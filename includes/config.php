@@ -37,12 +37,24 @@ if (!defined('PDF_BUILDER_PRO_ASSETS_URL')) {
 
 // Répertoire des uploads
 if (!defined('PDF_BUILDER_PRO_UPLOADS_DIR')) {
-    define('PDF_BUILDER_PRO_UPLOADS_DIR', wp_upload_dir()['basedir'] . '/pdf-builder-pro/');
+    // Utiliser une approche paresseuse pour éviter les erreurs si wp_upload_dir n'est pas disponible
+    if (function_exists('wp_upload_dir')) {
+        define('PDF_BUILDER_PRO_UPLOADS_DIR', wp_upload_dir()['basedir'] . '/pdf-builder-pro/');
+    } else {
+        // Fallback temporaire - sera redéfini plus tard
+        define('PDF_BUILDER_PRO_UPLOADS_DIR', ABSPATH . 'wp-content/uploads/pdf-builder-pro/');
+    }
 }
 
 // URL des uploads
 if (!defined('PDF_BUILDER_PRO_UPLOADS_URL')) {
-    define('PDF_BUILDER_PRO_UPLOADS_URL', wp_upload_dir()['baseurl'] . '/pdf-builder-pro/');
+    // Utiliser une approche paresseuse pour éviter les erreurs
+    if (function_exists('wp_upload_dir')) {
+        define('PDF_BUILDER_PRO_UPLOADS_URL', wp_upload_dir()['baseurl'] . '/pdf-builder-pro/');
+    } else {
+        // Fallback temporaire - sera redéfini plus tard
+        define('PDF_BUILDER_PRO_UPLOADS_URL', site_url('/wp-content/uploads/pdf-builder-pro/'));
+    }
 }
 
 // Répertoire du cache
