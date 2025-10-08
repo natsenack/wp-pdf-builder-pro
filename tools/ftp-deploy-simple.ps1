@@ -4,8 +4,11 @@
 
 param(
     [string]$RemoteDir = "/wp-content/plugins/wp-pdf-builder-pro",
-    [int]$Timeout = 2000,    # 2 secondes pour équilibre vitesse/stabilité
-    [int]$RetryCount = 3     # 3 retries rapides
+    [int]$Timeout = 1000,    # ⚡ 1s pour bon équilibre débit/stabilité
+    [int]$RetryCount = 3,    # 3 retries pour la stabilité
+    [int]$MaxParallel = 6,   # 🔥 6 connexions parallèles (vs 3 avant)
+    [int]$PreloadBuffer = 10, # 💾 10 fichiers préchargés (vs 5 avant)
+    [switch]$NoParallel      # Désactiver le parallélisme
 )
 
 Write-Host "🐌 DÉPLOIEMENT FTP SÉQUENTIEL ULTRA-RAPIDE" -ForegroundColor Green
@@ -37,8 +40,9 @@ Write-Host "🎯 Serveur : $FtpHost" -ForegroundColor Cyan
 Write-Host "📁 Destination : $RemoteDir" -ForegroundColor Cyan
 Write-Host "⏱️ Timeout : ${Timeout}ms" -ForegroundColor Yellow
 Write-Host "🔄 Retries : $RetryCount" -ForegroundColor Yellow
+Write-Host "🔀 Parallèle : $(if($NoParallel){'Désactivé'}else{$MaxParallel + ' connexions'})" -ForegroundColor Yellow
 Write-Host "🎯 Objectif : 5 fichiers/s (comme hier)" -ForegroundColor Red
-Write-Host "⚡ Optimisations : FtpWebRequest + KeepAlive=true + Binary + Test réseau" -ForegroundColor Cyan
+Write-Host "⚡ Optimisations : FtpWebRequest + KeepAlive=true + Binary + Test réseau + Pipelining" -ForegroundColor Cyan
 Write-Host ""
 
 # Test de connectivité réseau
@@ -120,12 +124,60 @@ function Send-FtpFile {
         } catch {
             Write-Host " ❌ Tentative $attempt : $($_.Exception.Message)" -ForegroundColor Red
             if ($attempt -lt $RetryCount) {
-                Start-Sleep -Milliseconds 100  # Attente très courte entre retries
+                Start-Sleep -Milliseconds 20  # ⚡ Attente minimale entre retries
             }
         }
     }
 
     return @{ Success = $false; Error = "Échec après $RetryCount tentatives"; File = $LocalPath }
+}
+
+# Fonction de transfert parallèle avec pipelining
+function Send-FtpFileParallel {
+    param([string]$LocalPath, [string]$RemotePath, [int]$Index)
+
+    $fileName = Split-Path $LocalPath -Leaf
+
+    for ($attempt = 1; $attempt -le $RetryCount; $attempt++) {
+        try {
+            Write-Host "📤 [$Index|$attempt/$RetryCount] $fileName..." -NoNewline
+
+            $ftpRequest = [System.Net.FtpWebRequest]::Create("ftp://$FtpHost$RemotePath")
+            $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
+            $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPassword)
+            $ftpRequest.UsePassive = $true
+            $ftpRequest.Timeout = $Timeout
+            $ftpRequest.ReadWriteTimeout = $Timeout
+            $ftpRequest.KeepAlive = $true
+            $ftpRequest.UseBinary = $true
+
+            $fileContents = [System.IO.File]::ReadAllBytes($LocalPath)
+            $ftpRequest.ContentLength = $fileContents.Length
+
+            $startTime = Get-Date
+
+            $requestStream = $ftpRequest.GetRequestStream()
+            $requestStream.Write($fileContents, 0, $fileContents.Length)
+            $requestStream.Close()
+
+            $response = $ftpRequest.GetResponse()
+            $response.Close()
+
+            $duration = (Get-Date) - $startTime
+            $fileSize = $fileContents.Length
+            $speedKBps = [math]::Round($fileSize / 1024 / $duration.TotalSeconds, 2)
+
+            Write-Host " ✅ $([math]::Round($duration.TotalSeconds, 2))s - ${speedKBps} KB/s" -ForegroundColor Green
+            return @{ Success = $true; File = $LocalPath; Size = $fileSize; Attempt = $attempt; Index = $Index }
+        } catch {
+            Write-Host " ❌ Tentative $attempt : $($_.Exception.Message)" -ForegroundColor Red
+            if ($attempt -lt $RetryCount) {
+                Start-Sleep -Milliseconds 200
+            }
+        }
+    }
+
+    return @{ Success = $false; Error = "Échec après $RetryCount tentatives"; File = $LocalPath; Index = $Index }
 }
 
 # Lister les fichiers
@@ -146,7 +198,7 @@ $files = Get-ChildItem -Path $projectRoot -Recurse -File | Where-Object {
     $relPath = $_.FullName.Substring($projectRoot.Length + 1).Replace('\', '/')
 
     # INCLURE seulement les fichiers de PRODUCTION selon README.md
-    ($relPath -match '^(assets|includes|languages|uploads)/') -or
+    ($relPath -match '^(assets|includes|languages|uploads|lib)/') -or
     ($relPath -eq '.htaccess') -or
     ($relPath -eq 'bootstrap.php') -or
     ($relPath -eq 'pdf-builder-pro.php') -or
@@ -164,38 +216,242 @@ $totalSizeMB = [math]::Round($totalSize / 1MB, 2)
 Write-Host "📏 Taille totale : ${totalSizeMB} MB" -ForegroundColor Yellow
 Write-Host ""
 
-# Upload séquentiel rapide (comme hier)
+# Upload parallèle avec pipelining
 $successCount = 0
 $failCount = 0
 $totalFiles = $files.Count
 $currentIndex = 0
 $startTime = Get-Date
 
-foreach ($file in $files) {
-    $currentIndex++
-    $relPath = $file.FullName.Substring($projectRoot.Length + 1).Replace('\', '/')
-    $remotePath = "$RemoteDir/$relPath"
+if ($NoParallel -or $MaxParallel -le 1) {
+    # Mode séquentiel (original)
+    Write-Host "🔄 Mode séquentiel activé" -ForegroundColor Yellow
+    foreach ($file in $files) {
+        $currentIndex++
+        $relPath = $file.FullName.Substring($projectRoot.Length + 1).Replace('\', '/')
+        $remotePath = "$RemoteDir/$relPath"
 
-    # Créer les répertoires nécessaires
-    $remoteDirPath = [System.IO.Path]::GetDirectoryName($remotePath).Replace('\', '/')
-    if ($remoteDirPath -ne $RemoteDir.TrimEnd('/') -and $remoteDirPath -ne "") {
-        New-FtpDirectory -Directory $remoteDirPath | Out-Null
+        # Créer les répertoires nécessaires
+        $remoteDirPath = [System.IO.Path]::GetDirectoryName($remotePath).Replace('\', '/')
+        if ($remoteDirPath -ne $RemoteDir.TrimEnd('/') -and $remoteDirPath -ne "") {
+            New-FtpDirectory -Directory $remoteDirPath | Out-Null
+        }
+
+        # Upload avec retry rapide
+        $result = Send-FtpFile -LocalPath $file.FullName -RemotePath $remotePath
+
+        if ($result.Success) {
+            $successCount++
+        } else {
+            $failCount++
+            Write-Host "❌ ÉCHEC FINAL : $(Split-Path $result.File -Leaf) - $($result.Error)" -ForegroundColor Red
+        }
+
+        # Progression
+        $currentFileSizeKB = [math]::Round($file.Length / 1KB, 1)
+        $percent = [math]::Round(($currentIndex / $totalFiles) * 100, 1)
+        Write-Host "`r📊 Progression: $percent% ($currentIndex/$totalFiles) - ${currentFileSizeKB} KB - ✅ $successCount - ❌ $failCount" -NoNewline
+    }
+} else {
+    # Mode parallèle avec pipelining avancé
+    Write-Host "🔀 Mode parallèle avancé activé ($MaxParallel connexions simultanées, $PreloadBuffer fichiers préchargés)" -ForegroundColor Cyan
+
+    # Précharger les fichiers en mémoire pour éviter les accès disque
+    Write-Host "💾 Préchargement des fichiers en RAM..." -ForegroundColor Yellow
+    $fileBuffer = @()
+    $preloadCount = [math]::Min($PreloadBuffer, $files.Count)
+
+    for ($i = 0; $i -lt $preloadCount; $i++) {
+        $file = $files[$i]
+        try {
+            $fileData = [System.IO.File]::ReadAllBytes($file.FullName)
+            $fileBuffer += @{
+                Index = $i + 1
+                File = $file
+                Data = $fileData
+                Size = $fileData.Length
+                RemotePath = "$RemoteDir/$($file.FullName.Substring($projectRoot.Length + 1).Replace('\', '/'))"
+            }
+            Write-Host "`r💾 Préchargement: $([math]::Round(($i + 1) / $preloadCount * 100, 1))% ($($i + 1)/$preloadCount)" -NoNewline
+        } catch {
+            Write-Host "❌ Erreur préchargement $($file.Name): $($_.Exception.Message)" -ForegroundColor Red
+        }
+    }
+    Write-Host "" -ForegroundColor Green
+
+    # Créer le pool de runspaces avec connexions persistantes
+    $runspacePool = [runspacefactory]::CreateRunspacePool(1, $MaxParallel)
+    $runspacePool.Open()
+
+    $jobs = [System.Collections.Generic.List[object]]::new()
+    $bufferIndex = 0
+    $fileIndex = $preloadCount
+    $completedCount = 0
+
+    # Fonction pour soumettre un nouveau job
+    function Submit-FileJob {
+        param($fileInfo)
+
+        # Créer les répertoires nécessaires (synchrone pour éviter conflits)
+        $remoteDirPath = [System.IO.Path]::GetDirectoryName($fileInfo.RemotePath).Replace('\', '/')
+        if ($remoteDirPath -ne $RemoteDir.TrimEnd('/') -and $remoteDirPath -ne "") {
+            New-FtpDirectory -Directory $remoteDirPath | Out-Null
+        }
+
+        # Script pour le job parallèle avec connexion persistante
+        $jobScript = {
+            param($FileData, $RemotePath, $Index, $FtpHost, $FtpUser, $FtpPassword, $Timeout, $RetryCount)
+
+            function Send-FtpFileParallel {
+                param([byte[]]$FileData, [string]$RemotePath, [int]$Index)
+
+                for ($attempt = 1; $attempt -le $RetryCount; $attempt++) {
+                    try {
+                        $ftpRequest = [System.Net.FtpWebRequest]::Create("ftp://$FtpHost$RemotePath")
+                        $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
+                        $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPassword)
+                        $ftpRequest.UsePassive = $true
+                        $ftpRequest.Timeout = $Timeout
+                        $ftpRequest.ReadWriteTimeout = $Timeout
+                        $ftpRequest.KeepAlive = $true  # Connexion persistante
+                        $ftpRequest.UseBinary = $true
+                        $ftpRequest.ContentLength = $FileData.Length
+
+                        $startTime = Get-Date
+
+                        $requestStream = $ftpRequest.GetRequestStream()
+                        $requestStream.Write($FileData, 0, $FileData.Length)
+                        $requestStream.Close()
+
+                        $response = $ftpRequest.GetResponse()
+                        $response.Close()
+
+                        $duration = (Get-Date) - $startTime
+                        $speedKBps = [math]::Round($FileData.Length / 1024 / $duration.TotalSeconds, 2)
+
+                        return @{
+                            Success = $true
+                            Size = $FileData.Length
+                            Attempt = $attempt
+                            Index = $Index
+                            Speed = $speedKBps
+                            Duration = $duration.TotalSeconds
+                        }
+                    } catch {
+                        if ($attempt -lt $RetryCount) {
+                            Start-Sleep -Milliseconds 10  # ⚡ Pause minimale entre tentatives
+                        }
+                    }
+                }
+
+                return @{
+                    Success = $false
+                    Error = "Échec après $RetryCount tentatives"
+                    Index = $Index
+                }
+            }
+
+            Send-FtpFileParallel -FileData $FileData -RemotePath $RemotePath -Index $Index
+        }
+
+        # Créer et démarrer le job
+        $job = [powershell]::Create().AddScript($jobScript).AddParameters(@{
+            FileData = $fileInfo.Data
+            RemotePath = $fileInfo.RemotePath
+            Index = $fileInfo.Index
+            FtpHost = $FtpHost
+            FtpUser = $FtpUser
+            FtpPassword = $FtpPassword
+            Timeout = $Timeout
+            RetryCount = $RetryCount
+        })
+        $job.RunspacePool = $runspacePool
+
+        return @{
+            Job = $job
+            Handle = $job.BeginInvoke()
+            FileInfo = $fileInfo
+        }
     }
 
-    # Upload avec retry rapide
-    $result = Send-FtpFile -LocalPath $file.FullName -RemotePath $remotePath
+    # Soumettre les premiers jobs depuis le buffer
+    Write-Host "🚀 Démarrage des transferts parallèles..." -ForegroundColor Green
+    for ($i = 0; $i -lt [math]::Min($MaxParallel, $fileBuffer.Count); $i++) {
+        $job = Submit-FileJob -fileInfo $fileBuffer[$i]
+        $jobs.Add($job)
+    }
+    $bufferIndex = $MaxParallel
 
-    if ($result.Success) {
-        $successCount++
-    } else {
-        $failCount++
-        Write-Host "❌ ÉCHEC FINAL : $(Split-Path $result.File -Leaf) - $($result.Error)" -ForegroundColor Red
+    # Boucle principale de traitement
+    while ($jobs.Count -gt 0 -or $bufferIndex -lt $fileBuffer.Count -or $fileIndex -lt $files.Count) {
+        # Précharger le prochain fichier si nécessaire
+        if ($bufferIndex -lt $fileBuffer.Count) {
+            # Rien à faire, déjà préchargé
+        } elseif ($fileIndex -lt $files.Count) {
+            # Charger le prochain fichier
+            $file = $files[$fileIndex]
+            try {
+                $fileData = [System.IO.File]::ReadAllBytes($file.FullName)
+                $fileBuffer += @{
+                    Index = $fileIndex + 1
+                    File = $file
+                    Data = $fileData
+                    Size = $fileData.Length
+                    RemotePath = "$RemoteDir/$($file.FullName.Substring($projectRoot.Length + 1).Replace('\', '/'))"
+                }
+                $fileIndex++
+            } catch {
+                Write-Host "❌ Erreur chargement $($file.Name): $($_.Exception.Message)" -ForegroundColor Red
+                $fileIndex++
+            }
+        }
+
+        # Traiter les jobs terminés
+        for ($i = $jobs.Count - 1; $i -ge 0; $i--) {
+            $job = $jobs[$i]
+            if ($job.Handle.IsCompleted) {
+                $result = $job.Job.EndInvoke($job.Handle)
+                $job.Job.Dispose()
+
+                $completedCount++
+                $fileInfo = $job.FileInfo
+
+                if ($result.Success) {
+                    $successCount++
+                    Write-Host "📤 [$($result.Index)] $(Split-Path $fileInfo.File.Name -Leaf)... ✅ $([math]::Round($result.Duration, 2))s - $($result.Speed) KB/s" -ForegroundColor Green
+                } else {
+                    $failCount++
+                    Write-Host "❌ ÉCHEC FINAL [$($result.Index)] : $(Split-Path $fileInfo.File.Name -Leaf) - $($result.Error)" -ForegroundColor Red
+                }
+
+                # Progression
+                $percent = [math]::Round(($completedCount / $totalFiles) * 100, 1)
+                Write-Host "`r📊 Progression: $percent% ($completedCount/$totalFiles) - ✅ $successCount - ❌ $failCount" -NoNewline
+
+                # Retirer le job terminé
+                $jobs.RemoveAt($i)
+
+                # Soumettre un nouveau job si disponible
+                if ($bufferIndex -lt $fileBuffer.Count) {
+                    $newJob = Submit-FileJob -fileInfo $fileBuffer[$bufferIndex]
+                    $jobs.Add($newJob)
+                    $bufferIndex++
+                }
+            }
+        }
+
+        # Petite pause pour éviter la surcharge CPU
+        if ($jobs.Count -gt 0) {
+            Start-Sleep -Milliseconds 10  # ⚡ Pause minimale pour l'efficacité
+        }
     }
 
-    # Progression
-    $currentFileSizeKB = [math]::Round($file.Length / 1KB, 1)
-    $percent = [math]::Round(($currentIndex / $totalFiles) * 100, 1)
-    Write-Host "`r📊 Progression: $percent% ($currentIndex/$totalFiles) - ${currentFileSizeKB} KB - ✅ $successCount - ❌ $failCount" -NoNewline
+    # Fermer le pool de runspaces
+    $runspacePool.Close()
+    $runspacePool.Dispose()
+
+    # Libérer la mémoire du buffer
+    $fileBuffer = $null
 }
 
 Write-Host ""
