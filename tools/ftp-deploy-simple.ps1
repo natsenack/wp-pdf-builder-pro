@@ -31,8 +31,22 @@ $FtpHost = $env:FTP_HOST
 $FtpUser = $env:FTP_USER
 $FtpPassword = $env:FTP_PASSWORD
 
-if (-not $FtpHost -or -not $FtpUser -or -not $FtpPassword) {
-    Write-Host "❌ Config FTP incomplète" -ForegroundColor Red
+# Demander le mot de passe de manière sécurisée si non défini
+if (-not $FtpPassword) {
+    Write-Host "🔑 Mot de passe FTP non trouvé dans les variables d'environnement" -ForegroundColor Yellow
+    $securePassword = Read-Host "Entrez le mot de passe FTP pour $FtpUser@$FtpHost" -AsSecureString
+    $FtpPassword = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($securePassword))
+} else {
+    Write-Host "✅ Mot de passe FTP chargé depuis les variables d'environnement" -ForegroundColor Green
+}
+
+if (-not $FtpHost -or -not $FtpUser) {
+    Write-Host "❌ Config FTP incomplète (FTP_HOST et FTP_USER requis)" -ForegroundColor Red
+    Write-Host "`n🔧 CONFIGURATION :" -ForegroundColor Yellow
+    Write-Host "Définissez les variables d'environnement :" -ForegroundColor White
+    Write-Host '$env:FTP_HOST = "votre-serveur.com"' -ForegroundColor Gray
+    Write-Host '$env:FTP_USER = "votre-utilisateur"' -ForegroundColor Gray
+    Write-Host '$env:FTP_PASSWORD = "votre-mot-de-passe"  # Optionnel, demandé interactivement sinon' -ForegroundColor Gray
     exit 1
 }
 
