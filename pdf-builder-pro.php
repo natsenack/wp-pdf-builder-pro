@@ -51,18 +51,24 @@ add_action('wp_loaded', 'pdf_builder_final_init', 9999);
 add_action('admin_menu', 'pdf_builder_register_admin_menu_early', 5);
 
 function pdf_builder_register_admin_menu_early() {
-    // Vérifications de sécurité
-    if (!function_exists('get_option') || !defined('ABSPATH')) {
+    // Vérifications de sécurité minimales
+    if (!defined('ABSPATH')) {
         return;
     }
 
-    // Vérifier si le plugin est activé
-    $is_activated = get_option('pdf_builder_final_activated', false);
-    if (!$is_activated) {
-        return;
-    }
+    // Enregistrer un menu de test d'abord
+    add_menu_page(
+        'PDF Builder Pro',
+        'PDF Builder',
+        'read',
+        'pdf-builder-pro',
+        'pdf_builder_test_page',
+        'dashicons-pdf',
+        30
+    );
 
     // Charger le bootstrap immédiatement quand on est dans l'admin
+    // Le bootstrap gérera lui-même les vérifications d'activation
     $bootstrap_path = plugin_dir_path(__FILE__) . 'bootstrap.php';
     if (file_exists($bootstrap_path)) {
         require_once $bootstrap_path;
@@ -70,6 +76,15 @@ function pdf_builder_register_admin_menu_early() {
             pdf_builder_load_bootstrap();
         }
     }
+}
+
+// Fonction de test pour le menu
+function pdf_builder_test_page() {
+    echo '<div class="wrap">';
+    echo '<h1>PDF Builder Pro - Test Menu</h1>';
+    echo '<p>Le menu fonctionne ! Le plugin est chargé.</p>';
+    echo '<p><a href="' . admin_url('plugins.php') . '">Retour aux plugins</a></p>';
+    echo '</div>';
 }
 
 function pdf_builder_final_init() {

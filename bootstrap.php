@@ -48,8 +48,8 @@ function pdf_builder_load_bootstrap() {
         }
     }
 
-    // Menu handled by PDF_Builder_Admin class
-    add_action('admin_menu', 'pdf_builder_register_admin_menu_simple');
+    // Menu handled by PDF_Builder_Admin class - DÉPLACÉ dans pdf-builder-pro.php
+    // add_action('admin_menu', 'pdf_builder_register_admin_menu_simple');
 
     // Marquer comme chargé globalement
     define('PDF_BUILDER_BOOTSTRAP_LOADED', true);
