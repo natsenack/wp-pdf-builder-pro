@@ -193,7 +193,7 @@ foreach ($file in $files) {
 
             if ($result.Success) {
                 $successCount++
-                Write-Host "`r✅ $(Split-Path $result.File -Leaf) ($(result.Method))" -ForegroundColor Green
+                Write-Host "`r✅ $(Split-Path $result.File -Leaf)" -ForegroundColor Green
             } else {
                 $failCount++
                 Write-Host "`r❌ $(Split-Path $result.File -Leaf) - $($result.Error)" -ForegroundColor Red
@@ -212,15 +212,13 @@ foreach ($file in $files) {
                 $result = $rs.PowerShell.EndInvoke($rs.Handle)
                 $rs.PowerShell.Dispose()
 
-                if ($result.Success) {
-                    $successCount++
-                    Write-Host "`r✅ $(Split-Path $result.File -Leaf) ($(result.Method))" -ForegroundColor Green
-                } else {
-                    $failCount++
-                    Write-Host "`r❌ $(Split-Path $result.File -Leaf) - $($result.Error)" -ForegroundColor Red
-                }
-
-                $runspaces.Remove($rs)
+            if ($result.Success) {
+                $successCount++
+                Write-Host "`r✅ $(Split-Path $result.File -Leaf)" -ForegroundColor Green
+            } else {
+                $failCount++
+                Write-Host "`r❌ $(Split-Path $result.File -Leaf) - $($result.Error)" -ForegroundColor Red
+            }                $runspaces.Remove($rs)
             }
         }
     }
@@ -243,7 +241,7 @@ while ($runspaces.Count -gt 0) {
 
             if ($result.Success) {
                 $successCount++
-                Write-Host "✅ $(Split-Path $result.File -Leaf) ($(result.Method))" -ForegroundColor Green
+                Write-Host "✅ $(Split-Path $result.File -Leaf)" -ForegroundColor Green
             } else {
                 $failCount++
                 Write-Host "❌ $(Split-Path $result.File -Leaf) - $($result.Error)" -ForegroundColor Red
