@@ -4,10 +4,10 @@
 
 param(
     [string]$RemoteDir = "/wp-content/plugins/wp-pdf-builder-pro",
-    [int]$Timeout = 1000,    # ⚡ 1s pour bon équilibre débit/stabilité
+    [int]$Timeout = 500,    # ⚡ 500ms pour vitesse maximale
     [int]$RetryCount = 3,    # 3 retries pour la stabilité
-    [int]$MaxParallel = 6,   # 🔥 6 connexions parallèles (vs 3 avant)
-    [int]$PreloadBuffer = 10, # 💾 10 fichiers préchargés (vs 5 avant)
+    [int]$MaxParallel = 12,  # 🔥 12 connexions parallèles (vs 6 avant)
+    [int]$PreloadBuffer = 20, # 💾 20 fichiers préchargés (vs 10 avant)
     [switch]$NoParallel      # Désactiver le parallélisme
 )
 
@@ -138,7 +138,7 @@ function Send-FtpFile {
         } catch {
             Write-Host " ❌ Tentative $attempt : $($_.Exception.Message)" -ForegroundColor Red
             if ($attempt -lt $RetryCount) {
-                Start-Sleep -Milliseconds 20  # ⚡ Attente minimale entre retries
+                Start-Sleep -Milliseconds 5  # ⚡ Pause ultra-minimale entre retries
             }
         }
     }
@@ -353,7 +353,7 @@ if ($NoParallel -or $MaxParallel -le 1) {
                         }
                     } catch {
                         if ($attempt -lt $RetryCount) {
-                            Start-Sleep -Milliseconds 10  # ⚡ Pause minimale entre tentatives
+                            Start-Sleep -Milliseconds 1  # ⚡ Pause ultra-minimale entre tentatives
                         }
                     }
                 }

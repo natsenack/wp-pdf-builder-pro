@@ -371,6 +371,7 @@ function pdf_builder_handle_pdf_download() {
         $woocommerce_integration->handle_pdf_download();
     }
 }
+
 function pdf_builder_lazy_load() {
     // Vérifier si le plugin est activé via option
     $is_enabled = get_option('pdf_builder_enabled', true); // Par défaut activé
