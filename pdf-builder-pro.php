@@ -47,6 +47,31 @@ function pdf_builder_final_deactivate() {
 // Chargement différé maximal - seulement quand WordPress est complètement prêt
 add_action('wp_loaded', 'pdf_builder_final_init', 9999);
 
+// Enregistrer le menu admin dès que possible dans l'admin
+add_action('admin_menu', 'pdf_builder_register_admin_menu_early', 5);
+
+function pdf_builder_register_admin_menu_early() {
+    // Vérifications de sécurité
+    if (!function_exists('get_option') || !defined('ABSPATH')) {
+        return;
+    }
+
+    // Vérifier si le plugin est activé
+    $is_activated = get_option('pdf_builder_final_activated', false);
+    if (!$is_activated) {
+        return;
+    }
+
+    // Charger le bootstrap immédiatement quand on est dans l'admin
+    $bootstrap_path = plugin_dir_path(__FILE__) . 'bootstrap.php';
+    if (file_exists($bootstrap_path)) {
+        require_once $bootstrap_path;
+        if (function_exists('pdf_builder_load_bootstrap')) {
+            pdf_builder_load_bootstrap();
+        }
+    }
+}
+
 function pdf_builder_final_init() {
     // Vérifications de sécurité maximales
     if (!function_exists('get_option') || !function_exists('is_admin') || !defined('ABSPATH')) {
@@ -59,17 +84,8 @@ function pdf_builder_final_init() {
         return; // Plugin pas activé
     }
 
-    // Charger seulement si nous sommes dans l'admin ET que c'est nécessaire
-    if (is_admin()) {
-        // Charger le bootstrap seulement quand on est dans l'admin
-        $bootstrap_path = plugin_dir_path(__FILE__) . 'bootstrap.php';
-        if (file_exists($bootstrap_path)) {
-            require_once $bootstrap_path;
-            if (function_exists('pdf_builder_load_bootstrap')) {
-                pdf_builder_load_bootstrap();
-            }
-        }
-    }
+    // Le bootstrap est déjà chargé dans l'admin via admin_menu
+    // Ici on gère seulement les autres cas (frontend, API, etc.)
 
     // Hook pour les téléchargements PDF - seulement si demandé
     if (isset($_GET['pdf_builder_action']) && $_GET['pdf_builder_action'] === 'download_order_pdf') {
