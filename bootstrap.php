@@ -1,5 +1,5 @@
 <?php
-/**
+/** 
  * PDF Builder Pro - Bootstrap
  * Chargement différé des fonctionnalités du plugin
  */
