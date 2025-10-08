@@ -18,7 +18,7 @@ function pdf_builder_load_bootstrap() {
 
     // Définir le répertoire du plugin si pas déjà fait
     if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
-        define('PDF_BUILDER_PLUGIN_DIR', plugin_dir_path(dirname(__FILE__)));
+        define('PDF_BUILDER_PLUGIN_DIR', plugin_dir_path(__FILE__));
     }
 
     // Charger la configuration si pas déjà faite
