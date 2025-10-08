@@ -3,11 +3,12 @@
 
 param(
     [string]$RemoteDir = "/wp-content/plugins/wp-pdf-builder-pro",
-    [int]$MaxConcurrent = 20
+    [int]$MaxConcurrent = 50,  # Augmenté pour plus de parallélisation
+    [int]$ChunkSize = 1048576  # 1MB chunks pour les gros fichiers
 )
 
-Write-Host "🚀 DÉPLOIEMENT FTP SIMPLIFIÉ" -ForegroundColor Green
-Write-Host "===========================" -ForegroundColor Green
+Write-Host "🚀 DÉPLOIEMENT FTP ULTRA-PARALLÈLE" -ForegroundColor Green
+Write-Host "=================================" -ForegroundColor Green
 
 # Configuration
 $configFile = ".\ftp-config.env"
@@ -33,7 +34,8 @@ if (-not $FtpHost -or -not $FtpUser -or -not $FtpPassword) {
 
 Write-Host "🎯 Serveur : $FtpHost" -ForegroundColor Cyan
 Write-Host "📁 Destination : $RemoteDir" -ForegroundColor Cyan
-Write-Host "🔥 Connexions simultanées : $MaxConcurrent (ULTRA-RAPIDE)" -ForegroundColor Yellow
+Write-Host "🔥 Connexions simultanées : $MaxConcurrent (ULTRA-PARALLÈLE)" -ForegroundColor Red
+Write-Host "📦 Taille des chunks : $([math]::Round($ChunkSize/1MB, 1))MB" -ForegroundColor Yellow
 
 # Fonction pour créer un répertoire FTP (optimisée)
 function New-FtpDirectory {
@@ -103,34 +105,86 @@ $files = Get-ChildItem -Path $projectRoot -Recurse -File | Where-Object {
 
 Write-Host "📊 Fichiers à déployer : $($files.Count)" -ForegroundColor Yellow
 
-# Fonction d'upload pour les jobs (ULTRA-optimisée)
+# Fonction upload ultra-optimisée avec chunks
 $uploadScript = {
-    param($localFile, $remoteFile, $ftpHost, $ftpUser, $ftpPassword)
+    param($localFile, $remoteFile, $ftpHost, $ftpUser, $ftpPassword, $chunkSize)
 
     try {
-        # Utiliser FtpWebRequest pour de meilleures performances
-        $ftpRequest = [System.Net.FtpWebRequest]::Create("ftp://$ftpHost$remoteFile")
-        $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
-        $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
-        $ftpRequest.UsePassive = $true
-        $ftpRequest.Timeout = 10000  # Réduit pour rapidité
-        $ftpRequest.ReadWriteTimeout = 10000
-        $ftpRequest.UseBinary = $true
-        $ftpRequest.KeepAlive = $true  # Pas de connexion persistante pour parallélisme
+        $fileInfo = Get-Item $localFile
+        $fileSize = $fileInfo.Length
 
-        # Lecture optimisée du fichier
-        $fileContents = [System.IO.File]::ReadAllBytes($localFile)
-        $ftpRequest.ContentLength = $fileContents.Length
+        # Pour les petits fichiers (< 1MB), upload direct
+        if ($fileSize -le 1048576) {
+            $ftpRequest = [System.Net.FtpWebRequest]::Create("ftp://$ftpHost$remoteFile")
+            $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
+            $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
+            $ftpRequest.UsePassive = $true
+            $ftpRequest.Timeout = 30000
+            $ftpRequest.ReadWriteTimeout = 30000
+            $ftpRequest.UseBinary = $true
+            $ftpRequest.KeepAlive = $false
 
-        # Stream optimisé
-        $requestStream = $ftpRequest.GetRequestStream()
-        $requestStream.Write($fileContents, 0, $fileContents.Length)
-        $requestStream.Close()
+            $fileContents = [System.IO.File]::ReadAllBytes($localFile)
+            $ftpRequest.ContentLength = $fileContents.Length
 
-        $response = $ftpRequest.GetResponse()
-        $response.Close()
+            $requestStream = $ftpRequest.GetRequestStream()
+            $requestStream.Write($fileContents, 0, $fileContents.Length)
+            $requestStream.Close()
 
-        return @{ Success = $true; File = $localFile; Size = $fileContents.Length }
+            $response = $ftpRequest.GetResponse()
+            $response.Close()
+
+            return @{ Success = $true; File = $localFile; Size = $fileSize; Method = "Direct" }
+        }
+        # Pour les gros fichiers, upload par chunks
+        else {
+            $bytesUploaded = 0
+            $buffer = New-Object byte[] $chunkSize
+            $fileStream = $null
+
+            try {
+                $fileStream = [System.IO.File]::OpenRead($localFile)
+
+                while ($bytesUploaded -lt $fileSize) {
+                    $bytesToRead = [Math]::Min($chunkSize, $fileSize - $bytesUploaded)
+
+                    $bytesRead = $fileStream.Read($buffer, 0, $bytesToRead)
+                    if ($bytesRead -eq 0) { break }
+
+                    # Créer une requête FTP pour ce chunk
+                    $chunkRemotePath = if ($bytesUploaded -eq 0) {
+                        $remoteFile  # Premier chunk : créer le fichier
+                    } else {
+                        "$remoteFile;offset=$bytesUploaded"  # Chunks suivants : append
+                    }
+
+                    $ftpRequest = [System.Net.FtpWebRequest]::Create("ftp://$ftpHost$chunkRemotePath")
+                    $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
+                    $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
+                    $ftpRequest.UsePassive = $true
+                    $ftpRequest.Timeout = 30000
+                    $ftpRequest.ReadWriteTimeout = 30000
+                    $ftpRequest.UseBinary = $true
+                    $ftpRequest.KeepAlive = $false
+
+                    $requestStream = $ftpRequest.GetRequestStream()
+                    $requestStream.Write($buffer, 0, $bytesRead)
+                    $requestStream.Close()
+
+                    $response = $ftpRequest.GetResponse()
+                    $response.Close()
+
+                    $bytesUploaded += $bytesRead
+                }
+            } finally {
+                if ($fileStream) {
+                    $fileStream.Close()
+                    $fileStream.Dispose()
+                }
+            }
+
+            return @{ Success = $true; File = $localFile; Size = $fileSize; Method = "Chunked" }
+        }
     } catch {
         return @{ Success = $false; Error = $_.Exception.Message; File = $localFile }
     }
@@ -138,10 +192,17 @@ $uploadScript = {
 
 $successCount = 0
 $failCount = 0
-$runningJobs = [System.Collections.ArrayList]::new()
 $totalFiles = $files.Count
 $currentIndex = 0
 $startTime = Get-Date
+
+# Créer le pool de runspaces pour parallélisation maximale
+$runspacePool = [runspacefactory]::CreateRunspacePool(1, $MaxConcurrent)
+$runspacePool.Open()
+
+$runspaces = [System.Collections.ArrayList]::new()
+
+Write-Host "📊 Déploiement de $totalFiles fichiers avec $MaxConcurrent connexions simultanées..." -ForegroundColor Cyan
 
 foreach ($file in $files) {
     $currentIndex++
@@ -154,55 +215,82 @@ foreach ($file in $files) {
         New-FtpDirectory -Directory $remoteDirPath | Out-Null
     }
 
-    # Lancer l'upload en job
-    $job = Start-Job -ScriptBlock $uploadScript -ArgumentList $file.FullName, $remotePath, $FtpHost, $FtpUser, $FtpPassword
-    $runningJobs.Add($job) | Out-Null
+    # Lancer l'upload en runspace (beaucoup plus rapide que les jobs)
+    $powershell = [powershell]::Create().AddScript($uploadScript).AddArgument($file.FullName).AddArgument($remotePath).AddArgument($FtpHost).AddArgument($FtpUser).AddArgument($FtpPassword).AddArgument($ChunkSize)
+    $powershell.RunspacePool = $runspacePool
 
+    $runspaceData = @{
+        PowerShell = $powershell
+        Handle = $powershell.BeginInvoke()
+        File = $file.FullName
+        Index = $currentIndex
+    }
+    $runspaces.Add($runspaceData) | Out-Null
+
+    # Afficher progression
     $percent = [math]::Round(($currentIndex / $totalFiles) * 100, 1)
-    Write-Host "`r📤 [$percent%] $currentIndex/$totalFiles fichiers" -ForegroundColor Gray -NoNewline
+    Write-Host "`r📤 [$percent%] $currentIndex/$totalFiles fichiers - Runspaces actifs: $($runspaces.Count)" -NoNewline
 
-    # Attendre si on atteint la limite de jobs simultanés
-    while ($runningJobs.Count -ge $MaxConcurrent) {
-        $completedJobs = $runningJobs | Where-Object { $_.State -ne 'Running' }
-        if ($completedJobs) {
-            foreach ($job in $completedJobs) {
-                $result = Receive-Job -Job $job -ErrorAction SilentlyContinue
+    # Attendre si on atteint la limite de runspaces simultanés
+    while ($runspaces.Count -ge $MaxConcurrent) {
+        $completedRunspaces = $runspaces | Where-Object { $_.Handle.IsCompleted }
+
+        if ($completedRunspaces) {
+            foreach ($rs in $completedRunspaces) {
+                $result = $rs.PowerShell.EndInvoke($rs.Handle)
+                $rs.PowerShell.Dispose()
+
                 if ($result.Success) {
                     $successCount++
+                    $method = if ($result.Method) { " ($($result.Method))" } else { "" }
+                    Write-Host "`r✅ Upload réussi: $(Split-Path $result.File -Leaf)$method" -ForegroundColor Green
                 } else {
                     $failCount++
+                    Write-Host "`r❌ Échec: $(Split-Path $result.File -Leaf) - $($result.Error)" -ForegroundColor Red
                 }
-                Remove-Job -Job $job -ErrorAction SilentlyContinue | Out-Null
-                $runningJobs.Remove($job) | Out-Null
-            }
-        }
 
-        if ($runningJobs.Count -ge $MaxConcurrent) {
-            Start-Sleep -Milliseconds 25  # Réduit pour rapidité
+                $runspaces.Remove($rs)
+            }
+        } else {
+            Start-Sleep -Milliseconds 10  # Très courte pause pour éviter la surcharge CPU
         }
     }
 }
 
-# Attendre que tous les jobs se terminent
-while ($runningJobs.Count -gt 0) {
-    $completedJobs = $runningJobs | Where-Object { $_.State -ne 'Running' }
-    if ($completedJobs) {
-        foreach ($job in $completedJobs) {
-            $result = Receive-Job -Job $job -ErrorAction SilentlyContinue
+Write-Host ""
+
+# Attendre que tous les runspaces se terminent
+Write-Host "🔄 Finalisation des derniers transferts..." -ForegroundColor Yellow
+
+while ($runspaces.Count -gt 0) {
+    $completedRunspaces = $runspaces | Where-Object { $_.Handle.IsCompleted }
+
+    if ($completedRunspaces) {
+        foreach ($rs in $completedRunspaces) {
+            $result = $rs.PowerShell.EndInvoke($rs.Handle)
+            $rs.PowerShell.Dispose()
+
             if ($result.Success) {
                 $successCount++
+                $method = if ($result.Method) { " ($($result.Method))" } else { "" }
+                Write-Host "✅ Upload réussi: $(Split-Path $result.File -Leaf)$method" -ForegroundColor Green
             } else {
                 $failCount++
+                Write-Host "❌ Échec: $(Split-Path $result.File -Leaf) - $($result.Error)" -ForegroundColor Red
             }
-            Remove-Job -Job $job -ErrorAction SilentlyContinue | Out-Null
-            $runningJobs.Remove($job) | Out-Null
+
+            $runspaces.Remove($rs)
         }
     }
 
-    if ($runningJobs.Count -gt 0) {
-        Start-Sleep -Milliseconds 25
+    if ($runspaces.Count -gt 0) {
+        Start-Sleep -Milliseconds 10
     }
 }
+
+# Nettoyer le pool de runspaces
+$runspacePool.Close()
+$runspacePool.Dispose()
 
 Write-Host ""
 Write-Host "✅ TERMINÉ" -ForegroundColor Green
