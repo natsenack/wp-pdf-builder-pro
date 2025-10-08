@@ -1,0 +1,69 @@
+/* Styles de base pour le nouveau Canvas Builder */
+
+.canvas-builder-container {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.canvas-toolbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+}
+
+.canvas-toolbar button {
+  padding: 8px 16px;
+  border: 1px solid #007cba;
+  background: #007cba;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.canvas-toolbar button:hover {
+  background: #005a87;
+  border-color: #005a87;
+}
+
+.canvas-toolbar button:active {
+  transform: translateY(1px);
+}
+
+.canvas-area {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  display: inline-block;
+}
+
+.canvas-element {
+  border: 2px solid #007cba;
+  border-radius: 4px;
+  background: white;
+}
+
+.status-panel {
+  margin-top: 20px;
+  padding: 15px;
+  background: #e3f2fd;
+  border: 1px solid #bbdefb;
+  border-radius: 4px;
+}
+
+.status-panel h3 {
+  margin: 0 0 10px 0;
+  color: #1976d2;
+}
+
+.status-panel p {
+  margin: 0;
+  color: #424242;
+}
