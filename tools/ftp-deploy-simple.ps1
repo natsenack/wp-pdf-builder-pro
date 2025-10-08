@@ -4,7 +4,7 @@
 
 param(
     [string]$RemoteDir = "/wp-content/plugins/wp-pdf-builder-pro",
-    [int]$Timeout = 3000,    # 3 secondes pour vitesse maximale
+    [int]$Timeout = 2000,    # 2 secondes pour équilibre vitesse/stabilité
     [int]$RetryCount = 3     # 3 retries rapides
 )
 
@@ -38,7 +38,17 @@ Write-Host "📁 Destination : $RemoteDir" -ForegroundColor Cyan
 Write-Host "⏱️ Timeout : ${Timeout}ms" -ForegroundColor Yellow
 Write-Host "🔄 Retries : $RetryCount" -ForegroundColor Yellow
 Write-Host "🎯 Objectif : 5 fichiers/s (comme hier)" -ForegroundColor Red
-Write-Host "⚡ Optimisations : FtpWebRequest + KeepAlive=false + Binary" -ForegroundColor Cyan
+Write-Host "⚡ Optimisations : FtpWebRequest + KeepAlive=true + Binary + Test réseau" -ForegroundColor Cyan
+Write-Host ""
+
+# Test de connectivité réseau
+Write-Host "🔍 Test de connectivité réseau..." -ForegroundColor Cyan
+$connectionTest = Test-NetConnection -ComputerName $FtpHost -Port 21 -WarningAction SilentlyContinue
+if (-not $connectionTest.TcpTestSucceeded) {
+    Write-Host "❌ Impossible de se connecter au serveur $FtpHost:21" -ForegroundColor Red
+    exit 1
+}
+Write-Host "✅ Connectivité réseau OK (latence: $($connectionTest.PingReplyDetails.RoundtripTime)ms)" -ForegroundColor Green
 Write-Host ""
 
 # Fonction pour créer un répertoire FTP
@@ -81,26 +91,31 @@ function Send-FtpFile {
             $ftpRequest.UsePassive = $true
             $ftpRequest.Timeout = $Timeout
             $ftpRequest.ReadWriteTimeout = $Timeout
-            $ftpRequest.KeepAlive = $false  # Fermer la connexion après chaque fichier
+            $ftpRequest.KeepAlive = $true  # Connexion persistante pour vitesse
             $ftpRequest.UseBinary = $true
 
             $fileContents = [System.IO.File]::ReadAllBytes($LocalPath)
             $ftpRequest.ContentLength = $fileContents.Length
 
-            $startTime = Get-Date
+            # Mesure précise du temps avec Stopwatch
+            $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
 
             $requestStream = $ftpRequest.GetRequestStream()
             $requestStream.Write($fileContents, 0, $fileContents.Length)
             $requestStream.Close()
 
             $response = $ftpRequest.GetResponse()
+            $stopwatch.Stop()
             $response.Close()
 
-            $duration = (Get-Date) - $startTime
+            # Calcul précis de la vitesse
             $fileSize = $fileContents.Length
-            $speedKBps = [math]::Round($fileSize / 1024 / $duration.TotalSeconds, 1)
+            $durationMs = $stopwatch.ElapsedMilliseconds
+            $durationSec = $durationMs / 1000
+            $sizeKB = $fileSize / 1024
+            $speedKBps = [math]::Round($sizeKB / $durationSec, 2)
 
-            Write-Host " ✅ $([math]::Round($duration.TotalSeconds, 2))s - ${speedKBps} KB/s" -ForegroundColor Green
+            Write-Host " ✅ $([math]::Round($durationSec, 2))s - ${speedKBps} KB/s" -ForegroundColor Green
             return @{ Success = $true; File = $LocalPath; Size = $fileSize; Attempt = $attempt }
         } catch {
             Write-Host " ❌ Tentative $attempt : $($_.Exception.Message)" -ForegroundColor Red
