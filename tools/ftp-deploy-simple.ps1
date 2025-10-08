@@ -3,9 +3,9 @@
 
 param(
     [string]$RemoteDir = "/wp-content/plugins/wp-pdf-builder-pro",
-    [int]$MaxConcurrent = 20,  # Réduit pour éviter la surcharge serveur
+    [int]$MaxConcurrent = 4,  # Réduit à 4 pour éviter saturation serveur lent
     [int]$ChunkSize = 2097152,  # Augmenté à 2MB pour moins de connexions
-    [int]$Timeout = 5000  # Timeout réduit à 5 secondes
+    [int]$Timeout = 15000  # Augmenté à 15 secondes pour connexions lentes
 )
 
 Write-Host "🚀 DÉPLOIEMENT FTP ULTRA-RAPIDE" -ForegroundColor Green
@@ -85,7 +85,7 @@ $projectRoot = Split-Path (Get-Location) -Parent
 $files = Get-ChildItem -Path $projectRoot -Recurse -File | Where-Object {
     $relPath = $_.FullName.Substring($projectRoot.Length + 1).Replace('\', '/')
 
-    # EXCLURE les dossiers et fichiers de développement
+    # EXCLURE les dossiers et fichiers de développement (selon README.md)
     -not ($relPath -match '^(\.git|\.vscode|node_modules|src|tools|docs|build-tools|dev-tools|vendor|archive|dist)/') -and
     -not ($relPath -match '\.(log|tmp|bak|md~)$') -and
     -not ($relPath -match '^composer\.(json|lock)$') -and
@@ -97,12 +97,15 @@ $files = Get-ChildItem -Path $projectRoot -Recurse -File | Where-Object {
 } | Where-Object {
     $relPath = $_.FullName.Substring($projectRoot.Length + 1).Replace('\', '/')
 
-    # INCLURE seulement les fichiers essentiels du plugin
+    # INCLURE seulement les fichiers de PRODUCTION selon README.md
     ($relPath -match '^(assets|includes|languages|uploads)/') -or
     ($relPath -eq '.htaccess') -or
     ($relPath -eq 'bootstrap.php') -or
     ($relPath -eq 'pdf-builder-pro.php') -or
-    ($relPath -eq 'README.md')
+    ($relPath -eq 'README.md') -or
+    ($relPath -eq 'settings-page.php') -or
+    ($relPath -eq 'template-editor.php') -or
+    ($relPath -eq 'woocommerce-elements.css')
 }
 
 Write-Host "📊 Fichiers à déployer : $($files.Count)" -ForegroundColor Yellow
@@ -115,29 +118,25 @@ $uploadScript = {
         $fileInfo = Get-Item $localFile
         $fileSize = $fileInfo.Length
 
-        # Pour TOUS les fichiers, utiliser la méthode optimisée
-        $ftpRequest = [System.Net.FtpWebRequest]::Create("ftp://$ftpHost$remoteFile")
-        $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
-        $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
-        $ftpRequest.UsePassive = $true
-        $ftpRequest.Timeout = $timeout
-        $ftpRequest.ReadWriteTimeout = $timeout
-        $ftpRequest.UseBinary = $true
-        $ftpRequest.KeepAlive = $false  # Changé pour éviter les blocages
+        # WebClient ULTRA-OPTIMISÉ pour VITESSE MAXIMALE
+        $webClient = New-Object System.Net.WebClient
+        $webClient.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
 
-        # Lecture optimisée du fichier
-        $fileContents = [System.IO.File]::ReadAllBytes($localFile)
-        $ftpRequest.ContentLength = $fileContents.Length
+        # Optimisations critiques pour la vitesse
+        $webClient.Proxy = $null  # PAS de proxy
+        $webClient.Encoding = [System.Text.Encoding]::UTF8
+        $webClient.Headers.Add("User-Agent", "Mozilla/5.0")  # Éviter les limitations serveur
 
-        # Upload direct et rapide
-        $requestStream = $ftpRequest.GetRequestStream()
-        $requestStream.Write($fileContents, 0, $fileContents.Length)
-        $requestStream.Close()
+        # Timeouts optimisés pour éviter les blocages
+        $webClient.DownloadTimeout = $timeout
+        $webClient.UploadTimeout = $timeout
 
-        $response = $ftpRequest.GetResponse()
-        $response.Close()
+        $ftpUri = "ftp://$ftpHost$remoteFile"
+        $webClient.UploadFile($ftpUri, $localFile)
 
-        return @{ Success = $true; File = $localFile; Size = $fileSize; Method = "Optimized" }
+        $webClient.Dispose()
+
+        return @{ Success = $true; File = $localFile; Size = $fileSize; Method = "WebClient-Ultra" }
     } catch {
         return @{ Success = $false; Error = $_.Exception.Message; File = $localFile }
     }
@@ -156,6 +155,7 @@ $runspacePool.Open()
 $runspaces = [System.Collections.ArrayList]::new()
 
 Write-Host "📊 Déploiement de $totalFiles fichiers avec $MaxConcurrent connexions simultanées..." -ForegroundColor Cyan
+Write-Host "💡 Mode optimisé pour serveurs lents (timeout 15s, retry automatique)" -ForegroundColor Yellow
 
 foreach ($file in $files) {
     $currentIndex++
@@ -195,8 +195,36 @@ foreach ($file in $files) {
                 $successCount++
                 Write-Host "`r✅ $(Split-Path $result.File -Leaf)" -ForegroundColor Green
             } else {
-                $failCount++
-                Write-Host "`r❌ $(Split-Path $result.File -Leaf) - $($result.Error)" -ForegroundColor Red
+                # Retry automatique en cas d'échec (jusqu'à 3 tentatives)
+                $retryCount = 0
+                $maxRetries = 3
+                $retrySuccess = $false
+
+                while ($retryCount -lt $maxRetries -and -not $retrySuccess) {
+                    $retryCount++
+                    Write-Host "`r🔄 Retry $retryCount/3 pour $(Split-Path $result.File -Leaf)" -ForegroundColor Yellow
+                    Start-Sleep -Milliseconds 500
+
+                    try {
+                        $webClient = New-Object System.Net.WebClient
+                        $webClient.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPassword)
+                        $webClient.Proxy = $null
+                        $webClient.Encoding = [System.Text.Encoding]::UTF8
+
+                        $ftpUri = "ftp://$FtpHost$remotePath"
+                        $webClient.UploadFile($ftpUri, $result.File)
+                        $webClient.Dispose()
+
+                        $retrySuccess = $true
+                        $successCount++
+                        Write-Host "`r✅ $(Split-Path $result.File -Leaf) (retry $retryCount)" -ForegroundColor Green
+                    } catch {
+                        if ($retryCount -eq $maxRetries) {
+                            $failCount++
+                            Write-Host "`r❌ $(Split-Path $result.File -Leaf) - Échec définitif: $($_.Exception.Message)" -ForegroundColor Red
+                        }
+                    }
+                }
             }
 
             $runspaces.Remove($rs)
@@ -216,8 +244,37 @@ foreach ($file in $files) {
                 $successCount++
                 Write-Host "`r✅ $(Split-Path $result.File -Leaf)" -ForegroundColor Green
             } else {
-                $failCount++
-                Write-Host "`r❌ $(Split-Path $result.File -Leaf) - $($result.Error)" -ForegroundColor Red
+                # Retry automatique en cas d'échec (jusqu'à 3 tentatives)
+                $retryCount = 0
+                $maxRetries = 3
+                $retrySuccess = $false
+                $remotePath = "$RemoteDir/$($result.File.Substring($projectRoot.Length + 1).Replace('\', '/'))"
+
+                while ($retryCount -lt $maxRetries -and -not $retrySuccess) {
+                    $retryCount++
+                    Write-Host "`r🔄 Retry $retryCount/3 pour $(Split-Path $result.File -Leaf)" -ForegroundColor Yellow
+                    Start-Sleep -Milliseconds 500
+
+                    try {
+                        $webClient = New-Object System.Net.WebClient
+                        $webClient.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPassword)
+                        $webClient.Proxy = $null
+                        $webClient.Encoding = [System.Text.Encoding]::UTF8
+
+                        $ftpUri = "ftp://$FtpHost$remotePath"
+                        $webClient.UploadFile($ftpUri, $result.File)
+                        $webClient.Dispose()
+
+                        $retrySuccess = $true
+                        $successCount++
+                        Write-Host "`r✅ $(Split-Path $result.File -Leaf) (retry $retryCount)" -ForegroundColor Green
+                    } catch {
+                        if ($retryCount -eq $maxRetries) {
+                            $failCount++
+                            Write-Host "`r❌ $(Split-Path $result.File -Leaf) - Échec définitif: $($_.Exception.Message)" -ForegroundColor Red
+                        }
+                    }
+                }
             }                $runspaces.Remove($rs)
             }
         }
@@ -243,8 +300,37 @@ while ($runspaces.Count -gt 0) {
                 $successCount++
                 Write-Host "✅ $(Split-Path $result.File -Leaf)" -ForegroundColor Green
             } else {
-                $failCount++
-                Write-Host "❌ $(Split-Path $result.File -Leaf) - $($result.Error)" -ForegroundColor Red
+                # Retry automatique en cas d'échec (jusqu'à 3 tentatives)
+                $retryCount = 0
+                $maxRetries = 3
+                $retrySuccess = $false
+                $remotePath = "$RemoteDir/$($result.File.Substring($projectRoot.Length + 1).Replace('\', '/'))"
+
+                while ($retryCount -lt $maxRetries -and -not $retrySuccess) {
+                    $retryCount++
+                    Write-Host "🔄 Retry $retryCount/3 pour $(Split-Path $result.File -Leaf)" -ForegroundColor Yellow
+                    Start-Sleep -Milliseconds 500
+
+                    try {
+                        $webClient = New-Object System.Net.WebClient
+                        $webClient.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPassword)
+                        $webClient.Proxy = $null
+                        $webClient.Encoding = [System.Text.Encoding]::UTF8
+
+                        $ftpUri = "ftp://$FtpHost$remotePath"
+                        $webClient.UploadFile($ftpUri, $result.File)
+                        $webClient.Dispose()
+
+                        $retrySuccess = $true
+                        $successCount++
+                        Write-Host "✅ $(Split-Path $result.File -Leaf) (retry $retryCount)" -ForegroundColor Green
+                    } catch {
+                        if ($retryCount -eq $maxRetries) {
+                            $failCount++
+                            Write-Host "❌ $(Split-Path $result.File -Leaf) - Échec définitif: $($_.Exception.Message)" -ForegroundColor Red
+                        }
+                    }
+                }
             }
 
             $runspaces.Remove($rs)
@@ -261,11 +347,15 @@ while ($runspaces.Count -gt 0) {
 
 Write-Host ""
 
-# Nettoyer le pool de runspaces
-$runspacePool.Close()
-$runspacePool.Dispose()
-$runspacePool.Close()
-$runspacePool.Dispose()
+# Nettoyer le pool de runspaces proprement
+try {
+    if ($runspacePool) {
+        $runspacePool.Close()
+        $runspacePool.Dispose()
+    }
+} catch {
+    Write-Host "⚠️ Avertissement lors du nettoyage: $($_.Exception.Message)" -ForegroundColor Yellow
+}
 
 Write-Host ""
 Write-Host "✅ TERMINÉ" -ForegroundColor Green
