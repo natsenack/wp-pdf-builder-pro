@@ -86,3 +86,24 @@ foreach ($file in $files) {
 }
 
 Write-Host "🎉 Déploiement terminé ! $uploaded fichiers uploadés." -ForegroundColor Green
+
+# Push automatique vers Git après déploiement réussi
+Write-Host "🔄 Push vers Git..." -ForegroundColor Yellow
+
+try {
+    # Aller dans le répertoire du projet
+    Push-Location (Split-Path (Get-Location) -Parent)
+
+    # Git add, commit, push
+    & git add .
+    $commitMessage = "Déploiement automatique - $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
+    & git commit -m $commitMessage
+    & git push origin dev
+
+    Write-Host "✅ Push Git réussi" -ForegroundColor Green
+
+} catch {
+    Write-Host "⚠️ Erreur Git: $($_.Exception.Message)" -ForegroundColor Yellow
+} finally {
+    Pop-Location
+}
