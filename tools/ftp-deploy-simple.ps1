@@ -4,7 +4,7 @@
 
 param(
     [string]$RemoteDir = "/wp-content/plugins/wp-pdf-builder-pro",
-    [int]$Timeout = 8000,    # 8 secondes pour vitesse
+    [int]$Timeout = 3000,    # 3 secondes pour vitesse maximale
     [int]$RetryCount = 3     # 3 retries rapides
 )
 
@@ -38,6 +38,7 @@ Write-Host "📁 Destination : $RemoteDir" -ForegroundColor Cyan
 Write-Host "⏱️ Timeout : ${Timeout}ms" -ForegroundColor Yellow
 Write-Host "🔄 Retries : $RetryCount" -ForegroundColor Yellow
 Write-Host "🎯 Objectif : 5 fichiers/s (comme hier)" -ForegroundColor Red
+Write-Host "⚡ Optimisations : FtpWebRequest + KeepAlive=false + Binary" -ForegroundColor Cyan
 Write-Host ""
 
 # Fonction pour créer un répertoire FTP
@@ -74,29 +75,37 @@ function Send-FtpFile {
         try {
             Write-Host "📤 [$attempt/$RetryCount] $fileName..." -NoNewline
 
-            $webClient = New-Object System.Net.WebClient
-            $webClient.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPassword)
-            $webClient.Proxy = $null
-            $webClient.Encoding = [System.Text.Encoding]::UTF8
-            $webClient.Headers.Add("User-Agent", "Mozilla/5.0")
+            $ftpRequest = [System.Net.FtpWebRequest]::Create("ftp://$FtpHost$RemotePath")
+            $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
+            $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPassword)
+            $ftpRequest.UsePassive = $true
+            $ftpRequest.Timeout = $Timeout
+            $ftpRequest.ReadWriteTimeout = $Timeout
+            $ftpRequest.KeepAlive = $false  # Fermer la connexion après chaque fichier
+            $ftpRequest.UseBinary = $true
 
-            $ftpUri = "ftp://$FtpHost$RemotePath"
+            $fileContents = [System.IO.File]::ReadAllBytes($LocalPath)
+            $ftpRequest.ContentLength = $fileContents.Length
+
             $startTime = Get-Date
 
-            $webClient.UploadFile($ftpUri, $LocalPath)
+            $requestStream = $ftpRequest.GetRequestStream()
+            $requestStream.Write($fileContents, 0, $fileContents.Length)
+            $requestStream.Close()
+
+            $response = $ftpRequest.GetResponse()
+            $response.Close()
 
             $duration = (Get-Date) - $startTime
-            $fileSize = (Get-Item $LocalPath).Length
+            $fileSize = $fileContents.Length
             $speedKBps = [math]::Round($fileSize / 1024 / $duration.TotalSeconds, 1)
-
-            $webClient.Dispose()
 
             Write-Host " ✅ $([math]::Round($duration.TotalSeconds, 2))s - ${speedKBps} KB/s" -ForegroundColor Green
             return @{ Success = $true; File = $LocalPath; Size = $fileSize; Attempt = $attempt }
         } catch {
             Write-Host " ❌ Tentative $attempt : $($_.Exception.Message)" -ForegroundColor Red
             if ($attempt -lt $RetryCount) {
-                Start-Sleep -Milliseconds 200  # Attente courte entre retries
+                Start-Sleep -Milliseconds 100  # Attente très courte entre retries
             }
         }
     }
@@ -133,6 +142,11 @@ $files = Get-ChildItem -Path $projectRoot -Recurse -File | Where-Object {
 }
 
 Write-Host "📊 Fichiers à déployer : $($files.Count)" -ForegroundColor Yellow
+
+# Calculer la taille totale
+$totalSize = ($files | Measure-Object -Property Length -Sum).Sum
+$totalSizeMB = [math]::Round($totalSize / 1MB, 2)
+Write-Host "📏 Taille totale : ${totalSizeMB} MB" -ForegroundColor Yellow
 Write-Host ""
 
 # Upload séquentiel rapide (comme hier)
@@ -164,8 +178,9 @@ foreach ($file in $files) {
     }
 
     # Progression
+    $currentFileSizeKB = [math]::Round($file.Length / 1KB, 1)
     $percent = [math]::Round(($currentIndex / $totalFiles) * 100, 1)
-    Write-Host "`r📊 Progression: $percent% ($currentIndex/$totalFiles) - ✅ $successCount - ❌ $failCount" -NoNewline
+    Write-Host "`r📊 Progression: $percent% ($currentIndex/$totalFiles) - ${currentFileSizeKB} KB - ✅ $successCount - ❌ $failCount" -NoNewline
 }
 
 Write-Host ""
@@ -184,6 +199,13 @@ Write-Host "📊 Réussis : $successCount" -ForegroundColor Green
 Write-Host "❌ Échecs : $failCount" -ForegroundColor Red
 Write-Host "⏱️ Durée : $([math]::Round($totalSeconds, 1))s" -ForegroundColor Cyan
 Write-Host "🚀 Vitesse : $filesPerSecond fichiers/s" -ForegroundColor Cyan
+
+# Statistiques de taille
+$uploadedSize = ($files | Where-Object { $successCount -gt 0 } | Measure-Object -Property Length -Sum).Sum
+$uploadedSizeMB = [math]::Round($uploadedSize / 1MB, 2)
+$avgFileSizeKB = [math]::Round($uploadedSize / 1KB / $successCount, 1)
+Write-Host "📏 Données uploadées : ${uploadedSizeMB} MB" -ForegroundColor Cyan
+Write-Host "📊 Taille moyenne : ${avgFileSizeKB} KB/fichier" -ForegroundColor Cyan
 
 if ($filesPerSecond -ge 4.5) {
     Write-Host "🎯 OBJECTIF ATTEINT : $filesPerSecond fichiers/s (comme hier !)" -ForegroundColor Green
@@ -214,6 +236,8 @@ deploy: déploiement FTP séquentiel rapide vers $FtpHost
 - Déploiement automatique via script ftp-deploy-simple.ps1
 - Mode séquentiel optimisé pour vitesse (comme hier)
 - $successCount fichiers déployés avec succès
+- Données uploadées: ${uploadedSizeMB} MB
+- Taille moyenne: ${avgFileSizeKB} KB/fichier
 - Durée du déploiement: $([math]::Round($totalSeconds, 1))s
 - Vitesse: $filesPerSecond fichiers/s
 - Timeout: ${Timeout}ms, Retries: $RetryCount
