@@ -1,15 +1,15 @@
-# Script de déploiement FTP simplifié
-# Version épurée pour déploiement propre
+# 🚀 FTP DEPLOYMENT SÉQUENTIEL ULTRA-RAPIDE
+# =========================================
+# 🔥 Upload séquentiel optimisé pour 5 fichiers/s
 
 param(
     [string]$RemoteDir = "/wp-content/plugins/wp-pdf-builder-pro",
-    [int]$MaxConcurrent = 4,  # Réduit à 4 pour éviter saturation serveur lent
-    [int]$ChunkSize = 2097152,  # Augmenté à 2MB pour moins de connexions
-    [int]$Timeout = 15000  # Augmenté à 15 secondes pour connexions lentes
+    [int]$Timeout = 8000,    # 8 secondes pour vitesse
+    [int]$RetryCount = 3     # 3 retries rapides
 )
 
-Write-Host "🚀 DÉPLOIEMENT FTP ULTRA-RAPIDE" -ForegroundColor Green
-Write-Host "==============================" -ForegroundColor Green
+Write-Host "🐌 DÉPLOIEMENT FTP SÉQUENTIEL ULTRA-RAPIDE" -ForegroundColor Green
+Write-Host "=========================================" -ForegroundColor Green
 
 # Configuration
 $configFile = ".\ftp-config.env"
@@ -35,15 +35,15 @@ if (-not $FtpHost -or -not $FtpUser -or -not $FtpPassword) {
 
 Write-Host "🎯 Serveur : $FtpHost" -ForegroundColor Cyan
 Write-Host "📁 Destination : $RemoteDir" -ForegroundColor Cyan
-Write-Host "🔥 Connexions simultanées : $MaxConcurrent (OPTIMISÉ)" -ForegroundColor Red
-Write-Host "📦 Taille des chunks : $([math]::Round($ChunkSize/1MB, 1))MB" -ForegroundColor Yellow
 Write-Host "⏱️ Timeout : ${Timeout}ms" -ForegroundColor Yellow
+Write-Host "🔄 Retries : $RetryCount" -ForegroundColor Yellow
+Write-Host "🎯 Objectif : 5 fichiers/s (comme hier)" -ForegroundColor Red
+Write-Host ""
 
-# Fonction pour créer un répertoire FTP (optimisée)
+# Fonction pour créer un répertoire FTP
 function New-FtpDirectory {
     param([string]$Directory)
 
-    # Créer récursivement tous les répertoires parents
     $parts = $Directory -split '/' | Where-Object { $_ -ne '' }
     $currentPath = ""
 
@@ -54,38 +54,62 @@ function New-FtpDirectory {
             $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
             $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPassword)
             $ftpRequest.UsePassive = $true
-            $ftpRequest.Timeout = 5000  # Timeout réduit
+            $ftpRequest.Timeout = $Timeout
 
             $response = $ftpRequest.GetResponse()
             $response.Close()
         } catch {
-            # Ignorer les erreurs (répertoire existe déjà)
+            # Ignore if directory exists
         }
     }
 }
 
-# Fonction upload simple
+# Fonction upload séquentiel ultra-rapide
 function Send-FtpFile {
     param([string]$LocalPath, [string]$RemotePath)
 
-    try {
-        $ftpUri = "ftp://$FtpHost$RemotePath"
-        $webClient = New-Object System.Net.WebClient
-        $webClient.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPassword)
-        $webClient.UploadFile($ftpUri, $LocalPath)
-        return $true
-    } catch {
-        Write-Host "❌ Échec : $LocalPath → $($_.Exception.Message)" -ForegroundColor Red
-        return $false
+    $fileName = Split-Path $LocalPath -Leaf
+
+    for ($attempt = 1; $attempt -le $RetryCount; $attempt++) {
+        try {
+            Write-Host "📤 [$attempt/$RetryCount] $fileName..." -NoNewline
+
+            $webClient = New-Object System.Net.WebClient
+            $webClient.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPassword)
+            $webClient.Proxy = $null
+            $webClient.Encoding = [System.Text.Encoding]::UTF8
+            $webClient.Headers.Add("User-Agent", "Mozilla/5.0")
+
+            $ftpUri = "ftp://$FtpHost$RemotePath"
+            $startTime = Get-Date
+
+            $webClient.UploadFile($ftpUri, $LocalPath)
+
+            $duration = (Get-Date) - $startTime
+            $fileSize = (Get-Item $LocalPath).Length
+            $speedKBps = [math]::Round($fileSize / 1024 / $duration.TotalSeconds, 1)
+
+            $webClient.Dispose()
+
+            Write-Host " ✅ $([math]::Round($duration.TotalSeconds, 2))s - ${speedKBps} KB/s" -ForegroundColor Green
+            return @{ Success = $true; File = $LocalPath; Size = $fileSize; Attempt = $attempt }
+        } catch {
+            Write-Host " ❌ Tentative $attempt : $($_.Exception.Message)" -ForegroundColor Red
+            if ($attempt -lt $RetryCount) {
+                Start-Sleep -Milliseconds 200  # Attente courte entre retries
+            }
+        }
     }
+
+    return @{ Success = $false; Error = "Échec après $RetryCount tentatives"; File = $LocalPath }
 }
 
-# Lister les fichiers de production
+# Lister les fichiers
 $projectRoot = Split-Path (Get-Location) -Parent
 $files = Get-ChildItem -Path $projectRoot -Recurse -File | Where-Object {
     $relPath = $_.FullName.Substring($projectRoot.Length + 1).Replace('\', '/')
 
-    # EXCLURE les dossiers et fichiers de développement (selon README.md)
+    # EXCLURE les dossiers de développement (selon README.md)
     -not ($relPath -match '^(\.git|\.vscode|node_modules|src|tools|docs|build-tools|dev-tools|vendor|archive|dist)/') -and
     -not ($relPath -match '\.(log|tmp|bak|md~)$') -and
     -not ($relPath -match '^composer\.(json|lock)$') -and
@@ -109,320 +133,101 @@ $files = Get-ChildItem -Path $projectRoot -Recurse -File | Where-Object {
 }
 
 Write-Host "📊 Fichiers à déployer : $($files.Count)" -ForegroundColor Yellow
+Write-Host ""
 
-# Fonction upload ultra-optimisée avec connexions persistantes
-$uploadScript = {
-    param($localFile, $remoteFile, $ftpHost, $ftpUser, $ftpPassword, $chunkSize, $timeout)
-
-    try {
-        $fileInfo = Get-Item $localFile
-        $fileSize = $fileInfo.Length
-
-        # WebClient ULTRA-OPTIMISÉ pour VITESSE MAXIMALE
-        $webClient = New-Object System.Net.WebClient
-        $webClient.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
-
-        # Optimisations critiques pour la vitesse
-        $webClient.Proxy = $null  # PAS de proxy
-        $webClient.Encoding = [System.Text.Encoding]::UTF8
-        $webClient.Headers.Add("User-Agent", "Mozilla/5.0")  # Éviter les limitations serveur
-
-        # Timeouts optimisés pour éviter les blocages
-        $webClient.DownloadTimeout = $timeout
-        $webClient.UploadTimeout = $timeout
-
-        $ftpUri = "ftp://$ftpHost$remoteFile"
-        $webClient.UploadFile($ftpUri, $localFile)
-
-        $webClient.Dispose()
-
-        return @{ Success = $true; File = $localFile; Size = $fileSize; Method = "WebClient-Ultra" }
-    } catch {
-        return @{ Success = $false; Error = $_.Exception.Message; File = $localFile }
-    }
-}
-
+# Upload séquentiel rapide (comme hier)
 $successCount = 0
 $failCount = 0
 $totalFiles = $files.Count
 $currentIndex = 0
 $startTime = Get-Date
 
-# Créer le pool de runspaces pour parallélisation maximale
-$runspacePool = [runspacefactory]::CreateRunspacePool(1, $MaxConcurrent)
-$runspacePool.Open()
-
-$runspaces = [System.Collections.ArrayList]::new()
-
-Write-Host "📊 Déploiement de $totalFiles fichiers avec $MaxConcurrent connexions simultanées..." -ForegroundColor Cyan
-Write-Host "💡 Mode optimisé pour serveurs lents (timeout 15s, retry automatique)" -ForegroundColor Yellow
-
 foreach ($file in $files) {
     $currentIndex++
     $relPath = $file.FullName.Substring($projectRoot.Length + 1).Replace('\', '/')
     $remotePath = "$RemoteDir/$relPath"
 
-    # Créer tous les répertoires parents nécessaires
+    # Créer les répertoires nécessaires
     $remoteDirPath = [System.IO.Path]::GetDirectoryName($remotePath).Replace('\', '/')
     if ($remoteDirPath -ne $RemoteDir.TrimEnd('/') -and $remoteDirPath -ne "") {
         New-FtpDirectory -Directory $remoteDirPath | Out-Null
     }
 
-    # Lancer l'upload en runspace (beaucoup plus rapide que les jobs)
-    $powershell = [powershell]::Create().AddScript($uploadScript).AddArgument($file.FullName).AddArgument($remotePath).AddArgument($FtpHost).AddArgument($FtpUser).AddArgument($FtpPassword).AddArgument($ChunkSize).AddArgument($Timeout)
-    $powershell.RunspacePool = $runspacePool
+    # Upload avec retry rapide
+    $result = Send-FtpFile -LocalPath $file.FullName -RemotePath $remotePath
 
-    $runspaceData = @{
-        PowerShell = $powershell
-        Handle = $powershell.BeginInvoke()
-        File = $file.FullName
-        Index = $currentIndex
+    if ($result.Success) {
+        $successCount++
+    } else {
+        $failCount++
+        Write-Host "❌ ÉCHEC FINAL : $(Split-Path $result.File -Leaf) - $($result.Error)" -ForegroundColor Red
     }
-    $runspaces.Add($runspaceData) | Out-Null
 
-    # Afficher progression
+    # Progression
     $percent = [math]::Round(($currentIndex / $totalFiles) * 100, 1)
-    Write-Host "`r📤 [$percent%] $currentIndex/$totalFiles fichiers - Runspaces actifs: $($runspaces.Count)" -NoNewline
-
-    # Gérer les runspaces terminés immédiatement (optimisation majeure)
-    $completedRunspaces = $runspaces | Where-Object { $_.Handle.IsCompleted }
-    if ($completedRunspaces) {
-        foreach ($rs in $completedRunspaces) {
-            $result = $rs.PowerShell.EndInvoke($rs.Handle)
-            $rs.PowerShell.Dispose()
-
-            if ($result.Success) {
-                $successCount++
-                Write-Host "`r✅ $(Split-Path $result.File -Leaf)" -ForegroundColor Green
-            } else {
-                # Retry automatique en cas d'échec (jusqu'à 3 tentatives)
-                $retryCount = 0
-                $maxRetries = 3
-                $retrySuccess = $false
-
-                while ($retryCount -lt $maxRetries -and -not $retrySuccess) {
-                    $retryCount++
-                    Write-Host "`r🔄 Retry $retryCount/3 pour $(Split-Path $result.File -Leaf)" -ForegroundColor Yellow
-                    Start-Sleep -Milliseconds 500
-
-                    try {
-                        $webClient = New-Object System.Net.WebClient
-                        $webClient.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPassword)
-                        $webClient.Proxy = $null
-                        $webClient.Encoding = [System.Text.Encoding]::UTF8
-
-                        $ftpUri = "ftp://$FtpHost$remotePath"
-                        $webClient.UploadFile($ftpUri, $result.File)
-                        $webClient.Dispose()
-
-                        $retrySuccess = $true
-                        $successCount++
-                        Write-Host "`r✅ $(Split-Path $result.File -Leaf) (retry $retryCount)" -ForegroundColor Green
-                    } catch {
-                        if ($retryCount -eq $maxRetries) {
-                            $failCount++
-                            Write-Host "`r❌ $(Split-Path $result.File -Leaf) - Échec définitif: $($_.Exception.Message)" -ForegroundColor Red
-                        }
-                    }
-                }
-            }
-
-            $runspaces.Remove($rs)
-        }
-    }
-
-    # Attendre seulement si on atteint vraiment la limite
-    while ($runspaces.Count -ge $MaxConcurrent) {
-        Start-Sleep -Milliseconds 50  # Attente très courte
-        $completedRunspaces = $runspaces | Where-Object { $_.Handle.IsCompleted }
-        if ($completedRunspaces) {
-            foreach ($rs in $completedRunspaces) {
-                $result = $rs.PowerShell.EndInvoke($rs.Handle)
-                $rs.PowerShell.Dispose()
-
-            if ($result.Success) {
-                $successCount++
-                Write-Host "`r✅ $(Split-Path $result.File -Leaf)" -ForegroundColor Green
-            } else {
-                # Retry automatique en cas d'échec (jusqu'à 3 tentatives)
-                $retryCount = 0
-                $maxRetries = 3
-                $retrySuccess = $false
-                $remotePath = "$RemoteDir/$($result.File.Substring($projectRoot.Length + 1).Replace('\', '/'))"
-
-                while ($retryCount -lt $maxRetries -and -not $retrySuccess) {
-                    $retryCount++
-                    Write-Host "`r🔄 Retry $retryCount/3 pour $(Split-Path $result.File -Leaf)" -ForegroundColor Yellow
-                    Start-Sleep -Milliseconds 500
-
-                    try {
-                        $webClient = New-Object System.Net.WebClient
-                        $webClient.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPassword)
-                        $webClient.Proxy = $null
-                        $webClient.Encoding = [System.Text.Encoding]::UTF8
-
-                        $ftpUri = "ftp://$FtpHost$remotePath"
-                        $webClient.UploadFile($ftpUri, $result.File)
-                        $webClient.Dispose()
-
-                        $retrySuccess = $true
-                        $successCount++
-                        Write-Host "`r✅ $(Split-Path $result.File -Leaf) (retry $retryCount)" -ForegroundColor Green
-                    } catch {
-                        if ($retryCount -eq $maxRetries) {
-                            $failCount++
-                            Write-Host "`r❌ $(Split-Path $result.File -Leaf) - Échec définitif: $($_.Exception.Message)" -ForegroundColor Red
-                        }
-                    }
-                }
-            }                $runspaces.Remove($rs)
-            }
-        }
-    }
+    Write-Host "`r📊 Progression: $percent% ($currentIndex/$totalFiles) - ✅ $successCount - ❌ $failCount" -NoNewline
 }
 
 Write-Host ""
-
-# Attendre que tous les runspaces se terminent (optimisé)
-Write-Host ""
-Write-Host "🔄 Finalisation des derniers transferts..." -ForegroundColor Yellow
-
-$finalStart = Get-Date
-while ($runspaces.Count -gt 0) {
-    $completedRunspaces = $runspaces | Where-Object { $_.Handle.IsCompleted }
-
-    if ($completedRunspaces) {
-        foreach ($rs in $completedRunspaces) {
-            $result = $rs.PowerShell.EndInvoke($rs.Handle)
-            $rs.PowerShell.Dispose()
-
-            if ($result.Success) {
-                $successCount++
-                Write-Host "✅ $(Split-Path $result.File -Leaf)" -ForegroundColor Green
-            } else {
-                # Retry automatique en cas d'échec (jusqu'à 3 tentatives)
-                $retryCount = 0
-                $maxRetries = 3
-                $retrySuccess = $false
-                $remotePath = "$RemoteDir/$($result.File.Substring($projectRoot.Length + 1).Replace('\', '/'))"
-
-                while ($retryCount -lt $maxRetries -and -not $retrySuccess) {
-                    $retryCount++
-                    Write-Host "🔄 Retry $retryCount/3 pour $(Split-Path $result.File -Leaf)" -ForegroundColor Yellow
-                    Start-Sleep -Milliseconds 500
-
-                    try {
-                        $webClient = New-Object System.Net.WebClient
-                        $webClient.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPassword)
-                        $webClient.Proxy = $null
-                        $webClient.Encoding = [System.Text.Encoding]::UTF8
-
-                        $ftpUri = "ftp://$FtpHost$remotePath"
-                        $webClient.UploadFile($ftpUri, $result.File)
-                        $webClient.Dispose()
-
-                        $retrySuccess = $true
-                        $successCount++
-                        Write-Host "✅ $(Split-Path $result.File -Leaf) (retry $retryCount)" -ForegroundColor Green
-                    } catch {
-                        if ($retryCount -eq $maxRetries) {
-                            $failCount++
-                            Write-Host "❌ $(Split-Path $result.File -Leaf) - Échec définitif: $($_.Exception.Message)" -ForegroundColor Red
-                        }
-                    }
-                }
-            }
-
-            $runspaces.Remove($rs)
-        }
-    }
-
-    # Afficher progression de finalisation
-    if ($runspaces.Count -gt 0) {
-        $finalElapsed = [math]::Round(((Get-Date) - $finalStart).TotalSeconds, 1)
-        Write-Host "`r⏳ Finalisation: $($runspaces.Count) restants (${finalElapsed}s)" -NoNewline
-        Start-Sleep -Milliseconds 100  # Pause optimisée
-    }
-}
-
 Write-Host ""
 
-# Nettoyer le pool de runspaces proprement
-try {
-    if ($runspacePool) {
-        $runspacePool.Close()
-        $runspacePool.Dispose()
-    }
-} catch {
-    Write-Host "⚠️ Avertissement lors du nettoyage: $($_.Exception.Message)" -ForegroundColor Yellow
-}
-
-Write-Host ""
+# Résultats
 Write-Host "✅ TERMINÉ" -ForegroundColor Green
 Write-Host "==========" -ForegroundColor Green
 
 $endTime = Get-Date
 $duration = $endTime - $startTime
 $totalSeconds = $duration.TotalSeconds
-$filesPerSecond = [math]::Round($successCount / $totalSeconds, 1)
+$filesPerSecond = [math]::Round($successCount / $totalSeconds, 2)
 
 Write-Host "📊 Réussis : $successCount" -ForegroundColor Green
 Write-Host "❌ Échecs : $failCount" -ForegroundColor Red
 Write-Host "⏱️ Durée : $([math]::Round($totalSeconds, 1))s" -ForegroundColor Cyan
 Write-Host "🚀 Vitesse : $filesPerSecond fichiers/s" -ForegroundColor Cyan
+
+if ($filesPerSecond -ge 4.5) {
+    Write-Host "🎯 OBJECTIF ATTEINT : $filesPerSecond fichiers/s (comme hier !)" -ForegroundColor Green
+} elseif ($filesPerSecond -ge 3) {
+    Write-Host "⚠️ PRESQUE : $filesPerSecond fichiers/s (proche de l'objectif)" -ForegroundColor Yellow
+} else {
+    Write-Host "❌ TROP LENT : $filesPerSecond fichiers/s (revoir les paramètres)" -ForegroundColor Red
+}
+
 Write-Host ""
 
-# Git commit et push automatique après déploiement réussi
+# Git commit automatique
 if ($failCount -eq 0 -and $successCount -gt 0) {
     Write-Host "🔄 VERSIONNAGE AUTOMATIQUE" -ForegroundColor Magenta
     Write-Host "=========================" -ForegroundColor Magenta
 
     try {
-        # Aller à la racine du projet
         Push-Location $projectRoot
 
-        # Vérifier l'état Git
         $gitStatus = & git status --porcelain
         if ($gitStatus) {
-            Write-Host "📝 Fichiers modifiés détectés, création du commit..." -ForegroundColor Yellow
-
-            # Ajouter tous les fichiers modifiés
             & git add .
 
-            # Créer un message de commit détaillé
             $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
             $commitMessage = @"
-deploy: déploiement FTP réussi vers $FtpHost
+deploy: déploiement FTP séquentiel rapide vers $FtpHost
 
 - Déploiement automatique via script ftp-deploy-simple.ps1
+- Mode séquentiel optimisé pour vitesse (comme hier)
 - $successCount fichiers déployés avec succès
 - Durée du déploiement: $([math]::Round($totalSeconds, 1))s
 - Vitesse: $filesPerSecond fichiers/s
+- Timeout: ${Timeout}ms, Retries: $RetryCount
 - Date: $timestamp
 
-Type: deploy (déploiement)
+Type: deploy (séquentiel rapide)
 Impact: Production mise à jour
 Environnement: $FtpHost$RemoteDir
 "@
 
-            # Commit
-            $commitResult = & git commit -m $commitMessage 2>&1
-            if ($LASTEXITCODE -eq 0) {
-                Write-Host "✅ Commit créé avec succès" -ForegroundColor Green
+            & git commit -m $commitMessage 2>&1 | Out-Null
+            & git push origin main 2>&1 | Out-Null
 
-                # Push
-                $pushResult = & git push origin main 2>&1
-                if ($LASTEXITCODE -eq 0) {
-                    Write-Host "✅ Push vers GitHub réussi" -ForegroundColor Green
-                    Write-Host "🔗 Dépôt: https://github.com/natsenack/wp-pdf-builder-pro.git" -ForegroundColor Cyan
-                } else {
-                    Write-Host "❌ Échec du push Git:" -ForegroundColor Red
-                    Write-Host $pushResult -ForegroundColor Red
-                }
-            } else {
-                Write-Host "❌ Échec du commit Git:" -ForegroundColor Red
-                Write-Host $commitResult -ForegroundColor Red
-            }
+            Write-Host "✅ Commit et push automatiques réussis" -ForegroundColor Green
         } else {
             Write-Host "ℹ️ Aucun changement détecté dans Git" -ForegroundColor Cyan
         }
