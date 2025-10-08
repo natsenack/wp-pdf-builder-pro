@@ -18,8 +18,15 @@
 # - Toujours tester après modification
 # - Ce script gère la production !
 #
-# 📞 En cas de problème: Vérifier la syntaxe PowerShell
+# � RÈGLE ABSOLUE - SCRIPTS FTP :
+# ================================
+# ❌ AUCUN AUTRE SCRIPT FTP NE DOIT ÊTRE CRÉÉ
+# ✅ ftp-deploy-simple.ps1 EST LE SEUL SCRIPT FTP AUTORISÉ
+# ✅ TOUTES LES MODIFICATIONS FTP SE FONT UNIQUEMENT DANS CE SCRIPT
+#
+# �📞 En cas de problème: Vérifier la syntaxe PowerShell
 # 🔧 Maintenance: Tester régulièrement les déploiements
 #
 # Créé le: 8 octobre 2025
 # Dernière validation: OK
+# Dernière mise à jour: 8 octobre 2025 - Règle scripts FTP ajoutée
