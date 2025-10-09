@@ -1,38 +1,105 @@
 ﻿import React, { useState } from 'react';
+import VariableManager from '../utilities/VariableManager';
+import '../styles/ElementLibrary.css';
 
 export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
-  const [expandedCategories, setExpandedCategories] = useState({
-    // Bibliothèque d'éléments vidée complètement
-  });
   const [showHeaderTemplatesModal, setShowHeaderTemplatesModal] = useState(false);
 
-  const toggleCategory = (categoryName) => {
-    setExpandedCategories(prev => ({
-      ...prev,
-      [categoryName]: !prev[categoryName]
-    }));
-  };
-
+  // Quelques éléments avec contenu réaliste pour commencer
   const elementCategories = [
-    // Bibliothèque d'éléments complètement vidée
-  ];
-
-  const handleElementClick = (elementType, defaultProps = {}) => {
-    if (elementType === 'header-templates') {
-      setShowHeaderTemplatesModal(true);
-    } else {
-      onToolSelect(`add-${elementType}`);
+    {
+      name: 'Informations Commande',
+      elements: [
+        {
+          type: 'order-info',
+          label: 'Numéro & Date',
+          icon: '📋',
+          description: 'Numéro de commande et date',
+          previewContent: 'Commande [order_number]\nDate: [order_date]',
+          defaultProperties: {
+            text: 'Commande [order_number]\nDate: [order_date]',
+            fontSize: 12,
+            fontFamily: 'Arial',
+            fontWeight: 'normal'
+          }
+        },
+        {
+          type: 'order-total',
+          label: 'Total Commande',
+          icon: '💰',
+          description: 'Montant total de la commande',
+          previewContent: 'Total: [order_total]',
+          defaultProperties: {
+            text: 'Total: [order_total]',
+            fontSize: 14,
+            fontFamily: 'Arial',
+            fontWeight: 'bold'
+          }
+        }
+      ]
+    },
+    {
+      name: 'Informations Client',
+      elements: [
+        {
+          type: 'customer-info',
+          label: 'Nom Client',
+          icon: '👤',
+          description: 'Nom et email du client',
+          previewContent: '[customer_name]\n[customer_email]',
+          defaultProperties: {
+            text: '[customer_name]\n[customer_email]',
+            fontSize: 12,
+            fontFamily: 'Arial',
+            fontWeight: 'normal'
+          }
+        },
+        {
+          type: 'billing-address',
+          label: 'Adresse Facturation',
+          icon: '📍',
+          description: 'Adresse de facturation',
+          previewContent: '[billing_address]',
+          defaultProperties: {
+            text: '[billing_address]',
+            fontSize: 11,
+            fontFamily: 'Arial',
+            fontWeight: 'normal'
+          }
+        }
+      ]
+    },
+    {
+      name: 'Éléments de Base',
+      elements: [
+        {
+          type: 'text',
+          label: 'Texte Libre',
+          icon: '📝',
+          description: 'Champ de texte personnalisable',
+          previewContent: 'Votre texte ici...',
+          defaultProperties: {
+            text: 'Votre texte ici...',
+            fontSize: 12,
+            fontFamily: 'Arial',
+            fontWeight: 'normal'
+          }
+        },
+        {
+          type: 'rectangle',
+          label: 'Rectangle',
+          icon: '▭',
+          description: 'Forme rectangulaire',
+          previewContent: '',
+          defaultProperties: {
+            fillColor: '#e0e0e0',
+            strokeColor: '#000000',
+            strokeWidth: 1
+          }
+        }
+      ]
     }
-  };
-
-  const handleDragStart = (e, element) => {
-    e.dataTransfer.setData('application/json', JSON.stringify({
-      type: 'new-element',
-      elementType: element.type,
-      defaultProps: element.defaultProps || {}
-    }));
-    e.dataTransfer.effectAllowed = 'copy';
-  };
+  ];
 
   const handleHeaderTemplateSelect = (template) => {
     // Ici on peut ajouter la logique pour appliquer le modèle sélectionné
@@ -125,35 +192,56 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
         </div>
 
         <div className="library-content">
-          {elementCategories.map(category => (
-            <div key={category.name} className="element-category">
-              <div
-                className="category-header"
-                onClick={() => toggleCategory(category.name)}
-              >
-                <h4 className="category-title">{category.name}</h4>
-                <span className={`category-toggle ${expandedCategories[category.name] ? 'expanded' : ''}`}>
-                  ▼
-                </span>
-              </div>
-              {expandedCategories[category.name] && (
-                <div className="element-grid">
-                  {category.elements.map(element => (
-                    <div
-                      key={`${element.type}-${element.label}`}
-                      className={`element-item ${selectedTool === `add-${element.type}` ? 'selected' : ''}`}
-                      onClick={() => handleElementClick(element.type, element.defaultProps)}
-                      onDragStart={(e) => handleDragStart(e, element)}
-                      draggable={true}
-                      title={element.description}
-                    >
-                      <div className="element-icon">{element.icon}</div>
+          {elementCategories.map((category, categoryIndex) => (
+            <div key={categoryIndex} className="element-category">
+              <h4 className="category-title">{category.name}</h4>
+              <div className="elements-grid">
+                {category.elements.map((element, elementIndex) => (
+                  <div
+                    key={elementIndex}
+                    className={`element-item ${selectedTool === element.type ? 'selected' : ''}`}
+                    onClick={() => {
+                      onToolSelect(element.type);
+                      onAddElement(element.type, {
+                        x: 50 + (elementIndex * 20),
+                        y: 50 + (categoryIndex * 100),
+                        width: element.type === 'rectangle' ? 200 : 250,
+                        height: element.type === 'rectangle' ? 100 : 60,
+                        ...element.defaultProperties
+                      });
+                    }}
+                    title={element.description}
+                  >
+                    <div className="element-icon">{element.icon}</div>
+                    <div className="element-info">
                       <div className="element-label">{element.label}</div>
-                      <div className="element-description">{element.description}</div>
+                      <div className="element-preview">
+                        {element.previewContent ? (
+                          <div className="preview-text">
+                            {VariableManager.processTextForPreview(element.previewContent).split('\n').map((line, i) => (
+                              <div key={i} className="preview-line">{line}</div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="preview-shape">
+                            {element.type === 'rectangle' && (
+                              <div
+                                className="shape-preview"
+                                style={{
+                                  width: '40px',
+                                  height: '20px',
+                                  backgroundColor: element.defaultProperties?.fillColor || '#e0e0e0',
+                                  border: `${element.defaultProperties?.strokeWidth || 1}px solid ${element.defaultProperties?.strokeColor || '#000'}`
+                                }}
+                              />
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  ))}
-                </div>
-              )}
+                  </div>
+                ))}
+              </div>
             </div>
           ))}
         </div>
