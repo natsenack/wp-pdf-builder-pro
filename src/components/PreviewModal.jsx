@@ -2,6 +2,8 @@ import React from 'react';
 import { CanvasElement } from './CanvasElement';
 import { WooCommerceElement } from './WooCommerceElements';
 
+// Cache busting: PreviewModal updated to render canvas elements directly - v2.0
+
 export const PreviewModal = ({
   isOpen,
   onClose,
