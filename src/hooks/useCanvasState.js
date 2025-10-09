@@ -75,6 +75,8 @@ export const useCanvasState = ({
   }, [elements, nextId, history]);
 
   const addElement = useCallback((elementType, properties = {}) => {
+    console.log('🔧 addElement called:', { elementType, properties });
+
     // Définir les propriétés par défaut selon le type d'élément
     const getDefaultProperties = (type) => {
       const defaults = {
@@ -478,6 +480,8 @@ export const useCanvasState = ({
       ...defaultProps,
       ...properties
     };
+
+    console.log('📦 New element created:', newElement);
 
     setElements(prev => [...prev, newElement]);
     setNextId(prev => prev + 1);

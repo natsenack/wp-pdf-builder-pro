@@ -462,6 +462,7 @@ export const CanvasElement = ({
           borderRadius: '2px',
           overflow: 'hidden'
         }}>
+          {console.log('📊 Rendering product_table:', { element, zoom })}
           {/* En-tête du tableau */}
           {(element.showHeaders !== false) && (
             <div style={{
@@ -472,8 +473,8 @@ export const CanvasElement = ({
             }}>
               {(element.columns?.image !== false) && (
                 <div style={{
-                  flex: '0 0 40px',
-                  padding: '4px',
+                  flex: `0 0 ${40 * zoom}px`,
+                  padding: `${4 * zoom}px`,
                   textAlign: 'center',
                   borderRight: '1px solid #ddd'
                 }}>
@@ -483,7 +484,7 @@ export const CanvasElement = ({
               {(element.columns?.name !== false) && (
                 <div style={{
                   flex: 1,
-                  padding: '4px 6px',
+                  padding: `${4 * zoom}px ${6 * zoom}px`,
                   textAlign: 'left',
                   borderRight: (element.columns?.sku !== false) || (element.columns?.quantity !== false) || (element.columns?.price !== false) || (element.columns?.total !== false) ? '1px solid #ddd' : 'none'
                 }}>
@@ -492,8 +493,8 @@ export const CanvasElement = ({
               )}
               {(element.columns?.sku !== false) && (
                 <div style={{
-                  flex: '0 0 80px',
-                  padding: '4px 6px',
+                  flex: `0 0 ${80 * zoom}px`,
+                  padding: `${4 * zoom}px ${6 * zoom}px`,
                   textAlign: 'left',
                   borderRight: (element.columns?.quantity !== false) || (element.columns?.price !== false) || (element.columns?.total !== false) ? '1px solid #ddd' : 'none'
                 }}>
@@ -502,8 +503,8 @@ export const CanvasElement = ({
               )}
               {(element.columns?.quantity !== false) && (
                 <div style={{
-                  flex: '0 0 60px',
-                  padding: '4px 6px',
+                  flex: `0 0 ${60 * zoom}px`,
+                  padding: `${4 * zoom}px ${6 * zoom}px`,
                   textAlign: 'center',
                   borderRight: (element.columns?.price !== false) || (element.columns?.total !== false) ? '1px solid #ddd' : 'none'
                 }}>
@@ -512,8 +513,8 @@ export const CanvasElement = ({
               )}
               {(element.columns?.price !== false) && (
                 <div style={{
-                  flex: '0 0 80px',
-                  padding: '4px 6px',
+                  flex: `0 0 ${80 * zoom}px`,
+                  padding: `${4 * zoom}px ${6 * zoom}px`,
                   textAlign: 'right',
                   borderRight: (element.columns?.total !== false) ? '1px solid #ddd' : 'none'
                 }}>
@@ -522,8 +523,8 @@ export const CanvasElement = ({
               )}
               {(element.columns?.total !== false) && (
                 <div style={{
-                  flex: '0 0 80px',
-                  padding: '4px 6px',
+                  flex: `0 0 ${80 * zoom}px`,
+                  padding: `${4 * zoom}px ${6 * zoom}px`,
                   textAlign: 'right'
                 }}>
                   Total
@@ -541,8 +542,8 @@ export const CanvasElement = ({
             }}>
               {(element.columns?.image !== false) && (
                 <div style={{
-                  flex: '0 0 40px',
-                  padding: '4px',
+                  flex: `0 0 ${40 * zoom}px`,
+                  padding: `${4 * zoom}px`,
                   textAlign: 'center',
                   borderRight: '1px solid #eee'
                 }}>
@@ -552,7 +553,7 @@ export const CanvasElement = ({
               {(element.columns?.name !== false) && (
                 <div style={{
                   flex: 1,
-                  padding: '4px 6px',
+                  padding: `${4 * zoom}px ${6 * zoom}px`,
                   borderRight: (element.columns?.sku !== false) || (element.columns?.quantity !== false) || (element.columns?.price !== false) || (element.columns?.total !== false) ? '1px solid #eee' : 'none'
                 }}>
                   Produit A - Description du produit
@@ -560,8 +561,8 @@ export const CanvasElement = ({
               )}
               {(element.columns?.sku !== false) && (
                 <div style={{
-                  flex: '0 0 80px',
-                  padding: '4px 6px',
+                  flex: `0 0 ${80 * zoom}px`,
+                  padding: `${4 * zoom}px ${6 * zoom}px`,
                   borderRight: (element.columns?.quantity !== false) || (element.columns?.price !== false) || (element.columns?.total !== false) ? '1px solid #eee' : 'none'
                 }}>
                   SKU001
@@ -569,8 +570,8 @@ export const CanvasElement = ({
               )}
               {(element.columns?.quantity !== false) && (
                 <div style={{
-                  flex: '0 0 60px',
-                  padding: '4px 6px',
+                  flex: `0 0 ${60 * zoom}px`,
+                  padding: `${4 * zoom}px ${6 * zoom}px`,
                   textAlign: 'center',
                   borderRight: (element.columns?.price !== false) || (element.columns?.total !== false) ? '1px solid #eee' : 'none'
                 }}>
@@ -579,8 +580,8 @@ export const CanvasElement = ({
               )}
               {(element.columns?.price !== false) && (
                 <div style={{
-                  flex: '0 0 80px',
-                  padding: '4px 6px',
+                  flex: `0 0 ${80 * zoom}px`,
+                  padding: `${4 * zoom}px ${6 * zoom}px`,
                   textAlign: 'right',
                   borderRight: (element.columns?.total !== false) ? '1px solid #eee' : 'none'
                 }}>
@@ -589,8 +590,8 @@ export const CanvasElement = ({
               )}
               {(element.columns?.total !== false) && (
                 <div style={{
-                  flex: '0 0 80px',
-                  padding: '4px 6px',
+                  flex: `0 0 ${80 * zoom}px`,
+                  padding: `${4 * zoom}px ${6 * zoom}px`,
                   textAlign: 'right'
                 }}>
                   €39.98
@@ -606,8 +607,8 @@ export const CanvasElement = ({
             }}>
               {(element.columns?.image !== false) && (
                 <div style={{
-                  flex: '0 0 40px',
-                  padding: '4px',
+                  flex: `0 0 ${40 * zoom}px`,
+                  padding: `${4 * zoom}px`,
                   textAlign: 'center',
                   borderRight: '1px solid #eee'
                 }}>
@@ -617,7 +618,7 @@ export const CanvasElement = ({
               {(element.columns?.name !== false) && (
                 <div style={{
                   flex: 1,
-                  padding: '4px 6px',
+                  padding: `${4 * zoom}px ${6 * zoom}px`,
                   borderRight: (element.columns?.sku !== false) || (element.columns?.quantity !== false) || (element.columns?.price !== false) || (element.columns?.total !== false) ? '1px solid #eee' : 'none'
                 }}>
                   Produit B - Un autre article
@@ -625,8 +626,8 @@ export const CanvasElement = ({
               )}
               {(element.columns?.sku !== false) && (
                 <div style={{
-                  flex: '0 0 80px',
-                  padding: '4px 6px',
+                  flex: `0 0 ${80 * zoom}px`,
+                  padding: `${4 * zoom}px ${6 * zoom}px`,
                   borderRight: (element.columns?.quantity !== false) || (element.columns?.price !== false) || (element.columns?.total !== false) ? '1px solid #eee' : 'none'
                 }}>
                   SKU002
@@ -634,8 +635,8 @@ export const CanvasElement = ({
               )}
               {(element.columns?.quantity !== false) && (
                 <div style={{
-                  flex: '0 0 60px',
-                  padding: '4px 6px',
+                  flex: `0 0 ${60 * zoom}px`,
+                  padding: `${4 * zoom}px ${6 * zoom}px`,
                   textAlign: 'center',
                   borderRight: (element.columns?.price !== false) || (element.columns?.total !== false) ? '1px solid #eee' : 'none'
                 }}>
@@ -644,8 +645,8 @@ export const CanvasElement = ({
               )}
               {(element.columns?.price !== false) && (
                 <div style={{
-                  flex: '0 0 80px',
-                  padding: '4px 6px',
+                  flex: `0 0 ${80 * zoom}px`,
+                  padding: `${4 * zoom}px ${6 * zoom}px`,
                   textAlign: 'right',
                   borderRight: (element.columns?.total !== false) ? '1px solid #eee' : 'none'
                 }}>
@@ -654,8 +655,8 @@ export const CanvasElement = ({
               )}
               {(element.columns?.total !== false) && (
                 <div style={{
-                  flex: '0 0 80px',
-                  padding: '4px 6px',
+                  flex: `0 0 ${80 * zoom}px`,
+                  padding: `${4 * zoom}px ${6 * zoom}px`,
                   textAlign: 'right'
                 }}>
                   €29.99

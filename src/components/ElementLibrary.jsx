@@ -129,13 +129,16 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
               <button
                 key={index}
                 className="element-button"
-                onClick={() => onAddElement(element.type, {
-                  x: 50 + (index * 20),
-                  y: 100 + (index * 20),
-                  width: 300,
-                  height: 150,
-                  ...element.defaultProperties
-                })}
+                onClick={() => {
+                  console.log('🖱️ Element button clicked:', element);
+                  onAddElement(element.type, {
+                    x: 50 + (index * 20),
+                    y: 100 + (index * 20),
+                    width: 300,
+                    height: 150,
+                    ...element.defaultProperties
+                  });
+                }}
                 title={element.description}
               >
                 <span className="element-icon">{element.icon}</span>
