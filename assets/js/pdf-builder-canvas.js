@@ -58,7 +58,6 @@ const PDF_BUILDER_CANVAS = {
         }
 
         this.state.initialized = true;
-        console.log('🚀 Canvas initialisé (version Archive Réparée)');
     },
 
     /**
@@ -210,7 +209,6 @@ const PDF_BUILDER_CANVAS = {
                 }
 
                 self.addElementAtPosition(data.type, data.category || 'base', x, y);
-                console.log('✅ Élément déposé:', data.type, 'à', Math.round(x), Math.round(y));
 
             } catch (error) {
                 console.error('❌ Erreur lors du drop:', error);
@@ -1077,8 +1075,6 @@ const PDF_BUILDER_CANVAS = {
             jQuery('#pdf-canvas').css('cursor', tool.cursor);
             jQuery('.drawing-tool').removeClass('active');
             jQuery(`[data-tool="${toolId}"]`).addClass('active');
-
-            console.log(`🎨 Outil changé: ${tool.name}`);
         },
 
         renderToolbar: function() {
@@ -1227,12 +1223,10 @@ const PDF_BUILDER_CANVAS = {
 
         enable: function() {
             this.enabled = true;
-            console.log('🤝 Collaboration activée');
         },
 
         broadcast: function(action, data) {
             if (!this.enabled) return;
-            console.log('📡 Collaboration:', action, data);
         }
     },
 
@@ -1268,8 +1262,6 @@ const PDF_BUILDER_CANVAS = {
      * Nettoie tous les événements et ressources
      */
     destroy: function() {
-        console.log('🧹 Nettoyage du canvas PDF Builder...');
-
         // Nettoyer les événements du canvas
         jQuery('#pdf-canvas').off('mousedown.drawing');
         jQuery(document).off('mousemove.drawing mouseup.drawing');
@@ -1292,8 +1284,6 @@ const PDF_BUILDER_CANVAS = {
         // Réinitialiser l'état
         this.state.initialized = false;
         this.state.selectedElements.clear();
-
-        console.log('✅ Canvas nettoyé');
     }
 };
 

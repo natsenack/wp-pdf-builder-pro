@@ -266,7 +266,6 @@ export const Canvas = ({
 
       if (clickedHandle) {
         // Commencer le redimensionnement
-        console.log('Starting resize for element:', clickedElement.id, 'handle:', clickedHandle.name);
         setIsResizing(true);
         setResizedElement(clickedElement);
         setResizeHandle(clickedHandle.name);
@@ -282,8 +281,6 @@ export const Canvas = ({
         onElementSelect(clickedElement.id);
       }
 
-      console.log('Starting drag for element:', clickedElement.id);
-      
       setIsDragging(true);
       setDraggedElement(clickedElement);
       setDragOffset({
@@ -417,14 +414,12 @@ export const Canvas = ({
   // Gestionnaire de mouse up pour finir le drag et le redimensionnement
   const handleMouseUp = useCallback(() => {
     if (isDragging) {
-      console.log('Ending drag for element:', draggedElement?.id);
       setIsDragging(false);
       setDraggedElement(null);
       setDragOffset({ x: 0, y: 0 });
     }
 
     if (isResizing) {
-      console.log('Ending resize for element:', resizedElement?.id);
       setIsResizing(false);
       setResizedElement(null);
       setResizeHandle(null);
@@ -437,14 +432,12 @@ export const Canvas = ({
   const handleMouseLeave = useCallback(() => {
     // Terminer le drag ou resize si la souris quitte le canvas
     if (isDragging) {
-      console.log('Mouse left canvas during drag, ending drag for element:', draggedElement?.id);
       setIsDragging(false);
       setDraggedElement(null);
       setDragOffset({ x: 0, y: 0 });
     }
 
     if (isResizing) {
-      console.log('Mouse left canvas during resize, ending resize for element:', resizedElement?.id);
       setIsResizing(false);
       setResizedElement(null);
       setResizeHandle(null);

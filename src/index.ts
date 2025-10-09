@@ -5,7 +5,6 @@
   var PDFBuilderPro = {
     version: '1.0.0',
     init: function(containerId) {
-      console.log('PDF Builder Pro initialized for container: ' + containerId);
     }
   };
 

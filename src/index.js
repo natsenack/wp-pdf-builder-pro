@@ -12,8 +12,6 @@ class PDFBuilderPro {
 
   // Initialiser l'éditeur dans un conteneur
   init(containerId, options = {}) {
-    console.log('PDF Builder Pro v' + this.version + ' - Initializing editor in:', containerId);
-
     const container = document.getElementById(containerId);
     if (!container) {
       console.error('Container not found:', containerId);
@@ -41,19 +39,15 @@ class PDFBuilderPro {
 
     ReactDOM.render(editorElement, container);
     this.editors.set(containerId, { container, options: defaultOptions });
-
-    console.log('PDF Builder Pro editor initialized successfully');
   }
 
   // Gérer la sauvegarde
   handleSave(data) {
-    console.log('Saving template:', data);
     // Ici on pourrait envoyer les données au serveur
   }
 
   // Gérer l'aperçu
   handlePreview(data) {
-    console.log('Generating preview:', data);
     // Ici on pourrait ouvrir une fenêtre d'aperçu
   }
 

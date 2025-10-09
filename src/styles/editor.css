@@ -171,14 +171,17 @@
 }
 
 .toolbar {
+  width: 100%; /* Prend toute la largeur */
   flex-shrink: 0; /* Empêche le toolbar d'être compressé */
-  padding: 20px 24px;
+  padding: 16px 24px;
   background: var(--surface-color);
   border-bottom: 1px solid var(--border-color);
   display: flex;
   gap: 32px;
   align-items: flex-start;
   position: relative;
+  box-shadow: var(--shadow);
+  margin-bottom: 1px; /* Petit espacement avec l'espace de travail */
 }
 
 .toolbar::before {

@@ -532,9 +532,8 @@ class PDF_Builder_Admin {
             // Pour la page éditeur, NE PAS charger les scripts canvas - React gère tout
             if ($clean_hook === 'pdf-builder_page_pdf-builder-editor') {
                 return; // Ne pas charger les scripts canvas pour éviter les conflits
-            } else if ($clean_hook !== 'pdf-builder_page_pdf-builder-settings') {
-                return;
             }
+            // Pour les autres pages (y compris settings), continuer avec les scripts canvas
         }
 
         // Charger seulement sur nos pages principales
@@ -737,178 +736,69 @@ class PDF_Builder_Admin {
                             console.warn("PDF Builder Pro: Erreur lors de l\'initialisation du canvas:", error);
                         }
                     } else if (jQuery("#pdf-canvas").length === 0) {
-                        console.log("PDF Builder Pro: Pas d\'élément canvas sur cette page, initialisation ignorée");
                     } else {
                         console.warn("PDF Builder Pro: Dépendances manquantes pour l\'initialisation du canvas");
                     }
                     */
-                    console.log("PDF Builder Pro: Auto-initialization disabled, React component will handle canvas init");
+                
                 });
             });
         ');
     }
 
     /**
-     * Enqueue React/TypeScript scripts for editor
+     * Enfile les scripts React pour les pages d'administration
      */
     private function enqueue_react_scripts() {
-        // Add console logging for debugging
-        $debug_script = "console.log('PDF Builder Admin: enqueue_react_scripts called - checking WordPress React availability');";
-        wp_add_inline_script('jquery', $debug_script);
+        // Charger React depuis CDN (plus fiable que les versions locales)
+        wp_enqueue_script('react', 'https://unpkg.com/react@18/umd/react.production.min.js', [], '18.2.0', true);
+        wp_enqueue_script('react-dom', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js', ['react'], '18.2.0', true);
 
-        // Check if WordPress has React available
-        global $wp_scripts;
-        $react_registered = wp_script_is('react', 'registered');
-        $reactdom_registered = wp_script_is('react-dom', 'registered');
+        // Charger le script principal React du plugin
+        $script_path = plugin_dir_url(__FILE__) . '../../../assets/js/pdf-builder-pro.js';
+        wp_enqueue_script(
+            'pdf-builder-pro-react',
+            $script_path,
+            ['react', 'react-dom', 'jquery'],
+            filemtime(plugin_dir_path(__FILE__) . '../../../assets/js/pdf-builder-pro.js'),
+            true
+        );
 
-        $debug_script .= "console.log('PDF Builder Admin: WordPress React registered: " . ($react_registered ? 'YES' : 'NO') . "');";
-        $debug_script .= "console.log('PDF Builder Admin: WordPress ReactDOM registered: " . ($reactdom_registered ? 'YES' : 'NO') . "');";
-
-        // Force register React if not available
-        if (!$react_registered) {
-            $debug_script .= "console.log('PDF Builder Admin: Registering React from CDN');";
-            wp_register_script('react', 'https://unpkg.com/react@18/umd/react.production.min.js', [], '18.2.0', true);
-        }
-
-        if (!$reactdom_registered) {
-            $debug_script .= "console.log('PDF Builder Admin: Registering ReactDOM from CDN');";
-            wp_register_script('react-dom', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js', ['react'], '18.2.0', true);
-        }
-
-        // Now enqueue them
-        wp_enqueue_script('react');
-        wp_enqueue_script('react-dom');
-
-        $debug_script .= "console.log('PDF Builder Admin: React scripts enqueued');";
-
-        // Enqueue our compiled React app (the main bundle)
-        $react_bundle_file = PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-builder-pro.js';
-        if (file_exists($react_bundle_file)) {
-            wp_enqueue_script(
-                'pdf-builder-pro-react',
-                PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-pro.js',
-                ['react', 'react-dom'],
-                filemtime($react_bundle_file),
-                true
-            );
-            $debug_script .= "console.log('PDF Builder Admin: pdf-builder-pro.js (React bundle) enqueued from: " . $react_bundle_file . "');";
-        } else {
-            $debug_script .= "console.log('PDF Builder Admin: pdf-builder-pro.js (React bundle) NOT FOUND at: " . $react_bundle_file . "');";
-        }
-
-        // Enqueue our compiled React app (now includes everything)
-        $asset_file = PDF_BUILDER_PRO_ASSETS_PATH . 'js/dist/pdf-builder-admin.js';
-        if (file_exists($asset_file)) {
-            wp_enqueue_script(
-                'pdf-builder-admin',
-                PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js',
-                ['jquery'],
-                '2.0.0-' . time(), // Version forcée avec timestamp
-                true
-            );
-            $debug_script .= "console.log('PDF Builder Admin: pdf-builder-admin.js enqueued from: " . $asset_file . "');";
-        } else {
-            $debug_script .= "console.log('PDF Builder Admin: pdf-builder-admin.js NOT FOUND at: " . $asset_file . "');";
-        }
-
-        // Add more detailed debugging after script loading
-        $debug_script .= "
-            // Check React availability after script loads
-            setTimeout(function() {
-                console.log('🔍 PDF Builder Admin: Checking React after enqueue...');
-                console.log('🔍 React available:', typeof window.React !== 'undefined' ? '✅ YES' : '❌ NO');
-                console.log('🔍 ReactDOM available:', typeof window.ReactDOM !== 'undefined' ? '✅ YES' : '❌ NO');
-                console.log('🔍 window.PDFBuilderPro available:', typeof window.PDFBuilderPro !== 'undefined' ? '✅ YES' : '❌ NO');
-            }, 100);
-
-            // Also check after a longer delay
-            setTimeout(function() {
-                console.log('🔍 PDF Builder Admin: Checking React after timeout...');
-                console.log('🔍 React available:', typeof window.React !== 'undefined' ? '✅ YES' : '❌ NO');
-                console.log('🔍 ReactDOM available:', typeof window.ReactDOM !== 'undefined' ? '✅ YES' : '❌ NO');
-                console.log('🔍 window.PDFBuilderPro available:', typeof window.PDFBuilderPro !== 'undefined' ? '✅ YES' : '❌ NO');
-            }, 1000);
-        ";
-
-        wp_add_inline_script('jquery', $debug_script);
-
-        // Enqueue CSS
-        $css_file = PDF_BUILDER_PRO_ASSETS_PATH . 'css/pdf-builder-admin.css';
-        if (file_exists($css_file)) {
-            wp_enqueue_style(
-                'pdf-builder-admin',
-                PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css',
-                [],
-                filemtime($css_file)
-            );
-        }
-
-        // Pour la page éditeur, charger aussi les scripts canvas ici !
-        if (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-editor') {
-
-            wp_enqueue_script('jquery');
-            wp_enqueue_script('jquery-ui-core');
-            wp_enqueue_script('jquery-ui-draggable');
-            wp_enqueue_script('jquery-ui-resizable');            wp_enqueue_script(
-                'pdf-builder-canvas',
-                PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-canvas.js',
-                array('jquery', 'jquery-ui-draggable', 'jquery-ui-resizable'),
-                PDF_BUILDER_PRO_VERSION,
-                true
-            );
-
-            wp_enqueue_script(
-                'pdf-builder-unified-config',
-                PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-unified-config.js',
-                array('jquery'),
-                PDF_BUILDER_PRO_VERSION,
-                true
-            );
-
-            wp_enqueue_script(
-                'pdf-builder-utils',
-                PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-utils.js',
-                array('jquery'),
-                PDF_BUILDER_PRO_VERSION,
-                true
-            );
-
-            // Charger aussi le script admin pour la gestion de l'interface
-            wp_enqueue_script(
-                'pdf-builder-admin-interface',
-                PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js',
-                array('jquery'),
-                PDF_BUILDER_PRO_VERSION,
-                true
-            );
-        }
-
-        // Localize script with WordPress data
-        wp_localize_script('pdf-builder-admin', 'pdfBuilderData', [
-            'ajaxUrl' => admin_url('admin-ajax.php'),
+        // Localiser le script avec les données nécessaires
+        wp_localize_script('pdf-builder-pro-react', 'pdfBuilderAjax', [
+            'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pdf_builder_nonce'),
-            'apiUrl' => rest_url('pdf-builder/v1/'),
-            'userId' => get_current_user_id(),
-            'locale' => get_locale(),
-            'isRtl' => is_rtl(),
-            'templateId' => isset($_GET['template_id']) ? intval($_GET['template_id']) : 0
+            'strings' => [
+                'loading' => __('Chargement...', 'pdf-builder-pro'),
+                'error' => __('Erreur', 'pdf-builder-pro'),
+                'success' => __('Succès', 'pdf-builder-pro'),
+                'confirm_delete' => __('Êtes-vous sûr de vouloir supprimer cet élément ?', 'pdf-builder-pro')
+            ]
         ]);
 
-        // Add inline script to check React availability
-        wp_add_inline_script('pdf-builder-admin', '
-            console.log("🔍 PDF Builder Admin: Checking React after enqueue...");
-            console.log("🔍 React available:", typeof React !== "undefined" ? "✅ YES" : "❌ NO");
-            console.log("🔍 ReactDOM available:", typeof ReactDOM !== "undefined" ? "✅ YES" : "❌ NO");
-            console.log("🔍 window.PDFBuilderPro available:", typeof window.PDFBuilderPro !== "undefined" ? "✅ YES" : "❌ NO");
+        // Charger le script admin compilé (avec les dépendances)
+        $admin_script_path = plugin_dir_url(__FILE__) . '../../../assets/js/dist/pdf-builder-admin.js';
+        wp_enqueue_script(
+            'pdf-builder-admin',
+            $admin_script_path,
+            ['react', 'react-dom', 'jquery', 'pdf-builder-pro-react'],
+            filemtime(plugin_dir_path(__FILE__) . '../../../assets/js/dist/pdf-builder-admin.js'),
+            true
+        );
 
-            // Wait a bit and check again
-            setTimeout(function() {
-                console.log("🔍 PDF Builder Admin: Checking React after timeout...");
-                console.log("🔍 React available:", typeof React !== "undefined" ? "✅ YES" : "❌ NO");
-                console.log("🔍 ReactDOM available:", typeof ReactDOM !== "undefined" ? "✅ YES" : "❌ NO");
-                console.log("🔍 window.PDFBuilderPro available:", typeof window.PDFBuilderPro !== "undefined" ? "✅ YES" : "❌ NO");
-            }, 1000);
-        ');
+        // Styles CSS
+        wp_enqueue_style(
+            'pdf-builder-admin',
+            plugin_dir_url(__FILE__) . '../../../assets/css/admin.css',
+            [],
+            filemtime(plugin_dir_path(__FILE__) . '../../../assets/css/admin.css')
+        );
+
+        // Debug logging
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('PDF Builder Admin: pdf-builder-pro.js enqueued from: ' . $script_path);
+            error_log('PDF Builder Admin: pdf-builder-admin.js enqueued from: ' . $admin_script_path);
+        }
     }
 
     /**

@@ -108,6 +108,22 @@ if (isset($_POST['pdf_builder_settings_nonce']) && wp_verify_nonce($_POST['pdf_b
 }
 ?>
 
+<!-- Debug script to check React availability -->
+<script type="text/javascript">
+console.log('🔍 PDF Builder Admin: Checking React after enqueue...');
+console.log('🔍 React available:', typeof React !== 'undefined' ? '✅ YES' : '❌ NO');
+console.log('🔍 ReactDOM available:', typeof ReactDOM !== 'undefined' ? '✅ YES' : '❌ NO');
+console.log('🔍 window.PDFBuilderPro available:', typeof window.PDFBuilderPro !== 'undefined' ? '✅ YES' : '❌ NO');
+
+// Check again after a timeout
+setTimeout(function() {
+    console.log('🔍 PDF Builder Admin: Checking React after timeout...');
+    console.log('🔍 React available:', typeof React !== 'undefined' ? '✅ YES' : '❌ NO');
+    console.log('🔍 ReactDOM available:', typeof ReactDOM !== 'undefined' ? '✅ YES' : '❌ NO');
+    console.log('🔍 window.PDFBuilderPro available:', typeof window.PDFBuilderPro !== 'undefined' ? '✅ YES' : '❌ NO');
+}, 1000);
+</script>
+
 <div class="wrap">
     <h1><?php _e('Paramètres PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
 
@@ -652,8 +668,6 @@ if (isset($_POST['pdf_builder_settings_nonce']) && wp_verify_nonce($_POST['pdf_b
 
     // Attendre que le DOM soit complètement chargé
     $(document).ready(function() {
-        console.log('🚀 PDF Builder Settings: Initializing tabs...');
-
         // Vérifier que les éléments existent
         var navTabs = document.querySelectorAll('.nav-tab');
         var tabContents = document.querySelectorAll('.tab-content');
@@ -662,8 +676,6 @@ if (isset($_POST['pdf_builder_settings_nonce']) && wp_verify_nonce($_POST['pdf_b
             console.error('❌ Tab elements not found');
             return;
         }
-
-        console.log('✅ Found', navTabs.length, 'nav tabs and', tabContents.length, 'tab contents');
 
         // Fonction pour masquer tous les onglets
         function hideAllTabs() {
@@ -679,7 +691,6 @@ if (isset($_POST['pdf_builder_settings_nonce']) && wp_verify_nonce($_POST['pdf_b
             if (tabElement) {
                 tabElement.classList.add('active');
                 tabElement.style.display = 'block';
-                console.log('📂 Showing tab:', tabId);
             } else {
                 console.error('❌ Tab element not found:', tabId);
             }
@@ -687,8 +698,6 @@ if (isset($_POST['pdf_builder_settings_nonce']) && wp_verify_nonce($_POST['pdf_b
 
         // Fonction pour changer d'onglet
         function switchToTab(tabId) {
-            console.log('🔄 Switching to tab:', tabId);
-
             // Masquer tous les onglets
             hideAllTabs();
 
@@ -712,7 +721,6 @@ if (isset($_POST['pdf_builder_settings_nonce']) && wp_verify_nonce($_POST['pdf_b
             tab.addEventListener('click', function(e) {
                 e.preventDefault();
                 var targetId = this.getAttribute('href');
-                console.log('🖱️ Tab clicked:', targetId);
                 switchToTab(targetId);
             });
         });
@@ -724,19 +732,15 @@ if (isset($_POST['pdf_builder_settings_nonce']) && wp_verify_nonce($_POST['pdf_b
         var activeTab = document.querySelector('.nav-tab-active');
         if (activeTab) {
             var activeTabId = activeTab.getAttribute('href');
-            console.log('🎯 Active tab found:', activeTabId);
             showTab(activeTabId);
         } else {
             // Si aucun onglet actif, activer le premier
             if (navTabs.length > 0) {
                 var firstTabId = navTabs[0].getAttribute('href');
-                console.log('🎯 No active tab, activating first:', firstTabId);
                 navTabs[0].classList.add('nav-tab-active');
                 showTab(firstTabId);
             }
         }
-
-        console.log('✅ PDF Builder Settings: Tabs initialized successfully');
     });
 
     // Fallback si jQuery n'est pas disponible
@@ -744,8 +748,6 @@ if (isset($_POST['pdf_builder_settings_nonce']) && wp_verify_nonce($_POST['pdf_b
         console.warn('⚠️ jQuery not available, using vanilla JS fallback');
 
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 PDF Builder Settings: Fallback initialization...');
-
             var navTabs = document.querySelectorAll('.nav-tab');
             var tabContents = document.querySelectorAll('.tab-content');
 
@@ -799,8 +801,6 @@ if (isset($_POST['pdf_builder_settings_nonce']) && wp_verify_nonce($_POST['pdf_b
             if (activeTab) {
                 showTab(activeTab.getAttribute('href'));
             }
-
-            console.log('✅ PDF Builder Settings: Fallback initialized');
         });
     }
 
@@ -843,7 +843,6 @@ if (isset($_POST['pdf_builder_settings_nonce']) && wp_verify_nonce($_POST['pdf_b
         });
 
     $('#execute-sql-repair').on('click', function() {
-        console.log('Bouton "Réparer la Base de Données" cliqué');
 
         if (!confirm('<?php echo esc_js(__('Êtes-vous sûr de vouloir exécuter la réparation SQL ? Cette action va créer les tables manquantes et insérer les données par défaut.', 'pdf-builder-pro')); ?>')) {
             return;
@@ -855,10 +854,6 @@ if (isset($_POST['pdf_builder_settings_nonce']) && wp_verify_nonce($_POST['pdf_b
         $button.prop('disabled', true).text('<?php echo esc_js(__('Exécution...', 'pdf-builder-pro')); ?>');
         $status.html('<div class="notice notice-info"><p><?php echo esc_js(__('Exécution du script SQL en cours...', 'pdf-builder-pro')); ?></p></div>');
 
-        console.log('Envoi de la requête AJAX...');
-        console.log('Action:', 'pdf_builder_execute_sql_repair');
-        console.log('AJAX URL:', ajaxurl);
-
         $.ajax({
             url: ajaxurl,
             type: 'POST',
@@ -867,7 +862,6 @@ if (isset($_POST['pdf_builder_settings_nonce']) && wp_verify_nonce($_POST['pdf_b
                 nonce: '<?php echo wp_create_nonce('pdf_builder_maintenance'); ?>'
             },
             success: function(response) {
-                console.log('Réponse AJAX reçue:', response);
                 if (response.success) {
                     var html = '<div class="notice notice-success"><p><?php echo esc_js(__('Réparation SQL exécutée avec succès !', 'pdf-builder-pro')); ?></p>';
                     if (response.data.results) {

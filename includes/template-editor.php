@@ -62,18 +62,12 @@ $template = null; // Temporaire : pas de template chargé
     // Ajouter la classe pour masquer les éléments WordPress
     document.body.classList.add('pdf-builder-active');
 
-    console.log('PDF Builder Pro: Template editor script loaded');
-
     // Initialisation optimisée avec polling intelligent
     let attempts = 0;
     const maxAttempts = 50; // ~1.5 secondes max
 
     const initApp = () => {
-        console.log('PDF Builder Pro: Checking for PDFBuilderPro.init (attempt ' + attempts + ')');
-        console.log('PDF Builder Pro: window.PDFBuilderPro:', window.PDFBuilderPro);
-
         if (window.PDFBuilderPro?.init) {
-            console.log('PDF Builder Pro: PDFBuilderPro.init found, calling with invoice-quote-builder-container');
             window.PDFBuilderPro.init('invoice-quote-builder-container', {
                 templateId: null,
                 isNew: true,
@@ -88,19 +82,14 @@ $template = null; // Temporaire : pas de template chargé
         }
 
         if (++attempts < maxAttempts) {
-            console.log('PDF Builder Pro: PDFBuilderPro.init not ready, retrying...');
             requestAnimationFrame(initApp);
-        } else {
-            console.log('PDF Builder Pro: Max attempts reached, PDFBuilderPro.init never became available');
         }
     };
 
     // Démarrer l'initialisation immédiatement après DOM ready
     if (document.readyState === 'loading') {
-        console.log('PDF Builder Pro: DOM still loading, waiting for DOMContentLoaded');
         document.addEventListener('DOMContentLoaded', initApp);
     } else {
-        console.log('PDF Builder Pro: DOM already loaded, starting init');
         initApp();
     }
 

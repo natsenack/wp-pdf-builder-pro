@@ -92,8 +92,6 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
         const adjustedX = dropX / canvasState.zoom.zoom;
         const adjustedY = dropY / canvasState.zoom.zoom;
         
-        console.log('Drop element:', data.elementType, 'at', adjustedX, adjustedY);
-        
         canvasState.addElement(data.elementType, {
           x: Math.max(0, adjustedX - 50), // Centrer l'élément sur le point de drop
           y: Math.max(0, adjustedY - 25),
@@ -128,6 +126,22 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
         </div>
       </div>
 
+      {/* Barre d'outils - déplacée sous le header pour prendre toute la largeur */}
+      <Toolbar
+        selectedTool={tool}
+        onToolSelect={setTool}
+        zoom={canvasState.zoom.zoom}
+        onZoomChange={canvasState.zoom.setZoomLevel}
+        showGrid={showGrid}
+        onShowGridChange={setShowGrid}
+        snapToGrid={true} // Peut être configuré plus tard
+        onSnapToGridChange={() => {}} // Peut être configuré plus tard
+        onUndo={canvasState.undo}
+        onRedo={canvasState.redo}
+        canUndo={canvasState.canUndo}
+        canRedo={canvasState.canRedo}
+      />
+
       <div className="editor-workspace">
         {/* Bibliothèque d'éléments */}
         <div className="editor-sidebar left-sidebar">
@@ -140,22 +154,6 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
 
         {/* Zone de travail principale */}
         <div className="editor-main">
-          {/* Barre d'outils */}
-          <Toolbar
-            selectedTool={tool}
-            onToolSelect={setTool}
-            zoom={canvasState.zoom.zoom}
-            onZoomChange={canvasState.zoom.setZoomLevel}
-            showGrid={showGrid}
-            onShowGridChange={setShowGrid}
-            snapToGrid={true} // Peut être configuré plus tard
-            onSnapToGridChange={() => {}} // Peut être configuré plus tard
-            onUndo={canvasState.undo}
-            onRedo={canvasState.redo}
-            canUndo={canvasState.canUndo}
-            canRedo={canvasState.canRedo}
-          />
-
           {/* Canvas */}
           <div
             className="canvas-container"
