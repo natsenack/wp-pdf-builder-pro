@@ -173,71 +173,75 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
             onContextMenu={handleContextMenu}
             onDragOver={handleDragOver}
             onDrop={handleDrop}
-            style={{
-              position: 'relative',
-              width: canvasState.canvasWidth * canvasState.zoom.zoom,
-              height: canvasState.canvasHeight * canvasState.zoom.zoom,
-              background: 'white',
-              border: '1px solid #e2e8f0',
-              overflow: 'hidden'
-            }}
           >
-            {/* Grille de fond */}
-            {showGrid && (
-              <div
-                className="canvas-grid"
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: '100%',
-                  backgroundImage: `
-                    linear-gradient(to right, #f1f5f9 1px, transparent 1px),
-                    linear-gradient(to bottom, #f1f5f9 1px, transparent 1px)
-                  `,
-                  backgroundSize: `${10 * canvasState.zoom.zoom}px ${10 * canvasState.zoom.zoom}px`,
-                  pointerEvents: 'none'
-                }}
-              />
-            )}
-
-            {/* Éléments normaux rendus comme composants interactifs */}
-            {canvasState.elements
-              .filter(el => !el.type.startsWith('woocommerce-'))
-              .map(element => {
-                console.log('Rendering element:', element.id, element.type, element.x, element.y, element.width, element.height);
-                return (
-                  <CanvasElement
-                    key={element.id}
-                    element={element}
-                    isSelected={canvasState.selection.selectedElements.includes(element.id)}
-                    zoom={canvasState.zoom.zoom}
-                    snapToGrid={true}
-                    gridSize={10}
-                    onSelect={() => handleElementSelect(element.id)}
-                    onUpdate={(updates) => canvasState.updateElement(element.id, updates)}
-                    onRemove={() => canvasState.deleteElement(element.id)}
-                    onContextMenu={handleContextMenu}
-                    dragAndDrop={dragAndDrop}
+            <div
+              className="canvas-zoom-wrapper"
+              style={{
+                transform: `scale(${canvasState.zoom.zoom})`,
+                transformOrigin: 'center'
+              }}
+            >
+              <div className="canvas">
+              <div className="canvas">
+                {/* Grille de fond */}
+                {showGrid && (
+                  <div
+                    className="canvas-grid"
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      backgroundImage: `
+                        linear-gradient(to right, #f1f5f9 1px, transparent 1px),
+                        linear-gradient(to bottom, #f1f5f9 1px, transparent 1px)
+                      `,
+                      backgroundSize: '10px 10px',
+                      pointerEvents: 'none'
+                    }}
                   />
-                );
-              })}
+                )}
 
-            {/* Éléments WooCommerce superposés */}
-            {canvasState.elements
-              .filter(el => el.type.startsWith('woocommerce-'))
-              .map(element => (
-                <WooCommerceElement
-                  key={element.id}
-                  element={element}
-                  isSelected={canvasState.selection.selectedElements.includes(element.id)}
-                  onSelect={handleElementSelect}
-                  onUpdate={canvasState.updateElement}
-                  dragAndDrop={dragAndDrop}
-                  zoom={canvasState.zoom.zoom}
-                />
-              ))}
+                {/* Éléments normaux rendus comme composants interactifs */}
+                {canvasState.elements
+                  .filter(el => !el.type.startsWith('woocommerce-'))
+                  .map(element => {
+                    console.log('Rendering element:', element.id, element.type, element.x, element.y, element.width, element.height);
+                    return (
+                      <CanvasElement
+                        key={element.id}
+                        element={element}
+                        isSelected={canvasState.selection.selectedElements.includes(element.id)}
+                        zoom={1} // Le zoom est géré au niveau du wrapper
+                        snapToGrid={true}
+                        gridSize={10}
+                        onSelect={() => handleElementSelect(element.id)}
+                        onUpdate={(updates) => canvasState.updateElement(element.id, updates)}
+                        onRemove={() => canvasState.deleteElement(element.id)}
+                        onContextMenu={handleContextMenu}
+                        dragAndDrop={dragAndDrop}
+                      />
+                    );
+                  })}
+
+                {/* Éléments WooCommerce superposés */}
+                {canvasState.elements
+                  .filter(el => el.type.startsWith('woocommerce-'))
+                  .map(element => (
+                    <WooCommerceElement
+                      key={element.id}
+                      element={element}
+                      isSelected={canvasState.selection.selectedElements.includes(element.id)}
+                      onSelect={handleElementSelect}
+                      onUpdate={canvasState.updateElement}
+                      dragAndDrop={dragAndDrop}
+                      zoom={1} // Le zoom est géré au niveau du wrapper
+                    />
+                  ))}
+              </div>
+            </div>
+          </div>
           </div>
         </div>
 

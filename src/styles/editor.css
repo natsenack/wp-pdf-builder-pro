@@ -153,23 +153,37 @@
   overflow: auto;
   position: relative;
   background: var(--background-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.canvas-zoom-wrapper {
+  position: relative;
+  transition: transform 0.2s ease;
 }
 
 .canvas {
-  background: var(--surface-color);
-  box-shadow: var(--shadow);
-  margin: 32px;
-  border-radius: var(--radius);
-  border: 2px solid transparent;
-  transition: all 0.2s ease;
+  background: white;
+  border: 1px solid #e2e8f0;
   position: relative;
   overflow: hidden;
-  /* Dimensions A4 adaptatives */
-  width: min(595px, 90vw);
-  height: min(842px, 90vh);
-  max-width: 595px;
-  max-height: 842px;
-  aspect-ratio: 595 / 842;
+  /* Dimensions A4 fixes */
+  width: 595px;
+  height: 842px;
+}
+
+.canvas {
+  background: white;
+  border: 1px solid #e2e8f0;
+  position: relative;
+  overflow: hidden;
+  /* Dimensions A4 fixes */
+  width: 595px;
+  height: 842px;
+  /* Zoom géré par transform */
+  transition: transform 0.2s ease;
 }
 
 .canvas:hover {
