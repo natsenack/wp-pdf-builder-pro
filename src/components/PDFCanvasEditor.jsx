@@ -144,6 +144,8 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
 
   // Gestionnaire pour les changements de propriétés
   const handlePropertyChange = useCallback((elementId, property, value) => {
+    console.log('🔧 PDFCanvasEditor handlePropertyChange:', elementId, property, '=', value);
+    
     // Gérer les propriétés imbriquées (ex: "columns.image" -> { columns: { image: value } })
     const updates = {};
     if (property.includes('.')) {
@@ -164,6 +166,7 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
       };
 
       updateNestedProperty(updates, property, value);
+      console.log('🔧 Updates object:', updates);
     } else {
       updates[property] = value;
     }
