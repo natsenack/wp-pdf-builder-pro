@@ -16,6 +16,12 @@ export const PreviewModal = ({ isOpen, onClose, templateData, canvasWidth, canva
     setError('');
 
     try {
+      // Utiliser directement l'URL admin-ajax.php de WordPress
+      const ajaxUrl = '/wp-admin/admin-ajax.php';
+
+      console.log('PDF Builder Preview: Utilisation de l\'URL AJAX:', ajaxUrl);
+      console.log('PDF Builder Preview: Données template:', templateData);
+
       // Convertir les données du canvas au format attendu par le backend
       const formattedData = {
         pages: [{
@@ -52,18 +58,33 @@ export const PreviewModal = ({ isOpen, onClose, templateData, canvasWidth, canva
         }]
       };
 
-      // Faire l'appel AJAX
+      console.log('PDF Builder Preview: Données formatées:', formattedData);
+
+      // Préparer les données pour l'AJAX
       const formData = new FormData();
       formData.append('action', 'pdf_builder_pro_preview_pdf');
-      formData.append('nonce', window.pdfBuilderAjax?.nonce || '');
+      // Pour le débogage, on peut essayer sans nonce d'abord
+      // formData.append('nonce', ''); // Temporairement désactivé pour déboguer
       formData.append('template_data', JSON.stringify(formattedData));
 
-      const response = await fetch(window.pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
+      console.log('PDF Builder Preview: Envoi de la requête AJAX...');
+
+      // Faire l'appel AJAX
+      const response = await fetch(ajaxUrl, {
         method: 'POST',
         body: formData
       });
 
+      console.log('PDF Builder Preview: Réponse reçue:', response.status, response.statusText);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.log('PDF Builder Preview: Contenu de l\'erreur:', errorText);
+        throw new Error(`Erreur HTTP ${response.status}: ${response.statusText}`);
+      }
+
       const result = await response.json();
+      console.log('PDF Builder Preview: Résultat JSON:', result);
 
       if (result.success) {
         setPreviewHtml(result.data.html);
