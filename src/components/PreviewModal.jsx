@@ -65,7 +65,7 @@ export const PreviewModal = ({ isOpen, onClose, templateData, canvasWidth, canva
 
       // Préparer les données pour l'AJAX avec FormData
       const formData = new FormData();
-      formData.append('action', 'pdf_builder_pro_preview_pdf');
+      formData.append('action', 'pdf_builder_preview');
       formData.append('nonce', pdfBuilderAjax.nonce);
       formData.append('template_data', jsonString);
 
