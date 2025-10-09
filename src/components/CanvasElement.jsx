@@ -412,6 +412,7 @@ export const CanvasElement = ({
         draggable={false}
       >
         {element.type === 'text' ? (element.text || 'Texte') : 
+         element.type === 'table' ? null : // Le contenu sera rendu plus bas pour les tableaux
          element.type === 'image' && !element.src ? '📷 Image' :
          element.type === 'line' ? null :
          element.type === 'layout-header' ? '📄 En-tête' :
@@ -447,6 +448,75 @@ export const CanvasElement = ({
          element.type === 'progress-bar' ? null :
          element.type !== 'image' && element.type !== 'rectangle' ? element.type : null}
       </div>
+
+      {/* Rendu spécial pour les tableaux */}
+      {element.type === 'table' && (
+        <div style={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          fontSize: Math.max(8, 10 * zoom),
+          fontFamily: 'Arial, sans-serif',
+          border: element.showBorders ? '1px solid #ddd' : 'none',
+          borderRadius: '2px',
+          overflow: 'hidden'
+        }}>
+          {/* En-tête du tableau */}
+          {element.showHeaders && (
+            <div style={{
+              display: 'flex',
+              backgroundColor: '#f5f5f5',
+              borderBottom: '1px solid #ddd',
+              fontWeight: 'bold'
+            }}>
+              {(element.headers || ['Produit', 'Qté', 'Prix']).map((header, index) => (
+                <div key={index} style={{
+                  flex: 1,
+                  padding: '4px 6px',
+                  textAlign: 'left',
+                  borderRight: index < (element.headers || ['Produit', 'Qté', 'Prix']).length - 1 ? '1px solid #ddd' : 'none'
+                }}>
+                  {header}
+                </div>
+              ))}
+            </div>
+          )}
+          
+          {/* Lignes de données d'exemple */}
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+            {/* Ligne 1 */}
+            <div style={{
+              display: 'flex',
+              borderBottom: '1px solid #eee'
+            }}>
+              <div style={{ flex: 1, padding: '4px 6px', borderRight: '1px solid #eee' }}>Produit A</div>
+              <div style={{ flex: 1, padding: '4px 6px', borderRight: '1px solid #eee', textAlign: 'center' }}>2</div>
+              <div style={{ flex: 1, padding: '4px 6px', textAlign: 'right' }}>€19.99</div>
+            </div>
+            
+            {/* Ligne 2 */}
+            <div style={{
+              display: 'flex',
+              borderBottom: '1px solid #eee'
+            }}>
+              <div style={{ flex: 1, padding: '4px 6px', borderRight: '1px solid #eee' }}>Produit B</div>
+              <div style={{ flex: 1, padding: '4px 6px', borderRight: '1px solid #eee', textAlign: 'center' }}>1</div>
+              <div style={{ flex: 1, padding: '4px 6px', textAlign: 'right' }}>€29.99</div>
+            </div>
+            
+            {/* Ligne 3 */}
+            <div style={{
+              display: 'flex',
+              backgroundColor: '#fafafa'
+            }}>
+              <div style={{ flex: 1, padding: '4px 6px', borderRight: '1px solid #eee' }}>Produit C</div>
+              <div style={{ flex: 1, padding: '4px 6px', borderRight: '1px solid #eee', textAlign: 'center' }}>3</div>
+              <div style={{ flex: 1, padding: '4px 6px', textAlign: 'right' }}>€15.00</div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Rendu spécial pour la barre de progression */}
       {element.type === 'progress-bar' && (
