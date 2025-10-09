@@ -1544,6 +1544,16 @@ class PDF_Builder_Admin {
                     </div>
                 <?php endif; ?>
 
+                <div style="margin-bottom: 12px;">
+                    <label for="pdf_document_type" style="display: block; margin-bottom: 5px; font-weight: 500;">
+                        <?php _e('Type de document:', 'pdf-builder-pro'); ?>
+                    </label>
+                    <select id="pdf_document_type" style="width: 100%; padding: 5px; border: 1px solid #ddd; border-radius: 3px;">
+                        <option value="invoice"><?php _e('Facture', 'pdf-builder-pro'); ?></option>
+                        <option value="quote"><?php _e('Devis', 'pdf-builder-pro'); ?></option>
+                    </select>
+                </div>
+
                 <div style="display: flex; flex-direction: column; gap: 8px;">
                     <button type="button"
                             id="pdf-builder-preview-btn"
@@ -1581,12 +1591,14 @@ class PDF_Builder_Admin {
             var $downloadBtn = $('#pdf-builder-download-btn');
             var $status = $('#pdf-builder-status');
             var $templateSelect = $('#pdf_template_select');
+            var $documentTypeSelect = $('#pdf_document_type');
             var nonce = $('#pdf_builder_order_nonce').val();
 
             // Aperçu PDF
             $previewBtn.on('click', function() {
                 var orderId = $(this).data('order-id');
                 var templateId = $templateSelect.val() || 0;
+                var documentType = $documentTypeSelect.val() || 'invoice';
 
                 $status.html('<?php echo esc_js(__('Génération de l\'aperçu...', 'pdf-builder-pro')); ?>');
                 $previewBtn.prop('disabled', true);
@@ -1598,6 +1610,7 @@ class PDF_Builder_Admin {
                         action: 'pdf_builder_preview_order_pdf',
                         order_id: orderId,
                         template_id: templateId,
+                        document_type: documentType,
                         nonce: nonce
                     },
                     success: function(response) {
@@ -1628,6 +1641,7 @@ class PDF_Builder_Admin {
             $generateBtn.on('click', function() {
                 var orderId = $(this).data('order-id');
                 var templateId = $templateSelect.val() || 0;
+                var documentType = $documentTypeSelect.val() || 'invoice';
 
                 $status.html('<?php echo esc_js(__('Génération du PDF...', 'pdf-builder-pro')); ?>');
                 $generateBtn.prop('disabled', true);
@@ -1639,6 +1653,7 @@ class PDF_Builder_Admin {
                         action: 'pdf_builder_generate_order_pdf',
                         order_id: orderId,
                         template_id: templateId,
+                        document_type: documentType,
                         nonce: nonce
                     },
                     success: function(response) {
@@ -1690,6 +1705,7 @@ class PDF_Builder_Admin {
 
         $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
         $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
+        $document_type = isset($_POST['document_type']) ? sanitize_text_field($_POST['document_type']) : 'invoice';
 
         if (!$order_id) {
             wp_send_json_error('ID commande manquant');
@@ -1759,7 +1775,11 @@ class PDF_Builder_Admin {
 
             // Si pas de template, utiliser un template par défaut
             if (!$template_data) {
-                $template_data = $this->get_default_invoice_template();
+                if ($document_type === 'quote') {
+                    $template_data = $this->get_default_quote_template();
+                } else {
+                    $template_data = $this->get_default_invoice_template();
+                }
             }
 
             // Générer le PDF avec les données de la commande
@@ -1874,11 +1894,20 @@ class PDF_Builder_Admin {
 
             // Si pas de template, utiliser un template par défaut
             if (!$template_data) {
-                $template_data = $this->get_default_invoice_template();
+                if ($document_type === 'quote') {
+                    $template_data = $this->get_default_quote_template();
+                } else {
+                    $template_data = $this->get_default_invoice_template();
+                }
             }
 
             // Générer l'HTML d'aperçu avec les données de la commande
             $html_content = $this->generate_order_html($order, $template_data);
+
+            // Debug: vérifier que le HTML est correct
+            if (strpos($html_content, '<!DOCTYPE html>') === false) {
+                error_log('PDF Builder: HTML content does not start with DOCTYPE: ' . substr($html_content, 0, 200));
+            }
 
             wp_send_json_success(array(
                 'html' => $html_content,
@@ -1933,6 +1962,8 @@ class PDF_Builder_Admin {
      * Génère du HTML pour une commande WooCommerce
      */
     private function generate_order_html($order, $template_data) {
+        error_log('PDF Builder: Starting generate_order_html for order ' . $order->get_id());
+
         $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Order #' . $order->get_id() . '</title>';
         $html .= '<style>body { font-family: Arial, sans-serif; margin: 0; padding: 20px; } .pdf-element { position: absolute; }</style>';
         $html .= '</head><body>';
@@ -2032,6 +2063,8 @@ class PDF_Builder_Admin {
         }
 
         $html .= '</body></html>';
+        error_log('PDF Builder: Final HTML length: ' . strlen($html));
+        error_log('PDF Builder: HTML preview: ' . substr($html, 0, 500));
         return $html;
     }
 
@@ -2270,19 +2303,27 @@ class PDF_Builder_Admin {
                 ),
                 array(
                     'id' => 'invoice_number',
-                    'type' => 'invoice_number',
+                    'type' => 'text',
                     'position' => array('x' => 400, 'y' => 90),
                     'size' => array('width' => 150, 'height' => 25),
                     'style' => array('fontSize' => 14, 'color' => '#000000'),
-                    'content' => 'N° de facture'
+                    'content' => 'N° {{order_number}}'
                 ),
                 array(
                     'id' => 'invoice_date',
-                    'type' => 'invoice_date',
+                    'type' => 'text',
                     'position' => array('x' => 400, 'y' => 120),
                     'size' => array('width' => 150, 'height' => 25),
                     'style' => array('fontSize' => 14, 'color' => '#000000'),
-                    'content' => 'Date'
+                    'content' => 'Date: {{order_date}}'
+                ),
+                array(
+                    'id' => 'due_date',
+                    'type' => 'text',
+                    'position' => array('x' => 400, 'y' => 150),
+                    'size' => array('width' => 150, 'height' => 25),
+                    'style' => array('fontSize' => 12, 'color' => '#666666'),
+                    'content' => 'Échéance: {{order_date|+30 days|format:d/m/Y}}'
                 ),
                 array(
                     'id' => 'customer_info',
@@ -2293,20 +2334,188 @@ class PDF_Builder_Admin {
                     'content' => 'Client'
                 ),
                 array(
+                    'id' => 'customer_address',
+                    'type' => 'customer_address',
+                    'position' => array('x' => 50, 'y' => 180),
+                    'size' => array('width' => 250, 'height' => 60),
+                    'style' => array('fontSize' => 12, 'color' => '#000000'),
+                    'content' => 'Adresse'
+                ),
+                array(
                     'id' => 'products_table',
                     'type' => 'product_table',
-                    'position' => array('x' => 50, 'y' => 250),
+                    'position' => array('x' => 50, 'y' => 260),
                     'size' => array('width' => 500, 'height' => 200),
                     'style' => array('fontSize' => 12, 'color' => '#000000'),
                     'content' => 'Tableau produits'
                 ),
                 array(
+                    'id' => 'subtotal',
+                    'type' => 'subtotal',
+                    'position' => array('x' => 400, 'y' => 490),
+                    'size' => array('width' => 150, 'height' => 25),
+                    'style' => array('fontSize' => 14, 'color' => '#000000'),
+                    'content' => 'Sous-total'
+                ),
+                array(
+                    'id' => 'tax',
+                    'type' => 'tax',
+                    'position' => array('x' => 400, 'y' => 520),
+                    'size' => array('width' => 150, 'height' => 25),
+                    'style' => array('fontSize' => 14, 'color' => '#000000'),
+                    'content' => 'TVA'
+                ),
+                array(
                     'id' => 'total',
                     'type' => 'total',
-                    'position' => array('x' => 400, 'y' => 500),
+                    'position' => array('x' => 400, 'y' => 550),
                     'size' => array('width' => 150, 'height' => 30),
                     'style' => array('fontSize' => 16, 'fontWeight' => 'bold', 'color' => '#000000'),
-                    'content' => 'Total'
+                    'content' => 'Total TTC'
+                ),
+                array(
+                    'id' => 'payment_info',
+                    'type' => 'text',
+                    'position' => array('x' => 50, 'y' => 480),
+                    'size' => array('width' => 300, 'height' => 40),
+                    'style' => array('fontSize' => 10, 'color' => '#666666'),
+                    'content' => 'Mode de paiement: {{payment_method}} - Échéance: {{order_date|+30 days|format:d/m/Y}}'
+                ),
+                array(
+                    'id' => 'invoice_footer',
+                    'type' => 'text',
+                    'position' => array('x' => 50, 'y' => 750),
+                    'size' => array('width' => 500, 'height' => 40),
+                    'style' => array('fontSize' => 10, 'color' => '#666666'),
+                    'content' => 'TVA non applicable, art. 293 B du CGI - Merci pour votre confiance'
+                )
+            )
+        );
+    }
+
+    /**
+     * Template par défaut pour les devis
+     */
+    private function get_default_quote_template() {
+        return array(
+            'canvas' => array(
+                'width' => 595,
+                'height' => 842,
+                'zoom' => 1,
+                'pan' => array('x' => 0, 'y' => 0)
+            ),
+            'elements' => array(
+                array(
+                    'id' => 'company_name',
+                    'type' => 'text',
+                    'position' => array('x' => 50, 'y' => 50),
+                    'size' => array('width' => 200, 'height' => 30),
+                    'style' => array('fontSize' => 18, 'fontWeight' => 'bold', 'color' => '#000000'),
+                    'content' => 'Ma Société'
+                ),
+                array(
+                    'id' => 'quote_title',
+                    'type' => 'text',
+                    'position' => array('x' => 400, 'y' => 50),
+                    'size' => array('width' => 150, 'height' => 30),
+                    'style' => array('fontSize' => 20, 'fontWeight' => 'bold', 'color' => '#000000'),
+                    'content' => 'DEVIS'
+                ),
+                array(
+                    'id' => 'quote_number',
+                    'type' => 'text',
+                    'position' => array('x' => 400, 'y' => 90),
+                    'size' => array('width' => 150, 'height' => 25),
+                    'style' => array('fontSize' => 14, 'color' => '#000000'),
+                    'content' => 'DEVIS-{{order_number}}'
+                ),
+                array(
+                    'id' => 'quote_date',
+                    'type' => 'text',
+                    'position' => array('x' => 400, 'y' => 120),
+                    'size' => array('width' => 150, 'height' => 25),
+                    'style' => array('fontSize' => 14, 'color' => '#000000'),
+                    'content' => 'Date: {{order_date}}'
+                ),
+                array(
+                    'id' => 'validity_date',
+                    'type' => 'text',
+                    'position' => array('x' => 400, 'y' => 150),
+                    'size' => array('width' => 150, 'height' => 25),
+                    'style' => array('fontSize' => 12, 'color' => '#666666'),
+                    'content' => 'Valable jusqu\'au: {{order_date|+30 days|format:d/m/Y}}'
+                ),
+                array(
+                    'id' => 'customer_info',
+                    'type' => 'customer_name',
+                    'position' => array('x' => 50, 'y' => 150),
+                    'size' => array('width' => 250, 'height' => 25),
+                    'style' => array('fontSize' => 14, 'color' => '#000000'),
+                    'content' => 'Client'
+                ),
+                array(
+                    'id' => 'customer_address',
+                    'type' => 'customer_address',
+                    'position' => array('x' => 50, 'y' => 180),
+                    'size' => array('width' => 250, 'height' => 60),
+                    'style' => array('fontSize' => 12, 'color' => '#000000'),
+                    'content' => 'Adresse'
+                ),
+                array(
+                    'id' => 'quote_intro',
+                    'type' => 'text',
+                    'position' => array('x' => 50, 'y' => 260),
+                    'size' => array('width' => 500, 'height' => 40),
+                    'style' => array('fontSize' => 12, 'color' => '#000000'),
+                    'content' => 'Nous avons le plaisir de vous soumettre notre devis pour les prestations suivantes :'
+                ),
+                array(
+                    'id' => 'products_table',
+                    'type' => 'product_table',
+                    'position' => array('x' => 50, 'y' => 320),
+                    'size' => array('width' => 500, 'height' => 200),
+                    'style' => array('fontSize' => 12, 'color' => '#000000'),
+                    'content' => 'Tableau produits'
+                ),
+                array(
+                    'id' => 'subtotal',
+                    'type' => 'subtotal',
+                    'position' => array('x' => 400, 'y' => 550),
+                    'size' => array('width' => 150, 'height' => 25),
+                    'style' => array('fontSize' => 14, 'color' => '#000000'),
+                    'content' => 'Sous-total'
+                ),
+                array(
+                    'id' => 'tax',
+                    'type' => 'tax',
+                    'position' => array('x' => 400, 'y' => 580),
+                    'size' => array('width' => 150, 'height' => 25),
+                    'style' => array('fontSize' => 14, 'color' => '#000000'),
+                    'content' => 'TVA'
+                ),
+                array(
+                    'id' => 'total',
+                    'type' => 'total',
+                    'position' => array('x' => 400, 'y' => 610),
+                    'size' => array('width' => 150, 'height' => 30),
+                    'style' => array('fontSize' => 16, 'fontWeight' => 'bold', 'color' => '#000000'),
+                    'content' => 'Total TTC'
+                ),
+                array(
+                    'id' => 'quote_conditions',
+                    'type' => 'text',
+                    'position' => array('x' => 50, 'y' => 660),
+                    'size' => array('width' => 500, 'height' => 60),
+                    'style' => array('fontSize' => 10, 'color' => '#666666'),
+                    'content' => 'Conditions: Ce devis est valable 30 jours. Paiement à 30 jours. Toute commande implique l\'acceptation de nos conditions générales de vente.'
+                ),
+                array(
+                    'id' => 'signature',
+                    'type' => 'text',
+                    'position' => array('x' => 400, 'y' => 750),
+                    'size' => array('width' => 150, 'height' => 25),
+                    'style' => array('fontSize' => 12, 'color' => '#000000'),
+                    'content' => 'Signature'
                 )
             )
         );
