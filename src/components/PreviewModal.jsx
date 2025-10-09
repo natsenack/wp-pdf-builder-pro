@@ -1,162 +1,76 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { CanvasElement } from './CanvasElement';
+import { WooCommerceElement } from './WooCommerceElements';
 
-export const PreviewModal = ({ isOpen, onClose, templateData, canvasWidth, canvasHeight }) => {
-  const [previewHtml, setPreviewHtml] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-
-  useEffect(() => {
-    if (isOpen && templateData) {
-      generatePreview();
-    }
-  }, [isOpen, templateData]);
-
-  const generatePreview = () => {
-    setLoading(true);
-    setError('');
-
-    // Utiliser directement l'URL admin-ajax.php de WordPress
-    const ajaxUrl = '/wp-admin/admin-ajax.php';
-
-      // Validation et nettoyage des données avant sérialisation
-      if (!templateData || !templateData.elements || !Array.isArray(templateData.elements)) {
-        setError('Données template invalides: éléments manquants');
-        setLoading(false);
-        return;
-      }
-
-      // Fonction pour nettoyer les objets (supprimer les propriétés non sérialisables)
-      const sanitizeObject = (obj) => {
-        if (obj === null || typeof obj !== 'object') {
-          return obj;
-        }
-
-        if (Array.isArray(obj)) {
-          return obj.map(sanitizeObject);
-        }
-
-        const cleaned = {};
-        for (const [key, value] of Object.entries(obj)) {
-          // Ignorer les propriétés qui commencent par $ ou _ (internes React)
-          if (key.startsWith('$') || key.startsWith('_')) {
-            continue;
-          }
-
-          // Convertir les valeurs non sérialisables
-          if (typeof value === 'function') {
-            continue; // Ignorer les fonctions
-          }
-
-          cleaned[key] = sanitizeObject(value);
-        }
-        return cleaned;
-      };
-
-      // Convertir les données du canvas au format attendu par le backend
-      const formattedData = {
-        pages: [{
-          size: {
-            width: canvasWidth || 595,
-            height: canvasHeight || 842
-          },
-          margins: {
-            top: 20,
-            right: 20,
-            bottom: 20,
-            left: 20
-          },
-          elements: templateData.elements.map(element => {
-            const cleanedElement = sanitizeObject(element);
-            return {
-              type: cleanedElement.type || 'text',
-              position: {
-                x: parseFloat(cleanedElement.x) || 0,
-                y: parseFloat(cleanedElement.y) || 0
-              },
-              size: {
-                width: parseFloat(cleanedElement.width) || 100,
-                height: parseFloat(cleanedElement.height) || 50
-              },
-              style: {
-                color: cleanedElement.color || '#333333',
-                fontSize: parseInt(cleanedElement.fontSize) || 14,
-                fontWeight: cleanedElement.fontWeight || 'normal',
-                fillColor: cleanedElement.backgroundColor || '#f8fafc',
-                borderColor: cleanedElement.borderColor || '#e2e8f0',
-                borderWidth: parseInt(cleanedElement.borderWidth) || 1
-              },
-              content: cleanedElement.text || cleanedElement.content || ''
-            };
-          })
-        }]
-      };
-
-      let jsonString;
-      try {
-        jsonString = JSON.stringify(formattedData);
-      } catch (jsonError) {
-        console.error('PDF Builder Preview: Erreur JSON:', jsonError);
-        setError('Erreur de sérialisation JSON: ' + jsonError.message);
-        setLoading(false);
-        return;
-      }
-
-      // Préparer les données pour l'AJAX avec FormData (méthode WordPress standard)
-      const formData = new FormData();
-      formData.append('action', 'pdf_builder_preview');
-      formData.append('nonce', pdfBuilderAjax.nonce);
-      formData.append('template_data', jsonString);
-
-      // Utiliser jQuery AJAX au lieu de fetch pour compatibilité WordPress
-      return new Promise((resolve, reject) => {
-        jQuery.ajax({
-          url: ajaxUrl,
-          type: 'POST',
-          data: formData,
-          processData: false, // Important pour FormData
-          contentType: false, // Important pour FormData
-          success: function(response) {
-            if (response.success) {
-              setPreviewHtml(response.data.html);
-              setLoading(false);
-              resolve();
-            } else {
-              console.error('PDF Builder Preview: Erreur dans la réponse:', response.data);
-              setError(response.data || 'Une erreur inconnue est survenue');
-              setLoading(false);
-              reject(new Error(response.data || 'Une erreur inconnue est survenue'));
-            }
-          },
-          error: function(xhr, status, error) {
-            const errorText = xhr.responseText || 'Erreur HTTP ' + xhr.status;
-            setError('Erreur lors de l\'aperçu: ' + errorText);
-            setLoading(false);
-            reject(new Error('Erreur HTTP ' + xhr.status + ': ' + xhr.statusText));
-          }
-        });
-      });
-  };
+export const PreviewModal = ({
+  isOpen,
+  onClose,
+  elements = [],
+  canvasWidth = 595,
+  canvasHeight = 842,
+  zoom = 1
+}) => {
+  if (!isOpen) return null;
 
   const handlePrint = () => {
     const printWindow = window.open('', '_blank');
     if (printWindow) {
-      printWindow.document.write(`
+      // Créer le HTML pour l'impression basé sur les éléments rendus
+      const printContent = `
         <!DOCTYPE html>
         <html>
         <head>
           <title>Impression PDF</title>
           <style>
             body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
-            .print-content { max-width: ${canvasWidth + 40}px; margin: 0 auto; }
+            .print-content {
+              width: ${canvasWidth}px;
+              height: ${canvasHeight}px;
+              margin: 0 auto;
+              background: white;
+              position: relative;
+              border: 1px solid #e2e8f0;
+            }
+            .canvas-element {
+              position: absolute;
+              box-sizing: border-box;
+            }
+            .canvas-element.selected {
+              outline: 2px solid #3b82f6;
+            }
           </style>
         </head>
         <body>
           <div class="print-content">
-            ${previewHtml}
+            ${elements.map(element => {
+              const style = {
+                left: `${element.x}px`,
+                top: `${element.y}px`,
+                width: `${element.width}px`,
+                height: `${element.height}px`,
+                fontSize: `${element.fontSize || 14}px`,
+                color: element.color || '#333333',
+                backgroundColor: element.backgroundColor || 'transparent',
+                border: element.borderWidth ? `${element.borderWidth}px solid ${element.borderColor || '#e2e8f0'}` : 'none',
+                fontWeight: element.fontWeight || 'normal',
+                textAlign: element.textAlign || 'left',
+                padding: '4px',
+                overflow: 'hidden'
+              };
+
+              let content = element.text || element.content || '';
+              if (element.type === 'image' && element.src) {
+                content = `<img src="${element.src}" style="width: 100%; height: 100%; object-fit: cover;" alt="Image" />`;
+              }
+
+              return `<div class="canvas-element" style="${Object.entries(style).map(([key, value]) => `${key.replace(/([A-Z])/g, '-$1').toLowerCase()}:${value}`).join(';')}">${content}</div>`;
+            }).join('')}
           </div>
         </body>
         </html>
-      `);
+      `;
+
+      printWindow.document.write(printContent);
       printWindow.document.close();
       printWindow.print();
     }
@@ -173,37 +87,60 @@ export const PreviewModal = ({ isOpen, onClose, templateData, canvasWidth, canva
         </div>
 
         <div className="preview-modal-body">
-          {loading && (
-            <div className="preview-loading">
-              <div className="preview-spinner"></div>
-              <p>Génération de l'aperçu...</p>
-            </div>
-          )}
+          <div className="preview-content">
+            <div
+              className="preview-canvas"
+              style={{
+                width: canvasWidth,
+                height: canvasHeight,
+                margin: '0 auto',
+                border: '1px solid #e2e8f0',
+                background: 'white',
+                position: 'relative',
+                overflow: 'hidden',
+                transform: `scale(${zoom})`,
+                transformOrigin: 'top center'
+              }}
+            >
+              {/* Éléments normaux rendus comme composants */}
+              {elements
+                .filter(el => !el.type.startsWith('woocommerce-'))
+                .map(element => (
+                  <CanvasElement
+                    key={element.id}
+                    element={element}
+                    isSelected={false} // Pas de sélection en mode aperçu
+                    zoom={1}
+                    snapToGrid={false} // Pas de grille en aperçu
+                    gridSize={10}
+                    canvasWidth={canvasWidth}
+                    canvasHeight={canvasHeight}
+                    onSelect={() => {}} // Pas d'interaction en aperçu
+                    onUpdate={() => {}} // Pas de mise à jour en aperçu
+                    onRemove={() => {}} // Pas de suppression en aperçu
+                    onContextMenu={() => {}} // Pas de menu contextuel en aperçu
+                    dragAndDrop={false} // Pas de drag & drop en aperçu
+                  />
+                ))}
 
-          {error && (
-            <div className="preview-error">
-              <h4>❌ Erreur lors de la génération de l'aperçu</h4>
-              <p>{error}</p>
+              {/* Éléments WooCommerce */}
+              {elements
+                .filter(el => el.type.startsWith('woocommerce-'))
+                .map(element => (
+                  <WooCommerceElement
+                    key={element.id}
+                    element={element}
+                    isSelected={false} // Pas de sélection en mode aperçu
+                    onSelect={() => {}} // Pas d'interaction en aperçu
+                    onUpdate={() => {}} // Pas de mise à jour en aperçu
+                    dragAndDrop={false} // Pas de drag & drop en aperçu
+                    zoom={1}
+                    canvasWidth={canvasWidth}
+                    canvasHeight={canvasHeight}
+                  />
+                ))}
             </div>
-          )}
-
-          {!loading && !error && previewHtml && (
-            <div className="preview-content">
-              <div
-                className="preview-canvas"
-                style={{
-                  width: canvasWidth,
-                  height: canvasHeight,
-                  margin: '0 auto',
-                  border: '1px solid #e2e8f0',
-                  background: 'white',
-                  position: 'relative',
-                  overflow: 'hidden'
-                }}
-                dangerouslySetInnerHTML={{ __html: previewHtml }}
-              />
-            </div>
-          )}
+          </div>
         </div>
 
         <div className="preview-modal-footer">

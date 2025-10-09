@@ -14,7 +14,6 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
   const [tool, setTool] = useState('select');
   const [showGrid, setShowGrid] = useState(true);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
-  const [previewData, setPreviewData] = useState(null);
   const [isPropertiesCollapsed, setIsPropertiesCollapsed] = useState(false);
 
   const canvasState = useCanvasState({
@@ -263,7 +262,6 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
           <button
             className="btn btn-secondary"
             onClick={() => {
-              setPreviewData(canvasState.saveTemplate());
               setShowPreviewModal(true);
             }}
           >
@@ -451,9 +449,8 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
         isOpen={showPreviewModal}
         onClose={() => {
           setShowPreviewModal(false);
-          setPreviewData(null);
         }}
-        templateData={previewData}
+        elements={canvasState.elements}
         canvasWidth={canvasState.canvasWidth}
         canvasHeight={canvasState.canvasHeight}
       />
