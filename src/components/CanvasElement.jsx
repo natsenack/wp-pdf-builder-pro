@@ -157,7 +157,8 @@ export const CanvasElement = ({
               textAlign: element.textAlign || 'left',
               lineHeight: 1.2,
               overflow: 'hidden',
-              padding: '2px'
+              padding: '2px',
+              whiteSpace: 'pre-line'
             }}
             onDoubleClick={handleDoubleClick}
           >
