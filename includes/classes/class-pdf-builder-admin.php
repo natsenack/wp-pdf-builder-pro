@@ -1369,6 +1369,28 @@ class PDF_Builder_Admin {
     }
 
     /**
+     * Nettoie le contenu pour éviter l'affichage de CSS ou de code
+     */
+    private function sanitize_content($content) {
+        // Supprimer les variables CSS qui commencent par --
+        if (strpos($content, '--') === 0) {
+            return '';
+        }
+
+        // Supprimer les déclarations CSS var()
+        if (strpos($content, 'var(') === 0) {
+            return '';
+        }
+
+        // Supprimer les lignes qui ressemblent à du CSS (propriété: valeur;)
+        if (preg_match('/^[a-z-]+:\s*[^;]+;/', $content)) {
+            return '';
+        }
+
+        return $content;
+    }
+
+    /**
      * Évalue une expression simple
      */
     private function evaluate_expression($expr, $replacements) {
@@ -1995,8 +2017,17 @@ class PDF_Builder_Admin {
 
                 $content = $element['content'] ?? '';
 
+                // Vérifier que le contenu n'est pas du CSS ou du code malformé
+                if (strpos($content, '--') === 0 || strpos($content, 'var(') === 0) {
+                    error_log('PDF Builder: Suspicious content detected in element ' . ($element['id'] ?? 'unknown') . ': ' . substr($content, 0, 100));
+                    $content = 'Contenu invalide';
+                }
+
                 // Remplacer les variables dynamiques de la commande
                 $content = $this->replace_dynamic_variables($content, $order->get_id());
+
+                // Nettoyer le contenu pour éviter l'affichage de CSS
+                $content = $this->sanitize_content($content);
 
                 switch ($element['type']) {
                     case 'text':
