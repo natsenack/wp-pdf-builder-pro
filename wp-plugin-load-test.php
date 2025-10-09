@@ -1,17 +1,12 @@
 <?php
 /**
- * Test de chargement du plugin PDF Builder Pro
+ * Test de chargement du plugin PDF Builder Pro - VERSION SIMPLIFIÉE
+ * Redirige vers le test rapide pour éviter les problèmes de mémoire
  */
 
-// Inclure WordPress
-$wp_load_path = dirname(__FILE__) . '/wp-load.php';
-if (file_exists($wp_load_path)) {
-    require_once($wp_load_path);
-} else {
-    die('Erreur: Impossible de trouver wp-load.php');
-}
-
-header('Content-Type: text/html; charset=utf-8');
+// Redirection vers le test rapide
+header('Location: /wp-ajax-quick-test.php');
+exit;
 ?>
 <!DOCTYPE html>
 <html>
@@ -134,14 +129,25 @@ header('Content-Type: text/html; charset=utf-8');
         </div>
 
         <div class="section">
-            <h2>📝 Logs de débogage</h2>
+            <h2>📝 Logs de débogage (dernières lignes seulement)</h2>
             <p>Contenu récent du fichier debug.log (si activé) :</p>
             <?php
             $debug_log = WP_CONTENT_DIR . '/debug.log';
             if (file_exists($debug_log) && is_readable($debug_log)) {
-                $lines = file($debug_log);
-                $recent_lines = array_slice($lines, -10); // Dernières 10 lignes
-                echo '<pre>';
+                $file_size = filesize($debug_log);
+                echo '<p><strong>Taille du fichier:</strong> ' . number_format($file_size) . ' octets</p>';
+
+                if ($file_size > 1024 * 1024) { // Plus de 1MB
+                    echo '<p style="color: orange;">⚠️ Fichier debug.log très volumineux (' . number_format($file_size / 1024 / 1024, 1) . ' MB)</p>';
+                    echo '<p>Lecture limitée aux dernières 5 lignes pour éviter les problèmes de mémoire.</p>';
+                    $lines = file($debug_log);
+                    $recent_lines = array_slice($lines, -5); // Dernières 5 lignes seulement
+                } else {
+                    $lines = file($debug_log);
+                    $recent_lines = array_slice($lines, -10); // Dernières 10 lignes
+                }
+
+                echo '<pre style="max-height: 200px; overflow-y: auto;">';
                 foreach ($recent_lines as $line) {
                     echo htmlspecialchars($line);
                 }

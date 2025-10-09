@@ -50,6 +50,20 @@ add_action('wp_loaded', 'pdf_builder_final_init', 9999);
 // Enregistrer le menu admin dès que possible dans l'admin
 add_action('admin_menu', 'pdf_builder_register_admin_menu_early', 5);
 
+// Charger le bootstrap dès que les plugins sont chargés (plus tôt que admin_menu)
+add_action('plugins_loaded', 'pdf_builder_load_bootstrap_early', 5);
+
+function pdf_builder_load_bootstrap_early() {
+    // Charger le bootstrap immédiatement après le chargement des plugins
+    $bootstrap_path = plugin_dir_path(__FILE__) . 'bootstrap.php';
+    if (file_exists($bootstrap_path)) {
+        require_once $bootstrap_path;
+        if (function_exists('pdf_builder_load_bootstrap')) {
+            pdf_builder_load_bootstrap();
+        }
+    }
+}
+
 function pdf_builder_register_admin_menu_early() {
     // Vérifications de sécurité minimales
     if (!defined('ABSPATH')) {
