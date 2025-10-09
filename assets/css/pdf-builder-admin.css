@@ -43,7 +43,7 @@ body.wp-admin .pdf-builder-app {
 
 .pdf-builder-header h1 {
   margin: 0;
-  color: #212529;
+  color: #1e293b;
   font-size: 1.5rem;
   font-weight: 600;
 }
@@ -58,7 +58,7 @@ body.wp-admin .pdf-builder-app {
   border: 1px solid #dee2e6;
   border-radius: 4px;
   background: white;
-  color: #495057;
+  color: #64748b;
   cursor: pointer;
   font-size: 0.875rem;
   transition: all 0.2s;
@@ -179,7 +179,7 @@ body.wp-admin .pdf-builder-app {
   padding: 0.5rem;
   border-radius: 4px;
   font-size: 0.75rem;
-  color: #6c757d;
+  color: #9ca3af;
   display: flex;
   gap: 1rem;
 }

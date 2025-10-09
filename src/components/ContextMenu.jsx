@@ -37,7 +37,7 @@ export const ContextMenu = ({ menu, onAction }) => {
         backgroundColor: 'white',
         border: '1px solid #ccc',
         borderRadius: '4px',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
         zIndex: 1000,
         minWidth: '180px',
         padding: '4px 0'

@@ -123,7 +123,7 @@ const PDF_BUILDER_UNIFIED_CONFIG = {
             position: 'absolute',
             fontFamily: 'Arial, sans-serif',
             fontSize: '14px',
-            color: '#333333',
+            color: '#1e293b',
             backgroundColor: 'transparent',
             textAlign: 'left',
             padding: '4px',

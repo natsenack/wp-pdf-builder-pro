@@ -36,7 +36,7 @@ export const Canvas = ({
     if (!showGrid) return;
 
     ctx.save();
-    ctx.strokeStyle = '#e0e0e0';
+    ctx.strokeStyle = '#f1f3f4';
     ctx.lineWidth = 1;
 
     const step = gridSize;

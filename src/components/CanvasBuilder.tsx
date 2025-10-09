@@ -23,7 +23,7 @@ const CanvasBuilder: React.FC<CanvasBuilderProps> = ({
         ctx.fillRect(0, 0, width, height);
 
         // Bordure
-        ctx.strokeStyle = '#cccccc';
+        ctx.strokeStyle = '#dee2e6';
         ctx.lineWidth = 1;
         ctx.strokeRect(0, 0, width, height);
 
@@ -69,9 +69,9 @@ const CanvasBuilder: React.FC<CanvasBuilderProps> = ({
       <div style={{
         marginTop: '20px',
         padding: '15px',
-        backgroundColor: '#e3f2fd',
+        backgroundColor: '#f8fafc',
         borderRadius: '4px',
-        border: '1px solid #bbdefb'
+        border: '1px solid #e2e8f0'
       }}>
         <h3 style={{ margin: '0 0 10px 0', color: '#1976d2' }}>
           🚀 Status: {isReady ? 'Prêt' : 'Initialisation...'}

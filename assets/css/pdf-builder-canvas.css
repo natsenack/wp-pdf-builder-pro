@@ -24,7 +24,7 @@
 #pdf-canvas {
     position: relative;
     background: white;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
     transform-origin: top left;
     transition: transform 0.3s ease;
     border-radius: 4px;
@@ -476,7 +476,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 20px 24px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #e0f2fe 0%, #f3e5f5 100%);
     color: white;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
