@@ -569,11 +569,24 @@
   margin-bottom: 20px;
 }
 
-.category-title {
-  margin: 0 0 8px 0;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-primary);
+.category-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  padding: 8px 0;
+  user-select: none;
+}
+
+.category-toggle {
+  font-size: 10px;
+  color: var(--text-secondary);
+  transition: transform 0.2s ease;
+  transform: rotate(-90deg);
+}
+
+.category-toggle.expanded {
+  transform: rotate(0deg);
 }
 
 .element-grid {

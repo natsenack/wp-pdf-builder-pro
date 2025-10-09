@@ -53,6 +53,7 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
 
   // Gestionnaire pour la sélection d'élément
   const handleElementSelect = useCallback((elementId) => {
+    console.log('handleElementSelect', elementId);
     canvasState.selection.selectElement(elementId);
   }, [canvasState.selection]);
 
@@ -204,21 +205,24 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
             {/* Éléments normaux rendus comme composants interactifs */}
             {canvasState.elements
               .filter(el => !el.type.startsWith('woocommerce-'))
-              .map(element => (
-                <CanvasElement
-                  key={element.id}
-                  element={element}
-                  isSelected={canvasState.selection.selectedElements.includes(element.id)}
-                  zoom={canvasState.zoom.zoom}
-                  snapToGrid={true}
-                  gridSize={10}
-                  onSelect={() => handleElementSelect(element.id)}
-                  onUpdate={(updates) => canvasState.updateElement(element.id, updates)}
-                  onRemove={() => canvasState.deleteElement(element.id)}
-                  onContextMenu={handleContextMenu}
-                  dragAndDrop={dragAndDrop}
-                />
-              ))}
+              .map(element => {
+                console.log('Rendering element:', element.id, element.type, element.x, element.y, element.width, element.height);
+                return (
+                  <CanvasElement
+                    key={element.id}
+                    element={element}
+                    isSelected={canvasState.selection.selectedElements.includes(element.id)}
+                    zoom={canvasState.zoom.zoom}
+                    snapToGrid={true}
+                    gridSize={10}
+                    onSelect={() => handleElementSelect(element.id)}
+                    onUpdate={(updates) => canvasState.updateElement(element.id, updates)}
+                    onRemove={() => canvasState.deleteElement(element.id)}
+                    onContextMenu={handleContextMenu}
+                    dragAndDrop={dragAndDrop}
+                  />
+                );
+              })}
 
             {/* Éléments WooCommerce superposés */}
             {canvasState.elements
@@ -230,6 +234,8 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
                   isSelected={canvasState.selection.selectedElements.includes(element.id)}
                   onSelect={handleElementSelect}
                   onUpdate={canvasState.updateElement}
+                  dragAndDrop={dragAndDrop}
+                  zoom={canvasState.zoom.zoom}
                 />
               ))}
           </div>

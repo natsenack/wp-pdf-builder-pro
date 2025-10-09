@@ -1,209 +1,5 @@
-import React from 'react';
-
-/**
- * Composant pour gérer les éléments WooCommerce dans le canvas
- * Ce composant gère l'affichage et le rendu des éléments WooCommerce
- */
-export const WooCommerceElement = ({ element, isSelected, onSelect, onUpdate }) => {
-  const handleClick = (e) => {
-    e.stopPropagation();
-    onSelect(element.id);
-  };
-
-  // Fonction pour rendre un tableau de produits détaillé
-  const renderProductsTable = () => {
-    const products = [
-      { name: 'Produit 1', qty: 1, price: 10.00, total: 10.00 },
-      { name: 'Produit 2', qty: 2, price: 15.00, total: 30.00 },
-      { name: 'Produit 3', qty: 1, price: 25.00, total: 25.00 }
-    ];
-
-    const subtotal = products.reduce((sum, p) => sum + p.total, 0);
-    const tax = subtotal * 0.1; // 10% tax
-    const total = subtotal + tax;
-
-    return (
-      <table style={{
-        width: '100%',
-        borderCollapse: 'collapse',
-        fontSize: '12px',
-        fontFamily: 'Arial, sans-serif'
-      }}>
-        <thead>
-          <tr style={{ backgroundColor: '#f8f9fa', borderBottom: '2px solid #dee2e6' }}>
-            <th style={{ padding: '8px 4px', textAlign: 'left', fontWeight: 'bold', borderRight: '1px solid #dee2e6' }}>Produit</th>
-            <th style={{ padding: '8px 4px', textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #dee2e6', width: '60px' }}>Qté</th>
-            <th style={{ padding: '8px 4px', textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #dee2e6', width: '80px' }}>Prix</th>
-            <th style={{ padding: '8px 4px', textAlign: 'right', fontWeight: 'bold', width: '80px' }}>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map((product, index) => (
-            <tr key={index} style={{ borderBottom: '1px solid #dee2e6' }}>
-              <td style={{ padding: '6px 4px', borderRight: '1px solid #dee2e6' }}>{product.name}</td>
-              <td style={{ padding: '6px 4px', textAlign: 'center', borderRight: '1px solid #dee2e6' }}>{product.qty}</td>
-              <td style={{ padding: '6px 4px', textAlign: 'center', borderRight: '1px solid #dee2e6' }}>${product.price.toFixed(2)}</td>
-              <td style={{ padding: '6px 4px', textAlign: 'right' }}>${product.total.toFixed(2)}</td>
-            </tr>
-          ))}
-          <tr style={{ borderTop: '2px solid #dee2e6', backgroundColor: '#f8f9fa' }}>
-            <td colSpan="3" style={{ padding: '8px 4px', textAlign: 'right', fontWeight: 'bold' }}>Sous-total:</td>
-            <td style={{ padding: '8px 4px', textAlign: 'right', fontWeight: 'bold' }}>${subtotal.toFixed(2)}</td>
-          </tr>
-          <tr style={{ backgroundColor: '#f8f9fa' }}>
-            <td colSpan="3" style={{ padding: '4px 4px', textAlign: 'right' }}>TVA (10%):</td>
-            <td style={{ padding: '4px 4px', textAlign: 'right' }}>${tax.toFixed(2)}</td>
-          </tr>
-          <tr style={{ borderTop: '2px solid #007cba', backgroundColor: '#e3f2fd' }}>
-            <td colSpan="3" style={{ padding: '8px 4px', textAlign: 'right', fontWeight: 'bold', fontSize: '14px' }}>Total:</td>
-            <td style={{ padding: '8px 4px', textAlign: 'right', fontWeight: 'bold', fontSize: '14px', color: '#007cba' }}>${total.toFixed(2)}</td>
-          </tr>
-        </tbody>
-      </table>
-    );
-  };
-
-  // Fonction pour rendre une liste simple de produits
-  const renderProductsSimple = () => {
-    const products = [
-      { name: 'Produit Premium', qty: 1, price: 29.99 },
-      { name: 'Accessoire Standard', qty: 2, price: 15.50 },
-      { name: 'Service Installation', qty: 1, price: 49.00 }
-    ];
-
-    return (
-      <div style={{ fontSize: '13px', lineHeight: '1.6' }}>
-        {products.map((product, index) => (
-          <div key={index} style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            padding: '4px 0',
-            borderBottom: index < products.length - 1 ? '1px solid #f0f0f0' : 'none'
-          }}>
-            <div style={{ flex: 1 }}>
-              <span style={{ fontWeight: '500' }}>{product.name}</span>
-              {product.qty > 1 && (
-                <span style={{ color: '#666', marginLeft: '8px' }}>
-                  (x{product.qty})
-                </span>
-              )}
-            </div>
-            <div style={{ fontWeight: '600', color: '#007cba' }}>
-              ${product.price.toFixed(2)}
-              {product.qty > 1 && (
-                <span style={{ fontSize: '11px', color: '#666', marginLeft: '4px' }}>
-                  (${(product.price * product.qty).toFixed(2)})
-                </span>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  };
-
-  const renderElement = () => {
-    const baseStyle = {
-      position: 'absolute',
-      left: element.x,
-      top: element.y,
-      width: element.width,
-      height: element.height,
-      border: isSelected ? '2px solid #007cba' : '1px solid #ddd',
-      backgroundColor: '#ffffff',
-      padding: '8px',
-      fontSize: '14px',
-      fontFamily: 'Arial, sans-serif',
-      cursor: 'pointer',
-      userSelect: 'none',
-      borderRadius: '4px',
-      boxShadow: isSelected ? '0 0 8px rgba(0,123,186,0.3)' : '0 2px 4px rgba(0,0,0,0.1)',
-      overflow: 'hidden'
-    };
-
-    const getPlaceholderText = () => {
-      switch (element.type) {
-        case 'woocommerce-invoice-number':
-          return 'INV-001';
-        case 'woocommerce-invoice-date':
-          return '2024-01-15';
-        case 'woocommerce-order-number':
-          return '#1234';
-        case 'woocommerce-order-date':
-          return '2024-01-15 10:30';
-        case 'woocommerce-billing-address':
-          return 'John Doe\n123 Main St\nCity, State 12345\nCountry';
-        case 'woocommerce-shipping-address':
-          return 'John Doe\n456 Shipping Ave\nCity, State 12345\nCountry';
-        case 'woocommerce-customer-name':
-          return 'John Doe';
-        case 'woocommerce-customer-email':
-          return 'john.doe@example.com';
-        case 'woocommerce-payment-method':
-          return 'Carte de crédit';
-        case 'woocommerce-order-status':
-          return 'Traitée';
-        case 'woocommerce-products-table':
-          return renderProductsTable();
-        case 'woocommerce-products-simple':
-          return renderProductsSimple();
-        case 'woocommerce-subtotal':
-          return '$45.00';
-        case 'woocommerce-discount':
-          return '-$5.00';
-        case 'woocommerce-shipping':
-          return '$5.00';
-        case 'woocommerce-taxes':
-          return '$2.25';
-        case 'woocommerce-total':
-          return '$47.25';
-        case 'woocommerce-refund':
-          return '-$10.00';
-        case 'woocommerce-fees':
-          return '$1.50';
-        case 'woocommerce-quote-number':
-          return 'QUO-001';
-        case 'woocommerce-quote-date':
-          return '2024-01-15';
-        case 'woocommerce-quote-validity':
-          return '30 jours';
-        case 'woocommerce-quote-notes':
-          return 'Conditions spéciales du devis';
-        default:
-          return 'Élément WooCommerce';
-      }
-    };
-
-    return (
-      <div
-        style={baseStyle}
-        onClick={handleClick}
-        title={`${element.type} - Cliquez pour modifier`}
-      >
-        <div style={{
-          fontSize: '12px',
-          color: '#666',
-          marginBottom: '4px',
-          fontWeight: 'bold',
-          textTransform: 'uppercase',
-          letterSpacing: '0.5px'
-        }}>
-          {getElementLabel(element.type)}
-        </div>
-        <div style={{
-          whiteSpace: 'pre-line',
-          lineHeight: '1.4',
-          color: '#333'
-        }}>
-          {getPlaceholderText()}
-        </div>
-      </div>
-    );
-  };
-
-  return renderElement();
-};
+import React, { useRef, useCallback } from 'react';
+import { useResize } from '../hooks/useResize';
 
 /**
  * Fonction utilitaire pour obtenir le label d'un élément WooCommerce
@@ -293,4 +89,309 @@ export const useWooCommerceElements = () => {
     validateElement,
     getElementLabel
   };
+};
+
+/**
+ * Composant pour gérer les éléments WooCommerce dans le canvas
+ * Ce composant gère l'affichage et le rendu des éléments WooCommerce
+ */
+export const WooCommerceElement = ({
+  element,
+  isSelected,
+  onSelect,
+  onUpdate,
+  dragAndDrop,
+  zoom = 1
+}) => {
+  const elementRef = useRef(null);
+
+  const resize = useResize({
+    onElementResize: (newRect) => {
+      onUpdate({
+        x: newRect.x,
+        y: newRect.y,
+        width: newRect.width,
+        height: newRect.height
+      });
+    },
+    snapToGrid: true,
+    gridSize: 10
+  });
+
+  const handleClick = (e) => {
+    e.stopPropagation();
+
+    if (!isSelected) {
+      onSelect(element.id);
+      return;
+    }
+
+    // Vérifier si on clique sur une poignée de redimensionnement
+    const rect = elementRef.current.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const clickY = e.clientY - rect.top;
+
+    const handleSize = 8;
+    const elementRect = elementRef.current.getBoundingClientRect();
+
+    // Poignées de redimensionnement
+    const handles = [
+      { name: 'nw', x: 0, y: 0 },
+      { name: 'ne', x: element.width - handleSize, y: 0 },
+      { name: 'sw', x: 0, y: element.height - handleSize },
+      { name: 'se', x: element.width - handleSize, y: element.height - handleSize },
+      { name: 'n', x: element.width / 2 - handleSize / 2, y: 0 },
+      { name: 's', x: element.width / 2 - handleSize / 2, y: element.height - handleSize },
+      { name: 'w', x: 0, y: element.height / 2 - handleSize / 2 },
+      { name: 'e', x: element.width - handleSize, y: element.height / 2 - handleSize / 2 }
+    ];
+
+    for (const handle of handles) {
+      if (
+        clickX >= handle.x &&
+        clickX <= handle.x + handleSize &&
+        clickY >= handle.y &&
+        clickY <= handle.y + handleSize
+      ) {
+        resize.handleResizeStart(e, handle.name, {
+          x: element.x,
+          y: element.y,
+          width: element.width,
+          height: element.height
+        });
+        return;
+      }
+    }
+
+    // Si on clique ailleurs sur l'élément, commencer le drag
+    if (dragAndDrop && dragAndDrop.handleMouseDown) {
+      dragAndDrop.handleMouseDown(e, element);
+    }
+  };
+
+  const baseStyle = {
+    position: 'absolute',
+    left: element.x * zoom,
+    top: element.y * zoom,
+    width: element.width * zoom,
+    height: element.height * zoom,
+    cursor: isSelected ? 'move' : 'pointer',
+    userSelect: 'none',
+    border: isSelected ? '2px solid #007cba' : '1px solid #ddd',
+    backgroundColor: element.backgroundColor || '#ffffff',
+    color: element.color || '#333333',
+    fontSize: (element.fontSize || 14) * zoom,
+    fontFamily: element.fontFamily || 'Arial, sans-serif',
+    padding: (element.padding || 8) * zoom,
+    borderRadius: (element.borderRadius || 4) * zoom,
+    boxSizing: 'border-box',
+    overflow: 'hidden'
+  };
+
+  return (
+    <>
+      <div
+        ref={elementRef}
+        style={baseStyle}
+        onClick={handleClick}
+        onMouseDown={handleClick}
+      >
+        <div style={{
+          fontWeight: 'bold',
+          textTransform: 'uppercase',
+          letterSpacing: '0.5px'
+        }}>
+          {getElementLabel(element.type)}
+        </div>
+        <div style={{
+          whiteSpace: 'pre-line',
+          lineHeight: '1.4',
+          color: '#666'
+        }}>
+          [Contenu dynamique WooCommerce]
+        </div>
+      </div>
+
+      {/* Poignées de redimensionnement */}
+      {isSelected && (
+        <>
+          {/* Coin supérieur gauche */}
+          <div
+            className="resize-handle nw"
+            style={{
+              position: 'absolute',
+              left: element.x * zoom - 4,
+              top: element.y * zoom - 4,
+              width: 8,
+              height: 8,
+              backgroundColor: '#007cba',
+              border: '1px solid white',
+              cursor: 'nw-resize',
+              pointerEvents: 'auto'
+            }}
+            onMouseDown={(e) => resize.handleResizeStart(e, 'nw', {
+              x: element.x,
+              y: element.y,
+              width: element.width,
+              height: element.height
+            })}
+          />
+
+          {/* Coin supérieur droit */}
+          <div
+            className="resize-handle ne"
+            style={{
+              position: 'absolute',
+              left: (element.x + element.width) * zoom - 4,
+              top: element.y * zoom - 4,
+              width: 8,
+              height: 8,
+              backgroundColor: '#007cba',
+              border: '1px solid white',
+              cursor: 'ne-resize',
+              pointerEvents: 'auto'
+            }}
+            onMouseDown={(e) => resize.handleResizeStart(e, 'ne', {
+              x: element.x,
+              y: element.y,
+              width: element.width,
+              height: element.height
+            })}
+          />
+
+          {/* Coin inférieur gauche */}
+          <div
+            className="resize-handle sw"
+            style={{
+              position: 'absolute',
+              left: element.x * zoom - 4,
+              top: (element.y + element.height) * zoom - 4,
+              width: 8,
+              height: 8,
+              backgroundColor: '#007cba',
+              border: '1px solid white',
+              cursor: 'sw-resize',
+              pointerEvents: 'auto'
+            }}
+            onMouseDown={(e) => resize.handleResizeStart(e, 'sw', {
+              x: element.x,
+              y: element.y,
+              width: element.width,
+              height: element.height
+            })}
+          />
+
+          {/* Coin inférieur droit */}
+          <div
+            className="resize-handle se"
+            style={{
+              position: 'absolute',
+              left: (element.x + element.width) * zoom - 4,
+              top: (element.y + element.height) * zoom - 4,
+              width: 8,
+              height: 8,
+              backgroundColor: '#007cba',
+              border: '1px solid white',
+              cursor: 'se-resize',
+              pointerEvents: 'auto'
+            }}
+            onMouseDown={(e) => resize.handleResizeStart(e, 'se', {
+              x: element.x,
+              y: element.y,
+              width: element.width,
+              height: element.height
+            })}
+          />
+
+          {/* Bord supérieur */}
+          <div
+            className="resize-handle n"
+            style={{
+              position: 'absolute',
+              left: (element.x + element.width / 2) * zoom - 4,
+              top: element.y * zoom - 4,
+              width: 8,
+              height: 8,
+              backgroundColor: '#007cba',
+              border: '1px solid white',
+              cursor: 'n-resize',
+              pointerEvents: 'auto'
+            }}
+            onMouseDown={(e) => resize.handleResizeStart(e, 'n', {
+              x: element.x,
+              y: element.y,
+              width: element.width,
+              height: element.height
+            })}
+          />
+
+          {/* Bord inférieur */}
+          <div
+            className="resize-handle s"
+            style={{
+              position: 'absolute',
+              left: (element.x + element.width / 2) * zoom - 4,
+              top: (element.y + element.height) * zoom - 4,
+              width: 8,
+              height: 8,
+              backgroundColor: '#007cba',
+              border: '1px solid white',
+              cursor: 's-resize',
+              pointerEvents: 'auto'
+            }}
+            onMouseDown={(e) => resize.handleResizeStart(e, 's', {
+              x: element.x,
+              y: element.y,
+              width: element.width,
+              height: element.height
+            })}
+          />
+
+          {/* Bord gauche */}
+          <div
+            className="resize-handle w"
+            style={{
+              position: 'absolute',
+              left: element.x * zoom - 4,
+              top: (element.y + element.height / 2) * zoom - 4,
+              width: 8,
+              height: 8,
+              backgroundColor: '#007cba',
+              border: '1px solid white',
+              cursor: 'w-resize',
+              pointerEvents: 'auto'
+            }}
+            onMouseDown={(e) => resize.handleResizeStart(e, 'w', {
+              x: element.x,
+              y: element.y,
+              width: element.width,
+              height: element.height
+            })}
+          />
+
+          {/* Bord droit */}
+          <div
+            className="resize-handle e"
+            style={{
+              position: 'absolute',
+              left: (element.x + element.width) * zoom - 4,
+              top: (element.y + element.height / 2) * zoom - 4,
+              width: 8,
+              height: 8,
+              backgroundColor: '#007cba',
+              border: '1px solid white',
+              cursor: 'e-resize',
+              pointerEvents: 'auto'
+            }}
+            onMouseDown={(e) => resize.handleResizeStart(e, 'e', {
+              x: element.x,
+              y: element.y,
+              width: element.width,
+              height: element.height
+            })}
+          />
+        </>
+      )}
+    </>
+  );
 };

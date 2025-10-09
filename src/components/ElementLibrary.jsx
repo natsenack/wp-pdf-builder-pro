@@ -1,6 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
+  const [expandedCategories, setExpandedCategories] = useState({
+    'Texte': true,
+    'WooCommerce - Factures': false,
+    'WooCommerce - Produits': false,
+    'WooCommerce - Devis': false
+  });
+
+  const toggleCategory = (categoryName) => {
+    setExpandedCategories(prev => ({
+      ...prev,
+      [categoryName]: !prev[categoryName]
+    }));
+  };
   const elementCategories = [
     {
       name: 'Texte',
@@ -94,23 +107,33 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
       <div className="library-content">
         {elementCategories.map(category => (
           <div key={category.name} className="element-category">
-            <h4 className="category-title">{category.name}</h4>
-            <div className="element-grid">
-              {category.elements.map(element => (
-                <div
-                  key={`${element.type}-${element.label}`}
-                  className={`element-item ${selectedTool === `add-${element.type}` ? 'selected' : ''}`}
-                  onClick={() => handleElementClick(element.type, element.defaultProps)}
-                  onDragStart={(e) => handleDragStart(e, element)}
-                  draggable={true}
-                  title={element.description}
-                >
-                  <div className="element-icon">{element.icon}</div>
-                  <div className="element-label">{element.label}</div>
-                  <div className="element-description">{element.description}</div>
-                </div>
-              ))}
+            <div
+              className="category-header"
+              onClick={() => toggleCategory(category.name)}
+            >
+              <h4 className="category-title">{category.name}</h4>
+              <span className={`category-toggle ${expandedCategories[category.name] ? 'expanded' : ''}`}>
+                ▼
+              </span>
             </div>
+            {expandedCategories[category.name] && (
+              <div className="element-grid">
+                {category.elements.map(element => (
+                  <div
+                    key={`${element.type}-${element.label}`}
+                    className={`element-item ${selectedTool === `add-${element.type}` ? 'selected' : ''}`}
+                    onClick={() => handleElementClick(element.type, element.defaultProps)}
+                    onDragStart={(e) => handleDragStart(e, element)}
+                    draggable={true}
+                    title={element.description}
+                  >
+                    <div className="element-icon">{element.icon}</div>
+                    <div className="element-label">{element.label}</div>
+                    <div className="element-description">{element.description}</div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         ))}
       </div>
