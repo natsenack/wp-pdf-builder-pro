@@ -1,5 +1,126 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import '../styles/PropertiesPanel.css';
+
+// Composant pour les contrôles de couleur avec presets
+const ColorPicker = ({ label, value, onChange, presets = [] }) => (
+  <div className="property-row">
+    <label>{label}:</label>
+    <div className="color-picker-container">
+      <input
+        type="color"
+        value={value || '#1e293b'}
+        onChange={(e) => onChange(e.target.value)}
+        className="color-input"
+      />
+      <div className="color-presets">
+        {presets.map((preset, index) => (
+          <button
+            key={index}
+            className="color-preset"
+            style={{ backgroundColor: preset }}
+            onClick={() => onChange(preset)}
+            title={preset}
+          />
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
+// Composant pour les contrôles de police
+const FontControls = ({ elementId, properties, onPropertyChange }) => (
+  <div className="properties-group">
+    <h4>🎨 Police & Style</h4>
+
+    <div className="property-row">
+      <label>Famille:</label>
+      <select
+        value={properties.fontFamily || 'Inter'}
+        onChange={(e) => onPropertyChange(elementId, 'fontFamily', e.target.value)}
+      >
+        <option value="Inter">Inter</option>
+        <option value="Arial">Arial</option>
+        <option value="Helvetica">Helvetica</option>
+        <option value="Times New Roman">Times New Roman</option>
+        <option value="Courier New">Courier New</option>
+        <option value="Georgia">Georgia</option>
+        <option value="Verdana">Verdana</option>
+        <option value="Roboto">Roboto</option>
+        <option value="Open Sans">Open Sans</option>
+      </select>
+    </div>
+
+    <div className="property-row">
+      <label>Taille:</label>
+      <div className="slider-container">
+        <input
+          type="range"
+          min="8"
+          max="72"
+          value={properties.fontSize || 14}
+          onChange={(e) => onPropertyChange(elementId, 'fontSize', parseInt(e.target.value))}
+          className="slider"
+        />
+        <span className="slider-value">{properties.fontSize || 14}px</span>
+      </div>
+    </div>
+
+    <div className="property-row">
+      <label>Style du texte:</label>
+      <div className="style-buttons-grid">
+        <button
+          className={`style-btn ${properties.fontWeight === 'bold' ? 'active' : ''}`}
+          onClick={() => onPropertyChange(elementId, 'fontWeight', properties.fontWeight === 'bold' ? 'normal' : 'bold')}
+          title="Gras"
+        >
+          <strong>B</strong>
+        </button>
+        <button
+          className={`style-btn ${properties.fontStyle === 'italic' ? 'active' : ''}`}
+          onClick={() => onPropertyChange(elementId, 'fontStyle', properties.fontStyle === 'italic' ? 'normal' : 'italic')}
+          title="Italique"
+        >
+          <em>I</em>
+        </button>
+        <button
+          className={`style-btn ${properties.textDecoration === 'underline' ? 'active' : ''}`}
+          onClick={() => onPropertyChange(elementId, 'textDecoration', properties.textDecoration === 'underline' ? 'none' : 'underline')}
+          title="Souligné"
+        >
+          <u>U</u>
+        </button>
+        <button
+          className={`style-btn ${properties.textDecoration === 'line-through' ? 'active' : ''}`}
+          onClick={() => onPropertyChange(elementId, 'textDecoration', properties.textDecoration === 'line-through' ? 'none' : 'line-through')}
+          title="Barré"
+        >
+          <s>S</s>
+        </button>
+      </div>
+    </div>
+
+    <div className="property-row">
+      <label>Alignement:</label>
+      <div className="alignment-buttons">
+        {[
+          { value: 'left', icon: '⬅️', label: 'Gauche' },
+          { value: 'center', icon: '⬌', label: 'Centre' },
+          { value: 'right', icon: '➡️', label: 'Droite' },
+          { value: 'justify', icon: '⬌⬅️', label: 'Justifié' }
+        ].map(({ value, icon, label }) => (
+          <button
+            key={value}
+            className={`align-btn ${properties.textAlign === value ? 'active' : ''}`}
+            onClick={() => onPropertyChange(elementId, 'textAlign', value)}
+            title={label}
+          >
+            {icon}
+          </button>
+        ))}
+      </div>
+    </div>
+  </div>
+);
 
 export const PropertiesPanel = ({
   selectedElements,
@@ -23,135 +144,14 @@ export const PropertiesPanel = ({
     }
   }, [selectedElement]);
 
-  // Gestionnaire de changement de propriété
-  const handlePropertyChange = (elementId, property, value) => {
+  // Gestionnaire de changement de propriété optimisé avec useCallback
+  const handlePropertyChange = useCallback((elementId, property, value) => {
     setLocalProperties(prev => ({ ...prev, [property]: value }));
     onPropertyChange(elementId, property, value);
-  };
-
-  // Composant pour les contrôles de couleur avec presets
-  const ColorPicker = ({ label, value, onChange, presets = [] }) => (
-    <div className="property-row">
-      <label>{label}:</label>
-      <div className="color-picker-container">
-        <input
-          type="color"
-          value={value || '#1e293b'}
-          onChange={(e) => onChange(e.target.value)}
-          className="color-input"
-        />
-        <div className="color-presets">
-          {presets.map((preset, index) => (
-            <button
-              key={index}
-              className="color-preset"
-              style={{ backgroundColor: preset }}
-              onClick={() => onChange(preset)}
-              title={preset}
-            />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-
-  // Composant pour les contrôles de police
-  const FontControls = ({ elementId, properties }) => (
-    <div className="properties-group">
-      <h4>🎨 Police & Style</h4>
-
-      <div className="property-row">
-        <label>Famille:</label>
-        <select
-          value={properties.fontFamily || 'Inter'}
-          onChange={(e) => handlePropertyChange(elementId, 'fontFamily', e.target.value)}
-        >
-          <option value="Inter">Inter</option>
-          <option value="Arial">Arial</option>
-          <option value="Helvetica">Helvetica</option>
-          <option value="Times New Roman">Times New Roman</option>
-          <option value="Courier New">Courier New</option>
-          <option value="Georgia">Georgia</option>
-          <option value="Verdana">Verdana</option>
-          <option value="Roboto">Roboto</option>
-          <option value="Open Sans">Open Sans</option>
-        </select>
-      </div>
-
-      <div className="property-row">
-        <label>Taille:</label>
-        <div className="slider-container">
-          <input
-            type="range"
-            min="8"
-            max="72"
-            value={properties.fontSize || 14}
-            onChange={(e) => handlePropertyChange(elementId, 'fontSize', parseInt(e.target.value))}
-            className="slider"
-          />
-          <span className="slider-value">{properties.fontSize || 14}px</span>
-        </div>
-      </div>
-
-      <div className="property-row">
-        <label>Style du texte:</label>
-        <div className="style-buttons-grid">
-          <button
-            className={`style-btn ${properties.fontWeight === 'bold' ? 'active' : ''}`}
-            onClick={() => handlePropertyChange(elementId, 'fontWeight', properties.fontWeight === 'bold' ? 'normal' : 'bold')}
-            title="Gras"
-          >
-            <strong>B</strong>
-          </button>
-          <button
-            className={`style-btn ${properties.fontStyle === 'italic' ? 'active' : ''}`}
-            onClick={() => handlePropertyChange(elementId, 'fontStyle', properties.fontStyle === 'italic' ? 'normal' : 'italic')}
-            title="Italique"
-          >
-            <em>I</em>
-          </button>
-          <button
-            className={`style-btn ${properties.textDecoration === 'underline' ? 'active' : ''}`}
-            onClick={() => handlePropertyChange(elementId, 'textDecoration', properties.textDecoration === 'underline' ? 'none' : 'underline')}
-            title="Souligné"
-          >
-            <u>U</u>
-          </button>
-          <button
-            className={`style-btn ${properties.textDecoration === 'line-through' ? 'active' : ''}`}
-            onClick={() => handlePropertyChange(elementId, 'textDecoration', properties.textDecoration === 'line-through' ? 'none' : 'line-through')}
-            title="Barré"
-          >
-            <s>S</s>
-          </button>
-        </div>
-      </div>
-
-      <div className="property-row">
-        <label>Alignement:</label>
-        <div className="alignment-buttons">
-          {[
-            { value: 'left', icon: '⬅️', label: 'Gauche' },
-            { value: 'center', icon: '⬌', label: 'Centre' },
-            { value: 'right', icon: '➡️', label: 'Droite' },
-            { value: 'justify', icon: '⬌⬅️', label: 'Justifié' }
-          ].map(({ value, icon, label }) => (
-            <button
-              key={value}
-              className={`align-btn ${properties.textAlign === value ? 'active' : ''}`}
-              onClick={() => handlePropertyChange(elementId, 'textAlign', value)}
-              title={label}
-            >
-              {icon}
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+  }, [onPropertyChange]);
 
   // Rendu des onglets
-  const renderTabs = () => (
+  const renderTabs = useCallback(() => (
     <div className="properties-tabs">
       <button
         className={`tab-btn ${activeTab === 'appearance' ? 'active' : ''}`}
@@ -178,10 +178,10 @@ export const PropertiesPanel = ({
         ✨ Effets
       </button>
     </div>
-  );
+  ), [activeTab]);
 
   // Rendu du contenu selon l'onglet actif
-  const renderTabContent = () => {
+  const renderTabContent = useCallback(() => {
     if (!selectedElement) {
       return (
         <div className="no-selection">
@@ -227,7 +227,11 @@ export const PropertiesPanel = ({
 
             {(selectedElement.type === 'text' || selectedElement.type === 'layout-header' ||
               selectedElement.type === 'layout-footer' || selectedElement.type === 'layout-section') && (
-              <FontControls elementId={selectedElement.id} properties={localProperties} />
+              <FontControls
+                elementId={selectedElement.id}
+                properties={localProperties}
+                onPropertyChange={handlePropertyChange}
+              />
             )}
 
             <div className="properties-group">
@@ -611,7 +615,7 @@ export const PropertiesPanel = ({
       default:
         return null;
     }
-  };
+  }, [activeTab, selectedElement, localProperties, handlePropertyChange, selectedElements.length]);
 
   return (
     <div className="properties-panel">
