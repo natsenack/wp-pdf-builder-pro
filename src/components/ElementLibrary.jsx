@@ -5,9 +5,150 @@ import '../styles/ElementLibrary.css';
 export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
   const [showHeaderTemplatesModal, setShowHeaderTemplatesModal] = useState(false);
 
-  // Block fields comme dans le plugin concurrent - éléments représentés comme des blocs de contenu
+  // Système de blocs en grille pour les éléments
   const elementCategories = [
-    // Bibliothèque vidée - tous les éléments supprimés
+    {
+      name: 'Éléments de Base',
+      elements: [
+        {
+          type: 'text',
+          fieldID: 'custom_text',
+          label: 'Texte Libre',
+          icon: '📝',
+          description: 'Bloc de texte personnalisable',
+          blockContent: 'Cliquez pour éditer ce texte...',
+          defaultProperties: {
+            text: 'Cliquez pour éditer ce texte...',
+            fontSize: 12,
+            fontFamily: 'Arial',
+            fontWeight: 'normal'
+          }
+        },
+        {
+          type: 'text',
+          fieldID: 'title_block',
+          label: 'Titre',
+          icon: '📄',
+          description: 'Bloc de titre',
+          blockContent: 'TITRE DU DOCUMENT',
+          defaultProperties: {
+            text: 'TITRE DU DOCUMENT',
+            fontSize: 18,
+            fontFamily: 'Arial',
+            fontWeight: 'bold'
+          }
+        }
+      ]
+    },
+    {
+      name: 'Informations Commande',
+      elements: [
+        {
+          type: 'field',
+          fieldID: 'order_number',
+          label: 'Numéro Commande',
+          icon: '📋',
+          description: 'Bloc numéro de commande',
+          blockContent: '[order_number]',
+          defaultProperties: {
+            text: '[order_number]',
+            fontSize: 12,
+            fontFamily: 'Arial',
+            fontWeight: 'normal'
+          }
+        },
+        {
+          type: 'field',
+          fieldID: 'order_date',
+          label: 'Date Commande',
+          icon: '📅',
+          description: 'Bloc date de commande',
+          blockContent: '[order_date]',
+          defaultProperties: {
+            text: '[order_date]',
+            fontSize: 12,
+            fontFamily: 'Arial',
+            fontWeight: 'normal'
+          }
+        },
+        {
+          type: 'field',
+          fieldID: 'order_total',
+          label: 'Total Commande',
+          icon: '💰',
+          description: 'Bloc montant total',
+          blockContent: '[order_total]',
+          defaultProperties: {
+            text: '[order_total]',
+            fontSize: 14,
+            fontFamily: 'Arial',
+            fontWeight: 'bold'
+          }
+        }
+      ]
+    },
+    {
+      name: 'Informations Client',
+      elements: [
+        {
+          type: 'field',
+          fieldID: 'customer_name',
+          label: 'Nom Client',
+          icon: '👤',
+          description: 'Bloc nom du client',
+          blockContent: '[customer_name]',
+          defaultProperties: {
+            text: '[customer_name]',
+            fontSize: 12,
+            fontFamily: 'Arial',
+            fontWeight: 'normal'
+          }
+        },
+        {
+          type: 'field',
+          fieldID: 'customer_email',
+          label: 'Email Client',
+          icon: '📧',
+          description: 'Bloc email du client',
+          blockContent: '[customer_email]',
+          defaultProperties: {
+            text: '[customer_email]',
+            fontSize: 12,
+            fontFamily: 'Arial',
+            fontWeight: 'normal'
+          }
+        }
+      ]
+    },
+    {
+      name: 'Éléments Visuels',
+      elements: [
+        {
+          type: 'image',
+          fieldID: 'custom_image',
+          label: 'Image',
+          icon: '🖼️',
+          description: 'Bloc image',
+          blockContent: '[IMAGE]',
+          defaultProperties: {
+            width: 100,
+            height: 100
+          }
+        },
+        {
+          type: 'separator',
+          fieldID: 'horizontal_line',
+          label: 'Ligne Séparatrice',
+          icon: '➖',
+          description: 'Bloc ligne horizontale',
+          blockContent: '────────────',
+          defaultProperties: {
+            height: 1,
+            color: '#000000'
+          }
+        }
+      ]
+    }
   ];
 
   const handleHeaderTemplateSelect = (template) => {
@@ -116,36 +257,40 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
           {elementCategories.map((category, categoryIndex) => (
             <div key={categoryIndex} className="element-category">
               <h4 className="category-title">{category.name}</h4>
-              <div className="elements-palette">
+              <div className="elements-grid">
                 {category.elements.map((element, elementIndex) => (
                   <div
                     key={elementIndex}
-                    className="element-block"
+                    className="element-grid-block"
                     data-type={element.type}
                     draggable
                     onDragStart={(e) => handleDragStart(e, element)}
                     title={`${element.label}: ${element.description}`}
                   >
-                    <div className="element-block-content">
+                    <div className="grid-block-header">
+                      <span className="grid-block-icon">{element.icon}</span>
+                      <span className="grid-block-title">{element.label}</span>
+                    </div>
+                    <div className="grid-block-content">
                       {element.blockContent ? (
-                        <div className="block-text-content">
-                          {VariableManager.processTextForPreview(element.blockContent).split('\n').map((line, i) => (
-                            <div key={i} className="block-line">{line}</div>
+                        <div className="grid-block-preview">
+                          {VariableManager.processTextForPreview(element.blockContent).split('\n').slice(0, 2).map((line, i) => (
+                            <div key={i} className="grid-block-line">{line}</div>
                           ))}
                         </div>
                       ) : (
-                        <div className="block-visual-content">
+                        <div className="grid-block-visual">
                           {element.type === 'image' && (
-                            <div className="image-placeholder">[IMAGE]</div>
+                            <div className="grid-image-placeholder">🖼️</div>
                           )}
                           {element.type === 'separator' && (
-                            <div className="separator-preview">────────────</div>
+                            <div className="grid-separator-preview">━━━━━</div>
                           )}
                         </div>
                       )}
                     </div>
-                    <div className="element-block-label">
-                      {element.icon} {element.label}
+                    <div className="grid-block-footer">
+                      <small>{element.description}</small>
                     </div>
                   </div>
                 ))}
