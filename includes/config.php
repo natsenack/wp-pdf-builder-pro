@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 
 // Version du plugin
 if (!defined('PDF_BUILDER_PRO_VERSION')) {
-    define('PDF_BUILDER_PRO_VERSION', '1.0.0');
+    define('PDF_BUILDER_PRO_VERSION', '1.0.1');
 }
 
 // Répertoire du plugin
