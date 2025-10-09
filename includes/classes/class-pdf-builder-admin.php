@@ -386,7 +386,7 @@ class PDF_Builder_Admin {
      */
     public function templates_page() {
         $this->check_admin_permissions();
-        include plugin_dir_path(__FILE__) . 'views/templates-page.php';
+        include plugin_dir_path(dirname(__FILE__)) . 'templates-page.php';
     }
 
     /**
