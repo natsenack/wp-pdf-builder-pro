@@ -800,6 +800,15 @@ export const PropertiesPanel = ({
                 </div>
               </div>
             )}
+
+            {/* Contrôles de police pour customer_info */}
+            {selectedElement.type === 'customer_info' && (
+              <FontControls
+                elementId={selectedElement.id}
+                properties={localProperties}
+                onPropertyChange={handlePropertyChange}
+              />
+            )}
           </div>
         );
 

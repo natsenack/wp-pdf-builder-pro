@@ -264,6 +264,11 @@ export const useCanvasState = ({
             defaults.showLabels = true;
             defaults.labelStyle = 'bold';
             defaults.spacing = 8;
+            defaults.fontSize = 12;
+            defaults.fontFamily = 'Arial, sans-serif';
+            defaults.fontWeight = 'normal';
+            defaults.fontStyle = 'normal';
+            defaults.textDecoration = 'none';
             break;
 
           case 'invoice-totals-block':
