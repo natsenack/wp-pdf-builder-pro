@@ -208,6 +208,79 @@ export const PropertiesPanel = ({
           </div>
         );
 
+      case 'layout-header':
+      case 'layout-footer':
+      case 'layout-sidebar':
+      case 'layout-section':
+      case 'layout-container':
+        const layoutLabels = {
+          'layout-header': 'En-tête',
+          'layout-footer': 'Pied de Page',
+          'layout-sidebar': 'Barre Latérale',
+          'layout-section': 'Section',
+          'layout-container': 'Conteneur'
+        };
+
+        return (
+          <div className="properties-group">
+            <h4>Propriétés de {layoutLabels[selectedElement.type]}</h4>
+
+            <div className="property-row">
+              <label>Couleur de fond:</label>
+              <input
+                type="color"
+                value={localProperties.backgroundColor || (selectedElement.type === 'layout-container' ? 'transparent' : '#f8fafc')}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundColor', e.target.value)}
+              />
+            </div>
+
+            <div className="property-row">
+              <label>Couleur de bordure:</label>
+              <input
+                type="color"
+                value={localProperties.borderColor || (selectedElement.type === 'layout-container' ? '#cbd5e1' : '#e2e8f0')}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'borderColor', e.target.value)}
+              />
+            </div>
+
+            <div className="property-row">
+              <label>Épaisseur de bordure:</label>
+              <input
+                type="number"
+                value={localProperties.borderWidth || (selectedElement.type === 'layout-container' ? 2 : 1)}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'borderWidth', parseInt(e.target.value))}
+                min="0"
+                max="10"
+              />
+            </div>
+
+            {selectedElement.type === 'layout-container' && (
+              <div className="property-row">
+                <label>Style de bordure:</label>
+                <select
+                  value={localProperties.borderStyle || 'dashed'}
+                  onChange={(e) => handlePropertyChange(selectedElement.id, 'borderStyle', e.target.value)}
+                >
+                  <option value="solid">Continue</option>
+                  <option value="dashed">Tirets</option>
+                  <option value="dotted">Pointillés</option>
+                </select>
+              </div>
+            )}
+
+            <div className="property-row">
+              <label>Rayon des coins:</label>
+              <input
+                type="number"
+                value={localProperties.borderRadius || 4}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'borderRadius', parseInt(e.target.value))}
+                min="0"
+                max="50"
+              />
+            </div>
+          </div>
+        );
+
       default:
         return (
           <div className="properties-group">

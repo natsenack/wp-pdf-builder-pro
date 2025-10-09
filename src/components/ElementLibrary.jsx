@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
   const [expandedCategories, setExpandedCategories] = useState({
     'Texte': true,
+    'Mises en Page': true,
     'WooCommerce - Factures': false,
     'WooCommerce - Produits': false,
     'WooCommerce - Devis': false,
@@ -23,6 +24,16 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
         { type: 'text', label: 'Texte Simple', icon: '📝', description: 'Ajouter du texte' },
         { type: 'text', label: 'Titre', icon: '🏷️', description: 'Titre de section', defaultProps: { fontSize: 24, fontWeight: 'bold' } },
         { type: 'text', label: 'Sous-titre', icon: '📄', description: 'Sous-titre', defaultProps: { fontSize: 18, fontWeight: 'bold' } }
+      ]
+    },
+    {
+      name: 'Mises en Page',
+      elements: [
+        { type: 'layout-header', label: 'En-tête', icon: '📄', description: 'Section d\'en-tête pour le document' },
+        { type: 'layout-footer', label: 'Pied de Page', icon: '📄', description: 'Section de pied de page' },
+        { type: 'layout-sidebar', label: 'Barre Latérale', icon: '📄', description: 'Barre latérale' },
+        { type: 'layout-section', label: 'Section', icon: '📄', description: 'Section de contenu' },
+        { type: 'layout-container', label: 'Conteneur', icon: '📦', description: 'Conteneur flexible' }
       ]
     },
     {

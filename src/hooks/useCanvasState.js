@@ -153,6 +153,42 @@ export const useCanvasState = ({
             defaults.height = 2;
             defaults.backgroundColor = '#6b7280';
             break;
+          case 'layout-header':
+            defaults.width = 500;
+            defaults.height = 80;
+            defaults.backgroundColor = '#f8fafc';
+            defaults.borderColor = '#e2e8f0';
+            defaults.borderWidth = 1;
+            break;
+          case 'layout-footer':
+            defaults.width = 500;
+            defaults.height = 60;
+            defaults.backgroundColor = '#f8fafc';
+            defaults.borderColor = '#e2e8f0';
+            defaults.borderWidth = 1;
+            break;
+          case 'layout-sidebar':
+            defaults.width = 150;
+            defaults.height = 300;
+            defaults.backgroundColor = '#f8fafc';
+            defaults.borderColor = '#e2e8f0';
+            defaults.borderWidth = 1;
+            break;
+          case 'layout-section':
+            defaults.width = 500;
+            defaults.height = 200;
+            defaults.backgroundColor = '#ffffff';
+            defaults.borderColor = '#e2e8f0';
+            defaults.borderWidth = 1;
+            break;
+          case 'layout-container':
+            defaults.width = 300;
+            defaults.height = 150;
+            defaults.backgroundColor = 'transparent';
+            defaults.borderColor = '#cbd5e1';
+            defaults.borderWidth = 2;
+            defaults.borderStyle = 'dashed';
+            break;
           default:
             break;
         }

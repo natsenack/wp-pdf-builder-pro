@@ -170,6 +170,52 @@ export const CanvasElement = ({
             borderTop: `${element.lineWidth || 1}px solid ${element.lineColor || '#6b7280'}`,
             height: '0px',
             width: '100%'
+          } : element.type === 'layout-header' ? {
+            backgroundColor: element.backgroundColor || '#f8fafc',
+            border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#e2e8f0'}` : '1px solid #e2e8f0',
+            borderRadius: '4px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 14 * zoom,
+            fontWeight: 'bold',
+            color: '#64748b'
+          } : element.type === 'layout-footer' ? {
+            backgroundColor: element.backgroundColor || '#f8fafc',
+            border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#e2e8f0'}` : '1px solid #e2e8f0',
+            borderRadius: '4px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 12 * zoom,
+            color: '#64748b'
+          } : element.type === 'layout-sidebar' ? {
+            backgroundColor: element.backgroundColor || '#f8fafc',
+            border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#e2e8f0'}` : '1px solid #e2e8f0',
+            borderRadius: '4px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 12 * zoom,
+            color: '#64748b'
+          } : element.type === 'layout-section' ? {
+            backgroundColor: element.backgroundColor || '#ffffff',
+            border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#e2e8f0'}` : '1px solid #e2e8f0',
+            borderRadius: '4px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 12 * zoom,
+            color: '#64748b'
+          } : element.type === 'layout-container' ? {
+            backgroundColor: element.backgroundColor || 'transparent',
+            border: element.border ? `${element.borderWidth || 2}px ${element.borderStyle || 'dashed'} ${element.borderColor || '#cbd5e1'}` : '2px dashed #cbd5e1',
+            borderRadius: '4px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 12 * zoom,
+            color: '#94a3b8'
           } : {
             backgroundColor: '#f1f3f4',
             border: '1px solid #ccc',
@@ -187,6 +233,11 @@ export const CanvasElement = ({
         {element.type === 'text' ? (element.text || 'Texte') : 
          element.type === 'image' && !element.src ? '📷 Image' :
          element.type === 'line' ? null :
+         element.type === 'layout-header' ? '📄 En-tête' :
+         element.type === 'layout-footer' ? '📄 Pied de Page' :
+         element.type === 'layout-sidebar' ? '📄 Barre Latérale' :
+         element.type === 'layout-section' ? '📄 Section' :
+         element.type === 'layout-container' ? '📦 Conteneur' :
          element.type !== 'image' && element.type !== 'rectangle' ? element.type : null}
       </div>
 
