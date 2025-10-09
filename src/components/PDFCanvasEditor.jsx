@@ -146,6 +146,13 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
     canvasState.updateElement(elementId, { [property]: value });
   }, [canvasState]);
 
+  // Gestionnaire pour les mises à jour par lot
+  const handleBatchUpdate = useCallback((updates) => {
+    updates.forEach(({ elementId, property, value }) => {
+      canvasState.updateElement(elementId, { [property]: value });
+    });
+  }, [canvasState]);
+
   // Gestionnaire du menu contextuel
   const handleContextMenu = useCallback((e, elementId = null) => {
     e.preventDefault();
@@ -334,6 +341,7 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
             selectedElements={canvasState.selection.selectedElements}
             elements={canvasState.elements}
             onPropertyChange={handlePropertyChange}
+            onBatchUpdate={handleBatchUpdate}
           />
         </div>
       </div>

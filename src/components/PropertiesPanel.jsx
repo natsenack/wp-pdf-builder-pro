@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useElementCustomization } from '../hooks/useElementCustomization';
+import { useElementSynchronization } from '../hooks/useElementSynchronization';
+import { elementCustomizationService } from '../services/ElementCustomizationService';
 import '../styles/PropertiesPanel.css';
 
 // Composant pour les contrôles de couleur avec presets
@@ -125,30 +128,46 @@ const FontControls = ({ elementId, properties, onPropertyChange }) => (
 export const PropertiesPanel = ({
   selectedElements,
   elements,
-  onPropertyChange
+  onPropertyChange,
+  onBatchUpdate
 }) => {
-  const [localProperties, setLocalProperties] = useState({});
-  const [activeTab, setActiveTab] = useState('appearance');
+  // Utiliser les hooks de personnalisation et synchronisation
+  const {
+    localProperties,
+    activeTab,
+    setActiveTab,
+    handlePropertyChange: customizationChange
+  } = useElementCustomization(selectedElements, elements, onPropertyChange);
 
-  // Obtenir l'élément sélectionné (premier de la liste pour l'instant)
+  const { syncImmediate, syncBatch } = useElementSynchronization(
+    elements,
+    onPropertyChange,
+    onBatchUpdate,
+    true, // autoSave
+    1000 // autoSaveDelay
+  );
+
+  // Obtenir l'élément sélectionné pour l'affichage
   const selectedElement = selectedElements.length > 0
     ? elements.find(el => el.id === selectedElements[0])
     : null;
 
-  // Mettre à jour les propriétés locales quand l'élément change
-  useEffect(() => {
-    if (selectedElement) {
-      setLocalProperties({ ...selectedElement });
-    } else {
-      setLocalProperties({});
-    }
-  }, [selectedElement]);
-
-  // Gestionnaire de changement de propriété optimisé avec useCallback
+  // Gestionnaire unifié de changement de propriété
   const handlePropertyChange = useCallback((elementId, property, value) => {
-    setLocalProperties(prev => ({ ...prev, [property]: value }));
-    onPropertyChange(elementId, property, value);
-  }, [onPropertyChange]);
+    // Validation via le service
+    if (!elementCustomizationService.validateProperty(property, value)) {
+      console.warn(`Propriété invalide: ${property} = ${value}`);
+      return;
+    }
+
+    // Utiliser le hook de personnalisation pour la gestion locale
+    customizationChange(elementId, property, value);
+
+    // Synchronisation immédiate pour les changements critiques
+    if (['x', 'y', 'width', 'height'].includes(property)) {
+      syncImmediate(elementId, property, value);
+    }
+  }, [customizationChange, syncImmediate]);
 
   // Rendu des onglets
   const renderTabs = useCallback(() => (
