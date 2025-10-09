@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
   const [expandedCategories, setExpandedCategories] = useState({
     'Mises en Page': true,
-    'Formes & Graphiques': false,
     'Médias': false,
     'Données Dynamiques': false,
     'Éléments Avancés': false,
@@ -30,18 +29,6 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
         { type: 'layout-sidebar', label: 'Barre Latérale', icon: '📄', description: 'Barre latérale' },
         { type: 'layout-section', label: 'Section', icon: '📄', description: 'Section de contenu' },
         { type: 'layout-container', label: 'Conteneur', icon: '📦', description: 'Conteneur flexible' }
-      ]
-    },
-    {
-      name: 'Formes & Graphiques',
-      elements: [
-        { type: 'shape-rectangle', label: 'Rectangle', icon: '▭', description: 'Forme rectangulaire' },
-        { type: 'shape-circle', label: 'Cercle', icon: '○', description: 'Forme circulaire' },
-        { type: 'shape-line', label: 'Ligne', icon: '━', description: 'Ligne horizontale ou verticale' },
-        { type: 'shape-arrow', label: 'Flèche', icon: '→', description: 'Flèche directionnelle' },
-        { type: 'shape-triangle', label: 'Triangle', icon: '△', description: 'Forme triangulaire' },
-        { type: 'shape-star', label: 'Étoile', icon: '⭐', description: 'Forme étoilée' },
-        { type: 'divider', label: 'Séparateur', icon: '━', description: 'Ligne de séparation stylisée' }
       ]
     },
     {

@@ -44,10 +44,12 @@ class PDF_Builder_Admin {
      * Initialise les hooks WordPress
      */
     private function init_hooks() {
+        error_log('PDF Builder Admin: init_hooks appelée');
         add_action('admin_menu', [$this, 'add_admin_menu']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts'], 20);
         add_action('wp_ajax_pdf_builder_pro_generate_pdf', [$this, 'ajax_generate_pdf_from_canvas']);
         add_action('wp_ajax_pdf_builder_pro_preview_pdf', [$this, 'ajax_preview_pdf']);
+        error_log('PDF Builder Admin: AJAX actions registered');
         add_action('wp_ajax_pdf_builder_pro_download_pdf', [$this, 'ajax_download_pdf']);
         add_action('wp_ajax_pdf_builder_pro_save_template', [$this, 'ajax_save_template']);
         add_action('wp_ajax_pdf_builder_pro_load_template', [$this, 'ajax_load_template']);
@@ -866,7 +868,15 @@ class PDF_Builder_Admin {
      * AJAX - Aperçu du PDF
      */
     public function ajax_preview_pdf() {
+        // LOGGING POUR DÉBOGUER - AVANT TOUT
+        error_log('PDF Builder Preview: ajax_preview_pdf appelée');
+
         $this->check_admin_permissions();
+
+        // LOGGING POUR DÉBOGUER
+        error_log('PDF Builder Preview: Requête reçue');
+        error_log('PDF Builder Preview: $_POST = ' . print_r($_POST, true));
+        error_log('PDF Builder Preview: template_data = ' . (isset($_POST['template_data']) ? $_POST['template_data'] : 'NOT SET'));
 
         // Vérification de sécurité - TEMPORAIREMENT DÉSACTIVÉE POUR DÉBOGUER
         // if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce')) {
@@ -877,6 +887,7 @@ class PDF_Builder_Admin {
         $template_data = isset($_POST['template_data']) ? $_POST['template_data'] : '';
 
         if (empty($template_data)) {
+            error_log('PDF Builder Preview: template_data vide');
             wp_send_json_error('Aucune donnée template reçue');
         }
 

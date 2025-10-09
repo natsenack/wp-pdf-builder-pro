@@ -20,8 +20,13 @@ export const Toolbar = ({
     { id: 'add-text-title', label: 'Titre', icon: '🏷️' },
     { id: 'add-text-subtitle', label: 'Sous-titre', icon: '📄' },
     { id: 'add-rectangle', label: 'Rectangle', icon: '▭' },
-    { id: 'add-image', label: 'Image', icon: '🖼️' },
-    { id: 'add-line', label: 'Ligne', icon: '━' }
+    { id: 'add-circle', label: 'Cercle', icon: '○' },
+    { id: 'add-line', label: 'Ligne', icon: '━' },
+    { id: 'add-arrow', label: 'Flèche', icon: '→' },
+    { id: 'add-triangle', label: 'Triangle', icon: '△' },
+    { id: 'add-star', label: 'Étoile', icon: '⭐' },
+    { id: 'add-divider', label: 'Séparateur', icon: '━' },
+    { id: 'add-image', label: 'Image', icon: '🖼️' }
   ];
 
   return (

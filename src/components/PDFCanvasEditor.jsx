@@ -14,6 +14,7 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
   const [tool, setTool] = useState('select');
   const [showGrid, setShowGrid] = useState(true);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [previewData, setPreviewData] = useState(null);
 
   const canvasState = useCanvasState({
     initialElements: options.initialElements || [],
@@ -95,11 +96,26 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
           case 'add-rectangle':
             elementType = 'rectangle';
             break;
-          case 'add-image':
-            elementType = 'image';
+          case 'add-circle':
+            elementType = 'shape-circle';
             break;
           case 'add-line':
             elementType = 'line';
+            break;
+          case 'add-arrow':
+            elementType = 'shape-arrow';
+            break;
+          case 'add-triangle':
+            elementType = 'shape-triangle';
+            break;
+          case 'add-star':
+            elementType = 'shape-star';
+            break;
+          case 'add-divider':
+            elementType = 'divider';
+            break;
+          case 'add-image':
+            elementType = 'image';
             break;
           default:
             // Pour les autres outils de la bibliothèque
@@ -186,7 +202,10 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
         <div className="editor-actions">
           <button
             className="btn btn-secondary"
-            onClick={() => setShowPreviewModal(true)}
+            onClick={() => {
+              setPreviewData(canvasState.saveTemplate());
+              setShowPreviewModal(true);
+            }}
           >
             👁️ Aperçu
           </button>
@@ -345,8 +364,11 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
       {/* Modale d'aperçu */}
       <PreviewModal
         isOpen={showPreviewModal}
-        onClose={() => setShowPreviewModal(false)}
-        templateData={canvasState.saveTemplate()}
+        onClose={() => {
+          setShowPreviewModal(false);
+          setPreviewData(null);
+        }}
+        templateData={previewData}
         canvasWidth={canvasState.canvasWidth}
         canvasHeight={canvasState.canvasHeight}
       />
