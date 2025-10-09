@@ -496,7 +496,7 @@ class PDF_Builder_Admin {
      */
     public function template_editor_page() {
         $this->check_admin_permissions();
-        include PDF_BUILDER_PLUGIN_DIR . 'template-editor.php';
+        include PDF_BUILDER_PLUGIN_DIR . 'includes/template-editor.php';
     }
 
     /**
