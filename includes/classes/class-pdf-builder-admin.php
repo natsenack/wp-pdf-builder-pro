@@ -919,7 +919,11 @@ class PDF_Builder_Admin {
      */
     public function ajax_preview_pdf() {
         // LOGGING POUR DÉBOGUER - AVANT TOUT
-        error_log('PDF Builder Preview: ajax_preview_pdf appelée');
+        error_log('PDF Builder Preview: ajax_preview_pdf appelée - DÉBUT');
+
+        // Test simple pour voir si la fonction est appelée
+        wp_send_json_success(array('test' => 'function_called'));
+        return;
 
         $this->check_admin_permissions();
 
