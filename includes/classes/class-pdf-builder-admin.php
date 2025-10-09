@@ -939,6 +939,12 @@ class PDF_Builder_Admin {
                 return;
             }
             error_log('PDF Builder Preview: JSON data = ' . print_r($json_data, true));
+
+            // Pour le routage WordPress AJAX, s'assurer que l'action est dans $_POST
+            if (isset($json_data['action'])) {
+                $_POST['action'] = $json_data['action'];
+                error_log('PDF Builder Preview: Action ajoutée à $_POST: ' . $json_data['action']);
+            }
         }
 
         // Extraire nonce et template_data
