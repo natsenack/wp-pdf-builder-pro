@@ -63,18 +63,21 @@ export const PreviewModal = ({ isOpen, onClose, templateData, canvasWidth, canva
       const jsonString = JSON.stringify(formattedData);
       console.log('PDF Builder Preview: JSON string:', jsonString);
 
-      // Préparer les données pour l'AJAX
-      const formData = new FormData();
-      formData.append('action', 'pdf_builder_pro_preview_pdf');
-      formData.append('nonce', pdfBuilderAjax.nonce);
-      formData.append('template_data', jsonString);
+      // Préparer les données pour l'AJAX avec URLSearchParams
+      const params = new URLSearchParams();
+      params.append('action', 'pdf_builder_pro_preview_pdf');
+      params.append('nonce', pdfBuilderAjax.nonce);
+      params.append('template_data', jsonString);
 
       console.log('PDF Builder Preview: Envoi de la requête AJAX...');
 
       // Faire l'appel AJAX
       const response = await fetch(ajaxUrl, {
         method: 'POST',
-        body: formData
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: params
       });
 
       console.log('PDF Builder Preview: Réponse reçue:', response.status, response.statusText);

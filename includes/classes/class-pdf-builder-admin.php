@@ -19,6 +19,21 @@ class PDF_Builder_Admin {
     private $main;
 
     /**
+     * Flag pour éviter les doublons de menu
+     */
+    private static $menu_added = false;
+
+    /**
+     * Flag pour éviter le rendu multiple de la page éditeur
+     */
+    private static $editor_page_rendered = false;
+
+    /**
+     * Flag pour éviter le rendu multiple de la page admin
+     */
+    private static $admin_page_rendered = false;
+
+    /**
      * Constructeur
      */
     public function __construct($main_instance) {
@@ -92,6 +107,11 @@ class PDF_Builder_Admin {
      * Ajoute le menu d'administration
      */
     public function add_admin_menu() {
+        // Éviter les doublons de menu
+        if (self::$menu_added) {
+            return;
+        }
+        self::$menu_added = true;
         // Menu principal avec icône distinctive
         add_menu_page(
             __('PDF Builder Pro - Gestionnaire de PDF', 'pdf-builder-pro'),
@@ -168,6 +188,12 @@ class PDF_Builder_Admin {
      * Page principale d'administration - Tableau de bord
      */
     public function admin_page() {
+        // Éviter le rendu multiple de la page
+        if (self::$admin_page_rendered) {
+            return;
+        }
+        self::$admin_page_rendered = true;
+
         $this->check_admin_permissions();
 
         // Statistiques de base (simulées pour l'instant)
@@ -507,6 +533,12 @@ class PDF_Builder_Admin {
      * Template Editor page (React/TypeScript)
      */
     public function template_editor_page() {
+        // Éviter le rendu multiple de la page
+        if (self::$editor_page_rendered) {
+            return;
+        }
+        self::$editor_page_rendered = true;
+
         $this->check_admin_permissions();
         include PDF_BUILDER_PLUGIN_DIR . 'includes/template-editor.php';
     }
