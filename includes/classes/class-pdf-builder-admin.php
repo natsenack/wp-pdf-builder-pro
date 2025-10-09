@@ -82,6 +82,7 @@ class PDF_Builder_Admin {
         add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts'], 20);
         add_action('wp_ajax_pdf_builder_pro_generate_pdf', [$this, 'ajax_generate_pdf_from_canvas']);
         add_action('wp_ajax_pdf_builder_preview_test', 'pdf_builder_handle_preview_ajax');
+        add_action('wp_ajax_nopriv_pdf_builder_preview_test', 'pdf_builder_handle_preview_ajax');
         error_log('PDF Builder Admin: AJAX actions registered - using global function');
         // Test if the action is registered
         global $wp_filter;
@@ -3964,10 +3965,12 @@ class PDF_Builder_Admin {
  * Global function to handle AJAX preview requests
  */
 function pdf_builder_handle_preview_ajax() {
-    error_log('PDF Builder Preview: Global function called');
-
+    error_log('PDF Builder Preview: GLOBAL FUNCTION CALLED - START');
+    
     // Test simple pour voir si la fonction est appelée
+    error_log('PDF Builder Preview: About to send test response');
     wp_send_json_success(array('test' => 'global_function_called'));
+    error_log('PDF Builder Preview: Test response sent');
     return;
 
     // Check permissions (basic check)
