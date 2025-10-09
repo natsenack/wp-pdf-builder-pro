@@ -878,10 +878,10 @@ class PDF_Builder_Admin {
         error_log('PDF Builder Preview: $_POST = ' . print_r($_POST, true));
         error_log('PDF Builder Preview: template_data = ' . (isset($_POST['template_data']) ? $_POST['template_data'] : 'NOT SET'));
 
-        // Vérification de sécurité - TEMPORAIREMENT DÉSACTIVÉE POUR DÉBOGUER
-        // if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce')) {
-        //     wp_send_json_error('Sécurité: Nonce invalide');
-        // }
+        // Vérification de sécurité
+        if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce')) {
+            wp_send_json_error('Sécurité: Nonce invalide');
+        }
 
         // Récupérer les données du template
         $template_data = isset($_POST['template_data']) ? $_POST['template_data'] : '';

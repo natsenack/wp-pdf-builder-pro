@@ -66,8 +66,7 @@ export const PreviewModal = ({ isOpen, onClose, templateData, canvasWidth, canva
       // Préparer les données pour l'AJAX
       const formData = new FormData();
       formData.append('action', 'pdf_builder_pro_preview_pdf');
-      // Pour le débogage, on peut essayer sans nonce d'abord
-      // formData.append('nonce', ''); // Temporairement désactivé pour déboguer
+      formData.append('nonce', pdfBuilderAjax.nonce);
       formData.append('template_data', jsonString);
 
       console.log('PDF Builder Preview: Envoi de la requête AJAX...');
