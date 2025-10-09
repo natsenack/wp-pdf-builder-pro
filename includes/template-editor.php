@@ -68,7 +68,16 @@ $template = null; // Temporaire : pas de template chargé
 
         if (window.PDFBuilderPro?.init) {
             console.log('PDF Builder Pro: PDFBuilderPro.init found, calling with pdf-builder-container');
-            window.PDFBuilderPro.init('pdf-builder-container');
+            window.PDFBuilderPro.init('pdf-builder-container', {
+                templateId: null,
+                isNew: true,
+                width: 595,
+                height: 842,
+                zoom: 1,
+                gridSize: 10,
+                snapToGrid: true,
+                maxHistorySize: 50
+            });
             return;
         }
 
