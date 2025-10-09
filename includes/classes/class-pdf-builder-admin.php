@@ -3555,10 +3555,19 @@ class PDF_Builder_Admin {
     public function woocommerce_test_page() {
         $this->check_admin_permissions();
 
-        if (!file_exists(plugin_dir_path(__FILE__) . 'PDF_Builder_WooCommerce_Test.php')) {
-            require_once plugin_dir_path(__FILE__) . 'PDF_Builder_WooCommerce_Test.php';
+        // Inclure le fichier de test s'il existe
+        $test_file = plugin_dir_path(__FILE__) . 'PDF_Builder_WooCommerce_Test.php';
+        if (file_exists($test_file)) {
+            require_once $test_file;
+        } else {
+            wp_die(__('Fichier de test WooCommerce introuvable.', 'pdf-builder-pro'));
         }
 
-        pdf_builder_woocommerce_test_page();
+        // Vérifier que la fonction existe
+        if (function_exists('pdf_builder_woocommerce_test_page')) {
+            pdf_builder_woocommerce_test_page();
+        } else {
+            wp_die(__('Fonction de test WooCommerce introuvable.', 'pdf-builder-pro'));
+        }
     }
 }

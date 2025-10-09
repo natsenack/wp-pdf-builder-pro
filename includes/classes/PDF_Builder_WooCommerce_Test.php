@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Inclure les classes nécessaires
-require_once plugin_dir_path(__FILE__) . 'includes/classes/PDF_Builder_WooCommerce_Data_Provider.php';
+require_once plugin_dir_path(dirname(dirname(__FILE__))) . 'classes/PDF_Builder_WooCommerce_Data_Provider.php';
 
 class PDF_Builder_WooCommerce_Test {
 
