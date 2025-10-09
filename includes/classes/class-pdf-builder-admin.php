@@ -866,7 +866,7 @@ class PDF_Builder_Admin {
             // Charger aussi le script admin pour la gestion de l'interface
             wp_enqueue_script(
                 'pdf-builder-admin-interface',
-                PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-admin.js',
+                PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js',
                 array('jquery'),
                 PDF_BUILDER_PRO_VERSION,
                 true
