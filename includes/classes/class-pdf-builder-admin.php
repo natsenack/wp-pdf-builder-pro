@@ -1150,8 +1150,53 @@ class PDF_Builder_Admin {
     /**
      * Génère du HTML depuis les données du template
      */
-    public function generate_html_from_template_data($template, $order_id = null) {
+    public function generate_html_from_template_data($template, $order_id = null, $custom_styles = null) {
         // Version optimisée avec Flexbox pour de meilleures performances
+
+        // Styles par défaut si aucun style personnalisé n'est fourni
+        $default_styles = [
+            'backgroundColor' => '#f8fafc',
+            'textColor' => '#1a202c',
+            'fontFamily' => '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+            'header' => [
+                'backgroundColor' => '#667eea',
+                'textColor' => '#ffffff',
+                'fontSize' => 16,
+                'fontWeight' => '600',
+                'borderRadius' => 8,
+                'padding' => 12
+            ],
+            'footer' => [
+                'backgroundColor' => '#2d3748',
+                'textColor' => '#e2e8f0',
+                'fontSize' => 14,
+                'fontWeight' => '400',
+                'borderRadius' => 6,
+                'padding' => 10
+            ],
+            'text' => [
+                'backgroundColor' => 'rgba(255,255,255,0.9)',
+                'textColor' => '#1a202c',
+                'fontSize' => 14,
+                'fontWeight' => '400',
+                'borderRadius' => 4,
+                'padding' => 8
+            ],
+            'container' => [
+                'backgroundColor' => 'rgba(102, 126, 234, 0.1)',
+                'textColor' => '#667eea',
+                'fontSize' => 14,
+                'fontWeight' => '400',
+                'borderRadius' => 6,
+                'padding' => 12,
+                'borderStyle' => 'dashed',
+                'borderWidth' => 2,
+                'borderColor' => '#667eea'
+            ]
+        ];
+
+        // Fusionner avec les styles personnalisés
+        $styles = $custom_styles ? array_merge($default_styles, $custom_styles) : $default_styles;
         $html = '<!DOCTYPE html>
 <html>
 <head>
@@ -1160,11 +1205,11 @@ class PDF_Builder_Admin {
     <style>
         * { box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: ' . $styles['fontFamily'] . ';
             margin: 0;
             padding: 20px;
-            background: #f8fafc;
-            color: #1a202c;
+            background: ' . $styles['backgroundColor'] . ';
+            color: ' . $styles['textColor'] . ';
             line-height: 1.5;
         }
         .pdf-page {
@@ -1183,18 +1228,20 @@ class PDF_Builder_Admin {
         }
         .pdf-element.text { background: rgba(255,255,255,0.8); border: 1px solid #e2e8f0; }
         .pdf-element.layout-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            font-weight: 600;
-            text-align: center;
-            border: none;
+            background: linear-gradient(135deg, ' . $styles['header']['backgroundColor'] . ' 0%, ' . $styles['header']['backgroundColor'] . '99 100%) !important;
+            color: ' . $styles['header']['textColor'] . ' !important;
+            font-size: ' . $styles['header']['fontSize'] . 'px !important;
+            font-weight: ' . $styles['header']['fontWeight'] . ' !important;
+            border-radius: ' . $styles['header']['borderRadius'] . 'px !important;
+            padding: ' . $styles['header']['padding'] . 'px !important;
         }
         .pdf-element.layout-footer {
-            background: #2d3748;
-            color: #e2e8f0;
-            font-size: 0.875rem;
-            text-align: center;
-            border: none;
+            background: ' . $styles['footer']['backgroundColor'] . ' !important;
+            color: ' . $styles['footer']['textColor'] . ' !important;
+            font-size: ' . $styles['footer']['fontSize'] . 'px !important;
+            font-weight: ' . $styles['footer']['fontWeight'] . ' !important;
+            border-radius: ' . $styles['footer']['borderRadius'] . 'px !important;
+            padding: ' . $styles['footer']['padding'] . 'px !important;
         }
         .pdf-element.layout-sidebar {
             background: #edf2f7;
@@ -1207,14 +1254,18 @@ class PDF_Builder_Admin {
             font-weight: 500;
         }
         .pdf-element.layout-container {
-            background: rgba(102, 126, 234, 0.1);
-            border: 2px dashed #667eea;
+            background: ' . $styles['container']['backgroundColor'] . ' !important;
+            color: ' . $styles['container']['textColor'] . ' !important;
+            font-size: ' . $styles['container']['fontSize'] . 'px !important;
+            font-weight: ' . $styles['container']['fontWeight'] . ' !important;
+            border-radius: ' . $styles['container']['borderRadius'] . 'px !important;
+            padding: ' . $styles['container']['padding'] . 'px !important;
+            border: ' . $styles['container']['borderWidth'] . 'px ' . $styles['container']['borderStyle'] . ' ' . $styles['container']['borderColor'] . ' !important;
             min-height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-style: italic;
-            color: #667eea;
         }
         .pdf-element.rectangle {
             background: #e2e8f0;
@@ -4162,7 +4213,8 @@ function pdf_builder_handle_preview_ajax() {
         }
 
         // Générer l'HTML d'aperçu
-        $html_content = $admin->generate_html_from_template_data($template);
+        $custom_styles = isset($template['customStyles']) ? $template['customStyles'] : null;
+        $html_content = $admin->generate_html_from_template_data($template, null, $custom_styles);
 
         // Utiliser les dimensions de la première page ou les valeurs par défaut
         $width = 595; // A4 width par défaut
