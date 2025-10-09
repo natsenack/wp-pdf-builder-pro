@@ -81,8 +81,15 @@ class PDF_Builder_Admin {
         add_action('admin_menu', [$this, 'add_admin_menu']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts'], 20);
         add_action('wp_ajax_pdf_builder_pro_generate_pdf', [$this, 'ajax_generate_pdf_from_canvas']);
-        add_action('wp_ajax_pdf_builder_preview', [$this, 'ajax_preview_pdf']);
-        error_log('PDF Builder Admin: AJAX actions registered');
+        add_action('wp_ajax_pdf_builder_preview', 'pdf_builder_handle_preview_ajax');
+        error_log('PDF Builder Admin: AJAX actions registered - using global function');
+        // Test if the action is registered
+        global $wp_filter;
+        if (isset($wp_filter['wp_ajax_pdf_builder_preview'])) {
+            error_log('PDF Builder Admin: wp_ajax_pdf_builder_preview action is registered in wp_filter');
+        } else {
+            error_log('PDF Builder Admin: wp_ajax_pdf_builder_preview action is NOT registered in wp_filter');
+        }
         add_action('wp_ajax_pdf_builder_pro_download_pdf', [$this, 'ajax_download_pdf']);
         add_action('wp_ajax_pdf_builder_pro_save_template', [$this, 'ajax_save_template']);
         add_action('wp_ajax_pdf_builder_pro_load_template', [$this, 'ajax_load_template']);
@@ -918,70 +925,8 @@ class PDF_Builder_Admin {
      * AJAX - Aperçu du PDF
      */
     public function ajax_preview_pdf() {
-        // LOGGING POUR DÉBOGUER - AVANT TOUT
-        error_log('PDF Builder Preview: ajax_preview_pdf appelée - DÉBUT');
-
-        // Test simple pour voir si la fonction est appelée
-        wp_send_json_success(array('test' => 'function_called'));
-        return;
-
-        $this->check_admin_permissions();
-
-        // LOGGING POUR DÉBOGUER
-        error_log('PDF Builder Preview: Requête reçue');
-        error_log('PDF Builder Preview: $_POST = ' . print_r($_POST, true));
-
-        // Récupérer les données du POST (FormData)
-        $nonce = isset($_POST['nonce']) ? $_POST['nonce'] : '';
-        $template_data = isset($_POST['template_data']) ? $_POST['template_data'] : '';
-
-        error_log('PDF Builder Preview: nonce = ' . $nonce);
-        error_log('PDF Builder Preview: template_data = ' . $template_data);
-
-        // Vérification de sécurité
-        if (!wp_verify_nonce($nonce, 'pdf_builder_nonce')) {
-            error_log('PDF Builder Preview: Nonce invalide');
-            wp_send_json_error('Sécurité: Nonce invalide');
-        }
-
-        // Récupérer les données du template
-        if (empty($template_data)) {
-            error_log('PDF Builder Preview: template_data vide');
-            wp_send_json_error('Aucune donnée template reçue');
-        }
-
-        try {
-            // Décoder les données JSON
-            $template = json_decode($template_data, true);
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                wp_send_json_error('Données template invalides: ' . json_last_error_msg());
-                return;
-            }
-
-            // Générer l'HTML d'aperçu
-            $html_content = $this->generate_html_from_template_data($template);
-
-            // Utiliser les dimensions de la première page ou les valeurs par défaut
-            $width = 595; // A4 width par défaut
-            $height = 842; // A4 height par défaut
-
-            if (isset($template['pages']) && is_array($template['pages']) && !empty($template['pages'])) {
-                $firstPage = $template['pages'][0];
-                if (isset($firstPage['size'])) {
-                    $width = $firstPage['size']['width'] ?? 595;
-                    $height = $firstPage['size']['height'] ?? 842;
-                }
-            }
-
-            wp_send_json_success(array(
-                'html' => $html_content,
-                'width' => $width,
-                'height' => $height
-            ));
-
-        } catch (Exception $e) {
-            wp_send_json_error('Erreur: ' . $e->getMessage());
-        }
+        // This method is now handled by the global function
+        // Keeping it for compatibility
     }
 
     /**
@@ -4012,5 +3957,91 @@ class PDF_Builder_Admin {
         } else {
             wp_die(__('Fonction de test WooCommerce introuvable.', 'pdf-builder-pro'));
         }
+    }
+}
+
+/**
+ * Global function to handle AJAX preview requests
+ */
+function pdf_builder_handle_preview_ajax() {
+    error_log('PDF Builder Preview: Global function called');
+
+    // Test simple pour voir si la fonction est appelée
+    wp_send_json_success(array('test' => 'global_function_called'));
+    return;
+
+    // Check permissions (basic check)
+    if (!is_user_logged_in() || !current_user_can('read')) {
+        error_log('PDF Builder Preview: User not logged in or no permissions');
+        wp_send_json_error('Accès non autorisé');
+        return;
+    }
+
+    // LOGGING POUR DÉBOGUER
+    error_log('PDF Builder Preview: Requête reçue');
+    error_log('PDF Builder Preview: $_POST = ' . print_r($_POST, true));
+
+    // Récupérer les données du POST (FormData)
+    $nonce = isset($_POST['nonce']) ? $_POST['nonce'] : '';
+    $template_data = isset($_POST['template_data']) ? $_POST['template_data'] : '';
+
+    error_log('PDF Builder Preview: nonce = ' . $nonce);
+    error_log('PDF Builder Preview: template_data = ' . $template_data);
+
+    // Vérification de sécurité
+    if (!wp_verify_nonce($nonce, 'pdf_builder_nonce')) {
+        error_log('PDF Builder Preview: Nonce invalide');
+        wp_send_json_error('Sécurité: Nonce invalide');
+        return;
+    }
+
+    // Récupérer les données du template
+    if (empty($template_data)) {
+        error_log('PDF Builder Preview: template_data vide');
+        wp_send_json_error('Aucune donnée template reçue');
+        return;
+    }
+
+    try {
+        // Décoder les données JSON
+        $template = json_decode($template_data, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log('PDF Builder Preview: JSON decode error: ' . json_last_error_msg());
+            wp_send_json_error('Données template invalides: ' . json_last_error_msg());
+            return;
+        }
+
+        // Get the admin instance to access methods
+        $admin = PDF_Builder_Admin::getInstance();
+        if (!$admin) {
+            error_log('PDF Builder Preview: Could not get admin instance');
+            wp_send_json_error('Erreur interne');
+            return;
+        }
+
+        // Générer l'HTML d'aperçu
+        $html_content = $admin->generate_html_from_template_data($template);
+
+        // Utiliser les dimensions de la première page ou les valeurs par défaut
+        $width = 595; // A4 width par défaut
+        $height = 842; // A4 height par défaut
+
+        if (isset($template['pages']) && is_array($template['pages']) && !empty($template['pages'])) {
+            $firstPage = $template['pages'][0];
+            if (isset($firstPage['size'])) {
+                $width = $firstPage['size']['width'] ?? 595;
+                $height = $firstPage['size']['height'] ?? 842;
+            }
+        }
+
+        wp_send_json_success(array(
+            'html' => $html_content,
+            'width' => $width,
+            'height' => $height
+        ));
+
+    } catch (Exception $e) {
+        error_log('PDF Builder Preview: Exception: ' . $e->getMessage());
+        wp_send_json_error('Erreur: ' . $e->getMessage());
     }
 }
