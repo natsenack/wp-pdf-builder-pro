@@ -1150,7 +1150,7 @@ class PDF_Builder_Admin {
     /**
      * Génère du HTML depuis les données du template
      */
-    private function generate_html_from_template_data($template, $order_id = null) {
+    public function generate_html_from_template_data($template, $order_id = null) {
         $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>PDF Preview</title>';
 
         // Gestion des marges d'impression - utiliser la première page
