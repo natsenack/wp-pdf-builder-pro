@@ -16,8 +16,6 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
   // Synchroniser les propriétés locales avec l'élément sélectionné
   useEffect(() => {
     if (selectedElement) {
-      console.log('🔄 Syncing localProperties with selectedElement:', selectedElement);
-      console.log('🔄 selectedElement.columns:', selectedElement.columns);
       setLocalProperties({ ...selectedElement });
     } else {
       setLocalProperties({});
@@ -28,8 +26,6 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
   const handlePropertyChange = useCallback((elementId, property, value) => {
     // Validation des valeurs selon le type de propriété
     const validatedValue = validatePropertyValue(property, value);
-
-    console.log('🔧 useElementCustomization handlePropertyChange:', elementId, property, '=', validatedValue);
 
     // Mettre à jour l'état local immédiatement pour l'UI
     setLocalProperties(prev => {
@@ -57,7 +53,6 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
         newProperties = { ...prev, [property]: validatedValue };
       }
       
-      console.log('🔧 New localProperties after update:', newProperties);
       return newProperties;
     });
 

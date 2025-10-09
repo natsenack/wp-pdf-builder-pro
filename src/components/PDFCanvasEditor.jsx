@@ -144,29 +144,54 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
 
   // Gestionnaire pour les changements de propriétés
   const handlePropertyChange = useCallback((elementId, property, value) => {
-    console.log('🔧 PDFCanvasEditor handlePropertyChange:', elementId, property, '=', value);
+    // Récupérer l'élément actuel pour connaître les valeurs existantes
+    const currentElement = canvasState.getElement(elementId);
+    if (!currentElement) return;
     
     // Gérer les propriétés imbriquées (ex: "columns.image" -> { columns: { image: value } })
     const updates = {};
     if (property.includes('.')) {
       // Fonction récursive pour mettre à jour les propriétés imbriquées
-      const updateNestedProperty = (obj, path, val) => {
+      // en préservant toutes les valeurs existantes
+      const updateNestedProperty = (existingObj, path, val) => {
         const keys = path.split('.');
         const lastKey = keys.pop();
-        const target = keys.reduce((current, key) => {
+        
+        // Commencer avec une copie complète de l'objet existant
+        const result = { ...existingObj };
+        let current = result;
+        
+        // Naviguer jusqu'à l'avant-dernier niveau en préservant les objets existants
+        for (let i = 0; i < keys.length - 1; i++) {
+          const key = keys[i];
           if (!current[key] || typeof current[key] !== 'object') {
             current[key] = {};
           } else {
-            current[key] = { ...current[key] }; // Créer une copie pour éviter de modifier l'original
+            current[key] = { ...current[key] };
           }
-          return current[key];
-        }, obj);
-        target[lastKey] = val;
-        return obj;
+          current = current[key];
+        }
+        
+        // Pour le dernier niveau (avant la propriété finale)
+        const parentKey = keys[keys.length - 1];
+        if (parentKey) {
+          if (!current[parentKey] || typeof current[parentKey] !== 'object') {
+            current[parentKey] = {};
+          } else {
+            current[parentKey] = { ...current[parentKey] };
+          }
+          current[parentKey][lastKey] = val;
+        } else {
+          // Propriété directement sur l'objet racine
+          current[lastKey] = val;
+        }
+        
+        return result;
       };
 
-      updateNestedProperty(updates, property, value);
-      console.log('🔧 Updates object:', updates);
+      // Créer l'update en préservant toutes les propriétés existantes
+      const fullUpdate = updateNestedProperty(currentElement, property, value);
+      Object.assign(updates, fullUpdate);
     } else {
       updates[property] = value;
     }
