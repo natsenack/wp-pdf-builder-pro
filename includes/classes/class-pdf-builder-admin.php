@@ -3996,7 +3996,7 @@ function pdf_builder_handle_preview_ajax() {
     try {
         // Décoder les données JSON
         error_log('PDF Builder Preview: Tentative de décodage JSON');
-        $template = json_decode($template_data, true);
+        $template = json_decode(stripslashes($template_data), true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             $error_msg = json_last_error_msg();
