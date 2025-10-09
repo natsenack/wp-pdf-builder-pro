@@ -214,7 +214,7 @@
 
 .toolbar-section:first-child {
   flex: 0 0 auto; /* Outils - taille fixe */
-  max-width: 250px;
+  max-width: 450px;
 }
 
 .toolbar-section:nth-child(2) {
@@ -598,7 +598,7 @@
 }
 
 .element-category {
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 
 .category-header {
