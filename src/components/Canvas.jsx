@@ -202,6 +202,8 @@ export const Canvas = ({
         onElementSelect(clickedElement.id);
       }
 
+      console.log('Starting drag for element:', clickedElement.id);
+      
       setIsDragging(true);
       setDraggedElement(clickedElement);
       setDragOffset({
@@ -215,6 +217,7 @@ export const Canvas = ({
       };
 
       const handleGlobalMouseUp = () => {
+        console.log('Ending drag for element:', clickedElement.id);
         setIsDragging(false);
         setDraggedElement(null);
         setDragOffset({ x: 0, y: 0 });
@@ -362,6 +365,21 @@ export const Canvas = ({
         onContextMenu={handleContextMenuEvent}
         onMouseDown={handleMouseDown}
         onMouseLeave={handleMouseLeave}
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => {
+          e.preventDefault();
+          // Forward to parent drop handler if available
+          if (onElementUpdate) {
+            // Handle drop of existing elements
+            const elementId = e.dataTransfer.getData('text/plain');
+            if (elementId) {
+              const rect = e.currentTarget.getBoundingClientRect();
+              const dropX = (e.clientX - rect.left) / zoom;
+              const dropY = (e.clientY - rect.top) / zoom;
+              onElementUpdate(elementId, { x: dropX, y: dropY });
+            }
+          }
+        }}
       />
     </div>
   );

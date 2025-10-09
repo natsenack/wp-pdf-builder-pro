@@ -56,6 +56,9 @@ $template = null; // Temporaire : pas de template chargé
 (function() {
     'use strict';
 
+    // Ajouter la classe pour masquer les éléments WordPress
+    document.body.classList.add('pdf-builder-active');
+
     console.log('PDF Builder Pro: Template editor script loaded');
 
     // Initialisation optimisée avec polling intelligent

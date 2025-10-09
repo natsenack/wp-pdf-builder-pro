@@ -2,6 +2,41 @@
 /* PDF Builder Pro - React/TypeScript Styles */
 /* Generated: 2025-10-04T15:09:27.425Z */
 
+/* Styles pour éviter les conflits avec WordPress */
+.pdf-builder-container,
+.pdf-canvas-editor {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  z-index: 10000 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #f8f9fa !important;
+}
+
+/* Masquer complètement les éléments WordPress qui pourraient interférer */
+body.pdf-builder-active #wpadminbar,
+body.pdf-builder-active #adminmenumain,
+body.pdf-builder-active #wpfooter,
+body.pdf-builder-active .notice,
+body.pdf-builder-active .update-nag,
+body.pdf-builder-active .wp-admin #wpcontent,
+body.pdf-builder-active .wp-admin #wpbody {
+  display: none !important;
+}
+
+/* S'assurer que le body prend toute la hauteur */
+body.pdf-builder-active {
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  background: #f8f9fa !important;
+}
+
 .pdf-builder-container {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   height: 100vh;

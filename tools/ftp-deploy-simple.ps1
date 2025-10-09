@@ -82,10 +82,14 @@ function Send-File {
 # Upload des fichiers
 $uploaded = 0
 $total = $files.Count
+$startTime = Get-Date
+$uploadedBytes = 0
 
 foreach ($file in $files) {
     $relPath = $file.FullName.Substring($projectRoot.Length + 1).Replace('\', '/')
     $remoteFile = "$remotePath/$relPath"
+    $fileName = [System.IO.Path]::GetFileName($relPath)
+    $fileSize = $file.Length
 
     # Créer les répertoires si nécessaire (FTP ne les crée pas automatiquement)
     $remoteDir = [System.IO.Path]::GetDirectoryName($remoteFile).Replace('\', '/')
@@ -95,8 +99,18 @@ foreach ($file in $files) {
     }
 
     Send-File -localFile $file.FullName -remoteFile $remoteFile
+    
     $uploaded++
-    Write-Progress -Activity "Upload en cours" -Status "$uploaded/$total fichiers" -PercentComplete (($uploaded / $total) * 100)
+    $uploadedBytes += $fileSize
+    $elapsed = (Get-Date) - $startTime
+    $avgSpeed = if ($elapsed.TotalSeconds -gt 0) { $uploadedBytes / $elapsed.TotalSeconds } else { 0 }
+    $remainingFiles = $total - $uploaded
+    $estimatedTimeRemaining = if ($avgSpeed -gt 0) { ($remainingFiles * ($uploadedBytes / $uploaded)) / $avgSpeed } else { 0 }
+    
+    $progressPercent = [math]::Round(($uploaded / $total) * 100, 1)
+    $status = "$uploaded/$total fichiers | $fileName | $([math]::Round($avgSpeed / 1024, 1)) KB/s | ~$([math]::Round($estimatedTimeRemaining / 60, 1)) min restantes"
+    
+    Write-Progress -Activity "🚀 Déploiement FTP - $progressPercent% terminé" -Status $status -PercentComplete $progressPercent
 }
 
 Write-Host "🎉 Déploiement terminé ! $uploaded fichiers uploadés." -ForegroundColor Green

@@ -6,6 +6,29 @@
   height: 100vh;
   background-color: #f8f9fa;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  position: relative;
+  z-index: 9999; /* S'assurer que le builder apparaît au-dessus des éléments WordPress */
+}
+
+/* Corriger les conflits avec l'admin bar WordPress */
+body.wp-admin .pdf-builder-app {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+/* Masquer ou repositionner les éléments WordPress qui interfèrent */
+body.wp-admin #wpadminbar,
+body.wp-admin #adminmenumain,
+body.wp-admin #wpfooter,
+body.wp-admin .notice,
+body.wp-admin .update-nag {
+  display: none !important;
+}
+
+/* S'assurer que le contenu du builder prend toute la hauteur disponible */
+.pdf-builder-app .pdf-canvas-editor {
+  height: 100vh;
+  overflow: hidden;
 }
 
 .pdf-builder-header {

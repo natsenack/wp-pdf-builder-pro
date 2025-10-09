@@ -91,6 +91,8 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
         const adjustedX = dropX / canvasState.zoom.zoom;
         const adjustedY = dropY / canvasState.zoom.zoom;
         
+        console.log('Drop element:', data.elementType, 'at', adjustedX, adjustedY);
+        
         canvasState.addElement(data.elementType, {
           x: Math.max(0, adjustedX - 50), // Centrer l'élément sur le point de drop
           y: Math.max(0, adjustedY - 25),
