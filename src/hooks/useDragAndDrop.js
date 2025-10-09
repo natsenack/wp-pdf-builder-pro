@@ -6,7 +6,9 @@ export const useDragAndDrop = ({
   snapToGrid = true,
   gridSize = 10,
   canvasRect = null,
-  zoom = 1
+  zoom = 1,
+  canvasWidth = 595,
+  canvasHeight = 842
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -30,7 +32,6 @@ export const useDragAndDrop = ({
   }, []);
 
   const handleMouseDown = useCallback((e, elementId, elementRect, canvasRect = null, zoomLevel = 1) => {
-    console.log('useDragAndDrop handleMouseDown', elementId, elementRect, canvasRect, zoomLevel);
     if (e.button !== 0) return; // Only left mouse button
 
     e.preventDefault();
@@ -40,21 +41,15 @@ export const useDragAndDrop = ({
     const currentCanvasRect = canvasRect || { left: 0, top: 0 };
     const currentZoom = zoomLevel || zoom || 1;
 
-    console.log('Current canvas rect:', currentCanvasRect, 'Current zoom:', currentZoom);
-
     const startX = (e.clientX - currentCanvasRect.left) / currentZoom;
     const startY = (e.clientY - currentCanvasRect.top) / currentZoom;
     let lastMouseX = startX;
     let lastMouseY = startY;
 
-    console.log('Start position (relative to canvas):', startX, startY);
-
     dragStartPos.current = {
       x: startX - elementRect.left,
       y: startY - elementRect.top
     };
-
-    console.log('Drag start offset:', dragStartPos.current);
 
     const handleMouseMove = (moveEvent) => {
       const mouseX = (moveEvent.clientX - currentCanvasRect.left) / currentZoom;
@@ -65,10 +60,8 @@ export const useDragAndDrop = ({
       const deltaX = mouseX - startX;
       const deltaY = mouseY - startY;
 
-      const newX = snapToGridValue(elementRect.left + deltaX);
-      const newY = snapToGridValue(elementRect.top + deltaY);
-
-      console.log('Mouse move - Delta:', deltaX, deltaY, 'New position:', newX, newY);
+      const newX = Math.max(0, Math.min(canvasWidth - elementRect.width, snapToGridValue(elementRect.left + deltaX)));
+      const newY = Math.max(0, Math.min(canvasHeight - elementRect.height, snapToGridValue(elementRect.top + deltaY)));
 
       setDragOffset({ x: newX - elementRect.left, y: newY - elementRect.top });
 
@@ -78,14 +71,12 @@ export const useDragAndDrop = ({
     };
 
     const handleMouseUp = () => {
-      console.log('Mouse up - Final position:', lastMouseX, lastMouseY);
       setIsDragging(false);
       setDragOffset({ x: 0, y: 0 });
 
       if (onElementDrop) {
-        const finalX = snapToGridValue(elementRect.left + (lastMouseX - startX));
-        const finalY = snapToGridValue(elementRect.top + (lastMouseY - startY));
-        console.log('Final drop position:', finalX, finalY);
+        const finalX = Math.max(0, Math.min(canvasWidth - elementRect.width, snapToGridValue(elementRect.left + (lastMouseX - startX))));
+        const finalY = Math.max(0, Math.min(canvasHeight - elementRect.height, snapToGridValue(elementRect.top + (lastMouseY - startY))));
         onElementDrop(elementId, { x: finalX, y: finalY });
       }
 
@@ -100,7 +91,7 @@ export const useDragAndDrop = ({
 
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
-  }, [snapToGridValue, onElementMove, onElementDrop, zoom]);
+  }, [snapToGridValue, onElementMove, onElementDrop, zoom, canvasWidth, canvasHeight]);
 
   const handleDragStart = useCallback((e, elementId, elementRect) => {
     e.dataTransfer.setData('text/plain', elementId);
@@ -126,8 +117,8 @@ export const useDragAndDrop = ({
     const dropX = e.clientX - canvasRect.left - dragStartPos.current.x;
     const dropY = e.clientY - canvasRect.top - dragStartPos.current.y;
 
-    const snappedX = snapToGridValue(dropX);
-    const snappedY = snapToGridValue(dropY);
+    const snappedX = Math.max(0, Math.min(canvasWidth - 50, snapToGridValue(dropX))); // Assuming element width 50
+    const snappedY = Math.max(0, Math.min(canvasHeight - 25, snapToGridValue(dropY))); // Assuming element height 25
 
     if (onElementDrop) {
       onElementDrop(elementId, { x: snappedX, y: snappedY });

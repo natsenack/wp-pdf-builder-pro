@@ -101,7 +101,9 @@ export const WooCommerceElement = ({
   onSelect,
   onUpdate,
   dragAndDrop,
-  zoom = 1
+  zoom = 1,
+  canvasWidth,
+  canvasHeight
 }) => {
   const elementRef = useRef(null);
 
@@ -115,7 +117,9 @@ export const WooCommerceElement = ({
       });
     },
     snapToGrid: true,
-    gridSize: 10
+    gridSize: 10,
+    canvasWidth,
+    canvasHeight
   });
 
   const handleMouseDown = (e) => {

@@ -33,7 +33,9 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
       canvasState.updateElement(elementId, position);
     },
     canvasRect: canvasRef.current?.getBoundingClientRect(),
-    zoom: canvasState.zoom.zoom
+    zoom: canvasState.zoom.zoom,
+    canvasWidth: canvasState.canvasWidth,
+    canvasHeight: canvasState.canvasHeight
   });
 
   // Gestion des raccourcis clavier
@@ -56,7 +58,6 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
 
   // Gestionnaire pour la sélection d'élément
   const handleElementSelect = useCallback((elementId) => {
-    console.log('handleElementSelect', elementId);
     canvasState.selection.selectElement(elementId);
   }, [canvasState.selection]);
 
@@ -210,7 +211,6 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
                 {canvasState.elements
                   .filter(el => !el.type.startsWith('woocommerce-'))
                   .map(element => {
-                    console.log('Rendering element:', element.id, element.type, element.x, element.y, element.width, element.height);
                     return (
                       <CanvasElement
                         key={element.id}
@@ -219,6 +219,8 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
                         zoom={1} // Le zoom est géré au niveau du wrapper
                         snapToGrid={true}
                         gridSize={10}
+                        canvasWidth={canvasState.canvasWidth}
+                        canvasHeight={canvasState.canvasHeight}
                         onSelect={() => handleElementSelect(element.id)}
                         onUpdate={(updates) => canvasState.updateElement(element.id, updates)}
                         onRemove={() => canvasState.deleteElement(element.id)}
@@ -240,6 +242,8 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
                       onUpdate={canvasState.updateElement}
                       dragAndDrop={dragAndDrop}
                       zoom={1} // Le zoom est géré au niveau du wrapper
+                      canvasWidth={canvasState.canvasWidth}
+                      canvasHeight={canvasState.canvasHeight}
                     />
                   ))}
               </div>

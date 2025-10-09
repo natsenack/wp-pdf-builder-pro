@@ -7,7 +7,9 @@ export const useResize = ({
   minWidth = 20,
   minHeight = 20,
   zoom = 1,
-  canvasRect = null
+  canvasRect = null,
+  canvasWidth = 595,
+  canvasHeight = 842
 }) => {
   const [isResizing, setIsResizing] = useState(false);
   const [resizeHandle, setResizeHandle] = useState(null);
@@ -20,7 +22,6 @@ export const useResize = ({
   }, [snapToGrid, gridSize]);
 
   const handleResizeStart = useCallback((e, handle, elementRect, canvasRectParam = null, zoomLevel = 1) => {
-    console.log('useResize handleResizeStart', handle, elementRect, canvasRectParam, zoomLevel);
     e.preventDefault();
     e.stopPropagation();
 
@@ -36,13 +37,11 @@ export const useResize = ({
     };
     originalRect.current = { ...elementRect };
 
-    console.log('Resize start pos adjusted:', resizeStartPos.current);
-
     const handleMouseMove = (moveEvent) => {
-      const deltaX = moveEvent.clientX - resizeStartPos.current.x;
-      const deltaY = moveEvent.clientY - resizeStartPos.current.y;
-
-      console.log('Resize move - Delta:', deltaX, deltaY, 'Handle:', handle);
+      const mouseX = (moveEvent.clientX - currentCanvasRect.left) / currentZoom;
+      const mouseY = (moveEvent.clientY - currentCanvasRect.top) / currentZoom;
+      const deltaX = mouseX - resizeStartPos.current.x;
+      const deltaY = mouseY - resizeStartPos.current.y;
 
       let newRect = { ...originalRect.current };
 
@@ -108,8 +107,35 @@ export const useResize = ({
         newRect.height = minHeight;
       }
 
+      // Appliquer les contraintes du canvas
+      if (newRect.x < 0) {
+        newRect.x = 0;
+        if (handle.includes('w')) {
+          newRect.width = originalRect.current.x + originalRect.current.width;
+        }
+      }
+      if (newRect.y < 0) {
+        newRect.y = 0;
+        if (handle.includes('n')) {
+          newRect.height = originalRect.current.y + originalRect.current.height;
+        }
+      }
+      if (newRect.x + newRect.width > canvasWidth) {
+        if (handle.includes('e')) {
+          newRect.width = canvasWidth - newRect.x;
+        } else {
+          newRect.x = canvasWidth - newRect.width;
+        }
+      }
+      if (newRect.y + newRect.height > canvasHeight) {
+        if (handle.includes('s')) {
+          newRect.height = canvasHeight - newRect.y;
+        } else {
+          newRect.y = canvasHeight - newRect.height;
+        }
+      }
+
       if (onElementResize) {
-        console.log('Calling onElementResize with:', newRect);
         onElementResize(newRect);
       }
     };
@@ -124,7 +150,7 @@ export const useResize = ({
 
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
-  }, [snapToGridValue, minWidth, minHeight, onElementResize, zoom, canvasRect]);
+  }, [snapToGridValue, minWidth, minHeight, onElementResize, zoom, canvasRect, canvasWidth, canvasHeight]);
 
   return {
     isResizing,

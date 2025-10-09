@@ -7,6 +7,8 @@ export const CanvasElement = ({
   zoom,
   snapToGrid,
   gridSize,
+  canvasWidth,
+  canvasHeight,
   onSelect,
   onUpdate,
   onRemove,
@@ -25,7 +27,9 @@ export const CanvasElement = ({
       });
     },
     snapToGrid,
-    gridSize
+    gridSize,
+    canvasWidth,
+    canvasHeight
   });
 
   // Gestionnaire de clic sur l'élément
