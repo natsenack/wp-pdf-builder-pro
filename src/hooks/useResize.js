@@ -5,7 +5,9 @@ export const useResize = ({
   snapToGrid = true,
   gridSize = 10,
   minWidth = 20,
-  minHeight = 20
+  minHeight = 20,
+  zoom = 1,
+  canvasRect = null
 }) => {
   const [isResizing, setIsResizing] = useState(false);
   const [resizeHandle, setResizeHandle] = useState(null);
@@ -17,16 +19,24 @@ export const useResize = ({
     return Math.round(value / gridSize) * gridSize;
   }, [snapToGrid, gridSize]);
 
-  const handleResizeStart = useCallback((e, handle, elementRect) => {
-    console.log('useResize handleResizeStart', handle, elementRect);
+  const handleResizeStart = useCallback((e, handle, elementRect, canvasRectParam = null, zoomLevel = 1) => {
+    console.log('useResize handleResizeStart', handle, elementRect, canvasRectParam, zoomLevel);
     e.preventDefault();
     e.stopPropagation();
 
     setIsResizing(true);
     setResizeHandle(handle);
 
-    resizeStartPos.current = { x: e.clientX, y: e.clientY };
+    // Ajuster les coordonnées pour le zoom
+    const currentCanvasRect = canvasRectParam || canvasRect || { left: 0, top: 0 };
+    const currentZoom = zoomLevel || zoom || 1;
+    resizeStartPos.current = {
+      x: (e.clientX - currentCanvasRect.left) / currentZoom,
+      y: (e.clientY - currentCanvasRect.top) / currentZoom
+    };
     originalRect.current = { ...elementRect };
+
+    console.log('Resize start pos adjusted:', resizeStartPos.current);
 
     const handleMouseMove = (moveEvent) => {
       const deltaX = moveEvent.clientX - resizeStartPos.current.x;
@@ -114,7 +124,7 @@ export const useResize = ({
 
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
-  }, [snapToGridValue, minWidth, minHeight, onElementResize]);
+  }, [snapToGridValue, minWidth, minHeight, onElementResize, zoom, canvasRect]);
 
   return {
     isResizing,

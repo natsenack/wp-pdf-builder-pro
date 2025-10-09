@@ -89,12 +89,14 @@ export const CanvasElement = ({
 
     if (clickedHandle) {
       console.log('Clicked handle:', clickedHandle.name);
+      const canvas = elementRef.current.closest('.canvas-zoom-wrapper');
+      const canvasRect = canvas.getBoundingClientRect();
       resize.handleResizeStart(e, clickedHandle.name, {
-        left: element.x,
-        top: element.y,
+        x: element.x,
+        y: element.y,
         width: element.width,
         height: element.height
-      });
+      }, canvasRect, zoom);
     } else {
       console.log('Starting drag for element:', element.id);
       // Démarrer le drag avec les coordonnées relatives au canvas

@@ -158,7 +158,7 @@ export const WooCommerceElement = ({
           y: element.y,
           width: element.width,
           height: element.height
-        });
+        }, canvasRect, zoom);
         return;
       }
     }
