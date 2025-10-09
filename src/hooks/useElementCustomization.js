@@ -29,9 +29,6 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
 
     // Mettre à jour l'état local immédiatement pour l'UI
     setLocalProperties(prev => {
-      console.log('🔧 Updating localProperties for:', property, '=', validatedValue);
-      console.log('🔧 Previous state:', prev);
-      
       if (property.includes('.')) {
         // Gérer les propriétés imbriquées (ex: "columns.image")
         const updateNestedProperty = (obj, path, value) => {
@@ -51,13 +48,9 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
 
         const newProperties = { ...prev };
         updateNestedProperty(newProperties, property, validatedValue);
-        
-        console.log('🔧 New state:', newProperties);
         return newProperties;
       } else {
-        const newProps = { ...prev, [property]: validatedValue };
-        console.log('🔧 New state (simple):', newProps);
-        return newProps;
+        return { ...prev, [property]: validatedValue };
       }
     });
 
