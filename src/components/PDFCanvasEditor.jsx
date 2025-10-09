@@ -8,10 +8,12 @@ import { ContextMenu } from './ContextMenu';
 import { WooCommerceElement } from './WooCommerceElements';
 import { useCanvasState } from '../hooks/useCanvasState';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
+import { PreviewModal } from './PreviewModal';
 
 export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
   const [tool, setTool] = useState('select');
   const [showGrid, setShowGrid] = useState(true);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
 
   const canvasState = useCanvasState({
     initialElements: options.initialElements || [],
@@ -129,7 +131,7 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
         <div className="editor-actions">
           <button
             className="btn btn-secondary"
-            onClick={() => onPreview(canvasState.saveTemplate())}
+            onClick={() => setShowPreviewModal(true)}
           >
             👁️ Aperçu
           </button>
@@ -284,6 +286,15 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
           </>
         )}
       </div>
+
+      {/* Modale d'aperçu */}
+      <PreviewModal
+        isOpen={showPreviewModal}
+        onClose={() => setShowPreviewModal(false)}
+        templateData={canvasState.saveTemplate()}
+        canvasWidth={canvasState.canvasWidth}
+        canvasHeight={canvasState.canvasHeight}
+      />
     </div>
   );
 };
