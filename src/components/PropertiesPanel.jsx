@@ -662,7 +662,10 @@ export const PropertiesPanel = ({
                         <input
                           type="checkbox"
                           checked={localProperties.columns?.[key] ?? true}
-                          onChange={(e) => handlePropertyChange(selectedElement.id, `columns.${key}`, e.target.checked)}
+                          onChange={(e) => {
+                            console.log('📊 Checkbox change:', { key, value: e.target.checked, property: `columns.${key}` });
+                            handlePropertyChange(selectedElement.id, `columns.${key}`, e.target.checked);
+                          }}
                         />
                         {label}
                       </label>
