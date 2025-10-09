@@ -129,6 +129,7 @@
   flex-direction: column;
   box-shadow: inset -1px 0 0 var(--border-color);
   transition: width 0.2s ease;
+  position: relative;
 }
 
 .left-sidebar {
@@ -143,7 +144,7 @@
 .sidebar-toggle {
   position: absolute;
   top: 50%;
-  left: -12px;
+  left: -16px;
   transform: translateY(-50%);
   width: 24px;
   height: 48px;
@@ -174,7 +175,7 @@
 }
 
 .editor-sidebar.collapsed .sidebar-toggle {
-  left: -16px;
+  left: -20px;
 }
 
 .editor-main {
