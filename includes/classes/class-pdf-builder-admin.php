@@ -1265,6 +1265,10 @@ class PDF_Builder_Admin {
             return $content;
         }
 
+        // Protection contre les boucles infinies - limiter à 10 remplacements maximum
+        $max_replacements = 10;
+        $replacement_count = 0;
+
         // Variables générales (date, etc.)
         $replacements = [
             '{{date}}' => date('d/m/Y'),
@@ -1309,63 +1313,79 @@ class PDF_Builder_Admin {
             }
         }
 
-        // Variables dynamiques avec expressions (formules)
-        $content = preg_replace_callback('/\{\{([^}]+)\}\}/', function($matches) use ($replacements) {
+        // Variables dynamiques avec expressions (formules) - approche sécurisée
+        while ($replacement_count < $max_replacements && preg_match('/\{\{([^}]+)\}\}/', $content, $matches)) {
             $expression = $matches[1];
+            $replacement_count++;
 
-            // Si c'est une expression mathématique
-            if (preg_match('/^(.+?)\s*\*\s*(.+)$/', $expression, $math_matches)) {
-                $left = $this->evaluate_expression($math_matches[1], $replacements);
-                $right = $this->evaluate_expression($math_matches[2], $replacements);
-                if (is_numeric($left) && is_numeric($right)) {
-                    return $left * $right;
-                }
+            // Éviter les remplacements récursifs - si l'expression contient déjà des accolades, ignorer
+            if (strpos($expression, '{{') !== false || strpos($expression, '}}') !== false) {
+                // Remplacer par une chaîne vide pour éviter la boucle
+                $content = str_replace($matches[0], '', $content);
+                continue;
             }
 
-            // Si c'est une expression avec |
-            if (strpos($expression, '|') !== false) {
-                $parts = explode('|', $expression, 2);
-                $value = trim($parts[0]);
-                $filter = trim($parts[1]);
-
-                // Filtres disponibles
-                if ($filter === 'currency:EUR') {
-                    $numeric_value = $this->extract_numeric_value($value, $replacements);
-                    return $numeric_value ? '€' . number_format($numeric_value, 2, ',', ' ') : $value;
-                }
-                if ($filter === 'currency:USD') {
-                    $numeric_value = $this->extract_numeric_value($value, $replacements);
-                    return $numeric_value ? '$' . number_format($numeric_value, 2, '.', ',') : $value;
-                }
-                if (preg_match('/^format:([YmdHis\/\-:]+)$/', $filter, $format_matches)) {
-                    $format = $format_matches[1];
-                    if ($value === 'date') {
-                        return date($format);
-                    }
-                }
-            }
-
-            // Si c'est une variable simple
-            if (isset($replacements[$matches[0]])) {
-                return $replacements[$matches[0]];
-            }
-
-            // Si c'est une expression conditionnelle
-            if (preg_match('/^(.+?)\s*\?\s*(.+?)\s*:\s*(.+)$/', $expression, $cond_matches)) {
-                $condition = trim($cond_matches[1]);
-                $true_val = trim($cond_matches[2]);
-                $false_val = trim($cond_matches[3]);
-
-                // Évaluer la condition (simple pour l'instant)
-                $condition_result = $this->evaluate_condition($condition, $replacements);
-                return $condition_result ? $true_val : $false_val;
-            }
-
-            // Retourner l'expression originale si non reconnue
-            return $matches[0];
-        }, $content);
+            $result = $this->evaluate_dynamic_expression($expression, $replacements);
+            $content = str_replace($matches[0], $result, $content);
+        }
 
         return $content;
+    }
+
+    /**
+     * Évalue une expression dynamique de manière sécurisée
+     */
+    private function evaluate_dynamic_expression($expression, $replacements) {
+        // Si c'est une expression mathématique
+        if (preg_match('/^(.+?)\s*\*\s*(.+)$/', $expression, $math_matches)) {
+            $left = $this->evaluate_expression($math_matches[1], $replacements);
+            $right = $this->evaluate_expression($math_matches[2], $replacements);
+            if (is_numeric($left) && is_numeric($right)) {
+                return $left * $right;
+            }
+        }
+
+        // Si c'est une expression avec |
+        if (strpos($expression, '|') !== false) {
+            $parts = explode('|', $expression, 2);
+            $value = trim($parts[0]);
+            $filter = trim($parts[1]);
+
+            // Filtres disponibles
+            if ($filter === 'currency:EUR') {
+                $numeric_value = $this->extract_numeric_value($value, $replacements);
+                return $numeric_value ? '€' . number_format($numeric_value, 2, ',', ' ') : $value;
+            }
+            if ($filter === 'currency:USD') {
+                $numeric_value = $this->extract_numeric_value($value, $replacements);
+                return $numeric_value ? '$' . number_format($numeric_value, 2, '.', ',') : $value;
+            }
+            if (preg_match('/^format:([YmdHis\/\-:]+)$/', $filter, $format_matches)) {
+                $format = $format_matches[1];
+                if ($value === 'date') {
+                    return date($format);
+                }
+            }
+        }
+
+        // Si c'est une variable simple
+        if (isset($replacements['{{' . $expression . '}}'])) {
+            return $replacements['{{' . $expression . '}}'];
+        }
+
+        // Si c'est une expression conditionnelle
+        if (preg_match('/^(.+?)\s*\?\s*(.+?)\s*:\s*(.+)$/', $expression, $cond_matches)) {
+            $condition = trim($cond_matches[1]);
+            $true_val = trim($cond_matches[2]);
+            $false_val = trim($cond_matches[3]);
+
+            // Évaluer la condition (simple pour l'instant)
+            $condition_result = $this->evaluate_condition($condition, $replacements);
+            return $condition_result ? $true_val : $false_val;
+        }
+
+        // Retourner l'expression originale si non reconnue
+        return '{{' . $expression . '}}';
     }
 
     /**
@@ -1931,12 +1951,6 @@ class PDF_Builder_Admin {
                 error_log('PDF Builder: HTML content does not start with DOCTYPE: ' . substr($html_content, 0, 200));
             }
 
-            wp_send_json_success(array(
-                'html' => $html_content,
-                'width' => $template_data['canvas']['width'] ?? 595,
-                'height' => $template_data['canvas']['height'] ?? 842
-            ));
-
         } catch (Exception $e) {
             wp_send_json_error('Erreur: ' . $e->getMessage());
         } catch (Error $e) {
@@ -1984,8 +1998,6 @@ class PDF_Builder_Admin {
      * Génère du HTML pour une commande WooCommerce
      */
     private function generate_order_html($order, $template_data) {
-        error_log('PDF Builder: Starting generate_order_html for order ' . $order->get_id());
-
         $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Order #' . $order->get_id() . '</title>';
         $html .= '<style>body { font-family: Arial, sans-serif; margin: 0; padding: 20px; } .pdf-element { position: absolute; }</style>';
         $html .= '</head><body>';
@@ -2019,7 +2031,6 @@ class PDF_Builder_Admin {
 
                 // Vérifier que le contenu n'est pas du CSS ou du code malformé
                 if (strpos($content, '--') === 0 || strpos($content, 'var(') === 0) {
-                    error_log('PDF Builder: Suspicious content detected in element ' . ($element['id'] ?? 'unknown') . ': ' . substr($content, 0, 100));
                     $content = 'Contenu invalide';
                 }
 
@@ -2094,8 +2105,6 @@ class PDF_Builder_Admin {
         }
 
         $html .= '</body></html>';
-        error_log('PDF Builder: Final HTML length: ' . strlen($html));
-        error_log('PDF Builder: HTML preview: ' . substr($html, 0, 500));
         return $html;
     }
 
