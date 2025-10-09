@@ -14,6 +14,11 @@ if (!defined('ABSPATH')) {
 class PDF_Builder_Admin {
 
     /**
+     * Instance singleton
+     */
+    private static $instance = null;
+
+    /**
      * Instance de la classe principale
      */
     private $main;
@@ -34,11 +39,21 @@ class PDF_Builder_Admin {
     private static $admin_page_rendered = false;
 
     /**
-     * Constructeur
+     * Constructeur privé pour singleton
      */
-    public function __construct($main_instance) {
+    private function __construct($main_instance) {
         $this->main = $main_instance;
         $this->init_hooks();
+    }
+
+    /**
+     * Obtenir l'instance singleton
+     */
+    public static function getInstance($main_instance = null) {
+        if (self::$instance === null) {
+            self::$instance = new self($main_instance);
+        }
+        return self::$instance;
     }
 
     /**

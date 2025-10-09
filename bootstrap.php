@@ -86,7 +86,7 @@ function pdf_builder_load_bootstrap() {
 
         // Initialiser l'interface d'administration
         if (is_admin() && class_exists('PDF_Builder_Admin')) {
-            new PDF_Builder_Admin($core);
+            PDF_Builder_Admin::getInstance($core);
         }
 
         // L'API Manager sera initialisé automatiquement par le Core
