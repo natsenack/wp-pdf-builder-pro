@@ -127,99 +127,6 @@ export const CanvasElement = ({
     }
   }, [onContextMenu, element.id]);
 
-  // Rendu de l'élément selon son type
-  const renderElement = () => {
-    const style = {
-      position: 'absolute',
-      left: element.x * zoom,
-      top: element.y * zoom,
-      width: element.width * zoom,
-      height: element.height * zoom,
-      zIndex: element.zIndex || 0
-    };
-
-    switch (element.type) {
-      case 'text':
-        return (
-          <div
-            style={{
-              ...style,
-              fontSize: (element.fontSize || 14) * zoom,
-              fontFamily: element.fontFamily || 'Arial',
-              color: element.color || '#1e293b',
-              fontWeight: element.fontWeight || 'normal',
-              textAlign: element.textAlign || 'left',
-              lineHeight: 1.2,
-              overflow: 'hidden',
-              padding: '2px',
-              whiteSpace: 'pre-line'
-            }}
-            onDoubleClick={handleDoubleClick}
-          >
-            {element.text || 'Texte'}
-          </div>
-        );
-
-      case 'rectangle':
-        return (
-          <div
-            style={{
-              ...style,
-              backgroundColor: element.fillColor || 'transparent',
-              border: `${element.borderWidth || 1}px solid ${element.borderColor || '#6b7280'}`,
-              borderRadius: element.borderRadius || 0
-            }}
-          />
-        );
-
-      case 'image':
-        return (
-          <div
-            style={{
-              ...style,
-              backgroundColor: '#f8f9fa',
-              border: '1px dashed #ccc',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 12 * zoom,
-              color: '#666'
-            }}
-          >
-            📷 Image
-          </div>
-        );
-
-      case 'line':
-        return (
-          <div
-            style={{
-              ...style,
-              borderTop: `${element.lineWidth || 1}px solid ${element.lineColor || '#6b7280'}`,
-              height: 0
-            }}
-          />
-        );
-
-      default:
-        return (
-          <div
-            style={{
-              ...style,
-              backgroundColor: '#f1f3f4',
-              border: '1px solid #ccc',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 12 * zoom
-            }}
-          >
-            {element.type}
-          </div>
-        );
-    }
-  };
-
   return (
     <>
       {/* Élément principal */}
@@ -233,13 +140,54 @@ export const CanvasElement = ({
           width: element.width * zoom,
           height: element.height * zoom,
           cursor: dragAndDrop.isDragging ? 'grabbing' : 'grab',
-          userSelect: 'none'
+          userSelect: 'none',
+          // Styles pour l'élément selon son type
+          ...(element.type === 'text' ? {
+            fontSize: (element.fontSize || 14) * zoom,
+            fontFamily: element.fontFamily || 'Arial',
+            color: element.color || '#1e293b',
+            fontWeight: element.fontWeight || 'normal',
+            fontStyle: element.fontStyle || 'normal',
+            textAlign: element.textAlign || 'left',
+            textDecoration: element.textDecoration || 'none',
+            lineHeight: element.lineHeight || 'normal',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: element.textAlign === 'center' ? 'center' : 
+                           element.textAlign === 'right' ? 'flex-end' : 'flex-start',
+            wordBreak: 'break-word',
+            overflow: 'hidden'
+          } : element.type === 'rectangle' ? {
+            backgroundColor: element.backgroundColor || 'transparent',
+            border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#000'}` : 'none',
+            borderRadius: element.borderRadius ? `${element.borderRadius}px` : '0'
+          } : element.type === 'image' && element.src ? {
+            backgroundImage: `url(${element.src})`,
+            backgroundSize: element.backgroundSize || 'contain',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          } : element.type === 'line' ? {
+            borderTop: `${element.lineWidth || 1}px solid ${element.lineColor || '#6b7280'}`,
+            height: '0px',
+            width: '100%'
+          } : {
+            backgroundColor: '#f1f3f4',
+            border: '1px solid #ccc',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 12 * zoom
+          })
         }}
         onMouseDown={handleMouseDown}
+        onDoubleClick={handleDoubleClick}
         onContextMenu={handleContextMenuEvent}
         draggable={false}
       >
-        {renderElement()}
+        {element.type === 'text' ? (element.text || 'Texte') : 
+         element.type === 'image' && !element.src ? '📷 Image' :
+         element.type === 'line' ? null :
+         element.type !== 'image' && element.type !== 'rectangle' ? element.type : null}
       </div>
 
       {/* Poignées de redimensionnement */}
