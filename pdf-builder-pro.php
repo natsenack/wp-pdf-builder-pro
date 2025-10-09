@@ -56,17 +56,6 @@ function pdf_builder_register_admin_menu_early() {
         return;
     }
 
-    // Enregistrer un menu de test d'abord
-    add_menu_page(
-        'PDF Builder Pro',
-        'PDF Builder',
-        'read',
-        'pdf-builder-pro',
-        'pdf_builder_test_page',
-        'dashicons-pdf',
-        30
-    );
-
     // Charger le bootstrap immédiatement quand on est dans l'admin
     // Le bootstrap gérera lui-même les vérifications d'activation
     $bootstrap_path = plugin_dir_path(__FILE__) . 'bootstrap.php';
@@ -78,14 +67,14 @@ function pdf_builder_register_admin_menu_early() {
     }
 }
 
-// Fonction de test pour le menu
-function pdf_builder_test_page() {
-    echo '<div class="wrap">';
-    echo '<h1>PDF Builder Pro - Test Menu</h1>';
-    echo '<p>Le menu fonctionne ! Le plugin est chargé.</p>';
-    echo '<p><a href="' . admin_url('plugins.php') . '">Retour aux plugins</a></p>';
-    echo '</div>';
-}
+// Fonction de test pour le menu - SUPPRIMÉE car le vrai menu est géré par PDF_Builder_Admin
+// function pdf_builder_test_page() {
+//     echo '<div class="wrap">';
+//     echo '<h1>PDF Builder Pro - Test Menu</h1>';
+//     echo '<p>Le menu fonctionne ! Le plugin est chargé.</p>';
+//     echo '<p><a href="' . admin_url('plugins.php') . '">Retour aux plugins</a></p>';
+//     echo '</div>';
+// }
 
 function pdf_builder_final_init() {
     // Vérifications de sécurité maximales

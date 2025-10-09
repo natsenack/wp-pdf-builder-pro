@@ -35,6 +35,11 @@ if (!defined('PDF_BUILDER_PRO_ASSETS_URL')) {
     define('PDF_BUILDER_PRO_ASSETS_URL', PDF_BUILDER_PLUGIN_URL . 'assets/');
 }
 
+// Chemin absolu des assets (pour file_exists)
+if (!defined('PDF_BUILDER_PRO_ASSETS_PATH')) {
+    define('PDF_BUILDER_PRO_ASSETS_PATH', PDF_BUILDER_PLUGIN_DIR . 'assets/');
+}
+
 // Répertoire des uploads
 if (!defined('PDF_BUILDER_PRO_UPLOADS_DIR')) {
     // Utiliser une approche paresseuse pour éviter les erreurs si wp_upload_dir n'est pas disponible
