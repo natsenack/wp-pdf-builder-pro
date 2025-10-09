@@ -86,7 +86,7 @@ function Send-File {
 }
 
 # Upload des fichiers en parallèle
-$maxConcurrentJobs = 5  # Nombre maximum de jobs simultanés
+$maxConcurrentJobs = 10  # Nombre maximum de jobs simultanés
 $runningJobs = @()
 $completedJobs = @()
 $uploaded = 0
