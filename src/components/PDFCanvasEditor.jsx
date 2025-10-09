@@ -145,7 +145,7 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
   // Gestionnaire pour les changements de propriétés
   const handlePropertyChange = useCallback((elementId, property, value) => {
     // Récupérer l'élément actuel pour connaître les valeurs existantes
-    const currentElement = canvasState.getElement(elementId);
+    const currentElement = canvasState.getElementById(elementId);
     if (!currentElement) return;
     
     // Gérer les propriétés imbriquées (ex: "columns.image" -> { columns: { image: value } })
