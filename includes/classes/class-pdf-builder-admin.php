@@ -3969,6 +3969,7 @@ function pdf_builder_handle_preview_ajax() {
     // LOGGING POUR DÉBOGUER
     error_log('PDF Builder Preview: Requête reçue');
     error_log('PDF Builder Preview: $_POST = ' . print_r($_POST, true));
+    error_log('PDF Builder Preview: $_FILES = ' . print_r($_FILES, true));
 
     // Récupérer les données du POST (FormData)
     $nonce = isset($_POST['nonce']) ? $_POST['nonce'] : '';
@@ -3976,6 +3977,7 @@ function pdf_builder_handle_preview_ajax() {
 
     error_log('PDF Builder Preview: nonce = ' . $nonce);
     error_log('PDF Builder Preview: template_data = ' . $template_data);
+    error_log('PDF Builder Preview: template_data length = ' . strlen($template_data));
 
     // Vérification de sécurité
     if (!wp_verify_nonce($nonce, 'pdf_builder_nonce')) {
@@ -3993,12 +3995,18 @@ function pdf_builder_handle_preview_ajax() {
 
     try {
         // Décoder les données JSON
+        error_log('PDF Builder Preview: Tentative de décodage JSON');
         $template = json_decode($template_data, true);
+
         if (json_last_error() !== JSON_ERROR_NONE) {
-            error_log('PDF Builder Preview: JSON decode error: ' . json_last_error_msg());
-            wp_send_json_error('Données template invalides: ' . json_last_error_msg());
+            $error_msg = json_last_error_msg();
+            error_log('PDF Builder Preview: JSON decode error: ' . $error_msg);
+            error_log('PDF Builder Preview: JSON reçu: ' . $template_data);
+            wp_send_json_error('Données template invalides: ' . $error_msg);
             return;
         }
+
+        error_log('PDF Builder Preview: JSON décodé avec succès: ' . print_r($template, true));
 
         // Get the admin instance to access methods
         $admin = PDF_Builder_Admin::getInstance();
