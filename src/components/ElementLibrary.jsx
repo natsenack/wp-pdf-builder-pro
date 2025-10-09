@@ -282,6 +282,17 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
     }
   ];
 
+  // Gestionnaire pour le drag start
+  const handleDragStart = (e, element) => {
+    e.dataTransfer.setData('application/json', JSON.stringify({
+      type: 'new-element',
+      elementType: element.type,
+      fieldID: element.fieldID,
+      defaultProps: element.defaultProperties
+    }));
+    e.dataTransfer.effectAllowed = 'copy';
+  };
+
   return (
     <>
       {/* Modale des modèles d'en-tête */}
@@ -323,55 +334,44 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
 
       <div className="element-library">
         <div className="library-header">
-          <h3>📚 Bibliothèque</h3>
+          <h3>📚 Bibliothèque d'Éléments</h3>
+          <p className="library-subtitle">Glissez les blocs vers le canvas pour les ajouter</p>
         </div>
 
         <div className="library-content">
           {elementCategories.map((category, categoryIndex) => (
             <div key={categoryIndex} className="element-category">
               <h4 className="category-title">{category.name}</h4>
-              <div className="elements-grid">
+              <div className="elements-palette">
                 {category.elements.map((element, elementIndex) => (
                   <div
                     key={elementIndex}
-                    className={`element-item ${selectedTool === element.type ? 'selected' : ''}`}
-                    onClick={() => {
-                      onToolSelect(element.type);
-                      onAddElement(element.type, {
-                        x: 50 + (elementIndex * 20),
-                        y: 50 + (categoryIndex * 100),
-                        width: element.type === 'rectangle' ? 200 : 250,
-                        height: element.type === 'rectangle' ? 100 : 60,
-                        fieldID: element.fieldID, // Ajout du fieldID comme dans FieldDTO
-                        ...element.defaultProperties
-                      });
-                    }}
-                    title={element.description}
+                    className="element-block"
+                    data-type={element.type}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, element)}
+                    title={`${element.label}: ${element.description}`}
                   >
-                    <div className="element-info">
-                      <span className="element-icon">{element.icon}</span>
-                      <span className="element-label">{element.label}</span>
-                    </div>
-                    <div className="element-preview">
+                    <div className="element-block-content">
                       {element.blockContent ? (
-                        <div className="preview-text">
+                        <div className="block-text-content">
                           {VariableManager.processTextForPreview(element.blockContent).split('\n').map((line, i) => (
-                            <div key={i} className="preview-line">{line}</div>
+                            <div key={i} className="block-line">{line}</div>
                           ))}
                         </div>
                       ) : (
-                        <div className="preview-shape">
-                          {element.type === 'rectangle' && (
-                            <div
-                              className="shape-preview"
-                              style={{
-                                backgroundColor: element.defaultProperties?.fillColor || '#e0e0e0',
-                                border: `${element.defaultProperties?.strokeWidth || 1}px solid ${element.defaultProperties?.strokeColor || '#000'}`
-                              }}
-                            />
+                        <div className="block-visual-content">
+                          {element.type === 'image' && (
+                            <div className="image-placeholder">[IMAGE]</div>
+                          )}
+                          {element.type === 'separator' && (
+                            <div className="separator-preview">────────────</div>
                           )}
                         </div>
                       )}
+                    </div>
+                    <div className="element-block-label">
+                      {element.icon} {element.label}
                     </div>
                   </div>
                 ))}
