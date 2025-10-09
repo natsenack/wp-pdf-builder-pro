@@ -570,85 +570,128 @@
   background: #cbd5e1;
 }
 
-/* Styles pour les variables organisées en grille */
-.variables-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.variable-category {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  padding: 8px;
-}
-
-.variable-category h5 {
-  margin: 0 0 8px 0;
-  font-size: 11px;
-  font-weight: 600;
-  color: #475569;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.variable-buttons {
+/* Styles pour les boutons de marges */
+.margin-presets {
   display: flex;
-  flex-direction: column;
   gap: 4px;
 }
 
-.variable-btn {
-  width: 100%;
-  padding: 6px 8px;
+.margin-btn {
+  flex: 1;
+  padding: 6px 4px;
   font-size: 10px;
-  background: #ffffff;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #475569;
+}
+
+.margin-btn:hover {
+  background: #e2e8f0;
+  border-color: #cbd5e1;
+}
+
+.margin-btn:active {
+  background: #cbd5e1;
+}
+
+/* Styles pour les boutons d'alignement de texte */
+.alignment-buttons {
+  display: flex;
+  gap: 2px;
+}
+
+.align-text-btn {
+  flex: 1;
+  padding: 8px 4px;
+  font-size: 11px;
+  background: #f8fafc;
   border: 1px solid #e2e8f0;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
   color: #475569;
-  text-align: left;
 }
 
-.variable-btn:hover {
-  background: #f1f5f9;
-  border-color: #cbd5e1;
-  color: #334155;
-}
-
-.variable-btn:active {
+.align-text-btn:hover {
   background: #e2e8f0;
+  border-color: #cbd5e1;
 }
 
-/* Styles pour les boutons de templates */
-.template-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.template-btn {
-  flex: 1;
-  min-width: 80px;
-  padding: 8px 6px;
-  font-size: 10px;
+.align-text-btn.active {
   background: #3b82f6;
-  border: 1px solid #2563eb;
+  border-color: #2563eb;
+  color: white;
+}
+
+.align-text-btn:active {
+  background: #2563eb;
+}
+
+/* Styles pour les boutons d'alignement vertical */
+.vertical-align-buttons {
+  display: flex;
+  gap: 2px;
+}
+
+.valign-btn {
+  flex: 1;
+  padding: 8px 4px;
+  font-size: 11px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
-  color: #ffffff;
-  text-align: center;
+  color: #475569;
 }
 
-.template-btn:hover {
-  background: #2563eb;
-  border-color: #1d4ed8;
-  color: #ffffff;
+.valign-btn:hover {
+  background: #e2e8f0;
+  border-color: #cbd5e1;
 }
 
-.template-btn:active {
-  background: #1d4ed8;
+.valign-btn.active {
+  background: #10b981;
+  border-color: #059669;
+  color: white;
+}
+
+.valign-btn:active {
+  background: #059669;
+}
+
+/* Styles pour les contrôles de bordures */
+.border-controls {
+  display: flex;
+  gap: 2px;
+}
+
+.border-btn {
+  flex: 1;
+  padding: 6px 4px;
+  font-size: 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #475569;
+}
+
+.border-btn:hover {
+  background: #e2e8f0;
+  border-color: #cbd5e1;
+}
+
+.border-btn.active {
+  background: #f59e0b;
+  border-color: #d97706;
+  color: white;
+}
+
+.border-btn:active {
+  background: #d97706;
 }

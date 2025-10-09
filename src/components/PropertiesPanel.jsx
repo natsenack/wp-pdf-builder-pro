@@ -292,51 +292,202 @@ export const PropertiesPanel = ({
       case 'layout':
         return (
           <div className="tab-content">
-            {/* Contrôles d'alignement rapide */}
+            {/* Structure du document */}
             <div className="properties-group">
-              <h4>🎯 Alignement Rapide</h4>
-              <div className="alignment-controls">
-                <div className="alignment-row">
+              <h4>�️ Structure Document</h4>
+
+              <div className="property-row">
+                <label>Section:</label>
+                <select
+                  value={localProperties.section || 'body'}
+                  onChange={(e) => handlePropertyChange(selectedElement.id, 'section', e.target.value)}
+                >
+                  <option value="header">En-tête</option>
+                  <option value="body">Corps</option>
+                  <option value="footer">Pied de page</option>
+                  <option value="table">Tableau</option>
+                </select>
+              </div>
+
+              <div className="property-row">
+                <label>Type d'élément:</label>
+                <select
+                  value={localProperties.elementType || 'text'}
+                  onChange={(e) => handlePropertyChange(selectedElement.id, 'elementType', e.target.value)}
+                >
+                  <option value="title">Titre</option>
+                  <option value="subtitle">Sous-titre</option>
+                  <option value="text">Texte</option>
+                  <option value="amount">Montant</option>
+                  <option value="date">Date</option>
+                  <option value="table-cell">Cellule tableau</option>
+                  <option value="separator">Séparateur</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Marges et espacement */}
+            <div className="properties-group">
+              <h4>� Marges & Espacement</h4>
+
+              <div className="property-row">
+                <label>Marge haut:</label>
+                <div className="input-with-unit">
+                  <input
+                    type="number"
+                    value={localProperties.marginTop || 0}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'marginTop', parseInt(e.target.value))}
+                    min="0"
+                    step="1"
+                  />
+                  <span className="unit">mm</span>
+                </div>
+              </div>
+
+              <div className="property-row">
+                <label>Marge bas:</label>
+                <div className="input-with-unit">
+                  <input
+                    type="number"
+                    value={localProperties.marginBottom || 0}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'marginBottom', parseInt(e.target.value))}
+                    min="0"
+                    step="1"
+                  />
+                  <span className="unit">mm</span>
+                </div>
+              </div>
+
+              <div className="property-row">
+                <label>Marge gauche:</label>
+                <div className="input-with-unit">
+                  <input
+                    type="number"
+                    value={localProperties.marginLeft || 0}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'marginLeft', parseInt(e.target.value))}
+                    min="0"
+                    step="1"
+                  />
+                  <span className="unit">mm</span>
+                </div>
+              </div>
+
+              <div className="property-row">
+                <label>Marge droite:</label>
+                <div className="input-with-unit">
+                  <input
+                    type="number"
+                    value={localProperties.marginRight || 0}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'marginRight', parseInt(e.target.value))}
+                    min="0"
+                    step="1"
+                  />
+                  <span className="unit">mm</span>
+                </div>
+              </div>
+
+              {/* Boutons de marges rapides */}
+              <div className="property-row">
+                <label>Marges rapides:</label>
+                <div className="margin-presets">
                   <button
-                    className="align-btn"
-                    onClick={() => handlePropertyChange(selectedElement.id, 'x', 0)}
+                    className="margin-btn"
+                    onClick={() => {
+                      handlePropertyChange(selectedElement.id, 'marginTop', 5);
+                      handlePropertyChange(selectedElement.id, 'marginBottom', 5);
+                      handlePropertyChange(selectedElement.id, 'marginLeft', 0);
+                      handlePropertyChange(selectedElement.id, 'marginRight', 0);
+                    }}
+                    title="Marges standard"
+                  >
+                    Standard
+                  </button>
+                  <button
+                    className="margin-btn"
+                    onClick={() => {
+                      handlePropertyChange(selectedElement.id, 'marginTop', 10);
+                      handlePropertyChange(selectedElement.id, 'marginBottom', 10);
+                      handlePropertyChange(selectedElement.id, 'marginLeft', 10);
+                      handlePropertyChange(selectedElement.id, 'marginRight', 10);
+                    }}
+                    title="Marges larges"
+                  >
+                    Large
+                  </button>
+                  <button
+                    className="margin-btn"
+                    onClick={() => {
+                      handlePropertyChange(selectedElement.id, 'marginTop', 0);
+                      handlePropertyChange(selectedElement.id, 'marginBottom', 0);
+                      handlePropertyChange(selectedElement.id, 'marginLeft', 0);
+                      handlePropertyChange(selectedElement.id, 'marginRight', 0);
+                    }}
+                    title="Aucune marge"
+                  >
+                    Aucune
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Alignement et justification */}
+            <div className="properties-group">
+              <h4>� Alignement & Justification</h4>
+
+              <div className="property-row">
+                <label>Alignement horizontal:</label>
+                <div className="alignment-buttons">
+                  <button
+                    className={`align-text-btn ${localProperties.textAlign === 'left' ? 'active' : ''}`}
+                    onClick={() => handlePropertyChange(selectedElement.id, 'textAlign', 'left')}
                     title="Aligner à gauche"
                   >
                     ⬅️ Gauche
                   </button>
                   <button
-                    className="align-btn"
-                    onClick={() => handlePropertyChange(selectedElement.id, 'x', 210)}
-                    title="Centrer horizontalement"
+                    className={`align-text-btn ${localProperties.textAlign === 'center' ? 'active' : ''}`}
+                    onClick={() => handlePropertyChange(selectedElement.id, 'textAlign', 'center')}
+                    title="Centrer"
                   >
                     ⬌ Centre
                   </button>
                   <button
-                    className="align-btn"
-                    onClick={() => handlePropertyChange(selectedElement.id, 'x', 420)}
+                    className={`align-text-btn ${localProperties.textAlign === 'right' ? 'active' : ''}`}
+                    onClick={() => handlePropertyChange(selectedElement.id, 'textAlign', 'right')}
                     title="Aligner à droite"
                   >
                     ➡️ Droite
                   </button>
-                </div>
-                <div className="alignment-row">
                   <button
-                    className="align-btn"
-                    onClick={() => handlePropertyChange(selectedElement.id, 'y', 0)}
+                    className={`align-text-btn ${localProperties.textAlign === 'justify' ? 'active' : ''}`}
+                    onClick={() => handlePropertyChange(selectedElement.id, 'textAlign', 'justify')}
+                    title="Justifier"
+                  >
+                    ⬌ Justifier
+                  </button>
+                </div>
+              </div>
+
+              <div className="property-row">
+                <label>Alignement vertical:</label>
+                <div className="vertical-align-buttons">
+                  <button
+                    className={`valign-btn ${localProperties.verticalAlign === 'top' ? 'active' : ''}`}
+                    onClick={() => handlePropertyChange(selectedElement.id, 'verticalAlign', 'top')}
                     title="Aligner en haut"
                   >
                     ⬆️ Haut
                   </button>
                   <button
-                    className="align-btn"
-                    onClick={() => handlePropertyChange(selectedElement.id, 'y', 148)}
+                    className={`valign-btn ${localProperties.verticalAlign === 'middle' ? 'active' : ''}`}
+                    onClick={() => handlePropertyChange(selectedElement.id, 'verticalAlign', 'middle')}
                     title="Centrer verticalement"
                   >
-                    ⬍ Centre
+                    ⬍ Milieu
                   </button>
                   <button
-                    className="align-btn"
-                    onClick={() => handlePropertyChange(selectedElement.id, 'y', 297)}
+                    className={`valign-btn ${localProperties.verticalAlign === 'bottom' ? 'active' : ''}`}
+                    onClick={() => handlePropertyChange(selectedElement.id, 'verticalAlign', 'bottom')}
                     title="Aligner en bas"
                   >
                     ⬇️ Bas
@@ -345,211 +496,130 @@ export const PropertiesPanel = ({
               </div>
             </div>
 
-            {/* Position précise */}
+            {/* Contrôles spécifiques aux tableaux */}
+            {(localProperties.elementType === 'table-cell' || localProperties.section === 'table') && (
+              <div className="properties-group">
+                <h4>📊 Paramètres Tableau</h4>
+
+                <div className="property-row">
+                  <label>Largeur colonne:</label>
+                  <div className="input-with-unit">
+                    <input
+                      type="number"
+                      value={localProperties.columnWidth || 50}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'columnWidth', parseInt(e.target.value))}
+                      min="10"
+                      max="200"
+                      step="5"
+                    />
+                    <span className="unit">mm</span>
+                  </div>
+                </div>
+
+                <div className="property-row">
+                  <label>Type de cellule:</label>
+                  <select
+                    value={localProperties.cellType || 'data'}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'cellType', e.target.value)}
+                  >
+                    <option value="header">En-tête</option>
+                    <option value="data">Données</option>
+                    <option value="total">Total</option>
+                    <option value="description">Description</option>
+                  </select>
+                </div>
+
+                <div className="property-row">
+                  <label>Bordures cellule:</label>
+                  <div className="border-controls">
+                    <button
+                      className={`border-btn ${localProperties.cellBorder === 'all' ? 'active' : ''}`}
+                      onClick={() => handlePropertyChange(selectedElement.id, 'cellBorder', 'all')}
+                      title="Toutes les bordures"
+                    >
+                      ☐ Toutes
+                    </button>
+                    <button
+                      className={`border-btn ${localProperties.cellBorder === 'bottom' ? 'active' : ''}`}
+                      onClick={() => handlePropertyChange(selectedElement.id, 'cellBorder', 'bottom')}
+                      title="Bordure inférieure seulement"
+                    >
+                      ▬ Bas
+                    </button>
+                    <button
+                      className={`border-btn ${localProperties.cellBorder === 'none' ? 'active' : ''}`}
+                      onClick={() => handlePropertyChange(selectedElement.id, 'cellBorder', 'none')}
+                      title="Aucune bordure"
+                    >
+                      ∅ Aucune
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Contrôles de flux et sauts */}
             <div className="properties-group">
-              <h4>📍 Position Précise</h4>
+              <h4>� Flux & Sauts</h4>
 
               <div className="property-row">
-                <label>X:</label>
-                <div className="input-with-unit">
-                  <input
-                    type="number"
-                    value={Math.round(localProperties.x || 0)}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'x', parseInt(e.target.value))}
-                    step="1"
-                  />
-                  <span className="unit">mm</span>
-                </div>
+                <label>Comportement:</label>
+                <select
+                  value={localProperties.flowBehavior || 'normal'}
+                  onChange={(e) => handlePropertyChange(selectedElement.id, 'flowBehavior', e.target.value)}
+                >
+                  <option value="normal">Normal</option>
+                  <option value="keep-together">Garder ensemble</option>
+                  <option value="page-break-before">Saut page avant</option>
+                  <option value="page-break-after">Saut page après</option>
+                  <option value="avoid-break">Éviter coupure</option>
+                </select>
               </div>
 
               <div className="property-row">
-                <label>Y:</label>
+                <label>Hauteur ligne:</label>
                 <div className="input-with-unit">
                   <input
                     type="number"
-                    value={Math.round(localProperties.y || 0)}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'y', parseInt(e.target.value))}
-                    step="1"
+                    value={localProperties.lineHeight || 1.2}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'lineHeight', parseFloat(e.target.value))}
+                    min="0.8"
+                    max="3"
+                    step="0.1"
                   />
-                  <span className="unit">mm</span>
+                  <span className="unit">×</span>
                 </div>
               </div>
             </div>
 
-            {/* Dimensions avec contraintes */}
+            {/* Positionnement avancé */}
             <div className="properties-group">
-              <h4>📏 Dimensions</h4>
+              <h4>🎯 Positionnement Avancé</h4>
 
               <div className="property-row">
-                <label>Largeur:</label>
-                <div className="input-with-unit">
-                  <input
-                    type="number"
-                    value={Math.round(localProperties.width || 100)}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'width', parseInt(e.target.value))}
-                    min="1"
-                    step="1"
-                  />
-                  <span className="unit">mm</span>
-                </div>
+                <label>Ancrage:</label>
+                <select
+                  value={localProperties.anchor || 'static'}
+                  onChange={(e) => handlePropertyChange(selectedElement.id, 'anchor', e.target.value)}
+                >
+                  <option value="static">Statique</option>
+                  <option value="relative">Relatif</option>
+                  <option value="absolute">Absolu</option>
+                  <option value="fixed">Fixe</option>
+                </select>
               </div>
 
               <div className="property-row">
-                <label>Hauteur:</label>
-                <div className="input-with-unit">
-                  <input
-                    type="number"
-                    value={Math.round(localProperties.height || 50)}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'height', parseInt(e.target.value))}
-                    min="1"
-                    step="1"
-                  />
-                  <span className="unit">mm</span>
-                </div>
-              </div>
-
-              {/* Boutons de ratio */}
-              <div className="property-row">
-                <label>Ratio:</label>
-                <div className="ratio-buttons">
-                  <button
-                    className="ratio-btn"
-                    onClick={() => {
-                      const newHeight = (localProperties.width || 100) * 0.75;
-                      handlePropertyChange(selectedElement.id, 'height', Math.round(newHeight));
-                    }}
-                    title="Format 4:3"
-                  >
-                    4:3
-                  </button>
-                  <button
-                    className="ratio-btn"
-                    onClick={() => {
-                      const newHeight = (localProperties.width || 100) * (297/210);
-                      handlePropertyChange(selectedElement.id, 'height', Math.round(newHeight));
-                    }}
-                    title="Format A4"
-                  >
-                    A4
-                  </button>
-                  <button
-                    className="ratio-btn"
-                    onClick={() => {
-                      const newHeight = (localProperties.width || 100);
-                      handlePropertyChange(selectedElement.id, 'height', Math.round(newHeight));
-                    }}
-                    title="Carré"
-                  >
-                    1:1
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Transformation */}
-            <div className="properties-group">
-              <h4>🔄 Transformation</h4>
-
-              <div className="property-row">
-                <label>Rotation:</label>
-                <div className="slider-container">
-                  <input
-                    type="range"
-                    min="-180"
-                    max="180"
-                    value={localProperties.rotation || 0}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'rotation', parseInt(e.target.value))}
-                    className="slider"
-                  />
-                  <span className="slider-value">{localProperties.rotation || 0}°</span>
-                </div>
-              </div>
-
-              <div className="property-row">
-                <label>Échelle:</label>
-                <div className="slider-container">
-                  <input
-                    type="range"
-                    min="10"
-                    max="200"
-                    value={localProperties.scale || 100}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'scale', parseInt(e.target.value))}
-                    className="slider"
-                  />
-                  <span className="slider-value">{localProperties.scale || 100}%</span>
-                </div>
-              </div>
-
-              {/* Boutons de rotation rapide */}
-              <div className="property-row">
-                <label>Rotation rapide:</label>
-                <div className="rotation-buttons">
-                  <button
-                    className="rotation-btn"
-                    onClick={() => handlePropertyChange(selectedElement.id, 'rotation', 0)}
-                    title="Rotation 0°"
-                  >
-                    ↻ 0°
-                  </button>
-                  <button
-                    className="rotation-btn"
-                    onClick={() => handlePropertyChange(selectedElement.id, 'rotation', 90)}
-                    title="Rotation 90°"
-                  >
-                    ↻ 90°
-                  </button>
-                  <button
-                    className="rotation-btn"
-                    onClick={() => handlePropertyChange(selectedElement.id, 'rotation', 180)}
-                    title="Rotation 180°"
-                  >
-                    ↻ 180°
-                  </button>
-                  <button
-                    className="rotation-btn"
-                    onClick={() => handlePropertyChange(selectedElement.id, 'rotation', -90)}
-                    title="Rotation -90°"
-                  >
-                    ↺ -90°
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Calques et profondeur */}
-            <div className="properties-group">
-              <h4>📚 Calques</h4>
-
-              <div className="property-row">
-                <label>Profondeur (Z-index):</label>
-                <input
-                  type="number"
-                  value={localProperties.zIndex || 0}
-                  onChange={(e) => handlePropertyChange(selectedElement.id, 'zIndex', parseInt(e.target.value))}
-                  min="0"
-                  max="100"
-                  step="1"
-                />
-              </div>
-
-              <div className="property-row">
-                <label>Actions:</label>
-                <div className="layer-actions">
-                  <button
-                    className="layer-btn"
-                    onClick={() => handlePropertyChange(selectedElement.id, 'zIndex', (localProperties.zIndex || 0) + 1)}
-                    title="Mettre devant"
-                  >
-                    ⬆️ Devant
-                  </button>
-                  <button
-                    className="layer-btn"
-                    onClick={() => handlePropertyChange(selectedElement.id, 'zIndex', Math.max(0, (localProperties.zIndex || 0) - 1))}
-                    title="Mettre derrière"
-                  >
-                    ⬇️ Derrière
-                  </button>
-                </div>
+                <label>Référence:</label>
+                <select
+                  value={localProperties.reference || 'page'}
+                  onChange={(e) => handlePropertyChange(selectedElement.id, 'reference', e.target.value)}
+                >
+                  <option value="page">Page</option>
+                  <option value="margin">Marge</option>
+                  <option value="previous">Élément précédent</option>
+                  <option value="container">Conteneur</option>
+                </select>
               </div>
             </div>
           </div>
@@ -574,133 +644,33 @@ export const PropertiesPanel = ({
 
                 <div className="property-row">
                   <label>Variables dynamiques:</label>
-                  <div className="variables-grid">
-                    <div className="variable-category">
-                      <h5>🛒 Commande</h5>
-                      <div className="variable-buttons">
-                        <button className="variable-btn" onClick={() => {
-                          const currentText = localProperties.text || '';
-                          handlePropertyChange(selectedElement.id, 'text', currentText + '{{order_number}}');
-                        }}>
-                          🏷️ N° Commande
-                        </button>
-                        <button className="variable-btn" onClick={() => {
-                          const currentText = localProperties.text || '';
-                          handlePropertyChange(selectedElement.id, 'text', currentText + '{{order_date}}');
-                        }}>
-                          📅 Date commande
-                        </button>
-                        <button className="variable-btn" onClick={() => {
-                          const currentText = localProperties.text || '';
-                          handlePropertyChange(selectedElement.id, 'text', currentText + '{{order_status}}');
-                        }}>
-                          📊 Statut
-                        </button>
-                        <button className="variable-btn" onClick={() => {
-                          const currentText = localProperties.text || '';
-                          handlePropertyChange(selectedElement.id, 'text', currentText + '{{payment_method}}');
-                        }}>
-                          💳 Paiement
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="variable-category">
-                      <h5>👤 Client</h5>
-                      <div className="variable-buttons">
-                        <button className="variable-btn" onClick={() => {
-                          const currentText = localProperties.text || '';
-                          handlePropertyChange(selectedElement.id, 'text', currentText + '{{customer_name}}');
-                        }}>
-                          👤 Nom complet
-                        </button>
-                        <button className="variable-btn" onClick={() => {
-                          const currentText = localProperties.text || '';
-                          handlePropertyChange(selectedElement.id, 'text', currentText + '{{customer_email}}');
-                        }}>
-                          📧 Email
-                        </button>
-                        <button className="variable-btn" onClick={() => {
-                          const currentText = localProperties.text || '';
-                          handlePropertyChange(selectedElement.id, 'text', currentText + '{{customer_phone}}');
-                        }}>
-                          📞 Téléphone
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="variable-category">
-                      <h5>💰 Finances</h5>
-                      <div className="variable-buttons">
-                        <button className="variable-btn" onClick={() => {
-                          const currentText = localProperties.text || '';
-                          handlePropertyChange(selectedElement.id, 'text', currentText + '{{subtotal}}');
-                        }}>
-                          � Sous-total
-                        </button>
-                        <button className="variable-btn" onClick={() => {
-                          const currentText = localProperties.text || '';
-                          handlePropertyChange(selectedElement.id, 'text', currentText + '{{tax_total}}');
-                        }}>
-                          🧾 TVA Total
-                        </button>
-                        <button className="variable-btn" onClick={() => {
-                          const currentText = localProperties.text || '';
-                          handlePropertyChange(selectedElement.id, 'text', currentText + '{{total}}');
-                        }}>
-                          💰 TOTAL TTC
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="variable-category">
-                      <h5>📄 Documents</h5>
-                      <div className="variable-buttons">
-                        <button className="variable-btn" onClick={() => {
-                          const currentText = localProperties.text || '';
-                          handlePropertyChange(selectedElement.id, 'text', currentText + '{{invoice_number}}');
-                        }}>
-                          📋 N° Facture
-                        </button>
-                        <button className="variable-btn" onClick={() => {
-                          const currentText = localProperties.text || '';
-                          handlePropertyChange(selectedElement.id, 'text', currentText + '{{quote_number}}');
-                        }}>
-                          📝 N° Devis
-                        </button>
-                        <button className="variable-btn" onClick={() => {
-                          const currentText = localProperties.text || '';
-                          handlePropertyChange(selectedElement.id, 'text', currentText + '{{due_date}}');
-                        }}>
-                          ⏰ Échéance
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Templates prédéfinis */}
-                <div className="property-row">
-                  <label>Templates rapides:</label>
-                  <div className="template-buttons">
-                    <button className="template-btn" onClick={() => {
-                      handlePropertyChange(selectedElement.id, 'text', 'FACTURE N° {{invoice_number}}\n\nDate: {{order_date}}\nClient: {{customer_name}}\n\nTotal TTC: {{total}} €');
+                  <div className="variables-list">
+                    <button className="variable-btn" onClick={() => {
+                      const currentText = localProperties.text || '';
+                      handlePropertyChange(selectedElement.id, 'text', currentText + '{{date}}');
                     }}>
-                      📄 Facture
+                      📅 Date
                     </button>
-                    <button className="template-btn" onClick={() => {
-                      handlePropertyChange(selectedElement.id, 'text', 'DEVIS N° {{quote_number}}\n\nDate: {{order_date}}\nValable jusqu\'au: {{due_date}}\nClient: {{customer_name}}\n\nTotal estimé: {{total}} €');
+                    <button className="variable-btn" onClick={() => {
+                      const currentText = localProperties.text || '';
+                      handlePropertyChange(selectedElement.id, 'text', currentText + '{{order_number}}');
                     }}>
-                      📝 Devis
+                      🏷️ N° commande
                     </button>
-                    <button className="template-btn" onClick={() => {
-                      handlePropertyChange(selectedElement.id, 'text', 'Adresse de facturation:\n{{billing_address}}\n\nAdresse de livraison:\n{{shipping_address}}');
+                    <button className="variable-btn" onClick={() => {
+                      const currentText = localProperties.text || '';
+                      handlePropertyChange(selectedElement.id, 'text', currentText + '{{customer_name}}');
                     }}>
-                      🏠 Adresses
+                      👤 Client
+                    </button>
+                    <button className="variable-btn" onClick={() => {
+                      const currentText = localProperties.text || '';
+                      handlePropertyChange(selectedElement.id, 'text', currentText + '{{total}}');
+                    }}>
+                      💰 Total
                     </button>
                   </div>
                 </div>
-
               </div>
             )}
 
