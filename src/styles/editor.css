@@ -139,6 +139,44 @@
   border-left: 1px solid var(--border-color);
 }
 
+/* Bouton de toggle pour réduire/agrandir le panneau */
+.sidebar-toggle {
+  position: absolute;
+  top: 50%;
+  left: -12px;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 48px;
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px 0 0 4px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.sidebar-toggle:hover {
+  background: var(--background-color);
+  color: var(--text-primary);
+  box-shadow: -3px 0 6px rgba(0, 0, 0, 0.15);
+}
+
+/* État collapsed du panneau */
+.editor-sidebar.collapsed {
+  width: 40px;
+  overflow: hidden;
+}
+
+.editor-sidebar.collapsed .sidebar-toggle {
+  left: -16px;
+}
+
 .editor-main {
   flex: 1;
   display: flex;

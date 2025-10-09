@@ -25,11 +25,11 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
           price: true,
           total: true
         },
-        showSubtotal: true,
+        showSubtotal: false,
         showShipping: true,
         showTaxes: true,
         showDiscount: false,
-        showTotal: true
+        showTotal: false
       }
     }
   ];

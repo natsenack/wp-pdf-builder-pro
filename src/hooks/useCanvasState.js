@@ -248,11 +248,11 @@ export const useCanvasState = ({
               price: true,
               total: true
             };
-            defaults.showSubtotal = true;
+            defaults.showSubtotal = false;
             defaults.showShipping = true;
             defaults.showTaxes = true;
             defaults.showDiscount = false;
-            defaults.showTotal = true;
+            defaults.showTotal = false;
             break;
 
           case 'invoice-totals-block':

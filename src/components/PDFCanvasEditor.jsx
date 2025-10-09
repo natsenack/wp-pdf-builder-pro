@@ -15,6 +15,7 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
   const [showGrid, setShowGrid] = useState(true);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [previewData, setPreviewData] = useState(null);
+  const [isPropertiesCollapsed, setIsPropertiesCollapsed] = useState(false);
 
   const canvasState = useCanvasState({
     initialElements: options.initialElements || [],
@@ -351,13 +352,24 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
         </div>
 
         {/* Panneau de propriétés */}
-        <div className="editor-sidebar right-sidebar">
-          <PropertiesPanel
-            selectedElements={canvasState.selection.selectedElements}
-            elements={canvasState.elements}
-            onPropertyChange={handlePropertyChange}
-            onBatchUpdate={handleBatchUpdate}
-          />
+        <div className={`editor-sidebar right-sidebar ${isPropertiesCollapsed ? 'collapsed' : ''}`}>
+          {/* Bouton de toggle */}
+          <button
+            className="sidebar-toggle"
+            onClick={() => setIsPropertiesCollapsed(!isPropertiesCollapsed)}
+            title={isPropertiesCollapsed ? 'Agrandir le panneau' : 'Réduire le panneau'}
+          >
+            {isPropertiesCollapsed ? '▶' : '◀'}
+          </button>
+
+          {!isPropertiesCollapsed && (
+            <PropertiesPanel
+              selectedElements={canvasState.selection.selectedElements}
+              elements={canvasState.elements}
+              onPropertyChange={handlePropertyChange}
+              onBatchUpdate={handleBatchUpdate}
+            />
+          )}
         </div>
       </div>
 
