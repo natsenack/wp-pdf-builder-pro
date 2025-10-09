@@ -412,7 +412,7 @@ export const CanvasElement = ({
         draggable={false}
       >
         {element.type === 'text' ? (element.text || 'Texte') : 
-         element.type === 'table' ? null : // Le contenu sera rendu plus bas pour les tableaux
+         element.type === 'product_table' ? null : // Le contenu sera rendu plus bas pour les tableaux
          element.type === 'image' && !element.src ? '📷 Image' :
          element.type === 'line' ? null :
          element.type === 'layout-header' ? '📄 En-tête' :
@@ -449,8 +449,8 @@ export const CanvasElement = ({
          element.type !== 'image' && element.type !== 'rectangle' ? element.type : null}
       </div>
 
-      {/* Rendu spécial pour les tableaux */}
-      {element.type === 'table' && (
+      {/* Rendu spécial pour les tableaux de produits */}
+      {element.type === 'product_table' && (
         <div style={{
           width: '100%',
           height: '100%',
@@ -470,16 +470,65 @@ export const CanvasElement = ({
               borderBottom: '1px solid #ddd',
               fontWeight: 'bold'
             }}>
-              {(element.headers || ['Produit', 'Qté', 'Prix']).map((header, index) => (
-                <div key={index} style={{
+              {element.columns?.image && (
+                <div style={{
+                  flex: '0 0 40px',
+                  padding: '4px',
+                  textAlign: 'center',
+                  borderRight: '1px solid #ddd'
+                }}>
+                  Img
+                </div>
+              )}
+              {element.columns?.name && (
+                <div style={{
                   flex: 1,
                   padding: '4px 6px',
                   textAlign: 'left',
-                  borderRight: index < (element.headers || ['Produit', 'Qté', 'Prix']).length - 1 ? '1px solid #ddd' : 'none'
+                  borderRight: element.columns?.sku || element.columns?.quantity || element.columns?.price || element.columns?.total ? '1px solid #ddd' : 'none'
                 }}>
-                  {header}
+                  Produit
                 </div>
-              ))}
+              )}
+              {element.columns?.sku && (
+                <div style={{
+                  flex: '0 0 80px',
+                  padding: '4px 6px',
+                  textAlign: 'left',
+                  borderRight: element.columns?.quantity || element.columns?.price || element.columns?.total ? '1px solid #ddd' : 'none'
+                }}>
+                  SKU
+                </div>
+              )}
+              {element.columns?.quantity && (
+                <div style={{
+                  flex: '0 0 60px',
+                  padding: '4px 6px',
+                  textAlign: 'center',
+                  borderRight: element.columns?.price || element.columns?.total ? '1px solid #ddd' : 'none'
+                }}>
+                  Qté
+                </div>
+              )}
+              {element.columns?.price && (
+                <div style={{
+                  flex: '0 0 80px',
+                  padding: '4px 6px',
+                  textAlign: 'right',
+                  borderRight: element.columns?.total ? '1px solid #ddd' : 'none'
+                }}>
+                  Prix
+                </div>
+              )}
+              {element.columns?.total && (
+                <div style={{
+                  flex: '0 0 80px',
+                  padding: '4px 6px',
+                  textAlign: 'right'
+                }}>
+                  Total
+                </div>
+              )}
             </div>
           )}
           
@@ -490,29 +539,128 @@ export const CanvasElement = ({
               display: 'flex',
               borderBottom: '1px solid #eee'
             }}>
-              <div style={{ flex: 1, padding: '4px 6px', borderRight: '1px solid #eee' }}>Produit A</div>
-              <div style={{ flex: 1, padding: '4px 6px', borderRight: '1px solid #eee', textAlign: 'center' }}>2</div>
-              <div style={{ flex: 1, padding: '4px 6px', textAlign: 'right' }}>€19.99</div>
+              {element.columns?.image && (
+                <div style={{
+                  flex: '0 0 40px',
+                  padding: '4px',
+                  textAlign: 'center',
+                  borderRight: '1px solid #eee'
+                }}>
+                  📷
+                </div>
+              )}
+              {element.columns?.name && (
+                <div style={{
+                  flex: 1,
+                  padding: '4px 6px',
+                  borderRight: element.columns?.sku || element.columns?.quantity || element.columns?.price || element.columns?.total ? '1px solid #eee' : 'none'
+                }}>
+                  Produit A - Description du produit
+                </div>
+              )}
+              {element.columns?.sku && (
+                <div style={{
+                  flex: '0 0 80px',
+                  padding: '4px 6px',
+                  borderRight: element.columns?.quantity || element.columns?.price || element.columns?.total ? '1px solid #eee' : 'none'
+                }}>
+                  SKU001
+                </div>
+              )}
+              {element.columns?.quantity && (
+                <div style={{
+                  flex: '0 0 60px',
+                  padding: '4px 6px',
+                  textAlign: 'center',
+                  borderRight: element.columns?.price || element.columns?.total ? '1px solid #eee' : 'none'
+                }}>
+                  2
+                </div>
+              )}
+              {element.columns?.price && (
+                <div style={{
+                  flex: '0 0 80px',
+                  padding: '4px 6px',
+                  textAlign: 'right',
+                  borderRight: element.columns?.total ? '1px solid #eee' : 'none'
+                }}>
+                  €19.99
+                </div>
+              )}
+              {element.columns?.total && (
+                <div style={{
+                  flex: '0 0 80px',
+                  padding: '4px 6px',
+                  textAlign: 'right'
+                }}>
+                  €39.98
+                </div>
+              )}
             </div>
             
             {/* Ligne 2 */}
             <div style={{
               display: 'flex',
-              borderBottom: '1px solid #eee'
-            }}>
-              <div style={{ flex: 1, padding: '4px 6px', borderRight: '1px solid #eee' }}>Produit B</div>
-              <div style={{ flex: 1, padding: '4px 6px', borderRight: '1px solid #eee', textAlign: 'center' }}>1</div>
-              <div style={{ flex: 1, padding: '4px 6px', textAlign: 'right' }}>€29.99</div>
-            </div>
-            
-            {/* Ligne 3 */}
-            <div style={{
-              display: 'flex',
+              borderBottom: '1px solid #eee',
               backgroundColor: '#fafafa'
             }}>
-              <div style={{ flex: 1, padding: '4px 6px', borderRight: '1px solid #eee' }}>Produit C</div>
-              <div style={{ flex: 1, padding: '4px 6px', borderRight: '1px solid #eee', textAlign: 'center' }}>3</div>
-              <div style={{ flex: 1, padding: '4px 6px', textAlign: 'right' }}>€15.00</div>
+              {element.columns?.image && (
+                <div style={{
+                  flex: '0 0 40px',
+                  padding: '4px',
+                  textAlign: 'center',
+                  borderRight: '1px solid #eee'
+                }}>
+                  📷
+                </div>
+              )}
+              {element.columns?.name && (
+                <div style={{
+                  flex: 1,
+                  padding: '4px 6px',
+                  borderRight: element.columns?.sku || element.columns?.quantity || element.columns?.price || element.columns?.total ? '1px solid #eee' : 'none'
+                }}>
+                  Produit B - Un autre article
+                </div>
+              )}
+              {element.columns?.sku && (
+                <div style={{
+                  flex: '0 0 80px',
+                  padding: '4px 6px',
+                  borderRight: element.columns?.quantity || element.columns?.price || element.columns?.total ? '1px solid #eee' : 'none'
+                }}>
+                  SKU002
+                </div>
+              )}
+              {element.columns?.quantity && (
+                <div style={{
+                  flex: '0 0 60px',
+                  padding: '4px 6px',
+                  textAlign: 'center',
+                  borderRight: element.columns?.price || element.columns?.total ? '1px solid #eee' : 'none'
+                }}>
+                  1
+                </div>
+              )}
+              {element.columns?.price && (
+                <div style={{
+                  flex: '0 0 80px',
+                  padding: '4px 6px',
+                  textAlign: 'right',
+                  borderRight: element.columns?.total ? '1px solid #eee' : 'none'
+                }}>
+                  €29.99
+                </div>
+              )}
+              {element.columns?.total && (
+                <div style={{
+                  flex: '0 0 80px',
+                  padding: '4px 6px',
+                  textAlign: 'right'
+                }}>
+                  €29.99
+                </div>
+              )}
             </div>
           </div>
         </div>

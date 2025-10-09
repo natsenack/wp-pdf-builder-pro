@@ -7,7 +7,7 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
   // Bibliothèque d'éléments - boutons simples
   const elements = [
     {
-      type: 'table',
+      type: 'product_table',
       fieldID: 'products_table',
       label: 'Tableau Produits',
       icon: '📋',
@@ -16,7 +16,15 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
         showHeaders: true,
         showBorders: true,
         headers: ['Produit', 'Qté', 'Prix'],
-        dataSource: 'order_items'
+        dataSource: 'order_items',
+        columns: {
+          image: true,
+          name: true,
+          sku: false,
+          quantity: true,
+          price: true,
+          total: true
+        }
       }
     }
   ];
