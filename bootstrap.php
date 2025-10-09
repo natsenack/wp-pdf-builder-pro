@@ -14,6 +14,11 @@ if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'diagnostic-ajax.php')) {
     require_once PDF_BUILDER_PLUGIN_DIR . 'diagnostic-ajax.php';
 }
 
+// Charger le test AJAX WordPress (temporaire)
+if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'wp-ajax-test.php')) {
+    require_once PDF_BUILDER_PLUGIN_DIR . 'wp-ajax-test.php';
+}
+
 // Fonction pour charger le core du plugin
 function pdf_builder_load_core() {
     static $loaded = false;
