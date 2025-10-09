@@ -24,8 +24,6 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
 
   // Gestionnaire de changement de propriété avec validation
   const handlePropertyChange = useCallback((elementId, property, value) => {
-    console.log('🔧 useElementCustomization - handlePropertyChange:', { elementId, property, value });
-    
     // Validation des valeurs selon le type de propriété
     const validatedValue = validatePropertyValue(property, value);
 
@@ -45,13 +43,9 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
         
         // Définir la valeur finale
         current[parts[parts.length - 1]] = validatedValue;
-        
-        console.log('🔧 Updated localProperties:', newProperties);
         return newProperties;
       } else {
-        const newProps = { ...prev, [property]: validatedValue };
-        console.log('🔧 Updated localProperties (simple):', newProps);
-        return newProps;
+        return { ...prev, [property]: validatedValue };
       }
     });
 

@@ -12,7 +12,9 @@ const ColorPicker = ({ label, value, onChange, presets = [] }) => (
       <input
         type="color"
         value={value || '#1e293b'}
-        onChange={(e) => onChange(e.target.value)}
+                             onChange={(e) => {
+                            handlePropertyChange(selectedElement.id, `columns.${key}`, e.target.checked);
+                          }}ge={(e) => onChange(e.target.value)}
         className="color-input"
       />
       <div className="color-presets">
