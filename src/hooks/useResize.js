@@ -108,32 +108,11 @@ export const useResize = ({
       }
 
       // Appliquer les contraintes du canvas
-      if (newRect.x < 0) {
-        newRect.x = 0;
-        if (handle.includes('w')) {
-          newRect.width = originalRect.current.x + originalRect.current.width;
-        }
-      }
-      if (newRect.y < 0) {
-        newRect.y = 0;
-        if (handle.includes('n')) {
-          newRect.height = originalRect.current.y + originalRect.current.height;
-        }
-      }
-      if (newRect.x + newRect.width > canvasWidth) {
-        if (handle.includes('e')) {
-          newRect.width = canvasWidth - newRect.x;
-        } else {
-          newRect.x = canvasWidth - newRect.width;
-        }
-      }
-      if (newRect.y + newRect.height > canvasHeight) {
-        if (handle.includes('s')) {
-          newRect.height = canvasHeight - newRect.y;
-        } else {
-          newRect.y = canvasHeight - newRect.height;
-        }
-      }
+      const effectiveCanvasWidth = canvasRectParam ? canvasRectParam.width / currentZoom : canvasWidth;
+      const effectiveCanvasHeight = canvasRectParam ? canvasRectParam.height / currentZoom : canvasHeight;
+
+      newRect.x = Math.max(0, Math.min(effectiveCanvasWidth - newRect.width, newRect.x));
+      newRect.y = Math.max(0, Math.min(effectiveCanvasHeight - newRect.height, newRect.y));
 
       if (onElementResize) {
         onElementResize(newRect);

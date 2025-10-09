@@ -105,7 +105,6 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
 
   const handleHeaderTemplateSelect = (template) => {
     // Ici on peut ajouter la logique pour appliquer le modèle sélectionné
-    console.log('Modèle d\'en-tête sélectionné:', template);
     setShowHeaderTemplatesModal(false);
     // Appliquer le contenu du modèle sélectionné
     onAddElement('text', {

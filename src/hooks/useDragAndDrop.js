@@ -60,8 +60,11 @@ export const useDragAndDrop = ({
       const deltaX = mouseX - startX;
       const deltaY = mouseY - startY;
 
-      const newX = Math.max(0, Math.min(canvasWidth - elementRect.width, snapToGridValue(elementRect.left + deltaX)));
-      const newY = Math.max(0, Math.min(canvasHeight - elementRect.height, snapToGridValue(elementRect.top + deltaY)));
+      const effectiveCanvasWidth = canvasRect ? canvasRect.width / zoomLevel : canvasWidth;
+      const effectiveCanvasHeight = canvasRect ? canvasRect.height / zoomLevel : canvasHeight;
+
+      const newX = Math.max(0, Math.min(effectiveCanvasWidth - elementRect.width, snapToGridValue(elementRect.left + deltaX)));
+      const newY = Math.max(0, Math.min(effectiveCanvasHeight - elementRect.height, snapToGridValue(elementRect.top + deltaY)));
 
       setDragOffset({ x: newX - elementRect.left, y: newY - elementRect.top });
 
@@ -75,8 +78,11 @@ export const useDragAndDrop = ({
       setDragOffset({ x: 0, y: 0 });
 
       if (onElementDrop) {
-        const finalX = Math.max(0, Math.min(canvasWidth - elementRect.width, snapToGridValue(elementRect.left + (lastMouseX - startX))));
-        const finalY = Math.max(0, Math.min(canvasHeight - elementRect.height, snapToGridValue(elementRect.top + (lastMouseY - startY))));
+        const effectiveCanvasWidth = canvasRect ? canvasRect.width / zoomLevel : canvasWidth;
+        const effectiveCanvasHeight = canvasRect ? canvasRect.height / zoomLevel : canvasHeight;
+
+        const finalX = Math.max(0, Math.min(effectiveCanvasWidth - elementRect.width, snapToGridValue(elementRect.left + (lastMouseX - startX))));
+        const finalY = Math.max(0, Math.min(effectiveCanvasHeight - elementRect.height, snapToGridValue(elementRect.top + (lastMouseY - startY))));
         onElementDrop(elementId, { x: finalX, y: finalY });
       }
 
@@ -114,16 +120,19 @@ export const useDragAndDrop = ({
     const elementId = e.dataTransfer.getData('text/plain');
     if (!elementId) return;
 
-    const dropX = e.clientX - canvasRect.left - dragStartPos.current.x;
-    const dropY = e.clientY - canvasRect.top - dragStartPos.current.y;
+    const dropX = (e.clientX - canvasRect.left - dragStartPos.current.x) / zoom;
+    const dropY = (e.clientY - canvasRect.top - dragStartPos.current.y) / zoom;
 
-    const snappedX = Math.max(0, Math.min(canvasWidth - 50, snapToGridValue(dropX))); // Assuming element width 50
-    const snappedY = Math.max(0, Math.min(canvasHeight - 25, snapToGridValue(dropY))); // Assuming element height 25
+    const effectiveCanvasWidth = canvasRect ? canvasRect.width / zoom : canvasWidth;
+    const effectiveCanvasHeight = canvasRect ? canvasRect.height / zoom : canvasHeight;
+
+    const snappedX = Math.max(0, Math.min(effectiveCanvasWidth - 50, snapToGridValue(dropX))); // Assuming element width 50
+    const snappedY = Math.max(0, Math.min(effectiveCanvasHeight - 25, snapToGridValue(dropY))); // Assuming element height 25
 
     if (onElementDrop) {
       onElementDrop(elementId, { x: snappedX, y: snappedY });
     }
-  }, [snapToGridValue, onElementDrop]);
+  }, [snapToGridValue, onElementDrop, zoom, canvasWidth, canvasHeight]);
 
   return {
     isDragging,

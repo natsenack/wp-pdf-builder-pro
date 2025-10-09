@@ -34,11 +34,9 @@ export const CanvasElement = ({
 
   // Gestionnaire de clic sur l'élément
   const handleMouseDown = useCallback((e) => {
-    console.log('CanvasElement handleMouseDown', element.id, e.clientX, e.clientY);
     e.stopPropagation();
 
     if (!isSelected) {
-      console.log('Element not selected, selecting...');
       onSelect();
       return;
     }
@@ -58,15 +56,9 @@ export const CanvasElement = ({
       height: elementRect.height / zoom
     };
 
-    console.log('Canvas rect:', canvasRect);
-    console.log('Element rect:', elementRect);
-    console.log('Relative rect:', relativeRect);
-
     // Vérifier si on clique sur une poignée de redimensionnement
     const clickX = (e.clientX - canvasRect.left) / zoom;
     const clickY = (e.clientY - canvasRect.top) / zoom;
-
-    console.log('Click position relative to canvas:', clickX, clickY);
 
     const handleSize = 8 / zoom; // Ajuster la taille des poignées pour le zoom
     const elementLeft = element.x;
@@ -92,7 +84,6 @@ export const CanvasElement = ({
     );
 
     if (clickedHandle) {
-      console.log('Clicked handle:', clickedHandle.name);
       const canvas = elementRef.current.closest('.canvas-zoom-wrapper');
       const canvasRect = canvas.getBoundingClientRect();
       resize.handleResizeStart(e, clickedHandle.name, {
@@ -102,7 +93,6 @@ export const CanvasElement = ({
         height: element.height
       }, canvasRect, zoom);
     } else {
-      console.log('Starting drag for element:', element.id);
       // Démarrer le drag avec les coordonnées relatives au canvas
       const canvas = elementRef.current.closest('.canvas-zoom-wrapper');
       const canvasRect = canvas.getBoundingClientRect();
