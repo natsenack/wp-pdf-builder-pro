@@ -127,10 +127,12 @@ export const PreviewModal = ({ isOpen, onClose, templateData, canvasWidth, canva
             console.log('PDF Builder Preview: Réponse jQuery AJAX:', response);
             if (response.success) {
               setPreviewHtml(response.data.html);
+              setLoading(false);
               resolve();
             } else {
               console.error('PDF Builder Preview: Erreur dans la réponse:', response.data);
               setError(response.data || 'Une erreur inconnue est survenue');
+              setLoading(false);
               reject(new Error(response.data || 'Une erreur inconnue est survenue'));
             }
           },
@@ -139,6 +141,7 @@ export const PreviewModal = ({ isOpen, onClose, templateData, canvasWidth, canva
             const errorText = xhr.responseText || 'Erreur HTTP ' + xhr.status;
             console.log('PDF Builder Preview: Contenu de l\'erreur:', errorText);
             setError('Erreur lors de l\'aperçu: ' + errorText);
+            setLoading(false);
             reject(new Error('Erreur HTTP ' + xhr.status + ': ' + xhr.statusText));
           }
         });
