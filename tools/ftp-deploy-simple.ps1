@@ -5,7 +5,11 @@ Write-Host "🚀 FTP DEPLOY - SIMPLE & FAST" -ForegroundColor Green
 Write-Host "================================" -ForegroundColor Green
 
 # Configuration
-$configFile = ".\ftp-config.env"
+$projectRoot = Split-Path (Get-Location) -Parent
+$configFile = Join-Path $projectRoot "./tools/ftp-config.env"
+Write-Host "Project root: $projectRoot" -ForegroundColor Yellow
+Write-Host "Config file: $configFile" -ForegroundColor Yellow
+Write-Host "Config exists: $(Test-Path $configFile)" -ForegroundColor Yellow
 if (-not (Test-Path $configFile)) {
     Write-Host "❌ Config manquante : $configFile" -ForegroundColor Red
     exit 1
@@ -37,7 +41,6 @@ Pop-Location
 Write-Host "✅ Compilation terminée" -ForegroundColor Green
 
 # Lister les fichiers
-$projectRoot = Split-Path (Get-Location) -Parent
 $files = Get-ChildItem -Path $projectRoot -Recurse -File | Where-Object {
     $relPath = $_.FullName.Substring($projectRoot.Length + 1).Replace('\', '/')
     -not ($relPath -match '^(archive|\.git|\.vscode|node_modules|src|tools|docs|build-tools|dev-tools|vendor|dist|package\.json|package-lock\.json|webpack\.config\.js|tsconfig\.json)/')
@@ -91,13 +94,6 @@ foreach ($file in $files) {
     $fileName = [System.IO.Path]::GetFileName($relPath)
     $fileSize = $file.Length
 
-    # Créer les répertoires si nécessaire (FTP ne les crée pas automatiquement)
-    $remoteDir = [System.IO.Path]::GetDirectoryName($remoteFile).Replace('\', '/')
-    if ($remoteDir -ne $remotePath) {
-        # Note: FTP ne supporte pas la création récursive de répertoires facilement
-        # Pour simplifier, on assume que les répertoires existent ou on les crée manuellement
-    }
-
     Send-File -localFile $file.FullName -remoteFile $remoteFile
     
     $uploaded++
@@ -120,7 +116,7 @@ Write-Host "🔄 Push vers Git..." -ForegroundColor Yellow
 
 try {
     # Aller dans le répertoire du projet
-    Push-Location (Split-Path (Get-Location) -Parent)
+    Push-Location $projectRoot
 
     # Git add, commit, push
     & git add .

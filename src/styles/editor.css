@@ -10,6 +10,9 @@
   --text-secondary: #64748b;
   --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   --radius: 6px;
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --error-color: #ef4444;
 }
 
 .pdf-canvas-editor {
@@ -94,13 +97,13 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary-color) 0%, #1d4ed8 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, #60a5fa 100%);
   color: white;
   box-shadow: var(--shadow);
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+  background: linear-gradient(135deg, #60a5fa 0%, #93c5fd 100%);
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
@@ -184,7 +187,7 @@
 .toolbar {
   flex-shrink: 0; /* Empêche le toolbar d'être compressé */
   padding: 20px 24px;
-  background: linear-gradient(135deg, var(--surface-color) 0%, var(#f8fafc) 100%);
+  background: linear-gradient(135deg, var(--surface-color) 0%, #f8fafc 100%);
   border-bottom: 1px solid var(--border-color);
   display: flex;
   gap: 32px;
@@ -260,13 +263,13 @@
 }
 
 .tool-button:hover, .edit-button:hover {
-  border-color: var(#cbd5e1);
+  border-color: #cbd5e1;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .tool-button.active {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(#1d4ed8) 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, #60a5fa 100%);
   color: white;
   border-color: var(--primary-color);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
@@ -333,7 +336,7 @@
 }
 
 .zoom-button:hover {
-  background: var(#f8fafc);
+  background: #f8fafc;
   color: var(--text-primary);
   transform: scale(1.05);
 }
@@ -357,7 +360,7 @@
 .panel-header {
   padding: 20px 24px;
   border-bottom: 1px solid var(--border-color);
-  background: linear-gradient(135deg, var(--surface-color) 0%, var(#f8fafc) 100%);
+  background: linear-gradient(135deg, var(--surface-color) 0%, #f8fafc 100%);
   position: relative;
 }
 
@@ -403,7 +406,7 @@
 }
 
 .panel-content::-webkit-scrollbar-thumb:hover {
-  background: var(#cbd5e1);
+  background: #cbd5e1;
 }
 
 .properties-group {
@@ -418,7 +421,7 @@
 
 .properties-group:hover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  border-color: var(#cbd5e1);
+  border-color: #cbd5e1;
 }
 
 .properties-group h4 {
@@ -513,15 +516,15 @@
 
 .style-buttons button:hover,
 .alignment-buttons button:hover {
-  border-color: var(#cbd5e1);
-  background: var(#f8fafc);
+  border-color: #cbd5e1;
+  background: #f8fafc;
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .style-buttons button.active,
 .alignment-buttons button.active {
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(#1d4ed8) 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, #60a5fa 100%);
   color: white;
   border-color: var(--primary-color);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
@@ -538,7 +541,7 @@
 .library-header {
   padding: 20px 24px;
   border-bottom: 1px solid var(--border-color);
-  background: linear-gradient(135deg, var(--surface-color) 0%, var(#f8fafc) 100%);
+  background: linear-gradient(135deg, var(--surface-color) 0%, #f8fafc 100%);
   position: relative;
 }
 
@@ -616,7 +619,7 @@
 }
 
 .library-content::-webkit-scrollbar-thumb:hover {
-  background: var(#cbd5e1);
+  background: #cbd5e1;
 }
 
 .element-category {
@@ -719,7 +722,7 @@
 .library-footer {
   padding: 20px 24px;
   border-top: 1px solid var(--border-color);
-  background: linear-gradient(135deg, var(--surface-color) 0%, var(#f8fafc) 100%);
+  background: linear-gradient(135deg, var(--surface-color) 0%, #f8fafc 100%);
 }
 
 .quick-actions {
@@ -745,8 +748,8 @@
 }
 
 .quick-action-btn:hover {
-  border-color: var(#cbd5e1);
-  background: var(#f8fafc);
+  border-color: #cbd5e1;
+  background: #f8fafc;
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
@@ -847,7 +850,7 @@
 }
 
 .context-menu-item:hover {
-  background: var(#f8fafc);
+  background: #f8fafc;
 }
 
 .context-menu-item:disabled {
@@ -1047,9 +1050,7 @@
   :root {
     --background-color: #0f172a;
     --surface-color: #1e293b;
-    #f8fafc: #334155;
     --border-color: #334155;
-    #cbd5e1: #475569;
     --text-primary: #f8fafc;
     --text-secondary: #cbd5e1;
     --text-muted: #64748b;
