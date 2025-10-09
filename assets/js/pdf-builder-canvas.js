@@ -1143,8 +1143,8 @@ const PDF_BUILDER_CANVAS = {
                 width: width,
                 height: height,
                 style: {
-                    backgroundColor: '#007cba',
-                    border: '2px solid #005a87'
+                    backgroundColor: '#3b82f6',
+                    border: '2px solid #60a5fa'
                 }
             });
         },
@@ -1168,8 +1168,8 @@ const PDF_BUILDER_CANVAS = {
                 height: radius * 2,
                 style: {
                     borderRadius: '50%',
-                    backgroundColor: '#007cba',
-                    border: '2px solid #005a87'
+                    backgroundColor: '#3b82f6',
+                    border: '2px solid #60a5fa'
                 }
             });
         }

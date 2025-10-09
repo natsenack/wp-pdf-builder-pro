@@ -353,7 +353,7 @@ class PDF_Builder_Admin {
                 }
 
                 .step-number {
-                    background: #2271b1;
+                    background: #3b82f6;
                     color: white;
                     width: 30px;
                     height: 30px;
