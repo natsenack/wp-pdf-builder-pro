@@ -669,6 +669,21 @@ export const PropertiesPanel = ({
                     ))}
                   </div>
                 </div>
+
+                <div className="property-row">
+                  <label>Style du tableau:</label>
+                  <select
+                    value={localProperties.tableStyle || 'default'}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'tableStyle', e.target.value)}
+                  >
+                    <option value="default">Style par défaut</option>
+                    <option value="classic">Classique (noir/blanc)</option>
+                    <option value="striped">Lignes alternées</option>
+                    <option value="bordered">Encadré</option>
+                    <option value="minimal">Minimal</option>
+                    <option value="modern">Moderne</option>
+                  </select>
+                </div>
               </div>
             )}
           </div>

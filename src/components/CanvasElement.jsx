@@ -127,6 +127,128 @@ export const CanvasElement = ({
     }
   }, [onContextMenu, element.id]);
 
+  // Fonctions de style pour les tableaux
+  const getTableStyle = (style) => {
+    switch (style) {
+      case 'classic':
+        return {
+          border: '2px solid #333',
+          borderRadius: '0',
+          boxShadow: 'none'
+        };
+      case 'striped':
+        return {
+          border: '1px solid #ddd',
+          borderRadius: '4px',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+        };
+      case 'bordered':
+        return {
+          border: '2px solid #333',
+          borderRadius: '0',
+          boxShadow: 'none'
+        };
+      case 'minimal':
+        return {
+          border: 'none',
+          borderRadius: '0',
+          boxShadow: 'none'
+        };
+      case 'modern':
+        return {
+          border: '1px solid #e1e5e9',
+          borderRadius: '8px',
+          boxShadow: '0 4px 6px rgba(0,0,0,0.07)',
+          backgroundColor: '#ffffff'
+        };
+      default: // 'default'
+        return {
+          border: '1px solid #ddd',
+          borderRadius: '2px',
+          boxShadow: 'none'
+        };
+    }
+  };
+
+  const getTableHeaderStyle = (style) => {
+    switch (style) {
+      case 'classic':
+        return {
+          backgroundColor: '#666',
+          color: '#fff',
+          borderBottom: '2px solid #333',
+          fontWeight: 'bold'
+        };
+      case 'striped':
+        return {
+          backgroundColor: '#f8f9fa',
+          borderBottom: '2px solid #dee2e6',
+          fontWeight: '600'
+        };
+      case 'bordered':
+        return {
+          backgroundColor: '#f8f9fa',
+          borderBottom: '2px solid #333',
+          fontWeight: 'bold'
+        };
+      case 'minimal':
+        return {
+          backgroundColor: 'transparent',
+          borderBottom: '1px solid #eee',
+          fontWeight: 'normal'
+        };
+      case 'modern':
+        return {
+          backgroundColor: '#f8fafc',
+          borderBottom: '1px solid #e2e8f0',
+          fontWeight: '600',
+          color: '#334155'
+        };
+      default: // 'default'
+        return {
+          backgroundColor: '#f5f5f5',
+          borderBottom: '1px solid #ddd',
+          fontWeight: 'bold'
+        };
+    }
+  };
+
+  const getTableRowStyle = (style, rowIndex) => {
+    switch (style) {
+      case 'classic':
+        return {
+          backgroundColor: rowIndex % 2 === 0 ? '#fff' : '#f9f9f9',
+          borderBottom: '1px solid #ccc'
+        };
+      case 'striped':
+        return {
+          backgroundColor: rowIndex % 2 === 0 ? '#fff' : '#f8f9fa',
+          borderBottom: '1px solid #dee2e6'
+        };
+      case 'bordered':
+        return {
+          backgroundColor: '#fff',
+          borderBottom: '1px solid #333'
+        };
+      case 'minimal':
+        return {
+          backgroundColor: 'transparent',
+          borderBottom: rowIndex % 2 === 0 ? '1px solid #f0f0f0' : 'none'
+        };
+      case 'modern':
+        return {
+          backgroundColor: rowIndex % 2 === 0 ? '#ffffff' : '#f8fafc',
+          borderBottom: '1px solid #e2e8f0',
+          transition: 'background-color 0.2s ease'
+        };
+      default: // 'default'
+        return {
+          backgroundColor: rowIndex % 2 === 0 ? '#fff' : '#fafafa',
+          borderBottom: '1px solid #eee'
+        };
+    }
+  };
+
   return (
     <>
       {/* Élément principal */}
@@ -460,7 +582,8 @@ export const CanvasElement = ({
             fontFamily: 'Arial, sans-serif',
             border: (element.showBorders !== false) ? '1px solid #ddd' : 'none',
             borderRadius: '2px',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            ...getTableStyle(element.tableStyle || 'default')
           }}>
             {console.log('📊 Rendering product_table:', { element, zoom })}
             {/* En-tête du tableau */}
@@ -469,7 +592,8 @@ export const CanvasElement = ({
                 display: 'flex',
                 backgroundColor: '#f5f5f5',
                 borderBottom: '1px solid #ddd',
-                fontWeight: 'bold'
+                fontWeight: 'bold',
+                ...getTableHeaderStyle(element.tableStyle || 'default')
               }}>
                 {(element.columns?.image !== false) && (
                   <div style={{
@@ -538,7 +662,8 @@ export const CanvasElement = ({
               {/* Ligne 1 */}
               <div style={{
                 display: 'flex',
-                borderBottom: '1px solid #eee'
+                borderBottom: '1px solid #eee',
+                ...getTableRowStyle(element.tableStyle || 'default', 0)
               }}>
                 {(element.columns?.image !== false) && (
                   <div style={{
@@ -603,7 +728,8 @@ export const CanvasElement = ({
               <div style={{
                 display: 'flex',
                 borderBottom: '1px solid #eee',
-                backgroundColor: '#fafafa'
+                backgroundColor: '#fafafa',
+                ...getTableRowStyle(element.tableStyle || 'default', 1)
               }}>
                 {(element.columns?.image !== false) && (
                   <div style={{
