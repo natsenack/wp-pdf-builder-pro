@@ -154,8 +154,9 @@ export const PropertiesPanel = ({
 
   // Gestionnaire unifié de changement de propriété
   const handlePropertyChange = useCallback((elementId, property, value) => {
-    // Validation via le service
-    if (!elementCustomizationService.validateProperty(property, value)) {
+    // Validation via le service (sauf pour les propriétés boolean qui sont toujours valides)
+    const isBooleanProperty = typeof value === 'boolean' || property.startsWith('columns.');
+    if (!isBooleanProperty && !elementCustomizationService.validateProperty(property, value)) {
       console.warn(`Propriété invalide: ${property} = ${value}`);
       return;
     }
