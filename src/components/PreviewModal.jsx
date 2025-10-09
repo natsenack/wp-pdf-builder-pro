@@ -21,6 +21,40 @@ export const PreviewModal = ({ isOpen, onClose, templateData, canvasWidth, canva
       console.log('PDF Builder Preview: Utilisation de l\'URL AJAX:', ajaxUrl);
       console.log('PDF Builder Preview: Données template:', templateData);
 
+      // Validation et nettoyage des données avant sérialisation
+      if (!templateData || !templateData.elements || !Array.isArray(templateData.elements)) {
+        setError('Données template invalides: éléments manquants');
+        setLoading(false);
+        return;
+      }
+
+      // Fonction pour nettoyer les objets (supprimer les propriétés non sérialisables)
+      const sanitizeObject = (obj) => {
+        if (obj === null || typeof obj !== 'object') {
+          return obj;
+        }
+
+        if (Array.isArray(obj)) {
+          return obj.map(sanitizeObject);
+        }
+
+        const cleaned = {};
+        for (const [key, value] of Object.entries(obj)) {
+          // Ignorer les propriétés qui commencent par $ ou _ (internes React)
+          if (key.startsWith('$') || key.startsWith('_')) {
+            continue;
+          }
+
+          // Convertir les valeurs non sérialisables
+          if (typeof value === 'function') {
+            continue; // Ignorer les fonctions
+          }
+
+          cleaned[key] = sanitizeObject(value);
+        }
+        return cleaned;
+      };
+
       // Convertir les données du canvas au format attendu par le backend
       const formattedData = {
         pages: [{
@@ -34,33 +68,44 @@ export const PreviewModal = ({ isOpen, onClose, templateData, canvasWidth, canva
             bottom: 20,
             left: 20
           },
-          elements: templateData.elements.map(element => ({
-            type: element.type,
-            position: {
-              x: element.x,
-              y: element.y
-            },
-            size: {
-              width: element.width,
-              height: element.height
-            },
-            style: {
-              color: element.color || '#000000',
-              fontSize: element.fontSize || 14,
-              fontWeight: element.fontWeight || 'normal',
-              fillColor: element.backgroundColor || 'transparent',
-              borderColor: element.borderColor || '#000000',
-              borderWidth: element.borderWidth || 0
-            },
-            content: element.text || element.content || ''
-          }))
+          elements: templateData.elements.map(element => {
+            const cleanedElement = sanitizeObject(element);
+            return {
+              type: cleanedElement.type || 'text',
+              position: {
+                x: parseFloat(cleanedElement.x) || 0,
+                y: parseFloat(cleanedElement.y) || 0
+              },
+              size: {
+                width: parseFloat(cleanedElement.width) || 100,
+                height: parseFloat(cleanedElement.height) || 50
+              },
+              style: {
+                color: cleanedElement.color || '#333333',
+                fontSize: parseInt(cleanedElement.fontSize) || 14,
+                fontWeight: cleanedElement.fontWeight || 'normal',
+                fillColor: cleanedElement.backgroundColor || '#f8fafc',
+                borderColor: cleanedElement.borderColor || '#e2e8f0',
+                borderWidth: parseInt(cleanedElement.borderWidth) || 1
+              },
+              content: cleanedElement.text || cleanedElement.content || ''
+            };
+          })
         }]
       };
 
       console.log('PDF Builder Preview: Données formatées:', formattedData);
 
-      const jsonString = JSON.stringify(formattedData);
-      console.log('PDF Builder Preview: JSON string:', jsonString);
+      let jsonString;
+      try {
+        jsonString = JSON.stringify(formattedData);
+        console.log('PDF Builder Preview: JSON string:', jsonString);
+      } catch (jsonError) {
+        console.error('PDF Builder Preview: Erreur JSON:', jsonError);
+        setError('Erreur de sérialisation JSON: ' + jsonError.message);
+        setLoading(false);
+        return;
+      }
 
       // Préparer les données pour l'AJAX avec FormData (méthode WordPress standard)
       const formData = new FormData();
