@@ -29,6 +29,7 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
       name: 'WooCommerce - Produits',
       elements: [
         { type: 'woocommerce-products-table', label: 'Tableau des Produits', icon: '📋', description: 'Tableau détaillé des produits commandés' },
+        { type: 'woocommerce-products-simple', label: 'Liste Produits Simple', icon: '📝', description: 'Liste simple des produits sans totaux' },
         { type: 'woocommerce-subtotal', label: 'Sous-total', icon: '💰', description: 'Sous-total de la commande' },
         { type: 'woocommerce-discount', label: 'Remise', icon: '🏷️', description: 'Montant de la remise appliquée' },
         { type: 'woocommerce-shipping', label: 'Frais de Port', icon: '🚚', description: 'Coûts de livraison' },

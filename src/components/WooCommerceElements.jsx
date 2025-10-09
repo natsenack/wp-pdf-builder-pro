@@ -10,6 +10,99 @@ export const WooCommerceElement = ({ element, isSelected, onSelect, onUpdate }) 
     onSelect(element.id);
   };
 
+  // Fonction pour rendre un tableau de produits détaillé
+  const renderProductsTable = () => {
+    const products = [
+      { name: 'Produit 1', qty: 1, price: 10.00, total: 10.00 },
+      { name: 'Produit 2', qty: 2, price: 15.00, total: 30.00 },
+      { name: 'Produit 3', qty: 1, price: 25.00, total: 25.00 }
+    ];
+
+    const subtotal = products.reduce((sum, p) => sum + p.total, 0);
+    const tax = subtotal * 0.1; // 10% tax
+    const total = subtotal + tax;
+
+    return (
+      <table style={{
+        width: '100%',
+        borderCollapse: 'collapse',
+        fontSize: '12px',
+        fontFamily: 'Arial, sans-serif'
+      }}>
+        <thead>
+          <tr style={{ backgroundColor: '#f8f9fa', borderBottom: '2px solid #dee2e6' }}>
+            <th style={{ padding: '8px 4px', textAlign: 'left', fontWeight: 'bold', borderRight: '1px solid #dee2e6' }}>Produit</th>
+            <th style={{ padding: '8px 4px', textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #dee2e6', width: '60px' }}>Qté</th>
+            <th style={{ padding: '8px 4px', textAlign: 'center', fontWeight: 'bold', borderRight: '1px solid #dee2e6', width: '80px' }}>Prix</th>
+            <th style={{ padding: '8px 4px', textAlign: 'right', fontWeight: 'bold', width: '80px' }}>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {products.map((product, index) => (
+            <tr key={index} style={{ borderBottom: '1px solid #dee2e6' }}>
+              <td style={{ padding: '6px 4px', borderRight: '1px solid #dee2e6' }}>{product.name}</td>
+              <td style={{ padding: '6px 4px', textAlign: 'center', borderRight: '1px solid #dee2e6' }}>{product.qty}</td>
+              <td style={{ padding: '6px 4px', textAlign: 'center', borderRight: '1px solid #dee2e6' }}>${product.price.toFixed(2)}</td>
+              <td style={{ padding: '6px 4px', textAlign: 'right' }}>${product.total.toFixed(2)}</td>
+            </tr>
+          ))}
+          <tr style={{ borderTop: '2px solid #dee2e6', backgroundColor: '#f8f9fa' }}>
+            <td colSpan="3" style={{ padding: '8px 4px', textAlign: 'right', fontWeight: 'bold' }}>Sous-total:</td>
+            <td style={{ padding: '8px 4px', textAlign: 'right', fontWeight: 'bold' }}>${subtotal.toFixed(2)}</td>
+          </tr>
+          <tr style={{ backgroundColor: '#f8f9fa' }}>
+            <td colSpan="3" style={{ padding: '4px 4px', textAlign: 'right' }}>TVA (10%):</td>
+            <td style={{ padding: '4px 4px', textAlign: 'right' }}>${tax.toFixed(2)}</td>
+          </tr>
+          <tr style={{ borderTop: '2px solid #007cba', backgroundColor: '#e3f2fd' }}>
+            <td colSpan="3" style={{ padding: '8px 4px', textAlign: 'right', fontWeight: 'bold', fontSize: '14px' }}>Total:</td>
+            <td style={{ padding: '8px 4px', textAlign: 'right', fontWeight: 'bold', fontSize: '14px', color: '#007cba' }}>${total.toFixed(2)}</td>
+          </tr>
+        </tbody>
+      </table>
+    );
+  };
+
+  // Fonction pour rendre une liste simple de produits
+  const renderProductsSimple = () => {
+    const products = [
+      { name: 'Produit Premium', qty: 1, price: 29.99 },
+      { name: 'Accessoire Standard', qty: 2, price: 15.50 },
+      { name: 'Service Installation', qty: 1, price: 49.00 }
+    ];
+
+    return (
+      <div style={{ fontSize: '13px', lineHeight: '1.6' }}>
+        {products.map((product, index) => (
+          <div key={index} style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: '4px 0',
+            borderBottom: index < products.length - 1 ? '1px solid #f0f0f0' : 'none'
+          }}>
+            <div style={{ flex: 1 }}>
+              <span style={{ fontWeight: '500' }}>{product.name}</span>
+              {product.qty > 1 && (
+                <span style={{ color: '#666', marginLeft: '8px' }}>
+                  (x{product.qty})
+                </span>
+              )}
+            </div>
+            <div style={{ fontWeight: '600', color: '#007cba' }}>
+              ${product.price.toFixed(2)}
+              {product.qty > 1 && (
+                <span style={{ fontSize: '11px', color: '#666', marginLeft: '4px' }}>
+                  (${(product.price * product.qty).toFixed(2)})
+                </span>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   const renderElement = () => {
     const baseStyle = {
       position: 'absolute',
@@ -52,7 +145,9 @@ export const WooCommerceElement = ({ element, isSelected, onSelect, onUpdate }) 
         case 'woocommerce-order-status':
           return 'Traitée';
         case 'woocommerce-products-table':
-          return 'Tableau des produits\n- Produit 1 x1 $10.00\n- Produit 2 x2 $20.00\nTotal: $50.00';
+          return renderProductsTable();
+        case 'woocommerce-products-simple':
+          return renderProductsSimple();
         case 'woocommerce-subtotal':
           return '$45.00';
         case 'woocommerce-discount':
@@ -125,7 +220,8 @@ const getElementLabel = (type) => {
     'woocommerce-customer-email': 'Email Client',
     'woocommerce-payment-method': 'Paiement',
     'woocommerce-order-status': 'Statut',
-    'woocommerce-products-table': 'Produits',
+    'woocommerce-products-table': 'Tableau Produits',
+    'woocommerce-products-simple': 'Liste Produits',
     'woocommerce-subtotal': 'Sous-total',
     'woocommerce-discount': 'Remise',
     'woocommerce-shipping': 'Livraison',
@@ -169,6 +265,10 @@ export const useWooCommerceElements = () => {
       case 'woocommerce-products-table':
         defaults.width = 400;
         defaults.height = 150;
+        break;
+      case 'woocommerce-products-simple':
+        defaults.width = 350;
+        defaults.height = 120;
         break;
       case 'woocommerce-invoice-number':
       case 'woocommerce-order-number':
