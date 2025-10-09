@@ -96,17 +96,54 @@ $uploadedBytes = 0
 
 Write-Host "📤 Upload en parallèle ($maxConcurrentJobs jobs max)..." -ForegroundColor Yellow
 
-foreach ($file in $files) {
-    $relPath = $file.FullName.Substring($projectRoot.Length + 1).Replace('\', '/')
-    $remoteFile = "$remotePath/$relPath"
-    $fileSize = $file.Length
+try {
+    foreach ($file in $files) {
+        $relPath = $file.FullName.Substring($projectRoot.Length + 1).Replace('\', '/')
+        $remoteFile = "$remotePath/$relPath"
+        $fileSize = $file.Length
 
-    # Démarrer un nouveau job si on n'a pas atteint la limite
-    if ($runningJobs.Count -lt $maxConcurrentJobs) {
+        # Attendre qu'il y ait un slot disponible si on a atteint la limite
+        while ($runningJobs.Count -ge $maxConcurrentJobs) {
+            # Attendre qu'au moins un job se termine
+            $completed = $runningJobs | Where-Object { $_.Job.State -ne 'Running' } | Select-Object -First 1
+            if ($completed) {
+                $result = Receive-Job -Job $completed.Job
+                Remove-Job -Job $completed.Job
+
+                if ($result.Success) {
+                    Write-Host "✅ $($result.FileName)" -ForegroundColor Green
+                    $uploaded++
+                    $uploadedBytes += $completed.FileSize
+                } else {
+                    Write-Host "❌ Erreur upload $($result.FileName): $($result.Error)" -ForegroundColor Red
+                }
+
+                $runningJobs = $runningJobs | Where-Object { $_.Job -ne $completed.Job }
+                $completedJobs += $completed
+            } else {
+                # Aucun job terminé, attendre un peu
+                Start-Sleep -Milliseconds 100
+            }
+        }
+
+        # Démarrer le job pour ce fichier
         $job = Start-Job -ScriptBlock ${function:Send-File} -ArgumentList $file.FullName, $remoteFile, $ftpHost, $ftpUser, $ftpPassword
         $runningJobs += @{ Job = $job; FileSize = $fileSize; RemoteFile = $remoteFile; FileName = [System.IO.Path]::GetFileName($relPath) }
-    } else {
-        # Attendre qu'un job se termine
+
+        # Mise à jour de la progression
+        $elapsed = (Get-Date) - $startTime
+        $avgSpeed = if ($elapsed.TotalSeconds -gt 0) { $uploadedBytes / $elapsed.TotalSeconds } else { 0 }
+        $remainingFiles = $total - $uploaded
+        $estimatedTimeRemaining = if ($avgSpeed -gt 0) { ($remainingFiles * ($uploadedBytes / [Math]::Max($uploaded, 1))) / $avgSpeed } else { 0 }
+
+        $progressPercent = [math]::Round(($uploaded / $total) * 100, 1)
+        $status = "$uploaded/$total fichiers | $([math]::Round($avgSpeed / 1024, 1)) KB/s | ~$([math]::Round($estimatedTimeRemaining / 60, 1)) min restantes"
+
+        Write-Progress -Activity "🚀 Déploiement FTP - $progressPercent% terminé" -Status $status -PercentComplete $progressPercent
+    }
+
+    # Attendre que tous les jobs restants se terminent
+    while ($runningJobs.Count -gt 0) {
         $completed = $runningJobs | Where-Object { $_.Job.State -ne 'Running' } | Select-Object -First 1
         if ($completed) {
             $result = Receive-Job -Job $completed.Job
@@ -124,54 +161,24 @@ foreach ($file in $files) {
             $completedJobs += $completed
         }
 
-        # Redémarrer le job pour le fichier actuel
-        $job = Start-Job -ScriptBlock ${function:Send-File} -ArgumentList $file.FullName, $remoteFile, $ftpHost, $ftpUser, $ftpPassword
-        $runningJobs += @{ Job = $job; FileSize = $fileSize; RemoteFile = $remoteFile; FileName = [System.IO.Path]::GetFileName($relPath) }
+        # Mise à jour de la progression
+        $elapsed = (Get-Date) - $startTime
+        $avgSpeed = if ($elapsed.TotalSeconds -gt 0) { $uploadedBytes / $elapsed.TotalSeconds } else { 0 }
+        $remainingFiles = $total - $uploaded
+        $estimatedTimeRemaining = if ($avgSpeed -gt 0) { ($remainingFiles * ($uploadedBytes / [Math]::Max($uploaded, 1))) / $avgSpeed } else { 0 }
+
+        $progressPercent = [math]::Round(($uploaded / $total) * 100, 1)
+        $status = "$uploaded/$total fichiers | $([math]::Round($avgSpeed / 1024, 1)) KB/s | ~$([math]::Round($estimatedTimeRemaining / 60, 1)) min restantes"
+
+        Write-Progress -Activity "🚀 Déploiement FTP - $progressPercent% terminé" -Status $status -PercentComplete $progressPercent
+
+        Start-Sleep -Milliseconds 100  # Petite pause pour éviter de boucler trop vite
     }
-
-    # Mise à jour de la progression
-    $elapsed = (Get-Date) - $startTime
-    $avgSpeed = if ($elapsed.TotalSeconds -gt 0) { $uploadedBytes / $elapsed.TotalSeconds } else { 0 }
-    $remainingFiles = $total - $uploaded
-    $estimatedTimeRemaining = if ($avgSpeed -gt 0) { ($remainingFiles * ($uploadedBytes / [Math]::Max($uploaded, 1))) / $avgSpeed } else { 0 }
-
-    $progressPercent = [math]::Round(($uploaded / $total) * 100, 1)
-    $status = "$uploaded/$total fichiers | $([math]::Round($avgSpeed / 1024, 1)) KB/s | ~$([math]::Round($estimatedTimeRemaining / 60, 1)) min restantes"
-
-    Write-Progress -Activity "🚀 Déploiement FTP - $progressPercent% terminé" -Status $status -PercentComplete $progressPercent
-}
-
-# Attendre que tous les jobs restants se terminent
-while ($runningJobs.Count -gt 0) {
-    $completed = $runningJobs | Where-Object { $_.Job.State -ne 'Running' } | Select-Object -First 1
-    if ($completed) {
-        $result = Receive-Job -Job $completed.Job
-        Remove-Job -Job $completed.Job
-
-        if ($result.Success) {
-            Write-Host "✅ $($result.FileName)" -ForegroundColor Green
-            $uploaded++
-            $uploadedBytes += $completed.FileSize
-        } else {
-            Write-Host "❌ Erreur upload $($result.FileName): $($result.Error)" -ForegroundColor Red
-        }
-
-        $runningJobs = $runningJobs | Where-Object { $_.Job -ne $completed.Job }
-        $completedJobs += $completed
-    }
-
-    # Mise à jour de la progression
-    $elapsed = (Get-Date) - $startTime
-    $avgSpeed = if ($elapsed.TotalSeconds -gt 0) { $uploadedBytes / $elapsed.TotalSeconds } else { 0 }
-    $remainingFiles = $total - $uploaded
-    $estimatedTimeRemaining = if ($avgSpeed -gt 0) { ($remainingFiles * ($uploadedBytes / [Math]::Max($uploaded, 1))) / $avgSpeed } else { 0 }
-
-    $progressPercent = [math]::Round(($uploaded / $total) * 100, 1)
-    $status = "$uploaded/$total fichiers | $([math]::Round($avgSpeed / 1024, 1)) KB/s | ~$([math]::Round($estimatedTimeRemaining / 60, 1)) min restantes"
-
-    Write-Progress -Activity "🚀 Déploiement FTP - $progressPercent% terminé" -Status $status -PercentComplete $progressPercent
-
-    Start-Sleep -Milliseconds 100  # Petite pause pour éviter de boucler trop vite
+} finally {
+    # Nettoyer tous les jobs restants en cas d'erreur ou d'interruption
+    Write-Host "🧹 Nettoyage des jobs en cours..." -ForegroundColor Yellow
+    Get-Job | Remove-Job -Force -ErrorAction SilentlyContinue
+    Write-Host "✅ Jobs nettoyés" -ForegroundColor Green
 }
 
 Write-Host "🎉 Déploiement terminé ! $uploaded fichiers uploadés." -ForegroundColor Green
