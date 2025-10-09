@@ -394,7 +394,7 @@ class PDF_Builder_Admin {
      */
     public function settings_page() {
         $this->check_admin_permissions();
-        include plugin_dir_path(__FILE__) . 'views/settings-page.php';
+        include plugin_dir_path(dirname(__FILE__)) . 'settings-page.php';
     }
 
     /**
