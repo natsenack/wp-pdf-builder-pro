@@ -40,7 +40,7 @@ export const CanvasElement = ({
     }
 
     // Calculer les coordonnées relatives au canvas (en tenant compte du zoom)
-    const canvas = elementRef.current.closest('.canvas-container');
+    const canvas = elementRef.current.closest('.canvas-zoom-wrapper');
     if (!canvas) return;
 
     const canvasRect = canvas.getBoundingClientRect();
@@ -98,7 +98,7 @@ export const CanvasElement = ({
     } else {
       console.log('Starting drag for element:', element.id);
       // Démarrer le drag avec les coordonnées relatives au canvas
-      const canvas = elementRef.current.closest('.canvas-container');
+      const canvas = elementRef.current.closest('.canvas-zoom-wrapper');
       const canvasRect = canvas.getBoundingClientRect();
       
       dragAndDrop.handleMouseDown(e, element.id, {

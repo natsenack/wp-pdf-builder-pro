@@ -122,7 +122,7 @@ export const WooCommerceElement = ({
     e.stopPropagation();
 
     // Calculer les coordonnées relatives au canvas (en tenant compte du zoom)
-    const canvas = elementRef.current.closest('.canvas-container');
+    const canvas = elementRef.current.closest('.canvas-zoom-wrapper');
     if (!canvas) return;
 
     const canvasRect = canvas.getBoundingClientRect();
@@ -165,7 +165,7 @@ export const WooCommerceElement = ({
 
     // Si on clique ailleurs sur l'élément, commencer le drag
     if (dragAndDrop && dragAndDrop.handleMouseDown) {
-      const canvas = elementRef.current.closest('.canvas-container');
+      const canvas = elementRef.current.closest('.canvas-zoom-wrapper');
       const canvasRect = canvas.getBoundingClientRect();
       
       dragAndDrop.handleMouseDown(e, element.id, {
