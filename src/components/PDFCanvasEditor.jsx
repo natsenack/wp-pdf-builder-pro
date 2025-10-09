@@ -147,13 +147,23 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
     // Gérer les propriétés imbriquées (ex: "columns.image" -> { columns: { image: value } })
     const updates = {};
     if (property.includes('.')) {
-      const parts = property.split('.');
-      let current = updates;
-      for (let i = 0; i < parts.length - 1; i++) {
-        current[parts[i]] = current[parts[i]] || {};
-        current = current[parts[i]];
-      }
-      current[parts[parts.length - 1]] = value;
+      // Fonction récursive pour mettre à jour les propriétés imbriquées
+      const updateNestedProperty = (obj, path, val) => {
+        const keys = path.split('.');
+        const lastKey = keys.pop();
+        const target = keys.reduce((current, key) => {
+          if (!current[key] || typeof current[key] !== 'object') {
+            current[key] = {};
+          } else {
+            current[key] = { ...current[key] }; // Créer une copie pour éviter de modifier l'original
+          }
+          return current[key];
+        }, obj);
+        target[lastKey] = val;
+        return obj;
+      };
+
+      updateNestedProperty(updates, property, value);
     } else {
       updates[property] = value;
     }
