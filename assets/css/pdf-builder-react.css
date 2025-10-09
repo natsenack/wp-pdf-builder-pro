@@ -11,7 +11,7 @@
   height: calc(100vh - 200px) !important; /* Ajusté pour la nouvelle structure */
   margin: 0 !important;
   padding: 0 !important;
-  background: #f8f9fa !important;
+  background: #ffffff !important; /* Blanc pur au lieu de gris */
 }
 
 /* Ajuster le z-index pour que le builder apparaisse au-dessus des éléments WordPress */
@@ -34,20 +34,22 @@ body.pdf-builder-active .pdf-canvas-editor {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   height: 100vh;
   overflow: hidden;
+  background: #ffffff; /* Blanc pur */
 }
 
 .pdf-builder-toolbar {
   display: flex;
   gap: 8px;
   padding: 12px 16px;
-  background: #f8f9fa;
-  border-bottom: 1px solid #e9ecef;
+  background: #ffffff; /* Blanc pur */
+  border-bottom: 1px solid #f1f3f4; /* Gris très clair */
   align-items: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* Ombre subtile */
 }
 
 .pdf-builder-toolbar button {
   padding: 8px 12px;
-  border: 1px solid #dee2e6;
+  border: 1px solid #e8eaed; /* Gris très clair */
   background: white;
   border-radius: 4px;
   cursor: pointer;
@@ -56,26 +58,27 @@ body.pdf-builder-active .pdf-canvas-editor {
 }
 
 .pdf-builder-toolbar button:hover {
-  background: #f8f9fa;
-  border-color: #adb5bd;
+  background: #fafbfc; /* Gris très très clair */
+  border-color: #d1d5db; /* Gris plus subtil */
 }
 
 .pdf-builder-toolbar button.active {
-  background: #007cba;
+  background: #2563eb; /* Bleu plus professionnel */
   color: white;
-  border-color: #007cba;
+  border-color: #2563eb;
 }
 
 .pdf-builder-workspace {
   display: flex;
   flex: 1;
   overflow: hidden;
+  background: #ffffff; /* Blanc pur */
 }
 
 .pdf-builder-sidebar {
   width: 280px;
-  background: #f8f9fa;
-  border-right: 1px solid #e9ecef;
+  background: #fafbfc; /* Gris très très clair */
+  border-right: 1px solid #f1f3f4; /* Bordure très subtile */
   overflow-y: auto;
 }
 
@@ -84,22 +87,22 @@ body.pdf-builder-active .pdf-canvas-editor {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #e9ecef;
+  background: #fafbfc; /* Gris très très clair au lieu de gris foncé */
   overflow: auto;
   padding: 20px;
 }
 
 .pdf-builder-canvas {
   background: white;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border: 1px solid #dee2e6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); /* Ombre plus subtile */
+  border: 1px solid #f1f3f4; /* Bordure très claire */
   position: relative;
 }
 
 .pdf-builder-properties {
   width: 320px;
-  background: #f8f9fa;
-  border-left: 1px solid #e9ecef;
+  background: #fafbfc; /* Gris très très clair */
+  border-left: 1px solid #f1f3f4; /* Bordure très subtile */
   overflow-y: auto;
 }
 
@@ -108,17 +111,17 @@ body.pdf-builder-active .pdf-canvas-editor {
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  border-bottom: 1px solid #e9ecef;
+  border-bottom: 1px solid #f1f3f4; /* Bordure très claire */
   cursor: pointer;
   transition: background 0.2s ease;
 }
 
 .pdf-builder-element-item:hover {
-  background: #e9ecef;
+  background: #f5f7fa; /* Gris très clair au hover */
 }
 
 .pdf-builder-element-item.selected {
-  background: #007cba;
+  background: #2563eb; /* Bleu plus professionnel */
   color: white;
 }
 
@@ -130,7 +133,7 @@ body.pdf-builder-active .pdf-canvas-editor {
   display: block;
   font-weight: 500;
   margin-bottom: 4px;
-  color: #495057;
+  color: #374151; /* Gris plus foncé pour le contraste */
 }
 
 .pdf-builder-property-group input,
@@ -138,17 +141,18 @@ body.pdf-builder-active .pdf-canvas-editor {
 .pdf-builder-property-group textarea {
   width: 100%;
   padding: 8px 12px;
-  border: 1px solid #dee2e6;
+  border: 1px solid #e5e7eb; /* Bordure plus claire */
   border-radius: 4px;
   font-size: 14px;
+  background: #ffffff;
 }
 
 .pdf-builder-property-group input:focus,
 .pdf-builder-property-group select:focus,
 .pdf-builder-property-group textarea:focus {
   outline: none;
-  border-color: #007cba;
-  box-shadow: 0 0 0 2px rgba(0, 124, 186, 0.25);
+  border-color: #2563eb; /* Bleu plus professionnel */
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1); /* Focus plus subtil */
 }
 
 /* Grid and guides */
@@ -160,8 +164,8 @@ body.pdf-builder-active .pdf-canvas-editor {
   right: 0;
   bottom: 0;
   background-image:
-    linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+    linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px), /* Grille plus subtile */
+    linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
   background-size: 20px 20px;
   pointer-events: none;
 }
@@ -171,7 +175,7 @@ body.pdf-builder-active .pdf-canvas-editor {
   position: absolute;
   width: 8px;
   height: 8px;
-  background: #007cba;
+  background: #2563eb; /* Bleu plus professionnel */
   border: 1px solid white;
   border-radius: 50%;
   cursor: pointer;
@@ -202,15 +206,15 @@ body.pdf-builder-active .pdf-canvas-editor {
   justify-content: center;
   align-items: center;
   height: 200px;
-  color: #6c757d;
+  color: #9ca3af; /* Gris plus clair */
 }
 
 .pdf-builder-loading::after {
   content: '';
   width: 20px;
   height: 20px;
-  border: 2px solid #f3f3f3;
-  border-top: 2px solid #007cba;
+  border: 2px solid #f3f4f6; /* Bordure plus claire */
+  border-top: 2px solid #2563eb; /* Bleu professionnel */
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -223,9 +227,9 @@ body.pdf-builder-active .pdf-canvas-editor {
 /* Error states */
 .pdf-builder-error {
   padding: 20px;
-  background: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
+  background: #fef2f2; /* Rouge plus clair */
+  color: #dc2626; /* Rouge plus professionnel */
+  border: 1px solid #fecaca; /* Bordure rouge claire */
   border-radius: 4px;
   margin: 20px;
 }
