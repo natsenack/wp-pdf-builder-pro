@@ -281,6 +281,699 @@ export const PropertiesPanel = ({
           </div>
         );
 
+      // Formes et Graphiques
+      case 'shape-rectangle':
+      case 'shape-circle':
+      case 'shape-triangle':
+      case 'shape-star':
+        return (
+          <div className="properties-group">
+            <h4>Propriétés de la forme</h4>
+
+            <div className="property-row">
+              <label>Couleur de fond:</label>
+              <input
+                type="color"
+                value={localProperties.backgroundColor || '#e5e7eb'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundColor', e.target.value)}
+              />
+            </div>
+
+            <div className="property-row">
+              <label>Couleur de bordure:</label>
+              <input
+                type="color"
+                value={localProperties.borderColor || '#000000'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'borderColor', e.target.value)}
+              />
+            </div>
+
+            <div className="property-row">
+              <label>Épaisseur de bordure:</label>
+              <input
+                type="number"
+                value={localProperties.borderWidth || 1}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'borderWidth', parseInt(e.target.value))}
+                min="0"
+                max="10"
+              />
+            </div>
+
+            {selectedElement.type === 'shape-rectangle' && (
+              <div className="property-row">
+                <label>Rayon des coins:</label>
+                <input
+                  type="number"
+                  value={localProperties.borderRadius || 0}
+                  onChange={(e) => handlePropertyChange(selectedElement.id, 'borderRadius', parseInt(e.target.value))}
+                  min="0"
+                  max="50"
+                />
+              </div>
+            )}
+          </div>
+        );
+
+      case 'shape-line':
+        return (
+          <div className="properties-group">
+            <h4>Propriétés de la ligne</h4>
+
+            <div className="property-row">
+              <label>Couleur:</label>
+              <input
+                type="color"
+                value={localProperties.backgroundColor || '#6b7280'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundColor', e.target.value)}
+              />
+            </div>
+          </div>
+        );
+
+      case 'shape-arrow':
+        return (
+          <div className="properties-group">
+            <h4>Propriétés de la flèche</h4>
+
+            <div className="property-row">
+              <label>Couleur:</label>
+              <input
+                type="color"
+                value={localProperties.backgroundColor || '#374151'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundColor', e.target.value)}
+              />
+            </div>
+          </div>
+        );
+
+      case 'divider':
+        return (
+          <div className="properties-group">
+            <h4>Propriétés du séparateur</h4>
+
+            <div className="property-row">
+              <label>Couleur:</label>
+              <input
+                type="color"
+                value={localProperties.backgroundColor || '#d1d5db'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundColor', e.target.value)}
+              />
+            </div>
+          </div>
+        );
+
+      // Médias
+      case 'image':
+      case 'image-upload':
+        return (
+          <div className="properties-group">
+            <h4>Propriétés de l'image</h4>
+
+            <div className="property-row">
+              <label>URL de l'image:</label>
+              <input
+                type="url"
+                value={localProperties.src || ''}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'src', e.target.value)}
+                placeholder="https://exemple.com/image.jpg"
+              />
+            </div>
+
+            <div className="property-row">
+              <label>Taille de l'arrière-plan:</label>
+              <select
+                value={localProperties.backgroundSize || 'contain'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundSize', e.target.value)}
+              >
+                <option value="contain">Contenir</option>
+                <option value="cover">Couvrir</option>
+                <option value="auto">Taille réelle</option>
+              </select>
+            </div>
+          </div>
+        );
+
+      case 'logo':
+        return (
+          <div className="properties-group">
+            <h4>Propriétés du logo</h4>
+
+            <div className="property-row">
+              <label>URL du logo:</label>
+              <input
+                type="url"
+                value={localProperties.src || ''}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'src', e.target.value)}
+                placeholder="https://exemple.com/logo.png"
+              />
+            </div>
+
+            <div className="property-row">
+              <label>Couleur de fond:</label>
+              <input
+                type="color"
+                value={localProperties.backgroundColor || '#f3f4f6'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundColor', e.target.value)}
+              />
+            </div>
+          </div>
+        );
+
+      case 'barcode':
+        return (
+          <div className="properties-group">
+            <h4>Propriétés du code-barres</h4>
+
+            <div className="property-row">
+              <label>Valeur:</label>
+              <input
+                type="text"
+                value={localProperties.content || '123456789'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'content', e.target.value)}
+                placeholder="Entrez le code-barres"
+              />
+            </div>
+
+            <div className="property-row">
+              <label>Couleur de fond:</label>
+              <input
+                type="color"
+                value={localProperties.backgroundColor || '#ffffff'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundColor', e.target.value)}
+              />
+            </div>
+
+            <div className="property-row">
+              <label>Couleur des barres:</label>
+              <input
+                type="color"
+                value={localProperties.borderColor || '#000000'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'borderColor', e.target.value)}
+              />
+            </div>
+          </div>
+        );
+
+      case 'qrcode':
+      case 'qrcode-dynamic':
+        return (
+          <div className="properties-group">
+            <h4>Propriétés du QR Code</h4>
+
+            <div className="property-row">
+              <label>Contenu:</label>
+              <input
+                type="text"
+                value={localProperties.content || 'https://exemple.com'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'content', e.target.value)}
+                placeholder="URL ou texte à encoder"
+              />
+            </div>
+
+            <div className="property-row">
+              <label>Couleur de fond:</label>
+              <input
+                type="color"
+                value={localProperties.backgroundColor || '#ffffff'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundColor', e.target.value)}
+              />
+            </div>
+
+            <div className="property-row">
+              <label>Couleur des modules:</label>
+              <input
+                type="color"
+                value={localProperties.borderColor || '#000000'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'borderColor', e.target.value)}
+              />
+            </div>
+          </div>
+        );
+
+      case 'icon':
+        return (
+          <div className="properties-group">
+            <h4>Propriétés de l'icône</h4>
+
+            <div className="property-row">
+              <label>Icône:</label>
+              <input
+                type="text"
+                value={localProperties.content || '🎯'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'content', e.target.value)}
+                placeholder="Emoji ou caractère"
+              />
+            </div>
+
+            <div className="property-row">
+              <label>Couleur de fond:</label>
+              <input
+                type="color"
+                value={localProperties.backgroundColor || 'transparent'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundColor', e.target.value)}
+              />
+            </div>
+          </div>
+        );
+
+      // Données Dynamiques
+      case 'dynamic-text':
+        return (
+          <div className="properties-group">
+            <h4>Propriétés du texte dynamique</h4>
+
+            <div className="property-row">
+              <label>Variable:</label>
+              <input
+                type="text"
+                value={localProperties.content || '{{variable}}'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'content', e.target.value)}
+                placeholder="{{nom_client}}"
+              />
+            </div>
+
+            <div className="property-row">
+              <label>Couleur de fond:</label>
+              <input
+                type="color"
+                value={localProperties.backgroundColor || '#f8fafc'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundColor', e.target.value)}
+              />
+            </div>
+          </div>
+        );
+
+      case 'formula':
+        return (
+          <div className="properties-group">
+            <h4>Propriétés de la formule</h4>
+
+            <div className="property-row">
+              <label>Formule:</label>
+              <input
+                type="text"
+                value={localProperties.content || '{{prix * quantite}}'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'content', e.target.value)}
+                placeholder="{{prix * quantite}}"
+              />
+            </div>
+
+            <div className="property-row">
+              <label>Couleur de fond:</label>
+              <input
+                type="color"
+                value={localProperties.backgroundColor || '#fef3c7'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundColor', e.target.value)}
+              />
+            </div>
+          </div>
+        );
+
+      case 'conditional-text':
+        return (
+          <div className="properties-group">
+            <h4>Propriétés du texte conditionnel</h4>
+
+            <div className="property-row">
+              <label>Condition:</label>
+              <input
+                type="text"
+                value={localProperties.content || '{{condition ? "Oui" : "Non"}}'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'content', e.target.value)}
+                placeholder='{{statut === "actif" ? "✓ Actif" : "✗ Inactif"}}'
+              />
+            </div>
+
+            <div className="property-row">
+              <label>Couleur de fond:</label>
+              <input
+                type="color"
+                value={localProperties.backgroundColor || '#ecfdf5'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundColor', e.target.value)}
+              />
+            </div>
+          </div>
+        );
+
+      case 'counter':
+        return (
+          <div className="properties-group">
+            <h4>Propriétés du compteur</h4>
+
+            <div className="property-row">
+              <label>Valeur de départ:</label>
+              <input
+                type="number"
+                value={localProperties.content || 1}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'content', parseInt(e.target.value))}
+                min="0"
+              />
+            </div>
+
+            <div className="property-row">
+              <label>Couleur de fond:</label>
+              <input
+                type="color"
+                value={localProperties.backgroundColor || '#f0f9ff'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundColor', e.target.value)}
+              />
+            </div>
+          </div>
+        );
+
+      case 'date-dynamic':
+        return (
+          <div className="properties-group">
+            <h4>Propriétés de la date dynamique</h4>
+
+            <div className="property-row">
+              <label>Format:</label>
+              <input
+                type="text"
+                value={localProperties.content || '{{date|format:Y-m-d}}'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'content', e.target.value)}
+                placeholder="{{date|format:d/m/Y}}"
+              />
+            </div>
+
+            <div className="property-row">
+              <label>Couleur de fond:</label>
+              <input
+                type="color"
+                value={localProperties.backgroundColor || '#f3f4f6'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundColor', e.target.value)}
+              />
+            </div>
+          </div>
+        );
+
+      case 'currency':
+        return (
+          <div className="properties-group">
+            <h4>Propriétés de la devise</h4>
+
+            <div className="property-row">
+              <label>Montant:</label>
+              <input
+                type="text"
+                value={localProperties.content || '{{montant|currency:EUR}}'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'content', e.target.value)}
+                placeholder="{{prix|currency:USD}}"
+              />
+            </div>
+
+            <div className="property-row">
+              <label>Couleur de fond:</label>
+              <input
+                type="color"
+                value={localProperties.backgroundColor || '#f0fdf4'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundColor', e.target.value)}
+              />
+            </div>
+          </div>
+        );
+
+      case 'table-dynamic':
+        return (
+          <div className="properties-group">
+            <h4>Propriétés du tableau dynamique</h4>
+
+            <div className="property-row">
+              <label>Couleur de fond:</label>
+              <input
+                type="color"
+                value={localProperties.backgroundColor || '#ffffff'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundColor', e.target.value)}
+              />
+            </div>
+
+            <div className="property-row">
+              <label>Couleur de bordure:</label>
+              <input
+                type="color"
+                value={localProperties.borderColor || '#e5e7eb'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'borderColor', e.target.value)}
+              />
+            </div>
+
+            <div className="property-row">
+              <label>Épaisseur de bordure:</label>
+              <input
+                type="number"
+                value={localProperties.borderWidth || 1}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'borderWidth', parseInt(e.target.value))}
+                min="0"
+                max="5"
+              />
+            </div>
+          </div>
+        );
+
+      // Éléments Avancés
+      case 'gradient-box':
+        return (
+          <div className="properties-group">
+            <h4>Propriétés de la boîte dégradé</h4>
+
+            <div className="property-row">
+              <label>Couleur 1:</label>
+              <input
+                type="color"
+                value={localProperties.gradientColor1 || '#667eea'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'gradientColor1', e.target.value)}
+              />
+            </div>
+
+            <div className="property-row">
+              <label>Couleur 2:</label>
+              <input
+                type="color"
+                value={localProperties.gradientColor2 || '#764ba2'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'gradientColor2', e.target.value)}
+              />
+            </div>
+
+            <div className="property-row">
+              <label>Direction:</label>
+              <select
+                value={localProperties.gradientDirection || '45deg'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'gradientDirection', e.target.value)}
+              >
+                <option value="45deg">Diagonale</option>
+                <option value="90deg">Vertical</option>
+                <option value="0deg">Horizontal</option>
+                <option value="135deg">Diagonale inverse</option>
+              </select>
+            </div>
+          </div>
+        );
+
+      case 'shadow-box':
+        return (
+          <div className="properties-group">
+            <h4>Propriétés de la boîte avec ombre</h4>
+
+            <div className="property-row">
+              <label>Couleur de fond:</label>
+              <input
+                type="color"
+                value={localProperties.backgroundColor || '#ffffff'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundColor', e.target.value)}
+              />
+            </div>
+
+            <div className="property-row">
+              <label>Ombre:</label>
+              <select
+                value={localProperties.boxShadow || '0 4px 6px -1px rgba(0, 0, 0, 0.1)'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'boxShadow', e.target.value)}
+              >
+                <option value="0 1px 3px rgba(0, 0, 0, 0.1)">Légère</option>
+                <option value="0 4px 6px -1px rgba(0, 0, 0, 0.1)">Normale</option>
+                <option value="0 10px 15px -3px rgba(0, 0, 0, 0.1)">Forte</option>
+                <option value="0 20px 25px -5px rgba(0, 0, 0, 0.1)">Très forte</option>
+              </select>
+            </div>
+          </div>
+        );
+
+      case 'rounded-box':
+        return (
+          <div className="properties-group">
+            <h4>Propriétés de la boîte arrondie</h4>
+
+            <div className="property-row">
+              <label>Couleur de fond:</label>
+              <input
+                type="color"
+                value={localProperties.backgroundColor || '#ffffff'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundColor', e.target.value)}
+              />
+            </div>
+
+            <div className="property-row">
+              <label>Rayon des coins:</label>
+              <input
+                type="number"
+                value={localProperties.borderRadius || 12}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'borderRadius', parseInt(e.target.value))}
+                min="0"
+                max="50"
+              />
+            </div>
+          </div>
+        );
+
+      case 'border-box':
+        return (
+          <div className="properties-group">
+            <h4>Propriétés de la boîte avec bordure</h4>
+
+            <div className="property-row">
+              <label>Couleur de fond:</label>
+              <input
+                type="color"
+                value={localProperties.backgroundColor || '#ffffff'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundColor', e.target.value)}
+              />
+            </div>
+
+            <div className="property-row">
+              <label>Couleur de bordure:</label>
+              <input
+                type="color"
+                value={localProperties.borderColor || '#3b82f6'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'borderColor', e.target.value)}
+              />
+            </div>
+
+            <div className="property-row">
+              <label>Épaisseur de bordure:</label>
+              <input
+                type="number"
+                value={localProperties.borderWidth || 3}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'borderWidth', parseInt(e.target.value))}
+                min="1"
+                max="10"
+              />
+            </div>
+          </div>
+        );
+
+      case 'background-pattern':
+        return (
+          <div className="properties-group">
+            <h4>Propriétés du motif d'arrière-plan</h4>
+
+            <div className="property-row">
+              <label>Couleur de fond:</label>
+              <input
+                type="color"
+                value={localProperties.backgroundColor || '#f8fafc'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundColor', e.target.value)}
+              />
+            </div>
+
+            <div className="property-row">
+              <label>Type de motif:</label>
+              <select
+                value={localProperties.patternType || 'diagonal'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'patternType', e.target.value)}
+              >
+                <option value="diagonal">Diagonales</option>
+                <option value="grid">Grille</option>
+                <option value="dots">Points</option>
+                <option value="stripes">Rayures</option>
+              </select>
+            </div>
+          </div>
+        );
+
+      case 'watermark':
+        return (
+          <div className="properties-group">
+            <h4>Propriétés du filigrane</h4>
+
+            <div className="property-row">
+              <label>Texte:</label>
+              <input
+                type="text"
+                value={localProperties.content || 'CONFIDENTIEL'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'content', e.target.value)}
+                placeholder="Texte du filigrane"
+              />
+            </div>
+
+            <div className="property-row">
+              <label>Couleur:</label>
+              <input
+                type="color"
+                value={localProperties.color || '#9ca3af'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'color', e.target.value)}
+              />
+            </div>
+
+            <div className="property-row">
+              <label>Taille:</label>
+              <input
+                type="number"
+                value={localProperties.fontSize || 48}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'fontSize', parseInt(e.target.value))}
+                min="12"
+                max="200"
+              />
+            </div>
+
+            <div className="property-row">
+              <label>Opacité:</label>
+              <input
+                type="number"
+                value={localProperties.opacity || 0.1}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'opacity', parseFloat(e.target.value))}
+                min="0.01"
+                max="1"
+                step="0.01"
+              />
+            </div>
+          </div>
+        );
+
+      case 'progress-bar':
+        return (
+          <div className="properties-group">
+            <h4>Propriétés de la barre de progression</h4>
+
+            <div className="property-row">
+              <label>Valeur (%):</label>
+              <input
+                type="number"
+                value={localProperties.progressValue || 75}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'progressValue', parseInt(e.target.value))}
+                min="0"
+                max="100"
+              />
+            </div>
+
+            <div className="property-row">
+              <label>Couleur de fond:</label>
+              <input
+                type="color"
+                value={localProperties.backgroundColor || '#e5e7eb'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundColor', e.target.value)}
+              />
+            </div>
+
+            <div className="property-row">
+              <label>Couleur de progression:</label>
+              <input
+                type="color"
+                value={localProperties.progressColor || '#3b82f6'}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'progressColor', e.target.value)}
+              />
+            </div>
+          </div>
+        );
+
       default:
         return (
           <div className="properties-group">

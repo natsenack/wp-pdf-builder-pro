@@ -189,6 +189,152 @@ export const useCanvasState = ({
             defaults.borderWidth = 2;
             defaults.borderStyle = 'dashed';
             break;
+          // Formes et Graphiques
+          case 'shape-rectangle':
+            defaults.width = 100;
+            defaults.height = 60;
+            defaults.backgroundColor = '#e5e7eb';
+            defaults.borderRadius = 0;
+            break;
+          case 'shape-circle':
+            defaults.width = 60;
+            defaults.height = 60;
+            defaults.backgroundColor = '#e5e7eb';
+            defaults.borderRadius = 30;
+            break;
+          case 'shape-line':
+            defaults.width = 100;
+            defaults.height = 2;
+            defaults.backgroundColor = '#6b7280';
+            break;
+          case 'shape-arrow':
+            defaults.width = 80;
+            defaults.height = 20;
+            defaults.backgroundColor = '#374151';
+            break;
+          case 'shape-triangle':
+            defaults.width = 60;
+            defaults.height = 52;
+            defaults.backgroundColor = '#e5e7eb';
+            break;
+          case 'shape-star':
+            defaults.width = 60;
+            defaults.height = 60;
+            defaults.backgroundColor = '#fbbf24';
+            break;
+          case 'divider':
+            defaults.width = 400;
+            defaults.height = 1;
+            defaults.backgroundColor = '#d1d5db';
+            break;
+          // Médias
+          case 'image':
+          case 'image-upload':
+            defaults.width = 150;
+            defaults.height = 100;
+            defaults.backgroundColor = '#f3f4f6';
+            defaults.content = 'Image';
+            break;
+          case 'logo':
+            defaults.width = 120;
+            defaults.height = 60;
+            defaults.backgroundColor = '#f3f4f6';
+            defaults.content = 'Logo';
+            break;
+          case 'barcode':
+            defaults.width = 120;
+            defaults.height = 40;
+            defaults.backgroundColor = '#ffffff';
+            defaults.borderColor = '#000000';
+            defaults.borderWidth = 1;
+            break;
+          case 'qrcode':
+          case 'qrcode-dynamic':
+            defaults.width = 60;
+            defaults.height = 60;
+            defaults.backgroundColor = '#ffffff';
+            defaults.borderColor = '#000000';
+            defaults.borderWidth = 1;
+            break;
+          case 'icon':
+            defaults.width = 40;
+            defaults.height = 40;
+            defaults.backgroundColor = 'transparent';
+            defaults.content = '🎯';
+            break;
+          // Données Dynamiques
+          case 'dynamic-text':
+            defaults.content = '{{variable}}';
+            break;
+          case 'formula':
+            defaults.content = '{{prix * quantite}}';
+            break;
+          case 'conditional-text':
+            defaults.content = '{{condition ? "Oui" : "Non"}}';
+            break;
+          case 'counter':
+            defaults.content = '1';
+            break;
+          case 'date-dynamic':
+            defaults.content = '{{date|format:Y-m-d}}';
+            break;
+          case 'currency':
+            defaults.content = '{{montant|currency:EUR}}';
+            break;
+          case 'table-dynamic':
+            defaults.width = 400;
+            defaults.height = 150;
+            defaults.backgroundColor = '#ffffff';
+            defaults.borderColor = '#e5e7eb';
+            defaults.borderWidth = 1;
+            break;
+          // Éléments Avancés
+          case 'gradient-box':
+            defaults.width = 200;
+            defaults.height = 100;
+            defaults.backgroundColor = 'linear-gradient(45deg, #667eea 0%, #764ba2 100%)';
+            break;
+          case 'shadow-box':
+            defaults.width = 200;
+            defaults.height = 100;
+            defaults.backgroundColor = '#ffffff';
+            defaults.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+            break;
+          case 'rounded-box':
+            defaults.width = 200;
+            defaults.height = 100;
+            defaults.backgroundColor = '#ffffff';
+            defaults.borderRadius = 12;
+            break;
+          case 'border-box':
+            defaults.width = 200;
+            defaults.height = 100;
+            defaults.backgroundColor = '#ffffff';
+            defaults.borderColor = '#3b82f6';
+            defaults.borderWidth = 3;
+            break;
+          case 'background-pattern':
+            defaults.width = 200;
+            defaults.height = 100;
+            defaults.backgroundColor = '#f8fafc';
+            defaults.backgroundImage = 'repeating-linear-gradient(45deg, #e2e8f0, #e2e8f0 10px, #f1f5f9 10px, #f1f5f9 20px)';
+            break;
+          case 'watermark':
+            defaults.width = 300;
+            defaults.height = 200;
+            defaults.backgroundColor = 'transparent';
+            defaults.content = 'CONFIDENTIEL';
+            defaults.color = '#9ca3af';
+            defaults.fontSize = 48;
+            defaults.opacity = 0.1;
+            break;
+          case 'progress-bar':
+            defaults.width = 200;
+            defaults.height = 20;
+            defaults.backgroundColor = '#e5e7eb';
+            defaults.progressColor = '#3b82f6';
+            defaults.progressValue = 75;
+            break;
           default:
             break;
         }

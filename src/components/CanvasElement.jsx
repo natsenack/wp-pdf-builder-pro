@@ -216,6 +216,187 @@ export const CanvasElement = ({
             justifyContent: 'center',
             fontSize: 12 * zoom,
             color: '#94a3b8'
+          } : element.type === 'shape-rectangle' ? {
+            backgroundColor: element.backgroundColor || '#e5e7eb',
+            border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#000'}` : 'none',
+            borderRadius: element.borderRadius ? `${element.borderRadius}px` : '0'
+          } : element.type === 'shape-circle' ? {
+            backgroundColor: element.backgroundColor || '#e5e7eb',
+            border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#000'}` : 'none',
+            borderRadius: '50%'
+          } : element.type === 'shape-line' ? {
+            backgroundColor: element.backgroundColor || '#6b7280',
+            height: '100%'
+          } : element.type === 'shape-arrow' ? {
+            backgroundColor: element.backgroundColor || '#374151',
+            clipPath: 'polygon(0% 50%, 70% 0%, 70% 40%, 100% 40%, 100% 60%, 70% 60%, 70% 100%)'
+          } : element.type === 'shape-triangle' ? {
+            backgroundColor: element.backgroundColor || '#e5e7eb',
+            clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)'
+          } : element.type === 'shape-star' ? {
+            backgroundColor: element.backgroundColor || '#fbbf24',
+            clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)'
+          } : element.type === 'divider' ? {
+            backgroundColor: element.backgroundColor || '#d1d5db',
+            height: '1px'
+          } : element.type === 'image-upload' ? {
+            backgroundColor: element.backgroundColor || '#f3f4f6',
+            border: '2px dashed #d1d5db',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 12 * zoom
+          } : element.type === 'logo' ? {
+            backgroundColor: element.backgroundColor || '#f3f4f6',
+            border: '1px solid #e5e7eb',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 14 * zoom,
+            fontWeight: 'bold'
+          } : element.type === 'barcode' ? {
+            backgroundColor: element.backgroundColor || '#ffffff',
+            border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#000000'}` : '1px solid #000000',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 10 * zoom,
+            fontFamily: 'monospace'
+          } : element.type === 'qrcode' || element.type === 'qrcode-dynamic' ? {
+            backgroundColor: element.backgroundColor || '#ffffff',
+            border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#000000'}` : '1px solid #000000',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 8 * zoom
+          } : element.type === 'icon' ? {
+            backgroundColor: element.backgroundColor || 'transparent',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 20 * zoom
+          } : element.type === 'dynamic-text' ? {
+            backgroundColor: element.backgroundColor || '#f8fafc',
+            border: '1px solid #e2e8f0',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-start',
+            fontSize: 12 * zoom,
+            fontFamily: 'monospace',
+            color: '#059669',
+            padding: '4px'
+          } : element.type === 'formula' ? {
+            backgroundColor: element.backgroundColor || '#fef3c7',
+            border: '1px solid #f59e0b',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-start',
+            fontSize: 12 * zoom,
+            fontFamily: 'monospace',
+            color: '#d97706',
+            padding: '4px'
+          } : element.type === 'conditional-text' ? {
+            backgroundColor: element.backgroundColor || '#ecfdf5',
+            border: '1px solid #10b981',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-start',
+            fontSize: 12 * zoom,
+            fontFamily: 'monospace',
+            color: '#059669',
+            padding: '4px'
+          } : element.type === 'counter' ? {
+            backgroundColor: element.backgroundColor || '#f0f9ff',
+            border: '1px solid #0ea5e9',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 14 * zoom,
+            fontWeight: 'bold',
+            color: '#0284c7'
+          } : element.type === 'date-dynamic' ? {
+            backgroundColor: element.backgroundColor || '#f3f4f6',
+            border: '1px solid #d1d5db',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-start',
+            fontSize: 12 * zoom,
+            fontFamily: 'monospace',
+            color: '#374151',
+            padding: '4px'
+          } : element.type === 'currency' ? {
+            backgroundColor: element.backgroundColor || '#f0fdf4',
+            border: '1px solid #22c55e',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            fontSize: 14 * zoom,
+            fontWeight: 'bold',
+            color: '#16a34a',
+            padding: '4px'
+          } : element.type === 'table-dynamic' ? {
+            backgroundColor: element.backgroundColor || '#ffffff',
+            border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#e5e7eb'}` : '1px solid #e5e7eb',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 12 * zoom
+          } : element.type === 'gradient-box' ? {
+            background: element.backgroundColor || 'linear-gradient(45deg, #667eea 0%, #764ba2 100%)',
+            borderRadius: element.borderRadius ? `${element.borderRadius}px` : '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 12 * zoom,
+            color: 'white',
+            fontWeight: 'bold'
+          } : element.type === 'shadow-box' ? {
+            backgroundColor: element.backgroundColor || '#ffffff',
+            borderRadius: element.borderRadius ? `${element.borderRadius}px` : '8px',
+            boxShadow: element.boxShadow || '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 12 * zoom
+          } : element.type === 'rounded-box' ? {
+            backgroundColor: element.backgroundColor || '#ffffff',
+            border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#e5e7eb'}` : '1px solid #e5e7eb',
+            borderRadius: element.borderRadius ? `${element.borderRadius}px` : '12px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 12 * zoom
+          } : element.type === 'border-box' ? {
+            backgroundColor: element.backgroundColor || '#ffffff',
+            border: element.border ? `${element.borderWidth || 3}px solid ${element.borderColor || '#3b82f6'}` : '3px solid #3b82f6',
+            borderRadius: element.borderRadius ? `${element.borderRadius}px` : '4px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 12 * zoom
+          } : element.type === 'background-pattern' ? {
+            backgroundColor: element.backgroundColor || '#f8fafc',
+            backgroundImage: element.backgroundImage || 'repeating-linear-gradient(45deg, #e2e8f0, #e2e8f0 10px, #f1f5f9 10px, #f1f5f9 20px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 12 * zoom
+          } : element.type === 'watermark' ? {
+            backgroundColor: element.backgroundColor || 'transparent',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: (element.fontSize || 48) * zoom,
+            color: element.color || '#9ca3af',
+            opacity: element.opacity || 0.1,
+            fontWeight: 'bold',
+            transform: 'rotate(-45deg)',
+            pointerEvents: 'none'
+          } : element.type === 'progress-bar' ? {
+            backgroundColor: element.backgroundColor || '#e5e7eb',
+            borderRadius: '10px',
+            overflow: 'hidden',
+            position: 'relative'
           } : {
             backgroundColor: '#f1f3f4',
             border: '1px solid #ccc',
@@ -238,8 +419,50 @@ export const CanvasElement = ({
          element.type === 'layout-sidebar' ? '📄 Barre Latérale' :
          element.type === 'layout-section' ? '📄 Section' :
          element.type === 'layout-container' ? '📦 Conteneur' :
+         element.type === 'shape-rectangle' ? '▭' :
+         element.type === 'shape-circle' ? '○' :
+         element.type === 'shape-line' ? null :
+         element.type === 'shape-arrow' ? '→' :
+         element.type === 'shape-triangle' ? '△' :
+         element.type === 'shape-star' ? '⭐' :
+         element.type === 'divider' ? null :
+         element.type === 'image-upload' ? '📤 Télécharger' :
+         element.type === 'logo' ? '🏷️ Logo' :
+         element.type === 'barcode' ? '📊 123456' :
+         element.type === 'qrcode' || element.type === 'qrcode-dynamic' ? '📱 QR' :
+         element.type === 'icon' ? (element.content || '🎯') :
+         element.type === 'dynamic-text' ? (element.content || '{{variable}}') :
+         element.type === 'formula' ? (element.content || '{{prix * quantite}}') :
+         element.type === 'conditional-text' ? (element.content || '{{condition ? "Oui" : "Non"}}') :
+         element.type === 'counter' ? (element.content || '1') :
+         element.type === 'date-dynamic' ? (element.content || '{{date|format:Y-m-d}}') :
+         element.type === 'currency' ? (element.content || '{{montant|currency:EUR}}') :
+         element.type === 'table-dynamic' ? '📊 Tableau' :
+         element.type === 'gradient-box' ? '🌈 Dégradé' :
+         element.type === 'shadow-box' ? '📦 Ombre' :
+         element.type === 'rounded-box' ? '🔄 Arrondi' :
+         element.type === 'border-box' ? '🔲 Bordure' :
+         element.type === 'background-pattern' ? '🎨 Motif' :
+         element.type === 'watermark' ? (element.content || 'CONFIDENTIEL') :
+         element.type === 'progress-bar' ? null :
          element.type !== 'image' && element.type !== 'rectangle' ? element.type : null}
       </div>
+
+      {/* Rendu spécial pour la barre de progression */}
+      {element.type === 'progress-bar' && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            height: '100%',
+            width: `${element.progressValue || 75}%`,
+            backgroundColor: element.progressColor || '#3b82f6',
+            borderRadius: '10px',
+            transition: 'width 0.3s ease'
+          }}
+        />
+      )}
 
       {/* Poignées de redimensionnement */}
       {isSelected && (

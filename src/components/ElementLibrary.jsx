@@ -4,6 +4,10 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
   const [expandedCategories, setExpandedCategories] = useState({
     'Texte': true,
     'Mises en Page': true,
+    'Formes & Graphiques': false,
+    'Médias': false,
+    'Données Dynamiques': false,
+    'Éléments Avancés': false,
     'WooCommerce - Factures': false,
     'WooCommerce - Produits': false,
     'WooCommerce - Devis': false,
@@ -34,6 +38,54 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
         { type: 'layout-sidebar', label: 'Barre Latérale', icon: '📄', description: 'Barre latérale' },
         { type: 'layout-section', label: 'Section', icon: '📄', description: 'Section de contenu' },
         { type: 'layout-container', label: 'Conteneur', icon: '📦', description: 'Conteneur flexible' }
+      ]
+    },
+    {
+      name: 'Formes & Graphiques',
+      elements: [
+        { type: 'shape-rectangle', label: 'Rectangle', icon: '▭', description: 'Forme rectangulaire' },
+        { type: 'shape-circle', label: 'Cercle', icon: '○', description: 'Forme circulaire' },
+        { type: 'shape-line', label: 'Ligne', icon: '━', description: 'Ligne horizontale ou verticale' },
+        { type: 'shape-arrow', label: 'Flèche', icon: '→', description: 'Flèche directionnelle' },
+        { type: 'shape-triangle', label: 'Triangle', icon: '△', description: 'Forme triangulaire' },
+        { type: 'shape-star', label: 'Étoile', icon: '⭐', description: 'Forme étoilée' },
+        { type: 'divider', label: 'Séparateur', icon: '━', description: 'Ligne de séparation stylisée' }
+      ]
+    },
+    {
+      name: 'Médias',
+      elements: [
+        { type: 'image', label: 'Image', icon: '🖼️', description: 'Insérer une image' },
+        { type: 'image-upload', label: 'Télécharger Image', icon: '📤', description: 'Uploader et insérer une image' },
+        { type: 'logo', label: 'Logo', icon: '🏷️', description: 'Logo de l\'entreprise' },
+        { type: 'barcode', label: 'Code-barres', icon: '📊', description: 'Code-barres' },
+        { type: 'qrcode', label: 'QR Code', icon: '📱', description: 'Code QR' },
+        { type: 'qrcode-dynamic', label: 'QR Code Dynamique', icon: '🔗', description: 'QR Code avec contenu dynamique' },
+        { type: 'icon', label: 'Icône', icon: '🎯', description: 'Icône vectorielle' }
+      ]
+    },
+    {
+      name: 'Données Dynamiques',
+      elements: [
+        { type: 'dynamic-text', label: 'Texte Dynamique', icon: '🔄', description: 'Texte avec variables' },
+        { type: 'formula', label: 'Formule', icon: '🧮', description: 'Calcul mathématique' },
+        { type: 'conditional-text', label: 'Texte Conditionnel', icon: '❓', description: 'Texte affiché selon conditions' },
+        { type: 'counter', label: 'Compteur', icon: '🔢', description: 'Compteur automatique' },
+        { type: 'date-dynamic', label: 'Date Dynamique', icon: '📅', description: 'Date avec format personnalisé' },
+        { type: 'currency', label: 'Devise', icon: '💱', description: 'Format monétaire' },
+        { type: 'table-dynamic', label: 'Tableau Dynamique', icon: '📊', description: 'Tableau avec données variables' }
+      ]
+    },
+    {
+      name: 'Éléments Avancés',
+      elements: [
+        { type: 'gradient-box', label: 'Boîte Dégradé', icon: '🌈', description: 'Boîte avec dégradé de couleur' },
+        { type: 'shadow-box', label: 'Boîte avec Ombre', icon: '📦', description: 'Boîte avec effet d\'ombre' },
+        { type: 'rounded-box', label: 'Boîte Arrondie', icon: '🔄', description: 'Boîte avec coins arrondis' },
+        { type: 'border-box', label: 'Boîte avec Bordure', icon: '🔲', description: 'Boîte avec bordure stylisée' },
+        { type: 'background-pattern', label: 'Motif d\'Arrière-plan', icon: '🎨', description: 'Arrière-plan avec motif' },
+        { type: 'watermark', label: 'Filigrane', icon: '💧', description: 'Texte ou image en filigrane' },
+        { type: 'progress-bar', label: 'Barre de Progression', icon: '📊', description: 'Barre de progression visuelle' }
       ]
     },
     {
@@ -72,21 +124,6 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
         { type: 'woocommerce-quote-date', label: 'Date de Devis', icon: '📅', description: 'Date de création du devis' },
         { type: 'woocommerce-quote-validity', label: 'Validité du Devis', icon: '⏰', description: 'Période de validité du devis' },
         { type: 'woocommerce-quote-notes', label: 'Notes du Devis', icon: '📝', description: 'Notes spécifiques au devis' }
-      ]
-    },
-    {
-      name: 'Médias',
-      elements: [
-        { type: 'image', label: 'Image', icon: '🖼️', description: 'Insérer une image' },
-        { type: 'barcode', label: 'Code-barres', icon: '📊', description: 'Code-barres' },
-        { type: 'qrcode', label: 'QR Code', icon: '📱', description: 'Code QR' }
-      ]
-    },
-    {
-      name: 'Données',
-      elements: [
-        { type: 'dynamic-text', label: 'Texte Dynamique', icon: '🔄', description: 'Texte avec variables' },
-        { type: 'table', label: 'Tableau', icon: '📋', description: 'Tableau de données' }
       ]
     },
     {
