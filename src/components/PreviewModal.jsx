@@ -71,10 +71,17 @@ export const PreviewModal = ({ isOpen, onClose, templateData, canvasWidth, canva
 
       console.log('PDF Builder Preview: Envoi de la requête AJAX...');
 
-      // Faire l'appel AJAX
+      // Faire l'appel AJAX avec JSON
       const response = await fetch(ajaxUrl, {
         method: 'POST',
-        body: formData
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          action: 'pdf_builder_preview',
+          nonce: pdfBuilderAjax.nonce,
+          template_data: jsonString
+        })
       });
 
       console.log('PDF Builder Preview: Réponse reçue:', response.status, response.statusText);
