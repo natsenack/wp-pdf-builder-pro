@@ -292,334 +292,390 @@ export const PropertiesPanel = ({
       case 'layout':
         return (
           <div className="tab-content">
-            {/* Structure du document */}
+            {/* Presets de mise en page pour factures/devis */}
             <div className="properties-group">
-              <h4>�️ Structure Document</h4>
-
-              <div className="property-row">
-                <label>Section:</label>
-                <select
-                  value={localProperties.section || 'body'}
-                  onChange={(e) => handlePropertyChange(selectedElement.id, 'section', e.target.value)}
+              <h4>📋 Presets Facturation</h4>
+              <div className="preset-buttons">
+                <button
+                  className="preset-btn"
+                  onClick={() => {
+                    // Position en-tête facture
+                    handlePropertyChange(selectedElement.id, 'x', 20);
+                    handlePropertyChange(selectedElement.id, 'y', 20);
+                    handlePropertyChange(selectedElement.id, 'width', 170);
+                    handlePropertyChange(selectedElement.id, 'height', 30);
+                  }}
+                  title="Position en-tête (logo, société)"
                 >
-                  <option value="header">En-tête</option>
-                  <option value="body">Corps</option>
-                  <option value="footer">Pied de page</option>
-                  <option value="table">Tableau</option>
-                </select>
-              </div>
-
-              <div className="property-row">
-                <label>Type d'élément:</label>
-                <select
-                  value={localProperties.elementType || 'text'}
-                  onChange={(e) => handlePropertyChange(selectedElement.id, 'elementType', e.target.value)}
+                  🏢 En-tête
+                </button>
+                <button
+                  className="preset-btn"
+                  onClick={() => {
+                    // Position infos client
+                    handlePropertyChange(selectedElement.id, 'x', 20);
+                    handlePropertyChange(selectedElement.id, 'y', 60);
+                    handlePropertyChange(selectedElement.id, 'width', 80);
+                    handlePropertyChange(selectedElement.id, 'height', 40);
+                  }}
+                  title="Section informations client"
                 >
-                  <option value="title">Titre</option>
-                  <option value="subtitle">Sous-titre</option>
-                  <option value="text">Texte</option>
-                  <option value="amount">Montant</option>
-                  <option value="date">Date</option>
-                  <option value="table-cell">Cellule tableau</option>
-                  <option value="separator">Séparateur</option>
-                </select>
+                  👤 Client
+                </button>
+                <button
+                  className="preset-btn"
+                  onClick={() => {
+                    // Position tableau articles
+                    handlePropertyChange(selectedElement.id, 'x', 20);
+                    handlePropertyChange(selectedElement.id, 'y', 110);
+                    handlePropertyChange(selectedElement.id, 'width', 170);
+                    handlePropertyChange(selectedElement.id, 'height', 120);
+                  }}
+                  title="Tableau des articles/services"
+                >
+                  📊 Tableau
+                </button>
+                <button
+                  className="preset-btn"
+                  onClick={() => {
+                    // Position totaux
+                    handlePropertyChange(selectedElement.id, 'x', 110);
+                    handlePropertyChange(selectedElement.id, 'y', 240);
+                    handlePropertyChange(selectedElement.id, 'width', 80);
+                    handlePropertyChange(selectedElement.id, 'height', 30);
+                  }}
+                  title="Section totaux (HT, TVA, TTC)"
+                >
+                  💰 Totaux
+                </button>
+                <button
+                  className="preset-btn"
+                  onClick={() => {
+                    // Position pied de page
+                    handlePropertyChange(selectedElement.id, 'x', 20);
+                    handlePropertyChange(selectedElement.id, 'y', 270);
+                    handlePropertyChange(selectedElement.id, 'width', 170);
+                    handlePropertyChange(selectedElement.id, 'height', 20);
+                  }}
+                  title="Pied de page (mentions légales)"
+                >
+                  📄 Pied
+                </button>
+                <button
+                  className="preset-btn"
+                  onClick={() => {
+                    // Position numéro facture
+                    handlePropertyChange(selectedElement.id, 'x', 120);
+                    handlePropertyChange(selectedElement.id, 'y', 20);
+                    handlePropertyChange(selectedElement.id, 'width', 70);
+                    handlePropertyChange(selectedElement.id, 'height', 15);
+                  }}
+                  title="Numéro de facture/devis"
+                >
+                  🔢 N° Facture
+                </button>
               </div>
             </div>
 
-            {/* Marges et espacement */}
+            {/* Alignements spécialisés facturation */}
             <div className="properties-group">
-              <h4>� Marges & Espacement</h4>
+              <h4>� Alignements Facturation</h4>
+              <div className="billing-alignments">
+                <div className="alignment-row">
+                  <button
+                    className="align-btn billing"
+                    onClick={() => handlePropertyChange(selectedElement.id, 'x', 20)}
+                    title="Aligner à gauche (descriptions)"
+                  >
+                    📝 Gauche
+                  </button>
+                  <button
+                    className="align-btn billing"
+                    onClick={() => handlePropertyChange(selectedElement.id, 'x', 95)}
+                    title="Centrer horizontalement"
+                  >
+                    🎯 Centre
+                  </button>
+                  <button
+                    className="align-btn billing"
+                    onClick={() => handlePropertyChange(selectedElement.id, 'x', 150)}
+                    title="Aligner à droite (montants)"
+                  >
+                    💵 Droite
+                  </button>
+                </div>
+                <div className="alignment-row">
+                  <button
+                    className="align-btn billing"
+                    onClick={() => handlePropertyChange(selectedElement.id, 'y', 20)}
+                    title="Position en-tête"
+                  >
+                    ⬆️ En-tête
+                  </button>
+                  <button
+                    className="align-btn billing"
+                    onClick={() => handlePropertyChange(selectedElement.id, 'y', 148)}
+                    title="Milieu de page"
+                  >
+                    📄 Milieu
+                  </button>
+                  <button
+                    className="align-btn billing"
+                    onClick={() => handlePropertyChange(selectedElement.id, 'y', 270)}
+                    title="Position pied de page"
+                  >
+                    ⬇️ Pied
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Dimensions standardisées facturation */}
+            <div className="properties-group">
+              <h4>📏 Dimensions Standard</h4>
 
               <div className="property-row">
-                <label>Marge haut:</label>
-                <div className="input-with-unit">
-                  <input
-                    type="number"
-                    value={localProperties.marginTop || 0}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'marginTop', parseInt(e.target.value))}
-                    min="0"
-                    step="1"
-                  />
-                  <span className="unit">mm</span>
+                <label>Taille:</label>
+                <div className="standard-sizes">
+                  <button
+                    className="size-btn"
+                    onClick={() => {
+                      handlePropertyChange(selectedElement.id, 'width', 170);
+                      handlePropertyChange(selectedElement.id, 'height', 10);
+                    }}
+                    title="Ligne de tableau"
+                  >
+                    📏 Ligne
+                  </button>
+                  <button
+                    className="size-btn"
+                    onClick={() => {
+                      handlePropertyChange(selectedElement.id, 'width', 80);
+                      handlePropertyChange(selectedElement.id, 'height', 40);
+                    }}
+                    title="Bloc d'informations"
+                  >
+                    📦 Bloc
+                  </button>
+                  <button
+                    className="size-btn"
+                    onClick={() => {
+                      handlePropertyChange(selectedElement.id, 'width', 50);
+                      handlePropertyChange(selectedElement.id, 'height', 15);
+                    }}
+                    title="Petit élément (logo, numéro)"
+                  >
+                    🔸 Petit
+                  </button>
+                  <button
+                    className="size-btn"
+                    onClick={() => {
+                      handlePropertyChange(selectedElement.id, 'width', 170);
+                      handlePropertyChange(selectedElement.id, 'height', 120);
+                    }}
+                    title="Tableau complet"
+                  >
+                    📊 Tableau
+                  </button>
                 </div>
               </div>
 
+              {/* Colonnes pour tableaux */}
               <div className="property-row">
-                <label>Marge bas:</label>
-                <div className="input-with-unit">
-                  <input
-                    type="number"
-                    value={localProperties.marginBottom || 0}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'marginBottom', parseInt(e.target.value))}
-                    min="0"
-                    step="1"
-                  />
-                  <span className="unit">mm</span>
+                <label>Colonnes:</label>
+                <div className="column-presets">
+                  <button
+                    className="column-btn"
+                    onClick={() => handlePropertyChange(selectedElement.id, 'width', 50)}
+                    title="Colonne description (50mm)"
+                  >
+                    📝 Desc.
+                  </button>
+                  <button
+                    className="column-btn"
+                    onClick={() => handlePropertyChange(selectedElement.id, 'width', 25)}
+                    title="Colonne quantité (25mm)"
+                  >
+                    🔢 Qté
+                  </button>
+                  <button
+                    className="column-btn"
+                    onClick={() => handlePropertyChange(selectedElement.id, 'width', 30)}
+                    title="Colonne prix (30mm)"
+                  >
+                    💰 Prix
+                  </button>
+                  <button
+                    className="column-btn"
+                    onClick={() => handlePropertyChange(selectedElement.id, 'width', 35)}
+                    title="Colonne total (35mm)"
+                  >
+                    🧮 Total
+                  </button>
                 </div>
               </div>
+            </div>
+
+            {/* Espacement et marges */}
+            <div className="properties-group">
+              <h4>📏 Espacement Facturation</h4>
 
               <div className="property-row">
-                <label>Marge gauche:</label>
-                <div className="input-with-unit">
-                  <input
-                    type="number"
-                    value={localProperties.marginLeft || 0}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'marginLeft', parseInt(e.target.value))}
-                    min="0"
-                    step="1"
-                  />
-                  <span className="unit">mm</span>
-                </div>
-              </div>
-
-              <div className="property-row">
-                <label>Marge droite:</label>
-                <div className="input-with-unit">
-                  <input
-                    type="number"
-                    value={localProperties.marginRight || 0}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'marginRight', parseInt(e.target.value))}
-                    min="0"
-                    step="1"
-                  />
-                  <span className="unit">mm</span>
-                </div>
-              </div>
-
-              {/* Boutons de marges rapides */}
-              <div className="property-row">
-                <label>Marges rapides:</label>
-                <div className="margin-presets">
+                <label>Marge standard:</label>
+                <div className="margin-buttons">
                   <button
                     className="margin-btn"
                     onClick={() => {
-                      handlePropertyChange(selectedElement.id, 'marginTop', 5);
-                      handlePropertyChange(selectedElement.id, 'marginBottom', 5);
-                      handlePropertyChange(selectedElement.id, 'marginLeft', 0);
-                      handlePropertyChange(selectedElement.id, 'marginRight', 0);
+                      handlePropertyChange(selectedElement.id, 'x', 20);
+                      handlePropertyChange(selectedElement.id, 'y', (localProperties.y || 0) + 5);
                     }}
-                    title="Marges standard"
+                    title="Marge normale (5mm)"
                   >
-                    Standard
+                    📐 Normal
                   </button>
                   <button
                     className="margin-btn"
                     onClick={() => {
-                      handlePropertyChange(selectedElement.id, 'marginTop', 10);
-                      handlePropertyChange(selectedElement.id, 'marginBottom', 10);
-                      handlePropertyChange(selectedElement.id, 'marginLeft', 10);
-                      handlePropertyChange(selectedElement.id, 'marginRight', 10);
+                      handlePropertyChange(selectedElement.id, 'x', 20);
+                      handlePropertyChange(selectedElement.id, 'y', (localProperties.y || 0) + 10);
                     }}
-                    title="Marges larges"
+                    title="Grande marge (10mm)"
                   >
-                    Large
+                    📏 Large
                   </button>
                   <button
                     className="margin-btn"
                     onClick={() => {
-                      handlePropertyChange(selectedElement.id, 'marginTop', 0);
-                      handlePropertyChange(selectedElement.id, 'marginBottom', 0);
-                      handlePropertyChange(selectedElement.id, 'marginLeft', 0);
-                      handlePropertyChange(selectedElement.id, 'marginRight', 0);
+                      handlePropertyChange(selectedElement.id, 'x', 20);
+                      handlePropertyChange(selectedElement.id, 'y', (localProperties.y || 0) + 2);
                     }}
-                    title="Aucune marge"
+                    title="Petite marge (2mm)"
                   >
-                    Aucune
+                    📏 Étroit
+                  </button>
+                </div>
+              </div>
+
+              {/* Lignes de tableau */}
+              <div className="property-row">
+                <label>Ligne suivante:</label>
+                <div className="line-spacing">
+                  <button
+                    className="spacing-btn"
+                    onClick={() => handlePropertyChange(selectedElement.id, 'y', (localProperties.y || 0) + 8)}
+                    title="Ligne de tableau (8mm)"
+                  >
+                    📊 +8mm
+                  </button>
+                  <button
+                    className="spacing-btn"
+                    onClick={() => handlePropertyChange(selectedElement.id, 'y', (localProperties.y || 0) + 12)}
+                    title="Section suivante (12mm)"
+                  >
+                    📄 +12mm
+                  </button>
+                  <button
+                    className="spacing-btn"
+                    onClick={() => handlePropertyChange(selectedElement.id, 'y', (localProperties.y || 0) + 20)}
+                    title="Nouvelle section (20mm)"
+                  >
+                    📑 +20mm
                   </button>
                 </div>
               </div>
             </div>
 
-            {/* Alignement et justification */}
+            {/* Position précise avec grille */}
             <div className="properties-group">
-              <h4>� Alignement & Justification</h4>
+              <h4>📍 Position Précise</h4>
 
               <div className="property-row">
-                <label>Alignement horizontal:</label>
-                <div className="alignment-buttons">
-                  <button
-                    className={`align-text-btn ${localProperties.textAlign === 'left' ? 'active' : ''}`}
-                    onClick={() => handlePropertyChange(selectedElement.id, 'textAlign', 'left')}
-                    title="Aligner à gauche"
-                  >
-                    ⬅️ Gauche
-                  </button>
-                  <button
-                    className={`align-text-btn ${localProperties.textAlign === 'center' ? 'active' : ''}`}
-                    onClick={() => handlePropertyChange(selectedElement.id, 'textAlign', 'center')}
-                    title="Centrer"
-                  >
-                    ⬌ Centre
-                  </button>
-                  <button
-                    className={`align-text-btn ${localProperties.textAlign === 'right' ? 'active' : ''}`}
-                    onClick={() => handlePropertyChange(selectedElement.id, 'textAlign', 'right')}
-                    title="Aligner à droite"
-                  >
-                    ➡️ Droite
-                  </button>
-                  <button
-                    className={`align-text-btn ${localProperties.textAlign === 'justify' ? 'active' : ''}`}
-                    onClick={() => handlePropertyChange(selectedElement.id, 'textAlign', 'justify')}
-                    title="Justifier"
-                  >
-                    ⬌ Justifier
-                  </button>
-                </div>
-              </div>
-
-              <div className="property-row">
-                <label>Alignement vertical:</label>
-                <div className="vertical-align-buttons">
-                  <button
-                    className={`valign-btn ${localProperties.verticalAlign === 'top' ? 'active' : ''}`}
-                    onClick={() => handlePropertyChange(selectedElement.id, 'verticalAlign', 'top')}
-                    title="Aligner en haut"
-                  >
-                    ⬆️ Haut
-                  </button>
-                  <button
-                    className={`valign-btn ${localProperties.verticalAlign === 'middle' ? 'active' : ''}`}
-                    onClick={() => handlePropertyChange(selectedElement.id, 'verticalAlign', 'middle')}
-                    title="Centrer verticalement"
-                  >
-                    ⬍ Milieu
-                  </button>
-                  <button
-                    className={`valign-btn ${localProperties.verticalAlign === 'bottom' ? 'active' : ''}`}
-                    onClick={() => handlePropertyChange(selectedElement.id, 'verticalAlign', 'bottom')}
-                    title="Aligner en bas"
-                  >
-                    ⬇️ Bas
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Contrôles spécifiques aux tableaux */}
-            {(localProperties.elementType === 'table-cell' || localProperties.section === 'table') && (
-              <div className="properties-group">
-                <h4>📊 Paramètres Tableau</h4>
-
-                <div className="property-row">
-                  <label>Largeur colonne:</label>
-                  <div className="input-with-unit">
-                    <input
-                      type="number"
-                      value={localProperties.columnWidth || 50}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'columnWidth', parseInt(e.target.value))}
-                      min="10"
-                      max="200"
-                      step="5"
-                    />
-                    <span className="unit">mm</span>
-                  </div>
-                </div>
-
-                <div className="property-row">
-                  <label>Type de cellule:</label>
-                  <select
-                    value={localProperties.cellType || 'data'}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'cellType', e.target.value)}
-                  >
-                    <option value="header">En-tête</option>
-                    <option value="data">Données</option>
-                    <option value="total">Total</option>
-                    <option value="description">Description</option>
-                  </select>
-                </div>
-
-                <div className="property-row">
-                  <label>Bordures cellule:</label>
-                  <div className="border-controls">
-                    <button
-                      className={`border-btn ${localProperties.cellBorder === 'all' ? 'active' : ''}`}
-                      onClick={() => handlePropertyChange(selectedElement.id, 'cellBorder', 'all')}
-                      title="Toutes les bordures"
-                    >
-                      ☐ Toutes
-                    </button>
-                    <button
-                      className={`border-btn ${localProperties.cellBorder === 'bottom' ? 'active' : ''}`}
-                      onClick={() => handlePropertyChange(selectedElement.id, 'cellBorder', 'bottom')}
-                      title="Bordure inférieure seulement"
-                    >
-                      ▬ Bas
-                    </button>
-                    <button
-                      className={`border-btn ${localProperties.cellBorder === 'none' ? 'active' : ''}`}
-                      onClick={() => handlePropertyChange(selectedElement.id, 'cellBorder', 'none')}
-                      title="Aucune bordure"
-                    >
-                      ∅ Aucune
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Contrôles de flux et sauts */}
-            <div className="properties-group">
-              <h4>� Flux & Sauts</h4>
-
-              <div className="property-row">
-                <label>Comportement:</label>
-                <select
-                  value={localProperties.flowBehavior || 'normal'}
-                  onChange={(e) => handlePropertyChange(selectedElement.id, 'flowBehavior', e.target.value)}
-                >
-                  <option value="normal">Normal</option>
-                  <option value="keep-together">Garder ensemble</option>
-                  <option value="page-break-before">Saut page avant</option>
-                  <option value="page-break-after">Saut page après</option>
-                  <option value="avoid-break">Éviter coupure</option>
-                </select>
-              </div>
-
-              <div className="property-row">
-                <label>Hauteur ligne:</label>
+                <label>X (mm):</label>
                 <div className="input-with-unit">
                   <input
                     type="number"
-                    value={localProperties.lineHeight || 1.2}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'lineHeight', parseFloat(e.target.value))}
-                    min="0.8"
-                    max="3"
-                    step="0.1"
+                    value={Math.round(localProperties.x || 0)}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'x', parseInt(e.target.value))}
+                    step="1"
+                    min="0"
+                    max="210"
                   />
-                  <span className="unit">×</span>
+                  <span className="unit">mm</span>
+                </div>
+              </div>
+
+              <div className="property-row">
+                <label>Y (mm):</label>
+                <div className="input-with-unit">
+                  <input
+                    type="number"
+                    value={Math.round(localProperties.y || 0)}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'y', parseInt(e.target.value))}
+                    step="1"
+                    min="0"
+                    max="297"
+                  />
+                  <span className="unit">mm</span>
+                </div>
+              </div>
+
+              {/* Grille d'alignement */}
+              <div className="property-row">
+                <label>Grille:</label>
+                <div className="grid-buttons">
+                  <button
+                    className="grid-btn"
+                    onClick={() => {
+                      const x = Math.round((localProperties.x || 0) / 10) * 10;
+                      handlePropertyChange(selectedElement.id, 'x', x);
+                    }}
+                    title="Aligner sur grille 10mm"
+                  >
+                    📐 10mm
+                  </button>
+                  <button
+                    className="grid-btn"
+                    onClick={() => {
+                      const y = Math.round((localProperties.y || 0) / 5) * 5;
+                      handlePropertyChange(selectedElement.id, 'y', y);
+                    }}
+                    title="Aligner sur grille 5mm"
+                  >
+                    📐 5mm
+                  </button>
                 </div>
               </div>
             </div>
 
-            {/* Positionnement avancé */}
+            {/* Calques et profondeur */}
             <div className="properties-group">
-              <h4>🎯 Positionnement Avancé</h4>
+              <h4>📚 Organisation</h4>
 
               <div className="property-row">
-                <label>Ancrage:</label>
-                <select
-                  value={localProperties.anchor || 'static'}
-                  onChange={(e) => handlePropertyChange(selectedElement.id, 'anchor', e.target.value)}
-                >
-                  <option value="static">Statique</option>
-                  <option value="relative">Relatif</option>
-                  <option value="absolute">Absolu</option>
-                  <option value="fixed">Fixe</option>
-                </select>
-              </div>
-
-              <div className="property-row">
-                <label>Référence:</label>
-                <select
-                  value={localProperties.reference || 'page'}
-                  onChange={(e) => handlePropertyChange(selectedElement.id, 'reference', e.target.value)}
-                >
-                  <option value="page">Page</option>
-                  <option value="margin">Marge</option>
-                  <option value="previous">Élément précédent</option>
-                  <option value="container">Conteneur</option>
-                </select>
+                <label>Calque:</label>
+                <div className="layer-buttons">
+                  <button
+                    className="layer-btn"
+                    onClick={() => handlePropertyChange(selectedElement.id, 'zIndex', 1)}
+                    title="Arrière-plan"
+                  >
+                    🔙 Arrière
+                  </button>
+                  <button
+                    className="layer-btn"
+                    onClick={() => handlePropertyChange(selectedElement.id, 'zIndex', 5)}
+                    title="Plan normal"
+                  >
+                    📄 Normal
+                  </button>
+                  <button
+                    className="layer-btn"
+                    onClick={() => handlePropertyChange(selectedElement.id, 'zIndex', 10)}
+                    title="Premier plan"
+                  >
+                    🔛 Devant
+                  </button>
+                </div>
               </div>
             </div>
           </div>
