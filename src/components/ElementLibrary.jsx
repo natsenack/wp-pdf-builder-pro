@@ -5,35 +5,108 @@ import '../styles/ElementLibrary.css';
 export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
   const [showHeaderTemplatesModal, setShowHeaderTemplatesModal] = useState(false);
 
-  // Quelques éléments avec contenu réaliste pour commencer
+  // Éléments restructurés selon l'architecture du plugin concurrent
+  // Utilise 'text' pour les éléments texte et 'field' pour les subfields
   const elementCategories = [
     {
       name: 'Informations Commande',
       elements: [
         {
-          type: 'order-info',
-          label: 'Numéro & Date',
+          type: 'field', // Type 'field' pour subfield comme dans FieldFactory::GetSubField()
+          fieldID: 'order_number',
+          label: 'Numéro Commande',
           icon: '📋',
-          description: 'Numéro de commande et date',
-          previewContent: 'Commande [order_number]\nDate: [order_date]',
+          description: 'Numéro de la commande',
+          previewContent: '[order_number]',
           defaultProperties: {
-            text: 'Commande [order_number]\nDate: [order_date]',
+            text: '[order_number]',
             fontSize: 12,
             fontFamily: 'Arial',
             fontWeight: 'normal'
           }
         },
         {
-          type: 'order-total',
-          label: 'Total Commande',
-          icon: '💰',
-          description: 'Montant total de la commande',
-          previewContent: 'Total: [order_total]',
+          type: 'field',
+          fieldID: 'order_date',
+          label: 'Date Commande',
+          icon: '📅',
+          description: 'Date de la commande',
+          previewContent: '[order_date]',
           defaultProperties: {
-            text: 'Total: [order_total]',
-            fontSize: 14,
+            text: '[order_date]',
+            fontSize: 12,
             fontFamily: 'Arial',
-            fontWeight: 'bold'
+            fontWeight: 'normal'
+          }
+        },
+        {
+          type: 'field',
+          fieldID: 'order_subtotal',
+          label: 'Sous-total',
+          icon: '💵',
+          description: 'Sous-total de la commande',
+          previewContent: '[order_subtotal]',
+          defaultProperties: {
+            text: '[order_subtotal]',
+            fontSize: 12,
+            fontFamily: 'Arial',
+            fontWeight: 'normal'
+          }
+        },
+        {
+          type: 'field',
+          fieldID: 'order_tax',
+          label: 'TVA',
+          icon: '�',
+          description: 'Montant de la TVA',
+          previewContent: '[order_tax]',
+          defaultProperties: {
+            text: '[order_tax]',
+            fontSize: 12,
+            fontFamily: 'Arial',
+            fontWeight: 'normal'
+          }
+        },
+        {
+          type: 'field',
+          fieldID: 'payment_method',
+          label: 'Méthode Paiement',
+          icon: '💳',
+          description: 'Méthode de paiement utilisée',
+          previewContent: '[payment_method]',
+          defaultProperties: {
+            text: '[payment_method]',
+            fontSize: 12,
+            fontFamily: 'Arial',
+            fontWeight: 'normal'
+          }
+        },
+        {
+          type: 'field',
+          fieldID: 'shipping_method',
+          label: 'Méthode Livraison',
+          icon: '🚚',
+          description: 'Méthode de livraison',
+          previewContent: '[shipping_method]',
+          defaultProperties: {
+            text: '[shipping_method]',
+            fontSize: 12,
+            fontFamily: 'Arial',
+            fontWeight: 'normal'
+          }
+        },
+        {
+          type: 'text', // Type 'text' pour texte libre comme dans FieldFactory::GetField('text')
+          fieldID: 'order_info_combined',
+          label: 'Info Commande Combinée',
+          icon: '📄',
+          description: 'Informations combinées de commande',
+          previewContent: 'Commande [order_number] - Date: [order_date]\nTotal: [order_total]',
+          defaultProperties: {
+            text: 'Commande [order_number] - Date: [order_date]\nTotal: [order_total]',
+            fontSize: 12,
+            fontFamily: 'Arial',
+            fontWeight: 'normal'
           }
         }
       ]
@@ -42,20 +115,36 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
       name: 'Informations Client',
       elements: [
         {
-          type: 'customer-info',
+          type: 'field',
+          fieldID: 'customer_name',
           label: 'Nom Client',
           icon: '👤',
-          description: 'Nom et email du client',
-          previewContent: '[customer_name]\n[customer_email]',
+          description: 'Nom du client',
+          previewContent: '[customer_name]',
           defaultProperties: {
-            text: '[customer_name]\n[customer_email]',
+            text: '[customer_name]',
             fontSize: 12,
             fontFamily: 'Arial',
             fontWeight: 'normal'
           }
         },
         {
-          type: 'billing-address',
+          type: 'field',
+          fieldID: 'customer_email',
+          label: 'Email Client',
+          icon: '📧',
+          description: 'Adresse email du client',
+          previewContent: '[customer_email]',
+          defaultProperties: {
+            text: '[customer_email]',
+            fontSize: 12,
+            fontFamily: 'Arial',
+            fontWeight: 'normal'
+          }
+        },
+        {
+          type: 'field',
+          fieldID: 'billing_address',
           label: 'Adresse Facturation',
           icon: '📍',
           description: 'Adresse de facturation',
@@ -63,6 +152,34 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
           defaultProperties: {
             text: '[billing_address]',
             fontSize: 11,
+            fontFamily: 'Arial',
+            fontWeight: 'normal'
+          }
+        },
+        {
+          type: 'field',
+          fieldID: 'shipping_address',
+          label: 'Adresse Livraison',
+          icon: '🏠',
+          description: 'Adresse de livraison',
+          previewContent: '[shipping_address]',
+          defaultProperties: {
+            text: '[shipping_address]',
+            fontSize: 11,
+            fontFamily: 'Arial',
+            fontWeight: 'normal'
+          }
+        },
+        {
+          type: 'text',
+          fieldID: 'customer_info_combined',
+          label: 'Info Client Combinée',
+          icon: '👥',
+          description: 'Informations client combinées',
+          previewContent: '[customer_name]\n[customer_email]\n[billing_address]',
+          defaultProperties: {
+            text: '[customer_name]\n[customer_email]\n[billing_address]',
+            fontSize: 12,
             fontFamily: 'Arial',
             fontWeight: 'normal'
           }
@@ -74,6 +191,7 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
       elements: [
         {
           type: 'text',
+          fieldID: 'custom_text',
           label: 'Texte Libre',
           icon: '📝',
           description: 'Champ de texte personnalisable',
@@ -87,6 +205,7 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
         },
         {
           type: 'rectangle',
+          fieldID: 'shape_rectangle',
           label: 'Rectangle',
           icon: '▭',
           description: 'Forme rectangulaire',
@@ -207,6 +326,7 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
                         y: 50 + (categoryIndex * 100),
                         width: element.type === 'rectangle' ? 200 : 250,
                         height: element.type === 'rectangle' ? 100 : 60,
+                        fieldID: element.fieldID, // Ajout du fieldID comme dans FieldDTO
                         ...element.defaultProperties
                       });
                     }}
