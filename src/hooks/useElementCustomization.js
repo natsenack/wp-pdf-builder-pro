@@ -28,7 +28,22 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
     const validatedValue = validatePropertyValue(property, value);
 
     // Mettre à jour l'état local immédiatement pour l'UI
-    setLocalProperties(prev => ({ ...prev, [property]: validatedValue }));
+    setLocalProperties(prev => {
+      const updates = {};
+      if (property.includes('.')) {
+        // Gérer les propriétés imbriquées (ex: "columns.image")
+        const parts = property.split('.');
+        let current = updates;
+        for (let i = 0; i < parts.length - 1; i++) {
+          current[parts[i]] = current[parts[i]] || {};
+          current = current[parts[i]];
+        }
+        current[parts[parts.length - 1]] = validatedValue;
+        return { ...prev, ...updates };
+      } else {
+        return { ...prev, [property]: validatedValue };
+      }
+    });
 
     // Notifier le parent pour la persistance
     onPropertyChange(elementId, property, validatedValue);

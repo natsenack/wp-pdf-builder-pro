@@ -144,7 +144,21 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
 
   // Gestionnaire pour les changements de propriétés
   const handlePropertyChange = useCallback((elementId, property, value) => {
-    canvasState.updateElement(elementId, { [property]: value });
+    // Gérer les propriétés imbriquées (ex: "columns.image" -> { columns: { image: value } })
+    const updates = {};
+    if (property.includes('.')) {
+      const parts = property.split('.');
+      let current = updates;
+      for (let i = 0; i < parts.length - 1; i++) {
+        current[parts[i]] = current[parts[i]] || {};
+        current = current[parts[i]];
+      }
+      current[parts[parts.length - 1]] = value;
+    } else {
+      updates[property] = value;
+    }
+
+    canvasState.updateElement(elementId, updates);
   }, [canvasState]);
 
   // Gestionnaire pour les mises à jour par lot
