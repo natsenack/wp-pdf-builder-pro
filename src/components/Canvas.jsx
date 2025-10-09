@@ -179,6 +179,49 @@ export const Canvas = ({
   const [resizeHandle, setResizeHandle] = useState(null);
   const [resizeStartPos, setResizeStartPos] = useState({ x: 0, y: 0 });
   const [resizeStartSize, setResizeStartSize] = useState({ width: 0, height: 0 });
+  const [hoveredHandle, setHoveredHandle] = useState(null);
+
+  // Fonction pour déterminer le curseur approprié
+  const getCursor = useCallback(() => {
+    if (isDragging) return 'grabbing';
+    if (isResizing) {
+      switch (resizeHandle) {
+        case 'nw':
+        case 'se':
+          return 'nw-resize';
+        case 'ne':
+        case 'sw':
+          return 'ne-resize';
+        case 'n':
+        case 's':
+          return 'ns-resize';
+        case 'w':
+        case 'e':
+          return 'ew-resize';
+        default:
+          return 'grabbing';
+      }
+    }
+    if (hoveredHandle) {
+      switch (hoveredHandle) {
+        case 'nw':
+        case 'se':
+          return 'nw-resize';
+        case 'ne':
+        case 'sw':
+          return 'ne-resize';
+        case 'n':
+        case 's':
+          return 'ns-resize';
+        case 'w':
+        case 'e':
+          return 'ew-resize';
+        default:
+          return 'grab';
+      }
+    }
+    return tool === 'select' ? 'grab' : 'crosshair';
+  }, [isDragging, isResizing, resizeHandle, hoveredHandle, tool]);
 
   // Gestionnaire de mouse down pour commencer le drag ou le redimensionnement
   const handleMouseDown = useCallback((e) => {
@@ -204,7 +247,7 @@ export const Canvas = ({
 
     if (clickedElement && selectedElements.includes(clickedElement.id)) {
       // Vérifier si on clique sur une poignée de redimensionnement
-      const handleSize = 8 / zoom; // Ajuster la taille selon le zoom
+      const handleSize = 6 / zoom; // Taille correspondant au dessin (6x6 pixels)
       const handles = [
         { name: 'nw', x: clickedElement.x, y: clickedElement.y },
         { name: 'ne', x: clickedElement.x + clickedElement.width, y: clickedElement.y },
@@ -236,7 +279,6 @@ export const Canvas = ({
     if (clickedElement) {
       // Si l'élément n'est pas déjà sélectionné, le sélectionner
       if (!selectedElements.includes(clickedElement.id)) {
-        selection.selectElement(clickedElement.id);
         onElementSelect(clickedElement.id);
       }
 
@@ -259,6 +301,37 @@ export const Canvas = ({
     const rect = canvas.getBoundingClientRect();
     const x = (e.clientX - rect.left) / zoom;
     const y = (e.clientY - rect.top) / zoom;
+
+    // Détecter le hover sur les poignées de redimensionnement
+    let newHoveredHandle = null;
+    if (tool === 'select' && !isDragging && !isResizing) {
+      for (const element of elements) {
+        if (selectedElements.includes(element.id)) {
+          const handleSize = 6 / zoom;
+          const handles = [
+            { name: 'nw', x: element.x, y: element.y },
+            { name: 'ne', x: element.x + element.width, y: element.y },
+            { name: 'sw', x: element.x, y: element.y + element.height },
+            { name: 'se', x: element.x + element.width, y: element.y + element.height },
+            { name: 'n', x: element.x + element.width / 2, y: element.y },
+            { name: 's', x: element.x + element.width / 2, y: element.y + element.height },
+            { name: 'w', x: element.x, y: element.y + element.height / 2 },
+            { name: 'e', x: element.x + element.width, y: element.y + element.height / 2 }
+          ];
+
+          const hovered = handles.find(handle =>
+            x >= handle.x - handleSize/2 && x <= handle.x + handleSize/2 &&
+            y >= handle.y - handleSize/2 && y <= handle.y + handleSize/2
+          );
+
+          if (hovered) {
+            newHoveredHandle = hovered.name;
+            break;
+          }
+        }
+      }
+    }
+    setHoveredHandle(newHoveredHandle);
 
     if (isResizing && resizedElement) {
       // Gérer le redimensionnement
@@ -468,7 +541,7 @@ export const Canvas = ({
         className="canvas"
         style={{
           border: '1px solid #ccc',
-          cursor: isDragging ? 'grabbing' : (tool === 'select' ? 'grab' : 'crosshair'),
+          cursor: getCursor(),
           backgroundColor: 'white'
         }}
         onClick={handleCanvasClick}
