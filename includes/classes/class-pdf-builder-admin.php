@@ -755,12 +755,17 @@ class PDF_Builder_Admin {
         wp_enqueue_script('react-dom', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js', ['react'], '18.2.0', true);
 
         // Charger le script principal React du plugin
-        $script_path = plugin_dir_url(__FILE__) . '../../../assets/js/pdf-builder-pro.js';
+        $script_path = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-pro.js';
+        $script_version = PDF_BUILDER_PRO_VERSION;
+        if (defined('PDF_BUILDER_PRO_ASSETS_PATH') && file_exists(PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-builder-pro.js')) {
+            $script_version = filemtime(PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-builder-pro.js');
+        }
+
         wp_enqueue_script(
             'pdf-builder-pro-react',
             $script_path,
             ['react', 'react-dom', 'jquery'],
-            filemtime(plugin_dir_path(__FILE__) . '../../../assets/js/pdf-builder-pro.js'),
+            $script_version,
             true
         );
 
@@ -777,21 +782,32 @@ class PDF_Builder_Admin {
         ]);
 
         // Charger le script admin compilé (avec les dépendances)
-        $admin_script_path = plugin_dir_url(__FILE__) . '../../../assets/js/dist/pdf-builder-admin.js';
+        $admin_script_path = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js';
+        $admin_script_version = PDF_BUILDER_PRO_VERSION;
+        if (defined('PDF_BUILDER_PRO_ASSETS_PATH') && file_exists(PDF_BUILDER_PRO_ASSETS_PATH . 'js/dist/pdf-builder-admin.js')) {
+            $admin_script_version = filemtime(PDF_BUILDER_PRO_ASSETS_PATH . 'js/dist/pdf-builder-admin.js');
+        }
+
         wp_enqueue_script(
             'pdf-builder-admin',
             $admin_script_path,
             ['react', 'react-dom', 'jquery', 'pdf-builder-pro-react'],
-            filemtime(plugin_dir_path(__FILE__) . '../../../assets/js/dist/pdf-builder-admin.js'),
+            $admin_script_version,
             true
         );
 
         // Styles CSS
+        $css_path = PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css';
+        $css_version = PDF_BUILDER_PRO_VERSION;
+        if (defined('PDF_BUILDER_PRO_ASSETS_PATH') && file_exists(PDF_BUILDER_PRO_ASSETS_PATH . 'css/pdf-builder-admin.css')) {
+            $css_version = filemtime(PDF_BUILDER_PRO_ASSETS_PATH . 'css/pdf-builder-admin.css');
+        }
+
         wp_enqueue_style(
             'pdf-builder-admin',
-            plugin_dir_url(__FILE__) . '../../../assets/css/admin.css',
+            $css_path,
             [],
-            filemtime(plugin_dir_path(__FILE__) . '../../../assets/css/admin.css')
+            $css_version
         );
 
         // Debug logging
