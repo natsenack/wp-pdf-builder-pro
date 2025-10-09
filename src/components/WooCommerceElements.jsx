@@ -165,7 +165,13 @@ export const WooCommerceElement = ({
 
     // Si on clique ailleurs sur l'élément, commencer le drag
     if (dragAndDrop && dragAndDrop.handleMouseDown) {
-      dragAndDrop.handleMouseDown(e, element);
+      const elementRect = {
+        left: element.x * zoom,
+        top: element.y * zoom,
+        width: element.width * zoom,
+        height: element.height * zoom
+      };
+      dragAndDrop.handleMouseDown(e, element.id, elementRect);
     }
   };
 
