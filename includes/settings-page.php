@@ -115,6 +115,12 @@ if (isset($_POST['pdf_builder_settings_nonce']) && wp_verify_nonce($_POST['pdf_b
         <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
 
         <div class="pdf-builder-settings">
+            <style>
+            /* Masquer tous les onglets sauf celui actif au chargement */
+            .tab-content:not(.active) { display: none !important; }
+            .tab-content.active { display: block !important; }
+            </style>
+
             <!-- Onglets -->
             <div class="nav-tab-wrapper">
                 <a href="#general" class="nav-tab nav-tab-active"><?php _e('Général', 'pdf-builder-pro'); ?></a>
@@ -608,71 +614,124 @@ if (isset($_POST['pdf_builder_settings_nonce']) && wp_verify_nonce($_POST['pdf_b
 </style>
 
 <script>
-jQuery(document).ready(function($) {
-    console.log('PDF Builder Settings: JavaScript loaded');
+(function($) {
+    'use strict';
 
-    // Navigation par onglets
-    $('.nav-tab').on('click', function(e) {
-        e.preventDefault();
-        console.log('Tab clicked:', $(this).attr('href'));
+    $(document).ready(function() {
+        console.log('🚀 PDF Builder Settings: Starting initialization...');
 
-        // Retirer la classe active de tous les onglets
-        $('.nav-tab').removeClass('nav-tab-active');
-        // Ajouter la classe active à l'onglet cliqué
-        $(this).addClass('nav-tab-active');
-
-        // Masquer tous les contenus d'onglets
-        $('.tab-content').removeClass('active').hide();
-        // Afficher le contenu de l'onglet cliqué
-        var targetId = $(this).attr('href');
-        $(targetId).addClass('active').show();
-
-        console.log('Switched to tab:', targetId);
-    });
-
-    // Initialiser l'onglet actif par défaut
-    var activeTab = $('.nav-tab-active').attr('href');
-    if (activeTab) {
-        $('.tab-content').removeClass('active').hide();
-        $(activeTab).addClass('active').show();
-    }
-
-    console.log('PDF Builder Settings: Initialization complete');
-
-    // Actions de maintenance
-    $('#clear-cache').on('click', function() {
-        if (!confirm('<?php echo esc_js(__('Êtes-vous sûr de vouloir vider le cache ?', 'pdf-builder-pro')); ?>')) {
+        // Vérifier que jQuery est disponible
+        if (typeof $ === 'undefined') {
+            console.error('❌ jQuery not available');
             return;
         }
 
-        var $button = $(this);
-        var $status = $('#cache-status');
+        // Vérifier que les éléments existent
+        if ($('.nav-tab').length === 0) {
+            console.error('❌ No nav-tab elements found');
+            return;
+        }
 
-        $button.prop('disabled', true).text('<?php echo esc_js(__('Nettoyage...', 'pdf-builder-pro')); ?>');
-        $status.html('<div class="notice notice-info"><p><?php echo esc_js(__('Nettoyage du cache en cours...', 'pdf-builder-pro')); ?></p></div>');
+        if ($('.tab-content').length === 0) {
+            console.error('❌ No tab-content elements found');
+            return;
+        }
 
-        $.ajax({
-            url: ajaxurl,
-            type: 'POST',
-            data: {
-                action: 'pdf_builder_clear_cache',
-                nonce: '<?php echo wp_create_nonce('pdf_builder_maintenance'); ?>'
-            },
-            success: function(response) {
-                if (response.success) {
-                    $status.html('<div class="notice notice-success"><p><?php echo esc_js(__('Cache vidé avec succès !', 'pdf-builder-pro')); ?></p></div>');
-                } else {
-                    $status.html('<div class="notice notice-error"><p>' + response.data.message + '</p></div>');
-                }
-            },
-            error: function() {
-                $status.html('<div class="notice notice-error"><p><?php echo esc_js(__('Erreur lors du nettoyage du cache.', 'pdf-builder-pro')); ?></p></div>');
-            },
-            complete: function() {
-                $button.prop('disabled', false).text('<?php echo esc_js(__('Vider le Cache', 'pdf-builder-pro')); ?>');
-            }
+        console.log('✅ Found', $('.nav-tab').length, 'tabs and', $('.tab-content').length, 'content areas');
+
+        // Fonction pour masquer tous les onglets
+        function hideAllTabs() {
+            $('.tab-content').removeClass('active').hide();
+            console.log('👁️ All tabs hidden');
+        }
+
+        // Fonction pour afficher un onglet
+        function showTab(tabId) {
+            console.log('📂 Showing tab:', tabId);
+            $(tabId).addClass('active').show();
+        }
+
+        // Fonction pour changer d'onglet
+        function switchToTab(tabId) {
+            console.log('🔄 Switching to tab:', tabId);
+
+            // Masquer tous les onglets
+            hideAllTabs();
+
+            // Désactiver tous les onglets de navigation
+            $('.nav-tab').removeClass('nav-tab-active');
+
+            // Activer l'onglet de navigation cible
+            $('a[href="' + tabId + '"]').addClass('nav-tab-active');
+
+            // Afficher l'onglet cible
+            showTab(tabId);
+        }
+
+        // Attacher les gestionnaires de clic
+        $('.nav-tab').on('click', function(e) {
+            e.preventDefault();
+            var targetId = $(this).attr('href');
+            console.log('🖱️ Tab clicked:', targetId);
+            switchToTab(targetId);
         });
-    });
+
+        // Initialisation : masquer tous les onglets sauf celui actif
+        hideAllTabs();
+
+        // Trouver l'onglet actif par défaut
+        var activeTabLink = $('.nav-tab-active');
+        if (activeTabLink.length > 0) {
+            var activeTabId = activeTabLink.attr('href');
+            console.log('🎯 Active tab found:', activeTabId);
+            showTab(activeTabId);
+        } else {
+            // Si aucun onglet actif, activer le premier
+            var firstTab = $('.nav-tab').first();
+            if (firstTab.length > 0) {
+                var firstTabId = firstTab.attr('href');
+                console.log('🎯 No active tab, activating first:', firstTabId);
+                firstTab.addClass('nav-tab-active');
+                showTab(firstTabId);
+            }
+        }
+
+        console.log('✅ PDF Builder Settings: Initialization complete');
+
+        // Actions de maintenance
+        $('#clear-cache').on('click', function() {
+            if (!confirm('<?php echo esc_js(__('Êtes-vous sûr de vouloir vider le cache ?', 'pdf-builder-pro')); ?>')) {
+                return;
+            }
+
+            var $button = $(this);
+            var $status = $('#cache-status');
+
+            $button.prop('disabled', true).text('<?php echo esc_js(__('Nettoyage...', 'pdf-builder-pro')); ?>');
+            $status.html('<div class="notice notice-info"><p><?php echo esc_js(__('Nettoyage du cache en cours...', 'pdf-builder-pro')); ?></p></div>');
+
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_clear_cache',
+                    nonce: '<?php echo wp_create_nonce('pdf_builder_maintenance'); ?>'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $status.html('<div class="notice notice-success"><p><?php echo esc_js(__('Cache vidé avec succès !', 'pdf-builder-pro')); ?></p></div>');
+                    } else {
+                        $status.html('<div class="notice notice-error"><p>' + response.data.message + '</p></div>');
+                    }
+                },
+                error: function() {
+                    $status.html('<div class="notice notice-error"><p><?php echo esc_js(__('Erreur lors du nettoyage du cache.', 'pdf-builder-pro')); ?></p></div>');
+                },
+                complete: function() {
+                    $button.prop('disabled', false).text('<?php echo esc_js(__('Vider le Cache', 'pdf-builder-pro')); ?>');
+                }
+            });
+        });
 
     $('#execute-sql-repair').on('click', function() {
         console.log('Bouton "Réparer la Base de Données" cliqué');
