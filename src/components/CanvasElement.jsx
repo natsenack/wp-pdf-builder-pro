@@ -1073,204 +1073,202 @@ export const CanvasElement = ({
             )}
           </div>
         )}
-      </div>
 
-
-
-      {/* Rendu spécial pour les informations client */}
-      {element.type === 'customer_info' && (
-        <div style={{
-          width: '100%',
-          height: '100%',
-          padding: `${8 * zoom}px`,
-          fontSize: `${12 * zoom}px`,
-          fontFamily: 'Arial, sans-serif',
-          color: '#333',
-          backgroundColor: element.backgroundColor || '#ffffff',
-          border: element.borderWidth ? `${element.borderWidth * zoom}px solid ${element.borderColor || '#ddd'}` : 'none',
-          borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0px'
-        }}>
+        {/* Rendu spécial pour les informations client */}
+        {element.type === 'customer_info' && (
           <div style={{
-            display: 'flex',
-            flexDirection: element.layout === 'horizontal' ? 'row' : 'column',
-            gap: `${element.spacing * zoom || 8 * zoom}px`,
-            height: '100%'
+            width: '100%',
+            height: '100%',
+            padding: `${8 * zoom}px`,
+            fontSize: `${12 * zoom}px`,
+            fontFamily: 'Arial, sans-serif',
+            color: '#333',
+            backgroundColor: element.backgroundColor || '#ffffff',
+            border: element.borderWidth ? `${element.borderWidth * zoom}px solid ${element.borderColor || '#ddd'}` : 'none',
+            borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0px'
           }}>
-            {/* Nom */}
-            {element.fields?.includes('name') && (
-              <div style={{
-                display: 'flex',
-                flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
-                alignItems: element.layout === 'horizontal' ? 'flex-start' : 'center',
-                gap: `${4 * zoom}px`,
-                flex: element.layout === 'horizontal' ? '1' : 'none'
-              }}>
-                {element.showLabels && (
-                  <div style={{
-                    fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
-                    textTransform: element.labelStyle === 'uppercase' ? 'uppercase' : 'none',
-                    color: '#666',
-                    minWidth: element.layout === 'horizontal' ? 'auto' : '80px',
-                    fontSize: `${11 * zoom}px`
-                  }}>
-                    Nom :
-                  </div>
-                )}
+            <div style={{
+              display: 'flex',
+              flexDirection: element.layout === 'horizontal' ? 'row' : 'column',
+              gap: `${element.spacing * zoom || 8 * zoom}px`,
+              height: '100%'
+            }}>
+              {/* Nom */}
+              {element.fields?.includes('name') && (
                 <div style={{
-                  fontWeight: 'bold',
-                  color: '#333'
+                  display: 'flex',
+                  flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
+                  alignItems: element.layout === 'horizontal' ? 'flex-start' : 'center',
+                  gap: `${4 * zoom}px`,
+                  flex: element.layout === 'horizontal' ? '1' : 'none'
                 }}>
-                  Jean Dupont
+                  {element.showLabels && (
+                    <div style={{
+                      fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
+                      textTransform: element.labelStyle === 'uppercase' ? 'uppercase' : 'none',
+                      color: '#666',
+                      minWidth: element.layout === 'horizontal' ? 'auto' : '80px',
+                      fontSize: `${11 * zoom}px`
+                    }}>
+                      Nom :
+                    </div>
+                  )}
+                  <div style={{
+                    fontWeight: 'bold',
+                    color: '#333'
+                  }}>
+                    Jean Dupont
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Email */}
-            {element.fields?.includes('email') && (
-              <div style={{
-                display: 'flex',
-                flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
-                alignItems: element.layout === 'horizontal' ? 'flex-start' : 'center',
-                gap: `${4 * zoom}px`,
-                flex: element.layout === 'horizontal' ? '1' : 'none'
-              }}>
-                {element.showLabels && (
-                  <div style={{
-                    fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
-                    textTransform: element.labelStyle === 'uppercase' ? 'uppercase' : 'none',
-                    color: '#666',
-                    minWidth: element.layout === 'horizontal' ? 'auto' : '80px',
-                    fontSize: `${11 * zoom}px`
-                  }}>
-                    Email :
-                  </div>
-                )}
+              {/* Email */}
+              {element.fields?.includes('email') && (
                 <div style={{
-                  color: '#1976d2'
+                  display: 'flex',
+                  flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
+                  alignItems: element.layout === 'horizontal' ? 'flex-start' : 'center',
+                  gap: `${4 * zoom}px`,
+                  flex: element.layout === 'horizontal' ? '1' : 'none'
                 }}>
-                  jean.dupont@email.com
+                  {element.showLabels && (
+                    <div style={{
+                      fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
+                      textTransform: element.labelStyle === 'uppercase' ? 'uppercase' : 'none',
+                      color: '#666',
+                      minWidth: element.layout === 'horizontal' ? 'auto' : '80px',
+                      fontSize: `${11 * zoom}px`
+                    }}>
+                      Email :
+                    </div>
+                  )}
+                  <div style={{
+                    color: '#1976d2'
+                  }}>
+                    jean.dupont@email.com
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Téléphone */}
-            {element.fields?.includes('phone') && (
-              <div style={{
-                display: 'flex',
-                flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
-                alignItems: element.layout === 'horizontal' ? 'flex-start' : 'center',
-                gap: `${4 * zoom}px`,
-                flex: element.layout === 'horizontal' ? '1' : 'none'
-              }}>
-                {element.showLabels && (
-                  <div style={{
-                    fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
-                    textTransform: element.labelStyle === 'uppercase' ? 'uppercase' : 'none',
-                    color: '#666',
-                    minWidth: element.layout === 'horizontal' ? 'auto' : '80px',
-                    fontSize: `${11 * zoom}px`
-                  }}>
-                    Téléphone :
-                  </div>
-                )}
+              {/* Téléphone */}
+              {element.fields?.includes('phone') && (
                 <div style={{
-                  color: '#333'
+                  display: 'flex',
+                  flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
+                  alignItems: element.layout === 'horizontal' ? 'flex-start' : 'center',
+                  gap: `${4 * zoom}px`,
+                  flex: element.layout === 'horizontal' ? '1' : 'none'
                 }}>
-                  +33 6 12 34 56 78
+                  {element.showLabels && (
+                    <div style={{
+                      fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
+                      textTransform: element.labelStyle === 'uppercase' ? 'uppercase' : 'none',
+                      color: '#666',
+                      minWidth: element.layout === 'horizontal' ? 'auto' : '80px',
+                      fontSize: `${11 * zoom}px`
+                    }}>
+                      Téléphone :
+                    </div>
+                  )}
+                  <div style={{
+                    color: '#333'
+                  }}>
+                    +33 6 12 34 56 78
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Adresse */}
-            {element.fields?.includes('address') && (
-              <div style={{
-                display: 'flex',
-                flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
-                alignItems: element.layout === 'horizontal' ? 'flex-start' : 'center',
-                gap: `${4 * zoom}px`,
-                flex: element.layout === 'horizontal' ? '1' : 'none'
-              }}>
-                {element.showLabels && (
-                  <div style={{
-                    fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
-                    textTransform: element.labelStyle === 'uppercase' ? 'uppercase' : 'none',
-                    color: '#666',
-                    minWidth: element.layout === 'horizontal' ? 'auto' : '80px',
-                    fontSize: `${11 * zoom}px`
-                  }}>
-                    Adresse :
-                  </div>
-                )}
+              {/* Adresse */}
+              {element.fields?.includes('address') && (
                 <div style={{
-                  color: '#333',
-                  lineHeight: '1.4'
+                  display: 'flex',
+                  flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
+                  alignItems: element.layout === 'horizontal' ? 'flex-start' : 'center',
+                  gap: `${4 * zoom}px`,
+                  flex: element.layout === 'horizontal' ? '1' : 'none'
                 }}>
-                  123 Rue de la Paix<br />
-                  75001 Paris<br />
-                  France
+                  {element.showLabels && (
+                    <div style={{
+                      fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
+                      textTransform: element.labelStyle === 'uppercase' ? 'uppercase' : 'none',
+                      color: '#666',
+                      minWidth: element.layout === 'horizontal' ? 'auto' : '80px',
+                      fontSize: `${11 * zoom}px`
+                    }}>
+                      Adresse :
+                    </div>
+                  )}
+                  <div style={{
+                    color: '#333',
+                    lineHeight: '1.4'
+                  }}>
+                    123 Rue de la Paix<br />
+                    75001 Paris<br />
+                    France
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Société */}
-            {element.fields?.includes('company') && (
-              <div style={{
-                display: 'flex',
-                flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
-                alignItems: element.layout === 'horizontal' ? 'flex-start' : 'center',
-                gap: `${4 * zoom}px`,
-                flex: element.layout === 'horizontal' ? '1' : 'none'
-              }}>
-                {element.showLabels && (
-                  <div style={{
-                    fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
-                    textTransform: element.labelStyle === 'uppercase' ? 'uppercase' : 'none',
-                    color: '#666',
-                    minWidth: element.layout === 'horizontal' ? 'auto' : '80px',
-                    fontSize: `${11 * zoom}px`
-                  }}>
-                    Société :
-                  </div>
-                )}
+              {/* Société */}
+              {element.fields?.includes('company') && (
                 <div style={{
-                  fontWeight: 'bold',
-                  color: '#333'
+                  display: 'flex',
+                  flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
+                  alignItems: element.layout === 'horizontal' ? 'flex-start' : 'center',
+                  gap: `${4 * zoom}px`,
+                  flex: element.layout === 'horizontal' ? '1' : 'none'
                 }}>
-                  ABC Company SARL
+                  {element.showLabels && (
+                    <div style={{
+                      fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
+                      textTransform: element.labelStyle === 'uppercase' ? 'uppercase' : 'none',
+                      color: '#666',
+                      minWidth: element.layout === 'horizontal' ? 'auto' : '80px',
+                      fontSize: `${11 * zoom}px`
+                    }}>
+                      Société :
+                    </div>
+                  )}
+                  <div style={{
+                    fontWeight: 'bold',
+                    color: '#333'
+                  }}>
+                    ABC Company SARL
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* TVA */}
-            {element.fields?.includes('vat') && (
-              <div style={{
-                display: 'flex',
-                flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
-                alignItems: element.layout === 'horizontal' ? 'flex-start' : 'center',
-                gap: `${4 * zoom}px`,
-                flex: element.layout === 'horizontal' ? '1' : 'none'
-              }}>
-                {element.showLabels && (
-                  <div style={{
-                    fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
-                    textTransform: element.labelStyle === 'uppercase' ? 'uppercase' : 'none',
-                    color: '#666',
-                    minWidth: element.layout === 'horizontal' ? 'auto' : '80px',
-                    fontSize: `${11 * zoom}px`
-                  }}>
-                    N° TVA :
-                  </div>
-                )}
+              {/* TVA */}
+              {element.fields?.includes('vat') && (
                 <div style={{
-                  color: '#333'
+                  display: 'flex',
+                  flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
+                  alignItems: element.layout === 'horizontal' ? 'flex-start' : 'center',
+                  gap: `${4 * zoom}px`,
+                  flex: element.layout === 'horizontal' ? '1' : 'none'
                 }}>
-                  FR 12 345 678 901
+                  {element.showLabels && (
+                    <div style={{
+                      fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
+                      textTransform: element.labelStyle === 'uppercase' ? 'uppercase' : 'none',
+                      color: '#666',
+                      minWidth: element.layout === 'horizontal' ? 'auto' : '80px',
+                      fontSize: `${11 * zoom}px`
+                    }}>
+                      N° TVA :
+                    </div>
+                  )}
+                  <div style={{
+                    color: '#333'
+                  }}>
+                    FR 12 345 678 901
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
 
 
