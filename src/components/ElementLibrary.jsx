@@ -108,13 +108,12 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
     console.log('Modèle d\'en-tête sélectionné:', template);
     setShowHeaderTemplatesModal(false);
     // Pour l'instant, on ajoute juste un élément de texte avec le nom du modèle
-    onAddElement({
-      type: 'text',
+    onAddElement('text', {
       x: 50,
       y: 50,
       width: 200,
       height: 40,
-      text: `En-tête: ${template.name}`,
+      content: `En-tête: ${template.name}`,
       fontSize: template.fontSize || 16,
       fontWeight: template.fontWeight || 'normal'
     });
