@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-
   const elementCategories = [
     {
       name: 'Texte',
@@ -86,31 +84,14 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
     e.dataTransfer.effectAllowed = 'copy';
   };
 
-  const filteredCategories = elementCategories.map(category => ({
-    ...category,
-    elements: category.elements.filter(element =>
-      element.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      element.description.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  })).filter(category => category.elements.length > 0);
-
   return (
     <div className="element-library">
       <div className="library-header">
         <h3>📚 Bibliothèque</h3>
-        <div className="search-box">
-          <input
-            type="text"
-            placeholder="Rechercher..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <span className="search-icon">🔍</span>
-        </div>
       </div>
 
       <div className="library-content">
-        {filteredCategories.map(category => (
+        {elementCategories.map(category => (
           <div key={category.name} className="element-category">
             <h4 className="category-title">{category.name}</h4>
             <div className="element-grid">
@@ -131,32 +112,6 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
             </div>
           </div>
         ))}
-
-        {filteredCategories.length === 0 && (
-          <div className="no-results">
-            <div className="no-results-icon">🔍</div>
-            <p>Aucun élément trouvé pour "{searchTerm}"</p>
-          </div>
-        )}
-      </div>
-
-      <div className="library-footer">
-        <div className="quick-actions">
-          <button
-            className="quick-action-btn"
-            onClick={() => handleElementClick('text', { text: 'Nouveau texte', fontSize: 14 })}
-            title="Ajouter un texte rapidement"
-          >
-            ⚡ Texte rapide
-          </button>
-          <button
-            className="quick-action-btn"
-            onClick={() => handleElementClick('rectangle', { width: 100, height: 50 })}
-            title="Ajouter un rectangle rapidement"
-          >
-            ▭ Forme rapide
-          </button>
-        </div>
       </div>
     </div>
   );
