@@ -1,8 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
 
-export const useHistory = ({
-  maxHistorySize = 50
-}) => {
+export const useHistory = (options = {}) => {
+  const { maxHistorySize = 50 } = options;
   const [history, setHistory] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(-1);
   const isUndoRedoRef = useRef(false);
