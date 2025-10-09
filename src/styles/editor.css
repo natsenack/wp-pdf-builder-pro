@@ -169,6 +169,7 @@
   flex-direction: column;
   background: var(--surface-color);
   position: relative;
+  min-height: 0; /* Permet au flex de fonctionner correctement */
 }
 
 .canvas-container {
@@ -199,6 +200,7 @@
 }
 
 .toolbar {
+  flex-shrink: 0; /* Empêche le toolbar d'être compressé */
   padding: 20px 24px;
   background: linear-gradient(135deg, var(--surface-color) 0%, var(--surface-hover) 100%);
   border-bottom: 1px solid var(--border-color);
