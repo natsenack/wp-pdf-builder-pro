@@ -1142,9 +1142,9 @@ class PDF_Builder_Admin {
     /**
      * Génère du HTML depuis les données du template
      */
-    private function generate_html_from_template_data($template) {
+    private function generate_html_from_template_data($template, $order_id = null) {
         $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>PDF Preview</title>';
-        
+
         // Gestion des marges d'impression - utiliser la première page
         $margins = ['top' => 20, 'right' => 20, 'bottom' => 20, 'left' => 20];
         if (isset($template['pages']) && is_array($template['pages']) && !empty($template['pages'])) {
@@ -1154,7 +1154,7 @@ class PDF_Builder_Admin {
             }
         }
         $margin_css = sprintf('margin: 0; padding: %dpx %dpx %dpx %dpx;', $margins['top'], $margins['right'], $margins['bottom'], $margins['left']);
-        
+
         $html .= '<style>body { font-family: Arial, sans-serif; ' . $margin_css . ' } .pdf-element { position: absolute; }</style>';
         $html .= '</head><body>';
 
@@ -1194,6 +1194,9 @@ class PDF_Builder_Admin {
                 }
 
                 $content = $element['content'] ?? '';
+
+                // Remplacer les variables dynamiques
+                $content = $this->replace_dynamic_variables($content, $order_id);
 
                 switch ($element['type']) {
                     case 'text':
@@ -1252,6 +1255,198 @@ class PDF_Builder_Admin {
 
         $html .= '</body></html>';
         return $html;
+    }
+
+    /**
+     * Remplace les variables dynamiques dans le contenu
+     */
+    private function replace_dynamic_variables($content, $order_id = null) {
+        if (empty($content)) {
+            return $content;
+        }
+
+        // Variables générales (date, etc.)
+        $replacements = [
+            '{{date}}' => date('d/m/Y'),
+            '{{date|format:Y-m-d}}' => date('Y-m-d'),
+            '{{date|format:d/m/Y}}' => date('d/m/Y'),
+            '{{time}}' => date('H:i:s'),
+            '{{datetime}}' => date('d/m/Y H:i:s'),
+        ];
+
+        // Variables WooCommerce si order_id est fourni
+        if ($order_id && function_exists('wc_get_order')) {
+            $order = wc_get_order($order_id);
+            if ($order) {
+                $replacements = array_merge($replacements, [
+                    // Informations de commande
+                    '{{order_number}}' => $order->get_order_number(),
+                    '{{order_date}}' => $order->get_date_created() ? $order->get_date_created()->date('d/m/Y') : '',
+                    '{{order_status}}' => wc_get_order_status_name($order->get_status()),
+                    '{{order_total}}' => $order->get_formatted_order_total(),
+                    '{{order_subtotal}}' => wc_price($order->get_subtotal()),
+                    '{{order_tax}}' => wc_price($order->get_total_tax()),
+                    '{{order_shipping}}' => wc_price($order->get_shipping_total()),
+                    '{{order_discount}}' => wc_price($order->get_discount_total()),
+                    '{{order_refund}}' => wc_price($order->get_total_refunded()),
+
+                    // Informations client
+                    '{{customer_name}}' => $order->get_formatted_billing_full_name(),
+                    '{{customer_email}}' => $order->get_billing_email(),
+                    '{{customer_phone}}' => $order->get_billing_phone(),
+
+                    // Adresses
+                    '{{billing_address}}' => $order->get_formatted_billing_address(),
+                    '{{shipping_address}}' => $order->get_formatted_shipping_address(),
+
+                    // Méthode de paiement
+                    '{{payment_method}}' => $order->get_payment_method_title(),
+
+                    // Numéros de facture/devis (si extension disponible)
+                    '{{invoice_number}}' => $this->get_invoice_number($order),
+                    '{{quote_number}}' => $this->get_quote_number($order),
+                ]);
+            }
+        }
+
+        // Variables dynamiques avec expressions (formules)
+        $content = preg_replace_callback('/\{\{([^}]+)\}\}/', function($matches) use ($replacements) {
+            $expression = $matches[1];
+
+            // Si c'est une expression mathématique
+            if (preg_match('/^(.+?)\s*\*\s*(.+)$/', $expression, $math_matches)) {
+                $left = $this->evaluate_expression($math_matches[1], $replacements);
+                $right = $this->evaluate_expression($math_matches[2], $replacements);
+                if (is_numeric($left) && is_numeric($right)) {
+                    return $left * $right;
+                }
+            }
+
+            // Si c'est une expression avec |
+            if (strpos($expression, '|') !== false) {
+                $parts = explode('|', $expression, 2);
+                $value = trim($parts[0]);
+                $filter = trim($parts[1]);
+
+                // Filtres disponibles
+                if ($filter === 'currency:EUR') {
+                    $numeric_value = $this->extract_numeric_value($value, $replacements);
+                    return $numeric_value ? '€' . number_format($numeric_value, 2, ',', ' ') : $value;
+                }
+                if ($filter === 'currency:USD') {
+                    $numeric_value = $this->extract_numeric_value($value, $replacements);
+                    return $numeric_value ? '$' . number_format($numeric_value, 2, '.', ',') : $value;
+                }
+                if (preg_match('/^format:([YmdHis\/\-:]+)$/', $filter, $format_matches)) {
+                    $format = $format_matches[1];
+                    if ($value === 'date') {
+                        return date($format);
+                    }
+                }
+            }
+
+            // Si c'est une variable simple
+            if (isset($replacements[$matches[0]])) {
+                return $replacements[$matches[0]];
+            }
+
+            // Si c'est une expression conditionnelle
+            if (preg_match('/^(.+?)\s*\?\s*(.+?)\s*:\s*(.+)$/', $expression, $cond_matches)) {
+                $condition = trim($cond_matches[1]);
+                $true_val = trim($cond_matches[2]);
+                $false_val = trim($cond_matches[3]);
+
+                // Évaluer la condition (simple pour l'instant)
+                $condition_result = $this->evaluate_condition($condition, $replacements);
+                return $condition_result ? $true_val : $false_val;
+            }
+
+            // Retourner l'expression originale si non reconnue
+            return $matches[0];
+        }, $content);
+
+        return $content;
+    }
+
+    /**
+     * Évalue une expression simple
+     */
+    private function evaluate_expression($expr, $replacements) {
+        // Remplacer les variables dans l'expression
+        foreach ($replacements as $key => $value) {
+            $expr = str_replace($key, $value, $expr);
+        }
+
+        // Essayer d'évaluer comme nombre
+        if (is_numeric($expr)) {
+            return floatval($expr);
+        }
+
+        // Extraire les valeurs numériques des prix
+        if (preg_match('/[\d.,\s]+/', $expr, $matches)) {
+            $cleaned = preg_replace('/[^\d.,]/', '', $matches[0]);
+            $cleaned = str_replace([' ', ','], ['', '.'], $cleaned);
+            return floatval($cleaned);
+        }
+
+        return 0;
+    }
+
+    /**
+     * Évalue une condition simple
+     */
+    private function evaluate_condition($condition, $replacements) {
+        // Remplacer les variables
+        foreach ($replacements as $key => $value) {
+            $condition = str_replace($key, '"' . $value . '"', $condition);
+        }
+
+        // Conditions simples
+        if (strpos($condition, '===') !== false) {
+            list($left, $right) = explode('===', $condition, 2);
+            return trim($left, '"\'') === trim($right, '"\'');
+        }
+
+        return false;
+    }
+
+    /**
+     * Extrait une valeur numérique d'une expression
+     */
+    private function extract_numeric_value($expr, $replacements) {
+        // Si c'est une variable
+        if (isset($replacements['{{' . $expr . '}}'])) {
+            $value = $replacements['{{' . $expr . '}}'];
+            return $this->evaluate_expression($value, []);
+        }
+
+        return $this->evaluate_expression($expr, $replacements);
+    }
+
+    /**
+     * Obtient le numéro de facture (extension WooCommerce PDF Invoices)
+     */
+    private function get_invoice_number($order) {
+        // Essayer différentes extensions de facturation
+        if (function_exists('wcpdf_get_invoice_number')) {
+            return wcpdf_get_invoice_number($order->get_id());
+        }
+
+        // Fallback: numéro de commande
+        return $order->get_order_number();
+    }
+
+    /**
+     * Obtient le numéro de devis
+     */
+    private function get_quote_number($order) {
+        // Essayer différentes extensions de devis
+        if (function_exists('get_quote_number')) {
+            return get_quote_number($order->get_id());
+        }
+
+        // Fallback: numéro de commande avec préfixe
+        return 'DEVIS-' . $order->get_order_number();
     }
 
     /**

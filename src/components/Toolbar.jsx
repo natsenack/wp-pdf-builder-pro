@@ -16,7 +16,9 @@ export const Toolbar = ({
 }) => {
   const tools = [
     { id: 'select', label: 'Sélection', icon: '👆' },
-    { id: 'add-text', label: 'Texte', icon: '📝' },
+    { id: 'add-text', label: 'Texte Simple', icon: '📝' },
+    { id: 'add-text-title', label: 'Titre', icon: '🏷️' },
+    { id: 'add-text-subtitle', label: 'Sous-titre', icon: '📄' },
     { id: 'add-rectangle', label: 'Rectangle', icon: '▭' },
     { id: 'add-image', label: 'Image', icon: '🖼️' },
     { id: 'add-line', label: 'Ligne', icon: '━' }

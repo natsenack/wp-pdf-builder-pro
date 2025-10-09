@@ -63,12 +63,67 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
     canvasState.selection.selectElement(elementId);
   }, [canvasState.selection]);
 
-  // Gestionnaire pour la désélection
+  // Gestionnaire pour la désélection et création d'éléments
   const handleCanvasClick = useCallback((e) => {
     if (e.target === e.currentTarget) {
+      // Si un outil d'ajout est sélectionné, créer l'élément
+      if (tool.startsWith('add-')) {
+        const canvasRect = e.currentTarget.getBoundingClientRect();
+        const clickX = e.clientX - canvasRect.left;
+        const clickY = e.clientY - canvasRect.top;
+
+        // Ajuster pour le zoom
+        const adjustedX = clickX / canvasState.zoom.zoom;
+        const adjustedY = clickY / canvasState.zoom.zoom;
+
+        let elementType = 'text';
+        let defaultProps = {};
+
+        // Déterminer le type d'élément selon l'outil
+        switch (tool) {
+          case 'add-text':
+            elementType = 'text';
+            break;
+          case 'add-text-title':
+            elementType = 'text';
+            defaultProps = { fontSize: 24, fontWeight: 'bold' };
+            break;
+          case 'add-text-subtitle':
+            elementType = 'text';
+            defaultProps = { fontSize: 18, fontWeight: 'bold' };
+            break;
+          case 'add-rectangle':
+            elementType = 'rectangle';
+            break;
+          case 'add-image':
+            elementType = 'image';
+            break;
+          case 'add-line':
+            elementType = 'line';
+            break;
+          default:
+            // Pour les autres outils de la bibliothèque
+            if (tool.startsWith('add-')) {
+              elementType = tool.replace('add-', '');
+            }
+            break;
+        }
+
+        canvasState.addElement(elementType, {
+          x: Math.max(0, adjustedX - 50),
+          y: Math.max(0, adjustedY - 25),
+          ...defaultProps
+        });
+
+        // Remettre l'outil de sélection après ajout
+        setTool('select');
+        return;
+      }
+
+      // Sinon, désélectionner
       canvasState.selection.clearSelection();
     }
-  }, [canvasState.selection]);
+  }, [canvasState, tool]);
 
   // Gestionnaire pour les changements de propriétés
   const handlePropertyChange = useCallback((elementId, property, value) => {

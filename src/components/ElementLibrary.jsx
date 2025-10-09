@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 
 export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
   const [expandedCategories, setExpandedCategories] = useState({
-    'Texte': true,
     'Mises en Page': true,
     'Formes & Graphiques': false,
     'Médias': false,
@@ -21,15 +20,8 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
       [categoryName]: !prev[categoryName]
     }));
   };
+
   const elementCategories = [
-    {
-      name: 'Texte',
-      elements: [
-        { type: 'text', label: 'Texte Simple', icon: '📝', description: 'Ajouter du texte' },
-        { type: 'text', label: 'Titre', icon: '🏷️', description: 'Titre de section', defaultProps: { fontSize: 24, fontWeight: 'bold' } },
-        { type: 'text', label: 'Sous-titre', icon: '📄', description: 'Sous-titre', defaultProps: { fontSize: 18, fontWeight: 'bold' } }
-      ]
-    },
     {
       name: 'Mises en Page',
       elements: [
