@@ -69,6 +69,39 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
     }
   }, []);
 
+  // Gestionnaire pour le drag over
+  const handleDragOver = useCallback((e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+  }, []);
+
+  // Gestionnaire pour le drop
+  const handleDrop = useCallback((e) => {
+    e.preventDefault();
+    
+    try {
+      const data = JSON.parse(e.dataTransfer.getData('application/json'));
+      
+      if (data.type === 'new-element') {
+        const canvasRect = e.currentTarget.getBoundingClientRect();
+        const dropX = e.clientX - canvasRect.left;
+        const dropY = e.clientY - canvasRect.top;
+        
+        // Ajuster pour le zoom
+        const adjustedX = dropX / canvasState.zoom.zoom;
+        const adjustedY = dropY / canvasState.zoom.zoom;
+        
+        canvasState.addElement(data.elementType, {
+          x: Math.max(0, adjustedX - 50), // Centrer l'élément sur le point de drop
+          y: Math.max(0, adjustedY - 25),
+          ...data.defaultProps
+        });
+      }
+    } catch (error) {
+      console.error('Erreur lors du drop:', error);
+    }
+  }, [canvasState]);
+
   return (
     <div className="pdf-canvas-editor" ref={editorRef}>
       {/* Barre d'outils principale */}
@@ -125,6 +158,8 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
             className="canvas-container"
             onClick={handleCanvasClick}
             onContextMenu={handleContextMenu}
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
           >
             <Canvas
               elements={canvasState.elements}

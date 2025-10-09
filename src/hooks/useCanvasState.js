@@ -4,6 +4,7 @@ import { useSelection } from './useSelection';
 import { useClipboard } from './useClipboard';
 import { useZoom } from './useZoom';
 import { useContextMenu } from './useContextMenu';
+import { useDragAndDrop } from './useDragAndDrop';
 
 export const useCanvasState = ({
   initialElements = [],
@@ -46,6 +47,18 @@ export const useCanvasState = ({
   });
 
   const contextMenu = useContextMenu();
+
+  const dragAndDrop = useDragAndDrop({
+    onElementMove: useCallback((elementId, position) => {
+      updateElement(elementId, position);
+    }, [updateElement]),
+    onElementDrop: useCallback((elementId, position) => {
+      updateElement(elementId, position);
+      history.addToHistory({ elements: elements.map(el => 
+        el.id === elementId ? { ...el, ...position } : el
+      ), nextId });
+    }, [updateElement, history, elements, nextId])
+  });
 
   // Sauvegarder l'état dans l'historique à chaque changement
   useEffect(() => {
@@ -223,6 +236,7 @@ export const useCanvasState = ({
     selection,
     zoom,
     contextMenu,
+    dragAndDrop,
 
     // Actions sur les éléments
     addElement,

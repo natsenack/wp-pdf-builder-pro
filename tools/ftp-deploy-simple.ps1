@@ -25,6 +25,17 @@ Write-Host "🎯 Serveur: $ftpHost" -ForegroundColor Cyan
 Write-Host "👤 User: $ftpUser" -ForegroundColor Cyan
 Write-Host "📁 Dest: $remotePath" -ForegroundColor Cyan
 
+# Compilation
+Write-Host "🔨 Compilation en cours..." -ForegroundColor Yellow
+Push-Location $projectRoot
+& npm run build
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "❌ Erreur de compilation" -ForegroundColor Red
+    exit 1
+}
+Pop-Location
+Write-Host "✅ Compilation terminée" -ForegroundColor Green
+
 # Lister les fichiers
 $projectRoot = Split-Path (Get-Location) -Parent
 $files = Get-ChildItem -Path $projectRoot -Recurse -File | Where-Object {

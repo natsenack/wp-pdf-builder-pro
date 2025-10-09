@@ -40,6 +40,15 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
     onToolSelect(`add-${elementType}`);
   };
 
+  const handleDragStart = (e, element) => {
+    e.dataTransfer.setData('application/json', JSON.stringify({
+      type: 'new-element',
+      elementType: element.type,
+      defaultProps: element.defaultProps || {}
+    }));
+    e.dataTransfer.effectAllowed = 'copy';
+  };
+
   const filteredCategories = elementCategories.map(category => ({
     ...category,
     elements: category.elements.filter(element =>
@@ -73,6 +82,8 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
                   key={`${element.type}-${element.label}`}
                   className={`element-item ${selectedTool === `add-${element.type}` ? 'selected' : ''}`}
                   onClick={() => handleElementClick(element.type, element.defaultProps)}
+                  onDragStart={(e) => handleDragStart(e, element)}
+                  draggable={true}
                   title={element.description}
                 >
                   <div className="element-icon">{element.icon}</div>

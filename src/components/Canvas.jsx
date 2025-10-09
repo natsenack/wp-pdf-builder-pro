@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback } from 'react';
+import React, { useRef, useEffect, useCallback, useState } from 'react';
 
 export const Canvas = ({
   elements,
@@ -168,6 +168,85 @@ export const Canvas = ({
     renderCanvas();
   }, [renderCanvas]);
 
+  // État pour le drag and drop
+  const [isDragging, setIsDragging] = useState(false);
+  const [draggedElement, setDraggedElement] = useState(null);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+
+  // Gestionnaire de mouse down pour commencer le drag
+  const handleMouseDown = useCallback((e) => {
+    if (tool !== 'select') return;
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / zoom;
+    const y = (e.clientY - rect.top) / zoom;
+
+    // Trouver l'élément cliqué
+    let clickedElement = null;
+    for (let i = elements.length - 1; i >= 0; i--) {
+      const element = elements[i];
+      if (x >= element.x && x <= element.x + element.width &&
+          y >= element.y && y <= element.y + element.height) {
+        clickedElement = element;
+        break;
+      }
+    }
+
+    if (clickedElement && selectedElements.includes(clickedElement.id)) {
+      setIsDragging(true);
+      setDraggedElement(clickedElement);
+      setDragOffset({
+        x: x - clickedElement.x,
+        y: y - clickedElement.y
+      });
+    }
+  }, [tool, zoom, elements, selectedElements]);
+
+  // Gestionnaire de mouse move pour le drag
+  const handleMouseMove = useCallback((e) => {
+    if (!isDragging || !draggedElement) return;
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    let newX = (e.clientX - rect.left) / zoom - dragOffset.x;
+    let newY = (e.clientY - rect.top) / zoom - dragOffset.y;
+
+    // Contraindre aux limites du canvas
+    newX = Math.max(0, Math.min(newX, canvasWidth - draggedElement.width));
+    newY = Math.max(0, Math.min(newY, canvasHeight - draggedElement.height));
+
+    // Appliquer le snap to grid si activé
+    if (snapToGrid) {
+      newX = Math.round(newX / gridSize) * gridSize;
+      newY = Math.round(newY / gridSize) * gridSize;
+    }
+
+    onElementUpdate(draggedElement.id, { x: newX, y: newY });
+  }, [isDragging, draggedElement, dragOffset, zoom, canvasWidth, canvasHeight, snapToGrid, gridSize, onElementUpdate]);
+
+  // Gestionnaire de mouse up pour finir le drag
+  const handleMouseUp = useCallback(() => {
+    if (isDragging) {
+      setIsDragging(false);
+      setDraggedElement(null);
+      setDragOffset({ x: 0, y: 0 });
+    }
+  }, [isDragging]);
+
+  // Gestionnaire de mouse leave pour annuler le drag
+  const handleMouseLeave = useCallback(() => {
+    if (isDragging) {
+      setIsDragging(false);
+      setDraggedElement(null);
+      setDragOffset({ x: 0, y: 0 });
+    }
+  }, [isDragging]);
+
   // Gestionnaire de clic sur le canvas
   const handleCanvasClick = useCallback((e) => {
     const canvas = canvasRef.current;
@@ -254,11 +333,15 @@ export const Canvas = ({
         className="canvas"
         style={{
           border: '1px solid #ccc',
-          cursor: tool === 'select' ? 'default' : 'crosshair',
+          cursor: isDragging ? 'grabbing' : (tool === 'select' ? 'grab' : 'crosshair'),
           backgroundColor: 'white'
         }}
         onClick={handleCanvasClick}
         onContextMenu={handleContextMenuEvent}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseLeave}
       />
     </div>
   );
