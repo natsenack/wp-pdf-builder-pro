@@ -8,7 +8,7 @@
   position: relative !important;
   z-index: 1000 !important;
   width: 100% !important;
-  height: calc(100vh - 32px) !important; /* Laisser de la place pour l'admin bar */
+  height: calc(100vh - 200px) !important; /* Ajusté pour la nouvelle structure */
   margin: 0 !important;
   padding: 0 !important;
   background: #f8f9fa !important;
