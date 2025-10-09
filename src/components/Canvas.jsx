@@ -1,7 +1,4 @@
-import React, { useRef, useCallback } from 'react';
-import { CanvasElement } from './CanvasElement';
-import { useDragAndDrop } from '../hooks/useDragAndDrop';
-import { useSelection } from '../hooks/useSelection';
+import React, { useRef, useEffect, useCallback } from 'react';
 
 export const Canvas = ({
   elements,
@@ -21,190 +18,248 @@ export const Canvas = ({
   zoomHook
 }) => {
   const canvasRef = useRef(null);
+  const contextRef = useRef(null);
 
-  const dragAndDrop = useDragAndDrop({
-    onElementMove: (elementId, position) => {
-      onElementUpdate(elementId, position);
-    },
-    onElementDrop: (elementId, position) => {
-      onElementUpdate(elementId, position);
-    },
-    snapToGrid,
-    gridSize
-  });
+  // Initialiser le contexte canvas
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      contextRef.current = canvas.getContext('2d');
+      // Activer l'anti-aliasing pour de meilleurs rendus
+      contextRef.current.imageSmoothingEnabled = true;
+      contextRef.current.imageSmoothingQuality = 'high';
+    }
+  }, []);
+
+  // Fonction pour dessiner la grille
+  const drawGrid = useCallback((ctx) => {
+    if (!showGrid) return;
+
+    ctx.save();
+    ctx.strokeStyle = '#e0e0e0';
+    ctx.lineWidth = 1;
+
+    const step = gridSize;
+
+    // Lignes verticales
+    for (let x = 0; x <= canvasWidth; x += step) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, canvasHeight);
+      ctx.stroke();
+    }
+
+    // Lignes horizontales
+    for (let y = 0; y <= canvasHeight; y += step) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(canvasWidth, y);
+      ctx.stroke();
+    }
+
+    ctx.restore();
+  }, [showGrid, gridSize, canvasWidth, canvasHeight]);
+
+  // Fonction pour dessiner un élément
+  const drawElement = useCallback((ctx, element) => {
+    ctx.save();
+
+    // Positionner l'élément
+    ctx.translate(element.x, element.y);
+
+    // Style de base
+    ctx.fillStyle = element.backgroundColor || '#ffffff';
+    ctx.strokeStyle = element.borderColor || '#000000';
+    ctx.lineWidth = element.borderWidth || 1;
+
+    // Dessiner selon le type d'élément
+    switch (element.type) {
+      case 'rectangle':
+        ctx.fillRect(0, 0, element.width, element.height);
+        if (element.borderWidth > 0) {
+          ctx.strokeRect(0, 0, element.width, element.height);
+        }
+        break;
+
+      case 'circle':
+        ctx.beginPath();
+        ctx.arc(element.width / 2, element.height / 2, Math.min(element.width, element.height) / 2, 0, 2 * Math.PI);
+        ctx.fill();
+        if (element.borderWidth > 0) {
+          ctx.stroke();
+        }
+        break;
+
+      case 'text':
+        ctx.fillStyle = element.color || '#000000';
+        ctx.font = `${element.fontSize || 14}px ${element.fontFamily || 'Arial'}`;
+        ctx.textAlign = element.textAlign || 'left';
+        ctx.textBaseline = 'top';
+        ctx.fillText(element.content || 'Texte', 0, 0);
+        break;
+
+      case 'line':
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(element.width, element.height);
+        ctx.stroke();
+        break;
+
+      default:
+        // Rectangle par défaut
+        ctx.fillRect(0, 0, element.width, element.height);
+        ctx.strokeRect(0, 0, element.width, element.height);
+    }
+
+    // Dessiner la sélection
+    if (selection.isSelected(element.id)) {
+      ctx.strokeStyle = '#007cba';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 5]);
+      ctx.strokeRect(-2, -2, element.width + 4, element.height + 4);
+      ctx.setLineDash([]);
+
+      // Poignées de redimensionnement
+      ctx.fillStyle = '#007cba';
+      const handles = [
+        [0, 0], [element.width, 0], [element.width, element.height], [0, element.height],
+        [element.width / 2, 0], [element.width, element.height / 2],
+        [element.width / 2, element.height], [0, element.height / 2]
+      ];
+
+      handles.forEach(([x, y]) => {
+        ctx.fillRect(x - 3, y - 3, 6, 6);
+      });
+    }
+
+    ctx.restore();
+  }, [selection]);
+
+  // Fonction principale de rendu
+  const renderCanvas = useCallback(() => {
+    const canvas = canvasRef.current;
+    const ctx = contextRef.current;
+    if (!canvas || !ctx) return;
+
+    // Effacer le canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Appliquer le zoom
+    ctx.save();
+    ctx.scale(zoom, zoom);
+
+    // Dessiner le fond
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+    // Dessiner la grille
+    drawGrid(ctx);
+
+    // Dessiner tous les éléments
+    elements.forEach(element => {
+      drawElement(ctx, element);
+    });
+
+    ctx.restore();
+  }, [elements, zoom, canvasWidth, canvasHeight, drawGrid, drawElement]);
+
+  // Redessiner à chaque changement
+  useEffect(() => {
+    renderCanvas();
+  }, [renderCanvas]);
 
   // Gestionnaire de clic sur le canvas
   const handleCanvasClick = useCallback((e) => {
-    if (e.target !== canvasRef.current) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
-    const rect = canvasRef.current.getBoundingClientRect();
+    const rect = canvas.getBoundingClientRect();
     const x = (e.clientX - rect.left) / zoom;
     const y = (e.clientY - rect.top) / zoom;
 
-    // Si on utilise l'outil de sélection
-    if (tool === 'select') {
-      // Désélectionner tous les éléments
-      selection.clearSelection();
-    } else if (tool.startsWith('add-')) {
-      // Ajouter un nouvel élément
-      const elementType = tool.replace('add-', '');
-      // Cette logique sera gérée par le parent
+    // Trouver l'élément cliqué (en ordre inverse pour les éléments superposés)
+    let clickedElement = null;
+    for (let i = elements.length - 1; i >= 0; i--) {
+      const element = elements[i];
+      if (x >= element.x && x <= element.x + element.width &&
+          y >= element.y && y <= element.y + element.height) {
+        clickedElement = element;
+        break;
+      }
     }
-  }, [tool, zoom, selection]);
 
-  // Gestionnaire de double-clic pour la sélection par boîte
-  const handleCanvasDoubleClick = useCallback((e) => {
-    if (tool !== 'select') return;
+    if (tool === 'select') {
+      if (clickedElement) {
+        selection.selectElement(clickedElement.id);
+        onElementSelect(clickedElement.id);
+      } else {
+        selection.clearSelection();
+      }
+    } else if (tool.startsWith('add-')) {
+      const elementType = tool.replace('add-', '');
+      const newElement = {
+        id: Date.now().toString(),
+        type: elementType,
+        x: x - 50, // Centrer l'élément
+        y: y - 25,
+        width: 100,
+        height: 50,
+        content: elementType === 'text' ? 'Nouveau texte' : '',
+        backgroundColor: '#ffffff',
+        borderColor: '#000000',
+        borderWidth: 1,
+        color: '#000000',
+        fontSize: 14,
+        fontFamily: 'Arial',
+        textAlign: 'left'
+      };
 
-    const rect = canvasRef.current.getBoundingClientRect();
-    const startX = (e.clientX - rect.left) / zoom;
-    const startY = (e.clientY - rect.top) / zoom;
-
-    selection.startSelectionBox(startX, startY);
-
-    const handleMouseMove = (moveEvent) => {
-      const currentX = (moveEvent.clientX - rect.left) / zoom;
-      const currentY = (moveEvent.clientY - rect.top) / zoom;
-      selection.updateSelectionBox(currentX, currentY);
-    };
-
-    const handleMouseUp = () => {
-      selection.endSelectionBox(elements);
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
-
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-  }, [tool, zoom, selection, elements]);
+      onElementUpdate(newElement.id, newElement);
+    }
+  }, [tool, zoom, elements, selection, onElementSelect, onElementUpdate]);
 
   // Gestionnaire de clic droit
   const handleContextMenuEvent = useCallback((e) => {
     e.preventDefault();
 
-    const rect = canvasRef.current.getBoundingClientRect();
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
     const x = (e.clientX - rect.left) / zoom;
     const y = (e.clientY - rect.top) / zoom;
 
-    // Vérifier si on clique sur un élément
-    const clickedElement = elements.find(element => {
-      return x >= element.x &&
-             x <= element.x + element.width &&
-             y >= element.y &&
-             y <= element.y + element.height;
-    });
+    // Trouver l'élément sous le curseur
+    let clickedElement = null;
+    for (let i = elements.length - 1; i >= 0; i--) {
+      const element = elements[i];
+      if (x >= element.x && x <= element.x + element.width &&
+          y >= element.y && y <= element.y + element.height) {
+        clickedElement = element;
+        break;
+      }
+    }
 
     if (onContextMenu) {
       onContextMenu(e, clickedElement?.id);
     }
   }, [elements, zoom, onContextMenu]);
 
-  // Rendu de la grille
-  const renderGrid = () => {
-    if (!showGrid) return null;
-
-    const lines = [];
-    const step = gridSize * zoom;
-
-    // Lignes verticales
-    for (let x = 0; x <= canvasWidth * zoom; x += step) {
-      lines.push(
-        <line
-          key={`v-${x}`}
-          x1={x}
-          y1={0}
-          x2={x}
-          y2={canvasHeight * zoom}
-          stroke="#e0e0e0"
-          strokeWidth="1"
-        />
-      );
-    }
-
-    // Lignes horizontales
-    for (let y = 0; y <= canvasHeight * zoom; y += step) {
-      lines.push(
-        <line
-          key={`h-${y}`}
-          x1={0}
-          y1={y}
-          x2={canvasWidth * zoom}
-          y2={y}
-          stroke="#e0e0e0"
-          strokeWidth="1"
-        />
-      );
-    }
-
-    return (
-      <svg
-        className="canvas-grid"
-        width={canvasWidth * zoom}
-        height={canvasHeight * zoom}
-        style={{ position: 'absolute', top: 0, left: 0, pointerEvents: 'none' }}
-      >
-        {lines}
-      </svg>
-    );
-  };
-
   return (
     <div className="canvas-wrapper">
-      <div
+      <canvas
         ref={canvasRef}
+        width={canvasWidth * zoom}
+        height={canvasHeight * zoom}
         className="canvas"
         style={{
-          width: canvasWidth * zoom,
-          height: canvasHeight * zoom,
-          position: 'relative',
-          backgroundColor: 'white',
           border: '1px solid #ccc',
           cursor: tool === 'select' ? 'default' : 'crosshair',
-          ...zoomHook.getTransformStyle()
+          backgroundColor: 'white'
         }}
         onClick={handleCanvasClick}
-        onDoubleClick={handleCanvasDoubleClick}
         onContextMenu={handleContextMenuEvent}
-        onDragOver={dragAndDrop.handleDragOver}
-        onDrop={(e) => dragAndDrop.handleDrop(e, canvasRef.current.getBoundingClientRect())}
-      >
-        {/* Grille */}
-        {renderGrid()}
-
-        {/* Éléments du canvas */}
-        {elements.map(element => (
-          <CanvasElement
-            key={element.id}
-            element={element}
-            isSelected={selection.isSelected(element.id)}
-            zoom={zoom}
-            snapToGrid={snapToGrid}
-            gridSize={gridSize}
-            onSelect={() => onElementSelect(element.id)}
-            onUpdate={(updates) => onElementUpdate(element.id, updates)}
-            onRemove={() => onElementRemove(element.id)}
-            onContextMenu={(e) => onContextMenu(e, element.id)}
-            dragAndDrop={dragAndDrop}
-          />
-        ))}
-
-        {/* Boîte de sélection */}
-        {selection.selectionBox && (
-          <div
-            className="selection-box"
-            style={{
-              position: 'absolute',
-              left: selection.selectionBox.startX * zoom,
-              top: selection.selectionBox.startY * zoom,
-              width: (selection.selectionBox.endX - selection.selectionBox.startX) * zoom,
-              height: (selection.selectionBox.endY - selection.selectionBox.startY) * zoom,
-              border: '2px dashed #007cba',
-              backgroundColor: 'rgba(0, 124, 186, 0.1)',
-              pointerEvents: 'none'
-            }}
-          />
-        )}
-      </div>
+      />
     </div>
   );
 };
