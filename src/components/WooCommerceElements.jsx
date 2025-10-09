@@ -61,6 +61,14 @@ export const useWooCommerceElements = () => {
       case 'woocommerce-products-table':
         defaults.width = 400;
         defaults.height = 150;
+        defaults.columns = {
+          image: true,
+          name: true,
+          sku: true,
+          quantity: true,
+          price: true,
+          total: true
+        };
         break;
       case 'woocommerce-products-simple':
         defaults.width = 350;

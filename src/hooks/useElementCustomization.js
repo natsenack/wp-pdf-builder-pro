@@ -29,17 +29,21 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
 
     // Mettre à jour l'état local immédiatement pour l'UI
     setLocalProperties(prev => {
-      const updates = {};
       if (property.includes('.')) {
         // Gérer les propriétés imbriquées (ex: "columns.image")
         const parts = property.split('.');
-        let current = updates;
+        const newProperties = { ...prev };
+        let current = newProperties;
+        
+        // Naviguer jusqu'à l'avant-dernier niveau
         for (let i = 0; i < parts.length - 1; i++) {
-          current[parts[i]] = current[parts[i]] || {};
+          current[parts[i]] = { ...current[parts[i]] };
           current = current[parts[i]];
         }
+        
+        // Définir la valeur finale
         current[parts[parts.length - 1]] = validatedValue;
-        return { ...prev, ...updates };
+        return newProperties;
       } else {
         return { ...prev, [property]: validatedValue };
       }
