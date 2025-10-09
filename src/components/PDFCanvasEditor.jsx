@@ -353,15 +353,6 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
 
         {/* Panneau de propriétés */}
         <div className={`editor-sidebar right-sidebar ${isPropertiesCollapsed ? 'collapsed' : ''}`}>
-          {/* Bouton de toggle */}
-          <button
-            className="sidebar-toggle"
-            onClick={() => setIsPropertiesCollapsed(!isPropertiesCollapsed)}
-            title={isPropertiesCollapsed ? 'Agrandir le panneau' : 'Réduire le panneau'}
-          >
-            {isPropertiesCollapsed ? '▶' : '◀'}
-          </button>
-
           {!isPropertiesCollapsed && (
             <PropertiesPanel
               selectedElements={canvasState.selection.selectedElements}
@@ -371,6 +362,15 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
             />
           )}
         </div>
+
+        {/* Bouton de toggle - placé après tous les autres éléments pour être au-dessus */}
+        <button
+          className="sidebar-toggle"
+          onClick={() => setIsPropertiesCollapsed(!isPropertiesCollapsed)}
+          title={isPropertiesCollapsed ? 'Agrandir le panneau' : 'Réduire le panneau'}
+        >
+          {isPropertiesCollapsed ? '▶' : '◀'}
+        </button>
       </div>
 
       {/* Menu contextuel */}
