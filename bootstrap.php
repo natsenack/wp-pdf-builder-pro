@@ -9,6 +9,11 @@ if (!defined('ABSPATH')) {
     exit('Accès direct interdit.');
 }
 
+// Charger le diagnostic AJAX (temporaire)
+if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'diagnostic-ajax.php')) {
+    require_once PDF_BUILDER_PLUGIN_DIR . 'diagnostic-ajax.php';
+}
+
 // Fonction pour charger le core du plugin
 function pdf_builder_load_core() {
     static $loaded = false;
