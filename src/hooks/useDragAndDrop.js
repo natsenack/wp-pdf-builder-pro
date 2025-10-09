@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 
 export const useDragAndDrop = ({
   onElementMove,
@@ -9,11 +9,23 @@ export const useDragAndDrop = ({
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const dragStartPos = useRef({ x: 0, y: 0 });
+  const currentDragData = useRef(null);
 
   const snapToGridValue = useCallback((value) => {
     if (!snapToGrid) return value;
     return Math.round(value / gridSize) * gridSize;
   }, [snapToGrid, gridSize]);
+
+  // Nettoyer les event listeners quand le composant se démonte
+  useEffect(() => {
+    return () => {
+      if (currentDragData.current) {
+        document.removeEventListener('mousemove', currentDragData.current.handleMouseMove);
+        document.removeEventListener('mouseup', currentDragData.current.handleMouseUp);
+        currentDragData.current = null;
+      }
+    };
+  }, []);
 
   const handleMouseDown = useCallback((e, elementId, elementRect) => {
     if (e.button !== 0) return; // Only left mouse button
@@ -23,6 +35,8 @@ export const useDragAndDrop = ({
 
     const startX = e.clientX;
     const startY = e.clientY;
+    let lastMouseX = startX;
+    let lastMouseY = startY;
 
     dragStartPos.current = {
       x: startX - elementRect.left,
@@ -30,6 +44,9 @@ export const useDragAndDrop = ({
     };
 
     const handleMouseMove = (moveEvent) => {
+      lastMouseX = moveEvent.clientX;
+      lastMouseY = moveEvent.clientY;
+
       const deltaX = moveEvent.clientX - startX;
       const deltaY = moveEvent.clientY - startY;
 
@@ -48,14 +65,19 @@ export const useDragAndDrop = ({
       setDragOffset({ x: 0, y: 0 });
 
       if (onElementDrop) {
-        const finalX = snapToGridValue(elementRect.left + (e.clientX - startX));
-        const finalY = snapToGridValue(elementRect.top + (e.clientY - startY));
+        const finalX = snapToGridValue(elementRect.left + (lastMouseX - startX));
+        const finalY = snapToGridValue(elementRect.top + (lastMouseY - startY));
         onElementDrop(elementId, { x: finalX, y: finalY });
       }
 
+      // Nettoyer les event listeners
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
+      currentDragData.current = null;
     };
+
+    // Stocker les références pour le nettoyage
+    currentDragData.current = { handleMouseMove, handleMouseUp };
 
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);

@@ -48,6 +48,13 @@ export const useCanvasState = ({
 
   const contextMenu = useContextMenu();
 
+  // Fonction updateElement définie avant useDragAndDrop
+  const updateElement = useCallback((elementId, updates) => {
+    setElements(prev => prev.map(element =>
+      element.id === elementId ? { ...element, ...updates } : element
+    ));
+  }, []);
+
   const dragAndDrop = useDragAndDrop({
     onElementMove: useCallback((elementId, position) => {
       updateElement(elementId, position);
@@ -166,12 +173,6 @@ export const useCanvasState = ({
     setNextId(prev => prev + 1);
     selection.selectElement(newElement.id);
   }, [nextId, selection]);
-
-  const updateElement = useCallback((elementId, updates) => {
-    setElements(prev => prev.map(element =>
-      element.id === elementId ? { ...element, ...updates } : element
-    ));
-  }, []);
 
   const deleteElement = useCallback((elementId) => {
     setElements(prev => prev.filter(element => element.id !== elementId));

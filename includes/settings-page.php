@@ -119,6 +119,39 @@ if (isset($_POST['pdf_builder_settings_nonce']) && wp_verify_nonce($_POST['pdf_b
             /* Masquer tous les onglets sauf celui actif au chargement */
             .tab-content:not(.active) { display: none !important; }
             .tab-content.active { display: block !important; }
+
+            /* Styles supplémentaires pour les onglets */
+            .nav-tab-wrapper {
+                border-bottom: 1px solid #ccc;
+                margin-bottom: 20px;
+            }
+
+            .nav-tab {
+                display: inline-block;
+                padding: 8px 16px;
+                margin-right: 4px;
+                border: 1px solid #ccc;
+                border-bottom: none;
+                background: #f1f1f1;
+                color: #555;
+                text-decoration: none;
+                border-radius: 4px 4px 0 0;
+                cursor: pointer;
+            }
+
+            .nav-tab-active {
+                background: #fff !important;
+                border-bottom: 1px solid #fff !important;
+                color: #000 !important;
+            }
+
+            .tab-content {
+                padding: 20px;
+                border: 1px solid #ccc;
+                border-top: none;
+                background: #fff;
+                border-radius: 0 0 4px 4px;
+            }
             </style>
 
             <!-- Onglets -->
@@ -613,42 +646,43 @@ if (isset($_POST['pdf_builder_settings_nonce']) && wp_verify_nonce($_POST['pdf_b
 }
 </style>
 
-<script>
+<script type="text/javascript">
 (function($) {
     'use strict';
 
+    // Attendre que le DOM soit complètement chargé
     $(document).ready(function() {
-        console.log('🚀 PDF Builder Settings: Starting initialization...');
-
-        // Vérifier que jQuery est disponible
-        if (typeof $ === 'undefined') {
-            console.error('❌ jQuery not available');
-            return;
-        }
+        console.log('🚀 PDF Builder Settings: Initializing tabs...');
 
         // Vérifier que les éléments existent
-        if ($('.nav-tab').length === 0) {
-            console.error('❌ No nav-tab elements found');
+        var navTabs = document.querySelectorAll('.nav-tab');
+        var tabContents = document.querySelectorAll('.tab-content');
+
+        if (navTabs.length === 0 || tabContents.length === 0) {
+            console.error('❌ Tab elements not found');
             return;
         }
 
-        if ($('.tab-content').length === 0) {
-            console.error('❌ No tab-content elements found');
-            return;
-        }
-
-        console.log('✅ Found', $('.nav-tab').length, 'tabs and', $('.tab-content').length, 'content areas');
+        console.log('✅ Found', navTabs.length, 'nav tabs and', tabContents.length, 'tab contents');
 
         // Fonction pour masquer tous les onglets
         function hideAllTabs() {
-            $('.tab-content').removeClass('active').hide();
-            console.log('👁️ All tabs hidden');
+            tabContents.forEach(function(tab) {
+                tab.classList.remove('active');
+                tab.style.display = 'none';
+            });
         }
 
         // Fonction pour afficher un onglet
         function showTab(tabId) {
-            console.log('📂 Showing tab:', tabId);
-            $(tabId).addClass('active').show();
+            var tabElement = document.getElementById(tabId.substring(1)); // Remove the #
+            if (tabElement) {
+                tabElement.classList.add('active');
+                tabElement.style.display = 'block';
+                console.log('📂 Showing tab:', tabId);
+            } else {
+                console.error('❌ Tab element not found:', tabId);
+            }
         }
 
         // Fonction pour changer d'onglet
@@ -659,44 +693,119 @@ if (isset($_POST['pdf_builder_settings_nonce']) && wp_verify_nonce($_POST['pdf_b
             hideAllTabs();
 
             // Désactiver tous les onglets de navigation
-            $('.nav-tab').removeClass('nav-tab-active');
+            navTabs.forEach(function(tab) {
+                tab.classList.remove('nav-tab-active');
+            });
 
             // Activer l'onglet de navigation cible
-            $('a[href="' + tabId + '"]').addClass('nav-tab-active');
+            var targetNavTab = document.querySelector('a[href="' + tabId + '"]');
+            if (targetNavTab) {
+                targetNavTab.classList.add('nav-tab-active');
+            }
 
             // Afficher l'onglet cible
             showTab(tabId);
         }
 
         // Attacher les gestionnaires de clic
-        $('.nav-tab').on('click', function(e) {
-            e.preventDefault();
-            var targetId = $(this).attr('href');
-            console.log('🖱️ Tab clicked:', targetId);
-            switchToTab(targetId);
+        navTabs.forEach(function(tab) {
+            tab.addEventListener('click', function(e) {
+                e.preventDefault();
+                var targetId = this.getAttribute('href');
+                console.log('🖱️ Tab clicked:', targetId);
+                switchToTab(targetId);
+            });
         });
 
         // Initialisation : masquer tous les onglets sauf celui actif
         hideAllTabs();
 
-        // Trouver l'onglet actif par défaut
-        var activeTabLink = $('.nav-tab-active');
-        if (activeTabLink.length > 0) {
-            var activeTabId = activeTabLink.attr('href');
+        // Trouver et afficher l'onglet actif par défaut
+        var activeTab = document.querySelector('.nav-tab-active');
+        if (activeTab) {
+            var activeTabId = activeTab.getAttribute('href');
             console.log('🎯 Active tab found:', activeTabId);
             showTab(activeTabId);
         } else {
             // Si aucun onglet actif, activer le premier
-            var firstTab = $('.nav-tab').first();
-            if (firstTab.length > 0) {
-                var firstTabId = firstTab.attr('href');
+            if (navTabs.length > 0) {
+                var firstTabId = navTabs[0].getAttribute('href');
                 console.log('🎯 No active tab, activating first:', firstTabId);
-                firstTab.addClass('nav-tab-active');
+                navTabs[0].classList.add('nav-tab-active');
                 showTab(firstTabId);
             }
         }
 
-        console.log('✅ PDF Builder Settings: Initialization complete');
+        console.log('✅ PDF Builder Settings: Tabs initialized successfully');
+    });
+
+    // Fallback si jQuery n'est pas disponible
+    if (typeof jQuery === 'undefined') {
+        console.warn('⚠️ jQuery not available, using vanilla JS fallback');
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 PDF Builder Settings: Fallback initialization...');
+
+            var navTabs = document.querySelectorAll('.nav-tab');
+            var tabContents = document.querySelectorAll('.tab-content');
+
+            if (navTabs.length === 0 || tabContents.length === 0) {
+                console.error('❌ Tab elements not found in fallback');
+                return;
+            }
+
+            // Fonction pour masquer tous les onglets
+            function hideAllTabs() {
+                tabContents.forEach(function(tab) {
+                    tab.classList.remove('active');
+                    tab.style.display = 'none';
+                });
+            }
+
+            // Fonction pour afficher un onglet
+            function showTab(tabId) {
+                var tabElement = document.getElementById(tabId.substring(1));
+                if (tabElement) {
+                    tabElement.classList.add('active');
+                    tabElement.style.display = 'block';
+                }
+            }
+
+            // Attacher les gestionnaires de clic
+            navTabs.forEach(function(tab) {
+                tab.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    var targetId = this.getAttribute('href');
+
+                    // Masquer tous les onglets
+                    hideAllTabs();
+
+                    // Désactiver tous les onglets de navigation
+                    navTabs.forEach(function(t) {
+                        t.classList.remove('nav-tab-active');
+                    });
+
+                    // Activer l'onglet de navigation cible
+                    this.classList.add('nav-tab-active');
+
+                    // Afficher l'onglet cible
+                    showTab(targetId);
+                });
+            });
+
+            // Initialisation
+            hideAllTabs();
+            var activeTab = document.querySelector('.nav-tab-active');
+            if (activeTab) {
+                showTab(activeTab.getAttribute('href'));
+            }
+
+            console.log('✅ PDF Builder Settings: Fallback initialized');
+        });
+    }
+
+})(jQuery);
+</script>
 
         // Actions de maintenance
         $('#clear-cache').on('click', function() {

@@ -43,12 +43,7 @@ export const CanvasElement = ({
     const clickY = e.clientY - rect.top;
 
     const handleSize = 8;
-    const elementRect = {
-      x: element.x,
-      y: element.y,
-      width: element.width,
-      height: element.height
-    };
+    const elementRect = elementRef.current.getBoundingClientRect();
 
     // Poignées de redimensionnement
     const handles = [
