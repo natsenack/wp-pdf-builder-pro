@@ -4,8 +4,22 @@ import '../styles/ElementLibrary.css';
 export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
   const [showHeaderTemplatesModal, setShowHeaderTemplatesModal] = useState(false);
 
-  // Bibliothèque d'éléments vide - tous les éléments ont été supprimés
-  // const elementCategories = []; // REMOVED
+  // Bibliothèque d'éléments - boutons simples
+  const elements = [
+    {
+      type: 'table',
+      fieldID: 'products_table',
+      label: 'Tableau Produits',
+      icon: '📋',
+      description: 'Tableau des produits commandés',
+      defaultProperties: {
+        showHeaders: true,
+        showBorders: true,
+        headers: ['Produit', 'Qté', 'Prix'],
+        dataSource: 'order_items'
+      }
+    }
+  ];
 
   const handleHeaderTemplateSelect = (template) => {
     // Ici on peut ajouter la logique pour appliquer le modèle sélectionné
@@ -101,9 +115,28 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
         </div>
 
         <div className="library-content">
-          {/* Grille vide - tous les éléments ont été supprimés */}
-          <div className="elements-master-grid">
-            {/* Bibliothèque d'éléments vide */}
+          {/* Liste simple d'éléments avec boutons */}
+          <div className="elements-list">
+            {elements.map((element, index) => (
+              <button
+                key={index}
+                className="element-button"
+                onClick={() => onAddElement(element.type, {
+                  x: 50 + (index * 20),
+                  y: 100 + (index * 20),
+                  width: 300,
+                  height: 150,
+                  ...element.defaultProperties
+                })}
+                title={element.description}
+              >
+                <span className="element-icon">{element.icon}</span>
+                <div className="element-info">
+                  <div className="element-label">{element.label}</div>
+                  <div className="element-description">{element.description}</div>
+                </div>
+              </button>
+            ))}
           </div>
         </div>
       </div>
