@@ -345,8 +345,8 @@
   font-size: 11px;
   transition: all 0.1s ease;
   position: relative;
-  min-width: 44px; /* Plus compact */
-  height: 44px; /* Plus compact */
+  min-width: 36px; /* Plus compact sans texte */
+  height: 36px; /* Plus compact sans texte */
   justify-content: center;
 }
 
@@ -369,6 +369,7 @@
   font-size: 9px; /* Plus petit pour compacité */
   font-weight: 500;
   text-align: center;
+  display: none; /* Masquer les textes des outils */
 }
 
 .tool-buttons {
