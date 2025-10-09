@@ -295,14 +295,16 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
       />
 
       <div className="editor-workspace">
-        {/* Bibliothèque d'éléments */}
-        <div className="editor-sidebar left-sidebar">
-          <ElementLibrary
-            onAddElement={handleAddElement}
-            selectedTool={tool}
-            onToolSelect={setTool}
-          />
-        </div>
+        {/* Bibliothèque d'éléments - masquée en mode aperçu */}
+        {!showPreviewModal && (
+          <div className="editor-sidebar left-sidebar">
+            <ElementLibrary
+              onAddElement={handleAddElement}
+              selectedTool={tool}
+              onToolSelect={setTool}
+            />
+          </div>
+        )}
 
         {/* Zone de travail principale */}
         <div className="editor-main">
@@ -388,34 +390,38 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
           </div>
         </div>
 
-        {/* Panneau de propriétés */}
-        <div className={`editor-sidebar right-sidebar ${isPropertiesCollapsed ? 'collapsed' : ''}`}>
-          {!isPropertiesCollapsed && (
-            <PropertiesPanel
-              selectedElements={canvasState.selection.selectedElements}
-              elements={canvasState.elements}
-              onPropertyChange={handlePropertyChange}
-              onBatchUpdate={handleBatchUpdate}
-            />
-          )}
-        </div>
+        {/* Panneau de propriétés - masqué en mode aperçu */}
+        {!showPreviewModal && (
+          <div className={`editor-sidebar right-sidebar ${isPropertiesCollapsed ? 'collapsed' : ''}`}>
+            {!isPropertiesCollapsed && (
+              <PropertiesPanel
+                selectedElements={canvasState.selection.selectedElements}
+                elements={canvasState.elements}
+                onPropertyChange={handlePropertyChange}
+                onBatchUpdate={handleBatchUpdate}
+              />
+            )}
+          </div>
+        )}
       </div>
 
-      {/* Bouton de toggle repositionné à la fin pour être au-dessus de tout */}
-      <button
-        className="sidebar-toggle-fixed"
-        onClick={() => setIsPropertiesCollapsed(!isPropertiesCollapsed)}
-        title={isPropertiesCollapsed ? 'Agrandir le panneau' : 'Réduire le panneau'}
-        style={{
-          position: 'fixed',
-          top: '50%',
-          right: isPropertiesCollapsed ? '70px' : '330px',
-          transform: 'translateY(-50%)',
-          zIndex: 999999
-        }}
-      >
-        {isPropertiesCollapsed ? '▶' : '◀'}
-      </button>
+      {/* Bouton de toggle repositionné à la fin pour être au-dessus de tout - masqué en mode aperçu */}
+      {!showPreviewModal && (
+        <button
+          className="sidebar-toggle-fixed"
+          onClick={() => setIsPropertiesCollapsed(!isPropertiesCollapsed)}
+          title={isPropertiesCollapsed ? 'Agrandir le panneau' : 'Réduire le panneau'}
+          style={{
+            position: 'fixed',
+            top: '50%',
+            right: isPropertiesCollapsed ? '70px' : '330px',
+            transform: 'translateY(-50%)',
+            zIndex: 999999
+          }}
+        >
+          {isPropertiesCollapsed ? '▶' : '◀'}
+        </button>
+      )}
 
       {/* Menu contextuel */}
       {canvasState.contextMenu.contextMenu && (
