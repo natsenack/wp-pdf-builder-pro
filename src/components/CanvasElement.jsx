@@ -30,9 +30,11 @@ export const CanvasElement = ({
 
   // Gestionnaire de clic sur l'élément
   const handleMouseDown = useCallback((e) => {
+    console.log('CanvasElement handleMouseDown', element.id, e.clientX, e.clientY);
     e.stopPropagation();
 
     if (!isSelected) {
+      console.log('Element not selected, selecting...');
       onSelect();
       return;
     }
@@ -41,6 +43,8 @@ export const CanvasElement = ({
     const rect = elementRef.current.getBoundingClientRect();
     const clickX = e.clientX - rect.left;
     const clickY = e.clientY - rect.top;
+
+    console.log('Click position relative to element:', clickX, clickY);
 
     const handleSize = 8;
     const elementRect = elementRef.current.getBoundingClientRect();
@@ -95,10 +99,10 @@ export const CanvasElement = ({
   const renderElement = () => {
     const style = {
       position: 'absolute',
-      left: 0,
-      top: 0,
-      width: '100%',
-      height: '100%',
+      left: element.x * zoom,
+      top: element.y * zoom,
+      width: element.width * zoom,
+      height: element.height * zoom,
       zIndex: element.zIndex || 0
     };
 

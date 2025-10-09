@@ -28,6 +28,7 @@ export const useDragAndDrop = ({
   }, []);
 
   const handleMouseDown = useCallback((e, elementId, elementRect) => {
+    console.log('useDragAndDrop handleMouseDown', elementId, elementRect);
     if (e.button !== 0) return; // Only left mouse button
 
     e.preventDefault();

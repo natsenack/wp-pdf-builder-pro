@@ -18,6 +18,7 @@ export const useResize = ({
   }, [snapToGrid, gridSize]);
 
   const handleResizeStart = useCallback((e, handle, elementRect) => {
+    console.log('useResize handleResizeStart', handle, elementRect);
     e.preventDefault();
     e.stopPropagation();
 

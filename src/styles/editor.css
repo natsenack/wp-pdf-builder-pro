@@ -177,14 +177,33 @@
   background: var(--surface-color);
   border-bottom: 1px solid var(--border-color);
   display: flex;
-  gap: 24px;
+  justify-content: space-between;
   align-items: flex-start;
   position: relative;
+  gap: 16px;
 }
 
 .toolbar-section {
   position: relative;
   z-index: 1;
+  flex: 1;
+  min-width: 0; /* Permet au flex de réduire si nécessaire */
+}
+
+.toolbar-section:first-child {
+  flex: 0 0 auto; /* Outils - taille fixe */
+  max-width: 250px;
+}
+
+.toolbar-section:nth-child(2) {
+  flex: 1; /* Édition - prend l'espace disponible au centre */
+  text-align: center;
+  max-width: 300px;
+}
+
+.toolbar-section:last-child {
+  flex: 0 0 auto; /* Affichage - taille fixe */
+  max-width: 280px;
 }
 
 .toolbar-section h4 {
@@ -196,10 +215,41 @@
   letter-spacing: 0.05em;
 }
 
-.tool-buttons, .edit-buttons {
+.edit-buttons {
   display: flex;
   gap: 4px;
   flex-wrap: wrap;
+  justify-content: center;
+}
+
+.edit-button {
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  background: var(--surface-color);
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  transition: all 0.1s ease;
+  position: relative;
+  white-space: nowrap;
+}
+
+.edit-button:hover {
+  background: var(--background-color);
+  border-color: var(--secondary-color);
+}
+
+.edit-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.edit-button:disabled:hover {
+  background: var(--surface-color);
+  border-color: var(--border-color);
 }
 
 .tool-button, .edit-button {
@@ -241,17 +291,31 @@
 
 .display-controls {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 16px;
+  justify-content: flex-end;
 }
 
 .control-group {
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 14px;
+  gap: 8px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.control-group label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  margin: 0;
+}
+
+.control-group input[type="checkbox"] {
+  margin: 0;
 }
 
 .zoom-controls {
