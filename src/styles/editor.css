@@ -266,6 +266,8 @@
   transition: all 0.1s ease;
   position: relative;
   min-width: 48px;
+  height: 48px; /* Hauteur fixe pour alignement uniforme */
+  justify-content: center;
 }
 
 .tool-button:hover, .edit-button:hover {
@@ -287,6 +289,14 @@
   font-size: 9px;
   font-weight: 500;
   text-align: center;
+}
+
+.tool-buttons {
+  display: flex;
+  gap: 4px;
+  align-items: stretch; /* Étire tous les boutons à la même hauteur */
+  flex-wrap: wrap;
+  justify-content: flex-start;
 }
 
 .display-controls {
