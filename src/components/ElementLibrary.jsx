@@ -135,7 +135,6 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
                 key={index}
                 className="element-button"
                 onClick={() => {
-                  console.log('🖱️ Element button clicked:', element);
                   onAddElement(element.type, {
                     x: 50 + (index * 20),
                     y: 100 + (index * 20),

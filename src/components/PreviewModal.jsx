@@ -18,9 +18,6 @@ export const PreviewModal = ({ isOpen, onClose, templateData, canvasWidth, canva
     // Utiliser directement l'URL admin-ajax.php de WordPress
     const ajaxUrl = '/wp-admin/admin-ajax.php';
 
-      console.log('PDF Builder Preview: Utilisation de l\'URL AJAX:', ajaxUrl);
-      console.log('PDF Builder Preview: Données template:', templateData);
-
       // Validation et nettoyage des données avant sérialisation
       if (!templateData || !templateData.elements || !Array.isArray(templateData.elements)) {
         setError('Données template invalides: éléments manquants');
@@ -94,12 +91,9 @@ export const PreviewModal = ({ isOpen, onClose, templateData, canvasWidth, canva
         }]
       };
 
-      console.log('PDF Builder Preview: Données formatées:', formattedData);
-
       let jsonString;
       try {
         jsonString = JSON.stringify(formattedData);
-        console.log('PDF Builder Preview: JSON string:', jsonString);
       } catch (jsonError) {
         console.error('PDF Builder Preview: Erreur JSON:', jsonError);
         setError('Erreur de sérialisation JSON: ' + jsonError.message);
@@ -113,8 +107,6 @@ export const PreviewModal = ({ isOpen, onClose, templateData, canvasWidth, canva
       formData.append('nonce', pdfBuilderAjax.nonce);
       formData.append('template_data', jsonString);
 
-      console.log('PDF Builder Preview: Envoi de la requête AJAX...');
-
       // Utiliser jQuery AJAX au lieu de fetch pour compatibilité WordPress
       return new Promise((resolve, reject) => {
         jQuery.ajax({
@@ -124,7 +116,6 @@ export const PreviewModal = ({ isOpen, onClose, templateData, canvasWidth, canva
           processData: false, // Important pour FormData
           contentType: false, // Important pour FormData
           success: function(response) {
-            console.log('PDF Builder Preview: Réponse jQuery AJAX:', response);
             if (response.success) {
               setPreviewHtml(response.data.html);
               setLoading(false);
@@ -137,9 +128,7 @@ export const PreviewModal = ({ isOpen, onClose, templateData, canvasWidth, canva
             }
           },
           error: function(xhr, status, error) {
-            console.log('PDF Builder Preview: Erreur AJAX:', xhr.status, xhr.statusText);
             const errorText = xhr.responseText || 'Erreur HTTP ' + xhr.status;
-            console.log('PDF Builder Preview: Contenu de l\'erreur:', errorText);
             setError('Erreur lors de l\'aperçu: ' + errorText);
             setLoading(false);
             reject(new Error('Erreur HTTP ' + xhr.status + ': ' + xhr.statusText));

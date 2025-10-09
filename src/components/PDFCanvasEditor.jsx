@@ -56,7 +56,6 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
 
   // Gestionnaire pour ajouter un élément depuis la bibliothèque
   const handleAddElement = useCallback((elementType, properties = {}) => {
-    console.log('🎨 handleAddElement called:', { elementType, properties });
     canvasState.addElement(elementType, properties);
     setTool('select');
   }, [canvasState]);
