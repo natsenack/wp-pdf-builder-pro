@@ -11,13 +11,12 @@ export const PreviewModal = ({ isOpen, onClose, templateData, canvasWidth, canva
     }
   }, [isOpen, templateData]);
 
-  const generatePreview = async () => {
+  const generatePreview = () => {
     setLoading(true);
     setError('');
 
-    try {
-      // Utiliser directement l'URL admin-ajax.php de WordPress
-      const ajaxUrl = '/wp-admin/admin-ajax.php';
+    // Utiliser directement l'URL admin-ajax.php de WordPress
+    const ajaxUrl = '/wp-admin/admin-ajax.php';
 
       console.log('PDF Builder Preview: Utilisation de l\'URL AJAX:', ajaxUrl);
       console.log('PDF Builder Preview: Données template:', templateData);
@@ -71,34 +70,34 @@ export const PreviewModal = ({ isOpen, onClose, templateData, canvasWidth, canva
 
       console.log('PDF Builder Preview: Envoi de la requête AJAX...');
 
-      // Faire l'appel AJAX avec FormData (compatible WordPress)
-      const response = await fetch(ajaxUrl, {
-        method: 'POST',
-        body: formData
+      // Utiliser jQuery AJAX au lieu de fetch pour compatibilité WordPress
+      return new Promise((resolve, reject) => {
+        jQuery.ajax({
+          url: ajaxUrl,
+          type: 'POST',
+          data: formData,
+          processData: false, // Important pour FormData
+          contentType: false, // Important pour FormData
+          success: function(response) {
+            console.log('PDF Builder Preview: Réponse jQuery AJAX:', response);
+            if (response.success) {
+              setPreviewHtml(response.data.html);
+              resolve();
+            } else {
+              console.error('PDF Builder Preview: Erreur dans la réponse:', response.data);
+              setError(response.data || 'Une erreur inconnue est survenue');
+              reject(new Error(response.data || 'Une erreur inconnue est survenue'));
+            }
+          },
+          error: function(xhr, status, error) {
+            console.log('PDF Builder Preview: Erreur AJAX:', xhr.status, xhr.statusText);
+            const errorText = xhr.responseText || 'Erreur HTTP ' + xhr.status;
+            console.log('PDF Builder Preview: Contenu de l\'erreur:', errorText);
+            setError('Erreur lors de l\'aperçu: ' + errorText);
+            reject(new Error('Erreur HTTP ' + xhr.status + ': ' + xhr.statusText));
+          }
+        });
       });
-
-      console.log('PDF Builder Preview: Réponse reçue:', response.status, response.statusText);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.log('PDF Builder Preview: Contenu de l\'erreur:', errorText);
-        throw new Error(`Erreur HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const result = await response.json();
-      console.log('PDF Builder Preview: Résultat JSON:', result);
-
-      if (result.success) {
-        setPreviewHtml(result.data.html);
-      } else {
-        setError(result.data || 'Une erreur inconnue est survenue');
-      }
-    } catch (err) {
-      console.error('Erreur lors de l\'aperçu:', err);
-      setError('Erreur de connexion: ' + err.message);
-    } finally {
-      setLoading(false);
-    }
   };
 
   const handlePrint = () => {
