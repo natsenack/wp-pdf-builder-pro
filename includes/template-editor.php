@@ -20,57 +20,12 @@ if (!defined('PDF_BUILDER_DEBUG_MODE') || !PDF_BUILDER_DEBUG_MODE) {
 $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
 $is_new = $template_id === 0;
 
-$core = PDF_Builder_Core::getInstance();
-$template_manager = $core->get_template_manager();
+// Temporaire : désactiver l'utilisation du template manager qui n'existe pas encore
+// $core = PDF_Builder_Core::getInstance();
+// $template_manager = $core->get_template_manager();
 
-if (!$is_new) {
-    $template = $template_manager->get_template($template_id);
-    if (!$template) {
-        wp_die(__('Template non trouvé.', 'pdf-builder-pro'));
-    }
-} else {
-    $template = null;
-}
+$template = null; // Temporaire : pas de template chargé
 ?>
-
-<?php
-/**
- * Template Editor Page - PDF Builder Pro
- * React/TypeScript Canvas Editor
- */
-
-if (!defined('ABSPATH')) {
-    exit('Accès direct interdit.');
-}
-
-// Permissions are checked by WordPress via add_submenu_page capability parameter
-// Additional check for logged-in users as fallback
-if (!defined('PDF_BUILDER_DEBUG_MODE') || !PDF_BUILDER_DEBUG_MODE) {
-    if (!is_user_logged_in() || !current_user_can('read')) {
-        wp_die(__('Vous devez être connecté pour accéder à cette page.', 'pdf-builder-pro'));
-    }
-}
-
-// Get template ID from URL
-$template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
-$is_new = $template_id === 0;
-
-$core = PDF_Builder_Core::getInstance();
-$template_manager = $core->get_template_manager();
-
-if (!$is_new) {
-    $template = $template_manager->get_template($template_id);
-    if (!$template) {
-        wp_die(__('Template non trouvé.', 'pdf-builder-pro'));
-    }
-} else {
-    $template = null;
-}
-?>
-
-
-
-<div class="wrap">
     <div id="pdf-builder-container" data-is-new="<?php echo $is_new ? 'true' : 'false'; ?>" style="height: calc(100vh - 120px); padding: 20px; background: #f5f5f5; border-radius: 8px; margin: 10px 0;">
         <!-- React App will be mounted here -->
         <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: #ffffff; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
