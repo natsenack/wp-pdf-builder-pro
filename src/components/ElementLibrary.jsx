@@ -41,18 +41,11 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
       defaultProperties: {
         showHeaders: true,
         showBorders: true,
-        fields: {
-          name: true,
-          email: true,
-          phone: true,
-          address: true,
-          company: false,
-          vat: false
-        },
+        fields: ['name', 'email', 'phone', 'address', 'company', 'vat'],
         layout: 'vertical', // 'vertical' ou 'horizontal'
         showLabels: true,
         labelStyle: 'bold', // 'normal', 'bold', 'uppercase'
-        spacing: 'normal' // 'compact', 'normal', 'spacious'
+        spacing: 8 // espacement en pixels
       }
     }
   ];

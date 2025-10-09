@@ -253,6 +253,19 @@ export const useCanvasState = ({
             defaults.showTotal = false;
             break;
 
+          case 'customer_info':
+            defaults.width = 300;
+            defaults.height = 200;
+            defaults.backgroundColor = '#ffffff';
+            defaults.borderColor = '#e2e8f0';
+            defaults.borderWidth = 1;
+            defaults.fields = ['name', 'email', 'phone', 'address', 'company', 'vat'];
+            defaults.layout = 'vertical';
+            defaults.showLabels = true;
+            defaults.labelStyle = 'bold';
+            defaults.spacing = 8;
+            break;
+
           case 'invoice-totals-block':
             defaults.width = 200;
             defaults.height = 150;
