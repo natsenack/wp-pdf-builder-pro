@@ -1151,20 +1151,99 @@ class PDF_Builder_Admin {
      * Génère du HTML depuis les données du template
      */
     public function generate_html_from_template_data($template, $order_id = null) {
-        $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>PDF Preview</title>';
-
-        // Gestion des marges d'impression - utiliser la première page
-        $margins = ['top' => 20, 'right' => 20, 'bottom' => 20, 'left' => 20];
-        if (isset($template['pages']) && is_array($template['pages']) && !empty($template['pages'])) {
-            $firstPage = $template['pages'][0];
-            if (isset($firstPage['margins'])) {
-                $margins = $firstPage['margins'];
-            }
+        // Version optimisée avec Flexbox pour de meilleures performances
+        $html = '<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>PDF Preview</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            color: #1a202c;
+            line-height: 1.5;
         }
-        $margin_css = sprintf('margin: 0; padding: %dpx %dpx %dpx %dpx;', $margins['top'], $margins['right'], $margins['bottom'], $margins['left']);
+        .pdf-page {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin: 0 auto 20px auto;
+            position: relative;
+            overflow: hidden;
+        }
+        .pdf-element {
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        .pdf-element.text { background: rgba(255,255,255,0.8); border: 1px solid #e2e8f0; }
+        .pdf-element.layout-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-align: center;
+            border: none;
+        }
+        .pdf-element.layout-footer {
+            background: #2d3748;
+            color: #e2e8f0;
+            font-size: 0.875rem;
+            text-align: center;
+            border: none;
+        }
+        .pdf-element.layout-sidebar {
+            background: #edf2f7;
+            border: 2px solid #cbd5e0;
+            font-weight: 500;
+        }
+        .pdf-element.layout-section {
+            background: #fefcbf;
+            border: 2px solid #d69e2e;
+            font-weight: 500;
+        }
+        .pdf-element.layout-container {
+            background: rgba(102, 126, 234, 0.1);
+            border: 2px dashed #667eea;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-style: italic;
+            color: #667eea;
+        }
+        .pdf-element.rectangle {
+            background: #e2e8f0;
+            border: 2px solid #cbd5e0;
+        }
+        .pdf-element img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+        .pdf-placeholder {
+            color: #a0aec0;
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+        }
+        @media print {
+            body { background: white; }
+            .pdf-page { box-shadow: none; border: none; }
+        }
+    </style>
+</head>
+<body>';
 
-        $html .= '<style>body { font-family: Arial, sans-serif; ' . $margin_css . ' } .pdf-element { position: absolute; }</style>';
-        $html .= '</head><body>';
+        // Structure de page optimisée
+        $page_width = $template['canvasWidth'] ?? 595;
+        $page_height = $template['canvasHeight'] ?? 842;
+
+        $html .= sprintf('<div class="pdf-page" style="width: %dpx; min-height: %dpx;">', $page_width, $page_height);
 
         // Utiliser les éléments de la première page
         $elements = [];
@@ -1177,36 +1256,45 @@ class PDF_Builder_Admin {
         }
 
         if (is_array($elements)) {
+            // Trier les éléments par position Y pour un meilleur rendu
+            usort($elements, function($a, $b) {
+                return ($a['position']['y'] ?? 0) <=> ($b['position']['y'] ?? 0);
+            });
+
             foreach ($elements as $element) {
-                $style = sprintf(
-                    'left: %dpx; top: %dpx; width: %dpx; height: %dpx;',
-                    $element['position']['x'],
-                    $element['position']['y'],
-                    $element['size']['width'],
-                    $element['size']['height']
-                );
-
-                if (isset($element['style'])) {
-                    if (isset($element['style']['color'])) {
-                        $style .= ' color: ' . $element['style']['color'] . ';';
-                    }
-                    if (isset($element['style']['fontSize'])) {
-                        $style .= ' font-size: ' . $element['style']['fontSize'] . 'px;';
-                    }
-                    if (isset($element['style']['fontWeight'])) {
-                        $style .= ' font-weight: ' . $element['style']['fontWeight'] . ';';
-                    }
-                    if (isset($element['style']['fillColor'])) {
-                        $style .= ' background-color: ' . $element['style']['fillColor'] . ';';
-                    }
-                }
-
                 $content = $element['content'] ?? '';
+                $type = $element['type'] ?? 'text';
 
                 // Remplacer les variables dynamiques
                 $content = $this->replace_dynamic_variables($content, $order_id);
 
-                switch ($element['type']) {
+                // Style de base optimisé
+                $element_style = '';
+                if (isset($element['style'])) {
+                    $styles = $element['style'];
+                    $element_style = sprintf(
+                        'color: %s; font-size: %dpx; font-weight: %s; background-color: %s;',
+                        $styles['color'] ?? '#1a202c',
+                        $styles['fontSize'] ?? 14,
+                        $styles['fontWeight'] ?? 'normal',
+                        $styles['fillColor'] ?? 'transparent'
+                    );
+                }
+
+                // Positionnement optimisé (conversion des coordonnées absolues en layout relatif)
+                $x = $element['position']['x'] ?? 0;
+                $y = $element['position']['y'] ?? 0;
+                $width = $element['size']['width'] ?? 100;
+                $height = $element['size']['height'] ?? 50;
+
+                $position_style = sprintf(
+                    'position: absolute; left: %dpx; top: %dpx; width: %dpx; min-height: %dpx;',
+                    $x, $y, $width, $height
+                );
+
+                $css_class = 'pdf-element ' . str_replace('_', '-', $type);
+
+                switch ($type) {
                     case 'text':
                     case 'invoice_number':
                     case 'invoice_date':
@@ -1216,52 +1304,109 @@ class PDF_Builder_Admin {
                     case 'tax':
                     case 'total':
                     case 'company_info':
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content));
+                        $html .= sprintf(
+                            '<div class="%s text" style="%s %s">%s</div>',
+                            $css_class,
+                            $position_style,
+                            $element_style,
+                            esc_html($content)
+                        );
                         break;
 
                     case 'rectangle':
-                        $html .= sprintf('<div class="pdf-element" style="%s"></div>', $style);
+                        $html .= sprintf(
+                            '<div class="%s rectangle" style="%s %s"></div>',
+                            $css_class,
+                            $position_style,
+                            $element_style
+                        );
                         break;
 
                     case 'image':
                     case 'company_logo':
                         if ($content) {
-                            $html .= sprintf('<img class="pdf-element" src="%s" style="%s" alt="Image" />', esc_url($content), $style);
+                            $html .= sprintf(
+                                '<img class="%s" src="%s" style="%s" alt="Image" />',
+                                $css_class,
+                                esc_url($content),
+                                $position_style
+                            );
+                        } else {
+                            $html .= sprintf(
+                                '<div class="%s" style="%s"><div class="pdf-placeholder">📷 Image</div></div>',
+                                $css_class,
+                                $position_style
+                            );
                         }
                         break;
 
                     case 'product_table':
-                        $html .= sprintf('<div class="pdf-element" style="%s">Product Table Placeholder</div>', $style);
+                        $html .= sprintf(
+                            '<div class="%s" style="%s"><div class="pdf-placeholder">📊 Tableau produits</div></div>',
+                            $css_class,
+                            $position_style
+                        );
                         break;
 
                     case 'layout-header':
-                        $html .= sprintf('<div class="pdf-element layout-header" style="%s"><strong>EN-TÊTE</strong></div>', $style);
+                        $html .= sprintf(
+                            '<div class="%s" style="%s %s"><strong>📄 EN-TÊTE</strong></div>',
+                            $css_class,
+                            $position_style,
+                            $element_style
+                        );
                         break;
 
                     case 'layout-footer':
-                        $html .= sprintf('<div class="pdf-element layout-footer" style="%s"><em>PIED DE PAGE</em></div>', $style);
+                        $html .= sprintf(
+                            '<div class="%s" style="%s %s"><em>📄 PIED DE PAGE</em></div>',
+                            $css_class,
+                            $position_style,
+                            $element_style
+                        );
                         break;
 
                     case 'layout-sidebar':
-                        $html .= sprintf('<div class="pdf-element layout-sidebar" style="%s"><strong>BARRE LATÉRALE</strong></div>', $style);
+                        $html .= sprintf(
+                            '<div class="%s" style="%s %s"><strong>📑 BARRE LATÉRALE</strong></div>',
+                            $css_class,
+                            $position_style,
+                            $element_style
+                        );
                         break;
 
                     case 'layout-section':
-                        $html .= sprintf('<div class="pdf-element layout-section" style="%s"><strong>SECTION</strong></div>', $style);
+                        $html .= sprintf(
+                            '<div class="%s" style="%s %s"><strong>📋 SECTION</strong></div>',
+                            $css_class,
+                            $position_style,
+                            $element_style
+                        );
                         break;
 
                     case 'layout-container':
-                        $html .= sprintf('<div class="pdf-element layout-container" style="%s"><em>CONTENEUR</em></div>', $style);
+                        $html .= sprintf(
+                            '<div class="%s" style="%s %s"><em>📦 CONTENEUR</em></div>',
+                            $css_class,
+                            $position_style,
+                            $element_style
+                        );
                         break;
 
                     default:
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: $element['type']));
+                        $html .= sprintf(
+                            '<div class="%s" style="%s %s">%s</div>',
+                            $css_class,
+                            $position_style,
+                            $element_style,
+                            esc_html($content ?: 'Élément: ' . $type)
+                        );
                         break;
                 }
             }
         }
 
-        $html .= '</body></html>';
+        $html .= '</div></body></html>';
         return $html;
     }
 
