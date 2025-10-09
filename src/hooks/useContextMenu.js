@@ -2,18 +2,47 @@ import { useState, useCallback, useEffect } from 'react';
 
 export const useContextMenu = () => {
   const [contextMenu, setContextMenu] = useState(null);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   const showContextMenu = useCallback((x, y, items) => {
+    // Ajuster la position pour éviter que le menu sorte de l'écran
+    const menuWidth = 180; // Largeur approximative du menu
+    const menuHeight = items.length * 36; // Hauteur approximative
+
+    let adjustedX = x;
+    let adjustedY = y;
+
+    // Ajuster horizontalement
+    if (x + menuWidth > window.innerWidth) {
+      adjustedX = x - menuWidth;
+    }
+
+    // Ajuster verticalement
+    if (y + menuHeight > window.innerHeight) {
+      adjustedY = y - menuHeight;
+    }
+
+    // S'assurer que le menu reste dans les limites
+    adjustedX = Math.max(0, Math.min(adjustedX, window.innerWidth - menuWidth));
+    adjustedY = Math.max(0, Math.min(adjustedY, window.innerHeight - menuHeight));
+
     setContextMenu({
-      x,
-      y,
+      x: adjustedX,
+      y: adjustedY,
       items
     });
   }, []);
 
   const hideContextMenu = useCallback(() => {
-    setContextMenu(null);
-  }, []);
+    if (contextMenu) {
+      setIsAnimating(true);
+      // Attendre la fin de l'animation avant de masquer complètement
+      setTimeout(() => {
+        setContextMenu(null);
+        setIsAnimating(false);
+      }, 150); // Durée de l'animation
+    }
+  }, [contextMenu]);
 
   const handleContextMenuAction = useCallback((action) => {
     hideContextMenu();
@@ -48,6 +77,7 @@ export const useContextMenu = () => {
     contextMenu,
     showContextMenu,
     hideContextMenu,
-    handleContextMenuAction
+    handleContextMenuAction,
+    isAnimating
   };
 };

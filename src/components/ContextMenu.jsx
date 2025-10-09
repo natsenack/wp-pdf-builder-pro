@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 
-export const ContextMenu = ({ menu, onAction }) => {
+export const ContextMenu = ({ menu, onAction, isAnimating = false }) => {
   const menuRef = useRef(null);
 
   // Fermer le menu quand on clique ailleurs
@@ -36,11 +36,15 @@ export const ContextMenu = ({ menu, onAction }) => {
         top: menu.y,
         backgroundColor: 'white',
         border: '1px solid #ccc',
-        borderRadius: '4px',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+        borderRadius: '6px',
+        boxShadow: '0 8px 24px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08)',
         zIndex: 1000,
-        minWidth: '180px',
-        padding: '4px 0'
+        minWidth: '200px',
+        padding: '4px 0',
+        animation: isAnimating
+          ? 'contextMenuFadeOut 0.15s cubic-bezier(0.4, 0, 1, 1)'
+          : 'contextMenuFadeIn 0.15s cubic-bezier(0.16, 1, 0.3, 1)',
+        transformOrigin: 'top left'
       }}
     >
       {menu.items.map((item, index) => (
@@ -61,27 +65,46 @@ export const ContextMenu = ({ menu, onAction }) => {
               style={{
                 display: 'flex',
                 alignItems: 'center',
+                justifyContent: 'space-between',
                 width: '100%',
-                padding: '8px 16px',
+                padding: '10px 16px',
                 border: 'none',
                 backgroundColor: 'transparent',
                 cursor: item.disabled ? 'not-allowed' : 'pointer',
                 fontSize: '14px',
                 textAlign: 'left',
                 borderRadius: '0',
-                opacity: item.disabled ? 0.5 : 1
+                opacity: item.disabled ? 0.5 : 1,
+                transition: 'background-color 0.15s ease, color 0.15s ease'
               }}
               onMouseEnter={(e) => {
-                if (!item.disabled) e.target.style.backgroundColor = '#f1f3f4';
+                if (!item.disabled) {
+                  e.target.style.backgroundColor = '#f8f9fa';
+                  e.target.style.color = '#1e293b';
+                }
               }}
               onMouseLeave={(e) => {
-                if (!item.disabled) e.target.style.backgroundColor = 'transparent';
+                if (!item.disabled) {
+                  e.target.style.backgroundColor = 'transparent';
+                  e.target.style.color = 'inherit';
+                }
               }}
             >
-              <span style={{ marginRight: '8px' }}>
-                {item.icon || getDefaultIcon(item.label)}
-              </span>
-              {item.label}
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <span style={{ marginRight: '8px' }}>
+                  {item.icon || getDefaultIcon(item.label)}
+                </span>
+                {item.label}
+              </div>
+              {getKeyboardShortcut(item.label) && (
+                <span style={{
+                  fontSize: '12px',
+                  color: '#666',
+                  marginLeft: '16px'
+                }}>
+                  {getKeyboardShortcut(item.label)}
+                </span>
+              )}
             </button>
           )}
         </div>
@@ -98,8 +121,26 @@ const getDefaultIcon = (label) => {
     'Copier': '📄',
     'Coller': '📄',
     'Annuler': '↶',
-    'Rétablir': '↷'
+    'Rétablir': '↷',
+    'Tout sélectionner': '☑️',
+    'Désélectionner': '☐'
   };
 
   return iconMap[label] || '•';
+};
+
+// Fonction utilitaire pour obtenir un raccourci clavier selon le label
+const getKeyboardShortcut = (label) => {
+  const shortcutMap = {
+    'Copier': 'Ctrl+C',
+    'Coller': 'Ctrl+V',
+    'Dupliquer': 'Ctrl+D',
+    'Supprimer': 'Del',
+    'Annuler': 'Ctrl+Z',
+    'Rétablir': 'Ctrl+Y',
+    'Tout sélectionner': 'Ctrl+A',
+    'Désélectionner': 'Esc'
+  };
+
+  return shortcutMap[label];
 };

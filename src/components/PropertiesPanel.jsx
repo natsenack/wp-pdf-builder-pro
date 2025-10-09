@@ -713,6 +713,93 @@ export const PropertiesPanel = ({
                 </div>
               </div>
             )}
+
+            {selectedElement.type === 'customer_info' && (
+              <div className="properties-group">
+                <h4>👤 Informations client</h4>
+
+                <div className="property-row">
+                  <label>Champs à afficher:</label>
+                  <div className="checkbox-group">
+                    {[
+                      { key: 'name', label: 'Nom' },
+                      { key: 'email', label: 'Email' },
+                      { key: 'phone', label: 'Téléphone' },
+                      { key: 'address', label: 'Adresse' },
+                      { key: 'company', label: 'Société' },
+                      { key: 'vat', label: 'N° TVA' }
+                    ].map(({ key, label }) => (
+                      <label key={key} className="checkbox-item">
+                        <input
+                          type="checkbox"
+                          checked={localProperties.fields?.includes(key) ?? true}
+                          onChange={(e) => {
+                            const currentFields = localProperties.fields || ['name', 'email', 'phone', 'address', 'company', 'vat'];
+                            const newFields = e.target.checked
+                              ? [...currentFields, key]
+                              : currentFields.filter(f => f !== key);
+                            handlePropertyChange(selectedElement.id, 'fields', newFields);
+                          }}
+                        />
+                        {label}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="property-row">
+                  <label>Disposition:</label>
+                  <select
+                    value={localProperties.layout || 'vertical'}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'layout', e.target.value)}
+                  >
+                    <option value="vertical">Verticale</option>
+                    <option value="horizontal">Horizontale</option>
+                  </select>
+                </div>
+
+                <div className="property-row">
+                  <label>Afficher les étiquettes:</label>
+                  <label className="toggle">
+                    <input
+                      type="checkbox"
+                      checked={localProperties.showLabels ?? true}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'showLabels', e.target.checked)}
+                    />
+                    <span className="toggle-slider"></span>
+                  </label>
+                </div>
+
+                {localProperties.showLabels && (
+                  <div className="property-row">
+                    <label>Style des étiquettes:</label>
+                    <select
+                      value={localProperties.labelStyle || 'normal'}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'labelStyle', e.target.value)}
+                    >
+                      <option value="normal">Normal</option>
+                      <option value="bold">Gras</option>
+                      <option value="uppercase">Majuscules</option>
+                    </select>
+                  </div>
+                )}
+
+                <div className="property-row">
+                  <label>Espacement:</label>
+                  <div className="slider-container">
+                    <input
+                      type="range"
+                      min="0"
+                      max="20"
+                      value={localProperties.spacing || 8}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'spacing', parseInt(e.target.value))}
+                      className="slider"
+                    />
+                    <span className="slider-value">{localProperties.spacing || 8}px</span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         );
 

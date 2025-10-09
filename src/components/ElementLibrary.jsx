@@ -31,6 +31,29 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
         showDiscount: false,
         showTotal: false
       }
+    },
+    {
+      type: 'customer_info',
+      fieldID: 'customer_info',
+      label: 'Fiche Client',
+      icon: '👤',
+      description: 'Informations détaillées du client',
+      defaultProperties: {
+        showHeaders: true,
+        showBorders: true,
+        fields: {
+          name: true,
+          email: true,
+          phone: true,
+          address: true,
+          company: false,
+          vat: false
+        },
+        layout: 'vertical', // 'vertical' ou 'horizontal'
+        showLabels: true,
+        labelStyle: 'bold', // 'normal', 'bold', 'uppercase'
+        spacing: 'normal' // 'compact', 'normal', 'spacious'
+      }
     }
   ];
 

@@ -208,7 +208,43 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
   // Gestionnaire du menu contextuel
   const handleContextMenu = useCallback((e, elementId = null) => {
     e.preventDefault();
-    canvasState.showContextMenu(e.clientX, e.clientY, elementId);
+
+    const menuItems = [];
+
+    if (elementId) {
+      // Menu contextuel pour un élément spécifique
+      const element = canvasState.getElementById(elementId);
+      if (element) {
+        menuItems.push(
+          { label: 'Copier', action: () => canvasState.copySelectedElements() },
+          { label: 'Dupliquer', action: () => canvasState.duplicateElement(elementId) },
+          { type: 'separator' },
+          { label: 'Supprimer', action: () => canvasState.deleteElement(elementId) }
+        );
+      }
+    } else {
+      // Menu contextuel pour le canvas vide
+      const hasSelection = canvasState.selection.selectedElements.length > 0;
+
+      if (hasSelection) {
+        menuItems.push(
+          { label: 'Copier', action: () => canvasState.copySelectedElements() },
+          { label: 'Dupliquer', action: () => canvasState.duplicateSelectedElements() },
+          { type: 'separator' },
+          { label: 'Supprimer', action: () => canvasState.deleteSelectedElements() }
+        );
+      }
+
+      menuItems.push(
+        { type: 'separator' },
+        { label: 'Coller', action: () => canvasState.pasteElements() },
+        { type: 'separator' },
+        { label: 'Tout sélectionner', action: () => canvasState.selectAll() },
+        { label: 'Désélectionner', action: () => canvasState.selection.clearSelection() }
+      );
+    }
+
+    canvasState.showContextMenu(e.clientX, e.clientY, menuItems);
   }, [canvasState]);
 
   // Gestionnaire pour les actions du menu contextuel
@@ -426,6 +462,7 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
         <ContextMenu
           menu={canvasState.contextMenu.contextMenu}
           onAction={handleContextMenuAction}
+          isAnimating={canvasState.contextMenu.isAnimating || false}
         />
       )}
 
