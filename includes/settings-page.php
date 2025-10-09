@@ -127,7 +127,7 @@ if (isset($_POST['pdf_builder_settings_nonce']) && wp_verify_nonce($_POST['pdf_b
             </div>
 
             <!-- Onglet Général -->
-            <div id="general" class="tab-content active" style="display: block;">
+            <div id="general" class="tab-content active">
                 <h2><?php _e('Paramètres Généraux', 'pdf-builder-pro'); ?></h2>
 
                 <table class="form-table">
@@ -475,17 +475,12 @@ if (isset($_POST['pdf_builder_settings_nonce']) && wp_verify_nonce($_POST['pdf_b
 }
 
 .tab-content {
-    display: none;
     background: #fff;
     border: 1px solid #e5e5e5;
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     margin-top: 20px;
-}
-
-.tab-content.active {
-    display: block !important;
 }
 
 .tab-content h2 {
@@ -627,16 +622,20 @@ jQuery(document).ready(function($) {
         $(this).addClass('nav-tab-active');
 
         // Masquer tous les contenus d'onglets
-        $('.tab-content').removeClass('active');
+        $('.tab-content').removeClass('active').hide();
         // Afficher le contenu de l'onglet cliqué
         var targetId = $(this).attr('href');
-        $(targetId).addClass('active');
+        $(targetId).addClass('active').show();
 
         console.log('Switched to tab:', targetId);
     });
 
-    // S'assurer que l'onglet actif par défaut est visible
-    $('.nav-tab-active').trigger('click');
+    // Initialiser l'onglet actif par défaut
+    var activeTab = $('.nav-tab-active').attr('href');
+    if (activeTab) {
+        $('.tab-content').removeClass('active').hide();
+        $(activeTab).addClass('active').show();
+    }
 
     console.log('PDF Builder Settings: Initialization complete');
 
