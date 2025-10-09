@@ -574,33 +574,133 @@ export const PropertiesPanel = ({
 
                 <div className="property-row">
                   <label>Variables dynamiques:</label>
-                  <div className="variables-list">
-                    <button className="variable-btn" onClick={() => {
-                      const currentText = localProperties.text || '';
-                      handlePropertyChange(selectedElement.id, 'text', currentText + '{{date}}');
+                  <div className="variables-grid">
+                    <div className="variable-category">
+                      <h5>🛒 Commande</h5>
+                      <div className="variable-buttons">
+                        <button className="variable-btn" onClick={() => {
+                          const currentText = localProperties.text || '';
+                          handlePropertyChange(selectedElement.id, 'text', currentText + '{{order_number}}');
+                        }}>
+                          🏷️ N° Commande
+                        </button>
+                        <button className="variable-btn" onClick={() => {
+                          const currentText = localProperties.text || '';
+                          handlePropertyChange(selectedElement.id, 'text', currentText + '{{order_date}}');
+                        }}>
+                          📅 Date commande
+                        </button>
+                        <button className="variable-btn" onClick={() => {
+                          const currentText = localProperties.text || '';
+                          handlePropertyChange(selectedElement.id, 'text', currentText + '{{order_status}}');
+                        }}>
+                          📊 Statut
+                        </button>
+                        <button className="variable-btn" onClick={() => {
+                          const currentText = localProperties.text || '';
+                          handlePropertyChange(selectedElement.id, 'text', currentText + '{{payment_method}}');
+                        }}>
+                          💳 Paiement
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="variable-category">
+                      <h5>👤 Client</h5>
+                      <div className="variable-buttons">
+                        <button className="variable-btn" onClick={() => {
+                          const currentText = localProperties.text || '';
+                          handlePropertyChange(selectedElement.id, 'text', currentText + '{{customer_name}}');
+                        }}>
+                          👤 Nom complet
+                        </button>
+                        <button className="variable-btn" onClick={() => {
+                          const currentText = localProperties.text || '';
+                          handlePropertyChange(selectedElement.id, 'text', currentText + '{{customer_email}}');
+                        }}>
+                          📧 Email
+                        </button>
+                        <button className="variable-btn" onClick={() => {
+                          const currentText = localProperties.text || '';
+                          handlePropertyChange(selectedElement.id, 'text', currentText + '{{customer_phone}}');
+                        }}>
+                          📞 Téléphone
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="variable-category">
+                      <h5>💰 Finances</h5>
+                      <div className="variable-buttons">
+                        <button className="variable-btn" onClick={() => {
+                          const currentText = localProperties.text || '';
+                          handlePropertyChange(selectedElement.id, 'text', currentText + '{{subtotal}}');
+                        }}>
+                          � Sous-total
+                        </button>
+                        <button className="variable-btn" onClick={() => {
+                          const currentText = localProperties.text || '';
+                          handlePropertyChange(selectedElement.id, 'text', currentText + '{{tax_total}}');
+                        }}>
+                          🧾 TVA Total
+                        </button>
+                        <button className="variable-btn" onClick={() => {
+                          const currentText = localProperties.text || '';
+                          handlePropertyChange(selectedElement.id, 'text', currentText + '{{total}}');
+                        }}>
+                          💰 TOTAL TTC
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="variable-category">
+                      <h5>📄 Documents</h5>
+                      <div className="variable-buttons">
+                        <button className="variable-btn" onClick={() => {
+                          const currentText = localProperties.text || '';
+                          handlePropertyChange(selectedElement.id, 'text', currentText + '{{invoice_number}}');
+                        }}>
+                          📋 N° Facture
+                        </button>
+                        <button className="variable-btn" onClick={() => {
+                          const currentText = localProperties.text || '';
+                          handlePropertyChange(selectedElement.id, 'text', currentText + '{{quote_number}}');
+                        }}>
+                          📝 N° Devis
+                        </button>
+                        <button className="variable-btn" onClick={() => {
+                          const currentText = localProperties.text || '';
+                          handlePropertyChange(selectedElement.id, 'text', currentText + '{{due_date}}');
+                        }}>
+                          ⏰ Échéance
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Templates prédéfinis */}
+                <div className="property-row">
+                  <label>Templates rapides:</label>
+                  <div className="template-buttons">
+                    <button className="template-btn" onClick={() => {
+                      handlePropertyChange(selectedElement.id, 'text', 'FACTURE N° {{invoice_number}}\n\nDate: {{order_date}}\nClient: {{customer_name}}\n\nTotal TTC: {{total}} €');
                     }}>
-                      📅 Date
+                      📄 Facture
                     </button>
-                    <button className="variable-btn" onClick={() => {
-                      const currentText = localProperties.text || '';
-                      handlePropertyChange(selectedElement.id, 'text', currentText + '{{order_number}}');
+                    <button className="template-btn" onClick={() => {
+                      handlePropertyChange(selectedElement.id, 'text', 'DEVIS N° {{quote_number}}\n\nDate: {{order_date}}\nValable jusqu\'au: {{due_date}}\nClient: {{customer_name}}\n\nTotal estimé: {{total}} €');
                     }}>
-                      🏷️ N° commande
+                      📝 Devis
                     </button>
-                    <button className="variable-btn" onClick={() => {
-                      const currentText = localProperties.text || '';
-                      handlePropertyChange(selectedElement.id, 'text', currentText + '{{customer_name}}');
+                    <button className="template-btn" onClick={() => {
+                      handlePropertyChange(selectedElement.id, 'text', 'Adresse de facturation:\n{{billing_address}}\n\nAdresse de livraison:\n{{shipping_address}}');
                     }}>
-                      👤 Client
-                    </button>
-                    <button className="variable-btn" onClick={() => {
-                      const currentText = localProperties.text || '';
-                      handlePropertyChange(selectedElement.id, 'text', currentText + '{{total}}');
-                    }}>
-                      💰 Total
+                      🏠 Adresses
                     </button>
                   </div>
                 </div>
+
               </div>
             )}
 

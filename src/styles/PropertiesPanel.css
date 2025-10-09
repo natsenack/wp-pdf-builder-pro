@@ -569,3 +569,86 @@
 .layer-btn:active {
   background: #cbd5e1;
 }
+
+/* Styles pour les variables organisées en grille */
+.variables-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.variable-category {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 8px;
+}
+
+.variable-category h5 {
+  margin: 0 0 8px 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.variable-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.variable-btn {
+  width: 100%;
+  padding: 6px 8px;
+  font-size: 10px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #475569;
+  text-align: left;
+}
+
+.variable-btn:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+.variable-btn:active {
+  background: #e2e8f0;
+}
+
+/* Styles pour les boutons de templates */
+.template-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.template-btn {
+  flex: 1;
+  min-width: 80px;
+  padding: 8px 6px;
+  font-size: 10px;
+  background: #3b82f6;
+  border: 1px solid #2563eb;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #ffffff;
+  text-align: center;
+}
+
+.template-btn:hover {
+  background: #2563eb;
+  border-color: #1d4ed8;
+  color: #ffffff;
+}
+
+.template-btn:active {
+  background: #1d4ed8;
+}
