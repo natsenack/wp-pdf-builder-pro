@@ -118,13 +118,8 @@ export const WooCommerceElement = ({
     gridSize: 10
   });
 
-  const handleClick = (e) => {
+  const handleMouseDown = (e) => {
     e.stopPropagation();
-
-    if (!isSelected) {
-      onSelect(element.id);
-      return;
-    }
 
     // Vérifier si on clique sur une poignée de redimensionnement
     const rect = elementRef.current.getBoundingClientRect();
@@ -175,6 +170,13 @@ export const WooCommerceElement = ({
     }
   };
 
+  const handleClick = (e) => {
+    e.stopPropagation();
+    if (!isSelected) {
+      onSelect(element.id);
+    }
+  };
+
   const baseStyle = {
     position: 'absolute',
     left: element.x * zoom,
@@ -200,7 +202,7 @@ export const WooCommerceElement = ({
         ref={elementRef}
         style={baseStyle}
         onClick={handleClick}
-        onMouseDown={handleClick}
+        onMouseDown={handleMouseDown}
       >
         <div style={{
           fontWeight: 'bold',

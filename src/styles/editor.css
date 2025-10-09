@@ -155,8 +155,9 @@
   background: var(--background-color);
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   padding: 40px;
+  min-height: fit-content;
 }
 
 .canvas-zoom-wrapper {
