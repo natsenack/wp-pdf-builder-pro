@@ -1581,6 +1581,7 @@ class PDF_Builder_Admin {
             var $downloadBtn = $('#pdf-builder-download-btn');
             var $status = $('#pdf-builder-status');
             var $templateSelect = $('#pdf_template_select');
+            var nonce = $('#pdf_builder_order_nonce').val();
 
             // Aperçu PDF
             $previewBtn.on('click', function() {
@@ -1597,7 +1598,7 @@ class PDF_Builder_Admin {
                         action: 'pdf_builder_preview_order_pdf',
                         order_id: orderId,
                         template_id: templateId,
-                        nonce: '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>'
+                        nonce: nonce
                     },
                     success: function(response) {
                         if (response.success) {
@@ -1638,7 +1639,7 @@ class PDF_Builder_Admin {
                         action: 'pdf_builder_generate_order_pdf',
                         order_id: orderId,
                         template_id: templateId,
-                        nonce: '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>'
+                        nonce: nonce
                     },
                     success: function(response) {
                         if (response.success) {
@@ -1963,47 +1964,49 @@ class PDF_Builder_Admin {
 
                 $content = $element['content'] ?? '';
 
-                // Remplacer les variables de la commande
-                $content = $this->replace_order_variables($content, $order);
+                // Remplacer les variables dynamiques de la commande
+                $content = $this->replace_dynamic_variables($content, $order->get_id());
 
                 switch ($element['type']) {
                     case 'text':
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content));
+                    case 'title':
+                    case 'subtitle':
+                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, nl2br(esc_html($content)));
                         break;
 
                     case 'invoice_number':
-                        $invoice_number = $order->get_id() . '-' . time();
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($invoice_number));
+                        if (empty($content)) $content = '{{order_number}}';
+                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content));
                         break;
 
                     case 'invoice_date':
-                        $date = $order->get_date_created() ? $order->get_date_created()->date('d/m/Y') : date('d/m/Y');
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($date));
+                        if (empty($content)) $content = '{{order_date}}';
+                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content));
                         break;
 
                     case 'customer_name':
-                        $customer_name = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($customer_name));
+                        if (empty($content)) $content = '{{customer_name}}';
+                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content));
                         break;
 
                     case 'customer_address':
-                        $address = $order->get_formatted_billing_address();
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, nl2br(esc_html($address)));
+                        if (empty($content)) $content = '{{billing_address}}';
+                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, nl2br(esc_html($content)));
                         break;
 
                     case 'subtotal':
-                        $subtotal = $order->get_subtotal();
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, wc_price($subtotal));
+                        if (empty($content)) $content = '{{order_subtotal}}';
+                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content));
                         break;
 
                     case 'tax':
-                        $tax = $order->get_total_tax();
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, wc_price($tax));
+                        if (empty($content)) $content = '{{order_tax}}';
+                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content));
                         break;
 
                     case 'total':
-                        $total = $order->get_total();
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, wc_price($total));
+                        if (empty($content)) $content = '{{order_total}}';
+                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content));
                         break;
 
                     case 'rectangle':
