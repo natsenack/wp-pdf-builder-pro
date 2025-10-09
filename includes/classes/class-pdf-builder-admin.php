@@ -793,7 +793,7 @@ class PDF_Builder_Admin {
                 'pdf-builder-admin',
                 PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js',
                 ['jquery'],
-                filemtime($asset_file),
+                filemtime($asset_file) . '-v2', // Force cache busting
                 true
             );
             $debug_script .= "console.log('PDF Builder Admin: pdf-builder-admin.js enqueued from: " . $asset_file . "');";
