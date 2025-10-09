@@ -159,7 +159,7 @@
   justify-content: center;
   box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
   transition: all 0.2s ease;
-  z-index: 1000;
+  z-index: 9999;
 }
 
 .sidebar-toggle:hover {
