@@ -63,7 +63,7 @@ export const PreviewModal = ({ isOpen, onClose, templateData, canvasWidth, canva
       const jsonString = JSON.stringify(formattedData);
       console.log('PDF Builder Preview: JSON string:', jsonString);
 
-      // Préparer les données pour l'AJAX avec FormData
+      // Préparer les données pour l'AJAX avec FormData (méthode WordPress standard)
       const formData = new FormData();
       formData.append('action', 'pdf_builder_preview');
       formData.append('nonce', pdfBuilderAjax.nonce);
@@ -71,17 +71,10 @@ export const PreviewModal = ({ isOpen, onClose, templateData, canvasWidth, canva
 
       console.log('PDF Builder Preview: Envoi de la requête AJAX...');
 
-      // Faire l'appel AJAX avec JSON
+      // Faire l'appel AJAX avec FormData (compatible WordPress)
       const response = await fetch(ajaxUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          action: 'pdf_builder_preview',
-          nonce: pdfBuilderAjax.nonce,
-          template_data: jsonString
-        })
+        body: formData
       });
 
       console.log('PDF Builder Preview: Réponse reçue:', response.status, response.statusText);

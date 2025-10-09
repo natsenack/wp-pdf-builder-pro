@@ -927,35 +927,16 @@ class PDF_Builder_Admin {
         error_log('PDF Builder Preview: Requête reçue');
         error_log('PDF Builder Preview: $_POST = ' . print_r($_POST, true));
 
-        // Vérifier si les données sont envoyées en JSON
-        $json_data = null;
-        if (empty($_POST)) {
-            $raw_input = file_get_contents('php://input');
-            error_log('PDF Builder Preview: Raw input = ' . $raw_input);
-            $json_data = json_decode($raw_input, true);
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                error_log('PDF Builder Preview: JSON decode error: ' . json_last_error_msg());
-                wp_send_json_error('Données JSON invalides: ' . json_last_error_msg());
-                return;
-            }
-            error_log('PDF Builder Preview: JSON data = ' . print_r($json_data, true));
-
-            // Pour le routage WordPress AJAX, s'assurer que l'action est dans $_POST
-            if (isset($json_data['action'])) {
-                $_POST['action'] = $json_data['action'];
-                error_log('PDF Builder Preview: Action ajoutée à $_POST: ' . $json_data['action']);
-            }
-        }
-
-        // Extraire nonce et template_data
-        $nonce = $json_data ? ($json_data['nonce'] ?? '') : ($_POST['nonce'] ?? '');
-        $template_data = $json_data ? ($json_data['template_data'] ?? '') : ($_POST['template_data'] ?? '');
+        // Récupérer les données du POST (FormData)
+        $nonce = isset($_POST['nonce']) ? $_POST['nonce'] : '';
+        $template_data = isset($_POST['template_data']) ? $_POST['template_data'] : '';
 
         error_log('PDF Builder Preview: nonce = ' . $nonce);
         error_log('PDF Builder Preview: template_data = ' . $template_data);
 
         // Vérification de sécurité
         if (!wp_verify_nonce($nonce, 'pdf_builder_nonce')) {
+            error_log('PDF Builder Preview: Nonce invalide');
             wp_send_json_error('Sécurité: Nonce invalide');
         }
 
