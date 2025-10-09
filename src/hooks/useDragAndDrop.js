@@ -114,7 +114,7 @@ export const useDragAndDrop = ({
     e.dataTransfer.dropEffect = 'move';
   }, []);
 
-  const handleDrop = useCallback((e, canvasRect) => {
+  const handleDrop = useCallback((e, canvasRect, elementRect) => {
     e.preventDefault();
 
     const elementId = e.dataTransfer.getData('text/plain');
@@ -126,8 +126,8 @@ export const useDragAndDrop = ({
     const effectiveCanvasWidth = canvasRect ? canvasRect.width / zoom : canvasWidth;
     const effectiveCanvasHeight = canvasRect ? canvasRect.height / zoom : canvasHeight;
 
-    const snappedX = Math.max(0, Math.min(effectiveCanvasWidth - 50, snapToGridValue(dropX))); // Assuming element width 50
-    const snappedY = Math.max(0, Math.min(effectiveCanvasHeight - 25, snapToGridValue(dropY))); // Assuming element height 25
+    const snappedX = Math.max(0, Math.min(effectiveCanvasWidth - elementRect.width, snapToGridValue(dropX)));
+    const snappedY = Math.max(0, Math.min(effectiveCanvasHeight - elementRect.height, snapToGridValue(dropY)));
 
     if (onElementDrop) {
       onElementDrop(elementId, { x: snappedX, y: snappedY });
