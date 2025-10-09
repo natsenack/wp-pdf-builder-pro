@@ -5,8 +5,10 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
     'Texte': true,
     'WooCommerce - Factures': false,
     'WooCommerce - Produits': false,
-    'WooCommerce - Devis': false
+    'WooCommerce - Devis': false,
+    'Test': false
   });
+  const [showHeaderTemplatesModal, setShowHeaderTemplatesModal] = useState(false);
 
   const toggleCategory = (categoryName) => {
     setExpandedCategories(prev => ({
@@ -75,11 +77,21 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
         { type: 'dynamic-text', label: 'Texte Dynamique', icon: '🔄', description: 'Texte avec variables' },
         { type: 'table', label: 'Tableau', icon: '📋', description: 'Tableau de données' }
       ]
+    },
+    {
+      name: 'Test',
+      elements: [
+        { type: 'header-templates', label: 'Modèles d\'En-tête', icon: '🎨', description: 'Choisir un modèle d\'en-tête prédéfini' }
+      ]
     }
   ];
 
   const handleElementClick = (elementType, defaultProps = {}) => {
-    onToolSelect(`add-${elementType}`);
+    if (elementType === 'header-templates') {
+      setShowHeaderTemplatesModal(true);
+    } else {
+      onToolSelect(`add-${elementType}`);
+    }
   };
 
   const handleDragStart = (e, element) => {
@@ -91,8 +103,94 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
     e.dataTransfer.effectAllowed = 'copy';
   };
 
+  const handleHeaderTemplateSelect = (template) => {
+    // Ici on peut ajouter la logique pour appliquer le modèle sélectionné
+    console.log('Modèle d\'en-tête sélectionné:', template);
+    setShowHeaderTemplatesModal(false);
+    // Pour l'instant, on ajoute juste un élément de texte avec le nom du modèle
+    onAddElement({
+      type: 'text',
+      x: 50,
+      y: 50,
+      width: 200,
+      height: 40,
+      text: `En-tête: ${template.name}`,
+      fontSize: template.fontSize || 16,
+      fontWeight: template.fontWeight || 'normal'
+    });
+  };
+
+  const headerTemplates = [
+    {
+      id: 'classic',
+      name: 'Classique',
+      preview: '🏢 ENTREPRISE\n123 Rue de la Paix\n75000 Paris',
+      fontSize: 14,
+      fontWeight: 'bold'
+    },
+    {
+      id: 'modern',
+      name: 'Moderne',
+      preview: '✨ ENTREPRISE MODERNE\nInnovation & Qualité\ncontact@entreprise.com',
+      fontSize: 16,
+      fontWeight: 'bold'
+    },
+    {
+      id: 'minimal',
+      name: 'Minimal',
+      preview: 'ENTREPRISE\nAdresse • Téléphone • Email',
+      fontSize: 12,
+      fontWeight: 'normal'
+    },
+    {
+      id: 'elegant',
+      name: 'Élégant',
+      preview: '🎩 Maison Élégante\nParis, France\nwww.entreprise.com',
+      fontSize: 15,
+      fontWeight: 'bold'
+    }
+  ];
+
   return (
-    <div className="element-library">
+    <>
+      {/* Modale des modèles d'en-tête */}
+      {showHeaderTemplatesModal && (
+        <div className="modal-overlay" onClick={() => setShowHeaderTemplatesModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>🎨 Choisir un modèle d'en-tête</h3>
+              <button className="modal-close" onClick={() => setShowHeaderTemplatesModal(false)}>×</button>
+            </div>
+            <div className="modal-body">
+              <div className="templates-grid">
+                {headerTemplates.map(template => (
+                  <div
+                    key={template.id}
+                    className="template-item"
+                    onClick={() => handleHeaderTemplateSelect(template)}
+                  >
+                    <div className="template-preview">
+                      {template.preview.split('\n').map((line, index) => (
+                        <div key={index} style={{
+                          fontSize: template.fontSize,
+                          fontWeight: template.fontWeight,
+                          marginBottom: '4px',
+                          whiteSpace: 'pre-wrap'
+                        }}>
+                          {line}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="template-name">{template.name}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="element-library">
       <div className="library-header">
         <h3>📚 Bibliothèque</h3>
       </div>
@@ -131,5 +229,6 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
         ))}
       </div>
     </div>
+    </>
   );
 };
