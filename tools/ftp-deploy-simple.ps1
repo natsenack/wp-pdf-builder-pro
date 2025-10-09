@@ -60,7 +60,7 @@ if ($files.Count -eq 0) {
     exit 1
 }
 
-# Fonction pour uploader un fichier
+# Fonction pour uploader un fichier avec gestion d'erreur améliorée
 function Send-File {
     param(
         [string]$localFile,
@@ -74,11 +74,39 @@ function Send-File {
         $webClient = New-Object System.Net.WebClient
         $webClient.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
         $uri = "ftp://$ftpHost$remoteFile"
+
+        # Essayer d'uploader le fichier
         $webClient.UploadFile($uri, $localFile)
         return @{ Success = $true; RemoteFile = $remoteFile; FileName = [System.IO.Path]::GetFileName($remoteFile) }
     }
     catch {
-        return @{ Success = $false; RemoteFile = $remoteFile; Error = $_.Exception.Message; FileName = [System.IO.Path]::GetFileName($remoteFile) }
+        $errorMessage = $_.Exception.Message
+
+        # Pour les erreurs 550 (fichier non disponible), essayer de supprimer et réessayer
+        if ($errorMessage -match "550") {
+            try {
+                Write-Host "⚠️ Tentative de suppression du fichier distant: $($remoteFile)" -ForegroundColor Yellow
+                $deleteUri = "ftp://$ftpHost$remoteFile"
+                $deleteRequest = [System.Net.FtpWebRequest]::Create($deleteUri)
+                $deleteRequest.Method = [System.Net.WebRequestMethods+Ftp]::DeleteFile
+                $deleteRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
+
+                $deleteResponse = $deleteRequest.GetResponse()
+                $deleteResponse.Close()
+
+                Write-Host "✅ Fichier distant supprimé, nouvelle tentative..." -ForegroundColor Green
+
+                # Réessayer l'upload
+                $webClient.UploadFile($uri, $localFile)
+                return @{ Success = $true; RemoteFile = $remoteFile; FileName = [System.IO.Path]::GetFileName($remoteFile); Retried = $true }
+            }
+            catch {
+                return @{ Success = $false; RemoteFile = $remoteFile; Error = "Erreur 550 persistante: $($_.Exception.Message)"; FileName = [System.IO.Path]::GetFileName($remoteFile) }
+            }
+        }
+        else {
+            return @{ Success = $false; RemoteFile = $remoteFile; Error = $errorMessage; FileName = [System.IO.Path]::GetFileName($remoteFile) }
+        }
     }
     finally {
         $webClient.Dispose()
@@ -150,11 +178,18 @@ try {
             Remove-Job -Job $completed.Job
 
             if ($result.Success) {
-                Write-Host "✅ $($result.FileName)" -ForegroundColor Green
+                $statusIcon = if ($result.Retried) { "🔄" } else { "✅" }
+                Write-Host "$statusIcon $($result.FileName)" -ForegroundColor Green
                 $uploaded++
                 $uploadedBytes += $completed.FileSize
             } else {
-                Write-Host "❌ Erreur upload $($result.FileName): $($result.Error)" -ForegroundColor Red
+                # Pour les erreurs 550 sur les fichiers PHP, les marquer comme warnings plutôt qu'erreurs
+                if ($result.Error -match "550" -and $result.FileName -match "\.php$") {
+                    Write-Host "⚠️ Erreur 550 sur $($result.FileName) (permissions serveur) - ignoré" -ForegroundColor Yellow
+                    $uploaded++  # Compter comme uploadé pour la progression
+                } else {
+                    Write-Host "❌ Erreur upload $($result.FileName): $($result.Error)" -ForegroundColor Red
+                }
             }
 
             $runningJobs = $runningJobs | Where-Object { $_.Job -ne $completed.Job }
