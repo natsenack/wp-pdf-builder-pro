@@ -189,6 +189,114 @@ export const useCanvasState = ({
             defaults.borderWidth = 2;
             defaults.borderStyle = 'dashed';
             break;
+
+          // Éléments spécialisés pour factures et devis
+          case 'invoice-header':
+            defaults.width = 500;
+            defaults.height = 100;
+            defaults.backgroundColor = '#ffffff';
+            defaults.borderColor = '#e2e8f0';
+            defaults.borderWidth = 1;
+            defaults.content = 'ENTREPRISE\n123 Rue de l\'Entreprise\n75000 Paris\nTéléphone: 01 23 45 67 89\nEmail: contact@entreprise.com';
+            defaults.fontSize = 12;
+            defaults.fontWeight = 'normal';
+            break;
+
+          case 'invoice-address-block':
+            defaults.width = 240;
+            defaults.height = 120;
+            defaults.backgroundColor = '#f8fafc';
+            defaults.borderColor = '#e2e8f0';
+            defaults.borderWidth = 1;
+            defaults.borderRadius = 4;
+            break;
+
+          case 'invoice-info-block':
+            defaults.width = 300;
+            defaults.height = 80;
+            defaults.backgroundColor = '#ffffff';
+            defaults.borderColor = '#e2e8f0';
+            defaults.borderWidth = 1;
+            defaults.borderRadius = 4;
+            break;
+
+          case 'invoice-products-table':
+            defaults.width = 500;
+            defaults.height = 200;
+            defaults.backgroundColor = '#ffffff';
+            defaults.borderColor = '#e2e8f0';
+            defaults.borderWidth = 1;
+            break;
+
+          case 'invoice-totals-block':
+            defaults.width = 200;
+            defaults.height = 150;
+            defaults.backgroundColor = '#f8fafc';
+            defaults.borderColor = '#e2e8f0';
+            defaults.borderWidth = 1;
+            defaults.borderRadius = 4;
+            break;
+
+          case 'invoice-payment-terms':
+            defaults.width = 250;
+            defaults.height = 100;
+            defaults.backgroundColor = '#ffffff';
+            defaults.borderColor = '#e2e8f0';
+            defaults.borderWidth = 1;
+            defaults.borderRadius = 4;
+            defaults.content = 'Conditions de paiement:\n- Paiement à 30 jours\n- Pénalités de retard: 1.5% par mois\n- Escompte: 2% à 10 jours';
+            defaults.fontSize = 10;
+            break;
+
+          case 'invoice-legal-footer':
+            defaults.width = 500;
+            defaults.height = 60;
+            defaults.backgroundColor = '#f8fafc';
+            defaults.borderColor = '#e2e8f0';
+            defaults.borderWidth = 1;
+            defaults.content = 'SARL au capital de 10 000€ - RCS Paris 123 456 789 - TVA FR 12 345 678 901 - IBAN: FR76 1234 5678 9012 3456 7890 123';
+            defaults.fontSize = 8;
+            break;
+
+          case 'invoice-signature-block':
+            defaults.width = 200;
+            defaults.height = 80;
+            defaults.backgroundColor = '#ffffff';
+            defaults.borderColor = '#e2e8f0';
+            defaults.borderWidth = 1;
+            defaults.borderRadius = 4;
+            defaults.content = 'Signature:\n\nDate: ____________________\n\nCachet de l\'entreprise';
+            break;
+
+          case 'layout-section-divider':
+            defaults.width = 500;
+            defaults.height = 2;
+            defaults.backgroundColor = '#e2e8f0';
+            break;
+
+          case 'layout-spacer':
+            defaults.width = 500;
+            defaults.height = 20;
+            defaults.backgroundColor = 'transparent';
+            break;
+
+          case 'layout-two-column':
+            defaults.width = 500;
+            defaults.height = 150;
+            defaults.backgroundColor = 'transparent';
+            defaults.borderColor = '#cbd5e1';
+            defaults.borderWidth = 1;
+            defaults.borderStyle = 'dashed';
+            break;
+
+          case 'layout-three-column':
+            defaults.width = 500;
+            defaults.height = 150;
+            defaults.backgroundColor = 'transparent';
+            defaults.borderColor = '#cbd5e1';
+            defaults.borderWidth = 1;
+            defaults.borderStyle = 'dashed';
+            break;
           // Formes et Graphiques
           case 'shape-rectangle':
             defaults.width = 100;

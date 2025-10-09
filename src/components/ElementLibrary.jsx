@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 
 export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
   const [expandedCategories, setExpandedCategories] = useState({
-    'Mises en Page': true,
+    'Mises en Page - Factures & Devis': true,
+    'Mises en Page - Génériques': false,
     'Médias': false,
     'Données Dynamiques': false,
     'Éléments Avancés': false,
@@ -22,9 +23,29 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
 
   const elementCategories = [
     {
-      name: 'Mises en Page',
+      name: 'Mises en Page - Factures & Devis',
       elements: [
-        { type: 'layout-header', label: 'En-tête', icon: '📄', description: 'Section d\'en-tête pour le document' },
+        // Éléments spécialisés pour factures/devis
+        { type: 'invoice-header', label: 'En-tête Facture/Devis', icon: '📄', description: 'En-tête professionnel avec logo et infos entreprise' },
+        { type: 'invoice-address-block', label: 'Bloc Adresses', icon: '🏢', description: 'Bloc avec adresse entreprise et client' },
+        { type: 'invoice-info-block', label: 'Informations Facture', icon: '📋', description: 'Numéro, date, échéance, conditions' },
+        { type: 'invoice-products-table', label: 'Tableau Produits', icon: '📊', description: 'Tableau détaillé des produits/services' },
+        { type: 'invoice-totals-block', label: 'Bloc Totaux', icon: '💰', description: 'Sous-total, TVA, frais de port, total' },
+        { type: 'invoice-payment-terms', label: 'Conditions de Paiement', icon: '�', description: 'Modalités et délais de paiement' },
+        { type: 'invoice-legal-footer', label: 'Pied Légal', icon: '⚖️', description: 'Mentions légales et conditions générales' },
+        { type: 'invoice-signature-block', label: 'Bloc Signature', icon: '✍️', description: 'Espace pour signature et tampon' },
+
+        // Éléments de mise en page génériques améliorés
+        { type: 'layout-section-divider', label: 'Séparateur de Section', icon: '➖', description: 'Ligne de séparation stylisée' },
+        { type: 'layout-spacer', label: 'Espaceur', icon: '⬜', description: 'Espace vide ajustable' },
+        { type: 'layout-two-column', label: 'Disposition 2 Colonnes', icon: '⬌', description: 'Mise en page à deux colonnes' },
+        { type: 'layout-three-column', label: 'Disposition 3 Colonnes', icon: '⬌', description: 'Mise en page à trois colonnes' }
+      ]
+    },
+    {
+      name: 'Mises en Page - Génériques',
+      elements: [
+        { type: 'layout-header', label: 'En-tête Simple', icon: '📄', description: 'Section d\'en-tête basique' },
         { type: 'layout-footer', label: 'Pied de Page', icon: '📄', description: 'Section de pied de page' },
         { type: 'layout-sidebar', label: 'Barre Latérale', icon: '📄', description: 'Barre latérale' },
         { type: 'layout-section', label: 'Section', icon: '📄', description: 'Section de contenu' },
