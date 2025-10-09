@@ -29,6 +29,9 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
 
     // Mettre à jour l'état local immédiatement pour l'UI
     setLocalProperties(prev => {
+      console.log('🔧 Updating localProperties for:', property, '=', validatedValue);
+      console.log('🔧 Previous state:', prev);
+      
       if (property.includes('.')) {
         // Gérer les propriétés imbriquées (ex: "columns.image")
         const parts = property.split('.');
@@ -43,9 +46,13 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
         
         // Définir la valeur finale
         current[parts[parts.length - 1]] = validatedValue;
+        
+        console.log('🔧 New state:', newProperties);
         return newProperties;
       } else {
-        return { ...prev, [property]: validatedValue };
+        const newProps = { ...prev, [property]: validatedValue };
+        console.log('🔧 New state (simple):', newProps);
+        return newProps;
       }
     });
 

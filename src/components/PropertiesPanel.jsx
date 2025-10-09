@@ -666,6 +666,7 @@ export const PropertiesPanel = ({
                           type="checkbox"
                           checked={localProperties.columns?.[key] ?? true}
                           onChange={(e) => {
+                            console.log(`🔍 Checkbox ${key} changed:`, e.target.checked, 'Current columns:', localProperties.columns);
                             handlePropertyChange(selectedElement.id, `columns.${key}`, e.target.checked);
                           }}
                         />
