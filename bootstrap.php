@@ -84,6 +84,11 @@ function pdf_builder_load_bootstrap() {
         $core = PDF_Builder_Core::getInstance();
         $core->init();
 
+        // Enregistrer l'action AJAX dès que possible
+        add_action('wp_ajax_pdf_builder_preview_test', 'pdf_builder_handle_preview_ajax');
+        add_action('wp_ajax_nopriv_pdf_builder_preview_test', 'pdf_builder_handle_preview_ajax');
+        error_log('PDF Builder Bootstrap: AJAX action registered in bootstrap');
+
         // Initialiser l'interface d'administration
         if (is_admin() && class_exists('PDF_Builder_Admin')) {
             PDF_Builder_Admin::getInstance($core);

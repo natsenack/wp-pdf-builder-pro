@@ -81,16 +81,8 @@ class PDF_Builder_Admin {
         add_action('admin_menu', [$this, 'add_admin_menu']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts'], 20);
         add_action('wp_ajax_pdf_builder_pro_generate_pdf', [$this, 'ajax_generate_pdf_from_canvas']);
-        add_action('wp_ajax_pdf_builder_preview_test', 'pdf_builder_handle_preview_ajax');
-        add_action('wp_ajax_nopriv_pdf_builder_preview_test', 'pdf_builder_handle_preview_ajax');
-        error_log('PDF Builder Admin: AJAX actions registered - using global function');
-        // Test if the action is registered
-        global $wp_filter;
-        if (isset($wp_filter['wp_ajax_pdf_builder_preview_test'])) {
-            error_log('PDF Builder Admin: wp_ajax_pdf_builder_preview_test action is registered in wp_filter');
-        } else {
-            error_log('PDF Builder Admin: wp_ajax_pdf_builder_preview_test action is NOT registered in wp_filter');
-        }
+        // AJAX actions are now registered in bootstrap.php
+        error_log('PDF Builder Admin: init_hooks called (actions registered in bootstrap)');
         add_action('wp_ajax_pdf_builder_pro_download_pdf', [$this, 'ajax_download_pdf']);
         add_action('wp_ajax_pdf_builder_pro_save_template', [$this, 'ajax_save_template']);
         add_action('wp_ajax_pdf_builder_pro_load_template', [$this, 'ajax_load_template']);
