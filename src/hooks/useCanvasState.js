@@ -228,6 +228,26 @@ export const useCanvasState = ({
             defaults.borderWidth = 1;
             break;
 
+          case 'product_table':
+            defaults.width = 500;
+            defaults.height = 200;
+            defaults.backgroundColor = '#ffffff';
+            defaults.borderColor = '#e2e8f0';
+            defaults.borderWidth = 1;
+            defaults.showHeaders = true;
+            defaults.showBorders = true;
+            defaults.headers = ['Produit', 'Qté', 'Prix'];
+            defaults.dataSource = 'order_items';
+            defaults.columns = {
+              image: true,
+              name: true,
+              sku: false,
+              quantity: true,
+              price: true,
+              total: true
+            };
+            break;
+
           case 'invoice-totals-block':
             defaults.width = 200;
             defaults.height = 150;
