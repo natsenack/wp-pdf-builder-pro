@@ -5,7 +5,7 @@
   --secondary-color: #475569;
   --background-color: #f8fafc;
   --surface-color: #ffffff;
-  --border-color: #cbd5e1;
+  --border-color: #e2e8f0;
   --text-primary: #0f172a;
   --text-secondary: #64748b;
   --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -91,7 +91,7 @@
 }
 
 .btn-primary:hover {
-  background: #1d4ed8;
+  background: #3b82f6;
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
@@ -252,7 +252,7 @@
 }
 
 .tool-button.active {
-  background: linear-gradient(135deg, var(--primary-color) 0%, #60a5fa 100%);
+  background: var(--primary-color);
   color: white;
   border-color: var(--primary-color);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
@@ -343,7 +343,7 @@
 .panel-header {
   padding: 20px 24px;
   border-bottom: 1px solid var(--border-color);
-  background: linear-gradient(135deg, var(--surface-color) 0%, #f8fafc 100%);
+  background: var(--surface-color);
   position: relative;
 }
 
@@ -389,7 +389,7 @@
 }
 
 .panel-content::-webkit-scrollbar-thumb:hover {
-  background: #cbd5e1;
+  background: #e2e8f0;
 }
 
 .properties-group {
@@ -507,7 +507,7 @@
 
 .style-buttons button.active,
 .alignment-buttons button.active {
-  background: linear-gradient(135deg, var(--primary-color) 0%, #60a5fa 100%);
+  background: var(--primary-color);
   color: white;
   border-color: var(--primary-color);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
@@ -524,7 +524,7 @@
 .library-header {
   padding: 20px 24px;
   border-bottom: 1px solid var(--border-color);
-  background: linear-gradient(135deg, var(--surface-color) 0%, #f8fafc 100%);
+  background: var(--surface-color);
   position: relative;
 }
 
@@ -602,7 +602,7 @@
 }
 
 .library-content::-webkit-scrollbar-thumb:hover {
-  background: #cbd5e1;
+  background: #e2e8f0;
 }
 
 .element-category {
@@ -705,7 +705,7 @@
 .library-footer {
   padding: 20px 24px;
   border-top: 1px solid var(--border-color);
-  background: linear-gradient(135deg, var(--surface-color) 0%, #f8fafc 100%);
+  background: var(--surface-color);
 }
 
 .quick-actions {

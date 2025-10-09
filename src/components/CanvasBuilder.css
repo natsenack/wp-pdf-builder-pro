@@ -18,8 +18,8 @@
 
 .canvas-toolbar button {
   padding: 8px 16px;
-  border: 1px solid #007cba;
-  background: #007cba;
+  border: 1px solid #3b82f6;
+  background: #3b82f6;
   color: white;
   border-radius: 4px;
   cursor: pointer;
@@ -28,8 +28,8 @@
 }
 
 .canvas-toolbar button:hover {
-  background: #005a87;
-  border-color: #005a87;
+  background: #60a5fa;
+  border-color: #60a5fa;
 }
 
 .canvas-toolbar button:active {
