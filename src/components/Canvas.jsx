@@ -112,7 +112,7 @@ export const Canvas = ({
     }
 
     // Dessiner la sélection
-    if (selection.isSelected(element.id)) {
+    if (selectedElements.includes(element.id)) {
       ctx.strokeStyle = '#007cba';
       ctx.lineWidth = 2;
       ctx.setLineDash([5, 5]);
@@ -133,7 +133,7 @@ export const Canvas = ({
     }
 
     ctx.restore();
-  }, [selection]);
+  }, [selectedElements]);
 
   // Fonction principale de rendu
   const renderCanvas = useCallback(() => {
@@ -195,15 +195,37 @@ export const Canvas = ({
       }
     }
 
-    if (clickedElement && selectedElements.includes(clickedElement.id)) {
+    if (clickedElement) {
+      // Si l'élément n'est pas déjà sélectionné, le sélectionner
+      if (!selectedElements.includes(clickedElement.id)) {
+        selection.selectElement(clickedElement.id);
+        onElementSelect(clickedElement.id);
+      }
+
       setIsDragging(true);
       setDraggedElement(clickedElement);
       setDragOffset({
         x: x - clickedElement.x,
         y: y - clickedElement.y
       });
+
+      // Ajouter les event listeners globaux
+      const handleGlobalMouseMove = (moveEvent) => {
+        handleMouseMove(moveEvent);
+      };
+
+      const handleGlobalMouseUp = () => {
+        setIsDragging(false);
+        setDraggedElement(null);
+        setDragOffset({ x: 0, y: 0 });
+        document.removeEventListener('mousemove', handleGlobalMouseMove);
+        document.removeEventListener('mouseup', handleGlobalMouseUp);
+      };
+
+      document.addEventListener('mousemove', handleGlobalMouseMove);
+      document.addEventListener('mouseup', handleGlobalMouseUp);
     }
-  }, [tool, zoom, elements, selectedElements]);
+  }, [tool, zoom, elements, selectedElements, selection, onElementSelect]);
 
   // Gestionnaire de mouse move pour le drag
   const handleMouseMove = useCallback((e) => {
@@ -339,8 +361,6 @@ export const Canvas = ({
         onClick={handleCanvasClick}
         onContextMenu={handleContextMenuEvent}
         onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseLeave}
       />
     </div>
