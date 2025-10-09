@@ -163,7 +163,25 @@
   z-index: 100000;
 }
 
-.sidebar-toggle:hover {
+.sidebar-toggle-fixed {
+  width: 24px;
+  height: 48px;
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px 0 0 4px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  z-index: 999999;
+}
+
+.sidebar-toggle:hover,
+.sidebar-toggle-fixed:hover {
   background: var(--background-color);
   color: var(--text-primary);
   box-shadow: -3px 0 6px rgba(0, 0, 0, 0.15);
