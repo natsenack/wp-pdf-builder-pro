@@ -29,11 +29,14 @@ Write-Host "📁 Dest: $remotePath" -ForegroundColor Cyan
 $projectRoot = Split-Path (Get-Location) -Parent
 $files = Get-ChildItem -Path $projectRoot -Recurse -File | Where-Object {
     $relPath = $_.FullName.Substring($projectRoot.Length + 1).Replace('\', '/')
-    -not ($relPath -match '^(archive|\.git|\.vscode|node_modules|src|tools|docs|build-tools|dev-tools|vendor|dist)/')
+    -not ($relPath -match '^(archive|\.git|\.vscode|node_modules|src|tools|docs|build-tools|dev-tools|vendor|dist|package\.json|package-lock\.json|webpack\.config\.js|tsconfig\.json)/')
 } | Where-Object {
     $relPath = $_.FullName.Substring($projectRoot.Length + 1).Replace('\', '/')
     ($relPath -match '^(assets|includes|languages|lib)/') -or
-    ($relPath -match '\.(php|css|js|html|txt|md|htaccess)$')
+    ($relPath -match '\.(php|css|js|html|htaccess)$') -or
+    ($relPath -eq 'readme.txt') -or
+    ($relPath -eq 'pdf-builder-pro.php') -or
+    ($relPath -eq 'bootstrap.php')
 }
 
 Write-Host "📊 Fichiers à envoyer: $($files.Count)" -ForegroundColor Yellow
