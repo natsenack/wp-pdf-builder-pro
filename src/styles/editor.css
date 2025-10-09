@@ -144,7 +144,7 @@
 .sidebar-toggle {
   position: absolute;
   top: 50%;
-  left: -16px;
+  left: -32px;
   transform: translateY(-50%);
   width: 24px;
   height: 48px;
@@ -159,7 +159,7 @@
   justify-content: center;
   box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
   transition: all 0.2s ease;
-  z-index: 9999;
+  z-index: 10000;
 }
 
 .sidebar-toggle:hover {
@@ -175,7 +175,7 @@
 }
 
 .editor-sidebar.collapsed .sidebar-toggle {
-  left: -20px;
+  left: -36px;
 }
 
 .editor-main {
