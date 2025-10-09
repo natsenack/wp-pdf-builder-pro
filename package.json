@@ -9,8 +9,12 @@
     "watch": "webpack --mode=development --watch"
   },
   "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/preset-react": "^7.0.0",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
+    "babel-loader": "^9.0.0",
     "css-loader": "^6.0.0",
     "style-loader": "^3.0.0",
     "ts-loader": "^9.0.0",
