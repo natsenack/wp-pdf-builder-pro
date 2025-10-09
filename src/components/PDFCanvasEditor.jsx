@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Canvas } from './Canvas';
+import { CanvasElement } from './CanvasElement';
+import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { Toolbar } from './Toolbar';
 import { PropertiesPanel } from './PropertiesPanel';
 import { ElementLibrary } from './ElementLibrary';
@@ -21,6 +22,16 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
   });
 
   const editorRef = useRef(null);
+
+  // Hook pour le drag and drop
+  const dragAndDrop = useDragAndDrop({
+    onElementMove: (elementId, position) => {
+      canvasState.updateElement(elementId, position);
+    },
+    onElementDrop: (elementId, position) => {
+      canvasState.updateElement(elementId, position);
+    }
+  });
 
   // Gestion des raccourcis clavier
   useKeyboardShortcuts({
@@ -154,32 +165,60 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
 
         {/* Zone de travail principale */}
         <div className="editor-main">
-          {/* Canvas */}
+          {/* Canvas avec éléments interactifs */}
           <div
             className="canvas-container"
             onClick={handleCanvasClick}
             onContextMenu={handleContextMenu}
             onDragOver={handleDragOver}
             onDrop={handleDrop}
-            style={{ position: 'relative' }}
+            style={{
+              position: 'relative',
+              width: canvasState.canvasWidth * canvasState.zoom.zoom,
+              height: canvasState.canvasHeight * canvasState.zoom.zoom,
+              background: 'white',
+              border: '1px solid #e2e8f0',
+              overflow: 'hidden'
+            }}
           >
-            <Canvas
-              elements={canvasState.elements.filter(el => !el.type.startsWith('woocommerce-'))}
-              selectedElements={canvasState.selection.selectedElements}
-              tool={tool}
-              zoom={canvasState.zoom.zoom}
-              showGrid={showGrid}
-              snapToGrid={true}
-              gridSize={10}
-              canvasWidth={canvasState.canvasWidth}
-              canvasHeight={canvasState.canvasHeight}
-              onElementSelect={handleElementSelect}
-              onElementUpdate={canvasState.updateElement}
-              onElementRemove={canvasState.deleteElement}
-              onContextMenu={handleContextMenu}
-              selection={canvasState.selection}
-              zoomHook={canvasState.zoom}
-            />
+            {/* Grille de fond */}
+            {showGrid && (
+              <div
+                className="canvas-grid"
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  backgroundImage: `
+                    linear-gradient(to right, #f1f5f9 1px, transparent 1px),
+                    linear-gradient(to bottom, #f1f5f9 1px, transparent 1px)
+                  `,
+                  backgroundSize: `${10 * canvasState.zoom.zoom}px ${10 * canvasState.zoom.zoom}px`,
+                  pointerEvents: 'none'
+                }}
+              />
+            )}
+
+            {/* Éléments normaux rendus comme composants interactifs */}
+            {canvasState.elements
+              .filter(el => !el.type.startsWith('woocommerce-'))
+              .map(element => (
+                <CanvasElement
+                  key={element.id}
+                  element={element}
+                  isSelected={canvasState.selection.selectedElements.includes(element.id)}
+                  zoom={canvasState.zoom.zoom}
+                  snapToGrid={true}
+                  gridSize={10}
+                  onSelect={() => handleElementSelect(element.id)}
+                  onUpdate={(updates) => canvasState.updateElement(element.id, updates)}
+                  onRemove={() => canvasState.deleteElement(element.id)}
+                  onContextMenu={handleContextMenu}
+                  dragAndDrop={dragAndDrop}
+                />
+              ))}
 
             {/* Éléments WooCommerce superposés */}
             {canvasState.elements
