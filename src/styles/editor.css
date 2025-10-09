@@ -164,11 +164,12 @@
   transition: all 0.2s ease;
   position: relative;
   overflow: hidden;
-  /* Dimensions A4 portrait fixes */
-  width: 595px;
-  height: 842px;
-  min-width: 595px;
-  min-height: 842px;
+  /* Dimensions A4 adaptatives */
+  width: min(595px, 90vw);
+  height: min(842px, 90vh);
+  max-width: 595px;
+  max-height: 842px;
+  aspect-ratio: 595 / 842;
 }
 
 .canvas:hover {
