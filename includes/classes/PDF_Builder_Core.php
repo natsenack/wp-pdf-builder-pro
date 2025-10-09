@@ -416,7 +416,7 @@ class PDF_Builder_Core {
         }
 
         if (class_exists('PDF_Builder_Admin')) {
-            $this->admin = new PDF_Builder_Admin($this);
+            $this->admin = PDF_Builder_Admin::getInstance($this);
             pdf_builder_debug('PDF Builder Admin interface initialized', 1, 'core');
         } else {
             pdf_builder_debug('Failed to load PDF_Builder_Admin class', 1, 'core');
