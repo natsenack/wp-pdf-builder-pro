@@ -1223,6 +1223,26 @@ class PDF_Builder_Admin {
                         $html .= sprintf('<div class="pdf-element" style="%s">Product Table Placeholder</div>', $style);
                         break;
 
+                    case 'layout-header':
+                        $html .= sprintf('<div class="pdf-element layout-header" style="%s"><strong>EN-TÊTE</strong></div>', $style);
+                        break;
+
+                    case 'layout-footer':
+                        $html .= sprintf('<div class="pdf-element layout-footer" style="%s"><em>PIED DE PAGE</em></div>', $style);
+                        break;
+
+                    case 'layout-sidebar':
+                        $html .= sprintf('<div class="pdf-element layout-sidebar" style="%s"><strong>BARRE LATÉRALE</strong></div>', $style);
+                        break;
+
+                    case 'layout-section':
+                        $html .= sprintf('<div class="pdf-element layout-section" style="%s"><strong>SECTION</strong></div>', $style);
+                        break;
+
+                    case 'layout-container':
+                        $html .= sprintf('<div class="pdf-element layout-container" style="%s"><em>CONTENEUR</em></div>', $style);
+                        break;
+
                     default:
                         $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: $element['type']));
                         break;
