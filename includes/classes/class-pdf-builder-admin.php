@@ -3957,13 +3957,7 @@ class PDF_Builder_Admin {
  * Global function to handle AJAX preview requests
  */
 function pdf_builder_handle_preview_ajax() {
-    error_log('PDF Builder Preview: GLOBAL FUNCTION CALLED - START');
-    
-    // Test simple pour voir si la fonction est appelée
-    error_log('PDF Builder Preview: About to send test response');
-    wp_send_json_success(array('test' => 'global_function_called'));
-    error_log('PDF Builder Preview: Test response sent');
-    return;
+    error_log('PDF Builder Preview: Function called');
 
     // Check permissions (basic check)
     if (!is_user_logged_in() || !current_user_can('read')) {

@@ -85,8 +85,8 @@ function pdf_builder_load_bootstrap() {
         $core->init();
 
         // Enregistrer l'action AJAX dès que possible
-        add_action('wp_ajax_pdf_builder_preview_test', 'pdf_builder_handle_preview_ajax');
-        add_action('wp_ajax_nopriv_pdf_builder_preview_test', 'pdf_builder_handle_preview_ajax');
+        add_action('wp_ajax_pdf_builder_preview', 'pdf_builder_handle_preview_ajax');
+        add_action('wp_ajax_nopriv_pdf_builder_preview', 'pdf_builder_handle_preview_ajax');
         error_log('PDF Builder Bootstrap: AJAX action registered in bootstrap');
 
         // Initialiser l'interface d'administration
