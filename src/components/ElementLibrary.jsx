@@ -24,7 +24,12 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
           quantity: true,
           price: true,
           total: true
-        }
+        },
+        showSubtotal: true,
+        showShipping: true,
+        showTaxes: true,
+        showDiscount: false,
+        showTotal: true
       }
     }
   ];

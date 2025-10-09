@@ -585,7 +585,6 @@ export const CanvasElement = ({
             overflow: 'hidden',
             ...getTableStyle(element.tableStyle || 'default')
           }}>
-            {console.log('📊 Rendering product_table:', { element, zoom })}
             {/* En-tête du tableau */}
             {(element.showHeaders !== false) && (
               <div style={{
@@ -790,6 +789,288 @@ export const CanvasElement = ({
                 )}
               </div>
             </div>
+
+            {/* Lignes de totaux */}
+            {(element.showSubtotal || element.showShipping || element.showTaxes || element.showDiscount || element.showTotal) && (
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                {/* Ligne de séparation */}
+                <div style={{
+                  display: 'flex',
+                  borderTop: '2px solid #ddd',
+                  marginTop: `${8 * zoom}px`,
+                  paddingTop: `${8 * zoom}px`
+                }}>
+                  <div style={{
+                    flex: 1,
+                    padding: `${4 * zoom}px ${6 * zoom}px`,
+                    textAlign: 'right',
+                    fontWeight: 'bold',
+                    color: '#666'
+                  }}>
+                    {/* Colonne vide pour l'alignement */}
+                  </div>
+                  {(element.columns?.quantity !== false) && (
+                    <div style={{
+                      flex: '0 0 60px',
+                      padding: `${4 * zoom}px ${6 * zoom}px`,
+                      textAlign: 'center'
+                    }}>
+                      {/* Quantité vide */}
+                    </div>
+                  )}
+                  {(element.columns?.price !== false) && (
+                    <div style={{
+                      flex: '0 0 80px',
+                      padding: `${4 * zoom}px ${6 * zoom}px`,
+                      textAlign: 'right',
+                      fontWeight: 'bold',
+                      color: '#666'
+                    }}>
+                      {/* Prix vide */}
+                    </div>
+                  )}
+                  {(element.columns?.total !== false) && (
+                    <div style={{
+                      flex: '0 0 80px',
+                      padding: `${4 * zoom}px ${6 * zoom}px`,
+                      textAlign: 'right',
+                      fontWeight: 'bold',
+                      color: '#666'
+                    }}>
+                      Total
+                    </div>
+                  )}
+                </div>
+
+                {/* Sous-total */}
+                {element.showSubtotal && (
+                  <div style={{
+                    display: 'flex',
+                    borderBottom: '1px solid #eee',
+                    backgroundColor: '#f9f9f9'
+                  }}>
+                    <div style={{
+                      flex: 1,
+                      padding: `${4 * zoom}px ${6 * zoom}px`,
+                      textAlign: 'right',
+                      fontWeight: 'bold'
+                    }}>
+                      Sous-total
+                    </div>
+                    {(element.columns?.quantity !== false) && (
+                      <div style={{
+                        flex: '0 0 60px',
+                        padding: `${4 * zoom}px ${6 * zoom}px`,
+                        textAlign: 'center'
+                      }}>
+                        {/* Quantité vide */}
+                      </div>
+                    )}
+                    {(element.columns?.price !== false) && (
+                      <div style={{
+                        flex: '0 0 80px',
+                        padding: `${4 * zoom}px ${6 * zoom}px`,
+                        textAlign: 'right'
+                      }}>
+                        {/* Prix vide */}
+                      </div>
+                    )}
+                    {(element.columns?.total !== false) && (
+                      <div style={{
+                        flex: '0 0 80px',
+                        padding: `${4 * zoom}px ${6 * zoom}px`,
+                        textAlign: 'right',
+                        fontWeight: 'bold'
+                      }}>
+                        €47.25
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Frais de port */}
+                {element.showShipping && (
+                  <div style={{
+                    display: 'flex',
+                    borderBottom: '1px solid #eee'
+                  }}>
+                    <div style={{
+                      flex: 1,
+                      padding: `${4 * zoom}px ${6 * zoom}px`,
+                      textAlign: 'right'
+                    }}>
+                      Frais de port
+                    </div>
+                    {(element.columns?.quantity !== false) && (
+                      <div style={{
+                        flex: '0 0 60px',
+                        padding: `${4 * zoom}px ${6 * zoom}px`,
+                        textAlign: 'center'
+                      }}>
+                        {/* Quantité vide */}
+                      </div>
+                    )}
+                    {(element.columns?.price !== false) && (
+                      <div style={{
+                        flex: '0 0 80px',
+                        padding: `${4 * zoom}px ${6 * zoom}px`,
+                        textAlign: 'right'
+                      }}>
+                        {/* Prix vide */}
+                      </div>
+                    )}
+                    {(element.columns?.total !== false) && (
+                      <div style={{
+                        flex: '0 0 80px',
+                        padding: `${4 * zoom}px ${6 * zoom}px`,
+                        textAlign: 'right'
+                      }}>
+                        €5.00
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Taxes */}
+                {element.showTaxes && (
+                  <div style={{
+                    display: 'flex',
+                    borderBottom: '1px solid #eee'
+                  }}>
+                    <div style={{
+                      flex: 1,
+                      padding: `${4 * zoom}px ${6 * zoom}px`,
+                      textAlign: 'right'
+                    }}>
+                      Taxes (TVA 20%)
+                    </div>
+                    {(element.columns?.quantity !== false) && (
+                      <div style={{
+                        flex: '0 0 60px',
+                        padding: `${4 * zoom}px ${6 * zoom}px`,
+                        textAlign: 'center'
+                      }}>
+                        {/* Quantité vide */}
+                      </div>
+                    )}
+                    {(element.columns?.price !== false) && (
+                      <div style={{
+                        flex: '0 0 80px',
+                        padding: `${4 * zoom}px ${6 * zoom}px`,
+                        textAlign: 'right'
+                      }}>
+                        {/* Prix vide */}
+                      </div>
+                    )}
+                    {(element.columns?.total !== false) && (
+                      <div style={{
+                        flex: '0 0 80px',
+                        padding: `${4 * zoom}px ${6 * zoom}px`,
+                        textAlign: 'right'
+                      }}>
+                        €2.25
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Remise */}
+                {element.showDiscount && (
+                  <div style={{
+                    display: 'flex',
+                    borderBottom: '1px solid #eee'
+                  }}>
+                    <div style={{
+                      flex: 1,
+                      padding: `${4 * zoom}px ${6 * zoom}px`,
+                      textAlign: 'right',
+                      color: '#d32f2f'
+                    }}>
+                      Remise
+                    </div>
+                    {(element.columns?.quantity !== false) && (
+                      <div style={{
+                        flex: '0 0 60px',
+                        padding: `${4 * zoom}px ${6 * zoom}px`,
+                        textAlign: 'center'
+                      }}>
+                        {/* Quantité vide */}
+                      </div>
+                    )}
+                    {(element.columns?.price !== false) && (
+                      <div style={{
+                        flex: '0 0 80px',
+                        padding: `${4 * zoom}px ${6 * zoom}px`,
+                        textAlign: 'right'
+                      }}>
+                        {/* Prix vide */}
+                      </div>
+                    )}
+                    {(element.columns?.total !== false) && (
+                      <div style={{
+                        flex: '0 0 80px',
+                        padding: `${4 * zoom}px ${6 * zoom}px`,
+                        textAlign: 'right',
+                        color: '#d32f2f'
+                      }}>
+                        -€5.00
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Total général */}
+                {element.showTotal && (
+                  <div style={{
+                    display: 'flex',
+                    borderTop: '2px solid #333',
+                    backgroundColor: '#f5f5f5',
+                    marginTop: `${4 * zoom}px`,
+                    paddingTop: `${4 * zoom}px`
+                  }}>
+                    <div style={{
+                      flex: 1,
+                      padding: `${4 * zoom}px ${6 * zoom}px`,
+                      textAlign: 'right',
+                      fontWeight: 'bold',
+                      fontSize: `${12 * zoom}px`
+                    }}>
+                      TOTAL TTC
+                    </div>
+                    {(element.columns?.quantity !== false) && (
+                      <div style={{
+                        flex: '0 0 60px',
+                        padding: `${4 * zoom}px ${6 * zoom}px`,
+                        textAlign: 'center'
+                      }}>
+                        {/* Quantité vide */}
+                      </div>
+                    )}
+                    {(element.columns?.price !== false) && (
+                      <div style={{
+                        flex: '0 0 80px',
+                        padding: `${4 * zoom}px ${6 * zoom}px`,
+                        textAlign: 'right'
+                      }}>
+                        {/* Prix vide */}
+                      </div>
+                    )}
+                    {(element.columns?.total !== false) && (
+                      <div style={{
+                        flex: '0 0 80px',
+                        padding: `${4 * zoom}px ${6 * zoom}px`,
+                        textAlign: 'right',
+                        fontWeight: 'bold',
+                        fontSize: `${12 * zoom}px`,
+                        color: '#1976d2'
+                      }}>
+                        €49.50
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>

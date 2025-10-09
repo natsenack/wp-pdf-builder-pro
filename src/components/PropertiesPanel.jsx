@@ -646,6 +646,7 @@ export const PropertiesPanel = ({
             {selectedElement.type === 'product_table' && (
               <div className="properties-group">
                 <h4>📊 Tableau produits</h4>
+                {console.log('📊 Product table properties:', { localProperties, columns: localProperties.columns })}
 
                 <div className="property-row">
                   <label>Colonnes à afficher:</label>
@@ -663,7 +664,7 @@ export const PropertiesPanel = ({
                           type="checkbox"
                           checked={localProperties.columns?.[key] ?? true}
                           onChange={(e) => {
-                            console.log('📊 Checkbox change:', { key, value: e.target.checked, property: `columns.${key}` });
+                            console.log('🔍 Column checkbox change:', { key, checked: e.target.checked, currentValue: localProperties.columns?.[key] });
                             handlePropertyChange(selectedElement.id, `columns.${key}`, e.target.checked);
                           }}
                         />
@@ -686,6 +687,28 @@ export const PropertiesPanel = ({
                     <option value="minimal">Minimal</option>
                     <option value="modern">Moderne</option>
                   </select>
+                </div>
+
+                <div className="property-row">
+                  <label>Lignes de totaux:</label>
+                  <div className="checkbox-group">
+                    {[
+                      { key: 'showSubtotal', label: 'Sous-total' },
+                      { key: 'showShipping', label: 'Frais de port' },
+                      { key: 'showTaxes', label: 'Taxes' },
+                      { key: 'showDiscount', label: 'Remise' },
+                      { key: 'showTotal', label: 'Total général' }
+                    ].map(({ key, label }) => (
+                      <label key={key} className="checkbox-item">
+                        <input
+                          type="checkbox"
+                          checked={localProperties[key] || false}
+                          onChange={(e) => handlePropertyChange(selectedElement.id, key, e.target.checked)}
+                        />
+                        {label}
+                      </label>
+                    ))}
+                  </div>
                 </div>
               </div>
             )}
