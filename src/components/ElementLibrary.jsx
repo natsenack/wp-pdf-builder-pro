@@ -1,23 +1,56 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import VariableManager from '../utilities/VariableManager';
 import '../styles/ElementLibrary.css';
 
 export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
   const [showHeaderTemplatesModal, setShowHeaderTemplatesModal] = useState(false);
 
-  // Éléments restructurés selon l'architecture du plugin concurrent
-  // Utilise 'text' pour les éléments texte et 'field' pour les subfields
+  // Block fields comme dans le plugin concurrent - éléments représentés comme des blocs de contenu
   const elementCategories = [
+    {
+      name: 'Éléments de Base',
+      elements: [
+        {
+          type: 'text',
+          fieldID: 'custom_text',
+          label: 'Texte Libre',
+          icon: '📝',
+          description: 'Bloc de texte personnalisable',
+          // Représentation en bloc plutôt qu'en bouton
+          blockContent: 'Cliquez pour éditer ce texte...',
+          defaultProperties: {
+            text: 'Cliquez pour éditer ce texte...',
+            fontSize: 12,
+            fontFamily: 'Arial',
+            fontWeight: 'normal'
+          }
+        },
+        {
+          type: 'text',
+          fieldID: 'title_block',
+          label: 'Titre',
+          icon: '📄',
+          description: 'Bloc de titre',
+          blockContent: 'TITRE DU DOCUMENT',
+          defaultProperties: {
+            text: 'TITRE DU DOCUMENT',
+            fontSize: 18,
+            fontFamily: 'Arial',
+            fontWeight: 'bold'
+          }
+        }
+      ]
+    },
     {
       name: 'Informations Commande',
       elements: [
         {
-          type: 'field', // Type 'field' pour subfield comme dans FieldFactory::GetSubField()
+          type: 'field',
           fieldID: 'order_number',
           label: 'Numéro Commande',
           icon: '📋',
-          description: 'Numéro de la commande',
-          previewContent: '[order_number]',
+          description: 'Bloc numéro de commande',
+          blockContent: '[order_number]',
           defaultProperties: {
             text: '[order_number]',
             fontSize: 12,
@@ -30,8 +63,8 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
           fieldID: 'order_date',
           label: 'Date Commande',
           icon: '📅',
-          description: 'Date de la commande',
-          previewContent: '[order_date]',
+          description: 'Bloc date de commande',
+          blockContent: '[order_date]',
           defaultProperties: {
             text: '[order_date]',
             fontSize: 12,
@@ -41,11 +74,25 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
         },
         {
           type: 'field',
+          fieldID: 'order_total',
+          label: 'Total Commande',
+          icon: '💰',
+          description: 'Bloc montant total',
+          blockContent: '[order_total]',
+          defaultProperties: {
+            text: '[order_total]',
+            fontSize: 14,
+            fontFamily: 'Arial',
+            fontWeight: 'bold'
+          }
+        },
+        {
+          type: 'field',
           fieldID: 'order_subtotal',
           label: 'Sous-total',
           icon: '💵',
-          description: 'Sous-total de la commande',
-          previewContent: '[order_subtotal]',
+          description: 'Bloc sous-total',
+          blockContent: '[order_subtotal]',
           defaultProperties: {
             text: '[order_subtotal]',
             fontSize: 12,
@@ -57,9 +104,9 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
           type: 'field',
           fieldID: 'order_tax',
           label: 'TVA',
-          icon: '�',
-          description: 'Montant de la TVA',
-          previewContent: '[order_tax]',
+          icon: '📊',
+          description: 'Bloc montant TVA',
+          blockContent: '[order_tax]',
           defaultProperties: {
             text: '[order_tax]',
             fontSize: 12,
@@ -72,8 +119,8 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
           fieldID: 'payment_method',
           label: 'Méthode Paiement',
           icon: '💳',
-          description: 'Méthode de paiement utilisée',
-          previewContent: '[payment_method]',
+          description: 'Bloc méthode de paiement',
+          blockContent: '[payment_method]',
           defaultProperties: {
             text: '[payment_method]',
             fontSize: 12,
@@ -86,24 +133,10 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
           fieldID: 'shipping_method',
           label: 'Méthode Livraison',
           icon: '🚚',
-          description: 'Méthode de livraison',
-          previewContent: '[shipping_method]',
+          description: 'Bloc méthode de livraison',
+          blockContent: '[shipping_method]',
           defaultProperties: {
             text: '[shipping_method]',
-            fontSize: 12,
-            fontFamily: 'Arial',
-            fontWeight: 'normal'
-          }
-        },
-        {
-          type: 'text', // Type 'text' pour texte libre comme dans FieldFactory::GetField('text')
-          fieldID: 'order_info_combined',
-          label: 'Info Commande Combinée',
-          icon: '📄',
-          description: 'Informations combinées de commande',
-          previewContent: 'Commande [order_number] - Date: [order_date]\nTotal: [order_total]',
-          defaultProperties: {
-            text: 'Commande [order_number] - Date: [order_date]\nTotal: [order_total]',
             fontSize: 12,
             fontFamily: 'Arial',
             fontWeight: 'normal'
@@ -119,8 +152,8 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
           fieldID: 'customer_name',
           label: 'Nom Client',
           icon: '👤',
-          description: 'Nom du client',
-          previewContent: '[customer_name]',
+          description: 'Bloc nom du client',
+          blockContent: '[customer_name]',
           defaultProperties: {
             text: '[customer_name]',
             fontSize: 12,
@@ -133,8 +166,8 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
           fieldID: 'customer_email',
           label: 'Email Client',
           icon: '📧',
-          description: 'Adresse email du client',
-          previewContent: '[customer_email]',
+          description: 'Bloc email du client',
+          blockContent: '[customer_email]',
           defaultProperties: {
             text: '[customer_email]',
             fontSize: 12,
@@ -147,8 +180,8 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
           fieldID: 'billing_address',
           label: 'Adresse Facturation',
           icon: '📍',
-          description: 'Adresse de facturation',
-          previewContent: '[billing_address]',
+          description: 'Bloc adresse de facturation',
+          blockContent: '[billing_address]',
           defaultProperties: {
             text: '[billing_address]',
             fontSize: 11,
@@ -161,25 +194,11 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
           fieldID: 'shipping_address',
           label: 'Adresse Livraison',
           icon: '🏠',
-          description: 'Adresse de livraison',
-          previewContent: '[shipping_address]',
+          description: 'Bloc adresse de livraison',
+          blockContent: '[shipping_address]',
           defaultProperties: {
             text: '[shipping_address]',
             fontSize: 11,
-            fontFamily: 'Arial',
-            fontWeight: 'normal'
-          }
-        },
-        {
-          type: 'text',
-          fieldID: 'customer_info_combined',
-          label: 'Info Client Combinée',
-          icon: '👥',
-          description: 'Informations client combinées',
-          previewContent: '[customer_name]\n[customer_email]\n[billing_address]',
-          defaultProperties: {
-            text: '[customer_name]\n[customer_email]\n[billing_address]',
-            fontSize: 12,
             fontFamily: 'Arial',
             fontWeight: 'normal'
           }
@@ -187,33 +206,30 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
       ]
     },
     {
-      name: 'Éléments de Base',
+      name: 'Éléments Visuels',
       elements: [
         {
-          type: 'text',
-          fieldID: 'custom_text',
-          label: 'Texte Libre',
-          icon: '📝',
-          description: 'Champ de texte personnalisable',
-          previewContent: 'Votre texte ici...',
+          type: 'image',
+          fieldID: 'custom_image',
+          label: 'Image',
+          icon: '🖼️',
+          description: 'Bloc image',
+          blockContent: '[IMAGE]',
           defaultProperties: {
-            text: 'Votre texte ici...',
-            fontSize: 12,
-            fontFamily: 'Arial',
-            fontWeight: 'normal'
+            width: 100,
+            height: 100
           }
         },
         {
-          type: 'rectangle',
-          fieldID: 'shape_rectangle',
-          label: 'Rectangle',
-          icon: '▭',
-          description: 'Forme rectangulaire',
-          previewContent: '',
+          type: 'separator',
+          fieldID: 'horizontal_line',
+          label: 'Ligne Séparatrice',
+          icon: '➖',
+          description: 'Bloc ligne horizontale',
+          blockContent: '────────────',
           defaultProperties: {
-            fillColor: '#e0e0e0',
-            strokeColor: '#000000',
-            strokeWidth: 1
+            height: 1,
+            color: '#000000'
           }
         }
       ]
@@ -332,32 +348,30 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
                     }}
                     title={element.description}
                   >
-                    <div className="element-icon">{element.icon}</div>
                     <div className="element-info">
-                      <div className="element-label">{element.label}</div>
-                      <div className="element-preview">
-                        {element.previewContent ? (
-                          <div className="preview-text">
-                            {VariableManager.processTextForPreview(element.previewContent).split('\n').map((line, i) => (
-                              <div key={i} className="preview-line">{line}</div>
-                            ))}
-                          </div>
-                        ) : (
-                          <div className="preview-shape">
-                            {element.type === 'rectangle' && (
-                              <div
-                                className="shape-preview"
-                                style={{
-                                  width: '40px',
-                                  height: '20px',
-                                  backgroundColor: element.defaultProperties?.fillColor || '#e0e0e0',
-                                  border: `${element.defaultProperties?.strokeWidth || 1}px solid ${element.defaultProperties?.strokeColor || '#000'}`
-                                }}
-                              />
-                            )}
-                          </div>
-                        )}
-                      </div>
+                      <span className="element-icon">{element.icon}</span>
+                      <span className="element-label">{element.label}</span>
+                    </div>
+                    <div className="element-preview">
+                      {element.blockContent ? (
+                        <div className="preview-text">
+                          {VariableManager.processTextForPreview(element.blockContent).split('\n').map((line, i) => (
+                            <div key={i} className="preview-line">{line}</div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="preview-shape">
+                          {element.type === 'rectangle' && (
+                            <div
+                              className="shape-preview"
+                              style={{
+                                backgroundColor: element.defaultProperties?.fillColor || '#e0e0e0',
+                                border: `${element.defaultProperties?.strokeWidth || 1}px solid ${element.defaultProperties?.strokeColor || '#000'}`
+                              }}
+                            />
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
