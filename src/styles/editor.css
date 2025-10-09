@@ -272,7 +272,8 @@
 
 .toolbar-section:first-child {
   flex: 0 0 auto; /* Outils - taille fixe */
-  max-width: 450px;
+  width: fit-content; /* S'adapte au contenu pour rester sur une ligne */
+  min-width: 400px; /* Largeur minimale pour éviter la compression excessive */
 }
 
 .toolbar-section:nth-child(2) {
