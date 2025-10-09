@@ -76,7 +76,7 @@ const CanvasBuilder: React.FC<CanvasBuilderProps> = ({
         <h3 style={{ margin: '0 0 10px 0', color: '#1976d2' }}>
           🚀 Status: {isReady ? 'Prêt' : 'Initialisation...'}
         </h3>
-        <p style={{ margin: '0', color: '#424242' }}>
+        <p style={{ margin: '0', color: '#64748b' }}>
           Canvas de base créé. Prêt pour ajouter des fonctionnalités !
         </p>
       </div>

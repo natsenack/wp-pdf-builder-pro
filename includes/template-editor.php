@@ -29,15 +29,15 @@ $template = null; // Temporaire : pas de template chargé
 <div class="wrap">
     <h1><?php echo $is_new ? __('Créer un nouveau template', 'pdf-builder-pro') : __('Éditer le template', 'pdf-builder-pro'); ?></h1>
     
-    <div id="pdf-builder-container" data-is-new="<?php echo $is_new ? 'true' : 'false'; ?>" style="height: calc(100vh - 120px); padding: 20px; background: #f5f5f5; border-radius: 8px; margin: 10px 0;">
+    <div id="pdf-builder-container" data-is-new="<?php echo $is_new ? 'true' : 'false'; ?>" style="height: calc(100vh - 200px); padding: 20px; background: #ffffff; border-radius: 8px; margin: 10px 0;">
         <!-- React App will be mounted here -->
-        <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: #ffffff; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: #ffffff; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
             <div style="text-align: center;">
                 <div style="font-size: 3rem; margin-bottom: 1rem;">📄</div>
                 <h2><?php echo $is_new ? __('Créer un nouveau template', 'pdf-builder-pro') : __('Éditer le template', 'pdf-builder-pro'); ?></h2>
                 <p><?php _e('Chargement de l\'éditeur React/TypeScript avancé...', 'pdf-builder-pro'); ?></p>
                 <div style="margin-top: 2rem;">
-                    <button id="flush-rest-cache-btn" style="background: #dc3232; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-right: 10px;">
+                    <button id="flush-rest-cache-btn" style="background: #6b7280; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-right: 10px;">
                         🔄 Vider Cache REST
                     </button>
                     <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #007cba; border-radius: 50%; animation: spin 1s linear infinite;"></div>

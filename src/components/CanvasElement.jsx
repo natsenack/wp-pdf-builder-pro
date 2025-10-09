@@ -115,7 +115,7 @@ export const CanvasElement = ({
               ...style,
               fontSize: (element.fontSize || 14) * zoom,
               fontFamily: element.fontFamily || 'Arial',
-              color: element.color || '#000000',
+              color: element.color || '#1e293b',
               fontWeight: element.fontWeight || 'normal',
               textAlign: element.textAlign || 'left',
               lineHeight: 1.2,
@@ -134,7 +134,7 @@ export const CanvasElement = ({
             style={{
               ...style,
               backgroundColor: element.fillColor || 'transparent',
-              border: `${element.borderWidth || 1}px solid ${element.borderColor || '#000000'}`,
+              border: `${element.borderWidth || 1}px solid ${element.borderColor || '#6b7280'}`,
               borderRadius: element.borderRadius || 0
             }}
           />
@@ -145,7 +145,7 @@ export const CanvasElement = ({
           <div
             style={{
               ...style,
-              backgroundColor: '#f0f0f0',
+              backgroundColor: '#f8f9fa',
               border: '1px dashed #ccc',
               display: 'flex',
               alignItems: 'center',
@@ -163,7 +163,7 @@ export const CanvasElement = ({
           <div
             style={{
               ...style,
-              borderTop: `${element.lineWidth || 1}px solid ${element.lineColor || '#000000'}`,
+              borderTop: `${element.lineWidth || 1}px solid ${element.lineColor || '#6b7280'}`,
               height: 0
             }}
           />
@@ -174,7 +174,7 @@ export const CanvasElement = ({
           <div
             style={{
               ...style,
-              backgroundColor: '#e0e0e0',
+              backgroundColor: '#f1f3f4',
               border: '1px solid #ccc',
               display: 'flex',
               alignItems: 'center',

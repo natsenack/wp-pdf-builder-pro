@@ -69,7 +69,7 @@ export const Canvas = ({
 
     // Style de base
     ctx.fillStyle = element.backgroundColor || '#ffffff';
-    ctx.strokeStyle = element.borderColor || '#000000';
+    ctx.strokeStyle = element.borderColor || '#6b7280';
     ctx.lineWidth = element.borderWidth || 1;
 
     // Dessiner selon le type d'élément
@@ -91,7 +91,7 @@ export const Canvas = ({
         break;
 
       case 'text':
-        ctx.fillStyle = element.color || '#000000';
+        ctx.fillStyle = element.color || '#1e293b';
         ctx.font = `${element.fontSize || 14}px ${element.fontFamily || 'Arial'}`;
         ctx.textAlign = element.textAlign || 'left';
         ctx.textBaseline = 'top';
@@ -310,9 +310,9 @@ export const Canvas = ({
         height: 50,
         content: elementType === 'text' ? 'Nouveau texte' : '',
         backgroundColor: '#ffffff',
-        borderColor: '#000000',
+        borderColor: '#6b7280',
         borderWidth: 1,
-        color: '#000000',
+        color: '#1e293b',
         fontSize: 14,
         fontFamily: 'Arial',
         textAlign: 'left'

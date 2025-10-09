@@ -49,7 +49,7 @@ export const ContextMenu = ({ menu, onAction }) => {
             <div
               style={{
                 height: '1px',
-                backgroundColor: '#e0e0e0',
+                backgroundColor: '#f8f9fa',
                 margin: '4px 0'
               }}
             />
@@ -72,7 +72,7 @@ export const ContextMenu = ({ menu, onAction }) => {
                 opacity: item.disabled ? 0.5 : 1
               }}
               onMouseEnter={(e) => {
-                if (!item.disabled) e.target.style.backgroundColor = '#f0f0f0';
+                if (!item.disabled) e.target.style.backgroundColor = '#f1f3f4';
               }}
               onMouseLeave={(e) => {
                 if (!item.disabled) e.target.style.backgroundColor = 'transparent';

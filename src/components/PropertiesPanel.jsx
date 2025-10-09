@@ -112,7 +112,7 @@ export const PropertiesPanel = ({
               <label>Couleur:</label>
               <input
                 type="color"
-                value={localProperties.color || '#000000'}
+                value={localProperties.color || '#1e293b'}
                 onChange={(e) => handlePropertyChange(selectedElement.id, 'color', e.target.value)}
               />
             </div>
@@ -152,7 +152,7 @@ export const PropertiesPanel = ({
               <label>Couleur de bordure:</label>
               <input
                 type="color"
-                value={localProperties.borderColor || '#000000'}
+                value={localProperties.borderColor || '#6b7280'}
                 onChange={(e) => handlePropertyChange(selectedElement.id, 'borderColor', e.target.value)}
               />
             </div>
@@ -190,7 +190,7 @@ export const PropertiesPanel = ({
               <label>Couleur:</label>
               <input
                 type="color"
-                value={localProperties.lineColor || '#000000'}
+                value={localProperties.lineColor || '#6b7280'}
                 onChange={(e) => handlePropertyChange(selectedElement.id, 'lineColor', e.target.value)}
               />
             </div>
