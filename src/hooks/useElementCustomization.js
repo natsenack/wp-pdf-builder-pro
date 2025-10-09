@@ -16,6 +16,7 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
   // Synchroniser les propriétés locales avec l'élément sélectionné
   useEffect(() => {
     if (selectedElement) {
+      console.log('🔄 Syncing localProperties with selectedElement:', selectedElement);
       setLocalProperties({ ...selectedElement });
     } else {
       setLocalProperties({});
@@ -29,6 +30,10 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
 
     // Mettre à jour l'état local immédiatement pour l'UI
     setLocalProperties(prev => {
+      console.log('🔧 Updating localProperties for:', property, '=', validatedValue);
+      console.log('🔧 Previous localProperties:', prev);
+      
+      let newProperties;
       if (property.includes('.')) {
         // Gérer les propriétés imbriquées (ex: "columns.image")
         const updateNestedProperty = (obj, path, value) => {
@@ -46,12 +51,14 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
           return obj;
         };
 
-        const newProperties = { ...prev };
+        newProperties = { ...prev };
         updateNestedProperty(newProperties, property, validatedValue);
-        return newProperties;
       } else {
-        return { ...prev, [property]: validatedValue };
+        newProperties = { ...prev, [property]: validatedValue };
       }
+      
+      console.log('🔧 New localProperties:', newProperties);
+      return newProperties;
     });
 
     // Notifier le parent pour la persistance
