@@ -42,6 +42,7 @@ class PDF_Builder_Admin {
      * Constructeur privé pour singleton
      */
     private function __construct($main_instance) {
+        error_log('PDF_Builder_Admin constructor called');
         $this->main = $main_instance;
         $this->init_hooks();
     }
@@ -50,7 +51,9 @@ class PDF_Builder_Admin {
      * Obtenir l'instance singleton
      */
     public static function getInstance($main_instance = null) {
+        error_log('PDF_Builder_Admin getInstance called');
         if (self::$instance === null) {
+            error_log('PDF_Builder_Admin creating new instance');
             self::$instance = new self($main_instance);
         }
         return self::$instance;
