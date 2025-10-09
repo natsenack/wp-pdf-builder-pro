@@ -16,13 +16,13 @@ body.wp-admin .pdf-builder-app {
   padding-top: 0;
 }
 
-/* Masquer ou repositionner les éléments WordPress qui interfèrent */
-body.wp-admin #wpadminbar,
-body.wp-admin #adminmenumain,
-body.wp-admin #wpfooter,
-body.wp-admin .notice,
-body.wp-admin .update-nag {
-  display: none !important;
+/* Ajuster le z-index pour éviter les conflits avec l'admin bar */
+body.wp-admin #wpadminbar {
+  z-index: 999 !important;
+}
+
+body.wp-admin .pdf-builder-app {
+  z-index: 1000 !important;
 }
 
 /* S'assurer que le contenu du builder prend toute la hauteur disponible */
