@@ -13,6 +13,43 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
       ]
     },
     {
+      name: 'WooCommerce - Factures',
+      elements: [
+        { type: 'woocommerce-invoice-number', label: 'Numéro de Facture', icon: '📄', description: 'Numéro de facture WooCommerce' },
+        { type: 'woocommerce-invoice-date', label: 'Date de Facture', icon: '📅', description: 'Date de création de la facture' },
+        { type: 'woocommerce-order-number', label: 'Numéro de Commande', icon: '🛒', description: 'Numéro de commande WooCommerce' },
+        { type: 'woocommerce-order-date', label: 'Date de Commande', icon: '📅', description: 'Date de création de la commande' },
+        { type: 'woocommerce-billing-address', label: 'Adresse de Facturation', icon: '🏠', description: 'Adresse de facturation du client' },
+        { type: 'woocommerce-shipping-address', label: 'Adresse de Livraison', icon: '🚚', description: 'Adresse de livraison du client' },
+        { type: 'woocommerce-customer-name', label: 'Nom du Client', icon: '👤', description: 'Nom complet du client' },
+        { type: 'woocommerce-customer-email', label: 'Email du Client', icon: '📧', description: 'Adresse email du client' },
+        { type: 'woocommerce-payment-method', label: 'Méthode de Paiement', icon: '💳', description: 'Méthode de paiement utilisée' },
+        { type: 'woocommerce-order-status', label: 'Statut de Commande', icon: '📊', description: 'Statut actuel de la commande' }
+      ]
+    },
+    {
+      name: 'WooCommerce - Produits',
+      elements: [
+        { type: 'woocommerce-products-table', label: 'Tableau des Produits', icon: '📋', description: 'Tableau détaillé des produits commandés' },
+        { type: 'woocommerce-subtotal', label: 'Sous-total', icon: '💰', description: 'Sous-total de la commande' },
+        { type: 'woocommerce-discount', label: 'Remise', icon: '🏷️', description: 'Montant de la remise appliquée' },
+        { type: 'woocommerce-shipping', label: 'Frais de Port', icon: '🚚', description: 'Coûts de livraison' },
+        { type: 'woocommerce-taxes', label: 'Taxes', icon: '📊', description: 'Montant des taxes' },
+        { type: 'woocommerce-total', label: 'Total', icon: '💵', description: 'Montant total de la commande' },
+        { type: 'woocommerce-refund', label: 'Remboursement', icon: '↩️', description: 'Montant remboursé' },
+        { type: 'woocommerce-fees', label: 'Frais Supplémentaires', icon: '💸', description: 'Frais supplémentaires' }
+      ]
+    },
+    {
+      name: 'WooCommerce - Devis',
+      elements: [
+        { type: 'woocommerce-quote-number', label: 'Numéro de Devis', icon: '📝', description: 'Numéro de devis WooCommerce' },
+        { type: 'woocommerce-quote-date', label: 'Date de Devis', icon: '📅', description: 'Date de création du devis' },
+        { type: 'woocommerce-quote-validity', label: 'Validité du Devis', icon: '⏰', description: 'Période de validité du devis' },
+        { type: 'woocommerce-quote-notes', label: 'Notes du Devis', icon: '📝', description: 'Notes spécifiques au devis' }
+      ]
+    },
+    {
       name: 'Formes',
       elements: [
         { type: 'rectangle', label: 'Rectangle', icon: '▭', description: 'Forme rectangulaire' },

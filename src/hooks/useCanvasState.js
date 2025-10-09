@@ -68,13 +68,97 @@ export const useCanvasState = ({
   }, [elements, nextId, history]);
 
   const addElement = useCallback((elementType, properties = {}) => {
+    // Définir les propriétés par défaut selon le type d'élément
+    const getDefaultProperties = (type) => {
+      const defaults = {
+        x: 50,
+        y: 50,
+        width: 100,
+        height: 50,
+        backgroundColor: '#ffffff',
+        borderColor: '#dddddd',
+        borderWidth: 1,
+        borderRadius: 4,
+        color: '#333333',
+        fontSize: 14,
+        fontFamily: 'Arial, sans-serif',
+        padding: 8
+      };
+
+      // Propriétés spécifiques selon le type
+      if (type.startsWith('woocommerce-')) {
+        switch (type) {
+          case 'woocommerce-billing-address':
+          case 'woocommerce-shipping-address':
+            defaults.width = 250;
+            defaults.height = 120;
+            break;
+          case 'woocommerce-products-table':
+            defaults.width = 500;
+            defaults.height = 200;
+            break;
+          case 'woocommerce-invoice-number':
+          case 'woocommerce-order-number':
+          case 'woocommerce-quote-number':
+            defaults.width = 180;
+            defaults.height = 50;
+            break;
+          case 'woocommerce-customer-name':
+          case 'woocommerce-customer-email':
+          case 'woocommerce-payment-method':
+          case 'woocommerce-order-status':
+            defaults.width = 200;
+            defaults.height = 50;
+            break;
+          case 'woocommerce-subtotal':
+          case 'woocommerce-discount':
+          case 'woocommerce-shipping':
+          case 'woocommerce-taxes':
+          case 'woocommerce-total':
+          case 'woocommerce-refund':
+          case 'woocommerce-fees':
+            defaults.width = 150;
+            defaults.height = 50;
+            break;
+          case 'woocommerce-invoice-date':
+          case 'woocommerce-order-date':
+          case 'woocommerce-quote-date':
+          case 'woocommerce-quote-validity':
+            defaults.width = 180;
+            defaults.height = 50;
+            break;
+          case 'woocommerce-quote-notes':
+            defaults.width = 400;
+            defaults.height = 80;
+            break;
+          default:
+            break;
+        }
+      } else {
+        switch (type) {
+          case 'text':
+            defaults.content = 'Texte';
+            break;
+          case 'rectangle':
+            defaults.backgroundColor = '#e5e7eb';
+            break;
+          case 'line':
+            defaults.height = 2;
+            defaults.backgroundColor = '#6b7280';
+            break;
+          default:
+            break;
+        }
+      }
+
+      return defaults;
+    };
+
+    const defaultProps = getDefaultProperties(elementType);
     const newElement = {
       id: `element_${nextId}`,
       type: elementType,
-      x: 50,
-      y: 50,
-      width: 100,
-      height: 50,
+      ...defaultProps,
       ...properties
     };
 

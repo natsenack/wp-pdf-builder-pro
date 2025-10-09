@@ -150,6 +150,16 @@ class PDF_Builder_Admin {
             'pdf-builder-diagnostic',
             [$this, 'diagnostic_page']
         );
+
+        // Tests WooCommerce
+        add_submenu_page(
+            'pdf-builder-pro',
+            __('Tests WooCommerce - PDF Builder Pro', 'pdf-builder-pro'),
+            __('🛒 Tests WC', 'pdf-builder-pro'),
+            'manage_options',
+            'pdf-builder-woocommerce-test',
+            [$this, 'woocommerce_test_page']
+        );
     }
 
     /**
@@ -3537,5 +3547,18 @@ class PDF_Builder_Admin {
         }
 
         return $output;
+    }
+
+    /**
+     * Page de test WooCommerce
+     */
+    public function woocommerce_test_page() {
+        $this->check_admin_permissions();
+
+        if (!file_exists(plugin_dir_path(__FILE__) . 'PDF_Builder_WooCommerce_Test.php')) {
+            require_once plugin_dir_path(__FILE__) . 'PDF_Builder_WooCommerce_Test.php';
+        }
+
+        pdf_builder_woocommerce_test_page();
     }
 }

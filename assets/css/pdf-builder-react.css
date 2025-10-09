@@ -3,6 +3,7 @@
 /* Generated: 2025-10-04T15:09:27.425Z */
 
 /* Styles pour éviter les conflits avec WordPress */
+.invoice-quote-builder-container,
 .pdf-builder-container,
 .pdf-canvas-editor {
   position: relative !important;
@@ -19,17 +20,20 @@ body.pdf-builder-active #wpadminbar {
   z-index: 999 !important;
 }
 
+body.pdf-builder-active .invoice-quote-builder-container,
 body.pdf-builder-active .pdf-builder-container,
 body.pdf-builder-active .pdf-canvas-editor {
   z-index: 1000 !important;
 }
 
 /* S'assurer que le contenu du builder ne dépasse pas */
+.invoice-quote-builder-container .pdf-canvas-editor,
 .pdf-builder-container .pdf-canvas-editor {
   overflow: hidden;
   border-radius: 0;
 }
 
+.invoice-quote-builder-container,
 .pdf-builder-container {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   height: 100vh;

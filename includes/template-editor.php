@@ -29,7 +29,7 @@ $template = null; // Temporaire : pas de template chargé
 <div class="wrap">
     <h1><?php echo $is_new ? __('Créer un nouveau template', 'pdf-builder-pro') : __('Éditer le template', 'pdf-builder-pro'); ?></h1>
     
-    <div id="pdf-builder-container" data-is-new="<?php echo $is_new ? 'true' : 'false'; ?>" style="padding: 20px; background: #ffffff; border-radius: 8px; margin: 10px 0;">
+    <div id="invoice-quote-builder-container" data-is-new="<?php echo $is_new ? 'true' : 'false'; ?>" style="padding: 20px; background: #ffffff; border-radius: 8px; margin: 10px 0;">
         <!-- React App will be mounted here -->
         <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: #ffffff; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
             <div style="text-align: center;">
@@ -73,8 +73,8 @@ $template = null; // Temporaire : pas de template chargé
         console.log('PDF Builder Pro: window.PDFBuilderPro:', window.PDFBuilderPro);
 
         if (window.PDFBuilderPro?.init) {
-            console.log('PDF Builder Pro: PDFBuilderPro.init found, calling with pdf-builder-container');
-            window.PDFBuilderPro.init('pdf-builder-container', {
+            console.log('PDF Builder Pro: PDFBuilderPro.init found, calling with invoice-quote-builder-container');
+            window.PDFBuilderPro.init('invoice-quote-builder-container', {
                 templateId: null,
                 isNew: true,
                 width: 595,

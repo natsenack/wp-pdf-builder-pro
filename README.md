@@ -395,6 +395,88 @@ echo '<a href="' . $pdf_url . '" target="_blank">Télécharger PDF</a>';
 
 wget https://downloads.pdfbuilderpro.com/pdf-builder-pro.zip[payment_method]   → Mode de paiement
 
+## 🛒 Éléments WooCommerce Intégrés
+
+### 📄 Éléments de Facturation
+
+| Élément | Description | Données d'exemple |
+|---------|-------------|-------------------|
+| **Numéro de Facture** | Numéro unique de facture | `INV-001` |
+| **Date de Facture** | Date de création de la facture | `2024-01-15` |
+| **Numéro de Commande** | Référence WooCommerce | `#1234` |
+| **Date de Commande** | Date de création de la commande | `2024-01-15 10:30` |
+
+### 👤 Informations Client
+
+| Élément | Description | Données d'exemple |
+|---------|-------------|-------------------|
+| **Adresse de Facturation** | Adresse complète du client | `John Doe`<br>`123 Main St`<br>`City, State 12345` |
+| **Adresse de Livraison** | Adresse de livraison | `John Doe`<br>`456 Shipping Ave`<br>`City, State 12345` |
+| **Nom du Client** | Nom complet du client | `John Doe` |
+| **Email du Client** | Adresse email | `john.doe@example.com` |
+
+### 💳 Informations de Paiement
+
+| Élément | Description | Données d'exemple |
+|---------|-------------|-------------------|
+| **Méthode de Paiement** | Moyen de paiement utilisé | `Carte de crédit (Stripe)` |
+| **Statut de Commande** | État actuel de la commande | `Traitée` |
+
+### 📊 Produits et Prix
+
+| Élément | Description | Données d'exemple |
+|---------|-------------|-------------------|
+| **Tableau des Produits** | Liste détaillée des articles | `- Produit 1 x1 $10.00`<br>`- Produit 2 x2 $20.00` |
+| **Sous-total** | Total HT | `$45.00` |
+| **Remise** | Montant de la remise | `-$5.00` |
+| **Frais de Port** | Coûts de livraison | `$5.00` |
+| **Taxes** | Montant des taxes | `$2.25` |
+| **Total** | Montant TTC | `$47.25` |
+| **Remboursement** | Montant remboursé | `-$10.00` |
+| **Frais Supplémentaires** | Frais divers | `$1.50` |
+
+### 📝 Éléments de Devis
+
+| Élément | Description | Données d'exemple |
+|---------|-------------|-------------------|
+| **Numéro de Devis** | Numéro unique du devis | `QUO-001` |
+| **Date de Devis** | Date de création du devis | `2024-01-15` |
+| **Validité du Devis** | Période de validité | `30 jours` |
+| **Notes du Devis** | Conditions spéciales | `Conditions spéciales du devis` |
+
+### 🎨 Utilisation dans l'Éditeur
+
+1. **Accès aux éléments** : Dans la bibliothèque d'éléments, ouvrez l'onglet "WooCommerce - Factures", "WooCommerce - Produits" ou "WooCommerce - Devis"
+
+2. **Drag & Drop** : Glissez-déposez les éléments sur le canvas
+
+3. **Personnalisation** : Ajustez la taille, la police, les couleurs via le panneau de propriétés
+
+4. **Aperçu** : Les éléments affichent des données d'exemple en mode édition
+
+5. **Génération PDF** : Lors de la génération, les vraies données WooCommerce remplacent les exemples
+
+### 🔧 Configuration Avancée
+
+#### Mode Test vs Production
+- **Mode Test** : Affiche des données d'exemple pour la conception
+- **Mode Production** : Utilise les vraies données de commande WooCommerce
+
+#### Mapping Automatique
+Le plugin détecte automatiquement :
+- Le numéro de commande pour générer les numéros de facture/devis
+- Les informations client depuis les métadonnées WooCommerce
+- Les détails de produits et prix depuis l'ordre
+
+#### Personnalisation des Formats
+Les formats peuvent être personnalisés via des filtres WordPress :
+```php
+// Exemple de personnalisation du numéro de facture
+add_filter('pdf_builder_invoice_number', function($number, $order_id) {
+    return 'FACT-' . $order_id;
+}, 10, 2);
+```
+
 unzip pdf-builder-pro.zip```
 
 

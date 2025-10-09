@@ -4,6 +4,7 @@ import { Toolbar } from './Toolbar';
 import { PropertiesPanel } from './PropertiesPanel';
 import { ElementLibrary } from './ElementLibrary';
 import { ContextMenu } from './ContextMenu';
+import { WooCommerceElement } from './WooCommerceElements';
 import { useCanvasState } from '../hooks/useCanvasState';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 
@@ -162,9 +163,10 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
             onContextMenu={handleContextMenu}
             onDragOver={handleDragOver}
             onDrop={handleDrop}
+            style={{ position: 'relative' }}
           >
             <Canvas
-              elements={canvasState.elements}
+              elements={canvasState.elements.filter(el => !el.type.startsWith('woocommerce-'))}
               selectedElements={canvasState.selection.selectedElements}
               tool={tool}
               zoom={canvasState.zoom.zoom}
@@ -180,6 +182,19 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
               selection={canvasState.selection}
               zoomHook={canvasState.zoom}
             />
+
+            {/* Éléments WooCommerce superposés */}
+            {canvasState.elements
+              .filter(el => el.type.startsWith('woocommerce-'))
+              .map(element => (
+                <WooCommerceElement
+                  key={element.id}
+                  element={element}
+                  isSelected={canvasState.selection.selectedElements.includes(element.id)}
+                  onSelect={handleElementSelect}
+                  onUpdate={canvasState.updateElement}
+                />
+              ))}
           </div>
         </div>
 
