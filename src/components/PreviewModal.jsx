@@ -149,7 +149,7 @@ export const PreviewModal = ({
           <button className="btn btn-secondary" onClick={onClose}>
             ❌ Fermer
           </button>
-          <button className="btn btn-primary" onClick={handlePrint} disabled={loading || error}>
+          <button className="btn btn-primary" onClick={handlePrint}>
             🖨️ Imprimer
           </button>
         </div>
