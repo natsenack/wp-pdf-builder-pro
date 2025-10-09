@@ -62,31 +62,62 @@ $template = null; // Temporaire : pas de template chargé
     // Ajouter la classe pour masquer les éléments WordPress
     document.body.classList.add('pdf-builder-active');
 
+    // Fonction pour vérifier si les scripts sont chargés
+    const checkScriptsLoaded = () => {
+        return typeof window.PDFBuilderPro !== 'undefined' &&
+               typeof window.PDFBuilderPro.init === 'function' &&
+               typeof window.React !== 'undefined' &&
+               typeof window.ReactDOM !== 'undefined';
+    };
+
     // Initialisation optimisée avec polling intelligent
     let attempts = 0;
-    const maxAttempts = 50; // ~1.5 secondes max
+    const maxAttempts = 100; // ~5 secondes max
 
     const initApp = () => {
-        if (window.PDFBuilderPro?.init) {
-            window.PDFBuilderPro.init('invoice-quote-builder-container', {
-                templateId: null,
-                isNew: true,
-                width: 595,
-                height: 842,
-                zoom: 1,
-                gridSize: 10,
-                snapToGrid: true,
-                maxHistorySize: 50
-            });
-            return;
+        if (checkScriptsLoaded()) {
+            try {
+                window.PDFBuilderPro.init('invoice-quote-builder-container', {
+                    templateId: null,
+                    isNew: true,
+                    width: 595,
+                    height: 842,
+                    zoom: 1,
+                    gridSize: 10,
+                    snapToGrid: true,
+                    maxHistorySize: 50
+                });
+                console.log('PDF Builder Pro: Éditeur initialisé avec succès');
+                return;
+            } catch (error) {
+                console.error('PDF Builder Pro: Erreur lors de l\'initialisation:', error);
+                return;
+            }
         }
 
         if (++attempts < maxAttempts) {
-            requestAnimationFrame(initApp);
+            setTimeout(initApp, 50); // Attendre 50ms et réessayer
+        } else {
+            console.error('PDF Builder Pro: Timeout - Scripts non chargés après', maxAttempts * 50, 'ms');
+            // Afficher un message d'erreur à l'utilisateur
+            const container = document.getElementById('invoice-quote-builder-container');
+            if (container) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #dc3545;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">❌</div>
+                        <h2>Erreur de chargement</h2>
+                        <p>Les scripts nécessaires n'ont pas pu être chargés.</p>
+                        <p>Vérifiez la console pour plus de détails.</p>
+                        <button onclick="location.reload()" style="background: #dc3545; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin-top: 10px;">
+                            Recharger la page
+                        </button>
+                    </div>
+                `;
+            }
         }
     };
 
-    // Démarrer l'initialisation immédiatement après DOM ready
+    // Démarrer l'initialisation après DOM ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initApp);
     } else {

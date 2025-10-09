@@ -70,9 +70,11 @@ class PDFBuilderPro {
 // Instance globale
 const pdfBuilderPro = new PDFBuilderPro();
 
-// Attacher à window pour WordPress
+// Attacher à window pour WordPress - avec vérification
 if (typeof window !== 'undefined') {
   window.PDFBuilderPro = pdfBuilderPro;
+  // Alias pour compatibilité
+  window.pdfBuilderPro = pdfBuilderPro;
 }
 
 // Export pour les modules ES6

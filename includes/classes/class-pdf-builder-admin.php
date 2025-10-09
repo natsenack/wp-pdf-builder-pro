@@ -163,6 +163,64 @@ class PDF_Builder_Admin {
     }
 
     /**
+     * Enqueue admin scripts and styles
+     */
+    public function enqueue_admin_scripts($hook) {
+        // Only load on our plugin pages
+        if (strpos($hook, 'pdf-builder') === false) {
+            return;
+        }
+
+        // Enqueue React and dependencies
+        wp_enqueue_script('wp-element');
+        wp_enqueue_script('wp-components');
+        wp_enqueue_script('wp-api');
+
+        // Enqueue our compiled admin script
+        wp_enqueue_script(
+            'pdf-builder-admin',
+            PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js',
+            array('wp-element', 'wp-components', 'wp-api'),
+            PDF_BUILDER_PRO_VERSION,
+            true
+        );
+
+        // Enqueue admin styles
+        wp_enqueue_style(
+            'pdf-builder-admin',
+            PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css',
+            array(),
+            PDF_BUILDER_PRO_VERSION
+        );
+
+        wp_enqueue_style(
+            'pdf-builder-canvas',
+            PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-canvas.css',
+            array(),
+            PDF_BUILDER_PRO_VERSION
+        );
+
+        wp_enqueue_style(
+            'pdf-builder-react',
+            PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-react.css',
+            array(),
+            PDF_BUILDER_PRO_VERSION
+        );
+
+        // Localize script with necessary data
+        wp_localize_script('pdf-builder-admin', 'pdfBuilderAjax', array(
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('pdf_builder_nonce'),
+            'strings' => array(
+                'loading' => __('Chargement...', 'pdf-builder-pro'),
+                'error' => __('Erreur', 'pdf-builder-pro'),
+                'success' => __('Succès', 'pdf-builder-pro'),
+                'confirm_delete' => __('Êtes-vous sûr de vouloir supprimer cet élément ?', 'pdf-builder-pro'),
+            ),
+        ));
+    }
+
+    /**
      * Page principale d'administration - Tableau de bord
      */
     public function admin_page() {

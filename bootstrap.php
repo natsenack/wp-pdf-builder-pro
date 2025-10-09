@@ -19,6 +19,11 @@ function pdf_builder_load_core() {
         require_once PDF_BUILDER_PLUGIN_DIR . 'includes/classes/PDF_Builder_Core.php';
     }
 
+    // Charger la classe d'administration
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'includes/classes/class-pdf-builder-admin.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'includes/classes/class-pdf-builder-admin.php';
+    }
+
     // Charger les managers essentiels en premier pour éviter les dépendances circulaires
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'includes/managers/PDF_Builder_Cache_Manager.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'includes/managers/PDF_Builder_Cache_Manager.php';
@@ -76,7 +81,13 @@ function pdf_builder_load_bootstrap() {
     }
 
     if (class_exists('PDF_Builder_Core') && method_exists('PDF_Builder_Core', 'getInstance')) {
-        PDF_Builder_Core::getInstance()->init();
+        $core = PDF_Builder_Core::getInstance();
+        $core->init();
+
+        // Initialiser l'interface d'administration
+        if (is_admin() && class_exists('PDF_Builder_Admin')) {
+            new PDF_Builder_Admin($core);
+        }
 
         // L'API Manager sera initialisé automatiquement par le Core
         // Les routes seront enregistrées sur le hook rest_api_init
