@@ -62,13 +62,6 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
       ]
     },
     {
-      name: 'Formes',
-      elements: [
-        { type: 'rectangle', label: 'Rectangle', icon: '▭', description: 'Forme rectangulaire' },
-        { type: 'line', label: 'Ligne', icon: '━', description: 'Ligne horizontale' }
-      ]
-    },
-    {
       name: 'Médias',
       elements: [
         { type: 'image', label: 'Image', icon: '🖼️', description: 'Insérer une image' },

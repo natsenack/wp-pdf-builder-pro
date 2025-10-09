@@ -150,7 +150,8 @@
 
 .canvas-container {
   flex: 1;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
   background: var(--background-color);
   display: flex;
@@ -201,7 +202,7 @@
   justify-content: space-between;
   align-items: flex-start;
   position: relative;
-  gap: 16px;
+  gap: 8px; /* Réduit l'espace entre les sections */
 }
 
 .toolbar-section {
@@ -274,7 +275,7 @@
 }
 
 .tool-button, .edit-button {
-  padding: 8px;
+  padding: 10px;
   border: 1px solid var(--border-color);
   background: var(--surface-color);
   border-radius: 4px;
@@ -282,12 +283,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 6px; /* Augmente l'espace entre icône et texte */
   font-size: 11px;
   transition: all 0.1s ease;
   position: relative;
-  min-width: 48px;
-  height: 48px; /* Hauteur fixe pour alignement uniforme */
+  min-width: 52px; /* Légèrement plus large */
+  height: 52px; /* Légèrement plus haut pour mieux respirer */
   justify-content: center;
 }
 
@@ -303,18 +304,18 @@
 }
 
 .tool-icon {
-  font-size: 16px;
+  font-size: 18px; /* Légèrement plus grand */
 }
 
 .tool-label {
-  font-size: 9px;
+  font-size: 10px; /* Légèrement plus grand */
   font-weight: 500;
   text-align: center;
 }
 
 .tool-buttons {
   display: flex;
-  gap: 4px;
+  gap: 8px; /* Augmente l'espace entre les boutons */
   align-items: stretch; /* Étire tous les boutons à la même hauteur */
   flex-wrap: wrap;
   justify-content: flex-start;
