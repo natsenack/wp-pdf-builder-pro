@@ -39,38 +39,74 @@ export const CanvasElement = ({
       return;
     }
 
-    // Vérifier si on clique sur une poignée de redimensionnement
-    const rect = elementRef.current.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const clickY = e.clientY - rect.top;
+    // Calculer les coordonnées relatives au canvas (en tenant compte du zoom)
+    const canvas = elementRef.current.closest('.canvas-container');
+    if (!canvas) return;
 
-    console.log('Click position relative to element:', clickX, clickY);
-
-    const handleSize = 8;
+    const canvasRect = canvas.getBoundingClientRect();
     const elementRect = elementRef.current.getBoundingClientRect();
 
-    // Poignées de redimensionnement
+    // Ajuster pour le zoom - les coordonnées doivent être relatives au canvas non-zoomé
+    const relativeRect = {
+      left: (elementRect.left - canvasRect.left) / zoom,
+      top: (elementRect.top - canvasRect.top) / zoom,
+      width: elementRect.width / zoom,
+      height: elementRect.height / zoom
+    };
+
+    console.log('Canvas rect:', canvasRect);
+    console.log('Element rect:', elementRect);
+    console.log('Relative rect:', relativeRect);
+
+    // Vérifier si on clique sur une poignée de redimensionnement
+    const clickX = (e.clientX - canvasRect.left) / zoom;
+    const clickY = (e.clientY - canvasRect.top) / zoom;
+
+    console.log('Click position relative to canvas:', clickX, clickY);
+
+    const handleSize = 8 / zoom; // Ajuster la taille des poignées pour le zoom
+    const elementLeft = element.x;
+    const elementTop = element.y;
+    const elementRight = element.x + element.width;
+    const elementBottom = element.y + element.height;
+
+    // Poignées de redimensionnement (coordonnées relatives au canvas)
     const handles = [
-      { name: 'nw', x: 0, y: 0 },
-      { name: 'ne', x: element.width * zoom - handleSize, y: 0 },
-      { name: 'sw', x: 0, y: element.height * zoom - handleSize },
-      { name: 'se', x: element.width * zoom - handleSize, y: element.height * zoom - handleSize },
-      { name: 'n', x: (element.width * zoom - handleSize) / 2, y: 0 },
-      { name: 's', x: (element.width * zoom - handleSize) / 2, y: element.height * zoom - handleSize },
-      { name: 'w', x: 0, y: (element.height * zoom - handleSize) / 2 },
-      { name: 'e', x: element.width * zoom - handleSize, y: (element.height * zoom - handleSize) / 2 }
+      { name: 'nw', x: elementLeft, y: elementTop },
+      { name: 'ne', x: elementRight, y: elementTop },
+      { name: 'sw', x: elementLeft, y: elementBottom },
+      { name: 'se', x: elementRight, y: elementBottom },
+      { name: 'n', x: elementLeft + element.width / 2, y: elementTop },
+      { name: 's', x: elementLeft + element.width / 2, y: elementBottom },
+      { name: 'w', x: elementLeft, y: elementTop + element.height / 2 },
+      { name: 'e', x: elementRight, y: elementTop + element.height / 2 }
     ];
 
     const clickedHandle = handles.find(handle =>
-      clickX >= handle.x && clickX <= handle.x + handleSize &&
-      clickY >= handle.y && clickY <= handle.y + handleSize
+      clickX >= handle.x - handleSize/2 && clickX <= handle.x + handleSize/2 &&
+      clickY >= handle.y - handleSize/2 && clickY <= handle.y + handleSize/2
     );
 
     if (clickedHandle) {
-      resize.handleResizeStart(e, clickedHandle.name, elementRect);
+      console.log('Clicked handle:', clickedHandle.name);
+      resize.handleResizeStart(e, clickedHandle.name, {
+        left: element.x,
+        top: element.y,
+        width: element.width,
+        height: element.height
+      });
     } else {
-      // Démarrer le drag
-      dragAndDrop.handleMouseDown(e, element.id, elementRect);
+      console.log('Starting drag for element:', element.id);
+      // Démarrer le drag avec les coordonnées relatives au canvas
+      const canvas = elementRef.current.closest('.canvas-container');
+      const canvasRect = canvas.getBoundingClientRect();
+      
+      dragAndDrop.handleMouseDown(e, element.id, {
+        left: element.x,
+        top: element.y,
+        width: element.width,
+        height: element.height
+      }, canvasRect, zoom);
     }
   }, [isSelected, onSelect, element, zoom, resize, dragAndDrop]);
 

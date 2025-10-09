@@ -22,6 +22,7 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
   });
 
   const editorRef = useRef(null);
+  const canvasRef = useRef(null);
 
   // Hook pour le drag and drop
   const dragAndDrop = useDragAndDrop({
@@ -30,7 +31,9 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
     },
     onElementDrop: (elementId, position) => {
       canvasState.updateElement(elementId, position);
-    }
+    },
+    canvasRect: canvasRef.current?.getBoundingClientRect(),
+    zoom: canvasState.zoom.zoom
   });
 
   // Gestion des raccourcis clavier
@@ -181,7 +184,7 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
                 transformOrigin: 'center'
               }}
             >
-              <div className="canvas">
+              <div className="canvas" ref={canvasRef}>
               <div className="canvas">
                 {/* Grille de fond */}
                 {showGrid && (

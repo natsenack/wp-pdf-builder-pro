@@ -4,7 +4,9 @@ export const useDragAndDrop = ({
   onElementMove,
   onElementDrop,
   snapToGrid = true,
-  gridSize = 10
+  gridSize = 10,
+  canvasRect = null,
+  zoom = 1
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -27,15 +29,19 @@ export const useDragAndDrop = ({
     };
   }, []);
 
-  const handleMouseDown = useCallback((e, elementId, elementRect) => {
-    console.log('useDragAndDrop handleMouseDown', elementId, elementRect);
+  const handleMouseDown = useCallback((e, elementId, elementRect, canvasRect = null, zoomLevel = 1) => {
+    console.log('useDragAndDrop handleMouseDown', elementId, elementRect, canvasRect, zoomLevel);
     if (e.button !== 0) return; // Only left mouse button
 
     e.preventDefault();
     setIsDragging(true);
 
-    const startX = e.clientX;
-    const startY = e.clientY;
+    // Utiliser les paramètres passés ou les valeurs par défaut
+    const currentCanvasRect = canvasRect || { left: 0, top: 0 };
+    const currentZoom = zoomLevel || zoom || 1;
+
+    const startX = (e.clientX - currentCanvasRect.left) / currentZoom;
+    const startY = (e.clientY - currentCanvasRect.top) / currentZoom;
     let lastMouseX = startX;
     let lastMouseY = startY;
 
@@ -45,11 +51,13 @@ export const useDragAndDrop = ({
     };
 
     const handleMouseMove = (moveEvent) => {
-      lastMouseX = moveEvent.clientX;
-      lastMouseY = moveEvent.clientY;
+      const mouseX = (moveEvent.clientX - currentCanvasRect.left) / currentZoom;
+      const mouseY = (moveEvent.clientY - currentCanvasRect.top) / currentZoom;
+      lastMouseX = mouseX;
+      lastMouseY = mouseY;
 
-      const deltaX = moveEvent.clientX - startX;
-      const deltaY = moveEvent.clientY - startY;
+      const deltaX = mouseX - startX;
+      const deltaY = mouseY - startY;
 
       const newX = snapToGridValue(elementRect.left + deltaX);
       const newY = snapToGridValue(elementRect.top + deltaY);
@@ -82,7 +90,7 @@ export const useDragAndDrop = ({
 
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
-  }, [snapToGridValue, onElementMove, onElementDrop]);
+  }, [snapToGridValue, onElementMove, onElementDrop, zoom]);
 
   const handleDragStart = useCallback((e, elementId, elementRect) => {
     e.dataTransfer.setData('text/plain', elementId);

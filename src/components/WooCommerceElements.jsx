@@ -121,32 +121,37 @@ export const WooCommerceElement = ({
   const handleMouseDown = (e) => {
     e.stopPropagation();
 
-    // Vérifier si on clique sur une poignée de redimensionnement
-    const rect = elementRef.current.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const clickY = e.clientY - rect.top;
+    // Calculer les coordonnées relatives au canvas (en tenant compte du zoom)
+    const canvas = elementRef.current.closest('.canvas-container');
+    if (!canvas) return;
 
-    const handleSize = 8;
+    const canvasRect = canvas.getBoundingClientRect();
     const elementRect = elementRef.current.getBoundingClientRect();
 
-    // Poignées de redimensionnement
+    // Ajuster pour le zoom - les coordonnées doivent être relatives au canvas non-zoomé
+    const clickX = (e.clientX - canvasRect.left) / zoom;
+    const clickY = (e.clientY - canvasRect.top) / zoom;
+
+    const handleSize = 8 / zoom; // Ajuster la taille des poignées pour le zoom
+
+    // Poignées de redimensionnement (coordonnées relatives au canvas)
     const handles = [
-      { name: 'nw', x: 0, y: 0 },
-      { name: 'ne', x: element.width - handleSize, y: 0 },
-      { name: 'sw', x: 0, y: element.height - handleSize },
-      { name: 'se', x: element.width - handleSize, y: element.height - handleSize },
-      { name: 'n', x: element.width / 2 - handleSize / 2, y: 0 },
-      { name: 's', x: element.width / 2 - handleSize / 2, y: element.height - handleSize },
-      { name: 'w', x: 0, y: element.height / 2 - handleSize / 2 },
-      { name: 'e', x: element.width - handleSize, y: element.height / 2 - handleSize / 2 }
+      { name: 'nw', x: element.x, y: element.y },
+      { name: 'ne', x: element.x + element.width, y: element.y },
+      { name: 'sw', x: element.x, y: element.y + element.height },
+      { name: 'se', x: element.x + element.width, y: element.y + element.height },
+      { name: 'n', x: element.x + element.width / 2, y: element.y },
+      { name: 's', x: element.x + element.width / 2, y: element.y + element.height },
+      { name: 'w', x: element.x, y: element.y + element.height / 2 },
+      { name: 'e', x: element.x + element.width, y: element.y + element.height / 2 }
     ];
 
     for (const handle of handles) {
       if (
-        clickX >= handle.x &&
-        clickX <= handle.x + handleSize &&
-        clickY >= handle.y &&
-        clickY <= handle.y + handleSize
+        clickX >= handle.x - handleSize/2 &&
+        clickX <= handle.x + handleSize/2 &&
+        clickY >= handle.y - handleSize/2 &&
+        clickY <= handle.y + handleSize/2
       ) {
         resize.handleResizeStart(e, handle.name, {
           x: element.x,
@@ -160,13 +165,15 @@ export const WooCommerceElement = ({
 
     // Si on clique ailleurs sur l'élément, commencer le drag
     if (dragAndDrop && dragAndDrop.handleMouseDown) {
-      const elementRect = {
-        left: element.x * zoom,
-        top: element.y * zoom,
-        width: element.width * zoom,
-        height: element.height * zoom
-      };
-      dragAndDrop.handleMouseDown(e, element.id, elementRect);
+      const canvas = elementRef.current.closest('.canvas-container');
+      const canvasRect = canvas.getBoundingClientRect();
+      
+      dragAndDrop.handleMouseDown(e, element.id, {
+        left: element.x,
+        top: element.y,
+        width: element.width,
+        height: element.height
+      }, canvasRect, zoom);
     }
   };
 
