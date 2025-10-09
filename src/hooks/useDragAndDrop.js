@@ -40,15 +40,21 @@ export const useDragAndDrop = ({
     const currentCanvasRect = canvasRect || { left: 0, top: 0 };
     const currentZoom = zoomLevel || zoom || 1;
 
+    console.log('Current canvas rect:', currentCanvasRect, 'Current zoom:', currentZoom);
+
     const startX = (e.clientX - currentCanvasRect.left) / currentZoom;
     const startY = (e.clientY - currentCanvasRect.top) / currentZoom;
     let lastMouseX = startX;
     let lastMouseY = startY;
 
+    console.log('Start position (relative to canvas):', startX, startY);
+
     dragStartPos.current = {
       x: startX - elementRect.left,
       y: startY - elementRect.top
     };
+
+    console.log('Drag start offset:', dragStartPos.current);
 
     const handleMouseMove = (moveEvent) => {
       const mouseX = (moveEvent.clientX - currentCanvasRect.left) / currentZoom;
@@ -62,6 +68,8 @@ export const useDragAndDrop = ({
       const newX = snapToGridValue(elementRect.left + deltaX);
       const newY = snapToGridValue(elementRect.top + deltaY);
 
+      console.log('Mouse move - Delta:', deltaX, deltaY, 'New position:', newX, newY);
+
       setDragOffset({ x: newX - elementRect.left, y: newY - elementRect.top });
 
       if (onElementMove) {
@@ -70,12 +78,14 @@ export const useDragAndDrop = ({
     };
 
     const handleMouseUp = () => {
+      console.log('Mouse up - Final position:', lastMouseX, lastMouseY);
       setIsDragging(false);
       setDragOffset({ x: 0, y: 0 });
 
       if (onElementDrop) {
         const finalX = snapToGridValue(elementRect.left + (lastMouseX - startX));
         const finalY = snapToGridValue(elementRect.top + (lastMouseY - startY));
+        console.log('Final drop position:', finalX, finalY);
         onElementDrop(elementId, { x: finalX, y: finalY });
       }
 

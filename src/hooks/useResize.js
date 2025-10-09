@@ -32,6 +32,8 @@ export const useResize = ({
       const deltaX = moveEvent.clientX - resizeStartPos.current.x;
       const deltaY = moveEvent.clientY - resizeStartPos.current.y;
 
+      console.log('Resize move - Delta:', deltaX, deltaY, 'Handle:', handle);
+
       let newRect = { ...originalRect.current };
 
       switch (handle) {
@@ -97,6 +99,7 @@ export const useResize = ({
       }
 
       if (onElementResize) {
+        console.log('Calling onElementResize with:', newRect);
         onElementResize(newRect);
       }
     };
