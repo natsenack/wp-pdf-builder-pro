@@ -292,58 +292,163 @@ export const PropertiesPanel = ({
       case 'layout':
         return (
           <div className="tab-content">
+            {/* Contrôles d'alignement rapide */}
             <div className="properties-group">
-              <h4>📍 Position</h4>
+              <h4>🎯 Alignement Rapide</h4>
+              <div className="alignment-controls">
+                <div className="alignment-row">
+                  <button
+                    className="align-btn"
+                    onClick={() => handlePropertyChange(selectedElement.id, 'x', 0)}
+                    title="Aligner à gauche"
+                  >
+                    ⬅️ Gauche
+                  </button>
+                  <button
+                    className="align-btn"
+                    onClick={() => handlePropertyChange(selectedElement.id, 'x', 210)}
+                    title="Centrer horizontalement"
+                  >
+                    ⬌ Centre
+                  </button>
+                  <button
+                    className="align-btn"
+                    onClick={() => handlePropertyChange(selectedElement.id, 'x', 420)}
+                    title="Aligner à droite"
+                  >
+                    ➡️ Droite
+                  </button>
+                </div>
+                <div className="alignment-row">
+                  <button
+                    className="align-btn"
+                    onClick={() => handlePropertyChange(selectedElement.id, 'y', 0)}
+                    title="Aligner en haut"
+                  >
+                    ⬆️ Haut
+                  </button>
+                  <button
+                    className="align-btn"
+                    onClick={() => handlePropertyChange(selectedElement.id, 'y', 148)}
+                    title="Centrer verticalement"
+                  >
+                    ⬍ Centre
+                  </button>
+                  <button
+                    className="align-btn"
+                    onClick={() => handlePropertyChange(selectedElement.id, 'y', 297)}
+                    title="Aligner en bas"
+                  >
+                    ⬇️ Bas
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Position précise */}
+            <div className="properties-group">
+              <h4>📍 Position Précise</h4>
 
               <div className="property-row">
                 <label>X:</label>
-                <input
-                  type="number"
-                  value={Math.round(localProperties.x || 0)}
-                  onChange={(e) => handlePropertyChange(selectedElement.id, 'x', parseInt(e.target.value))}
-                  step="1"
-                />
+                <div className="input-with-unit">
+                  <input
+                    type="number"
+                    value={Math.round(localProperties.x || 0)}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'x', parseInt(e.target.value))}
+                    step="1"
+                  />
+                  <span className="unit">mm</span>
+                </div>
               </div>
 
               <div className="property-row">
                 <label>Y:</label>
-                <input
-                  type="number"
-                  value={Math.round(localProperties.y || 0)}
-                  onChange={(e) => handlePropertyChange(selectedElement.id, 'y', parseInt(e.target.value))}
-                  step="1"
-                />
+                <div className="input-with-unit">
+                  <input
+                    type="number"
+                    value={Math.round(localProperties.y || 0)}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'y', parseInt(e.target.value))}
+                    step="1"
+                  />
+                  <span className="unit">mm</span>
+                </div>
               </div>
             </div>
 
+            {/* Dimensions avec contraintes */}
             <div className="properties-group">
               <h4>📏 Dimensions</h4>
 
               <div className="property-row">
                 <label>Largeur:</label>
-                <input
-                  type="number"
-                  value={Math.round(localProperties.width || 100)}
-                  onChange={(e) => handlePropertyChange(selectedElement.id, 'width', parseInt(e.target.value))}
-                  min="1"
-                  step="1"
-                />
+                <div className="input-with-unit">
+                  <input
+                    type="number"
+                    value={Math.round(localProperties.width || 100)}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'width', parseInt(e.target.value))}
+                    min="1"
+                    step="1"
+                  />
+                  <span className="unit">mm</span>
+                </div>
               </div>
 
               <div className="property-row">
                 <label>Hauteur:</label>
-                <input
-                  type="number"
-                  value={Math.round(localProperties.height || 50)}
-                  onChange={(e) => handlePropertyChange(selectedElement.id, 'height', parseInt(e.target.value))}
-                  min="1"
-                  step="1"
-                />
+                <div className="input-with-unit">
+                  <input
+                    type="number"
+                    value={Math.round(localProperties.height || 50)}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'height', parseInt(e.target.value))}
+                    min="1"
+                    step="1"
+                  />
+                  <span className="unit">mm</span>
+                </div>
+              </div>
+
+              {/* Boutons de ratio */}
+              <div className="property-row">
+                <label>Ratio:</label>
+                <div className="ratio-buttons">
+                  <button
+                    className="ratio-btn"
+                    onClick={() => {
+                      const newHeight = (localProperties.width || 100) * 0.75;
+                      handlePropertyChange(selectedElement.id, 'height', Math.round(newHeight));
+                    }}
+                    title="Format 4:3"
+                  >
+                    4:3
+                  </button>
+                  <button
+                    className="ratio-btn"
+                    onClick={() => {
+                      const newHeight = (localProperties.width || 100) * (297/210);
+                      handlePropertyChange(selectedElement.id, 'height', Math.round(newHeight));
+                    }}
+                    title="Format A4"
+                  >
+                    A4
+                  </button>
+                  <button
+                    className="ratio-btn"
+                    onClick={() => {
+                      const newHeight = (localProperties.width || 100);
+                      handlePropertyChange(selectedElement.id, 'height', Math.round(newHeight));
+                    }}
+                    title="Carré"
+                  >
+                    1:1
+                  </button>
+                </div>
               </div>
             </div>
 
+            {/* Transformation */}
             <div className="properties-group">
-              <h4>🔄 Rotation & Échelle</h4>
+              <h4>🔄 Transformation</h4>
 
               <div className="property-row">
                 <label>Rotation:</label>
@@ -372,6 +477,78 @@ export const PropertiesPanel = ({
                     className="slider"
                   />
                   <span className="slider-value">{localProperties.scale || 100}%</span>
+                </div>
+              </div>
+
+              {/* Boutons de rotation rapide */}
+              <div className="property-row">
+                <label>Rotation rapide:</label>
+                <div className="rotation-buttons">
+                  <button
+                    className="rotation-btn"
+                    onClick={() => handlePropertyChange(selectedElement.id, 'rotation', 0)}
+                    title="Rotation 0°"
+                  >
+                    ↻ 0°
+                  </button>
+                  <button
+                    className="rotation-btn"
+                    onClick={() => handlePropertyChange(selectedElement.id, 'rotation', 90)}
+                    title="Rotation 90°"
+                  >
+                    ↻ 90°
+                  </button>
+                  <button
+                    className="rotation-btn"
+                    onClick={() => handlePropertyChange(selectedElement.id, 'rotation', 180)}
+                    title="Rotation 180°"
+                  >
+                    ↻ 180°
+                  </button>
+                  <button
+                    className="rotation-btn"
+                    onClick={() => handlePropertyChange(selectedElement.id, 'rotation', -90)}
+                    title="Rotation -90°"
+                  >
+                    ↺ -90°
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Calques et profondeur */}
+            <div className="properties-group">
+              <h4>📚 Calques</h4>
+
+              <div className="property-row">
+                <label>Profondeur (Z-index):</label>
+                <input
+                  type="number"
+                  value={localProperties.zIndex || 0}
+                  onChange={(e) => handlePropertyChange(selectedElement.id, 'zIndex', parseInt(e.target.value))}
+                  min="0"
+                  max="100"
+                  step="1"
+                />
+              </div>
+
+              <div className="property-row">
+                <label>Actions:</label>
+                <div className="layer-actions">
+                  <button
+                    className="layer-btn"
+                    onClick={() => handlePropertyChange(selectedElement.id, 'zIndex', (localProperties.zIndex || 0) + 1)}
+                    title="Mettre devant"
+                  >
+                    ⬆️ Devant
+                  </button>
+                  <button
+                    className="layer-btn"
+                    onClick={() => handlePropertyChange(selectedElement.id, 'zIndex', Math.max(0, (localProperties.zIndex || 0) - 1))}
+                    title="Mettre derrière"
+                  >
+                    ⬇️ Derrière
+                  </button>
                 </div>
               </div>
             </div>

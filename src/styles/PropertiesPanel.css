@@ -10,7 +10,8 @@
 }
 
 .properties-header {
-  p/* Styles pour les contrôles de couleur */
+  /* Styles pour les contrôles de couleur */
+}
 .color-picker-container {
   display: flex;
   align-items: center;
@@ -433,4 +434,138 @@
     padding: 10px 6px;
     font-size: 11px;
   }
-}}
+}
+
+/* Styles pour les contrôles d'alignement */
+.alignment-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.alignment-row {
+  display: flex;
+  gap: 4px;
+  justify-content: space-between;
+}
+
+.align-btn {
+  flex: 1;
+  padding: 8px 4px;
+  font-size: 11px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #475569;
+}
+
+.align-btn:hover {
+  background: #e2e8f0;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+.align-btn:active {
+  background: #cbd5e1;
+}
+
+/* Styles pour les inputs avec unités */
+.input-with-unit {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.input-with-unit input {
+  flex: 1;
+}
+
+.unit {
+  font-size: 11px;
+  color: #64748b;
+  min-width: 20px;
+  text-align: center;
+}
+
+/* Styles pour les boutons de ratio */
+.ratio-buttons {
+  display: flex;
+  gap: 4px;
+}
+
+.ratio-btn {
+  flex: 1;
+  padding: 6px 4px;
+  font-size: 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #475569;
+}
+
+.ratio-btn:hover {
+  background: #e2e8f0;
+  border-color: #cbd5e1;
+}
+
+.ratio-btn:active {
+  background: #cbd5e1;
+}
+
+/* Styles pour les boutons de rotation */
+.rotation-buttons {
+  display: flex;
+  gap: 4px;
+}
+
+.rotation-btn {
+  flex: 1;
+  padding: 6px 4px;
+  font-size: 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #475569;
+}
+
+.rotation-btn:hover {
+  background: #e2e8f0;
+  border-color: #cbd5e1;
+}
+
+.rotation-btn:active {
+  background: #cbd5e1;
+}
+
+/* Styles pour les actions de calques */
+.layer-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.layer-btn {
+  flex: 1;
+  padding: 6px 4px;
+  font-size: 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #475569;
+}
+
+.layer-btn:hover {
+  background: #e2e8f0;
+  border-color: #cbd5e1;
+}
+
+.layer-btn:active {
+  background: #cbd5e1;
+}
