@@ -328,7 +328,7 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
       {/* Barre d'outils principale */}
       <div className="editor-header">
         <div className="editor-title">
-          <h2>Éditeur PDF - {options.isNew ? 'Nouveau Template' : `Template #${options.templateId}`}</h2>
+          <h2>Éditeur PDF - {options.isNew ? 'Nouveau Template' : options.templateName}</h2>
         </div>
         <div className="editor-actions">
           <button

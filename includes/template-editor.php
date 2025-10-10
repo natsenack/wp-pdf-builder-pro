@@ -35,7 +35,7 @@ if (!$is_new && $template_id > 0) {
 }
 ?>
 <div class="wrap">
-    <h1><?php echo $is_new ? __('Créer un nouveau template', 'pdf-builder-pro') : sprintf(__('Éditer le template: %s', 'pdf-builder-pro'), esc_html($template_name)); ?></h1>
+    <h1><?php echo $is_new ? __('Créer un nouveau template', 'pdf-builder-pro') : esc_html($template_name); ?></h1>
     
     <div id="invoice-quote-builder-container" data-is-new="<?php echo $is_new ? 'true' : 'false'; ?>" style="padding: 20px; background: #ffffff; border-radius: 8px; margin: 10px 0;">
         <!-- React App will be mounted here -->

@@ -835,7 +835,7 @@ class PDF_Builder_Admin {
         // Localiser le script avec les données nécessaires
         wp_localize_script('pdf-builder-admin', 'pdfBuilderAjax', [
             'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_nonce'),
+            'nonce' => wp_create_nonce('pdf_builder_templates'),
             'strings' => [
                 'loading' => __('Chargement...', 'pdf-builder-pro'),
                 'error' => __('Erreur', 'pdf-builder-pro'),
