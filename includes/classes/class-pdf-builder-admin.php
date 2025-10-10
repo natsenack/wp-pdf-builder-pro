@@ -3173,12 +3173,16 @@ class PDF_Builder_Admin {
         $template_id = intval($_POST['template_id'] ?? 0);
         $is_default = intval($_POST['is_default'] ?? 0);
 
+        error_log("PDF Builder: Processing template_id=$template_id, is_default=$is_default");
+
         if (!$template_id) {
+            error_log('PDF Builder: Invalid template_id - received: ' . ($_POST['template_id'] ?? 'null'));
             wp_send_json_error(['message' => __('ID de template invalide.', 'pdf-builder-pro')]);
             return;
         }
 
         try {
+            error_log('PDF Builder: Starting database operations');
             global $wpdb;
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
@@ -3188,7 +3192,10 @@ class PDF_Builder_Admin {
                 $template_id
             ));
 
+            error_log("PDF Builder: Template exists check - exists: $template_exists");
+
             if (!$template_exists) {
+                error_log('PDF Builder: Template not found');
                 wp_send_json_error(['message' => __('Template introuvable.', 'pdf-builder-pro')]);
                 return;
             }
@@ -3241,9 +3248,11 @@ class PDF_Builder_Admin {
             if ($result !== false) {
                 $wpdb->query('COMMIT');
                 $message = $is_default ? __('Template défini comme défaut.', 'pdf-builder-pro') : __('Statut par défaut retiré.', 'pdf-builder-pro');
+                error_log("PDF Builder: Success - sending JSON response: $message");
                 wp_send_json_success(['message' => $message]);
             } else {
                 $wpdb->query('ROLLBACK');
+                error_log('PDF Builder: Database update failed');
                 wp_send_json_error(['message' => __('Erreur lors de la modification du statut par défaut.', 'pdf-builder-pro')]);
             }
 
@@ -3251,6 +3260,7 @@ class PDF_Builder_Admin {
             if (isset($wpdb)) {
                 $wpdb->query('ROLLBACK');
             }
+            error_log('PDF Builder: Exception caught: ' . $e->getMessage());
             wp_send_json_error(['message' => $e->getMessage()]);
         }
     }
