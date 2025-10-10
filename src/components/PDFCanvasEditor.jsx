@@ -285,6 +285,13 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
     canvasState.showContextMenu(e.clientX, e.clientY, menuItems);
   }, [canvasState]);
 
+  // Gestionnaire pour les actions du menu contextuel
+  const handleContextMenuAction = useCallback((action) => {
+    if (typeof action === 'function') {
+      action();
+    }
+  }, []);
+
   // Fonction pour déterminer le curseur selon l'outil sélectionné
   const getCursorStyle = useCallback(() => {
     switch (tool) {
