@@ -431,9 +431,16 @@ const PropertiesPanel = React.memo(({
                     readOnly
                   />
                   <span className="toggle-slider" onClick={() => {
-                    const currentChecked = !!localProperties.backgroundColor && localProperties.backgroundColor !== 'transparent';
-                    const willBeChecked = !currentChecked;
-                    handleNoBackgroundToggle(selectedElement.id, !willBeChecked);
+                    const currentColor = localProperties.backgroundColor;
+                    if (currentColor && currentColor !== 'transparent') {
+                      // Désactiver le fond
+                      setPreviousBackgroundColor(currentColor);
+                      handlePropertyChange(selectedElement.id, 'backgroundColor', 'transparent');
+                    } else {
+                      // Activer le fond
+                      const colorToSet = previousBackgroundColor || '#ffffff';
+                      handlePropertyChange(selectedElement.id, 'backgroundColor', colorToSet);
+                    }
                   }}></span>
                 </label>
               </div>
