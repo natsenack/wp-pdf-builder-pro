@@ -177,13 +177,6 @@ if (!defined('ABSPATH')) {
 
                         <div style="margin-bottom: 15px;">
                             <label style="display: flex; align-items: center; cursor: pointer;">
-                                <input type="checkbox" id="template-active" style="margin-right: 8px;">
-                                <span>Template actif</span>
-                            </label>
-                        </div>
-
-                        <div style="margin-bottom: 15px;">
-                            <label style="display: flex; align-items: center; cursor: pointer;">
                                 <input type="checkbox" id="template-public" style="margin-right: 8px;">
                                 <span>Template public (visible par tous les utilisateurs)</span>
                             </label>
@@ -267,7 +260,6 @@ function loadTemplateSettings(templateId) {
     // Simulation du chargement des paramètres (à remplacer par un vrai appel AJAX)
     // Pour l'instant, on met des valeurs par défaut
     document.getElementById('template-description-input').value = 'Description du template...';
-    document.getElementById('template-active').checked = true;
     document.getElementById('template-public').checked = false;
     document.getElementById('template-paper-size').value = 'A4';
     document.getElementById('template-orientation').value = 'portrait';
@@ -289,7 +281,6 @@ function saveTemplateSettings() {
         id: currentTemplateId,
         name: document.getElementById('template-name-input').value,
         description: document.getElementById('template-description-input').value,
-        active: document.getElementById('template-active').checked,
         public: document.getElementById('template-public').checked,
         paperSize: document.getElementById('template-paper-size').value,
         orientation: document.getElementById('template-orientation').value,
