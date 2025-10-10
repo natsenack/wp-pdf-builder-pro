@@ -861,7 +861,6 @@ class PDF_Builder_Admin {
 
         // Debug logging
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('PDF Builder Admin: pdf-builder-pro.js enqueued from: ' . $script_path);
             error_log('PDF Builder Admin: pdf-builder-admin.js enqueued from: ' . $admin_script_path);
         }
     }
