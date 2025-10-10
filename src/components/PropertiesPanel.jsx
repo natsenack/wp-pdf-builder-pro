@@ -396,7 +396,12 @@ const PropertiesPanel = React.memo(({
 
     switch (activeTab) {
       case 'appearance':
-        // console.log('🎨 Rendu section Couleurs - localProperties:', localProperties);
+        console.log('🎨 Rendu section Apparence:', {
+          borderWidth: localProperties.borderWidth,
+          borderWidthType: typeof localProperties.borderWidth,
+          shouldShowBorderControls: localProperties.borderWidth > 0,
+          backgroundColor: localProperties.backgroundColor
+        });
         return (
           <div className="tab-content">
             <div className="properties-group">
@@ -520,49 +525,41 @@ const PropertiesPanel = React.memo(({
               />
             )}
 
-            {(() => {
-              const shouldShowBorderControls = localProperties.borderWidth > 0;
-              console.log('🔍 Condition affichage bordures:', {
-                borderWidth: localProperties.borderWidth,
-                borderWidthType: typeof localProperties.borderWidth,
-                shouldShowBorderControls
-              });
-              return shouldShowBorderControls && (
-                <div className="properties-group">
-                  <h4>🔲 Bordures & Coins</h4>
+            {localProperties.borderWidth > 0 && (
+              <div className="properties-group">
+                <h4>🔲 Bordures & Coins</h4>
 
-                  <div className="property-row">
-                    <label>Épaisseur bordure:</label>
-                    <div className="slider-container">
-                      <input
-                        type="range"
-                        min="0"
-                        max="10"
-                        value={localProperties.borderWidth ?? 1}
-                        onChange={(e) => handlePropertyChange(selectedElement.id, 'borderWidth', parseInt(e.target.value))}
-                        className="slider"
-                      />
-                      <span className="slider-value">{localProperties.borderWidth ?? 1}px</span>
-                    </div>
-                  </div>
-
-                  <div className="property-row">
-                    <label>Arrondi des coins:</label>
-                    <div className="slider-container">
-                      <input
-                        type="range"
-                        min="0"
-                        max="50"
-                        value={localProperties.borderRadius ?? 4}
-                        onChange={(e) => handlePropertyChange(selectedElement.id, 'borderRadius', parseInt(e.target.value))}
-                        className="slider"
-                      />
-                      <span className="slider-value">{localProperties.borderRadius ?? 4}px</span>
-                    </div>
+                <div className="property-row">
+                  <label>Épaisseur bordure:</label>
+                  <div className="slider-container">
+                    <input
+                      type="range"
+                      min="0"
+                      max="10"
+                      value={localProperties.borderWidth ?? 1}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'borderWidth', parseInt(e.target.value))}
+                      className="slider"
+                    />
+                    <span className="slider-value">{localProperties.borderWidth ?? 1}px</span>
                   </div>
                 </div>
-              );
-            })()}
+
+                <div className="property-row">
+                  <label>Arrondi des coins:</label>
+                  <div className="slider-container">
+                    <input
+                      type="range"
+                      min="0"
+                      max="50"
+                      value={localProperties.borderRadius ?? 4}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'borderRadius', parseInt(e.target.value))}
+                      className="slider"
+                    />
+                    <span className="slider-value">{localProperties.borderRadius ?? 4}px</span>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="properties-group">
               <h4>✨ Effets</h4>
