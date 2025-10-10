@@ -398,7 +398,8 @@ const PropertiesPanel = React.memo(({
               />
 
               <div style={{
-                opacity: isBackgroundEnabled ? 1 : 0.5
+                opacity: isBackgroundEnabled ? 1 : 0.5,
+                pointerEvents: isBackgroundEnabled ? 'auto' : 'none'
               }}>
                 <ColorPicker
                   label="Fond"
@@ -411,7 +412,8 @@ const PropertiesPanel = React.memo(({
               </div>
 
               <div className="property-row" style={{
-                opacity: isBackgroundEnabled ? 1 : 0.5
+                opacity: isBackgroundEnabled ? 1 : 0.5,
+                pointerEvents: isBackgroundEnabled ? 'auto' : 'none'
               }}>
                 <label>Opacité fond:</label>
                 <div className="slider-container">
@@ -482,12 +484,11 @@ const PropertiesPanel = React.memo(({
                 <h4>🔲 Bordures & Coins</h4>
 
                 <div style={{
-                  opacity: localProperties.borderWidth > 0 ? 1 : 0.5,
-                  pointerEvents: localProperties.borderWidth > 0 ? 'auto' : 'none'
+                  opacity: localProperties.borderWidth > 0 ? 1 : 0.5
                 }}>
                   <ColorPicker
                     label="Bordure"
-                    value={localProperties.borderColor}
+                    value={localProperties.borderColor || '#000000'}
                     onChange={(value) => handlePropertyChange(selectedElement.id, 'borderColor', value)}
                     presets={['#e2e8f0', '#cbd5e1', '#94a3b8', '#64748b', '#475569', '#334155']}
                   />
