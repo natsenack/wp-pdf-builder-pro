@@ -566,7 +566,7 @@ export const CanvasElement = ({
          element.type === 'product_table' ? null : // Le contenu sera rendu plus bas pour les tableaux
          element.type === 'image' && !element.src ? '📷 Image' :
          element.type === 'line' ? null :
-         element.type === 'layout-header' ? '[HEADER] En-tête' :
+         element.type === 'layout-header' ? '[H] En-tête' :
          element.type === 'layout-footer' ? '📄 Pied de Page' :
          element.type === 'layout-sidebar' ? '📄 Barre Latérale' :
          element.type === 'layout-section' ? '📄 Section' :

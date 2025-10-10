@@ -118,8 +118,8 @@ const getDefaultIcon = (label) => {
   const iconMap = {
     'Dupliquer': '📋',
     'Supprimer': '🗑️',
-    'Copier': '[COPY]',
-    'Coller': '[PASTE]',
+    'Copier': '[C]',
+    'Coller': '[V]',
     'Annuler': '↶',
     'Rétablir': '↷',
     'Tout sélectionner': '☑️',
