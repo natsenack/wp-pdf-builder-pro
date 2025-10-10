@@ -122,7 +122,7 @@
 }
 
 .editor-sidebar {
-  width: 300px;
+  width: 400px;
   background: var(--surface-color);
   border-right: 1px solid var(--border-color);
   display: flex;
@@ -993,7 +993,7 @@
 /* Responsive Design */
 @media (max-width: 1200px) {
   .editor-sidebar {
-    width: 280px;
+    width: 380px;
   }
 
   .toolbar {
@@ -1004,7 +1004,7 @@
 
 @media (max-width: 1024px) {
   .editor-sidebar {
-    width: 260px;
+    width: 360px;
   }
 
   .editor-header {

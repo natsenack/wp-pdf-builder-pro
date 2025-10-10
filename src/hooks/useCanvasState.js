@@ -271,55 +271,6 @@ export const useCanvasState = ({
             defaults.textDecoration = 'none';
             break;
 
-          case 'company_logo':
-            defaults.width = 200;
-            defaults.height = 100;
-            defaults.backgroundColor = 'transparent';
-            defaults.borderColor = '#e2e8f0';
-            defaults.borderWidth = 1;
-            defaults.imageUrl = '';
-            defaults.alignment = 'left';
-            defaults.fitMode = 'contain';
-            break;
-
-          case 'company_info':
-            defaults.width = 300;
-            defaults.height = 150;
-            defaults.backgroundColor = '#ffffff';
-            defaults.borderColor = '#e2e8f0';
-            defaults.borderWidth = 1;
-            defaults.fields = ['name', 'address', 'phone', 'email', 'website', 'vat'];
-            defaults.layout = 'vertical';
-            defaults.showLabels = false;
-            defaults.labelStyle = 'normal';
-            defaults.spacing = 4;
-            defaults.fontSize = 11;
-            defaults.fontFamily = 'Arial, sans-serif';
-            defaults.fontWeight = 'normal';
-            defaults.fontStyle = 'normal';
-            defaults.textDecoration = 'none';
-            defaults.alignment = 'left';
-            break;
-
-          case 'order_details':
-            defaults.width = 250;
-            defaults.height = 120;
-            defaults.backgroundColor = '#ffffff';
-            defaults.borderColor = '#e2e8f0';
-            defaults.borderWidth = 1;
-            defaults.fields = ['order_number', 'order_date', 'order_status', 'payment_method'];
-            defaults.layout = 'horizontal';
-            defaults.showLabels = true;
-            defaults.labelStyle = 'bold';
-            defaults.spacing = 12;
-            defaults.fontSize = 12;
-            defaults.fontFamily = 'Arial, sans-serif';
-            defaults.fontWeight = 'normal';
-            defaults.fontStyle = 'normal';
-            defaults.textDecoration = 'none';
-            defaults.alignment = 'right';
-            break;
-
           case 'invoice-totals-block':
             defaults.width = 200;
             defaults.height = 150;
