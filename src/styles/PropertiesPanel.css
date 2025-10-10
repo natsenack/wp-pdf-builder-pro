@@ -1,7 +1,7 @@
 /* Styles pour le panneau de propriétés avec onglets */
 
 .properties-panel {
-  width: 320px;
+  width: 400px;
   background: #ffffff;
   border-left: 1px solid #e2e8f0;
   display: flex;
@@ -424,7 +424,7 @@
 /* Responsive */
 @media (max-width: 768px) {
   .properties-panel {
-    width: 280px;
+    width: 360px;
   }
 
   .tab-btn {
