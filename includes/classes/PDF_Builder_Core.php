@@ -169,7 +169,8 @@ class PDF_Builder_Core {
     public function admin_enqueue_scripts($hook) {
         // Charger les scripts sur toutes les pages du plugin
         if (strpos($hook, 'pdf-builder') !== false || 
-            (isset($_GET['page']) && strpos($_GET['page'], 'pdf-builder') !== false)) {
+            (isset($_GET['page']) && strpos($_GET['page'], 'pdf-builder') !== false) ||
+            (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'pdf-builder-editor') !== false)) {
             
             wp_enqueue_script(
                 'pdf-builder-admin-core',
