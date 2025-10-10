@@ -1283,15 +1283,18 @@ class PDF_Builder_Admin {
 
                 // Style de base optimisé
                 $element_style = '';
-                if (isset($element['style'])) {
-                    $styles = $element['style'];
-                    $element_style = sprintf(
-                        'color: %s; font-size: %dpx; font-weight: %s; background-color: %s;',
-                        $styles['color'] ?? '#1a202c',
-                        $styles['fontSize'] ?? 14,
-                        $styles['fontWeight'] ?? 'normal',
-                        $styles['fillColor'] ?? 'transparent'
-                    );
+                $element_style = sprintf(
+                    'color: %s; font-size: %dpx; font-weight: %s; background-color: %s;',
+                    $element['color'] ?? '#1a202c',
+                    $element['fontSize'] ?? 14,
+                    $element['fontWeight'] ?? 'normal',
+                    $element['backgroundColor'] ?? 'transparent'
+                );
+                
+                // Ajouter les styles de bordure si présents
+                if (isset($element['borderWidth']) && $element['borderWidth'] > 0) {
+                    $border_color = $element['borderColor'] ?? '#000000';
+                    $element_style .= sprintf(' border: %dpx solid %s;', $element['borderWidth'], $border_color);
                 }
 
                 // Positionnement optimisé (conversion des coordonnées absolues en layout relatif)
