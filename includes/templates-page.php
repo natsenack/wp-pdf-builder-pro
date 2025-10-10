@@ -42,7 +42,7 @@ if (!defined('ABSPATH')) {
                     $button_action = 'openTemplateSettings';
                     
                     // Déterminer l'icône basée sur le nom du template
-                    $icon = '�'; // Default
+                    $icon = '📄'; // Default
                     $description = 'Template personnalisé';
                     $features = ['✓ Contenu personnalisable', '✓ Mise en page flexible', '✓ Éléments dynamiques', '✓ Export PDF'];
                     
