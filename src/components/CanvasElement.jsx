@@ -570,6 +570,9 @@ export const CanvasElement = ({
          element.type === 'progress-bar' ? null :
          element.type === 'product_table' ? null : // Le contenu sera rendu plus bas dans le même conteneur
          element.type === 'customer_info' ? null : // Le contenu sera rendu plus bas dans le même conteneur
+         element.type === 'company_logo' ? null : // Le contenu sera rendu plus bas dans le même conteneur
+         element.type === 'company_info' ? null : // Le contenu sera rendu plus bas dans le même conteneur
+         element.type === 'order_details' ? null : // Le contenu sera rendu plus bas dans le même conteneur
          element.type !== 'image' && element.type !== 'rectangle' ? element.type : null}
 
         {/* Rendu spécial pour les tableaux de produits */}
@@ -1275,6 +1278,268 @@ export const CanvasElement = ({
       </div>
 
 
+
+      {/* Rendu spécial pour le logo entreprise */}
+      {element.type === 'company_logo' && (
+        <div style={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          alignItems: element.alignment === 'center' ? 'center' : element.alignment === 'right' ? 'flex-end' : 'flex-start',
+          justifyContent: element.alignment === 'center' ? 'center' : element.alignment === 'right' ? 'flex-end' : 'flex-start',
+          padding: `${8 * zoom}px`
+        }}>
+          {element.imageUrl ? (
+            <img
+              src={element.imageUrl}
+              alt="Logo entreprise"
+              style={{
+                width: `${(element.width || 150) * zoom}px`,
+                height: `${(element.height || 80) * zoom}px`,
+                objectFit: element.fitMode || 'contain',
+                borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0px'
+              }}
+            />
+          ) : (
+            <div style={{
+              width: `${(element.width || 150) * zoom}px`,
+              height: `${(element.height || 80) * zoom}px`,
+              border: '2px dashed #ccc',
+              borderRadius: '4px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#999',
+              fontSize: `${12 * zoom}px`,
+              backgroundColor: '#f9f9f9'
+            }}>
+              🏢 Logo
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Rendu spécial pour les informations entreprise */}
+      {element.type === 'company_info' && (
+        <div style={{
+          width: '100%',
+          height: '100%',
+          padding: `${8 * zoom}px`,
+          fontSize: `${(element.fontSize || 11) * zoom}px`,
+          fontFamily: element.fontFamily || 'Arial, sans-serif',
+          fontWeight: element.fontWeight || 'normal',
+          fontStyle: element.fontStyle || 'normal',
+          textDecoration: element.textDecoration || 'none',
+          color: '#333',
+          backgroundColor: element.backgroundColor || '#ffffff',
+          border: element.borderWidth ? `${element.borderWidth * zoom}px solid ${element.borderColor || '#ddd'}` : 'none',
+          borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0px',
+          textAlign: element.alignment || 'left'
+        }}>
+          <div style={{
+            display: 'flex',
+            flexDirection: element.layout === 'horizontal' ? 'row' : 'column',
+            gap: `${element.spacing * zoom || 4 * zoom}px`,
+            height: '100%',
+            flexWrap: element.layout === 'horizontal' ? 'wrap' : 'nowrap'
+          }}>
+            {/* Nom entreprise */}
+            {element.fields?.includes('name') && (
+              <div style={{
+                fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
+                textTransform: element.labelStyle === 'uppercase' ? 'uppercase' : 'none',
+                color: '#333',
+                fontSize: element.layout === 'horizontal' ? `${(element.fontSize || 11) * zoom}px` : `${((element.fontSize || 11) + 2) * zoom}px`
+              }}>
+                ABC Company SARL
+              </div>
+            )}
+
+            {/* Adresse */}
+            {element.fields?.includes('address') && (
+              <div style={{
+                color: '#666',
+                lineHeight: '1.4'
+              }}>
+                123 Rue de la Paix<br />
+                75001 Paris<br />
+                France
+              </div>
+            )}
+
+            {/* Téléphone */}
+            {element.fields?.includes('phone') && (
+              <div style={{
+                color: '#666'
+              }}>
+                Tél: +33 1 23 45 67 89
+              </div>
+            )}
+
+            {/* Email */}
+            {element.fields?.includes('email') && (
+              <div style={{
+                color: '#1976d2'
+              }}>
+                contact@abc-company.com
+              </div>
+            )}
+
+            {/* Site web */}
+            {element.fields?.includes('website') && (
+              <div style={{
+                color: '#1976d2'
+              }}>
+                www.abc-company.com
+              </div>
+            )}
+
+            {/* TVA */}
+            {element.fields?.includes('vat') && (
+              <div style={{
+                color: '#666',
+                fontSize: `${10 * zoom}px`
+              }}>
+                TVA: FR 12 345 678 901
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Rendu spécial pour les détails commande */}
+      {element.type === 'order_details' && (
+        <div style={{
+          width: '100%',
+          height: '100%',
+          padding: `${8 * zoom}px`,
+          fontSize: `${(element.fontSize || 12) * zoom}px`,
+          fontFamily: element.fontFamily || 'Arial, sans-serif',
+          fontWeight: element.fontWeight || 'normal',
+          fontStyle: element.fontStyle || 'normal',
+          textDecoration: element.textDecoration || 'none',
+          color: '#333',
+          backgroundColor: element.backgroundColor || '#ffffff',
+          border: element.borderWidth ? `${element.borderWidth * zoom}px solid ${element.borderColor || '#ddd'}` : 'none',
+          borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0px',
+          textAlign: element.alignment || 'right'
+        }}>
+          <div style={{
+            display: 'flex',
+            flexDirection: element.layout === 'horizontal' ? 'row' : 'column',
+            gap: `${element.spacing * zoom || 12 * zoom}px`,
+            height: '100%',
+            justifyContent: element.alignment === 'center' ? 'center' : element.alignment === 'left' ? 'flex-start' : 'flex-end',
+            flexWrap: element.layout === 'horizontal' ? 'wrap' : 'nowrap'
+          }}>
+            {/* Numéro de commande */}
+            {element.fields?.includes('order_number') && (
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: element.alignment === 'center' ? 'center' : element.alignment === 'left' ? 'flex-start' : 'flex-end',
+                gap: `${2 * zoom}px`
+              }}>
+                {element.showLabels && (
+                  <div style={{
+                    fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
+                    textTransform: element.labelStyle === 'uppercase' ? 'uppercase' : 'none',
+                    color: '#666',
+                    fontSize: `${10 * zoom}px`
+                  }}>
+                    Commande N°
+                  </div>
+                )}
+                <div style={{
+                  fontWeight: 'bold',
+                  color: '#333'
+                }}>
+                  #WC-2024-001
+                </div>
+              </div>
+            )}
+
+            {/* Date de commande */}
+            {element.fields?.includes('order_date') && (
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: element.alignment === 'center' ? 'center' : element.alignment === 'left' ? 'flex-start' : 'flex-end',
+                gap: `${2 * zoom}px`
+              }}>
+                {element.showLabels && (
+                  <div style={{
+                    fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
+                    textTransform: element.labelStyle === 'uppercase' ? 'uppercase' : 'none',
+                    color: '#666',
+                    fontSize: `${10 * zoom}px`
+                  }}>
+                    Date
+                  </div>
+                )}
+                <div style={{
+                  color: '#333'
+                }}>
+                  15/10/2024
+                </div>
+              </div>
+            )}
+
+            {/* Statut commande */}
+            {element.fields?.includes('order_status') && (
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: element.alignment === 'center' ? 'center' : element.alignment === 'left' ? 'flex-start' : 'flex-end',
+                gap: `${2 * zoom}px`
+              }}>
+                {element.showLabels && (
+                  <div style={{
+                    fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
+                    textTransform: element.labelStyle === 'uppercase' ? 'uppercase' : 'none',
+                    color: '#666',
+                    fontSize: `${10 * zoom}px`
+                  }}>
+                    Statut
+                  </div>
+                )}
+                <div style={{
+                  color: '#28a745',
+                  fontWeight: 'bold'
+                }}>
+                  Payée
+                </div>
+              </div>
+            )}
+
+            {/* Mode de paiement */}
+            {element.fields?.includes('payment_method') && (
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: element.alignment === 'center' ? 'center' : element.alignment === 'left' ? 'flex-start' : 'flex-end',
+                gap: `${2 * zoom}px`
+              }}>
+                {element.showLabels && (
+                  <div style={{
+                    fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
+                    textTransform: element.textDecoration || 'none',
+                    color: '#666',
+                    fontSize: `${10 * zoom}px`
+                  }}>
+                    Paiement
+                  </div>
+                )}
+                <div style={{
+                  color: '#333'
+                }}>
+                  Carte bancaire
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Rendu spécial pour la barre de progression */}
       {element.type === 'progress-bar' && (

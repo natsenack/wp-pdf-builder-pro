@@ -809,6 +809,267 @@ export const PropertiesPanel = ({
                 onPropertyChange={handlePropertyChange}
               />
             )}
+
+            {/* Contrôles pour company_logo */}
+            {selectedElement.type === 'company_logo' && (
+              <div className="properties-group">
+                <h4>🏢 Logo Entreprise</h4>
+
+                <div className="property-row">
+                  <label>URL de l'image:</label>
+                  <input
+                    type="text"
+                    value={localProperties.imageUrl || ''}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'imageUrl', e.target.value)}
+                    placeholder="https://exemple.com/logo.png"
+                  />
+                </div>
+
+                <div className="property-row">
+                  <label>Largeur:</label>
+                  <div className="slider-container">
+                    <input
+                      type="range"
+                      min="50"
+                      max="300"
+                      value={localProperties.width || 150}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'width', parseInt(e.target.value))}
+                      className="slider"
+                    />
+                    <span className="slider-value">{localProperties.width || 150}px</span>
+                  </div>
+                </div>
+
+                <div className="property-row">
+                  <label>Hauteur:</label>
+                  <div className="slider-container">
+                    <input
+                      type="range"
+                      min="30"
+                      max="200"
+                      value={localProperties.height || 80}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'height', parseInt(e.target.value))}
+                      className="slider"
+                    />
+                    <span className="slider-value">{localProperties.height || 80}px</span>
+                  </div>
+                </div>
+
+                <div className="property-row">
+                  <label>Alignement:</label>
+                  <select
+                    value={localProperties.alignment || 'left'}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'alignment', e.target.value)}
+                  >
+                    <option value="left">Gauche</option>
+                    <option value="center">Centre</option>
+                    <option value="right">Droite</option>
+                  </select>
+                </div>
+
+                <div className="property-row">
+                  <label>Mode d'ajustement:</label>
+                  <select
+                    value={localProperties.fitMode || 'contain'}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'fitMode', e.target.value)}
+                  >
+                    <option value="contain">Contenir</option>
+                    <option value="cover">Couvrir</option>
+                    <option value="fill">Remplir</option>
+                  </select>
+                </div>
+              </div>
+            )}
+
+            {/* Contrôles pour company_info */}
+            {selectedElement.type === 'company_info' && (
+              <div className="properties-group">
+                <h4>📄 Informations Entreprise</h4>
+
+                <div className="property-row">
+                  <label>Champs à afficher:</label>
+                  <div className="checkbox-group">
+                    {[
+                      { key: 'name', label: 'Nom entreprise' },
+                      { key: 'address', label: 'Adresse' },
+                      { key: 'phone', label: 'Téléphone' },
+                      { key: 'email', label: 'Email' },
+                      { key: 'website', label: 'Site web' },
+                      { key: 'vat', label: 'N° TVA' }
+                    ].map(({ key, label }) => (
+                      <label key={key} className="checkbox-item">
+                        <input
+                          type="checkbox"
+                          checked={localProperties.fields?.includes(key) ?? true}
+                          onChange={(e) => {
+                            const currentFields = localProperties.fields || ['name', 'address', 'phone', 'email', 'website', 'vat'];
+                            const newFields = e.target.checked
+                              ? [...currentFields, key]
+                              : currentFields.filter(f => f !== key);
+                            handlePropertyChange(selectedElement.id, 'fields', newFields);
+                          }}
+                        />
+                        {label}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="property-row">
+                  <label>Disposition:</label>
+                  <select
+                    value={localProperties.layout || 'vertical'}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'layout', e.target.value)}
+                  >
+                    <option value="vertical">Verticale</option>
+                    <option value="horizontal">Horizontale</option>
+                  </select>
+                </div>
+
+                <div className="property-row">
+                  <label>Alignement:</label>
+                  <select
+                    value={localProperties.alignment || 'left'}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'alignment', e.target.value)}
+                  >
+                    <option value="left">Gauche</option>
+                    <option value="center">Centre</option>
+                    <option value="right">Droite</option>
+                  </select>
+                </div>
+
+                <div className="property-row">
+                  <label>Espacement:</label>
+                  <div className="slider-container">
+                    <input
+                      type="range"
+                      min="0"
+                      max="20"
+                      value={localProperties.spacing || 4}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'spacing', parseInt(e.target.value))}
+                      className="slider"
+                    />
+                    <span className="slider-value">{localProperties.spacing || 4}px</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Contrôles de police pour company_info */}
+            {selectedElement.type === 'company_info' && (
+              <FontControls
+                elementId={selectedElement.id}
+                properties={localProperties}
+                onPropertyChange={handlePropertyChange}
+              />
+            )}
+
+            {/* Contrôles pour order_details */}
+            {selectedElement.type === 'order_details' && (
+              <div className="properties-group">
+                <h4>📋 Détails Commande</h4>
+
+                <div className="property-row">
+                  <label>Champs à afficher:</label>
+                  <div className="checkbox-group">
+                    {[
+                      { key: 'order_number', label: 'N° commande' },
+                      { key: 'order_date', label: 'Date' },
+                      { key: 'order_status', label: 'Statut' },
+                      { key: 'payment_method', label: 'Paiement' }
+                    ].map(({ key, label }) => (
+                      <label key={key} className="checkbox-item">
+                        <input
+                          type="checkbox"
+                          checked={localProperties.fields?.includes(key) ?? true}
+                          onChange={(e) => {
+                            const currentFields = localProperties.fields || ['order_number', 'order_date', 'order_status', 'payment_method'];
+                            const newFields = e.target.checked
+                              ? [...currentFields, key]
+                              : currentFields.filter(f => f !== key);
+                            handlePropertyChange(selectedElement.id, 'fields', newFields);
+                          }}
+                        />
+                        {label}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="property-row">
+                  <label>Disposition:</label>
+                  <select
+                    value={localProperties.layout || 'horizontal'}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'layout', e.target.value)}
+                  >
+                    <option value="vertical">Verticale</option>
+                    <option value="horizontal">Horizontale</option>
+                  </select>
+                </div>
+
+                <div className="property-row">
+                  <label>Afficher les étiquettes:</label>
+                  <label className="toggle">
+                    <input
+                      type="checkbox"
+                      checked={localProperties.showLabels ?? true}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'showLabels', e.target.checked)}
+                    />
+                    <span className="toggle-slider"></span>
+                  </label>
+                </div>
+
+                {localProperties.showLabels && (
+                  <div className="property-row">
+                    <label>Style des étiquettes:</label>
+                    <select
+                      value={localProperties.labelStyle || 'bold'}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'labelStyle', e.target.value)}
+                    >
+                      <option value="normal">Normal</option>
+                      <option value="bold">Gras</option>
+                      <option value="uppercase">Majuscules</option>
+                    </select>
+                  </div>
+                )}
+
+                <div className="property-row">
+                  <label>Alignement:</label>
+                  <select
+                    value={localProperties.alignment || 'right'}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'alignment', e.target.value)}
+                  >
+                    <option value="left">Gauche</option>
+                    <option value="center">Centre</option>
+                    <option value="right">Droite</option>
+                  </select>
+                </div>
+
+                <div className="property-row">
+                  <label>Espacement:</label>
+                  <div className="slider-container">
+                    <input
+                      type="range"
+                      min="4"
+                      max="24"
+                      value={localProperties.spacing || 12}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'spacing', parseInt(e.target.value))}
+                      className="slider"
+                    />
+                    <span className="slider-value">{localProperties.spacing || 12}px</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Contrôles de police pour order_details */}
+            {selectedElement.type === 'order_details' && (
+              <FontControls
+                elementId={selectedElement.id}
+                properties={localProperties}
+                onPropertyChange={handlePropertyChange}
+              />
+            )}
           </div>
         );
 
