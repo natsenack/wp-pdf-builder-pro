@@ -398,7 +398,7 @@ const PropertiesPanel = React.memo(({
 
               <div className="property-row">
                 <label>Aucun fond:</label>
-                <label className="toggle">
+                <div className="toggle">
                   <input
                     ref={backgroundToggleRef}
                     type="checkbox"
@@ -409,27 +409,22 @@ const PropertiesPanel = React.memo(({
                     }}
                   />
                   <span className="toggle-slider" onClick={() => backgroundToggleRef.current?.click()}></span>
-                </label>
+                </div>
               </div>
 
-              <div style={{
-                opacity: (!localProperties.borderWidth || localProperties.borderWidth === 0) ? 0.5 : 1,
-                pointerEvents: (!localProperties.borderWidth || localProperties.borderWidth === 0) ? 'none' : 'auto'
-              }}>
-                <ColorPicker
-                  label="Bordure"
-                  value={localProperties.borderColor}
-                  onChange={(value) => {
-                    console.log('🎨 Changement couleur bordure:', value);
-                    handlePropertyChange(selectedElement.id, 'borderColor', value);
-                  }}
-                  presets={['#e2e8f0', '#cbd5e1', '#94a3b8', '#64748b', '#475569', '#334155']}
-                />
-              </div>
+              <ColorPicker
+                label="Bordure"
+                value={localProperties.borderColor}
+                onChange={(value) => {
+                  console.log('🎨 Changement couleur bordure:', value);
+                  handlePropertyChange(selectedElement.id, 'borderColor', value);
+                }}
+                presets={['#e2e8f0', '#cbd5e1', '#94a3b8', '#64748b', '#475569', '#334155']}
+              />
 
               <div className="property-row">
                 <label>Aucune bordure:</label>
-                <label className="toggle">
+                <div className="toggle">
                   <input
                     ref={borderToggleRef}
                     type="checkbox"
@@ -440,7 +435,7 @@ const PropertiesPanel = React.memo(({
                     }}
                   />
                   <span className="toggle-slider" onClick={() => borderToggleRef.current?.click()}></span>
-                </label>
+                </div>
               </div>
             </div>
 
@@ -456,10 +451,7 @@ const PropertiesPanel = React.memo(({
             <div className="properties-group">
               <h4>🔲 Bordures & Coins</h4>
 
-              <div className="property-row" style={{
-                opacity: (!localProperties.borderWidth || localProperties.borderWidth === 0) ? 0.5 : 1,
-                pointerEvents: (!localProperties.borderWidth || localProperties.borderWidth === 0) ? 'none' : 'auto'
-              }}>
+              <div className="property-row">
                 <label>Épaisseur bordure:</label>
                 <div className="slider-container">
                   <input
@@ -1270,7 +1262,7 @@ const PropertiesPanel = React.memo(({
 
                 <div className="property-row">
                   <label>Afficher la bordure:</label>
-                  <label className="toggle">
+                  <div className="toggle">
                     <input
                       ref={showBorderToggleRef}
                       type="checkbox"
@@ -1278,7 +1270,7 @@ const PropertiesPanel = React.memo(({
                       onChange={(e) => handlePropertyChange(selectedElement.id, 'showBorder', e.target.checked)}
                     />
                     <span className="toggle-slider" onClick={() => showBorderToggleRef.current?.click()}></span>
-                  </label>
+                  </div>
                 </div>
 
                 <ColorPicker
