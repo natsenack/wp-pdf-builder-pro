@@ -1412,11 +1412,7 @@ export const CanvasElement = ({
         {/* Rendu spécial pour le type de document */}
         {element.type === 'document_type' && (
           <div style={{
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start',
+            display: 'inline-block',
             padding: `${8 * zoom}px`,
             fontSize: `${(element.fontSize || 18) * zoom}px`,
             fontFamily: element.fontFamily || 'Arial',
@@ -1425,7 +1421,8 @@ export const CanvasElement = ({
             textAlign: element.textAlign || 'center',
             backgroundColor: element.backgroundColor || 'transparent',
             border: element.showBorder ? '2px solid #e2e8f0' : 'none',
-            borderRadius: '4px'
+            borderRadius: '4px',
+            whiteSpace: 'nowrap'
           }}>
             {element.documentType === 'invoice' ? 'FACTURE' :
              element.documentType === 'quote' ? 'DEVIS' :
