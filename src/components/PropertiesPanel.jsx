@@ -151,6 +151,11 @@ export const PropertiesPanel = ({
     1000 // autoSaveDelay
   );
 
+  // Obtenir l'élément sélectionné pour l'affichage
+  const selectedElement = selectedElements.length > 0
+    ? elements.find(el => el.id === selectedElements[0])
+    : null;
+
   // Mettre à jour les valeurs précédentes quand l'élément change
   useEffect(() => {
     if (selectedElement) {
