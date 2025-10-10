@@ -497,6 +497,7 @@ const PropertiesPanel = React.memo(({
                   />
                   <span className="toggle-slider" onClick={() => {
                     const currentChecked = !localProperties.borderWidth || localProperties.borderWidth === 0;
+                    console.log('🎛️ Toggle click:', { currentChecked, borderWidth: localProperties.borderWidth, willCallWith: !currentChecked });
                     handleNoBorderToggle(selectedElement.id, !currentChecked);
                   }}></span>
                 </label>
