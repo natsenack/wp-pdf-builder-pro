@@ -230,7 +230,7 @@ const PropertiesPanel = React.memo(({
 }) => {
   // États pour mémoriser les valeurs précédentes
   const [previousBackgroundColor, setPreviousBackgroundColor] = useState('#ffffff');
-  const [previousBorderWidth, setPreviousBorderWidth] = useState(1);
+  const [previousBorderWidth, setPreviousBorderWidth] = useState(0);
 
   // Log des props pour débogage (seulement quand elles changent)
   useEffect(() => {
@@ -335,13 +335,13 @@ const PropertiesPanel = React.memo(({
       if (selectedElement?.borderWidth && selectedElement.borderWidth > 0) {
         setPreviousBorderWidth(selectedElement.borderWidth);
       } else {
-        // Si pas de bordure ou bordure = 0, sauvegarder 1 comme valeur par défaut
-        setPreviousBorderWidth(1);
+        // Si pas de bordure ou bordure = 0, sauvegarder 2 comme valeur par défaut (plus visible)
+        setPreviousBorderWidth(2);
       }
       handlePropertyChange(elementId, 'borderWidth', 0);
     } else {
-      // Restaurer l'épaisseur précédente, au minimum 1
-      const widthToRestore = Math.max(previousBorderWidth || 1, 1);
+      // Restaurer l'épaisseur précédente, au minimum 2
+      const widthToRestore = Math.max(previousBorderWidth || 2, 2);
       handlePropertyChange(elementId, 'borderWidth', widthToRestore);
     }
   }, [selectedElement?.borderWidth, previousBorderWidth, handlePropertyChange]);
@@ -460,33 +460,6 @@ const PropertiesPanel = React.memo(({
                 </label>
               </div>
 
-              {localProperties.borderWidth > 0 && (
-                <>
-                  <ColorPicker
-                    label="Bordure"
-                    value={localProperties.borderColor}
-                    onChange={(value) => {
-                      console.log('🎨 Changement couleur bordure:', value);
-                      handlePropertyChange(selectedElement.id, 'borderColor', value);
-                    }}
-                    presets={['#e2e8f0', '#cbd5e1', '#94a3b8', '#64748b', '#475569', '#334155']}
-                  />
-
-                  <div className="property-row">
-                    <label>Style bordure:</label>
-                    <select
-                      value={localProperties.borderStyle || 'solid'}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'borderStyle', e.target.value)}
-                    >
-                      <option value="solid">Continue</option>
-                      <option value="dashed">Tirets</option>
-                      <option value="dotted">Pointillés</option>
-                      <option value="double">Double</option>
-                    </select>
-                  </div>
-                </>
-              )}
-
               <div className="property-row">
                 <span>Aucune bordure:</span>
                 <label className="toggle">
@@ -515,6 +488,26 @@ const PropertiesPanel = React.memo(({
             {localProperties.borderWidth > 0 && (
               <div className="properties-group">
                 <h4>🔲 Bordures & Coins</h4>
+
+                <ColorPicker
+                  label="Bordure"
+                  value={localProperties.borderColor}
+                  onChange={(value) => handlePropertyChange(selectedElement.id, 'borderColor', value)}
+                  presets={['#e2e8f0', '#cbd5e1', '#94a3b8', '#64748b', '#475569', '#334155']}
+                />
+
+                <div className="property-row">
+                  <label>Style bordure:</label>
+                  <select
+                    value={localProperties.borderStyle || 'solid'}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'borderStyle', e.target.value)}
+                  >
+                    <option value="solid">Continue</option>
+                    <option value="dashed">Tirets</option>
+                    <option value="dotted">Pointillés</option>
+                    <option value="double">Double</option>
+                  </select>
+                </div>
 
                 <div className="property-row">
                   <label>Épaisseur bordure:</label>

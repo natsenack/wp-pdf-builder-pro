@@ -29,7 +29,7 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
         color: '#333333',
         backgroundColor: '#ffffff',
         borderColor: '#dddddd',
-        borderWidth: 1,
+        borderWidth: 0,
         borderRadius: 4,
         fontSize: 14,
         fontFamily: 'Inter',
