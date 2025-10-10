@@ -204,7 +204,11 @@ const WooCommerceElement = ({
     height: element.height * zoom,
     cursor: isSelected ? 'move' : 'pointer',
     userSelect: 'none',
-    border: isSelected ? '1px solid #007cba' : '1px solid #ddd',
+    border: isSelected
+      ? `2px solid #007cba`
+      : element.borderWidth > 0
+        ? `${element.borderWidth || 1}px ${element.borderStyle || 'solid'} ${element.borderColor || '#dddddd'}`
+        : 'none',
     backgroundColor: element.backgroundColor || '#ffffff',
     color: element.color || '#333333',
     fontSize: (element.fontSize || 14) * zoom,
@@ -212,7 +216,8 @@ const WooCommerceElement = ({
     padding: (element.padding || 8) * zoom,
     borderRadius: (element.borderRadius || 4) * zoom,
     boxSizing: 'border-box',
-    overflow: 'hidden'
+    overflow: 'hidden',
+    '--element-border-width': isSelected ? '2px' : (element.borderWidth > 0 ? `${element.borderWidth || 1}px` : '0px')
   };
 
   return (
@@ -247,13 +252,10 @@ const WooCommerceElement = ({
             className="resize-handle nw"
             style={{
               position: 'absolute',
-              left: element.x * zoom - 6,
-              top: element.y * zoom - 6,
               width: 8,
               height: 8,
               backgroundColor: '#007cba',
               border: '1px solid white',
-              cursor: 'nw-resize',
               pointerEvents: 'auto'
             }}
             onMouseDown={(e) => resize.handleResizeStart(e, 'nw', {
@@ -269,13 +271,10 @@ const WooCommerceElement = ({
             className="resize-handle ne"
             style={{
               position: 'absolute',
-              left: (element.x + element.width) * zoom - 4,
-              top: element.y * zoom - 6,
               width: 8,
               height: 8,
               backgroundColor: '#007cba',
               border: '1px solid white',
-              cursor: 'ne-resize',
               pointerEvents: 'auto'
             }}
             onMouseDown={(e) => resize.handleResizeStart(e, 'ne', {
@@ -291,13 +290,10 @@ const WooCommerceElement = ({
             className="resize-handle sw"
             style={{
               position: 'absolute',
-              left: element.x * zoom - 6,
-              top: (element.y + element.height) * zoom - 4,
               width: 8,
               height: 8,
               backgroundColor: '#007cba',
               border: '1px solid white',
-              cursor: 'sw-resize',
               pointerEvents: 'auto'
             }}
             onMouseDown={(e) => resize.handleResizeStart(e, 'sw', {
@@ -313,13 +309,10 @@ const WooCommerceElement = ({
             className="resize-handle se"
             style={{
               position: 'absolute',
-              left: (element.x + element.width) * zoom - 4,
-              top: (element.y + element.height) * zoom - 4,
               width: 8,
               height: 8,
               backgroundColor: '#007cba',
               border: '1px solid white',
-              cursor: 'se-resize',
               pointerEvents: 'auto'
             }}
             onMouseDown={(e) => resize.handleResizeStart(e, 'se', {
@@ -335,13 +328,10 @@ const WooCommerceElement = ({
             className="resize-handle n"
             style={{
               position: 'absolute',
-              left: (element.x + element.width / 2) * zoom - 4,
-              top: element.y * zoom - 6,
               width: 8,
               height: 8,
               backgroundColor: '#007cba',
               border: '1px solid white',
-              cursor: 'n-resize',
               pointerEvents: 'auto'
             }}
             onMouseDown={(e) => resize.handleResizeStart(e, 'n', {
@@ -357,13 +347,10 @@ const WooCommerceElement = ({
             className="resize-handle s"
             style={{
               position: 'absolute',
-              left: (element.x + element.width / 2) * zoom - 4,
-              top: (element.y + element.height) * zoom - 4,
               width: 8,
               height: 8,
               backgroundColor: '#007cba',
               border: '1px solid white',
-              cursor: 's-resize',
               pointerEvents: 'auto'
             }}
             onMouseDown={(e) => resize.handleResizeStart(e, 's', {
@@ -379,13 +366,10 @@ const WooCommerceElement = ({
             className="resize-handle w"
             style={{
               position: 'absolute',
-              left: element.x * zoom - 6,
-              top: (element.y + element.height / 2) * zoom - 4,
               width: 8,
               height: 8,
               backgroundColor: '#007cba',
               border: '1px solid white',
-              cursor: 'w-resize',
               pointerEvents: 'auto'
             }}
             onMouseDown={(e) => resize.handleResizeStart(e, 'w', {
@@ -401,13 +385,10 @@ const WooCommerceElement = ({
             className="resize-handle e"
             style={{
               position: 'absolute',
-              left: (element.x + element.width) * zoom - 4,
-              top: (element.y + element.height / 2) * zoom - 4,
               width: 8,
               height: 8,
               backgroundColor: '#007cba',
               border: '1px solid white',
-              cursor: 'e-resize',
               pointerEvents: 'auto'
             }}
             onMouseDown={(e) => resize.handleResizeStart(e, 'e', {
