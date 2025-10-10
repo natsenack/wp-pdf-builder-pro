@@ -259,21 +259,6 @@ const PropertiesPanel = React.memo(({
     });
   }, [activeTab, selectedElement?.id]); // Éviter de logger localProperties qui change souvent
 
-  // Debug border controls rendering
-  const [lastLoggedBorderWidth, setLastLoggedBorderWidth] = useState(null);
-  useEffect(() => {
-    if (lastLoggedBorderWidth !== localProperties.borderWidth) {
-      console.log('🎯 Vérification affichage contrôles:', {
-        borderWidth: localProperties.borderWidth,
-        borderWidthType: typeof localProperties.borderWidth,
-        shouldShow: localProperties.borderWidth > 0,
-        toggleChecked: !localProperties.borderWidth || localProperties.borderWidth === 0,
-        elementId: selectedElement?.id
-      });
-      setLastLoggedBorderWidth(localProperties.borderWidth);
-    }
-  }, [localProperties.borderWidth, selectedElement?.id, lastLoggedBorderWidth]);
-
   const { syncImmediate, syncBatch } = useElementSynchronization(
     elements,
     onPropertyChange,
@@ -512,7 +497,6 @@ const PropertiesPanel = React.memo(({
                   />
                   <span className="toggle-slider" onClick={() => {
                     const currentChecked = !localProperties.borderWidth || localProperties.borderWidth === 0;
-                    console.log('🎛️ Toggle click:', { currentChecked, borderWidth: localProperties.borderWidth, willCallWith: !currentChecked });
                     handleNoBorderToggle(selectedElement.id, !currentChecked);
                   }}></span>
                 </label>
