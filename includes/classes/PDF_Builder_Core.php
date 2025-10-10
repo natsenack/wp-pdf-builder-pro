@@ -172,11 +172,24 @@ class PDF_Builder_Core {
         error_log('PDF Builder Debug - REQUEST_URI: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'not set'));
         error_log('PDF Builder Debug - GET page: ' . (isset($_GET['page']) ? $_GET['page'] : 'not set'));
 
-        // Charger les scripts sur toutes les pages du plugin
-        if (strpos($hook, 'pdf-builder') !== false ||
-            (isset($_GET['page']) && strpos($_GET['page'], 'pdf-builder') !== false) ||
-            (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'pdf-builder-editor') !== false)) {
+        // Charger les scripts sur toutes les pages du plugin - condition simplifiée
+        $should_load = false;
 
+        if (strpos($hook, 'pdf-builder') !== false) {
+            $should_load = true;
+            error_log('PDF Builder Debug - Loading because hook contains pdf-builder');
+        } elseif (isset($_GET['page']) && strpos($_GET['page'], 'pdf-builder') !== false) {
+            $should_load = true;
+            error_log('PDF Builder Debug - Loading because GET page contains pdf-builder');
+        } elseif (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'pdf-builder-editor') !== false) {
+            $should_load = true;
+            error_log('PDF Builder Debug - Loading because REQUEST_URI contains pdf-builder-editor');
+        } elseif (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-editor') {
+            $should_load = true;
+            error_log('PDF Builder Debug - Loading because GET page is exactly pdf-builder-editor');
+        }
+
+        if ($should_load) {
             error_log('PDF Builder Debug - Scripts will be loaded');
 
             wp_enqueue_script(
@@ -185,9 +198,7 @@ class PDF_Builder_Core {
                 array('jquery'),
                 PDF_BUILDER_PRO_VERSION,
                 true
-            );
-
-            wp_enqueue_style(
+            );            wp_enqueue_style(
                 'pdf-builder-admin-core',
                 PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css',
                 array(),
