@@ -135,7 +135,7 @@ class PDF_Builder_Admin {
         // Menu principal avec icône distinctive
         add_menu_page(
             __('PDF Builder Pro - Gestionnaire de PDF', 'pdf-builder-pro'),
-            __('📄 PDF Builder', 'pdf-builder-pro'),
+            __('[DOC] PDF Builder', 'pdf-builder-pro'),
             'manage_options',
             'pdf-builder-pro',
             [$this, 'admin_page'],
@@ -226,7 +226,7 @@ class PDF_Builder_Admin {
         <div class="wrap">
             <div class="pdf-builder-dashboard">
                 <div class="dashboard-header">
-                    <h1>📄 PDF Builder Pro</h1>
+                    <h1>[DOC] PDF Builder Pro</h1>
                     <p class="dashboard-subtitle">Constructeur de PDF professionnel avec éditeur visuel avancé</p>
                 </div>
 
@@ -240,7 +240,7 @@ class PDF_Builder_Admin {
                         </div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon">📄</div>
+                        <div class="stat-icon">[DOC]</div>
                         <div class="stat-content">
                             <div class="stat-number"><?php echo $stats['documents']; ?></div>
                             <div class="stat-label">Documents générés</div>
@@ -274,7 +274,7 @@ class PDF_Builder_Admin {
                     </div>
 
                     <div class="action-card">
-                        <h3>📄 Documents Récents</h3>
+                        <h3>[DOC] Documents Récents</h3>
                         <p>Consultez et téléchargez vos PDF générés récemment</p>
                         <a href="<?php echo admin_url('admin.php?page=pdf-builder-documents'); ?>" class="button button-secondary">
                             Voir les Documents
@@ -1360,7 +1360,7 @@ class PDF_Builder_Admin {
 
                     case 'layout-header':
                         $html .= sprintf(
-                            '<div class="%s" style="%s %s"><strong>📄 EN-TÊTE</strong></div>',
+                            '<div class="%s" style="%s %s"><strong>[HEADER] EN-TÊTE</strong></div>',
                             $css_class,
                             $position_style,
                             $element_style
@@ -1369,7 +1369,7 @@ class PDF_Builder_Admin {
 
                     case 'layout-footer':
                         $html .= sprintf(
-                            '<div class="%s" style="%s %s"><em>📄 PIED DE PAGE</em></div>',
+                            '<div class="%s" style="%s %s"><em>[FOOTER] PIED DE PAGE</em></div>',
                             $css_class,
                             $position_style,
                             $element_style
@@ -1773,7 +1773,7 @@ class PDF_Builder_Admin {
                             class="button button-primary"
                             style="width: 100%; justify-content: center;"
                             data-order-id="<?php echo esc_attr($order->get_id()); ?>">
-                        📄 <?php _e('Générer PDF', 'pdf-builder-pro'); ?>
+                        [PDF] <?php _e('Générer PDF', 'pdf-builder-pro'); ?>
                     </button>
 
                     <button type="button"

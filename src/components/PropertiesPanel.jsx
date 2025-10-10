@@ -371,7 +371,7 @@ const PropertiesPanel = React.memo(({
         className={`tab-btn ${activeTab === 'content' ? 'active' : ''}`}
         onClick={() => setActiveTab('content')}
       >
-        📝 Contenu
+        [TXT] Contenu
       </button>
       <button
         className={`tab-btn ${activeTab === 'effects' ? 'active' : ''}`}
@@ -884,7 +884,7 @@ const PropertiesPanel = React.memo(({
           <div className="tab-content">
             {selectedElement.type === 'text' && (
               <div className="properties-group">
-                <h4>📝 Contenu texte</h4>
+                <h4>[TXT] Contenu texte</h4>
 
                 <div className="property-row">
                   <label>Texte:</label>
@@ -909,7 +909,7 @@ const PropertiesPanel = React.memo(({
                       const currentText = localProperties.text || '';
                       handlePropertyChange(selectedElement.id, 'text', currentText + '{{order_number}}');
                     }}>
-                      🏷️ N° commande
+                      [ORDER] N° commande
                     </button>
                     <button className="variable-btn" onClick={() => {
                       const currentText = localProperties.text || '';
@@ -930,7 +930,7 @@ const PropertiesPanel = React.memo(({
 
             {selectedElement.type === 'image' && (
               <div className="properties-group">
-                <h4>🖼️ Image</h4>
+                <h4>[IMG] Image</h4>
 
                 <div className="property-row">
                   <label>URL de l'image:</label>
@@ -1131,7 +1131,7 @@ const PropertiesPanel = React.memo(({
 
             {/* Contrôles d'image disponibles pour tous les éléments */}
             <div className="properties-group">
-              <h4>🖼️ Image</h4>
+              <h4>[IMG] Image</h4>
 
               <div className="property-row">
                 <label>URL de l'image:</label>

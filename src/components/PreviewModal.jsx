@@ -84,7 +84,7 @@ const PreviewModal = ({
     <div className="preview-modal-overlay" onClick={onClose}>
       <div className="preview-modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="preview-modal-header">
-          <h3>📄 Aperçu PDF - PDF Builder Pro</h3>
+          <h3>[PDF] Aperçu PDF - PDF Builder Pro</h3>
           <button className="preview-modal-close" onClick={onClose}>×</button>
         </div>
 

@@ -68,7 +68,7 @@ const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
       type: 'company_info',
       fieldID: 'company_info',
       label: 'Informations Entreprise',
-      icon: '📄',
+      icon: '[DOC]',
       description: 'Nom, adresse, contact et TVA de l\'entreprise',
       defaultProperties: {
         showHeaders: false,
