@@ -805,8 +805,8 @@ class PDF_Builder_Admin {
      */
     private function enqueue_react_scripts() {
         // Charger React depuis CDN (plus fiable que les versions locales)
-        wp_enqueue_script('react', 'https://unpkg.com/react@18/umd/react.production.min.js', [], '18.2.0', true); // Load in footer for better performance
-        wp_enqueue_script('react-dom', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js', ['react'], '18.2.0', true); // Load in footer for better performance
+        wp_enqueue_script('react', 'https://unpkg.com/react@18/umd/react.production.min.js', [], '18.2.0', false); // Load in head to ensure availability
+        wp_enqueue_script('react-dom', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js', ['react'], '18.2.0', false); // Load in head to ensure availability
 
         // Charger le script principal React du plugin
         $script_path = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-pro.js';
