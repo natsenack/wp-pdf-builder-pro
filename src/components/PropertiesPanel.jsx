@@ -817,12 +817,44 @@ export const PropertiesPanel = ({
 
                 <div className="property-row">
                   <label>URL de l'image:</label>
-                  <input
-                    type="text"
-                    value={localProperties.imageUrl || ''}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'imageUrl', e.target.value)}
-                    placeholder="https://exemple.com/logo.png"
-                  />
+                  <div className="input-with-button">
+                    <input
+                      type="text"
+                      value={localProperties.imageUrl || ''}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'imageUrl', e.target.value)}
+                      placeholder="https://exemple.com/logo.png"
+                    />
+                    <button
+                      type="button"
+                      className="media-button"
+                      onClick={() => {
+                        // Ouvrir la médiathèque WordPress
+                        if (window.wp && window.wp.media) {
+                          const mediaFrame = window.wp.media({
+                            title: 'Sélectionner un logo',
+                            button: {
+                              text: 'Utiliser ce logo'
+                            },
+                            multiple: false,
+                            library: {
+                              type: 'image'
+                            }
+                          });
+
+                          mediaFrame.on('select', function() {
+                            const attachment = mediaFrame.state().get('selection').first().toJSON();
+                            handlePropertyChange(selectedElement.id, 'imageUrl', attachment.url);
+                          });
+
+                          mediaFrame.open();
+                        } else {
+                          alert('La médiathèque WordPress n\'est pas disponible dans ce contexte.');
+                        }
+                      }}
+                    >
+                      📁 Médiathèque
+                    </button>
+                  </div>
                 </div>
 
                 <div className="property-row">
