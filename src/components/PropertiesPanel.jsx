@@ -398,7 +398,7 @@ const PropertiesPanel = React.memo(({
               />
 
               <div style={{
-                opacity: localProperties.backgroundColor === 'transparent' ? 0.5 : 1
+                opacity: isBackgroundEnabled ? 1 : 0.5
               }}>
                 <ColorPicker
                   label="Fond"
@@ -411,7 +411,7 @@ const PropertiesPanel = React.memo(({
               </div>
 
               <div className="property-row" style={{
-                opacity: localProperties.backgroundColor === 'transparent' ? 0.5 : 1
+                opacity: isBackgroundEnabled ? 1 : 0.5
               }}>
                 <label>Opacité fond:</label>
                 <div className="slider-container">
