@@ -451,7 +451,7 @@ window.addEventListener('load', function() {
                     <tr>
                         <th scope="row"><?php _e('Couleur des Bordures', 'pdf-builder-pro'); ?></th>
                         <td>
-                            <input type="color" name="canvas_border_color" value="<?php echo esc_attr($config->get('canvas_border_color', '#007cba') ?: '#007cba'); ?>">
+                            <input type="color" name="canvas_border_color" value="<?php echo esc_attr($config->get('canvas_border_color') ?: '#007cba'); ?>">
                             <span class="description"><?php _e('Couleur des bordures des éléments', 'pdf-builder-pro'); ?></span>
                         </td>
                     </tr>
@@ -474,14 +474,14 @@ window.addEventListener('load', function() {
                     <tr>
                         <th scope="row"><?php _e('Couleur des Poignées', 'pdf-builder-pro'); ?></th>
                         <td>
-                            <input type="color" name="canvas_handle_color" value="<?php echo esc_attr($config->get('canvas_handle_color', '#007cba') ?: '#007cba'); ?>">
+                            <input type="color" name="canvas_handle_color" value="<?php echo esc_attr($config->get('canvas_handle_color') ?: '#007cba'); ?>">
                             <span class="description"><?php _e('Couleur des poignées de redimensionnement', 'pdf-builder-pro'); ?></span>
                         </td>
                     </tr>
                     <tr>
                         <th scope="row"><?php _e('Couleur de Survol des Poignées', 'pdf-builder-pro'); ?></th>
                         <td>
-                            <input type="color" name="canvas_handle_hover_color" value="<?php echo esc_attr($config->get('canvas_handle_hover_color', '#005a87') ?: '#005a87'); ?>">
+                            <input type="color" name="canvas_handle_hover_color" value="<?php echo esc_attr($config->get('canvas_handle_hover_color') ?: '#005a87'); ?>">
                             <span class="description"><?php _e('Couleur des poignées au survol', 'pdf-builder-pro'); ?></span>
                         </td>
                     </tr>
