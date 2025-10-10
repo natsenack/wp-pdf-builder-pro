@@ -67,63 +67,141 @@ if (!$is_new && $template_id > 0) {
 (function() {
     'use strict';
 
-    // Vérifier que pdfBuilderAjax est disponible
-    console.log('PDF Builder Editor: Vérification de pdfBuilderAjax:', typeof pdfBuilderAjax, pdfBuilderAjax);
-    console.log('PDF Builder Editor: ajaxurl disponible:', typeof ajaxurl, ajaxurl);
-    
-    // S'assurer qu'ajaxurl est défini
-    if (typeof ajaxurl === 'undefined') {
-        ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
-        console.log('PDF Builder Editor: ajaxurl défini manuellement:', ajaxurl);
-    }
-
-    // Ajouter la classe pour masquer les éléments WordPress
-    document.body.classList.add('pdf-builder-active');
-
-    // Fonction pour vérifier si les scripts sont chargés
-    const checkScriptsLoaded = () => {
-        return typeof window.PDFBuilderPro !== 'undefined' &&
-               typeof window.PDFBuilderPro.init === 'function';
+    // Fonction pour attendre que pdfBuilderAjax soit disponible
+    const waitForPdfBuilderAjax = () => {
+        return new Promise((resolve, reject) => {
+            const checkPdfBuilderAjax = () => {
+                if (typeof pdfBuilderAjax !== 'undefined') {
+                    resolve();
+                } else if (attempts++ < 100) { // Attendre jusqu'à 5 secondes
+                    setTimeout(checkPdfBuilderAjax, 50);
+                } else {
+                    reject(new Error('pdfBuilderAjax n\'a pas été chargé'));
+                }
+            };
+            let attempts = 0;
+            checkPdfBuilderAjax();
+        });
     };
 
-    // Initialisation optimisée avec polling intelligent
-    let attempts = 0;
-    const maxAttempts = 100; // ~5 secondes max
-
-    const initApp = () => {
-        if (checkScriptsLoaded()) {
-            try {
-                window.PDFBuilderPro.init('invoice-quote-builder-container', {
-                    templateId: <?php echo $template_id ?: 'null'; ?>,
-                    templateName: <?php echo $template_name ? json_encode($template_name) : 'null'; ?>,
-                    isNew: <?php echo $is_new ? 'true' : 'false'; ?>,
-                    width: 595,
-                    height: 842,
-                    zoom: 1,
-                    gridSize: 10,
-                    snapToGrid: true,
-                    maxHistorySize: 50
-                });
-                
-                return;
-            } catch (error) {
-                console.error('PDF Builder Pro: Erreur lors de l\'initialisation:', error);
-                return;
+    // Initialisation principale
+    const initEditor = async () => {
+        try {
+            // Attendre que pdfBuilderAjax soit disponible
+            await waitForPdfBuilderAjax();
+            
+            // Vérifier que pdfBuilderAjax est disponible
+            console.log('PDF Builder Editor: Vérification de pdfBuilderAjax:', typeof pdfBuilderAjax, pdfBuilderAjax);
+            console.log('PDF Builder Editor: ajaxurl disponible:', typeof ajaxurl, ajaxurl);
+            
+            // S'assurer qu'ajaxurl est défini
+            if (typeof ajaxurl === 'undefined') {
+                ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
+                console.log('PDF Builder Editor: ajaxurl défini manuellement:', ajaxurl);
             }
-        }
 
-        if (++attempts < maxAttempts) {
-            setTimeout(initApp, 50); // Attendre 50ms et réessayer
-        } else {
-            console.error('PDF Builder Pro: Timeout - Scripts non chargés après', maxAttempts * 50, 'ms');
-            // Afficher un message d'erreur à l'utilisateur
+            // Ajouter la classe pour masquer les éléments WordPress
+            document.body.classList.add('pdf-builder-active');
+
+            // Fonction pour vérifier si les scripts sont chargés
+            const checkScriptsLoaded = () => {
+                return typeof window.PDFBuilderPro !== 'undefined' &&
+                       typeof window.PDFBuilderPro.init === 'function';
+            };
+
+            // Initialisation optimisée avec polling intelligent
+            let attempts = 0;
+            const maxAttempts = 100; // ~5 secondes max
+
+            const initApp = () => {
+                if (checkScriptsLoaded()) {
+                    try {
+                        window.PDFBuilderPro.init('invoice-quote-builder-container', {
+                            templateId: <?php echo $template_id ?: 'null'; ?>,
+                            templateName: <?php echo $template_name ? json_encode($template_name) : 'null'; ?>,
+                            isNew: <?php echo $is_new ? 'true' : 'false'; ?>,
+                            width: 595,
+                            height: 842,
+                            zoom: 1,
+                            gridSize: 10,
+                            snapToGrid: true,
+                            maxHistorySize: 50
+                        });
+                        
+                        return;
+                    } catch (error) {
+                        console.error('PDF Builder Pro: Erreur lors de l\'initialisation:', error);
+                        return;
+                    }
+                }
+
+                if (++attempts < maxAttempts) {
+                    setTimeout(initApp, 50); // Attendre 50ms et réessayer
+                } else {
+                    console.error('PDF Builder Pro: Timeout - Scripts non chargés après', maxAttempts * 50, 'ms');
+                    // Afficher un message d'erreur à l'utilisateur
+                    const container = document.getElementById('invoice-quote-builder-container');
+                    if (container) {
+                        container.innerHTML = `
+                            <div style="text-align: center; padding: 40px; color: #dc3545;">
+                                <div style="font-size: 3rem; margin-bottom: 1rem;">❌</div>
+                                <h2>Erreur de chargement</h2>
+                                <p>Les scripts nécessaires n'ont pas pu être chargés.</p>
+                                <p>Vérifiez la console pour plus de détails.</p>
+                                <button onclick="location.reload()" style="background: #dc3545; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin-top: 10px;">
+                                    Recharger la page
+                                </button>
+                            </div>
+                        `;
+                    }
+                }
+            };
+
+            // Démarrer l'initialisation après DOM ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initApp);
+            } else {
+                initApp();
+            }
+
+            // Gestionnaire de cache optimisé
+            document.getElementById('flush-rest-cache-btn')?.addEventListener('click', function() {
+                const btn = this, status = document.getElementById('cache-status');
+                btn.disabled = true;
+                btn.textContent = '🔄 Vidage...';
+                status.textContent = 'Vidage du cache REST...';
+
+                fetch(ajaxurl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'action=pdf_builder_flush_rest_cache&nonce=' + (window.wpApiSettings?.nonce || '')
+                })
+                .then(r => r.json())
+                .then(d => {
+                    status.innerHTML = d.success
+                        ? '<span style="color:green">✅ ' + d.data.message + '</span>'
+                        : '<span style="color:red">❌ ' + (d.data || 'Erreur') + '</span>';
+                    d.success && setTimeout(() => location.reload(), 1500);
+                })
+                .catch(e => {
+                    status.innerHTML = '<span style="color:red">❌ Erreur réseau</span>';
+                })
+                .finally(() => {
+                    btn.disabled = false;
+                    btn.textContent = '🔄 Vider Cache REST';
+                });
+            });
+            
+        } catch (error) {
+            console.error('PDF Builder Editor: Erreur d\'initialisation:', error);
+            // Afficher un message d'erreur
             const container = document.getElementById('invoice-quote-builder-container');
             if (container) {
                 container.innerHTML = `
                     <div style="text-align: center; padding: 40px; color: #dc3545;">
                         <div style="font-size: 3rem; margin-bottom: 1rem;">❌</div>
                         <h2>Erreur de chargement</h2>
-                        <p>Les scripts nécessaires n'ont pas pu être chargés.</p>
+                        <p>pdfBuilderAjax n'est pas disponible: ${error.message}</p>
                         <p>Vérifiez la console pour plus de détails.</p>
                         <button onclick="location.reload()" style="background: #dc3545; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin-top: 10px;">
                             Recharger la page
@@ -134,40 +212,9 @@ if (!$is_new && $template_id > 0) {
         }
     };
 
-    // Démarrer l'initialisation après DOM ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initApp);
-    } else {
-        initApp();
-    }
-
-    // Gestionnaire de cache optimisé
-    document.getElementById('flush-rest-cache-btn')?.addEventListener('click', function() {
-        const btn = this, status = document.getElementById('cache-status');
-        btn.disabled = true;
-        btn.textContent = '🔄 Vidage...';
-        status.textContent = 'Vidage du cache REST...';
-
-        fetch(ajaxurl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: 'action=pdf_builder_flush_rest_cache&nonce=' + (window.wpApiSettings?.nonce || '')
-        })
-        .then(r => r.json())
-        .then(d => {
-            status.innerHTML = d.success
-                ? '<span style="color:green">✅ ' + d.data.message + '</span>'
-                : '<span style="color:red">❌ ' + (d.data || 'Erreur') + '</span>';
-            d.success && setTimeout(() => location.reload(), 1500);
-        })
-        .catch(e => {
-            status.innerHTML = '<span style="color:red">❌ Erreur réseau</span>';
-        })
-        .finally(() => {
-            btn.disabled = false;
-            btn.textContent = '🔄 Vider Cache REST';
-        });
-    });
+    // Démarrer l'initialisation
+    initEditor();
+    
 })();
 </script>
 

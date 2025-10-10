@@ -584,12 +584,14 @@ class PDF_Builder_Admin {
         error_log('PDF_Builder_Admin Debug - Our pages: ' . implode(', ', $our_pages));
 
         // Load React/TypeScript on ALL PDF Builder pages for debugging
-        if (in_array($clean_hook, $our_pages) || strpos($clean_hook, 'pdf-builder') !== false) {
+        if (in_array($clean_hook, $our_pages) || strpos($clean_hook, 'pdf-builder') !== false ||
+            (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-editor')) {
             error_log('PDF_Builder_Admin Debug - Loading React scripts for hook: ' . $clean_hook);
             $this->enqueue_react_scripts();
 
             // Pour la page éditeur, NE PAS charger les scripts canvas - React gère tout
-            if ($clean_hook === 'pdf-builder_page_pdf-builder-editor') {
+            if ($clean_hook === 'pdf-builder_page_pdf-builder-editor' ||
+                (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-editor')) {
                 error_log('PDF_Builder_Admin Debug - Editor page detected, returning early');
                 return; // Ne pas charger les scripts canvas pour éviter les conflits
             }
