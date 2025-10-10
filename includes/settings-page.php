@@ -406,6 +406,9 @@ window.addEventListener('load', function() {
                         <td>
                             <?php
                             $events = $config->get('notification_events', []);
+                            if (!is_array($events)) {
+                                $events = [];
+                            }
                             $available_events = [
                                 'template_created' => __('Template créé', 'pdf-builder-pro'),
                                 'template_updated' => __('Template mis à jour', 'pdf-builder-pro'),
