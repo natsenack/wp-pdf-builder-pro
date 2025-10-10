@@ -189,6 +189,12 @@ class PDF_Builder_Core {
             error_log('PDF Builder Debug - Loading because GET page is exactly pdf-builder-editor');
         }
 
+        // NE PAS charger sur la page éditeur - class-pdf-builder-admin.php s'en charge
+        if (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-editor') {
+            $should_load = false;
+            error_log('PDF Builder Debug - NOT loading on editor page - handled by class-pdf-builder-admin.php');
+        }
+
         if ($should_load) {
             error_log('PDF Builder Debug - Scripts will be loaded');
 
