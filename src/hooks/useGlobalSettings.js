@@ -22,15 +22,39 @@ export const useGlobalSettings = () => {
     selectionAnimation: true
   });
 
-  // Charger les paramètres depuis le localStorage au montage
+  // Fonction pour récupérer les paramètres WordPress
+  const getWordPressSettings = () => {
+    if (window.pdfBuilderCanvasSettings) {
+      return window.pdfBuilderCanvasSettings;
+    }
+    return null;
+  };
+
+  // Charger les paramètres depuis WordPress ou localStorage au montage
   useEffect(() => {
-    const savedSettings = localStorage.getItem('pdf-builder-global-settings');
-    if (savedSettings) {
-      try {
-        const parsedSettings = JSON.parse(savedSettings);
-        setSettings(prev => ({ ...prev, ...parsedSettings }));
-      } catch (error) {
-        console.warn('Erreur lors du chargement des paramètres globaux:', error);
+    const wpSettings = getWordPressSettings();
+    if (wpSettings) {
+      // Utiliser les paramètres WordPress
+      setSettings(prev => ({
+        ...prev,
+        resizeHandleSize: wpSettings.canvas_handle_size || prev.resizeHandleSize,
+        resizeHandleColor: wpSettings.canvas_handle_color || prev.resizeHandleColor,
+        resizeHandleBorderColor: wpSettings.canvas_handle_hover_color || prev.resizeHandleBorderColor,
+        selectionBorderWidth: wpSettings.canvas_border_width || prev.selectionBorderWidth,
+        selectionBorderColor: wpSettings.canvas_border_color || prev.selectionBorderColor,
+        showResizeHandles: wpSettings.canvas_resize_handles_enabled !== undefined ? wpSettings.canvas_resize_handles_enabled : prev.showResizeHandles,
+        showResizeZones: wpSettings.canvas_element_borders_enabled !== undefined ? wpSettings.canvas_element_borders_enabled : prev.showResizeZones
+      }));
+    } else {
+      // Fallback vers localStorage si les paramètres WordPress ne sont pas disponibles
+      const savedSettings = localStorage.getItem('pdf-builder-global-settings');
+      if (savedSettings) {
+        try {
+          const parsedSettings = JSON.parse(savedSettings);
+          setSettings(prev => ({ ...prev, ...parsedSettings }));
+        } catch (error) {
+          console.warn('Erreur lors du chargement des paramètres globaux:', error);
+        }
       }
     }
   }, []);
@@ -61,7 +85,12 @@ export const useGlobalSettings = () => {
   }, [settings]);
 
   const updateSettings = (newSettings) => {
-    setSettings(prev => ({ ...prev, ...newSettings }));
+    setSettings(prev => {
+      const updated = { ...prev, ...newSettings };
+      // Sauvegarder dans localStorage pour la compatibilité
+      localStorage.setItem('pdf-builder-global-settings', JSON.stringify(updated));
+      return updated;
+    });
   };
 
   const resetToDefaults = () => {

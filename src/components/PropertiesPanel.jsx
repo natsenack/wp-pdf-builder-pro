@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useElementCustomization } from '../hooks/useElementCustomization';
 import { useElementSynchronization } from '../hooks/useElementSynchronization';
 import { elementCustomizationService } from '../services/ElementCustomizationService';
-import { GlobalSettingsPanel } from './GlobalSettingsPanel';
 import '../styles/PropertiesPanel.css';
 
 // Composant pour les contrôles de couleur avec presets
@@ -199,12 +198,6 @@ export const PropertiesPanel = ({
         onClick={() => setActiveTab('effects')}
       >
         ✨ Effets
-      </button>
-      <button
-        className={`tab-btn ${activeTab === 'settings' ? 'active' : ''}`}
-        onClick={() => setActiveTab('settings')}
-      >
-        ⚙️ Paramètres
       </button>
     </div>
   ), [activeTab]);
@@ -1349,19 +1342,6 @@ export const PropertiesPanel = ({
                 </div>
               </div>
             </div>
-          </div>
-        );
-
-      case 'settings':
-        return (
-          <div className="tab-content">
-            <GlobalSettingsPanel
-              onSettingsChange={(settings) => {
-                // Ici nous pourrions dispatcher les paramètres globaux
-                // Pour l'instant, ils sont sauvegardés automatiquement dans le localStorage
-                console.log('Paramètres globaux mis à jour:', settings);
-              }}
-            />
           </div>
         );
 

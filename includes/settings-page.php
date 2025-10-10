@@ -65,7 +65,14 @@ if (isset($_POST['pdf_builder_settings_nonce']) && wp_verify_nonce($_POST['pdf_b
         'default_orientation' => sanitize_text_field($_POST['default_orientation']),
         'log_level' => sanitize_text_field($_POST['log_level']),
         'max_template_size' => intval($_POST['max_template_size']),
-        'email_notifications_enabled' => isset($_POST['email_notifications_enabled'])
+        'email_notifications_enabled' => isset($_POST['email_notifications_enabled']),
+        'canvas_element_borders_enabled' => isset($_POST['canvas_element_borders_enabled']),
+        'canvas_border_width' => floatval($_POST['canvas_border_width']),
+        'canvas_border_color' => sanitize_text_field($_POST['canvas_border_color']),
+        'canvas_resize_handles_enabled' => isset($_POST['canvas_resize_handles_enabled']),
+        'canvas_handle_size' => intval($_POST['canvas_handle_size']),
+        'canvas_handle_color' => sanitize_text_field($_POST['canvas_handle_color']),
+        'canvas_handle_hover_color' => sanitize_text_field($_POST['canvas_handle_hover_color'])
     ];
 
     $config->set_multiple($settings);
@@ -178,6 +185,7 @@ setTimeout(function() {
                 <a href="#security" class="nav-tab"><?php _e('Sécurité', 'pdf-builder-pro'); ?></a>
                 <a href="#roles" class="nav-tab"><?php _e('Rôles', 'pdf-builder-pro'); ?></a>
                 <a href="#notifications" class="nav-tab"><?php _e('Notifications', 'pdf-builder-pro'); ?></a>
+                <a href="#canvas" class="nav-tab"><?php _e('Canvas', 'pdf-builder-pro'); ?></a>
                 <a href="#maintenance" class="nav-tab"><?php _e('Maintenance', 'pdf-builder-pro'); ?></a>
             </div>
 
@@ -445,6 +453,67 @@ setTimeout(function() {
                                     <?php echo $label; ?>
                                 </label>
                             <?php endforeach; ?>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Onglet Canvas -->
+            <div id="canvas" class="tab-content">
+                <h2><?php _e('Paramètres du Canvas', 'pdf-builder-pro'); ?></h2>
+
+                <table class="form-table">
+                    <tr>
+                        <th scope="row"><?php _e('Bordures des Éléments', 'pdf-builder-pro'); ?></th>
+                        <td>
+                            <label>
+                                <input type="checkbox" name="canvas_element_borders_enabled" value="1" <?php checked($config->get('canvas_element_borders_enabled', true)); ?>>
+                                <?php _e('Activer les bordures des éléments sur le canvas', 'pdf-builder-pro'); ?>
+                            </label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php _e('Épaisseur des Bordures', 'pdf-builder-pro'); ?></th>
+                        <td>
+                            <input type="number" name="canvas_border_width" value="<?php echo $config->get('canvas_border_width', 1); ?>" class="small-text" min="0" max="10" step="0.5">
+                            <span class="description"><?php _e('Épaisseur en pixels (0.5 à 10)', 'pdf-builder-pro'); ?></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php _e('Couleur des Bordures', 'pdf-builder-pro'); ?></th>
+                        <td>
+                            <input type="color" name="canvas_border_color" value="<?php echo $config->get('canvas_border_color', '#007cba'); ?>">
+                            <span class="description"><?php _e('Couleur des bordures des éléments', 'pdf-builder-pro'); ?></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php _e('Poignées de Redimensionnement', 'pdf-builder-pro'); ?></th>
+                        <td>
+                            <label>
+                                <input type="checkbox" name="canvas_resize_handles_enabled" value="1" <?php checked($config->get('canvas_resize_handles_enabled', true)); ?>>
+                                <?php _e('Afficher les poignées de redimensionnement', 'pdf-builder-pro'); ?>
+                            </label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php _e('Taille des Poignées', 'pdf-builder-pro'); ?></th>
+                        <td>
+                            <input type="number" name="canvas_handle_size" value="<?php echo $config->get('canvas_handle_size', 8); ?>" class="small-text" min="4" max="20">
+                            <span class="description"><?php _e('Taille en pixels (4 à 20)', 'pdf-builder-pro'); ?></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php _e('Couleur des Poignées', 'pdf-builder-pro'); ?></th>
+                        <td>
+                            <input type="color" name="canvas_handle_color" value="<?php echo $config->get('canvas_handle_color', '#007cba'); ?>">
+                            <span class="description"><?php _e('Couleur des poignées de redimensionnement', 'pdf-builder-pro'); ?></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php _e('Couleur de Survol des Poignées', 'pdf-builder-pro'); ?></th>
+                        <td>
+                            <input type="color" name="canvas_handle_hover_color" value="<?php echo $config->get('canvas_handle_hover_color', '#005a87'); ?>">
+                            <span class="description"><?php _e('Couleur des poignées au survol', 'pdf-builder-pro'); ?></span>
                         </td>
                     </tr>
                 </table>
