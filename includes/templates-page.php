@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 ?>
 
 <div class="wrap">
-    <h1><?php _e('📄 Gestion des Templates PDF', 'pdf-builder-pro'); ?></h1>
+    <h1><?php _e('○ Gestion des Templates PDF', 'pdf-builder-pro'); ?></h1>
 
     <div style="background: #fff; padding: 20px; border-radius: 8px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
         <h2><?php _e('Templates Disponibles', 'pdf-builder-pro'); ?></h2>
@@ -26,7 +26,7 @@ if (!defined('ABSPATH')) {
         <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
             <h3 style="margin: 0 0 15px 0; color: #23282d; font-size: 16px;">🔍 Filtrer par type :</h3>
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                <button class="filter-btn button button-secondary active" data-filter="all" style="font-size: 12px; padding: 6px 12px;">📄 Tous</button>
+                <button class="filter-btn button button-secondary active" data-filter="all" style="font-size: 12px; padding: 6px 12px;">▭ Tous</button>
                 <button class="filter-btn button button-secondary" data-filter="facture" style="font-size: 12px; padding: 6px 12px; background: #007cba; border-color: #007cba; color: white;">📄 Factures</button>
                 <button class="filter-btn button button-secondary" data-filter="devis" style="font-size: 12px; padding: 6px 12px; background: #28a745; border-color: #28a745; color: white;">📋 Devis</button>
                 <button class="filter-btn button button-secondary" data-filter="commande" style="font-size: 12px; padding: 6px 12px; background: #ffc107; border-color: #ffc107; color: #212529;">🛒 Commandes</button>
@@ -65,7 +65,7 @@ if (!defined('ABSPATH')) {
                     $button_action = 'openTemplateSettings';
                     
                     // Déterminer l'icône basée sur le nom du template
-                    $icon = '📄'; // Default
+                    $icon = '○'; // Default
                     $description = 'Template personnalisé';
                     $features = ['✓ Contenu personnalisable', '✓ Mise en page flexible', '✓ Éléments dynamiques', '✓ Export PDF'];
                     
@@ -99,7 +99,7 @@ if (!defined('ABSPATH')) {
                     // Badge du type de template en haut à gauche
                     
                     echo '<div class="default-template-icon" style="position: absolute; top: 10px; right: 10px; font-size: 20px; cursor: pointer; opacity: ' . ($is_default ? '1' : '0.5') . ';" onclick="toggleDefaultTemplate(' . $template_id . ', \'' . $template_type . '\', \'' . addslashes($template_name) . '\')" title="' . ($is_default ? 'Template par défaut' : 'Définir comme template par défaut') . '">';
-                    echo $is_default ? '⭐' : '☆';
+                    echo $is_default ? '★' : '☆';
                     echo '</div>';
                     
                     // Badge du type de template en haut à gauche
@@ -222,7 +222,7 @@ if (!defined('ABSPATH')) {
         </div>
 
         <div id="no-templates" style="display: none; text-align: center; padding: 40px; color: #666;">
-            <div style="font-size: 3rem; margin-bottom: 1rem;">📄</div>
+            <div style="font-size: 3rem; margin-bottom: 1rem;">○</div>
             <h3><?php _e('Aucun template trouvé', 'pdf-builder-pro'); ?></h3>
             <p><?php _e('Créez votre premier template pour commencer à concevoir des PDF personnalisés.', 'pdf-builder-pro'); ?></p>
         </div>
@@ -355,7 +355,7 @@ function toggleDefaultTemplate(templateId, templateType, templateName) {
             // Mettre à jour l'icône et le titre
             if (currentIcon) {
                 const newIsDefault = !isCurrentlyDefault;
-                currentIcon.innerHTML = newIsDefault ? '⭐' : '☆';
+                currentIcon.innerHTML = newIsDefault ? '★' : '☆';
                 currentIcon.style.opacity = newIsDefault ? '1' : '0.5';
                 currentIcon.title = newIsDefault ? 'Template par défaut' : 'Définir comme template par défaut';
                 currentIcon.style.pointerEvents = 'auto';
@@ -378,7 +378,7 @@ function toggleDefaultTemplate(templateId, templateType, templateName) {
         } else {
             // Erreur
             if (currentIcon) {
-                currentIcon.innerHTML = isCurrentlyDefault ? '⭐' : '☆';
+                currentIcon.innerHTML = isCurrentlyDefault ? '★' : '☆';
                 currentIcon.style.pointerEvents = 'auto';
             }
             showErrorMessage(response.data?.message || 'Erreur lors de la modification du statut par défaut');
@@ -387,7 +387,7 @@ function toggleDefaultTemplate(templateId, templateType, templateName) {
         console.log('AJAX failed:', xhr, status, error);
         // Erreur de réseau
         if (currentIcon) {
-            currentIcon.innerHTML = isCurrentlyDefault ? '⭐' : '☆';
+            currentIcon.innerHTML = isCurrentlyDefault ? '★' : '☆';
             currentIcon.style.pointerEvents = 'auto';
         }
         showErrorMessage('Erreur de connexion: ' + error);
