@@ -607,7 +607,7 @@ export const PropertiesPanel = ({
               </div>
             )}
 
-            {(selectedElement.type === 'image' || selectedElement.type === 'company_logo') && (
+            {selectedElement.type === 'image' && (
               <div className="properties-group">
                 <h4>🖼️ Image</h4>
 
@@ -816,7 +816,7 @@ export const PropertiesPanel = ({
                 <h4>🏢 Logo Entreprise</h4>
 
                 <div className="property-row">
-                  <label>URL de l'image:</label>
+                  <label>Image:</label>
                   <div className="input-with-button">
                     <input
                       type="text"
@@ -824,35 +824,31 @@ export const PropertiesPanel = ({
                       onChange={(e) => handlePropertyChange(selectedElement.id, 'imageUrl', e.target.value)}
                       placeholder="https://exemple.com/logo.png"
                     />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      id={`logo-upload-${selectedElement.id}`}
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                          // Créer une URL de données pour prévisualisation immédiate
+                          const reader = new FileReader();
+                          reader.onload = (event) => {
+                            handlePropertyChange(selectedElement.id, 'imageUrl', event.target.result);
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                    />
                     <button
                       type="button"
                       className="media-button"
                       onClick={() => {
-                        // Ouvrir la médiathèque WordPress
-                        if (window.wp && window.wp.media) {
-                          const mediaFrame = window.wp.media({
-                            title: 'Sélectionner un logo',
-                            button: {
-                              text: 'Utiliser ce logo'
-                            },
-                            multiple: false,
-                            library: {
-                              type: 'image'
-                            }
-                          });
-
-                          mediaFrame.on('select', function() {
-                            const attachment = mediaFrame.state().get('selection').first().toJSON();
-                            handlePropertyChange(selectedElement.id, 'imageUrl', attachment.url);
-                          });
-
-                          mediaFrame.open();
-                        } else {
-                          alert('La médiathèque WordPress n\'est pas disponible dans ce contexte.');
-                        }
+                        document.getElementById(`logo-upload-${selectedElement.id}`).click();
                       }}
                     >
-                      📁 Médiathèque
+                      � Uploader
                     </button>
                   </div>
                 </div>
