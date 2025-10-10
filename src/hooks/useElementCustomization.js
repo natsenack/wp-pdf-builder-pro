@@ -16,7 +16,21 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
   // Synchroniser les propriétés locales avec l'élément sélectionné
   useEffect(() => {
     if (selectedElement) {
-      setLocalProperties({ ...selectedElement });
+      setLocalProperties({
+        // Valeurs par défaut
+        color: '#333333',
+        backgroundColor: '#ffffff',
+        borderColor: '#dddddd',
+        borderWidth: 1,
+        borderRadius: 4,
+        fontSize: 14,
+        fontFamily: 'Arial, sans-serif',
+        fontWeight: 'normal',
+        fontStyle: 'normal',
+        textDecoration: 'none',
+        // Propriétés de l'élément
+        ...selectedElement
+      });
     } else {
       setLocalProperties({});
     }

@@ -11,7 +11,7 @@ const ColorPicker = ({ label, value, onChange, presets = [] }) => (
     <div className="color-picker-container">
       <input
         type="color"
-        value={value || '#333333'}
+        value={value}
         onChange={(e) => onChange(e.target.value)}
         className="color-input"
       />
