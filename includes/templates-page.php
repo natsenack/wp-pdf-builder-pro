@@ -329,9 +329,13 @@ function deleteTemplate(templateId, templateName) {
 }
 
 function toggleDefaultTemplate(templateId, templateType, templateName) {
+    console.log('toggleDefaultTemplate called with:', templateId, templateType, templateName);
+
     // Trouver l'icône du template actuel
     const currentIcon = document.querySelector(`.template-card input[value="${templateId}"]`)?.closest('.template-card')?.querySelector('.default-template-icon');
     const isCurrentlyDefault = currentIcon?.style.opacity === '1';
+
+    console.log('Current icon found:', !!currentIcon, 'Is currently default:', isCurrentlyDefault);
 
     // Préparer les données pour AJAX
     const data = {
@@ -341,6 +345,9 @@ function toggleDefaultTemplate(templateId, templateType, templateName) {
         nonce: '<?php echo wp_create_nonce("pdf_builder_templates"); ?>'
     };
 
+    console.log('AJAX data:', data);
+    console.log('ajaxurl:', ajaxurl);
+
     // Afficher un indicateur de chargement
     if (currentIcon) {
         currentIcon.style.pointerEvents = 'none';
@@ -349,6 +356,7 @@ function toggleDefaultTemplate(templateId, templateType, templateName) {
 
     // Faire l'appel AJAX
     jQuery.post(ajaxurl, data, function(response) {
+        console.log('AJAX success:', response);
         if (response.success) {
             // Mettre à jour l'icône et le titre
             if (currentIcon) {
@@ -380,13 +388,14 @@ function toggleDefaultTemplate(templateId, templateType, templateName) {
             }
             showErrorMessage(response.data?.message || 'Erreur lors de la modification du statut par défaut');
         }
-    }).fail(function() {
+    }).fail(function(xhr, status, error) {
+        console.log('AJAX failed:', xhr, status, error);
         // Erreur de réseau
         if (currentIcon) {
             currentIcon.innerHTML = isCurrentlyDefault ? '⭐' : '☆';
             currentIcon.style.pointerEvents = 'auto';
         }
-        showErrorMessage('Erreur de connexion');
+        showErrorMessage('Erreur de connexion: ' + error);
     });
 }
 

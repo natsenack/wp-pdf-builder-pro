@@ -3153,14 +3153,18 @@ class PDF_Builder_Admin {
      * AJAX - Définir un template comme défaut
      */
     public function ajax_set_default_template() {
+        error_log('PDF Builder: ajax_set_default_template called');
+
         // Vérifier le nonce
         if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_templates')) {
+            error_log('PDF Builder: Invalid nonce');
             wp_send_json_error(['message' => __('Nonce invalide.', 'pdf-builder-pro')]);
             return;
         }
 
         // Vérifier les permissions
         if (!current_user_can('manage_options')) {
+            error_log('PDF Builder: Insufficient permissions');
             wp_send_json_error(['message' => __('Permissions insuffisantes.', 'pdf-builder-pro')]);
             return;
         }
