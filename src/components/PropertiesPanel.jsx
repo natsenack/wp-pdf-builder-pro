@@ -376,15 +376,20 @@ const PropertiesPanel = React.memo(({
                 presets={['#1e293b', '#334155', '#475569', '#64748b', '#94a3b8', '#cbd5e1']}
               />
 
-              <ColorPicker
-                label="Fond"
-                value={localProperties.backgroundColor}
-                onChange={(value) => {
-                  console.log('🎨 Changement couleur fond:', value);
-                  handlePropertyChange(selectedElement.id, 'backgroundColor', value);
-                }}
-                presets={['#ffffff', '#f8fafc', '#f1f5f9', '#e2e8f0', '#cbd5e1', '#94a3b8']}
-              />
+              <div style={{
+                opacity: localProperties.backgroundColor === 'transparent' ? 0.5 : 1,
+                pointerEvents: localProperties.backgroundColor === 'transparent' ? 'none' : 'auto'
+              }}>
+                <ColorPicker
+                  label="Fond"
+                  value={localProperties.backgroundColor}
+                  onChange={(value) => {
+                    console.log('🎨 Changement couleur fond:', value);
+                    handlePropertyChange(selectedElement.id, 'backgroundColor', value);
+                  }}
+                  presets={['#ffffff', '#f8fafc', '#f1f5f9', '#e2e8f0', '#cbd5e1', '#94a3b8']}
+                />
+              </div>
 
               <div className="property-row">
                 <label>Aucun fond:</label>
@@ -401,15 +406,20 @@ const PropertiesPanel = React.memo(({
                 </label>
               </div>
 
-              <ColorPicker
-                label="Bordure"
-                value={localProperties.borderColor}
-                onChange={(value) => {
-                  console.log('🎨 Changement couleur bordure:', value);
-                  handlePropertyChange(selectedElement.id, 'borderColor', value);
-                }}
-                presets={['#e2e8f0', '#cbd5e1', '#94a3b8', '#64748b', '#475569', '#334155']}
-              />
+              <div style={{
+                opacity: (!localProperties.borderWidth || localProperties.borderWidth === 0) ? 0.5 : 1,
+                pointerEvents: (!localProperties.borderWidth || localProperties.borderWidth === 0) ? 'none' : 'auto'
+              }}>
+                <ColorPicker
+                  label="Bordure"
+                  value={localProperties.borderColor}
+                  onChange={(value) => {
+                    console.log('🎨 Changement couleur bordure:', value);
+                    handlePropertyChange(selectedElement.id, 'borderColor', value);
+                  }}
+                  presets={['#e2e8f0', '#cbd5e1', '#94a3b8', '#64748b', '#475569', '#334155']}
+                />
+              </div>
 
               <div className="property-row">
                 <label>Aucune bordure:</label>
@@ -439,7 +449,10 @@ const PropertiesPanel = React.memo(({
             <div className="properties-group">
               <h4>🔲 Bordures & Coins</h4>
 
-              <div className="property-row">
+              <div className="property-row" style={{
+                opacity: (!localProperties.borderWidth || localProperties.borderWidth === 0) ? 0.5 : 1,
+                pointerEvents: (!localProperties.borderWidth || localProperties.borderWidth === 0) ? 'none' : 'auto'
+              }}>
                 <label>Épaisseur bordure:</label>
                 <div className="slider-container">
                   <input
