@@ -12,9 +12,7 @@ const ColorPicker = ({ label, value, onChange, presets = [] }) => (
       <input
         type="color"
         value={value || '#1e293b'}
-                             onChange={(e) => {
-                            handlePropertyChange(selectedElement.id, `columns.${key}`, e.target.checked);
-                          }}ge={(e) => onChange(e.target.value)}
+        onChange={(e) => onChange(e.target.value)}
         className="color-input"
       />
       <div className="color-presets">
@@ -234,10 +232,22 @@ export const PropertiesPanel = ({
 
               <ColorPicker
                 label="Fond"
-                value={localProperties.fillColor}
-                onChange={(value) => handlePropertyChange(selectedElement.id, 'fillColor', value)}
+                value={localProperties.backgroundColor}
+                onChange={(value) => handlePropertyChange(selectedElement.id, 'backgroundColor', value)}
                 presets={['#ffffff', '#f8fafc', '#f1f5f9', '#e2e8f0', '#cbd5e1', '#94a3b8']}
               />
+
+              <div className="property-row">
+                <label>Aucun fond:</label>
+                <label className="toggle">
+                  <input
+                    type="checkbox"
+                    checked={!localProperties.backgroundColor || localProperties.backgroundColor === 'transparent'}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundColor', e.target.checked ? 'transparent' : '#ffffff')}
+                  />
+                  <span className="toggle-slider"></span>
+                </label>
+              </div>
 
               <ColorPicker
                 label="Bordure"
@@ -245,6 +255,18 @@ export const PropertiesPanel = ({
                 onChange={(value) => handlePropertyChange(selectedElement.id, 'borderColor', value)}
                 presets={['#e2e8f0', '#cbd5e1', '#94a3b8', '#64748b', '#475569', '#334155']}
               />
+
+              <div className="property-row">
+                <label>Aucune bordure:</label>
+                <label className="toggle">
+                  <input
+                    type="checkbox"
+                    checked={!localProperties.borderWidth || localProperties.borderWidth === 0}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'borderWidth', e.target.checked ? 0 : 1)}
+                  />
+                  <span className="toggle-slider"></span>
+                </label>
+              </div>
             </div>
 
             {(selectedElement.type === 'text' || selectedElement.type === 'layout-header' ||

@@ -1474,6 +1474,7 @@ export const CanvasElement = ({
               width: element.width,
               height: element.height
             })}
+            onContextMenu={handleContextMenuEvent}
           />
           <div
             className="resize-handle ne"
@@ -1494,6 +1495,7 @@ export const CanvasElement = ({
               width: element.width,
               height: element.height
             })}
+            onContextMenu={handleContextMenuEvent}
           />
           <div
             className="resize-handle sw"
@@ -1514,6 +1516,7 @@ export const CanvasElement = ({
               width: element.width,
               height: element.height
             })}
+            onContextMenu={handleContextMenuEvent}
           />
           <div
             className="resize-handle se"
@@ -1534,6 +1537,7 @@ export const CanvasElement = ({
               width: element.width,
               height: element.height
             })}
+            onContextMenu={handleContextMenuEvent}
           />
 
           {/* Côtés */}
@@ -1556,6 +1560,7 @@ export const CanvasElement = ({
               width: element.width,
               height: element.height
             })}
+            onContextMenu={handleContextMenuEvent}
           />
           <div
             className="resize-handle s"
@@ -1576,6 +1581,7 @@ export const CanvasElement = ({
               width: element.width,
               height: element.height
             })}
+            onContextMenu={handleContextMenuEvent}
           />
           <div
             className="resize-handle w"
@@ -1596,6 +1602,7 @@ export const CanvasElement = ({
               width: element.width,
               height: element.height
             })}
+            onContextMenu={handleContextMenuEvent}
           />
           <div
             className="resize-handle e"
@@ -1616,6 +1623,7 @@ export const CanvasElement = ({
               width: element.width,
               height: element.height
             })}
+            onContextMenu={handleContextMenuEvent}
           />
 
           {/* Zones de redimensionnement sur les bords */}
