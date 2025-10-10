@@ -918,43 +918,45 @@ window.addEventListener('load', function() {
 })(jQuery);
 </script>
 <script>
-        // Actions de maintenance
-        $('#clear-cache').on('click', function() {
-            if (!confirm('<?php echo esc_js(__('Êtes-vous sûr de vouloir vider le cache ?', 'pdf-builder-pro')); ?>')) {
-                return;
-            }
+(function($) {
+    'use strict';
 
-            var $button = $(this);
-            var $status = $('#cache-status');
+    // Actions de maintenance
+    $('#clear-cache').on('click', function() {
+        if (!confirm('<?php echo esc_js(__('Êtes-vous sûr de vouloir vider le cache ?', 'pdf-builder-pro')); ?>')) {
+            return;
+        }
 
-            $button.prop('disabled', true).text('<?php echo esc_js(__('Nettoyage...', 'pdf-builder-pro')); ?>');
-            $status.html('<div class="notice notice-info"><p><?php echo esc_js(__('Nettoyage du cache en cours...', 'pdf-builder-pro')); ?></p></div>');
+        var $button = $(this);
+        var $status = $('#cache-status');
 
-            $.ajax({
-                url: ajaxurl,
-                type: 'POST',
-                data: {
-                    action: 'pdf_builder_clear_cache',
-                    nonce: '<?php echo wp_create_nonce('pdf_builder_maintenance'); ?>'
-                },
-                success: function(response) {
-                    if (response.success) {
-                        $status.html('<div class="notice notice-success"><p><?php echo esc_js(__('Cache vidé avec succès !', 'pdf-builder-pro')); ?></p></div>');
-                    } else {
-                        $status.html('<div class="notice notice-error"><p>' + $('<div>').text(response.data.message).html() + '</p></div>');
-                    }
-                },
-                error: function() {
-                    $status.html('<div class="notice notice-error"><p><?php echo esc_js(__('Erreur lors du nettoyage du cache.', 'pdf-builder-pro')); ?></p></div>');
-                },
-                complete: function() {
-                    $button.prop('disabled', false).text('<?php echo esc_js(__('Vider le Cache', 'pdf-builder-pro')); ?>');
+        $button.prop('disabled', true).text('<?php echo esc_js(__('Nettoyage...', 'pdf-builder-pro')); ?>');
+        $status.html('<div class="notice notice-info"><p><?php echo esc_js(__('Nettoyage du cache en cours...', 'pdf-builder-pro')); ?></p></div>');
+
+        $.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'pdf_builder_clear_cache',
+                nonce: '<?php echo wp_create_nonce('pdf_builder_maintenance'); ?>'
+            },
+            success: function(response) {
+                if (response.success) {
+                    $status.html('<div class="notice notice-success"><p><?php echo esc_js(__('Cache vidé avec succès !', 'pdf-builder-pro')); ?></p></div>');
+                } else {
+                    $status.html('<div class="notice notice-error"><p>' + (response.data && response.data.message ? $('<div>').text(response.data.message).html() : 'Erreur inconnue') + '</p></div>');
                 }
-            });
+            },
+            error: function() {
+                $status.html('<div class="notice notice-error"><p><?php echo esc_js(__('Erreur lors du nettoyage du cache.', 'pdf-builder-pro')); ?></p></div>');
+            },
+            complete: function() {
+                $button.prop('disabled', false).text('<?php echo esc_js(__('Vider le Cache', 'pdf-builder-pro')); ?>');
+            }
         });
+    });
 
     $('#execute-sql-repair').on('click', function() {
-
         if (!confirm('<?php echo esc_js(__('Êtes-vous sûr de vouloir exécuter la réparation SQL ? Cette action va créer les tables manquantes et insérer les données par défaut.', 'pdf-builder-pro')); ?>')) {
             return;
         }
@@ -987,7 +989,7 @@ window.addEventListener('load', function() {
                     $status.html(html);
                 } else {
                     console.error('Erreur dans la réponse:', response.data);
-                    $status.html('<div class="notice notice-error"><p>' + $('<div>').text(response.data.message).html() + '</p></div>');
+                    $status.html('<div class="notice notice-error"><p>' + (response.data && response.data.message ? $('<div>').text(response.data.message).html() : 'Erreur inconnue') + '</p></div>');
                 }
             },
             error: function(xhr, status, error) {
@@ -1027,7 +1029,7 @@ window.addEventListener('load', function() {
                 if (response.success) {
                     $status.html('<div class="notice notice-success"><p><?php echo esc_js(__('Base de données optimisée avec succès !', 'pdf-builder-pro')); ?></p></div>');
                 } else {
-                    $status.html('<div class="notice notice-error"><p>' + $('<div>').text(response.data.message).html() + '</p></div>');
+                    $status.html('<div class="notice notice-error"><p>' + (response.data && response.data.message ? $('<div>').text(response.data.message).html() : 'Erreur inconnue') + '</p></div>');
                 }
             },
             error: function() {
@@ -1062,7 +1064,7 @@ window.addEventListener('load', function() {
                     logsHtml += '</pre></div></div>';
                     $status.html(logsHtml);
                 } else {
-                    $status.html('<div class="notice notice-error"><p>' + $('<div>').text(response.data.message).html() + '</p></div>');
+                    $status.html('<div class="notice notice-error"><p>' + (response.data && response.data.message ? $('<div>').text(response.data.message).html() : 'Erreur inconnue') + '</p></div>');
                 }
             },
             error: function() {
@@ -1096,7 +1098,7 @@ window.addEventListener('load', function() {
                 if (response.success) {
                     $status.html('<div class="notice notice-success"><p><?php echo esc_js(__('Logs vidés avec succès !', 'pdf-builder-pro')); ?></p></div>');
                 } else {
-                    $status.html('<div class="notice notice-error"><p>' + $('<div>').text(response.data.message).html() + '</p></div>');
+                    $status.html('<div class="notice notice-error"><p>' + (response.data && response.data.message ? $('<div>').text(response.data.message).html() : 'Erreur inconnue') + '</p></div>');
                 }
             },
             error: function() {
@@ -1132,7 +1134,7 @@ window.addEventListener('load', function() {
                     $status.html('<div class="notice notice-success"><p><?php echo esc_js(__('Permissions réinitialisées avec succès !', 'pdf-builder-pro')); ?></p></div>');
                     location.reload(); // Recharger la page pour voir les changements
                 } else {
-                    $status.html('<div class="notice notice-error"><p>' + $('<div>').text(response.data.message).html() + '</p></div>');
+                    $status.html('<div class="notice notice-error"><p>' + (response.data && response.data.message ? $('<div>').text(response.data.message).html() : 'Erreur inconnue') + '</p></div>');
                 }
             },
             error: function() {
@@ -1217,7 +1219,7 @@ window.addEventListener('load', function() {
                         $status.html('<div class="notice notice-success"><p>Permissions appliquées avec succès !</p></div>');
                         location.reload();
                     } else {
-                        $status.html('<div class="notice notice-error"><p>' + $('<div>').text(response.data.message).html() + '</p></div>');
+                        $status.html('<div class="notice notice-error"><p>' + (response.data && response.data.message ? $('<div>').text(response.data.message).html() : 'Erreur inconnue') + '</p></div>');
                     }
                 },
                 error: function() {
@@ -1236,5 +1238,6 @@ window.addEventListener('load', function() {
             }
         });
     });
-});
+
+})(jQuery);
 </script>
