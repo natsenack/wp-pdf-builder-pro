@@ -256,17 +256,18 @@ const PropertiesPanel = React.memo(({
 
     // Validation via le service (sauf pour les propriétés boolean qui sont toujours valides)
     const isBooleanProperty = typeof value === 'boolean' || property.startsWith('columns.');
-    if (!isBooleanProperty && !elementCustomizationService.validateProperty(property, value)) {
+    const validatedValue = elementCustomizationService.validateProperty(property, value);
+    if (!isBooleanProperty && (validatedValue === undefined || validatedValue === null)) {
       console.warn(`Propriété invalide: ${property} = ${value}`);
       return;
     }
 
     // Utiliser le hook de personnalisation pour la gestion locale
-    customizationChange(elementId, property, value);
+    customizationChange(elementId, property, validatedValue !== undefined ? validatedValue : value);
 
     // Synchronisation immédiate pour les changements critiques
     if (['x', 'y', 'width', 'height'].includes(property)) {
-      syncImmediate(elementId, property, value);
+      syncImmediate(elementId, property, validatedValue !== undefined ? validatedValue : value);
     }
   }, [customizationChange, syncImmediate]);
 
