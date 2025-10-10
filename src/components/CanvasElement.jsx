@@ -1433,7 +1433,21 @@ export const CanvasElement = ({
               </div>
             )}
             <div>
-              Commande #12345 - 15/10/2025
+              {(() => {
+                // Utiliser le format défini ou une valeur par défaut
+                const format = element.format || 'Commande #{order_number} - {order_date}';
+
+                // Données de test pour l'aperçu (seront remplacées par les vraies données lors de la génération)
+                const testData = {
+                  order_number: '12345',
+                  order_date: '15/10/2025'
+                };
+
+                // Remplacer les variables dans le format
+                return format
+                  .replace(/{order_number}/g, testData.order_number)
+                  .replace(/{order_date}/g, testData.order_date);
+              })()}
             </div>
           </div>
         )}
