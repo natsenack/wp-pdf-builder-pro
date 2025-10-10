@@ -112,7 +112,8 @@ const WooCommerceElement = ({
   dragAndDrop,
   zoom = 1,
   canvasWidth,
-  canvasHeight
+  canvasHeight,
+  orderData = {}
 }) => {
   const elementRef = useRef(null);
 
@@ -221,6 +222,70 @@ const WooCommerceElement = ({
     '--element-border-width': isSelected ? '2px' : (element.borderWidth > 0 ? `${element.borderWidth || 1}px` : '0px')
   };
 
+  // Fonction pour obtenir le contenu dynamique selon le type d'élément
+  const getElementContent = (type) => {
+    switch (type) {
+      case 'woocommerce-invoice-number':
+        return orderData.invoice_number || 'INV-001';
+      case 'woocommerce-invoice-date':
+        return orderData.invoice_date || '15/10/2025';
+      case 'woocommerce-order-number':
+        return orderData.order_number || '#12345';
+      case 'woocommerce-order-date':
+        return orderData.order_date || '15/10/2025';
+      case 'woocommerce-customer-name':
+        return orderData.customer_name || 'John Doe';
+      case 'woocommerce-customer-email':
+        return orderData.customer_email || 'john.doe@example.com';
+      case 'woocommerce-billing-address':
+        return orderData.billing_address || '123 Rue de Test\n75001 Paris\nFrance';
+      case 'woocommerce-shipping-address':
+        return orderData.shipping_address || '456 Rue de Livraison\n75002 Paris\nFrance';
+      case 'woocommerce-payment-method':
+        return orderData.payment_method || 'Carte bancaire';
+      case 'woocommerce-order-status':
+        return orderData.order_status || 'Traitée';
+      case 'woocommerce-subtotal':
+        return orderData.subtotal || '45,00 €';
+      case 'woocommerce-discount':
+        return orderData.discount || '-5,00 €';
+      case 'woocommerce-shipping':
+        return orderData.shipping || '5,00 €';
+      case 'woocommerce-taxes':
+        return orderData.tax || '9,00 €';
+      case 'woocommerce-total':
+        return orderData.total || '54,00 €';
+      case 'woocommerce-refund':
+        return orderData.refund || '0,00 €';
+      case 'woocommerce-fees':
+        return orderData.fees || '1,50 €';
+      case 'woocommerce-quote-number':
+        return orderData.quote_number || 'QUO-001';
+      case 'woocommerce-quote-date':
+        return orderData.quote_date || '15/10/2025';
+      case 'woocommerce-quote-validity':
+        return orderData.quote_validity || '30 jours';
+      case 'woocommerce-quote-notes':
+        return orderData.quote_notes || 'Conditions spéciales : paiement à 30 jours.';
+      case 'woocommerce-products-table':
+        if (orderData.products && orderData.products.length > 0) {
+          return orderData.products.map(product =>
+            `${product.name} x${product.quantity} - ${product.total}`
+          ).join('\n');
+        }
+        return 'Produit Test 1 x1 - 25,00 €\nProduit Test 2 x2 - 20,00 €';
+      case 'woocommerce-products-simple':
+        if (orderData.products && orderData.products.length > 0) {
+          return orderData.products.map(product =>
+            `${product.quantity}x ${product.name}`
+          ).join('\n');
+        }
+        return '1x Produit Test 1\n2x Produit Test 2';
+      default:
+        return '[Contenu dynamique WooCommerce]';
+    }
+  };
+
   return (
     <>
       <div
@@ -241,7 +306,7 @@ const WooCommerceElement = ({
           lineHeight: '1.4',
           color: '#666'
         }}>
-          [Contenu dynamique WooCommerce]
+          {getElementContent(element.type)}
         </div>
       </div>
 

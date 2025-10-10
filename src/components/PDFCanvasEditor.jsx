@@ -22,6 +22,35 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
   // Hook pour les paramètres globaux
   const globalSettings = useGlobalSettings();
 
+  // Données de commande WooCommerce (passées via options ou données de test)
+  const orderData = options.orderData || {
+    invoice_number: 'INV-001',
+    invoice_date: '15/10/2025',
+    order_number: '#12345',
+    order_date: '15/10/2025',
+    customer_name: 'John Doe',
+    customer_email: 'john.doe@example.com',
+    billing_address: '123 Rue de Test\n75001 Paris\nFrance',
+    shipping_address: '456 Rue de Livraison\n75002 Paris\nFrance',
+    payment_method: 'Carte bancaire',
+    order_status: 'Traitée',
+    subtotal: '45,00 €',
+    discount: '-5,00 €',
+    shipping: '5,00 €',
+    tax: '9,00 €',
+    total: '54,00 €',
+    refund: '0,00 €',
+    fees: '1,50 €',
+    quote_number: 'QUO-001',
+    quote_date: '15/10/2025',
+    quote_validity: '30 jours',
+    quote_notes: 'Conditions spéciales : paiement à 30 jours.',
+    products: [
+      { name: 'Produit Test 1', quantity: 1, price: '25,00 €', total: '25,00 €' },
+      { name: 'Produit Test 2', quantity: 2, price: '10,00 €', total: '20,00 €' }
+    ]
+  };
+
   const canvasState = useCanvasState({
     initialElements: options.initialElements || [],
     canvasWidth: options.width || 595,
@@ -424,6 +453,7 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
                         zoom={1} // Le zoom est géré au niveau du wrapper
                         canvasWidth={canvasState.canvasWidth}
                         canvasHeight={canvasState.canvasHeight}
+                        orderData={orderData}
                       />
                     </React.Suspense>
                   ))}
