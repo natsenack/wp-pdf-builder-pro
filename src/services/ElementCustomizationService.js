@@ -62,16 +62,23 @@ export class ElementCustomizationService {
    * Valide une propriété selon son type
    */
   validateProperty(property, value) {
+    // Pour les propriétés boolean, retourner la valeur telle quelle
+    if (typeof value === 'boolean') {
+      return value;
+    }
+
+    // Pour les propriétés de colonnes (tableaux), retourner la valeur telle quelle
+    if (property.startsWith('columns.')) {
+      return value;
+    }
+
+    // Chercher un validateur pour cette propriété
     const validator = this.propertyValidators.get(property);
     if (validator) {
       return validator(value);
     }
 
-    // Validation par défaut selon le type de valeur
-    if (typeof value === 'number') {
-      return this.propertyValidators.get('numeric')(value);
-    }
-
+    // Si pas de validateur spécifique, retourner la valeur telle quelle
     return value;
   }
 
