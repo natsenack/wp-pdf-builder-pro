@@ -259,6 +259,21 @@ const PropertiesPanel = React.memo(({
     });
   }, [activeTab, selectedElement?.id]); // Éviter de logger localProperties qui change souvent
 
+  // Debug border controls rendering
+  const [lastLoggedBorderWidth, setLastLoggedBorderWidth] = useState(null);
+  useEffect(() => {
+    if (lastLoggedBorderWidth !== localProperties.borderWidth) {
+      console.log('🎯 Vérification affichage contrôles:', {
+        borderWidth: localProperties.borderWidth,
+        borderWidthType: typeof localProperties.borderWidth,
+        shouldShow: localProperties.borderWidth > 0,
+        toggleChecked: !localProperties.borderWidth || localProperties.borderWidth === 0,
+        elementId: selectedElement?.id
+      });
+      setLastLoggedBorderWidth(localProperties.borderWidth);
+    }
+  }, [localProperties.borderWidth, selectedElement?.id, lastLoggedBorderWidth]);
+
   const { syncImmediate, syncBatch } = useElementSynchronization(
     elements,
     onPropertyChange,
@@ -513,17 +528,9 @@ const PropertiesPanel = React.memo(({
               />
             )}
 
-            {(() => {
-              const shouldShow = localProperties.borderWidth > 0;
-              console.log('🎯 Vérification affichage contrôles:', {
-                borderWidth: localProperties.borderWidth,
-                borderWidthType: typeof localProperties.borderWidth,
-                shouldShow,
-                toggleChecked: !localProperties.borderWidth || localProperties.borderWidth === 0
-              });
-              return shouldShow && (
-                <div className="properties-group">
-                  <h4>🔲 Bordures & Coins</h4>
+            {localProperties.borderWidth > 0 && (
+              <div className="properties-group">
+                <h4>🔲 Bordures & Coins</h4>
 
                 <div className="property-row">
                   <label>Épaisseur bordure:</label>
@@ -555,8 +562,7 @@ const PropertiesPanel = React.memo(({
                   </div>
                 </div>
               </div>
-            );
-            })()}
+            )}
 
             <div className="properties-group">
               <h4>✨ Effets</h4>
