@@ -3554,9 +3554,18 @@ class PDF_Builder_Admin {
             // Charger les éléments du template
             $elements = $elements_manager->load_canvas_elements($template_id);
             
+            // Récupérer aussi le nom du template
+            global $wpdb;
+            $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+            $template_info = $wpdb->get_row(
+                $wpdb->prepare("SELECT name FROM $table_templates WHERE id = %d", $template_id),
+                ARRAY_A
+            );
+            
             wp_send_json_success([
                 'elements' => $elements,
-                'template_id' => $template_id
+                'template_id' => $template_id,
+                'template_name' => $template_info ? $template_info['name'] : 'Template #' . $template_id
             ]);
             
         } catch (Exception $e) {

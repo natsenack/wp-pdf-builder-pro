@@ -20,14 +20,22 @@ if (!defined('PDF_BUILDER_DEBUG_MODE') || !PDF_BUILDER_DEBUG_MODE) {
 $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
 $is_new = $template_id === 0;
 
-// Temporaire : désactiver l'utilisation du template manager qui n'existe pas encore
-// $core = PDF_Builder_Core::getInstance();
-// $template_manager = $core->get_template_manager();
-
-$template = null; // Temporaire : pas de template chargé
+// Récupérer le nom du template si c'est un template existant
+$template_name = '';
+if (!$is_new && $template_id > 0) {
+    global $wpdb;
+    $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+    $template = $wpdb->get_row(
+        $wpdb->prepare("SELECT name FROM $table_templates WHERE id = %d", $template_id),
+        ARRAY_A
+    );
+    if ($template) {
+        $template_name = $template['name'];
+    }
+}
 ?>
 <div class="wrap">
-    <h1><?php echo $is_new ? __('Créer un nouveau template', 'pdf-builder-pro') : __('Éditer le template', 'pdf-builder-pro'); ?></h1>
+    <h1><?php echo $is_new ? __('Créer un nouveau template', 'pdf-builder-pro') : sprintf(__('Éditer le template: %s', 'pdf-builder-pro'), esc_html($template_name)); ?></h1>
     
     <div id="invoice-quote-builder-container" data-is-new="<?php echo $is_new ? 'true' : 'false'; ?>" style="padding: 20px; background: #ffffff; border-radius: 8px; margin: 10px 0;">
         <!-- React App will be mounted here -->
@@ -77,6 +85,7 @@ $template = null; // Temporaire : pas de template chargé
             try {
                 window.PDFBuilderPro.init('invoice-quote-builder-container', {
                     templateId: <?php echo $template_id ?: 'null'; ?>,
+                    templateName: <?php echo $template_name ? json_encode($template_name) : 'null'; ?>,
                     isNew: <?php echo $is_new ? 'true' : 'false'; ?>,
                     width: 595,
                     height: 842,
