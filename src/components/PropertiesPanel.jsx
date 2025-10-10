@@ -414,7 +414,7 @@ const PropertiesPanel = React.memo(({
               }}>
                 <ColorPicker
                   label="Fond"
-                  value={localProperties.backgroundColor}
+                  value={localProperties.backgroundColor === 'transparent' ? '#ffffff' : localProperties.backgroundColor}
                   onChange={(value) => {
                     console.log('🎨 Changement couleur fond:', value);
                     handlePropertyChange(selectedElement.id, 'backgroundColor', value);
@@ -423,7 +423,10 @@ const PropertiesPanel = React.memo(({
                 />
               </div>
 
-              <div className="property-row">
+              <div className="property-row" style={{
+                opacity: localProperties.backgroundColor === 'transparent' ? 0.5 : 1,
+                pointerEvents: localProperties.backgroundColor === 'transparent' ? 'none' : 'auto'
+              }}>
                 <label>Opacité fond:</label>
                 <div className="slider-container">
                   <input
@@ -445,13 +448,11 @@ const PropertiesPanel = React.memo(({
                   <input
                     type="checkbox"
                     checked={!localProperties.backgroundColor || localProperties.backgroundColor === 'transparent'}
-                    onChange={(e) => {
-                      console.log('🎛️ Toggle aucun fond:', e.target.checked);
-                      handleNoBackgroundToggle(selectedElement.id, e.target.checked);
-                    }}
+                    readOnly
                   />
                   <span className="toggle-slider" onClick={() => {
                     const currentChecked = !localProperties.backgroundColor || localProperties.backgroundColor === 'transparent';
+                    console.log('🎛️ Toggle aucun fond cliqué:', { currentChecked, newState: !currentChecked });
                     handleNoBackgroundToggle(selectedElement.id, !currentChecked);
                   }}></span>
                 </label>
@@ -490,13 +491,11 @@ const PropertiesPanel = React.memo(({
                   <input
                     type="checkbox"
                     checked={!localProperties.borderWidth || localProperties.borderWidth === 0}
-                    onChange={(e) => {
-                      console.log('🎛️ Toggle aucune bordure:', e.target.checked);
-                      handleNoBorderToggle(selectedElement.id, e.target.checked);
-                    }}
+                    readOnly
                   />
                   <span className="toggle-slider" onClick={() => {
                     const currentChecked = !localProperties.borderWidth || localProperties.borderWidth === 0;
+                    console.log('🎛️ Toggle aucune bordure cliqué:', { currentChecked, newState: !currentChecked });
                     handleNoBorderToggle(selectedElement.id, !currentChecked);
                   }}></span>
                 </label>
