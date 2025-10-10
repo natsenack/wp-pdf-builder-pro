@@ -423,16 +423,17 @@ const PropertiesPanel = React.memo(({
               </div>
 
               <div className="property-row">
-                <span>Aucun fond:</span>
+                <span>Fond:</span>
                 <label className="toggle">
                   <input
                     type="checkbox"
-                    checked={!localProperties.backgroundColor || localProperties.backgroundColor === 'transparent'}
+                    checked={!!localProperties.backgroundColor && localProperties.backgroundColor !== 'transparent'}
                     readOnly
                   />
                   <span className="toggle-slider" onClick={() => {
-                    const currentChecked = !localProperties.backgroundColor || localProperties.backgroundColor === 'transparent';
-                    handleNoBackgroundToggle(selectedElement.id, !currentChecked);
+                    const currentChecked = !!localProperties.backgroundColor && localProperties.backgroundColor !== 'transparent';
+                    const willBeChecked = !currentChecked;
+                    handleNoBackgroundToggle(selectedElement.id, !willBeChecked);
                   }}></span>
                 </label>
               </div>
