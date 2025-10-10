@@ -228,6 +228,7 @@ const PropertiesPanel = React.memo(({
   // États pour mémoriser les valeurs précédentes
   const [previousBackgroundColor, setPreviousBackgroundColor] = useState('#ffffff');
   const [previousBorderWidth, setPreviousBorderWidth] = useState(0);
+  const [isBackgroundEnabled, setIsBackgroundEnabled] = useState(true);
 
   // Log des props pour débogage (seulement quand elles changent)
   useEffect(() => {
@@ -270,6 +271,11 @@ const PropertiesPanel = React.memo(({
       setPreviousBorderWidth(initialBorderWidth);
     }
   }, [selectedElement]); // Ne dépendre que de selectedElement pour éviter les boucles
+
+  // Synchroniser l'état du toggle fond
+  useEffect(() => {
+    setIsBackgroundEnabled(!!localProperties.backgroundColor && localProperties.backgroundColor !== 'transparent');
+  }, [localProperties.backgroundColor]);
 
   // Gestionnaire unifié de changement de propriété
   const handlePropertyChange = useCallback((elementId, property, value) => {
@@ -427,19 +433,20 @@ const PropertiesPanel = React.memo(({
                 <label className="toggle">
                   <input
                     type="checkbox"
-                    checked={!!localProperties.backgroundColor && localProperties.backgroundColor !== 'transparent'}
+                    checked={isBackgroundEnabled}
                     readOnly
                   />
                   <span className="toggle-slider" onClick={() => {
-                    const currentColor = localProperties.backgroundColor;
-                    if (currentColor && currentColor !== 'transparent') {
+                    if (isBackgroundEnabled) {
                       // Désactiver le fond
-                      setPreviousBackgroundColor(currentColor);
+                      setPreviousBackgroundColor(localProperties.backgroundColor);
                       handlePropertyChange(selectedElement.id, 'backgroundColor', 'transparent');
+                      setIsBackgroundEnabled(false);
                     } else {
                       // Activer le fond
                       const colorToSet = previousBackgroundColor || '#ffffff';
                       handlePropertyChange(selectedElement.id, 'backgroundColor', colorToSet);
+                      setIsBackgroundEnabled(true);
                     }
                   }}></span>
                 </label>
