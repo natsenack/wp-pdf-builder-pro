@@ -101,7 +101,7 @@ if (!$is_new) {
 (function() {
     'use strict';
 
-    console.log('PDF Builder Pro: Template editor script loaded');
+    
 
     // Initialisation optimisée avec polling intelligent
     let attempts = 0;
@@ -109,28 +109,28 @@ if (!$is_new) {
 
     const initApp = () => {
         console.log('PDF Builder Pro: Checking for PDFBuilderPro.init (attempt ' + attempts + ')');
-        console.log('PDF Builder Pro: window.PDFBuilderPro:', window.PDFBuilderPro);
+        
 
         if (window.PDFBuilderPro?.init) {
-            console.log('PDF Builder Pro: PDFBuilderPro.init found, calling with pdf-builder-container');
+            
             window.PDFBuilderPro.init('pdf-builder-container');
             return;
         }
 
         if (++attempts < maxAttempts) {
-            console.log('PDF Builder Pro: PDFBuilderPro.init not ready, retrying...');
+            
             requestAnimationFrame(initApp);
         } else {
-            console.log('PDF Builder Pro: Max attempts reached, PDFBuilderPro.init never became available');
+            
         }
     };
 
     // Démarrer l'initialisation immédiatement après DOM ready
     if (document.readyState === 'loading') {
-        console.log('PDF Builder Pro: DOM still loading, waiting for DOMContentLoaded');
+        
         document.addEventListener('DOMContentLoaded', initApp);
     } else {
-        console.log('PDF Builder Pro: DOM already loaded, starting init');
+        
         initApp();
     }
 
@@ -163,6 +163,7 @@ if (!$is_new) {
     });
 })();
 </script>
+
 
 
 

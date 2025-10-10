@@ -636,7 +636,7 @@ jQuery(document).ready(function($) {
     });
 
     $('#execute-sql-repair').on('click', function() {
-        console.log('Bouton "Réparer la Base de Données" cliqué');
+        
 
         if (!confirm('<?php echo esc_js(__('Êtes-vous sûr de vouloir exécuter la réparation SQL ? Cette action va créer les tables manquantes et insérer les données par défaut.', 'pdf-builder-pro')); ?>')) {
             return;
@@ -648,9 +648,9 @@ jQuery(document).ready(function($) {
         $button.prop('disabled', true).text('<?php echo esc_js(__('Exécution...', 'pdf-builder-pro')); ?>');
         $status.html('<div class="notice notice-info"><p><?php echo esc_js(__('Exécution du script SQL en cours...', 'pdf-builder-pro')); ?></p></div>');
 
-        console.log('Envoi de la requête AJAX...');
-        console.log('Action:', 'pdf_builder_execute_sql_repair');
-        console.log('AJAX URL:', ajaxurl);
+        
+        
+        
 
         $.ajax({
             url: ajaxurl,
@@ -660,7 +660,7 @@ jQuery(document).ready(function($) {
                 nonce: '<?php echo wp_create_nonce('pdf_builder_maintenance'); ?>'
             },
             success: function(response) {
-                console.log('Réponse AJAX reçue:', response);
+                
                 if (response.success) {
                     var html = '<div class="notice notice-success"><p><?php echo esc_js(__('Réparation SQL exécutée avec succès !', 'pdf-builder-pro')); ?></p>';
                     if (response.data.results) {
@@ -926,3 +926,4 @@ jQuery(document).ready(function($) {
     });
 });
 </script>
+

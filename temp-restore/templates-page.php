@@ -1289,16 +1289,6 @@ jQuery(document).ready(function($) {
     var editorBaseUrl = editorUrl + '&template_id=';
     var ajaxNonce = '<?php echo esc_js(wp_create_nonce('pdf_builder_templates')); ?>';
 
-    // Logs de débogage
-    console.log('PDF Builder Pro: Templates page JavaScript loaded');
-    console.log('PDF Builder Pro: ajaxurl =', ajaxurl);
-    console.log('PDF Builder Pro: ajaxNonce =', ajaxNonce);
-    console.log('PDF Builder Pro: editorBaseUrl =', editorBaseUrl);
-
-    // Vérifier que jQuery est chargé
-    console.log('PDF Builder Pro: jQuery loaded =', typeof jQuery !== 'undefined');
-    console.log('PDF Builder Pro: $ loaded =', typeof $ !== 'undefined');
-
     // Traductions
     var translations = {
         aucun_template_trouve: "Aucun template trouvé",
@@ -1319,7 +1309,6 @@ jQuery(document).ready(function($) {
         duplication_en_cours: "Duplication..."
     };
 
-    console.log('Templates page loaded at ' + new Date().toISOString());
     // File updated at 2025-10-06 15:00
 
     // Variables pour la pagination et le cache
@@ -1338,9 +1327,7 @@ jQuery(document).ready(function($) {
     var isLoadingTemplates = false;
 
     function loadTemplates(reset = true, forceRefresh = false) {
-        console.log('PDF Builder: loadTemplates called with reset=' + reset + ', forceRefresh=' + forceRefresh);
         if (isLoadingTemplates) {
-            console.log('PDF Builder: loadTemplates blocked - already loading');
             return;
         }
 
@@ -1384,16 +1371,10 @@ jQuery(document).ready(function($) {
                 nonce: ajaxNonce
             },
             success: function(response) {
-                console.log('PDF Builder: AJAX get_templates response:', response);
                 if (response.success && response.data) {
                     var templates = response.data.templates || [];
                     var total = response.data.total || 0;
                     hasMoreTemplates = templates.length === templatesPerPage && (currentPage * templatesPerPage) < total;
-
-                    console.log('PDF Builder: Templates loaded:', templates.length, 'total:', total);
-                    console.log('PDF Builder: Current page:', currentPage, 'hasMoreTemplates:', hasMoreTemplates);
-                    console.log('PDF Builder: Templates IDs:', templates.map(t => t.id));
-                    console.log('PDF Builder: First template data:', templates[0]);
 
                     // Mettre en cache
                     setCachedData(cacheKey, templates);
@@ -1401,17 +1382,12 @@ jQuery(document).ready(function($) {
                     // Ajouter à la collection existante
                     if (reset) {
                         allTemplates = templates;
-                        console.log('PDF Builder: Reset - allTemplates set to', allTemplates.length, 'templates');
                     } else {
                         allTemplates = allTemplates.concat(templates);
-                        console.log('PDF Builder: Concat - allTemplates now has', allTemplates.length, 'templates');
-                        console.log('PDF Builder: Added templates IDs:', templates.map(t => t.id));
                     }
 
                     renderTemplates(templates, view, reset);
                     currentPage++;
-
-                    console.log('PDF Builder: currentPage incremented to', currentPage);
 
                     // Mettre à jour l'observer du scroll infini
                     updateInfiniteScrollObserver();
@@ -1448,24 +1424,17 @@ jQuery(document).ready(function($) {
     }
 
     function setCachedData(key, templates) {
-        console.log('PDF Builder: setCachedData called for key:', key, 'with', templates.length, 'templates');
         try {
             localStorage.setItem('pdf_builder_' + key, JSON.stringify({
                 templates: templates,
                 timestamp: Date.now()
             }));
-            console.log('PDF Builder: Cache saved successfully');
         } catch (e) {
             console.warn('Erreur sauvegarde cache:', e);
         }
     }
 
     function renderTemplates(templates, view, reset = true) {
-        console.log('PDF Builder: renderTemplates called with', templates.length, 'templates, view:', view, 'reset:', reset);
-        if (templates.length > 0) {
-            console.log('PDF Builder: First template to render:', templates[0]);
-        }
-
         // Masquer le chargement
         $('#templates-loading, #templates-list-loading').hide();
 
@@ -1493,16 +1462,11 @@ jQuery(document).ready(function($) {
     }
 
     function renderGridView(templates, reset = true) {
-        console.log('PDF Builder: renderGridView called with', templates.length, 'templates, reset:', reset);
-
         var $container = $('#templates-grid-content');
-        console.log('PDF Builder: container found:', $container.length, 'elements, current html length:', $container.html().length);
 
         // Vider seulement si c'est un reset complet
         if (reset) {
-            console.log('PDF Builder: Reset - emptying container');
             $container.empty();
-            console.log('PDF Builder: Container emptied, html length now:', $container.html().length);
         }
 
         // Vérifier que templates est un array valide
@@ -1530,12 +1494,10 @@ jQuery(document).ready(function($) {
                 var card = createTemplateCard(template);
                 gridContainer.appendChild(card);
             });
-            console.log('PDF Builder: cards created and appended, gridContainer children:', gridContainer.children.length);
 
             if (reset) {
                 fragment.appendChild(gridContainer);
                 $container.html('').append(fragment);
-                console.log('PDF Builder: grid container appended to DOM, final container children:', $container.children().length);
             }
 
             // Ajouter indicateur de chargement si plus de templates disponibles
@@ -1587,7 +1549,6 @@ jQuery(document).ready(function($) {
 
     // Fonction optimisée pour créer une carte de template
     function createTemplateCard(template) {
-        console.log('PDF Builder: createTemplateCard called for template:', template.id, template.name);
         var card = document.createElement('div');
         card.className = 'template-card';
         card.setAttribute('data-status', template.status);
@@ -1686,8 +1647,8 @@ jQuery(document).ready(function($) {
         window.templateIntersectionObserver = new IntersectionObserver(function(entries) {
             entries.forEach(function(entry) {
                 if (entry.isIntersecting && hasMoreTemplates && !isLoadingTemplates) {
-                    console.log('PDF Builder Pro: Intersection detected, loading more templates');
-                    console.log('PDF Builder Pro: Current state - page:', currentPage, 'hasMore:', hasMoreTemplates, 'loading:', isLoadingTemplates);
+                    
+                    
 
                     // Marquer immédiatement comme en chargement pour éviter les appels multiples
                     isLoadingTemplates = true;
@@ -1710,7 +1671,7 @@ jQuery(document).ready(function($) {
 
         // Si plus de templates à charger, ne pas reconnecter
         if (!hasMoreTemplates) {
-            console.log('PDF Builder Pro: No more templates to load, disconnecting observer');
+            
             // Supprimer le loader s'il existe
             $('.loading-indicator').remove();
             return;
@@ -1720,7 +1681,7 @@ jQuery(document).ready(function($) {
         setTimeout(function() {
             // Vérifier à nouveau si on a encore besoin de charger
             if (!hasMoreTemplates || isLoadingTemplates) {
-                console.log('PDF Builder Pro: Skipping observer reconnection - no more templates or loading in progress');
+                
                 return;
             }
 
@@ -1734,10 +1695,10 @@ jQuery(document).ready(function($) {
             }
 
             if (lastElement) {
-                console.log('PDF Builder Pro: Observing new last element for infinite scroll');
+                
                 window.templateIntersectionObserver.observe(lastElement);
             } else {
-                console.log('PDF Builder Pro: No last element found for infinite scroll');
+                
             }
         }, 200); // Augmenter le délai pour laisser le DOM se stabiliser
     }
@@ -1841,7 +1802,7 @@ jQuery(document).ready(function($) {
     }
 
     function updateTemplateCardVisuals(templateId, newData) {
-        console.log('PDF Builder: updateTemplateCardVisuals called for template', templateId, 'with data:', newData);
+        
 
         // Mettre à jour les cartes de la vue grille
         $('.template-card .edit-template-params[data-id="' + templateId + '"]').each(function() {
@@ -1880,7 +1841,7 @@ jQuery(document).ready(function($) {
             // Mettre à jour le bouton dupliquer
             $card.find('.duplicate-template').html('🔄');
 
-            console.log('PDF Builder: Updated grid card visuals');
+            
         });
 
         // Mettre à jour les lignes de la vue liste
@@ -1920,16 +1881,16 @@ jQuery(document).ready(function($) {
             // Mettre à jour le bouton dupliquer
             $row.find('.duplicate-template').html('🔄');
 
-            console.log('PDF Builder: Updated list row visuals');
+            
         });
 
         // Mettre à jour les statistiques si elles sont affichées
         updateStatsFromDOM();
-        console.log('PDF Builder: Updated statistics');
+        
     }
 
     function attachTemplateEvents() {
-        console.log('PDF Builder: attachTemplateEvents called');
+        
 
         // Boutons Éditer
         $('.template-card .button-icon:not(.duplicate-template):not(.delete-template):not(.set-default-template):not(.remove-default-template):not(.edit-template-params), .edit').off('click').on('click', function(e) {
@@ -2175,8 +2136,7 @@ jQuery(document).ready(function($) {
     }
 
     // Confirmation que tous les gestionnaires d'événements sont attachés
-    console.log('PDF Builder Pro: All event handlers attached successfully');
-    console.log('PDF Builder Pro: Checking for .edit-template-params buttons:', $('.edit-template-params').length);
+    
 
     // Pré-créer la modale d'édition pour de meilleures performances
     createEditTemplateModal();
@@ -2235,7 +2195,7 @@ jQuery(document).ready(function($) {
 
     // Fonction pour charger la liste des auteurs
     function loadAuthors() {
-        console.log('PDF Builder: Loading authors list');
+        
         return $.ajax({
             url: ajaxurl,
             method: 'POST',
@@ -2250,12 +2210,11 @@ jQuery(document).ready(function($) {
     $(document).on('click', '.edit-template-params', function(e) {
         e.stopImmediatePropagation();
         e.preventDefault();
-        console.log('PDF Builder Pro: Bouton edit-template-params cliqué');
+        
         var templateId = $(this).data('id');
-        console.log('PDF Builder Pro: Template ID:', templateId);
+        
 
         // Charger les données du template
-        console.log('PDF Builder Pro: Envoi requête AJAX avec paramètres:', {
             url: ajaxurl,
             action: 'pdf_builder_get_template_data',
             template_id: templateId,
@@ -2275,8 +2234,8 @@ jQuery(document).ready(function($) {
                 }
             })
         ).done(function(authorsResponse, templateResponse) {
-            console.log('PDF Builder: Authors response:', authorsResponse[0]);
-            console.log('PDF Builder: Template response:', templateResponse[0]);
+            
+            
             
             // Remplir la liste des auteurs
             if (authorsResponse[0].success) {
@@ -2322,9 +2281,9 @@ jQuery(document).ready(function($) {
         var status = $('#template-status').val();
         var authorId = $('#template-author').val();
 
-        console.log('PDF Builder: Préparation sauvegarde - templateId:', templateId, 'name:', name, 'type:', type, 'status:', status, 'author:', authorId);
-        console.log('PDF Builder: Validation - type value:', typeof type, 'status value:', typeof status);
-        console.log('PDF Builder: Validation - type truthy:', !!type, 'status truthy:', !!status);
+        
+        
+        
 
         // Validation côté client
         if (!name) {
@@ -2336,7 +2295,7 @@ jQuery(document).ready(function($) {
         if (!type) type = 'pdf';
         if (!status) status = 'draft';
 
-        console.log('PDF Builder: After defaults - type:', type, 'status:', status);
+        
 
         if (!authorId) {
             alert('L\'auteur est obligatoire');
@@ -2354,7 +2313,7 @@ jQuery(document).ready(function($) {
             author_id: authorId
         };
 
-        console.log('PDF Builder: Saving template params, formData:', formData);
+        
 
         // Désactiver le bouton pendant la sauvegarde
         var $button = $(this);
@@ -2366,11 +2325,11 @@ jQuery(document).ready(function($) {
             method: 'POST',
             data: formData,
             success: function(response) {
-                console.log('PDF Builder: Save response:', response);
+                
                 $button.prop('disabled', false).text(originalText);
 
                 if (response.success) {
-                    console.log('PDF Builder: Template params saved successfully, reloading...');
+                    
                     $('#edit-template-modal').hide();
 
                     // Utiliser les valeurs validées plutôt que de les récupérer à nouveau du DOM
@@ -2382,7 +2341,7 @@ jQuery(document).ready(function($) {
                     var newAuthorId = authorId; // Utiliser la variable validée
                     var newAuthorName = $('#template-author option:selected').text().split(' (')[0] || 'Inconnu';
 
-                    console.log('PDF Builder: Updating template', templateId, 'with validated values - name:', newName, 'type:', newType, 'status:', newStatus, 'author:', newAuthorName);
+                    
 
                     // Mettre à jour immédiatement l'interface pour ce template
                     updateTemplateCardVisuals(templateId, {
@@ -2397,7 +2356,7 @@ jQuery(document).ready(function($) {
                     $('#edit-template-modal').hide();
                     alert('Paramètres du template mis à jour avec succès !');
 
-                    console.log('PDF Builder: Template parameters updated successfully');
+                    
                 } else {
                     console.error('PDF Builder: Save failed:', response.data?.message);
                     alert('Erreur lors de la sauvegarde: ' + (response.data?.message || 'Erreur inconnue'));
@@ -2519,3 +2478,4 @@ jQuery(document).ready(function($) {
     text-decoration: underline;
 }
 </style>
+

@@ -67,3 +67,4 @@ foreach ($tables as $table) {
 
 echo "<br><a href='" . admin_url('admin.php?page=pdf-builder-templates') . "' class='button'>Retour à PDF Builder</a>";
 ?>
+

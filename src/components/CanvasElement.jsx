@@ -282,7 +282,8 @@ export const CanvasElement = ({
           } : element.type === 'rectangle' ? {
             backgroundColor: element.backgroundColor || 'transparent',
             border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#000'}` : 'none',
-            borderRadius: element.borderRadius ? `${element.borderRadius}px` : '0'
+            borderRadius: element.borderRadius ? `${element.borderRadius}px` : '0',
+            '--element-border-width': element.border ? `${element.borderWidth || 1}px` : '0px'
           } : element.type === 'image' && element.src ? {
             backgroundImage: `url(${element.src})`,
             backgroundSize: element.backgroundSize || 'contain',
@@ -301,7 +302,8 @@ export const CanvasElement = ({
             justifyContent: 'center',
             fontSize: 14 * zoom,
             fontWeight: 'bold',
-            color: '#64748b'
+            color: '#64748b',
+            '--element-border-width': element.border ? `${element.borderWidth || 1}px` : '1px'
           } : element.type === 'layout-footer' ? {
             backgroundColor: element.backgroundColor || '#f8fafc',
             border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#e2e8f0'}` : '1px solid #e2e8f0',
@@ -310,7 +312,8 @@ export const CanvasElement = ({
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 12 * zoom,
-            color: '#64748b'
+            color: '#64748b',
+            '--element-border-width': element.border ? `${element.borderWidth || 1}px` : '1px'
           } : element.type === 'layout-sidebar' ? {
             backgroundColor: element.backgroundColor || '#f8fafc',
             border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#e2e8f0'}` : '1px solid #e2e8f0',
@@ -319,7 +322,8 @@ export const CanvasElement = ({
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 12 * zoom,
-            color: '#64748b'
+            color: '#64748b',
+            '--element-border-width': element.border ? `${element.borderWidth || 1}px` : '1px'
           } : element.type === 'layout-section' ? {
             backgroundColor: element.backgroundColor || '#ffffff',
             border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#e2e8f0'}` : '1px solid #e2e8f0',
@@ -328,7 +332,8 @@ export const CanvasElement = ({
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 12 * zoom,
-            color: '#64748b'
+            color: '#64748b',
+            '--element-border-width': element.border ? `${element.borderWidth || 1}px` : '1px'
           } : element.type === 'layout-container' ? {
             backgroundColor: element.backgroundColor || 'transparent',
             border: element.border ? `${element.borderWidth || 2}px ${element.borderStyle || 'dashed'} ${element.borderColor || '#cbd5e1'}` : '2px dashed #cbd5e1',
@@ -337,15 +342,18 @@ export const CanvasElement = ({
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 12 * zoom,
-            color: '#94a3b8'
+            color: '#94a3b8',
+            '--element-border-width': element.border ? `${element.borderWidth || 2}px` : '2px'
           } : element.type === 'shape-rectangle' ? {
             backgroundColor: element.backgroundColor || '#e5e7eb',
             border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#000'}` : 'none',
-            borderRadius: element.borderRadius ? `${element.borderRadius}px` : '0'
+            borderRadius: element.borderRadius ? `${element.borderRadius}px` : '0',
+            '--element-border-width': element.border ? `${element.borderWidth || 1}px` : '0px'
           } : element.type === 'shape-circle' ? {
             backgroundColor: element.backgroundColor || '#e5e7eb',
             border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#000'}` : 'none',
-            borderRadius: '50%'
+            borderRadius: '50%',
+            '--element-border-width': element.border ? `${element.borderWidth || 1}px` : '0px'
           } : element.type === 'shape-line' ? {
             backgroundColor: element.backgroundColor || '#6b7280',
             height: '100%'
@@ -375,7 +383,8 @@ export const CanvasElement = ({
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 14 * zoom,
-            fontWeight: 'bold'
+            fontWeight: 'bold',
+            '--element-border-width': '1px'
           } : element.type === 'barcode' ? {
             backgroundColor: element.backgroundColor || '#ffffff',
             border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#000000'}` : '1px solid #000000',
@@ -383,14 +392,16 @@ export const CanvasElement = ({
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 10 * zoom,
-            fontFamily: 'monospace'
+            fontFamily: 'monospace',
+            '--element-border-width': element.border ? `${element.borderWidth || 1}px` : '1px'
           } : element.type === 'qrcode' || element.type === 'qrcode-dynamic' ? {
             backgroundColor: element.backgroundColor || '#ffffff',
             border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#000000'}` : '1px solid #000000',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 8 * zoom
+            fontSize: 8 * zoom,
+            '--element-border-width': element.border ? `${element.borderWidth || 1}px` : '1px'
           } : element.type === 'icon' ? {
             backgroundColor: element.backgroundColor || 'transparent',
             display: 'flex',
@@ -406,7 +417,8 @@ export const CanvasElement = ({
             fontSize: 12 * zoom,
             fontFamily: 'monospace',
             color: '#059669',
-            padding: '4px'
+            padding: '4px',
+            '--element-border-width': '1px'
           } : element.type === 'formula' ? {
             backgroundColor: element.backgroundColor || '#fef3c7',
             border: '1px solid #f59e0b',
@@ -416,7 +428,8 @@ export const CanvasElement = ({
             fontSize: 12 * zoom,
             fontFamily: 'monospace',
             color: '#d97706',
-            padding: '4px'
+            padding: '4px',
+            '--element-border-width': '1px'
           } : element.type === 'conditional-text' ? {
             backgroundColor: element.backgroundColor || '#ecfdf5',
             border: '1px solid #10b981',
@@ -426,7 +439,8 @@ export const CanvasElement = ({
             fontSize: 12 * zoom,
             fontFamily: 'monospace',
             color: '#059669',
-            padding: '4px'
+            padding: '4px',
+            '--element-border-width': '1px'
           } : element.type === 'counter' ? {
             backgroundColor: element.backgroundColor || '#f0f9ff',
             border: '1px solid #0ea5e9',
@@ -435,7 +449,8 @@ export const CanvasElement = ({
             justifyContent: 'center',
             fontSize: 14 * zoom,
             fontWeight: 'bold',
-            color: '#0284c7'
+            color: '#0284c7',
+            '--element-border-width': '1px'
           } : element.type === 'date-dynamic' ? {
             backgroundColor: element.backgroundColor || '#f3f4f6',
             border: '1px solid #d1d5db',
@@ -445,7 +460,8 @@ export const CanvasElement = ({
             fontSize: 12 * zoom,
             fontFamily: 'monospace',
             color: '#374151',
-            padding: '4px'
+            padding: '4px',
+            '--element-border-width': '1px'
           } : element.type === 'currency' ? {
             backgroundColor: element.backgroundColor || '#f0fdf4',
             border: '1px solid #22c55e',
@@ -455,14 +471,16 @@ export const CanvasElement = ({
             fontSize: 14 * zoom,
             fontWeight: 'bold',
             color: '#16a34a',
-            padding: '4px'
+            padding: '4px',
+            '--element-border-width': '1px'
           } : element.type === 'table-dynamic' ? {
             backgroundColor: element.backgroundColor || '#ffffff',
             border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#e5e7eb'}` : '1px solid #e5e7eb',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 12 * zoom
+            fontSize: 12 * zoom,
+            '--element-border-width': element.border ? `${element.borderWidth || 1}px` : '1px'
           } : element.type === 'gradient-box' ? {
             background: element.backgroundColor || 'linear-gradient(45deg, #667eea 0%, #764ba2 100%)',
             borderRadius: element.borderRadius ? `${element.borderRadius}px` : '8px',
@@ -487,7 +505,8 @@ export const CanvasElement = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 12 * zoom
+            fontSize: 12 * zoom,
+            '--element-border-width': element.border ? `${element.borderWidth || 1}px` : '1px'
           } : element.type === 'border-box' ? {
             backgroundColor: element.backgroundColor || '#ffffff',
             border: element.border ? `${element.borderWidth || 3}px solid ${element.borderColor || '#3b82f6'}` : '3px solid #3b82f6',
@@ -495,7 +514,8 @@ export const CanvasElement = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 12 * zoom
+            fontSize: 12 * zoom,
+            '--element-border-width': element.border ? `${element.borderWidth || 3}px` : '3px'
           } : element.type === 'background-pattern' ? {
             backgroundColor: element.backgroundColor || '#f8fafc',
             backgroundImage: element.backgroundImage || 'repeating-linear-gradient(45deg, #e2e8f0, #e2e8f0 10px, #f1f5f9 10px, #f1f5f9 20px)',

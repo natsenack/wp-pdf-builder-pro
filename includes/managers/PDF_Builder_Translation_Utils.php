@@ -215,3 +215,4 @@ function pdf_builder_translate($text, $context = '') {
 function pdf_builder_translate_vars($text, $vars = array(), $context = '') {
     return PDF_Builder_Translation_Utils::getInstance()->translate_with_vars($text, $vars, $context);
 }
+

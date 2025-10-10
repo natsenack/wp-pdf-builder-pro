@@ -2597,3 +2597,4 @@ class PDF_Builder_API_Manager {
         define('PDF_BUILDER_API_INITIALIZED', true);
     }
 }
+

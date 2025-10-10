@@ -185,3 +185,4 @@ add_action('wp_enqueue_scripts', 'pdf_builder_pro_load_frontend_translations');
 add_action('admin_enqueue_scripts', 'pdf_builder_pro_load_frontend_translations');
 add_action('wp_enqueue_scripts', 'pdf_builder_pro_enqueue_frontend_i18n');
 add_action('admin_enqueue_scripts', 'pdf_builder_pro_enqueue_frontend_i18n');
+

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Plugin Name: PDF Builder Pro
  * Plugin URI: https://github.com/your-repo/pdf-builder-pro
@@ -387,3 +387,4 @@ function pdf_builder_lazy_load() {
     }
     // Sinon: RIEN - plugin totalement dormant
 }
+

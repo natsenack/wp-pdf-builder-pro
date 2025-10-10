@@ -4186,3 +4186,4 @@ function pdf_builder_handle_preview_ajax() {
         wp_send_json_error('Erreur: ' . $e->getMessage());
     }
 }
+

@@ -647,3 +647,4 @@ class PDF_Builder_Bulk_Actions_Manager {
         ];
     }
 }
+

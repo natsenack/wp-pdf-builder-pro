@@ -352,3 +352,4 @@ class PDF_Builder_Canvas_Elements_Manager {
         return $elements ?: [];
     }
 }
+

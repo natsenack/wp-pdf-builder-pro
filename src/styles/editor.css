@@ -885,38 +885,38 @@
 }
 
 .resize-handle.nw {
-  top: -6px;
-  left: -6px;
+  top: calc(var(--resize-handle-offset, -6px) - var(--element-border-width, 0px));
+  left: calc(var(--resize-handle-offset, -6px) - var(--element-border-width, 0px));
   cursor: nw-resize;
 }
 
 .resize-handle.ne {
-  top: -6px;
-  right: -6px;
+  top: calc(var(--resize-handle-offset, -6px) - var(--element-border-width, 0px));
+  right: calc(var(--resize-handle-offset, -6px) - var(--element-border-width, 0px));
   cursor: ne-resize;
 }
 
 .resize-handle.sw {
-  bottom: -6px;
-  left: -6px;
+  bottom: calc(var(--resize-handle-offset, -6px) - var(--element-border-width, 0px));
+  left: calc(var(--resize-handle-offset, -6px) - var(--element-border-width, 0px));
   cursor: sw-resize;
 }
 
 .resize-handle.se {
-  bottom: -6px;
-  right: -6px;
+  bottom: calc(var(--resize-handle-offset, -6px) - var(--element-border-width, 0px));
+  right: calc(var(--resize-handle-offset, -6px) - var(--element-border-width, 0px));
   cursor: se-resize;
 }
 
 .resize-handle.n {
-  top: -6px;
+  top: calc(var(--resize-handle-offset, -6px) - var(--element-border-width, 0px));
   left: 50%;
   transform: translateX(-50%);
   cursor: n-resize;
 }
 
 .resize-handle.s {
-  bottom: -6px;
+  bottom: calc(var(--resize-handle-offset, -6px) - var(--element-border-width, 0px));
   left: 50%;
   transform: translateX(-50%);
   cursor: s-resize;
@@ -924,22 +924,22 @@
 
 .resize-handle.w {
   top: 50%;
-  left: -6px;
+  left: calc(var(--resize-handle-offset, -6px) - var(--element-border-width, 0px));
   transform: translateY(-50%);
   cursor: w-resize;
 }
 
 .resize-handle.e {
   top: 50%;
-  right: -6px;
+  right: calc(var(--resize-handle-offset, -6px) - var(--element-border-width, 0px));
   transform: translateY(-50%);
   cursor: e-resize;
 }
 
 .canvas-element.selected {
   outline: var(--selection-border-width, 2px) solid var(--selection-border-color, var(--primary-color));
-  outline-offset: 1px;
-  box-shadow: 0 0 0 1px white, 0 0 0 calc(var(--selection-border-width, 2px) * 2) rgba(37, 99, 235, var(--selection-shadow-opacity, 0.1));
+  outline-offset: calc(1px + var(--element-border-width, 0px));
+  box-shadow: 0 0 0 1px white, 0 0 0 calc(var(--selection-border-width, 2px) * 2 + var(--element-border-width, 0px)) rgba(37, 99, 235, var(--selection-shadow-opacity, 0.1));
   border-radius: 4px;
   position: relative;
 }
@@ -955,7 +955,7 @@
 }
 
 .canvas-element.selected .resize-zone-n {
-  top: calc(var(--resize-zone-size, 16px) / -2);
+  top: calc(var(--resize-zone-size, 16px) / -2 - var(--element-border-width, 0px));
   left: 0;
   right: 0;
   height: var(--resize-zone-size, 16px);
@@ -963,7 +963,7 @@
 }
 
 .canvas-element.selected .resize-zone-s {
-  bottom: calc(var(--resize-zone-size, 16px) / -2);
+  bottom: calc(var(--resize-zone-size, 16px) / -2 - var(--element-border-width, 0px));
   left: 0;
   right: 0;
   height: var(--resize-zone-size, 16px);
@@ -972,7 +972,7 @@
 
 .canvas-element.selected .resize-zone-w {
   top: 0;
-  left: calc(var(--resize-zone-size, 16px) / -2);
+  left: calc(var(--resize-zone-size, 16px) / -2 - var(--element-border-width, 0px));
   bottom: 0;
   width: var(--resize-zone-size, 16px);
   cursor: w-resize;
@@ -980,7 +980,7 @@
 
 .canvas-element.selected .resize-zone-e {
   top: 0;
-  right: calc(var(--resize-zone-size, 16px) / -2);
+  right: calc(var(--resize-zone-size, 16px) / -2 - var(--element-border-width, 0px));
   bottom: 0;
   width: var(--resize-zone-size, 16px);
   cursor: e-resize;
@@ -996,10 +996,10 @@
 }
 
 .canvas-element.selected::before {
-  top: -8px;
-  left: -8px;
-  right: -8px;
-  bottom: -8px;
+  top: calc(-8px - var(--element-border-width, 0px));
+  left: calc(-8px - var(--element-border-width, 0px));
+  right: calc(-8px - var(--element-border-width, 0px));
+  bottom: calc(-8px - var(--element-border-width, 0px));
   border: 8px solid transparent;
   border-image: linear-gradient(45deg, transparent 40%, rgba(37, 99, 235, 0.1) 40%, rgba(37, 99, 235, 0.1) 60%, transparent 60%) 8;
   cursor: move;

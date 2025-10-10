@@ -17,11 +17,6 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
 
   // Synchroniser les propriétés locales avec l'élément sélectionné
   useEffect(() => {
-    console.log('🔄 useElementCustomization - Synchronisation élément:', {
-      selectedElementId: selectedElement?.id,
-      selectedElementsCount: selectedElements?.length,
-      elementsCount: elements?.length
-    });
 
     if (selectedElement) {
       const newProperties = {
@@ -43,7 +38,6 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
         ...selectedElement
       };
 
-      console.log('🔄 useElementCustomization - Nouvelles propriétés:', newProperties);
       setLocalProperties(newProperties);
     } else {
       setLocalProperties({});
@@ -52,11 +46,6 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
 
   // Gestionnaire de changement de propriété avec validation
   const handlePropertyChange = useCallback((elementId, property, value) => {
-    console.log('🔄 useElementCustomization - handlePropertyChange:', { elementId, property, value });
-
-    // Validation des valeurs selon le type de propriété
-    const validatedValue = validatePropertyValue(property, value);
-    console.log('🔄 useElementCustomization - Valeur validée:', validatedValue);
 
     // Mettre à jour l'état local immédiatement pour l'UI
     setLocalProperties(prev => {
@@ -84,12 +73,10 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
         newProperties = { ...prev, [property]: validatedValue };
       }
 
-      console.log('🔄 useElementCustomization - Nouvelles propriétés locales:', newProperties);
       return newProperties;
     });
 
     // Notifier le parent pour la persistance
-    console.log('🔄 useElementCustomization - Notification parent:', { elementId, property, validatedValue });
     onPropertyChange(elementId, property, validatedValue);
   }, [onPropertyChange]);
 

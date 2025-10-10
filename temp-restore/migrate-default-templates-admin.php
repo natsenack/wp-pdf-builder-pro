@@ -50,3 +50,4 @@ if (empty($column_exists)) {
 
 echo "<p>Migration terminée.</p>";
 echo "<p><a href='" . admin_url('admin.php?page=pdf-builder-templates') . "'>Retour à la gestion des templates</a></p>";
+

@@ -135,3 +135,4 @@ $core = PDF_Builder_Core::getInstance();
     text-transform: uppercase;
 }
 </style>
+

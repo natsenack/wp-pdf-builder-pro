@@ -587,3 +587,4 @@ class PDF_Builder_Export_Manager {
         return $size;
     }
 }
+

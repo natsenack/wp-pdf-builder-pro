@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Autoload optimisé pour TCPDF - Version allégée
  * Charge seulement les classes essentielles
@@ -26,3 +26,4 @@ if (!class_exists('TCPDF')) {
 
     spl_autoload_register(array('TCPDF_Autoloader', 'load'));
 }
+

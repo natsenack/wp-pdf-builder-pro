@@ -169,3 +169,4 @@ class PDF_Builder_Logger {
 function pdf_builder_log($message, $level = 2, $context = array()) {
     PDF_Builder_Logger::getInstance()->log($message, $level, $context);
 }
+

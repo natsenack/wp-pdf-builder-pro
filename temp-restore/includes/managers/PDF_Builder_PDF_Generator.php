@@ -229,3 +229,4 @@ class PDF_Builder_PDF_Generator {
         return $this->variables;
     }
 }
+

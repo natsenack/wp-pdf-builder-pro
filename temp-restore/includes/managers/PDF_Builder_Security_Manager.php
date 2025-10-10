@@ -1121,3 +1121,4 @@ class PDF_Builder_Security_Manager {
         return $this->gdpr_rules;
     }
 }
+

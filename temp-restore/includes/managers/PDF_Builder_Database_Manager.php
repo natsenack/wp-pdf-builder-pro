@@ -1852,3 +1852,4 @@ class PDF_Builder_Database_Manager {
         return $this->table_prefix . $table_name;
     }
 }
+

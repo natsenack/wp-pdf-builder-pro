@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Autoload personnalisé pour TCPDF allégé
  * Remplace vendor/autoload.php
@@ -32,3 +32,4 @@ if (!defined('PDF_PAGE_ORIENTATION')) {
 if (!defined('PDF_UNIT')) {
     define('PDF_UNIT', 'mm');
 }
+

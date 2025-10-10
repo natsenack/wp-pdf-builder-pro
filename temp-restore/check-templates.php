@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Vérification des templates PDF Builder Pro
  */
@@ -62,3 +62,4 @@ if ($total_templates > 0) {
 
 echo "<br><a href='" . admin_url('admin.php?page=pdf-builder-templates') . "' class='button'>Retour aux templates</a>";
 ?>
+

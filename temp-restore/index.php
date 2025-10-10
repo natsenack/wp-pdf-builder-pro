@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * PDF Builder Pro - Sécurité
  * Blocage de l'accès direct au répertoire
@@ -18,3 +18,4 @@ if (is_admin()) {
 // Redirection par défaut
 wp_redirect(home_url());
 exit;
+

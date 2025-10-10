@@ -159,3 +159,4 @@ class PDF_Builder_Debug_Helper {
 function pdf_builder_debug($message, $level = 1, $context = '') {
     PDF_Builder_Debug_Helper::get_instance()->log($message, $level, $context);
 }
+

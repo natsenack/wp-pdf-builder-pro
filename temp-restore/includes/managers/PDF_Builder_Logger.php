@@ -533,3 +533,4 @@ class PDF_Builder_Logger {
         $this->info('Logger initialized', $this->get_stats());
     }
 }
+

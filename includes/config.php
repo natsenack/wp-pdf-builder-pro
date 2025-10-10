@@ -342,3 +342,4 @@ function pdf_builder_cache_enabled() {
 function pdf_builder_logging_enabled() {
     return PDF_BUILDER_ENABLE_LOGGING && pdf_builder_get_option('enable_logging', true);
 }
+

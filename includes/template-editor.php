@@ -85,7 +85,7 @@ $template = null; // Temporaire : pas de template chargé
                     snapToGrid: true,
                     maxHistorySize: 50
                 });
-                console.log('PDF Builder Pro: Éditeur initialisé avec succès');
+                
                 return;
             } catch (error) {
                 console.error('PDF Builder Pro: Erreur lors de l\'initialisation:', error);
@@ -151,6 +151,7 @@ $template = null; // Temporaire : pas de template chargé
     });
 })();
 </script>
+
 
 
 

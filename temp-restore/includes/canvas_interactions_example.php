@@ -181,3 +181,4 @@ if (basename(__FILE__) === basename($_SERVER['PHP_SELF'] ?? '')) {
     $example = new Canvas_Interactions_Example();
     $example->run_examples();
 }
+

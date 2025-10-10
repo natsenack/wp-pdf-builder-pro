@@ -1520,3 +1520,4 @@ class PDF_Builder_Validation_Launch_System {
         return end($this->post_launch_metrics) ?: [];
     }
 }
+

@@ -759,3 +759,4 @@ class PDF_Builder_Template_Intelligence_Manager {
         ];
     }
 }
+

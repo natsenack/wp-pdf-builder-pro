@@ -512,3 +512,4 @@ class PDF_Builder_Config_Manager {
         $this->logger->info('Configuration manager initialized');
     }
 }
+

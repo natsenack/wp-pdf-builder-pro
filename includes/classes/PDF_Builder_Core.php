@@ -430,3 +430,4 @@ class PDF_Builder_Core {
         return $this->version;
     }
 }
+

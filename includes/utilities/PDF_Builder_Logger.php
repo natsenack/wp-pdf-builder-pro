@@ -388,3 +388,4 @@ function pdf_builder_log($message, $level = 2, $context = 'general', $data = nul
     $logger = PDF_Builder_Logger::get_instance();
     return $logger->log($message, $level, $context, $data);
 }
+

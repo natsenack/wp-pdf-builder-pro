@@ -139,3 +139,4 @@ if (!function_exists('pdf_builder_pro_e')) {
         echo PDF_Builder_Translation_Utils::translate($text, 'pdf-builder-pro');
     }
 }
+

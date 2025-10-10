@@ -145,3 +145,4 @@ function pdf_builder_woocommerce_test_page() {
 
     PDF_Builder_WooCommerce_Test::run_tests();
 }
+

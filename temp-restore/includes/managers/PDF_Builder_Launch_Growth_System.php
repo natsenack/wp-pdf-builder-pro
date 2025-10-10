@@ -1809,3 +1809,4 @@ class PDF_Builder_Launch_Growth_System {
         return end($this->growth_metrics) ?: [];
     }
 }
+

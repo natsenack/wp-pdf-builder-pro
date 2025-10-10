@@ -803,3 +803,4 @@ class PDF_Builder_Template_Manager {
         $this->logger->info('Template manager initialized');
     }
 }
+

@@ -1529,3 +1529,4 @@ class PDF_Builder_Monitoring_Alerts {
         return $this->metrics;
     }
 }
+

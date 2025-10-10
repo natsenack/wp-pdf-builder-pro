@@ -343,3 +343,4 @@ class PDF_Builder_WooCommerce_Data_Provider {
         return $data;
     }
 }
+

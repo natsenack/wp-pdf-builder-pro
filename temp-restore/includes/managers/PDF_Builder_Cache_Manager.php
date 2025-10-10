@@ -590,3 +590,4 @@ class PDF_Builder_Cache_Manager {
         // Actions d'initialisation supplémentaires si nécessaire
     }
 }
+

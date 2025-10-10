@@ -188,3 +188,4 @@ function pdf_builder_cache_delete($key) {
 function pdf_builder_cache_flush() {
     return PDF_Builder_Cache_Manager::getInstance()->flush();
 }
+

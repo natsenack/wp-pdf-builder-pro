@@ -1275,3 +1275,4 @@ class PDF_Builder_Test_Manager {
         return $this->available_tests;
     }
 }
+

@@ -378,3 +378,4 @@ function pdf_builder_init_freemium() {
 
 // Hook d'initialisation
 add_action('plugins_loaded', 'pdf_builder_init_freemium', 15);
+

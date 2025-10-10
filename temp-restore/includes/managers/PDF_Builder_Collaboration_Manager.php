@@ -978,3 +978,4 @@ class PDF_Builder_Collaboration_Manager {
         ];
     }
 }
+

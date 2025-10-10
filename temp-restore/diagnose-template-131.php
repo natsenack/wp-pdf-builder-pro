@@ -242,3 +242,4 @@ if ($json_test === null) {
 }
 
 echo "\n=== Diagnostic Complete ===\n";
+

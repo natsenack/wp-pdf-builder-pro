@@ -42,3 +42,4 @@ add_action('pdf_builder_cache_cleanup', function() {
     }
 });
 ?>
+

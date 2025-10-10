@@ -467,3 +467,4 @@ class PDF_Builder_WC_Settings extends WC_Settings_Page {
 
 // Initialiser la page de paramètres
 new PDF_Builder_WC_Settings();
+

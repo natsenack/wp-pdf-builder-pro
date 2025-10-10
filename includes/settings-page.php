@@ -143,19 +143,19 @@ if (isset($_POST['pdf_builder_settings_nonce']) && wp_verify_nonce($_POST['pdf_b
 <!-- Debug script to check React availability -->
 <script type="text/javascript">
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🔍 PDF Builder Admin: Checking React after DOM ready...');
-    console.log('🔍 React available:', typeof React !== 'undefined' ? '✅ YES' : '❌ NO');
-    console.log('🔍 ReactDOM available:', typeof ReactDOM !== 'undefined' ? '✅ YES' : '❌ NO');
-    console.log('🔍 window.PDFBuilderPro available:', typeof window.PDFBuilderPro !== 'undefined' ? '✅ YES' : '❌ NO');
+    
+    
+    
+    
 });
 
 // Check again after a longer timeout to ensure all scripts are loaded
 window.addEventListener('load', function() {
     setTimeout(function() {
-        console.log('🔍 PDF Builder Admin: Checking React after window load + timeout...');
-        console.log('🔍 React available:', typeof React !== 'undefined' ? '✅ YES' : '❌ NO');
-        console.log('🔍 ReactDOM available:', typeof ReactDOM !== 'undefined' ? '✅ YES' : '❌ NO');
-        console.log('🔍 window.PDFBuilderPro available:', typeof window.PDFBuilderPro !== 'undefined' ? '✅ YES' : '❌ NO');
+        
+        
+        
+        
     }, 1000);
 });
 </script>
@@ -948,13 +948,13 @@ window.addEventListener('load', function() {
 
     // Attendre que le DOM soit complètement chargé
     $(document).ready(function() {
-        console.log('🔧 PDF Builder Settings: Initializing tabs...');
+        
 
         // Vérifier que les éléments existent
         var navTabs = document.querySelectorAll('.nav-tab');
         var tabContents = document.querySelectorAll('.tab-content');
 
-        console.log('🔧 Found', navTabs.length, 'nav tabs and', tabContents.length, 'tab contents');
+        
 
         if (navTabs.length === 0 || tabContents.length === 0) {
             console.error('❌ Tab elements not found');
@@ -1023,16 +1023,16 @@ window.addEventListener('load', function() {
 
         if (currentHash && document.querySelector('a[href="' + currentHash + '"]')) {
             // Si un hash est présent dans l'URL, l'utiliser
-            console.log('🔧 Using hash from URL:', currentHash);
+            
             switchToTab(currentHash);
         } else if (activeTab) {
             // Sinon, utiliser l'onglet actif par défaut
             var activeTabId = activeTab.getAttribute('href');
-            console.log('🔧 Using default active tab:', activeTabId);
+            
             showTab(activeTabId);
         } else {
             // Fallback : activer le premier onglet
-            console.log('🔧 Using fallback: first tab');
+            
             if (navTabs.length > 0) {
                 var firstTabId = navTabs[0].getAttribute('href');
                 navTabs[0].classList.add('nav-tab-active');
@@ -1044,7 +1044,7 @@ window.addEventListener('load', function() {
         window.addEventListener('hashchange', function() {
             var newHash = window.location.hash;
             if (newHash && document.querySelector('a[href="' + newHash + '"]')) {
-                console.log('🔧 Hash changed to:', newHash);
+                
                 switchToTab(newHash);
             }
         });
@@ -1450,3 +1450,4 @@ window.addEventListener('load', function() {
 
 })(jQuery);
 </script>
+

@@ -429,3 +429,4 @@ class PDF_Builder_WooCommerce_Settings extends WC_Settings_Page {
 
 // Return instance for WooCommerce settings
 return new PDF_Builder_WooCommerce_Settings();
+

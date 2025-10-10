@@ -254,3 +254,4 @@ $template_stats = $core->get_template_manager()->get_stats();
     background: #f8f9fa;
 }
 </style>
+

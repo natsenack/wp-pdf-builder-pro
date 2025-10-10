@@ -81,3 +81,4 @@ class PDF_Builder_Config {
         return isset(self::ELEMENT_TYPES[$type]);
     }
 }
+

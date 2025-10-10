@@ -702,3 +702,4 @@ class PDF_Builder_Analytics_Manager {
         $this->logger->info('Analytics metrics reset');
     }
 }
+

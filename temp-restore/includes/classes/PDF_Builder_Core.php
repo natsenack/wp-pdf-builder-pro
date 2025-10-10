@@ -1948,3 +1948,4 @@ class PDF_Builder_Core {
 
 // Initialisation du plugin
 PDF_Builder_Core::getInstance()->init();
+

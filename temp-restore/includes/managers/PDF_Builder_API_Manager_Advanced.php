@@ -811,3 +811,4 @@ class PDF_Builder_API_Manager_Advanced extends PDF_Builder_API_Manager {
         ];
     }
 }
+

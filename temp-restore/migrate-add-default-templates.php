@@ -47,3 +47,4 @@ if (empty($column_exists)) {
 }
 
 echo "Migration terminée.\n";
+
