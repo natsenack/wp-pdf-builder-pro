@@ -279,7 +279,9 @@ const PropertiesPanel = React.memo(({
     if (selectedElement) {
       // Initialiser les valeurs précédentes avec les valeurs actuelles de l'élément
       setPreviousBackgroundColor(selectedElement.backgroundColor || '#ffffff');
-      setPreviousBorderWidth(selectedElement.borderWidth || 1);
+      // Pour borderWidth, s'assurer qu'on a au moins 1 pour la restauration
+      const initialBorderWidth = selectedElement.borderWidth && selectedElement.borderWidth > 0 ? selectedElement.borderWidth : 1;
+      setPreviousBorderWidth(initialBorderWidth);
     }
   }, [selectedElement]); // Ne dépendre que de selectedElement pour éviter les boucles
 
@@ -332,14 +334,15 @@ const PropertiesPanel = React.memo(({
       // Sauvegarder l'épaisseur actuelle avant de la désactiver
       if (selectedElement?.borderWidth && selectedElement.borderWidth > 0) {
         setPreviousBorderWidth(selectedElement.borderWidth);
-      } else if (!previousBorderWidth || previousBorderWidth === 0) {
-        // Si pas d'épaisseur précédente sauvegardée, utiliser la valeur par défaut
+      } else {
+        // Si pas de bordure ou bordure = 0, sauvegarder 1 comme valeur par défaut
         setPreviousBorderWidth(1);
       }
       handlePropertyChange(elementId, 'borderWidth', 0);
     } else {
-      // Restaurer l'épaisseur précédente (avec fallback)
-      const widthToRestore = previousBorderWidth || 1;
+      // Restaurer l'épaisseur précédente, au minimum 1
+      const widthToRestore = Math.max(previousBorderWidth || 1, 1);
+      console.log('🎛️ Restaurer borderWidth à:', widthToRestore);
       handlePropertyChange(elementId, 'borderWidth', widthToRestore);
     }
   }, [selectedElement?.borderWidth, previousBorderWidth, handlePropertyChange]);
