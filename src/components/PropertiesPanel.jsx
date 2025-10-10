@@ -457,28 +457,32 @@ const PropertiesPanel = React.memo(({
                 </label>
               </div>
 
-              <ColorPicker
-                label="Bordure"
-                value={localProperties.borderColor}
-                onChange={(value) => {
-                  console.log('🎨 Changement couleur bordure:', value);
-                  handlePropertyChange(selectedElement.id, 'borderColor', value);
-                }}
-                presets={['#e2e8f0', '#cbd5e1', '#94a3b8', '#64748b', '#475569', '#334155']}
-              />
+              {localProperties.borderWidth > 0 && (
+                <>
+                  <ColorPicker
+                    label="Bordure"
+                    value={localProperties.borderColor}
+                    onChange={(value) => {
+                      console.log('🎨 Changement couleur bordure:', value);
+                      handlePropertyChange(selectedElement.id, 'borderColor', value);
+                    }}
+                    presets={['#e2e8f0', '#cbd5e1', '#94a3b8', '#64748b', '#475569', '#334155']}
+                  />
 
-              <div className="property-row">
-                <label>Style bordure:</label>
-                <select
-                  value={localProperties.borderStyle || 'solid'}
-                  onChange={(e) => handlePropertyChange(selectedElement.id, 'borderStyle', e.target.value)}
-                >
-                  <option value="solid">Continue</option>
-                  <option value="dashed">Tirets</option>
-                  <option value="dotted">Pointillés</option>
-                  <option value="double">Double</option>
-                </select>
-              </div>
+                  <div className="property-row">
+                    <label>Style bordure:</label>
+                    <select
+                      value={localProperties.borderStyle || 'solid'}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'borderStyle', e.target.value)}
+                    >
+                      <option value="solid">Continue</option>
+                      <option value="dashed">Tirets</option>
+                      <option value="dotted">Pointillés</option>
+                      <option value="double">Double</option>
+                    </select>
+                  </div>
+                </>
+              )}
 
               <div className="property-row">
                 <span>Aucune bordure:</span>
