@@ -228,7 +228,9 @@ const PropertiesPanel = React.memo(({
   // États pour mémoriser les valeurs précédentes
   const [previousBackgroundColor, setPreviousBackgroundColor] = useState('#ffffff');
   const [previousBorderWidth, setPreviousBorderWidth] = useState(0);
+  const [previousBorderColor, setPreviousBorderColor] = useState('#000000');
   const [isBackgroundEnabled, setIsBackgroundEnabled] = useState(true);
+  const [isBorderEnabled, setIsBorderEnabled] = useState(false);
 
   // Log des props pour débogage (seulement quand elles changent)
   useEffect(() => {
@@ -269,6 +271,7 @@ const PropertiesPanel = React.memo(({
       // Pour borderWidth, s'assurer qu'on a au moins 1 pour la restauration
       const initialBorderWidth = selectedElement.borderWidth && selectedElement.borderWidth > 0 ? selectedElement.borderWidth : 1;
       setPreviousBorderWidth(initialBorderWidth);
+      setPreviousBorderColor(selectedElement.borderColor || '#000000');
     }
   }, [selectedElement]); // Ne dépendre que de selectedElement pour éviter les boucles
 
@@ -276,6 +279,11 @@ const PropertiesPanel = React.memo(({
   useEffect(() => {
     setIsBackgroundEnabled(!!localProperties.backgroundColor && localProperties.backgroundColor !== 'transparent');
   }, [localProperties.backgroundColor]);
+
+  // Synchroniser l'état du toggle bordures
+  useEffect(() => {
+    setIsBorderEnabled(!!localProperties.border && (localProperties.borderWidth || 0) > 0);
+  }, [localProperties.border, localProperties.borderWidth]);
 
   // Gestionnaire unifié de changement de propriété
   const handlePropertyChange = useCallback((elementId, property, value) => {
@@ -436,36 +444,50 @@ const PropertiesPanel = React.memo(({
                   <input
                     type="checkbox"
                     checked={isBackgroundEnabled}
-                    readOnly
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        // Activer le fond
+                        const colorToSet = previousBackgroundColor || '#ffffff';
+                        handlePropertyChange(selectedElement.id, 'backgroundColor', colorToSet);
+                        setIsBackgroundEnabled(true);
+                      } else {
+                        // Désactiver le fond
+                        setPreviousBackgroundColor(localProperties.backgroundColor);
+                        handlePropertyChange(selectedElement.id, 'backgroundColor', 'transparent');
+                        setIsBackgroundEnabled(false);
+                      }
+                    }}
                   />
-                  <span className="toggle-slider" onClick={() => {
-                    if (isBackgroundEnabled) {
-                      // Désactiver le fond
-                      setPreviousBackgroundColor(localProperties.backgroundColor);
-                      handlePropertyChange(selectedElement.id, 'backgroundColor', 'transparent');
-                      setIsBackgroundEnabled(false);
-                    } else {
-                      // Activer le fond
-                      const colorToSet = previousBackgroundColor || '#ffffff';
-                      handlePropertyChange(selectedElement.id, 'backgroundColor', colorToSet);
-                      setIsBackgroundEnabled(true);
-                    }
-                  }}></span>
+                  <span className="toggle-slider"></span>
                 </label>
               </div>
 
               <div className="property-row">
-                <span>Aucune bordure:</span>
+                <span>Bordures:</span>
                 <label className="toggle">
                   <input
                     type="checkbox"
-                    checked={!localProperties.borderWidth || localProperties.borderWidth === 0}
-                    readOnly
+                    checked={isBorderEnabled}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        // Activer les bordures
+                        const widthToSet = previousBorderWidth || 1;
+                        const colorToSet = previousBorderColor || '#000000';
+                        handlePropertyChange(selectedElement.id, 'border', true);
+                        handlePropertyChange(selectedElement.id, 'borderWidth', widthToSet);
+                        handlePropertyChange(selectedElement.id, 'borderColor', colorToSet);
+                        setIsBorderEnabled(true);
+                      } else {
+                        // Désactiver les bordures
+                        setPreviousBorderWidth(localProperties.borderWidth || 1);
+                        setPreviousBorderColor(localProperties.borderColor || '#000000');
+                        handlePropertyChange(selectedElement.id, 'border', false);
+                        handlePropertyChange(selectedElement.id, 'borderWidth', 0);
+                        setIsBorderEnabled(false);
+                      }
+                    }}
                   />
-                  <span className="toggle-slider" onClick={() => {
-                    const currentChecked = !localProperties.borderWidth || localProperties.borderWidth === 0;
-                    handleNoBorderToggle(selectedElement.id, !currentChecked);
-                  }}></span>
+                  <span className="toggle-slider"></span>
                 </label>
               </div>
             </div>
