@@ -76,8 +76,8 @@ $template = null; // Temporaire : pas de template chargé
         if (checkScriptsLoaded()) {
             try {
                 window.PDFBuilderPro.init('invoice-quote-builder-container', {
-                    templateId: null,
-                    isNew: true,
+                    templateId: <?php echo $template_id ?: 'null'; ?>,
+                    isNew: <?php echo $is_new ? 'true' : 'false'; ?>,
                     width: 595,
                     height: 842,
                     zoom: 1,

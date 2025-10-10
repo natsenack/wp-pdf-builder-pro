@@ -53,6 +53,7 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
 
   const canvasState = useCanvasState({
     initialElements: options.initialElements || [],
+    templateId: options.templateId || null,
     canvasWidth: options.width || 595,
     canvasHeight: options.height || 842,
     onSave,

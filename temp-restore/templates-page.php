@@ -911,7 +911,163 @@ $tables_exist = $wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}pdf_builder_tem
     to { transform: rotate(360deg); }
 }
 
+/* === NOUVELLES FONCTIONNALITÉS DES CARTES === */
+
+/* Métadonnées du template */
+.template-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #6c757d;
+    margin-top: auto;
+    padding-top: 8px;
+    border-top: 1px solid #f8f9fa;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.template-date {
+    font-style: italic;
+}
+
+.template-usage {
+    font-weight: 500;
+    color: #28a745;
+}
+
+/* Tooltip d'aperçu */
+.template-preview-tooltip {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    min-width: 280px;
+    margin-top: 8px;
+}
+
+.template-preview-tooltip::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-bottom-color: #ffffff;
+}
+
+.template-preview-tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 7px solid transparent;
+    border-bottom-color: #dee2e6;
+    margin-bottom: -1px;
+}
+
+.preview-content {
+    padding: 0;
+}
+
+.preview-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    padding: 12px 16px;
+    border-bottom: 1px solid #e9ecef;
+    font-weight: 600;
+    color: #212529;
+    font-size: 14px;
+    border-radius: 8px 8px 0 0;
+}
+
+.preview-body {
+    padding: 16px;
+}
+
+.preview-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 12px;
+    font-size: 12px;
+    color: #6c757d;
+}
+
+.preview-stats span {
+    padding: 2px 0;
+}
+
+.preview-thumbnail {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    padding: 20px;
+    text-align: center;
+    color: #6c757d;
+}
+
+.thumbnail-placeholder {
+    font-size: 24px;
+    line-height: 1.2;
+}
+
+/* Animation du tooltip */
+.template-card:hover .template-preview-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+.template-preview-tooltip.visible {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateX(-50%) translateY(0) !important;
+}
+
+/* Indicateurs visuels */
+.template-popular-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+    z-index: 10;
+}
+
+.template-recent-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: linear-gradient(135deg, #007bff, #6610f2);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+    z-index: 10;
+}
+
 /* Responsive */
+@media (max-width: 768px) {
 @media (max-width: 768px) {
     .pdf-builder-templates-header {
         padding: 1.5rem;
@@ -1569,8 +1725,13 @@ jQuery(document).ready(function($) {
         '<div class="template-content">' +
             '<h3 class="template-title"><a href="' + editorBaseUrl + template.id + '" class="template-editor-link" title="Cliquer pour éditer avec l\'éditeur canvas">' + escapeHtml(template.name) + '</a></h3>' +
             (template.description ? '<p class="template-description">' + escapeHtml(template.description) + '</p>' : '') +
+            '<div class="template-meta">' +
+                '<span class="template-date">Modifié ' + (template.updated_at ? formatDate(template.updated_at) : 'récemment') + '</span>' +
+                (template.usage_count ? '<span class="template-usage">• ' + template.usage_count + ' utilisations</span>' : '') +
+            '</div>' +
         '</div>' +
         '<div class="template-actions">' +
+            '<button type="button" class="button button-icon preview-template" data-id="' + template.id + '" title="Aperçu rapide">👁️</button>' +
             '<a href="#" class="button button-icon edit-template-params" data-id="' + template.id + '" title="' + translations.editer_parametres + '" style="text-decoration:none;">⚙️</a>' +
             '<button type="button" class="button button-icon duplicate-template" data-id="' + template.id + '" title="' + translations.dupliquer + '">🔄</button>' +
             (template.is_default == 1 ?
@@ -1578,6 +1739,21 @@ jQuery(document).ready(function($) {
                 '<button type="button" class="button button-icon set-default-template" data-id="' + template.id + '" data-type="' + template.type + '" title="Définir comme défaut">☆</button>'
             ) +
             '<button type="button" class="button button-icon button-link-delete delete-template" data-id="' + template.id + '" title="' + translations.supprimer + '">🗑️</button>' +
+        '</div>' +
+        '<div class="template-preview-tooltip" id="preview-' + template.id + '">' +
+            '<div class="preview-content">' +
+                '<div class="preview-header">' + escapeHtml(template.name) + '</div>' +
+                '<div class="preview-body">' +
+                    '<div class="preview-stats">' +
+                        '<span>Type: ' + getTemplateTypeName(template.type) + '</span>' +
+                        '<span>Statut: ' + template.status.charAt(0).toUpperCase() + template.status.slice(1) + '</span>' +
+                        '<span>Auteur: ' + (template.author_name || 'Inconnu') + '</span>' +
+                    '</div>' +
+                    '<div class="preview-thumbnail">' +
+                        '<div class="thumbnail-placeholder">📄<br/>Aperçu</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>' +
         '</div>';
 
         return card;
@@ -1799,6 +1975,53 @@ jQuery(document).ready(function($) {
         }
 
         return icon;
+    }
+
+    // Nouvelle fonction pour obtenir le nom complet du type
+    function getTemplateTypeName(type) {
+        var typeName = type || 'other';
+
+        switch(typeName.toLowerCase()) {
+            case 'pdf':
+                return 'Document PDF';
+            case 'facture':
+            case 'invoice':
+                return 'Facture';
+            case 'devis':
+            case 'quote':
+                return 'Devis';
+            case 'bon_commande':
+                return 'Bon de commande';
+            case 'bon_livraison':
+                return 'Bon de livraison';
+            default:
+                return 'Autre type';
+        }
+    }
+
+    // Fonction pour formater les dates de manière lisible
+    function formatDate(dateString) {
+        if (!dateString) return 'récemment';
+
+        var date = new Date(dateString);
+        var now = new Date();
+        var diffTime = Math.abs(now - date);
+        var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays === 1) {
+            return 'hier';
+        } else if (diffDays < 7) {
+            return 'il y a ' + diffDays + ' jours';
+        } else if (diffDays < 30) {
+            var weeks = Math.floor(diffDays / 7);
+            return 'il y a ' + weeks + ' semaine' + (weeks > 1 ? 's' : '');
+        } else if (diffDays < 365) {
+            var months = Math.floor(diffDays / 30);
+            return 'il y a ' + months + ' mois';
+        } else {
+            var years = Math.floor(diffDays / 365);
+            return 'il y a ' + years + ' an' + (years > 1 ? 's' : '');
+        }
     }
 
     function updateTemplateCardVisuals(templateId, newData) {
@@ -2079,6 +2302,33 @@ jQuery(document).ready(function($) {
             $('#templates-loading').hide();
         }
     }
+
+    // Boutons Aperçu rapide
+    $('.preview-template').off('click').on('click', function(e) {
+        e.stopPropagation(); // Empêcher la propagation pour éviter l'ouverture de l'éditeur
+        
+        var templateId = $(this).data('id');
+        var $card = $(this).closest('.template-card');
+        var $tooltip = $card.find('.template-preview-tooltip');
+        
+        // Masquer tous les autres tooltips
+        $('.template-preview-tooltip').not($tooltip).removeClass('visible');
+        
+        // Toggle le tooltip actuel
+        $tooltip.toggleClass('visible');
+        
+        // Fermer le tooltip si on clique ailleurs
+        $(document).one('click', function() {
+            $tooltip.removeClass('visible');
+        });
+    });
+
+    // Fermer les tooltips au clic en dehors
+    $(document).on('click', function(e) {
+        if (!$(e.target).closest('.preview-template, .template-preview-tooltip').length) {
+            $('.template-preview-tooltip').removeClass('visible');
+        }
+    });
 
     // Boutons Nouveau Template et Importer
     $('#create-template').on('click', function() {

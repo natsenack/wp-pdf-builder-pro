@@ -8,6 +8,7 @@ import { useDragAndDrop } from './useDragAndDrop';
 
 export const useCanvasState = ({
   initialElements = [],
+  templateId = null,
   canvasWidth = 595, // A4 width in points
   canvasHeight = 842, // A4 height in points
   onSave,
@@ -15,6 +16,13 @@ export const useCanvasState = ({
 }) => {
   const [elements, setElements] = useState(initialElements);
   const [nextId, setNextId] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+
+    // Hooks intégrés
+    selection,
+    zoom,
+    contextMenu,
+    dragAndDrop,useState(false);
 
   const history = useHistory();
   const selection = useSelection({
@@ -54,6 +62,45 @@ export const useCanvasState = ({
       element.id === elementId ? { ...element, ...updates } : element
     ));
   }, []);
+
+  // Charger les éléments du template si un templateId est fourni
+  useEffect(() => {
+    if (templateId && templateId !== null) {
+      setIsLoading(true);
+      
+      // Faire un appel AJAX pour charger les éléments du template
+      fetch(ajaxurl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          action: 'pdf_builder_load_canvas_elements',
+          template_id: templateId,
+          nonce: typeof pdfBuilderAjax !== 'undefined' ? pdfBuilderAjax.nonce : ''
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success && data.data.elements) {
+          setElements(data.data.elements);
+          // Calculer le prochain ID basé sur les éléments chargés
+          const maxId = data.data.elements.length > 0 
+            ? Math.max(...data.data.elements.map(el => parseInt(el.id.split('_')[1] || 0)))
+            : 0;
+          setNextId(maxId + 1);
+        } else {
+          console.warn('Aucun élément trouvé pour ce template ou erreur de chargement');
+        }
+      })
+      .catch(error => {
+        console.error('Erreur lors du chargement des éléments du template:', error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+    }
+  }, [templateId]);
 
   const dragAndDrop = useDragAndDrop({
     onElementMove: useCallback((elementId, position) => {

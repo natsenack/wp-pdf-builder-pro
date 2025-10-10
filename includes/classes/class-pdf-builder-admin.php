@@ -91,6 +91,7 @@ class PDF_Builder_Admin {
         add_action('wp_ajax_pdf_builder_duplicate_template', [$this, 'ajax_duplicate_template']);
         add_action('wp_ajax_pdf_builder_set_default_template', [$this, 'ajax_set_default_template']);
         add_action('wp_ajax_pdf_builder_get_template_data', [$this, 'ajax_get_template_data']);
+        add_action('wp_ajax_pdf_builder_load_canvas_elements', [$this, 'ajax_load_canvas_elements']);
         add_action('wp_ajax_pdf_builder_update_template_params', [$this, 'ajax_update_template_params']);
         add_action('wp_ajax_pdf_builder_get_authors', [$this, 'ajax_get_authors']);
         add_action('wp_ajax_pdf_builder_flush_rest_cache', [$this, 'ajax_flush_rest_cache']);
@@ -3518,6 +3519,49 @@ class PDF_Builder_Admin {
         } catch (Exception $e) {
             error_log('PDF Builder Pro: Exception caught: ' . $e->getMessage());
             wp_send_json_error(['message' => 'DEBUG: Exception: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * AJAX - Charger les éléments du canvas d'un template
+     */
+    public function ajax_load_canvas_elements() {
+        error_log('PDF Builder Pro: ajax_load_canvas_elements function START');
+        
+        // Vérifier le nonce
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_templates')) {
+            wp_send_json_error(['message' => 'Nonce invalide']);
+            return;
+        }
+
+        // Vérifier les permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => 'Permissions insuffisantes']);
+            return;
+        }
+
+        $template_id = intval($_POST['template_id'] ?? 0);
+
+        if (!$template_id) {
+            wp_send_json_error(['message' => 'ID de template invalide']);
+            return;
+        }
+
+        try {
+            // Obtenir l'instance du gestionnaire d'éléments
+            $elements_manager = PDF_Builder_Canvas_Elements_Manager::getInstance();
+            
+            // Charger les éléments du template
+            $elements = $elements_manager->load_canvas_elements($template_id);
+            
+            wp_send_json_success([
+                'elements' => $elements,
+                'template_id' => $template_id
+            ]);
+            
+        } catch (Exception $e) {
+            error_log('PDF Builder Pro: Exception in ajax_load_canvas_elements: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Erreur lors du chargement des éléments: ' . $e->getMessage()]);
         }
     }
 
