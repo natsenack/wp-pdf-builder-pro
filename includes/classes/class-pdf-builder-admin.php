@@ -77,7 +77,7 @@ class PDF_Builder_Admin {
      * Initialise les hooks WordPress
      */
     private function init_hooks() {
-        error_log('PDF Builder Admin: init_hooks appelée');
+        error_log('PDF Builder Admin: init_hooks appelée - ENREGISTREMENT DES ACTIONS AJAX');
         add_action('admin_menu', [$this, 'add_admin_menu']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts'], 20);
         add_action('wp_ajax_pdf_builder_pro_generate_pdf', [$this, 'ajax_generate_pdf_from_canvas']);
@@ -90,6 +90,7 @@ class PDF_Builder_Admin {
         add_action('wp_ajax_pdf_builder_delete_template', [$this, 'ajax_delete_template']);
         add_action('wp_ajax_pdf_builder_duplicate_template', [$this, 'ajax_duplicate_template']);
         add_action('wp_ajax_pdf_builder_set_default_template', [$this, 'ajax_set_default_template']);
+        error_log('PDF Builder Admin: Action pdf_builder_set_default_template enregistrée');
         add_action('wp_ajax_pdf_builder_get_template_data', [$this, 'ajax_get_template_data']);
         add_action('wp_ajax_pdf_builder_load_canvas_elements', [$this, 'ajax_load_canvas_elements']);
         add_action('wp_ajax_pdf_builder_update_template_params', [$this, 'ajax_update_template_params']);
@@ -3153,7 +3154,7 @@ class PDF_Builder_Admin {
      * AJAX - Définir un template comme défaut
      */
     public function ajax_set_default_template() {
-        error_log('PDF Builder: ajax_set_default_template called');
+        error_log('PDF Builder: ajax_set_default_template appelée avec POST: ' . print_r($_POST, true));
 
         // Vérifier le nonce
         if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_templates')) {

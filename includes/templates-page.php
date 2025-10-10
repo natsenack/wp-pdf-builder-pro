@@ -243,6 +243,7 @@ let currentTemplateId = null;
 if (typeof ajaxurl === 'undefined') {
     ajaxurl = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>';
 }
+console.log('ajaxurl défini comme:', ajaxurl);
 
 function openTemplateSettings(templateId, templateName) {
     currentTemplateId = templateId;
@@ -331,8 +332,10 @@ function deleteTemplate(templateId, templateName) {
 function toggleDefaultTemplate(templateId, templateType, templateName) {
     console.log('toggleDefaultTemplate called with:', templateId, templateType, templateName);
 
-    // Trouver l'icône du template actuel
-    const currentIcon = document.querySelector(`.template-card input[value="${templateId}"]`)?.closest('.template-card')?.querySelector('.default-template-icon');
+    // Trouver l'icône du template actuel en utilisant l'attribut onclick
+    const currentIcon = Array.from(document.querySelectorAll('.default-template-icon')).find(icon =>
+        icon.onclick && icon.onclick.toString().includes(`toggleDefaultTemplate(${templateId}`)
+    );
     const isCurrentlyDefault = currentIcon?.style.opacity === '1';
 
     console.log('Current icon found:', !!currentIcon, 'Is currently default:', isCurrentlyDefault);
