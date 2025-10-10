@@ -91,7 +91,10 @@ export const useCanvasState = ({
           setNextId(maxId + 1);
           console.log('Éléments chargés avec succès:', data.data.elements.length, 'éléments');
         } else {
-          console.warn('Aucun élément trouvé pour ce template ou erreur de chargement - data:', data);
+          const errorMessage = data.data?.message || 'Erreur inconnue lors du chargement des éléments';
+          console.error('Erreur de chargement des éléments:', errorMessage, '- data complète:', data);
+          // Afficher une alerte à l'utilisateur avec le message d'erreur détaillé
+          alert('Erreur lors du chargement du template:\n' + errorMessage);
         }
       })
       .catch(error => {

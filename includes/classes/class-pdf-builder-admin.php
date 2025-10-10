@@ -3532,7 +3532,7 @@ class PDF_Builder_Admin {
         // Vérifier le nonce
         if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_templates')) {
             error_log('PDF Builder Pro: ajax_load_canvas_elements - Nonce check failed');
-            wp_send_json_error(['message' => 'Nonce invalide']);
+            wp_send_json_error(['message' => 'Nonce invalide - vérifiez que vous êtes connecté']);
             return;
         }
         error_log('PDF Builder Pro: ajax_load_canvas_elements - Nonce check passed');
@@ -3540,7 +3540,7 @@ class PDF_Builder_Admin {
         // Vérifier les permissions
         if (!current_user_can('manage_options')) {
             error_log('PDF Builder Pro: ajax_load_canvas_elements - Permission check failed');
-            wp_send_json_error(['message' => 'Permissions insuffisantes']);
+            wp_send_json_error(['message' => 'Permissions insuffisantes - vous devez être administrateur']);
             return;
         }
         error_log('PDF Builder Pro: ajax_load_canvas_elements - Permission check passed');
@@ -3550,7 +3550,7 @@ class PDF_Builder_Admin {
 
         if (!$template_id) {
             error_log('PDF Builder Pro: ajax_load_canvas_elements - Invalid template ID');
-            wp_send_json_error(['message' => 'ID de template invalide']);
+            wp_send_json_error(['message' => 'ID de template invalide - valeur reçue: ' . ($_POST['template_id'] ?? 'null')]);
             return;
         }
 
