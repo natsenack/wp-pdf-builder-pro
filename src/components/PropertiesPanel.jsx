@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useElementCustomization } from '../hooks/useElementCustomization';
 import { useElementSynchronization } from '../hooks/useElementSynchronization';
 import { elementCustomizationService } from '../services/ElementCustomizationService';
@@ -163,7 +163,7 @@ export const PropertiesPanel = ({
   console.log('🔍 PropertiesPanel - Hook useElementCustomization:', {
     localProperties,
     activeTab,
-    selectedElement: selectedElements.length > 0 ? elements.find(el => el.id === selectedElements[0]) : null
+    selectedElement
   });
 
   const { syncImmediate, syncBatch } = useElementSynchronization(
@@ -174,10 +174,12 @@ export const PropertiesPanel = ({
     1000 // autoSaveDelay
   );
 
-  // Obtenir l'élément sélectionné depuis le hook
-  const selectedElement = selectedElements.length > 0
-    ? elements.find(el => el.id === selectedElements[0])
-    : null;
+  // Obtenir l'élément sélectionné (mémorisé pour éviter les re-renders)
+  const selectedElement = useMemo(() => {
+    return selectedElements.length > 0
+      ? elements.find(el => el.id === selectedElements[0])
+      : null;
+  }, [selectedElements, elements]);
 
   // Mettre à jour les valeurs précédentes quand l'élément change
   useEffect(() => {
