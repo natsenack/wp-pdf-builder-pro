@@ -68,8 +68,8 @@ class PDF_Builder_Admin {
             return;
         }
 
-        if (!is_user_logged_in() || !current_user_can('read')) {
-            wp_die(__('Vous devez être connecté pour accéder à cette page.', 'pdf-builder-pro'));
+        if (!is_user_logged_in() || !current_user_can('manage_options')) {
+            wp_die(__('Vous devez être administrateur pour accéder à cette page.', 'pdf-builder-pro'));
         }
     }
 
