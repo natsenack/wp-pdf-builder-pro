@@ -120,6 +120,38 @@ const FontControls = ({ elementId, properties, onPropertyChange }) => (
     </div>
 
     <div className="property-row">
+      <label>Opacité texte:</label>
+      <div className="slider-container">
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.1"
+          value={properties.opacity ?? 1}
+          onChange={(e) => onPropertyChange(elementId, 'opacity', parseFloat(e.target.value))}
+          className="slider"
+        />
+        <span className="slider-value">{Math.round((properties.opacity ?? 1) * 100)}%</span>
+      </div>
+    </div>
+
+    <div className="property-row">
+      <label>Ombre texte:</label>
+      <div className="slider-container">
+        <input
+          type="range"
+          min="0"
+          max="5"
+          step="0.1"
+          value={properties.textShadowBlur ?? 0}
+          onChange={(e) => onPropertyChange(elementId, 'textShadowBlur', parseFloat(e.target.value))}
+          className="slider"
+        />
+        <span className="slider-value">{properties.textShadowBlur ?? 0}px</span>
+      </div>
+    </div>
+
+    <div className="property-row">
       <label>Style du texte:</label>
       <div className="style-buttons-grid">
         <button
@@ -397,6 +429,22 @@ const PropertiesPanel = React.memo(({
               </div>
 
               <div className="property-row">
+                <label>Opacité fond:</label>
+                <div className="slider-container">
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.1"
+                    value={localProperties.backgroundOpacity ?? 1}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundOpacity', parseFloat(e.target.value))}
+                    className="slider"
+                  />
+                  <span className="slider-value">{Math.round((localProperties.backgroundOpacity ?? 1) * 100)}%</span>
+                </div>
+              </div>
+
+              <div className="property-row">
                 <label>Aucun fond:</label>
                 <div className="toggle">
                   <input
@@ -421,6 +469,19 @@ const PropertiesPanel = React.memo(({
                 }}
                 presets={['#e2e8f0', '#cbd5e1', '#94a3b8', '#64748b', '#475569', '#334155']}
               />
+
+              <div className="property-row">
+                <label>Style bordure:</label>
+                <select
+                  value={localProperties.borderStyle || 'solid'}
+                  onChange={(e) => handlePropertyChange(selectedElement.id, 'borderStyle', e.target.value)}
+                >
+                  <option value="solid">Continue</option>
+                  <option value="dashed">Tirets</option>
+                  <option value="dotted">Pointillés</option>
+                  <option value="double">Double</option>
+                </select>
+              </div>
 
               <div className="property-row">
                 <label>Aucune bordure:</label>
@@ -478,6 +539,47 @@ const PropertiesPanel = React.memo(({
                     className="slider"
                   />
                   <span className="slider-value">{localProperties.borderRadius ?? 4}px</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="properties-group">
+              <h4>✨ Effets</h4>
+
+              <ColorPicker
+                label="Ombre"
+                value={localProperties.boxShadowColor || '#000000'}
+                onChange={(value) => handlePropertyChange(selectedElement.id, 'boxShadowColor', value)}
+                presets={['#000000', '#ffffff', '#64748b', '#ef4444', '#3b82f6']}
+              />
+
+              <div className="property-row">
+                <label>Flou ombre:</label>
+                <div className="slider-container">
+                  <input
+                    type="range"
+                    min="0"
+                    max="20"
+                    value={localProperties.boxShadowBlur ?? 0}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'boxShadowBlur', parseInt(e.target.value))}
+                    className="slider"
+                  />
+                  <span className="slider-value">{localProperties.boxShadowBlur ?? 0}px</span>
+                </div>
+              </div>
+
+              <div className="property-row">
+                <label>Décalage ombre:</label>
+                <div className="slider-container">
+                  <input
+                    type="range"
+                    min="0"
+                    max="10"
+                    value={localProperties.boxShadowSpread ?? 0}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'boxShadowSpread', parseInt(e.target.value))}
+                    className="slider"
+                  />
+                  <span className="slider-value">{localProperties.boxShadowSpread ?? 0}px</span>
                 </div>
               </div>
             </div>
