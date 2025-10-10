@@ -48,23 +48,23 @@ if (!defined('ABSPATH')) {
                     
                     if (stripos($template_name, 'facture') !== false) {
                         $icon = '📄';
-                        $description = 'Template professionnel pour factures';
+                        $description = 'Template professionnel et élégant';
                         $features = ['✓ En-tête société', '✓ Informations client', '✓ Tableau des articles', '✓ Totaux & TVA'];
                     } elseif (stripos($template_name, 'devis') !== false) {
                         $icon = '📋';
-                        $description = 'Template élégant pour devis';
+                        $description = 'Template professionnel et élégant';
                         $features = ['✓ Présentation entreprise', '✓ Détails du projet', '✓ Conditions & validité', '✓ Signature numérique'];
                     } elseif (stripos($template_name, 'commande') !== false) {
                         $icon = '🛒';
-                        $description = 'Template structuré pour commandes';
+                        $description = 'Template professionnel et élégant';
                         $features = ['✓ Numéro de commande', '✓ Liste des produits', '✓ Modalités de paiement', '✓ Conditions générales'];
                     } elseif (stripos($template_name, 'contrat') !== false) {
                         $icon = '📝';
-                        $description = 'Template juridique professionnel';
+                        $description = 'Template professionnel et élégant';
                         $features = ['✓ Parties contractantes', '✓ Objet du contrat', '✓ Conditions & obligations', '✓ Clauses légales'];
                     } elseif (stripos($template_name, 'newsletter') !== false) {
                         $icon = '📧';
-                        $description = 'Template engageant pour emails';
+                        $description = 'Template professionnel et élégant';
                         $features = ['✓ En-tête accrocheur', '✓ Sections d\'articles', '✓ Call-to-action', '✓ Pied de page'];
                     }
                     
@@ -85,7 +85,31 @@ if (!defined('ABSPATH')) {
                     echo $is_default ? '⭐' : '☆';
                     echo '</div>';
                     
-                    echo '<div style="text-align: center; margin-bottom: 15px;">';
+                    // Badge du type de template en haut à gauche
+                    $type_colors = [
+                        'facture' => '#007cba',
+                        'devis' => '#28a745', 
+                        'commande' => '#ffc107',
+                        'contrat' => '#dc3545',
+                        'newsletter' => '#6f42c1',
+                        'autre' => '#6c757d'
+                    ];
+                    $type_color = isset($type_colors[$template_type]) ? $type_colors[$template_type] : $type_colors['autre'];
+                    $type_labels = [
+                        'facture' => 'Facture',
+                        'devis' => 'Devis',
+                        'commande' => 'Commande', 
+                        'contrat' => 'Contrat',
+                        'newsletter' => 'Newsletter',
+                        'autre' => 'Autre'
+                    ];
+                    $type_label = isset($type_labels[$template_type]) ? $type_labels[$template_type] : $type_labels['autre'];
+                    
+                    echo '<div class="template-type-badge" style="position: absolute; top: 10px; left: 10px; background: ' . $type_color . '; color: white; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">';
+                    echo $type_label;
+                    echo '</div>';
+                    
+                    echo '<div style="text-align: center; margin-bottom: 15px; margin-top: 40px;">';
                     echo '<div style="font-size: 3rem; margin-bottom: 10px;">' . $icon . '</div>';
                     echo '<h3 style="margin: 0; color: #23282d;">' . $template_name . '</h3>';
                     echo '<p style="color: #666; margin: 5px 0;">' . $description . '</p>';
@@ -373,6 +397,12 @@ document.addEventListener('keydown', function(e) {
     opacity: 1 !important;
     transform: scale(1.2);
 }
+
+.template-type-badge {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    z-index: 2;
+}
+
 
 </style>
 
