@@ -512,9 +512,11 @@ const PropertiesPanel = React.memo(({
               />
             )}
 
-            {localProperties.borderWidth > 0 && (
-              <div className="properties-group">
-                <h4>🔲 Bordures & Coins</h4>
+            {(() => {
+              console.log('🔍 Debug contrôles bordure:', { borderWidth: localProperties.borderWidth, condition: localProperties.borderWidth > 0 });
+              return localProperties.borderWidth > 0 && (
+                <div className="properties-group">
+                  <h4>🔲 Bordures & Coins</h4>
 
                 <div className="property-row">
                   <label>Épaisseur bordure:</label>
@@ -546,7 +548,8 @@ const PropertiesPanel = React.memo(({
                   </div>
                 </div>
               </div>
-            )}
+            );
+            })()}
 
             <div className="properties-group">
               <h4>✨ Effets</h4>
