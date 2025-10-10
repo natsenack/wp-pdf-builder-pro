@@ -570,7 +570,7 @@ export const CanvasElement = ({
          element.type === 'progress-bar' ? null :
          element.type === 'product_table' ? null : // Le contenu sera rendu plus bas dans le même conteneur
          element.type === 'customer_info' ? null : // Le contenu sera rendu plus bas dans le même conteneur
-         element.type !== 'image' && element.type !== 'rectangle' ? element.type : null}
+         element.type !== 'image' && element.type !== 'rectangle' && element.type !== 'company_logo' ? element.type : null}
 
         {/* Rendu spécial pour les tableaux de produits */}
         {element.type === 'product_table' && (
