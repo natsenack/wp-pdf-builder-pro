@@ -52,6 +52,14 @@ if (!defined('ABSPATH')) {
                     $created_at = isset($template['created_at']) ? $template['created_at'] : null;
                     $updated_at = isset($template['updated_at']) ? $template['updated_at'] : null;
                     
+                    // Déterminer le type de template pour l'icône par défaut
+                    $template_type = 'autre';
+                    if (stripos($template_name, 'facture') !== false) $template_type = 'facture';
+                    elseif (stripos($template_name, 'devis') !== false) $template_type = 'devis';
+                    elseif (stripos($template_name, 'commande') !== false) $template_type = 'commande';
+                    elseif (stripos($template_name, 'contrat') !== false) $template_type = 'contrat';
+                    elseif (stripos($template_name, 'newsletter') !== false) $template_type = 'newsletter';
+                    
                     $button_text = '⚙️ Paramètres';
                     $button_action = 'openTemplateSettings';
                     
@@ -98,6 +106,32 @@ if (!defined('ABSPATH')) {
                     echo '<div class="default-template-icon" style="position: absolute; top: 10px; right: 10px; font-size: 20px; cursor: pointer; opacity: ' . ($is_default ? '1' : '0.5') . ';" onclick="toggleDefaultTemplate(' . $template_id . ', \'' . $template_type . '\', \'' . addslashes($template_name) . '\')" title="' . ($is_default ? 'Template par défaut' : 'Définir comme template par défaut') . '">';
                     echo $is_default ? '⭐' : '☆';
                     echo '</div>';
+                    
+                    // Badge du type de template en haut à gauche
+                    $type_colors = [
+                        'facture' => '#007cba',
+                        'devis' => '#28a745', 
+                        'commande' => '#ffc107',
+                        'contrat' => '#dc3545',
+                        'newsletter' => '#6f42c1',
+                        'autre' => '#6c757d'
+                    ];
+                    $type_color = isset($type_colors[$template_type]) ? $type_colors[$template_type] : $type_colors['autre'];
+                    $type_labels = [
+                        'facture' => 'Facture',
+                        'devis' => 'Devis',
+                        'commande' => 'Commande', 
+                        'contrat' => 'Contrat',
+                        'newsletter' => 'Newsletter',
+                        'autre' => 'Autre'
+                    ];
+                    $type_label = isset($type_labels[$template_type]) ? $type_labels[$template_type] : $type_labels['autre'];
+                    
+                    echo '<div class="template-type-badge" style="position: absolute; top: 10px; left: 10px; background: ' . $type_color . '; color: white; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">';
+                    echo $type_label;
+                    echo '</div>';
+                    
+                    echo '<div style="text-align: center; margin-bottom: 15px; margin-top: 40px;">';
                     
                     // Badge du type de template en haut à gauche
                     $type_colors = [
