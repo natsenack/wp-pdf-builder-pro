@@ -138,44 +138,6 @@ setTimeout(function() {
         <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
 
         <div class="pdf-builder-settings">
-            <style>
-            /* Masquer tous les onglets sauf celui actif au chargement */
-            .tab-content:not(.active) { display: none !important; }
-            .tab-content.active { display: block !important; }
-
-            /* Styles supplémentaires pour les onglets */
-            .nav-tab-wrapper {
-                border-bottom: 1px solid #ccc;
-                margin-bottom: 20px;
-            }
-
-            .nav-tab {
-                display: inline-block;
-                padding: 8px 16px;
-                margin-right: 4px;
-                border: 1px solid #ccc;
-                border-bottom: none;
-                background: #f1f1f1;
-                color: #555;
-                text-decoration: none;
-                border-radius: 4px 4px 0 0;
-                cursor: pointer;
-            }
-
-            .nav-tab-active {
-                background: #fff !important;
-                border-bottom: 1px solid #fff !important;
-                color: #000 !important;
-            }
-
-            .tab-content {
-                padding: 20px;
-                border: 1px solid #ccc;
-                border-top: none;
-                background: #fff;
-                border-radius: 0 0 4px 4px;
-            }
-            </style>
 
             <!-- Onglets -->
             <div class="nav-tab-wrapper">
@@ -596,6 +558,55 @@ setTimeout(function() {
 
 .nav-tab-wrapper {
     margin-bottom: 20px;
+    border-bottom: 1px solid #ccc;
+}
+
+.nav-tab {
+    display: inline-block;
+    padding: 8px 16px;
+    margin-right: 4px;
+    border: 1px solid #ccc;
+    border-bottom: none;
+    background: #f1f1f1;
+    color: #555;
+    text-decoration: none;
+    border-radius: 4px 4px 0 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.nav-tab:hover {
+    background: #e9e9e9;
+    color: #333;
+}
+
+.nav-tab-active {
+    background: #fff !important;
+    border-bottom: 1px solid #fff !important;
+    color: #000 !important;
+    position: relative;
+    top: 1px;
+}
+
+.tab-content {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 0 8px 8px 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-top: -1px;
+    display: none;
+}
+
+.tab-content.active {
+    display: block !important;
+}
+
+.tab-content h2 {
+    margin: 0 0 20px 0;
+    color: #23282d;
+    border-bottom: 1px solid #e5e5e5;
+    padding-bottom: 10px;
 }
 
 .tab-content {
@@ -737,9 +748,13 @@ setTimeout(function() {
 
     // Attendre que le DOM soit complètement chargé
     $(document).ready(function() {
+        console.log('🔧 PDF Builder Settings: Initializing tabs...');
+
         // Vérifier que les éléments existent
         var navTabs = document.querySelectorAll('.nav-tab');
         var tabContents = document.querySelectorAll('.tab-content');
+
+        console.log('🔧 Found', navTabs.length, 'nav tabs and', tabContents.length, 'tab contents');
 
         if (navTabs.length === 0 || tabContents.length === 0) {
             console.error('❌ Tab elements not found');
