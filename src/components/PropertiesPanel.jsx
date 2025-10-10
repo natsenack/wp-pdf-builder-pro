@@ -822,30 +822,120 @@ export const PropertiesPanel = ({
                       type="text"
                       value={localProperties.imageUrl || ''}
                       onChange={(e) => handlePropertyChange(selectedElement.id, 'imageUrl', e.target.value)}
-                      placeholder="https://exemple.com/logo.png"
-                    />
-                    <input
-                      type="file"
-                      accept="image/*"
-                      style={{ display: 'none' }}
-                      id={`logo-upload-${selectedElement.id}`}
-                      onChange={(e) => {
-                        const file = e.target.files[0];
-                        if (file) {
-                          // Créer une URL de données pour prévisualisation immédiate
-                          const reader = new FileReader();
-                          reader.onload = (event) => {
-                            handlePropertyChange(selectedElement.id, 'imageUrl', event.target.result);
-                          };
-                          reader.readAsDataURL(file);
-                        }
-                      }}
+                      placeholder="https://exemple.com/logo.png ou sélectionner ci-dessous"
                     />
                     <button
                       type="button"
                       className="media-button"
-                      onClick={() => {
-                        document.getElementById(`logo-upload-${selectedElement.id}`).click();
+                      onClick={async () => {
+                        try {
+                          // Récupérer les médias WordPress via l'API REST
+                          const response = await fetch('/wp-json/wp/v2/media?media_type=image&per_page=50&_embed');
+                          const media = await response.json();
+
+                          // Créer une modale simple pour sélectionner l'image
+                          const modal = document.createElement('div');
+                          modal.style.cssText = `
+                            position: fixed;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            background: rgba(0,0,0,0.8);
+                            z-index: 9999;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                          `;
+
+                          const modalContent = document.createElement('div');
+                          modalContent.style.cssText = `
+                            background: white;
+                            padding: 20px;
+                            border-radius: 8px;
+                            max-width: 600px;
+                            max-height: 80vh;
+                            overflow-y: auto;
+                            width: 90%;
+                          `;
+
+                          const title = document.createElement('h3');
+                          title.textContent = 'Sélectionner un logo depuis la médiathèque';
+                          title.style.marginBottom = '15px';
+
+                          const closeBtn = document.createElement('button');
+                          closeBtn.textContent = '✕';
+                          closeBtn.style.cssText = `
+                            position: absolute;
+                            top: 10px;
+                            right: 10px;
+                            background: none;
+                            border: none;
+                            font-size: 20px;
+                            cursor: pointer;
+                          `;
+                          closeBtn.onclick = () => document.body.removeChild(modal);
+
+                          const grid = document.createElement('div');
+                          grid.style.cssText = `
+                            display: grid;
+                            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                            gap: 10px;
+                            margin-top: 15px;
+                          `;
+
+                          media.forEach(item => {
+                            const imgContainer = document.createElement('div');
+                            imgContainer.style.cssText = `
+                              border: 2px solid #ddd;
+                              border-radius: 4px;
+                              padding: 5px;
+                              cursor: pointer;
+                              transition: border-color 0.2s;
+                            `;
+                            imgContainer.onmouseover = () => imgContainer.style.borderColor = '#007cba';
+                            imgContainer.onmouseout = () => imgContainer.style.borderColor = '#ddd';
+
+                            const img = document.createElement('img');
+                            img.src = item.source_url;
+                            img.style.cssText = `
+                              width: 100%;
+                              height: 80px;
+                              object-fit: cover;
+                              border-radius: 2px;
+                            `;
+
+                            const name = document.createElement('div');
+                            name.textContent = item.title.rendered.length > 15 ?
+                              item.title.rendered.substring(0, 15) + '...' :
+                              item.title.rendered;
+                            name.style.cssText = `
+                              font-size: 11px;
+                              text-align: center;
+                              margin-top: 5px;
+                              color: #666;
+                            `;
+
+                            imgContainer.onclick = () => {
+                              handlePropertyChange(selectedElement.id, 'imageUrl', item.source_url);
+                              document.body.removeChild(modal);
+                            };
+
+                            imgContainer.appendChild(img);
+                            imgContainer.appendChild(name);
+                            grid.appendChild(imgContainer);
+                          });
+
+                          modalContent.appendChild(title);
+                          modalContent.appendChild(closeBtn);
+                          modalContent.appendChild(grid);
+                          modal.appendChild(modalContent);
+                          document.body.appendChild(modal);
+
+                        } catch (error) {
+                          console.error('Erreur lors de la récupération des médias:', error);
+                          alert('Erreur lors de l\'accès à la médiathèque WordPress');
+                        }
                       }}
                     >
                       � Uploader
