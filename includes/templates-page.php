@@ -41,7 +41,7 @@ if (!defined('ABSPATH')) {
             // Récupérer les templates depuis la base de données
             global $wpdb;
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-            $templates = $wpdb->get_results("SELECT id, name, created_at, updated_at FROM $table_templates ORDER BY id", ARRAY_A);
+            $templates = $wpdb->get_results("SELECT id, name, created_at, updated_at, is_default FROM $table_templates ORDER BY id", ARRAY_A);
             
             if (!empty($templates)) {
                 echo '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">';
@@ -51,6 +51,7 @@ if (!defined('ABSPATH')) {
                     $template_name = esc_html($template['name']);
                     $created_at = isset($template['created_at']) ? $template['created_at'] : null;
                     $updated_at = isset($template['updated_at']) ? $template['updated_at'] : null;
+                    $is_default = isset($template['is_default']) ? (bool)$template['is_default'] : false;
                     
                     // Déterminer le type de template pour l'icône par défaut
                     $template_type = 'autre';
@@ -96,9 +97,6 @@ if (!defined('ABSPATH')) {
                     echo '<div style="display: flex; flex-direction: column; height: 100%;">';
 
                     // Badge du type de template en haut à gauche
-                    
-                    // Vérifier si c'est le template par défaut pour ce type (simulation)
-                    $is_default = false; // À remplacer par une vraie vérification en base
                     
                     echo '<div class="default-template-icon" style="position: absolute; top: 10px; right: 10px; font-size: 20px; cursor: pointer; opacity: ' . ($is_default ? '1' : '0.5') . ';" onclick="toggleDefaultTemplate(' . $template_id . ', \'' . $template_type . '\', \'' . addslashes($template_name) . '\')" title="' . ($is_default ? 'Template par défaut' : 'Définir comme template par défaut') . '">';
                     echo $is_default ? '⭐' : '☆';
@@ -326,14 +324,137 @@ function deleteTemplate(templateId, templateName) {
 }
 
 function toggleDefaultTemplate(templateId, templateType, templateName) {
-    // Simulation du changement de template par défaut (à remplacer par un vrai appel AJAX)
-    console.log('Changement template par défaut:', templateId, templateType, templateName);
-    
-    // Afficher un message de succès temporaire
-    alert('✅ "' + templateName + '" défini comme template par défaut pour les ' + templateType + 's !');
-    
-    // Recharger la page pour voir les changements
-    location.reload();
+    // Trouver l'icône du template actuel
+    const currentIcon = document.querySelector(`.template-card input[value="${templateId}"]`)?.closest('.template-card')?.querySelector('.default-template-icon');
+    const isCurrentlyDefault = currentIcon?.style.opacity === '1';
+
+    // Préparer les données pour AJAX
+    const data = {
+        action: 'pdf_builder_set_default_template',
+        template_id: templateId,
+        is_default: isCurrentlyDefault ? 0 : 1,
+        nonce: '<?php echo wp_create_nonce("pdf_builder_templates"); ?>'
+    };
+
+    // Afficher un indicateur de chargement
+    if (currentIcon) {
+        currentIcon.style.pointerEvents = 'none';
+        currentIcon.innerHTML = '⏳';
+    }
+
+    // Faire l'appel AJAX
+    jQuery.post(ajaxurl, data, function(response) {
+        if (response.success) {
+            // Mettre à jour l'icône et le titre
+            if (currentIcon) {
+                const newIsDefault = !isCurrentlyDefault;
+                currentIcon.innerHTML = newIsDefault ? '⭐' : '☆';
+                currentIcon.style.opacity = newIsDefault ? '1' : '0.5';
+                currentIcon.title = newIsDefault ? 'Template par défaut' : 'Définir comme template par défaut';
+                currentIcon.style.pointerEvents = 'auto';
+            }
+
+            // Afficher un message de succès temporaire
+            showSuccessMessage(response.data.message);
+
+            // Mettre à jour les autres icônes du même type pour retirer le statut par défaut
+            if (!isCurrentlyDefault) {
+                document.querySelectorAll('.template-card').forEach(card => {
+                    const cardType = card.className.match(/template-type-(\w+)/)?.[1];
+                    if (cardType === templateType) {
+                        const otherIcon = card.querySelector('.default-template-icon');
+                        if (otherIcon && otherIcon !== currentIcon) {
+                            otherIcon.innerHTML = '☆';
+                            otherIcon.style.opacity = '0.5';
+                            otherIcon.title = 'Définir comme template par défaut';
+                        }
+                    }
+                });
+            }
+        } else {
+            // Erreur
+            if (currentIcon) {
+                currentIcon.innerHTML = isCurrentlyDefault ? '⭐' : '☆';
+                currentIcon.style.pointerEvents = 'auto';
+            }
+            showErrorMessage(response.data?.message || 'Erreur lors de la modification du statut par défaut');
+        }
+    }).fail(function() {
+        // Erreur de réseau
+        if (currentIcon) {
+            currentIcon.innerHTML = isCurrentlyDefault ? '⭐' : '☆';
+            currentIcon.style.pointerEvents = 'auto';
+        }
+        showErrorMessage('Erreur de connexion');
+    });
+}
+
+// Fonction pour afficher un message de succès temporaire
+function showSuccessMessage(message) {
+    // Supprimer les anciens messages
+    const existingMessages = document.querySelectorAll('.pdf-builder-message');
+    existingMessages.forEach(msg => msg.remove());
+
+    // Créer le nouveau message
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'pdf-builder-message success';
+    messageDiv.style.cssText = `
+        position: fixed;
+        top: 40px;
+        right: 20px;
+        background: #28a745;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 4px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        z-index: 9999;
+        font-weight: bold;
+        max-width: 400px;
+    `;
+    messageDiv.innerHTML = '✅ ' + message;
+
+    document.body.appendChild(messageDiv);
+
+    // Faire disparaître le message après 3 secondes
+    setTimeout(() => {
+        messageDiv.style.transition = 'opacity 0.5s';
+        messageDiv.style.opacity = '0';
+        setTimeout(() => messageDiv.remove(), 500);
+    }, 3000);
+}
+
+// Fonction pour afficher un message d'erreur temporaire
+function showErrorMessage(message) {
+    // Supprimer les anciens messages
+    const existingMessages = document.querySelectorAll('.pdf-builder-message');
+    existingMessages.forEach(msg => msg.remove());
+
+    // Créer le nouveau message
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'pdf-builder-message error';
+    messageDiv.style.cssText = `
+        position: fixed;
+        top: 40px;
+        right: 20px;
+        background: #dc3545;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 4px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        z-index: 9999;
+        font-weight: bold;
+        max-width: 400px;
+    `;
+    messageDiv.innerHTML = '❌ ' + message;
+
+    document.body.appendChild(messageDiv);
+
+    // Faire disparaître le message après 5 secondes
+    setTimeout(() => {
+        messageDiv.style.transition = 'opacity 0.5s';
+        messageDiv.style.opacity = '0';
+        setTimeout(() => messageDiv.remove(), 500);
+    }, 5000);
 }
 
 // Fonction de filtrage des templates
