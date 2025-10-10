@@ -129,32 +129,6 @@ if (!defined('ABSPATH')) {
                     echo '</div>';
                     
                     echo '<div style="text-align: center; margin-bottom: 15px; margin-top: 40px;">';
-                    
-                    // Badge du type de template en haut à gauche
-                    $type_colors = [
-                        'facture' => '#007cba',
-                        'devis' => '#28a745', 
-                        'commande' => '#ffc107',
-                        'contrat' => '#dc3545',
-                        'newsletter' => '#6f42c1',
-                        'autre' => '#6c757d'
-                    ];
-                    $type_color = isset($type_colors[$template_type]) ? $type_colors[$template_type] : $type_colors['autre'];
-                    $type_labels = [
-                        'facture' => 'Facture',
-                        'devis' => 'Devis',
-                        'commande' => 'Commande', 
-                        'contrat' => 'Contrat',
-                        'newsletter' => 'Newsletter',
-                        'autre' => 'Autre'
-                    ];
-                    $type_label = isset($type_labels[$template_type]) ? $type_labels[$template_type] : $type_labels['autre'];
-                    
-                    echo '<div class="template-type-badge" style="position: absolute; top: 10px; left: 10px; background: ' . $type_color . '; color: white; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px;">';
-                    echo $type_label;
-                    echo '</div>';
-                    
-                    echo '<div style="text-align: center; margin-bottom: 15px; margin-top: 40px;">';
                     echo '<div style="font-size: 3rem; margin-bottom: 10px;">' . $icon . '</div>';
                     echo '<h3 style="margin: 0; color: #23282d;">' . $template_name . '</h3>';
                     echo '<p style="color: #666; margin: 5px 0;">' . $description . '</p>';
@@ -378,10 +352,10 @@ function filterTemplates(filterType) {
     // Filtrer les cartes
     cards.forEach(card => {
         if (filterType === 'all') {
-            card.style.display = 'flex';
+            card.style.display = 'block';
         } else {
             if (card.classList.contains('template-type-' + filterType)) {
-                card.style.display = 'flex';
+                card.style.display = 'block';
             } else {
                 card.style.display = 'none';
             }
