@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
+import { elementCustomizationService } from '../services/ElementCustomizationService';
 
 /**
  * Hook pour gérer la personnalisation des éléments
