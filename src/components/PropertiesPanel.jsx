@@ -810,7 +810,7 @@ export const PropertiesPanel = ({
               />
             )}
 
-            {/* Contrôles pour company_logo */}
+            {/* Contrôles pour le logo entreprise */}
             {selectedElement.type === 'company_logo' && (
               <div className="properties-group">
                 <h4>🏢 Logo Entreprise</h4>
@@ -827,31 +827,29 @@ export const PropertiesPanel = ({
 
                 <div className="property-row">
                   <label>Largeur:</label>
-                  <div className="slider-container">
+                  <div className="input-with-unit">
                     <input
-                      type="range"
-                      min="50"
-                      max="300"
+                      type="number"
                       value={localProperties.width || 150}
                       onChange={(e) => handlePropertyChange(selectedElement.id, 'width', parseInt(e.target.value))}
-                      className="slider"
+                      min="20"
+                      max="500"
                     />
-                    <span className="slider-value">{localProperties.width || 150}px</span>
+                    <span className="unit">px</span>
                   </div>
                 </div>
 
                 <div className="property-row">
                   <label>Hauteur:</label>
-                  <div className="slider-container">
+                  <div className="input-with-unit">
                     <input
-                      type="range"
-                      min="30"
-                      max="200"
+                      type="number"
                       value={localProperties.height || 80}
                       onChange={(e) => handlePropertyChange(selectedElement.id, 'height', parseInt(e.target.value))}
-                      className="slider"
+                      min="20"
+                      max="300"
                     />
-                    <span className="slider-value">{localProperties.height || 80}px</span>
+                    <span className="unit">px</span>
                   </div>
                 </div>
 
@@ -868,20 +866,47 @@ export const PropertiesPanel = ({
                 </div>
 
                 <div className="property-row">
-                  <label>Mode d'ajustement:</label>
+                  <label>Ajustement:</label>
                   <select
-                    value={localProperties.fitMode || 'contain'}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'fitMode', e.target.value)}
+                    value={localProperties.fit || 'contain'}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'fit', e.target.value)}
                   >
                     <option value="contain">Contenir</option>
                     <option value="cover">Couvrir</option>
                     <option value="fill">Remplir</option>
                   </select>
                 </div>
+
+                <div className="property-row">
+                  <label>Afficher la bordure:</label>
+                  <label className="toggle">
+                    <input
+                      type="checkbox"
+                      checked={localProperties.showBorder || false}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'showBorder', e.target.checked)}
+                    />
+                    <span className="toggle-slider"></span>
+                  </label>
+                </div>
+
+                <div className="property-row">
+                  <label>Arrondi des coins:</label>
+                  <div className="slider-container">
+                    <input
+                      type="range"
+                      min="0"
+                      max="50"
+                      value={localProperties.borderRadius || 0}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'borderRadius', parseInt(e.target.value))}
+                      className="slider"
+                    />
+                    <span className="slider-value">{localProperties.borderRadius || 0}px</span>
+                  </div>
+                </div>
               </div>
             )}
 
-            {/* Contrôles pour company_info */}
+            {/* Contrôles pour les informations entreprise */}
             {selectedElement.type === 'company_info' && (
               <div className="properties-group">
                 <h4>📄 Informations Entreprise</h4>
@@ -890,7 +915,7 @@ export const PropertiesPanel = ({
                   <label>Champs à afficher:</label>
                   <div className="checkbox-group">
                     {[
-                      { key: 'name', label: 'Nom entreprise' },
+                      { key: 'name', label: 'Nom' },
                       { key: 'address', label: 'Adresse' },
                       { key: 'phone', label: 'Téléphone' },
                       { key: 'email', label: 'Email' },
@@ -915,129 +940,76 @@ export const PropertiesPanel = ({
                   </div>
                 </div>
 
-                <div className="property-row">
-                  <label>Disposition:</label>
-                  <select
-                    value={localProperties.layout || 'vertical'}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'layout', e.target.value)}
-                  >
-                    <option value="vertical">Verticale</option>
-                    <option value="horizontal">Horizontale</option>
-                  </select>
-                </div>
+                <FontControls
+                  elementId={selectedElement.id}
+                  properties={localProperties}
+                  onPropertyChange={handlePropertyChange}
+                />
 
                 <div className="property-row">
-                  <label>Alignement:</label>
+                  <label>Alignement du texte:</label>
                   <select
-                    value={localProperties.alignment || 'left'}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'alignment', e.target.value)}
+                    value={localProperties.textAlign || 'left'}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'textAlign', e.target.value)}
                   >
                     <option value="left">Gauche</option>
                     <option value="center">Centre</option>
                     <option value="right">Droite</option>
                   </select>
                 </div>
-
-                <div className="property-row">
-                  <label>Espacement:</label>
-                  <div className="slider-container">
-                    <input
-                      type="range"
-                      min="0"
-                      max="20"
-                      value={localProperties.spacing || 4}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'spacing', parseInt(e.target.value))}
-                      className="slider"
-                    />
-                    <span className="slider-value">{localProperties.spacing || 4}px</span>
-                  </div>
-                </div>
               </div>
             )}
 
-            {/* Contrôles de police pour company_info */}
-            {selectedElement.type === 'company_info' && (
-              <FontControls
-                elementId={selectedElement.id}
-                properties={localProperties}
-                onPropertyChange={handlePropertyChange}
-              />
-            )}
-
-            {/* Contrôles pour order_details */}
-            {selectedElement.type === 'order_details' && (
+            {/* Contrôles pour le numéro de commande */}
+            {selectedElement.type === 'order_number' && (
               <div className="properties-group">
-                <h4>📋 Détails Commande</h4>
+                <h4>🔢 Numéro de Commande</h4>
 
                 <div className="property-row">
-                  <label>Champs à afficher:</label>
-                  <div className="checkbox-group">
-                    {[
-                      { key: 'order_number', label: 'N° commande' },
-                      { key: 'order_date', label: 'Date' },
-                      { key: 'order_status', label: 'Statut' },
-                      { key: 'payment_method', label: 'Paiement' }
-                    ].map(({ key, label }) => (
-                      <label key={key} className="checkbox-item">
-                        <input
-                          type="checkbox"
-                          checked={localProperties.fields?.includes(key) ?? true}
-                          onChange={(e) => {
-                            const currentFields = localProperties.fields || ['order_number', 'order_date', 'order_status', 'payment_method'];
-                            const newFields = e.target.checked
-                              ? [...currentFields, key]
-                              : currentFields.filter(f => f !== key);
-                            handlePropertyChange(selectedElement.id, 'fields', newFields);
-                          }}
-                        />
-                        {label}
-                      </label>
-                    ))}
-                  </div>
+                  <label>Format:</label>
+                  <input
+                    type="text"
+                    value={localProperties.format || 'Commande #{order_number} - {order_date}'}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'format', e.target.value)}
+                    placeholder="Commande #{order_number} - {order_date}"
+                  />
                 </div>
 
                 <div className="property-row">
-                  <label>Disposition:</label>
-                  <select
-                    value={localProperties.layout || 'horizontal'}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'layout', e.target.value)}
-                  >
-                    <option value="vertical">Verticale</option>
-                    <option value="horizontal">Horizontale</option>
-                  </select>
-                </div>
-
-                <div className="property-row">
-                  <label>Afficher les étiquettes:</label>
+                  <label>Afficher l'étiquette:</label>
                   <label className="toggle">
                     <input
                       type="checkbox"
-                      checked={localProperties.showLabels ?? true}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'showLabels', e.target.checked)}
+                      checked={localProperties.showLabel || true}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'showLabel', e.target.checked)}
                     />
                     <span className="toggle-slider"></span>
                   </label>
                 </div>
 
-                {localProperties.showLabels && (
+                {localProperties.showLabel && (
                   <div className="property-row">
-                    <label>Style des étiquettes:</label>
-                    <select
-                      value={localProperties.labelStyle || 'bold'}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'labelStyle', e.target.value)}
-                    >
-                      <option value="normal">Normal</option>
-                      <option value="bold">Gras</option>
-                      <option value="uppercase">Majuscules</option>
-                    </select>
+                    <label>Texte de l'étiquette:</label>
+                    <input
+                      type="text"
+                      value={localProperties.labelText || 'N° de commande:'}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'labelText', e.target.value)}
+                      placeholder="N° de commande:"
+                    />
                   </div>
                 )}
 
+                <FontControls
+                  elementId={selectedElement.id}
+                  properties={localProperties}
+                  onPropertyChange={handlePropertyChange}
+                />
+
                 <div className="property-row">
-                  <label>Alignement:</label>
+                  <label>Alignement du texte:</label>
                   <select
-                    value={localProperties.alignment || 'right'}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'alignment', e.target.value)}
+                    value={localProperties.textAlign || 'right'}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'textAlign', e.target.value)}
                   >
                     <option value="left">Gauche</option>
                     <option value="center">Centre</option>
@@ -1045,30 +1017,13 @@ export const PropertiesPanel = ({
                   </select>
                 </div>
 
-                <div className="property-row">
-                  <label>Espacement:</label>
-                  <div className="slider-container">
-                    <input
-                      type="range"
-                      min="4"
-                      max="24"
-                      value={localProperties.spacing || 12}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'spacing', parseInt(e.target.value))}
-                      className="slider"
-                    />
-                    <span className="slider-value">{localProperties.spacing || 12}px</span>
-                  </div>
-                </div>
+                <ColorPicker
+                  label="Couleur du texte"
+                  value={localProperties.color}
+                  onChange={(value) => handlePropertyChange(selectedElement.id, 'color', value)}
+                  presets={['#1e293b', '#334155', '#475569', '#64748b', '#000000', '#333333']}
+                />
               </div>
-            )}
-
-            {/* Contrôles de police pour order_details */}
-            {selectedElement.type === 'order_details' && (
-              <FontControls
-                elementId={selectedElement.id}
-                properties={localProperties}
-                onPropertyChange={handlePropertyChange}
-              />
             )}
           </div>
         );

@@ -47,6 +47,61 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
         labelStyle: 'bold', // 'normal', 'bold', 'uppercase'
         spacing: 8 // espacement en pixels
       }
+    },
+    {
+      type: 'company_logo',
+      fieldID: 'company_logo',
+      label: 'Logo Entreprise',
+      icon: '🏢',
+      description: 'Logo et identité visuelle de l\'entreprise',
+      defaultProperties: {
+        imageUrl: '',
+        width: 150,
+        height: 80,
+        alignment: 'left', // 'left', 'center', 'right'
+        fit: 'contain', // 'contain', 'cover', 'fill'
+        showBorder: false,
+        borderRadius: 0
+      }
+    },
+    {
+      type: 'company_info',
+      fieldID: 'company_info',
+      label: 'Informations Entreprise',
+      icon: '📄',
+      description: 'Nom, adresse, contact et TVA de l\'entreprise',
+      defaultProperties: {
+        showHeaders: false,
+        showBorders: false,
+        fields: ['name', 'address', 'phone', 'email', 'website', 'vat'],
+        layout: 'vertical',
+        showLabels: false,
+        labelStyle: 'normal',
+        spacing: 4,
+        fontSize: 12,
+        fontFamily: 'Arial',
+        fontWeight: 'normal',
+        textAlign: 'left' // 'left', 'center', 'right'
+      }
+    },
+    {
+      type: 'order_number',
+      fieldID: 'order_number',
+      label: 'Numéro de Commande',
+      icon: '🔢',
+      description: 'Référence de commande avec date',
+      defaultProperties: {
+        showHeaders: false,
+        showBorders: false,
+        format: 'Commande #{order_number} - {order_date}',
+        fontSize: 14,
+        fontFamily: 'Arial',
+        fontWeight: 'bold',
+        textAlign: 'right',
+        color: '#333333',
+        showLabel: true,
+        labelText: 'N° de commande:'
+      }
     }
   ];
 
