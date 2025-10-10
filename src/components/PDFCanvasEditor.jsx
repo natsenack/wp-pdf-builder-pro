@@ -448,7 +448,7 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
           style={{
             position: 'fixed',
             top: '50%',
-            right: isPropertiesCollapsed ? '70px' : '330px',
+            right: isPropertiesCollapsed ? '70px' : '410px',
             transform: 'translateY(-50%)',
             zIndex: 999999
           }}
