@@ -102,6 +102,30 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
         showLabel: true,
         labelText: 'N° de commande:'
       }
+    },
+    {
+      type: 'document_type',
+      fieldID: 'document_type',
+      label: 'Type de Document',
+      icon: '📋',
+      description: 'Devis, Facture, Reçu, etc.',
+      defaultProperties: {
+        documentType: 'invoice', // 'invoice', 'quote', 'receipt', 'order', 'credit_note'
+        customText: {
+          invoice: 'FACTURE',
+          quote: 'DEVIS',
+          receipt: 'REÇU',
+          order: 'COMMANDE',
+          credit_note: 'AVOIR'
+        },
+        fontSize: 18,
+        fontFamily: 'Arial',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        color: '#1e293b',
+        showBorder: false,
+        backgroundColor: 'transparent'
+      }
     }
   ];
 

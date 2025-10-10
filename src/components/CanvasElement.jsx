@@ -570,7 +570,7 @@ export const CanvasElement = ({
          element.type === 'progress-bar' ? null :
          element.type === 'product_table' ? null : // Le contenu sera rendu plus bas dans le même conteneur
          element.type === 'customer_info' ? null : // Le contenu sera rendu plus bas dans le même conteneur
-         element.type !== 'image' && element.type !== 'rectangle' && element.type !== 'company_logo' && element.type !== 'order_number' && element.type !== 'company_info' ? element.type : null}
+         element.type !== 'image' && element.type !== 'rectangle' && element.type !== 'company_logo' && element.type !== 'order_number' && element.type !== 'company_info' && element.type !== 'document_type' ? element.type : null}
 
         {/* Rendu spécial pour les tableaux de produits */}
         {element.type === 'product_table' && (
@@ -1406,6 +1406,33 @@ export const CanvasElement = ({
             <div>
               Commande #12345 - 15/10/2025
             </div>
+          </div>
+        )}
+
+        {/* Rendu spécial pour le type de document */}
+        {element.type === 'document_type' && (
+          <div style={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start',
+            padding: `${8 * zoom}px`,
+            fontSize: `${(element.fontSize || 18) * zoom}px`,
+            fontFamily: element.fontFamily || 'Arial',
+            fontWeight: element.fontWeight || 'bold',
+            color: element.color || '#1e293b',
+            textAlign: element.textAlign || 'center',
+            backgroundColor: element.backgroundColor || 'transparent',
+            border: element.showBorder ? '2px solid #e2e8f0' : 'none',
+            borderRadius: '4px'
+          }}>
+            {element.customText?.[element.documentType] || 
+             (element.documentType === 'invoice' ? 'FACTURE' :
+              element.documentType === 'quote' ? 'DEVIS' :
+              element.documentType === 'receipt' ? 'REÇU' :
+              element.documentType === 'order' ? 'COMMANDE' :
+              element.documentType === 'credit_note' ? 'AVOIR' : 'DOCUMENT')}
           </div>
         )}
       </div>

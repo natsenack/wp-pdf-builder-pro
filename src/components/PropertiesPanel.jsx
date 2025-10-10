@@ -1024,6 +1024,121 @@ export const PropertiesPanel = ({
               </div>
             )}
 
+            {/* Contrôles pour le type de document */}
+            {selectedElement.type === 'document_type' && (
+              <div className="properties-group">
+                <h4>📋 Type de Document</h4>
+
+                <div className="property-row">
+                  <label>Type de document:</label>
+                  <select
+                    value={localProperties.documentType || 'invoice'}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'documentType', e.target.value)}
+                  >
+                    <option value="invoice">Facture</option>
+                    <option value="quote">Devis</option>
+                    <option value="receipt">Reçu</option>
+                    <option value="order">Commande</option>
+                    <option value="credit_note">Avoir</option>
+                  </select>
+                </div>
+
+                <div className="property-row">
+                  <label>Texte personnalisé - Facture:</label>
+                  <input
+                    type="text"
+                    value={localProperties.customText?.invoice || 'FACTURE'}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'customText.invoice', e.target.value)}
+                    placeholder="FACTURE"
+                  />
+                </div>
+
+                <div className="property-row">
+                  <label>Texte personnalisé - Devis:</label>
+                  <input
+                    type="text"
+                    value={localProperties.customText?.quote || 'DEVIS'}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'customText.quote', e.target.value)}
+                    placeholder="DEVIS"
+                  />
+                </div>
+
+                <div className="property-row">
+                  <label>Texte personnalisé - Reçu:</label>
+                  <input
+                    type="text"
+                    value={localProperties.customText?.receipt || 'REÇU'}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'customText.receipt', e.target.value)}
+                    placeholder="REÇU"
+                  />
+                </div>
+
+                <div className="property-row">
+                  <label>Texte personnalisé - Commande:</label>
+                  <input
+                    type="text"
+                    value={localProperties.customText?.order || 'COMMANDE'}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'customText.order', e.target.value)}
+                    placeholder="COMMANDE"
+                  />
+                </div>
+
+                <div className="property-row">
+                  <label>Texte personnalisé - Avoir:</label>
+                  <input
+                    type="text"
+                    value={localProperties.customText?.credit_note || 'AVOIR'}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'customText.credit_note', e.target.value)}
+                    placeholder="AVOIR"
+                  />
+                </div>
+
+                <FontControls
+                  elementId={selectedElement.id}
+                  properties={localProperties}
+                  onPropertyChange={handlePropertyChange}
+                />
+
+                <div className="property-row">
+                  <label>Alignement du texte:</label>
+                  <select
+                    value={localProperties.textAlign || 'center'}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'textAlign', e.target.value)}
+                  >
+                    <option value="left">Gauche</option>
+                    <option value="center">Centre</option>
+                    <option value="right">Droite</option>
+                  </select>
+                </div>
+
+                <ColorPicker
+                  label="Couleur du texte"
+                  value={localProperties.color}
+                  onChange={(value) => handlePropertyChange(selectedElement.id, 'color', value)}
+                  presets={['#1e293b', '#334155', '#475569', '#64748b', '#000000', '#dc2626', '#059669', '#7c3aed']}
+                />
+
+                <div className="property-row">
+                  <label>Afficher la bordure:</label>
+                  <label className="toggle">
+                    <input
+                      type="checkbox"
+                      checked={localProperties.showBorder || false}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'showBorder', e.target.checked)}
+                    />
+                    <span className="toggle-slider"></span>
+                  </label>
+                </div>
+
+                <ColorPicker
+                  label="Couleur de fond"
+                  value={localProperties.backgroundColor}
+                  onChange={(value) => handlePropertyChange(selectedElement.id, 'backgroundColor', value)}
+                  presets={['transparent', '#ffffff', '#f8fafc', '#fef3c7', '#ecfdf5', '#f0f9ff']}
+                />
+              </div>
+            )}
+
             {/* Contrôles pour les informations entreprise */}
             {selectedElement.type === 'company_info' && (
               <div className="properties-group">
