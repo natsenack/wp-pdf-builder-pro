@@ -715,32 +715,43 @@ class PDF_Builder_Canvas_Elements_Manager {
      * Charger les éléments du canvas
      */
     public function load_canvas_elements($template_id) {
+        error_log('PDF_Builder_Canvas_Elements_Manager: load_canvas_elements called with template_id: ' . $template_id);
+        
         // Charger le template depuis la base de données
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-
+        
         $template = $wpdb->get_row(
             $wpdb->prepare("SELECT template_data FROM $table_templates WHERE id = %d", $template_id),
             ARRAY_A
         );
-
+        
+        error_log('PDF_Builder_Canvas_Elements_Manager: Template query result: ' . print_r($template, true));
+        
         if (!$template) {
+            error_log('PDF_Builder_Canvas_Elements_Manager: No template found with ID: ' . $template_id);
             return [];
         }
 
         // Décoder les données JSON du template
         $template_data = json_decode($template['template_data'], true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            error_log('PDF Builder: Invalid JSON in template_data for template ID ' . $template_id . '. JSON error: ' . json_last_error_msg());
+            error_log('PDF_Builder_Canvas_Elements_Manager: Invalid JSON in template_data for template ID ' . $template_id . '. JSON error: ' . json_last_error_msg());
             return [];
         }
+        
+        error_log('PDF_Builder_Canvas_Elements_Manager: Decoded template data: ' . print_r($template_data, true));
 
         // Extraire les éléments du canvas depuis les données du template
         $elements = [];
         if (isset($template_data['elements']) && is_array($template_data['elements'])) {
             $elements = $template_data['elements'];
+            error_log('PDF_Builder_Canvas_Elements_Manager: Found ' . count($elements) . ' elements in template');
+        } else {
+            error_log('PDF_Builder_Canvas_Elements_Manager: No elements array found in template data');
         }
 
+        error_log('PDF_Builder_Canvas_Elements_Manager: Returning elements: ' . print_r($elements, true));
         return $elements;
     }
 }

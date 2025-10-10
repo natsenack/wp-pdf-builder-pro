@@ -3526,23 +3526,30 @@ class PDF_Builder_Admin {
      * AJAX - Charger les éléments du canvas d'un template
      */
     public function ajax_load_canvas_elements() {
-        error_log('PDF Builder Pro: ajax_load_canvas_elements function START');
+        error_log('PDF Builder Pro: ajax_load_canvas_elements function START - REQUEST: ' . print_r($_REQUEST, true));
+        error_log('PDF Builder Pro: ajax_load_canvas_elements function START - POST: ' . print_r($_POST, true));
         
         // Vérifier le nonce
         if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_templates')) {
+            error_log('PDF Builder Pro: ajax_load_canvas_elements - Nonce check failed');
             wp_send_json_error(['message' => 'Nonce invalide']);
             return;
         }
+        error_log('PDF Builder Pro: ajax_load_canvas_elements - Nonce check passed');
 
         // Vérifier les permissions
         if (!current_user_can('manage_options')) {
+            error_log('PDF Builder Pro: ajax_load_canvas_elements - Permission check failed');
             wp_send_json_error(['message' => 'Permissions insuffisantes']);
             return;
         }
+        error_log('PDF Builder Pro: ajax_load_canvas_elements - Permission check passed');
 
         $template_id = intval($_POST['template_id'] ?? 0);
+        error_log('PDF Builder Pro: ajax_load_canvas_elements - Template ID: ' . $template_id);
 
         if (!$template_id) {
+            error_log('PDF Builder Pro: ajax_load_canvas_elements - Invalid template ID');
             wp_send_json_error(['message' => 'ID de template invalide']);
             return;
         }
@@ -3550,9 +3557,12 @@ class PDF_Builder_Admin {
         try {
             // Obtenir l'instance du gestionnaire d'éléments
             $elements_manager = PDF_Builder_Canvas_Elements_Manager::getInstance();
+            error_log('PDF Builder Pro: ajax_load_canvas_elements - Elements manager obtained');
             
             // Charger les éléments du template
             $elements = $elements_manager->load_canvas_elements($template_id);
+            error_log('PDF Builder Pro: ajax_load_canvas_elements - Elements loaded: ' . print_r($elements, true));
+            error_log('PDF Builder Pro: ajax_load_canvas_elements - Elements count: ' . count($elements));
             
             // Récupérer aussi le nom du template
             global $wpdb;
@@ -3561,15 +3571,17 @@ class PDF_Builder_Admin {
                 $wpdb->prepare("SELECT name FROM $table_templates WHERE id = %d", $template_id),
                 ARRAY_A
             );
+            error_log('PDF Builder Pro: ajax_load_canvas_elements - Template info: ' . print_r($template_info, true));
             
             wp_send_json_success([
                 'elements' => $elements,
                 'template_id' => $template_id,
                 'template_name' => $template_info ? $template_info['name'] : 'Template #' . $template_id
             ]);
+            error_log('PDF Builder Pro: ajax_load_canvas_elements - Success response sent');
             
         } catch (Exception $e) {
-            error_log('PDF Builder Pro: Exception in ajax_load_canvas_elements: ' . $e->getMessage());
+            error_log('PDF Builder Pro: ajax_load_canvas_elements - Exception: ' . $e->getMessage());
             wp_send_json_error(['message' => 'Erreur lors du chargement des éléments: ' . $e->getMessage()]);
         }
     }
