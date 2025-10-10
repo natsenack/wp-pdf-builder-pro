@@ -171,6 +171,7 @@ window.addEventListener('load', function() {
             <!-- Onglets -->
             <div class="nav-tab-wrapper">
                 <a href="#general" class="nav-tab nav-tab-active"><?php _e('Général', 'pdf-builder-pro'); ?></a>
+                <a href="#license" class="nav-tab"><?php _e('Licence', 'pdf-builder-pro'); ?></a>
                 <a href="#performance" class="nav-tab"><?php _e('Performance', 'pdf-builder-pro'); ?></a>
                 <a href="#pdf" class="nav-tab"><?php _e('PDF', 'pdf-builder-pro'); ?></a>
                 <a href="#security" class="nav-tab"><?php _e('Sécurité', 'pdf-builder-pro'); ?></a>
@@ -178,7 +179,6 @@ window.addEventListener('load', function() {
                 <a href="#notifications" class="nav-tab"><?php _e('Notifications', 'pdf-builder-pro'); ?></a>
                 <a href="#canvas" class="nav-tab"><?php _e('Canvas', 'pdf-builder-pro'); ?></a>
                 <a href="#maintenance" class="nav-tab"><?php _e('Maintenance', 'pdf-builder-pro'); ?></a>
-                <a href="#license" class="nav-tab"><?php _e('Licence', 'pdf-builder-pro'); ?></a>
             </div>
 
             <!-- Onglet Général -->
@@ -214,6 +214,189 @@ window.addEventListener('load', function() {
                         </td>
                     </tr>
                 </table>
+            </div>
+
+            <!-- Onglet Licence -->
+            <div id="license" class="tab-content">
+                <h2><?php _e('Gestion de la Licence', 'pdf-builder-pro'); ?></h2>
+
+                <?php
+                // Charger les classes de licence si elles existent
+                if (file_exists(plugin_dir_path(__FILE__) . 'classes/PDF_Builder_License_Manager.php')) {
+                    require_once plugin_dir_path(__FILE__) . 'classes/PDF_Builder_License_Manager.php';
+                    require_once plugin_dir_path(__FILE__) . 'classes/PDF_Builder_Feature_Manager.php';
+
+                    $license_manager = PDF_Builder_License_Manager::getInstance();
+                    $feature_manager = new PDF_Builder_Feature_Manager();
+                    $license_info = $license_manager->get_license_info();
+                    $is_premium = $license_manager->is_premium();
+
+                    // Traitement de l'activation de licence
+                    if (isset($_POST['activate_license']) && check_admin_referer('activate_license', 'license_nonce')) {
+                        $license_key = sanitize_text_field($_POST['license_key']);
+                        $result = $license_manager->activate_license($license_key);
+
+                        if ($result['success']) {
+                            echo '<div class="notice notice-success is-dismissible"><p>' . esc_html($result['message']) . '</p></div>';
+                            $license_info = $license_manager->get_license_info(); // Refresh
+                            $is_premium = $license_manager->is_premium();
+                        } else {
+                            echo '<div class="notice notice-error is-dismissible"><p>' . esc_html($result['message']) . '</p></div>';
+                        }
+                    }
+
+                    // Traitement de la désactivation
+                    if (isset($_POST['deactivate_license']) && check_admin_referer('deactivate_license', 'deactivate_nonce')) {
+                        $result = $license_manager->deactivate_license();
+                        if ($result['success']) {
+                            echo '<div class="notice notice-success is-dismissible"><p>' . esc_html($result['message']) . '</p></div>';
+                            $license_info = $license_manager->get_license_info(); // Refresh
+                            $is_premium = $license_manager->is_premium();
+                        } else {
+                            echo '<div class="notice notice-error is-dismissible"><p>' . esc_html($result['message']) . '</p></div>';
+                        }
+                    }
+                } else {
+                    echo '<div class="notice notice-warning"><p>Le système de licence n\'est pas encore disponible. Il sera activé dans la prochaine mise à jour.</p></div>';
+                    $is_premium = false;
+                    $license_info = ['status' => 'free', 'tier' => 'free'];
+                }
+                ?>
+
+                <!-- Status de la licence -->
+                <div class="license-status-card" style="background: #fff; border: 1px solid #e5e5e5; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                    <h3 style="margin-top: 0; color: #23282d;"><?php _e('Statut de la Licence', 'pdf-builder-pro'); ?></h3>
+
+                    <div class="license-status-indicator <?php echo esc_attr($license_info['status']); ?>" style="display: inline-block; padding: 8px 16px; border-radius: 4px; font-weight: bold; margin-bottom: 15px;">
+                        <?php
+                        $status_labels = [
+                            'free' => 'Gratuit',
+                            'active' => 'Premium Activé',
+                            'expired' => 'Expiré',
+                            'invalid' => 'Invalide'
+                        ];
+                        echo esc_html($status_labels[$license_info['status']] ?? ucfirst($license_info['status']));
+                        ?>
+                    </div>
+
+                    <?php if ($license_info['tier'] !== 'free'): ?>
+                        <div style="margin-bottom: 15px;">
+                            <strong><?php _e('Niveau :', 'pdf-builder-pro'); ?></strong>
+                            <?php echo esc_html(ucfirst($license_info['tier'])); ?>
+                            <?php if ($license_info['expires']): ?>
+                                <br><strong><?php _e('Expire le :', 'pdf-builder-pro'); ?></strong>
+                                <?php echo esc_html($license_info['expires']); ?>
+                            <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if (!$is_premium): ?>
+                        <div class="upgrade-prompt" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; margin-top: 20px;">
+                            <h4 style="margin: 0 0 10px 0; color: white;">🔓 Passez à la version Premium</h4>
+                            <p style="margin: 0 0 15px 0;">Débloquez toutes les fonctionnalités avancées et créez des PDFs professionnels sans limites !</p>
+                            <a href="https://pdfbuilderpro.com/pricing" class="button button-primary" target="_blank" style="background: white; color: #667eea; border: none; font-weight: bold;">
+                                <?php _e('Voir les tarifs', 'pdf-builder-pro'); ?>
+                            </a>
+                        </div>
+                    <?php endif; ?>
+                </div>
+
+                <!-- Activation/Désactivation de licence -->
+                <?php if (!$is_premium): ?>
+                <div class="license-activation-form" style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px;">
+                    <h3><?php _e('Activer une Licence Premium', 'pdf-builder-pro'); ?></h3>
+                    <p><?php _e('Entrez votre clé de licence pour débloquer toutes les fonctionnalités premium.', 'pdf-builder-pro'); ?></p>
+
+                    <form method="post">
+                        <?php wp_nonce_field('activate_license', 'license_nonce'); ?>
+                        <table class="form-table" style="background: transparent; margin: 0;">
+                            <tr>
+                                <th scope="row">
+                                    <label for="license_key"><?php _e('Clé de licence', 'pdf-builder-pro'); ?></label>
+                                </th>
+                                <td>
+                                    <input type="text" name="license_key" id="license_key" class="regular-text" placeholder="XXXX-XXXX-XXXX-XXXX" required style="min-width: 300px;">
+                                    <p class="description">
+                                        <?php _e('Vous pouvez trouver votre clé de licence dans votre compte client.', 'pdf-builder-pro'); ?>
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                        <p>
+                            <input type="submit" name="activate_license" class="button button-primary" value="<?php esc_attr_e('Activer la licence', 'pdf-builder-pro'); ?>">
+                        </p>
+                    </form>
+                </div>
+                <?php else: ?>
+                <div class="license-management" style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px;">
+                    <h3><?php _e('Gestion de la Licence', 'pdf-builder-pro'); ?></h3>
+                    <p><?php _e('Votre licence premium est active. Vous pouvez la désactiver si vous souhaitez la transférer vers un autre site.', 'pdf-builder-pro'); ?></p>
+
+                    <form method="post" onsubmit="return confirm('<?php _e('Êtes-vous sûr de vouloir désactiver cette licence ? Elle pourra être réactivée ultérieurement.', 'pdf-builder-pro'); ?>');">
+                        <?php wp_nonce_field('deactivate_license', 'deactivate_nonce'); ?>
+                        <p>
+                            <input type="submit" name="deactivate_license" class="button button-secondary" value="<?php esc_attr_e('Désactiver la licence', 'pdf-builder-pro'); ?>">
+                        </p>
+                    </form>
+                </div>
+                <?php endif; ?>
+
+                <!-- Comparaison des fonctionnalités -->
+                <div class="feature-comparison" style="margin-top: 30px;">
+                    <h3><?php _e('Comparaison des Fonctionnalités', 'pdf-builder-pro'); ?></h3>
+
+                    <div style="overflow-x: auto;">
+                        <table class="wp-list-table widefat fixed striped" style="margin-top: 15px;">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40%;"><?php _e('Fonctionnalité', 'pdf-builder-pro'); ?></th>
+                                    <th style="width: 15%; text-align: center;"><?php _e('Gratuit', 'pdf-builder-pro'); ?></th>
+                                    <th style="width: 15%; text-align: center;"><?php _e('Premium', 'pdf-builder-pro'); ?></th>
+                                    <th style="width: 30%;"><?php _e('Description', 'pdf-builder-pro'); ?></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $features = [
+                                    ['name' => 'Templates de base', 'free' => true, 'premium' => true, 'desc' => '4 templates prédéfinis'],
+                                    ['name' => 'Éléments standards', 'free' => true, 'premium' => true, 'desc' => 'Texte, image, ligne, rectangle'],
+                                    ['name' => 'Intégration WooCommerce', 'free' => true, 'premium' => true, 'desc' => 'Variables de commande'],
+                                    ['name' => 'Génération PDF', 'free' => '50/mois', 'premium' => 'Illimitée', 'desc' => 'Création de documents'],
+                                    ['name' => 'Templates avancés', 'free' => false, 'premium' => true, 'desc' => 'Bibliothèque complète'],
+                                    ['name' => 'Éléments premium', 'free' => false, 'premium' => true, 'desc' => 'Codes-barres, QR codes, graphiques'],
+                                    ['name' => 'Génération en masse', 'free' => false, 'premium' => true, 'desc' => 'Création multiple'],
+                                    ['name' => 'API développeur', 'free' => false, 'premium' => true, 'desc' => 'Accès complet à l\'API'],
+                                    ['name' => 'White-label', 'free' => false, 'premium' => true, 'desc' => 'Rebranding complet'],
+                                    ['name' => 'Support prioritaire', 'free' => false, 'premium' => true, 'desc' => '24/7 avec SLA']
+                                ];
+
+                                foreach ($features as $feature):
+                                ?>
+                                <tr>
+                                    <td><strong><?php echo esc_html($feature['name']); ?></strong></td>
+                                    <td style="text-align: center;">
+                                        <?php if ($feature['free'] === true): ?>
+                                            <span style="color: #46b450;">✓</span>
+                                        <?php elseif ($feature['free'] === false): ?>
+                                            <span style="color: #dc3232;">✗</span>
+                                        <?php else: ?>
+                                            <span style="color: #ffb900;"><?php echo esc_html($feature['free']); ?></span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <?php if ($feature['premium']): ?>
+                                            <span style="color: #46b450;">✓</span>
+                                        <?php else: ?>
+                                            <span style="color: #dc3232;">✗</span>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td><?php echo esc_html($feature['desc']); ?></td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
             <!-- Onglet Performance -->
@@ -574,189 +757,6 @@ window.addEventListener('load', function() {
                     </div>
 
                     <div id="logs-status" class="maintenance-status" style="margin-top: 15px;"></div>
-                </div>
-            </div>
-
-            <!-- Onglet Licence -->
-            <div id="license" class="tab-content">
-                <h2><?php _e('Gestion de la Licence', 'pdf-builder-pro'); ?></h2>
-
-                <?php
-                // Charger les classes de licence si elles existent
-                if (file_exists(plugin_dir_path(__FILE__) . 'classes/PDF_Builder_License_Manager.php')) {
-                    require_once plugin_dir_path(__FILE__) . 'classes/PDF_Builder_License_Manager.php';
-                    require_once plugin_dir_path(__FILE__) . 'classes/PDF_Builder_Feature_Manager.php';
-
-                    $license_manager = PDF_Builder_License_Manager::getInstance();
-                    $feature_manager = new PDF_Builder_Feature_Manager();
-                    $license_info = $license_manager->get_license_info();
-                    $is_premium = $license_manager->is_premium();
-
-                    // Traitement de l'activation de licence
-                    if (isset($_POST['activate_license']) && check_admin_referer('activate_license', 'license_nonce')) {
-                        $license_key = sanitize_text_field($_POST['license_key']);
-                        $result = $license_manager->activate_license($license_key);
-
-                        if ($result['success']) {
-                            echo '<div class="notice notice-success is-dismissible"><p>' . esc_html($result['message']) . '</p></div>';
-                            $license_info = $license_manager->get_license_info(); // Refresh
-                            $is_premium = $license_manager->is_premium();
-                        } else {
-                            echo '<div class="notice notice-error is-dismissible"><p>' . esc_html($result['message']) . '</p></div>';
-                        }
-                    }
-
-                    // Traitement de la désactivation
-                    if (isset($_POST['deactivate_license']) && check_admin_referer('deactivate_license', 'deactivate_nonce')) {
-                        $result = $license_manager->deactivate_license();
-                        if ($result['success']) {
-                            echo '<div class="notice notice-success is-dismissible"><p>' . esc_html($result['message']) . '</p></div>';
-                            $license_info = $license_manager->get_license_info(); // Refresh
-                            $is_premium = $license_manager->is_premium();
-                        } else {
-                            echo '<div class="notice notice-error is-dismissible"><p>' . esc_html($result['message']) . '</p></div>';
-                        }
-                    }
-                } else {
-                    echo '<div class="notice notice-warning"><p>Le système de licence n\'est pas encore disponible. Il sera activé dans la prochaine mise à jour.</p></div>';
-                    $is_premium = false;
-                    $license_info = ['status' => 'free', 'tier' => 'free'];
-                }
-                ?>
-
-                <!-- Status de la licence -->
-                <div class="license-status-card" style="background: #fff; border: 1px solid #e5e5e5; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
-                    <h3 style="margin-top: 0; color: #23282d;"><?php _e('Statut de la Licence', 'pdf-builder-pro'); ?></h3>
-
-                    <div class="license-status-indicator <?php echo esc_attr($license_info['status']); ?>" style="display: inline-block; padding: 8px 16px; border-radius: 4px; font-weight: bold; margin-bottom: 15px;">
-                        <?php
-                        $status_labels = [
-                            'free' => 'Gratuit',
-                            'active' => 'Premium Activé',
-                            'expired' => 'Expiré',
-                            'invalid' => 'Invalide'
-                        ];
-                        echo esc_html($status_labels[$license_info['status']] ?? ucfirst($license_info['status']));
-                        ?>
-                    </div>
-
-                    <?php if ($license_info['tier'] !== 'free'): ?>
-                        <div style="margin-bottom: 15px;">
-                            <strong><?php _e('Niveau :', 'pdf-builder-pro'); ?></strong>
-                            <?php echo esc_html(ucfirst($license_info['tier'])); ?>
-                            <?php if ($license_info['expires']): ?>
-                                <br><strong><?php _e('Expire le :', 'pdf-builder-pro'); ?></strong>
-                                <?php echo esc_html($license_info['expires']); ?>
-                            <?php endif; ?>
-                        </div>
-                    <?php endif; ?>
-
-                    <?php if (!$is_premium): ?>
-                        <div class="upgrade-prompt" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; margin-top: 20px;">
-                            <h4 style="margin: 0 0 10px 0; color: white;">🔓 Passez à la version Premium</h4>
-                            <p style="margin: 0 0 15px 0;">Débloquez toutes les fonctionnalités avancées et créez des PDFs professionnels sans limites !</p>
-                            <a href="https://pdfbuilderpro.com/pricing" class="button button-primary" target="_blank" style="background: white; color: #667eea; border: none; font-weight: bold;">
-                                <?php _e('Voir les tarifs', 'pdf-builder-pro'); ?>
-                            </a>
-                        </div>
-                    <?php endif; ?>
-                </div>
-
-                <!-- Activation/Désactivation de licence -->
-                <?php if (!$is_premium): ?>
-                <div class="license-activation-form" style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px;">
-                    <h3><?php _e('Activer une Licence Premium', 'pdf-builder-pro'); ?></h3>
-                    <p><?php _e('Entrez votre clé de licence pour débloquer toutes les fonctionnalités premium.', 'pdf-builder-pro'); ?></p>
-
-                    <form method="post">
-                        <?php wp_nonce_field('activate_license', 'license_nonce'); ?>
-                        <table class="form-table" style="background: transparent; margin: 0;">
-                            <tr>
-                                <th scope="row">
-                                    <label for="license_key"><?php _e('Clé de licence', 'pdf-builder-pro'); ?></label>
-                                </th>
-                                <td>
-                                    <input type="text" name="license_key" id="license_key" class="regular-text" placeholder="XXXX-XXXX-XXXX-XXXX" required style="min-width: 300px;">
-                                    <p class="description">
-                                        <?php _e('Vous pouvez trouver votre clé de licence dans votre compte client.', 'pdf-builder-pro'); ?>
-                                    </p>
-                                </td>
-                            </tr>
-                        </table>
-                        <p>
-                            <input type="submit" name="activate_license" class="button button-primary" value="<?php esc_attr_e('Activer la licence', 'pdf-builder-pro'); ?>">
-                        </p>
-                    </form>
-                </div>
-                <?php else: ?>
-                <div class="license-management" style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px;">
-                    <h3><?php _e('Gestion de la Licence', 'pdf-builder-pro'); ?></h3>
-                    <p><?php _e('Votre licence premium est active. Vous pouvez la désactiver si vous souhaitez la transférer vers un autre site.', 'pdf-builder-pro'); ?></p>
-
-                    <form method="post" onsubmit="return confirm('<?php _e('Êtes-vous sûr de vouloir désactiver cette licence ? Elle pourra être réactivée ultérieurement.', 'pdf-builder-pro'); ?>');">
-                        <?php wp_nonce_field('deactivate_license', 'deactivate_nonce'); ?>
-                        <p>
-                            <input type="submit" name="deactivate_license" class="button button-secondary" value="<?php esc_attr_e('Désactiver la licence', 'pdf-builder-pro'); ?>">
-                        </p>
-                    </form>
-                </div>
-                <?php endif; ?>
-
-                <!-- Comparaison des fonctionnalités -->
-                <div class="feature-comparison" style="margin-top: 30px;">
-                    <h3><?php _e('Comparaison des Fonctionnalités', 'pdf-builder-pro'); ?></h3>
-
-                    <div style="overflow-x: auto;">
-                        <table class="wp-list-table widefat fixed striped" style="margin-top: 15px;">
-                            <thead>
-                                <tr>
-                                    <th style="width: 40%;"><?php _e('Fonctionnalité', 'pdf-builder-pro'); ?></th>
-                                    <th style="width: 15%; text-align: center;"><?php _e('Gratuit', 'pdf-builder-pro'); ?></th>
-                                    <th style="width: 15%; text-align: center;"><?php _e('Premium', 'pdf-builder-pro'); ?></th>
-                                    <th style="width: 30%;"><?php _e('Description', 'pdf-builder-pro'); ?></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                $features = [
-                                    ['name' => 'Templates de base', 'free' => true, 'premium' => true, 'desc' => '4 templates prédéfinis'],
-                                    ['name' => 'Éléments standards', 'free' => true, 'premium' => true, 'desc' => 'Texte, image, ligne, rectangle'],
-                                    ['name' => 'Intégration WooCommerce', 'free' => true, 'premium' => true, 'desc' => 'Variables de commande'],
-                                    ['name' => 'Génération PDF', 'free' => '50/mois', 'premium' => 'Illimitée', 'desc' => 'Création de documents'],
-                                    ['name' => 'Templates avancés', 'free' => false, 'premium' => true, 'desc' => 'Bibliothèque complète'],
-                                    ['name' => 'Éléments premium', 'free' => false, 'premium' => true, 'desc' => 'Codes-barres, QR codes, graphiques'],
-                                    ['name' => 'Génération en masse', 'free' => false, 'premium' => true, 'desc' => 'Création multiple'],
-                                    ['name' => 'API développeur', 'free' => false, 'premium' => true, 'desc' => 'Accès complet à l\'API'],
-                                    ['name' => 'White-label', 'free' => false, 'premium' => true, 'desc' => 'Rebranding complet'],
-                                    ['name' => 'Support prioritaire', 'free' => false, 'premium' => true, 'desc' => '24/7 avec SLA']
-                                ];
-
-                                foreach ($features as $feature):
-                                ?>
-                                <tr>
-                                    <td><strong><?php echo esc_html($feature['name']); ?></strong></td>
-                                    <td style="text-align: center;">
-                                        <?php if ($feature['free'] === true): ?>
-                                            <span style="color: #46b450;">✓</span>
-                                        <?php elseif ($feature['free'] === false): ?>
-                                            <span style="color: #dc3232;">✗</span>
-                                        <?php else: ?>
-                                            <span style="color: #ffb900;"><?php echo esc_html($feature['free']); ?></span>
-                                        <?php endif; ?>
-                                    </td>
-                                    <td style="text-align: center;">
-                                        <?php if ($feature['premium']): ?>
-                                            <span style="color: #46b450;">✓</span>
-                                        <?php else: ?>
-                                            <span style="color: #dc3232;">✗</span>
-                                        <?php endif; ?>
-                                    </td>
-                                    <td><?php echo esc_html($feature['desc']); ?></td>
-                                </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
                 </div>
             </div>
         </div>
