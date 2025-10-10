@@ -131,6 +131,10 @@ export const PropertiesPanel = ({
   onPropertyChange,
   onBatchUpdate
 }) => {
+  // États pour mémoriser les valeurs précédentes
+  const [previousBackgroundColor, setPreviousBackgroundColor] = useState('#ffffff');
+  const [previousBorderWidth, setPreviousBorderWidth] = useState(1);
+
   // Utiliser les hooks de personnalisation et synchronisation
   const {
     localProperties,
@@ -147,10 +151,13 @@ export const PropertiesPanel = ({
     1000 // autoSaveDelay
   );
 
-  // Obtenir l'élément sélectionné pour l'affichage
-  const selectedElement = selectedElements.length > 0
-    ? elements.find(el => el.id === selectedElements[0])
-    : null;
+  // Mettre à jour les valeurs précédentes quand l'élément change
+  useEffect(() => {
+    if (selectedElement) {
+      setPreviousBackgroundColor(localProperties.backgroundColor || '#ffffff');
+      setPreviousBorderWidth(localProperties.borderWidth || 1);
+    }
+  }, [selectedElement, localProperties.backgroundColor, localProperties.borderWidth]);
 
   // Gestionnaire unifié de changement de propriété
   const handlePropertyChange = useCallback((elementId, property, value) => {
@@ -169,6 +176,30 @@ export const PropertiesPanel = ({
       syncImmediate(elementId, property, value);
     }
   }, [customizationChange, syncImmediate]);
+
+  // Gestionnaire pour le toggle "Aucun fond"
+  const handleNoBackgroundToggle = useCallback((elementId, checked) => {
+    if (checked) {
+      // Sauvegarder la couleur actuelle avant de la mettre à transparent
+      setPreviousBackgroundColor(localProperties.backgroundColor || '#ffffff');
+      handlePropertyChange(elementId, 'backgroundColor', 'transparent');
+    } else {
+      // Restaurer la couleur précédente
+      handlePropertyChange(elementId, 'backgroundColor', previousBackgroundColor);
+    }
+  }, [localProperties.backgroundColor, previousBackgroundColor, handlePropertyChange]);
+
+  // Gestionnaire pour le toggle "Aucune bordure"
+  const handleNoBorderToggle = useCallback((elementId, checked) => {
+    if (checked) {
+      // Sauvegarder l'épaisseur actuelle avant de la mettre à 0
+      setPreviousBorderWidth(localProperties.borderWidth || 1);
+      handlePropertyChange(elementId, 'borderWidth', 0);
+    } else {
+      // Restaurer l'épaisseur précédente
+      handlePropertyChange(elementId, 'borderWidth', previousBorderWidth);
+    }
+  }, [localProperties.borderWidth, previousBorderWidth, handlePropertyChange]);
 
   // Rendu des onglets
   const renderTabs = useCallback(() => (
@@ -243,7 +274,7 @@ export const PropertiesPanel = ({
                   <input
                     type="checkbox"
                     checked={!localProperties.backgroundColor || localProperties.backgroundColor === 'transparent'}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundColor', e.target.checked ? 'transparent' : '#ffffff')}
+                    onChange={(e) => handleNoBackgroundToggle(selectedElement.id, e.target.checked)}
                   />
                   <span className="toggle-slider"></span>
                 </label>
@@ -262,7 +293,7 @@ export const PropertiesPanel = ({
                   <input
                     type="checkbox"
                     checked={!localProperties.borderWidth || localProperties.borderWidth === 0}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'borderWidth', e.target.checked ? 0 : 1)}
+                    onChange={(e) => handleNoBorderToggle(selectedElement.id, e.target.checked)}
                   />
                   <span className="toggle-slider"></span>
                 </label>
