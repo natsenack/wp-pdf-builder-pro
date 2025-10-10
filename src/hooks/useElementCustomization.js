@@ -46,6 +46,19 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
 
   // Gestionnaire de changement de propriété avec validation
   const handlePropertyChange = useCallback((elementId, property, value) => {
+    let validatedValue = value;
+
+    // Appliquer la validation selon le type de propriété
+    if (typeof value !== 'boolean' && !property.startsWith('columns.')) {
+      try {
+        const validated = elementCustomizationService.validateProperty(property, value);
+        if (validated !== undefined) {
+          validatedValue = validated;
+        }
+      } catch (error) {
+        console.warn(`Erreur de validation pour ${property}:`, error);
+      }
+    }
 
     // Mettre à jour l'état local immédiatement pour l'UI
     setLocalProperties(prev => {
