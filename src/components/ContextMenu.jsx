@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 
-export const ContextMenu = ({ menu, onAction, isAnimating = false }) => {
+const ContextMenu = ({ menu, onAction, isAnimating = false }) => {
   const menuRef = useRef(null);
 
   // Fermer le menu quand on clique ailleurs
@@ -144,3 +144,5 @@ const getKeyboardShortcut = (label) => {
 
   return shortcutMap[label];
 };
+
+export default ContextMenu;

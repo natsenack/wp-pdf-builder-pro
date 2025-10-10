@@ -189,7 +189,7 @@ const FontControls = ({ elementId, properties, onPropertyChange }) => (
   </div>
 );
 
-export const PropertiesPanel = React.memo(({
+const PropertiesPanel = React.memo(({
   selectedElements,
   elements,
   onPropertyChange,
@@ -1547,3 +1547,5 @@ export const PropertiesPanel = React.memo(({
     </div>
   );
 });
+
+export default PropertiesPanel;

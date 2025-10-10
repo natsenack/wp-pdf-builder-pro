@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import '../styles/ElementLibrary.css';
 
-export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
+const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
   const [showHeaderTemplatesModal, setShowHeaderTemplatesModal] = useState(false);
 
   // Bibliothèque d'éléments - boutons simples
@@ -246,3 +246,5 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
     </>
   );
 };
+
+export default ElementLibrary;

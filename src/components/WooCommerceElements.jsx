@@ -103,7 +103,7 @@ export const useWooCommerceElements = () => {
  * Composant pour gérer les éléments WooCommerce dans le canvas
  * Ce composant gère l'affichage et le rendu des éléments WooCommerce
  */
-export const WooCommerceElement = ({
+const WooCommerceElement = ({
   element,
   isSelected,
   onSelect,
@@ -422,3 +422,5 @@ export const WooCommerceElement = ({
     </>
   );
 };
+
+export default WooCommerceElement;
