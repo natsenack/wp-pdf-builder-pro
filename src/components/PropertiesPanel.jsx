@@ -328,7 +328,7 @@ const PropertiesPanel = React.memo(({
 
   // Gestionnaire pour le toggle "Aucune bordure"
   const handleNoBorderToggle = useCallback((elementId, checked) => {
-    console.log('🎛️ handleNoBorderToggle appelé:', { elementId, checked, currentWidth: selectedElement?.borderWidth, previousWidth: previousBorderWidth });
+    console.log('🎛️ handleNoBorderToggle:', { elementId, checked, currentWidth: selectedElement?.borderWidth, previousWidth: previousBorderWidth });
 
     if (checked) {
       // Sauvegarder l'épaisseur actuelle avant de la désactiver
@@ -338,12 +338,10 @@ const PropertiesPanel = React.memo(({
         // Si pas de bordure ou bordure = 0, sauvegarder 1 comme valeur par défaut
         setPreviousBorderWidth(1);
       }
-      console.log('🎛️ Activation toggle - mettre borderWidth à 0');
       handlePropertyChange(elementId, 'borderWidth', 0);
     } else {
       // Restaurer l'épaisseur précédente, au minimum 1
       const widthToRestore = Math.max(previousBorderWidth || 1, 1);
-      console.log('🎛️ Désactivation toggle - restaurer borderWidth à:', widthToRestore);
       handlePropertyChange(elementId, 'borderWidth', widthToRestore);
     }
   }, [selectedElement?.borderWidth, previousBorderWidth, handlePropertyChange]);
@@ -396,12 +394,7 @@ const PropertiesPanel = React.memo(({
 
     switch (activeTab) {
       case 'appearance':
-        console.log('🎨 Rendu section Apparence:', {
-          borderWidth: localProperties.borderWidth,
-          borderWidthType: typeof localProperties.borderWidth,
-          shouldShowBorderControls: localProperties.borderWidth > 0,
-          backgroundColor: localProperties.backgroundColor
-        });
+        // console.log('🎨 Rendu section Couleurs - localProperties:', localProperties);
         return (
           <div className="tab-content">
             <div className="properties-group">
@@ -504,12 +497,6 @@ const PropertiesPanel = React.memo(({
                   />
                   <span className="toggle-slider" onClick={() => {
                     const currentChecked = !localProperties.borderWidth || localProperties.borderWidth === 0;
-                    console.log('🎛️ Toggle aucune bordure cliqué:', { 
-                      currentChecked, 
-                      newState: !currentChecked,
-                      currentBorderWidth: localProperties.borderWidth,
-                      previousBorderWidth
-                    });
                     handleNoBorderToggle(selectedElement.id, !currentChecked);
                   }}></span>
                 </label>
