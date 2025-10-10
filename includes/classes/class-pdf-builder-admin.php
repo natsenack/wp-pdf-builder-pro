@@ -807,23 +807,23 @@ class PDF_Builder_Admin {
         // React est maintenant bundlé avec l'application pour éviter les conflits
         // Plus besoin de charger depuis CDN
 
-        // Charger le script principal React du plugin
-        $script_path = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-pro.js';
-        $script_version = PDF_BUILDER_PRO_VERSION;
-        if (defined('PDF_BUILDER_PRO_ASSETS_PATH') && file_exists(PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-builder-pro.js')) {
-            $script_version = filemtime(PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-builder-pro.js');
+        // Charger le script admin compilé (avec React bundlé)
+        $admin_script_path = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js';
+        $admin_script_version = PDF_BUILDER_PRO_VERSION;
+        if (defined('PDF_BUILDER_PRO_ASSETS_PATH') && file_exists(PDF_BUILDER_PRO_ASSETS_PATH . 'js/dist/pdf-builder-admin.js')) {
+            $admin_script_version = filemtime(PDF_BUILDER_PRO_ASSETS_PATH . 'js/dist/pdf-builder-admin.js');
         }
 
         wp_enqueue_script(
-            'pdf-builder-pro-react',
-            $script_path,
+            'pdf-builder-admin',
+            $admin_script_path,
             ['jquery'],
-            $script_version,
+            $admin_script_version,
             true
         );
 
         // Localiser le script avec les données nécessaires
-        wp_localize_script('pdf-builder-pro-react', 'pdfBuilderAjax', [
+        wp_localize_script('pdf-builder-admin', 'pdfBuilderAjax', [
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pdf_builder_nonce'),
             'strings' => [
@@ -835,7 +835,7 @@ class PDF_Builder_Admin {
         ]);
 
         // Localiser les paramètres canvas
-        wp_localize_script('pdf-builder-pro-react', 'pdfBuilderCanvasSettings', [
+        wp_localize_script('pdf-builder-admin', 'pdfBuilderCanvasSettings', [
             'canvas_element_borders_enabled' => get_option('canvas_element_borders_enabled', true),
             'canvas_border_width' => get_option('canvas_border_width', 1),
             'canvas_border_color' => get_option('canvas_border_color', '#007cba'),
@@ -844,21 +844,6 @@ class PDF_Builder_Admin {
             'canvas_handle_color' => get_option('canvas_handle_color', '#007cba'),
             'canvas_handle_hover_color' => get_option('canvas_handle_hover_color', '#005a87')
         ]);
-
-        // Charger le script admin compilé (avec les dépendances)
-        $admin_script_path = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js';
-        $admin_script_version = PDF_BUILDER_PRO_VERSION;
-        if (defined('PDF_BUILDER_PRO_ASSETS_PATH') && file_exists(PDF_BUILDER_PRO_ASSETS_PATH . 'js/dist/pdf-builder-admin.js')) {
-            $admin_script_version = filemtime(PDF_BUILDER_PRO_ASSETS_PATH . 'js/dist/pdf-builder-admin.js');
-        }
-
-        wp_enqueue_script(
-            'pdf-builder-admin',
-            $admin_script_path,
-            ['jquery', 'pdf-builder-pro-react'],
-            $admin_script_version,
-            true
-        );
 
         // Styles CSS
         $css_path = PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css';
