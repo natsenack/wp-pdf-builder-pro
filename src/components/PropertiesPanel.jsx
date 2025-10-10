@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useElementCustomization } from '../hooks/useElementCustomization';
 import { useElementSynchronization } from '../hooks/useElementSynchronization';
 import { elementCustomizationService } from '../services/ElementCustomizationService';
@@ -259,20 +259,6 @@ const PropertiesPanel = React.memo(({
     });
   }, [activeTab, selectedElement?.id]); // Éviter de logger localProperties qui change souvent
 
-  // Debug borderWidth changes - using ref to avoid infinite loops
-  const prevBorderWidthRef = useRef();
-  useEffect(() => {
-    if (prevBorderWidthRef.current !== localProperties.borderWidth) {
-      console.log('🔍 Debug contrôles bordure:', { 
-        borderWidth: localProperties.borderWidth, 
-        condition: localProperties.borderWidth > 0,
-        selectedElementId: selectedElement?.id,
-        changed: true
-      });
-      prevBorderWidthRef.current = localProperties.borderWidth;
-    }
-  }, [localProperties.borderWidth, selectedElement?.id]);
-
   const { syncImmediate, syncBatch } = useElementSynchronization(
     elements,
     onPropertyChange,
@@ -526,10 +512,9 @@ const PropertiesPanel = React.memo(({
               />
             )}
 
-            {/* DEBUG: Force display of border controls */}
-            {true && ( // Temporarily force to true
-              <div className="properties-group" style={{border: '2px solid red'}}>
-                <h4>🔲 Bordures & Coins (FORCÉ)</h4>
+            {localProperties.borderWidth > 0 && (
+              <div className="properties-group">
+                <h4>🔲 Bordures & Coins</h4>
 
                 <div className="property-row">
                   <label>Épaisseur bordure:</label>
