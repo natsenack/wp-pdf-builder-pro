@@ -9,12 +9,16 @@ import { WooCommerceElement } from './WooCommerceElements';
 import { useCanvasState } from '../hooks/useCanvasState';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import { PreviewModal } from './PreviewModal';
+import { useGlobalSettings } from '../hooks/useGlobalSettings';
 
 export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
   const [tool, setTool] = useState('select');
   const [showGrid, setShowGrid] = useState(true);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [isPropertiesCollapsed, setIsPropertiesCollapsed] = useState(false);
+
+  // Hook pour les paramètres globaux
+  const globalSettings = useGlobalSettings();
 
   const canvasState = useCanvasState({
     initialElements: options.initialElements || [],
