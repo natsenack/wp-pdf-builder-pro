@@ -167,10 +167,17 @@ class PDF_Builder_Core {
      * Charger les scripts pour l'administration
      */
     public function admin_enqueue_scripts($hook) {
+        // Debug logging
+        error_log('PDF_Builder_Core Debug - Hook: ' . $hook);
+        error_log('PDF_Builder_Core Debug - REQUEST_URI: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'not set'));
+        error_log('PDF_Builder_Core Debug - GET page: ' . (isset($_GET['page']) ? $_GET['page'] : 'not set'));
+
         // Charger les scripts sur toutes les pages du plugin
         if (strpos($hook, 'pdf-builder') !== false ||
             (isset($_GET['page']) && strpos($_GET['page'], 'pdf-builder') !== false) ||
             (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'pdf-builder-editor') !== false)) {
+
+            error_log('PDF_Builder_Core Debug - Loading scripts');
 
             wp_enqueue_script(
                 'pdf-builder-admin-core',

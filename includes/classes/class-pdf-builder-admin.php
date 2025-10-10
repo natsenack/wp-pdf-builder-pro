@@ -578,12 +578,19 @@ class PDF_Builder_Admin {
         $clean_hook = urldecode($hook);
         $clean_hook = preg_replace('/^[^\w]*/', '', $clean_hook); // Retire les emojis du début
 
+        error_log('PDF_Builder_Admin Debug - Hook: ' . $hook);
+        error_log('PDF_Builder_Admin Debug - Clean hook: ' . $clean_hook);
+        error_log('PDF_Builder_Admin Debug - GET page: ' . (isset($_GET['page']) ? $_GET['page'] : 'not set'));
+        error_log('PDF_Builder_Admin Debug - Our pages: ' . implode(', ', $our_pages));
+
         // Load React/TypeScript on ALL PDF Builder pages for debugging
         if (in_array($clean_hook, $our_pages) || strpos($clean_hook, 'pdf-builder') !== false) {
+            error_log('PDF_Builder_Admin Debug - Loading React scripts for hook: ' . $clean_hook);
             $this->enqueue_react_scripts();
 
             // Pour la page éditeur, NE PAS charger les scripts canvas - React gère tout
             if ($clean_hook === 'pdf-builder_page_pdf-builder-editor') {
+                error_log('PDF_Builder_Admin Debug - Editor page detected, returning early');
                 return; // Ne pas charger les scripts canvas pour éviter les conflits
             }
             // Pour les autres pages (y compris settings), continuer avec les scripts canvas
