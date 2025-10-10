@@ -1,5 +1,5 @@
 <?php
-/** 
+/**
  * PDF Builder Pro - Bootstrap
  * Chargement différé des fonctionnalités du plugin
  */
@@ -9,11 +9,74 @@ if (!defined('ABSPATH')) {
     exit('Accès direct interdit.');
 }
 
+// Définir la constante du répertoire du plugin si elle n'existe pas
+if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
+    define('PDF_BUILDER_PLUGIN_DIR', plugin_dir_path(__FILE__));
+}
+
+// Charger le diagnostic AJAX (temporaire)
+if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'diagnostic-ajax.php')) {
+    require_once PDF_BUILDER_PLUGIN_DIR . 'diagnostic-ajax.php';
+}
+
+// Charger le test AJAX WordPress (temporaire)
+if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'wp-ajax-test.php')) {
+    require_once PDF_BUILDER_PLUGIN_DIR . 'wp-ajax-test.php';
+}
+
+// Fonction pour charger le core du plugin
+function pdf_builder_load_core() {
+    static $loaded = false;
+    if ($loaded) return;
+
+    // Charger la classe principale PDF_Builder_Core
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'includes/classes/PDF_Builder_Core.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'includes/classes/PDF_Builder_Core.php';
+    }
+
+    // Charger la classe d'administration
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'includes/classes/class-pdf-builder-admin.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'includes/classes/class-pdf-builder-admin.php';
+    }
+
+    // Charger les managers essentiels en premier pour éviter les dépendances circulaires
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'includes/managers/PDF_Builder_Cache_Manager.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'includes/managers/PDF_Builder_Cache_Manager.php';
+    }
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'includes/utilities/PDF_Builder_Logger.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'includes/utilities/PDF_Builder_Logger.php';
+    }
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'includes/utilities/PDF_Builder_Debug_Helper.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'includes/utilities/PDF_Builder_Debug_Helper.php';
+    }
+
+    // Charger les managers canvas
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'includes/managers/PDF_Builder_Canvas_Elements_Manager.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'includes/managers/PDF_Builder_Canvas_Elements_Manager.php';
+    }
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'includes/managers/PDF_Builder_Canvas_Interactions_Manager.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'includes/managers/PDF_Builder_Canvas_Interactions_Manager.php';
+    }
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'includes/managers/PDF_Builder_Drag_Drop_Manager.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'includes/managers/PDF_Builder_Drag_Drop_Manager.php';
+    }
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'includes/managers/PDF_Builder_Resize_Manager.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'includes/managers/PDF_Builder_Resize_Manager.php';
+    }
+
+    $loaded = true;
+}
+
 // Fonction principale de chargement du bootstrap
 function pdf_builder_load_bootstrap() {
     // Protection globale contre les chargements multiples
     if (defined('PDF_BUILDER_BOOTSTRAP_LOADED') && PDF_BUILDER_BOOTSTRAP_LOADED) {
         return;
+    }
+
+    // Définir le répertoire du plugin si pas déjà fait
+    if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
+        define('PDF_BUILDER_PLUGIN_DIR', plugin_dir_path(__FILE__));
     }
 
     // Charger la configuration si pas déjà faite
@@ -33,7 +96,18 @@ function pdf_builder_load_bootstrap() {
     }
 
     if (class_exists('PDF_Builder_Core') && method_exists('PDF_Builder_Core', 'getInstance')) {
-        PDF_Builder_Core::getInstance()->init();
+        $core = PDF_Builder_Core::getInstance();
+        $core->init();
+
+        // Enregistrer l'action AJAX dès que possible
+        add_action('wp_ajax_pdf_builder_preview', 'pdf_builder_handle_preview_ajax');
+        add_action('wp_ajax_nopriv_pdf_builder_preview', 'pdf_builder_handle_preview_ajax');
+        error_log('PDF Builder Bootstrap: AJAX action registered in bootstrap');
+
+        // Initialiser l'interface d'administration
+        if (is_admin() && class_exists('PDF_Builder_Admin')) {
+            PDF_Builder_Admin::getInstance($core);
+        }
 
         // L'API Manager sera initialisé automatiquement par le Core
         // Les routes seront enregistrées sur le hook rest_api_init
@@ -48,8 +122,8 @@ function pdf_builder_load_bootstrap() {
         }
     }
 
-    // Menu handled by PDF_Builder_Admin class
-    add_action('admin_menu', 'pdf_builder_register_admin_menu_simple');
+    // Menu handled by PDF_Builder_Admin class - DÉPLACÉ dans pdf-builder-pro.php
+    // add_action('admin_menu', 'pdf_builder_register_admin_menu_simple');
 
     // Marquer comme chargé globalement
     define('PDF_BUILDER_BOOTSTRAP_LOADED', true);

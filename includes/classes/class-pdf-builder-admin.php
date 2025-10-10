@@ -14,16 +14,49 @@ if (!defined('ABSPATH')) {
 class PDF_Builder_Admin {
 
     /**
+     * Instance singleton
+     */
+    private static $instance = null;
+
+    /**
      * Instance de la classe principale
      */
     private $main;
 
     /**
-     * Constructeur
+     * Flag pour éviter les doublons de menu
      */
-    public function __construct($main_instance) {
+    private static $menu_added = false;
+
+    /**
+     * Flag pour éviter le rendu multiple de la page éditeur
+     */
+    private static $editor_page_rendered = false;
+
+    /**
+     * Flag pour éviter le rendu multiple de la page admin
+     */
+    private static $admin_page_rendered = false;
+
+    /**
+     * Constructeur privé pour singleton
+     */
+    private function __construct($main_instance) {
+        error_log('PDF_Builder_Admin constructor called');
         $this->main = $main_instance;
         $this->init_hooks();
+    }
+
+    /**
+     * Obtenir l'instance singleton
+     */
+    public static function getInstance($main_instance = null) {
+        error_log('PDF_Builder_Admin getInstance called');
+        if (self::$instance === null) {
+            error_log('PDF_Builder_Admin creating new instance');
+            self::$instance = new self($main_instance);
+        }
+        return self::$instance;
     }
 
     /**
@@ -44,10 +77,12 @@ class PDF_Builder_Admin {
      * Initialise les hooks WordPress
      */
     private function init_hooks() {
+        error_log('PDF Builder Admin: init_hooks appelée');
         add_action('admin_menu', [$this, 'add_admin_menu']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts'], 20);
         add_action('wp_ajax_pdf_builder_pro_generate_pdf', [$this, 'ajax_generate_pdf_from_canvas']);
-        add_action('wp_ajax_pdf_builder_pro_preview_pdf', [$this, 'ajax_preview_pdf']);
+        // AJAX actions are now registered in bootstrap.php
+        error_log('PDF Builder Admin: init_hooks called (actions registered in bootstrap)');
         add_action('wp_ajax_pdf_builder_pro_download_pdf', [$this, 'ajax_download_pdf']);
         add_action('wp_ajax_pdf_builder_pro_save_template', [$this, 'ajax_save_template']);
         add_action('wp_ajax_pdf_builder_pro_load_template', [$this, 'ajax_load_template']);
@@ -90,6 +125,11 @@ class PDF_Builder_Admin {
      * Ajoute le menu d'administration
      */
     public function add_admin_menu() {
+        // Éviter les doublons de menu
+        if (self::$menu_added) {
+            return;
+        }
+        self::$menu_added = true;
         // Menu principal avec icône distinctive
         add_menu_page(
             __('PDF Builder Pro - Gestionnaire de PDF', 'pdf-builder-pro'),
@@ -150,12 +190,28 @@ class PDF_Builder_Admin {
             'pdf-builder-diagnostic',
             [$this, 'diagnostic_page']
         );
+
+        // Tests WooCommerce
+        add_submenu_page(
+            'pdf-builder-pro',
+            __('Tests WooCommerce - PDF Builder Pro', 'pdf-builder-pro'),
+            __('🛒 Tests WC', 'pdf-builder-pro'),
+            'manage_options',
+            'pdf-builder-woocommerce-test',
+            [$this, 'woocommerce_test_page']
+        );
     }
 
     /**
      * Page principale d'administration - Tableau de bord
      */
     public function admin_page() {
+        // Éviter le rendu multiple de la page
+        if (self::$admin_page_rendered) {
+            return;
+        }
+        self::$admin_page_rendered = true;
+
         $this->check_admin_permissions();
 
         // Statistiques de base (simulées pour l'instant)
@@ -353,7 +409,7 @@ class PDF_Builder_Admin {
                 }
 
                 .step-number {
-                    background: #2271b1;
+                    background: #3b82f6;
                     color: white;
                     width: 30px;
                     height: 30px;
@@ -386,7 +442,7 @@ class PDF_Builder_Admin {
      */
     public function templates_page() {
         $this->check_admin_permissions();
-        include plugin_dir_path(__FILE__) . 'views/templates-page.php';
+        include plugin_dir_path(dirname(__FILE__)) . 'templates-page.php';
     }
 
     /**
@@ -394,7 +450,7 @@ class PDF_Builder_Admin {
      */
     public function settings_page() {
         $this->check_admin_permissions();
-        include plugin_dir_path(__FILE__) . 'views/settings-page.php';
+        include plugin_dir_path(dirname(__FILE__)) . 'settings-page.php';
     }
 
     /**
@@ -495,8 +551,14 @@ class PDF_Builder_Admin {
      * Template Editor page (React/TypeScript)
      */
     public function template_editor_page() {
+        // Éviter le rendu multiple de la page
+        if (self::$editor_page_rendered) {
+            return;
+        }
+        self::$editor_page_rendered = true;
+
         $this->check_admin_permissions();
-        include PDF_BUILDER_PLUGIN_DIR . 'template-editor.php';
+        include PDF_BUILDER_PLUGIN_DIR . 'includes/template-editor.php';
     }
 
     /**
@@ -522,9 +584,10 @@ class PDF_Builder_Admin {
             // Pour la page éditeur, NE PAS charger les scripts canvas - React gère tout
             if ($clean_hook === 'pdf-builder_page_pdf-builder-editor') {
                 return; // Ne pas charger les scripts canvas pour éviter les conflits
-            } else if ($clean_hook !== 'pdf-builder_page_pdf-builder-settings') {
-                return;
             }
+            // Pour les autres pages (y compris settings), continuer avec les scripts canvas
+        } else {
+            error_log('PDF Builder: NOT loading React scripts for hook: ' . $clean_hook);
         }
 
         // Charger seulement sur nos pages principales
@@ -727,178 +790,96 @@ class PDF_Builder_Admin {
                             console.warn("PDF Builder Pro: Erreur lors de l\'initialisation du canvas:", error);
                         }
                     } else if (jQuery("#pdf-canvas").length === 0) {
-                        console.log("PDF Builder Pro: Pas d\'élément canvas sur cette page, initialisation ignorée");
                     } else {
                         console.warn("PDF Builder Pro: Dépendances manquantes pour l\'initialisation du canvas");
                     }
                     */
-                    console.log("PDF Builder Pro: Auto-initialization disabled, React component will handle canvas init");
+                
                 });
             });
         ');
     }
 
     /**
-     * Enqueue React/TypeScript scripts for editor
+     * Enfile les scripts React pour les pages d'administration
      */
     private function enqueue_react_scripts() {
-        // Add console logging for debugging
-        $debug_script = "console.log('PDF Builder Admin: enqueue_react_scripts called - checking WordPress React availability');";
-        wp_add_inline_script('jquery', $debug_script);
+        // Charger React depuis CDN (plus fiable que les versions locales)
+        wp_enqueue_script('react', 'https://unpkg.com/react@18/umd/react.production.min.js', [], '18.2.0', false); // Changed to false to load in head
+        wp_enqueue_script('react-dom', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js', ['react'], '18.2.0', false); // Changed to false to load in head
 
-        // Check if WordPress has React available
-        global $wp_scripts;
-        $react_registered = wp_script_is('react', 'registered');
-        $reactdom_registered = wp_script_is('react-dom', 'registered');
-
-        $debug_script .= "console.log('PDF Builder Admin: WordPress React registered: " . ($react_registered ? 'YES' : 'NO') . "');";
-        $debug_script .= "console.log('PDF Builder Admin: WordPress ReactDOM registered: " . ($reactdom_registered ? 'YES' : 'NO') . "');";
-
-        // Force register React if not available
-        if (!$react_registered) {
-            $debug_script .= "console.log('PDF Builder Admin: Registering React from CDN');";
-            wp_register_script('react', 'https://unpkg.com/react@18/umd/react.production.min.js', [], '18.2.0', true);
+        // Charger le script principal React du plugin
+        $script_path = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-pro.js';
+        $script_version = PDF_BUILDER_PRO_VERSION;
+        if (defined('PDF_BUILDER_PRO_ASSETS_PATH') && file_exists(PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-builder-pro.js')) {
+            $script_version = filemtime(PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-builder-pro.js');
         }
 
-        if (!$reactdom_registered) {
-            $debug_script .= "console.log('PDF Builder Admin: Registering ReactDOM from CDN');";
-            wp_register_script('react-dom', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js', ['react'], '18.2.0', true);
-        }
+        wp_enqueue_script(
+            'pdf-builder-pro-react',
+            $script_path,
+            ['react', 'react-dom', 'jquery'],
+            $script_version,
+            true
+        );
 
-        // Now enqueue them
-        wp_enqueue_script('react');
-        wp_enqueue_script('react-dom');
-
-        $debug_script .= "console.log('PDF Builder Admin: React scripts enqueued');";
-
-        // Enqueue our compiled React app (the main bundle)
-        $react_bundle_file = PDF_BUILDER_PRO_ASSETS_PATH . 'js/pdf-builder-pro.js';
-        if (file_exists($react_bundle_file)) {
-            wp_enqueue_script(
-                'pdf-builder-pro-react',
-                PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-pro.js',
-                ['react', 'react-dom'],
-                filemtime($react_bundle_file),
-                true
-            );
-            $debug_script .= "console.log('PDF Builder Admin: pdf-builder-pro.js (React bundle) enqueued from: " . $react_bundle_file . "');";
-        } else {
-            $debug_script .= "console.log('PDF Builder Admin: pdf-builder-pro.js (React bundle) NOT FOUND at: " . $react_bundle_file . "');";
-        }
-
-        // Enqueue our compiled React app (now includes everything)
-        $asset_file = PDF_BUILDER_PRO_ASSETS_PATH . 'js/dist/pdf-builder-admin.js';
-        if (file_exists($asset_file)) {
-            wp_enqueue_script(
-                'pdf-builder-admin',
-                PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js',
-                ['jquery'],
-                filemtime($asset_file),
-                true
-            );
-            $debug_script .= "console.log('PDF Builder Admin: pdf-builder-admin.js enqueued from: " . $asset_file . "');";
-        } else {
-            $debug_script .= "console.log('PDF Builder Admin: pdf-builder-admin.js NOT FOUND at: " . $asset_file . "');";
-        }
-
-        // Add more detailed debugging after script loading
-        $debug_script .= "
-            // Check React availability after script loads
-            setTimeout(function() {
-                console.log('🔍 PDF Builder Admin: Checking React after enqueue...');
-                console.log('🔍 React available:', typeof window.React !== 'undefined' ? '✅ YES' : '❌ NO');
-                console.log('🔍 ReactDOM available:', typeof window.ReactDOM !== 'undefined' ? '✅ YES' : '❌ NO');
-                console.log('🔍 window.PDFBuilderPro available:', typeof window.PDFBuilderPro !== 'undefined' ? '✅ YES' : '❌ NO');
-            }, 100);
-
-            // Also check after a longer delay
-            setTimeout(function() {
-                console.log('🔍 PDF Builder Admin: Checking React after timeout...');
-                console.log('🔍 React available:', typeof window.React !== 'undefined' ? '✅ YES' : '❌ NO');
-                console.log('🔍 ReactDOM available:', typeof window.ReactDOM !== 'undefined' ? '✅ YES' : '❌ NO');
-                console.log('🔍 window.PDFBuilderPro available:', typeof window.PDFBuilderPro !== 'undefined' ? '✅ YES' : '❌ NO');
-            }, 1000);
-        ";
-
-        wp_add_inline_script('jquery', $debug_script);
-
-        // Enqueue CSS
-        $css_file = PDF_BUILDER_PRO_ASSETS_PATH . 'css/pdf-builder-admin.css';
-        if (file_exists($css_file)) {
-            wp_enqueue_style(
-                'pdf-builder-admin',
-                PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css',
-                [],
-                filemtime($css_file)
-            );
-        }
-
-        // Pour la page éditeur, charger aussi les scripts canvas ici !
-        if (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-editor') {
-
-            wp_enqueue_script('jquery');
-            wp_enqueue_script('jquery-ui-core');
-            wp_enqueue_script('jquery-ui-draggable');
-            wp_enqueue_script('jquery-ui-resizable');            wp_enqueue_script(
-                'pdf-builder-canvas',
-                PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-canvas.js',
-                array('jquery', 'jquery-ui-draggable', 'jquery-ui-resizable'),
-                PDF_BUILDER_PRO_VERSION,
-                true
-            );
-
-            wp_enqueue_script(
-                'pdf-builder-unified-config',
-                PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-unified-config.js',
-                array('jquery'),
-                PDF_BUILDER_PRO_VERSION,
-                true
-            );
-
-            wp_enqueue_script(
-                'pdf-builder-utils',
-                PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-utils.js',
-                array('jquery'),
-                PDF_BUILDER_PRO_VERSION,
-                true
-            );
-
-            // Charger aussi le script admin pour la gestion de l'interface
-            wp_enqueue_script(
-                'pdf-builder-admin-interface',
-                PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-admin.js',
-                array('jquery'),
-                PDF_BUILDER_PRO_VERSION,
-                true
-            );
-        }
-
-        // Localize script with WordPress data
-        wp_localize_script('pdf-builder-admin', 'pdfBuilderData', [
-            'ajaxUrl' => admin_url('admin-ajax.php'),
+        // Localiser le script avec les données nécessaires
+        wp_localize_script('pdf-builder-pro-react', 'pdfBuilderAjax', [
+            'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pdf_builder_nonce'),
-            'apiUrl' => rest_url('pdf-builder/v1/'),
-            'userId' => get_current_user_id(),
-            'locale' => get_locale(),
-            'isRtl' => is_rtl(),
-            'templateId' => isset($_GET['template_id']) ? intval($_GET['template_id']) : 0
+            'strings' => [
+                'loading' => __('Chargement...', 'pdf-builder-pro'),
+                'error' => __('Erreur', 'pdf-builder-pro'),
+                'success' => __('Succès', 'pdf-builder-pro'),
+                'confirm_delete' => __('Êtes-vous sûr de vouloir supprimer cet élément ?', 'pdf-builder-pro')
+            ]
         ]);
 
-        // Add inline script to check React availability
-        wp_add_inline_script('pdf-builder-admin', '
-            console.log("🔍 PDF Builder Admin: Checking React after enqueue...");
-            console.log("🔍 React available:", typeof React !== "undefined" ? "✅ YES" : "❌ NO");
-            console.log("🔍 ReactDOM available:", typeof ReactDOM !== "undefined" ? "✅ YES" : "❌ NO");
-            console.log("🔍 window.PDFBuilderPro available:", typeof window.PDFBuilderPro !== "undefined" ? "✅ YES" : "❌ NO");
+        // Localiser les paramètres canvas
+        wp_localize_script('pdf-builder-pro-react', 'pdfBuilderCanvasSettings', [
+            'canvas_element_borders_enabled' => get_option('canvas_element_borders_enabled', true),
+            'canvas_border_width' => get_option('canvas_border_width', 1),
+            'canvas_border_color' => get_option('canvas_border_color', '#007cba'),
+            'canvas_resize_handles_enabled' => get_option('canvas_resize_handles_enabled', true),
+            'canvas_handle_size' => get_option('canvas_handle_size', 8),
+            'canvas_handle_color' => get_option('canvas_handle_color', '#007cba'),
+            'canvas_handle_hover_color' => get_option('canvas_handle_hover_color', '#005a87')
+        ]);
 
-            // Wait a bit and check again
-            setTimeout(function() {
-                console.log("🔍 PDF Builder Admin: Checking React after timeout...");
-                console.log("🔍 React available:", typeof React !== "undefined" ? "✅ YES" : "❌ NO");
-                console.log("🔍 ReactDOM available:", typeof ReactDOM !== "undefined" ? "✅ YES" : "❌ NO");
-                console.log("🔍 window.PDFBuilderPro available:", typeof window.PDFBuilderPro !== "undefined" ? "✅ YES" : "❌ NO");
-            }, 1000);
-        ');
+        // Charger le script admin compilé (avec les dépendances)
+        $admin_script_path = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js';
+        $admin_script_version = PDF_BUILDER_PRO_VERSION;
+        if (defined('PDF_BUILDER_PRO_ASSETS_PATH') && file_exists(PDF_BUILDER_PRO_ASSETS_PATH . 'js/dist/pdf-builder-admin.js')) {
+            $admin_script_version = filemtime(PDF_BUILDER_PRO_ASSETS_PATH . 'js/dist/pdf-builder-admin.js');
+        }
+
+        wp_enqueue_script(
+            'pdf-builder-admin',
+            $admin_script_path,
+            ['react', 'react-dom', 'jquery', 'pdf-builder-pro-react'],
+            $admin_script_version,
+            true
+        );
+
+        // Styles CSS
+        $css_path = PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css';
+        $css_version = PDF_BUILDER_PRO_VERSION;
+        if (defined('PDF_BUILDER_PRO_ASSETS_PATH') && file_exists(PDF_BUILDER_PRO_ASSETS_PATH . 'css/pdf-builder-admin.css')) {
+            $css_version = filemtime(PDF_BUILDER_PRO_ASSETS_PATH . 'css/pdf-builder-admin.css');
+        }
+
+        wp_enqueue_style(
+            'pdf-builder-admin',
+            $css_path,
+            [],
+            $css_version
+        );
+
+        // Debug logging
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            error_log('PDF Builder Admin: pdf-builder-pro.js enqueued from: ' . $script_path);
+            error_log('PDF Builder Admin: pdf-builder-admin.js enqueued from: ' . $admin_script_path);
+        }
     }
 
     /**
@@ -950,52 +931,8 @@ class PDF_Builder_Admin {
      * AJAX - Aperçu du PDF
      */
     public function ajax_preview_pdf() {
-        $this->check_admin_permissions();
-
-        // Vérification de sécurité
-        if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce')) {
-            wp_send_json_error('Sécurité: Nonce invalide');
-        }
-
-        // Récupérer les données du template
-        $template_data = isset($_POST['template_data']) ? $_POST['template_data'] : '';
-
-        if (empty($template_data)) {
-            wp_send_json_error('Aucune donnée template reçue');
-        }
-
-        try {
-            // Décoder les données JSON
-            $template = json_decode($template_data, true);
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                wp_send_json_error('Données template invalides');
-                return;
-            }
-
-            // Générer l'HTML d'aperçu
-            $html_content = $this->generate_html_from_template_data($template);
-
-            // Utiliser les dimensions de la première page ou les valeurs par défaut
-            $width = 595; // A4 width par défaut
-            $height = 842; // A4 height par défaut
-            
-            if (isset($template['pages']) && is_array($template['pages']) && !empty($template['pages'])) {
-                $firstPage = $template['pages'][0];
-                if (isset($firstPage['size'])) {
-                    $width = $firstPage['size']['width'] ?? 595;
-                    $height = $firstPage['size']['height'] ?? 842;
-                }
-            }
-
-            wp_send_json_success(array(
-                'html' => $html_content,
-                'width' => $width,
-                'height' => $height
-            ));
-
-        } catch (Exception $e) {
-            wp_send_json_error('Erreur: ' . $e->getMessage());
-        }
+        // This method is now handled by the global function
+        // Keeping it for compatibility
     }
 
     /**
@@ -1226,21 +1163,100 @@ class PDF_Builder_Admin {
     /**
      * Génère du HTML depuis les données du template
      */
-    private function generate_html_from_template_data($template) {
-        $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>PDF Preview</title>';
-        
-        // Gestion des marges d'impression - utiliser la première page
-        $margins = ['top' => 20, 'right' => 20, 'bottom' => 20, 'left' => 20];
-        if (isset($template['pages']) && is_array($template['pages']) && !empty($template['pages'])) {
-            $firstPage = $template['pages'][0];
-            if (isset($firstPage['margins'])) {
-                $margins = $firstPage['margins'];
-            }
+    public function generate_html_from_template_data($template, $order_id = null) {
+        // Version optimisée avec Flexbox pour de meilleures performances
+        $html = '<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>PDF Preview</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8fafc;
+            color: #1a202c;
+            line-height: 1.5;
         }
-        $margin_css = sprintf('margin: 0; padding: %dpx %dpx %dpx %dpx;', $margins['top'], $margins['right'], $margins['bottom'], $margins['left']);
-        
-        $html .= '<style>body { font-family: Arial, sans-serif; ' . $margin_css . ' } .pdf-element { position: absolute; }</style>';
-        $html .= '</head><body>';
+        .pdf-page {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin: 0 auto 20px auto;
+            position: relative;
+            overflow: hidden;
+        }
+        .pdf-element {
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        .pdf-element.text { background: rgba(255,255,255,0.8); border: 1px solid #e2e8f0; }
+        .pdf-element.layout-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-align: center;
+            border: none;
+        }
+        .pdf-element.layout-footer {
+            background: #2d3748;
+            color: #e2e8f0;
+            font-size: 0.875rem;
+            text-align: center;
+            border: none;
+        }
+        .pdf-element.layout-sidebar {
+            background: #edf2f7;
+            border: 2px solid #cbd5e0;
+            font-weight: 500;
+        }
+        .pdf-element.layout-section {
+            background: #fefcbf;
+            border: 2px solid #d69e2e;
+            font-weight: 500;
+        }
+        .pdf-element.layout-container {
+            background: rgba(102, 126, 234, 0.1);
+            border: 2px dashed #667eea;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-style: italic;
+            color: #667eea;
+        }
+        .pdf-element.rectangle {
+            background: #e2e8f0;
+            border: 2px solid #cbd5e0;
+        }
+        .pdf-element img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+        .pdf-placeholder {
+            color: #a0aec0;
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+        }
+        @media print {
+            body { background: white; }
+            .pdf-page { box-shadow: none; border: none; }
+        }
+    </style>
+</head>
+<body>';
+
+        // Structure de page optimisée
+        $page_width = $template['canvasWidth'] ?? 595;
+        $page_height = $template['canvasHeight'] ?? 842;
+
+        $html .= sprintf('<div class="pdf-page" style="width: %dpx; min-height: %dpx;">', $page_width, $page_height);
 
         // Utiliser les éléments de la première page
         $elements = [];
@@ -1253,33 +1269,45 @@ class PDF_Builder_Admin {
         }
 
         if (is_array($elements)) {
-            foreach ($elements as $element) {
-                $style = sprintf(
-                    'left: %dpx; top: %dpx; width: %dpx; height: %dpx;',
-                    $element['position']['x'],
-                    $element['position']['y'],
-                    $element['size']['width'],
-                    $element['size']['height']
-                );
+            // Trier les éléments par position Y pour un meilleur rendu
+            usort($elements, function($a, $b) {
+                return ($a['position']['y'] ?? 0) <=> ($b['position']['y'] ?? 0);
+            });
 
+            foreach ($elements as $element) {
+                $content = $element['content'] ?? '';
+                $type = $element['type'] ?? 'text';
+
+                // Remplacer les variables dynamiques
+                $content = $this->replace_dynamic_variables($content, $order_id);
+
+                // Style de base optimisé
+                $element_style = '';
                 if (isset($element['style'])) {
-                    if (isset($element['style']['color'])) {
-                        $style .= ' color: ' . $element['style']['color'] . ';';
-                    }
-                    if (isset($element['style']['fontSize'])) {
-                        $style .= ' font-size: ' . $element['style']['fontSize'] . 'px;';
-                    }
-                    if (isset($element['style']['fontWeight'])) {
-                        $style .= ' font-weight: ' . $element['style']['fontWeight'] . ';';
-                    }
-                    if (isset($element['style']['fillColor'])) {
-                        $style .= ' background-color: ' . $element['style']['fillColor'] . ';';
-                    }
+                    $styles = $element['style'];
+                    $element_style = sprintf(
+                        'color: %s; font-size: %dpx; font-weight: %s; background-color: %s;',
+                        $styles['color'] ?? '#1a202c',
+                        $styles['fontSize'] ?? 14,
+                        $styles['fontWeight'] ?? 'normal',
+                        $styles['fillColor'] ?? 'transparent'
+                    );
                 }
 
-                $content = $element['content'] ?? '';
+                // Positionnement optimisé (conversion des coordonnées absolues en layout relatif)
+                $x = $element['position']['x'] ?? 0;
+                $y = $element['position']['y'] ?? 0;
+                $width = $element['size']['width'] ?? 100;
+                $height = $element['size']['height'] ?? 50;
 
-                switch ($element['type']) {
+                $position_style = sprintf(
+                    'position: absolute; left: %dpx; top: %dpx; width: %dpx; min-height: %dpx;',
+                    $x, $y, $width, $height
+                );
+
+                $css_class = 'pdf-element ' . str_replace('_', '-', $type);
+
+                switch ($type) {
                     case 'text':
                     case 'invoice_number':
                     case 'invoice_date':
@@ -1289,33 +1317,344 @@ class PDF_Builder_Admin {
                     case 'tax':
                     case 'total':
                     case 'company_info':
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content));
+                        $html .= sprintf(
+                            '<div class="%s text" style="%s %s">%s</div>',
+                            $css_class,
+                            $position_style,
+                            $element_style,
+                            esc_html($content)
+                        );
                         break;
 
                     case 'rectangle':
-                        $html .= sprintf('<div class="pdf-element" style="%s"></div>', $style);
+                        $html .= sprintf(
+                            '<div class="%s rectangle" style="%s %s"></div>',
+                            $css_class,
+                            $position_style,
+                            $element_style
+                        );
                         break;
 
                     case 'image':
                     case 'company_logo':
                         if ($content) {
-                            $html .= sprintf('<img class="pdf-element" src="%s" style="%s" alt="Image" />', esc_url($content), $style);
+                            $html .= sprintf(
+                                '<img class="%s" src="%s" style="%s" alt="Image" />',
+                                $css_class,
+                                esc_url($content),
+                                $position_style
+                            );
+                        } else {
+                            $html .= sprintf(
+                                '<div class="%s" style="%s"><div class="pdf-placeholder">📷 Image</div></div>',
+                                $css_class,
+                                $position_style
+                            );
                         }
                         break;
 
                     case 'product_table':
-                        $html .= sprintf('<div class="pdf-element" style="%s">Product Table Placeholder</div>', $style);
+                        $html .= sprintf(
+                            '<div class="%s" style="%s"><div class="pdf-placeholder">📊 Tableau produits</div></div>',
+                            $css_class,
+                            $position_style
+                        );
+                        break;
+
+                    case 'layout-header':
+                        $html .= sprintf(
+                            '<div class="%s" style="%s %s"><strong>📄 EN-TÊTE</strong></div>',
+                            $css_class,
+                            $position_style,
+                            $element_style
+                        );
+                        break;
+
+                    case 'layout-footer':
+                        $html .= sprintf(
+                            '<div class="%s" style="%s %s"><em>📄 PIED DE PAGE</em></div>',
+                            $css_class,
+                            $position_style,
+                            $element_style
+                        );
+                        break;
+
+                    case 'layout-sidebar':
+                        $html .= sprintf(
+                            '<div class="%s" style="%s %s"><strong>📑 BARRE LATÉRALE</strong></div>',
+                            $css_class,
+                            $position_style,
+                            $element_style
+                        );
+                        break;
+
+                    case 'layout-section':
+                        $html .= sprintf(
+                            '<div class="%s" style="%s %s"><strong>📋 SECTION</strong></div>',
+                            $css_class,
+                            $position_style,
+                            $element_style
+                        );
+                        break;
+
+                    case 'layout-container':
+                        $html .= sprintf(
+                            '<div class="%s" style="%s %s"><em>📦 CONTENEUR</em></div>',
+                            $css_class,
+                            $position_style,
+                            $element_style
+                        );
                         break;
 
                     default:
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: $element['type']));
+                        $html .= sprintf(
+                            '<div class="%s" style="%s %s">%s</div>',
+                            $css_class,
+                            $position_style,
+                            $element_style,
+                            esc_html($content ?: 'Élément: ' . $type)
+                        );
                         break;
                 }
             }
         }
 
-        $html .= '</body></html>';
+        $html .= '</div></body></html>';
         return $html;
+    }
+
+    /**
+     * Remplace les variables dynamiques dans le contenu
+     */
+    private function replace_dynamic_variables($content, $order_id = null) {
+        if (empty($content)) {
+            return $content;
+        }
+
+        // Protection contre les boucles infinies - limiter à 10 remplacements maximum
+        $max_replacements = 10;
+        $replacement_count = 0;
+
+        // Variables générales (date, etc.)
+        $replacements = [
+            '{{date}}' => date('d/m/Y'),
+            '{{date|format:Y-m-d}}' => date('Y-m-d'),
+            '{{date|format:d/m/Y}}' => date('d/m/Y'),
+            '{{time}}' => date('H:i:s'),
+            '{{datetime}}' => date('d/m/Y H:i:s'),
+        ];
+
+        // Variables WooCommerce si order_id est fourni
+        if ($order_id && function_exists('wc_get_order')) {
+            $order = wc_get_order($order_id);
+            if ($order) {
+                $replacements = array_merge($replacements, [
+                    // Informations de commande
+                    '{{order_number}}' => $order->get_order_number(),
+                    '{{order_date}}' => $order->get_date_created() ? $order->get_date_created()->date('d/m/Y') : '',
+                    '{{order_status}}' => wc_get_order_status_name($order->get_status()),
+                    '{{order_total}}' => $order->get_formatted_order_total(),
+                    '{{order_subtotal}}' => wc_price($order->get_subtotal()),
+                    '{{order_tax}}' => wc_price($order->get_total_tax()),
+                    '{{order_shipping}}' => wc_price($order->get_shipping_total()),
+                    '{{order_discount}}' => wc_price($order->get_discount_total()),
+                    '{{order_refund}}' => wc_price($order->get_total_refunded()),
+
+                    // Informations client
+                    '{{customer_name}}' => $order->get_formatted_billing_full_name(),
+                    '{{customer_email}}' => $order->get_billing_email(),
+                    '{{customer_phone}}' => $order->get_billing_phone(),
+
+                    // Adresses
+                    '{{billing_address}}' => $order->get_formatted_billing_address(),
+                    '{{shipping_address}}' => $order->get_formatted_shipping_address(),
+
+                    // Méthode de paiement
+                    '{{payment_method}}' => $order->get_payment_method_title(),
+
+                    // Numéros de facture/devis (si extension disponible)
+                    '{{invoice_number}}' => $this->get_invoice_number($order),
+                    '{{quote_number}}' => $this->get_quote_number($order),
+                ]);
+            }
+        }
+
+        // Variables dynamiques avec expressions (formules) - approche sécurisée
+        while ($replacement_count < $max_replacements && preg_match('/\{\{([^}]+)\}\}/', $content, $matches)) {
+            $expression = $matches[1];
+            $replacement_count++;
+
+            // Éviter les remplacements récursifs - si l'expression contient déjà des accolades, ignorer
+            if (strpos($expression, '{{') !== false || strpos($expression, '}}') !== false) {
+                // Remplacer par une chaîne vide pour éviter la boucle
+                $content = str_replace($matches[0], '', $content);
+                continue;
+            }
+
+            $result = $this->evaluate_dynamic_expression($expression, $replacements);
+            $content = str_replace($matches[0], $result, $content);
+        }
+
+        return $content;
+    }
+
+    /**
+     * Évalue une expression dynamique de manière sécurisée
+     */
+    private function evaluate_dynamic_expression($expression, $replacements) {
+        // Si c'est une expression mathématique
+        if (preg_match('/^(.+?)\s*\*\s*(.+)$/', $expression, $math_matches)) {
+            $left = $this->evaluate_expression($math_matches[1], $replacements);
+            $right = $this->evaluate_expression($math_matches[2], $replacements);
+            if (is_numeric($left) && is_numeric($right)) {
+                return $left * $right;
+            }
+        }
+
+        // Si c'est une expression avec |
+        if (strpos($expression, '|') !== false) {
+            $parts = explode('|', $expression, 2);
+            $value = trim($parts[0]);
+            $filter = trim($parts[1]);
+
+            // Filtres disponibles
+            if ($filter === 'currency:EUR') {
+                $numeric_value = $this->extract_numeric_value($value, $replacements);
+                return $numeric_value ? '€' . number_format($numeric_value, 2, ',', ' ') : $value;
+            }
+            if ($filter === 'currency:USD') {
+                $numeric_value = $this->extract_numeric_value($value, $replacements);
+                return $numeric_value ? '$' . number_format($numeric_value, 2, '.', ',') : $value;
+            }
+            if (preg_match('/^format:([YmdHis\/\-:]+)$/', $filter, $format_matches)) {
+                $format = $format_matches[1];
+                if ($value === 'date') {
+                    return date($format);
+                }
+            }
+        }
+
+        // Si c'est une variable simple
+        if (isset($replacements['{{' . $expression . '}}'])) {
+            return $replacements['{{' . $expression . '}}'];
+        }
+
+        // Si c'est une expression conditionnelle
+        if (preg_match('/^(.+?)\s*\?\s*(.+?)\s*:\s*(.+)$/', $expression, $cond_matches)) {
+            $condition = trim($cond_matches[1]);
+            $true_val = trim($cond_matches[2]);
+            $false_val = trim($cond_matches[3]);
+
+            // Évaluer la condition (simple pour l'instant)
+            $condition_result = $this->evaluate_condition($condition, $replacements);
+            return $condition_result ? $true_val : $false_val;
+        }
+
+        // Retourner l'expression originale si non reconnue
+        return '{{' . $expression . '}}';
+    }
+
+    /**
+     * Nettoie le contenu pour éviter l'affichage de CSS ou de code
+     */
+    private function sanitize_content($content) {
+        // Supprimer les variables CSS qui commencent par --
+        if (strpos($content, '--') === 0) {
+            return '';
+        }
+
+        // Supprimer les déclarations CSS var()
+        if (strpos($content, 'var(') === 0) {
+            return '';
+        }
+
+        // Supprimer les lignes qui ressemblent à du CSS (propriété: valeur;)
+        if (preg_match('/^[a-z-]+:\s*[^;]+;/', $content)) {
+            return '';
+        }
+
+        return $content;
+    }
+
+    /**
+     * Évalue une expression simple
+     */
+    private function evaluate_expression($expr, $replacements) {
+        // Remplacer les variables dans l'expression
+        foreach ($replacements as $key => $value) {
+            $expr = str_replace($key, $value, $expr);
+        }
+
+        // Essayer d'évaluer comme nombre
+        if (is_numeric($expr)) {
+            return floatval($expr);
+        }
+
+        // Extraire les valeurs numériques des prix
+        if (preg_match('/[\d.,\s]+/', $expr, $matches)) {
+            $cleaned = preg_replace('/[^\d.,]/', '', $matches[0]);
+            $cleaned = str_replace([' ', ','], ['', '.'], $cleaned);
+            return floatval($cleaned);
+        }
+
+        return 0;
+    }
+
+    /**
+     * Évalue une condition simple
+     */
+    private function evaluate_condition($condition, $replacements) {
+        // Remplacer les variables
+        foreach ($replacements as $key => $value) {
+            $condition = str_replace($key, '"' . $value . '"', $condition);
+        }
+
+        // Conditions simples
+        if (strpos($condition, '===') !== false) {
+            list($left, $right) = explode('===', $condition, 2);
+            return trim($left, '"\'') === trim($right, '"\'');
+        }
+
+        return false;
+    }
+
+    /**
+     * Extrait une valeur numérique d'une expression
+     */
+    private function extract_numeric_value($expr, $replacements) {
+        // Si c'est une variable
+        if (isset($replacements['{{' . $expr . '}}'])) {
+            $value = $replacements['{{' . $expr . '}}'];
+            return $this->evaluate_expression($value, []);
+        }
+
+        return $this->evaluate_expression($expr, $replacements);
+    }
+
+    /**
+     * Obtient le numéro de facture (extension WooCommerce PDF Invoices)
+     */
+    private function get_invoice_number($order) {
+        // Essayer différentes extensions de facturation
+        if (function_exists('wcpdf_get_invoice_number')) {
+            return wcpdf_get_invoice_number($order->get_id());
+        }
+
+        // Fallback: numéro de commande
+        return $order->get_order_number();
+    }
+
+    /**
+     * Obtient le numéro de devis
+     */
+    private function get_quote_number($order) {
+        // Essayer différentes extensions de devis
+        if (function_exists('get_quote_number')) {
+            return get_quote_number($order->get_id());
+        }
+
+        // Fallback: numéro de commande avec préfixe
+        return 'DEVIS-' . $order->get_order_number();
     }
 
     /**
@@ -1413,6 +1752,16 @@ class PDF_Builder_Admin {
                     </div>
                 <?php endif; ?>
 
+                <div style="margin-bottom: 12px;">
+                    <label for="pdf_document_type" style="display: block; margin-bottom: 5px; font-weight: 500;">
+                        <?php _e('Type de document:', 'pdf-builder-pro'); ?>
+                    </label>
+                    <select id="pdf_document_type" style="width: 100%; padding: 5px; border: 1px solid #ddd; border-radius: 3px;">
+                        <option value="invoice"><?php _e('Facture', 'pdf-builder-pro'); ?></option>
+                        <option value="quote"><?php _e('Devis', 'pdf-builder-pro'); ?></option>
+                    </select>
+                </div>
+
                 <div style="display: flex; flex-direction: column; gap: 8px;">
                     <button type="button"
                             id="pdf-builder-preview-btn"
@@ -1450,11 +1799,14 @@ class PDF_Builder_Admin {
             var $downloadBtn = $('#pdf-builder-download-btn');
             var $status = $('#pdf-builder-status');
             var $templateSelect = $('#pdf_template_select');
+            var $documentTypeSelect = $('#pdf_document_type');
+            var nonce = $('#pdf_builder_order_nonce').val();
 
             // Aperçu PDF
             $previewBtn.on('click', function() {
                 var orderId = $(this).data('order-id');
                 var templateId = $templateSelect.val() || 0;
+                var documentType = $documentTypeSelect.val() || 'invoice';
 
                 $status.html('<?php echo esc_js(__('Génération de l\'aperçu...', 'pdf-builder-pro')); ?>');
                 $previewBtn.prop('disabled', true);
@@ -1466,7 +1818,8 @@ class PDF_Builder_Admin {
                         action: 'pdf_builder_preview_order_pdf',
                         order_id: orderId,
                         template_id: templateId,
-                        nonce: '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>'
+                        document_type: documentType,
+                        nonce: nonce
                     },
                     success: function(response) {
                         if (response.success) {
@@ -1496,6 +1849,7 @@ class PDF_Builder_Admin {
             $generateBtn.on('click', function() {
                 var orderId = $(this).data('order-id');
                 var templateId = $templateSelect.val() || 0;
+                var documentType = $documentTypeSelect.val() || 'invoice';
 
                 $status.html('<?php echo esc_js(__('Génération du PDF...', 'pdf-builder-pro')); ?>');
                 $generateBtn.prop('disabled', true);
@@ -1507,7 +1861,8 @@ class PDF_Builder_Admin {
                         action: 'pdf_builder_generate_order_pdf',
                         order_id: orderId,
                         template_id: templateId,
-                        nonce: '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>'
+                        document_type: documentType,
+                        nonce: nonce
                     },
                     success: function(response) {
                         if (response.success) {
@@ -1558,6 +1913,7 @@ class PDF_Builder_Admin {
 
         $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
         $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
+        $document_type = isset($_POST['document_type']) ? sanitize_text_field($_POST['document_type']) : 'invoice';
 
         if (!$order_id) {
             wp_send_json_error('ID commande manquant');
@@ -1627,7 +1983,11 @@ class PDF_Builder_Admin {
 
             // Si pas de template, utiliser un template par défaut
             if (!$template_data) {
-                $template_data = $this->get_default_invoice_template();
+                if ($document_type === 'quote') {
+                    $template_data = $this->get_default_quote_template();
+                } else {
+                    $template_data = $this->get_default_invoice_template();
+                }
             }
 
             // Générer le PDF avec les données de la commande
@@ -1742,17 +2102,20 @@ class PDF_Builder_Admin {
 
             // Si pas de template, utiliser un template par défaut
             if (!$template_data) {
-                $template_data = $this->get_default_invoice_template();
+                if ($document_type === 'quote') {
+                    $template_data = $this->get_default_quote_template();
+                } else {
+                    $template_data = $this->get_default_invoice_template();
+                }
             }
 
             // Générer l'HTML d'aperçu avec les données de la commande
             $html_content = $this->generate_order_html($order, $template_data);
 
-            wp_send_json_success(array(
-                'html' => $html_content,
-                'width' => $template_data['canvas']['width'] ?? 595,
-                'height' => $template_data['canvas']['height'] ?? 842
-            ));
+            // Debug: vérifier que le HTML est correct
+            if (strpos($html_content, '<!DOCTYPE html>') === false) {
+                error_log('PDF Builder: HTML content does not start with DOCTYPE: ' . substr($html_content, 0, 200));
+            }
 
         } catch (Exception $e) {
             wp_send_json_error('Erreur: ' . $e->getMessage());
@@ -1832,47 +2195,57 @@ class PDF_Builder_Admin {
 
                 $content = $element['content'] ?? '';
 
-                // Remplacer les variables de la commande
-                $content = $this->replace_order_variables($content, $order);
+                // Vérifier que le contenu n'est pas du CSS ou du code malformé
+                if (strpos($content, '--') === 0 || strpos($content, 'var(') === 0) {
+                    $content = 'Contenu invalide';
+                }
+
+                // Remplacer les variables dynamiques de la commande
+                $content = $this->replace_dynamic_variables($content, $order->get_id());
+
+                // Nettoyer le contenu pour éviter l'affichage de CSS
+                $content = $this->sanitize_content($content);
 
                 switch ($element['type']) {
                     case 'text':
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content));
+                    case 'title':
+                    case 'subtitle':
+                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, nl2br(esc_html($content)));
                         break;
 
                     case 'invoice_number':
-                        $invoice_number = $order->get_id() . '-' . time();
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($invoice_number));
+                        if (empty($content)) $content = '{{order_number}}';
+                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content));
                         break;
 
                     case 'invoice_date':
-                        $date = $order->get_date_created() ? $order->get_date_created()->date('d/m/Y') : date('d/m/Y');
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($date));
+                        if (empty($content)) $content = '{{order_date}}';
+                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content));
                         break;
 
                     case 'customer_name':
-                        $customer_name = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($customer_name));
+                        if (empty($content)) $content = '{{customer_name}}';
+                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content));
                         break;
 
                     case 'customer_address':
-                        $address = $order->get_formatted_billing_address();
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, nl2br(esc_html($address)));
+                        if (empty($content)) $content = '{{billing_address}}';
+                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, nl2br(esc_html($content)));
                         break;
 
                     case 'subtotal':
-                        $subtotal = $order->get_subtotal();
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, wc_price($subtotal));
+                        if (empty($content)) $content = '{{order_subtotal}}';
+                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content));
                         break;
 
                     case 'tax':
-                        $tax = $order->get_total_tax();
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, wc_price($tax));
+                        if (empty($content)) $content = '{{order_tax}}';
+                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content));
                         break;
 
                     case 'total':
-                        $total = $order->get_total();
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, wc_price($total));
+                        if (empty($content)) $content = '{{order_total}}';
+                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content));
                         break;
 
                     case 'rectangle':
@@ -2136,19 +2509,27 @@ class PDF_Builder_Admin {
                 ),
                 array(
                     'id' => 'invoice_number',
-                    'type' => 'invoice_number',
+                    'type' => 'text',
                     'position' => array('x' => 400, 'y' => 90),
                     'size' => array('width' => 150, 'height' => 25),
                     'style' => array('fontSize' => 14, 'color' => '#000000'),
-                    'content' => 'N° de facture'
+                    'content' => 'N° {{order_number}}'
                 ),
                 array(
                     'id' => 'invoice_date',
-                    'type' => 'invoice_date',
+                    'type' => 'text',
                     'position' => array('x' => 400, 'y' => 120),
                     'size' => array('width' => 150, 'height' => 25),
                     'style' => array('fontSize' => 14, 'color' => '#000000'),
-                    'content' => 'Date'
+                    'content' => 'Date: {{order_date}}'
+                ),
+                array(
+                    'id' => 'due_date',
+                    'type' => 'text',
+                    'position' => array('x' => 400, 'y' => 150),
+                    'size' => array('width' => 150, 'height' => 25),
+                    'style' => array('fontSize' => 12, 'color' => '#666666'),
+                    'content' => 'Échéance: {{order_date|+30 days|format:d/m/Y}}'
                 ),
                 array(
                     'id' => 'customer_info',
@@ -2159,20 +2540,188 @@ class PDF_Builder_Admin {
                     'content' => 'Client'
                 ),
                 array(
+                    'id' => 'customer_address',
+                    'type' => 'customer_address',
+                    'position' => array('x' => 50, 'y' => 180),
+                    'size' => array('width' => 250, 'height' => 60),
+                    'style' => array('fontSize' => 12, 'color' => '#000000'),
+                    'content' => 'Adresse'
+                ),
+                array(
                     'id' => 'products_table',
                     'type' => 'product_table',
-                    'position' => array('x' => 50, 'y' => 250),
+                    'position' => array('x' => 50, 'y' => 260),
                     'size' => array('width' => 500, 'height' => 200),
                     'style' => array('fontSize' => 12, 'color' => '#000000'),
                     'content' => 'Tableau produits'
                 ),
                 array(
+                    'id' => 'subtotal',
+                    'type' => 'subtotal',
+                    'position' => array('x' => 400, 'y' => 490),
+                    'size' => array('width' => 150, 'height' => 25),
+                    'style' => array('fontSize' => 14, 'color' => '#000000'),
+                    'content' => 'Sous-total'
+                ),
+                array(
+                    'id' => 'tax',
+                    'type' => 'tax',
+                    'position' => array('x' => 400, 'y' => 520),
+                    'size' => array('width' => 150, 'height' => 25),
+                    'style' => array('fontSize' => 14, 'color' => '#000000'),
+                    'content' => 'TVA'
+                ),
+                array(
                     'id' => 'total',
                     'type' => 'total',
-                    'position' => array('x' => 400, 'y' => 500),
+                    'position' => array('x' => 400, 'y' => 550),
                     'size' => array('width' => 150, 'height' => 30),
                     'style' => array('fontSize' => 16, 'fontWeight' => 'bold', 'color' => '#000000'),
-                    'content' => 'Total'
+                    'content' => 'Total TTC'
+                ),
+                array(
+                    'id' => 'payment_info',
+                    'type' => 'text',
+                    'position' => array('x' => 50, 'y' => 480),
+                    'size' => array('width' => 300, 'height' => 40),
+                    'style' => array('fontSize' => 10, 'color' => '#666666'),
+                    'content' => 'Mode de paiement: {{payment_method}} - Échéance: {{order_date|+30 days|format:d/m/Y}}'
+                ),
+                array(
+                    'id' => 'invoice_footer',
+                    'type' => 'text',
+                    'position' => array('x' => 50, 'y' => 750),
+                    'size' => array('width' => 500, 'height' => 40),
+                    'style' => array('fontSize' => 10, 'color' => '#666666'),
+                    'content' => 'TVA non applicable, art. 293 B du CGI - Merci pour votre confiance'
+                )
+            )
+        );
+    }
+
+    /**
+     * Template par défaut pour les devis
+     */
+    private function get_default_quote_template() {
+        return array(
+            'canvas' => array(
+                'width' => 595,
+                'height' => 842,
+                'zoom' => 1,
+                'pan' => array('x' => 0, 'y' => 0)
+            ),
+            'elements' => array(
+                array(
+                    'id' => 'company_name',
+                    'type' => 'text',
+                    'position' => array('x' => 50, 'y' => 50),
+                    'size' => array('width' => 200, 'height' => 30),
+                    'style' => array('fontSize' => 18, 'fontWeight' => 'bold', 'color' => '#000000'),
+                    'content' => 'Ma Société'
+                ),
+                array(
+                    'id' => 'quote_title',
+                    'type' => 'text',
+                    'position' => array('x' => 400, 'y' => 50),
+                    'size' => array('width' => 150, 'height' => 30),
+                    'style' => array('fontSize' => 20, 'fontWeight' => 'bold', 'color' => '#000000'),
+                    'content' => 'DEVIS'
+                ),
+                array(
+                    'id' => 'quote_number',
+                    'type' => 'text',
+                    'position' => array('x' => 400, 'y' => 90),
+                    'size' => array('width' => 150, 'height' => 25),
+                    'style' => array('fontSize' => 14, 'color' => '#000000'),
+                    'content' => 'DEVIS-{{order_number}}'
+                ),
+                array(
+                    'id' => 'quote_date',
+                    'type' => 'text',
+                    'position' => array('x' => 400, 'y' => 120),
+                    'size' => array('width' => 150, 'height' => 25),
+                    'style' => array('fontSize' => 14, 'color' => '#000000'),
+                    'content' => 'Date: {{order_date}}'
+                ),
+                array(
+                    'id' => 'validity_date',
+                    'type' => 'text',
+                    'position' => array('x' => 400, 'y' => 150),
+                    'size' => array('width' => 150, 'height' => 25),
+                    'style' => array('fontSize' => 12, 'color' => '#666666'),
+                    'content' => 'Valable jusqu\'au: {{order_date|+30 days|format:d/m/Y}}'
+                ),
+                array(
+                    'id' => 'customer_info',
+                    'type' => 'customer_name',
+                    'position' => array('x' => 50, 'y' => 150),
+                    'size' => array('width' => 250, 'height' => 25),
+                    'style' => array('fontSize' => 14, 'color' => '#000000'),
+                    'content' => 'Client'
+                ),
+                array(
+                    'id' => 'customer_address',
+                    'type' => 'customer_address',
+                    'position' => array('x' => 50, 'y' => 180),
+                    'size' => array('width' => 250, 'height' => 60),
+                    'style' => array('fontSize' => 12, 'color' => '#000000'),
+                    'content' => 'Adresse'
+                ),
+                array(
+                    'id' => 'quote_intro',
+                    'type' => 'text',
+                    'position' => array('x' => 50, 'y' => 260),
+                    'size' => array('width' => 500, 'height' => 40),
+                    'style' => array('fontSize' => 12, 'color' => '#000000'),
+                    'content' => 'Nous avons le plaisir de vous soumettre notre devis pour les prestations suivantes :'
+                ),
+                array(
+                    'id' => 'products_table',
+                    'type' => 'product_table',
+                    'position' => array('x' => 50, 'y' => 320),
+                    'size' => array('width' => 500, 'height' => 200),
+                    'style' => array('fontSize' => 12, 'color' => '#000000'),
+                    'content' => 'Tableau produits'
+                ),
+                array(
+                    'id' => 'subtotal',
+                    'type' => 'subtotal',
+                    'position' => array('x' => 400, 'y' => 550),
+                    'size' => array('width' => 150, 'height' => 25),
+                    'style' => array('fontSize' => 14, 'color' => '#000000'),
+                    'content' => 'Sous-total'
+                ),
+                array(
+                    'id' => 'tax',
+                    'type' => 'tax',
+                    'position' => array('x' => 400, 'y' => 580),
+                    'size' => array('width' => 150, 'height' => 25),
+                    'style' => array('fontSize' => 14, 'color' => '#000000'),
+                    'content' => 'TVA'
+                ),
+                array(
+                    'id' => 'total',
+                    'type' => 'total',
+                    'position' => array('x' => 400, 'y' => 610),
+                    'size' => array('width' => 150, 'height' => 30),
+                    'style' => array('fontSize' => 16, 'fontWeight' => 'bold', 'color' => '#000000'),
+                    'content' => 'Total TTC'
+                ),
+                array(
+                    'id' => 'quote_conditions',
+                    'type' => 'text',
+                    'position' => array('x' => 50, 'y' => 660),
+                    'size' => array('width' => 500, 'height' => 60),
+                    'style' => array('fontSize' => 10, 'color' => '#666666'),
+                    'content' => 'Conditions: Ce devis est valable 30 jours. Paiement à 30 jours. Toute commande implique l\'acceptation de nos conditions générales de vente.'
+                ),
+                array(
+                    'id' => 'signature',
+                    'type' => 'text',
+                    'position' => array('x' => 400, 'y' => 750),
+                    'size' => array('width' => 150, 'height' => 25),
+                    'style' => array('fontSize' => 12, 'color' => '#000000'),
+                    'content' => 'Signature'
                 )
             )
         );
@@ -3537,5 +4086,117 @@ class PDF_Builder_Admin {
         }
 
         return $output;
+    }
+
+    /**
+     * Page de test WooCommerce
+     */
+    public function woocommerce_test_page() {
+        $this->check_admin_permissions();
+
+        // Inclure le fichier de test s'il existe
+        $test_file = plugin_dir_path(__FILE__) . 'PDF_Builder_WooCommerce_Test.php';
+        if (file_exists($test_file)) {
+            require_once $test_file;
+        } else {
+            wp_die(__('Fichier de test WooCommerce introuvable.', 'pdf-builder-pro'));
+        }
+
+        // Vérifier que la fonction existe
+        if (function_exists('pdf_builder_woocommerce_test_page')) {
+            pdf_builder_woocommerce_test_page();
+        } else {
+            wp_die(__('Fonction de test WooCommerce introuvable.', 'pdf-builder-pro'));
+        }
+    }
+}
+
+/**
+ * Global function to handle AJAX preview requests
+ */
+function pdf_builder_handle_preview_ajax() {
+    error_log('PDF Builder Preview: Function called');
+
+    // Check permissions (basic check)
+    if (!is_user_logged_in() || !current_user_can('read')) {
+        error_log('PDF Builder Preview: User not logged in or no permissions');
+        wp_send_json_error('Accès non autorisé');
+        return;
+    }
+
+    // LOGGING POUR DÉBOGUER
+    error_log('PDF Builder Preview: Requête reçue');
+    error_log('PDF Builder Preview: $_POST = ' . print_r($_POST, true));
+    error_log('PDF Builder Preview: $_FILES = ' . print_r($_FILES, true));
+
+    // Récupérer les données du POST (FormData)
+    $nonce = isset($_POST['nonce']) ? $_POST['nonce'] : '';
+    $template_data = isset($_POST['template_data']) ? $_POST['template_data'] : '';
+
+    error_log('PDF Builder Preview: nonce = ' . $nonce);
+    error_log('PDF Builder Preview: template_data = ' . $template_data);
+    error_log('PDF Builder Preview: template_data length = ' . strlen($template_data));
+
+    // Vérification de sécurité
+    if (!wp_verify_nonce($nonce, 'pdf_builder_nonce')) {
+        error_log('PDF Builder Preview: Nonce invalide');
+        wp_send_json_error('Sécurité: Nonce invalide');
+        return;
+    }
+
+    // Récupérer les données du template
+    if (empty($template_data)) {
+        error_log('PDF Builder Preview: template_data vide');
+        wp_send_json_error('Aucune donnée template reçue');
+        return;
+    }
+
+    try {
+        // Décoder les données JSON
+        error_log('PDF Builder Preview: Tentative de décodage JSON');
+        $template = json_decode(stripslashes($template_data), true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            $error_msg = json_last_error_msg();
+            error_log('PDF Builder Preview: JSON decode error: ' . $error_msg);
+            error_log('PDF Builder Preview: JSON reçu: ' . $template_data);
+            wp_send_json_error('Données template invalides: ' . $error_msg);
+            return;
+        }
+
+        error_log('PDF Builder Preview: JSON décodé avec succès: ' . print_r($template, true));
+
+        // Get the admin instance to access methods
+        $admin = PDF_Builder_Admin::getInstance();
+        if (!$admin) {
+            error_log('PDF Builder Preview: Could not get admin instance');
+            wp_send_json_error('Erreur interne');
+            return;
+        }
+
+        // Générer l'HTML d'aperçu
+        $html_content = $admin->generate_html_from_template_data($template);
+
+        // Utiliser les dimensions de la première page ou les valeurs par défaut
+        $width = 595; // A4 width par défaut
+        $height = 842; // A4 height par défaut
+
+        if (isset($template['pages']) && is_array($template['pages']) && !empty($template['pages'])) {
+            $firstPage = $template['pages'][0];
+            if (isset($firstPage['size'])) {
+                $width = $firstPage['size']['width'] ?? 595;
+                $height = $firstPage['size']['height'] ?? 842;
+            }
+        }
+
+        wp_send_json_success(array(
+            'html' => $html_content,
+            'width' => $width,
+            'height' => $height
+        ));
+
+    } catch (Exception $e) {
+        error_log('PDF Builder Preview: Exception: ' . $e->getMessage());
+        wp_send_json_error('Erreur: ' . $e->getMessage());
     }
 }

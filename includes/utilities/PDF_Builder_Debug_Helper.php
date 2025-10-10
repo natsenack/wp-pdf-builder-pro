@@ -54,7 +54,7 @@ class PDF_Builder_Debug_Helper {
 
             // En développement, afficher aussi dans la console
             if ($this->debug_level >= 2 && defined('WP_DEBUG') && WP_DEBUG) {
-                echo '<script>console.log("' . esc_js($prefix . $message) . '");</script>';
+                // Debug console output removed
             }
         }
     }

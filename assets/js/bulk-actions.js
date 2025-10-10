@@ -371,7 +371,7 @@
         }
 
         .pdf-builder-task-progress .progress-fill {
-            background: #007cba;
+            background: #3b82f6;
             height: 100%;
             transition: width 0.3s ease;
         }

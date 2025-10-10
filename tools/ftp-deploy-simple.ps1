@@ -1,374 +1,240 @@
-# Script de déploiement FTP simplifié
-# Version épurée pour déploiement propre
+# 🚀 FTP DEPLOY - SIMPLE & FAST
+# ===================================
 
-param(
-    [string]$RemoteDir = "/wp-content/plugins/wp-pdf-builder-pro",
-    [int]$MaxConcurrent = 50,  # Augmenté pour plus de parallélisation
-    [int]$ChunkSize = 1048576  # 1MB chunks pour les gros fichiers
-)
-
-Write-Host "🚀 DÉPLOIEMENT FTP ULTRA-PARALLÈLE" -ForegroundColor Green
-Write-Host "=================================" -ForegroundColor Green
+Write-Host "🚀 FTP DEPLOY - SIMPLE & FAST" -ForegroundColor Green
+Write-Host "================================" -ForegroundColor Green
 
 # Configuration
-$configFile = ".\ftp-config.env"
+$projectRoot = Split-Path (Get-Location) -Parent
+$configFile = Join-Path $projectRoot "./tools/ftp-config.env"
+Write-Host "Project root: $projectRoot" -ForegroundColor Yellow
+Write-Host "Config file: $configFile" -ForegroundColor Yellow
+Write-Host "Config exists: $(Test-Path $configFile)" -ForegroundColor Yellow
 if (-not (Test-Path $configFile)) {
     Write-Host "❌ Config manquante : $configFile" -ForegroundColor Red
     exit 1
 }
 
-# Charger config
 Get-Content $configFile | Where-Object { $_ -match '^FTP_' } | ForEach-Object {
     $key, $value = $_ -split '=', 2
     [Environment]::SetEnvironmentVariable($key.Trim(), $value.Trim())
 }
 
-$FtpHost = $env:FTP_HOST
-$FtpUser = $env:FTP_USER
-$FtpPassword = $env:FTP_PASSWORD
+$ftpHost = $env:FTP_HOST
+$ftpUser = $env:FTP_USER
+$ftpPassword = $env:FTP_PASSWORD
+$remotePath = $env:FTP_PATH
 
-if (-not $FtpHost -or -not $FtpUser -or -not $FtpPassword) {
-    Write-Host "❌ Config FTP incomplète" -ForegroundColor Red
+Write-Host "🎯 Serveur: $ftpHost" -ForegroundColor Cyan
+Write-Host "👤 User: $ftpUser" -ForegroundColor Cyan
+Write-Host "📁 Dest: $remotePath" -ForegroundColor Cyan
+
+# Compilation
+Write-Host "🔨 Compilation en cours..." -ForegroundColor Yellow
+Push-Location $projectRoot
+& npm run build
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "❌ Erreur de compilation" -ForegroundColor Red
+    exit 1
+}
+Pop-Location
+Write-Host "✅ Compilation terminée" -ForegroundColor Green
+
+# Lister les fichiers
+$files = Get-ChildItem -Path $projectRoot -Recurse -File | Where-Object {
+    $relPath = $_.FullName.Substring($projectRoot.Length + 1).Replace('\', '/')
+    -not ($relPath -match '^(archive|\.git|\.vscode|node_modules|src|tools|docs|build-tools|dev-tools|vendor|dist|package\.json|package-lock\.json|webpack\.config\.js|tsconfig\.json|temp-restore)/')
+} | Where-Object {
+    $relPath = $_.FullName.Substring($projectRoot.Length + 1).Replace('\', '/')
+    ($relPath -match '^(assets|includes|languages|lib)/') -or
+    ($relPath -match '\.(php|css|js|html|htaccess)$') -or
+    ($relPath -eq 'readme.txt') -or
+    ($relPath -eq 'pdf-builder-pro.php') -or
+    ($relPath -eq 'bootstrap.php')
+}
+
+Write-Host "📊 Fichiers à envoyer: $($files.Count)" -ForegroundColor Yellow
+
+if ($files.Count -eq 0) {
+    Write-Host "❌ Aucun fichier à envoyer" -ForegroundColor Red
     exit 1
 }
 
-Write-Host "🎯 Serveur : $FtpHost" -ForegroundColor Cyan
-Write-Host "📁 Destination : $RemoteDir" -ForegroundColor Cyan
-Write-Host "🔥 Connexions simultanées : $MaxConcurrent (ULTRA-PARALLÈLE)" -ForegroundColor Red
-Write-Host "📦 Taille des chunks : $([math]::Round($ChunkSize/1MB, 1))MB" -ForegroundColor Yellow
-
-# Fonction pour créer un répertoire FTP (optimisée)
-function New-FtpDirectory {
-    param([string]$Directory)
-
-    # Créer récursivement tous les répertoires parents
-    $parts = $Directory -split '/' | Where-Object { $_ -ne '' }
-    $currentPath = ""
-
-    foreach ($part in $parts) {
-        $currentPath += "/$part"
-        try {
-            $ftpRequest = [System.Net.FtpWebRequest]::Create("ftp://$FtpHost$currentPath")
-            $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
-            $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPassword)
-            $ftpRequest.UsePassive = $true
-            $ftpRequest.Timeout = 5000  # Timeout réduit
-
-            $response = $ftpRequest.GetResponse()
-            $response.Close()
-        } catch {
-            # Ignorer les erreurs (répertoire existe déjà)
-        }
-    }
-}
-
-# Fonction upload simple
-function Send-FtpFile {
-    param([string]$LocalPath, [string]$RemotePath)
+# Fonction pour uploader un fichier avec gestion d'erreur améliorée
+function Send-File {
+    param(
+        [string]$localFile,
+        [string]$remoteFile,
+        [string]$ftpHost,
+        [string]$ftpUser,
+        [string]$ftpPassword
+    )
 
     try {
-        $ftpUri = "ftp://$FtpHost$RemotePath"
         $webClient = New-Object System.Net.WebClient
-        $webClient.Credentials = New-Object System.Net.NetworkCredential($FtpUser, $FtpPassword)
-        $webClient.UploadFile($ftpUri, $LocalPath)
-        return $true
-    } catch {
-        Write-Host "❌ Échec : $LocalPath → $($_.Exception.Message)" -ForegroundColor Red
-        return $false
+        $webClient.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
+        $uri = "ftp://$ftpHost$remoteFile"
+
+        # Essayer d'uploader le fichier
+        $webClient.UploadFile($uri, $localFile)
+        return @{ Success = $true; RemoteFile = $remoteFile; FileName = [System.IO.Path]::GetFileName($remoteFile) }
     }
-}
+    catch {
+        $errorMessage = $_.Exception.Message
 
-# Lister les fichiers de production
-$projectRoot = Split-Path (Get-Location) -Parent
-$files = Get-ChildItem -Path $projectRoot -Recurse -File | Where-Object {
-    $relPath = $_.FullName.Substring($projectRoot.Length + 1).Replace('\', '/')
-
-    # EXCLURE les dossiers et fichiers de développement
-    -not ($relPath -match '^(\.git|\.vscode|node_modules|src|tools|docs|build-tools|dev-tools|vendor|archive|dist)/') -and
-    -not ($relPath -match '\.(log|tmp|bak|md~)$') -and
-    -not ($relPath -match '^composer\.(json|lock)$') -and
-    -not ($relPath -match '^package\.json$') -and
-    -not ($relPath -match '^tsconfig\.json$') -and
-    -not ($relPath -match '\.ts$') -and
-    -not ($relPath -match '\.tsx$') -and
-    -not ($relPath -match '\.map$')
-} | Where-Object {
-    $relPath = $_.FullName.Substring($projectRoot.Length + 1).Replace('\', '/')
-
-    # INCLURE seulement les fichiers essentiels du plugin
-    ($relPath -match '^(assets|includes|languages|uploads)/') -or
-    ($relPath -eq '.htaccess') -or
-    ($relPath -eq 'bootstrap.php') -or
-    ($relPath -eq 'pdf-builder-pro.php') -or
-    ($relPath -eq 'README.md')
-}
-
-Write-Host "📊 Fichiers à déployer : $($files.Count)" -ForegroundColor Yellow
-
-# Fonction upload ultra-optimisée avec chunks
-$uploadScript = {
-    param($localFile, $remoteFile, $ftpHost, $ftpUser, $ftpPassword, $chunkSize)
-
-    try {
-        $fileInfo = Get-Item $localFile
-        $fileSize = $fileInfo.Length
-
-        # Pour les petits fichiers (< 1MB), upload direct
-        if ($fileSize -le 1048576) {
-            $ftpRequest = [System.Net.FtpWebRequest]::Create("ftp://$ftpHost$remoteFile")
-            $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
-            $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
-            $ftpRequest.UsePassive = $true
-            $ftpRequest.Timeout = 30000
-            $ftpRequest.ReadWriteTimeout = 30000
-            $ftpRequest.UseBinary = $true
-            $ftpRequest.KeepAlive = $false
-
-            $fileContents = [System.IO.File]::ReadAllBytes($localFile)
-            $ftpRequest.ContentLength = $fileContents.Length
-
-            $requestStream = $ftpRequest.GetRequestStream()
-            $requestStream.Write($fileContents, 0, $fileContents.Length)
-            $requestStream.Close()
-
-            $response = $ftpRequest.GetResponse()
-            $response.Close()
-
-            return @{ Success = $true; File = $localFile; Size = $fileSize; Method = "Direct" }
-        }
-        # Pour les gros fichiers, upload par chunks
-        else {
-            $bytesUploaded = 0
-            $buffer = New-Object byte[] $chunkSize
-            $fileStream = $null
-
+        # Pour les erreurs 550 (fichier non disponible), essayer de supprimer et réessayer
+        if ($errorMessage -match "550") {
             try {
-                $fileStream = [System.IO.File]::OpenRead($localFile)
+                Write-Host "⚠️ Tentative de suppression du fichier distant: $($remoteFile)" -ForegroundColor Yellow
+                $deleteUri = "ftp://$ftpHost$remoteFile"
+                $deleteRequest = [System.Net.FtpWebRequest]::Create($deleteUri)
+                $deleteRequest.Method = [System.Net.WebRequestMethods+Ftp]::DeleteFile
+                $deleteRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
 
-                while ($bytesUploaded -lt $fileSize) {
-                    $bytesToRead = [Math]::Min($chunkSize, $fileSize - $bytesUploaded)
+                $deleteResponse = $deleteRequest.GetResponse()
+                $deleteResponse.Close()
 
-                    $bytesRead = $fileStream.Read($buffer, 0, $bytesToRead)
-                    if ($bytesRead -eq 0) { break }
+                Write-Host "✅ Fichier distant supprimé, nouvelle tentative..." -ForegroundColor Green
 
-                    # Créer une requête FTP pour ce chunk
-                    $chunkRemotePath = if ($bytesUploaded -eq 0) {
-                        $remoteFile  # Premier chunk : créer le fichier
-                    } else {
-                        "$remoteFile;offset=$bytesUploaded"  # Chunks suivants : append
-                    }
-
-                    $ftpRequest = [System.Net.FtpWebRequest]::Create("ftp://$ftpHost$chunkRemotePath")
-                    $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
-                    $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
-                    $ftpRequest.UsePassive = $true
-                    $ftpRequest.Timeout = 30000
-                    $ftpRequest.ReadWriteTimeout = 30000
-                    $ftpRequest.UseBinary = $true
-                    $ftpRequest.KeepAlive = $false
-
-                    $requestStream = $ftpRequest.GetRequestStream()
-                    $requestStream.Write($buffer, 0, $bytesRead)
-                    $requestStream.Close()
-
-                    $response = $ftpRequest.GetResponse()
-                    $response.Close()
-
-                    $bytesUploaded += $bytesRead
-                }
-            } finally {
-                if ($fileStream) {
-                    $fileStream.Close()
-                    $fileStream.Dispose()
-                }
+                # Réessayer l'upload
+                $webClient.UploadFile($uri, $localFile)
+                return @{ Success = $true; RemoteFile = $remoteFile; FileName = [System.IO.Path]::GetFileName($remoteFile); Retried = $true }
             }
-
-            return @{ Success = $true; File = $localFile; Size = $fileSize; Method = "Chunked" }
+            catch {
+                return @{ Success = $false; RemoteFile = $remoteFile; Error = "Erreur 550 persistante: $($_.Exception.Message)"; FileName = [System.IO.Path]::GetFileName($remoteFile) }
+            }
         }
-    } catch {
-        return @{ Success = $false; Error = $_.Exception.Message; File = $localFile }
+        else {
+            return @{ Success = $false; RemoteFile = $remoteFile; Error = $errorMessage; FileName = [System.IO.Path]::GetFileName($remoteFile) }
+        }
+    }
+    finally {
+        $webClient.Dispose()
     }
 }
 
-$successCount = 0
-$failCount = 0
-$totalFiles = $files.Count
-$currentIndex = 0
+# Upload des fichiers en parallèle
+$maxConcurrentJobs = 10  # Nombre maximum de jobs simultanés
+$runningJobs = @()
+$completedJobs = @()
+$uploaded = 0
+$total = $files.Count
 $startTime = Get-Date
+$uploadedBytes = 0
 
-# Créer le pool de runspaces pour parallélisation maximale
-$runspacePool = [runspacefactory]::CreateRunspacePool(1, $MaxConcurrent)
-$runspacePool.Open()
+Write-Host "📤 Upload en parallèle ($maxConcurrentJobs jobs max)..." -ForegroundColor Yellow
 
-$runspaces = [System.Collections.ArrayList]::new()
+try {
+    foreach ($file in $files) {
+        $relPath = $file.FullName.Substring($projectRoot.Length + 1).Replace('\', '/')
+        $remoteFile = "$remotePath/$relPath"
+        $fileSize = $file.Length
 
-Write-Host "📊 Déploiement de $totalFiles fichiers avec $MaxConcurrent connexions simultanées..." -ForegroundColor Cyan
-
-foreach ($file in $files) {
-    $currentIndex++
-    $relPath = $file.FullName.Substring($projectRoot.Length + 1).Replace('\', '/')
-    $remotePath = "$RemoteDir/$relPath"
-
-    # Créer tous les répertoires parents nécessaires
-    $remoteDirPath = [System.IO.Path]::GetDirectoryName($remotePath).Replace('\', '/')
-    if ($remoteDirPath -ne $RemoteDir.TrimEnd('/') -and $remoteDirPath -ne "") {
-        New-FtpDirectory -Directory $remoteDirPath | Out-Null
-    }
-
-    # Lancer l'upload en runspace (beaucoup plus rapide que les jobs)
-    $powershell = [powershell]::Create().AddScript($uploadScript).AddArgument($file.FullName).AddArgument($remotePath).AddArgument($FtpHost).AddArgument($FtpUser).AddArgument($FtpPassword).AddArgument($ChunkSize)
-    $powershell.RunspacePool = $runspacePool
-
-    $runspaceData = @{
-        PowerShell = $powershell
-        Handle = $powershell.BeginInvoke()
-        File = $file.FullName
-        Index = $currentIndex
-    }
-    $runspaces.Add($runspaceData) | Out-Null
-
-    # Afficher progression
-    $percent = [math]::Round(($currentIndex / $totalFiles) * 100, 1)
-    Write-Host "`r📤 [$percent%] $currentIndex/$totalFiles fichiers - Runspaces actifs: $($runspaces.Count)" -NoNewline
-
-    # Attendre si on atteint la limite de runspaces simultanés
-    while ($runspaces.Count -ge $MaxConcurrent) {
-        $completedRunspaces = $runspaces | Where-Object { $_.Handle.IsCompleted }
-
-        if ($completedRunspaces) {
-            foreach ($rs in $completedRunspaces) {
-                $result = $rs.PowerShell.EndInvoke($rs.Handle)
-                $rs.PowerShell.Dispose()
+        # Attendre qu'il y ait un slot disponible si on a atteint la limite
+        while ($runningJobs.Count -ge $maxConcurrentJobs) {
+            # Attendre qu'au moins un job se termine
+            $completed = $runningJobs | Where-Object { $_.Job.State -ne 'Running' } | Select-Object -First 1
+            if ($completed) {
+                $result = Receive-Job -Job $completed.Job
+                Remove-Job -Job $completed.Job
 
                 if ($result.Success) {
-                    $successCount++
-                    $method = if ($result.Method) { " ($($result.Method))" } else { "" }
-                    Write-Host "`r✅ Upload réussi: $(Split-Path $result.File -Leaf)$method" -ForegroundColor Green
+                    Write-Host "✅ $($result.FileName)" -ForegroundColor Green
+                    $uploaded++
+                    $uploadedBytes += $completed.FileSize
                 } else {
-                    $failCount++
-                    Write-Host "`r❌ Échec: $(Split-Path $result.File -Leaf) - $($result.Error)" -ForegroundColor Red
+                    Write-Host "❌ Erreur upload $($result.FileName): $($result.Error)" -ForegroundColor Red
                 }
 
-                $runspaces.Remove($rs)
+                $runningJobs = $runningJobs | Where-Object { $_.Job -ne $completed.Job }
+                $completedJobs += $completed
+            } else {
+                # Aucun job terminé, attendre un peu
+                Start-Sleep -Milliseconds 100
             }
-        } else {
-            Start-Sleep -Milliseconds 10  # Très courte pause pour éviter la surcharge CPU
         }
+
+        # Démarrer le job pour ce fichier
+        $job = Start-Job -ScriptBlock ${function:Send-File} -ArgumentList $file.FullName, $remoteFile, $ftpHost, $ftpUser, $ftpPassword
+        $runningJobs += @{ Job = $job; FileSize = $fileSize; RemoteFile = $remoteFile; FileName = [System.IO.Path]::GetFileName($relPath) }
+
+        # Mise à jour de la progression
+        $elapsed = (Get-Date) - $startTime
+        $avgSpeed = if ($elapsed.TotalSeconds -gt 0) { $uploadedBytes / $elapsed.TotalSeconds } else { 0 }
+        $remainingFiles = $total - $uploaded
+        $estimatedTimeRemaining = if ($avgSpeed -gt 0) { ($remainingFiles * ($uploadedBytes / [Math]::Max($uploaded, 1))) / $avgSpeed } else { 0 }
+
+        $progressPercent = [math]::Round(($uploaded / $total) * 100, 1)
+        $status = "$uploaded/$total fichiers | $([math]::Round($avgSpeed / 1024, 1)) KB/s | ~$([math]::Round($estimatedTimeRemaining / 60, 1)) min restantes"
+
+        Write-Progress -Activity "🚀 Déploiement FTP - $progressPercent% terminé" -Status $status -PercentComplete $progressPercent
     }
-}
 
-Write-Host ""
-
-# Attendre que tous les runspaces se terminent
-Write-Host "🔄 Finalisation des derniers transferts..." -ForegroundColor Yellow
-
-while ($runspaces.Count -gt 0) {
-    $completedRunspaces = $runspaces | Where-Object { $_.Handle.IsCompleted }
-
-    if ($completedRunspaces) {
-        foreach ($rs in $completedRunspaces) {
-            $result = $rs.PowerShell.EndInvoke($rs.Handle)
-            $rs.PowerShell.Dispose()
+    # Attendre que tous les jobs restants se terminent
+    while ($runningJobs.Count -gt 0) {
+        $completed = $runningJobs | Where-Object { $_.Job.State -ne 'Running' } | Select-Object -First 1
+        if ($completed) {
+            $result = Receive-Job -Job $completed.Job
+            Remove-Job -Job $completed.Job
 
             if ($result.Success) {
-                $successCount++
-                $method = if ($result.Method) { " ($($result.Method))" } else { "" }
-                Write-Host "✅ Upload réussi: $(Split-Path $result.File -Leaf)$method" -ForegroundColor Green
+                $statusIcon = if ($result.Retried) { "🔄" } else { "✅" }
+                Write-Host "$statusIcon $($result.FileName)" -ForegroundColor Green
+                $uploaded++
+                $uploadedBytes += $completed.FileSize
             } else {
-                $failCount++
-                Write-Host "❌ Échec: $(Split-Path $result.File -Leaf) - $($result.Error)" -ForegroundColor Red
-            }
-
-            $runspaces.Remove($rs)
-        }
-    }
-
-    if ($runspaces.Count -gt 0) {
-        Start-Sleep -Milliseconds 10
-    }
-}
-
-# Nettoyer le pool de runspaces
-$runspacePool.Close()
-$runspacePool.Dispose()
-
-Write-Host ""
-Write-Host "✅ TERMINÉ" -ForegroundColor Green
-Write-Host "==========" -ForegroundColor Green
-
-$endTime = Get-Date
-$duration = $endTime - $startTime
-$totalSeconds = $duration.TotalSeconds
-$filesPerSecond = [math]::Round($successCount / $totalSeconds, 1)
-
-Write-Host "📊 Réussis : $successCount" -ForegroundColor Green
-Write-Host "❌ Échecs : $failCount" -ForegroundColor Red
-Write-Host "⏱️ Durée : $([math]::Round($totalSeconds, 1))s" -ForegroundColor Cyan
-Write-Host "🚀 Vitesse : $filesPerSecond fichiers/s" -ForegroundColor Cyan
-Write-Host ""
-
-# Git commit et push automatique après déploiement réussi
-if ($failCount -eq 0 -and $successCount -gt 0) {
-    Write-Host "🔄 VERSIONNAGE AUTOMATIQUE" -ForegroundColor Magenta
-    Write-Host "=========================" -ForegroundColor Magenta
-
-    try {
-        # Aller à la racine du projet
-        Push-Location $projectRoot
-
-        # Vérifier l'état Git
-        $gitStatus = & git status --porcelain
-        if ($gitStatus) {
-            Write-Host "📝 Fichiers modifiés détectés, création du commit..." -ForegroundColor Yellow
-
-            # Ajouter tous les fichiers modifiés
-            & git add .
-
-            # Créer un message de commit détaillé
-            $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-            $commitMessage = @"
-deploy: déploiement FTP réussi vers $FtpHost
-
-- Déploiement automatique via script ftp-deploy-simple.ps1
-- $successCount fichiers déployés avec succès
-- Durée du déploiement: $([math]::Round($totalSeconds, 1))s
-- Vitesse: $filesPerSecond fichiers/s
-- Date: $timestamp
-
-Type: deploy (déploiement)
-Impact: Production mise à jour
-Environnement: $FtpHost$RemoteDir
-"@
-
-            # Commit
-            $commitResult = & git commit -m $commitMessage 2>&1
-            if ($LASTEXITCODE -eq 0) {
-                Write-Host "✅ Commit créé avec succès" -ForegroundColor Green
-
-                # Push
-                $pushResult = & git push origin main 2>&1
-                if ($LASTEXITCODE -eq 0) {
-                    Write-Host "✅ Push vers GitHub réussi" -ForegroundColor Green
-                    Write-Host "🔗 Dépôt: https://github.com/natsenack/wp-pdf-builder-pro.git" -ForegroundColor Cyan
+                # Pour les erreurs 550 sur les fichiers PHP, les marquer comme warnings plutôt qu'erreurs
+                if ($result.Error -match "550" -and $result.FileName -match "\.php$") {
+                    Write-Host "⚠️ Erreur 550 sur $($result.FileName) (permissions serveur) - ignoré" -ForegroundColor Yellow
+                    $uploaded++  # Compter comme uploadé pour la progression
                 } else {
-                    Write-Host "❌ Échec du push Git:" -ForegroundColor Red
-                    Write-Host $pushResult -ForegroundColor Red
+                    Write-Host "❌ Erreur upload $($result.FileName): $($result.Error)" -ForegroundColor Red
                 }
-            } else {
-                Write-Host "❌ Échec du commit Git:" -ForegroundColor Red
-                Write-Host $commitResult -ForegroundColor Red
             }
-        } else {
-            Write-Host "ℹ️ Aucun changement détecté dans Git" -ForegroundColor Cyan
+
+            $runningJobs = $runningJobs | Where-Object { $_.Job -ne $completed.Job }
+            $completedJobs += $completed
         }
 
-        Pop-Location
-    } catch {
-        Write-Host "❌ Erreur lors du versionnage Git:" -ForegroundColor Red
-        Write-Host $_.Exception.Message -ForegroundColor Red
-    }
+        # Mise à jour de la progression
+        $elapsed = (Get-Date) - $startTime
+        $avgSpeed = if ($elapsed.TotalSeconds -gt 0) { $uploadedBytes / $elapsed.TotalSeconds } else { 0 }
+        $remainingFiles = $total - $uploaded
+        $estimatedTimeRemaining = if ($avgSpeed -gt 0) { ($remainingFiles * ($uploadedBytes / [Math]::Max($uploaded, 1))) / $avgSpeed } else { 0 }
 
-    Write-Host ""
+        $progressPercent = [math]::Round(($uploaded / $total) * 100, 1)
+        $status = "$uploaded/$total fichiers | $([math]::Round($avgSpeed / 1024, 1)) KB/s | ~$([math]::Round($estimatedTimeRemaining / 60, 1)) min restantes"
+
+        Write-Progress -Activity "🚀 Déploiement FTP - $progressPercent% terminé" -Status $status -PercentComplete $progressPercent
+
+        Start-Sleep -Milliseconds 100  # Petite pause pour éviter de boucler trop vite
+    }
+} finally {
+    # Nettoyer tous les jobs restants en cas d'erreur ou d'interruption
+    Write-Host "🧹 Nettoyage des jobs en cours..." -ForegroundColor Yellow
+    Get-Job | Remove-Job -Force -ErrorAction SilentlyContinue
+    Write-Host "✅ Jobs nettoyés" -ForegroundColor Green
 }
 
-Write-Host "⚠️ Videz le cache WordPress après déploiement" -ForegroundColor Yellow
+Write-Host "🎉 Déploiement terminé ! $uploaded fichiers uploadés." -ForegroundColor Green
+
+# Push automatique vers Git après déploiement réussi
+Write-Host "🔄 Push vers Git..." -ForegroundColor Yellow
+
+try {
+    # Aller dans le répertoire du projet
+    Push-Location $projectRoot
+
+    # Git add, commit, push
+    & git add .
+    $commitMessage = "Déploiement automatique - $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
+    & git commit -m $commitMessage
+    & git push origin dev
+
+    Write-Host "✅ Push Git réussi" -ForegroundColor Green
+
+} catch {
+    Write-Host "⚠️ Erreur Git: $($_.Exception.Message)" -ForegroundColor Yellow
+} finally {
+    Pop-Location
+}

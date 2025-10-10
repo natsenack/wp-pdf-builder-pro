@@ -20,66 +20,24 @@ if (!defined('PDF_BUILDER_DEBUG_MODE') || !PDF_BUILDER_DEBUG_MODE) {
 $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
 $is_new = $template_id === 0;
 
-$core = PDF_Builder_Core::getInstance();
-$template_manager = $core->get_template_manager();
+// Temporaire : désactiver l'utilisation du template manager qui n'existe pas encore
+// $core = PDF_Builder_Core::getInstance();
+// $template_manager = $core->get_template_manager();
 
-if (!$is_new) {
-    $template = $template_manager->get_template($template_id);
-    if (!$template) {
-        wp_die(__('Template non trouvé.', 'pdf-builder-pro'));
-    }
-} else {
-    $template = null;
-}
+$template = null; // Temporaire : pas de template chargé
 ?>
-
-<?php
-/**
- * Template Editor Page - PDF Builder Pro
- * React/TypeScript Canvas Editor
- */
-
-if (!defined('ABSPATH')) {
-    exit('Accès direct interdit.');
-}
-
-// Permissions are checked by WordPress via add_submenu_page capability parameter
-// Additional check for logged-in users as fallback
-if (!defined('PDF_BUILDER_DEBUG_MODE') || !PDF_BUILDER_DEBUG_MODE) {
-    if (!is_user_logged_in() || !current_user_can('read')) {
-        wp_die(__('Vous devez être connecté pour accéder à cette page.', 'pdf-builder-pro'));
-    }
-}
-
-// Get template ID from URL
-$template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
-$is_new = $template_id === 0;
-
-$core = PDF_Builder_Core::getInstance();
-$template_manager = $core->get_template_manager();
-
-if (!$is_new) {
-    $template = $template_manager->get_template($template_id);
-    if (!$template) {
-        wp_die(__('Template non trouvé.', 'pdf-builder-pro'));
-    }
-} else {
-    $template = null;
-}
-?>
-
-
-
 <div class="wrap">
-    <div id="pdf-builder-container" data-is-new="<?php echo $is_new ? 'true' : 'false'; ?>" style="height: calc(100vh - 120px); padding: 20px; background: #f5f5f5; border-radius: 8px; margin: 10px 0;">
+    <h1><?php echo $is_new ? __('Créer un nouveau template', 'pdf-builder-pro') : __('Éditer le template', 'pdf-builder-pro'); ?></h1>
+    
+    <div id="invoice-quote-builder-container" data-is-new="<?php echo $is_new ? 'true' : 'false'; ?>" style="padding: 20px; background: #ffffff; border-radius: 8px; margin: 10px 0;">
         <!-- React App will be mounted here -->
-        <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: #ffffff; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: #ffffff; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
             <div style="text-align: center;">
                 <div style="font-size: 3rem; margin-bottom: 1rem;">📄</div>
                 <h2><?php echo $is_new ? __('Créer un nouveau template', 'pdf-builder-pro') : __('Éditer le template', 'pdf-builder-pro'); ?></h2>
                 <p><?php _e('Chargement de l\'éditeur React/TypeScript avancé...', 'pdf-builder-pro'); ?></p>
                 <div style="margin-top: 2rem;">
-                    <button id="flush-rest-cache-btn" style="background: #dc3232; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-right: 10px;">
+                    <button id="flush-rest-cache-btn" style="background: #94a3b8; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-right: 10px;">
                         🔄 Vider Cache REST
                     </button>
                     <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #007cba; border-radius: 50%; animation: spin 1s linear infinite;"></div>
@@ -101,36 +59,68 @@ if (!$is_new) {
 (function() {
     'use strict';
 
-    console.log('PDF Builder Pro: Template editor script loaded');
+    // Ajouter la classe pour masquer les éléments WordPress
+    document.body.classList.add('pdf-builder-active');
+
+    // Fonction pour vérifier si les scripts sont chargés
+    const checkScriptsLoaded = () => {
+        return typeof window.PDFBuilderPro !== 'undefined' &&
+               typeof window.PDFBuilderPro.init === 'function' &&
+               typeof window.React !== 'undefined' &&
+               typeof window.ReactDOM !== 'undefined';
+    };
 
     // Initialisation optimisée avec polling intelligent
     let attempts = 0;
-    const maxAttempts = 50; // ~1.5 secondes max
+    const maxAttempts = 100; // ~5 secondes max
 
     const initApp = () => {
-        console.log('PDF Builder Pro: Checking for PDFBuilderPro.init (attempt ' + attempts + ')');
-        console.log('PDF Builder Pro: window.PDFBuilderPro:', window.PDFBuilderPro);
-
-        if (window.PDFBuilderPro?.init) {
-            console.log('PDF Builder Pro: PDFBuilderPro.init found, calling with pdf-builder-container');
-            window.PDFBuilderPro.init('pdf-builder-container');
-            return;
+        if (checkScriptsLoaded()) {
+            try {
+                window.PDFBuilderPro.init('invoice-quote-builder-container', {
+                    templateId: null,
+                    isNew: true,
+                    width: 595,
+                    height: 842,
+                    zoom: 1,
+                    gridSize: 10,
+                    snapToGrid: true,
+                    maxHistorySize: 50
+                });
+                console.log('PDF Builder Pro: Éditeur initialisé avec succès');
+                return;
+            } catch (error) {
+                console.error('PDF Builder Pro: Erreur lors de l\'initialisation:', error);
+                return;
+            }
         }
 
         if (++attempts < maxAttempts) {
-            console.log('PDF Builder Pro: PDFBuilderPro.init not ready, retrying...');
-            requestAnimationFrame(initApp);
+            setTimeout(initApp, 50); // Attendre 50ms et réessayer
         } else {
-            console.log('PDF Builder Pro: Max attempts reached, PDFBuilderPro.init never became available');
+            console.error('PDF Builder Pro: Timeout - Scripts non chargés après', maxAttempts * 50, 'ms');
+            // Afficher un message d'erreur à l'utilisateur
+            const container = document.getElementById('invoice-quote-builder-container');
+            if (container) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #dc3545;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">❌</div>
+                        <h2>Erreur de chargement</h2>
+                        <p>Les scripts nécessaires n'ont pas pu être chargés.</p>
+                        <p>Vérifiez la console pour plus de détails.</p>
+                        <button onclick="location.reload()" style="background: #dc3545; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin-top: 10px;">
+                            Recharger la page
+                        </button>
+                    </div>
+                `;
+            }
         }
     };
 
-    // Démarrer l'initialisation immédiatement après DOM ready
+    // Démarrer l'initialisation après DOM ready
     if (document.readyState === 'loading') {
-        console.log('PDF Builder Pro: DOM still loading, waiting for DOMContentLoaded');
         document.addEventListener('DOMContentLoaded', initApp);
     } else {
-        console.log('PDF Builder Pro: DOM already loaded, starting init');
         initApp();
     }
 

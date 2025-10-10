@@ -1,11 +1,34 @@
-/* PDF Builder Pro - React/TypeScript Interface Styles */
+/* PDF Builder Pro - THÈME TRÈS CLAIR - BACKGROUNDS UNIFIÉS */
 
 .pdf-builder-app {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: #f8f9fa;
+  background-color: #ffffff; /* BLANC PUR - Background principal */
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  position: relative;
+  z-index: 9999;
+}
+
+/* Corriger les conflits avec l'admin bar WordPress */
+body.wp-admin .pdf-builder-app {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+/* Ajuster le z-index pour éviter les conflits avec l'admin bar */
+body.wp-admin #wpadminbar {
+  z-index: 999 !important;
+}
+
+body.wp-admin .pdf-builder-app {
+  z-index: 1000 !important;
+}
+
+/* S'assurer que le contenu du builder prend toute la hauteur disponible */
+.pdf-builder-app .pdf-canvas-editor {
+  height: 100vh;
+  overflow: hidden;
 }
 
 .pdf-builder-header {
@@ -13,14 +36,14 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background: white;
-  border-bottom: 1px solid #dee2e6;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  background: #ffffff; /* BLANC PUR */
+  border-bottom: 1px solid #f8f9fa; /* Bordure ultra-claire */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03); /* Ombre ultra-subtile */
 }
 
 .pdf-builder-header h1 {
   margin: 0;
-  color: #212529;
+  color: #1e293b; /* Gris foncé très clair */
   font-size: 1.5rem;
   font-weight: 600;
 }
@@ -32,40 +55,46 @@
 
 .btn {
   padding: 0.5rem 1rem;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  background: white;
-  color: #495057;
+  border: 1px solid #f8f9fa; /* Bordure ultra-claire */
+  border-radius: 6px;
+  background: #ffffff; /* BLANC PUR */
+  color: #64748b;
   cursor: pointer;
   font-size: 0.875rem;
   transition: all 0.2s;
 }
 
 .btn:hover {
-  background: #f8f9fa;
-  border-color: #adb5bd;
+  background: #f8f9fa; /* Blanc cassé ultra-clair */
+  border-color: #e9ecef;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .btn-primary {
-  background: #007cba;
+  background: #3b82f6; /* Bleu clair */
   color: white;
-  border-color: #007cba;
+  border-color: #3b82f6;
 }
 
 .btn-primary:hover {
-  background: #005a87;
-  border-color: #005a87;
+  background: #60a5fa; /* Bleu plus clair au hover */
+  border-color: #60a5fa;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
 
 .btn-secondary {
-  background: #6c757d;
+  background: #94a3b8; /* Gris très clair */
   color: white;
-  border-color: #6c757d;
+  border-color: #94a3b8;
 }
 
 .btn-secondary:hover {
-  background: #545b62;
-  border-color: #545b62;
+  background: #64748b; /* Gris moyen clair au hover */
+  border-color: #64748b;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
 
 .pdf-builder-workspace {
@@ -76,26 +105,26 @@
 
 .sidebar {
   width: 300px;
-  background: white;
-  border-right: 1px solid #dee2e6;
+  background: #ffffff; /* BLANC PUR */
+  border-right: 1px solid #f8f9fa; /* Bordure ultra-claire */
   display: flex;
   flex-direction: column;
   overflow-y: auto;
 }
 
 .left-sidebar {
-  border-right: 1px solid #dee2e6;
+  border-right: 1px solid #f8f9fa;
 }
 
 .right-sidebar {
-  border-left: 1px solid #dee2e6;
+  border-left: 1px solid #f8f9fa;
 }
 
 .main-canvas-area {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: #f8f9fa;
+  background: #ffffff; /* BLANC PUR */
   overflow-y: auto;
   max-height: 100vh;
 }
@@ -104,22 +133,17 @@
 .pdf-toolbar {
   display: flex;
   padding: 0.5rem;
-  background: white;
-  border-bottom: 1px solid #dee2e6;
+  background: #ffffff; /* BLANC PUR */
+  border-bottom: 1px solid #f8f9fa; /* Bordure ultra-claire */
   gap: 1rem;
-}
-
-.toolbar-section {
-  display: flex;
-  gap: 0.25rem;
 }
 
 .toolbar-btn {
   padding: 0.5rem;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  background: white;
-  color: #495057;
+  border: 1px solid #f8f9fa; /* Bordure ultra-claire */
+  border-radius: 6px;
+  background: #ffffff; /* BLANC PUR */
+  color: #64748b;
   cursor: pointer;
   font-size: 1rem;
   min-width: 36px;
@@ -131,45 +155,44 @@
 }
 
 .toolbar-btn:hover {
-  background: #f8f9fa;
-  border-color: #adb5bd;
+  background: #f8f9fa; /* Blanc cassé ultra-clair */
+  border-color: #e9ecef;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .toolbar-btn.active {
-  background: #007cba;
+  background: #3b82f6; /* Bleu clair */
   color: white;
-  border-color: #007cba;
+  border-color: #3b82f6;
 }
 
 /* Canvas Styles */
 .pdf-builder-canvas {
   flex: 1;
   position: relative;
-  background: #f8f9fa;
+  background: #ffffff; /* BLANC PUR */
 }
 
 .canvas-info {
   position: absolute;
   bottom: 10px;
   right: 10px;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95); /* Blanc avec transparence */
   padding: 0.5rem;
-  border-radius: 4px;
+  border-radius: 6px; /* Rayon plus doux */
   font-size: 0.75rem;
-  color: #6c757d;
+  color: #94a3b8; /* Gris clair */
   display: flex;
   gap: 1rem;
+  border: 1px solid #f1f5f9; /* Bordure très claire */
 }
 
 /* Element Library Styles */
-.element-library {
-  padding: 1rem;
-}
-
 .element-library h3 {
   margin: 0 0 1rem 0;
   font-size: 1rem;
-  color: #212529;
+  color: #1e293b; /* Gris foncé très clair */
 }
 
 .element-grid {
@@ -183,25 +206,28 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  background: white;
+  border: 1px solid #f8f9fa; /* Bordure ultra-claire */
+  border-radius: 6px;
+  background: #ffffff; /* BLANC PUR */
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .element-item:hover {
-  background: #f8f9fa;
-  border-color: #adb5bd;
+  background: #f8f9fa; /* Blanc cassé ultra-clair */
+  border-color: #e9ecef;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .element-icon {
   font-size: 1.25rem;
+  color: #64748b; /* Gris moyen clair */
 }
 
 .element-label {
   font-size: 0.875rem;
-  color: #495057;
+  color: #64748b; /* Gris moyen clair */
 }
 
 /* Properties Panel Styles */
@@ -212,11 +238,11 @@
 .properties-panel h3 {
   margin: 0 0 1rem 0;
   font-size: 1rem;
-  color: #212529;
+  color: #1e293b; /* Gris foncé très clair */
 }
 
 .no-selection {
-  color: #6c757d;
+  color: #94a3b8; /* Gris clair */
   font-style: italic;
   text-align: center;
   padding: 2rem;
@@ -231,15 +257,23 @@
   margin-bottom: 0.5rem;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #495057;
+  color: #64748b; /* Gris moyen clair */
 }
 
 .property-group input {
   width: 100%;
   padding: 0.5rem;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
+  border: 1px solid #f8f9fa; /* Bordure ultra-claire */
+  border-radius: 6px;
   font-size: 0.875rem;
+  background: #ffffff; /* BLANC PUR */
+  color: #1e293b;
+}
+
+.property-group input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
 }
 
 .input-row {
@@ -254,7 +288,7 @@
 .property-actions {
   margin-top: 2rem;
   padding-top: 1rem;
-  border-top: 1px solid #dee2e6;
+  border-top: 1px solid #f8f9fa; /* Bordure ultra-claire */
   display: flex;
   gap: 0.5rem;
 }
@@ -262,18 +296,20 @@
 .property-actions button {
   flex: 1;
   padding: 0.75rem;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  background: white;
-  color: #495057;
+  border: 1px solid #f8f9fa; /* Bordure ultra-claire */
+  border-radius: 6px;
+  background: #ffffff; /* BLANC PUR */
+  color: #64748b;
   cursor: pointer;
   font-size: 0.875rem;
   transition: all 0.2s;
 }
 
 .property-actions button:hover {
-  background: #f8f9fa;
-  border-color: #adb5bd;
+  background: #f8f9fa; /* Blanc cassé ultra-clair */
+  border-color: #e9ecef;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 /* Element Styles */
@@ -283,7 +319,7 @@
 }
 
 .pdf-element.selected {
-  outline: 2px solid #007cba;
+  outline: 2px solid #3b82f6; /* Bleu clair pour la sélection */
   outline-offset: 1px;
 }
 
@@ -291,9 +327,10 @@
   position: absolute;
   width: 8px;
   height: 8px;
-  background: #007cba;
+  background: #3b82f6; /* Bleu clair */
   border-radius: 50%;
   cursor: pointer;
+  border: 1px solid #ffffff; /* Bordure blanche pour contraste */
 }
 
 .resize-handle.nw { top: -4px; left: -4px; cursor: nw-resize; }

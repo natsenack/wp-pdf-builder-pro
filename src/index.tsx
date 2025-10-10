@@ -1,26 +1,13 @@
-// Étendre l'interface Window pour WordPress
-interface Window {
-  PDFBuilderPro?: {
-    init: (containerId: string) => void;
-  };
-}
-
-import React from 'react';
-import { createRoot } from 'react-dom/client';
-import CanvasBuilder from './components/CanvasBuilder';
-
-// Fonction d'initialisation pour WordPress
-(window as any).PDFBuilderPro = {
+// Simple export pour commencer
+const PDFBuilderPro = {
+  version: '1.0.0',
   init: (containerId: string) => {
-    const container = document.getElementById(containerId);
-    if (container) {
-      const root = createRoot(container);
-      root.render(<CanvasBuilder />);
-    } else {
-      console.error(`Container with ID "${containerId}" not found`);
-    }
   }
 };
 
-// Export par défaut pour les tests
-export default CanvasBuilder;
+// Attacher à window pour WordPress
+if (typeof window !== 'undefined') {
+  (window as any).PDFBuilderPro = PDFBuilderPro;
+}
+
+export default PDFBuilderPro;

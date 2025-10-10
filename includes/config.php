@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 
 // Version du plugin
 if (!defined('PDF_BUILDER_PRO_VERSION')) {
-    define('PDF_BUILDER_PRO_VERSION', '1.0.0');
+    define('PDF_BUILDER_PRO_VERSION', '1.0.1');
 }
 
 // Répertoire du plugin
@@ -35,14 +35,31 @@ if (!defined('PDF_BUILDER_PRO_ASSETS_URL')) {
     define('PDF_BUILDER_PRO_ASSETS_URL', PDF_BUILDER_PLUGIN_URL . 'assets/');
 }
 
+// Chemin absolu des assets (pour file_exists)
+if (!defined('PDF_BUILDER_PRO_ASSETS_PATH')) {
+    define('PDF_BUILDER_PRO_ASSETS_PATH', PDF_BUILDER_PLUGIN_DIR . 'assets/');
+}
+
 // Répertoire des uploads
 if (!defined('PDF_BUILDER_PRO_UPLOADS_DIR')) {
-    define('PDF_BUILDER_PRO_UPLOADS_DIR', wp_upload_dir()['basedir'] . '/pdf-builder-pro/');
+    // Utiliser une approche paresseuse pour éviter les erreurs si wp_upload_dir n'est pas disponible
+    if (function_exists('wp_upload_dir')) {
+        define('PDF_BUILDER_PRO_UPLOADS_DIR', wp_upload_dir()['basedir'] . '/pdf-builder-pro/');
+    } else {
+        // Fallback temporaire - sera redéfini plus tard
+        define('PDF_BUILDER_PRO_UPLOADS_DIR', ABSPATH . 'wp-content/uploads/pdf-builder-pro/');
+    }
 }
 
 // URL des uploads
 if (!defined('PDF_BUILDER_PRO_UPLOADS_URL')) {
-    define('PDF_BUILDER_PRO_UPLOADS_URL', wp_upload_dir()['baseurl'] . '/pdf-builder-pro/');
+    // Utiliser une approche paresseuse pour éviter les erreurs
+    if (function_exists('wp_upload_dir')) {
+        define('PDF_BUILDER_PRO_UPLOADS_URL', wp_upload_dir()['baseurl'] . '/pdf-builder-pro/');
+    } else {
+        // Fallback temporaire - sera redéfini plus tard
+        define('PDF_BUILDER_PRO_UPLOADS_URL', site_url('/wp-content/uploads/pdf-builder-pro/'));
+    }
 }
 
 // Répertoire du cache

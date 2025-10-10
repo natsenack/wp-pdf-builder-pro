@@ -169,7 +169,7 @@ class PDF_Builder_Core {
     public function admin_enqueue_scripts($hook) {
         // Scripts d'administration
         wp_enqueue_script(
-            'pdf-builder-admin',
+            'pdf-builder-admin-core',
             PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js',
             array('jquery'),
             PDF_BUILDER_PRO_VERSION,
@@ -177,14 +177,14 @@ class PDF_Builder_Core {
         );
 
         wp_enqueue_style(
-            'pdf-builder-admin',
+            'pdf-builder-admin-core',
             PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css',
             array(),
             PDF_BUILDER_PRO_VERSION
         );
 
         // Localiser le script pour AJAX
-        wp_localize_script('pdf-builder-admin', 'pdfBuilderAjax', array(
+        wp_localize_script('pdf-builder-admin-core', 'pdfBuilderAjax', array(
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pdf_builder_nonce'),
             'strings' => array(
@@ -416,7 +416,7 @@ class PDF_Builder_Core {
         }
 
         if (class_exists('PDF_Builder_Admin')) {
-            $this->admin = new PDF_Builder_Admin($this);
+            $this->admin = PDF_Builder_Admin::getInstance($this);
             pdf_builder_debug('PDF Builder Admin interface initialized', 1, 'core');
         } else {
             pdf_builder_debug('Failed to load PDF_Builder_Admin class', 1, 'core');
