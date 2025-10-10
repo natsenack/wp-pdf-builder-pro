@@ -140,7 +140,7 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
       <div className="element-library">
         <div className="library-header">
           <h3>📚 Bibliothèque d'Éléments</h3>
-          <p className="library-subtitle">Glissez les blocs vers le canvas pour les ajouter</p>
+          <p className="library-subtitle">Cliquez sur les blocs pour les ajouter au canvas</p>
         </div>
 
         <div className="library-content">
