@@ -181,12 +181,12 @@ export const PropertiesPanel = ({
 
   // Mettre à jour les valeurs précédentes quand l'élément change
   useEffect(() => {
-    if (selectedElement && localProperties) {
+    if (selectedElement) {
       // Initialiser les valeurs précédentes avec les valeurs actuelles de l'élément
-      setPreviousBackgroundColor(localProperties.backgroundColor || '#ffffff');
-      setPreviousBorderWidth(localProperties.borderWidth || 1);
+      setPreviousBackgroundColor(selectedElement.backgroundColor || '#ffffff');
+      setPreviousBorderWidth(selectedElement.borderWidth || 1);
     }
-  }, [selectedElement, localProperties]);
+  }, [selectedElement]); // Ne dépendre que de selectedElement pour éviter les boucles
 
   // Gestionnaire unifié de changement de propriété
   const handlePropertyChange = useCallback((elementId, property, value) => {
@@ -210,35 +210,35 @@ export const PropertiesPanel = ({
 
   // Gestionnaire pour le toggle "Aucun fond"
   const handleNoBackgroundToggle = useCallback((elementId, checked) => {
-    console.log('🎛️ handleNoBackgroundToggle:', { elementId, checked, currentColor: localProperties.backgroundColor, previousColor: previousBackgroundColor });
+    console.log('🎛️ handleNoBackgroundToggle:', { elementId, checked, currentColor: selectedElement?.backgroundColor, previousColor: previousBackgroundColor });
 
     if (checked) {
       // Sauvegarder la couleur actuelle avant de la désactiver
-      if (localProperties.backgroundColor && localProperties.backgroundColor !== 'transparent') {
-        setPreviousBackgroundColor(localProperties.backgroundColor);
+      if (selectedElement?.backgroundColor && selectedElement.backgroundColor !== 'transparent') {
+        setPreviousBackgroundColor(selectedElement.backgroundColor);
       }
       handlePropertyChange(elementId, 'backgroundColor', 'transparent');
     } else {
       // Restaurer la couleur précédente
       handlePropertyChange(elementId, 'backgroundColor', previousBackgroundColor);
     }
-  }, [localProperties.backgroundColor, previousBackgroundColor, handlePropertyChange]);
+  }, [selectedElement?.backgroundColor, previousBackgroundColor, handlePropertyChange]);
 
   // Gestionnaire pour le toggle "Aucune bordure"
   const handleNoBorderToggle = useCallback((elementId, checked) => {
-    console.log('🎛️ handleNoBorderToggle:', { elementId, checked, currentWidth: localProperties.borderWidth, previousWidth: previousBorderWidth });
+    console.log('🎛️ handleNoBorderToggle:', { elementId, checked, currentWidth: selectedElement?.borderWidth, previousWidth: previousBorderWidth });
 
     if (checked) {
       // Sauvegarder l'épaisseur actuelle avant de la désactiver
-      if (localProperties.borderWidth && localProperties.borderWidth > 0) {
-        setPreviousBorderWidth(localProperties.borderWidth);
+      if (selectedElement?.borderWidth && selectedElement.borderWidth > 0) {
+        setPreviousBorderWidth(selectedElement.borderWidth);
       }
       handlePropertyChange(elementId, 'borderWidth', 0);
     } else {
       // Restaurer l'épaisseur précédente
       handlePropertyChange(elementId, 'borderWidth', previousBorderWidth);
     }
-  }, [localProperties.borderWidth, previousBorderWidth, handlePropertyChange]);
+  }, [selectedElement?.borderWidth, previousBorderWidth, handlePropertyChange]);
 
   // Rendu des onglets
   const renderTabs = useCallback(() => (

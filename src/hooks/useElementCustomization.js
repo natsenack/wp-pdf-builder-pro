@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 
 /**
  * Hook pour gérer la personnalisation des éléments
@@ -8,10 +8,12 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
   const [localProperties, setLocalProperties] = useState({});
   const [activeTab, setActiveTab] = useState('appearance');
 
-  // Obtenir l'élément sélectionné
-  const selectedElement = selectedElements.length > 0
-    ? elements.find(el => el.id === selectedElements[0])
-    : null;
+  // Obtenir l'élément sélectionné (mémorisé pour éviter les re-renders)
+  const selectedElement = useMemo(() => {
+    return selectedElements.length > 0
+      ? elements.find(el => el.id === selectedElements[0])
+      : null;
+  }, [selectedElements, elements]);
 
   // Synchroniser les propriétés locales avec l'élément sélectionné
   useEffect(() => {
