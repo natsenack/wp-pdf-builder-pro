@@ -68,7 +68,23 @@ if (!defined('ABSPATH')) {
                         $features = ['✓ En-tête accrocheur', '✓ Sections d\'articles', '✓ Call-to-action', '✓ Pied de page'];
                     }
                     
-                    echo '<div class="template-card" style="border: 2px solid #dee2e6; border-radius: 8px; padding: 20px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease; cursor: pointer; display: flex; flex-direction: column; min-height: 350px;" onmouseover="this.style.transform=\'translateY(-2px)\'; this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.15)\';" onmouseout="this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'0 2px 8px rgba(0,0,0,0.1)\';">';
+                    echo '<div class="template-card" style="border: 2px solid #dee2e6; border-radius: 8px; padding: 20px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease; cursor: pointer; display: flex; flex-direction: column; min-height: 350px; position: relative;" onmouseover="this.style.transform=\'translateY(-2px)\'; this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.15)\';" onmouseout="this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'0 2px 8px rgba(0,0,0,0.1)\';">';
+                    
+                    // Déterminer le type de template pour l'icône par défaut
+                    $template_type = 'autre';
+                    if (stripos($template_name, 'facture') !== false) $template_type = 'facture';
+                    elseif (stripos($template_name, 'devis') !== false) $template_type = 'devis';
+                    elseif (stripos($template_name, 'commande') !== false) $template_type = 'commande';
+                    elseif (stripos($template_name, 'contrat') !== false) $template_type = 'contrat';
+                    elseif (stripos($template_name, 'newsletter') !== false) $template_type = 'newsletter';
+                    
+                    // Vérifier si c'est le template par défaut pour ce type (simulation)
+                    $is_default = false; // À remplacer par une vraie vérification en base
+                    
+                    echo '<div class="default-template-icon" style="position: absolute; top: 10px; right: 10px; font-size: 20px; cursor: pointer; opacity: ' . ($is_default ? '1' : '0.5') . ';" onclick="toggleDefaultTemplate(' . $template_id . ', \'' . $template_type . '\', \'' . addslashes($template_name) . '\')" title="' . ($is_default ? 'Template par défaut' : 'Définir comme template par défaut') . '">';
+                    echo $is_default ? '⭐' : '☆';
+                    echo '</div>';
+                    
                     echo '<div style="text-align: center; margin-bottom: 15px;">';
                     echo '<div style="font-size: 3rem; margin-bottom: 10px;">' . $icon . '</div>';
                     echo '<h3 style="margin: 0; color: #23282d;">' . $template_name . '</h3>';
@@ -265,6 +281,17 @@ function deleteTemplate(templateId, templateName) {
     location.reload();
 }
 
+function toggleDefaultTemplate(templateId, templateType, templateName) {
+    // Simulation du changement de template par défaut (à remplacer par un vrai appel AJAX)
+    console.log('Changement template par défaut:', templateId, templateType, templateName);
+    
+    // Afficher un message de succès temporaire
+    alert('✅ "' + templateName + '" défini comme template par défaut pour les ' + templateType + 's !');
+    
+    // Recharger la page pour voir les changements
+    location.reload();
+}
+
 // Fermer les modales en cliquant en dehors
 document.getElementById('template-settings-modal').addEventListener('click', function(e) {
     if (e.target === this) {
@@ -336,5 +363,16 @@ document.addEventListener('keydown', function(e) {
     background: #c82333 !important;
     border-color: #bd2130 !important;
 }
+
+.default-template-icon {
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+.default-template-icon:hover {
+    opacity: 1 !important;
+    transform: scale(1.2);
+}
+
 </style>
 
