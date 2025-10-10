@@ -105,7 +105,6 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
     if (e.target === e.currentTarget) {
       // Si un outil d'ajout est sélectionné, créer l'élément
       if (tool.startsWith('add-')) {
-        console.log('Canvas clicked with tool:', tool);
         const canvasRect = e.currentTarget.getBoundingClientRect();
         const clickX = e.clientX - canvasRect.left;
         const clickY = e.clientY - canvasRect.top;
@@ -162,7 +161,6 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
             break;
         }
 
-        console.log('Creating element:', elementType, 'at position:', adjustedX, adjustedY);
         canvasState.addElement(elementType, {
           x: Math.max(0, adjustedX - 50),
           y: Math.max(0, adjustedY - 25),
