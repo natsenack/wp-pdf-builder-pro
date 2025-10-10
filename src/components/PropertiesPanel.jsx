@@ -502,39 +502,41 @@ const PropertiesPanel = React.memo(({
               />
             )}
 
-            <div className="properties-group">
-              <h4>🔲 Bordures & Coins</h4>
+            {localProperties.borderWidth > 0 && (
+              <div className="properties-group">
+                <h4>🔲 Bordures & Coins</h4>
 
-              <div className="property-row">
-                <label>Épaisseur bordure:</label>
-                <div className="slider-container">
-                  <input
-                    type="range"
-                    min="0"
-                    max="10"
-                    value={localProperties.borderWidth ?? 1}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'borderWidth', parseInt(e.target.value))}
-                    className="slider"
-                  />
-                  <span className="slider-value">{localProperties.borderWidth ?? 1}px</span>
+                <div className="property-row">
+                  <label>Épaisseur bordure:</label>
+                  <div className="slider-container">
+                    <input
+                      type="range"
+                      min="0"
+                      max="10"
+                      value={localProperties.borderWidth ?? 1}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'borderWidth', parseInt(e.target.value))}
+                      className="slider"
+                    />
+                    <span className="slider-value">{localProperties.borderWidth ?? 1}px</span>
+                  </div>
+                </div>
+
+                <div className="property-row">
+                  <label>Arrondi des coins:</label>
+                  <div className="slider-container">
+                    <input
+                      type="range"
+                      min="0"
+                      max="50"
+                      value={localProperties.borderRadius ?? 4}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'borderRadius', parseInt(e.target.value))}
+                      className="slider"
+                    />
+                    <span className="slider-value">{localProperties.borderRadius ?? 4}px</span>
+                  </div>
                 </div>
               </div>
-
-              <div className="property-row">
-                <label>Arrondi des coins:</label>
-                <div className="slider-container">
-                  <input
-                    type="range"
-                    min="0"
-                    max="50"
-                    value={localProperties.borderRadius ?? 4}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'borderRadius', parseInt(e.target.value))}
-                    className="slider"
-                  />
-                  <span className="slider-value">{localProperties.borderRadius ?? 4}px</span>
-                </div>
-              </div>
-            </div>
+            )}
 
             <div className="properties-group">
               <h4>✨ Effets</h4>
