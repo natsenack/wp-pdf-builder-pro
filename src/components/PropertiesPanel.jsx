@@ -526,9 +526,19 @@ const PropertiesPanel = React.memo(({
               />
             )}
 
-            {localProperties.borderWidth > 0 && (
-              <div className="properties-group">
-                <h4>🔲 Bordures & Coins</h4>
+            {(() => {
+              const shouldShow = localProperties.borderWidth > 0;
+              const borderWidthValue = localProperties.borderWidth;
+              const borderWidthType = typeof localProperties.borderWidth;
+              console.log('🎯 Rendu contrôles bordure - Vérification:', { 
+                shouldShow, 
+                borderWidthValue, 
+                borderWidthType,
+                elementId: selectedElement?.id 
+              });
+              return shouldShow && (
+                <div className="properties-group">
+                  <h4>🔲 Bordures & Coins</h4>
 
                 <div className="property-row">
                   <label>Épaisseur bordure:</label>
@@ -560,7 +570,8 @@ const PropertiesPanel = React.memo(({
                   </div>
                 </div>
               </div>
-            )}
+            );
+            })()}
 
             <div className="properties-group">
               <h4>✨ Effets</h4>
