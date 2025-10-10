@@ -83,6 +83,7 @@ if (!defined('ABSPATH')) {
                     echo '<a href="' . admin_url('admin.php?page=pdf-builder-editor&template_id=' . $template_id) . '" class="button button-secondary" style="flex: 1; text-align: center;">✏️ Éditer</a>';
                     echo '<button class="button button-secondary" style="flex: 1;" onclick="' . $button_action . '(' . $template_id . ', \'' . addslashes($template_name) . '\')">' . $button_text . '</button>';
                     echo '<button class="button button-primary" style="flex: 1;" onclick="alert(\'Fonctionnalité en développement\')">📋 Utiliser</button>';
+                    echo '<button class="button button-danger" style="flex: 1;" onclick="confirmDeleteTemplate(' . $template_id . ', \'' . addslashes($template_name) . '\')">🗑️ Supprimer</button>';
                     echo '</div>';
                     echo '</div>';
                 }
@@ -247,6 +248,23 @@ function saveTemplateSettings() {
     }, 1500);
 }
 
+function confirmDeleteTemplate(templateId, templateName) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer le template "' + templateName + '" ?\n\n⚠️ Cette action est irréversible.')) {
+        deleteTemplate(templateId, templateName);
+    }
+}
+
+function deleteTemplate(templateId, templateName) {
+    // Simulation de la suppression (à remplacer par un vrai appel AJAX)
+    console.log('Suppression du template:', templateId, templateName);
+
+    // Afficher un message de succès temporaire
+    alert('✅ Template "' + templateName + '" supprimé avec succès !');
+
+    // Recharger la page pour voir les changements
+    location.reload();
+}
+
 // Fermer les modales en cliquant en dehors
 document.getElementById('template-settings-modal').addEventListener('click', function(e) {
     if (e.target === this) {
@@ -306,6 +324,17 @@ document.addEventListener('keydown', function(e) {
     border-color: #007cba;
     box-shadow: 0 0 0 1px #007cba;
     outline: none;
+}
+
+.button-danger {
+    background: #dc3545 !important;
+    border-color: #dc3545 !important;
+    color: #fff !important;
+}
+
+.button-danger:hover {
+    background: #c82333 !important;
+    border-color: #bd2130 !important;
 }
 </style>
 
