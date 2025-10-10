@@ -22,6 +22,20 @@ if (!defined('ABSPATH')) {
             </a>
         </div>
 
+        <!-- Section de filtrage -->
+        <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
+            <h3 style="margin: 0 0 15px 0; color: #23282d; font-size: 16px;">🔍 Filtrer par type :</h3>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button class="filter-btn button button-secondary active" data-filter="all" style="font-size: 12px; padding: 6px 12px;">📄 Tous</button>
+                <button class="filter-btn button button-secondary" data-filter="facture" style="font-size: 12px; padding: 6px 12px; background: #007cba; border-color: #007cba; color: white;">📄 Factures</button>
+                <button class="filter-btn button button-secondary" data-filter="devis" style="font-size: 12px; padding: 6px 12px; background: #28a745; border-color: #28a745; color: white;">📋 Devis</button>
+                <button class="filter-btn button button-secondary" data-filter="commande" style="font-size: 12px; padding: 6px 12px; background: #ffc107; border-color: #ffc107; color: #212529;">🛒 Commandes</button>
+                <button class="filter-btn button button-secondary" data-filter="contrat" style="font-size: 12px; padding: 6px 12px; background: #dc3545; border-color: #dc3545; color: white;">📝 Contrats</button>
+                <button class="filter-btn button button-secondary" data-filter="newsletter" style="font-size: 12px; padding: 6px 12px; background: #6f42c1; border-color: #6f42c1; color: white;">📧 Newsletters</button>
+                <button class="filter-btn button button-secondary" data-filter="autre" style="font-size: 12px; padding: 6px 12px; background: #6c757d; border-color: #6c757d; color: white;">📄 Autres</button>
+            </div>
+        </div>
+
         <div id="templates-list" style="margin-top: 20px;">
             <?php
             // Récupérer les templates depuis la base de données
@@ -68,7 +82,7 @@ if (!defined('ABSPATH')) {
                         $features = ['✓ En-tête accrocheur', '✓ Sections d\'articles', '✓ Call-to-action', '✓ Pied de page'];
                     }
                     
-                    echo '<div class="template-card" style="border: 2px solid #dee2e6; border-radius: 8px; padding: 20px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease; cursor: pointer; display: flex; flex-direction: column; min-height: 350px; position: relative;" onmouseover="this.style.transform=\'translateY(-2px)\'; this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.15)\';" onmouseout="this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'0 2px 8px rgba(0,0,0,0.1)\';">';
+                    echo '<div class="template-card template-type-' . $template_type . '" style="border: 2px solid #dee2e6; border-radius: 8px; padding: 20px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease; cursor: pointer; display: flex; flex-direction: column; min-height: 350px; position: relative;" onmouseover="this.style.transform=\'translateY(-2px)\'; this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.15)\';" onmouseout="this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'0 2px 8px rgba(0,0,0,0.1)\';">';
                     
                     // Déterminer le type de template pour l'icône par défaut
                     $template_type = 'autre';
@@ -316,6 +330,45 @@ function toggleDefaultTemplate(templateId, templateType, templateName) {
     location.reload();
 }
 
+// Fonction de filtrage des templates
+function filterTemplates(filterType) {
+    const cards = document.querySelectorAll('.template-card');
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    
+    // Mettre à jour les boutons actifs
+    filterButtons.forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.getAttribute('data-filter') === filterType) {
+            btn.classList.add('active');
+        }
+    });
+    
+    // Filtrer les cartes
+    cards.forEach(card => {
+        if (filterType === 'all') {
+            card.style.display = 'flex';
+        } else {
+            if (card.classList.contains('template-type-' + filterType)) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        }
+    });
+}
+
+// Initialiser le filtrage au chargement de la page
+document.addEventListener('DOMContentLoaded', function() {
+    // Ajouter les event listeners aux boutons de filtrage
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const filterType = this.getAttribute('data-filter');
+            filterTemplates(filterType);
+        });
+    });
+});
+
 // Fermer les modales en cliquant en dehors
 document.getElementById('template-settings-modal').addEventListener('click', function(e) {
     if (e.target === this) {
@@ -401,6 +454,11 @@ document.addEventListener('keydown', function(e) {
 .template-type-badge {
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     z-index: 2;
+}
+
+.filter-btn.active {
+    box-shadow: 0 0 0 2px rgba(0,123,186,0.5) !important;
+    font-weight: bold !important;
 }
 
 
