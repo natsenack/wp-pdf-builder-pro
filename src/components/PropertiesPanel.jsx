@@ -440,7 +440,7 @@ const PropertiesPanel = React.memo(({
               </div>
 
               <div className="property-row">
-                <label>Aucun fond:</label>
+                <span>Aucun fond:</span>
                 <label className="toggle">
                   <input
                     type="checkbox"
@@ -450,7 +450,10 @@ const PropertiesPanel = React.memo(({
                       handleNoBackgroundToggle(selectedElement.id, e.target.checked);
                     }}
                   />
-                  <span className="toggle-slider"></span>
+                  <span className="toggle-slider" onClick={() => {
+                    const currentChecked = !localProperties.backgroundColor || localProperties.backgroundColor === 'transparent';
+                    handleNoBackgroundToggle(selectedElement.id, !currentChecked);
+                  }}></span>
                 </label>
               </div>
 
@@ -478,7 +481,7 @@ const PropertiesPanel = React.memo(({
               </div>
 
               <div className="property-row">
-                <label>Aucune bordure:</label>
+                <span>Aucune bordure:</span>
                 <label className="toggle">
                   <input
                     type="checkbox"
@@ -488,7 +491,10 @@ const PropertiesPanel = React.memo(({
                       handleNoBorderToggle(selectedElement.id, e.target.checked);
                     }}
                   />
-                  <span className="toggle-slider"></span>
+                  <span className="toggle-slider" onClick={() => {
+                    const currentChecked = !localProperties.borderWidth || localProperties.borderWidth === 0;
+                    handleNoBorderToggle(selectedElement.id, !currentChecked);
+                  }}></span>
                 </label>
               </div>
             </div>
@@ -1285,14 +1291,17 @@ const PropertiesPanel = React.memo(({
                 </div>
 
                 <div className="property-row">
-                  <label>Afficher la bordure:</label>
+                  <span>Afficher la bordure:</span>
                   <label className="toggle">
                     <input
                       type="checkbox"
                       checked={localProperties.showBorder || false}
                       onChange={(e) => handlePropertyChange(selectedElement.id, 'showBorder', e.target.checked)}
                     />
-                    <span className="toggle-slider"></span>
+                    <span className="toggle-slider" onClick={() => {
+                      const currentChecked = localProperties.showBorder || false;
+                      handlePropertyChange(selectedElement.id, 'showBorder', !currentChecked);
+                    }}></span>
                   </label>
                 </div>
 
