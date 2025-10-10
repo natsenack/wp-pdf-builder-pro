@@ -167,36 +167,10 @@ class PDF_Builder_Core {
      * Charger les scripts pour l'administration
      */
     public function admin_enqueue_scripts($hook) {
-        // Debug logging
-        error_log('PDF Builder Debug - Hook: ' . $hook);
-        error_log('PDF Builder Debug - REQUEST_URI: ' . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : 'not set'));
-        error_log('PDF Builder Debug - GET page: ' . (isset($_GET['page']) ? $_GET['page'] : 'not set'));
-
-        // Charger les scripts sur toutes les pages du plugin - condition simplifiée
-        $should_load = false;
-
-        if (strpos($hook, 'pdf-builder') !== false) {
-            $should_load = true;
-            error_log('PDF Builder Debug - Loading because hook contains pdf-builder');
-        } elseif (isset($_GET['page']) && strpos($_GET['page'], 'pdf-builder') !== false) {
-            $should_load = true;
-            error_log('PDF Builder Debug - Loading because GET page contains pdf-builder');
-        } elseif (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'pdf-builder-editor') !== false) {
-            $should_load = true;
-            error_log('PDF Builder Debug - Loading because REQUEST_URI contains pdf-builder-editor');
-        } elseif (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-editor') {
-            $should_load = true;
-            error_log('PDF Builder Debug - Loading because GET page is exactly pdf-builder-editor');
-        }
-
-        // NE PAS charger sur la page éditeur - class-pdf-builder-admin.php s'en charge
-        if (isset($_GET['page']) && $_GET['page'] === 'pdf-builder-editor') {
-            $should_load = false;
-            error_log('PDF Builder Debug - NOT loading on editor page - handled by class-pdf-builder-admin.php');
-        }
-
-        if ($should_load) {
-            error_log('PDF Builder Debug - Scripts will be loaded');
+        // Charger les scripts sur toutes les pages du plugin
+        if (strpos($hook, 'pdf-builder') !== false ||
+            (isset($_GET['page']) && strpos($_GET['page'], 'pdf-builder') !== false) ||
+            (isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'pdf-builder-editor') !== false)) {
 
             wp_enqueue_script(
                 'pdf-builder-admin-core',
