@@ -519,7 +519,7 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
             zIndex: 999999
           }}
         >
-          {isPropertiesCollapsed ? '▶' : '◀'}
+          {isPropertiesCollapsed ? '◀' : '▶'}
         </button>
       )}
 
