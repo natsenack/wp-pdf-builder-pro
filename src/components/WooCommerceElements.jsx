@@ -48,6 +48,7 @@ export const useWooCommerceElements = () => {
       backgroundColor: '#ffffff',
       borderColor: '#dddddd',
       borderWidth: 1,
+      borderStyle: 'solid',
       borderRadius: 4,
       padding: 8
     };

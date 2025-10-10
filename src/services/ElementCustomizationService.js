@@ -22,6 +22,10 @@ export class ElementCustomizationService {
     this.propertyValidators.set('color', (value) => this.validateColor(value));
     this.propertyValidators.set('fontSize', (value) => Math.max(8, Math.min(72, parseInt(value) || 14)));
     this.propertyValidators.set('borderWidth', (value) => Math.max(0, Math.min(20, parseInt(value) || 0)));
+    this.propertyValidators.set('borderStyle', (value) => {
+      const validStyles = ['solid', 'dashed', 'dotted', 'double'];
+      return validStyles.includes(value) ? value : 'solid';
+    });
     this.propertyValidators.set('borderRadius', (value) => Math.max(0, Math.min(100, parseInt(value) || 0)));
 
     // Presets de couleurs
@@ -212,6 +216,7 @@ export class ElementCustomizationService {
       backgroundColor: 'transparent',
       borderColor: '#e2e8f0',
       borderWidth: 0,
+      borderStyle: 'solid',
       borderRadius: 0,
 
       // Typographie (pour les éléments texte)

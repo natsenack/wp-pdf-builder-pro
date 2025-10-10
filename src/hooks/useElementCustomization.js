@@ -26,6 +26,7 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
         backgroundColor: '#ffffff',
         borderColor: '#dddddd',
         borderWidth: 0,
+        borderStyle: 'solid',
         borderRadius: 4,
         fontSize: 14,
         fontFamily: 'Inter',
@@ -115,6 +116,10 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
       case 'borderWidth':
         return Math.max(0, Math.min(20, parseInt(value) || 0));
 
+      case 'borderStyle':
+        const validStyles = ['solid', 'dashed', 'dotted', 'double'];
+        return validStyles.includes(value) ? value : 'solid';
+
       case 'borderRadius':
         return Math.max(0, Math.min(100, parseInt(value) || 0));
 
@@ -186,6 +191,7 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
       backgroundColor: '#ffffff',
       borderColor: '#dddddd',
       borderWidth: 1,
+      borderStyle: 'solid',
       borderRadius: 4,
       color: '#333333',
       fontSize: 14,
