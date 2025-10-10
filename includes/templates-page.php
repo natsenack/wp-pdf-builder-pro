@@ -96,12 +96,6 @@ if (!defined('ABSPATH')) {
                     echo '<div style="display: flex; flex-direction: column; height: 100%;">';
 
                     // Badge du type de template en haut à gauche
-                    $template_type = 'autre';
-                    if (stripos($template_name, 'facture') !== false) $template_type = 'facture';
-                    elseif (stripos($template_name, 'devis') !== false) $template_type = 'devis';
-                    elseif (stripos($template_name, 'commande') !== false) $template_type = 'commande';
-                    elseif (stripos($template_name, 'contrat') !== false) $template_type = 'contrat';
-                    elseif (stripos($template_name, 'newsletter') !== false) $template_type = 'newsletter';
                     
                     // Vérifier si c'est le template par défaut pour ce type (simulation)
                     $is_default = false; // À remplacer par une vraie vérification en base
