@@ -6,7 +6,6 @@ import '../styles/PropertiesPanel.css';
 
 // Composant pour les contrôles de couleur avec presets
 const ColorPicker = ({ label, value, onChange, presets = [] }) => {
-  // console.log(`🎨 ColorPicker ${label} - Props:`, { value, presets: presets.length });
 
   // Valeur par défaut selon le type de contrôle
   const getDefaultValue = () => {
@@ -25,7 +24,6 @@ const ColorPicker = ({ label, value, onChange, presets = [] }) => {
           type="color"
           value={inputValue}
           onChange={(e) => {
-            console.log(`🎨 ColorPicker ${label} - Changement input:`, e.target.value);
             onChange(e.target.value);
           }}
           className="color-input"
@@ -37,7 +35,6 @@ const ColorPicker = ({ label, value, onChange, presets = [] }) => {
               className="color-preset"
               style={{ backgroundColor: preset }}
               onClick={() => {
-                console.log(`🎨 ColorPicker ${label} - Preset cliqué:`, preset);
                 onChange(preset);
               }}
               title={preset}
@@ -234,12 +231,6 @@ const PropertiesPanel = React.memo(({
 
   // Log des props pour débogage (seulement quand elles changent)
   useEffect(() => {
-    console.log('🔍 PropertiesPanel - Props reçues:', {
-      selectedElements: selectedElements?.length,
-      elementsCount: elements?.length,
-      onPropertyChange: !!onPropertyChange,
-      onBatchUpdate: !!onBatchUpdate
-    });
   }, [selectedElements?.length, elements?.length]); // Éviter les références d'objets instables
 
   // Utiliser les hooks de personnalisation et synchronisation
@@ -251,13 +242,8 @@ const PropertiesPanel = React.memo(({
   } = useElementCustomization(selectedElements, elements, onPropertyChange);
 
   // Log du hook (seulement quand il change)
-  useEffect(() => {
-    console.log('🔍 PropertiesPanel - Hook useElementCustomization:', {
-      hasLocalProperties: !!localProperties && Object.keys(localProperties).length > 0,
-      activeTab,
-      selectedElementId: selectedElement?.id
-    });
-  }, [activeTab, selectedElement?.id]); // Éviter de logger localProperties qui change souvent
+  // useEffect(() => {
+  // }, [activeTab, selectedElement?.id]); // Éviter de logger localProperties qui change souvent
 
   const { syncImmediate, syncBatch } = useElementSynchronization(
     elements,
@@ -287,7 +273,6 @@ const PropertiesPanel = React.memo(({
 
   // Gestionnaire unifié de changement de propriété
   const handlePropertyChange = useCallback((elementId, property, value) => {
-    console.log('🔄 handlePropertyChange appelé:', { elementId, property, value });
 
     // Validation via le service (sauf pour les propriétés boolean qui sont toujours valides)
     const isBooleanProperty = typeof value === 'boolean' || property.startsWith('columns.');
@@ -308,7 +293,6 @@ const PropertiesPanel = React.memo(({
 
   // Gestionnaire pour le toggle "Aucun fond"
   const handleNoBackgroundToggle = useCallback((elementId, checked) => {
-    console.log('🎛️ handleNoBackgroundToggle:', { elementId, checked, currentColor: selectedElement?.backgroundColor, previousColor: previousBackgroundColor });
 
     if (checked) {
       // Sauvegarder la couleur actuelle avant de la désactiver
@@ -328,7 +312,6 @@ const PropertiesPanel = React.memo(({
 
   // Gestionnaire pour le toggle "Aucune bordure"
   const handleNoBorderToggle = useCallback((elementId, checked) => {
-    console.log('🎛️ handleNoBorderToggle:', { elementId, checked, currentWidth: selectedElement?.borderWidth, previousWidth: previousBorderWidth });
 
     if (checked) {
       // Sauvegarder l'épaisseur actuelle avant de la désactiver
@@ -394,7 +377,6 @@ const PropertiesPanel = React.memo(({
 
     switch (activeTab) {
       case 'appearance':
-        // console.log('🎨 Rendu section Couleurs - localProperties:', localProperties);
         return (
           <div className="tab-content">
             <div className="properties-group">
@@ -404,30 +386,26 @@ const PropertiesPanel = React.memo(({
                 label="Texte"
                 value={localProperties.color}
                 onChange={(value) => {
-                  console.log('🎨 Changement couleur texte:', value);
                   handlePropertyChange(selectedElement.id, 'color', value);
                 }}
                 presets={['#1e293b', '#334155', '#475569', '#64748b', '#94a3b8', '#cbd5e1']}
               />
 
               <div style={{
-                opacity: localProperties.backgroundColor === 'transparent' ? 0.5 : 1,
-                pointerEvents: localProperties.backgroundColor === 'transparent' ? 'none' : 'auto'
+                opacity: localProperties.backgroundColor === 'transparent' ? 0.5 : 1
               }}>
                 <ColorPicker
                   label="Fond"
                   value={localProperties.backgroundColor === 'transparent' ? '#ffffff' : localProperties.backgroundColor}
                   onChange={(value) => {
-                    console.log('🎨 Changement couleur fond:', value);
                     handlePropertyChange(selectedElement.id, 'backgroundColor', value);
                   }}
-                  presets={['#ffffff', '#f8fafc', '#f1f5f9', '#e2e8f0', '#cbd5e1', '#94a3b8']}
+                  presets={['transparent', '#ffffff', '#f8fafc', '#f1f5f9', '#e2e8f0', '#cbd5e1', '#94a3b8']}
                 />
               </div>
 
               <div className="property-row" style={{
-                opacity: localProperties.backgroundColor === 'transparent' ? 0.5 : 1,
-                pointerEvents: localProperties.backgroundColor === 'transparent' ? 'none' : 'auto'
+                opacity: localProperties.backgroundColor === 'transparent' ? 0.5 : 1
               }}>
                 <label>Opacité fond:</label>
                 <div className="slider-container">
@@ -454,7 +432,6 @@ const PropertiesPanel = React.memo(({
                   />
                   <span className="toggle-slider" onClick={() => {
                     const currentChecked = !localProperties.backgroundColor || localProperties.backgroundColor === 'transparent';
-                    console.log('🎛️ Toggle aucun fond cliqué:', { currentChecked, newState: !currentChecked });
                     handleNoBackgroundToggle(selectedElement.id, !currentChecked);
                   }}></span>
                 </label>
@@ -485,57 +462,62 @@ const PropertiesPanel = React.memo(({
               />
             )}
 
-            {localProperties.borderWidth > 0 && (
+            {localProperties.borderWidth >= 0 && (
               <div className="properties-group">
                 <h4>🔲 Bordures & Coins</h4>
 
-                <ColorPicker
-                  label="Bordure"
-                  value={localProperties.borderColor}
-                  onChange={(value) => handlePropertyChange(selectedElement.id, 'borderColor', value)}
-                  presets={['#e2e8f0', '#cbd5e1', '#94a3b8', '#64748b', '#475569', '#334155']}
-                />
+                <div style={{
+                  opacity: localProperties.borderWidth > 0 ? 1 : 0.5,
+                  pointerEvents: localProperties.borderWidth > 0 ? 'auto' : 'none'
+                }}>
+                  <ColorPicker
+                    label="Bordure"
+                    value={localProperties.borderColor}
+                    onChange={(value) => handlePropertyChange(selectedElement.id, 'borderColor', value)}
+                    presets={['#e2e8f0', '#cbd5e1', '#94a3b8', '#64748b', '#475569', '#334155']}
+                  />
 
-                <div className="property-row">
-                  <label>Style bordure:</label>
-                  <select
-                    value={localProperties.borderStyle || 'solid'}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'borderStyle', e.target.value)}
-                  >
-                    <option value="solid">Continue</option>
-                    <option value="dashed">Tirets</option>
-                    <option value="dotted">Pointillés</option>
-                    <option value="double">Double</option>
-                  </select>
-                </div>
-
-                <div className="property-row">
-                  <label>Épaisseur bordure:</label>
-                  <div className="slider-container">
-                    <input
-                      type="range"
-                      min="0"
-                      max="10"
-                      value={localProperties.borderWidth ?? 1}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'borderWidth', parseInt(e.target.value))}
-                      className="slider"
-                    />
-                    <span className="slider-value">{localProperties.borderWidth ?? 1}px</span>
+                  <div className="property-row">
+                    <label>Style bordure:</label>
+                    <select
+                      value={localProperties.borderStyle || 'solid'}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'borderStyle', e.target.value)}
+                    >
+                      <option value="solid">Continue</option>
+                      <option value="dashed">Tirets</option>
+                      <option value="dotted">Pointillés</option>
+                      <option value="double">Double</option>
+                    </select>
                   </div>
-                </div>
 
-                <div className="property-row">
-                  <label>Arrondi des coins:</label>
-                  <div className="slider-container">
-                    <input
-                      type="range"
-                      min="0"
-                      max="50"
-                      value={localProperties.borderRadius ?? 4}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'borderRadius', parseInt(e.target.value))}
-                      className="slider"
-                    />
-                    <span className="slider-value">{localProperties.borderRadius ?? 4}px</span>
+                  <div className="property-row">
+                    <label>Épaisseur bordure:</label>
+                    <div className="slider-container">
+                      <input
+                        type="range"
+                        min="0"
+                        max="10"
+                        value={localProperties.borderWidth ?? 1}
+                        onChange={(e) => handlePropertyChange(selectedElement.id, 'borderWidth', parseInt(e.target.value))}
+                        className="slider"
+                      />
+                      <span className="slider-value">{localProperties.borderWidth ?? 1}px</span>
+                    </div>
+                  </div>
+
+                  <div className="property-row">
+                    <label>Arrondi des coins:</label>
+                    <div className="slider-container">
+                      <input
+                        type="range"
+                        min="0"
+                        max="50"
+                        value={localProperties.borderRadius ?? 4}
+                        onChange={(e) => handlePropertyChange(selectedElement.id, 'borderRadius', parseInt(e.target.value))}
+                        className="slider"
+                      />
+                      <span className="slider-value">{localProperties.borderRadius ?? 4}px</span>
+                    </div>
                   </div>
                 </div>
               </div>
