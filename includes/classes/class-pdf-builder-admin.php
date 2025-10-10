@@ -565,8 +565,6 @@ class PDF_Builder_Admin {
      * Charge les scripts et styles d'administration
      */
     public function enqueue_admin_scripts($hook) {
-        error_log('PDF Builder: enqueue_admin_scripts called with hook: ' . $hook);
-
         // Liste des pages de notre plugin
         $our_pages = [
             'toplevel_page_pdf-builder-pro',
@@ -579,14 +577,8 @@ class PDF_Builder_Admin {
         $clean_hook = urldecode($hook);
         $clean_hook = preg_replace('/^[^\w]*/', '', $clean_hook); // Retire les emojis du début
 
-        error_log('PDF Builder: Clean hook: ' . $clean_hook);
-        error_log('PDF Builder: Our pages: ' . implode(', ', $our_pages));
-        error_log('PDF Builder: in_array result: ' . (in_array($clean_hook, $our_pages) ? 'true' : 'false'));
-        error_log('PDF Builder: strpos result: ' . (strpos($clean_hook, 'pdf-builder') !== false ? 'true' : 'false'));
-
         // Load React/TypeScript on ALL PDF Builder pages for debugging
         if (in_array($clean_hook, $our_pages) || strpos($clean_hook, 'pdf-builder') !== false) {
-            error_log('PDF Builder: Loading React scripts for hook: ' . $clean_hook);
             $this->enqueue_react_scripts();
 
             // Pour la page éditeur, NE PAS charger les scripts canvas - React gère tout
