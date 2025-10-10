@@ -328,7 +328,7 @@ const PropertiesPanel = React.memo(({
 
   // Gestionnaire pour le toggle "Aucune bordure"
   const handleNoBorderToggle = useCallback((elementId, checked) => {
-    console.log('🎛️ handleNoBorderToggle:', { elementId, checked, currentWidth: selectedElement?.borderWidth, previousWidth: previousBorderWidth });
+    console.log('🎛️ handleNoBorderToggle appelé:', { elementId, checked, currentWidth: selectedElement?.borderWidth, previousWidth: previousBorderWidth });
 
     if (checked) {
       // Sauvegarder l'épaisseur actuelle avant de la désactiver
@@ -338,11 +338,12 @@ const PropertiesPanel = React.memo(({
         // Si pas de bordure ou bordure = 0, sauvegarder 1 comme valeur par défaut
         setPreviousBorderWidth(1);
       }
+      console.log('🎛️ Activation toggle - mettre borderWidth à 0');
       handlePropertyChange(elementId, 'borderWidth', 0);
     } else {
       // Restaurer l'épaisseur précédente, au minimum 1
       const widthToRestore = Math.max(previousBorderWidth || 1, 1);
-      console.log('🎛️ Restaurer borderWidth à:', widthToRestore);
+      console.log('🎛️ Désactivation toggle - restaurer borderWidth à:', widthToRestore);
       handlePropertyChange(elementId, 'borderWidth', widthToRestore);
     }
   }, [selectedElement?.borderWidth, previousBorderWidth, handlePropertyChange]);
@@ -498,7 +499,12 @@ const PropertiesPanel = React.memo(({
                   />
                   <span className="toggle-slider" onClick={() => {
                     const currentChecked = !localProperties.borderWidth || localProperties.borderWidth === 0;
-                    console.log('🎛️ Toggle aucune bordure cliqué:', { currentChecked, newState: !currentChecked });
+                    console.log('🎛️ Toggle aucune bordure cliqué:', { 
+                      currentChecked, 
+                      newState: !currentChecked,
+                      currentBorderWidth: localProperties.borderWidth,
+                      previousBorderWidth
+                    });
                     handleNoBorderToggle(selectedElement.id, !currentChecked);
                   }}></span>
                 </label>
@@ -514,41 +520,49 @@ const PropertiesPanel = React.memo(({
               />
             )}
 
-            {localProperties.borderWidth > 0 && (
-              <div className="properties-group">
-                <h4>🔲 Bordures & Coins</h4>
+            {(() => {
+              const shouldShowBorderControls = localProperties.borderWidth > 0;
+              console.log('🔍 Condition affichage bordures:', {
+                borderWidth: localProperties.borderWidth,
+                borderWidthType: typeof localProperties.borderWidth,
+                shouldShowBorderControls
+              });
+              return shouldShowBorderControls && (
+                <div className="properties-group">
+                  <h4>🔲 Bordures & Coins</h4>
 
-                <div className="property-row">
-                  <label>Épaisseur bordure:</label>
-                  <div className="slider-container">
-                    <input
-                      type="range"
-                      min="0"
-                      max="10"
-                      value={localProperties.borderWidth ?? 1}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'borderWidth', parseInt(e.target.value))}
-                      className="slider"
-                    />
-                    <span className="slider-value">{localProperties.borderWidth ?? 1}px</span>
+                  <div className="property-row">
+                    <label>Épaisseur bordure:</label>
+                    <div className="slider-container">
+                      <input
+                        type="range"
+                        min="0"
+                        max="10"
+                        value={localProperties.borderWidth ?? 1}
+                        onChange={(e) => handlePropertyChange(selectedElement.id, 'borderWidth', parseInt(e.target.value))}
+                        className="slider"
+                      />
+                      <span className="slider-value">{localProperties.borderWidth ?? 1}px</span>
+                    </div>
+                  </div>
+
+                  <div className="property-row">
+                    <label>Arrondi des coins:</label>
+                    <div className="slider-container">
+                      <input
+                        type="range"
+                        min="0"
+                        max="50"
+                        value={localProperties.borderRadius ?? 4}
+                        onChange={(e) => handlePropertyChange(selectedElement.id, 'borderRadius', parseInt(e.target.value))}
+                        className="slider"
+                      />
+                      <span className="slider-value">{localProperties.borderRadius ?? 4}px</span>
+                    </div>
                   </div>
                 </div>
-
-                <div className="property-row">
-                  <label>Arrondi des coins:</label>
-                  <div className="slider-container">
-                    <input
-                      type="range"
-                      min="0"
-                      max="50"
-                      value={localProperties.borderRadius ?? 4}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'borderRadius', parseInt(e.target.value))}
-                      className="slider"
-                    />
-                    <span className="slider-value">{localProperties.borderRadius ?? 4}px</span>
-                  </div>
-                </div>
-              </div>
-            )}
+              );
+            })()}
 
             <div className="properties-group">
               <h4>✨ Effets</h4>
