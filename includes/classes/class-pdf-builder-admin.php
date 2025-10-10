@@ -804,9 +804,8 @@ class PDF_Builder_Admin {
      * Enfile les scripts React pour les pages d'administration
      */
     private function enqueue_react_scripts() {
-        // Charger React depuis CDN (plus fiable que les versions locales)
-        wp_enqueue_script('react', 'https://unpkg.com/react@18/umd/react.production.min.js', [], '18.2.0', false); // Load in head to ensure availability
-        wp_enqueue_script('react-dom', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js', ['react'], '18.2.0', false); // Load in head to ensure availability
+        // React est maintenant bundlé avec l'application pour éviter les conflits
+        // Plus besoin de charger depuis CDN
 
         // Charger le script principal React du plugin
         $script_path = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-pro.js';
@@ -818,7 +817,7 @@ class PDF_Builder_Admin {
         wp_enqueue_script(
             'pdf-builder-pro-react',
             $script_path,
-            ['react', 'react-dom', 'jquery'],
+            ['jquery'],
             $script_version,
             true
         );
@@ -856,7 +855,7 @@ class PDF_Builder_Admin {
         wp_enqueue_script(
             'pdf-builder-admin',
             $admin_script_path,
-            ['react', 'react-dom', 'jquery', 'pdf-builder-pro-react'],
+            ['jquery', 'pdf-builder-pro-react'],
             $admin_script_version,
             true
         );

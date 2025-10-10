@@ -7,10 +7,6 @@ module.exports = {
     path: path.resolve(__dirname, 'assets/js/dist'),
   },
   mode: 'production',
-  externals: {
-    'react': 'React',
-    'react-dom': 'ReactDOM'
-  },
   resolve: {
     extensions: ['.js', '.jsx', '.json']
   },
