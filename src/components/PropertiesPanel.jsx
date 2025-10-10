@@ -15,6 +15,7 @@ const ColorPicker = ({ label, value, onChange, presets = [] }) => {
   };
 
   const safeValue = value || getDefaultValue();
+  const inputValue = value === 'transparent' ? '#ffffff' : safeValue;
 
   return (
     <div className="property-row">
@@ -22,7 +23,7 @@ const ColorPicker = ({ label, value, onChange, presets = [] }) => {
       <div className="color-picker-container">
         <input
           type="color"
-          value={safeValue}
+          value={inputValue}
           onChange={(e) => {
             console.log(`🎨 ColorPicker ${label} - Changement input:`, e.target.value);
             onChange(e.target.value);
