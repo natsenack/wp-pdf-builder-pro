@@ -90,9 +90,12 @@ if (!defined('ABSPATH')) {
                         $features = ['✓ En-tête accrocheur', '✓ Sections d\'articles', '✓ Call-to-action', '✓ Pied de page'];
                     }
                     
-                    echo '<div class="template-card template-type-' . $template_type . '" style="border: 2px solid #dee2e6; border-radius: 8px; padding: 20px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease; cursor: pointer; display: flex; flex-direction: column; min-height: 350px; position: relative;" onmouseover="this.style.transform=\'translateY(-2px)\'; this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.15)\';" onmouseout="this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'0 2px 8px rgba(0,0,0,0.1)\';">';
-                    
-                    // Déterminer le type de template pour l'icône par défaut
+                    echo '<div class="template-card template-type-' . $template_type . '" style="border: 2px solid #dee2e6; border-radius: 8px; padding: 20px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease; cursor: pointer; min-height: 350px; position: relative;" onmouseover="this.style.transform=\'translateY(-2px)\'; this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.15)\';" onmouseout="this.style.transform=\'translateY(0)\'; this.style.boxShadow=\'0 2px 8px rgba(0,0,0,0.1)\';">';
+
+                    // Conteneur pour organiser le contenu de la carte
+                    echo '<div style="display: flex; flex-direction: column; height: 100%;">';
+
+                    // Badge du type de template en haut à gauche
                     $template_type = 'autre';
                     if (stripos($template_name, 'facture') !== false) $template_type = 'facture';
                     elseif (stripos($template_name, 'devis') !== false) $template_type = 'devis';
@@ -173,6 +176,7 @@ if (!defined('ABSPATH')) {
                     echo '<button class="button button-primary" style="flex: 1; font-size: 16px;" onclick="alert(\'Fonctionnalité en développement\')">📋</button>';
                     echo '<button class="button button-danger" style="flex: 1; font-size: 16px;" onclick="confirmDeleteTemplate(' . $template_id . ', \'' . addslashes($template_name) . '\')">🗑️</button>';
                     echo '</div>';
+                    echo '</div>'; // Fermeture du conteneur flex
                     echo '</div>';
                 }
                 
