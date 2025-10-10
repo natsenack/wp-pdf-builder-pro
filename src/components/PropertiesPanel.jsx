@@ -5,30 +5,40 @@ import { elementCustomizationService } from '../services/ElementCustomizationSer
 import '../styles/PropertiesPanel.css';
 
 // Composant pour les contrôles de couleur avec presets
-const ColorPicker = ({ label, value, onChange, presets = [] }) => (
-  <div className="property-row">
-    <label>{label}:</label>
-    <div className="color-picker-container">
-      <input
-        type="color"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="color-input"
-      />
-      <div className="color-presets">
-        {presets.map((preset, index) => (
-          <button
-            key={index}
-            className="color-preset"
-            style={{ backgroundColor: preset }}
-            onClick={() => onChange(preset)}
-            title={preset}
-          />
-        ))}
+const ColorPicker = ({ label, value, onChange, presets = [] }) => {
+  console.log(`🎨 ColorPicker ${label} - Props:`, { value, presets: presets.length });
+
+  return (
+    <div className="property-row">
+      <label>{label}:</label>
+      <div className="color-picker-container">
+        <input
+          type="color"
+          value={value}
+          onChange={(e) => {
+            console.log(`🎨 ColorPicker ${label} - Changement input:`, e.target.value);
+            onChange(e.target.value);
+          }}
+          className="color-input"
+        />
+        <div className="color-presets">
+          {presets.map((preset, index) => (
+            <button
+              key={index}
+              className="color-preset"
+              style={{ backgroundColor: preset }}
+              onClick={() => {
+                console.log(`🎨 ColorPicker ${label} - Preset cliqué:`, preset);
+                onChange(preset);
+              }}
+              title={preset}
+            />
+          ))}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 // Composant pour les contrôles de police
 const FontControls = ({ elementId, properties, onPropertyChange }) => (
@@ -131,6 +141,13 @@ export const PropertiesPanel = ({
   onPropertyChange,
   onBatchUpdate
 }) => {
+  console.log('🔍 PropertiesPanel - Props reçues:', {
+    selectedElements,
+    elementsCount: elements?.length,
+    onPropertyChange: !!onPropertyChange,
+    onBatchUpdate: !!onBatchUpdate
+  });
+
   // États pour mémoriser les valeurs précédentes
   const [previousBackgroundColor, setPreviousBackgroundColor] = useState('#ffffff');
   const [previousBorderWidth, setPreviousBorderWidth] = useState(1);
@@ -142,6 +159,12 @@ export const PropertiesPanel = ({
     setActiveTab,
     handlePropertyChange: customizationChange
   } = useElementCustomization(selectedElements, elements, onPropertyChange);
+
+  console.log('🔍 PropertiesPanel - Hook useElementCustomization:', {
+    localProperties,
+    activeTab,
+    selectedElement: selectedElements.length > 0 ? elements.find(el => el.id === selectedElements[0]) : null
+  });
 
   const { syncImmediate, syncBatch } = useElementSynchronization(
     elements,
@@ -167,6 +190,8 @@ export const PropertiesPanel = ({
 
   // Gestionnaire unifié de changement de propriété
   const handlePropertyChange = useCallback((elementId, property, value) => {
+    console.log('🔄 handlePropertyChange appelé:', { elementId, property, value });
+
     // Validation via le service (sauf pour les propriétés boolean qui sont toujours valides)
     const isBooleanProperty = typeof value === 'boolean' || property.startsWith('columns.');
     if (!isBooleanProperty && !elementCustomizationService.validateProperty(property, value)) {
@@ -185,6 +210,8 @@ export const PropertiesPanel = ({
 
   // Gestionnaire pour le toggle "Aucun fond"
   const handleNoBackgroundToggle = useCallback((elementId, checked) => {
+    console.log('🎛️ handleNoBackgroundToggle:', { elementId, checked, currentColor: localProperties.backgroundColor, previousColor: previousBackgroundColor });
+
     if (checked) {
       // Sauvegarder la couleur actuelle avant de la désactiver
       if (localProperties.backgroundColor && localProperties.backgroundColor !== 'transparent') {
@@ -199,6 +226,8 @@ export const PropertiesPanel = ({
 
   // Gestionnaire pour le toggle "Aucune bordure"
   const handleNoBorderToggle = useCallback((elementId, checked) => {
+    console.log('🎛️ handleNoBorderToggle:', { elementId, checked, currentWidth: localProperties.borderWidth, previousWidth: previousBorderWidth });
+
     if (checked) {
       // Sauvegarder l'épaisseur actuelle avant de la désactiver
       if (localProperties.borderWidth && localProperties.borderWidth > 0) {
@@ -259,6 +288,7 @@ export const PropertiesPanel = ({
 
     switch (activeTab) {
       case 'appearance':
+        console.log('🎨 Rendu section Couleurs - localProperties:', localProperties);
         return (
           <div className="tab-content">
             <div className="properties-group">
@@ -267,14 +297,20 @@ export const PropertiesPanel = ({
               <ColorPicker
                 label="Texte"
                 value={localProperties.color}
-                onChange={(value) => handlePropertyChange(selectedElement.id, 'color', value)}
+                onChange={(value) => {
+                  console.log('🎨 Changement couleur texte:', value);
+                  handlePropertyChange(selectedElement.id, 'color', value);
+                }}
                 presets={['#1e293b', '#334155', '#475569', '#64748b', '#94a3b8', '#cbd5e1']}
               />
 
               <ColorPicker
                 label="Fond"
                 value={localProperties.backgroundColor}
-                onChange={(value) => handlePropertyChange(selectedElement.id, 'backgroundColor', value)}
+                onChange={(value) => {
+                  console.log('🎨 Changement couleur fond:', value);
+                  handlePropertyChange(selectedElement.id, 'backgroundColor', value);
+                }}
                 presets={['#ffffff', '#f8fafc', '#f1f5f9', '#e2e8f0', '#cbd5e1', '#94a3b8']}
               />
 
@@ -284,7 +320,10 @@ export const PropertiesPanel = ({
                   <input
                     type="checkbox"
                     checked={!localProperties.backgroundColor || localProperties.backgroundColor === 'transparent'}
-                    onChange={(e) => handleNoBackgroundToggle(selectedElement.id, e.target.checked)}
+                    onChange={(e) => {
+                      console.log('🎛️ Toggle aucun fond:', e.target.checked);
+                      handleNoBackgroundToggle(selectedElement.id, e.target.checked);
+                    }}
                   />
                   <span className="toggle-slider"></span>
                 </label>
@@ -293,7 +332,10 @@ export const PropertiesPanel = ({
               <ColorPicker
                 label="Bordure"
                 value={localProperties.borderColor}
-                onChange={(value) => handlePropertyChange(selectedElement.id, 'borderColor', value)}
+                onChange={(value) => {
+                  console.log('🎨 Changement couleur bordure:', value);
+                  handlePropertyChange(selectedElement.id, 'borderColor', value);
+                }}
                 presets={['#e2e8f0', '#cbd5e1', '#94a3b8', '#64748b', '#475569', '#334155']}
               />
 
@@ -303,7 +345,10 @@ export const PropertiesPanel = ({
                   <input
                     type="checkbox"
                     checked={!localProperties.borderWidth || localProperties.borderWidth === 0}
-                    onChange={(e) => handleNoBorderToggle(selectedElement.id, e.target.checked)}
+                    onChange={(e) => {
+                      console.log('🎛️ Toggle aucune bordure:', e.target.checked);
+                      handleNoBorderToggle(selectedElement.id, e.target.checked);
+                    }}
                   />
                   <span className="toggle-slider"></span>
                 </label>
