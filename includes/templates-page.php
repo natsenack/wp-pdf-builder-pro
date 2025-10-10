@@ -27,7 +27,7 @@ if (!defined('ABSPATH')) {
             // Récupérer les templates depuis la base de données
             global $wpdb;
             $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-            $templates = $wpdb->get_results("SELECT id, name, description, modified_at, created_at FROM $table_templates ORDER BY id", ARRAY_A);
+            $templates = $wpdb->get_results("SELECT id, name, created_at, updated_at FROM $table_templates ORDER BY id", ARRAY_A);
             
             if (!empty($templates)) {
                 echo '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">';
@@ -35,12 +35,11 @@ if (!defined('ABSPATH')) {
                 foreach ($templates as $template) {
                     $template_id = $template['id'];
                     $template_name = esc_html($template['name']);
-                    $template_description = isset($template['description']) ? esc_html($template['description']) : '';
-                    $modified_at = isset($template['modified_at']) ? $template['modified_at'] : null;
                     $created_at = isset($template['created_at']) ? $template['created_at'] : null;
+                    $updated_at = isset($template['updated_at']) ? $template['updated_at'] : null;
                     
                     // Déterminer si le template a été modifié (différent de la création)
-                    $is_modified = (!empty($modified_at) && $modified_at !== $created_at) || !empty($template_description);
+                    $is_modified = (!empty($updated_at) && !empty($created_at) && $updated_at !== $created_at);
                     $button_text = $is_modified ? '🔄 Modifier' : '⚙️ Paramètres';
                     $button_action = $is_modified ? 'confirmTemplateModifications' : 'openTemplateSettings';
                     
@@ -84,7 +83,7 @@ if (!defined('ABSPATH')) {
                     echo '</div>';
                     echo '<div style="display: flex; gap: 10px;">';
                     echo '<a href="' . admin_url('admin.php?page=pdf-builder-editor&template_id=' . $template_id) . '" class="button button-secondary" style="flex: 1; text-align: center;">✏️ Éditer</a>';
-                    echo '<button class="button button-secondary" style="flex: 1;" onclick="' . $button_action . '(' . $template_id . ', \'' . addslashes($template_name) . '\', \'' . addslashes($template_description) . '\', ' . ($is_modified ? 'true' : 'false') . ')">' . $button_text . '</button>';
+                    echo '<button class="button button-secondary" style="flex: 1;" onclick="' . $button_action . '(' . $template_id . ', \'' . addslashes($template_name) . '\', \'' . ($is_modified ? 'true' : 'false') . '\')">' . $button_text . '</button>';
                     echo '<button class="button button-primary" style="flex: 1;" onclick="alert(\'Fonctionnalité en développement\')">📋 Utiliser</button>';
                     echo '</div>';
                     echo '</div>';
@@ -240,14 +239,14 @@ function openTemplateSettings(templateId, templateName) {
     loadTemplateSettings(templateId);
 }
 
-function confirmTemplateModifications(templateId, templateName, templateDescription, isModified) {
+function confirmTemplateModifications(templateId, templateName, isModified) {
     currentTemplateId = templateId;
 
     // Afficher la modale de confirmation
     document.getElementById('template-modifications-modal').style.display = 'flex';
 
     // Générer la liste des modifications
-    generateModificationsList(templateId, templateName, templateDescription, isModified);
+    generateModificationsList(templateId, templateName, isModified);
 }
 
 function closeTemplateSettings() {
@@ -261,14 +260,13 @@ function closeModificationsModal() {
     currentModifications = {};
 }
 
-function generateModificationsList(templateId, templateName, templateDescription, isModified) {
+function generateModificationsList(templateId, templateName, isModified) {
     const modificationsList = document.getElementById('modifications-list');
     const lastModifiedInfo = document.getElementById('last-modified-info');
 
     // Simulation des modifications (à remplacer par de vraies données)
     const modifications = [
         { field: 'Nom du template', oldValue: templateName, newValue: templateName + ' (modifié)', type: 'text' },
-        { field: 'Description', oldValue: templateDescription || 'Aucune', newValue: 'Description mise à jour avec de nouveaux détails', type: 'text' },
         { field: 'Statut actif', oldValue: 'Activé', newValue: 'Activé', type: 'boolean' },
         { field: 'Visibilité publique', oldValue: 'Privé', newValue: 'Privé', type: 'boolean' },
         { field: 'Format papier', oldValue: 'A4', newValue: 'A4', type: 'select' },
