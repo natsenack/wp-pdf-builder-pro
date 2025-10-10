@@ -164,7 +164,7 @@ window.addEventListener('load', function() {
                         <th scope="row"><?php _e('Mode Debug', 'pdf-builder-pro'); ?></th>
                         <td>
                             <label>
-                                <input type="checkbox" name="debug_mode" value="1" <?php checked($config->get('debug_mode')); ?>>
+                                <input type="checkbox" name="debug_mode" value="1" <?php checked($config->get('debug_mode'), true); ?>>
                                 <?php _e('Activer le mode debug pour les logs détaillés', 'pdf-builder-pro'); ?>
                             </label>
                         </td>
@@ -173,17 +173,17 @@ window.addEventListener('load', function() {
                         <th scope="row"><?php _e('Niveau de Log', 'pdf-builder-pro'); ?></th>
                         <td>
                             <select name="log_level">
-                                <option value="debug" <?php selected($config->get('log_level'), 'debug'); ?>><?php _e('Debug', 'pdf-builder-pro'); ?></option>
-                                <option value="info" <?php selected($config->get('log_level'), 'info'); ?>><?php _e('Info', 'pdf-builder-pro'); ?></option>
-                                <option value="warning" <?php selected($config->get('log_level'), 'warning'); ?>><?php _e('Warning', 'pdf-builder-pro'); ?></option>
-                                <option value="error" <?php selected($config->get('log_level'), 'error'); ?>><?php _e('Error', 'pdf-builder-pro'); ?></option>
+                                <option value="debug" <?php selected($config->get('log_level', 'info'), 'debug'); ?>><?php _e('Debug', 'pdf-builder-pro'); ?></option>
+                                <option value="info" <?php selected($config->get('log_level', 'info'), 'info'); ?>><?php _e('Info', 'pdf-builder-pro'); ?></option>
+                                <option value="warning" <?php selected($config->get('log_level', 'info'), 'warning'); ?>><?php _e('Warning', 'pdf-builder-pro'); ?></option>
+                                <option value="error" <?php selected($config->get('log_level', 'info'), 'error'); ?>><?php _e('Error', 'pdf-builder-pro'); ?></option>
                             </select>
                         </td>
                     </tr>
                     <tr>
                         <th scope="row"><?php _e('Taille Max Template', 'pdf-builder-pro'); ?></th>
                         <td>
-                            <input type="number" name="max_template_size" value="<?php echo $config->get('max_template_size'); ?>" class="small-text">
+                            <input type="number" name="max_template_size" value="<?php echo esc_attr($config->get('max_template_size', 52428800)); ?>" class="small-text">
                             <span class="description"><?php _e('Taille maximale en octets (50MB par défaut)', 'pdf-builder-pro'); ?></span>
                         </td>
                     </tr>
@@ -199,7 +199,7 @@ window.addEventListener('load', function() {
                         <th scope="row"><?php _e('Cache Activé', 'pdf-builder-pro'); ?></th>
                         <td>
                             <label>
-                                <input type="checkbox" name="cache_enabled" value="1" <?php checked($config->get('cache_enabled')); ?>>
+                                <input type="checkbox" name="cache_enabled" value="1" <?php checked($config->get('cache_enabled'), true); ?>>
                                 <?php _e('Activer la mise en cache pour améliorer les performances', 'pdf-builder-pro'); ?>
                             </label>
                         </td>
@@ -207,21 +207,21 @@ window.addEventListener('load', function() {
                     <tr>
                         <th scope="row"><?php _e('TTL Cache', 'pdf-builder-pro'); ?></th>
                         <td>
-                            <input type="number" name="cache_ttl" value="<?php echo $config->get('cache_ttl'); ?>" class="small-text">
+                            <input type="number" name="cache_ttl" value="<?php echo esc_attr($config->get('cache_ttl', 3600)); ?>" class="small-text">
                             <span class="description"><?php _e('Durée de vie du cache en secondes (3600 = 1 heure)', 'pdf-builder-pro'); ?></span>
                         </td>
                     </tr>
                     <tr>
                         <th scope="row"><?php _e('Temps Max Exécution', 'pdf-builder-pro'); ?></th>
                         <td>
-                            <input type="number" name="max_execution_time" value="<?php echo $config->get('max_execution_time'); ?>" class="small-text">
+                            <input type="number" name="max_execution_time" value="<?php echo esc_attr($config->get('max_execution_time', 300)); ?>" class="small-text">
                             <span class="description"><?php _e('Temps maximum d\'exécution en secondes', 'pdf-builder-pro'); ?></span>
                         </td>
                     </tr>
                     <tr>
                         <th scope="row"><?php _e('Limite Mémoire', 'pdf-builder-pro'); ?></th>
                         <td>
-                            <input type="text" name="memory_limit" value="<?php echo $config->get('memory_limit'); ?>" class="small-text">
+                            <input type="text" name="memory_limit" value="<?php echo esc_attr($config->get('memory_limit', '256M')); ?>" class="small-text">
                             <span class="description"><?php _e('Limite mémoire PHP (ex: 256M, 512M)', 'pdf-builder-pro'); ?></span>
                         </td>
                     </tr>
@@ -237,10 +237,10 @@ window.addEventListener('load', function() {
                         <th scope="row"><?php _e('Qualité PDF', 'pdf-builder-pro'); ?></th>
                         <td>
                             <select name="pdf_quality">
-                                <option value="low" <?php selected($config->get('pdf_quality'), 'low'); ?>><?php _e('Basse', 'pdf-builder-pro'); ?></option>
-                                <option value="medium" <?php selected($config->get('pdf_quality'), 'medium'); ?>><?php _e('Moyenne', 'pdf-builder-pro'); ?></option>
-                                <option value="high" <?php selected($config->get('pdf_quality'), 'high'); ?>><?php _e('Haute', 'pdf-builder-pro'); ?></option>
-                                <option value="ultra" <?php selected($config->get('pdf_quality'), 'ultra'); ?>><?php _e('Ultra', 'pdf-builder-pro'); ?></option>
+                                <option value="low" <?php selected($config->get('pdf_quality', 'medium'), 'low'); ?>><?php _e('Basse', 'pdf-builder-pro'); ?></option>
+                                <option value="medium" <?php selected($config->get('pdf_quality', 'medium'), 'medium'); ?>><?php _e('Moyenne', 'pdf-builder-pro'); ?></option>
+                                <option value="high" <?php selected($config->get('pdf_quality', 'medium'), 'high'); ?>><?php _e('Haute', 'pdf-builder-pro'); ?></option>
+                                <option value="ultra" <?php selected($config->get('pdf_quality', 'medium'), 'ultra'); ?>><?php _e('Ultra', 'pdf-builder-pro'); ?></option>
                             </select>
                         </td>
                     </tr>
@@ -248,11 +248,11 @@ window.addEventListener('load', function() {
                         <th scope="row"><?php _e('Format par Défaut', 'pdf-builder-pro'); ?></th>
                         <td>
                             <select name="default_format">
-                                <option value="A3" <?php selected($config->get('default_format'), 'A3'); ?>>A3</option>
-                                <option value="A4" <?php selected($config->get('default_format'), 'A4'); ?>>A4</option>
-                                <option value="A5" <?php selected($config->get('default_format'), 'A5'); ?>>A5</option>
-                                <option value="Letter" <?php selected($config->get('default_format'), 'Letter'); ?>>Letter</option>
-                                <option value="Legal" <?php selected($config->get('default_format'), 'Legal'); ?>>Legal</option>
+                                <option value="A3" <?php selected($config->get('default_format', 'A4'), 'A3'); ?>>A3</option>
+                                <option value="A4" <?php selected($config->get('default_format', 'A4'), 'A4'); ?>>A4</option>
+                                <option value="A5" <?php selected($config->get('default_format', 'A4'), 'A5'); ?>>A5</option>
+                                <option value="Letter" <?php selected($config->get('default_format', 'A4'), 'Letter'); ?>>Letter</option>
+                                <option value="Legal" <?php selected($config->get('default_format', 'A4'), 'Legal'); ?>>Legal</option>
                             </select>
                         </td>
                     </tr>
@@ -260,8 +260,8 @@ window.addEventListener('load', function() {
                         <th scope="row"><?php _e('Orientation par Défaut', 'pdf-builder-pro'); ?></th>
                         <td>
                             <select name="default_orientation">
-                                <option value="portrait" <?php selected($config->get('default_orientation'), 'portrait'); ?>><?php _e('Portrait', 'pdf-builder-pro'); ?></option>
-                                <option value="landscape" <?php selected($config->get('default_orientation'), 'landscape'); ?>><?php _e('Paysage', 'pdf-builder-pro'); ?></option>
+                                <option value="portrait" <?php selected($config->get('default_orientation', 'portrait'), 'portrait'); ?>><?php _e('Portrait', 'pdf-builder-pro'); ?></option>
+                                <option value="landscape" <?php selected($config->get('default_orientation', 'portrait'), 'landscape'); ?>><?php _e('Paysage', 'pdf-builder-pro'); ?></option>
                             </select>
                         </td>
                     </tr>
@@ -396,7 +396,7 @@ window.addEventListener('load', function() {
                         <th scope="row"><?php _e('Notifications Email', 'pdf-builder-pro'); ?></th>
                         <td>
                             <label>
-                                <input type="checkbox" name="email_notifications_enabled" value="1" <?php checked($config->get('email_notifications_enabled')); ?>>
+                                <input type="checkbox" name="email_notifications_enabled" value="1" <?php checked($config->get('email_notifications_enabled'), true); ?>>
                                 <?php _e('Activer les notifications par email', 'pdf-builder-pro'); ?>
                             </label>
                         </td>
@@ -436,7 +436,7 @@ window.addEventListener('load', function() {
                         <th scope="row"><?php _e('Bordures des Éléments', 'pdf-builder-pro'); ?></th>
                         <td>
                             <label>
-                                <input type="checkbox" name="canvas_element_borders_enabled" value="1" <?php checked($config->get('canvas_element_borders_enabled', true)); ?>>
+                                <input type="checkbox" name="canvas_element_borders_enabled" value="1" <?php checked($config->get('canvas_element_borders_enabled', true), true); ?>>
                                 <?php _e('Activer les bordures des éléments sur le canvas', 'pdf-builder-pro'); ?>
                             </label>
                         </td>
@@ -451,7 +451,7 @@ window.addEventListener('load', function() {
                     <tr>
                         <th scope="row"><?php _e('Couleur des Bordures', 'pdf-builder-pro'); ?></th>
                         <td>
-                            <input type="color" name="canvas_border_color" value="<?php echo $config->get('canvas_border_color', '#007cba'); ?>">
+                            <input type="color" name="canvas_border_color" value="<?php echo esc_attr($config->get('canvas_border_color', '#007cba') ?: '#007cba'); ?>">
                             <span class="description"><?php _e('Couleur des bordures des éléments', 'pdf-builder-pro'); ?></span>
                         </td>
                     </tr>
@@ -459,7 +459,7 @@ window.addEventListener('load', function() {
                         <th scope="row"><?php _e('Poignées de Redimensionnement', 'pdf-builder-pro'); ?></th>
                         <td>
                             <label>
-                                <input type="checkbox" name="canvas_resize_handles_enabled" value="1" <?php checked($config->get('canvas_resize_handles_enabled', true)); ?>>
+                                <input type="checkbox" name="canvas_resize_handles_enabled" value="1" <?php checked($config->get('canvas_resize_handles_enabled', true), true); ?>>
                                 <?php _e('Afficher les poignées de redimensionnement', 'pdf-builder-pro'); ?>
                             </label>
                         </td>
@@ -474,14 +474,14 @@ window.addEventListener('load', function() {
                     <tr>
                         <th scope="row"><?php _e('Couleur des Poignées', 'pdf-builder-pro'); ?></th>
                         <td>
-                            <input type="color" name="canvas_handle_color" value="<?php echo $config->get('canvas_handle_color', '#007cba'); ?>">
+                            <input type="color" name="canvas_handle_color" value="<?php echo esc_attr($config->get('canvas_handle_color', '#007cba') ?: '#007cba'); ?>">
                             <span class="description"><?php _e('Couleur des poignées de redimensionnement', 'pdf-builder-pro'); ?></span>
                         </td>
                     </tr>
                     <tr>
                         <th scope="row"><?php _e('Couleur de Survol des Poignées', 'pdf-builder-pro'); ?></th>
                         <td>
-                            <input type="color" name="canvas_handle_hover_color" value="<?php echo $config->get('canvas_handle_hover_color', '#005a87'); ?>">
+                            <input type="color" name="canvas_handle_hover_color" value="<?php echo esc_attr($config->get('canvas_handle_hover_color', '#005a87') ?: '#005a87'); ?>">
                             <span class="description"><?php _e('Couleur des poignées au survol', 'pdf-builder-pro'); ?></span>
                         </td>
                     </tr>
