@@ -11,7 +11,7 @@ const ColorPicker = ({ label, value, onChange, presets = [] }) => (
     <div className="color-picker-container">
       <input
         type="color"
-        value={value || '#1e293b'}
+        value={value || '#333333'}
         onChange={(e) => onChange(e.target.value)}
         className="color-input"
       />
@@ -151,7 +151,7 @@ export const PropertiesPanel = ({
     1000 // autoSaveDelay
   );
 
-  // Obtenir l'élément sélectionné pour l'affichage
+  // Obtenir l'élément sélectionné depuis le hook
   const selectedElement = selectedElements.length > 0
     ? elements.find(el => el.id === selectedElements[0])
     : null;
@@ -159,10 +159,16 @@ export const PropertiesPanel = ({
   // Mettre à jour les valeurs précédentes quand l'élément change
   useEffect(() => {
     if (selectedElement) {
-      setPreviousBackgroundColor(localProperties.backgroundColor || '#ffffff');
-      setPreviousBorderWidth(localProperties.borderWidth || 1);
+      // Initialiser les valeurs précédentes seulement si elles ne sont pas déjà définies
+      // et que les valeurs actuelles ne sont pas les valeurs "désactivées"
+      if (localProperties.backgroundColor && localProperties.backgroundColor !== 'transparent') {
+        setPreviousBackgroundColor(localProperties.backgroundColor);
+      }
+      if (localProperties.borderWidth && localProperties.borderWidth > 0) {
+        setPreviousBorderWidth(localProperties.borderWidth);
+      }
     }
-  }, [selectedElement, localProperties.backgroundColor, localProperties.borderWidth]);
+  }, [selectedElement]); // Retirer les dépendances aux propriétés locales pour éviter les écrasements
 
   // Gestionnaire unifié de changement de propriété
   const handlePropertyChange = useCallback((elementId, property, value) => {
@@ -185,8 +191,10 @@ export const PropertiesPanel = ({
   // Gestionnaire pour le toggle "Aucun fond"
   const handleNoBackgroundToggle = useCallback((elementId, checked) => {
     if (checked) {
-      // Sauvegarder la couleur actuelle avant de la mettre à transparent
-      setPreviousBackgroundColor(localProperties.backgroundColor || '#ffffff');
+      // Sauvegarder la couleur actuelle seulement si elle n'est pas déjà transparente
+      if (localProperties.backgroundColor && localProperties.backgroundColor !== 'transparent') {
+        setPreviousBackgroundColor(localProperties.backgroundColor);
+      }
       handlePropertyChange(elementId, 'backgroundColor', 'transparent');
     } else {
       // Restaurer la couleur précédente
@@ -197,8 +205,10 @@ export const PropertiesPanel = ({
   // Gestionnaire pour le toggle "Aucune bordure"
   const handleNoBorderToggle = useCallback((elementId, checked) => {
     if (checked) {
-      // Sauvegarder l'épaisseur actuelle avant de la mettre à 0
-      setPreviousBorderWidth(localProperties.borderWidth || 1);
+      // Sauvegarder l'épaisseur actuelle seulement si elle n'est pas déjà 0
+      if (localProperties.borderWidth && localProperties.borderWidth > 0) {
+        setPreviousBorderWidth(localProperties.borderWidth);
+      }
       handlePropertyChange(elementId, 'borderWidth', 0);
     } else {
       // Restaurer l'épaisseur précédente
