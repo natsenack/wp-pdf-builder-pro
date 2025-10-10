@@ -8,13 +8,21 @@ import '../styles/PropertiesPanel.css';
 const ColorPicker = ({ label, value, onChange, presets = [] }) => {
   // console.log(`🎨 ColorPicker ${label} - Props:`, { value, presets: presets.length });
 
+  // Valeur par défaut selon le type de contrôle
+  const getDefaultValue = () => {
+    if (label === 'Bordure') return '#dddddd'; // Couleur par défaut pour les bordures
+    return '#ffffff'; // Couleur par défaut pour texte et fond
+  };
+
+  const safeValue = value || getDefaultValue();
+
   return (
     <div className="property-row">
       <label>{label}:</label>
       <div className="color-picker-container">
         <input
           type="color"
-          value={value}
+          value={safeValue}
           onChange={(e) => {
             console.log(`🎨 ColorPicker ${label} - Changement input:`, e.target.value);
             onChange(e.target.value);
@@ -70,11 +78,43 @@ const FontControls = ({ elementId, properties, onPropertyChange }) => (
           type="range"
           min="8"
           max="72"
-          value={properties.fontSize || 14}
+          value={properties.fontSize ?? 14}
           onChange={(e) => onPropertyChange(elementId, 'fontSize', parseInt(e.target.value))}
           className="slider"
         />
-        <span className="slider-value">{properties.fontSize || 14}px</span>
+        <span className="slider-value">{properties.fontSize ?? 14}px</span>
+      </div>
+    </div>
+
+    <div className="property-row">
+      <label>Interligne:</label>
+      <div className="slider-container">
+        <input
+          type="range"
+          min="0.8"
+          max="3"
+          step="0.1"
+          value={properties.lineHeight ?? 1.2}
+          onChange={(e) => onPropertyChange(elementId, 'lineHeight', parseFloat(e.target.value))}
+          className="slider"
+        />
+        <span className="slider-value">{properties.lineHeight ?? 1.2}</span>
+      </div>
+    </div>
+
+    <div className="property-row">
+      <label>Espacement lettres:</label>
+      <div className="slider-container">
+        <input
+          type="range"
+          min="-2"
+          max="10"
+          step="0.1"
+          value={properties.letterSpacing ?? 0}
+          onChange={(e) => onPropertyChange(elementId, 'letterSpacing', parseFloat(e.target.value))}
+          className="slider"
+        />
+        <span className="slider-value">{properties.letterSpacing ?? 0}px</span>
       </div>
     </div>
 
@@ -96,15 +136,29 @@ const FontControls = ({ elementId, properties, onPropertyChange }) => (
           <em>I</em>
         </button>
         <button
-          className={`style-btn ${properties.textDecoration === 'underline' ? 'active' : ''}`}
-          onClick={() => onPropertyChange(elementId, 'textDecoration', properties.textDecoration === 'underline' ? 'none' : 'underline')}
+          className={`style-btn ${(properties.textDecoration || '').includes('underline') ? 'active' : ''}`}
+          onClick={() => {
+            const currentDecorations = properties.textDecoration ? properties.textDecoration.split(' ') : [];
+            const hasUnderline = currentDecorations.includes('underline');
+            const newDecorations = hasUnderline
+              ? currentDecorations.filter(d => d !== 'underline')
+              : [...currentDecorations, 'underline'];
+            onPropertyChange(elementId, 'textDecoration', newDecorations.join(' ') || 'none');
+          }}
           title="Souligné"
         >
           <u>U</u>
         </button>
         <button
-          className={`style-btn ${properties.textDecoration === 'line-through' ? 'active' : ''}`}
-          onClick={() => onPropertyChange(elementId, 'textDecoration', properties.textDecoration === 'line-through' ? 'none' : 'line-through')}
+          className={`style-btn ${(properties.textDecoration || '').includes('line-through') ? 'active' : ''}`}
+          onClick={() => {
+            const currentDecorations = properties.textDecoration ? properties.textDecoration.split(' ') : [];
+            const hasLineThrough = currentDecorations.includes('line-through');
+            const newDecorations = hasLineThrough
+              ? currentDecorations.filter(d => d !== 'line-through')
+              : [...currentDecorations, 'line-through'];
+            onPropertyChange(elementId, 'textDecoration', newDecorations.join(' ') || 'none');
+          }}
           title="Barré"
         >
           <s>S</s>
@@ -148,12 +202,12 @@ export const PropertiesPanel = React.memo(({
   // Log des props pour débogage (seulement quand elles changent)
   useEffect(() => {
     console.log('🔍 PropertiesPanel - Props reçues:', {
-      selectedElements,
+      selectedElements: selectedElements?.length,
       elementsCount: elements?.length,
       onPropertyChange: !!onPropertyChange,
       onBatchUpdate: !!onBatchUpdate
     });
-  }, [selectedElements, elements?.length, onPropertyChange, onBatchUpdate]);
+  }, [selectedElements?.length, elements?.length]); // Éviter les références d'objets instables
 
   // Utiliser les hooks de personnalisation et synchronisation
   const {
@@ -166,11 +220,11 @@ export const PropertiesPanel = React.memo(({
   // Log du hook (seulement quand il change)
   useEffect(() => {
     console.log('🔍 PropertiesPanel - Hook useElementCustomization:', {
-      localProperties,
+      hasLocalProperties: !!localProperties && Object.keys(localProperties).length > 0,
       activeTab,
-      selectedElement
+      selectedElementId: selectedElement?.id
     });
-  }, [localProperties, activeTab, selectedElement]);
+  }, [activeTab, selectedElement?.id]); // Éviter de logger localProperties qui change souvent
 
   const { syncImmediate, syncBatch } = useElementSynchronization(
     elements,
@@ -224,11 +278,15 @@ export const PropertiesPanel = React.memo(({
       // Sauvegarder la couleur actuelle avant de la désactiver
       if (selectedElement?.backgroundColor && selectedElement.backgroundColor !== 'transparent') {
         setPreviousBackgroundColor(selectedElement.backgroundColor);
+      } else if (!previousBackgroundColor) {
+        // Si pas de couleur précédente sauvegardée, utiliser la valeur par défaut
+        setPreviousBackgroundColor('#ffffff');
       }
       handlePropertyChange(elementId, 'backgroundColor', 'transparent');
     } else {
-      // Restaurer la couleur précédente
-      handlePropertyChange(elementId, 'backgroundColor', previousBackgroundColor);
+      // Restaurer la couleur précédente (avec fallback)
+      const colorToRestore = previousBackgroundColor || '#ffffff';
+      handlePropertyChange(elementId, 'backgroundColor', colorToRestore);
     }
   }, [selectedElement?.backgroundColor, previousBackgroundColor, handlePropertyChange]);
 
@@ -240,11 +298,15 @@ export const PropertiesPanel = React.memo(({
       // Sauvegarder l'épaisseur actuelle avant de la désactiver
       if (selectedElement?.borderWidth && selectedElement.borderWidth > 0) {
         setPreviousBorderWidth(selectedElement.borderWidth);
+      } else if (!previousBorderWidth || previousBorderWidth === 0) {
+        // Si pas d'épaisseur précédente sauvegardée, utiliser la valeur par défaut
+        setPreviousBorderWidth(1);
       }
       handlePropertyChange(elementId, 'borderWidth', 0);
     } else {
-      // Restaurer l'épaisseur précédente
-      handlePropertyChange(elementId, 'borderWidth', previousBorderWidth);
+      // Restaurer l'épaisseur précédente (avec fallback)
+      const widthToRestore = previousBorderWidth || 1;
+      handlePropertyChange(elementId, 'borderWidth', widthToRestore);
     }
   }, [selectedElement?.borderWidth, previousBorderWidth, handlePropertyChange]);
 
@@ -382,11 +444,11 @@ export const PropertiesPanel = React.memo(({
                     type="range"
                     min="0"
                     max="10"
-                    value={localProperties.borderWidth || 0}
+                    value={localProperties.borderWidth ?? 1}
                     onChange={(e) => handlePropertyChange(selectedElement.id, 'borderWidth', parseInt(e.target.value))}
                     className="slider"
                   />
-                  <span className="slider-value">{localProperties.borderWidth || 0}px</span>
+                  <span className="slider-value">{localProperties.borderWidth ?? 1}px</span>
                 </div>
               </div>
 
@@ -397,11 +459,11 @@ export const PropertiesPanel = React.memo(({
                     type="range"
                     min="0"
                     max="50"
-                    value={localProperties.borderRadius || 0}
+                    value={localProperties.borderRadius ?? 4}
                     onChange={(e) => handlePropertyChange(selectedElement.id, 'borderRadius', parseInt(e.target.value))}
                     className="slider"
                   />
-                  <span className="slider-value">{localProperties.borderRadius || 0}px</span>
+                  <span className="slider-value">{localProperties.borderRadius ?? 4}px</span>
                 </div>
               </div>
             </div>

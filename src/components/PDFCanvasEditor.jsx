@@ -2,14 +2,16 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { CanvasElement } from './CanvasElement';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { Toolbar } from './Toolbar';
-import { PropertiesPanel } from './PropertiesPanel';
-import { ElementLibrary } from './ElementLibrary';
-import { ContextMenu } from './ContextMenu';
-import { WooCommerceElement } from './WooCommerceElements';
 import { useCanvasState } from '../hooks/useCanvasState';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
-import { PreviewModal } from './PreviewModal';
 import { useGlobalSettings } from '../hooks/useGlobalSettings';
+
+// Chargement lazy des composants conditionnels
+const ContextMenu = React.lazy(() => import('./ContextMenu'));
+const PreviewModal = React.lazy(() => import('./PreviewModal'));
+const WooCommerceElement = React.lazy(() => import('./WooCommerceElements'));
+const ElementLibrary = React.lazy(() => import('./ElementLibrary'));
+const PropertiesPanel = React.lazy(() => import('./PropertiesPanel'));
 
 export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
   const [tool, setTool] = useState('select');
@@ -336,11 +338,13 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
         {/* Bibliothèque d'éléments - masquée en mode aperçu */}
         {!showPreviewModal && (
           <div className="editor-sidebar left-sidebar">
-            <ElementLibrary
-              onAddElement={handleAddElement}
-              selectedTool={tool}
-              onToolSelect={setTool}
-            />
+            <React.Suspense fallback={<div className="loading">Chargement...</div>}>
+              <ElementLibrary
+                onAddElement={handleAddElement}
+                selectedTool={tool}
+                onToolSelect={setTool}
+              />
+            </React.Suspense>
           </div>
         )}
 
@@ -410,17 +414,18 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
                 {canvasState.elements
                   .filter(el => el.type.startsWith('woocommerce-'))
                   .map(element => (
-                    <WooCommerceElement
-                      key={element.id}
-                      element={element}
-                      isSelected={canvasState.selection.selectedElements.includes(element.id)}
-                      onSelect={handleElementSelect}
-                      onUpdate={canvasState.updateElement}
-                      dragAndDrop={dragAndDrop}
-                      zoom={1} // Le zoom est géré au niveau du wrapper
-                      canvasWidth={canvasState.canvasWidth}
-                      canvasHeight={canvasState.canvasHeight}
-                    />
+                    <React.Suspense key={element.id} fallback={null}>
+                      <WooCommerceElement
+                        element={element}
+                        isSelected={canvasState.selection.selectedElements.includes(element.id)}
+                        onSelect={handleElementSelect}
+                        onUpdate={canvasState.updateElement}
+                        dragAndDrop={dragAndDrop}
+                        zoom={1} // Le zoom est géré au niveau du wrapper
+                        canvasWidth={canvasState.canvasWidth}
+                        canvasHeight={canvasState.canvasHeight}
+                      />
+                    </React.Suspense>
                   ))}
               </div>
             </div>
@@ -432,12 +437,14 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
         {!showPreviewModal && (
           <div className={`editor-sidebar right-sidebar ${isPropertiesCollapsed ? 'collapsed' : ''}`}>
             {!isPropertiesCollapsed && (
-              <PropertiesPanel
-                selectedElements={canvasState.selection.selectedElements}
-                elements={canvasState.elements}
-                onPropertyChange={handlePropertyChange}
-                onBatchUpdate={handleBatchUpdate}
-              />
+              <React.Suspense fallback={<div className="loading">Chargement...</div>}>
+                <PropertiesPanel
+                  selectedElements={canvasState.selection.selectedElements}
+                  elements={canvasState.elements}
+                  onPropertyChange={handlePropertyChange}
+                  onBatchUpdate={handleBatchUpdate}
+                />
+              </React.Suspense>
             )}
           </div>
         )}
@@ -463,11 +470,13 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
 
       {/* Menu contextuel */}
       {canvasState.contextMenu.contextMenu && (
-        <ContextMenu
-          menu={canvasState.contextMenu.contextMenu}
-          onAction={handleContextMenuAction}
-          isAnimating={canvasState.contextMenu.isAnimating || false}
-        />
+        <React.Suspense fallback={null}>
+          <ContextMenu
+            menu={canvasState.contextMenu.contextMenu}
+            onAction={handleContextMenuAction}
+            isAnimating={canvasState.contextMenu.isAnimating || false}
+          />
+        </React.Suspense>
       )}
 
       {/* Indicateur d'état */}
@@ -486,15 +495,17 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
       </div>
 
       {/* Modale d'aperçu */}
-      <PreviewModal
-        isOpen={showPreviewModal}
-        onClose={() => {
-          setShowPreviewModal(false);
-        }}
-        elements={canvasState.elements}
-        canvasWidth={canvasState.canvasWidth}
-        canvasHeight={canvasState.canvasHeight}
-      />
+      <React.Suspense fallback={null}>
+        <PreviewModal
+          isOpen={showPreviewModal}
+          onClose={() => {
+            setShowPreviewModal(false);
+          }}
+          elements={canvasState.elements}
+          canvasWidth={canvasState.canvasWidth}
+          canvasHeight={canvasState.canvasHeight}
+        />
+      </React.Suspense>
     </div>
   );
 };

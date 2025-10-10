@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useHistory } from './useHistory';
 import { useSelection } from './useSelection';
 import { useClipboard } from './useClipboard';
@@ -644,7 +644,7 @@ export const useCanvasState = ({
     contextMenu.showContextMenu(x, y, menuItems);
   }, [selection, contextMenu, duplicateElement, deleteElement, copySelectedElements, pasteElements, clipboard, duplicateSelectedElements, deleteSelectedElements]);
 
-  return {
+  return useMemo(() => ({
     // État
     elements,
     canvasWidth,
@@ -683,5 +683,25 @@ export const useCanvasState = ({
 
     // Utilitaires
     getElementById: useCallback((id) => elements.find(el => el.id === id), [elements])
-  };
+  }), [
+    elements,
+    canvasWidth,
+    canvasHeight,
+    selection,
+    zoom,
+    contextMenu,
+    dragAndDrop,
+    addElement,
+    updateElement,
+    deleteElement,
+    deleteSelectedElements,
+    duplicateElement,
+    duplicateSelectedElements,
+    copySelectedElements,
+    pasteElements,
+    undo,
+    redo,
+    history,
+    showContextMenu
+  ]);
 };

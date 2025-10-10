@@ -18,8 +18,8 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
   // Synchroniser les propriétés locales avec l'élément sélectionné
   useEffect(() => {
     console.log('🔄 useElementCustomization - Synchronisation élément:', {
-      selectedElement,
-      selectedElements,
+      selectedElementId: selectedElement?.id,
+      selectedElementsCount: selectedElements?.length,
       elementsCount: elements?.length
     });
 
@@ -32,10 +32,13 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
         borderWidth: 1,
         borderRadius: 4,
         fontSize: 14,
-        fontFamily: 'Arial, sans-serif',
+        fontFamily: 'Inter',
         fontWeight: 'normal',
         fontStyle: 'normal',
         textDecoration: 'none',
+        textAlign: 'left',
+        lineHeight: 1.2,
+        letterSpacing: 0,
         // Propriétés de l'élément
         ...selectedElement
       };
@@ -45,7 +48,7 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
     } else {
       setLocalProperties({});
     }
-  }, [selectedElement]);
+  }, [selectedElement?.id]); // Ne dépendre que de l'ID pour éviter les re-renders inutiles
 
   // Gestionnaire de changement de propriété avec validation
   const handlePropertyChange = useCallback((elementId, property, value) => {
@@ -101,6 +104,12 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
 
       case 'fontSize':
         return Math.max(8, Math.min(72, parseInt(value) || 14));
+
+      case 'lineHeight':
+        return Math.max(0.5, Math.min(5, parseFloat(value) || 1.2));
+
+      case 'letterSpacing':
+        return Math.max(-5, Math.min(20, parseFloat(value) || 0));
 
       case 'borderWidth':
         return Math.max(0, Math.min(20, parseInt(value) || 0));
@@ -179,11 +188,13 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
       borderRadius: 4,
       color: '#333333',
       fontSize: 14,
-      fontFamily: 'Arial, sans-serif',
+      fontFamily: 'Inter',
       fontWeight: 'normal',
       fontStyle: 'normal',
       textAlign: 'left',
       textDecoration: 'none',
+      lineHeight: 1.2,
+      letterSpacing: 0,
       opacity: 100,
       rotation: 0,
       scale: 100,
