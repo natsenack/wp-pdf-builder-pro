@@ -111,13 +111,6 @@ export const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => 
       description: 'Devis, Facture, Reçu, etc.',
       defaultProperties: {
         documentType: 'invoice', // 'invoice', 'quote', 'receipt', 'order', 'credit_note'
-        customText: {
-          invoice: 'FACTURE',
-          quote: 'DEVIS',
-          receipt: 'REÇU',
-          order: 'COMMANDE',
-          credit_note: 'AVOIR'
-        },
         fontSize: 18,
         fontFamily: 'Arial',
         fontWeight: 'bold',

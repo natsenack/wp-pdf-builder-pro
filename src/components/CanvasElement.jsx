@@ -1427,12 +1427,11 @@ export const CanvasElement = ({
             border: element.showBorder ? '2px solid #e2e8f0' : 'none',
             borderRadius: '4px'
           }}>
-            {element.customText?.[element.documentType] || 
-             (element.documentType === 'invoice' ? 'FACTURE' :
-              element.documentType === 'quote' ? 'DEVIS' :
-              element.documentType === 'receipt' ? 'REÇU' :
-              element.documentType === 'order' ? 'COMMANDE' :
-              element.documentType === 'credit_note' ? 'AVOIR' : 'DOCUMENT')}
+            {element.documentType === 'invoice' ? 'FACTURE' :
+             element.documentType === 'quote' ? 'DEVIS' :
+             element.documentType === 'receipt' ? 'REÇU' :
+             element.documentType === 'order' ? 'COMMANDE' :
+             element.documentType === 'credit_note' ? 'AVOIR' : 'DOCUMENT'}
           </div>
         )}
       </div>

@@ -1043,56 +1043,6 @@ export const PropertiesPanel = ({
                   </select>
                 </div>
 
-                <div className="property-row">
-                  <label>Texte personnalisé - Facture:</label>
-                  <input
-                    type="text"
-                    value={localProperties.customText?.invoice || 'FACTURE'}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'customText.invoice', e.target.value)}
-                    placeholder="FACTURE"
-                  />
-                </div>
-
-                <div className="property-row">
-                  <label>Texte personnalisé - Devis:</label>
-                  <input
-                    type="text"
-                    value={localProperties.customText?.quote || 'DEVIS'}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'customText.quote', e.target.value)}
-                    placeholder="DEVIS"
-                  />
-                </div>
-
-                <div className="property-row">
-                  <label>Texte personnalisé - Reçu:</label>
-                  <input
-                    type="text"
-                    value={localProperties.customText?.receipt || 'REÇU'}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'customText.receipt', e.target.value)}
-                    placeholder="REÇU"
-                  />
-                </div>
-
-                <div className="property-row">
-                  <label>Texte personnalisé - Commande:</label>
-                  <input
-                    type="text"
-                    value={localProperties.customText?.order || 'COMMANDE'}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'customText.order', e.target.value)}
-                    placeholder="COMMANDE"
-                  />
-                </div>
-
-                <div className="property-row">
-                  <label>Texte personnalisé - Avoir:</label>
-                  <input
-                    type="text"
-                    value={localProperties.customText?.credit_note || 'AVOIR'}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'customText.credit_note', e.target.value)}
-                    placeholder="AVOIR"
-                  />
-                </div>
-
                 <FontControls
                   elementId={selectedElement.id}
                   properties={localProperties}
