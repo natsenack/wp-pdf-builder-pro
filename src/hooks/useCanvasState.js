@@ -82,15 +82,16 @@ export const useCanvasState = ({
       })
       .then(response => response.json())
       .then(data => {
-        if (data.success && data.data.elements) {
+        if (data.success && Array.isArray(data.data.elements)) {
           setElements(data.data.elements);
           // Calculer le prochain ID basé sur les éléments chargés
           const maxId = data.data.elements.length > 0 
             ? Math.max(...data.data.elements.map(el => parseInt(el.id.split('_')[1] || 0)))
             : 0;
           setNextId(maxId + 1);
+          console.log('Éléments chargés avec succès:', data.data.elements.length, 'éléments');
         } else {
-          console.warn('Aucun élément trouvé pour ce template ou erreur de chargement');
+          console.warn('Aucun élément trouvé pour ce template ou erreur de chargement - data:', data);
         }
       })
       .catch(error => {
