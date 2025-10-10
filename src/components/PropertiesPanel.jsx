@@ -526,19 +526,10 @@ const PropertiesPanel = React.memo(({
               />
             )}
 
-            {(() => {
-              const shouldShow = localProperties.borderWidth > 0;
-              const borderWidthValue = localProperties.borderWidth;
-              const borderWidthType = typeof localProperties.borderWidth;
-              console.log('🎯 Rendu contrôles bordure - Vérification:', { 
-                shouldShow, 
-                borderWidthValue, 
-                borderWidthType,
-                elementId: selectedElement?.id 
-              });
-              return shouldShow && (
-                <div className="properties-group">
-                  <h4>🔲 Bordures & Coins</h4>
+            {/* DEBUG: Force display of border controls */}
+            {true && ( // Temporarily force to true
+              <div className="properties-group" style={{border: '2px solid red'}}>
+                <h4>🔲 Bordures & Coins (FORCÉ)</h4>
 
                 <div className="property-row">
                   <label>Épaisseur bordure:</label>
@@ -570,8 +561,7 @@ const PropertiesPanel = React.memo(({
                   </div>
                 </div>
               </div>
-            );
-            })()}
+            )}
 
             <div className="properties-group">
               <h4>✨ Effets</h4>
