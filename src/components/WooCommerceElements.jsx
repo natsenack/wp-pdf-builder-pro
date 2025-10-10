@@ -204,7 +204,7 @@ export const WooCommerceElement = ({
     height: element.height * zoom,
     cursor: isSelected ? 'move' : 'pointer',
     userSelect: 'none',
-    border: isSelected ? '2px solid #007cba' : '1px solid #ddd',
+    border: isSelected ? '1px solid #007cba' : '1px solid #ddd',
     backgroundColor: element.backgroundColor || '#ffffff',
     color: element.color || '#333333',
     fontSize: (element.fontSize || 14) * zoom,

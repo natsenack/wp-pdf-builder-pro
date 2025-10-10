@@ -935,9 +935,9 @@
 }
 
 .canvas-element.selected {
-  outline: 3px solid var(--primary-color);
-  outline-offset: 2px;
-  box-shadow: 0 0 0 1px white, 0 0 0 6px rgba(37, 99, 235, 0.2);
+  outline: 2px solid var(--primary-color);
+  outline-offset: 1px;
+  box-shadow: 0 0 0 1px white, 0 0 0 4px rgba(37, 99, 235, 0.1);
   border-radius: 4px;
 }
 
