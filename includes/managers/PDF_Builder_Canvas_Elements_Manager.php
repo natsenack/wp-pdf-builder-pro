@@ -67,7 +67,7 @@ class PDF_Builder_Canvas_Elements_Manager {
      * Valider les données d'un élément
      */
     public function validate_element_data($element_data) {
-        $required_fields = ['id', 'type', 'position', 'size'];
+        $required_fields = ['id', 'type', 'x', 'y', 'width', 'height'];
         $errors = [];
 
         foreach ($required_fields as $field) {
@@ -76,30 +76,383 @@ class PDF_Builder_Canvas_Elements_Manager {
             }
         }
 
-        // Validation de la position
-        if (isset($element_data['position'])) {
-            if (!is_array($element_data['position']) ||
-                !isset($element_data['position']['x']) ||
-                !isset($element_data['position']['y'])) {
-                $errors[] = "Position invalide";
+        // Validation des coordonnées
+        if (isset($element_data['x']) && !is_numeric($element_data['x'])) {
+            $errors[] = "Coordonnée X invalide";
+        }
+        if (isset($element_data['y']) && !is_numeric($element_data['y'])) {
+            $errors[] = "Coordonnée Y invalide";
+        }
+
+        // Validation des dimensions
+        if (isset($element_data['width']) && (!is_numeric($element_data['width']) || $element_data['width'] < 1)) {
+            $errors[] = "Largeur invalide (minimum 1px)";
+        }
+        if (isset($element_data['height']) && (!is_numeric($element_data['height']) || $element_data['height'] < 1)) {
+            $errors[] = "Hauteur invalide (minimum 1px)";
+        }
+
+        // Validation des propriétés avancées
+        if (isset($element_data['fontSize']) && (!is_numeric($element_data['fontSize']) || $element_data['fontSize'] < 8 || $element_data['fontSize'] > 72)) {
+            $errors[] = "Taille de police invalide (8-72px)";
+        }
+
+        if (isset($element_data['borderWidth']) && (!is_numeric($element_data['borderWidth']) || $element_data['borderWidth'] < 0 || $element_data['borderWidth'] > 20)) {
+            $errors[] = "Largeur de bordure invalide (0-20px)";
+        }
+
+        if (isset($element_data['borderStyle']) && !in_array($element_data['borderStyle'], ['solid', 'dashed', 'dotted', 'double'])) {
+            $errors[] = "Style de bordure invalide";
+        }
+
+        if (isset($element_data['borderRadius']) && (!is_numeric($element_data['borderRadius']) || $element_data['borderRadius'] < 0 || $element_data['borderRadius'] > 100)) {
+            $errors[] = "Rayon de bordure invalide (0-100px)";
+        }
+
+        if (isset($element_data['opacity']) && (!is_numeric($element_data['opacity']) || $element_data['opacity'] < 0 || $element_data['opacity'] > 100)) {
+            $errors[] = "Opacité invalide (0-100%)";
+        }
+
+        if (isset($element_data['rotation']) && (!is_numeric($element_data['rotation']) || $element_data['rotation'] < -180 || $element_data['rotation'] > 180)) {
+            $errors[] = "Rotation invalide (-180° à 180°)";
+        }
+
+        if (isset($element_data['scale']) && (!is_numeric($element_data['scale']) || $element_data['scale'] < 10 || $element_data['scale'] > 200)) {
+            $errors[] = "Échelle invalide (10-200%)";
+        }
+
+        // Validation des couleurs (format hexadécimal)
+        $color_fields = ['color', 'backgroundColor', 'borderColor', 'shadowColor'];
+        foreach ($color_fields as $field) {
+            if (isset($element_data[$field]) && !preg_match('/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/', $element_data[$field]) && $element_data[$field] !== 'transparent') {
+                $errors[] = "Couleur {$field} invalide (format hexadécimal attendu)";
             }
         }
 
-        // Validation de la taille
-        if (isset($element_data['size'])) {
-            if (!is_array($element_data['size']) ||
-                !isset($element_data['size']['width']) ||
-                !isset($element_data['size']['height'])) {
-                $errors[] = "Taille invalide";
-            }
-
-            // Vérifier les tailles minimales
-            if ($element_data['size']['width'] < 10 || $element_data['size']['height'] < 10) {
-                $errors[] = "Taille minimale: 10x10 pixels";
+        // Validation des pourcentages
+        $percentage_fields = ['brightness', 'contrast', 'saturate'];
+        foreach ($percentage_fields as $field) {
+            if (isset($element_data[$field]) && (!is_numeric($element_data[$field]) || $element_data[$field] < 0 || $element_data[$field] > 200)) {
+                $errors[] = "Pourcentage {$field} invalide (0-200%)";
             }
         }
 
         return $errors;
+    }
+
+    /**
+     * Obtenir les propriétés par défaut pour un élément
+     */
+    public function get_default_element_properties($element_type = 'text') {
+        // Propriétés communes à tous les éléments
+        $defaults = [
+            // Propriétés de base
+            'x' => 50,
+            'y' => 50,
+            'width' => 100,
+            'height' => 50,
+            'opacity' => 100,
+            'rotation' => 0,
+            'scale' => 100,
+            'visible' => true,
+
+            // Apparence
+            'backgroundColor' => 'transparent',
+            'borderColor' => '#e2e8f0',
+            'borderWidth' => 0,
+            'borderStyle' => 'solid',
+            'borderRadius' => 0,
+
+            // Typographie
+            'color' => '#1e293b',
+            'fontFamily' => 'Inter, sans-serif',
+            'fontSize' => 14,
+            'fontWeight' => 'normal',
+            'fontStyle' => 'normal',
+            'textAlign' => 'left',
+            'textDecoration' => 'none',
+
+            // Contenu
+            'content' => 'Texte',
+
+            // Images
+            'src' => '',
+            'alt' => '',
+            'objectFit' => 'cover',
+            'imageUrl' => '',
+
+            // Effets
+            'shadow' => false,
+            'shadowColor' => '#000000',
+            'shadowOffsetX' => 2,
+            'shadowOffsetY' => 2,
+            'brightness' => 100,
+            'contrast' => 100,
+            'saturate' => 100,
+
+            // Propriétés spécifiques aux tableaux
+            'showHeaders' => true,
+            'showBorders' => true,
+            'headers' => ['Produit', 'Qté', 'Prix'],
+            'dataSource' => 'order_items',
+            'columns' => [
+                'image' => true,
+                'name' => true,
+                'sku' => false,
+                'quantity' => true,
+                'price' => true,
+                'total' => true
+            ],
+            'showSubtotal' => false,
+            'showShipping' => true,
+            'showTaxes' => true,
+            'showDiscount' => false,
+            'showTotal' => false,
+
+            // Propriétés pour les barres de progression
+            'progressColor' => '#3b82f6',
+            'progressValue' => 75,
+
+            // Propriétés pour les codes
+            'lineColor' => '#64748b',
+            'lineWidth' => 2,
+
+            // Propriétés pour les types de document
+            'documentType' => 'invoice',
+
+            // Propriétés d'espacement et mise en page
+            'spacing' => 8,
+            'layout' => 'vertical',
+            'alignment' => 'left',
+            'fit' => 'contain',
+
+            // Propriétés pour les champs et options
+            'fields' => [],
+            'showLabel' => false,
+            'labelText' => '',
+
+            // Propriétés pour les lignes
+            'lineHeight' => 1.2
+        ];
+
+        // Ajustements spécifiques selon le type d'élément
+        $type_adjustments = [
+            'text' => [
+                'width' => 150,
+                'height' => 30
+            ],
+            'image' => [
+                'width' => 150,
+                'height' => 100
+            ],
+            'rectangle' => [
+                'backgroundColor' => '#f1f5f9',
+                'borderWidth' => 1,
+                'width' => 150,
+                'height' => 80
+            ],
+            'product_table' => [
+                'width' => 300,
+                'height' => 150
+            ],
+            'customer_info' => [
+                'width' => 200,
+                'height' => 100
+            ],
+            'company_logo' => [
+                'width' => 100,
+                'height' => 60
+            ],
+            'order_number' => [
+                'width' => 150,
+                'height' => 30
+            ],
+            'company_info' => [
+                'width' => 200,
+                'height' => 80
+            ],
+            'document_type' => [
+                'width' => 120,
+                'height' => 40
+            ],
+            'watermark' => [
+                'width' => 300,
+                'height' => 200,
+                'opacity' => 10,
+                'content' => 'CONFIDENTIEL'
+            ],
+            'progress-bar' => [
+                'width' => 200,
+                'height' => 20
+            ],
+            'barcode' => [
+                'width' => 150,
+                'height' => 60
+            ],
+            'qrcode' => [
+                'width' => 80,
+                'height' => 80
+            ],
+            'icon' => [
+                'width' => 50,
+                'height' => 50
+            ],
+            'line' => [
+                'width' => 200,
+                'height' => 2
+            ]
+        ];
+
+        // Fusionner les propriétés par défaut avec les ajustements spécifiques
+        if (isset($type_adjustments[$element_type])) {
+            $defaults = array_merge($defaults, $type_adjustments[$element_type]);
+        }
+
+        return $defaults;
+    }
+
+    /**
+     * Nettoyer et sanitiser les propriétés d'un élément
+     */
+    public function sanitize_element_properties($element_data) {
+        $sanitized = [];
+
+        // Sanitisation des champs de base
+        $sanitized['id'] = sanitize_text_field($element_data['id'] ?? '');
+        $sanitized['type'] = sanitize_text_field($element_data['type'] ?? 'text');
+
+        // Sanitisation des coordonnées et dimensions
+        $sanitized['x'] = floatval($element_data['x'] ?? 50);
+        $sanitized['y'] = floatval($element_data['y'] ?? 50);
+        $sanitized['width'] = max(1, floatval($element_data['width'] ?? 100));
+        $sanitized['height'] = max(1, floatval($element_data['height'] ?? 50));
+
+        // Sanitisation des propriétés numériques avec contraintes
+        $numeric_constraints = [
+            'opacity' => [0, 100, 100],
+            'rotation' => [-180, 180, 0],
+            'scale' => [10, 200, 100],
+            'fontSize' => [8, 72, 14],
+            'borderWidth' => [0, 20, 0],
+            'borderRadius' => [0, 100, 0],
+            'brightness' => [0, 200, 100],
+            'contrast' => [0, 200, 100],
+            'saturate' => [0, 200, 100],
+            'spacing' => [0, 50, 8],
+            'lineHeight' => [0.5, 3, 1.2],
+            'progressValue' => [0, 100, 75],
+            'lineWidth' => [1, 10, 2],
+            'shadowOffsetX' => [-50, 50, 2],
+            'shadowOffsetY' => [-50, 50, 2]
+        ];
+
+        foreach ($numeric_constraints as $field => $constraints) {
+            list($min, $max, $default) = $constraints;
+            $value = $element_data[$field] ?? $default;
+            $sanitized[$field] = max($min, min($max, floatval($value)));
+        }
+
+        // Sanitisation des couleurs
+        $color_fields = ['color', 'backgroundColor', 'borderColor', 'shadowColor', 'progressColor', 'lineColor'];
+        foreach ($color_fields as $field) {
+            $color = $element_data[$field] ?? '';
+            if (preg_match('/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/', $color) || $color === 'transparent') {
+                $sanitized[$field] = $color;
+            }
+        }
+
+        // Sanitisation des chaînes de caractères
+        $text_fields = [
+            'content', 'fontFamily', 'fontWeight', 'fontStyle', 'textAlign', 'textDecoration',
+            'src', 'alt', 'objectFit', 'imageUrl', 'documentType', 'layout', 'alignment', 'fit', 'labelText'
+        ];
+        foreach ($text_fields as $field) {
+            if (isset($element_data[$field])) {
+                $sanitized[$field] = sanitize_text_field($element_data[$field]);
+            }
+        }
+
+        // Sanitisation des booléens
+        $boolean_fields = ['visible', 'shadow', 'showLabel', 'showBorders', 'showHeaders', 'showSubtotal', 'showShipping', 'showTaxes', 'showDiscount', 'showTotal'];
+        foreach ($boolean_fields as $field) {
+            $sanitized[$field] = (bool) ($element_data[$field] ?? false);
+        }
+
+        // Sanitisation des tableaux
+        if (isset($element_data['headers']) && is_array($element_data['headers'])) {
+            $sanitized['headers'] = array_map('sanitize_text_field', $element_data['headers']);
+        }
+
+        if (isset($element_data['fields']) && is_array($element_data['fields'])) {
+            $sanitized['fields'] = array_map('sanitize_text_field', $element_data['fields']);
+        }
+
+        if (isset($element_data['columns']) && is_array($element_data['columns'])) {
+            $sanitized['columns'] = array_map('boolval', $element_data['columns']);
+        }
+
+        // Sanitisation des valeurs énumérées
+        $enum_fields = [
+            'borderStyle' => ['solid', 'dashed', 'dotted', 'double'],
+            'textAlign' => ['left', 'center', 'right', 'justify'],
+            'fontWeight' => ['normal', 'bold', 'lighter', 'bolder', '100', '200', '300', '400', '500', '600', '700', '800', '900'],
+            'fontStyle' => ['normal', 'italic', 'oblique'],
+            'textDecoration' => ['none', 'underline', 'overline', 'line-through'],
+            'objectFit' => ['cover', 'contain', 'fill', 'none', 'scale-down'],
+            'fit' => ['cover', 'contain', 'fill', 'none', 'scale-down'],
+            'layout' => ['vertical', 'horizontal'],
+            'alignment' => ['left', 'center', 'right'],
+            'documentType' => ['invoice', 'quote', 'receipt', 'order', 'credit_note']
+        ];
+
+        foreach ($enum_fields as $field => $allowed_values) {
+            if (isset($element_data[$field]) && in_array($element_data[$field], $allowed_values)) {
+                $sanitized[$field] = $element_data[$field];
+            }
+        }
+
+        return $sanitized;
+    }
+
+    /**
+     * Sauvegarder les éléments d'un template (implémentation temporaire avec WP options)
+     */
+    private function save_template_elements_to_db($template_id, $elements) {
+        $option_key = 'pdf_builder_template_' . $template_id . '_elements';
+        $json_data = wp_json_encode($elements);
+
+        if ($json_data === false) {
+            return new WP_Error('json_encode_error', 'Erreur lors de l\'encodage JSON des éléments');
+        }
+
+        $result = update_option($option_key, $json_data, false);
+
+        if ($result === false) {
+            return new WP_Error('save_error', 'Erreur lors de la sauvegarde des éléments');
+        }
+
+        return true;
+    }
+
+    /**
+     * Charger les éléments d'un template (implémentation temporaire avec WP options)
+     */
+    private function get_template_elements_from_db($template_id) {
+        $option_key = 'pdf_builder_template_' . $template_id . '_elements';
+        $json_data = get_option($option_key, false);
+
+        if ($json_data === false) {
+            return [];
+        }
+
+        $elements = json_decode($json_data, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            pdf_builder_debug('Erreur de décodage JSON pour le template ' . $template_id . ': ' . json_last_error_msg(), 1, 'elements_manager');
+            return [];
+        }
+
+        return $elements ?: [];
     }
 
     /**
@@ -302,25 +655,20 @@ class PDF_Builder_Canvas_Elements_Manager {
      * Sauvegarder les éléments du canvas
      */
     public function save_canvas_elements($template_id, $elements) {
-        if (!$this->db_manager) {
-            return new WP_Error('db_manager_missing', 'Database manager not available');
-        }
-
-        // Valider tous les éléments
+        // Valider et sanitiser tous les éléments
+        $sanitized_elements = [];
         foreach ($elements as $element) {
             $errors = $this->validate_element_data($element);
             if (!empty($errors)) {
                 return new WP_Error('validation_error', 'Invalid element data: ' . implode(', ', $errors));
             }
+
+            // Sanitiser les propriétés de l'élément
+            $sanitized_elements[] = $this->sanitize_element_properties($element);
         }
 
         // Sauvegarder en base de données
-        $result = $this->db_manager->save_template_elements($template_id, $elements);
-
-        // Invalider le cache
-        if ($this->cache_manager) {
-            $this->cache_manager->invalidate_template_cache($template_id);
-        }
+        $result = $this->save_template_elements_to_db($template_id, $sanitized_elements);
 
         return $result;
     }
@@ -329,25 +677,8 @@ class PDF_Builder_Canvas_Elements_Manager {
      * Charger les éléments du canvas
      */
     public function load_canvas_elements($template_id) {
-        if (!$this->db_manager) {
-            return [];
-        }
-
-        // Essayer le cache d'abord
-        if ($this->cache_manager) {
-            $cached_elements = $this->cache_manager->get_template_elements($template_id);
-            if ($cached_elements !== false) {
-                return $cached_elements;
-            }
-        }
-
         // Charger depuis la base de données
-        $elements = $this->db_manager->get_template_elements($template_id);
-
-        // Mettre en cache
-        if ($this->cache_manager && !empty($elements)) {
-            $this->cache_manager->set_template_elements($template_id, $elements);
-        }
+        $elements = $this->get_template_elements_from_db($template_id);
 
         return $elements ?: [];
     }

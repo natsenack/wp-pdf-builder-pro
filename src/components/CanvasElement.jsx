@@ -263,7 +263,16 @@ export const CanvasElement = ({
           height: element.height * zoom,
           cursor: dragAndDrop.isDragging ? 'grabbing' : 'grab',
           userSelect: 'none',
-          // Styles pour l'élément selon son type
+          // Styles de base communs à tous les éléments
+          backgroundColor: element.backgroundColor || 'transparent',
+          border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#e2e8f0'}` : 'none',
+          borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0px',
+          opacity: (element.opacity || 100) / 100,
+          transform: `rotate(${element.rotation || 0}deg) scale(${element.scale || 100}%)`,
+          filter: `brightness(${element.brightness || 100}%) contrast(${element.contrast || 100}%) saturate(${element.saturate || 100}%)`,
+          boxShadow: element.shadow ? `${element.shadowOffsetX || 2}px ${element.shadowOffsetY || 2}px 4px ${element.shadowColor || '#000000'}40` : 'none',
+
+          // Styles spécifiques selon le type d'élément (mais utilisant les propriétés génériques)
           ...(element.type === 'text' ? {
             fontSize: (element.fontSize || 14) * zoom,
             fontFamily: element.fontFamily || 'Arial',
@@ -284,9 +293,9 @@ export const CanvasElement = ({
             border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#000'}` : 'none',
             borderRadius: element.borderRadius ? `${element.borderRadius}px` : '0',
             '--element-border-width': element.border ? `${element.borderWidth || 1}px` : '0px'
-          } : element.type === 'image' && element.src ? {
-            backgroundImage: `url(${element.src})`,
-            backgroundSize: element.backgroundSize || 'contain',
+          } : element.type === 'image' && (element.src || element.imageUrl) ? {
+            backgroundImage: `url(${element.src || element.imageUrl})`,
+            backgroundSize: element.objectFit || element.fit || 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat'
           } : element.type === 'line' ? {

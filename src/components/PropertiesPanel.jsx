@@ -1122,233 +1122,176 @@ const PropertiesPanel = React.memo(({
               </div>
             )}
 
-            {/* Contrôles de police pour customer_info */}
-            {selectedElement.type === 'customer_info' && (
-              <FontControls
-                elementId={selectedElement.id}
-                properties={localProperties}
-                onPropertyChange={handlePropertyChange}
-              />
-            )}
+            {/* Contrôles de police disponibles pour tous les éléments */}
+            <FontControls
+              elementId={selectedElement.id}
+              properties={localProperties}
+              onPropertyChange={handlePropertyChange}
+            />
 
-            {/* Contrôles pour le logo entreprise */}
-            {selectedElement.type === 'company_logo' && (
-              <div className="properties-group">
-                <h4>🏢 Logo Entreprise</h4>
+            {/* Contrôles d'image disponibles pour tous les éléments */}
+            <div className="properties-group">
+              <h4>🖼️ Image</h4>
 
-                <div className="property-row">
-                  <label>Image:</label>
-                  <div className="input-with-button">
-                    <input
-                      type="text"
-                      value={localProperties.imageUrl || ''}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'imageUrl', e.target.value)}
-                      placeholder="https://exemple.com/logo.png ou sélectionner ci-dessous"
-                    />
-                    <button
-                      type="button"
-                      className="media-button"
-                      onClick={async () => {
-                        try {
-                          // Récupérer les médias WordPress via l'API REST
-                          const response = await fetch('/wp-json/wp/v2/media?media_type=image&per_page=50&_embed');
-                          const media = await response.json();
+              <div className="property-row">
+                <label>URL de l'image:</label>
+                <div className="input-with-button">
+                  <input
+                    type="text"
+                    value={localProperties.imageUrl || localProperties.src || ''}
+                    onChange={(e) => {
+                      handlePropertyChange(selectedElement.id, 'imageUrl', e.target.value);
+                      handlePropertyChange(selectedElement.id, 'src', e.target.value);
+                    }}
+                    placeholder="https://exemple.com/image.png"
+                  />
+                  <button
+                    type="button"
+                    className="media-button"
+                    onClick={async () => {
+                      try {
+                        // Récupérer les médias WordPress via l'API REST
+                        const response = await fetch('/wp-json/wp/v2/media?media_type=image&per_page=50&_embed');
+                        const media = await response.json();
 
-                          // Créer une modale simple pour sélectionner l'image
-                          const modal = document.createElement('div');
-                          modal.style.cssText = `
-                            position: fixed;
-                            top: 0;
-                            left: 0;
-                            width: 100%;
-                            height: 100%;
-                            background: rgba(0,0,0,0.8);
-                            z-index: 9999;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                          `;
+                        // Créer une modale simple pour sélectionner l'image
+                        const modal = document.createElement('div');
+                        modal.style.cssText = `
+                          position: fixed;
+                          top: 0;
+                          left: 0;
+                          width: 100%;
+                          height: 100%;
+                          background: rgba(0,0,0,0.8);
+                          z-index: 9999;
+                          display: flex;
+                          align-items: center;
+                          justify-content: center;
+                        `;
 
-                          const modalContent = document.createElement('div');
-                          modalContent.style.cssText = `
-                            background: white;
-                            padding: 20px;
-                            border-radius: 8px;
-                            max-width: 600px;
-                            max-height: 80vh;
-                            overflow-y: auto;
-                            width: 90%;
-                          `;
+                        const modalContent = document.createElement('div');
+                        modalContent.style.cssText = `
+                          background: white;
+                          padding: 20px;
+                          border-radius: 8px;
+                          max-width: 600px;
+                          max-height: 80vh;
+                          overflow-y: auto;
+                          width: 90%;
+                        `;
 
-                          const title = document.createElement('h3');
-                          title.textContent = 'Sélectionner un logo depuis la médiathèque';
-                          title.style.marginBottom = '15px';
+                        const title = document.createElement('h3');
+                        title.textContent = 'Sélectionner une image depuis la médiathèque';
+                        title.style.marginBottom = '15px';
 
-                          const closeBtn = document.createElement('button');
-                          closeBtn.textContent = '✕';
-                          closeBtn.style.cssText = `
-                            position: absolute;
-                            top: 10px;
-                            right: 10px;
-                            background: none;
-                            border: none;
-                            font-size: 20px;
+                        const closeBtn = document.createElement('button');
+                        closeBtn.textContent = '✕';
+                        closeBtn.style.cssText = `
+                          position: absolute;
+                          top: 10px;
+                          right: 10px;
+                          background: none;
+                          border: none;
+                          font-size: 20px;
+                          cursor: pointer;
+                        `;
+                        closeBtn.onclick = () => document.body.removeChild(modal);
+
+                        const grid = document.createElement('div');
+                        grid.style.cssText = `
+                          display: grid;
+                          grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                          gap: 10px;
+                          margin-top: 15px;
+                        `;
+
+                        media.forEach(item => {
+                          const imgContainer = document.createElement('div');
+                          imgContainer.style.cssText = `
+                            border: 2px solid #ddd;
+                            border-radius: 4px;
+                            padding: 5px;
                             cursor: pointer;
+                            transition: border-color 0.2s;
                           `;
-                          closeBtn.onclick = () => document.body.removeChild(modal);
+                          imgContainer.onmouseover = () => imgContainer.style.borderColor = '#007cba';
+                          imgContainer.onmouseout = () => imgContainer.style.borderColor = '#ddd';
 
-                          const grid = document.createElement('div');
-                          grid.style.cssText = `
-                            display: grid;
-                            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-                            gap: 10px;
-                            margin-top: 15px;
+                          const img = document.createElement('img');
+                          img.src = item.source_url;
+                          img.style.cssText = `
+                            width: 100%;
+                            height: 80px;
+                            object-fit: cover;
+                            border-radius: 2px;
                           `;
 
-                          media.forEach(item => {
-                            const imgContainer = document.createElement('div');
-                            imgContainer.style.cssText = `
-                              border: 2px solid #ddd;
-                              border-radius: 4px;
-                              padding: 5px;
-                              cursor: pointer;
-                              transition: border-color 0.2s;
-                            `;
-                            imgContainer.onmouseover = () => imgContainer.style.borderColor = '#007cba';
-                            imgContainer.onmouseout = () => imgContainer.style.borderColor = '#ddd';
+                          const name = document.createElement('div');
+                          name.textContent = item.title.rendered.length > 15 ?
+                            item.title.rendered.substring(0, 15) + '...' :
+                            item.title.rendered;
+                          name.style.cssText = `
+                            font-size: 11px;
+                            text-align: center;
+                            margin-top: 5px;
+                            color: #666;
+                          `;
 
-                            const img = document.createElement('img');
-                            img.src = item.source_url;
-                            img.style.cssText = `
-                              width: 100%;
-                              height: 80px;
-                              object-fit: cover;
-                              border-radius: 2px;
-                            `;
+                          imgContainer.onclick = () => {
+                            handlePropertyChange(selectedElement.id, 'imageUrl', item.source_url);
+                            handlePropertyChange(selectedElement.id, 'src', item.source_url);
+                            document.body.removeChild(modal);
+                          };
 
-                            const name = document.createElement('div');
-                            name.textContent = item.title.rendered.length > 15 ?
-                              item.title.rendered.substring(0, 15) + '...' :
-                              item.title.rendered;
-                            name.style.cssText = `
-                              font-size: 11px;
-                              text-align: center;
-                              margin-top: 5px;
-                              color: #666;
-                            `;
+                          imgContainer.appendChild(img);
+                          imgContainer.appendChild(name);
+                          grid.appendChild(imgContainer);
+                        });
 
-                            imgContainer.onclick = () => {
-                              handlePropertyChange(selectedElement.id, 'imageUrl', item.source_url);
-                              document.body.removeChild(modal);
-                            };
+                        modalContent.appendChild(title);
+                        modalContent.appendChild(closeBtn);
+                        modalContent.appendChild(grid);
+                        modal.appendChild(modalContent);
+                        document.body.appendChild(modal);
 
-                            imgContainer.appendChild(img);
-                            imgContainer.appendChild(name);
-                            grid.appendChild(imgContainer);
-                          });
-
-                          modalContent.appendChild(title);
-                          modalContent.appendChild(closeBtn);
-                          modalContent.appendChild(grid);
-                          modal.appendChild(modalContent);
-                          document.body.appendChild(modal);
-
-                        } catch (error) {
-                          console.error('Erreur lors de la récupération des médias:', error);
-                          alert('Erreur lors de l\'accès à la médiathèque WordPress');
-                        }
-                      }}
-                    >
-                      � Uploader
-                    </button>
-                  </div>
-                </div>
-
-                <div className="property-row">
-                  <label>Largeur:</label>
-                  <div className="input-with-unit">
-                    <input
-                      type="number"
-                      value={localProperties.width || 150}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'width', parseInt(e.target.value))}
-                      min="20"
-                      max="500"
-                    />
-                    <span className="unit">px</span>
-                  </div>
-                </div>
-
-                <div className="property-row">
-                  <label>Hauteur:</label>
-                  <div className="input-with-unit">
-                    <input
-                      type="number"
-                      value={localProperties.height || 80}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'height', parseInt(e.target.value))}
-                      min="20"
-                      max="300"
-                    />
-                    <span className="unit">px</span>
-                  </div>
-                </div>
-
-                <div className="property-row">
-                  <label>Alignement:</label>
-                  <select
-                    value={localProperties.alignment || 'left'}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'alignment', e.target.value)}
+                      } catch (error) {
+                        console.error('Erreur lors de la récupération des médias:', error);
+                        alert('Erreur lors de l\'accès à la médiathèque WordPress');
+                      }
+                    }}
                   >
-                    <option value="left">Gauche</option>
-                    <option value="center">Centre</option>
-                    <option value="right">Droite</option>
-                  </select>
-                </div>
-
-                <div className="property-row">
-                  <label>Ajustement:</label>
-                  <select
-                    value={localProperties.fit || 'contain'}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'fit', e.target.value)}
-                  >
-                    <option value="contain">Contenir</option>
-                    <option value="cover">Couvrir</option>
-                    <option value="fill">Remplir</option>
-                  </select>
-                </div>
-
-                <div className="property-row">
-                  <span>Afficher la bordure:</span>
-                  <label className="toggle">
-                    <input
-                      type="checkbox"
-                      checked={localProperties.showBorder || false}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'showBorder', e.target.checked)}
-                    />
-                    <span className="toggle-slider" onClick={() => {
-                      const currentChecked = localProperties.showBorder || false;
-                      handlePropertyChange(selectedElement.id, 'showBorder', !currentChecked);
-                    }}></span>
-                  </label>
-                </div>
-
-                <div className="property-row">
-                  <label>Arrondi des coins:</label>
-                  <div className="slider-container">
-                    <input
-                      type="range"
-                      min="0"
-                      max="50"
-                      value={localProperties.borderRadius || 0}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'borderRadius', parseInt(e.target.value))}
-                      className="slider"
-                    />
-                    <span className="slider-value">{localProperties.borderRadius || 0}px</span>
-                  </div>
+                    📁 Médiathèque
+                  </button>
                 </div>
               </div>
-            )}
 
-            {/* Contrôles pour le type de document */}
+              <div className="property-row">
+                <label>Texte alternatif:</label>
+                <input
+                  type="text"
+                  value={localProperties.alt || ''}
+                  onChange={(e) => handlePropertyChange(selectedElement.id, 'alt', e.target.value)}
+                  placeholder="Description de l'image"
+                />
+              </div>
+
+              <div className="property-row">
+                <label>Ajustement:</label>
+                <select
+                  value={localProperties.objectFit || localProperties.fit || 'cover'}
+                  onChange={(e) => {
+                    handlePropertyChange(selectedElement.id, 'objectFit', e.target.value);
+                    handlePropertyChange(selectedElement.id, 'fit', e.target.value);
+                  }}
+                >
+                  <option value="cover">Couvrir</option>
+                  <option value="contain">Contenir</option>
+                  <option value="fill">Remplir</option>
+                  <option value="none">Aucun</option>
+                  <option value="scale-down">Réduire</option>
+                </select>
+              </div>
+            </div>            {/* Contrôles pour le type de document */}
             {selectedElement.type === 'document_type' && (
               <div className="properties-group">
                 <h4>📋 Type de Document</h4>
@@ -1413,125 +1356,131 @@ const PropertiesPanel = React.memo(({
               </div>
             )}
 
-            {/* Contrôles pour les informations entreprise */}
-            {selectedElement.type === 'company_info' && (
-              <div className="properties-group">
-                <h4>📄 Informations Entreprise</h4>
+            {/* Contrôles de contenu disponibles pour tous les éléments */}
+            <div className="properties-group">
+              <h4>� Contenu</h4>
 
-                <div className="property-row">
-                  <label>Champs à afficher:</label>
-                  <div className="checkbox-group">
-                    {[
-                      { key: 'name', label: 'Nom' },
-                      { key: 'address', label: 'Adresse' },
-                      { key: 'phone', label: 'Téléphone' },
-                      { key: 'email', label: 'Email' },
-                      { key: 'website', label: 'Site web' },
-                      { key: 'vat', label: 'N° TVA' }
-                    ].map(({ key, label }) => (
-                      <label key={key} className="checkbox-item">
-                        <input
-                          type="checkbox"
-                          checked={localProperties.fields?.includes(key) ?? true}
-                          onChange={(e) => {
-                            const currentFields = localProperties.fields || ['name', 'address', 'phone', 'email', 'website', 'vat'];
-                            const newFields = e.target.checked
-                              ? [...currentFields, key]
-                              : currentFields.filter(f => f !== key);
-                            handlePropertyChange(selectedElement.id, 'fields', newFields);
-                          }}
-                        />
-                        {label}
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                <FontControls
-                  elementId={selectedElement.id}
-                  properties={localProperties}
-                  onPropertyChange={handlePropertyChange}
+              <div className="property-row">
+                <label>Texte/Contenu:</label>
+                <input
+                  type="text"
+                  value={localProperties.content || ''}
+                  onChange={(e) => handlePropertyChange(selectedElement.id, 'content', e.target.value)}
+                  placeholder="Texte à afficher"
                 />
+              </div>
 
-                <div className="property-row">
-                  <label>Alignement du texte:</label>
-                  <select
-                    value={localProperties.textAlign || 'left'}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'textAlign', e.target.value)}
-                  >
-                    <option value="left">Gauche</option>
-                    <option value="center">Centre</option>
-                    <option value="right">Droite</option>
-                  </select>
+              <div className="property-row">
+                <label>Format:</label>
+                <input
+                  type="text"
+                  value={localProperties.format || ''}
+                  onChange={(e) => handlePropertyChange(selectedElement.id, 'format', e.target.value)}
+                  placeholder="Format d'affichage (optionnel)"
+                />
+              </div>
+
+              <div className="property-row">
+                <label>Type de document:</label>
+                <select
+                  value={localProperties.documentType || 'invoice'}
+                  onChange={(e) => handlePropertyChange(selectedElement.id, 'documentType', e.target.value)}
+                >
+                  <option value="invoice">Facture</option>
+                  <option value="quote">Devis</option>
+                  <option value="receipt">Reçu</option>
+                  <option value="order">Commande</option>
+                  <option value="credit_note">Avoir</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Contrôles de champs disponibles pour tous les éléments */}
+            <div className="properties-group">
+              <h4>📋 Champs & Options</h4>
+
+              <div className="property-row">
+                <label>Champs à afficher:</label>
+                <div className="checkbox-group">
+                  {[
+                    { key: 'name', label: 'Nom' },
+                    { key: 'address', label: 'Adresse' },
+                    { key: 'phone', label: 'Téléphone' },
+                    { key: 'email', label: 'Email' },
+                    { key: 'website', label: 'Site web' },
+                    { key: 'vat', label: 'N° TVA' },
+                    { key: 'image', label: 'Image' },
+                    { key: 'sku', label: 'SKU' },
+                    { key: 'quantity', label: 'Quantité' },
+                    { key: 'price', label: 'Prix' },
+                    { key: 'total', label: 'Total' }
+                  ].map(({ key, label }) => (
+                    <label key={key} className="checkbox-item">
+                      <input
+                        type="checkbox"
+                        checked={localProperties.fields?.includes(key) ?? false}
+                        onChange={(e) => {
+                          const currentFields = localProperties.fields || [];
+                          const newFields = e.target.checked
+                            ? [...currentFields, key]
+                            : currentFields.filter(f => f !== key);
+                          handlePropertyChange(selectedElement.id, 'fields', newFields);
+                        }}
+                      />
+                      {label}
+                    </label>
+                  ))}
                 </div>
               </div>
-            )}
 
-            {/* Contrôles pour le numéro de commande */}
-            {selectedElement.type === 'order_number' && (
-              <div className="properties-group">
-                <h4>🔢 Numéro de Commande</h4>
+              <div className="property-row">
+                <label>Afficher l'étiquette:</label>
+                <label className="toggle">
+                  <input
+                    type="checkbox"
+                    checked={localProperties.showLabel ?? false}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'showLabel', e.target.checked)}
+                  />
+                  <span className="toggle-slider"></span>
+                </label>
+              </div>
 
+              {localProperties.showLabel && (
                 <div className="property-row">
-                  <label>Format:</label>
+                  <label>Texte de l'étiquette:</label>
                   <input
                     type="text"
-                    value={localProperties.format || 'Commande #{order_number} - {order_date}'}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'format', e.target.value)}
-                    placeholder="Commande #{order_number} - {order_date}"
+                    value={localProperties.labelText || ''}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'labelText', e.target.value)}
+                    placeholder="Texte de l'étiquette"
                   />
                 </div>
+              )}
 
-                <div className="property-row">
-                  <label>Afficher l'étiquette:</label>
-                  <label className="toggle">
-                    <input
-                      type="checkbox"
-                      checked={localProperties.showLabel || true}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'showLabel', e.target.checked)}
-                    />
-                    <span className="toggle-slider"></span>
-                  </label>
-                </div>
-
-                {localProperties.showLabel && (
-                  <div className="property-row">
-                    <label>Texte de l'étiquette:</label>
-                    <input
-                      type="text"
-                      value={localProperties.labelText || 'N° de commande:'}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'labelText', e.target.value)}
-                      placeholder="N° de commande:"
-                    />
-                  </div>
-                )}
-
-                <FontControls
-                  elementId={selectedElement.id}
-                  properties={localProperties}
-                  onPropertyChange={handlePropertyChange}
-                />
-
-                <div className="property-row">
-                  <label>Alignement du texte:</label>
-                  <select
-                    value={localProperties.textAlign || 'right'}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'textAlign', e.target.value)}
-                  >
-                    <option value="left">Gauche</option>
-                    <option value="center">Centre</option>
-                    <option value="right">Droite</option>
-                  </select>
-                </div>
-
-                <ColorPicker
-                  label="Couleur du texte"
-                  value={localProperties.color}
-                  onChange={(value) => handlePropertyChange(selectedElement.id, 'color', value)}
-                  presets={['#1e293b', '#334155', '#475569', '#64748b', '#000000', '#333333']}
-                />
+              <div className="property-row">
+                <label>Afficher les bordures:</label>
+                <label className="toggle">
+                  <input
+                    type="checkbox"
+                    checked={localProperties.showBorders ?? false}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'showBorders', e.target.checked)}
+                  />
+                  <span className="toggle-slider"></span>
+                </label>
               </div>
-            )}
+
+              <div className="property-row">
+                <label>Afficher les en-têtes:</label>
+                <label className="toggle">
+                  <input
+                    type="checkbox"
+                    checked={localProperties.showHeaders ?? false}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'showHeaders', e.target.checked)}
+                  />
+                  <span className="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
           </div>
         );
 

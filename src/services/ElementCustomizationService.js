@@ -201,6 +201,7 @@ export class ElementCustomizationService {
    * Réinitialise les propriétés aux valeurs par défaut
    */
   getDefaultProperties(elementType = 'text') {
+    // Propriétés communes à tous les éléments
     const defaults = {
       // Propriétés communes
       x: 50,
@@ -219,7 +220,7 @@ export class ElementCustomizationService {
       borderStyle: 'solid',
       borderRadius: 0,
 
-      // Typographie (pour les éléments texte)
+      // Typographie (disponible pour tous les éléments)
       color: '#1e293b',
       fontFamily: 'Inter, sans-serif',
       fontSize: 14,
@@ -228,6 +229,14 @@ export class ElementCustomizationService {
       textAlign: 'left',
       textDecoration: 'none',
 
+      // Contenu (pour éléments texte)
+      content: 'Texte',
+
+      // Images
+      src: '',
+      alt: '',
+      objectFit: 'cover',
+
       // Effets
       shadow: false,
       shadowColor: '#000000',
@@ -235,34 +244,119 @@ export class ElementCustomizationService {
       shadowOffsetY: 2,
       brightness: 100,
       contrast: 100,
-      saturate: 100
+      saturate: 100,
+
+      // Propriétés spécifiques aux tableaux
+      showHeaders: true,
+      showBorders: true,
+      headers: ['Produit', 'Qté', 'Prix'],
+      dataSource: 'order_items',
+      columns: {
+        image: true,
+        name: true,
+        sku: false,
+        quantity: true,
+        price: true,
+        total: true
+      },
+      showSubtotal: false,
+      showShipping: true,
+      showTaxes: true,
+      showDiscount: false,
+      showTotal: false,
+
+      // Propriétés pour les barres de progression
+      progressColor: '#3b82f6',
+      progressValue: 75,
+
+      // Propriétés pour les codes
+      lineColor: '#64748b',
+      lineWidth: 2,
+
+      // Propriétés pour les types de document
+      documentType: 'invoice',
+
+      // Propriétés pour les logos et images
+      imageUrl: '',
+
+      // Propriétés d'espacement et mise en page
+      spacing: 8,
+      layout: 'vertical',
+      alignment: 'left',
+      fit: 'contain'
     };
 
-    // Propriétés spécifiques selon le type d'élément
-    const typeSpecificDefaults = {
+    // Ajustements mineurs selon le type pour une meilleure UX
+    const typeAdjustments = {
       'text': {
-        content: 'Texte',
         width: 150,
         height: 30
       },
       'image': {
-        src: '',
-        alt: '',
-        objectFit: 'cover'
+        width: 150,
+        height: 100
       },
       'rectangle': {
         backgroundColor: '#f1f5f9',
-        borderWidth: 1
+        borderWidth: 1,
+        width: 150,
+        height: 80
+      },
+      'product_table': {
+        width: 300,
+        height: 150
+      },
+      'customer_info': {
+        width: 200,
+        height: 100
+      },
+      'company_logo': {
+        width: 100,
+        height: 60
+      },
+      'order_number': {
+        width: 150,
+        height: 30
+      },
+      'company_info': {
+        width: 200,
+        height: 80
+      },
+      'document_type': {
+        width: 120,
+        height: 40
+      },
+      'watermark': {
+        width: 300,
+        height: 200,
+        opacity: 10,
+        content: 'CONFIDENTIEL'
+      },
+      'progress-bar': {
+        width: 200,
+        height: 20
+      },
+      'barcode': {
+        width: 150,
+        height: 60
+      },
+      'qrcode': {
+        width: 80,
+        height: 80
+      },
+      'icon': {
+        width: 50,
+        height: 50
       },
       'line': {
-        lineColor: '#64748b',
-        lineWidth: 2
+        width: 200,
+        height: 2
       }
     };
 
     return {
       ...defaults,
-      ...(typeSpecificDefaults[elementType] || {})
+      ...(typeAdjustments[elementType] || {})
     };
   }
 
