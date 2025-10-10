@@ -38,10 +38,8 @@ if (!defined('ABSPATH')) {
                     $created_at = isset($template['created_at']) ? $template['created_at'] : null;
                     $updated_at = isset($template['updated_at']) ? $template['updated_at'] : null;
                     
-                    // Déterminer si le template a été modifié (différent de la création)
-                    $is_modified = (!empty($updated_at) && !empty($created_at) && $updated_at !== $created_at);
-                    $button_text = $is_modified ? '🔄 Modifier' : '⚙️ Paramètres';
-                    $button_action = $is_modified ? 'confirmTemplateModifications' : 'openTemplateSettings';
+                    $button_text = '⚙️ Paramètres';
+                    $button_action = 'openTemplateSettings';
                     
                     // Déterminer l'icône basée sur le nom du template
                     $icon = '�'; // Default
@@ -83,7 +81,7 @@ if (!defined('ABSPATH')) {
                     echo '</div>';
                     echo '<div style="display: flex; gap: 10px;">';
                     echo '<a href="' . admin_url('admin.php?page=pdf-builder-editor&template_id=' . $template_id) . '" class="button button-secondary" style="flex: 1; text-align: center;">✏️ Éditer</a>';
-                    echo '<button class="button button-secondary" style="flex: 1;" onclick="' . $button_action . '(' . $template_id . ', \'' . addslashes($template_name) . '\', \'' . ($is_modified ? 'true' : 'false') . '\')">' . $button_text . '</button>';
+                    echo '<button class="button button-secondary" style="flex: 1;" onclick="' . $button_action . '(' . $template_id . ', \'' . addslashes($template_name) . '\')">' . $button_text . '</button>';
                     echo '<button class="button button-primary" style="flex: 1;" onclick="alert(\'Fonctionnalité en développement\')">📋 Utiliser</button>';
                     echo '</div>';
                     echo '</div>';
@@ -94,49 +92,6 @@ if (!defined('ABSPATH')) {
                 echo '<p>' . __('Aucun template trouvé. Créez votre premier template !', 'pdf-builder-pro') . '</p>';
             }
             ?>
-        </div>
-
-        <!-- Modale de confirmation des modifications -->
-        <div id="template-modifications-modal" class="template-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; align-items: center; justify-content: center;">
-            <div class="template-modal-content" style="background: #fff; border-radius: 8px; padding: 30px; max-width: 700px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
-                <div class="template-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
-                    <h2 style="margin: 0; color: #23282d;">🔄 Confirmation des Modifications</h2>
-                    <button onclick="closeModificationsModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #666; padding: 0;">×</button>
-                </div>
-
-                <div id="modifications-content">
-                    <div style="margin-bottom: 20px;">
-                        <h3 style="color: #23282d; margin-bottom: 15px;">📋 Modifications apportées au template :</h3>
-                        <div id="modifications-list" style="background: #f8f9fa; padding: 15px; border-radius: 4px; border-left: 4px solid #007cba;">
-                            <!-- Les modifications seront ajoutées ici dynamiquement -->
-                        </div>
-                    </div>
-
-                    <div style="margin-bottom: 20px;">
-                        <h4 style="color: #23282d; margin-bottom: 10px;">⚠️ Impact des modifications :</h4>
-                        <ul style="color: #666; line-height: 1.6;">
-                            <li><strong>Utilisation existante :</strong> Les documents déjà générés ne seront pas affectés</li>
-                            <li><strong>Nouveaux documents :</strong> Utiliseront automatiquement les nouveaux paramètres</li>
-                            <li><strong>Compatibilité :</strong> Toutes les fonctionnalités restent compatibles</li>
-                            <li><strong>Sauvegarde :</strong> Une sauvegarde automatique sera créée avant l'application</li>
-                        </ul>
-                    </div>
-
-                    <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; padding: 15px; margin-bottom: 20px;">
-                        <strong style="color: #856404;">💡 Conseil :</strong> Vous pouvez toujours restaurer la version précédente depuis l'historique des modifications.
-                    </div>
-                </div>
-
-                <div class="template-modal-footer" style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #dee2e6; padding-top: 15px; margin-top: 25px;">
-                    <div style="font-size: 12px; color: #666;">
-                        <span id="last-modified-info"></span>
-                    </div>
-                    <div style="display: flex; gap: 10px;">
-                        <button onclick="closeModificationsModal()" class="button button-secondary">Annuler</button>
-                        <button onclick="applyModifications()" class="button button-primary" style="background: #28a745; border-color: #28a745;">✅ Appliquer les modifications</button>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <!-- Modale des paramètres du template -->
@@ -224,7 +179,6 @@ if (!defined('ABSPATH')) {
 
 <script>
 let currentTemplateId = null;
-let currentModifications = {};
 
 function openTemplateSettings(templateId, templateName) {
     currentTemplateId = templateId;
@@ -239,68 +193,9 @@ function openTemplateSettings(templateId, templateName) {
     loadTemplateSettings(templateId);
 }
 
-function confirmTemplateModifications(templateId, templateName, isModified) {
-    currentTemplateId = templateId;
-
-    // Afficher la modale de confirmation
-    document.getElementById('template-modifications-modal').style.display = 'flex';
-
-    // Générer la liste des modifications
-    generateModificationsList(templateId, templateName, isModified);
-}
-
 function closeTemplateSettings() {
     document.getElementById('template-settings-modal').style.display = 'none';
     currentTemplateId = null;
-}
-
-function closeModificationsModal() {
-    document.getElementById('template-modifications-modal').style.display = 'none';
-    currentTemplateId = null;
-    currentModifications = {};
-}
-
-function generateModificationsList(templateId, templateName, isModified) {
-    const modificationsList = document.getElementById('modifications-list');
-    const lastModifiedInfo = document.getElementById('last-modified-info');
-
-    // Simulation des modifications (à remplacer par de vraies données)
-    const modifications = [
-        { field: 'Nom du template', oldValue: templateName, newValue: templateName + ' (modifié)', type: 'text' },
-        { field: 'Statut actif', oldValue: 'Activé', newValue: 'Activé', type: 'boolean' },
-        { field: 'Visibilité publique', oldValue: 'Privé', newValue: 'Privé', type: 'boolean' },
-        { field: 'Format papier', oldValue: 'A4', newValue: 'A4', type: 'select' },
-        { field: 'Orientation', oldValue: 'Portrait', newValue: 'Portrait', type: 'select' },
-        { field: 'Catégorie', oldValue: 'Autre', newValue: 'Facture', type: 'select' }
-    ];
-
-    // Filtrer seulement les vraies modifications
-    const realModifications = modifications.filter(mod => mod.oldValue !== mod.newValue);
-
-    let html = '';
-    if (realModifications.length === 0) {
-        html = '<div style="text-align: center; color: #666; padding: 20px;"><em>Aucune modification détectée</em></div>';
-    } else {
-        realModifications.forEach(mod => {
-            const changeIcon = mod.oldValue !== mod.newValue ? '🔄' : '✅';
-            html += `
-                <div style="margin-bottom: 10px; padding: 8px; background: #fff; border-radius: 3px; border-left: 3px solid ${mod.oldValue !== mod.newValue ? '#ffc107' : '#28a745'};">
-                    <strong>${mod.field}:</strong><br>
-                    <span style="color: #dc3545; text-decoration: line-through;">${mod.oldValue}</span>
-                    <span style="color: #28a745; margin-left: 10px;">→ ${mod.newValue}</span>
-                </div>
-            `;
-        });
-    }
-
-    modificationsList.innerHTML = html;
-    lastModifiedInfo.textContent = `Dernière modification: ${new Date().toLocaleString('fr-FR')}`;
-
-    currentModifications = {
-        templateId: templateId,
-        modifications: realModifications,
-        timestamp: new Date().toISOString()
-    };
 }
 
 function loadTemplateSettings(templateId) {
@@ -352,36 +247,10 @@ function saveTemplateSettings() {
     }, 1500);
 }
 
-function applyModifications() {
-    // Simulation de l'application des modifications
-    console.log('Application des modifications:', currentModifications);
-
-    // Afficher un message de succès temporaire
-    const applyButton = document.querySelector('#template-modifications-modal .button-primary');
-    const originalText = applyButton.innerHTML;
-    applyButton.innerHTML = '🚀 Modifications appliquées !';
-    applyButton.style.background = '#28a745';
-
-    setTimeout(() => {
-        applyButton.innerHTML = originalText;
-        applyButton.style.background = '';
-        closeModificationsModal();
-        
-        // Recharger la page pour voir les changements
-        location.reload();
-    }, 2000);
-}
-
 // Fermer les modales en cliquant en dehors
 document.getElementById('template-settings-modal').addEventListener('click', function(e) {
     if (e.target === this) {
         closeTemplateSettings();
-    }
-});
-
-document.getElementById('template-modifications-modal').addEventListener('click', function(e) {
-    if (e.target === this) {
-        closeModificationsModal();
     }
 });
 
@@ -390,8 +259,6 @@ document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         if (document.getElementById('template-settings-modal').style.display === 'flex') {
             closeTemplateSettings();
-        } else if (document.getElementById('template-modifications-modal').style.display === 'flex') {
-            closeModificationsModal();
         }
     }
 });
