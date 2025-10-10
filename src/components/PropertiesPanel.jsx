@@ -6,7 +6,7 @@ import '../styles/PropertiesPanel.css';
 
 // Composant pour les contrôles de couleur avec presets
 const ColorPicker = ({ label, value, onChange, presets = [] }) => {
-  console.log(`🎨 ColorPicker ${label} - Props:`, { value, presets: presets.length });
+  // console.log(`🎨 ColorPicker ${label} - Props:`, { value, presets: presets.length });
 
   return (
     <div className="property-row">
@@ -135,22 +135,25 @@ const FontControls = ({ elementId, properties, onPropertyChange }) => (
   </div>
 );
 
-export const PropertiesPanel = ({
+export const PropertiesPanel = React.memo(({
   selectedElements,
   elements,
   onPropertyChange,
   onBatchUpdate
 }) => {
-  console.log('🔍 PropertiesPanel - Props reçues:', {
-    selectedElements,
-    elementsCount: elements?.length,
-    onPropertyChange: !!onPropertyChange,
-    onBatchUpdate: !!onBatchUpdate
-  });
-
   // États pour mémoriser les valeurs précédentes
   const [previousBackgroundColor, setPreviousBackgroundColor] = useState('#ffffff');
   const [previousBorderWidth, setPreviousBorderWidth] = useState(1);
+
+  // Log des props pour débogage (seulement quand elles changent)
+  useEffect(() => {
+    console.log('🔍 PropertiesPanel - Props reçues:', {
+      selectedElements,
+      elementsCount: elements?.length,
+      onPropertyChange: !!onPropertyChange,
+      onBatchUpdate: !!onBatchUpdate
+    });
+  }, [selectedElements, elements?.length, onPropertyChange, onBatchUpdate]);
 
   // Utiliser les hooks de personnalisation et synchronisation
   const {
@@ -160,11 +163,14 @@ export const PropertiesPanel = ({
     handlePropertyChange: customizationChange
   } = useElementCustomization(selectedElements, elements, onPropertyChange);
 
-  console.log('🔍 PropertiesPanel - Hook useElementCustomization:', {
-    localProperties,
-    activeTab,
-    selectedElement
-  });
+  // Log du hook (seulement quand il change)
+  useEffect(() => {
+    console.log('🔍 PropertiesPanel - Hook useElementCustomization:', {
+      localProperties,
+      activeTab,
+      selectedElement
+    });
+  }, [localProperties, activeTab, selectedElement]);
 
   const { syncImmediate, syncBatch } = useElementSynchronization(
     elements,
@@ -290,7 +296,7 @@ export const PropertiesPanel = ({
 
     switch (activeTab) {
       case 'appearance':
-        console.log('🎨 Rendu section Couleurs - localProperties:', localProperties);
+        // console.log('🎨 Rendu section Couleurs - localProperties:', localProperties);
         return (
           <div className="tab-content">
             <div className="properties-group">
@@ -1478,4 +1484,4 @@ export const PropertiesPanel = ({
       </div>
     </div>
   );
-};
+});
