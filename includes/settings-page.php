@@ -117,18 +117,22 @@ if (isset($_POST['pdf_builder_settings_nonce']) && wp_verify_nonce($_POST['pdf_b
 
 <!-- Debug script to check React availability -->
 <script type="text/javascript">
-console.log('🔍 PDF Builder Admin: Checking React after enqueue...');
-console.log('🔍 React available:', typeof React !== 'undefined' ? '✅ YES' : '❌ NO');
-console.log('🔍 ReactDOM available:', typeof ReactDOM !== 'undefined' ? '✅ YES' : '❌ NO');
-console.log('🔍 window.PDFBuilderPro available:', typeof window.PDFBuilderPro !== 'undefined' ? '✅ YES' : '❌ NO');
-
-// Check again after a timeout
-setTimeout(function() {
-    console.log('🔍 PDF Builder Admin: Checking React after timeout...');
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🔍 PDF Builder Admin: Checking React after DOM ready...');
     console.log('🔍 React available:', typeof React !== 'undefined' ? '✅ YES' : '❌ NO');
     console.log('🔍 ReactDOM available:', typeof ReactDOM !== 'undefined' ? '✅ YES' : '❌ NO');
     console.log('🔍 window.PDFBuilderPro available:', typeof window.PDFBuilderPro !== 'undefined' ? '✅ YES' : '❌ NO');
-}, 1000);
+});
+
+// Check again after a longer timeout to ensure all scripts are loaded
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        console.log('🔍 PDF Builder Admin: Checking React after window load + timeout...');
+        console.log('🔍 React available:', typeof React !== 'undefined' ? '✅ YES' : '❌ NO');
+        console.log('🔍 ReactDOM available:', typeof ReactDOM !== 'undefined' ? '✅ YES' : '❌ NO');
+        console.log('🔍 window.PDFBuilderPro available:', typeof window.PDFBuilderPro !== 'undefined' ? '✅ YES' : '❌ NO');
+    }, 1000);
+});
 </script>
 
 <div class="wrap">
@@ -609,22 +613,6 @@ setTimeout(function() {
     padding-bottom: 10px;
 }
 
-.tab-content {
-    background: #fff;
-    border: 1px solid #e5e5e5;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin-top: 20px;
-}
-
-.tab-content h2 {
-    margin: 0 0 20px 0;
-    color: #23282d;
-    border-bottom: 1px solid #e5e5e5;
-    padding-bottom: 10px;
-}
-
 .pdf-builder-maintenance {
     margin-top: 40px;
     padding: 20px;
@@ -806,25 +794,61 @@ setTimeout(function() {
                 e.preventDefault();
                 var targetId = this.getAttribute('href');
                 switchToTab(targetId);
+
+                // Mettre à jour l'URL avec le hash (sans recharger la page)
+                if (history.replaceState) {
+                    history.replaceState(null, null, targetId);
+                }
             });
         });
 
         // Initialisation : masquer tous les onglets sauf celui actif
         hideAllTabs();
 
-        // Trouver et afficher l'onglet actif par défaut
+        // Vérifier si on arrive sur la page avec un hash dans l'URL
+        var currentHash = window.location.hash;
         var activeTab = document.querySelector('.nav-tab-active');
-        if (activeTab) {
+
+        if (currentHash && document.querySelector('a[href="' + currentHash + '"]')) {
+            // Si un hash est présent dans l'URL, l'utiliser
+            console.log('🔧 Using hash from URL:', currentHash);
+            switchToTab(currentHash);
+        } else if (activeTab) {
+            // Sinon, utiliser l'onglet actif par défaut
             var activeTabId = activeTab.getAttribute('href');
+            console.log('🔧 Using default active tab:', activeTabId);
             showTab(activeTabId);
         } else {
-            // Si aucun onglet actif, activer le premier
+            // Fallback : activer le premier onglet
+            console.log('🔧 Using fallback: first tab');
             if (navTabs.length > 0) {
                 var firstTabId = navTabs[0].getAttribute('href');
                 navTabs[0].classList.add('nav-tab-active');
                 showTab(firstTabId);
             }
         }
+
+        // Gérer les changements de hash dans l'URL (liens directs, navigation arrière/avant)
+        window.addEventListener('hashchange', function() {
+            var newHash = window.location.hash;
+            if (newHash && document.querySelector('a[href="' + newHash + '"]')) {
+                console.log('🔧 Hash changed to:', newHash);
+                switchToTab(newHash);
+            }
+        });
+
+        // Vérifier périodiquement si les onglets sont bien affichés (fallback au cas où)
+        setTimeout(function() {
+            var visibleTabs = document.querySelectorAll('.tab-content[style*="display: block"]');
+            if (visibleTabs.length === 0) {
+                console.warn('⚠️ No tabs visible, forcing default tab');
+                var defaultTab = document.querySelector('.nav-tab-active') || navTabs[0];
+                if (defaultTab) {
+                    var defaultTabId = defaultTab.getAttribute('href');
+                    switchToTab(defaultTabId);
+                }
+            }
+        }, 100);
     });
 
     // Fallback si jQuery n'est pas disponible

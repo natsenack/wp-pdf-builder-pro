@@ -579,6 +579,7 @@ class PDF_Builder_Admin {
 
         // Load React/TypeScript on ALL PDF Builder pages for debugging
         if (in_array($clean_hook, $our_pages) || strpos($clean_hook, 'pdf-builder') !== false) {
+            error_log('PDF Builder: Loading React scripts for hook: ' . $clean_hook);
             $this->enqueue_react_scripts();
 
             // Pour la page éditeur, NE PAS charger les scripts canvas - React gère tout
@@ -586,6 +587,8 @@ class PDF_Builder_Admin {
                 return; // Ne pas charger les scripts canvas pour éviter les conflits
             }
             // Pour les autres pages (y compris settings), continuer avec les scripts canvas
+        } else {
+            error_log('PDF Builder: NOT loading React scripts for hook: ' . $clean_hook);
         }
 
         // Charger seulement sur nos pages principales
@@ -803,8 +806,8 @@ class PDF_Builder_Admin {
      */
     private function enqueue_react_scripts() {
         // Charger React depuis CDN (plus fiable que les versions locales)
-        wp_enqueue_script('react', 'https://unpkg.com/react@18/umd/react.production.min.js', [], '18.2.0', true);
-        wp_enqueue_script('react-dom', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js', ['react'], '18.2.0', true);
+        wp_enqueue_script('react', 'https://unpkg.com/react@18/umd/react.production.min.js', [], '18.2.0', false); // Changed to false to load in head
+        wp_enqueue_script('react-dom', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js', ['react'], '18.2.0', false); // Changed to false to load in head
 
         // Charger le script principal React du plugin
         $script_path = PDF_BUILDER_PRO_ASSETS_URL . 'js/pdf-builder-pro.js';
