@@ -158,17 +158,12 @@ export const PropertiesPanel = ({
 
   // Mettre à jour les valeurs précédentes quand l'élément change
   useEffect(() => {
-    if (selectedElement) {
-      // Initialiser les valeurs précédentes seulement si elles ne sont pas déjà définies
-      // et que les valeurs actuelles ne sont pas les valeurs "désactivées"
-      if (localProperties.backgroundColor && localProperties.backgroundColor !== 'transparent') {
-        setPreviousBackgroundColor(localProperties.backgroundColor);
-      }
-      if (localProperties.borderWidth && localProperties.borderWidth > 0) {
-        setPreviousBorderWidth(localProperties.borderWidth);
-      }
+    if (selectedElement && localProperties) {
+      // Initialiser les valeurs précédentes avec les valeurs actuelles de l'élément
+      setPreviousBackgroundColor(localProperties.backgroundColor || '#ffffff');
+      setPreviousBorderWidth(localProperties.borderWidth || 1);
     }
-  }, [selectedElement]); // Retirer les dépendances aux propriétés locales pour éviter les écrasements
+  }, [selectedElement, localProperties]);
 
   // Gestionnaire unifié de changement de propriété
   const handlePropertyChange = useCallback((elementId, property, value) => {
@@ -191,7 +186,7 @@ export const PropertiesPanel = ({
   // Gestionnaire pour le toggle "Aucun fond"
   const handleNoBackgroundToggle = useCallback((elementId, checked) => {
     if (checked) {
-      // Sauvegarder la couleur actuelle seulement si elle n'est pas déjà transparente
+      // Sauvegarder la couleur actuelle avant de la désactiver
       if (localProperties.backgroundColor && localProperties.backgroundColor !== 'transparent') {
         setPreviousBackgroundColor(localProperties.backgroundColor);
       }
@@ -205,7 +200,7 @@ export const PropertiesPanel = ({
   // Gestionnaire pour le toggle "Aucune bordure"
   const handleNoBorderToggle = useCallback((elementId, checked) => {
     if (checked) {
-      // Sauvegarder l'épaisseur actuelle seulement si elle n'est pas déjà 0
+      // Sauvegarder l'épaisseur actuelle avant de la désactiver
       if (localProperties.borderWidth && localProperties.borderWidth > 0) {
         setPreviousBorderWidth(localProperties.borderWidth);
       }
