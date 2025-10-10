@@ -239,6 +239,11 @@ if (!defined('ABSPATH')) {
 <script>
 let currentTemplateId = null;
 
+// Définir ajaxurl si pas déjà défini (nécessaire pour l'admin WordPress)
+if (typeof ajaxurl === 'undefined') {
+    ajaxurl = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>';
+}
+
 function openTemplateSettings(templateId, templateName) {
     currentTemplateId = templateId;
 
