@@ -259,6 +259,15 @@ const PropertiesPanel = React.memo(({
     });
   }, [activeTab, selectedElement?.id]); // Éviter de logger localProperties qui change souvent
 
+  // Debug borderWidth changes
+  useEffect(() => {
+    console.log('🔍 Debug contrôles bordure:', { 
+      borderWidth: localProperties.borderWidth, 
+      condition: localProperties.borderWidth > 0,
+      selectedElementId: selectedElement?.id 
+    });
+  }, [localProperties.borderWidth, selectedElement?.id]);
+
   const { syncImmediate, syncBatch } = useElementSynchronization(
     elements,
     onPropertyChange,
@@ -512,11 +521,9 @@ const PropertiesPanel = React.memo(({
               />
             )}
 
-            {(() => {
-              console.log('🔍 Debug contrôles bordure:', { borderWidth: localProperties.borderWidth, condition: localProperties.borderWidth > 0 });
-              return localProperties.borderWidth > 0 && (
-                <div className="properties-group">
-                  <h4>🔲 Bordures & Coins</h4>
+            {localProperties.borderWidth > 0 && (
+              <div className="properties-group">
+                <h4>🔲 Bordures & Coins</h4>
 
                 <div className="property-row">
                   <label>Épaisseur bordure:</label>
@@ -548,8 +555,7 @@ const PropertiesPanel = React.memo(({
                   </div>
                 </div>
               </div>
-            );
-            })()}
+            )}
 
             <div className="properties-group">
               <h4>✨ Effets</h4>
