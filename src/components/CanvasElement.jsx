@@ -1617,6 +1617,44 @@ export const CanvasElement = ({
               height: element.height
             })}
           />
+
+          {/* Zones de redimensionnement sur les bords */}
+          <div
+            className="resize-zone resize-zone-n"
+            onMouseDown={(e) => resize.handleResizeStart(e, 'n', {
+              x: element.x,
+              y: element.y,
+              width: element.width,
+              height: element.height
+            })}
+          />
+          <div
+            className="resize-zone resize-zone-s"
+            onMouseDown={(e) => resize.handleResizeStart(e, 's', {
+              x: element.x,
+              y: element.y,
+              width: element.width,
+              height: element.height
+            })}
+          />
+          <div
+            className="resize-zone resize-zone-w"
+            onMouseDown={(e) => resize.handleResizeStart(e, 'w', {
+              x: element.x,
+              y: element.y,
+              width: element.width,
+              height: element.height
+            })}
+          />
+          <div
+            className="resize-zone resize-zone-e"
+            onMouseDown={(e) => resize.handleResizeStart(e, 'e', {
+              x: element.x,
+              y: element.y,
+              width: element.width,
+              height: element.height
+            })}
+          />
         </>
       )}
     </>
