@@ -942,6 +942,7 @@
   box-shadow: 0 0 0 1px white, 0 0 0 calc(var(--selection-border-width, 2px) * 2 + var(--element-border-width, 0px)) rgba(37, 99, 235, var(--selection-shadow-opacity, 0.1));
   border-radius: 4px;
   position: relative;
+  --element-border-width: var(--selection-border-width, 2px);
 }
 
 /* Zones de redimensionnement sur les bords de l'élément sélectionné */

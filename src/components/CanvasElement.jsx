@@ -1479,8 +1479,8 @@ export const CanvasElement = ({
             className="resize-handle nw"
             style={{
               position: 'absolute',
-              left: element.x * zoom - 4,
-              top: element.y * zoom - 4,
+              left: element.x * zoom - 6,
+              top: element.y * zoom - 6,
               width: 8,
               height: 8,
               backgroundColor: '#007cba',
@@ -1501,7 +1501,7 @@ export const CanvasElement = ({
             style={{
               position: 'absolute',
               left: (element.x + element.width) * zoom - 4,
-              top: element.y * zoom - 4,
+              top: element.y * zoom - 6,
               width: 8,
               height: 8,
               backgroundColor: '#007cba',
@@ -1521,7 +1521,7 @@ export const CanvasElement = ({
             className="resize-handle sw"
             style={{
               position: 'absolute',
-              left: element.x * zoom - 4,
+              left: element.x * zoom - 6,
               top: (element.y + element.height) * zoom - 4,
               width: 8,
               height: 8,
@@ -1566,7 +1566,7 @@ export const CanvasElement = ({
             style={{
               position: 'absolute',
               left: (element.x + element.width / 2) * zoom - 4,
-              top: element.y * zoom - 4,
+              top: element.y * zoom - 6,
               width: 8,
               height: 8,
               backgroundColor: '#007cba',
@@ -1607,7 +1607,7 @@ export const CanvasElement = ({
             className="resize-handle w"
             style={{
               position: 'absolute',
-              left: element.x * zoom - 4,
+              left: element.x * zoom - 6,
               top: (element.y + element.height / 2) * zoom - 4,
               width: 8,
               height: 8,
