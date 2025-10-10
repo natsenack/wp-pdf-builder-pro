@@ -373,10 +373,11 @@ function toggleDefaultTemplate(templateId, templateType, templateName) {
             // Afficher un message de succès temporaire
             showSuccessMessage(response.data.message);
 
-            // Mettre à jour les autres icônes pour retirer le statut par défaut
+            // Mettre à jour les autres icônes pour retirer le statut par défaut (seulement du même type)
             if (!isCurrentlyDefault) {
                 document.querySelectorAll('.default-template-icon').forEach(icon => {
-                    if (icon !== currentIcon) {
+                    // Vérifier si cette icône appartient à un template du même type
+                    if (icon !== currentIcon && icon.onclick && icon.onclick.toString().includes(`'${templateType}'`)) {
                         icon.innerHTML = '☆';
                         icon.style.opacity = '0.5';
                         icon.title = 'Définir comme template par défaut';

@@ -3217,14 +3217,24 @@ class PDF_Builder_Admin {
             $wpdb->query('START TRANSACTION');
 
             if ($is_default) {
-                // Retirer le statut par défaut de tous les autres templates
-                $wpdb->update(
-                    $table_templates,
-                    ['is_default' => 0],
-                    [],
-                    [],
-                    []
-                );
+                // Vérifier s'il y a déjà un template par défaut du même type
+                $existing_default = $wpdb->get_var($wpdb->prepare(
+                    "SELECT COUNT(*) FROM $table_templates WHERE is_default = 1 AND name LIKE %s",
+                    '%' . $wpdb->esc_like($template_type) . '%'
+                ));
+
+                if ($existing_default > 0) {
+                    error_log("PDF Builder: Template type '$template_type' already has a default template");
+                    wp_send_json_error(['message' => sprintf(__('Il y a déjà un template %s par défaut. Veuillez d\'abord retirer le statut par défaut de l\'autre template.', 'pdf-builder-pro'), $template_type)]);
+                    return;
+                }
+
+                // Retirer le statut par défaut de tous les autres templates du même type
+                $wpdb->query($wpdb->prepare(
+                    "UPDATE $table_templates SET is_default = 0 WHERE name LIKE %s AND id != %d",
+                    '%' . $wpdb->esc_like($template_type) . '%',
+                    $template_id
+                ));
 
                 // Définir ce template comme défaut
                 $result = $wpdb->update(
