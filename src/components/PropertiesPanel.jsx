@@ -508,7 +508,7 @@ const PropertiesPanel = React.memo(({
               />
             )}
 
-            {localProperties.borderWidth === 0 && (
+            {localProperties.borderWidth > 0 && (
               <div className="properties-group">
                 <h4>🔲 Bordures & Coins</h4>
 
