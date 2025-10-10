@@ -67,6 +67,16 @@ if (!$is_new && $template_id > 0) {
 (function() {
     'use strict';
 
+    // Vérifier que pdfBuilderAjax est disponible
+    console.log('PDF Builder Editor: Vérification de pdfBuilderAjax:', typeof pdfBuilderAjax, pdfBuilderAjax);
+    console.log('PDF Builder Editor: ajaxurl disponible:', typeof ajaxurl, ajaxurl);
+    
+    // S'assurer qu'ajaxurl est défini
+    if (typeof ajaxurl === 'undefined') {
+        ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
+        console.log('PDF Builder Editor: ajaxurl défini manuellement:', ajaxurl);
+    }
+
     // Ajouter la classe pour masquer les éléments WordPress
     document.body.classList.add('pdf-builder-active');
 

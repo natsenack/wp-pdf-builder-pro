@@ -68,6 +68,21 @@ export const useCanvasState = ({
     if (templateId && templateId !== null) {
       setIsLoading(true);
       
+      // Vérifier que pdfBuilderAjax est disponible
+      if (typeof pdfBuilderAjax === 'undefined') {
+        console.error('pdfBuilderAjax n\'est pas défini - les scripts AJAX ne sont pas chargés');
+        alert('Erreur: Les scripts AJAX ne sont pas chargés correctement. Actualisez la page.');
+        setIsLoading(false);
+        return;
+      }
+
+      if (!pdfBuilderAjax.nonce) {
+        console.error('Nonce manquant dans pdfBuilderAjax');
+        alert('Erreur: Nonce de sécurité manquant. Actualisez la page.');
+        setIsLoading(false);
+        return;
+      }
+      
       // Faire un appel AJAX pour charger les éléments du template
       fetch(ajaxurl, {
         method: 'POST',
@@ -77,7 +92,7 @@ export const useCanvasState = ({
         body: new URLSearchParams({
           action: 'pdf_builder_load_canvas_elements',
           template_id: templateId,
-          nonce: typeof pdfBuilderAjax !== 'undefined' ? pdfBuilderAjax.nonce : ''
+          nonce: pdfBuilderAjax.nonce
         })
       })
       .then(response => response.json())
