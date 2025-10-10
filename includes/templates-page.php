@@ -80,10 +80,10 @@ if (!defined('ABSPATH')) {
                     }
                     echo '</div>';
                     echo '<div style="display: flex; gap: 10px;">';
-                    echo '<a href="' . admin_url('admin.php?page=pdf-builder-editor&template_id=' . $template_id) . '" class="button button-secondary" style="flex: 1; text-align: center;">✏️ Éditer</a>';
-                    echo '<button class="button button-secondary" style="flex: 1;" onclick="' . $button_action . '(' . $template_id . ', \'' . addslashes($template_name) . '\')">' . $button_text . '</button>';
-                    echo '<button class="button button-primary" style="flex: 1;" onclick="alert(\'Fonctionnalité en développement\')">📋 Utiliser</button>';
-                    echo '<button class="button button-danger" style="flex: 1;" onclick="confirmDeleteTemplate(' . $template_id . ', \'' . addslashes($template_name) . '\')">🗑️ Supprimer</button>';
+                    echo '<a href="' . admin_url('admin.php?page=pdf-builder-editor&template_id=' . $template_id) . '" class="button button-secondary" style="flex: 1; text-align: center; font-size: 16px;">✏️</a>';
+                    echo '<button class="button button-secondary" style="flex: 1; font-size: 16px;" onclick="' . $button_action . '(' . $template_id . ', \'' . addslashes($template_name) . '\')">⚙️</button>';
+                    echo '<button class="button button-primary" style="flex: 1; font-size: 16px;" onclick="alert(\'Fonctionnalité en développement\')">📋</button>';
+                    echo '<button class="button button-danger" style="flex: 1; font-size: 16px;" onclick="confirmDeleteTemplate(' . $template_id . ', \'' . addslashes($template_name) . '\')">🗑️</button>';
                     echo '</div>';
                     echo '</div>';
                 }
