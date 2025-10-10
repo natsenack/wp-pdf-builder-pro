@@ -667,20 +667,81 @@ class PDF_Builder_Canvas_Elements_Manager {
             $sanitized_elements[] = $this->sanitize_element_properties($element);
         }
 
-        // Sauvegarder en base de données
-        $result = $this->save_template_elements_to_db($template_id, $sanitized_elements);
+        // Charger le template existant
+        global $wpdb;
+        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
-        return $result;
+        $template = $wpdb->get_row(
+            $wpdb->prepare("SELECT template_data FROM $table_templates WHERE id = %d", $template_id),
+            ARRAY_A
+        );
+
+        if (!$template) {
+            return new WP_Error('template_not_found', 'Template not found');
+        }
+
+        // Décoder les données JSON existantes
+        $template_data = json_decode($template['template_data'], true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return new WP_Error('json_error', 'Invalid JSON in existing template data');
+        }
+
+        // Mettre à jour les éléments dans les données du template
+        $template_data['elements'] = $sanitized_elements;
+
+        // Réencoder en JSON
+        $updated_template_data = wp_json_encode($template_data);
+        if ($updated_template_data === false) {
+            return new WP_Error('json_encode_error', 'Failed to encode template data');
+        }
+
+        // Sauvegarder en base de données
+        $result = $wpdb->update(
+            $table_templates,
+            array('template_data' => $updated_template_data),
+            array('id' => $template_id),
+            array('%s'),
+            array('%d')
+        );
+
+        if ($result === false) {
+            return new WP_Error('db_error', 'Failed to update template in database');
+        }
+
+        return true;
     }
 
     /**
      * Charger les éléments du canvas
      */
     public function load_canvas_elements($template_id) {
-        // Charger depuis la base de données
-        $elements = $this->get_template_elements_from_db($template_id);
+        // Charger le template depuis la base de données
+        global $wpdb;
+        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
-        return $elements ?: [];
+        $template = $wpdb->get_row(
+            $wpdb->prepare("SELECT template_data FROM $table_templates WHERE id = %d", $template_id),
+            ARRAY_A
+        );
+
+        if (!$template) {
+            return [];
+        }
+
+        // Décoder les données JSON du template
+        $template_data = json_decode($template['template_data'], true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log('PDF Builder: Invalid JSON in template_data for template ID ' . $template_id . '. JSON error: ' . json_last_error_msg());
+            return [];
+        }
+
+        // Extraire les éléments du canvas depuis les données du template
+        $elements = [];
+        if (isset($template_data['elements']) && is_array($template_data['elements'])) {
+            $elements = $template_data['elements'];
+        }
+
+        return $elements;
     }
 }
 
