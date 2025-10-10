@@ -3174,28 +3174,78 @@ class PDF_Builder_Admin {
         }
 
         try {
-            // Utiliser l'instance globale si elle existe, sinon créer une nouvelle
-            global $pdf_builder_core;
-            if (isset($pdf_builder_core) && $pdf_builder_core instanceof PDF_Builder_Core) {
-                $core = $pdf_builder_core;
-            } else {
-                $core = PDF_Builder_Core::getInstance();
-                if (!$core->is_initialized()) {
-                    $core->init();
-                }
+            global $wpdb;
+            $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+
+            // Vérifier que le template existe
+            $template_exists = $wpdb->get_var($wpdb->prepare(
+                "SELECT COUNT(*) FROM $table_templates WHERE id = %d",
+                $template_id
+            ));
+
+            if (!$template_exists) {
+                wp_send_json_error(['message' => __('Template introuvable.', 'pdf-builder-pro')]);
+                return;
             }
 
-            $template_manager = $core->get_template_manager();
-            $result = $template_manager->set_default_template($template_id, $is_default);
+            // Déterminer le type du template pour gérer les templates par défaut par type
+            $template_name = $wpdb->get_var($wpdb->prepare(
+                "SELECT name FROM $table_templates WHERE id = %d",
+                $template_id
+            ));
 
-            if ($result) {
+            $template_type = 'autre';
+            if (stripos($template_name, 'facture') !== false) $template_type = 'facture';
+            elseif (stripos($template_name, 'devis') !== false) $template_type = 'devis';
+            elseif (stripos($template_name, 'commande') !== false) $template_type = 'commande';
+            elseif (stripos($template_name, 'contrat') !== false) $template_type = 'contrat';
+            elseif (stripos($template_name, 'newsletter') !== false) $template_type = 'newsletter';
+
+            // Commencer une transaction
+            $wpdb->query('START TRANSACTION');
+
+            if ($is_default) {
+                // Retirer le statut par défaut de tous les autres templates
+                $wpdb->update(
+                    $table_templates,
+                    ['is_default' => 0],
+                    [],
+                    [],
+                    []
+                );
+
+                // Définir ce template comme défaut
+                $result = $wpdb->update(
+                    $table_templates,
+                    ['is_default' => 1],
+                    ['id' => $template_id],
+                    ['%d'],
+                    ['%d']
+                );
+            } else {
+                // Retirer le statut par défaut de ce template
+                $result = $wpdb->update(
+                    $table_templates,
+                    ['is_default' => 0],
+                    ['id' => $template_id],
+                    ['%d'],
+                    ['%d']
+                );
+            }
+
+            if ($result !== false) {
+                $wpdb->query('COMMIT');
                 $message = $is_default ? __('Template défini comme défaut.', 'pdf-builder-pro') : __('Statut par défaut retiré.', 'pdf-builder-pro');
                 wp_send_json_success(['message' => $message]);
             } else {
+                $wpdb->query('ROLLBACK');
                 wp_send_json_error(['message' => __('Erreur lors de la modification du statut par défaut.', 'pdf-builder-pro')]);
             }
 
         } catch (Exception $e) {
+            if (isset($wpdb)) {
+                $wpdb->query('ROLLBACK');
+            }
             wp_send_json_error(['message' => $e->getMessage()]);
         }
     }

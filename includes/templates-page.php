@@ -357,17 +357,13 @@ function toggleDefaultTemplate(templateId, templateType, templateName) {
             // Afficher un message de succès temporaire
             showSuccessMessage(response.data.message);
 
-            // Mettre à jour les autres icônes du même type pour retirer le statut par défaut
+            // Mettre à jour les autres icônes pour retirer le statut par défaut
             if (!isCurrentlyDefault) {
-                document.querySelectorAll('.template-card').forEach(card => {
-                    const cardType = card.className.match(/template-type-(\w+)/)?.[1];
-                    if (cardType === templateType) {
-                        const otherIcon = card.querySelector('.default-template-icon');
-                        if (otherIcon && otherIcon !== currentIcon) {
-                            otherIcon.innerHTML = '☆';
-                            otherIcon.style.opacity = '0.5';
-                            otherIcon.title = 'Définir comme template par défaut';
-                        }
+                document.querySelectorAll('.default-template-icon').forEach(icon => {
+                    if (icon !== currentIcon) {
+                        icon.innerHTML = '☆';
+                        icon.style.opacity = '0.5';
+                        icon.title = 'Définir comme template par défaut';
                     }
                 });
             }
