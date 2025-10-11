@@ -1860,8 +1860,14 @@ echo '<style>
         });
     });
 
+        });
+    });
+
 })(jQuery);
 </script>
+
+</div>
+
 <?php
 // Fin du fichier
 ?>
