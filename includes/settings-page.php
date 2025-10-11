@@ -189,13 +189,22 @@ window.addEventListener('load', function() {
 });
 </script>
 
-<div class="wrap">
     <h1><?php _e('Paramètres PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
 
     <form method="post" action="<?php echo esc_url(admin_url('admin.php?page=pdf-builder-settings')); ?>" onsubmit="console.log('Form submitted'); console.log('Form action:', this.action); console.log('Form method:', this.method); return true;">
         <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
 
         <div class="pdf-builder-settings">
+
+            <style>
+            /* Forcer le masquage des onglets inactifs au chargement */
+            .tab-content:not(.active) {
+                display: none !important;
+            }
+            .sub-tab-content:not(.sub-tab-active) {
+                display: none !important;
+            }
+            </style>
 
             <!-- Onglets -->
             <div class="nav-tab-wrapper">
@@ -1122,7 +1131,7 @@ echo '<style>
     padding: 20px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     margin-top: -1px;
-    display: none;
+    display: none !important;
 }
 
 .tab-content.active {
@@ -1313,7 +1322,7 @@ echo '<style>
 }
 
 .sub-tab-content {
-    display: none;
+    display: none !important;
 }
 
 .sub-tab-active {
@@ -1328,13 +1337,13 @@ echo '<style>
 
     // Attendre que le DOM soit complètement chargé
     $(document).ready(function() {
-        
+        console.log('PDF Builder Settings JavaScript loaded');
 
         // Vérifier que les éléments existent
         var navTabs = document.querySelectorAll('.nav-tab');
         var tabContents = document.querySelectorAll('.tab-content');
 
-        
+        console.log('Found', navTabs.length, 'nav tabs and', tabContents.length, 'tab contents');
 
         if (navTabs.length === 0 || tabContents.length === 0) {
             console.error('❌ Tab elements not found');
@@ -1395,7 +1404,31 @@ echo '<style>
         });
 
         // Initialisation : masquer tous les onglets sauf celui actif
+        console.log('Initializing tabs...');
         hideAllTabs();
+
+        // Forcer le masquage de tous les onglets inactifs au cas où
+        tabContents.forEach(function(tab, index) {
+            if (!tab.classList.contains('active')) {
+                tab.style.display = 'none';
+                tab.style.visibility = 'hidden';
+                console.log('Hidden tab:', tab.id);
+            } else {
+                tab.style.display = 'block';
+                tab.style.visibility = 'visible';
+                console.log('Shown tab:', tab.id);
+            }
+        });
+
+        // Vérification périodique pour s'assurer que les onglets sont correctement affichés
+        setTimeout(function() {
+            tabContents.forEach(function(tab) {
+                if (!tab.classList.contains('active')) {
+                    tab.style.display = 'none';
+                    tab.style.visibility = 'hidden';
+                }
+            });
+        }, 100);
 
         // Vérifier si on arrive sur la page avec un hash dans l'URL
         var currentHash = window.location.hash;
@@ -1511,25 +1544,26 @@ echo '<style>
 (function($) {
     'use strict';
 
-    // Gestion des sous-onglets dans l'onglet Canvas
-    $(document).ready(function() {
-        // Gestionnaire pour les sous-onglets
-        $('.sub-nav-tab').on('click', function(e) {
-            e.preventDefault();
+        // Gestion des sous-onglets dans l'onglet Canvas
+        $(document).ready(function() {
+            // Masquer tous les sous-onglets inactifs au chargement
+            $('.sub-tab-content:not(.sub-tab-active)').hide();
 
-            var $this = $(this);
-            var targetId = $this.attr('href');
+            // Gestionnaire pour les sous-onglets
+            $('.sub-nav-tab').on('click', function(e) {
+                e.preventDefault();
 
-            // Désactiver tous les sous-onglets
-            $('.sub-nav-tab').removeClass('sub-nav-tab-active');
-            $('.sub-tab-content').removeClass('sub-tab-active');
+                var $this = $(this);
+                var targetId = $this.attr('href');
 
-            // Activer le sous-onglet cliqué
-            $this.addClass('sub-nav-tab-active');
-            $(targetId).addClass('sub-tab-active');
-        });
+                // Désactiver tous les sous-onglets
+                $('.sub-nav-tab').removeClass('sub-nav-tab-active');
+                $('.sub-tab-content').removeClass('sub-tab-active').hide();
 
-        // Affichage en temps réel de la valeur du slider d'opacité
+                // Activer le sous-onglet cliqué
+                $this.addClass('sub-nav-tab-active');
+                $(targetId).addClass('sub-tab-active').show();
+            });        // Affichage en temps réel de la valeur du slider d'opacité
         $('input[name="default_opacity"]').on('input', function() {
             $(this).next('span').text($(this).val() + '%');
         });
@@ -1865,8 +1899,6 @@ echo '<style>
 
 })(jQuery);
 </script>
-
-</div>
 
 <?php
 // Fin du fichier
