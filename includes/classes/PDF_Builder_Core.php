@@ -430,15 +430,15 @@ class PDF_Builder_Core {
         }
 
         // Inclure et instancier la classe d'administration
-        if (!class_exists('PDF_Builder_Admin')) {
+        if (!class_exists('PDF_Builder_Admin_New')) {
             require_once PDF_BUILDER_PLUGIN_DIR . 'includes/classes/class-pdf-builder-admin-new.php';
         }
 
-        if (class_exists('PDF_Builder_Admin')) {
-            $this->admin = PDF_Builder_Admin::getInstance($this);
+        if (class_exists('PDF_Builder_Admin_New')) {
+            $this->admin = PDF_Builder_Admin_New::getInstance($this);
             pdf_builder_debug('PDF Builder Admin interface initialized', 1, 'core');
         } else {
-            pdf_builder_debug('Failed to load PDF_Builder_Admin class', 1, 'core');
+            pdf_builder_debug('Failed to load PDF_Builder_Admin_New class', 1, 'core');
         }
     }
 

@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 /**
  * Classe d'administration PDF Builder Pro - Version Simplifiée
  */
-class PDF_Builder_Admin {
+class PDF_Builder_Admin_New {
 
     /**
      * Instance singleton
