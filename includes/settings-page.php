@@ -768,9 +768,46 @@ window.addEventListener('load', function() {
         </div>
 
         <p class="submit">
-            <input type="submit" name="submit" id="submit" class="button button-primary" value="<?php _e('Enregistrer les paramètres', 'pdf-builder-pro'); ?>" onclick="console.log('Submit button clicked');">
+            <input type="submit" name="submit" id="submit" class="button button-primary" value="<?php _e('Enregistrer les paramètres', 'pdf-builder-pro'); ?>" onclick="console.log('Submit button clicked - type:', this.type, 'name:', this.name);">
         </p>
     </form>
+
+<!-- Debug script to check form submission -->
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Settings page JavaScript loaded');
+    
+    // Écouter tous les événements de soumission de formulaire
+    document.addEventListener('submit', function(e) {
+        console.log('Form submit event detected on:', e.target);
+        console.log('Form action:', e.target.action);
+        console.log('Form method:', e.target.method);
+    });
+    
+    // Écouter les clics sur le bouton submit
+    var submitBtn = document.getElementById('submit');
+    if (submitBtn) {
+        console.log('Submit button found:', submitBtn);
+        submitBtn.addEventListener('click', function(e) {
+            console.log('Submit button click event:', e);
+            console.log('Default prevented?', e.defaultPrevented);
+        });
+    } else {
+        console.error('Submit button not found!');
+    }
+    
+    // Vérifier le formulaire
+    var form = document.querySelector('form[method="post"]');
+    if (form) {
+        console.log('Form found:', form);
+        console.log('Form action:', form.action);
+        console.log('Form method:', form.method);
+    } else {
+        console.error('Form not found!');
+    }
+});
+</script>
+
 </div>
 
 <style>
