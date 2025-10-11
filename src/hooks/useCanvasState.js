@@ -84,7 +84,7 @@ export const useCanvasState = ({
       }
       
       // Faire un appel AJAX pour charger les éléments du template
-      fetch(ajaxurl, {
+      fetch(pdfBuilderAjax.ajaxurl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
