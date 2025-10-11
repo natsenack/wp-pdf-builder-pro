@@ -32,6 +32,32 @@ export const CanvasElement = ({
     canvasHeight
   });
 
+  // Fonction helper pour déterminer si un élément est spécial
+  const isSpecialElement = (type) => {
+    return [
+      'product_table', 'customer_info', 'company_logo', 'company_info',
+      'order_number', 'document_type', 'progress-bar'
+    ].includes(type);
+  };
+
+  // Fonction helper pour gérer les styles de bordure des éléments spéciaux
+  const getSpecialElementBorderStyle = (element) => {
+    // Pour les éléments spéciaux, on utilise des bordures plus subtiles qui ne gênent pas le contenu interne
+    if (element.borderWidth && element.borderWidth > 0) {
+      return {
+        border: `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#e5e7eb'}`,
+        // Assurer que le background ne cache pas les bordures
+        backgroundColor: element.backgroundColor || 'transparent',
+        // Utiliser box-sizing pour que les bordures soient incluses dans les dimensions
+        boxSizing: 'border-box'
+      };
+    }
+    return {
+      backgroundColor: element.backgroundColor || 'transparent',
+      boxSizing: 'border-box'
+    };
+  };
+
   // Gestionnaire de clic sur l'élément
   const handleMouseDown = useCallback((e) => {
     e.stopPropagation();
@@ -141,9 +167,12 @@ export const CanvasElement = ({
           height: element.height * zoom,
           cursor: dragAndDrop.isDragging ? 'grabbing' : 'grab',
           userSelect: 'none',
-          // Styles de base communs à tous les éléments
-          backgroundColor: element.backgroundColor || 'transparent',
-          border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || 'transparent'}` : 'none',
+          // Pour les éléments spéciaux, utiliser une gestion différente des bordures
+          ...(isSpecialElement(element.type) ? getSpecialElementBorderStyle(element) : {
+            // Styles de base communs à tous les éléments non-spéciaux
+            backgroundColor: element.backgroundColor || 'transparent',
+            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || 'transparent'}` : 'none',
+          }),
           borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0px',
           opacity: (element.opacity || 100) / 100,
           transform: `rotate(${element.rotation || 0}deg) scale(${element.scale || 100}%)`,
@@ -447,9 +476,13 @@ export const CanvasElement = ({
             flexDirection: 'column',
             fontSize: 10 * zoom,
             fontFamily: 'Arial, sans-serif',
-            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || 'transparent'}` : 'none',
+            // Utiliser des bordures subtiles qui ne sont pas affectées par les paramètres globaux
+            border: element.borderWidth && element.borderWidth > 0 ? `${Math.max(1, element.borderWidth * zoom * 0.5)}px solid ${element.borderColor || '#e5e7eb'}` : 'none',
             borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '2px',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            // Assurer que le background ne cache pas les bordures
+            backgroundColor: element.backgroundColor || 'transparent',
+            boxSizing: 'border-box'
           }}>
             {/* En-tête du tableau */}
             {(element.showHeaders !== false) && (
@@ -949,7 +982,11 @@ export const CanvasElement = ({
             fontStyle: element.fontStyle || 'normal',
             textDecoration: element.textDecoration || 'none',
             color: element.color || '#333',
-            backgroundColor: element.backgroundColor || '#ffffff'
+            backgroundColor: element.backgroundColor || '#ffffff',
+            // Bordures subtiles pour les éléments spéciaux
+            border: element.borderWidth && element.borderWidth > 0 ? `${Math.max(1, element.borderWidth * zoom * 0.5)}px solid ${element.borderColor || '#e5e7eb'}` : 'none',
+            borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '2px',
+            boxSizing: 'border-box'
           }}>
             <div style={{
               display: 'flex',
@@ -1142,7 +1179,11 @@ export const CanvasElement = ({
             alignItems: 'center',
             justifyContent: element.alignment === 'center' ? 'center' : element.alignment === 'right' ? 'flex-end' : 'flex-start',
             padding: '8px',
-            backgroundColor: 'transparent'
+            backgroundColor: element.backgroundColor || 'transparent',
+            // Bordures subtiles pour les éléments spéciaux
+            border: element.borderWidth && element.borderWidth > 0 ? `${Math.max(1, element.borderWidth * zoom * 0.5)}px solid ${element.borderColor || '#e5e7eb'}` : 'none',
+            borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '2px',
+            boxSizing: 'border-box'
           }}>
             {element.imageUrl ? (
               <img
@@ -1189,7 +1230,12 @@ export const CanvasElement = ({
             fontWeight: element.fontWeight || 'normal',
             textAlign: element.textAlign || 'left',
             color: element.color || '#333',
-            lineHeight: '1.4'
+            lineHeight: '1.4',
+            backgroundColor: element.backgroundColor || 'transparent',
+            // Bordures subtiles pour les éléments spéciaux
+            border: element.borderWidth && element.borderWidth > 0 ? `${Math.max(1, element.borderWidth * zoom * 0.5)}px solid ${element.borderColor || '#e5e7eb'}` : 'none',
+            borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '2px',
+            boxSizing: 'border-box'
           }}>
             {/* Nom de l'entreprise */}
             {element.fields?.includes('name') && (
@@ -1251,7 +1297,12 @@ export const CanvasElement = ({
             fontFamily: element.fontFamily || 'Arial',
             fontWeight: element.fontWeight || 'bold',
             color: element.color || '#333333',
-            textAlign: element.textAlign || 'right'
+            textAlign: element.textAlign || 'right',
+            backgroundColor: element.backgroundColor || 'transparent',
+            // Bordures subtiles pour les éléments spéciaux
+            border: element.borderWidth && element.borderWidth > 0 ? `${Math.max(1, element.borderWidth * zoom * 0.5)}px solid ${element.borderColor || '#e5e7eb'}` : 'none',
+            borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '2px',
+            boxSizing: 'border-box'
           }}>
             {element.showLabel && (
               <div style={{
@@ -1294,9 +1345,11 @@ export const CanvasElement = ({
             color: element.color || '#1e293b',
             textAlign: element.textAlign || 'center',
             backgroundColor: element.backgroundColor || 'transparent',
-            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || 'transparent'}` : (element.showBorder ? '2px solid transparent' : 'none'),
+            // Bordures subtiles pour les éléments spéciaux
+            border: element.borderWidth && element.borderWidth > 0 ? `${Math.max(1, element.borderWidth * zoom * 0.5)}px solid ${element.borderColor || '#e5e7eb'}` : 'none',
             borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '4px',
-            whiteSpace: 'nowrap'
+            whiteSpace: 'nowrap',
+            boxSizing: 'border-box'
           }}>
             {element.documentType === 'invoice' ? 'FACTURE' :
              element.documentType === 'quote' ? 'DEVIS' :
@@ -1320,7 +1373,10 @@ export const CanvasElement = ({
             width: `${element.progressValue || 75}%`,
             backgroundColor: element.progressColor || '#3b82f6',
             borderRadius: '10px',
-            transition: 'width 0.3s ease'
+            transition: 'width 0.3s ease',
+            // Bordures subtiles pour les éléments spéciaux
+            border: element.borderWidth && element.borderWidth > 0 ? `${Math.max(1, element.borderWidth * zoom * 0.5)}px solid ${element.borderColor || '#e5e7eb'}` : 'none',
+            boxSizing: 'border-box'
           }}
         />
       )}

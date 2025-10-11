@@ -15,7 +15,7 @@ const PropertiesPanel = React.lazy(() => import('./PropertiesPanel'));
 
 export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
   const [tool, setTool] = useState('select');
-  const [showGrid, setShowGrid] = useState(true);
+  const [showGrid, setShowGrid] = useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [isPropertiesCollapsed, setIsPropertiesCollapsed] = useState(false);
 
