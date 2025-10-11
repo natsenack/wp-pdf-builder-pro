@@ -22,7 +22,7 @@ if (isset($_GET['run']) && $_GET['run'] === '1') {
 
     try {
         // Vérifier si la fonction ajax_load_canvas_elements existe et contient nos modifications
-        $admin_file = __DIR__ . '/includes/classes/class-pdf-builder-admin.php';
+        $admin_file = __DIR__ . '/includes/classes/class-pdf-builder-admin-new.php';
         echo "Checking file: $admin_file\n";
 
         if (file_exists($admin_file)) {

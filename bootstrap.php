@@ -35,8 +35,8 @@ function pdf_builder_load_core() {
     }
 
     // Charger la classe d'administration
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'includes/classes/class-pdf-builder-admin.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'includes/classes/class-pdf-builder-admin.php';
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'includes/classes/class-pdf-builder-admin-new.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'includes/classes/class-pdf-builder-admin-new.php';
     }
 
     // Charger les managers essentiels en premier pour éviter les dépendances circulaires

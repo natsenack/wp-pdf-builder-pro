@@ -431,7 +431,7 @@ class PDF_Builder_Core {
 
         // Inclure et instancier la classe d'administration
         if (!class_exists('PDF_Builder_Admin')) {
-            require_once PDF_BUILDER_PLUGIN_DIR . 'includes/classes/class-pdf-builder-admin.php';
+            require_once PDF_BUILDER_PLUGIN_DIR . 'includes/classes/class-pdf-builder-admin-new.php';
         }
 
         if (class_exists('PDF_Builder_Admin')) {
