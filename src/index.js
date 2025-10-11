@@ -3,8 +3,8 @@ import ReactDOM from 'react-dom';
 import { PDFCanvasEditor } from './components/PDFCanvasEditor';
 import './styles/editor.css';
 
-// DIAGNOSTIC: Cache busting test - Version 2025-10-11_17:45
-console.log('PDF Builder Pro - Diagnostic: JavaScript chargé avec cache busting v3');
+// DIAGNOSTIC: Cache busting test - Version 2025-10-11_18:15
+console.log('PDF Builder Pro - Diagnostic: JavaScript chargé avec cache busting v4');
 
 // Classe principale pour l'éditeur PDF
 class PDFBuilderPro {
