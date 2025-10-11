@@ -554,7 +554,8 @@ export const CanvasElement = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 12 * zoom
+            fontSize: 12 * zoom,
+            color: element.color || '#333333'
           })
         }}
         onMouseDown={handleMouseDown}
