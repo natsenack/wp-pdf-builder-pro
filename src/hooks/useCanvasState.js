@@ -12,7 +12,8 @@ export const useCanvasState = ({
   canvasWidth = 595, // A4 width in points
   canvasHeight = 842, // A4 height in points
   onSave,
-  onPreview
+  onPreview,
+  globalSettings = null
 }) => {
   const [elements, setElements] = useState(initialElements);
   const [nextId, setNextId] = useState(1);
@@ -157,6 +158,26 @@ export const useCanvasState = ({
         fontFamily: 'Arial, sans-serif',
         padding: 8
       };
+
+      // Appliquer les paramètres globaux du canvas si disponibles
+      if (globalSettings) {
+        // Couleur de bordure par défaut pour les éléments
+        if (globalSettings.selectionBorderColor && globalSettings.selectionBorderColor !== 'var(--primary-color)') {
+          defaults.borderColor = globalSettings.selectionBorderColor;
+        }
+        // Largeur de bordure par défaut pour les éléments
+        if (globalSettings.selectionBorderWidth && globalSettings.selectionBorderWidth > 0) {
+          defaults.borderWidth = globalSettings.selectionBorderWidth;
+        }
+        // Couleur de fond par défaut pour les éléments
+        if (globalSettings.resizeHandleColor) {
+          defaults.color = globalSettings.resizeHandleColor;
+        }
+        // Taille de police par défaut
+        if (globalSettings.resizeHandleSize) {
+          defaults.fontSize = Math.max(10, globalSettings.resizeHandleSize - 2); // Ajuster légèrement
+        }
+      }
 
       // Propriétés spécifiques selon le type
       if (type.startsWith('woocommerce-')) {

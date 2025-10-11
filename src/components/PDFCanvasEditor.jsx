@@ -57,7 +57,8 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
     canvasWidth: options.width || 595,
     canvasHeight: options.height || 842,
     onSave,
-    onPreview
+    onPreview,
+    globalSettings: globalSettings.settings
   });
 
   const editorRef = useRef(null);
