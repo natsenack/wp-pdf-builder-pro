@@ -94,6 +94,9 @@ function pdf_builder_load_bootstrap() {
         $core = PDF_Builder_Core::getInstance();
         $core->init();
 
+        // Initialiser les paramètres par défaut du canvas
+        pdf_builder_init_canvas_defaults();
+
         // Enregistrer l'action AJAX dès que possible
         add_action('wp_ajax_pdf_builder_preview', 'pdf_builder_handle_preview_ajax');
         add_action('wp_ajax_nopriv_pdf_builder_preview', 'pdf_builder_handle_preview_ajax');
@@ -324,9 +327,33 @@ function pdf_builder_ensure_admin_menu() {
             'Settings',
             'read',  // Changé pour permettre à tous les utilisateurs connectés
             'pdf-builder-settings',
+            'pdf-builder-settings',
             'pdf_builder_settings_page_callback'
         );
     }
 }
-*/
+
+/**
+ * Initialiser les paramètres par défaut du canvas
+ */
+function pdf_builder_init_canvas_defaults() {
+    // Paramètres par défaut du canvas
+    $defaults = [
+        'canvas_element_borders_enabled' => true,
+        'canvas_border_width' => 1,
+        'canvas_border_color' => '#007cba',
+        'canvas_border_spacing' => 2,
+        'canvas_resize_handles_enabled' => true,
+        'canvas_handle_size' => 8,
+        'canvas_handle_color' => '#007cba',
+        'canvas_handle_hover_color' => '#ffffff'
+    ];
+
+    // Initialiser chaque paramètre seulement s'il n'existe pas déjà
+    foreach ($defaults as $option => $default_value) {
+        if (get_option($option) === false) {
+            add_option($option, $default_value);
+        }
+    }
+}
 

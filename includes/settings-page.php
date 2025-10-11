@@ -674,7 +674,7 @@ window.addEventListener('load', function() {
                         <th scope="row"><?php _e('Bordures des Éléments', 'pdf-builder-pro'); ?></th>
                         <td>
                             <label>
-                                <input type="checkbox" name="canvas_element_borders_enabled" value="1" <?php checked($config->get('canvas_element_borders_enabled', true), true); ?>>
+                                <input type="checkbox" name="canvas_element_borders_enabled" value="1" <?php checked(get_option('canvas_element_borders_enabled', true), true); ?>>
                                 <?php _e('Activer les bordures des éléments sur le canvas', 'pdf-builder-pro'); ?>
                             </label>
                         </td>
@@ -682,21 +682,21 @@ window.addEventListener('load', function() {
                     <tr>
                         <th scope="row"><?php _e('Épaisseur des Bordures', 'pdf-builder-pro'); ?></th>
                         <td>
-                            <input type="number" name="canvas_border_width" value="<?php echo $config->get('canvas_border_width'); ?>" class="small-text" min="0" max="10" step="0.5">
+                            <input type="number" name="canvas_border_width" value="<?php echo get_option('canvas_border_width', 1); ?>" class="small-text" min="0" max="10" step="0.5">
                             <span class="description"><?php _e('Épaisseur en pixels (0.5 à 10)', 'pdf-builder-pro'); ?></span>
                         </td>
                     </tr>
                     <tr>
                         <th scope="row"><?php _e('Couleur des Bordures', 'pdf-builder-pro'); ?></th>
                         <td>
-                            <input type="color" name="canvas_border_color" value="<?php echo esc_attr($config->get('canvas_border_color')); ?>">
+                            <input type="color" name="canvas_border_color" value="<?php echo esc_attr(get_option('canvas_border_color', '#007cba')); ?>">
                             <span class="description"><?php _e('Couleur des bordures des éléments', 'pdf-builder-pro'); ?></span>
                         </td>
                     </tr>
                     <tr>
                         <th scope="row"><?php _e('Écart des Bordures', 'pdf-builder-pro'); ?></th>
                         <td>
-                            <input type="number" name="canvas_border_spacing" value="<?php echo $config->get('canvas_border_spacing'); ?>" class="small-text" min="0" max="20" step="1">
+                            <input type="number" name="canvas_border_spacing" value="<?php echo get_option('canvas_border_spacing', 2); ?>" class="small-text" min="0" max="20" step="1">
                             <span class="description"><?php _e('Espacement autour des bordures en pixels (0 à 20)', 'pdf-builder-pro'); ?></span>
                         </td>
                     </tr>
@@ -704,7 +704,7 @@ window.addEventListener('load', function() {
                         <th scope="row"><?php _e('Poignées de Redimensionnement', 'pdf-builder-pro'); ?></th>
                         <td>
                             <label>
-                                <input type="checkbox" name="canvas_resize_handles_enabled" value="1" <?php checked($config->get('canvas_resize_handles_enabled'), true); ?>>
+                                <input type="checkbox" name="canvas_resize_handles_enabled" value="1" <?php checked(get_option('canvas_resize_handles_enabled', true), true); ?>>
                                 <?php _e('Afficher les poignées de redimensionnement', 'pdf-builder-pro'); ?>
                             </label>
                         </td>
@@ -712,21 +712,21 @@ window.addEventListener('load', function() {
                     <tr>
                         <th scope="row"><?php _e('Taille des Poignées', 'pdf-builder-pro'); ?></th>
                         <td>
-                            <input type="number" name="canvas_handle_size" value="<?php echo $config->get('canvas_handle_size'); ?>" class="small-text" min="4" max="20">
+                            <input type="number" name="canvas_handle_size" value="<?php echo get_option('canvas_handle_size', 8); ?>" class="small-text" min="4" max="20">
                             <span class="description"><?php _e('Taille en pixels (4 à 20)', 'pdf-builder-pro'); ?></span>
                         </td>
                     </tr>
                     <tr>
                         <th scope="row"><?php _e('Couleur des Poignées', 'pdf-builder-pro'); ?></th>
                         <td>
-                            <input type="color" name="canvas_handle_color" value="<?php echo esc_attr($config->get('canvas_handle_color')); ?>">
+                            <input type="color" name="canvas_handle_color" value="<?php echo esc_attr(get_option('canvas_handle_color', '#007cba')); ?>">
                             <span class="description"><?php _e('Couleur des poignées de redimensionnement', 'pdf-builder-pro'); ?></span>
                         </td>
                     </tr>
                     <tr>
                         <th scope="row"><?php _e('Couleur de Survol des Poignées', 'pdf-builder-pro'); ?></th>
                         <td>
-                            <input type="color" name="canvas_handle_hover_color" value="<?php echo esc_attr($config->get('canvas_handle_hover_color')); ?>">
+                            <input type="color" name="canvas_handle_hover_color" value="<?php echo esc_attr(get_option('canvas_handle_hover_color', '#ffffff')); ?>">
                             <span class="description"><?php _e('Couleur des poignées au survol', 'pdf-builder-pro'); ?></span>
                         </td>
                     </tr>
