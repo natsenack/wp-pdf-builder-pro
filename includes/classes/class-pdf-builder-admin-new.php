@@ -238,6 +238,34 @@ class PDF_Builder_Admin_New {
                     </div>
                 </div>
 
+                <!-- DEBUG: Informations sur les menus -->
+                <div class="dashboard-debug" style="background: #f1f1f1; padding: 20px; margin: 20px 0; border: 1px solid #ddd; border-radius: 4px;">
+                    <h3>🔍 Debug - État des menus</h3>
+                    <?php
+                    global $menu, $submenu;
+                    echo '<h4>Menus principaux avec "pdf-builder":</h4>';
+                    $found = false;
+                    foreach ($menu as $item) {
+                        if (isset($item[2]) && strpos($item[2], 'pdf-builder') !== false) {
+                            echo '<p><strong>' . esc_html($item[0]) . '</strong> (slug: ' . esc_html($item[2]) . ')</p>';
+                            $found = true;
+                        }
+                    }
+                    if (!$found) {
+                        echo '<p style="color: red;">❌ Aucun menu PDF Builder trouvé</p>';
+                    }
+
+                    echo '<h4>Sous-menus pour "pdf-builder-pro":</h4>';
+                    if (isset($submenu['pdf-builder-pro'])) {
+                        foreach ($submenu['pdf-builder-pro'] as $sub) {
+                            echo '<p>- ' . esc_html($sub[0]) . ' (slug: ' . esc_html($sub[2]) . ')</p>';
+                        }
+                    } else {
+                        echo '<p style="color: red;">❌ Aucun sous-menu trouvé</p>';
+                    }
+                    ?>
+                </div>
+
                 <!-- Actions principales -->
                 <div class="dashboard-actions">
                     <div class="action-card primary">
