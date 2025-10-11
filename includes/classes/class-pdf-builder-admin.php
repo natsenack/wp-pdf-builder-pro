@@ -2308,14 +2308,6 @@ class PDF_Builder_Admin {
      * AJAX - Charger les éléments du canvas pour un template
      */
     public function ajax_load_canvas_elements() {
-        // Log au début pour vérifier que la méthode est appelée
-        error_log('PDF Builder Debug - ajax_load_canvas_elements appelée');
-
-        // Debug: Log des valeurs de nonce
-        $received_nonce = $_POST['nonce'] ?? 'NONCE_MANQUANT';
-        error_log('PDF Builder Debug - Nonce reçu: ' . $received_nonce);
-        error_log('PDF Builder Debug - Action: pdf_builder_load_canvas_elements');
-
         // Vérification de sécurité - essayer d'abord avec session_id, puis sans
         $nonce_valid = false;
         $received_nonce = $_POST['nonce'] ?? '';
@@ -2330,19 +2322,7 @@ class PDF_Builder_Admin {
         }
 
         if (!$nonce_valid) {
-            error_log('PDF Builder Debug - Nonce invalide - Reçu: ' . $received_nonce);
-
-            // Retourner des informations de débogage dans la réponse
-            wp_send_json_error([
-                'message' => 'Nonce invalide',
-                'debug' => [
-                    'received_nonce' => $received_nonce,
-                    'expected_actions' => ['pdf_builder_nonce_' . session_id(), 'pdf_builder_nonce'],
-                    'session_id' => session_id(),
-                    'user_logged_in' => is_user_logged_in(),
-                    'current_user_id' => get_current_user_id()
-                ]
-            ]);
+            wp_send_json_error('Nonce invalide');
             return;
         }
 
