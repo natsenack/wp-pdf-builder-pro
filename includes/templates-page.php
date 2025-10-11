@@ -355,7 +355,7 @@ function toggleDefaultTemplate(templateId, templateType, templateName) {
             // Mettre à jour l'icône et le titre
             if (currentIcon) {
                 const newIsDefault = !isCurrentlyDefault;
-                currentIcon.innerHTML = newIsDefault ? '*' : '-';
+                currentIcon.innerHTML = newIsDefault ? '⭐' : '☆';
                 currentIcon.style.opacity = newIsDefault ? '1' : '0.5';
                 currentIcon.title = newIsDefault ? 'Template par défaut' : 'Définir comme template par défaut';
                 currentIcon.style.pointerEvents = 'auto';
@@ -376,9 +376,11 @@ function toggleDefaultTemplate(templateId, templateType, templateName) {
                 });
             }
         } else {
-            // Erreur
+            // Erreur - garder l'icône décochée si c'était une tentative de définition par défaut
             if (currentIcon) {
-                currentIcon.innerHTML = isCurrentlyDefault ? '*' : '-';
+                currentIcon.innerHTML = '☆';
+                currentIcon.style.opacity = '0.5';
+                currentIcon.title = 'Définir comme template par défaut';
                 currentIcon.style.pointerEvents = 'auto';
             }
             showErrorMessage(response.data?.message || 'Erreur lors de la modification du statut par défaut');
