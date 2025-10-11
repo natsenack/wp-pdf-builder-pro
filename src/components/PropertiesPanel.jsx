@@ -810,6 +810,7 @@ const PropertiesPanel = React.memo(({
                     max="180"
                     value={localProperties.rotation || 0}
                     onChange={(e) => handlePropertyChange(selectedElement.id, 'rotation', parseInt(e.target.value))}
+                    onDoubleClick={() => handlePropertyChange(selectedElement.id, 'rotation', 0)}
                     className="slider"
                   />
                   <span className="slider-value">{localProperties.rotation || 0}°</span>
@@ -825,6 +826,7 @@ const PropertiesPanel = React.memo(({
                     max="200"
                     value={localProperties.scale || 100}
                     onChange={(e) => handlePropertyChange(selectedElement.id, 'scale', parseInt(e.target.value))}
+                    onDoubleClick={() => handlePropertyChange(selectedElement.id, 'scale', 100)}
                     className="slider"
                   />
                   <span className="slider-value">{localProperties.scale || 100}%</span>
@@ -955,7 +957,7 @@ const PropertiesPanel = React.memo(({
               </div>
             )}
 
-            {selectedElement.type === 'image' && (
+            {selectedElement.type === 'logo' && (
               <div className="properties-group">
                 <h4>[Img] Image</h4>
 

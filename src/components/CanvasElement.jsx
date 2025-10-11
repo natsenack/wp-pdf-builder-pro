@@ -170,14 +170,18 @@ export const CanvasElement = ({
           // Pour les éléments spéciaux, utiliser une gestion différente des bordures
           ...(isSpecialElement(element.type) ? getSpecialElementBorderStyle(element) : {
             // Styles de base communs à tous les éléments non-spéciaux
-            backgroundColor: element.backgroundColor || 'transparent',
+            backgroundColor: element.backgroundOpacity && element.backgroundColor && element.backgroundColor !== 'transparent' ? 
+              element.backgroundColor + Math.round(element.backgroundOpacity * 255).toString(16).padStart(2, '0') : 
+              (element.backgroundColor || 'transparent'),
             border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || 'transparent'}` : 'none',
           }),
           borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0px',
           opacity: (element.opacity || 100) / 100,
           transform: `rotate(${element.rotation || 0}deg) scale(${element.scale || 100}%)`,
           filter: `brightness(${element.brightness || 100}%) contrast(${element.contrast || 100}%) saturate(${element.saturate || 100}%)`,
-          boxShadow: element.shadow ? `${element.shadowOffsetX || 2}px ${element.shadowOffsetY || 2}px 4px ${element.shadowColor || '#000000'}40` : 'none',
+          boxShadow: element.boxShadowColor ? 
+            `0px ${element.boxShadowSpread || 0}px ${element.boxShadowBlur || 0}px ${element.boxShadowColor}` : 
+            (element.shadow ? `${element.shadowOffsetX || 2}px ${element.shadowOffsetY || 2}px 4px ${element.shadowColor || '#000000'}40` : 'none'),
 
           // Styles spécifiques selon le type d'élément (mais utilisant les propriétés génériques)
           ...(element.type === 'text' ? {

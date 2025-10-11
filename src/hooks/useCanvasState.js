@@ -153,7 +153,7 @@ export const useCanvasState = ({
         borderColor: 'transparent',
         borderWidth: 0,
         borderRadius: 4,
-        color: '#333333',
+        color: '#000000',
         fontSize: 14,
         fontFamily: 'Arial, sans-serif',
         padding: 8

@@ -286,6 +286,11 @@
   text-align: left;
 }
 
+.properties-section {
+  margin-bottom: 24px;
+  text-align: left;
+}
+
 .properties-group h4 {
   margin: 0 0 12px 0;
   font-size: 14px;
