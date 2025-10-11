@@ -86,12 +86,6 @@ class PDF_Builder_Admin_New {
         add_action('wp_ajax_pdf_builder_view_logs', [$this, 'ajax_view_logs']);
         add_action('wp_ajax_pdf_builder_clear_logs', [$this, 'ajax_clear_logs']);
 
-        // Action de test nonce - DIAGNOSTIC
-        add_action('wp_ajax_pdf_builder_test_nonce', [$this, 'ajax_test_nonce']);
-
-        // Diagnostic action
-        add_action('wp_ajax_pdf_builder_diagnose_template', [$this, 'ajax_diagnose_template']);
-
         // Actions de gestion des rôles
         add_action('wp_ajax_pdf_builder_reset_role_permissions', [$this, 'ajax_reset_role_permissions']);
         add_action('wp_ajax_pdf_builder_bulk_assign_permissions', [$this, 'ajax_bulk_assign_permissions']);
@@ -2145,36 +2139,6 @@ class PDF_Builder_Admin_New {
     }
 
     /**
-     * AJAX handler for template diagnosis
-     */
-    public function ajax_diagnose_template() {
-        // Vérifier le nonce
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_maintenance')) {
-            wp_send_json_error(['message' => __('Nonce invalide.', 'pdf-builder-pro')]);
-            return;
-        }
-
-        // Vérifier les permissions
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error(['message' => __('Permissions insuffisantes.', 'pdf-builder-pro')]);
-            return;
-        }
-
-        $template_id = intval($_POST['template_id'] ?? 0);
-        if (!$template_id) {
-            wp_send_json_error(['message' => __('ID de template invalide.', 'pdf-builder-pro')]);
-            return;
-        }
-
-        try {
-            $diagnostic_output = $this->diagnose_template_json($template_id);
-            wp_send_json_success(['html' => $diagnostic_output]);
-        } catch (Exception $e) {
-            wp_send_json_error(['message' => $e->getMessage()]);
-        }
-    }
-
-    /**
      * Diagnose template JSON issues
      */
     public function diagnose_template_json($template_id) {
@@ -2255,7 +2219,6 @@ class PDF_Builder_Admin_New {
             $output .= "<p>Template structure appears correct.</p>";
         }
 
-        return $output;
     }
 
     /**
@@ -2422,24 +2385,6 @@ class PDF_Builder_Admin_New {
         } catch (Exception $e) {
             wp_send_json_error('Erreur: ' . $e->getMessage());
         }
-    }
-
-    /**
-     * AJAX - Test du nonce pour diagnostic
-     */
-    public function ajax_test_nonce() {
-        $this->check_admin_permissions();
-
-        // Générer le même nonce que dans enqueue_admin_scripts
-        $test_nonce = wp_create_nonce('pdf_builder_canvas_v4_' . get_current_user_id() . '_cachebust_' . time());
-
-        wp_send_json_success([
-            'message' => 'Test nonce réussi',
-            'generated_nonce' => $test_nonce,
-            'user_id' => get_current_user_id(),
-            'timestamp' => time(),
-            'nonce_action' => 'pdf_builder_canvas_v4_' . get_current_user_id() . '_cachebust_' . time()
-        ]);
     }
 }
 
