@@ -545,7 +545,7 @@ class PDF_Builder_Admin {
         // Variables JavaScript pour AJAX
         wp_localize_script('pdf-builder-admin', 'pdfBuilderAjax', [
             'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_nonce_' . session_id()),
+            'nonce' => wp_create_nonce('pdf_builder_nonce_' . get_current_user_id()),
             'strings' => [
                 'loading' => __('Chargement...', 'pdf-builder-pro'),
                 'error' => __('Erreur', 'pdf-builder-pro'),
@@ -2310,28 +2310,28 @@ class PDF_Builder_Admin {
     public function ajax_load_canvas_elements() {
         // Debug temporaire
         $received_nonce = $_POST['nonce'] ?? '';
-        $session_id = session_id();
-        $expected_action_1 = 'pdf_builder_nonce_' . $session_id;
+        $user_id = get_current_user_id();
+        $expected_action_1 = 'pdf_builder_nonce_' . $user_id;
         $expected_action_2 = 'pdf_builder_nonce';
 
         error_log("DEBUG Nonce - Reçu: $received_nonce");
-        error_log("DEBUG Session ID: $session_id");
-        error_log("DEBUG Action 1 (avec session): $expected_action_1");
-        error_log("DEBUG Action 2 (sans session): $expected_action_2");
+        error_log("DEBUG User ID: $user_id");
+        error_log("DEBUG Action 1 (avec user_id): $expected_action_1");
+        error_log("DEBUG Action 2 (sans user_id): $expected_action_2");
 
         $test1 = wp_verify_nonce($received_nonce, $expected_action_1);
         $test2 = wp_verify_nonce($received_nonce, $expected_action_2);
 
-        error_log("DEBUG Test 1 (avec session): " . ($test1 ? 'VALID' : 'INVALID'));
-        error_log("DEBUG Test 2 (sans session): " . ($test2 ? 'VALID' : 'INVALID'));
+        error_log("DEBUG Test 1 (avec user_id): " . ($test1 ? 'VALID' : 'INVALID'));
+        error_log("DEBUG Test 2 (sans user_id): " . ($test2 ? 'VALID' : 'INVALID'));
 
-        // Vérification de sécurité - essayer d'abord avec session_id, puis sans
+        // Vérification de sécurité - essayer d'abord avec user_id, puis sans
         $nonce_valid = false;
 
-        // Essayer avec session_id d'abord
-        if (wp_verify_nonce($received_nonce, 'pdf_builder_nonce_' . session_id())) {
+        // Essayer avec user_id d'abord
+        if (wp_verify_nonce($received_nonce, 'pdf_builder_nonce_' . get_current_user_id())) {
             $nonce_valid = true;
-            error_log("DEBUG - Validation réussie avec session_id");
+            error_log("DEBUG - Validation réussie avec user_id");
         }
         // Essayer avec l'ancien format pour la compatibilité
         elseif (wp_verify_nonce($received_nonce, 'pdf_builder_nonce')) {
