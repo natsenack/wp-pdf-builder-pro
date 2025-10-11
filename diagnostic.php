@@ -40,8 +40,8 @@ if (isset($_GET['run']) && $_GET['run'] === '1') {
                     echo "❌ Modifications _cachebust_ ABSENTES\n";
                 }
 
-                if (strpos($content, 'wp_create_nonce(\'pdf_builder_canvas_v3_') !== false) {
-                    echo "✅ Nouveau nonce trouvé\n";
+                if (strpos($content, 'wp_create_nonce(\'pdf_builder_canvas_v4_') !== false) {
+                    echo "✅ Nouveau nonce trouvé (v4)\n";
                 } else {
                     echo "❌ Nouveau nonce ABSENT\n";
                 }
