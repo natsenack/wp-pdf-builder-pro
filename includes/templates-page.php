@@ -66,28 +66,28 @@ if (!defined('ABSPATH')) {
                     
                     // Déterminer l'icône basée sur le nom du template
                     $icon = '[DOC]'; // Default
-                    $description = 'Template personnalisé';
+                    $description = 'Template PDF personnalisable';
                     $features = ['✓ Contenu personnalisable', '✓ Mise en page flexible', '✓ Éléments dynamiques', '✓ Export PDF'];
                     
                     if (stripos($template_name, 'facture') !== false) {
                         $icon = '[FACT]';
-                        $description = 'Template professionnel et élégant';
+                        $description = 'Pour créer des factures professionnelles';
                         $features = ['✓ En-tête société', '✓ Informations client', '✓ Tableau des articles', '✓ Totaux & TVA'];
                     } elseif (stripos($template_name, 'devis') !== false) {
                         $icon = '[DEV]';
-                        $description = 'Template professionnel et élégant';
+                        $description = 'Pour établir des devis détaillés';
                         $features = ['✓ Présentation entreprise', '✓ Détails du projet', '✓ Conditions & validité', '✓ Signature numérique'];
                     } elseif (stripos($template_name, 'commande') !== false) {
                         $icon = '[CMD]';
-                        $description = 'Template professionnel et élégant';
+                        $description = 'Pour gérer les bons de commande';
                         $features = ['✓ Numéro de commande', '✓ Liste des produits', '✓ Modalités de paiement', '✓ Conditions générales'];
                     } elseif (stripos($template_name, 'contrat') !== false) {
                         $icon = '[CTR]';
-                        $description = 'Template professionnel et élégant';
+                        $description = 'Pour rédiger des contrats officiels';
                         $features = ['✓ Parties contractantes', '✓ Objet du contrat', '✓ Conditions & obligations', '✓ Clauses légales'];
                     } elseif (stripos($template_name, 'newsletter') !== false) {
                         $icon = '[NEWS]';
-                        $description = 'Template professionnel et élégant';
+                        $description = 'Pour créer des bulletins d\'information';
                         $features = ['✓ En-tête accrocheur', '✓ Sections d\'articles', '✓ Call-to-action', '✓ Pied de page'];
                     }
                     
