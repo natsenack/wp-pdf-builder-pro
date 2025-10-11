@@ -545,7 +545,7 @@ class PDF_Builder_Admin {
         // Variables JavaScript pour AJAX
         wp_localize_script('pdf-builder-admin', 'pdfBuilderAjax', [
             'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_nonce'),
+            'nonce' => wp_create_nonce('pdf_builder_nonce_' . session_id()),
             'strings' => [
                 'loading' => __('Chargement...', 'pdf-builder-pro'),
                 'error' => __('Erreur', 'pdf-builder-pro'),
@@ -2316,8 +2316,20 @@ class PDF_Builder_Admin {
         error_log('PDF Builder Debug - Nonce reçu: ' . $received_nonce);
         error_log('PDF Builder Debug - Action: pdf_builder_load_canvas_elements');
 
-        // Vérification de sécurité
-        if (!wp_verify_nonce($received_nonce, 'pdf_builder_nonce')) {
+        // Vérification de sécurité - essayer d'abord avec session_id, puis sans
+        $nonce_valid = false;
+        $received_nonce = $_POST['nonce'] ?? '';
+
+        // Essayer avec session_id d'abord
+        if (wp_verify_nonce($received_nonce, 'pdf_builder_nonce_' . session_id())) {
+            $nonce_valid = true;
+        }
+        // Essayer avec l'ancien format pour la compatibilité
+        elseif (wp_verify_nonce($received_nonce, 'pdf_builder_nonce')) {
+            $nonce_valid = true;
+        }
+
+        if (!$nonce_valid) {
             error_log('PDF Builder Debug - Nonce invalide - Reçu: ' . $received_nonce);
 
             // Retourner des informations de débogage dans la réponse
@@ -2325,7 +2337,8 @@ class PDF_Builder_Admin {
                 'message' => 'Nonce invalide',
                 'debug' => [
                     'received_nonce' => $received_nonce,
-                    'expected_action' => 'pdf_builder_nonce',
+                    'expected_actions' => ['pdf_builder_nonce_' . session_id(), 'pdf_builder_nonce'],
+                    'session_id' => session_id(),
                     'user_logged_in' => is_user_logged_in(),
                     'current_user_id' => get_current_user_id()
                 ]
