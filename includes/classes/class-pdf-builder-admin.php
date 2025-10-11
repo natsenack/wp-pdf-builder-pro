@@ -75,6 +75,7 @@ class PDF_Builder_Admin {
         add_action('wp_ajax_pdf_builder_update_template_params', [$this, 'ajax_update_template_params']);
         add_action('wp_ajax_pdf_builder_get_authors', [$this, 'ajax_get_authors']);
         add_action('wp_ajax_pdf_builder_flush_rest_cache', [$this, 'ajax_flush_rest_cache']);
+        add_action('wp_ajax_pdf_builder_save_settings', [$this, 'ajax_save_settings_page']);
 
         // Actions de maintenance
         add_action('wp_ajax_pdf_builder_check_database', [$this, 'ajax_check_database']);
@@ -2302,6 +2303,57 @@ class PDF_Builder_Admin {
         update_option('pdf_builder_settings', $sanitized_settings);
 
         wp_send_json_success('Paramètres sauvegardés avec succès');
+    }
+
+    /**
+     * AJAX - Sauvegarder les paramètres de la page des paramètres
+     */
+    public function ajax_save_settings_page() {
+        // Vérification de sécurité
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_settings')) {
+            wp_send_json_error(['message' => 'Nonce invalide']);
+            return;
+        }
+
+        // Vérification des permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => 'Permissions insuffisantes']);
+            return;
+        }
+
+        // Récupération des paramètres depuis le formulaire
+        $settings = [];
+
+        // Paramètres de debug et performance
+        $settings['debug_mode'] = isset($_POST['debug_mode']);
+        $settings['cache_enabled'] = isset($_POST['cache_enabled']);
+        $settings['cache_ttl'] = intval($_POST['cache_ttl'] ?? 3600);
+        $settings['max_execution_time'] = intval($_POST['max_execution_time'] ?? 300);
+        $settings['memory_limit'] = sanitize_text_field($_POST['memory_limit'] ?? '256M');
+        $settings['pdf_quality'] = sanitize_text_field($_POST['pdf_quality'] ?? 'high');
+
+        // Paramètres de format
+        $settings['default_format'] = sanitize_text_field($_POST['default_format'] ?? 'A4');
+        $settings['default_orientation'] = sanitize_text_field($_POST['default_orientation'] ?? 'portrait');
+
+        // Paramètres des bordures du canvas
+        $settings['canvas_element_borders_enabled'] = isset($_POST['canvas_element_borders_enabled']);
+        $settings['canvas_border_width'] = intval($_POST['canvas_border_width'] ?? 1);
+        $settings['canvas_border_color'] = sanitize_hex_color($_POST['canvas_border_color'] ?? '#007cba');
+        $settings['canvas_border_spacing'] = intval($_POST['canvas_border_spacing'] ?? 2);
+        $settings['canvas_resize_handles_enabled'] = isset($_POST['canvas_resize_handles_enabled']);
+        $settings['canvas_handle_size'] = intval($_POST['canvas_handle_size'] ?? 8);
+        $settings['canvas_handle_color'] = sanitize_hex_color($_POST['canvas_handle_color'] ?? '#007cba');
+        $settings['canvas_handle_hover_color'] = sanitize_hex_color($_POST['canvas_handle_hover_color'] ?? '#005a87');
+
+        // Paramètres de notifications
+        $settings['email_notifications_enabled'] = isset($_POST['email_notifications_enabled']);
+        $settings['notification_events'] = isset($_POST['notification_events']) ? (array) $_POST['notification_events'] : [];
+
+        // Sauvegarde des paramètres
+        update_option('pdf_builder_settings', $settings);
+
+        wp_send_json_success(['message' => 'Paramètres sauvegardés avec succès !']);
     }
 
     /**
