@@ -643,59 +643,6 @@ const PropertiesPanel = React.memo(({
       case 'layout':
         return (
           <div className="tab-content">
-            {/* Contrôles d'alignement rapide */}
-            <div className="properties-group">
-              <h4>🎯 Alignement Rapide</h4>
-              <div className="alignment-controls">
-                <div className="alignment-row">
-                  <button
-                    className="align-btn"
-                    onClick={() => handlePropertyChange(selectedElement.id, 'x', 0)}
-                    title="Aligner à gauche"
-                  >
-                    ⬅️ Gauche
-                  </button>
-                  <button
-                    className="align-btn"
-                    onClick={() => handlePropertyChange(selectedElement.id, 'x', 210)}
-                    title="Centrer horizontalement"
-                  >
-                    ⬌ Centre
-                  </button>
-                  <button
-                    className="align-btn"
-                    onClick={() => handlePropertyChange(selectedElement.id, 'x', 420)}
-                    title="Aligner à droite"
-                  >
-                    ➡️ Droite
-                  </button>
-                </div>
-                <div className="alignment-row">
-                  <button
-                    className="align-btn"
-                    onClick={() => handlePropertyChange(selectedElement.id, 'y', 0)}
-                    title="Aligner en haut"
-                  >
-                    ⬆️ Haut
-                  </button>
-                  <button
-                    className="align-btn"
-                    onClick={() => handlePropertyChange(selectedElement.id, 'y', 148)}
-                    title="Centrer verticalement"
-                  >
-                    ⬍ Centre
-                  </button>
-                  <button
-                    className="align-btn"
-                    onClick={() => handlePropertyChange(selectedElement.id, 'y', 297)}
-                    title="Aligner en bas"
-                  >
-                    ⬇️ Bas
-                  </button>
-                </div>
-              </div>
-            </div>
-
             {/* Position précise */}
             <div className="properties-group">
               <h4>📍 Position Précise</h4>
@@ -814,22 +761,6 @@ const PropertiesPanel = React.memo(({
                     className="slider"
                   />
                   <span className="slider-value">{localProperties.rotation || 0}°</span>
-                </div>
-              </div>
-
-              <div className="property-row">
-                <label>Échelle:</label>
-                <div className="slider-container">
-                  <input
-                    type="range"
-                    min="10"
-                    max="200"
-                    value={localProperties.scale || 100}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'scale', parseInt(e.target.value))}
-                    onDoubleClick={() => handlePropertyChange(selectedElement.id, 'scale', 100)}
-                    className="slider"
-                  />
-                  <span className="slider-value">{localProperties.scale || 100}%</span>
                 </div>
               </div>
 
