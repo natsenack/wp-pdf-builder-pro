@@ -2250,6 +2250,22 @@ class PDF_Builder_Admin {
                         $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, $this->generate_order_products_table($order));
                         break;
 
+                    case 'customer_info':
+                        $html .= sprintf('<div class="pdf-element customer-info" style="%s">%s</div>', $style, $this->generate_customer_info_html($order, $element));
+                        break;
+
+                    case 'company_info':
+                        $html .= sprintf('<div class="pdf-element company-info" style="%s">%s</div>', $style, $this->generate_company_info_html($element));
+                        break;
+
+                    case 'order_number':
+                        $html .= sprintf('<div class="pdf-element order-number" style="%s">%s</div>', $style, $this->generate_order_number_html($order, $element));
+                        break;
+
+                    case 'document_type':
+                        $html .= sprintf('<div class="pdf-element document-type" style="%s">%s</div>', $style, $this->generate_document_type_html($element));
+                        break;
+
                     default:
                         $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: $element['type']));
                         break;
@@ -2463,6 +2479,217 @@ class PDF_Builder_Admin {
         }
 
         $html .= '</tbody></table>';
+        return $html;
+    }
+
+    /**
+     * Génère le HTML pour les informations client
+     */
+    private function generate_customer_info_html($order, $element) {
+        $fields = isset($element['fields']) ? $element['fields'] : ['name', 'email', 'phone', 'address', 'company', 'vat'];
+        $layout = isset($element['layout']) ? $element['layout'] : 'vertical';
+        $showLabels = isset($element['showLabels']) ? $element['showLabels'] : true;
+        $labelStyle = isset($element['labelStyle']) ? $element['labelStyle'] : 'bold';
+        $spacing = isset($element['spacing']) ? $element['spacing'] : 8;
+        $color = isset($element['color']) ? $element['color'] : '#333';
+
+        $html = '<div style="display: flex; flex-direction: ' . ($layout === 'horizontal' ? 'row' : 'column') . '; gap: ' . $spacing . 'px; height: 100%; color: ' . $color . ';">';
+
+        // Nom
+        if (in_array('name', $fields)) {
+            $html .= '<div style="display: flex; flex-direction: ' . ($layout === 'horizontal' ? 'column' : 'row') . '; align-items: ' . ($layout === 'horizontal' ? 'flex-start' : 'center') . '; gap: 4px; ' . ($layout === 'horizontal' ? 'flex: 1;' : '') . '">';
+            if ($showLabels) {
+                $labelWeight = $labelStyle === 'bold' ? 'bold' : 'normal';
+                $textTransform = $labelStyle === 'uppercase' ? 'uppercase' : 'none';
+                $html .= '<div style="font-weight: ' . $labelWeight . '; text-transform: ' . $textTransform . '; color: #666; ' . ($layout === 'horizontal' ? '' : 'min-width: 80px;') . ' font-size: 11px;">Nom :</div>';
+            }
+            $customerName = trim($order->get_billing_first_name() . ' ' . $order->get_billing_last_name());
+            $html .= '<div style="font-weight: bold;">' . esc_html($customerName ?: 'Jean Dupont') . '</div>';
+            $html .= '</div>';
+        }
+
+        // Email
+        if (in_array('email', $fields)) {
+            $html .= '<div style="display: flex; flex-direction: ' . ($layout === 'horizontal' ? 'column' : 'row') . '; align-items: ' . ($layout === 'horizontal' ? 'flex-start' : 'center') . '; gap: 4px; ' . ($layout === 'horizontal' ? 'flex: 1;' : '') . '">';
+            if ($showLabels) {
+                $labelWeight = $labelStyle === 'bold' ? 'bold' : 'normal';
+                $textTransform = $labelStyle === 'uppercase' ? 'uppercase' : 'none';
+                $html .= '<div style="font-weight: ' . $labelWeight . '; text-transform: ' . $textTransform . '; color: #666; ' . ($layout === 'horizontal' ? '' : 'min-width: 80px;') . ' font-size: 11px;">Email :</div>';
+            }
+            $email = $order->get_billing_email();
+            $html .= '<div style="color: #1976d2;">' . esc_html($email ?: 'jean.dupont@email.com') . '</div>';
+            $html .= '</div>';
+        }
+
+        // Téléphone
+        if (in_array('phone', $fields)) {
+            $html .= '<div style="display: flex; flex-direction: ' . ($layout === 'horizontal' ? 'column' : 'row') . '; align-items: ' . ($layout === 'horizontal' ? 'flex-start' : 'center') . '; gap: 4px; ' . ($layout === 'horizontal' ? 'flex: 1;' : '') . '">';
+            if ($showLabels) {
+                $labelWeight = $labelStyle === 'bold' ? 'bold' : 'normal';
+                $textTransform = $labelStyle === 'uppercase' ? 'uppercase' : 'none';
+                $html .= '<div style="font-weight: ' . $labelWeight . '; text-transform: ' . $textTransform . '; color: #666; ' . ($layout === 'horizontal' ? '' : 'min-width: 80px;') . ' font-size: 11px;">Téléphone :</div>';
+            }
+            $phone = $order->get_billing_phone();
+            $html .= '<div>' . esc_html($phone ?: '+33 6 12 34 56 78') . '</div>';
+            $html .= '</div>';
+        }
+
+        // Adresse
+        if (in_array('address', $fields)) {
+            $html .= '<div style="display: flex; flex-direction: ' . ($layout === 'horizontal' ? 'column' : 'row') . '; align-items: ' . ($layout === 'horizontal' ? 'flex-start' : 'center') . '; gap: 4px; ' . ($layout === 'horizontal' ? 'flex: 1;' : '') . '">';
+            if ($showLabels) {
+                $labelWeight = $labelStyle === 'bold' ? 'bold' : 'normal';
+                $textTransform = $labelStyle === 'uppercase' ? 'uppercase' : 'none';
+                $html .= '<div style="font-weight: ' . $labelWeight . '; text-transform: ' . $textTransform . '; color: #666; ' . ($layout === 'horizontal' ? '' : 'min-width: 80px;') . ' font-size: 11px;">Adresse :</div>';
+            }
+            $address = $order->get_formatted_billing_address();
+            if (empty($address)) {
+                $address = "123 Rue de la Paix\n75001 Paris\nFrance";
+            }
+            $html .= '<div style="line-height: 1.4;">' . nl2br(esc_html($address)) . '</div>';
+            $html .= '</div>';
+        }
+
+        // Société
+        if (in_array('company', $fields)) {
+            $html .= '<div style="display: flex; flex-direction: ' . ($layout === 'horizontal' ? 'column' : 'row') . '; align-items: ' . ($layout === 'horizontal' ? 'flex-start' : 'center') . '; gap: 4px; ' . ($layout === 'horizontal' ? 'flex: 1;' : '') . '">';
+            if ($showLabels) {
+                $labelWeight = $labelStyle === 'bold' ? 'bold' : 'normal';
+                $textTransform = $labelStyle === 'uppercase' ? 'uppercase' : 'none';
+                $html .= '<div style="font-weight: ' . $labelWeight . '; text-transform: ' . $textTransform . '; color: #666; ' . ($layout === 'horizontal' ? '' : 'min-width: 80px;') . ' font-size: 11px;">Société :</div>';
+            }
+            $company = $order->get_billing_company();
+            $html .= '<div style="font-weight: bold;">' . esc_html($company ?: 'ABC Company SARL') . '</div>';
+            $html .= '</div>';
+        }
+
+        // TVA
+        if (in_array('vat', $fields)) {
+            $html .= '<div style="display: flex; flex-direction: ' . ($layout === 'horizontal' ? 'column' : 'row') . '; align-items: ' . ($layout === 'horizontal' ? 'flex-start' : 'center') . '; gap: 4px; ' . ($layout === 'horizontal' ? 'flex: 1;' : '') . '">';
+            if ($showLabels) {
+                $labelWeight = $labelStyle === 'bold' ? 'bold' : 'normal';
+                $textTransform = $labelStyle === 'uppercase' ? 'uppercase' : 'none';
+                $html .= '<div style="font-weight: ' . $labelWeight . '; text-transform: ' . $textTransform . '; color: #666; ' . ($layout === 'horizontal' ? '' : 'min-width: 80px;') . ' font-size: 11px;">N° TVA :</div>';
+            }
+            $html .= '<div>FR 12 345 678 901</div>';
+            $html .= '</div>';
+        }
+
+        $html .= '</div>';
+        return $html;
+    }
+
+    /**
+     * Génère le HTML pour les informations entreprise
+     */
+    private function generate_company_info_html($element) {
+        $fields = isset($element['fields']) ? $element['fields'] : ['name', 'address', 'phone', 'email', 'website'];
+        $color = isset($element['color']) ? $element['color'] : '#333';
+        $fontSize = isset($element['fontSize']) ? $element['fontSize'] : 12;
+
+        $html = '<div style="display: flex; flex-direction: column; justify-content: center; height: 100%; color: ' . $color . '; font-size: ' . $fontSize . 'px; line-height: 1.4;">';
+
+        // Nom de l'entreprise
+        if (in_array('name', $fields)) {
+            $html .= '<div style="font-weight: bold; margin-bottom: 2px;">Ma Société SARL</div>';
+        }
+
+        // Adresse
+        if (in_array('address', $fields)) {
+            $html .= '<div style="margin-bottom: 2px;">123 Rue de l\'Entreprise<br />75001 Paris<br />France</div>';
+        }
+
+        // Téléphone
+        if (in_array('phone', $fields)) {
+            $html .= '<div style="margin-bottom: 2px;">Tél: +33 1 23 45 67 89</div>';
+        }
+
+        // Email
+        if (in_array('email', $fields)) {
+            $html .= '<div style="margin-bottom: 2px;">contact@masociete.com</div>';
+        }
+
+        // Site web
+        if (in_array('website', $fields)) {
+            $html .= '<div style="margin-bottom: 2px;">www.masociete.com</div>';
+        }
+
+        $html .= '</div>';
+        return $html;
+    }
+
+    /**
+     * Génère le HTML pour le numéro de commande
+     */
+    private function generate_order_number_html($order, $element) {
+        $format = isset($element['format']) ? $element['format'] : 'Commande #{order_number} - {order_date}';
+        $showLabel = isset($element['showLabel']) ? $element['showLabel'] : true;
+        $labelText = isset($element['labelText']) ? $element['labelText'] : 'N° de commande:';
+        $color = isset($element['color']) ? $element['color'] : '#333333';
+        $fontSize = isset($element['fontSize']) ? $element['fontSize'] : 14;
+        $fontWeight = isset($element['fontWeight']) ? $element['fontWeight'] : 'bold';
+        $textAlign = isset($element['textAlign']) ? $element['textAlign'] : 'right';
+
+        $html = '<div style="display: flex; flex-direction: column; justify-content: center; align-items: ' . ($textAlign === 'center' ? 'center' : ($textAlign === 'right' ? 'flex-end' : 'flex-start')) . '; height: 100%; color: ' . $color . '; font-size: ' . $fontSize . 'px; font-weight: ' . $fontWeight . '; text-align: ' . $textAlign . ';">';
+
+        if ($showLabel) {
+            $html .= '<div style="font-size: 12px; font-weight: normal; color: #666; margin-bottom: 4px;">' . esc_html($labelText) . '</div>';
+        }
+
+        // Remplacer les variables
+        $orderNumber = $order->get_order_number();
+        $orderDate = $order->get_date_created() ? $order->get_date_created()->date('d/m/Y') : date('d/m/Y');
+
+        $formattedText = str_replace(
+            ['{order_number}', '{order_date}'],
+            [$orderNumber, $orderDate],
+            $format
+        );
+
+        $html .= '<div>' . esc_html($formattedText) . '</div>';
+        $html .= '</div>';
+
+        return $html;
+    }
+
+    /**
+     * Génère le HTML pour le type de document
+     */
+    private function generate_document_type_html($element) {
+        $documentType = isset($element['documentType']) ? $element['documentType'] : 'invoice';
+        $color = isset($element['color']) ? $element['color'] : '#1e293b';
+        $fontSize = isset($element['fontSize']) ? $element['fontSize'] : 18;
+        $fontWeight = isset($element['fontWeight']) ? $element['fontWeight'] : 'bold';
+        $textAlign = isset($element['textAlign']) ? $element['textAlign'] : 'center';
+        $showBorder = isset($element['showBorder']) ? $element['showBorder'] : false;
+        $backgroundColor = isset($element['backgroundColor']) ? $element['backgroundColor'] : 'transparent';
+
+        $borderStyle = $showBorder ? 'border: 2px solid #e2e8f0; border-radius: 4px; ' : '';
+
+        $html = '<div style="display: inline-block; padding: 8px; font-size: ' . $fontSize . 'px; font-weight: ' . $fontWeight . '; color: ' . $color . '; text-align: ' . $textAlign . '; background-color: ' . $backgroundColor . '; ' . $borderStyle . ' white-space: nowrap;">';
+
+        switch ($documentType) {
+            case 'invoice':
+                $html .= 'FACTURE';
+                break;
+            case 'quote':
+                $html .= 'DEVIS';
+                break;
+            case 'receipt':
+                $html .= 'REÇU';
+                break;
+            case 'order':
+                $html .= 'COMMANDE';
+                break;
+            case 'credit_note':
+                $html .= 'AVOIR';
+                break;
+            default:
+                $html .= 'DOCUMENT';
+                break;
+        }
+
+        $html .= '</div>';
         return $html;
     }
 
