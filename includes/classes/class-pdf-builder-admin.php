@@ -840,6 +840,7 @@ class PDF_Builder_Admin {
             'canvas_element_borders_enabled' => get_option('canvas_element_borders_enabled', true),
             'canvas_border_width' => get_option('canvas_border_width', 1),
             'canvas_border_color' => get_option('canvas_border_color', '#007cba'),
+            'canvas_border_spacing' => get_option('canvas_border_spacing', 2),
             'canvas_resize_handles_enabled' => get_option('canvas_resize_handles_enabled', true),
             'canvas_handle_size' => get_option('canvas_handle_size', 8),
             'canvas_handle_color' => get_option('canvas_handle_color', '#007cba'),

@@ -11,6 +11,7 @@ export const useGlobalSettings = () => {
     selectionBorderWidth: 2,
     selectionBorderColor: 'var(--primary-color)',
     selectionShadowOpacity: 0.1,
+    selectionBorderSpacing: 2,
 
     // Paramètres des zones de redimensionnement
     resizeZoneSize: 16,
@@ -42,6 +43,7 @@ export const useGlobalSettings = () => {
         resizeHandleBorderColor: wpSettings.canvas_handle_hover_color || prev.resizeHandleBorderColor,
         selectionBorderWidth: wpSettings.canvas_border_width || prev.selectionBorderWidth,
         selectionBorderColor: wpSettings.canvas_border_color || prev.selectionBorderColor,
+        selectionBorderSpacing: wpSettings.canvas_border_spacing || prev.selectionBorderSpacing,
         showResizeHandles: wpSettings.canvas_resize_handles_enabled !== undefined ? wpSettings.canvas_resize_handles_enabled : prev.showResizeHandles,
         showResizeZones: wpSettings.canvas_element_borders_enabled !== undefined ? wpSettings.canvas_element_borders_enabled : prev.showResizeZones
       }));
@@ -71,6 +73,7 @@ export const useGlobalSettings = () => {
     // Appliquer les paramètres des bordures de sélection
     root.style.setProperty('--selection-border-width', `${settings.selectionBorderWidth}px`);
     root.style.setProperty('--selection-border-color', settings.selectionBorderColor);
+    root.style.setProperty('--selection-border-spacing', `${settings.selectionBorderSpacing}px`);
     root.style.setProperty('--selection-shadow-opacity', settings.selectionShadowOpacity);
 
     // Appliquer les paramètres des zones de redimensionnement
@@ -100,6 +103,7 @@ export const useGlobalSettings = () => {
       resizeHandleBorderColor: '#ffffff',
       selectionBorderWidth: 2,
       selectionBorderColor: 'var(--primary-color)',
+      selectionBorderSpacing: 2,
       selectionShadowOpacity: 0.1,
       resizeZoneSize: 16,
       resizeZoneOpacity: 0.1,

@@ -52,6 +52,7 @@ class TempConfig {
             'canvas_element_borders_enabled' => true,
             'canvas_border_width' => 1,
             'canvas_border_color' => '#007cba',
+            'canvas_border_spacing' => 2,
             'canvas_resize_handles_enabled' => true,
             'canvas_handle_size' => 8,
             'canvas_handle_color' => '#007cba',
@@ -94,6 +95,7 @@ if (isset($_POST['pdf_builder_settings_nonce']) && wp_verify_nonce($_POST['pdf_b
         'canvas_element_borders_enabled' => isset($_POST['canvas_element_borders_enabled']),
         'canvas_border_width' => floatval($_POST['canvas_border_width']),
         'canvas_border_color' => sanitize_text_field($_POST['canvas_border_color']),
+        'canvas_border_spacing' => intval($_POST['canvas_border_spacing']),
         'canvas_resize_handles_enabled' => isset($_POST['canvas_resize_handles_enabled']),
         'canvas_handle_size' => intval($_POST['canvas_handle_size']),
         'canvas_handle_color' => sanitize_text_field($_POST['canvas_handle_color']),
@@ -662,6 +664,13 @@ window.addEventListener('load', function() {
                         <td>
                             <input type="color" name="canvas_border_color" value="<?php echo esc_attr($config->get('canvas_border_color')); ?>">
                             <span class="description"><?php _e('Couleur des bordures des éléments', 'pdf-builder-pro'); ?></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php _e('Écart des Bordures', 'pdf-builder-pro'); ?></th>
+                        <td>
+                            <input type="number" name="canvas_border_spacing" value="<?php echo $config->get('canvas_border_spacing'); ?>" class="small-text" min="0" max="20" step="1">
+                            <span class="description"><?php _e('Espacement autour des bordures en pixels (0 à 20)', 'pdf-builder-pro'); ?></span>
                         </td>
                     </tr>
                     <tr>

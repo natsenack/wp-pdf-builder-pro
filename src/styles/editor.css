@@ -938,8 +938,8 @@
 
 .canvas-element.selected {
   outline: var(--selection-border-width, 2px) solid var(--selection-border-color, var(--primary-color));
-  outline-offset: calc(1px + var(--element-border-width, 0px));
-  box-shadow: 0 0 0 1px white, 0 0 0 calc(var(--selection-border-width, 2px) * 2 + var(--element-border-width, 0px)) rgba(37, 99, 235, var(--selection-shadow-opacity, 0.1));
+  outline-offset: var(--selection-border-spacing, 2px);
+  box-shadow: 0 0 0 1px white, 0 0 0 calc(var(--selection-border-width, 2px) * 2 + var(--selection-border-spacing, 2px)) rgba(37, 99, 235, var(--selection-shadow-opacity, 0.1));
   border-radius: 4px;
   position: relative;
   --element-border-width: var(--selection-border-width, 2px);
