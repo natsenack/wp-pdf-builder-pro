@@ -82,10 +82,6 @@ export const useCanvasState = ({
         setIsLoading(false)
         return
       }
-
-      // TEST: Forcer un nonce valide pour contourner le cache OPcache
-      const testNonce = 'test_nonce_123'
-      console.log('TEST NONCE: Utilisation du nonce de test:', testNonce)
       
       // Faire un appel AJAX pour charger les éléments du template
       fetch(pdfBuilderAjax.ajaxurl, {
@@ -96,7 +92,7 @@ export const useCanvasState = ({
         body: new URLSearchParams({
           action: "pdf_builder_load_canvas_elements",
           template_id: templateId,
-          nonce: testNonce // Utiliser le nonce de test
+          nonce: pdfBuilderAjax.nonce // Utiliser le nonce de test
         })
       })
       .then(response => response.json())
