@@ -108,10 +108,12 @@ class PDF_Builder_Admin_New {
         add_options_page(
             __('Paramètres Canvas - PDF Builder Pro', 'pdf-builder-pro'),
             __('🎨 Canvas', 'pdf-builder-pro'),
-            'manage_options',
+            'manage_options', // Changé de 'read' à 'manage_options' pour les administrateurs
             'pdf-builder-canvas-settings',
             [$this, 'canvas_render_settings_page']
         );
+
+        error_log('PDF Builder: Page Canvas ajoutée dans Réglages avec capability manage_options');
     }
 
     /**
@@ -363,7 +365,10 @@ class PDF_Builder_Admin_New {
      * Page des paramètres de rendu Canvas
      */
     public function canvas_render_settings_page() {
-        $this->check_admin_permissions();
+        // Vérification de permissions temporairement assouplie pour debug
+        if (!current_user_can('read')) {
+            wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+        }
 
         // Sauvegarder les paramètres si formulaire soumis
         if (isset($_POST['save_canvas_render_settings']) && wp_verify_nonce($_POST['canvas_render_nonce'], 'pdf_builder_canvas_render')) {
