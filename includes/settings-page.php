@@ -82,7 +82,7 @@ $config = new TempConfig();
 /*
 // Le traitement des paramètres est maintenant géré par AJAX via ajax_save_settings()
 // Code commenté pour référence
-// ...
+// ...*/
 $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 
 if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
@@ -965,7 +965,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </div>
 
-<style>
+</div>
+
+<?php
+// CSS pour la page des paramètres
+echo '<style>
 .pdf-builder-settings {
     margin-top: 20px;
 }
@@ -1047,7 +1051,7 @@ document.addEventListener('DOMContentLoaded', function() {
     padding: 8px 16px;
 }
 
-/* Styles pour l'onglet Rôles */
+/* Styles pour l\'onglet Rôles */
 .roles-management {
     max-width: none;
 }
@@ -1138,7 +1142,8 @@ document.addEventListener('DOMContentLoaded', function() {
 #roles-status {
     margin-top: 15px;
 }
-</style>
+</style>';
+?>
 
 <script type="text/javascript">
 (function($) {
@@ -1648,4 +1653,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 })(jQuery);
 </script>
+<?php
+// Fin du fichier
+?>
 
