@@ -131,11 +131,12 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
         error_log('PDF Builder: Vérification sauvegarde - canvas_border_spacing: ' . $saved_spacing);
 
         if ($isAjax) {
-            // Réponse AJAX
+            // Réponse AJAX - sortir immédiatement
             wp_send_json_success(array(
                 'message' => __('Paramètres sauvegardés avec succès.', 'pdf-builder-pro'),
                 'spacing' => $settings['canvas_border_spacing']
             ));
+            exit; // Important : arrêter l'exécution ici pour les requêtes AJAX
         } else {
             // Réponse normale
             echo '<div class="notice notice-success"><p>' . __('Paramètres sauvegardés avec succès.', 'pdf-builder-pro') . ' (espacement: ' . $settings['canvas_border_spacing'] . ')</p></div>';
@@ -144,6 +145,7 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
         error_log('PDF Builder: Nonce invalide');
         if ($isAjax) {
             wp_send_json_error(__('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro'));
+            exit; // Important : arrêter l'exécution ici pour les requêtes AJAX
         } else {
             echo '<div class="notice notice-error"><p>' . __('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro') . '</p></div>';
         }
@@ -152,9 +154,15 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
     error_log('PDF Builder: Bouton submit cliqué mais pas de nonce');
     if ($isAjax) {
         wp_send_json_error(__('Erreur : nonce manquant.', 'pdf-builder-pro'));
+        exit; // Important : arrêter l'exécution ici pour les requêtes AJAX
     } else {
         echo '<div class="notice notice-error"><p>' . __('Erreur : nonce manquant.', 'pdf-builder-pro') . '</p></div>';
     }
+}
+
+// Si c'est une requête AJAX, ne pas afficher le HTML
+if ($isAjax) {
+    exit; // Sortir immédiatement pour les requêtes AJAX qui n'ont pas de données POST
 }
 ?>
 
