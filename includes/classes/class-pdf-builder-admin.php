@@ -2308,20 +2308,39 @@ class PDF_Builder_Admin {
      * AJAX - Charger les éléments du canvas pour un template
      */
     public function ajax_load_canvas_elements() {
+        // Debug temporaire
+        $received_nonce = $_POST['nonce'] ?? '';
+        $session_id = session_id();
+        $expected_action_1 = 'pdf_builder_nonce_' . $session_id;
+        $expected_action_2 = 'pdf_builder_nonce';
+
+        error_log("DEBUG Nonce - Reçu: $received_nonce");
+        error_log("DEBUG Session ID: $session_id");
+        error_log("DEBUG Action 1 (avec session): $expected_action_1");
+        error_log("DEBUG Action 2 (sans session): $expected_action_2");
+
+        $test1 = wp_verify_nonce($received_nonce, $expected_action_1);
+        $test2 = wp_verify_nonce($received_nonce, $expected_action_2);
+
+        error_log("DEBUG Test 1 (avec session): " . ($test1 ? 'VALID' : 'INVALID'));
+        error_log("DEBUG Test 2 (sans session): " . ($test2 ? 'VALID' : 'INVALID'));
+
         // Vérification de sécurité - essayer d'abord avec session_id, puis sans
         $nonce_valid = false;
-        $received_nonce = $_POST['nonce'] ?? '';
 
         // Essayer avec session_id d'abord
         if (wp_verify_nonce($received_nonce, 'pdf_builder_nonce_' . session_id())) {
             $nonce_valid = true;
+            error_log("DEBUG - Validation réussie avec session_id");
         }
         // Essayer avec l'ancien format pour la compatibilité
         elseif (wp_verify_nonce($received_nonce, 'pdf_builder_nonce')) {
             $nonce_valid = true;
+            error_log("DEBUG - Validation réussie avec ancien format");
         }
 
         if (!$nonce_valid) {
+            error_log("DEBUG - Échec de validation du nonce");
             wp_send_json_error('Nonce invalide');
             return;
         }
