@@ -9,9 +9,10 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Classe d'administration PDF Builder Pro - Version Simplifiée
+ * Classe d'administration PDF Builder Pro - VERSION ANCIENNE COMPLÈTEMENT DÉSACTIVÉE
+ * NE PAS UTILISER - Remplacée par PDF_Builder_Admin_New
  */
-class PDF_Builder_Admin {
+class PDF_Builder_Admin_Old {
 
     /**
      * Instance singleton

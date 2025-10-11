@@ -29,15 +29,20 @@ function pdf_builder_load_core() {
     static $loaded = false;
     if ($loaded) return;
 
+    // IMPORTANT: Ne charger QUE la nouvelle classe pour éviter les conflits
+    // L'ancienne classe PDF_Builder_Admin_Old est complètement désactivée
+
     // Charger la classe principale PDF_Builder_Core
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'includes/classes/PDF_Builder_Core.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'includes/classes/PDF_Builder_Core.php';
     }
 
-    // Charger la classe d'administration
+    // Charger UNIQUEMENT la nouvelle classe d'administration
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'includes/classes/class-pdf-builder-admin-new.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'includes/classes/class-pdf-builder-admin-new.php';
     }
+
+    // NE PAS charger l'ancienne classe class-pdf-builder-admin.php
 
     // Charger les managers essentiels en premier pour éviter les dépendances circulaires
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'includes/managers/PDF_Builder_Cache_Manager.php')) {
