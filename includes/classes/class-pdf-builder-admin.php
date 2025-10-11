@@ -2308,17 +2308,41 @@ class PDF_Builder_Admin {
      * AJAX - Charger les éléments du canvas pour un template
      */
     public function ajax_load_canvas_elements() {
+        // Debug temporaire pour diagnostiquer le problème
+        $received_nonce = $_POST['nonce'] ?? '';
+        $current_user_id = get_current_user_id();
+        $expected_action_user = 'pdf_builder_nonce_' . $current_user_id;
+        $expected_action_general = 'pdf_builder_nonce';
+
+        error_log("=== DIAGNOSTIC NONCE ===");
+        error_log("Nonce reçu: '$received_nonce'");
+        error_log("User ID: $current_user_id");
+        error_log("Action attendue (user): '$expected_action_user'");
+        error_log("Action attendue (general): '$expected_action_general'");
+
+        // Tester les deux validations
+        $user_test = wp_verify_nonce($received_nonce, $expected_action_user);
+        $general_test = wp_verify_nonce($received_nonce, $expected_action_general);
+
+        error_log("Test user-specific: " . ($user_test ? 'VALID' : 'INVALID'));
+        error_log("Test general: " . ($general_test ? 'VALID' : 'INVALID'));
+        error_log("========================");
+
         // Vérification de sécurité - essayer d'abord avec user_id, puis sans
         $nonce_valid = false;
-        $received_nonce = $_POST['nonce'] ?? '';
 
         // Essayer avec user_id d'abord
         if (wp_verify_nonce($received_nonce, 'pdf_builder_nonce_' . get_current_user_id())) {
             $nonce_valid = true;
+            error_log("VALIDATION: Succès avec user_id");
         }
         // Essayer avec l'ancien format pour la compatibilité
         elseif (wp_verify_nonce($received_nonce, 'pdf_builder_nonce')) {
             $nonce_valid = true;
+            error_log("VALIDATION: Succès avec format général");
+        }
+        else {
+            error_log("VALIDATION: Échec complet");
         }
 
         if (!$nonce_valid) {
