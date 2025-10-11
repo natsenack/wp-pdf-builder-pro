@@ -78,91 +78,62 @@ class TempConfig {
 $config = new TempConfig();
 
 // Sauvegarde des paramètres si formulaire soumis
-if (isset($_POST['pdf_builder_settings_nonce']) && wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
-    $settings = [
-        'debug_mode' => isset($_POST['debug_mode']),
-        'cache_enabled' => isset($_POST['cache_enabled']),
-        'cache_ttl' => intval($_POST['cache_ttl']),
-        'max_execution_time' => intval($_POST['max_execution_time']),
-        'memory_limit' => sanitize_text_field($_POST['memory_limit']),
-        'pdf_quality' => sanitize_text_field($_POST['pdf_quality']),
-        'default_format' => sanitize_text_field($_POST['default_format']),
-        'default_orientation' => sanitize_text_field($_POST['default_orientation']),
-        'log_level' => sanitize_text_field($_POST['log_level']),
-        'max_template_size' => intval($_POST['max_template_size']),
-        'email_notifications_enabled' => isset($_POST['email_notifications_enabled']),
-        'notification_events' => isset($_POST['notification_events']) ? array_map('sanitize_text_field', $_POST['notification_events']) : [],
-        'canvas_element_borders_enabled' => isset($_POST['canvas_element_borders_enabled']),
-        'canvas_border_width' => floatval($_POST['canvas_border_width']),
-        'canvas_border_color' => sanitize_text_field($_POST['canvas_border_color']),
-        'canvas_border_spacing' => intval($_POST['canvas_border_spacing']),
-        'canvas_resize_handles_enabled' => isset($_POST['canvas_resize_handles_enabled']),
-        'canvas_handle_size' => intval($_POST['canvas_handle_size']),
-        'canvas_handle_color' => sanitize_text_field($_POST['canvas_handle_color']),
-        'canvas_handle_hover_color' => sanitize_text_field($_POST['canvas_handle_hover_color'])
-    ];
+if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
+    error_log('PDF Builder: Bouton submit cliqué, nonce présent: ' . $_POST['pdf_builder_settings_nonce']);
 
-    $config->set_multiple($settings);
+    if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
+        error_log('PDF Builder: Nonce valide, traitement des paramètres');
 
-    // Sauvegarde individuelle des paramètres canvas pour la compatibilité avec le JavaScript
-    update_option('canvas_element_borders_enabled', $settings['canvas_element_borders_enabled']);
-    update_option('canvas_border_width', $settings['canvas_border_width']);
-    update_option('canvas_border_color', $settings['canvas_border_color']);
-    update_option('canvas_border_spacing', $settings['canvas_border_spacing']);
-    update_option('canvas_resize_handles_enabled', $settings['canvas_resize_handles_enabled']);
-    update_option('canvas_handle_size', $settings['canvas_handle_size']);
-    update_option('canvas_handle_color', $settings['canvas_handle_color']);
-    update_option('canvas_handle_hover_color', $settings['canvas_handle_hover_color']);
-
-    // Sauvegarde des autres paramètres importants
-    update_option('debug_mode', $settings['debug_mode']);
-    update_option('cache_enabled', $settings['cache_enabled']);
-    update_option('cache_ttl', $settings['cache_ttl']);
-    update_option('max_execution_time', $settings['max_execution_time']);
-    update_option('memory_limit', $settings['memory_limit']);
-    update_option('pdf_quality', $settings['pdf_quality']);
-    update_option('default_format', $settings['default_format']);
-    update_option('default_orientation', $settings['default_orientation']);
-    update_option('log_level', $settings['log_level']);
-    update_option('max_template_size', $settings['max_template_size']);
-    update_option('email_notifications_enabled', $settings['email_notifications_enabled']);
-    update_option('notification_events', $settings['notification_events']);
-
-    // Sauvegarde des permissions des rôles
-    if (isset($_POST['role_permissions']) && is_array($_POST['role_permissions'])) {
-        global $wp_roles;
-        $roles = $wp_roles->roles;
-
-        $pdf_permissions = [
-            'manage_pdf_templates',
-            'create_pdf_templates',
-            'edit_pdf_templates',
-            'delete_pdf_templates',
-            'view_pdf_templates',
-            'export_pdf_templates',
-            'import_pdf_templates',
-            'manage_pdf_settings'
+        $settings = [
+            'debug_mode' => isset($_POST['debug_mode']),
+            'cache_enabled' => isset($_POST['cache_enabled']),
+            'cache_ttl' => intval($_POST['cache_ttl']),
+            'max_execution_time' => intval($_POST['max_execution_time']),
+            'memory_limit' => sanitize_text_field($_POST['memory_limit']),
+            'pdf_quality' => sanitize_text_field($_POST['pdf_quality']),
+            'default_format' => sanitize_text_field($_POST['default_format']),
+            'default_orientation' => sanitize_text_field($_POST['default_orientation']),
+            'log_level' => sanitize_text_field($_POST['log_level']),
+            'max_template_size' => intval($_POST['max_template_size']),
+            'email_notifications_enabled' => isset($_POST['email_notifications_enabled']),
+            'notification_events' => isset($_POST['notification_events']) ? array_map('sanitize_text_field', $_POST['notification_events']) : [],
+            'canvas_element_borders_enabled' => isset($_POST['canvas_element_borders_enabled']),
+            'canvas_border_width' => floatval($_POST['canvas_border_width']),
+            'canvas_border_color' => sanitize_text_field($_POST['canvas_border_color']),
+            'canvas_border_spacing' => intval($_POST['canvas_border_spacing']),
+            'canvas_resize_handles_enabled' => isset($_POST['canvas_resize_handles_enabled']),
+            'canvas_handle_size' => intval($_POST['canvas_handle_size']),
+            'canvas_handle_color' => sanitize_text_field($_POST['canvas_handle_color']),
+            'canvas_handle_hover_color' => sanitize_text_field($_POST['canvas_handle_hover_color'])
         ];
 
-        foreach ($_POST['role_permissions'] as $role_key => $permissions) {
-            $role_obj = get_role($role_key);
-            if ($role_obj) {
-                // Supprimer toutes les permissions PDF existantes
-                foreach ($pdf_permissions as $perm) {
-                    $role_obj->remove_cap($perm);
-                }
+        error_log('PDF Builder: Paramètres canvas - borders_enabled: ' . ($settings['canvas_element_borders_enabled'] ? 'true' : 'false'));
+        error_log('PDF Builder: Paramètres canvas - border_spacing: ' . $settings['canvas_border_spacing']);
 
-                // Ajouter les permissions cochées
-                foreach ($permissions as $perm => $value) {
-                    if (in_array($perm, $pdf_permissions) && $value == '1') {
-                        $role_obj->add_cap($perm);
-                    }
-                }
-            }
-        }
+        $config->set_multiple($settings);
+
+        // Sauvegarde individuelle des paramètres canvas pour la compatibilité avec le JavaScript
+        update_option('canvas_element_borders_enabled', $settings['canvas_element_borders_enabled']);
+        update_option('canvas_border_width', $settings['canvas_border_width']);
+        update_option('canvas_border_color', $settings['canvas_border_color']);
+        update_option('canvas_border_spacing', $settings['canvas_border_spacing']);
+        update_option('canvas_resize_handles_enabled', $settings['canvas_resize_handles_enabled']);
+        update_option('canvas_handle_size', $settings['canvas_handle_size']);
+        update_option('canvas_handle_color', $settings['canvas_handle_color']);
+        update_option('canvas_handle_hover_color', $settings['canvas_handle_hover_color']);
+
+        // Vérification que les options sont bien sauvegardées
+        $saved_spacing = get_option('canvas_border_spacing', 'NOT_SET');
+        error_log('PDF Builder: Vérification sauvegarde - canvas_border_spacing: ' . $saved_spacing);
+
+        echo '<div class="notice notice-success"><p>' . __('Paramètres sauvegardés avec succès.', 'pdf-builder-pro') . ' (espacement: ' . $settings['canvas_border_spacing'] . ')</p></div>';
+    } else {
+        error_log('PDF Builder: Nonce invalide');
+        echo '<div class="notice notice-error"><p>' . __('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro') . '</p></div>';
     }
-
-    echo '<div class="notice notice-success"><p>' . __('Paramètres sauvegardés avec succès.', 'pdf-builder-pro') . '</p></div>';
+} elseif (isset($_POST['submit'])) {
+    error_log('PDF Builder: Bouton submit cliqué mais pas de nonce');
+    echo '<div class="notice notice-error"><p>' . __('Erreur : nonce manquant.', 'pdf-builder-pro') . '</p></div>';
 }
 ?>
 
