@@ -175,7 +175,7 @@ export const CanvasElement = ({
       case 'classic':
         return {
           backgroundColor: '#666',
-          color: '#fff',
+          color: element.color || '#fff',
           borderBottom: '2px solid #333',
           fontWeight: 'bold'
         };
@@ -202,7 +202,7 @@ export const CanvasElement = ({
           backgroundColor: '#f8fafc',
           borderBottom: '1px solid #e2e8f0',
           fontWeight: '600',
-          color: '#334155'
+          color: element.color || '#334155'
         };
       default: // 'default'
         return {
@@ -311,7 +311,7 @@ export const CanvasElement = ({
             justifyContent: 'center',
             fontSize: 14 * zoom,
             fontWeight: 'bold',
-            color: '#64748b',
+            color: element.color || '#64748b',
             '--element-border-width': element.border ? `${element.borderWidth || 1}px` : '1px'
           } : element.type === 'layout-footer' ? {
             backgroundColor: element.backgroundColor || 'transparent',
@@ -321,7 +321,7 @@ export const CanvasElement = ({
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 12 * zoom,
-            color: '#64748b',
+            color: element.color || '#64748b',
             '--element-border-width': element.border ? `${element.borderWidth || 1}px` : '1px'
           } : element.type === 'layout-sidebar' ? {
             backgroundColor: element.backgroundColor || 'transparent',
@@ -331,7 +331,7 @@ export const CanvasElement = ({
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 12 * zoom,
-            color: '#64748b',
+            color: element.color || '#64748b',
             '--element-border-width': element.border ? `${element.borderWidth || 1}px` : '1px'
           } : element.type === 'layout-section' ? {
             backgroundColor: element.backgroundColor || 'transparent',
@@ -341,7 +341,7 @@ export const CanvasElement = ({
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 12 * zoom,
-            color: '#64748b',
+            color: element.color || '#64748b',
             '--element-border-width': element.border ? `${element.borderWidth || 1}px` : '1px'
           } : element.type === 'layout-container' ? {
             backgroundColor: element.backgroundColor || 'transparent',
@@ -351,7 +351,7 @@ export const CanvasElement = ({
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 12 * zoom,
-            color: '#94a3b8',
+            color: element.color || '#94a3b8',
             '--element-border-width': element.border ? `${element.borderWidth || 2}px` : '2px'
           } : element.type === 'shape-rectangle' ? {
             backgroundColor: element.backgroundColor || '#e5e7eb',
@@ -425,7 +425,7 @@ export const CanvasElement = ({
             justifyContent: 'flex-start',
             fontSize: 12 * zoom,
             fontFamily: 'monospace',
-            color: '#059669',
+            color: element.color || '#059669',
             padding: '4px',
             '--element-border-width': '1px'
           } : element.type === 'formula' ? {
@@ -436,7 +436,7 @@ export const CanvasElement = ({
             justifyContent: 'flex-start',
             fontSize: 12 * zoom,
             fontFamily: 'monospace',
-            color: '#d97706',
+            color: element.color || '#d97706',
             padding: '4px',
             '--element-border-width': '1px'
           } : element.type === 'conditional-text' ? {
