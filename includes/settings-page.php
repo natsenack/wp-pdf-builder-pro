@@ -196,16 +196,6 @@ window.addEventListener('load', function() {
 
         <div class="pdf-builder-settings">
 
-            <style>
-            /* Forcer le masquage des onglets inactifs au chargement */
-            .tab-content:not(.active) {
-                display: none !important;
-            }
-            .sub-tab-content:not(.sub-tab-active) {
-                display: none !important;
-            }
-            </style>
-
             <!-- Onglets -->
             <div class="nav-tab-wrapper">
                 <a href="#general" class="nav-tab nav-tab-active"><?php _e('Général', 'pdf-builder-pro'); ?></a>
@@ -220,7 +210,7 @@ window.addEventListener('load', function() {
             </div>
 
             <!-- Onglet Général -->
-            <div id="general" class="tab-content active">
+            <div id="general" class="tab-content active" style="display: block;">
                 <h2><?php _e('Paramètres Généraux', 'pdf-builder-pro'); ?></h2>
 
                 <table class="form-table">
@@ -1131,11 +1121,11 @@ echo '<style>
     padding: 20px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     margin-top: -1px;
-    display: none !important;
+    display: none;
 }
 
 .tab-content.active {
-    display: block !important;
+    display: block;
 }
 
 .tab-content h2 {
@@ -1339,203 +1329,36 @@ echo '<style>
     $(document).ready(function() {
         console.log('PDF Builder Settings JavaScript loaded');
 
-        // Vérifier que les éléments existent
-        var navTabs = document.querySelectorAll('.nav-tab');
-        var tabContents = document.querySelectorAll('.tab-content');
+        // Navigation par onglets - approche simplifiée
+        $('.nav-tab').on('click', function(e) {
+            e.preventDefault();
 
-        console.log('Found', navTabs.length, 'nav tabs and', tabContents.length, 'tab contents');
+            $('.nav-tab').removeClass('nav-tab-active');
+            $(this).addClass('nav-tab-active');
 
-        if (navTabs.length === 0 || tabContents.length === 0) {
-            console.error('❌ Tab elements not found');
-            return;
-        }
-
-        // Fonction pour masquer tous les onglets
-        function hideAllTabs() {
-            tabContents.forEach(function(tab) {
-                tab.classList.remove('active');
-                tab.style.display = 'none';
-            });
-        }
-
-        // Fonction pour afficher un onglet
-        function showTab(tabId) {
-            var tabElement = document.getElementById(tabId.substring(1)); // Remove the #
-            if (tabElement) {
-                tabElement.classList.add('active');
-                tabElement.style.display = 'block';
-            } else {
-                console.error('❌ Tab element not found:', tabId);
-            }
-        }
-
-        // Fonction pour changer d'onglet
-        function switchToTab(tabId) {
-            // Masquer tous les onglets
-            hideAllTabs();
-
-            // Désactiver tous les onglets de navigation
-            navTabs.forEach(function(tab) {
-                tab.classList.remove('nav-tab-active');
-            });
-
-            // Activer l'onglet de navigation cible
-            var targetNavTab = document.querySelector('a[href="' + tabId + '"]');
-            if (targetNavTab) {
-                targetNavTab.classList.add('nav-tab-active');
-            }
-
-            // Afficher l'onglet cible
-            showTab(tabId);
-        }
-
-        // Attacher les gestionnaires de clic
-        navTabs.forEach(function(tab) {
-            tab.addEventListener('click', function(e) {
-                e.preventDefault();
-                var targetId = this.getAttribute('href');
-                switchToTab(targetId);
-
-                // Mettre à jour l'URL avec le hash (sans recharger la page)
-                if (history.replaceState) {
-                    history.replaceState(null, null, targetId);
-                }
-            });
+            $('.tab-content').removeClass('active').hide();
+            $($(this).attr('href')).addClass('active').show();
         });
 
-        // Initialisation : masquer tous les onglets sauf celui actif
-        console.log('Initializing tabs...');
-        hideAllTabs();
-
-        // Forcer le masquage de tous les onglets inactifs au cas où
-        tabContents.forEach(function(tab, index) {
-            if (!tab.classList.contains('active')) {
-                tab.style.display = 'none';
-                tab.style.visibility = 'hidden';
-                console.log('Hidden tab:', tab.id);
-            } else {
-                tab.style.display = 'block';
-                tab.style.visibility = 'visible';
-                console.log('Shown tab:', tab.id);
-            }
-        });
-
-        // Vérification périodique pour s'assurer que les onglets sont correctement affichés
-        setTimeout(function() {
-            tabContents.forEach(function(tab) {
-                if (!tab.classList.contains('active')) {
-                    tab.style.display = 'none';
-                    tab.style.visibility = 'hidden';
-                }
-            });
-        }, 100);
-
-        // Vérifier si on arrive sur la page avec un hash dans l'URL
-        var currentHash = window.location.hash;
-        var activeTab = document.querySelector('.nav-tab-active');
-
-        if (currentHash && document.querySelector('a[href="' + currentHash + '"]')) {
-            // Si un hash est présent dans l'URL, l'utiliser
-            
-            switchToTab(currentHash);
-        } else if (activeTab) {
-            // Sinon, utiliser l'onglet actif par défaut
-            var activeTabId = activeTab.getAttribute('href');
-            
-            showTab(activeTabId);
+        // Initialisation : s'assurer que l'onglet actif est visible
+        var activeTab = $('.nav-tab-active');
+        if (activeTab.length > 0) {
+            var activeTabId = activeTab.attr('href');
+            $(activeTabId).addClass('active').show();
         } else {
             // Fallback : activer le premier onglet
-            
-            if (navTabs.length > 0) {
-                var firstTabId = navTabs[0].getAttribute('href');
-                navTabs[0].classList.add('nav-tab-active');
-                showTab(firstTabId);
-            }
+            $('.nav-tab').first().addClass('nav-tab-active');
+            $('.tab-content').first().addClass('active').show();
         }
 
-        // Gérer les changements de hash dans l'URL (liens directs, navigation arrière/avant)
-        window.addEventListener('hashchange', function() {
-            var newHash = window.location.hash;
-            if (newHash && document.querySelector('a[href="' + newHash + '"]')) {
-                
-                switchToTab(newHash);
+        // Gérer les changements de hash dans l'URL
+        if (window.location.hash) {
+            var hashTab = $('.nav-tab[href="' + window.location.hash + '"]');
+            if (hashTab.length > 0) {
+                hashTab.click();
             }
-        });
-
-        // Vérifier périodiquement si les onglets sont bien affichés (fallback au cas où)
-        setTimeout(function() {
-            var visibleTabs = document.querySelectorAll('.tab-content[style*="display: block"]');
-            if (visibleTabs.length === 0) {
-                console.warn('⚠️ No tabs visible, forcing default tab');
-                var defaultTab = document.querySelector('.nav-tab-active') || navTabs[0];
-                if (defaultTab) {
-                    var defaultTabId = defaultTab.getAttribute('href');
-                    switchToTab(defaultTabId);
-                }
-            }
-        }, 100);
+        }
     });
-
-    // Fallback si jQuery n'est pas disponible
-    if (typeof jQuery === 'undefined') {
-        console.warn('⚠️ jQuery not available, using vanilla JS fallback');
-
-        document.addEventListener('DOMContentLoaded', function() {
-            var navTabs = document.querySelectorAll('.nav-tab');
-            var tabContents = document.querySelectorAll('.tab-content');
-
-            if (navTabs.length === 0 || tabContents.length === 0) {
-                console.error('❌ Tab elements not found in fallback');
-                return;
-            }
-
-            // Fonction pour masquer tous les onglets
-            function hideAllTabs() {
-                tabContents.forEach(function(tab) {
-                    tab.classList.remove('active');
-                    tab.style.display = 'none';
-                });
-            }
-
-            // Fonction pour afficher un onglet
-            function showTab(tabId) {
-                var tabElement = document.getElementById(tabId.substring(1));
-                if (tabElement) {
-                    tabElement.classList.add('active');
-                    tabElement.style.display = 'block';
-                }
-            }
-
-            // Attacher les gestionnaires de clic
-            navTabs.forEach(function(tab) {
-                tab.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    var targetId = this.getAttribute('href');
-
-                    // Masquer tous les onglets
-                    hideAllTabs();
-
-                    // Désactiver tous les onglets de navigation
-                    navTabs.forEach(function(t) {
-                        t.classList.remove('nav-tab-active');
-                    });
-
-                    // Activer l'onglet de navigation cible
-                    this.classList.add('nav-tab-active');
-
-                    // Afficher l'onglet cible
-                    showTab(targetId);
-                });
-            });
-
-            // Initialisation
-            hideAllTabs();
-            var activeTab = document.querySelector('.nav-tab-active');
-            if (activeTab) {
-                showTab(activeTab.getAttribute('href'));
-            }
-        });
-    }
 
 })(jQuery);
 </script>
