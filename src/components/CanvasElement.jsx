@@ -304,49 +304,49 @@ export const CanvasElement = ({
             width: '100%'
           } : element.type === 'layout-header' ? {
             backgroundColor: element.backgroundColor || 'transparent',
-            border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#e2e8f0'}` : '1px solid #e2e8f0',
-            borderRadius: '4px',
+            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#e2e8f0'}` : (element.border ? '1px solid #e2e8f0' : 'none'),
+            borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '4px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 14 * zoom,
             fontWeight: 'bold',
             color: element.color || '#64748b',
-            '--element-border-width': element.border ? `${element.borderWidth || 1}px` : '1px'
+            '--element-border-width': element.borderWidth ? `${element.borderWidth * zoom}px` : (element.border ? '1px' : '0px')
           } : element.type === 'layout-footer' ? {
             backgroundColor: element.backgroundColor || 'transparent',
-            border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#e2e8f0'}` : '1px solid #e2e8f0',
-            borderRadius: '4px',
+            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#e2e8f0'}` : (element.border ? '1px solid #e2e8f0' : 'none'),
+            borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '4px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 12 * zoom,
             color: element.color || '#64748b',
-            '--element-border-width': element.border ? `${element.borderWidth || 1}px` : '1px'
+            '--element-border-width': element.borderWidth ? `${element.borderWidth * zoom}px` : (element.border ? '1px' : '0px')
           } : element.type === 'layout-sidebar' ? {
             backgroundColor: element.backgroundColor || 'transparent',
-            border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#e2e8f0'}` : '1px solid #e2e8f0',
-            borderRadius: '4px',
+            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#e2e8f0'}` : (element.border ? '1px solid #e2e8f0' : 'none'),
+            borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '4px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 12 * zoom,
             color: element.color || '#64748b',
-            '--element-border-width': element.border ? `${element.borderWidth || 1}px` : '1px'
+            '--element-border-width': element.borderWidth ? `${element.borderWidth * zoom}px` : (element.border ? '1px' : '0px')
           } : element.type === 'layout-section' ? {
             backgroundColor: element.backgroundColor || 'transparent',
-            border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#e2e8f0'}` : '1px solid #e2e8f0',
-            borderRadius: '4px',
+            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#e2e8f0'}` : (element.border ? '1px solid #e2e8f0' : 'none'),
+            borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '4px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 12 * zoom,
             color: element.color || '#64748b',
-            '--element-border-width': element.border ? `${element.borderWidth || 1}px` : '1px'
+            '--element-border-width': element.borderWidth ? `${element.borderWidth * zoom}px` : (element.border ? '1px' : '0px')
           } : element.type === 'layout-container' ? {
             backgroundColor: element.backgroundColor || 'transparent',
-            border: element.border ? `${element.borderWidth || 2}px ${element.borderStyle || 'dashed'} ${element.borderColor || '#cbd5e1'}` : '2px dashed #cbd5e1',
-            borderRadius: '4px',
+            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'dashed'} ${element.borderColor || '#cbd5e1'}` : (element.border ? '2px dashed #cbd5e1' : 'none'),
+            borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '4px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -355,14 +355,14 @@ export const CanvasElement = ({
             '--element-border-width': element.border ? `${element.borderWidth || 2}px` : '2px'
           } : element.type === 'shape-rectangle' ? {
             backgroundColor: element.backgroundColor || '#e5e7eb',
-            border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#000'}` : 'none',
-            borderRadius: element.borderRadius ? `${element.borderRadius}px` : '0',
-            '--element-border-width': element.border ? `${element.borderWidth || 1}px` : '0px'
+            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#000'}` : (element.border ? '1px solid #000' : 'none'),
+            borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0',
+            '--element-border-width': element.borderWidth ? `${element.borderWidth * zoom}px` : (element.border ? '1px' : '0px')
           } : element.type === 'shape-circle' ? {
             backgroundColor: element.backgroundColor || '#e5e7eb',
-            border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#000'}` : 'none',
+            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#000'}` : (element.border ? '1px solid #000' : 'none'),
             borderRadius: '50%',
-            '--element-border-width': element.border ? `${element.borderWidth || 1}px` : '0px'
+            '--element-border-width': element.borderWidth ? `${element.borderWidth * zoom}px` : (element.border ? '1px' : '0px')
           } : element.type === 'shape-line' ? {
             backgroundColor: element.backgroundColor || '#6b7280',
             height: '100%'
@@ -396,21 +396,21 @@ export const CanvasElement = ({
             '--element-border-width': '1px'
           } : element.type === 'barcode' ? {
             backgroundColor: element.backgroundColor || '#ffffff',
-            border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#000000'}` : '1px solid #000000',
+            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#000000'}` : (element.border ? '1px solid #000000' : 'none'),
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 10 * zoom,
             fontFamily: 'monospace',
-            '--element-border-width': element.border ? `${element.borderWidth || 1}px` : '1px'
+            '--element-border-width': element.borderWidth ? `${element.borderWidth * zoom}px` : (element.border ? '1px' : '0px')
           } : element.type === 'qrcode' || element.type === 'qrcode-dynamic' ? {
             backgroundColor: element.backgroundColor || '#ffffff',
-            border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#000000'}` : '1px solid #000000',
+            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#000000'}` : (element.border ? '1px solid #000000' : 'none'),
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 8 * zoom,
-            '--element-border-width': element.border ? `${element.borderWidth || 1}px` : '1px'
+            '--element-border-width': element.borderWidth ? `${element.borderWidth * zoom}px` : (element.border ? '1px' : '0px')
           } : element.type === 'icon' ? {
             backgroundColor: element.backgroundColor || 'transparent',
             display: 'flex',
@@ -550,7 +550,7 @@ export const CanvasElement = ({
             position: 'relative'
           } : {
             backgroundColor: element.backgroundColor || 'transparent',
-            border: '1px solid #ccc',
+            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#e2e8f0'}` : '1px solid #ccc',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -1118,7 +1118,7 @@ export const CanvasElement = ({
             textDecoration: element.textDecoration || 'none',
             color: element.color || '#333',
             backgroundColor: element.backgroundColor || '#ffffff',
-            border: element.borderWidth ? `${element.borderWidth * zoom}px solid ${element.borderColor || '#ddd'}` : 'none',
+            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#ddd'}` : 'none',
             borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0px'
           }}>
             <div style={{
@@ -1323,7 +1323,7 @@ export const CanvasElement = ({
                   height: `${element.height || 80}px`,
                   objectFit: element.fit || 'contain',
                   borderRadius: element.borderRadius || 0,
-                  border: element.showBorder ? '1px solid #ddd' : 'none'
+                  border: element.borderWidth ? `${element.borderWidth}px ${element.borderStyle || 'solid'} ${element.borderColor || '#ddd'}` : (element.showBorder ? '1px solid #ddd' : 'none')
                 }}
               />
             ) : (
@@ -1359,7 +1359,10 @@ export const CanvasElement = ({
             fontWeight: element.fontWeight || 'normal',
             textAlign: element.textAlign || 'left',
             color: element.color || '#333',
-            lineHeight: '1.4'
+            lineHeight: '1.4',
+            backgroundColor: element.backgroundColor || 'transparent',
+            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#e2e8f0'}` : 'none',
+            borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0px'
           }}>
             {/* Nom de l'entreprise */}
             {element.fields?.includes('name') && (
@@ -1421,7 +1424,10 @@ export const CanvasElement = ({
             fontFamily: element.fontFamily || 'Arial',
             fontWeight: element.fontWeight || 'bold',
             color: element.color || '#333333',
-            textAlign: element.textAlign || 'right'
+            textAlign: element.textAlign || 'right',
+            backgroundColor: element.backgroundColor || 'transparent',
+            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#e2e8f0'}` : 'none',
+            borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0px'
           }}>
             {element.showLabel && (
               <div style={{
@@ -1464,8 +1470,8 @@ export const CanvasElement = ({
             color: element.color || '#1e293b',
             textAlign: element.textAlign || 'center',
             backgroundColor: element.backgroundColor || 'transparent',
-            border: element.showBorder ? '2px solid #e2e8f0' : 'none',
-            borderRadius: '4px',
+            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#e2e8f0'}` : (element.showBorder ? '2px solid #e2e8f0' : 'none'),
+            borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '4px',
             whiteSpace: 'nowrap'
           }}>
             {element.documentType === 'invoice' ? 'FACTURE' :
