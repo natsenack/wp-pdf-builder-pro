@@ -553,6 +553,18 @@ class PDF_Builder_Admin_New {
             ]
         ]);
 
+        // Paramètres du canvas pour le JavaScript
+        wp_localize_script('pdf-builder-admin', 'pdfBuilderCanvasSettings', [
+            'canvas_element_borders_enabled' => get_option('canvas_element_borders_enabled', true),
+            'canvas_border_width' => get_option('canvas_border_width', 2),
+            'canvas_border_color' => get_option('canvas_border_color', '#007cba'),
+            'canvas_border_spacing' => get_option('canvas_border_spacing', 2),
+            'canvas_resize_handles_enabled' => get_option('canvas_resize_handles_enabled', true),
+            'canvas_handle_size' => get_option('canvas_handle_size', 12),
+            'canvas_handle_color' => get_option('canvas_handle_color', '#007cba'),
+            'canvas_handle_hover_color' => get_option('canvas_handle_hover_color', '#ffffff')
+        ]);
+
         // Styles pour l'éditeur canvas
         if ($hook === 'pdf-builder_page_pdf-builder-editor') {
             wp_enqueue_style('pdf-builder-canvas-editor', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-canvas.css', [], PDF_BUILDER_PRO_VERSION);

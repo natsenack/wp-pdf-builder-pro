@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useCallback, useState } from 'react';
+import { useGlobalSettings } from '../hooks/useGlobalSettings';
 
-export const Canvas = ({
+const Canvas = ({
   elements,
   selectedElements,
   tool,
@@ -19,6 +20,7 @@ export const Canvas = ({
 }) => {
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
+  const { settings } = useGlobalSettings();
 
   // Initialiser le contexte canvas
   useEffect(() => {
@@ -111,29 +113,37 @@ export const Canvas = ({
         ctx.strokeRect(0, 0, element.width, element.height);
     }
 
-    // Dessiner la sélection
-    if (selectedElements.includes(element.id)) {
-      ctx.strokeStyle = '#007cba';
-      ctx.lineWidth = 2;
+    // Dessiner la sélection si les bordures sont activées
+    if (selectedElements.includes(element.id) && settings.showResizeZones) {
+      ctx.strokeStyle = settings.selectionBorderColor;
+      ctx.lineWidth = settings.selectionBorderWidth;
       ctx.setLineDash([5, 5]);
-      ctx.strokeRect(-2, -2, element.width + 4, element.height + 4);
+      const spacing = settings.selectionBorderSpacing;
+      ctx.strokeRect(-spacing, -spacing, element.width + (spacing * 2), element.height + (spacing * 2));
       ctx.setLineDash([]);
 
-      // Poignées de redimensionnement
-      ctx.fillStyle = '#007cba';
-      const handles = [
-        [0, 0], [element.width, 0], [element.width, element.height], [0, element.height],
-        [element.width / 2, 0], [element.width, element.height / 2],
-        [element.width / 2, element.height], [0, element.height / 2]
-      ];
+      // Poignées de redimensionnement si activées
+      if (settings.showResizeHandles) {
+        ctx.fillStyle = settings.resizeHandleColor;
+        const handleSize = settings.resizeHandleSize / 2;
+        const handles = [
+          [0, 0], [element.width, 0], [element.width, element.height], [0, element.height],
+          [element.width / 2, 0], [element.width, element.height / 2],
+          [element.width / 2, element.height], [0, element.height / 2]
+        ];
 
-      handles.forEach(([x, y]) => {
-        ctx.fillRect(x - 3, y - 3, 6, 6);
-      });
+        handles.forEach(([x, y]) => {
+          ctx.fillRect(x - handleSize/2, y - handleSize/2, handleSize, handleSize);
+          // Bordure blanche des poignées
+          ctx.strokeStyle = settings.resizeHandleBorderColor;
+          ctx.lineWidth = 1;
+          ctx.strokeRect(x - handleSize/2, y - handleSize/2, handleSize, handleSize);
+        });
+      }
     }
 
     ctx.restore();
-  }, [selectedElements]);
+  }, [selectedElements, settings]);
 
   // Fonction principale de rendu
   const renderCanvas = useCallback(() => {
