@@ -65,28 +65,28 @@ if (!defined('ABSPATH')) {
                     $button_action = 'openTemplateSettings';
                     
                     // Déterminer l'icône basée sur le nom du template
-                    $icon = '[DOC]'; // Default
+                    $icon = '📄'; // Default
                     $description = 'Template personnalisé';
                     $features = ['✓ Contenu personnalisable', '✓ Mise en page flexible', '✓ Éléments dynamiques', '✓ Export PDF'];
                     
                     if (stripos($template_name, 'facture') !== false) {
-                        $icon = '[FACT]';
+                        $icon = '🧾';
                         $description = 'Template professionnel et élégant';
                         $features = ['✓ En-tête société', '✓ Informations client', '✓ Tableau des articles', '✓ Totaux & TVA'];
                     } elseif (stripos($template_name, 'devis') !== false) {
-                        $icon = '[DEV]';
+                        $icon = '📋';
                         $description = 'Template professionnel et élégant';
                         $features = ['✓ Présentation entreprise', '✓ Détails du projet', '✓ Conditions & validité', '✓ Signature numérique'];
                     } elseif (stripos($template_name, 'commande') !== false) {
-                        $icon = '[CMD]';
+                        $icon = '📦';
                         $description = 'Template professionnel et élégant';
                         $features = ['✓ Numéro de commande', '✓ Liste des produits', '✓ Modalités de paiement', '✓ Conditions générales'];
                     } elseif (stripos($template_name, 'contrat') !== false) {
-                        $icon = '[CTR]';
+                        $icon = '📑';
                         $description = 'Template professionnel et élégant';
                         $features = ['✓ Parties contractantes', '✓ Objet du contrat', '✓ Conditions & obligations', '✓ Clauses légales'];
                     } elseif (stripos($template_name, 'newsletter') !== false) {
-                        $icon = '[NEWS]';
+                        $icon = '📰';
                         $description = 'Template professionnel et élégant';
                         $features = ['✓ En-tête accrocheur', '✓ Sections d\'articles', '✓ Call-to-action', '✓ Pied de page'];
                     }
