@@ -26,51 +26,114 @@
 .color-presets {
   display: flex;
   gap: 4px;
+  flex-wrap: wrap;
 }
 
 .color-preset {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   border: 1px solid #e2e8f0;
-  border-radius: 3px;
+  border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
+  position: relative;
 }
 
 .color-preset:hover {
   transform: scale(1.1);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  z-index: 1;
 }
 
-/* Styles pour les boutons de style de texte */
-.style-buttons-grid {
-  display: flex;
-  gap: 4px;
+.color-preset.active {
+  box-shadow: 0 0 0 2px #2563eb;
+  transform: scale(1.05);
 }
 
-.style-btn {
-  width: 32px;
-  height: 32px;
-  border: 1px solid #cbd5e1;
-  border-radius: 4px;
-  background: #ffffff;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.color-preset.transparent {
+  background-size: 8px 8px;
+}
+
+.color-preset.transparent::after {
+  content: '×';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #64748b;
+  font-size: 12px;
   font-weight: bold;
+  pointer-events: none;
+}
+
+/* Styles pour les selects stylisés */
+.styled-select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #ffffff;
+  font-size: 14px;
+  color: #334155;
+  cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.style-btn:hover {
-  background: #f8fafc;
+.styled-select:hover {
   border-color: #94a3b8;
 }
 
-.style-btn.active {
-  background: #2563eb;
+.styled-select:focus {
+  outline: none;
   border-color: #2563eb;
-  color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Amélioration des toggles */
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #cbd5e1;
+  border-radius: 24px;
+  transition: 0.3s;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.3s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle input:checked + .toggle-slider {
+  background-color: #2563eb;
+}
+
+.toggle input:checked + .toggle-slider:before {
+  transform: translateX(26px);
 }
 
 /* Styles pour les boutons d'alignement */

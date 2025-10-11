@@ -4,17 +4,22 @@ import { useElementSynchronization } from '../hooks/useElementSynchronization';
 import { elementCustomizationService } from '../services/ElementCustomizationService';
 import '../styles/PropertiesPanel.css';
 
-// Composant pour les contrôles de couleur avec presets
+// Composant amélioré pour les contrôles de couleur avec presets
 const ColorPicker = ({ label, value, onChange, presets = [] }) => {
-
-  // Valeur par défaut selon le type de contrôle
-  const getDefaultValue = () => {
-    if (label === 'Bordure') return '#dddddd'; // Couleur par défaut pour les bordures
-    return '#ffffff'; // Couleur par défaut pour texte et fond
+  // Fonction pour valider et normaliser une couleur hex
+  const normalizeColor = (color) => {
+    if (!color || color === 'transparent') return '#ffffff';
+    if (color.startsWith('#') && (color.length === 4 || color.length === 7)) return color;
+    return '#ffffff'; // fallback
   };
 
-  const safeValue = value || getDefaultValue();
-  const inputValue = value === 'transparent' ? '#ffffff' : safeValue;
+  // Valeur normalisée pour l'input color
+  const inputValue = normalizeColor(value);
+
+  // Fonction pour vérifier si une couleur est valide pour les presets
+  const isValidColor = (color) => {
+    return color && color !== 'transparent' && color.startsWith('#');
+  };
 
   return (
     <div className="property-row">
@@ -24,22 +29,41 @@ const ColorPicker = ({ label, value, onChange, presets = [] }) => {
           type="color"
           value={inputValue}
           onChange={(e) => {
-            onChange(e.target.value);
+            const newColor = e.target.value;
+            onChange(newColor);
           }}
           className="color-input"
+          title={`Couleur actuelle: ${value || 'transparent'}`}
         />
         <div className="color-presets">
-          {presets.map((preset, index) => (
+          {presets.filter(isValidColor).map((preset, index) => (
             <button
               key={index}
-              className="color-preset"
-              style={{ backgroundColor: preset }}
-              onClick={() => {
-                onChange(preset);
+              className={`color-preset ${value === preset ? 'active' : ''}`}
+              style={{
+                backgroundColor: preset,
+                border: value === preset ? '2px solid #2563eb' : '1px solid #e2e8f0'
               }}
-              title={preset}
+              onClick={() => onChange(preset)}
+              title={`${label}: ${preset}`}
+              aria-label={`Sélectionner la couleur ${preset}`}
             />
           ))}
+          {/* Bouton spécial pour transparent si dans les presets */}
+          {presets.includes('transparent') && (
+            <button
+              className={`color-preset transparent ${value === 'transparent' ? 'active' : ''}`}
+              style={{
+                background: value === 'transparent' ?
+                  'repeating-conic-gradient(#f0f0f0 0% 25%, #ffffff 0% 50%) 50% / 10px 10px' :
+                  'repeating-conic-gradient(#e2e8f0 0% 25%, #ffffff 0% 50%) 50% / 10px 10px',
+                border: value === 'transparent' ? '2px solid #2563eb' : '1px solid #e2e8f0'
+              }}
+              onClick={() => onChange('transparent')}
+              title={`${label}: Transparent`}
+              aria-label="Rendre transparent"
+            />
+          )}
         </div>
       </div>
     </div>
@@ -403,64 +427,31 @@ const PropertiesPanel = React.memo(({
         return (
           <div className="tab-content">
             <div className="properties-group">
-              <h4>🎨 Couleurs</h4>
+              <h4>🎨 Couleurs & Apparence</h4>
 
+              {/* Couleur du texte */}
               <ColorPicker
                 label="Texte"
                 value={localProperties.color}
                 onChange={(value) => {
                   handlePropertyChange(selectedElement.id, 'color', value);
                 }}
-                presets={['#1e293b', '#334155', '#475569', '#64748b', '#94a3b8', '#cbd5e1']}
+                presets={['#1e293b', '#334155', '#475569', '#64748b', '#94a3b8', '#cbd5e1', '#000000']}
               />
 
-              <div style={{
-                opacity: isBackgroundEnabled ? 1 : 0.5,
-                pointerEvents: isBackgroundEnabled ? 'auto' : 'none'
-              }}>
-                <ColorPicker
-                  label="Fond"
-                  value={localProperties.backgroundColor === 'transparent' ? '#ffffff' : localProperties.backgroundColor}
-                  onChange={(value) => {
-                    handlePropertyChange(selectedElement.id, 'backgroundColor', value);
-                  }}
-                  presets={['transparent', '#ffffff', '#f8fafc', '#f1f5f9', '#e2e8f0', '#cbd5e1', '#94a3b8']}
-                />
-              </div>
-
-              <div className="property-row" style={{
-                opacity: isBackgroundEnabled ? 1 : 0.5,
-                pointerEvents: isBackgroundEnabled ? 'auto' : 'none'
-              }}>
-                <label>Opacité fond:</label>
-                <div className="slider-container">
-                  <input
-                    type="range"
-                    min="0"
-                    max="1"
-                    step="0.1"
-                    value={localProperties.backgroundOpacity ?? 1}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundOpacity', parseFloat(e.target.value))}
-                    className="slider"
-                  />
-                  <span className="slider-value">{Math.round((localProperties.backgroundOpacity ?? 1) * 100)}%</span>
-                </div>
-              </div>
-
+              {/* Contrôle du fond */}
               <div className="property-row">
-                <span>Fond:</span>
+                <span>Fond activé:</span>
                 <label className="toggle">
                   <input
                     type="checkbox"
                     checked={isBackgroundEnabled}
                     onChange={(e) => {
                       if (e.target.checked) {
-                        // Activer le fond
                         const colorToSet = previousBackgroundColor || '#ffffff';
                         handlePropertyChange(selectedElement.id, 'backgroundColor', colorToSet);
                         setIsBackgroundEnabled(true);
                       } else {
-                        // Désactiver le fond
                         setPreviousBackgroundColor(localProperties.backgroundColor);
                         handlePropertyChange(selectedElement.id, 'backgroundColor', 'transparent');
                         setIsBackgroundEnabled(false);
@@ -471,33 +462,37 @@ const PropertiesPanel = React.memo(({
                 </label>
               </div>
 
-              <div className="property-row">
-                <span>Bordures:</span>
-                <label className="toggle">
-                  <input
-                    type="checkbox"
-                    checked={isBorderEnabled}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        // Activer les bordures
-                        const widthToSet = previousBorderWidth || 1;
-                        const colorToSet = previousBorderColor || '#000000';
-                        handlePropertyChange(selectedElement.id, 'border', true);
-                        handlePropertyChange(selectedElement.id, 'borderWidth', widthToSet);
-                        handlePropertyChange(selectedElement.id, 'borderColor', colorToSet);
-                        setIsBorderEnabled(true);
-                      } else {
-                        // Désactiver les bordures
-                        setPreviousBorderWidth(localProperties.borderWidth || 1);
-                        setPreviousBorderColor(localProperties.borderColor || '#000000');
-                        handlePropertyChange(selectedElement.id, 'border', false);
-                        handlePropertyChange(selectedElement.id, 'borderWidth', 0);
-                        setIsBorderEnabled(false);
-                      }
-                    }}
-                  />
-                  <span className="toggle-slider"></span>
-                </label>
+              {/* Couleur du fond (conditionnelle) */}
+              <div style={{
+                opacity: isBackgroundEnabled ? 1 : 0.5,
+                pointerEvents: isBackgroundEnabled ? 'auto' : 'none',
+                transition: 'opacity 0.3s ease'
+              }}>
+                <ColorPicker
+                  label="Fond"
+                  value={localProperties.backgroundColor === 'transparent' ? '#ffffff' : localProperties.backgroundColor}
+                  onChange={(value) => {
+                    handlePropertyChange(selectedElement.id, 'backgroundColor', value);
+                  }}
+                  presets={['transparent', '#ffffff', '#f8fafc', '#f1f5f9', '#e2e8f0', '#cbd5e1', '#94a3b8']}
+                />
+
+                {/* Opacité du fond */}
+                <div className="property-row">
+                  <label>Opacité fond:</label>
+                  <div className="slider-container">
+                    <input
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="0.1"
+                      value={localProperties.backgroundOpacity ?? 1}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundOpacity', parseFloat(e.target.value))}
+                      className="slider"
+                    />
+                    <span className="slider-value">{Math.round((localProperties.backgroundOpacity ?? 1) * 100)}%</span>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -512,16 +507,47 @@ const PropertiesPanel = React.memo(({
 
             {localProperties.borderWidth >= 0 && (
               <div className="properties-group">
-                <h4>🔲 Bordures & Coins</h4>
+                <h4>🔲 Bordures & Coins Arrondis</h4>
 
+                {/* Contrôle d'activation des bordures */}
+                <div className="property-row">
+                  <span>Bordures activées:</span>
+                  <label className="toggle">
+                    <input
+                      type="checkbox"
+                      checked={isBorderEnabled}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          const widthToSet = previousBorderWidth || 1;
+                          const colorToSet = previousBorderColor || '#000000';
+                          handlePropertyChange(selectedElement.id, 'border', true);
+                          handlePropertyChange(selectedElement.id, 'borderWidth', widthToSet);
+                          handlePropertyChange(selectedElement.id, 'borderColor', colorToSet);
+                          setIsBorderEnabled(true);
+                        } else {
+                          setPreviousBorderWidth(localProperties.borderWidth || 1);
+                          setPreviousBorderColor(localProperties.borderColor || '#000000');
+                          handlePropertyChange(selectedElement.id, 'border', false);
+                          handlePropertyChange(selectedElement.id, 'borderWidth', 0);
+                          setIsBorderEnabled(false);
+                        }
+                      }}
+                    />
+                    <span className="toggle-slider"></span>
+                  </label>
+                </div>
+
+                {/* Contrôles des bordures (conditionnels) */}
                 <div style={{
-                  opacity: localProperties.borderWidth > 0 ? 1 : 0.5
+                  opacity: localProperties.borderWidth > 0 ? 1 : 0.5,
+                  pointerEvents: localProperties.borderWidth > 0 ? 'auto' : 'none',
+                  transition: 'opacity 0.3s ease'
                 }}>
                   <ColorPicker
-                    label="Bordure"
+                    label="Couleur bordure"
                     value={localProperties.borderColor || '#000000'}
                     onChange={(value) => handlePropertyChange(selectedElement.id, 'borderColor', value)}
-                    presets={['#e2e8f0', '#cbd5e1', '#94a3b8', '#64748b', '#475569', '#334155']}
+                    presets={['#e2e8f0', '#cbd5e1', '#94a3b8', '#64748b', '#475569', '#334155', '#000000']}
                   />
 
                   <div className="property-row">
@@ -529,6 +555,7 @@ const PropertiesPanel = React.memo(({
                     <select
                       value={localProperties.borderStyle || 'solid'}
                       onChange={(e) => handlePropertyChange(selectedElement.id, 'borderStyle', e.target.value)}
+                      className="styled-select"
                     >
                       <option value="solid">Continue</option>
                       <option value="dashed">Tirets</option>
@@ -553,7 +580,7 @@ const PropertiesPanel = React.memo(({
                   </div>
 
                   <div className="property-row">
-                    <label>Arrondi des coins:</label>
+                    <label>Coins arrondis:</label>
                     <div className="slider-container">
                       <input
                         type="range"
