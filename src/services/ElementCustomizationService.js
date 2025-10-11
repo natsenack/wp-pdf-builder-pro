@@ -135,17 +135,17 @@ export class ElementCustomizationService {
       'shape-rounded': {
         borderRadius: 8,
         borderWidth: 1,
-        borderColor: '#e2e8f0'
+        borderColor: 'transparent'
       },
       'shape-circle': {
         borderRadius: 50,
         borderWidth: 1,
-        borderColor: '#e2e8f0'
+        borderColor: 'transparent'
       },
       'shape-square': {
         borderRadius: 0,
         borderWidth: 1,
-        borderColor: '#e2e8f0'
+        borderColor: 'transparent'
       },
 
       // Presets d'effets
