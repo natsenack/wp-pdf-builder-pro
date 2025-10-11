@@ -549,7 +549,7 @@ class PDF_Builder_Admin {
         // Variables JavaScript pour AJAX - Cache busting forcé v4 - 2025-10-11_18:15
         wp_localize_script('pdf-builder-admin', 'pdfBuilderAjax', [
             'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_canvas_v4_' . get_current_user_id() . '_cachebust_' . time()),
+            'nonce' => wp_create_nonce('pdf_builder_canvas_v4_' . get_current_user_id()),
             'strings' => [
                 'loading' => __('Chargement...', 'pdf-builder-pro'),
                 'error' => __('Erreur', 'pdf-builder-pro'),
@@ -2369,6 +2369,7 @@ class PDF_Builder_Admin {
 
         // Essayer différents formats de nonce pour la compatibilité
         $valid_formats = [
+            'pdf_builder_canvas_v4_' . $user_id,
             'pdf_builder_canvas_v3_' . $user_id . '_cachebust_' . time(),
             'pdf_builder_canvas_v3_' . $user_id,
             'pdf_builder_nonce_' . $user_id,
