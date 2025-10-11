@@ -3,49 +3,60 @@
 // Accessible via: https://threeaxe.fr/wp-content/plugins/wp-pdf-builder-pro/diagnostic.php?run=1
 
 if (isset($_GET['run']) && $_GET['run'] === '1') {
-    error_log('=== DIAGNOSTIC PDF BUILDER === START');
+    echo "<h1>Résultats du Diagnostic PDF Builder</h1>\n";
+    echo "<pre>\n";
 
     // Vérifier si la fonction ajax_load_canvas_elements existe et contient nos modifications
     $admin_file = __DIR__ . '/includes/classes/class-pdf-builder-admin.php';
     if (file_exists($admin_file)) {
         $content = file_get_contents($admin_file);
 
-        error_log('✅ Fichier admin trouvé');
+        echo "✅ Fichier admin trouvé\n";
 
         if (strpos($content, '_cachebust_') !== false) {
-            error_log('✅ Modifications _cachebust_ présentes');
+            echo "✅ Modifications _cachebust_ présentes\n";
         } else {
-            error_log('❌ Modifications _cachebust_ ABSENTES');
+            echo "❌ Modifications _cachebust_ ABSENTES\n";
         }
 
         if (strpos($content, 'wp_create_nonce(\'pdf_builder_canvas_v3_') !== false) {
-            error_log('✅ Nouveau nonce trouvé');
+            echo "✅ Nouveau nonce trouvé\n";
         } else {
-            error_log('❌ Nouveau nonce ABSENT');
+            echo "❌ Nouveau nonce ABSENT\n";
         }
 
         // Compter les occurrences
         $cachebust_count = substr_count($content, '_cachebust_');
-        error_log("Nombre d'occurrences _cachebust_: $cachebust_count");
+        echo "Nombre d'occurrences _cachebust_: $cachebust_count\n";
 
     } else {
-        error_log("❌ Fichier admin NON trouvé: $admin_file");
+        echo "❌ Fichier admin NON trouvé: $admin_file\n";
     }
 
-    error_log('=== TEST NONCE ===');
+    echo "\n=== TEST NONCE ===\n";
     // Tester la génération du nonce
     if (function_exists('wp_create_nonce')) {
         $test_nonce = wp_create_nonce('pdf_builder_canvas_v3_' . 1 . '_cachebust_' . time());
-        error_log("Test nonce généré: " . substr($test_nonce, 0, 10) . "...");
-        error_log("Longueur: " . strlen($test_nonce));
+        echo "Test nonce généré: " . substr($test_nonce, 0, 10) . "...\n";
+        echo "Longueur: " . strlen($test_nonce) . "\n";
     } else {
-        error_log('❌ Fonction wp_create_nonce non disponible');
+        echo "❌ Fonction wp_create_nonce non disponible\n";
     }
 
-    error_log('=== FIN DIAGNOSTIC ===');
+    echo "\n=== CONTENU RECENT DU DEBUG.LOG ===\n";
 
-    // Afficher un message simple pour confirmer l'exécution
-    echo 'Diagnostic executed - check WordPress logs at /wp-content/debug.log';
+    $debug_log = '/var/www/nats/data/www/threeaxe.fr/wp-content/debug.log';
+    if (file_exists($debug_log)) {
+        $lines = file($debug_log);
+        $recent_lines = array_slice($lines, -10); // Dernières 10 lignes
+        foreach ($recent_lines as $line) {
+            echo htmlspecialchars($line);
+        }
+    } else {
+        echo "❌ Fichier debug.log non trouvé: $debug_log\n";
+    }
+
+    echo "</pre>\n";
     exit;
 }
 
