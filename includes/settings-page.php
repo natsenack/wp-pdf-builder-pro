@@ -189,7 +189,6 @@ window.addEventListener('load', function() {
 });
 </script>
 
-<div class="wrap">
     <h1><?php _e('Paramètres PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
 
     <form method="post" action="<?php echo esc_url(admin_url('admin.php?page=pdf-builder-settings')); ?>" onsubmit="console.log('Form submitted'); console.log('Form action:', this.action); console.log('Form method:', this.method); return true;">
@@ -1435,7 +1434,6 @@ echo '<style>
 
 })(jQuery);
 </script>
-</div>
 
 <?php
 // Fin du fichier

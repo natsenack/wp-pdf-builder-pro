@@ -408,7 +408,13 @@ class PDF_Builder_Admin_New {
      */
     public function settings_page() {
         $this->check_admin_permissions();
+        ?>
+        <div class="wrap">
+        <?php
         include plugin_dir_path(dirname(__FILE__)) . 'settings-page.php';
+        ?>
+        </div>
+        <?php
     }
 
     /**
