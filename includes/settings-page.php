@@ -1433,12 +1433,16 @@ echo '<style>
 
 <script type="text/javascript">
         $(document).ready(function() {
+            console.log('PDF Builder: Initializing sub-tabs...');
+
             // Masquer tous les sous-onglets inactifs au chargement
             $('.sub-tab-content:not(.sub-tab-active)').hide();
+            console.log('PDF Builder: Hidden inactive sub-tabs');
 
             // Gestionnaire pour les sous-onglets
             $('.sub-nav-tab').on('click', function(e) {
                 e.preventDefault();
+                console.log('PDF Builder: Sub-tab clicked', $(this).attr('href'));
 
                 var $this = $(this);
                 var targetId = $this.attr('href');
@@ -1450,14 +1454,17 @@ echo '<style>
                 // Activer le sous-onglet cliqué
                 $this.addClass('sub-nav-tab-active');
                 $(targetId).addClass('sub-tab-active').show();
+
+                console.log('PDF Builder: Activated sub-tab', targetId);
             });
 
             // Affichage en temps réel de la valeur du slider d'opacité
             $('input[name="default_opacity"]').on('input', function() {
                 $(this).next('span').text($(this).val() + '%');
             });
+
+            console.log('PDF Builder: Sub-tabs initialized successfully');
         });
-    });
 
 })(jQuery);
 </script>

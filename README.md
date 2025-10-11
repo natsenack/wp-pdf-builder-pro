@@ -920,7 +920,50 @@ Le fichier CSS `pdf-builder-pro-admin.css` contient :
 - ✅ **Système de prévisualisation WooCommerce** contrôlable
 - ✅ **Installation automatique** des templates lors de l'activation
 
-## 💡 Support Technique
+## � Leçons Apprises - Structure WordPress
+
+### ⚠️ Règle d'Or : Structure HTML WordPress
+**Dans WordPress, TOUS les éléments HTML doivent être à l'intérieur du `div.wrap`** pour respecter la structure d'administration.
+
+**❌ Mauvaise pratique :**
+```php
+// Dans settings-page.php - AFFICHAGE EN DEHORS DU DIV.WRAPP
+if ($error) {
+    echo '<div class="notice notice-error">Erreur !</div>'; // ❌ Casse la structure
+}
+?>
+<div class="wrap"> <!-- OUVERTURE TARDIVE -->
+    <h1>Titre</h1>
+    <!-- Contenu -->
+</div>
+```
+
+**✅ Bonne pratique :**
+```php
+// Stocker les messages
+$admin_notices = [];
+if ($error) {
+    $admin_notices[] = '<div class="notice notice-error">Erreur !</div>';
+}
+
+// Dans la méthode parente (ex: settings_page())
+?>
+<div class="wrap">
+    <h1>Titre</h1>
+    <?php
+    // Afficher les messages stockés À L'INTÉRIEUR du div.wrap
+    foreach ($admin_notices as $notice) {
+        echo $notice;
+    }
+    ?>
+    <!-- Contenu -->
+</div>
+<?php
+```
+
+**Impact :** Les `echo` prématurés peuvent casser complètement la mise en page, faire apparaître le footer WordPress au mauvais endroit, et briser la structure d'administration.
+
+## �💡 Support Technique
 
 ### Dépannage Commun
 - **Interface vide** → Vérifier console JS, s'assurer que jQuery UI est chargé
