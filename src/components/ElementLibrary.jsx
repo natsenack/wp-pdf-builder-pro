@@ -14,7 +14,7 @@ const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
       description: 'Tableau des produits commandés',
       defaultProperties: {
         showHeaders: true,
-        showBorders: true,
+        showBorders: false,
         headers: ['Produit', 'Qté', 'Prix'],
         dataSource: 'order_items',
         columns: {
@@ -40,7 +40,7 @@ const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
       description: 'Informations détaillées du client',
       defaultProperties: {
         showHeaders: true,
-        showBorders: true,
+        showBorders: false,
         fields: ['name', 'email', 'phone', 'address', 'company', 'vat'],
         layout: 'vertical', // 'vertical' ou 'horizontal'
         showLabels: true,

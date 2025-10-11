@@ -215,7 +215,7 @@ export class ElementCustomizationService {
 
       // Apparence
       backgroundColor: 'transparent',
-      borderColor: '#e2e8f0',
+      borderColor: 'transparent',
       borderWidth: 0,
       borderStyle: 'solid',
       borderRadius: 0,

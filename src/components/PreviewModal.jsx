@@ -53,7 +53,7 @@ const PreviewModal = ({
                 fontSize: `${element.fontSize || 14}px`,
                 color: element.color || '#333333',
                 backgroundColor: element.backgroundColor || 'transparent',
-                border: element.borderWidth ? `${element.borderWidth}px solid ${element.borderColor || '#e2e8f0'}` : 'none',
+                border: element.borderWidth ? `${element.borderWidth}px solid ${element.borderColor || 'transparent'}` : 'none',
                 fontWeight: element.fontWeight || 'normal',
                 textAlign: element.textAlign || 'left',
                 padding: '4px',

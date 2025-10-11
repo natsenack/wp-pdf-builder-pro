@@ -209,7 +209,7 @@ const WooCommerceElement = ({
     border: isSelected
       ? `2px solid #007cba`
       : element.borderWidth > 0
-        ? `${element.borderWidth || 1}px ${element.borderStyle || 'solid'} ${element.borderColor || '#dddddd'}`
+        ? `${element.borderWidth || 1}px ${element.borderStyle || 'solid'} ${element.borderColor || 'transparent'}`
         : 'none',
     backgroundColor: element.backgroundColor || 'transparent',
     color: element.color || '#333333',

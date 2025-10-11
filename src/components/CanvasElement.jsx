@@ -127,128 +127,6 @@ export const CanvasElement = ({
     }
   }, [onContextMenu, element.id]);
 
-  // Fonctions de style pour les tableaux
-  const getTableStyle = (style) => {
-    switch (style) {
-      case 'classic':
-        return {
-          border: '2px solid #333',
-          borderRadius: '0',
-          boxShadow: 'none'
-        };
-      case 'striped':
-        return {
-          border: '1px solid #ddd',
-          borderRadius: '4px',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-        };
-      case 'bordered':
-        return {
-          border: '2px solid #333',
-          borderRadius: '0',
-          boxShadow: 'none'
-        };
-      case 'minimal':
-        return {
-          border: 'none',
-          borderRadius: '0',
-          boxShadow: 'none'
-        };
-      case 'modern':
-        return {
-          border: '1px solid #e1e5e9',
-          borderRadius: '8px',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.07)',
-          backgroundColor: '#ffffff'
-        };
-      default: // 'default'
-        return {
-          border: '1px solid #ddd',
-          borderRadius: '2px',
-          boxShadow: 'none'
-        };
-    }
-  };
-
-  const getTableHeaderStyle = (style) => {
-    switch (style) {
-      case 'classic':
-        return {
-          backgroundcolor: element.color || '#666',
-          color: element.color || '#fff',
-          borderBottom: '2px solid #333',
-          fontWeight: 'bold'
-        };
-      case 'striped':
-        return {
-          backgroundColor: '#f8f9fa',
-          borderBottom: '2px solid #dee2e6',
-          fontWeight: '600'
-        };
-      case 'bordered':
-        return {
-          backgroundColor: '#f8f9fa',
-          borderBottom: '2px solid #333',
-          fontWeight: 'bold'
-        };
-      case 'minimal':
-        return {
-          backgroundColor: 'transparent',
-          borderBottom: '1px solid #eee',
-          fontWeight: 'normal'
-        };
-      case 'modern':
-        return {
-          backgroundColor: '#f8fafc',
-          borderBottom: '1px solid #e2e8f0',
-          fontWeight: '600',
-          color: element.color || '#334155'
-        };
-      default: // 'default'
-        return {
-          backgroundColor: '#f5f5f5',
-          borderBottom: '1px solid #ddd',
-          fontWeight: 'bold'
-        };
-    }
-  };
-
-  const getTableRowStyle = (style, rowIndex) => {
-    switch (style) {
-      case 'classic':
-        return {
-          backgroundColor: rowIndex % 2 === 0 ? '#fff' : '#f9f9f9',
-          borderBottom: '1px solid #ccc'
-        };
-      case 'striped':
-        return {
-          backgroundColor: rowIndex % 2 === 0 ? '#fff' : '#f8f9fa',
-          borderBottom: '1px solid #dee2e6'
-        };
-      case 'bordered':
-        return {
-          backgroundColor: '#fff',
-          borderBottom: '1px solid #333'
-        };
-      case 'minimal':
-        return {
-          backgroundColor: 'transparent',
-          borderBottom: rowIndex % 2 === 0 ? '1px solid #f0f0f0' : 'none'
-        };
-      case 'modern':
-        return {
-          backgroundColor: rowIndex % 2 === 0 ? '#ffffff' : '#f8fafc',
-          borderBottom: '1px solid #e2e8f0',
-          transition: 'background-color 0.2s ease'
-        };
-      default: // 'default'
-        return {
-          backgroundColor: rowIndex % 2 === 0 ? '#fff' : '#fafafa',
-          borderBottom: '1px solid #eee'
-        };
-    }
-  };
-
   return (
     <>
       {/* Élément principal */}
@@ -265,7 +143,7 @@ export const CanvasElement = ({
           userSelect: 'none',
           // Styles de base communs à tous les éléments
           backgroundColor: element.backgroundColor || 'transparent',
-          border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#e2e8f0'}` : 'none',
+          border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || 'transparent'}` : 'none',
           borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0px',
           opacity: (element.opacity || 100) / 100,
           transform: `rotate(${element.rotation || 0}deg) scale(${element.scale || 100}%)`,
@@ -290,9 +168,7 @@ export const CanvasElement = ({
             overflow: 'hidden'
           } : element.type === 'rectangle' ? {
             backgroundColor: element.backgroundColor || 'transparent',
-            border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#000'}` : 'none',
-            borderRadius: element.borderRadius ? `${element.borderRadius}px` : '0',
-            '--element-border-width': element.border ? `${element.borderWidth || 1}px` : '0px'
+            borderRadius: element.borderRadius ? `${element.borderRadius}px` : '0'
           } : element.type === 'image' && (element.src || element.imageUrl) ? {
             backgroundImage: `url(${element.src || element.imageUrl})`,
             backgroundSize: element.objectFit || element.fit || 'cover',
@@ -304,65 +180,51 @@ export const CanvasElement = ({
             width: '100%'
           } : element.type === 'layout-header' ? {
             backgroundColor: element.backgroundColor || 'transparent',
-            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#e2e8f0'}` : (element.border ? '1px solid #e2e8f0' : 'none'),
             borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '4px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 14 * zoom,
             fontWeight: 'bold',
-            color: element.color || '#64748b',
-            '--element-border-width': element.borderWidth ? `${element.borderWidth * zoom}px` : (element.border ? '1px' : '0px')
+            color: element.color || '#64748b'
           } : element.type === 'layout-footer' ? {
             backgroundColor: element.backgroundColor || 'transparent',
-            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#e2e8f0'}` : (element.border ? '1px solid #e2e8f0' : 'none'),
             borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '4px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 12 * zoom,
-            color: element.color || '#64748b',
-            '--element-border-width': element.borderWidth ? `${element.borderWidth * zoom}px` : (element.border ? '1px' : '0px')
+            color: element.color || '#64748b'
           } : element.type === 'layout-sidebar' ? {
             backgroundColor: element.backgroundColor || 'transparent',
-            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#e2e8f0'}` : (element.border ? '1px solid #e2e8f0' : 'none'),
             borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '4px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 12 * zoom,
-            color: element.color || '#64748b',
-            '--element-border-width': element.borderWidth ? `${element.borderWidth * zoom}px` : (element.border ? '1px' : '0px')
+            color: element.color || '#64748b'
           } : element.type === 'layout-section' ? {
             backgroundColor: element.backgroundColor || 'transparent',
-            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#e2e8f0'}` : (element.border ? '1px solid #e2e8f0' : 'none'),
             borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '4px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 12 * zoom,
-            color: element.color || '#64748b',
-            '--element-border-width': element.borderWidth ? `${element.borderWidth * zoom}px` : (element.border ? '1px' : '0px')
+            color: element.color || '#64748b'
           } : element.type === 'layout-container' ? {
             backgroundColor: element.backgroundColor || 'transparent',
-            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'dashed'} ${element.borderColor || '#cbd5e1'}` : (element.border ? '2px dashed #cbd5e1' : 'none'),
             borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '4px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 12 * zoom,
-            color: element.color || '#94a3b8',
-            '--element-border-width': element.border ? `${element.borderWidth || 2}px` : '2px'
+            color: element.color || '#94a3b8'
           } : element.type === 'shape-rectangle' ? {
             backgroundColor: element.backgroundColor || '#e5e7eb',
-            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#000'}` : (element.border ? '1px solid #000' : 'none'),
-            borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0',
-            '--element-border-width': element.borderWidth ? `${element.borderWidth * zoom}px` : (element.border ? '1px' : '0px')
+            borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0'
           } : element.type === 'shape-circle' ? {
             backgroundColor: element.backgroundColor || '#e5e7eb',
-            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#000'}` : (element.border ? '1px solid #000' : 'none'),
-            borderRadius: '50%',
-            '--element-border-width': element.borderWidth ? `${element.borderWidth * zoom}px` : (element.border ? '1px' : '0px')
+            borderRadius: '50%'
           } : element.type === 'shape-line' ? {
             backgroundColor: element.backgroundColor || '#6b7280',
             height: '100%'
@@ -380,37 +242,30 @@ export const CanvasElement = ({
             height: '1px'
           } : element.type === 'image-upload' ? {
             backgroundColor: element.backgroundColor || '#f3f4f6',
-            border: '2px dashed #d1d5db',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 12 * zoom
           } : element.type === 'logo' ? {
             backgroundColor: element.backgroundColor || '#f3f4f6',
-            border: '1px solid #e5e7eb',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 14 * zoom,
-            fontWeight: 'bold',
-            '--element-border-width': '1px'
+            fontWeight: 'bold'
           } : element.type === 'barcode' ? {
             backgroundColor: element.backgroundColor || '#ffffff',
-            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#000000'}` : (element.border ? '1px solid #000000' : 'none'),
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 10 * zoom,
-            fontFamily: 'monospace',
-            '--element-border-width': element.borderWidth ? `${element.borderWidth * zoom}px` : (element.border ? '1px' : '0px')
+            fontFamily: 'monospace'
           } : element.type === 'qrcode' || element.type === 'qrcode-dynamic' ? {
             backgroundColor: element.backgroundColor || '#ffffff',
-            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#000000'}` : (element.border ? '1px solid #000000' : 'none'),
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 8 * zoom,
-            '--element-border-width': element.borderWidth ? `${element.borderWidth * zoom}px` : (element.border ? '1px' : '0px')
+            fontSize: 8 * zoom
           } : element.type === 'icon' ? {
             backgroundColor: element.backgroundColor || 'transparent',
             display: 'flex',
@@ -419,77 +274,63 @@ export const CanvasElement = ({
             fontSize: 20 * zoom
           } : element.type === 'dynamic-text' ? {
             backgroundColor: element.backgroundColor || 'transparent',
-            border: '1px solid #e2e8f0',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'flex-start',
             fontSize: 12 * zoom,
             fontFamily: 'monospace',
             color: element.color || '#059669',
-            padding: '4px',
-            '--element-border-width': '1px'
+            padding: '4px'
           } : element.type === 'formula' ? {
             backgroundColor: element.backgroundColor || 'transparent',
-            border: '1px solid #f59e0b',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'flex-start',
             fontSize: 12 * zoom,
             fontFamily: 'monospace',
             color: element.color || '#d97706',
-            padding: '4px',
-            '--element-border-width': '1px'
+            padding: '4px'
           } : element.type === 'conditional-text' ? {
             backgroundColor: element.backgroundColor || '#ecfdf5',
-            border: '1px solid #10b981',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'flex-start',
             fontSize: 12 * zoom,
             fontFamily: 'monospace',
             color: '#059669',
-            padding: '4px',
-            '--element-border-width': '1px'
+            padding: '4px'
           } : element.type === 'counter' ? {
             backgroundColor: element.backgroundColor || '#f0f9ff',
-            border: '1px solid #0ea5e9',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 14 * zoom,
             fontWeight: 'bold',
-            color: '#0284c7',
-            '--element-border-width': '1px'
+            color: '#0284c7'
           } : element.type === 'date-dynamic' ? {
             backgroundColor: element.backgroundColor || '#f3f4f6',
-            border: '1px solid #d1d5db',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'flex-start',
             fontSize: 12 * zoom,
             fontFamily: 'monospace',
             color: '#374151',
-            padding: '4px',
-            '--element-border-width': '1px'
+            padding: '4px'
           } : element.type === 'currency' ? {
             backgroundColor: element.backgroundColor || '#f0fdf4',
-            border: '1px solid #22c55e',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'flex-end',
             fontSize: 14 * zoom,
             fontWeight: 'bold',
             color: '#16a34a',
-            padding: '4px',
-            '--element-border-width': '1px'
+            padding: '4px'
           } : element.type === 'table-dynamic' ? {
             backgroundColor: element.backgroundColor || '#ffffff',
-            border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#e5e7eb'}` : '1px solid #e5e7eb',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 12 * zoom,
-            '--element-border-width': element.border ? `${element.borderWidth || 1}px` : '1px'
+            fontSize: 12 * zoom
           } : element.type === 'gradient-box' ? {
             background: element.backgroundColor || 'linear-gradient(45deg, #667eea 0%, #764ba2 100%)',
             borderRadius: element.borderRadius ? `${element.borderRadius}px` : '8px',
@@ -509,22 +350,18 @@ export const CanvasElement = ({
             fontSize: 12 * zoom
           } : element.type === 'rounded-box' ? {
             backgroundColor: element.backgroundColor || 'transparent',
-            border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#e5e7eb'}` : '1px solid #e5e7eb',
             borderRadius: element.borderRadius ? `${element.borderRadius}px` : '12px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 12 * zoom,
-            '--element-border-width': element.border ? `${element.borderWidth || 1}px` : '1px'
+            fontSize: 12 * zoom
           } : element.type === 'border-box' ? {
             backgroundColor: element.backgroundColor || 'transparent',
-            border: element.border ? `${element.borderWidth || 3}px solid ${element.borderColor || '#3b82f6'}` : '3px solid #3b82f6',
             borderRadius: element.borderRadius ? `${element.borderRadius}px` : '4px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: 12 * zoom,
-            '--element-border-width': element.border ? `${element.borderWidth || 3}px` : '3px'
+            fontSize: 12 * zoom
           } : element.type === 'background-pattern' ? {
             backgroundColor: element.backgroundColor || '#f8fafc',
             backgroundImage: element.backgroundImage || 'repeating-linear-gradient(45deg, #e2e8f0, #e2e8f0 10px, #f1f5f9 10px, #f1f5f9 20px)',
@@ -550,7 +387,6 @@ export const CanvasElement = ({
             position: 'relative'
           } : {
             backgroundColor: element.backgroundColor || 'transparent',
-            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#e2e8f0'}` : '1px solid #ccc',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -611,26 +447,24 @@ export const CanvasElement = ({
             flexDirection: 'column',
             fontSize: 10 * zoom,
             fontFamily: 'Arial, sans-serif',
-            border: (element.showBorders !== false) ? '1px solid #ddd' : 'none',
-            borderRadius: '2px',
-            overflow: 'hidden',
-            ...getTableStyle(element.tableStyle || 'default')
+            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || 'transparent'}` : 'none',
+            borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '2px',
+            overflow: 'hidden'
           }}>
             {/* En-tête du tableau */}
             {(element.showHeaders !== false) && (
               <div style={{
                 display: 'flex',
                 backgroundColor: '#f5f5f5',
-                borderBottom: '1px solid #ddd',
-                fontWeight: 'bold',
-                ...getTableHeaderStyle(element.tableStyle || 'default')
+                borderBottom: element.borderWidth ? '1px solid #ddd' : 'none',
+                fontWeight: 'bold'
               }}>
                 {(element.columns?.image !== false) && (
                   <div style={{
                     flex: '0 0 40px',
                     padding: `${4 * zoom}px`,
                     textAlign: 'center',
-                    borderRight: '1px solid #ddd'
+                    borderRight: element.borderWidth ? '1px solid #ddd' : 'none'
                   }}>
                     Img
                   </div>
@@ -640,7 +474,7 @@ export const CanvasElement = ({
                     flex: 1,
                     padding: `${4 * zoom}px ${6 * zoom}px`,
                     textAlign: 'left',
-                    borderRight: (element.columns?.sku !== false) || (element.columns?.quantity !== false) || (element.columns?.price !== false) || (element.columns?.total !== false) ? '1px solid #ddd' : 'none'
+                    borderRight: element.borderWidth ? '1px solid #ddd' : 'none'
                   }}>
                     Produit
                   </div>
@@ -650,7 +484,7 @@ export const CanvasElement = ({
                     flex: '0 0 80px',
                     padding: `${4 * zoom}px ${6 * zoom}px`,
                     textAlign: 'left',
-                    borderRight: (element.columns?.quantity !== false) || (element.columns?.price !== false) || (element.columns?.total !== false) ? '1px solid #ddd' : 'none'
+                    borderRight: (element.showBorders !== false && ((element.columns?.quantity !== false) || (element.columns?.price !== false) || (element.columns?.total !== false))) ? '1px solid #ddd' : 'none'
                   }}>
                     SKU
                   </div>
@@ -660,7 +494,7 @@ export const CanvasElement = ({
                     flex: '0 0 60px',
                     padding: `${4 * zoom}px ${6 * zoom}px`,
                     textAlign: 'center',
-                    borderRight: (element.columns?.price !== false) || (element.columns?.total !== false) ? '1px solid #ddd' : 'none'
+                    borderRight: (element.showBorders !== false && ((element.columns?.price !== false) || (element.columns?.total !== false))) ? '1px solid #ddd' : 'none'
                   }}>
                     Qté
                   </div>
@@ -670,7 +504,7 @@ export const CanvasElement = ({
                     flex: '0 0 80px',
                     padding: `${4 * zoom}px ${6 * zoom}px`,
                     textAlign: 'right',
-                    borderRight: (element.columns?.total !== false) ? '1px solid #ddd' : 'none'
+                    borderRight: element.borderWidth ? '1px solid #ddd' : 'none'
                   }}>
                     Prix
                   </div>
@@ -692,15 +526,14 @@ export const CanvasElement = ({
               {/* Ligne 1 */}
               <div style={{
                 display: 'flex',
-                borderBottom: '1px solid #eee',
-                ...getTableRowStyle(element.tableStyle || 'default', 0)
+                borderBottom: element.borderWidth ? '1px solid #eee' : 'none'
               }}>
                 {(element.columns?.image !== false) && (
                   <div style={{
                     flex: '0 0 40px',
                     padding: `${4 * zoom}px`,
                     textAlign: 'center',
-                    borderRight: '1px solid #eee'
+                    borderRight: element.borderWidth ? '1px solid #eee' : 'none'
                   }}>
                     📷
                   </div>
@@ -709,7 +542,7 @@ export const CanvasElement = ({
                   <div style={{
                     flex: 1,
                     padding: `${4 * zoom}px ${6 * zoom}px`,
-                    borderRight: (element.columns?.sku !== false) || (element.columns?.quantity !== false) || (element.columns?.price !== false) || (element.columns?.total !== false) ? '1px solid #eee' : 'none'
+                    borderRight: element.borderWidth ? '1px solid #eee' : 'none'
                   }}>
                     Produit A - Description du produit
                   </div>
@@ -718,7 +551,7 @@ export const CanvasElement = ({
                   <div style={{
                     flex: '0 0 80px',
                     padding: `${4 * zoom}px ${6 * zoom}px`,
-                    borderRight: (element.columns?.quantity !== false) || (element.columns?.price !== false) || (element.columns?.total !== false) ? '1px solid #eee' : 'none'
+                    borderRight: element.borderWidth ? '1px solid #eee' : 'none'
                   }}>
                     SKU001
                   </div>
@@ -728,7 +561,7 @@ export const CanvasElement = ({
                     flex: '0 0 60px',
                     padding: `${4 * zoom}px ${6 * zoom}px`,
                     textAlign: 'center',
-                    borderRight: (element.columns?.price !== false) || (element.columns?.total !== false) ? '1px solid #eee' : 'none'
+                    borderRight: element.borderWidth ? '1px solid #eee' : 'none'
                   }}>
                     2
                   </div>
@@ -738,7 +571,7 @@ export const CanvasElement = ({
                     flex: '0 0 80px',
                     padding: `${4 * zoom}px ${6 * zoom}px`,
                     textAlign: 'right',
-                    borderRight: (element.columns?.total !== false) ? '1px solid #eee' : 'none'
+                    borderRight: element.borderWidth ? '1px solid #eee' : 'none'
                   }}>
                     €19.99
                   </div>
@@ -757,16 +590,15 @@ export const CanvasElement = ({
               {/* Ligne 2 */}
               <div style={{
                 display: 'flex',
-                borderBottom: '1px solid #eee',
-                backgroundColor: '#fafafa',
-                ...getTableRowStyle(element.tableStyle || 'default', 1)
+                borderBottom: element.borderWidth ? '1px solid #eee' : 'none',
+                backgroundColor: '#fafafa'
               }}>
                 {(element.columns?.image !== false) && (
                   <div style={{
                     flex: '0 0 40px',
                     padding: `${4 * zoom}px`,
                     textAlign: 'center',
-                    borderRight: '1px solid #eee'
+                    borderRight: element.borderWidth ? '1px solid #eee' : 'none'
                   }}>
                     📷
                   </div>
@@ -775,7 +607,7 @@ export const CanvasElement = ({
                   <div style={{
                     flex: 1,
                     padding: `${4 * zoom}px ${6 * zoom}px`,
-                    borderRight: (element.columns?.sku !== false) || (element.columns?.quantity !== false) || (element.columns?.price !== false) || (element.columns?.total !== false) ? '1px solid #eee' : 'none'
+                    borderRight: element.borderWidth ? '1px solid #eee' : 'none'
                   }}>
                     Produit B - Un autre article
                   </div>
@@ -784,7 +616,7 @@ export const CanvasElement = ({
                   <div style={{
                     flex: '0 0 80px',
                     padding: `${4 * zoom}px ${6 * zoom}px`,
-                    borderRight: (element.columns?.quantity !== false) || (element.columns?.price !== false) || (element.columns?.total !== false) ? '1px solid #eee' : 'none'
+                    borderRight: element.borderWidth ? '1px solid #eee' : 'none'
                   }}>
                     SKU002
                   </div>
@@ -794,7 +626,7 @@ export const CanvasElement = ({
                     flex: '0 0 60px',
                     padding: `${4 * zoom}px ${6 * zoom}px`,
                     textAlign: 'center',
-                    borderRight: (element.columns?.price !== false) || (element.columns?.total !== false) ? '1px solid #eee' : 'none'
+                    borderRight: element.borderWidth ? '1px solid #eee' : 'none'
                   }}>
                     1
                   </div>
@@ -804,7 +636,7 @@ export const CanvasElement = ({
                     flex: '0 0 80px',
                     padding: `${4 * zoom}px ${6 * zoom}px`,
                     textAlign: 'right',
-                    borderRight: (element.columns?.total !== false) ? '1px solid #eee' : 'none'
+                    borderRight: element.borderWidth ? '1px solid #eee' : 'none'
                   }}>
                     €29.99
                   </div>
@@ -827,7 +659,7 @@ export const CanvasElement = ({
                 {/* Ligne de séparation */}
                 <div style={{
                   display: 'flex',
-                  borderTop: '2px solid #ddd',
+                  borderTop: element.borderWidth ? '2px solid #ddd' : 'none',
                   marginTop: `${8 * zoom}px`,
                   paddingTop: `${8 * zoom}px`
                 }}>
@@ -877,7 +709,7 @@ export const CanvasElement = ({
                 {element.showSubtotal && (
                   <div style={{
                     display: 'flex',
-                    borderBottom: '1px solid #eee',
+                    borderBottom: element.borderWidth ? '1px solid #eee' : 'none',
                     backgroundColor: '#f9f9f9'
                   }}>
                     <div style={{
@@ -923,7 +755,7 @@ export const CanvasElement = ({
                 {element.showShipping && (
                   <div style={{
                     display: 'flex',
-                    borderBottom: '1px solid #eee'
+                    borderBottom: element.borderWidth ? '1px solid #eee' : 'none'
                   }}>
                     <div style={{
                       flex: 1,
@@ -966,7 +798,7 @@ export const CanvasElement = ({
                 {element.showTaxes && (
                   <div style={{
                     display: 'flex',
-                    borderBottom: '1px solid #eee'
+                    borderBottom: element.borderWidth ? '1px solid #eee' : 'none'
                   }}>
                     <div style={{
                       flex: 1,
@@ -1009,7 +841,7 @@ export const CanvasElement = ({
                 {element.showDiscount && (
                   <div style={{
                     display: 'flex',
-                    borderBottom: '1px solid #eee'
+                    borderBottom: element.borderWidth ? '1px solid #eee' : 'none'
                   }}>
                     <div style={{
                       flex: 1,
@@ -1054,7 +886,7 @@ export const CanvasElement = ({
                 {element.showTotal && (
                   <div style={{
                     display: 'flex',
-                    borderTop: '2px solid #333',
+                    borderTop: element.borderWidth ? '2px solid #333' : 'none',
                     backgroundColor: '#f5f5f5',
                     marginTop: `${4 * zoom}px`,
                     paddingTop: `${4 * zoom}px`
@@ -1117,9 +949,7 @@ export const CanvasElement = ({
             fontStyle: element.fontStyle || 'normal',
             textDecoration: element.textDecoration || 'none',
             color: element.color || '#333',
-            backgroundColor: element.backgroundColor || '#ffffff',
-            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#ddd'}` : 'none',
-            borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0px'
+            backgroundColor: element.backgroundColor || '#ffffff'
           }}>
             <div style={{
               display: 'flex',
@@ -1323,7 +1153,7 @@ export const CanvasElement = ({
                   height: `${element.height || 80}px`,
                   objectFit: element.fit || 'contain',
                   borderRadius: element.borderRadius || 0,
-                  border: element.borderWidth ? `${element.borderWidth}px ${element.borderStyle || 'solid'} ${element.borderColor || '#ddd'}` : (element.showBorder ? '1px solid #ddd' : 'none')
+                  border: element.borderWidth ? `${element.borderWidth}px ${element.borderStyle || 'solid'} ${element.borderColor || 'transparent'}` : (element.showBorder ? '1px solid transparent' : 'none')
                 }}
               />
             ) : (
@@ -1331,8 +1161,8 @@ export const CanvasElement = ({
                 width: `${element.width || 150}px`,
                 height: `${element.height || 80}px`,
                 backgroundColor: '#f5f5f5',
-                border: '2px dashed #ddd',
-                borderRadius: '4px',
+                border: element.borderWidth ? `${element.borderWidth}px ${element.borderStyle || 'solid'} ${element.borderColor || 'transparent'}` : (element.showBorder ? '1px solid transparent' : 'none'),
+                borderRadius: element.borderRadius || '4px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -1359,10 +1189,7 @@ export const CanvasElement = ({
             fontWeight: element.fontWeight || 'normal',
             textAlign: element.textAlign || 'left',
             color: element.color || '#333',
-            lineHeight: '1.4',
-            backgroundColor: element.backgroundColor || 'transparent',
-            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#e2e8f0'}` : 'none',
-            borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0px'
+            lineHeight: '1.4'
           }}>
             {/* Nom de l'entreprise */}
             {element.fields?.includes('name') && (
@@ -1424,10 +1251,7 @@ export const CanvasElement = ({
             fontFamily: element.fontFamily || 'Arial',
             fontWeight: element.fontWeight || 'bold',
             color: element.color || '#333333',
-            textAlign: element.textAlign || 'right',
-            backgroundColor: element.backgroundColor || 'transparent',
-            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#e2e8f0'}` : 'none',
-            borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0px'
+            textAlign: element.textAlign || 'right'
           }}>
             {element.showLabel && (
               <div style={{
@@ -1470,7 +1294,7 @@ export const CanvasElement = ({
             color: element.color || '#1e293b',
             textAlign: element.textAlign || 'center',
             backgroundColor: element.backgroundColor || 'transparent',
-            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#e2e8f0'}` : (element.showBorder ? '2px solid #e2e8f0' : 'none'),
+            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || 'transparent'}` : (element.showBorder ? '2px solid transparent' : 'none'),
             borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '4px',
             whiteSpace: 'nowrap'
           }}>
