@@ -786,6 +786,57 @@ window.addEventListener('load', function() {
                                     <p class="description"><?php _e('Taille de police en pixels pour les nouveaux éléments texte (8-72px)', 'pdf-builder-pro'); ?></p>
                                 </td>
                             </tr>
+                            <tr>
+                                <th scope="row"><?php _e('Police par défaut', 'pdf-builder-pro'); ?></th>
+                                <td>
+                                    <select name="default_font_family">
+                                        <option value="Arial" <?php selected(get_option('default_font_family', 'Arial'), 'Arial'); ?>>Arial</option>
+                                        <option value="Helvetica" <?php selected(get_option('default_font_family', 'Arial'), 'Helvetica'); ?>>Helvetica</option>
+                                        <option value="Times New Roman" <?php selected(get_option('default_font_family', 'Arial'), 'Times New Roman'); ?>>Times New Roman</option>
+                                        <option value="Courier New" <?php selected(get_option('default_font_family', 'Arial'), 'Courier New'); ?>>Courier New</option>
+                                        <option value="Georgia" <?php selected(get_option('default_font_family', 'Arial'), 'Georgia'); ?>>Georgia</option>
+                                        <option value="Verdana" <?php selected(get_option('default_font_family', 'Arial'), 'Verdana'); ?>>Verdana</option>
+                                    </select>
+                                    <p class="description"><?php _e('Famille de police utilisée pour les nouveaux éléments texte', 'pdf-builder-pro'); ?></p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><?php _e('Style de police par défaut', 'pdf-builder-pro'); ?></th>
+                                <td>
+                                    <select name="default_font_weight">
+                                        <option value="normal" <?php selected(get_option('default_font_weight', 'normal'), 'normal'); ?>>Normal</option>
+                                        <option value="bold" <?php selected(get_option('default_font_weight', 'normal'), 'bold'); ?>>Gras</option>
+                                    </select>
+                                    <p class="description"><?php _e('Style de police pour les nouveaux éléments texte', 'pdf-builder-pro'); ?></p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><?php _e('Alignement du texte par défaut', 'pdf-builder-pro'); ?></th>
+                                <td>
+                                    <select name="default_text_align">
+                                        <option value="left" <?php selected(get_option('default_text_align', 'left'), 'left'); ?>>Gauche</option>
+                                        <option value="center" <?php selected(get_option('default_text_align', 'left'), 'center'); ?>>Centre</option>
+                                        <option value="right" <?php selected(get_option('default_text_align', 'left'), 'right'); ?>>Droite</option>
+                                        <option value="justify" <?php selected(get_option('default_text_align', 'left'), 'justify'); ?>>Justifié</option>
+                                    </select>
+                                    <p class="description"><?php _e('Alignement du texte pour les nouveaux éléments texte', 'pdf-builder-pro'); ?></p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><?php _e('Opacité par défaut', 'pdf-builder-pro'); ?></th>
+                                <td>
+                                    <input type="range" name="default_opacity" value="<?php echo get_option('default_opacity', 100); ?>" min="0" max="100" step="5" />
+                                    <span><?php echo get_option('default_opacity', 100); ?>%</span>
+                                    <p class="description"><?php _e('Opacité par défaut pour tous les nouveaux éléments (0-100%)', 'pdf-builder-pro'); ?></p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><?php _e('Épaisseur de bordure par défaut', 'pdf-builder-pro'); ?></th>
+                                <td>
+                                    <input type="number" name="default_border_width" value="<?php echo get_option('default_border_width', 0); ?>" min="0" max="10" />
+                                    <p class="description"><?php _e('Épaisseur de bordure en pixels pour les nouveaux éléments (0 = pas de bordure)', 'pdf-builder-pro'); ?></p>
+                                </td>
+                            </tr>
                         </table>
                     </div>
                 </div>
@@ -1476,6 +1527,11 @@ echo '<style>
             // Activer le sous-onglet cliqué
             $this.addClass('sub-nav-tab-active');
             $(targetId).addClass('sub-tab-active');
+        });
+
+        // Affichage en temps réel de la valeur du slider d'opacité
+        $('input[name="default_opacity"]').on('input', function() {
+            $(this).next('span').text($(this).val() + '%');
         });
     });
 
