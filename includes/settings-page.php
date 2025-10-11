@@ -1358,16 +1358,47 @@ echo '<style>
                 hashTab.click();
             }
         }
+
+        // Actions de maintenance
+        $('#clear-cache').on('click', function() {
+            if (!confirm('<?php echo esc_js(__('Êtes-vous sûr de vouloir vider le cache ?', 'pdf-builder-pro')); ?>')) {
+                return;
+            }
+
+            var $button = $(this);
+            var $status = $('#cache-status');
+
+            $button.prop('disabled', true).text('<?php echo esc_js(__('Nettoyage...', 'pdf-builder-pro')); ?>');
+            $status.html('<div class="notice notice-info"><p><?php echo esc_js(__('Nettoyage du cache en cours...', 'pdf-builder-pro')); ?></p></div>');
+
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_clear_cache',
+                    nonce: '<?php echo wp_create_nonce('pdf_builder_maintenance'); ?>'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $status.html('<div class="notice notice-success"><p><?php echo esc_js(__('Cache vidé avec succès !', 'pdf-builder-pro')); ?></p></div>');
+                    } else {
+                        $status.html('<div class="notice notice-error"><p>' + (response.data && response.data.message ? $('<div>').text(response.data.message).html() : 'Erreur inconnue') + '</p></div>');
+                    }
+                },
+                error: function() {
+                    $status.html('<div class="notice notice-error"><p><?php echo esc_js(__('Erreur lors du nettoyage du cache.', 'pdf-builder-pro')); ?></p></div>');
+                },
+                complete: function() {
+                    $button.prop('disabled', false).text('<?php echo esc_js(__('Vider le Cache', 'pdf-builder-pro')); ?>');
+                }
+            });
+        });
     });
 
 })(jQuery);
 </script>
 
 <script type="text/javascript">
-(function($) {
-    'use strict';
-
-        // Gestion des sous-onglets dans l'onglet Canvas
         $(document).ready(function() {
             // Masquer tous les sous-onglets inactifs au chargement
             $('.sub-tab-content:not(.sub-tab-active)').hide();
@@ -1431,6 +1462,169 @@ echo '<style>
             complete: function() {
                 $button.prop('disabled', false).text('<?php echo esc_js(__('Vider le Cache', 'pdf-builder-pro')); ?>');
             }
+        });
+
+        $('#execute-sql-repair').on('click', function() {
+            if (!confirm('<?php echo esc_js(__('Êtes-vous sûr de vouloir exécuter la réparation SQL ? Cette action va créer les tables manquantes et insérer les données par défaut.', 'pdf-builder-pro')); ?>')) {
+                return;
+            }
+
+            var $button = $(this);
+            var $status = $('#database-status');
+
+            $button.prop('disabled', true).text('<?php echo esc_js(__('Exécution...', 'pdf-builder-pro')); ?>');
+            $status.html('<div class="notice notice-info"><p><?php echo esc_js(__('Exécution du script SQL en cours...', 'pdf-builder-pro')); ?></p></div>');
+
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_execute_sql_repair',
+                    nonce: '<?php echo wp_create_nonce('pdf_builder_maintenance'); ?>'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        var html = '<div class="notice notice-success"><p><?php echo esc_js(__('Réparation SQL exécutée avec succès !', 'pdf-builder-pro')); ?></p>';
+                        if (response.data.results) {
+                            html += '<ul>';
+                            $.each(response.data.results, function(index, result) {
+                                var icon = result.success ? '✅' : '❌';
+                                html += '<li>' + icon + ' ' + result.table + ': ' + result.message + '</li>';
+                            });
+                            html += '</ul>';
+                        }
+                        html += '</div>';
+                        $status.html(html);
+                    } else {
+                        console.error('Erreur dans la réponse:', response.data);
+                        $status.html('<div class="notice notice-error"><p>' + (response.data && response.data.message ? $('<div>').text(response.data.message).html() : 'Erreur inconnue') + '</p></div>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Erreur AJAX:', {
+                        xhr: xhr,
+                        status: status,
+                        error: error,
+                        responseText: xhr.responseText
+                    });
+                    $status.html('<div class="notice notice-error"><p><?php echo esc_js(__('Erreur lors de l\'exécution du script SQL.', 'pdf-builder-pro')); ?></p></div>');
+                },
+                complete: function() {
+                    $button.prop('disabled', false).text('<?php echo esc_js(__('Réparer la Base de Données', 'pdf-builder-pro')); ?>');
+                }
+            });
+        });
+
+        $('#optimize-database').on('click', function() {
+            if (!confirm('<?php echo esc_js(__('Êtes-vous sûr de vouloir optimiser la base de données ?', 'pdf-builder-pro')); ?>')) {
+                return;
+            }
+
+            var $button = $(this);
+            var $status = $('#database-status');
+
+            $button.prop('disabled', true).text('<?php echo esc_js(__('Optimisation...', 'pdf-builder-pro')); ?>');
+            $status.html('<div class="notice notice-info"><p><?php echo esc_js(__('Optimisation de la base de données en cours...', 'pdf-builder-pro')); ?></p></div>');
+
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_optimize_database',
+                    nonce: '<?php echo wp_create_nonce('pdf_builder_maintenance'); ?>'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        var html = '<div class="notice notice-success"><p><?php echo esc_js(__('Base de données optimisée avec succès !', 'pdf-builder-pro')); ?></p></div>';
+                        if (response.data.results) {
+                            html += '<ul>';
+                            $.each(response.data.results, function(index, result) {
+                                var icon = result.success ? '✅' : '❌';
+                                html += '<li>' + icon + ' ' + result.table + ': ' + result.message + '</li>';
+                            });
+                            html += '</ul>';
+                        }
+                        $status.html(html);
+                    } else {
+                        $status.html('<div class="notice notice-error"><p>' + (response.data && response.data.message ? $('<div>').text(response.data.message).html() : 'Erreur inconnue') + '</p></div>');
+                    }
+                },
+                error: function() {
+                    $status.html('<div class="notice notice-error"><p><?php echo esc_js(__('Erreur lors de l\'optimisation de la base de données.', 'pdf-builder-pro')); ?></p></div>');
+                },
+                complete: function() {
+                    $button.prop('disabled', false).text('<?php echo esc_js(__('Optimiser la Base de Données', 'pdf-builder-pro')); ?>');
+                }
+            });
+        });
+
+        $('#view-logs').on('click', function() {
+            var $button = $(this);
+            var $status = $('#logs-status');
+
+            $button.prop('disabled', true).text('<?php echo esc_js(__('Chargement...', 'pdf-builder-pro')); ?>');
+            $status.html('<div class="notice notice-info"><p><?php echo esc_js(__('Chargement des logs en cours...', 'pdf-builder-pro')); ?></p></div>');
+
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_view_logs',
+                    nonce: '<?php echo wp_create_nonce('pdf_builder_maintenance'); ?>'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        var logsHtml = '<div class="notice notice-info"><p><?php echo esc_js(__('Logs récents :', 'pdf-builder-pro')); ?></p>';
+                        logsHtml += '<div style="max-height: 300px; overflow-y: auto; background: #f9f9f9; padding: 10px; border: 1px solid #ddd; margin-top: 10px;">';
+                        logsHtml += '<pre style="margin: 0; white-space: pre-wrap; font-family: monospace; font-size: 12px;">';
+                        logsHtml += response.data.logs || '<?php echo esc_js(__('Aucun log trouvé.', 'pdf-builder-pro')); ?>';
+                        logsHtml += '</pre></div></div>';
+                        $status.html(logsHtml);
+                    } else {
+                        $status.html('<div class="notice notice-error"><p>' + (response.data && response.data.message ? $('<div>').text(response.data.message).html() : 'Erreur inconnue') + '</p></div>');
+                    }
+                },
+                error: function() {
+                    $status.html('<div class="notice notice-error"><p><?php echo esc_js(__('Erreur lors du chargement des logs.', 'pdf-builder-pro')); ?></p></div>');
+                },
+                complete: function() {
+                    $button.prop('disabled', false).text('<?php echo esc_js(__('Voir les Logs', 'pdf-builder-pro')); ?>');
+                }
+            });
+        });
+
+        $('#clear-logs').on('click', function() {
+            if (!confirm('<?php echo esc_js(__('Êtes-vous sûr de vouloir vider les logs ?', 'pdf-builder-pro')); ?>')) {
+                return;
+            }
+
+            var $button = $(this);
+            var $status = $('#logs-status');
+
+            $button.prop('disabled', true).text('<?php echo esc_js(__('Nettoyage...', 'pdf-builder-pro')); ?>');
+            $status.html('<div class="notice notice-info"><p><?php echo esc_js(__('Nettoyage des logs en cours...', 'pdf-builder-pro')); ?></p></div>');
+
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_clear_logs',
+                    nonce: '<?php echo wp_create_nonce('pdf_builder_maintenance'); ?>'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $status.html('<div class="notice notice-success"><p><?php echo esc_js(__('Logs vidés avec succès !', 'pdf-builder-pro')); ?></p></div>');
+                    } else {
+                        $status.html('<div class="notice notice-error"><p>' + (response.data && response.data.message ? $('<div>').text(response.data.message).html() : 'Erreur inconnue') + '</p></div>');
+                    }
+                },
+                error: function() {
+                    $status.html('<div class="notice notice-error"><p><?php echo esc_js(__('Erreur lors du nettoyage des logs.', 'pdf-builder-pro')); ?></p></div>');
+                },
+                complete: function() {
+                    $button.prop('disabled', false).text('<?php echo esc_js(__('Vider les Logs', 'pdf-builder-pro')); ?>');
+                }
+            });
         });
     });
 
@@ -1585,6 +1779,132 @@ echo '<style>
             complete: function() {
                 $button.prop('disabled', false).text('<?php echo esc_js(__('Vider les Logs', 'pdf-builder-pro')); ?>');
             }
+        });
+
+        // Gestion des rôles
+        $('#reset-role-permissions').on('click', function() {
+            if (!confirm('<?php echo esc_js(__('Êtes-vous sûr de vouloir réinitialiser toutes les permissions des rôles ? Cette action ne peut pas être annulée.', 'pdf-builder-pro')); ?>')) {
+                return;
+            }
+
+            var $button = $(this);
+            var $status = $('#roles-status');
+
+            $button.prop('disabled', true).text('<?php echo esc_js(__('Réinitialisation...', 'pdf-builder-pro')); ?>');
+            $status.html('<div class="notice notice-info"><p><?php echo esc_js(__('Réinitialisation des permissions en cours...', 'pdf-builder-pro')); ?></p></div>');
+
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_reset_role_permissions',
+                    nonce: '<?php echo wp_create_nonce('pdf_builder_roles'); ?>'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $status.html('<div class="notice notice-success"><p><?php echo esc_js(__('Permissions réinitialisées avec succès !', 'pdf-builder-pro')); ?></p></div>');
+                        location.reload(); // Recharger la page pour voir les changements
+                    } else {
+                        $status.html('<div class="notice notice-error"><p>' + (response.data && response.data.message ? $('<div>').text(response.data.message).html() : 'Erreur inconnue') + '</p></div>');
+                    }
+                },
+                error: function() {
+                    $status.html('<div class="notice notice-error"><p><?php echo esc_js(__('Erreur lors de la réinitialisation des permissions.', 'pdf-builder-pro')); ?></p></div>');
+                },
+                complete: function() {
+                    $button.prop('disabled', false).text('<?php echo esc_js(__('Réinitialiser les Permissions', 'pdf-builder-pro')); ?>');
+                }
+            });
+        });
+
+        $('#bulk-assign-permissions').on('click', function() {
+            var $button = $(this);
+            var $status = $('#roles-status');
+
+            // Créer une boîte de dialogue simple
+            var dialogHtml = '<div id="bulk-assign-dialog" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000;">';
+            dialogHtml += '<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto;">';
+            dialogHtml += '<h3 style="margin: 0 0 15px 0; color: #23282d;">Assignation en Masse des Permissions</h3>';
+            dialogHtml += '<p>Sélectionnez les permissions à assigner à tous les rôles:</p>';
+            dialogHtml += '<div style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; margin: 10px 0;">';
+
+            var permissions = [
+                {key: 'manage_pdf_templates', label: 'Gérer les templates PDF'},
+                {key: 'create_pdf_templates', label: 'Créer des templates PDF'},
+                {key: 'edit_pdf_templates', label: 'Modifier les templates PDF'},
+                {key: 'delete_pdf_templates', label: 'Supprimer les templates PDF'},
+                {key: 'view_pdf_templates', label: 'Voir les templates PDF'},
+                {key: 'export_pdf_templates', label: 'Exporter les templates PDF'},
+                {key: 'import_pdf_templates', label: 'Importer les templates PDF'},
+                {key: 'manage_pdf_settings', label: 'Gérer les paramètres PDF'}
+            ];
+
+            permissions.forEach(function(perm) {
+                dialogHtml += '<label style="display: block; margin-bottom: 5px;"><input type="checkbox" name="bulk_permissions[]" value="' + perm.key + '"> ' + perm.label + '</label>';
+            });
+
+            dialogHtml += '</div>';
+            dialogHtml += '<p><small style="color: #666;">Attention: Cette action va écraser toutes les permissions actuelles.</small></p>';
+            dialogHtml += '<div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">';
+            dialogHtml += '<button id="bulk-assign-cancel" class="button">Annuler</button>';
+            dialogHtml += '<button id="bulk-assign-confirm" class="button button-primary">Appliquer</button>';
+            dialogHtml += '</div>';
+            dialogHtml += '</div>';
+            dialogHtml += '</div>';
+
+            $('body').append(dialogHtml);
+            $('#bulk-assign-dialog').show();
+
+            $('#bulk-assign-cancel').on('click', function() {
+                $('#bulk-assign-dialog').remove();
+            });
+
+            $('#bulk-assign-confirm').on('click', function() {
+                var selectedPermissions = [];
+                $('input[name="bulk_permissions[]"]:checked').each(function() {
+                    selectedPermissions.push($(this).val());
+                });
+
+                if (selectedPermissions.length === 0) {
+                    alert('<?php echo esc_js(__('Veuillez sélectionner au moins une permission.', 'pdf-builder-pro')); ?>');
+                    return;
+                }
+
+                $('#bulk-assign-dialog').remove();
+
+                $button.prop('disabled', true).text('<?php echo esc_js(__('Application...', 'pdf-builder-pro')); ?>');
+                $status.html('<div class="notice notice-info"><p><?php echo esc_js(__('Application des permissions en cours...', 'pdf-builder-pro')); ?></p></div>');
+
+                $.ajax({
+                    url: ajaxurl,
+                    type: 'POST',
+                    data: {
+                        action: 'pdf_builder_bulk_assign_permissions',
+                        permissions: selectedPermissions,
+                        nonce: '<?php echo wp_create_nonce('pdf_builder_roles'); ?>'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $status.html('<div class="notice notice-success"><p><?php echo esc_js(__('Permissions appliquées avec succès !', 'pdf-builder-pro')); ?></p></div>');
+                            location.reload(); // Recharger la page pour voir les changements
+                        } else {
+                            $status.html('<div class="notice notice-error"><p>' + (response.data && response.data.message ? $('<div>').text(response.data.message).html() : 'Erreur inconnue') + '</p></div>');
+                        }
+                    },
+                    error: function() {
+                        $status.html('<div class="notice notice-error"><p><?php echo esc_js(__('Erreur lors de l\'application des permissions.', 'pdf-builder-pro')); ?></p></div>');
+                    },
+                    complete: function() {
+                        $button.prop('disabled', false).text('<?php echo esc_js(__('Assignation en Masse', 'pdf-builder-pro')); ?>');
+                    }
+                });
+            });
+
+            $('#bulk-assign-dialog').on('click', function(e) {
+                if (e.target === this) {
+                    $(this).remove();
+                }
+            });
         });
     });
 
