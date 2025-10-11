@@ -66,28 +66,28 @@ if (!defined('ABSPATH')) {
                     
                     // Déterminer l'icône basée sur le nom du template
                     $icon = '[DOC]'; // Default
-                    $description = 'Template PDF personnalisable';
+                    $description = 'Template personnalisé';
                     $features = ['✓ Contenu personnalisable', '✓ Mise en page flexible', '✓ Éléments dynamiques', '✓ Export PDF'];
                     
                     if (stripos($template_name, 'facture') !== false) {
                         $icon = '[FACT]';
-                        $description = 'Pour créer des factures professionnelles';
+                        $description = 'Template professionnel et élégant';
                         $features = ['✓ En-tête société', '✓ Informations client', '✓ Tableau des articles', '✓ Totaux & TVA'];
                     } elseif (stripos($template_name, 'devis') !== false) {
                         $icon = '[DEV]';
-                        $description = 'Pour établir des devis détaillés';
+                        $description = 'Template professionnel et élégant';
                         $features = ['✓ Présentation entreprise', '✓ Détails du projet', '✓ Conditions & validité', '✓ Signature numérique'];
                     } elseif (stripos($template_name, 'commande') !== false) {
                         $icon = '[CMD]';
-                        $description = 'Pour gérer les bons de commande';
+                        $description = 'Template professionnel et élégant';
                         $features = ['✓ Numéro de commande', '✓ Liste des produits', '✓ Modalités de paiement', '✓ Conditions générales'];
                     } elseif (stripos($template_name, 'contrat') !== false) {
                         $icon = '[CTR]';
-                        $description = 'Pour rédiger des contrats officiels';
+                        $description = 'Template professionnel et élégant';
                         $features = ['✓ Parties contractantes', '✓ Objet du contrat', '✓ Conditions & obligations', '✓ Clauses légales'];
                     } elseif (stripos($template_name, 'newsletter') !== false) {
                         $icon = '[NEWS]';
-                        $description = 'Pour créer des bulletins d\'information';
+                        $description = 'Template professionnel et élégant';
                         $features = ['✓ En-tête accrocheur', '✓ Sections d\'articles', '✓ Call-to-action', '✓ Pied de page'];
                     }
                     
@@ -127,13 +127,20 @@ if (!defined('ABSPATH')) {
                     echo '</div>';
                     
                     echo '<div style="text-align: center; margin-bottom: 15px; margin-top: 40px;">';
-                    echo '<h3 style="margin: 0; color: #23282d; font-size: 18px;">' . $template_name . '</h3>';
-                    echo '<p style="color: #666; margin: 5px 0; font-size: 14px;">' . $description . '</p>';
+                    echo '<div style="font-size: 3rem; margin-bottom: 10px;">' . $icon . '</div>';
+                    echo '<h3 style="margin: 0; color: #23282d;">' . $template_name . '</h3>';
+                    echo '<p style="color: #666; margin: 5px 0;">' . $description . '</p>';
+                    echo '</div>';
+                    echo '<div style="background: #f8f9fa; padding: 15px; border-radius: 4px; margin-bottom: 15px; font-size: 12px; color: #666; flex-grow: 1;">';
+                    foreach ($features as $feature) {
+                        echo '<div>' . $feature . '</div>';
+                    }
                     echo '</div>';
                     echo '<div style="display: flex; gap: 10px; margin-top: auto;">';
-                    echo '<a href="' . admin_url('admin.php?page=pdf-builder-editor&template_id=' . $template_id) . '" class="button button-primary" style="flex: 1; text-align: center;">Modifier</a>';
-                    echo '<button class="button button-secondary" style="flex: 1;" onclick="' . $button_action . '(' . $template_id . ', \'' . addslashes($template_name) . '\')">Paramètres</button>';
-                    echo '<button class="button button-danger" style="flex: 1;" onclick="confirmDeleteTemplate(' . $template_id . ', \'' . addslashes($template_name) . '\')">Supprimer</button>';
+                    echo '<a href="' . admin_url('admin.php?page=pdf-builder-editor&template_id=' . $template_id) . '" class="button button-secondary" style="flex: 1; text-align: center; font-size: 16px;">✏️</a>';
+                    echo '<button class="button button-secondary" style="flex: 1; font-size: 16px;" onclick="' . $button_action . '(' . $template_id . ', \'' . addslashes($template_name) . '\')">⚙️</button>';
+                    echo '<button class="button button-primary" style="flex: 1; font-size: 16px;" onclick="alert(\'Fonctionnalité en développement\')">📋</button>';
+                    echo '<button class="button button-danger" style="flex: 1; font-size: 16px;" onclick="confirmDeleteTemplate(' . $template_id . ', \'' . addslashes($template_name) . '\')">🗑️</button>';
                     echo '</div>';
                     echo '</div>'; // Fermeture du conteneur flex
                     echo '</div>';
