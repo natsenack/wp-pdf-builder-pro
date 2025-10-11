@@ -5,12 +5,12 @@ import { elementCustomizationService } from '../services/ElementCustomizationSer
 import '../styles/PropertiesPanel.css';
 
 // Composant amélioré pour les contrôles de couleur avec presets
-const ColorPicker = ({ label, value, onChange, presets = [] }) => {
+const ColorPicker = ({ label, value, onChange, presets = [], defaultColor = '#ffffff' }) => {
   // Fonction pour valider et normaliser une couleur hex
   const normalizeColor = (color) => {
-    if (!color || color === 'transparent') return '#ffffff';
+    if (!color || color === 'transparent') return defaultColor;
     if (color.startsWith('#') && (color.length === 4 || color.length === 7)) return color;
-    return '#ffffff'; // fallback
+    return defaultColor; // fallback
   };
 
   // Valeur normalisée pour l'input color
@@ -312,6 +312,11 @@ const PropertiesPanel = React.memo(({
   // Gestionnaire unifié de changement de propriété
   const handlePropertyChange = useCallback((elementId, property, value) => {
 
+    // Empêcher la couleur du texte d'être transparente
+    if (property === 'color' && value === 'transparent') {
+      value = '#333333';
+    }
+
     // Validation via le service (sauf pour les propriétés boolean qui sont toujours valides)
     const isBooleanProperty = typeof value === 'boolean' || property.startsWith('columns.');
     let validatedValue = value; // Valeur par défaut
@@ -437,6 +442,7 @@ const PropertiesPanel = React.memo(({
                   handlePropertyChange(selectedElement.id, 'color', value);
                 }}
                 presets={['#1e293b', '#334155', '#475569', '#64748b', '#94a3b8', '#cbd5e1', '#000000']}
+                defaultColor="#333333"
               />
 
               {/* Contrôle du fond */}
@@ -1360,6 +1366,7 @@ const PropertiesPanel = React.memo(({
                   value={localProperties.color}
                   onChange={(value) => handlePropertyChange(selectedElement.id, 'color', value)}
                   presets={['#1e293b', '#334155', '#475569', '#64748b', '#000000', '#dc2626', '#059669', '#7c3aed']}
+                  defaultColor="#333333"
                 />
 
                 <div className="property-row">
