@@ -104,93 +104,14 @@ class PDF_Builder_Admin_New {
      * Ajoute le menu d'administration
      */
     public function add_admin_menu() {
-        // DEBUG: Log pour vérifier que la méthode est appelée
-        error_log('PDF Builder: add_admin_menu() called');
-
-        // Menu principal avec icône distinctive
-        add_menu_page(
-            __('PDF Builder Pro - Gestionnaire de PDF', 'pdf-builder-pro'),
-            __('📄 PDF Builder', 'pdf-builder-pro'),
+        // Ajouter les paramètres Canvas dans le menu Réglages de WordPress
+        add_options_page(
+            __('Paramètres Canvas - PDF Builder Pro', 'pdf-builder-pro'),
+            __('🎨 Canvas', 'pdf-builder-pro'),
             'manage_options',
-            'pdf-builder-pro',
-            [$this, 'admin_page'],
-            'dashicons-pdf',
-            30
-        );
-
-        error_log('PDF Builder: Menu principal ajouté');
-
-        // Page d'accueil (sous-menu principal masqué)
-        add_submenu_page(
-            'pdf-builder-pro',
-            __('Accueil - PDF Builder Pro', 'pdf-builder-pro'),
-            __('🏠 Accueil', 'pdf-builder-pro'),
-            'manage_options',
-            'pdf-builder-pro', // Même slug que le menu principal
-            [$this, 'admin_page']
-        );
-
-        error_log('PDF Builder: Sous-menu Accueil ajouté');
-
-        // Éditeur Canvas (outil principal)
-        add_submenu_page(
-            'pdf-builder-pro',
-            __('Éditeur Canvas - PDF Builder Pro', 'pdf-builder-pro'),
-            __('🎨 Éditeur Canvas', 'pdf-builder-pro'),
-            'manage_options',
-            'pdf-builder-editor',
-            [$this, 'template_editor_page']
-        );
-
-        error_log('PDF Builder: Sous-menu Éditeur Canvas ajouté');
-
-        // Gestion des templates
-        add_submenu_page(
-            'pdf-builder-pro',
-            __('Templates PDF - PDF Builder Pro', 'pdf-builder-pro'),
-            __('📋 Templates', 'pdf-builder-pro'),
-            'manage_options',
-            'pdf-builder-templates',
-            [$this, 'templates_page']
-        );
-
-        error_log('PDF Builder: Sous-menu Templates ajouté');
-
-        // Paramètres et configuration
-        add_submenu_page(
-            'pdf-builder-pro',
-            __('Paramètres - PDF Builder Pro', 'pdf-builder-pro'),
-            __('⚙️ Paramètres', 'pdf-builder-pro'),
-            'manage_options',
-            'pdf-builder-settings',
-            [$this, 'settings_page']
-        );
-
-        error_log('PDF Builder: Sous-menu Paramètres ajouté');
-
-        // Paramètres des rendus Canvas par défaut
-        add_submenu_page(
-            'pdf-builder-pro',
-            __('Rendus Canvas - PDF Builder Pro', 'pdf-builder-pro'),
-            __('🎨 Rendus Canvas', 'pdf-builder-pro'),
-            'manage_options',
-            'pdf-builder-canvas-render',
+            'pdf-builder-canvas-settings',
             [$this, 'canvas_render_settings_page']
         );
-
-        error_log('PDF Builder: Sous-menu Rendus Canvas ajouté');
-
-        // Outils de diagnostic
-        add_submenu_page(
-            'pdf-builder-pro',
-            __('Diagnostic - PDF Builder Pro', 'pdf-builder-pro'),
-            __('🔧 Diagnostic', 'pdf-builder-pro'),
-            'manage_options',
-            'pdf-builder-diagnostic',
-            [$this, 'diagnostic_page']
-        );
-
-        error_log('PDF Builder: Sous-menu Diagnostic ajouté');
     }
 
     /**
@@ -236,34 +157,6 @@ class PDF_Builder_Admin_New {
                             <div class="stat-label">Aujourd'hui</div>
                         </div>
                     </div>
-                </div>
-
-                <!-- DEBUG: Informations sur les menus -->
-                <div class="dashboard-debug" style="background: #f1f1f1; padding: 20px; margin: 20px 0; border: 1px solid #ddd; border-radius: 4px;">
-                    <h3>🔍 Debug - État des menus</h3>
-                    <?php
-                    global $menu, $submenu;
-                    echo '<h4>Menus principaux avec "pdf-builder":</h4>';
-                    $found = false;
-                    foreach ($menu as $item) {
-                        if (isset($item[2]) && strpos($item[2], 'pdf-builder') !== false) {
-                            echo '<p><strong>' . esc_html($item[0]) . '</strong> (slug: ' . esc_html($item[2]) . ')</p>';
-                            $found = true;
-                        }
-                    }
-                    if (!$found) {
-                        echo '<p style="color: red;">❌ Aucun menu PDF Builder trouvé</p>';
-                    }
-
-                    echo '<h4>Sous-menus pour "pdf-builder-pro":</h4>';
-                    if (isset($submenu['pdf-builder-pro'])) {
-                        foreach ($submenu['pdf-builder-pro'] as $sub) {
-                            echo '<p>- ' . esc_html($sub[0]) . ' (slug: ' . esc_html($sub[2]) . ')</p>';
-                        }
-                    } else {
-                        echo '<p style="color: red;">❌ Aucun sous-menu trouvé</p>';
-                    }
-                    ?>
                 </div>
 
                 <!-- Actions principales -->
