@@ -12,6 +12,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  text-align: left;
 }
 
 .color-input {
@@ -281,6 +282,7 @@
 
 .properties-group {
   margin-bottom: 24px;
+  text-align: left;
 }
 
 .properties-group h4 {
@@ -298,13 +300,22 @@
   align-items: center;
   margin-bottom: 12px;
   gap: 8px;
+  text-align: left;
 }
 
 .property-row label {
-  min-width: 100px;
+    min-width: 40px;
+    font-size: 13px;
+    color: #475569;
+    font-weight: 500;
+    text-align: left;
+}
+
+.property-row span {
   font-size: 13px;
   color: #475569;
   font-weight: 500;
+  text-align: left;
 }
 
 .property-row input,
