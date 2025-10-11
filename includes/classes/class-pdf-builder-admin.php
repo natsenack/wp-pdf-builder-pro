@@ -401,7 +401,7 @@ class PDF_Builder_Admin {
      */
     public function templates_page() {
         $this->check_admin_permissions();
-        include plugin_dir_path(__FILE__) . 'views/templates-page.php';
+        include plugin_dir_path(dirname(__FILE__)) . 'templates-page.php';
     }
 
     /**
@@ -409,7 +409,7 @@ class PDF_Builder_Admin {
      */
     public function settings_page() {
         $this->check_admin_permissions();
-        include plugin_dir_path(__FILE__) . 'views/settings-page.php';
+        include plugin_dir_path(dirname(__FILE__)) . 'settings-page.php';
     }
 
     /**
@@ -511,7 +511,7 @@ class PDF_Builder_Admin {
      */
     public function template_editor_page() {
         $this->check_admin_permissions();
-        include plugin_dir_path(__FILE__) . 'views/template-editor.php';
+        include plugin_dir_path(dirname(__FILE__)) . 'template-editor.php';
     }
 
     /**
