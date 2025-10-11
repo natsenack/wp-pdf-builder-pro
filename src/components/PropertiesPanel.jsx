@@ -470,8 +470,7 @@ const PropertiesPanel = React.memo(({
 
               {/* Couleur du fond (conditionnelle) */}
               <div style={{
-                opacity: isBackgroundEnabled ? 1 : 0.5,
-                pointerEvents: isBackgroundEnabled ? 'auto' : 'none',
+                display: isBackgroundEnabled ? 'block' : 'none',
                 transition: 'opacity 0.3s ease'
               }}>
                 <ColorPicker
