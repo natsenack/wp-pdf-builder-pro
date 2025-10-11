@@ -791,6 +791,14 @@ document.addEventListener('DOMContentLoaded', function() {
         submitBtn.addEventListener('click', function(e) {
             console.log('Submit button click event:', e);
             console.log('Default prevented?', e.defaultPrevented);
+            
+            // Tester la soumission manuelle après un délai
+            setTimeout(function() {
+                console.log('Attempting manual form submission...');
+                if (form) {
+                    form.submit();
+                }
+            }, 100);
         });
     } else {
         console.error('Submit button not found!');
@@ -802,6 +810,13 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Form found:', form);
         console.log('Form action:', form.action);
         console.log('Form method:', form.method);
+        
+        // Ajouter un écouteur d'événement submit sur le formulaire
+        form.addEventListener('submit', function(e) {
+            console.log('FORM SUBMIT EVENT TRIGGERED!');
+            console.log('Submit event:', e);
+            console.log('Default prevented:', e.defaultPrevented);
+        });
     } else {
         console.error('Form not found!');
     }
