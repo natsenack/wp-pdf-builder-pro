@@ -127,20 +127,13 @@ if (!defined('ABSPATH')) {
                     echo '</div>';
                     
                     echo '<div style="text-align: center; margin-bottom: 15px; margin-top: 40px;">';
-                    echo '<div style="font-size: 3rem; margin-bottom: 10px;">' . $icon . '</div>';
-                    echo '<h3 style="margin: 0; color: #23282d;">' . $template_name . '</h3>';
-                    echo '<p style="color: #666; margin: 5px 0;">' . $description . '</p>';
-                    echo '</div>';
-                    echo '<div style="background: #f8f9fa; padding: 15px; border-radius: 4px; margin-bottom: 15px; font-size: 12px; color: #666; flex-grow: 1;">';
-                    foreach ($features as $feature) {
-                        echo '<div>' . $feature . '</div>';
-                    }
+                    echo '<h3 style="margin: 0; color: #23282d; font-size: 18px;">' . $template_name . '</h3>';
+                    echo '<p style="color: #666; margin: 5px 0; font-size: 14px;">' . $description . '</p>';
                     echo '</div>';
                     echo '<div style="display: flex; gap: 10px; margin-top: auto;">';
-                    echo '<a href="' . admin_url('admin.php?page=pdf-builder-editor&template_id=' . $template_id) . '" class="button button-secondary" style="flex: 1; text-align: center; font-size: 16px;">✏️</a>';
-                    echo '<button class="button button-secondary" style="flex: 1; font-size: 16px;" onclick="' . $button_action . '(' . $template_id . ', \'' . addslashes($template_name) . '\')">⚙️</button>';
-                    echo '<button class="button button-primary" style="flex: 1; font-size: 16px;" onclick="alert(\'Fonctionnalité en développement\')">📋</button>';
-                    echo '<button class="button button-danger" style="flex: 1; font-size: 16px;" onclick="confirmDeleteTemplate(' . $template_id . ', \'' . addslashes($template_name) . '\')">🗑️</button>';
+                    echo '<a href="' . admin_url('admin.php?page=pdf-builder-editor&template_id=' . $template_id) . '" class="button button-primary" style="flex: 1; text-align: center;">Modifier</a>';
+                    echo '<button class="button button-secondary" style="flex: 1;" onclick="' . $button_action . '(' . $template_id . ', \'' . addslashes($template_name) . '\')">Paramètres</button>';
+                    echo '<button class="button button-danger" style="flex: 1;" onclick="confirmDeleteTemplate(' . $template_id . ', \'' . addslashes($template_name) . '\')">Supprimer</button>';
                     echo '</div>';
                     echo '</div>'; // Fermeture du conteneur flex
                     echo '</div>';
