@@ -67,6 +67,8 @@ class PDF_Builder_Admin {
         add_action('wp_ajax_pdf_builder_pro_save_template', [$this, 'ajax_save_template']);
         add_action('wp_ajax_pdf_builder_pro_load_template', [$this, 'ajax_load_template']);
         add_action('wp_ajax_pdf_builder_load_canvas_elements', [$this, 'ajax_load_canvas_elements']);
+        // ACTION DÉSACTIVÉE - Utiliser PDF_Builder_Admin_New à la place
+        // add_action('wp_ajax_pdf_builder_load_canvas_elements', [$this, 'ajax_load_canvas_elements']);
         add_action('wp_ajax_pdf_builder_get_templates', [$this, 'ajax_get_templates']);
         add_action('wp_ajax_pdf_builder_delete_template', [$this, 'ajax_delete_template']);
         add_action('wp_ajax_pdf_builder_duplicate_template', [$this, 'ajax_duplicate_template']);
