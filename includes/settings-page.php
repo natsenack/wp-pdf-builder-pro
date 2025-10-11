@@ -189,6 +189,7 @@ window.addEventListener('load', function() {
 });
 </script>
 
+<div class="wrap">
     <h1><?php _e('Paramètres PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
 
     <form method="post" action="<?php echo esc_url(admin_url('admin.php?page=pdf-builder-settings')); ?>" onsubmit="console.log('Form submitted'); console.log('Form action:', this.action); console.log('Form method:', this.method); return true;">
@@ -909,6 +910,7 @@ window.addEventListener('load', function() {
             <input type="submit" name="submit" id="submit" class="button button-primary" value="<?php _e('Enregistrer les paramètres', 'pdf-builder-pro'); ?>" onclick="console.log('Submit button clicked - type:', this.type, 'name:', this.name);">
         </p>
     </form>
+</div>
 
 <!-- Debug script to check form submission -->
 <script type="text/javascript">
@@ -1318,6 +1320,11 @@ echo '<style>
 .sub-tab-active {
     display: block !important;
 }
+
+/* Fix footer overlap issue */
+#wpfooter {
+    z-index: 0 !important;
+}
 </style>';
 ?>
 
@@ -1417,30 +1424,22 @@ echo '<style>
                 // Activer le sous-onglet cliqué
                 $this.addClass('sub-nav-tab-active');
                 $(targetId).addClass('sub-tab-active').show();
-            });        // Affichage en temps réel de la valeur du slider d'opacité
-        $('input[name="default_opacity"]').on('input', function() {
-            $(this).next('span').text($(this).val() + '%');
+            });
+
+            // Affichage en temps réel de la valeur du slider d'opacité
+            $('input[name="default_opacity"]').on('input', function() {
+                $(this).next('span').text($(this).val() + '%');
+            });
         });
     });
 
 })(jQuery);
 </script>
+</script>
 
-<script>
-(function($) {
-    'use strict';
-
-    // Actions de maintenance
-    $('#clear-cache').on('click', function() {
-        if (!confirm('<?php echo esc_js(__('Êtes-vous sûr de vouloir vider le cache ?', 'pdf-builder-pro')); ?>')) {
-            return;
-        }
-
-        var $button = $(this);
-        var $status = $('#cache-status');
-
-        $button.prop('disabled', true).text('<?php echo esc_js(__('Nettoyage...', 'pdf-builder-pro')); ?>');
-        $status.html('<div class="notice notice-info"><p><?php echo esc_js(__('Nettoyage du cache en cours...', 'pdf-builder-pro')); ?></p></div>');
+<?php
+// Fin du fichier
+?>
 
         $.ajax({
             url: ajaxurl,
