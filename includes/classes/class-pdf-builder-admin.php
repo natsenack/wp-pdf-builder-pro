@@ -2308,6 +2308,9 @@ class PDF_Builder_Admin {
      * AJAX - Charger les éléments du canvas pour un template
      */
     public function ajax_load_canvas_elements() {
+        // Log au début pour vérifier que la méthode est appelée
+        error_log('PDF Builder Debug - ajax_load_canvas_elements appelée');
+
         // Debug: Log des valeurs de nonce
         error_log('PDF Builder Debug - Nonce reçu: ' . ($_POST['nonce'] ?? 'NONCE_MANQUANT'));
         error_log('PDF Builder Debug - Action: pdf_builder_load_canvas_elements');
