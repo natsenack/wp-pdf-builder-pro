@@ -211,7 +211,7 @@ const WooCommerceElement = ({
       : element.borderWidth > 0
         ? `${element.borderWidth || 1}px ${element.borderStyle || 'solid'} ${element.borderColor || '#dddddd'}`
         : 'none',
-    backgroundColor: element.backgroundColor || '#ffffff',
+    backgroundColor: element.backgroundColor || 'transparent',
     color: element.color || '#333333',
     fontSize: (element.fontSize || 14) * zoom,
     fontFamily: element.fontFamily || 'Arial, sans-serif',

@@ -23,7 +23,7 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
       const newProperties = {
         // Valeurs par défaut
         color: '#333333',
-        backgroundColor: '#ffffff',
+        backgroundColor: 'transparent',
         borderColor: '#dddddd',
         borderWidth: 0,
         borderStyle: 'solid',
