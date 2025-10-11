@@ -104,6 +104,9 @@ class PDF_Builder_Admin_New {
      * Ajoute le menu d'administration
      */
     public function add_admin_menu() {
+        // DEBUG: Log pour vérifier que la méthode est appelée
+        error_log('PDF Builder: add_admin_menu() called');
+
         // Menu principal avec icône distinctive
         add_menu_page(
             __('PDF Builder Pro - Gestionnaire de PDF', 'pdf-builder-pro'),
@@ -115,6 +118,8 @@ class PDF_Builder_Admin_New {
             30
         );
 
+        error_log('PDF Builder: Menu principal ajouté');
+
         // Page d'accueil (sous-menu principal masqué)
         add_submenu_page(
             'pdf-builder-pro',
@@ -124,6 +129,8 @@ class PDF_Builder_Admin_New {
             'pdf-builder-pro', // Même slug que le menu principal
             [$this, 'admin_page']
         );
+
+        error_log('PDF Builder: Sous-menu Accueil ajouté');
 
         // Éditeur Canvas (outil principal)
         add_submenu_page(
@@ -135,6 +142,8 @@ class PDF_Builder_Admin_New {
             [$this, 'template_editor_page']
         );
 
+        error_log('PDF Builder: Sous-menu Éditeur Canvas ajouté');
+
         // Gestion des templates
         add_submenu_page(
             'pdf-builder-pro',
@@ -144,6 +153,8 @@ class PDF_Builder_Admin_New {
             'pdf-builder-templates',
             [$this, 'templates_page']
         );
+
+        error_log('PDF Builder: Sous-menu Templates ajouté');
 
         // Paramètres et configuration
         add_submenu_page(
@@ -155,6 +166,8 @@ class PDF_Builder_Admin_New {
             [$this, 'settings_page']
         );
 
+        error_log('PDF Builder: Sous-menu Paramètres ajouté');
+
         // Paramètres des rendus Canvas par défaut
         add_submenu_page(
             'pdf-builder-pro',
@@ -165,6 +178,8 @@ class PDF_Builder_Admin_New {
             [$this, 'canvas_render_settings_page']
         );
 
+        error_log('PDF Builder: Sous-menu Rendus Canvas ajouté');
+
         // Outils de diagnostic
         add_submenu_page(
             'pdf-builder-pro',
@@ -174,6 +189,8 @@ class PDF_Builder_Admin_New {
             'pdf-builder-diagnostic',
             [$this, 'diagnostic_page']
         );
+
+        error_log('PDF Builder: Sous-menu Diagnostic ajouté');
     }
 
     /**
