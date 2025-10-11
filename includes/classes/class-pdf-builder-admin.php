@@ -86,6 +86,9 @@ class PDF_Builder_Admin {
         add_action('wp_ajax_pdf_builder_view_logs', [$this, 'ajax_view_logs']);
         add_action('wp_ajax_pdf_builder_clear_logs', [$this, 'ajax_clear_logs']);
 
+        // Action de test nonce - DIAGNOSTIC
+        add_action('wp_ajax_pdf_builder_test_nonce', [$this, 'ajax_test_nonce']);
+
         // Diagnostic action
         add_action('wp_ajax_pdf_builder_diagnose_template', [$this, 'ajax_diagnose_template']);
 
@@ -2433,6 +2436,24 @@ class PDF_Builder_Admin {
         } catch (Exception $e) {
             wp_send_json_error('Erreur: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * AJAX - Test du nonce pour diagnostic
+     */
+    public function ajax_test_nonce() {
+        $this->check_admin_permissions();
+
+        // Générer le même nonce que dans enqueue_admin_scripts
+        $test_nonce = wp_create_nonce('pdf_builder_canvas_v4_' . get_current_user_id() . '_cachebust_' . time());
+
+        wp_send_json_success([
+            'message' => 'Test nonce réussi',
+            'generated_nonce' => $test_nonce,
+            'user_id' => get_current_user_id(),
+            'timestamp' => time(),
+            'nonce_action' => 'pdf_builder_canvas_v4_' . get_current_user_id() . '_cachebust_' . time()
+        ]);
     }
 }
 
