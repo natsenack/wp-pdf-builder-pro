@@ -428,7 +428,7 @@ window.addEventListener('load', function() {
             </div>
 
             <!-- Onglet Performance -->
-            <div id="performance" class="tab-content">
+            <div id="performance" class="tab-content" style="display: none;">
                 <h2><?php _e('Paramètres de Performance', 'pdf-builder-pro'); ?></h2>
 
                 <table class="form-table">
@@ -466,7 +466,7 @@ window.addEventListener('load', function() {
             </div>
 
             <!-- Onglet PDF -->
-            <div id="pdf" class="tab-content">
+            <div id="pdf" class="tab-content" style="display: none;">
                 <h2><?php _e('Paramètres PDF', 'pdf-builder-pro'); ?></h2>
 
                 <table class="form-table">
@@ -506,7 +506,7 @@ window.addEventListener('load', function() {
             </div>
 
             <!-- Onglet Sécurité -->
-            <div id="security" class="tab-content">
+            <div id="security" class="tab-content" style="display: none;">
                 <h2><?php _e('Paramètres de Sécurité', 'pdf-builder-pro'); ?></h2>
 
                 <table class="form-table">
@@ -527,7 +527,7 @@ window.addEventListener('load', function() {
             </div>
 
             <!-- Onglet Rôles -->
-            <div id="roles" class="tab-content">
+            <div id="roles" class="tab-content" style="display: none;">
                 <h2><?php _e('Gestion des Rôles et Permissions', 'pdf-builder-pro'); ?></h2>
 
                 <div class="roles-management">
@@ -625,7 +625,7 @@ window.addEventListener('load', function() {
             </div>
 
             <!-- Onglet Notifications -->
-            <div id="notifications" class="tab-content">
+            <div id="notifications" class="tab-content" style="display: none;">
                 <h2><?php _e('Paramètres de Notifications', 'pdf-builder-pro'); ?></h2>
 
                 <table class="form-table">
@@ -665,7 +665,7 @@ window.addEventListener('load', function() {
             </div>
 
             <!-- Onglet Canvas -->
-            <div id="canvas" class="tab-content">
+            <div id="canvas" class="tab-content" style="display: none;">
                 <h2><?php _e('Paramètres Canvas', 'pdf-builder-pro'); ?></h2>
 
                 <!-- Sous-onglets dans l'onglet Canvas -->
@@ -842,7 +842,7 @@ window.addEventListener('load', function() {
             </div>
 
             <!-- Onglet Maintenance -->
-            <div id="maintenance" class="tab-content">
+            <div id="maintenance" class="tab-content" style="display: none;">
                 <h2><?php _e('Actions de Maintenance', 'pdf-builder-pro'); ?></h2>
 
                 <div class="maintenance-section">
