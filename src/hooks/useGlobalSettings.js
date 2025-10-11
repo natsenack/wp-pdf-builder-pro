@@ -20,7 +20,12 @@ export const useGlobalSettings = () => {
     // Paramètres généraux
     showResizeHandles: true,
     showResizeZones: true,
-    selectionAnimation: true
+    selectionAnimation: true,
+
+    // Paramètres par défaut des éléments
+    defaultTextColor: '#000000',
+    defaultBackgroundColor: '#ffffff',
+    defaultFontSize: 14
   });
 
   // Fonction pour récupérer les paramètres WordPress
@@ -45,7 +50,11 @@ export const useGlobalSettings = () => {
         selectionBorderColor: wpSettings.canvas_border_color || prev.selectionBorderColor,
         selectionBorderSpacing: wpSettings.canvas_border_spacing || prev.selectionBorderSpacing,
         showResizeHandles: wpSettings.canvas_resize_handles_enabled !== undefined ? wpSettings.canvas_resize_handles_enabled : prev.showResizeHandles,
-        showResizeZones: wpSettings.canvas_element_borders_enabled !== undefined ? wpSettings.canvas_element_borders_enabled : prev.showResizeZones
+        showResizeZones: wpSettings.canvas_element_borders_enabled !== undefined ? wpSettings.canvas_element_borders_enabled : prev.showResizeZones,
+        // Nouveaux paramètres par défaut des éléments
+        defaultTextColor: wpSettings.default_text_color || prev.defaultTextColor,
+        defaultBackgroundColor: wpSettings.default_background_color || prev.defaultBackgroundColor,
+        defaultFontSize: wpSettings.default_font_size || prev.defaultFontSize
       }));
     } else {
       // Fallback vers localStorage si les paramètres WordPress ne sont pas disponibles

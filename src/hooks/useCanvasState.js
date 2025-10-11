@@ -169,13 +169,17 @@ export const useCanvasState = ({
         if (globalSettings.selectionBorderWidth && globalSettings.selectionBorderWidth > 0) {
           defaults.borderWidth = globalSettings.selectionBorderWidth;
         }
-        // Couleur de fond par défaut pour les éléments
-        if (globalSettings.resizeHandleColor) {
-          defaults.color = globalSettings.resizeHandleColor;
+        // Couleur de texte par défaut pour les éléments
+        if (globalSettings.defaultTextColor) {
+          defaults.color = globalSettings.defaultTextColor;
         }
-        // Taille de police par défaut
-        if (globalSettings.resizeHandleSize) {
-          defaults.fontSize = Math.max(10, globalSettings.resizeHandleSize - 2); // Ajuster légèrement
+        // Couleur de fond par défaut pour les éléments
+        if (globalSettings.defaultBackgroundColor) {
+          defaults.backgroundColor = globalSettings.defaultBackgroundColor;
+        }
+        // Taille de police par défaut pour les éléments
+        if (globalSettings.defaultFontSize) {
+          defaults.fontSize = globalSettings.defaultFontSize;
         }
       }
 
