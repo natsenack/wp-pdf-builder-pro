@@ -99,7 +99,7 @@ if (!defined('ABSPATH')) {
                     // Badge du type de template en haut à gauche
                     
                     echo '<div class="default-template-icon" style="position: absolute; top: 10px; right: 10px; font-size: 20px; cursor: pointer; opacity: ' . ($is_default ? '1' : '0.5') . ';" onclick="toggleDefaultTemplate(' . $template_id . ', \'' . $template_type . '\', \'' . addslashes($template_name) . '\')" title="' . ($is_default ? 'Template par défaut' : 'Définir comme template par défaut') . '">';
-                    echo $is_default ? '*' : '-';
+                    echo $is_default ? '⭐' : '☆';
                     echo '</div>';
                     
                     // Badge du type de template en haut à gauche
