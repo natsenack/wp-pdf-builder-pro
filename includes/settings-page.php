@@ -80,6 +80,8 @@ class TempConfig {
 $config = new TempConfig();
 
 // Sauvegarde des paramètres si formulaire soumis
+$isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+
 if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
     error_log('PDF Builder: Bouton submit cliqué, nonce présent: ' . $_POST['pdf_builder_settings_nonce']);
 
@@ -128,14 +130,31 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
         $saved_spacing = get_option('canvas_border_spacing', 'NOT_SET');
         error_log('PDF Builder: Vérification sauvegarde - canvas_border_spacing: ' . $saved_spacing);
 
-        echo '<div class="notice notice-success"><p>' . __('Paramètres sauvegardés avec succès.', 'pdf-builder-pro') . ' (espacement: ' . $settings['canvas_border_spacing'] . ')</p></div>';
+        if ($isAjax) {
+            // Réponse AJAX
+            wp_send_json_success(array(
+                'message' => __('Paramètres sauvegardés avec succès.', 'pdf-builder-pro'),
+                'spacing' => $settings['canvas_border_spacing']
+            ));
+        } else {
+            // Réponse normale
+            echo '<div class="notice notice-success"><p>' . __('Paramètres sauvegardés avec succès.', 'pdf-builder-pro') . ' (espacement: ' . $settings['canvas_border_spacing'] . ')</p></div>';
+        }
     } else {
         error_log('PDF Builder: Nonce invalide');
-        echo '<div class="notice notice-error"><p>' . __('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro') . '</p></div>';
+        if ($isAjax) {
+            wp_send_json_error(__('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro'));
+        } else {
+            echo '<div class="notice notice-error"><p>' . __('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro') . '</p></div>';
+        }
     }
 } elseif (isset($_POST['submit'])) {
     error_log('PDF Builder: Bouton submit cliqué mais pas de nonce');
-    echo '<div class="notice notice-error"><p>' . __('Erreur : nonce manquant.', 'pdf-builder-pro') . '</p></div>';
+    if ($isAjax) {
+        wp_send_json_error(__('Erreur : nonce manquant.', 'pdf-builder-pro'));
+    } else {
+        echo '<div class="notice notice-error"><p>' . __('Erreur : nonce manquant.', 'pdf-builder-pro') . '</p></div>';
+    }
 }
 ?>
 
@@ -789,16 +808,12 @@ document.addEventListener('DOMContentLoaded', function() {
     if (submitBtn) {
         console.log('Submit button found:', submitBtn);
         submitBtn.addEventListener('click', function(e) {
+            e.preventDefault(); // Empêcher la soumission normale
             console.log('Submit button click event:', e);
             console.log('Default prevented?', e.defaultPrevented);
             
-            // Tester la soumission manuelle après un délai
-            setTimeout(function() {
-                console.log('Attempting manual form submission...');
-                if (form) {
-                    form.submit();
-                }
-            }, 100);
+            // Soumission AJAX
+            submitFormAjax();
         });
     } else {
         console.error('Submit button not found!');
@@ -819,6 +834,117 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     } else {
         console.error('Form not found!');
+    }
+    
+    // Fonction pour soumettre le formulaire en AJAX
+    function submitFormAjax() {
+        if (!form) {
+            console.error('No form found for AJAX submission');
+            return;
+        }
+        
+        // Collecter les données du formulaire
+        var formData = new FormData(form);
+        
+        // Afficher un indicateur de chargement
+        submitBtn.disabled = true;
+        submitBtn.value = 'Enregistrement...';
+        
+        console.log('Submitting form via AJAX...');
+        
+        // Faire la requête AJAX
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(function(response) {
+            console.log('AJAX response received:', response);
+            return response.text();
+        })
+        .then(function(data) {
+            console.log('AJAX response data:', data);
+            
+            // Réactiver le bouton
+            submitBtn.disabled = false;
+            submitBtn.value = 'Enregistrer les paramètres';
+            
+            try {
+                // Essayer de parser comme JSON
+                var jsonResponse = JSON.parse(data);
+                if (jsonResponse.success) {
+                    showNotification(jsonResponse.data.message || 'Paramètres sauvegardés avec succès !', 'success');
+                } else {
+                    showNotification(jsonResponse.data || 'Erreur lors de la sauvegarde.', 'error');
+                }
+            } catch (e) {
+                // Si ce n'est pas du JSON, vérifier le contenu HTML
+                if (data.includes('Paramètres sauvegardés avec succès') || data.includes('notice-success')) {
+                    showNotification('Paramètres sauvegardés avec succès !', 'success');
+                } else if (data.includes('notice-error') || data.includes('Erreur')) {
+                    showNotification('Erreur lors de la sauvegarde.', 'error');
+                } else {
+                    showNotification('Paramètres sauvegardés.', 'success');
+                }
+            }
+        })
+        .catch(function(error) {
+            console.error('AJAX error:', error);
+            submitBtn.disabled = false;
+            submitBtn.value = 'Enregistrer les paramètres';
+            showNotification('Erreur de connexion.', 'error');
+        });
+    }
+    
+    // Fonction pour afficher les notifications
+    function showNotification(message, type) {
+        // Supprimer les notifications existantes
+        var existingNotifications = document.querySelectorAll('.pdf-builder-notification');
+        existingNotifications.forEach(function(notif) {
+            notif.remove();
+        });
+        
+        // Créer la notification
+        var notification = document.createElement('div');
+        notification.className = 'pdf-builder-notification ' + (type === 'success' ? 'success' : 'error');
+        notification.innerHTML = '<span>' + message + '</span>';
+        notification.style.cssText = `
+            position: fixed;
+            top: 40px;
+            right: 20px;
+            background: ${type === 'success' ? '#4CAF50' : '#f44336'};
+            color: white;
+            padding: 12px 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 9999;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-size: 14px;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Animer l'apparition
+        setTimeout(function() {
+            notification.style.opacity = '1';
+            notification.style.transform = 'translateX(0)';
+        }, 10);
+        
+        // Masquer automatiquement après 3 secondes
+        setTimeout(function() {
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(function() {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }, 3000);
     }
 });
 </script>
