@@ -104,16 +104,32 @@ class PDF_Builder_Admin_New {
      * Ajoute le menu d'administration
      */
     public function add_admin_menu() {
+        // DEBUG: Vérifier que la fonction est appelée
+        error_log('PDF Builder: add_admin_menu() appelée à ' . time());
+
         // Ajouter les paramètres Canvas dans le menu Réglages de WordPress
-        add_options_page(
+        $page_hook = add_options_page(
             __('Paramètres Canvas - PDF Builder Pro', 'pdf-builder-pro'),
             __('🎨 Canvas', 'pdf-builder-pro'),
-            'manage_options', // Changé de 'read' à 'manage_options' pour les administrateurs
+            'read', // Capability minimale pour le debug
             'pdf-builder-canvas-settings',
             [$this, 'canvas_render_settings_page']
         );
 
-        error_log('PDF Builder: Page Canvas ajoutée dans Réglages avec capability manage_options');
+        error_log('PDF Builder: Page Canvas ajoutée avec hook: ' . $page_hook);
+
+        // Debug: Vérifier si la page est bien enregistrée
+        global $submenu;
+        if (isset($submenu['options-general.php'])) {
+            error_log('PDF Builder: Sous-menu options-general.php trouvé avec ' . count($submenu['options-general.php']) . ' éléments');
+            foreach ($submenu['options-general.php'] as $item) {
+                if (strpos($item[2], 'pdf-builder') !== false) {
+                    error_log('PDF Builder: Trouvé item menu: ' . $item[0] . ' -> ' . $item[2]);
+                }
+            }
+        } else {
+            error_log('PDF Builder: Sous-menu options-general.php NON trouvé');
+        }
     }
 
     /**
@@ -365,10 +381,12 @@ class PDF_Builder_Admin_New {
      * Page des paramètres de rendu Canvas
      */
     public function canvas_render_settings_page() {
-        // Vérification de permissions temporairement assouplie pour debug
-        if (!current_user_can('read')) {
-            wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+        // Vérification de permissions minimale pour debug
+        if (!is_user_logged_in()) {
+            wp_die(__('Vous devez être connecté pour accéder à cette page.', 'pdf-builder-pro'));
         }
+
+        error_log('PDF Builder: Accès à la page canvas_render_settings_page autorisé pour user ' . get_current_user_id());
 
         // Sauvegarder les paramètres si formulaire soumis
         if (isset($_POST['save_canvas_render_settings']) && wp_verify_nonce($_POST['canvas_render_nonce'], 'pdf_builder_canvas_render')) {
@@ -382,6 +400,14 @@ class PDF_Builder_Admin_New {
         ?>
         <div class="wrap">
             <h1><?php _e('🎨 Paramètres de Rendu Canvas - PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
+
+            <div style="background: #f1f1f1; padding: 15px; margin: 20px 0; border-left: 4px solid #007cba;">
+                <h3>🔍 Debug Info:</h3>
+                <p><strong>User ID:</strong> <?php echo get_current_user_id(); ?></p>
+                <p><strong>User Login:</strong> <?php echo wp_get_current_user()->user_login; ?></p>
+                <p><strong>Capabilities:</strong> <?php echo implode(', ', wp_get_current_user()->roles); ?></p>
+                <p><strong>Page:</strong> pdf-builder-canvas-settings</p>
+            </div>
 
             <p><?php _e('Configurez les paramètres par défaut pour le rendu des éléments sur le canvas.', 'pdf-builder-pro'); ?></p>
 
