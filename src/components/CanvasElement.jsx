@@ -174,7 +174,7 @@ export const CanvasElement = ({
     switch (style) {
       case 'classic':
         return {
-          backgroundColor: '#666',
+          backgroundcolor: element.color || '#666',
           color: element.color || '#fff',
           borderBottom: '2px solid #333',
           fontWeight: 'bold'
@@ -836,7 +836,7 @@ export const CanvasElement = ({
                     padding: `${4 * zoom}px ${6 * zoom}px`,
                     textAlign: 'right',
                     fontWeight: 'bold',
-                    color: '#666'
+                    color: element.color || '#666'
                   }}>
                     {/* Colonne vide pour l'alignement */}
                   </div>
@@ -855,7 +855,7 @@ export const CanvasElement = ({
                       padding: `${4 * zoom}px ${6 * zoom}px`,
                       textAlign: 'right',
                       fontWeight: 'bold',
-                      color: '#666'
+                      color: element.color || '#666'
                     }}>
                       {/* Prix vide */}
                     </div>
@@ -866,7 +866,7 @@ export const CanvasElement = ({
                       padding: `${4 * zoom}px ${6 * zoom}px`,
                       textAlign: 'right',
                       fontWeight: 'bold',
-                      color: '#666'
+                      color: element.color || '#666'
                     }}>
                       Total
                     </div>
@@ -1116,7 +1116,7 @@ export const CanvasElement = ({
             fontWeight: element.fontWeight || 'normal',
             fontStyle: element.fontStyle || 'normal',
             textDecoration: element.textDecoration || 'none',
-            color: '#333',
+            color: element.color || '#333',
             backgroundColor: element.backgroundColor || '#ffffff',
             border: element.borderWidth ? `${element.borderWidth * zoom}px solid ${element.borderColor || '#ddd'}` : 'none',
             borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0px'
@@ -1140,7 +1140,7 @@ export const CanvasElement = ({
                     <div style={{
                       fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
                       textTransform: element.labelStyle === 'uppercase' ? 'uppercase' : 'none',
-                      color: '#666',
+                      color: element.color || '#666',
                       minWidth: element.layout === 'horizontal' ? 'auto' : '80px',
                       fontSize: `${11 * zoom}px`
                     }}>
@@ -1149,7 +1149,7 @@ export const CanvasElement = ({
                   )}
                   <div style={{
                     fontWeight: 'bold',
-                    color: '#333'
+                    color: element.color || '#333'
                   }}>
                     Jean Dupont
                   </div>
@@ -1169,7 +1169,7 @@ export const CanvasElement = ({
                     <div style={{
                       fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
                       textTransform: element.labelStyle === 'uppercase' ? 'uppercase' : 'none',
-                      color: '#666',
+                      color: element.color || '#666',
                       minWidth: element.layout === 'horizontal' ? 'auto' : '80px',
                       fontSize: `${11 * zoom}px`
                     }}>
@@ -1197,7 +1197,7 @@ export const CanvasElement = ({
                     <div style={{
                       fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
                       textTransform: element.labelStyle === 'uppercase' ? 'uppercase' : 'none',
-                      color: '#666',
+                      color: element.color || '#666',
                       minWidth: element.layout === 'horizontal' ? 'auto' : '80px',
                       fontSize: `${11 * zoom}px`
                     }}>
@@ -1205,7 +1205,7 @@ export const CanvasElement = ({
                     </div>
                   )}
                   <div style={{
-                    color: '#333'
+                    color: element.color || '#333'
                   }}>
                     +33 6 12 34 56 78
                   </div>
@@ -1225,7 +1225,7 @@ export const CanvasElement = ({
                     <div style={{
                       fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
                       textTransform: element.labelStyle === 'uppercase' ? 'uppercase' : 'none',
-                      color: '#666',
+                      color: element.color || '#666',
                       minWidth: element.layout === 'horizontal' ? 'auto' : '80px',
                       fontSize: `${11 * zoom}px`
                     }}>
@@ -1233,7 +1233,7 @@ export const CanvasElement = ({
                     </div>
                   )}
                   <div style={{
-                    color: '#333',
+                    color: element.color || '#333',
                     lineHeight: '1.4'
                   }}>
                     123 Rue de la Paix<br />
@@ -1256,7 +1256,7 @@ export const CanvasElement = ({
                     <div style={{
                       fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
                       textTransform: element.labelStyle === 'uppercase' ? 'uppercase' : 'none',
-                      color: '#666',
+                      color: element.color || '#666',
                       minWidth: element.layout === 'horizontal' ? 'auto' : '80px',
                       fontSize: `${11 * zoom}px`
                     }}>
@@ -1265,7 +1265,7 @@ export const CanvasElement = ({
                   )}
                   <div style={{
                     fontWeight: 'bold',
-                    color: '#333'
+                    color: element.color || '#333'
                   }}>
                     ABC Company SARL
                   </div>
@@ -1285,7 +1285,7 @@ export const CanvasElement = ({
                     <div style={{
                       fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
                       textTransform: element.labelStyle === 'uppercase' ? 'uppercase' : 'none',
-                      color: '#666',
+                      color: element.color || '#666',
                       minWidth: element.layout === 'horizontal' ? 'auto' : '80px',
                       fontSize: `${11 * zoom}px`
                     }}>
@@ -1293,7 +1293,7 @@ export const CanvasElement = ({
                     </div>
                   )}
                   <div style={{
-                    color: '#333'
+                    color: element.color || '#333'
                   }}>
                     FR 12 345 678 901
                   </div>
@@ -1358,7 +1358,7 @@ export const CanvasElement = ({
             fontFamily: element.fontFamily || 'Arial',
             fontWeight: element.fontWeight || 'normal',
             textAlign: element.textAlign || 'left',
-            color: '#333',
+            color: element.color || '#333',
             lineHeight: '1.4'
           }}>
             {/* Nom de l'entreprise */}
@@ -1427,7 +1427,7 @@ export const CanvasElement = ({
               <div style={{
                 fontSize: `${12 * zoom}px`,
                 fontWeight: 'normal',
-                color: '#666',
+                color: element.color || '#666',
                 marginBottom: `${4 * zoom}px`
               }}>
                 {element.labelText || 'N° de commande:'}
