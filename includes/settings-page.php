@@ -79,7 +79,10 @@ class TempConfig {
 
 $config = new TempConfig();
 
-// Sauvegarde des paramètres si formulaire soumis
+/*
+// Le traitement des paramètres est maintenant géré par AJAX via ajax_save_settings()
+// Code commenté pour référence
+// ...
 $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 
 if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
@@ -860,13 +863,16 @@ document.addEventListener('DOMContentLoaded', function() {
         
         console.log('Submitting form via AJAX...');
         
-        // Faire la requête AJAX
-        fetch(form.action, {
+        // Faire la requête AJAX vers l'endpoint WordPress
+        fetch(ajaxurl + '?action=pdf_builder_save_settings', {
             method: 'POST',
-            body: formData,
             headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                ...Object.fromEntries(formData),
+                nonce: '<?php echo wp_create_nonce('pdf_builder_settings'); ?>'
+            })
         })
         .then(function(response) {
             console.log('AJAX response received:', response);
