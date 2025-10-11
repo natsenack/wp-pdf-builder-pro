@@ -2312,13 +2312,24 @@ class PDF_Builder_Admin {
         error_log('PDF Builder Debug - ajax_load_canvas_elements appelée');
 
         // Debug: Log des valeurs de nonce
-        error_log('PDF Builder Debug - Nonce reçu: ' . ($_POST['nonce'] ?? 'NONCE_MANQUANT'));
+        $received_nonce = $_POST['nonce'] ?? 'NONCE_MANQUANT';
+        error_log('PDF Builder Debug - Nonce reçu: ' . $received_nonce);
         error_log('PDF Builder Debug - Action: pdf_builder_load_canvas_elements');
 
         // Vérification de sécurité
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_nonce')) {
-            error_log('PDF Builder Debug - Nonce invalide - Reçu: ' . ($_POST['nonce'] ?? 'NONCE_MANQUANT'));
-            wp_send_json_error('Nonce invalide');
+        if (!wp_verify_nonce($received_nonce, 'pdf_builder_nonce')) {
+            error_log('PDF Builder Debug - Nonce invalide - Reçu: ' . $received_nonce);
+
+            // Retourner des informations de débogage dans la réponse
+            wp_send_json_error([
+                'message' => 'Nonce invalide',
+                'debug' => [
+                    'received_nonce' => $received_nonce,
+                    'expected_action' => 'pdf_builder_nonce',
+                    'user_logged_in' => is_user_logged_in(),
+                    'current_user_id' => get_current_user_id()
+                ]
+            ]);
             return;
         }
 
