@@ -2308,8 +2308,13 @@ class PDF_Builder_Admin {
      * AJAX - Charger les éléments du canvas pour un template
      */
     public function ajax_load_canvas_elements() {
+        // Debug: Log des valeurs de nonce
+        error_log('PDF Builder Debug - Nonce reçu: ' . ($_POST['nonce'] ?? 'NONCE_MANQUANT'));
+        error_log('PDF Builder Debug - Action: pdf_builder_load_canvas_elements');
+
         // Vérification de sécurité
         if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_nonce')) {
+            error_log('PDF Builder Debug - Nonce invalide - Reçu: ' . ($_POST['nonce'] ?? 'NONCE_MANQUANT'));
             wp_send_json_error('Nonce invalide');
             return;
         }
