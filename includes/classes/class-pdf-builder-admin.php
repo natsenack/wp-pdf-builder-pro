@@ -536,17 +536,17 @@ class PDF_Builder_Admin {
         wp_enqueue_style('pdf-builder-canvas', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-canvas.css', [], PDF_BUILDER_PRO_VERSION);
 
         // Scripts JavaScript
-        wp_enqueue_script('pdf-builder-admin', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'wp-api'], time(), true);
+        wp_enqueue_script('pdf-builder-admin', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'wp-api'], PDF_BUILDER_PRO_VERSION . '_cachebust', true);
         wp_enqueue_script('pdf-builder-canvas', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-canvas.js', ['jquery', 'wp-api'], PDF_BUILDER_PRO_VERSION, true);
 
         // Scripts utilitaires
         wp_enqueue_script('pdf-builder-utils', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-utils.js', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
         wp_enqueue_script('pdf-builder-unified-config', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-unified-config.js', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
 
-        // Variables JavaScript pour AJAX
+        // Variables JavaScript pour AJAX - Cache busting forcé
         wp_localize_script('pdf-builder-admin', 'pdfBuilderAjax', [
             'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_canvas_v3_' . get_current_user_id()),
+            'nonce' => wp_create_nonce('pdf_builder_canvas_v3_' . get_current_user_id() . '_cachebust_' . time()),
             'strings' => [
                 'loading' => __('Chargement...', 'pdf-builder-pro'),
                 'error' => __('Erreur', 'pdf-builder-pro'),
@@ -2360,9 +2360,26 @@ class PDF_Builder_Admin {
      * AJAX - Charger les éléments du canvas pour un template
      */
     public function ajax_load_canvas_elements() {
-        // Vérification de sécurité
+        // Vérification de sécurité avec validation flexible du nonce
         $received_nonce = $_POST['nonce'] ?? '';
-        if (!wp_verify_nonce($received_nonce, 'pdf_builder_canvas_v3_' . get_current_user_id())) {
+        $user_id = get_current_user_id();
+
+        // Essayer différents formats de nonce pour la compatibilité
+        $valid_formats = [
+            'pdf_builder_canvas_v3_' . $user_id . '_cachebust_' . time(),
+            'pdf_builder_canvas_v3_' . $user_id,
+            'pdf_builder_nonce_' . $user_id,
+        ];
+
+        $nonce_valid = false;
+        foreach ($valid_formats as $format) {
+            if (wp_verify_nonce($received_nonce, $format)) {
+                $nonce_valid = true;
+                break;
+            }
+        }
+
+        if (!$nonce_valid) {
             wp_send_json_error('Nonce invalide');
             return;
         }
