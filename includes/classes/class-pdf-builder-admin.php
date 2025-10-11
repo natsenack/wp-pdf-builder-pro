@@ -545,7 +545,7 @@ class PDF_Builder_Admin {
         // Variables JavaScript pour AJAX
         wp_localize_script('pdf-builder-admin', 'pdfBuilderAjax', [
             'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_nonce_' . get_current_user_id()),
+            'nonce' => wp_create_nonce('pdf_builder_nonce_' . get_current_user_id() . '_' . time()),
             'strings' => [
                 'loading' => __('Chargement...', 'pdf-builder-pro'),
                 'error' => __('Erreur', 'pdf-builder-pro'),
@@ -2331,8 +2331,13 @@ class PDF_Builder_Admin {
         // Vérification de sécurité - essayer d'abord avec user_id, puis sans
         $nonce_valid = false;
 
-        // Essayer avec user_id d'abord
-        if (wp_verify_nonce($received_nonce, 'pdf_builder_nonce_' . get_current_user_id())) {
+        // Essayer avec timestamp d'abord (nouveau format)
+        if (wp_verify_nonce($received_nonce, 'pdf_builder_nonce_' . get_current_user_id() . '_' . time())) {
+            $nonce_valid = true;
+            error_log("VALIDATION: Succès avec timestamp");
+        }
+        // Essayer avec user_id seulement
+        elseif (wp_verify_nonce($received_nonce, 'pdf_builder_nonce_' . get_current_user_id())) {
             $nonce_valid = true;
             error_log("VALIDATION: Succès avec user_id");
         }
