@@ -1277,8 +1277,14 @@ class PDF_Builder_Admin {
                 
                 // Ajouter les styles de bordure si présents
                 if (isset($element['borderWidth']) && $element['borderWidth'] > 0) {
+                    $border_style = $element['borderStyle'] ?? 'solid';
                     $border_color = $element['borderColor'] ?? '#000000';
-                    $element_style .= sprintf(' border: %dpx solid %s;', $element['borderWidth'], $border_color);
+                    $element_style .= sprintf(' border: %dpx %s %s;', $element['borderWidth'], $border_style, $border_color);
+                }
+
+                // Ajouter les coins arrondis si présents
+                if (isset($element['borderRadius']) && $element['borderRadius'] > 0) {
+                    $element_style .= sprintf(' border-radius: %dpx;', $element['borderRadius']);
                 }
 
                 // Positionnement optimisé (conversion des coordonnées absolues en layout relatif)
