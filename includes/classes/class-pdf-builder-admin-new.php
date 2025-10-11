@@ -104,13 +104,75 @@ class PDF_Builder_Admin_New {
      * Ajoute le menu d'administration
      */
     public function add_admin_menu() {
-        // Ajouter les paramètres Canvas dans le menu Réglages de WordPress
-        add_options_page(
-            __('Paramètres Canvas - PDF Builder Pro', 'pdf-builder-pro'),
-            __('🎨 Canvas', 'pdf-builder-pro'),
+        // Menu principal avec icône distinctive
+        add_menu_page(
+            __('PDF Builder Pro - Gestionnaire de PDF', 'pdf-builder-pro'),
+            __('📄 PDF Builder', 'pdf-builder-pro'),
             'manage_options',
-            'pdf-builder-canvas-settings',
+            'pdf-builder-pro',
+            [$this, 'admin_page'],
+            'dashicons-pdf',
+            30
+        );
+
+        // Page d'accueil (sous-menu principal masqué)
+        add_submenu_page(
+            'pdf-builder-pro',
+            __('Accueil - PDF Builder Pro', 'pdf-builder-pro'),
+            __('🏠 Accueil', 'pdf-builder-pro'),
+            'manage_options',
+            'pdf-builder-pro', // Même slug que le menu principal
+            [$this, 'admin_page']
+        );
+
+        // Éditeur Canvas (outil principal)
+        add_submenu_page(
+            'pdf-builder-pro',
+            __('Éditeur Canvas - PDF Builder Pro', 'pdf-builder-pro'),
+            __('🎨 Éditeur Canvas', 'pdf-builder-pro'),
+            'manage_options',
+            'pdf-builder-editor',
+            [$this, 'template_editor_page']
+        );
+
+        // Gestion des templates
+        add_submenu_page(
+            'pdf-builder-pro',
+            __('Templates PDF - PDF Builder Pro', 'pdf-builder-pro'),
+            __('📋 Templates', 'pdf-builder-pro'),
+            'manage_options',
+            'pdf-builder-templates',
+            [$this, 'templates_page']
+        );
+
+        // Paramètres et configuration
+        add_submenu_page(
+            'pdf-builder-pro',
+            __('Paramètres - PDF Builder Pro', 'pdf-builder-pro'),
+            __('⚙️ Paramètres', 'pdf-builder-pro'),
+            'manage_options',
+            'pdf-builder-settings',
+            [$this, 'settings_page']
+        );
+
+        // Paramètres des rendus Canvas par défaut
+        add_submenu_page(
+            'pdf-builder-pro',
+            __('Rendus Canvas - PDF Builder Pro', 'pdf-builder-pro'),
+            __('🎨 Rendus Canvas', 'pdf-builder-pro'),
+            'manage_options',
+            'pdf-builder-canvas-render',
             [$this, 'canvas_render_settings_page']
+        );
+
+        // Outils de diagnostic
+        add_submenu_page(
+            'pdf-builder-pro',
+            __('Diagnostic - PDF Builder Pro', 'pdf-builder-pro'),
+            __('🔧 Diagnostic', 'pdf-builder-pro'),
+            'manage_options',
+            'pdf-builder-diagnostic',
+            [$this, 'diagnostic_page']
         );
     }
 
