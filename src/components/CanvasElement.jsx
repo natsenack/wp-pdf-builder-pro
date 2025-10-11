@@ -303,7 +303,7 @@ export const CanvasElement = ({
             height: '0px',
             width: '100%'
           } : element.type === 'layout-header' ? {
-            backgroundColor: element.backgroundColor || '#f8fafc',
+            backgroundColor: element.backgroundColor || 'transparent',
             border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#e2e8f0'}` : '1px solid #e2e8f0',
             borderRadius: '4px',
             display: 'flex',
@@ -314,7 +314,7 @@ export const CanvasElement = ({
             color: '#64748b',
             '--element-border-width': element.border ? `${element.borderWidth || 1}px` : '1px'
           } : element.type === 'layout-footer' ? {
-            backgroundColor: element.backgroundColor || '#f8fafc',
+            backgroundColor: element.backgroundColor || 'transparent',
             border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#e2e8f0'}` : '1px solid #e2e8f0',
             borderRadius: '4px',
             display: 'flex',
@@ -324,7 +324,7 @@ export const CanvasElement = ({
             color: '#64748b',
             '--element-border-width': element.border ? `${element.borderWidth || 1}px` : '1px'
           } : element.type === 'layout-sidebar' ? {
-            backgroundColor: element.backgroundColor || '#f8fafc',
+            backgroundColor: element.backgroundColor || 'transparent',
             border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#e2e8f0'}` : '1px solid #e2e8f0',
             borderRadius: '4px',
             display: 'flex',
@@ -334,7 +334,7 @@ export const CanvasElement = ({
             color: '#64748b',
             '--element-border-width': element.border ? `${element.borderWidth || 1}px` : '1px'
           } : element.type === 'layout-section' ? {
-            backgroundColor: element.backgroundColor || '#ffffff',
+            backgroundColor: element.backgroundColor || 'transparent',
             border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#e2e8f0'}` : '1px solid #e2e8f0',
             borderRadius: '4px',
             display: 'flex',
@@ -418,7 +418,7 @@ export const CanvasElement = ({
             justifyContent: 'center',
             fontSize: 20 * zoom
           } : element.type === 'dynamic-text' ? {
-            backgroundColor: element.backgroundColor || '#f8fafc',
+            backgroundColor: element.backgroundColor || 'transparent',
             border: '1px solid #e2e8f0',
             display: 'flex',
             alignItems: 'center',
@@ -429,7 +429,7 @@ export const CanvasElement = ({
             padding: '4px',
             '--element-border-width': '1px'
           } : element.type === 'formula' ? {
-            backgroundColor: element.backgroundColor || '#fef3c7',
+            backgroundColor: element.backgroundColor || 'transparent',
             border: '1px solid #f59e0b',
             display: 'flex',
             alignItems: 'center',
@@ -500,7 +500,7 @@ export const CanvasElement = ({
             color: 'white',
             fontWeight: 'bold'
           } : element.type === 'shadow-box' ? {
-            backgroundColor: element.backgroundColor || '#ffffff',
+            backgroundColor: element.backgroundColor || 'transparent',
             borderRadius: element.borderRadius ? `${element.borderRadius}px` : '8px',
             boxShadow: element.boxShadow || '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
             display: 'flex',
@@ -508,7 +508,7 @@ export const CanvasElement = ({
             justifyContent: 'center',
             fontSize: 12 * zoom
           } : element.type === 'rounded-box' ? {
-            backgroundColor: element.backgroundColor || '#ffffff',
+            backgroundColor: element.backgroundColor || 'transparent',
             border: element.border ? `${element.borderWidth || 1}px solid ${element.borderColor || '#e5e7eb'}` : '1px solid #e5e7eb',
             borderRadius: element.borderRadius ? `${element.borderRadius}px` : '12px',
             display: 'flex',
@@ -517,7 +517,7 @@ export const CanvasElement = ({
             fontSize: 12 * zoom,
             '--element-border-width': element.border ? `${element.borderWidth || 1}px` : '1px'
           } : element.type === 'border-box' ? {
-            backgroundColor: element.backgroundColor || '#ffffff',
+            backgroundColor: element.backgroundColor || 'transparent',
             border: element.border ? `${element.borderWidth || 3}px solid ${element.borderColor || '#3b82f6'}` : '3px solid #3b82f6',
             borderRadius: element.borderRadius ? `${element.borderRadius}px` : '4px',
             display: 'flex',
@@ -549,7 +549,7 @@ export const CanvasElement = ({
             overflow: 'hidden',
             position: 'relative'
           } : {
-            backgroundColor: '#f1f3f4',
+            backgroundColor: element.backgroundColor || 'transparent',
             border: '1px solid #ccc',
             display: 'flex',
             alignItems: 'center',
