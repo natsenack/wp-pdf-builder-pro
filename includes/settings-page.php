@@ -3,6 +3,8 @@
  * Page des Paramètres - PDF Builder Pro
  */
 
+error_log('PDF Builder: Settings page loaded');
+
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit.');
 }
@@ -160,7 +162,7 @@ window.addEventListener('load', function() {
 <div class="wrap">
     <h1><?php _e('Paramètres PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
 
-    <form method="post" action="">
+    <form method="post" action="" onsubmit="console.log('Form submitted'); return true;">
         <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
 
         <div class="pdf-builder-settings">
@@ -766,7 +768,7 @@ window.addEventListener('load', function() {
         </div>
 
         <p class="submit">
-            <input type="submit" name="submit" id="submit" class="button button-primary" value="<?php _e('Enregistrer les paramètres', 'pdf-builder-pro'); ?>">
+            <input type="submit" name="submit" id="submit" class="button button-primary" value="<?php _e('Enregistrer les paramètres', 'pdf-builder-pro'); ?>" onclick="console.log('Submit button clicked');">
         </p>
     </form>
 </div>
