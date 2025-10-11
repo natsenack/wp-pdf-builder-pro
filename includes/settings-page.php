@@ -30,6 +30,9 @@ if (isset($pdf_builder_core) && $pdf_builder_core instanceof PDF_Builder_Core) {
 
 $config = null; // Temporaire : pas de config manager pour l'instant
 
+// Variable pour stocker les messages de notification
+$admin_notices = array();
+
 // Classe temporaire pour gérer la configuration avec les options WordPress
 class TempConfig {
     private $option_name = 'pdf_builder_settings';
@@ -141,8 +144,8 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
             ));
             exit; // Important : arrêter l'exécution ici pour les requêtes AJAX
         } else {
-            // Réponse normale
-            echo '<div class="notice notice-success"><p>' . __('Paramètres sauvegardés avec succès.', 'pdf-builder-pro') . ' (espacement: ' . $settings['canvas_border_spacing'] . ')</p></div>';
+            // Réponse normale - stocker le message pour affichage dans le HTML
+            $admin_notices[] = '<div class="notice notice-success"><p>' . __('Paramètres sauvegardés avec succès.', 'pdf-builder-pro') . ' (espacement: ' . $settings['canvas_border_spacing'] . ')</p></div>';
         }
     } else {
         error_log('PDF Builder: Nonce invalide');
@@ -150,7 +153,7 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
             wp_send_json_error(__('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro'));
             exit; // Important : arrêter l'exécution ici pour les requêtes AJAX
         } else {
-            echo '<div class="notice notice-error"><p>' . __('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro') . '</p></div>';
+            $admin_notices[] = '<div class="notice notice-error"><p>' . __('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro') . '</p></div>';
         }
     }
 } elseif (isset($_POST['submit'])) {
@@ -159,7 +162,7 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
         wp_send_json_error(__('Erreur : nonce manquant.', 'pdf-builder-pro'));
         exit; // Important : arrêter l'exécution ici pour les requêtes AJAX
     } else {
-        echo '<div class="notice notice-error"><p>' . __('Erreur : nonce manquant.', 'pdf-builder-pro') . '</p></div>';
+        $admin_notices[] = '<div class="notice notice-error"><p>' . __('Erreur : nonce manquant.', 'pdf-builder-pro') . '</p></div>';
     }
 }
 
@@ -190,6 +193,15 @@ window.addEventListener('load', function() {
 </script>
 
     <h1><?php _e('Paramètres PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
+
+    <?php
+    // Afficher les messages de notification stockés
+    if (!empty($admin_notices)) {
+        foreach ($admin_notices as $notice) {
+            echo $notice;
+        }
+    }
+    ?>
 
     <form method="post" action="<?php echo esc_url(admin_url('admin.php?page=pdf-builder-settings')); ?>" onsubmit="console.log('Form submitted'); console.log('Form action:', this.action); console.log('Form method:', this.method); return true;">
         <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
@@ -1320,9 +1332,24 @@ echo '<style>
     display: block !important;
 }
 
-/* Fix footer overlap issue */
+/* Fix footer positioning */
 #wpfooter {
-    z-index: 0 !important;
+    position: static !important;
+    clear: both !important;
+    margin-top: 50px !important;
+}
+
+/* Ensure proper page layout */
+.wrap {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    min-height: auto !important;
+}
+
+/* Ensure content stays within bounds */
+.pdf-builder-settings {
+    margin-bottom: 100px !important;
+    padding-bottom: 50px !important;
 }
 </style>';
 ?>
