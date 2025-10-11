@@ -14,14 +14,29 @@ if (!defined('ABSPATH')) {
 class PDF_Builder_Admin {
 
     /**
+     * Instance singleton
+     */
+    private static $instance = null;
+
+    /**
      * Instance de la classe principale
      */
     private $main;
 
     /**
-     * Constructeur
+     * Obtenir l'instance unique
      */
-    public function __construct($main_instance) {
+    public static function getInstance($main_instance = null) {
+        if (null === self::$instance) {
+            self::$instance = new self($main_instance);
+        }
+        return self::$instance;
+    }
+
+    /**
+     * Constructeur privé pour singleton
+     */
+    private function __construct($main_instance) {
         $this->main = $main_instance;
         $this->init_hooks();
     }
