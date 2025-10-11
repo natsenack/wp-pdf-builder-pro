@@ -145,16 +145,6 @@ class PDF_Builder_Admin_New {
             [$this, 'templates_page']
         );
 
-        // Paramètres Canvas (rendu)
-        add_submenu_page(
-            'pdf-builder-pro',
-            __('Paramètres de Rendu Canvas - PDF Builder Pro', 'pdf-builder-pro'),
-            __('🎨 Paramètres Canvas', 'pdf-builder-pro'),
-            'manage_options',
-            'pdf-builder-canvas-render',
-            [$this, 'canvas_render_settings_page']
-        );
-
         // Paramètres et configuration
         add_submenu_page(
             'pdf-builder-pro',
