@@ -104,6 +104,30 @@ if (isset($_POST['pdf_builder_settings_nonce']) && wp_verify_nonce($_POST['pdf_b
 
     $config->set_multiple($settings);
 
+    // Sauvegarde individuelle des paramètres canvas pour la compatibilité avec le JavaScript
+    update_option('canvas_element_borders_enabled', $settings['canvas_element_borders_enabled']);
+    update_option('canvas_border_width', $settings['canvas_border_width']);
+    update_option('canvas_border_color', $settings['canvas_border_color']);
+    update_option('canvas_border_spacing', $settings['canvas_border_spacing']);
+    update_option('canvas_resize_handles_enabled', $settings['canvas_resize_handles_enabled']);
+    update_option('canvas_handle_size', $settings['canvas_handle_size']);
+    update_option('canvas_handle_color', $settings['canvas_handle_color']);
+    update_option('canvas_handle_hover_color', $settings['canvas_handle_hover_color']);
+
+    // Sauvegarde des autres paramètres importants
+    update_option('debug_mode', $settings['debug_mode']);
+    update_option('cache_enabled', $settings['cache_enabled']);
+    update_option('cache_ttl', $settings['cache_ttl']);
+    update_option('max_execution_time', $settings['max_execution_time']);
+    update_option('memory_limit', $settings['memory_limit']);
+    update_option('pdf_quality', $settings['pdf_quality']);
+    update_option('default_format', $settings['default_format']);
+    update_option('default_orientation', $settings['default_orientation']);
+    update_option('log_level', $settings['log_level']);
+    update_option('max_template_size', $settings['max_template_size']);
+    update_option('email_notifications_enabled', $settings['email_notifications_enabled']);
+    update_option('notification_events', $settings['notification_events']);
+
     // Sauvegarde des permissions des rôles
     if (isset($_POST['role_permissions']) && is_array($_POST['role_permissions'])) {
         global $wp_roles;
