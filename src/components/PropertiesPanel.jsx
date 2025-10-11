@@ -544,8 +544,7 @@ const PropertiesPanel = React.memo(({
 
                 {/* Contrôles des bordures (conditionnels) */}
                 <div style={{
-                  opacity: localProperties.borderWidth > 0 ? 1 : 0.5,
-                  pointerEvents: localProperties.borderWidth > 0 ? 'auto' : 'none',
+                  display: localProperties.borderWidth > 0 ? 'block' : 'none',
                   transition: 'opacity 0.3s ease'
                 }}>
                   <ColorPicker
