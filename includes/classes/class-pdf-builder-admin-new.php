@@ -2367,6 +2367,9 @@ class PDF_Builder_Admin {
         $received_nonce = $_POST['nonce'] ?? '';
         $user_id = get_current_user_id();
 
+        // LOGGING DEBUG
+        error_log("PDF BUILDER DEBUG - Nonce reçu: '$received_nonce', User ID: $user_id");
+
         // Essayer différents formats de nonce pour la compatibilité
         $valid_formats = [
             'test_nonce_123', // TEST TEMPORAIRE
@@ -2377,14 +2380,18 @@ class PDF_Builder_Admin {
         ];
 
         $nonce_valid = false;
+        $matched_format = '';
         foreach ($valid_formats as $format) {
             if (wp_verify_nonce($received_nonce, $format)) {
                 $nonce_valid = true;
+                $matched_format = $format;
+                error_log("PDF BUILDER DEBUG - Nonce valide avec format: '$format'");
                 break;
             }
         }
 
         if (!$nonce_valid) {
+            error_log("PDF BUILDER DEBUG - Nonce invalide. Formats testés: " . implode(', ', $valid_formats));
             wp_send_json_error('Nonce invalide');
             return;
         }
