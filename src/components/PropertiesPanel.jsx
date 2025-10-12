@@ -4,6 +4,19 @@ import { useElementSynchronization } from '../hooks/useElementSynchronization';
 import { elementCustomizationService } from '../services/ElementCustomizationService';
 import '../styles/PropertiesPanel.css';
 
+// Fonction helper pour parser les valeurs numériques de manière sécurisée
+const safeParseInt = (value, defaultValue = 0) => {
+  if (value === null || value === undefined || value === '') return defaultValue;
+  const parsed = parseInt(value, 10);
+  return isNaN(parsed) ? defaultValue : parsed;
+};
+
+const safeParseFloat = (value, defaultValue = 0) => {
+  if (value === null || value === undefined || value === '') return defaultValue;
+  const parsed = parseFloat(value);
+  return isNaN(parsed) ? defaultValue : parsed;
+};
+
 // Composant amélioré pour les contrôles de couleur avec presets
 const ColorPicker = ({ label, value, onChange, presets = [], defaultColor = '#ffffff' }) => {
   // Fonction pour valider et normaliser une couleur hex
@@ -101,7 +114,7 @@ const FontControls = ({ elementId, properties, onPropertyChange }) => (
           min="8"
           max="72"
           value={properties.fontSize ?? 14}
-          onChange={(e) => onPropertyChange(elementId, 'fontSize', parseInt(e.target.value))}
+          onChange={(e) => onPropertyChange(elementId, 'fontSize', safeParseInt(e.target.value, 14))}
           className="slider"
         />
         <span className="slider-value">{properties.fontSize ?? 14}px</span>
@@ -117,7 +130,7 @@ const FontControls = ({ elementId, properties, onPropertyChange }) => (
           max="3"
           step="0.1"
           value={properties.lineHeight ?? 1.2}
-          onChange={(e) => onPropertyChange(elementId, 'lineHeight', parseFloat(e.target.value))}
+          onChange={(e) => onPropertyChange(elementId, 'lineHeight', safeParseFloat(e.target.value, 1.2))}
           className="slider"
         />
         <span className="slider-value">{properties.lineHeight ?? 1.2}</span>
@@ -133,7 +146,7 @@ const FontControls = ({ elementId, properties, onPropertyChange }) => (
           max="10"
           step="0.1"
           value={properties.letterSpacing ?? 0}
-          onChange={(e) => onPropertyChange(elementId, 'letterSpacing', parseFloat(e.target.value))}
+          onChange={(e) => onPropertyChange(elementId, 'letterSpacing', safeParseFloat(e.target.value, 0))}
           className="slider"
         />
         <span className="slider-value">{properties.letterSpacing ?? 0}px</span>
@@ -149,7 +162,7 @@ const FontControls = ({ elementId, properties, onPropertyChange }) => (
           max="1"
           step="0.1"
           value={properties.opacity ?? 1}
-          onChange={(e) => onPropertyChange(elementId, 'opacity', parseFloat(e.target.value))}
+          onChange={(e) => onPropertyChange(elementId, 'opacity', safeParseFloat(e.target.value, 1))}
           className="slider"
         />
         <span className="slider-value">{Math.round((properties.opacity ?? 1) * 100)}%</span>
@@ -165,7 +178,7 @@ const FontControls = ({ elementId, properties, onPropertyChange }) => (
           max="5"
           step="0.1"
           value={properties.textShadowBlur ?? 0}
-          onChange={(e) => onPropertyChange(elementId, 'textShadowBlur', parseFloat(e.target.value))}
+          onChange={(e) => onPropertyChange(elementId, 'textShadowBlur', safeParseFloat(e.target.value, 0))}
           className="slider"
         />
         <span className="slider-value">{properties.textShadowBlur ?? 0}px</span>
@@ -434,7 +447,6 @@ const PropertiesPanel = React.memo(({
             <div className="properties-group">
               <h4>🎨 Couleurs & Apparence</h4>
 
-              {/* Couleur du texte */}
               <ColorPicker
                 label="Texte"
                 value={localProperties.color}
@@ -488,7 +500,7 @@ const PropertiesPanel = React.memo(({
                       max="1"
                       step="0.1"
                       value={localProperties.backgroundOpacity ?? 1}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundOpacity', parseFloat(e.target.value))}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundOpacity', safeParseFloat(e.target.value, 1))}
                       className="slider"
                     />
                     <span className="slider-value">{Math.round((localProperties.backgroundOpacity ?? 1) * 100)}%</span>
@@ -572,7 +584,7 @@ const PropertiesPanel = React.memo(({
                         min="0"
                         max="10"
                         value={localProperties.borderWidth ?? 1}
-                        onChange={(e) => handlePropertyChange(selectedElement.id, 'borderWidth', parseInt(e.target.value))}
+                        onChange={(e) => handlePropertyChange(selectedElement.id, 'borderWidth', safeParseInt(e.target.value, 1))}
                         className="slider"
                       />
                       <span className="slider-value">{localProperties.borderWidth ?? 1}px</span>
@@ -587,7 +599,7 @@ const PropertiesPanel = React.memo(({
                         min="0"
                         max="50"
                         value={localProperties.borderRadius ?? 4}
-                        onChange={(e) => handlePropertyChange(selectedElement.id, 'borderRadius', parseInt(e.target.value))}
+                        onChange={(e) => handlePropertyChange(selectedElement.id, 'borderRadius', safeParseInt(e.target.value, 0))}
                         className="slider"
                       />
                       <span className="slider-value">{localProperties.borderRadius ?? 4}px</span>
@@ -615,7 +627,7 @@ const PropertiesPanel = React.memo(({
                     min="0"
                     max="20"
                     value={localProperties.boxShadowBlur ?? 0}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'boxShadowBlur', parseInt(e.target.value))}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'boxShadowBlur', safeParseInt(e.target.value, 0))}
                     className="slider"
                   />
                   <span className="slider-value">{localProperties.boxShadowBlur ?? 0}px</span>
@@ -630,7 +642,7 @@ const PropertiesPanel = React.memo(({
                     min="0"
                     max="10"
                     value={localProperties.boxShadowSpread ?? 0}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'boxShadowSpread', parseInt(e.target.value))}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'boxShadowSpread', safeParseInt(e.target.value, 0))}
                     className="slider"
                   />
                   <span className="slider-value">{localProperties.boxShadowSpread ?? 0}px</span>
@@ -653,7 +665,7 @@ const PropertiesPanel = React.memo(({
                   <input
                     type="number"
                     value={Math.round(localProperties.x || 0)}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'x', parseInt(e.target.value))}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'x', safeParseInt(e.target.value, 0))}
                     step="1"
                   />
                   <span className="unit">mm</span>
@@ -666,7 +678,7 @@ const PropertiesPanel = React.memo(({
                   <input
                     type="number"
                     value={Math.round(localProperties.y || 0)}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'y', parseInt(e.target.value))}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'y', safeParseInt(e.target.value, 0))}
                     step="1"
                   />
                   <span className="unit">mm</span>
@@ -684,7 +696,7 @@ const PropertiesPanel = React.memo(({
                   <input
                     type="number"
                     value={Math.round(localProperties.width || 100)}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'width', parseInt(e.target.value))}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'width', safeParseInt(e.target.value, 100))}
                     min="1"
                     step="1"
                   />
@@ -698,7 +710,7 @@ const PropertiesPanel = React.memo(({
                   <input
                     type="number"
                     value={Math.round(localProperties.height || 50)}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'height', parseInt(e.target.value))}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'height', safeParseInt(e.target.value, 50))}
                     min="1"
                     step="1"
                   />
@@ -756,7 +768,7 @@ const PropertiesPanel = React.memo(({
                     min="-180"
                     max="180"
                     value={localProperties.rotation || 0}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'rotation', parseInt(e.target.value))}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'rotation', safeParseInt(e.target.value, 0))}
                     onDoubleClick={() => handlePropertyChange(selectedElement.id, 'rotation', 0)}
                     className="slider"
                   />
@@ -809,7 +821,7 @@ const PropertiesPanel = React.memo(({
                 <input
                   type="number"
                   value={localProperties.zIndex || 0}
-                  onChange={(e) => handlePropertyChange(selectedElement.id, 'zIndex', parseInt(e.target.value))}
+                  onChange={(e) => handlePropertyChange(selectedElement.id, 'zIndex', safeParseInt(e.target.value, 0))}
                   min="0"
                   max="100"
                   step="1"
@@ -1073,7 +1085,7 @@ const PropertiesPanel = React.memo(({
                       min="0"
                       max="20"
                       value={localProperties.spacing || 8}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'spacing', parseInt(e.target.value))}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'spacing', safeParseInt(e.target.value, 10))}
                       className="slider"
                     />
                     <span className="slider-value">{localProperties.spacing || 8}px</span>
@@ -1462,7 +1474,7 @@ const PropertiesPanel = React.memo(({
                     min="0"
                     max="100"
                     value={localProperties.opacity || 100}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'opacity', parseInt(e.target.value))}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'opacity', safeParseInt(e.target.value, 100))}
                     className="slider"
                   />
                   <span className="slider-value">{localProperties.opacity || 100}%</span>
@@ -1511,7 +1523,7 @@ const PropertiesPanel = React.memo(({
                     <input
                       type="number"
                       value={localProperties.shadowOffsetX || 2}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'shadowOffsetX', parseInt(e.target.value))}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'shadowOffsetX', safeParseInt(e.target.value, 0))}
                       min="-20"
                       max="20"
                     />
@@ -1522,7 +1534,7 @@ const PropertiesPanel = React.memo(({
                     <input
                       type="number"
                       value={localProperties.shadowOffsetY || 2}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'shadowOffsetY', parseInt(e.target.value))}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'shadowOffsetY', safeParseInt(e.target.value, 0))}
                       min="-20"
                       max="20"
                     />
@@ -1542,7 +1554,7 @@ const PropertiesPanel = React.memo(({
                     min="0"
                     max="200"
                     value={localProperties.brightness || 100}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'brightness', parseInt(e.target.value))}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'brightness', safeParseInt(e.target.value, 100))}
                     className="slider"
                   />
                   <span className="slider-value">{localProperties.brightness || 100}%</span>
