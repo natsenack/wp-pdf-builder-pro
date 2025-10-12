@@ -108,8 +108,8 @@ export const useResize = ({
       }
 
       // Appliquer les contraintes du canvas
-      const effectiveCanvasWidth = canvasRectParam ? canvasRectParam.width / currentZoom : canvasWidth;
-      const effectiveCanvasHeight = canvasRectParam ? canvasRectParam.height / currentZoom : canvasHeight;
+      const effectiveCanvasWidth = canvasWidth;
+      const effectiveCanvasHeight = canvasHeight;
 
       newRect.x = Math.max(0, Math.min(effectiveCanvasWidth - newRect.width, newRect.x));
       newRect.y = Math.max(0, Math.min(effectiveCanvasHeight - newRect.height, newRect.y));
