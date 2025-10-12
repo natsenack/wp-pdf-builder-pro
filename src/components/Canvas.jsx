@@ -495,7 +495,7 @@ const Canvas = ({
         width: 100,
         height: 50,
         content: elementType === 'text' ? 'Nouveau texte' : '',
-        backgroundColor: '#ffffff',
+        backgroundColor: 'transparent',
         borderColor: '#6b7280',
         borderWidth: 1,
         color: '#1e293b',

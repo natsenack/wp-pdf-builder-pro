@@ -259,7 +259,7 @@ export const useCanvasState = ({
         y: 50,
         width: 100,
         height: 50,
-        backgroundColor: '#ffffff',
+        backgroundColor: 'transparent',
         borderColor: 'transparent',
         borderWidth: 0,
         borderRadius: 4,
@@ -378,7 +378,7 @@ export const useCanvasState = ({
           case 'layout-section':
             defaults.width = 500;
             defaults.height = 200;
-            defaults.backgroundColor = '#ffffff';
+            defaults.backgroundColor = 'transparent';
             defaults.borderColor = 'transparent';
             defaults.borderWidth = 0;
             break;
@@ -395,7 +395,7 @@ export const useCanvasState = ({
           case 'invoice-header':
             defaults.width = 500;
             defaults.height = 100;
-            defaults.backgroundColor = '#ffffff';
+            defaults.backgroundColor = 'transparent';
             defaults.borderColor = 'transparent';
             defaults.borderWidth = 0;
             defaults.content = 'ENTREPRISE\n123 Rue de l\'Entreprise\n75000 Paris\nTéléphone: 01 23 45 67 89\nEmail: contact@entreprise.com';
@@ -415,7 +415,7 @@ export const useCanvasState = ({
           case 'invoice-info-block':
             defaults.width = 300;
             defaults.height = 80;
-            defaults.backgroundColor = '#ffffff';
+            defaults.backgroundColor = 'transparent';
             defaults.borderColor = 'transparent';
             defaults.borderWidth = 0;
             defaults.borderRadius = 4;
@@ -424,7 +424,7 @@ export const useCanvasState = ({
           case 'invoice-products-table':
             defaults.width = 500;
             defaults.height = 200;
-            defaults.backgroundColor = '#ffffff';
+            defaults.backgroundColor = 'transparent';
             defaults.borderColor = 'transparent';
             defaults.borderWidth = 0;
             break;
@@ -432,7 +432,7 @@ export const useCanvasState = ({
           case 'product_table':
             defaults.width = 500;
             defaults.height = 200;
-            defaults.backgroundColor = '#ffffff';
+            defaults.backgroundColor = 'transparent';
             defaults.borderColor = 'transparent';
             defaults.borderWidth = 0;
             defaults.showHeaders = true;
@@ -457,7 +457,7 @@ export const useCanvasState = ({
           case 'customer_info':
             defaults.width = 300;
             defaults.height = 200;
-            defaults.backgroundColor = '#ffffff';
+            defaults.backgroundColor = 'transparent';
             defaults.borderColor = 'transparent';
             defaults.borderWidth = 0;
             defaults.fields = ['name', 'email', 'phone', 'address', 'company', 'vat'];
@@ -484,7 +484,7 @@ export const useCanvasState = ({
           case 'invoice-payment-terms':
             defaults.width = 250;
             defaults.height = 100;
-            defaults.backgroundColor = '#ffffff';
+            defaults.backgroundColor = 'transparent';
             defaults.borderColor = 'transparent';
             defaults.borderWidth = 0;
             defaults.borderRadius = 4;
@@ -505,7 +505,7 @@ export const useCanvasState = ({
           case 'invoice-signature-block':
             defaults.width = 200;
             defaults.height = 80;
-            defaults.backgroundColor = '#ffffff';
+            defaults.backgroundColor = 'transparent';
             defaults.borderColor = 'transparent';
             defaults.borderWidth = 0;
             defaults.borderRadius = 4;
@@ -596,7 +596,7 @@ export const useCanvasState = ({
           case 'barcode':
             defaults.width = 120;
             defaults.height = 40;
-            defaults.backgroundColor = '#ffffff';
+            defaults.backgroundColor = 'transparent';
             defaults.borderColor = 'transparent';
             defaults.borderWidth = 0;
             break;
@@ -604,7 +604,7 @@ export const useCanvasState = ({
           case 'qrcode-dynamic':
             defaults.width = 60;
             defaults.height = 60;
-            defaults.backgroundColor = '#ffffff';
+            defaults.backgroundColor = 'transparent';
             defaults.borderColor = 'transparent';
             defaults.borderWidth = 0;
             break;
@@ -636,7 +636,7 @@ export const useCanvasState = ({
           case 'table-dynamic':
             defaults.width = 400;
             defaults.height = 150;
-            defaults.backgroundColor = '#ffffff';
+            defaults.backgroundColor = 'transparent';
             defaults.borderColor = 'transparent';
             defaults.borderWidth = 0;
             break;
@@ -649,19 +649,19 @@ export const useCanvasState = ({
           case 'shadow-box':
             defaults.width = 200;
             defaults.height = 100;
-            defaults.backgroundColor = '#ffffff';
+            defaults.backgroundColor = 'transparent';
             defaults.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
             break;
           case 'rounded-box':
             defaults.width = 200;
             defaults.height = 100;
-            defaults.backgroundColor = '#ffffff';
+            defaults.backgroundColor = 'transparent';
             defaults.borderRadius = 12;
             break;
           case 'border-box':
             defaults.width = 200;
             defaults.height = 100;
-            defaults.backgroundColor = '#ffffff';
+            defaults.backgroundColor = 'transparent';
             defaults.borderColor = 'transparent';
             defaults.borderWidth = 0;
             break;
