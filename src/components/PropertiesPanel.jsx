@@ -393,7 +393,6 @@ const PropertiesPanel = React.memo(({
     const shouldBeEnabled = !!localProperties.backgroundColor && localProperties.backgroundColor !== 'transparent';
     console.log('🎨 Toggle sync - localProperties.backgroundColor:', localProperties.backgroundColor, 'shouldBeEnabled:', shouldBeEnabled);
     console.log('🎨 Toggle sync - full localProperties:', localProperties);
-    console.log('🎨 Toggle sync - current isBackgroundEnabled before set:', isBackgroundEnabled);
     setIsBackgroundEnabled(shouldBeEnabled);
   }, [localProperties.backgroundColor]);
 
@@ -549,18 +548,14 @@ const PropertiesPanel = React.memo(({
               {/* Contrôle du fond */}
               <div className="property-row">
                 <span>Fond activé:</span>
-                {console.log('🔘 Rendering toggle - isBackgroundEnabled:', isBackgroundEnabled, 'localProperties.backgroundColor:', localProperties.backgroundColor)}
                 <label className="toggle">
                   <input
                     type="checkbox"
                     checked={isBackgroundEnabled}
                     onChange={(e) => {
-                      console.log('🔘 Toggle changed - checked:', e.target.checked, 'current isBackgroundEnabled:', isBackgroundEnabled);
                       if (e.target.checked) {
-                        console.log('🔘 Setting backgroundColor to #ffffff');
                         handlePropertyChange(selectedElement.id, 'backgroundColor', '#ffffff');
                       } else {
-                        console.log('🔘 Setting backgroundColor to transparent');
                         handlePropertyChange(selectedElement.id, 'backgroundColor', 'transparent');
                       }
                     }}
