@@ -975,35 +975,39 @@
 }
 
 .canvas-element.selected .resize-zone-n {
-  top: calc(var(--selection-border-spacing, 2px) * -1 - var(--selection-border-width, 2px));
-  left: var(--selection-border-spacing, 2px);
-  right: var(--selection-border-spacing, 2px);
-  height: calc(var(--selection-border-width, 2px) + var(--selection-border-spacing, 2px));
+  top: -6px;
+  left: 2px;
+  right: 2px;
+  height: 8px;
   cursor: n-resize;
+  background-color: rgba(37, 99, 235, 0.1);
 }
 
 .canvas-element.selected .resize-zone-s {
-  bottom: calc(var(--selection-border-spacing, 2px) * -1 - var(--selection-border-width, 2px));
-  left: var(--selection-border-spacing, 2px);
-  right: var(--selection-border-spacing, 2px);
-  height: calc(var(--selection-border-width, 2px) + var(--selection-border-spacing, 2px));
+  bottom: -6px;
+  left: 2px;
+  right: 2px;
+  height: 8px;
   cursor: s-resize;
+  background-color: rgba(37, 99, 235, 0.1);
 }
 
 .canvas-element.selected .resize-zone-w {
-  top: var(--selection-border-spacing, 2px);
-  left: calc(var(--selection-border-spacing, 2px) * -1 - var(--selection-border-width, 2px));
-  bottom: var(--selection-border-spacing, 2px);
-  width: calc(var(--selection-border-width, 2px) + var(--selection-border-spacing, 2px));
+  top: 2px;
+  left: -6px;
+  bottom: 2px;
+  width: 8px;
   cursor: w-resize;
+  background-color: rgba(37, 99, 235, 0.1);
 }
 
 .canvas-element.selected .resize-zone-e {
-  top: var(--selection-border-spacing, 2px);
-  right: calc(var(--selection-border-spacing, 2px) * -1 - var(--selection-border-width, 2px));
-  bottom: var(--selection-border-spacing, 2px);
-  width: calc(var(--selection-border-width, 2px) + var(--selection-border-spacing, 2px));
+  top: 2px;
+  right: -6px;
+  bottom: 2px;
+  width: 8px;
   cursor: e-resize;
+  background-color: rgba(37, 99, 235, 0.1);
 }
 
 /* Zones de redimensionnement sur les bords */
