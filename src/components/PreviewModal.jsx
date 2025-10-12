@@ -18,6 +18,20 @@ const PreviewModal = ({
     console.log('handlePrint called with elements:', elements);
     console.log('canvasWidth:', canvasWidth, 'canvasHeight:', canvasHeight);
 
+    // Debug: Log details of each element
+    elements.forEach((element, index) => {
+      console.log(`Element ${index}:`, {
+        type: element.type,
+        text: element.text,
+        src: element.src,
+        content: element.content,
+        x: element.x,
+        y: element.y,
+        width: element.width,
+        height: element.height
+      });
+    });
+
     // Ouvrir l'aperçu dans une nouvelle fenêtre pour l'impression
     const printWindow = window.open('', '_blank', 'width=800,height=600');
     if (printWindow) {
@@ -119,8 +133,16 @@ const PreviewModal = ({
                     filter: brightness(${(element.brightness || 100)}%) contrast(${(element.contrast || 100)}%) saturate(${(element.saturate || 100)}%);
                     box-shadow: ${element.boxShadowColor ? `0px ${element.boxShadowSpread || 0}px ${element.boxShadowBlur || 0}px ${element.boxShadowColor}` : (element.shadow ? `${element.shadowOffsetX || 2}px ${element.shadowOffsetY || 2}px 4px ${element.shadowColor || '#000000'}40` : 'none')};
                   ">
-                    ${element.type === 'text' ? (element.text || 'Texte') : ''}
-                    ${element.type === 'image' && element.src ? `<img src="${element.src}" style="width: 100%; height: 100%; object-fit: cover;" />` : ''}
+                    ${element.type === 'text' ? (element.text || 'Texte') :
+                      element.type === 'icon' ? (element.content || '🎯') :
+                      element.type === 'dynamic-text' ? (element.content || '{{variable}}') :
+                      element.type === 'formula' ? (element.content || '{{prix * quantite}}') :
+                      element.type === 'conditional-text' ? (element.content || '{{condition ? "Oui" : "Non"}}') :
+                      element.type === 'counter' ? (element.content || '1') :
+                      element.type === 'date-dynamic' ? (element.content || '{{date|format:Y-m-d}}') :
+                      element.type === 'currency' ? (element.content || '{{montant|currency:EUR}}') :
+                      element.type === 'watermark' ? (element.content || 'CONFIDENTIEL') :
+                      element.type === 'image' && element.src ? `<img src="${element.src}" style="width: 100%; height: 100%; object-fit: cover;" />` : ''}
                   </div>
                 `;
               }
