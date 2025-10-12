@@ -22,6 +22,15 @@ export const useResize = ({
   }, [snapToGrid, gridSize]);
 
   const handleResizeStart = useCallback((e, handle, elementRect, zoomLevel = 1) => {
+    console.log('🔧 handleResizeStart called:', {
+      handle,
+      elementRect,
+      zoomLevel,
+      eventType: e.type,
+      clientX: e.clientX,
+      clientY: e.clientY,
+      canvasRef: !!canvasRef?.current
+    });
     e.preventDefault();
     e.stopPropagation();
 

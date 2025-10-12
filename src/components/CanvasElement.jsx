@@ -73,7 +73,15 @@ export const CanvasElement = ({
             zoneStyles: Array.from(resizeZones).map(z => ({
               pointerEvents: window.getComputedStyle(z).pointerEvents,
               zIndex: window.getComputedStyle(z).zIndex,
-              display: window.getComputedStyle(z).display
+              display: window.getComputedStyle(z).display,
+              position: window.getComputedStyle(z).position,
+              width: window.getComputedStyle(z).width,
+              height: window.getComputedStyle(z).height,
+              top: window.getComputedStyle(z).top,
+              left: window.getComputedStyle(z).left,
+              right: window.getComputedStyle(z).right,
+              bottom: window.getComputedStyle(z).bottom,
+              boundingRect: z.getBoundingClientRect()
             }))
           });
           console.log('🔍 Resize zone N ref:', {
@@ -1588,7 +1596,12 @@ export const CanvasElement = ({
                 backgroundColor: element.backgroundColor,
                 isTransparent: !element.backgroundColor || element.backgroundColor === 'transparent',
                 eventTarget: e.target,
-                eventCurrentTarget: e.currentTarget
+                eventCurrentTarget: e.currentTarget,
+                eventType: e.type,
+                clientX: e.clientX,
+                clientY: e.clientY,
+                targetRect: e.target.getBoundingClientRect(),
+                currentTargetRect: e.currentTarget.getBoundingClientRect()
               });
               resize.handleResizeStart(e, 'n', {
                 x: element.x,
@@ -1608,7 +1621,12 @@ export const CanvasElement = ({
                 backgroundColor: element.backgroundColor,
                 isTransparent: !element.backgroundColor || element.backgroundColor === 'transparent',
                 eventTarget: e.target,
-                eventCurrentTarget: e.currentTarget
+                eventCurrentTarget: e.currentTarget,
+                eventType: e.type,
+                clientX: e.clientX,
+                clientY: e.clientY,
+                targetRect: e.target.getBoundingClientRect(),
+                currentTargetRect: e.currentTarget.getBoundingClientRect()
               });
               resize.handleResizeStart(e, 's', {
                 x: element.x,
@@ -1628,7 +1646,12 @@ export const CanvasElement = ({
                 backgroundColor: element.backgroundColor,
                 isTransparent: !element.backgroundColor || element.backgroundColor === 'transparent',
                 eventTarget: e.target,
-                eventCurrentTarget: e.currentTarget
+                eventCurrentTarget: e.currentTarget,
+                eventType: e.type,
+                clientX: e.clientX,
+                clientY: e.clientY,
+                targetRect: e.target.getBoundingClientRect(),
+                currentTargetRect: e.currentTarget.getBoundingClientRect()
               });
               resize.handleResizeStart(e, 'w', {
                 x: element.x,
