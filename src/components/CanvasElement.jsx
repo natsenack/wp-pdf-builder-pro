@@ -137,7 +137,7 @@ export const CanvasElement = ({
     const clickX = (e.clientX - canvasRect.left) / zoom;
     const clickY = (e.clientY - canvasRect.top) / zoom;
 
-    const handleSize = 8 / zoom; // Ajuster la taille des poignées pour le zoom
+    const handleSize = 16 / zoom; // Ajuster la taille des poignées pour le zoom (16px au lieu de 8px)
     const elementLeft = element.x;
     const elementTop = element.y;
     const elementRight = element.x + element.width;
@@ -1448,14 +1448,16 @@ export const CanvasElement = ({
             className="resize-handle nw"
             style={{
               position: 'absolute',
-              left: element.x * zoom - 6,
-              top: element.y * zoom - 6,
-              width: 8,
-              height: 8,
+              left: element.x * zoom - 8,
+              top: element.y * zoom - 8,
+              width: 16,
+              height: 16,
               backgroundColor: '#007cba',
-              border: '1px solid white',
+              border: '2px solid white',
+              borderRadius: '50%',
               cursor: 'nw-resize',
-              pointerEvents: 'auto'
+              pointerEvents: 'auto',
+              zIndex: 10
             }}
             onMouseDown={(e) => resize.handleResizeStart(e, 'nw', {
               x: element.x,
@@ -1469,14 +1471,16 @@ export const CanvasElement = ({
             className="resize-handle ne"
             style={{
               position: 'absolute',
-              left: (element.x + element.width) * zoom - 4,
-              top: element.y * zoom - 6,
-              width: 8,
-              height: 8,
+              left: (element.x + element.width) * zoom - 8,
+              top: element.y * zoom - 8,
+              width: 16,
+              height: 16,
               backgroundColor: '#007cba',
-              border: '1px solid white',
+              border: '2px solid white',
+              borderRadius: '50%',
               cursor: 'ne-resize',
-              pointerEvents: 'auto'
+              pointerEvents: 'auto',
+              zIndex: 10
             }}
             onMouseDown={(e) => resize.handleResizeStart(e, 'ne', {
               x: element.x,
@@ -1490,14 +1494,16 @@ export const CanvasElement = ({
             className="resize-handle sw"
             style={{
               position: 'absolute',
-              left: element.x * zoom - 6,
-              top: (element.y + element.height) * zoom - 4,
-              width: 8,
-              height: 8,
+              left: element.x * zoom - 8,
+              top: (element.y + element.height) * zoom - 8,
+              width: 16,
+              height: 16,
               backgroundColor: '#007cba',
-              border: '1px solid white',
+              border: '2px solid white',
+              borderRadius: '50%',
               cursor: 'sw-resize',
-              pointerEvents: 'auto'
+              pointerEvents: 'auto',
+              zIndex: 10
             }}
             onMouseDown={(e) => resize.handleResizeStart(e, 'sw', {
               x: element.x,
@@ -1511,14 +1517,16 @@ export const CanvasElement = ({
             className="resize-handle se"
             style={{
               position: 'absolute',
-              left: (element.x + element.width) * zoom - 4,
-              top: (element.y + element.height) * zoom - 4,
-              width: 8,
-              height: 8,
+              left: (element.x + element.width) * zoom - 8,
+              top: (element.y + element.height) * zoom - 8,
+              width: 16,
+              height: 16,
               backgroundColor: '#007cba',
-              border: '1px solid white',
+              border: '2px solid white',
+              borderRadius: '50%',
               cursor: 'se-resize',
-              pointerEvents: 'auto'
+              pointerEvents: 'auto',
+              zIndex: 10
             }}
             onMouseDown={(e) => resize.handleResizeStart(e, 'se', {
               x: element.x,
@@ -1534,14 +1542,16 @@ export const CanvasElement = ({
             className="resize-handle n"
             style={{
               position: 'absolute',
-              left: (element.x + element.width / 2) * zoom - 4,
-              top: element.y * zoom - 6,
-              width: 8,
-              height: 8,
+              left: (element.x + element.width / 2) * zoom - 8,
+              top: element.y * zoom - 8,
+              width: 16,
+              height: 16,
               backgroundColor: '#007cba',
-              border: '1px solid white',
+              border: '2px solid white',
+              borderRadius: '50%',
               cursor: 'n-resize',
-              pointerEvents: 'auto'
+              pointerEvents: 'auto',
+              zIndex: 10
             }}
             onMouseDown={(e) => resize.handleResizeStart(e, 'n', {
               x: element.x,
@@ -1555,14 +1565,16 @@ export const CanvasElement = ({
             className="resize-handle s"
             style={{
               position: 'absolute',
-              left: (element.x + element.width / 2) * zoom - 4,
-              top: (element.y + element.height) * zoom - 4,
-              width: 8,
-              height: 8,
+              left: (element.x + element.width / 2) * zoom - 8,
+              top: (element.y + element.height) * zoom - 8,
+              width: 16,
+              height: 16,
               backgroundColor: '#007cba',
-              border: '1px solid white',
+              border: '2px solid white',
+              borderRadius: '50%',
               cursor: 's-resize',
-              pointerEvents: 'auto'
+              pointerEvents: 'auto',
+              zIndex: 10
             }}
             onMouseDown={(e) => resize.handleResizeStart(e, 's', {
               x: element.x,
@@ -1576,14 +1588,16 @@ export const CanvasElement = ({
             className="resize-handle w"
             style={{
               position: 'absolute',
-              left: element.x * zoom - 6,
-              top: (element.y + element.height / 2) * zoom - 4,
-              width: 8,
-              height: 8,
+              left: element.x * zoom - 8,
+              top: (element.y + element.height / 2) * zoom - 8,
+              width: 16,
+              height: 16,
               backgroundColor: '#007cba',
-              border: '1px solid white',
+              border: '2px solid white',
+              borderRadius: '50%',
               cursor: 'w-resize',
-              pointerEvents: 'auto'
+              pointerEvents: 'auto',
+              zIndex: 10
             }}
             onMouseDown={(e) => resize.handleResizeStart(e, 'w', {
               x: element.x,
@@ -1597,14 +1611,16 @@ export const CanvasElement = ({
             className="resize-handle e"
             style={{
               position: 'absolute',
-              left: (element.x + element.width) * zoom - 4,
-              top: (element.y + element.height / 2) * zoom - 4,
-              width: 8,
-              height: 8,
+              left: (element.x + element.width) * zoom - 8,
+              top: (element.y + element.height / 2) * zoom - 8,
+              width: 16,
+              height: 16,
               backgroundColor: '#007cba',
-              border: '1px solid white',
+              border: '2px solid white',
+              borderRadius: '50%',
               cursor: 'e-resize',
-              pointerEvents: 'auto'
+              pointerEvents: 'auto',
+              zIndex: 10
             }}
             onMouseDown={(e) => resize.handleResizeStart(e, 'e', {
               x: element.x,
