@@ -367,7 +367,7 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
             className="btn btn-primary"
             onClick={canvasState.saveTemplate}
           >
-            💾 Sauvegarder
+            {options.isNew ? '💾 Sauvegarder' : '✏️ Modifié'}
           </button>
         </div>
       </div>
