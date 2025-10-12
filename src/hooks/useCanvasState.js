@@ -766,7 +766,9 @@ export const useCanvasState = ({
         const excludedProps = [
           'domElement', 'eventListeners', 'ref', 'onClick', 'onMouseDown',
           'onMouseUp', 'onMouseMove', 'onContextMenu', 'onDoubleClick',
-          'onDragStart', 'onDragEnd', 'onResize', 'component', 'render'
+          'onDragStart', 'onDragEnd', 'onResize', 'component', 'render',
+          'props', 'state', 'context', 'refs', '_reactInternalInstance',
+          '_reactInternals', '$$typeof', 'constructor', 'prototype'
         ];
 
         const cleaned = {};
@@ -774,15 +776,40 @@ export const useCanvasState = ({
         for (const [key, value] of Object.entries(element)) {
           // Exclure les propriétés problématiques
           if (excludedProps.includes(key)) {
+            console.log(`🔍 PDF Builder - Propriété exclue: ${key}`);
             continue;
           }
 
-          // Vérifier si la valeur est sérialisable
-          try {
-            JSON.stringify(value);
+          // Vérifier le type de valeur
+          if (value === null || value === undefined) {
             cleaned[key] = value;
-          } catch (e) {
-            console.warn(`PDF Builder - Propriété non-sérialisable ignorée: ${key}`, value);
+          } else if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+            cleaned[key] = value;
+          } else if (Array.isArray(value)) {
+            // Pour les tableaux, vérifier chaque élément
+            try {
+              const cleanedArray = value.map(item => {
+                if (typeof item === 'object' && item !== null) {
+                  return cleanElementForSerialization(item);
+                }
+                return item;
+              });
+              JSON.stringify(cleanedArray); // Test de sérialisation
+              cleaned[key] = cleanedArray;
+            } catch (e) {
+              console.warn(`PDF Builder - Propriété tableau non-sérialisable ignorée: ${key}`, value);
+            }
+          } else if (typeof value === 'object') {
+            // Pour les objets, nettoyer récursivement
+            try {
+              const cleanedObj = cleanElementForSerialization(value);
+              cleaned[key] = cleanedObj;
+            } catch (e) {
+              console.warn(`PDF Builder - Propriété objet non-sérialisable ignorée: ${key}`, value);
+            }
+          } else {
+            // Pour les autres types (functions, symbols, etc.), ignorer
+            console.log(`🔍 PDF Builder - Propriété de type ${typeof value} ignorée: ${key}`);
           }
         }
 
@@ -819,11 +846,13 @@ export const useCanvasState = ({
       // Sauvegarde directe via AJAX
       const formData = new FormData();
       formData.append('action', 'pdf_builder_pro_save_template');
-      formData.append('template_data', JSON.stringify(templateData));
+      formData.append('template_data', jsonString); // Utiliser la string JSON validée
       formData.append('template_name', window.pdfBuilderData?.templateName || `Template ${window.pdfBuilderData?.templateId || 'New'}`);
       formData.append('template_id', window.pdfBuilderData?.templateId || '0');
       formData.append('nonce', window.pdfBuilderAjax?.nonce || window.pdfBuilderData?.nonce || '');
 
+      console.log('📤 PDF Builder - Données JSON à envoyer:', jsonString);
+      console.log('📤 PDF Builder - Longueur des données:', jsonString.length);
       console.log('📤 PDF Builder - Envoi sauvegarde AJAX:', {
         action: 'pdf_builder_pro_save_template',
         template_name: window.pdfBuilderData?.templateName,

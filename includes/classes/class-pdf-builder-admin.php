@@ -979,12 +979,20 @@ class PDF_Builder_Admin {
         // DEBUG: Vérifier la taille et le format des données reçues
         error_log("PDF Builder SAVE - Template data length: " . strlen($template_data));
         error_log("PDF Builder SAVE - Template data preview: " . substr($template_data, 0, 200) . "...");
+        error_log("PDF Builder SAVE - Template data raw: " . $template_data);
         error_log("PDF Builder SAVE - Template name: '{$template_name}', ID: {$template_id}");
+
+        // Vérifier si les données commencent et finissent par des accolades
+        $starts_with_brace = strpos($template_data, '{') === 0;
+        $ends_with_brace = strrpos($template_data, '}') === (strlen($template_data) - 1);
+        error_log("PDF Builder SAVE - Starts with '{': " . ($starts_with_brace ? 'YES' : 'NO'));
+        error_log("PDF Builder SAVE - Ends with '}': " . ($ends_with_brace ? 'YES' : 'NO'));
 
         // Valider que c'est du JSON valide
         $decoded_test = json_decode($template_data, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
             error_log("PDF Builder SAVE - JSON validation error: " . json_last_error_msg());
+            error_log("PDF Builder SAVE - JSON error code: " . json_last_error());
             wp_send_json_error('Données JSON invalides: ' . json_last_error_msg());
         } else {
             error_log("PDF Builder SAVE - JSON validation successful, elements count: " . (isset($decoded_test['elements']) ? count($decoded_test['elements']) : 'unknown'));
