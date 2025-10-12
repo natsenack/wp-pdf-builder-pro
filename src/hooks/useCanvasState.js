@@ -117,6 +117,7 @@ export const useCanvasState = ({
   const [selectedElements, setSelectedElements] = useState([]);
   const [nextId, setNextId] = useState(1);
   const [isSaving, setIsSaving] = useState(false);
+  const [zoomLevel, setZoomLevel] = useState(1);
 
   const history = { addToHistory: () => {}, historySize: 0 };
   const selection = {
@@ -167,11 +168,20 @@ export const useCanvasState = ({
   };
 
   const zoom = {
-    zoom: 1,
-    setZoom: () => {},
-    zoomIn: () => {},
-    zoomOut: () => {},
-    fitToScreen: () => {}
+    zoom: zoomLevel,
+    setZoomLevel: useCallback((newZoom) => {
+      setZoomLevel(Math.max(0.1, Math.min(3, newZoom)));
+    }, []),
+    zoomIn: useCallback(() => {
+      setZoomLevel(prev => Math.min(3, prev + 0.1));
+    }, []),
+    zoomOut: useCallback(() => {
+      setZoomLevel(prev => Math.max(0.1, prev - 0.1));
+    }, []),
+    fitToScreen: useCallback(() => {
+      // TODO: Implement fit to screen logic
+      setZoomLevel(1);
+    }, [])
   };
 
   const contextMenu = {
