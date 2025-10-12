@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useCallback, useEffect } from 'react';
 import { useResize } from '../hooks/useResize';
 
 export const CanvasElement = ({
@@ -33,6 +33,20 @@ export const CanvasElement = ({
     canvasHeight,
     canvasRef
   });
+
+  // Debug logging pour les éléments sélectionnés
+  useEffect(() => {
+    if (isSelected) {
+      console.log('🎯 Element selected:', {
+        id: element.id,
+        type: element.type,
+        backgroundColor: element.backgroundColor,
+        isTransparent: !element.backgroundColor || element.backgroundColor === 'transparent',
+        hasTransparentClass: (!element.backgroundColor || element.backgroundColor === 'transparent') ? 'transparent-bg' : 'no-transparent-bg',
+        showResizeZones: window.pdfBuilderCanvasSettings?.canvas_resize_zones_enabled
+      });
+    }
+  }, [isSelected, element.id, element.backgroundColor]);
 
   // Fonction helper pour déterminer si un élément est spécial
   const isSpecialElement = (type) => {
@@ -1511,39 +1525,83 @@ export const CanvasElement = ({
           {/* Zones de redimensionnement sur les bords */}
           <div
             className="resize-zone resize-zone-n"
-            onMouseDown={(e) => resize.handleResizeStart(e, 'n', {
-              x: element.x,
-              y: element.y,
-              width: element.width,
-              height: element.height
-            })}
+            onMouseDown={(e) => {
+              console.log('🖱️ Resize zone N clicked!', {
+                elementId: element.id,
+                backgroundColor: element.backgroundColor,
+                isTransparent: !element.backgroundColor || element.backgroundColor === 'transparent',
+                eventTarget: e.target,
+                eventCurrentTarget: e.currentTarget
+              });
+              resize.handleResizeStart(e, 'n', {
+                x: element.x,
+                y: element.y,
+                width: element.width,
+                height: element.height
+              });
+            }}
+            onMouseEnter={() => console.log('🔍 Resize zone N hovered - element:', element.id)}
+            onMouseLeave={() => console.log('🔍 Resize zone N left - element:', element.id)}
           />
           <div
             className="resize-zone resize-zone-s"
-            onMouseDown={(e) => resize.handleResizeStart(e, 's', {
-              x: element.x,
-              y: element.y,
-              width: element.width,
-              height: element.height
-            })}
+            onMouseDown={(e) => {
+              console.log('🖱️ Resize zone S clicked!', {
+                elementId: element.id,
+                backgroundColor: element.backgroundColor,
+                isTransparent: !element.backgroundColor || element.backgroundColor === 'transparent',
+                eventTarget: e.target,
+                eventCurrentTarget: e.currentTarget
+              });
+              resize.handleResizeStart(e, 's', {
+                x: element.x,
+                y: element.y,
+                width: element.width,
+                height: element.height
+              });
+            }}
+            onMouseEnter={() => console.log('🔍 Resize zone S hovered - element:', element.id)}
+            onMouseLeave={() => console.log('🔍 Resize zone S left - element:', element.id)}
           />
           <div
             className="resize-zone resize-zone-w"
-            onMouseDown={(e) => resize.handleResizeStart(e, 'w', {
-              x: element.x,
-              y: element.y,
-              width: element.width,
-              height: element.height
-            })}
+            onMouseDown={(e) => {
+              console.log('🖱️ Resize zone W clicked!', {
+                elementId: element.id,
+                backgroundColor: element.backgroundColor,
+                isTransparent: !element.backgroundColor || element.backgroundColor === 'transparent',
+                eventTarget: e.target,
+                eventCurrentTarget: e.currentTarget
+              });
+              resize.handleResizeStart(e, 'w', {
+                x: element.x,
+                y: element.y,
+                width: element.width,
+                height: element.height
+              });
+            }}
+            onMouseEnter={() => console.log('🔍 Resize zone W hovered - element:', element.id)}
+            onMouseLeave={() => console.log('🔍 Resize zone W left - element:', element.id)}
           />
           <div
             className="resize-zone resize-zone-e"
-            onMouseDown={(e) => resize.handleResizeStart(e, 'e', {
-              x: element.x,
-              y: element.y,
-              width: element.width,
-              height: element.height
-            })}
+            onMouseDown={(e) => {
+              console.log('🖱️ Resize zone E clicked!', {
+                elementId: element.id,
+                backgroundColor: element.backgroundColor,
+                isTransparent: !element.backgroundColor || element.backgroundColor === 'transparent',
+                eventTarget: e.target,
+                eventCurrentTarget: e.currentTarget
+              });
+              resize.handleResizeStart(e, 'e', {
+                x: element.x,
+                y: element.y,
+                width: element.width,
+                height: element.height
+              });
+            }}
+            onMouseEnter={() => console.log('🔍 Resize zone E hovered - element:', element.id)}
+            onMouseLeave={() => console.log('🔍 Resize zone E left - element:', element.id)}
           />
         </>
       )}
