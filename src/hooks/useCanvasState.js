@@ -122,8 +122,22 @@ export const useCanvasState = ({
 
   const history = { addToHistory: () => {}, historySize: 0 };
   const selection = {
-    selectElement: useCallback((elementId) => {
-      setSelectedElements([elementId]);
+    selectElement: useCallback((elementId, addToSelection = false) => {
+      setSelectedElements(prev => {
+        if (addToSelection) {
+          // Ajouter à la sélection existante (avec Ctrl/Cmd)
+          if (prev.includes(elementId)) {
+            // Si déjà sélectionné, le retirer
+            return prev.filter(id => id !== elementId);
+          } else {
+            // L'ajouter
+            return [...prev, elementId];
+          }
+        } else {
+          // Remplacer la sélection (sélection simple)
+          return [elementId];
+        }
+      });
     }, []),
     clearSelection: useCallback(() => {
       setSelectedElements([]);

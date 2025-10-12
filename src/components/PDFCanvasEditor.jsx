@@ -99,8 +99,8 @@ export const PDFCanvasEditor = ({ options }) => {
   }, [canvasState]);
 
   // Gestionnaire pour la sélection d'élément
-  const handleElementSelect = useCallback((elementId) => {
-    canvasState.selection.selectElement(elementId);
+  const handleElementSelect = useCallback((elementId, addToSelection = false) => {
+    canvasState.selection.selectElement(elementId, addToSelection);
   }, [canvasState.selection]);
 
   // Gestionnaire pour la désélection et création d'éléments

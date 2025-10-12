@@ -113,8 +113,11 @@ export const CanvasElement = ({
   const handleMouseDown = useCallback((e) => {
     e.stopPropagation();
 
-    if (!isSelected) {
-      onSelect();
+    // Vérifier si Ctrl/Cmd est pressé pour la sélection multiple
+    const addToSelection = e.ctrlKey || e.metaKey;
+
+    if (!isSelected || addToSelection) {
+      onSelect(addToSelection);
       return;
     }
 
