@@ -58,6 +58,55 @@ export const CanvasElement = ({
     };
   };
 
+  // Fonction helper pour obtenir les styles de tableau selon le style choisi
+  const getTableStyles = (tableStyle = 'default') => {
+    const baseStyles = {
+      default: {
+        headerBg: '#f5f5f5',
+        headerBorder: '#ddd',
+        rowBorder: '#eee',
+        altRowBg: '#fafafa',
+        borderWidth: 1
+      },
+      classic: {
+        headerBg: '#ffffff',
+        headerBorder: '#000000',
+        rowBorder: '#000000',
+        altRowBg: '#ffffff',
+        borderWidth: 1
+      },
+      striped: {
+        headerBg: '#f8f9fa',
+        headerBorder: '#dee2e6',
+        rowBorder: '#dee2e6',
+        altRowBg: '#e9ecef',
+        borderWidth: 1
+      },
+      bordered: {
+        headerBg: '#ffffff',
+        headerBorder: '#dee2e6',
+        rowBorder: '#dee2e6',
+        altRowBg: '#ffffff',
+        borderWidth: 2
+      },
+      minimal: {
+        headerBg: '#ffffff',
+        headerBorder: '#f1f1f1',
+        rowBorder: '#f8f8f8',
+        altRowBg: '#ffffff',
+        borderWidth: 0.5
+      },
+      modern: {
+        headerBg: '#007bff',
+        headerBorder: '#007bff',
+        rowBorder: '#e3f2fd',
+        altRowBg: '#f8f9ff',
+        borderWidth: 1
+      }
+    };
+    return baseStyles[tableStyle] || baseStyles.default;
+  };
+
   // Gestionnaire de clic sur l'élément
   const handleMouseDown = useCallback((e) => {
     e.stopPropagation();
@@ -473,36 +522,39 @@ export const CanvasElement = ({
          element.type !== 'image' && element.type !== 'rectangle' && element.type !== 'company_logo' && element.type !== 'order_number' && element.type !== 'company_info' && element.type !== 'document_type' ? element.type : null}
 
         {/* Rendu spécial pour les tableaux de produits */}
-        {element.type === 'product_table' && (
-          <div style={{
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            fontSize: 10 * zoom,
-            fontFamily: 'Arial, sans-serif',
-            // Utiliser des bordures subtiles qui ne sont pas affectées par les paramètres globaux
-            border: element.borderWidth && element.borderWidth > 0 ? `${Math.max(1, element.borderWidth * zoom * 0.5)}px solid ${element.borderColor || '#e5e7eb'}` : 'none',
-            borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '2px',
-            overflow: 'hidden',
-            // Assurer que le background ne cache pas les bordures
-            backgroundColor: element.backgroundColor || 'transparent',
-            boxSizing: 'border-box'
-          }}>
-            {/* En-tête du tableau */}
-            {(element.showHeaders !== false) && (
-              <div style={{
-                display: 'flex',
-                backgroundColor: '#f5f5f5',
-                borderBottom: element.borderWidth ? '1px solid #ddd' : 'none',
-                fontWeight: 'bold'
-              }}>
+        {element.type === 'product_table' && (() => {
+          const tableStyles = getTableStyles(element.tableStyle);
+          return (
+            <div style={{
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              fontSize: 10 * zoom,
+              fontFamily: 'Arial, sans-serif',
+              // Utiliser des bordures subtiles qui ne sont pas affectées par les paramètres globaux
+              border: element.borderWidth && element.borderWidth > 0 ? `${Math.max(1, element.borderWidth * zoom * 0.5)}px solid ${element.borderColor || '#e5e7eb'}` : 'none',
+              borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '2px',
+              overflow: 'hidden',
+              // Assurer que le background ne cache pas les bordures
+              backgroundColor: element.backgroundColor || 'transparent',
+              boxSizing: 'border-box'
+            }}>
+              {/* En-tête du tableau */}
+              {(element.showHeaders !== false) && (
+                <div style={{
+                  display: 'flex',
+                  backgroundColor: tableStyles.headerBg,
+                  borderBottom: `${tableStyles.borderWidth}px solid ${tableStyles.headerBorder}`,
+                  fontWeight: 'bold',
+                  color: element.tableStyle === 'modern' ? '#ffffff' : '#000000'
+                }}>
                 {(element.columns?.image !== false) && (
                   <div style={{
                     flex: '0 0 40px',
                     padding: `${4 * zoom}px`,
                     textAlign: 'center',
-                    borderRight: element.borderWidth ? '1px solid #ddd' : 'none'
+                    borderRight: `${tableStyles.borderWidth}px solid ${tableStyles.headerBorder}`
                   }}>
                     Img
                   </div>
@@ -512,7 +564,7 @@ export const CanvasElement = ({
                     flex: 1,
                     padding: `${4 * zoom}px ${6 * zoom}px`,
                     textAlign: 'left',
-                    borderRight: element.borderWidth ? '1px solid #ddd' : 'none'
+                    borderRight: `${tableStyles.borderWidth}px solid ${tableStyles.headerBorder}`
                   }}>
                     Produit
                   </div>
@@ -522,7 +574,7 @@ export const CanvasElement = ({
                     flex: '0 0 80px',
                     padding: `${4 * zoom}px ${6 * zoom}px`,
                     textAlign: 'left',
-                    borderRight: (element.showBorders !== false && ((element.columns?.quantity !== false) || (element.columns?.price !== false) || (element.columns?.total !== false))) ? '1px solid #ddd' : 'none'
+                    borderRight: `${tableStyles.borderWidth}px solid ${tableStyles.headerBorder}`
                   }}>
                     SKU
                   </div>
@@ -532,7 +584,7 @@ export const CanvasElement = ({
                     flex: '0 0 60px',
                     padding: `${4 * zoom}px ${6 * zoom}px`,
                     textAlign: 'center',
-                    borderRight: (element.showBorders !== false && ((element.columns?.price !== false) || (element.columns?.total !== false))) ? '1px solid #ddd' : 'none'
+                    borderRight: `${tableStyles.borderWidth}px solid ${tableStyles.headerBorder}`
                   }}>
                     Qté
                   </div>
@@ -542,7 +594,7 @@ export const CanvasElement = ({
                     flex: '0 0 80px',
                     padding: `${4 * zoom}px ${6 * zoom}px`,
                     textAlign: 'right',
-                    borderRight: element.borderWidth ? '1px solid #ddd' : 'none'
+                    borderRight: `${tableStyles.borderWidth}px solid ${tableStyles.headerBorder}`
                   }}>
                     Prix
                   </div>
@@ -564,14 +616,14 @@ export const CanvasElement = ({
               {/* Ligne 1 */}
               <div style={{
                 display: 'flex',
-                borderBottom: element.borderWidth ? '1px solid #eee' : 'none'
+                borderBottom: `${tableStyles.borderWidth}px solid ${tableStyles.rowBorder}`
               }}>
                 {(element.columns?.image !== false) && (
                   <div style={{
                     flex: '0 0 40px',
                     padding: `${4 * zoom}px`,
                     textAlign: 'center',
-                    borderRight: element.borderWidth ? '1px solid #eee' : 'none'
+                    borderRight: `${tableStyles.borderWidth}px solid ${tableStyles.rowBorder}`
                   }}>
                     📷
                   </div>
@@ -580,7 +632,7 @@ export const CanvasElement = ({
                   <div style={{
                     flex: 1,
                     padding: `${4 * zoom}px ${6 * zoom}px`,
-                    borderRight: element.borderWidth ? '1px solid #eee' : 'none'
+                    borderRight: `${tableStyles.borderWidth}px solid ${tableStyles.rowBorder}`
                   }}>
                     Produit A - Description du produit
                   </div>
@@ -589,7 +641,7 @@ export const CanvasElement = ({
                   <div style={{
                     flex: '0 0 80px',
                     padding: `${4 * zoom}px ${6 * zoom}px`,
-                    borderRight: element.borderWidth ? '1px solid #eee' : 'none'
+                    borderRight: `${tableStyles.borderWidth}px solid ${tableStyles.rowBorder}`
                   }}>
                     SKU001
                   </div>
@@ -599,7 +651,7 @@ export const CanvasElement = ({
                     flex: '0 0 60px',
                     padding: `${4 * zoom}px ${6 * zoom}px`,
                     textAlign: 'center',
-                    borderRight: element.borderWidth ? '1px solid #eee' : 'none'
+                    borderRight: `${tableStyles.borderWidth}px solid ${tableStyles.rowBorder}`
                   }}>
                     2
                   </div>
@@ -609,7 +661,7 @@ export const CanvasElement = ({
                     flex: '0 0 80px',
                     padding: `${4 * zoom}px ${6 * zoom}px`,
                     textAlign: 'right',
-                    borderRight: element.borderWidth ? '1px solid #eee' : 'none'
+                    borderRight: `${tableStyles.borderWidth}px solid ${tableStyles.rowBorder}`
                   }}>
                     €19.99
                   </div>
@@ -628,15 +680,15 @@ export const CanvasElement = ({
               {/* Ligne 2 */}
               <div style={{
                 display: 'flex',
-                borderBottom: element.borderWidth ? '1px solid #eee' : 'none',
-                backgroundColor: '#fafafa'
+                borderBottom: `${tableStyles.borderWidth}px solid ${tableStyles.rowBorder}`,
+                backgroundColor: tableStyles.altRowBg
               }}>
                 {(element.columns?.image !== false) && (
                   <div style={{
                     flex: '0 0 40px',
                     padding: `${4 * zoom}px`,
                     textAlign: 'center',
-                    borderRight: element.borderWidth ? '1px solid #eee' : 'none'
+                    borderRight: `${tableStyles.borderWidth}px solid ${tableStyles.rowBorder}`
                   }}>
                     📷
                   </div>
@@ -645,7 +697,7 @@ export const CanvasElement = ({
                   <div style={{
                     flex: 1,
                     padding: `${4 * zoom}px ${6 * zoom}px`,
-                    borderRight: element.borderWidth ? '1px solid #eee' : 'none'
+                    borderRight: `${tableStyles.borderWidth}px solid ${tableStyles.rowBorder}`
                   }}>
                     Produit B - Un autre article
                   </div>
@@ -654,7 +706,7 @@ export const CanvasElement = ({
                   <div style={{
                     flex: '0 0 80px',
                     padding: `${4 * zoom}px ${6 * zoom}px`,
-                    borderRight: element.borderWidth ? '1px solid #eee' : 'none'
+                    borderRight: `${tableStyles.borderWidth}px solid ${tableStyles.rowBorder}`
                   }}>
                     SKU002
                   </div>
@@ -664,7 +716,7 @@ export const CanvasElement = ({
                     flex: '0 0 60px',
                     padding: `${4 * zoom}px ${6 * zoom}px`,
                     textAlign: 'center',
-                    borderRight: element.borderWidth ? '1px solid #eee' : 'none'
+                    borderRight: `${tableStyles.borderWidth}px solid ${tableStyles.rowBorder}`
                   }}>
                     1
                   </div>
@@ -674,7 +726,7 @@ export const CanvasElement = ({
                     flex: '0 0 80px',
                     padding: `${4 * zoom}px ${6 * zoom}px`,
                     textAlign: 'right',
-                    borderRight: element.borderWidth ? '1px solid #eee' : 'none'
+                    borderRight: `${tableStyles.borderWidth}px solid ${tableStyles.rowBorder}`
                   }}>
                     €29.99
                   </div>
@@ -973,7 +1025,8 @@ export const CanvasElement = ({
               </div>
             )}
           </div>
-        )}
+        );
+        })()}
 
         {/* Rendu spécial pour les informations client */}
         {element.type === 'customer_info' && (
