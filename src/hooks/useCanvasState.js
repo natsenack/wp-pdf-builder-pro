@@ -648,7 +648,15 @@ export const useCanvasState = ({
         canvasHeight,
         version: '1.0'
       };
-      // Si onSave est défini, l'utiliser, sinon faire la sauvegarde directement
+
+      // Déterminer si c'est un template existant
+      const isExistingTemplate = templateId && templateId !== '0' && templateId !== 0;
+
+      console.log('🔍 PDF Builder - Détection template existant:', {
+        templateId,
+        isExistingTemplate,
+        toastrAvailable: typeof toastr !== 'undefined'
+      });
       if (onSave) {
         await onSave(templateData);
       } else {
@@ -712,7 +720,7 @@ export const useCanvasState = ({
     } finally {
       setIsSaving(false);
     }
-  }, [elements, canvasWidth, canvasHeight, onSave, isSaving]);
+  }, [elements, canvasWidth, canvasHeight, onSave, isSaving, templateId]);
 
   const loadTemplate = useCallback((templateData) => {
     if (templateData.elements) {
