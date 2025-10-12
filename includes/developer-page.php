@@ -46,10 +46,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $php_code = stripslashes($_POST['php_code']);
         $execution_result = '';
 
+        // Protection contre les codes trop longs
+        if (strlen($php_code) > 10000) {
+            $execution_result = '❌ Code PHP trop long (maximum 10,000 caractères).';
+        }
         // Protection contre les exécutions dangereuses
-        if (stripos($php_code, 'exec(') !== false || stripos($php_code, 'shell_exec(') !== false ||
-            stripos($php_code, 'system(') !== false || stripos($php_code, 'passthru(') !== false) {
-            $execution_result = '❌ Commandes système interdites pour des raisons de sécurité.';
+        elseif (stripos($php_code, 'exec(') !== false || stripos($php_code, 'shell_exec(') !== false ||
+                stripos($php_code, 'system(') !== false || stripos($php_code, 'passthru(') !== false ||
+                stripos($php_code, 'eval(') !== false || stripos($php_code, 'create_function(') !== false) {
+            $execution_result = '❌ Commandes système ou fonctions dangereuses interdites pour des raisons de sécurité.';
         } else {
             try {
                 // Limiter le temps d'exécution et la mémoire
@@ -271,10 +276,17 @@ $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'system-
                     <pre style="margin: 0; white-space: pre-wrap;"><?php
                         $error_log = ini_get('error_log');
                         if ($error_log && file_exists($error_log)) {
-                            $content = file_get_contents($error_log);
-                            $lines = explode("\n", $content);
-                            $lines = array_slice($lines, -50); // Dernières 50 lignes
-                            echo esc_html(implode("\n", $lines));
+                            $file_size = filesize($error_log);
+                            if ($file_size > 10485760) { // 10MB
+                                echo "⚠️ Fichier error_log PHP trop volumineux (" . number_format($file_size / 1024 / 1024, 2) . " MB).\n";
+                                echo "Utilisez un outil externe pour examiner ce fichier.\n";
+                                echo "Chemin : " . esc_html($error_log);
+                            } else {
+                                $content = file_get_contents($error_log);
+                                $lines = explode("\n", $content);
+                                $lines = array_slice($lines, -50); // Dernières 50 lignes
+                                echo esc_html(implode("\n", $lines));
+                            }
                         } else {
                             echo 'Fichier error_log PHP non trouvé ou non accessible.';
                         }
