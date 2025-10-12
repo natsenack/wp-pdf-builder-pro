@@ -714,22 +714,14 @@ export const useCanvasState = ({
   }, [clipboard]);
 
   const undo = useCallback(() => {
-    const previousState = history.undo();
-    if (previousState) {
-      setElements(previousState.elements);
-      setNextId(previousState.nextId);
-      selection.clearSelection();
-    }
-  }, [history, selection]);
+    // Fonctionnalité d'historique supprimée
+    console.log('🔄 PDF Builder - Fonction undo désactivée (historique supprimé)');
+  }, []);
 
   const redo = useCallback(() => {
-    const nextState = history.redo();
-    if (nextState) {
-      setElements(nextState.elements);
-      setNextId(nextState.nextId);
-      selection.clearSelection();
-    }
-  }, [history, selection]);
+    // Fonctionnalité d'historique supprimée
+    console.log('🔄 PDF Builder - Fonction redo désactivée (historique supprimé)');
+  }, []);
 
   const saveTemplate = useCallback(async () => {
     if (isSaving) {
@@ -957,11 +949,11 @@ export const useCanvasState = ({
     copySelectedElements,
     pasteElements,
 
-    // Historique
+    // Historique (désactivé après suppression de useHistory)
     undo,
     redo,
-    canUndo: history.canUndo(),
-    canRedo: history.canRedo(),
+    canUndo: false, // Fonctionnalité d'historique supprimée
+    canRedo: false, // Fonctionnalité d'historique supprimée
 
     // Template
     saveTemplate,
@@ -991,7 +983,6 @@ export const useCanvasState = ({
     pasteElements,
     undo,
     redo,
-    history,
     showContextMenu
   ]);
 };
