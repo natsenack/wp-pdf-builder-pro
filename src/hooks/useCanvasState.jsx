@@ -348,30 +348,30 @@ export const useCanvasState = ({
             defaults.content = 'Texte';
             break;
           case 'rectangle':
-            defaults.backgroundColor = '#e5e7eb';
+            defaults.backgroundColor = 'transparent';
             break;
           case 'line':
             defaults.height = 2;
-            defaults.backgroundColor = '#6b7280';
+            defaults.backgroundColor = 'transparent';
             break;
           case 'layout-header':
             defaults.width = 500;
             defaults.height = 80;
-            defaults.backgroundColor = '#f8fafc';
+            defaults.backgroundColor = 'transparent';
             defaults.borderColor = 'transparent';
             defaults.borderWidth = 0;
             break;
           case 'layout-footer':
             defaults.width = 500;
             defaults.height = 60;
-            defaults.backgroundColor = '#f8fafc';
+            defaults.backgroundColor = 'transparent';
             defaults.borderColor = 'transparent';
             defaults.borderWidth = 0;
             break;
           case 'layout-sidebar':
             defaults.width = 150;
             defaults.height = 300;
-            defaults.backgroundColor = '#f8fafc';
+            defaults.backgroundColor = 'transparent';
             defaults.borderColor = 'transparent';
             defaults.borderWidth = 0;
             break;
@@ -406,7 +406,7 @@ export const useCanvasState = ({
           case 'invoice-address-block':
             defaults.width = 240;
             defaults.height = 120;
-            defaults.backgroundColor = '#f8fafc';
+            defaults.backgroundColor = 'transparent';
             defaults.borderColor = 'transparent';
             defaults.borderWidth = 0;
             defaults.borderRadius = 4;
@@ -475,7 +475,7 @@ export const useCanvasState = ({
           case 'invoice-totals-block':
             defaults.width = 200;
             defaults.height = 150;
-            defaults.backgroundColor = '#f8fafc';
+            defaults.backgroundColor = 'transparent';
             defaults.borderColor = 'transparent';
             defaults.borderWidth = 0;
             defaults.borderRadius = 4;
@@ -495,7 +495,7 @@ export const useCanvasState = ({
           case 'invoice-legal-footer':
             defaults.width = 500;
             defaults.height = 60;
-            defaults.backgroundColor = '#f8fafc';
+            defaults.backgroundColor = 'transparent';
             defaults.borderColor = 'transparent';
             defaults.borderWidth = 0;
             defaults.content = 'SARL au capital de 10 000€ - RCS Paris 123 456 789 - TVA FR 12 345 678 901 - IBAN: FR76 1234 5678 9012 3456 7890 123';
@@ -515,7 +515,7 @@ export const useCanvasState = ({
           case 'layout-section-divider':
             defaults.width = 500;
             defaults.height = 2;
-            defaults.backgroundColor = '#e2e8f0';
+            defaults.backgroundColor = 'transparent';
             break;
 
           case 'layout-spacer':
@@ -545,52 +545,52 @@ export const useCanvasState = ({
           case 'shape-rectangle':
             defaults.width = 100;
             defaults.height = 60;
-            defaults.backgroundColor = '#e5e7eb';
+            defaults.backgroundColor = 'transparent';
             defaults.borderRadius = 0;
             break;
           case 'shape-circle':
             defaults.width = 60;
             defaults.height = 60;
-            defaults.backgroundColor = '#e5e7eb';
+            defaults.backgroundColor = 'transparent';
             defaults.borderRadius = 30;
             break;
           case 'shape-line':
             defaults.width = 100;
             defaults.height = 2;
-            defaults.backgroundColor = '#6b7280';
+            defaults.backgroundColor = 'transparent';
             break;
           case 'shape-arrow':
             defaults.width = 80;
             defaults.height = 20;
-            defaults.backgroundColor = '#374151';
+            defaults.backgroundColor = 'transparent';
             break;
           case 'shape-triangle':
             defaults.width = 60;
             defaults.height = 52;
-            defaults.backgroundColor = '#e5e7eb';
+            defaults.backgroundColor = 'transparent';
             break;
           case 'shape-star':
             defaults.width = 60;
             defaults.height = 60;
-            defaults.backgroundColor = '#fbbf24';
+            defaults.backgroundColor = 'transparent';
             break;
           case 'divider':
             defaults.width = 400;
             defaults.height = 1;
-            defaults.backgroundColor = '#d1d5db';
+            defaults.backgroundColor = 'transparent';
             break;
           // Médias
           case 'image':
           case 'image-upload':
             defaults.width = 150;
             defaults.height = 100;
-            defaults.backgroundColor = '#f3f4f6';
+            defaults.backgroundColor = 'transparent';
             defaults.content = 'Image';
             break;
           case 'logo':
             defaults.width = 120;
             defaults.height = 60;
-            defaults.backgroundColor = '#f3f4f6';
+            defaults.backgroundColor = 'transparent';
             defaults.content = 'Logo';
             break;
           case 'barcode':
@@ -668,7 +668,7 @@ export const useCanvasState = ({
           case 'background-pattern':
             defaults.width = 200;
             defaults.height = 100;
-            defaults.backgroundColor = '#f8fafc';
+            defaults.backgroundColor = 'transparent';
             defaults.backgroundImage = 'repeating-linear-gradient(45deg, #e2e8f0, #e2e8f0 10px, #f1f5f9 10px, #f1f5f9 20px)';
             break;
           case 'watermark':
@@ -683,7 +683,7 @@ export const useCanvasState = ({
           case 'progress-bar':
             defaults.width = 200;
             defaults.height = 20;
-            defaults.backgroundColor = '#e5e7eb';
+            defaults.backgroundColor = 'transparent';
             defaults.progressColor = '#3b82f6';
             defaults.progressValue = 75;
             break;
