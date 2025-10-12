@@ -6,6 +6,116 @@ import { useZoom } from './useZoom';
 import { useContextMenu } from './useContextMenu';
 import { useDragAndDrop } from './useDragAndDrop';
 
+// Fallback notification system in case Toastr is not available
+if (typeof window !== 'undefined' && typeof window.toastr === 'undefined') {
+  console.log('📋 PDF Builder - Toastr non disponible, initialisation du système de fallback...');
+
+  // Simple notification system
+  const createNotification = (type, title, message) => {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 999999;
+      padding: 15px 20px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      color: white;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      max-width: 300px;
+      opacity: 0;
+      transform: translateX(100%);
+      transition: all 0.3s ease;
+    `;
+
+    // Set colors based on type
+    switch (type) {
+      case 'success':
+        notification.style.backgroundColor = '#51A351';
+        break;
+      case 'error':
+        notification.style.backgroundColor = '#BD362F';
+        break;
+      case 'warning':
+        notification.style.backgroundColor = '#F89406';
+        break;
+      case 'info':
+      default:
+        notification.style.backgroundColor = '#2F96B4';
+        break;
+    }
+
+    // Create content
+    const titleElement = title ? `<strong>${title}</strong><br>` : '';
+    notification.innerHTML = `${titleElement}${message}`;
+
+    // Add close button
+    const closeButton = document.createElement('button');
+    closeButton.innerHTML = '×';
+    closeButton.style.cssText = `
+      position: absolute;
+      top: 5px;
+      right: 10px;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      opacity: 0.8;
+    `;
+    closeButton.onclick = () => removeNotification(notification);
+    notification.appendChild(closeButton);
+
+    // Add to page
+    document.body.appendChild(notification);
+
+    // Animate in
+    setTimeout(() => {
+      notification.style.opacity = '1';
+      notification.style.transform = 'translateX(0)';
+    }, 10);
+
+    // Auto remove after 5 seconds
+    setTimeout(() => removeNotification(notification), 5000);
+
+    function removeNotification(el) {
+      el.style.opacity = '0';
+      el.style.transform = 'translateX(100%)';
+      setTimeout(() => {
+        if (el.parentNode) {
+          el.parentNode.removeChild(el);
+        }
+      }, 300);
+    }
+  };
+
+  // Create fallback toastr object
+  window.toastr = {
+    success: (message, title) => {
+      console.log('✅ PDF Builder - Notification succès (fallback):', message);
+      createNotification('success', title, message);
+    },
+    error: (message, title) => {
+      console.log('❌ PDF Builder - Notification erreur (fallback):', message);
+      createNotification('error', title, message);
+    },
+    warning: (message, title) => {
+      console.log('⚠️ PDF Builder - Notification avertissement (fallback):', message);
+      createNotification('warning', title, message);
+    },
+    info: (message, title) => {
+      console.log('ℹ️ PDF Builder - Notification info (fallback):', message);
+      createNotification('info', title, message);
+    },
+    options: {} // Placeholder for options
+  };
+
+  console.log('✅ PDF Builder - Système de notification fallback initialisé');
+}
+
 export const useCanvasState = ({
   initialElements = [],
   templateId = null,
@@ -654,26 +764,7 @@ export const useCanvasState = ({
 
       // Fonction pour vérifier la disponibilité de Toastr avec retry
       const checkToastrAvailability = () => {
-        let attempts = 0;
-        const maxAttempts = 10;
-        const checkInterval = 100; // 100ms
-
-        return new Promise((resolve) => {
-          const check = () => {
-            attempts++;
-            const available = typeof toastr !== 'undefined';
-
-            console.log(`🔍 PDF Builder - Vérification Toastr (tentative ${attempts}/${maxAttempts}):`, available);
-
-            if (available || attempts >= maxAttempts) {
-              resolve(available);
-            } else {
-              setTimeout(check, checkInterval);
-            }
-          };
-
-          check();
-        });
+        return Promise.resolve(true); // Toastr is now always available (real or fallback)
       };
 
       const toastrAvailable = await checkToastrAvailability();
