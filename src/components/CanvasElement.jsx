@@ -111,21 +111,16 @@ export const CanvasElement = ({
 
   // Gestionnaire de clic sur l'élément
   const handleMouseDown = useCallback((e) => {
-    console.log('CanvasElement handleMouseDown called for element:', element.id, element.type);
     e.stopPropagation();
 
     if (!isSelected) {
-      console.log('Element not selected, selecting it');
       onSelect();
       return;
     }
 
     // Calculer les coordonnées relatives au canvas (en tenant compte du zoom)
     const canvas = elementRef.current.closest('.canvas-zoom-wrapper');
-    if (!canvas) {
-      console.log('Canvas not found');
-      return;
-    }
+    if (!canvas) return;
 
     const canvasRect = canvas.getBoundingClientRect();
     const elementRect = elementRef.current.getBoundingClientRect();
@@ -166,7 +161,6 @@ export const CanvasElement = ({
     );
 
     if (clickedHandle) {
-      console.log('Clicked on resize handle:', clickedHandle.name);
       resize.handleResizeStart(e, clickedHandle.name, {
         x: element.x,
         y: element.y,
@@ -174,7 +168,6 @@ export const CanvasElement = ({
         height: element.height
       });
     } else {
-      console.log('Starting drag for element:', element.id);
       // Démarrer le drag avec les coordonnées relatives au canvas
       dragAndDrop.handleMouseDown(e, element.id, {
         left: element.x,
@@ -199,30 +192,12 @@ export const CanvasElement = ({
 
   // Gestionnaire de clic droit
   const handleContextMenuEvent = useCallback((e) => {
-    console.log('CanvasElement handleContextMenuEvent called for element:', element.id);
     e.preventDefault();
     e.stopPropagation();
     if (onContextMenu) {
       onContextMenu(e, element.id);
     }
   }, [onContextMenu, element.id]);
-
-  // Gestionnaire de clic simple pour le débogage
-  const handleClick = useCallback((e) => {
-    console.log('CanvasElement handleClick called for element:', element.id, element.type);
-    e.stopPropagation();
-  }, [element.id, element.type]);
-
-  // Log des dimensions pour le débogage
-  console.log('Rendering CanvasElement:', element.id, element.type, {
-    x: element.x,
-    y: element.y,
-    width: element.width,
-    height: element.height,
-    zoom: zoom,
-    computedWidth: element.width * zoom,
-    computedHeight: element.height * zoom
-  });
 
   return (
     <>
@@ -503,7 +478,6 @@ export const CanvasElement = ({
           minHeight: '10px'
         }}
         onMouseDown={handleMouseDown}
-        onClick={handleClick}
         onDoubleClick={handleDoubleClick}
         onContextMenu={handleContextMenuEvent}
         draggable={false}
