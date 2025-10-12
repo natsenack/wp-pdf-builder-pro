@@ -46,6 +46,7 @@ export const CanvasElement = ({
   useEffect(() => {
     console.log('🔍 useEffect triggered - isSelected:', isSelected, 'elementId:', element.id);
     if (isSelected) {
+      console.log('✅ ENTERED isSelected BLOCK for element:', element.id);
       const computedStyle = window.getComputedStyle(document.documentElement);
       console.log('🎯 Element selected - DETAILED LOGS:', {
         id: element.id,
@@ -60,6 +61,7 @@ export const CanvasElement = ({
 
       // Vérifier si les zones de redimensionnement existent dans le DOM
       setTimeout(() => {
+        console.log('⏰ setTimeout triggered for element:', element.id);
         const elementDiv = elementRef.current;
         if (elementDiv) {
           const resizeZones = elementDiv.querySelectorAll('.resize-zone');
@@ -73,8 +75,12 @@ export const CanvasElement = ({
               display: window.getComputedStyle(z).display
             }))
           });
+        } else {
+          console.log('❌ elementDiv not found for element:', element.id);
         }
       }, 100);
+    } else {
+      console.log('❌ NOT isSelected for element:', element.id);
     }
   }, [isSelected, element.id, element.backgroundColor]);
 
