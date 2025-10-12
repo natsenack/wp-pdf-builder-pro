@@ -534,22 +534,22 @@ class PDF_Builder_Admin_Old {
         wp_enqueue_style('pdf-builder-admin', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css', [], PDF_BUILDER_PRO_VERSION);
         wp_enqueue_style('pdf-builder-canvas', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-canvas.css', [], PDF_BUILDER_PRO_VERSION);
 
-        // Scripts JavaScript - VERSION ULTRA FORCE V2
-        wp_enqueue_script('pdf-builder-admin-v2', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'wp-api'], '6.0.0_ultra_force_v2_' . microtime(true) . '_' . rand(10000, 99999), true);
+        // Scripts JavaScript - CHANGEMENT DE HANDLE POUR FORCER LE RECHARGEMENT
+        wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'wp-api'], '7.0.0_force_reload_' . time(), true);
         wp_enqueue_script('pdf-builder-canvas', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-canvas.js', ['jquery', 'wp-api'], PDF_BUILDER_PRO_VERSION, true);
 
-        // Script de correction de nonce - TOUJOURS FRAIS - ULTRA FORCE V2
-        wp_enqueue_script('pdf-builder-nonce-fix', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js', ['jquery'], '3.0.0_ultra_force_v2_' . microtime(true) . '_' . rand(10000, 99999), true);
+        // Script de correction de nonce - NOUVEAU HANDLE POUR FORCER LE RECHARGEMENT
+        wp_enqueue_script('pdf-builder-nonce-fix-v2', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js', ['jquery'], '4.0.0_force_reload_' . time(), true);
 
         // Scripts utilitaires
         wp_enqueue_script('pdf-builder-utils', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-utils.js', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
         wp_enqueue_script('pdf-builder-unified-config', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-unified-config.js', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
 
         // Variables JavaScript pour AJAX - VERSION FORCEE
-        wp_localize_script('pdf-builder-admin-v2', 'pdfBuilderAjax', [
+        wp_localize_script('pdf-builder-admin-v3', 'pdfBuilderAjax', [
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pdf_builder_canvas_load'),
-            'version' => '5.0.0_ultra_force_' . microtime(true),
+            'version' => '7.0.0_force_reload_' . time(),
             'timestamp' => time(),
             'strings' => [
                 'loading' => __('Chargement...', 'pdf-builder-pro'),
@@ -561,10 +561,10 @@ class PDF_Builder_Admin_Old {
         ]);
 
         // Variables JavaScript pour AJAX - SUR LE SCRIPT NONCE-FIX (toujours frais)
-        wp_localize_script('pdf-builder-nonce-fix', 'pdfBuilderAjax', [
+        wp_localize_script('pdf-builder-nonce-fix-v2', 'pdfBuilderAjax', [
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pdf_builder_canvas_load'),
-            'version' => '5.0.0_ultra_force_' . microtime(true),
+            'version' => '7.0.0_force_reload_' . time(),
             'timestamp' => time(),
             'strings' => [
                 'loading' => __('Chargement...', 'pdf-builder-pro'),

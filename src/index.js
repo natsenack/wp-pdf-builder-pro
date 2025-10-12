@@ -3,9 +3,10 @@ import ReactDOM from 'react-dom';
 import { PDFCanvasEditor } from './components/PDFCanvasEditor';
 import './styles/editor.css';
 
-// DIAGNOSTIC: Cache busting test - Version 2025-10-12_12:30
-console.log('PDF Builder Pro - Diagnostic: JavaScript chargé avec cache busting v6');
-console.log('PDF Builder Pro - Vérification pdfBuilderAjax au chargement:', typeof pdfBuilderAjax, pdfBuilderAjax);
+// DIAGNOSTIC: Cache busting test - Version 2025-10-12_13:00 - HANDLE CHANGÉ
+console.log('🚀 PDF Builder Pro - NOUVEAU HANDLE CHARGÉ: JavaScript avec cache busting v7');
+console.log('🔍 PDF Builder Pro - Vérification pdfBuilderAjax au chargement:', typeof pdfBuilderAjax, pdfBuilderAjax);
+console.log('📊 PDF Builder Pro - Version détectée:', pdfBuilderAjax?.version);
 
 // Classe principale pour l'éditeur PDF
 class PDFBuilderPro {

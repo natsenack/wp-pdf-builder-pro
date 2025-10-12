@@ -1,10 +1,10 @@
 // PDF Builder Pro - Correction de Nonce
-// Version: 1.0.2 - 2025-10-12_12:30
+// Version: 1.0.3 - 2025-10-12_13:00 - NOUVEAU HANDLE
 // Ce fichier corrige les problèmes de nonce en forçant l'utilisation de la bonne valeur
 
-console.log('PDF Builder Pro - Correction de Nonce chargée - v1.0.2');
-console.log('PDF Builder Pro - Timestamp de chargement:', Date.now());
-console.log('PDF Builder Pro - Vérification globale pdfBuilderAjax:', typeof window.pdfBuilderAjax);
+console.log('🔧 PDF Builder Pro - NOUVEAU HANDLE NONCE-FIX chargé - v1.0.3');
+console.log('⏰ PDF Builder Pro - Timestamp de chargement:', Date.now());
+console.log('🌐 PDF Builder Pro - Vérification globale pdfBuilderAjax:', typeof window.pdfBuilderAjax);
 
 // S'assurer que pdfBuilderAjax existe et a la bonne version
 if (typeof pdfBuilderAjax === 'undefined') {
