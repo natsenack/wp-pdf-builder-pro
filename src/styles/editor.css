@@ -413,9 +413,10 @@
 }
 
 .control-group-column {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-right: 20px;
 }
 
 .zoom-controls {
