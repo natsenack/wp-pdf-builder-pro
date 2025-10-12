@@ -962,47 +962,47 @@
   position: absolute;
   pointer-events: var(--show-resize-zones, auto);
   z-index: 10;
-  background-color: rgba(37, 99, 235, 0.1);
-  opacity: 0;
-  transition: opacity 0.2s ease;
+  background-color: transparent;
+  opacity: 1;
+  transition: background-color 0.2s ease;
 }
 
-.canvas-element.selected:hover .resize-zone-n,
-.canvas-element.selected:hover .resize-zone-s,
-.canvas-element.selected:hover .resize-zone-w,
-.canvas-element.selected:hover .resize-zone-e {
-  opacity: 1;
+.canvas-element.selected .resize-zone-n:hover,
+.canvas-element.selected .resize-zone-s:hover,
+.canvas-element.selected .resize-zone-w:hover,
+.canvas-element.selected .resize-zone-e:hover {
+  background-color: rgba(37, 99, 235, 0.2);
 }
 
 .canvas-element.selected .resize-zone-n {
-  top: calc(var(--resize-zone-size, 16px) / -2 - var(--element-border-width, 0px));
-  left: 0;
-  right: 0;
-  height: var(--resize-zone-size, 16px);
+  top: calc(var(--selection-border-spacing, 2px) * -1 - var(--selection-border-width, 2px));
+  left: var(--selection-border-spacing, 2px);
+  right: var(--selection-border-spacing, 2px);
+  height: calc(var(--selection-border-width, 2px) + var(--selection-border-spacing, 2px));
   cursor: n-resize;
 }
 
 .canvas-element.selected .resize-zone-s {
-  bottom: calc(var(--resize-zone-size, 16px) / -2 - var(--element-border-width, 0px));
-  left: 0;
-  right: 0;
-  height: var(--resize-zone-size, 16px);
+  bottom: calc(var(--selection-border-spacing, 2px) * -1 - var(--selection-border-width, 2px));
+  left: var(--selection-border-spacing, 2px);
+  right: var(--selection-border-spacing, 2px);
+  height: calc(var(--selection-border-width, 2px) + var(--selection-border-spacing, 2px));
   cursor: s-resize;
 }
 
 .canvas-element.selected .resize-zone-w {
-  top: 0;
-  left: calc(var(--resize-zone-size, 16px) / -2 - var(--element-border-width, 0px));
-  bottom: 0;
-  width: var(--resize-zone-size, 16px);
+  top: var(--selection-border-spacing, 2px);
+  left: calc(var(--selection-border-spacing, 2px) * -1 - var(--selection-border-width, 2px));
+  bottom: var(--selection-border-spacing, 2px);
+  width: calc(var(--selection-border-width, 2px) + var(--selection-border-spacing, 2px));
   cursor: w-resize;
 }
 
 .canvas-element.selected .resize-zone-e {
-  top: 0;
-  right: calc(var(--resize-zone-size, 16px) / -2 - var(--element-border-width, 0px));
-  bottom: 0;
-  width: var(--resize-zone-size, 16px);
+  top: var(--selection-border-spacing, 2px);
+  right: calc(var(--selection-border-spacing, 2px) * -1 - var(--selection-border-width, 2px));
+  bottom: var(--selection-border-spacing, 2px);
+  width: calc(var(--selection-border-width, 2px) + var(--selection-border-spacing, 2px));
   cursor: e-resize;
 }
 
