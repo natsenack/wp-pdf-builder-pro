@@ -468,7 +468,11 @@ export const PDFCanvasEditor = ({ options }) => {
                       <CanvasElement
                         key={element.id}
                         element={element}
-                        isSelected={canvasState.selection.selectedElements.includes(element.id)}
+                        isSelected={(() => {
+                          const isSel = canvasState.selection.selectedElements.includes(element.id);
+                          console.log('CanvasElement', element.id, 'isSelected:', isSel, 'selectedElements:', canvasState.selection.selectedElements);
+                          return isSel;
+                        })()}
                         zoom={1} // Le zoom est géré au niveau du wrapper
                         snapToGrid={snapToGrid}
                         gridSize={10}

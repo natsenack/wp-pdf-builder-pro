@@ -123,20 +123,25 @@ export const useCanvasState = ({
   const history = { addToHistory: () => {}, historySize: 0 };
   const selection = {
     selectElement: useCallback((elementId, addToSelection = false) => {
+      console.log('selectElement called with:', elementId, addToSelection);
       setSelectedElements(prev => {
+        console.log('Previous selectedElements:', prev);
+        let newSelection;
         if (addToSelection) {
           // Ajouter à la sélection existante (avec Ctrl/Cmd)
           if (prev.includes(elementId)) {
             // Si déjà sélectionné, le retirer
-            return prev.filter(id => id !== elementId);
+            newSelection = prev.filter(id => id !== elementId);
           } else {
             // L'ajouter
-            return [...prev, elementId];
+            newSelection = [...prev, elementId];
           }
         } else {
           // Remplacer la sélection (sélection simple)
-          return [elementId];
+          newSelection = [elementId];
         }
+        console.log('New selectedElements:', newSelection);
+        return newSelection;
       });
     }, []),
     clearSelection: useCallback(() => {
