@@ -15,6 +15,9 @@ const PreviewModal = ({
   if (!isOpen) return null;
 
   const handlePrint = () => {
+    console.log('handlePrint called with elements:', elements);
+    console.log('canvasWidth:', canvasWidth, 'canvasHeight:', canvasHeight);
+
     // Ouvrir l'aperçu dans une nouvelle fenêtre pour l'impression
     const printWindow = window.open('', '_blank', 'width=800,height=600');
     if (printWindow) {
@@ -124,6 +127,8 @@ const PreviewModal = ({
             }).join('')}
         </div>
       `;
+
+      console.log('Generated printContent:', printContent);
 
       printWindow.document.write(`
         <!DOCTYPE html>
