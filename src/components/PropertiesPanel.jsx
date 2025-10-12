@@ -330,7 +330,7 @@ const PropertiesPanel = React.memo(({
   const [previousBackgroundColor, setPreviousBackgroundColor] = useState('#ffffff');
   const [previousBorderWidth, setPreviousBorderWidth] = useState(0);
   const [previousBorderColor, setPreviousBorderColor] = useState('#000000');
-  const [isBackgroundEnabled, setIsBackgroundEnabled] = useState(true);
+  const [isBackgroundEnabled, setIsBackgroundEnabled] = useState(false);
   const [isBorderEnabled, setIsBorderEnabled] = useState(false);
 
   // Log des props pour débogage (seulement quand elles changent)

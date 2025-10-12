@@ -303,48 +303,48 @@ export const CanvasElement = ({
             fontSize: 12 * zoom,
             color: element.color || '#94a3b8'
           } : element.type === 'shape-rectangle' ? {
-            backgroundColor: element.backgroundColor || '#e5e7eb',
+            backgroundColor: element.backgroundColor || 'transparent',
             borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0'
           } : element.type === 'shape-circle' ? {
-            backgroundColor: element.backgroundColor || '#e5e7eb',
+            backgroundColor: element.backgroundColor || 'transparent',
             borderRadius: '50%'
           } : element.type === 'shape-line' ? {
-            backgroundColor: element.backgroundColor || '#6b7280',
+            backgroundColor: element.backgroundColor || 'transparent',
             height: '100%'
           } : element.type === 'shape-arrow' ? {
-            backgroundColor: element.backgroundColor || '#374151',
+            backgroundColor: element.backgroundColor || 'transparent',
             clipPath: 'polygon(0% 50%, 70% 0%, 70% 40%, 100% 40%, 100% 60%, 70% 60%, 70% 100%)'
           } : element.type === 'shape-triangle' ? {
-            backgroundColor: element.backgroundColor || '#e5e7eb',
+            backgroundColor: element.backgroundColor || 'transparent',
             clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)'
           } : element.type === 'shape-star' ? {
-            backgroundColor: element.backgroundColor || '#fbbf24',
+            backgroundColor: element.backgroundColor || 'transparent',
             clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)'
           } : element.type === 'divider' ? {
-            backgroundColor: element.backgroundColor || '#d1d5db',
+            backgroundColor: element.backgroundColor || 'transparent',
             height: '1px'
           } : element.type === 'image-upload' ? {
-            backgroundColor: element.backgroundColor || '#f3f4f6',
+            backgroundColor: element.backgroundColor || 'transparent',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 12 * zoom
           } : element.type === 'logo' ? {
-            backgroundColor: element.backgroundColor || '#f3f4f6',
+            backgroundColor: element.backgroundColor || 'transparent',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 14 * zoom,
             fontWeight: 'bold'
           } : element.type === 'barcode' ? {
-            backgroundColor: element.backgroundColor || '#ffffff',
+            backgroundColor: element.backgroundColor || 'transparent',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 10 * zoom,
             fontFamily: 'monospace'
           } : element.type === 'qrcode' || element.type === 'qrcode-dynamic' ? {
-            backgroundColor: element.backgroundColor || '#ffffff',
+            backgroundColor: element.backgroundColor || 'transparent',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -374,7 +374,7 @@ export const CanvasElement = ({
             color: element.color || '#d97706',
             padding: '4px'
           } : element.type === 'conditional-text' ? {
-            backgroundColor: element.backgroundColor || '#ecfdf5',
+            backgroundColor: element.backgroundColor || 'transparent',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'flex-start',
@@ -383,7 +383,7 @@ export const CanvasElement = ({
             color: '#059669',
             padding: '4px'
           } : element.type === 'counter' ? {
-            backgroundColor: element.backgroundColor || '#f0f9ff',
+            backgroundColor: element.backgroundColor || 'transparent',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -391,7 +391,7 @@ export const CanvasElement = ({
             fontWeight: 'bold',
             color: '#0284c7'
           } : element.type === 'date-dynamic' ? {
-            backgroundColor: element.backgroundColor || '#f3f4f6',
+            backgroundColor: element.backgroundColor || 'transparent',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'flex-start',
@@ -400,7 +400,7 @@ export const CanvasElement = ({
             color: '#374151',
             padding: '4px'
           } : element.type === 'currency' ? {
-            backgroundColor: element.backgroundColor || '#f0fdf4',
+            backgroundColor: element.backgroundColor || 'transparent',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'flex-end',
@@ -409,13 +409,13 @@ export const CanvasElement = ({
             color: '#16a34a',
             padding: '4px'
           } : element.type === 'table-dynamic' ? {
-            backgroundColor: element.backgroundColor || '#ffffff',
+            backgroundColor: element.backgroundColor || 'transparent',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 12 * zoom
           } : element.type === 'gradient-box' ? {
-            background: element.backgroundColor || 'linear-gradient(45deg, #667eea 0%, #764ba2 100%)',
+            background: element.backgroundColor || 'transparent',
             borderRadius: element.borderRadius ? `${element.borderRadius}px` : '8px',
             display: 'flex',
             alignItems: 'center',
@@ -446,7 +446,7 @@ export const CanvasElement = ({
             justifyContent: 'center',
             fontSize: 12 * zoom
           } : element.type === 'background-pattern' ? {
-            backgroundColor: element.backgroundColor || '#f8fafc',
+            backgroundColor: element.backgroundColor || 'transparent',
             backgroundImage: element.backgroundImage || 'repeating-linear-gradient(45deg, #e2e8f0, #e2e8f0 10px, #f1f5f9 10px, #f1f5f9 20px)',
             display: 'flex',
             alignItems: 'center',
@@ -464,7 +464,7 @@ export const CanvasElement = ({
             transform: 'rotate(-45deg)',
             pointerEvents: 'none'
           } : element.type === 'progress-bar' ? {
-            backgroundColor: element.backgroundColor || '#e5e7eb',
+            backgroundColor: element.backgroundColor || 'transparent',
             borderRadius: '10px',
             overflow: 'hidden',
             position: 'relative'
@@ -1040,7 +1040,7 @@ export const CanvasElement = ({
             fontStyle: element.fontStyle || 'normal',
             textDecoration: element.textDecoration || 'none',
             color: element.color || '#333',
-            backgroundColor: element.backgroundColor || '#ffffff',
+            backgroundColor: element.backgroundColor || 'transparent',
             // Bordures subtiles pour les éléments spéciaux
             border: element.borderWidth && element.borderWidth > 0 ? `${Math.max(1, element.borderWidth * zoom * 0.5)}px solid ${element.borderColor || '#e5e7eb'}` : 'none',
             borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '2px',
