@@ -203,11 +203,13 @@
   background: var(--surface-color);
   position: relative;
   min-height: 0; /* Permet au flex de fonctionner correctement */
+  overflow-y: scroll; /* Ajouté overflow vertical sur editor-main */
+  overflow-x: hidden;
 }
 
 .canvas-container {
   flex: 1;
-  overflow-y: scroll; /* Changé de auto à scroll pour forcer la scrollbar verticale */
+  /* overflow-y: scroll; retiré - maintenant sur editor-main */
   overflow-x: hidden;
   position: relative;
   background: var(--background-color);
