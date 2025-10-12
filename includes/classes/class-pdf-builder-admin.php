@@ -768,7 +768,7 @@ class PDF_Builder_Admin {
         ');
 
         // Scripts JavaScript - VERSION ULTRA FORCEE
-        wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'wp-api'], '7.0.0_force_reload_' . time(), true);
+        wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'wp-api'], '8.0.0_force_' . microtime(true), true);
         wp_enqueue_script('pdf-builder-canvas', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-canvas.js', ['jquery', 'wp-api'], PDF_BUILDER_PRO_VERSION, true);
 
         // Scripts utilitaires

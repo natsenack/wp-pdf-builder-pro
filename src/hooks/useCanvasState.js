@@ -6,6 +6,11 @@ import { useZoom } from './useZoom';
 import { useContextMenu } from './useContextMenu';
 import { useDragAndDrop } from './useDragAndDrop';
 
+// DEBUG: Vérifier les variables globales au chargement
+console.log('🔧 PDF Builder DEBUG - window.pdfBuilderAjax:', window.pdfBuilderAjax);
+console.log('🔧 PDF Builder DEBUG - window.pdfBuilderData:', window.pdfBuilderData);
+console.log('🔧 PDF Builder DEBUG - Nonce disponible:', window.pdfBuilderAjax?.nonce || window.pdfBuilderData?.nonce || 'AUCUN NONCE');
+
 // Fallback notification system in case Toastr is not available
 if (typeof window !== 'undefined' && typeof window.toastr === 'undefined') {
   console.log('📋 PDF Builder - Toastr non disponible, initialisation du système de fallback...');
