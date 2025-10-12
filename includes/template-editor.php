@@ -35,6 +35,10 @@ if (!$is_new && $template_id > 0) {
     if ($template) {
         $template_name = $template['name'];
 
+        // DEBUG: Log des données brutes du template
+        error_log("PDF Builder LOAD - Template name: '{$template_name}'");
+        error_log("PDF Builder LOAD - Raw template_data: " . substr($template['template_data'], 0, 500) . "...");
+
         // Décoder et préparer les données du template
         $template_data_raw = $template['template_data'];
         if (!empty($template_data_raw)) {
@@ -42,18 +46,32 @@ if (!$is_new && $template_id > 0) {
             if (json_last_error() === JSON_ERROR_NONE && is_array($decoded_data)) {
                 $template_data = $decoded_data;
 
+                // DEBUG: Log des données décodées
+                error_log("PDF Builder LOAD - Decoded data keys: " . implode(', ', array_keys($decoded_data)));
+                error_log("PDF Builder LOAD - Elements count in decoded data: " . (isset($decoded_data['elements']) ? count($decoded_data['elements']) : 'NO ELEMENTS KEY'));
+
                 // Extraire les éléments initiaux depuis la structure du template
                 if (isset($decoded_data['pages']) && is_array($decoded_data['pages']) && !empty($decoded_data['pages'])) {
                     $first_page = $decoded_data['pages'][0];
                     if (isset($first_page['elements']) && is_array($first_page['elements'])) {
                         $initial_elements = $first_page['elements'];
+                        error_log("PDF Builder LOAD - Elements loaded from pages[0].elements: " . count($initial_elements));
                     }
                 } elseif (isset($decoded_data['elements']) && is_array($decoded_data['elements'])) {
                     // Fallback pour l'ancienne structure
                     $initial_elements = $decoded_data['elements'];
+                    error_log("PDF Builder LOAD - Elements loaded from elements (fallback): " . count($initial_elements));
+                } else {
+                    error_log("PDF Builder LOAD - No elements found in any structure");
                 }
+            } else {
+                error_log("PDF Builder LOAD - JSON decode error: " . json_last_error_msg());
             }
+        } else {
+            error_log("PDF Builder LOAD - Template data is empty");
         }
+    } else {
+        error_log("PDF Builder LOAD - Template not found in database for ID: {$template_id}");
     }
 }
 ?>
