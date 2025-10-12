@@ -590,7 +590,7 @@ const PropertiesPanel = React.memo(({
             {/* Bordures (uniquement si activées et autorisées) */}
             {allowedControls.includes('borders') && localProperties.borderWidth >= 0 && (
               <div className="properties-group">
-                <h4>🔲 Bordures & Coins Arrondis</h4>
+                <h4>🔲 Bordures</h4>
 
                 {/* Contrôle d'activation des bordures */}
                 <div className="property-row">
@@ -660,20 +660,27 @@ const PropertiesPanel = React.memo(({
                       <span className="slider-value">{localProperties.borderWidth ?? 1}px</span>
                     </div>
                   </div>
+                </div>
+              </div>
+            )}
 
-                  <div className="property-row">
-                    <label>Coins arrondis:</label>
-                    <div className="slider-container">
-                      <input
-                        type="range"
-                        min="0"
-                        max="50"
-                        value={localProperties.borderRadius ?? 4}
-                        onChange={(e) => handlePropertyChange(selectedElement.id, 'borderRadius', safeParseInt(e.target.value, 0))}
-                        className="slider"
-                      />
-                      <span className="slider-value">{localProperties.borderRadius ?? 4}px</span>
-                    </div>
+            {/* Coins Arrondis (uniquement si autorisés) */}
+            {allowedControls.includes('borders') && (
+              <div className="properties-group">
+                <h4>🔲 Coins Arrondis</h4>
+
+                <div className="property-row">
+                  <label>Coins arrondis:</label>
+                  <div className="slider-container">
+                    <input
+                      type="range"
+                      min="0"
+                      max="50"
+                      value={localProperties.borderRadius ?? 0}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'borderRadius', safeParseInt(e.target.value, 0))}
+                      className="slider"
+                    />
+                    <span className="slider-value">{localProperties.borderRadius ?? 0}px</span>
                   </div>
                 </div>
               </div>
