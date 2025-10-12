@@ -954,10 +954,24 @@ class PDF_Builder_Admin {
     public function ajax_save_template() {
         $this->check_admin_permissions();
 
+        // DEBUG: Log du nonce reçu vs attendu
+        $received_nonce = isset($_POST['nonce']) ? $_POST['nonce'] : 'NONCE_MANQUANT';
+        $expected_nonce_action = 'pdf_builder_nonce';
+        $current_user_id = get_current_user_id();
+
+        error_log("PDF Builder DEBUG - Nonce reçu: '{$received_nonce}'");
+        error_log("PDF Builder DEBUG - Action attendue: '{$expected_nonce_action}'");
+        error_log("PDF Builder DEBUG - User ID: {$current_user_id}");
+        error_log("PDF Builder DEBUG - Session ID: " . session_id());
+        error_log("PDF Builder DEBUG - POST data: " . print_r($_POST, true));
+
         // Vérification de sécurité
         if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce')) {
+            error_log("PDF Builder DEBUG - VERIFICATION NONCE ECHOUEE");
             wp_send_json_error('Sécurité: Nonce invalide');
         }
+
+        error_log("PDF Builder DEBUG - VERIFICATION NONCE REUSSIE");
 
         $template_data = isset($_POST['template_data']) ? $_POST['template_data'] : '';
         $template_name = isset($_POST['template_name']) ? sanitize_text_field($_POST['template_name']) : '';
