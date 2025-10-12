@@ -254,34 +254,34 @@ export const CanvasElement = ({
             fontSize: 12 * zoom,
             color: element.color || '#94a3b8'
           } : element.type === 'shape-rectangle' ? {
-            backgroundColor: element.backgroundColor || '#e5e7eb',
+            backgroundColor: element.backgroundColor || 'transparent',
             borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0'
           } : element.type === 'shape-circle' ? {
-            backgroundColor: element.backgroundColor || '#e5e7eb',
+            backgroundColor: element.backgroundColor || 'transparent',
             borderRadius: '50%'
           } : element.type === 'shape-line' ? {
-            backgroundColor: element.backgroundColor || '#6b7280',
+            backgroundColor: element.backgroundColor || 'transparent',
             height: '100%'
           } : element.type === 'shape-arrow' ? {
-            backgroundColor: element.backgroundColor || '#374151',
+            backgroundColor: element.backgroundColor || 'transparent',
             clipPath: 'polygon(0% 50%, 70% 0%, 70% 40%, 100% 40%, 100% 60%, 70% 60%, 70% 100%)'
           } : element.type === 'shape-triangle' ? {
-            backgroundColor: element.backgroundColor || '#e5e7eb',
+            backgroundColor: element.backgroundColor || 'transparent',
             clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)'
           } : element.type === 'shape-star' ? {
-            backgroundColor: element.backgroundColor || '#fbbf24',
+            backgroundColor: element.backgroundColor || 'transparent',
             clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)'
           } : element.type === 'divider' ? {
-            backgroundColor: element.backgroundColor || '#d1d5db',
+            backgroundColor: element.backgroundColor || 'transparent',
             height: '1px'
           } : element.type === 'image-upload' ? {
-            backgroundColor: element.backgroundColor || '#f3f4f6',
+            backgroundColor: element.backgroundColor || 'transparent',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 12 * zoom
           } : element.type === 'logo' ? {
-            backgroundColor: element.backgroundColor || '#f3f4f6',
+            backgroundColor: element.backgroundColor || 'transparent',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',

@@ -369,7 +369,7 @@ const PropertiesPanel = React.memo(({
   useEffect(() => {
     if (selectedElement) {
       // Initialiser seulement les valeurs précédentes, pas l'état du toggle
-      setPreviousBackgroundColor(selectedElement.backgroundColor || '#ffffff');
+      setPreviousBackgroundColor(selectedElement.backgroundColor || 'transparent');
       // Pour borderWidth, s'assurer qu'on a au moins 1 pour la restauration
       const initialBorderWidth = selectedElement.borderWidth && selectedElement.borderWidth > 0 ? selectedElement.borderWidth : 1;
       setPreviousBorderWidth(initialBorderWidth);
@@ -435,7 +435,7 @@ const PropertiesPanel = React.memo(({
       handlePropertyChange(elementId, 'backgroundColor', 'transparent');
     } else {
       // Restaurer la couleur précédente (avec fallback)
-      const colorToRestore = previousBackgroundColor || '#ffffff';
+      const colorToRestore = previousBackgroundColor || 'transparent';
       handlePropertyChange(elementId, 'backgroundColor', colorToRestore);
     }
   }, [selectedElement?.backgroundColor, previousBackgroundColor, handlePropertyChange]);
@@ -535,11 +535,11 @@ const PropertiesPanel = React.memo(({
                     checked={isBackgroundEnabled}
                     onChange={(e) => {
                       if (e.target.checked) {
-                        const colorToSet = previousBackgroundColor || '#ffffff';
+                        const colorToSet = previousBackgroundColor || 'transparent';
                         handlePropertyChange(selectedElement.id, 'backgroundColor', colorToSet);
                         setIsBackgroundEnabled(true);
                       } else {
-                        setPreviousBackgroundColor(localProperties.backgroundColor || '#ffffff');
+                        setPreviousBackgroundColor(localProperties.backgroundColor || 'transparent');
                         handlePropertyChange(selectedElement.id, 'backgroundColor', 'transparent');
                         setIsBackgroundEnabled(false);
                       }
