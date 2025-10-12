@@ -559,15 +559,37 @@ const PropertiesPanel = React.memo(({
 
               {/* Contrôle du fond */}
               <div className="property-row">
-                <span>Fond activé:</span>
+                <span title={ELEMENT_TYPE_MAPPING[selectedElement?.type || ''] === 'special' ?
+                  'Les éléments spéciaux n\'ont pas de fond contrôlable' :
+                  'Activer/désactiver le fond de l\'élément'
+                }>
+                  Fond activé:
+                  {ELEMENT_TYPE_MAPPING[selectedElement?.type || ''] === 'special' && (
+                    <small style={{ color: '#666', fontSize: '11px', marginLeft: '8px' }}>
+                      (non contrôlable)
+                    </small>
+                  )}
+                </span>
                 <label className="toggle">
                   <input
                     type="checkbox"
                     checked={isBackgroundEnabled}
-                    disabled={!isPropertyAllowed(selectedElement?.type || '', 'backgroundColor')}
+                    disabled={false} // Toujours actif maintenant
                     onChange={(e) => {
-                      const isAllowed = isPropertyAllowed(selectedElement?.type || '', 'backgroundColor');
-                      if (!isAllowed) return;
+                      const elementType = selectedElement?.type || '';
+                      const isSpecial = ELEMENT_TYPE_MAPPING[elementType] === 'special';
+
+                      if (isSpecial) {
+                        // Pour les éléments spéciaux, forcer toujours transparent
+                        handlePropertyChange(selectedElement.id, 'backgroundColor', 'transparent');
+                        // Afficher une notification
+                        if (window.toastr) {
+                          window.toastr.info('Fond non contrôlable', 'Les éléments spéciaux n\'ont pas de fond visible');
+                        }
+                        return;
+                      }
+
+                      // Pour les éléments normaux, comportement normal
                       if (e.target.checked) {
                         handlePropertyChange(selectedElement.id, 'backgroundColor', '#ffffff');
                       } else {
