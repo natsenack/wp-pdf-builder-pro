@@ -928,6 +928,10 @@ window.addEventListener('load', function() {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Settings page JavaScript loaded');
     
+    // Définir les nonces en variables JavaScript
+    var pdfBuilderSettingsNonce = '<?php echo wp_create_nonce('pdf_builder_settings'); ?>';
+    var pdfBuilderMaintenanceNonce = '<?php echo wp_create_nonce('pdf_builder_maintenance'); ?>';
+    
     // Écouter tous les événements de soumission de formulaire
     document.addEventListener('submit', function(e) {
         console.log('Form submit event detected on:', e.target);
@@ -992,7 +996,7 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: new URLSearchParams({
                 ...Object.fromEntries(formData),
-                nonce: '<?php echo wp_create_nonce('pdf_builder_settings'); ?>'
+                nonce: pdfBuilderSettingsNonce
             })
         })
         .then(function(response) {
@@ -1409,7 +1413,7 @@ echo '<style>
                 type: 'POST',
                 data: {
                     action: 'pdf_builder_clear_cache',
-                    nonce: '<?php echo wp_create_nonce('pdf_builder_maintenance'); ?>'
+                    nonce: pdfBuilderMaintenanceNonce
                 },
                 success: function(response) {
                     if (response.success) {
