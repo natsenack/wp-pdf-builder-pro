@@ -545,7 +545,7 @@ class PDF_Builder_Admin_Old {
         // Variables JavaScript pour AJAX - TEST ULTIME
         wp_localize_script('pdf-builder-admin', 'pdfBuilderAjax', [
             'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_canvas_load'),
+            'nonce' => wp_create_nonce('pdf_builder_canvas_load_' . time()),
             'strings' => [
                 'loading' => __('Chargement...', 'pdf-builder-pro'),
                 'error' => __('Erreur', 'pdf-builder-pro'),

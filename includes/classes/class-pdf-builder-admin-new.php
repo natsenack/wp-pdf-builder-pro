@@ -752,7 +752,7 @@ class PDF_Builder_Admin_New {
         // Variables JavaScript pour AJAX - TEST ULTIME
         wp_localize_script('pdf-builder-admin', 'pdfBuilderAjax', [
             'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_canvas_load'),
+            'nonce' => wp_create_nonce('pdf_builder_canvas_load_' . time()),
             'strings' => [
                 'loading' => __('Chargement...', 'pdf-builder-pro'),
                 'error' => __('Erreur', 'pdf-builder-pro'),
@@ -2597,12 +2597,27 @@ class PDF_Builder_Admin_New {
      * AJAX - Charger les éléments du canvas pour un template
      */
     public function ajax_load_canvas_elements() {
-        // Vérification de sécurité du nonce
+        // Vérification de sécurité du nonce - approche flexible
         $received_nonce = $_POST['nonce'] ?? '';
 
-        // Validation du nonce avec l'action correcte
-        if (!wp_verify_nonce($received_nonce, 'pdf_builder_canvas_load')) {
-            wp_send_json_error('Nonce invalide');
+        // Essayer différentes actions possibles pour la compatibilité
+        $valid_actions = [
+            'pdf_builder_canvas_load',
+            'pdf_builder_canvas_load_' . time(),
+            'pdf_builder_canvas_load_' . (time() - 1), // Pour les cas de délai
+            'pdf_builder_canvas_load_' . (time() + 1),
+        ];
+
+        $nonce_valid = false;
+        foreach ($valid_actions as $action) {
+            if (wp_verify_nonce($received_nonce, $action)) {
+                $nonce_valid = true;
+                break;
+            }
+        }
+
+        if (!$nonce_valid) {
+            wp_send_json_error('Nonce invalide - veuillez rafraîchir la page');
             return;
         }
 
