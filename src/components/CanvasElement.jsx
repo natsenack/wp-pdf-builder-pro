@@ -18,6 +18,14 @@ export const CanvasElement = ({
 }) => {
   const elementRef = useRef(null);
 
+  // Log basique pour vérifier que le composant se rend
+  console.log('🔧 CanvasElement rendering:', {
+    id: element.id,
+    type: element.type,
+    isSelected,
+    backgroundColor: element.backgroundColor
+  });
+
   const resize = useResize({
     onElementResize: (newRect) => {
       onUpdate({
@@ -125,6 +133,14 @@ export const CanvasElement = ({
 
   // Gestionnaire de clic sur l'élément
   const handleMouseDown = useCallback((e) => {
+    console.log('🖱️ Element clicked:', {
+      elementId: element.id,
+      elementType: element.type,
+      isSelected,
+      backgroundColor: element.backgroundColor,
+      clientX: e.clientX,
+      clientY: e.clientY
+    });
     e.stopPropagation();
 
     // Vérifier si Ctrl/Cmd est pressé pour la sélection multiple
