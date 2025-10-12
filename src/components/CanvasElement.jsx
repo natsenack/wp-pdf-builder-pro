@@ -65,7 +65,7 @@ export const CanvasElement = ({
         console.log('⏰ setTimeout triggered for element:', element.id);
         const elementDiv = elementRef.current;
         if (elementDiv) {
-          const resizeZones = elementDiv.querySelectorAll('.resize-zone');
+          const resizeZones = elementDiv.parentElement.querySelectorAll('.resize-zone');
           console.log('🔍 Resize zones in DOM:', {
             elementId: element.id,
             zonesFound: resizeZones.length,

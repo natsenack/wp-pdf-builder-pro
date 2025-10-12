@@ -970,12 +970,12 @@
 }
 
 /* Zones de redimensionnement sur les bords de l'élément sélectionné */
-.canvas-element.selected .resize-zone-n,
-.canvas-element.selected .resize-zone-s,
-.canvas-element.selected .resize-zone-w,
-.canvas-element.selected .resize-zone-e {
+.resize-zone-n,
+.resize-zone-s,
+.resize-zone-w,
+.resize-zone-e {
   position: absolute;
-  pointer-events: var(--show-resize-zones, auto);
+  pointer-events: auto;
   z-index: 10;
   background-color: transparent;
   opacity: 1;
@@ -987,14 +987,14 @@
   display: block;
 }
 
-.canvas-element.selected .resize-zone-n:hover,
-.canvas-element.selected .resize-zone-s:hover,
-.canvas-element.selected .resize-zone-w:hover,
-.canvas-element.selected .resize-zone-e:hover {
+.resize-zone-n:hover,
+.resize-zone-s:hover,
+.resize-zone-w:hover,
+.resize-zone-e:hover {
   background-color: rgba(37, 99, 235, 0.2);
 }
 
-.canvas-element.selected .resize-zone-n {
+.resize-zone-n {
   top: -6px;
   left: 2px;
   right: 2px;
@@ -1003,7 +1003,7 @@
   background-color: rgba(37, 99, 235, 0.1);
 }
 
-.canvas-element.selected .resize-zone-s {
+.resize-zone-s {
   bottom: -6px;
   left: 2px;
   right: 2px;
@@ -1012,7 +1012,7 @@
   background-color: rgba(37, 99, 235, 0.1);
 }
 
-.canvas-element.selected .resize-zone-w {
+.resize-zone-w {
   top: 2px;
   left: -6px;
   bottom: 2px;
@@ -1021,7 +1021,7 @@
   background-color: rgba(37, 99, 235, 0.1);
 }
 
-.canvas-element.selected .resize-zone-e {
+.resize-zone-e {
   top: 2px;
   right: -6px;
   bottom: 2px;
