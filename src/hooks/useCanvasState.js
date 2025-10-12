@@ -843,32 +843,25 @@ export const useCanvasState = ({
         throw new Error('Données JSON invalides côté client: ' + jsonError.message);
       }
 
-      // Sauvegarde directe via AJAX
-      const formData = new FormData();
-      formData.append('action', 'pdf_builder_pro_save_template');
-      formData.append('template_data', jsonString); // Utiliser la string JSON validée
-      formData.append('template_name', window.pdfBuilderData?.templateName || `Template ${window.pdfBuilderData?.templateId || 'New'}`);
-      formData.append('template_id', window.pdfBuilderData?.templateId || '0');
-      formData.append('nonce', window.pdfBuilderAjax?.nonce || window.pdfBuilderData?.nonce || '');
+      // Sauvegarde directe via AJAX avec URLSearchParams au lieu de FormData
+      console.log('📤 PDF Builder - Tentative avec URLSearchParams au lieu de FormData');
 
-      console.log('📤 PDF Builder - Données JSON à envoyer:', jsonString);
-      console.log('📤 PDF Builder - Longueur des données:', jsonString.length);
-      console.log('📤 PDF Builder - Envoi sauvegarde AJAX:', {
+      const requestData = {
         action: 'pdf_builder_pro_save_template',
-        template_name: window.pdfBuilderData?.templateName,
-        template_id: window.pdfBuilderData?.templateId,
-        nonce: window.pdfBuilderAjax?.nonce || window.pdfBuilderData?.nonce
-      });
+        template_data: jsonString,
+        template_name: window.pdfBuilderData?.templateName || `Template ${window.pdfBuilderData?.templateId || 'New'}`,
+        template_id: window.pdfBuilderData?.templateId || '0',
+        nonce: window.pdfBuilderAjax?.nonce || window.pdfBuilderData?.nonce || ''
+      };
 
-      console.log('📤 PDF Builder - Envoi sauvegarde AJAX:', {
-        action: 'pdf_builder_pro_save_template',
-        template_name: window.pdfBuilderData?.templateName,
-        template_id: window.pdfBuilderData?.templateId
-      });
+      console.log('📤 PDF Builder - Données de requête:', requestData);
 
       const response = await fetch(window.pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
         method: 'POST',
-        body: formData
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams(requestData).toString()
       });
 
       const result = await response.json();
