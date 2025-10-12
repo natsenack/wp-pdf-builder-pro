@@ -1099,6 +1099,14 @@ class PDF_Builder_Admin {
                     wp_send_json_error('Impossible de corriger le template vide');
                 }
             } else {
+                // Vérifier si les données contiennent des backslashes (échappement PHP)
+                $has_backslashes = strpos($template_data_raw, '\\') !== false;
+                if ($has_backslashes) {
+                    error_log('PDF Builder LOAD - Template data contains backslashes, unescaping...');
+                    $template_data_raw = stripslashes($template_data_raw);
+                    $data_length = strlen($template_data_raw); // Recalculer la longueur
+                }
+
                 $template_data = json_decode($template_data_raw, true);
                 if ($template_data === null && json_last_error() !== JSON_ERROR_NONE) {
                     $json_error = json_last_error_msg();
