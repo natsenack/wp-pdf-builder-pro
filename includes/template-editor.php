@@ -37,7 +37,8 @@ if (!$is_new && $template_id > 0) {
 
         // DEBUG: Log des données brutes du template
         error_log("PDF Builder LOAD - Template name: '{$template_name}'");
-        error_log("PDF Builder LOAD - Raw template_data: " . substr($template['template_data'], 0, 500) . "...");
+        error_log("PDF Builder LOAD - Raw template_data length: " . strlen($template['template_data']));
+        error_log("PDF Builder LOAD - Raw template_data: " . substr($template['template_data'], 0, 500) . (strlen($template['template_data']) > 500 ? '... (truncated)' : ''));
 
         // Décoder et préparer les données du template
         $template_data_raw = $template['template_data'];

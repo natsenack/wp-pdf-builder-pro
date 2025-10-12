@@ -976,6 +976,20 @@ class PDF_Builder_Admin {
         $template_name = isset($_POST['template_name']) ? sanitize_text_field($_POST['template_name']) : '';
         $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
 
+        // DEBUG: Vérifier la taille et le format des données reçues
+        error_log("PDF Builder SAVE - Template data length: " . strlen($template_data));
+        error_log("PDF Builder SAVE - Template data preview: " . substr($template_data, 0, 200) . "...");
+        error_log("PDF Builder SAVE - Template name: '{$template_name}', ID: {$template_id}");
+
+        // Valider que c'est du JSON valide
+        $decoded_test = json_decode($template_data, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log("PDF Builder SAVE - JSON validation error: " . json_last_error_msg());
+            wp_send_json_error('Données JSON invalides: ' . json_last_error_msg());
+        } else {
+            error_log("PDF Builder SAVE - JSON validation successful, elements count: " . (isset($decoded_test['elements']) ? count($decoded_test['elements']) : 'unknown'));
+        }
+
         if (empty($template_data) || empty($template_name)) {
             wp_send_json_error('Données template ou nom manquant');
         }
