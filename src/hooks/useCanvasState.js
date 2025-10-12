@@ -5,6 +5,7 @@ import { useClipboard } from './useClipboard';
 import { useZoom } from './useZoom';
 import { useContextMenu } from './useContextMenu';
 import { useDragAndDrop } from './useDragAndDrop';
+import { ELEMENT_TYPE_MAPPING, fixInvalidProperty } from '../utilities/elementPropertyRestrictions';
 
 // Fallback notification system in case Toastr is not available
 if (typeof window !== 'undefined' && typeof window.toastr === 'undefined') {
@@ -198,6 +199,30 @@ export const useCanvasState = ({
       history.addToHistory({ elements, nextId });
     }
   }, [elements, nextId, history]);
+
+  // Correction automatique des éléments spéciaux existants
+  useEffect(() => {
+    const specialElements = ['product_table', 'customer_info', 'company_logo', 'company_info', 'order_number', 'document_type', 'progress-bar'];
+    const needsCorrection = elements.some(element => 
+      specialElements.includes(element.type) && element.backgroundColor !== 'transparent'
+    );
+
+    if (needsCorrection) {
+      console.log('🔧 Correction automatique des éléments spéciaux existants...');
+      setElements(prevElements => 
+        prevElements.map(element => {
+          if (specialElements.includes(element.type) && element.backgroundColor !== 'transparent') {
+            console.log(`🔧 Correction de ${element.type} (id: ${element.id}): backgroundColor '${element.backgroundColor}' -> 'transparent'`);
+            return {
+              ...element,
+              backgroundColor: 'transparent'
+            };
+          }
+          return element;
+        })
+      );
+    }
+  }, []); // Uniquement au montage du composant
 
   const addElement = useCallback((elementType, properties = {}) => {
     // Système intelligent de propriétés par défaut

@@ -69,9 +69,21 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
       const newProperties = {
         // Valeurs par défaut avec restrictions
         ...restrictedDefaults,
-        // Propriétés de l'élément (écrasent les défauts)
+        // Propriétés de l'élément (écrasent les défauts SAUF les propriétés restreintes)
         ...selectedElement
       };
+
+      // Pour les propriétés restreintes, forcer les valeurs corrigées
+      Object.keys(restrictedDefaults).forEach(property => {
+        const isRestricted = !isPropertyAllowed(elementType, property);
+        if (isRestricted) {
+          const correctedValue = fixInvalidProperty(elementType, property, newProperties[property]);
+          if (correctedValue !== newProperties[property]) {
+            console.log(`🔧 Forçage de ${property} pour ${elementType}: '${newProperties[property]}' -> '${correctedValue}'`);
+            newProperties[property] = correctedValue;
+          }
+        }
+      });
 
       // Validation finale des propriétés
       Object.keys(newProperties).forEach(property => {

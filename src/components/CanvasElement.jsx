@@ -42,19 +42,16 @@ export const CanvasElement = ({
 
   // Fonction helper pour gérer les styles de bordure des éléments spéciaux
   const getSpecialElementBorderStyle = (element) => {
-    // Pour les éléments spéciaux, on utilise des bordures plus subtiles qui ne gênent pas le contenu interne
-    if (element.borderWidth && element.borderWidth > 0) {
-      return {
-        border: `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#e5e7eb'}`,
-        // Assurer que le background ne cache pas les bordures
-        backgroundColor: 'transparent',
-        // Utiliser box-sizing pour que les bordures soient incluses dans les dimensions
-        boxSizing: 'border-box'
-      };
-    }
+    // Pour les éléments spéciaux, forcer toujours un fond transparent
+    // indépendamment des propriétés de l'élément
     return {
       backgroundColor: 'transparent',
-      boxSizing: 'border-box'
+      // Utiliser box-sizing pour que les bordures soient incluses dans les dimensions
+      boxSizing: 'border-box',
+      // Appliquer les bordures si elles sont définies
+      ...(element.borderWidth && element.borderWidth > 0 ? {
+        border: `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#e5e7eb'}`
+      } : {})
     };
   };
 
