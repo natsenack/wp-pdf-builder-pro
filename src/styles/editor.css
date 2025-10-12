@@ -884,7 +884,7 @@
   pointer-events: auto;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   transition: var(--selection-animation, all 0.15s ease);
-  z-index: 10;
+  z-index: 1000;
   display: var(--show-resize-handles, block);
 }
 
