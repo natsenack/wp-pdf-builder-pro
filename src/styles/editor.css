@@ -390,6 +390,13 @@
   justify-content: flex-end;
 }
 
+.canvas-controls-column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
 .control-group {
   display: flex;
   flex-direction: column;

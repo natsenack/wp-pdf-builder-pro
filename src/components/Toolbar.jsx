@@ -97,26 +97,28 @@ export const Toolbar = ({
             </div>
           </div>
 
-          <div className="control-group">
-            <label>
-              <input
-                type="checkbox"
-                checked={showGrid}
-                onChange={(e) => onShowGridChange(e.target.checked)}
-              />
-              Grille
-            </label>
-          </div>
+          <div className="canvas-controls-column">
+            <div className="control-group">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={showGrid}
+                  onChange={(e) => onShowGridChange(e.target.checked)}
+                />
+                Grille
+              </label>
+            </div>
 
-          <div className="control-group">
-            <label>
-              <input
-                type="checkbox"
-                checked={snapToGrid}
-                onChange={(e) => onSnapToGridChange(e.target.checked)}
-              />
-              Aimantation
-            </label>
+            <div className="control-group">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={snapToGrid}
+                  onChange={(e) => onSnapToGridChange(e.target.checked)}
+                />
+                Aimantation
+              </label>
+            </div>
           </div>
         </div>
       </div>
