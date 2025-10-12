@@ -43,25 +43,14 @@ class PDFBuilderPro {
 
     // Créer l'éditeur React
     const editorElement = React.createElement(PDFCanvasEditor, {
-      options: defaultOptions,
-      onSave: (data) => this.handleSave(data),
-      onPreview: (data) => this.handlePreview(data)
+      options: defaultOptions
     });
 
     ReactDOM.render(editorElement, container);
     this.editors.set(containerId, { container, options: defaultOptions });
   }
 
-  // Gérer la sauvegarde
-  handleSave(data) {
-    // Ici on pourrait envoyer les données au serveur
-  }
-
-  // Gérer l'aperçu
-  handlePreview(data) {
-    // L'aperçu est maintenant géré par la modale dans le composant React
-    // Cette fonction peut être utilisée pour d'autres fonctionnalités si nécessaire
-  }  // Détruire un éditeur
+  // Détruire un éditeur
   destroy(containerId) {
     const editor = this.editors.get(containerId);
     if (editor) {

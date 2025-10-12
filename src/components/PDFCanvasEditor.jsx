@@ -13,7 +13,7 @@ const WooCommerceElement = React.lazy(() => import('./WooCommerceElements'));
 const ElementLibrary = React.lazy(() => import('./ElementLibrary'));
 const PropertiesPanel = React.lazy(() => import('./PropertiesPanel'));
 
-export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
+export const PDFCanvasEditor = ({ options }) => {
   const [tool, setTool] = useState('select');
   const [showGrid, setShowGrid] = useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
@@ -55,10 +55,7 @@ export const PDFCanvasEditor = ({ options, onSave, onPreview }) => {
     initialElements: options.initialElements || [],
     templateId: options.templateId || null,
     canvasWidth: options.width || 595,
-    canvasHeight: options.height || 842,
-    onSave,
-    onPreview,
-    globalSettings: globalSettings.settings
+    canvasHeight: options.height || 842
   });
 
   const editorRef = useRef(null);
