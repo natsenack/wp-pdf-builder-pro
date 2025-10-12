@@ -100,79 +100,84 @@ export const PDFCanvasEditor = ({ options }) => {
 
   // Gestionnaire pour la désélection et création d'éléments
   const handleCanvasClick = useCallback((e) => {
-    if (e.target === e.currentTarget) {
-      // Si un outil d'ajout est sélectionné, créer l'élément
-      if (tool.startsWith('add-')) {
-        const canvasRect = e.currentTarget.getBoundingClientRect();
-        const clickX = e.clientX - canvasRect.left;
-        const clickY = e.clientY - canvasRect.top;
+    // Vérifier si le clic vient de la zone vide du canvas (pas d'un élément)
+    const clickedElement = e.target.closest('[data-element-id]');
+    if (clickedElement) {
+      // Si on clique sur un élément, ne rien faire ici (laissé à CanvasElement)
+      return;
+    }
 
-        // Ajuster pour le zoom
-        const adjustedX = clickX / canvasState.zoom.zoom;
-        const adjustedY = clickY / canvasState.zoom.zoom;
+    // Si un outil d'ajout est sélectionné, créer l'élément
+    if (tool.startsWith('add-')) {
+      const canvasRect = e.currentTarget.getBoundingClientRect();
+      const clickX = e.clientX - canvasRect.left;
+      const clickY = e.clientY - canvasRect.top;
 
-        let elementType = 'text';
-        let defaultProps = {};
+      // Ajuster pour le zoom
+      const adjustedX = clickX / canvasState.zoom.zoom;
+      const adjustedY = clickY / canvasState.zoom.zoom;
 
-        // Déterminer le type d'élément selon l'outil
-        switch (tool) {
-          case 'add-text':
-            elementType = 'text';
-            break;
-          case 'add-text-title':
-            elementType = 'text';
-            defaultProps = { fontSize: 24, fontWeight: 'bold' };
-            break;
-          case 'add-text-subtitle':
-            elementType = 'text';
-            defaultProps = { fontSize: 18, fontWeight: 'bold' };
-            break;
-          case 'add-rectangle':
-            elementType = 'rectangle';
-            break;
-          case 'add-circle':
-            elementType = 'shape-circle';
-            break;
-          case 'add-line':
-            elementType = 'line';
-            break;
-          case 'add-arrow':
-            elementType = 'shape-arrow';
-            break;
-          case 'add-triangle':
-            elementType = 'shape-triangle';
-            break;
-          case 'add-star':
-            elementType = 'shape-star';
-            break;
-          case 'add-divider':
-            elementType = 'divider';
-            break;
-          case 'add-image':
-            elementType = 'image';
-            break;
-          default:
-            // Pour les autres outils de la bibliothèque
-            if (tool.startsWith('add-')) {
-              elementType = tool.replace('add-', '');
-            }
-            break;
-        }
+      let elementType = 'text';
+      let defaultProps = {};
 
-        canvasState.addElement(elementType, {
-          x: Math.max(0, adjustedX - 50),
-          y: Math.max(0, adjustedY - 25),
-          ...defaultProps
-        });
-
-        // Remettre l'outil de sélection après ajout
-        setTool('select');
-        return;
+      // Déterminer le type d'élément selon l'outil
+      switch (tool) {
+        case 'add-text':
+          elementType = 'text';
+          break;
+        case 'add-text-title':
+          elementType = 'text';
+          defaultProps = { fontSize: 24, fontWeight: 'bold' };
+          break;
+        case 'add-text-subtitle':
+          elementType = 'text';
+          defaultProps = { fontSize: 18, fontWeight: 'bold' };
+          break;
+        case 'add-rectangle':
+          elementType = 'rectangle';
+          break;
+        case 'add-circle':
+          elementType = 'shape-circle';
+          break;
+        case 'add-line':
+          elementType = 'line';
+          break;
+        case 'add-arrow':
+          elementType = 'shape-arrow';
+          break;
+        case 'add-triangle':
+          elementType = 'shape-triangle';
+          break;
+        case 'add-star':
+          elementType = 'shape-star';
+          break;
+        case 'add-divider':
+          elementType = 'divider';
+          break;
+        case 'add-image':
+          elementType = 'image';
+          break;
+        default:
+          // Pour les autres outils de la bibliothèque
+          if (tool.startsWith('add-')) {
+            elementType = tool.replace('add-', '');
+          }
+          break;
       }
 
-      // Sinon, désélectionner
-      canvasState.selection.clearSelection();
+      canvasState.addElement(elementType, {
+        x: Math.max(0, adjustedX - 50),
+        y: Math.max(0, adjustedY - 25),
+        ...defaultProps
+      });
+
+      // Remettre l'outil de sélection après ajout
+      setTool('select');
+      return;
     }
+
+    // Sinon, désélectionner
+    canvasState.selection.clearSelection();
   }, [canvasState, tool]);
 
   // Gestionnaire pour les changements de propriétés
@@ -405,7 +410,6 @@ export const PDFCanvasEditor = ({ options }) => {
           {/* Canvas avec éléments interactifs */}
           <div
             className="canvas-container"
-            onClick={handleCanvasClick}
             onContextMenu={handleContextMenu}
             onDragOver={handleDragOver}
             onDrop={handleDrop}
@@ -418,8 +422,16 @@ export const PDFCanvasEditor = ({ options }) => {
                 transformOrigin: 'center'
               }}
             >
-              <div className="canvas" ref={canvasRef}>
-              <div className="canvas">
+              <div
+                className="canvas"
+                ref={canvasRef}
+                onClick={handleCanvasClick}
+                style={{
+                  width: canvasState.canvasWidth,
+                  height: canvasState.canvasHeight,
+                  position: 'relative'
+                }}
+              >
                 {/* Grille de fond */}
                 {showGrid && (
                   <div
@@ -483,7 +495,6 @@ export const PDFCanvasEditor = ({ options }) => {
                   ))}
               </div>
             </div>
-          </div>
           </div>
         </div>
 

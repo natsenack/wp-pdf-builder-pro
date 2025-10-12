@@ -158,6 +158,7 @@ export const CanvasElement = ({
       {/* Élément principal */}
       <div
         ref={elementRef}
+        data-element-id={element.id}
         className={`canvas-element ${isSelected ? 'selected' : ''}`}
         style={{
           position: 'absolute',
