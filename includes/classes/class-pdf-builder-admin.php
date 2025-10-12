@@ -746,7 +746,9 @@ class PDF_Builder_Admin {
 
         // Configuration de toastr
         wp_add_inline_script('toastr', '
+            console.log("📋 PDF Builder - Initialisation Toastr...");
             if (typeof toastr !== "undefined") {
+                console.log("✅ PDF Builder - Toastr chargé, configuration...");
                 toastr.options = {
                     "closeButton": true,
                     "debug": false,
@@ -764,6 +766,16 @@ class PDF_Builder_Admin {
                     "showMethod": "fadeIn",
                     "hideMethod": "fadeOut"
                 };
+                console.log("✅ PDF Builder - Toastr configuré");
+                // Test immédiat
+                setTimeout(function() {
+                    console.log("🧪 PDF Builder - Test Toastr:", typeof toastr);
+                    if (typeof toastr !== "undefined") {
+                        toastr.info("Toastr est prêt !");
+                    }
+                }, 100);
+            } else {
+                console.error("❌ PDF Builder - Toastr non chargé");
             }
         ');
 
