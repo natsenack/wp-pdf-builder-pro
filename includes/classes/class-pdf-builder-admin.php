@@ -244,36 +244,43 @@ class PDF_Builder_Admin {
                         <div class="step">
                             <span class="step-number">1</span>
                             <div class="step-content">
-                                <h4>Smart Element Selector</h4>
-                                <p>Cliquez sur n'importe quel élément du canvas pour le sélectionner. Utilisez Ctrl+clic pour sélectionner plusieurs éléments simultanément.</p>
+                                <h4>Éditeur Visuel Drag & Drop</h4>
+                                <p>Interface intuitive avec canvas A4, guides d'alignement et sidebar d'outils organisée. Édition en temps réel des éléments.</p>
                             </div>
                         </div>
                         <div class="step">
                             <span class="step-number">2</span>
                             <div class="step-content">
-                                <h4>Border-Based Resizer</h4>
-                                <p>Survolez les bords d'un élément sélectionné pour voir les zones de redimensionnement. Cliquez et glissez pour ajuster la taille.</p>
+                                <h4>Intégration WooCommerce Complète</h4>
+                                <p>Détection automatique des commandes, mapping statuts→templates, support HPOS. Boutons PDF dans les commandes WooCommerce.</p>
                             </div>
                         </div>
                         <div class="step">
                             <span class="step-number">3</span>
                             <div class="step-content">
-                                <h4>Canvas Element Manager</h4>
-                                <p>Gérez vos éléments avec les boutons d'action : déplacer, dupliquer, supprimer. Utilisez le panneau latéral pour modifier les propriétés.</p>
+                                <h4>Système de Templates Avancé</h4>
+                                <p>Création de templates personnalisés (factures, devis, reçus). Bibliothèque de templates prédéfinis et gestion par type.</p>
                             </div>
                         </div>
                         <div class="step">
                             <span class="step-number">4</span>
                             <div class="step-content">
-                                <h4>Template System</h4>
-                                <p>Créez et sauvegardez vos modèles personnalisés. Importez des templates pré-configurés depuis la bibliothèque.</p>
+                                <h4>Éléments Prédéfinis (35+)</h4>
+                                <p>Texte, images, tableaux, codes-barres, formes géométriques. Variables WooCommerce dynamiques intégrées.</p>
                             </div>
                         </div>
                         <div class="step">
                             <span class="step-number">5</span>
                             <div class="step-content">
-                                <h4>PDF Export Engine</h4>
-                                <p>Générez votre PDF final avec toutes vos personnalisations. Choisissez la qualité et le format d'export.</p>
+                                <h4>Génération PDF Temps Réel</h4>
+                                <p>Aperçu PDF intégré, export haute qualité, personnalisation des paramètres d'impression et de format.</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-number">6</span>
+                            <div class="step-content">
+                                <h4>API REST & Extensibilité</h4>
+                                <p>Hooks WordPress, filtres personnalisés, actions AJAX. Architecture modulaire pour extensions futures.</p>
                             </div>
                         </div>
                     </div>
@@ -287,6 +294,73 @@ class PDF_Builder_Admin {
                             <li><kbd>Ctrl+C</kbd> / <kbd>Ctrl+V</kbd> - Copier/Coller des éléments</li>
                             <li><kbd>Suppr</kbd> - Supprimer l'élément sélectionné</li>
                         </ul>
+                    </div>
+                </div>
+
+                <!-- Fonctions du Plugin -->
+                <div class="plugin-functions">
+                    <h3>⚡ Fonctions du Plugin</h3>
+                    <div class="functions-grid">
+                        <div class="function-item">
+                            <div class="function-icon">🎨</div>
+                            <h4>Éditeur Visuel Drag & Drop</h4>
+                            <p>Interface intuitive avec canvas A4, guides d'alignement et sidebar d'outils organisée</p>
+                        </div>
+                        <div class="function-item">
+                            <div class="function-icon">🛒</div>
+                            <h4>Intégration WooCommerce</h4>
+                            <p>Détection automatique des commandes, mapping statuts→templates, support HPOS</p>
+                        </div>
+                        <div class="function-item">
+                            <div class="function-icon">📄</div>
+                            <h4>Système de Templates</h4>
+                            <p>Création de templates personnalisés (factures, devis, reçus) avec bibliothèque prédéfinie</p>
+                        </div>
+                        <div class="function-item">
+                            <div class="function-icon">🔧</div>
+                            <h4>Éléments Prédéfinis (35+)</h4>
+                            <p>Texte, images, tableaux, codes-barres, formes géométriques et variables dynamiques</p>
+                        </div>
+                        <div class="function-item">
+                            <div class="function-icon">⚡</div>
+                            <h4>Génération PDF Temps Réel</h4>
+                            <p>Aperçu PDF intégré, export haute qualité avec personnalisation des paramètres</p>
+                        </div>
+                        <div class="function-item">
+                            <div class="function-icon">🔌</div>
+                            <h4>API REST & Extensibilité</h4>
+                            <p>Hooks WordPress, filtres personnalisés, actions AJAX et architecture modulaire</p>
+                        </div>
+                        <div class="function-item">
+                            <div class="function-icon">🎯</div>
+                            <h4>Smart Element Selector</h4>
+                            <p>Sélection intelligente d'éléments avec gestion des sélections multiples</p>
+                        </div>
+                        <div class="function-item">
+                            <div class="function-icon">↔️</div>
+                            <h4>Border-Based Resizer</h4>
+                            <p>Redimensionnement intuitif utilisant les bordures de sélection</p>
+                        </div>
+                        <div class="function-item">
+                            <div class="function-icon">🖱️</div>
+                            <h4>Interactive Cursor Manager</h4>
+                            <p>Gestion intelligente des curseurs selon le contexte d'utilisation</p>
+                        </div>
+                        <div class="function-item">
+                            <div class="function-icon">⚛️</div>
+                            <h4>Reactive Canvas Editor</h4>
+                            <p>Éditeur principal avec gestion d'état réactive et synchronisation temps réel</p>
+                        </div>
+                        <div class="function-item">
+                            <div class="function-icon">🎨</div>
+                            <h4>Conditional Style System</h4>
+                            <p>Application automatique des styles selon le type d'élément et adaptation au zoom</p>
+                        </div>
+                        <div class="function-item">
+                            <div class="function-icon">🌐</div>
+                            <h4>Multi-language Support</h4>
+                            <p>Support complet des langues avec fichiers de traduction .po/.mo</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -456,6 +530,60 @@ class PDF_Builder_Admin {
                     line-height: 1;
                     padding: 2px 4px;
                     margin: 0 2px;
+                }
+
+                .plugin-functions {
+                    background: #fff;
+                    border: 1px solid #e1e1e1;
+                    border-radius: 8px;
+                    padding: 25px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                    margin-top: 30px;
+                }
+
+                .plugin-functions h3 {
+                    margin: 0 0 20px 0;
+                    color: #1d2327;
+                    font-size: 20px;
+                }
+
+                .functions-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                    gap: 20px;
+                }
+
+                .function-item {
+                    background: #f8f9fa;
+                    border: 1px solid #e9ecef;
+                    border-radius: 6px;
+                    padding: 20px;
+                    transition: all 0.3s ease;
+                }
+
+                .function-item:hover {
+                    background: #fff;
+                    border-color: #2271b1;
+                    box-shadow: 0 4px 8px rgba(34, 113, 177, 0.1);
+                    transform: translateY(-2px);
+                }
+
+                .function-icon {
+                    font-size: 24px;
+                    margin-bottom: 10px;
+                }
+
+                .function-item h4 {
+                    margin: 0 0 8px 0;
+                    color: #1d2327;
+                    font-size: 16px;
+                }
+
+                .function-item p {
+                    margin: 0;
+                    color: #666;
+                    font-size: 14px;
+                    line-height: 1.4;
                 }
             </style>
         </div>
