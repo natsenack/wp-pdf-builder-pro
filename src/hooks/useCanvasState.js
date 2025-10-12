@@ -653,8 +653,28 @@ export const useCanvasState = ({
                               window.pdfBuilderData.templateId !== 0;
 
     try {
+      // Si onSave est défini, l'utiliser, sinon faire la sauvegarde directement
       if (onSave) {
         await onSave(templateData);
+      } else {
+        // Sauvegarde directe via AJAX
+        const formData = new FormData();
+        formData.append('action', 'pdf_builder_pro_save_template');
+        formData.append('template_data', JSON.stringify(templateData));
+        formData.append('template_name', window.pdfBuilderData?.templateName || `Template ${window.pdfBuilderData?.templateId || 'New'}`);
+        formData.append('template_id', window.pdfBuilderData?.templateId || '0');
+        formData.append('nonce', window.pdfBuilderData?.nonce || '');
+
+        const response = await fetch(window.pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
+          method: 'POST',
+          body: formData
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+          throw new Error(result.data?.message || 'Erreur lors de la sauvegarde');
+        }
       }
 
       // Notification de succès pour les templates existants
