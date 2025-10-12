@@ -138,6 +138,15 @@ if (!$is_new && $template_id > 0) {
             const initApp = () => {
                 if (checkScriptsLoaded()) {
                     try {
+                        // Définir les données globales pour le JavaScript
+                        window.pdfBuilderData = {
+                            templateId: <?php echo $template_id ?: 'null'; ?>,
+                            templateName: <?php echo $template_name ? json_encode($template_name) : 'null'; ?>,
+                            isNew: <?php echo $is_new ? 'true' : 'false'; ?>,
+                            ajaxurl: ajaxurl,
+                            nonce: window.pdfBuilderAjax?.nonce || ''
+                        };
+
                         window.PDFBuilderPro.init('invoice-quote-builder-container', {
                             templateId: <?php echo $template_id ?: 'null'; ?>,
                             templateName: <?php echo $template_name ? json_encode($template_name) : 'null'; ?>,
