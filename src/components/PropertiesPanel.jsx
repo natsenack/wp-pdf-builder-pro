@@ -365,7 +365,7 @@ const PropertiesPanel = React.memo(({
       : null;
   }, [selectedElements, elements]);
 
-  // Mettre à jour les valeurs précédentes quand l'élément change
+  // Mettre à jour les valeurs précédentes et l'état des toggles quand l'élément change
   useEffect(() => {
     if (selectedElement) {
       // Initialiser les valeurs précédentes avec les valeurs actuelles de l'élément
@@ -374,18 +374,12 @@ const PropertiesPanel = React.memo(({
       const initialBorderWidth = selectedElement.borderWidth && selectedElement.borderWidth > 0 ? selectedElement.borderWidth : 1;
       setPreviousBorderWidth(initialBorderWidth);
       setPreviousBorderColor(selectedElement.borderColor || '#000000');
+
+      // Initialiser l'état des toggles basé sur les propriétés actuelles
+      setIsBackgroundEnabled(!!selectedElement.backgroundColor && selectedElement.backgroundColor !== 'transparent');
+      setIsBorderEnabled(!!selectedElement.borderWidth && selectedElement.borderWidth > 0);
     }
-  }, [selectedElement]); // Ne dépendre que de selectedElement pour éviter les boucles
-
-  // Synchroniser l'état du toggle fond
-  useEffect(() => {
-    setIsBackgroundEnabled(!!localProperties.backgroundColor && localProperties.backgroundColor !== 'transparent');
-  }, [localProperties.backgroundColor]);
-
-  // Synchroniser l'état du toggle bordures
-  useEffect(() => {
-    setIsBorderEnabled(!!localProperties.border && (localProperties.borderWidth || 0) > 0);
-  }, [localProperties.border, localProperties.borderWidth]);
+  }, [selectedElement?.id]); // Ne dépendre que de l'ID de l'élément sélectionné
 
   // Gestionnaire unifié de changement de propriété
   const handlePropertyChange = useCallback((elementId, property, value) => {
