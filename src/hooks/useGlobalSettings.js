@@ -24,7 +24,7 @@ export const useGlobalSettings = () => {
 
     // Paramètres par défaut des éléments
     defaultTextColor: '#000000',
-    defaultBackgroundColor: '#ffffff',
+    defaultBackgroundColor: 'transparent',
     defaultFontSize: 14
   });
 
