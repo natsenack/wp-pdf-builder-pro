@@ -208,7 +208,7 @@ export const CanvasElement = ({
       <div
         ref={elementRef}
         data-element-id={element.id}
-        className={`canvas-element ${isSelected ? 'selected' : ''}`}
+        className={`canvas-element${isSelected ? ' selected' : ''}`}
         style={{
           position: 'absolute',
           left: element.x * zoom,
@@ -221,17 +221,15 @@ export const CanvasElement = ({
           // Pour les éléments spéciaux, utiliser une gestion différente des bordures
           ...(isSpecialElement(element.type) ? getSpecialElementBorderStyle(element) : {
             // Styles de base communs à tous les éléments non-spéciaux
-            backgroundColor: element.backgroundOpacity && element.backgroundColor && element.backgroundColor !== 'transparent' ? 
-              element.backgroundColor + Math.round(element.backgroundOpacity * 255).toString(16).padStart(2, '0') : 
-              (element.backgroundColor || 'transparent'),
+            backgroundColor: element.backgroundColor || 'transparent',
             border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || 'transparent'}` : 'none',
           }),
           borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0px',
           opacity: (element.opacity || 100) / 100,
           transform: `rotate(${element.rotation || 0}deg) scale(${element.scale || 100}%)`,
           filter: `brightness(${element.brightness || 100}%) contrast(${element.contrast || 100}%) saturate(${element.saturate || 100}%)`,
-          boxShadow: element.boxShadowColor ? 
-            `0px ${element.boxShadowSpread || 0}px ${element.boxShadowBlur || 0}px ${element.boxShadowColor}` : 
+          boxShadow: element.boxShadowColor ?
+            `0px ${element.boxShadowSpread || 0}px ${element.boxShadowBlur || 0}px ${element.boxShadowColor}` :
             (element.shadow ? `${element.shadowOffsetX || 2}px ${element.shadowOffsetY || 2}px 4px ${element.shadowColor || '#000000'}40` : 'none'),
 
           // Styles spécifiques selon le type d'élément (mais utilisant les propriétés génériques)
@@ -246,7 +244,7 @@ export const CanvasElement = ({
             lineHeight: element.lineHeight || 'normal',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: element.textAlign === 'center' ? 'center' : 
+            justifyContent: element.textAlign === 'center' ? 'center' :
                            element.textAlign === 'right' ? 'flex-end' : 'flex-start',
             wordBreak: 'break-word',
             overflow: 'hidden'
@@ -305,7 +303,7 @@ export const CanvasElement = ({
             color: element.color || '#94a3b8'
           } : element.type === 'shape-rectangle' ? {
             backgroundColor: element.backgroundColor || '#e5e7eb',
-            borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0'
+            borderRadius: element.borderRadius ? `${element.borderRadius}px` : '0'
           } : element.type === 'shape-circle' ? {
             backgroundColor: element.backgroundColor || '#e5e7eb',
             borderRadius: '50%'
@@ -477,9 +475,18 @@ export const CanvasElement = ({
             fontSize: 12 * zoom,
             color: element.color || '#333333'
           }),
+          backgroundColor: element.backgroundColor || 'transparent',
+          border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || 'transparent'}` : 'none',
+          borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0px',
+          opacity: (element.opacity || 100) / 100,
+          transform: `rotate(${element.rotation || 0}deg) scale(${element.scale || 100}%)`,
+          filter: `brightness(${element.brightness || 100}%) contrast(${element.contrast || 100}%) saturate(${element.saturate || 100}%)`,
+          boxShadow: element.boxShadowColor ?
+            `0px ${element.boxShadowSpread || 0}px ${element.boxShadowBlur || 0}px ${element.boxShadowColor}` :
+            (element.shadow ? `${element.shadowOffsetX || 2}px ${element.shadowOffsetY || 2}px 4px ${element.shadowColor || '#000000'}40` : 'none'),
           zIndex: isSelected ? 1000 : 1,
           minWidth: '10px',
-          minHeight: '10px'
+          minHeight: '10px',
         }}
         onMouseDown={handleMouseDown}
         onDoubleClick={handleDoubleClick}
