@@ -19,6 +19,14 @@ function pdf_builder_load_core() {
     static $loaded = false;
     if ($loaded) return;
 
+    // IMPORTANT: Charger les utilitaires essentiels en premier
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'includes/utilities/PDF_Builder_Debug_Helper.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'includes/utilities/PDF_Builder_Debug_Helper.php';
+    }
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'includes/utilities/PDF_Builder_Logger.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'includes/utilities/PDF_Builder_Logger.php';
+    }
+
     // IMPORTANT: Ne charger QUE la nouvelle classe pour éviter les conflits
     // L'ancienne classe PDF_Builder_Admin_Old est complètement désactivée
 
@@ -37,12 +45,6 @@ function pdf_builder_load_core() {
     // Charger les managers essentiels en premier pour éviter les dépendances circulaires
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'includes/managers/PDF_Builder_Cache_Manager.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'includes/managers/PDF_Builder_Cache_Manager.php';
-    }
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'includes/utilities/PDF_Builder_Logger.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'includes/utilities/PDF_Builder_Logger.php';
-    }
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'includes/utilities/PDF_Builder_Debug_Helper.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'includes/utilities/PDF_Builder_Debug_Helper.php';
     }
 
     // Charger les managers canvas
