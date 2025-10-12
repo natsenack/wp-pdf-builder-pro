@@ -874,179 +874,86 @@
   cursor: not-allowed;
 }
 
+/* Poignées de redimensionnement */
 .resize-handle {
   position: absolute;
-  width: var(--resize-handle-size, 16px);
-  height: var(--resize-handle-size, 16px);
-  background: var(--resize-handle-color, var(--primary-color));
-  border: 2px solid var(--resize-handle-border-color, white);
+  width: 12px;
+  height: 12px;
+  background: var(--primary-color);
+  border: 2px solid white;
   border-radius: 50%;
   pointer-events: auto;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  transition: var(--selection-animation, all 0.15s ease);
-  z-index: 1000;
-  display: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.15s ease;
+  z-index: 10000;
+  cursor: inherit;
 }
 
 .resize-handle:hover {
-  transform: scale(1.3);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  transform: scale(1.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-.resize-handle.nw {
-  top: calc(var(--resize-handle-offset, -8px) - var(--element-border-width, 0px));
-  left: calc(var(--resize-handle-offset, -8px) - var(--element-border-width, 0px));
+.resize-handle-n {
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: n-resize;
+}
+
+.resize-handle-s {
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: s-resize;
+}
+
+.resize-handle-w {
+  top: 50%;
+  left: -6px;
+  transform: translateY(-50%);
+  cursor: w-resize;
+}
+
+.resize-handle-e {
+  top: 50%;
+  right: -6px;
+  transform: translateY(-50%);
+  cursor: e-resize;
+}
+
+.resize-handle-nw {
+  top: -6px;
+  left: -6px;
   cursor: nw-resize;
 }
 
-.resize-handle.ne {
-  top: calc(var(--resize-handle-offset, -8px) - var(--element-border-width, 0px));
-  right: calc(var(--resize-handle-offset, -8px) - var(--element-border-width, 0px));
+.resize-handle-ne {
+  top: -6px;
+  right: -6px;
   cursor: ne-resize;
 }
 
-.resize-handle.sw {
-  bottom: calc(var(--resize-handle-offset, -8px) - var(--element-border-width, 0px));
-  left: calc(var(--resize-handle-offset, -8px) - var(--element-border-width, 0px));
+.resize-handle-sw {
+  bottom: -6px;
+  left: -6px;
   cursor: sw-resize;
 }
 
-.resize-handle.se {
-  bottom: calc(var(--resize-handle-offset, -8px) - var(--element-border-width, 0px));
-  right: calc(var(--resize-handle-offset, -8px) - var(--element-border-width, 0px));
+.resize-handle-se {
+  bottom: -6px;
+  right: -6px;
   cursor: se-resize;
 }
 
-.resize-handle.n {
-  top: calc(var(--resize-handle-offset, -8px) - var(--element-border-width, 0px));
-  left: 50%;
-  transform: translateX(-50%);
-  cursor: n-resize;
-}
-
-.resize-handle.s {
-  bottom: calc(var(--resize-handle-offset, -8px) - var(--element-border-width, 0px));
-  left: 50%;
-  transform: translateX(-50%);
-  cursor: s-resize;
-}
-
-.resize-handle.w {
-  top: 50%;
-  left: calc(var(--resize-handle-offset, -8px) - var(--element-border-width, 0px));
-  transform: translateY(-50%);
-  cursor: w-resize;
-}
-
-.resize-handle.e {
-  top: 50%;
-  right: calc(var(--resize-handle-offset, -8px) - var(--element-border-width, 0px));
-  transform: translateY(-50%);
-  cursor: e-resize;
-}
-
-/* Assurer une surface cliquable minimale même avec background transparent */
+/* Sélection d'éléments */
 .canvas-element.selected {
-  outline: var(--selection-border-width, 2px) solid var(--selection-border-color, var(--primary-color));
-  outline-offset: var(--selection-border-spacing, 2px);
-  box-shadow: 0 0 0 1px white, 0 0 0 calc(var(--selection-border-width, 2px) * 2 + var(--selection-border-spacing, 2px)) rgba(37, 99, 235, var(--selection-shadow-opacity, 0.1));
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 1px white, 0 0 0 4px rgba(37, 99, 235, 0.1);
   border-radius: 4px;
   position: relative;
-  --element-border-width: var(--selection-border-width, 2px);
-  /* Assurer une surface cliquable minimale même avec background transparent */
-  min-height: 20px;
-  min-width: 20px;
-}
-
-/* Style spécial pour les éléments avec background transparent sélectionnés */
-.canvas-element.selected.transparent-bg .resize-zone-n,
-.canvas-element.selected.transparent-bg .resize-zone-s,
-.canvas-element.selected.transparent-bg .resize-zone-w,
-.canvas-element.selected.transparent-bg .resize-zone-e {
-  /* Assurer que les zones de redimensionnement sont toujours cliquables */
-  pointer-events: auto !important;
-  /* Ajouter une surface cliquable minimale invisible */
-  background-color: rgba(255, 255, 255, 0.001);
-}
-
-/* Zones de redimensionnement sur les bords de l'élément sélectionné */
-.resize-zone-n,
-.resize-zone-s,
-.resize-zone-w,
-.resize-zone-e {
-  position: absolute;
-  pointer-events: auto;
-  z-index: 10000;
-  background-color: transparent;
-  opacity: 1;
-  transition: background-color 0.2s ease;
-  /* Assurer que les zones sont toujours cliquables même avec background transparent */
-  cursor: inherit;
-  /* Ajouter une surface cliquable invisible pour garantir l'interaction */
-  content: '';
-  display: block;
-}
-
-.resize-zone-n:hover,
-.resize-zone-s:hover,
-.resize-zone-w:hover,
-.resize-zone-e:hover {
-  background-color: rgba(37, 99, 235, 0.2);
-}
-
-.resize-zone-n {
-  top: -4px;
-  left: 4px;
-  right: 4px;
-  height: 8px;
-  cursor: n-resize;
-  background-color: rgba(37, 99, 235, 0.9);
-}
-
-.resize-zone-s {
-  bottom: -4px;
-  left: 4px;
-  right: 4px;
-  height: 8px;
-  cursor: s-resize;
-  background-color: rgba(37, 99, 235, 0.9);
-}
-
-.resize-zone-w {
-  top: 4px;
-  left: -4px;
-  bottom: 4px;
-  width: 8px;
-  cursor: w-resize;
-  background-color: rgba(37, 99, 235, 0.9);
-}
-
-.resize-zone-e {
-  top: 4px;
-  right: -4px;
-  bottom: 4px;
-  width: 8px;
-  cursor: e-resize;
-  background-color: rgba(37, 99, 235, 0.9);
-}
-
-/* Zones de redimensionnement sur les bords */
-.canvas-element.selected::before,
-.canvas-element.selected::after {
-  content: '';
-  position: absolute;
-  pointer-events: auto;
-  z-index: 5;
-}
-
-.canvas-element.selected::before {
-  top: calc(-8px - var(--element-border-width, 0px));
-  left: calc(-8px - var(--element-border-width, 0px));
-  right: calc(-8px - var(--element-border-width, 0px));
-  bottom: calc(-8px - var(--element-border-width, 0px));
-  border: 8px solid transparent;
-  /* Bordure diagonale supprimée - redondante avec les poignées de redimensionnement */
-  cursor: move;
+  z-index: 10;
 }
 
 

@@ -1,158 +1,182 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 
+/**
+ * Hook pour gérer le redimensionnement d'éléments
+ * @param {Object} options - Options du hook
+ * @param {Function} options.onResize - Callback appelé pendant le redimensionnement
+ * @param {Function} options.onResizeEnd - Callback appelé à la fin du redimensionnement
+ * @param {boolean} options.snapToGrid - Si l'accrochage à la grille est activé
+ * @param {number} options.gridSize - Taille de la grille
+ * @param {number} options.minWidth - Largeur minimale
+ * @param {number} options.minHeight - Hauteur minimale
+ * @param {Object} options.canvasRef - Référence au canvas
+ * @returns {Object} - État et méthodes de redimensionnement
+ */
 export const useResize = ({
-  onElementResize,
+  onResize,
+  onResizeEnd,
   snapToGrid = true,
   gridSize = 10,
   minWidth = 20,
   minHeight = 20,
-  zoom = 1,
-  canvasRef = null,
-  canvasWidth = 595,
-  canvasHeight = 842
-}) => {
+  canvasRef = null
+} = {}) => {
   const [isResizing, setIsResizing] = useState(false);
-  const [resizeHandle, setResizeHandle] = useState(null);
-  const resizeStartPos = useRef({ x: 0, y: 0 });
-  const originalRect = useRef({ x: 0, y: 0, width: 0, height: 0 });
+  const [activeHandle, setActiveHandle] = useState(null);
+  const resizeDataRef = useRef({
+    startPos: { x: 0, y: 0 },
+    originalRect: { x: 0, y: 0, width: 0, height: 0 },
+    zoom: 1
+  });
 
+  // Fonction d'accrochage à la grille
   const snapToGridValue = useCallback((value) => {
     if (!snapToGrid) return value;
     return Math.round(value / gridSize) * gridSize;
   }, [snapToGrid, gridSize]);
 
-  const handleResizeStart = useCallback((e, handle, elementRect, zoomLevel = 1) => {
-    console.log('🔧 handleResizeStart called:', {
-      handle,
-      elementRect,
-      zoomLevel,
-      eventType: e.type,
-      clientX: e.clientX,
-      clientY: e.clientY,
-      canvasRef: !!canvasRef?.current
-    });
-    e.preventDefault();
-    e.stopPropagation();
+  // Calculer le rectangle après redimensionnement
+  const calculateNewRect = useCallback((handle, deltaX, deltaY, originalRect) => {
+    let newRect = { ...originalRect };
+
+    switch (handle) {
+      case 'nw':
+        newRect.x = snapToGridValue(originalRect.x + deltaX);
+        newRect.y = snapToGridValue(originalRect.y + deltaY);
+        newRect.width = Math.max(minWidth, snapToGridValue(originalRect.width - deltaX));
+        newRect.height = Math.max(minHeight, snapToGridValue(originalRect.height - deltaY));
+        break;
+
+      case 'ne':
+        newRect.y = snapToGridValue(originalRect.y + deltaY);
+        newRect.width = Math.max(minWidth, snapToGridValue(originalRect.width + deltaX));
+        newRect.height = Math.max(minHeight, snapToGridValue(originalRect.height - deltaY));
+        break;
+
+      case 'sw':
+        newRect.x = snapToGridValue(originalRect.x + deltaX);
+        newRect.width = Math.max(minWidth, snapToGridValue(originalRect.width - deltaX));
+        newRect.height = Math.max(minHeight, snapToGridValue(originalRect.height + deltaY));
+        break;
+
+      case 'se':
+        newRect.width = Math.max(minWidth, snapToGridValue(originalRect.width + deltaX));
+        newRect.height = Math.max(minHeight, snapToGridValue(originalRect.height + deltaY));
+        break;
+
+      case 'n':
+        newRect.y = snapToGridValue(originalRect.y + deltaY);
+        newRect.height = Math.max(minHeight, snapToGridValue(originalRect.height - deltaY));
+        break;
+
+      case 's':
+        newRect.height = Math.max(minHeight, snapToGridValue(originalRect.height + deltaY));
+        break;
+
+      case 'w':
+        newRect.x = snapToGridValue(originalRect.x + deltaX);
+        newRect.width = Math.max(minWidth, snapToGridValue(originalRect.width - deltaX));
+        break;
+
+      case 'e':
+        newRect.width = Math.max(minWidth, snapToGridValue(originalRect.width + deltaX));
+        break;
+
+      default:
+        break;
+    }
+
+    return newRect;
+  }, [snapToGridValue, minWidth, minHeight]);
+
+  // Démarrer le redimensionnement
+  const startResize = useCallback((event, handle, elementRect, zoom = 1) => {
+    event.preventDefault();
+    event.stopPropagation();
 
     setIsResizing(true);
-    setResizeHandle(handle);
+    setActiveHandle(handle);
 
-    // Obtenir le canvasRect depuis canvasRef si disponible
+    // Obtenir les coordonnées relatives au canvas
     const canvasRect = canvasRef?.current?.getBoundingClientRect() || { left: 0, top: 0 };
-    const currentZoom = zoomLevel || zoom || 1;
-    resizeStartPos.current = {
-      x: (e.clientX - canvasRect.left) / currentZoom,
-      y: (e.clientY - canvasRect.top) / currentZoom
+    resizeDataRef.current = {
+      startPos: {
+        x: (event.clientX - canvasRect.left) / zoom,
+        y: (event.clientY - canvasRect.top) / zoom
+      },
+      originalRect: { ...elementRect },
+      zoom
     };
-    originalRect.current = { ...elementRect };
 
+    // Ajouter les écouteurs d'événements globaux
     const handleMouseMove = (moveEvent) => {
-      console.log('🔄 handleMouseMove called:', {
-        clientX: moveEvent.clientX,
-        clientY: moveEvent.clientY,
-        deltaX: (moveEvent.clientX - canvasRect.left) / currentZoom - resizeStartPos.current.x,
-        deltaY: (moveEvent.clientY - canvasRect.top) / currentZoom - resizeStartPos.current.y,
-        handle,
-        isResizing
-      });
-      const mouseX = (moveEvent.clientX - canvasRect.left) / currentZoom;
-      const mouseY = (moveEvent.clientY - canvasRect.top) / currentZoom;
-      const deltaX = mouseX - resizeStartPos.current.x;
-      const deltaY = mouseY - resizeStartPos.current.y;
+      const canvasRect = canvasRef?.current?.getBoundingClientRect() || { left: 0, top: 0 };
+      const mouseX = (moveEvent.clientX - canvasRect.left) / resizeDataRef.current.zoom;
+      const mouseY = (moveEvent.clientY - canvasRect.top) / resizeDataRef.current.zoom;
 
-      let newRect = { ...originalRect.current };
+      const deltaX = mouseX - resizeDataRef.current.startPos.x;
+      const deltaY = mouseY - resizeDataRef.current.startPos.y;
 
-      switch (handle) {
-        case 'nw':
-          newRect.x = snapToGridValue(originalRect.current.x + deltaX);
-          newRect.y = snapToGridValue(originalRect.current.y + deltaY);
-          newRect.width = snapToGridValue(originalRect.current.width - deltaX);
-          newRect.height = snapToGridValue(originalRect.current.height - deltaY);
-          break;
+      const newRect = calculateNewRect(handle, deltaX, deltaY, resizeDataRef.current.originalRect);
 
-        case 'ne':
-          newRect.y = snapToGridValue(originalRect.current.y + deltaY);
-          newRect.width = snapToGridValue(originalRect.current.width + deltaX);
-          newRect.height = snapToGridValue(originalRect.current.height - deltaY);
-          break;
-
-        case 'sw':
-          newRect.x = snapToGridValue(originalRect.current.x + deltaX);
-          newRect.width = snapToGridValue(originalRect.current.width - deltaX);
-          newRect.height = snapToGridValue(originalRect.current.height + deltaY);
-          break;
-
-        case 'se':
-          newRect.width = snapToGridValue(originalRect.current.width + deltaX);
-          newRect.height = snapToGridValue(originalRect.current.height + deltaY);
-          break;
-
-        case 'n':
-          newRect.y = snapToGridValue(originalRect.current.y + deltaY);
-          newRect.height = snapToGridValue(originalRect.current.height - deltaY);
-          break;
-
-        case 's':
-          newRect.height = snapToGridValue(originalRect.current.height + deltaY);
-          break;
-
-        case 'w':
-          newRect.x = snapToGridValue(originalRect.current.x + deltaX);
-          newRect.width = snapToGridValue(originalRect.current.width - deltaX);
-          break;
-
-        case 'e':
-          newRect.width = snapToGridValue(originalRect.current.width + deltaX);
-          break;
-
-        default:
-          break;
-      }
-
-      // Appliquer les contraintes de taille minimale
-      if (newRect.width < minWidth) {
-        if (handle.includes('w')) {
-          newRect.x = originalRect.current.x + originalRect.current.width - minWidth;
-        }
-        newRect.width = minWidth;
-      }
-
-      if (newRect.height < minHeight) {
-        if (handle.includes('n')) {
-          newRect.y = originalRect.current.y + originalRect.current.height - minHeight;
-        }
-        newRect.height = minHeight;
-      }
-
-      // Appliquer les contraintes du canvas
-      const effectiveCanvasWidth = canvasWidth;
-      const effectiveCanvasHeight = canvasHeight;
-
-      newRect.x = Math.max(0, Math.min(effectiveCanvasWidth - newRect.width, newRect.x));
-      newRect.y = Math.max(0, Math.min(effectiveCanvasHeight - newRect.height, newRect.y));
-
-      if (onElementResize) {
-        onElementResize(newRect);
-      }
+      onResize?.(newRect);
     };
 
     const handleMouseUp = () => {
-      console.log('🛑 handleMouseUp called: resizing ended');
       setIsResizing(false);
-      setResizeHandle(null);
+      setActiveHandle(null);
 
+      // Calculer le rectangle final
+      const canvasRect = canvasRef?.current?.getBoundingClientRect() || { left: 0, top: 0 };
+      const mouseX = (event.clientX - canvasRect.left) / resizeDataRef.current.zoom;
+      const mouseY = (event.clientY - canvasRect.top) / resizeDataRef.current.zoom;
+
+      const deltaX = mouseX - resizeDataRef.current.startPos.x;
+      const deltaY = mouseY - resizeDataRef.current.startPos.y;
+
+      const finalRect = calculateNewRect(handle, deltaX, deltaY, resizeDataRef.current.originalRect);
+
+      onResizeEnd?.(finalRect);
+
+      // Nettoyer les écouteurs
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
 
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
-    console.log('🎧 Event listeners added for resize:', { handle, isResizing: true });
-  }, [snapToGridValue, minWidth, minHeight, onElementResize, zoom, canvasWidth, canvasHeight]);
+  }, [canvasRef, calculateNewRect, onResize, onResizeEnd]);
+
+  // Annuler le redimensionnement
+  const cancelResize = useCallback(() => {
+    setIsResizing(false);
+    setActiveHandle(null);
+  }, []);
+
+  // Effet pour gérer l'annulation avec Échap
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape' && isResizing) {
+        cancelResize();
+      }
+    };
+
+    if (isResizing) {
+      document.addEventListener('keydown', handleKeyDown);
+      return () => document.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [isResizing, cancelResize]);
 
   return {
+    // État
     isResizing,
-    resizeHandle,
-    handleResizeStart
+    activeHandle,
+
+    // Méthodes
+    startResize,
+    cancelResize,
+
+    // Utilitaires
+    calculateNewRect
   };
 };
