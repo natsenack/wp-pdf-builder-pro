@@ -381,6 +381,11 @@ const PropertiesPanel = React.memo(({
     }
   }, [selectedElement?.id]); // Ne dépendre que de l'ID de l'élément sélectionné
 
+  // Synchroniser l'état du toggle fond avec les propriétés locales
+  useEffect(() => {
+    setIsBackgroundEnabled(!!localProperties.backgroundColor && localProperties.backgroundColor !== 'transparent');
+  }, [localProperties.backgroundColor]);
+
   // Gestionnaire unifié de changement de propriété
   const handlePropertyChange = useCallback((elementId, property, value) => {
 
