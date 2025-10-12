@@ -976,7 +976,7 @@
 .resize-zone-e {
   position: absolute;
   pointer-events: auto;
-  z-index: 10;
+  z-index: 1000;
   background-color: transparent;
   opacity: 1;
   transition: background-color 0.2s ease;
@@ -1000,7 +1000,7 @@
   right: 4px;
   height: 8px;
   cursor: n-resize;
-  background-color: rgba(37, 99, 235, 0.1);
+  background-color: rgba(37, 99, 235, 0.8);
 }
 
 .resize-zone-s {
@@ -1009,7 +1009,7 @@
   right: 4px;
   height: 8px;
   cursor: s-resize;
-  background-color: rgba(37, 99, 235, 0.1);
+  background-color: rgba(37, 99, 235, 0.8);
 }
 
 .resize-zone-w {
@@ -1018,7 +1018,7 @@
   bottom: 4px;
   width: 8px;
   cursor: w-resize;
-  background-color: rgba(37, 99, 235, 0.1);
+  background-color: rgba(37, 99, 235, 0.8);
 }
 
 .resize-zone-e {
@@ -1027,7 +1027,7 @@
   bottom: 4px;
   width: 8px;
   cursor: e-resize;
-  background-color: rgba(37, 99, 235, 0.1);
+  background-color: rgba(37, 99, 235, 0.8);
 }
 
 /* Zones de redimensionnement sur les bords */
