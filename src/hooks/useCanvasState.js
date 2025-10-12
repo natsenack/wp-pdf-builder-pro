@@ -749,6 +749,16 @@ export const useCanvasState = ({
 
     setIsSaving(true);
 
+    // Déterminer si c'est un template existant
+    const isExistingTemplate = templateId && templateId !== '0' && templateId !== 0;
+
+    // Fonction pour vérifier la disponibilité de Toastr avec retry
+    const checkToastrAvailability = () => {
+      return Promise.resolve(true); // Toastr is now always available (real or fallback)
+    };
+
+    const toastrAvailable = await checkToastrAvailability();
+
     try {
       const templateData = {
         elements,
@@ -756,16 +766,6 @@ export const useCanvasState = ({
         canvasHeight,
         version: '1.0'
       };
-
-      // Déterminer si c'est un template existant
-      const isExistingTemplate = templateId && templateId !== '0' && templateId !== 0;
-
-      // Fonction pour vérifier la disponibilité de Toastr avec retry
-      const checkToastrAvailability = () => {
-        return Promise.resolve(true); // Toastr is now always available (real or fallback)
-      };
-
-      const toastrAvailable = await checkToastrAvailability();
 
       console.log('🔍 PDF Builder - Détection template existant:', {
         templateId,
@@ -779,7 +779,14 @@ export const useCanvasState = ({
       formData.append('template_data', JSON.stringify(templateData));
       formData.append('template_name', window.pdfBuilderData?.templateName || `Template ${window.pdfBuilderData?.templateId || 'New'}`);
       formData.append('template_id', window.pdfBuilderData?.templateId || '0');
-      formData.append('nonce', window.pdfBuilderData?.nonce || '');
+      formData.append('nonce', window.pdfBuilderAjax?.nonce || window.pdfBuilderData?.nonce || '');
+
+      console.log('📤 PDF Builder - Envoi sauvegarde AJAX:', {
+        action: 'pdf_builder_pro_save_template',
+        template_name: window.pdfBuilderData?.templateName,
+        template_id: window.pdfBuilderData?.templateId,
+        nonce: window.pdfBuilderAjax?.nonce || window.pdfBuilderData?.nonce
+      });
 
       console.log('📤 PDF Builder - Envoi sauvegarde AJAX:', {
         action: 'pdf_builder_pro_save_template',

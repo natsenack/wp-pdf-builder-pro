@@ -781,7 +781,7 @@ class PDF_Builder_Admin {
         // Variables JavaScript pour AJAX - VERSION FORCEE
         wp_localize_script('pdf-builder-nonce-fix-v2', 'pdfBuilderAjax', [
             'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_canvas_load'),
+            'nonce' => wp_create_nonce('pdf_builder_nonce'),
             'version' => '7.0.0_force_reload_' . time(),
             'timestamp' => time(),
             'strings' => [
