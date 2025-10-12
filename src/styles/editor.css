@@ -995,36 +995,36 @@
 }
 
 .resize-zone-n {
-  top: -6px;
-  left: 2px;
-  right: 2px;
+  top: 0;
+  left: 4px;
+  right: 4px;
   height: 8px;
   cursor: n-resize;
   background-color: rgba(37, 99, 235, 0.1);
 }
 
 .resize-zone-s {
-  bottom: -6px;
-  left: 2px;
-  right: 2px;
+  bottom: 0;
+  left: 4px;
+  right: 4px;
   height: 8px;
   cursor: s-resize;
   background-color: rgba(37, 99, 235, 0.1);
 }
 
 .resize-zone-w {
-  top: 2px;
-  left: -6px;
-  bottom: 2px;
+  top: 4px;
+  left: 0;
+  bottom: 4px;
   width: 8px;
   cursor: w-resize;
   background-color: rgba(37, 99, 235, 0.1);
 }
 
 .resize-zone-e {
-  top: 2px;
-  right: -6px;
-  bottom: 2px;
+  top: 4px;
+  right: 0;
+  bottom: 4px;
   width: 8px;
   cursor: e-resize;
   background-color: rgba(37, 99, 235, 0.1);
