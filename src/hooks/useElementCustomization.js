@@ -83,6 +83,10 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
             newProperties[property] = correctedValue;
           }
         }
+        // Pour les éléments spéciaux, garder backgroundColor à transparent par défaut seulement si pas défini
+        else if (ELEMENT_TYPE_MAPPING[elementType] === 'special' && property === 'backgroundColor' && !newProperties[property]) {
+          newProperties[property] = 'transparent';
+        }
       });
 
       // Validation finale des propriétés

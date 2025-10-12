@@ -2,11 +2,11 @@
 // Définit les restrictions et validations pour chaque type d'élément
 
 export const ELEMENT_PROPERTY_RESTRICTIONS = {
-  // Éléments spéciaux - pas de contrôle de fond
+  // Éléments spéciaux - contrôle du fond autorisé mais valeur par défaut transparente
   special: {
     backgroundColor: {
-      disabled: true,
-      reason: 'Les éléments spéciaux n\'ont pas de fond contrôlable'
+      disabled: false, // Maintenant autorisé
+      default: 'transparent' // Valeur par défaut transparente
     },
     borderColor: {
       disabled: false
@@ -197,10 +197,7 @@ export const validateProperty = (elementType, propertyName, value) => {
       if (typeof value !== 'string') {
         return { valid: false, reason: 'La couleur doit être une chaîne' };
       }
-      // Pour les éléments spéciaux, forcer transparent
-      if (ELEMENT_TYPE_MAPPING[elementType] === 'special' && value !== 'transparent') {
-        return { valid: false, reason: 'Les éléments spéciaux doivent avoir un fond transparent' };
-      }
+      // Plus de restriction pour les éléments spéciaux - ils peuvent maintenant avoir un fond
       break;
 
     case 'borderWidth':
@@ -231,10 +228,8 @@ export const validateProperty = (elementType, propertyName, value) => {
 
 // Fonction pour corriger automatiquement une propriété invalide
 export const fixInvalidProperty = (elementType, propertyName, invalidValue) => {
-  // Pour les éléments spéciaux, forcer backgroundColor à transparent
-  if (propertyName === 'backgroundColor' && ELEMENT_TYPE_MAPPING[elementType] === 'special') {
-    return 'transparent';
-  }
+  // Pour les éléments spéciaux, backgroundColor peut maintenant être contrôlé
+  // (pas de forçage automatique à 'transparent')
 
   // Valeurs par défaut pour les propriétés numériques
   const numericDefaults = {
