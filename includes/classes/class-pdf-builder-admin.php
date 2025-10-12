@@ -972,6 +972,10 @@ class PDF_Builder_Admin {
 
         error_log("PDF Builder SECURITY - Nonce validé, traitement de la sauvegarde");
 
+        // DEBUG: Vérifier les données POST brutes
+        error_log("PDF Builder SAVE - Raw POST data: " . print_r($_POST, true));
+        error_log("PDF Builder SAVE - template_data from POST: " . isset($_POST['template_data']) ? 'SET' : 'NOT SET');
+
         $template_data = isset($_POST['template_data']) ? $_POST['template_data'] : '';
         $template_name = isset($_POST['template_name']) ? sanitize_text_field($_POST['template_name']) : '';
         $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
@@ -987,6 +991,18 @@ class PDF_Builder_Admin {
         $ends_with_brace = strrpos($template_data, '}') === (strlen($template_data) - 1);
         error_log("PDF Builder SAVE - Starts with '{': " . ($starts_with_brace ? 'YES' : 'NO'));
         error_log("PDF Builder SAVE - Ends with '}': " . ($ends_with_brace ? 'YES' : 'NO'));
+
+        // Vérifier si les données sont déjà échappées (contiennent des backslashes)
+        $has_backslashes = strpos($template_data, '\\') !== false;
+        error_log("PDF Builder SAVE - Contains backslashes: " . ($has_backslashes ? 'YES' : 'NO'));
+
+        // Si les données contiennent des backslashes, essayer de les déséchapper
+        if ($has_backslashes) {
+            $unescaped_data = stripslashes($template_data);
+            error_log("PDF Builder SAVE - Unescaped data length: " . strlen($unescaped_data));
+            error_log("PDF Builder SAVE - Unescaped data preview: " . substr($unescaped_data, 0, 200) . "...");
+            $template_data = $unescaped_data;
+        }
 
         // Valider que c'est du JSON valide
         $decoded_test = json_decode($template_data, true);
