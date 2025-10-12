@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useDragAndDrop } from './useDragAndDrop';
 
 // Fallback notification system in case Toastr is not available
 if (typeof window !== 'undefined' && typeof window.toastr === 'undefined') {
@@ -216,27 +217,10 @@ export const useCanvasState = ({
   const snapToGridValue = useCallback((value) => {
     if (!snapToGrid) return value;
     return Math.round(value / gridSize) * gridSize;
-  }, [snapToGrid, gridSize]);
-
   const updateElement = useCallback((elementId, updates) => {
-    setElements(prev => prev.map(element => {
-      if (element.id === elementId) {
-        // Fonction helper pour fusionner récursivement les objets
-        const deepMerge = (target, source) => {
-          const result = { ...target };
-          Object.keys(source).forEach(key => {
-            if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key]) && typeof target[key] === 'object') {
-              result[key] = deepMerge(target[key], source[key]);
-            } else {
-              result[key] = source[key];
-            }
-          });
-          return result;
-        };
-        return deepMerge(element, updates);
-      }
-      return element;
-    }));
+    setElements(prev => prev.map(element =>
+      element.id === elementId ? { ...element, ...updates } : element
+    ));
   }, []);
 
   // Calculer le prochain ID basé sur les éléments initiaux
@@ -252,6 +236,16 @@ export const useCanvasState = ({
     }
   }, [initialElements]);
 
+  const dragAndDrop = useDragAndDrop({
+    onElementMove: useCallback((elementId, position) => {
+      updateElement(elementId, position);
+    }, [updateElement]),
+    onElementDrop: useCallback((elementId, position) => {
+      updateElement(elementId, position);
+      // Historique simplifié - pourrait être réimplémenté plus tard si nécessaire
+    }, [updateElement])
+  });
+
   // Sauvegarde simplifiée - pourrait être réimplémentée plus tard si nécessaire
   useEffect(() => {
     // Historique des changements simplifié
@@ -265,7 +259,7 @@ export const useCanvasState = ({
         y: 50,
         width: 100,
         height: 50,
-        backgroundColor: 'transparent',
+        backgroundColor: '#ffffff',
         borderColor: 'transparent',
         borderWidth: 0,
         borderRadius: 4,
@@ -384,7 +378,7 @@ export const useCanvasState = ({
           case 'layout-section':
             defaults.width = 500;
             defaults.height = 200;
-            defaults.backgroundColor = 'transparent';
+            defaults.backgroundColor = '#ffffff';
             defaults.borderColor = 'transparent';
             defaults.borderWidth = 0;
             break;
@@ -401,7 +395,7 @@ export const useCanvasState = ({
           case 'invoice-header':
             defaults.width = 500;
             defaults.height = 100;
-            defaults.backgroundColor = 'transparent';
+            defaults.backgroundColor = '#ffffff';
             defaults.borderColor = 'transparent';
             defaults.borderWidth = 0;
             defaults.content = 'ENTREPRISE\n123 Rue de l\'Entreprise\n75000 Paris\nTéléphone: 01 23 45 67 89\nEmail: contact@entreprise.com';
@@ -421,7 +415,7 @@ export const useCanvasState = ({
           case 'invoice-info-block':
             defaults.width = 300;
             defaults.height = 80;
-            defaults.backgroundColor = 'transparent';
+            defaults.backgroundColor = '#ffffff';
             defaults.borderColor = 'transparent';
             defaults.borderWidth = 0;
             defaults.borderRadius = 4;
@@ -430,7 +424,7 @@ export const useCanvasState = ({
           case 'invoice-products-table':
             defaults.width = 500;
             defaults.height = 200;
-            defaults.backgroundColor = 'transparent';
+            defaults.backgroundColor = '#ffffff';
             defaults.borderColor = 'transparent';
             defaults.borderWidth = 0;
             break;
@@ -438,7 +432,7 @@ export const useCanvasState = ({
           case 'product_table':
             defaults.width = 500;
             defaults.height = 200;
-            defaults.backgroundColor = 'transparent';
+            defaults.backgroundColor = '#ffffff';
             defaults.borderColor = 'transparent';
             defaults.borderWidth = 0;
             defaults.showHeaders = true;
@@ -463,7 +457,7 @@ export const useCanvasState = ({
           case 'customer_info':
             defaults.width = 300;
             defaults.height = 200;
-            defaults.backgroundColor = 'transparent';
+            defaults.backgroundColor = '#ffffff';
             defaults.borderColor = 'transparent';
             defaults.borderWidth = 0;
             defaults.fields = ['name', 'email', 'phone', 'address', 'company', 'vat'];
@@ -490,7 +484,7 @@ export const useCanvasState = ({
           case 'invoice-payment-terms':
             defaults.width = 250;
             defaults.height = 100;
-            defaults.backgroundColor = 'transparent';
+            defaults.backgroundColor = '#ffffff';
             defaults.borderColor = 'transparent';
             defaults.borderWidth = 0;
             defaults.borderRadius = 4;
@@ -511,7 +505,7 @@ export const useCanvasState = ({
           case 'invoice-signature-block':
             defaults.width = 200;
             defaults.height = 80;
-            defaults.backgroundColor = 'transparent';
+            defaults.backgroundColor = '#ffffff';
             defaults.borderColor = 'transparent';
             defaults.borderWidth = 0;
             defaults.borderRadius = 4;
@@ -602,7 +596,7 @@ export const useCanvasState = ({
           case 'barcode':
             defaults.width = 120;
             defaults.height = 40;
-            defaults.backgroundColor = 'transparent';
+            defaults.backgroundColor = '#ffffff';
             defaults.borderColor = 'transparent';
             defaults.borderWidth = 0;
             break;
@@ -610,7 +604,7 @@ export const useCanvasState = ({
           case 'qrcode-dynamic':
             defaults.width = 60;
             defaults.height = 60;
-            defaults.backgroundColor = 'transparent';
+            defaults.backgroundColor = '#ffffff';
             defaults.borderColor = 'transparent';
             defaults.borderWidth = 0;
             break;
@@ -642,7 +636,7 @@ export const useCanvasState = ({
           case 'table-dynamic':
             defaults.width = 400;
             defaults.height = 150;
-            defaults.backgroundColor = 'transparent';
+            defaults.backgroundColor = '#ffffff';
             defaults.borderColor = 'transparent';
             defaults.borderWidth = 0;
             break;
@@ -655,19 +649,19 @@ export const useCanvasState = ({
           case 'shadow-box':
             defaults.width = 200;
             defaults.height = 100;
-            defaults.backgroundColor = 'transparent';
+            defaults.backgroundColor = '#ffffff';
             defaults.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
             break;
           case 'rounded-box':
             defaults.width = 200;
             defaults.height = 100;
-            defaults.backgroundColor = 'transparent';
+            defaults.backgroundColor = '#ffffff';
             defaults.borderRadius = 12;
             break;
           case 'border-box':
             defaults.width = 200;
             defaults.height = 100;
-            defaults.backgroundColor = 'transparent';
+            defaults.backgroundColor = '#ffffff';
             defaults.borderColor = 'transparent';
             defaults.borderWidth = 0;
             break;
@@ -989,6 +983,7 @@ export const useCanvasState = ({
     selection,
     zoom,
     contextMenu,
+    dragAndDrop,
 
     // Actions sur les éléments
     addElement,
