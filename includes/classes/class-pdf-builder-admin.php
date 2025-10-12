@@ -538,6 +538,9 @@ class PDF_Builder_Admin_Old {
         wp_enqueue_script('pdf-builder-admin-v2', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'wp-api'], '3.0.0_force_' . microtime(true), true);
         wp_enqueue_script('pdf-builder-canvas', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-canvas.js', ['jquery', 'wp-api'], PDF_BUILDER_PRO_VERSION, true);
 
+        // Script de correction de nonce - TOUJOURS FRAIS
+        wp_enqueue_script('pdf-builder-nonce-fix', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js', ['jquery'], '1.0.0_' . microtime(true), true);
+
         // Scripts utilitaires
         wp_enqueue_script('pdf-builder-utils', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-utils.js', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
         wp_enqueue_script('pdf-builder-unified-config', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-unified-config.js', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
@@ -546,6 +549,20 @@ class PDF_Builder_Admin_Old {
         wp_localize_script('pdf-builder-admin-v2', 'pdfBuilderAjax', [
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pdf_builder_canvas_load_' . time()),
+            'strings' => [
+                'loading' => __('Chargement...', 'pdf-builder-pro'),
+                'error' => __('Erreur', 'pdf-builder-pro'),
+                'success' => __('Succès', 'pdf-builder-pro'),
+                'confirm_delete' => __('Êtes-vous sûr de vouloir supprimer ce template ?', 'pdf-builder-pro'),
+                'confirm_duplicate' => __('Dupliquer ce template ?', 'pdf-builder-pro'),
+            ]
+        ]);
+
+        // Variables JavaScript pour AJAX - SUR LE SCRIPT NONCE-FIX (toujours frais)
+        wp_localize_script('pdf-builder-nonce-fix', 'pdfBuilderAjax', [
+            'ajaxurl' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('pdf_builder_canvas_load_' . time()),
+            'version' => '3.0.0',
             'strings' => [
                 'loading' => __('Chargement...', 'pdf-builder-pro'),
                 'error' => __('Erreur', 'pdf-builder-pro'),
