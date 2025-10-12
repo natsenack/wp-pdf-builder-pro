@@ -207,7 +207,7 @@
 
 .canvas-container {
   flex: 1;
-  overflow-y: auto;
+  overflow-y: scroll; /* Changé de auto à scroll pour forcer la scrollbar verticale */
   overflow-x: hidden;
   position: relative;
   background: var(--background-color);
