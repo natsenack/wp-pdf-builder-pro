@@ -368,20 +368,14 @@ const PropertiesPanel = React.memo(({
   // Mettre à jour les valeurs précédentes et l'état des toggles quand l'élément change
   useEffect(() => {
     if (selectedElement) {
-      // Initialiser les valeurs précédentes avec les valeurs actuelles de l'élément
+      // Initialiser seulement les valeurs précédentes, pas l'état du toggle
       setPreviousBackgroundColor(selectedElement.backgroundColor || '#ffffff');
       // Pour borderWidth, s'assurer qu'on a au moins 1 pour la restauration
       const initialBorderWidth = selectedElement.borderWidth && selectedElement.borderWidth > 0 ? selectedElement.borderWidth : 1;
       setPreviousBorderWidth(initialBorderWidth);
       setPreviousBorderColor(selectedElement.borderColor || '#000000');
 
-      // Initialiser l'état des toggles basé sur les propriétés actuelles
-      // Le fond est activé seulement si backgroundColor existe, n'est pas 'transparent' et n'est pas vide
-      const hasBackground = selectedElement.backgroundColor && 
-                           selectedElement.backgroundColor !== 'transparent' && 
-                           selectedElement.backgroundColor !== '';
-      setIsBackgroundEnabled(hasBackground);
-      setIsBorderEnabled(!!selectedElement.borderWidth && selectedElement.borderWidth > 0);
+      // Le toggle sera initialisé par le useEffect avec localProperties
     }
   }, [selectedElement?.id]); // Ne dépendre que de l'ID de l'élément sélectionné
 
