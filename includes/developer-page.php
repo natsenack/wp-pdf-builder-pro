@@ -46,12 +46,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $php_code = stripslashes($_POST['php_code']);
         $execution_result = '';
 
-        try {
-            ob_start();
-            eval($php_code);
-            $execution_result = ob_get_clean();
-        } catch (Throwable $e) {
-            $execution_result = 'Erreur PHP : ' . $e->getMessage() . "\n" . $e->getTraceAsString();
+        // Protection contre les exécutions dangereuses
+        if (stripos($php_code, 'exec(') !== false || stripos($php_code, 'shell_exec(') !== false ||
+            stripos($php_code, 'system(') !== false || stripos($php_code, 'passthru(') !== false) {
+            $execution_result = '❌ Commandes système interdites pour des raisons de sécurité.';
+        } else {
+            try {
+                // Limiter le temps d'exécution et la mémoire
+                ini_set('max_execution_time', 10); // 10 secondes max
+                $old_memory_limit = ini_get('memory_limit');
+                ini_set('memory_limit', '128M'); // Limiter à 128MB
+
+                ob_start();
+                eval($php_code);
+                $execution_result = ob_get_clean();
+
+                // Restaurer les limites
+                ini_set('memory_limit', $old_memory_limit);
+
+            } catch (Throwable $e) {
+                $execution_result = 'Erreur PHP : ' . $e->getMessage() . "\n" . $e->getTraceAsString();
+            }
         }
 
         // Stocker le résultat en session pour l'afficher
@@ -90,23 +105,51 @@ $system_info = array(
     'wp_debug_display' => defined('WP_DEBUG_DISPLAY') && WP_DEBUG_DISPLAY ? 'Activé' : 'Désactivé',
 );
 
-// Récupérer les logs d'erreur récents
+// Récupérer les logs d'erreur récents (limiter la taille pour éviter les erreurs mémoire)
 $debug_log_content = '';
 $log_file = WP_CONTENT_DIR . '/debug.log';
 if (file_exists($log_file)) {
-    $debug_log_content = file_get_contents($log_file);
-    // Garder seulement les 100 dernières lignes
-    $lines = explode("\n", $debug_log_content);
-    $lines = array_slice($lines, -100);
-    $debug_log_content = implode("\n", $lines);
+    // Vérifier la taille du fichier (max 10MB pour éviter les problèmes mémoire)
+    $file_size = filesize($log_file);
+    if ($file_size > 10485760) { // 10MB
+        $debug_log_content = "⚠️ Fichier debug.log trop volumineux (" . number_format($file_size / 1024 / 1024, 2) . " MB). Affichage limité aux dernières lignes.\n\n";
+
+        // Lire seulement les derniers 2MB du fichier
+        $handle = fopen($log_file, 'r');
+        if ($handle) {
+            fseek($handle, max(0, $file_size - 2097152)); // 2MB avant la fin
+            $content = fread($handle, 2097152);
+            fclose($handle);
+
+            // Prendre les 100 dernières lignes
+            $lines = explode("\n", $content);
+            $lines = array_slice($lines, -100);
+            $debug_log_content .= implode("\n", $lines);
+        }
+    } else {
+        $debug_log_content = file_get_contents($log_file);
+        // Garder seulement les 100 dernières lignes
+        $lines = explode("\n", $debug_log_content);
+        $lines = array_slice($lines, -100);
+        $debug_log_content = implode("\n", $lines);
+    }
 }
 
-// Récupérer les options du plugin
+// Récupérer les options du plugin (avec protection contre les données volumineuses)
 $plugin_options = array();
 global $wpdb;
 $option_names = $wpdb->get_col("SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE 'pdf_builder_%' OR option_name LIKE 'canvas_%' ORDER BY option_name");
 foreach ($option_names as $option_name) {
-    $plugin_options[$option_name] = get_option($option_name);
+    $option_value = get_option($option_name);
+
+    // Protection contre les options trop volumineuses
+    if (is_string($option_value) && strlen($option_value) > 10000) {
+        $plugin_options[$option_name] = '[DONNÉES TROP VOLUMINEUSES - ' . number_format(strlen($option_value)) . ' caractères]';
+    } elseif (is_array($option_value) && count($option_value) > 100) {
+        $plugin_options[$option_name] = '[TABLEAU TROP GRAND - ' . count($option_value) . ' éléments]';
+    } else {
+        $plugin_options[$option_name] = $option_value;
+    }
 }
 
 // Onglet actif
