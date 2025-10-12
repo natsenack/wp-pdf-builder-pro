@@ -1089,9 +1089,10 @@ const PropertiesPanel = React.memo(({
               onPropertyChange={handlePropertyChange}
             />
 
-            {/* Contrôles d'image disponibles pour tous les éléments */}
-            <div className="properties-group">
-              <h4>[Img] Image</h4>
+            {/* Contrôles d'image disponibles uniquement pour les éléments logo */}
+            {selectedElement.type === 'logo' && (
+              <div className="properties-group">
+                <h4>[Img] Image</h4>
 
               <div className="property-row">
                 <label>URL de l'image:</label>
@@ -1251,7 +1252,9 @@ const PropertiesPanel = React.memo(({
                   <option value="scale-down">Réduire</option>
                 </select>
               </div>
-            </div>            {/* Contrôles pour le type de document */}
+            </div>
+            )}
+            {/* Contrôles pour le type de document */}
             {selectedElement.type === 'document_type' && (
               <div className="properties-group">
                 <h4>📋 Type de Document</h4>
