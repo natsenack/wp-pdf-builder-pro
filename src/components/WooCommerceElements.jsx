@@ -111,6 +111,8 @@ const WooCommerceElement = ({
   onUpdate,
   dragAndDrop,
   zoom = 1,
+  snapToGrid = true,
+  gridSize = 10,
   canvasWidth,
   canvasHeight,
   canvasRef,
@@ -127,8 +129,8 @@ const WooCommerceElement = ({
         height: newRect.height
       });
     },
-    snapToGrid: true,
-    gridSize: 10,
+    snapToGrid,
+    gridSize,
     canvasWidth,
     canvasHeight,
     canvasRef

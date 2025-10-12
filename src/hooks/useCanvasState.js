@@ -109,7 +109,9 @@ export const useCanvasState = ({
   templateId = null,
   canvasWidth = 595, // A4 width in points
   canvasHeight = 842, // A4 height in points
-  globalSettings = null
+  globalSettings = null,
+  snapToGrid = true,
+  gridSize = 10
 }) => {
   const [elements, setElements] = useState(initialElements);
   const [selectedElements, setSelectedElements] = useState([]);
@@ -180,11 +182,9 @@ export const useCanvasState = ({
 
   // Fonction d'aimantation à la grille
   const snapToGridValue = useCallback((value) => {
-    const gridSize = 10; // Taille de la grille par défaut
-    const snapToGrid = true; // Aimantation activée par défaut
     if (!snapToGrid) return value;
     return Math.round(value / gridSize) * gridSize;
-  }, []);
+  }, [snapToGrid, gridSize]);
   const updateElement = useCallback((elementId, updates) => {
     setElements(prev => prev.map(element =>
       element.id === elementId ? { ...element, ...updates } : element

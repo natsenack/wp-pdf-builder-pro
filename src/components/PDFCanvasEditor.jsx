@@ -16,6 +16,7 @@ const PropertiesPanel = React.lazy(() => import('./PropertiesPanel'));
 export const PDFCanvasEditor = ({ options }) => {
   const [tool, setTool] = useState('select');
   const [showGrid, setShowGrid] = useState(false);
+  const [snapToGrid, setSnapToGrid] = useState(true);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [isPropertiesCollapsed, setIsPropertiesCollapsed] = useState(false);
 
@@ -55,7 +56,9 @@ export const PDFCanvasEditor = ({ options }) => {
     initialElements: options.initialElements || [],
     templateId: options.templateId || null,
     canvasWidth: options.width || 595,
-    canvasHeight: options.height || 842
+    canvasHeight: options.height || 842,
+    snapToGrid: snapToGrid,
+    gridSize: 10
   });
 
   const editorRef = useRef(null);
@@ -69,7 +72,7 @@ export const PDFCanvasEditor = ({ options }) => {
     onElementDrop: (elementId, position) => {
       canvasState.updateElement(elementId, position);
     },
-    snapToGrid: true,
+    snapToGrid: snapToGrid,
     gridSize: 10,
     zoom: canvasState.zoom.zoom,
     canvasWidth: canvasState.canvasWidth,
@@ -385,8 +388,8 @@ export const PDFCanvasEditor = ({ options }) => {
         onZoomChange={canvasState.zoom.setZoomLevel}
         showGrid={showGrid}
         onShowGridChange={setShowGrid}
-        snapToGrid={true} // Peut être configuré plus tard
-        onSnapToGridChange={() => {}} // Peut être configuré plus tard
+        snapToGrid={snapToGrid}
+        onSnapToGridChange={setSnapToGrid}
         onUndo={canvasState.undo}
         onRedo={canvasState.redo}
         canUndo={canvasState.canUndo}
@@ -464,7 +467,7 @@ export const PDFCanvasEditor = ({ options }) => {
                         element={element}
                         isSelected={canvasState.selection.selectedElements.includes(element.id)}
                         zoom={1} // Le zoom est géré au niveau du wrapper
-                        snapToGrid={true}
+                        snapToGrid={snapToGrid}
                         gridSize={10}
                         canvasWidth={canvasState.canvasWidth}
                         canvasHeight={canvasState.canvasHeight}
@@ -490,6 +493,8 @@ export const PDFCanvasEditor = ({ options }) => {
                         onUpdate={canvasState.updateElement}
                         dragAndDrop={dragAndDrop}
                         zoom={1} // Le zoom est géré au niveau du wrapper
+                        snapToGrid={snapToGrid}
+                        gridSize={10}
                         canvasWidth={canvasState.canvasWidth}
                         canvasHeight={canvasState.canvasHeight}
                         canvasRef={canvasRef}
