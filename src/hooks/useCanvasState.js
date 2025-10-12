@@ -89,6 +89,8 @@ export const useCanvasState = ({
 
       waitForPdfBuilderAjax()
         .then(() => {
+          console.log('PDF Builder: Envoi AJAX avec nonce:', pdfBuilderAjax.nonce);
+          
           // Faire un appel AJAX pour charger les éléments du template
           fetch(pdfBuilderAjax.ajaxurl, {
             method: "POST",
