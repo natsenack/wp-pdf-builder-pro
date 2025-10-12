@@ -3,7 +3,6 @@ import { useDragAndDrop } from './useDragAndDrop';
 
 // Fallback notification system in case Toastr is not available
 if (typeof window !== 'undefined' && typeof window.toastr === 'undefined') {
-  console.log('📋 PDF Builder - Toastr non disponible, initialisation du système de fallback...');
 
   // Simple notification system
   const createNotification = (type, title, message) => {
@@ -90,25 +89,19 @@ if (typeof window !== 'undefined' && typeof window.toastr === 'undefined') {
   // Create fallback toastr object
   window.toastr = {
     success: (message, title) => {
-      console.log('✅ PDF Builder - Notification succès (fallback):', message);
       createNotification('success', title, message);
     },
     error: (message, title) => {
-      console.log('❌ PDF Builder - Notification erreur (fallback):', message);
       createNotification('error', title, message);
     },
     warning: (message, title) => {
-      console.log('⚠️ PDF Builder - Notification avertissement (fallback):', message);
       createNotification('warning', title, message);
     },
     info: (message, title) => {
-      console.log('ℹ️ PDF Builder - Notification info (fallback):', message);
       createNotification('info', title, message);
     },
     options: {} // Placeholder for options
   };
-
-  console.log('✅ PDF Builder - Système de notification fallback initialisé');
 }
 
 export const useCanvasState = ({
@@ -185,7 +178,13 @@ export const useCanvasState = ({
     hide: () => {}
   };
 
-  // Fonction updateElement définie avant useDragAndDrop
+  // Fonction d'aimantation à la grille
+  const snapToGridValue = useCallback((value) => {
+    const gridSize = 10; // Taille de la grille par défaut
+    const snapToGrid = true; // Aimantation activée par défaut
+    if (!snapToGrid) return value;
+    return Math.round(value / gridSize) * gridSize;
+  }, []);
   const updateElement = useCallback((elementId, updates) => {
     setElements(prev => prev.map(element =>
       element.id === elementId ? { ...element, ...updates } : element
@@ -200,7 +199,6 @@ export const useCanvasState = ({
         return parseInt(idParts[1] || 0);
       }));
       setNextId(maxId + 1);
-      console.log('PDF Builder: Prochain ID calculé:', maxId + 1, 'basé sur', initialElements.length, 'éléments initiaux');
     } else {
       setNextId(1);
     }
@@ -673,6 +671,10 @@ export const useCanvasState = ({
       ...properties
     };
 
+    // Appliquer l'aimantation à la grille pour les nouvelles positions
+    if (newElement.x !== undefined) newElement.x = snapToGridValue(newElement.x);
+    if (newElement.y !== undefined) newElement.y = snapToGridValue(newElement.y);
+
     setElements(prev => [...prev, newElement]);
     setNextId(prev => prev + 1);
     selection.selectElement(newElement.id);
@@ -695,15 +697,15 @@ export const useCanvasState = ({
       const duplicatedElement = {
         ...element,
         id: `element_${nextId}`,
-        x: element.x + 20,
-        y: element.y + 20
+        x: snapToGridValue(element.x + 20),
+        y: snapToGridValue(element.y + 20)
       };
 
       setElements(prev => [...prev, duplicatedElement]);
       setNextId(prev => prev + 1);
       selection.selectElement(duplicatedElement.id);
     }
-  }, [elements, nextId, selection]);
+  }, [elements, nextId, selection, snapToGridValue]);
 
   const duplicateSelectedElements = useCallback(() => {
     const elementsToDuplicate = selection.duplicateSelected();
@@ -715,8 +717,8 @@ export const useCanvasState = ({
         const duplicatedElement = {
           ...element,
           id: `element_${nextId + duplicatedElements.length}`,
-          x: element.x + 20,
-          y: element.y + 20
+          x: snapToGridValue(element.x + 20),
+          y: snapToGridValue(element.y + 20)
         };
         duplicatedElements.push(duplicatedElement);
       }
@@ -727,7 +729,7 @@ export const useCanvasState = ({
       setNextId(prev => prev + duplicatedElements.length);
       selection.selectAll(duplicatedElements.map(el => el.id));
     }
-  }, [elements, nextId, selection]);
+  }, [elements, nextId, selection, snapToGridValue]);
 
   const copySelectedElements = useCallback(() => {
     const selectedIds = selection.selectedElements;
@@ -747,17 +749,14 @@ export const useCanvasState = ({
 
   const undo = useCallback(() => {
     // Fonctionnalité d'historique supprimée
-    console.log('🔄 PDF Builder - Fonction undo désactivée (historique supprimé)');
   }, []);
 
   const redo = useCallback(() => {
     // Fonctionnalité d'historique supprimée
-    console.log('🔄 PDF Builder - Fonction redo désactivée (historique supprimé)');
   }, []);
 
   const saveTemplate = useCallback(async () => {
     if (isSaving) {
-      console.log('🔄 PDF Builder - Sauvegarde déjà en cours, ignorée');
       return;
     }
 
@@ -790,7 +789,6 @@ export const useCanvasState = ({
         for (const [key, value] of Object.entries(element)) {
           // Exclure les propriétés problématiques
           if (excludedProps.includes(key)) {
-            console.log(`🔍 PDF Builder - Propriété exclue: ${key}`);
             continue;
           }
 
@@ -823,7 +821,6 @@ export const useCanvasState = ({
             }
           } else {
             // Pour les autres types (functions, symbols, etc.), ignorer
-            console.log(`🔍 PDF Builder - Propriété de type ${typeof value} ignorée: ${key}`);
           }
         }
 
@@ -840,25 +837,19 @@ export const useCanvasState = ({
         version: '1.0'
       };
 
-      console.log('🔍 PDF Builder - Données nettoyées à sauvegarder:', templateData);
-      console.log('🔍 PDF Builder - Nombre d\'éléments nettoyés:', cleanedElements.length);
-
       // Valider le JSON avant envoi
       let jsonString;
       try {
         jsonString = JSON.stringify(templateData);
-        console.log('🔍 PDF Builder - JSON stringifié, longueur:', jsonString.length);
 
         // Tester le parsing pour valider
         const testParse = JSON.parse(jsonString);
-        console.log('🔍 PDF Builder - JSON validé côté client');
       } catch (jsonError) {
         console.error('🔍 PDF Builder - ERREUR JSON côté client:', jsonError);
         throw new Error('Données JSON invalides côté client: ' + jsonError.message);
       }
 
       // Sauvegarde directe via AJAX avec URLSearchParams au lieu de FormData
-      console.log('📤 PDF Builder - Tentative avec URLSearchParams au lieu de FormData');
 
       const requestData = {
         action: 'pdf_builder_pro_save_template',
@@ -867,8 +858,6 @@ export const useCanvasState = ({
         template_id: window.pdfBuilderData?.templateId || '0',
         nonce: window.pdfBuilderAjax?.nonce || window.pdfBuilderData?.nonce || ''
       };
-
-      console.log('📤 PDF Builder - Données de requête:', requestData);
 
       const response = await fetch(window.pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
         method: 'POST',
@@ -879,7 +868,6 @@ export const useCanvasState = ({
       });
 
       const result = await response.json();
-      console.log('📥 PDF Builder - Réponse AJAX:', result);
 
       if (!result.success) {
         throw new Error(result.data?.message || 'Erreur lors de la sauvegarde');
@@ -887,16 +875,14 @@ export const useCanvasState = ({
 
       // Notification de succès pour les templates existants
       if (isExistingTemplate) {
-        console.log('✅ PDF Builder - Affichage notification succès');
         if (toastrAvailable) {
           toastr.success('Modifications du canvas sauvegardées avec succès !');
-          console.log('🎉 PDF Builder - Notification toastr affichée');
         } else {
           console.warn('⚠️ PDF Builder - Toastr non disponible, utilisation alert');
           alert('Modifications du canvas sauvegardées avec succès !');
         }
       } else {
-        console.log('ℹ️ PDF Builder - Template nouveau, pas de notification');
+        // Template nouveau, pas de notification
       }
 
       return templateData;
@@ -905,10 +891,8 @@ export const useCanvasState = ({
 
       // Notification d'erreur
       const errorMessage = error.message || 'Erreur inconnue lors de la sauvegarde';
-      console.log('🚨 PDF Builder - Affichage notification erreur');
       if (toastrAvailable) {
         toastr.error(`Erreur lors de la sauvegarde: ${errorMessage}`);
-        console.log('🚨 PDF Builder - Notification d\'erreur toastr affichée');
       } else {
         console.warn('⚠️ PDF Builder - Toastr non disponible pour erreur, utilisation alert');
         alert(`Erreur lors de la sauvegarde: ${errorMessage}`);
