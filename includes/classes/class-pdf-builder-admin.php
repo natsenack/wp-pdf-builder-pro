@@ -9,10 +9,9 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Classe d'administration PDF Builder Pro - VERSION ANCIENNE COMPLÈTEMENT DÉSACTIVÉE
- * NE PAS UTILISER - Remplacée par PDF_Builder_Admin_New
+ * Classe d'administration PDF Builder Pro
  */
-class PDF_Builder_Admin_Old {
+class PDF_Builder_Admin {
 
     /**
      * Instance singleton
@@ -67,8 +66,6 @@ class PDF_Builder_Admin_Old {
         add_action('wp_ajax_pdf_builder_pro_download_pdf', [$this, 'ajax_download_pdf']);
         add_action('wp_ajax_pdf_builder_pro_save_template', [$this, 'ajax_save_template']);
         add_action('wp_ajax_pdf_builder_pro_load_template', [$this, 'ajax_load_template']);
-        // ACTION DÉSACTIVÉE - Utiliser PDF_Builder_Admin_New à la place
-        // add_action('wp_ajax_pdf_builder_load_canvas_elements', [$this, 'ajax_load_canvas_elements']);
         add_action('wp_ajax_pdf_builder_get_templates', [$this, 'ajax_get_templates']);
         add_action('wp_ajax_pdf_builder_delete_template', [$this, 'ajax_delete_template']);
         add_action('wp_ajax_pdf_builder_duplicate_template', [$this, 'ajax_duplicate_template']);
@@ -410,7 +407,216 @@ class PDF_Builder_Admin_Old {
      */
     public function settings_page() {
         $this->check_admin_permissions();
+        ?>
+        <div class="wrap">
+        <?php
         include plugin_dir_path(dirname(__FILE__)) . 'settings-page.php';
+        ?>
+        </div>
+        <?php
+    }
+
+    /**
+     * Page des paramètres de rendu Canvas
+     */
+    public function canvas_render_settings_page() {
+        // Vérification des permissions administrateur
+        if (!current_user_can('manage_options')) {
+            wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+        }
+
+        // Récupérer l'onglet actif
+        $active_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'canvas';
+
+        // Sauvegarder les paramètres si formulaire soumis
+        if (isset($_POST['save_canvas_render_settings']) && wp_verify_nonce($_POST['canvas_render_nonce'], 'pdf_builder_canvas_render')) {
+            $this->save_canvas_render_settings();
+            echo '<div class="notice notice-success"><p>Paramètres de rendu Canvas sauvegardés avec succès !</p></div>';
+        }
+
+        // Récupérer les paramètres actuels
+        $canvas_settings = get_option('pdf_builder_canvas_settings', []);
+
+        ?>
+        <div class="wrap">
+            <h1><?php _e('🎨 Paramètres Canvas - PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
+
+            <p><?php _e('Configurez les paramètres du canvas et les valeurs par défaut des éléments.', 'pdf-builder-pro'); ?></p>
+
+            <nav class="nav-tab-wrapper">
+                <a href="?page=pdf-builder-canvas-render&tab=canvas" class="nav-tab <?php echo $active_tab == 'canvas' ? 'nav-tab-active' : ''; ?>">
+                    <?php _e('⚙️ Paramètres du Canvas', 'pdf-builder-pro'); ?>
+                </a>
+                <a href="?page=pdf-builder-canvas-render&tab=elements" class="nav-tab <?php echo $active_tab == 'elements' ? 'nav-tab-active' : ''; ?>">
+                    <?php _e('🎨 Paramètres par défaut des éléments', 'pdf-builder-pro'); ?>
+                </a>
+            </nav>
+
+            <form method="post" action="">
+                <?php wp_nonce_field('pdf_builder_canvas_render', 'canvas_render_nonce'); ?>
+
+                <?php if ($active_tab == 'canvas'): ?>
+                    <!-- Onglet Paramètres du Canvas -->
+                    <div class="pdf-builder-settings-section">
+                        <h2><?php _e('🎯 Paramètres des poignées de redimensionnement', 'pdf-builder-pro'); ?></h2>
+
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row"><?php _e('Taille des poignées', 'pdf-builder-pro'); ?></th>
+                                <td>
+                                    <input type="number" name="canvas_handle_size" value="<?php echo esc_attr($canvas_settings['canvas_handle_size'] ?? 12); ?>" min="8" max="20" />
+                                    <p class="description"><?php _e('Taille en pixels des poignées de redimensionnement (8-20px)', 'pdf-builder-pro'); ?></p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><?php _e('Couleur des poignées', 'pdf-builder-pro'); ?></th>
+                                <td>
+                                    <input type="color" name="canvas_handle_color" value="<?php echo esc_attr($canvas_settings['canvas_handle_color'] ?? '#007cba'); ?>" />
+                                    <p class="description"><?php _e('Couleur des poignées de redimensionnement', 'pdf-builder-pro'); ?></p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><?php _e('Couleur de survol des poignées', 'pdf-builder-pro'); ?></th>
+                                <td>
+                                    <input type="color" name="canvas_handle_hover_color" value="<?php echo esc_attr($canvas_settings['canvas_handle_hover_color'] ?? '#ffffff'); ?>" />
+                                    <p class="description"><?php _e('Couleur des poignées au survol', 'pdf-builder-pro'); ?></p>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="pdf-builder-settings-section">
+                        <h2><?php _e('📦 Paramètres des bordures de sélection', 'pdf-builder-pro'); ?></h2>
+
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row"><?php _e('Largeur des bordures', 'pdf-builder-pro'); ?></th>
+                                <td>
+                                    <input type="number" name="canvas_border_width" value="<?php echo esc_attr($canvas_settings['canvas_border_width'] ?? 2); ?>" min="1" max="5" />
+                                    <p class="description"><?php _e('Épaisseur des bordures de sélection en pixels (1-5px)', 'pdf-builder-pro'); ?></p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><?php _e('Couleur des bordures', 'pdf-builder-pro'); ?></th>
+                                <td>
+                                    <input type="color" name="canvas_border_color" value="<?php echo esc_attr($canvas_settings['canvas_border_color'] ?? '#007cba'); ?>" />
+                                    <p class="description"><?php _e('Couleur des bordures de sélection', 'pdf-builder-pro'); ?></p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><?php _e('Espacement des bordures', 'pdf-builder-pro'); ?></th>
+                                <td>
+                                    <input type="number" name="canvas_border_spacing" value="<?php echo esc_attr($canvas_settings['canvas_border_spacing'] ?? 2); ?>" min="0" max="10" />
+                                    <p class="description"><?php _e('Espace entre la bordure et l\'élément en pixels (0-10px)', 'pdf-builder-pro'); ?></p>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="pdf-builder-settings-section">
+                        <h2><?php _e('👁️ Paramètres de visibilité', 'pdf-builder-pro'); ?></h2>
+
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row"><?php _e('Poignées de redimensionnement', 'pdf-builder-pro'); ?></th>
+                                <td>
+                                    <label>
+                                        <input type="checkbox" name="canvas_resize_handles_enabled" value="1" <?php checked($canvas_settings['canvas_resize_handles_enabled'] ?? true); ?> />
+                                        <?php _e('Afficher les poignées de redimensionnement', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><?php _e('Bordures des éléments', 'pdf-builder-pro'); ?></th>
+                                <td>
+                                    <label>
+                                        <input type="checkbox" name="canvas_element_borders_enabled" value="1" <?php checked($canvas_settings['canvas_element_borders_enabled'] ?? true); ?> />
+                                        <?php _e('Afficher les bordures des zones de redimensionnement', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                <?php elseif ($active_tab == 'elements'): ?>
+                    <!-- Onglet Paramètres par défaut des éléments -->
+                    <div class="pdf-builder-settings-section">
+                        <h2><?php _e('🎨 Paramètres par défaut des éléments', 'pdf-builder-pro'); ?></h2>
+
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row"><?php _e('Couleur de texte par défaut', 'pdf-builder-pro'); ?></th>
+                                <td>
+                                    <input type="color" name="default_text_color" value="<?php echo esc_attr($canvas_settings['default_text_color'] ?? '#000000'); ?>" />
+                                    <p class="description"><?php _e('Couleur de texte utilisée pour les nouveaux éléments texte', 'pdf-builder-pro'); ?></p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><?php _e('Couleur de fond par défaut', 'pdf-builder-pro'); ?></th>
+                                <td>
+                                    <input type="color" name="default_background_color" value="<?php echo esc_attr($canvas_settings['default_background_color'] ?? '#ffffff'); ?>" />
+                                    <p class="description"><?php _e('Couleur de fond utilisée pour les nouveaux éléments', 'pdf-builder-pro'); ?></p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><?php _e('Taille de police par défaut', 'pdf-builder-pro'); ?></th>
+                                <td>
+                                    <input type="number" name="default_font_size" value="<?php echo esc_attr($canvas_settings['default_font_size'] ?? 14); ?>" min="8" max="72" />
+                                    <p class="description"><?php _e('Taille de police en pixels pour les nouveaux éléments texte (8-72px)', 'pdf-builder-pro'); ?></p>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                <?php endif; ?>
+
+                <?php submit_button(__('💾 Sauvegarder les paramètres', 'pdf-builder-pro'), 'primary', 'save_canvas_render_settings'); ?>
+            </form>
+        </div>
+
+        <style>
+            .pdf-builder-settings-section {
+                background: #fff;
+                border: 1px solid #ccd0d4;
+                border-radius: 4px;
+                margin: 20px 0;
+                padding: 20px;
+            }
+            .pdf-builder-settings-section h2 {
+                margin-top: 0;
+                color: #1d2327;
+                font-size: 1.3em;
+                border-bottom: 1px solid #eee;
+                padding-bottom: 10px;
+            }
+            .form-table th {
+                width: 200px;
+                padding: 15px 10px 15px 0;
+            }
+            .form-table td {
+                padding: 15px 10px;
+            }
+            .nav-tab-wrapper {
+                margin-bottom: 20px;
+                border-bottom: 1px solid #ccc;
+            }
+            .nav-tab {
+                display: inline-block;
+                padding: 8px 16px;
+                margin-right: 4px;
+                background: #f1f1f1;
+                color: #666;
+                text-decoration: none;
+                border: 1px solid #ccc;
+                border-bottom: none;
+                border-radius: 4px 4px 0 0;
+            }
+            .nav-tab-active {
+                background: #fff;
+                color: #000;
+                border-bottom: 1px solid #fff;
+            }
+        </style>
     }
 
     /**
@@ -534,19 +740,46 @@ class PDF_Builder_Admin_Old {
         wp_enqueue_style('pdf-builder-admin', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css', [], PDF_BUILDER_PRO_VERSION);
         wp_enqueue_style('pdf-builder-canvas', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-canvas.css', [], PDF_BUILDER_PRO_VERSION);
 
-        // Scripts JavaScript - CHANGEMENT DE HANDLE POUR FORCER LE RECHARGEMENT
+        // Toastr pour les notifications
+        wp_enqueue_style('toastr', PDF_BUILDER_PRO_ASSETS_URL . 'css/toastr/toastr.min.css', [], '2.1.4');
+        wp_enqueue_script('toastr', PDF_BUILDER_PRO_ASSETS_URL . 'js/toastr/toastr.min.js', ['jquery'], '2.1.4', true);
+
+        // Configuration de toastr
+        wp_add_inline_script('toastr', '
+            if (typeof toastr !== "undefined") {
+                toastr.options = {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": true,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "5000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                };
+            }
+        ');
+
+        // Scripts JavaScript - VERSION ULTRA FORCEE
         wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'wp-api'], '7.0.0_force_reload_' . time(), true);
         wp_enqueue_script('pdf-builder-canvas', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-canvas.js', ['jquery', 'wp-api'], PDF_BUILDER_PRO_VERSION, true);
-
-        // Script de correction de nonce - NOUVEAU HANDLE POUR FORCER LE RECHARGEMENT
-        wp_enqueue_script('pdf-builder-nonce-fix-v2', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js', ['jquery'], '4.0.0_force_reload_' . time(), true);
 
         // Scripts utilitaires
         wp_enqueue_script('pdf-builder-utils', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-utils.js', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
         wp_enqueue_script('pdf-builder-unified-config', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-unified-config.js', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
 
+        // Script de correction de nonce - NOUVEAU HANDLE POUR FORCER LE RECHARGEMENT
+        wp_enqueue_script('pdf-builder-nonce-fix-v2', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js', ['jquery'], '4.0.0_force_reload_' . time(), true);
+
         // Variables JavaScript pour AJAX - VERSION FORCEE
-        wp_localize_script('pdf-builder-admin-v3', 'pdfBuilderAjax', [
+        wp_localize_script('pdf-builder-nonce-fix-v2', 'pdfBuilderAjax', [
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pdf_builder_canvas_load'),
             'version' => '7.0.0_force_reload_' . time(),
@@ -560,19 +793,23 @@ class PDF_Builder_Admin_Old {
             ]
         ]);
 
-        // Variables JavaScript pour AJAX - SUR LE SCRIPT NONCE-FIX (toujours frais)
-        wp_localize_script('pdf-builder-nonce-fix-v2', 'pdfBuilderAjax', [
-            'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_canvas_load'),
-            'version' => '7.0.0_force_reload_' . time(),
-            'timestamp' => time(),
-            'strings' => [
-                'loading' => __('Chargement...', 'pdf-builder-pro'),
-                'error' => __('Erreur', 'pdf-builder-pro'),
-                'success' => __('Succès', 'pdf-builder-pro'),
-                'confirm_delete' => __('Êtes-vous sûr de vouloir supprimer ce template ?', 'pdf-builder-pro'),
-                'confirm_duplicate' => __('Dupliquer ce template ?', 'pdf-builder-pro'),
-            ]
+        // Paramètres du canvas pour le JavaScript
+        // Récupérer les paramètres canvas
+        $canvas_settings = get_option('pdf_builder_canvas_settings', []);
+
+        wp_localize_script('pdf-builder-admin', 'pdfBuilderCanvasSettings', [
+            'canvas_element_borders_enabled' => $canvas_settings['canvas_element_borders_enabled'] ?? true,
+            'canvas_border_width' => $canvas_settings['canvas_border_width'] ?? 2,
+            'canvas_border_color' => $canvas_settings['canvas_border_color'] ?? '#007cba',
+            'canvas_border_spacing' => $canvas_settings['canvas_border_spacing'] ?? 2,
+            'canvas_resize_handles_enabled' => $canvas_settings['canvas_resize_handles_enabled'] ?? true,
+            'canvas_handle_size' => $canvas_settings['canvas_handle_size'] ?? 12,
+            'canvas_handle_color' => $canvas_settings['canvas_handle_color'] ?? '#007cba',
+            'canvas_handle_hover_color' => $canvas_settings['canvas_handle_hover_color'] ?? '#ffffff',
+            // Nouveaux paramètres par défaut des éléments
+            'default_text_color' => $canvas_settings['default_text_color'] ?? '#000000',
+            'default_background_color' => $canvas_settings['default_background_color'] ?? '#ffffff',
+            'default_font_size' => $canvas_settings['default_font_size'] ?? 14
         ]);
 
         // Styles pour l'éditeur canvas
@@ -1167,15 +1404,6 @@ class PDF_Builder_Admin_Old {
 
         <script type="text/javascript">
         jQuery(document).ready(function($) {
-            // Définir les nonces et messages
-            var pdfBuilderOrderActionsNonce = '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>';
-            var msgGenerating = '<?php echo esc_js(__('Génération du PDF...', 'pdf-builder-pro')); ?>';
-            var msgGenerated = '<?php echo esc_js(__('PDF généré avec succès', 'pdf-builder-pro')); ?>';
-            var msgPreviewOpened = '<?php echo esc_js(__('Aperçu ouvert', 'pdf-builder-pro')); ?>';
-            var msgEnablePopups = '<?php echo esc_js(__('Activez les popups pour voir l\'aperçu', 'pdf-builder-pro')); ?>';
-            var msgErrorPreview = '<?php echo esc_js(__('Erreur lors de l\'aperçu', 'pdf-builder-pro')); ?>';
-            var msgErrorGenerate = '<?php echo esc_js(__('Erreur lors de la génération', 'pdf-builder-pro')); ?>';
-            var msgAjaxError = '<?php echo esc_js(__('Erreur AJAX', 'pdf-builder-pro')); ?>';
             var $previewBtn = $('#pdf-builder-preview-btn');
             var $generateBtn = $('#pdf-builder-generate-btn');
             var $downloadBtn = $('#pdf-builder-download-btn');
@@ -1197,7 +1425,7 @@ class PDF_Builder_Admin_Old {
                         action: 'pdf_builder_preview_order_pdf',
                         order_id: orderId,
                         template_id: templateId,
-                        nonce: pdfBuilderOrderActionsNonce
+                        nonce: '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>'
                     },
                     success: function(response) {
                         if (response.success) {
@@ -1206,16 +1434,16 @@ class PDF_Builder_Admin_Old {
                             if (previewWindow) {
                                 previewWindow.document.write(response.data.html);
                                 previewWindow.document.close();
-                                $status.html(msgPreviewOpened);
+                                $status.html('<?php echo esc_js(__('Aperçu ouvert', 'pdf-builder-pro')); ?>');
                             } else {
-                                $status.html('<span style="color: #d63638;">' + msgEnablePopups + '</span>');
+                                $status.html('<span style="color: #d63638;"><?php echo esc_js(__('Activez les popups pour voir l\'aperçu', 'pdf-builder-pro')); ?></span>');
                             }
                         } else {
-                            $status.html('<span style="color: #d63638;">' + (response.data || msgErrorPreview) + '</span>');
+                            $status.html('<span style="color: #d63638;">' + (response.data || '<?php echo esc_js(__('Erreur lors de l\'aperçu', 'pdf-builder-pro')); ?>') + '</span>');
                         }
                     },
                     error: function() {
-                        $status.html('<span style="color: #d63638;">' + msgAjaxError + '</span>');
+                        $status.html('<span style="color: #d63638;"><?php echo esc_js(__('Erreur AJAX', 'pdf-builder-pro')); ?></span>');
                     },
                     complete: function() {
                         $previewBtn.prop('disabled', false);
@@ -1228,7 +1456,7 @@ class PDF_Builder_Admin_Old {
                 var orderId = $(this).data('order-id');
                 var templateId = $templateSelect.val() || 0;
 
-                $status.html(msgGenerating);
+                $status.html('<?php echo esc_js(__('Génération du PDF...', 'pdf-builder-pro')); ?>');
                 $generateBtn.prop('disabled', true);
 
                 $.ajax({
@@ -1238,19 +1466,19 @@ class PDF_Builder_Admin_Old {
                         action: 'pdf_builder_generate_order_pdf',
                         order_id: orderId,
                         template_id: templateId,
-                        nonce: pdfBuilderOrderActionsNonce
+                        nonce: '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>'
                     },
                     success: function(response) {
                         if (response.success) {
-                            $status.html(msgGenerated);
+                            $status.html('<?php echo esc_js(__('PDF généré avec succès', 'pdf-builder-pro')); ?>');
                             $downloadBtn.show();
                             $downloadBtn.data('pdf-url', response.data.url);
                         } else {
-                            $status.html('<span style="color: #d63638;">' + (response.data || msgErrorGenerate) + '</span>');
+                            $status.html('<span style="color: #d63638;">' + (response.data || '<?php echo esc_js(__('Erreur lors de la génération', 'pdf-builder-pro')); ?>') + '</span>');
                         }
                     },
                     error: function() {
-                        $status.html('<span style="color: #d63638;">' + msgAjaxError + '</span>');
+                        $status.html('<span style="color: #d63638;"><?php echo esc_js(__('Erreur AJAX', 'pdf-builder-pro')); ?></span>');
                     },
                     complete: function() {
                         $generateBtn.prop('disabled', false);
@@ -2303,6 +2531,49 @@ class PDF_Builder_Admin_Old {
     }
 
     /**
+     * Sauvegarder les paramètres de rendu Canvas
+     */
+    private function save_canvas_render_settings() {
+        // Vérifier les permissions
+        if (!current_user_can('manage_options')) {
+            wp_die(__('Permissions insuffisantes.', 'pdf-builder-pro'));
+        }
+
+        // Récupérer les paramètres actuels
+        $canvas_settings = get_option('pdf_builder_canvas_settings', []);
+
+        // Mettre à jour les paramètres des poignées
+        $canvas_settings['canvas_handle_size'] = intval($_POST['canvas_handle_size'] ?? 12);
+        $canvas_settings['canvas_handle_color'] = sanitize_hex_color($_POST['canvas_handle_color'] ?? '#007cba');
+        $canvas_settings['canvas_handle_hover_color'] = sanitize_hex_color($_POST['canvas_handle_hover_color'] ?? '#ffffff');
+
+        // Mettre à jour les paramètres des bordures
+        $canvas_settings['canvas_border_width'] = intval($_POST['canvas_border_width'] ?? 2);
+        $canvas_settings['canvas_border_color'] = sanitize_hex_color($_POST['canvas_border_color'] ?? '#007cba');
+        $canvas_settings['canvas_border_spacing'] = intval($_POST['canvas_border_spacing'] ?? 2);
+
+        // Mettre à jour les paramètres de visibilité
+        $canvas_settings['canvas_resize_handles_enabled'] = isset($_POST['canvas_resize_handles_enabled']);
+        $canvas_settings['canvas_element_borders_enabled'] = isset($_POST['canvas_element_borders_enabled']);
+
+        // Mettre à jour les paramètres par défaut des éléments
+        $canvas_settings['default_text_color'] = sanitize_hex_color($_POST['default_text_color'] ?? '#000000');
+        $canvas_settings['default_background_color'] = sanitize_hex_color($_POST['default_background_color'] ?? '#ffffff');
+        $canvas_settings['default_font_size'] = intval($_POST['default_font_size'] ?? 14);
+
+        // Sauvegarder les paramètres
+        update_option('pdf_builder_canvas_settings', $canvas_settings);
+
+        // Ajouter un message de succès
+        add_settings_error(
+            'pdf_builder_canvas_render',
+            'settings_updated',
+            __('Paramètres de rendu Canvas sauvegardés avec succès.', 'pdf-builder-pro'),
+            'updated'
+        );
+    }
+
+    /**
      * AJAX - Sauvegarder les paramètres de la page des paramètres
      */
     public function ajax_save_settings_page() {
@@ -2351,87 +2622,6 @@ class PDF_Builder_Admin_Old {
         update_option('pdf_builder_settings', $settings);
 
         wp_send_json_success(['message' => 'Paramètres sauvegardés avec succès !']);
-    }
-
-    /**
-     * AJAX - Charger les éléments du canvas pour un template
-     */
-    public function ajax_load_canvas_elements() {
-        // Vérification de sécurité avec validation flexible du nonce
-        $received_nonce = $_POST['nonce'] ?? '';
-        $user_id = get_current_user_id();
-
-        // Essayer différents formats de nonce pour la compatibilité
-        $valid_formats = [
-            'test_nonce_123', // TEST TEMPORAIRE
-            'pdf_builder_canvas_v4_' . $user_id,
-            'pdf_builder_canvas_v3_' . $user_id . '_cachebust_' . time(),
-            'pdf_builder_canvas_v3_' . $user_id,
-            'pdf_builder_nonce_' . $user_id,
-        ];
-
-        $nonce_valid = false;
-        foreach ($valid_formats as $format) {
-            if (wp_verify_nonce($received_nonce, $format)) {
-                $nonce_valid = true;
-                break;
-            }
-        }
-
-        if (!$nonce_valid) {
-            wp_send_json_error('Nonce invalide');
-            return;
-        }
-
-        $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
-
-        if (!$template_id) {
-            wp_send_json_error('ID template manquant');
-            return;
-        }
-
-        try {
-            global $wpdb;
-            $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-
-            // Vérifier que la table existe
-            if ($wpdb->get_var("SHOW TABLES LIKE '$table_templates'") != $table_templates) {
-                wp_send_json_error('Table des templates non trouvée');
-                return;
-            }
-
-            // Récupérer les données du template
-            $template = $wpdb->get_row(
-                PDF_Builder_Debug_Helper::safe_wpdb_prepare("SELECT template_data FROM $table_templates WHERE id = %d", $template_id),
-                ARRAY_A
-            );
-
-            if (!$template) {
-                wp_send_json_error('Template non trouvé');
-                return;
-            }
-
-            $template_data = json_decode($template['template_data'], true);
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                wp_send_json_error('Erreur lors du décodage du template JSON: ' . json_last_error_msg());
-                return;
-            }
-
-            // Extraire les éléments du template
-            $elements = [];
-            if (isset($template_data['pages']) && is_array($template_data['pages']) && !empty($template_data['pages'])) {
-                $firstPage = $template_data['pages'][0];
-                $elements = $firstPage['elements'] ?? [];
-            } elseif (isset($template_data['elements']) && is_array($template_data['elements'])) {
-                // Fallback pour l'ancienne structure
-                $elements = $template_data['elements'];
-            }
-
-            wp_send_json_success(['elements' => $elements]);
-
-        } catch (Exception $e) {
-            wp_send_json_error('Erreur: ' . $e->getMessage());
-        }
     }
 }
 

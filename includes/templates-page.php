@@ -236,7 +236,7 @@ let currentTemplateId = null;
 if (typeof ajaxurl === 'undefined') {
     ajaxurl = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>';
 }
-console.log('ajaxurl défini comme:', ajaxurl);
+// console.log('ajaxurl défini comme:', ajaxurl);
 
 // Définir le nonce pour les templates
 var pdfBuilderTemplatesNonce = '<?php echo wp_create_nonce("pdf_builder_templates"); ?>';
@@ -291,7 +291,7 @@ function saveTemplateSettings() {
     };
 
     // Simulation de la sauvegarde (à remplacer par un vrai appel AJAX)
-    console.log('Sauvegarde des paramètres:', settings);
+    // console.log('Sauvegarde des paramètres:', settings);
 
     // Afficher un message de succès temporaire
     const saveButton = document.querySelector('.template-modal-footer .button-primary');
