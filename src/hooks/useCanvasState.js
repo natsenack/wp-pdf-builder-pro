@@ -123,9 +123,7 @@ export const useCanvasState = ({
   const history = { addToHistory: () => {}, historySize: 0 };
   const selection = {
     selectElement: useCallback((elementId, addToSelection = false) => {
-      console.log('selectElement called with:', elementId, addToSelection);
       setSelectedElements(prev => {
-        console.log('Previous selectedElements:', prev);
         let newSelection;
         if (addToSelection) {
           // Ajouter à la sélection existante (avec Ctrl/Cmd)
@@ -140,7 +138,6 @@ export const useCanvasState = ({
           // Remplacer la sélection (sélection simple)
           newSelection = [elementId];
         }
-        console.log('New selectedElements:', newSelection);
         return newSelection;
       });
     }, []),

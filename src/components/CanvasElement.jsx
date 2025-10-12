@@ -60,11 +60,9 @@ export const CanvasElement = ({
 
   // Gestionnaire de clic sur l'élément
   const handleMouseDown = useCallback((e) => {
-    console.log('CanvasElement handleMouseDown called for element:', element.id, element.type);
     e.stopPropagation();
 
     if (!isSelected) {
-      console.log('Element not selected, calling onSelect');
       onSelect();
       return;
     }
@@ -161,6 +159,7 @@ export const CanvasElement = ({
       <div
         ref={elementRef}
         className={`canvas-element ${isSelected ? 'selected' : ''}`}
+        data-element-id={element.id}
         style={{
           position: 'absolute',
           left: element.x * zoom,

@@ -100,7 +100,6 @@ export const PDFCanvasEditor = ({ options }) => {
 
   // Gestionnaire pour la sélection d'élément
   const handleElementSelect = useCallback((elementId, addToSelection = false) => {
-    console.log('handleElementSelect called with:', elementId, addToSelection);
     canvasState.selection.selectElement(elementId, addToSelection);
   }, [canvasState.selection]);
 
@@ -468,11 +467,7 @@ export const PDFCanvasEditor = ({ options }) => {
                       <CanvasElement
                         key={element.id}
                         element={element}
-                        isSelected={(() => {
-                          const isSel = canvasState.selection.selectedElements.includes(element.id);
-                          console.log('CanvasElement', element.id, 'isSelected:', isSel, 'selectedElements:', canvasState.selection.selectedElements);
-                          return isSel;
-                        })()}
+                        isSelected={canvasState.selection.selectedElements.includes(element.id)}
                         zoom={1} // Le zoom est géré au niveau du wrapper
                         snapToGrid={snapToGrid}
                         gridSize={10}
