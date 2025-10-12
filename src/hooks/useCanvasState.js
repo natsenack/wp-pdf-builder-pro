@@ -639,7 +639,7 @@ export const useCanvasState = ({
     }
   }, [history, selection]);
 
-  const saveTemplate = useCallback(() => {
+  const saveTemplate = useCallback(async () => {
     const templateData = {
       elements,
       canvasWidth,
@@ -647,11 +647,39 @@ export const useCanvasState = ({
       version: '1.0'
     };
 
-    if (onSave) {
-      onSave(templateData);
-    }
+    // Vérifier si c'est un template existant (avec ID)
+    const isExistingTemplate = window.pdfBuilderData?.templateId &&
+                              window.pdfBuilderData.templateId !== '0' &&
+                              window.pdfBuilderData.templateId !== 0;
 
-    return templateData;
+    try {
+      if (onSave) {
+        await onSave(templateData);
+      }
+
+      // Notification de succès pour les templates existants
+      if (isExistingTemplate) {
+        if (typeof toastr !== 'undefined') {
+          toastr.success('Modifications du canvas sauvegardées avec succès !');
+        } else {
+          alert('Modifications du canvas sauvegardées avec succès !');
+        }
+      }
+
+      return templateData;
+    } catch (error) {
+      console.error('Erreur lors de la sauvegarde du template:', error);
+
+      // Notification d'erreur
+      const errorMessage = error.message || 'Erreur inconnue lors de la sauvegarde';
+      if (typeof toastr !== 'undefined') {
+        toastr.error(`Erreur lors de la sauvegarde: ${errorMessage}`);
+      } else {
+        alert(`Erreur lors de la sauvegarde: ${errorMessage}`);
+      }
+
+      throw error; // Re-throw pour permettre la gestion d'erreur en amont si nécessaire
+    }
   }, [elements, canvasWidth, canvasHeight, onSave]);
 
   const loadTemplate = useCallback((templateData) => {
