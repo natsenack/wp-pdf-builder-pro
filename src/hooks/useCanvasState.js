@@ -119,17 +119,49 @@ export const useCanvasState = ({
   globalSettings = null
 }) => {
   const [elements, setElements] = useState(initialElements);
+  const [selectedElements, setSelectedElements] = useState([]);
   const [nextId, setNextId] = useState(1);
   const [isSaving, setIsSaving] = useState(false);
 
   const history = { addToHistory: () => {}, historySize: 0 };
   const selection = {
-    selectElement: () => {},
-    clearSelection: () => {},
-    deleteSelected: () => [],
-    duplicateSelected: () => [],
-    selectAll: () => {},
-    selectedElements: []
+    selectElement: useCallback((elementId) => {
+      setSelectedElements([elementId]);
+    }, []),
+    clearSelection: useCallback(() => {
+      setSelectedElements([]);
+    }, []),
+    deleteSelected: useCallback(() => {
+      const elementsToDelete = [...selectedElements];
+      setElements(prev => prev.filter(element => !selectedElements.includes(element.id)));
+      setSelectedElements([]);
+      return elementsToDelete;
+    }, [selectedElements]),
+    duplicateSelected: useCallback(() => {
+      const duplicatedElements = [];
+      selectedElements.forEach(elementId => {
+        const element = elements.find(el => el.id === elementId);
+        if (element) {
+          const duplicatedElement = {
+            ...element,
+            id: `element_${nextId}`,
+            x: element.x + 20,
+            y: element.y + 20
+          };
+          duplicatedElements.push(duplicatedElement);
+          setNextId(prev => prev + 1);
+        }
+      });
+      if (duplicatedElements.length > 0) {
+        setElements(prev => [...prev, ...duplicatedElements]);
+        setSelectedElements(duplicatedElements.map(el => el.id));
+      }
+      return duplicatedElements;
+    }, [selectedElements, elements, nextId]),
+    selectAll: useCallback(() => {
+      setSelectedElements(elements.map(el => el.id));
+    }, [elements]),
+    selectedElements
   };
 
   const clipboard = {

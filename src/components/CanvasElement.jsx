@@ -111,12 +111,22 @@ export const CanvasElement = ({
 
   // Gestionnaire de clic sur l'élément
   const handleMouseDown = useCallback((e) => {
+    console.log('CanvasElement handleMouseDown called for element:', element.id, element.type);
+    console.log('Event target:', e.target);
+    console.log('Element ref:', elementRef.current);
+    console.log('Element dimensions:', element.width, element.height);
+    console.log('Element position:', element.x, element.y);
+    console.log('Zoom:', zoom);
+    console.log('isSelected before:', isSelected);
     e.stopPropagation();
 
     if (!isSelected) {
+      console.log('Element not selected, calling onSelect()');
       onSelect();
       return;
     }
+
+    console.log('Element already selected, proceeding with drag/resize logic');
 
     // Calculer les coordonnées relatives au canvas (en tenant compte du zoom)
     const canvas = elementRef.current.closest('.canvas-zoom-wrapper');
@@ -210,10 +220,11 @@ export const CanvasElement = ({
           position: 'absolute',
           left: element.x * zoom,
           top: element.y * zoom,
-          width: element.width * zoom,
-          height: element.height * zoom,
+          width: Math.max(element.width * zoom, 10),
+          height: Math.max(element.height * zoom, 10),
           cursor: dragAndDrop.isDragging ? 'grabbing' : 'grab',
           userSelect: 'none',
+          pointerEvents: 'auto',
           // Pour les éléments spéciaux, utiliser une gestion différente des bordures
           ...(isSpecialElement(element.type) ? getSpecialElementBorderStyle(element) : {
             // Styles de base communs à tous les éléments non-spéciaux
