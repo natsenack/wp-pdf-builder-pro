@@ -3,13 +3,6 @@ import ReactDOM from 'react-dom';
 import { PDFCanvasEditor } from './components/PDFCanvasEditor';
 import './styles/editor.css';
 
-// DIAGNOSTIC: Nouvelle approche - Chargement direct des éléments
-console.log('🆕 PDF Builder Pro - NOUVELLE APPROCHE: Chargement direct des éléments depuis PHP');
-console.log('� PDF Builder Pro - Éléments initiaux reçus:', options.initialElements?.length || 0, 'éléments');
-console.log('🆔 PDF Builder Pro - Template ID:', options.templateId);
-console.log('� PDF Builder Pro - Template Name:', options.templateName);
-console.log('🔄 PDF Builder Pro - isNew:', options.isNew);
-
 // Classe principale pour l'éditeur PDF
 class PDFBuilderPro {
   constructor() {
@@ -38,6 +31,13 @@ class PDFBuilderPro {
       snapToGrid: true,
       ...options
     };
+
+    // DIAGNOSTIC: Nouvelle approche - Chargement direct des éléments
+    console.log('🆕 PDF Builder Pro - NOUVELLE APPROCHE: Chargement direct des éléments depuis PHP');
+    console.log('📊 PDF Builder Pro - Éléments initiaux reçus:', defaultOptions.initialElements?.length || 0, 'éléments');
+    console.log('🆔 PDF Builder Pro - Template ID:', defaultOptions.templateId);
+    console.log('📝 PDF Builder Pro - Template Name:', defaultOptions.templateName);
+    console.log('🔄 PDF Builder Pro - isNew:', defaultOptions.isNew);
 
     console.log('PDF Builder Pro - Initialisation avec options:', defaultOptions);
 
