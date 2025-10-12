@@ -1017,5 +1017,4 @@ export const useCanvasState = ({
     // Utilitaires
     getElementById: (id) => elements.find(el => el.id === id)
   };
-};
-
+})
