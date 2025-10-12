@@ -334,11 +334,6 @@ const PropertiesPanel = React.memo(({
   const [isBackgroundEnabled, setIsBackgroundEnabled] = useState(false);
   const [isBorderEnabled, setIsBorderEnabled] = useState(false);
 
-  // Log des props pour débogage (seulement quand elles changent)
-  useEffect(() => {
-    console.log('🔍 PropertiesPanel - selectedElements changed:', selectedElements?.length);
-  }, [selectedElements?.length, elements?.length]); // Éviter les références d'objets instables
-
   // Utiliser les hooks de personnalisation et synchronisation
   const {
     localProperties,
@@ -346,10 +341,6 @@ const PropertiesPanel = React.memo(({
     setActiveTab,
     handlePropertyChange: customizationChange
   } = useElementCustomization(selectedElements, elements, onPropertyChange);
-
-  // Log du hook (seulement quand il change)
-  // useEffect(() => {
-  // }, [activeTab, selectedElement?.id]); // Éviter de logger localProperties qui change souvent
 
   const { syncImmediate, syncBatch } = useElementSynchronization(
     elements,
@@ -369,38 +360,20 @@ const PropertiesPanel = React.memo(({
   // Mettre à jour les valeurs précédentes quand l'élément change
   useEffect(() => {
     if (selectedElement) {
-      console.log('📋 PropertiesPanel - selectedElement changed:', {
-        id: selectedElement.id,
-        type: selectedElement.type,
-        backgroundColor: selectedElement.backgroundColor,
-        allProperties: selectedElement
-      });
       // Initialiser les valeurs précédentes avec les valeurs actuelles de l'élément
       setPreviousBackgroundColor(selectedElement.backgroundColor || '#ffffff');
       // Pour borderWidth, s'assurer qu'on a au moins 1 pour la restauration
       const initialBorderWidth = selectedElement.borderWidth && selectedElement.borderWidth > 0 ? selectedElement.borderWidth : 1;
       setPreviousBorderWidth(initialBorderWidth);
       setPreviousBorderColor(selectedElement.borderColor || '#000000');
-      console.log('📋 Previous values set:', {
-        backgroundColor: selectedElement.backgroundColor || '#ffffff',
-        borderWidth: initialBorderWidth,
-        borderColor: selectedElement.borderColor || '#000000'
-      });
     }
   }, [selectedElement]); // Ne dépendre que de selectedElement pour éviter les boucles
 
   // Synchroniser l'état du toggle fond
   useEffect(() => {
     const shouldBeEnabled = !!localProperties.backgroundColor && localProperties.backgroundColor !== 'transparent';
-    console.log('🎨 Toggle sync - localProperties.backgroundColor:', localProperties.backgroundColor, 'shouldBeEnabled:', shouldBeEnabled);
-    console.log('🎨 Toggle sync - full localProperties:', localProperties);
     setIsBackgroundEnabled(shouldBeEnabled);
   }, [localProperties.backgroundColor]);
-
-  // Log quand isBackgroundEnabled change
-  useEffect(() => {
-    console.log('🎛️ isBackgroundEnabled changed to:', isBackgroundEnabled);
-  }, [isBackgroundEnabled]);
 
   // Synchroniser l'état du toggle bordures
   useEffect(() => {
@@ -504,7 +477,7 @@ const PropertiesPanel = React.memo(({
         className={`tab-btn ${activeTab === 'content' ? 'active' : ''}`}
         onClick={() => setActiveTab('content')}
       >
-        [Aa] Contenu
+        📝 Contenu
       </button>
       <button
         className={`tab-btn ${activeTab === 'effects' ? 'active' : ''}`}
@@ -965,7 +938,7 @@ const PropertiesPanel = React.memo(({
             {/* Contenu texte (uniquement pour les éléments texte) */}
             {allowedControls.includes('text') && selectedElement.type === 'text' && (
               <div className="properties-group">
-                <h4>[Aa] Contenu texte</h4>
+                <h4>📝 Contenu texte</h4>
 
                 <div className="property-row">
                   <label>Texte:</label>

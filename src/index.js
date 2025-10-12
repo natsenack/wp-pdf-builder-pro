@@ -32,15 +32,6 @@ class PDFBuilderPro {
       ...options
     };
 
-    // DIAGNOSTIC: Nouvelle approche - Chargement direct des éléments
-    console.log('🆕 PDF Builder Pro - NOUVELLE APPROCHE: Chargement direct des éléments depuis PHP');
-    console.log('📊 PDF Builder Pro - Éléments initiaux reçus:', defaultOptions.initialElements?.length || 0, 'éléments');
-    console.log('🆔 PDF Builder Pro - Template ID:', defaultOptions.templateId);
-    console.log('📝 PDF Builder Pro - Template Name:', defaultOptions.templateName);
-    console.log('🔄 PDF Builder Pro - isNew:', defaultOptions.isNew);
-
-    console.log('PDF Builder Pro - Initialisation avec options:', defaultOptions);
-
     // Créer l'éditeur React
     const editorElement = React.createElement(PDFCanvasEditor, {
       options: defaultOptions

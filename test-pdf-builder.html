@@ -49,15 +49,27 @@
                         isNew: false,
                         initialElements: [
                             {
-                                id: 'test-element-1',
-                                type: 'text',
+                                id: 'test-product-table',
+                                type: 'product_table',
                                 x: 50,
                                 y: 50,
-                                width: 200,
-                                height: 30,
-                                text: 'Test Element',
-                                fontSize: 14,
-                                fontFamily: 'Arial'
+                                width: 500,
+                                height: 200,
+                                columns: {
+                                    image: true,
+                                    name: true,
+                                    sku: true,
+                                    quantity: true,
+                                    price: true,
+                                    total: true
+                                },
+                                showSubtotal: true,
+                                showShipping: true,
+                                showTaxes: true,
+                                showDiscount: true,
+                                showTotal: true,
+                                fontSize: 12,
+                                borderWidth: 1
                             }
                         ],
                         width: 595,

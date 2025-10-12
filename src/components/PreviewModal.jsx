@@ -15,66 +15,73 @@ const PreviewModal = ({
   if (!isOpen) return null;
 
   const handlePrint = () => {
-    const printWindow = window.open('', '_blank');
+    // Ouvrir l'aperçu dans une nouvelle fenêtre pour l'impression
+    const printWindow = window.open('', '_blank', 'width=800,height=600');
     if (printWindow) {
-      // Créer le HTML pour l'impression basé sur les éléments rendus
-      const printContent = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>Impression PDF</title>
-          <style>
-            body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
-            .print-content {
-              width: ${canvasWidth}px;
-              height: ${canvasHeight}px;
-              margin: 0 auto;
-              background: white;
-              position: relative;
-              border: 1px solid #e2e8f0;
-            }
-            .canvas-element {
-              position: absolute;
-              box-sizing: border-box;
-            }
-            .canvas-element.selected {
-              outline: 2px solid #3b82f6;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="print-content">
-            ${elements.map(element => {
-              const style = {
-                left: `${element.x}px`,
-                top: `${element.y}px`,
-                width: `${element.width}px`,
-                height: `${element.height}px`,
-                fontSize: `${element.fontSize || 14}px`,
-                color: element.color || '#333333',
-                backgroundColor: element.backgroundColor || 'transparent',
-                border: element.borderWidth ? `${element.borderWidth}px solid ${element.borderColor || 'transparent'}` : 'none',
-                fontWeight: element.fontWeight || 'normal',
-                textAlign: element.textAlign || 'left',
-                padding: '4px',
-                overflow: 'hidden'
-              };
-
-              let content = element.text || element.content || '';
-              if (element.type === 'image' && element.src) {
-                content = `<img src="${element.src}" style="width: 100%; height: 100%; object-fit: cover;" alt="Image" />`;
+      // Copier le contenu de l'aperçu actuel
+      const previewContent = document.querySelector('.preview-content');
+      if (previewContent) {
+        printWindow.document.write(`
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>Impression PDF Builder Pro</title>
+            <style>
+              body {
+                margin: 0;
+                padding: 20px;
+                font-family: Arial, sans-serif;
+                background: white;
               }
-
-              return `<div class="canvas-element" style="${Object.entries(style).map(([key, value]) => `${key.replace(/([A-Z])/g, '-$1').toLowerCase()}:${value}`).join(';')}">${content}</div>`;
-            }).join('')}
-          </div>
-        </body>
-        </html>
-      `;
-
-      printWindow.document.write(printContent);
-      printWindow.document.close();
-      printWindow.print();
+              .print-container {
+                max-width: ${canvasWidth}px;
+                margin: 0 auto;
+                background: white;
+                position: relative;
+              }
+              .preview-canvas {
+                border: none !important;
+                margin: 0;
+                padding: 0;
+              }
+              @media print {
+                body { margin: 0; }
+                .print-container { max-width: none; }
+              }
+            </style>
+          </head>
+          <body>
+            <div class="print-container">
+              ${previewContent.outerHTML}
+            </div>
+            <script>
+              window.onload = function() {
+                setTimeout(function() {
+                  window.print();
+                  window.close();
+                }, 500);
+              };
+            </script>
+          </body>
+          </html>
+        `);
+        printWindow.document.close();
+      } else {
+        // Fallback si l'aperçu n'est pas trouvé
+        printWindow.document.write(`
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>Impression PDF</title>
+          </head>
+          <body>
+            <p>Contenu d'aperçu non disponible pour l'impression.</p>
+            <script>window.print(); window.close();</script>
+          </body>
+          </html>
+        `);
+        printWindow.document.close();
+      }
     }
   };
 

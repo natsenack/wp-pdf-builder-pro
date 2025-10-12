@@ -25,9 +25,6 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
 
   // Synchroniser les propriétés locales avec l'élément sélectionné
   useEffect(() => {
-    console.log('🔧 useElementCustomization - selectedElement:', selectedElement?.id, 'backgroundColor:', selectedElement?.backgroundColor);
-    console.log('🔧 useElementCustomization - selectedElement full properties:', selectedElement);
-
     if (selectedElement) {
       const defaultProperties = {
         // Valeurs par défaut de base
@@ -46,8 +43,6 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
         lineHeight: 1.2,
         letterSpacing: 0,
       };
-
-      console.log('🔧 useElementCustomization - default properties:', defaultProperties);
 
       // Appliquer les restrictions selon le type d'élément
       const elementType = selectedElement.type;
@@ -79,7 +74,6 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
         if (isRestricted) {
           const correctedValue = fixInvalidProperty(elementType, property, newProperties[property]);
           if (correctedValue !== newProperties[property]) {
-            console.log(`🔧 Forçage de ${property} pour ${elementType}: '${newProperties[property]}' -> '${correctedValue}'`);
             newProperties[property] = correctedValue;
           }
         }
@@ -98,16 +92,8 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
         }
       });
 
-      console.log('🔧 useElementCustomization - merged properties:', newProperties);
-      console.log('🔧 useElementCustomization - final backgroundColor:', newProperties.backgroundColor);
-      console.log('🔧 useElementCustomization - backgroundColor source comparison:', {
-        default: defaultProperties.backgroundColor,
-        element: selectedElement.backgroundColor,
-        final: newProperties.backgroundColor
-      });
       setLocalProperties(newProperties);
     } else {
-      console.log('🔧 useElementCustomization - no selectedElement, setting empty properties');
       setLocalProperties({});
     }
   }, [selectedElement?.id]); // Ne dépendre que de l'ID pour éviter les re-renders inutiles

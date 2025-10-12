@@ -70,10 +70,11 @@ export const PDFCanvasEditor = ({ options }) => {
     onElementDrop: (elementId, position) => {
       canvasState.updateElement(elementId, position);
     },
+    snapToGrid: snapToGrid,
     canvasRect: canvasRef.current?.getBoundingClientRect(),
     zoom: canvasState.zoom.zoom,
     canvasWidth: canvasState.canvasWidth,
-    canvasHeight: canvasState.canvasHeight
+    canvasHeight: canvasHeight
   });
 
   // Gestion des raccourcis clavier

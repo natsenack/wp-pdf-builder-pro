@@ -199,6 +199,169 @@ export const CanvasElement = ({
     }
   }, [onContextMenu, element.id]);
 
+  // Fonction helper pour obtenir les styles spécifiques au type d'élément
+  const getElementTypeStyles = (element, zoom) => {
+    switch (element.type) {
+      case 'text':
+        return {
+          fontSize: (element.fontSize || 14) * zoom,
+          fontFamily: element.fontFamily || 'Arial',
+          color: element.color || '#1e293b',
+          fontWeight: element.fontWeight || 'normal',
+          fontStyle: element.fontStyle || 'normal',
+          textAlign: element.textAlign || 'left',
+          textDecoration: element.textDecoration || 'none',
+          lineHeight: element.lineHeight || 'normal',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: element.textAlign === 'center' ? 'center' :
+                         element.textAlign === 'right' ? 'flex-end' : 'flex-start',
+          wordBreak: 'break-word',
+          overflow: 'hidden'
+        };
+
+      case 'rectangle':
+        return {
+          backgroundColor: element.backgroundColor || 'transparent',
+          borderRadius: element.borderRadius ? `${element.borderRadius}px` : '0'
+        };
+
+      case 'image':
+        if (element.src || element.imageUrl) {
+          return {
+            backgroundImage: `url(${element.src || element.imageUrl})`,
+            backgroundSize: element.objectFit || element.fit || 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          };
+        }
+        return {
+          backgroundColor: element.backgroundColor || 'transparent',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#9ca3af',
+          fontSize: 12 * zoom
+        };
+
+      case 'line':
+        return {
+          borderTop: `${element.lineWidth || 1}px solid ${element.lineColor || '#6b7280'}`,
+          height: '0px',
+          width: '100%'
+        };
+
+      case 'layout-header':
+        return {
+          backgroundColor: element.backgroundColor || 'transparent',
+          borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '4px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 14 * zoom,
+          fontWeight: 'bold',
+          color: element.color || '#64748b'
+        };
+
+      case 'layout-footer':
+        return {
+          backgroundColor: element.backgroundColor || 'transparent',
+          borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '4px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 12 * zoom,
+          color: element.color || '#64748b'
+        };
+
+      case 'layout-sidebar':
+        return {
+          backgroundColor: element.backgroundColor || 'transparent',
+          borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '4px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 12 * zoom,
+          color: element.color || '#64748b'
+        };
+
+      case 'layout-section':
+        return {
+          backgroundColor: element.backgroundColor || 'transparent',
+          borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '4px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 12 * zoom,
+          color: element.color || '#64748b'
+        };
+
+      case 'layout-container':
+        return {
+          backgroundColor: element.backgroundColor || 'transparent',
+          borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '4px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 12 * zoom,
+          color: element.color || '#94a3b8'
+        };
+
+      case 'shape-rectangle':
+        return {
+          backgroundColor: element.backgroundColor || 'transparent',
+          borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0'
+        };
+
+      case 'shape-circle':
+        return {
+          backgroundColor: element.backgroundColor || 'transparent',
+          borderRadius: '50%'
+        };
+
+      case 'shape-line':
+        return {
+          backgroundColor: element.backgroundColor || 'transparent',
+          height: '100%'
+        };
+
+      case 'shape-arrow':
+        return {
+          backgroundColor: element.backgroundColor || 'transparent',
+          clipPath: 'polygon(0% 50%, 70% 0%, 70% 40%, 100% 40%, 100% 60%, 70% 60%, 70% 100%)'
+        };
+
+      case 'shape-triangle':
+        return {
+          backgroundColor: element.backgroundColor || 'transparent',
+          clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)'
+        };
+
+      case 'shape-star':
+        return {
+          backgroundColor: element.backgroundColor || 'transparent',
+          clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)'
+        };
+
+      case 'divider':
+        return {
+          backgroundColor: element.backgroundColor || 'transparent',
+          height: '1px'
+        };
+
+      // Styles par défaut pour les autres types
+      default:
+        return {
+          backgroundColor: element.backgroundColor || 'transparent',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 12 * zoom,
+          color: element.color || '#333333'
+        };
+    }
+  };
+
   return (
     <>
       {/* Élément principal */}
@@ -230,249 +393,8 @@ export const CanvasElement = ({
             `0px ${element.boxShadowSpread || 0}px ${element.boxShadowBlur || 0}px ${element.boxShadowColor}` : 
             (element.shadow ? `${element.shadowOffsetX || 2}px ${element.shadowOffsetY || 2}px 4px ${element.shadowColor || '#000000'}40` : 'none'),
 
-          // Styles spécifiques selon le type d'élément (mais utilisant les propriétés génériques)
-          ...(element.type === 'text' ? {
-            fontSize: (element.fontSize || 14) * zoom,
-            fontFamily: element.fontFamily || 'Arial',
-            color: element.color || '#1e293b',
-            fontWeight: element.fontWeight || 'normal',
-            fontStyle: element.fontStyle || 'normal',
-            textAlign: element.textAlign || 'left',
-            textDecoration: element.textDecoration || 'none',
-            lineHeight: element.lineHeight || 'normal',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: element.textAlign === 'center' ? 'center' : 
-                           element.textAlign === 'right' ? 'flex-end' : 'flex-start',
-            wordBreak: 'break-word',
-            overflow: 'hidden'
-          } : element.type === 'rectangle' ? {
-            backgroundColor: element.backgroundColor || 'transparent',
-            borderRadius: element.borderRadius ? `${element.borderRadius}px` : '0'
-          } : element.type === 'image' && (element.src || element.imageUrl) ? {
-            backgroundImage: `url(${element.src || element.imageUrl})`,
-            backgroundSize: element.objectFit || element.fit || 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat'
-          } : element.type === 'line' ? {
-            borderTop: `${element.lineWidth || 1}px solid ${element.lineColor || '#6b7280'}`,
-            height: '0px',
-            width: '100%'
-          } : element.type === 'layout-header' ? {
-            backgroundColor: element.backgroundColor || 'transparent',
-            borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '4px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 14 * zoom,
-            fontWeight: 'bold',
-            color: element.color || '#64748b'
-          } : element.type === 'layout-footer' ? {
-            backgroundColor: element.backgroundColor || 'transparent',
-            borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '4px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 12 * zoom,
-            color: element.color || '#64748b'
-          } : element.type === 'layout-sidebar' ? {
-            backgroundColor: element.backgroundColor || 'transparent',
-            borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '4px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 12 * zoom,
-            color: element.color || '#64748b'
-          } : element.type === 'layout-section' ? {
-            backgroundColor: element.backgroundColor || 'transparent',
-            borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '4px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 12 * zoom,
-            color: element.color || '#64748b'
-          } : element.type === 'layout-container' ? {
-            backgroundColor: element.backgroundColor || 'transparent',
-            borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '4px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 12 * zoom,
-            color: element.color || '#94a3b8'
-          } : element.type === 'shape-rectangle' ? {
-            backgroundColor: element.backgroundColor || 'transparent',
-            borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0'
-          } : element.type === 'shape-circle' ? {
-            backgroundColor: element.backgroundColor || 'transparent',
-            borderRadius: '50%'
-          } : element.type === 'shape-line' ? {
-            backgroundColor: element.backgroundColor || 'transparent',
-            height: '100%'
-          } : element.type === 'shape-arrow' ? {
-            backgroundColor: element.backgroundColor || 'transparent',
-            clipPath: 'polygon(0% 50%, 70% 0%, 70% 40%, 100% 40%, 100% 60%, 70% 60%, 70% 100%)'
-          } : element.type === 'shape-triangle' ? {
-            backgroundColor: element.backgroundColor || 'transparent',
-            clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)'
-          } : element.type === 'shape-star' ? {
-            backgroundColor: element.backgroundColor || 'transparent',
-            clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)'
-          } : element.type === 'divider' ? {
-            backgroundColor: element.backgroundColor || 'transparent',
-            height: '1px'
-          } : element.type === 'image-upload' ? {
-            backgroundColor: element.backgroundColor || 'transparent',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 12 * zoom
-          } : element.type === 'logo' ? {
-            backgroundColor: element.backgroundColor || 'transparent',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 14 * zoom,
-            fontWeight: 'bold'
-          } : element.type === 'barcode' ? {
-            backgroundColor: element.backgroundColor || 'transparent',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 10 * zoom,
-            fontFamily: 'monospace'
-          } : element.type === 'qrcode' || element.type === 'qrcode-dynamic' ? {
-            backgroundColor: element.backgroundColor || 'transparent',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 8 * zoom
-          } : element.type === 'icon' ? {
-            backgroundColor: element.backgroundColor || 'transparent',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 20 * zoom
-          } : element.type === 'dynamic-text' ? {
-            backgroundColor: element.backgroundColor || 'transparent',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-start',
-            fontSize: 12 * zoom,
-            fontFamily: 'monospace',
-            color: element.color || '#059669',
-            padding: '4px'
-          } : element.type === 'formula' ? {
-            backgroundColor: element.backgroundColor || 'transparent',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-start',
-            fontSize: 12 * zoom,
-            fontFamily: 'monospace',
-            color: element.color || '#d97706',
-            padding: '4px'
-          } : element.type === 'conditional-text' ? {
-            backgroundColor: element.backgroundColor || 'transparent',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-start',
-            fontSize: 12 * zoom,
-            fontFamily: 'monospace',
-            color: '#059669',
-            padding: '4px'
-          } : element.type === 'counter' ? {
-            backgroundColor: element.backgroundColor || 'transparent',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 14 * zoom,
-            fontWeight: 'bold',
-            color: '#0284c7'
-          } : element.type === 'date-dynamic' ? {
-            backgroundColor: element.backgroundColor || 'transparent',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-start',
-            fontSize: 12 * zoom,
-            fontFamily: 'monospace',
-            color: '#374151',
-            padding: '4px'
-          } : element.type === 'currency' ? {
-            backgroundColor: element.backgroundColor || 'transparent',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-            fontSize: 14 * zoom,
-            fontWeight: 'bold',
-            color: '#16a34a',
-            padding: '4px'
-          } : element.type === 'table-dynamic' ? {
-            backgroundColor: element.backgroundColor || 'transparent',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 12 * zoom
-          } : element.type === 'gradient-box' ? {
-            background: element.backgroundColor || 'transparent',
-            borderRadius: element.borderRadius ? `${element.borderRadius}px` : '8px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 12 * zoom,
-            color: 'white',
-            fontWeight: 'bold'
-          } : element.type === 'shadow-box' ? {
-            backgroundColor: element.backgroundColor || 'transparent',
-            borderRadius: element.borderRadius ? `${element.borderRadius}px` : '8px',
-            boxShadow: element.boxShadow || '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 12 * zoom
-          } : element.type === 'rounded-box' ? {
-            backgroundColor: element.backgroundColor || 'transparent',
-            borderRadius: element.borderRadius ? `${element.borderRadius}px` : '12px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 12 * zoom
-          } : element.type === 'border-box' ? {
-            backgroundColor: element.backgroundColor || 'transparent',
-            borderRadius: element.borderRadius ? `${element.borderRadius}px` : '4px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 12 * zoom
-          } : element.type === 'background-pattern' ? {
-            backgroundColor: element.backgroundColor || 'transparent',
-            backgroundImage: element.backgroundImage || 'repeating-linear-gradient(45deg, #e2e8f0, #e2e8f0 10px, #f1f5f9 10px, #f1f5f9 20px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 12 * zoom
-          } : element.type === 'watermark' ? {
-            backgroundColor: element.backgroundColor || 'transparent',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: (element.fontSize || 48) * zoom,
-            color: element.color || '#9ca3af',
-            opacity: element.opacity || 0.1,
-            fontWeight: 'bold',
-            transform: 'rotate(-45deg)',
-            pointerEvents: 'none'
-          } : element.type === 'progress-bar' ? {
-            backgroundColor: element.backgroundColor || 'transparent',
-            borderRadius: '10px',
-            overflow: 'hidden',
-            position: 'relative'
-          } : {
-            backgroundColor: element.backgroundColor || 'transparent',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 12 * zoom,
-            color: element.color || '#333333'
-          })
+          // Styles spécifiques selon le type d'élément
+          ...getElementTypeStyles(element, zoom)
         }}
         onMouseDown={handleMouseDown}
         onDoubleClick={handleDoubleClick}
@@ -520,6 +442,30 @@ export const CanvasElement = ({
 
         {/* Rendu spécial pour les tableaux de produits */}
         {element.type === 'product_table' && (() => {
+          // Données des produits (pourrait venir de props ou d'un état global)
+          const products = [
+            { name: 'Produit A - Description du produit', sku: 'SKU001', quantity: 2, price: 19.99, total: 39.98 },
+            { name: 'Produit B - Un autre article', sku: 'SKU002', quantity: 1, price: 29.99, total: 29.99 }
+          ];
+
+          // Calcul des totaux dynamiques
+          const subtotal = products.reduce((sum, product) => sum + product.total, 0);
+          const shipping = element.showShipping ? 5.00 : 0;
+          const tax = element.showTaxes ? 2.25 : 0;
+          const discount = element.showDiscount ? -5.00 : 0;
+          const total = subtotal + shipping + tax + discount;
+
+          // Déterminer la dernière colonne visible pour afficher les totaux
+          const getLastVisibleColumn = () => {
+            const columns = ['image', 'name', 'sku', 'quantity', 'price', 'total'];
+            for (let i = columns.length - 1; i >= 0; i--) {
+              if (element.columns?.[columns[i]] !== false) {
+                return columns[i];
+              }
+            }
+            return 'total'; // fallback
+          };
+          const lastVisibleColumn = getLastVisibleColumn();
           const tableStyles = getTableStyles(element.tableStyle);
           return (
             <div style={{
@@ -825,14 +771,14 @@ export const CanvasElement = ({
                         {/* Prix vide */}
                       </div>
                     )}
-                    {(element.columns?.total !== false) && (
+                    {(lastVisibleColumn === 'total') && (
                       <div style={{
                         flex: '0 0 80px',
                         padding: `${4 * zoom}px ${6 * zoom}px`,
                         textAlign: 'right',
                         fontWeight: 'bold'
                       }}>
-                        €47.25
+                        €{subtotal.toFixed(2)}
                       </div>
                     )}
                   </div>
@@ -869,13 +815,13 @@ export const CanvasElement = ({
                         {/* Prix vide */}
                       </div>
                     )}
-                    {(element.columns?.total !== false) && (
+                    {(lastVisibleColumn === 'total') && (
                       <div style={{
                         flex: '0 0 80px',
                         padding: `${4 * zoom}px ${6 * zoom}px`,
                         textAlign: 'right'
                       }}>
-                        €5.00
+                        €{shipping.toFixed(2)}
                       </div>
                     )}
                   </div>
@@ -912,13 +858,13 @@ export const CanvasElement = ({
                         {/* Prix vide */}
                       </div>
                     )}
-                    {(element.columns?.total !== false) && (
+                    {(lastVisibleColumn === 'total') && (
                       <div style={{
                         flex: '0 0 80px',
                         padding: `${4 * zoom}px ${6 * zoom}px`,
                         textAlign: 'right'
                       }}>
-                        €2.25
+                        €{tax.toFixed(2)}
                       </div>
                     )}
                   </div>
@@ -956,14 +902,14 @@ export const CanvasElement = ({
                         {/* Prix vide */}
                       </div>
                     )}
-                    {(element.columns?.total !== false) && (
+                    {(lastVisibleColumn === 'total') && (
                       <div style={{
                         flex: '0 0 80px',
                         padding: `${4 * zoom}px ${6 * zoom}px`,
                         textAlign: 'right',
                         color: '#d32f2f'
                       }}>
-                        -€5.00
+                        €{discount.toFixed(2)}
                       </div>
                     )}
                   </div>
@@ -1005,7 +951,7 @@ export const CanvasElement = ({
                         {/* Prix vide */}
                       </div>
                     )}
-                    {(element.columns?.total !== false) && (
+                    {(lastVisibleColumn === 'total') && (
                       <div style={{
                         flex: '0 0 80px',
                         padding: `${4 * zoom}px ${6 * zoom}px`,
@@ -1014,7 +960,7 @@ export const CanvasElement = ({
                         fontSize: `${12 * zoom}px`,
                         color: '#1976d2'
                       }}>
-                        €49.50
+                        €{total.toFixed(2)}
                       </div>
                     )}
                   </div>

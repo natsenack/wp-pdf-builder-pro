@@ -9,8 +9,6 @@ import { ELEMENT_TYPE_MAPPING, fixInvalidProperty } from '../utilities/elementPr
 
 // Fallback notification system in case Toastr is not available
 if (typeof window !== 'undefined' && typeof window.toastr === 'undefined') {
-  console.log('📋 PDF Builder - Toastr non disponible, initialisation du système de fallback...');
-
   // Simple notification system
   const createNotification = (type, title, message) => {
     const notification = document.createElement('div');
@@ -96,25 +94,19 @@ if (typeof window !== 'undefined' && typeof window.toastr === 'undefined') {
   // Create fallback toastr object
   window.toastr = {
     success: (message, title) => {
-      console.log('✅ PDF Builder - Notification succès (fallback):', message);
       createNotification('success', title, message);
     },
     error: (message, title) => {
-      console.log('❌ PDF Builder - Notification erreur (fallback):', message);
       createNotification('error', title, message);
     },
     warning: (message, title) => {
-      console.log('⚠️ PDF Builder - Notification avertissement (fallback):', message);
       createNotification('warning', title, message);
     },
     info: (message, title) => {
-      console.log('ℹ️ PDF Builder - Notification info (fallback):', message);
       createNotification('info', title, message);
     },
     options: {} // Placeholder for options
   };
-
-  console.log('✅ PDF Builder - Système de notification fallback initialisé');
 }
 
 export const useCanvasState = ({
@@ -160,12 +152,17 @@ export const useCanvasState = ({
 
   const contextMenu = useContextMenu();
 
-  // Fonction updateElement définie avant useDragAndDrop
+  // Fonction updateElement définie après history
   const updateElement = useCallback((elementId, updates) => {
-    setElements(prev => prev.map(element =>
-      element.id === elementId ? { ...element, ...updates } : element
-    ));
-  }, []);
+    setElements(prev => {
+      const newElements = prev.map(element =>
+        element.id === elementId ? { ...element, ...updates } : element
+      );
+      // Sauvegarder dans l'historique
+      history.addToHistory({ elements: newElements, nextId });
+      return newElements;
+    });
+  }, [history, nextId]);
 
   // Calculer le prochain ID basé sur les éléments initiaux
   useEffect(() => {
@@ -175,7 +172,6 @@ export const useCanvasState = ({
         return parseInt(idParts[1] || 0);
       }));
       setNextId(maxId + 1);
-      console.log('PDF Builder: Prochain ID calculé:', maxId + 1, 'basé sur', initialElements.length, 'éléments initiaux');
     } else {
       setNextId(1);
     }
@@ -208,11 +204,9 @@ export const useCanvasState = ({
     );
 
     if (needsCorrection) {
-      console.log('🔧 Correction automatique des éléments spéciaux existants...');
-      setElements(prevElements => 
+      setElements(prevElements =>
         prevElements.map(element => {
           if (specialElements.includes(element.type) && element.backgroundColor !== 'transparent') {
-            console.log(`🔧 Correction de ${element.type} (id: ${element.id}): backgroundColor '${element.backgroundColor}' -> 'transparent'`);
             return {
               ...element,
               backgroundColor: 'transparent'
@@ -310,6 +304,39 @@ export const useCanvasState = ({
           height: 2,
           backgroundColor: getOption('default_shape_background', '#6b7280'),
           width: 200
+        },
+        'shape-circle': {
+          backgroundColor: getOption('default_shape_background', '#e5e7eb'),
+          width: 100,
+          height: 100,
+          borderRadius: 50
+        },
+        'shape-arrow': {
+          backgroundColor: getOption('default_shape_background', '#e5e7eb'),
+          width: 150,
+          height: 60
+        },
+        'shape-triangle': {
+          backgroundColor: getOption('default_shape_background', '#e5e7eb'),
+          width: 100,
+          height: 100
+        },
+        'shape-star': {
+          backgroundColor: getOption('default_shape_background', '#e5e7eb'),
+          width: 100,
+          height: 100
+        },
+        'divider': {
+          height: 1,
+          backgroundColor: getOption('default_shape_background', '#6b7280'),
+          width: 300
+        },
+        'image': {
+          backgroundColor: 'transparent',
+          width: 150,
+          height: 150,
+          src: '',
+          alt: 'Image'
         },
 
         // Éléments spécialisés pour factures
@@ -422,21 +449,36 @@ export const useCanvasState = ({
       ...properties
     };
 
-    setElements(prev => [...prev, newElement]);
+    setElements(prev => {
+      const newElements = [...prev, newElement];
+      // Sauvegarder dans l'historique
+      history.addToHistory({ elements: newElements, nextId: nextId + 1 });
+      return newElements;
+    });
     setNextId(prev => prev + 1);
     selection.selectElement(newElement.id);
-  }, [nextId, selection]);
+  }, [nextId, selection, history]);
 
   const deleteElement = useCallback((elementId) => {
-    setElements(prev => prev.filter(element => element.id !== elementId));
+    setElements(prev => {
+      const newElements = prev.filter(element => element.id !== elementId);
+      // Sauvegarder dans l'historique
+      history.addToHistory({ elements: newElements, nextId });
+      return newElements;
+    });
     selection.clearSelection();
-  }, [selection]);
+  }, [selection, history, nextId]);
 
   const deleteSelectedElements = useCallback(() => {
     const elementsToDelete = selection.deleteSelected();
-    setElements(prev => prev.filter(element => !elementsToDelete.includes(element.id)));
+    setElements(prev => {
+      const newElements = prev.filter(element => !elementsToDelete.includes(element.id));
+      // Sauvegarder dans l'historique
+      history.addToHistory({ elements: newElements, nextId });
+      return newElements;
+    });
     selection.clearSelection();
-  }, [selection]);
+  }, [selection, history, nextId]);
 
   const duplicateElement = useCallback((elementId) => {
     const element = elements.find(el => el.id === elementId);
@@ -448,11 +490,16 @@ export const useCanvasState = ({
         y: element.y + 20
       };
 
-      setElements(prev => [...prev, duplicatedElement]);
+      setElements(prev => {
+        const newElements = [...prev, duplicatedElement];
+        // Sauvegarder dans l'historique
+        history.addToHistory({ elements: newElements, nextId: nextId + 1 });
+        return newElements;
+      });
       setNextId(prev => prev + 1);
       selection.selectElement(duplicatedElement.id);
     }
-  }, [elements, nextId, selection]);
+  }, [elements, nextId, selection, history]);
 
   const duplicateSelectedElements = useCallback(() => {
     const elementsToDuplicate = selection.duplicateSelected();
@@ -472,11 +519,16 @@ export const useCanvasState = ({
     });
 
     if (duplicatedElements.length > 0) {
-      setElements(prev => [...prev, ...duplicatedElements]);
+      setElements(prev => {
+        const newElements = [...prev, ...duplicatedElements];
+        // Sauvegarder dans l'historique
+        history.addToHistory({ elements: newElements, nextId: nextId + duplicatedElements.length });
+        return newElements;
+      });
       setNextId(prev => prev + duplicatedElements.length);
       selection.selectAll(duplicatedElements.map(el => el.id));
     }
-  }, [elements, nextId, selection]);
+  }, [elements, nextId, selection, history]);
 
   const copySelectedElements = useCallback(() => {
     const selectedIds = selection.selectedElements;
@@ -514,7 +566,6 @@ export const useCanvasState = ({
 
   const saveTemplate = useCallback(async () => {
     if (isSaving) {
-      console.log('🔄 PDF Builder - Sauvegarde déjà en cours, ignorée');
       return;
     }
 
@@ -547,7 +598,6 @@ export const useCanvasState = ({
         for (const [key, value] of Object.entries(element)) {
           // Exclure les propriétés problématiques
           if (excludedProps.includes(key)) {
-            console.log(`🔍 PDF Builder - Propriété exclue: ${key}`);
             continue;
           }
 
@@ -580,7 +630,6 @@ export const useCanvasState = ({
             }
           } else {
             // Pour les autres types (functions, symbols, etc.), ignorer
-            console.log(`🔍 PDF Builder - Propriété de type ${typeof value} ignorée: ${key}`);
           }
         }
 
@@ -597,25 +646,19 @@ export const useCanvasState = ({
         version: '1.0'
       };
 
-      console.log('🔍 PDF Builder - Données nettoyées à sauvegarder:', templateData);
-      console.log('🔍 PDF Builder - Nombre d\'éléments nettoyés:', cleanedElements.length);
-
       // Valider le JSON avant envoi
       let jsonString;
       try {
         jsonString = JSON.stringify(templateData);
-        console.log('🔍 PDF Builder - JSON stringifié, longueur:', jsonString.length);
 
         // Tester le parsing pour valider
         const testParse = JSON.parse(jsonString);
-        console.log('🔍 PDF Builder - JSON validé côté client');
       } catch (jsonError) {
         console.error('🔍 PDF Builder - ERREUR JSON côté client:', jsonError);
         throw new Error('Données JSON invalides côté client: ' + jsonError.message);
       }
 
       // Sauvegarde directe via AJAX avec URLSearchParams au lieu de FormData
-      console.log('📤 PDF Builder - Tentative avec URLSearchParams au lieu de FormData');
 
       const requestData = {
         action: 'pdf_builder_pro_save_template',
@@ -624,8 +667,6 @@ export const useCanvasState = ({
         template_id: window.pdfBuilderData?.templateId || '0',
         nonce: window.pdfBuilderAjax?.nonce || window.pdfBuilderData?.nonce || ''
       };
-
-      console.log('📤 PDF Builder - Données de requête:', requestData);
 
       const response = await fetch(window.pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
         method: 'POST',
@@ -636,7 +677,6 @@ export const useCanvasState = ({
       });
 
       const result = await response.json();
-      console.log('📥 PDF Builder - Réponse AJAX:', result);
 
       if (!result.success) {
         throw new Error(result.data?.message || 'Erreur lors de la sauvegarde');
@@ -644,16 +684,12 @@ export const useCanvasState = ({
 
       // Notification de succès pour les templates existants
       if (isExistingTemplate) {
-        console.log('✅ PDF Builder - Affichage notification succès');
         if (toastrAvailable) {
           toastr.success('Modifications du canvas sauvegardées avec succès !');
-          console.log('🎉 PDF Builder - Notification toastr affichée');
         } else {
           console.warn('⚠️ PDF Builder - Toastr non disponible, utilisation alert');
           alert('Modifications du canvas sauvegardées avec succès !');
         }
-      } else {
-        console.log('ℹ️ PDF Builder - Template nouveau, pas de notification');
       }
 
       return templateData;
@@ -662,10 +698,8 @@ export const useCanvasState = ({
 
       // Notification d'erreur
       const errorMessage = error.message || 'Erreur inconnue lors de la sauvegarde';
-      console.log('🚨 PDF Builder - Affichage notification erreur');
       if (toastrAvailable) {
         toastr.error(`Erreur lors de la sauvegarde: ${errorMessage}`);
-        console.log('🚨 PDF Builder - Notification d\'erreur toastr affichée');
       } else {
         console.warn('⚠️ PDF Builder - Toastr non disponible pour erreur, utilisation alert');
         alert(`Erreur lors de la sauvegarde: ${errorMessage}`);
