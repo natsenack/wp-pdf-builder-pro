@@ -393,7 +393,7 @@ export const useCanvasState = ({
 
       // Fonction helper pour récupérer les options WordPress
       const getOption = (key, defaultValue) => {
-        // En attendant l'intégration complète, utiliser des valeurs par défaut intelligentes
+        // Utiliser des valeurs par défaut intelligentes
         const defaults = {
           default_text_background: 'transparent',
           default_shape_background: '#e5e7eb',

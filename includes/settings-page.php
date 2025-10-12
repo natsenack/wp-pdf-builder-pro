@@ -114,29 +114,13 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
             'canvas_resize_handles_enabled' => isset($_POST['canvas_resize_handles_enabled']),
             'canvas_handle_size' => intval($_POST['canvas_handle_size']),
             'canvas_handle_color' => sanitize_text_field($_POST['canvas_handle_color']),
-            'canvas_handle_hover_color' => sanitize_text_field($_POST['canvas_handle_hover_color']),
-            'default_text_color' => sanitize_text_field($_POST['default_text_color']),
-            'default_font_size' => intval($_POST['default_font_size'])
+            'canvas_handle_hover_color' => sanitize_text_field($_POST['canvas_handle_hover_color'])
         ];
 
         error_log('PDF Builder: Paramètres canvas - borders_enabled: ' . ($settings['canvas_element_borders_enabled'] ? 'true' : 'false'));
         error_log('PDF Builder: Paramètres canvas - border_spacing: ' . $settings['canvas_border_spacing']);
 
         $config->set_multiple($settings);
-
-        // Traiter la couleur de fond par défaut
-        $bg_color_select = sanitize_text_field($_POST['default_background_color_select'] ?? 'transparent');
-        $bg_color_custom = sanitize_text_field($_POST['default_background_color_custom'] ?? '#ffffff');
-        
-        if ($bg_color_select === 'transparent') {
-            $settings['default_background_color'] = 'transparent';
-        } else {
-            $settings['default_background_color'] = $bg_color_custom;
-        }
-        
-        // Sauvegarder séparément pour la compatibilité
-        update_option('default_background_color', $settings['default_background_color']);
-        update_option('default_background_color_custom', $bg_color_custom);
 
         // Vérification que les options sont bien sauvegardées
         $saved_spacing = get_option('canvas_border_spacing', 'NOT_SET');
@@ -689,7 +673,6 @@ window.addEventListener('load', function() {
                 <!-- Sous-onglets dans l'onglet Canvas -->
                 <div class="sub-nav-tab-wrapper">
                     <a href="#canvas-settings" class="sub-nav-tab sub-nav-tab-active"><?php _e('⚙️ Paramètres du Canvas', 'pdf-builder-pro'); ?></a>
-                    <a href="#canvas-elements" class="sub-nav-tab"><?php _e('🎨 Paramètres par défaut des éléments', 'pdf-builder-pro'); ?></a>
                 </div>
 
                 <!-- Sous-onglet Paramètres du Canvas -->
@@ -770,92 +753,6 @@ window.addEventListener('load', function() {
                                         <input type="checkbox" name="canvas_element_borders_enabled" value="1" <?php checked(get_option('canvas_element_borders_enabled', true), true); ?> />
                                         <?php _e('Afficher les bordures des zones de redimensionnement', 'pdf-builder-pro'); ?>
                                     </label>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Sous-onglet Paramètres par défaut des éléments -->
-                <div id="canvas-elements" class="sub-tab-content">
-                    <div class="pdf-builder-settings-section">
-                        <h3><?php _e('🎨 Paramètres par défaut des éléments', 'pdf-builder-pro'); ?></h3>
-
-                        <table class="form-table">
-                            <tr>
-                                <th scope="row"><?php _e('Couleur de texte par défaut', 'pdf-builder-pro'); ?></th>
-                                <td>
-                                    <input type="color" name="default_text_color" value="<?php echo esc_attr(get_option('default_text_color', '#000000')); ?>" />
-                                    <p class="description"><?php _e('Couleur de texte utilisée pour les nouveaux éléments texte', 'pdf-builder-pro'); ?></p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><?php _e('Couleur de fond par défaut', 'pdf-builder-pro'); ?></th>
-                                <td>
-                                    <select name="default_background_color_select" id="default_background_color_select">
-                                        <option value="transparent" <?php selected(get_option('default_background_color', 'transparent') === 'transparent', true); ?>><?php _e('Transparent', 'pdf-builder-pro'); ?></option>
-                                        <option value="custom" <?php selected(get_option('default_background_color', 'transparent') !== 'transparent', true); ?>><?php _e('Couleur personnalisée', 'pdf-builder-pro'); ?></option>
-                                    </select>
-                                    <input type="color" name="default_background_color_custom" id="default_background_color_custom" value="<?php echo esc_attr(get_option('default_background_color_custom', get_option('default_background_color', '#ffffff'))); ?>" style="margin-left: 10px; <?php echo (get_option('default_background_color', 'transparent') === 'transparent') ? 'display: none;' : ''; ?>" />
-                                    <p class="description"><?php _e('Couleur de fond utilisée pour les nouveaux éléments', 'pdf-builder-pro'); ?></p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><?php _e('Taille de police par défaut', 'pdf-builder-pro'); ?></th>
-                                <td>
-                                    <input type="number" name="default_font_size" value="<?php echo get_option('default_font_size', 14); ?>" min="8" max="72" />
-                                    <p class="description"><?php _e('Taille de police en pixels pour les nouveaux éléments texte (8-72px)', 'pdf-builder-pro'); ?></p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><?php _e('Police par défaut', 'pdf-builder-pro'); ?></th>
-                                <td>
-                                    <select name="default_font_family">
-                                        <option value="Arial" <?php selected(get_option('default_font_family', 'Arial'), 'Arial'); ?>>Arial</option>
-                                        <option value="Helvetica" <?php selected(get_option('default_font_family', 'Arial'), 'Helvetica'); ?>>Helvetica</option>
-                                        <option value="Times New Roman" <?php selected(get_option('default_font_family', 'Arial'), 'Times New Roman'); ?>>Times New Roman</option>
-                                        <option value="Courier New" <?php selected(get_option('default_font_family', 'Arial'), 'Courier New'); ?>>Courier New</option>
-                                        <option value="Georgia" <?php selected(get_option('default_font_family', 'Arial'), 'Georgia'); ?>>Georgia</option>
-                                        <option value="Verdana" <?php selected(get_option('default_font_family', 'Arial'), 'Verdana'); ?>>Verdana</option>
-                                    </select>
-                                    <p class="description"><?php _e('Famille de police utilisée pour les nouveaux éléments texte', 'pdf-builder-pro'); ?></p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><?php _e('Style de police par défaut', 'pdf-builder-pro'); ?></th>
-                                <td>
-                                    <select name="default_font_weight">
-                                        <option value="normal" <?php selected(get_option('default_font_weight', 'normal'), 'normal'); ?>>Normal</option>
-                                        <option value="bold" <?php selected(get_option('default_font_weight', 'normal'), 'bold'); ?>>Gras</option>
-                                    </select>
-                                    <p class="description"><?php _e('Style de police pour les nouveaux éléments texte', 'pdf-builder-pro'); ?></p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><?php _e('Alignement du texte par défaut', 'pdf-builder-pro'); ?></th>
-                                <td>
-                                    <select name="default_text_align">
-                                        <option value="left" <?php selected(get_option('default_text_align', 'left'), 'left'); ?>>Gauche</option>
-                                        <option value="center" <?php selected(get_option('default_text_align', 'left'), 'center'); ?>>Centre</option>
-                                        <option value="right" <?php selected(get_option('default_text_align', 'left'), 'right'); ?>>Droite</option>
-                                        <option value="justify" <?php selected(get_option('default_text_align', 'left'), 'justify'); ?>>Justifié</option>
-                                    </select>
-                                    <p class="description"><?php _e('Alignement du texte pour les nouveaux éléments texte', 'pdf-builder-pro'); ?></p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><?php _e('Opacité par défaut', 'pdf-builder-pro'); ?></th>
-                                <td>
-                                    <input type="range" name="default_opacity" value="<?php echo get_option('default_opacity', 100); ?>" min="0" max="100" step="5" />
-                                    <span><?php echo get_option('default_opacity', 100); ?>%</span>
-                                    <p class="description"><?php _e('Opacité par défaut pour tous les nouveaux éléments (0-100%)', 'pdf-builder-pro'); ?></p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><?php _e('Épaisseur de bordure par défaut', 'pdf-builder-pro'); ?></th>
-                                <td>
-                                    <input type="number" name="default_border_width" value="<?php echo get_option('default_border_width', 0); ?>" min="0" max="10" />
-                                    <p class="description"><?php _e('Épaisseur de bordure en pixels pour les nouveaux éléments (0 = pas de bordure)', 'pdf-builder-pro'); ?></p>
                                 </td>
                             </tr>
                         </table>
@@ -1471,18 +1368,6 @@ echo '<style>
                 }
             });
         });
-    });
-
-    // Gestion du select de couleur de fond par défaut
-    $('#default_background_color_select').on('change', function() {
-        var selectedValue = $(this).val();
-        var customColorInput = $('#default_background_color_custom');
-        
-        if (selectedValue === 'transparent') {
-            customColorInput.hide();
-        } else {
-            customColorInput.show();
-        }
     });
 
 })(jQuery);
