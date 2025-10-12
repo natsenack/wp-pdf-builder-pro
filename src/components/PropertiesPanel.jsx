@@ -331,7 +331,7 @@ const PropertiesPanel = React.memo(({
   const [previousBackgroundColor, setPreviousBackgroundColor] = useState('#ffffff');
   const [previousBorderWidth, setPreviousBorderWidth] = useState(0);
   const [previousBorderColor, setPreviousBorderColor] = useState('#000000');
-  const [isBackgroundEnabled, setIsBackgroundEnabled] = useState(true);
+  const [isBackgroundEnabled, setIsBackgroundEnabled] = useState(false);
   const [isBorderEnabled, setIsBorderEnabled] = useState(false);
 
   // Log des props pour débogage (seulement quand elles changent)
@@ -376,7 +376,7 @@ const PropertiesPanel = React.memo(({
       setPreviousBorderColor(selectedElement.borderColor || '#000000');
 
       // Initialiser l'état des toggles basé sur les propriétés actuelles
-      setIsBackgroundEnabled(false); // Désactivé par défaut
+      setIsBackgroundEnabled(selectedElement.backgroundColor && selectedElement.backgroundColor !== 'transparent');
       setIsBorderEnabled(!!selectedElement.borderWidth && selectedElement.borderWidth > 0);
     }
   }, [selectedElement?.id]); // Ne dépendre que de l'ID de l'élément sélectionné
