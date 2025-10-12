@@ -962,6 +962,16 @@
   position: absolute;
   pointer-events: var(--show-resize-zones, auto);
   z-index: 10;
+  background-color: rgba(37, 99, 235, 0.1);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.canvas-element.selected:hover .resize-zone-n,
+.canvas-element.selected:hover .resize-zone-s,
+.canvas-element.selected:hover .resize-zone-w,
+.canvas-element.selected:hover .resize-zone-e {
+  opacity: 1;
 }
 
 .canvas-element.selected .resize-zone-n {
