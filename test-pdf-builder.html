@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test PDF Builder Pro</title>
+    <link rel="stylesheet" href="../assets/css/pdf-builder-admin.css">
+    <link rel="stylesheet" href="../assets/css/pdf-builder-canvas.css">
+    <link rel="stylesheet" href="../assets/css/pdf-builder-react.css">
+</head>
+<body>
+    <div id="pdf-builder-test" style="width: 100%; height: 600px; border: 1px solid #ccc;">
+        <p>Chargement du PDF Builder...</p>
+    </div>
+
+    <script>
+        // Simuler les données WordPress
+        window.ajaxurl = 'http://localhost/wp-admin/admin-ajax.php';
+        window.rednaoPDFInvoiceParams = {
+            URL: 'http://localhost/wp-content/plugins/wp-pdf-builder-pro/',
+            IsPr: '',
+            Newsletter: 0,
+            AdminUrl: 'http://localhost/wp-admin/',
+            PAGE_OPTIONS: {
+                name: 'Test Template',
+                pageId: 1,
+                width: 595,
+                height: 842
+            },
+            ALREADY_EDITED: true
+        };
+    </script>
+
+    <script src="../assets/js/dist/pdf-builder-admin.js"></script>
+
+    <script>
+        // Test d'initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🧪 Test du PDF Builder Pro');
+
+            try {
+                // Simuler l'initialisation WordPress
+                if (window.PDFBuilderPro) {
+                    console.log('✅ PDFBuilderPro trouvé');
+
+                    const testOptions = {
+                        templateId: 1,
+                        templateName: 'Test Template',
+                        isNew: false,
+                        initialElements: [
+                            {
+                                id: 'test-element-1',
+                                type: 'text',
+                                x: 50,
+                                y: 50,
+                                width: 200,
+                                height: 30,
+                                text: 'Test Element',
+                                fontSize: 14,
+                                fontFamily: 'Arial'
+                            }
+                        ],
+                        width: 595,
+                        height: 842
+                    };
+
+                    window.PDFBuilderPro.init('pdf-builder-test', testOptions);
+                    console.log('✅ Initialisation réussie');
+                } else {
+                    console.error('❌ PDFBuilderPro non trouvé');
+                }
+            } catch (error) {
+                console.error('❌ Erreur lors du test:', error);
+            }
+        });
+    </script>
+</body>
+</html>
