@@ -9,6 +9,7 @@ export const CanvasElement = ({
   gridSize,
   canvasWidth,
   canvasHeight,
+  canvasRef,
   onSelect,
   onUpdate,
   onRemove,
@@ -29,7 +30,8 @@ export const CanvasElement = ({
     snapToGrid,
     gridSize,
     canvasWidth,
-    canvasHeight
+    canvasHeight,
+    canvasRef
   });
 
   // Fonction helper pour déterminer si un élément est spécial
@@ -159,25 +161,20 @@ export const CanvasElement = ({
     );
 
     if (clickedHandle) {
-      const canvas = elementRef.current.closest('.canvas-zoom-wrapper');
-      const canvasRect = canvas.getBoundingClientRect();
       resize.handleResizeStart(e, clickedHandle.name, {
         x: element.x,
         y: element.y,
         width: element.width,
         height: element.height
-      }, canvasRect, zoom);
+      });
     } else {
       // Démarrer le drag avec les coordonnées relatives au canvas
-      const canvas = elementRef.current.closest('.canvas-zoom-wrapper');
-      const canvasRect = canvas.getBoundingClientRect();
-      
       dragAndDrop.handleMouseDown(e, element.id, {
         left: element.x,
         top: element.y,
         width: element.width,
         height: element.height
-      }, canvasRect, zoom);
+      }, zoom);
     }
   }, [isSelected, onSelect, element, zoom, resize, dragAndDrop]);
 

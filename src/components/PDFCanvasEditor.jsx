@@ -69,10 +69,10 @@ export const PDFCanvasEditor = ({ options }) => {
     onElementDrop: (elementId, position) => {
       canvasState.updateElement(elementId, position);
     },
-    canvasRect: canvasRef.current?.getBoundingClientRect(),
     zoom: canvasState.zoom.zoom,
     canvasWidth: canvasState.canvasWidth,
-    canvasHeight: canvasState.canvasHeight
+    canvasHeight: canvasState.canvasHeight,
+    canvasRef: canvasRef
   });
 
   // Gestion des raccourcis clavier
@@ -466,6 +466,7 @@ export const PDFCanvasEditor = ({ options }) => {
                         gridSize={10}
                         canvasWidth={canvasState.canvasWidth}
                         canvasHeight={canvasState.canvasHeight}
+                        canvasRef={canvasRef}
                         onSelect={() => handleElementSelect(element.id)}
                         onUpdate={(updates) => canvasState.updateElement(element.id, updates)}
                         onRemove={() => canvasState.deleteElement(element.id)}
@@ -489,6 +490,7 @@ export const PDFCanvasEditor = ({ options }) => {
                         zoom={1} // Le zoom est géré au niveau du wrapper
                         canvasWidth={canvasState.canvasWidth}
                         canvasHeight={canvasState.canvasHeight}
+                        canvasRef={canvasRef}
                         orderData={orderData}
                       />
                     </React.Suspense>

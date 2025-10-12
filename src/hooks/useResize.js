@@ -7,7 +7,7 @@ export const useResize = ({
   minWidth = 20,
   minHeight = 20,
   zoom = 1,
-  canvasRect = null,
+  canvasRef = null,
   canvasWidth = 595,
   canvasHeight = 842
 }) => {
@@ -21,19 +21,19 @@ export const useResize = ({
     return Math.round(value / gridSize) * gridSize;
   }, [snapToGrid, gridSize]);
 
-  const handleResizeStart = useCallback((e, handle, elementRect, canvasRectParam = null, zoomLevel = 1) => {
+  const handleResizeStart = useCallback((e, handle, elementRect, zoomLevel = 1) => {
     e.preventDefault();
     e.stopPropagation();
 
     setIsResizing(true);
     setResizeHandle(handle);
 
-    // Ajuster les coordonnées pour le zoom
-    const currentCanvasRect = canvasRectParam || canvasRect || { left: 0, top: 0 };
+    // Obtenir le canvasRect depuis canvasRef si disponible
+    const canvasRect = canvasRef?.current?.getBoundingClientRect() || { left: 0, top: 0 };
     const currentZoom = zoomLevel || zoom || 1;
     resizeStartPos.current = {
-      x: (e.clientX - currentCanvasRect.left) / currentZoom,
-      y: (e.clientY - currentCanvasRect.top) / currentZoom
+      x: (e.clientX - canvasRect.left) / currentZoom,
+      y: (e.clientY - canvasRect.top) / currentZoom
     };
     originalRect.current = { ...elementRect };
 

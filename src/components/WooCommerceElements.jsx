@@ -113,6 +113,7 @@ const WooCommerceElement = ({
   zoom = 1,
   canvasWidth,
   canvasHeight,
+  canvasRef,
   orderData = {}
 }) => {
   const elementRef = useRef(null);
@@ -129,7 +130,8 @@ const WooCommerceElement = ({
     snapToGrid: true,
     gridSize: 10,
     canvasWidth,
-    canvasHeight
+    canvasHeight,
+    canvasRef
   });
 
   const handleMouseDown = (e) => {
@@ -172,22 +174,19 @@ const WooCommerceElement = ({
           y: element.y,
           width: element.width,
           height: element.height
-        }, canvasRect, zoom);
+        });
         return;
       }
     }
 
     // Si on clique ailleurs sur l'élément, commencer le drag
     if (dragAndDrop && dragAndDrop.handleMouseDown) {
-      const canvas = elementRef.current.closest('.canvas-zoom-wrapper');
-      const canvasRect = canvas.getBoundingClientRect();
-      
       dragAndDrop.handleMouseDown(e, element.id, {
         left: element.x,
         top: element.y,
         width: element.width,
         height: element.height
-      }, canvasRect, zoom);
+      }, zoom);
     }
   };
 

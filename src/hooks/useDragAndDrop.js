@@ -5,10 +5,10 @@ export const useDragAndDrop = ({
   onElementDrop,
   snapToGrid = true,
   gridSize = 10,
-  canvasRect = null,
   zoom = 1,
   canvasWidth = 595,
-  canvasHeight = 842
+  canvasHeight = 842,
+  canvasRef = null
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -31,18 +31,18 @@ export const useDragAndDrop = ({
     };
   }, []);
 
-  const handleMouseDown = useCallback((e, elementId, elementRect, canvasRect = null, zoomLevel = 1) => {
+  const handleMouseDown = useCallback((e, elementId, elementRect, zoomLevel = 1) => {
     if (e.button !== 0) return; // Only left mouse button
 
     e.preventDefault();
     setIsDragging(true);
 
-    // Utiliser les paramètres passés ou les valeurs par défaut
-    const currentCanvasRect = canvasRect || { left: 0, top: 0 };
+    // Obtenir le canvasRect depuis canvasRef si disponible
+    const canvasRect = canvasRef?.current?.getBoundingClientRect() || { left: 0, top: 0 };
     const currentZoom = zoomLevel || zoom || 1;
 
-    const startX = (e.clientX - currentCanvasRect.left) / currentZoom;
-    const startY = (e.clientY - currentCanvasRect.top) / currentZoom;
+    const startX = (e.clientX - canvasRect.left) / currentZoom;
+    const startY = (e.clientY - canvasRect.top) / currentZoom;
     let lastMouseX = startX;
     let lastMouseY = startY;
 
