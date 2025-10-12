@@ -335,6 +335,7 @@ const PropertiesPanel = React.memo(({
 
   // Log des props pour débogage (seulement quand elles changent)
   useEffect(() => {
+    console.log('🔍 PropertiesPanel - selectedElements changed:', selectedElements?.length);
   }, [selectedElements?.length, elements?.length]); // Éviter les références d'objets instables
 
   // Utiliser les hooks de personnalisation et synchronisation
@@ -378,8 +379,15 @@ const PropertiesPanel = React.memo(({
 
   // Synchroniser l'état du toggle fond
   useEffect(() => {
-    setIsBackgroundEnabled(!!localProperties.backgroundColor && localProperties.backgroundColor !== 'transparent');
+    const shouldBeEnabled = !!localProperties.backgroundColor && localProperties.backgroundColor !== 'transparent';
+    console.log('🎨 Toggle sync - localProperties.backgroundColor:', localProperties.backgroundColor, 'shouldBeEnabled:', shouldBeEnabled);
+    setIsBackgroundEnabled(shouldBeEnabled);
   }, [localProperties.backgroundColor]);
+
+  // Log quand isBackgroundEnabled change
+  useEffect(() => {
+    console.log('🎛️ isBackgroundEnabled changed to:', isBackgroundEnabled);
+  }, [isBackgroundEnabled]);
 
   // Synchroniser l'état du toggle bordures
   useEffect(() => {
@@ -533,9 +541,12 @@ const PropertiesPanel = React.memo(({
                     type="checkbox"
                     checked={isBackgroundEnabled}
                     onChange={(e) => {
+                      console.log('🔘 Toggle changed - checked:', e.target.checked, 'current isBackgroundEnabled:', isBackgroundEnabled);
                       if (e.target.checked) {
+                        console.log('🔘 Setting backgroundColor to #ffffff');
                         handlePropertyChange(selectedElement.id, 'backgroundColor', '#ffffff');
                       } else {
+                        console.log('🔘 Setting backgroundColor to transparent');
                         handlePropertyChange(selectedElement.id, 'backgroundColor', 'transparent');
                       }
                     }}

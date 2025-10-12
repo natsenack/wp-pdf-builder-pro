@@ -18,6 +18,7 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
 
   // Synchroniser les propriétés locales avec l'élément sélectionné
   useEffect(() => {
+    console.log('🔧 useElementCustomization - selectedElement:', selectedElement?.id, 'backgroundColor:', selectedElement?.backgroundColor);
 
     if (selectedElement) {
       const newProperties = {
@@ -40,8 +41,10 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
         ...selectedElement
       };
 
+      console.log('🔧 useElementCustomization - final backgroundColor:', newProperties.backgroundColor);
       setLocalProperties(newProperties);
     } else {
+      console.log('🔧 useElementCustomization - no selectedElement, setting empty properties');
       setLocalProperties({});
     }
   }, [selectedElement?.id]); // Ne dépendre que de l'ID pour éviter les re-renders inutiles
