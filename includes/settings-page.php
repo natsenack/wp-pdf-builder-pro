@@ -114,7 +114,9 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
             'canvas_resize_handles_enabled' => isset($_POST['canvas_resize_handles_enabled']),
             'canvas_handle_size' => intval($_POST['canvas_handle_size']),
             'canvas_handle_color' => sanitize_text_field($_POST['canvas_handle_color']),
-            'canvas_handle_hover_color' => sanitize_text_field($_POST['canvas_handle_hover_color'])
+            'canvas_handle_hover_color' => sanitize_text_field($_POST['canvas_handle_hover_color']),
+            'default_text_color' => sanitize_text_field($_POST['default_text_color']),
+            'default_font_size' => intval($_POST['default_font_size'])
         ];
 
         error_log('PDF Builder: Paramètres canvas - borders_enabled: ' . ($settings['canvas_element_borders_enabled'] ? 'true' : 'false'));
@@ -122,15 +124,19 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
 
         $config->set_multiple($settings);
 
-        // Sauvegarde individuelle des paramètres canvas pour la compatibilité avec le JavaScript
-        update_option('canvas_element_borders_enabled', $settings['canvas_element_borders_enabled']);
-        update_option('canvas_border_width', $settings['canvas_border_width']);
-        update_option('canvas_border_color', $settings['canvas_border_color']);
-        update_option('canvas_border_spacing', $settings['canvas_border_spacing']);
-        update_option('canvas_resize_handles_enabled', $settings['canvas_resize_handles_enabled']);
-        update_option('canvas_handle_size', $settings['canvas_handle_size']);
-        update_option('canvas_handle_color', $settings['canvas_handle_color']);
-        update_option('canvas_handle_hover_color', $settings['canvas_handle_hover_color']);
+        // Traiter la couleur de fond par défaut
+        $bg_color_select = sanitize_text_field($_POST['default_background_color_select'] ?? 'transparent');
+        $bg_color_custom = sanitize_text_field($_POST['default_background_color_custom'] ?? '#ffffff');
+        
+        if ($bg_color_select === 'transparent') {
+            $settings['default_background_color'] = 'transparent';
+        } else {
+            $settings['default_background_color'] = $bg_color_custom;
+        }
+        
+        // Sauvegarder séparément pour la compatibilité
+        update_option('default_background_color', $settings['default_background_color']);
+        update_option('default_background_color_custom', $bg_color_custom);
 
         // Vérification que les options sont bien sauvegardées
         $saved_spacing = get_option('canvas_border_spacing', 'NOT_SET');
@@ -786,7 +792,11 @@ window.addEventListener('load', function() {
                             <tr>
                                 <th scope="row"><?php _e('Couleur de fond par défaut', 'pdf-builder-pro'); ?></th>
                                 <td>
-                                    <input type="color" name="default_background_color" value="<?php echo esc_attr(get_option('default_background_color', '#ffffff')); ?>" />
+                                    <select name="default_background_color_select" id="default_background_color_select">
+                                        <option value="transparent" <?php selected(get_option('default_background_color', 'transparent') === 'transparent', true); ?>><?php _e('Transparent', 'pdf-builder-pro'); ?></option>
+                                        <option value="custom" <?php selected(get_option('default_background_color', 'transparent') !== 'transparent', true); ?>><?php _e('Couleur personnalisée', 'pdf-builder-pro'); ?></option>
+                                    </select>
+                                    <input type="color" name="default_background_color_custom" id="default_background_color_custom" value="<?php echo esc_attr(get_option('default_background_color_custom', get_option('default_background_color', '#ffffff'))); ?>" style="margin-left: 10px; <?php echo (get_option('default_background_color', 'transparent') === 'transparent') ? 'display: none;' : ''; ?>" />
                                     <p class="description"><?php _e('Couleur de fond utilisée pour les nouveaux éléments', 'pdf-builder-pro'); ?></p>
                                 </td>
                             </tr>
@@ -1385,7 +1395,7 @@ echo '<style>
                 $('.sub-tab-active').show();
                 
                 // Attacher les événements des sous-onglets si pas déjà fait
-                if (!$._data(document, 'events') || !$._data(document, 'events').click || !$._data(document, 'events').click.some(e => e.selector === '.sub-nav-tab')) {
+                if (!window.subTabsInitialized) {
                     $('.sub-nav-tab').on('click', function(e) {
                         e.preventDefault();
                         console.log('PDF Builder: Sub-tab clicked', $(this).attr('href'));
@@ -1403,6 +1413,7 @@ echo '<style>
 
                         console.log('PDF Builder: Activated sub-tab', targetId);
                     });
+                    window.subTabsInitialized = true;
                 }
             }
         });
@@ -1460,6 +1471,18 @@ echo '<style>
                 }
             });
         });
+    });
+
+    // Gestion du select de couleur de fond par défaut
+    $('#default_background_color_select').on('change', function() {
+        var selectedValue = $(this).val();
+        var customColorInput = $('#default_background_color_custom');
+        
+        if (selectedValue === 'transparent') {
+            customColorInput.hide();
+        } else {
+            customColorInput.show();
+        }
     });
 
 })(jQuery);
