@@ -1004,13 +1004,11 @@
   right: calc(-8px - var(--element-border-width, 0px));
   bottom: calc(-8px - var(--element-border-width, 0px));
   border: 8px solid transparent;
-  border-image: linear-gradient(45deg, transparent 40%, rgba(37, 99, 235, 0.05) 40%, rgba(37, 99, 235, 0.05) 60%, transparent 60%) 8;
+  /* Bordure diagonale supprimée - redondante avec les poignées de redimensionnement */
   cursor: move;
 }
 
-.canvas-element.selected:hover::before {
-  border-image: linear-gradient(45deg, transparent 40%, rgba(37, 99, 235, 0.08) 40%, rgba(37, 99, 235, 0.08) 60%, transparent 60%) 8;
-}
+
 
 .selection-box {
   border: 2px dashed var(--primary-color);
