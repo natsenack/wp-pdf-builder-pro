@@ -652,10 +652,36 @@ export const useCanvasState = ({
       // Déterminer si c'est un template existant
       const isExistingTemplate = templateId && templateId !== '0' && templateId !== 0;
 
+      // Fonction pour vérifier la disponibilité de Toastr avec retry
+      const checkToastrAvailability = () => {
+        let attempts = 0;
+        const maxAttempts = 10;
+        const checkInterval = 100; // 100ms
+
+        return new Promise((resolve) => {
+          const check = () => {
+            attempts++;
+            const available = typeof toastr !== 'undefined';
+
+            console.log(`🔍 PDF Builder - Vérification Toastr (tentative ${attempts}/${maxAttempts}):`, available);
+
+            if (available || attempts >= maxAttempts) {
+              resolve(available);
+            } else {
+              setTimeout(check, checkInterval);
+            }
+          };
+
+          check();
+        });
+      };
+
+      const toastrAvailable = await checkToastrAvailability();
+
       console.log('🔍 PDF Builder - Détection template existant:', {
         templateId,
         isExistingTemplate,
-        toastrAvailable: typeof toastr !== 'undefined'
+        toastrAvailable
       });
       if (onSave) {
         await onSave(templateData);
@@ -690,7 +716,7 @@ export const useCanvasState = ({
       // Notification de succès pour les templates existants
       if (isExistingTemplate) {
         console.log('✅ PDF Builder - Affichage notification succès');
-        if (typeof toastr !== 'undefined') {
+        if (toastrAvailable) {
           toastr.success('Modifications du canvas sauvegardées avec succès !');
           console.log('🎉 PDF Builder - Notification toastr affichée');
         } else {
@@ -708,7 +734,7 @@ export const useCanvasState = ({
       // Notification d'erreur
       const errorMessage = error.message || 'Erreur inconnue lors de la sauvegarde';
       console.log('🚨 PDF Builder - Affichage notification erreur');
-      if (typeof toastr !== 'undefined') {
+      if (toastrAvailable) {
         toastr.error(`Erreur lors de la sauvegarde: ${errorMessage}`);
         console.log('🚨 PDF Builder - Notification d\'erreur toastr affichée');
       } else {
