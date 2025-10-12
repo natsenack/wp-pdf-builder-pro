@@ -692,6 +692,9 @@ export const useCanvasState = ({
         }
       }
 
+      // Forcer backgroundColor à 'transparent' pour tous les éléments par défaut
+      defaults.backgroundColor = 'transparent';
+
       return defaults;
     };
 

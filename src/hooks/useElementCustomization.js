@@ -40,8 +40,14 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
         ...selectedElement
       };
 
-      // S'assurer que backgroundColor est défini à 'transparent' si non défini, vide, ou '#ffffff' (migration)
-      if (!newProperties.backgroundColor || newProperties.backgroundColor === '' || newProperties.backgroundColor === '#ffffff') {
+      // Forcer backgroundColor à 'transparent' pour tous les éléments par défaut
+      // sauf si c'est explicitement défini à une couleur non-transparente
+      if (!newProperties.backgroundColor || newProperties.backgroundColor === '' || 
+          newProperties.backgroundColor === '#ffffff' || newProperties.backgroundColor === '#f8fafc' ||
+          newProperties.backgroundColor === '#e5e7eb' || newProperties.backgroundColor === '#6b7280' ||
+          newProperties.backgroundColor === '#374151' || newProperties.backgroundColor === '#fbbf24' ||
+          newProperties.backgroundColor === '#d1d5db' || newProperties.backgroundColor === '#f3f4f6' ||
+          newProperties.backgroundColor === '#e2e8f0') {
         newProperties.backgroundColor = 'transparent';
       }
 
