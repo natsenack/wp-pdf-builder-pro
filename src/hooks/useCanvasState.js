@@ -207,7 +207,7 @@ export const useCanvasState = ({
         y: 50,
         width: 100,
         height: 50,
-        backgroundColor: '#ffffff',
+        backgroundColor: 'transparent',
         borderColor: 'transparent',
         borderWidth: 0,
         borderRadius: 4,
