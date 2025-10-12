@@ -945,6 +945,7 @@
   cursor: e-resize;
 }
 
+/* Assurer une surface cliquable minimale même avec background transparent */
 .canvas-element.selected {
   outline: var(--selection-border-width, 2px) solid var(--selection-border-color, var(--primary-color));
   outline-offset: var(--selection-border-spacing, 2px);
@@ -952,6 +953,20 @@
   border-radius: 4px;
   position: relative;
   --element-border-width: var(--selection-border-width, 2px);
+  /* Assurer une surface cliquable minimale même avec background transparent */
+  min-height: 20px;
+  min-width: 20px;
+}
+
+/* Style spécial pour les éléments avec background transparent sélectionnés */
+.canvas-element.selected.transparent-bg .resize-zone-n,
+.canvas-element.selected.transparent-bg .resize-zone-s,
+.canvas-element.selected.transparent-bg .resize-zone-w,
+.canvas-element.selected.transparent-bg .resize-zone-e {
+  /* Assurer que les zones de redimensionnement sont toujours cliquables */
+  pointer-events: auto !important;
+  /* Ajouter une surface cliquable minimale invisible */
+  background-color: rgba(255, 255, 255, 0.001);
 }
 
 /* Zones de redimensionnement sur les bords de l'élément sélectionné */
@@ -965,6 +980,11 @@
   background-color: transparent;
   opacity: 1;
   transition: background-color 0.2s ease;
+  /* Assurer que les zones sont toujours cliquables même avec background transparent */
+  cursor: inherit;
+  /* Ajouter une surface cliquable invisible pour garantir l'interaction */
+  content: '';
+  display: block;
 }
 
 .canvas-element.selected .resize-zone-n:hover,

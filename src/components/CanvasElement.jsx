@@ -208,7 +208,7 @@ export const CanvasElement = ({
       <div
         ref={elementRef}
         data-element-id={element.id}
-        className={`canvas-element${isSelected ? ' selected' : ''}`}
+        className={`canvas-element${isSelected ? ' selected' : ''}${(!element.backgroundColor || element.backgroundColor === 'transparent') ? ' transparent-bg' : ''}`}
         style={{
           position: 'absolute',
           left: element.x * zoom,
