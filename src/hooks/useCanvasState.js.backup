@@ -217,27 +217,10 @@ export const useCanvasState = ({
   const snapToGridValue = useCallback((value) => {
     if (!snapToGrid) return value;
     return Math.round(value / gridSize) * gridSize;
-  }, [snapToGrid, gridSize]);
-
   const updateElement = useCallback((elementId, updates) => {
-    setElements(prev => prev.map(element => {
-      if (element.id === elementId) {
-        // Fonction helper pour fusionner récursivement les objets
-        const deepMerge = (target, source) => {
-          const result = { ...target };
-          Object.keys(source).forEach(key => {
-            if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key]) && typeof target[key] === 'object') {
-              result[key] = deepMerge(target[key], source[key]);
-            } else {
-              result[key] = source[key];
-            }
-          });
-          return result;
-        };
-        return deepMerge(element, updates);
-      }
-      return element;
-    }));
+    setElements(prev => prev.map(element =>
+      element.id === elementId ? { ...element, ...updates } : element
+    ));
   }, []);
 
   // Calculer le prochain ID basé sur les éléments initiaux
