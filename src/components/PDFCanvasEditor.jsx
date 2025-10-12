@@ -16,6 +16,7 @@ const PropertiesPanel = React.lazy(() => import('./PropertiesPanel'));
 export const PDFCanvasEditor = ({ options }) => {
   const [tool, setTool] = useState('select');
   const [showGrid, setShowGrid] = useState(false);
+  const [snapToGrid, setSnapToGrid] = useState(true); // Aimantation activée par défaut
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [isPropertiesCollapsed, setIsPropertiesCollapsed] = useState(false);
 
@@ -383,8 +384,8 @@ export const PDFCanvasEditor = ({ options }) => {
         onZoomChange={canvasState.zoom.setZoomLevel}
         showGrid={showGrid}
         onShowGridChange={setShowGrid}
-        snapToGrid={true} // Peut être configuré plus tard
-        onSnapToGridChange={() => {}} // Peut être configuré plus tard
+        snapToGrid={snapToGrid}
+        onSnapToGridChange={setSnapToGrid}
         onUndo={canvasState.undo}
         onRedo={canvasState.redo}
         canUndo={canvasState.canUndo}
@@ -462,7 +463,7 @@ export const PDFCanvasEditor = ({ options }) => {
                         element={element}
                         isSelected={canvasState.selection.selectedElements.includes(element.id)}
                         zoom={1} // Le zoom est géré au niveau du wrapper
-                        snapToGrid={true}
+                        snapToGrid={snapToGrid}
                         gridSize={10}
                         canvasWidth={canvasState.canvasWidth}
                         canvasHeight={canvasState.canvasHeight}
