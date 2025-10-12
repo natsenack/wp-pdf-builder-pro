@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useElementCustomization } from '../hooks/useElementCustomization';
 import { useElementSynchronization } from '../hooks/useElementSynchronization';
 import { elementCustomizationService } from '../services/ElementCustomizationService';
+import { isPropertyAllowed, ELEMENT_TYPE_MAPPING } from '../utilities/elementPropertyRestrictions';
 import '../styles/PropertiesPanel.css';
 
 // Profils de propriétés contextuelles par type d'élément
@@ -390,8 +391,8 @@ const PropertiesPanel = React.memo(({
 
   // Synchroniser l'état du toggle fond
   useEffect(() => {
-    const isSpecial = selectedElement?.type && ['product_table', 'customer_info', 'company_logo', 'company_info', 'order_number', 'document_type', 'progress-bar'].includes(selectedElement.type);
-    if (isSpecial) {
+    const isBackgroundAllowed = selectedElement?.type ? isPropertyAllowed(selectedElement.type, 'backgroundColor') : true;
+    if (!isBackgroundAllowed) {
       setIsBackgroundEnabled(false);
     } else {
       const shouldBeEnabled = !!localProperties.backgroundColor && localProperties.backgroundColor !== 'transparent';
@@ -447,6 +448,12 @@ const PropertiesPanel = React.memo(({
 
   // Gestionnaire pour le toggle "Aucun fond"
   const handleNoBackgroundToggle = useCallback((elementId, checked) => {
+    // Vérifier si la propriété backgroundColor est autorisée pour ce type d'élément
+    const isBackgroundAllowed = selectedElement?.type ? isPropertyAllowed(selectedElement.type, 'backgroundColor') : true;
+    if (!isBackgroundAllowed) {
+      console.warn('Fond non contrôlable pour ce type d\'élément');
+      return;
+    }
 
     if (checked) {
       // Sauvegarder la couleur actuelle avant de la désactiver
@@ -462,7 +469,7 @@ const PropertiesPanel = React.memo(({
       const colorToRestore = previousBackgroundColor || '#ffffff';
       handlePropertyChange(elementId, 'backgroundColor', colorToRestore);
     }
-  }, [selectedElement?.backgroundColor, previousBackgroundColor, handlePropertyChange]);
+  }, [selectedElement?.backgroundColor, previousBackgroundColor, handlePropertyChange, selectedElement?.type]);
 
   // Gestionnaire pour le toggle "Aucune bordure"
   const handleNoBorderToggle = useCallback((elementId, checked) => {
@@ -557,10 +564,10 @@ const PropertiesPanel = React.memo(({
                   <input
                     type="checkbox"
                     checked={isBackgroundEnabled}
-                    disabled={selectedElement?.type && ['product_table', 'customer_info', 'company_logo', 'company_info', 'order_number', 'document_type', 'progress-bar'].includes(selectedElement.type)}
+                    disabled={!isPropertyAllowed(selectedElement?.type || '', 'backgroundColor')}
                     onChange={(e) => {
-                      const isSpecial = selectedElement?.type && ['product_table', 'customer_info', 'company_logo', 'company_info', 'order_number', 'document_type', 'progress-bar'].includes(selectedElement.type);
-                      if (isSpecial) return;
+                      const isAllowed = isPropertyAllowed(selectedElement?.type || '', 'backgroundColor');
+                      if (!isAllowed) return;
                       if (e.target.checked) {
                         handlePropertyChange(selectedElement.id, 'backgroundColor', '#ffffff');
                       } else {

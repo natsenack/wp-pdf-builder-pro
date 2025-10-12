@@ -1,5 +1,12 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { elementCustomizationService } from '../services/ElementCustomizationService';
+import {
+  isPropertyAllowed,
+  getPropertyDefault,
+  validateProperty,
+  fixInvalidProperty,
+  ELEMENT_TYPE_MAPPING
+} from '../utilities/elementPropertyRestrictions';
 
 /**
  * Hook pour gérer la personnalisation des éléments
@@ -23,7 +30,7 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
 
     if (selectedElement) {
       const defaultProperties = {
-        // Valeurs par défaut
+        // Valeurs par défaut de base
         color: '#333333',
         backgroundColor: 'transparent',
         borderColor: '#dddddd',
@@ -42,12 +49,38 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
 
       console.log('🔧 useElementCustomization - default properties:', defaultProperties);
 
+      // Appliquer les restrictions selon le type d'élément
+      const elementType = selectedElement.type;
+      const restrictedDefaults = { ...defaultProperties };
+
+      // Pour les propriétés restreintes, utiliser les valeurs par défaut spécifiques
+      Object.keys(defaultProperties).forEach(property => {
+        const specificDefault = getPropertyDefault(elementType, property);
+        if (specificDefault !== null) {
+          restrictedDefaults[property] = specificDefault;
+        }
+
+        // Pour les éléments spéciaux, forcer backgroundColor à transparent
+        if (ELEMENT_TYPE_MAPPING[elementType] === 'special' && property === 'backgroundColor') {
+          restrictedDefaults[property] = 'transparent';
+        }
+      });
+
       const newProperties = {
-        // Valeurs par défaut
-        ...defaultProperties,
-        // Propriétés de l'élément
+        // Valeurs par défaut avec restrictions
+        ...restrictedDefaults,
+        // Propriétés de l'élément (écrasent les défauts)
         ...selectedElement
       };
+
+      // Validation finale des propriétés
+      Object.keys(newProperties).forEach(property => {
+        const validation = validateProperty(elementType, property, newProperties[property]);
+        if (!validation.valid) {
+          console.warn(`Propriété invalide ${property} pour ${elementType}:`, validation.reason);
+          newProperties[property] = fixInvalidProperty(elementType, property, newProperties[property]);
+        }
+      });
 
       console.log('🔧 useElementCustomization - merged properties:', newProperties);
       console.log('🔧 useElementCustomization - final backgroundColor:', newProperties.backgroundColor);
@@ -65,14 +98,25 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
 
   // Gestionnaire de changement de propriété avec validation
   const handlePropertyChange = useCallback((elementId, property, value) => {
+    const element = elements.find(el => el.id === elementId);
+    if (!element) return;
+
     let validatedValue = value;
 
-    // Appliquer la validation selon le type de propriété
+    // Validation selon le système de restrictions
+    const validation = validateProperty(element.type, property, value);
+    if (!validation.valid) {
+      console.warn(`Propriété non autorisée: ${validation.reason}`);
+      // Ne pas appliquer le changement si la propriété n'est pas autorisée
+      return;
+    }
+
+    // Validation supplémentaire selon le type de propriété (service existant)
     if (typeof value !== 'boolean' && !property.startsWith('columns.')) {
       try {
-        const validated = elementCustomizationService.validateProperty(property, value);
-        if (validated !== undefined) {
-          validatedValue = validated;
+        const serviceValidated = elementCustomizationService.validateProperty(property, value);
+        if (serviceValidated !== undefined) {
+          validatedValue = serviceValidated;
         }
       } catch (error) {
         console.warn(`Erreur de validation pour ${property}:`, error);
@@ -110,7 +154,7 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
 
     // Notifier le parent pour la persistance
     onPropertyChange(elementId, property, validatedValue);
-  }, [onPropertyChange]);
+  }, [onPropertyChange, elements]);
 
   // Validation des valeurs de propriétés
   const validatePropertyValue = (property, value) => {
