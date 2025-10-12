@@ -1,9 +1,12 @@
 const path = require('path');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: {
+    'pdf-builder-admin': './src/index.js',
+    'pdf-builder-nonce-fix': './src/pdf-builder-nonce-fix.js'
+  },
   output: {
-    filename: 'pdf-builder-admin.js',
+    filename: '[name].js',
     path: path.resolve(__dirname, 'assets/js/dist'),
   },
   mode: 'production',

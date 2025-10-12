@@ -749,8 +749,11 @@ class PDF_Builder_Admin_New {
         wp_enqueue_script('pdf-builder-utils', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-utils.js', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
         wp_enqueue_script('pdf-builder-unified-config', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-unified-config.js', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
 
+        // Script de correction de nonce - CHARGÉ EN PLUS
+        wp_enqueue_script('pdf-builder-nonce-fix', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js', ['jquery'], '1.0.0_' . microtime(true), true);
+
         // Variables JavaScript pour AJAX - VERSION FORCEE
-        wp_localize_script('pdf-builder-admin-v2', 'pdfBuilderAjax', [
+        wp_localize_script('pdf-builder-nonce-fix', 'pdfBuilderAjax', [
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pdf_builder_canvas_load_' . time()),
             'version' => '3.0.0',
@@ -762,14 +765,6 @@ class PDF_Builder_Admin_New {
                 'confirm_duplicate' => __('Dupliquer ce template ?', 'pdf-builder-pro'),
             ]
         ]);
-
-        // Script pour forcer le rechargement si ancienne version détectée
-        wp_add_inline_script('pdf-builder-admin-v2', "
-            if (typeof pdfBuilderAjax !== 'undefined' && (!pdfBuilderAjax.version || pdfBuilderAjax.version !== '3.0.0')) {
-                console.log('Ancienne version détectée, rechargement forcé...');
-                window.location.reload(true);
-            }
-        ");
 
         // Paramètres du canvas pour le JavaScript
         // Récupérer les paramètres canvas
