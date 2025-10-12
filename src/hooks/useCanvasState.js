@@ -69,35 +69,40 @@ export const useCanvasState = ({
     if (templateId && templateId !== null) {
       setIsLoading(true);
       
-      // Vérifier que pdfBuilderAjax est disponible
-      if (typeof pdfBuilderAjax === 'undefined') {
-        console.error('pdfBuilderAjax n\'est pas défini - les scripts AJAX ne sont pas chargés');
-        alert('Erreur: Les scripts AJAX ne sont pas chargés correctement. Actualisez la page.');
-        setIsLoading(false);
-        return;
-      }
+      // Attendre que pdfBuilderAjax soit disponible
+      const waitForPdfBuilderAjax = () => {
+        return new Promise((resolve, reject) => {
+          const checkPdfBuilderAjax = () => {
+            if (typeof pdfBuilderAjax !== 'undefined' && pdfBuilderAjax && pdfBuilderAjax.nonce) {
+              console.log('PDF Builder: pdfBuilderAjax disponible:', pdfBuilderAjax);
+              resolve();
+            } else {
+              console.log('PDF Builder: Attente de pdfBuilderAjax...');
+              setTimeout(checkPdfBuilderAjax, 100);
+            }
+          };
+          // Timeout après 5 secondes
+          setTimeout(() => reject(new Error('pdfBuilderAjax n\'a pas été chargé')), 5000);
+          checkPdfBuilderAjax();
+        });
+      };
 
-      if (!pdfBuilderAjax.nonce) {
-        console.error("Nonce manquant dans pdfBuilderAjax")
-        alert("Erreur: Nonce de sécurité manquant. Actualisez la page.")
-        setIsLoading(false)
-        return
-      }
-      
-      // Faire un appel AJAX pour charger les éléments du template
-      fetch(pdfBuilderAjax.ajaxurl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: new URLSearchParams({
-          action: "pdf_builder_load_canvas_elements",
-          template_id: templateId,
-          nonce: pdfBuilderAjax.nonce // Utiliser le nonce de test
-        })
-      })
-      .then(response => response.json())
-      .then(data => {
+      waitForPdfBuilderAjax()
+        .then(() => {
+          // Faire un appel AJAX pour charger les éléments du template
+          fetch(pdfBuilderAjax.ajaxurl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: new URLSearchParams({
+              action: "pdf_builder_load_canvas_elements",
+              template_id: templateId,
+              nonce: pdfBuilderAjax.nonce
+            })
+          })
+          .then(response => response.json())
+          .then(data => {
         if (data.success && Array.isArray(data.data.elements)) {
           setElements(data.data.elements);
           // Calculer le prochain ID basé sur les éléments chargés
@@ -119,6 +124,12 @@ export const useCanvasState = ({
       .finally(() => {
         setIsLoading(false);
       });
+        })
+        .catch(error => {
+          console.error('Erreur d\'attente pdfBuilderAjax:', error);
+          alert('Erreur: Les scripts AJAX ne sont pas chargés correctement. Actualisez la page.');
+          setIsLoading(false);
+        });
     }
   }, [templateId]);
 
