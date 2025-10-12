@@ -44,17 +44,16 @@ export const CanvasElement = ({
 
   // Debug logging pour les éléments sélectionnés
   useEffect(() => {
+    console.log('🔍 useEffect triggered - isSelected:', isSelected, 'elementId:', element.id);
     if (isSelected) {
-      const computedStyle = window.getComputedStyle(document.documentElement);
-      const showResizeZones = computedStyle.getPropertyValue('--show-resize-zones');
-      console.log('🎯 Element selected:', {
+      console.log('🎯 Element selected - DETAILED LOGS:', {
         id: element.id,
         type: element.type,
         backgroundColor: element.backgroundColor,
         isTransparent: !element.backgroundColor || element.backgroundColor === 'transparent',
         hasTransparentClass: (!element.backgroundColor || element.backgroundColor === 'transparent') ? 'transparent-bg' : 'no-transparent-bg',
         showResizeZones: window.pdfBuilderCanvasSettings?.canvas_resize_zones_enabled,
-        cssShowResizeZones: showResizeZones,
+        cssShowResizeZones: computedStyle.getPropertyValue('--show-resize-zones'),
         elementRef: elementRef.current
       });
 
@@ -1505,6 +1504,7 @@ export const CanvasElement = ({
       {/* Poignées de redimensionnement */}
       {isSelected && (
         <>
+          {console.log('🎯 RENDERING RESIZE HANDLES for element:', element.id)}
           {/* Coins */}
           <div
             className="resize-handle nw"
