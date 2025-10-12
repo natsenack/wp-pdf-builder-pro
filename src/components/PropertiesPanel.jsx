@@ -390,11 +390,16 @@ const PropertiesPanel = React.memo(({
 
   // Synchroniser l'état du toggle fond
   useEffect(() => {
-    const shouldBeEnabled = !!localProperties.backgroundColor && localProperties.backgroundColor !== 'transparent';
-    console.log('🎨 Toggle sync - localProperties.backgroundColor:', localProperties.backgroundColor, 'shouldBeEnabled:', shouldBeEnabled);
-    console.log('🎨 Toggle sync - full localProperties:', localProperties);
-    setIsBackgroundEnabled(shouldBeEnabled);
-  }, [localProperties.backgroundColor]);
+    const isSpecial = selectedElement?.type && ['product_table', 'customer_info', 'company_logo', 'company_info', 'order_number', 'document_type', 'progress-bar'].includes(selectedElement.type);
+    if (isSpecial) {
+      setIsBackgroundEnabled(false);
+    } else {
+      const shouldBeEnabled = !!localProperties.backgroundColor && localProperties.backgroundColor !== 'transparent';
+      console.log('🎨 Toggle sync - localProperties.backgroundColor:', localProperties.backgroundColor, 'shouldBeEnabled:', shouldBeEnabled);
+      console.log('🎨 Toggle sync - full localProperties:', localProperties);
+      setIsBackgroundEnabled(shouldBeEnabled);
+    }
+  }, [localProperties.backgroundColor, selectedElement?.type]);
 
   // Log quand isBackgroundEnabled change
   useEffect(() => {
@@ -552,7 +557,10 @@ const PropertiesPanel = React.memo(({
                   <input
                     type="checkbox"
                     checked={isBackgroundEnabled}
+                    disabled={selectedElement?.type && ['product_table', 'customer_info', 'company_logo', 'company_info', 'order_number', 'document_type', 'progress-bar'].includes(selectedElement.type)}
                     onChange={(e) => {
+                      const isSpecial = selectedElement?.type && ['product_table', 'customer_info', 'company_logo', 'company_info', 'order_number', 'document_type', 'progress-bar'].includes(selectedElement.type);
+                      if (isSpecial) return;
                       if (e.target.checked) {
                         handlePropertyChange(selectedElement.id, 'backgroundColor', '#ffffff');
                       } else {

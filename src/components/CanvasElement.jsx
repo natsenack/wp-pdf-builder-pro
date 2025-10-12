@@ -47,13 +47,13 @@ export const CanvasElement = ({
       return {
         border: `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#e5e7eb'}`,
         // Assurer que le background ne cache pas les bordures
-        backgroundColor: element.backgroundColor || 'transparent',
+        backgroundColor: 'transparent',
         // Utiliser box-sizing pour que les bordures soient incluses dans les dimensions
         boxSizing: 'border-box'
       };
     }
     return {
-      backgroundColor: element.backgroundColor || 'transparent',
+      backgroundColor: 'transparent',
       boxSizing: 'border-box'
     };
   };
