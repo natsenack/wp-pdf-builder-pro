@@ -52,8 +52,8 @@ export const useDragAndDrop = ({
     };
 
     const handleMouseMove = (moveEvent) => {
-      const mouseX = (moveEvent.clientX - currentCanvasRect.left) / currentZoom;
-      const mouseY = (moveEvent.clientY - currentCanvasRect.top) / currentZoom;
+      const mouseX = (moveEvent.clientX - canvasRect.left) / currentZoom;
+      const mouseY = (moveEvent.clientY - canvasRect.top) / currentZoom;
       lastMouseX = mouseX;
       lastMouseY = mouseY;
 
@@ -114,11 +114,14 @@ export const useDragAndDrop = ({
     e.dataTransfer.dropEffect = 'move';
   }, []);
 
-  const handleDrop = useCallback((e, canvasRect, elementRect) => {
+  const handleDrop = useCallback((e, elementRect) => {
     e.preventDefault();
 
     const elementId = e.dataTransfer.getData('text/plain');
     if (!elementId) return;
+
+    // Obtenir le canvasRect depuis canvasRef si disponible
+    const canvasRect = canvasRef?.current?.getBoundingClientRect() || { left: 0, top: 0 };
 
     const dropX = (e.clientX - canvasRect.left - dragStartPos.current.x) / zoom;
     const dropY = (e.clientY - canvasRect.top - dragStartPos.current.y) / zoom;
@@ -132,7 +135,7 @@ export const useDragAndDrop = ({
     if (onElementDrop) {
       onElementDrop(elementId, { x: snappedX, y: snappedY });
     }
-  }, [snapToGridValue, onElementDrop, zoom, canvasWidth, canvasHeight]);
+  }, [snapToGridValue, onElementDrop, zoom, canvasWidth, canvasHeight, canvasRef]);
 
   return {
     isDragging,

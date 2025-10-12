@@ -38,8 +38,8 @@ export const useResize = ({
     originalRect.current = { ...elementRect };
 
     const handleMouseMove = (moveEvent) => {
-      const mouseX = (moveEvent.clientX - currentCanvasRect.left) / currentZoom;
-      const mouseY = (moveEvent.clientY - currentCanvasRect.top) / currentZoom;
+      const mouseX = (moveEvent.clientX - canvasRect.left) / currentZoom;
+      const mouseY = (moveEvent.clientY - canvasRect.top) / currentZoom;
       const deltaX = mouseX - resizeStartPos.current.x;
       const deltaY = mouseY - resizeStartPos.current.y;
 
@@ -129,7 +129,7 @@ export const useResize = ({
 
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
-  }, [snapToGridValue, minWidth, minHeight, onElementResize, zoom, canvasRect, canvasWidth, canvasHeight]);
+  }, [snapToGridValue, minWidth, minHeight, onElementResize, zoom, canvasWidth, canvasHeight]);
 
   return {
     isResizing,
