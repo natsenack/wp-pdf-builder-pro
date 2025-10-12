@@ -1512,6 +1512,7 @@ export const CanvasElement = ({
       {isSelected && (
         <>
           {console.log('🎯 RENDERING RESIZE HANDLES for element:', element.id)}
+          {console.log('🔧 isSelected is true, about to render resize zones for:', element.id)}
           {/* Coins */}
           <div
             className="resize-handle nw"
@@ -1648,6 +1649,7 @@ export const CanvasElement = ({
             onMouseEnter={() => console.log('🔍 Resize zone E hovered - element:', element.id)}
             onMouseLeave={() => console.log('🔍 Resize zone E left - element:', element.id)}
           />
+          {console.log('✅ Finished rendering all resize zones for element:', element.id)}
         </>
       )}
     </>
