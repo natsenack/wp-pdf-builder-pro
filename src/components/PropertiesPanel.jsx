@@ -2,7 +2,72 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useElementCustomization } from '../hooks/useElementCustomization';
 import { useElementSynchronization } from '../hooks/useElementSynchronization';
 import { elementCustomizationService } from '../services/ElementCustomizationService';
+import { getControlComponent } from './property-controls';
 import '../styles/PropertiesPanel.css';
+
+// Profils de propriétés contextuelles par type d'élément
+const ELEMENT_PROPERTY_PROFILES = {
+  // Éléments texte
+  text: {
+    appearance: ['colors', 'font', 'borders', 'effects'],
+    layout: ['position', 'dimensions', 'transform', 'layers'],
+    content: ['text', 'variables'],
+    effects: ['opacity', 'shadows', 'filters']
+  },
+  'layout-header': {
+    appearance: ['colors', 'font', 'borders', 'effects'],
+    layout: ['position', 'dimensions', 'transform', 'layers'],
+    content: ['text', 'variables'],
+    effects: ['opacity', 'shadows', 'filters']
+  },
+  'layout-footer': {
+    appearance: ['colors', 'font', 'borders', 'effects'],
+    layout: ['position', 'dimensions', 'transform', 'layers'],
+    content: ['text', 'variables'],
+    effects: ['opacity', 'shadows', 'filters']
+  },
+  'layout-section': {
+    appearance: ['colors', 'font', 'borders', 'effects'],
+    layout: ['position', 'dimensions', 'transform', 'layers'],
+    content: ['text', 'variables'],
+    effects: ['opacity', 'shadows', 'filters']
+  },
+  // Éléments image/logo
+  logo: {
+    appearance: ['colors', 'borders', 'effects'],
+    layout: ['position', 'dimensions', 'transform', 'layers'],
+    content: ['image'],
+    effects: ['opacity', 'shadows', 'filters']
+  },
+  // Tableaux produits
+  product_table: {
+    appearance: ['colors', 'font', 'borders', 'effects'],
+    layout: ['position', 'dimensions', 'transform', 'layers'],
+    content: ['table'],
+    effects: ['opacity', 'shadows', 'filters']
+  },
+  // Informations client
+  customer_info: {
+    appearance: ['colors', 'font', 'borders', 'effects'],
+    layout: ['position', 'dimensions', 'transform', 'layers'],
+    content: ['customer_fields'],
+    effects: ['opacity', 'shadows', 'filters']
+  },
+  // Type de document
+  document_type: {
+    appearance: ['colors', 'font', 'borders', 'effects'],
+    layout: ['position', 'dimensions', 'transform', 'layers'],
+    content: ['document_type'],
+    effects: ['opacity', 'shadows', 'filters']
+  },
+  // Éléments par défaut (forme géométrique)
+  default: {
+    appearance: ['colors', 'borders', 'effects'],
+    layout: ['position', 'dimensions', 'transform', 'layers'],
+    content: [],
+    effects: ['opacity', 'shadows', 'filters']
+  }
+};
 
 // Fonction helper pour parser les valeurs numériques de manière sécurisée
 const safeParseInt = (value, defaultValue = 0) => {
@@ -440,6 +505,10 @@ const PropertiesPanel = React.memo(({
       );
     }
 
+    // Obtenir le profil de propriétés pour ce type d'élément
+    const elementProfile = ELEMENT_PROPERTY_PROFILES[selectedElement.type] || ELEMENT_PROPERTY_PROFILES.default;
+    const allowedControls = elementProfile[activeTab] || [];
+
     switch (activeTab) {
       case 'appearance':
         return (
@@ -509,8 +578,8 @@ const PropertiesPanel = React.memo(({
               </div>
             </div>
 
-            {(selectedElement.type === 'text' || selectedElement.type === 'layout-header' ||
-              selectedElement.type === 'layout-footer' || selectedElement.type === 'layout-section') && (
+            {/* Contrôles de police (uniquement pour les éléments qui les supportent) */}
+            {allowedControls.includes('font') && (
               <FontControls
                 elementId={selectedElement.id}
                 properties={localProperties}
@@ -518,7 +587,8 @@ const PropertiesPanel = React.memo(({
               />
             )}
 
-            {localProperties.borderWidth >= 0 && (
+            {/* Bordures (uniquement si activées et autorisées) */}
+            {allowedControls.includes('borders') && localProperties.borderWidth >= 0 && (
               <div className="properties-group">
                 <h4>🔲 Bordures & Coins Arrondis</h4>
 
@@ -609,988 +679,419 @@ const PropertiesPanel = React.memo(({
               </div>
             )}
 
-            <div className="properties-group">
-              <h4>✨ Effets</h4>
+            {/* Effets (uniquement si autorisés) */}
+            {allowedControls.includes('effects') && (
+              <div className="properties-group">
+                <h4>✨ Effets</h4>
 
-              <ColorPicker
-                label="Ombre"
-                value={localProperties.boxShadowColor || '#000000'}
-                onChange={(value) => handlePropertyChange(selectedElement.id, 'boxShadowColor', value)}
-                presets={['#000000', '#ffffff', '#64748b', '#ef4444', '#3b82f6']}
-              />
+                <ColorPicker
+                  label="Ombre"
+                  value={localProperties.boxShadowColor || '#000000'}
+                  onChange={(value) => handlePropertyChange(selectedElement.id, 'boxShadowColor', value)}
+                  presets={['#000000', '#ffffff', '#64748b', '#ef4444', '#3b82f6']}
+                />
 
-              <div className="property-row">
-                <label>Flou ombre:</label>
-                <div className="slider-container">
-                  <input
-                    type="range"
-                    min="0"
-                    max="20"
-                    value={localProperties.boxShadowBlur ?? 0}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'boxShadowBlur', safeParseInt(e.target.value, 0))}
-                    className="slider"
-                  />
-                  <span className="slider-value">{localProperties.boxShadowBlur ?? 0}px</span>
+                <div className="property-row">
+                  <label>Flou ombre:</label>
+                  <div className="slider-container">
+                    <input
+                      type="range"
+                      min="0"
+                      max="20"
+                      value={localProperties.boxShadowBlur ?? 0}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'boxShadowBlur', safeParseInt(e.target.value, 0))}
+                      className="slider"
+                    />
+                    <span className="slider-value">{localProperties.boxShadowBlur ?? 0}px</span>
+                  </div>
+                </div>
+
+                <div className="property-row">
+                  <label>Décalage ombre:</label>
+                  <div className="slider-container">
+                    <input
+                      type="range"
+                      min="0"
+                      max="10"
+                      value={localProperties.boxShadowSpread ?? 0}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'boxShadowSpread', safeParseInt(e.target.value, 0))}
+                      className="slider"
+                    />
+                    <span className="slider-value">{localProperties.boxShadowSpread ?? 0}px</span>
+                  </div>
                 </div>
               </div>
-
-              <div className="property-row">
-                <label>Décalage ombre:</label>
-                <div className="slider-container">
-                  <input
-                    type="range"
-                    min="0"
-                    max="10"
-                    value={localProperties.boxShadowSpread ?? 0}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'boxShadowSpread', safeParseInt(e.target.value, 0))}
-                    className="slider"
-                  />
-                  <span className="slider-value">{localProperties.boxShadowSpread ?? 0}px</span>
-                </div>
-              </div>
-            </div>
+            )}
           </div>
         );
 
       case 'layout':
         return (
           <div className="tab-content">
-            {/* Position précise */}
-            <div className="properties-group">
-              <h4>📍 Position Précise</h4>
+            {/* Position précise (toujours disponible) */}
+            {allowedControls.includes('position') && (
+              <div className="properties-group">
+                <h4>📍 Position Précise</h4>
 
-              <div className="property-row">
-                <label>X:</label>
-                <div className="input-with-unit">
+                <div className="property-row">
+                  <label>X:</label>
+                  <div className="input-with-unit">
+                    <input
+                      type="number"
+                      value={Math.round(localProperties.x || 0)}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'x', safeParseInt(e.target.value, 0))}
+                      step="1"
+                    />
+                    <span className="unit">mm</span>
+                  </div>
+                </div>
+
+                <div className="property-row">
+                  <label>Y:</label>
+                  <div className="input-with-unit">
+                    <input
+                      type="number"
+                      value={Math.round(localProperties.y || 0)}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'y', safeParseInt(e.target.value, 0))}
+                      step="1"
+                    />
+                    <span className="unit">mm</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Dimensions avec contraintes (toujours disponible) */}
+            {allowedControls.includes('dimensions') && (
+              <div className="properties-group">
+                <h4>📏 Dimensions</h4>
+
+                <div className="property-row">
+                  <label>Largeur:</label>
+                  <div className="input-with-unit">
+                    <input
+                      type="number"
+                      value={Math.round(localProperties.width || 100)}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'width', safeParseInt(e.target.value, 100))}
+                      min="1"
+                      step="1"
+                    />
+                    <span className="unit">mm</span>
+                  </div>
+                </div>
+
+                <div className="property-row">
+                  <label>Hauteur:</label>
+                  <div className="input-with-unit">
+                    <input
+                      type="number"
+                      value={Math.round(localProperties.height || 50)}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'height', safeParseInt(e.target.value, 50))}
+                      min="1"
+                      step="1"
+                    />
+                    <span className="unit">mm</span>
+                  </div>
+                </div>
+
+                {/* Boutons de ratio */}
+                <div className="property-row">
+                  <label>Ratio:</label>
+                  <div className="ratio-buttons">
+                    <button
+                      className="ratio-btn"
+                      onClick={() => {
+                        const newHeight = (localProperties.width || 100) * 0.75;
+                        handlePropertyChange(selectedElement.id, 'height', Math.round(newHeight));
+                      }}
+                      title="Format 4:3"
+                    >
+                      4:3
+                    </button>
+                    <button
+                      className="ratio-btn"
+                      onClick={() => {
+                        const newHeight = (localProperties.width || 100) * (297/210);
+                        handlePropertyChange(selectedElement.id, 'height', Math.round(newHeight));
+                      }}
+                      title="Format A4"
+                    >
+                      A4
+                    </button>
+                    <button
+                      className="ratio-btn"
+                      onClick={() => {
+                        const newHeight = (localProperties.width || 100);
+                        handlePropertyChange(selectedElement.id, 'height', Math.round(newHeight));
+                      }}
+                      title="Carré"
+                    >
+                      1:1
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Transformation (toujours disponible) */}
+            {allowedControls.includes('transform') && (
+              <div className="properties-group">
+                <h4>🔄 Transformation</h4>
+
+                <div className="property-row">
+                  <label>Rotation:</label>
+                  <div className="slider-container">
+                    <input
+                      type="range"
+                      min="-180"
+                      max="180"
+                      value={localProperties.rotation || 0}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'rotation', safeParseInt(e.target.value, 0))}
+                      onDoubleClick={() => handlePropertyChange(selectedElement.id, 'rotation', 0)}
+                      className="slider"
+                    />
+                    <span className="slider-value">{localProperties.rotation || 0}°</span>
+                  </div>
+                </div>
+
+                {/* Boutons de rotation rapide */}
+                <div className="property-row">
+                  <label>Rotation rapide:</label>
+                  <div className="rotation-buttons">
+                    <button
+                      className="rotation-btn"
+                      onClick={() => handlePropertyChange(selectedElement.id, 'rotation', 0)}
+                      title="Rotation 0°"
+                    >
+                      ↻ 0°
+                    </button>
+                    <button
+                      className="rotation-btn"
+                      onClick={() => handlePropertyChange(selectedElement.id, 'rotation', 90)}
+                      title="Rotation 90°"
+                    >
+                      ↻ 90°
+                    </button>
+                    <button
+                      className="rotation-btn"
+                      onClick={() => handlePropertyChange(selectedElement.id, 'rotation', 180)}
+                      title="Rotation 180°"
+                    >
+                      ↻ 180°
+                    </button>
+                    <button
+                      className="rotation-btn"
+                      onClick={() => handlePropertyChange(selectedElement.id, 'rotation', -90)}
+                      title="Rotation -90°"
+                    >
+                      ↺ -90°
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Calques et profondeur (toujours disponible) */}
+            {allowedControls.includes('layers') && (
+              <div className="properties-group">
+                <h4>📚 Calques</h4>
+
+                <div className="property-row">
+                  <label>Profondeur (Z-index):</label>
                   <input
                     type="number"
-                    value={Math.round(localProperties.x || 0)}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'x', safeParseInt(e.target.value, 0))}
+                    value={localProperties.zIndex || 0}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'zIndex', safeParseInt(e.target.value, 0))}
+                    min="0"
+                    max="100"
                     step="1"
                   />
-                  <span className="unit">mm</span>
+                </div>
+
+                <div className="property-row">
+                  <label>Actions:</label>
+                  <div className="layer-actions">
+                    <button
+                      className="layer-btn"
+                      onClick={() => handlePropertyChange(selectedElement.id, 'zIndex', (localProperties.zIndex || 0) + 1)}
+                      title="Mettre devant"
+                    >
+                      ⬆️ Devant
+                    </button>
+                    <button
+                      className="layer-btn"
+                      onClick={() => handlePropertyChange(selectedElement.id, 'zIndex', Math.max(0, (localProperties.zIndex || 0) - 1))}
+                      title="Mettre derrière"
+                    >
+                      ⬇️ Derrière
+                    </button>
+                  </div>
                 </div>
               </div>
-
-              <div className="property-row">
-                <label>Y:</label>
-                <div className="input-with-unit">
-                  <input
-                    type="number"
-                    value={Math.round(localProperties.y || 0)}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'y', safeParseInt(e.target.value, 0))}
-                    step="1"
-                  />
-                  <span className="unit">mm</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Dimensions avec contraintes */}
-            <div className="properties-group">
-              <h4>📏 Dimensions</h4>
-
-              <div className="property-row">
-                <label>Largeur:</label>
-                <div className="input-with-unit">
-                  <input
-                    type="number"
-                    value={Math.round(localProperties.width || 100)}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'width', safeParseInt(e.target.value, 100))}
-                    min="1"
-                    step="1"
-                  />
-                  <span className="unit">mm</span>
-                </div>
-              </div>
-
-              <div className="property-row">
-                <label>Hauteur:</label>
-                <div className="input-with-unit">
-                  <input
-                    type="number"
-                    value={Math.round(localProperties.height || 50)}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'height', safeParseInt(e.target.value, 50))}
-                    min="1"
-                    step="1"
-                  />
-                  <span className="unit">mm</span>
-                </div>
-              </div>
-
-              {/* Boutons de ratio */}
-              <div className="property-row">
-                <label>Ratio:</label>
-                <div className="ratio-buttons">
-                  <button
-                    className="ratio-btn"
-                    onClick={() => {
-                      const newHeight = (localProperties.width || 100) * 0.75;
-                      handlePropertyChange(selectedElement.id, 'height', Math.round(newHeight));
-                    }}
-                    title="Format 4:3"
-                  >
-                    4:3
-                  </button>
-                  <button
-                    className="ratio-btn"
-                    onClick={() => {
-                      const newHeight = (localProperties.width || 100) * (297/210);
-                      handlePropertyChange(selectedElement.id, 'height', Math.round(newHeight));
-                    }}
-                    title="Format A4"
-                  >
-                    A4
-                  </button>
-                  <button
-                    className="ratio-btn"
-                    onClick={() => {
-                      const newHeight = (localProperties.width || 100);
-                      handlePropertyChange(selectedElement.id, 'height', Math.round(newHeight));
-                    }}
-                    title="Carré"
-                  >
-                    1:1
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Transformation */}
-            <div className="properties-group">
-              <h4>🔄 Transformation</h4>
-
-              <div className="property-row">
-                <label>Rotation:</label>
-                <div className="slider-container">
-                  <input
-                    type="range"
-                    min="-180"
-                    max="180"
-                    value={localProperties.rotation || 0}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'rotation', safeParseInt(e.target.value, 0))}
-                    onDoubleClick={() => handlePropertyChange(selectedElement.id, 'rotation', 0)}
-                    className="slider"
-                  />
-                  <span className="slider-value">{localProperties.rotation || 0}°</span>
-                </div>
-              </div>
-
-              {/* Boutons de rotation rapide */}
-              <div className="property-row">
-                <label>Rotation rapide:</label>
-                <div className="rotation-buttons">
-                  <button
-                    className="rotation-btn"
-                    onClick={() => handlePropertyChange(selectedElement.id, 'rotation', 0)}
-                    title="Rotation 0°"
-                  >
-                    ↻ 0°
-                  </button>
-                  <button
-                    className="rotation-btn"
-                    onClick={() => handlePropertyChange(selectedElement.id, 'rotation', 90)}
-                    title="Rotation 90°"
-                  >
-                    ↻ 90°
-                  </button>
-                  <button
-                    className="rotation-btn"
-                    onClick={() => handlePropertyChange(selectedElement.id, 'rotation', 180)}
-                    title="Rotation 180°"
-                  >
-                    ↻ 180°
-                  </button>
-                  <button
-                    className="rotation-btn"
-                    onClick={() => handlePropertyChange(selectedElement.id, 'rotation', -90)}
-                    title="Rotation -90°"
-                  >
-                    ↺ -90°
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Calques et profondeur */}
-            <div className="properties-group">
-              <h4>📚 Calques</h4>
-
-              <div className="property-row">
-                <label>Profondeur (Z-index):</label>
-                <input
-                  type="number"
-                  value={localProperties.zIndex || 0}
-                  onChange={(e) => handlePropertyChange(selectedElement.id, 'zIndex', safeParseInt(e.target.value, 0))}
-                  min="0"
-                  max="100"
-                  step="1"
-                />
-              </div>
-
-              <div className="property-row">
-                <label>Actions:</label>
-                <div className="layer-actions">
-                  <button
-                    className="layer-btn"
-                    onClick={() => handlePropertyChange(selectedElement.id, 'zIndex', (localProperties.zIndex || 0) + 1)}
-                    title="Mettre devant"
-                  >
-                    ⬆️ Devant
-                  </button>
-                  <button
-                    className="layer-btn"
-                    onClick={() => handlePropertyChange(selectedElement.id, 'zIndex', Math.max(0, (localProperties.zIndex || 0) - 1))}
-                    title="Mettre derrière"
-                  >
-                    ⬇️ Derrière
-                  </button>
-                </div>
-              </div>
-            </div>
+            )}
           </div>
         );
 
       case 'content':
         return (
           <div className="tab-content">
-            {selectedElement.type === 'text' && (
-              <div className="properties-group">
-                <h4>[Aa] Contenu texte</h4>
+            {/* Rendu dynamique des contrôles selon les permissions du profil */}
+            {allowedControls.map(controlName => {
+              const ControlComponent = getControlComponent(controlName);
+              if (!ControlComponent) return null;
 
-                <div className="property-row">
-                  <label>Texte:</label>
-                  <textarea
-                    value={localProperties.text || ''}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'text', e.target.value)}
-                    rows={4}
-                    placeholder="Saisissez votre texte ici..."
-                  />
-                </div>
-
-                <div className="property-row">
-                  <label>Variables dynamiques:</label>
-                  <div className="variables-list">
-                    <button className="variable-btn" onClick={() => {
-                      const currentText = localProperties.text || '';
-                      handlePropertyChange(selectedElement.id, 'text', currentText + '{{date}}');
-                    }}>
-                      📅 Date
-                    </button>
-                    <button className="variable-btn" onClick={() => {
-                      const currentText = localProperties.text || '';
-                      handlePropertyChange(selectedElement.id, 'text', currentText + '{{order_number}}');
-                    }}>
-                      [Ord] N° commande
-                    </button>
-                    <button className="variable-btn" onClick={() => {
-                      const currentText = localProperties.text || '';
-                      handlePropertyChange(selectedElement.id, 'text', currentText + '{{customer_name}}');
-                    }}>
-                      👤 Client
-                    </button>
-                    <button className="variable-btn" onClick={() => {
-                      const currentText = localProperties.text || '';
-                      handlePropertyChange(selectedElement.id, 'text', currentText + '{{total}}');
-                    }}>
-                      💰 Total
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {selectedElement.type === 'logo' && (
-              <div className="properties-group">
-                <h4>[Img] Image</h4>
-
-                <div className="property-row">
-                  <label>URL de l'image:</label>
-                  <input
-                    type="url"
-                    value={localProperties.src || ''}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'src', e.target.value)}
-                    placeholder="https://exemple.com/image.jpg"
-                  />
-                </div>
-
-                <div className="property-row">
-                  <label>Alt text:</label>
-                  <input
-                    type="text"
-                    value={localProperties.alt || ''}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'alt', e.target.value)}
-                    placeholder="Description de l'image"
-                  />
-                </div>
-
-                <div className="property-row">
-                  <label>Adaptation:</label>
-                  <select
-                    value={localProperties.objectFit || 'cover'}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'objectFit', e.target.value)}
-                  >
-                    <option value="cover">Couvrir (zoom)</option>
-                    <option value="contain">Contenir (intégral)</option>
-                    <option value="fill">Remplir</option>
-                    <option value="none">Aucune</option>
-                  </select>
-                </div>
-              </div>
-            )}
-
-            {selectedElement.type === 'product_table' && (
-              <div className="properties-group">
-                <h4>📊 Tableau produits</h4>
-
-                <div className="property-row">
-                  <label>Colonnes à afficher:</label>
-                  <div className="checkbox-group">
-                    {[
-                      { key: 'image', label: 'Image' },
-                      { key: 'name', label: 'Nom' },
-                      { key: 'sku', label: 'SKU' },
-                      { key: 'quantity', label: 'Quantité' },
-                      { key: 'price', label: 'Prix' },
-                      { key: 'total', label: 'Total' }
-                    ].map(({ key, label }) => (
-                      <label key={key} className="checkbox-item">
-                        <input
-                          type="checkbox"
-                          checked={localProperties.columns?.[key] ?? true}
-                          onChange={(e) => {
-                            handlePropertyChange(selectedElement.id, `columns.${key}`, e.target.checked);
-                          }}
-                        />
-                        {label}
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="property-row">
-                  <label>Style du tableau:</label>
-                  <select
-                    value={localProperties.tableStyle || 'default'}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'tableStyle', e.target.value)}
-                  >
-                    <option value="default">Style par défaut</option>
-                    <option value="classic">Classique (noir/blanc)</option>
-                    <option value="striped">Lignes alternées</option>
-                    <option value="bordered">Encadré</option>
-                    <option value="minimal">Minimal</option>
-                    <option value="modern">Moderne</option>
-                  </select>
-                </div>
-
-                <div className="property-row">
-                  <label>Lignes de totaux:</label>
-                  <div className="checkbox-group">
-                    {[
-                      { key: 'showSubtotal', label: 'Sous-total' },
-                      { key: 'showShipping', label: 'Frais de port' },
-                      { key: 'showTaxes', label: 'Taxes' },
-                      { key: 'showDiscount', label: 'Remise' },
-                      { key: 'showTotal', label: 'Total général' }
-                    ].map(({ key, label }) => (
-                      <label key={key} className="checkbox-item">
-                        <input
-                          type="checkbox"
-                          checked={localProperties[key] || false}
-                          onChange={(e) => handlePropertyChange(selectedElement.id, key, e.target.checked)}
-                        />
-                        {label}
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {selectedElement.type === 'customer_info' && (
-              <div className="properties-group">
-                <h4>👤 Informations client</h4>
-
-                <div className="property-row">
-                  <label>Champs à afficher:</label>
-                  <div className="checkbox-group">
-                    {[
-                      { key: 'name', label: 'Nom' },
-                      { key: 'email', label: 'Email' },
-                      { key: 'phone', label: 'Téléphone' },
-                      { key: 'address', label: 'Adresse' },
-                      { key: 'company', label: 'Société' },
-                      { key: 'vat', label: 'N° TVA' }
-                    ].map(({ key, label }) => (
-                      <label key={key} className="checkbox-item">
-                        <input
-                          type="checkbox"
-                          checked={localProperties.fields?.includes(key) ?? true}
-                          onChange={(e) => {
-                            const currentFields = localProperties.fields || ['name', 'email', 'phone', 'address', 'company', 'vat'];
-                            const newFields = e.target.checked
-                              ? [...currentFields, key]
-                              : currentFields.filter(f => f !== key);
-                            handlePropertyChange(selectedElement.id, 'fields', newFields);
-                          }}
-                        />
-                        {label}
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="property-row">
-                  <label>Disposition:</label>
-                  <select
-                    value={localProperties.layout || 'vertical'}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'layout', e.target.value)}
-                  >
-                    <option value="vertical">Verticale</option>
-                    <option value="horizontal">Horizontale</option>
-                  </select>
-                </div>
-
-                <div className="property-row">
-                  <label>Afficher les étiquettes:</label>
-                  <label className="toggle">
-                    <input
-                      type="checkbox"
-                      checked={localProperties.showLabels ?? true}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'showLabels', e.target.checked)}
-                    />
-                    <span className="toggle-slider"></span>
-                  </label>
-                </div>
-
-                {localProperties.showLabels && (
-                  <div className="property-row">
-                    <label>Style des étiquettes:</label>
-                    <select
-                      value={localProperties.labelStyle || 'normal'}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'labelStyle', e.target.value)}
-                    >
-                      <option value="normal">Normal</option>
-                      <option value="bold">Gras</option>
-                      <option value="uppercase">Majuscules</option>
-                    </select>
-                  </div>
-                )}
-
-                <div className="property-row">
-                  <label>Espacement:</label>
-                  <div className="slider-container">
-                    <input
-                      type="range"
-                      min="0"
-                      max="20"
-                      value={localProperties.spacing || 8}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'spacing', safeParseInt(e.target.value, 10))}
-                      className="slider"
-                    />
-                    <span className="slider-value">{localProperties.spacing || 8}px</span>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Contrôles de police disponibles pour tous les éléments */}
-            <FontControls
-              elementId={selectedElement.id}
-              properties={localProperties}
-              onPropertyChange={handlePropertyChange}
-            />
-
-            {/* Contrôles d'image disponibles uniquement pour les éléments logo */}
-            {selectedElement.type === 'logo' && (
-              <div className="properties-group">
-                <h4>[Img] Image</h4>
-
-              <div className="property-row">
-                <label>URL de l'image:</label>
-                <div className="input-with-button">
-                  <input
-                    type="text"
-                    value={localProperties.imageUrl || localProperties.src || ''}
-                    onChange={(e) => {
-                      handlePropertyChange(selectedElement.id, 'imageUrl', e.target.value);
-                      handlePropertyChange(selectedElement.id, 'src', e.target.value);
-                    }}
-                    placeholder="https://exemple.com/image.png"
-                  />
-                  <button
-                    type="button"
-                    className="media-button"
-                    onClick={async () => {
-                      try {
-                        // Récupérer les médias WordPress via l'API REST
-                        const response = await fetch('/wp-json/wp/v2/media?media_type=image&per_page=50&_embed');
-                        const media = await response.json();
-
-                        // Créer une modale simple pour sélectionner l'image
-                        const modal = document.createElement('div');
-                        modal.style.cssText = `
-                          position: fixed;
-                          top: 0;
-                          left: 0;
-                          width: 100%;
-                          height: 100%;
-                          background: rgba(0,0,0,0.8);
-                          z-index: 9999;
-                          display: flex;
-                          align-items: center;
-                          justify-content: center;
-                        `;
-
-                        const modalContent = document.createElement('div');
-                        modalContent.style.cssText = `
-                          background: white;
-                          padding: 20px;
-                          border-radius: 8px;
-                          max-width: 600px;
-                          max-height: 80vh;
-                          overflow-y: auto;
-                          width: 90%;
-                        `;
-
-                        const title = document.createElement('h3');
-                        title.textContent = 'Sélectionner une image depuis la médiathèque';
-                        title.style.marginBottom = '15px';
-
-                        const closeBtn = document.createElement('button');
-                        closeBtn.textContent = '✕';
-                        closeBtn.style.cssText = `
-                          position: absolute;
-                          top: 10px;
-                          right: 10px;
-                          background: none;
-                          border: none;
-                          font-size: 20px;
-                          cursor: pointer;
-                        `;
-                        closeBtn.onclick = () => document.body.removeChild(modal);
-
-                        const grid = document.createElement('div');
-                        grid.style.cssText = `
-                          display: grid;
-                          grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-                          gap: 10px;
-                          margin-top: 15px;
-                        `;
-
-                        media.forEach(item => {
-                          const imgContainer = document.createElement('div');
-                          imgContainer.style.cssText = `
-                            border: 2px solid #ddd;
-                            border-radius: 4px;
-                            padding: 5px;
-                            cursor: pointer;
-                            transition: border-color 0.2s;
-                          `;
-                          imgContainer.onmouseover = () => imgContainer.style.borderColor = '#007cba';
-                          imgContainer.onmouseout = () => imgContainer.style.borderColor = '#ddd';
-
-                          const img = document.createElement('img');
-                          img.src = item.source_url;
-                          img.style.cssText = `
-                            width: 100%;
-                            height: 80px;
-                            object-fit: cover;
-                            border-radius: 2px;
-                          `;
-
-                          const name = document.createElement('div');
-                          name.textContent = item.title.rendered.length > 15 ?
-                            item.title.rendered.substring(0, 15) + '...' :
-                            item.title.rendered;
-                          name.style.cssText = `
-                            font-size: 11px;
-                            text-align: center;
-                            margin-top: 5px;
-                            color: #666;
-                          `;
-
-                          imgContainer.onclick = () => {
-                            handlePropertyChange(selectedElement.id, 'imageUrl', item.source_url);
-                            handlePropertyChange(selectedElement.id, 'src', item.source_url);
-                            document.body.removeChild(modal);
-                          };
-
-                          imgContainer.appendChild(img);
-                          imgContainer.appendChild(name);
-                          grid.appendChild(imgContainer);
-                        });
-
-                        modalContent.appendChild(title);
-                        modalContent.appendChild(closeBtn);
-                        modalContent.appendChild(grid);
-                        modal.appendChild(modalContent);
-                        document.body.appendChild(modal);
-
-                      } catch (error) {
-                        console.error('Erreur lors de la récupération des médias:', error);
-                        alert('Erreur lors de l\'accès à la médiathèque WordPress');
-                      }
-                    }}
-                  >
-                    📁 Médiathèque
-                  </button>
-                </div>
-              </div>
-
-              <div className="property-row">
-                <label>Texte alternatif:</label>
-                <input
-                  type="text"
-                  value={localProperties.alt || ''}
-                  onChange={(e) => handlePropertyChange(selectedElement.id, 'alt', e.target.value)}
-                  placeholder="Description de l'image"
-                />
-              </div>
-
-              <div className="property-row">
-                <label>Ajustement:</label>
-                <select
-                  value={localProperties.objectFit || localProperties.fit || 'cover'}
-                  onChange={(e) => {
-                    handlePropertyChange(selectedElement.id, 'objectFit', e.target.value);
-                    handlePropertyChange(selectedElement.id, 'fit', e.target.value);
-                  }}
-                >
-                  <option value="cover">Couvrir</option>
-                  <option value="contain">Contenir</option>
-                  <option value="fill">Remplir</option>
-                  <option value="none">Aucun</option>
-                  <option value="scale-down">Réduire</option>
-                </select>
-              </div>
-            </div>
-            )}
-            {/* Contrôles pour le type de document */}
-            {selectedElement.type === 'document_type' && (
-              <div className="properties-group">
-                <h4>📋 Type de Document</h4>
-
-                <div className="property-row">
-                  <label>Type de document:</label>
-                  <select
-                    value={localProperties.documentType || 'invoice'}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'documentType', e.target.value)}
-                  >
-                    <option value="invoice">Facture</option>
-                    <option value="quote">Devis</option>
-                    <option value="receipt">Reçu</option>
-                    <option value="order">Commande</option>
-                    <option value="credit_note">Avoir</option>
-                  </select>
-                </div>
-
-                <FontControls
+              return (
+                <ControlComponent
+                  key={controlName}
                   elementId={selectedElement.id}
                   properties={localProperties}
                   onPropertyChange={handlePropertyChange}
                 />
-
-                <div className="property-row">
-                  <label>Alignement du texte:</label>
-                  <select
-                    value={localProperties.textAlign || 'center'}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'textAlign', e.target.value)}
-                  >
-                    <option value="left">Gauche</option>
-                    <option value="center">Centre</option>
-                    <option value="right">Droite</option>
-                  </select>
-                </div>
-
-                <ColorPicker
-                  label="Couleur du texte"
-                  value={localProperties.color}
-                  onChange={(value) => handlePropertyChange(selectedElement.id, 'color', value)}
-                  presets={['#1e293b', '#334155', '#475569', '#64748b', '#000000', '#dc2626', '#059669', '#7c3aed']}
-                  defaultColor="#333333"
-                />
-
-                <div className="property-row">
-                  <label>Afficher la bordure:</label>
-                  <label className="toggle">
-                    <input
-                      type="checkbox"
-                      checked={localProperties.showBorder || false}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'showBorder', e.target.checked)}
-                    />
-                    <span className="toggle-slider"></span>
-                  </label>
-                </div>
-
-                <ColorPicker
-                  label="Couleur de fond"
-                  value={localProperties.backgroundColor}
-                  onChange={(value) => handlePropertyChange(selectedElement.id, 'backgroundColor', value)}
-                  presets={['transparent', '#ffffff', '#f8fafc', '#fef3c7', '#ecfdf5', '#f0f9ff']}
-                />
-              </div>
-            )}
-
-            {/* Contrôles de contenu disponibles pour tous les éléments */}
-            <div className="properties-group">
-              <h4>� Contenu</h4>
-
-              <div className="property-row">
-                <label>Texte/Contenu:</label>
-                <input
-                  type="text"
-                  value={localProperties.content || ''}
-                  onChange={(e) => handlePropertyChange(selectedElement.id, 'content', e.target.value)}
-                  placeholder="Texte à afficher"
-                />
-              </div>
-
-              <div className="property-row">
-                <label>Format:</label>
-                <input
-                  type="text"
-                  value={localProperties.format || ''}
-                  onChange={(e) => handlePropertyChange(selectedElement.id, 'format', e.target.value)}
-                  placeholder="Format d'affichage (optionnel)"
-                />
-              </div>
-
-              <div className="property-row">
-                <label>Type de document:</label>
-                <select
-                  value={localProperties.documentType || 'invoice'}
-                  onChange={(e) => handlePropertyChange(selectedElement.id, 'documentType', e.target.value)}
-                >
-                  <option value="invoice">Facture</option>
-                  <option value="quote">Devis</option>
-                  <option value="receipt">Reçu</option>
-                  <option value="order">Commande</option>
-                  <option value="credit_note">Avoir</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Contrôles de champs disponibles pour tous les éléments */}
-            <div className="properties-group">
-              <h4>📋 Champs & Options</h4>
-
-              <div className="property-row">
-                <label>Champs à afficher:</label>
-                <div className="checkbox-group">
-                  {[
-                    { key: 'name', label: 'Nom' },
-                    { key: 'address', label: 'Adresse' },
-                    { key: 'phone', label: 'Téléphone' },
-                    { key: 'email', label: 'Email' },
-                    { key: 'website', label: 'Site web' },
-                    { key: 'vat', label: 'N° TVA' },
-                    { key: 'image', label: 'Image' },
-                    { key: 'sku', label: 'SKU' },
-                    { key: 'quantity', label: 'Quantité' },
-                    { key: 'price', label: 'Prix' },
-                    { key: 'total', label: 'Total' }
-                  ].map(({ key, label }) => (
-                    <label key={key} className="checkbox-item">
-                      <input
-                        type="checkbox"
-                        checked={localProperties.fields?.includes(key) ?? false}
-                        onChange={(e) => {
-                          const currentFields = localProperties.fields || [];
-                          const newFields = e.target.checked
-                            ? [...currentFields, key]
-                            : currentFields.filter(f => f !== key);
-                          handlePropertyChange(selectedElement.id, 'fields', newFields);
-                        }}
-                      />
-                      {label}
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              <div className="property-row">
-                <label>Afficher l'étiquette:</label>
-                <label className="toggle">
-                  <input
-                    type="checkbox"
-                    checked={localProperties.showLabel ?? false}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'showLabel', e.target.checked)}
-                  />
-                  <span className="toggle-slider"></span>
-                </label>
-              </div>
-
-              {localProperties.showLabel && (
-                <div className="property-row">
-                  <label>Texte de l'étiquette:</label>
-                  <input
-                    type="text"
-                    value={localProperties.labelText || ''}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'labelText', e.target.value)}
-                    placeholder="Texte de l'étiquette"
-                  />
-                </div>
-              )}
-
-              <div className="property-row">
-                <label>Afficher les bordures:</label>
-                <label className="toggle">
-                  <input
-                    type="checkbox"
-                    checked={localProperties.showBorders ?? false}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'showBorders', e.target.checked)}
-                  />
-                  <span className="toggle-slider"></span>
-                </label>
-              </div>
-
-              <div className="property-row">
-                <label>Afficher les en-têtes:</label>
-                <label className="toggle">
-                  <input
-                    type="checkbox"
-                    checked={localProperties.showHeaders ?? false}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'showHeaders', e.target.checked)}
-                  />
-                  <span className="toggle-slider"></span>
-                </label>
-              </div>
-            </div>
+              );
+            })}
           </div>
         );
 
       case 'effects':
         return (
           <div className="tab-content">
-            <div className="properties-group">
-              <h4>🌟 Transparence & Visibilité</h4>
+            {/* Transparence & Visibilité (toujours disponible si autorisé) */}
+            {allowedControls.includes('opacity') && (
+              <div className="properties-group">
+                <h4>🌟 Transparence & Visibilité</h4>
 
-              <div className="property-row">
-                <label>Opacité:</label>
-                <div className="slider-container">
-                  <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    value={localProperties.opacity || 100}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'opacity', safeParseInt(e.target.value, 100))}
-                    className="slider"
-                  />
-                  <span className="slider-value">{localProperties.opacity || 100}%</span>
-                </div>
-              </div>
-
-              <div className="property-row">
-                <label>Visibilité:</label>
-                <label className="toggle">
-                  <input
-                    type="checkbox"
-                    checked={localProperties.visible !== false}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'visible', e.target.checked)}
-                  />
-                  <span className="toggle-slider"></span>
-                </label>
-              </div>
-            </div>
-
-            <div className="properties-group">
-              <h4>✨ Ombres & Effets</h4>
-
-              <div className="property-row">
-                <label>Ombre:</label>
-                <label className="toggle">
-                  <input
-                    type="checkbox"
-                    checked={localProperties.shadow || false}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'shadow', e.target.checked)}
-                  />
-                  <span className="toggle-slider"></span>
-                </label>
-              </div>
-
-              {localProperties.shadow && (
-                <>
-                  <ColorPicker
-                    label="Couleur ombre"
-                    value={localProperties.shadowColor}
-                    onChange={(value) => handlePropertyChange(selectedElement.id, 'shadowColor', value)}
-                    presets={['#000000', '#374151', '#6b7280', '#9ca3af']}
-                  />
-
-                  <div className="property-row">
-                    <label>Décalage X:</label>
+                <div className="property-row">
+                  <label>Opacité:</label>
+                  <div className="slider-container">
                     <input
-                      type="number"
-                      value={localProperties.shadowOffsetX || 2}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'shadowOffsetX', safeParseInt(e.target.value, 0))}
-                      min="-20"
-                      max="20"
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={localProperties.opacity || 100}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'opacity', safeParseInt(e.target.value, 100))}
+                      className="slider"
                     />
+                    <span className="slider-value">{localProperties.opacity || 100}%</span>
                   </div>
+                </div>
 
-                  <div className="property-row">
-                    <label>Décalage Y:</label>
+                <div className="property-row">
+                  <label>Visibilité:</label>
+                  <label className="toggle">
                     <input
-                      type="number"
-                      value={localProperties.shadowOffsetY || 2}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'shadowOffsetY', safeParseInt(e.target.value, 0))}
-                      min="-20"
-                      max="20"
+                      type="checkbox"
+                      checked={localProperties.visible !== false}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'visible', e.target.checked)}
                     />
+                    <span className="toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+            )}
+
+            {/* Ombres & Effets (uniquement si autorisé) */}
+            {allowedControls.includes('shadows') && (
+              <div className="properties-group">
+                <h4>✨ Ombres & Effets</h4>
+
+                <div className="property-row">
+                  <label>Ombre:</label>
+                  <label className="toggle">
+                    <input
+                      type="checkbox"
+                      checked={localProperties.shadow || false}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'shadow', e.target.checked)}
+                    />
+                    <span className="toggle-slider"></span>
+                  </label>
+                </div>
+
+                {localProperties.shadow && (
+                  <>
+                    <ColorPicker
+                      label="Couleur ombre"
+                      value={localProperties.shadowColor}
+                      onChange={(value) => handlePropertyChange(selectedElement.id, 'shadowColor', value)}
+                      presets={['#000000', '#374151', '#6b7280', '#9ca3af']}
+                    />
+
+                    <div className="property-row">
+                      <label>Décalage X:</label>
+                      <input
+                        type="number"
+                        value={localProperties.shadowOffsetX || 2}
+                        onChange={(e) => handlePropertyChange(selectedElement.id, 'shadowOffsetX', safeParseInt(e.target.value, 0))}
+                        min="-20"
+                        max="20"
+                      />
+                    </div>
+
+                    <div className="property-row">
+                      <label>Décalage Y:</label>
+                      <input
+                        type="number"
+                        value={localProperties.shadowOffsetY || 2}
+                        onChange={(e) => handlePropertyChange(selectedElement.id, 'shadowOffsetY', safeParseInt(e.target.value, 0))}
+                        min="-20"
+                        max="20"
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+
+            {/* Filtres visuels (uniquement si autorisé) */}
+            {allowedControls.includes('filters') && (
+              <div className="properties-group">
+                <h4>🎭 Filtres visuels</h4>
+
+                <div className="property-row">
+                  <label>Luminosité:</label>
+                  <div className="slider-container">
+                    <input
+                      type="range"
+                      min="0"
+                      max="200"
+                      value={localProperties.brightness || 100}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'brightness', safeParseInt(e.target.value, 100))}
+                      className="slider"
+                    />
+                    <span className="slider-value">{localProperties.brightness || 100}%</span>
                   </div>
-                </>
-              )}
-            </div>
+                </div>
 
-            <div className="properties-group">
-              <h4>🎭 Filtres visuels</h4>
+                <div className="property-row">
+                  <label>Contraste:</label>
+                  <div className="slider-container">
+                    <input
+                      type="range"
+                      min="0"
+                      max="200"
+                      value={localProperties.contrast || 100}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'contrast', parseInt(e.target.value))}
+                      className="slider"
+                    />
+                    <span className="slider-value">{localProperties.contrast || 100}%</span>
+                  </div>
+                </div>
 
-              <div className="property-row">
-                <label>Luminosité:</label>
-                <div className="slider-container">
-                  <input
-                    type="range"
-                    min="0"
-                    max="200"
-                    value={localProperties.brightness || 100}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'brightness', safeParseInt(e.target.value, 100))}
-                    className="slider"
-                  />
-                  <span className="slider-value">{localProperties.brightness || 100}%</span>
+                <div className="property-row">
+                  <label>Saturation:</label>
+                  <div className="slider-container">
+                    <input
+                      type="range"
+                      min="0"
+                      max="200"
+                      value={localProperties.saturate || 100}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'saturate', parseInt(e.target.value))}
+                      className="slider"
+                    />
+                    <span className="slider-value">{localProperties.saturate || 100}%</span>
+                  </div>
                 </div>
               </div>
-
-              <div className="property-row">
-                <label>Contraste:</label>
-                <div className="slider-container">
-                  <input
-                    type="range"
-                    min="0"
-                    max="200"
-                    value={localProperties.contrast || 100}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'contrast', parseInt(e.target.value))}
-                    className="slider"
-                  />
-                  <span className="slider-value">{localProperties.contrast || 100}%</span>
-                </div>
-              </div>
-
-              <div className="property-row">
-                <label>Saturation:</label>
-                <div className="slider-container">
-                  <input
-                    type="range"
-                    min="0"
-                    max="200"
-                    value={localProperties.saturate || 100}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'saturate', parseInt(e.target.value))}
-                    className="slider"
-                  />
-                  <span className="slider-value">{localProperties.saturate || 100}%</span>
-                </div>
-              </div>
-            </div>
+            )}
           </div>
         );
 
