@@ -741,25 +741,19 @@ class PDF_Builder_Admin_New {
         wp_enqueue_style('pdf-builder-admin', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css', [], PDF_BUILDER_PRO_VERSION);
         wp_enqueue_style('pdf-builder-canvas', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-canvas.css', [], PDF_BUILDER_PRO_VERSION);
 
-        // Scripts JavaScript
-        wp_enqueue_script('pdf-builder-admin', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'wp-api'], '2.0.0_' . time() . '_' . uniqid(), true);
-
-        // Forcer le non-cache du script
-        add_action('wp_head', function() {
-            echo '<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">';
-            echo '<meta http-equiv="Pragma" content="no-cache">';
-            echo '<meta http-equiv="Expires" content="0">';
-        });
+        // Scripts JavaScript - VERSION FORCEE
+        wp_enqueue_script('pdf-builder-admin-v2', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'wp-api'], '3.0.0_force_' . microtime(true), true);
         wp_enqueue_script('pdf-builder-canvas', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-canvas.js', ['jquery', 'wp-api'], PDF_BUILDER_PRO_VERSION, true);
 
         // Scripts utilitaires
         wp_enqueue_script('pdf-builder-utils', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-utils.js', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
         wp_enqueue_script('pdf-builder-unified-config', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-unified-config.js', ['jquery'], PDF_BUILDER_PRO_VERSION, true);
 
-        // Variables JavaScript pour AJAX - TEST ULTIME
-        wp_localize_script('pdf-builder-admin', 'pdfBuilderAjax', [
+        // Variables JavaScript pour AJAX - VERSION FORCEE
+        wp_localize_script('pdf-builder-admin-v2', 'pdfBuilderAjax', [
             'ajaxurl' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('pdf_builder_canvas_load_' . time()),
+            'version' => '3.0.0',
             'strings' => [
                 'loading' => __('Chargement...', 'pdf-builder-pro'),
                 'error' => __('Erreur', 'pdf-builder-pro'),
@@ -768,6 +762,14 @@ class PDF_Builder_Admin_New {
                 'confirm_duplicate' => __('Dupliquer ce template ?', 'pdf-builder-pro'),
             ]
         ]);
+
+        // Script pour forcer le rechargement si ancienne version détectée
+        wp_add_inline_script('pdf-builder-admin-v2', "
+            if (typeof pdfBuilderAjax !== 'undefined' && (!pdfBuilderAjax.version || pdfBuilderAjax.version !== '3.0.0')) {
+                console.log('Ancienne version détectée, rechargement forcé...');
+                window.location.reload(true);
+            }
+        ");
 
         // Paramètres du canvas pour le JavaScript
         // Récupérer les paramètres canvas
