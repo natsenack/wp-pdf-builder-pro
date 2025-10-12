@@ -230,7 +230,7 @@
   background: white;
   border: 1px solid #e2e8f0;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   /* Dimensions A4 fixes */
   width: 595px;
   height: 842px;
@@ -240,7 +240,7 @@
   background: white;
   border: 1px solid #e2e8f0;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   /* Dimensions A4 fixes */
   width: 595px;
   height: 842px;
