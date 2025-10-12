@@ -32,6 +32,60 @@ const PreviewModal = ({
       });
     });
 
+    // Fonction helper pour générer le contenu des éléments spéciaux
+    const getSpecialElementContent = (element) => {
+      switch (element.type) {
+        case 'company_logo':
+          if (element.src) {
+            return `<img src="${element.src}" style="width: 100%; height: 100%; object-fit: contain;" alt="Logo entreprise" />`;
+          }
+          return 'Logo Entreprise';
+
+        case 'customer_info':
+          return 'Informations Client<br/>Nom: Jean Dupont<br/>Email: jean@example.com<br/>Téléphone: +33 1 23 45 67 89';
+
+        case 'company_info':
+          return 'Ma Société SARL<br/>123 Rue de l\'Entreprise<br/>75001 Paris, France<br/>Tél: +33 1 23 45 67 89<br/>contact@masociete.com';
+
+        case 'product_table':
+          return `
+            <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
+              <thead>
+                <tr style="background-color: #f8f9fa;">
+                  <th style="border: 1px solid #ddd; padding: 4px;">Produit</th>
+                  <th style="border: 1px solid #ddd; padding: 4px;">Qté</th>
+                  <th style="border: 1px solid #ddd; padding: 4px;">Prix</th>
+                  <th style="border: 1px solid #ddd; padding: 4px;">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="border: 1px solid #ddd; padding: 4px;">Produit A</td>
+                  <td style="border: 1px solid #ddd; padding: 4px;">2</td>
+                  <td style="border: 1px solid #ddd; padding: 4px;">19.99€</td>
+                  <td style="border: 1px solid #ddd; padding: 4px;">39.98€</td>
+                </tr>
+                <tr>
+                  <td style="border: 1px solid #ddd; padding: 4px;">Produit B</td>
+                  <td style="border: 1px solid #ddd; padding: 4px;">1</td>
+                  <td style="border: 1px solid #ddd; padding: 4px;">29.99€</td>
+                  <td style="border: 1px solid #ddd; padding: 4px;">29.99€</td>
+                </tr>
+              </tbody>
+            </table>
+          `;
+
+        case 'document_type':
+          return 'FACTURE';
+
+        case 'divider':
+          return '<hr style="width: 100%; border: none; border-top: 1px solid #d1d5db; margin: 0;" />';
+
+        default:
+          return element.type;
+      }
+    };
+
     // Ouvrir l'aperçu dans une nouvelle fenêtre pour l'impression
     const printWindow = window.open('', '_blank', 'width=800,height=600');
     if (printWindow) {
@@ -104,7 +158,7 @@ const PreviewModal = ({
                   </div>
                 `;
               } else {
-                // Éléments normaux
+                // Gérer les éléments spéciaux et normaux
                 return `
                   <div style="
                     position: absolute;
@@ -115,34 +169,17 @@ const PreviewModal = ({
                     font-size: ${element.fontSize || 14}px;
                     font-family: ${element.fontFamily || 'Arial'};
                     color: ${element.color || '#1e293b'};
-                    font-weight: ${element.fontWeight || 'normal'};
-                    font-style: ${element.fontStyle || 'normal'};
-                    text-align: ${element.textAlign || 'left'};
-                    text-decoration: ${element.textDecoration || 'none'};
-                    line-height: ${element.lineHeight || 'normal'};
-                    display: flex;
-                    align-items: center;
-                    justify-content: ${element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start'};
-                    word-break: break-word;
-                    overflow: hidden;
                     background-color: ${element.backgroundColor || 'transparent'};
                     border: ${element.borderWidth ? `${element.borderWidth}px ${element.borderStyle || 'solid'} ${element.borderColor || 'transparent'}` : 'none'};
                     border-radius: ${element.borderRadius || 0}px;
-                    opacity: ${(element.opacity || 100) / 100};
-                    transform: rotate(${element.rotation || 0}deg);
-                    filter: brightness(${(element.brightness || 100)}%) contrast(${(element.contrast || 100)}%) saturate(${(element.saturate || 100)}%);
-                    box-shadow: ${element.boxShadowColor ? `0px ${element.boxShadowSpread || 0}px ${element.boxShadowBlur || 0}px ${element.boxShadowColor}` : (element.shadow ? `${element.shadowOffsetX || 2}px ${element.shadowOffsetY || 2}px 4px ${element.shadowColor || '#000000'}40` : 'none')};
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    text-align: center;
+                    word-break: break-word;
+                    overflow: hidden;
                   ">
-                    ${element.type === 'text' ? (element.text || 'Texte') :
-                      element.type === 'icon' ? (element.content || '🎯') :
-                      element.type === 'dynamic-text' ? (element.content || '{{variable}}') :
-                      element.type === 'formula' ? (element.content || '{{prix * quantite}}') :
-                      element.type === 'conditional-text' ? (element.content || '{{condition ? "Oui" : "Non"}}') :
-                      element.type === 'counter' ? (element.content || '1') :
-                      element.type === 'date-dynamic' ? (element.content || '{{date|format:Y-m-d}}') :
-                      element.type === 'currency' ? (element.content || '{{montant|currency:EUR}}') :
-                      element.type === 'watermark' ? (element.content || 'CONFIDENTIEL') :
-                      element.type === 'image' && element.src ? `<img src="${element.src}" style="width: 100%; height: 100%; object-fit: cover;" />` : ''}
+                    ${getSpecialElementContent(element)}
                   </div>
                 `;
               }
