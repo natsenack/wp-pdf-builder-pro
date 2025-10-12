@@ -767,11 +767,22 @@ export const useCanvasState = ({
         version: '1.0'
       };
 
-      console.log('🔍 PDF Builder - Détection template existant:', {
-        templateId,
-        isExistingTemplate,
-        toastrAvailable
-      });
+      console.log('🔍 PDF Builder - Données à sauvegarder:', templateData);
+      console.log('🔍 PDF Builder - Nombre d\'éléments:', elements.length);
+
+      // Valider le JSON avant envoi
+      let jsonString;
+      try {
+        jsonString = JSON.stringify(templateData);
+        console.log('🔍 PDF Builder - JSON stringifié, longueur:', jsonString.length);
+
+        // Tester le parsing pour valider
+        const testParse = JSON.parse(jsonString);
+        console.log('🔍 PDF Builder - JSON validé côté client');
+      } catch (jsonError) {
+        console.error('🔍 PDF Builder - ERREUR JSON côté client:', jsonError);
+        throw new Error('Données JSON invalides côté client: ' + jsonError.message);
+      }
 
       // Sauvegarde directe via AJAX
       const formData = new FormData();
