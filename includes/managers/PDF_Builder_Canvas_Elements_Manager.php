@@ -246,7 +246,7 @@ class PDF_Builder_Canvas_Elements_Manager {
                 'height' => 100
             ],
             'rectangle' => [
-                'backgroundColor' => '#f1f5f9',
+                'backgroundColor' => 'transparent',
                 'borderWidth' => 1,
                 'width' => 150,
                 'height' => 80
