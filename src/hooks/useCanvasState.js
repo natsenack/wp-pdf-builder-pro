@@ -17,13 +17,7 @@ export const useCanvasState = ({
 }) => {
   const [elements, setElements] = useState(initialElements);
   const [nextId, setNextId] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
-
-    // Hooks intégrés
-    selection,
-    zoom,
-    contextMenu,
-    dragAndDrop,useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const history = useHistory();
   const selection = useSelection({
@@ -640,25 +634,20 @@ export const useCanvasState = ({
   }, [history, selection]);
 
   const saveTemplate = useCallback(async () => {
-    const templateData = {
-      elements,
-      canvasWidth,
-      canvasHeight,
-      version: '1.0'
-    };
+    if (isSaving) {
+      console.log('🔄 PDF Builder - Sauvegarde déjà en cours, ignorée');
+      return;
+    }
 
-    // Vérifier si c'est un template existant (avec ID)
-    const isExistingTemplate = window.pdfBuilderData?.templateId &&
-                              window.pdfBuilderData.templateId !== '0' &&
-                              window.pdfBuilderData.templateId !== 0;
-
-    console.log('🔍 PDF Builder - Détection template existant:', {
-      templateId: window.pdfBuilderData?.templateId,
-      isExistingTemplate,
-      toastrAvailable: typeof toastr !== 'undefined'
-    });
+    setIsSaving(true);
 
     try {
+      const templateData = {
+        elements,
+        canvasWidth,
+        canvasHeight,
+        version: '1.0'
+      };
       // Si onSave est défini, l'utiliser, sinon faire la sauvegarde directement
       if (onSave) {
         await onSave(templateData);
@@ -720,8 +709,10 @@ export const useCanvasState = ({
       }
 
       throw error; // Re-throw pour permettre la gestion d'erreur en amont si nécessaire
+    } finally {
+      setIsSaving(false);
     }
-  }, [elements, canvasWidth, canvasHeight, onSave]);
+  }, [elements, canvasWidth, canvasHeight, onSave, isSaving]);
 
   const loadTemplate = useCallback((templateData) => {
     if (templateData.elements) {
@@ -793,6 +784,7 @@ export const useCanvasState = ({
     // Template
     saveTemplate,
     loadTemplate,
+    isSaving,
 
     // Menu contextuel
     showContextMenu,

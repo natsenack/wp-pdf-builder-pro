@@ -41,9 +41,10 @@ Pop-Location
 Write-Host "✅ Compilation terminée" -ForegroundColor Green
 
 # Lister les fichiers
+# Exclusions: dossiers de développement, fichiers temporaires, archives, backups, logs, docs
 $files = Get-ChildItem -Path $projectRoot -Recurse -File | Where-Object {
     $relPath = $_.FullName.Substring($projectRoot.Length + 1).Replace('\', '/')
-    -not ($relPath -match '^(archive|\.git|\.vscode|node_modules|src|tools|docs|build-tools|dev-tools|vendor|dist|package\.json|package-lock\.json|webpack\.config\.js|tsconfig\.json|temp-restore)/')
+    -not ($relPath -match '^(archive|\.git|\.vscode|node_modules|src|tools|docs|build-tools|dev-tools|vendor|dist|package\.json|package-lock\.json|webpack\.config\.js|tsconfig\.json|temp-restore)/|^(temp|backup|cache|extract|restore|canvas-extract|temp-canvas|backup-wp|archive-pdf|temp_backup|projet)/|^.*\.(bak|tmp|log|md)$')
 } | Where-Object {
     $relPath = $_.FullName.Substring($projectRoot.Length + 1).Replace('\', '/')
     ($relPath -match '^(assets|includes|languages|lib)/') -or
