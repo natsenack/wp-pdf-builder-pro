@@ -1375,6 +1375,13 @@ echo '<style>
 
             $('.tab-content').removeClass('active').hide();
             $($(this).attr('href')).addClass('active').show();
+
+            // Initialiser les sous-onglets si on active l'onglet canvas
+            if ($(this).attr('href') === '#canvas') {
+                console.log('PDF Builder: Initializing canvas sub-tabs...');
+                $('.sub-tab-content:not(.sub-tab-active)').hide();
+                $('.sub-tab-active').show();
+            }
         });
 
         // Initialisation : s'assurer que l'onglet actif est visible
@@ -1438,10 +1445,6 @@ echo '<style>
 <script type="text/javascript">
         $(document).ready(function() {
             console.log('PDF Builder: Initializing sub-tabs...');
-
-            // Masquer tous les sous-onglets inactifs au chargement
-            $('.sub-tab-content:not(.sub-tab-active)').hide();
-            console.log('PDF Builder: Hidden inactive sub-tabs');
 
             // Gestionnaire pour les sous-onglets
             $('.sub-nav-tab').on('click', function(e) {
