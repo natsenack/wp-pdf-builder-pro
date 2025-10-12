@@ -1,9 +1,4 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
-import { useHistory } from './useHistory';
-import { useSelection } from './useSelection';
-import { useClipboard } from './useClipboard';
-import { useZoom } from './useZoom';
-import { useContextMenu } from './useContextMenu';
 import { useDragAndDrop } from './useDragAndDrop';
 
 // Fallback notification system in case Toastr is not available
