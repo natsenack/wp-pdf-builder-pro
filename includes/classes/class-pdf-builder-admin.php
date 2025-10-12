@@ -244,24 +244,49 @@ class PDF_Builder_Admin {
                         <div class="step">
                             <span class="step-number">1</span>
                             <div class="step-content">
-                                <h4>Créez votre premier template</h4>
-                                <p>Utilisez l'éditeur canvas pour concevoir votre modèle PDF</p>
+                                <h4>Smart Element Selector</h4>
+                                <p>Cliquez sur n'importe quel élément du canvas pour le sélectionner. Utilisez Ctrl+clic pour sélectionner plusieurs éléments simultanément.</p>
                             </div>
                         </div>
                         <div class="step">
                             <span class="step-number">2</span>
                             <div class="step-content">
-                                <h4>Ajoutez vos données</h4>
-                                <p>Importez vos informations depuis WooCommerce ou saisissez-les manuellement</p>
+                                <h4>Border-Based Resizer</h4>
+                                <p>Survolez les bords d'un élément sélectionné pour voir les zones de redimensionnement. Cliquez et glissez pour ajuster la taille.</p>
                             </div>
                         </div>
                         <div class="step">
                             <span class="step-number">3</span>
                             <div class="step-content">
-                                <h4>Exportez votre PDF</h4>
-                                <p>Générez et téléchargez votre document professionnel</p>
+                                <h4>Canvas Element Manager</h4>
+                                <p>Gérez vos éléments avec les boutons d'action : déplacer, dupliquer, supprimer. Utilisez le panneau latéral pour modifier les propriétés.</p>
                             </div>
                         </div>
+                        <div class="step">
+                            <span class="step-number">4</span>
+                            <div class="step-content">
+                                <h4>Template System</h4>
+                                <p>Créez et sauvegardez vos modèles personnalisés. Importez des templates pré-configurés depuis la bibliothèque.</p>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <span class="step-number">5</span>
+                            <div class="step-content">
+                                <h4>PDF Export Engine</h4>
+                                <p>Générez votre PDF final avec toutes vos personnalisations. Choisissez la qualité et le format d'export.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="guide-shortcuts">
+                        <h4>Raccourcis clavier utiles</h4>
+                        <ul>
+                            <li><kbd>Ctrl+Z</kbd> - Annuler la dernière action</li>
+                            <li><kbd>Ctrl+Y</kbd> - Rétablir l'action annulée</li>
+                            <li><kbd>Ctrl+A</kbd> - Sélectionner tous les éléments</li>
+                            <li><kbd>Ctrl+C</kbd> / <kbd>Ctrl+V</kbd> - Copier/Coller des éléments</li>
+                            <li><kbd>Suppr</kbd> - Supprimer l'élément sélectionné</li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -388,6 +413,49 @@ class PDF_Builder_Admin {
                     margin: 0;
                     color: #666;
                     font-size: 14px;
+                }
+
+                .guide-shortcuts {
+                    margin-top: 30px;
+                    padding-top: 20px;
+                    border-top: 1px solid #e1e1e1;
+                }
+
+                .guide-shortcuts h4 {
+                    margin: 0 0 15px 0;
+                    color: #1d2327;
+                }
+
+                .guide-shortcuts ul {
+                    list-style: none;
+                    padding: 0;
+                    margin: 0;
+                }
+
+                .guide-shortcuts li {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 8px 0;
+                    border-bottom: 1px solid #f0f0f0;
+                }
+
+                .guide-shortcuts li:last-child {
+                    border-bottom: none;
+                }
+
+                .guide-shortcuts kbd {
+                    background: #f1f1f1;
+                    border: 1px solid #ccc;
+                    border-radius: 3px;
+                    box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+                    color: #444;
+                    display: inline-block;
+                    font-family: monospace;
+                    font-size: 11px;
+                    line-height: 1;
+                    padding: 2px 4px;
+                    margin: 0 2px;
                 }
             </style>
         </div>

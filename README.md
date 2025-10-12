@@ -1,6 +1,112 @@
 # 📄 PDF Builder Pro - Documentation Complète
 
-## � Structure Organisée du Plugin
+## 🚀 Guide de démarrage rapide
+
+### 🎯 Fonctionnalités principales
+
+#### 1. **Sélecteur d'Éléments Intelligent** 
+- **Nom** : `Smart Element Selector`
+- **Description** : Système de sélection avancé avec gestion des éléments multiples
+- **Fonctionnalités** :
+  - Clic simple pour sélectionner un élément
+  - Ctrl/Cmd + Clic pour sélection multiple
+  - Clic dans l'espace vide pour désélectionner
+  - Indicateurs visuels (bordures bleues) pour les éléments sélectionnés
+
+#### 2. **Redimensionnement par Bordures** 
+- **Nom** : `Border-Based Resizer`
+- **Description** : Système de redimensionnement intuitif utilisant les bordures de sélection
+- **Fonctionnalités** :
+  - Curseurs directionnels automatiques (↕ ↔) sur les bordures
+  - Redimensionnement précis dans toutes les directions
+  - Zones de redimensionnement visibles au survol
+  - Interface moderne sans poignées traditionnelles
+
+#### 3. **Gestionnaire de Curseurs Interactifs**
+- **Nom** : `Interactive Cursor Manager`
+- **Description** : Gestion intelligente des curseurs selon le contexte
+- **Fonctionnalités** :
+  - Curseur "grab" pour le déplacement normal
+  - Curseur "grabbing" pendant le drag & drop
+  - Curseurs directionnels pour le redimensionnement
+  - Curseurs contextuels pour les outils actifs
+
+#### 4. **Éditeur de Canvas Réactif**
+- **Nom** : `Reactive Canvas Editor`
+- **Description** : Éditeur principal avec gestion d'état réactive
+- **Fonctionnalités** :
+  - Rendu en temps réel des modifications
+  - Gestion d'état centralisée des éléments
+  - Synchronisation automatique sélection/affichage
+  - Optimisations de performance pour grands canvas
+
+#### 5. **Système de Styles Conditionnels**
+- **Nom** : `Conditional Style System`
+- **Description** : Application automatique des styles selon le type d'élément
+- **Fonctionnalités** :
+  - Styles spécifiques pour textes, images, formes
+  - Gestion des couleurs, polices, effets visuels
+  - Adaptation automatique au zoom
+  - Préservation de l'apparence lors des sélections
+
+### 📖 Comment utiliser les fonctionnalités
+
+#### 🎯 Utilisation du Sélecteur d'Éléments
+```
+1. Clic gauche sur un élément → Sélection simple
+2. Ctrl/Clic (ou Cmd/Clic sur Mac) → Ajouter à la sélection
+3. Clic dans l'espace vide → Désélectionner tout
+4. Les éléments sélectionnés affichent des bordures bleues
+```
+
+#### ↔ Utilisation du Redimensionnement par Bordures
+```
+1. Sélectionnez un élément (bordures bleues apparaissent)
+2. Survolez les bordures → Curseur change selon la direction
+3. Clic et glissez sur une bordure → Redimensionnement
+4. Les zones de redimensionnement sont visibles au survol
+```
+
+#### 🎨 Gestion des Styles d'Éléments
+```
+• Textes : Police, taille, couleur, alignement
+• Images : Redimensionnement, positionnement, filtres
+• Formes : Couleurs, bordures, effets spéciaux
+• Éléments dynamiques : Codes-barres, QR codes, variables
+```
+
+### 📚 Documentation technique
+
+Pour les développeurs souhaitant comprendre l'implémentation technique :
+- **[Système de Sélection et Redimensionnement](docs/SELECTION_RESIZE_SYSTEM.md)** - Documentation détaillée des fonctions internes
+
+### ⌨️ Raccourcis clavier
+
+#### Sélection et Édition
+- **Ctrl+A** : Tout sélectionner
+- **Ctrl+C** : Copier les éléments sélectionnés
+- **Ctrl+V** : Coller les éléments copiés
+- **Suppr** : Supprimer les éléments sélectionnés
+- **Échap** : Désélectionner tout
+
+#### Navigation
+- **Molette souris** : Zoom avant/arrière
+- **Ctrl+Molette** : Zoom plus précis
+- **Espace + Clic** : Déplacement du canvas
+
+### 💡 Astuces d'utilisation
+
+#### 🚀 Optimisations de performance
+- Utilisez le zoom pour travailler sur des détails
+- Évitez de sélectionner trop d'éléments simultanément
+- Les éléments sont automatiquement optimisés pour le rendu
+
+#### 🎨 Bonnes pratiques de conception
+- Utilisez la grille d'alignement (Maj pour désactiver)
+- Groupez les éléments similaires
+- Testez l'aperçu avant l'export final
+
+## 📂 Structure Organisée du Plugin
 
 Le plugin suit une structure organisée pour séparer clairement les fichiers de production des outils de développement :
 
