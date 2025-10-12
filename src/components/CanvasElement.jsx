@@ -288,14 +288,14 @@ export const CanvasElement = ({
             fontSize: 14 * zoom,
             fontWeight: 'bold'
           } : element.type === 'barcode' ? {
-            backgroundColor: element.backgroundColor || '#ffffff',
+            backgroundColor: element.backgroundColor || 'transparent',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 10 * zoom,
             fontFamily: 'monospace'
           } : element.type === 'qrcode' || element.type === 'qrcode-dynamic' ? {
-            backgroundColor: element.backgroundColor || '#ffffff',
+            backgroundColor: element.backgroundColor || 'transparent',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -360,7 +360,7 @@ export const CanvasElement = ({
             color: '#16a34a',
             padding: '4px'
           } : element.type === 'table-dynamic' ? {
-            backgroundColor: element.backgroundColor || '#ffffff',
+            backgroundColor: element.backgroundColor || 'transparent',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -987,7 +987,7 @@ export const CanvasElement = ({
             fontStyle: element.fontStyle || 'normal',
             textDecoration: element.textDecoration || 'none',
             color: element.color || '#333',
-            backgroundColor: element.backgroundColor || '#ffffff',
+            backgroundColor: element.backgroundColor || 'transparent',
             // Bordures subtiles pour les éléments spéciaux
             border: element.borderWidth && element.borderWidth > 0 ? `${Math.max(1, element.borderWidth * zoom * 0.5)}px solid ${element.borderColor || '#e5e7eb'}` : 'none',
             borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '2px',

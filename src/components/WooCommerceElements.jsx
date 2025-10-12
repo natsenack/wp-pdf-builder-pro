@@ -45,7 +45,7 @@ export const useWooCommerceElements = () => {
       fontSize: 14,
       fontFamily: 'Arial, sans-serif',
       color: '#333333',
-      backgroundColor: '#ffffff',
+      backgroundColor: 'transparent',
       borderColor: '#dddddd',
       borderWidth: 1,
       borderStyle: 'solid',

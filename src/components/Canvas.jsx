@@ -70,7 +70,7 @@ const Canvas = ({
     ctx.translate(element.x, element.y);
 
     // Style de base
-    ctx.fillStyle = element.backgroundColor || '#ffffff';
+    ctx.fillStyle = element.backgroundColor || 'transparent';
     ctx.strokeStyle = element.borderColor || '#6b7280';
     ctx.lineWidth = element.borderWidth || 1;
 
