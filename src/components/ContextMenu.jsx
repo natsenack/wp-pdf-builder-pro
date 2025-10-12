@@ -1,19 +1,19 @@
 import React, { useEffect, useRef } from 'react';
 
-const ContextMenu = ({ menu, onAction, isAnimating = false }) => {
+const ContextMenu = ({ menu, onAction, isAnimating = false, onClose }) => {
   const menuRef = useRef(null);
 
   // Fermer le menu quand on clique ailleurs
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
-        // Le menu se ferme automatiquement via le hook useContextMenu
+        if (onClose) onClose();
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [onClose]);
 
   // Gestionnaire d'action
   const handleAction = (item) => {

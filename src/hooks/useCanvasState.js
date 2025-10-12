@@ -116,7 +116,7 @@ export const useCanvasState = ({
   const [elements, setElements] = useState(initialElements);
   const [selectedElements, setSelectedElements] = useState([]);
   const [nextId, setNextId] = useState(1);
-  const [isSaving, setIsSaving] = useState(false);
+  const [contextMenuState, setContextMenuState] = useState(null);
   const [zoomLevel, setZoomLevel] = useState(1);
 
   const history = { addToHistory: () => {}, historySize: 0 };
@@ -185,9 +185,15 @@ export const useCanvasState = ({
   };
 
   const contextMenu = {
-    showContextMenu: () => {},
-    show: () => {},
-    hide: () => {}
+    contextMenu: contextMenuState,
+    showContextMenu: useCallback((x, y, items) => {
+      setContextMenuState({ x, y, items });
+    }, []),
+    hide: useCallback(() => {
+      setContextMenuState(null);
+    }, []),
+    show: useCallback(() => {}, []),
+    isAnimating: false
   };
 
   // Fonction d'aimantation à la grille

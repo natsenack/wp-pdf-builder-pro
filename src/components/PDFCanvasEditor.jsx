@@ -296,7 +296,9 @@ export const PDFCanvasEditor = ({ options }) => {
     if (typeof action === 'function') {
       action();
     }
-  }, []);
+    // Fermer le menu après l'action
+    canvasState.contextMenu.hide();
+  }, [canvasState]);
 
   // Fonction pour déterminer le curseur selon l'outil sélectionné
   const getCursorStyle = useCallback(() => {
@@ -549,6 +551,7 @@ export const PDFCanvasEditor = ({ options }) => {
             menu={canvasState.contextMenu.contextMenu}
             onAction={handleContextMenuAction}
             isAnimating={canvasState.contextMenu.isAnimating || false}
+            onClose={canvasState.contextMenu.hide}
           />
         </React.Suspense>
       )}
