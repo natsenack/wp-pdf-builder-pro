@@ -535,9 +535,13 @@ const PropertiesPanel = React.memo(({
                     checked={isBackgroundEnabled}
                     onChange={(e) => {
                       if (e.target.checked) {
-                        handlePropertyChange(selectedElement.id, 'backgroundColor', '#ffffff');
+                        const colorToSet = previousBackgroundColor || '#ffffff';
+                        handlePropertyChange(selectedElement.id, 'backgroundColor', colorToSet);
+                        setIsBackgroundEnabled(true);
                       } else {
+                        setPreviousBackgroundColor(localProperties.backgroundColor || '#ffffff');
                         handlePropertyChange(selectedElement.id, 'backgroundColor', 'transparent');
+                        setIsBackgroundEnabled(false);
                       }
                     }}
                   />
