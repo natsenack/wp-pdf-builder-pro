@@ -200,8 +200,10 @@ export const useCanvasState = ({
   }, [elements, nextId, history]);
 
   const addElement = useCallback((elementType, properties = {}) => {
+    console.log('🆕 addElement called - elementType:', elementType, 'provided properties:', properties);
     // Définir les propriétés par défaut selon le type d'élément
     const getDefaultProperties = (type) => {
+      console.log('🆕 getDefaultProperties called for type:', type);
       const defaults = {
         x: 50,
         y: 50,
@@ -216,6 +218,8 @@ export const useCanvasState = ({
         fontFamily: 'Arial, sans-serif',
         padding: 8
       };
+
+      console.log('🆕 Initial defaults:', defaults);
 
       // Appliquer les paramètres globaux du canvas si disponibles
       if (globalSettings) {
@@ -640,6 +644,7 @@ export const useCanvasState = ({
         }
       }
 
+      console.log('🆕 Final defaults for type', type, ':', defaults);
       return defaults;
     };
 
@@ -650,6 +655,15 @@ export const useCanvasState = ({
       ...defaultProps,
       ...properties
     };
+
+    console.log('🆕 New element created:', {
+      id: newElement.id,
+      type: newElement.type,
+      backgroundColor: newElement.backgroundColor,
+      defaultProps,
+      providedProperties: properties,
+      finalElement: newElement
+    });
 
     setElements(prev => [...prev, newElement]);
     setNextId(prev => prev + 1);

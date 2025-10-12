@@ -19,9 +19,10 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
   // Synchroniser les propriétés locales avec l'élément sélectionné
   useEffect(() => {
     console.log('🔧 useElementCustomization - selectedElement:', selectedElement?.id, 'backgroundColor:', selectedElement?.backgroundColor);
+    console.log('🔧 useElementCustomization - selectedElement full properties:', selectedElement);
 
     if (selectedElement) {
-      const newProperties = {
+      const defaultProperties = {
         // Valeurs par défaut
         color: '#333333',
         backgroundColor: 'transparent',
@@ -37,11 +38,24 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
         textAlign: 'left',
         lineHeight: 1.2,
         letterSpacing: 0,
+      };
+
+      console.log('🔧 useElementCustomization - default properties:', defaultProperties);
+
+      const newProperties = {
+        // Valeurs par défaut
+        ...defaultProperties,
         // Propriétés de l'élément
         ...selectedElement
       };
 
+      console.log('🔧 useElementCustomization - merged properties:', newProperties);
       console.log('🔧 useElementCustomization - final backgroundColor:', newProperties.backgroundColor);
+      console.log('🔧 useElementCustomization - backgroundColor source comparison:', {
+        default: defaultProperties.backgroundColor,
+        element: selectedElement.backgroundColor,
+        final: newProperties.backgroundColor
+      });
       setLocalProperties(newProperties);
     } else {
       console.log('🔧 useElementCustomization - no selectedElement, setting empty properties');

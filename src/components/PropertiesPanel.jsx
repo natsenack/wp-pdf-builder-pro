@@ -368,12 +368,23 @@ const PropertiesPanel = React.memo(({
   // Mettre à jour les valeurs précédentes quand l'élément change
   useEffect(() => {
     if (selectedElement) {
+      console.log('📋 PropertiesPanel - selectedElement changed:', {
+        id: selectedElement.id,
+        type: selectedElement.type,
+        backgroundColor: selectedElement.backgroundColor,
+        allProperties: selectedElement
+      });
       // Initialiser les valeurs précédentes avec les valeurs actuelles de l'élément
       setPreviousBackgroundColor(selectedElement.backgroundColor || '#ffffff');
       // Pour borderWidth, s'assurer qu'on a au moins 1 pour la restauration
       const initialBorderWidth = selectedElement.borderWidth && selectedElement.borderWidth > 0 ? selectedElement.borderWidth : 1;
       setPreviousBorderWidth(initialBorderWidth);
       setPreviousBorderColor(selectedElement.borderColor || '#000000');
+      console.log('📋 Previous values set:', {
+        backgroundColor: selectedElement.backgroundColor || '#ffffff',
+        borderWidth: initialBorderWidth,
+        borderColor: selectedElement.borderColor || '#000000'
+      });
     }
   }, [selectedElement]); // Ne dépendre que de selectedElement pour éviter les boucles
 
@@ -381,6 +392,8 @@ const PropertiesPanel = React.memo(({
   useEffect(() => {
     const shouldBeEnabled = !!localProperties.backgroundColor && localProperties.backgroundColor !== 'transparent';
     console.log('🎨 Toggle sync - localProperties.backgroundColor:', localProperties.backgroundColor, 'shouldBeEnabled:', shouldBeEnabled);
+    console.log('🎨 Toggle sync - full localProperties:', localProperties);
+    console.log('🎨 Toggle sync - current isBackgroundEnabled before set:', isBackgroundEnabled);
     setIsBackgroundEnabled(shouldBeEnabled);
   }, [localProperties.backgroundColor]);
 
@@ -536,6 +549,7 @@ const PropertiesPanel = React.memo(({
               {/* Contrôle du fond */}
               <div className="property-row">
                 <span>Fond activé:</span>
+                {console.log('🔘 Rendering toggle - isBackgroundEnabled:', isBackgroundEnabled, 'localProperties.backgroundColor:', localProperties.backgroundColor)}
                 <label className="toggle">
                   <input
                     type="checkbox"
