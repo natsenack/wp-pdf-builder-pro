@@ -64,78 +64,19 @@ export const useCanvasState = ({
     ));
   }, []);
 
-  // Charger les éléments du template si un templateId est fourni
+  // Calculer le prochain ID basé sur les éléments initiaux
   useEffect(() => {
-    if (templateId && templateId !== null) {
-      setIsLoading(true);
-      
-      // Attendre que pdfBuilderAjax soit disponible
-      const waitForPdfBuilderAjax = () => {
-        return new Promise((resolve, reject) => {
-          const checkPdfBuilderAjax = () => {
-            if (typeof pdfBuilderAjax !== 'undefined' && pdfBuilderAjax && pdfBuilderAjax.nonce) {
-              console.log('PDF Builder: pdfBuilderAjax disponible:', pdfBuilderAjax);
-              resolve();
-            } else {
-              console.log('PDF Builder: Attente de pdfBuilderAjax...');
-              setTimeout(checkPdfBuilderAjax, 100);
-            }
-          };
-          // Timeout après 5 secondes
-          setTimeout(() => reject(new Error('pdfBuilderAjax n\'a pas été chargé')), 5000);
-          checkPdfBuilderAjax();
-        });
-      };
-
-      waitForPdfBuilderAjax()
-        .then(() => {
-          console.log('PDF Builder: Envoi AJAX avec nonce:', pdfBuilderAjax.nonce);
-          console.log('PDF Builder: Action utilisée: pdf_builder_load_canvas_elements');
-          console.log('PDF Builder: Template ID:', templateId);
-          
-          // Faire un appel AJAX pour charger les éléments du template
-          fetch(pdfBuilderAjax.ajaxurl, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: new URLSearchParams({
-              action: "pdf_builder_load_canvas_elements",
-              template_id: templateId,
-              nonce: pdfBuilderAjax.nonce
-            })
-          })
-          .then(response => response.json())
-          .then(data => {
-        if (data.success && Array.isArray(data.data.elements)) {
-          setElements(data.data.elements);
-          // Calculer le prochain ID basé sur les éléments chargés
-          const maxId = data.data.elements.length > 0 
-            ? Math.max(...data.data.elements.map(el => parseInt(el.id.split('_')[1] || 0)))
-            : 0;
-          setNextId(maxId + 1);
-          console.log('Éléments chargés avec succès:', data.data.elements.length, 'éléments');
-        } else {
-          const errorMessage = data.data?.message || 'Erreur inconnue lors du chargement des éléments';
-          console.error('Erreur de chargement des éléments:', errorMessage, '- data complète:', data);
-          // Afficher une alerte à l'utilisateur avec le message d'erreur détaillé
-          alert('Erreur lors du chargement du template:\n' + errorMessage);
-        }
-      })
-      .catch(error => {
-        console.error('Erreur lors du chargement des éléments du template:', error);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-        })
-        .catch(error => {
-          console.error('Erreur d\'attente pdfBuilderAjax:', error);
-          alert('Erreur: Les scripts AJAX ne sont pas chargés correctement. Actualisez la page.');
-          setIsLoading(false);
-        });
+    if (initialElements && initialElements.length > 0) {
+      const maxId = Math.max(...initialElements.map(el => {
+        const idParts = el.id?.split('_') || [];
+        return parseInt(idParts[1] || 0);
+      }));
+      setNextId(maxId + 1);
+      console.log('PDF Builder: Prochain ID calculé:', maxId + 1, 'basé sur', initialElements.length, 'éléments initiaux');
+    } else {
+      setNextId(1);
     }
-  }, [templateId]);
+  }, [initialElements]);
 
   const dragAndDrop = useDragAndDrop({
     onElementMove: useCallback((elementId, position) => {

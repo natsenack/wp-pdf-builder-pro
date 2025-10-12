@@ -20,17 +20,40 @@ if (!defined('PDF_BUILDER_DEBUG_MODE') || !PDF_BUILDER_DEBUG_MODE) {
 $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
 $is_new = $template_id === 0;
 
-// Récupérer le nom du template si c'est un template existant
+// Récupérer les données complètes du template si c'est un template existant
 $template_name = '';
+$template_data = null;
+$initial_elements = [];
+
 if (!$is_new && $template_id > 0) {
     global $wpdb;
     $table_templates = $wpdb->prefix . 'pdf_builder_templates';
     $template = $wpdb->get_row(
-        $wpdb->prepare("SELECT name FROM $table_templates WHERE id = %d", $template_id),
+        $wpdb->prepare("SELECT name, template_data FROM $table_templates WHERE id = %d", $template_id),
         ARRAY_A
     );
     if ($template) {
         $template_name = $template['name'];
+
+        // Décoder et préparer les données du template
+        $template_data_raw = $template['template_data'];
+        if (!empty($template_data_raw)) {
+            $decoded_data = json_decode($template_data_raw, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded_data)) {
+                $template_data = $decoded_data;
+
+                // Extraire les éléments initiaux depuis la structure du template
+                if (isset($decoded_data['pages']) && is_array($decoded_data['pages']) && !empty($decoded_data['pages'])) {
+                    $first_page = $decoded_data['pages'][0];
+                    if (isset($first_page['elements']) && is_array($first_page['elements'])) {
+                        $initial_elements = $first_page['elements'];
+                    }
+                } elseif (isset($decoded_data['elements']) && is_array($decoded_data['elements'])) {
+                    // Fallback pour l'ancienne structure
+                    $initial_elements = $decoded_data['elements'];
+                }
+            }
+        }
     }
 }
 ?>
@@ -119,6 +142,7 @@ if (!$is_new && $template_id > 0) {
                             templateId: <?php echo $template_id ?: 'null'; ?>,
                             templateName: <?php echo $template_name ? json_encode($template_name) : 'null'; ?>,
                             isNew: <?php echo $is_new ? 'true' : 'false'; ?>,
+                            initialElements: <?php echo json_encode($initial_elements); ?>,
                             width: 595,
                             height: 842,
                             zoom: 1,

@@ -26,7 +26,9 @@ class PDFBuilderPro {
     // Options par défaut
     const defaultOptions = {
       templateId: null,
+      templateName: null,
       isNew: true,
+      initialElements: [],
       width: 595, // A4 width in points
       height: 842, // A4 height in points
       zoom: 1,
@@ -34,6 +36,8 @@ class PDFBuilderPro {
       snapToGrid: true,
       ...options
     };
+
+    console.log('PDF Builder Pro - Initialisation avec options:', defaultOptions);
 
     // Créer l'éditeur React
     const editorElement = React.createElement(PDFCanvasEditor, {
