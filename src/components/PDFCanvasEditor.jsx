@@ -71,7 +71,6 @@ export const PDFCanvasEditor = ({ options }) => {
       canvasState.updateElement(elementId, position);
     },
     snapToGrid: snapToGrid,
-    canvasRect: canvasRef.current?.getBoundingClientRect(),
     zoom: canvasState.zoom.zoom,
     canvasWidth: canvasState.canvasWidth,
     canvasHeight: canvasState.canvasHeight

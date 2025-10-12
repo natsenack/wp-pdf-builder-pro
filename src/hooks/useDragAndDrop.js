@@ -5,7 +5,6 @@ export const useDragAndDrop = ({
   onElementDrop,
   snapToGrid = true,
   gridSize = 10,
-  canvasRect = null,
   zoom = 1,
   canvasWidth = 595,
   canvasHeight = 842
@@ -37,8 +36,8 @@ export const useDragAndDrop = ({
     e.preventDefault();
     setIsDragging(true);
 
-    // Utiliser les paramètres passés ou les valeurs par défaut
-    const currentCanvasRect = canvasRect || { left: 0, top: 0 };
+    // Obtenir le canvasRect dynamiquement si non fourni
+    const currentCanvasRect = canvasRect || { left: 0, top: 0, width: canvasWidth, height: canvasHeight };
     const currentZoom = zoomLevel || zoom || 1;
 
     const startX = (e.clientX - currentCanvasRect.left) / currentZoom;
