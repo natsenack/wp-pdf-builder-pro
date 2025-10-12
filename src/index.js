@@ -3,9 +3,9 @@ import ReactDOM from 'react-dom';
 import { PDFCanvasEditor } from './components/PDFCanvasEditor';
 import './styles/editor.css';
 
-// DIAGNOSTIC: Cache busting test - Version 2025-10-12_11:45
-console.log('PDF Builder Pro - Diagnostic: JavaScript chargé avec cache busting v5');
-console.log('PDF Builder Pro - Vérification pdfBuilderAjax:', typeof pdfBuilderAjax, pdfBuilderAjax);
+// DIAGNOSTIC: Cache busting test - Version 2025-10-12_12:30
+console.log('PDF Builder Pro - Diagnostic: JavaScript chargé avec cache busting v6');
+console.log('PDF Builder Pro - Vérification pdfBuilderAjax au chargement:', typeof pdfBuilderAjax, pdfBuilderAjax);
 
 // Classe principale pour l'éditeur PDF
 class PDFBuilderPro {
