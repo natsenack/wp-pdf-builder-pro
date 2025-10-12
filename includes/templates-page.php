@@ -238,6 +238,9 @@ if (typeof ajaxurl === 'undefined') {
 }
 console.log('ajaxurl défini comme:', ajaxurl);
 
+// Définir le nonce pour les templates
+var pdfBuilderTemplatesNonce = '<?php echo wp_create_nonce("pdf_builder_templates"); ?>';
+
 function openTemplateSettings(templateId, templateName) {
     currentTemplateId = templateId;
 
@@ -336,7 +339,7 @@ function toggleDefaultTemplate(templateId, templateType, templateName) {
         action: 'pdf_builder_set_default_template',
         template_id: templateId,
         is_default: isCurrentlyDefault ? 0 : 1,
-        nonce: '<?php echo wp_create_nonce("pdf_builder_templates"); ?>'
+        nonce: pdfBuilderTemplatesNonce
     };
 
     console.log('AJAX data:', data);

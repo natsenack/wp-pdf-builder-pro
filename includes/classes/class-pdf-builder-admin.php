@@ -1147,6 +1147,15 @@ class PDF_Builder_Admin_Old {
 
         <script type="text/javascript">
         jQuery(document).ready(function($) {
+            // Définir les nonces et messages
+            var pdfBuilderOrderActionsNonce = '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>';
+            var msgGenerating = '<?php echo esc_js(__('Génération du PDF...', 'pdf-builder-pro')); ?>';
+            var msgGenerated = '<?php echo esc_js(__('PDF généré avec succès', 'pdf-builder-pro')); ?>';
+            var msgPreviewOpened = '<?php echo esc_js(__('Aperçu ouvert', 'pdf-builder-pro')); ?>';
+            var msgEnablePopups = '<?php echo esc_js(__('Activez les popups pour voir l\'aperçu', 'pdf-builder-pro')); ?>';
+            var msgErrorPreview = '<?php echo esc_js(__('Erreur lors de l\'aperçu', 'pdf-builder-pro')); ?>';
+            var msgErrorGenerate = '<?php echo esc_js(__('Erreur lors de la génération', 'pdf-builder-pro')); ?>';
+            var msgAjaxError = '<?php echo esc_js(__('Erreur AJAX', 'pdf-builder-pro')); ?>';
             var $previewBtn = $('#pdf-builder-preview-btn');
             var $generateBtn = $('#pdf-builder-generate-btn');
             var $downloadBtn = $('#pdf-builder-download-btn');
@@ -1168,7 +1177,7 @@ class PDF_Builder_Admin_Old {
                         action: 'pdf_builder_preview_order_pdf',
                         order_id: orderId,
                         template_id: templateId,
-                        nonce: '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>'
+                        nonce: pdfBuilderOrderActionsNonce
                     },
                     success: function(response) {
                         if (response.success) {
@@ -1177,16 +1186,16 @@ class PDF_Builder_Admin_Old {
                             if (previewWindow) {
                                 previewWindow.document.write(response.data.html);
                                 previewWindow.document.close();
-                                $status.html('<?php echo esc_js(__('Aperçu ouvert', 'pdf-builder-pro')); ?>');
+                                $status.html(msgPreviewOpened);
                             } else {
-                                $status.html('<span style="color: #d63638;"><?php echo esc_js(__('Activez les popups pour voir l\'aperçu', 'pdf-builder-pro')); ?></span>');
+                                $status.html('<span style="color: #d63638;">' + msgEnablePopups + '</span>');
                             }
                         } else {
-                            $status.html('<span style="color: #d63638;">' + (response.data || '<?php echo esc_js(__('Erreur lors de l\'aperçu', 'pdf-builder-pro')); ?>') + '</span>');
+                            $status.html('<span style="color: #d63638;">' + (response.data || msgErrorPreview) + '</span>');
                         }
                     },
                     error: function() {
-                        $status.html('<span style="color: #d63638;"><?php echo esc_js(__('Erreur AJAX', 'pdf-builder-pro')); ?></span>');
+                        $status.html('<span style="color: #d63638;">' + msgAjaxError + '</span>');
                     },
                     complete: function() {
                         $previewBtn.prop('disabled', false);
@@ -1199,7 +1208,7 @@ class PDF_Builder_Admin_Old {
                 var orderId = $(this).data('order-id');
                 var templateId = $templateSelect.val() || 0;
 
-                $status.html('<?php echo esc_js(__('Génération du PDF...', 'pdf-builder-pro')); ?>');
+                $status.html(msgGenerating);
                 $generateBtn.prop('disabled', true);
 
                 $.ajax({
@@ -1209,19 +1218,19 @@ class PDF_Builder_Admin_Old {
                         action: 'pdf_builder_generate_order_pdf',
                         order_id: orderId,
                         template_id: templateId,
-                        nonce: '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>'
+                        nonce: pdfBuilderOrderActionsNonce
                     },
                     success: function(response) {
                         if (response.success) {
-                            $status.html('<?php echo esc_js(__('PDF généré avec succès', 'pdf-builder-pro')); ?>');
+                            $status.html(msgGenerated);
                             $downloadBtn.show();
                             $downloadBtn.data('pdf-url', response.data.url);
                         } else {
-                            $status.html('<span style="color: #d63638;">' + (response.data || '<?php echo esc_js(__('Erreur lors de la génération', 'pdf-builder-pro')); ?>') + '</span>');
+                            $status.html('<span style="color: #d63638;">' + (response.data || msgErrorGenerate) + '</span>');
                         }
                     },
                     error: function() {
-                        $status.html('<span style="color: #d63638;"><?php echo esc_js(__('Erreur AJAX', 'pdf-builder-pro')); ?></span>');
+                        $status.html('<span style="color: #d63638;">' + msgAjaxError + '</span>');
                     },
                     complete: function() {
                         $generateBtn.prop('disabled', false);
