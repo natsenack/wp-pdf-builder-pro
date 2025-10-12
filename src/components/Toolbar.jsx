@@ -99,7 +99,7 @@ export const Toolbar = ({
 
           <div className="control-group-column">
             <div className="control-group">
-              <label>
+              <label title="Affiche/masque la grille de guidage (10px) pour faciliter le positionnement des éléments.">
                 <input
                   type="checkbox"
                   checked={showGrid}
@@ -110,7 +110,7 @@ export const Toolbar = ({
             </div>
 
             <div className="control-group">
-              <label>
+              <label title="Active/désactive l'alignement automatique des éléments sur la grille (10px). Quand activé, les éléments se positionnent automatiquement sur les lignes de la grille pour un alignement parfait.">
                 <input
                   type="checkbox"
                   checked={snapToGrid}
