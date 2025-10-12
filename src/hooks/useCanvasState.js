@@ -652,6 +652,12 @@ export const useCanvasState = ({
                               window.pdfBuilderData.templateId !== '0' &&
                               window.pdfBuilderData.templateId !== 0;
 
+    console.log('🔍 PDF Builder - Détection template existant:', {
+      templateId: window.pdfBuilderData?.templateId,
+      isExistingTemplate,
+      toastrAvailable: typeof toastr !== 'undefined'
+    });
+
     try {
       // Si onSave est défini, l'utiliser, sinon faire la sauvegarde directement
       if (onSave) {
@@ -665,12 +671,19 @@ export const useCanvasState = ({
         formData.append('template_id', window.pdfBuilderData?.templateId || '0');
         formData.append('nonce', window.pdfBuilderData?.nonce || '');
 
+        console.log('📤 PDF Builder - Envoi sauvegarde AJAX:', {
+          action: 'pdf_builder_pro_save_template',
+          template_name: window.pdfBuilderData?.templateName,
+          template_id: window.pdfBuilderData?.templateId
+        });
+
         const response = await fetch(window.pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
           method: 'POST',
           body: formData
         });
 
         const result = await response.json();
+        console.log('📥 PDF Builder - Réponse AJAX:', result);
 
         if (!result.success) {
           throw new Error(result.data?.message || 'Erreur lors de la sauvegarde');
@@ -679,22 +692,30 @@ export const useCanvasState = ({
 
       // Notification de succès pour les templates existants
       if (isExistingTemplate) {
+        console.log('✅ PDF Builder - Affichage notification succès');
         if (typeof toastr !== 'undefined') {
           toastr.success('Modifications du canvas sauvegardées avec succès !');
+          console.log('🎉 PDF Builder - Notification toastr affichée');
         } else {
+          console.warn('⚠️ PDF Builder - Toastr non disponible, utilisation alert');
           alert('Modifications du canvas sauvegardées avec succès !');
         }
+      } else {
+        console.log('ℹ️ PDF Builder - Template nouveau, pas de notification');
       }
 
       return templateData;
     } catch (error) {
-      console.error('Erreur lors de la sauvegarde du template:', error);
+      console.error('❌ PDF Builder - Erreur lors de la sauvegarde:', error);
 
       // Notification d'erreur
       const errorMessage = error.message || 'Erreur inconnue lors de la sauvegarde';
+      console.log('🚨 PDF Builder - Affichage notification erreur');
       if (typeof toastr !== 'undefined') {
         toastr.error(`Erreur lors de la sauvegarde: ${errorMessage}`);
+        console.log('🚨 PDF Builder - Notification d\'erreur toastr affichée');
       } else {
+        console.warn('⚠️ PDF Builder - Toastr non disponible pour erreur, utilisation alert');
         alert(`Erreur lors de la sauvegarde: ${errorMessage}`);
       }
 
