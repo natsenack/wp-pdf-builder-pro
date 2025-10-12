@@ -1329,11 +1329,11 @@ echo '<style>
 }
 
 .sub-tab-content {
-    display: none !important;
+    display: none;
 }
 
 .sub-tab-active {
-    display: block !important;
+    display: block;
 }
 
 /* Fix footer positioning */
@@ -1379,8 +1379,31 @@ echo '<style>
             // Initialiser les sous-onglets si on active l'onglet canvas
             if ($(this).attr('href') === '#canvas') {
                 console.log('PDF Builder: Initializing canvas sub-tabs...');
-                $('.sub-tab-content:not(.sub-tab-active)').hide();
+                
+                // S'assurer que les sous-onglets sont correctement affichés
+                $('.sub-tab-content').hide();
                 $('.sub-tab-active').show();
+                
+                // Attacher les événements des sous-onglets si pas déjà fait
+                if (!$._data(document, 'events') || !$._data(document, 'events').click || !$._data(document, 'events').click.some(e => e.selector === '.sub-nav-tab')) {
+                    $('.sub-nav-tab').on('click', function(e) {
+                        e.preventDefault();
+                        console.log('PDF Builder: Sub-tab clicked', $(this).attr('href'));
+
+                        var $this = $(this);
+                        var targetId = $this.attr('href');
+
+                        // Désactiver tous les sous-onglets
+                        $('.sub-nav-tab').removeClass('sub-nav-tab-active');
+                        $('.sub-tab-content').removeClass('sub-tab-active').hide();
+
+                        // Activer le sous-onglet cliqué
+                        $this.addClass('sub-nav-tab-active');
+                        $(targetId).addClass('sub-tab-active').show();
+
+                        console.log('PDF Builder: Activated sub-tab', targetId);
+                    });
+                }
             }
         });
 
@@ -1442,39 +1465,7 @@ echo '<style>
 })(jQuery);
 </script>
 
-<script type="text/javascript">
-        $(document).ready(function() {
-            console.log('PDF Builder: Initializing sub-tabs...');
 
-            // Gestionnaire pour les sous-onglets
-            $('.sub-nav-tab').on('click', function(e) {
-                e.preventDefault();
-                console.log('PDF Builder: Sub-tab clicked', $(this).attr('href'));
-
-                var $this = $(this);
-                var targetId = $this.attr('href');
-
-                // Désactiver tous les sous-onglets
-                $('.sub-nav-tab').removeClass('sub-nav-tab-active');
-                $('.sub-tab-content').removeClass('sub-tab-active').hide();
-
-                // Activer le sous-onglet cliqué
-                $this.addClass('sub-nav-tab-active');
-                $(targetId).addClass('sub-tab-active').show();
-
-                console.log('PDF Builder: Activated sub-tab', targetId);
-            });
-
-            // Affichage en temps réel de la valeur du slider d'opacité
-            $('input[name="default_opacity"]').on('input', function() {
-                $(this).next('span').text($(this).val() + '%');
-            });
-
-            console.log('PDF Builder: Sub-tabs initialized successfully');
-        });
-
-})(jQuery);
-</script>
 
 <?php
 // Fin du fichier
