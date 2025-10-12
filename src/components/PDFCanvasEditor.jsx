@@ -74,7 +74,7 @@ export const PDFCanvasEditor = ({ options }) => {
     canvasRect: canvasRef.current?.getBoundingClientRect(),
     zoom: canvasState.zoom.zoom,
     canvasWidth: canvasState.canvasWidth,
-    canvasHeight: canvasHeight
+    canvasHeight: canvasState.canvasHeight
   });
 
   // Gestion des raccourcis clavier
