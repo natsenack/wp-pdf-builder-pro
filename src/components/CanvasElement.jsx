@@ -17,6 +17,7 @@ export const CanvasElement = ({
   dragAndDrop
 }) => {
   const elementRef = useRef(null);
+  const resizeZoneNRef = useRef(null);
 
   // Log basique pour vérifier que le composant se rend
   console.log('🔧 CanvasElement rendering:', {
@@ -75,10 +76,16 @@ export const CanvasElement = ({
               display: window.getComputedStyle(z).display
             }))
           });
+          console.log('🔍 Resize zone N ref:', {
+            ref: resizeZoneNRef.current,
+            refExists: !!resizeZoneNRef.current,
+            refClassName: resizeZoneNRef.current?.className,
+            refStyle: resizeZoneNRef.current ? window.getComputedStyle(resizeZoneNRef.current) : null
+          });
         } else {
           console.log('❌ elementDiv not found for element:', element.id);
         }
-      }, 100);
+      }, 200); // Increased delay
     } else {
       console.log('❌ NOT isSelected for element:', element.id);
     }
@@ -1570,6 +1577,7 @@ export const CanvasElement = ({
           />
           {/* Zones de redimensionnement sur les bords */}
           <div
+            ref={resizeZoneNRef}
             className="resize-zone resize-zone-n"
             onMouseDown={(e) => {
               console.log('🖱️ Resize zone N clicked!', {
