@@ -45,14 +45,36 @@ export const CanvasElement = ({
   // Debug logging pour les éléments sélectionnés
   useEffect(() => {
     if (isSelected) {
+      const computedStyle = window.getComputedStyle(document.documentElement);
+      const showResizeZones = computedStyle.getPropertyValue('--show-resize-zones');
       console.log('🎯 Element selected:', {
         id: element.id,
         type: element.type,
         backgroundColor: element.backgroundColor,
         isTransparent: !element.backgroundColor || element.backgroundColor === 'transparent',
         hasTransparentClass: (!element.backgroundColor || element.backgroundColor === 'transparent') ? 'transparent-bg' : 'no-transparent-bg',
-        showResizeZones: window.pdfBuilderCanvasSettings?.canvas_resize_zones_enabled
+        showResizeZones: window.pdfBuilderCanvasSettings?.canvas_resize_zones_enabled,
+        cssShowResizeZones: showResizeZones,
+        elementRef: elementRef.current
       });
+
+      // Vérifier si les zones de redimensionnement existent dans le DOM
+      setTimeout(() => {
+        const elementDiv = elementRef.current;
+        if (elementDiv) {
+          const resizeZones = elementDiv.querySelectorAll('.resize-zone');
+          console.log('🔍 Resize zones in DOM:', {
+            elementId: element.id,
+            zonesFound: resizeZones.length,
+            zoneClasses: Array.from(resizeZones).map(z => z.className),
+            zoneStyles: Array.from(resizeZones).map(z => ({
+              pointerEvents: window.getComputedStyle(z).pointerEvents,
+              zIndex: window.getComputedStyle(z).zIndex,
+              display: window.getComputedStyle(z).display
+            }))
+          });
+        }
+      }, 100);
     }
   }, [isSelected, element.id, element.backgroundColor]);
 
