@@ -80,7 +80,10 @@ export const CanvasElement = ({
             ref: resizeZoneNRef.current,
             refExists: !!resizeZoneNRef.current,
             refClassName: resizeZoneNRef.current?.className,
-            refStyle: resizeZoneNRef.current ? window.getComputedStyle(resizeZoneNRef.current) : null
+            refStyle: resizeZoneNRef.current ? window.getComputedStyle(resizeZoneNRef.current) : null,
+            refParent: resizeZoneNRef.current?.parentElement,
+            refParentChildren: resizeZoneNRef.current?.parentElement?.children,
+            refParentQuery: resizeZoneNRef.current?.parentElement?.querySelectorAll('.resize-zone')
           });
         } else {
           console.log('❌ elementDiv not found for element:', element.id);
