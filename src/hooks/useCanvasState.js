@@ -118,6 +118,7 @@ export const useCanvasState = ({
   const [nextId, setNextId] = useState(1);
   const [contextMenuState, setContextMenuState] = useState(null);
   const [zoomLevel, setZoomLevel] = useState(1);
+  const [isSaving, setIsSaving] = useState(false);
 
   const history = { addToHistory: () => {}, historySize: 0 };
   const selection = {
