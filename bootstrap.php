@@ -28,8 +28,8 @@ function pdf_builder_load_core() {
     }
 
     // Charger UNIQUEMENT la nouvelle classe d'administration
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'includes/classes/class-pdf-builder-admin-new.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'includes/classes/class-pdf-builder-admin-new.php';
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'includes/classes/class-pdf-builder-admin.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'includes/classes/class-pdf-builder-admin.php';
     }
 
     // NE PAS charger l'ancienne classe class-pdf-builder-admin.php

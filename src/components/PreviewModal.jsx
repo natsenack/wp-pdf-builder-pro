@@ -18,70 +18,116 @@ const PreviewModal = ({
     // Ouvrir l'aperçu dans une nouvelle fenêtre pour l'impression
     const printWindow = window.open('', '_blank', 'width=800,height=600');
     if (printWindow) {
-      // Copier le contenu de l'aperçu actuel
-      const previewContent = document.querySelector('.preview-content');
-      if (previewContent) {
-        printWindow.document.write(`
-          <!DOCTYPE html>
-          <html>
-          <head>
-            <title>Impression PDF Builder Pro</title>
-            <style>
+      // Générer le contenu HTML pour l'impression avec zoom = 1
+      const printContent = `
+        <div class="print-canvas" style="
+          width: ${canvasWidth}px;
+          height: ${canvasHeight}px;
+          margin: 0 auto;
+          border: none;
+          background: white;
+          position: relative;
+          overflow: hidden;
+        ">
+          ${elements
+            .filter(el => !el.type.startsWith('woocommerce-'))
+            .map(element => `
+              <div style="
+                position: absolute;
+                left: ${element.x}px;
+                top: ${element.y}px;
+                width: ${element.width}px;
+                height: ${element.height}px;
+                font-size: ${element.fontSize || 14}px;
+                font-family: ${element.fontFamily || 'Arial'};
+                color: ${element.color || '#1e293b'};
+                font-weight: ${element.fontWeight || 'normal'};
+                font-style: ${element.fontStyle || 'normal'};
+                text-align: ${element.textAlign || 'left'};
+                text-decoration: ${element.textDecoration || 'none'};
+                line-height: ${element.lineHeight || 'normal'};
+                display: flex;
+                align-items: center;
+                justify-content: ${element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start'};
+                word-break: break-word;
+                overflow: hidden;
+                background-color: ${element.backgroundColor || 'transparent'};
+                border: ${element.borderWidth ? `${element.borderWidth}px ${element.borderStyle || 'solid'} ${element.borderColor || 'transparent'}` : 'none'};
+                border-radius: ${element.borderRadius || 0}px;
+                opacity: ${(element.opacity || 100) / 100};
+                transform: rotate(${element.rotation || 0}deg);
+                filter: brightness(${(element.brightness || 100)}%) contrast(${(element.contrast || 100)}%) saturate(${(element.saturate || 100)}%);
+                box-shadow: ${element.boxShadowColor ? `0px ${element.boxShadowSpread || 0}px ${element.boxShadowBlur || 0}px ${element.boxShadowColor}` : (element.shadow ? `${element.shadowOffsetX || 2}px ${element.shadowOffsetY || 2}px 4px ${element.shadowColor || '#000000'}40` : 'none')};
+              ">
+                ${element.type === 'text' ? (element.text || 'Texte') : ''}
+                ${element.type === 'image' && element.src ? `<img src="${element.src}" style="width: 100%; height: 100%; object-fit: cover;" />` : ''}
+              </div>
+            `).join('')}
+        </div>
+      `;
+
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Impression PDF Builder Pro</title>
+          <style>
+            body {
+              margin: 0;
+              padding: 20px;
+              font-family: Arial, sans-serif;
+              background: #f8f9fa;
+            }
+            .print-container {
+              background: white;
+              border: 1px solid #e2e8f0;
+              border-radius: 4px;
+              padding: 20px;
+              max-width: ${canvasWidth + 40}px;
+              margin: 0 auto;
+              position: relative;
+            }
+            .print-canvas {
+              width: ${canvasWidth}px !important;
+              height: ${canvasHeight}px !important;
+              margin: 0 auto;
+              border: none !important;
+              background: white;
+              position: relative;
+              overflow: hidden;
+            }
+            @media print {
               body {
                 margin: 0;
-                padding: 20px;
-                font-family: Arial, sans-serif;
+                padding: 0;
                 background: white;
               }
               .print-container {
-                max-width: ${canvasWidth}px;
-                margin: 0 auto;
-                background: white;
-                position: relative;
-              }
-              .preview-canvas {
-                border: none !important;
+                border: none;
+                padding: 20px;
+                max-width: none;
                 margin: 0;
-                padding: 0;
+                background: white;
               }
-              @media print {
-                body { margin: 0; }
-                .print-container { max-width: none; }
-              }
-            </style>
-          </head>
-          <body>
-            <div class="print-container">
-              ${previewContent.outerHTML}
-            </div>
-            <script>
-              window.onload = function() {
-                setTimeout(function() {
-                  window.print();
-                  window.close();
-                }, 500);
-              };
-            </script>
-          </body>
-          </html>
-        `);
-        printWindow.document.close();
-      } else {
-        // Fallback si l'aperçu n'est pas trouvé
-        printWindow.document.write(`
-          <!DOCTYPE html>
-          <html>
-          <head>
-            <title>Impression PDF</title>
-          </head>
-          <body>
-            <p>Contenu d'aperçu non disponible pour l'impression.</p>
-            <script>window.print(); window.close();</script>
-          </body>
-          </html>
-        `);
-        printWindow.document.close();
-      }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="print-container">
+            ${printContent}
+          </div>
+          <script>
+            window.onload = function() {
+              setTimeout(function() {
+                window.print();
+                window.close();
+              }, 500);
+            };
+          </script>
+        </body>
+        </html>
+      `);
+      printWindow.document.close();
     }
   };
 
@@ -96,7 +142,11 @@ const PreviewModal = ({
         </div>
 
         <div className="preview-modal-body">
-          <div className="preview-content">
+          <div className="preview-content" style={{
+            padding: '20px',
+            background: '#f8f9fa',
+            borderRadius: '4px'
+          }}>
             <div
               className="preview-canvas"
               style={{

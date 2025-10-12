@@ -127,6 +127,18 @@ export const useCanvasState = ({
     }, [])
   });
 
+  const historyRef = useRef(history);
+  const selectionRef = useRef(selection);
+
+  // Mettre à jour les refs quand les valeurs changent
+  useEffect(() => {
+    historyRef.current = history;
+  }, [history]);
+
+  useEffect(() => {
+    selectionRef.current = selection;
+  }, [selection]);
+
   const clipboard = useClipboard({
     onPaste: useCallback((data) => {
       if (data.type === 'elements') {
@@ -219,229 +231,37 @@ export const useCanvasState = ({
   }, []); // Uniquement au montage du composant
 
   const addElement = useCallback((elementType, properties = {}) => {
-    // Système intelligent de propriétés par défaut
-    const getDefaultProperties = (type) => {
-      // Propriétés de base pour tous les éléments
-      const baseDefaults = {
-        x: 50,
-        y: 50,
-        width: 100,
-        height: 50,
-        color: '#000000',
-        fontSize: 14,
-        fontFamily: 'Arial, sans-serif',
-        fontWeight: 'normal',
-        fontStyle: 'normal',
-        textDecoration: 'none',
-        textAlign: 'left',
-        lineHeight: 1.2,
-        letterSpacing: 0,
-        borderColor: 'transparent',
-        borderWidth: 0,
-        borderStyle: 'solid',
-        borderRadius: 4,
-        padding: 8
-      };
+    // Utiliser les refs pour accéder aux valeurs actuelles
+    const currentHistory = historyRef.current;
+    const currentSelection = selectionRef.current;
 
-      // Éléments spéciaux qui n'ont pas de fond contrôlable
-      const specialElements = ['product_table', 'customer_info', 'company_logo', 'company_info', 'order_number', 'document_type', 'progress-bar'];
+    // Vérifications de sécurité
+    if (!currentSelection || !currentHistory) {
+      console.error('useCanvasState: selection or history not initialized');
+      return;
+    }
 
-      // Propriétés spécifiques selon le type
-      const typeSpecificDefaults = {
-        // Éléments de mise en page
-        'layout-header': {
-          width: 500,
-          height: 80,
-          backgroundColor: getOption('default_layout_background', '#f8fafc'),
-          borderColor: 'transparent',
-          borderWidth: 0
-        },
-        'layout-footer': {
-          width: 500,
-          height: 60,
-          backgroundColor: getOption('default_layout_background', '#f8fafc'),
-          borderColor: 'transparent',
-          borderWidth: 0
-        },
-        'layout-sidebar': {
-          width: 150,
-          height: 300,
-          backgroundColor: getOption('default_layout_background', '#f8fafc'),
-          borderColor: 'transparent',
-          borderWidth: 0
-        },
-        'layout-section': {
-          width: 500,
-          height: 200,
-          backgroundColor: getOption('default_layout_background', '#ffffff'),
-          borderColor: 'transparent',
-          borderWidth: 0
-        },
-        'layout-container': {
-          width: 300,
-          height: 150,
-          backgroundColor: 'transparent',
-          borderColor: 'transparent',
-          borderWidth: 0,
-          borderStyle: 'dashed'
-        },
+    if (typeof currentSelection.selectElement !== 'function') {
+      console.error('selection.selectElement is not a function:', currentSelection.selectElement);
+      return;
+    }
 
-        // Éléments de texte
-        'text': {
-          content: 'Texte',
-          backgroundColor: getOption('default_text_background', 'transparent'),
-          width: 200,
-          height: 50
-        },
+    if (typeof currentHistory.addToHistory !== 'function') {
+      console.error('history.addToHistory is not a function:', currentHistory.addToHistory);
+      return;
+    }
 
-        // Éléments graphiques
-        'rectangle': {
-          backgroundColor: getOption('default_shape_background', '#e5e7eb'),
-          width: 150,
-          height: 100
-        },
-        'line': {
-          height: 2,
-          backgroundColor: getOption('default_shape_background', '#6b7280'),
-          width: 200
-        },
-        'shape-circle': {
-          backgroundColor: getOption('default_shape_background', '#e5e7eb'),
-          width: 100,
-          height: 100,
-          borderRadius: 50
-        },
-        'shape-arrow': {
-          backgroundColor: getOption('default_shape_background', '#e5e7eb'),
-          width: 150,
-          height: 60
-        },
-        'shape-triangle': {
-          backgroundColor: getOption('default_shape_background', '#e5e7eb'),
-          width: 100,
-          height: 100
-        },
-        'shape-star': {
-          backgroundColor: getOption('default_shape_background', '#e5e7eb'),
-          width: 100,
-          height: 100
-        },
-        'divider': {
-          height: 1,
-          backgroundColor: getOption('default_shape_background', '#6b7280'),
-          width: 300
-        },
-        'image': {
-          backgroundColor: 'transparent',
-          width: 150,
-          height: 150,
-          src: '',
-          alt: 'Image'
-        },
-
-        // Éléments spécialisés pour factures
-        'invoice-header': {
-          width: 500,
-          height: 100,
-          backgroundColor: getOption('default_special_background', 'transparent'), // Spéciaux = transparent
-          borderColor: 'transparent',
-          borderWidth: 0,
-          content: 'ENTREPRISE\n123 Rue de l\'Entreprise\n75000 Paris\nTéléphone: 01 23 45 67 89\nEmail: contact@entreprise.com',
-          fontSize: 12,
-          fontWeight: 'normal'
-        },
-        'invoice-address-block': {
-          width: 240,
-          height: 120,
-          backgroundColor: getOption('default_special_background', 'transparent'),
-          borderColor: 'transparent',
-          borderWidth: 0,
-          borderRadius: 4
-        },
-        'invoice-info-block': {
-          width: 300,
-          height: 80,
-          backgroundColor: getOption('default_special_background', 'transparent'),
-          borderColor: 'transparent',
-          borderWidth: 0,
-          borderRadius: 4
-        },
-        'invoice-products-table': {
-          width: 500,
-          height: 200,
-          backgroundColor: getOption('default_special_background', 'transparent'),
-          borderColor: 'transparent',
-          borderWidth: 0
-        },
-
-        // Éléments spéciaux
-        'product_table': {
-          width: 500,
-          height: 200,
-          backgroundColor: 'transparent', // Toujours transparent pour les spéciaux
-          borderColor: 'transparent',
-          borderWidth: 0,
-          showHeaders: true,
-          showBorders: true,
-          headers: ['Produit', 'Qté', 'Prix'],
-          dataSource: 'order_items',
-          columns: {
-            image: true,
-            name: true,
-            sku: false,
-            quantity: true,
-            price: true,
-            total: true
-          },
-          showSubtotal: false,
-          showShipping: true,
-          showTaxes: true,
-          showDiscount: false,
-          showTotal: false
-        },
-        'customer_info': {
-          width: 300,
-          height: 200,
-          backgroundColor: 'transparent', // Toujours transparent pour les spéciaux
-          borderColor: 'transparent',
-          borderWidth: 0,
-          fields: ['name', 'email', 'phone', 'address', 'company', 'vat'],
-          layout: 'vertical',
-          showLabels: true,
-          labelStyle: 'bold',
-          spacing: 8,
-          fontSize: 12,
-          fontFamily: 'Arial, sans-serif',
-          fontWeight: 'normal',
-          fontStyle: 'normal',
-          textDecoration: 'none'
-        }
-      };
-
-      // Fonction helper pour récupérer les options WordPress
-      const getOption = (key, defaultValue) => {
-        // Utiliser des valeurs par défaut intelligentes
-        const defaults = {
-          default_text_background: 'transparent',
-          default_shape_background: '#e5e7eb',
-          default_layout_background: '#f8fafc',
-          default_special_background: 'transparent'
-        };
-        return defaults[key] || defaultValue;
-      };
-
-      // Fusionner les propriétés de base avec les propriétés spécifiques du type
-      const mergedDefaults = { ...baseDefaults, ...(typeSpecificDefaults[type] || {}) };
-
-      // Pour les éléments spéciaux, forcer backgroundColor à transparent
-      if (specialElements.includes(type)) {
-        mergedDefaults.backgroundColor = 'transparent';
-      }
-
-      return mergedDefaults;
+    // Propriétés par défaut simplifiées
+    const defaultProps = {
+      x: 50,
+      y: 50,
+      width: 100,
+      height: 50,
+      color: '#000000',
+      fontSize: 14,
+      backgroundColor: 'transparent'
     };
 
-    const defaultProps = getDefaultProperties(elementType);
     const newElement = {
       id: `element_${nextId}`,
       type: elementType,
@@ -452,12 +272,26 @@ export const useCanvasState = ({
     setElements(prev => {
       const newElements = [...prev, newElement];
       // Sauvegarder dans l'historique
-      history.addToHistory({ elements: newElements, nextId: nextId + 1 });
+      try {
+        if (currentHistory && typeof currentHistory.addToHistory === 'function') {
+          currentHistory.addToHistory({ elements: newElements, nextId: nextId + 1 });
+        }
+      } catch (error) {
+        console.error('Error calling history.addToHistory:', error);
+      }
       return newElements;
     });
+
     setNextId(prev => prev + 1);
-    selection.selectElement(newElement.id);
-  }, [nextId, selection, history]);
+
+    try {
+      if (currentSelection && typeof currentSelection.selectElement === 'function') {
+        currentSelection.selectElement(newElement.id);
+      }
+    } catch (error) {
+      console.error('Error calling selection.selectElement:', error);
+    }
+  }, [nextId]); // Retirer selection et history des dépendances
 
   const deleteElement = useCallback((elementId) => {
     setElements(prev => {
