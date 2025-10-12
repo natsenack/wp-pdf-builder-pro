@@ -760,15 +760,47 @@ export const useCanvasState = ({
     const toastrAvailable = await checkToastrAvailability();
 
     try {
+      // Fonction pour nettoyer les données avant sérialisation
+      const cleanElementForSerialization = (element) => {
+        // Liste des propriétés à exclure car elles ne sont pas sérialisables
+        const excludedProps = [
+          'domElement', 'eventListeners', 'ref', 'onClick', 'onMouseDown',
+          'onMouseUp', 'onMouseMove', 'onContextMenu', 'onDoubleClick',
+          'onDragStart', 'onDragEnd', 'onResize', 'component', 'render'
+        ];
+
+        const cleaned = {};
+
+        for (const [key, value] of Object.entries(element)) {
+          // Exclure les propriétés problématiques
+          if (excludedProps.includes(key)) {
+            continue;
+          }
+
+          // Vérifier si la valeur est sérialisable
+          try {
+            JSON.stringify(value);
+            cleaned[key] = value;
+          } catch (e) {
+            console.warn(`PDF Builder - Propriété non-sérialisable ignorée: ${key}`, value);
+          }
+        }
+
+        return cleaned;
+      };
+
+      // Nettoyer tous les éléments
+      const cleanedElements = elements.map(cleanElementForSerialization);
+
       const templateData = {
-        elements,
+        elements: cleanedElements,
         canvasWidth,
         canvasHeight,
         version: '1.0'
       };
 
-      console.log('🔍 PDF Builder - Données à sauvegarder:', templateData);
-      console.log('🔍 PDF Builder - Nombre d\'éléments:', elements.length);
+      console.log('🔍 PDF Builder - Données nettoyées à sauvegarder:', templateData);
+      console.log('🔍 PDF Builder - Nombre d\'éléments nettoyés:', cleanedElements.length);
 
       // Valider le JSON avant envoi
       let jsonString;
