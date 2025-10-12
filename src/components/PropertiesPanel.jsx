@@ -376,14 +376,21 @@ const PropertiesPanel = React.memo(({
       setPreviousBorderColor(selectedElement.borderColor || '#000000');
 
       // Initialiser l'état des toggles basé sur les propriétés actuelles
-      setIsBackgroundEnabled(!!(selectedElement.backgroundColor && selectedElement.backgroundColor !== 'transparent'));
+      // Le fond est activé seulement si backgroundColor existe, n'est pas 'transparent' et n'est pas vide
+      const hasBackground = selectedElement.backgroundColor && 
+                           selectedElement.backgroundColor !== 'transparent' && 
+                           selectedElement.backgroundColor !== '';
+      setIsBackgroundEnabled(hasBackground);
       setIsBorderEnabled(!!selectedElement.borderWidth && selectedElement.borderWidth > 0);
     }
   }, [selectedElement?.id]); // Ne dépendre que de l'ID de l'élément sélectionné
 
   // Synchroniser l'état du toggle fond avec les propriétés locales
   useEffect(() => {
-    setIsBackgroundEnabled(!!(localProperties.backgroundColor && localProperties.backgroundColor !== 'transparent'));
+    const hasBackground = localProperties.backgroundColor && 
+                         localProperties.backgroundColor !== 'transparent' && 
+                         localProperties.backgroundColor !== '';
+    setIsBackgroundEnabled(hasBackground);
   }, [localProperties.backgroundColor]);
 
   // Gestionnaire unifié de changement de propriété

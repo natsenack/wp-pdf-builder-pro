@@ -40,6 +40,11 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
         ...selectedElement
       };
 
+      // S'assurer que backgroundColor est défini à 'transparent' si non défini, vide, ou '#ffffff' (migration)
+      if (!newProperties.backgroundColor || newProperties.backgroundColor === '' || newProperties.backgroundColor === '#ffffff') {
+        newProperties.backgroundColor = 'transparent';
+      }
+
       setLocalProperties(newProperties);
     } else {
       setLocalProperties({});
