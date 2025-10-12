@@ -346,6 +346,7 @@ function pdf_builder_init_canvas_defaults() {
         'canvas_border_color' => '#007cba',
         'canvas_border_spacing' => 2,
         'canvas_resize_handles_enabled' => true,
+        'canvas_resize_zones_enabled' => true,
         'canvas_handle_size' => 8,
         'canvas_handle_color' => '#007cba',
         'canvas_handle_hover_color' => '#ffffff'

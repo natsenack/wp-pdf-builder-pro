@@ -731,6 +731,15 @@ class PDF_Builder_Admin {
                                     </label>
                                 </td>
                             </tr>
+                            <tr>
+                                <th scope="row"><?php _e('Zones de redimensionnement', 'pdf-builder-pro'); ?></th>
+                                <td>
+                                    <label>
+                                        <input type="checkbox" name="canvas_resize_zones_enabled" value="1" <?php checked($canvas_settings['canvas_resize_zones_enabled'] ?? true); ?> />
+                                        <?php _e('Activer les zones de redimensionnement par bordure', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </td>
+                            </tr>
                         </table>
                     </div>
 
@@ -999,6 +1008,7 @@ class PDF_Builder_Admin {
             'canvas_border_color' => $canvas_settings['canvas_border_color'] ?? '#007cba',
             'canvas_border_spacing' => $canvas_settings['canvas_border_spacing'] ?? 2,
             'canvas_resize_handles_enabled' => $canvas_settings['canvas_resize_handles_enabled'] ?? true,
+            'canvas_resize_zones_enabled' => $canvas_settings['canvas_resize_zones_enabled'] ?? true,
             'canvas_handle_size' => $canvas_settings['canvas_handle_size'] ?? 12,
             'canvas_handle_color' => $canvas_settings['canvas_handle_color'] ?? '#007cba',
             'canvas_handle_hover_color' => $canvas_settings['canvas_handle_hover_color'] ?? '#ffffff',
@@ -2810,6 +2820,7 @@ class PDF_Builder_Admin {
         // Mettre à jour les paramètres de visibilité
         $canvas_settings['canvas_resize_handles_enabled'] = isset($_POST['canvas_resize_handles_enabled']);
         $canvas_settings['canvas_element_borders_enabled'] = isset($_POST['canvas_element_borders_enabled']);
+        $canvas_settings['canvas_resize_zones_enabled'] = isset($_POST['canvas_resize_zones_enabled']);
 
         // Mettre à jour les paramètres par défaut des éléments
         $canvas_settings['default_text_color'] = sanitize_hex_color($_POST['default_text_color'] ?? '#000000');
@@ -2865,6 +2876,7 @@ class PDF_Builder_Admin {
         $settings['canvas_border_color'] = sanitize_hex_color($_POST['canvas_border_color'] ?? '#007cba');
         $settings['canvas_border_spacing'] = intval($_POST['canvas_border_spacing'] ?? 2);
         $settings['canvas_resize_handles_enabled'] = isset($_POST['canvas_resize_handles_enabled']);
+        $settings['canvas_resize_zones_enabled'] = isset($_POST['canvas_resize_zones_enabled']);
         $settings['canvas_handle_size'] = intval($_POST['canvas_handle_size'] ?? 8);
         $settings['canvas_handle_color'] = sanitize_hex_color($_POST['canvas_handle_color'] ?? '#007cba');
         $settings['canvas_handle_hover_color'] = sanitize_hex_color($_POST['canvas_handle_hover_color'] ?? '#005a87');

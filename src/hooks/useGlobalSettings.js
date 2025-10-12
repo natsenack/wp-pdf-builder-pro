@@ -50,7 +50,7 @@ export const useGlobalSettings = () => {
         selectionBorderColor: wpSettings.canvas_border_color || prev.selectionBorderColor,
         selectionBorderSpacing: wpSettings.canvas_border_spacing || prev.selectionBorderSpacing,
         showResizeHandles: wpSettings.canvas_resize_handles_enabled !== undefined ? wpSettings.canvas_resize_handles_enabled : prev.showResizeHandles,
-        showResizeZones: wpSettings.canvas_element_borders_enabled !== undefined ? wpSettings.canvas_element_borders_enabled : prev.showResizeZones,
+        showResizeZones: wpSettings.canvas_resize_zones_enabled !== undefined ? wpSettings.canvas_resize_zones_enabled : prev.showResizeZones,
         // Nouveaux paramètres par défaut des éléments
         defaultTextColor: wpSettings.default_text_color || prev.defaultTextColor,
         defaultBackgroundColor: wpSettings.default_background_color || prev.defaultBackgroundColor,

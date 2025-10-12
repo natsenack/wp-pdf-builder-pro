@@ -59,6 +59,7 @@ class TempConfig {
             'canvas_border_color' => '#007cba',
             'canvas_border_spacing' => 2,
             'canvas_resize_handles_enabled' => true,
+            'canvas_resize_zones_enabled' => true,
             'canvas_handle_size' => 8,
             'canvas_handle_color' => '#007cba',
             'canvas_handle_hover_color' => '#005a87'
@@ -112,6 +113,7 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
             'canvas_border_color' => sanitize_text_field($_POST['canvas_border_color']),
             'canvas_border_spacing' => intval($_POST['canvas_border_spacing']),
             'canvas_resize_handles_enabled' => isset($_POST['canvas_resize_handles_enabled']),
+            'canvas_resize_zones_enabled' => isset($_POST['canvas_resize_zones_enabled']),
             'canvas_handle_size' => intval($_POST['canvas_handle_size']),
             'canvas_handle_color' => sanitize_text_field($_POST['canvas_handle_color']),
             'canvas_handle_hover_color' => sanitize_text_field($_POST['canvas_handle_hover_color'])
@@ -128,6 +130,7 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
         update_option('canvas_border_color', $settings['canvas_border_color']);
         update_option('canvas_border_spacing', $settings['canvas_border_spacing']);
         update_option('canvas_resize_handles_enabled', $settings['canvas_resize_handles_enabled']);
+        update_option('canvas_resize_zones_enabled', $settings['canvas_resize_zones_enabled']);
         update_option('canvas_handle_size', $settings['canvas_handle_size']);
         update_option('canvas_handle_color', $settings['canvas_handle_color']);
         update_option('canvas_handle_hover_color', $settings['canvas_handle_hover_color']);
@@ -763,6 +766,15 @@ window.addEventListener('load', function() {
                                     <label>
                                         <input type="checkbox" name="canvas_element_borders_enabled" value="1" <?php checked(get_option('canvas_element_borders_enabled', true), true); ?> />
                                         <?php _e('Afficher les bordures des zones de redimensionnement', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><?php _e('Zones de redimensionnement', 'pdf-builder-pro'); ?></th>
+                                <td>
+                                    <label>
+                                        <input type="checkbox" name="canvas_resize_zones_enabled" value="1" <?php checked(get_option('canvas_resize_zones_enabled', true), true); ?> />
+                                        <?php _e('Activer les zones de redimensionnement par bordure', 'pdf-builder-pro'); ?>
                                     </label>
                                 </td>
                             </tr>
