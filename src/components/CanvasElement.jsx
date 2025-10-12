@@ -46,6 +46,7 @@ export const CanvasElement = ({
   useEffect(() => {
     console.log('🔍 useEffect triggered - isSelected:', isSelected, 'elementId:', element.id);
     if (isSelected) {
+      const computedStyle = window.getComputedStyle(document.documentElement);
       console.log('🎯 Element selected - DETAILED LOGS:', {
         id: element.id,
         type: element.type,
