@@ -440,7 +440,8 @@ class PDF_Generator {
     }
 
     private function render_text($text, $element, $width, $height) {
-        // Utiliser les propriétés de l'élément avec des valeurs par défaut
+        // Utiliser content au lieu de text (comme envoyé par React)
+        $text_content = $element['content'] ?? $text;
         $font_size = ($element['fontSize'] ?? 14) * 0.75; // Ajuster la taille pour TCPDF
         $font_family = $element['fontFamily'] ?? 'helvetica';
         $font_style = $this->get_font_style($element);
@@ -464,7 +465,7 @@ class PDF_Generator {
         $this->pdf->SetTextColor($color[0], $color[1], $color[2]);
 
         // Couleur de fond si définie
-        if (!empty($element['backgroundColor']) && $element['backgroundColor'] !== 'transparent') {
+        if (!empty($element['backgroundColor']) && $element['backgroundColor'] !== 'transparent' && $element['backgroundColor'] !== '#d1d5db') {
             $bg_color = $this->hex_to_rgb($element['backgroundColor']);
             $this->pdf->SetFillColor($bg_color[0], $bg_color[1], $bg_color[2]);
             $fill = true;
@@ -493,11 +494,12 @@ class PDF_Generator {
         // Positionner avec le padding
         $this->pdf->SetXY($this->pdf->GetX() + $padding, $current_y + $padding);
 
-        $this->pdf->MultiCell($adjusted_width, $adjusted_height, $text, $border, $this->get_text_align($element), $fill);
+        $this->pdf->MultiCell($adjusted_width, $adjusted_height, $text_content, $border, $this->get_text_align($element), $fill);
     }
 
     private function render_multiline_text($text, $element, $width, $height) {
-        $font_size = ($element['fontSize'] ?? 12) * 0.75;
+        // Utiliser content au lieu de text (comme envoyé par React)
+        $text_content = $element['content'] ?? $text;
         $font_family = $element['fontFamily'] ?? 'helvetica';
 
         // Mapper les familles de polices CSS vers TCPDF
@@ -518,8 +520,8 @@ class PDF_Generator {
         $color = $this->hex_to_rgb($element['color'] ?? '#000000');
         $this->pdf->SetTextColor($color[0], $color[1], $color[2]);
 
-        // Couleur de fond si définie
-        if (!empty($element['backgroundColor']) && $element['backgroundColor'] !== 'transparent') {
+        // Couleur de fond si définie et non transparente
+        if (!empty($element['backgroundColor']) && $element['backgroundColor'] !== 'transparent' && $element['backgroundColor'] !== '#d1d5db') {
             $bg_color = $this->hex_to_rgb($element['backgroundColor']);
             $this->pdf->SetFillColor($bg_color[0], $bg_color[1], $bg_color[2]);
             $fill = true;
@@ -544,7 +546,7 @@ class PDF_Generator {
         // Positionner avec le padding
         $this->pdf->SetXY($this->pdf->GetX() + $padding, $this->pdf->GetY() + $padding);
 
-        $this->pdf->MultiCell($adjusted_width, $adjusted_height/4, $text, $border, 'L', $fill);
+        $this->pdf->MultiCell($adjusted_width, $adjusted_height/4, $text_content, $border, $this->get_text_align($element), $fill);
     }
 
     private function get_font_style($element) {
@@ -555,7 +557,8 @@ class PDF_Generator {
     }
 
     private function get_text_align($element) {
-        switch ($element['textAlign']) {
+        $textAlign = $element['textAlign'] ?? 'left';
+        switch ($textAlign) {
             case 'center': return 'C';
             case 'right': return 'R';
             default: return 'L';
@@ -616,6 +619,11 @@ function pdf_builder_generate_pdf() {
         // Récupérer les éléments
         $elements = json_decode(stripslashes($_POST['elements'] ?? '[]'), true);
         error_log('PDF Builder: ' . count($elements) . ' éléments reçus pour génération PDF');
+
+        // Log détaillé du premier élément pour debug
+        if (!empty($elements)) {
+            error_log('PDF Builder: Premier élément: ' . json_encode($elements[0]));
+        }
 
         if (empty($elements)) {
             // Vider le buffer avant d'envoyer la réponse
