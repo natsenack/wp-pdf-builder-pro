@@ -30,14 +30,24 @@ const PreviewModal = ({
     try {
       console.log('Génération aperçu côté serveur pour', elements.length, 'éléments');
 
+      // Vérifier que les variables AJAX sont disponibles
+      let ajaxUrl = window.pdfBuilderAjax?.ajaxurl || ajaxurl;
+      let nonce = window.pdfBuilderAjax?.nonce || pdfBuilderNonce;
+
+      if (!ajaxUrl || !nonce) {
+        throw new Error('Variables AJAX non disponibles. Rechargez la page.');
+      }
+
+      console.log('Variables AJAX utilisées:', { ajaxUrl: ajaxUrl.substring(0, 50) + '...', nonceLength: nonce.length });
+
       // Préparer les données pour l'AJAX
       const formData = new FormData();
       formData.append('action', 'pdf_builder_generate_preview');
-      formData.append('nonce', pdfBuilderNonce);
+      formData.append('nonce', nonce);
       formData.append('elements', JSON.stringify(elements));
 
       // Faire l'appel AJAX
-      const response = await fetch(ajaxurl, {
+      const response = await fetch(ajaxUrl, {
         method: 'POST',
         body: formData
       });
