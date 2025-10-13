@@ -92,13 +92,15 @@ const PreviewModal = ({
       // Générer le contenu HTML pour l'impression avec zoom = 1
       const printContent = `
         <div class="print-canvas" style="
-          width: ${canvasWidth}px;
+          width: 100%;
+          max-width: ${canvasWidth}px;
           height: ${canvasHeight}px;
           margin: 0 auto;
           border: none;
           background: white;
           position: relative;
           overflow: hidden;
+          box-sizing: border-box;
         ">
           ${elements
             .map(element => {
@@ -233,9 +235,15 @@ const PreviewModal = ({
                 max-width: none !important;
               }
               .print-canvas {
-                margin: 0 !important;
+                width: 100% !important;
+                max-width: ${canvasWidth}px !important;
+                height: ${canvasHeight}px !important;
+                margin: 0 auto !important;
                 border: none !important;
                 background: white !important;
+                position: relative !important;
+                overflow: hidden !important;
+                box-sizing: border-box !important;
               }
               @page {
                 margin: 0.2cm !important; /* Marges minimales pour éviter la coupe */
