@@ -164,7 +164,7 @@ class PDF_Builder_Admin {
             [$this, 'diagnostic_page']
         );
 
-        // Test TCPDF (réactivé temporairement pour diagnostic)
+        // Test TCPDF (temporairement réactivé pour tests)
         add_submenu_page(
             'pdf-builder-pro',
             __('Test TCPDF - PDF Builder Pro', 'pdf-builder-pro'),
