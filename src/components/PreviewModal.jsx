@@ -245,7 +245,7 @@ const PreviewModal = ({
             ❌ Fermer
           </button>
           <button className="btn btn-primary" onClick={handlePrint}>
-            👁️ Prévisualiser PDF
+            👁️ Imprimer PDF
           </button>
         </div>
       </div>

@@ -511,6 +511,7 @@ function pdf_builder_generate_pdf() {
         // Récupérer les éléments
         $elements = json_decode(stripslashes($_POST['elements'] ?? '[]'), true);
         error_log('PDF Builder: Éléments reçus: ' . count($elements) . ' éléments');
+        error_log('PDF Builder: Détails des éléments: ' . json_encode($elements, JSON_PRETTY_PRINT));
 
         if (empty($elements)) {
             // Vider le buffer avant d'envoyer la réponse
