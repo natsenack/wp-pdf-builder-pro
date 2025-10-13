@@ -221,14 +221,15 @@ class PDF_Builder_Core {
             array($this, 'templates_page')
         );
 
-        add_submenu_page(
-            null, // Hidden page
-            __('Template Editor', 'pdf-builder-pro'),
-            __('Template Editor', 'pdf-builder-pro'),
-            'manage_options',
-            'pdf-builder-editor',
-            array($this, 'template_editor_page')
-        );
+        // Template Editor page is now handled by PDF_Builder_Admin class
+        // add_submenu_page(
+        //     null, // Hidden page
+        //     __('Template Editor', 'pdf-builder-pro'),
+        //     __('Template Editor', 'pdf-builder-pro'),
+        //     'manage_options',
+        //     'pdf-builder-editor',
+        //     array($this, 'template_editor_page')
+        // );
 
         add_submenu_page(
             'pdf-builder-pro',
