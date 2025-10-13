@@ -271,7 +271,8 @@ class PDF_Generator {
             $this->pdf->SetXY($x, $y);
 
             $element_type = $element['type'] ?? 'unknown';
-            error_log('PDF Builder: Rendu élément: ' . $element_type);
+            // Log seulement les erreurs, pas chaque élément
+            // error_log('PDF Builder: Rendu élément: ' . $element_type);
 
             switch ($element_type) {
                 case 'text':
@@ -339,8 +340,18 @@ class PDF_Generator {
                 // Télécharger l'image depuis l'URL
                 $image_data = $this->download_image($element['src']);
                 if ($image_data) {
-                    // Créer un fichier temporaire
-                    $temp_file = tempnam(sys_get_temp_dir(), 'pdf_img');
+                    // Utiliser un répertoire temporaire autorisé au lieu de /tmp
+                    $temp_dir = sys_get_temp_dir();
+                    if (!is_writable($temp_dir)) {
+                        // Essayer d'utiliser le répertoire uploads de WordPress
+                        $upload_dir = wp_upload_dir();
+                        $temp_dir = $upload_dir['basedir'] . '/pdf-temp/';
+                        if (!file_exists($temp_dir)) {
+                            wp_mkdir_p($temp_dir);
+                        }
+                    }
+
+                    $temp_file = tempnam($temp_dir, 'pdf_img');
                     if ($temp_file && file_put_contents($temp_file, $image_data) !== false) {
                         // Ajouter l'image au PDF
                         $this->pdf->Image($temp_file, $this->pdf->GetX(), $this->pdf->GetY(), $width, $height);
@@ -348,7 +359,7 @@ class PDF_Generator {
                         // Supprimer le fichier temporaire
                         unlink($temp_file);
                     } else {
-                        error_log('PDF Builder: Impossible de créer le fichier temporaire pour l\'image');
+                        error_log('PDF Builder: Impossible de créer le fichier temporaire pour l\'image dans: ' . $temp_dir);
                     }
                 } else {
                     error_log('PDF Builder: Échec du téléchargement de l\'image: ' . $element['src']);
@@ -370,27 +381,35 @@ class PDF_Generator {
     }
 
     private function render_product_table($element, $width, $height, $x, $y) {
-        // Créer un tableau simple
-        $this->pdf->SetXY($x, $y);
+        try {
+            // Créer un tableau simple avec des caractères ASCII seulement
+            $this->pdf->SetXY($x, $y);
 
-        // En-tête
-        $this->pdf->SetFont('helvetica', 'B', 8);
-        $this->pdf->Cell(40, 5, 'Produit', 1, 0, 'L');
-        $this->pdf->Cell(15, 5, 'Qté', 1, 0, 'C');
-        $this->pdf->Cell(20, 5, 'Prix', 1, 0, 'R');
-        $this->pdf->Cell(20, 5, 'Total', 1, 1, 'R');
+            // En-tête - utiliser des caractères simples
+            $this->pdf->SetFont('helvetica', 'B', 8);
+            $this->pdf->Cell(40, 5, 'Produit', 1, 0, 'L');
+            $this->pdf->Cell(15, 5, 'Qte', 1, 0, 'C');
+            $this->pdf->Cell(20, 5, 'Prix', 1, 0, 'R');
+            $this->pdf->Cell(20, 5, 'Total', 1, 1, 'R');
 
-        // Lignes de données
-        $this->pdf->SetFont('helvetica', '', 8);
-        $this->pdf->Cell(40, 5, 'Produit A', 1, 0, 'L');
-        $this->pdf->Cell(15, 5, '2', 1, 0, 'C');
-        $this->pdf->Cell(20, 5, '19.99€', 1, 0, 'R');
-        $this->pdf->Cell(20, 5, '39.98€', 1, 1, 'R');
+            // Lignes de données
+            $this->pdf->SetFont('helvetica', '', 8);
+            $this->pdf->Cell(40, 5, 'Produit A', 1, 0, 'L');
+            $this->pdf->Cell(15, 5, '2', 1, 0, 'C');
+            $this->pdf->Cell(20, 5, '19.99 EUR', 1, 0, 'R');
+            $this->pdf->Cell(20, 5, '39.98 EUR', 1, 1, 'R');
 
-        $this->pdf->Cell(40, 5, 'Produit B', 1, 0, 'L');
-        $this->pdf->Cell(15, 5, '1', 1, 0, 'C');
-        $this->pdf->Cell(20, 5, '29.99€', 1, 0, 'R');
-        $this->pdf->Cell(20, 5, '29.99€', 1, 1, 'R');
+            $this->pdf->Cell(40, 5, 'Produit B', 1, 0, 'L');
+            $this->pdf->Cell(15, 5, '1', 1, 0, 'C');
+            $this->pdf->Cell(20, 5, '29.99 EUR', 1, 0, 'R');
+            $this->pdf->Cell(20, 5, '29.99 EUR', 1, 1, 'R');
+        } catch (Exception $e) {
+            error_log('PDF Builder: Exception dans render_product_table: ' . $e->getMessage());
+            // Fallback simple
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->SetFont('helvetica', '', 10);
+            $this->pdf->MultiCell($width, $height, 'Tableau de produits', 0, 'L', false);
+        }
     }
 
     private function render_document_type($element, $width, $height) {
@@ -421,31 +440,117 @@ class PDF_Generator {
     }
 
     private function render_text($text, $element, $width, $height) {
+        // Utiliser les propriétés de l'élément avec des valeurs par défaut
         $font_size = ($element['fontSize'] ?? 14) * 0.75; // Ajuster la taille pour TCPDF
-        $this->pdf->SetFont('helvetica', $this->get_font_style($element), $font_size);
+        $font_family = $element['fontFamily'] ?? 'helvetica';
+        $font_style = $this->get_font_style($element);
 
+        // Mapper les familles de polices CSS vers TCPDF
+        $tcpdf_fonts = [
+            'Arial, sans-serif' => 'helvetica',
+            'Helvetica, sans-serif' => 'helvetica',
+            'Times New Roman, serif' => 'times',
+            'Georgia, serif' => 'times',
+            'Courier New, monospace' => 'courier',
+            'Verdana, sans-serif' => 'helvetica'
+        ];
+
+        $tcpdf_font = $tcpdf_fonts[$font_family] ?? 'helvetica';
+
+        $this->pdf->SetFont($tcpdf_font, $font_style, $font_size);
+
+        // Couleur du texte
         $color = $this->hex_to_rgb($element['color'] ?? '#000000');
         $this->pdf->SetTextColor($color[0], $color[1], $color[2]);
 
-        // Calculer la position verticale pour centrer
+        // Couleur de fond si définie
+        if (!empty($element['backgroundColor']) && $element['backgroundColor'] !== 'transparent') {
+            $bg_color = $this->hex_to_rgb($element['backgroundColor']);
+            $this->pdf->SetFillColor($bg_color[0], $bg_color[1], $bg_color[2]);
+            $fill = true;
+        } else {
+            $fill = false;
+        }
+
+        // Bordure si définie
+        $border = 0;
+        if (!empty($element['borderWidth']) && $element['borderWidth'] > 0) {
+            $border = 1;
+            if (!empty($element['borderColor']) && $element['borderColor'] !== 'transparent') {
+                $border_color = $this->hex_to_rgb($element['borderColor']);
+                $this->pdf->SetDrawColor($border_color[0], $border_color[1], $border_color[2]);
+            }
+        }
+
+        // Calculer la position verticale pour centrer et appliquer le padding
         $current_y = $this->pdf->GetY();
-        $this->pdf->MultiCell($width, $height, $text, 0, $this->get_text_align($element), false);
+        $padding = ($element['padding'] ?? 8) * 0.75; // Convertir padding en mm
+
+        // Ajuster la hauteur et largeur avec le padding
+        $adjusted_width = $width - ($padding * 2);
+        $adjusted_height = $height - ($padding * 2);
+
+        // Positionner avec le padding
+        $this->pdf->SetXY($this->pdf->GetX() + $padding, $current_y + $padding);
+
+        $this->pdf->MultiCell($adjusted_width, $adjusted_height, $text, $border, $this->get_text_align($element), $fill);
     }
 
     private function render_multiline_text($text, $element, $width, $height) {
         $font_size = ($element['fontSize'] ?? 12) * 0.75;
-        $this->pdf->SetFont('helvetica', '', $font_size);
+        $font_family = $element['fontFamily'] ?? 'helvetica';
+
+        // Mapper les familles de polices CSS vers TCPDF
+        $tcpdf_fonts = [
+            'Arial, sans-serif' => 'helvetica',
+            'Helvetica, sans-serif' => 'helvetica',
+            'Times New Roman, serif' => 'times',
+            'Georgia, serif' => 'times',
+            'Courier New, monospace' => 'courier',
+            'Verdana, sans-serif' => 'helvetica'
+        ];
+
+        $tcpdf_font = $tcpdf_fonts[$font_family] ?? 'helvetica';
+        $font_style = $this->get_font_style($element);
+
+        $this->pdf->SetFont($tcpdf_font, $font_style, $font_size);
 
         $color = $this->hex_to_rgb($element['color'] ?? '#000000');
         $this->pdf->SetTextColor($color[0], $color[1], $color[2]);
 
-        $this->pdf->MultiCell($width, $height/4, $text, 0, 'L', false);
+        // Couleur de fond si définie
+        if (!empty($element['backgroundColor']) && $element['backgroundColor'] !== 'transparent') {
+            $bg_color = $this->hex_to_rgb($element['backgroundColor']);
+            $this->pdf->SetFillColor($bg_color[0], $bg_color[1], $bg_color[2]);
+            $fill = true;
+        } else {
+            $fill = false;
+        }
+
+        // Bordure si définie
+        $border = 0;
+        if (!empty($element['borderWidth']) && $element['borderWidth'] > 0) {
+            $border = 1;
+            if (!empty($element['borderColor']) && $element['borderColor'] !== 'transparent') {
+                $border_color = $this->hex_to_rgb($element['borderColor']);
+                $this->pdf->SetDrawColor($border_color[0], $border_color[1], $border_color[2]);
+            }
+        }
+
+        $padding = ($element['padding'] ?? 8) * 0.75; // Convertir padding en mm
+        $adjusted_width = $width - ($padding * 2);
+        $adjusted_height = $height - ($padding * 2);
+
+        // Positionner avec le padding
+        $this->pdf->SetXY($this->pdf->GetX() + $padding, $this->pdf->GetY() + $padding);
+
+        $this->pdf->MultiCell($adjusted_width, $adjusted_height/4, $text, $border, 'L', $fill);
     }
 
     private function get_font_style($element) {
         $style = '';
-        if ($element['fontWeight'] === 'bold') $style .= 'B';
-        if ($element['fontStyle'] === 'italic') $style .= 'I';
+        if (isset($element['fontWeight']) && $element['fontWeight'] === 'bold') $style .= 'B';
+        if (isset($element['fontStyle']) && $element['fontStyle'] === 'italic') $style .= 'I';
         return $style ?: '';
     }
 
@@ -510,8 +615,7 @@ function pdf_builder_generate_pdf() {
 
         // Récupérer les éléments
         $elements = json_decode(stripslashes($_POST['elements'] ?? '[]'), true);
-        error_log('PDF Builder: Éléments reçus: ' . count($elements) . ' éléments');
-        error_log('PDF Builder: Détails des éléments: ' . json_encode($elements, JSON_PRETTY_PRINT));
+        error_log('PDF Builder: ' . count($elements) . ' éléments reçus pour génération PDF');
 
         if (empty($elements)) {
             // Vider le buffer avant d'envoyer la réponse
