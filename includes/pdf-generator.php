@@ -462,37 +462,36 @@ function pdf_builder_generate_pdf() {
     try {
         // Vérifier la sécurité
         if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_nonce')) {
-            wp_die('Sécurité non valide');
+            wp_send_json_error('Sécurité non valide');
+            return;
         }
 
         // Récupérer les éléments
         $elements = json_decode(stripslashes($_POST['elements'] ?? '[]'), true);
 
         if (empty($elements)) {
-            wp_die('Aucun élément à traiter');
+            wp_send_json_error('Aucun élément à traiter');
+            return;
         }
 
         // Générer le PDF
         $generator = new PDF_Generator();
         $pdf_content = $generator->generate_from_elements($elements);
 
-        // Retourner le PDF
-        header('Content-Type: application/pdf');
-        header('Content-Disposition: attachment; filename="document.pdf"');
-        header('Content-Length: ' . strlen($pdf_content));
-        header('Cache-Control: private, max-age=0, must-revalidate');
-        header('Pragma: public');
+        if (empty($pdf_content)) {
+            wp_send_json_error('Erreur lors de la génération du PDF');
+            return;
+        }
 
-        echo $pdf_content;
-        exit;
+        // Retourner le PDF en base64 dans une réponse JSON
+        wp_send_json_success(array(
+            'pdf' => base64_encode($pdf_content),
+            'filename' => 'pdf-builder-pro-document.pdf'
+        ));
 
     } catch (Exception $e) {
         error_log('Erreur génération PDF: ' . $e->getMessage());
-        if (function_exists('wp_die')) {
-            wp_die('Erreur lors de la génération du PDF: ' . $e->getMessage());
-        } else {
-            die('Erreur lors de la génération du PDF: ' . $e->getMessage());
-        }
+        wp_send_json_error('Erreur lors de la génération du PDF: ' . $e->getMessage());
     }
 }
 

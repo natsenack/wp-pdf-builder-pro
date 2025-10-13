@@ -67,18 +67,31 @@ const PreviewModal = ({
       if (!response.ok) {
         throw new Error('Erreur réseau: ' + response.status + ' ' + response.statusText);
       }
-      return response.blob();
+      return response.json();
     })
-    .then(blob => {
-      console.log('Blob PDF reçu, taille:', blob.size, 'bytes');
+    .then(data => {
+      console.log('Données reçues:', data);
+
+      if (!data.success) {
+        throw new Error(data.data || 'Erreur inconnue lors de la génération du PDF');
+      }
+
+      // Convertir le PDF base64 en blob
+      const pdfBase64 = data.data.pdf;
+      const pdfBlob = new Blob(
+        [Uint8Array.from(atob(pdfBase64), c => c.charCodeAt(0))],
+        { type: 'application/pdf' }
+      );
+
+      console.log('Blob PDF créé, taille:', pdfBlob.size, 'bytes');
 
       // Créer un URL pour le blob PDF
-      const pdfUrl = URL.createObjectURL(blob);
+      const pdfUrl = URL.createObjectURL(pdfBlob);
 
       // Ouvrir le PDF dans une nouvelle fenêtre ou le télécharger
       const link = document.createElement('a');
       link.href = pdfUrl;
-      link.download = 'pdf-builder-pro-document.pdf';
+      link.download = data.data.filename || 'pdf-builder-pro-document.pdf';
       link.target = '_blank'; // Ouvrir dans un nouvel onglet
       document.body.appendChild(link);
       link.click();
