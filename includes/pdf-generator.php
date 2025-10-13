@@ -279,7 +279,7 @@ class PDF_Builder_Pro_Generator {
      * Rendu d'un element individuel
      */
     private function render_single_element($element, $px_to_mm) {
-        $type = $element['type'] ?? 'unknown';
+        $type = isset($element['type']) ? $element['type'] : 'unknown';
 
         switch ($type) {
             case 'text':
@@ -294,8 +294,29 @@ class PDF_Builder_Pro_Generator {
             case 'image':
                 $this->render_image_element($element, $px_to_mm);
                 break;
+            case 'customer_info':
+                $this->render_customer_info_element($element, $px_to_mm);
+                break;
+            case 'company_info':
+                $this->render_company_info_element($element, $px_to_mm);
+                break;
+            case 'company_logo':
+                $this->render_company_logo_element($element, $px_to_mm);
+                break;
+            case 'product_table':
+                $this->render_product_table_element($element, $px_to_mm);
+                break;
+            case 'document_type':
+                $this->render_document_type_element($element, $px_to_mm);
+                break;
+            case 'divider':
+                $this->render_divider_element($element, $px_to_mm);
+                break;
             default:
                 $this->log_error("Type d'element non supporte: $type");
+                if (isset($GLOBALS['pdf_debug_logs'])) {
+                    $GLOBALS['pdf_debug_logs'][] = "❌ TYPE D'ÉLÉMENT NON SUPPORTÉ: $type";
+                }
         }
     }
 
@@ -571,6 +592,128 @@ class PDF_Builder_Pro_Generator {
             'cache_size' => count($this->cache),
             'cache_keys' => array_keys($this->cache)
         ];
+    }
+
+    /**
+     * Rendu d'élément customer_info
+     */
+    private function render_customer_info_element($element, $px_to_mm) {
+        $x = isset($element['x']) ? $element['x'] * $px_to_mm : 0;
+        $y = isset($element['y']) ? $element['y'] * $px_to_mm : 0;
+        $width = isset($element['width']) ? $element['width'] * $px_to_mm : 100;
+        $height = isset($element['height']) ? $element['height'] * $px_to_mm : 50;
+
+        // Contenu factice pour l'instant (devrait venir des données WooCommerce)
+        $customer_info = "Client\nJean Dupont\n123 Rue de la Paix\n75001 Paris\nFrance";
+
+        $this->pdf->SetXY($x, $y);
+        $this->pdf->SetFont('helvetica', 'B', 12);
+        $this->pdf->Cell($width, 6, 'Client', 0, 2);
+        $this->pdf->SetFont('helvetica', '', 10);
+        $this->pdf->MultiCell($width, 5, $customer_info, 0, 'L');
+    }
+
+    /**
+     * Rendu d'élément company_info
+     */
+    private function render_company_info_element($element, $px_to_mm) {
+        $x = isset($element['x']) ? $element['x'] * $px_to_mm : 0;
+        $y = isset($element['y']) ? $element['y'] * $px_to_mm : 0;
+        $width = isset($element['width']) ? $element['width'] * $px_to_mm : 100;
+        $height = isset($element['height']) ? $element['height'] * $px_to_mm : 50;
+
+        // Contenu factice pour l'instant
+        $company_info = "ABC Company SARL\n456 Avenue des Champs\n75008 Paris\nFrance\nTel: 01 23 45 67 89";
+
+        $this->pdf->SetXY($x, $y);
+        $this->pdf->SetFont('helvetica', 'B', 12);
+        $this->pdf->Cell($width, 6, 'ABC Company SARL', 0, 2);
+        $this->pdf->SetFont('helvetica', '', 10);
+        $this->pdf->MultiCell($width, 5, "456 Avenue des Champs\n75008 Paris\nFrance\nTel: 01 23 45 67 89", 0, 'L');
+    }
+
+    /**
+     * Rendu d'élément company_logo
+     */
+    private function render_company_logo_element($element, $px_to_mm) {
+        $x = isset($element['x']) ? $element['x'] * $px_to_mm : 0;
+        $y = isset($element['y']) ? $element['y'] * $px_to_mm : 0;
+        $width = isset($element['width']) ? $element['width'] * $px_to_mm : 100;
+        $height = isset($element['height']) ? $element['height'] * $px_to_mm : 50;
+
+        // Pour l'instant, dessiner un rectangle placeholder
+        $this->pdf->SetXY($x, $y);
+        $this->pdf->SetFillColor(240, 240, 240);
+        $this->pdf->Rect($x, $y, $width, $height, 'F');
+        $this->pdf->SetDrawColor(200, 200, 200);
+        $this->pdf->Rect($x, $y, $width, $height, 'D');
+        $this->pdf->SetXY($x, $y + $height/2 - 3);
+        $this->pdf->SetFont('helvetica', '', 10);
+        $this->pdf->Cell($width, 6, 'LOGO ENTREPRISE', 0, 0, 'C');
+    }
+
+    /**
+     * Rendu d'élément product_table
+     */
+    private function render_product_table_element($element, $px_to_mm) {
+        $x = isset($element['x']) ? $element['x'] * $px_to_mm : 0;
+        $y = isset($element['y']) ? $element['y'] * $px_to_mm : 0;
+        $width = isset($element['width']) ? $element['width'] * $px_to_mm : 200;
+        $height = isset($element['height']) ? $element['height'] * $px_to_mm : 100;
+
+        // En-têtes du tableau
+        $this->pdf->SetXY($x, $y);
+        $this->pdf->SetFillColor(245, 245, 245);
+        $this->pdf->Rect($x, $y, $width, 8, 'F');
+        $this->pdf->SetFont('helvetica', 'B', 9);
+
+        $col_widths = [$width * 0.4, $width * 0.15, $width * 0.2, $width * 0.25];
+        $this->pdf->Cell($col_widths[0], 8, 'Produit', 1, 0, 'L', true);
+        $this->pdf->Cell($col_widths[1], 8, 'Qté', 1, 0, 'C', true);
+        $this->pdf->Cell($col_widths[2], 8, 'Prix', 1, 0, 'R', true);
+        $this->pdf->Cell($col_widths[3], 8, 'Total', 1, 1, 'R', true);
+
+        // Ligne de produit factice
+        $this->pdf->SetFont('helvetica', '', 8);
+        $this->pdf->Cell($col_widths[0], 6, 'Produit A - Description', 1, 0, 'L');
+        $this->pdf->Cell($col_widths[1], 6, '2', 1, 0, 'C');
+        $this->pdf->Cell($col_widths[2], 6, '19.99€', 1, 0, 'R');
+        $this->pdf->Cell($col_widths[3], 6, '39.98€', 1, 1, 'R');
+
+        // Total
+        $this->pdf->SetXY($x + $col_widths[0] + $col_widths[1] + $col_widths[2], $y + 14);
+        $this->pdf->SetFont('helvetica', 'B', 9);
+        $this->pdf->Cell($col_widths[3], 6, 'Total: 39.98€', 1, 1, 'R', true);
+    }
+
+    /**
+     * Rendu d'élément document_type
+     */
+    private function render_document_type_element($element, $px_to_mm) {
+        $x = isset($element['x']) ? $element['x'] * $px_to_mm : 0;
+        $y = isset($element['y']) ? $element['y'] * $px_to_mm : 0;
+        $width = isset($element['width']) ? $element['width'] * $px_to_mm : 100;
+        $height = isset($element['height']) ? $element['height'] * $px_to_mm : 50;
+
+        $this->pdf->SetXY($x, $y);
+        $this->pdf->SetFont('helvetica', 'B', 14);
+        $this->pdf->Cell($width, 8, 'FACTURE', 0, 1, 'R');
+        $this->pdf->SetFont('helvetica', '', 10);
+        $this->pdf->Cell($width, 6, 'N° INV-001', 0, 1, 'R');
+    }
+
+    /**
+     * Rendu d'élément divider
+     */
+    private function render_divider_element($element, $px_to_mm) {
+        $x = isset($element['x']) ? $element['x'] * $px_to_mm : 0;
+        $y = isset($element['y']) ? $element['y'] * $px_to_mm : 0;
+        $width = isset($element['width']) ? $element['width'] * $px_to_mm : 200;
+        $height = isset($element['height']) ? $element['height'] * $px_to_mm : 10;
+
+        // Ligne de séparation
+        $this->pdf->SetDrawColor(200, 200, 200);
+        $this->pdf->Line($x, $y + $height/2, $x + $width, $y + $height/2);
     }
 }
 
