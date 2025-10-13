@@ -23,28 +23,8 @@ class PDF_Generator {
     private $pdf;
 
     public function __construct() {
-        // Vérifier si TCPDF est disponible
-        if (class_exists('TCPDF')) {
-            // Créer une instance TCPDF
-            $this->pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
-
-            // Configuration de base
-            $this->pdf->SetCreator('PDF Builder Pro');
-            $this->pdf->SetAuthor('PDF Builder Pro');
-            $this->pdf->SetTitle('Document PDF Builder Pro');
-
-            // Supprimer les marges par défaut
-            $this->pdf->SetMargins(0, 0, 0);
-            $this->pdf->SetHeaderMargin(0);
-            $this->pdf->SetFooterMargin(0);
-
-            // Mode paysage si nécessaire (A4: 210x297mm)
-            $this->pdf->SetAutoPageBreak(false);
-        } else {
-            // TCPDF non disponible - mode dégradé
-            $this->pdf = null;
-            error_log('PDF Builder: TCPDF non disponible, génération PDF désactivée');
-        }
+        // Ne pas créer l'instance TCPDF ici - elle sera créée dans generate_from_elements
+        $this->pdf = null;
     }
 
     /**
@@ -52,6 +32,17 @@ class PDF_Generator {
      */
     public function generate_from_elements($elements) {
         try {
+            // Définir les constantes TCPDF par défaut avant le chargement
+            if (!defined('PDF_PAGE_ORIENTATION')) {
+                define('PDF_PAGE_ORIENTATION', 'P');
+            }
+            if (!defined('PDF_UNIT')) {
+                define('PDF_UNIT', 'mm');
+            }
+            if (!defined('PDF_PAGE_FORMAT')) {
+                define('PDF_PAGE_FORMAT', 'A4');
+            }
+
             // Charger TCPDF seulement quand nécessaire
             if (!class_exists('TCPDF')) {
                 error_log('PDF Builder: Chargement de TCPDF...');
