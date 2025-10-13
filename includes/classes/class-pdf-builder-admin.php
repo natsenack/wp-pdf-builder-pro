@@ -1822,8 +1822,30 @@ class PDF_Builder_Admin {
 
                     case 'image':
                     case 'company_logo':
-                        if ($content) {
-                            $html .= sprintf('<div class="pdf-element image-element" style="%s"><img src="%s" style="width: 100%%; height: 100%%; object-fit: contain;" alt="Image" /></div>', $style, esc_url($content));
+                        // Essayer de récupérer l'URL du logo depuis les options WordPress
+                        $logo_url = $content;
+
+                        // Si pas de contenu spécifique, essayer le logo du site WordPress
+                        if (!$logo_url) {
+                            $custom_logo_id = get_theme_mod('custom_logo');
+                            if ($custom_logo_id) {
+                                $logo_url = wp_get_attachment_image_url($custom_logo_id, 'full');
+                            }
+                        }
+
+                        // Si pas de logo WordPress, essayer l'option site_logo
+                        if (!$logo_url) {
+                            $site_logo_id = get_option('site_logo');
+                            if ($site_logo_id) {
+                                $logo_url = wp_get_attachment_image_url($site_logo_id, 'full');
+                            }
+                        }
+
+                        if ($logo_url) {
+                            $html .= sprintf('<div class="pdf-element image-element" style="%s"><img src="%s" style="width: 100%%; height: 100%%; object-fit: contain;" alt="Logo entreprise" /></div>', $style, esc_url($logo_url));
+                        } else {
+                            // Afficher un placeholder pour le logo de l'entreprise
+                            $html .= sprintf('<div class="pdf-element image-element" style="%s"><div style="width: 100%%; height: 100%%; background-color: #f0f0f0; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center; color: #666; font-size: 12px;">🏢 Logo</div></div>', $style);
                         }
                         break;
 
@@ -1933,7 +1955,7 @@ class PDF_Builder_Admin {
                     case 'customer_info':
                         if ($order) {
                             $customer_info = $this->format_complete_customer_info($order);
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, nl2br(esc_html($customer_info)));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, wp_kses_post(nl2br($customer_info)));
                         } else {
                             $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: 'Informations client'));
                         }
