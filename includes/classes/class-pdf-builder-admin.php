@@ -134,6 +134,9 @@ class PDF_Builder_Admin {
         add_action('wp_ajax_pdf_builder_view_logs', [$this, 'ajax_view_logs']);
         add_action('wp_ajax_pdf_builder_clear_logs', [$this, 'ajax_clear_logs']);
 
+        // Hook pour les actions de maintenance générales
+        add_action('wp_ajax_pdf_builder_maintenance', [$this, 'handle_maintenance_action']);
+
         // Actions de gestion des rôles
         add_action('wp_ajax_pdf_builder_reset_role_permissions', [$this, 'ajax_reset_role_permissions']);
         add_action('wp_ajax_pdf_builder_bulk_assign_permissions', [$this, 'ajax_bulk_assign_permissions']);
@@ -4285,6 +4288,176 @@ class PDF_Builder_Admin {
         // TODO: Implémenter un vrai comptage des templates quand le système de templates sera en place
         $templates = get_option('pdf_builder_templates', []);
         return is_array($templates) ? count($templates) : 0;
+    }
+
+    /**
+     * Gère les actions de maintenance via AJAX
+     */
+    public function handle_maintenance_action() {
+        // Vérifier les permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(array('message' => __('Permissions insuffisantes.', 'pdf-builder-pro')));
+            return;
+        }
+
+        // Vérifier le nonce
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_maintenance')) {
+            wp_send_json_error(array('message' => __('Nonce invalide.', 'pdf-builder-pro')));
+            return;
+        }
+
+        // Récupérer l'action de maintenance
+        $action = isset($_POST['maintenance_action']) ? sanitize_text_field($_POST['maintenance_action']) : '';
+
+        try {
+            switch ($action) {
+                case 'clear_cache':
+                    $result = $this->perform_clear_cache();
+                    break;
+
+                case 'clear_temp_files':
+                    $result = $this->perform_clear_temp_files();
+                    break;
+
+                case 'repair_templates':
+                    $result = $this->perform_repair_templates();
+                    break;
+
+                case 'reset_settings':
+                    $result = $this->perform_reset_settings();
+                    break;
+
+                default:
+                    wp_send_json_error(array('message' => __('Action de maintenance inconnue.', 'pdf-builder-pro')));
+                    return;
+            }
+
+            if ($result['success']) {
+                wp_send_json_success(array('message' => $result['message']));
+            } else {
+                wp_send_json_error(array('message' => $result['message']));
+            }
+
+        } catch (Exception $e) {
+            error_log('PDF Builder Maintenance Error: ' . $e->getMessage());
+            wp_send_json_error(array('message' => __('Erreur lors de l\'exécution de l\'action de maintenance.', 'pdf-builder-pro')));
+        }
+    }
+
+    /**
+     * Vide le cache du plugin
+     */
+    private function perform_clear_cache() {
+        $cache_dir = PDF_BUILDER_PLUGIN_DIR . 'cache/';
+        $cleared_files = 0;
+        $total_size = 0;
+
+        if (is_dir($cache_dir)) {
+            $files = glob($cache_dir . '*');
+            foreach ($files as $file) {
+                if (is_file($file)) {
+                    $size = filesize($file);
+                    if (unlink($file)) {
+                        $cleared_files++;
+                        $total_size += $size;
+                    }
+                }
+            }
+        }
+
+        // Invalider aussi le cache WordPress si nécessaire
+        wp_cache_flush();
+
+        return array(
+            'success' => true,
+            'message' => sprintf(__('Cache vidé avec succès. %d fichiers supprimés, %s libérés.', 'pdf-builder-pro'), $cleared_files, size_format($total_size))
+        );
+    }
+
+    /**
+     * Supprime les fichiers temporaires
+     */
+    private function perform_clear_temp_files() {
+        $temp_dir = sys_get_temp_dir() . '/pdf-builder/';
+        $cleared_files = 0;
+        $total_size = 0;
+
+        if (is_dir($temp_dir)) {
+            $files = glob($temp_dir . '*');
+            foreach ($files as $file) {
+                if (is_file($file) && filemtime($file) < time() - 86400) { // Fichiers de plus de 24h
+                    $size = filesize($file);
+                    if (unlink($file)) {
+                        $cleared_files++;
+                        $total_size += $size;
+                    }
+                }
+            }
+        }
+
+        return array(
+            'success' => true,
+            'message' => sprintf(__('Fichiers temporaires nettoyés. %d fichiers supprimés, %s libérés.', 'pdf-builder-pro'), $cleared_files, size_format($total_size))
+        );
+    }
+
+    /**
+     * Répare les templates corrompus
+     */
+    private function perform_repair_templates() {
+        $templates = get_option('pdf_builder_templates', []);
+        $repaired_count = 0;
+
+        if (is_array($templates)) {
+            foreach ($templates as $key => $template) {
+                // Vérifier et réparer la structure des templates
+                if (!isset($template['name']) || !isset($template['data'])) {
+                    unset($templates[$key]);
+                    $repaired_count++;
+                }
+            }
+        }
+
+        update_option('pdf_builder_templates', $templates);
+
+        return array(
+            'success' => true,
+            'message' => sprintf(__('Templates réparés. %d templates corrompus supprimés.', 'pdf-builder-pro'), $repaired_count)
+        );
+    }
+
+    /**
+     * Réinitialise tous les paramètres aux valeurs par défaut
+     */
+    private function perform_reset_settings() {
+        // Liste des options à réinitialiser
+        $options_to_reset = [
+            'pdf_builder_settings',
+            'pdf_builder_allowed_roles',
+            'pdf_builder_templates',
+            'pdf_builder_admin_email',
+            'pdf_builder_notification_log_level',
+            'pdf_builder_default_canvas_width',
+            'pdf_builder_default_canvas_height',
+            'pdf_builder_show_grid',
+            'pdf_builder_snap_to_grid',
+            'pdf_builder_snap_to_elements'
+        ];
+
+        $reset_count = 0;
+        foreach ($options_to_reset as $option) {
+            if (delete_option($option)) {
+                $reset_count++;
+            }
+        }
+
+        // Vider le cache
+        wp_cache_flush();
+
+        return array(
+            'success' => true,
+            'message' => sprintf(__('Paramètres réinitialisés avec succès. %d options supprimées.', 'pdf-builder-pro'), $reset_count)
+        );
     }
 }
 

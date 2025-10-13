@@ -466,7 +466,7 @@ window.addEventListener('load', function() {
                                     <label for="license_key"><?php _e('Clé de licence', 'pdf-builder-pro'); ?></label>
                                 </th>
                                 <td>
-                                    <input type="text" name="license_key" id="license_key" class="regular-text" placeholder="XXXX-XXXX-XXXX-XXXX" required style="min-width: 300px;">
+                                    <input type="text" name="license_key" id="license_key" class="regular-text" placeholder="XXXX-XXXX-XXXX-XXXX" style="min-width: 300px;">
                                     <p class="description">
                                         <?php _e('Vous pouvez trouver votre clé de licence dans votre compte client.', 'pdf-builder-pro'); ?>
                                     </p>
@@ -477,6 +477,23 @@ window.addEventListener('load', function() {
                             <input type="submit" name="activate_license" class="button button-primary" value="<?php esc_attr_e('Activer la licence', 'pdf-builder-pro'); ?>">
                         </p>
                     </form>
+
+                    <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var licenseForm = document.querySelector('form[action*="activate_license"]');
+                        if (licenseForm) {
+                            licenseForm.addEventListener('submit', function(e) {
+                                var licenseKey = document.getElementById('license_key');
+                                if (licenseKey && licenseKey.value.trim() === '') {
+                                    alert('<?php _e('Veuillez entrer une clé de licence valide.', 'pdf-builder-pro'); ?>');
+                                    licenseKey.focus();
+                                    e.preventDefault();
+                                    return false;
+                                }
+                            });
+                        }
+                    });
+                    </script>
                 </div>
                 <?php else: ?>
                 <div class="license-management" style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px;">
@@ -879,18 +896,23 @@ window.addEventListener('load', function() {
                 <h2><?php _e('Actions de Maintenance', 'pdf-builder-pro'); ?></h2>
 
                 <div class="maintenance-actions">
+                    <!-- Zone de statut pour les actions de maintenance -->
+                    <div id="maintenance-status" class="maintenance-status" style="margin-bottom: 20px; display: none;">
+                        <!-- Les messages de statut seront affichés ici -->
+                    </div>
+
                     <div class="maintenance-section" style="margin-bottom: 30px;">
                         <h3><?php _e('Nettoyage des Données', 'pdf-builder-pro'); ?></h3>
                         <p><?php _e('Supprimez les données temporaires et les fichiers obsolètes pour optimiser les performances.', 'pdf-builder-pro'); ?></p>
 
-                        <form method="post" style="display: inline;">
+                        <form method="post" style="display: inline;" id="clear-cache-form">
                             <?php wp_nonce_field('clear_cache', 'clear_cache_nonce'); ?>
-                            <input type="submit" name="clear_cache" class="button button-secondary" value="<?php esc_attr_e('Vider le Cache', 'pdf-builder-pro'); ?>">
+                            <input type="submit" name="clear_cache" id="clear-cache-btn" class="button button-secondary" value="<?php esc_attr_e('Vider le Cache', 'pdf-builder-pro'); ?>">
                         </form>
 
-                        <form method="post" style="display: inline; margin-left: 10px;">
+                        <form method="post" style="display: inline; margin-left: 10px;" id="clear-temp-files-form">
                             <?php wp_nonce_field('clear_temp_files', 'clear_temp_files_nonce'); ?>
-                            <input type="submit" name="clear_temp_files" class="button button-secondary" value="<?php esc_attr_e('Supprimer Fichiers Temporaires', 'pdf-builder-pro'); ?>">
+                            <input type="submit" name="clear_temp_files" id="clear-temp-files-btn" class="button button-secondary" value="<?php esc_attr_e('Supprimer Fichiers Temporaires', 'pdf-builder-pro'); ?>">
                         </form>
                     </div>
 
@@ -898,14 +920,14 @@ window.addEventListener('load', function() {
                         <h3><?php _e('Réparation de Données', 'pdf-builder-pro'); ?></h3>
                         <p><?php _e('Réparez les templates corrompus et les paramètres invalides.', 'pdf-builder-pro'); ?></p>
 
-                        <form method="post" style="display: inline;">
+                        <form method="post" style="display: inline;" id="repair-templates-form">
                             <?php wp_nonce_field('repair_templates', 'repair_templates_nonce'); ?>
-                            <input type="submit" name="repair_templates" class="button button-secondary" value="<?php esc_attr_e('Réparer Templates', 'pdf-builder-pro'); ?>">
+                            <input type="submit" name="repair_templates" id="repair-templates-btn" class="button button-secondary" value="<?php esc_attr_e('Réparer Templates', 'pdf-builder-pro'); ?>">
                         </form>
 
-                        <form method="post" style="display: inline; margin-left: 10px;">
+                        <form method="post" style="display: inline; margin-left: 10px;" id="reset-settings-form">
                             <?php wp_nonce_field('reset_settings', 'reset_settings_nonce'); ?>
-                            <input type="submit" name="reset_settings" class="button button-warning" value="<?php esc_attr_e('Réinitialiser Paramètres', 'pdf-builder-pro'); ?>"
+                            <input type="submit" name="reset_settings" id="reset-settings-btn" class="button button-warning" value="<?php esc_attr_e('Réinitialiser Paramètres', 'pdf-builder-pro'); ?>"
                                    onclick="return confirm('<?php _e('Attention: Cette action va réinitialiser tous les paramètres aux valeurs par défaut. Continuer ?', 'pdf-builder-pro'); ?>');">
                         </form>
                     </div>
@@ -1377,6 +1399,77 @@ echo '<style>
     margin-top: 15px;
 }
 
+/* Styles pour l'onglet Maintenance */
+.maintenance-status {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.maintenance-status .notice {
+    margin: 0;
+    padding: 10px 12px;
+}
+
+.maintenance-status .notice-success {
+    border-left-color: #46b450;
+    background-color: #f0f9f0;
+}
+
+.maintenance-status .notice-error {
+    border-left-color: #dc3232;
+    background-color: #fef2f2;
+}
+
+.maintenance-status .notice-info {
+    border-left-color: #00a0d2;
+    background-color: #f0f8ff;
+}
+
+.maintenance-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.maintenance-section {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.maintenance-section h3 {
+    margin: 0 0 15px 0;
+    color: #23282d;
+    font-size: 16px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.maintenance-section p {
+    margin: 0 0 15px 0;
+    color: #666;
+}
+
+.maintenance-section .button {
+    margin-right: 10px;
+    margin-bottom: 5px;
+}
+
+.maintenance-section .button-warning {
+    background-color: #d63638;
+    border-color: #d63638;
+    color: #fff;
+}
+
+.maintenance-section .button-warning:hover {
+    background-color: #b32d2e;
+    border-color: #b32d2e;
+}
+
 /* Styles for sub-tabs in Canvas tab */
 .sub-nav-tab-wrapper {
     margin: 20px 0 30px 0;
@@ -1555,6 +1648,183 @@ echo '<style>
 
         // Initialiser le compteur
         updateSelectedCount();
+    });
+
+    // Gestion des actions de maintenance en AJAX
+    $(document).ready(function() {
+        // Fonction utilitaire pour afficher les messages de statut
+        function showMaintenanceStatus(message, type) {
+            var $status = $('#maintenance-status');
+            var statusClass = type === 'success' ? 'notice-success' : (type === 'error' ? 'notice-error' : 'notice-info');
+
+            $status.html('<div class="notice ' + statusClass + ' is-dismissible"><p>' + message + '</p></div>');
+            $status.show();
+
+            // Masquer automatiquement après 5 secondes pour les succès
+            if (type === 'success') {
+                setTimeout(function() {
+                    $status.fadeOut();
+                }, 5000);
+            }
+        }
+
+        // Fonction utilitaire pour gérer l'état des boutons
+        function setButtonState(buttonId, loading, text) {
+            var $button = $('#' + buttonId);
+            $button.prop('disabled', loading);
+            if (loading) {
+                $button.data('original-text', $button.val());
+                $button.val(text || '<?php _e('Traitement...', 'pdf-builder-pro'); ?>');
+            } else {
+                $button.val($button.data('original-text') || $button.val());
+            }
+        }
+
+        // Action: Vider le Cache
+        $('#clear-cache-btn').on('click', function(e) {
+            e.preventDefault();
+
+            if (!confirm('<?php _e('Êtes-vous sûr de vouloir vider le cache ?', 'pdf-builder-pro'); ?>')) {
+                return;
+            }
+
+            setButtonState('clear-cache-btn', true, '<?php _e('Nettoyage...', 'pdf-builder-pro'); ?>');
+            showMaintenanceStatus('<?php _e('Nettoyage du cache en cours...', 'pdf-builder-pro'); ?>', 'info');
+
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_maintenance',
+                    maintenance_action: 'clear_cache',
+                    nonce: pdfBuilderMaintenanceNonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        showMaintenanceStatus('<?php _e('Cache vidé avec succès !', 'pdf-builder-pro'); ?>', 'success');
+                    } else {
+                        var errorMsg = response.data && response.data.message ? response.data.message : '<?php _e('Erreur lors du nettoyage du cache.', 'pdf-builder-pro'); ?>';
+                        showMaintenanceStatus(errorMsg, 'error');
+                    }
+                },
+                error: function() {
+                    showMaintenanceStatus('<?php _e('Erreur de connexion lors du nettoyage du cache.', 'pdf-builder-pro'); ?>', 'error');
+                },
+                complete: function() {
+                    setButtonState('clear-cache-btn', false);
+                }
+            });
+        });
+
+        // Action: Supprimer Fichiers Temporaires
+        $('#clear-temp-files-btn').on('click', function(e) {
+            e.preventDefault();
+
+            if (!confirm('<?php _e('Êtes-vous sûr de vouloir supprimer les fichiers temporaires ?', 'pdf-builder-pro'); ?>')) {
+                return;
+            }
+
+            setButtonState('clear-temp-files-btn', true, '<?php _e('Suppression...', 'pdf-builder-pro'); ?>');
+            showMaintenanceStatus('<?php _e('Suppression des fichiers temporaires en cours...', 'pdf-builder-pro'); ?>', 'info');
+
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_maintenance',
+                    maintenance_action: 'clear_temp_files',
+                    nonce: pdfBuilderMaintenanceNonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        showMaintenanceStatus('<?php _e('Fichiers temporaires supprimés avec succès !', 'pdf-builder-pro'); ?>', 'success');
+                    } else {
+                        var errorMsg = response.data && response.data.message ? response.data.message : '<?php _e('Erreur lors de la suppression des fichiers temporaires.', 'pdf-builder-pro'); ?>';
+                        showMaintenanceStatus(errorMsg, 'error');
+                    }
+                },
+                error: function() {
+                    showMaintenanceStatus('<?php _e('Erreur de connexion lors de la suppression des fichiers temporaires.', 'pdf-builder-pro'); ?>', 'error');
+                },
+                complete: function() {
+                    setButtonState('clear-temp-files-btn', false);
+                }
+            });
+        });
+
+        // Action: Réparer Templates
+        $('#repair-templates-btn').on('click', function(e) {
+            e.preventDefault();
+
+            if (!confirm('<?php _e('Êtes-vous sûr de vouloir réparer les templates ?', 'pdf-builder-pro'); ?>')) {
+                return;
+            }
+
+            setButtonState('repair-templates-btn', true, '<?php _e('Réparation...', 'pdf-builder-pro'); ?>');
+            showMaintenanceStatus('<?php _e('Réparation des templates en cours...', 'pdf-builder-pro'); ?>', 'info');
+
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_maintenance',
+                    maintenance_action: 'repair_templates',
+                    nonce: pdfBuilderMaintenanceNonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        showMaintenanceStatus('<?php _e('Templates réparés avec succès !', 'pdf-builder-pro'); ?>', 'success');
+                    } else {
+                        var errorMsg = response.data && response.data.message ? response.data.message : '<?php _e('Erreur lors de la réparation des templates.', 'pdf-builder-pro'); ?>';
+                        showMaintenanceStatus(errorMsg, 'error');
+                    }
+                },
+                error: function() {
+                    showMaintenanceStatus('<?php _e('Erreur de connexion lors de la réparation des templates.', 'pdf-builder-pro'); ?>', 'error');
+                },
+                complete: function() {
+                    setButtonState('repair-templates-btn', false);
+                }
+            });
+        });
+
+        // Action: Réinitialiser Paramètres
+        $('#reset-settings-btn').on('click', function(e) {
+            e.preventDefault();
+
+            // Le confirm est déjà géré par l'attribut onclick du bouton
+            // Si l'utilisateur annule, on ne fait rien
+            if (!confirm('<?php _e('Attention: Cette action va réinitialiser tous les paramètres aux valeurs par défaut. Continuer ?', 'pdf-builder-pro'); ?>')) {
+                return;
+            }
+
+            setButtonState('reset-settings-btn', true, '<?php _e('Réinitialisation...', 'pdf-builder-pro'); ?>');
+            showMaintenanceStatus('<?php _e('Réinitialisation des paramètres en cours...', 'pdf-builder-pro'); ?>', 'info');
+
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'pdf_builder_maintenance',
+                    maintenance_action: 'reset_settings',
+                    nonce: pdfBuilderMaintenanceNonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        showMaintenanceStatus('<?php _e('Paramètres réinitialisés avec succès ! Rechargez la page pour voir les changements.', 'pdf-builder-pro'); ?>', 'success');
+                    } else {
+                        var errorMsg = response.data && response.data.message ? response.data.message : '<?php _e('Erreur lors de la réinitialisation des paramètres.', 'pdf-builder-pro'); ?>';
+                        showMaintenanceStatus(errorMsg, 'error');
+                    }
+                },
+                error: function() {
+                    showMaintenanceStatus('<?php _e('Erreur de connexion lors de la réinitialisation des paramètres.', 'pdf-builder-pro'); ?>', 'error');
+                },
+                complete: function() {
+                    setButtonState('reset-settings-btn', false);
+                }
+            });
+        });
     });
 
 })(jQuery);
