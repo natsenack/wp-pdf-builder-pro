@@ -341,6 +341,147 @@ class PDF_Builder_Admin {
                         </div>
                     </div>
                 </div>
+
+                <!-- Fonctionnalités complètes -->
+                <div class="dashboard-features">
+                    <h3>✨ Fonctionnalités de PDF Builder Pro</h3>
+                    <div class="features-grid">
+                        <!-- Éditeur Canvas -->
+                        <div class="feature-category">
+                            <h4>🎨 Éditeur Canvas</h4>
+                            <ul>
+                                <li>Interface drag & drop intuitive</li>
+                                <li>Éditeur visuel en temps réel</li>
+                                <li>Grille d'aimantation magnétique</li>
+                                <li>Zoom fluide (10% à 500%)</li>
+                                <li>Navigation panoramique</li>
+                                <li>Compteur FPS intégré</li>
+                                <li>Aperçu en direct</li>
+                            </ul>
+                        </div>
+
+                        <!-- Éléments de Design -->
+                        <div class="feature-category">
+                            <h4>📐 Éléments de Design</h4>
+                            <ul>
+                                <li>Textes avec formatage riche</li>
+                                <li>Images et logos</li>
+                                <li>Formes géométriques</li>
+                                <li>Lignes et bordures</li>
+                                <li>Code-barres et QR codes</li>
+                                <li>Éléments WooCommerce</li>
+                                <li>Variables dynamiques</li>
+                            </ul>
+                        </div>
+
+                        <!-- Gestion des Templates -->
+                        <div class="feature-category">
+                            <h4>📋 Gestion des Templates</h4>
+                            <ul>
+                                <li>Création de modèles personnalisés</li>
+                                <li>Import/Export de templates</li>
+                                <li>Catégorisation avancée</li>
+                                <li>Templates prédéfinis</li>
+                                <li>Historique des versions</li>
+                                <li>Partage d'équipe</li>
+                                <li>Sauvegarde automatique</li>
+                            </ul>
+                        </div>
+
+                        <!-- Intégration WooCommerce -->
+                        <div class="feature-category">
+                            <h4>🛒 WooCommerce</h4>
+                            <ul>
+                                <li>Factures automatiques</li>
+                                <li>Bon de livraison</li>
+                                <li>Étiquettes de produits</li>
+                                <li>Intégration commandes</li>
+                                <li>Variables dynamiques</li>
+                                <li>Support HPOS</li>
+                                <li>Gestion des statuts</li>
+                            </ul>
+                        </div>
+
+                        <!-- Export et Qualité -->
+                        <div class="feature-category">
+                            <h4>📤 Export & Qualité</h4>
+                            <ul>
+                                <li>PDF haute qualité</li>
+                                <li>Compression intelligente</li>
+                                <li>Polices embarquées</li>
+                                <li>Métadonnées PDF</li>
+                                <li>Formats multiples</li>
+                                <li>Optimisation web</li>
+                                <li>Signature numérique</li>
+                            </ul>
+                        </div>
+
+                        <!-- Paramètres Avancés -->
+                        <div class="feature-category">
+                            <h4>⚙️ Paramètres Avancés</h4>
+                            <ul>
+                                <li>Configuration canvas</li>
+                                <li>Paramètres de performance</li>
+                                <li>Gestion des rôles</li>
+                                <li>Notifications email</li>
+                                <li>Cache intelligent</li>
+                                <li>Logs détaillés</li>
+                                <li>Actions de maintenance</li>
+                            </ul>
+                        </div>
+
+                        <!-- API et Intégrations -->
+                        <div class="feature-category">
+                            <h4>🔗 API & Intégrations</h4>
+                            <ul>
+                                <li>API REST complète</li>
+                                <li>Webhooks personnalisés</li>
+                                <li>Intégration Zapier</li>
+                                <li>Support JSON</li>
+                                <li>Import CSV/Excel</li>
+                                <li>Connexions externes</li>
+                                <li>Callbacks JavaScript</li>
+                            </ul>
+                        </div>
+
+                        <!-- Sécurité et Performance -->
+                        <div class="feature-category">
+                            <h4>🔒 Sécurité & Performance</h4>
+                            <ul>
+                                <li>Validation des données</li>
+                                <li>Protection CSRF</li>
+                                <li>Sanitisation automatique</li>
+                                <li>Cache optimisé</li>
+                                <li>Compression GZIP</li>
+                                <li>Monitoring des ressources</li>
+                                <li>Logs de sécurité</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Nouvelles fonctionnalités -->
+                    <div class="new-features">
+                        <h4>🆕 Nouvelles fonctionnalités (v1.0.2)</h4>
+                        <div class="new-features-list">
+                            <div class="new-feature-item">
+                                <span class="feature-badge">NOUVEAU</span>
+                                <strong>Compteur FPS</strong> - Surveillez les performances de l'éditeur canvas
+                            </div>
+                            <div class="new-feature-item">
+                                <span class="feature-badge">AMÉLIORÉ</span>
+                                <strong>Aperçu côté serveur</strong> - Validation des éléments avant génération
+                            </div>
+                            <div class="new-feature-item">
+                                <span class="feature-badge">CORRIGÉ</span>
+                                <strong>Paramètres Canvas</strong> - Sauvegarde et chargement corrects de tous les paramètres
+                            </div>
+                            <div class="new-feature-item">
+                                <span class="feature-badge">OPTIMISÉ</span>
+                                <strong>Performance AJAX</strong> - Requêtes plus rapides et fiables
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <style>
@@ -465,6 +606,109 @@ class PDF_Builder_Admin {
                     margin: 0;
                     color: #666;
                     font-size: 14px;
+                }
+
+                /* Styles pour la section fonctionnalités */
+                .dashboard-features {
+                    background: #fff;
+                    border: 1px solid #e1e1e1;
+                    border-radius: 8px;
+                    padding: 25px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                    margin-top: 30px;
+                }
+
+                .dashboard-features h3 {
+                    margin-top: 0;
+                    color: #1d2327;
+                    border-bottom: 2px solid #2271b1;
+                    padding-bottom: 10px;
+                }
+
+                .features-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                    gap: 25px;
+                    margin-top: 25px;
+                }
+
+                .feature-category {
+                    background: #f8f9fa;
+                    border: 1px solid #e9ecef;
+                    border-radius: 6px;
+                    padding: 20px;
+                }
+
+                .feature-category h4 {
+                    margin: 0 0 15px 0;
+                    color: #2271b1;
+                    font-size: 16px;
+                    border-bottom: 1px solid #dee2e6;
+                    padding-bottom: 8px;
+                }
+
+                .feature-category ul {
+                    list-style: none;
+                    padding: 0;
+                    margin: 0;
+                }
+
+                .feature-category li {
+                    padding: 4px 0;
+                    color: #495057;
+                    font-size: 14px;
+                    position: relative;
+                    padding-left: 20px;
+                }
+
+                .feature-category li:before {
+                    content: "✓";
+                    color: #28a745;
+                    font-weight: bold;
+                    position: absolute;
+                    left: 0;
+                }
+
+                /* Styles pour les nouvelles fonctionnalités */
+                .new-features {
+                    margin-top: 30px;
+                    padding-top: 25px;
+                    border-top: 1px solid #e9ecef;
+                }
+
+                .new-features h4 {
+                    color: #1d2327;
+                    margin-bottom: 15px;
+                }
+
+                .new-features-list {
+                    display: grid;
+                    gap: 10px;
+                }
+
+                .new-feature-item {
+                    display: flex;
+                    align-items: center;
+                    padding: 10px 15px;
+                    background: #fff3cd;
+                    border: 1px solid #ffeaa7;
+                    border-radius: 4px;
+                    font-size: 14px;
+                }
+
+                .feature-badge {
+                    background: #fd7e14;
+                    color: white;
+                    padding: 2px 8px;
+                    border-radius: 12px;
+                    font-size: 11px;
+                    font-weight: bold;
+                    margin-right: 10px;
+                    flex-shrink: 0;
+                }
+
+                .new-feature-item strong {
+                    color: #856404;
                 }
             </style>
         </div>
