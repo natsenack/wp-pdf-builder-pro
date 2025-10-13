@@ -35,8 +35,11 @@ const PreviewModal = ({
     });
 
     // Vérifier que les variables AJAX sont disponibles
-    if (!ajaxurl || !pdfBuilderNonce) {
-      console.error('Variables AJAX manquantes:', { ajaxurl, pdfBuilderNonce });
+    const ajaxUrl = window.pdfBuilderAjax?.ajaxurl || ajaxurl;
+    const nonce = window.pdfBuilderAjax?.nonce || pdfBuilderNonce;
+
+    if (!ajaxUrl || !nonce) {
+      console.error('Variables AJAX manquantes:', { ajaxUrl, nonce, windowPdfBuilderAjax: window.pdfBuilderAjax });
       alert('Erreur: Variables AJAX non disponibles. Rechargez la page.');
       return;
     }
@@ -44,12 +47,15 @@ const PreviewModal = ({
     // Préparer les données pour l'AJAX
     const formData = new FormData();
     formData.append('action', 'pdf_builder_generate_pdf');
-    formData.append('nonce', pdfBuilderNonce);
+    formData.append('nonce', nonce);
     formData.append('elements', JSON.stringify(elements));
     formData.append('canvasWidth', canvasWidth);
     formData.append('canvasHeight', canvasHeight);
 
-    console.log('Envoi requête AJAX vers:', ajaxurl);
+    console.log('Valeur du nonce envoyé:', nonce);
+    console.log('Variables AJAX disponibles:', { ajaxUrl, nonce });
+
+    console.log('Envoi requête AJAX vers:', ajaxUrl);
 
     // Afficher un indicateur de chargement
     const printButton = document.querySelector('.btn-primary');
@@ -58,7 +64,7 @@ const PreviewModal = ({
     printButton.disabled = true;
 
     // Envoyer la requête AJAX
-    fetch(ajaxurl, {
+    fetch(ajaxUrl, {
       method: 'POST',
       body: formData
     })
