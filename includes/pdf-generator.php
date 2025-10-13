@@ -8,46 +8,59 @@ if (!defined('ABSPATH') && !defined('PDF_GENERATOR_TEST_MODE')) {
     exit;
 }
 
-// Inclure TCPDF
+// Inclure TCPDF - TEMPORAIREMENT DÉSACTIVÉ POUR DIAGNOSTIC
+/*
 if (function_exists('plugin_dir_path')) {
     require_once plugin_dir_path(__FILE__) . '../lib/tcpdf_autoload.php';
 } else {
     // Mode test - utiliser __DIR__
     require_once __DIR__ . '/../lib/tcpdf_autoload.php';
 }
+*/
 
 class PDF_Generator {
 
     private $pdf;
 
     public function __construct() {
-        // Créer une instance TCPDF
-        $this->pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+        // Vérifier si TCPDF est disponible
+        if (class_exists('TCPDF')) {
+            // Créer une instance TCPDF
+            $this->pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
-        // Configuration de base
-        $this->pdf->SetCreator('PDF Builder Pro');
-        $this->pdf->SetAuthor('PDF Builder Pro');
-        $this->pdf->SetTitle('Document PDF Builder Pro');
+            // Configuration de base
+            $this->pdf->SetCreator('PDF Builder Pro');
+            $this->pdf->SetAuthor('PDF Builder Pro');
+            $this->pdf->SetTitle('Document PDF Builder Pro');
 
-        // Supprimer les marges par défaut
-        $this->pdf->SetMargins(0, 0, 0);
-        $this->pdf->SetHeaderMargin(0);
-        $this->pdf->SetFooterMargin(0);
+            // Supprimer les marges par défaut
+            $this->pdf->SetMargins(0, 0, 0);
+            $this->pdf->SetHeaderMargin(0);
+            $this->pdf->SetFooterMargin(0);
 
-        // Mode paysage si nécessaire (A4: 210x297mm)
-        $this->pdf->SetAutoPageBreak(false);
-
-        // Ajouter une page
-        $this->pdf->AddPage();
+            // Mode paysage si nécessaire (A4: 210x297mm)
+            $this->pdf->SetAutoPageBreak(false);
+        } else {
+            // TCPDF non disponible - mode dégradé
+            $this->pdf = null;
+            error_log('PDF Builder: TCPDF non disponible, génération PDF désactivée');
+        }
     }
 
     /**
      * Générer le PDF à partir des éléments
      */
     public function generate_from_elements($elements) {
+        if (!$this->pdf) {
+            return false; // TCPDF non disponible
+        }
+
         // Dimensions A4 en mm (TCPDF utilise les mm par défaut)
         $page_width = 210;  // A4 width
         $page_height = 297; // A4 height
+
+        // Ajouter une page
+        $this->pdf->AddPage();
 
         // Facteur de conversion pixels -> mm (72 DPI)
         $px_to_mm = 0.264583;
@@ -64,6 +77,10 @@ class PDF_Generator {
      * Rendre un élément dans le PDF
      */
     private function render_element($element, $px_to_mm, $page_width, $page_height) {
+        if (!$this->pdf) {
+            return;
+        }
+
         $x = $element['x'] * $px_to_mm;
         $y = $element['y'] * $px_to_mm;
         $width = $element['width'] * $px_to_mm;

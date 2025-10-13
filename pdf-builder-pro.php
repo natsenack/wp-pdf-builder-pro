@@ -11,11 +11,6 @@
  * Domain Path: /languages
  */
 
-// SÉCURITÉ ABSOLUE : empêcher l'accès direct
-if (!defined('ABSPATH')) {
-    exit('Accès direct interdit.');
-}
-
 // VERSION FINALE : CHARGEMENT ULTRA-DIFFÉRÉ
 // Le plugin ne fait RIEN tant que WordPress n'est pas complètement chargé
 
