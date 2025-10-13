@@ -4,6 +4,8 @@
  * React/TypeScript Canvas Editor
  */
 
+error_log("PDF Builder Debug: Début de template-editor.php");
+
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit.');
 }

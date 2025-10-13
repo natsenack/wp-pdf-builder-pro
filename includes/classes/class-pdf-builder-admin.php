@@ -948,8 +948,13 @@ class PDF_Builder_Admin {
      * Template Editor page (React/TypeScript)
      */
     public function template_editor_page() {
+        error_log("PDF Builder Debug: template_editor_page() appelée");
+
         $this->check_admin_permissions();
+        error_log("PDF Builder Debug: Permissions vérifiées, incluant template-editor.php");
+
         include plugin_dir_path(dirname(__FILE__)) . 'template-editor.php';
+        error_log("PDF Builder Debug: template-editor.php inclus avec succès");
     }
 
     /**
