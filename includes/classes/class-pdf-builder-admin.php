@@ -1608,6 +1608,8 @@ class PDF_Builder_Admin {
             $elements = $template['elements'];
         }
 
+        error_log('🔍 PDF BUILDER - generate_unified_html: Processing ' . count($elements) . ' elements');
+
         if (is_array($elements)) {
             foreach ($elements as $element) {
                 // Gérer les deux formats de structure des éléments
@@ -2629,6 +2631,16 @@ class PDF_Builder_Admin {
             if ($template_id > 0) {
                 $template_data = $this->load_template_robust($template_id);
                 error_log('✅ PDF BUILDER - Template loaded from database: ' . $template_id);
+                error_log('🔍 PDF BUILDER - Template data structure: ' . print_r(array_keys($template_data), true));
+                if (isset($template_data['pages'])) {
+                    error_log('🔍 PDF BUILDER - Pages count: ' . count($template_data['pages']));
+                    if (!empty($template_data['pages'])) {
+                        error_log('🔍 PDF BUILDER - First page elements count: ' . (isset($template_data['pages'][0]['elements']) ? count($template_data['pages'][0]['elements']) : 'NO ELEMENTS'));
+                        if (isset($template_data['pages'][0]['elements']) && !empty($template_data['pages'][0]['elements'])) {
+                            error_log('🔍 PDF BUILDER - First few elements: ' . print_r(array_slice($template_data['pages'][0]['elements'], 0, 3), true));
+                        }
+                    }
+                }
             } else {
                 $template_data = $this->get_default_invoice_template();
                 error_log('✅ PDF BUILDER - Default template loaded');
