@@ -1608,7 +1608,7 @@ class PDF_Builder_Admin {
             $elements = $template['elements'];
         }
 
-        error_log('🔍 PDF BUILDER - generate_unified_html: Processing ' . count($elements) . ' elements');
+        error_log('🔍 PDF BUILDER - generate_unified_html: Processing ' . (is_array($elements) ? count($elements) : 'INVALID') . ' elements');
 
         if (is_array($elements)) {
             foreach ($elements as $element) {
@@ -1657,7 +1657,7 @@ class PDF_Builder_Admin {
                     $content = $this->replace_order_variables($content, $order);
                 }
 
-                error_log('🔍 PDF BUILDER - Processing element: ' . $element['type'] . ' at position (' . $x . ', ' . $y . ') with content: ' . substr($content, 0, 50) . '...');
+                error_log('🔍 PDF BUILDER - Processing element: ' . (isset($element['type']) ? $element['type'] : 'UNKNOWN') . ' at position (' . (isset($element['x']) ? $element['x'] : 'UNKNOWN') . ', ' . (isset($element['y']) ? $element['y'] : 'UNKNOWN') . ') with content: ' . substr(isset($content) ? $content : '', 0, 50) . '...');
 
                 switch ($element['type']) {
                     case 'text':
@@ -2633,15 +2633,19 @@ class PDF_Builder_Admin {
             if ($template_id > 0) {
                 $template_data = $this->load_template_robust($template_id);
                 error_log('✅ PDF BUILDER - Template loaded from database: ' . $template_id);
-                error_log('🔍 PDF BUILDER - Template data structure: ' . print_r(array_keys($template_data), true));
-                if (isset($template_data['pages'])) {
-                    error_log('🔍 PDF BUILDER - Pages count: ' . count($template_data['pages']));
-                    if (!empty($template_data['pages'])) {
-                        error_log('🔍 PDF BUILDER - First page elements count: ' . (isset($template_data['pages'][0]['elements']) ? count($template_data['pages'][0]['elements']) : 'NO ELEMENTS'));
-                        if (isset($template_data['pages'][0]['elements']) && !empty($template_data['pages'][0]['elements'])) {
-                            error_log('🔍 PDF BUILDER - First few elements: ' . print_r(array_slice($template_data['pages'][0]['elements'], 0, 3), true));
+                if (is_array($template_data)) {
+                    error_log('🔍 PDF BUILDER - Template data structure: ' . print_r(array_keys($template_data), true));
+                    if (isset($template_data['pages'])) {
+                        error_log('🔍 PDF BUILDER - Pages count: ' . (is_array($template_data['pages']) ? count($template_data['pages']) : 'INVALID'));
+                        if (is_array($template_data['pages']) && !empty($template_data['pages'])) {
+                            error_log('🔍 PDF BUILDER - First page elements count: ' . (isset($template_data['pages'][0]['elements']) ? (is_array($template_data['pages'][0]['elements']) ? count($template_data['pages'][0]['elements']) : 'INVALID') : 'NO ELEMENTS'));
+                            if (isset($template_data['pages'][0]['elements']) && is_array($template_data['pages'][0]['elements']) && !empty($template_data['pages'][0]['elements'])) {
+                                error_log('🔍 PDF BUILDER - First few elements: ' . print_r(array_slice($template_data['pages'][0]['elements'], 0, 3), true));
+                            }
                         }
                     }
+                } else {
+                    error_log('❌ PDF BUILDER - Template data is not an array: ' . gettype($template_data));
                 }
             } else {
                 $template_data = $this->get_default_invoice_template();
