@@ -249,6 +249,16 @@ class PDF_Preview_Generator {
 
                 return sprintf('<div style="%s"><div style="%s"></div></div>', $base_style, $line_style);
 
+            case 'divider':
+                $divider_style = sprintf(
+                    'width: 100%%; height: %dpx; background-color: %s; margin: %dpx 0;',
+                    $element['thickness'] ?? 2,
+                    $element['color'] ?? '#cccccc',
+                    ($element['margin'] ?? 10) * $scale
+                );
+
+                return sprintf('<div style="%s"><div style="%s"></div></div>', $base_style, $divider_style);
+
             case 'product_table':
                 $table_html = '<div style="width: 100%; height: 100%; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; font-size: 10px; background-color: white;">';
                 $table_html .= '<div style="display: flex; background-color: #f5f5f5; padding: 4px; font-weight: bold; border-bottom: 1px solid #ddd;">';

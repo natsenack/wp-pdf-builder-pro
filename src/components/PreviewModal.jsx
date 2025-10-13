@@ -125,6 +125,19 @@ const PreviewModal = ({
           />
         );
 
+      case 'divider':
+        return (
+          <div
+            style={{
+              width: '100%',
+              height: '100%',
+              backgroundColor: element.color || '#cccccc',
+              height: `${element.thickness || 2}px`,
+              margin: `${element.margin || 10}px 0`
+            }}
+          />
+        );
+
       case 'product_table':
         // Rendu simplifié du tableau de produits
         return (
