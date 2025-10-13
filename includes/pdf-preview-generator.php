@@ -9,6 +9,9 @@ if (!defined('PDF_PREVIEW_TEST_MODE')) {
 }
 require_once __DIR__ . '/pdf-generator.php';
 
+// Log pour vérifier que le fichier est chargé
+error_log('PDF Builder: pdf-preview-generator.php chargé');
+
 class PDF_Preview_Generator {
 
     private $generator;
@@ -226,9 +229,13 @@ function pdf_builder_generate_preview() {
 
 // Endpoint pour obtenir un nonce frais
 function pdf_builder_get_fresh_nonce() {
+    error_log('PDF Builder: Fonction pdf_builder_get_fresh_nonce appelée');
     try {
+        $fresh_nonce = wp_create_nonce('pdf_builder_nonce');
+        error_log('PDF Builder: Nonce frais généré: ' . $fresh_nonce);
+
         wp_send_json_success([
-            'nonce' => wp_create_nonce('pdf_builder_nonce'),
+            'nonce' => $fresh_nonce,
             'timestamp' => time()
         ]);
     } catch (Exception $e) {
@@ -239,8 +246,10 @@ function pdf_builder_get_fresh_nonce() {
 
 // Enregistrer la fonction AJAX
 if (function_exists('add_action')) {
+    error_log('PDF Builder: Enregistrement des actions AJAX');
     add_action('wp_ajax_pdf_builder_generate_preview', 'pdf_builder_generate_preview');
     add_action('wp_ajax_nopriv_pdf_builder_generate_preview', 'pdf_builder_generate_preview');
     add_action('wp_ajax_pdf_builder_get_fresh_nonce', 'pdf_builder_get_fresh_nonce');
     add_action('wp_ajax_nopriv_pdf_builder_get_fresh_nonce', 'pdf_builder_get_fresh_nonce');
+    error_log('PDF Builder: Actions AJAX enregistrées');
 }
