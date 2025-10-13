@@ -13,6 +13,9 @@ const WooCommerceElement = React.lazy(() => import('./WooCommerceElements'));
 const ElementLibrary = React.lazy(() => import('./ElementLibrary'));
 const PropertiesPanel = React.lazy(() => import('./PropertiesPanel'));
 
+// LOG DE TEST POUR VÉRIFIER QUE LES NOUVEAUX ASSETS SONT CHARGÉS
+console.log('🎉 PDF BUILDER PRO - NOUVELLE VERSION CHARGÉE - VERSION DEBUG 3.0 🎉');
+
 export const PDFCanvasEditor = ({ options }) => {
   const [tool, setTool] = useState('select');
   const [showGrid, setShowGrid] = useState(false);
