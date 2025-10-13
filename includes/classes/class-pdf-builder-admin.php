@@ -863,7 +863,7 @@ class PDF_Builder_Admin {
             error_log("PDF Builder Debug: Avant chargement TCPDF");
 
             // Test de chargement TCPDF
-            require_once plugin_dir_path(dirname(dirname(__FILE__))) . 'lib/tcpdf_autoload.php';
+            require_once __DIR__ . '/../../lib/tcpdf/tcpdf_autoload.php';
 
             error_log("PDF Builder Debug: TCPDF chargé avec succès");
             echo "✅ TCPDF chargé\n";

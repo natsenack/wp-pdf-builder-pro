@@ -9,7 +9,7 @@ define('ABSPATH', dirname(__FILE__) . '/');
 define('PDF_GENERATOR_TEST_MODE', true);
 
 // Charger les dépendances nécessaires
-require_once 'lib/tcpdf_autoload.php';
+require_once 'lib/tcpdf/tcpdf_autoload.php';
 require_once 'includes/pdf-generator.php';
 
 echo "<!DOCTYPE html>

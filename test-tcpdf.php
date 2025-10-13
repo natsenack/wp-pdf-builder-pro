@@ -9,11 +9,14 @@ if (!defined('ABSPATH')) {
     define('PDF_GENERATOR_TEST_MODE', true);
 }
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 echo "🚀 Test de chargement TCPDF...<br><br>";
 
 try {
     echo "📚 Chargement de l'autoload TCPDF...<br>";
-    require_once __DIR__ . '/lib/tcpdf_autoload.php';
+    require_once __DIR__ . '/lib/tcpdf/tcpdf_autoload.php';
     echo "✅ Autoload TCPDF chargé<br>";
 
     echo "🔨 Test de création d'instance TCPDF...<br>";
