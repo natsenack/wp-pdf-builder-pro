@@ -242,7 +242,7 @@ const PreviewModal = ({
                 position: relative !important;
                 overflow: hidden !important;
                 box-sizing: border-box !important;
-                transform: scale(1.1) !important;
+                transform: scale(1.2) !important;
                 transform-origin: center top !important;
               }
               @page {
