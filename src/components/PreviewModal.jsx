@@ -47,93 +47,262 @@ const PreviewModal = ({
             zIndex: element.zIndex || index + 1
           };
 
-          switch (element.type) {
-            case 'text':
-              return (
-                <div
-                  key={index}
-                  style={{
-                    ...baseStyle,
-                    fontSize: element.fontSize || 16,
-                    color: element.color || '#000000',
-                    fontWeight: element.fontWeight === 'bold' ? 'bold' : 'normal',
-                    fontStyle: element.fontStyle === 'italic' ? 'italic' : 'normal',
-                    textAlign: element.textAlign || 'left',
-                    lineHeight: '1.2',
-                    whiteSpace: 'pre-wrap',
-                    overflow: 'hidden'
-                  }}
-                >
-                  {element.content || element.text || 'Texte'}
-                </div>
-              );
-
-            case 'rectangle':
-              return (
-                <div
-                  key={index}
-                  style={{
-                    ...baseStyle,
-                    backgroundColor: element.fillColor || 'transparent',
-                    border: element.borderWidth
-                      ? `${element.borderWidth}px solid ${element.borderColor || '#000000'}`
-                      : 'none',
-                    borderRadius: element.borderRadius || 0
-                  }}
-                />
-              );
-
-            case 'image':
-              return (
-                <img
-                  key={index}
-                  src={element.src || ''}
-                  alt={element.alt || 'Image'}
-                  style={{
-                    ...baseStyle,
-                    objectFit: 'cover'
-                  }}
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                  }}
-                />
-              );
-
-            case 'line':
-              return (
-                <div
-                  key={index}
-                  style={{
-                    ...baseStyle,
-                    borderTop: `${element.strokeWidth || 1}px solid ${element.strokeColor || '#000000'}`,
-                    height: 0,
-                    width: element.width || 100
-                  }}
-                />
-              );
-
-            default:
-              return (
-                <div
-                  key={index}
-                  style={{
-                    ...baseStyle,
-                    backgroundColor: '#f0f0f0',
-                    border: '1px dashed #ccc',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '12px',
-                    color: '#666'
-                  }}
-                >
-                  {element.type || 'Élément inconnu'}
-                </div>
-              );
-          }
+          return (
+            <div key={index} style={baseStyle}>
+              {renderSpecialElement(element, zoom)}
+            </div>
+          );
         })}
       </div>
     );
+  };
+
+  // Fonction pour rendre un élément spécial (basée sur CanvasElement.jsx)
+  const renderSpecialElement = (element, zoom) => {
+    switch (element.type) {
+      case 'text':
+        return (
+          <div
+            style={{
+              width: '100%',
+              height: '100%',
+              fontSize: element.fontSize || 16,
+              color: element.color || '#000000',
+              fontWeight: element.fontWeight === 'bold' ? 'bold' : 'normal',
+              fontStyle: element.fontStyle === 'italic' ? 'italic' : 'normal',
+              textAlign: element.textAlign || 'left',
+              lineHeight: '1.2',
+              whiteSpace: 'pre-wrap',
+              overflow: 'hidden',
+              padding: '4px',
+              boxSizing: 'border-box'
+            }}
+          >
+            {element.content || element.text || 'Texte'}
+          </div>
+        );
+
+      case 'rectangle':
+        return (
+          <div
+            style={{
+              width: '100%',
+              height: '100%',
+              backgroundColor: element.fillColor || 'transparent',
+              border: element.borderWidth
+                ? `${element.borderWidth}px solid ${element.borderColor || '#000000'}`
+                : 'none',
+              borderRadius: element.borderRadius || 0
+            }}
+          />
+        );
+
+      case 'image':
+        return (
+          <img
+            src={element.src || ''}
+            alt={element.alt || 'Image'}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover'
+            }}
+            onError={(e) => {
+              e.target.style.display = 'none';
+            }}
+          />
+        );
+
+      case 'line':
+        return (
+          <div
+            style={{
+              width: '100%',
+              height: '100%',
+              borderTop: `${element.strokeWidth || 1}px solid ${element.strokeColor || '#000000'}`,
+              height: 0
+            }}
+          />
+        );
+
+      case 'product_table':
+        // Rendu simplifié du tableau de produits
+        return (
+          <div style={{
+            width: '100%',
+            height: '100%',
+            border: '1px solid #ddd',
+            borderRadius: '4px',
+            overflow: 'hidden',
+            fontSize: '10px',
+            backgroundColor: 'white'
+          }}>
+            <div style={{
+              display: 'flex',
+              backgroundColor: '#f5f5f5',
+              padding: '4px',
+              fontWeight: 'bold',
+              borderBottom: '1px solid #ddd'
+            }}>
+              <div style={{ flex: 1 }}>Produit</div>
+              <div style={{ width: '60px', textAlign: 'center' }}>Qté</div>
+              <div style={{ width: '80px', textAlign: 'right' }}>Prix</div>
+              <div style={{ width: '80px', textAlign: 'right' }}>Total</div>
+            </div>
+            <div style={{ padding: '4px', borderBottom: '1px solid #eee' }}>
+              <div style={{ display: 'flex' }}>
+                <div style={{ flex: 1 }}>Produit A - Description</div>
+                <div style={{ width: '60px', textAlign: 'center' }}>2</div>
+                <div style={{ width: '80px', textAlign: 'right' }}>19.99€</div>
+                <div style={{ width: '80px', textAlign: 'right' }}>39.98€</div>
+              </div>
+            </div>
+            <div style={{ padding: '4px', fontWeight: 'bold', textAlign: 'right' }}>
+              Total: 39.98€
+            </div>
+          </div>
+        );
+
+      case 'customer_info':
+        return (
+          <div style={{
+            padding: '8px',
+            fontSize: '12px',
+            lineHeight: '1.4'
+          }}>
+            <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>Client</div>
+            <div>Jean Dupont</div>
+            <div>123 Rue de la Paix</div>
+            <div>75001 Paris</div>
+            <div>France</div>
+          </div>
+        );
+
+      case 'company_info':
+        return (
+          <div style={{
+            padding: '8px',
+            fontSize: '12px',
+            lineHeight: '1.4'
+          }}>
+            <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>ABC Company SARL</div>
+            <div>456 Avenue des Champs</div>
+            <div>75008 Paris</div>
+            <div>France</div>
+            <div>Tél: 01 23 45 67 89</div>
+          </div>
+        );
+
+      case 'company_logo':
+        return (
+          <div style={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '8px',
+            backgroundColor: element.backgroundColor || 'transparent'
+          }}>
+            {element.imageUrl ? (
+              <img
+                src={element.imageUrl}
+                alt="Logo entreprise"
+                style={{
+                  maxWidth: '100%',
+                  maxHeight: '100%',
+                  objectFit: 'contain'
+                }}
+              />
+            ) : (
+              <div style={{
+                width: '100%',
+                height: '100%',
+                backgroundColor: '#f0f0f0',
+                border: '2px dashed #ccc',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#666',
+                fontSize: '12px'
+              }}>
+                🏢 Logo
+              </div>
+            )}
+          </div>
+        );
+
+      case 'order_number':
+        return (
+          <div style={{
+            padding: '8px',
+            fontSize: '14px',
+            fontWeight: 'bold',
+            color: element.color || '#333'
+          }}>
+            <div style={{ fontSize: '12px', color: '#666', marginBottom: '2px' }}>
+              N° de commande:
+            </div>
+            <div>CMD-2025-00123</div>
+          </div>
+        );
+
+      case 'document_type':
+        return (
+          <div style={{
+            padding: '8px',
+            fontSize: '18px',
+            fontWeight: 'bold',
+            color: element.color || '#1e293b',
+            textAlign: 'center'
+          }}>
+            {element.documentType === 'invoice' ? 'FACTURE' :
+             element.documentType === 'quote' ? 'DEVIS' :
+             element.documentType === 'receipt' ? 'REÇU' :
+             element.documentType === 'order' ? 'COMMANDE' :
+             element.documentType === 'credit_note' ? 'AVOIR' : 'DOCUMENT'}
+          </div>
+        );
+
+      case 'progress-bar':
+        return (
+          <div style={{
+            width: '100%',
+            height: '100%',
+            backgroundColor: '#e5e7eb',
+            borderRadius: '10px',
+            overflow: 'hidden'
+          }}>
+            <div style={{
+              width: `${element.progressValue || 75}%`,
+              height: '100%',
+              backgroundColor: element.progressColor || '#3b82f6',
+              borderRadius: '10px'
+            }} />
+          </div>
+        );
+
+      default:
+        return (
+          <div
+            style={{
+              width: '100%',
+              height: '100%',
+              backgroundColor: '#f0f0f0',
+              border: '1px dashed #ccc',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '12px',
+              color: '#666',
+              padding: '4px',
+              boxSizing: 'border-box'
+            }}
+          >
+            {element.type || 'Élément inconnu'}
+          </div>
+        );
+    }
   };
 
   // Générer l'aperçu quand la modale s'ouvre
