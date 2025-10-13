@@ -1888,12 +1888,36 @@ class PDF_Builder_Admin {
 
         error_log('PDF Builder: Rendering meta box for order ID: ' . $order_id);
 
-        // Récupérer les templates par défaut uniquement
+        // Détecter automatiquement le type de document basé sur le statut de la commande
+        $order_status = $order->get_status();
+        $document_type = $this->detect_document_type($order_status);
+        $document_type_label = $this->get_document_type_label($document_type);
+
+        error_log('PDF Builder: Order status: ' . $order_status . ', Detected document type: ' . $document_type);
+
+        // Récupérer le template par défaut pour ce type de document
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-        $templates = $wpdb->get_results("SELECT id, name FROM $table_templates WHERE is_default = 1 ORDER BY name ASC", ARRAY_A);
+        $default_template = $wpdb->get_row(
+            $wpdb->prepare(
+                "SELECT id, name FROM $table_templates WHERE is_default = 1 AND document_type = %s LIMIT 1",
+                $document_type
+            ),
+            ARRAY_A
+        );
 
-        error_log('PDF Builder: Found ' . count($templates) . ' templates');
+        // Si pas de template spécifique trouvé, prendre n'importe quel template par défaut
+        if (!$default_template) {
+            $default_template = $wpdb->get_row("SELECT id, name FROM $table_templates WHERE is_default = 1 LIMIT 1", ARRAY_A);
+            if ($default_template) {
+                error_log('PDF Builder: Using fallback default template: ' . $default_template['name']);
+            }
+        }
+
+        // Récupérer tous les templates pour le sélecteur manuel
+        $all_templates = $wpdb->get_results("SELECT id, name, document_type FROM $table_templates ORDER BY name ASC", ARRAY_A);
+
+        error_log('PDF Builder: Selected template: ' . ($default_template ? $default_template['name'] : 'None'));
 
         wp_nonce_field('pdf_builder_order_actions', 'pdf_builder_order_nonce');
         ?>
@@ -2060,31 +2084,54 @@ class PDF_Builder_Admin {
             </div>
 
             <div style="padding: 12px;">
-                <!-- Statistiques rapides -->
-                <div class="quick-stats">
-                    <div class="stat-item">
-                        <span class="stat-label"><?php _e('Total:', 'pdf-builder-pro'); ?></span>
-                        <span class="stat-value"><?php echo wc_price($order->get_total()); ?></span>
+                <!-- Statut du document détecté -->
+                <div class="document-type-indicator" style="margin-bottom: 15px; padding: 10px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 6px;">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                        <span style="font-size: 16px;">📄</span>
+                        <strong style="color: #495057;"><?php _e('Type de document détecté:', 'pdf-builder-pro'); ?></strong>
                     </div>
-                    <div class="stat-item">
-                        <span class="stat-label"><?php _e('Articles:', 'pdf-builder-pro'); ?></span>
-                        <span class="stat-value"><?php echo $order->get_item_count(); ?></span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label"><?php _e('Client:', 'pdf-builder-pro'); ?></span>
-                        <span class="stat-value"><?php echo esc_html($order->get_billing_first_name() . ' ' . $order->get_billing_last_name()); ?></span>
+                    <div style="font-size: 14px; color: #007cba; font-weight: 600;">
+                        <?php echo esc_html($document_type_label); ?>
+                        <small style="color: #6c757d; font-weight: normal;">
+                            (<?php printf(__('Statut: %s', 'pdf-builder-pro'), esc_html(wc_get_order_status_name($order->get_status()))); ?>)
+                        </small>
                     </div>
                 </div>
 
-                <?php if (!empty($templates)): ?>
-                    <div class="template-selector">
+                <!-- Template sélectionné automatiquement -->
+                <div class="template-info" style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 6px; font-weight: 500; color: #23282d; font-size: 13px;">
+                        🎨 <?php _e('Template sélectionné:', 'pdf-builder-pro'); ?>
+                    </label>
+                    <div style="padding: 10px; background: #e8f5e8; border: 1px solid #c3e6c3; border-radius: 6px; font-size: 14px; color: #155724;">
+                        <?php if ($default_template): ?>
+                            <strong><?php echo esc_html($default_template['name']); ?></strong>
+                            <small style="color: #6c757d; display: block; margin-top: 4px;">
+                                <?php _e('Template par défaut pour ce type de document', 'pdf-builder-pro'); ?>
+                            </small>
+                        <?php else: ?>
+                            <em><?php _e('Aucun template par défaut trouvé', 'pdf-builder-pro'); ?></em>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <!-- Sélecteur manuel (optionnel) -->
+                <?php if (!empty($all_templates)): ?>
+                    <div class="template-selector" style="margin-bottom: 15px;">
                         <label for="pdf_template_select">
-                            🎨 <?php _e('Template PDF:', 'pdf-builder-pro'); ?>
+                            🔄 <?php _e('Changer de template (optionnel):', 'pdf-builder-pro'); ?>
                         </label>
                         <select id="pdf_template_select">
-                            <?php foreach ($templates as $template): ?>
+                            <option value="<?php echo $default_template ? esc_attr($default_template['id']) : ''; ?>" selected>
+                                <?php echo $default_template ? esc_html($default_template['name']) . ' (' . __('Par défaut', 'pdf-builder-pro') . ')' : __('Sélectionner un template...', 'pdf-builder-pro'); ?>
+                            </option>
+                            <?php foreach ($all_templates as $template): ?>
+                                <?php if ($default_template && $template['id'] == $default_template['id']) continue; ?>
                                 <option value="<?php echo esc_attr($template['id']); ?>">
                                     <?php echo esc_html($template['name']); ?>
+                                    <?php if ($template['document_type']): ?>
+                                        (<?php echo esc_html($this->get_document_type_label($template['document_type'])); ?>)
+                                    <?php endif; ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -2645,8 +2692,36 @@ class PDF_Builder_Admin {
     }
 
     /**
-     * Génère un PDF pour une commande WooCommerce
+     * Détecte automatiquement le type de document basé sur le statut de la commande
      */
+    private function detect_document_type($order_status) {
+        $status_mapping = [
+            'processing' => 'invoice',
+            'completed' => 'invoice',
+            'pending' => 'quote',
+            'on-hold' => 'quote',
+            'cancelled' => 'credit_note',
+            'refunded' => 'credit_note',
+            'failed' => 'credit_note'
+        ];
+
+        return $status_mapping[$order_status] ?? 'invoice';
+    }
+
+    /**
+     * Retourne le libellé du type de document
+     */
+    private function get_document_type_label($document_type) {
+        $labels = [
+            'invoice' => __('Facture', 'pdf-builder-pro'),
+            'quote' => __('Devis', 'pdf-builder-pro'),
+            'receipt' => __('Reçu', 'pdf-builder-pro'),
+            'credit_note' => __('Avoir', 'pdf-builder-pro'),
+            'order' => __('Commande', 'pdf-builder-pro')
+        ];
+
+        return $labels[$document_type] ?? __('Document', 'pdf-builder-pro');
+    }
     private function generate_order_pdf($order, $template_data, $filename) {
         // Créer le répertoire de stockage s'il n'existe pas
         $upload_dir = wp_upload_dir();
