@@ -39,6 +39,13 @@ const ELEMENT_PROPERTY_PROFILES = {
     content: ['image'],
     effects: ['opacity', 'shadows', 'filters']
   },
+  // Logo entreprise (même propriétés que logo)
+  company_logo: {
+    appearance: ['colors', 'borders', 'effects'],
+    layout: ['position', 'dimensions', 'transform', 'layers'],
+    content: ['image'],
+    effects: ['opacity', 'shadows', 'filters']
+  },
   // Tableaux produits
   product_table: {
     appearance: ['colors', 'font', 'borders', 'effects'],
@@ -1021,7 +1028,7 @@ const PropertiesPanel = React.memo(({
             )}
 
             {/* Contrôles image (uniquement pour les éléments logo) */}
-            {allowedControls.includes('image') && selectedElement.type === 'logo' && (
+            {allowedControls.includes('image') && (selectedElement.type === 'logo' || selectedElement.type === 'company_logo') && (
               <div className="properties-group">
                 <h4>[Img] Image</h4>
 
@@ -1248,7 +1255,7 @@ const PropertiesPanel = React.memo(({
             )}
 
             {/* Contrôles d'image disponibles uniquement pour les éléments logo */}
-            {allowedControls.includes('image') && selectedElement.type === 'logo' && (
+            {allowedControls.includes('image') && (selectedElement.type === 'logo' || selectedElement.type === 'company_logo') && (
               <div className="properties-group">
                 <h4>[Img] Image</h4>
 

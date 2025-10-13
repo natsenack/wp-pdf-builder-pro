@@ -1795,6 +1795,15 @@ class PDF_Builder_Admin {
                         $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($docType));
                         break;
 
+                    case 'divider':
+                        // Ligne de séparation horizontale
+                        $thickness = $element['thickness'] ?? 2;
+                        $color = $element['color'] ?? '#cccccc';
+                        $margin = $element['margin'] ?? 10;
+                        $divider_style = $style . sprintf('height: %dpx; background-color: %s; margin: %dpx 0;', $thickness, $color, $margin);
+                        $html .= sprintf('<div class="pdf-element divider" style="%s"></div>', $divider_style);
+                        break;
+
                     case 'watermark':
                         $watermark_text = $element['content'] ?? 'CONFIDENTIEL';
                         $opacity = isset($element['opacity']) ? $element['opacity'] / 100 : 0.1;
