@@ -53,11 +53,8 @@ class PDF_Generator {
                 if (function_exists('plugin_dir_path')) {
                     $plugin_dir = plugin_dir_path(dirname(__FILE__));
                     $autoload_path = $plugin_dir . 'lib/tcpdf/tcpdf_autoload.php';
-                    error_log('PDF Builder: Plugin dir: ' . $plugin_dir);
-                    error_log('PDF Builder: Autoload path: ' . $autoload_path);
                 } else {
                     $autoload_path = dirname(__DIR__) . '/lib/tcpdf/tcpdf_autoload.php';
-                    error_log('PDF Builder: Autoload path (fallback): ' . $autoload_path);
                 }
 
                 // Vérifier que le fichier existe avant de le charger
@@ -68,7 +65,7 @@ class PDF_Generator {
                     return $this->generate_basic_pdf($elements);
                 }
 
-                error_log('PDF Builder: TCPDF chargé, class_exists: ' . (class_exists('TCPDF') ? 'oui' : 'non'));
+                error_log('PDF Builder: TCPDF chargé');
             }
 
             if (!class_exists('TCPDF')) {
@@ -92,7 +89,6 @@ class PDF_Generator {
                 define('K_PATH_FONTS', plugin_dir_path(__FILE__) . '../lib/tcpdf/fonts/');
             }
 
-            error_log('PDF Builder: Création instance TCPDF');
             $this->pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
             // Configuration de base
@@ -113,27 +109,22 @@ class PDF_Generator {
             $page_height = 297; // A4 height
 
             // Ajouter une page
-            error_log('PDF Builder: Ajout de la page');
             $this->pdf->AddPage();
 
             // Facteur de conversion pixels -> mm (72 DPI)
             $px_to_mm = 0.264583;
 
-            error_log('PDF Builder: Rendu des éléments: ' . count($elements) . ' éléments');
             foreach ($elements as $element) {
                 $this->render_element($element, $px_to_mm, $page_width, $page_height);
             }
 
             // Générer le PDF
-            error_log('PDF Builder: Génération du contenu PDF');
             return $this->pdf->Output('document.pdf', 'S'); // 'S' pour retourner le contenu
         } catch (Exception $e) {
             error_log('PDF Builder: Exception dans generate_from_elements: ' . $e->getMessage());
-            error_log('PDF Builder: Trace: ' . $e->getTraceAsString());
             return false;
         } catch (Throwable $t) {
             error_log('PDF Builder: Erreur fatale dans generate_from_elements: ' . $t->getMessage());
-            error_log('PDF Builder: Trace fatale: ' . $t->getTraceAsString());
             return false;
         }
     }
@@ -464,6 +455,9 @@ class PDF_Generator {
 
 // Fonction principale pour traiter la requête AJAX
 function pdf_builder_generate_pdf() {
+    // Démarrer le buffer de sortie pour capturer toute sortie accidentelle
+    ob_start();
+
     try {
         // Log du nonce reçu pour débogage
         $received_nonce = $_POST['nonce'] ?? '';
@@ -496,6 +490,8 @@ function pdf_builder_generate_pdf() {
         error_log('PDF Builder: Éléments reçus: ' . count($elements) . ' éléments');
 
         if (empty($elements)) {
+            // Vider le buffer avant d'envoyer la réponse
+            ob_end_clean();
             wp_send_json_error('Aucun élément à traiter');
             return;
         }
@@ -507,11 +503,16 @@ function pdf_builder_generate_pdf() {
 
         if (empty($pdf_content)) {
             error_log('PDF Builder: Contenu PDF vide retourné');
+            // Vider le buffer avant d'envoyer la réponse
+            ob_end_clean();
             wp_send_json_error('Erreur lors de la génération du PDF');
             return;
         }
 
         error_log('PDF Builder: PDF généré avec succès, taille: ' . strlen($pdf_content) . ' octets');
+
+        // Vider le buffer avant d'envoyer la réponse
+        ob_end_clean();
 
         // Retourner le PDF en base64 dans une réponse JSON
         wp_send_json_success(array(
@@ -522,10 +523,14 @@ function pdf_builder_generate_pdf() {
     } catch (Exception $e) {
         error_log('Erreur génération PDF: ' . $e->getMessage());
         error_log('Erreur génération PDF - Trace: ' . $e->getTraceAsString());
+        // Vider le buffer avant d'envoyer la réponse
+        ob_end_clean();
         wp_send_json_error('Erreur lors de la génération du PDF: ' . $e->getMessage());
     } catch (Throwable $t) {
         error_log('Erreur fatale génération PDF: ' . $t->getMessage());
         error_log('Erreur fatale génération PDF - Trace: ' . $t->getTraceAsString());
+        // Vider le buffer avant d'envoyer la réponse
+        ob_end_clean();
         wp_send_json_error('Erreur fatale lors de la génération du PDF: ' . $t->getMessage());
     }
 }
