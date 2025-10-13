@@ -3211,8 +3211,19 @@ class PDF_Builder_Admin {
                 $template_data = $this->load_template_robust($template_id);
                 error_log('✅ PDF BUILDER - Template loaded from database: ' . $template_id);
             } else {
-                $template_data = $this->get_default_invoice_template();
-                error_log('✅ PDF BUILDER - Default template loaded');
+                // Vérifier s'il y a un template spécifique pour le statut de la commande
+                $order_status = $order->get_status();
+                $status_templates = get_option('pdf_builder_order_status_templates', []);
+                $status_key = 'wc-' . $order_status;
+
+                if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
+                    $mapped_template_id = $status_templates[$status_key];
+                    $template_data = $this->load_template_robust($mapped_template_id);
+                    error_log('✅ PDF BUILDER - Template loaded from status mapping: ' . $mapped_template_id . ' for status: ' . $order_status);
+                } else {
+                    $template_data = $this->get_default_invoice_template();
+                    error_log('✅ PDF BUILDER - Default template loaded (no status mapping found)');
+                }
             }
 
             error_log('🟡 PDF BUILDER - Generating PDF...');
@@ -3336,7 +3347,19 @@ class PDF_Builder_Admin {
                     error_log('❌ PDF BUILDER - Template data is not an array: ' . gettype($template_data));
                 }
             } else {
-                $template_data = $this->get_default_invoice_template();
+                // Vérifier s'il y a un template spécifique pour le statut de la commande
+                $order_status = $order->get_status();
+                $status_templates = get_option('pdf_builder_order_status_templates', []);
+                $status_key = 'wc-' . $order_status;
+
+                if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
+                    $mapped_template_id = $status_templates[$status_key];
+                    $template_data = $this->load_template_robust($mapped_template_id);
+                    error_log('✅ PDF BUILDER - Template loaded from status mapping: ' . $mapped_template_id . ' for status: ' . $order_status);
+                } else {
+                    $template_data = $this->get_default_invoice_template();
+                    error_log('✅ PDF BUILDER - Default template loaded (no status mapping found)');
+                }
                 error_log('✅ PDF BUILDER - Default template loaded');
             }
 

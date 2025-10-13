@@ -101,7 +101,7 @@ $config = new TempConfig();
 // ...*/
 $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 
-if ((isset($_POST['submit']) || isset($_POST['submit_roles']) || isset($_POST['submit_notifications'])) && isset($_POST['pdf_builder_settings_nonce'])) {
+if ((isset($_POST['submit']) || isset($_POST['submit_roles']) || isset($_POST['submit_notifications']) || isset($_POST['submit_templates'])) && isset($_POST['pdf_builder_settings_nonce'])) {
     error_log('PDF Builder: Bouton submit cliqué, nonce présent: ' . $_POST['pdf_builder_settings_nonce']);
 
     if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
@@ -147,6 +147,19 @@ if ((isset($_POST['submit']) || isset($_POST['submit_roles']) || isset($_POST['s
             }
             update_option('pdf_builder_allowed_roles', $allowed_roles);
             error_log('PDF Builder: Rôles autorisés sauvegardés: ' . implode(', ', $allowed_roles));
+        }
+
+        // Traitement des mappings template par statut de commande
+        if (isset($_POST['order_status_templates']) && is_array($_POST['order_status_templates'])) {
+            $template_mappings = [];
+            foreach ($_POST['order_status_templates'] as $status => $template_id) {
+                $template_id = intval($template_id);
+                if ($template_id > 0) {
+                    $template_mappings[sanitize_text_field($status)] = $template_id;
+                }
+            }
+            update_option('pdf_builder_order_status_templates', $template_mappings);
+            error_log('PDF Builder: Mappings template par statut sauvegardés: ' . print_r($template_mappings, true));
         }
 
         // Vérification que les options sont bien sauvegardées
@@ -434,6 +447,7 @@ window.addEventListener('load', function() {
                 <a href="#roles" class="nav-tab"><?php _e('Rôles', 'pdf-builder-pro'); ?></a>
                 <a href="#notifications" class="nav-tab"><?php _e('Notifications', 'pdf-builder-pro'); ?></a>
                 <a href="#canvas" class="nav-tab"><?php _e('Canvas', 'pdf-builder-pro'); ?></a>
+                <a href="#templates" class="nav-tab"><?php _e('Templates', 'pdf-builder-pro'); ?></a>
                 <a href="#maintenance" class="nav-tab"><?php _e('Maintenance', 'pdf-builder-pro'); ?></a>
             </div>
 
@@ -1538,6 +1552,85 @@ window.addEventListener('load', function() {
                         </tr>
                     </table>
                 </div>
+            </div>
+
+            <!-- Onglet Templates -->
+            <div id="templates" class="tab-content">
+                <h2><?php _e('Templates par Statut de Commande', 'pdf-builder-pro'); ?></h2>
+
+                <p><?php _e('Configurez les templates PDF à utiliser automatiquement selon le statut des commandes WooCommerce.', 'pdf-builder-pro'); ?></p>
+
+                <div class="notice notice-info inline" style="margin-bottom: 20px;">
+                    <p><strong><?php _e('ℹ️ Information :', 'pdf-builder-pro'); ?></strong> <?php _e('Cette section détecte automatiquement tous les statuts de commande WooCommerce disponibles, y compris ceux ajoutés par des plugins tiers. Si vous installez un plugin qui ajoute de nouveaux statuts de commande, ils apparaîtront automatiquement ici.', 'pdf-builder-pro'); ?></p>
+                </div>
+
+                <table class="form-table">
+                    <?php
+                    // Récupérer les statuts WooCommerce disponibles
+                    $order_statuses = [];
+                    $woocommerce_available = function_exists('wc_get_order_statuses');
+
+                    if ($woocommerce_available) {
+                        $order_statuses = wc_get_order_statuses();
+                    } else {
+                        // Statuts par défaut si WooCommerce n'est pas disponible
+                        $order_statuses = [
+                            'wc-pending' => __('En attente', 'pdf-builder-pro'),
+                            'wc-processing' => __('En cours', 'pdf-builder-pro'),
+                            'wc-on-hold' => __('En attente', 'pdf-builder-pro'),
+                            'wc-completed' => __('Terminée', 'pdf-builder-pro'),
+                            'wc-cancelled' => __('Annulée', 'pdf-builder-pro'),
+                            'wc-refunded' => __('Remboursée', 'pdf-builder-pro'),
+                            'wc-failed' => __('Échec', 'pdf-builder-pro')
+                        ];
+
+                        echo '<div class="notice notice-warning inline"><p>';
+                        _e('WooCommerce n\'est pas détecté. Les statuts affichés sont les statuts par défaut. Une fois WooCommerce activé, tous les statuts disponibles (y compris ceux ajoutés par des plugins) seront affichés ici.', 'pdf-builder-pro');
+                        echo '</p></div>';
+                    }
+
+                    // Récupérer les mappings actuels
+                    $current_mappings = get_option('pdf_builder_order_status_templates', []);
+
+                    // Récupérer la liste des templates disponibles
+                    global $wpdb;
+                    $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+                    $templates = $wpdb->get_results("SELECT id, name FROM $table_templates ORDER BY name", ARRAY_A);
+
+                    foreach ($order_statuses as $status_key => $status_name) {
+                        // Enlever le préfixe 'wc-' pour l'affichage
+                        $display_status = str_replace('wc-', '', $status_key);
+                        $selected_template = isset($current_mappings[$status_key]) ? $current_mappings[$status_key] : '';
+                        ?>
+                        <tr>
+                            <th scope="row">
+                                <label for="template_<?php echo esc_attr($status_key); ?>">
+                                    <?php echo esc_html($status_name); ?>
+                                    <code>(<?php echo esc_html($display_status); ?>)</code>
+                                </label>
+                            </th>
+                            <td>
+                                <select name="order_status_templates[<?php echo esc_attr($status_key); ?>]" id="template_<?php echo esc_attr($status_key); ?>" class="regular-text">
+                                    <option value=""><?php _e('-- Utiliser le template par défaut --', 'pdf-builder-pro'); ?></option>
+                                    <?php foreach ($templates as $template) { ?>
+                                        <option value="<?php echo esc_attr($template['id']); ?>" <?php selected($selected_template, $template['id']); ?>>
+                                            <?php echo esc_html($template['name']); ?>
+                                        </option>
+                                    <?php } ?>
+                                </select>
+                                <p class="description">
+                                    <?php printf(__('Template à utiliser pour les commandes avec le statut "%s".', 'pdf-builder-pro'), esc_html($status_name)); ?>
+                                </p>
+                            </td>
+                        </tr>
+                        <?php
+                    }
+                    ?>
+                </table>
+
+                <p class="submit">
+                    <input type="submit" name="submit_templates" class="button button-primary" value="<?php esc_attr_e('Enregistrer les Templates', 'pdf-builder-pro'); ?>">
+                </p>
             </div>
 
             <!-- Onglet Maintenance -->
