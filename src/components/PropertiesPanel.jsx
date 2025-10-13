@@ -347,7 +347,7 @@ const PropertiesPanel = React.memo(({
     onPropertyChange,
     onBatchUpdate,
     true, // autoSave
-    1000 // autoSaveDelay
+    3000 // autoSaveDelay - increased to reduce AJAX calls
   );
 
   // Obtenir l'élément sélectionné (mémorisé pour éviter les re-renders)

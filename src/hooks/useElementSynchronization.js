@@ -9,7 +9,7 @@ export const useElementSynchronization = (
   onPropertyChange,
   onBatchUpdate,
   autoSave = true,
-  autoSaveDelay = 1000
+  autoSaveDelay = 3000
 ) => {
   const pendingChangesRef = useRef(new Map());
   const autoSaveTimeoutRef = useRef(null);
