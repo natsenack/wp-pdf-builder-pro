@@ -279,29 +279,64 @@ function loadTemplateSettings(templateId) {
 
 function saveTemplateSettings() {
     const settings = {
-        id: currentTemplateId,
+        template_id: currentTemplateId,
         name: document.getElementById('template-name-input').value,
         description: document.getElementById('template-description-input').value,
-        public: document.getElementById('template-public').checked,
-        paperSize: document.getElementById('template-paper-size').value,
+        is_public: document.getElementById('template-public').checked ? 1 : 0,
+        paper_size: document.getElementById('template-paper-size').value,
         orientation: document.getElementById('template-orientation').value,
         category: document.getElementById('template-category').value
     };
 
-    // Simulation de la sauvegarde (à remplacer par un vrai appel AJAX)
-    // console.log('Sauvegarde des paramètres:', settings);
-
-    // Afficher un message de succès temporaire
+    // Afficher un indicateur de chargement
     const saveButton = document.querySelector('.template-modal-footer .button-primary');
     const originalText = saveButton.innerHTML;
-    saveButton.innerHTML = '✅ Enregistré !';
-    saveButton.style.background = '#28a745';
+    saveButton.innerHTML = '⏳ Sauvegarde...';
+    saveButton.disabled = true;
 
-    setTimeout(() => {
-        saveButton.innerHTML = originalText;
-        saveButton.style.background = '';
-        closeTemplateSettings();
-    }, 1500);
+    // Faire l'appel AJAX
+    jQuery.post(ajaxurl, {
+        action: 'pdf_builder_save_template_settings',
+        nonce: pdfBuilderTemplatesNonce,
+        ...settings
+    }, function(response) {
+        if (response.success) {
+            // Afficher un message de succès
+            saveButton.innerHTML = '✅ Enregistré !';
+            saveButton.style.background = '#28a745';
+
+            // Fermer la modale après un délai
+            setTimeout(() => {
+                closeTemplateSettings();
+                // Recharger la page pour voir les changements
+                location.reload();
+            }, 1500);
+        } else {
+            // Erreur
+            saveButton.innerHTML = '❌ Erreur';
+            saveButton.style.background = '#dc3545';
+            alert('Erreur lors de la sauvegarde: ' + (response.data?.message || 'Erreur inconnue'));
+
+            // Remettre le bouton normal après un délai
+            setTimeout(() => {
+                saveButton.innerHTML = originalText;
+                saveButton.style.background = '';
+                saveButton.disabled = false;
+            }, 3000);
+        }
+    }).fail(function(xhr, status, error) {
+        // Erreur de réseau
+        saveButton.innerHTML = '❌ Erreur réseau';
+        saveButton.style.background = '#dc3545';
+        alert('Erreur de connexion: ' + error);
+
+        // Remettre le bouton normal
+        setTimeout(() => {
+            saveButton.innerHTML = originalText;
+            saveButton.style.background = '';
+            saveButton.disabled = false;
+        }, 3000);
+    });
 }
 
 function confirmDeleteTemplate(templateId, templateName) {
