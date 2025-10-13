@@ -251,9 +251,9 @@ window.addEventListener('load', function() {
         var tabContents = document.querySelectorAll('.tab-content');
         console.log('Found', tabContents.length, 'tab content elements');
 
+        // Log each tab content found
         for (var i = 0; i < tabContents.length; i++) {
-            console.log('Removing active class from tab content', i, 'id:', tabContents[i].id);
-            tabContents[i].classList.remove('active');
+            console.log('Tab content', i, ': id=', tabContents[i].id, 'classes=', tabContents[i].className, 'has active:', tabContents[i].classList.contains('active'));
         }
 
         // Remove active class from all nav tabs
