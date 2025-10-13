@@ -1023,9 +1023,9 @@ window.addEventListener('load', function() {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Settings page JavaScript loaded');
     
-    // Définir les nonces en variables JavaScript
-    var pdfBuilderSettingsNonce = '<?php echo wp_create_nonce('pdf_builder_settings'); ?>';
-    var pdfBuilderMaintenanceNonce = '<?php echo wp_create_nonce('pdf_builder_maintenance'); ?>';
+    // Définir les nonces en variables JavaScript (globales)
+    window.pdfBuilderSettingsNonce = '<?php echo wp_create_nonce('pdf_builder_settings'); ?>';
+    window.pdfBuilderMaintenanceNonce = '<?php echo wp_create_nonce('pdf_builder_maintenance'); ?>';
     
     // Écouter tous les événements de soumission de formulaire
     document.addEventListener('submit', function(e) {
@@ -1601,8 +1601,8 @@ echo '<style>
     'use strict';
 
     $(document).ready(function() {
-        // Définir le nonce pour les actions de maintenance
-        var pdfBuilderMaintenanceNonce = '<?php echo wp_create_nonce('pdf_builder_maintenance'); ?>';
+        // Définir le nonce pour les actions de maintenance (global)
+        window.pdfBuilderMaintenanceNonce = '<?php echo wp_create_nonce('pdf_builder_maintenance'); ?>';
         
         // Gestion du bouton "Vider le Cache"
         $('#clear-cache').on('click', function() {
@@ -1714,8 +1714,8 @@ echo '<style>
 
     // Gestion des actions de maintenance en AJAX
     $(document).ready(function() {
-        // Définir le nonce pour les actions de maintenance
-        var pdfBuilderMaintenanceNonce = '<?php echo wp_create_nonce('pdf_builder_maintenance'); ?>';
+        // Définir le nonce pour les actions de maintenance (global)
+        window.pdfBuilderMaintenanceNonce = '<?php echo wp_create_nonce('pdf_builder_maintenance'); ?>';
         
         // Fonction utilitaire pour afficher les messages de statut
         function showMaintenanceStatus(message, type) {
