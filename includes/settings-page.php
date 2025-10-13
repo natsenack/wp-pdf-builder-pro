@@ -850,22 +850,22 @@ window.addEventListener('load', function() {
 
             <!-- Onglet Notifications -->
             <?php error_log('PDF Builder: About to render notifications tab'); ?>
-            <div id="notifications" class="tab-content" style="border: 2px solid blue;">
-                <h2><?php _e('Paramètres de Notifications', 'pdf-builder-pro'); ?></h2>
+            <div id="notifications" class="tab-content" style="border: 2px solid blue; padding: 20px;">
+                <h2>Paramètres de Notifications</h2>
                 <p>TEST: Notifications tab content rendered</p>
             </div>
 
             <!-- Onglet Canvas -->
             <?php error_log('PDF Builder: About to render canvas tab'); ?>
-            <div id="canvas" class="tab-content" style="border: 2px solid green;">
-                <h2><?php _e('Paramètres Canvas', 'pdf-builder-pro'); ?></h2>
+            <div id="canvas" class="tab-content" style="border: 2px solid green; padding: 20px;">
+                <h2>Paramètres Canvas</h2>
                 <p>TEST: Canvas tab content rendered</p>
             </div>
 
             <!-- Onglet Maintenance -->
             <?php error_log('PDF Builder: About to render maintenance tab'); ?>
-            <div id="maintenance" class="tab-content" style="border: 2px solid orange;">
-                <h2><?php _e('Actions de Maintenance', 'pdf-builder-pro'); ?></h2>
+            <div id="maintenance" class="tab-content" style="border: 2px solid orange; padding: 20px;">
+                <h2>Actions de Maintenance</h2>
                 <p>TEST: Maintenance tab content rendered</p>
             </div>
         </div>
