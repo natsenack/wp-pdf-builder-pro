@@ -61,6 +61,59 @@ if ($files.Count -eq 0) {
     exit 1
 }
 
+# Fonction pour créer un répertoire sur le serveur FTP
+function Create-FtpDirectory {
+    param(
+        [string]$ftpHost,
+        [string]$ftpUser,
+        [string]$ftpPassword,
+        [string]$remoteDir
+    )
+
+    try {
+        $ftpRequest = [System.Net.FtpWebRequest]::Create("ftp://$ftpHost$remoteDir")
+        $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
+        $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
+        $ftpRequest.UseBinary = $true
+        $ftpRequest.KeepAlive = $false
+
+        $response = $ftpRequest.GetResponse()
+        $response.Close()
+        return $true
+    }
+    catch {
+        # Si le répertoire existe déjà (erreur 550), c'est ok
+        if ($_.Exception.Message -match "550") {
+            return $true
+        }
+        return $false
+    }
+}
+
+# Créer tous les répertoires nécessaires
+$directories = @()
+foreach ($file in $files) {
+    $relPath = $file.FullName.Substring($projectRoot.Length + 1).Replace('\', '/')
+    $dir = [System.IO.Path]::GetDirectoryName($relPath)
+    if ($dir -and $dir -notin $directories) {
+        $directories += $dir
+    }
+}
+
+# Trier par profondeur pour créer les répertoires parents d'abord
+$directories = $directories | Sort-Object { ($_.Split('/')).Count }
+
+Write-Host "📁 Création des répertoires ($($directories.Count) répertoires)..." -ForegroundColor Yellow
+foreach ($dir in $directories) {
+    $remoteDir = "$remotePath/$dir"
+    if (Create-FtpDirectory -ftpHost $ftpHost -ftpUser $ftpUser -ftpPassword $ftpPassword -remoteDir $remoteDir) {
+        Write-Host "✅ $dir" -ForegroundColor Green
+    } else {
+        Write-Host "❌ Échec création $dir" -ForegroundColor Red
+    }
+}
+Write-Host "✅ Répertoires créés" -ForegroundColor Green
+
 # Fonction pour uploader un fichier avec gestion d'erreur améliorée
 function Send-File {
     param(
