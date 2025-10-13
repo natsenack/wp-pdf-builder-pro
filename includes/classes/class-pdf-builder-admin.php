@@ -1548,7 +1548,7 @@ class PDF_Builder_Admin {
         // Ici nous simulons la génération - à remplacer par une vraie bibliothèque PDF
 
         // Générer le HTML d'abord
-        $html_content = $this->generate_html_from_template_data($template);
+        $html_content = $this->generate_unified_html($template);
 
         // Utiliser notre générateur PDF personnalisé
         require_once plugin_dir_path(__FILE__) . '../pdf-generator.php';
@@ -1620,8 +1620,19 @@ class PDF_Builder_Admin {
      * Génère du HTML depuis les données du template
      */
     private function generate_html_from_template_data($template) {
-        $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>PDF Preview</title>';
-        
+        return $this->generate_unified_html($template, null);
+    }
+
+    /**
+     * Génère du HTML unifié depuis les données du template (avec support WooCommerce optionnel)
+     *
+     * @param array $template Données du template
+     * @param WC_Order|null $order Commande WooCommerce (optionnel)
+     * @return string HTML généré
+     */
+    private function generate_unified_html($template, $order = null) {
+        $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' . ($order ? 'Order #' . $order->get_id() : 'PDF Preview') . '</title>';
+
         // Gestion des marges d'impression - utiliser la première page
         $margins = ['top' => 20, 'right' => 20, 'bottom' => 20, 'left' => 20];
         if (isset($template['pages']) && is_array($template['pages']) && !empty($template['pages'])) {
@@ -1631,7 +1642,7 @@ class PDF_Builder_Admin {
             }
         }
         $margin_css = sprintf('margin: 0; padding: %dpx %dpx %dpx %dpx;', $margins['top'], $margins['right'], $margins['bottom'], $margins['left']);
-        
+
         $html .= '<style>body { font-family: Arial, sans-serif; ' . $margin_css . ' } .pdf-element { position: absolute; }</style>';
         $html .= '</head><body>';
 
@@ -1687,17 +1698,78 @@ class PDF_Builder_Admin {
 
                 $content = $element['content'] ?? '';
 
+                // Remplacer les variables si on a une commande WooCommerce
+                if ($order) {
+                    $content = $this->replace_order_variables($content, $order);
+                }
+
                 switch ($element['type']) {
                     case 'text':
+                        $final_content = $order ? $this->replace_order_variables($content, $order) : $content;
+                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($final_content));
+                        break;
+
                     case 'invoice_number':
+                        if ($order) {
+                            $invoice_number = $order->get_id() . '-' . time();
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($invoice_number));
+                        } else {
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: 'N° de facture'));
+                        }
+                        break;
+
                     case 'invoice_date':
+                        if ($order) {
+                            $date = $order->get_date_created() ? $order->get_date_created()->date('d/m/Y') : date('d/m/Y');
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($date));
+                        } else {
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: 'Date'));
+                        }
+                        break;
+
                     case 'customer_name':
+                        if ($order) {
+                            $customer_name = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($customer_name));
+                        } else {
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: 'Nom du client'));
+                        }
+                        break;
+
                     case 'customer_address':
+                        if ($order) {
+                            $address = $order->get_formatted_billing_address();
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, nl2br(esc_html($address)));
+                        } else {
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: 'Adresse du client'));
+                        }
+                        break;
+
                     case 'subtotal':
+                        if ($order) {
+                            $subtotal = $order->get_subtotal();
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, wc_price($subtotal));
+                        } else {
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: 'Sous-total'));
+                        }
+                        break;
+
                     case 'tax':
+                        if ($order) {
+                            $tax = $order->get_total_tax();
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, wc_price($tax));
+                        } else {
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: 'Taxes'));
+                        }
+                        break;
+
                     case 'total':
-                    case 'company_info':
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content));
+                        if ($order) {
+                            $total = $order->get_total();
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, wc_price($total));
+                        } else {
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: 'Total'));
+                        }
                         break;
 
                     case 'rectangle':
@@ -1712,11 +1784,28 @@ class PDF_Builder_Admin {
                         break;
 
                     case 'product_table':
-                        $html .= sprintf('<div class="pdf-element" style="%s">Product Table Placeholder</div>', $style);
+                        if ($order) {
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, $this->generate_order_products_table($order));
+                        } else {
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, 'Tableau des produits (aperçu)');
+                        }
                         break;
 
                     default:
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: $element['type']));
+                        // Vérifier si c'est un élément WooCommerce
+                        if (strpos($element['type'], 'woocommerce-') === 0 && $order) {
+                            $woo_data_provider = PDF_Builder_WooCommerce_Data_Provider::getInstance();
+                            $woo_content = $woo_data_provider->get_element_data($element['type'], $order->get_id());
+
+                            // Pour les tableaux de produits, générer du HTML spécial
+                            if ($element['type'] === 'woocommerce-products-table') {
+                                $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, $woo_content);
+                            } else {
+                                $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($woo_content));
+                            }
+                        } else {
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: $element['type']));
+                        }
                         break;
                 }
             }
@@ -2379,7 +2468,7 @@ class PDF_Builder_Admin {
         $pdf_path = $pdf_dir . '/' . $filename;
 
         // Générer le HTML d'abord
-        $html_content = $this->generate_order_html($order, $template_data);
+        $html_content = $this->generate_unified_html($template_data, $order);
 
         // Utiliser une bibliothèque PDF si disponible
         if (class_exists('TCPDF')) {
@@ -2405,147 +2494,7 @@ class PDF_Builder_Admin {
      * Génère du HTML pour une commande WooCommerce
      */
     private function generate_order_html($order, $template_data) {
-        error_log('🟡 PDF BUILDER - generate_order_html called for order: ' . $order->get_id());
-        error_log('🟡 Order data - Customer: ' . $order->get_billing_first_name() . ' ' . $order->get_billing_last_name());
-        error_log('🟡 Order data - Total: ' . $order->get_total());
-        error_log('🟡 Order data - Status: ' . $order->get_status());
-
-        $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Order #' . $order->get_id() . '</title>';
-        $html .= '<style>body { font-family: Arial, sans-serif; margin: 0; padding: 20px; } .pdf-element { position: absolute; }</style>';
-        $html .= '</head><body>';
-
-        if (isset($template_data['elements']) && is_array($template_data['elements'])) {
-            error_log('🟡 PDF BUILDER - Processing ' . count($template_data['elements']) . ' elements');
-            foreach ($template_data['elements'] as $element) {
-                error_log('🟡 Processing element: ' . ($element['id'] ?? 'no-id') . ' of type: ' . ($element['type'] ?? 'no-type'));
-                // Gérer les deux formats de structure des éléments
-                if (isset($element['position']) && isset($element['size'])) {
-                    // Format structuré (position.x, position.y, size.width, size.height)
-                    $x = $element['position']['x'] ?? 0;
-                    $y = $element['position']['y'] ?? 0;
-                    $width = $element['size']['width'] ?? 100;
-                    $height = $element['size']['height'] ?? 50;
-                } else {
-                    // Format plat (x, y, width, height directement)
-                    $x = $element['x'] ?? 0;
-                    $y = $element['y'] ?? 0;
-                    $width = $element['width'] ?? 100;
-                    $height = $element['height'] ?? 50;
-                }
-
-                $style = sprintf(
-                    'left: %dpx; top: %dpx; width: %dpx; height: %dpx;',
-                    $x,
-                    $y,
-                    $width,
-                    $height
-                );
-
-                if (isset($element['style'])) {
-                    if (isset($element['style']['color'])) {
-                        $style .= ' color: ' . $element['style']['color'] . ';';
-                    }
-                    if (isset($element['style']['fontSize'])) {
-                        $style .= ' font-size: ' . $element['style']['fontSize'] . 'px;';
-                    }
-                    if (isset($element['style']['fontWeight'])) {
-                        $style .= ' font-weight: ' . $element['style']['fontWeight'] . ';';
-                    }
-                    if (isset($element['style']['fillColor'])) {
-                        $style .= ' background-color: ' . $element['style']['fillColor'] . ';';
-                    }
-                }
-
-                $content = $element['content'] ?? '';
-
-                // Remplacer les variables de la commande
-                $content = $this->replace_order_variables($content, $order);
-
-                switch ($element['type']) {
-                    case 'text':
-                        $final_content = $this->replace_order_variables($content, $order);
-                        error_log('🟡 Element text - Original: "' . $content . '", Final: "' . $final_content . '"');
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($final_content));
-                        break;
-
-                    case 'invoice_number':
-                        $invoice_number = $order->get_id() . '-' . time();
-                        error_log('🟡 Element invoice_number - Generated: "' . $invoice_number . '"');
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($invoice_number));
-                        break;
-
-                    case 'invoice_date':
-                        $date = $order->get_date_created() ? $order->get_date_created()->date('d/m/Y') : date('d/m/Y');
-                        error_log('🟡 Element invoice_date - Generated: "' . $date . '"');
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($date));
-                        break;
-
-                    case 'customer_name':
-                        $customer_name = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
-                        error_log('🟡 Element customer_name - Generated: "' . $customer_name . '"');
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($customer_name));
-                        break;
-
-                    case 'customer_address':
-                        $address = $order->get_formatted_billing_address();
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, nl2br(esc_html($address)));
-                        break;
-
-                    case 'subtotal':
-                        $subtotal = $order->get_subtotal();
-                        error_log('🟡 Element subtotal - Generated: "' . wc_price($subtotal) . '"');
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, wc_price($subtotal));
-                        break;
-
-                    case 'tax':
-                        $tax = $order->get_total_tax();
-                        error_log('🟡 Element tax - Generated: "' . wc_price($tax) . '"');
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, wc_price($tax));
-                        break;
-
-                    case 'total':
-                        $total = $order->get_total();
-                        error_log('🟡 Element total - Generated: "' . wc_price($total) . '"');
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, wc_price($total));
-                        break;
-
-                    case 'rectangle':
-                        $html .= sprintf('<div class="pdf-element" style="%s"></div>', $style);
-                        break;
-
-                    case 'image':
-                    case 'company_logo':
-                        if ($content) {
-                            $html .= sprintf('<img class="pdf-element" src="%s" style="%s" alt="Image" />', esc_url($content), $style);
-                        }
-                        break;
-
-                    case 'product_table':
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, $this->generate_order_products_table($order));
-                        break;
-
-                    default:
-                        // Vérifier si c'est un élément WooCommerce
-                        if (strpos($element['type'], 'woocommerce-') === 0) {
-                            $woo_data_provider = PDF_Builder_WooCommerce_Data_Provider::getInstance();
-                            $woo_content = $woo_data_provider->get_element_data($element['type'], $order->get_id());
-
-                            // Pour les tableaux de produits, générer du HTML spécial
-                            if ($element['type'] === 'woocommerce-products-table') {
-                                $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, $woo_content);
-                            } else {
-                                $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($woo_content));
-                            }
-                        } else {
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: $element['type']));
-                        }
-                        break;
-                }
-            }
-        }
-
-        $html .= '</body></html>';
-        return $html;
+        return $this->generate_unified_html($template_data, $order);
     }
 
     /**
