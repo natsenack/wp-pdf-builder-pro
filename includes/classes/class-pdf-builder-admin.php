@@ -1595,7 +1595,86 @@ class PDF_Builder_Admin {
         }
         $margin_css = sprintf('margin: 0; padding: %dpx %dpx %dpx %dpx;', $margins['top'], $margins['right'], $margins['bottom'], $margins['left']);
 
-        $html .= '<style>body { font-family: Arial, sans-serif; ' . $margin_css . ' } .pdf-element { position: absolute; }</style>';
+        $html .= '<style>
+        body {
+            font-family: "DejaVu Sans", "Arial Unicode MS", Arial, sans-serif;
+            margin: 0;
+            padding: ' . $margins['top'] . 'px ' . $margins['right'] . 'px ' . $margins['bottom'] . 'px ' . $margins['left'] . 'px;
+            background: white;
+            color: #333;
+            line-height: 1.4;
+            font-size: 12px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .pdf-element {
+            position: absolute;
+            box-sizing: border-box;
+        }
+        .pdf-element.text-element {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .pdf-element.image-element img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .pdf-element.table-element {
+            border-collapse: collapse;
+        }
+        .pdf-element.table-element table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .pdf-element.table-element th,
+        .pdf-element.table-element td {
+            border: 1px solid #ddd;
+            padding: 4px 8px;
+            text-align: left;
+        }
+        .pdf-element.table-element th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        .pdf-element.barcode,
+        .pdf-element.qrcode {
+            font-family: monospace;
+            text-align: center;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .pdf-element.progress-bar {
+            background: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .pdf-element.progress-bar div {
+            height: 100%;
+            background: linear-gradient(90deg, #007cba 0%, #005a87 100%);
+            border-radius: 8px;
+        }
+        .pdf-element.watermark {
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .pdf-element.divider {
+            background-color: #cccccc;
+            height: 2px;
+        }
+        @media print {
+            body {
+                margin: 0;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+        }
+        </style>';
         $html .= '</head><body>';
 
         // Utiliser les éléments de la première page
@@ -1662,7 +1741,7 @@ class PDF_Builder_Admin {
                 switch ($element['type']) {
                     case 'text':
                         $final_content = $order ? $this->replace_order_variables($content, $order) : $content;
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($final_content));
+                        $html .= sprintf('<div class="pdf-element text-element" style="%s">%s</div>', $style, esc_html($final_content));
                         break;
 
                     case 'invoice_number':
@@ -1744,42 +1823,47 @@ class PDF_Builder_Admin {
                     case 'image':
                     case 'company_logo':
                         if ($content) {
-                            $html .= sprintf('<img class="pdf-element" src="%s" style="%s" alt="Image" />', esc_url($content), $style);
+                            $html .= sprintf('<div class="pdf-element image-element" style="%s"><img src="%s" style="width: 100%%; height: 100%%; object-fit: contain;" alt="Image" /></div>', $style, esc_url($content));
                         }
                         break;
 
                     case 'product_table':
                         if ($order) {
                             $table_html = $this->generate_order_products_table($order);
-                            $html .= '<div class="pdf-element" style="' . $style . '">' . $table_html . '</div>';
+                            $html .= '<div class="pdf-element table-element" style="' . $style . '">' . $table_html . '</div>';
                         } else {
-                            // Aperçu fictif du tableau de produits
-                            $table_html = '<div style="width: 100%; height: 100%; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; font-size: 10px; background-color: white;">';
-                            $table_html .= '<div style="display: flex; background-color: #f5f5f5; padding: 4px; font-weight: bold; border-bottom: 1px solid #ddd;">';
-                            $table_html .= '<div style="flex: 1;">Produit</div>';
-                            $table_html .= '<div style="width: 60px; text-align: center;">Qté</div>';
-                            $table_html .= '<div style="width: 80px; text-align: right;">Prix</div>';
-                            $table_html .= '<div style="width: 80px; text-align: right;">Total</div>';
-                            $table_html .= '</div>';
-                            $table_html .= '<div style="padding: 4px; border-bottom: 1px solid #eee;">';
-                            $table_html .= '<div style="display: flex;">';
-                            $table_html .= '<div style="flex: 1;">Produit A - Description</div>';
-                            $table_html .= '<div style="width: 60px; text-align: center;">2</div>';
-                            $table_html .= '<div style="width: 80px; text-align: right;">19.99€</div>';
-                            $table_html .= '<div style="width: 80px; text-align: right;">39.98€</div>';
-                            $table_html .= '</div>';
-                            $table_html .= '</div>';
-                            $table_html .= '<div style="padding: 4px; border-bottom: 1px solid #eee;">';
-                            $table_html .= '<div style="display: flex;">';
-                            $table_html .= '<div style="flex: 1;">Produit B - Autre article</div>';
-                            $table_html .= '<div style="width: 60px; text-align: center;">1</div>';
-                            $table_html .= '<div style="width: 80px; text-align: right;">29.99€</div>';
-                            $table_html .= '<div style="width: 80px; text-align: right;">29.99€</div>';
-                            $table_html .= '</div>';
-                            $table_html .= '</div>';
-                            $table_html .= '<div style="padding: 4px; font-weight: bold; text-align: right; border-top: 1px solid #ddd;">Total: 69.97€</div>';
-                            $table_html .= '</div>';
-                            $html .= '<div class="pdf-element" style="' . $style . '">' . $table_html . '</div>';
+                            // Aperçu fictif du tableau de produits avec un meilleur style
+                            $table_html = '<table style="width: 100%; border-collapse: collapse; font-size: 11px;">';
+                            $table_html .= '<thead>';
+                            $table_html .= '<tr style="background-color: #f8f9fa;">';
+                            $table_html .= '<th style="border: 1px solid #ddd; padding: 6px 8px; text-align: left; font-weight: bold;">Produit</th>';
+                            $table_html .= '<th style="border: 1px solid #ddd; padding: 6px 8px; text-align: center; font-weight: bold; width: 60px;">Qté</th>';
+                            $table_html .= '<th style="border: 1px solid #ddd; padding: 6px 8px; text-align: right; font-weight: bold; width: 80px;">Prix</th>';
+                            $table_html .= '<th style="border: 1px solid #ddd; padding: 6px 8px; text-align: right; font-weight: bold; width: 80px;">Total</th>';
+                            $table_html .= '</tr>';
+                            $table_html .= '</thead>';
+                            $table_html .= '<tbody>';
+                            $table_html .= '<tr>';
+                            $table_html .= '<td style="border: 1px solid #ddd; padding: 6px 8px;">Produit A - Description détaillée</td>';
+                            $table_html .= '<td style="border: 1px solid #ddd; padding: 6px 8px; text-align: center;">2</td>';
+                            $table_html .= '<td style="border: 1px solid #ddd; padding: 6px 8px; text-align: right;">19.99€</td>';
+                            $table_html .= '<td style="border: 1px solid #ddd; padding: 6px 8px; text-align: right;">39.98€</td>';
+                            $table_html .= '</tr>';
+                            $table_html .= '<tr>';
+                            $table_html .= '<td style="border: 1px solid #ddd; padding: 6px 8px;">Produit B - Autre article</td>';
+                            $table_html .= '<td style="border: 1px solid #ddd; padding: 6px 8px; text-align: center;">1</td>';
+                            $table_html .= '<td style="border: 1px solid #ddd; padding: 6px 8px; text-align: right;">29.99€</td>';
+                            $table_html .= '<td style="border: 1px solid #ddd; padding: 6px 8px; text-align: right;">29.99€</td>';
+                            $table_html .= '</tr>';
+                            $table_html .= '</tbody>';
+                            $table_html .= '<tfoot>';
+                            $table_html .= '<tr style="background-color: #f8f9fa; font-weight: bold;">';
+                            $table_html .= '<td colspan="3" style="border: 1px solid #ddd; padding: 6px 8px; text-align: right;">Total:</td>';
+                            $table_html .= '<td style="border: 1px solid #ddd; padding: 6px 8px; text-align: right;">69.97€</td>';
+                            $table_html .= '</tr>';
+                            $table_html .= '</tfoot>';
+                            $table_html .= '</table>';
+                            $html .= '<div class="pdf-element table-element" style="' . $style . '">' . $table_html . '</div>';
                         }
                         break;
 
@@ -1955,21 +2039,10 @@ class PDF_Builder_Admin {
         $document_type = $this->detect_document_type($order_status);
         $document_type_label = $this->get_document_type_label($document_type);
 
+        // Récupérer tous les templates disponibles
+        $all_templates = $wpdb->get_results("SELECT id, name, is_default FROM $table_templates ORDER BY is_default DESC, name ASC", ARRAY_A);
+
         // Récupérer le template par défaut adapté au type de document détecté
-        global $wpdb;
-        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-
-        // Mots-clés pour chaque type de document
-        $type_keywords = [
-            'invoice' => ['facture', 'invoice', 'factura'],
-            'quote' => ['devis', 'quote', 'quotation', 'cotización'],
-            'credit_note' => ['avoir', 'credit', 'note', 'refund'],
-            'delivery_note' => ['livraison', 'delivery', 'bon', 'note']
-        ];
-
-        $keywords = isset($type_keywords[$document_type]) ? $type_keywords[$document_type] : [];
-
-        // Construire la requête pour privilégier les templates dont le nom correspond au type
         $default_template = null;
 
         if (!empty($keywords)) {
@@ -1987,12 +2060,6 @@ class PDF_Builder_Admin {
         // Si aucun template spécifique trouvé, prendre n'importe quel template par défaut
         if (!$default_template) {
             $default_template = $wpdb->get_row("SELECT id, name FROM $table_templates WHERE is_default = 1 LIMIT 1", ARRAY_A);
-        }
-
-        if ($default_template) {
-            // Template trouvé pour ce type de document
-        } else {
-            // Aucun template spécifique trouvé
         }
 
         wp_nonce_field('pdf_builder_order_actions', 'pdf_builder_order_nonce');
@@ -2095,6 +2162,27 @@ class PDF_Builder_Admin {
         #pdf-builder-order-meta-box .btn-download:hover {
             background: linear-gradient(135deg, #e0a800 0%, #e8590c 100%);
         }
+        #pdf-builder-order-meta-box .action-buttons button.loading {
+            position: relative;
+            color: transparent !important;
+        }
+        #pdf-builder-order-meta-box .action-buttons button.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 16px;
+            height: 16px;
+            margin: -8px 0 0 -8px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        #pdf-builder-order-meta-box .template-selector select.loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
         #pdf-builder-order-meta-box .status-message {
             margin-top: 12px;
             padding: 8px 12px;
@@ -2102,21 +2190,33 @@ class PDF_Builder_Admin {
             font-size: 12px;
             text-align: center;
             font-weight: 500;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        #pdf-builder-order-meta-box .status-message.show {
+            opacity: 1;
+            transform: translateY(0);
         }
         #pdf-builder-order-meta-box .status-loading {
-            background: #e3f2fd;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
             color: #1976d2;
-            border: 1px solid #bbdefb;
+            border: 1px solid #90caf9;
+            animation: pulse 2s infinite;
         }
         #pdf-builder-order-meta-box .status-success {
-            background: #e8f5e8;
+            background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
             color: #2e7d32;
-            border: 1px solid #c8e6c9;
+            border: 1px solid #81c784;
         }
         #pdf-builder-order-meta-box .status-error {
-            background: #ffebee;
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
             color: #c62828;
-            border: 1px solid #ffcdd2;
+            border: 1px solid #e57373;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
@@ -2174,21 +2274,26 @@ class PDF_Builder_Admin {
                     </div>
                 </div>
 
-                <!-- Template sélectionné automatiquement -->
-                <div class="template-info" style="margin-bottom: 15px;">
+                <!-- Sélecteur de templates -->
+                <div class="template-selector" style="margin-bottom: 15px;">
                     <label style="display: block; margin-bottom: 6px; font-weight: 500; color: #23282d; font-size: 13px;">
-                        🎨 <?php _e('Template sélectionné:', 'pdf-builder-pro'); ?>
+                        🎨 <?php _e('Choisir un template:', 'pdf-builder-pro'); ?>
                     </label>
-                    <div style="padding: 10px; background: #e8f5e8; border: 1px solid #c3e6c3; border-radius: 6px; font-size: 14px; color: #155724;">
-                        <?php if ($default_template): ?>
-                            <strong><?php echo esc_html($default_template['name']); ?></strong>
-                            <small style="color: #6c757d; display: block; margin-top: 4px;">
-                                <?php _e('Template automatiquement sélectionné pour ce type de document', 'pdf-builder-pro'); ?>
-                            </small>
+                    <select id="pdf-builder-template-select" style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; background: white; transition: border-color 0.2s ease;">
+                        <?php if (!empty($all_templates)): ?>
+                            <?php foreach ($all_templates as $template): ?>
+                                <option value="<?php echo esc_attr($template['id']); ?>" <?php selected($template['id'], $default_template ? $default_template['id'] : 0); ?>>
+                                    <?php echo esc_html($template['name']); ?>
+                                    <?php if ($template['is_default']): ?> (<?php _e('Par défaut', 'pdf-builder-pro'); ?>)<?php endif; ?>
+                                </option>
+                            <?php endforeach; ?>
                         <?php else: ?>
-                            <em><?php _e('Aucun template par défaut trouvé', 'pdf-builder-pro'); ?></em>
+                            <option value="0"><?php _e('Aucun template disponible', 'pdf-builder-pro'); ?></option>
                         <?php endif; ?>
-                    </div>
+                    </select>
+                    <small style="color: #6c757d; font-size: 11px; margin-top: 4px; display: block;">
+                        <?php _e('Sélectionnez un template pour personnaliser votre document', 'pdf-builder-pro'); ?>
+                    </small>
                 </div>
 
                 <div class="action-buttons">
@@ -2235,30 +2340,26 @@ class PDF_Builder_Admin {
                     'error': 'status-error'
                 };
 
-                $status.removeClass('status-loading status-success status-error')
+                $status.removeClass('status-loading status-success status-error show')
                        .addClass(classes[type])
                        .html(message)
-                       .show();
+                       .addClass('show');
             }
 
             // Fonction pour masquer le statut
             function hideStatus() {
-                $status.hide();
+                $status.removeClass('show');
+                setTimeout(function() {
+                    $status.hide();
+                }, 300);
             }
 
             // Fonction pour définir l'état de chargement d'un bouton
             function setButtonLoading($btn, loading) {
                 if (loading) {
-                    $btn.prop('disabled', true);
-                    var originalText = $btn.html();
-                    $btn.data('original-text', originalText);
-                    $btn.html('<span class="spinner" style="display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spin 1s ease-in-out infinite; margin-right: 8px;"></span><?php echo esc_js(__("Chargement...", "pdf-builder-pro")); ?>');
+                    $btn.addClass('loading').prop('disabled', true);
                 } else {
-                    $btn.prop('disabled', false);
-                    var originalText = $btn.data('original-text');
-                    if (originalText) {
-                        $btn.html(originalText);
-                    }
+                    $btn.removeClass('loading').prop('disabled', false);
                 }
             }
 
@@ -2301,7 +2402,51 @@ class PDF_Builder_Admin {
                                     background: #f8f9fa;
                                     border-radius: 8px 8px 0 0;
                                 ">
-                                    <h3 style="margin: 0; color: #333; font-size: 18px;"><?php echo esc_js(__('Aperçu PDF', 'pdf-builder-pro')); ?></h3>
+                                    <div style="display: flex; align-items: center; gap: 15px;">
+                                        <h3 style="margin: 0; color: #333; font-size: 18px;"><?php echo esc_js(__('Aperçu PDF', 'pdf-builder-pro')); ?></h3>
+                                        <div id="pdf-zoom-controls" style="display: flex; align-items: center; gap: 10px;">
+                                            <button id="pdf-zoom-out" style="
+                                                background: #fff;
+                                                border: 1px solid #ddd;
+                                                border-radius: 4px;
+                                                width: 30px;
+                                                height: 30px;
+                                                display: flex;
+                                                align-items: center;
+                                                justify-content: center;
+                                                cursor: pointer;
+                                                font-size: 16px;
+                                                color: #666;
+                                            " title="<?php echo esc_js(__('Zoom arrière', 'pdf-builder-pro')); ?>">−</button>
+                                            <span id="pdf-zoom-level" style="font-size: 13px; color: #666; min-width: 45px; text-align: center;">100%</span>
+                                            <button id="pdf-zoom-in" style="
+                                                background: #fff;
+                                                border: 1px solid #ddd;
+                                                border-radius: 4px;
+                                                width: 30px;
+                                                height: 30px;
+                                                display: flex;
+                                                align-items: center;
+                                                justify-content: center;
+                                                cursor: pointer;
+                                                font-size: 16px;
+                                                color: #666;
+                                            " title="<?php echo esc_js(__('Zoom avant', 'pdf-builder-pro')); ?>">+</button>
+                                            <button id="pdf-zoom-fit" style="
+                                                background: #fff;
+                                                border: 1px solid #ddd;
+                                                border-radius: 4px;
+                                                padding: 0 8px;
+                                                height: 30px;
+                                                display: flex;
+                                                align-items: center;
+                                                justify-content: center;
+                                                cursor: pointer;
+                                                font-size: 12px;
+                                                color: #666;
+                                            " title="<?php echo esc_js(__('Ajuster à la fenêtre', 'pdf-builder-pro')); ?>"><?php echo esc_js(__('Ajuster', 'pdf-builder-pro')); ?></button>
+                                        </div>
+                                    </div>
                                     <button id="pdf-preview-close" style="
                                         background: none;
                                         border: none;
@@ -2358,6 +2503,8 @@ class PDF_Builder_Admin {
 
                 // Fonction pour fermer la modale
                 function closePdfPreviewModal() {
+                    // Nettoyer les gestionnaires d'événements de zoom
+                    $('#pdf-zoom-in, #pdf-zoom-out, #pdf-zoom-fit').off('click');
                     $('#pdf-preview-modal').fadeOut(300, function() {
                         $(this).remove();
                     });
@@ -2383,6 +2530,45 @@ class PDF_Builder_Admin {
                 iframe.style.height = height + 'px';
                 iframe.style.border = 'none';
                 iframe.style.background = 'white';
+                iframe.style.transformOrigin = 'top left';
+
+                // Variable globale pour la hauteur originale du PDF
+                window.originalPdfHeight = height;
+
+                // Fonction pour appliquer le zoom
+                window.applyPdfZoom = function(zoomLevel, iframe, height) {
+                    window.currentPdfZoom = Math.max(0.25, Math.min(3.0, zoomLevel)); // Limiter entre 25% et 300%
+                    iframe.style.transform = 'scale(' + window.currentPdfZoom + ')';
+                    iframe.style.transformOrigin = 'top left';
+                    iframe.style.width = (100 / window.currentPdfZoom) + '%';
+                    iframe.style.height = (height / window.currentPdfZoom) + 'px';
+                    $('#pdf-zoom-level').text(Math.round(window.currentPdfZoom * 100) + '%');
+
+                    // Ajuster la hauteur du conteneur
+                    var scaledHeight = height * window.currentPdfZoom + 40;
+                    $('#pdf-preview-iframe-container').css('min-height', scaledHeight + 'px');
+                };
+
+                // Gestionnaires d'événements pour les contrôles de zoom
+                $('#pdf-zoom-in').off('click').on('click', function() {
+                    var iframe = $('#pdf-preview-iframe-container iframe')[0];
+                    window.applyPdfZoom(window.currentPdfZoom * 1.2, iframe, window.originalPdfHeight);
+                });
+
+                $('#pdf-zoom-out').off('click').on('click', function() {
+                    var iframe = $('#pdf-preview-iframe-container iframe')[0];
+                    window.applyPdfZoom(window.currentPdfZoom / 1.2, iframe, window.originalPdfHeight);
+                });
+
+                $('#pdf-zoom-fit').off('click').on('click', function() {
+                    var iframe = $('#pdf-preview-iframe-container iframe')[0];
+                    var containerWidth = $('#pdf-preview-iframe-container').width();
+                    var fitZoom = containerWidth / width;
+                    window.applyPdfZoom(fitZoom, iframe, window.originalPdfHeight);
+                });
+
+                // Appliquer le zoom initial
+                window.applyPdfZoom(1.0, iframe, height);
 
                 // Utiliser une approche moderne pour écrire dans l'iframe
                 iframe.onload = function() {
@@ -2425,7 +2611,7 @@ class PDF_Builder_Admin {
             // Aperçu PDF
             $previewBtn.on('click', function() {
                 var orderId = $(this).data('order-id');
-                var templateId = <?php echo $default_template ? esc_js($default_template['id']) : '0'; ?>;
+                var templateId = $('#pdf-builder-template-select').val();
 
                 console.log('PDF Builder: Preview button clicked');
                 console.log('PDF Builder: Order ID:', orderId);
@@ -2473,7 +2659,7 @@ class PDF_Builder_Admin {
             // Générer PDF
             $generateBtn.on('click', function() {
                 var orderId = $(this).data('order-id');
-                var templateId = <?php echo $default_template ? esc_js($default_template['id']) : '0'; ?>;
+                var templateId = $('#pdf-builder-template-select').val();
 
                 console.log('PDF Builder: Generate button clicked');
                 console.log('PDF Builder: Order ID:', orderId);
@@ -2516,6 +2702,69 @@ class PDF_Builder_Admin {
                     complete: function() {
                         console.log('PDF Builder: Generate AJAX complete');
                         setButtonLoading($generateBtn, false);
+                    }
+                });
+            });
+
+            // Aperçu automatique lors du changement de template
+            $('#pdf-builder-template-select').on('change', function() {
+                var templateId = $(this).val();
+                var orderId = $previewBtn.data('order-id');
+
+                console.log('PDF Builder: Template changed to:', templateId);
+
+                // Désactiver temporairement le sélecteur pendant le chargement
+                $(this).addClass('loading');
+
+                // Afficher un indicateur de chargement rapide
+                showStatus('<?php echo esc_js(__('Mise à jour de l\'aperçu...', 'pdf-builder-pro')); ?>', 'loading');
+
+                // Générer automatiquement un aperçu avec le nouveau template
+                $.ajax({
+                    url: ajaxurl,
+                    type: 'POST',
+                    data: {
+                        action: 'pdf_builder_pro_preview_order_pdf',
+                        order_id: orderId,
+                        template_id: templateId,
+                        nonce: '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>'
+                    },
+                    success: function(response) {
+                        console.log('PDF Builder: Auto-preview success');
+                        if (response.success) {
+                            // Vérifier si la modale est déjà ouverte
+                            if ($('#pdf-preview-modal').length) {
+                                // Mettre à jour le contenu de l'iframe existant
+                                var iframe = $('#pdf-preview-iframe-container iframe')[0];
+                                if (iframe) {
+                                    var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                                    if (iframeDoc && iframeDoc.body) {
+                                        iframeDoc.body.innerHTML = response.data.html;
+                                        // Réinitialiser le zoom si la fonction existe
+                                        if (typeof window.applyPdfZoom === 'function') {
+                                            var height = response.data.height || 842; // Valeur par défaut A4
+                                            window.applyPdfZoom(1.0, iframe, height);
+                                        }
+                                    }
+                                }
+                            } else {
+                                // Ouvrir une nouvelle modale
+                                openPdfPreviewModal(response.data.html, response.data.width || 595, response.data.height || 842);
+                            }
+                            showStatus('<?php echo esc_js(__('Aperçu mis à jour ✅', 'pdf-builder-pro')); ?>', 'success');
+                            setTimeout(hideStatus, 2000);
+                        } else {
+                            console.error('PDF Builder: Auto-preview failed:', response.data);
+                            showStatus(response.data || '<?php echo esc_js(__('Erreur lors de la mise à jour ❌', 'pdf-builder-pro')); ?>', 'error');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('PDF Builder: Auto-preview AJAX error');
+                        showStatus('<?php echo esc_js(__('Erreur AJAX lors de la mise à jour ❌', 'pdf-builder-pro')); ?>', 'error');
+                    },
+                    complete: function() {
+                        // Réactiver le sélecteur
+                        $('#pdf-builder-template-select').removeClass('loading');
                     }
                 });
             });
@@ -3070,62 +3319,67 @@ class PDF_Builder_Admin {
                 'zoom' => 1,
                 'pan' => array('x' => 0, 'y' => 0)
             ),
-            'elements' => array(
+            'pages' => array(
                 array(
-                    'id' => 'company_name',
-                    'type' => 'text',
-                    'position' => array('x' => 50, 'y' => 50),
-                    'size' => array('width' => 200, 'height' => 30),
-                    'style' => array('fontSize' => 18, 'fontWeight' => 'bold', 'color' => '#000000'),
-                    'content' => 'Ma Société'
-                ),
-                array(
-                    'id' => 'invoice_title',
-                    'type' => 'text',
-                    'position' => array('x' => 400, 'y' => 50),
-                    'size' => array('width' => 150, 'height' => 30),
-                    'style' => array('fontSize' => 20, 'fontWeight' => 'bold', 'color' => '#000000'),
-                    'content' => 'FACTURE'
-                ),
-                array(
-                    'id' => 'invoice_number',
-                    'type' => 'invoice_number',
-                    'position' => array('x' => 400, 'y' => 90),
-                    'size' => array('width' => 150, 'height' => 25),
-                    'style' => array('fontSize' => 14, 'color' => '#000000'),
-                    'content' => 'N° de facture'
-                ),
-                array(
-                    'id' => 'invoice_date',
-                    'type' => 'invoice_date',
-                    'position' => array('x' => 400, 'y' => 120),
-                    'size' => array('width' => 150, 'height' => 25),
-                    'style' => array('fontSize' => 14, 'color' => '#000000'),
-                    'content' => 'Date'
-                ),
-                array(
-                    'id' => 'customer_info',
-                    'type' => 'customer_info',
-                    'position' => array('x' => 50, 'y' => 150),
-                    'size' => array('width' => 250, 'height' => 80),
-                    'style' => array('fontSize' => 12, 'color' => '#000000'),
-                    'content' => 'Informations client'
-                ),
-                array(
-                    'id' => 'products_table',
-                    'type' => 'product_table',
-                    'position' => array('x' => 50, 'y' => 250),
-                    'size' => array('width' => 500, 'height' => 200),
-                    'style' => array('fontSize' => 12, 'color' => '#000000'),
-                    'content' => 'Tableau produits'
-                ),
-                array(
-                    'id' => 'total',
-                    'type' => 'total',
-                    'position' => array('x' => 400, 'y' => 500),
-                    'size' => array('width' => 150, 'height' => 30),
-                    'style' => array('fontSize' => 16, 'fontWeight' => 'bold', 'color' => '#000000'),
-                    'content' => 'Total'
+                    'margins' => array('top' => 20, 'right' => 20, 'bottom' => 20, 'left' => 20),
+                    'elements' => array(
+                        array(
+                            'id' => 'company_name',
+                            'type' => 'text',
+                            'position' => array('x' => 50, 'y' => 50),
+                            'size' => array('width' => 200, 'height' => 30),
+                            'style' => array('fontSize' => 18, 'fontWeight' => 'bold', 'color' => '#000000'),
+                            'content' => 'Ma Société'
+                        ),
+                        array(
+                            'id' => 'invoice_title',
+                            'type' => 'text',
+                            'position' => array('x' => 400, 'y' => 50),
+                            'size' => array('width' => 150, 'height' => 30),
+                            'style' => array('fontSize' => 20, 'fontWeight' => 'bold', 'color' => '#000000'),
+                            'content' => 'FACTURE'
+                        ),
+                        array(
+                            'id' => 'invoice_number',
+                            'type' => 'invoice_number',
+                            'position' => array('x' => 400, 'y' => 90),
+                            'size' => array('width' => 150, 'height' => 25),
+                            'style' => array('fontSize' => 14, 'color' => '#000000'),
+                            'content' => 'N° de facture'
+                        ),
+                        array(
+                            'id' => 'invoice_date',
+                            'type' => 'invoice_date',
+                            'position' => array('x' => 400, 'y' => 120),
+                            'size' => array('width' => 150, 'height' => 25),
+                            'style' => array('fontSize' => 14, 'color' => '#000000'),
+                            'content' => 'Date'
+                        ),
+                        array(
+                            'id' => 'customer_info',
+                            'type' => 'customer_info',
+                            'position' => array('x' => 50, 'y' => 150),
+                            'size' => array('width' => 250, 'height' => 80),
+                            'style' => array('fontSize' => 12, 'color' => '#000000'),
+                            'content' => 'Informations client'
+                        ),
+                        array(
+                            'id' => 'products_table',
+                            'type' => 'product_table',
+                            'position' => array('x' => 50, 'y' => 250),
+                            'size' => array('width' => 500, 'height' => 200),
+                            'style' => array('fontSize' => 12, 'color' => '#000000'),
+                            'content' => 'Tableau produits'
+                        ),
+                        array(
+                            'id' => 'total',
+                            'type' => 'total',
+                            'position' => array('x' => 400, 'y' => 500),
+                            'size' => array('width' => 150, 'height' => 30),
+                            'style' => array('fontSize' => 16, 'fontWeight' => 'bold', 'color' => '#000000'),
+                            'content' => 'Total'
+                        )
+                    )
                 )
             )
         );
