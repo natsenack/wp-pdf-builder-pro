@@ -1895,27 +1895,17 @@ class PDF_Builder_Admin {
 
         error_log('PDF Builder: Order status: ' . $order_status . ', Detected document type: ' . $document_type);
 
-        // Récupérer le template par défaut pour ce type de document
+        // Récupérer le template par défaut (sans filtrer par document_type car la colonne n'existe pas)
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-        $default_template = $wpdb->get_row(
-            $wpdb->prepare(
-                "SELECT id, name FROM $table_templates WHERE is_default = 1 AND document_type = %s LIMIT 1",
-                $document_type
-            ),
-            ARRAY_A
-        );
+        $default_template = $wpdb->get_row("SELECT id, name FROM $table_templates WHERE is_default = 1 LIMIT 1", ARRAY_A);
 
-        // Si pas de template spécifique trouvé, prendre n'importe quel template par défaut
-        if (!$default_template) {
-            $default_template = $wpdb->get_row("SELECT id, name FROM $table_templates WHERE is_default = 1 LIMIT 1", ARRAY_A);
-            if ($default_template) {
-                error_log('PDF Builder: Using fallback default template: ' . $default_template['name']);
-            }
+        if ($default_template) {
+            error_log('PDF Builder: Using default template: ' . $default_template['name']);
         }
 
-        // Récupérer tous les templates pour le sélecteur manuel
-        $all_templates = $wpdb->get_results("SELECT id, name, document_type FROM $table_templates ORDER BY name ASC", ARRAY_A);
+        // Récupérer tous les templates pour le sélecteur manuel (sans document_type)
+        $all_templates = $wpdb->get_results("SELECT id, name FROM $table_templates ORDER BY name ASC", ARRAY_A);
 
         error_log('PDF Builder: Selected template: ' . ($default_template ? $default_template['name'] : 'None'));
 
@@ -2129,9 +2119,6 @@ class PDF_Builder_Admin {
                                 <?php if ($default_template && $template['id'] == $default_template['id']) continue; ?>
                                 <option value="<?php echo esc_attr($template['id']); ?>">
                                     <?php echo esc_html($template['name']); ?>
-                                    <?php if ($template['document_type']): ?>
-                                        (<?php echo esc_html($this->get_document_type_label($template['document_type'])); ?>)
-                                    <?php endif; ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -2175,7 +2162,8 @@ class PDF_Builder_Admin {
             var $templateSelect = $('#pdf_template_select');
 
             // Fonction pour afficher le statut
-            function showStatus(message, type = 'loading') {
+            function showStatus(message, type) {
+                type = type || 'loading';
                 var classes = {
                     'loading': 'status-loading',
                     'success': 'status-success',
@@ -2199,7 +2187,7 @@ class PDF_Builder_Admin {
                     $btn.prop('disabled', true);
                     var originalText = $btn.html();
                     $btn.data('original-text', originalText);
-                    $btn.html('<span class="spinner" style="display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spin 1s ease-in-out infinite; margin-right: 8px;"></span>' + '<?php _e('Chargement...', 'pdf-builder-pro'); ?>');
+                    $btn.html('<span class="spinner" style="display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spin 1s ease-in-out infinite; margin-right: 8px;"></span><?php echo esc_js(__("Chargement...", "pdf-builder-pro")); ?>');
                 } else {
                     $btn.prop('disabled', false);
                     var originalText = $btn.data('original-text');
@@ -2378,7 +2366,7 @@ class PDF_Builder_Admin {
                 console.log('PDF Builder: Order ID:', orderId);
                 console.log('PDF Builder: Template ID:', templateId);
 
-                showStatus('<?php _e('Génération de l\'aperçu...', 'pdf-builder-pro'); ?>', 'loading');
+                showStatus('<?php echo esc_js(__('Génération de l\'aperçu...', 'pdf-builder-pro')); ?>', 'loading');
                 setButtonLoading($previewBtn, true);
 
                 $.ajax({
@@ -2396,11 +2384,11 @@ class PDF_Builder_Admin {
                         if (response.success) {
                             // Ouvrir l'aperçu dans une modale
                             openPdfPreviewModal(response.data.html, response.data.width, response.data.height);
-                            showStatus('<?php _e('Aperçu ouvert avec succès ✅', 'pdf-builder-pro'); ?>', 'success');
+                            showStatus('<?php echo esc_js(__('Aperçu ouvert avec succès ✅', 'pdf-builder-pro')); ?>', 'success');
                             setTimeout(hideStatus, 3000);
                         } else {
                             console.error('PDF Builder: Preview failed:', response.data);
-                            showStatus(response.data || '<?php _e('Erreur lors de l\'aperçu ❌', 'pdf-builder-pro'); ?>', 'error');
+                            showStatus(response.data || '<?php echo esc_js(__('Erreur lors de l\'aperçu ❌', 'pdf-builder-pro')); ?>', 'error');
                         }
                     },
                     error: function(xhr, status, error) {
@@ -2408,7 +2396,7 @@ class PDF_Builder_Admin {
                         console.error('PDF Builder: Status:', status);
                         console.error('PDF Builder: Error:', error);
                         console.error('PDF Builder: Response:', xhr.responseText);
-                        showStatus('<?php _e('Erreur AJAX lors de l\'aperçu ❌', 'pdf-builder-pro'); ?>', 'error');
+                        showStatus('<?php echo esc_js(__('Erreur AJAX lors de l\'aperçu ❌', 'pdf-builder-pro')); ?>', 'error');
                     },
                     complete: function() {
                         console.log('PDF Builder: Preview AJAX complete');
@@ -2426,7 +2414,7 @@ class PDF_Builder_Admin {
                 console.log('PDF Builder: Order ID:', orderId);
                 console.log('PDF Builder: Template ID:', templateId);
 
-                showStatus('<?php _e('Génération du PDF en cours...', 'pdf-builder-pro'); ?>', 'loading');
+                showStatus('<?php echo esc_js(__('Génération du PDF en cours...', 'pdf-builder-pro')); ?>', 'loading');
                 setButtonLoading($generateBtn, true);
 
                 $.ajax({
@@ -2444,13 +2432,13 @@ class PDF_Builder_Admin {
                         if (response.success) {
                             // Afficher le bouton de téléchargement
                             $downloadBtn.attr('href', response.data.url).show();
-                            showStatus('<?php _e('PDF généré avec succès ✅', 'pdf-builder-pro'); ?>', 'success');
+                            showStatus('<?php echo esc_js(__('PDF généré avec succès ✅', 'pdf-builder-pro')); ?>', 'success');
 
                             // Ouvrir automatiquement le PDF dans un nouvel onglet
                             window.open(response.data.url, '_blank');
                         } else {
                             console.error('PDF Builder: Generate failed:', response.data);
-                            showStatus(response.data || '<?php _e('Erreur lors de la génération ❌', 'pdf-builder-pro'); ?>', 'error');
+                            showStatus(response.data || '<?php echo esc_js(__('Erreur lors de la génération ❌', 'pdf-builder-pro')); ?>', 'error');
                         }
                     },
                     error: function(xhr, status, error) {
@@ -2458,7 +2446,7 @@ class PDF_Builder_Admin {
                         console.error('PDF Builder: Status:', status);
                         console.error('PDF Builder: Error:', error);
                         console.error('PDF Builder: Response:', xhr.responseText);
-                        showStatus('<?php _e('Erreur AJAX lors de la génération ❌', 'pdf-builder-pro'); ?>', 'error');
+                        showStatus('<?php echo esc_js(__('Erreur AJAX lors de la génération ❌', 'pdf-builder-pro')); ?>', 'error');
                     },
                     complete: function() {
                         console.log('PDF Builder: Generate AJAX complete');
