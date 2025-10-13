@@ -234,69 +234,113 @@ window.addEventListener('load', function() {
     
     // Simple tab functionality without jQuery wrapper
     function simpleActivateTab(tabHref) {
-        console.log('Simple activateTab called with:', tabHref);
-        
+        console.log('🔄 simpleActivateTab called with:', tabHref);
+
         // Find the target element
         var targetElement = document.getElementById(tabHref.substring(1)); // Remove #
+        console.log('Target element lookup - id:', tabHref.substring(1), 'found:', !!targetElement);
+
         if (!targetElement) {
-            console.error('Target element not found:', tabHref);
+            console.error('❌ Target element not found:', tabHref);
             return;
         }
-        
+
+        console.log('✅ Target element found, proceeding with activation');
+
         // Hide all tab contents
         var tabContents = document.querySelectorAll('.tab-content');
+        console.log('Found', tabContents.length, 'tab content elements');
+
         for (var i = 0; i < tabContents.length; i++) {
+            console.log('Removing active class from tab content', i, 'id:', tabContents[i].id);
             tabContents[i].classList.remove('active');
         }
-        
+
         // Remove active class from all nav tabs
         var navTabs = document.querySelectorAll('.nav-tab');
+        console.log('Found', navTabs.length, 'nav tab elements');
+
         for (var i = 0; i < navTabs.length; i++) {
+            console.log('Removing nav-tab-active class from tab', i, 'href:', navTabs[i].getAttribute('href'));
             navTabs[i].classList.remove('nav-tab-active');
         }
-        
+
         // Activate the clicked tab
         var activeNavTab = document.querySelector('.nav-tab[href="' + tabHref + '"]');
+        console.log('Looking for nav tab with href:', tabHref, 'found:', !!activeNavTab);
+
         if (activeNavTab) {
+            console.log('Adding nav-tab-active class to clicked tab');
             activeNavTab.classList.add('nav-tab-active');
+        } else {
+            console.error('❌ Could not find nav tab with href:', tabHref);
         }
-        
+
         // Show the target content
+        console.log('Adding active class to target content:', targetElement.id);
         targetElement.classList.add('active');
-        
-        console.log('Simple tab activation complete');
+
+        // Verify final state
+        var activeContents = document.querySelectorAll('.tab-content.active');
+        var activeNavs = document.querySelectorAll('.nav-tab.nav-tab-active');
+
+        console.log('Final state - active contents:', activeContents.length, 'active navs:', activeNavs.length);
+        console.log('✅ Simple tab activation complete for:', tabHref);
     }
     
     // Attach click handlers when DOM is ready
     document.addEventListener('DOMContentLoaded', function() {
         console.log('DOMContentLoaded - attaching tab handlers');
-        
+
         var navTabs = document.querySelectorAll('.nav-tab');
         console.log('Found nav tabs:', navTabs.length);
-        
+
+        // Log each tab found
+        for (var i = 0; i < navTabs.length; i++) {
+            console.log('Tab', i, ':', navTabs[i].getAttribute('href'), navTabs[i].textContent.trim());
+        }
+
         for (var i = 0; i < navTabs.length; i++) {
             navTabs[i].addEventListener('click', function(e) {
+                console.log('🖱️ TAB CLICK DETECTED!');
+                console.log('Clicked element:', this);
+                console.log('Href:', this.getAttribute('href'));
+                console.log('Text:', this.textContent.trim());
+
                 e.preventDefault();
                 var tabHref = this.getAttribute('href');
-                console.log('Tab clicked:', tabHref);
+                console.log('Processing tab click for:', tabHref);
+
+                // Check if tab content exists
+                var targetElement = document.getElementById(tabHref.substring(1));
+                console.log('Target element found:', !!targetElement, 'id:', tabHref.substring(1));
+
                 simpleActivateTab(tabHref);
-                
+
                 // Update URL hash
                 window.location.hash = tabHref;
+                console.log('Updated URL hash to:', window.location.hash);
             });
         }
-        
+
+        console.log('All click handlers attached successfully');
+
         // Initialize first tab
         var firstTab = document.querySelector('.nav-tab');
         if (firstTab) {
             var firstHref = firstTab.getAttribute('href');
+            console.log('Initializing first tab:', firstHref);
             simpleActivateTab(firstHref);
+        } else {
+            console.error('No first tab found!');
         }
-        
+
         // Update debug info
         if (statusSpan) {
             statusSpan.textContent = 'JavaScript chargé - ' + navTabs.length + ' onglets trouvés';
         }
+
+        console.log('Tab initialization complete');
     });
     </script>
 
