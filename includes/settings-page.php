@@ -850,23 +850,32 @@ window.addEventListener('load', function() {
 
             <!-- Onglet Notifications -->
             <?php error_log('PDF Builder: About to render notifications tab'); ?>
-            <div id="notifications" class="tab-content" style="border: 2px solid blue; padding: 20px;">
-                <h2>Paramètres de Notifications</h2>
-                <p>TEST: Notifications tab content rendered</p>
+            <div id="notifications" class="tab-content" style="border: 5px solid blue !important; padding: 30px !important; background: lightblue !important; margin: 20px !important;">
+                <h2 style="color: darkblue !important;">🚨 Paramètres de Notifications</h2>
+                <p style="font-size: 18px !important; color: red !important;"><strong>CONTENU NOTIFICATIONS VISIBLE ICI</strong></p>
+                <div style="background: yellow !important; padding: 20px !important; border: 3px solid red !important;">
+                    <p>Si vous voyez cette boîte jaune avec bordure rouge, l'onglet fonctionne !</p>
+                </div>
             </div>
 
             <!-- Onglet Canvas -->
             <?php error_log('PDF Builder: About to render canvas tab'); ?>
-            <div id="canvas" class="tab-content" style="border: 2px solid green; padding: 20px;">
-                <h2>Paramètres Canvas</h2>
-                <p>TEST: Canvas tab content rendered</p>
+            <div id="canvas" class="tab-content" style="border: 5px solid green !important; padding: 30px !important; background: lightgreen !important; margin: 20px !important;">
+                <h2 style="color: darkgreen !important;">🎨 Paramètres Canvas</h2>
+                <p style="font-size: 18px !important; color: red !important;"><strong>CONTENU CANVAS VISIBLE ICI</strong></p>
+                <div style="background: yellow !important; padding: 20px !important; border: 3px solid red !important;">
+                    <p>Si vous voyez cette boîte jaune avec bordure rouge, l'onglet fonctionne !</p>
+                </div>
             </div>
 
             <!-- Onglet Maintenance -->
             <?php error_log('PDF Builder: About to render maintenance tab'); ?>
-            <div id="maintenance" class="tab-content" style="border: 2px solid orange; padding: 20px;">
-                <h2>Actions de Maintenance</h2>
-                <p>TEST: Maintenance tab content rendered</p>
+            <div id="maintenance" class="tab-content" style="border: 5px solid orange !important; padding: 30px !important; background: lightyellow !important; margin: 20px !important;">
+                <h2 style="color: darkorange !important;">🔧 Actions de Maintenance</h2>
+                <p style="font-size: 18px !important; color: red !important;"><strong>CONTENU MAINTENANCE VISIBLE ICI</strong></p>
+                <div style="background: yellow !important; padding: 20px !important; border: 3px solid red !important;">
+                    <p>Si vous voyez cette boîte jaune avec bordure rouge, l'onglet fonctionne !</p>
+                </div>
             </div>
         </div>
 
