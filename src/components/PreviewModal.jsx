@@ -16,12 +16,125 @@ const PreviewModal = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Générer l'aperçu quand la modale s'ouvre
-  useEffect(() => {
-    if (isOpen && elements.length > 0) {
-      generatePreview();
+  // Fonction pour rendre le contenu du canvas en HTML
+  const renderCanvasContent = (elements) => {
+    if (!elements || elements.length === 0) {
+      return <div style={{ padding: '20px', textAlign: 'center', color: '#666' }}>Aucun élément à afficher</div>;
     }
-  }, [isOpen, elements]);
+
+    return (
+      <div
+        style={{
+          position: 'relative',
+          width: canvasWidth,
+          height: canvasHeight,
+          backgroundColor: 'white',
+          border: '1px solid #e2e8f0',
+          borderRadius: '4px',
+          overflow: 'hidden',
+          transform: `scale(${zoom})`,
+          transformOrigin: 'top left',
+          margin: '0 auto'
+        }}
+      >
+        {elements.map((element, index) => {
+          const baseStyle = {
+            position: 'absolute',
+            left: element.x || 0,
+            top: element.y || 0,
+            width: element.width || 100,
+            height: element.height || 50,
+            zIndex: element.zIndex || index + 1
+          };
+
+          switch (element.type) {
+            case 'text':
+              return (
+                <div
+                  key={index}
+                  style={{
+                    ...baseStyle,
+                    fontSize: element.fontSize || 16,
+                    color: element.color || '#000000',
+                    fontWeight: element.fontWeight === 'bold' ? 'bold' : 'normal',
+                    fontStyle: element.fontStyle === 'italic' ? 'italic' : 'normal',
+                    textAlign: element.textAlign || 'left',
+                    lineHeight: '1.2',
+                    whiteSpace: 'pre-wrap',
+                    overflow: 'hidden'
+                  }}
+                >
+                  {element.content || element.text || 'Texte'}
+                </div>
+              );
+
+            case 'rectangle':
+              return (
+                <div
+                  key={index}
+                  style={{
+                    ...baseStyle,
+                    backgroundColor: element.fillColor || 'transparent',
+                    border: element.borderWidth
+                      ? `${element.borderWidth}px solid ${element.borderColor || '#000000'}`
+                      : 'none',
+                    borderRadius: element.borderRadius || 0
+                  }}
+                />
+              );
+
+            case 'image':
+              return (
+                <img
+                  key={index}
+                  src={element.src || ''}
+                  alt={element.alt || 'Image'}
+                  style={{
+                    ...baseStyle,
+                    objectFit: 'cover'
+                  }}
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                  }}
+                />
+              );
+
+            case 'line':
+              return (
+                <div
+                  key={index}
+                  style={{
+                    ...baseStyle,
+                    borderTop: `${element.strokeWidth || 1}px solid ${element.strokeColor || '#000000'}`,
+                    height: 0,
+                    width: element.width || 100
+                  }}
+                />
+              );
+
+            default:
+              return (
+                <div
+                  key={index}
+                  style={{
+                    ...baseStyle,
+                    backgroundColor: '#f0f0f0',
+                    border: '1px dashed #ccc',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '12px',
+                    color: '#666'
+                  }}
+                >
+                  {element.type || 'Élément inconnu'}
+                </div>
+              );
+          }
+        })}
+      </div>
+    );
+  };
 
   const generatePreview = async () => {
     setLoading(true);
@@ -235,7 +348,7 @@ const PreviewModal = ({
     <div className="preview-modal-overlay" onClick={onClose}>
       <div className="preview-modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="preview-modal-header">
-          <h3>📄 Aperçu PDF - PDF Builder Pro v2.0</h3>
+          <h3>🎨 Aperçu Canvas - PDF Builder Pro v2.0</h3>
           <button className="preview-modal-close" onClick={onClose}>×</button>
         </div>
 
@@ -273,19 +386,28 @@ const PreviewModal = ({
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'flex-start',
-                minHeight: '400px'
+                minHeight: '400px',
+                backgroundColor: '#f8f9fa',
+                borderRadius: '8px',
+                padding: '20px'
               }}>
-                <img
-                  src={`data:image/png;base64,${previewData.preview}`}
-                  alt="Aperçu PDF"
-                  style={{
-                    maxWidth: '100%',
-                    maxHeight: '600px',
-                    border: '1px solid #e2e8f0',
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
-                  }}
-                />
+                {renderCanvasContent(elements)}
+              </div>
+
+              <div style={{
+                marginTop: '20px',
+                padding: '15px',
+                backgroundColor: '#e8f4fd',
+                borderRadius: '6px',
+                border: '1px solid #b3d9ff'
+              }}>
+                <h5 style={{ margin: '0 0 10px 0', color: '#0066cc' }}>ℹ️ Informations du Canvas</h5>
+                <p style={{ margin: '0', fontSize: '14px', color: '#333' }}>
+                  <strong>Dimensions:</strong> {canvasWidth} × {canvasHeight} pixels<br/>
+                  <strong>Éléments:</strong> {elements.length}<br/>
+                  <strong>Zoom:</strong> {Math.round(zoom * 100)}%<br/>
+                  <strong>Miniature PDF:</strong> {previewData.width}×{previewData.height}px
+                </p>
               </div>
             </div>
           )}
