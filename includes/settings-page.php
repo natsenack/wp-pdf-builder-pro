@@ -275,20 +275,20 @@ window.addEventListener('load', function() {
         console.log('Found', tabContents.length, 'tab content elements (by ID lookup)');
 
         // Simple approach: hide all tab contents first, then show only the target
-        var allTabContents = document.querySelectorAll('.tab-content');
-        console.log('Found', allTabContents.length, 'total tab content elements to manage');
+        // Use the tabContents array we built from nav tabs instead of querySelectorAll
+        console.log('Found', tabContents.length, 'total tab content elements to manage');
 
-        for (var i = 0; i < allTabContents.length; i++) {
-            if (allTabContents[i].id === targetElement.id) {
+        for (var i = 0; i < tabContents.length; i++) {
+            if (tabContents[i].id === targetElement.id) {
                 // This is the target - show it
-                allTabContents[i].classList.add('active');
-                allTabContents[i].style.cssText = 'display: block !important;';
-                console.log('SHOWING target content:', allTabContents[i].id);
+                tabContents[i].classList.add('active');
+                tabContents[i].style.cssText = 'display: block !important;';
+                console.log('SHOWING target content:', tabContents[i].id);
             } else {
                 // This is not the target - hide it
-                allTabContents[i].classList.remove('active');
-                allTabContents[i].style.cssText = 'display: none !important;';
-                console.log('HIDING non-target content:', allTabContents[i].id);
+                tabContents[i].classList.remove('active');
+                tabContents[i].style.cssText = 'display: none !important;';
+                console.log('HIDING non-target content:', tabContents[i].id);
             }
         }
 
