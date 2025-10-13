@@ -9,7 +9,7 @@ define('PDF_GENERATOR_TEST_MODE', true);
 require_once __DIR__ . '/includes/pdf-generator.php';
 
 // Créer une instance du générateur
-$generator = new PDF_Generator();
+$generator = new PDF_Builder_Pro_Generator();
 
 // Éléments de test avec propriétés CSS réalistes du frontend React
 $test_elements = [
