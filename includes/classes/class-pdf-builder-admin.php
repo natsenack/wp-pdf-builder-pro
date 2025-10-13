@@ -1822,10 +1822,10 @@ class PDF_Builder_Admin {
 
                     case 'image':
                     case 'company_logo':
-                        // Essayer de récupérer l'URL du logo depuis les options WordPress
-                        $logo_url = $content;
+                        // Utiliser l'URL de l'image depuis l'élément du canvas en priorité
+                        $logo_url = $element['imageUrl'] ?? $content;
 
-                        // Si pas de contenu spécifique, essayer le logo du site WordPress
+                        // Si pas d'URL spécifique dans l'élément, essayer le logo du site WordPress
                         if (!$logo_url) {
                             $custom_logo_id = get_theme_mod('custom_logo');
                             if ($custom_logo_id) {
@@ -1896,8 +1896,14 @@ class PDF_Builder_Admin {
                         break;
 
                     case 'document_type':
-                        // Type de document : statut de la commande ou contenu par défaut
-                        $docType = $order ? wc_get_order_status_name($order->get_status()) : ($content ?: 'Document');
+                        // Type de document basé sur le statut de la commande
+                        if ($order) {
+                            $order_status = $order->get_status();
+                            $document_type = $this->detect_document_type($order_status);
+                            $docType = $this->get_document_type_label($document_type);
+                        } else {
+                            $docType = $content ?: 'Document';
+                        }
                         $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($docType));
                         break;
 
