@@ -338,6 +338,17 @@ window.addEventListener('load', function() {
                 var targetElement = document.getElementById(tabHref.substring(1));
                 console.log('Target element found:', !!targetElement, 'id:', tabHref.substring(1));
 
+                // Debug: Check all elements with class tab-content
+                var allTabContents = document.querySelectorAll('.tab-content');
+                console.log('Total tab-content elements in DOM:', allTabContents.length);
+                for (var i = 0; i < allTabContents.length; i++) {
+                    console.log('Tab content element', i, ': id="' + allTabContents[i].id + '"');
+                }
+
+                // Debug: Check if element exists but is not found by getElementById
+                var elementByQuery = document.querySelector('#' + tabHref.substring(1));
+                console.log('Element found by querySelector:', !!elementByQuery, 'id:', tabHref.substring(1));
+
                 simpleActivateTab(tabHref);
 
                 // Note: Removed hash update to prevent unwanted scrolling
