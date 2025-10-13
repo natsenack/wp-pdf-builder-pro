@@ -10,7 +10,8 @@ const PreviewModal = ({
   canvasHeight = 842,
   zoom = 1,
   ajaxurl,
-  pdfBuilderNonce
+  pdfBuilderNonce,
+  onOpenPDFModal = null
 }) => {
   const [previewData, setPreviewData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -540,24 +541,31 @@ const PreviewModal = ({
       // Créer un URL pour le blob PDF
       const pdfUrl = URL.createObjectURL(pdfBlob);
 
-      // Ouvrir le PDF dans une nouvelle fenêtre
-      const previewWindow = window.open(pdfUrl, '_blank');
+      // Ouvrir le PDF dans une modale si la prop est fournie, sinon dans une nouvelle fenêtre
+      if (onOpenPDFModal) {
+        onOpenPDFModal(pdfUrl);
+      } else {
+        // Fallback vers l'ancienne méthode
+        const previewWindow = window.open(pdfUrl, '_blank');
 
-      if (!previewWindow) {
-        // Fallback si le popup est bloqué
-        const link = document.createElement('a');
-        link.href = pdfUrl;
-        link.target = '_blank';
-        link.rel = 'noopener noreferrer';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        if (!previewWindow) {
+          // Fallback si le popup est bloqué
+          const link = document.createElement('a');
+          link.href = pdfUrl;
+          link.target = '_blank';
+          link.rel = 'noopener noreferrer';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
       }
 
-      // Libérer l'URL du blob après un délai
-      setTimeout(() => {
-        URL.revokeObjectURL(pdfUrl);
-      }, 1000);
+      // Libérer l'URL du blob après un délai (seulement si pas en modale)
+      if (!onOpenPDFModal) {
+        setTimeout(() => {
+          URL.revokeObjectURL(pdfUrl);
+        }, 1000);
+      }
 
       console.log('PDF généré et ouvert avec succès');
 

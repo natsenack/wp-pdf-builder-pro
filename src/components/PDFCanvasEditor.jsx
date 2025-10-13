@@ -9,6 +9,7 @@ import { useGlobalSettings } from '../hooks/useGlobalSettings';
 // Chargement lazy des composants conditionnels
 const ContextMenu = React.lazy(() => import('./ContextMenu'));
 const PreviewModal = React.lazy(() => import('./PreviewModal'));
+const ModalPDFViewer = React.lazy(() => import('./ModalPDFViewer'));
 const WooCommerceElement = React.lazy(() => import('./WooCommerceElements'));
 const ElementLibrary = React.lazy(() => import('./ElementLibrary'));
 const PropertiesPanel = React.lazy(() => import('./PropertiesPanel'));
@@ -22,6 +23,8 @@ export const PDFCanvasEditor = ({ options }) => {
   const [showGrid, setShowGrid] = useState(false);
   const [snapToGrid, setSnapToGrid] = useState(true); // Aimantation activée par défaut
   const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [showPDFModal, setShowPDFModal] = useState(false);
+  const [pdfModalUrl, setPdfModalUrl] = useState(null);
   const [isPropertiesCollapsed, setIsPropertiesCollapsed] = useState(false);
 
   // Hook pour les paramètres globaux
@@ -167,24 +170,10 @@ export const PDFCanvasEditor = ({ options }) => {
         const pdfDataUrl = `data:application/pdf;base64,${data.data.pdf}`;
         console.log('URL du PDF créée:', pdfDataUrl.substring(0, 100) + '...');
 
-        // Ouvrir le PDF dans un nouvel onglet
-        console.log('Ouverture du PDF dans un nouvel onglet...');
-        const newWindow = window.open(pdfDataUrl, '_blank');
-
-        if (!newWindow) {
-          console.warn('Popup bloquée, tentative de téléchargement alternatif...');
-          // Fallback : téléchargement si popup bloquée
-          const link = document.createElement('a');
-          link.href = pdfDataUrl;
-          link.download = data.data.filename || 'document.pdf';
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          alert('PDF généré et téléchargé ! Vérifiez vos téléchargements.');
-        } else {
-          console.log('PDF ouvert dans un nouvel onglet avec succès');
-          alert('PDF généré et ouvert dans un nouvel onglet !');
-        }
+        // Ouvrir le PDF dans une modale
+        console.log('Ouverture du PDF dans une modale...');
+        setPdfModalUrl(pdfDataUrl);
+        setShowPDFModal(true);
       } else {
         console.error('Erreur serveur:', data.data);
         throw new Error(data.data?.message || 'Erreur lors de la génération du PDF');
@@ -669,6 +658,29 @@ export const PDFCanvasEditor = ({ options }) => {
           canvasHeight={canvasState.canvasHeight}
           ajaxurl={window.pdfBuilderAjax?.ajaxurl}
           pdfBuilderNonce={window.pdfBuilderAjax?.nonce}
+          onOpenPDFModal={(pdfUrl) => {
+            setPdfModalUrl(pdfUrl);
+            setShowPDFModal(true);
+            setShowPreviewModal(false); // Fermer la modale d'aperçu
+          }}
+        />
+      </React.Suspense>
+
+      <React.Suspense fallback={null}>
+        <ModalPDFViewer
+          isOpen={showPDFModal}
+          onClose={() => {
+            setShowPDFModal(false);
+            // Libérer l'URL du blob après la fermeture
+            if (pdfModalUrl && pdfModalUrl.startsWith('blob:')) {
+              setTimeout(() => {
+                URL.revokeObjectURL(pdfModalUrl);
+              }, 100);
+            }
+            setPdfModalUrl(null);
+          }}
+          pdfUrl={pdfModalUrl}
+          title="PDF Généré"
         />
       </React.Suspense>
     </div>
