@@ -445,8 +445,6 @@ export const PDFCanvasEditor = ({ options }) => {
         onRedo={canvasState.redo}
         canUndo={canvasState.canUndo}
         canRedo={canvasState.canRedo}
-        onPreview={() => setShowPreviewModal(true)}
-        onPrint={handlePrint}
       />
 
       <div className="editor-workspace">
