@@ -1433,41 +1433,55 @@ class PDF_Builder_Admin {
         // Générer le HTML d'abord
         $html_content = $this->generate_html_from_template_data($template);
 
-        // Utiliser une bibliothèque PDF si disponible
-        if (class_exists('TCPDF')) {
-            // Utiliser TCPDF si disponible
-            $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
-            $pdf->SetCreator('PDF Builder Pro');
-            $pdf->SetAuthor('PDF Builder Pro');
-            $pdf->SetTitle('Generated PDF');
+        // Utiliser notre générateur PDF personnalisé
+        require_once plugin_dir_path(__FILE__) . '../pdf-generator.php';
+        $generator = new PDF_Generator();
+        $pdf_content = $generator->generate_from_elements($this->convert_template_to_elements($template));
 
-            // Appliquer les marges d'impression depuis le template
-            $pdf_margins = ['top' => 20, 'right' => 20, 'bottom' => 20, 'left' => 20];
-            if (isset($template['pages']) && is_array($template['pages']) && !empty($template['pages'])) {
-                $firstPage = $template['pages'][0];
-                if (isset($firstPage['margins'])) {
-                    $pdf_margins = $firstPage['margins'];
-                }
-            }
-            // Convertir les marges en unités TCPDF (points par défaut)
-            $pdf->SetMargins($pdf_margins['left'], $pdf_margins['top'], $pdf_margins['right']);
-            $pdf->SetAutoPageBreak(true, $pdf_margins['bottom']);
-
-            $pdf->AddPage();
-            $pdf->writeHTML($html_content, true, false, true, false, '');
-            $pdf->Output($pdf_path, 'F');
-
-            return $pdf_path;
-        } elseif (function_exists('wkhtmltopdf')) {
-            // Utiliser wkhtmltopdf si disponible
-            // Simulation pour l'instant
-            file_put_contents($pdf_path, 'PDF Content Placeholder');
+        if ($pdf_content) {
+            // Sauvegarder le contenu HTML/PDF
+            file_put_contents($pdf_path, $pdf_content);
             return $pdf_path;
         } else {
-            // Erreur: aucune bibliothèque PDF disponible
-            error_log('PDF Builder Pro: Aucune bibliothèque PDF disponible (TCPDF ou wkhtmltopdf requis)');
-            throw new Exception('Bibliothèque PDF non disponible. Veuillez installer TCPDF via Composer ou wkhtmltopdf.');
+            throw new Exception('Erreur lors de la génération du PDF');
         }
+    }
+
+    /**
+     * Convertit les données template en format éléments pour le générateur PDF
+     */
+    private function convert_template_to_elements($template) {
+        $elements = [];
+
+        // Utiliser les éléments de la première page
+        $template_elements = [];
+        if (isset($template['pages']) && is_array($template['pages']) && !empty($template['pages'])) {
+            $firstPage = $template['pages'][0];
+            $template_elements = $firstPage['elements'] ?? [];
+        } elseif (isset($template['elements']) && is_array($template['elements'])) {
+            // Fallback pour l'ancienne structure
+            $template_elements = $template['elements'];
+        }
+
+        if (is_array($template_elements)) {
+            foreach ($template_elements as $element) {
+                $converted_element = [
+                    'type' => 'text',
+                    'x' => $element['position']['x'],
+                    'y' => $element['position']['y'],
+                    'width' => $element['size']['width'],
+                    'height' => $element['size']['height'],
+                    'text' => $element['content'] ?? '',
+                    'fontSize' => $element['style']['fontSize'] ?? 12,
+                    'color' => $element['style']['color'] ?? '#000000',
+                    'fontWeight' => $element['style']['fontWeight'] ?? 'normal'
+                ];
+
+                $elements[] = $converted_element;
+            }
+        }
+
+        return $elements;
     }
 
     /**
