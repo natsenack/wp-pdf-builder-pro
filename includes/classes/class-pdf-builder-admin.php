@@ -1093,36 +1093,26 @@ class PDF_Builder_Admin {
             wp_send_json_error('Sécurité: Nonce invalide');
         }
 
-        // Récupérer les données du template ou les éléments
-        $template_data = isset($_POST['template_data']) ? $_POST['template_data'] : '';
-        $elements_data = isset($_POST['elements']) ? $_POST['elements'] : '';
-
-        if (empty($template_data) && empty($elements_data)) {
+        // Récupérer et décoder les données JSON du template ou des éléments
+        if (!empty($_POST['template_data'])) {
+            $raw_json = $_POST['template_data'];
+            $is_template = true;
+        } elseif (!empty($_POST['elements']) || !empty($_POST['elements_data'])) {
+            // Accepte 'elements' ou 'elements_data' selon version JS
+            $raw_json = $_POST['elements'] ?? $_POST['elements_data'];
+            $is_template = false;
+        } else {
             wp_send_json_error('Aucune donnée template ou éléments reçue');
+            return;
         }
+        $data = json_decode($raw_json, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            wp_send_json_error('JSON invalide: ' . json_last_error_msg());
+            return;
+        }
+        $template = $is_template ? $data : $this->convert_elements_to_template($data);
 
         try {
-            $template = null;
-
-            if (!empty($template_data)) {
-                // Décoder les données JSON du template
-                $template = json_decode($template_data, true);
-                if (json_last_error() !== JSON_ERROR_NONE) {
-                    wp_send_json_error('Données template invalides');
-                    return;
-                }
-            } elseif (!empty($elements_data)) {
-                // Convertir les éléments au format template
-                $elements = json_decode($elements_data, true);
-                if (json_last_error() !== JSON_ERROR_NONE) {
-                    wp_send_json_error('Données éléments invalides');
-                    return;
-                }
-
-                // Convertir le format éléments vers le format template
-                $template = $this->convert_elements_to_template($elements);
-            }
-
             // Générer le PDF
             $pdf_filename = 'pdf-builder-' . time() . '.pdf';
             $pdf_path = $this->generate_pdf_from_template_data($template, $pdf_filename);
@@ -1213,57 +1203,40 @@ class PDF_Builder_Admin {
             wp_send_json_error('Sécurité: Nonce invalide');
         }
 
-        // Récupérer les données du template ou les éléments
-        $template_data = isset($_POST['template_data']) ? $_POST['template_data'] : '';
-        $elements_data = isset($_POST['elements']) ? $_POST['elements'] : '';
-
-        if (empty($template_data) && empty($elements_data)) {
+        // Récupérer et décoder les données JSON du template ou des éléments
+        if (!empty($_POST['template_data'])) {
+            $raw_json = $_POST['template_data'];
+            $is_template = true;
+        } elseif (!empty($_POST['elements']) || !empty($_POST['elements_data'])) {
+            // Accepte 'elements' ou 'elements_data' selon version JS
+            $raw_json = $_POST['elements'] ?? $_POST['elements_data'];
+            $is_template = false;
+        } else {
             wp_send_json_error('Aucune donnée template ou éléments reçue');
+            return;
         }
-
+        $data = json_decode($raw_json, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            wp_send_json_error('JSON invalide: ' . json_last_error_msg());
+            return;
+        }
+        $template = $is_template ? $data : $this->convert_elements_to_template($data);
         try {
-            $template = null;
-
-            if (!empty($template_data)) {
-                // Décoder les données JSON du template
-                $template = json_decode($template_data, true);
-                if (json_last_error() !== JSON_ERROR_NONE) {
-                    wp_send_json_error('Données template invalides');
-                    return;
-                }
-            } elseif (!empty($elements_data)) {
-                // Convertir les éléments au format template
-                $elements = json_decode($elements_data, true);
-                if (json_last_error() !== JSON_ERROR_NONE) {
-                    wp_send_json_error('Données éléments invalides');
-                    return;
-                }
-
-                // Convertir le format éléments vers le format template
-                $template = $this->convert_elements_to_template($elements);
-            }
-
             // Générer l'HTML d'aperçu
             $html_content = $this->generate_html_from_template_data($template);
-
-            // Utiliser les dimensions de la première page ou les valeurs par défaut
-            $width = 595; // A4 width par défaut
-            $height = 842; // A4 height par défaut
-            
-            if (isset($template['pages']) && is_array($template['pages']) && !empty($template['pages'])) {
-                $firstPage = $template['pages'][0];
-                if (isset($firstPage['size'])) {
-                    $width = $firstPage['size']['width'] ?? 595;
-                    $height = $firstPage['size']['height'] ?? 842;
-                }
+            // Déterminer les dimensions de la page (A4 par défaut)
+            $width = 595;
+            $height = 842;
+            if (!empty($template['pages'][0]['size'])) {
+                $firstSize = $template['pages'][0]['size'];
+                $width = $firstSize['width'] ?? $width;
+                $height = $firstSize['height'] ?? $height;
             }
-
-            wp_send_json_success(array(
-                'html' => $html_content,
-                'width' => $width,
-                'height' => $height
-            ));
-
+            wp_send_json_success([
+                'html'   => $html_content,
+                'width'  => $width,
+                'height' => $height,
+            ]);
         } catch (Exception $e) {
             wp_send_json_error('Erreur: ' . $e->getMessage());
         }
@@ -1785,9 +1758,36 @@ class PDF_Builder_Admin {
 
                     case 'product_table':
                         if ($order) {
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, $this->generate_order_products_table($order));
+                            $table_html = $this->generate_order_products_table($order);
+                            $html .= '<div class="pdf-element" style="' . $style . '">' . $table_html . '</div>';
                         } else {
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, 'Tableau des produits (aperçu)');
+                            $html .= '<div class="pdf-element" style="' . $style . '">Tableau de produits (aperçu)</div>';
+                        }
+                        break;
+
+                    case 'company_info':
+                        // Informations de la société depuis les options
+                        $company = get_option('pdf_builder_company_info', '');
+                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($company));
+                        break;
+
+                    case 'document_type':
+                        // Type de document : statut de la commande ou contenu par défaut
+                        $docType = $order ? wc_get_order_status_name($order->get_status()) : ($content ?: 'Document');
+                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($docType));
+                        break;
+
+                    case 'divider':
+                        // Séparateur horizontal
+                        $html .= sprintf('<hr class="pdf-element" style="%s;border:none;border-top:1px solid #000;" />', $style);
+                        break;
+
+                    case 'customer_info':
+                        if ($order) {
+                            $addr = $order->get_formatted_billing_address();
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, nl2br(esc_html($addr)));
+                        } else {
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: 'Adresse client'));
                         }
                         break;
 

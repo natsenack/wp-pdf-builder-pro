@@ -3,6 +3,12 @@
 echo "🧪 TESTING PDF BUILDER PRO AJAX ENDPOINTS\n";
 echo "==========================================\n\n";
 
+// Prendre en compte un argument CLI pour le chemin WordPress
+$wpRoot = $argv[1] ?? null;
+if ($wpRoot) {
+    echo "ℹ️ Utilisation du chemin WordPress fourni : $wpRoot\n";
+}
+
 // Chemin vers WordPress
 $wp_load_paths = [
     '../../../wp-load.php',
@@ -12,17 +18,32 @@ $wp_load_paths = [
 ];
 
 $wp_loaded = false;
-foreach ($wp_load_paths as $path) {
-    if (file_exists($path)) {
-        require_once($path);
+// Ancienne détection de wp-load.php remplacée par une recherche récursive
+// Récupérer dynamiquement le path vers wp-load.php
+if ($wpRoot) {
+    $candidate = rtrim($wpRoot, '/\\') . '/wp-load.php';
+    if (file_exists($candidate)) {
+        require_once $candidate;
         $wp_loaded = true;
-        echo "✅ WordPress loaded from: $path\n";
-        break;
+        echo "✅ WordPress chargé depuis : $candidate\n";
     }
 }
-
-if (!$wp_loaded) {
-    die("❌ Could not find wp-load.php\n");
+if (! $wp_loaded) {
+    $dir = __DIR__;
+    for ($i = 0; $i < 10; $i++) {
+        $candidate = $dir . '/wp-load.php';
+        if (file_exists($candidate)) {
+            require_once $candidate;
+            $wp_loaded = true;
+            echo "✅ WordPress chargé depuis : $candidate\n";
+            break;
+        }
+        $dir = dirname($dir);
+    }
+}
+if (! $wp_loaded) {
+    die("❌ Impossible de charger WordPress : wp-load.php introuvable.\n" .
+        "Utilisez 'php test-ajax-endpoint.php /chemin/vers/wordpress' pour spécifier l'installation.\n");
 }
 
 // Test basic AJAX functionality
