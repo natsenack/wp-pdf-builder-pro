@@ -227,7 +227,7 @@ window.addEventListener('load', function() {
             </div>
 
             <!-- Onglet Général -->
-            <div id="general" class="tab-content active" style="display: block;">
+            <div id="general" class="tab-content active">
                 <h2><?php _e('Paramètres Généraux', 'pdf-builder-pro'); ?></h2>
 
                 <table class="form-table">
@@ -445,7 +445,7 @@ window.addEventListener('load', function() {
             </div>
 
             <!-- Onglet Performance -->
-            <div id="performance" class="tab-content" style="display: none;">
+            <div id="performance" class="tab-content">
                 <h2><?php _e('Paramètres de Performance', 'pdf-builder-pro'); ?></h2>
 
                 <table class="form-table">
@@ -483,7 +483,7 @@ window.addEventListener('load', function() {
             </div>
 
             <!-- Onglet PDF -->
-            <div id="pdf" class="tab-content" style="display: none;">
+            <div id="pdf" class="tab-content">
                 <h2><?php _e('Paramètres PDF', 'pdf-builder-pro'); ?></h2>
 
                 <table class="form-table">
@@ -523,7 +523,7 @@ window.addEventListener('load', function() {
             </div>
 
             <!-- Onglet Sécurité -->
-            <div id="security" class="tab-content" style="display: none;">
+            <div id="security" class="tab-content">
                 <h2><?php _e('Paramètres de Sécurité', 'pdf-builder-pro'); ?></h2>
 
                 <table class="form-table">
@@ -544,7 +544,7 @@ window.addEventListener('load', function() {
             </div>
 
             <!-- Onglet Rôles -->
-            <div id="roles" class="tab-content" style="display: none;">
+            <div id="roles" class="tab-content">
                 <h2><?php _e('Gestion des Rôles et Permissions', 'pdf-builder-pro'); ?></h2>
 
                 <div class="roles-management">
@@ -659,7 +659,7 @@ window.addEventListener('load', function() {
             </div>
 
             <!-- Onglet Notifications -->
-            <div id="notifications" class="tab-content" style="display: none;">
+            <div id="notifications" class="tab-content">
                 <h2><?php _e('Paramètres de Notifications', 'pdf-builder-pro'); ?></h2>
 
                 <table class="form-table">
@@ -699,7 +699,7 @@ window.addEventListener('load', function() {
             </div>
 
             <!-- Onglet Canvas -->
-            <div id="canvas" class="tab-content" style="display: none;">
+            <div id="canvas" class="tab-content">
                 <h2><?php _e('Paramètres Canvas', 'pdf-builder-pro'); ?></h2>
 
                 <!-- Sous-onglets dans l'onglet Canvas -->
@@ -793,7 +793,7 @@ window.addEventListener('load', function() {
             </div>
 
             <!-- Onglet Maintenance -->
-            <div id="maintenance" class="tab-content" style="display: none;">
+            <div id="maintenance" class="tab-content">
                 <h2><?php _e('Actions de Maintenance', 'pdf-builder-pro'); ?></h2>
 
                 <div class="maintenance-section">
@@ -1374,45 +1374,37 @@ echo '<style>
     $(document).ready(function() {
         console.log('PDF Builder Settings JavaScript loaded');
 
-        // Navigation par onglets - approche simplifiée
+        // Navigation par onglets - approche unifiée avec classes CSS
         $('.nav-tab').on('click', function(e) {
             e.preventDefault();
 
+            var $this = $(this);
+            var targetId = $this.attr('href');
+
+            // Gérer les onglets principaux
             $('.nav-tab').removeClass('nav-tab-active');
-            $(this).addClass('nav-tab-active');
+            $this.addClass('nav-tab-active');
 
-            $('.tab-content').removeClass('active').hide();
-            $($(this).attr('href')).addClass('active').show();
+            $('.tab-content').removeClass('active');
+            $(targetId).addClass('active');
 
-            // Initialiser les sous-onglets si on active l'onglet canvas
-            if ($(this).attr('href') === '#canvas') {
-                console.log('PDF Builder: Initializing canvas sub-tabs...');
-                
-                // S'assurer que les sous-onglets sont correctement affichés
-                $('.sub-tab-content').hide();
-                $('.sub-tab-active').show();
-                
-                // Attacher les événements des sous-onglets si pas déjà fait
-                if (!window.subTabsInitialized) {
-                    $('.sub-nav-tab').on('click', function(e) {
-                        e.preventDefault();
-                        console.log('PDF Builder: Sub-tab clicked', $(this).attr('href'));
+            // Gérer les sous-onglets si on active l'onglet canvas
+            if (targetId === '#canvas') {
+                console.log('PDF Builder: Activating canvas tab with sub-tabs');
 
-                        var $this = $(this);
-                        var targetId = $this.attr('href');
+                // S'assurer que le premier sous-onglet est actif
+                $('.sub-nav-tab').removeClass('sub-nav-tab-active');
+                $('.sub-nav-tab').first().addClass('sub-nav-tab-active');
 
-                        // Désactiver tous les sous-onglets
-                        $('.sub-nav-tab').removeClass('sub-nav-tab-active');
-                        $('.sub-tab-content').removeClass('sub-tab-active').hide();
+                $('.sub-tab-content').removeClass('sub-tab-active');
+                $('.sub-tab-content').first().addClass('sub-tab-active');
+            }
 
-                        // Activer le sous-onglet cliqué
-                        $this.addClass('sub-nav-tab-active');
-                        $(targetId).addClass('sub-tab-active').show();
-
-                        console.log('PDF Builder: Activated sub-tab', targetId);
-                    });
-                    window.subTabsInitialized = true;
-                }
+            // Mettre à jour l'URL hash pour la navigation
+            if (history.pushState) {
+                history.pushState(null, null, targetId);
+            } else {
+                window.location.hash = targetId;
             }
         });
 
@@ -1420,20 +1412,49 @@ echo '<style>
         var activeTab = $('.nav-tab-active');
         if (activeTab.length > 0) {
             var activeTabId = activeTab.attr('href');
-            $(activeTabId).addClass('active').show();
+            $(activeTabId).addClass('active');
         } else {
             // Fallback : activer le premier onglet
             $('.nav-tab').first().addClass('nav-tab-active');
-            $('.tab-content').first().addClass('active').show();
+            $('.tab-content').first().addClass('active');
         }
 
-        // Gérer les changements de hash dans l'URL
+        // Gestion des sous-onglets (pour l'onglet Canvas)
+        $('.sub-nav-tab').on('click', function(e) {
+            e.preventDefault();
+
+            var $this = $(this);
+            var targetId = $this.attr('href');
+
+            console.log('PDF Builder: Sub-tab clicked', targetId);
+
+            // Désactiver tous les sous-onglets
+            $('.sub-nav-tab').removeClass('sub-nav-tab-active');
+            $('.sub-tab-content').removeClass('sub-tab-active');
+
+            // Activer le sous-onglet cliqué
+            $this.addClass('sub-nav-tab-active');
+            $(targetId).addClass('sub-tab-active');
+        });
+
+        // Gérer les changements de hash dans l'URL au chargement
         if (window.location.hash) {
             var hashTab = $('.nav-tab[href="' + window.location.hash + '"]');
             if (hashTab.length > 0) {
+                // Simuler un clic sur l'onglet pour déclencher toute la logique
                 hashTab.click();
             }
         }
+
+        // Écouter les changements de hash pendant la navigation
+        $(window).on('hashchange', function() {
+            if (window.location.hash) {
+                var hashTab = $('.nav-tab[href="' + window.location.hash + '"]');
+                if (hashTab.length > 0 && !hashTab.hasClass('nav-tab-active')) {
+                    hashTab.click();
+                }
+            }
+        });
 
         // Actions de maintenance
         $('#clear-cache').on('click', function() {
