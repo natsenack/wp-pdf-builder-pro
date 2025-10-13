@@ -740,7 +740,7 @@ class PDF_Builder_Admin {
      * Page de test TCPDF
      */
     public function test_tcpdf_page() {
-        $this->check_admin_permissions();
+        // Pas de vérification de permissions pour la page de test (diagnostic)
 
         // Test de génération PDF
         $test_results = $this->run_tcpdf_test();
