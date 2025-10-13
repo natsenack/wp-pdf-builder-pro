@@ -5,6 +5,7 @@ import { Toolbar } from './Toolbar';
 import { useCanvasState } from '../hooks/useCanvasState';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import { useGlobalSettings } from '../hooks/useGlobalSettings';
+import { FPSCounter } from './FPSCounter';
 
 // Chargement lazy des composants conditionnels
 const ContextMenu = React.lazy(() => import('./ContextMenu'));
@@ -683,6 +684,9 @@ export const PDFCanvasEditor = ({ options }) => {
           title="PDF Généré"
         />
       </React.Suspense>
+
+      {/* Compteur FPS */}
+      <FPSCounter showFps={globalSettings.settings.showFps} />
     </div>
   );
 };

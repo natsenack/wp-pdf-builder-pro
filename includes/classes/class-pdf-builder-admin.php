@@ -159,7 +159,7 @@ class PDF_Builder_Admin {
         // Menu principal avec icône distinctive
         add_menu_page(
             __('PDF Builder Pro - Gestionnaire de PDF', 'pdf-builder-pro'),
-            __('📄 PDF Builder', 'pdf-builder-pro'),
+            __('PDF Builder', 'pdf-builder-pro'),
             'manage_options',
             'pdf-builder-pro',
             [$this, 'admin_page'],
@@ -1099,22 +1099,101 @@ class PDF_Builder_Admin {
         ', 'before');
 
         // Paramètres du canvas pour le JavaScript
-        // Récupérer les paramètres canvas
-        $canvas_settings = get_option('pdf_builder_canvas_settings', []);
+        // Récupérer les paramètres canvas individuels depuis les options WordPress
+        wp_localize_script('pdf-builder-admin-v3', 'pdfBuilderCanvasSettings', [
+            // Paramètres généraux du canvas
+            'default_canvas_width' => get_option('pdf_builder_default_canvas_width', 210),
+            'default_canvas_height' => get_option('pdf_builder_default_canvas_height', 297),
+            'default_canvas_unit' => get_option('pdf_builder_default_canvas_unit', 'mm'),
+            'default_orientation' => get_option('pdf_builder_default_orientation', 'portrait'),
+            'canvas_background_color' => get_option('pdf_builder_canvas_background_color', '#ffffff'),
+            'canvas_show_transparency' => get_option('pdf_builder_canvas_show_transparency', false),
 
-        wp_localize_script('pdf-builder-admin', 'pdfBuilderCanvasSettings', [
-            'canvas_element_borders_enabled' => $canvas_settings['canvas_element_borders_enabled'] ?? true,
-            'canvas_border_width' => $canvas_settings['canvas_border_width'] ?? 2,
-            'canvas_border_color' => $canvas_settings['canvas_border_color'] ?? '#007cba',
-            'canvas_border_spacing' => $canvas_settings['canvas_border_spacing'] ?? 2,
-            'canvas_resize_handles_enabled' => $canvas_settings['canvas_resize_handles_enabled'] ?? true,
-            'canvas_handle_size' => $canvas_settings['canvas_handle_size'] ?? 12,
-            'canvas_handle_color' => $canvas_settings['canvas_handle_color'] ?? '#007cba',
-            'canvas_handle_hover_color' => $canvas_settings['canvas_handle_hover_color'] ?? '#ffffff',
-            // Nouveaux paramètres par défaut des éléments
-            'default_text_color' => $canvas_settings['default_text_color'] ?? '#000000',
-            'default_background_color' => $canvas_settings['default_background_color'] ?? '#ffffff',
-            'default_font_size' => $canvas_settings['default_font_size'] ?? 14
+            // Marges de sécurité
+            'margin_top' => get_option('pdf_builder_margin_top', 10),
+            'margin_right' => get_option('pdf_builder_margin_right', 10),
+            'margin_bottom' => get_option('pdf_builder_margin_bottom', 10),
+            'margin_left' => get_option('pdf_builder_margin_left', 10),
+            'show_margins' => get_option('pdf_builder_show_margins', true),
+
+            // Paramètres de grille
+            'show_grid' => get_option('pdf_builder_show_grid', true),
+            'grid_size' => get_option('pdf_builder_grid_size', 10),
+            'grid_color' => get_option('pdf_builder_grid_color', '#e0e0e0'),
+            'grid_opacity' => get_option('pdf_builder_grid_opacity', 30),
+
+            // Aimantation
+            'snap_to_grid' => get_option('pdf_builder_snap_to_grid', true),
+            'snap_to_elements' => get_option('pdf_builder_snap_to_elements', true),
+            'snap_to_margins' => get_option('pdf_builder_snap_to_margins', true),
+            'snap_tolerance' => get_option('pdf_builder_snap_tolerance', 5),
+
+            // Lignes guides
+            'show_guides' => get_option('pdf_builder_show_guides', true),
+            'lock_guides' => get_option('pdf_builder_lock_guides', false),
+
+            // Paramètres de zoom et navigation
+            'default_zoom' => get_option('pdf_builder_default_zoom', '100'),
+            'min_zoom' => get_option('pdf_builder_min_zoom', 10),
+            'max_zoom' => get_option('pdf_builder_max_zoom', 500),
+            'zoom_step' => get_option('pdf_builder_zoom_step', 25),
+            'pan_with_mouse' => get_option('pdf_builder_pan_with_mouse', true),
+            'smooth_zoom' => get_option('pdf_builder_smooth_zoom', true),
+            'show_zoom_indicator' => get_option('pdf_builder_show_zoom_indicator', true),
+            'zoom_with_wheel' => get_option('pdf_builder_zoom_with_wheel', true),
+            'zoom_to_selection' => get_option('pdf_builder_zoom_to_selection', true),
+
+            // Paramètres de sélection et manipulation
+            'show_resize_handles' => get_option('pdf_builder_show_resize_handles', true),
+            'handle_size' => get_option('pdf_builder_handle_size', 8),
+            'handle_color' => get_option('pdf_builder_handle_color', '#007cba'),
+            'enable_rotation' => get_option('pdf_builder_enable_rotation', true),
+            'rotation_step' => get_option('pdf_builder_rotation_step', 15),
+            'rotation_snap' => get_option('pdf_builder_rotation_snap', true),
+            'multi_select' => get_option('pdf_builder_multi_select', true),
+            'select_all_shortcut' => get_option('pdf_builder_select_all_shortcut', true),
+            'show_selection_bounds' => get_option('pdf_builder_show_selection_bounds', true),
+            'copy_paste_enabled' => get_option('pdf_builder_copy_paste_enabled', true),
+            'duplicate_on_drag' => get_option('pdf_builder_duplicate_on_drag', false),
+
+            // Paramètres d'export et qualité
+            'export_quality' => get_option('pdf_builder_export_quality', 'print'),
+            'export_format' => get_option('pdf_builder_export_format', 'pdf'),
+            'compress_images' => get_option('pdf_builder_compress_images', true),
+            'image_quality' => get_option('pdf_builder_image_quality', 85),
+            'max_image_size' => get_option('pdf_builder_max_image_size', 2048),
+            'include_metadata' => get_option('pdf_builder_include_metadata', true),
+            'pdf_author' => get_option('pdf_builder_pdf_author', get_bloginfo('name')),
+            'pdf_subject' => get_option('pdf_builder_pdf_subject', ''),
+            'auto_crop' => get_option('pdf_builder_auto_crop', false),
+            'embed_fonts' => get_option('pdf_builder_embed_fonts', true),
+            'optimize_for_web' => get_option('pdf_builder_optimize_for_web', true),
+
+            // Paramètres avancés
+            'enable_hardware_acceleration' => get_option('pdf_builder_enable_hardware_acceleration', true),
+            'limit_fps' => get_option('pdf_builder_limit_fps', true),
+            'max_fps' => get_option('pdf_builder_max_fps', 60),
+            'auto_save_enabled' => get_option('pdf_builder_auto_save_enabled', true),
+            'auto_save_interval' => get_option('pdf_builder_auto_save_interval', 30),
+            'auto_save_versions' => get_option('pdf_builder_auto_save_versions', 10),
+            'undo_levels' => get_option('pdf_builder_undo_levels', 50),
+            'redo_levels' => get_option('pdf_builder_redo_levels', 50),
+            'enable_keyboard_shortcuts' => get_option('pdf_builder_enable_keyboard_shortcuts', true),
+            'debug_mode' => get_option('pdf_builder_debug_mode', false),
+            'show_fps' => get_option('pdf_builder_show_fps', false),
+
+            // Anciens paramètres (pour compatibilité)
+            'canvas_element_borders_enabled' => get_option('pdf_builder_canvas_element_borders_enabled', true),
+            'canvas_border_width' => get_option('pdf_builder_canvas_border_width', 2),
+            'canvas_border_color' => get_option('pdf_builder_canvas_border_color', '#007cba'),
+            'canvas_border_spacing' => get_option('pdf_builder_canvas_border_spacing', 2),
+            'canvas_resize_handles_enabled' => get_option('pdf_builder_show_resize_handles', true),
+            'canvas_handle_size' => get_option('pdf_builder_handle_size', 8),
+            'canvas_handle_color' => get_option('pdf_builder_handle_color', '#007cba'),
+            'canvas_handle_hover_color' => get_option('pdf_builder_canvas_handle_hover_color', '#ffffff'),
+            'default_text_color' => get_option('pdf_builder_default_text_color', '#000000'),
+            'default_background_color' => get_option('pdf_builder_default_background_color', '#ffffff'),
+            'default_font_size' => get_option('pdf_builder_default_font_size', 14)
         ]);
 
         // Styles pour l'éditeur canvas
