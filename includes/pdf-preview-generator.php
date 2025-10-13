@@ -7,7 +7,7 @@
 if (!defined('PDF_PREVIEW_TEST_MODE')) {
     define('PDF_PREVIEW_TEST_MODE', true);
 }
-require_once 'includes/pdf-generator.php';
+require_once __DIR__ . '/pdf-generator.php';
 
 class PDF_Preview_Generator {
 
