@@ -32,247 +32,57 @@ const PreviewModal = ({
       });
     });
 
-    // Fonction helper pour générer le contenu des éléments spéciaux
-    const getSpecialElementContent = (element) => {
-      switch (element.type) {
-        case 'company_logo':
-          if (element.src) {
-            return `<img src="${element.src}" style="width: 100%; height: 100%; object-fit: contain;" alt="Logo entreprise" />`;
-          }
-          return 'Logo Entreprise';
+    // Préparer les données pour l'AJAX
+    const formData = new FormData();
+    formData.append('action', 'pdf_builder_generate_pdf');
+    formData.append('nonce', pdfBuilderAjax.nonce);
+    formData.append('elements', JSON.stringify(elements));
+    formData.append('canvasWidth', canvasWidth);
+    formData.append('canvasHeight', canvasHeight);
 
-        case 'customer_info':
-          return 'Informations Client<br/>Nom: Jean Dupont<br/>Email: jean@example.com<br/>Téléphone: +33 1 23 45 67 89';
+    // Afficher un indicateur de chargement
+    const printButton = document.querySelector('.btn-primary');
+    const originalText = printButton.textContent;
+    printButton.textContent = '⏳ Génération PDF...';
+    printButton.disabled = true;
 
-        case 'company_info':
-          return 'Ma Société SARL<br/>123 Rue de l\'Entreprise<br/>75001 Paris, France<br/>Tél: +33 1 23 45 67 89<br/>contact@masociete.com';
-
-        case 'product_table':
-          return `
-            <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
-              <thead>
-                <tr style="background-color: #f8f9fa;">
-                  <th style="border: 1px solid #ddd; padding: 4px;">Produit</th>
-                  <th style="border: 1px solid #ddd; padding: 4px;">Qté</th>
-                  <th style="border: 1px solid #ddd; padding: 4px;">Prix</th>
-                  <th style="border: 1px solid #ddd; padding: 4px;">Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td style="border: 1px solid #ddd; padding: 4px;">Produit A</td>
-                  <td style="border: 1px solid #ddd; padding: 4px;">2</td>
-                  <td style="border: 1px solid #ddd; padding: 4px;">19.99€</td>
-                  <td style="border: 1px solid #ddd; padding: 4px;">39.98€</td>
-                </tr>
-                <tr>
-                  <td style="border: 1px solid #ddd; padding: 4px;">Produit B</td>
-                  <td style="border: 1px solid #ddd; padding: 4px;">1</td>
-                  <td style="border: 1px solid #ddd; padding: 4px;">29.99€</td>
-                  <td style="border: 1px solid #ddd; padding: 4px;">29.99€</td>
-                </tr>
-              </tbody>
-            </table>
-          `;
-
-        case 'document_type':
-          return 'FACTURE';
-
-        case 'divider':
-          return '<hr style="width: 100%; border: none; border-top: 1px solid #d1d5db; margin: 0;" />';
-
-        default:
-          return element.type;
+    // Envoyer la requête AJAX
+    fetch(pdfBuilderAjax.ajaxurl, {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Erreur réseau: ' + response.status);
       }
-    };
+      return response.blob();
+    })
+    .then(blob => {
+      // Créer un URL pour le blob PDF
+      const pdfUrl = URL.createObjectURL(blob);
 
-    // Ouvrir l'aperçu dans une nouvelle fenêtre pour l'impression
-    const printWindow = window.open('', '_blank', 'width=800,height=600');
-    if (printWindow) {
-      // Générer le contenu HTML pour l'impression avec zoom = 1
-      const printContent = `
-        <div class="print-canvas" style="
-          width: ${canvasWidth}px;
-          height: ${canvasHeight}px;
-          margin: 0 auto;
-          border: none;
-          background: white;
-          position: relative;
-          overflow: hidden;
-          box-sizing: border-box;
-        ">
-          ${elements
-            .map(element => {
-              // Traiter différemment les éléments WooCommerce
-              if (element.type.startsWith('woocommerce-')) {
-                const getWCLabel = (type) => {
-                  const labels = {
-                    'woocommerce-invoice-number': 'Numéro Facture',
-                    'woocommerce-invoice-date': 'Date Facture',
-                    'woocommerce-order-number': 'N° Commande',
-                    'woocommerce-order-date': 'Date Commande',
-                    'woocommerce-billing-address': 'Adresse Facturation',
-                    'woocommerce-shipping-address': 'Adresse Livraison',
-                    'woocommerce-customer-name': 'Nom Client',
-                    'woocommerce-customer-email': 'Email Client',
-                    'woocommerce-payment-method': 'Paiement',
-                    'woocommerce-order-status': 'Statut',
-                    'woocommerce-products-table': 'Tableau Produits',
-                    'woocommerce-products-simple': 'Liste Produits',
-                    'woocommerce-subtotal': 'Sous-total',
-                    'woocommerce-discount': 'Remise',
-                    'woocommerce-shipping': 'Livraison',
-                    'woocommerce-taxes': 'Taxes',
-                    'woocommerce-total': 'Total',
-                    'woocommerce-refund': 'Remboursement',
-                    'woocommerce-fees': 'Frais',
-                    'woocommerce-quote-number': 'N° Devis',
-                    'woocommerce-quote-date': 'Date Devis',
-                    'woocommerce-quote-validity': 'Validité',
-                    'woocommerce-quote-notes': 'Notes Devis'
-                  };
-                  return labels[type] || 'Élément WC';
-                };
+      // Ouvrir le PDF dans une nouvelle fenêtre ou le télécharger
+      const link = document.createElement('a');
+      link.href = pdfUrl;
+      link.download = 'pdf-builder-pro-document.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
 
-                return `
-                  <div style="
-                    position: absolute;
-                    left: ${element.x}px;
-                    top: ${element.y}px;
-                    width: ${element.width}px;
-                    height: ${element.height}px;
-                    font-size: ${element.fontSize || 14}px;
-                    font-family: ${element.fontFamily || 'Arial'};
-                    color: ${element.color || '#333333'};
-                    font-weight: ${element.fontWeight || 'normal'};
-                    background-color: ${element.backgroundColor || '#ffffff'};
-                    border: ${element.borderWidth ? `${element.borderWidth}px ${element.borderStyle || 'solid'} ${element.borderColor || '#dddddd'}` : '1px solid #dddddd'};
-                    border-radius: ${element.borderRadius || 0}px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    text-align: center;
-                    word-break: break-word;
-                    overflow: hidden;
-                  ">
-                    ${getWCLabel(element.type)}
-                  </div>
-                `;
-              } else {
-                // Gérer les éléments spéciaux et normaux
-                return `
-                  <div style="
-                    position: absolute;
-                    left: ${element.x}px;
-                    top: ${element.y}px;
-                    width: ${element.width}px;
-                    height: ${element.height}px;
-                    font-size: ${element.fontSize || 14}px;
-                    font-family: ${element.fontFamily || 'Arial'};
-                    color: ${element.color || '#1e293b'};
-                    background-color: ${element.backgroundColor || 'transparent'};
-                    border: ${element.borderWidth ? `${element.borderWidth}px ${element.borderStyle || 'solid'} ${element.borderColor || 'transparent'}` : 'none'};
-                    border-radius: ${element.borderRadius || 0}px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    text-align: center;
-                    word-break: break-word;
-                    overflow: hidden;
-                  ">
-                    ${getSpecialElementContent(element)}
-                  </div>
-                `;
-              }
-            }).join('')}
-        </div>
-      `;
+      // Libérer l'URL du blob
+      URL.revokeObjectURL(pdfUrl);
 
-      console.log('Generated printContent:', printContent);
-
-      printWindow.document.write(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>Impression PDF Builder Pro</title>
-          <style>
-            body {
-              margin: 0;
-              padding: 20px;
-              font-family: Arial, sans-serif;
-              background: #f8f9fa;
-            }
-            .print-container {
-              background: white;
-              border: 1px solid #e2e8f0;
-              border-radius: 4px;
-              padding: 20px;
-              max-width: ${canvasWidth + 40}px;
-              margin: 0 auto;
-              position: relative;
-            }
-            .print-canvas {
-              width: ${canvasWidth}px !important;
-              height: ${canvasHeight}px !important;
-              margin: 0 auto;
-              border: none !important;
-              background: white;
-              position: relative;
-              overflow: hidden;
-            }
-            @media print {
-              body {
-                margin: 0 !important;
-                padding: 0 !important;
-                background: white !important;
-              }
-              .print-container {
-                border: none !important;
-                padding: 0 !important;
-                margin: 0 !important;
-                background: white !important;
-                max-width: none !important;
-              }
-              .print-canvas {
-                width: ${canvasWidth}px !important;
-                height: ${canvasHeight}px !important;
-                margin: 0 auto !important;
-                border: none !important;
-                background: white !important;
-                position: relative !important;
-                overflow: hidden !important;
-                box-sizing: border-box !important;
-                transform: scale(1.3) !important;
-                transform-origin: center top !important;
-              }
-              @page {
-                size: A4;
-                margin: 1cm !important; /* Marges équilibrées pour centrer le contenu */
-              }
-              * {
-                -webkit-print-color-adjust: exact !important;
-                color-adjust: exact !important;
-              }
-            }
-          </style>
-        </head>
-        <body>
-          <div class="print-container">
-            ${printContent}
-          </div>
-          <script>
-            window.onload = function() {
-              setTimeout(function() {
-                window.print();
-                window.close();
-              }, 500);
-            };
-          </script>
-        </body>
-        </html>
-      `);
-      printWindow.document.close();
-    }
+      console.log('PDF généré et téléchargé avec succès');
+    })
+    .catch(error => {
+      console.error('Erreur lors de la génération du PDF:', error);
+      alert('Erreur lors de la génération du PDF: ' + error.message);
+    })
+    .finally(() => {
+      // Restaurer le bouton
+      printButton.textContent = originalText;
+      printButton.disabled = false;
+    });
   };
 
   if (!isOpen) return null;

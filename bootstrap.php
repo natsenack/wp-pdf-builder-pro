@@ -97,6 +97,11 @@ function pdf_builder_load_bootstrap() {
         // Initialiser les paramètres par défaut du canvas
         pdf_builder_init_canvas_defaults();
 
+        // Charger le générateur PDF
+        if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'includes/pdf-generator.php')) {
+            require_once PDF_BUILDER_PLUGIN_DIR . 'includes/pdf-generator.php';
+        }
+
         // Enregistrer l'action AJAX dès que possible
         add_action('wp_ajax_pdf_builder_preview', 'pdf_builder_handle_preview_ajax');
         add_action('wp_ajax_nopriv_pdf_builder_preview', 'pdf_builder_handle_preview_ajax');
