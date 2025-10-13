@@ -124,6 +124,7 @@ class PDF_Builder_Admin {
         add_action('wp_ajax_pdf_builder_get_authors', [$this, 'ajax_get_authors']);
         add_action('wp_ajax_pdf_builder_flush_rest_cache', [$this, 'ajax_flush_rest_cache']);
         add_action('wp_ajax_pdf_builder_save_settings', [$this, 'ajax_save_settings_page']);
+        add_action('wp_ajax_pdf_builder_generate_preview', [$this, 'ajax_generate_preview']);
 
         // Actions de maintenance
         add_action('wp_ajax_pdf_builder_check_database', [$this, 'ajax_check_database']);
@@ -3974,6 +3975,84 @@ class PDF_Builder_Admin {
         $settings['canvas_handle_color'] = sanitize_hex_color($_POST['canvas_handle_color'] ?? '#007cba');
         $settings['canvas_handle_hover_color'] = sanitize_hex_color($_POST['canvas_handle_hover_color'] ?? '#005a87');
 
+        // Paramètres Canvas complets (tous les paramètres des sous-onglets)
+        // Général
+        $settings['default_canvas_width'] = intval($_POST['default_canvas_width'] ?? 210);
+        $settings['default_canvas_height'] = intval($_POST['default_canvas_height'] ?? 297);
+        $settings['default_canvas_unit'] = sanitize_text_field($_POST['default_canvas_unit'] ?? 'mm');
+        $settings['default_orientation'] = sanitize_text_field($_POST['default_orientation'] ?? 'portrait');
+        $settings['canvas_background_color'] = sanitize_hex_color($_POST['canvas_background_color'] ?? '#ffffff');
+        $settings['canvas_show_transparency'] = isset($_POST['canvas_show_transparency']);
+
+        // Marges de sécurité
+        $settings['margin_top'] = intval($_POST['margin_top'] ?? 10);
+        $settings['margin_right'] = intval($_POST['margin_right'] ?? 10);
+        $settings['margin_bottom'] = intval($_POST['margin_bottom'] ?? 10);
+        $settings['margin_left'] = intval($_POST['margin_left'] ?? 10);
+        $settings['show_margins'] = isset($_POST['show_margins']);
+
+        // Grille & Aimants
+        $settings['show_grid'] = isset($_POST['show_grid']);
+        $settings['grid_size'] = intval($_POST['grid_size'] ?? 10);
+        $settings['grid_color'] = sanitize_hex_color($_POST['grid_color'] ?? '#e0e0e0');
+        $settings['grid_opacity'] = intval($_POST['grid_opacity'] ?? 30);
+        $settings['snap_to_grid'] = isset($_POST['snap_to_grid']);
+        $settings['snap_to_elements'] = isset($_POST['snap_to_elements']);
+        $settings['snap_to_margins'] = isset($_POST['snap_to_margins']);
+        $settings['snap_tolerance'] = intval($_POST['snap_tolerance'] ?? 5);
+        $settings['show_guides'] = isset($_POST['show_guides']);
+        $settings['lock_guides'] = isset($_POST['lock_guides']);
+
+        // Zoom & Navigation
+        $settings['default_zoom'] = sanitize_text_field($_POST['default_zoom'] ?? '100');
+        $settings['min_zoom'] = intval($_POST['min_zoom'] ?? 10);
+        $settings['max_zoom'] = intval($_POST['max_zoom'] ?? 500);
+        $settings['zoom_step'] = intval($_POST['zoom_step'] ?? 25);
+        $settings['pan_with_mouse'] = isset($_POST['pan_with_mouse']);
+        $settings['smooth_zoom'] = isset($_POST['smooth_zoom']);
+        $settings['show_zoom_indicator'] = isset($_POST['show_zoom_indicator']);
+        $settings['zoom_with_wheel'] = isset($_POST['zoom_with_wheel']);
+        $settings['zoom_to_selection'] = isset($_POST['zoom_to_selection']);
+
+        // Sélection & Manipulation
+        $settings['show_resize_handles'] = isset($_POST['show_resize_handles']);
+        $settings['handle_size'] = intval($_POST['handle_size'] ?? 8);
+        $settings['handle_color'] = sanitize_hex_color($_POST['handle_color'] ?? '#007cba');
+        $settings['enable_rotation'] = isset($_POST['enable_rotation']);
+        $settings['rotation_step'] = intval($_POST['rotation_step'] ?? 15);
+        $settings['rotation_snap'] = isset($_POST['rotation_snap']);
+        $settings['multi_select'] = isset($_POST['multi_select']);
+        $settings['select_all_shortcut'] = isset($_POST['select_all_shortcut']);
+        $settings['show_selection_bounds'] = isset($_POST['show_selection_bounds']);
+        $settings['copy_paste_enabled'] = isset($_POST['copy_paste_enabled']);
+        $settings['duplicate_on_drag'] = isset($_POST['duplicate_on_drag']);
+
+        // Export & Qualité
+        $settings['export_quality'] = sanitize_text_field($_POST['export_quality'] ?? 'print');
+        $settings['export_format'] = sanitize_text_field($_POST['export_format'] ?? 'pdf');
+        $settings['compress_images'] = isset($_POST['compress_images']);
+        $settings['image_quality'] = intval($_POST['image_quality'] ?? 85);
+        $settings['max_image_size'] = intval($_POST['max_image_size'] ?? 2048);
+        $settings['include_metadata'] = isset($_POST['include_metadata']);
+        $settings['pdf_author'] = sanitize_text_field($_POST['pdf_author'] ?? '');
+        $settings['pdf_subject'] = sanitize_text_field($_POST['pdf_subject'] ?? '');
+        $settings['auto_crop'] = isset($_POST['auto_crop']);
+        $settings['embed_fonts'] = isset($_POST['embed_fonts']);
+        $settings['optimize_for_web'] = isset($_POST['optimize_for_web']);
+
+        // Avancé
+        $settings['enable_hardware_acceleration'] = isset($_POST['enable_hardware_acceleration']);
+        $settings['limit_fps'] = isset($_POST['limit_fps']);
+        $settings['max_fps'] = intval($_POST['max_fps'] ?? 60);
+        $settings['auto_save_enabled'] = isset($_POST['auto_save_enabled']);
+        $settings['auto_save_interval'] = intval($_POST['auto_save_interval'] ?? 30);
+        $settings['auto_save_versions'] = intval($_POST['auto_save_versions'] ?? 10);
+        $settings['undo_levels'] = intval($_POST['undo_levels'] ?? 50);
+        $settings['redo_levels'] = intval($_POST['redo_levels'] ?? 50);
+        $settings['enable_keyboard_shortcuts'] = isset($_POST['enable_keyboard_shortcuts']);
+        $settings['debug_mode'] = isset($_POST['debug_mode']);
+        $settings['show_fps'] = isset($_POST['show_fps']);
+
         // Paramètres de notifications
         $settings['email_notifications_enabled'] = isset($_POST['email_notifications_enabled']);
         $settings['notification_events'] = isset($_POST['notification_events']) ? (array) $_POST['notification_events'] : [];
@@ -4004,6 +4083,13 @@ class PDF_Builder_Admin {
 
         // Sauvegarde des paramètres
         update_option('pdf_builder_settings', $settings);
+
+        // Sauvegarde individuelle de tous les paramètres Canvas pour la compatibilité
+        foreach ($settings as $key => $value) {
+            if ($key !== 'allowed_roles') { // Les rôles sont sauvegardés séparément
+                update_option('pdf_builder_' . $key, $value);
+            }
+        }
 
         // Sauvegarde séparée pour la compatibilité avec l'ancien système
         update_option('pdf_builder_allowed_roles', $settings['allowed_roles']);
@@ -4065,6 +4151,62 @@ class PDF_Builder_Admin {
         $cleaned = preg_replace('/\s+/', ' ', $cleaned);
 
         return $cleaned;
+    }
+
+    /**
+     * AJAX - Générer un aperçu du PDF depuis les éléments du canvas
+     */
+    public function ajax_generate_preview() {
+        // Vérification de sécurité
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_nonce')) {
+            wp_send_json_error(['message' => 'Nonce invalide pour la génération d\'aperçu']);
+            return;
+        }
+
+        // Vérification des permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => 'Permissions insuffisantes pour générer un aperçu']);
+            return;
+        }
+
+        try {
+            // Récupérer les éléments depuis la requête
+            $elements_json = $_POST['elements'] ?? '';
+            if (empty($elements_json)) {
+                wp_send_json_error(['message' => 'Aucun élément fourni pour l\'aperçu']);
+                return;
+            }
+
+            // Décoder les éléments JSON
+            $elements = json_decode($this->clean_json_data($elements_json), true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                wp_send_json_error(['message' => 'Erreur de décodage JSON des éléments: ' . json_last_error_msg()]);
+                return;
+            }
+
+            // Valider que c'est un tableau d'éléments
+            if (!is_array($elements)) {
+                wp_send_json_error(['message' => 'Les éléments doivent être un tableau']);
+                return;
+            }
+
+            // Générer l'aperçu (version simplifiée pour l'instant)
+            $preview_data = [
+                'success' => true,
+                'message' => 'Aperçu généré avec succès',
+                'elements_count' => count($elements),
+                'timestamp' => time(),
+                'preview_url' => '', // Sera rempli plus tard avec l'URL du PDF généré
+                'validation_status' => 'valid'
+            ];
+
+            // Retourner les données d'aperçu
+            wp_send_json_success($preview_data);
+
+        } catch (Exception $e) {
+            error_log('Erreur génération aperçu PDF: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Erreur lors de la génération de l\'aperçu: ' . $e->getMessage()]);
+        }
     }
 
     /**
