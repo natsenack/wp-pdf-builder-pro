@@ -51,27 +51,10 @@ class PDF_Generator {
      * Générer le PDF à partir des éléments
      */
     public function generate_from_elements($elements) {
-        // Charger TCPDF seulement quand nécessaire
-        if (!class_exists('TCPDF')) {
-            error_log('PDF Builder: Tentative de chargement de TCPDF...');
-            try {
-                if (function_exists('plugin_dir_path')) {
-                    require_once plugin_dir_path(__FILE__) . '../lib/tcpdf_autoload.php';
-                } else {
-                    require_once __DIR__ . '/../lib/tcpdf_autoload.php';
-                }
-                error_log('PDF Builder: TCPDF chargé avec succès');
-            } catch (Exception $e) {
-                error_log('PDF Builder: Erreur lors du chargement de TCPDF: ' . $e->getMessage());
-            } catch (Error $e) {
-                error_log('PDF Builder: Erreur fatale lors du chargement de TCPDF: ' . $e->getMessage());
-            }
-        }
-
-        if (!class_exists('TCPDF')) {
-            error_log('PDF Builder: TCPDF non disponible, utilisation de la méthode alternative');
-            return $this->generate_basic_pdf($elements);
-        }
+        // TCPDF cause des problèmes de permission sur ce serveur
+        // Utiliser directement la méthode alternative
+        error_log('PDF Builder: Utilisation de la génération HTML (TCPDF désactivé)');
+        return $this->generate_basic_pdf($elements);
 
         // Créer l'instance TCPDF seulement maintenant
         // Définir le cache dans un répertoire accessible
