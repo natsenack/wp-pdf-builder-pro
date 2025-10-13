@@ -1576,16 +1576,31 @@ class PDF_Builder_Admin {
 
         if (is_array($template_elements)) {
             foreach ($template_elements as $element) {
+                // Gérer les deux formats de structure des éléments
+                if (isset($element['position']) && isset($element['size'])) {
+                    // Format structuré (position.x, position.y, size.width, size.height)
+                    $x = $element['position']['x'] ?? 0;
+                    $y = $element['position']['y'] ?? 0;
+                    $width = $element['size']['width'] ?? 100;
+                    $height = $element['size']['height'] ?? 50;
+                } else {
+                    // Format plat (x, y, width, height directement)
+                    $x = $element['x'] ?? 0;
+                    $y = $element['y'] ?? 0;
+                    $width = $element['width'] ?? 100;
+                    $height = $element['height'] ?? 50;
+                }
+
                 $converted_element = [
-                    'type' => 'text',
-                    'x' => $element['position']['x'],
-                    'y' => $element['position']['y'],
-                    'width' => $element['size']['width'],
-                    'height' => $element['size']['height'],
-                    'text' => $element['content'] ?? '',
-                    'fontSize' => $element['style']['fontSize'] ?? 12,
-                    'color' => $element['style']['color'] ?? '#000000',
-                    'fontWeight' => $element['style']['fontWeight'] ?? 'normal'
+                    'type' => $element['type'] ?? 'text',
+                    'x' => $x,
+                    'y' => $y,
+                    'width' => $width,
+                    'height' => $height,
+                    'text' => $element['content'] ?? $element['text'] ?? '',
+                    'fontSize' => $element['style']['fontSize'] ?? $element['fontSize'] ?? 12,
+                    'color' => $element['style']['color'] ?? $element['color'] ?? '#000000',
+                    'fontWeight' => $element['style']['fontWeight'] ?? $element['fontWeight'] ?? 'normal'
                 ];
 
                 $elements[] = $converted_element;
@@ -1626,12 +1641,27 @@ class PDF_Builder_Admin {
 
         if (is_array($elements)) {
             foreach ($elements as $element) {
+                // Gérer les deux formats de structure des éléments
+                if (isset($element['position']) && isset($element['size'])) {
+                    // Format structuré (position.x, position.y, size.width, size.height)
+                    $x = $element['position']['x'] ?? 0;
+                    $y = $element['position']['y'] ?? 0;
+                    $width = $element['size']['width'] ?? 100;
+                    $height = $element['size']['height'] ?? 50;
+                } else {
+                    // Format plat (x, y, width, height directement)
+                    $x = $element['x'] ?? 0;
+                    $y = $element['y'] ?? 0;
+                    $width = $element['width'] ?? 100;
+                    $height = $element['height'] ?? 50;
+                }
+
                 $style = sprintf(
                     'left: %dpx; top: %dpx; width: %dpx; height: %dpx;',
-                    $element['position']['x'],
-                    $element['position']['y'],
-                    $element['size']['width'],
-                    $element['size']['height']
+                    $x,
+                    $y,
+                    $width,
+                    $height
                 );
 
                 if (isset($element['style'])) {
@@ -2218,12 +2248,27 @@ class PDF_Builder_Admin {
 
         if (isset($template_data['elements']) && is_array($template_data['elements'])) {
             foreach ($template_data['elements'] as $element) {
+                // Gérer les deux formats de structure des éléments
+                if (isset($element['position']) && isset($element['size'])) {
+                    // Format structuré (position.x, position.y, size.width, size.height)
+                    $x = $element['position']['x'] ?? 0;
+                    $y = $element['position']['y'] ?? 0;
+                    $width = $element['size']['width'] ?? 100;
+                    $height = $element['size']['height'] ?? 50;
+                } else {
+                    // Format plat (x, y, width, height directement)
+                    $x = $element['x'] ?? 0;
+                    $y = $element['y'] ?? 0;
+                    $width = $element['width'] ?? 100;
+                    $height = $element['height'] ?? 50;
+                }
+
                 $style = sprintf(
                     'left: %dpx; top: %dpx; width: %dpx; height: %dpx;',
-                    $element['position']['x'],
-                    $element['position']['y'],
-                    $element['size']['width'],
-                    $element['size']['height']
+                    $x,
+                    $y,
+                    $width,
+                    $height
                 );
 
                 if (isset($element['style'])) {
