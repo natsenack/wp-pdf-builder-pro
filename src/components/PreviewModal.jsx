@@ -39,9 +39,12 @@ const PreviewModal = ({
 
       // Obtenir un nonce frais
       console.log('Obtention d\'un nonce frais...');
+      const nonceFormData = new FormData();
+      nonceFormData.append('action', 'pdf_builder_get_fresh_nonce');
+
       const nonceResponse = await fetch(ajaxUrl, {
         method: 'POST',
-        body: new FormData([['action', 'pdf_builder_get_fresh_nonce']])
+        body: nonceFormData
       });
 
       if (!nonceResponse.ok) {
@@ -107,9 +110,12 @@ const PreviewModal = ({
 
       // Obtenir un nonce frais
       console.log('Obtention d\'un nonce frais pour PDF...');
+      const nonceFormData = new FormData();
+      nonceFormData.append('action', 'pdf_builder_get_fresh_nonce');
+
       const nonceResponse = await fetch(ajaxUrl, {
         method: 'POST',
-        body: new FormData([['action', 'pdf_builder_get_fresh_nonce']])
+        body: nonceFormData
       });
 
       if (!nonceResponse.ok) {
