@@ -4,9 +4,7 @@
  * Utilitaires de débogage pour le plugin PDF Builder Pro
  */
 
-if (!defined('ABSPATH')) {
-    exit('Accès direct interdit.');
-}
+
 
 class PDF_Builder_Debug_Helper {
 
@@ -99,4 +97,5 @@ class PDF_Builder_Debug_Helper {
 function pdf_builder_debug($message, $level = 1, $context = '') {
     PDF_Builder_Debug_Helper::get_instance()->log($message, $level, $context);
 }
+
 

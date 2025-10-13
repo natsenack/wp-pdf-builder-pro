@@ -4,9 +4,7 @@
  * Système de logging avancé pour le plugin PDF Builder Pro
  */
 
-if (!defined('ABSPATH')) {
-    exit('Accès direct interdit.');
-}
+
 
 class PDF_Builder_Logger {
 
@@ -388,4 +386,5 @@ function pdf_builder_log($message, $level = 2, $context = 'general', $data = nul
     $logger = PDF_Builder_Logger::get_instance();
     return $logger->log($message, $level, $context, $data);
 }
+
 

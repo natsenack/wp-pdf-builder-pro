@@ -6,9 +6,7 @@
  * @version 1.0.0
  */
 
-if (!defined('ABSPATH')) {
-    exit('Accès direct interdit.');
-}
+
 
 /**
  * Classe principale pour gérer toutes les interactions du canvas
@@ -373,4 +371,5 @@ class PDF_Builder_Canvas_Interactions_Manager {
         return ['type' => 'resize', 'processed' => true];
     }
 }
+
 

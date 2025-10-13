@@ -4,9 +4,7 @@
  * Gestionnaire des utilitaires de traduction
  */
 
-if (!defined('ABSPATH')) {
-    exit('Accès direct interdit.');
-}
+
 
 /**
  * Classe utilitaire pour la gestion des traductions
@@ -215,4 +213,5 @@ function pdf_builder_translate($text, $context = '') {
 function pdf_builder_translate_vars($text, $vars = array(), $context = '') {
     return PDF_Builder_Translation_Utils::getInstance()->translate_with_vars($text, $vars, $context);
 }
+
 

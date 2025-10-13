@@ -5,9 +5,7 @@
                 <div class="template-card" style="border: 2px solid #dee2e6; border-radius: 8px; padding: 20px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease; cursor: pointer;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.1)';">plates PDF
  */
 
-if (!defined('ABSPATH')) {
-    exit('Accès direct interdit.');
-}
+
 ?>
 
 <div class="wrap">
@@ -600,4 +598,5 @@ document.addEventListener('keydown', function(e) {
 
 
 </style>
+
 

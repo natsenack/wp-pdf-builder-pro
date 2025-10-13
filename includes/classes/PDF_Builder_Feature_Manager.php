@@ -4,9 +4,7 @@
  * Gestion des fonctionnalités freemium
  */
 
-if (!defined('ABSPATH')) {
-    exit('Accès direct interdit.');
-}
+
 
 class PDF_Builder_Feature_Manager {
 
@@ -264,4 +262,5 @@ class PDF_Builder_Feature_Manager {
         ];
     }
 }
+
 

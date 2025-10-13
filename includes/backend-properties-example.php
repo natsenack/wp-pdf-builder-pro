@@ -4,9 +4,7 @@
  * PDF Builder Pro - Backend Properties Example
  */
 
-if (!defined('ABSPATH')) {
-    exit('Accès direct interdit.');
-}
+
 
 // Inclure le gestionnaire d'éléments
 require_once plugin_dir_path(__FILE__) . 'managers/PDF_Builder_Canvas_Elements_Manager.php';

@@ -4,9 +4,7 @@
  * Exemples d'intégration des restrictions freemium
  */
 
-if (!defined('ABSPATH')) {
-    exit('Accès direct interdit.');
-}
+
 
 // =============================================================================
 // EXEMPLE 1 : Restriction dans le générateur PDF
@@ -378,4 +376,5 @@ function pdf_builder_init_freemium() {
 
 // Hook d'initialisation
 add_action('plugins_loaded', 'pdf_builder_init_freemium', 15);
+
 

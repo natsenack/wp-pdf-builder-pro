@@ -4,9 +4,7 @@
  * Gestion de l'internationalisation pour le frontend
  */
 
-if (!defined('ABSPATH')) {
-    exit('Accès direct interdit.');
-}
+
 
 class PDF_Builder_Frontend_I18n {
 
@@ -306,4 +304,5 @@ function pdf_builder_i18n_translate_n($single, $plural, $number) {
     $i18n = PDF_Builder_Frontend_I18n::get_instance();
     return $i18n->translate_plural($single, $plural, $number);
 }
+
 

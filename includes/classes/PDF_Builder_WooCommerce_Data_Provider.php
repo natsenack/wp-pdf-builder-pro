@@ -4,9 +4,7 @@
  * Fournit les données WooCommerce pour les éléments du canvas
  */
 
-if (!defined('ABSPATH')) {
-    exit('Accès direct interdit.');
-}
+
 
 class PDF_Builder_WooCommerce_Data_Provider {
 
@@ -343,4 +341,5 @@ class PDF_Builder_WooCommerce_Data_Provider {
         return $data;
     }
 }
+
 

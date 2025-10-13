@@ -4,9 +4,7 @@
  * Utilitaires de traduction pour le plugin PDF Builder Pro
  */
 
-if (!defined('ABSPATH')) {
-    exit('Accès direct interdit.');
-}
+
 
 class PDF_Builder_Translation_Utils {
 
@@ -98,4 +96,5 @@ function pdf_builder_translate($text, $context = '') {
 function pdf_builder_translate_plural($single, $plural, $number, $context = '') {
     return PDF_Builder_Translation_Utils::get_instance()->translate_plural($single, $plural, $number, $context);
 }
+
 

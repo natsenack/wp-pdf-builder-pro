@@ -6,9 +6,7 @@
  * @version 1.0.0
  */
 
-if (!defined('ABSPATH')) {
-    exit('Accès direct interdit.');
-}
+
 
 /**
  * Classe pour gérer les interactions de drag & drop
@@ -283,4 +281,5 @@ class PDF_Builder_Drag_Drop_Manager {
         return $stats;
     }
 }
+
 

@@ -6,9 +6,7 @@
  * @version 1.0.0
  */
 
-if (!defined('ABSPATH')) {
-    exit('Accès direct interdit.');
-}
+
 
 /**
  * Classe pour gérer les interactions de redimensionnement
@@ -303,4 +301,5 @@ class PDF_Builder_Resize_Manager {
         return $stats;
     }
 }
+
 

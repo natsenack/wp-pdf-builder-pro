@@ -4,10 +4,6 @@
  * Version 5.1.0 - Canvas uniquement
  */
 
-if (!defined('ABSPATH')) {
-    exit('Accès direct interdit.');
-}
-
 /**
  * Classe d'administration PDF Builder Pro
  */
@@ -2924,5 +2920,6 @@ class PDF_Builder_Admin {
         wp_send_json_success(['message' => 'Paramètres sauvegardés avec succès !']);
     }
 }
+
 
 

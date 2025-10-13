@@ -13,9 +13,7 @@
 
 error_log('PDF Builder: Developer page accessed');
 
-if (!defined('ABSPATH')) {
-    exit('Accès direct interdit.');
-}
+
 
 // Vérifier le mode développeur (peut être désactivé en production)
 if (!defined('PDF_BUILDER_DEV_MODE') || !PDF_BUILDER_DEV_MODE) {

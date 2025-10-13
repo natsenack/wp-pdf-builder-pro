@@ -4,10 +4,6 @@
  * Classe principale du plugin PDF Builder Pro
  */
 
-if (!defined('ABSPATH')) {
-    exit('Accès direct interdit.');
-}
-
 class PDF_Builder_Core {
 
     /**
@@ -450,4 +446,5 @@ class PDF_Builder_Core {
         return $this->version;
     }
 }
+
 

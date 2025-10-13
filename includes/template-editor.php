@@ -6,10 +6,6 @@
 
 error_log("PDF Builder Debug: Début de template-editor.php");
 
-if (!defined('ABSPATH')) {
-    exit('Accès direct interdit.');
-}
-
 // Permissions are checked by WordPress via add_submenu_page capability parameter
 // Additional check for logged-in users as fallback
 if (!defined('PDF_BUILDER_DEBUG_MODE') || !PDF_BUILDER_DEBUG_MODE) {
@@ -270,6 +266,7 @@ if (!$is_new && $template_id > 0) {
     
 })();
 </script>
+
 
 
 

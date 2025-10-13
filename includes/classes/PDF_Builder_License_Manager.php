@@ -4,9 +4,7 @@
  * Gestion centralisée des licences freemium
  */
 
-if (!defined('ABSPATH')) {
-    exit('Accès direct interdit.');
-}
+
 
 class PDF_Builder_License_Manager {
 
@@ -195,4 +193,5 @@ class PDF_Builder_License_Manager {
         ];
     }
 }
+
 

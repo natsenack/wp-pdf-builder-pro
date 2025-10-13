@@ -5,9 +5,7 @@
 
 error_log('PDF Builder: Settings page loaded');
 
-if (!defined('ABSPATH')) {
-    exit('Accès direct interdit.');
-}
+
 
 // Vérifier les permissions - permettre à tous les utilisateurs connectés
 if (!defined('PDF_BUILDER_DEBUG_MODE') || !PDF_BUILDER_DEBUG_MODE) {
@@ -1378,3 +1376,4 @@ echo '<style>
 <?php
 // Fin du fichier
 ?>
+

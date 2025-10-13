@@ -4,9 +4,7 @@
  * Gestionnaire de cache pour le plugin PDF Builder Pro
  */
 
-if (!defined('ABSPATH')) {
-    exit('Accès direct interdit.');
-}
+
 
 class PDF_Builder_Cache_Manager {
 
@@ -188,4 +186,5 @@ function pdf_builder_cache_delete($key) {
 function pdf_builder_cache_flush() {
     return PDF_Builder_Cache_Manager::getInstance()->flush();
 }
+
 

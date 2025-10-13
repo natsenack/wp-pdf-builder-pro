@@ -6,9 +6,7 @@
  * @version 1.0.0
  */
 
-if (!defined('ABSPATH')) {
-    exit('Accès direct interdit.');
-}
+
 
 /**
  * Classe pour gérer les éléments du canvas
@@ -755,4 +753,5 @@ class PDF_Builder_Canvas_Elements_Manager {
         return $elements;
     }
 }
+
 
