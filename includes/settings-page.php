@@ -76,6 +76,23 @@ class TempConfig {
         $settings[$key] = $value;
         update_option($this->option_name, $settings);
     }
+
+    /**
+     * Retourne une description pour un rôle WordPress
+     */
+    public function get_role_description($role_key) {
+        $descriptions = [
+            'administrator' => __('Accès complet à toutes les fonctionnalités de WordPress, y compris PDF Builder Pro.', 'pdf-builder-pro'),
+            'editor' => __('Peut publier et gérer ses propres articles et ceux des autres. Accès à PDF Builder Pro.', 'pdf-builder-pro'),
+            'author' => __('Peut publier et gérer ses propres articles. Accès limité à PDF Builder Pro.', 'pdf-builder-pro'),
+            'contributor' => __('Peut écrire ses propres articles mais ne peut pas les publier. Accès limité à PDF Builder Pro.', 'pdf-builder-pro'),
+            'subscriber' => __('Peut uniquement lire les articles. Pas d\'accès à PDF Builder Pro.', 'pdf-builder-pro'),
+            'shop_manager' => __('Gestionnaire de boutique WooCommerce. Accès à PDF Builder Pro pour les commandes.', 'pdf-builder-pro'),
+            'customer' => __('Client WooCommerce. Pas d\'accès à PDF Builder Pro.', 'pdf-builder-pro'),
+        ];
+
+        return isset($descriptions[$role_key]) ? $descriptions[$role_key] : __('Rôle personnalisé ajouté par un plugin.', 'pdf-builder-pro');
+    }
 }
 
 $config = new TempConfig();
@@ -554,17 +571,49 @@ window.addEventListener('load', function() {
                                     <label for="pdf_builder_allowed_roles"><?php _e('Rôles avec Accès', 'pdf-builder-pro'); ?></label>
                                 </th>
                                 <td>
-                                    <select name="pdf_builder_allowed_roles[]" id="pdf_builder_allowed_roles" multiple="multiple" class="widefat" style="height: 200px;">
-                                        <?php foreach ($all_roles as $role_key => $role): ?>
+                                    <!-- Boutons de sélection rapide -->
+                                    <div class="role-selection-controls" style="margin-bottom: 10px;">
+                                        <button type="button" id="select-all-roles" class="button button-secondary" style="margin-right: 5px;">
+                                            <?php _e('Sélectionner Tout', 'pdf-builder-pro'); ?>
+                                        </button>
+                                        <button type="button" id="select-none-roles" class="button button-secondary" style="margin-right: 5px;">
+                                            <?php _e('Désélectionner Tout', 'pdf-builder-pro'); ?>
+                                        </button>
+                                        <button type="button" id="select-common-roles" class="button button-secondary" style="margin-right: 5px;">
+                                            <?php _e('Rôles Courants', 'pdf-builder-pro'); ?>
+                                        </button>
+                                        <span class="description" style="margin-left: 10px;">
+                                            <?php printf(__('Sélectionnés: <strong id="selected-count">%d</strong> rôle(s)', 'pdf-builder-pro'), count($allowed_roles)); ?>
+                                        </span>
+                                    </div>
+
+                                    <select name="pdf_builder_allowed_roles[]" id="pdf_builder_allowed_roles" multiple="multiple" class="widefat" style="height: 200px;" required>
+                                        <?php foreach ($all_roles as $role_key => $role):
+                                            $role_name = translate_user_role($role['name']);
+                                            $is_selected = in_array($role_key, $allowed_roles);
+                                            $role_description = $this->get_role_description($role_key);
+                                        ?>
                                             <option value="<?php echo esc_attr($role_key); ?>"
-                                                    <?php selected(in_array($role_key, $allowed_roles)); ?>>
-                                                <?php echo translate_user_role($role['name']); ?> (<?php echo $role_key; ?>)
+                                                    <?php selected($is_selected); ?>
+                                                    title="<?php echo esc_attr($role_description); ?>">
+                                                <?php echo esc_html($role_name); ?>
+                                                <?php if ($role_key === 'administrator'): ?>
+                                                    <em>(<?php _e('Accès complet', 'pdf-builder-pro'); ?>)</em>
+                                                <?php else: ?>
+                                                    <em>(<?php echo esc_html($role_key); ?>)</em>
+                                                <?php endif; ?>
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
+
+                                    <div class="role-validation-message" style="display: none; color: #dc3232; margin-top: 5px;" id="role-validation-error">
+                                        <?php _e('⚠️ Vous devez sélectionner au moins un rôle pour éviter de bloquer l\'accès à PDF Builder Pro.', 'pdf-builder-pro'); ?>
+                                    </div>
+
                                     <p class="description">
-                                        <?php _e('Sélectionnez les rôles qui auront accès à PDF Builder Pro. Maintenez Ctrl (ou Cmd sur Mac) pour sélectionner plusieurs rôles.', 'pdf-builder-pro'); ?><br>
-                                        <?php _e('Note: Les rôles personnalisés ajoutés par d\'autres plugins apparaîtront automatiquement dans cette liste.', 'pdf-builder-pro'); ?>
+                                        <?php _e('Sélectionnez les rôles qui auront accès à PDF Builder Pro.', 'pdf-builder-pro'); ?><br>
+                                        <?php _e('💡 Conseil: Maintenez Ctrl (ou Cmd sur Mac) pour sélectionner plusieurs rôles à la fois.', 'pdf-builder-pro'); ?><br>
+                                        <?php _e('📝 Note: Les rôles personnalisés ajoutés par d\'autres plugins apparaîtront automatiquement dans cette liste.', 'pdf-builder-pro'); ?>
                                     </p>
                                 </td>
                             </tr>
@@ -573,12 +622,36 @@ window.addEventListener('load', function() {
                         <div class="roles-info">
                             <div class="notice notice-info inline">
                                 <p>
-                                    <strong><?php _e('Permissions Incluses:', 'pdf-builder-pro'); ?></strong><br>
-                                    <?php _e('Les rôles sélectionnés auront accès à : création/édition/suppression de templates, paramètres, génération de PDF, et toutes les fonctionnalités du plugin.', 'pdf-builder-pro'); ?>
+                                    <strong><?php _e('🔐 Permissions Incluses:', 'pdf-builder-pro'); ?></strong><br>
+                                    <?php _e('Les rôles sélectionnés auront un accès complet à :', 'pdf-builder-pro'); ?>
                                 </p>
+                                <ul style="margin-left: 20px; margin-top: 5px;">
+                                    <li><?php _e('✅ Création, édition et suppression de templates PDF', 'pdf-builder-pro'); ?></li>
+                                    <li><?php _e('✅ Génération et téléchargement de PDF', 'pdf-builder-pro'); ?></li>
+                                    <li><?php _e('✅ Accès aux paramètres et à la configuration', 'pdf-builder-pro'); ?></li>
+                                    <li><?php _e('✅ Prévisualisation des PDF avant génération', 'pdf-builder-pro'); ?></li>
+                                    <li><?php _e('✅ Gestion des commandes WooCommerce (si applicable)', 'pdf-builder-pro'); ?></li>
+                                </ul>
+                            </div>
+
+                            <div class="notice notice-warning inline" style="margin-top: 10px;">
                                 <p>
-                                    <?php _e('Pour créer un nouveau rôle personnalisé, utilisez un plugin de gestion des rôles WordPress. Le nouveau rôle apparaîtra automatiquement dans cette liste.', 'pdf-builder-pro'); ?>
+                                    <strong><?php _e('⚠️ Important:', 'pdf-builder-pro'); ?></strong><br>
+                                    <?php _e('Les rôles non sélectionnés n\'auront aucun accès à PDF Builder Pro.', 'pdf-builder-pro'); ?><br>
+                                    <?php _e('Le rôle "Administrator" a toujours accès complet, même s\'il n\'est pas sélectionné.', 'pdf-builder-pro'); ?>
                                 </p>
+                            </div>
+
+                            <div class="notice notice-success inline" style="margin-top: 10px;">
+                                <p>
+                                    <strong><?php _e('💡 Conseils d\'utilisation:', 'pdf-builder-pro'); ?></strong>
+                                </p>
+                                <ul style="margin-left: 20px; margin-top: 5px;">
+                                    <li><?php _e('Pour une utilisation basique: sélectionnez "Administrator" et "Editor"', 'pdf-builder-pro'); ?></li>
+                                    <li><?php _e('Pour les boutiques WooCommerce: ajoutez "Shop Manager"', 'pdf-builder-pro'); ?></li>
+                                    <li><?php _e('Utilisez le bouton "Rôles Courants" pour une configuration rapide', 'pdf-builder-pro'); ?></li>
+                                    <li><?php _e('Survolez les rôles avec la souris pour voir leur description détaillée', 'pdf-builder-pro'); ?></li>
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -1125,6 +1198,75 @@ echo '<style>
     border-radius: 8px;
 }
 
+/* Styles pour la gestion des roles */
+.role-selection-controls {
+    margin-bottom: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+}
+
+.role-selection-controls .button {
+    margin-right: 8px;
+    margin-bottom: 5px;
+}
+
+.role-selection-controls .description {
+    font-style: italic;
+    color: #666;
+}
+
+#pdf_builder_allowed_roles {
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    transition: border-color 0.3s ease;
+}
+
+#pdf_builder_allowed_roles:focus {
+    border-color: #007cba;
+    box-shadow: 0 0 0 1px #007cba;
+}
+
+#pdf_builder_allowed_roles.error {
+    border-color: #dc3232 !important;
+    box-shadow: 0 0 0 1px #dc3232 !important;
+}
+
+.role-validation-message {
+    color: #dc3232;
+    font-weight: bold;
+    padding: 8px 12px;
+    background: #ffeaea;
+    border: 1px solid #facfd2;
+    border-radius: 4px;
+    margin-top: 8px;
+}
+
+.roles-info .notice {
+    margin-bottom: 15px;
+}
+
+.roles-info .notice ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.roles-info .notice ul li {
+    margin-bottom: 5px;
+}
+
+.roles-info .notice ul li:before {
+    content: "•";
+    color: #007cba;
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+#pdf_builder_allowed_roles option:hover {
+    background-color: #f0f8ff;
+}
+
 .roles-actions h3 {
     margin: 0 0 15px 0;
     color: #23282d;
@@ -1327,6 +1469,78 @@ echo '<style>
                 }
             });
         });
+    });
+
+    // Gestion des rôles - boutons de sélection rapide
+    jQuery(document).ready(function($) {
+        var $rolesSelect = $('#pdf_builder_allowed_roles');
+        var $selectedCount = $('#selected-count');
+        var $validationError = $('#role-validation-error');
+
+        // Fonction pour mettre à jour le compteur
+        function updateSelectedCount() {
+            var selectedCount = $rolesSelect.find('option:selected').length;
+            $selectedCount.text(selectedCount);
+
+            // Validation : au moins un rôle doit être sélectionné
+            if (selectedCount === 0) {
+                $validationError.show();
+                $rolesSelect.addClass('error');
+            } else {
+                $validationError.hide();
+                $rolesSelect.removeClass('error');
+            }
+        }
+
+        // Bouton "Sélectionner Tout"
+        $('#select-all-roles').on('click', function(e) {
+            e.preventDefault();
+            $rolesSelect.find('option').prop('selected', true);
+            updateSelectedCount();
+        });
+
+        // Bouton "Désélectionner Tout"
+        $('#select-none-roles').on('click', function(e) {
+            e.preventDefault();
+            $rolesSelect.find('option').prop('selected', false);
+            updateSelectedCount();
+        });
+
+        // Bouton "Rôles Courants" - sélectionne les rôles les plus utilisés
+        $('#select-common-roles').on('click', function(e) {
+            e.preventDefault();
+            var commonRoles = ['administrator', 'editor', 'shop_manager'];
+            $rolesSelect.find('option').prop('selected', false);
+            commonRoles.forEach(function(role) {
+                $rolesSelect.find('option[value="' + role + '"]').prop('selected', true);
+            });
+            updateSelectedCount();
+        });
+
+        // Mettre à jour le compteur lors des changements
+        $rolesSelect.on('change', function() {
+            updateSelectedCount();
+        });
+
+        // Validation avant soumission du formulaire
+        $('form#pdf-builder-settings-form').on('submit', function(e) {
+            var selectedCount = $rolesSelect.find('option:selected').length;
+            if (selectedCount === 0) {
+                e.preventDefault();
+                $validationError.show();
+                $rolesSelect.addClass('error').focus();
+
+                // Scroll vers la section des rôles
+                $('html, body').animate({
+                    scrollTop: $rolesSelect.offset().top - 50
+                }, 500);
+
+                return false;
+            }
+        });
+
+        // Initialiser le compteur
+        updateSelectedCount();
     });
 
 })(jQuery);

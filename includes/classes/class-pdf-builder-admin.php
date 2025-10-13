@@ -65,6 +65,16 @@ class PDF_Builder_Admin {
             return true;
         }
 
+        $user_id = get_current_user_id();
+
+        // Vérifier le cache (valide pour 5 minutes)
+        $cache_key = 'pdf_builder_user_access_' . $user_id;
+        $cached_result = get_transient($cache_key);
+
+        if ($cached_result !== false) {
+            return $cached_result === 'allowed';
+        }
+
         // Récupérer les rôles autorisés depuis les options
         $allowed_roles = get_option('pdf_builder_allowed_roles', ['administrator']);
 
@@ -76,14 +86,19 @@ class PDF_Builder_Admin {
         // Vérifier si l'utilisateur a un des rôles autorisés
         $user = wp_get_current_user();
         $user_roles = $user->roles;
+        $has_access = false;
 
         foreach ($user_roles as $role) {
             if (in_array($role, $allowed_roles)) {
-                return true;
+                $has_access = true;
+                break;
             }
         }
 
-        return false;
+        // Mettre en cache le résultat (5 minutes)
+        set_transient($cache_key, $has_access ? 'allowed' : 'denied', 5 * MINUTE_IN_SECONDS);
+
+        return $has_access;
     }
 
     /**
@@ -3878,14 +3893,42 @@ class PDF_Builder_Admin {
         $settings['email_notifications_enabled'] = isset($_POST['email_notifications_enabled']);
         $settings['notification_events'] = isset($_POST['notification_events']) ? (array) $_POST['notification_events'] : [];
 
-        // Paramètres des rôles autorisés
-        $settings['allowed_roles'] = isset($_POST['pdf_builder_allowed_roles']) ? array_map('sanitize_text_field', (array) $_POST['pdf_builder_allowed_roles']) : ['administrator', 'editor', 'shop_manager'];
+        // Paramètres des rôles autorisés avec validation améliorée
+        $new_allowed_roles = isset($_POST['pdf_builder_allowed_roles']) ? array_map('sanitize_text_field', (array) $_POST['pdf_builder_allowed_roles']) : [];
+
+        // Validation : s'assurer qu'au moins un rôle est sélectionné
+        if (empty($new_allowed_roles)) {
+            wp_send_json_error(['message' => __('Erreur: Vous devez sélectionner au moins un rôle pour éviter de bloquer complètement l\'accès à PDF Builder Pro.', 'pdf-builder-pro')]);
+            return;
+        }
+
+        // Validation : s'assurer que seuls des rôles valides sont sélectionnés
+        global $wp_roles;
+        $valid_roles = array_keys($wp_roles->roles);
+        $invalid_roles = array_diff($new_allowed_roles, $valid_roles);
+
+        if (!empty($invalid_roles)) {
+            wp_send_json_error(['message' => sprintf(__('Erreur: Les rôles suivants ne sont pas valides: %s', 'pdf-builder-pro'), implode(', ', $invalid_roles))]);
+            return;
+        }
+
+        $settings['allowed_roles'] = $new_allowed_roles;
+
+        // Récupérer les anciens rôles pour le logging
+        $old_allowed_roles = get_option('pdf_builder_allowed_roles', []);
 
         // Sauvegarde des paramètres
         update_option('pdf_builder_settings', $settings);
 
         // Sauvegarde séparée pour la compatibilité avec l'ancien système
         update_option('pdf_builder_allowed_roles', $settings['allowed_roles']);
+
+        // Logging des changements de permissions
+        if ($old_allowed_roles !== $new_allowed_roles) {
+            $this->log_role_permissions_change($old_allowed_roles, $new_allowed_roles);
+            // Invalider le cache des permissions pour tous les utilisateurs
+            $this->clear_permissions_cache();
+        }
 
         wp_send_json_success(['message' => 'Paramètres sauvegardés avec succès !']);
     }
@@ -4101,6 +4144,76 @@ class PDF_Builder_Admin {
             'template_id' => $template_id,
             'name' => $name
         ]);
+    }
+
+    /**
+     * Enregistre les changements de permissions des rôles dans les logs
+     */
+    private function log_role_permissions_change($old_roles, $new_roles) {
+        $current_user = wp_get_current_user();
+        $user_name = $current_user->display_name;
+        $user_id = $current_user->ID;
+
+        // Calculer les différences
+        $added_roles = array_diff($new_roles, $old_roles);
+        $removed_roles = array_diff($old_roles, $new_roles);
+
+        $log_message = sprintf(
+            'PDF Builder: Changement des permissions par %s (ID: %d) - Anciens rôles: [%s], Nouveaux rôles: [%s]',
+            $user_name,
+            $user_id,
+            implode(', ', $old_roles),
+            implode(', ', $new_roles)
+        );
+
+        if (!empty($added_roles)) {
+            $log_message .= sprintf(' - Rôles ajoutés: [%s]', implode(', ', $added_roles));
+        }
+
+        if (!empty($removed_roles)) {
+            $log_message .= sprintf(' - Rôles supprimés: [%s]', implode(', ', $removed_roles));
+        }
+
+        // Log dans le fichier de debug WordPress
+        error_log($log_message);
+
+        // Log dans le système de logging du plugin si disponible
+        if (method_exists($this, 'get_logger')) {
+            $logger = $this->get_logger();
+            if ($logger) {
+                $logger->info('Role permissions changed', [
+                    'user_id' => $user_id,
+                    'user_name' => $user_name,
+                    'old_roles' => $old_roles,
+                    'new_roles' => $new_roles,
+                    'added_roles' => array_values($added_roles),
+                    'removed_roles' => array_values($removed_roles)
+                ]);
+            }
+        }
+    }
+
+    /**
+     * Invalide le cache des permissions pour tous les utilisateurs
+     * Utile quand les rôles autorisés changent
+     */
+    private function clear_permissions_cache() {
+        global $wpdb;
+
+        // Supprimer tous les transients liés aux permissions PDF Builder
+        $wpdb->query($wpdb->prepare(
+            "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
+            $wpdb->esc_like('_transient_pdf_builder_user_access_') . '%'
+        ));
+
+        // Supprimer aussi les timeouts
+        $wpdb->query($wpdb->prepare(
+            "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
+            $wpdb->esc_like('_transient_timeout_pdf_builder_user_access_') . '%'
+        ));
+
+        // Log de l'invalidation du cache
+        error_log('PDF Builder: Cache des permissions invalidé suite à un changement des rôles autorisés');
     }
 }
 
