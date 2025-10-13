@@ -17,7 +17,14 @@ class PDF_Preview_Generator {
     private $generator;
 
     public function __construct() {
-        $this->generator = new PDF_Builder_Pro_Generator();
+        try {
+            error_log('PDF Preview: Initialisation PDF_Builder_Pro_Generator');
+            $this->generator = new PDF_Builder_Pro_Generator();
+            error_log('PDF Preview: PDF_Builder_Pro_Generator initialisé avec succès');
+        } catch (Exception $e) {
+            error_log('PDF Preview: Erreur initialisation PDF_Builder_Pro_Generator: ' . $e->getMessage());
+            $this->generator = null;
+        }
     }
 
     /**
@@ -26,6 +33,12 @@ class PDF_Preview_Generator {
     public function generate_preview($elements, $width = 400, $height = 566) {
         try {
             error_log('PDF Preview: Début génération aperçu pour ' . count($elements) . ' éléments');
+
+            // Vérifier si le générateur est disponible
+            if (!$this->generator) {
+                error_log('PDF Preview: Générateur non disponible, utilisation du fallback');
+                return $this->generate_fallback_preview($elements, $width, $height);
+            }
 
             // Générer le PDF complet
             $pdf_content = $this->generator->generate($elements);
@@ -53,10 +66,63 @@ class PDF_Preview_Generator {
 
         } catch (Exception $e) {
             error_log('PDF Preview: Erreur - ' . $e->getMessage());
+            error_log('PDF Preview: Utilisation du fallback');
+            return $this->generate_fallback_preview($elements, $width, $height);
+        }
+    }
+
+    /**
+     * Génère un aperçu de fallback simple
+     */
+    private function generate_fallback_preview($elements, $width, $height) {
+        try {
+            error_log('PDF Preview: Génération aperçu fallback pour ' . count($elements) . ' éléments');
+
+            // Créer une image simple avec GD
+            if (!function_exists('imagecreatetruecolor')) {
+                throw new Exception('Extension GD non disponible');
+            }
+
+            $image = imagecreatetruecolor($width, $height);
+
+            // Fond blanc
+            $white = imagecolorallocate($image, 255, 255, 255);
+            imagefill($image, 0, 0, $white);
+
+            // Bordure
+            $black = imagecolorallocate($image, 0, 0, 0);
+            imagerectangle($image, 0, 0, $width-1, $height-1, $black);
+
+            // Texte d'aperçu
+            $text_color = imagecolorallocate($image, 100, 100, 100);
+            imagestring($image, 5, 20, 20, 'APERÇU PDF', $text_color);
+            imagestring($image, 3, 20, 50, count($elements) . ' elements', $text_color);
+            imagestring($image, 2, 20, $height - 30, 'Mode fallback', $text_color);
+
+            // Convertir en PNG
+            ob_start();
+            imagepng($image);
+            $png_data = ob_get_clean();
+            imagedestroy($image);
+
+            error_log('PDF Preview: Aperçu fallback généré avec succès');
+
+            return [
+                'success' => true,
+                'preview' => base64_encode($png_data),
+                'width' => $width,
+                'height' => $height,
+                'elements_count' => count($elements),
+                'fallback' => true
+            ];
+
+        } catch (Exception $e) {
+            error_log('PDF Preview: Erreur fallback - ' . $e->getMessage());
             return [
                 'success' => false,
-                'error' => $e->getMessage(),
-                'elements_count' => count($elements)
+                'error' => 'Erreur génération aperçu: ' . $e->getMessage(),
+                'elements_count' => count($elements),
+                'fallback_failed' => true
             ];
         }
     }
@@ -204,25 +270,16 @@ function pdf_builder_generate_preview() {
 
         error_log('PDF Builder Preview: Nonce validé avec succès');
 
-        // TEST SIMPLE: Retourner une réponse de succès sans génération
-        error_log('PDF Builder Preview: ===== TEST SIMPLE - Retour succès sans génération =====');
-        wp_send_json_success([
-            'preview' => base64_encode('test_image_data'),
-            'width' => 400,
-            'height' => 566,
-            'message' => 'Test réussi - génération simulée'
-        ]);
-        return;
-
-        // CODE ORIGINAL COMMENTÉ TEMPORAIREMENT
-        /*
         // Récupérer les éléments
         $elements = json_decode(stripslashes($_POST['elements'] ?? '[]'), true);
 
         if (empty($elements)) {
+            error_log('PDF Builder Preview: Aucun élément à prévisualiser');
             wp_send_json_error('Aucun élément à prévisualiser');
             return;
         }
+
+        error_log('PDF Builder Preview: ' . count($elements) . ' éléments reçus');
 
         // Générer l'aperçu
         $preview_generator = new PDF_Preview_Generator();
@@ -237,7 +294,6 @@ function pdf_builder_generate_preview() {
             error_log('PDF Builder Preview: ===== FIN génération aperçu - ÉCHEC =====');
             wp_send_json_error('Erreur génération aperçu: ' . $result['error']);
         }
-        */
 
     } catch (Exception $e) {
         error_log('PDF Builder Preview: ===== ERREUR génération aperçu =====');
