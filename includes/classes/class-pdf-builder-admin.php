@@ -97,7 +97,7 @@ class PDF_Builder_Admin {
             add_action('add_meta_boxes_shop_order', [$this, 'add_woocommerce_order_meta_box']);
             add_action('add_meta_boxes_woocommerce_page_wc-orders', [$this, 'add_woocommerce_order_meta_box']);
             add_action('wp_ajax_pdf_builder_generate_order_pdf', [$this, 'ajax_generate_order_pdf']);
-            add_action('wp_ajax_pdf_builder_preview_order_pdf', [$this, 'ajax_preview_order_pdf']);
+            add_action('wp_ajax_pdf_builder_pro_preview_order_pdf', [$this, 'ajax_preview_order_pdf']);
             error_log('PDF BUILDER: wp_ajax_pdf_builder_preview_order_pdf action registered');
         } else {
             error_log('PDF BUILDER: WooCommerce NOT detected, order AJAX actions NOT registered');
@@ -2044,7 +2044,7 @@ class PDF_Builder_Admin {
                     url: ajaxurl,
                     type: 'POST',
                     data: {
-                        action: 'pdf_builder_preview_order_pdf',
+                        action: 'pdf_builder_pro_preview_order_pdf',
                         order_id: orderId,
                         template_id: templateId,
                         nonce: '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>'
@@ -2052,7 +2052,7 @@ class PDF_Builder_Admin {
                     beforeSend: function() {
                         console.log('PDF Builder: Sending preview AJAX request');
                         console.log('PDF Builder: Request data:', {
-                            action: 'pdf_builder_preview_order_pdf',
+                            action: 'pdf_builder_pro_preview_order_pdf',
                             order_id: orderId,
                             template_id: templateId,
                             nonce: '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>'
