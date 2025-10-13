@@ -2653,8 +2653,8 @@ class PDF_Builder_Admin {
             }
 
             error_log('🟡 PDF BUILDER - Generating HTML preview...');
-            // Générer l'HTML d'aperçu avec les données de la commande
-            $html_content = $this->generate_order_html($order, $template_data);
+            // Générer l'HTML d'aperçu avec les données de la commande (comme le builder)
+            $html_content = $this->generate_unified_html($template_data, $order);
             error_log('✅ PDF BUILDER - HTML generated, length: ' . strlen($html_content));
 
             $response = array(
