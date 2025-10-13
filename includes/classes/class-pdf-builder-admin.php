@@ -3096,11 +3096,11 @@ class PDF_Builder_Admin {
                 ),
                 array(
                     'id' => 'customer_info',
-                    'type' => 'customer_name',
+                    'type' => 'customer_info',
                     'position' => array('x' => 50, 'y' => 150),
-                    'size' => array('width' => 250, 'height' => 25),
-                    'style' => array('fontSize' => 14, 'color' => '#000000'),
-                    'content' => 'Client'
+                    'size' => array('width' => 250, 'height' => 80),
+                    'style' => array('fontSize' => 12, 'color' => '#000000'),
+                    'content' => 'Informations client'
                 ),
                 array(
                     'id' => 'products_table',
