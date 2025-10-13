@@ -137,19 +137,26 @@ const PreviewModal = ({
       // Créer un URL pour le blob PDF
       const pdfUrl = URL.createObjectURL(pdfBlob);
 
-      // Ouvrir le PDF dans une nouvelle fenêtre ou le télécharger
-      const link = document.createElement('a');
-      link.href = pdfUrl;
-      link.download = data.data.filename || 'pdf-builder-pro-document.pdf';
-      link.target = '_blank'; // Ouvrir dans un nouvel onglet
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      // Ouvrir le PDF dans une nouvelle fenêtre pour prévisualisation
+      const previewWindow = window.open(pdfUrl, '_blank');
 
-      // Libérer l'URL du blob
-      URL.revokeObjectURL(pdfUrl);
+      if (!previewWindow) {
+        // Fallback si le popup est bloqué
+        const link = document.createElement('a');
+        link.href = pdfUrl;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
 
-      console.log('PDF généré et ouvert avec succès');
+      // Libérer l'URL du blob après un délai (pour laisser le temps à la fenêtre de se charger)
+      setTimeout(() => {
+        URL.revokeObjectURL(pdfUrl);
+      }, 1000);
+
+      console.log('PDF généré et ouvert en prévisualisation');
     })
     .catch(error => {
       console.error('Erreur lors de la génération du PDF:', error);
@@ -238,7 +245,7 @@ const PreviewModal = ({
             ❌ Fermer
           </button>
           <button className="btn btn-primary" onClick={handlePrint}>
-            🖨️ Imprimer
+            👁️ Prévisualiser PDF
           </button>
         </div>
       </div>
