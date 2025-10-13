@@ -884,7 +884,7 @@ class PDF_Builder_Admin {
             echo "🔨 Génération du PDF...\n";
 
             // Inclure le générateur PDF
-            require_once plugin_dir_path(dirname(__FILE__)) . '../pdf-generator.php';
+            require_once plugin_dir_path(dirname(dirname(__FILE__))) . 'includes/pdf-generator.php';
 
             $generator = new PDF_Generator();
             $pdf_content = $generator->generate_from_elements($test_elements);
