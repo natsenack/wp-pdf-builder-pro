@@ -1466,6 +1466,25 @@ echo '<style>
 
     // Tab functionality moved to inline script above
     </script>
+
+<script type="text/javascript">
+(function($) {
+    'use strict';
+
+    $(document).ready(function() {
+        // Gestion du bouton "Vider le Cache"
+        $('#clear-cache').on('click', function() {
+            if (!confirm('<?php echo esc_js(__('Êtes-vous sûr de vouloir vider le cache ?', 'pdf-builder-pro')); ?>')) {
+                return;
+            }
+
+            var $button = $(this);
+            var $status = $('#cache-status');
+
+            $button.prop('disabled', true).text('<?php echo esc_js(__('Nettoyage...', 'pdf-builder-pro')); ?>');
+            $status.html('<div class="notice notice-info"><p><?php echo esc_js(__('Nettoyage du cache en cours...', 'pdf-builder-pro')); ?></p></div>');
+
+            $.ajax({
                 url: ajaxurl,
                 type: 'POST',
                 data: {
