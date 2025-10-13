@@ -1872,49 +1872,10 @@ class PDF_Builder_Admin {
         }
 
         try {
-            // Charger le template
-            $template_data = null;
+            // Charger le template de manière robuste
             if ($template_id > 0) {
-                global $wpdb;
-                $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-
-                // Vérifier que la table existe
-                if ($wpdb->get_var("SHOW TABLES LIKE '$table_templates'") != $table_templates) {
-                    wp_send_json_error('Table des templates non trouvée - veuillez réinstaller le plugin');
-                }
-
-                $template = $wpdb->get_row(
-                    PDF_Builder_Debug_Helper::safe_wpdb_prepare("SELECT template_data FROM $table_templates WHERE id = %d", $template_id),
-                    ARRAY_A
-                );
-                if ($template) {
-                    $template_data = json_decode($template['template_data'], true);
-                    if (json_last_error() !== JSON_ERROR_NONE) {
-                        // Log détaillé pour le débogage
-                        error_log('PDF Builder: JSON decode error for template ID ' . $template_id . ' in generate_order_pdf');
-                        error_log('PDF Builder: Raw JSON data: ' . substr($template['template_data'], 0, 500) . '...');
-                        error_log('PDF Builder: JSON error: ' . json_last_error_msg());
-
-                        // Essayer de nettoyer le JSON si c'est un problème d'encodage
-                        $clean_json = $this->clean_json_data($template['template_data']);
-                        if ($clean_json !== $template['template_data']) {
-                            $template_data = json_decode($clean_json, true);
-                            if (json_last_error() === JSON_ERROR_NONE) {
-                                error_log('PDF Builder: JSON cleaned successfully for template ID ' . $template_id);
-                            } else {
-                                wp_send_json_error('Erreur lors du décodage du template JSON: ' . json_last_error_msg() . ' (Template ID: ' . $template_id . ')');
-                            }
-                        } else {
-                            wp_send_json_error('Erreur lors du décodage du template JSON: ' . json_last_error_msg() . ' (Template ID: ' . $template_id . ')');
-                        }
-                    }
-                } else {
-                    wp_send_json_error('Template non trouvé');
-                }
-            }
-
-            // Si pas de template, utiliser un template par défaut
-            if (!$template_data) {
+                $template_data = $this->load_template_robust($template_id);
+            } else {
                 $template_data = $this->get_default_invoice_template();
             }
 
@@ -1988,49 +1949,10 @@ class PDF_Builder_Admin {
         }
 
         try {
-            // Charger le template
-            $template_data = null;
+            // Charger le template de manière robuste
             if ($template_id > 0) {
-                global $wpdb;
-                $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-
-                // Vérifier que la table existe
-                if ($wpdb->get_var("SHOW TABLES LIKE '$table_templates'") != $table_templates) {
-                    wp_send_json_error('Table des templates non trouvée - veuillez réinstaller le plugin');
-                }
-
-                $template = $wpdb->get_row(
-                    PDF_Builder_Debug_Helper::safe_wpdb_prepare("SELECT template_data FROM $table_templates WHERE id = %d", $template_id),
-                    ARRAY_A
-                );
-                if ($template) {
-                    $template_data = json_decode($template['template_data'], true);
-                    if (json_last_error() !== JSON_ERROR_NONE) {
-                        // Log détaillé pour le débogage
-                        error_log('PDF Builder: JSON decode error for template ID ' . $template_id . ' in preview_order_pdf');
-                        error_log('PDF Builder: Raw JSON data: ' . substr($template['template_data'], 0, 500) . '...');
-                        error_log('PDF Builder: JSON error: ' . json_last_error_msg());
-
-                        // Essayer de nettoyer le JSON si c'est un problème d'encodage
-                        $clean_json = $this->clean_json_data($template['template_data']);
-                        if ($clean_json !== $template['template_data']) {
-                            $template_data = json_decode($clean_json, true);
-                            if (json_last_error() === JSON_ERROR_NONE) {
-                                error_log('PDF Builder: JSON cleaned successfully for template ID ' . $template_id);
-                            } else {
-                                wp_send_json_error('Erreur lors du décodage du template JSON: ' . json_last_error_msg() . ' (Template ID: ' . $template_id . ')');
-                            }
-                        } else {
-                            wp_send_json_error('Erreur lors du décodage du template JSON: ' . json_last_error_msg() . ' (Template ID: ' . $template_id . ')');
-                        }
-                    }
-                } else {
-                    wp_send_json_error('Template non trouvé');
-                }
-            }
-
-            // Si pas de template, utiliser un template par défaut
-            if (!$template_data) {
+                $template_data = $this->load_template_robust($template_id);
+            } else {
                 $template_data = $this->get_default_invoice_template();
             }
 
@@ -3013,6 +2935,105 @@ class PDF_Builder_Admin {
         $cleaned = preg_replace('/\s+/', ' ', $cleaned);
 
         return $cleaned;
+    }
+
+    /**
+     * Nettoyage JSON plus agressif pour récupérer les templates très corrompus
+     */
+    private function aggressive_json_clean($json_string) {
+        if (!is_string($json_string)) {
+            return $json_string;
+        }
+
+        // Appliquer d'abord le nettoyage normal
+        $cleaned = $this->clean_json_data($json_string);
+
+        // Essayer de trouver et corriger les structures JSON de base
+        // Chercher les patterns courants et essayer de les réparer
+
+        // 1. Corriger les objets malformés avec des virgules finales
+        $cleaned = preg_replace('/,(\s*})/', '$1', $cleaned);
+        $cleaned = preg_replace('/,(\s*\])/m', '$1', $cleaned);
+
+        // 2. Ajouter des guillemets manquants autour des clés
+        $cleaned = preg_replace('/([{,]\s*)([a-zA-Z_][a-zA-Z0-9_]*)\s*:/', '$1"$2":', $cleaned);
+
+        // 3. Corriger les valeurs de chaîne non quotées (simple)
+        $cleaned = preg_replace('/:(\s*)([a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z0-9])\s*([,}\]])/', ':"$2"$3', $cleaned);
+
+        // 4. Supprimer les caractères de contrôle restants qui pourraient poser problème
+        $cleaned = preg_replace('/[\x00-\x1F\x7F]/', '', $cleaned);
+
+        return $cleaned;
+    }
+
+    /**
+     * Marque un template comme corrompu pour réparation future
+     */
+    private function mark_template_corrupted($template_id) {
+        global $wpdb;
+        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+
+        // Ajouter un flag de corruption (on peut utiliser un champ meta ou modifier le nom)
+        $current_name = $wpdb->get_var($wpdb->prepare("SELECT name FROM $table_templates WHERE id = %d", $template_id));
+        if ($current_name && strpos($current_name, '[CORROMPU]') !== 0) {
+            $wpdb->update(
+                $table_templates,
+                ['name' => '[CORROMPU] ' . $current_name],
+                ['id' => $template_id]
+            );
+        }
+
+        error_log('PDF Builder: Template ID ' . $template_id . ' marked as corrupted');
+    }
+
+    /**
+     * Charge un template de manière robuste avec récupération automatique
+     */
+    private function load_template_robust($template_id) {
+        global $wpdb;
+        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+
+        $template = $wpdb->get_row(
+            $wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
+            ARRAY_A
+        );
+
+        if (!$template) {
+            return $this->get_default_invoice_template();
+        }
+
+        // Essayer de décoder le JSON
+        $template_data = json_decode($template['template_data'], true);
+
+        if (json_last_error() === JSON_ERROR_NONE) {
+            return $template_data;
+        }
+
+        // Essayer le nettoyage normal
+        $clean_json = $this->clean_json_data($template['template_data']);
+        if ($clean_json !== $template['template_data']) {
+            $template_data = json_decode($clean_json, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                error_log('PDF Builder: JSON cleaned successfully for template ID ' . $template_id);
+                return $template_data;
+            }
+        }
+
+        // Essayer le nettoyage agressif
+        $aggressive_clean = $this->aggressive_json_clean($template['template_data']);
+        if ($aggressive_clean !== $template['template_data']) {
+            $template_data = json_decode($aggressive_clean, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                error_log('PDF Builder: JSON recovered with aggressive cleaning for template ID ' . $template_id);
+                return $template_data;
+            }
+        }
+
+        // Marquer comme corrompu et utiliser un template par défaut
+        $this->mark_template_corrupted($template_id);
+        error_log('PDF Builder: Template ID ' . $template_id . ' is corrupted, using default template');
+        return $this->get_default_invoice_template();
     }
 }
 
