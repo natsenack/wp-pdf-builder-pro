@@ -1896,13 +1896,42 @@ class PDF_Builder_Admin {
 
         error_log('PDF Builder: Order status: ' . $order_status . ', Detected document type: ' . $document_type);
 
-        // Récupérer le template par défaut (sans filtrer par document_type car la colonne n'existe pas)
+        // Récupérer le template par défaut adapté au type de document détecté
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-        $default_template = $wpdb->get_row("SELECT id, name FROM $table_templates WHERE is_default = 1 LIMIT 1", ARRAY_A);
+
+        // Mots-clés pour chaque type de document
+        $type_keywords = [
+            'invoice' => ['facture', 'invoice', 'factura'],
+            'quote' => ['devis', 'quote', 'quotation', 'cotización'],
+            'credit_note' => ['avoir', 'credit', 'note', 'refund'],
+            'delivery_note' => ['livraison', 'delivery', 'bon', 'note']
+        ];
+
+        $keywords = isset($type_keywords[$document_type]) ? $type_keywords[$document_type] : [];
+
+        // Construire la requête pour privilégier les templates dont le nom correspond au type
+        $default_template = null;
+
+        if (!empty($keywords)) {
+            // D'abord chercher un template par défaut dont le nom contient un mot-clé du type
+            $placeholders = str_repeat('%s,', count($keywords) - 1) . '%s';
+            $sql = $wpdb->prepare(
+                "SELECT id, name FROM $table_templates WHERE is_default = 1 AND (" .
+                implode(' OR ', array_fill(0, count($keywords), 'LOWER(name) LIKE LOWER(%s)')) .
+                ") LIMIT 1",
+                array_map(function($keyword) { return '%' . $keyword . '%'; }, $keywords)
+            );
+            $default_template = $wpdb->get_row($sql, ARRAY_A);
+        }
+
+        // Si aucun template spécifique trouvé, prendre n'importe quel template par défaut
+        if (!$default_template) {
+            $default_template = $wpdb->get_row("SELECT id, name FROM $table_templates WHERE is_default = 1 LIMIT 1", ARRAY_A);
+        }
 
         if ($default_template) {
-            error_log('PDF Builder: Using default template: ' . $default_template['name']);
+            error_log('PDF Builder: Using default template: ' . $default_template['name'] . ' for document type: ' . $document_type);
         }
 
         error_log('PDF Builder: Selected template: ' . ($default_template ? $default_template['name'] : 'None'));
@@ -2095,7 +2124,7 @@ class PDF_Builder_Admin {
                         <?php if ($default_template): ?>
                             <strong><?php echo esc_html($default_template['name']); ?></strong>
                             <small style="color: #6c757d; display: block; margin-top: 4px;">
-                                <?php _e('Template par défaut pour ce type de document', 'pdf-builder-pro'); ?>
+                                <?php _e('Template automatiquement sélectionné pour ce type de document', 'pdf-builder-pro'); ?>
                             </small>
                         <?php else: ?>
                             <em><?php _e('Aucun template par défaut trouvé', 'pdf-builder-pro'); ?></em>
