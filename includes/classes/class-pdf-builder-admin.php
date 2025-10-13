@@ -2665,6 +2665,7 @@ class PDF_Builder_Admin {
             'completed' => 'invoice',
             'pending' => 'quote',
             'on-hold' => 'quote',
+            'wc-devis' => 'quote', // État personnalisé pour les devis
             'cancelled' => 'credit_note',
             'refunded' => 'credit_note',
             'failed' => 'credit_note'
