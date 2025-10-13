@@ -88,7 +88,6 @@ export const useGlobalSettings = () => {
           const parsedSettings = JSON.parse(savedSettings);
           setSettings(prev => ({ ...prev, ...ajaxSettings, ...parsedSettings }));
         } catch (error) {
-          console.warn('Erreur lors du chargement des paramètres globaux:', error);
           setSettings(prev => ({ ...prev, ...ajaxSettings }));
         }
       } else {

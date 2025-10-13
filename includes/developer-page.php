@@ -11,8 +11,6 @@
  * 3. Ou définir PDF_BUILDER_DEV_MODE à false dans wp-config.php
  */
 
-error_log('PDF Builder: Developer page accessed');
-
 
 
 // Vérifier le mode développeur (peut être désactivé en production)

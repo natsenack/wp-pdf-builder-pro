@@ -151,9 +151,6 @@ function pdf_builder_handle_pdf_download_final() {
         }
     } catch (Exception $e) {
         // Log l'erreur silencieusement sans casser WordPress
-        if (function_exists('error_log')) {
-            error_log('PDF Builder: Erreur dans handle_pdf_download - ' . $e->getMessage());
-        }
     }
 }
 

@@ -87,7 +87,6 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
       Object.keys(newProperties).forEach(property => {
         const validation = validateProperty(elementType, property, newProperties[property]);
         if (!validation.valid) {
-          console.warn(`Propriété invalide ${property} pour ${elementType}:`, validation.reason);
           newProperties[property] = fixInvalidProperty(elementType, property, newProperties[property]);
         }
       });
@@ -108,7 +107,6 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
     // Validation selon le système de restrictions
     const validation = validateProperty(element.type, property, value);
     if (!validation.valid) {
-      console.warn(`Propriété non autorisée: ${validation.reason}`);
       // Ne pas appliquer le changement si la propriété n'est pas autorisée
       return;
     }
@@ -121,7 +119,6 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
           validatedValue = serviceValidated;
         }
       } catch (error) {
-        console.warn(`Erreur de validation pour ${property}:`, error);
       }
     }
 

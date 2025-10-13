@@ -520,7 +520,6 @@ class PDF_Builder_Pro_Generator {
      */
     private function log_error($message) {
         $this->errors[] = $message;
-        error_log('PDF Builder Pro: ' . $message);
     }
 
     /**
@@ -540,6 +539,86 @@ class PDF_Builder_Pro_Generator {
             'cache_keys' => array_keys($this->cache)
         ];
     }
+
+    /**
+     * Configure les constantes TCPDF pour éviter les problèmes de permissions
+     */
+    private function configure_tcpdf_constants() {
+        // Désactiver la configuration automatique qui peut causer des problèmes
+        if (!defined('K_TCPDF_EXTERNAL_CONFIG')) {
+            define('K_TCPDF_EXTERNAL_CONFIG', true);
+        }
+
+        // Définir le répertoire principal TCPDF
+        if (!defined('K_PATH_MAIN')) {
+            $tcpdf_path = function_exists('plugin_dir_path')
+                ? plugin_dir_path(dirname(__FILE__)) . 'lib/tcpdf/'
+                : dirname(__DIR__) . '/lib/tcpdf/';
+            define('K_PATH_MAIN', $tcpdf_path);
+        }
+
+        // Définir le répertoire des polices
+        if (!defined('K_PATH_FONTS')) {
+            define('K_PATH_FONTS', K_PATH_MAIN . 'fonts/');
+        }
+
+        // Définir le répertoire de cache dans uploads (accessible en écriture)
+        if (!defined('K_PATH_CACHE')) {
+            if (function_exists('wp_upload_dir')) {
+                $upload_dir = wp_upload_dir();
+                $cache_dir = $upload_dir['basedir'] . '/pdf-builder-cache/';
+
+                // Créer le répertoire s'il n'existe pas
+                if (!file_exists($cache_dir)) {
+                    if (function_exists('wp_mkdir_p')) {
+                        wp_mkdir_p($cache_dir);
+                    } elseif (!file_exists($cache_dir)) {
+                        mkdir($cache_dir, 0755, true);
+                    }
+                }
+
+                // Vérifier que le répertoire est accessible en écriture
+                if (is_writable($cache_dir)) {
+                    define('K_PATH_CACHE', $cache_dir);
+                } else {
+                    // Fallback vers le répertoire temporaire système
+                    define('K_PATH_CACHE', sys_get_temp_dir() . '/tcpdf_cache/');
+                }
+            } else {
+                // Mode test - utiliser un répertoire temporaire
+                $cache_dir = sys_get_temp_dir() . '/tcpdf_cache/';
+                if (!file_exists($cache_dir)) {
+                    mkdir($cache_dir, 0755, true);
+                }
+                define('K_PATH_CACHE', $cache_dir);
+            }
+        }
+
+        // Définir le répertoire des images
+        if (!defined('K_PATH_IMAGES')) {
+            define('K_PATH_IMAGES', K_PATH_MAIN . 'images/');
+        }
+
+        // Définir l'URL de base
+        if (!defined('K_PATH_URL')) {
+            if (function_exists('plugin_dir_url')) {
+                define('K_PATH_URL', plugin_dir_url(__FILE__) . '../lib/tcpdf/');
+            } else {
+                define('K_PATH_URL', 'file://' . K_PATH_MAIN);
+            }
+        }
+
+        // Autres constantes importantes
+        if (!defined('PDF_PAGE_FORMAT')) {
+            define('PDF_PAGE_FORMAT', 'A4');
+        }
+        if (!defined('PDF_PAGE_ORIENTATION')) {
+            define('PDF_PAGE_ORIENTATION', 'P');
+        }
+        if (!defined('PDF_UNIT')) {
+            define('PDF_UNIT', 'mm');
+        }
+    }
 }
 
 // Alias pour la compatibilité descendante
@@ -555,18 +634,14 @@ function pdf_builder_generate_pdf() {
     try {
         // Log du nonce reçu pour débogage
         $received_nonce = $_POST['nonce'] ?? '';
-        error_log('PDF Builder Pro: Nonce reçu: ' . $received_nonce);
 
         // Vérifier la sécurité
         if (!wp_verify_nonce($received_nonce, 'pdf_builder_nonce')) {
-            error_log('PDF Builder Pro: Échec vérification nonce');
             // Pour le débogage, accepter temporairement
-            error_log('PDF Builder Pro: Nonce invalide mais acceptation temporaire pour débogage');
         }
 
         // Récupérer les éléments
         $elements = json_decode(stripslashes($_POST['elements'] ?? '[]'), true);
-        error_log('PDF Builder Pro: ' . count($elements) . ' éléments reçus');
 
         if (empty($elements)) {
             ob_end_clean();
@@ -579,13 +654,10 @@ function pdf_builder_generate_pdf() {
         $pdf_content = $generator->generate($elements);
 
         if (empty($pdf_content)) {
-            error_log('PDF Builder Pro: Contenu PDF vide');
             ob_end_clean();
             wp_send_json_error('Erreur lors de la génération du PDF');
             return;
         }
-
-        error_log('PDF Builder Pro: PDF généré avec succès, taille: ' . strlen($pdf_content) . ' octets');
 
         // Vider le buffer avant d'envoyer la réponse
         ob_end_clean();
@@ -603,7 +675,6 @@ function pdf_builder_generate_pdf() {
         ob_end_clean();
         wp_send_json_error('Erreur lors de la génération du PDF: ' . $e->getMessage());
     } catch (Throwable $t) {
-        error_log('Erreur fatale génération PDF: ' . $t->getMessage());
         ob_end_clean();
         wp_send_json_error('Erreur fatale lors de la génération du PDF');
     }
@@ -707,15 +778,12 @@ function generate_from_elements($elements) {
             // Générer le PDF
             $pdf_output = $this->pdf->Output('document.pdf', 'S'); // 'S' pour retourner le contenu
             if (empty($pdf_output)) {
-                error_log('PDF Builder: La méthode Output de TCPDF a retourné du contenu vide');
                 return false;
             }
             return $pdf_output;
         } catch (Exception $e) {
-            error_log('PDF Builder: Exception dans generate_from_elements: ' . $e->getMessage());
             return false;
         } catch (Throwable $t) {
-            error_log('PDF Builder: Erreur fatale dans generate_from_elements: ' . $t->getMessage());
             return false;
         }
     }

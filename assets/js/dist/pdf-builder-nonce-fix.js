@@ -1,1 +1,1 @@
-console.log("PDF Builder Nonce Fix: Vérification des variables AJAX"),document.addEventListener("DOMContentLoaded",function(){console.log("PDF Builder Nonce Fix: DOM chargé"),"undefined"==typeof pdfBuilderAjax?console.error("PDF Builder Nonce Fix: pdfBuilderAjax n'existe toujours pas !"):console.log("PDF Builder Nonce Fix: pdfBuilderAjax trouvé:",{hasAjaxurl:!!pdfBuilderAjax.ajaxurl,hasNonce:!!pdfBuilderAjax.nonce,nonceLength:pdfBuilderAjax.nonce?pdfBuilderAjax.nonce.length:0,version:pdfBuilderAjax.version})});
+document.addEventListener("DOMContentLoaded",function(){});

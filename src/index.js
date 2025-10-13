@@ -14,7 +14,6 @@ class PDFBuilderPro {
   init(containerId, options = {}) {
     const container = document.getElementById(containerId);
     if (!container) {
-      console.error('Container not found:', containerId);
       return;
     }
 

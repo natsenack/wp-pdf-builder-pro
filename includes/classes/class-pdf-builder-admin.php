@@ -33,7 +33,6 @@ class PDF_Builder_Admin {
      * Constructeur privé pour singleton
      */
     private function __construct($main_instance) {
-        error_log("PDF Builder Debug: PDF_Builder_Admin::__construct() appelée");
         $this->main = $main_instance;
         $this->init_hooks();
     }
@@ -56,8 +55,6 @@ class PDF_Builder_Admin {
      * Initialise les hooks WordPress
      */
     private function init_hooks() {
-        error_log('PDF BUILDER: init_hooks() called for PDF_Builder_Admin');
-
         add_action('admin_menu', [$this, 'add_admin_menu']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts'], 20);
         add_action('wp_ajax_pdf_builder_pro_generate_pdf', [$this, 'ajax_generate_pdf_from_canvas']);
@@ -93,15 +90,12 @@ class PDF_Builder_Admin {
 
         // WooCommerce integration hooks
         if (class_exists('WooCommerce')) {
-            error_log('PDF BUILDER: WooCommerce detected, registering order AJAX actions');
             // Support for both legacy and HPOS order systems
             add_action('add_meta_boxes_shop_order', [$this, 'add_woocommerce_order_meta_box']);
             add_action('add_meta_boxes_woocommerce_page_wc-orders', [$this, 'add_woocommerce_order_meta_box']);
             add_action('wp_ajax_pdf_builder_generate_order_pdf', [$this, 'ajax_generate_order_pdf']);
             add_action('wp_ajax_pdf_builder_pro_preview_order_pdf', [$this, 'ajax_preview_order_pdf']);
-            error_log('PDF BUILDER: wp_ajax_pdf_builder_preview_order_pdf action registered');
         } else {
-            error_log('PDF BUILDER: WooCommerce NOT detected, order AJAX actions NOT registered');
         }
     }
 
@@ -109,8 +103,6 @@ class PDF_Builder_Admin {
      * Ajoute le menu d'administration
      */
     public function add_admin_menu() {
-        error_log("PDF Builder Debug: add_admin_menu() appelée");
-
         // Menu principal avec icône distinctive
         add_menu_page(
             __('PDF Builder Pro - Gestionnaire de PDF', 'pdf-builder-pro'),
@@ -750,12 +742,8 @@ class PDF_Builder_Admin {
     public function test_tcpdf_page() {
         // Pas de vérification de permissions pour la page de test (diagnostic)
 
-        error_log("PDF Builder Debug: test_tcpdf_page() appelée");
-
         // Test simple de TCPDF
         $test_results = $this->run_simple_tcpdf_test();
-
-        error_log("PDF Builder Debug: test_tcpdf_page() terminé, résultats: " . strlen($test_results) . " caractères");
 
         ?>
         <div class="wrap">
@@ -773,7 +761,6 @@ class PDF_Builder_Admin {
         </div>
 
         <script>
-        console.log("PDF Builder Debug: Page TCPDF chargée côté client");
         </script>
 
         <script>
@@ -869,36 +856,30 @@ class PDF_Builder_Admin {
 
         try {
             echo "📚 Chargement de TCPDF...\n";
-            error_log("PDF Builder Debug: Avant chargement TCPDF");
 
             // Test de chargement TCPDF
             require_once __DIR__ . '/../../lib/tcpdf/tcpdf_autoload.php';
 
-            error_log("PDF Builder Debug: TCPDF chargé avec succès");
             echo "✅ TCPDF chargé\n";
 
             echo "🔨 Création d'une instance TCPDF...\n";
-            error_log("PDF Builder Debug: Avant création instance TCPDF");
 
             $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
-            error_log("PDF Builder Debug: Instance TCPDF créée");
             echo "✅ Instance TCPDF créée\n";
 
             $version = TCPDF_STATIC::getTCPDFVersion();
-            error_log("PDF Builder Debug: Version TCPDF: " . $version);
             echo "📊 Version TCPDF : {$version}\n";
 
             echo "📝 Ajout d'une page...\n";
-            error_log("PDF Builder Debug: Avant AddPage");
 
             $pdf->AddPage();
 
-            error_log("PDF Builder Debug: Page ajoutée");
             echo "✅ Page ajoutée\n";
 
             echo "✍️ Ajout de texte...\n";
-            error_log("PDF Builder Debug: Avant SetFont");
+
+            $pdf->SetFont('helvetica', '', 12);
 
             $pdf->SetFont('helvetica', '', 12);
             $pdf->Cell(0, 10, 'Test TCPDF réussi - ' . date('d/m/Y H:i:s'), 0, 1, 'C');
@@ -907,11 +888,9 @@ class PDF_Builder_Admin {
             echo "✅ Texte ajouté\n";
 
             echo "💾 Génération du PDF...\n";
-            error_log("PDF Builder Debug: Avant génération PDF");
 
             $pdf_content = $pdf->Output('', 'S');
 
-            error_log("PDF Builder Debug: PDF généré, taille: " . strlen($pdf_content));
             $size = strlen($pdf_content);
             echo "✅ PDF généré avec succès !\n";
             echo "📊 Taille : " . number_format($size) . " octets\n";
@@ -925,7 +904,6 @@ class PDF_Builder_Admin {
             echo "</div>";
 
         } catch (Exception $e) {
-            error_log("PDF Builder Debug: Exception dans run_simple_tcpdf_test: " . $e->getMessage());
             echo "❌ Erreur : " . $e->getMessage() . "\n";
             echo "📍 Fichier : " . $e->getFile() . " ligne " . $e->getLine() . "\n";
 
@@ -1887,14 +1865,13 @@ class PDF_Builder_Admin {
             return;
         }
 
-        error_log('PDF Builder: Rendering meta box for order ID: ' . $order_id);
-
         // Détecter automatiquement le type de document basé sur le statut de la commande
         $order_status = $order->get_status();
         $document_type = $this->detect_document_type($order_status);
         $document_type_label = $this->get_document_type_label($document_type);
 
-        error_log('PDF Builder: Order status: ' . $order_status . ', Detected document type: ' . $document_type);
+        // DEBUG temporaire
+        echo "<!-- DEBUG: Order status: '$order_status', Document type: '$document_type', Label: '$document_type_label' -->";
 
         // Récupérer le template par défaut adapté au type de document détecté
         global $wpdb;
@@ -1930,11 +1907,12 @@ class PDF_Builder_Admin {
             $default_template = $wpdb->get_row("SELECT id, name FROM $table_templates WHERE is_default = 1 LIMIT 1", ARRAY_A);
         }
 
+        // DEBUG temporaire
         if ($default_template) {
-            error_log('PDF Builder: Using default template: ' . $default_template['name'] . ' for document type: ' . $document_type);
+            echo "<!-- DEBUG: Using template: '{$default_template['name']}' for document type: '$document_type' -->";
+        } else {
+            echo "<!-- DEBUG: No template selected -->";
         }
-
-        error_log('PDF Builder: Selected template: ' . ($default_template ? $default_template['name'] : 'None'));
 
         wp_nonce_field('pdf_builder_order_actions', 'pdf_builder_order_nonce');
         ?>
@@ -2689,18 +2667,27 @@ class PDF_Builder_Admin {
      * Détecte automatiquement le type de document basé sur le statut de la commande
      */
     private function detect_document_type($order_status) {
+        // DEBUG temporaire
+        echo "<!-- DEBUG detect_document_type: Received status: '$order_status' -->";
+
         $status_mapping = [
             'processing' => 'invoice',
             'completed' => 'invoice',
             'pending' => 'quote',
             'on-hold' => 'quote',
             'wc-devis' => 'quote', // État personnalisé pour les devis
+            'devis' => 'quote', // Au cas où le préfixe n'est pas présent
             'cancelled' => 'credit_note',
             'refunded' => 'credit_note',
             'failed' => 'credit_note'
         ];
 
-        return $status_mapping[$order_status] ?? 'invoice';
+        $result = $status_mapping[$order_status] ?? 'invoice';
+
+        // DEBUG temporaire
+        echo "<!-- DEBUG detect_document_type: Mapped '$order_status' to '$result' -->";
+
+        return $result;
     }
 
     /**

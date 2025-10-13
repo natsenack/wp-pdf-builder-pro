@@ -237,17 +237,14 @@ export const useCanvasState = ({
 
     // Vérifications de sécurité
     if (!currentSelection || !currentHistory) {
-      console.error('useCanvasState: selection or history not initialized');
       return;
     }
 
     if (typeof currentSelection.selectElement !== 'function') {
-      console.error('selection.selectElement is not a function:', currentSelection.selectElement);
       return;
     }
 
     if (typeof currentHistory.addToHistory !== 'function') {
-      console.error('history.addToHistory is not a function:', currentHistory.addToHistory);
       return;
     }
 
@@ -277,7 +274,6 @@ export const useCanvasState = ({
           currentHistory.addToHistory({ elements: newElements, nextId: nextId + 1 });
         }
       } catch (error) {
-        console.error('Error calling history.addToHistory:', error);
       }
       return newElements;
     });
@@ -289,7 +285,6 @@ export const useCanvasState = ({
         currentSelection.selectElement(newElement.id);
       }
     } catch (error) {
-      console.error('Error calling selection.selectElement:', error);
     }
   }, [nextId]); // Retirer selection et history des dépendances
 
@@ -452,7 +447,6 @@ export const useCanvasState = ({
               JSON.stringify(cleanedArray); // Test de sérialisation
               cleaned[key] = cleanedArray;
             } catch (e) {
-              console.warn(`PDF Builder - Propriété tableau non-sérialisable ignorée: ${key}`, value);
             }
           } else if (typeof value === 'object') {
             // Pour les objets, nettoyer récursivement
@@ -460,7 +454,6 @@ export const useCanvasState = ({
               const cleanedObj = cleanElementForSerialization(value);
               cleaned[key] = cleanedObj;
             } catch (e) {
-              console.warn(`PDF Builder - Propriété objet non-sérialisable ignorée: ${key}`, value);
             }
           } else {
             // Pour les autres types (functions, symbols, etc.), ignorer
@@ -488,7 +481,6 @@ export const useCanvasState = ({
         // Tester le parsing pour valider
         const testParse = JSON.parse(jsonString);
       } catch (jsonError) {
-        console.error('🔍 PDF Builder - ERREUR JSON côté client:', jsonError);
         throw new Error('Données JSON invalides côté client: ' + jsonError.message);
       }
 
@@ -521,21 +513,18 @@ export const useCanvasState = ({
         if (toastrAvailable) {
           toastr.success('Modifications du canvas sauvegardées avec succès !');
         } else {
-          console.warn('⚠️ PDF Builder - Toastr non disponible, utilisation alert');
           alert('Modifications du canvas sauvegardées avec succès !');
         }
       }
 
       return templateData;
     } catch (error) {
-      console.error('❌ PDF Builder - Erreur lors de la sauvegarde:', error);
 
       // Notification d'erreur
       const errorMessage = error.message || 'Erreur inconnue lors de la sauvegarde';
       if (toastrAvailable) {
         toastr.error(`Erreur lors de la sauvegarde: ${errorMessage}`);
       } else {
-        console.warn('⚠️ PDF Builder - Toastr non disponible pour erreur, utilisation alert');
         alert(`Erreur lors de la sauvegarde: ${errorMessage}`);
       }
 
