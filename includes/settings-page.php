@@ -354,6 +354,59 @@ window.addEventListener('load', function() {
             var firstHref = firstTab.getAttribute('href');
             simpleActivateTab(firstHref);
         }
+
+        // Handle sub-tabs for Canvas tab
+        var subNavTabs = document.querySelectorAll('.sub-nav-tab');
+        for (var i = 0; i < subNavTabs.length; i++) {
+            subNavTabs[i].addEventListener('click', function(e) {
+                e.preventDefault();
+                var targetId = this.getAttribute('href');
+
+                // Hide all sub-tab contents
+                var subTabContents = document.querySelectorAll('.sub-tab-content');
+                for (var j = 0; j < subTabContents.length; j++) {
+                    subTabContents[j].classList.remove('sub-tab-active');
+                }
+
+                // Remove active class from all sub-nav tabs
+                var allSubNavTabs = document.querySelectorAll('.sub-nav-tab');
+                for (var j = 0; j < allSubNavTabs.length; j++) {
+                    allSubNavTabs[j].classList.remove('sub-nav-tab-active');
+                }
+
+                // Show target sub-tab content
+                var targetContent = document.querySelector(targetId);
+                if (targetContent) {
+                    targetContent.classList.add('sub-tab-active');
+                }
+
+                // Add active class to clicked sub-nav tab
+                this.classList.add('sub-nav-tab-active');
+            });
+        }
+
+        // Initialize first sub-tab for Canvas
+        var firstSubTab = document.querySelector('.sub-nav-tab');
+        if (firstSubTab) {
+            firstSubTab.click();
+        }
+
+        // Handle range inputs with value display
+        var rangeInputs = document.querySelectorAll('input[type="range"]');
+        for (var i = 0; i < rangeInputs.length; i++) {
+            var rangeInput = rangeInputs[i];
+            var valueDisplay = document.getElementById(rangeInput.id + '_value');
+            if (valueDisplay) {
+                rangeInput.addEventListener('input', function() {
+                    var display = document.getElementById(this.id + '_value');
+                    if (display) {
+                        display.textContent = this.value + (this.id.includes('opacity') ? '%' : '%');
+                    }
+                });
+                // Initialize display
+                valueDisplay.textContent = rangeInput.value + (rangeInput.id.includes('opacity') ? '%' : '%');
+            }
+        }
     });
     </script>
 
@@ -904,50 +957,587 @@ window.addEventListener('load', function() {
             <div id="canvas" class="tab-content">
                 <h2><?php _e('Paramètres Canvas', 'pdf-builder-pro'); ?></h2>
 
-                <table class="form-table">
-                    <tr>
-                        <th scope="row"><?php _e('Dimensions par Défaut', 'pdf-builder-pro'); ?></th>
-                        <td>
-                            <label for="default_canvas_width"><?php _e('Largeur:', 'pdf-builder-pro'); ?></label>
-                            <input name="default_canvas_width" type="number" id="default_canvas_width" value="<?php echo esc_attr(get_option('pdf_builder_default_canvas_width', 210)); ?>" class="small-text"> mm
-                            <br>
-                            <label for="default_canvas_height"><?php _e('Hauteur:', 'pdf-builder-pro'); ?></label>
-                            <input name="default_canvas_height" type="number" id="default_canvas_height" value="<?php echo esc_attr(get_option('pdf_builder_default_canvas_height', 297)); ?>" class="small-text"> mm
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><?php _e('Grille d\'Alignement', 'pdf-builder-pro'); ?></th>
-                        <td>
-                            <fieldset>
-                                <label for="show_grid">
-                                    <input name="show_grid" type="checkbox" id="show_grid" value="1" <?php checked(get_option('pdf_builder_show_grid', true)); ?>>
-                                    <?php _e('Afficher la grille d\'alignement dans l\'éditeur', 'pdf-builder-pro'); ?>
-                                </label>
-                            </fieldset>
-                            <br>
-                            <label for="grid_size"><?php _e('Taille de la grille:', 'pdf-builder-pro'); ?></label>
-                            <input name="grid_size" type="number" id="grid_size" value="<?php echo esc_attr(get_option('pdf_builder_grid_size', 10)); ?>" class="small-text"> px
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><?php _e('Aimants', 'pdf-builder-pro'); ?></th>
-                        <td>
-                            <fieldset>
-                                <label for="snap_to_grid">
-                                    <input name="snap_to_grid" type="checkbox" id="snap_to_grid" value="1" <?php checked(get_option('pdf_builder_snap_to_grid', true)); ?>>
-                                    <?php _e('Activer l\'aimantation à la grille', 'pdf-builder-pro'); ?>
-                                </label>
-                            </fieldset>
-                            <br>
-                            <fieldset>
-                                <label for="snap_to_elements">
-                                    <input name="snap_to_elements" type="checkbox" id="snap_to_elements" value="1" <?php checked(get_option('pdf_builder_snap_to_elements', true)); ?>>
-                                    <?php _e('Activer l\'aimantation aux autres éléments', 'pdf-builder-pro'); ?>
-                                </label>
-                            </fieldset>
-                        </td>
-                    </tr>
-                </table>
+                <!-- Sous-onglets pour l'organisation -->
+                <div class="sub-nav-tab-wrapper">
+                    <a href="#canvas-general" class="sub-nav-tab sub-nav-tab-active"><?php _e('Général', 'pdf-builder-pro'); ?></a>
+                    <a href="#canvas-grid" class="sub-nav-tab"><?php _e('Grille & Aimants', 'pdf-builder-pro'); ?></a>
+                    <a href="#canvas-zoom" class="sub-nav-tab"><?php _e('Zoom & Navigation', 'pdf-builder-pro'); ?></a>
+                    <a href="#canvas-selection" class="sub-nav-tab"><?php _e('Sélection & Manipulation', 'pdf-builder-pro'); ?></a>
+                    <a href="#canvas-export" class="sub-nav-tab"><?php _e('Export & Qualité', 'pdf-builder-pro'); ?></a>
+                    <a href="#canvas-advanced" class="sub-nav-tab"><?php _e('Avancé', 'pdf-builder-pro'); ?></a>
+                </div>
+
+                <!-- Sous-onglet Général -->
+                <div id="canvas-general" class="sub-tab-content sub-tab-active">
+                    <h3><?php _e('Paramètres Généraux du Canvas', 'pdf-builder-pro'); ?></h3>
+
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><?php _e('Dimensions par Défaut', 'pdf-builder-pro'); ?></th>
+                            <td>
+                                <div style="display: flex; gap: 20px; align-items: center;">
+                                    <div>
+                                        <label for="default_canvas_width"><?php _e('Largeur:', 'pdf-builder-pro'); ?></label>
+                                        <input name="default_canvas_width" type="number" id="default_canvas_width" value="<?php echo esc_attr(get_option('pdf_builder_default_canvas_width', 210)); ?>" class="small-text" min="50" max="1000"> mm
+                                    </div>
+                                    <div>
+                                        <label for="default_canvas_height"><?php _e('Hauteur:', 'pdf-builder-pro'); ?></label>
+                                        <input name="default_canvas_height" type="number" id="default_canvas_height" value="<?php echo esc_attr(get_option('pdf_builder_default_canvas_height', 297)); ?>" class="small-text" min="50" max="1000"> mm
+                                    </div>
+                                    <div>
+                                        <label for="default_canvas_unit"><?php _e('Unité:', 'pdf-builder-pro'); ?></label>
+                                        <select name="default_canvas_unit" id="default_canvas_unit">
+                                            <option value="mm" <?php selected(get_option('pdf_builder_default_canvas_unit', 'mm'), 'mm'); ?>>mm</option>
+                                            <option value="cm" <?php selected(get_option('pdf_builder_default_canvas_unit', 'mm'), 'cm'); ?>>cm</option>
+                                            <option value="in" <?php selected(get_option('pdf_builder_default_canvas_unit', 'mm'), 'in'); ?>>inches</option>
+                                            <option value="px" <?php selected(get_option('pdf_builder_default_canvas_unit', 'mm'), 'px'); ?>>pixels</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <p class="description"><?php _e('Dimensions par défaut pour les nouveaux documents PDF.', 'pdf-builder-pro'); ?></p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?php _e('Orientation par Défaut', 'pdf-builder-pro'); ?></th>
+                            <td>
+                                <fieldset>
+                                    <label for="default_orientation_portrait">
+                                        <input name="default_orientation" type="radio" id="default_orientation_portrait" value="portrait" <?php checked(get_option('pdf_builder_default_orientation', 'portrait'), 'portrait'); ?>>
+                                        <?php _e('Portrait', 'pdf-builder-pro'); ?>
+                                    </label>
+                                    <br>
+                                    <label for="default_orientation_landscape">
+                                        <input name="default_orientation" type="radio" id="default_orientation_landscape" value="landscape" <?php checked(get_option('pdf_builder_default_orientation', 'portrait'), 'landscape'); ?>>
+                                        <?php _e('Paysage', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?php _e('Fond du Canvas', 'pdf-builder-pro'); ?></th>
+                            <td>
+                                <fieldset>
+                                    <label for="canvas_background_color">
+                                        <input name="canvas_background_color" type="color" id="canvas_background_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_background_color', '#ffffff')); ?>">
+                                        <?php _e('Couleur de fond', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                                <br>
+                                <fieldset>
+                                    <label for="canvas_show_transparency">
+                                        <input name="canvas_show_transparency" type="checkbox" id="canvas_show_transparency" value="1" <?php checked(get_option('pdf_builder_canvas_show_transparency', false)); ?>>
+                                        <?php _e('Afficher la transparence (motif de damier)', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?php _e('Marges de Sécurité', 'pdf-builder-pro'); ?></th>
+                            <td>
+                                <fieldset>
+                                    <label for="show_margins">
+                                        <input name="show_margins" type="checkbox" id="show_margins" value="1" <?php checked(get_option('pdf_builder_show_margins', true)); ?>>
+                                        <?php _e('Afficher les marges de sécurité dans l\'éditeur', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                                <br>
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <label for="margin_top"><?php _e('Haut:', 'pdf-builder-pro'); ?></label>
+                                    <input name="margin_top" type="number" id="margin_top" value="<?php echo esc_attr(get_option('pdf_builder_margin_top', 10)); ?>" class="tiny-text" min="0" max="50"> mm
+
+                                    <label for="margin_right"><?php _e('Droite:', 'pdf-builder-pro'); ?></label>
+                                    <input name="margin_right" type="number" id="margin_right" value="<?php echo esc_attr(get_option('pdf_builder_margin_right', 10)); ?>" class="tiny-text" min="0" max="50"> mm
+
+                                    <label for="margin_bottom"><?php _e('Bas:', 'pdf-builder-pro'); ?></label>
+                                    <input name="margin_bottom" type="number" id="margin_bottom" value="<?php echo esc_attr(get_option('pdf_builder_margin_bottom', 10)); ?>" class="tiny-text" min="0" max="50"> mm
+
+                                    <label for="margin_left"><?php _e('Gauche:', 'pdf-builder-pro'); ?></label>
+                                    <input name="margin_left" type="number" id="margin_left" value="<?php echo esc_attr(get_option('pdf_builder_margin_left', 10)); ?>" class="tiny-text" min="0" max="50"> mm
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Sous-onglet Grille & Aimants -->
+                <div id="canvas-grid" class="sub-tab-content">
+                    <h3><?php _e('Paramètres de Grille et Aimantation', 'pdf-builder-pro'); ?></h3>
+
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><?php _e('Grille d\'Alignement', 'pdf-builder-pro'); ?></th>
+                            <td>
+                                <fieldset>
+                                    <label for="show_grid">
+                                        <input name="show_grid" type="checkbox" id="show_grid" value="1" <?php checked(get_option('pdf_builder_show_grid', true)); ?>>
+                                        <?php _e('Afficher la grille d\'alignement dans l\'éditeur', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                                <br>
+                                <div style="display: flex; gap: 20px; align-items: center;">
+                                    <div>
+                                        <label for="grid_size"><?php _e('Taille de la grille:', 'pdf-builder-pro'); ?></label>
+                                        <input name="grid_size" type="number" id="grid_size" value="<?php echo esc_attr(get_option('pdf_builder_grid_size', 10)); ?>" class="small-text" min="5" max="50" step="5"> px
+                                    </div>
+                                    <div>
+                                        <label for="grid_color"><?php _e('Couleur:', 'pdf-builder-pro'); ?></label>
+                                        <input name="grid_color" type="color" id="grid_color" value="<?php echo esc_attr(get_option('pdf_builder_grid_color', '#e0e0e0')); ?>">
+                                    </div>
+                                    <div>
+                                        <label for="grid_opacity"><?php _e('Opacité:', 'pdf-builder-pro'); ?></label>
+                                        <input name="grid_opacity" type="range" id="grid_opacity" min="10" max="100" value="<?php echo esc_attr(get_option('pdf_builder_grid_opacity', 30)); ?>" style="width: 80px;">
+                                        <span id="grid_opacity_value"><?php echo esc_attr(get_option('pdf_builder_grid_opacity', 30)); ?>%</span>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?php _e('Aimantation', 'pdf-builder-pro'); ?></th>
+                            <td>
+                                <fieldset>
+                                    <label for="snap_to_grid">
+                                        <input name="snap_to_grid" type="checkbox" id="snap_to_grid" value="1" <?php checked(get_option('pdf_builder_snap_to_grid', true)); ?>>
+                                        <?php _e('Activer l\'aimantation à la grille', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                                <br>
+                                <fieldset>
+                                    <label for="snap_to_elements">
+                                        <input name="snap_to_elements" type="checkbox" id="snap_to_elements" value="1" <?php checked(get_option('pdf_builder_snap_to_elements', true)); ?>>
+                                        <?php _e('Activer l\'aimantation aux autres éléments', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                                <br>
+                                <fieldset>
+                                    <label for="snap_to_margins">
+                                        <input name="snap_to_margins" type="checkbox" id="snap_to_margins" value="1" <?php checked(get_option('pdf_builder_snap_to_margins', true)); ?>>
+                                        <?php _e('Activer l\'aimantation aux marges de sécurité', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                                <br>
+                                <div style="margin-top: 10px;">
+                                    <label for="snap_tolerance"><?php _e('Tolérance d\'aimantation:', 'pdf-builder-pro'); ?></label>
+                                    <input name="snap_tolerance" type="number" id="snap_tolerance" value="<?php echo esc_attr(get_option('pdf_builder_snap_tolerance', 5)); ?>" class="small-text" min="1" max="20"> px
+                                    <p class="description"><?php _e('Distance maximale pour l\'aimantation automatique.', 'pdf-builder-pro'); ?></p>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?php _e('Lignes Guides', 'pdf-builder-pro'); ?></th>
+                            <td>
+                                <fieldset>
+                                    <label for="show_guides">
+                                        <input name="show_guides" type="checkbox" id="show_guides" value="1" <?php checked(get_option('pdf_builder_show_guides', true)); ?>>
+                                        <?php _e('Afficher les lignes guides personnalisables', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                                <br>
+                                <fieldset>
+                                    <label for="lock_guides">
+                                        <input name="lock_guides" type="checkbox" id="lock_guides" value="1" <?php checked(get_option('pdf_builder_lock_guides', false)); ?>>
+                                        <?php _e('Verrouiller les guides (empêcher le déplacement accidentel)', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Sous-onglet Zoom & Navigation -->
+                <div id="canvas-zoom" class="sub-tab-content">
+                    <h3><?php _e('Paramètres de Zoom et Navigation', 'pdf-builder-pro'); ?></h3>
+
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><?php _e('Zoom par Défaut', 'pdf-builder-pro'); ?></th>
+                            <td>
+                                <div style="display: flex; gap: 20px; align-items: center;">
+                                    <div>
+                                        <label for="default_zoom"><?php _e('Niveau de zoom initial:', 'pdf-builder-pro'); ?></label>
+                                        <select name="default_zoom" id="default_zoom">
+                                            <option value="25" <?php selected(get_option('pdf_builder_default_zoom', '100'), '25'); ?>>25%</option>
+                                            <option value="50" <?php selected(get_option('pdf_builder_default_zoom', '100'), '50'); ?>>50%</option>
+                                            <option value="75" <?php selected(get_option('pdf_builder_default_zoom', '100'), '75'); ?>>75%</option>
+                                            <option value="100" <?php selected(get_option('pdf_builder_default_zoom', '100'), '100'); ?>>100%</option>
+                                            <option value="125" <?php selected(get_option('pdf_builder_default_zoom', '100'), '125'); ?>>125%</option>
+                                            <option value="150" <?php selected(get_option('pdf_builder_default_zoom', '100'), '150'); ?>>150%</option>
+                                            <option value="200" <?php selected(get_option('pdf_builder_default_zoom', '100'), '200'); ?>>200%</option>
+                                            <option value="fit" <?php selected(get_option('pdf_builder_default_zoom', '100'), 'fit'); ?>>Ajuster à la page</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="zoom_step"><?php _e('Pas de zoom:', 'pdf-builder-pro'); ?></label>
+                                        <input name="zoom_step" type="number" id="zoom_step" value="<?php echo esc_attr(get_option('pdf_builder_zoom_step', 25)); ?>" class="small-text" min="5" max="50" step="5"> %
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?php _e('Limites de Zoom', 'pdf-builder-pro'); ?></th>
+                            <td>
+                                <div style="display: flex; gap: 20px; align-items: center;">
+                                    <div>
+                                        <label for="min_zoom"><?php _e('Zoom minimum:', 'pdf-builder-pro'); ?></label>
+                                        <input name="min_zoom" type="number" id="min_zoom" value="<?php echo esc_attr(get_option('pdf_builder_min_zoom', 10)); ?>" class="small-text" min="5" max="50"> %
+                                    </div>
+                                    <div>
+                                        <label for="max_zoom"><?php _e('Zoom maximum:', 'pdf-builder-pro'); ?></label>
+                                        <input name="max_zoom" type="number" id="max_zoom" value="<?php echo esc_attr(get_option('pdf_builder_max_zoom', 500)); ?>" class="small-text" min="100" max="1000"> %
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?php _e('Navigation', 'pdf-builder-pro'); ?></th>
+                            <td>
+                                <fieldset>
+                                    <label for="pan_with_mouse">
+                                        <input name="pan_with_mouse" type="checkbox" id="pan_with_mouse" value="1" <?php checked(get_option('pdf_builder_pan_with_mouse', true)); ?>>
+                                        <?php _e('Activer le panoramique avec le bouton central de la souris', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                                <br>
+                                <fieldset>
+                                    <label for="smooth_zoom">
+                                        <input name="smooth_zoom" type="checkbox" id="smooth_zoom" value="1" <?php checked(get_option('pdf_builder_smooth_zoom', true)); ?>>
+                                        <?php _e('Activer le zoom fluide (animation)', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                                <br>
+                                <fieldset>
+                                    <label for="show_zoom_indicator">
+                                        <input name="show_zoom_indicator" type="checkbox" id="show_zoom_indicator" value="1" <?php checked(get_option('pdf_builder_show_zoom_indicator', true)); ?>>
+                                        <?php _e('Afficher l\'indicateur de niveau de zoom', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?php _e('Raccourcis Zoom', 'pdf-builder-pro'); ?></th>
+                            <td>
+                                <fieldset>
+                                    <label for="zoom_with_wheel">
+                                        <input name="zoom_with_wheel" type="checkbox" id="zoom_with_wheel" value="1" <?php checked(get_option('pdf_builder_zoom_with_wheel', true)); ?>>
+                                        <?php _e('Zoom avec la molette de la souris (Ctrl+molette)', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                                <br>
+                                <fieldset>
+                                    <label for="zoom_to_selection">
+                                        <input name="zoom_to_selection" type="checkbox" id="zoom_to_selection" value="1" <?php checked(get_option('pdf_builder_zoom_to_selection', true)); ?>>
+                                        <?php _e('Double-clic pour zoomer sur la sélection', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Sous-onglet Sélection & Manipulation -->
+                <div id="canvas-selection" class="sub-tab-content">
+                    <h3><?php _e('Paramètres de Sélection et Manipulation', 'pdf-builder-pro'); ?></h3>
+
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><?php _e('Poignées de Redimensionnement', 'pdf-builder-pro'); ?></th>
+                            <td>
+                                <fieldset>
+                                    <label for="show_resize_handles">
+                                        <input name="show_resize_handles" type="checkbox" id="show_resize_handles" value="1" <?php checked(get_option('pdf_builder_show_resize_handles', true)); ?>>
+                                        <?php _e('Afficher les poignées de redimensionnement', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                                <br>
+                                <div style="display: flex; gap: 20px; align-items: center;">
+                                    <div>
+                                        <label for="handle_size"><?php _e('Taille des poignées:', 'pdf-builder-pro'); ?></label>
+                                        <input name="handle_size" type="number" id="handle_size" value="<?php echo esc_attr(get_option('pdf_builder_handle_size', 8)); ?>" class="small-text" min="4" max="20"> px
+                                    </div>
+                                    <div>
+                                        <label for="handle_color"><?php _e('Couleur:', 'pdf-builder-pro'); ?></label>
+                                        <input name="handle_color" type="color" id="handle_color" value="<?php echo esc_attr(get_option('pdf_builder_handle_color', '#007cba')); ?>">
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?php _e('Rotation', 'pdf-builder-pro'); ?></th>
+                            <td>
+                                <fieldset>
+                                    <label for="enable_rotation">
+                                        <input name="enable_rotation" type="checkbox" id="enable_rotation" value="1" <?php checked(get_option('pdf_builder_enable_rotation', true)); ?>>
+                                        <?php _e('Activer la rotation des éléments', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                                <br>
+                                <div style="display: flex; gap: 20px; align-items: center;">
+                                    <div>
+                                        <label for="rotation_step"><?php _e('Pas de rotation:', 'pdf-builder-pro'); ?></label>
+                                        <input name="rotation_step" type="number" id="rotation_step" value="<?php echo esc_attr(get_option('pdf_builder_rotation_step', 15)); ?>" class="small-text" min="1" max="45"> °
+                                    </div>
+                                    <div>
+                                        <label for="rotation_snap"><?php _e('Aimantation angulaire:', 'pdf-builder-pro'); ?></label>
+                                        <input name="rotation_snap" type="checkbox" id="rotation_snap" value="1" <?php checked(get_option('pdf_builder_rotation_snap', true)); ?>>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?php _e('Sélection Multiple', 'pdf-builder-pro'); ?></th>
+                            <td>
+                                <fieldset>
+                                    <label for="multi_select">
+                                        <input name="multi_select" type="checkbox" id="multi_select" value="1" <?php checked(get_option('pdf_builder_multi_select', true)); ?>>
+                                        <?php _e('Activer la sélection multiple (Ctrl+Clic)', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                                <br>
+                                <fieldset>
+                                    <label for="select_all_shortcut">
+                                        <input name="select_all_shortcut" type="checkbox" id="select_all_shortcut" value="1" <?php checked(get_option('pdf_builder_select_all_shortcut', true)); ?>>
+                                        <?php _e('Activer Ctrl+A pour tout sélectionner', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                                <br>
+                                <fieldset>
+                                    <label for="show_selection_bounds">
+                                        <input name="show_selection_bounds" type="checkbox" id="show_selection_bounds" value="1" <?php checked(get_option('pdf_builder_show_selection_bounds', true)); ?>>
+                                        <?php _e('Afficher le cadre de sélection pour les groupes', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?php _e('Copier-Coller', 'pdf-builder-pro'); ?></th>
+                            <td>
+                                <fieldset>
+                                    <label for="copy_paste_enabled">
+                                        <input name="copy_paste_enabled" type="checkbox" id="copy_paste_enabled" value="1" <?php checked(get_option('pdf_builder_copy_paste_enabled', true)); ?>>
+                                        <?php _e('Activer les fonctions copier-coller', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                                <br>
+                                <fieldset>
+                                    <label for="duplicate_on_drag">
+                                        <input name="duplicate_on_drag" type="checkbox" id="duplicate_on_drag" value="1" <?php checked(get_option('pdf_builder_duplicate_on_drag', false)); ?>>
+                                        <?php _e('Dupliquer l\'élément lors du glisser avec Alt', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Sous-onglet Export & Qualité -->
+                <div id="canvas-export" class="sub-tab-content">
+                    <h3><?php _e('Paramètres d\'Export et Qualité', 'pdf-builder-pro'); ?></h3>
+
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><?php _e('Qualité d\'Export', 'pdf-builder-pro'); ?></th>
+                            <td>
+                                <div style="display: flex; gap: 20px; align-items: center;">
+                                    <div>
+                                        <label for="export_quality"><?php _e('Qualité PDF:', 'pdf-builder-pro'); ?></label>
+                                        <select name="export_quality" id="export_quality">
+                                            <option value="screen" <?php selected(get_option('pdf_builder_export_quality', 'print'), 'screen'); ?>>Écran (72 DPI)</option>
+                                            <option value="ebook" <?php selected(get_option('pdf_builder_export_quality', 'print'), 'ebook'); ?>>E-book (150 DPI)</option>
+                                            <option value="printer" <?php selected(get_option('pdf_builder_export_quality', 'print'), 'printer'); ?>>Imprimante (300 DPI)</option>
+                                            <option value="print" <?php selected(get_option('pdf_builder_export_quality', 'print'), 'print'); ?>>Haute qualité (600 DPI)</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label for="export_format"><?php _e('Format d\'export:', 'pdf-builder-pro'); ?></label>
+                                        <select name="export_format" id="export_format">
+                                            <option value="pdf" <?php selected(get_option('pdf_builder_export_format', 'pdf'), 'pdf'); ?>>PDF</option>
+                                            <option value="png" <?php selected(get_option('pdf_builder_export_format', 'pdf'), 'png'); ?>>PNG</option>
+                                            <option value="jpg" <?php selected(get_option('pdf_builder_export_format', 'pdf'), 'jpg'); ?>>JPEG</option>
+                                            <option value="svg" <?php selected(get_option('pdf_builder_export_format', 'pdf'), 'svg'); ?>>SVG</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?php _e('Compression', 'pdf-builder-pro'); ?></th>
+                            <td>
+                                <fieldset>
+                                    <label for="compress_images">
+                                        <input name="compress_images" type="checkbox" id="compress_images" value="1" <?php checked(get_option('pdf_builder_compress_images', true)); ?>>
+                                        <?php _e('Compresser automatiquement les images', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                                <br>
+                                <div style="display: flex; gap: 20px; align-items: center;">
+                                    <div>
+                                        <label for="image_quality"><?php _e('Qualité des images:', 'pdf-builder-pro'); ?></label>
+                                        <input name="image_quality" type="range" id="image_quality" min="10" max="100" value="<?php echo esc_attr(get_option('pdf_builder_image_quality', 85)); ?>" style="width: 100px;">
+                                        <span id="image_quality_value"><?php echo esc_attr(get_option('pdf_builder_image_quality', 85)); ?>%</span>
+                                    </div>
+                                    <div>
+                                        <label for="max_image_size"><?php _e('Taille max des images:', 'pdf-builder-pro'); ?></label>
+                                        <input name="max_image_size" type="number" id="max_image_size" value="<?php echo esc_attr(get_option('pdf_builder_max_image_size', 2048)); ?>" class="small-text" min="512" max="8192" step="512"> px
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?php _e('Métadonnées PDF', 'pdf-builder-pro'); ?></th>
+                            <td>
+                                <fieldset>
+                                    <label for="include_metadata">
+                                        <input name="include_metadata" type="checkbox" id="include_metadata" value="1" <?php checked(get_option('pdf_builder_include_metadata', true)); ?>>
+                                        <?php _e('Inclure les métadonnées dans le PDF', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                                <br>
+                                <div style="margin-top: 10px;">
+                                    <label for="pdf_author"><?php _e('Auteur par défaut:', 'pdf-builder-pro'); ?></label>
+                                    <input name="pdf_author" type="text" id="pdf_author" value="<?php echo esc_attr(get_option('pdf_builder_pdf_author', get_bloginfo('name'))); ?>" class="regular-text">
+                                    <br>
+                                    <label for="pdf_subject"><?php _e('Sujet par défaut:', 'pdf-builder-pro'); ?></label>
+                                    <input name="pdf_subject" type="text" id="pdf_subject" value="<?php echo esc_attr(get_option('pdf_builder_pdf_subject', '')); ?>" class="regular-text">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?php _e('Options d\'Export', 'pdf-builder-pro'); ?></th>
+                            <td>
+                                <fieldset>
+                                    <label for="auto_crop">
+                                        <input name="auto_crop" type="checkbox" id="auto_crop" value="1" <?php checked(get_option('pdf_builder_auto_crop', false)); ?>>
+                                        <?php _e('Rogner automatiquement les espaces vides', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                                <br>
+                                <fieldset>
+                                    <label for="embed_fonts">
+                                        <input name="embed_fonts" type="checkbox" id="embed_fonts" value="1" <?php checked(get_option('pdf_builder_embed_fonts', true)); ?>>
+                                        <?php _e('Intégrer les polices dans le PDF', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                                <br>
+                                <fieldset>
+                                    <label for="optimize_for_web">
+                                        <input name="optimize_for_web" type="checkbox" id="optimize_for_web" value="1" <?php checked(get_option('pdf_builder_optimize_for_web', true)); ?>>
+                                        <?php _e('Optimiser pour l\'affichage web', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Sous-onglet Avancé -->
+                <div id="canvas-advanced" class="sub-tab-content">
+                    <h3><?php _e('Paramètres Avancés du Canvas', 'pdf-builder-pro'); ?></h3>
+
+                    <table class="form-table">
+                        <tr>
+                            <th scope="row"><?php _e('Performance', 'pdf-builder-pro'); ?></th>
+                            <td>
+                                <fieldset>
+                                    <label for="enable_hardware_acceleration">
+                                        <input name="enable_hardware_acceleration" type="checkbox" id="enable_hardware_acceleration" value="1" <?php checked(get_option('pdf_builder_enable_hardware_acceleration', true)); ?>>
+                                        <?php _e('Activer l\'accélération matérielle (GPU)', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                                <br>
+                                <fieldset>
+                                    <label for="limit_fps">
+                                        <input name="limit_fps" type="checkbox" id="limit_fps" value="1" <?php checked(get_option('pdf_builder_limit_fps', true)); ?>>
+                                        <?php _e('Limiter les FPS pour économiser les ressources', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                                <br>
+                                <div style="margin-top: 10px;">
+                                    <label for="max_fps"><?php _e('FPS maximum:', 'pdf-builder-pro'); ?></label>
+                                    <input name="max_fps" type="number" id="max_fps" value="<?php echo esc_attr(get_option('pdf_builder_max_fps', 60)); ?>" class="small-text" min="15" max="120"> FPS
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?php _e('Sauvegarde Automatique', 'pdf-builder-pro'); ?></th>
+                            <td>
+                                <fieldset>
+                                    <label for="auto_save_enabled">
+                                        <input name="auto_save_enabled" type="checkbox" id="auto_save_enabled" value="1" <?php checked(get_option('pdf_builder_auto_save_enabled', true)); ?>>
+                                        <?php _e('Activer la sauvegarde automatique', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                                <br>
+                                <div style="display: flex; gap: 20px; align-items: center;">
+                                    <div>
+                                        <label for="auto_save_interval"><?php _e('Intervalle:', 'pdf-builder-pro'); ?></label>
+                                        <input name="auto_save_interval" type="number" id="auto_save_interval" value="<?php echo esc_attr(get_option('pdf_builder_auto_save_interval', 30)); ?>" class="small-text" min="10" max="300" step="10"> secondes
+                                    </div>
+                                    <div>
+                                        <label for="auto_save_versions"><?php _e('Versions à conserver:', 'pdf-builder-pro'); ?></label>
+                                        <input name="auto_save_versions" type="number" id="auto_save_versions" value="<?php echo esc_attr(get_option('pdf_builder_auto_save_versions', 10)); ?>" class="small-text" min="1" max="50">
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?php _e('Historique d\'Actions', 'pdf-builder-pro'); ?></th>
+                            <td>
+                                <div style="display: flex; gap: 20px; align-items: center;">
+                                    <div>
+                                        <label for="undo_levels"><?php _e('Niveaux d\'annulation:', 'pdf-builder-pro'); ?></label>
+                                        <input name="undo_levels" type="number" id="undo_levels" value="<?php echo esc_attr(get_option('pdf_builder_undo_levels', 50)); ?>" class="small-text" min="10" max="200" step="10">
+                                    </div>
+                                    <div>
+                                        <label for="redo_levels"><?php _e('Niveaux de rétablissement:', 'pdf-builder-pro'); ?></label>
+                                        <input name="redo_levels" type="number" id="redo_levels" value="<?php echo esc_attr(get_option('pdf_builder_redo_levels', 50)); ?>" class="small-text" min="10" max="200" step="10">
+                                    </div>
+                                </div>
+                                <p class="description"><?php _e('Nombre maximum d\'actions annulables/rétablissables.', 'pdf-builder-pro'); ?></p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?php _e('Raccourcis Clavier', 'pdf-builder-pro'); ?></th>
+                            <td>
+                                <fieldset>
+                                    <label for="enable_keyboard_shortcuts">
+                                        <input name="enable_keyboard_shortcuts" type="checkbox" id="enable_keyboard_shortcuts" value="1" <?php checked(get_option('pdf_builder_enable_keyboard_shortcuts', true)); ?>>
+                                        <?php _e('Activer les raccourcis clavier personnalisables', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                                <br>
+                                <div style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 4px;">
+                                    <p style="margin: 0; font-weight: bold;"><?php _e('Raccourcis par défaut:', 'pdf-builder-pro'); ?></p>
+                                    <ul style="margin: 5px 0; padding-left: 20px;">
+                                        <li>Ctrl+Z: Annuler</li>
+                                        <li>Ctrl+Y: Rétablir</li>
+                                        <li>Ctrl+A: Tout sélectionner</li>
+                                        <li>Ctrl+C: Copier</li>
+                                        <li>Ctrl+V: Coller</li>
+                                        <li>Ctrl+D: Dupliquer</li>
+                                        <li>Suppr: Supprimer</li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?php _e('Débogage', 'pdf-builder-pro'); ?></th>
+                            <td>
+                                <fieldset>
+                                    <label for="debug_mode">
+                                        <input name="debug_mode" type="checkbox" id="debug_mode" value="1" <?php checked(get_option('pdf_builder_debug_mode', false)); ?>>
+                                        <?php _e('Activer le mode débogage (console détaillée)', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                                <br>
+                                <fieldset>
+                                    <label for="show_fps">
+                                        <input name="show_fps" type="checkbox" id="show_fps" value="1" <?php checked(get_option('pdf_builder_show_fps', false)); ?>>
+                                        <?php _e('Afficher le compteur FPS', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
             </div>
 
             <!-- Onglet Maintenance -->
