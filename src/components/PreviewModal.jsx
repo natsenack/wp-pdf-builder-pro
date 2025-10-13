@@ -67,13 +67,29 @@ const PreviewModal = ({
       if (!response.ok) {
         throw new Error('Erreur réseau: ' + response.status + ' ' + response.statusText);
       }
-      return response.json();
+      return response.json().catch(jsonError => {
+        console.error('Erreur de parsing JSON:', jsonError);
+        throw new Error('Réponse invalide du serveur (pas du JSON)');
+      });
     })
     .then(data => {
       console.log('Données reçues:', data);
 
       if (!data.success) {
-        throw new Error(data.data || 'Erreur inconnue lors de la génération du PDF');
+        console.error('Réponse d\'erreur du serveur:', data);
+        let errorMessage = 'Erreur inconnue lors de la génération du PDF';
+
+        if (typeof data.data === 'string') {
+          errorMessage = data.data;
+        } else if (typeof data.data === 'object' && data.data !== null) {
+          errorMessage = data.data.message || JSON.stringify(data.data);
+        }
+
+        throw new Error(errorMessage);
+      }
+
+      if (!data.data || !data.data.pdf) {
+        throw new Error('Données PDF manquantes dans la réponse');
       }
 
       // Convertir le PDF base64 en blob
@@ -84,6 +100,10 @@ const PreviewModal = ({
       );
 
       console.log('Blob PDF créé, taille:', pdfBlob.size, 'bytes');
+
+      if (pdfBlob.size === 0) {
+        throw new Error('Le PDF généré est vide');
+      }
 
       // Créer un URL pour le blob PDF
       const pdfUrl = URL.createObjectURL(pdfBlob);
