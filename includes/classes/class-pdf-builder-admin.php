@@ -2977,5 +2977,247 @@ class PDF_Builder_Admin {
 
         wp_send_json_success(['message' => 'Paramètres sauvegardés avec succès !']);
     }
+
+    /**
+     * Enqueue scripts and styles for admin pages
+     */
+    public function enqueue_admin_scripts($hook) {
+        // Enqueue scripts only for our plugin pages
+        if (strpos($hook, 'pdf-builder') !== false) {
+            wp_enqueue_script('jquery');
+            wp_enqueue_script('jquery-ui-core');
+            wp_enqueue_script('jquery-ui-sortable');
+            
+            // Enqueue our custom admin script
+            wp_enqueue_script(
+                'pdf-builder-admin',
+                plugin_dir_url(dirname(__FILE__)) . 'assets/js/admin.js',
+                ['jquery'],
+                '1.0.0',
+                true
+            );
+
+            // Enqueue admin styles
+            wp_enqueue_style(
+                'pdf-builder-admin',
+                plugin_dir_url(dirname(__FILE__)) . 'assets/css/admin.css',
+                [],
+                '1.0.0'
+            );
+
+            // Localize script for AJAX
+            wp_localize_script('pdf-builder-admin', 'pdf_builder_ajax', [
+                'ajax_url' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('pdf_builder_admin')
+            ]);
+        }
+    }
+
+    /**
+     * Page de test TCPDF - Test sécurisé via interface admin
+     */
+    public function test_tcpdf_page() {
+        $this->check_admin_permissions();
+
+        // Traitement des actions POST
+        if (isset($_POST['run_tcpdf_test']) && check_admin_referer('tcpdf_test_action')) {
+            $this->run_tcpdf_test();
+            return;
+        }
+
+        // Affichage de la page
+        ?>
+        <div class="wrap">
+            <h1><?php _e('Test TCPDF - PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
+
+            <div class="notice notice-info">
+                <p><?php _e('Cette page permet de tester la fonctionnalité TCPDF de manière sécurisée via l\'interface d\'administration WordPress.', 'pdf-builder-pro'); ?></p>
+                <p><?php _e('Cliquez sur le bouton ci-dessous pour exécuter un test complet de génération PDF avec TCPDF.', 'pdf-builder-pro'); ?></p>
+            </div>
+
+            <form method="post" action="">
+                <?php wp_nonce_field('tcpdf_test_action'); ?>
+                <input type="hidden" name="run_tcpdf_test" value="1">
+                <p>
+                    <input type="submit" class="button button-primary" value="<?php _e('Lancer le test TCPDF', 'pdf-builder-pro'); ?>">
+                </p>
+            </form>
+
+            <div class="tcpdf-test-info">
+                <h3><?php _e('Informations sur le test', 'pdf-builder-pro'); ?></h3>
+                <ul>
+                    <li><?php _e('Vérification de la présence de la bibliothèque TCPDF', 'pdf-builder-pro'); ?></li>
+                    <li><?php _e('Test de création d\'un document PDF simple', 'pdf-builder-pro'); ?></li>
+                    <li><?php _e('Test d\'ajout de texte et d\'éléments graphiques', 'pdf-builder-pro'); ?></li>
+                    <li><?php _e('Vérification des permissions d\'écriture', 'pdf-builder-pro'); ?></li>
+                    <li><?php _e('Test de téléchargement du PDF généré', 'pdf-builder-pro'); ?></li>
+                </ul>
+            </div>
+        </div>
+        <?php
+    }
+
+    /**
+     * Exécute le test TCPDF et affiche les résultats
+     */
+    private function run_tcpdf_test() {
+        $this->check_admin_permissions();
+
+        // Vérification du nonce
+        if (!wp_verify_nonce($_POST['_wpnonce'] ?? '', 'tcpdf_test_action')) {
+            wp_die(__('Nonce de sécurité invalide.', 'pdf-builder-pro'));
+        }
+
+        $results = [];
+        $errors = [];
+
+        // Test 1: Vérification de la présence de TCPDF
+        try {
+            if (!class_exists('TCPDF')) {
+                // Tentative de chargement automatique
+                $tcpdf_path = plugin_dir_path(dirname(__FILE__)) . 'vendor/tecnickcom/tcpdf/tcpdf.php';
+                if (file_exists($tcpdf_path)) {
+                    require_once($tcpdf_path);
+                    $results[] = __('✓ Bibliothèque TCPDF chargée avec succès', 'pdf-builder-pro');
+                } else {
+                    $errors[] = __('✗ Bibliothèque TCPDF introuvable', 'pdf-builder-pro');
+                }
+            } else {
+                $results[] = __('✓ Bibliothèque TCPDF déjà chargée', 'pdf-builder-pro');
+            }
+        } catch (Exception $e) {
+            $errors[] = sprintf(__('✗ Erreur lors du chargement TCPDF: %s', 'pdf-builder-pro'), $e->getMessage());
+        }
+
+        // Test 2: Création d'un document PDF simple
+        if (class_exists('TCPDF')) {
+            try {
+                $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+                // Configuration de base
+                $pdf->SetCreator(PDF_CREATOR);
+                $pdf->SetAuthor('PDF Builder Pro');
+                $pdf->SetTitle('Test TCPDF');
+                $pdf->SetSubject('Test de fonctionnalité TCPDF');
+                $pdf->SetKeywords('TCPDF, PDF, test');
+
+                // Ajout d'une page
+                $pdf->AddPage();
+
+                // Définition de la police
+                $pdf->SetFont('helvetica', '', 12);
+
+                // Ajout de contenu de test
+                $pdf->Cell(0, 10, 'Test TCPDF - PDF Builder Pro', 0, 1, 'C');
+                $pdf->Ln(10);
+                $pdf->Cell(0, 10, 'Date du test: ' . date('d/m/Y H:i:s'), 0, 1);
+                $pdf->Cell(0, 10, 'Version TCPDF: ' . TCPDF_VERSION, 0, 1);
+                $pdf->Ln(10);
+
+                // Test d'éléments graphiques simples
+                $pdf->SetFillColor(200, 220, 255);
+                $pdf->Cell(0, 10, 'Test d\'éléments graphiques', 1, 1, 'L', true);
+                $pdf->Ln(5);
+
+                // Test de couleurs et formes
+                $pdf->SetFillColor(255, 255, 0);
+                $pdf->Rect(10, $pdf->GetY(), 50, 20, 'DF');
+                $pdf->SetXY(65, $pdf->GetY() + 5);
+                $pdf->Cell(0, 10, 'Rectangle jaune de test', 0, 1);
+
+                $results[] = __('✓ Document PDF créé avec succès', 'pdf-builder-pro');
+
+                // Test 3: Génération du fichier
+                try {
+                    $upload_dir = wp_upload_dir();
+                    $test_dir = $upload_dir['basedir'] . '/pdf-builder-test';
+                    
+                    // Création du répertoire de test si nécessaire
+                    if (!file_exists($test_dir)) {
+                        wp_mkdir_p($test_dir);
+                    }
+
+                    $filename = 'tcpdf_test_' . time() . '.pdf';
+                    $filepath = $test_dir . '/' . $filename;
+
+                    // Génération du PDF
+                    $pdf_content = $pdf->Output($filename, 'S'); // 'S' pour retourner le contenu
+                    
+                    if (file_put_contents($filepath, $pdf_content) !== false) {
+                        $results[] = sprintf(__('✓ PDF sauvegardé: %s', 'pdf-builder-pro'), $filename);
+                        
+                        // Test 4: Téléchargement
+                        $download_url = $upload_dir['baseurl'] . '/pdf-builder-test/' . $filename;
+                        $results[] = sprintf(__('✓ URL de téléchargement: <a href="%s" target="_blank">%s</a>', 'pdf-builder-pro'), $download_url, $download_url);
+                    } else {
+                        $errors[] = __('✗ Impossible de sauvegarder le PDF', 'pdf-builder-pro');
+                    }
+
+                } catch (Exception $e) {
+                    $errors[] = sprintf(__('✗ Erreur lors de la génération du PDF: %s', 'pdf-builder-pro'), $e->getMessage());
+                }
+
+            } catch (Exception $e) {
+                $errors[] = sprintf(__('✗ Erreur lors de la création du PDF: %s', 'pdf-builder-pro'), $e->getMessage());
+            }
+        }
+
+        // Affichage des résultats
+        ?>
+        <div class="wrap">
+            <h1><?php _e('Résultats du test TCPDF', 'pdf-builder-pro'); ?></h1>
+
+            <a href="<?php echo admin_url('admin.php?page=pdf-builder-test-tcpdf'); ?>" class="button"><?php _e('← Retour au test', 'pdf-builder-pro'); ?></a>
+
+            <h2><?php _e('Résumé', 'pdf-builder-pro'); ?></h2>
+            
+            <?php if (empty($errors)): ?>
+                <div class="notice notice-success">
+                    <p><?php _e('✅ Tous les tests TCPDF ont réussi ! La bibliothèque fonctionne correctement.', 'pdf-builder-pro'); ?></p>
+                </div>
+            <?php else: ?>
+                <div class="notice notice-error">
+                    <p><?php _e('❌ Des erreurs ont été détectées lors des tests TCPDF.', 'pdf-builder-pro'); ?></p>
+                </div>
+            <?php endif; ?>
+
+            <?php if (!empty($results)): ?>
+                <h3><?php _e('Tests réussis', 'pdf-builder-pro'); ?></h3>
+                <ul class="tcpdf-results success">
+                    <?php foreach ($results as $result): ?>
+                        <li><?php echo $result; ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
+
+            <?php if (!empty($errors)): ?>
+                <h3><?php _e('Erreurs détectées', 'pdf-builder-pro'); ?></h3>
+                <ul class="tcpdf-results error">
+                    <?php foreach ($errors as $error): ?>
+                        <li><?php echo $error; ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
+
+            <div class="tcpdf-debug-info">
+                <h3><?php _e('Informations de débogage', 'pdf-builder-pro'); ?></h3>
+                <ul>
+                    <li><?php printf(__('Version PHP: %s', 'pdf-builder-pro'), PHP_VERSION); ?></li>
+                    <li><?php printf(__('Mémoire limite: %s', 'pdf-builder-pro'), ini_get('memory_limit')); ?></li>
+                    <li><?php printf(__('Temps d\'exécution max: %s secondes', 'pdf-builder-pro'), ini_get('max_execution_time')); ?></li>
+                    <li><?php printf(__('Répertoire uploads: %s', 'pdf-builder-pro'), wp_upload_dir()['basedir']); ?></li>
+                </ul>
+            </div>
+        </div>
+
+        <style>
+            .tcpdf-results.success li { color: #46b450; }
+            .tcpdf-results.error li { color: #dc3232; }
+            .tcpdf-test-info { background: #f9f9f9; padding: 15px; border-left: 4px solid #007cba; margin: 20px 0; }
+            .tcpdf-debug-info { background: #f1f1f1; padding: 15px; margin: 20px 0; font-family: monospace; }
+        </style>
+        <?php
+    }
 }
+
 
