@@ -19,6 +19,7 @@ const PreviewModal = ({
   const handlePrint = () => {
     console.log('handlePrint called with elements:', elements);
     console.log('canvasWidth:', canvasWidth, 'canvasHeight:', canvasHeight);
+    console.log('window.pdfBuilderAjax au début:', window.pdfBuilderAjax);
 
     // Debug: Log details of each element
     elements.forEach((element, index) => {
@@ -35,8 +36,30 @@ const PreviewModal = ({
     });
 
     // Vérifier que les variables AJAX sont disponibles
-    const ajaxUrl = window.pdfBuilderAjax?.ajaxurl || ajaxurl;
-    const nonce = window.pdfBuilderAjax?.nonce || pdfBuilderNonce;
+    let ajaxUrl = window.pdfBuilderAjax?.ajaxurl || ajaxurl;
+    let nonce = window.pdfBuilderAjax?.nonce || pdfBuilderNonce;
+
+    // Si le nonce n'est pas disponible, essayer de le régénérer
+    if (!nonce && window.pdfBuilderAjax?.ajaxurl) {
+      console.log('Tentative de régénération du nonce...');
+      try {
+        // Faire une requête synchrone pour obtenir un nouveau nonce
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', window.pdfBuilderAjax.ajaxurl, false); // Synchrone
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.send('action=pdf_builder_regenerate_nonce');
+
+        if (xhr.status === 200) {
+          const response = JSON.parse(xhr.responseText);
+          if (response.success && response.data && response.data.nonce) {
+            nonce = response.data.nonce;
+            console.log('Nouveau nonce régénéré:', nonce);
+          }
+        }
+      } catch (error) {
+        console.error('Erreur lors de la régénération du nonce:', error);
+      }
+    }
 
     if (!ajaxUrl || !nonce) {
       console.error('Variables AJAX manquantes:', { ajaxUrl, nonce, windowPdfBuilderAjax: window.pdfBuilderAjax });

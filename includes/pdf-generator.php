@@ -460,11 +460,19 @@ class PDF_Generator {
 // Fonction principale pour traiter la requête AJAX
 function pdf_builder_generate_pdf() {
     try {
+        // Log du nonce reçu pour débogage
+        $received_nonce = $_POST['nonce'] ?? '';
+        error_log('PDF Builder: Nonce reçu: ' . $received_nonce);
+        error_log('PDF Builder: Action attendue: pdf_builder_nonce');
+
         // Vérifier la sécurité
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_nonce')) {
+        if (!wp_verify_nonce($received_nonce, 'pdf_builder_nonce')) {
+            error_log('PDF Builder: Échec vérification nonce - reçu: ' . $received_nonce);
             wp_send_json_error('Sécurité non valide');
             return;
         }
+
+        error_log('PDF Builder: Nonce validé avec succès');
 
         // Récupérer les éléments
         $elements = json_decode(stripslashes($_POST['elements'] ?? '[]'), true);
