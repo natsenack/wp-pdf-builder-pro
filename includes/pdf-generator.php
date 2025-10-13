@@ -231,10 +231,13 @@ class PDF_Builder_Pro_Generator {
      */
     private function render_elements($elements) {
         $px_to_mm = 0.264583; // Facteur de conversion pixels -> mm
+        error_log('PDF Builder Pro: Debut rendu elements, facteur conversion: ' . $px_to_mm);
 
         foreach ($elements as $element) {
             try {
+                error_log('PDF Builder Pro: Rendu element type: ' . ($element['type'] ?? 'unknown'));
                 $this->render_single_element($element, $px_to_mm);
+                error_log('PDF Builder Pro: Element rendu avec succes');
             } catch (Exception $e) {
                 $this->log_error("Erreur rendu element " . ($element['id'] ?? 'unknown') . ": " . $e->getMessage());
                 // Continuer avec les autres elements
@@ -242,6 +245,7 @@ class PDF_Builder_Pro_Generator {
         }
 
         $this->performance_metrics['elements_rendered'] = microtime(true);
+        error_log('PDF Builder Pro: Rendu elements termine');
     }
 
     /**
@@ -569,11 +573,20 @@ function pdf_builder_generate_pdf() {
         // Recuperer les elements
         $elements = json_decode(stripslashes($_POST['elements'] ?? '[]'), true);
         error_log('PDF Builder Pro: ' . count($elements) . ' elements recus');
+        error_log('PDF Builder Pro: Elements bruts: ' . print_r($elements, true));
 
         if (empty($elements)) {
             ob_end_clean();
             wp_send_json_error('Aucun element a traiter');
             return;
+        }
+
+        // Valider et logger chaque element
+        foreach ($elements as $index => $element) {
+            error_log("PDF Builder Pro: Element $index - Type: " . ($element['type'] ?? 'unknown'));
+            error_log("PDF Builder Pro: Element $index - Content: " . ($element['content'] ?? $element['text'] ?? 'empty'));
+            error_log("PDF Builder Pro: Element $index - Position: x=" . ($element['x'] ?? 0) . ", y=" . ($element['y'] ?? 0));
+            error_log("PDF Builder Pro: Element $index - Dimensions: w=" . ($element['width'] ?? 0) . ", h=" . ($element['height'] ?? 0));
         }
 
         // Generer le PDF avec le nouveau generateur

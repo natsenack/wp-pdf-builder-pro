@@ -106,17 +106,31 @@ export const PDFCanvasEditor = ({ options }) => {
 
       // Récupérer tous les éléments du canvas
       const elements = canvasState.getAllElements();
+      console.log('Éléments récupérés:', elements);
 
       if (elements.length === 0) {
         alert('Aucun élément à imprimer. Ajoutez des éléments au canvas d\'abord.');
         return;
       }
 
+      // Vérifier la structure des éléments
+      elements.forEach((element, index) => {
+        console.log(`Élément ${index}:`, element);
+        console.log(`- Type: ${element.type}`);
+        console.log(`- ID: ${element.id}`);
+        console.log(`- Content/Text: ${element.content || element.text}`);
+        console.log(`- Position: x=${element.x}, y=${element.y}`);
+        console.log(`- Dimensions: width=${element.width}, height=${element.height}`);
+      });
+
       // Préparer les données pour l'AJAX
       const formData = new FormData();
       formData.append('action', 'pdf_builder_generate_pdf');
       formData.append('nonce', window.pdfBuilderAjax?.nonce);
       formData.append('elements', JSON.stringify(elements));
+
+      console.log('Envoi de', elements.length, 'éléments au serveur...');
+      console.log('Données JSON envoyées:', JSON.stringify(elements, null, 2));
 
       console.log('Envoi de', elements.length, 'éléments au serveur...');
 
