@@ -169,11 +169,36 @@ class PDF_Preview_Generator {
 // Fonction AJAX pour l'aperçu
 function pdf_builder_generate_preview() {
     try {
-        // Vérifier le nonce
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_nonce')) {
+        // Log détaillé pour le débogage du nonce
+        error_log('PDF Builder Preview: Début génération aperçu');
+        error_log('PDF Builder Preview: Nonce reçu: ' . ($_POST['nonce'] ?? 'NONCE_MANQUANT'));
+        error_log('PDF Builder Preview: Action attendue: pdf_builder_nonce');
+
+        // Vérifier le nonce avec plus de détails
+        $nonce_to_verify = $_POST['nonce'] ?? '';
+        $expected_action = 'pdf_builder_nonce';
+
+        if (empty($nonce_to_verify)) {
+            error_log('PDF Builder Preview: ERREUR - Nonce vide ou manquant');
+            wp_send_json_error('Nonce manquant');
+            return;
+        }
+
+        $nonce_valid = wp_verify_nonce($nonce_to_verify, $expected_action);
+
+        error_log('PDF Builder Preview: Résultat vérification nonce: ' . ($nonce_valid ? 'VALID' : 'INVALID'));
+
+        if (!$nonce_valid) {
+            // Essayer de vérifier si c'est un problème de timing
+            $current_user_id = get_current_user_id();
+            error_log('PDF Builder Preview: User ID: ' . $current_user_id);
+            error_log('PDF Builder Preview: Session ID: ' . session_id());
+
             wp_send_json_error('Nonce invalide');
             return;
         }
+
+        error_log('PDF Builder Preview: Nonce validé avec succès');
 
         // Récupérer les éléments
         $elements = json_decode(stripslashes($_POST['elements'] ?? '[]'), true);

@@ -39,6 +39,8 @@ const PreviewModal = ({
       }
 
       console.log('Variables AJAX utilisées:', { ajaxUrl: ajaxUrl.substring(0, 50) + '...', nonceLength: nonce.length });
+      console.log('Valeur du nonce envoyé:', nonce);
+      console.log('Timestamp envoi:', Date.now());
 
       // Préparer les données pour l'AJAX
       const formData = new FormData();
