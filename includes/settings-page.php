@@ -199,6 +199,22 @@ window.addEventListener('load', function() {
 
     <h1><?php _e('Paramètres PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
 
+    <!-- Debug info for JavaScript -->
+    <div id="js-debug-info" style="background: #f0f8ff; border: 1px solid #007cba; padding: 10px; margin-bottom: 20px; border-radius: 4px; display: none;">
+        <strong>🔧 Debug JavaScript:</strong> <span id="js-status">JavaScript NON chargé</span>
+        <br><strong>📊 Onglets trouvés:</strong> <span id="tabs-count">0</span>
+        <br><strong>🎯 Onglet actif:</strong> <span id="active-tab">aucun</span>
+        <br><strong>⏰ Timestamp:</strong> <span id="timestamp">-</span>
+    </div>
+
+    <script type="text/javascript">
+    // Message immédiat pour confirmer que le script s'exécute
+    document.getElementById('js-status').textContent = 'Script en cours de chargement...';
+    document.getElementById('timestamp').textContent = new Date().toLocaleTimeString();
+    document.getElementById('js-debug-info').style.display = 'block';
+    console.log('⚡ PDF Builder Settings: Inline script executed immediately');
+    </script>
+
     <?php
     // Afficher les messages de notification stockés
     if (!empty($admin_notices)) {
@@ -1374,44 +1390,86 @@ echo '<style>
 ?>
 
 <script type="text/javascript">
+console.log('🚀🚀🚀 PDF BUILDER SETTINGS JS LOADING 🚀🚀🚀');
+
 (function($) {
     'use strict';
 
+    console.log('📦 PDF Builder Settings: jQuery wrapper function called');
+
     // Vérifier que jQuery est disponible
     if (typeof $ === 'undefined') {
-        console.error('PDF Builder Settings: jQuery not available');
+        console.error('❌ PDF Builder Settings: CRITICAL - jQuery not available!');
         return;
     }
 
+    console.log('✅ PDF Builder Settings: jQuery available, version:', $.fn.jquery);
+
     // Attendre que le DOM soit complètement chargé
     $(document).ready(function() {
-        console.log('PDF Builder Settings: DOM ready, initializing tabs...');
+        console.log('🎯 PDF Builder Settings: DOCUMENT READY - DOM fully loaded!');
+        console.log('📍 PDF Builder Settings: Current URL:', window.location.href);
+        console.log('🔗 PDF Builder Settings: Current hash:', window.location.hash);
+        console.log('📊 PDF Builder Settings: jQuery version:', $.fn.jquery);
 
         // Vérifier que les éléments nécessaires existent
+        console.log('PDF Builder Settings: Checking for nav-tab elements...');
+        console.log('PDF Builder Settings: Found nav-tab elements:', $('.nav-tab').length);
+        $('.nav-tab').each(function(index) {
+            console.log('PDF Builder Settings: nav-tab', index, 'href:', $(this).attr('href'), 'text:', $(this).text());
+        });
+
+        console.log('PDF Builder Settings: Checking for tab-content elements...');
+        console.log('PDF Builder Settings: Found tab-content elements:', $('.tab-content').length);
+        $('.tab-content').each(function(index) {
+            console.log('PDF Builder Settings: tab-content', index, 'id:', $(this).attr('id'), 'has active class:', $(this).hasClass('active'));
+        });
+
         if ($('.nav-tab').length === 0) {
-            console.warn('PDF Builder Settings: No nav-tab elements found');
+            console.error('PDF Builder Settings: CRITICAL - No nav-tab elements found!');
             return;
         }
 
         if ($('.tab-content').length === 0) {
-            console.warn('PDF Builder Settings: No tab-content elements found');
+            console.error('PDF Builder Settings: CRITICAL - No tab-content elements found!');
             return;
         }
 
+        console.log('PDF Builder Settings: All required elements found, proceeding with initialization...');
+
+        // Afficher la zone de debug
+        $('#js-debug-info').show();
+        $('#tabs-count').text($('.nav-tab').length);
+        $('#js-status').text('JavaScript chargé et initialisé - ' + new Date().toLocaleTimeString());
+        console.log('🎉 PDF Builder Settings: Debug panel updated successfully');
+
         // Fonction pour activer un onglet
         function activateTab(tabHref) {
-            console.log('Activating tab:', tabHref);
+            console.log('PDF Builder Settings: activateTab called with:', tabHref);
+
+            // Vérifier que l'élément existe
+            var targetElement = $(tabHref);
+            console.log('PDF Builder Settings: Target element exists:', targetElement.length > 0, 'id:', targetElement.attr('id'));
 
             // Désactiver tous les onglets
             $('.nav-tab').removeClass('nav-tab-active');
             $('.tab-content').removeClass('active');
 
             // Activer l'onglet cliqué
-            $('.nav-tab[href="' + tabHref + '"]').addClass('nav-tab-active');
-            $(tabHref).addClass('active');
+            var navTab = $('.nav-tab[href="' + tabHref + '"]');
+            console.log('PDF Builder Settings: Found nav-tab to activate:', navTab.length > 0, 'href:', navTab.attr('href'));
+            navTab.addClass('nav-tab-active');
+            targetElement.addClass('active');
+
+            // Vérifier l'état final
+            console.log('PDF Builder Settings: Final state - active nav-tab:', $('.nav-tab-active').attr('href'), 'active tab-content:', $('.tab-content.active').attr('id'));
+
+            // Mettre à jour le debug
+            $('#active-tab').text($('.nav-tab-active').text() || 'aucun');
 
             // Gérer les sous-onglets pour l'onglet canvas
             if (tabHref === '#canvas') {
+                console.log('PDF Builder Settings: Activating canvas sub-tabs');
                 // Activer le premier sous-onglet par défaut
                 $('.sub-nav-tab').removeClass('sub-nav-tab-active').first().addClass('sub-nav-tab-active');
                 $('.sub-tab-content').removeClass('sub-tab-active').first().addClass('sub-tab-active');
@@ -1419,14 +1477,31 @@ echo '<style>
         }
 
         // Gestionnaire de clic pour les onglets principaux
+        console.log('PDF Builder Settings: Attaching click handlers to nav-tab elements...');
         $('.nav-tab').on('click', function(e) {
+            console.log('🖱️ PDF Builder Settings: nav-tab CLICKED!', $(this).attr('href'), $(this).text());
+            $('#js-status').text('Clic détecté sur onglet: ' + $(this).text() + ' - ' + new Date().toLocaleTimeString());
             e.preventDefault();
             var tabHref = $(this).attr('href');
             activateTab(tabHref);
 
             // Mise à jour de l'URL hash (simple, sans history.pushState)
             window.location.hash = tabHref;
+            console.log('PDF Builder Settings: Updated hash to:', window.location.hash);
         });
+
+        console.log('PDF Builder Settings: Click handlers attached successfully');
+
+        // Test immédiat des événements
+        setTimeout(function() {
+            console.log('🧪 PDF Builder Settings: Testing event handlers...');
+            var testTab = $('.nav-tab').first();
+            if (testTab.length > 0) {
+                console.log('🧪 PDF Builder Settings: Test tab found:', testTab.attr('href'));
+                var events = $._data(testTab[0], 'events');
+                console.log('🧪 PDF Builder Settings: Events attached to first tab:', events ? Object.keys(events) : 'none');
+            }
+        }, 1000);
 
         // Gestionnaire de clic pour les sous-onglets
         $('.sub-nav-tab').on('click', function(e) {
@@ -1448,20 +1523,25 @@ echo '<style>
 
             // Cacher tous les onglets d'abord
             $('.tab-content').removeClass('active');
+            console.log('PDF Builder Settings: Removed active class from all tab-content elements');
 
             var hash = window.location.hash;
-            console.log('Current hash:', hash);
+            console.log('PDF Builder Settings: Current URL hash:', hash);
 
             if (hash && $('.nav-tab[href="' + hash + '"]').length > 0) {
-                console.log('Activating tab from hash:', hash);
+                console.log('PDF Builder Settings: Activating tab from hash:', hash);
                 // Activer l'onglet depuis l'URL hash
                 activateTab(hash);
             } else {
-                console.log('Activating first tab as default');
+                console.log('PDF Builder Settings: Activating first tab as default');
                 // Activer le premier onglet par défaut
                 var firstTab = $('.nav-tab').first();
                 if (firstTab.length > 0) {
-                    activateTab(firstTab.attr('href'));
+                    var firstTabHref = firstTab.attr('href');
+                    console.log('PDF Builder Settings: First tab href:', firstTabHref);
+                    activateTab(firstTabHref);
+                } else {
+                    console.error('PDF Builder Settings: No first tab found!');
                 }
             }
 
@@ -1469,17 +1549,20 @@ echo '<style>
         }
 
         // Initialiser les onglets
+        console.log('PDF Builder Settings: Calling initializeTabs...');
         initializeTabs();
+        console.log('PDF Builder Settings: initializeTabs completed');
 
         // Écouter les changements de hash (pour la navigation par URL)
         $(window).on('hashchange', function() {
+            console.log('PDF Builder Settings: Hash changed to:', window.location.hash);
             var hash = window.location.hash;
             if (hash && $('.nav-tab[href="' + hash + '"]').length > 0) {
                 activateTab(hash);
             }
         });
 
-        console.log('PDF Builder Settings: Tabs initialized successfully');
+        console.log('PDF Builder Settings: Tabs initialization completed successfully');
     });
 
         // Actions de maintenance
