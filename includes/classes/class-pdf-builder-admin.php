@@ -37,6 +37,7 @@ class PDF_Builder_Admin {
      * Constructeur privé pour singleton
      */
     private function __construct($main_instance) {
+        error_log("PDF Builder Debug: PDF_Builder_Admin::__construct() appelée");
         $this->main = $main_instance;
         $this->init_hooks();
     }
@@ -103,6 +104,8 @@ class PDF_Builder_Admin {
      * Ajoute le menu d'administration
      */
     public function add_admin_menu() {
+        error_log("PDF Builder Debug: add_admin_menu() appelée");
+
         // Menu principal avec icône distinctive
         add_menu_page(
             __('PDF Builder Pro - Gestionnaire de PDF', 'pdf-builder-pro'),
@@ -948,7 +951,7 @@ class PDF_Builder_Admin {
      * Template Editor page (React/TypeScript)
      */
     public function template_editor_page() {
-        error_log("PDF Builder Debug: template_editor_page() appelée");
+        error_log("PDF Builder Debug: template_editor_page() appelée - DEBUT");
 
         $this->check_admin_permissions();
         error_log("PDF Builder Debug: Permissions vérifiées, incluant template-editor.php");
