@@ -2717,6 +2717,45 @@ class PDF_Builder_Admin {
                     </div>
                 </div>
 
+                <!-- Sélecteur de template pour l'aperçu -->
+                <div class="template-selector" style="margin-bottom: 15px; padding: 12px; background: #f8f9fa; border-radius: 6px; border: 1px solid #e9ecef;">
+                    <label for="pdf-template-selector" style="display: block; margin-bottom: 8px; font-weight: 600; color: #495057; font-size: 13px;">
+                        📄 <?php _e('Template pour l\'aperçu :', 'pdf-builder-pro'); ?>
+                    </label>
+                    <select id="pdf-template-selector" style="width: 100%; padding: 8px 12px; border: 1px solid #ced4da; border-radius: 4px; font-size: 13px; background: white;">
+                        <?php
+                        // Récupérer tous les templates disponibles
+                        global $wpdb;
+                        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+                        $templates = $wpdb->get_results("SELECT id, name FROM $table_templates ORDER BY name", ARRAY_A);
+
+                        // Option pour le template automatique selon le statut
+                        $current_status = $order->get_status();
+                        $status_templates = get_option('pdf_builder_order_status_templates', []);
+                        $status_key = 'wc-' . $current_status;
+                        $auto_template_name = __('Template automatique (selon statut)', 'pdf-builder-pro');
+
+                        if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
+                            $auto_template = $wpdb->get_row($wpdb->prepare("SELECT name FROM $table_templates WHERE id = %d", $status_templates[$status_key]), ARRAY_A);
+                            if ($auto_template) {
+                                $auto_template_name = sprintf(__('Template automatique: %s', 'pdf-builder-pro'), $auto_template['name']);
+                            }
+                        }
+
+                        echo '<option value="auto" selected>' . esc_html($auto_template_name) . '</option>';
+
+                        // Templates disponibles
+                        foreach ($templates as $template) {
+                            $selected = ($default_template && $default_template['id'] == $template['id']) ? ' selected' : '';
+                            echo '<option value="' . esc_attr($template['id']) . '"' . $selected . '>' . esc_html($template['name']) . '</option>';
+                        }
+                        ?>
+                    </select>
+                    <small style="display: block; margin-top: 6px; color: #6c757d; font-size: 12px;">
+                        <?php _e('Choisissez le template à utiliser pour générer l\'aperçu PDF', 'pdf-builder-pro'); ?>
+                    </small>
+                </div>
+
                 <div class="action-buttons">
                     <button type="button"
                             id="pdf-builder-preview-btn"
@@ -2785,7 +2824,7 @@ class PDF_Builder_Admin {
             }
 
             // Fonction pour ouvrir la modale d'aperçu PDF
-            function openPdfPreviewModal(htmlContent, width, height) {
+            function openPdfPreviewModal(htmlContent, width, height, templateInfo) {
                 // Créer la modale si elle n'existe pas
                 if (!$('#pdf-preview-modal').length) {
                     $('body').append(`
@@ -2825,7 +2864,49 @@ class PDF_Builder_Admin {
                                 ">
                                     <div style="display: flex; align-items: center; gap: 15px;">
                                         <h3 style="margin: 0; color: #333; font-size: 18px;"><?php echo esc_js(__('Aperçu PDF', 'pdf-builder-pro')); ?></h3>
+                                        <div id="pdf-template-info" style="
+                                            background: #e3f2fd;
+                                            color: #1565c0;
+                                            padding: 4px 8px;
+                                            border-radius: 12px;
+                                            font-size: 11px;
+                                            font-weight: 500;
+                                            border: 1px solid #bbdefb;
+                                        "></div>
                                         <div id="pdf-zoom-controls" style="display: flex; align-items: center; gap: 10px;">
+                                            <button id="pdf-print-btn" style="
+                                                background: #fff;
+                                                border: 1px solid #ddd;
+                                                border-radius: 4px;
+                                                padding: 0 8px;
+                                                height: 30px;
+                                                display: flex;
+                                                align-items: center;
+                                                justify-content: center;
+                                                cursor: pointer;
+                                                font-size: 12px;
+                                                color: #666;
+                                                gap: 4px;
+                                            " title="<?php echo esc_js(__('Imprimer l\'aperçu', 'pdf-builder-pro')); ?>">
+                                                🖨️ <?php echo esc_js(__('Imprimer', 'pdf-builder-pro')); ?>
+                                            </button>
+                                            <button id="pdf-export-btn" style="
+                                                background: #fff;
+                                                border: 1px solid #ddd;
+                                                border-radius: 4px;
+                                                padding: 0 8px;
+                                                height: 30px;
+                                                display: flex;
+                                                align-items: center;
+                                                justify-content: center;
+                                                cursor: pointer;
+                                                font-size: 12px;
+                                                color: #666;
+                                                gap: 4px;
+                                            " title="<?php echo esc_js(__('Ouvrir dans un nouvel onglet', 'pdf-builder-pro')); ?>">
+                                                📤 <?php echo esc_js(__('Ouvrir', 'pdf-builder-pro')); ?>
+                                            </button>
+                                            <span style="color: #ddd; font-size: 14px;">|</span>
                                             <button id="pdf-zoom-out" style="
                                                 background: #fff;
                                                 border: 1px solid #ddd;
@@ -2866,6 +2947,19 @@ class PDF_Builder_Admin {
                                                 font-size: 12px;
                                                 color: #666;
                                             " title="<?php echo esc_js(__('Ajuster à la fenêtre', 'pdf-builder-pro')); ?>"><?php echo esc_js(__('Ajuster', 'pdf-builder-pro')); ?></button>
+                                            <button id="pdf-fullscreen-btn" style="
+                                                background: #fff;
+                                                border: 1px solid #ddd;
+                                                border-radius: 4px;
+                                                width: 30px;
+                                                height: 30px;
+                                                display: flex;
+                                                align-items: center;
+                                                justify-content: center;
+                                                cursor: pointer;
+                                                font-size: 14px;
+                                                color: #666;
+                                            " title="<?php echo esc_js(__('Plein écran', 'pdf-builder-pro')); ?>">⛶</button>
                                         </div>
                                     </div>
                                     <button id="pdf-preview-close" style="
@@ -2988,6 +3082,40 @@ class PDF_Builder_Admin {
                     window.applyPdfZoom(fitZoom, iframe, window.originalPdfHeight);
                 });
 
+                // Gestionnaire pour le bouton plein écran
+                $('#pdf-fullscreen-btn').off('click').on('click', function() {
+                    var modal = $('#pdf-preview-modal')[0];
+                    if (!document.fullscreenElement) {
+                        modal.requestFullscreen().catch(err => {
+                            console.log('Erreur lors de la mise en plein écran:', err);
+                        });
+                    } else {
+                        document.exitFullscreen();
+                    }
+                });
+
+                // Gestionnaire pour le bouton d'impression
+                $('#pdf-print-btn').off('click').on('click', function() {
+                    var iframe = $('#pdf-preview-iframe-container iframe')[0];
+                    try {
+                        iframe.contentWindow.print();
+                    } catch (e) {
+                        console.log('Erreur lors de l\'impression:', e);
+                        // Fallback: ouvrir dans une nouvelle fenêtre pour impression
+                        var printWindow = window.open('', '_blank');
+                        printWindow.document.write('<html><head><title>Impression PDF</title></head><body>' + htmlContent + '</body></html>');
+                        printWindow.document.close();
+                        printWindow.print();
+                    }
+                });
+
+                // Gestionnaire pour le bouton d'export/ouverture
+                $('#pdf-export-btn').off('click').on('click', function() {
+                    var exportWindow = window.open('', '_blank');
+                    exportWindow.document.write('<html><head><title>Aperçu PDF</title><style>body{margin:0;padding:20px;}</style></head><body>' + htmlContent + '</body></html>');
+                    exportWindow.document.close();
+                });
+
                 // Appliquer le zoom initial
                 window.applyPdfZoom(1.0, iframe, height);
 
@@ -3024,6 +3152,13 @@ class PDF_Builder_Admin {
                     console.log('PDF Builder: Will write to iframe on load event');
                 }
 
+                // Afficher les informations du template
+                if (templateInfo) {
+                    $('#pdf-template-info').text(templateInfo).show();
+                } else {
+                    $('#pdf-template-info').hide();
+                }
+
                 // Afficher la modale avec animation
                 $('#pdf-preview-modal').show().animate({opacity: 1}, 300);
                 $('#pdf-preview-content').animate({scale: 1}, 300);
@@ -3032,10 +3167,12 @@ class PDF_Builder_Admin {
             // Aperçu PDF
             $previewBtn.on('click', function() {
                 var orderId = $(this).data('order-id');
-                var templateId = <?php echo $default_template ? esc_js($default_template['id']) : '0'; ?>;
+                var selectedTemplate = $('#pdf-template-selector').val();
+                var templateId = selectedTemplate === 'auto' ? 0 : parseInt(selectedTemplate);
 
                 console.log('PDF Builder: Preview button clicked');
                 console.log('PDF Builder: Order ID:', orderId);
+                console.log('PDF Builder: Selected template:', selectedTemplate);
                 console.log('PDF Builder: Template ID:', templateId);
 
                 showStatus('<?php echo esc_js(__('Génération de l\'aperçu...', 'pdf-builder-pro')); ?>', 'loading');
@@ -3054,8 +3191,18 @@ class PDF_Builder_Admin {
                         console.log('PDF Builder: Preview AJAX success');
                         console.log('PDF Builder: Response:', response);
                         if (response.success) {
+                            // Créer les informations du template pour l'affichage
+                            var templateInfo = '';
+                            var selectedTemplate = $('#pdf-template-selector').val();
+                            if (selectedTemplate === 'auto') {
+                                templateInfo = response.data.template_name || '<?php echo esc_js(__('Template automatique', 'pdf-builder-pro')); ?>';
+                            } else {
+                                var selectedOption = $('#pdf-template-selector option:selected');
+                                templateInfo = selectedOption.text();
+                            }
+
                             // Ouvrir l'aperçu dans une modale
-                            openPdfPreviewModal(response.data.html, response.data.width, response.data.height);
+                            openPdfPreviewModal(response.data.html, response.data.width, response.data.height, templateInfo);
                             showStatus('<?php echo esc_js(__('Aperçu ouvert avec succès ✅', 'pdf-builder-pro')); ?>', 'success');
                             setTimeout(hideStatus, 3000);
                         } else {
@@ -3368,10 +3515,41 @@ class PDF_Builder_Admin {
             $html_content = $this->generate_unified_html($template_data, $order);
             error_log('✅ PDF BUILDER - HTML generated, length: ' . strlen($html_content));
 
+            // Déterminer le nom du template utilisé pour l'affichage
+            $template_name = 'Template inconnu';
+            if (isset($template_data['name'])) {
+                $template_name = $template_data['name'];
+            } elseif ($template_id > 0) {
+                global $wpdb;
+                $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+                $template_info = $wpdb->get_row($wpdb->prepare("SELECT name FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
+                if ($template_info) {
+                    $template_name = $template_info['name'];
+                }
+            } else {
+                // Template automatique basé sur le statut
+                $order_status = $order->get_status();
+                $status_templates = get_option('pdf_builder_order_status_templates', []);
+                $status_key = 'wc-' . $order_status;
+
+                if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
+                    $mapped_template_id = $status_templates[$status_key];
+                    global $wpdb;
+                    $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+                    $template_info = $wpdb->get_row($wpdb->prepare("SELECT name FROM $table_templates WHERE id = %d", $mapped_template_id), ARRAY_A);
+                    if ($template_info) {
+                        $template_name = $template_info['name'] . ' (auto)';
+                    }
+                } else {
+                    $template_name = 'Template par défaut (auto)';
+                }
+            }
+
             $response = array(
                 'html' => $html_content,
                 'width' => $template_data['canvas']['width'] ?? 595,
-                'height' => $template_data['canvas']['height'] ?? 842
+                'height' => $template_data['canvas']['height'] ?? 842,
+                'template_name' => $template_name
             );
 
             error_log('✅ PDF BUILDER - Sending success response');
