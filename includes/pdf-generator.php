@@ -53,16 +53,24 @@ class PDF_Generator {
     public function generate_from_elements($elements) {
         // Charger TCPDF seulement quand nécessaire
         if (!class_exists('TCPDF')) {
-            if (function_exists('plugin_dir_path')) {
-                require_once plugin_dir_path(__FILE__) . '../lib/tcpdf_autoload.php';
-            } else {
-                require_once __DIR__ . '/../lib/tcpdf_autoload.php';
+            error_log('PDF Builder: Tentative de chargement de TCPDF...');
+            try {
+                if (function_exists('plugin_dir_path')) {
+                    require_once plugin_dir_path(__FILE__) . '../lib/tcpdf_autoload.php';
+                } else {
+                    require_once __DIR__ . '/../lib/tcpdf_autoload.php';
+                }
+                error_log('PDF Builder: TCPDF chargé avec succès');
+            } catch (Exception $e) {
+                error_log('PDF Builder: Erreur lors du chargement de TCPDF: ' . $e->getMessage());
+            } catch (Error $e) {
+                error_log('PDF Builder: Erreur fatale lors du chargement de TCPDF: ' . $e->getMessage());
             }
         }
 
         if (!class_exists('TCPDF')) {
-            error_log('PDF Builder: Impossible de charger TCPDF');
-            return false;
+            error_log('PDF Builder: TCPDF non disponible, utilisation de la méthode alternative');
+            return $this->generate_basic_pdf($elements);
         }
 
         // Créer l'instance TCPDF seulement maintenant
@@ -112,6 +120,47 @@ class PDF_Generator {
 
         // Générer le PDF
         return $this->pdf->Output('document.pdf', 'S'); // 'S' pour retourner le contenu
+    }
+
+    /**
+     * Méthode alternative de génération PDF sans TCPDF
+     */
+    private function generate_basic_pdf($elements) {
+        // Générer un PDF basique en HTML/CSS qui peut être converti plus tard
+        $html = $this->generate_html_from_elements($elements);
+
+        // Pour l'instant, retourner le HTML comme contenu (peut être converti côté client)
+        // Plus tard, nous pourrons intégrer une bibliothèque comme DomPDF ou wkhtmltopdf
+        return $html;
+    }
+
+    /**
+     * Convertir les éléments en HTML basique
+     */
+    private function generate_html_from_elements($elements) {
+        $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Document PDF</title>';
+        $html .= '<style>body { font-family: Arial, sans-serif; margin: 0; padding: 20px; } .element { position: absolute; }</style>';
+        $html .= '</head><body>';
+
+        foreach ($elements as $element) {
+            $style = sprintf('left: %dpx; top: %dpx; width: %dpx; height: %dpx; font-size: %dpx;',
+                $element['x'], $element['y'], $element['width'], $element['height'], $element['fontSize']);
+
+            if (isset($element['color'])) {
+                $style .= ' color: ' . $element['color'] . ';';
+            }
+
+            if (isset($element['fontWeight']) && $element['fontWeight'] === 'bold') {
+                $style .= ' font-weight: bold;';
+            }
+
+            $content = isset($element['text']) ? htmlspecialchars($element['text']) : '';
+
+            $html .= sprintf('<div class="element" style="%s">%s</div>', $style, $content);
+        }
+
+        $html .= '</body></html>';
+        return $html;
     }
 
     /**

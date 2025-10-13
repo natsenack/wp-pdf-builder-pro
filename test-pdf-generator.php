@@ -9,6 +9,31 @@ if (!defined('ABSPATH')) {
     define('PDF_GENERATOR_TEST_MODE', true);
 }
 
+// Simuler les fonctions WordPress nécessaires
+if (!function_exists('plugin_dir_path')) {
+    function plugin_dir_path($file) {
+        return dirname($file) . '/';
+    }
+}
+
+if (!function_exists('wp_upload_dir')) {
+    function wp_upload_dir() {
+        return [
+            'basedir' => dirname(__FILE__) . '/uploads',
+            'baseurl' => 'http://localhost/uploads'
+        ];
+    }
+}
+
+if (!function_exists('wp_mkdir_p')) {
+    function wp_mkdir_p($dir) {
+        if (!file_exists($dir)) {
+            mkdir($dir, 0755, true);
+        }
+        return true;
+    }
+}
+
 // Simuler une requête AJAX pour tester la génération PDF
 function test_pdf_generation() {
     echo "🚀 Démarrage du test de génération PDF...<br><br>";
