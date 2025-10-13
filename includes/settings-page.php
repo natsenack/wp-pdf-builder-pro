@@ -247,22 +247,43 @@ window.addEventListener('load', function() {
 
         console.log('✅ Target element found, proceeding with activation');
 
-        // Hide all tab contents
-        var tabContents = document.querySelectorAll('.tab-content');
-        console.log('Found', tabContents.length, 'tab content elements');
+        // Hide all tab contents by finding elements that match nav tab hrefs
+        var navTabs = document.querySelectorAll('.nav-tab');
+        console.log('Found', navTabs.length, 'nav tab elements');
+        
+        // Collect all tab content IDs from nav tabs
+        var tabContentIds = [];
+        for (var i = 0; i < navTabs.length; i++) {
+            var href = navTabs[i].getAttribute('href');
+            if (href && href.startsWith('#')) {
+                tabContentIds.push(href.substring(1));
+            }
+        }
+        console.log('Tab content IDs to manage:', tabContentIds);
+        
+        // Hide all tab contents that correspond to nav tabs
+        var tabContents = [];
+        for (var i = 0; i < tabContentIds.length; i++) {
+            var element = document.getElementById(tabContentIds[i]);
+            if (element) {
+                tabContents.push(element);
+                console.log('Found tab content element:', tabContentIds[i]);
+            } else {
+                console.log('Missing tab content element:', tabContentIds[i]);
+            }
+        }
+        console.log('Found', tabContents.length, 'tab content elements (by ID lookup)');
 
-        // Log each tab content found
+        // Remove active class from all tab contents
         for (var i = 0; i < tabContents.length; i++) {
-            console.log('Tab content', i, ': id=', tabContents[i].id, 'classes=', tabContents[i].className, 'has active:', tabContents[i].classList.contains('active'));
+            tabContents[i].classList.remove('active');
+            console.log('Removed active class from content:', tabContents[i].id);
         }
 
         // Remove active class from all nav tabs
-        var navTabs = document.querySelectorAll('.nav-tab');
-        console.log('Found', navTabs.length, 'nav tab elements');
-
         for (var i = 0; i < navTabs.length; i++) {
-            console.log('Removing nav-tab-active class from tab', i, 'href:', navTabs[i].getAttribute('href'));
             navTabs[i].classList.remove('nav-tab-active');
+            console.log('Removed nav-tab-active class from tab', i, 'href:', navTabs[i].getAttribute('href'));
         }
 
         // Activate the clicked tab
