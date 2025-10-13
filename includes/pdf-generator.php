@@ -8,7 +8,7 @@ if (!defined('ABSPATH') && !defined('PDF_GENERATOR_TEST_MODE')) {
     exit;
 }
 
-// Inclure TCPDF - TEMPORAIREMENT DÉSACTIVÉ POUR DIAGNOSTIC
+// Inclure TCPDF - seulement quand nécessaire
 /*
 if (function_exists('plugin_dir_path')) {
     require_once plugin_dir_path(__FILE__) . '../lib/tcpdf_autoload.php';
@@ -51,9 +51,50 @@ class PDF_Generator {
      * Générer le PDF à partir des éléments
      */
     public function generate_from_elements($elements) {
-        if (!$this->pdf) {
-            return false; // TCPDF non disponible
+        // Charger TCPDF seulement quand nécessaire
+        if (!class_exists('TCPDF')) {
+            if (function_exists('plugin_dir_path')) {
+                require_once plugin_dir_path(__FILE__) . '../lib/tcpdf_autoload.php';
+            } else {
+                require_once __DIR__ . '/../lib/tcpdf_autoload.php';
+            }
         }
+
+        if (!class_exists('TCPDF')) {
+            error_log('PDF Builder: Impossible de charger TCPDF');
+            return false;
+        }
+
+        // Créer l'instance TCPDF seulement maintenant
+        // Définir le cache dans un répertoire accessible
+        if (!defined('K_PATH_CACHE')) {
+            $upload_dir = wp_upload_dir();
+            $cache_dir = $upload_dir['basedir'] . '/pdf-builder-cache/';
+            if (!file_exists($cache_dir)) {
+                wp_mkdir_p($cache_dir);
+            }
+            define('K_PATH_CACHE', $cache_dir);
+        }
+
+        // Définir le chemin des polices
+        if (!defined('K_PATH_FONTS')) {
+            define('K_PATH_FONTS', plugin_dir_path(__FILE__) . '../lib/tcpdf/fonts/');
+        }
+
+        $this->pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+
+        // Configuration de base
+        $this->pdf->SetCreator('PDF Builder Pro');
+        $this->pdf->SetAuthor('PDF Builder Pro');
+        $this->pdf->SetTitle('Document PDF Builder Pro');
+
+        // Supprimer les marges par défaut
+        $this->pdf->SetMargins(0, 0, 0);
+        $this->pdf->SetHeaderMargin(0);
+        $this->pdf->SetFooterMargin(0);
+
+        // Mode paysage si nécessaire (A4: 210x297mm)
+        $this->pdf->SetAutoPageBreak(false);
 
         // Dimensions A4 en mm (TCPDF utilise les mm par défaut)
         $page_width = 210;  // A4 width
