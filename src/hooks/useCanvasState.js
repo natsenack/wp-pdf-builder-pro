@@ -621,6 +621,7 @@ export const useCanvasState = ({
     showContextMenu,
 
     // Utilitaires
+    getAllElements: useCallback(() => elements, [elements]),
     getElementById: useCallback((id) => elements.find(el => el.id === id), [elements])
   }), [
     elements,

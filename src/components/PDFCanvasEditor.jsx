@@ -115,13 +115,13 @@ export const PDFCanvasEditor = ({ options }) => {
       // Préparer les données pour l'AJAX
       const formData = new FormData();
       formData.append('action', 'pdf_builder_generate_pdf');
-      formData.append('nonce', globalSettings.nonce);
+      formData.append('nonce', window.pdfBuilderAjax?.nonce);
       formData.append('elements', JSON.stringify(elements));
 
       console.log('Envoi de', elements.length, 'éléments au serveur...');
 
       // Faire l'appel AJAX
-      const response = await fetch(globalSettings.ajaxurl, {
+      const response = await fetch(window.pdfBuilderAjax?.ajaxurl, {
         method: 'POST',
         body: formData
       });
@@ -152,7 +152,7 @@ export const PDFCanvasEditor = ({ options }) => {
       console.error('Erreur lors de l\'impression:', error);
       alert('Erreur lors de la génération du PDF: ' + error.message);
     }
-  }, [canvasState, globalSettings]);
+  }, [canvasState]);
 
   // Gestionnaire pour la désélection et création d'éléments
   const handleCanvasClick = useCallback((e) => {
