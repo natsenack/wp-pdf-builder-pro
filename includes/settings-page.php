@@ -340,9 +340,8 @@ window.addEventListener('load', function() {
 
                 simpleActivateTab(tabHref);
 
-                // Update URL hash
-                window.location.hash = tabHref;
-                console.log('Updated URL hash to:', window.location.hash);
+                // Note: Removed hash update to prevent unwanted scrolling
+                // window.location.hash = tabHref;
             });
         }
 
