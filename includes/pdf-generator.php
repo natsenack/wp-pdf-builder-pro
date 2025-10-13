@@ -24,12 +24,12 @@ class PDF_Builder_Pro_Generator {
         'format' => 'A4',
         'font_size' => 12,
         'font_family' => 'helvetica',
-        'margin_left' => 10,
-        'margin_top' => 10,
-        'margin_right' => 10,
-        'margin_bottom' => 10,
+        'margin_left' => 15,
+        'margin_top' => 20,
+        'margin_right' => 15,
+        'margin_bottom' => 20,
         'auto_page_break' => true,
-        'page_break_margin' => 10
+        'page_break_margin' => 15
     ];
 
     public function __construct($config = []) {
@@ -230,7 +230,7 @@ class PDF_Builder_Pro_Generator {
      * Rendu des elements optimise
      */
     private function render_elements($elements) {
-        $px_to_mm = 0.264583; // Facteur de conversion pixels -> mm
+        $px_to_mm = 0.264583; // Facteur de conversion pixels -> mm (96 DPI)
         error_log('PDF Builder Pro: Debut rendu elements, facteur conversion: ' . $px_to_mm);
 
         // 🚨 LOG DEBUG ULTRA-VISIBLE - AJOUTER AU DEBUG LOGS SI DISPONIBLE
@@ -239,6 +239,13 @@ class PDF_Builder_Pro_Generator {
             $GLOBALS['pdf_debug_logs'][] = "📏 FACTEUR CONVERSION PX->MM: " . $px_to_mm;
         }
 
+        // Trier les éléments par position Y pour un meilleur rendu
+        usort($elements, function($a, $b) {
+            $a_y = isset($a['y']) ? $a['y'] : 0;
+            $b_y = isset($b['y']) ? $b['y'] : 0;
+            return $a_y <=> $b_y;
+        });
+
         foreach ($elements as $element) {
             try {
                 $element_type = isset($element['type']) ? $element['type'] : 'unknown';
@@ -246,7 +253,8 @@ class PDF_Builder_Pro_Generator {
 
                 if (isset($GLOBALS['pdf_debug_logs'])) {
                     $element_content = isset($element['content']) ? substr($element['content'], 0, 30) : (isset($element['text']) ? substr($element['text'], 0, 30) : 'empty');
-                    $GLOBALS['pdf_debug_logs'][] = "🔧 RENDU ÉLÉMENT: $element_type - CONTENT: $element_content";
+                    $element_pos = isset($element['x']) && isset($element['y']) ? '(' . $element['x'] . ',' . $element['y'] . ')' : '(0,0)';
+                    $GLOBALS['pdf_debug_logs'][] = "🔧 RENDU ÉLÉMENT: $element_type - POS: $element_pos - CONTENT: $element_content";
                 }
 
                 $this->render_single_element($element, $px_to_mm);
@@ -598,17 +606,22 @@ class PDF_Builder_Pro_Generator {
      * Rendu d'élément customer_info
      */
     private function render_customer_info_element($element, $px_to_mm) {
-        $x = isset($element['x']) ? $element['x'] * $px_to_mm : 0;
-        $y = isset($element['y']) ? $element['y'] * $px_to_mm : 0;
-        $width = isset($element['width']) ? $element['width'] * $px_to_mm : 100;
-        $height = isset($element['height']) ? $element['height'] * $px_to_mm : 50;
+        $x = isset($element['x']) ? $element['x'] * $px_to_mm : 10;
+        $y = isset($element['y']) ? $element['y'] * $px_to_mm : 10;
+        $width = isset($element['width']) ? $element['width'] * $px_to_mm : 80;
+        $height = isset($element['height']) ? $element['height'] * $px_to_mm : 30;
 
         // Contenu factice pour l'instant (devrait venir des données WooCommerce)
         $customer_info = "Client\nJean Dupont\n123 Rue de la Paix\n75001 Paris\nFrance";
 
+        // Positionner le curseur
         $this->pdf->SetXY($x, $y);
+
+        // Titre
         $this->pdf->SetFont('helvetica', 'B', 12);
         $this->pdf->Cell($width, 6, utf8_decode('Client'), 0, 2);
+
+        // Contenu
         $this->pdf->SetFont('helvetica', '', 10);
         $this->pdf->MultiCell($width, 5, utf8_decode($customer_info), 0, 'L');
     }
@@ -617,17 +630,22 @@ class PDF_Builder_Pro_Generator {
      * Rendu d'élément company_info
      */
     private function render_company_info_element($element, $px_to_mm) {
-        $x = isset($element['x']) ? $element['x'] * $px_to_mm : 0;
-        $y = isset($element['y']) ? $element['y'] * $px_to_mm : 0;
-        $width = isset($element['width']) ? $element['width'] * $px_to_mm : 100;
-        $height = isset($element['height']) ? $element['height'] * $px_to_mm : 50;
+        $x = isset($element['x']) ? $element['x'] * $px_to_mm : 10;
+        $y = isset($element['y']) ? $element['y'] * $px_to_mm : 10;
+        $width = isset($element['width']) ? $element['width'] * $px_to_mm : 80;
+        $height = isset($element['height']) ? $element['height'] * $px_to_mm : 30;
 
         // Contenu factice pour l'instant
         $company_info = "ABC Company SARL\n456 Avenue des Champs\n75008 Paris\nFrance\nTel: 01 23 45 67 89";
 
+        // Positionner le curseur
         $this->pdf->SetXY($x, $y);
+
+        // Titre
         $this->pdf->SetFont('helvetica', 'B', 12);
         $this->pdf->Cell($width, 6, utf8_decode('ABC Company SARL'), 0, 2);
+
+        // Contenu
         $this->pdf->SetFont('helvetica', '', 10);
         $this->pdf->MultiCell($width, 5, utf8_decode("456 Avenue des Champs\n75008 Paris\nFrance\nTel: 01 23 45 67 89"), 0, 'L');
     }
@@ -636,19 +654,20 @@ class PDF_Builder_Pro_Generator {
      * Rendu d'élément company_logo
      */
     private function render_company_logo_element($element, $px_to_mm) {
-        $x = isset($element['x']) ? $element['x'] * $px_to_mm : 0;
-        $y = isset($element['y']) ? $element['y'] * $px_to_mm : 0;
-        $width = isset($element['width']) ? $element['width'] * $px_to_mm : 100;
-        $height = isset($element['height']) ? $element['height'] * $px_to_mm : 50;
+        $x = isset($element['x']) ? $element['x'] * $px_to_mm : 10;
+        $y = isset($element['y']) ? $element['y'] * $px_to_mm : 10;
+        $width = isset($element['width']) ? $element['width'] * $px_to_mm : 50;
+        $height = isset($element['height']) ? $element['height'] * $px_to_mm : 30;
 
-        // Pour l'instant, dessiner un rectangle placeholder
-        $this->pdf->SetXY($x, $y);
+        // Dessiner un rectangle placeholder avec du texte
         $this->pdf->SetFillColor(240, 240, 240);
         $this->pdf->Rect($x, $y, $width, $height, 'F');
         $this->pdf->SetDrawColor(200, 200, 200);
         $this->pdf->Rect($x, $y, $width, $height, 'D');
+
+        // Centrer le texte dans le rectangle
         $this->pdf->SetXY($x, $y + $height/2 - 3);
-        $this->pdf->SetFont('helvetica', '', 10);
+        $this->pdf->SetFont('helvetica', 'B', 10);
         $this->pdf->Cell($width, 6, utf8_decode('LOGO ENTREPRISE'), 0, 0, 'C');
     }
 
@@ -656,18 +675,24 @@ class PDF_Builder_Pro_Generator {
      * Rendu d'élément product_table
      */
     private function render_product_table_element($element, $px_to_mm) {
-        $x = isset($element['x']) ? $element['x'] * $px_to_mm : 0;
-        $y = isset($element['y']) ? $element['y'] * $px_to_mm : 0;
-        $width = isset($element['width']) ? $element['width'] * $px_to_mm : 200;
-        $height = isset($element['height']) ? $element['height'] * $px_to_mm : 100;
+        $x = isset($element['x']) ? $element['x'] * $px_to_mm : 10;
+        $y = isset($element['y']) ? $element['y'] * $px_to_mm : 10;
+        $width = isset($element['width']) ? $element['width'] * $px_to_mm : 180;
+        $height = isset($element['height']) ? $element['height'] * $px_to_mm : 80;
+
+        // Calculer les largeurs des colonnes
+        $col_widths = [
+            $width * 0.4,  // Produit
+            $width * 0.15, // Qté
+            $width * 0.2,  // Prix
+            $width * 0.25  // Total
+        ];
 
         // En-têtes du tableau
         $this->pdf->SetXY($x, $y);
         $this->pdf->SetFillColor(245, 245, 245);
-        $this->pdf->Rect($x, $y, $width, 8, 'F');
         $this->pdf->SetFont('helvetica', 'B', 9);
 
-        $col_widths = [$width * 0.4, $width * 0.15, $width * 0.2, $width * 0.25];
         $this->pdf->Cell($col_widths[0], 8, utf8_decode('Produit'), 1, 0, 'L', true);
         $this->pdf->Cell($col_widths[1], 8, utf8_decode('Qté'), 1, 0, 'C', true);
         $this->pdf->Cell($col_widths[2], 8, utf8_decode('Prix'), 1, 0, 'R', true);
@@ -690,10 +715,10 @@ class PDF_Builder_Pro_Generator {
      * Rendu d'élément document_type
      */
     private function render_document_type_element($element, $px_to_mm) {
-        $x = isset($element['x']) ? $element['x'] * $px_to_mm : 0;
-        $y = isset($element['y']) ? $element['y'] * $px_to_mm : 0;
-        $width = isset($element['width']) ? $element['width'] * $px_to_mm : 100;
-        $height = isset($element['height']) ? $element['height'] * $px_to_mm : 50;
+        $x = isset($element['x']) ? $element['x'] * $px_to_mm : 10;
+        $y = isset($element['y']) ? $element['y'] * $px_to_mm : 10;
+        $width = isset($element['width']) ? $element['width'] * $px_to_mm : 50;
+        $height = isset($element['height']) ? $element['height'] * $px_to_mm : 20;
 
         $this->pdf->SetXY($x, $y);
         $this->pdf->SetFont('helvetica', 'B', 14);
@@ -706,14 +731,16 @@ class PDF_Builder_Pro_Generator {
      * Rendu d'élément divider
      */
     private function render_divider_element($element, $px_to_mm) {
-        $x = isset($element['x']) ? $element['x'] * $px_to_mm : 0;
-        $y = isset($element['y']) ? $element['y'] * $px_to_mm : 0;
-        $width = isset($element['width']) ? $element['width'] * $px_to_mm : 200;
-        $height = isset($element['height']) ? $element['height'] * $px_to_mm : 10;
+        $x = isset($element['x']) ? $element['x'] * $px_to_mm : 10;
+        $y = isset($element['y']) ? $element['y'] * $px_to_mm : 10;
+        $width = isset($element['width']) ? $element['width'] * $px_to_mm : 180;
+        $height = isset($element['height']) ? $element['height'] * $px_to_mm : 5;
 
-        // Ligne de séparation
+        // Ligne de séparation horizontale
         $this->pdf->SetDrawColor(200, 200, 200);
+        $this->pdf->SetLineWidth(0.5);
         $this->pdf->Line($x, $y + $height/2, $x + $width, $y + $height/2);
+        $this->pdf->SetLineWidth(0.2); // Remettre la largeur par défaut
     }
 }
 
