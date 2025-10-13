@@ -99,6 +99,8 @@ const PreviewModal = ({
   const handlePrint = async () => {
     console.log('Génération PDF finale...');
 
+    let printButton = null;
+
     try {
       // Vérifier que les variables AJAX sont disponibles
       let ajaxUrl = window.pdfBuilderAjax?.ajaxurl || ajaxurl;
@@ -139,7 +141,7 @@ const PreviewModal = ({
       console.log('Envoi requête génération PDF...');
 
       // Afficher un indicateur de chargement
-      const printButton = document.querySelector('.btn-primary');
+      printButton = document.querySelector('.btn-primary');
       if (printButton) {
         const originalText = printButton.textContent;
         printButton.textContent = '⏳ Génération PDF...';
