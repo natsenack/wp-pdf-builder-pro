@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Aperçu PDF Builder Pro</title>
+    <link rel="stylesheet" href="assets/css/pdf-builder-admin.css">
+    <link rel="stylesheet" href="assets/css/pdf-builder-canvas.css">
+    <link rel="stylesheet" href="assets/css/pdf-builder-react.css">
+</head>
+<body>
+    <div id="test-preview"></div>
+
+    <script>
+        // Test simple d'aperçu
+        console.log('Test d\'aperçu simple');
+
+        const testContainer = document.getElementById('test-preview');
+
+        testContainer.innerHTML = `
+            <div style="
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.6);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 2000;
+            ">
+                <div style="
+                    background: white;
+                    border-radius: 12px;
+                    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+                    max-width: 90vw;
+                    max-height: 90vh;
+                    width: 800px;
+                    overflow: hidden;
+                    display: flex;
+                    flex-direction: column;
+                ">
+                    <div style="
+                        padding: 20px 24px;
+                        border-bottom: 1px solid #e2e8f0;
+                        background: linear-gradient(135deg, #007bff 0%, #28a745 100%);
+                        color: white;
+                    ">
+                        <h3 style="margin: 0; font-size: 18px; font-weight: 600;">
+                            🧪 Test Aperçu Simple
+                        </h3>
+                    </div>
+
+                    <div style="padding: 24px; overflow-y: auto; flex: 1;">
+                        <div style="
+                            padding: 20px;
+                            background: #f8f9fa;
+                            border-radius: 4px;
+                        ">
+                            <div style="
+                                width: 595px;
+                                height: 842px;
+                                margin: 0 auto;
+                                border: 1px solid #e2e8f0;
+                                background: white;
+                                position: relative;
+                                overflow: hidden;
+                                transform: scale(0.5);
+                                transform-origin: top center;
+                            ">
+                                <!-- Élément texte -->
+                                <div style="
+                                    position: absolute;
+                                    left: 50px;
+                                    top: 50px;
+                                    width: 200px;
+                                    height: 30px;
+                                    font-size: 16px;
+                                    color: #000000;
+                                    background: transparent;
+                                    border: none;
+                                    font-family: Arial, sans-serif;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    text-align: center;
+                                    border: 1px solid red;
+                                ">Test Aperçu PDF</div>
+
+                                <!-- Élément rectangle -->
+                                <div style="
+                                    position: absolute;
+                                    left: 40px;
+                                    top: 40px;
+                                    width: 220px;
+                                    height: 50px;
+                                    border: 2px solid #ff0000;
+                                    background: transparent;
+                                    border: 1px solid blue;
+                                "></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="
+                        padding: 20px 24px;
+                        border-top: 1px solid #e2e8f0;
+                        display: flex;
+                        justify-content: flex-end;
+                        gap: 12px;
+                    ">
+                        <button style="
+                            padding: 10px 20px;
+                            border: 1px solid #e2e8f0;
+                            background: white;
+                            border-radius: 6px;
+                            cursor: pointer;
+                        ">❌ Fermer</button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        console.log('Test d\'aperçu simple créé - éléments visibles avec bordures de debug');
+    </script>
+</body>
+</html>

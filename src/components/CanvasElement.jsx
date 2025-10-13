@@ -183,7 +183,7 @@ export const CanvasElement = ({
     e.stopPropagation();
 
     if (element.type === 'text') {
-      const newText = prompt('Modifier le texte:', element.text || '');
+      const newText = prompt('Modifier le texte:', element.content || element.text || '');
       if (newText !== null) {
         onUpdate({ text: newText });
       }
@@ -401,7 +401,7 @@ export const CanvasElement = ({
         onContextMenu={handleContextMenuEvent}
         draggable={false}
       >
-        {element.type === 'text' ? (element.text || 'Texte') : 
+        {element.type === 'text' ? (element.content || element.text || 'Texte') : 
          element.type === 'product_table' ? null : // Le contenu sera rendu plus bas pour les tableaux
          element.type === 'image' && !element.src ? '📷 Image' :
          element.type === 'line' ? null :
