@@ -1,6 +1,6 @@
 {
   "name": "wp-pdf-builder-pro",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "WordPress PDF Builder Pro - Frontend Assets",
   "main": "index.js",
   "scripts": {
