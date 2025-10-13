@@ -1908,6 +1908,11 @@ class PDF_Builder_Admin {
      * AJAX - Aperçu PDF pour une commande WooCommerce
      */
     public function ajax_preview_order_pdf() {
+        // Logs de débogage détaillés
+        error_log('🟡 PDF BUILDER - ajax_preview_order_pdf called');
+        error_log('🟡 REQUEST METHOD: ' . $_SERVER['REQUEST_METHOD']);
+        error_log('🟡 POST data: ' . print_r($_POST, true));
+
         // Désactiver l'affichage des erreurs PHP pour éviter les réponses HTML
         if (!defined('WP_DEBUG') || !WP_DEBUG) {
             ini_set('display_errors', 0);
@@ -1915,60 +1920,88 @@ class PDF_Builder_Admin {
         }
 
         $this->check_admin_permissions();
+        error_log('✅ PDF BUILDER - Permissions checked');
 
         // Vérification de sécurité
         if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions')) {
+            error_log('❌ PDF BUILDER - Nonce verification failed');
+            error_log('❌ Expected nonce action: pdf_builder_order_actions');
+            error_log('❌ Received nonce: ' . (isset($_POST['nonce']) ? $_POST['nonce'] : 'NOT SET'));
             wp_send_json_error('Sécurité: Nonce invalide');
         }
+
+        error_log('✅ PDF BUILDER - Nonce verified');
 
         $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
         $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
         $document_type = isset($_POST['document_type']) ? sanitize_text_field($_POST['document_type']) : 'invoice';
 
+        error_log('🟡 PDF BUILDER - Order ID: ' . $order_id . ', Template ID: ' . $template_id . ', Document type: ' . $document_type);
+
         if (!$order_id) {
+            error_log('❌ PDF BUILDER - Order ID missing');
             wp_send_json_error('ID commande manquant');
         }
 
         // Vérifier que WooCommerce est actif
         if (!class_exists('WooCommerce')) {
+            error_log('❌ PDF BUILDER - WooCommerce not active');
             wp_send_json_error('WooCommerce n\'est pas installé ou activé');
         }
 
         // Vérifier que les fonctions WooCommerce nécessaires existent
         if (!function_exists('wc_get_order')) {
+            error_log('❌ PDF BUILDER - wc_get_order function not available');
             wp_send_json_error('Fonction wc_get_order non disponible - WooCommerce mal installé');
         }
 
         $order = wc_get_order($order_id);
         if (!$order) {
+            error_log('❌ PDF BUILDER - Order not found: ' . $order_id);
             wp_send_json_error('Commande non trouvée');
         }
 
+        error_log('✅ PDF BUILDER - Order found: ' . $order->get_order_number());
+
         // Vérifier que l'objet order a les méthodes nécessaires
         if (!method_exists($order, 'get_id') || !method_exists($order, 'get_total')) {
+            error_log('❌ PDF BUILDER - Order object invalid');
             wp_send_json_error('Objet commande WooCommerce invalide');
         }
 
         try {
+            error_log('🟡 PDF BUILDER - Loading template...');
+
             // Charger le template de manière robuste
             if ($template_id > 0) {
                 $template_data = $this->load_template_robust($template_id);
+                error_log('✅ PDF BUILDER - Template loaded from database: ' . $template_id);
             } else {
                 $template_data = $this->get_default_invoice_template();
+                error_log('✅ PDF BUILDER - Default template loaded');
             }
 
+            error_log('🟡 PDF BUILDER - Generating HTML preview...');
             // Générer l'HTML d'aperçu avec les données de la commande
             $html_content = $this->generate_order_html($order, $template_data);
+            error_log('✅ PDF BUILDER - HTML generated, length: ' . strlen($html_content));
 
-            wp_send_json_success(array(
+            $response = array(
                 'html' => $html_content,
                 'width' => $template_data['canvas']['width'] ?? 595,
                 'height' => $template_data['canvas']['height'] ?? 842
-            ));
+            );
+
+            error_log('✅ PDF BUILDER - Sending success response');
+            wp_send_json_success($response);
 
         } catch (Exception $e) {
+            error_log('❌ PDF BUILDER - Exception in ajax_preview_order_pdf: ' . $e->getMessage());
+            error_log('❌ Stack trace: ' . $e->getTraceAsString());
             wp_send_json_error('Erreur: ' . $e->getMessage());
         } catch (Error $e) {
+            error_log('❌ PDF BUILDER - Fatal error in ajax_preview_order_pdf: ' . $e->getMessage());
+            error_log('❌ Stack trace: ' . $e->getTraceAsString());
             wp_send_json_error('Erreur fatale: ' . $e->getMessage());
         }
     }
