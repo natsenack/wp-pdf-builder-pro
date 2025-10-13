@@ -403,7 +403,20 @@ const PreviewModal = ({
         return;
       }
 
-      const data = await response.json();
+      let data;
+      try {
+        data = await response.json();
+      } catch (jsonErr) {
+        console.error('❌ Erreur parsing JSON réponse serveur:', jsonErr);
+        const responseText = await response.text();
+        console.error('Contenu brut de la réponse:', responseText.substring(0, 500));
+        // Garder l'aperçu local mais marquer l'erreur
+        setPreviewData(prev => ({
+          ...prev,
+          server_error: 'Réponse serveur invalide (pas du JSON)'
+        }));
+        return;
+      }
 
       if (data.success) {
         console.log('✅ Validation aperçu côté serveur réussie:', data.data);
