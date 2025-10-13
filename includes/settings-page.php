@@ -776,7 +776,7 @@ window.addEventListener('load', function() {
                                         <?php foreach ($all_roles as $role_key => $role):
                                             $role_name = translate_user_role($role['name']);
                                             $is_selected = in_array($role_key, $allowed_roles);
-                                            $role_description = $this->get_role_description($role_key);
+                                            $role_description = $config->get_role_description($role_key);
                                         ?>
                                             <option value="<?php echo esc_attr($role_key); ?>"
                                                     <?php selected($is_selected); ?>
