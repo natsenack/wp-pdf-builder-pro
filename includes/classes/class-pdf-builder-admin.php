@@ -4224,6 +4224,68 @@ class PDF_Builder_Admin {
         // Log de l'invalidation du cache
         error_log('PDF Builder: Cache des permissions invalidé suite à un changement des rôles autorisés');
     }
+
+    /**
+     * Calcule l'espace disque utilisé par le plugin
+     *
+     * @return int Espace disque utilisé en octets
+     */
+    public function get_disk_usage() {
+        $total_size = 0;
+
+        // Répertoires à analyser
+        $dirs_to_check = [
+            PDF_BUILDER_PRO_UPLOADS_DIR,
+            PDF_BUILDER_PLUGIN_DIR . 'cache/',
+            PDF_BUILDER_PLUGIN_DIR . 'logs/',
+        ];
+
+        foreach ($dirs_to_check as $dir) {
+            if (is_dir($dir)) {
+                $total_size += $this->get_directory_size($dir);
+            }
+        }
+
+        return $total_size;
+    }
+
+    /**
+     * Calcule la taille d'un répertoire récursivement
+     *
+     * @param string $directory Chemin du répertoire
+     * @return int Taille en octets
+     */
+    private function get_directory_size($directory) {
+        $size = 0;
+
+        if (!is_dir($directory)) {
+            return $size;
+        }
+
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS)
+        );
+
+        foreach ($iterator as $file) {
+            if ($file->isFile()) {
+                $size += $file->getSize();
+            }
+        }
+
+        return $size;
+    }
+
+    /**
+     * Compte le nombre de templates PDF
+     *
+     * @return int Nombre de templates
+     */
+    public function get_template_count() {
+        // Pour l'instant, retourner un compte approximatif basé sur les options
+        // TODO: Implémenter un vrai comptage des templates quand le système de templates sera en place
+        $templates = get_option('pdf_builder_templates', []);
+        return is_array($templates) ? count($templates) : 0;
+    }
 }
 
 
