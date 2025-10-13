@@ -221,16 +221,28 @@ const PreviewModal = ({
             }
             @media print {
               body {
-                margin: 0;
-                padding: 0;
-                background: white;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: white !important;
               }
               .print-container {
-                border: none;
-                padding: 20px;
-                max-width: none;
-                margin: 0;
-                background: white;
+                border: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                background: white !important;
+                max-width: none !important;
+              }
+              .print-canvas {
+                margin: 0 !important;
+                border: none !important;
+                background: white !important;
+              }
+              @page {
+                margin: 0.2cm !important; /* Marges minimales pour éviter la coupe */
+              }
+              * {
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
               }
             }
           </style>
