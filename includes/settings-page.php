@@ -214,10 +214,69 @@ window.addEventListener('load', function() {
     <script type="text/javascript">
     // Vérification de sécurité pour éviter les erreurs JavaScript de plugins tiers
     if (typeof wp === 'undefined') {
-        // Définir un objet wp minimal pour éviter les erreurs
+        // Définir un objet wp complet pour éviter les erreurs de plugins tiers
         window.wp = window.wp || {
-            api: { models: {}, collections: {}, views: {} },
-            ajax: { settings: { url: ajaxurl || '/wp-admin/admin-ajax.php' } }
+            api: {
+                models: {},
+                collections: {},
+                views: {},
+                loadPromise: Promise.resolve()
+            },
+            ajax: {
+                settings: {
+                    url: ajaxurl || '/wp-admin/admin-ajax.php',
+                    type: 'POST',
+                    timeout: 30000
+                },
+                send: function(action, data) {
+                    return jQuery.ajax({
+                        url: this.settings.url,
+                        type: this.settings.type,
+                        data: jQuery.extend({ action: action }, data),
+                        timeout: this.settings.timeout
+                    });
+                }
+            },
+            hooks: {
+                addAction: function(hook, callback) { /* stub */ },
+                addFilter: function(hook, callback) { return callback; },
+                doAction: function(hook) { /* stub */ },
+                applyFilters: function(hook, value) { return value; }
+            },
+            i18n: {
+                __: function(text) { return text; },
+                _x: function(text, context) { return text; },
+                _n: function(single, plural, number) { return number === 1 ? single : plural; }
+            },
+            media: {
+                controller: {
+                    Library: function() { /* stub */ }
+                }
+            },
+            blocks: {},
+            components: {},
+            compose: {},
+            data: {
+                dispatch: function(store) { return {}; },
+                select: function(store) { return {}; },
+                subscribe: function(callback) { /* stub */ }
+            },
+            editPost: {},
+            editor: {},
+            plugins: {},
+            richText: {},
+            url: {
+                addQueryArgs: function(url, args) {
+                    var separator = url.indexOf('?') !== -1 ? '&' : '?';
+                    var query = [];
+                    for (var key in args) {
+                        if (args.hasOwnProperty(key)) {
+                            query.push(encodeURIComponent(key) + '=' + encodeURIComponent(args[key]));
+                        }
+                    }
+                    return url + separator + query.join('&');
+                }
+            }
         };
     }
 
@@ -1399,7 +1458,7 @@ echo '<style>
     margin-top: 15px;
 }
 
-/* Styles pour l'onglet Maintenance */
+/* Styles for Maintenance tab */
 .maintenance-status {
     background: #fff;
     border: 1px solid #e5e5e5;
