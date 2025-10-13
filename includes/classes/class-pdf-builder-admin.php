@@ -98,7 +98,7 @@ class PDF_Builder_Admin {
             add_action('add_meta_boxes_woocommerce_page_wc-orders', [$this, 'add_woocommerce_order_meta_box']);
             add_action('wp_ajax_pdf_builder_generate_order_pdf', [$this, 'ajax_generate_order_pdf']);
             add_action('wp_ajax_pdf_builder_preview_order_pdf', [$this, 'ajax_preview_order_pdf']);
-            error_log('PDF BUILDER: Order AJAX actions registered');
+            error_log('PDF BUILDER: wp_ajax_pdf_builder_preview_order_pdf action registered');
         } else {
             error_log('PDF BUILDER: WooCommerce NOT detected, order AJAX actions NOT registered');
         }
