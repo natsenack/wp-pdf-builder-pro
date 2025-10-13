@@ -1657,6 +1657,8 @@ class PDF_Builder_Admin {
                     $content = $this->replace_order_variables($content, $order);
                 }
 
+                error_log('🔍 PDF BUILDER - Processing element: ' . $element['type'] . ' at position (' . $x . ', ' . $y . ') with content: ' . substr($content, 0, 50) . '...');
+
                 switch ($element['type']) {
                     case 'text':
                         $final_content = $order ? $this->replace_order_variables($content, $order) : $content;
