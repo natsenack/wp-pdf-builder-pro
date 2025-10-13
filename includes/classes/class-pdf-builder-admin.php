@@ -1982,18 +1982,42 @@ class PDF_Builder_Admin {
                 iframe.style.height = height + 'px';
                 iframe.style.border = 'none';
                 iframe.style.background = 'white';
+
+                // Utiliser une approche différente pour écrire dans l'iframe
                 iframe.onload = function() {
                     $('#pdf-preview-loading').hide();
+                    try {
+                        var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                        if (iframeDoc) {
+                            iframeDoc.open();
+                            iframeDoc.write(htmlContent);
+                            iframeDoc.close();
+                        } else {
+                            console.error('PDF Builder: Cannot access iframe document');
+                            $('#pdf-preview-iframe-container').html('<div style="color: #d63638; padding: 20px; text-align: center;">Erreur d\'accès à l\'aperçu</div>');
+                        }
+                    } catch (e) {
+                        console.error('PDF Builder: Error writing to iframe:', e);
+                        $('#pdf-preview-iframe-container').html('<div style="color: #d63638; padding: 20px; text-align: center;">Erreur lors du chargement de l\'aperçu</div>');
+                    }
                 };
 
-                // Écrire le contenu HTML dans l'iframe
-                var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                iframeDoc.open();
-                iframeDoc.write(htmlContent);
-                iframeDoc.close();
-
-                // Remplacer le contenu de chargement par l'iframe
+                // Ajouter l'iframe au conteneur
                 $('#pdf-preview-iframe-container').html(iframe);
+
+                // Essayer d'écrire immédiatement (pour les navigateurs qui le supportent)
+                try {
+                    var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    if (iframeDoc) {
+                        iframeDoc.open();
+                        iframeDoc.write(htmlContent);
+                        iframeDoc.close();
+                        $('#pdf-preview-loading').hide();
+                    }
+                } catch (e) {
+                    // L'onload handler s'occupera de ça
+                    console.log('PDF Builder: Will write to iframe on load event');
+                }
 
                 // Afficher la modale avec animation
                 $('#pdf-preview-modal').show().animate({opacity: 1}, 300);
