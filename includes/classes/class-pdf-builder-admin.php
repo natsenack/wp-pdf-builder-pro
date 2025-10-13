@@ -1870,9 +1870,6 @@ class PDF_Builder_Admin {
         $document_type = $this->detect_document_type($order_status);
         $document_type_label = $this->get_document_type_label($document_type);
 
-        // DEBUG temporaire
-        echo "<!-- DEBUG: Order status: '$order_status', Document type: '$document_type', Label: '$document_type_label' -->";
-
         // Récupérer le template par défaut adapté au type de document détecté
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
@@ -1907,11 +1904,10 @@ class PDF_Builder_Admin {
             $default_template = $wpdb->get_row("SELECT id, name FROM $table_templates WHERE is_default = 1 LIMIT 1", ARRAY_A);
         }
 
-        // DEBUG temporaire
         if ($default_template) {
-            echo "<!-- DEBUG: Using template: '{$default_template['name']}' for document type: '$document_type' -->";
+            // Template trouvé pour ce type de document
         } else {
-            echo "<!-- DEBUG: No template selected -->";
+            // Aucun template spécifique trouvé
         }
 
         wp_nonce_field('pdf_builder_order_actions', 'pdf_builder_order_nonce');
@@ -2667,9 +2663,6 @@ class PDF_Builder_Admin {
      * Détecte automatiquement le type de document basé sur le statut de la commande
      */
     private function detect_document_type($order_status) {
-        // DEBUG temporaire
-        echo "<!-- DEBUG detect_document_type: Received status: '$order_status' -->";
-
         $status_mapping = [
             'processing' => 'invoice',
             'completed' => 'invoice',
@@ -2682,12 +2675,7 @@ class PDF_Builder_Admin {
             'failed' => 'credit_note'
         ];
 
-        $result = $status_mapping[$order_status] ?? 'invoice';
-
-        // DEBUG temporaire
-        echo "<!-- DEBUG detect_document_type: Mapped '$order_status' to '$result' -->";
-
-        return $result;
+        return $status_mapping[$order_status] ?? 'invoice';
     }
 
     /**
@@ -2950,14 +2938,12 @@ class PDF_Builder_Admin {
             $fee_name = $fee->get_name();
             $fee_total = $fee->get_total();
 
-            if ($fee_total != 0) {
-                $html .= '<tr>';
-                $html .= '<td style="border: 1px solid #ddd; padding: 5px; font-weight: bold;">' . esc_html($fee_name) . '</td>';
-                $html .= '<td style="border: 1px solid #ddd; padding: 5px;">-</td>';
-                $html .= '<td style="border: 1px solid #ddd; padding: 5px;">-</td>';
-                $html .= '<td style="border: 1px solid #ddd; padding: 5px; font-weight: bold;">' . wc_price($fee_total) . '</td>';
-                $html .= '</tr>';
-            }
+            $html .= '<tr>';
+            $html .= '<td style="border: 1px solid #ddd; padding: 5px; font-weight: bold;">' . esc_html($fee_name) . '</td>';
+            $html .= '<td style="border: 1px solid #ddd; padding: 5px;">-</td>';
+            $html .= '<td style="border: 1px solid #ddd; padding: 5px;">-</td>';
+            $html .= '<td style="border: 1px solid #ddd; padding: 5px; font-weight: bold;">' . wc_price($fee_total) . '</td>';
+            $html .= '</tr>';
         }
 
         $html .= '</tbody></table>';
