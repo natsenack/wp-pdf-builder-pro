@@ -120,6 +120,10 @@ class PDF_Builder_Pro_Generator {
         $this->pdf->SetHeaderMargin(0);
         $this->pdf->SetFooterMargin(0);
 
+        // Désactivation des headers et footers
+        $this->pdf->setPrintHeader(false);
+        $this->pdf->setPrintFooter(false);
+
         // Gestion des sauts de page
         $this->pdf->SetAutoPageBreak($this->config['auto_page_break'], $this->config['page_break_margin']);
 
@@ -609,10 +613,10 @@ function pdf_builder_generate_pdf() {
 add_action('wp_ajax_pdf_builder_generate_pdf', 'pdf_builder_generate_pdf');
 add_action('wp_ajax_nopriv_pdf_builder_generate_pdf', 'pdf_builder_generate_pdf');
 
-    /**
-     * Générer le PDF à partir des éléments
-     */
-    public function generate_from_elements($elements) {
+/**
+ * Générer le PDF à partir des éléments
+ */
+function generate_from_elements($elements) {
         try {
             // Définir les constantes TCPDF par défaut avant le chargement
             if (!defined('PDF_PAGE_ORIENTATION')) {

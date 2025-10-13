@@ -118,6 +118,10 @@ class PDF_Builder_Pro_Generator {
         $this->pdf->SetHeaderMargin(0);
         $this->pdf->SetFooterMargin(0);
 
+        // Désactivation des headers et footers
+        $this->pdf->setPrintHeader(false);
+        $this->pdf->setPrintFooter(false);
+
         // Désactivation du saut de page automatique pour un contrôle total
         $this->pdf->SetAutoPageBreak(false, 0);
 
