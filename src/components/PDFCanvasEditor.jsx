@@ -14,7 +14,8 @@ const ElementLibrary = React.lazy(() => import('./ElementLibrary'));
 const PropertiesPanel = React.lazy(() => import('./PropertiesPanel'));
 
 // LOG DE TEST POUR VÉRIFIER QUE LES NOUVEAUX ASSETS SONT CHARGÉS
-console.log('🎉 PDF BUILDER PRO - NOUVELLE VERSION CHARGÉE - VERSION DEBUG 3.0 🎉');
+console.log('🎉 PDF BUILDER PRO - NOUVELLE VERSION CHARGÉE - VERSION DEBUG 4.0 - FORCE RELOAD 🎉');
+console.log('Timestamp de chargement:', Date.now());
 
 export const PDFCanvasEditor = ({ options }) => {
   const [tool, setTool] = useState('select');
@@ -104,7 +105,8 @@ export const PDFCanvasEditor = ({ options }) => {
 
   // Gestionnaire pour l'impression
   const handlePrint = useCallback(async () => {
-    console.log('🚀 NOUVEAUX LOGS DE DEBUG - VERSION 2.0 - DÉBUT');
+    console.log('� HANDLE PRINT DÉCLENCHÉ - FONCTION IMPRIMER CLIQUEE 🔥');
+    console.log('�🚀 NOUVEAUX LOGS DE DEBUG - VERSION 2.0 - DÉBUT');
     console.log('🔍 Début de la génération PDF avec logs détaillés');
 
     try {
