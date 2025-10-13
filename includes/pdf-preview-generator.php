@@ -9,20 +9,14 @@ if (!defined('PDF_PREVIEW_TEST_MODE')) {
 }
 require_once __DIR__ . '/pdf-generator.php';
 
-// Log pour vérifier que le fichier est chargé
-error_log('PDF Builder: pdf-preview-generator.php chargé');
-
 class PDF_Preview_Generator {
 
     private $generator;
 
     public function __construct() {
         try {
-            error_log('PDF Preview: Initialisation PDF_Builder_Pro_Generator');
             $this->generator = new PDF_Builder_Pro_Generator();
-            error_log('PDF Preview: PDF_Builder_Pro_Generator initialisé avec succès');
         } catch (Exception $e) {
-            error_log('PDF Preview: Erreur initialisation PDF_Builder_Pro_Generator: ' . $e->getMessage());
             $this->generator = null;
         }
     }
@@ -32,11 +26,8 @@ class PDF_Preview_Generator {
      */
     public function generate_preview($elements, $width = 400, $height = 566) {
         try {
-            error_log('PDF Preview: Début génération aperçu pour ' . count($elements) . ' éléments');
-
             // Vérifier si le générateur est disponible
             if (!$this->generator) {
-                error_log('PDF Preview: Générateur non disponible, utilisation du fallback');
                 return $this->generate_fallback_preview($elements, $width, $height);
             }
 
@@ -54,8 +45,6 @@ class PDF_Preview_Generator {
                 throw new Exception('Échec création miniature');
             }
 
-            error_log('PDF Preview: Aperçu généré avec succès, taille: ' . strlen($preview_image) . ' octets');
-
             return [
                 'success' => true,
                 'preview' => base64_encode($preview_image),
@@ -65,8 +54,6 @@ class PDF_Preview_Generator {
             ];
 
         } catch (Exception $e) {
-            error_log('PDF Preview: Erreur - ' . $e->getMessage());
-            error_log('PDF Preview: Utilisation du fallback');
             return $this->generate_fallback_preview($elements, $width, $height);
         }
     }
@@ -76,8 +63,6 @@ class PDF_Preview_Generator {
      */
     private function generate_fallback_preview($elements, $width, $height) {
         try {
-            error_log('PDF Preview: Génération aperçu fallback pour ' . count($elements) . ' éléments');
-
             // Créer une image simple avec GD
             if (!function_exists('imagecreatetruecolor')) {
                 throw new Exception('Extension GD non disponible');
@@ -105,8 +90,6 @@ class PDF_Preview_Generator {
             $png_data = ob_get_clean();
             imagedestroy($image);
 
-            error_log('PDF Preview: Aperçu fallback généré avec succès');
-
             return [
                 'success' => true,
                 'preview' => base64_encode($png_data),
@@ -117,7 +100,6 @@ class PDF_Preview_Generator {
             ];
 
         } catch (Exception $e) {
-            error_log('PDF Preview: Erreur fallback - ' . $e->getMessage());
             return [
                 'success' => false,
                 'error' => 'Erreur génération aperçu: ' . $e->getMessage(),
@@ -237,87 +219,47 @@ class PDF_Preview_Generator {
 
 // Fonction AJAX pour l'aperçu
 function pdf_builder_generate_preview() {
-    error_log('PDF Builder Preview: ===== DÉBUT génération aperçu =====');
     try {
-        // Log détaillé pour le débogage du nonce
-        error_log('PDF Builder Preview: Début génération aperçu');
-        error_log('PDF Builder Preview: Nonce reçu: ' . ($_POST['nonce'] ?? 'NONCE_MANQUANT'));
-        error_log('PDF Builder Preview: Action attendue: pdf_builder_nonce');
-
-        // Vérifier le nonce avec plus de détails
-        $nonce_to_verify = $_POST['nonce'] ?? '';
-        $expected_action = 'pdf_builder_nonce';
-
-        if (empty($nonce_to_verify)) {
-            error_log('PDF Builder Preview: ERREUR - Nonce vide ou manquant');
-            wp_send_json_error('Nonce manquant');
-            return;
-        }
-
-        $nonce_valid = wp_verify_nonce($nonce_to_verify, $expected_action);
-
-        error_log('PDF Builder Preview: Résultat vérification nonce: ' . ($nonce_valid ? 'VALID' : 'INVALID'));
-
-        if (!$nonce_valid) {
-            // Essayer de vérifier si c'est un problème de timing
-            $current_user_id = get_current_user_id();
-            error_log('PDF Builder Preview: User ID: ' . $current_user_id);
-            error_log('PDF Builder Preview: Session ID: ' . session_id());
-
+        // Vérifier le nonce
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_nonce')) {
             wp_send_json_error('Nonce invalide');
             return;
         }
-
-        error_log('PDF Builder Preview: Nonce validé avec succès');
 
         // Récupérer les éléments
         $elements = json_decode(stripslashes($_POST['elements'] ?? '[]'), true);
 
         if (empty($elements)) {
-            error_log('PDF Builder Preview: Aucun élément à prévisualiser');
             wp_send_json_error('Aucun élément à prévisualiser');
             return;
         }
-
-        error_log('PDF Builder Preview: ' . count($elements) . ' éléments reçus');
 
         // Générer l'aperçu
         $preview_generator = new PDF_Preview_Generator();
         $result = $preview_generator->generate_preview($elements);
 
-        error_log('PDF Builder Preview: Résultat génération: ' . json_encode($result));
-
         if ($result['success']) {
-            error_log('PDF Builder Preview: ===== FIN génération aperçu - SUCCÈS =====');
             wp_send_json_success($result);
         } else {
-            error_log('PDF Builder Preview: ===== FIN génération aperçu - ÉCHEC =====');
             wp_send_json_error('Erreur génération aperçu: ' . $result['error']);
         }
 
     } catch (Exception $e) {
-        error_log('PDF Builder Preview: ===== ERREUR génération aperçu =====');
         error_log('Erreur aperçu PDF: ' . $e->getMessage());
-        error_log('PDF Builder Preview: Trace: ' . $e->getTraceAsString());
         wp_send_json_error('Erreur serveur: ' . $e->getMessage());
     }
 }
 
 // Endpoint de test AJAX
 function pdf_builder_test_ajax() {
-    error_log('PDF Builder: Test AJAX appelé');
     wp_send_json_success(['message' => 'AJAX fonctionne', 'timestamp' => time()]);
 }
 
 // Endpoint pour obtenir un nonce frais
 function pdf_builder_get_fresh_nonce() {
-    error_log('PDF Builder: Fonction pdf_builder_get_fresh_nonce appelée');
     try {
-        $fresh_nonce = wp_create_nonce('pdf_builder_nonce');
-        error_log('PDF Builder: Nonce frais généré: ' . $fresh_nonce);
-
         wp_send_json_success([
-            'nonce' => $fresh_nonce,
+            'nonce' => wp_create_nonce('pdf_builder_nonce'),
             'timestamp' => time()
         ]);
     } catch (Exception $e) {
@@ -328,12 +270,10 @@ function pdf_builder_get_fresh_nonce() {
 
 // Enregistrer la fonction AJAX
 if (function_exists('add_action')) {
-    error_log('PDF Builder: Enregistrement des actions AJAX');
     add_action('wp_ajax_pdf_builder_generate_preview', 'pdf_builder_generate_preview');
     add_action('wp_ajax_nopriv_pdf_builder_generate_preview', 'pdf_builder_generate_preview');
     add_action('wp_ajax_pdf_builder_get_fresh_nonce', 'pdf_builder_get_fresh_nonce');
     add_action('wp_ajax_nopriv_pdf_builder_get_fresh_nonce', 'pdf_builder_get_fresh_nonce');
     add_action('wp_ajax_pdf_builder_test_ajax', 'pdf_builder_test_ajax');
     add_action('wp_ajax_nopriv_pdf_builder_test_ajax', 'pdf_builder_test_ajax');
-    error_log('PDF Builder: Actions AJAX enregistrées');
 }
