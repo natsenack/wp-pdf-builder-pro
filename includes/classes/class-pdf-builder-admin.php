@@ -2013,6 +2013,9 @@ class PDF_Builder_Admin {
      * Rend la meta box dans les commandes WooCommerce
      */
     public function render_woocommerce_order_meta_box($post_or_order) {
+        global $wpdb;
+        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+
         error_log('PDF Builder: render_woocommerce_order_meta_box called');
 
         // Handle both legacy (WP_Post) and HPOS (WC_Order) cases
