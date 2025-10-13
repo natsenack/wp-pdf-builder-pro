@@ -7,6 +7,9 @@
 if (!defined('PDF_PREVIEW_TEST_MODE')) {
     define('PDF_PREVIEW_TEST_MODE', true);
 }
+if (!defined('PDF_GENERATOR_TEST_MODE')) {
+    define('PDF_GENERATOR_TEST_MODE', true);
+}
 require_once __DIR__ . '/pdf-generator.php';
 
 class PDF_Preview_Generator {
@@ -219,9 +222,21 @@ class PDF_Preview_Generator {
 
 // Fonction AJAX pour l'aperçu
 function pdf_builder_generate_preview() {
+    // Démarrer la bufferisation de sortie pour capturer toute sortie accidentelle
+    ob_start();
+
     try {
+        // Vérifier que les fonctions WordPress sont disponibles
+        if (!function_exists('wp_verify_nonce') || !function_exists('wp_send_json_error') || !function_exists('wp_send_json_success')) {
+            ob_end_clean();
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => 'Fonctions WordPress non disponibles']);
+            exit;
+        }
+
         // Vérifier le nonce
         if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_nonce')) {
+            ob_end_clean();
             wp_send_json_error('Nonce invalide');
             return;
         }
@@ -230,6 +245,7 @@ function pdf_builder_generate_preview() {
         $elements = json_decode(stripslashes($_POST['elements'] ?? '[]'), true);
 
         if (empty($elements)) {
+            ob_end_clean();
             wp_send_json_error('Aucun élément à prévisualiser');
             return;
         }
@@ -238,15 +254,26 @@ function pdf_builder_generate_preview() {
         $preview_generator = new PDF_Preview_Generator();
         $result = $preview_generator->generate_preview($elements, 400, 566);
 
+        // Nettoyer le buffer avant d'envoyer la réponse
+        ob_end_clean();
+
         if ($result['success']) {
             wp_send_json_success($result);
         } else {
+            error_log('PDF Preview Error: ' . $result['error']);
             wp_send_json_error('Erreur génération aperçu: ' . $result['error']);
         }
 
     } catch (Exception $e) {
-        error_log('Erreur aperçu PDF: ' . $e->getMessage());
+        // Nettoyer le buffer et logger l'erreur
+        ob_end_clean();
+        error_log('Exception aperçu PDF: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
         wp_send_json_error('Erreur serveur: ' . $e->getMessage());
+    } catch (Error $e) {
+        // Capturer aussi les erreurs fatales PHP
+        ob_end_clean();
+        error_log('Erreur fatale aperçu PDF: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
+        wp_send_json_error('Erreur fatale serveur: ' . $e->getMessage());
     }
 }
 
