@@ -501,6 +501,15 @@ const PreviewModal = ({
 
       console.log('Données reçues:', data);
 
+      // 🚨🚨🚨 AFFICHAGE DES LOGS DE DEBUG SERVEUR 🚨🚨🚨
+      if (data.data && data.data.debug_logs) {
+        console.log('🚨 LOGS DE DEBUG SERVEUR ULTRA-VISIBLES:');
+        data.data.debug_logs.forEach((log, index) => {
+          console.log(`🔥 LOG ${index}: ${log}`);
+        });
+        console.log('🚨 FIN DES LOGS DE DEBUG SERVEUR 🚨');
+      }
+
       if (!data.success) {
         let errorMessage = 'Erreur inconnue lors de la génération du PDF';
         if (typeof data.data === 'string') {
