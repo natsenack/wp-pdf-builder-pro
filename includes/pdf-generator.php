@@ -103,7 +103,7 @@ class PDF_Builder_Pro_Generator {
             $this->config['unit'],
             $this->config['format'],
             true,
-            'UTF-8',
+            'ISO-8859-1',
             false
         );
 
@@ -608,9 +608,9 @@ class PDF_Builder_Pro_Generator {
 
         $this->pdf->SetXY($x, $y);
         $this->pdf->SetFont('helvetica', 'B', 12);
-        $this->pdf->Cell($width, 6, 'Client', 0, 2);
+        $this->pdf->Cell($width, 6, utf8_decode('Client'), 0, 2);
         $this->pdf->SetFont('helvetica', '', 10);
-        $this->pdf->MultiCell($width, 5, $customer_info, 0, 'L');
+        $this->pdf->MultiCell($width, 5, utf8_decode($customer_info), 0, 'L');
     }
 
     /**
@@ -627,9 +627,9 @@ class PDF_Builder_Pro_Generator {
 
         $this->pdf->SetXY($x, $y);
         $this->pdf->SetFont('helvetica', 'B', 12);
-        $this->pdf->Cell($width, 6, 'ABC Company SARL', 0, 2);
+        $this->pdf->Cell($width, 6, utf8_decode('ABC Company SARL'), 0, 2);
         $this->pdf->SetFont('helvetica', '', 10);
-        $this->pdf->MultiCell($width, 5, "456 Avenue des Champs\n75008 Paris\nFrance\nTel: 01 23 45 67 89", 0, 'L');
+        $this->pdf->MultiCell($width, 5, utf8_decode("456 Avenue des Champs\n75008 Paris\nFrance\nTel: 01 23 45 67 89"), 0, 'L');
     }
 
     /**
@@ -649,7 +649,7 @@ class PDF_Builder_Pro_Generator {
         $this->pdf->Rect($x, $y, $width, $height, 'D');
         $this->pdf->SetXY($x, $y + $height/2 - 3);
         $this->pdf->SetFont('helvetica', '', 10);
-        $this->pdf->Cell($width, 6, 'LOGO ENTREPRISE', 0, 0, 'C');
+        $this->pdf->Cell($width, 6, utf8_decode('LOGO ENTREPRISE'), 0, 0, 'C');
     }
 
     /**
@@ -668,22 +668,22 @@ class PDF_Builder_Pro_Generator {
         $this->pdf->SetFont('helvetica', 'B', 9);
 
         $col_widths = [$width * 0.4, $width * 0.15, $width * 0.2, $width * 0.25];
-        $this->pdf->Cell($col_widths[0], 8, 'Produit', 1, 0, 'L', true);
-        $this->pdf->Cell($col_widths[1], 8, 'Qté', 1, 0, 'C', true);
-        $this->pdf->Cell($col_widths[2], 8, 'Prix', 1, 0, 'R', true);
-        $this->pdf->Cell($col_widths[3], 8, 'Total', 1, 1, 'R', true);
+        $this->pdf->Cell($col_widths[0], 8, utf8_decode('Produit'), 1, 0, 'L', true);
+        $this->pdf->Cell($col_widths[1], 8, utf8_decode('Qté'), 1, 0, 'C', true);
+        $this->pdf->Cell($col_widths[2], 8, utf8_decode('Prix'), 1, 0, 'R', true);
+        $this->pdf->Cell($col_widths[3], 8, utf8_decode('Total'), 1, 1, 'R', true);
 
         // Ligne de produit factice
         $this->pdf->SetFont('helvetica', '', 8);
-        $this->pdf->Cell($col_widths[0], 6, 'Produit A - Description', 1, 0, 'L');
+        $this->pdf->Cell($col_widths[0], 6, utf8_decode('Produit A - Description'), 1, 0, 'L');
         $this->pdf->Cell($col_widths[1], 6, '2', 1, 0, 'C');
-        $this->pdf->Cell($col_widths[2], 6, '19.99€', 1, 0, 'R');
-        $this->pdf->Cell($col_widths[3], 6, '39.98€', 1, 1, 'R');
+        $this->pdf->Cell($col_widths[2], 6, '19.99 EUR', 1, 0, 'R');
+        $this->pdf->Cell($col_widths[3], 6, '39.98 EUR', 1, 1, 'R');
 
         // Total
         $this->pdf->SetXY($x + $col_widths[0] + $col_widths[1] + $col_widths[2], $y + 14);
         $this->pdf->SetFont('helvetica', 'B', 9);
-        $this->pdf->Cell($col_widths[3], 6, 'Total: 39.98€', 1, 1, 'R', true);
+        $this->pdf->Cell($col_widths[3], 6, utf8_decode('Total: 39.98 EUR'), 1, 1, 'R', true);
     }
 
     /**
@@ -697,9 +697,9 @@ class PDF_Builder_Pro_Generator {
 
         $this->pdf->SetXY($x, $y);
         $this->pdf->SetFont('helvetica', 'B', 14);
-        $this->pdf->Cell($width, 8, 'FACTURE', 0, 1, 'R');
+        $this->pdf->Cell($width, 8, utf8_decode('FACTURE'), 0, 1, 'R');
         $this->pdf->SetFont('helvetica', '', 10);
-        $this->pdf->Cell($width, 6, 'N° INV-001', 0, 1, 'R');
+        $this->pdf->Cell($width, 6, utf8_decode('N° INV-001'), 0, 1, 'R');
     }
 
     /**
