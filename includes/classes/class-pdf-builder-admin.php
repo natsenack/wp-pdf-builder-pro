@@ -56,6 +56,8 @@ class PDF_Builder_Admin {
      * Initialise les hooks WordPress
      */
     private function init_hooks() {
+        error_log('PDF BUILDER: init_hooks() called for PDF_Builder_Admin');
+
         add_action('admin_menu', [$this, 'add_admin_menu']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts'], 20);
         add_action('wp_ajax_pdf_builder_pro_generate_pdf', [$this, 'ajax_generate_pdf_from_canvas']);
@@ -90,11 +92,15 @@ class PDF_Builder_Admin {
 
         // WooCommerce integration hooks
         if (class_exists('WooCommerce')) {
+            error_log('PDF BUILDER: WooCommerce detected, registering order AJAX actions');
             // Support for both legacy and HPOS order systems
             add_action('add_meta_boxes_shop_order', [$this, 'add_woocommerce_order_meta_box']);
             add_action('add_meta_boxes_woocommerce_page_wc-orders', [$this, 'add_woocommerce_order_meta_box']);
             add_action('wp_ajax_pdf_builder_generate_order_pdf', [$this, 'ajax_generate_order_pdf']);
             add_action('wp_ajax_pdf_builder_preview_order_pdf', [$this, 'ajax_preview_order_pdf']);
+            error_log('PDF BUILDER: Order AJAX actions registered');
+        } else {
+            error_log('PDF BUILDER: WooCommerce NOT detected, order AJAX actions NOT registered');
         }
     }
 
