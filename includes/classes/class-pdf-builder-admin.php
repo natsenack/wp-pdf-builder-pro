@@ -1674,6 +1674,15 @@ class PDF_Builder_Admin {
                         }
                         break;
 
+                    case 'order_number':
+                        if ($order) {
+                            $order_number = $order->get_order_number();
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($order_number));
+                        } else {
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: 'N° de commande'));
+                        }
+                        break;
+
                     case 'invoice_date':
                         if ($order) {
                             $date = $order->get_date_created() ? $order->get_date_created()->date('d/m/Y') : date('d/m/Y');
@@ -1744,14 +1753,40 @@ class PDF_Builder_Admin {
                             $table_html = $this->generate_order_products_table($order);
                             $html .= '<div class="pdf-element" style="' . $style . '">' . $table_html . '</div>';
                         } else {
-                            $html .= '<div class="pdf-element" style="' . $style . '">Tableau de produits (aperçu)</div>';
+                            // Aperçu fictif du tableau de produits
+                            $table_html = '<div style="width: 100%; height: 100%; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; font-size: 10px; background-color: white;">';
+                            $table_html .= '<div style="display: flex; background-color: #f5f5f5; padding: 4px; font-weight: bold; border-bottom: 1px solid #ddd;">';
+                            $table_html .= '<div style="flex: 1;">Produit</div>';
+                            $table_html .= '<div style="width: 60px; text-align: center;">Qté</div>';
+                            $table_html .= '<div style="width: 80px; text-align: right;">Prix</div>';
+                            $table_html .= '<div style="width: 80px; text-align: right;">Total</div>';
+                            $table_html .= '</div>';
+                            $table_html .= '<div style="padding: 4px; border-bottom: 1px solid #eee;">';
+                            $table_html .= '<div style="display: flex;">';
+                            $table_html .= '<div style="flex: 1;">Produit A - Description</div>';
+                            $table_html .= '<div style="width: 60px; text-align: center;">2</div>';
+                            $table_html .= '<div style="width: 80px; text-align: right;">19.99€</div>';
+                            $table_html .= '<div style="width: 80px; text-align: right;">39.98€</div>';
+                            $table_html .= '</div>';
+                            $table_html .= '</div>';
+                            $table_html .= '<div style="padding: 4px; border-bottom: 1px solid #eee;">';
+                            $table_html .= '<div style="display: flex;">';
+                            $table_html .= '<div style="flex: 1;">Produit B - Autre article</div>';
+                            $table_html .= '<div style="width: 60px; text-align: center;">1</div>';
+                            $table_html .= '<div style="width: 80px; text-align: right;">29.99€</div>';
+                            $table_html .= '<div style="width: 80px; text-align: right;">29.99€</div>';
+                            $table_html .= '</div>';
+                            $table_html .= '</div>';
+                            $table_html .= '<div style="padding: 4px; font-weight: bold; text-align: right; border-top: 1px solid #ddd;">Total: 69.97€</div>';
+                            $table_html .= '</div>';
+                            $html .= '<div class="pdf-element" style="' . $style . '">' . $table_html . '</div>';
                         }
                         break;
 
                     case 'company_info':
-                        // Informations de la société depuis les options
-                        $company = get_option('pdf_builder_company_info', '');
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($company));
+                        // Informations complètes de la société
+                        $company_info = $this->format_complete_company_info();
+                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, nl2br(esc_html($company_info)));
                         break;
 
                     case 'document_type':
@@ -1760,17 +1795,54 @@ class PDF_Builder_Admin {
                         $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($docType));
                         break;
 
-                    case 'divider':
-                        // Séparateur horizontal
-                        $html .= sprintf('<hr class="pdf-element" style="%s;border:none;border-top:1px solid #000;" />', $style);
+                    case 'watermark':
+                        $watermark_text = $element['content'] ?? 'CONFIDENTIEL';
+                        $opacity = isset($element['opacity']) ? $element['opacity'] / 100 : 0.1;
+                        $style .= sprintf('opacity: %s; color: rgba(0,0,0,%s); font-size: 48px; text-align: center; transform: rotate(-45deg); pointer-events: none;', $opacity, $opacity);
+                        $html .= sprintf('<div class="pdf-element watermark" style="%s">%s</div>', $style, esc_html($watermark_text));
+                        break;
+
+                    case 'progress-bar':
+                        $progress = $element['progress'] ?? 50;
+                        $progress_style = $style . sprintf('background: #f0f0f0; border: 1px solid #ccc; border-radius: 10px; overflow: hidden;');
+                        $bar_style = sprintf('width: %d%%; height: 100%%; background: #007cba; border-radius: 8px;', $progress);
+                        $html .= sprintf('<div class="pdf-element progress-bar" style="%s"><div style="%s"></div></div>', $progress_style, $bar_style);
+                        break;
+
+                    case 'barcode':
+                        if ($order) {
+                            $barcode_data = $order->get_order_number();
+                            $html .= sprintf('<div class="pdf-element barcode" style="%s">*%s*</div>', $style, esc_html($barcode_data));
+                        } else {
+                            $html .= sprintf('<div class="pdf-element barcode" style="%s">*BARCODE*</div>', $style);
+                        }
+                        break;
+
+                    case 'qrcode':
+                        if ($order) {
+                            $qr_data = 'Order: ' . $order->get_order_number();
+                            $html .= sprintf('<div class="pdf-element qrcode" style="%s">[QR:%s]</div>', $style, esc_html($qr_data));
+                        } else {
+                            $html .= sprintf('<div class="pdf-element qrcode" style="%s">[QR:CODE]</div>', $style);
+                        }
+                        break;
+
+                    case 'icon':
+                        $icon_name = $element['icon'] ?? 'star';
+                        $html .= sprintf('<div class="pdf-element icon" style="%s">📄</div>', $style);
+                        break;
+
+                    case 'line':
+                        $line_style = $style . 'border-top: 2px solid #000; height: 0;';
+                        $html .= sprintf('<div class="pdf-element line" style="%s"></div>', $line_style);
                         break;
 
                     case 'customer_info':
                         if ($order) {
-                            $addr = $order->get_formatted_billing_address();
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, nl2br(esc_html($addr)));
+                            $customer_info = $this->format_complete_customer_info($order);
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, nl2br(esc_html($customer_info)));
                         } else {
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: 'Adresse client'));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: 'Informations client'));
                         }
                         break;
 
@@ -2751,8 +2823,18 @@ class PDF_Builder_Admin {
     }
 
     /**
-     * Remplace les variables dans le contenu
+     * Formate les informations complètes de la société
      */
+    private function format_complete_company_info() {
+        $company_info = get_option('pdf_builder_company_info', '');
+
+        // Si les informations sont vides, retourner des données d'exemple
+        if (empty($company_info)) {
+            return "Votre Société SARL\n123 Rue de l'Entreprise\n75001 Paris\nFrance\nTél: 01 23 45 67 89\nEmail: contact@votresociete.com";
+        }
+
+        return $company_info;
+    }
     private function replace_order_variables($content, $order) {
         // Préparer les données de la commande
         $billing_address = $order->get_formatted_billing_address();
