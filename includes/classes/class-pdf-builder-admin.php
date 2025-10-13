@@ -2698,6 +2698,21 @@ class PDF_Builder_Admin {
             $html .= '</tr>';
         }
 
+        // Ajouter les frais de commande personnalisés
+        foreach ($order->get_fees() as $fee) {
+            $fee_name = $fee->get_name();
+            $fee_total = $fee->get_total();
+
+            if ($fee_total != 0) {
+                $html .= '<tr>';
+                $html .= '<td style="border: 1px solid #ddd; padding: 5px; font-weight: bold;">' . esc_html($fee_name) . '</td>';
+                $html .= '<td style="border: 1px solid #ddd; padding: 5px;">-</td>';
+                $html .= '<td style="border: 1px solid #ddd; padding: 5px;">-</td>';
+                $html .= '<td style="border: 1px solid #ddd; padding: 5px; font-weight: bold;">' . wc_price($fee_total) . '</td>';
+                $html .= '</tr>';
+            }
+        }
+
         $html .= '</tbody></table>';
         return $html;
     }

@@ -708,19 +708,32 @@ class PDF_Builder_Pro_Generator {
         $this->pdf->Cell($col_widths[2], 8, utf8_decode('Prix'), 1, 0, 'R', true);
         $this->pdf->Cell($col_widths[3], 8, utf8_decode('Total'), 1, 1, 'R', true);
 
-    // Ligne de produit factice
-    // Position explicite sous l'en-tête
-    $this->pdf->SetXY($x, $y + 8);
-    $this->pdf->SetFont('helvetica', '', 8);
-        $this->pdf->Cell($col_widths[0], 6, utf8_decode('Produit A - Description'), 1, 0, 'L');
-        $this->pdf->Cell($col_widths[1], 6, '2', 1, 0, 'C');
-        $this->pdf->Cell($col_widths[2], 6, '19.99 EUR', 1, 0, 'R');
-        $this->pdf->Cell($col_widths[3], 6, '39.98 EUR', 1, 1, 'R');
+        // Vérifier si on a accès à l'objet commande
+        if (isset($this->order) && $this->order) {
+            // Rendre les vrais produits de la commande
+            $this->render_order_products_with_fees($x, $col_widths);
+        } else {
+            // Ligne de produit factice
+            $this->pdf->SetXY($x, $y + 8);
+            $this->pdf->SetFont('helvetica', '', 8);
+            $this->pdf->Cell($col_widths[0], 6, utf8_decode('Produit A - Description'), 1, 0, 'L');
+            $this->pdf->Cell($col_widths[1], 6, '2', 1, 0, 'C');
+            $this->pdf->Cell($col_widths[2], 6, '19.99 EUR', 1, 0, 'R');
+            $this->pdf->Cell($col_widths[3], 6, '39.98 EUR', 1, 1, 'R');
 
-        // Total
-        $this->pdf->SetXY($x + $col_widths[0] + $col_widths[1] + $col_widths[2], $y + 14);
-        $this->pdf->SetFont('helvetica', 'B', 9);
-        $this->pdf->Cell($col_widths[3], 6, utf8_decode('Total: 39.98 EUR'), 1, 1, 'R', true);
+            // Ligne de frais factice
+            $this->pdf->SetXY($x, $y + 14);
+            $this->pdf->SetFont('helvetica', 'B', 8);
+            $this->pdf->Cell($col_widths[0], 6, utf8_decode('Frais de port'), 1, 0, 'L');
+            $this->pdf->Cell($col_widths[1], 6, '-', 1, 0, 'C');
+            $this->pdf->Cell($col_widths[2], 6, '-', 1, 0, 'R');
+            $this->pdf->Cell($col_widths[3], 6, '5.00 EUR', 1, 1, 'R');
+
+            // Total
+            $this->pdf->SetXY($x + $col_widths[0] + $col_widths[1] + $col_widths[2], $y + 20);
+            $this->pdf->SetFont('helvetica', 'B', 9);
+            $this->pdf->Cell($col_widths[3], 6, utf8_decode('Total: 44.98 EUR'), 1, 1, 'R', true);
+        }
     }
 
     /**

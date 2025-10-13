@@ -275,7 +275,15 @@ class PDF_Preview_Generator {
                 $table_html .= '<div style="width: 80px; text-align: right;">39.98€</div>';
                 $table_html .= '</div>';
                 $table_html .= '</div>';
-                $table_html .= '<div style="padding: 4px; font-weight: bold; text-align: right;">Total: 39.98€</div>';
+                $table_html .= '<div style="padding: 4px; border-bottom: 1px solid #eee; font-weight: bold;">';
+                $table_html .= '<div style="display: flex;">';
+                $table_html .= '<div style="flex: 1;">Frais de port</div>';
+                $table_html .= '<div style="width: 60px; text-align: center;">-</div>';
+                $table_html .= '<div style="width: 80px; text-align: right;">-</div>';
+                $table_html .= '<div style="width: 80px; text-align: right;">5.00€</div>';
+                $table_html .= '</div>';
+                $table_html .= '</div>';
+                $table_html .= '<div style="padding: 4px; font-weight: bold; text-align: right;">Total: 44.98€</div>';
                 $table_html .= '</div>';
 
                 return sprintf('<div style="%s">%s</div>', $base_style, $table_html);
