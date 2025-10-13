@@ -113,7 +113,7 @@ export const PDFCanvasEditor = ({ options }) => {
       // Récupérer tous les éléments du canvas
       const elements = canvasState.getAllElements();
       console.log('Éléments récupérés:', elements);
-      console.log('Éléments récupérés:', elements);
+      console.log('Nombre d\'éléments récupérés:', elements.length);
 
       if (elements.length === 0) {
         alert('Aucun élément à imprimer. Ajoutez des éléments au canvas d\'abord.');
@@ -161,15 +161,28 @@ export const PDFCanvasEditor = ({ options }) => {
         console.log('Nombre d\'éléments traités:', data.data?.elements_count || 0);
         console.log('Taille du PDF:', data.data?.pdf_size || 0, 'octets');
 
-        // Créer un lien de téléchargement temporaire
-        const link = document.createElement('a');
-        link.href = `data:application/pdf;base64,${data.data.pdf}`;
-        link.download = data.data.filename || 'document.pdf';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        // Créer l'URL du PDF
+        const pdfDataUrl = `data:application/pdf;base64,${data.data.pdf}`;
+        console.log('URL du PDF créée:', pdfDataUrl.substring(0, 100) + '...');
 
-        alert('PDF généré et téléchargé avec succès !');
+        // Ouvrir le PDF dans un nouvel onglet
+        console.log('Ouverture du PDF dans un nouvel onglet...');
+        const newWindow = window.open(pdfDataUrl, '_blank');
+
+        if (!newWindow) {
+          console.warn('Popup bloquée, tentative de téléchargement alternatif...');
+          // Fallback : téléchargement si popup bloquée
+          const link = document.createElement('a');
+          link.href = pdfDataUrl;
+          link.download = data.data.filename || 'document.pdf';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          alert('PDF généré et téléchargé ! Vérifiez vos téléchargements.');
+        } else {
+          console.log('PDF ouvert dans un nouvel onglet avec succès');
+          alert('PDF généré et ouvert dans un nouvel onglet !');
+        }
       } else {
         console.error('Erreur serveur:', data.data);
         throw new Error(data.data?.message || 'Erreur lors de la génération du PDF');
