@@ -274,32 +274,34 @@ window.addEventListener('load', function() {
         }
         console.log('Found', tabContents.length, 'tab content elements (by ID lookup)');
 
-        // Remove active class from all tab contents
-        for (var i = 0; i < tabContents.length; i++) {
-            tabContents[i].classList.remove('active');
-            console.log('Removed active class from content:', tabContents[i].id);
+        // Simple approach: hide all tab contents first, then show only the target
+        var allTabContents = document.querySelectorAll('.tab-content');
+        console.log('Found', allTabContents.length, 'total tab content elements to manage');
+
+        for (var i = 0; i < allTabContents.length; i++) {
+            if (allTabContents[i].id === targetElement.id) {
+                // This is the target - show it
+                allTabContents[i].classList.add('active');
+                allTabContents[i].style.cssText = 'display: block !important;';
+                console.log('SHOWING target content:', allTabContents[i].id);
+            } else {
+                // This is not the target - hide it
+                allTabContents[i].classList.remove('active');
+                allTabContents[i].style.cssText = 'display: none !important;';
+                console.log('HIDING non-target content:', allTabContents[i].id);
+            }
         }
 
-        // Remove active class from all nav tabs
+        // Handle nav tabs
         for (var i = 0; i < navTabs.length; i++) {
             navTabs[i].classList.remove('nav-tab-active');
-            console.log('Removed nav-tab-active class from tab', i, 'href:', navTabs[i].getAttribute('href'));
         }
 
-        // Activate the clicked tab
         var activeNavTab = document.querySelector('.nav-tab[href="' + tabHref + '"]');
-        console.log('Looking for nav tab with href:', tabHref, 'found:', !!activeNavTab);
-
         if (activeNavTab) {
-            console.log('Adding nav-tab-active class to clicked tab');
             activeNavTab.classList.add('nav-tab-active');
-        } else {
-            console.error('❌ Could not find nav tab with href:', tabHref);
+            console.log('Activated nav tab for:', tabHref);
         }
-
-        // Show the target content
-        console.log('Adding active class to target content:', targetElement.id);
-        targetElement.classList.add('active');
 
         // Verify final state
         var activeContents = document.querySelectorAll('.tab-content.active');
