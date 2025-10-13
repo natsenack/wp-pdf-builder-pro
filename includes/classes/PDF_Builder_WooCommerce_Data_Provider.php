@@ -228,17 +228,30 @@ class PDF_Builder_WooCommerce_Data_Provider {
             return '';
         }
 
-        $output = '';
+        $output = '<table style="width: 100%; border-collapse: collapse; font-size: 12px;">';
+        $output .= '<thead><tr style="border-bottom: 1px solid #000;">';
+        $output .= '<th style="text-align: left; padding: 5px;">Produit</th>';
+        $output .= '<th style="text-align: center; padding: 5px;">Qté</th>';
+        $output .= '<th style="text-align: right; padding: 5px;">Prix</th>';
+        $output .= '<th style="text-align: right; padding: 5px;">Total</th>';
+        $output .= '</tr></thead><tbody>';
+
         foreach ($items as $item) {
             $name = isset($item['name']) ? $item['name'] : '';
             $quantity = isset($item['quantity']) ? $item['quantity'] : 1;
             $price = isset($item['price']) ? $item['price'] : '$0.00';
             $total = isset($item['total']) ? $item['total'] : '$0.00';
 
-            $output .= "- {$name} x{$quantity} {$price}\n";
+            $output .= '<tr>';
+            $output .= '<td style="padding: 5px;">' . esc_html($name) . '</td>';
+            $output .= '<td style="text-align: center; padding: 5px;">' . esc_html($quantity) . '</td>';
+            $output .= '<td style="text-align: right; padding: 5px;">' . esc_html($price) . '</td>';
+            $output .= '<td style="text-align: right; padding: 5px;">' . esc_html($total) . '</td>';
+            $output .= '</tr>';
         }
 
-        return trim($output);
+        $output .= '</tbody></table>';
+        return $output;
     }
 
     /**

@@ -2180,7 +2180,20 @@ class PDF_Builder_Admin {
                         break;
 
                     default:
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: $element['type']));
+                        // Vérifier si c'est un élément WooCommerce
+                        if (strpos($element['type'], 'woocommerce-') === 0) {
+                            $woo_data_provider = PDF_Builder_WooCommerce_Data_Provider::getInstance();
+                            $woo_content = $woo_data_provider->get_element_data($element['type'], $order->get_id());
+
+                            // Pour les tableaux de produits, générer du HTML spécial
+                            if ($element['type'] === 'woocommerce-products-table') {
+                                $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, $woo_content);
+                            } else {
+                                $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($woo_content));
+                            }
+                        } else {
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: $element['type']));
+                        }
                         break;
                 }
             }

@@ -91,6 +91,19 @@ class PDF_Builder_Debug_Helper {
     public function get_debug_level() {
         return $this->debug_level;
     }
+
+    /**
+     * Préparer une requête SQL de manière sécurisée
+     * Wrapper statique pour $wpdb->prepare()
+     */
+    public static function safe_wpdb_prepare($query, ...$args) {
+        global $wpdb;
+        if (!$wpdb) {
+            self::get_instance()->error('wpdb not available for safe_wpdb_prepare');
+            return $query;
+        }
+        return $wpdb->prepare($query, ...$args);
+    }
 }
 
 // Fonction globale pour accéder au debug helper
