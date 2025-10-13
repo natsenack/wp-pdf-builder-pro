@@ -2967,12 +2967,14 @@ class PDF_Builder_Admin {
     }
 
     /**
-     * Nettoie les données JSON pour corriger les erreurs d'encodage
+     * Nettoie les données JSON pour corriger les erreurs d'encodage et de syntaxe
      */
     private function clean_json_data($json_string) {
         if (!is_string($json_string)) {
             return $json_string;
         }
+
+        $original = $json_string;
 
         // Supprimer les caractères de contrôle invisibles (sauf tabulation, retour chariot, nouvelle ligne)
         $cleaned = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $json_string);
@@ -2990,6 +2992,25 @@ class PDF_Builder_Admin {
 
         // Supprimer les caractères null
         $cleaned = str_replace("\0", '', $cleaned);
+
+        // Corriger les virgules de fin dans les objets/tableaux
+        $cleaned = preg_replace('/,(\s*[}\]])/m', '$1', $cleaned);
+
+        // Supprimer les virgules multiples
+        $cleaned = preg_replace('/,{2,}/', ',', $cleaned);
+
+        // Corriger les clés non quotées (pattern simple)
+        $cleaned = preg_replace('/([{,]\s*)([a-zA-Z_][a-zA-Z0-9_]*)\s*:/', '$1"$2":', $cleaned);
+
+        // Supprimer les commentaires de style JavaScript (// et /* */)
+        $cleaned = preg_replace('/\/\/.*$/m', '', $cleaned);
+        $cleaned = preg_replace('/\/\*.*?\*\//s', '', $cleaned);
+
+        // Corriger les valeurs undefined/null malformées
+        $cleaned = preg_replace('/:\s*undefined\b/', ':null', $cleaned);
+
+        // Supprimer les espaces blancs excessifs
+        $cleaned = preg_replace('/\s+/', ' ', $cleaned);
 
         return $cleaned;
     }
