@@ -3,8 +3,7 @@ const path = require('path');
 module.exports = {
   entry: {
     'pdf-builder-admin': './src/index.js',
-    'pdf-builder-nonce-fix': './src/pdf-builder-nonce-fix.js',
-    'test-ajax-variables': './test-ajax-variables.js'
+    'pdf-builder-nonce-fix': './src/pdf-builder-nonce-fix.js'
   },
   output: {
     filename: '[name].js',

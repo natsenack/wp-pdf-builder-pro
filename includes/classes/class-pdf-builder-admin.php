@@ -163,15 +163,15 @@ class PDF_Builder_Admin {
             [$this, 'diagnostic_page']
         );
 
-        // Test TCPDF (temporairement réactivé pour tests)
-        add_submenu_page(
-            'pdf-builder-pro',
-            __('Test TCPDF - PDF Builder Pro', 'pdf-builder-pro'),
-            __('🧪 Test TCPDF', 'pdf-builder-pro'),
-            'manage_options',
-            'pdf-builder-test-tcpdf',
-            [$this, 'test_tcpdf_page']
-        );
+        // Test TCPDF (commenté - système de test nettoyé)
+        // add_submenu_page(
+        //     'pdf-builder-pro',
+        //     __('Test TCPDF - PDF Builder Pro', 'pdf-builder-pro'),
+        //     __('🧪 Test TCPDF', 'pdf-builder-pro'),
+        //     'manage_options',
+        //     'pdf-builder-test-tcpdf',
+        //     [$this, 'test_tcpdf_page']
+        // );
 
         // Page développeur (uniquement pour l'utilisateur ID 1 et en mode dev)
         $current_user = wp_get_current_user();
@@ -967,7 +967,7 @@ class PDF_Builder_Admin {
             'pdf-builder_page_pdf-builder-editor',
             'pdf-builder_page_pdf-builder-settings',
             'pdf-builder_page_pdf-builder-diagnostic',
-            'pdf-builder_page_pdf-builder-test-tcpdf', // Réactivé temporairement
+            // 'pdf-builder_page_pdf-builder-test-tcpdf', // Commenté - système de test nettoyé
             'pdf-builder_page_pdf-builder-developer'
         ])) {
             return;
