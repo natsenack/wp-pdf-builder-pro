@@ -1601,6 +1601,9 @@ echo '<style>
     'use strict';
 
     $(document).ready(function() {
+        // Définir le nonce pour les actions de maintenance
+        var pdfBuilderMaintenanceNonce = '<?php echo wp_create_nonce('pdf_builder_maintenance'); ?>';
+        
         // Gestion du bouton "Vider le Cache"
         $('#clear-cache').on('click', function() {
             if (!confirm('<?php echo esc_js(__('Êtes-vous sûr de vouloir vider le cache ?', 'pdf-builder-pro')); ?>')) {
@@ -1711,6 +1714,9 @@ echo '<style>
 
     // Gestion des actions de maintenance en AJAX
     $(document).ready(function() {
+        // Définir le nonce pour les actions de maintenance
+        var pdfBuilderMaintenanceNonce = '<?php echo wp_create_nonce('pdf_builder_maintenance'); ?>';
+        
         // Fonction utilitaire pour afficher les messages de statut
         function showMaintenanceStatus(message, type) {
             var $status = $('#maintenance-status');
