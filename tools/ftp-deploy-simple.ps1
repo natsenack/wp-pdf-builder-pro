@@ -61,6 +61,31 @@ if ($files.Count -eq 0) {
     exit 1
 }
 
+# Fonction pour vérifier si un répertoire FTP existe
+function Test-FtpDirectory {
+    param(
+        [string]$ftpHost,
+        [string]$ftpUser,
+        [string]$ftpPassword,
+        [string]$remoteDir
+    )
+
+    try {
+        $ftpRequest = [System.Net.FtpWebRequest]::Create("ftp://$ftpHost$remoteDir")
+        $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::ListDirectory
+        $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
+        $ftpRequest.UseBinary = $true
+        $ftpRequest.KeepAlive = $false
+
+        $response = $ftpRequest.GetResponse()
+        $response.Close()
+        return $true
+    }
+    catch {
+        return $false
+    }
+}
+
 # Fonction pour créer un répertoire sur le serveur FTP
 function Create-FtpDirectory {
     param(
@@ -69,6 +94,12 @@ function Create-FtpDirectory {
         [string]$ftpPassword,
         [string]$remoteDir
     )
+
+    # Vérifier d'abord si le répertoire existe déjà
+    if (Test-FtpDirectory -ftpHost $ftpHost -ftpUser $ftpUser -ftpPassword $ftpPassword -remoteDir $remoteDir) {
+        Write-Host "ℹ️  Répertoire existe déjà: $remoteDir" -ForegroundColor Cyan
+        return $true
+    }
 
     try {
         $ftpRequest = [System.Net.FtpWebRequest]::Create("ftp://$ftpHost$remoteDir")
@@ -79,17 +110,15 @@ function Create-FtpDirectory {
 
         $response = $ftpRequest.GetResponse()
         $response.Close()
-        
+
         # Tenter de définir les permissions
         Set-FtpPermissions -ftpHost $ftpHost -ftpUser $ftpUser -ftpPassword $ftpPassword -remotePath $remoteDir -permissions "755"
-        
+
+        Write-Host "✅ Répertoire créé: $remoteDir" -ForegroundColor Green
         return $true
     }
     catch {
-        # Si le répertoire existe déjà (erreur 550), c'est ok
-        if ($_.Exception.Message -match "550") {
-            return $true
-        }
+        Write-Host "❌ Échec création répertoire: $remoteDir - $($_.Exception.Message)" -ForegroundColor Red
         return $false
     }
 }
@@ -122,11 +151,11 @@ function Set-FtpPermissions {
 }
 
 # Créer le répertoire de base si nécessaire
-Write-Host "📁 Création du répertoire de base: $remotePath" -ForegroundColor Yellow
+Write-Host "📁 Vérification du répertoire de base: $remotePath" -ForegroundColor Yellow
 if (Create-FtpDirectory -ftpHost $ftpHost -ftpUser $ftpUser -ftpPassword $ftpPassword -remoteDir $remotePath) {
-    Write-Host "✅ Répertoire de base créé" -ForegroundColor Green
+    Write-Host "✅ Répertoire de base prêt" -ForegroundColor Green
 } else {
-    Write-Host "❌ Échec création répertoire de base" -ForegroundColor Red
+    Write-Host "❌ Échec préparation répertoire de base" -ForegroundColor Red
     exit 1
 }
 
@@ -150,15 +179,18 @@ foreach ($file in $files) {
 $directories = $allDirectories | Sort-Object { ($_.Split('/')).Count }
 
 Write-Host "📁 Création des répertoires ($($directories.Count) répertoires)..." -ForegroundColor Yellow
+$createdCount = 0
+$existingCount = 0
 foreach ($dir in $directories) {
     $remoteDir = "$remotePath/$dir"
     if (Create-FtpDirectory -ftpHost $ftpHost -ftpUser $ftpUser -ftpPassword $ftpPassword -remoteDir $remoteDir) {
-        Write-Host "✅ $dir" -ForegroundColor Green
+        # Le message est déjà affiché dans Create-FtpDirectory
+        $createdCount++
     } else {
-        Write-Host "❌ Échec création $dir" -ForegroundColor Red
+        $existingCount++
     }
 }
-Write-Host "✅ Répertoires créés" -ForegroundColor Green
+Write-Host "✅ Répertoires prêts: $createdCount créés, $existingCount existants" -ForegroundColor Green
 
 # Fonction pour uploader un fichier avec gestion d'erreur améliorée
 function Send-File {
