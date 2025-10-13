@@ -79,6 +79,10 @@ function Create-FtpDirectory {
 
         $response = $ftpRequest.GetResponse()
         $response.Close()
+        
+        # Tenter de définir les permissions
+        Set-FtpPermissions -ftpHost $ftpHost -ftpUser $ftpUser -ftpPassword $ftpPassword -remotePath $remoteDir -permissions "755"
+        
         return $true
     }
     catch {
@@ -90,18 +94,60 @@ function Create-FtpDirectory {
     }
 }
 
+# Fonction pour définir les permissions FTP
+function Set-FtpPermissions {
+    param(
+        [string]$ftpHost,
+        [string]$ftpUser,
+        [string]$ftpPassword,
+        [string]$remotePath,
+        [string]$permissions
+    )
+
+    try {
+        $ftpRequest = [System.Net.FtpWebRequest]::Create("ftp://$ftpHost$remotePath")
+        $ftpRequest.Method = "SITE CHMOD $permissions $remotePath"
+        $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
+        $ftpRequest.UseBinary = $false
+        $ftpRequest.KeepAlive = $false
+
+        $response = $ftpRequest.GetResponse()
+        $response.Close()
+        return $true
+    }
+    catch {
+        # Ignorer les erreurs de permissions
+        return $false
+    }
+}
+
+# Créer le répertoire de base si nécessaire
+Write-Host "📁 Création du répertoire de base: $remotePath" -ForegroundColor Yellow
+if (Create-FtpDirectory -ftpHost $ftpHost -ftpUser $ftpUser -ftpPassword $ftpPassword -remoteDir $remotePath) {
+    Write-Host "✅ Répertoire de base créé" -ForegroundColor Green
+} else {
+    Write-Host "❌ Échec création répertoire de base" -ForegroundColor Red
+    exit 1
+}
+
 # Créer tous les répertoires nécessaires
-$directories = @()
+$allDirectories = @()
 foreach ($file in $files) {
     $relPath = $file.FullName.Substring($projectRoot.Length + 1).Replace('\', '/')
     $dir = [System.IO.Path]::GetDirectoryName($relPath)
-    if ($dir -and $dir -notin $directories) {
-        $directories += $dir
+    if ($dir) {
+        $parts = $dir.Split('/')
+        for ($i = 0; $i -lt $parts.Length; $i++) {
+            $parentDir = ($parts[0..$i] -join '/')
+            if ($parentDir -notin $allDirectories) {
+                $allDirectories += $parentDir
+            }
+        }
     }
 }
 
 # Trier par profondeur pour créer les répertoires parents d'abord
-$directories = $directories | Sort-Object { ($_.Split('/')).Count }
+$directories = $allDirectories | Sort-Object { ($_.Split('/')).Count }
 
 Write-Host "📁 Création des répertoires ($($directories.Count) répertoires)..." -ForegroundColor Yellow
 foreach ($dir in $directories) {
