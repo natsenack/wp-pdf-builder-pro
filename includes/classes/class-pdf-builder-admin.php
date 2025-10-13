@@ -49,6 +49,41 @@ class PDF_Builder_Admin {
         if (!is_user_logged_in() || !current_user_can('read')) {
             wp_die(__('Vous devez être connecté pour accéder à cette page.', 'pdf-builder-pro'));
         }
+
+        // Vérifier si l'utilisateur a accès basé sur les rôles autorisés
+        if (!$this->user_has_pdf_access()) {
+            wp_die(__('Vous n\'avez pas les permissions nécessaires pour accéder à cette page.', 'pdf-builder-pro'));
+        }
+    }
+
+    /**
+     * Vérifie si l'utilisateur actuel a accès au PDF Builder basé sur les rôles autorisés
+     */
+    private function user_has_pdf_access() {
+        // Les administrateurs ont toujours accès
+        if (current_user_can('administrator')) {
+            return true;
+        }
+
+        // Récupérer les rôles autorisés depuis les options
+        $allowed_roles = get_option('pdf_builder_allowed_roles', ['administrator']);
+
+        // S'assurer que c'est un tableau
+        if (!is_array($allowed_roles)) {
+            $allowed_roles = ['administrator'];
+        }
+
+        // Vérifier si l'utilisateur a un des rôles autorisés
+        $user = wp_get_current_user();
+        $user_roles = $user->roles;
+
+        foreach ($user_roles as $role) {
+            if (in_array($role, $allowed_roles)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -3843,8 +3878,14 @@ class PDF_Builder_Admin {
         $settings['email_notifications_enabled'] = isset($_POST['email_notifications_enabled']);
         $settings['notification_events'] = isset($_POST['notification_events']) ? (array) $_POST['notification_events'] : [];
 
+        // Paramètres des rôles autorisés
+        $settings['allowed_roles'] = isset($_POST['pdf_builder_allowed_roles']) ? array_map('sanitize_text_field', (array) $_POST['pdf_builder_allowed_roles']) : ['administrator', 'editor', 'shop_manager'];
+
         // Sauvegarde des paramètres
         update_option('pdf_builder_settings', $settings);
+
+        // Sauvegarde séparée pour la compatibilité avec l'ancien système
+        update_option('pdf_builder_allowed_roles', $settings['allowed_roles']);
 
         wp_send_json_success(['message' => 'Paramètres sauvegardés avec succès !']);
     }

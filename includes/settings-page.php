@@ -531,94 +531,55 @@ window.addEventListener('load', function() {
                 <h2><?php _e('Gestion des Rôles et Permissions', 'pdf-builder-pro'); ?></h2>
 
                 <div class="roles-management">
-                    <p><?php _e('Gérez les rôles et permissions pour l\'accès aux fonctionnalités PDF Builder Pro.', 'pdf-builder-pro'); ?></p>
+                    <p><?php _e('Sélectionnez les rôles WordPress qui auront accès aux fonctionnalités PDF Builder Pro.', 'pdf-builder-pro'); ?></p>
 
                     <div class="roles-section">
-                        <h3><?php _e('Permissions par Rôle', 'pdf-builder-pro'); ?></h3>
+                        <h3><?php _e('Rôles Autorises', 'pdf-builder-pro'); ?></h3>
 
                         <?php
                         // Récupérer tous les rôles WordPress
                         global $wp_roles;
-                        $roles = $wp_roles->roles;
+                        $all_roles = $wp_roles->roles;
 
-                        // Permissions disponibles pour PDF Builder
-                        $pdf_permissions = [
-                            'manage_pdf_templates' => __('Gérer les templates PDF', 'pdf-builder-pro'),
-                            'create_pdf_templates' => __('Créer des templates PDF', 'pdf-builder-pro'),
-                            'edit_pdf_templates' => __('Modifier les templates PDF', 'pdf-builder-pro'),
-                            'delete_pdf_templates' => __('Supprimer les templates PDF', 'pdf-builder-pro'),
-                            'view_pdf_templates' => __('Voir les templates PDF', 'pdf-builder-pro'),
-                            'export_pdf_templates' => __('Exporter les templates PDF', 'pdf-builder-pro'),
-                            'import_pdf_templates' => __('Importer les templates PDF', 'pdf-builder-pro'),
-                            'manage_pdf_settings' => __('Gérer les paramètres PDF', 'pdf-builder-pro')
-                        ];
+                        // Rôles actuellement autorisés (récupérés depuis les options)
+                        $allowed_roles = get_option('pdf_builder_allowed_roles', ['administrator', 'editor', 'shop_manager']);
+                        if (!is_array($allowed_roles)) {
+                            $allowed_roles = ['administrator', 'editor', 'shop_manager'];
+                        }
                         ?>
 
-                        <table class="wp-list-table widefat fixed striped">
-                            <thead>
-                                <tr>
-                                    <th><?php _e('Rôle', 'pdf-builder-pro'); ?></th>
-                                    <?php foreach ($pdf_permissions as $perm => $label): ?>
-                                        <th><?php echo $label; ?></th>
-                                    <?php endforeach; ?>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($roles as $role_key => $role): ?>
-                                    <tr>
-                                        <td>
-                                            <strong><?php echo translate_user_role($role['name']); ?></strong>
-                                            <br><small><?php echo $role_key; ?></small>
-                                        </td>
-                                        <?php foreach ($pdf_permissions as $perm => $label): ?>
-                                            <td>
-                                                <input type="checkbox"
-                                                       name="role_permissions[<?php echo $role_key; ?>][<?php echo $perm; ?>]"
-                                                       value="1"
-                                                       <?php checked($role['capabilities'][$perm] ?? false); ?>>
-                                            </td>
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row">
+                                    <label for="pdf_builder_allowed_roles"><?php _e('Rôles avec Accès', 'pdf-builder-pro'); ?></label>
+                                </th>
+                                <td>
+                                    <select name="pdf_builder_allowed_roles[]" id="pdf_builder_allowed_roles" multiple="multiple" class="widefat" style="height: 200px;">
+                                        <?php foreach ($all_roles as $role_key => $role): ?>
+                                            <option value="<?php echo esc_attr($role_key); ?>"
+                                                    <?php selected(in_array($role_key, $allowed_roles)); ?>>
+                                                <?php echo translate_user_role($role['name']); ?> (<?php echo $role_key; ?>)
+                                            </option>
                                         <?php endforeach; ?>
-                                    </tr>
-                                <?php endforeach; ?>
-                            </tbody>
+                                    </select>
+                                    <p class="description">
+                                        <?php _e('Sélectionnez les rôles qui auront accès à PDF Builder Pro. Maintenez Ctrl (ou Cmd sur Mac) pour sélectionner plusieurs rôles.', 'pdf-builder-pro'); ?><br>
+                                        <?php _e('Note: Les rôles personnalisés ajoutés par d\'autres plugins apparaîtront automatiquement dans cette liste.', 'pdf-builder-pro'); ?>
+                                    </p>
+                                </td>
+                            </tr>
                         </table>
 
-                        <p class="description">
-                            <?php _e('Cochez les permissions que vous souhaitez accorder à chaque rôle.', 'pdf-builder-pro'); ?>
-                        </p>
-                    </div>
-
-                    <div class="roles-actions">
-                        <h3><?php _e('Actions', 'pdf-builder-pro'); ?></h3>
-
-                        <div class="action-buttons">
-                            <a href="<?php echo admin_url('users.php?page=roles'); ?>" class="button button-secondary" target="_blank">
-                                <?php _e('Créer un Nouveau Rôle', 'pdf-builder-pro'); ?>
-                                <span class="dashicons dashicons-external"></span>
-                            </a>
-
-                            <button type="button" id="reset-role-permissions" class="button button-secondary">
-                                <?php _e('Réinitialiser les Permissions', 'pdf-builder-pro'); ?>
-                            </button>
-
-                            <button type="button" id="bulk-assign-permissions" class="button button-secondary">
-                                <?php _e('Assigner en Masse', 'pdf-builder-pro'); ?>
-                            </button>
-                        </div>
-
-                        <div id="roles-status"></div>
-                    </div>
-
-                    <div class="roles-info">
-                        <h3><?php _e('Informations', 'pdf-builder-pro'); ?></h3>
-                        <div class="notice notice-info inline">
-                            <p>
-                                <strong><?php _e('Note importante:', 'pdf-builder-pro'); ?></strong><br>
-                                <?php _e('Les modifications des permissions prennent effet immédiatement. Les utilisateurs connectés devront se reconnecter pour que les changements soient appliqués.', 'pdf-builder-pro'); ?>
-                            </p>
-                            <p>
-                                <?php _e('Pour créer un nouveau rôle personnalisé, utilisez le lien "Créer un Nouveau Rôle" ci-dessus qui vous redirigera vers la page de gestion des rôles de WordPress.', 'pdf-builder-pro'); ?>
-                            </p>
+                        <div class="roles-info">
+                            <div class="notice notice-info inline">
+                                <p>
+                                    <strong><?php _e('Permissions Incluses:', 'pdf-builder-pro'); ?></strong><br>
+                                    <?php _e('Les rôles sélectionnés auront accès à : création/édition/suppression de templates, paramètres, génération de PDF, et toutes les fonctionnalités du plugin.', 'pdf-builder-pro'); ?>
+                                </p>
+                                <p>
+                                    <?php _e('Pour créer un nouveau rôle personnalisé, utilisez un plugin de gestion des rôles WordPress. Le nouveau rôle apparaîtra automatiquement dans cette liste.', 'pdf-builder-pro'); ?>
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
