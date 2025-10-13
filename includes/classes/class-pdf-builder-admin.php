@@ -742,16 +742,20 @@ class PDF_Builder_Admin {
     public function test_tcpdf_page() {
         // Pas de vérification de permissions pour la page de test (diagnostic)
 
-        // Test de génération PDF
-        $test_results = $this->run_tcpdf_test();
+        error_log("PDF Builder Debug: test_tcpdf_page() appelée");
+
+        // Test simple de TCPDF
+        $test_results = $this->run_simple_tcpdf_test();
+
+        error_log("PDF Builder Debug: test_tcpdf_page() terminé, résultats: " . strlen($test_results) . " caractères");
 
         ?>
         <div class="wrap">
-            <h1><?php _e('🧪 Test TCPDF - PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
+            <h1><?php _e('🧪 Test TCPDF Simple - PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
 
             <div class="pdf-builder-test-tcpdf">
                 <div class="test-header">
-                    <p><?php _e('Cette page teste le système de génération PDF TCPDF pour diagnostiquer les problèmes.', 'pdf-builder-pro'); ?></p>
+                    <p><?php _e('Test simplifié de TCPDF pour diagnostiquer les problèmes.', 'pdf-builder-pro'); ?></p>
                 </div>
 
                 <div class="test-results">
@@ -759,6 +763,14 @@ class PDF_Builder_Admin {
                 </div>
             </div>
         </div>
+
+        <script>
+        console.log("PDF Builder Debug: Page TCPDF chargée côté client");
+        </script>
+
+        <script>
+        console.log("PDF Builder Debug: Page TCPDF chargée côté client");
+        </script>
 
         <style>
         .pdf-builder-test-tcpdf {
@@ -838,66 +850,91 @@ class PDF_Builder_Admin {
     /**
      * Exécute le test TCPDF
      */
-    private function run_tcpdf_test() {
+    private function run_simple_tcpdf_test() {
+        error_log("PDF Builder Debug: run_simple_tcpdf_test() démarré");
+
         ob_start();
 
         echo "<div class='test-section info'>";
-        echo "<h3>🚀 Démarrage du test de génération PDF...</h3>";
+        echo "<h3>🚀 Test simple TCPDF...</h3>";
         echo "<pre>";
 
-        $start_time = microtime(true);
-
         try {
-            // Éléments de test plus complets
-            $test_elements = [
-                [
-                    'type' => 'text',
-                    'text' => 'Test TCPDF Generation - ' . date('d/m/Y H:i:s'),
-                    'x' => 50,
-                    'y' => 50,
-                    'width' => 200,
-                    'height' => 30,
-                    'fontSize' => 16,
-                    'color' => '#000000',
-                    'fontWeight' => 'bold',
-                    'textAlign' => 'center'
-                ],
-                [
-                    'type' => 'woocommerce-invoice-number',
-                    'x' => 50,
-                    'y' => 100,
-                    'width' => 150,
-                    'height' => 20,
-                    'fontSize' => 12,
-                    'color' => '#333333'
-                ],
-                [
-                    'type' => 'divider',
-                    'x' => 50,
-                    'y' => 140,
-                    'width' => 200,
-                    'height' => 2
-                ]
-            ];
+            echo "📚 Chargement de TCPDF...\n";
+            error_log("PDF Builder Debug: Avant chargement TCPDF");
 
-            echo "📋 Éléments de test préparés (" . count($test_elements) . " éléments)\n";
-            echo "🔨 Génération du PDF...\n";
+            // Test de chargement TCPDF
+            require_once plugin_dir_path(dirname(dirname(__FILE__))) . 'lib/tcpdf_autoload.php';
 
-            // Inclure le générateur PDF
-            require_once plugin_dir_path(dirname(dirname(__FILE__))) . 'includes/pdf-generator.php';
+            error_log("PDF Builder Debug: TCPDF chargé avec succès");
+            echo "✅ TCPDF chargé\n";
 
-            $generator = new PDF_Generator();
-            $pdf_content = $generator->generate_from_elements($test_elements);
+            echo "🔨 Création d'une instance TCPDF...\n";
+            error_log("PDF Builder Debug: Avant création instance TCPDF");
 
-            $end_time = microtime(true);
-            $duration = round(($end_time - $start_time) * 1000, 2); // en millisecondes
+            $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
-            if ($pdf_content) {
-                $size = strlen($pdf_content);
-                echo "✅ PDF généré avec succès en {$duration}ms !\n";
-                echo "📊 Taille : " . number_format($size) . " octets\n";
+            error_log("PDF Builder Debug: Instance TCPDF créée");
+            echo "✅ Instance TCPDF créée\n";
 
-                // Vérifier que c'est un PDF valide
+            $version = TCPDF_STATIC::getTCPDFVersion();
+            error_log("PDF Builder Debug: Version TCPDF: " . $version);
+            echo "📊 Version TCPDF : {$version}\n";
+
+            echo "📝 Ajout d'une page...\n";
+            error_log("PDF Builder Debug: Avant AddPage");
+
+            $pdf->AddPage();
+
+            error_log("PDF Builder Debug: Page ajoutée");
+            echo "✅ Page ajoutée\n";
+
+            echo "✍️ Ajout de texte...\n";
+            error_log("PDF Builder Debug: Avant SetFont");
+
+            $pdf->SetFont('helvetica', '', 12);
+            $pdf->Cell(0, 10, 'Test TCPDF réussi - ' . date('d/m/Y H:i:s'), 0, 1, 'C');
+
+            error_log("PDF Builder Debug: Texte ajouté");
+            echo "✅ Texte ajouté\n";
+
+            echo "💾 Génération du PDF...\n";
+            error_log("PDF Builder Debug: Avant génération PDF");
+
+            $pdf_content = $pdf->Output('', 'S');
+
+            error_log("PDF Builder Debug: PDF généré, taille: " . strlen($pdf_content));
+            $size = strlen($pdf_content);
+            echo "✅ PDF généré avec succès !\n";
+            echo "📊 Taille : " . number_format($size) . " octets\n";
+
+            echo "</pre>";
+            echo "</div>";
+
+            echo "<div class='test-section success'>";
+            echo "<h3>🎉 Test réussi !</h3>";
+            echo "<p>TCPDF fonctionne correctement.</p>";
+            echo "</div>";
+
+        } catch (Exception $e) {
+            error_log("PDF Builder Debug: Exception dans run_simple_tcpdf_test: " . $e->getMessage());
+            echo "❌ Erreur : " . $e->getMessage() . "\n";
+            echo "📍 Fichier : " . $e->getFile() . " ligne " . $e->getLine() . "\n";
+
+            echo "</pre>";
+            echo "</div>";
+
+            echo "<div class='test-section error'>";
+            echo "<h3>💥 Erreur détectée</h3>";
+            echo "<p>Le test TCPDF a échoué. Vérifiez les détails ci-dessus.</p>";
+            echo "</div>";
+        }
+
+        $result = ob_get_clean();
+        error_log("PDF Builder Debug: run_simple_tcpdf_test() terminé, résultat: " . strlen($result) . " caractères");
+
+        return $result;
+    }
                 if (strpos($pdf_content, '%PDF-') === 0) {
                     echo "✅ Format PDF valide détecté\n";
                     echo "📄 Version PDF : " . substr($pdf_content, 5, 3) . "\n";
