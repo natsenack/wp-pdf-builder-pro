@@ -208,6 +208,16 @@ window.addEventListener('load', function() {
     </div>
 
     <script type="text/javascript">
+    // Vérification de sécurité pour éviter les erreurs JavaScript de plugins tiers
+    if (typeof wp === 'undefined') {
+        console.warn('⚠️ PDF Builder: Objet wp non défini - certains plugins peuvent ne pas fonctionner correctement');
+        // Définir un objet wp minimal pour éviter les erreurs
+        window.wp = window.wp || {
+            api: { models: {}, collections: {}, views: {} },
+            ajax: { settings: { url: ajaxurl || '/wp-admin/admin-ajax.php' } }
+        };
+    }
+
     // Message immédiat pour confirmer que le script s'exécute
     var debugDiv = document.getElementById('js-debug-info');
     var statusSpan = document.getElementById('js-status');
