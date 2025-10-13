@@ -61,6 +61,7 @@ class PDF_Builder_Admin {
         add_action('wp_ajax_pdf_builder_pro_generate_pdf', [$this, 'ajax_generate_pdf_from_canvas']);
         add_action('wp_ajax_pdf_builder_generate_pdf', [$this, 'ajax_generate_pdf_from_canvas']); // Alias pour compatibilité
         add_action('wp_ajax_pdf_builder_pro_preview_pdf', [$this, 'ajax_preview_pdf']);
+        add_action('wp_ajax_pdf_builder_generate_preview', [$this, 'ajax_preview_pdf']); // Alias pour compatibilité
         add_action('wp_ajax_pdf_builder_pro_download_pdf', [$this, 'ajax_download_pdf']);
         add_action('wp_ajax_pdf_builder_pro_save_template', [$this, 'ajax_save_template']);
         add_action('wp_ajax_pdf_builder_pro_load_template', [$this, 'ajax_load_template']);
@@ -1086,19 +1087,34 @@ class PDF_Builder_Admin {
             wp_send_json_error('Sécurité: Nonce invalide');
         }
 
-        // Récupérer les données du template
+        // Récupérer les données du template ou les éléments
         $template_data = isset($_POST['template_data']) ? $_POST['template_data'] : '';
+        $elements_data = isset($_POST['elements']) ? $_POST['elements'] : '';
 
-        if (empty($template_data)) {
-            wp_send_json_error('Aucune donnée template reçue');
+        if (empty($template_data) && empty($elements_data)) {
+            wp_send_json_error('Aucune donnée template ou éléments reçue');
         }
 
         try {
-            // Décoder les données JSON
-            $template = json_decode($template_data, true);
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                wp_send_json_error('Données template invalides');
-                return;
+            $template = null;
+
+            if (!empty($template_data)) {
+                // Décoder les données JSON du template
+                $template = json_decode($template_data, true);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    wp_send_json_error('Données template invalides');
+                    return;
+                }
+            } elseif (!empty($elements_data)) {
+                // Convertir les éléments au format template
+                $elements = json_decode($elements_data, true);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    wp_send_json_error('Données éléments invalides');
+                    return;
+                }
+
+                // Convertir le format éléments vers le format template
+                $template = $this->convert_elements_to_template($elements);
             }
 
             // Générer le PDF
@@ -1121,6 +1137,66 @@ class PDF_Builder_Admin {
     }
 
     /**
+     * Convertit un tableau d'éléments au format template
+     */
+    private function convert_elements_to_template($elements) {
+        $converted_elements = [];
+
+        foreach ($elements as $element) {
+            $converted_element = [
+                'type' => $element['type'],
+                'content' => $element['content'] ?? $element['text'] ?? '',
+                'position' => [
+                    'x' => $element['x'] ?? 0,
+                    'y' => $element['y'] ?? 0
+                ],
+                'size' => [
+                    'width' => $element['width'] ?? 100,
+                    'height' => $element['height'] ?? 50
+                ],
+                'style' => []
+            ];
+
+            // Copier les propriétés de style
+            if (isset($element['color'])) {
+                $converted_element['style']['color'] = $element['color'];
+            }
+            if (isset($element['fontSize'])) {
+                $converted_element['style']['fontSize'] = $element['fontSize'];
+            }
+            if (isset($element['fontWeight'])) {
+                $converted_element['style']['fontWeight'] = $element['fontWeight'];
+            }
+            if (isset($element['fillColor'])) {
+                $converted_element['style']['fillColor'] = $element['fillColor'];
+            }
+            if (isset($element['borderWidth'])) {
+                $converted_element['style']['borderWidth'] = $element['borderWidth'];
+            }
+            if (isset($element['borderColor'])) {
+                $converted_element['style']['borderColor'] = $element['borderColor'];
+            }
+            if (isset($element['borderRadius'])) {
+                $converted_element['style']['borderRadius'] = $element['borderRadius'];
+            }
+
+            $converted_elements[] = $converted_element;
+        }
+
+        return [
+            'pages' => [
+                [
+                    'elements' => $converted_elements,
+                    'size' => [
+                        'width' => 595, // A4
+                        'height' => 842
+                    ]
+                ]
+            ]
+        ];
+    }
+
+    /**
      * AJAX - Aperçu du PDF
      */
     public function ajax_preview_pdf() {
@@ -1131,19 +1207,34 @@ class PDF_Builder_Admin {
             wp_send_json_error('Sécurité: Nonce invalide');
         }
 
-        // Récupérer les données du template
+        // Récupérer les données du template ou les éléments
         $template_data = isset($_POST['template_data']) ? $_POST['template_data'] : '';
+        $elements_data = isset($_POST['elements']) ? $_POST['elements'] : '';
 
-        if (empty($template_data)) {
-            wp_send_json_error('Aucune donnée template reçue');
+        if (empty($template_data) && empty($elements_data)) {
+            wp_send_json_error('Aucune donnée template ou éléments reçue');
         }
 
         try {
-            // Décoder les données JSON
-            $template = json_decode($template_data, true);
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                wp_send_json_error('Données template invalides');
-                return;
+            $template = null;
+
+            if (!empty($template_data)) {
+                // Décoder les données JSON du template
+                $template = json_decode($template_data, true);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    wp_send_json_error('Données template invalides');
+                    return;
+                }
+            } elseif (!empty($elements_data)) {
+                // Convertir les éléments au format template
+                $elements = json_decode($elements_data, true);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    wp_send_json_error('Données éléments invalides');
+                    return;
+                }
+
+                // Convertir le format éléments vers le format template
+                $template = $this->convert_elements_to_template($elements);
             }
 
             // Générer l'HTML d'aperçu
