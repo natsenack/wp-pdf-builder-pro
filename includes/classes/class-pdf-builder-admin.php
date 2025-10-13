@@ -2087,19 +2087,28 @@ class PDF_Builder_Admin {
 
                 <!-- Template sélectionné automatiquement -->
                 <div class="template-info" style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 6px; font-weight: 500; color: #23282d; font-size: 13px;">
-                        🎨 <?php _e('Template sélectionné:', 'pdf-builder-pro'); ?>
+                    <label for="pdf_template_name" style="display: block; margin-bottom: 6px; font-weight: 500; color: #23282d; font-size: 13px;">
+                        🎨 <?php _e('Nom du template:', 'pdf-builder-pro'); ?>
                     </label>
-                    <div style="padding: 10px; background: #e8f5e8; border: 1px solid #c3e6c3; border-radius: 6px; font-size: 14px; color: #155724;">
-                        <?php if ($default_template): ?>
-                            <strong><?php echo esc_html($default_template['name']); ?></strong>
-                            <small style="color: #6c757d; display: block; margin-top: 4px;">
-                                <?php _e('Template par défaut pour ce type de document', 'pdf-builder-pro'); ?>
-                            </small>
-                        <?php else: ?>
-                            <em><?php _e('Aucun template par défaut trouvé', 'pdf-builder-pro'); ?></em>
-                        <?php endif; ?>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <input type="text"
+                               id="pdf_template_name"
+                               value="<?php echo $default_template ? esc_attr($default_template['name']) : ''; ?>"
+                               style="flex: 1; padding: 8px 12px; border: 1px solid #c3e6c3; border-radius: 6px; font-size: 14px; background: #e8f5e8; color: #155724; font-weight: 600;"
+                               placeholder="<?php _e('Nom du template...', 'pdf-builder-pro'); ?>">
+                        <small style="color: #6c757d; font-size: 12px;">
+                            <?php _e('Modifiable', 'pdf-builder-pro'); ?>
+                        </small>
                     </div>
+                    <?php if ($default_template): ?>
+                        <small style="color: #6c757d; display: block; margin-top: 4px;">
+                            <?php _e('Template par défaut pour ce type de document', 'pdf-builder-pro'); ?>
+                        </small>
+                    <?php else: ?>
+                        <small style="color: #d63638; display: block; margin-top: 4px;">
+                            <?php _e('Aucun template par défaut trouvé', 'pdf-builder-pro'); ?>
+                        </small>
+                    <?php endif; ?>
                 </div>
 
                 <div class="action-buttons">
@@ -2337,10 +2346,12 @@ class PDF_Builder_Admin {
             $previewBtn.on('click', function() {
                 var orderId = $(this).data('order-id');
                 var templateId = <?php echo $default_template ? esc_js($default_template['id']) : '0'; ?>;
+                var templateName = $('#pdf_template_name').val() || '';
 
                 console.log('PDF Builder: Preview button clicked');
                 console.log('PDF Builder: Order ID:', orderId);
                 console.log('PDF Builder: Template ID:', templateId);
+                console.log('PDF Builder: Template Name:', templateName);
 
                 showStatus('<?php echo esc_js(__('Génération de l\'aperçu...', 'pdf-builder-pro')); ?>', 'loading');
                 setButtonLoading($previewBtn, true);
@@ -2352,6 +2363,7 @@ class PDF_Builder_Admin {
                         action: 'pdf_builder_pro_preview_order_pdf',
                         order_id: orderId,
                         template_id: templateId,
+                        template_name: templateName,
                         nonce: '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>'
                     },
                     success: function(response) {
@@ -2385,10 +2397,12 @@ class PDF_Builder_Admin {
             $generateBtn.on('click', function() {
                 var orderId = $(this).data('order-id');
                 var templateId = <?php echo $default_template ? esc_js($default_template['id']) : '0'; ?>;
+                var templateName = $('#pdf_template_name').val() || '';
 
                 console.log('PDF Builder: Generate button clicked');
                 console.log('PDF Builder: Order ID:', orderId);
                 console.log('PDF Builder: Template ID:', templateId);
+                console.log('PDF Builder: Template Name:', templateName);
 
                 showStatus('<?php echo esc_js(__('Génération du PDF en cours...', 'pdf-builder-pro')); ?>', 'loading');
                 setButtonLoading($generateBtn, true);
@@ -2400,6 +2414,7 @@ class PDF_Builder_Admin {
                         action: 'pdf_builder_generate_order_pdf',
                         order_id: orderId,
                         template_id: templateId,
+                        template_name: templateName,
                         nonce: '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>'
                     },
                     success: function(response) {
