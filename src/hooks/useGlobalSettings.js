@@ -6,6 +6,7 @@ export const useGlobalSettings = () => {
     resizeHandleSize: 12,
     resizeHandleColor: '#007cba',
     resizeHandleBorderColor: '#ffffff',
+    resizeHandleOffset: -6,
 
     // Paramètres des bordures de sélection
     selectionBorderWidth: 2,
@@ -104,6 +105,7 @@ export const useGlobalSettings = () => {
     root.style.setProperty('--resize-handle-size', `${settings.resizeHandleSize}px`);
     root.style.setProperty('--resize-handle-color', settings.resizeHandleColor);
     root.style.setProperty('--resize-handle-border-color', settings.resizeHandleBorderColor);
+    root.style.setProperty('--resize-handle-offset', `${settings.resizeHandleOffset}px`);
 
     // Appliquer les paramètres des bordures de sélection
     root.style.setProperty('--selection-border-width', `${settings.selectionBorderWidth}px`);
