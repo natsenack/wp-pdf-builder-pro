@@ -95,6 +95,7 @@ function pdf_builder_load_bootstrap() {
         // Charger le générateur PDF
         if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'includes/pdf-generator.php')) {
             require_once PDF_BUILDER_PLUGIN_DIR . 'includes/pdf-generator.php';
+            require_once PDF_BUILDER_PLUGIN_DIR . 'includes/pdf-preview-generator.php';
         }
 
         // Enregistrer l'action AJAX dès que possible

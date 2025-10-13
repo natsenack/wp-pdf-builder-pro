@@ -1,8 +1,6 @@
-import React from 'react';
-import { CanvasElement } from './CanvasElement';
-import WooCommerceElement from './WooCommerceElements';
+import React, { useState, useEffect } from 'react';
 
-// Cache busting: PreviewModal updated to render canvas elements directly - v2.0
+// Nouveau système d'aperçu côté serveur avec TCPDF
 
 const PreviewModal = ({
   isOpen,
@@ -14,55 +12,66 @@ const PreviewModal = ({
   ajaxurl,
   pdfBuilderNonce
 }) => {
-  if (!isOpen) return null;
+  const [previewData, setPreviewData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Générer l'aperçu quand la modale s'ouvre
+  useEffect(() => {
+    if (isOpen && elements.length > 0) {
+      generatePreview();
+    }
+  }, [isOpen, elements]);
+
+  const generatePreview = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      console.log('Génération aperçu côté serveur pour', elements.length, 'éléments');
+
+      // Préparer les données pour l'AJAX
+      const formData = new FormData();
+      formData.append('action', 'pdf_builder_generate_preview');
+      formData.append('nonce', pdfBuilderNonce);
+      formData.append('elements', JSON.stringify(elements));
+
+      // Faire l'appel AJAX
+      const response = await fetch(ajaxurl, {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
+        console.log('Aperçu généré avec succès:', data.data);
+        setPreviewData(data.data);
+      } else {
+        throw new Error(data.data || 'Erreur génération aperçu');
+      }
+
+    } catch (err) {
+      console.error('Erreur génération aperçu:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handlePrint = () => {
-    console.log('handlePrint called with elements:', elements);
-    console.log('canvasWidth:', canvasWidth, 'canvasHeight:', canvasHeight);
-    console.log('window.pdfBuilderAjax au début:', window.pdfBuilderAjax);
-
-    // Debug: Log details of each element
-    elements.forEach((element, index) => {
-      console.log(`Element ${index}:`, {
-        type: element.type,
-        text: element.text,
-        src: element.src,
-        content: element.content,
-        x: element.x,
-        y: element.y,
-        width: element.width,
-        height: element.height
-      });
-    });
+    console.log('Génération PDF finale...');
 
     // Vérifier que les variables AJAX sont disponibles
     let ajaxUrl = window.pdfBuilderAjax?.ajaxurl || ajaxurl;
     let nonce = window.pdfBuilderAjax?.nonce || pdfBuilderNonce;
 
-    // Si le nonce n'est pas disponible, essayer de le régénérer
-    if (!nonce && window.pdfBuilderAjax?.ajaxurl) {
-      console.log('Tentative de régénération du nonce...');
-      try {
-        // Faire une requête synchrone pour obtenir un nouveau nonce
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', window.pdfBuilderAjax.ajaxurl, false); // Synchrone
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        xhr.send('action=pdf_builder_regenerate_nonce');
-
-        if (xhr.status === 200) {
-          const response = JSON.parse(xhr.responseText);
-          if (response.success && response.data && response.data.nonce) {
-            nonce = response.data.nonce;
-            console.log('Nouveau nonce régénéré:', nonce);
-          }
-        }
-      } catch (error) {
-        console.error('Erreur lors de la régénération du nonce:', error);
-      }
-    }
-
     if (!ajaxUrl || !nonce) {
-      console.error('Variables AJAX manquantes:', { ajaxUrl, nonce, windowPdfBuilderAjax: window.pdfBuilderAjax });
+      console.error('Variables AJAX manquantes:', { ajaxUrl, nonce });
       alert('Erreur: Variables AJAX non disponibles. Rechargez la page.');
       return;
     }
@@ -72,19 +81,16 @@ const PreviewModal = ({
     formData.append('action', 'pdf_builder_generate_pdf');
     formData.append('nonce', nonce);
     formData.append('elements', JSON.stringify(elements));
-    formData.append('canvasWidth', canvasWidth);
-    formData.append('canvasHeight', canvasHeight);
 
-    console.log('Valeur du nonce envoyé:', nonce);
-    console.log('Variables AJAX disponibles:', { ajaxUrl, nonce });
-
-    console.log('Envoi requête AJAX vers:', ajaxUrl);
+    console.log('Envoi requête génération PDF...');
 
     // Afficher un indicateur de chargement
     const printButton = document.querySelector('.btn-primary');
-    const originalText = printButton.textContent;
-    printButton.textContent = '⏳ Génération PDF...';
-    printButton.disabled = true;
+    if (printButton) {
+      const originalText = printButton.textContent;
+      printButton.textContent = '⏳ Génération PDF...';
+      printButton.disabled = true;
+    }
 
     // Envoyer la requête AJAX
     fetch(ajaxUrl, {
@@ -92,12 +98,12 @@ const PreviewModal = ({
       body: formData
     })
     .then(response => {
-      console.log('Réponse reçue:', response.status, response.statusText);
+      console.log('Réponse reçue:', response.status);
       if (!response.ok) {
-        throw new Error('Erreur réseau: ' + response.status + ' ' + response.statusText);
+        throw new Error('Erreur réseau: ' + response.status);
       }
       return response.json().catch(jsonError => {
-        console.error('Erreur de parsing JSON:', jsonError);
+        console.error('Erreur parsing JSON:', jsonError);
         throw new Error('Réponse invalide du serveur (pas du JSON)');
       });
     })
@@ -105,15 +111,12 @@ const PreviewModal = ({
       console.log('Données reçues:', data);
 
       if (!data.success) {
-        console.error('Réponse d\'erreur du serveur:', data);
         let errorMessage = 'Erreur inconnue lors de la génération du PDF';
-
         if (typeof data.data === 'string') {
           errorMessage = data.data;
         } else if (typeof data.data === 'object' && data.data !== null) {
           errorMessage = data.data.message || JSON.stringify(data.data);
         }
-
         throw new Error(errorMessage);
       }
 
@@ -137,7 +140,7 @@ const PreviewModal = ({
       // Créer un URL pour le blob PDF
       const pdfUrl = URL.createObjectURL(pdfBlob);
 
-      // Ouvrir le PDF dans une nouvelle fenêtre pour prévisualisation
+      // Ouvrir le PDF dans une nouvelle fenêtre
       const previewWindow = window.open(pdfUrl, '_blank');
 
       if (!previewWindow) {
@@ -151,21 +154,23 @@ const PreviewModal = ({
         document.body.removeChild(link);
       }
 
-      // Libérer l'URL du blob après un délai (pour laisser le temps à la fenêtre de se charger)
+      // Libérer l'URL du blob après un délai
       setTimeout(() => {
         URL.revokeObjectURL(pdfUrl);
       }, 1000);
 
-      console.log('PDF généré et ouvert en prévisualisation');
+      console.log('PDF généré et ouvert avec succès');
     })
     .catch(error => {
-      console.error('Erreur lors de la génération du PDF:', error);
+      console.error('Erreur génération PDF:', error);
       alert('Erreur lors de la génération du PDF: ' + error.message);
     })
     .finally(() => {
       // Restaurer le bouton
-      printButton.textContent = originalText;
-      printButton.disabled = false;
+      if (printButton) {
+        printButton.textContent = '👁️ Imprimer PDF';
+        printButton.disabled = false;
+      }
     });
   };
 
@@ -175,69 +180,66 @@ const PreviewModal = ({
     <div className="preview-modal-overlay" onClick={onClose}>
       <div className="preview-modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="preview-modal-header">
-          <h3>[PDF] Aperçu PDF - PDF Builder Pro</h3>
+          <h3>📄 Aperçu PDF - PDF Builder Pro v2.0</h3>
           <button className="preview-modal-close" onClick={onClose}>×</button>
         </div>
 
         <div className="preview-modal-body">
-          <div className="preview-content" style={{
-            padding: '20px',
-            background: '#f8f9fa',
-            borderRadius: '4px'
-          }}>
-            <div
-              className="preview-canvas"
-              style={{
-                width: canvasWidth,
-                height: canvasHeight,
-                margin: '0 auto',
-                border: '1px solid #e2e8f0',
-                background: 'white',
-                position: 'relative',
-                overflow: 'hidden',
-                transform: `scale(${zoom})`,
-                transformOrigin: 'top center'
-              }}
-            >
-              {/* Éléments normaux rendus comme composants */}
-              {elements
-                .filter(el => !el.type.startsWith('woocommerce-'))
-                .map(element => (
-                  <CanvasElement
-                    key={element.id}
-                    element={element}
-                    isSelected={false} // Pas de sélection en mode aperçu
-                    zoom={1}
-                    snapToGrid={false} // Pas de grille en aperçu
-                    gridSize={10}
-                    canvasWidth={canvasWidth}
-                    canvasHeight={canvasHeight}
-                    onSelect={() => {}} // Pas d'interaction en aperçu
-                    onUpdate={() => {}} // Pas de mise à jour en aperçu
-                    onRemove={() => {}} // Pas de suppression en aperçu
-                    onContextMenu={() => {}} // Pas de menu contextuel en aperçu
-                    dragAndDrop={false} // Pas de drag & drop en aperçu
-                  />
-                ))}
-
-              {/* Éléments WooCommerce */}
-              {elements
-                .filter(el => el.type.startsWith('woocommerce-'))
-                .map(element => (
-                  <WooCommerceElement
-                    key={element.id}
-                    element={element}
-                    isSelected={false} // Pas de sélection en mode aperçu
-                    onSelect={() => {}} // Pas d'interaction en aperçu
-                    onUpdate={() => {}} // Pas de mise à jour en aperçu
-                    dragAndDrop={false} // Pas de drag & drop en aperçu
-                    zoom={1}
-                    canvasWidth={canvasWidth}
-                    canvasHeight={canvasHeight}
-                  />
-                ))}
+          {loading && (
+            <div className="preview-loading">
+              <div className="preview-spinner"></div>
+              <p>Génération de l'aperçu...</p>
             </div>
-          </div>
+          )}
+
+          {error && (
+            <div className="preview-error">
+              <h4>❌ Erreur d'aperçu</h4>
+              <p>{error}</p>
+              <p><small>Le PDF pourra quand même être généré normalement.</small></p>
+            </div>
+          )}
+
+          {previewData && previewData.success && (
+            <div className="preview-content">
+              <div style={{
+                textAlign: 'center',
+                marginBottom: '20px',
+                padding: '10px',
+                background: '#e8f5e8',
+                borderRadius: '4px',
+                border: '1px solid #c3e6c3'
+              }}>
+                <strong>✅ Aperçu généré avec succès</strong><br/>
+                <small>{previewData.elements_count} éléments • {previewData.width}×{previewData.height}px</small>
+              </div>
+
+              <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'flex-start',
+                minHeight: '400px'
+              }}>
+                <img
+                  src={`data:image/png;base64,${previewData.preview}`}
+                  alt="Aperçu PDF"
+                  style={{
+                    maxWidth: '100%',
+                    maxHeight: '600px',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+                  }}
+                />
+              </div>
+            </div>
+          )}
+
+          {!loading && !error && !previewData && (
+            <div className="preview-loading">
+              <p>Préparation de l'aperçu...</p>
+            </div>
+          )}
         </div>
 
         <div className="preview-modal-footer">

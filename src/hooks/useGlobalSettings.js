@@ -25,7 +25,11 @@ export const useGlobalSettings = () => {
     // Paramètres par défaut des éléments
     defaultTextColor: '#000000',
     defaultBackgroundColor: '#ffffff',
-    defaultFontSize: 14
+    defaultFontSize: 14,
+
+    // Paramètres AJAX
+    ajaxurl: window.ajaxurl || '',
+    nonce: window.pdfBuilderNonce || ''
   });
 
   // Fonction pour récupérer les paramètres WordPress
@@ -36,13 +40,32 @@ export const useGlobalSettings = () => {
     return null;
   };
 
+  // Fonction pour récupérer ajaxurl et nonce
+  const getAjaxSettings = () => {
+    // Essayer d'abord les variables globales définies par WordPress
+    if (window.pdfBuilderAjax) {
+      return {
+        ajaxurl: window.pdfBuilderAjax.ajaxurl || '',
+        nonce: window.pdfBuilderAjax.nonce || ''
+      };
+    }
+    // Fallback vers les variables individuelles
+    return {
+      ajaxurl: window.ajaxurl || '',
+      nonce: window.pdfBuilderNonce || window.pdf_builder_nonce || ''
+    };
+  };
+
   // Charger les paramètres depuis WordPress ou localStorage au montage
   useEffect(() => {
     const wpSettings = getWordPressSettings();
+    const ajaxSettings = getAjaxSettings();
+
     if (wpSettings) {
       // Utiliser les paramètres WordPress
       setSettings(prev => ({
         ...prev,
+        ...ajaxSettings, // Ajouter ajaxurl et nonce
         resizeHandleSize: wpSettings.canvas_handle_size || prev.resizeHandleSize,
         resizeHandleColor: wpSettings.canvas_handle_color || prev.resizeHandleColor,
         resizeHandleBorderColor: wpSettings.canvas_handle_hover_color || prev.resizeHandleBorderColor,
@@ -58,14 +81,18 @@ export const useGlobalSettings = () => {
       }));
     } else {
       // Fallback vers localStorage si les paramètres WordPress ne sont pas disponibles
+      const ajaxSettings = getAjaxSettings();
       const savedSettings = localStorage.getItem('pdf-builder-global-settings');
       if (savedSettings) {
         try {
           const parsedSettings = JSON.parse(savedSettings);
-          setSettings(prev => ({ ...prev, ...parsedSettings }));
+          setSettings(prev => ({ ...prev, ...ajaxSettings, ...parsedSettings }));
         } catch (error) {
           console.warn('Erreur lors du chargement des paramètres globaux:', error);
+          setSettings(prev => ({ ...prev, ...ajaxSettings }));
         }
+      } else {
+        setSettings(prev => ({ ...prev, ...ajaxSettings }));
       }
     }
   }, []);

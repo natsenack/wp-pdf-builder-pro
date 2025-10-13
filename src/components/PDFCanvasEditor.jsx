@@ -99,6 +99,61 @@ export const PDFCanvasEditor = ({ options }) => {
     canvasState.selection.selectElement(elementId);
   }, [canvasState.selection]);
 
+  // Gestionnaire pour l'impression
+  const handlePrint = useCallback(async () => {
+    try {
+      console.log('Génération PDF pour impression...');
+
+      // Récupérer tous les éléments du canvas
+      const elements = canvasState.getAllElements();
+
+      if (elements.length === 0) {
+        alert('Aucun élément à imprimer. Ajoutez des éléments au canvas d\'abord.');
+        return;
+      }
+
+      // Préparer les données pour l'AJAX
+      const formData = new FormData();
+      formData.append('action', 'pdf_builder_generate_pdf');
+      formData.append('nonce', globalSettings.nonce);
+      formData.append('elements', JSON.stringify(elements));
+
+      console.log('Envoi de', elements.length, 'éléments au serveur...');
+
+      // Faire l'appel AJAX
+      const response = await fetch(globalSettings.ajaxurl, {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
+        console.log('PDF généré avec succès');
+
+        // Créer un lien de téléchargement temporaire
+        const link = document.createElement('a');
+        link.href = `data:application/pdf;base64,${data.pdf}`;
+        link.download = data.filename || 'document.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        alert('PDF généré et téléchargé avec succès !');
+      } else {
+        throw new Error(data.data || 'Erreur lors de la génération du PDF');
+      }
+
+    } catch (error) {
+      console.error('Erreur lors de l\'impression:', error);
+      alert('Erreur lors de la génération du PDF: ' + error.message);
+    }
+  }, [canvasState, globalSettings]);
+
   // Gestionnaire pour la désélection et création d'éléments
   const handleCanvasClick = useCallback((e) => {
     // Vérifier si le clic vient de la zone vide du canvas (pas d'un élément)
@@ -390,6 +445,8 @@ export const PDFCanvasEditor = ({ options }) => {
         onRedo={canvasState.redo}
         canUndo={canvasState.canUndo}
         canRedo={canvasState.canRedo}
+        onPreview={() => setShowPreviewModal(true)}
+        onPrint={handlePrint}
       />
 
       <div className="editor-workspace">

@@ -12,7 +12,9 @@ export const Toolbar = ({
   onUndo,
   onRedo,
   canUndo,
-  canRedo
+  canRedo,
+  onPreview,
+  onPrint
 }) => {
   const tools = [
     { id: 'select', label: 'Sélection', icon: '👆' },
@@ -46,6 +48,27 @@ export const Toolbar = ({
               <span className="tool-label">{tool.label}</span>
             </button>
           ))}
+        </div>
+      </div>
+
+      {/* Actions */}
+      <div className="toolbar-section">
+        <h4>Actions</h4>
+        <div className="action-buttons">
+          <button
+            className="action-button preview-button"
+            onClick={onPreview}
+            title="Aperçu du PDF"
+          >
+            👁️ Aperçu
+          </button>
+          <button
+            className="action-button print-button"
+            onClick={onPrint}
+            title="Générer et imprimer le PDF"
+          >
+            🖨️ Imprimer
+          </button>
         </div>
       </div>
 

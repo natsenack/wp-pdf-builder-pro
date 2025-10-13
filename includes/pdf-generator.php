@@ -549,7 +549,7 @@ class_alias('PDF_Builder_Pro_Generator', 'PDF_Generator');
 /**
  * Fonction AJAX pour la generation PDF
  */
-if (function_exists('wp_send_json_success')) {
+if (function_exists('wp_send_json_success') && !defined('PDF_GENERATOR_TEST_MODE')) {
 function pdf_builder_generate_pdf() {
     // Demarrer le buffer de sortie pour capturer toute sortie accidentelle
     ob_start();
@@ -613,7 +613,7 @@ function pdf_builder_generate_pdf() {
 }
 
 // Enregistrer la fonction AJAX
-if (function_exists('add_action')) {
+if (function_exists('add_action') && !defined('PDF_GENERATOR_TEST_MODE')) {
     add_action('wp_ajax_pdf_builder_generate_pdf', 'pdf_builder_generate_pdf');
     add_action('wp_ajax_nopriv_pdf_builder_generate_pdf', 'pdf_builder_generate_pdf');
 }
