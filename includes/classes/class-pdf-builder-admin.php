@@ -2399,12 +2399,19 @@ class PDF_Builder_Admin {
      * Génère du HTML pour une commande WooCommerce
      */
     private function generate_order_html($order, $template_data) {
+        error_log('🟡 PDF BUILDER - generate_order_html called for order: ' . $order->get_id());
+        error_log('🟡 Order data - Customer: ' . $order->get_billing_first_name() . ' ' . $order->get_billing_last_name());
+        error_log('🟡 Order data - Total: ' . $order->get_total());
+        error_log('🟡 Order data - Status: ' . $order->get_status());
+
         $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Order #' . $order->get_id() . '</title>';
         $html .= '<style>body { font-family: Arial, sans-serif; margin: 0; padding: 20px; } .pdf-element { position: absolute; }</style>';
         $html .= '</head><body>';
 
         if (isset($template_data['elements']) && is_array($template_data['elements'])) {
+            error_log('🟡 PDF BUILDER - Processing ' . count($template_data['elements']) . ' elements');
             foreach ($template_data['elements'] as $element) {
+                error_log('🟡 Processing element: ' . ($element['id'] ?? 'no-id') . ' of type: ' . ($element['type'] ?? 'no-type'));
                 // Gérer les deux formats de structure des éléments
                 if (isset($element['position']) && isset($element['size'])) {
                     // Format structuré (position.x, position.y, size.width, size.height)
@@ -2450,21 +2457,26 @@ class PDF_Builder_Admin {
 
                 switch ($element['type']) {
                     case 'text':
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content));
+                        $final_content = $this->replace_order_variables($content, $order);
+                        error_log('🟡 Element text - Original: "' . $content . '", Final: "' . $final_content . '"');
+                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($final_content));
                         break;
 
                     case 'invoice_number':
                         $invoice_number = $order->get_id() . '-' . time();
+                        error_log('🟡 Element invoice_number - Generated: "' . $invoice_number . '"');
                         $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($invoice_number));
                         break;
 
                     case 'invoice_date':
                         $date = $order->get_date_created() ? $order->get_date_created()->date('d/m/Y') : date('d/m/Y');
+                        error_log('🟡 Element invoice_date - Generated: "' . $date . '"');
                         $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($date));
                         break;
 
                     case 'customer_name':
                         $customer_name = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
+                        error_log('🟡 Element customer_name - Generated: "' . $customer_name . '"');
                         $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($customer_name));
                         break;
 
@@ -2475,16 +2487,19 @@ class PDF_Builder_Admin {
 
                     case 'subtotal':
                         $subtotal = $order->get_subtotal();
+                        error_log('🟡 Element subtotal - Generated: "' . wc_price($subtotal) . '"');
                         $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, wc_price($subtotal));
                         break;
 
                     case 'tax':
                         $tax = $order->get_total_tax();
+                        error_log('🟡 Element tax - Generated: "' . wc_price($tax) . '"');
                         $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, wc_price($tax));
                         break;
 
                     case 'total':
                         $total = $order->get_total();
+                        error_log('🟡 Element total - Generated: "' . wc_price($total) . '"');
                         $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, wc_price($total));
                         break;
 
