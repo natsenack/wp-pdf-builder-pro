@@ -101,11 +101,15 @@ export const PDFCanvasEditor = ({ options }) => {
 
   // Gestionnaire pour l'impression
   const handlePrint = useCallback(async () => {
+    console.log('🚀 NOUVEAUX LOGS DE DEBUG - VERSION 2.0 - DÉBUT');
+    console.log('🔍 Début de la génération PDF avec logs détaillés');
+
     try {
       console.log('Génération PDF pour impression...');
 
       // Récupérer tous les éléments du canvas
       const elements = canvasState.getAllElements();
+      console.log('Éléments récupérés:', elements);
       console.log('Éléments récupérés:', elements);
 
       if (elements.length === 0) {
@@ -146,6 +150,7 @@ export const PDFCanvasEditor = ({ options }) => {
 
       const data = await response.json();
       console.log('Données complètes reçues du serveur:', data);
+      console.log('🔍 FIN DES LOGS DE DEBUG - VERSION 2.0');
 
       if (data.success) {
         console.log('PDF généré avec succès côté serveur');
