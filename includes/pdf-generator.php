@@ -113,17 +113,13 @@ class PDF_Builder_Pro_Generator {
         $this->pdf->SetTitle('Document PDF Builder Pro');
         $this->pdf->SetSubject('Document genere automatiquement');
 
-        // Marges optimisees
-        $this->pdf->SetMargins(
-            $this->config['margin_left'],
-            $this->config['margin_top'],
-            $this->config['margin_right']
-        );
+        // Marges à zéro pour correspondre au canvas sans décalage
+        $this->pdf->SetMargins(0, 0, 0);
         $this->pdf->SetHeaderMargin(0);
         $this->pdf->SetFooterMargin(0);
 
-        // Gestion des sauts de page
-        $this->pdf->SetAutoPageBreak($this->config['auto_page_break'], $this->config['page_break_margin']);
+        // Désactivation du saut de page automatique pour un contrôle total
+        $this->pdf->SetAutoPageBreak(false, 0);
 
         // Police par defaut
         $this->pdf->SetFont($this->config['font_family'], '', $this->config['font_size']);
@@ -230,13 +226,21 @@ class PDF_Builder_Pro_Generator {
      * Rendu des elements optimise
      */
     private function render_elements($elements) {
-        $px_to_mm = 0.264583; // Facteur de conversion pixels -> mm (96 DPI)
+        // Calcul précis du facteur de conversion basé sur les dimensions réelles
+        // Canvas: 595×842 px | A4: 210×297 mm
+        // Conversion: 210mm / 595px = 0.3529 mm/px
+        $canvas_width_px = 595;
+        $canvas_height_px = 842;
+        $page_width_mm = 210; // A4 largeur
+        $page_height_mm = 297; // A4 hauteur
+        
+        $px_to_mm = $page_width_mm / $canvas_width_px; // 0.3529 mm/px
         error_log('PDF Builder Pro: Debut rendu elements, facteur conversion: ' . $px_to_mm);
 
         // 🚨 LOG DEBUG ULTRA-VISIBLE - AJOUTER AU DEBUG LOGS SI DISPONIBLE
         if (isset($GLOBALS['pdf_debug_logs'])) {
             $GLOBALS['pdf_debug_logs'][] = "🎨 DÉBUT RENDU ÉLÉMENTS - " . count($elements) . " ÉLÉMENTS";
-            $GLOBALS['pdf_debug_logs'][] = "📏 FACTEUR CONVERSION PX->MM: " . $px_to_mm;
+            $GLOBALS['pdf_debug_logs'][] = "📏 FACTEUR CONVERSION PX->MM: " . $px_to_mm . " (Canvas: {$canvas_width_px}×{$canvas_height_px}px → PDF: {$page_width_mm}×{$page_height_mm}mm)";
         }
 
         // Trier les éléments par position Y pour un meilleur rendu
@@ -362,18 +366,19 @@ class PDF_Builder_Pro_Generator {
         // Bordure
         $border = $this->get_border_settings($element);
 
-        // Padding
-        $padding = ($element['padding'] ?? 4) * $px_to_mm;
+        // Pas de padding automatique - utiliser uniquement si défini explicitement
+        $padding = isset($element['padding']) ? $element['padding'] * $px_to_mm : 0;
         $adjusted_width = $width - ($padding * 2);
+        $adjusted_height = $height - ($padding * 2);
 
-        // Positionnement
+        // Positionnement exact selon le canvas
         $this->pdf->SetXY($x + $padding, $y + $padding);
 
         // Alignement
         $align = $this->get_text_alignment($element['textAlign'] ?? 'left');
 
         // Rendu du texte
-        $this->pdf->Cell($adjusted_width, $height - ($padding * 2), $text, $border, 0, $align, $fill);
+        $this->pdf->Cell($adjusted_width, $adjusted_height, $text, $border, 0, $align, $fill);
     }
 
     /**
@@ -408,17 +413,18 @@ class PDF_Builder_Pro_Generator {
 
         // Bordure et padding
         $border = $this->get_border_settings($element);
-        $padding = ($element['padding'] ?? 4) * $px_to_mm;
+        $padding = isset($element['padding']) ? $element['padding'] * $px_to_mm : 0;
         $adjusted_width = $width - ($padding * 2);
 
-        // Positionnement
+        // Positionnement exact selon le canvas
         $this->pdf->SetXY($x + $padding, $y + $padding);
 
         // Alignement
         $align = $this->get_text_alignment($element['textAlign'] ?? 'left');
 
-        // Rendu multiligne
-        $this->pdf->MultiCell($adjusted_width, $font_size * 0.4, $text, $border, $align, $fill);
+        // Rendu multiligne avec hauteur de ligne proportionnelle
+        $line_height = $font_size * 0.5; // Hauteur de ligne proportionnelle à la taille de police
+        $this->pdf->MultiCell($adjusted_width, $line_height, $text, $border, $align, $fill);
     }
 
     /**
