@@ -1861,6 +1861,145 @@ class PDF_Builder_Admin {
             var $status = $('#pdf-builder-status');
             var $templateSelect = $('#pdf_template_select');
 
+            // Fonction pour ouvrir la modale d'aperçu PDF
+            function openPdfPreviewModal(htmlContent, width, height) {
+                // Créer la modale si elle n'existe pas
+                if (!$('#pdf-preview-modal').length) {
+                    $('body').append(`
+                        <div id="pdf-preview-modal" style="
+                            position: fixed;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            background: rgba(0, 0, 0, 0.8);
+                            z-index: 99999;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            opacity: 0;
+                            transition: opacity 0.3s ease;
+                        ">
+                            <div id="pdf-preview-content" style="
+                                background: white;
+                                border-radius: 8px;
+                                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                                max-width: 90vw;
+                                max-height: 90vh;
+                                overflow: auto;
+                                position: relative;
+                                transform: scale(0.9);
+                                transition: transform 0.3s ease;
+                            ">
+                                <div id="pdf-preview-header" style="
+                                    padding: 15px 20px;
+                                    border-bottom: 1px solid #e1e1e1;
+                                    display: flex;
+                                    justify-content: space-between;
+                                    align-items: center;
+                                    background: #f8f9fa;
+                                    border-radius: 8px 8px 0 0;
+                                ">
+                                    <h3 style="margin: 0; color: #333; font-size: 18px;"><?php echo esc_js(__('Aperçu PDF', 'pdf-builder-pro')); ?></h3>
+                                    <button id="pdf-preview-close" style="
+                                        background: none;
+                                        border: none;
+                                        font-size: 24px;
+                                        cursor: pointer;
+                                        color: #666;
+                                        padding: 0;
+                                        width: 30px;
+                                        height: 30px;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        border-radius: 50%;
+                                        transition: all 0.2s ease;
+                                    ">&times;</button>
+                                </div>
+                                <div id="pdf-preview-body" style="
+                                    padding: 20px;
+                                    background: white;
+                                    border-radius: 0 0 8px 8px;
+                                ">
+                                    <div id="pdf-preview-iframe-container" style="
+                                        border: 1px solid #ddd;
+                                        border-radius: 4px;
+                                        background: #f8f9fa;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        min-height: 400px;
+                                    ">
+                                        <div id="pdf-preview-loading" style="color: #666; font-size: 16px;">
+                                            <?php echo esc_js(__('Chargement de l\'aperçu...', 'pdf-builder-pro')); ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+
+                    // Gestionnaire pour fermer la modale
+                    $(document).on('click', '#pdf-preview-close, #pdf-preview-modal', function(e) {
+                        if (e.target.id === 'pdf-preview-modal' || e.target.id === 'pdf-preview-close') {
+                            closePdfPreviewModal();
+                        }
+                    });
+
+                    // Fermer avec la touche Échap
+                    $(document).on('keydown', function(e) {
+                        if (e.keyCode === 27) { // Échap
+                            closePdfPreviewModal();
+                        }
+                    });
+                }
+
+                // Fonction pour fermer la modale
+                function closePdfPreviewModal() {
+                    $('#pdf-preview-modal').fadeOut(300, function() {
+                        $(this).remove();
+                    });
+                }
+
+                // Calculer les dimensions de l'aperçu
+                var modalWidth = Math.min(width + 40, window.innerWidth * 0.9);
+                var modalHeight = Math.min(height + 120, window.innerHeight * 0.9);
+
+                // Mettre à jour le contenu
+                $('#pdf-preview-content').css({
+                    'width': modalWidth + 'px',
+                    'max-width': modalWidth + 'px'
+                });
+
+                $('#pdf-preview-iframe-container').css({
+                    'min-height': (height + 40) + 'px'
+                });
+
+                // Créer un iframe avec le contenu HTML
+                var iframe = document.createElement('iframe');
+                iframe.style.width = '100%';
+                iframe.style.height = height + 'px';
+                iframe.style.border = 'none';
+                iframe.style.background = 'white';
+                iframe.onload = function() {
+                    $('#pdf-preview-loading').hide();
+                };
+
+                // Écrire le contenu HTML dans l'iframe
+                var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                iframeDoc.open();
+                iframeDoc.write(htmlContent);
+                iframeDoc.close();
+
+                // Remplacer le contenu de chargement par l'iframe
+                $('#pdf-preview-iframe-container').html(iframe);
+
+                // Afficher la modale avec animation
+                $('#pdf-preview-modal').show().animate({opacity: 1}, 300);
+                $('#pdf-preview-content').animate({scale: 1}, 300);
+            }
+
             // Aperçu PDF
             $previewBtn.on('click', function() {
                 var orderId = $(this).data('order-id');
@@ -1896,15 +2035,9 @@ class PDF_Builder_Admin {
                         console.log('PDF Builder: Preview AJAX success');
                         console.log('PDF Builder: Response:', response);
                         if (response.success) {
-                            // Ouvrir l'aperçu dans une nouvelle fenêtre
-                            var previewWindow = window.open('', '_blank', 'width=800,height=600');
-                            if (previewWindow) {
-                                previewWindow.document.write(response.data.html);
-                                previewWindow.document.close();
-                                $status.html('<?php echo esc_js(__('Aperçu ouvert', 'pdf-builder-pro')); ?>');
-                            } else {
-                                $status.html('<span style="color: #d63638;"><?php echo esc_js(__('Activez les popups pour voir l\'aperçu', 'pdf-builder-pro')); ?></span>');
-                            }
+                            // Ouvrir l'aperçu dans une modale
+                            openPdfPreviewModal(response.data.html, response.data.width, response.data.height);
+                            $status.html('<?php echo esc_js(__('Aperçu ouvert', 'pdf-builder-pro')); ?>');
                         } else {
                             console.error('PDF Builder: Preview failed:', response.data);
                             $status.html('<span style="color: #d63638;">' + (response.data || '<?php echo esc_js(__('Erreur lors de l\'aperçu', 'pdf-builder-pro')); ?>') + '</span>');
