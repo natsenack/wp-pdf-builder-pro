@@ -171,6 +171,7 @@ class PDF_Preview_Generator {
 
 // Fonction AJAX pour l'aperçu
 function pdf_builder_generate_preview() {
+    error_log('PDF Builder Preview: ===== DÉBUT génération aperçu =====');
     try {
         // Log détaillé pour le débogage du nonce
         error_log('PDF Builder Preview: Début génération aperçu');
@@ -203,6 +204,18 @@ function pdf_builder_generate_preview() {
 
         error_log('PDF Builder Preview: Nonce validé avec succès');
 
+        // TEST SIMPLE: Retourner une réponse de succès sans génération
+        error_log('PDF Builder Preview: ===== TEST SIMPLE - Retour succès sans génération =====');
+        wp_send_json_success([
+            'preview' => base64_encode('test_image_data'),
+            'width' => 400,
+            'height' => 566,
+            'message' => 'Test réussi - génération simulée'
+        ]);
+        return;
+
+        // CODE ORIGINAL COMMENTÉ TEMPORAIREMENT
+        /*
         // Récupérer les éléments
         $elements = json_decode(stripslashes($_POST['elements'] ?? '[]'), true);
 
@@ -215,14 +228,21 @@ function pdf_builder_generate_preview() {
         $preview_generator = new PDF_Preview_Generator();
         $result = $preview_generator->generate_preview($elements);
 
+        error_log('PDF Builder Preview: Résultat génération: ' . json_encode($result));
+
         if ($result['success']) {
+            error_log('PDF Builder Preview: ===== FIN génération aperçu - SUCCÈS =====');
             wp_send_json_success($result);
         } else {
+            error_log('PDF Builder Preview: ===== FIN génération aperçu - ÉCHEC =====');
             wp_send_json_error('Erreur génération aperçu: ' . $result['error']);
         }
+        */
 
     } catch (Exception $e) {
+        error_log('PDF Builder Preview: ===== ERREUR génération aperçu =====');
         error_log('Erreur aperçu PDF: ' . $e->getMessage());
+        error_log('PDF Builder Preview: Trace: ' . $e->getTraceAsString());
         wp_send_json_error('Erreur serveur: ' . $e->getMessage());
     }
 }
