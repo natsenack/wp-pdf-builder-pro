@@ -480,6 +480,15 @@ class PDF_Builder_Admin {
      */
     public function settings_page() {
         $this->check_admin_permissions();
+
+        // Charger le fichier de configuration si nécessaire
+        if (!defined('PDF_BUILDER_VERSION')) {
+            $config_file = plugin_dir_path(dirname(__FILE__)) . 'config.php';
+            if (file_exists($config_file)) {
+                require_once $config_file;
+            }
+        }
+
         ?>
         <div class="wrap">
         <?php

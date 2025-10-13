@@ -101,7 +101,7 @@ $config = new TempConfig();
 // ...*/
 $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 
-if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
+if ((isset($_POST['submit']) || isset($_POST['submit_roles']) || isset($_POST['submit_notifications'])) && isset($_POST['pdf_builder_settings_nonce'])) {
     error_log('PDF Builder: Bouton submit cliqué, nonce présent: ' . $_POST['pdf_builder_settings_nonce']);
 
     if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
@@ -127,13 +127,27 @@ if (isset($_POST['submit']) && isset($_POST['pdf_builder_settings_nonce'])) {
             'canvas_resize_handles_enabled' => isset($_POST['canvas_resize_handles_enabled']),
             'canvas_handle_size' => intval($_POST['canvas_handle_size']),
             'canvas_handle_color' => sanitize_text_field($_POST['canvas_handle_color']),
-            'canvas_handle_hover_color' => sanitize_text_field($_POST['canvas_handle_hover_color'])
+            'canvas_handle_hover_color' => sanitize_text_field($_POST['canvas_handle_hover_color']),
+            'email_notifications' => isset($_POST['email_notifications']),
+            'admin_email' => sanitize_email($_POST['admin_email']),
+            'notification_log_level' => sanitize_text_field($_POST['notification_log_level'])
         ];
 
         error_log('PDF Builder: Paramètres canvas - borders_enabled: ' . ($settings['canvas_element_borders_enabled'] ? 'true' : 'false'));
         error_log('PDF Builder: Paramètres canvas - border_spacing: ' . $settings['canvas_border_spacing']);
 
         $config->set_multiple($settings);
+
+        // Traitement spécifique des rôles autorisés
+        if (isset($_POST['pdf_builder_allowed_roles'])) {
+            $allowed_roles = array_map('sanitize_text_field', (array) $_POST['pdf_builder_allowed_roles']);
+            // S'assurer qu'au moins un rôle est sélectionné
+            if (empty($allowed_roles)) {
+                $allowed_roles = ['administrator']; // Rôle par défaut
+            }
+            update_option('pdf_builder_allowed_roles', $allowed_roles);
+            error_log('PDF Builder: Rôles autorisés sauvegardés: ' . implode(', ', $allowed_roles));
+        }
 
         // Vérification que les options sont bien sauvegardées
         $saved_spacing = get_option('canvas_border_spacing', 'NOT_SET');
@@ -200,7 +214,6 @@ window.addEventListener('load', function() {
     <script type="text/javascript">
     // Vérification de sécurité pour éviter les erreurs JavaScript de plugins tiers
     if (typeof wp === 'undefined') {
-        console.warn('⚠️ PDF Builder: Objet wp non défini - certains plugins peuvent ne pas fonctionner correctement');
         // Définir un objet wp minimal pour éviter les erreurs
         window.wp = window.wp || {
             api: { models: {}, collections: {}, views: {} },
@@ -748,6 +761,18 @@ window.addEventListener('load', function() {
                             </div>
                         </div>
                     </div>
+
+                    <div class="roles-save-section" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px;">
+                        <h3><?php _e('Sauvegarder les Paramètres', 'pdf-builder-pro'); ?></h3>
+                        <p><?php _e('Cliquez sur le bouton ci-dessous pour sauvegarder les modifications apportées aux rôles et permissions.', 'pdf-builder-pro'); ?></p>
+
+                        <p style="margin-top: 15px;">
+                            <input type="submit" name="submit_roles" class="button button-primary" value="<?php esc_attr_e('Enregistrer les Rôles et Permissions', 'pdf-builder-pro'); ?>">
+                            <span style="margin-left: 10px; color: #666;">
+                                <?php _e('💡 Vous pouvez aussi utiliser le bouton principal en bas de la page.', 'pdf-builder-pro'); ?>
+                            </span>
+                        </p>
+                    </div>
                 </div>
             </div>
 
@@ -785,6 +810,18 @@ window.addEventListener('load', function() {
                         </td>
                     </tr>
                 </table>
+
+                <div class="notifications-save-section" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px;">
+                    <h3><?php _e('Sauvegarder les Paramètres', 'pdf-builder-pro'); ?></h3>
+                    <p><?php _e('Cliquez sur le bouton ci-dessous pour sauvegarder les modifications apportées aux paramètres de notifications.', 'pdf-builder-pro'); ?></p>
+
+                    <p style="margin-top: 15px;">
+                        <input type="submit" name="submit_notifications" class="button button-primary" value="<?php esc_attr_e('Enregistrer les Paramètres de Notifications', 'pdf-builder-pro'); ?>">
+                        <span style="margin-left: 10px; color: #666;">
+                            <?php _e('💡 Vous pouvez aussi utiliser le bouton principal en bas de la page.', 'pdf-builder-pro'); ?>
+                        </span>
+                    </p>
+                </div>
             </div>
 
             <!-- Onglet Canvas -->

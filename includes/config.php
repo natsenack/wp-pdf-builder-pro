@@ -13,6 +13,11 @@ if (!defined('PDF_BUILDER_PRO_VERSION')) {
     define('PDF_BUILDER_PRO_VERSION', '1.0.2');
 }
 
+// Alias pour compatibilité
+if (!defined('PDF_BUILDER_VERSION')) {
+    define('PDF_BUILDER_VERSION', PDF_BUILDER_PRO_VERSION);
+}
+
 // Répertoire du plugin
 if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
     define('PDF_BUILDER_PLUGIN_DIR', plugin_dir_path(__FILE__) . '../');
