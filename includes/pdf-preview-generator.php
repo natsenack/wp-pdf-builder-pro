@@ -180,43 +180,170 @@ class PDF_Preview_Generator {
         $html = '<div style="border: 1px solid #ddd; padding: 10px; background: white; font-family: Arial, sans-serif; font-size: ' . (12 * $scale) . 'px;">';
 
         foreach ($elements as $element) {
-            $style = sprintf(
-                'position: absolute; left: %dpx; top: %dpx; width: %dpx; height: %dpx;',
-                $element['x'] * $scale,
-                $element['y'] * $scale,
-                $element['width'] * $scale,
-                $element['height'] * $scale
-            );
-
-            if ($element['type'] === 'text') {
-                $text_style = sprintf(
-                    'font-size: %dpx; color: %s; font-weight: %s; text-align: %s;',
-                    ($element['fontSize'] ?? 12) * $scale,
-                    $element['color'] ?? '#000000',
-                    (($element['fontWeight'] ?? '') === 'bold') ? 'bold' : 'normal',
-                    $element['textAlign'] ?? 'left'
-                );
-
-                $html .= sprintf(
-                    '<div style="%s %s">%s</div>',
-                    $style,
-                    $text_style,
-                    htmlspecialchars($element['content'] ?? $element['text'] ?? 'Texte')
-                );
-
-            } elseif ($element['type'] === 'rectangle') {
-                $border_style = sprintf(
-                    'border: %dpx solid %s; background: transparent;',
-                    $element['borderWidth'] ?? 1,
-                    $element['borderColor'] ?? '#000000'
-                );
-
-                $html .= sprintf('<div style="%s %s"></div>', $style, $border_style);
-            }
+            $html .= $this->render_special_element($element, $scale);
         }
 
         $html .= '</div>';
         return $html;
+    }
+
+    /**
+     * Rend un élément spécial (basé sur PreviewModal.jsx)
+     */
+    private function render_special_element($element, $scale = 1) {
+        $base_style = sprintf(
+            'position: absolute; left: %dpx; top: %dpx; width: %dpx; height: %dpx; z-index: %d;',
+            ($element['x'] ?? 0) * $scale,
+            ($element['y'] ?? 0) * $scale,
+            ($element['width'] ?? 100) * $scale,
+            ($element['height'] ?? 50) * $scale,
+            $element['zIndex'] ?? 1
+        );
+
+        $element_type = $element['type'] ?? 'unknown';
+
+        switch ($element_type) {
+            case 'text':
+                $text_style = sprintf(
+                    'width: 100%%; height: 100%%; font-size: %dpx; color: %s; font-weight: %s; font-style: %s; text-align: %s; line-height: 1.2; white-space: pre-wrap; overflow: hidden; padding: 4px; box-sizing: border-box;',
+                    ($element['fontSize'] ?? 16) * $scale,
+                    $element['color'] ?? '#000000',
+                    (isset($element['fontWeight']) && $element['fontWeight'] === 'bold') ? 'bold' : 'normal',
+                    (isset($element['fontStyle']) && $element['fontStyle'] === 'italic') ? 'italic' : 'normal',
+                    $element['textAlign'] ?? 'left'
+                );
+
+                return sprintf(
+                    '<div style="%s"><div style="%s">%s</div></div>',
+                    $base_style,
+                    $text_style,
+                    htmlspecialchars($element['content'] ?? $element['text'] ?? 'Texte')
+                );
+
+            case 'rectangle':
+                $rect_style = sprintf(
+                    'width: 100%%; height: 100%%; background-color: %s; border: %s; border-radius: %dpx;',
+                    $element['fillColor'] ?? 'transparent',
+                    $element['borderWidth'] ? sprintf('%dpx solid %s', $element['borderWidth'], $element['borderColor'] ?? '#000000') : 'none',
+                    $element['borderRadius'] ?? 0
+                );
+
+                return sprintf('<div style="%s"><div style="%s"></div></div>', $base_style, $rect_style);
+
+            case 'image':
+                $img_style = 'width: 100%; height: 100%; object-fit: cover;';
+                return sprintf(
+                    '<div style="%s"><img src="%s" alt="%s" style="%s" onerror="this.style.display=\'none\'" /></div>',
+                    $base_style,
+                    htmlspecialchars($element['src'] ?? ''),
+                    htmlspecialchars($element['alt'] ?? 'Image'),
+                    $img_style
+                );
+
+            case 'line':
+                $line_style = sprintf(
+                    'width: 100%%; height: 0; border-top: %dpx solid %s;',
+                    $element['strokeWidth'] ?? 1,
+                    $element['strokeColor'] ?? '#000000'
+                );
+
+                return sprintf('<div style="%s"><div style="%s"></div></div>', $base_style, $line_style);
+
+            case 'product_table':
+                $table_html = '<div style="width: 100%; height: 100%; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; font-size: 10px; background-color: white;">';
+                $table_html .= '<div style="display: flex; background-color: #f5f5f5; padding: 4px; font-weight: bold; border-bottom: 1px solid #ddd;">';
+                $table_html .= '<div style="flex: 1;">Produit</div>';
+                $table_html .= '<div style="width: 60px; text-align: center;">Qté</div>';
+                $table_html .= '<div style="width: 80px; text-align: right;">Prix</div>';
+                $table_html .= '<div style="width: 80px; text-align: right;">Total</div>';
+                $table_html .= '</div>';
+                $table_html .= '<div style="padding: 4px; border-bottom: 1px solid #eee;">';
+                $table_html .= '<div style="display: flex;">';
+                $table_html .= '<div style="flex: 1;">Produit A - Description</div>';
+                $table_html .= '<div style="width: 60px; text-align: center;">2</div>';
+                $table_html .= '<div style="width: 80px; text-align: right;">19.99€</div>';
+                $table_html .= '<div style="width: 80px; text-align: right;">39.98€</div>';
+                $table_html .= '</div>';
+                $table_html .= '</div>';
+                $table_html .= '<div style="padding: 4px; font-weight: bold; text-align: right;">Total: 39.98€</div>';
+                $table_html .= '</div>';
+
+                return sprintf('<div style="%s">%s</div>', $base_style, $table_html);
+
+            case 'customer_info':
+                $customer_html = '<div style="padding: 8px; font-size: 12px; line-height: 1.4;">';
+                $customer_html .= '<div style="font-weight: bold; margin-bottom: 4px;">Client</div>';
+                $customer_html .= '<div>Jean Dupont</div>';
+                $customer_html .= '<div>123 Rue de la Paix</div>';
+                $customer_html .= '<div>75001 Paris</div>';
+                $customer_html .= '<div>France</div>';
+                $customer_html .= '</div>';
+
+                return sprintf('<div style="%s">%s</div>', $base_style, $customer_html);
+
+            case 'company_info':
+                $company_html = '<div style="padding: 8px; font-size: 12px; line-height: 1.4;">';
+                $company_html .= '<div style="font-weight: bold; margin-bottom: 4px;">ABC Company SARL</div>';
+                $company_html .= '<div>456 Avenue des Champs</div>';
+                $company_html .= '<div>75008 Paris</div>';
+                $company_html .= '<div>France</div>';
+                $company_html .= '<div>Tél: 01 23 45 67 89</div>';
+                $company_html .= '</div>';
+
+                return sprintf('<div style="%s">%s</div>', $base_style, $company_html);
+
+            case 'company_logo':
+                $logo_html = '<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 8px; background-color: ' . ($element['backgroundColor'] ?? 'transparent') . ';">';
+
+                if (isset($element['imageUrl']) && $element['imageUrl']) {
+                    $logo_html .= sprintf('<img src="%s" alt="Logo entreprise" style="max-width: 100%%; max-height: 100%%; object-fit: contain;" />', htmlspecialchars($element['imageUrl']));
+                } else {
+                    $logo_html .= '<div style="width: 100%; height: 100%; background-color: #f0f0f0; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center; color: #666; font-size: 12px;">🏢 Logo</div>';
+                }
+
+                $logo_html .= '</div>';
+
+                return sprintf('<div style="%s">%s</div>', $base_style, $logo_html);
+
+            case 'order_number':
+                $order_html = '<div style="padding: 8px; font-size: 14px; font-weight: bold; color: ' . ($element['color'] ?? '#333') . ';">';
+                $order_html .= '<div style="font-size: 12px; color: #666; margin-bottom: 2px;">N° de commande:</div>';
+                $order_html .= '<div>CMD-2025-00123</div>';
+                $order_html .= '</div>';
+
+                return sprintf('<div style="%s">%s</div>', $base_style, $order_html);
+
+            case 'document_type':
+                $doc_type = $element['documentType'] ?? '';
+                $doc_text = match($doc_type) {
+                    'invoice' => 'FACTURE',
+                    'quote' => 'DEVIS',
+                    'receipt' => 'REÇU',
+                    'order' => 'COMMANDE',
+                    'credit_note' => 'AVOIR',
+                    default => 'DOCUMENT'
+                };
+
+                $doc_html = '<div style="padding: 8px; font-size: 18px; font-weight: bold; color: ' . ($element['color'] ?? '#1e293b') . '; text-align: center;">';
+                $doc_html .= $doc_text;
+                $doc_html .= '</div>';
+
+                return sprintf('<div style="%s">%s</div>', $base_style, $doc_html);
+
+            case 'progress-bar':
+                $progress_html = '<div style="width: 100%; height: 100%; background-color: #e5e7eb; border-radius: 10px; overflow: hidden;">';
+                $progress_html .= sprintf('<div style="width: %d%%; height: 100%%; background-color: %s; border-radius: 10px;"></div>', $element['progressValue'] ?? 75, $element['progressColor'] ?? '#3b82f6');
+                $progress_html .= '</div>';
+
+                return sprintf('<div style="%s">%s</div>', $base_style, $progress_html);
+
+            default:
+                $unknown_html = '<div style="width: 100%; height: 100%; background-color: #f0f0f0; border: 1px dashed #ccc; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #666; padding: 4px; box-sizing: border-box;">';
+                $unknown_html .= 'Élément inconnu: ' . htmlspecialchars($element_type);
+                $unknown_html .= '</div>';
+
+                return sprintf('<div style="%s">%s</div>', $base_style, $unknown_html);
+        }
     }
 }
 
