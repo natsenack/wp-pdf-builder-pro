@@ -1983,15 +1983,14 @@ class PDF_Builder_Admin {
                 iframe.style.border = 'none';
                 iframe.style.background = 'white';
 
-                // Utiliser une approche différente pour écrire dans l'iframe
+                // Utiliser une approche moderne pour écrire dans l'iframe
                 iframe.onload = function() {
                     $('#pdf-preview-loading').hide();
                     try {
                         var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
                         if (iframeDoc) {
-                            iframeDoc.open();
-                            iframeDoc.write(htmlContent);
-                            iframeDoc.close();
+                            // Utiliser innerHTML au lieu de document.write pour éviter les problèmes
+                            iframeDoc.body.innerHTML = htmlContent;
                         } else {
                             console.error('PDF Builder: Cannot access iframe document');
                             $('#pdf-preview-iframe-container').html('<div style="color: #d63638; padding: 20px; text-align: center;">Erreur d\'accès à l\'aperçu</div>');
@@ -2008,10 +2007,8 @@ class PDF_Builder_Admin {
                 // Essayer d'écrire immédiatement (pour les navigateurs qui le supportent)
                 try {
                     var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                    if (iframeDoc) {
-                        iframeDoc.open();
-                        iframeDoc.write(htmlContent);
-                        iframeDoc.close();
+                    if (iframeDoc && iframeDoc.readyState === 'complete') {
+                        iframeDoc.body.innerHTML = htmlContent;
                         $('#pdf-preview-loading').hide();
                     }
                 } catch (e) {
@@ -2261,6 +2258,9 @@ class PDF_Builder_Admin {
      * AJAX - Aperçu PDF pour une commande WooCommerce
      */
     public function ajax_preview_order_pdf() {
+        // Log immédiat pour vérifier si la fonction est appelée
+        error_log('🚨 PDF BUILDER - ajax_preview_order_pdf FUNCTION STARTED');
+
         // Logs de débogage détaillés
         error_log('🟡 PDF BUILDER - ajax_preview_order_pdf called');
         error_log('🟡 REQUEST METHOD: ' . $_SERVER['REQUEST_METHOD']);

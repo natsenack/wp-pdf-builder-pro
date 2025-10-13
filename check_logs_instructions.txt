@@ -1,0 +1,16 @@
+Pour vérifier les logs PHP côté serveur, exécutez ces commandes :
+
+1. Logs Apache/XAMPP :
+   tail -f /chemin/vers/apache/logs/error.log | grep "PDF BUILDER"
+
+2. Logs WordPress :
+   tail -f /chemin/vers/wordpress/wp-content/debug.log | grep "PDF BUILDER"
+
+3. Ou vérifiez directement dans les fichiers de logs
+
+Les logs devraient afficher :
+- Données de la commande (nom client, total, statut)
+- Éléments traités dans le template
+- Contenu généré pour chaque élément
+
+Si vous ne voyez pas les logs PHP, cela signifie que l'AJAX n'atteint pas le code PHP ou qu'il y a une erreur avant les logs.
