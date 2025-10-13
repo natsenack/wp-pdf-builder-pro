@@ -119,7 +119,12 @@ class PDF_Generator {
             }
 
             // Générer le PDF
-            return $this->pdf->Output('document.pdf', 'S'); // 'S' pour retourner le contenu
+            $pdf_output = $this->pdf->Output('document.pdf', 'S'); // 'S' pour retourner le contenu
+            if (empty($pdf_output)) {
+                error_log('PDF Builder: La méthode Output de TCPDF a retourné du contenu vide');
+                return false;
+            }
+            return $pdf_output;
         } catch (Exception $e) {
             error_log('PDF Builder: Exception dans generate_from_elements: ' . $e->getMessage());
             return false;
@@ -252,64 +257,74 @@ class PDF_Generator {
      */
     private function render_element($element, $px_to_mm, $page_width, $page_height) {
         if (!$this->pdf) {
+            error_log('PDF Builder: PDF object non disponible');
             return;
         }
 
-        $x = $element['x'] * $px_to_mm;
-        $y = $element['y'] * $px_to_mm;
-        $width = $element['width'] * $px_to_mm;
-        $height = $element['height'] * $px_to_mm;
+        try {
+            $x = $element['x'] * $px_to_mm;
+            $y = $element['y'] * $px_to_mm;
+            $width = $element['width'] * $px_to_mm;
+            $height = $element['height'] * $px_to_mm;
 
-        // Positionner le curseur
-        $this->pdf->SetXY($x, $y);
+            // Positionner le curseur
+            $this->pdf->SetXY($x, $y);
 
-        switch ($element['type']) {
-            case 'text':
-                $this->render_text_element($element, $width, $height);
-                break;
+            $element_type = $element['type'] ?? 'unknown';
+            error_log('PDF Builder: Rendu élément: ' . $element_type);
 
-            case 'company_logo':
-                $this->render_image_element($element, $width, $height);
-                break;
+            switch ($element_type) {
+                case 'text':
+                    $this->render_text_element($element, $width, $height);
+                    break;
 
-            case 'customer_info':
-                $this->render_customer_info($element, $width, $height);
-                break;
+                case 'company_logo':
+                    $this->render_image_element($element, $width, $height);
+                    break;
 
-            case 'company_info':
-                $this->render_company_info($element, $width, $height);
-                break;
+                case 'customer_info':
+                    $this->render_customer_info($element, $width, $height);
+                    break;
 
-            case 'product_table':
-                $this->render_product_table($element, $width, $height, $x, $y);
-                break;
+                case 'company_info':
+                    $this->render_company_info($element, $width, $height);
+                    break;
 
-            case 'document_type':
-                $this->render_document_type($element, $width, $height);
-                break;
+                case 'product_table':
+                    $this->render_product_table($element, $width, $height, $x, $y);
+                    break;
 
-            case 'divider':
-                $this->render_divider($element, $width, $height, $x, $y);
-                break;
+                case 'document_type':
+                    $this->render_document_type($element, $width, $height);
+                    break;
 
-            // WooCommerce elements
-            case 'woocommerce-invoice-number':
-            case 'woocommerce-invoice-date':
-            case 'woocommerce-order-number':
-            case 'woocommerce-order-date':
-            case 'woocommerce-customer-name':
-            case 'woocommerce-customer-email':
-            case 'woocommerce-billing-address':
-            case 'woocommerce-shipping-address':
-            case 'woocommerce-payment-method':
-            case 'woocommerce-order-status':
-                $this->render_woocommerce_element($element, $width, $height);
-                break;
+                case 'divider':
+                    $this->render_divider($element, $width, $height, $x, $y);
+                    break;
 
-            default:
-                // Élément non supporté - afficher le type
-                $this->render_text($element['type'], $element, $width, $height);
-                break;
+                // WooCommerce elements
+                case 'woocommerce-invoice-number':
+                case 'woocommerce-invoice-date':
+                case 'woocommerce-order-number':
+                case 'woocommerce-order-date':
+                case 'woocommerce-customer-name':
+                case 'woocommerce-customer-email':
+                case 'woocommerce-billing-address':
+                case 'woocommerce-shipping-address':
+                case 'woocommerce-payment-method':
+                case 'woocommerce-order-status':
+                    $this->render_woocommerce_element($element, $width, $height);
+                    break;
+
+                default:
+                    // Élément non supporté - afficher le type
+                    $this->render_text($element_type, $element, $width, $height);
+                    break;
+            }
+        } catch (Exception $e) {
+            error_log('PDF Builder: Exception lors du rendu de l\'élément ' . ($element['type'] ?? 'unknown') . ': ' . $e->getMessage());
+        } catch (Throwable $t) {
+            error_log('PDF Builder: Erreur fatale lors du rendu de l\'élément ' . ($element['type'] ?? 'unknown') . ': ' . $t->getMessage());
         }
     }
 
@@ -320,18 +335,26 @@ class PDF_Generator {
 
     private function render_image_element($element, $width, $height) {
         if (!empty($element['src'])) {
-            // Télécharger l'image depuis l'URL
-            $image_data = $this->download_image($element['src']);
-            if ($image_data) {
-                // Créer un fichier temporaire
-                $temp_file = tempnam(sys_get_temp_dir(), 'pdf_img');
-                file_put_contents($temp_file, $image_data);
+            try {
+                // Télécharger l'image depuis l'URL
+                $image_data = $this->download_image($element['src']);
+                if ($image_data) {
+                    // Créer un fichier temporaire
+                    $temp_file = tempnam(sys_get_temp_dir(), 'pdf_img');
+                    if ($temp_file && file_put_contents($temp_file, $image_data) !== false) {
+                        // Ajouter l'image au PDF
+                        $this->pdf->Image($temp_file, $this->pdf->GetX(), $this->pdf->GetY(), $width, $height);
 
-                // Ajouter l'image au PDF
-                $this->pdf->Image($temp_file, $this->pdf->GetX(), $this->pdf->GetY(), $width, $height);
-
-                // Supprimer le fichier temporaire
-                unlink($temp_file);
+                        // Supprimer le fichier temporaire
+                        unlink($temp_file);
+                    } else {
+                        error_log('PDF Builder: Impossible de créer le fichier temporaire pour l\'image');
+                    }
+                } else {
+                    error_log('PDF Builder: Échec du téléchargement de l\'image: ' . $element['src']);
+                }
+            } catch (Exception $e) {
+                error_log('PDF Builder: Exception lors du rendu de l\'image: ' . $e->getMessage());
             }
         }
     }
