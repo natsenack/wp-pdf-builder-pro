@@ -136,22 +136,47 @@ const PreviewModal = ({
     );
   };
 
+  // Générer l'aperçu quand la modale s'ouvre
+  useEffect(() => {
+    if (isOpen && elements.length > 0) {
+      // Afficher immédiatement le contenu du canvas
+      setPreviewData({
+        success: true,
+        elements_count: elements.length,
+        width: 400,
+        height: 566,
+        fallback: false
+      });
+      // Puis générer l'aperçu côté serveur en arrière-plan
+      generatePreview();
+    } else if (isOpen && elements.length === 0) {
+      setPreviewData({
+        success: true,
+        elements_count: 0,
+        width: 400,
+        height: 566,
+        fallback: false
+      });
+    }
+  }, [isOpen, elements]);
+
   const generatePreview = async () => {
-    setLoading(true);
+    // Ne pas définir loading=true car l'aperçu s'affiche déjà
     setError(null);
 
     try {
-      console.log('Génération aperçu côté serveur pour', elements.length, 'éléments');
+      console.log('Validation aperçu côté serveur pour', elements.length, 'éléments');
 
       // Vérifier que les variables AJAX sont disponibles
       let ajaxUrl = window.pdfBuilderAjax?.ajaxurl || ajaxurl;
 
       if (!ajaxUrl) {
-        throw new Error('Variables AJAX non disponibles. Rechargez la page.');
+        console.warn('Variables AJAX non disponibles pour validation côté serveur');
+        return;
       }
 
       // Obtenir un nonce frais
-      console.log('Obtention d\'un nonce frais...');
+      console.log('Obtention d\'un nonce frais pour validation...');
       const nonceFormData = new FormData();
       nonceFormData.append('action', 'pdf_builder_get_fresh_nonce');
 
@@ -161,16 +186,18 @@ const PreviewModal = ({
       });
 
       if (!nonceResponse.ok) {
-        throw new Error(`Erreur HTTP nonce: ${nonceResponse.status}`);
+        console.warn('Erreur obtention nonce pour validation:', nonceResponse.status);
+        return;
       }
 
       const nonceData = await nonceResponse.json();
       if (!nonceData.success) {
-        throw new Error('Impossible d\'obtenir un nonce frais');
+        console.warn('Impossible d\'obtenir un nonce frais pour validation');
+        return;
       }
 
       const freshNonce = nonceData.data.nonce;
-      console.log('Nonce frais obtenu:', freshNonce);
+      console.log('Nonce frais obtenu pour validation:', freshNonce);
 
       console.log('Variables AJAX utilisées:', { ajaxUrl: ajaxUrl.substring(0, 50) + '...', nonceLength: freshNonce.length });
       console.log('Valeur du nonce envoyé:', freshNonce);
@@ -182,30 +209,43 @@ const PreviewModal = ({
       formData.append('nonce', freshNonce);
       formData.append('elements', JSON.stringify(elements));
 
-      // Faire l'appel AJAX
+      // Faire l'appel AJAX en arrière-plan
       const response = await fetch(ajaxUrl, {
         method: 'POST',
         body: formData
       });
 
       if (!response.ok) {
-        throw new Error(`Erreur HTTP: ${response.status}`);
+        console.warn('Erreur HTTP validation aperçu:', response.status);
+        return;
       }
 
       const data = await response.json();
 
       if (data.success) {
-        console.log('Aperçu généré avec succès:', data.data);
-        setPreviewData(data.data);
+        console.log('✅ Validation aperçu côté serveur réussie:', data.data);
+        // Mettre à jour previewData avec les données du serveur si nécessaire
+        setPreviewData(prev => ({
+          ...prev,
+          ...data.data,
+          server_validated: true
+        }));
       } else {
-        throw new Error(data.data || 'Erreur génération aperçu');
+        console.warn('⚠️ Validation aperçu côté serveur échouée:', data.data);
+        // Garder l'aperçu local mais marquer qu'il y a un problème serveur
+        setPreviewData(prev => ({
+          ...prev,
+          server_error: data.data || 'Erreur validation serveur'
+        }));
       }
 
     } catch (err) {
-      console.error('Erreur génération aperçu:', err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
+      console.warn('Erreur validation aperçu côté serveur:', err);
+      // Ne pas afficher d'erreur car l'aperçu local fonctionne
+      setPreviewData(prev => ({
+        ...prev,
+        server_error: err.message
+      }));
     }
   };
 
@@ -368,18 +408,22 @@ const PreviewModal = ({
             </div>
           )}
 
-          {previewData && previewData.success && (
+          {previewData && (
             <div className="preview-content">
               <div style={{
                 textAlign: 'center',
                 marginBottom: '20px',
                 padding: '10px',
-                background: '#e8f5e8',
+                background: previewData.server_validated ? '#e8f5e8' : '#fff3cd',
                 borderRadius: '4px',
-                border: '1px solid #c3e6c3'
+                border: `1px solid ${previewData.server_validated ? '#c3e6c3' : '#ffeaa7'}`
               }}>
-                <strong>✅ Aperçu généré avec succès</strong><br/>
-                <small>{previewData.elements_count} éléments • {previewData.width}×{previewData.height}px</small>
+                <strong>{previewData.server_validated ? '✅' : '⚡'} Aperçu généré</strong><br/>
+                <small>
+                  {previewData.elements_count} élément{previewData.elements_count !== 1 ? 's' : ''} • {previewData.width}×{previewData.height}px
+                  {previewData.server_validated && ' • Serveur validé'}
+                  {previewData.server_error && ' • ⚠️ Problème serveur'}
+                </small>
               </div>
 
               <div style={{
@@ -394,6 +438,21 @@ const PreviewModal = ({
                 {renderCanvasContent(elements)}
               </div>
 
+              {previewData.server_error && (
+                <div style={{
+                  marginTop: '20px',
+                  padding: '15px',
+                  backgroundColor: '#ffeaa7',
+                  borderRadius: '6px',
+                  border: '1px solid #d4a574'
+                }}>
+                  <h5 style={{ margin: '0 0 10px 0', color: '#856404' }}>⚠️ Note</h5>
+                  <p style={{ margin: '0', fontSize: '14px', color: '#333' }}>
+                    L'aperçu s'affiche correctement, mais il y a un problème de validation côté serveur: {previewData.server_error}
+                  </p>
+                </div>
+              )}
+
               <div style={{
                 marginTop: '20px',
                 padding: '15px',
@@ -406,7 +465,7 @@ const PreviewModal = ({
                   <strong>Dimensions:</strong> {canvasWidth} × {canvasHeight} pixels<br/>
                   <strong>Éléments:</strong> {elements.length}<br/>
                   <strong>Zoom:</strong> {Math.round(zoom * 100)}%<br/>
-                  <strong>Miniature PDF:</strong> {previewData.width}×{previewData.height}px
+                  <strong>Status:</strong> {previewData.server_validated ? 'Validé côté serveur' : 'Aperçu local'}
                 </p>
               </div>
             </div>
