@@ -92,8 +92,7 @@ const PreviewModal = ({
       // Générer le contenu HTML pour l'impression avec zoom = 1
       const printContent = `
         <div class="print-canvas" style="
-          width: 100%;
-          max-width: ${canvasWidth}px;
+          width: ${canvasWidth}px;
           height: ${canvasHeight}px;
           margin: 0 auto;
           border: none;
@@ -235,8 +234,7 @@ const PreviewModal = ({
                 max-width: none !important;
               }
               .print-canvas {
-                width: 100% !important;
-                max-width: ${canvasWidth}px !important;
+                width: ${canvasWidth}px !important;
                 height: ${canvasHeight}px !important;
                 margin: 0 auto !important;
                 border: none !important;
@@ -246,7 +244,8 @@ const PreviewModal = ({
                 box-sizing: border-box !important;
               }
               @page {
-                margin: 0.2cm !important; /* Marges minimales pour éviter la coupe */
+                size: A4;
+                margin: 1cm !important; /* Marges équilibrées pour centrer le contenu */
               }
               * {
                 -webkit-print-color-adjust: exact !important;
