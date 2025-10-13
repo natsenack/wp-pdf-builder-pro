@@ -708,8 +708,10 @@ class PDF_Builder_Pro_Generator {
         $this->pdf->Cell($col_widths[2], 8, utf8_decode('Prix'), 1, 0, 'R', true);
         $this->pdf->Cell($col_widths[3], 8, utf8_decode('Total'), 1, 1, 'R', true);
 
-        // Ligne de produit factice
-        $this->pdf->SetFont('helvetica', '', 8);
+    // Ligne de produit factice
+    // Position explicite sous l'en-tête
+    $this->pdf->SetXY($x, $y + 8);
+    $this->pdf->SetFont('helvetica', '', 8);
         $this->pdf->Cell($col_widths[0], 6, utf8_decode('Produit A - Description'), 1, 0, 'L');
         $this->pdf->Cell($col_widths[1], 6, '2', 1, 0, 'C');
         $this->pdf->Cell($col_widths[2], 6, '19.99 EUR', 1, 0, 'R');
