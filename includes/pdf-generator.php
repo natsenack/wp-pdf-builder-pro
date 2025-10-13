@@ -51,10 +51,38 @@ class PDF_Generator {
      * Générer le PDF à partir des éléments
      */
     public function generate_from_elements($elements) {
-        // TCPDF cause des problèmes de permission sur ce serveur
-        // Utiliser directement la méthode alternative
-        error_log('PDF Builder: Utilisation de la génération HTML (TCPDF désactivé)');
-        return $this->generate_basic_pdf($elements);
+        // Charger TCPDF seulement quand nécessaire
+        if (!class_exists('TCPDF')) {
+            error_log('PDF Builder: Chargement de TCPDF...');
+
+            // Définir les constantes TCPDF avant le chargement
+            $this->configure_tcpdf_constants();
+
+            if (function_exists('plugin_dir_path')) {
+                $plugin_dir = plugin_dir_path(dirname(__FILE__));
+                $autoload_path = $plugin_dir . 'lib/tcpdf/tcpdf_autoload.php';
+                error_log('PDF Builder: Plugin dir: ' . $plugin_dir);
+                error_log('PDF Builder: Autoload path: ' . $autoload_path);
+            } else {
+                $autoload_path = dirname(__DIR__) . '/lib/tcpdf/tcpdf_autoload.php';
+                error_log('PDF Builder: Autoload path (fallback): ' . $autoload_path);
+            }
+
+            // Vérifier que le fichier existe avant de le charger
+            if (file_exists($autoload_path)) {
+                require_once $autoload_path;
+            } else {
+                error_log('PDF Builder: Fichier TCPDF autoload introuvable: ' . $autoload_path);
+                return $this->generate_basic_pdf($elements);
+            }
+
+            error_log('PDF Builder: TCPDF chargé, class_exists: ' . (class_exists('TCPDF') ? 'oui' : 'non'));
+        }
+
+        if (!class_exists('TCPDF')) {
+            error_log('PDF Builder: TCPDF non disponible, utilisation de la méthode alternative');
+            return $this->generate_basic_pdf($elements);
+        }
 
         // Créer l'instance TCPDF seulement maintenant
         // Définir le cache dans un répertoire accessible
@@ -103,6 +131,83 @@ class PDF_Generator {
 
         // Générer le PDF
         return $this->pdf->Output('document.pdf', 'S'); // 'S' pour retourner le contenu
+    }
+
+    /**
+     * Configure les constantes TCPDF pour éviter les problèmes de permissions
+     */
+    private function configure_tcpdf_constants() {
+        // Désactiver la configuration automatique qui peut causer des problèmes
+        if (!defined('K_TCPDF_EXTERNAL_CONFIG')) {
+            define('K_TCPDF_EXTERNAL_CONFIG', true);
+        }
+
+        // Définir le répertoire principal TCPDF
+        if (!defined('K_PATH_MAIN')) {
+            $tcpdf_path = function_exists('plugin_dir_path')
+                ? plugin_dir_path(dirname(__FILE__)) . 'lib/tcpdf/'
+                : dirname(__DIR__) . '/lib/tcpdf/';
+            define('K_PATH_MAIN', $tcpdf_path);
+        }
+
+        // Définir le répertoire des polices
+        if (!defined('K_PATH_FONTS')) {
+            define('K_PATH_FONTS', K_PATH_MAIN . 'fonts/');
+        }
+
+        // Définir le répertoire de cache dans uploads (accessible en écriture)
+        if (!defined('K_PATH_CACHE')) {
+            if (function_exists('wp_upload_dir')) {
+                $upload_dir = wp_upload_dir();
+                $cache_dir = $upload_dir['basedir'] . '/pdf-builder-cache/';
+
+                // Créer le répertoire s'il n'existe pas
+                if (!file_exists($cache_dir)) {
+                    if (function_exists('wp_mkdir_p')) {
+                        wp_mkdir_p($cache_dir);
+                    } elseif (!file_exists($cache_dir)) {
+                        mkdir($cache_dir, 0755, true);
+                    }
+                }
+
+                // Vérifier que le répertoire est accessible en écriture
+                if (is_writable($cache_dir)) {
+                    define('K_PATH_CACHE', $cache_dir);
+                } else {
+                    // Fallback vers le répertoire temporaire système
+                    define('K_PATH_CACHE', sys_get_temp_dir() . '/tcpdf_cache/');
+                }
+            } else {
+                // Mode test - utiliser un répertoire temporaire
+                $cache_dir = sys_get_temp_dir() . '/tcpdf_cache/';
+                if (!file_exists($cache_dir)) {
+                    mkdir($cache_dir, 0755, true);
+                }
+                define('K_PATH_CACHE', $cache_dir);
+            }
+        }
+
+        // Définir le répertoire des images
+        if (!defined('K_PATH_IMAGES')) {
+            define('K_PATH_IMAGES', K_PATH_MAIN . 'images/');
+        }
+
+        // Définir l'URL de base
+        if (!defined('K_PATH_URL')) {
+            if (function_exists('plugin_dir_url')) {
+                define('K_PATH_URL', plugin_dir_url(__FILE__) . '../lib/tcpdf/');
+            } else {
+                define('K_PATH_URL', 'file://' . K_PATH_MAIN);
+            }
+        }
+
+        // Autres constantes importantes
+        if (!defined('PDF_PAGE_FORMAT')) {
+            define('PDF_PAGE_FORMAT', 'A4');
+        }
+        if (!defined('PDF_PAGE_ORIENTATION')) {
+            define('PDF_PAGE_ORIENTATION', 'P');
+        }
     }
 
     /**

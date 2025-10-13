@@ -61,6 +61,18 @@ class TCPDF_FONT_DATA {
 	protected static $unicode = array();
 
 	/**
+	 * Arabic regular expression pattern
+	 * @public
+	 */
+	public static $uni_RE_PATTERN_ARABIC = '/[\x{0600}-\x{06FF}]/u';
+
+	/**
+	 * RTL regular expression pattern
+	 * @public
+	 */
+	public static $uni_RE_PATTERN_RTL = '/[\x{0590}-\x{05FF}\x{07C0}-\x{07FF}\x{FB1D}-\x{FB4F}]/u';
+
+	/**
 	 * Return the unicode data array for the specified character
 	 * @param $char (int) character code
 	 * @return mixed character unicode data or false if not exist
