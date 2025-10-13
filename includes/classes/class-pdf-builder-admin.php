@@ -1904,9 +1904,6 @@ class PDF_Builder_Admin {
             error_log('PDF Builder: Using default template: ' . $default_template['name']);
         }
 
-        // Récupérer tous les templates pour le sélecteur manuel (sans document_type)
-        $all_templates = $wpdb->get_results("SELECT id, name FROM $table_templates ORDER BY name ASC", ARRAY_A);
-
         error_log('PDF Builder: Selected template: ' . ($default_template ? $default_template['name'] : 'None'));
 
         wp_nonce_field('pdf_builder_order_actions', 'pdf_builder_order_nonce');
@@ -2105,26 +2102,6 @@ class PDF_Builder_Admin {
                     </div>
                 </div>
 
-                <!-- Sélecteur manuel (optionnel) -->
-                <?php if (!empty($all_templates)): ?>
-                    <div class="template-selector" style="margin-bottom: 15px;">
-                        <label for="pdf_template_select">
-                            🔄 <?php _e('Changer de template (optionnel):', 'pdf-builder-pro'); ?>
-                        </label>
-                        <select id="pdf_template_select">
-                            <option value="<?php echo $default_template ? esc_attr($default_template['id']) : ''; ?>" selected>
-                                <?php echo $default_template ? esc_html($default_template['name']) . ' (' . __('Par défaut', 'pdf-builder-pro') . ')' : __('Sélectionner un template...', 'pdf-builder-pro'); ?>
-                            </option>
-                            <?php foreach ($all_templates as $template): ?>
-                                <?php if ($default_template && $template['id'] == $default_template['id']) continue; ?>
-                                <option value="<?php echo esc_attr($template['id']); ?>">
-                                    <?php echo esc_html($template['name']); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                <?php endif; ?>
-
                 <div class="action-buttons">
                     <button type="button"
                             id="pdf-builder-preview-btn"
@@ -2159,7 +2136,6 @@ class PDF_Builder_Admin {
             var $generateBtn = $('#pdf-builder-generate-btn');
             var $downloadBtn = $('#pdf-builder-download-btn');
             var $status = $('#pdf-builder-status');
-            var $templateSelect = $('#pdf_template_select');
 
             // Fonction pour afficher le statut
             function showStatus(message, type) {
@@ -2360,7 +2336,7 @@ class PDF_Builder_Admin {
             // Aperçu PDF
             $previewBtn.on('click', function() {
                 var orderId = $(this).data('order-id');
-                var templateId = $templateSelect.val() || 0;
+                var templateId = <?php echo $default_template ? esc_js($default_template['id']) : '0'; ?>;
 
                 console.log('PDF Builder: Preview button clicked');
                 console.log('PDF Builder: Order ID:', orderId);
@@ -2408,7 +2384,7 @@ class PDF_Builder_Admin {
             // Générer PDF
             $generateBtn.on('click', function() {
                 var orderId = $(this).data('order-id');
-                var templateId = $templateSelect.val() || 0;
+                var templateId = <?php echo $default_template ? esc_js($default_template['id']) : '0'; ?>;
 
                 console.log('PDF Builder: Generate button clicked');
                 console.log('PDF Builder: Order ID:', orderId);
