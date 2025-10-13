@@ -593,10 +593,26 @@ function pdf_builder_generate_pdf() {
         $generator = new PDF_Builder_Pro_Generator();
         $pdf_content = $generator->generate($elements);
 
+        // Collecter tous les logs de debug
+        $debug_logs = array();
+        if (function_exists('error_log')) {
+            // Récupérer les dernières lignes de logs si possible
+            $debug_logs[] = 'Génération PDF démarrée';
+            $debug_logs[] = count($elements) . ' éléments reçus';
+            foreach ($elements as $index => $element) {
+                $debug_logs[] = "Élément $index: " . ($element['type'] ?? 'unknown') . ' - ' . ($element['content'] ?? $element['text'] ?? 'empty');
+            }
+        }
+
         if (empty($pdf_content)) {
             error_log('PDF Builder Pro: Contenu PDF vide');
             ob_end_clean();
-            wp_send_json_error('Erreur lors de la generation du PDF');
+            wp_send_json_error(array(
+                'message' => 'Erreur lors de la generation du PDF',
+                'debug_logs' => $debug_logs,
+                'elements_count' => count($elements),
+                'pdf_size' => 0
+            ));
             return;
         }
 
@@ -605,12 +621,15 @@ function pdf_builder_generate_pdf() {
         // Vider le buffer avant d'envoyer la reponse
         ob_end_clean();
 
-        // Retourner le PDF en base64
+        // Retourner le PDF en base64 avec les logs de debug
         wp_send_json_success(array(
             'pdf' => base64_encode($pdf_content),
             'filename' => 'pdf-builder-pro-document.pdf',
             'performance' => $generator->get_performance_metrics(),
-            'errors' => $generator->get_errors()
+            'errors' => $generator->get_errors(),
+            'debug_logs' => $debug_logs,
+            'elements_count' => count($elements),
+            'pdf_size' => strlen($pdf_content)
         ));
 
     } catch (Exception $e) {

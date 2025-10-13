@@ -145,21 +145,26 @@ export const PDFCanvasEditor = ({ options }) => {
       }
 
       const data = await response.json();
+      console.log('Données complètes reçues du serveur:', data);
 
       if (data.success) {
-        console.log('PDF généré avec succès');
+        console.log('PDF généré avec succès côté serveur');
+        console.log('Logs de debug serveur:', data.data?.debug_logs || []);
+        console.log('Nombre d\'éléments traités:', data.data?.elements_count || 0);
+        console.log('Taille du PDF:', data.data?.pdf_size || 0, 'octets');
 
         // Créer un lien de téléchargement temporaire
         const link = document.createElement('a');
-        link.href = `data:application/pdf;base64,${data.pdf}`;
-        link.download = data.filename || 'document.pdf';
+        link.href = `data:application/pdf;base64,${data.data.pdf}`;
+        link.download = data.data.filename || 'document.pdf';
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
 
         alert('PDF généré et téléchargé avec succès !');
       } else {
-        throw new Error(data.data || 'Erreur lors de la génération du PDF');
+        console.error('Erreur serveur:', data.data);
+        throw new Error(data.data?.message || 'Erreur lors de la génération du PDF');
       }
 
     } catch (error) {
