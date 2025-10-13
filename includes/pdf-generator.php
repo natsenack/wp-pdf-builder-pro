@@ -498,4 +498,16 @@ function pdf_builder_generate_pdf() {
 // Enregistrer l'action AJAX seulement si on est dans WordPress
 if (function_exists('add_action')) {
     add_action('wp_ajax_pdf_builder_generate_pdf', 'pdf_builder_generate_pdf');
+    add_action('wp_ajax_pdf_builder_regenerate_nonce', 'pdf_builder_regenerate_nonce');
+}
+
+// Fonction pour régénérer un nonce
+function pdf_builder_regenerate_nonce() {
+    try {
+        wp_send_json_success(array(
+            'nonce' => wp_create_nonce('pdf_builder_nonce')
+        ));
+    } catch (Exception $e) {
+        wp_send_json_error('Erreur lors de la régénération du nonce');
+    }
 }

@@ -1,23 +1,22 @@
 // PDF Builder Pro - Correction de Nonce
-// Version: 1.0.3 - 2025-10-12_13:00 - NOUVEAU HANDLE
-// Ce fichier corrige les problèmes de nonce en forçant l'utilisation de la bonne valeur
+// Version: 1.0.5 - 2025-10-13_14:30 - SIMPLIFIÉ
+// Ce fichier ne fait que vérifier que les variables existent
 
-// S'assurer que pdfBuilderAjax existe et a la bonne version
-if (typeof pdfBuilderAjax === 'undefined') {
-    window.pdfBuilderAjax = {
-        ajaxurl: ajaxurl || '/wp-admin/admin-ajax.php',
-        nonce: 'forced_nonce_' + Date.now(),
-        version: '3.0.0',
-        strings: {
-            loading: 'Chargement...',
-            error: 'Erreur',
-            success: 'Succès',
-            confirm_delete: 'Êtes-vous sûr de vouloir supprimer ce template ?',
-            confirm_duplicate: 'Dupliquer ce template ?'
-        }
-    };
-} else {
-    // Forcer la mise à jour avec la nouvelle version
-    pdfBuilderAjax.version = '3.0.0';
-    pdfBuilderAjax.nonce = pdfBuilderAjax.nonce || 'forced_nonce_' + Date.now();
-}
+console.log('PDF Builder Nonce Fix: Vérification des variables AJAX');
+
+// Attendre que le DOM soit chargé
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('PDF Builder Nonce Fix: DOM chargé');
+
+    // Vérifier si pdfBuilderAjax existe
+    if (typeof pdfBuilderAjax === 'undefined') {
+        console.error('PDF Builder Nonce Fix: pdfBuilderAjax n\'existe toujours pas !');
+    } else {
+        console.log('PDF Builder Nonce Fix: pdfBuilderAjax trouvé:', {
+            hasAjaxurl: !!pdfBuilderAjax.ajaxurl,
+            hasNonce: !!pdfBuilderAjax.nonce,
+            nonceLength: pdfBuilderAjax.nonce ? pdfBuilderAjax.nonce.length : 0,
+            version: pdfBuilderAjax.version
+        });
+    }
+});
