@@ -227,6 +227,12 @@ function pdf_builder_generate_preview() {
     }
 }
 
+// Endpoint de test AJAX
+function pdf_builder_test_ajax() {
+    error_log('PDF Builder: Test AJAX appelé');
+    wp_send_json_success(['message' => 'AJAX fonctionne', 'timestamp' => time()]);
+}
+
 // Endpoint pour obtenir un nonce frais
 function pdf_builder_get_fresh_nonce() {
     error_log('PDF Builder: Fonction pdf_builder_get_fresh_nonce appelée');
@@ -251,5 +257,7 @@ if (function_exists('add_action')) {
     add_action('wp_ajax_nopriv_pdf_builder_generate_preview', 'pdf_builder_generate_preview');
     add_action('wp_ajax_pdf_builder_get_fresh_nonce', 'pdf_builder_get_fresh_nonce');
     add_action('wp_ajax_nopriv_pdf_builder_get_fresh_nonce', 'pdf_builder_get_fresh_nonce');
+    add_action('wp_ajax_pdf_builder_test_ajax', 'pdf_builder_test_ajax');
+    add_action('wp_ajax_nopriv_pdf_builder_test_ajax', 'pdf_builder_test_ajax');
     error_log('PDF Builder: Actions AJAX enregistrées');
 }

@@ -37,6 +37,23 @@ const PreviewModal = ({
         throw new Error('Variables AJAX non disponibles. Rechargez la page.');
       }
 
+      // TEST: D'abord tester si AJAX fonctionne
+      console.log('TEST: Test de l\'endpoint AJAX de base...');
+      const testFormData = new FormData();
+      testFormData.append('action', 'pdf_builder_test_ajax');
+
+      const testResponse = await fetch(ajaxUrl, {
+        method: 'POST',
+        body: testFormData
+      });
+
+      if (!testResponse.ok) {
+        throw new Error(`Erreur HTTP test: ${testResponse.status}`);
+      }
+
+      const testData = await testResponse.json();
+      console.log('TEST: AJAX fonctionne:', testData);
+
       // Obtenir un nonce frais
       console.log('Obtention d\'un nonce frais...');
       const nonceFormData = new FormData();
