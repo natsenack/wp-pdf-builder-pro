@@ -1960,10 +1960,45 @@ class PDF_Builder_Admin {
 
                     case 'customer_info':
                         if ($order) {
-                            $customer_info = $this->format_complete_customer_info($order);
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, wp_kses_post(nl2br($customer_info)));
+                            // Formater comme dans l'aperçu du builder avec les vraies données
+                            $customer_html = '<div style="padding: 8px; font-size: 12px; line-height: 1.4;">';
+                            $customer_html .= '<div style="font-weight: bold; margin-bottom: 4px;">' . esc_html($order->get_billing_first_name() . ' ' . $order->get_billing_last_name()) . '</div>';
+
+                            // Adresse de facturation
+                            $billing_address = $order->get_formatted_billing_address();
+                            if ($billing_address) {
+                                $address_lines = explode("\n", $billing_address);
+                                foreach ($address_lines as $line) {
+                                    if (!empty(trim($line))) {
+                                        $customer_html .= '<div>' . esc_html(trim($line)) . '</div>';
+                                    }
+                                }
+                            }
+
+                            // Email
+                            $email = $order->get_billing_email();
+                            if (!empty($email)) {
+                                $customer_html .= '<div>' . esc_html($email) . '</div>';
+                            }
+
+                            // Téléphone
+                            $phone = $order->get_billing_phone();
+                            if (!empty($phone)) {
+                                $customer_html .= '<div>' . esc_html($phone) . '</div>';
+                            }
+
+                            $customer_html .= '</div>';
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, $customer_html);
                         } else {
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: 'Informations client'));
+                            // Aperçu fictif comme dans le builder
+                            $customer_html = '<div style="padding: 8px; font-size: 12px; line-height: 1.4;">';
+                            $customer_html .= '<div style="font-weight: bold; margin-bottom: 4px;">Client</div>';
+                            $customer_html .= '<div>Jean Dupont</div>';
+                            $customer_html .= '<div>123 Rue de la Paix</div>';
+                            $customer_html .= '<div>75001 Paris</div>';
+                            $customer_html .= '<div>France</div>';
+                            $customer_html .= '</div>';
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, $customer_html);
                         }
                         break;
 
