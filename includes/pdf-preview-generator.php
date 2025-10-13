@@ -224,8 +224,23 @@ function pdf_builder_generate_preview() {
     }
 }
 
+// Endpoint pour obtenir un nonce frais
+function pdf_builder_get_fresh_nonce() {
+    try {
+        wp_send_json_success([
+            'nonce' => wp_create_nonce('pdf_builder_nonce'),
+            'timestamp' => time()
+        ]);
+    } catch (Exception $e) {
+        error_log('Erreur génération nonce frais: ' . $e->getMessage());
+        wp_send_json_error('Erreur génération nonce');
+    }
+}
+
 // Enregistrer la fonction AJAX
 if (function_exists('add_action')) {
     add_action('wp_ajax_pdf_builder_generate_preview', 'pdf_builder_generate_preview');
     add_action('wp_ajax_nopriv_pdf_builder_generate_preview', 'pdf_builder_generate_preview');
+    add_action('wp_ajax_pdf_builder_get_fresh_nonce', 'pdf_builder_get_fresh_nonce');
+    add_action('wp_ajax_nopriv_pdf_builder_get_fresh_nonce', 'pdf_builder_get_fresh_nonce');
 }

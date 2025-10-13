@@ -32,20 +32,38 @@ const PreviewModal = ({
 
       // Vérifier que les variables AJAX sont disponibles
       let ajaxUrl = window.pdfBuilderAjax?.ajaxurl || ajaxurl;
-      let nonce = window.pdfBuilderAjax?.nonce || pdfBuilderNonce;
 
-      if (!ajaxUrl || !nonce) {
+      if (!ajaxUrl) {
         throw new Error('Variables AJAX non disponibles. Rechargez la page.');
       }
 
-      console.log('Variables AJAX utilisées:', { ajaxUrl: ajaxUrl.substring(0, 50) + '...', nonceLength: nonce.length });
-      console.log('Valeur du nonce envoyé:', nonce);
+      // Obtenir un nonce frais
+      console.log('Obtention d\'un nonce frais...');
+      const nonceResponse = await fetch(ajaxUrl, {
+        method: 'POST',
+        body: new FormData([['action', 'pdf_builder_get_fresh_nonce']])
+      });
+
+      if (!nonceResponse.ok) {
+        throw new Error(`Erreur HTTP nonce: ${nonceResponse.status}`);
+      }
+
+      const nonceData = await nonceResponse.json();
+      if (!nonceData.success) {
+        throw new Error('Impossible d\'obtenir un nonce frais');
+      }
+
+      const freshNonce = nonceData.data.nonce;
+      console.log('Nonce frais obtenu:', freshNonce);
+
+      console.log('Variables AJAX utilisées:', { ajaxUrl: ajaxUrl.substring(0, 50) + '...', nonceLength: freshNonce.length });
+      console.log('Valeur du nonce envoyé:', freshNonce);
       console.log('Timestamp envoi:', Date.now());
 
       // Préparer les données pour l'AJAX
       const formData = new FormData();
       formData.append('action', 'pdf_builder_generate_preview');
-      formData.append('nonce', nonce);
+      formData.append('nonce', freshNonce);
       formData.append('elements', JSON.stringify(elements));
 
       // Faire l'appel AJAX
@@ -75,51 +93,69 @@ const PreviewModal = ({
     }
   };
 
-  const handlePrint = () => {
+  const handlePrint = async () => {
     console.log('Génération PDF finale...');
 
-    // Vérifier que les variables AJAX sont disponibles
-    let ajaxUrl = window.pdfBuilderAjax?.ajaxurl || ajaxurl;
-    let nonce = window.pdfBuilderAjax?.nonce || pdfBuilderNonce;
+    try {
+      // Vérifier que les variables AJAX sont disponibles
+      let ajaxUrl = window.pdfBuilderAjax?.ajaxurl || ajaxurl;
 
-    if (!ajaxUrl || !nonce) {
-      console.error('Variables AJAX manquantes:', { ajaxUrl, nonce });
-      alert('Erreur: Variables AJAX non disponibles. Rechargez la page.');
-      return;
-    }
+      if (!ajaxUrl) {
+        alert('Erreur: Variables AJAX non disponibles. Rechargez la page.');
+        return;
+      }
 
-    // Préparer les données pour l'AJAX
-    const formData = new FormData();
-    formData.append('action', 'pdf_builder_generate_pdf');
-    formData.append('nonce', nonce);
-    formData.append('elements', JSON.stringify(elements));
+      // Obtenir un nonce frais
+      console.log('Obtention d\'un nonce frais pour PDF...');
+      const nonceResponse = await fetch(ajaxUrl, {
+        method: 'POST',
+        body: new FormData([['action', 'pdf_builder_get_fresh_nonce']])
+      });
 
-    console.log('Envoi requête génération PDF...');
+      if (!nonceResponse.ok) {
+        throw new Error(`Erreur HTTP nonce: ${nonceResponse.status}`);
+      }
 
-    // Afficher un indicateur de chargement
-    const printButton = document.querySelector('.btn-primary');
-    if (printButton) {
-      const originalText = printButton.textContent;
-      printButton.textContent = '⏳ Génération PDF...';
-      printButton.disabled = true;
-    }
+      const nonceData = await nonceResponse.json();
+      if (!nonceData.success) {
+        throw new Error('Impossible d\'obtenir un nonce frais');
+      }
 
-    // Envoyer la requête AJAX
-    fetch(ajaxUrl, {
-      method: 'POST',
-      body: formData
-    })
-    .then(response => {
+      const freshNonce = nonceData.data.nonce;
+      console.log('Nonce frais obtenu pour PDF:', freshNonce);
+
+      // Préparer les données pour l'AJAX
+      const formData = new FormData();
+      formData.append('action', 'pdf_builder_generate_pdf');
+      formData.append('nonce', freshNonce);
+      formData.append('elements', JSON.stringify(elements));
+
+      console.log('Envoi requête génération PDF...');
+
+      // Afficher un indicateur de chargement
+      const printButton = document.querySelector('.btn-primary');
+      if (printButton) {
+        const originalText = printButton.textContent;
+        printButton.textContent = '⏳ Génération PDF...';
+        printButton.disabled = true;
+      }
+
+      // Envoyer la requête AJAX
+      const response = await fetch(ajaxUrl, {
+        method: 'POST',
+        body: formData
+      });
+
       console.log('Réponse reçue:', response.status);
       if (!response.ok) {
         throw new Error('Erreur réseau: ' + response.status);
       }
-      return response.json().catch(jsonError => {
+
+      const data = await response.json().catch(jsonError => {
         console.error('Erreur parsing JSON:', jsonError);
         throw new Error('Réponse invalide du serveur (pas du JSON)');
       });
-    })
-    .then(data => {
+
       console.log('Données reçues:', data);
 
       if (!data.success) {
@@ -172,18 +208,17 @@ const PreviewModal = ({
       }, 1000);
 
       console.log('PDF généré et ouvert avec succès');
-    })
-    .catch(error => {
+
+    } catch (error) {
       console.error('Erreur génération PDF:', error);
       alert('Erreur lors de la génération du PDF: ' + error.message);
-    })
-    .finally(() => {
+    } finally {
       // Restaurer le bouton
       if (printButton) {
         printButton.textContent = '👁️ Imprimer PDF';
         printButton.disabled = false;
       }
-    });
+    }
   };
 
   if (!isOpen) return null;
