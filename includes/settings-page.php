@@ -843,201 +843,30 @@ window.addEventListener('load', function() {
                 </div>
             </div>
 
-            <!-- Onglet Notifications -->
-            <div id="notifications" class="tab-content">
-                <h2><?php _e('Paramètres de Notifications', 'pdf-builder-pro'); ?></h2>
+            <!-- TEST: Simple div to check if PHP execution reaches here -->
+            <div style="background: red; color: white; padding: 10px; margin: 10px 0;">
+                PHP EXECUTION TEST - If you see this, PHP reached this point
+            </div>
 
-                <table class="form-table">
-                    <tr>
-                        <th scope="row"><?php _e('Notifications Email', 'pdf-builder-pro'); ?></th>
-                        <td>
-                            <label>
-                                <input type="checkbox" name="email_notifications_enabled" value="1" <?php checked($config->get('email_notifications_enabled'), true); ?>>
-                                <?php _e('Activer les notifications par email', 'pdf-builder-pro'); ?>
-                            </label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><?php _e('Événements à Notifier', 'pdf-builder-pro'); ?></th>
-                        <td>
-                            <?php
-                            $events = $config->get('notification_events', []);
-                            if (!is_array($events)) {
-                                $events = [];
-                            }
-                            $available_events = [
-                                'template_created' => __('Template créé', 'pdf-builder-pro'),
-                                'template_updated' => __('Template mis à jour', 'pdf-builder-pro'),
-                                'document_generated' => __('Document généré', 'pdf-builder-pro'),
-                                'error_occurred' => __('Erreur survenue', 'pdf-builder-pro')
-                            ];
-                            ?>
-                            <?php foreach ($available_events as $event => $label): ?>
-                                <label style="display: block; margin-bottom: 5px;">
-                                    <input type="checkbox" name="notification_events[]" value="<?php echo $event; ?>" <?php checked(true, in_array($event, $events)); ?>>
-                                    <?php echo $label; ?>
-                                </label>
-                            <?php endforeach; ?>
-                        </td>
-                    </tr>
-                </table>
+            <!-- Onglet Notifications -->
+            <?php error_log('PDF Builder: About to render notifications tab'); ?>
+            <div id="notifications" class="tab-content" style="border: 2px solid blue;">
+                <h2><?php _e('Paramètres de Notifications', 'pdf-builder-pro'); ?></h2>
+                <p>TEST: Notifications tab content rendered</p>
             </div>
 
             <!-- Onglet Canvas -->
-            <div id="canvas" class="tab-content">
+            <?php error_log('PDF Builder: About to render canvas tab'); ?>
+            <div id="canvas" class="tab-content" style="border: 2px solid green;">
                 <h2><?php _e('Paramètres Canvas', 'pdf-builder-pro'); ?></h2>
-
-                <!-- Sous-onglets dans l'onglet Canvas -->
-                <div class="sub-nav-tab-wrapper">
-                    <a href="#canvas-settings" class="sub-nav-tab sub-nav-tab-active"><?php _e('⚙️ Paramètres du Canvas', 'pdf-builder-pro'); ?></a>
-                </div>
-
-                <!-- Sous-onglet Paramètres du Canvas -->
-                <div id="canvas-settings" class="sub-tab-content sub-tab-active">
-                    <div class="pdf-builder-settings-section">
-                        <h3><?php _e('🎯 Paramètres des poignées de redimensionnement', 'pdf-builder-pro'); ?></h3>
-
-                        <table class="form-table">
-                            <tr>
-                                <th scope="row"><?php _e('Taille des poignées', 'pdf-builder-pro'); ?></th>
-                                <td>
-                                    <input type="number" name="canvas_handle_size" value="<?php echo get_option('canvas_handle_size', 12); ?>" min="8" max="20" />
-                                    <p class="description"><?php _e('Taille en pixels des poignées de redimensionnement (8-20px)', 'pdf-builder-pro'); ?></p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><?php _e('Couleur des poignées', 'pdf-builder-pro'); ?></th>
-                                <td>
-                                    <input type="color" name="canvas_handle_color" value="<?php echo esc_attr(get_option('canvas_handle_color', '#007cba')); ?>" />
-                                    <p class="description"><?php _e('Couleur des poignées de redimensionnement', 'pdf-builder-pro'); ?></p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><?php _e('Couleur de survol des poignées', 'pdf-builder-pro'); ?></th>
-                                <td>
-                                    <input type="color" name="canvas_handle_hover_color" value="<?php echo esc_attr(get_option('canvas_handle_hover_color', '#ffffff')); ?>" />
-                                    <p class="description"><?php _e('Couleur des poignées au survol', 'pdf-builder-pro'); ?></p>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-
-                    <div class="pdf-builder-settings-section">
-                        <h3><?php _e('📦 Paramètres des bordures de sélection', 'pdf-builder-pro'); ?></h3>
-
-                        <table class="form-table">
-                            <tr>
-                                <th scope="row"><?php _e('Largeur des bordures', 'pdf-builder-pro'); ?></th>
-                                <td>
-                                    <input type="number" name="canvas_border_width" value="<?php echo get_option('canvas_border_width', 2); ?>" min="1" max="5" />
-                                    <p class="description"><?php _e('Épaisseur des bordures de sélection en pixels (1-5px)', 'pdf-builder-pro'); ?></p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><?php _e('Couleur des bordures', 'pdf-builder-pro'); ?></th>
-                                <td>
-                                    <input type="color" name="canvas_border_color" value="<?php echo esc_attr(get_option('canvas_border_color', '#007cba')); ?>" />
-                                    <p class="description"><?php _e('Couleur des bordures de sélection', 'pdf-builder-pro'); ?></p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><?php _e('Espacement des bordures', 'pdf-builder-pro'); ?></th>
-                                <td>
-                                    <input type="number" name="canvas_border_spacing" value="<?php echo get_option('canvas_border_spacing', 2); ?>" min="0" max="10" />
-                                    <p class="description"><?php _e('Espace entre la bordure et l\'élément en pixels (0-10px)', 'pdf-builder-pro'); ?></p>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-
-                    <div class="pdf-builder-settings-section">
-                        <h3><?php _e('👁️ Paramètres de visibilité', 'pdf-builder-pro'); ?></h3>
-
-                        <table class="form-table">
-                            <tr>
-                                <th scope="row"><?php _e('Poignées de redimensionnement', 'pdf-builder-pro'); ?></th>
-                                <td>
-                                    <label>
-                                        <input type="checkbox" name="canvas_resize_handles_enabled" value="1" <?php checked(get_option('canvas_resize_handles_enabled', true), true); ?> />
-                                        <?php _e('Afficher les poignées de redimensionnement', 'pdf-builder-pro'); ?>
-                                    </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row"><?php _e('Bordures des éléments', 'pdf-builder-pro'); ?></th>
-                                <td>
-                                    <label>
-                                        <input type="checkbox" name="canvas_element_borders_enabled" value="1" <?php checked(get_option('canvas_element_borders_enabled', true), true); ?> />
-                                        <?php _e('Afficher les bordures des zones de redimensionnement', 'pdf-builder-pro'); ?>
-                                    </label>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
+                <p>TEST: Canvas tab content rendered</p>
             </div>
 
             <!-- Onglet Maintenance -->
-            <div id="maintenance" class="tab-content">
+            <?php error_log('PDF Builder: About to render maintenance tab'); ?>
+            <div id="maintenance" class="tab-content" style="border: 2px solid orange;">
                 <h2><?php _e('Actions de Maintenance', 'pdf-builder-pro'); ?></h2>
-
-                <div class="maintenance-section">
-                    <h3><?php _e('Base de Données', 'pdf-builder-pro'); ?></h3>
-                    <p><?php _e('Vérifiez et réparez la structure de la base de données si nécessaire.', 'pdf-builder-pro'); ?></p>
-
-                    <div class="maintenance-actions">
-                        <a href="<?php echo plugins_url('repair-database.php', dirname(__FILE__) . '/../..'); ?>" class="button button-secondary">
-                            <?php _e('Vérifier la Base de Données', 'pdf-builder-pro'); ?>
-                        </a>
-                        <button type="button" id="execute-sql-repair" class="button button-primary" style="margin-left: 10px;">
-                            <?php _e('Réparer la Base de Données', 'pdf-builder-pro'); ?>
-                        </button>
-                        <a href="<?php echo plugins_url('repair-database.sql', dirname(__FILE__) . '/../..'); ?>" class="button button-secondary" style="margin-left: 10px;" download="repair-database.sql">
-                            <?php _e('Télécharger SQL', 'pdf-builder-pro'); ?>
-                        </a>
-                    </div>
-
-                    <div id="database-status" class="maintenance-status" style="margin-top: 15px;"></div>
-                </div>
-
-                <hr>
-
-                <div class="maintenance-section">
-                    <h3><?php _e('Cache et Optimisation', 'pdf-builder-pro'); ?></h3>
-                    <p><?php _e('Nettoyez le cache et optimisez les performances.', 'pdf-builder-pro'); ?></p>
-
-                    <div class="maintenance-actions">
-                        <button type="button" id="clear-cache" class="button button-secondary">
-                            <?php _e('Vider le Cache', 'pdf-builder-pro'); ?>
-                        </button>
-                        <button type="button" id="optimize-database" class="button button-secondary" style="margin-left: 10px;">
-                            <?php _e('Optimiser la Base de Données', 'pdf-builder-pro'); ?>
-                        </button>
-                    </div>
-
-                    <div id="cache-status" class="maintenance-status" style="margin-top: 15px;"></div>
-                </div>
-
-                <hr>
-
-                <div class="maintenance-section">
-                    <h3><?php _e('Logs et Diagnostics', 'pdf-builder-pro'); ?></h3>
-                    <p><?php _e('Consultez et nettoyez les logs du système.', 'pdf-builder-pro'); ?></p>
-
-                    <div class="maintenance-actions">
-                        <button type="button" id="view-logs" class="button button-secondary">
-                            <?php _e('Voir les Logs', 'pdf-builder-pro'); ?>
-                        </button>
-                        <button type="button" id="clear-logs" class="button button-secondary" style="margin-left: 10px;">
-                            <?php _e('Vider les Logs', 'pdf-builder-pro'); ?>
-                        </button>
-                        <a href="<?php echo admin_url('admin.php?page=pdf-builder-templates&action=diagnostic'); ?>" class="button button-secondary" style="margin-left: 10px;">
-                            <?php _e('Outil de Diagnostic', 'pdf-builder-pro'); ?>
-                        </a>
-                    </div>
-
-                    <div id="logs-status" class="maintenance-status" style="margin-top: 15px;"></div>
-                </div>
+                <p>TEST: Maintenance tab content rendered</p>
             </div>
         </div>
 
