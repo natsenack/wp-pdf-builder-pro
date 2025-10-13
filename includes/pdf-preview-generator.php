@@ -234,9 +234,9 @@ function pdf_builder_generate_preview() {
             return;
         }
 
-        // FORCER LE FALLBACK pour tester
+        // Générer l'aperçu avec fallback automatique
         $preview_generator = new PDF_Preview_Generator();
-        $result = $preview_generator->generate_fallback_preview($elements, 400, 566);
+        $result = $preview_generator->generate_preview($elements, 400, 566);
 
         if ($result['success']) {
             wp_send_json_success($result);
