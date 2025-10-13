@@ -3,8 +3,6 @@
  * Page des Paramètres - PDF Builder Pro
  */
 
-error_log('PDF Builder: Settings page loaded');
-
 
 
 // Vérifier les permissions - permettre à tous les utilisateurs connectés
@@ -199,14 +197,6 @@ window.addEventListener('load', function() {
 
     <h1><?php _e('Paramètres PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
 
-    <!-- Debug info for JavaScript -->
-    <div id="js-debug-info" style="background: #f0f8ff; border: 1px solid #007cba; padding: 10px; margin-bottom: 20px; border-radius: 4px; display: none;">
-        <strong>🔧 Debug JavaScript:</strong> <span id="js-status">JavaScript NON chargé</span>
-        <br><strong>📊 Onglets trouvés:</strong> <span id="tabs-count">0</span>
-        <br><strong>🎯 Onglet actif:</strong> <span id="active-tab">aucun</span>
-        <br><strong>⏰ Timestamp:</strong> <span id="timestamp">-</span>
-    </div>
-
     <script type="text/javascript">
     // Vérification de sécurité pour éviter les erreurs JavaScript de plugins tiers
     if (typeof wp === 'undefined') {
@@ -219,37 +209,18 @@ window.addEventListener('load', function() {
     }
 
     // Message immédiat pour confirmer que le script s'exécute
-    var debugDiv = document.getElementById('js-debug-info');
-    var statusSpan = document.getElementById('js-status');
-    var timestampSpan = document.getElementById('timestamp');
-    
-    if (debugDiv && statusSpan && timestampSpan) {
-        statusSpan.textContent = 'Script en cours de chargement...';
-        timestampSpan.textContent = new Date().toLocaleTimeString();
-        debugDiv.style.display = 'block';
-        console.log('⚡ PDF Builder Settings: Inline script executed immediately');
-    } else {
-        console.error('⚡ PDF Builder Settings: Debug elements not found');
-    }
+    // Debug elements removed - script is working properly
     
     // Simple tab functionality without jQuery wrapper
     function simpleActivateTab(tabHref) {
-        console.log('🔄 simpleActivateTab called with:', tabHref);
-
         // Find the target element
         var targetElement = document.getElementById(tabHref.substring(1)); // Remove #
-        console.log('Target element lookup - id:', tabHref.substring(1), 'found:', !!targetElement);
-
         if (!targetElement) {
-            console.error('❌ Target element not found:', tabHref);
             return;
         }
 
-        console.log('✅ Target element found, proceeding with activation');
-
         // Hide all tab contents by finding elements that match nav tab hrefs
         var navTabs = document.querySelectorAll('.nav-tab');
-        console.log('Found', navTabs.length, 'nav tab elements');
         
         // Collect all tab content IDs from nav tabs
         var tabContentIds = [];
@@ -259,7 +230,6 @@ window.addEventListener('load', function() {
                 tabContentIds.push(href.substring(1));
             }
         }
-        console.log('Tab content IDs to manage:', tabContentIds);
         
         // Hide all tab contents that correspond to nav tabs
         var tabContents = [];
@@ -267,28 +237,19 @@ window.addEventListener('load', function() {
             var element = document.getElementById(tabContentIds[i]);
             if (element) {
                 tabContents.push(element);
-                console.log('Found tab content element:', tabContentIds[i]);
-            } else {
-                console.log('Missing tab content element:', tabContentIds[i]);
             }
         }
-        console.log('Found', tabContents.length, 'tab content elements (by ID lookup)');
 
         // Simple approach: hide all tab contents first, then show only the target
-        // Use the tabContents array we built from nav tabs instead of querySelectorAll
-        console.log('Found', tabContents.length, 'total tab content elements to manage');
-
         for (var i = 0; i < tabContents.length; i++) {
             if (tabContents[i].id === targetElement.id) {
                 // This is the target - show it
                 tabContents[i].classList.add('active');
                 tabContents[i].style.cssText = 'display: block !important;';
-                console.log('SHOWING target content:', tabContents[i].id);
             } else {
                 // This is not the target - hide it
                 tabContents[i].classList.remove('active');
                 tabContents[i].style.cssText = 'display: none !important;';
-                console.log('HIDING non-target content:', tabContents[i].id);
             }
         }
 
@@ -300,80 +261,27 @@ window.addEventListener('load', function() {
         var activeNavTab = document.querySelector('.nav-tab[href="' + tabHref + '"]');
         if (activeNavTab) {
             activeNavTab.classList.add('nav-tab-active');
-            console.log('Activated nav tab for:', tabHref);
         }
-
-        // Verify final state
-        var activeContents = document.querySelectorAll('.tab-content.active');
-        var activeNavs = document.querySelectorAll('.nav-tab.nav-tab-active');
-
-        console.log('Final state - active contents:', activeContents.length, 'active navs:', activeNavs.length);
-        console.log('✅ Simple tab activation complete for:', tabHref);
     }
     
     // Attach click handlers when DOM is ready
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOMContentLoaded - attaching tab handlers');
-
         var navTabs = document.querySelectorAll('.nav-tab');
-        console.log('Found nav tabs:', navTabs.length);
-
-        // Log each tab found
-        for (var i = 0; i < navTabs.length; i++) {
-            console.log('Tab', i, ':', navTabs[i].getAttribute('href'), navTabs[i].textContent.trim());
-        }
 
         for (var i = 0; i < navTabs.length; i++) {
             navTabs[i].addEventListener('click', function(e) {
-                console.log('🖱️ TAB CLICK DETECTED!');
-                console.log('Clicked element:', this);
-                console.log('Href:', this.getAttribute('href'));
-                console.log('Text:', this.textContent.trim());
-
                 e.preventDefault();
                 var tabHref = this.getAttribute('href');
-                console.log('Processing tab click for:', tabHref);
-
-                // Check if tab content exists
-                var targetElement = document.getElementById(tabHref.substring(1));
-                console.log('Target element found:', !!targetElement, 'id:', tabHref.substring(1));
-
-                // Debug: Check all elements with class tab-content
-                var allTabContents = document.querySelectorAll('.tab-content');
-                console.log('Total tab-content elements in DOM:', allTabContents.length);
-                for (var i = 0; i < allTabContents.length; i++) {
-                    console.log('Tab content element', i, ': id="' + allTabContents[i].id + '"');
-                }
-
-                // Debug: Check if element exists but is not found by getElementById
-                var elementByQuery = document.querySelector('#' + tabHref.substring(1));
-                console.log('Element found by querySelector:', !!elementByQuery, 'id:', tabHref.substring(1));
-
                 simpleActivateTab(tabHref);
-
-                // Note: Removed hash update to prevent unwanted scrolling
-                // window.location.hash = tabHref;
             });
         }
-
-        console.log('All click handlers attached successfully');
 
         // Initialize first tab
         var firstTab = document.querySelector('.nav-tab');
         if (firstTab) {
             var firstHref = firstTab.getAttribute('href');
-            console.log('Initializing first tab:', firstHref);
             simpleActivateTab(firstHref);
-        } else {
-            console.error('No first tab found!');
         }
-
-        // Update debug info
-        if (statusSpan) {
-            statusSpan.textContent = 'JavaScript chargé - ' + navTabs.length + ' onglets trouvés';
-        }
-
-        console.log('Tab initialization complete');
     });
     </script>
 
@@ -843,38 +751,145 @@ window.addEventListener('load', function() {
                 </div>
             </div>
 
-            <!-- TEST: Simple div to check if PHP execution reaches here -->
-            <div style="background: red; color: white; padding: 10px; margin: 10px 0;">
-                PHP EXECUTION TEST - If you see this, PHP reached this point
-            </div>
-
             <!-- Onglet Notifications -->
-            <?php error_log('PDF Builder: About to render notifications tab'); ?>
-            <div id="notifications" class="tab-content" style="border: 5px solid blue !important; padding: 30px !important; background: lightblue !important; margin: 20px !important;">
-                <h2 style="color: darkblue !important;">🚨 Paramètres de Notifications</h2>
-                <p style="font-size: 18px !important; color: red !important;"><strong>CONTENU NOTIFICATIONS VISIBLE ICI</strong></p>
-                <div style="background: yellow !important; padding: 20px !important; border: 3px solid red !important;">
-                    <p>Si vous voyez cette boîte jaune avec bordure rouge, l'onglet fonctionne !</p>
-                </div>
+            <div id="notifications" class="tab-content">
+                <h2><?php _e('Paramètres de Notifications', 'pdf-builder-pro'); ?></h2>
+
+                <table class="form-table">
+                    <tr>
+                        <th scope="row"><?php _e('Notifications par Email', 'pdf-builder-pro'); ?></th>
+                        <td>
+                            <fieldset>
+                                <label for="email_notifications">
+                                    <input name="email_notifications" type="checkbox" id="email_notifications" value="1" <?php checked(get_option('pdf_builder_email_notifications', true)); ?>>
+                                    <?php _e('Activer les notifications par email pour les erreurs et avertissements', 'pdf-builder-pro'); ?>
+                                </label>
+                            </fieldset>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php _e('Email Administrateur', 'pdf-builder-pro'); ?></th>
+                        <td>
+                            <input name="admin_email" type="email" id="admin_email" value="<?php echo esc_attr(get_option('pdf_builder_admin_email', get_option('admin_email'))); ?>" class="regular-text">
+                            <p class="description"><?php _e('Adresse email pour recevoir les notifications système.', 'pdf-builder-pro'); ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php _e('Niveau de Log pour Notifications', 'pdf-builder-pro'); ?></th>
+                        <td>
+                            <select name="notification_log_level">
+                                <option value="error" <?php selected(get_option('pdf_builder_notification_log_level'), 'error'); ?>><?php _e('Erreurs uniquement', 'pdf-builder-pro'); ?></option>
+                                <option value="warning" <?php selected(get_option('pdf_builder_notification_log_level'), 'warning'); ?>><?php _e('Erreurs et avertissements', 'pdf-builder-pro'); ?></option>
+                                <option value="info" <?php selected(get_option('pdf_builder_notification_log_level'), 'info'); ?>><?php _e('Tous les événements importants', 'pdf-builder-pro'); ?></option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
             </div>
 
             <!-- Onglet Canvas -->
-            <?php error_log('PDF Builder: About to render canvas tab'); ?>
-            <div id="canvas" class="tab-content" style="border: 5px solid green !important; padding: 30px !important; background: lightgreen !important; margin: 20px !important;">
-                <h2 style="color: darkgreen !important;">🎨 Paramètres Canvas</h2>
-                <p style="font-size: 18px !important; color: red !important;"><strong>CONTENU CANVAS VISIBLE ICI</strong></p>
-                <div style="background: yellow !important; padding: 20px !important; border: 3px solid red !important;">
-                    <p>Si vous voyez cette boîte jaune avec bordure rouge, l'onglet fonctionne !</p>
-                </div>
+            <div id="canvas" class="tab-content">
+                <h2><?php _e('Paramètres Canvas', 'pdf-builder-pro'); ?></h2>
+
+                <table class="form-table">
+                    <tr>
+                        <th scope="row"><?php _e('Dimensions par Défaut', 'pdf-builder-pro'); ?></th>
+                        <td>
+                            <label for="default_canvas_width"><?php _e('Largeur:', 'pdf-builder-pro'); ?></label>
+                            <input name="default_canvas_width" type="number" id="default_canvas_width" value="<?php echo esc_attr(get_option('pdf_builder_default_canvas_width', 210)); ?>" class="small-text"> mm
+                            <br>
+                            <label for="default_canvas_height"><?php _e('Hauteur:', 'pdf-builder-pro'); ?></label>
+                            <input name="default_canvas_height" type="number" id="default_canvas_height" value="<?php echo esc_attr(get_option('pdf_builder_default_canvas_height', 297)); ?>" class="small-text"> mm
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php _e('Grille d\'Alignement', 'pdf-builder-pro'); ?></th>
+                        <td>
+                            <fieldset>
+                                <label for="show_grid">
+                                    <input name="show_grid" type="checkbox" id="show_grid" value="1" <?php checked(get_option('pdf_builder_show_grid', true)); ?>>
+                                    <?php _e('Afficher la grille d\'alignement dans l\'éditeur', 'pdf-builder-pro'); ?>
+                                </label>
+                            </fieldset>
+                            <br>
+                            <label for="grid_size"><?php _e('Taille de la grille:', 'pdf-builder-pro'); ?></label>
+                            <input name="grid_size" type="number" id="grid_size" value="<?php echo esc_attr(get_option('pdf_builder_grid_size', 10)); ?>" class="small-text"> px
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php _e('Aimants', 'pdf-builder-pro'); ?></th>
+                        <td>
+                            <fieldset>
+                                <label for="snap_to_grid">
+                                    <input name="snap_to_grid" type="checkbox" id="snap_to_grid" value="1" <?php checked(get_option('pdf_builder_snap_to_grid', true)); ?>>
+                                    <?php _e('Activer l\'aimantation à la grille', 'pdf-builder-pro'); ?>
+                                </label>
+                            </fieldset>
+                            <br>
+                            <fieldset>
+                                <label for="snap_to_elements">
+                                    <input name="snap_to_elements" type="checkbox" id="snap_to_elements" value="1" <?php checked(get_option('pdf_builder_snap_to_elements', true)); ?>>
+                                    <?php _e('Activer l\'aimantation aux autres éléments', 'pdf-builder-pro'); ?>
+                                </label>
+                            </fieldset>
+                        </td>
+                    </tr>
+                </table>
             </div>
 
             <!-- Onglet Maintenance -->
-            <?php error_log('PDF Builder: About to render maintenance tab'); ?>
-            <div id="maintenance" class="tab-content" style="border: 5px solid orange !important; padding: 30px !important; background: lightyellow !important; margin: 20px !important;">
-                <h2 style="color: darkorange !important;">🔧 Actions de Maintenance</h2>
-                <p style="font-size: 18px !important; color: red !important;"><strong>CONTENU MAINTENANCE VISIBLE ICI</strong></p>
-                <div style="background: yellow !important; padding: 20px !important; border: 3px solid red !important;">
-                    <p>Si vous voyez cette boîte jaune avec bordure rouge, l'onglet fonctionne !</p>
+            <div id="maintenance" class="tab-content">
+                <h2><?php _e('Actions de Maintenance', 'pdf-builder-pro'); ?></h2>
+
+                <div class="maintenance-actions">
+                    <div class="maintenance-section" style="margin-bottom: 30px;">
+                        <h3><?php _e('Nettoyage des Données', 'pdf-builder-pro'); ?></h3>
+                        <p><?php _e('Supprimez les données temporaires et les fichiers obsolètes pour optimiser les performances.', 'pdf-builder-pro'); ?></p>
+
+                        <form method="post" style="display: inline;">
+                            <?php wp_nonce_field('clear_cache', 'clear_cache_nonce'); ?>
+                            <input type="submit" name="clear_cache" class="button button-secondary" value="<?php esc_attr_e('Vider le Cache', 'pdf-builder-pro'); ?>">
+                        </form>
+
+                        <form method="post" style="display: inline; margin-left: 10px;">
+                            <?php wp_nonce_field('clear_temp_files', 'clear_temp_files_nonce'); ?>
+                            <input type="submit" name="clear_temp_files" class="button button-secondary" value="<?php esc_attr_e('Supprimer Fichiers Temporaires', 'pdf-builder-pro'); ?>">
+                        </form>
+                    </div>
+
+                    <div class="maintenance-section" style="margin-bottom: 30px;">
+                        <h3><?php _e('Réparation de Données', 'pdf-builder-pro'); ?></h3>
+                        <p><?php _e('Réparez les templates corrompus et les paramètres invalides.', 'pdf-builder-pro'); ?></p>
+
+                        <form method="post" style="display: inline;">
+                            <?php wp_nonce_field('repair_templates', 'repair_templates_nonce'); ?>
+                            <input type="submit" name="repair_templates" class="button button-secondary" value="<?php esc_attr_e('Réparer Templates', 'pdf-builder-pro'); ?>">
+                        </form>
+
+                        <form method="post" style="display: inline; margin-left: 10px;">
+                            <?php wp_nonce_field('reset_settings', 'reset_settings_nonce'); ?>
+                            <input type="submit" name="reset_settings" class="button button-warning" value="<?php esc_attr_e('Réinitialiser Paramètres', 'pdf-builder-pro'); ?>"
+                                   onclick="return confirm('<?php _e('Attention: Cette action va réinitialiser tous les paramètres aux valeurs par défaut. Continuer ?', 'pdf-builder-pro'); ?>');">
+                        </form>
+                    </div>
+
+                    <div class="maintenance-section">
+                        <h3><?php _e('Informations Système', 'pdf-builder-pro'); ?></h3>
+                        <table class="form-table">
+                            <tr>
+                                <th scope="row"><?php _e('Version du Plugin', 'pdf-builder-pro'); ?></th>
+                                <td><?php echo esc_html(PDF_BUILDER_VERSION); ?></td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><?php _e('Espace Disque Utilisé', 'pdf-builder-pro'); ?></th>
+                                <td><?php echo size_format($this->get_disk_usage()); ?></td>
+                            </tr>
+                            <tr>
+                                <th scope="row"><?php _e('Nombre de Templates', 'pdf-builder-pro'); ?></th>
+                                <td><?php echo $this->get_template_count(); ?></td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
