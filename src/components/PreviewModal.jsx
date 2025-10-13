@@ -10,7 +10,9 @@ const PreviewModal = ({
   elements = [],
   canvasWidth = 595,
   canvasHeight = 842,
-  zoom = 1
+  zoom = 1,
+  ajaxurl,
+  pdfBuilderNonce
 }) => {
   if (!isOpen) return null;
 
@@ -32,13 +34,22 @@ const PreviewModal = ({
       });
     });
 
+    // Vérifier que les variables AJAX sont disponibles
+    if (!ajaxurl || !pdfBuilderNonce) {
+      console.error('Variables AJAX manquantes:', { ajaxurl, pdfBuilderNonce });
+      alert('Erreur: Variables AJAX non disponibles. Rechargez la page.');
+      return;
+    }
+
     // Préparer les données pour l'AJAX
     const formData = new FormData();
     formData.append('action', 'pdf_builder_generate_pdf');
-    formData.append('nonce', pdfBuilderAjax.nonce);
+    formData.append('nonce', pdfBuilderNonce);
     formData.append('elements', JSON.stringify(elements));
     formData.append('canvasWidth', canvasWidth);
     formData.append('canvasHeight', canvasHeight);
+
+    console.log('Envoi requête AJAX vers:', ajaxurl);
 
     // Afficher un indicateur de chargement
     const printButton = document.querySelector('.btn-primary');
@@ -47,17 +58,20 @@ const PreviewModal = ({
     printButton.disabled = true;
 
     // Envoyer la requête AJAX
-    fetch(pdfBuilderAjax.ajaxurl, {
+    fetch(ajaxurl, {
       method: 'POST',
       body: formData
     })
     .then(response => {
+      console.log('Réponse reçue:', response.status, response.statusText);
       if (!response.ok) {
-        throw new Error('Erreur réseau: ' + response.status);
+        throw new Error('Erreur réseau: ' + response.status + ' ' + response.statusText);
       }
       return response.blob();
     })
     .then(blob => {
+      console.log('Blob PDF reçu, taille:', blob.size, 'bytes');
+
       // Créer un URL pour le blob PDF
       const pdfUrl = URL.createObjectURL(blob);
 
@@ -65,6 +79,7 @@ const PreviewModal = ({
       const link = document.createElement('a');
       link.href = pdfUrl;
       link.download = 'pdf-builder-pro-document.pdf';
+      link.target = '_blank'; // Ouvrir dans un nouvel onglet
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -72,7 +87,7 @@ const PreviewModal = ({
       // Libérer l'URL du blob
       URL.revokeObjectURL(pdfUrl);
 
-      console.log('PDF généré et téléchargé avec succès');
+      console.log('PDF généré et ouvert avec succès');
     })
     .catch(error => {
       console.error('Erreur lors de la génération du PDF:', error);

@@ -570,6 +570,8 @@ export const PDFCanvasEditor = ({ options }) => {
           elements={canvasState.elements}
           canvasWidth={canvasState.canvasWidth}
           canvasHeight={canvasState.canvasHeight}
+          ajaxurl={window.pdfBuilderAjax?.ajaxurl}
+          pdfBuilderNonce={window.pdfBuilderAjax?.nonce}
         />
       </React.Suspense>
     </div>

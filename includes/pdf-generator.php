@@ -3,13 +3,18 @@
  * Générateur PDF avec TCPDF pour PDF Builder Pro
  */
 
-// Sécurité
-if (!defined('ABSPATH')) {
+// Sécurité - seulement en mode WordPress normal
+if (!defined('ABSPATH') && !defined('PDF_GENERATOR_TEST_MODE')) {
     exit;
 }
 
 // Inclure TCPDF
-require_once plugin_dir_path(__FILE__) . '../lib/tcpdf_autoload.php';
+if (function_exists('plugin_dir_path')) {
+    require_once plugin_dir_path(__FILE__) . '../lib/tcpdf_autoload.php';
+} else {
+    // Mode test - utiliser __DIR__
+    require_once __DIR__ . '/../lib/tcpdf_autoload.php';
+}
 
 class PDF_Generator {
 
@@ -288,9 +293,15 @@ function pdf_builder_generate_pdf() {
 
     } catch (Exception $e) {
         error_log('Erreur génération PDF: ' . $e->getMessage());
-        wp_die('Erreur lors de la génération du PDF: ' . $e->getMessage());
+        if (function_exists('wp_die')) {
+            wp_die('Erreur lors de la génération du PDF: ' . $e->getMessage());
+        } else {
+            die('Erreur lors de la génération du PDF: ' . $e->getMessage());
+        }
     }
 }
 
-// Enregistrer l'action AJAX
-add_action('wp_ajax_pdf_builder_generate_pdf', 'pdf_builder_generate_pdf');
+// Enregistrer l'action AJAX seulement si on est dans WordPress
+if (function_exists('add_action')) {
+    add_action('wp_ajax_pdf_builder_generate_pdf', 'pdf_builder_generate_pdf');
+}

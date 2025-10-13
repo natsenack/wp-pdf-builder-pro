@@ -6,19 +6,22 @@
 
 // Chemins vers les classes TCPDF
 $tcpdf_paths = array(
-    __DIR__ . '/tcpdf.php',
-    __DIR__ . '/tcpdf_parser.php',
-    __DIR__ . '/tcpdf_import.php',
-    __DIR__ . '/include/tcpdf_colors.php',
-    __DIR__ . '/include/tcpdf_fonts.php',
-    __DIR__ . '/include/tcpdf_images.php',
-    __DIR__ . '/include/tcpdf_static.php'
+    __DIR__ . '/tcpdf/tcpdf.php',
+    __DIR__ . '/tcpdf/tcpdf_parser.php',
+    __DIR__ . '/tcpdf/tcpdf_import.php',
+    __DIR__ . '/tcpdf/tcpdf_static.php',
+    __DIR__ . '/tcpdf/tcpdf_colors.php',
+    __DIR__ . '/tcpdf/tcpdf_fonts.php',
+    __DIR__ . '/tcpdf/tcpdf_images.php',
+    __DIR__ . '/tcpdf/tcpdf_autoconfig.php'
 );
 
 // Inclure toutes les classes nécessaires
 foreach ($tcpdf_paths as $path) {
     if (file_exists($path)) {
         require_once $path;
+    } else {
+        die("Fichier TCPDF manquant: $path\n");
     }
 }
 
