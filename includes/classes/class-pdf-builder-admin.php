@@ -2965,6 +2965,34 @@ class PDF_Builder_Admin {
 
         wp_send_json_success(['message' => 'Paramètres sauvegardés avec succès !']);
     }
+
+    /**
+     * Nettoie les données JSON pour corriger les erreurs d'encodage
+     */
+    private function clean_json_data($json_string) {
+        if (!is_string($json_string)) {
+            return $json_string;
+        }
+
+        // Supprimer les caractères de contrôle invisibles (sauf tabulation, retour chariot, nouvelle ligne)
+        $cleaned = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $json_string);
+
+        // Corriger les problèmes d'encodage UTF-8
+        if (!mb_check_encoding($cleaned, 'UTF-8')) {
+            $cleaned = mb_convert_encoding($cleaned, 'UTF-8', 'auto');
+        }
+
+        // Supprimer les BOM UTF-8 si présent
+        $cleaned = preg_replace('/^\x{EF}\x{BB}\x{BF}/', '', $cleaned);
+
+        // Nettoyer les espaces de noms problématiques
+        $cleaned = str_replace('\\u0000', '', $cleaned);
+
+        // Supprimer les caractères null
+        $cleaned = str_replace("\0", '', $cleaned);
+
+        return $cleaned;
+    }
 }
 
 
