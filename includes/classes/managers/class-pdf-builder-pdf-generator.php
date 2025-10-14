@@ -214,13 +214,22 @@ class PDF_Builder_PDF_Generator {
      * Générer HTML depuis les données template
      */
     private function generate_html_from_template_data($template) {
-        return $this->generate_unified_html($template);
+        // Utiliser la même fonction que l'aperçu commande pour la cohérence
+        if (class_exists('PDF_Builder_Admin')) {
+            $admin = PDF_Builder_Admin::getInstance();
+            if (method_exists($admin, 'generate_unified_html')) {
+                return $admin->generate_unified_html($template);
+            }
+        }
+
+        // Fallback vers l'ancienne implémentation si nécessaire
+        return $this->generate_unified_html_legacy($template);
     }
 
     /**
-     * Générer HTML unifié
+     * Générer HTML unifié (version legacy - conservée pour compatibilité)
      */
-    private function generate_unified_html($template, $order = null) {
+    private function generate_unified_html_legacy($template, $order = null) {
         $html = '<div style="font-family: Arial, sans-serif; padding: 20px;">';
 
         if (isset($template['pages']) && is_array($template['pages']) && !empty($template['pages'])) {
