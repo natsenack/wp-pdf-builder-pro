@@ -214,7 +214,7 @@ class PDF_Builder_Core {
             add_menu_page(
                 __('PDF Builder Pro', 'pdf-builder-pro'),
                 __('PDF Builder', 'pdf-builder-pro'),
-                'manage_options',
+                'read',
                 'pdf-builder-pro',
                 array($this, 'admin_page'),
                 'dashicons-pdf',
@@ -225,7 +225,7 @@ class PDF_Builder_Core {
                 'pdf-builder-pro',
                 __('Templates', 'pdf-builder-pro'),
                 __('Templates', 'pdf-builder-pro'),
-                'manage_options',
+                'read',
                 'pdf-builder-templates',
                 array($this, 'templates_page')
             );
@@ -244,7 +244,7 @@ class PDF_Builder_Core {
                 'pdf-builder-pro',
                 __('Settings', 'pdf-builder-pro'),
                 __('Settings', 'pdf-builder-pro'),
-                'manage_options',
+                'read',
                 'pdf-builder-settings',
                 array($this, 'settings_page')
             );
