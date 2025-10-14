@@ -25,6 +25,15 @@ class PDF_Preview_Generator {
     }
 
     /**
+     * Définit l'ordre pour la génération de l'aperçu
+     */
+    public function set_order($order) {
+        if ($this->generator) {
+            $this->generator->set_order($order);
+        }
+    }
+
+    /**
      * Génère un aperçu miniature du PDF
      */
     public function generate_preview($elements, $width = 400, $height = 566) {

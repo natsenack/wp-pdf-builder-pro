@@ -16,6 +16,7 @@ class PDF_Builder_Pro_Generator {
     private $cache = [];
     private $errors = [];
     private $performance_metrics = [];
+    private $order = null; // Ajout de la propriété order
 
     // Configuration par defaut
     private $config = [
@@ -35,6 +36,13 @@ class PDF_Builder_Pro_Generator {
     public function __construct($config = []) {
         $this->config = array_merge($this->config, $config);
         $this->performance_metrics['start_time'] = microtime(true);
+    }
+
+    /**
+     * Définit l'ordre pour la génération du PDF
+     */
+    public function set_order($order) {
+        $this->order = $order;
     }
 
     /**
@@ -819,11 +827,61 @@ class PDF_Builder_Pro_Generator {
         $width = isset($element['width']) ? $element['width'] * $px_to_mm : 50;
         $height = isset($element['height']) ? $element['height'] * $px_to_mm : 20;
 
+        // Déterminer le type de document dynamiquement
+        $document_type = 'facture'; // Valeur par défaut
+        $document_type_label = 'FACTURE';
+        $invoice_number = 'N° INV-001';
+
+        if ($this->order) {
+            $order_status = $this->order->get_status();
+            $document_type = $this->detect_document_type($order_status);
+            $document_type_label = $this->get_document_type_label($document_type);
+            $invoice_number = 'N° ' . strtoupper($document_type) . '-' . $this->order->get_id();
+        }
+
         $this->pdf->SetXY($x, $y);
         $this->pdf->SetFont('helvetica', 'B', 14);
-        $this->pdf->Cell($width, 8, utf8_decode('FACTURE'), 0, 1, 'R');
+        $this->pdf->Cell($width, 8, utf8_decode($document_type_label), 0, 1, 'R');
         $this->pdf->SetFont('helvetica', '', 10);
-        $this->pdf->Cell($width, 6, utf8_decode('N° INV-001'), 0, 1, 'R');
+        $this->pdf->Cell($width, 6, utf8_decode($invoice_number), 0, 1, 'R');
+    }
+
+    /**
+     * Détecte le type de document basé sur le statut de la commande
+     */
+    private function detect_document_type($order_status) {
+        // Mapping des statuts WooCommerce vers les types de document
+        $status_mapping = [
+            'wc-quote' => 'devis',           // Devis
+            'wc-quotation' => 'devis',      // Devis (variante)
+            'quote' => 'devis',             // Devis (sans préfixe)
+            'quotation' => 'devis',         // Devis (sans préfixe)
+            'wc-pending' => 'commande',     // En attente
+            'wc-processing' => 'commande',  // En cours
+            'wc-on-hold' => 'commande',     // En attente
+            'wc-completed' => 'facture',    // Terminée -> Facture
+            'wc-cancelled' => 'commande',   // Annulée
+            'wc-refunded' => 'facture',     // Remboursée -> Facture
+            'wc-failed' => 'commande',      // Échec
+        ];
+
+        // Retourner le type mappé ou 'commande' par défaut
+        return isset($status_mapping[$order_status]) ? $status_mapping[$order_status] : 'commande';
+    }
+
+    /**
+     * Retourne le libellé du type de document
+     */
+    private function get_document_type_label($document_type) {
+        $labels = [
+            'facture' => 'FACTURE',
+            'devis' => 'DEVIS',
+            'commande' => 'COMMANDE',
+            'contrat' => 'CONTRAT',
+            'bon_livraison' => 'BON DE LIVRAISON',
+        ];
+
+        return isset($labels[$document_type]) ? $labels[$document_type] : strtoupper($document_type);
     }
 
     /**

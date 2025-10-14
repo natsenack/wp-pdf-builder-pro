@@ -110,7 +110,7 @@ class PDF_Builder_Admin {
         add_action('wp_ajax_pdf_builder_pro_generate_pdf', [$this, 'ajax_generate_pdf_from_canvas']);
         add_action('wp_ajax_pdf_builder_generate_pdf', [$this, 'ajax_generate_pdf_from_canvas']); // Alias pour compatibilité
         add_action('wp_ajax_pdf_builder_pro_preview_pdf', [$this, 'ajax_preview_pdf']);
-        add_action('wp_ajax_pdf_builder_generate_preview', [$this, 'ajax_preview_pdf']); // Alias pour compatibilité
+        // add_action('wp_ajax_pdf_builder_generate_preview', [$this, 'ajax_preview_pdf']); // Alias supprimé - conflit avec ajax_generate_preview
         add_action('wp_ajax_pdf_builder_pro_download_pdf', [$this, 'ajax_download_pdf']);
         add_action('wp_ajax_pdf_builder_pro_save_template', [$this, 'ajax_save_template']);
         add_action('wp_ajax_pdf_builder_pro_load_template', [$this, 'ajax_load_template']);
@@ -1885,6 +1885,7 @@ class PDF_Builder_Admin {
         // Utiliser notre générateur PDF personnalisé
         require_once plugin_dir_path(__FILE__) . '../pdf-generator.php';
         $generator = new PDF_Generator();
+        $generator->set_order($order); // Passer l'ordre au générateur
         $pdf_content = $generator->generate_from_elements($this->convert_template_to_elements($template));
 
         if ($pdf_content) {
@@ -5071,6 +5072,9 @@ class PDF_Builder_Admin {
      * Détecte le type de document basé sur le statut de la commande
      */
     private function detect_document_type($order_status) {
+        // Log pour debug
+        error_log('PDF Builder: Détection type document pour statut: ' . $order_status);
+
         // Mapping des statuts WooCommerce vers les types de document
         $status_mapping = [
             'wc-quote' => 'devis',           // Devis
@@ -5087,7 +5091,10 @@ class PDF_Builder_Admin {
         ];
 
         // Retourner le type mappé ou 'commande' par défaut
-        return isset($status_mapping[$order_status]) ? $status_mapping[$order_status] : 'commande';
+        $document_type = isset($status_mapping[$order_status]) ? $status_mapping[$order_status] : 'commande';
+        error_log('PDF Builder: Type document détecté: ' . $document_type . ' pour statut: ' . $order_status);
+
+        return $document_type;
     }
 
     /**
