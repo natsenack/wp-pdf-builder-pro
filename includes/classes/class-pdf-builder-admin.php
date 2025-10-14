@@ -2933,12 +2933,16 @@ class PDF_Builder_Admin {
                 var orderId = $(this).data('order-id');
                 var templateId = <?php echo $default_template ? esc_js($default_template['id']) : '0'; ?>;
 
-                console.log('PDF Builder: Preview button clicked');
-                console.log('PDF Builder: Order ID:', orderId);
-                console.log('PDF Builder: Template ID:', templateId);
+                console.log('🚀 PDF Builder: Preview button clicked');
+                console.log('📋 PDF Builder: Order ID:', orderId);
+                console.log('📄 PDF Builder: Template ID:', templateId);
+                console.log('🔗 PDF Builder: AJAX URL:', ajaxurl);
 
                 showStatus('<?php echo esc_js(__('Génération de l\'aperçu...', 'pdf-builder-pro')); ?>', 'loading');
                 setButtonLoading($previewBtn, true);
+
+                console.log('📡 PDF Builder: Starting AJAX request...');
+                var ajaxStartTime = Date.now();
 
                 $.ajax({
                     url: ajaxurl,
@@ -2950,23 +2954,31 @@ class PDF_Builder_Admin {
                         nonce: '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>'
                     },
                     success: function(response) {
-                        console.log('PDF Builder: Preview AJAX success');
-                        console.log('PDF Builder: Response:', response);
+                        var ajaxEndTime = Date.now();
+                        var ajaxDuration = ajaxEndTime - ajaxStartTime;
+                        console.log('✅ PDF Builder: Preview AJAX success after', ajaxDuration, 'ms');
+                        console.log('📦 PDF Builder: Response:', response);
+
                         if (response.success) {
+                            console.log('🎉 PDF Builder: Preview successful, opening modal');
                             // Ouvrir l'aperçu dans une modale
                             openPdfPreviewModal(response.data.html, response.data.width, response.data.height);
                             showStatus('<?php echo esc_js(__('Aperçu ouvert avec succès ✅', 'pdf-builder-pro')); ?>', 'success');
                             setTimeout(hideStatus, 3000);
                         } else {
-                            console.error('PDF Builder: Preview failed:', response.data);
+                            console.error('❌ PDF Builder: Preview failed:', response.data);
                             showStatus(response.data || '<?php echo esc_js(__('Erreur lors de l\'aperçu ❌', 'pdf-builder-pro')); ?>', 'error');
                         }
                     },
                     error: function(xhr, status, error) {
-                        console.error('PDF Builder: Preview AJAX error');
-                        console.error('PDF Builder: Status:', status);
-                        console.error('PDF Builder: Error:', error);
-                        console.error('PDF Builder: Response:', xhr.responseText);
+                        var ajaxEndTime = Date.now();
+                        var ajaxDuration = ajaxEndTime - ajaxStartTime;
+                        console.error('❌ PDF Builder: Preview AJAX error after', ajaxDuration, 'ms');
+                        console.error('📊 PDF Builder: Status:', status);
+                        console.error('🚨 PDF Builder: Error:', error);
+                        console.error('📄 PDF Builder: Response text:', xhr.responseText);
+                        console.error('🔢 PDF Builder: Status code:', xhr.status);
+
                         showStatus('<?php echo esc_js(__('Erreur AJAX lors de l\'aperçu ❌', 'pdf-builder-pro')); ?>', 'error');
                     },
                     complete: function() {
