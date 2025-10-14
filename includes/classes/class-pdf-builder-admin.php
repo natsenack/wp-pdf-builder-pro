@@ -1790,7 +1790,7 @@ class PDF_Builder_Admin {
         if (!$for_preview) {
             $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' . ($order ? 'Order #' . $order->get_id() : 'PDF Preview') . '</title>';
         } else {
-            $html = '';
+            $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>PDF Preview</title>';
         }
 
         // Gestion des marges d'impression - utiliser la première page
@@ -1805,21 +1805,24 @@ class PDF_Builder_Admin {
 
         $html .= '<style>
         body {
-            font-family: "DejaVu Sans", "Arial Unicode MS", Arial, sans-serif;
+            font-family: Arial, sans-serif;
             margin: 0;
-            padding: ' . $margins['top'] . 'px ' . $margins['right'] . 'px ' . $margins['bottom'] . 'px ' . $margins['left'] . 'px;
-            background: white;
+            padding: 0;
+            background: #f5f5f5;
             color: #333;
             line-height: 1.4;
-            font-size: 12px;
+            font-size: 14px;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
         .pdf-container {
             position: relative;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
+            width: ' . ($for_preview ? '595px' : '100%') . ';
+            height: ' . ($for_preview ? '842px' : '100%') . ';
+            background: white;
+            margin: ' . ($for_preview ? '20px auto' : '0') . ';
+            border: ' . ($for_preview ? '1px solid #e2e8f0' : 'none') . ';
+            box-shadow: ' . ($for_preview ? '0 4px 12px rgba(0,0,0,0.1)' : 'none') . ';
         }
         .pdf-element {
             position: absolute;
@@ -1893,6 +1896,8 @@ class PDF_Builder_Admin {
         </style>';
         if (!$for_preview) {
             $html .= '</head><body>';
+        } else {
+            $html .= '</head><body>';
         }
         $html .= '<div class="pdf-container" style="position: relative; width: 595px; height: 842px; background: white;">';
 
@@ -1935,40 +1940,55 @@ class PDF_Builder_Admin {
                     $height = $element['height'] ?? 50;
                 }
 
-                // Convertir les coordonnées pour TCPDF (de pixels à points, approx 1px = 0.75pt)
-                $x_pt = round($x * 0.75);
-                $y_pt = round($y * 0.75);
-                $width_pt = round($width * 0.75);
-                $height_pt = round($height * 0.75);
+                if ($for_preview) {
+                    // Pour l'aperçu côté client, utiliser des pixels et des styles compatibles
+                    $base_style = sprintf(
+                        'position: absolute; left: %dpx; top: %dpx; width: %dpx; height: %dpx;',
+                        $x,
+                        $y,
+                        $width,
+                        $height
+                    );
+                } else {
+                    // Convertir les coordonnées pour TCPDF (de pixels à points, approx 1px = 0.75pt)
+                    $x_pt = round($x * 0.75);
+                    $y_pt = round($y * 0.75);
+                    $width_pt = round($width * 0.75);
+                    $height_pt = round($height * 0.75);
 
-                // TCPDF ne supporte pas bien position:absolute, utiliser une approche alternative
-                // Créer un élément avec des coordonnées TCPDF spéciales
-                $tcpdf_style = sprintf(
-                    'position: absolute; left: %dpt; top: %dpt; width: %dpt; height: %dpt;',
-                    $x_pt,
-                    $y_pt,
-                    $width_pt,
-                    $height_pt
-                );
+                    // TCPDF ne supporte pas bien position:absolute, utiliser une approche alternative
+                    // Créer un élément avec des coordonnées TCPDF spéciales
+                    $base_style = sprintf(
+                        'position: absolute; left: %dpt; top: %dpt; width: %dpt; height: %dpt;',
+                        $x_pt,
+                        $y_pt,
+                        $width_pt,
+                        $height_pt
+                    );
+                }
 
                 // Ajouter les styles CSS supplémentaires
                 if (isset($element['style'])) {
                     if (isset($element['style']['color'])) {
-                        $tcpdf_style .= ' color: ' . $element['style']['color'] . ';';
+                        $base_style .= ' color: ' . $element['style']['color'] . ';';
                     }
                     if (isset($element['style']['fontSize'])) {
-                        $font_size_pt = round($element['style']['fontSize'] * 0.75);
-                        $tcpdf_style .= ' font-size: ' . $font_size_pt . 'pt;';
+                        if ($for_preview) {
+                            $base_style .= ' font-size: ' . $element['style']['fontSize'] . 'px;';
+                        } else {
+                            $font_size_pt = round($element['style']['fontSize'] * 0.75);
+                            $base_style .= ' font-size: ' . $font_size_pt . 'pt;';
+                        }
                     }
                     if (isset($element['style']['fontWeight'])) {
-                        $tcpdf_style .= ' font-weight: ' . $element['style']['fontWeight'] . ';';
+                        $base_style .= ' font-weight: ' . $element['style']['fontWeight'] . ';';
                     }
                     if (isset($element['style']['fillColor'])) {
-                        $tcpdf_style .= ' background-color: ' . $element['style']['fillColor'] . ';';
+                        $base_style .= ' background-color: ' . $element['style']['fillColor'] . ';';
                     }
                 }
 
-                $style = $tcpdf_style;
+                $style = $base_style;
 
                 $content = $element['content'] ?? '';
 
@@ -1980,83 +2000,116 @@ class PDF_Builder_Admin {
                 switch ($element['type']) {
                     case 'text':
                         $final_content = $order ? $this->replace_order_variables($content, $order) : $content;
-                        $html .= sprintf('<div class="pdf-element text-element" style="%s">%s</div>', $tcpdf_style, esc_html($final_content));
+                        if ($for_preview) {
+                            // Styles identiques à PreviewModal pour le texte
+                            $text_style = $style . sprintf(
+                                ' font-size: %dpx; line-height: 1.2; white-space: pre-wrap; overflow: hidden; padding: 4px; box-sizing: border-box;',
+                                $element['style']['fontSize'] ?? 16
+                            );
+                            if (isset($element['style']['textAlign'])) {
+                                $text_style .= ' text-align: ' . $element['style']['textAlign'] . ';';
+                            }
+                            if (isset($element['style']['fontStyle']) && $element['style']['fontStyle'] === 'italic') {
+                                $text_style .= ' font-style: italic;';
+                            }
+                            $html .= sprintf('<div class="pdf-element text-element" style="%s">%s</div>', $text_style, esc_html($final_content));
+                        } else {
+                            $html .= sprintf('<div class="pdf-element text-element" style="%s">%s</div>', $style, esc_html($final_content));
+                        }
                         break;
 
                     case 'invoice_number':
                         if ($order) {
                             $invoice_number = $order->get_id() . '-' . time();
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $tcpdf_style, esc_html($invoice_number));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($invoice_number));
                         } else {
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $tcpdf_style, esc_html($content ?: 'N° de facture'));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: 'N° de facture'));
                         }
                         break;
 
                     case 'order_number':
                         if ($order) {
                             $order_number = $order->get_order_number();
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $tcpdf_style, esc_html($order_number));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($order_number));
                         } else {
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $tcpdf_style, esc_html($content ?: 'N° de commande'));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: 'N° de commande'));
                         }
                         break;
 
                     case 'invoice_date':
                         if ($order) {
                             $date = $order->get_date_created() ? $order->get_date_created()->date('d/m/Y') : date('d/m/Y');
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $tcpdf_style, esc_html($date));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($date));
                         } else {
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $tcpdf_style, esc_html($content ?: 'Date'));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: 'Date'));
                         }
                         break;
 
                     case 'customer_name':
                         if ($order) {
                             $customer_name = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $tcpdf_style, esc_html($customer_name));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($customer_name));
                         } else {
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $tcpdf_style, esc_html($content ?: 'Nom du client'));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: 'Nom du client'));
                         }
                         break;
 
                     case 'customer_address':
                         if ($order) {
                             $address = $order->get_formatted_billing_address();
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $tcpdf_style, nl2br(esc_html($address)));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, nl2br(esc_html($address)));
                         } else {
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $tcpdf_style, esc_html($content ?: 'Adresse du client'));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: 'Adresse du client'));
                         }
                         break;
 
                     case 'subtotal':
                         if ($order) {
                             $subtotal = $order->get_subtotal();
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $tcpdf_style, wc_price($subtotal));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, wc_price($subtotal));
                         } else {
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $tcpdf_style, esc_html($content ?: 'Sous-total'));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: 'Sous-total'));
                         }
                         break;
 
                     case 'tax':
                         if ($order) {
                             $tax = $order->get_total_tax();
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $tcpdf_style, wc_price($tax));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, wc_price($tax));
                         } else {
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $tcpdf_style, esc_html($content ?: 'Taxes'));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: 'Taxes'));
                         }
                         break;
 
                     case 'total':
                         if ($order) {
                             $total = $order->get_total();
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $tcpdf_style, wc_price($total));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, wc_price($total));
                         } else {
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $tcpdf_style, esc_html($content ?: 'Total'));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: 'Total'));
                         }
                         break;
 
                     case 'rectangle':
-                        $html .= sprintf('<div class="pdf-element" style="%s"></div>', $tcpdf_style);
+                        if ($for_preview) {
+                            $rect_style = $style;
+                            if (isset($element['style']['fillColor'])) {
+                                $rect_style .= ' background-color: ' . $element['style']['fillColor'] . ';';
+                            } else {
+                                $rect_style .= ' background-color: transparent;';
+                            }
+                            if (isset($element['style']['borderWidth']) && $element['style']['borderWidth'] > 0) {
+                                $rect_style .= sprintf(' border: %dpx solid %s;', $element['style']['borderWidth'], $element['style']['borderColor'] ?? '#000000');
+                            } else {
+                                $rect_style .= ' border: none;';
+                            }
+                            if (isset($element['style']['borderRadius'])) {
+                                $rect_style .= ' border-radius: ' . $element['style']['borderRadius'] . 'px;';
+                            }
+                            $html .= sprintf('<div class="pdf-element" style="%s"></div>', $rect_style);
+                        } else {
+                            $html .= sprintf('<div class="pdf-element" style="%s"></div>', $style);
+                        }
                         break;
 
                     case 'image':
@@ -2081,10 +2134,14 @@ class PDF_Builder_Admin {
                         }
 
                         if ($logo_url) {
-                            $html .= sprintf('<div class="pdf-element image-element" style="%s"><img src="%s" style="width: 100%%; height: 100%%; object-fit: contain;" alt="Logo entreprise" /></div>', $tcpdf_style, esc_url($logo_url));
+                            if ($for_preview) {
+                                $html .= sprintf('<div class="pdf-element image-element" style="%s"><img src="%s" style="width: 100%%; height: 100%%; object-fit: cover;" alt="Logo entreprise" /></div>', $style, esc_url($logo_url));
+                            } else {
+                                $html .= sprintf('<div class="pdf-element image-element" style="%s"><img src="%s" style="width: 100%%; height: 100%%; object-fit: contain;" alt="Logo entreprise" /></div>', $style, esc_url($logo_url));
+                            }
                         } else {
                             // Afficher un placeholder pour le logo de l'entreprise
-                            $html .= sprintf('<div class="pdf-element image-element" style="%s"><div style="width: 100%%; height: 100%%; background-color: #f0f0f0; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center; color: #666; font-size: 12px;">🏢 Logo</div></div>', $tcpdf_style);
+                            $html .= sprintf('<div class="pdf-element image-element" style="%s"><div style="width: 100%%; height: 100%%; background-color: #f0f0f0; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center; color: #666; font-size: 12px;">🏢 Logo</div></div>', $style);
                         }
                         break;
 
@@ -2131,7 +2188,7 @@ class PDF_Builder_Admin {
                     case 'company_info':
                         // Informations complètes de la société
                         $company_info = $this->format_complete_company_info();
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $tcpdf_style, nl2br(esc_html($company_info)));
+                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, nl2br(esc_html($company_info)));
                         break;
 
                     case 'document_type':
@@ -2193,8 +2250,15 @@ class PDF_Builder_Admin {
                         break;
 
                     case 'line':
-                        $line_style = $style . 'border-top: 2px solid #000; height: 0;';
-                        $html .= sprintf('<div class="pdf-element line" style="%s"></div>', $line_style);
+                        if ($for_preview) {
+                            $stroke_width = $element['style']['strokeWidth'] ?? 1;
+                            $stroke_color = $element['style']['strokeColor'] ?? '#000000';
+                            $line_style = $style . sprintf(' border-top: %dpx solid %s; height: 0;', $stroke_width, $stroke_color);
+                            $html .= sprintf('<div class="pdf-element line" style="%s"></div>', $line_style);
+                        } else {
+                            $line_style = $style . 'border-top: 2px solid #000; height: 0;';
+                            $html .= sprintf('<div class="pdf-element line" style="%s"></div>', $line_style);
+                        }
                         break;
 
                     case 'customer_info':
@@ -2244,7 +2308,7 @@ class PDF_Builder_Admin {
                     default:
                         // Élément par défaut - afficher le contenu tel quel
                         $final_content = $order ? $this->replace_order_variables($content, $order) : $content;
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $tcpdf_style, esc_html($final_content ?: $element['type']));
+                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($final_content ?: $element['type']));
                         break;
                 }
             }
@@ -2252,6 +2316,8 @@ class PDF_Builder_Admin {
 
         $html .= '</div>'; // Fermer le pdf-container
         if (!$for_preview) {
+            $html .= '</body></html>';
+        } else {
             $html .= '</body></html>';
         }
         return $html;
@@ -3284,24 +3350,33 @@ class PDF_Builder_Admin {
                 error_log('✅ PDF BUILDER - Default template loaded');
             }
 
-            error_log('🟡 PDF BUILDER - Generating HTML preview...');
-            // Générer l'HTML d'aperçu avec les données de la commande (comme le builder)
-            $html_content = $this->generate_unified_html($template_data, $order, true);
-            error_log('✅ PDF BUILDER - HTML generated, length: ' . strlen($html_content));
+            error_log('🟡 PDF BUILDER - Generating PDF preview with TCPDF...');
+            // Générer un PDF d'aperçu avec TCPDF au lieu d'HTML
+            require_once plugin_dir_path(__FILE__) . '../pdf-generator.php';
+            $generator = new PDF_Generator();
+            $generator->set_order($order);
+            $pdf_content = $generator->generate_from_elements($this->convert_template_to_elements($template_data));
 
-            // Créer un fichier HTML temporaire pour l'aperçu
+            if (!$pdf_content) {
+                error_log('❌ PDF BUILDER - PDF generation failed');
+                wp_send_json_error('Erreur lors de la génération du PDF d\'aperçu');
+            }
+
+            error_log('✅ PDF BUILDER - PDF generated, length: ' . strlen($pdf_content));
+
+            // Créer un fichier PDF temporaire pour l'aperçu
             $upload_dir = wp_upload_dir();
             $preview_dir = $upload_dir['basedir'] . '/pdf-builder-previews';
             if (!file_exists($preview_dir)) {
                 wp_mkdir_p($preview_dir);
             }
 
-            $preview_filename = 'preview_' . $order_id . '_' . time() . '.html';
+            $preview_filename = 'preview_' . $order_id . '_' . time() . '.pdf';
             $preview_path = $preview_dir . '/' . $preview_filename;
             $preview_url = $upload_dir['baseurl'] . '/pdf-builder-previews/' . $preview_filename;
 
-            file_put_contents($preview_path, $html_content);
-            error_log('✅ PDF BUILDER - Preview file created: ' . $preview_path);
+            file_put_contents($preview_path, $pdf_content);
+            error_log('✅ PDF BUILDER - Preview PDF file created: ' . $preview_path);
 
             $response = array(
                 'url' => $preview_url,
