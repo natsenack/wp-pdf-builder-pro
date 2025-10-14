@@ -4970,30 +4970,47 @@ class PDF_Builder_Admin {
      * @return string|WP_Error URL du PDF généré ou erreur
      */
     public function generate_order_pdf($order_id, $template_id = 0, $is_preview = false) {
+        // Désactiver l'affichage des erreurs PHP pour éviter les réponses HTML
+        if (!defined('WP_DEBUG') || !WP_DEBUG) {
+            ini_set('display_errors', 0);
+            error_reporting(0);
+        }
+
+        error_log('🟡 PDF BUILDER - generate_order_pdf appelée: order_id=' . $order_id . ', template_id=' . $template_id . ', is_preview=' . ($is_preview ? 'true' : 'false'));
+
         // Vérifier que WooCommerce est actif
         if (!class_exists('WooCommerce')) {
+            error_log('❌ PDF BUILDER - WooCommerce non actif');
             return new WP_Error('woocommerce_missing', 'WooCommerce n\'est pas installé ou activé');
         }
 
         // Vérifier que les fonctions WooCommerce nécessaires existent
         if (!function_exists('wc_get_order')) {
+            error_log('❌ PDF BUILDER - Fonction wc_get_order non disponible');
             return new WP_Error('woocommerce_functions_missing', 'Fonction wc_get_order non disponible - WooCommerce mal installé');
         }
 
         $order = wc_get_order($order_id);
         if (!$order) {
+            error_log('❌ PDF BUILDER - Commande non trouvée: ' . $order_id);
             return new WP_Error('order_not_found', 'Commande non trouvée');
         }
 
+        error_log('✅ PDF BUILDER - Commande trouvée: ' . $order->get_order_number());
+
         // Vérifier que l'objet order a les méthodes nécessaires
         if (!method_exists($order, 'get_id') || !method_exists($order, 'get_total')) {
+            error_log('❌ PDF BUILDER - Objet commande invalide');
             return new WP_Error('invalid_order_object', 'Objet commande WooCommerce invalide');
         }
 
         try {
+            error_log('🟡 PDF BUILDER - Chargement du template...');
+
             // Charger le template de manière robuste
             if ($template_id > 0) {
                 $template_data = $this->load_template_robust($template_id);
+                error_log('✅ PDF BUILDER - Template chargé depuis database: ' . $template_id);
             } else {
                 // Vérifier s'il y a un template spécifique pour le statut de la commande
                 $order_status = $order->get_status();
@@ -5003,27 +5020,40 @@ class PDF_Builder_Admin {
                 if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
                     $mapped_template_id = $status_templates[$status_key];
                     $template_data = $this->load_template_robust($mapped_template_id);
+                    error_log('✅ PDF BUILDER - Template chargé depuis mapping statut: ' . $mapped_template_id . ' pour statut: ' . $order_status);
                 } else {
                     $template_data = $this->get_default_invoice_template();
+                    error_log('✅ PDF BUILDER - Template par défaut chargé (pas de mapping trouvé)');
                 }
+            }
+
+            if (!$template_data) {
+                error_log('❌ PDF BUILDER - Échec chargement template');
+                return new WP_Error('template_load_failed', 'Impossible de charger le template');
             }
 
             // Générer le PDF avec les données de la commande
             $prefix = $is_preview ? 'preview-' : '';
             $pdf_filename = $prefix . 'order-' . $order_id . '-' . time() . '.pdf';
+            error_log('🟡 PDF BUILDER - Génération PDF: ' . $pdf_filename);
+
             $pdf_path = $this->generate_order_pdf_private($order, $template_data, $pdf_filename);
 
             if ($pdf_path && file_exists($pdf_path)) {
                 $upload_dir = wp_upload_dir();
                 $pdf_url = str_replace($upload_dir['basedir'], $upload_dir['baseurl'], $pdf_path);
+                error_log('✅ PDF BUILDER - PDF généré avec succès: ' . $pdf_url);
                 return $pdf_url;
             } else {
+                error_log('❌ PDF BUILDER - Échec génération PDF - fichier non créé: ' . $pdf_path);
                 return new WP_Error('pdf_generation_failed', 'Erreur lors de la génération du PDF - fichier non créé');
             }
 
         } catch (Exception $e) {
+            error_log('❌ PDF BUILDER - Exception: ' . $e->getMessage());
             return new WP_Error('generation_exception', 'Erreur: ' . $e->getMessage());
         } catch (Error $e) {
+            error_log('❌ PDF BUILDER - Erreur fatale: ' . $e->getMessage());
             return new WP_Error('generation_error', 'Erreur fatale: ' . $e->getMessage());
         }
     }
