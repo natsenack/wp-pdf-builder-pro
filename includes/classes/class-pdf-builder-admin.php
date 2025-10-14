@@ -3122,7 +3122,7 @@ class PDF_Builder_Admin {
                 // Afficher la modale avec animation
                 $('#pdf-preview-modal').show().animate({opacity: 1}, 300);
                 $('#pdf-preview-content').animate({scale: 1}, 300);
-            });
+            }
 
             // Aperçu PDF
             $previewBtn.on('click', function() {
