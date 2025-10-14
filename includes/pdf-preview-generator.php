@@ -434,6 +434,34 @@ class PDF_Preview_Generator {
                 return sprintf('<div style="%s">%s</div>', $base_style, $unknown_html);
         }
     }
+
+    /**
+     * Récupère les informations client depuis la commande WooCommerce
+     */
+    private function get_customer_info() {
+        // Pour l'aperçu, on utilise des données fictives mais réalistes
+        // Format cohérent avec format_complete_customer_info()
+        $customer_info = [];
+
+        // Nom complet
+        $customer_info[] = 'Jean Dupont';
+
+        // Société (optionnel)
+        $customer_info[] = 'ABC Company SARL';
+
+        // Adresse complète (formatée comme WooCommerce)
+        $customer_info[] = '123 Rue de la Paix';
+        $customer_info[] = '75001 Paris';
+        $customer_info[] = 'France';
+
+        // Email
+        $customer_info[] = 'Email: jean.dupont@email.com';
+
+        // Téléphone
+        $customer_info[] = 'Téléphone: +33 6 12 34 56 78';
+
+        return implode("\n", $customer_info);
+    }
 }
 
 // Fonction AJAX pour l'aperçu
@@ -490,34 +518,6 @@ function pdf_builder_generate_preview() {
         ob_end_clean();
         error_log('Erreur fatale aperçu PDF: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
         wp_send_json_error('Erreur fatale serveur: ' . $e->getMessage());
-    }
-
-    /**
-     * Récupère les informations client depuis la commande WooCommerce
-     */
-    private function get_customer_info() {
-        // Pour l'aperçu, on utilise des données fictives mais réalistes
-        // Format cohérent avec format_complete_customer_info()
-        $customer_info = [];
-
-        // Nom complet
-        $customer_info[] = 'Jean Dupont';
-
-        // Société (optionnel)
-        $customer_info[] = 'ABC Company SARL';
-
-        // Adresse complète (formatée comme WooCommerce)
-        $customer_info[] = '123 Rue de la Paix';
-        $customer_info[] = '75001 Paris';
-        $customer_info[] = 'France';
-
-        // Email
-        $customer_info[] = 'Email: jean.dupont@email.com';
-
-        // Téléphone
-        $customer_info[] = 'Téléphone: +33 6 12 34 56 78';
-
-        return implode("\n", $customer_info);
     }
 }
 
