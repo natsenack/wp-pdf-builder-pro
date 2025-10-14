@@ -1094,6 +1094,9 @@ class PDF_Builder_Pro_Generator {
      * Détecte le type de document basé sur le statut de la commande
      */
     private function detect_document_type($order_status) {
+        if (!$order_status) {
+            return 'commande';
+        }
         // Nettoyer le statut (enlever le préfixe wc- si présent)
         $clean_status = str_replace('wc-', '', $order_status);
 

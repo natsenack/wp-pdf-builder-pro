@@ -405,7 +405,7 @@ class PDF_Preview_Test {
      * Remplacer les variables de commande dans le contenu
      */
     private function replace_order_variables($content) {
-        if (!$this->order) {
+        if (!$this->order || !is_string($content)) {
             return $content;
         }
 
