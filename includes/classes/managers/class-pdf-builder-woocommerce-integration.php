@@ -95,7 +95,7 @@ class PDF_Builder_WooCommerce_Integration {
      * Rend la meta box dans les commandes WooCommerce
      */
     /**
-     * Rend la meta box dans les commandes WooCommerce - VERSION ULTRA-MODERNE 2025
+     * Rend la meta box dans les commandes WooCommerce - VERSION CLEAN & PROFESSIONAL
      */
     public function render_woocommerce_order_meta_box($post_or_order) {
         global $wpdb;
@@ -163,689 +163,488 @@ class PDF_Builder_WooCommerce_Integration {
         wp_nonce_field('pdf_builder_order_actions', 'pdf_builder_order_nonce');
         ?>
         <style>
-        /* PDF Builder Pro - Ultra Modern Meta Box Styles 2025 */
-        #pdf-builder-ultra-metabox {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            line-height: 1.5;
-            color: #1a1a1a;
-            position: relative;
+        /* PDF Builder Pro - Clean & Professional Meta Box Styles */
+        #pdf-builder-metabox {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            line-height: 1.4;
+            color: #333;
         }
 
-        /* Header Section - Ultra Modern */
-        .ultra-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
+        /* Header Section - Clean */
+        .pdf-header {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-bottom: 1px solid #dee2e6;
             margin: -12px -12px 20px -12px;
-            border-radius: 12px 12px 0 0;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
         }
 
-        .ultra-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.05)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.08)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-            opacity: 0.3;
-            animation: float 20s ease-in-out infinite;
-        }
-
-        .ultra-header-content {
-            position: relative;
-            z-index: 1;
-        }
-
-        .ultra-order-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin: 0 0 8px 0;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .ultra-order-title .order-icon {
-            font-size: 24px;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-            animation: bounceIn 0.6s ease-out;
-        }
-
-        .ultra-order-meta {
-            font-size: 14px;
-            opacity: 0.9;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
-        .ultra-status-badge {
-            background: rgba(255,255,255,0.2);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.3);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        /* Document Type Section */
-        .ultra-doc-type {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            padding: 16px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 6px 20px rgba(240, 147, 251, 0.3);
-        }
-
-        .ultra-doc-type::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            animation: pulse 4s ease-in-out infinite;
-        }
-
-        .ultra-doc-type-content {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .ultra-doc-icon {
-            font-size: 28px;
-            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
-            animation: bounceIn 0.8s ease-out;
-        }
-
-        .ultra-doc-info h4 {
-            margin: 0 0 4px 0;
+        .pdf-order-title {
             font-size: 16px;
-            font-weight: 700;
-        }
-
-        .ultra-doc-info p {
-            margin: 0;
-            font-size: 13px;
-            opacity: 0.9;
-        }
-
-        /* Template Section */
-        .ultra-template-section {
-            margin-bottom: 20px;
-        }
-
-        .ultra-template-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
-        }
-
-        .ultra-template-title {
-            font-size: 14px;
             font-weight: 600;
-            color: #1a1a1a;
+            margin: 0 0 8px 0;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .ultra-template-toggle {
-            font-size: 12px;
+        .pdf-order-meta {
+            font-size: 13px;
             color: #6c757d;
-            cursor: pointer;
-            padding: 6px 12px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border: 1px solid #dee2e6;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-
-        .ultra-template-toggle:hover {
-            background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
-            color: #495057;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-
-        .ultra-template-display {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 14px 18px;
-            border-radius: 12px;
             display: flex;
             align-items: center;
             gap: 12px;
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
-            transition: all 0.3s ease;
-            cursor: pointer;
         }
 
-        .ultra-template-display:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-        }
-
-        .ultra-template-icon {
-            font-size: 20px;
-            opacity: 0.9;
-        }
-
-        .ultra-template-info {
-            flex: 1;
-        }
-
-        .ultra-template-name {
-            font-weight: 600;
-            font-size: 15px;
-            margin-bottom: 2px;
-        }
-
-        .ultra-template-meta {
-            font-size: 12px;
-            opacity: 0.8;
-        }
-
-        .ultra-template-selector {
-            display: none;
-            margin-top: 12px;
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 12px;
-            padding: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            animation: slideInUp 0.3s ease-out;
-        }
-
-        .ultra-template-search {
-            width: 100%;
-            padding: 10px 14px;
-            border: 2px solid #ced4da;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            background: white;
-        }
-
-        .ultra-template-search:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-            outline: none;
-        }
-
-        .ultra-template-list {
-            max-height: 250px;
-            overflow-y: auto;
-            border-radius: 8px;
-        }
-
-        .ultra-template-list::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .ultra-template-list::-webkit-scrollbar-track {
-            background: #f1f1f1;
+        .pdf-status-badge {
+            background: #e9ecef;
+            padding: 2px 8px;
             border-radius: 3px;
+            font-size: 11px;
+            font-weight: 500;
         }
 
-        .ultra-template-list::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
-            border-radius: 3px;
+        /* Document Type Section */
+        .pdf-doc-type {
+            background: #fff;
+            border: 1px solid #dee2e6;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            border-radius: 4px;
         }
 
-        .ultra-template-list::-webkit-scrollbar-thumb:hover {
-            background: #a8a8a8;
-        }
-
-        .ultra-template-option {
-            padding: 10px 14px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 4px;
+        .pdf-doc-type-content {
             display: flex;
             align-items: center;
             gap: 10px;
-            border: 1px solid transparent;
         }
 
-        .ultra-template-option:hover {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border-color: #dee2e6;
-            transform: translateX(4px);
+        .pdf-doc-info h4 {
+            margin: 0 0 2px 0;
+            font-size: 14px;
+            font-weight: 600;
         }
 
-        .ultra-template-option.selected {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .pdf-doc-info p {
+            margin: 0;
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        /* Template Section */
+        .pdf-template-section {
+            margin-bottom: 16px;
+        }
+
+        .pdf-template-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .pdf-template-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .pdf-template-toggle {
+            font-size: 12px;
+            color: #007cba;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 3px;
+            transition: background-color 0.2s;
+        }
+
+        .pdf-template-toggle:hover {
+            background: #f0f0f0;
+        }
+
+        .pdf-template-display {
+            background: #fff;
+            border: 1px solid #dee2e6;
+            padding: 12px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .pdf-template-display:hover {
+            border-color: #007cba;
+        }
+
+        .pdf-template-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pdf-template-name {
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .pdf-template-meta {
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .pdf-template-selector {
+            display: none;
+            margin-top: 8px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 12px;
+        }
+
+        .pdf-template-search {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .pdf-template-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .pdf-template-option {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: background-color 0.2s;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pdf-template-option:hover {
+            background: #e9ecef;
+        }
+
+        .pdf-template-option.selected {
+            background: #007cba;
             color: white;
-            border-color: rgba(255,255,255,0.3);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-        }
-
-        .ultra-template-option .template-icon {
-            font-size: 16px;
         }
 
         /* Action Buttons */
-        .ultra-actions {
+        .pdf-actions {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 14px;
-            margin-bottom: 20px;
+            gap: 10px;
+            margin-bottom: 16px;
         }
 
-        .ultra-btn {
-            padding: 16px 22px;
-            border: none;
-            border-radius: 12px;
-            font-size: 15px;
-            font-weight: 600;
+        .pdf-btn {
+            padding: 10px 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 6px;
             text-decoration: none;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            background: #fff;
         }
 
-        .ultra-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            transition: left 0.6s ease;
+        .pdf-btn:hover {
+            border-color: #007cba;
+            background: #f0f8ff;
         }
 
-        .ultra-btn:hover::before {
-            left: 100%;
-        }
-
-        .ultra-btn:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-        }
-
-        .ultra-btn:active {
-            transform: translateY(-1px) scale(1.01);
-        }
-
-        .ultra-btn:disabled {
+        .pdf-btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
-            transform: none !important;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
         }
 
-        .ultra-btn.loading {
-            color: transparent !important;
+        .pdf-btn.loading {
+            color: transparent;
         }
 
-        .ultra-btn.loading::after {
+        .pdf-btn.loading::after {
             content: '';
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 24px;
-            height: 24px;
-            margin: -12px 0 0 -12px;
-            border: 3px solid rgba(255,255,255, 0.3);
-            border-top: 3px solid white;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #007cba;
+            border-top: 2px solid transparent;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
 
-        .ultra-btn-preview {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .pdf-btn-preview {
+            border-color: #007cba;
+            color: #007cba;
+        }
+
+        .pdf-btn-preview:hover {
+            background: #007cba;
             color: white;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
-        .ultra-btn-preview:hover {
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-        }
-
-        .ultra-btn-generate {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        .pdf-btn-generate {
+            background: #28a745;
             color: white;
-            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+            border-color: #28a745;
         }
 
-        .ultra-btn-generate:hover {
-            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+        .pdf-btn-generate:hover {
+            background: #218838;
         }
 
-        .ultra-btn-download {
-            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+        .pdf-btn-download {
+            background: #ffc107;
             color: #212529;
+            border-color: #ffc107;
             display: none;
-            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
         }
 
-        .ultra-btn-download:hover {
-            box-shadow: 0 8px 25px rgba(255, 193, 7, 0.4);
+        .pdf-btn-download:hover {
+            background: #e0a800;
         }
 
         /* Status Messages */
-        .ultra-status {
-            padding: 14px 18px;
-            border-radius: 10px;
-            font-size: 14px;
+        .pdf-status {
+            padding: 10px 14px;
+            border-radius: 4px;
+            font-size: 13px;
             font-weight: 500;
             text-align: center;
-            margin-top: 16px;
+            margin-top: 12px;
             opacity: 0;
-            transform: translateY(-10px);
-            transition: all 0.4s ease;
+            transition: opacity 0.3s;
             display: none;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
-        .ultra-status.show {
+        .pdf-status.show {
             opacity: 1;
-            transform: translateY(0);
-            animation: bounceIn 0.5s ease-out;
         }
 
-        .ultra-status-loading {
-            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-            color: #1976d2;
-            border: 1px solid #90caf9;
-            animation: pulse 2s infinite;
+        .pdf-status-loading {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
         }
 
-        .ultra-status-success {
-            background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
-            color: #2e7d32;
-            border: 1px solid #81c784;
+        .pdf-status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
         }
 
-        .ultra-status-error {
-            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
-            color: #c62828;
-            border: 1px solid #e57373;
+        .pdf-status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
         }
 
-        /* PDF Preview Modal - Ultra Modern 2025 */
-        .ultra-modal-overlay {
+        /* PDF Preview Modal - Clean */
+        .pdf-modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(12px);
+            background: rgba(0, 0, 0, 0.7);
             z-index: 100000;
             display: flex;
             align-items: center;
             justify-content: center;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.4s ease;
+            transition: opacity 0.3s;
         }
 
-        .ultra-modal-overlay.show {
+        .pdf-modal-overlay.show {
             opacity: 1;
             visibility: visible;
         }
 
-        .ultra-modal {
+        .pdf-modal {
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
-            max-width: 98vw;
-            max-height: 98vh;
+            border-radius: 6px;
+            max-width: 95vw;
+            max-height: 95vh;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            transform: scale(0.8) translateY(30px) rotate(-2deg);
-            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
-        .ultra-modal.show .ultra-modal {
-            transform: scale(1) translateY(0) rotate(0deg);
+        .pdf-modal.show .pdf-modal {
+            transform: scale(1);
         }
 
-        .ultra-modal-header {
-            padding: 28px 32px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        .pdf-modal-header {
+            padding: 20px 24px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-radius: 20px 20px 0 0;
-            position: relative;
-            overflow: hidden;
         }
 
-        .ultra-modal-header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%);
-            animation: float 15s ease-in-out infinite;
-        }
-
-        .ultra-modal-title {
+        .pdf-modal-title {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 12px;
             margin: 0;
-            font-size: 24px;
-            font-weight: 700;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            position: relative;
-            z-index: 1;
+            font-size: 18px;
+            font-weight: 600;
         }
 
-        .ultra-modal-title .modal-icon {
-            font-size: 32px;
-            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
-            animation: bounceIn 0.6s ease-out;
-        }
-
-        .ultra-modal-controls {
+        .pdf-modal-controls {
             display: flex;
             align-items: center;
-            gap: 16px;
-            position: relative;
-            z-index: 1;
+            gap: 12px;
         }
 
-        .ultra-zoom-controls {
+        .pdf-zoom-controls {
             display: flex;
             align-items: center;
-            gap: 8px;
-            background: rgba(255,255,255,0.15);
-            border-radius: 12px;
-            padding: 8px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
+            gap: 6px;
+            background: #e9ecef;
+            border-radius: 4px;
+            padding: 6px;
         }
 
-        .ultra-zoom-btn {
-            background: rgba(255,255,255,0.2);
-            border: none;
-            border-radius: 10px;
-            width: 40px;
-            height: 40px;
+        .pdf-zoom-btn {
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            width: 32px;
+            height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 20px;
-            color: white;
-            transition: all 0.3s ease;
-            font-weight: bold;
-        }
-
-        .ultra-zoom-btn:hover {
-            background: rgba(255,255,255,0.3);
-            transform: scale(1.1);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-
-        .ultra-zoom-btn:active {
-            transform: scale(0.95);
-        }
-
-        .ultra-zoom-level {
             font-size: 16px;
-            font-weight: 700;
-            min-width: 60px;
-            text-align: center;
-            color: white;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            transition: background-color 0.2s;
         }
 
-        .ultra-close-btn {
-            background: rgba(255,255,255,0.2);
+        .pdf-zoom-btn:hover {
+            background: #f8f9fa;
+        }
+
+        .pdf-zoom-level {
+            font-size: 13px;
+            font-weight: 500;
+            min-width: 50px;
+            text-align: center;
+            color: #333;
+        }
+
+        .pdf-close-btn {
+            background: #6c757d;
             border: none;
             border-radius: 50%;
-            width: 44px;
-            height: 44px;
+            width: 32px;
+            height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 26px;
+            font-size: 18px;
             color: white;
-            transition: all 0.3s ease;
-            font-weight: bold;
+            transition: background-color 0.2s;
         }
 
-        .ultra-close-btn:hover {
-            background: rgba(255,255,255,0.3);
-            transform: scale(1.1) rotate(90deg);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        .pdf-close-btn:hover {
+            background: #5a6268;
         }
 
-        .ultra-modal-body {
+        .pdf-modal-body {
             flex: 1;
-            padding: 28px;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 24px;
             overflow: auto;
         }
 
-        .ultra-preview-container {
-            background: white;
-            border: 3px solid #e1e8ed;
-            border-radius: 16px;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        .pdf-preview-container {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 650px;
+            min-height: 600px;
             position: relative;
             overflow: hidden;
-            transition: all 0.3s ease;
         }
 
-        .ultra-preview-container:hover {
-            box-shadow: 0 16px 50px rgba(0,0,0,0.2);
-            transform: translateY(-2px);
-        }
-
-        .ultra-preview-loading {
+        .pdf-preview-loading {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 24px;
+            gap: 16px;
             color: #6c757d;
-            font-size: 18px;
-            animation: bounceIn 0.8s ease-out;
         }
 
-        .ultra-spinner {
-            width: 56px;
-            height: 56px;
-            border: 5px solid #e1e8ed;
-            border-top: 5px solid #667eea;
+        .pdf-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #dee2e6;
+            border-top: 3px solid #007cba;
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
         }
 
-        .ultra-preview-info {
-            margin-top: 24px;
-            padding: 24px;
+        .pdf-preview-info {
+            margin-top: 20px;
+            padding: 16px;
             background: white;
-            border: 1px solid #e1e8ed;
-            border-radius: 16px;
-            font-size: 15px;
-            color: #495057;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
         }
 
-        .ultra-preview-info-header {
+        .pdf-preview-info-header {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 16px;
+            gap: 8px;
+            margin-bottom: 12px;
             font-weight: 600;
-            font-size: 16px;
         }
 
-        .ultra-preview-stats {
+        .pdf-preview-stats {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
         }
 
-        .ultra-preview-stat {
+        .pdf-preview-stat {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 0;
+            padding: 6px 0;
             border-bottom: 1px solid #f1f1f1;
         }
 
-        .ultra-preview-stat:last-child {
+        .pdf-preview-stat:last-child {
             border-bottom: none;
         }
 
-        .ultra-preview-stat-label {
+        .pdf-preview-stat-label {
             color: #6c757d;
             font-weight: 500;
         }
 
-        .ultra-preview-stat-value {
-            color: #495057;
+        .pdf-preview-stat-value {
+            color: #333;
             font-weight: 600;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 4px 10px;
-            border-radius: 20px;
+            background: #e9ecef;
+            padding: 2px 8px;
+            border-radius: 3px;
             font-size: 12px;
         }
 
@@ -855,137 +654,59 @@ class PDF_Builder_WooCommerce_Integration {
             100% { transform: rotate(360deg); }
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-10px) rotate(5deg); }
-        }
-
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes bounceIn {
-            0% {
-                opacity: 0;
-                transform: scale(0.3) rotate(-10deg);
-            }
-            50% {
-                opacity: 1;
-                transform: scale(1.05) rotate(5deg);
-            }
-            70% {
-                transform: scale(0.9) rotate(-2deg);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1) rotate(0deg);
-            }
-        }
-
-        @keyframes glow {
-            0%, 100% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.3); }
-            50% { box-shadow: 0 0 30px rgba(102, 126, 234, 0.6); }
-        }
-
         /* Responsive */
         @media (max-width: 768px) {
-            .ultra-actions {
+            .pdf-actions {
                 grid-template-columns: 1fr;
             }
 
-            .ultra-modal {
-                max-width: 98vw;
-                max-height: 98vh;
-                border-radius: 16px;
+            .pdf-modal {
+                max-width: 95vw;
+                max-height: 95vh;
+                border-radius: 4px;
             }
 
-            .ultra-modal-header {
-                padding: 20px 24px;
+            .pdf-modal-header {
+                padding: 16px 20px;
                 flex-direction: column;
-                gap: 16px;
+                gap: 12px;
                 text-align: center;
             }
 
-            .ultra-modal-title {
-                font-size: 20px;
+            .pdf-modal-title {
+                font-size: 16px;
                 justify-content: center;
             }
 
-            .ultra-zoom-controls {
+            .pdf-zoom-controls {
                 display: none;
             }
 
-            .ultra-modal-controls {
+            .pdf-modal-controls {
                 width: 100%;
                 justify-content: center;
             }
 
-            .ultra-btn {
-                padding: 14px 18px;
+            .pdf-btn {
+                padding: 12px 16px;
                 font-size: 14px;
             }
         }
-
-        /* Dark mode support */
-        @media (prefers-color-scheme: dark) {
-            #pdf-builder-ultra-metabox {
-                color: #e9ecef;
-            }
-
-            .ultra-template-selector {
-                background: #343a40;
-                border-color: #495057;
-            }
-
-            .ultra-template-search {
-                background: #495057;
-                border-color: #6c757d;
-                color: #e9ecef;
-            }
-
-            .ultra-template-option:hover {
-                background: #495057;
-            }
-        }
-
-        /* Loading states */
-        .ultra-loading-shimmer {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
         </style>
 
-        <div id="pdf-builder-ultra-metabox">
+        <div id="pdf-builder-metabox">
             <!-- Header Section -->
-            <div class="ultra-header">
-                <div class="ultra-header-content">
-                    <h3 class="ultra-order-title">
-                        <span class="order-icon">🚀</span>
+            <div class="pdf-header">
+                <div class="pdf-header-content">
+                    <h3 class="pdf-order-title">
+                        <span class="order-icon">�</span>
                         Commande #<?php echo esc_html($order->get_order_number()); ?>
                     </h3>
-                    <div class="ultra-order-meta">
+                    <div class="pdf-order-meta">
                         <span><?php echo esc_html(wc_get_order_status_name($order->get_status())); ?></span>
                         <span>•</span>
                         <span><?php echo esc_html($order->get_date_created()->format('d/m/Y H:i')); ?></span>
-                        <span class="ultra-status-badge">
+                        <span class="pdf-status-badge">
                             <?php echo esc_html($document_type_label); ?>
                         </span>
                     </div>
@@ -993,10 +714,10 @@ class PDF_Builder_WooCommerce_Integration {
             </div>
 
             <!-- Document Type Section -->
-            <div class="ultra-doc-type">
-                <div class="ultra-doc-type-content">
-                    <span class="ultra-doc-icon">📄</span>
-                    <div class="ultra-doc-info">
+            <div class="pdf-doc-type">
+                <div class="pdf-doc-type-content">
+                    <span class="pdf-doc-icon">📄</span>
+                    <div class="pdf-doc-info">
                         <h4><?php echo esc_html($document_type_label); ?> détecté automatiquement</h4>
                         <p>Statut: <?php echo esc_html(wc_get_order_status_name($order->get_status())); ?> • Template intelligent sélectionné</p>
                     </div>
@@ -1004,24 +725,23 @@ class PDF_Builder_WooCommerce_Integration {
             </div>
 
             <!-- Template Section -->
-            <div class="ultra-template-section">
-                <div class="ultra-template-header">
-                    <h4 class="ultra-template-title">
-                        <span>🎨</span>
+            <div class="pdf-template-section">
+                <div class="pdf-template-header">
+                    <h4 class="pdf-template-title">
                         Template sélectionné
                     </h4>
-                    <span class="ultra-template-toggle" id="ultra-template-toggle">
+                    <span class="pdf-template-toggle" id="pdf-template-toggle">
                         Changer de template ▼
                     </span>
                 </div>
 
-                <div class="ultra-template-display" id="ultra-template-display">
-                    <span class="ultra-template-icon">📋</span>
-                    <div class="ultra-template-info">
-                        <div class="ultra-template-name">
+                <div class="pdf-template-display" id="pdf-template-display">
+                    <span class="pdf-template-icon">📋</span>
+                    <div class="pdf-template-info">
+                        <div class="pdf-template-name">
                             <?php echo $selected_template ? esc_html($selected_template['name']) : 'Aucun template disponible'; ?>
                         </div>
-                        <div class="ultra-template-meta">
+                        <div class="pdf-template-meta">
                             <?php if ($selected_template): ?>
                                 Template automatiquement détecté • Prêt pour génération
                             <?php else: ?>
@@ -1031,16 +751,16 @@ class PDF_Builder_WooCommerce_Integration {
                     </div>
                 </div>
 
-                <div class="ultra-template-selector" id="ultra-template-selector">
+                <div class="pdf-template-selector" id="pdf-template-selector">
                     <input type="text"
-                           class="ultra-template-search"
-                           placeholder="🔍 Rechercher un template..."
-                           id="ultra-template-search">
+                           class="pdf-template-search"
+                           placeholder="Rechercher un template..."
+                           id="pdf-template-search">
 
-                    <div class="ultra-template-list" id="ultra-template-list">
+                    <div class="pdf-template-list" id="pdf-template-list">
                         <?php if (!empty($all_templates)): ?>
                             <?php foreach ($all_templates as $template): ?>
-                                <div class="ultra-template-option <?php echo ($selected_template && $selected_template['id'] == $template['id']) ? 'selected' : ''; ?>"
+                                <div class="pdf-template-option <?php echo ($selected_template && $selected_template['id'] == $template['id']) ? 'selected' : ''; ?>"
                                      data-template-id="<?php echo esc_attr($template['id']); ?>">
                                     <span class="template-icon">📄</span>
                                     <span><?php echo esc_html($template['name']); ?></span>
@@ -1061,96 +781,95 @@ class PDF_Builder_WooCommerce_Integration {
             </div>
 
             <!-- Action Buttons -->
-            <div class="ultra-actions">
-                <button type="button" class="ultra-btn ultra-btn-preview" id="ultra-preview-btn">
+            <div class="pdf-actions">
+                <button type="button" class="pdf-btn pdf-btn-preview" id="pdf-preview-btn">
                     <span>👁️</span>
                     Aperçu PDF
                 </button>
 
-                <button type="button" class="ultra-btn ultra-btn-generate" id="ultra-generate-btn">
+                <button type="button" class="pdf-btn pdf-btn-generate" id="pdf-generate-btn">
                     <span>⚡</span>
                     Générer PDF
                 </button>
 
-                <button type="button" class="ultra-btn ultra-btn-download" id="ultra-download-btn">
+                <button type="button" class="pdf-btn pdf-btn-download" id="pdf-download-btn">
                     <span>⬇️</span>
                     Télécharger PDF
                 </button>
             </div>
 
             <!-- Status Messages -->
-            <div class="ultra-status" id="ultra-status"></div>
+            <div class="pdf-status" id="pdf-status"></div>
         </div>
 
-        <!-- Ultra Modern PDF Preview Modal -->
-        <div class="ultra-modal-overlay" id="ultra-modal-overlay">
-            <div class="ultra-modal">
-                <div class="ultra-modal-header">
-                    <h3 class="ultra-modal-title">
+        <!-- Clean PDF Preview Modal -->
+        <div class="pdf-modal-overlay" id="pdf-modal-overlay">
+            <div class="pdf-modal">
+                <div class="pdf-modal-header">
+                    <h3 class="pdf-modal-title">
                         <span class="modal-icon">🔍</span>
-                        Aperçu Ultra HD - <?php echo esc_html($document_type_label); ?>
+                        Aperçu PDF - <?php echo esc_html($document_type_label); ?>
                     </h3>
 
-                    <div class="ultra-modal-controls">
-                        <div class="ultra-zoom-controls">
-                            <button class="ultra-zoom-btn" id="ultra-zoom-out" title="Zoom arrière (Ctrl+-)">−</button>
-                            <span class="ultra-zoom-level" id="ultra-zoom-level">100%</span>
-                            <button class="ultra-zoom-btn" id="ultra-zoom-in" title="Zoom avant (Ctrl++)">+</button>
-                            <button class="ultra-zoom-btn" id="ultra-zoom-fit" title="Ajuster à la fenêtre (Ctrl+0)">🔍</button>
+                    <div class="pdf-modal-controls">
+                        <div class="pdf-zoom-controls">
+                            <button class="pdf-zoom-btn" id="pdf-zoom-out" title="Zoom arrière (Ctrl+-)">−</button>
+                            <span class="pdf-zoom-level" id="pdf-zoom-level">100%</span>
+                            <button class="pdf-zoom-btn" id="pdf-zoom-in" title="Zoom avant (Ctrl++)">+</button>
+                            <button class="pdf-zoom-btn" id="pdf-zoom-fit" title="Ajuster à la fenêtre (Ctrl+0)">🔍</button>
                         </div>
 
-                        <button class="ultra-close-btn" id="ultra-close-modal" title="Fermer (Échap)">
+                        <button class="pdf-close-btn" id="pdf-close-modal" title="Fermer (Échap)">
                             ×
                         </button>
                     </div>
                 </div>
 
-                <div class="ultra-modal-body">
-                    <div class="ultra-preview-container">
-                        <div class="ultra-preview-loading" id="ultra-preview-loading">
-                            <div class="ultra-spinner"></div>
+                <div class="pdf-modal-body">
+                    <div class="pdf-preview-container">
+                        <div class="pdf-preview-loading" id="pdf-preview-loading">
+                            <div class="pdf-spinner"></div>
                             <div>
-                                <div style="font-weight: 700; margin-bottom: 8px; font-size: 20px;">Génération de l'aperçu Ultra HD...</div>
-                                <div style="font-size: 16px; opacity: 0.8;">Analyse du template et rendu haute qualité</div>
-                                <div style="font-size: 14px; opacity: 0.6; margin-top: 8px;">Veuillez patienter</div>
+                                <div style="font-weight: 600; margin-bottom: 8px;">Génération de l'aperçu...</div>
+                                <div style="font-size: 14px; opacity: 0.8;">Veuillez patienter</div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="ultra-preview-info">
-                        <div class="ultra-preview-info-header">
+                    <div class="pdf-preview-info">
+                        <div class="pdf-preview-info-header">
                             <span>📊</span>
-                            Informations détaillées de l'aperçu
+                            Informations de l'aperçu
                         </div>
 
-                        <div class="ultra-preview-stats">
-                            <div class="ultra-preview-stat">
-                                <span class="ultra-preview-stat-label">Template actif:</span>
-                                <span class="ultra-preview-stat-value" id="ultra-info-template">
+                        <div class="pdf-preview-stats">
+                            <div class="pdf-preview-stat">
+                                <span class="pdf-preview-stat-label">Template actif:</span>
+                                <span class="pdf-preview-stat-value" id="pdf-info-template">
                                     <?php echo $selected_template ? esc_html($selected_template['name']) : 'Par défaut'; ?>
                                 </span>
                             </div>
-                            <div class="ultra-preview-stat">
-                                <span class="ultra-preview-stat-label">Format du document:</span>
-                                <span class="ultra-preview-stat-value">A4 (210×297mm)</span>
+                            <div class="pdf-preview-stat">
+                                <span class="pdf-preview-stat-label">Format du document:</span>
+                                <span class="pdf-preview-stat-value">A4 (210×297mm)</span>
                             </div>
-                            <div class="ultra-preview-stat">
-                                <span class="ultra-preview-stat-label">Orientation:</span>
-                                <span class="ultra-preview-stat-value">Portrait</span>
+                            <div class="pdf-preview-stat">
+                                <span class="pdf-preview-stat-label">Orientation:</span>
+                                <span class="pdf-preview-stat-value">Portrait</span>
                             </div>
-                            <div class="ultra-preview-stat">
-                                <span class="ultra-preview-stat-label">Résolution d'aperçu:</span>
-                                <span class="ultra-preview-stat-value">Ultra HD 4K</span>
+                            <div class="pdf-preview-stat">
+                                <span class="pdf-preview-stat-label">Résolution:</span>
+                                <span class="pdf-preview-stat-value">HD</span>
                             </div>
-                            <div class="ultra-preview-stat">
-                                <span class="ultra-preview-stat-label">Généré le:</span>
-                                <span class="ultra-preview-stat-value" id="ultra-info-date">
+                            <div class="pdf-preview-stat">
+                                <span class="pdf-preview-stat-label">Généré le:</span>
+                                <span class="pdf-preview-stat-value" id="pdf-info-date">
                                     <?php echo esc_html(current_time('d/m/Y H:i')); ?>
                                 </span>
                             </div>
-                            <div class="ultra-preview-stat">
-                                <span class="ultra-preview-stat-label">Temps de génération:</span>
-                                <span class="ultra-preview-stat-value" id="ultra-info-time">--</span>
+                            <div class="pdf-preview-stat">
+                                <span class="pdf-preview-stat-label">Temps de génération:</span>
+                                <span class="pdf-preview-stat-value" id="pdf-info-time">--</span>
                             </div>
                         </div>
                     </div>
@@ -1169,14 +888,14 @@ class PDF_Builder_WooCommerce_Integration {
 
             // Fonctions utilitaires
             function showStatus(message, type = 'loading') {
-                const $status = $('#ultra-status');
+                const $status = $('#pdf-status');
                 const classes = {
-                    'loading': 'ultra-status-loading',
-                    'success': 'ultra-status-success',
-                    'error': 'ultra-status-error'
+                    'loading': 'pdf-status-loading',
+                    'success': 'pdf-status-success',
+                    'error': 'pdf-status-error'
                 };
 
-                $status.removeClass('ultra-status-loading ultra-status-success ultra-status-error show')
+                $status.removeClass('pdf-status-loading pdf-status-success pdf-status-error show')
                        .addClass(classes[type])
                        .html(message)
                        .show();
@@ -1184,13 +903,13 @@ class PDF_Builder_WooCommerce_Integration {
                 setTimeout(() => $status.addClass('show'), 10);
 
                 if (type !== 'loading') {
-                    setTimeout(() => hideStatus(), 6000);
+                    setTimeout(() => hideStatus(), 5000);
                 }
             }
 
             function hideStatus() {
-                $('#ultra-status').removeClass('show');
-                setTimeout(() => $('#ultra-status').hide(), 400);
+                $('#pdf-status').removeClass('show');
+                setTimeout(() => $('#pdf-status').hide(), 300);
             }
 
             function setButtonLoading($btn, loading) {
@@ -1202,101 +921,134 @@ class PDF_Builder_WooCommerce_Integration {
             }
 
             function updateTemplateDisplay(templateId, templateName) {
-                $('#ultra-template-display .ultra-template-name').text(templateName);
-                $('#ultra-info-template').text(templateName);
+                $('#pdf-template-display .pdf-template-name').text(templateName);
+                $('#pdf-info-template').text(templateName);
                 currentTemplateId = templateId;
-
-                // Animation de mise à jour
-                $('#ultra-template-display').addClass('ultra-loading-shimmer');
-                setTimeout(() => $('#ultra-template-display').removeClass('ultra-loading-shimmer'), 1000);
             }
 
-            // Template selector avec animations avancées
-            $('#ultra-template-toggle').on('click', function() {
-                const $selector = $('#ultra-template-selector');
+            // Template selector
+            $('#pdf-template-toggle').on('click', function() {
+                const $selector = $('#pdf-template-selector');
                 const isVisible = $selector.is(':visible');
 
                 if (isVisible) {
-                    $selector.slideUp(400, 'easeOutCubic');
-                    $(this).text('Changer de template ▼').removeClass('ultra-template-toggle-active');
+                    $selector.slideUp(300);
+                    $(this).text('Changer de template ▼');
                 } else {
-                    $selector.slideDown(400, 'easeOutCubic');
-                    $(this).text('Masquer ▲').addClass('ultra-template-toggle-active');
-                    $('#ultra-template-search').focus().addClass('ultra-template-search-focus');
+                    $selector.slideDown(300);
+                    $(this).text('Masquer ▲');
+                    $('#pdf-template-search').focus();
                 }
             });
 
-            // Template search avec filtrage en temps réel
-            $('#ultra-template-search').on('input', function() {
+            // Template search
+            $('#pdf-template-search').on('input', function() {
                 const searchTerm = $(this).val().toLowerCase();
                 let visibleCount = 0;
 
-                $('.ultra-template-option').each(function() {
+                $('.pdf-template-option').each(function() {
                     const templateName = $(this).text().toLowerCase();
                     const $option = $(this);
 
                     if (templateName.includes(searchTerm)) {
-                        $option.slideDown(200);
+                        $option.show();
                         visibleCount++;
                     } else {
-                        $option.slideUp(200);
+                        $option.hide();
                     }
                 });
 
                 // Message si aucun résultat
                 if (visibleCount === 0 && searchTerm.length > 0) {
-                    if (!$('.ultra-no-results').length) {
-                        $('#ultra-template-list').append(
-                            '<div class="ultra-no-results" style="text-align: center; color: #6c757d; padding: 20px; font-style: italic;">' +
-                            '<div style="font-size: 32px; margin-bottom: 8px;">🔍</div>' +
+                    if (!$('.pdf-no-results').length) {
+                        $('#pdf-template-list').append(
+                            '<div class="pdf-no-results" style="text-align: center; color: #6c757d; padding: 20px; font-style: italic;">' +
                             'Aucun template trouvé pour "' + searchTerm + '"' +
                             '</div>'
                         );
                     }
                 } else {
-                    $('.ultra-no-results').remove();
+                    $('.pdf-no-results').remove();
                 }
             });
 
-            // Template selection avec feedback visuel
-            $(document).on('click', '.ultra-template-option', function() {
+            // Template selection
+            $(document).on('click', '.pdf-template-option', function() {
                 const templateId = $(this).data('template-id');
                 const templateName = $(this).find('span:last-child').text();
 
-                $('.ultra-template-option').removeClass('selected');
+                $('.pdf-template-option').removeClass('selected');
                 $(this).addClass('selected');
 
-                // Animation de sélection
-                $(this).css('animation', 'bounceIn 0.5s ease-out');
-                setTimeout(() => $(this).css('animation', ''), 500);
-
                 updateTemplateDisplay(templateId, templateName);
-                $('#ultra-template-selector').slideUp(400);
-                $('#ultra-template-toggle').text('Changer de template ▼').removeClass('ultra-template-toggle-active');
+                $('#pdf-template-selector').slideUp(300);
+                $('#pdf-template-toggle').text('Changer de template ▼');
 
-                // Notification de changement
-                showStatus('<span style="color: #28a745;">✅ Template changé: ' + templateName + '</span>', 'success');
+                showStatus('Template changé: ' + templateName, 'success');
             });
 
-            // Modal functions avec animations avancées
+            // Modal functions
             function openModal() {
                 previewStartTime = Date.now();
-                $('#ultra-modal-overlay').addClass('show');
-                $('body').addClass('ultra-modal-open');
+                $('#pdf-modal-overlay').addClass('show');
+                $('body').addClass('pdf-modal-open');
 
-                // Animation d'entrée
-                setTimeout(() => {
-                    $('.ultra-modal').addClass('show');
-                }, 100);
-
-                $(document).on('keydown.ultra-modal', handleKeydown);
+                $(document).on('keydown.pdf-modal', handleKeydown);
             }
 
             function closeModal() {
-                $('.ultra-modal').removeClass('show');
-                $('#ultra-modal-overlay').removeClass('show');
-                $('body').removeClass('ultra-modal-open');
-                $(document).off('keydown.ultra-modal');
+                $('#pdf-modal-overlay').removeClass('show');
+                $('body').removeClass('pdf-modal-open');
+                $(document).off('keydown.pdf-modal');
+
+                // Reset zoom
+                currentZoom = 1.0;
+                $('#pdf-zoom-level').text('100%');
+            }
+
+            function handleKeydown(e) {
+                if (e.keyCode === 27) { // Escape
+                    closeModal();
+                }
+
+                if (e.ctrlKey || e.metaKey) {
+                    switch (e.key) {
+                        case '+':
+                        case '=':
+                            e.preventDefault();
+                            applyZoom(currentZoom * 1.2);
+                            break;
+                        case '-':
+                            e.preventDefault();
+                            applyZoom(currentZoom / 1.2);
+                            break;
+                        case '0':
+                            e.preventDefault();
+                            applyZoom(1.0);
+                            break;
+                    }
+                }
+            }
+
+            // Zoom functions
+            function applyZoom(zoomLevel) {
+                currentZoom = Math.max(0.25, Math.min(4.0, zoomLevel));
+                $('#pdf-zoom-level').text(Math.round(currentZoom * 100) + '%');
+
+                const $iframe = $('.pdf-preview-container iframe');
+                if ($iframe.length) {
+                    $iframe.css({
+                        'transform': 'scale(' + currentZoom + ')',
+                        'transform-origin': 'top center',
+                        'width': (100 / currentZoom) + '%',
+                        'height': (originalPdfHeight / currentZoom) + 'px'
+                    });
+
+                    $('.pdf-preview-container').css({
+                        'min-height': (originalPdfHeight * currentZoom + 60) + 'px'
+                    });
+                }
+            }
 
                 // Reset zoom
                 currentZoom = 1.0;
@@ -1349,11 +1101,9 @@ class PDF_Builder_WooCommerce_Integration {
                 }
             }
 
-            // Event handlers avec améliorations UX
-            $('#ultra-preview-btn').on('click', function() {
-                console.log('Ultra Preview: Button clicked - Template ID:', currentTemplateId);
-
-                showStatus('<div style="display: flex; align-items: center; gap: 10px;"><div class="ultra-spinner" style="width: 18px; height: 18px;"></div>Génération de l\'aperçu Ultra HD...</div>', 'loading');
+            // Event handlers
+            $('#pdf-preview-btn').on('click', function() {
+                showStatus('Génération de l\'aperçu...', 'loading');
                 setButtonLoading($(this), true);
 
                 openModal();
@@ -1368,8 +1118,6 @@ class PDF_Builder_WooCommerce_Integration {
                         nonce: '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>'
                     },
                     success: function(response) {
-                        console.log('Ultra Preview: AJAX success', response);
-
                         if (response.success) {
                             const generationTime = Date.now() - previewStartTime;
                             originalPdfWidth = response.data.width;
@@ -1381,76 +1129,49 @@ class PDF_Builder_WooCommerce_Integration {
                             iframe.style.border = 'none';
                             iframe.style.background = 'white';
                             iframe.style.transformOrigin = 'top center';
-                            iframe.style.borderRadius = '8px';
-                            iframe.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
 
                             iframe.onload = function() {
-                                $('#ultra-preview-loading').fadeOut(300, function() {
-                                    $('#ultra-preview-loading').hide();
-                                });
-
-                                try {
-                                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                                    if (iframeDoc) {
-                                        iframeDoc.body.innerHTML = response.data.html;
-                                    }
-                                } catch (e) {
-                                    console.error('Ultra Preview: Error writing to iframe:', e);
-                                    $('.ultra-preview-container').html(
-                                        '<div style="color: #dc3545; padding: 40px; text-align: center; background: #f8d7da; border-radius: 12px; border: 1px solid #f5c6cb;">' +
-                                        '<div style="font-size: 48px; margin-bottom: 16px;">⚠️</div>' +
-                                        '<strong style="font-size: 18px;">Erreur lors du chargement de l\'aperçu</strong><br>' +
-                                        '<small>Droits d\'accès iframe insuffisants</small>' +
-                                        '</div>'
-                                    );
-                                }
+                                $('#pdf-preview-loading').hide();
                             };
 
-                            $('.ultra-preview-container').html(iframe);
+                            $('.pdf-preview-container').html(iframe);
                             applyZoom(1.0);
 
                             // Update timing info
-                            $('#ultra-info-time').text(generationTime + 'ms');
-                            $('#ultra-info-date').text(new Date().toLocaleString('fr-FR'));
+                            $('#pdf-info-time').text(generationTime + 'ms');
+                            $('#pdf-info-date').text(new Date().toLocaleString('fr-FR'));
 
-                            showStatus('<span style="color: #28a745;">✅ Aperçu Ultra HD généré avec succès (' + generationTime + 'ms)</span>', 'success');
-
-                            // Animation de succès
-                            $('.ultra-preview-container').addClass('animate__animated animate__fadeInUp');
+                            showStatus('Aperçu généré avec succès (' + generationTime + 'ms)', 'success');
 
                         } else {
-                            console.error('Ultra Preview: Failed:', response.data);
-                            $('.ultra-preview-container').html(
-                                '<div style="color: #dc3545; padding: 40px; text-align: center; background: #f8d7da; border-radius: 12px; border: 1px solid #f5c6cb;">' +
+                            $('.pdf-preview-container').html(
+                                '<div style="color: #dc3545; padding: 40px; text-align: center;">' +
                                 '<div style="font-size: 48px; margin-bottom: 16px;">❌</div>' +
-                                '<strong style="font-size: 18px;">Erreur de génération</strong><br>' +
+                                '<strong>Erreur de génération</strong><br>' +
                                 '<small>' + response.data + '</small>' +
                                 '</div>'
                             );
-                            showStatus('<span style="color: #dc3545;">❌ Erreur lors de l\'aperçu Ultra HD</span>', 'error');
+                            showStatus('Erreur lors de l\'aperçu', 'error');
                         }
                     },
                     error: function(xhr, status, error) {
-                        console.error('Ultra Preview: AJAX error', status, error);
-                        $('.ultra-preview-container').html(
-                            '<div style="color: #dc3545; padding: 40px; text-align: center; background: #f8d7da; border-radius: 12px; border: 1px solid #f5c6cb;">' +
+                        $('.pdf-preview-container').html(
+                            '<div style="color: #dc3545; padding: 40px; text-align: center;">' +
                             '<div style="font-size: 48px; margin-bottom: 16px;">🔌</div>' +
-                            '<strong style="font-size: 18px;">Erreur de connexion</strong><br>' +
+                            '<strong>Erreur de connexion</strong><br>' +
                             '<small>Impossible de contacter le serveur</small>' +
                             '</div>'
                         );
-                        showStatus('<span style="color: #dc3545;">❌ Erreur AJAX lors de l\'aperçu</span>', 'error');
+                        showStatus('Erreur AJAX lors de l\'aperçu', 'error');
                     },
                     complete: function() {
-                        setButtonLoading($('#ultra-preview-btn'), false);
+                        setButtonLoading($('#pdf-preview-btn'), false);
                     }
                 });
             });
 
-            $('#ultra-generate-btn').on('click', function() {
-                console.log('Ultra Generate: Button clicked - Template ID:', currentTemplateId);
-
-                showStatus('<div style="display: flex; align-items: center; gap: 10px;"><div class="ultra-spinner" style="width: 18px; height: 18px;"></div>Génération du PDF haute qualité...</div>', 'loading');
+            $('#pdf-generate-btn').on('click', function() {
+                showStatus('Génération du PDF...', 'loading');
                 setButtonLoading($(this), true);
 
                 $.ajax({
@@ -1463,108 +1184,70 @@ class PDF_Builder_WooCommerce_Integration {
                         nonce: '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>'
                     },
                     success: function(response) {
-                        console.log('Ultra Generate: AJAX success', response);
-
                         if (response.success) {
-                            $('#ultra-download-btn').attr('href', response.data.url).show();
+                            $('#pdf-download-btn').attr('href', response.data.url).show();
+                            showStatus('PDF généré avec succès', 'success');
 
-                            // Animation de succès
-                            $('#ultra-download-btn').addClass('animate__animated animate__bounceIn').show();
-                            showStatus('<span style="color: #28a745;">✅ PDF haute qualité généré avec succès</span>', 'success');
-
-                            // Ouvrir automatiquement le PDF après un court délai
+                            // Ouvrir automatiquement le PDF
                             setTimeout(() => {
                                 window.open(response.data.url, '_blank');
-                            }, 800);
-
-                            // Animation de célébration
-                            $('#ultra-generate-btn').addClass('animate__animated animate__rubberBand');
-                            setTimeout(() => $('#ultra-generate-btn').removeClass('animate__animated animate__rubberBand'), 1000);
+                            }, 500);
 
                         } else {
-                            console.error('Ultra Generate: Failed:', response.data);
-                            showStatus('<span style="color: #dc3545;">❌ Erreur lors de la génération</span>', 'error');
+                            showStatus('Erreur lors de la génération', 'error');
                         }
                     },
                     error: function(xhr, status, error) {
-                        console.error('Ultra Generate: AJAX error', status, error);
-                        showStatus('<span style="color: #dc3545;">❌ Erreur AJAX lors de la génération</span>', 'error');
+                        showStatus('Erreur AJAX lors de la génération', 'error');
                     },
                     complete: function() {
-                        setButtonLoading($('#ultra-generate-btn'), false);
+                        setButtonLoading($('#pdf-generate-btn'), false);
                     }
                 });
             });
 
-            $('#ultra-download-btn').on('click', function() {
+            $('#pdf-download-btn').on('click', function() {
                 const pdfUrl = $(this).attr('href');
                 if (pdfUrl) {
                     window.open(pdfUrl, '_blank');
                 }
             });
 
-            // Modal controls avec animations
-            $('#ultra-close-modal').on('click', function() {
+            // Modal controls
+            $('#pdf-close-modal').on('click', function() {
                 closeModal();
             });
 
-            $('#ultra-modal-overlay').on('click', function(e) {
+            $('#pdf-modal-overlay').on('click', function(e) {
                 if (e.target === this) {
                     closeModal();
                 }
             });
 
-            // Zoom controls avec feedback visuel
-            $('#ultra-zoom-in').on('click', function() {
+            // Zoom controls
+            $('#pdf-zoom-in').on('click', function() {
                 applyZoom(currentZoom * 1.2);
-                $(this).addClass('animate__animated animate__pulse');
-                setTimeout(() => $(this).removeClass('animate__animated animate__pulse'), 300);
             });
 
-            $('#ultra-zoom-out').on('click', function() {
+            $('#pdf-zoom-out').on('click', function() {
                 applyZoom(currentZoom / 1.2);
-                $(this).addClass('animate__animated animate__pulse');
-                setTimeout(() => $(this).removeClass('animate__animated animate__pulse'), 300);
             });
 
-            $('#ultra-zoom-fit').on('click', function() {
+            $('#pdf-zoom-fit').on('click', function() {
                 if (originalPdfWidth > 0) {
-                    const containerWidth = $('.ultra-preview-container').width() - 60;
+                    const containerWidth = $('.pdf-preview-container').width() - 60;
                     const fitZoom = containerWidth / originalPdfWidth;
                     applyZoom(fitZoom);
                 }
-                $(this).addClass('animate__animated animate__pulse');
-                setTimeout(() => $(this).removeClass('animate__animated animate__pulse'), 300);
             });
 
             // Double-clic pour zoom fit
-            $(document).on('dblclick', '.ultra-preview-container iframe', function() {
+            $(document).on('dblclick', '.pdf-preview-container iframe', function() {
                 if (originalPdfWidth > 0) {
-                    const containerWidth = $('.ultra-preview-container').width() - 60;
+                    const containerWidth = $('.pdf-preview-container').width() - 60;
                     const fitZoom = containerWidth / originalPdfWidth;
                     applyZoom(fitZoom);
                 }
-            });
-
-            // Tooltips pour les boutons
-            $('.ultra-btn, .ultra-zoom-btn, .ultra-close-btn').each(function() {
-                const title = $(this).attr('title');
-                if (title) {
-                    $(this).tooltip({
-                        placement: 'top',
-                        trigger: 'hover'
-                    });
-                }
-            });
-
-            // Initialisation des animations
-            $('.ultra-btn').addClass('animate__animated animate__fadeInUp');
-            $('.ultra-doc-type').addClass('animate__animated animate__fadeInLeft');
-            $('.ultra-template-section').addClass('animate__animated animate__fadeInRight');
-
-            // Stagger animations
-            $('.ultra-btn').each(function(index) {
-                $(this).css('animation-delay', (index * 0.1) + 's');
             });
         });
         </script>
