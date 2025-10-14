@@ -2922,7 +2922,7 @@ class PDF_Builder_Admin {
                                 </div>
                                 <div id="pdf-preview-body" style="
                                     flex: 1;
-                                    padding: 24px;
+                                    padding: 20px;
                                     background: #f8f9fa;
                                     overflow: auto;
                                     border-radius: 0 0 12px 12px;

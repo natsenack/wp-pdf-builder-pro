@@ -17,6 +17,9 @@ export const CanvasElement = ({
 }) => {
   const elementRef = useRef(null);
 
+  // Debug log pour diagnostiquer les éléments
+  console.log('🎯 CanvasElement rendu pour élément:', element.id, element.type, element);
+
   const resize = useResize({
     onElementResize: (newRect) => {
       onUpdate({
@@ -1019,7 +1022,7 @@ export const CanvasElement = ({
                     fontWeight: 'bold',
                     color: element.color || '#333'
                   }}>
-                    Marie Dubois
+                    Jean Dupont
                   </div>
                 </div>
               )}
@@ -1047,7 +1050,7 @@ export const CanvasElement = ({
                   <div style={{
                     color: '#1976d2'
                   }}>
-                    marie.dubois@tech-innov.fr
+                    jean.dupont@email.com
                   </div>
                 </div>
               )}
@@ -1075,7 +1078,7 @@ export const CanvasElement = ({
                   <div style={{
                     color: element.color || '#333'
                   }}>
-                    +33 1 42 86 95 47
+                    +33 6 12 34 56 78
                   </div>
                 </div>
               )}
@@ -1104,8 +1107,8 @@ export const CanvasElement = ({
                     color: element.color || '#333',
                     lineHeight: '1.4'
                   }}>
-                    15 Avenue des Entrepreneurs<br />
-                    75008 Paris<br />
+                    123 Rue de la Paix<br />
+                    75001 Paris<br />
                     France
                   </div>
                 </div>
@@ -1135,7 +1138,7 @@ export const CanvasElement = ({
                     fontWeight: 'bold',
                     color: element.color || '#333'
                   }}>
-                    Technologies Innovantes SARL
+                    ABC Company SARL
                   </div>
                 </div>
               )}
