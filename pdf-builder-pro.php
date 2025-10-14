@@ -16,6 +16,9 @@ if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
 
+// Désactiver les avertissements de dépréciation pour la compatibilité PHP 8.1+
+error_reporting(error_reporting() & ~E_DEPRECATED);
+
 // Hook d'activation
 register_activation_hook(__FILE__, 'pdf_builder_activate');
 
