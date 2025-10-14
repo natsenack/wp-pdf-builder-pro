@@ -522,8 +522,15 @@ class PDF_Builder_WooCommerce_Integration {
                             iframe.style.border = 'none';
                             iframe.style.background = 'white';
                             iframe.style.transformOrigin = 'top center';
+                            iframe.style.minHeight = '600px';
                             iframe.onload = function() {
                                 $('#pdf-preview-loading').hide();
+                                // S'assurer que l'iframe a la bonne taille
+                                const iframeBody = iframe.contentDocument || iframe.contentWindow.document;
+                                if (iframeBody) {
+                                    iframeBody.body.style.margin = '0';
+                                    iframeBody.body.style.padding = '0';
+                                }
                             };
                             $('.pdf-preview-container').html(iframe);
                             
@@ -760,10 +767,12 @@ class PDF_Builder_WooCommerce_Integration {
             if ($canvas_data) {
                 // Utiliser le canvas personnalisé de la commande
                 $template_data = $canvas_data;
+                error_log('PDF Preview: Using custom canvas for order ' . $order_id);
             } else {
                 // Charger le template si aucun canvas personnalisé n'existe
                 if ($template_id > 0) {
                     $template_data = $this->load_template_robust($template_id);
+                    error_log('PDF Preview: Loading template ID ' . $template_id . ' for order ' . $order_id);
                 } else {
                     // Utiliser le template par défaut ou détecté automatiquement
                     $order_status = $order->get_status();
@@ -772,18 +781,22 @@ class PDF_Builder_WooCommerce_Integration {
 
                     if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
                         $template_data = $this->load_template_robust($status_templates[$status_key]);
+                        error_log('PDF Preview: Using status template for status ' . $order_status . ' (ID: ' . $status_templates[$status_key] . ')');
                     } else {
                         $template_data = $this->get_default_invoice_template();
+                        error_log('PDF Preview: Using default template for order ' . $order_id);
                     }
                 }
             }
 
             if (!$template_data) {
+                error_log('PDF Preview: No template data found for order ' . $order_id);
                 wp_send_json_error('Template ou canvas non trouvé');
             }
 
             // Générer l'HTML d'aperçu avec les données de la commande
             $html_content = $this->generate_unified_html($template_data, $order);
+            error_log('PDF Preview: Generated HTML length: ' . strlen($html_content) . ' for order ' . $order_id);
 
             $response = array(
                 'html' => $html_content,
@@ -853,7 +866,40 @@ class PDF_Builder_WooCommerce_Integration {
      * Générer HTML unifié (méthode commune avec PDF Generator)
      */
     private function generate_unified_html($template, $order = null) {
-        $html = '<div style="font-family: Arial, sans-serif; padding: 20px;">';
+        $canvas_width = $template['canvas']['width'] ?? 595;
+        $canvas_height = $template['canvas']['height'] ?? 842;
+        
+        $html = '<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: white;
+            width: ' . $canvas_width . 'px;
+            height: ' . $canvas_height . 'px;
+            position: relative;
+            overflow: hidden;
+        }
+        .pdf-canvas {
+            position: relative;
+            width: ' . $canvas_width . 'px;
+            height: ' . $canvas_height . 'px;
+            background: white;
+            margin: 0;
+            padding: 0;
+        }
+        .pdf-element {
+            position: absolute;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div class="pdf-canvas">';
 
         if (isset($template['pages']) && is_array($template['pages']) && !empty($template['pages'])) {
             $firstPage = $template['pages'][0];
@@ -880,7 +926,7 @@ class PDF_Builder_WooCommerce_Integration {
                 }
 
                 $style = sprintf(
-                    'position: absolute; left: %dpx; top: %dpx; width: %dpx; height: %dpx;',
+                    'left: %dpx; top: %dpx; width: %dpx; height: %dpx;',
                     $x, $y, $width, $height
                 );
 
@@ -909,24 +955,24 @@ class PDF_Builder_WooCommerce_Integration {
                 switch ($element['type']) {
                     case 'text':
                         $final_content = $order ? $this->replace_order_variables($content, $order) : $content;
-                        $html .= sprintf('<div style="%s">%s</div>', $style, esc_html($final_content));
+                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($final_content));
                         break;
 
                     case 'invoice_number':
                         if ($order) {
                             $invoice_number = $order->get_id() . '-' . time();
-                            $html .= sprintf('<div style="%s">%s</div>', $style, esc_html($invoice_number));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($invoice_number));
                         }
                         break;
 
                     default:
-                        $html .= sprintf('<div style="%s">%s</div>', $style, esc_html($content));
+                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content));
                         break;
                 }
             }
         }
 
-        $html .= '</div>';
+        $html .= '</div></body></html>';
         return $html;
     }
 
