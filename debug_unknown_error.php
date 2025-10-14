@@ -71,8 +71,8 @@ if (class_exists('TCPDF')) {
 
     // Utiliser la même logique que PDF_Builder_Admin::load_tcpdf_library()
     $tcpdf_paths = [
+        $plugin_dir . 'lib/tcpdf/tcpdf_autoload.php', // Essayer d'abord l'autoload
         $plugin_dir . 'lib/tcpdf/tcpdf.php',
-        $plugin_dir . 'lib/tcpdf/tcpdf_autoload.php',
         $plugin_dir . 'vendor/tecnickcom/tcpdf/tcpdf.php'
     ];
 
@@ -86,6 +86,24 @@ if (class_exists('TCPDF')) {
             // Vérifier les permissions
             if (is_readable($path)) {
                 echo "✅ Fichier lisible: " . basename($path) . "<br>";
+
+                // Pour tcpdf.php, essayer de précharger les dépendances
+                if (basename($path) === 'tcpdf.php') {
+                    echo "🔧 Tentative de préchargement des dépendances TCPDF...<br>";
+                    $deps = [
+                        $plugin_dir . 'lib/tcpdf/tcpdf_autoconfig.php',
+                        $plugin_dir . 'lib/tcpdf/tcpdf_static.php',
+                        $plugin_dir . 'lib/tcpdf/tcpdf_colors.php',
+                        $plugin_dir . 'lib/tcpdf/tcpdf_fonts.php'
+                    ];
+
+                    foreach ($deps as $dep) {
+                        if (file_exists($dep) && is_readable($dep)) {
+                            require_once $dep;
+                            echo "✅ Dépendance chargée: " . basename($dep) . "<br>";
+                        }
+                    }
+                }
 
                 $result = require_once $path;
                 echo "📦 Résultat require_once: " . ($result ? 'true' : 'false') . "<br>";
@@ -117,8 +135,31 @@ if (class_exists('TCPDF')) {
         echo "<li>Include path: " . get_include_path() . "</li>";
         echo "<li>Current user: " . get_current_user() . "</li>";
         echo "<li>Script owner: " . (function_exists('posix_getuid') ? posix_getuid() : 'N/A') . "</li>";
+        echo "<li>open_basedir: " . ini_get('open_basedir') . "</li>";
+        echo "<li>safe_mode: " . (ini_get('safe_mode') ? 'On' : 'Off') . "</li>";
         echo "</ul>";
-        exit;
+
+        // Essayer une approche alternative : charger via eval si possible
+        echo "<h3>🔧 Tentative de chargement alternatif...</h3>";
+        $tcpdf_content = @file_get_contents($plugin_dir . 'lib/tcpdf/tcpdf.php');
+        if ($tcpdf_content !== false) {
+            echo "✅ Contenu TCPDF lu, tentative d'évaluation...<br>";
+            // Note: eval peut être dangereux, mais c'est pour le diagnostic
+            @eval('?>' . $tcpdf_content);
+            if (class_exists('TCPDF')) {
+                echo "✅ TCPDF chargé via eval()<br>";
+                $tcpdf_loaded = true;
+                define_tcpdf_constants_if_needed();
+            } else {
+                echo "❌ Échec du chargement via eval()<br>";
+            }
+        } else {
+            echo "❌ Impossible de lire le contenu du fichier TCPDF<br>";
+        }
+
+        if (!$tcpdf_loaded) {
+            exit;
+        }
     }
 }
 
