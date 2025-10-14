@@ -22,7 +22,7 @@ Get-Content $configFile | Where-Object { $_ -match '^FTP_' } | ForEach-Object {
 
 $ftpHost = $env:FTP_HOST
 $ftpUser = $env:FTP_USER
-$ftpPassword = $env:FTP_PASSWORD
+$ftpPassword = $env:FTP_PASS
 $remotePath = $env:FTP_PATH
 
 Write-Host "🎯 Serveur: $ftpHost" -ForegroundColor Cyan

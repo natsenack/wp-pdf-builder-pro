@@ -466,12 +466,11 @@ class PDF_Builder_Core {
      *
      * @param int $order_id ID de la commande
      * @param int $template_id ID du template (0 pour auto-détection)
-     * @param bool $is_preview True pour aperçu, false pour génération finale
      * @return string|WP_Error URL du PDF généré ou erreur
      */
-    public function generate_order_pdf($order_id, $template_id = 0, $is_preview = false) {
+    public function generate_order_pdf($order_id, $template_id = 0) {
         if ($this->admin && method_exists($this->admin, 'generate_order_pdf')) {
-            return $this->admin->generate_order_pdf($order_id, $template_id, $is_preview);
+            return $this->admin->generate_order_pdf($order_id, $template_id);
         } else {
             return new WP_Error('admin_not_initialized', 'Interface d\'administration non initialisée');
         }

@@ -1583,56 +1583,6 @@ class PDF_Builder_Admin {
     }
 
     /**
-     * AJAX - Aperçu du PDF
-     */
-    public function ajax_preview_pdf() {
-        $this->check_admin_permissions();
-
-        // Vérification de sécurité
-        if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce')) {
-            wp_send_json_error('Sécurité: Nonce invalide');
-        }
-
-        // Récupérer et décoder les données JSON du template ou des éléments
-        if (!empty($_POST['template_data'])) {
-            $raw_json = $_POST['template_data'];
-            $is_template = true;
-        } elseif (!empty($_POST['elements']) || !empty($_POST['elements_data'])) {
-            // Accepte 'elements' ou 'elements_data' selon version JS
-            $raw_json = $_POST['elements'] ?? $_POST['elements_data'];
-            $is_template = false;
-        } else {
-            wp_send_json_error('Aucune donnée template ou éléments reçue');
-            return;
-        }
-        $data = json_decode($raw_json, true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            wp_send_json_error('JSON invalide: ' . json_last_error_msg());
-            return;
-        }
-        $template = $is_template ? $data : $this->convert_elements_to_template($data);
-        try {
-            // Générer l'HTML d'aperçu
-            $html_content = $this->generate_html_from_template_data($template);
-            // Déterminer les dimensions de la page (A4 par défaut)
-            $width = 595;
-            $height = 842;
-            if (!empty($template['pages'][0]['size'])) {
-                $firstSize = $template['pages'][0]['size'];
-                $width = $firstSize['width'] ?? $width;
-                $height = $firstSize['height'] ?? $height;
-            }
-            wp_send_json_success([
-                'html'   => $html_content,
-                'width'  => $width,
-                'height' => $height,
-            ]);
-        } catch (Exception $e) {
-            wp_send_json_error('Erreur: ' . $e->getMessage());
-        }
-    }
-
-    /**
      * AJAX - Téléchargement du PDF
      */
     public function ajax_download_pdf() {
@@ -1786,12 +1736,8 @@ class PDF_Builder_Admin {
      * @param WC_Order|null $order Commande WooCommerce (optionnel)
      * @return string HTML généré
      */
-    public function generate_unified_html($template, $order = null, $for_preview = false) {
-        if (!$for_preview) {
-            $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' . ($order ? 'Order #' . $order->get_id() : 'PDF Preview') . '</title>';
-        } else {
-            $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>PDF Preview</title>';
-        }
+    public function generate_unified_html($template, $order = null) {
+        $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' . ($order ? 'Order #' . $order->get_id() : 'PDF') . '</title>';
 
         // Gestion des marges d'impression - utiliser la première page
         $margins = ['top' => 20, 'right' => 20, 'bottom' => 20, 'left' => 20];
@@ -1817,12 +1763,12 @@ class PDF_Builder_Admin {
         }
         .pdf-container {
             position: relative;
-            width: ' . ($for_preview ? '595px' : '100%') . ';
-            height: ' . ($for_preview ? '842px' : '100%') . ';
+            width: 100%;
+            height: 100%;
             background: white;
-            margin: ' . ($for_preview ? '20px auto' : '0') . ';
-            border: ' . ($for_preview ? '1px solid #e2e8f0' : 'none') . ';
-            box-shadow: ' . ($for_preview ? '0 4px 12px rgba(0,0,0,0.1)' : 'none') . ';
+            margin: 0;
+            border: none;
+            box-shadow: none;
         }
         .pdf-element {
             position: absolute;
@@ -1894,11 +1840,7 @@ class PDF_Builder_Admin {
             }
         }
         </style>';
-        if (!$for_preview) {
-            $html .= '</head><body>';
-        } else {
-            $html .= '</head><body>';
-        }
+        $html .= '</head><body>';
         $html .= '<div class="pdf-container" style="position: relative; width: 595px; height: 842px; background: white;">';
 
         // Utiliser les éléments de la première page
@@ -1940,32 +1882,21 @@ class PDF_Builder_Admin {
                     $height = $element['height'] ?? 50;
                 }
 
-                if ($for_preview) {
-                    // Pour l'aperçu côté client, utiliser des pixels et des styles compatibles
-                    $base_style = sprintf(
-                        'position: absolute; left: %dpx; top: %dpx; width: %dpx; height: %dpx;',
-                        $x,
-                        $y,
-                        $width,
-                        $height
-                    );
-                } else {
-                    // Convertir les coordonnées pour TCPDF (de pixels à points, approx 1px = 0.75pt)
-                    $x_pt = round($x * 0.75);
-                    $y_pt = round($y * 0.75);
-                    $width_pt = round($width * 0.75);
-                    $height_pt = round($height * 0.75);
+                // Convertir les coordonnées pour TCPDF (de pixels à points, approx 1px = 0.75pt)
+                $x_pt = round($x * 0.75);
+                $y_pt = round($y * 0.75);
+                $width_pt = round($width * 0.75);
+                $height_pt = round($height * 0.75);
 
-                    // TCPDF ne supporte pas bien position:absolute, utiliser une approche alternative
-                    // Créer un élément avec des coordonnées TCPDF spéciales
-                    $base_style = sprintf(
-                        'position: absolute; left: %dpt; top: %dpt; width: %dpt; height: %dpt;',
-                        $x_pt,
+                // TCPDF ne supporte pas bien position:absolute, utiliser une approche alternative
+                // Créer un élément avec des coordonnées TCPDF spéciales
+                $base_style = sprintf(
+                    'position: absolute; left: %dpt; top: %dpt; width: %dpt; height: %dpt;',
+                    $x_pt,
                         $y_pt,
                         $width_pt,
                         $height_pt
                     );
-                }
 
                 // Ajouter les styles CSS supplémentaires
                 if (isset($element['style'])) {
@@ -1973,12 +1904,8 @@ class PDF_Builder_Admin {
                         $base_style .= ' color: ' . $element['style']['color'] . ';';
                     }
                     if (isset($element['style']['fontSize'])) {
-                        if ($for_preview) {
-                            $base_style .= ' font-size: ' . $element['style']['fontSize'] . 'px;';
-                        } else {
-                            $font_size_pt = round($element['style']['fontSize'] * 0.75);
-                            $base_style .= ' font-size: ' . $font_size_pt . 'pt;';
-                        }
+                        $font_size_pt = round($element['style']['fontSize'] * 0.75);
+                        $base_style .= ' font-size: ' . $font_size_pt . 'pt;';
                     }
                     if (isset($element['style']['fontWeight'])) {
                         $base_style .= ' font-weight: ' . $element['style']['fontWeight'] . ';';
@@ -2000,22 +1927,7 @@ class PDF_Builder_Admin {
                 switch ($element['type']) {
                     case 'text':
                         $final_content = $order ? $this->replace_order_variables($content, $order) : $content;
-                        if ($for_preview) {
-                            // Styles identiques à PreviewModal pour le texte
-                            $text_style = $style . sprintf(
-                                ' font-size: %dpx; line-height: 1.2; white-space: pre-wrap; overflow: hidden; padding: 4px; box-sizing: border-box;',
-                                $element['style']['fontSize'] ?? 16
-                            );
-                            if (isset($element['style']['textAlign'])) {
-                                $text_style .= ' text-align: ' . $element['style']['textAlign'] . ';';
-                            }
-                            if (isset($element['style']['fontStyle']) && $element['style']['fontStyle'] === 'italic') {
-                                $text_style .= ' font-style: italic;';
-                            }
-                            $html .= sprintf('<div class="pdf-element text-element" style="%s">%s</div>', $text_style, esc_html($final_content));
-                        } else {
-                            $html .= sprintf('<div class="pdf-element text-element" style="%s">%s</div>', $style, esc_html($final_content));
-                        }
+                        $html .= sprintf('<div class="pdf-element text-element" style="%s">%s</div>', $style, esc_html($final_content));
                         break;
 
                     case 'invoice_number':
@@ -2091,25 +2003,7 @@ class PDF_Builder_Admin {
                         break;
 
                     case 'rectangle':
-                        if ($for_preview) {
-                            $rect_style = $style;
-                            if (isset($element['style']['fillColor'])) {
-                                $rect_style .= ' background-color: ' . $element['style']['fillColor'] . ';';
-                            } else {
-                                $rect_style .= ' background-color: transparent;';
-                            }
-                            if (isset($element['style']['borderWidth']) && $element['style']['borderWidth'] > 0) {
-                                $rect_style .= sprintf(' border: %dpx solid %s;', $element['style']['borderWidth'], $element['style']['borderColor'] ?? '#000000');
-                            } else {
-                                $rect_style .= ' border: none;';
-                            }
-                            if (isset($element['style']['borderRadius'])) {
-                                $rect_style .= ' border-radius: ' . $element['style']['borderRadius'] . 'px;';
-                            }
-                            $html .= sprintf('<div class="pdf-element" style="%s"></div>', $rect_style);
-                        } else {
-                            $html .= sprintf('<div class="pdf-element" style="%s"></div>', $style);
-                        }
+                        $html .= sprintf('<div class="pdf-element" style="%s"></div>', $style);
                         break;
 
                     case 'image':
@@ -2134,11 +2028,7 @@ class PDF_Builder_Admin {
                         }
 
                         if ($logo_url) {
-                            if ($for_preview) {
-                                $html .= sprintf('<div class="pdf-element image-element" style="%s"><img src="%s" style="width: 100%%; height: 100%%; object-fit: cover;" alt="Logo entreprise" /></div>', $style, esc_url($logo_url));
-                            } else {
-                                $html .= sprintf('<div class="pdf-element image-element" style="%s"><img src="%s" style="width: 100%%; height: 100%%; object-fit: contain;" alt="Logo entreprise" /></div>', $style, esc_url($logo_url));
-                            }
+                            $html .= sprintf('<div class="pdf-element image-element" style="%s"><img src="%s" style="width: 100%%; height: 100%%; object-fit: contain;" alt="Logo entreprise" /></div>', $style, esc_url($logo_url));
                         } else {
                             // Afficher un placeholder pour le logo de l'entreprise
                             $html .= sprintf('<div class="pdf-element image-element" style="%s"><div style="width: 100%%; height: 100%%; background-color: #f0f0f0; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center; color: #666; font-size: 12px;">🏢 Logo</div></div>', $style);
@@ -2250,15 +2140,8 @@ class PDF_Builder_Admin {
                         break;
 
                     case 'line':
-                        if ($for_preview) {
-                            $stroke_width = $element['style']['strokeWidth'] ?? 1;
-                            $stroke_color = $element['style']['strokeColor'] ?? '#000000';
-                            $line_style = $style . sprintf(' border-top: %dpx solid %s; height: 0;', $stroke_width, $stroke_color);
-                            $html .= sprintf('<div class="pdf-element line" style="%s"></div>', $line_style);
-                        } else {
-                            $line_style = $style . 'border-top: 2px solid #000; height: 0;';
-                            $html .= sprintf('<div class="pdf-element line" style="%s"></div>', $line_style);
-                        }
+                        $line_style = $style . 'border-top: 2px solid #000; height: 0;';
+                        $html .= sprintf('<div class="pdf-element line" style="%s"></div>', $line_style);
                         break;
 
                     case 'customer_info':
@@ -2315,11 +2198,7 @@ class PDF_Builder_Admin {
         }
 
         $html .= '</div>'; // Fermer le pdf-container
-        if (!$for_preview) {
-            $html .= '</body></html>';
-        } else {
-            $html .= '</body></html>';
-        }
+        $html .= '</body></html>';
         return $html;
     }
 
@@ -2495,13 +2374,6 @@ class PDF_Builder_Admin {
             cursor: not-allowed;
             transform: none !important;
         }
-        #pdf-builder-order-meta-box .btn-preview {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        #pdf-builder-order-meta-box .btn-preview:hover {
-            background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
-        }
         #pdf-builder-order-meta-box .btn-generate {
             background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
             color: white;
@@ -2515,6 +2387,13 @@ class PDF_Builder_Admin {
         }
         #pdf-builder-order-meta-box .btn-download:hover {
             background: linear-gradient(135deg, #e0a800 0%, #e8590c 100%);
+        }
+        #pdf-builder-order-meta-box .btn-preview {
+            background: linear-gradient(135deg, #007bff 0%, #6610f2 100%);
+            color: white;
+        }
+        #pdf-builder-order-meta-box .btn-preview:hover {
+            background: linear-gradient(135deg, #0056b3 0%, #5a0fc8 100%);
         }
         #pdf-builder-order-meta-box .action-buttons button.loading {
             position: relative;
@@ -2676,7 +2555,6 @@ class PDF_Builder_Admin {
 
         <script type="text/javascript">
         jQuery(document).ready(function($) {
-            var $previewBtn = $('#pdf-builder-preview-btn');
             var $generateBtn = $('#pdf-builder-generate-btn');
             var $downloadBtn = $('#pdf-builder-download-btn');
             var $status = $('#pdf-builder-status');
@@ -2712,387 +2590,6 @@ class PDF_Builder_Admin {
                     $btn.removeClass('loading').prop('disabled', false);
                 }
             }
-
-            // Fonction pour ouvrir la modale d'aperçu PDF
-            function openPdfPreviewModal(htmlContent, width, height) {
-                // Créer la modale si elle n'existe pas
-                if (!$('#pdf-preview-modal').length) {
-                    $('body').append(`
-                        <div id="pdf-preview-modal" style="
-                            position: fixed;
-                            top: 0;
-                            left: 0;
-                            width: 100%;
-                            height: 100%;
-                            background: rgba(0, 0, 0, 0.85);
-                            backdrop-filter: blur(4px);
-                            z-index: 99999;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            opacity: 0;
-                            transition: opacity 0.3s ease;
-                        ">
-                            <div id="pdf-preview-content" style="
-                                background: white;
-                                border-radius: 12px;
-                                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-                                max-width: 98vw;
-                                max-height: 98vh;
-                                overflow: hidden;
-                                position: relative;
-                                transform: scale(0.9) translateY(20px);
-                                transition: all 0.3s ease;
-                                display: flex;
-                                flex-direction: column;
-                            ">
-                                <div id="pdf-preview-header" style="
-                                    padding: 20px 24px;
-                                    border-bottom: 1px solid #e1e8ed;
-                                    display: flex;
-                                    justify-content: space-between;
-                                    align-items: center;
-                                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                                    color: white;
-                                    border-radius: 12px 12px 0 0;
-                                ">
-                                    <div style="display: flex; align-items: center; gap: 16px;">
-                                        <div style="font-size: 24px;">📄</div>
-                                        <div>
-                                            <h3 style="margin: 0; font-size: 20px; font-weight: 600;"><?php echo esc_js(__('Aperçu PDF', 'pdf-builder-pro')); ?></h3>
-                                            <div style="font-size: 14px; opacity: 0.9; margin-top: 2px;">
-                                                <?php echo esc_js(__('Commande', 'pdf-builder-pro')); ?> #<?php echo esc_js($order->get_order_number()); ?> •
-                                                <?php echo esc_js(wc_get_order_status_name($order->get_status())); ?>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div style="display: flex; align-items: center; gap: 12px;">
-                                        <div id="pdf-zoom-controls" style="display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.1); border-radius: 8px; padding: 4px;">
-                                            <button id="pdf-zoom-out" style="
-                                                background: rgba(255,255,255,0.2);
-                                                border: none;
-                                                border-radius: 6px;
-                                                width: 32px;
-                                                height: 32px;
-                                                display: flex;
-                                                align-items: center;
-                                                justify-content: center;
-                                                cursor: pointer;
-                                                font-size: 16px;
-                                                color: white;
-                                                transition: all 0.2s ease;
-                                            " title="<?php echo esc_js(__('Zoom arrière', 'pdf-builder-pro')); ?>">−</button>
-                                            <span id="pdf-zoom-level" style="font-size: 14px; font-weight: 600; min-width: 50px; text-align: center; color: white;">100%</span>
-                                            <button id="pdf-zoom-in" style="
-                                                background: rgba(255,255,255,0.2);
-                                                border: none;
-                                                border-radius: 6px;
-                                                width: 32px;
-                                                height: 32px;
-                                                display: flex;
-                                                align-items: center;
-                                                justify-content: center;
-                                                cursor: pointer;
-                                                font-size: 16px;
-                                                color: white;
-                                                transition: all 0.2s ease;
-                                            " title="<?php echo esc_js(__('Zoom avant', 'pdf-builder-pro')); ?>">+</button>
-                                            <button id="pdf-zoom-fit" style="
-                                                background: rgba(255,255,255,0.2);
-                                                border: none;
-                                                border-radius: 6px;
-                                                padding: 0 12px;
-                                                height: 32px;
-                                                display: flex;
-                                                align-items: center;
-                                                justify-content: center;
-                                                cursor: pointer;
-                                                font-size: 13px;
-                                                font-weight: 500;
-                                                color: white;
-                                                transition: all 0.2s ease;
-                                            " title="<?php echo esc_js(__('Ajuster à la fenêtre', 'pdf-builder-pro')); ?>"><?php echo esc_js(__('Ajuster', 'pdf-builder-pro')); ?></button>
-                                        </div>
-                                        <button id="pdf-preview-close" style="
-                                            background: rgba(255,255,255,0.2);
-                                            border: none;
-                                            border-radius: 50%;
-                                            width: 36px;
-                                            height: 36px;
-                                            display: flex;
-                                            align-items: center;
-                                            justify-content: center;
-                                            cursor: pointer;
-                                            font-size: 20px;
-                                            color: white;
-                                            transition: all 0.2s ease;
-                                        " title="<?php echo esc_js(__('Fermer', 'pdf-builder-pro')); ?>">&times;</button>
-                                    </div>
-                                </div>
-                                <div id="pdf-preview-body" style="
-                                    flex: 1;
-                                    padding: 20px;
-                                    background: #f8f9fa;
-                                    overflow: auto;
-                                    border-radius: 0 0 12px 12px;
-                                ">
-                                    <div id="pdf-preview-iframe-container" style="
-                                        border: 2px solid #e1e8ed;
-                                        border-radius: 8px;
-                                        background: white;
-                                        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-                                        display: flex;
-                                        align-items: center;
-                                        justify-content: center;
-                                        min-height: 700px;
-                                        position: relative;
-                                        overflow: hidden;
-                                    ">
-                                        <div id="pdf-preview-loading" style="
-                                            display: flex;
-                                            flex-direction: column;
-                                            align-items: center;
-                                            gap: 16px;
-                                            color: #6c757d;
-                                            font-size: 16px;
-                                        ">
-                                            <div style="width: 40px; height: 40px; border: 4px solid #e1e8ed; border-top: 4px solid #667eea; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-                                            <div style="text-align: center;">
-                                                <div style="font-weight: 600; margin-bottom: 4px;"><?php echo esc_js(__('Génération de l\'aperçu...', 'pdf-builder-pro')); ?></div>
-                                                <div style="font-size: 14px; opacity: 0.8;"><?php echo esc_js(__('Veuillez patienter', 'pdf-builder-pro')); ?></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div id="pdf-preview-info" style="
-                                        margin-top: 16px;
-                                        padding: 16px;
-                                        background: white;
-                                        border: 1px solid #e1e8ed;
-                                        border-radius: 8px;
-                                        font-size: 14px;
-                                        color: #495057;
-                                    ">
-                                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                                            <span style="font-size: 16px;">ℹ️</span>
-                                            <strong><?php echo esc_js(__('Informations sur l\'aperçu', 'pdf-builder-pro')); ?></strong>
-                                        </div>
-                                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
-                                            <div><strong><?php echo esc_js(__('Template:', 'pdf-builder-pro')); ?></strong> <?php echo esc_js($default_template ? $default_template['name'] : __('Par défaut', 'pdf-builder-pro')); ?></div>
-                                            <div><strong><?php echo esc_js(__('Format:', 'pdf-builder-pro')); ?></strong> A4 (210×297mm)</div>
-                                            <div><strong><?php echo esc_js(__('Orientation:', 'pdf-builder-pro')); ?></strong> Portrait</div>
-                                            <div><strong><?php echo esc_js(__('Généré le:', 'pdf-builder-pro')); ?></strong> <?php echo esc_js(current_time('d/m/Y H:i')); ?></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `);
-
-                    // Animation d'ouverture
-                    setTimeout(function() {
-                        $('#pdf-preview-modal').css('opacity', '1');
-                        $('#pdf-preview-content').css({
-                            'transform': 'scale(1) translateY(0)',
-                            'opacity': '1'
-                        });
-                    }, 10);
-
-                    // Gestionnaire pour fermer la modale
-                    $(document).on('click', '#pdf-preview-close', function() {
-                        closePdfPreviewModal();
-                    });
-
-                    $(document).on('click', '#pdf-preview-modal', function(e) {
-                        if (e.target.id === 'pdf-preview-modal') {
-                            closePdfPreviewModal();
-                        }
-                    });
-
-                    // Fermer avec la touche Échap
-                    $(document).on('keydown', function(e) {
-                        if (e.keyCode === 27) { // Échap
-                            closePdfPreviewModal();
-                        }
-                    });
-
-                    // Effets hover pour les boutons
-                    $(document).on('mouseenter', '#pdf-zoom-out, #pdf-zoom-in, #pdf-zoom-fit, #pdf-preview-close', function() {
-                        $(this).css('background', 'rgba(255,255,255,0.3)');
-                    }).on('mouseleave', '#pdf-zoom-out, #pdf-zoom-in, #pdf-zoom-fit, #pdf-preview-close', function() {
-                        $(this).css('background', 'rgba(255,255,255,0.2)');
-                    });
-                }
-
-                // Fonction pour fermer la modale
-                function closePdfPreviewModal() {
-                    $('#pdf-preview-content').css({
-                        'transform': 'scale(0.9) translateY(20px)',
-                        'opacity': '0'
-                    });
-                    $('#pdf-preview-modal').css('opacity', '0');
-                    setTimeout(function() {
-                        $('#pdf-preview-modal').remove();
-                    }, 300);
-                }
-
-                // Calculer les dimensions de l'aperçu
-                var modalWidth = Math.min(width + 40, window.innerWidth * 0.98);
-                var modalHeight = Math.min(height + 120, window.innerHeight * 0.98);
-
-                // Mettre à jour le contenu
-                $('#pdf-preview-content').css({
-                    'width': modalWidth + 'px',
-                    'max-width': modalWidth + 'px'
-                });
-
-                $('#pdf-preview-iframe-container').css({
-                    'min-height': (height + 40) + 'px'
-                });
-
-                // Créer un iframe avec le contenu HTML
-                var iframe = document.createElement('iframe');
-                iframe.style.width = '100%';
-                iframe.style.height = height + 'px';
-                iframe.style.border = 'none';
-                iframe.style.background = 'white';
-                iframe.style.transformOrigin = 'top left';
-
-                // Variable globale pour la hauteur originale du PDF
-                window.originalPdfHeight = height;
-
-                // Fonction pour appliquer le zoom
-                window.applyPdfZoom = function(zoomLevel, iframe, height) {
-                    window.currentPdfZoom = Math.max(0.25, Math.min(3.0, zoomLevel)); // Limiter entre 25% et 300%
-                    iframe.style.transform = 'scale(' + window.currentPdfZoom + ')';
-                    iframe.style.transformOrigin = 'top left';
-                    iframe.style.width = (100 / window.currentPdfZoom) + '%';
-                    iframe.style.height = (height / window.currentPdfZoom) + 'px';
-                    $('#pdf-zoom-level').text(Math.round(window.currentPdfZoom * 100) + '%');
-
-                    // Ajuster la hauteur du conteneur
-                    var scaledHeight = height * window.currentPdfZoom + 40;
-                    $('#pdf-preview-iframe-container').css('min-height', scaledHeight + 'px');
-                };
-
-                // Gestionnaires d'événements pour les contrôles de zoom
-                $('#pdf-zoom-in').off('click').on('click', function() {
-                    var iframe = $('#pdf-preview-iframe-container iframe')[0];
-                    window.applyPdfZoom(window.currentPdfZoom * 1.2, iframe, window.originalPdfHeight);
-                });
-
-                $('#pdf-zoom-out').off('click').on('click', function() {
-                    var iframe = $('#pdf-preview-iframe-container iframe')[0];
-                    window.applyPdfZoom(window.currentPdfZoom / 1.2, iframe, window.originalPdfHeight);
-                });
-
-                $('#pdf-zoom-fit').off('click').on('click', function() {
-                    var iframe = $('#pdf-preview-iframe-container iframe')[0];
-                    var containerWidth = $('#pdf-preview-iframe-container').width();
-                    var fitZoom = containerWidth / width;
-                    window.applyPdfZoom(fitZoom, iframe, window.originalPdfHeight);
-                });
-
-                // Appliquer le zoom initial
-                window.applyPdfZoom(1.0, iframe, height);
-
-                // Utiliser une approche moderne pour écrire dans l'iframe
-                iframe.onload = function() {
-                    $('#pdf-preview-loading').hide();
-                    try {
-                        var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                        if (iframeDoc) {
-                            // Utiliser innerHTML au lieu de document.write pour éviter les problèmes
-                            iframeDoc.body.innerHTML = htmlContent;
-                        } else {
-                            console.error('PDF Builder: Cannot access iframe document');
-                            $('#pdf-preview-iframe-container').html('<div style="color: #d63638; padding: 20px; text-align: center;">Erreur d\'accès à l\'aperçu</div>');
-                        }
-                    } catch (e) {
-                        console.error('PDF Builder: Error writing to iframe:', e);
-                        $('#pdf-preview-iframe-container').html('<div style="color: #d63638; padding: 20px; text-align: center;">Erreur lors du chargement de l\'aperçu</div>');
-                    }
-                };
-
-                // Ajouter l'iframe au conteneur
-                $('#pdf-preview-iframe-container').html(iframe);
-
-                // Essayer d'écrire immédiatement (pour les navigateurs qui le supportent)
-                try {
-                    var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                    if (iframeDoc && iframeDoc.readyState === 'complete') {
-                        iframeDoc.body.innerHTML = htmlContent;
-                        $('#pdf-preview-loading').hide();
-                    }
-                } catch (e) {
-                    // L'onload handler s'occupera de ça
-                    console.log('PDF Builder: Will write to iframe on load event');
-                }
-
-                // Afficher la modale avec animation
-                $('#pdf-preview-modal').show().animate({opacity: 1}, 300);
-                $('#pdf-preview-content').animate({scale: 1}, 300);
-            }
-
-            // Aperçu PDF
-            $previewBtn.on('click', function() {
-                var orderId = $(this).data('order-id');
-                var templateId = <?php echo $default_template ? esc_js($default_template['id']) : '0'; ?>;
-
-                console.log('🚀 PDF Builder: Preview button clicked');
-                console.log('📋 PDF Builder: Order ID:', orderId);
-                console.log('📄 PDF Builder: Template ID:', templateId);
-                console.log('🔗 PDF Builder: AJAX URL:', ajaxurl);
-
-                showStatus('<?php echo esc_js(__('Génération de l\'aperçu...', 'pdf-builder-pro')); ?>', 'loading');
-                setButtonLoading($previewBtn, true);
-
-                console.log('📡 PDF Builder: Starting AJAX request...');
-                var ajaxStartTime = Date.now();
-
-                $.ajax({
-                    url: ajaxurl,
-                    type: 'POST',
-                    data: {
-                        action: 'pdf_builder_pro_preview_order_pdf',
-                        order_id: orderId,
-                        template_id: templateId,
-                        nonce: '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>'
-                    },
-                    success: function(response) {
-                        var ajaxEndTime = Date.now();
-                        var ajaxDuration = ajaxEndTime - ajaxStartTime;
-                        console.log('✅ PDF Builder: Preview AJAX success after', ajaxDuration, 'ms');
-                        console.log('📦 PDF Builder: Response:', response);
-
-                        if (response.success) {
-                            console.log('🎉 PDF Builder: Preview successful, opening modal');
-                            // Ouvrir l'aperçu dans une modale
-                            openPdfPreviewModal(response.data.html, response.data.width, response.data.height);
-                            showStatus('<?php echo esc_js(__('Aperçu ouvert avec succès ✅', 'pdf-builder-pro')); ?>', 'success');
-                            setTimeout(hideStatus, 3000);
-                        } else {
-                            console.error('❌ PDF Builder: Preview failed:', response.data);
-                            showStatus(response.data || '<?php echo esc_js(__('Erreur lors de l\'aperçu ❌', 'pdf-builder-pro')); ?>', 'error');
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        var ajaxEndTime = Date.now();
-                        var ajaxDuration = ajaxEndTime - ajaxStartTime;
-                        console.error('❌ PDF Builder: Preview AJAX error after', ajaxDuration, 'ms');
-                        console.error('📊 PDF Builder: Status:', status);
-                        console.error('🚨 PDF Builder: Error:', error);
-                        console.error('📄 PDF Builder: Response text:', xhr.responseText);
-                        console.error('🔢 PDF Builder: Status code:', xhr.status);
-
-                        showStatus('<?php echo esc_js(__('Erreur AJAX lors de l\'aperçu ❌', 'pdf-builder-pro')); ?>', 'error');
-                    },
-                    complete: function() {
-                        console.log('PDF Builder: Preview AJAX complete');
-                        setButtonLoading($previewBtn, false);
-                    }
-                });
-            });
-
             // Générer PDF
             $generateBtn.on('click', function() {
                 var orderId = $(this).data('order-id');
@@ -3149,6 +2646,50 @@ class PDF_Builder_Admin {
                 if (pdfUrl) {
                     window.open(pdfUrl, '_blank');
                 }
+            });
+
+            // Aperçu PDF
+            $('#pdf-builder-preview-btn').on('click', function() {
+                var orderId = $(this).data('order-id');
+
+                console.log('PDF Builder: Preview button clicked');
+                console.log('PDF Builder: Order ID:', orderId);
+
+                showStatus('<?php echo esc_js(__('Génération de l\'aperçu en cours...', 'pdf-builder-pro')); ?>', 'loading');
+                setButtonLoading($(this), true);
+
+                $.ajax({
+                    url: ajaxurl,
+                    type: 'POST',
+                    data: {
+                        action: 'pdf_builder_preview_order_pdf',
+                        order_id: orderId,
+                        nonce: '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>'
+                    },
+                    success: function(response) {
+                        console.log('PDF Builder: Preview AJAX success');
+                        console.log('PDF Builder: Response:', response);
+                        if (response.success) {
+                            // Ouvrir l'aperçu dans un nouvel onglet
+                            window.open(response.data.url, '_blank');
+                            showStatus('<?php echo esc_js(__('Aperçu généré avec succès ✅', 'pdf-builder-pro')); ?>', 'success');
+                        } else {
+                            console.error('PDF Builder: Preview failed:', response.data);
+                            showStatus(response.data || '<?php echo esc_js(__('Erreur lors de l\'aperçu ❌', 'pdf-builder-pro')); ?>', 'error');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('PDF Builder: Preview AJAX error');
+                        console.error('PDF Builder: Status:', status);
+                        console.error('PDF Builder: Error:', error);
+                        console.error('PDF Builder: Response:', xhr.responseText);
+                        showStatus('<?php echo esc_js(__('Erreur AJAX lors de l\'aperçu ❌', 'pdf-builder-pro')); ?>', 'error');
+                    },
+                    complete: function() {
+                        console.log('PDF Builder: Preview AJAX complete');
+                        setButtonLoading($('#pdf-builder-preview-btn'), false);
+                    }
+                });
             });
         });
         </script>
@@ -3239,133 +2780,6 @@ class PDF_Builder_Admin {
         } catch (Exception $e) {
             wp_send_json_error('Erreur: ' . $e->getMessage());
         } catch (Error $e) {
-            wp_send_json_error('Erreur fatale: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * AJAX - Aperçu PDF pour une commande WooCommerce
-     */
-    public function ajax_preview_order_pdf() {
-        // Log immédiat pour vérifier si la fonction est appelée
-        error_log('🚨 PDF BUILDER - ajax_preview_order_pdf FUNCTION STARTED');
-
-        // Démarrer la bufferisation de sortie pour éviter toute sortie HTML
-        ob_start();
-
-        // Désactiver complètement l'affichage des erreurs
-        ini_set('display_errors', 0);
-        error_reporting(0);
-
-        // Logs de débogage détaillés
-        error_log('🟡 PDF BUILDER - ajax_preview_order_pdf called');
-        error_log('🟡 REQUEST METHOD: ' . $_SERVER['REQUEST_METHOD']);
-        error_log('🟡 POST data: ' . print_r($_POST, true));
-
-        $this->check_admin_permissions();
-        error_log('✅ PDF BUILDER - Permissions checked');
-
-        // Vérification de sécurité
-        if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions')) {
-            error_log('❌ PDF BUILDER - Nonce verification failed');
-            error_log('❌ Expected nonce action: pdf_builder_order_actions');
-            error_log('❌ Received nonce: ' . (isset($_POST['nonce']) ? $_POST['nonce'] : 'NOT SET'));
-            wp_send_json_error('Sécurité: Nonce invalide');
-        }
-
-        error_log('✅ PDF BUILDER - Nonce verified');
-
-        $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
-        $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
-        $document_type = isset($_POST['document_type']) ? sanitize_text_field($_POST['document_type']) : 'invoice';
-
-        error_log('🟡 PDF BUILDER - Order ID: ' . $order_id . ', Template ID: ' . $template_id . ', Document type: ' . $document_type);
-
-        if (!$order_id) {
-            error_log('❌ PDF BUILDER - Order ID missing');
-            wp_send_json_error('ID commande manquant');
-        }
-
-        // Vérifier que WooCommerce est actif
-        if (!class_exists('WooCommerce')) {
-            error_log('❌ PDF BUILDER - WooCommerce not active');
-            wp_send_json_error('WooCommerce n\'est pas installé ou activé');
-        }
-
-        // Vérifier que les fonctions WooCommerce nécessaires existent
-        if (!function_exists('wc_get_order')) {
-            error_log('❌ PDF BUILDER - wc_get_order function not available');
-            wp_send_json_error('Fonction wc_get_order non disponible - WooCommerce mal installé');
-        }
-
-        $order = wc_get_order($order_id);
-        if (!$order) {
-            error_log('❌ PDF BUILDER - Order not found: ' . $order_id);
-            wp_send_json_error('Commande non trouvée');
-        }
-
-        error_log('✅ PDF BUILDER - Order found: ' . $order->get_order_number());
-
-        // Vérifier que l'objet order a les méthodes nécessaires
-        if (!method_exists($order, 'get_id') || !method_exists($order, 'get_total')) {
-            error_log('❌ PDF BUILDER - Order object invalid');
-            wp_send_json_error('Objet commande WooCommerce invalide');
-        }
-
-        try {
-            error_log('🟡 PDF BUILDER - Generating simple PDF preview...');
-
-            // Utiliser la nouvelle méthode simplifiée au lieu du système complexe
-            require_once plugin_dir_path(__FILE__) . '../pdf-generator.php';
-            $generator = new PDF_Generator();
-
-            $result = $generator->generate_simple_preview($order_id, $template_id);
-
-            if (!$result['success']) {
-                error_log('❌ PDF BUILDER - Simple PDF generation failed: ' . $result['error']);
-                wp_send_json_error('Erreur lors de la génération du PDF: ' . $result['error']);
-            }
-
-            error_log('✅ PDF BUILDER - Simple PDF generated successfully');
-
-            // Créer un fichier PDF temporaire pour l'aperçu
-            $upload_dir = wp_upload_dir();
-            $preview_dir = $upload_dir['basedir'] . '/pdf-builder-previews';
-            if (!file_exists($preview_dir)) {
-                wp_mkdir_p($preview_dir);
-            }
-
-            $preview_filename = 'preview_' . $order_id . '_' . time() . '.pdf';
-            $preview_path = $preview_dir . '/' . $preview_filename;
-            $preview_url = $upload_dir['baseurl'] . '/pdf-builder-previews/' . $preview_filename;
-
-            // Décoder le contenu base64 et l'enregistrer
-            $pdf_content = base64_decode($result['pdf_content']);
-            file_put_contents($preview_path, $pdf_content);
-            error_log('✅ PDF BUILDER - Preview PDF file created: ' . $preview_path);
-
-            $response = array(
-                'url' => $preview_url,
-                'width' => 595, // A4 width in points
-                'height' => 842, // A4 height in points
-                'simple_mode' => true // Indicateur que c'est le mode simplifié
-            );
-
-            // Nettoyer le buffer de sortie avant d'envoyer la réponse JSON
-            ob_end_clean();
-
-            error_log('✅ PDF BUILDER - Sending success response for simple preview');
-            wp_send_json_success($response);
-
-        } catch (Exception $e) {
-            error_log('❌ PDF BUILDER - Exception in ajax_preview_order_pdf: ' . $e->getMessage());
-            error_log('❌ Stack trace: ' . $e->getTraceAsString());
-            ob_end_clean();
-            wp_send_json_error('Erreur: ' . $e->getMessage());
-        } catch (Error $e) {
-            error_log('❌ PDF BUILDER - Fatal error in ajax_preview_order_pdf: ' . $e->getMessage());
-            error_log('❌ Stack trace: ' . $e->getTraceAsString());
-            ob_end_clean();
             wp_send_json_error('Erreur fatale: ' . $e->getMessage());
         }
     }
@@ -4689,96 +4103,7 @@ class PDF_Builder_Admin {
         return $cleaned;
     }
 
-    /**
-     * AJAX - Générer un aperçu du PDF depuis les éléments du canvas
-     */
-    public function ajax_generate_preview() {
-        // Vérification de sécurité
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_nonce')) {
-            wp_send_json_error(['message' => 'Nonce invalide pour la génération d\'aperçu']);
-            return;
-        }
 
-        // Vérification des permissions
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error(['message' => 'Permissions insuffisantes pour générer un aperçu']);
-            return;
-        }
-
-        try {
-            // Récupérer les éléments depuis la requête
-            $elements_json = $_POST['elements'] ?? '';
-            if (empty($elements_json)) {
-                wp_send_json_error(['message' => 'Aucun élément fourni pour l\'aperçu']);
-                return;
-            }
-
-            // Log des données brutes pour débogage
-            error_log('PDF Builder - Données JSON brutes reçues: ' . substr($elements_json, 0, 500));
-            error_log('PDF Builder - Longueur des données: ' . strlen($elements_json));
-
-            // Test avec des données JSON simples d'abord
-            $test_json = '[{"id":"test_element","type":"text","content":"Test","x":10,"y":10,"width":100,"height":50}]';
-            error_log('PDF Builder - Test avec JSON simple: ' . $test_json);
-
-            $test_elements = json_decode($test_json, true);
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                error_log('PDF Builder - Même le JSON de test échoue: ' . json_last_error_msg());
-            } else {
-                error_log('PDF Builder - JSON de test OK, éléments décodés: ' . count($test_elements));
-            }
-
-            // Vérifier l'encodage du JSON reçu
-            if (!mb_check_encoding($elements_json, 'UTF-8')) {
-                error_log('PDF Builder - JSON reçu n\'est pas en UTF-8 valide');
-                $elements_json = mb_convert_encoding($elements_json, 'UTF-8', 'auto');
-                error_log('PDF Builder - JSON converti en UTF-8');
-            }
-
-            // Puisque le JSON du frontend est valide, essayons d'abord SANS nettoyage
-            error_log('PDF Builder - Tentative de décodage JSON brut...');
-            $elements = json_decode($elements_json, true);
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                error_log('PDF Builder - JSON brut échoue: ' . json_last_error_msg() . ', tentative avec nettoyage...');
-                error_log('PDF Builder - JSON brut qui échoue: ' . substr($elements_json, 0, 200));
-                // SEULEMENT si le JSON brut échoue, utiliser le nettoyage
-                $elements = json_decode($this->clean_json_data($elements_json), true);
-                if (json_last_error() !== JSON_ERROR_NONE) {
-                    error_log('PDF Builder - Erreur JSON après nettoyage: ' . json_last_error_msg());
-                    error_log('PDF Builder - Données après nettoyage: ' . substr($this->clean_json_data($elements_json), 0, 500));
-                    wp_send_json_error(['message' => 'Erreur de décodage JSON des éléments: ' . json_last_error_msg()]);
-                    return;
-                } else {
-                    error_log('PDF Builder - Décodage réussi avec nettoyage');
-                }
-            } else {
-                error_log('PDF Builder - Décodage réussi SANS nettoyage, éléments: ' . count($elements));
-            }
-
-            // Valider que c'est un tableau d'éléments
-            if (!is_array($elements)) {
-                wp_send_json_error(['message' => 'Les éléments doivent être un tableau']);
-                return;
-            }
-
-            // Générer l'aperçu (version simplifiée pour l'instant)
-            $preview_data = [
-                'success' => true,
-                'message' => 'Aperçu généré avec succès',
-                'elements_count' => count($elements),
-                'timestamp' => time(),
-                'preview_url' => '', // Sera rempli plus tard avec l'URL du PDF généré
-                'validation_status' => 'valid'
-            ];
-
-            // Retourner les données d'aperçu
-            wp_send_json_success($preview_data);
-
-        } catch (Exception $e) {
-            error_log('Erreur génération aperçu PDF: ' . $e->getMessage());
-            wp_send_json_error(['message' => 'Erreur lors de la génération de l\'aperçu: ' . $e->getMessage()]);
-        }
-    }
 
     /**
      * Nettoyage JSON plus agressif pour récupérer les templates très corrompus
@@ -5340,17 +4665,16 @@ class PDF_Builder_Admin {
      *
      * @param int $order_id ID de la commande
      * @param int $template_id ID du template (0 pour auto-détection)
-     * @param bool $is_preview True pour aperçu, false pour génération finale
      * @return string|WP_Error URL du PDF généré ou erreur
      */
-    public function generate_order_pdf($order_id, $template_id = 0, $is_preview = false) {
+    public function generate_order_pdf($order_id, $template_id = 0) {
         // Désactiver l'affichage des erreurs PHP pour éviter les réponses HTML
         if (!defined('WP_DEBUG') || !WP_DEBUG) {
             ini_set('display_errors', 0);
             error_reporting(0);
         }
 
-        error_log('🟡 PDF BUILDER - generate_order_pdf appelée: order_id=' . $order_id . ', template_id=' . $template_id . ', is_preview=' . ($is_preview ? 'true' : 'false'));
+        error_log('🟡 PDF BUILDER - generate_order_pdf appelée: order_id=' . $order_id . ', template_id=' . $template_id);
 
         // Vérifier que WooCommerce est actif
         if (!class_exists('WooCommerce')) {
@@ -5407,8 +4731,7 @@ class PDF_Builder_Admin {
             }
 
             // Générer le PDF avec les données de la commande
-            $prefix = $is_preview ? 'preview-' : '';
-            $pdf_filename = $prefix . 'order-' . $order_id . '-' . time() . '.pdf';
+            $pdf_filename = 'order-' . $order_id . '-' . time() . '.pdf';
             error_log('🟡 PDF BUILDER - Génération PDF: ' . $pdf_filename);
 
             $pdf_path = $this->generate_order_pdf_private($order, $template_data, $pdf_filename);
