@@ -762,6 +762,9 @@ class PDF_Builder_WooCommerce_Integration {
             }
         }
 
+        // Définir les constantes TCPDF nécessaires
+        $this->define_tcpdf_constants();
+
         try {
             // Générer l'aperçu PDF
             $result = $this->main->generate_order_pdf($order_id, $template_id, true);
@@ -837,6 +840,9 @@ class PDF_Builder_WooCommerce_Integration {
             }
         }
 
+        // Définir les constantes TCPDF nécessaires
+        $this->define_tcpdf_constants();
+
         try {
             // Générer le PDF
             $result = $this->main->generate_order_pdf($order_id, $template_id, false);
@@ -908,5 +914,28 @@ class PDF_Builder_WooCommerce_Integration {
     private function save_order_canvas($order_id, $canvas_data, $template_id = null) {
         // Cette méthode peut être implémentée selon les besoins
         return true;
+    }
+
+    /**
+     * Définit les constantes TCPDF nécessaires
+     */
+    private function define_tcpdf_constants() {
+        $plugin_dir = plugin_dir_path(__FILE__) . '../../';
+
+        $constants = [
+            'PDF_PAGE_ORIENTATION' => 'P',
+            'PDF_UNIT' => 'mm',
+            'PDF_PAGE_FORMAT' => 'A4',
+            'K_PATH_FONTS' => $plugin_dir . 'lib/tcpdf/fonts/',
+            'K_PATH_CACHE' => $plugin_dir . 'uploads/pdf-builder-cache/',
+            'K_PATH_IMAGES' => $plugin_dir . 'lib/tcpdf/images/',
+            'K_PATH_URL' => $plugin_dir . 'lib/tcpdf/'
+        ];
+
+        foreach ($constants as $name => $value) {
+            if (!defined($name)) {
+                define($name, $value);
+            }
+        }
     }
 }
