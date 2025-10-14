@@ -851,12 +851,15 @@ class PDF_Builder_Pro_Generator {
         $width = isset($element['width']) ? $element['width'] * $px_to_mm : 180;
         $height = isset($element['height']) ? $element['height'] * $px_to_mm : 80;
 
-        // Calculer les largeurs des colonnes
+        // S'assurer que la largeur est valide (au minimum 50mm)
+        $width = max(50, $width);
+
+        // Calculer les largeurs des colonnes avec protection contre les valeurs nulles
         $col_widths = [
-            $width * 0.4,  // Produit
-            $width * 0.15, // Qté
-            $width * 0.2,  // Prix
-            $width * 0.25  // Total
+            max(1, $width * 0.4),  // Produit
+            max(1, $width * 0.15), // Qté
+            max(1, $width * 0.2),  // Prix
+            max(1, $width * 0.25)  // Total
         ];
 
         // En-têtes du tableau
@@ -901,6 +904,11 @@ class PDF_Builder_Pro_Generator {
      * Rendu des produits et frais de la commande WooCommerce
      */
     private function render_order_products_with_fees($x, $col_widths) {
+        // Vérifier que les largeurs de colonnes sont valides
+        if (empty($col_widths) || count($col_widths) < 4) {
+            return;
+        }
+
         if (!$this->order) {
             return;
         }
