@@ -912,50 +912,62 @@ class PDF_Builder_Pro_Generator {
         $line_items = $this->order->get_items();
         $fees = $this->order->get_fees();
 
-        // Afficher les produits
-        foreach ($line_items as $item_id => $item) {
-            $product = $item->get_product();
-            $product_name = $item->get_name();
-            $quantity = $item->get_quantity();
-            $price = $item->get_total() / $quantity; // Prix unitaire
-            $total = $item->get_total();
-
-            // Nom du produit (avec variation si applicable)
-            $display_name = $product_name;
-            if ($product && $product->is_type('variation')) {
-                $variation_attributes = $product->get_variation_attributes();
-                if (!empty($variation_attributes)) {
-                    $variation_text = implode(', ', array_map(function($key, $value) {
-                        $key = str_replace('attribute_', '', $key);
-                        $key = str_replace('pa_', '', $key);
-                        return ucfirst($key) . ': ' . $value;
-                    }, array_keys($variation_attributes), $variation_attributes));
-                    $display_name .= ' (' . $variation_text . ')';
-                }
-            }
-
+        // Vérifier que nous avons des données valides
+        if (empty($line_items) && empty($fees)) {
+            // Si pas de produits ni frais, afficher un message
             $this->pdf->SetXY($x, $current_y);
-            $this->pdf->Cell($col_widths[0], 6, utf8_decode($this->truncate_text($display_name, 30)), 1, 0, 'L');
-            $this->pdf->Cell($col_widths[1], 6, $quantity, 1, 0, 'C');
-            $this->pdf->Cell($col_widths[2], 6, number_format($price, 2, ',', ' ') . ' €', 1, 0, 'R');
-            $this->pdf->Cell($col_widths[3], 6, number_format($total, 2, ',', ' ') . ' €', 1, 1, 'R');
+            $this->pdf->Cell(array_sum($col_widths), 6, utf8_decode('Aucun produit dans cette commande'), 1, 1, 'C');
+            return;
+        }
 
-            $current_y += 6;
+        // Afficher les produits
+        if (!empty($line_items)) {
+            foreach ($line_items as $item_id => $item) {
+                $product = $item->get_product();
+                $product_name = $item->get_name();
+                $quantity = $item->get_quantity();
+                $price = $item->get_total() / max(1, $quantity); // Éviter division par zéro
+                $total = $item->get_total();
+
+                // Nom du produit (avec variation si applicable)
+                $display_name = $product_name;
+                if ($product && $product->is_type('variation')) {
+                    $variation_attributes = $product->get_variation_attributes();
+                    if (!empty($variation_attributes)) {
+                        $variation_text = implode(', ', array_map(function($key, $value) {
+                            $key = str_replace('attribute_', '', $key);
+                            $key = str_replace('pa_', '', $key);
+                            return ucfirst($key) . ': ' . $value;
+                        }, array_keys($variation_attributes), $variation_attributes));
+                        $display_name .= ' (' . $variation_text . ')';
+                    }
+                }
+
+                $this->pdf->SetXY($x, $current_y);
+                $this->pdf->Cell($col_widths[0], 6, utf8_decode($this->truncate_text($display_name, 30)), 1, 0, 'L');
+                $this->pdf->Cell($col_widths[1], 6, $quantity, 1, 0, 'C');
+                $this->pdf->Cell($col_widths[2], 6, number_format($price, 2, ',', ' ') . ' €', 1, 0, 'R');
+                $this->pdf->Cell($col_widths[3], 6, number_format($total, 2, ',', ' ') . ' €', 1, 1, 'R');
+
+                $current_y += 6;
+            }
         }
 
         // Afficher les frais (shipping, taxes, etc.)
-        foreach ($fees as $fee) {
-            $fee_name = $fee->get_name();
-            $fee_total = $fee->get_total();
+        if (!empty($fees)) {
+            foreach ($fees as $fee) {
+                $fee_name = $fee->get_name();
+                $fee_total = $fee->get_total();
 
-            $this->pdf->SetXY($x, $current_y);
-            $this->pdf->SetFont('helvetica', 'B', 8);
-            $this->pdf->Cell($col_widths[0], 6, utf8_decode($this->truncate_text($fee_name, 30)), 1, 0, 'L');
-            $this->pdf->Cell($col_widths[1], 6, '-', 1, 0, 'C');
-            $this->pdf->Cell($col_widths[2], 6, '-', 1, 0, 'R');
-            $this->pdf->Cell($col_widths[3], 6, number_format($fee_total, 2, ',', ' ') . ' €', 1, 1, 'R');
+                $this->pdf->SetXY($x, $current_y);
+                $this->pdf->SetFont('helvetica', 'B', 8);
+                $this->pdf->Cell($col_widths[0], 6, utf8_decode($this->truncate_text($fee_name, 30)), 1, 0, 'L');
+                $this->pdf->Cell($col_widths[1], 6, '-', 1, 0, 'C');
+                $this->pdf->Cell($col_widths[2], 6, '-', 1, 0, 'R');
+                $this->pdf->Cell($col_widths[3], 6, number_format($fee_total, 2, ',', ' ') . ' €', 1, 1, 'R');
 
-            $current_y += 6;
+                $current_y += 6;
+            }
         }
 
         // Afficher le total de la commande
