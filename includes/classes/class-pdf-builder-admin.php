@@ -2529,14 +2529,16 @@ class PDF_Builder_Admin {
                     <button type="button"
                             id="pdf-builder-preview-btn"
                             class="btn-preview"
-                            data-order-id="<?php echo esc_attr($order->get_id()); ?>">
+                            data-order-id="<?php echo esc_attr($order->get_id()); ?>"
+                            title="<?php echo esc_attr(__('Générer un aperçu du PDF', 'pdf-builder-pro')); ?>">
                         👁️ <?php _e('Aperçu PDF', 'pdf-builder-pro'); ?>
                     </button>
 
                     <button type="button"
                             id="pdf-builder-generate-btn"
                             class="btn-generate"
-                            data-order-id="<?php echo esc_attr($order->get_id()); ?>">
+                            data-order-id="<?php echo esc_attr($order->get_id()); ?>"
+                            title="<?php echo esc_attr(__('Générer le PDF définitif', 'pdf-builder-pro')); ?>">
                         ⚡ <?php _e('Générer PDF', 'pdf-builder-pro'); ?>
                     </button>
 
@@ -2544,7 +2546,8 @@ class PDF_Builder_Admin {
                             id="pdf-builder-download-btn"
                             class="btn-download"
                             style="display: none;"
-                            data-order-id="<?php echo esc_attr($order->get_id()); ?>">
+                            data-order-id="<?php echo esc_attr($order->get_id()); ?>"
+                            title="<?php echo esc_attr(__('Télécharger le PDF généré', 'pdf-builder-pro')); ?>">
                         ⬇️ <?php _e('Télécharger PDF', 'pdf-builder-pro'); ?>
                     </button>
                 </div>
@@ -2554,31 +2557,41 @@ class PDF_Builder_Admin {
         </div>
 <script>
         jQuery(document).ready(function($) {
-            // Vérifier que WordPress est chargé
-            if (typeof wp === 'undefined' || typeof ajaxurl === 'undefined') {
-                console.error('PDF Builder: WordPress AJAX non disponible');
+            // Vérifier que WordPress et jQuery sont chargés
+            if (typeof wp === 'undefined' || typeof $ === 'undefined') {
+                console.error('PDF Builder: WordPress ou jQuery non disponible');
                 return;
             }
 
-            // Assurer que ajaxurl est défini
+            // Définir ajaxurl si nécessaire
             if (typeof ajaxurl === 'undefined') {
                 ajaxurl = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>';
             }
 
+            // Vérifier que les éléments du DOM existent
             var $generateBtn = $('#pdf-builder-generate-btn');
             var $downloadBtn = $('#pdf-builder-download-btn');
             var $previewBtn = $('#pdf-builder-preview-btn');
             var $status = $('#pdf-builder-status');
 
-            // Vérifier que les éléments existent
             if ($generateBtn.length === 0 || $previewBtn.length === 0) {
                 console.error('PDF Builder: Éléments du metabox non trouvés');
                 return;
             }
 
-            // Fonction pour afficher le statut
+            // Fonction pour afficher le statut avec validation
             function showStatus(message, type) {
+                if (typeof message !== 'string' || message.length === 0) {
+                    console.error('PDF Builder: Message de statut invalide');
+                    return;
+                }
+
                 type = type || 'loading';
+                var validTypes = ['loading', 'success', 'error'];
+                if (validTypes.indexOf(type) === -1) {
+                    type = 'loading';
+                }
+
                 var classes = {
                     'loading': 'status-loading',
                     'success': 'status-success',
@@ -2601,16 +2614,32 @@ class PDF_Builder_Admin {
 
             // Fonction pour définir l'état de chargement d'un bouton
             function setButtonLoading($btn, loading) {
+                if (!$btn || $btn.length === 0) return;
+
                 if (loading) {
                     $btn.addClass('loading').prop('disabled', true);
                 } else {
                     $btn.removeClass('loading').prop('disabled', false);
                 }
             }
-            // Générer PDF
-            $generateBtn.on('click', function() {
+
+            // Générer PDF avec gestion d'erreurs améliorée
+            $generateBtn.on('click', function(e) {
+                e.preventDefault();
+
                 var orderId = $(this).data('order-id');
                 var templateId = <?php echo isset($default_template) && $default_template ? esc_js($default_template['id']) : '0'; ?>;
+
+                // Validation des données
+                if (!orderId || orderId <= 0) {
+                    showStatus('<?php echo esc_js(__('ID de commande invalide', 'pdf-builder-pro')); ?>', 'error');
+                    return;
+                }
+
+                if (typeof orderId !== 'number' && typeof orderId !== 'string') {
+                    showStatus('<?php echo esc_js(__('Type de données invalide', 'pdf-builder-pro')); ?>', 'error');
+                    return;
+                }
 
                 console.log('PDF Builder: Generate button clicked');
                 console.log('PDF Builder: Order ID:', orderId);
@@ -2619,28 +2648,48 @@ class PDF_Builder_Admin {
                 showStatus('<?php echo esc_js(__('Génération du PDF en cours...', 'pdf-builder-pro')); ?>', 'loading');
                 setButtonLoading($generateBtn, true);
 
+                // Préparer les données AJAX
+                var ajaxData = {
+                    action: 'pdf_builder_generate_order_pdf',
+                    order_id: parseInt(orderId, 10),
+                    template_id: parseInt(templateId, 10),
+                    nonce: '<?php echo esc_js(wp_create_nonce('pdf_builder_order_actions')); ?>'
+                };
+
                 $.ajax({
                     url: ajaxurl,
                     type: 'POST',
-                    data: {
-                        action: 'pdf_builder_generate_order_pdf',
-                        order_id: orderId,
-                        template_id: templateId,
-                        nonce: '<?php echo esc_js(wp_create_nonce('pdf_builder_order_actions')); ?>'
-                    },
-                    success: function(response) {
+                    dataType: 'json',
+                    timeout: 30000,
+                    data: ajaxData,
+                    success: function(response, textStatus, xhr) {
                         console.log('PDF Builder: Generate AJAX success');
                         console.log('PDF Builder: Response:', response);
-                        if (response.success) {
-                            // Afficher le bouton de téléchargement
-                            $downloadBtn.attr('href', response.data.url).show();
-                            showStatus('<?php echo esc_js(__('PDF généré avec succès ✅', 'pdf-builder-pro')); ?>', 'success');
 
-                            // Ouvrir automatiquement le PDF dans un nouvel onglet
-                            window.open(response.data.url, '_blank');
+                        // Validation de la réponse
+                        if (typeof response !== 'object' || response === null) {
+                            showStatus('<?php echo esc_js(__('Réponse serveur invalide', 'pdf-builder-pro')); ?>', 'error');
+                            return;
+                        }
+
+                        if (response.success) {
+                            // Validation de l'URL
+                            if (response.data && typeof response.data.url === 'string' && response.data.url.length > 0) {
+                                // Afficher le bouton de téléchargement
+                                $downloadBtn.attr('href', response.data.url).show();
+                                showStatus('<?php echo esc_js(__('PDF généré avec succès ✅', 'pdf-builder-pro')); ?>', 'success');
+
+                                // Ouvrir automatiquement le PDF dans un nouvel onglet
+                                setTimeout(function() {
+                                    window.open(response.data.url, '_blank');
+                                }, 500);
+                            } else {
+                                showStatus('<?php echo esc_js(__('URL du PDF manquante', 'pdf-builder-pro')); ?>', 'error');
+                            }
                         } else {
-                            console.error('PDF Builder: Generate failed:', response.data);
-                            showStatus(response.data || '<?php echo esc_js(__('Erreur lors de la génération ❌', 'pdf-builder-pro')); ?>', 'error');
+                            var errorMsg = (response.data && typeof response.data === 'string') ? response.data : '<?php echo esc_js(__('Erreur lors de la génération ❌', 'pdf-builder-pro')); ?>';
+                            console.error('PDF Builder: Generate failed:', errorMsg);
+                            showStatus(errorMsg, 'error');
                         }
                     },
                     error: function(xhr, status, error) {
@@ -2648,9 +2697,16 @@ class PDF_Builder_Admin {
                         console.error('PDF Builder: Status:', status);
                         console.error('PDF Builder: Error:', error);
                         console.error('PDF Builder: Response:', xhr.responseText);
-                        showStatus('<?php echo esc_js(__('Erreur AJAX lors de la génération ❌', 'pdf-builder-pro')); ?>', 'error');
+
+                        var errorMsg = '<?php echo esc_js(__('Erreur AJAX lors de la génération ❌', 'pdf-builder-pro')); ?>';
+                        if (status === 'timeout') {
+                            errorMsg = '<?php echo esc_js(__('Timeout - génération trop longue', 'pdf-builder-pro')); ?>';
+                        } else if (status === 'parsererror') {
+                            errorMsg = '<?php echo esc_js(__('Erreur de parsing JSON', 'pdf-builder-pro')); ?>';
+                        }
+                        showStatus(errorMsg, 'error');
                     },
-                    complete: function() {
+                    complete: function(xhr, status) {
                         console.log('PDF Builder: Generate AJAX complete');
                         setButtonLoading($generateBtn, false);
                     }
@@ -2658,16 +2714,30 @@ class PDF_Builder_Admin {
             });
 
             // Télécharger PDF
-            $downloadBtn.on('click', function() {
+            $downloadBtn.on('click', function(e) {
+                e.preventDefault();
                 var pdfUrl = $(this).attr('href');
                 if (pdfUrl) {
                     window.open(pdfUrl, '_blank');
                 }
             });
 
-            // Aperçu PDF
-            $previewBtn.on('click', function() {
+            // Aperçu PDF avec gestion d'erreurs améliorée
+            $previewBtn.on('click', function(e) {
+                e.preventDefault();
+
                 var orderId = $(this).data('order-id');
+
+                // Validation des données
+                if (!orderId || orderId <= 0) {
+                    showStatus('<?php echo esc_js(__('ID de commande invalide', 'pdf-builder-pro')); ?>', 'error');
+                    return;
+                }
+
+                if (typeof orderId !== 'number' && typeof orderId !== 'string') {
+                    showStatus('<?php echo esc_js(__('Type de données invalide', 'pdf-builder-pro')); ?>', 'error');
+                    return;
+                }
 
                 console.log('PDF Builder: Preview button clicked');
                 console.log('PDF Builder: Order ID:', orderId);
@@ -2675,24 +2745,44 @@ class PDF_Builder_Admin {
                 showStatus('<?php echo esc_js(__('Génération de l\'aperçu en cours...', 'pdf-builder-pro')); ?>', 'loading');
                 setButtonLoading($previewBtn, true);
 
+                // Préparer les données AJAX
+                var ajaxData = {
+                    action: 'pdf_builder_preview_order_pdf',
+                    order_id: parseInt(orderId, 10),
+                    nonce: '<?php echo esc_js(wp_create_nonce('pdf_builder_order_actions')); ?>'
+                };
+
                 $.ajax({
                     url: ajaxurl,
                     type: 'POST',
-                    data: {
-                        action: 'pdf_builder_preview_order_pdf',
-                        order_id: orderId,
-                        nonce: '<?php echo esc_js(wp_create_nonce('pdf_builder_order_actions')); ?>'
-                    },
-                    success: function(response) {
+                    dataType: 'json',
+                    timeout: 30000,
+                    data: ajaxData,
+                    success: function(response, textStatus, xhr) {
                         console.log('PDF Builder: Preview AJAX success');
                         console.log('PDF Builder: Response:', response);
+
+                        // Validation de la réponse
+                        if (typeof response !== 'object' || response === null) {
+                            showStatus('<?php echo esc_js(__('Réponse serveur invalide', 'pdf-builder-pro')); ?>', 'error');
+                            return;
+                        }
+
                         if (response.success) {
-                            // Ouvrir l'aperçu dans un nouvel onglet
-                            window.open(response.data.url, '_blank');
-                            showStatus('<?php echo esc_js(__('Aperçu généré avec succès ✅', 'pdf-builder-pro')); ?>', 'success');
+                            // Validation de l'URL
+                            if (response.data && typeof response.data.url === 'string' && response.data.url.length > 0) {
+                                // Ouvrir l'aperçu dans un nouvel onglet
+                                setTimeout(function() {
+                                    window.open(response.data.url, '_blank');
+                                }, 500);
+                                showStatus('<?php echo esc_js(__('Aperçu généré avec succès ✅', 'pdf-builder-pro')); ?>', 'success');
+                            } else {
+                                showStatus('<?php echo esc_js(__('URL de l\'aperçu manquante', 'pdf-builder-pro')); ?>', 'error');
+                            }
                         } else {
-                            console.error('PDF Builder: Preview failed:', response.data);
-                            showStatus(response.data || '<?php echo esc_js(__('Erreur lors de l\'aperçu ❌', 'pdf-builder-pro')); ?>', 'error');
+                            var errorMsg = (response.data && typeof response.data === 'string') ? response.data : '<?php echo esc_js(__('Erreur lors de l\'aperçu ❌', 'pdf-builder-pro')); ?>';
+                            console.error('PDF Builder: Preview failed:', errorMsg);
+                            showStatus(errorMsg, 'error');
                         }
                     },
                     error: function(xhr, status, error) {
@@ -2700,9 +2790,16 @@ class PDF_Builder_Admin {
                         console.error('PDF Builder: Status:', status);
                         console.error('PDF Builder: Error:', error);
                         console.error('PDF Builder: Response:', xhr.responseText);
-                        showStatus('<?php echo esc_js(__('Erreur AJAX lors de l\'aperçu ❌', 'pdf-builder-pro')); ?>', 'error');
+
+                        var errorMsg = '<?php echo esc_js(__('Erreur AJAX lors de l\'aperçu ❌', 'pdf-builder-pro')); ?>';
+                        if (status === 'timeout') {
+                            errorMsg = '<?php echo esc_js(__('Timeout - aperçu trop long', 'pdf-builder-pro')); ?>';
+                        } else if (status === 'parsererror') {
+                            errorMsg = '<?php echo esc_js(__('Erreur de parsing JSON', 'pdf-builder-pro')); ?>';
+                        }
+                        showStatus(errorMsg, 'error');
                     },
-                    complete: function() {
+                    complete: function(xhr, status) {
                         console.log('PDF Builder: Preview AJAX complete');
                         setButtonLoading($previewBtn, false);
                     }
