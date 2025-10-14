@@ -694,28 +694,91 @@ class PDF_Builder_WooCommerce_Integration {
 
             error_log('✅ PDF BUILDER - ajax_preview_order_pdf: Classe PDF_Builder_Pro_Generator trouvée');
 
-            // Récupérer le template par défaut
-            global $wpdb;
-            $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-            $default_template = $wpdb->get_row("SELECT id, name FROM $table_templates WHERE is_default = 1 LIMIT 1", ARRAY_A);
+            // Récupérer l'état de la commande pour déterminer le bon template
+            $order_status = $order->get_status();
+            error_log('🟡 PDF BUILDER - ajax_preview_order_pdf: Order status: ' . $order_status);
 
+            // Vérifier s'il y a un mapping spécifique pour ce statut de commande
+            $status_templates = get_option('pdf_builder_order_status_templates', []);
+            $status_key = 'wc-' . $order_status;
+            $mapped_template = null;
+
+            if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
+                $mapped_template = $wpdb->get_row($wpdb->prepare(
+                    "SELECT id, name FROM $table_templates WHERE id = %d",
+                    $status_templates[$status_key]
+                ), ARRAY_A);
+                error_log('✅ PDF BUILDER - ajax_preview_order_pdf: Found specific mapping for status ' . $order_status . ': ' . ($mapped_template ? $mapped_template['name'] : 'none'));
+            }
+
+            // Si pas de mapping spécifique, utiliser la logique de détection automatique
             $template_id = null;
-            if ($default_template) {
-                $template_id = $default_template['id'];
-                error_log('✅ PDF BUILDER - ajax_preview_order_pdf: Default template found: ' . $default_template['name'] . ' (ID: ' . $template_id . ')');
+            if ($mapped_template) {
+                $template_id = $mapped_template['id'];
+                error_log('✅ PDF BUILDER - ajax_preview_order_pdf: Using mapped template: ' . $mapped_template['name'] . ' (ID: ' . $template_id . ')');
             } else {
-                error_log('⚠️ PDF BUILDER - ajax_preview_order_pdf: No default template found, checking all templates...');
+                // Logique de détection automatique basée sur le statut
+                $keywords = [];
+                switch ($order_status) {
+                    case 'pending':
+                        $keywords = ['devis', 'quote', 'estimation'];
+                        break;
+                    case 'processing':
+                    case 'on-hold':
+                        $keywords = ['facture', 'invoice', 'commande'];
+                        break;
+                    case 'completed':
+                        $keywords = ['facture', 'invoice', 'reçu', 'receipt'];
+                        break;
+                    case 'cancelled':
+                    case 'refunded':
+                        $keywords = ['avoir', 'credit', 'refund'];
+                        break;
+                    case 'failed':
+                        $keywords = ['erreur', 'failed', 'échoué'];
+                        break;
+                    default:
+                        $keywords = ['facture', 'invoice'];
+                        break;
+                }
 
-                // Vérifier s'il y a des templates du tout
-                $all_templates = $wpdb->get_results("SELECT id, name, is_default FROM $table_templates LIMIT 5", ARRAY_A);
-                error_log('🔍 PDF BUILDER - ajax_preview_order_pdf: All templates in DB: ' . print_r($all_templates, true));
+                error_log('🟡 PDF BUILDER - ajax_preview_order_pdf: Using keywords for status ' . $order_status . ': ' . implode(', ', $keywords));
 
-                // Si pas de template par défaut, prendre le premier template disponible
-                if (!empty($all_templates)) {
-                    $template_id = $all_templates[0]['id'];
-                    error_log('🔄 PDF BUILDER - ajax_preview_order_pdf: Using first available template: ' . $all_templates[0]['name'] . ' (ID: ' . $template_id . ')');
-                } else {
-                    error_log('❌ PDF BUILDER - ajax_preview_order_pdf: No templates found in database');
+                if (!empty($keywords)) {
+                    // Chercher un template par défaut dont le nom contient un mot-clé
+                    $placeholders = str_repeat('%s,', count($keywords) - 1) . '%s';
+                    $sql = $wpdb->prepare(
+                        "SELECT id, name FROM $table_templates WHERE is_default = 1 AND (" .
+                        implode(' OR ', array_fill(0, count($keywords), 'LOWER(name) LIKE LOWER(%s)')) .
+                        ") LIMIT 1",
+                        array_map(function($keyword) { return '%' . $keyword . '%'; }, $keywords)
+                    );
+                    $keyword_template = $wpdb->get_row($sql, ARRAY_A);
+
+                    if ($keyword_template) {
+                        $template_id = $keyword_template['id'];
+                        error_log('✅ PDF BUILDER - ajax_preview_order_pdf: Found keyword-based template: ' . $keyword_template['name'] . ' (ID: ' . $template_id . ')');
+                    }
+                }
+
+                // Si aucun template spécifique trouvé, prendre n'importe quel template par défaut
+                if (!$template_id) {
+                    $default_template = $wpdb->get_row("SELECT id, name FROM $table_templates WHERE is_default = 1 LIMIT 1", ARRAY_A);
+                    if ($default_template) {
+                        $template_id = $default_template['id'];
+                        error_log('✅ PDF BUILDER - ajax_preview_order_pdf: Using default template: ' . $default_template['name'] . ' (ID: ' . $template_id . ')');
+                    }
+                }
+
+                // Si toujours pas de template, prendre le premier template disponible
+                if (!$template_id) {
+                    $any_template = $wpdb->get_row("SELECT id, name FROM $table_templates ORDER BY id LIMIT 1", ARRAY_A);
+                    if ($any_template) {
+                        $template_id = $any_template['id'];
+                        error_log('🔄 PDF BUILDER - ajax_preview_order_pdf: Using first available template: ' . $any_template['name'] . ' (ID: ' . $template_id . ')');
+                    } else {
+                        error_log('❌ PDF BUILDER - ajax_preview_order_pdf: No templates found in database');
+                    }
                 }
             }
 
