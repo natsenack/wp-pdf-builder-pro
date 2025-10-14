@@ -26,6 +26,7 @@ class PDF_Builder_WooCommerce_Integration {
         // AJAX handlers pour WooCommerce - gérés par le manager
         add_action('wp_ajax_pdf_builder_generate_order_pdf', [$this, 'ajax_generate_order_pdf']);
         add_action('wp_ajax_pdf_builder_pro_preview_order_pdf', [$this, 'ajax_preview_order_pdf']);
+        add_action('wp_ajax_pdf_builder_save_order_canvas', [$this, 'ajax_save_order_canvas']);
     }
 
     /**
@@ -733,24 +734,32 @@ class PDF_Builder_WooCommerce_Integration {
         }
 
         try {
-            // Charger le template
-            if ($template_id > 0) {
-                $template_data = $this->load_template_robust($template_id);
-            } else {
-                // Utiliser le template par défaut ou détecté automatiquement
-                $order_status = $order->get_status();
-                $status_templates = get_option('pdf_builder_order_status_templates', []);
-                $status_key = 'wc-' . $order_status;
+            // Essayer d'abord de récupérer le canvas personnalisé de la commande
+            $canvas_data = $this->load_order_canvas($order_id);
 
-                if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
-                    $template_data = $this->load_template_robust($status_templates[$status_key]);
+            if ($canvas_data) {
+                // Utiliser le canvas personnalisé de la commande
+                $template_data = $canvas_data;
+            } else {
+                // Charger le template si aucun canvas personnalisé n'existe
+                if ($template_id > 0) {
+                    $template_data = $this->load_template_robust($template_id);
                 } else {
-                    $template_data = $this->get_default_invoice_template();
+                    // Utiliser le template par défaut ou détecté automatiquement
+                    $order_status = $order->get_status();
+                    $status_templates = get_option('pdf_builder_order_status_templates', []);
+                    $status_key = 'wc-' . $order_status;
+
+                    if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
+                        $template_data = $this->load_template_robust($status_templates[$status_key]);
+                    } else {
+                        $template_data = $this->get_default_invoice_template();
+                    }
                 }
             }
 
             if (!$template_data) {
-                wp_send_json_error('Template non trouvé');
+                wp_send_json_error('Template ou canvas non trouvé');
             }
 
             // Générer l'HTML d'aperçu avec les données de la commande
@@ -1069,5 +1078,143 @@ class PDF_Builder_WooCommerce_Integration {
         }
 
         return $template_data;
+    }
+
+    /**
+     * Charger le canvas personnalisé d'une commande depuis la base de données
+     */
+    private function load_order_canvas($order_id) {
+        global $wpdb;
+        $table_order_canvases = $wpdb->prefix . 'pdf_builder_order_canvases';
+
+        $canvas = $wpdb->get_row(
+            $wpdb->prepare("SELECT * FROM $table_order_canvases WHERE order_id = %d", $order_id),
+            ARRAY_A
+        );
+
+        if (!$canvas) {
+            return false;
+        }
+
+        $canvas_data_raw = $canvas['canvas_data'];
+
+        // Vérifier si les données contiennent des backslashes (échappement PHP)
+        if (strpos($canvas_data_raw, '\\') !== false) {
+            $canvas_data_raw = stripslashes($canvas_data_raw);
+        }
+
+        $canvas_data = json_decode($canvas_data_raw, true);
+        if ($canvas_data === null && json_last_error() !== JSON_ERROR_NONE) {
+            return false;
+        }
+
+        return $canvas_data;
+    }
+
+    /**
+     * Sauvegarder le canvas personnalisé d'une commande
+     */
+    public function save_order_canvas($order_id, $canvas_data, $template_id = null) {
+        global $wpdb;
+        $table_order_canvases = $wpdb->prefix . 'pdf_builder_order_canvases';
+
+        // Encoder les données en JSON
+        $canvas_data_json = json_encode($canvas_data);
+        if ($canvas_data_json === false) {
+            return new WP_Error('json_encode_error', 'Erreur lors de l\'encodage JSON du canvas');
+        }
+
+        // Vérifier si un canvas existe déjà pour cette commande
+        $existing = $wpdb->get_var(
+            $wpdb->prepare("SELECT id FROM $table_order_canvases WHERE order_id = %d", $order_id)
+        );
+
+        if ($existing) {
+            // Mettre à jour
+            $result = $wpdb->update(
+                $table_order_canvases,
+                [
+                    'canvas_data' => $canvas_data_json,
+                    'template_id' => $template_id,
+                    'updated_at' => current_time('mysql')
+                ],
+                ['order_id' => $order_id],
+                ['%s', '%d', '%s'],
+                ['%d']
+            );
+        } else {
+            // Insérer
+            $result = $wpdb->insert(
+                $table_order_canvases,
+                [
+                    'order_id' => $order_id,
+                    'canvas_data' => $canvas_data_json,
+                    'template_id' => $template_id
+                ],
+                ['%d', '%s', '%d']
+            );
+        }
+
+        if ($result === false) {
+            return new WP_Error('db_error', 'Erreur lors de la sauvegarde du canvas en base de données');
+        }
+
+        return true;
+    }
+
+    /**
+     * AJAX handler pour sauvegarder le canvas d'une commande
+     */
+    public function ajax_save_order_canvas() {
+        // Désactiver l'affichage des erreurs PHP
+        if (!defined('WP_DEBUG') || !WP_DEBUG) {
+            ini_set('display_errors', 0);
+            error_reporting(0);
+        }
+
+        // Vérifier les permissions
+        if (!current_user_can('manage_woocommerce')) {
+            wp_send_json_error('Permissions insuffisantes');
+        }
+
+        // Vérification de sécurité
+        if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions')) {
+            wp_send_json_error('Sécurité: Nonce invalide');
+        }
+
+        $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
+        $canvas_data = isset($_POST['canvas_data']) ? $_POST['canvas_data'] : null;
+        $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : null;
+
+        if (!$order_id) {
+            wp_send_json_error('ID commande manquant');
+        }
+
+        if (!$canvas_data || !is_array($canvas_data)) {
+            wp_send_json_error('Données canvas manquantes ou invalides');
+        }
+
+        // Vérifier que WooCommerce est actif
+        if (!class_exists('WooCommerce')) {
+            wp_send_json_error('WooCommerce n\'est pas installé ou activé');
+        }
+
+        $order = wc_get_order($order_id);
+        if (!$order) {
+            wp_send_json_error('Commande non trouvée');
+        }
+
+        try {
+            $result = $this->save_order_canvas($order_id, $canvas_data, $template_id);
+
+            if (is_wp_error($result)) {
+                wp_send_json_error($result->get_error_message());
+            }
+
+            wp_send_json_success('Canvas sauvegardé avec succès');
+
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur: ' . $e->getMessage());
+        }
     }
 }
