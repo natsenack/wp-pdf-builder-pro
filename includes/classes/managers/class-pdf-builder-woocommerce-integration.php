@@ -29,6 +29,39 @@ class PDF_Builder_WooCommerce_Integration {
     }
 
     /**
+     * Détecte automatiquement le type de document basé sur le statut de la commande
+     */
+    private function detect_document_type($order_status) {
+        $status_mapping = [
+            'pending' => 'devis',
+            'processing' => 'commande',
+            'on-hold' => 'commande',
+            'completed' => 'facture',
+            'cancelled' => 'annulation',
+            'refunded' => 'remboursement',
+            'failed' => 'erreur'
+        ];
+
+        return isset($status_mapping[$order_status]) ? $status_mapping[$order_status] : 'commande';
+    }
+
+    /**
+     * Retourne le label du type de document
+     */
+    private function get_document_type_label($document_type) {
+        $labels = [
+            'devis' => 'Devis',
+            'commande' => 'Bon de commande',
+            'facture' => 'Facture',
+            'annulation' => 'Annulation',
+            'remboursement' => 'Remboursement',
+            'erreur' => 'Document d\'erreur'
+        ];
+
+        return isset($labels[$document_type]) ? $labels[$document_type] : 'Document';
+    }
+
+    /**
      * Ajoute la meta box PDF Builder dans les commandes WooCommerce
      */
     public function add_woocommerce_order_meta_box() {
@@ -83,46 +116,107 @@ class PDF_Builder_WooCommerce_Integration {
             return;
         }
 
-        // Récupérer les templates disponibles
-        $templates = $wpdb->get_results("SELECT id, name FROM $table_templates ORDER BY name ASC", ARRAY_A);
-
-        // Récupérer le template par défaut pour le statut de la commande
+        // Détecter automatiquement le type de document basé sur le statut de la commande
         $order_status = $order->get_status();
+        $document_type = $this->detect_document_type($order_status);
+        $document_type_label = $this->get_document_type_label($document_type);
+
+        // Vérifier d'abord s'il y a un mapping spécifique pour ce statut de commande
         $status_templates = get_option('pdf_builder_order_status_templates', []);
         $status_key = 'wc-' . $order_status;
-        $default_template_id = isset($status_templates[$status_key]) ? $status_templates[$status_key] : 0;
+        $selected_template = null;
+
+        if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
+            // Il y a un mapping spécifique pour ce statut
+            $selected_template = $wpdb->get_row($wpdb->prepare(
+                "SELECT id, name FROM $table_templates WHERE id = %d",
+                $status_templates[$status_key]
+            ), ARRAY_A);
+        }
+
+        // Si pas de mapping spécifique, utiliser la logique de détection automatique
+        if (!$selected_template) {
+            // Chercher un template dont le nom contient le type de document détecté
+            $templates = $wpdb->get_results($wpdb->prepare(
+                "SELECT id, name FROM $table_templates WHERE name LIKE %s ORDER BY id DESC LIMIT 1",
+                '%' . $wpdb->esc_like($document_type_label) . '%'
+            ), ARRAY_A);
+
+            if (!empty($templates)) {
+                $selected_template = $templates[0];
+            } else {
+                // Fallback: prendre le premier template disponible
+                $fallback_template = $wpdb->get_row("SELECT id, name FROM $table_templates ORDER BY id ASC LIMIT 1", ARRAY_A);
+                $selected_template = $fallback_template;
+            }
+        }
 
         ?>
         <div id="pdf-builder-order-meta-box">
-            <p><?php _e('Générer un PDF pour cette commande', 'pdf-builder-pro'); ?></p>
+            <div style="margin-bottom: 15px;">
+                <div style="font-weight: bold; margin-bottom: 5px; color: #2271b1;">
+                    📄 <?php echo esc_html($document_type_label); ?>
+                </div>
+                <div style="font-size: 12px; color: #666; margin-bottom: 10px;">
+                    Statut: <?php echo esc_html(wc_get_order_status_name($order_status)); ?>
+                </div>
 
-            <div style="margin-bottom: 10px;">
-                <label for="pdf_template_select"><?php _e('Template:', 'pdf-builder-pro'); ?></label>
-                <select id="pdf_template_select" style="width: 100%;">
-                    <option value="0"><?php _e('Template par défaut', 'pdf-builder-pro'); ?></option>
-                    <?php foreach ($templates as $template): ?>
-                        <option value="<?php echo esc_attr($template['id']); ?>"
-                                <?php selected($default_template_id, $template['id']); ?>>
-                            <?php echo esc_html($template['name']); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+                <?php if ($selected_template): ?>
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 4px; margin-bottom: 10px;">
+                        <strong>Template détecté:</strong><br>
+                        <span style="color: #2271b1;"><?php echo esc_html($selected_template['name']); ?></span>
+                    </div>
+                <?php else: ?>
+                    <div style="background: #fff3cd; padding: 10px; border-radius: 4px; margin-bottom: 10px; border: 1px solid #ffeaa7;">
+                        ⚠️ Aucun template trouvé
+                    </div>
+                <?php endif; ?>
             </div>
 
-            <button type="button" id="generate-order-pdf" class="button button-primary" style="width: 100%;">
-                <?php _e('Générer PDF', 'pdf-builder-pro'); ?>
-            </button>
+            <?php if ($selected_template): ?>
+                <button type="button" id="generate-order-pdf" class="button button-primary" style="width: 100%; margin-bottom: 10px;">
+                    🚀 Générer <?php echo esc_html($document_type_label); ?>
+                </button>
+
+                <div style="text-align: center; margin-bottom: 10px;">
+                    <a href="#" id="change-template-link" style="font-size: 12px; color: #666; text-decoration: none;">
+                        Changer de template ▼
+                    </a>
+                </div>
+
+                <div id="template-selector" style="display: none; margin-bottom: 10px;">
+                    <label for="pdf_template_select" style="font-size: 12px; font-weight: bold;">Template alternatif:</label>
+                    <select id="pdf_template_select" style="width: 100%; margin-top: 5px;">
+                        <?php
+                        $all_templates = $wpdb->get_results("SELECT id, name FROM $table_templates ORDER BY name ASC", ARRAY_A);
+                        foreach ($all_templates as $template):
+                        ?>
+                            <option value="<?php echo esc_attr($template['id']); ?>"
+                                    <?php selected($selected_template['id'], $template['id']); ?>>
+                                <?php echo esc_html($template['name']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            <?php endif; ?>
 
             <div id="pdf-result" style="margin-top: 10px;"></div>
         </div>
 
         <script type="text/javascript">
         jQuery(document).ready(function($) {
+            // Toggle du sélecteur de template alternatif
+            $('#change-template-link').on('click', function(e) {
+                e.preventDefault();
+                $('#template-selector').slideToggle();
+                $(this).text($(this).text() === 'Changer de template ▼' ? 'Masquer ▼' : 'Changer de template ▼');
+            });
+
             $('#generate-order-pdf').on('click', function() {
-                var templateId = $('#pdf_template_select').val();
+                var templateId = $('#pdf_template_select').val() || <?php echo intval($selected_template['id'] ?? 0); ?>;
                 var orderId = <?php echo intval($order_id); ?>;
 
-                $(this).prop('disabled', true).text('<?php _e('Génération...', 'pdf-builder-pro'); ?>');
+                $(this).prop('disabled', true).text('🔄 Génération en cours...');
 
                 $.ajax({
                     url: ajaxurl,
@@ -135,22 +229,44 @@ class PDF_Builder_WooCommerce_Integration {
                     },
                     success: function(response) {
                         if (response.success) {
-                            $('#pdf-result').html('<p style="color: green;">' + response.data.message + '</p>' +
-                                '<p><a href="' + response.data.url + '" target="_blank" class="button">Télécharger PDF</a></p>');
+                            $('#pdf-result').html('<div style="background: #d4edda; color: #155724; padding: 10px; border-radius: 4px; margin-top: 10px;">' +
+                                '<strong>✅ Succès!</strong><br>' +
+                                '<a href="' + response.data.url + '" target="_blank" class="button" style="margin-top: 5px;">📥 Télécharger le PDF</a>' +
+                                '</div>');
                         } else {
-                            $('#pdf-result').html('<p style="color: red;">' + response.data + '</p>');
+                            $('#pdf-result').html('<div style="background: #f8d7da; color: #721c24; padding: 10px; border-radius: 4px; margin-top: 10px;">' +
+                                '<strong>❌ Erreur:</strong> ' + response.data +
+                                '</div>');
                         }
                     },
                     error: function() {
-                        $('#pdf-result').html('<p style="color: red;">Erreur lors de la génération</p>');
+                        $('#pdf-result').html('<div style="background: #f8d7da; color: #721c24; padding: 10px; border-radius: 4px; margin-top: 10px;">' +
+                            '<strong>❌ Erreur de connexion</strong>' +
+                            '</div>');
                     },
                     complete: function() {
-                        $('#generate-order-pdf').prop('disabled', false).text('<?php _e('Générer PDF', 'pdf-builder-pro'); ?>');
+                        $('#generate-order-pdf').prop('disabled', false).text('🚀 Générer <?php echo esc_html($document_type_label); ?>');
                     }
                 });
             });
         });
         </script>
+
+        <style>
+        #pdf-builder-order-meta-box {
+            font-size: 13px;
+        }
+        #pdf-builder-order-meta-box .button-primary {
+            background: #2271b1;
+            border-color: #2271b1;
+            text-shadow: none;
+            box-shadow: none;
+        }
+        #pdf-builder-order-meta-box .button-primary:hover {
+            background: #135e96;
+            border-color: #135e96;
+        }
+        </style>
         <?php
     }
 
