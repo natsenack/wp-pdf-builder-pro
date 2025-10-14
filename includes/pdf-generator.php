@@ -633,7 +633,8 @@ class PDF_Builder_Pro_Generator {
         $height = isset($element['height']) ? $element['height'] * $px_to_mm : 30;
 
         // Récupérer les vraies informations client depuis la commande WooCommerce
-        $customer_info = "Client\n";
+        $customer_info_lines = ["Client"];
+
         if ($this->order) {
             $billing_first_name = $this->order->get_billing_first_name();
             $billing_last_name = $this->order->get_billing_last_name();
@@ -646,26 +647,49 @@ class PDF_Builder_Pro_Generator {
             $billing_email = $this->order->get_billing_email();
             $billing_phone = $this->order->get_billing_phone();
 
-            if ($billing_company) {
-                $customer_info .= $billing_company . "\n";
+            // Ajouter chaque ligne seulement si elle contient du contenu valide
+            if (!empty(trim($billing_company))) {
+                $customer_info_lines[] = trim($billing_company);
             }
-            $customer_info .= $billing_first_name . ' ' . $billing_last_name . "\n";
-            $customer_info .= $billing_address_1 . "\n";
-            if ($billing_address_2) {
-                $customer_info .= $billing_address_2 . "\n";
+            $name_line = trim($billing_first_name . ' ' . $billing_last_name);
+            if (!empty($name_line)) {
+                $customer_info_lines[] = $name_line;
             }
-            $customer_info .= $billing_postcode . ' ' . $billing_city . "\n";
-            $customer_info .= $billing_country . "\n";
-            if ($billing_email) {
-                $customer_info .= $billing_email . "\n";
+            if (!empty(trim($billing_address_1))) {
+                $customer_info_lines[] = trim($billing_address_1);
             }
-            if ($billing_phone) {
-                $customer_info .= $billing_phone;
+            if (!empty(trim($billing_address_2))) {
+                $customer_info_lines[] = trim($billing_address_2);
+            }
+            $city_line = trim($billing_postcode . ' ' . $billing_city);
+            if (!empty($city_line)) {
+                $customer_info_lines[] = $city_line;
+            }
+            if (!empty(trim($billing_country))) {
+                $customer_info_lines[] = trim($billing_country);
+            }
+            if (!empty(trim($billing_email))) {
+                $customer_info_lines[] = trim($billing_email);
+            }
+            if (!empty(trim($billing_phone))) {
+                $customer_info_lines[] = trim($billing_phone);
             }
         } else {
             // Contenu factice si pas de commande
-            $customer_info .= "Jean Dupont\n123 Rue de la Paix\n75001 Paris\nFrance";
+            $customer_info_lines = ["Client", "Jean Dupont", "123 Rue de la Paix", "75001 Paris", "France"];
         }
+
+        // Joindre les lignes avec des sauts de ligne
+        $customer_info = implode("\n", $customer_info_lines);
+
+        // Nettoyer le texte et s'assurer qu'il n'est pas vide
+        $customer_info = trim($customer_info);
+        if (empty($customer_info)) {
+            $customer_info = "Client";
+        }
+
+        // Encoder en UTF-8 et nettoyer les caractères problématiques
+        $customer_info = utf8_decode($customer_info);
 
         // Positionner le curseur
         $this->pdf->SetXY($x, $y);
@@ -676,7 +700,7 @@ class PDF_Builder_Pro_Generator {
 
         // Contenu
         $this->pdf->SetFont('helvetica', '', 10);
-        $this->pdf->MultiCell($width, 5, utf8_decode($customer_info), 0, 'L');
+        $this->pdf->MultiCell($width, 5, $customer_info, 0, 'L');
     }
 
     /**
