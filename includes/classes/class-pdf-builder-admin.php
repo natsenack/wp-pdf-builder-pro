@@ -3310,11 +3310,7 @@ class PDF_Builder_Admin {
                 require_once $path;
                 if (class_exists('TCPDF')) {
                     // Définir les constantes TCPDF si elles ne sont pas définies
-                    if (!defined('PDF_PAGE_ORIENTATION')) {
-                        define('PDF_PAGE_ORIENTATION', 'P');
-                        define('PDF_PAGE_FORMAT', 'A4');
-                        define('PDF_UNIT', 'mm');
-                    }
+                    $this->define_tcpdf_constants();
                     return true;
                 }
             }
@@ -3325,12 +3321,36 @@ class PDF_Builder_Admin {
         if (file_exists($tcpdf_dir . 'tcpdf.php')) {
             require_once $tcpdf_dir . 'tcpdf.php';
             if (class_exists('TCPDF')) {
+                $this->define_tcpdf_constants();
                 return true;
             }
         }
 
         error_log('PDF Builder Pro: Impossible de charger TCPDF depuis tous les chemins testés');
         return false;
+    }
+
+    /**
+     * Définit les constantes TCPDF nécessaires
+     */
+    private function define_tcpdf_constants() {
+        $plugin_dir = plugin_dir_path(__FILE__) . '../../';
+
+        $constants = [
+            'PDF_PAGE_ORIENTATION' => 'P',
+            'PDF_UNIT' => 'mm',
+            'PDF_PAGE_FORMAT' => 'A4',
+            'K_PATH_FONTS' => $plugin_dir . 'lib/tcpdf/fonts/',
+            'K_PATH_CACHE' => $plugin_dir . 'uploads/pdf-builder-cache/',
+            'K_PATH_IMAGES' => $plugin_dir . 'lib/tcpdf/images/',
+            'K_PATH_URL' => $plugin_dir . 'lib/tcpdf/'
+        ];
+
+        foreach ($constants as $name => $value) {
+            if (!defined($name)) {
+                define($name, $value);
+            }
+        }
     }
 
     /**
