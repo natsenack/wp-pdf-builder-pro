@@ -3299,8 +3299,10 @@ class PDF_Builder_Admin {
      */
     private function load_tcpdf_library() {
         $tcpdf_paths = [
+            __DIR__ . '/../../lib/tcpdf/tcpdf.php',  // Essayer d'abord tcpdf.php directement
             __DIR__ . '/../../lib/tcpdf/tcpdf_autoload.php',
             __DIR__ . '/../../vendor/tecnickcom/tcpdf/tcpdf.php',
+            plugin_dir_path(__FILE__) . '../../lib/tcpdf/tcpdf.php',
             plugin_dir_path(__FILE__) . '../../lib/tcpdf/tcpdf_autoload.php',
             plugin_dir_path(__FILE__) . '../../vendor/tecnickcom/tcpdf/tcpdf.php'
         ];
@@ -3313,16 +3315,6 @@ class PDF_Builder_Admin {
                     $this->define_tcpdf_constants();
                     return true;
                 }
-            }
-        }
-
-        // Si TCPDF n'est toujours pas chargé, essayer une approche alternative
-        $tcpdf_dir = plugin_dir_path(__FILE__) . '../../lib/tcpdf/';
-        if (file_exists($tcpdf_dir . 'tcpdf.php')) {
-            require_once $tcpdf_dir . 'tcpdf.php';
-            if (class_exists('TCPDF')) {
-                $this->define_tcpdf_constants();
-                return true;
             }
         }
 
