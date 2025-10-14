@@ -1786,7 +1786,7 @@ class PDF_Builder_Admin {
      * @param WC_Order|null $order Commande WooCommerce (optionnel)
      * @return string HTML généré
      */
-    private function generate_unified_html($template, $order = null) {
+    public function generate_unified_html($template, $order = null) {
         $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' . ($order ? 'Order #' . $order->get_id() : 'PDF Preview') . '</title>';
 
         // Gestion des marges d'impression - utiliser la première page
@@ -2234,20 +2234,9 @@ class PDF_Builder_Admin {
                         break;
 
                     default:
-                        // Vérifier si c'est un élément WooCommerce
-                        if (strpos($element['type'], 'woocommerce-') === 0 && $order) {
-                            $woo_data_provider = PDF_Builder_WooCommerce_Data_Provider::getInstance();
-                            $woo_content = $woo_data_provider->get_element_data($element['type'], $order->get_id());
-
-                            // Pour les tableaux de produits, générer du HTML spécial
-                            if ($element['type'] === 'woocommerce-products-table') {
-                                $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $tcpdf_style, $woo_content);
-                            } else {
-                                $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $tcpdf_style, esc_html($woo_content));
-                            }
-                        } else {
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $tcpdf_style, esc_html($content ?: $element['type']));
-                        }
+                        // Élément par défaut - afficher le contenu tel quel
+                        $final_content = $order ? $this->replace_order_variables($content, $order) : $content;
+                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $tcpdf_style, esc_html($final_content ?: $element['type']));
                         break;
                 }
             }
@@ -5445,6 +5434,9 @@ class PDF_Builder_Admin {
         return $vars;
     }
 }
+
+
+
 
 
 
