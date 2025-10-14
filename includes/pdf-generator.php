@@ -333,6 +333,9 @@ class PDF_Builder_Pro_Generator {
             case 'document_type':
                 $this->render_document_type_element($element, $px_to_mm);
                 break;
+            case 'order_number':
+                $this->render_order_number_element($element, $px_to_mm);
+                break;
             case 'divider':
                 $this->render_divider_element($element, $px_to_mm);
                 break;
@@ -629,8 +632,40 @@ class PDF_Builder_Pro_Generator {
         $width = isset($element['width']) ? $element['width'] * $px_to_mm : 80;
         $height = isset($element['height']) ? $element['height'] * $px_to_mm : 30;
 
-        // Contenu factice pour l'instant (devrait venir des données WooCommerce)
-        $customer_info = "Client\nJean Dupont\n123 Rue de la Paix\n75001 Paris\nFrance";
+        // Récupérer les vraies informations client depuis la commande WooCommerce
+        $customer_info = "Client\n";
+        if ($this->order) {
+            $billing_first_name = $this->order->get_billing_first_name();
+            $billing_last_name = $this->order->get_billing_last_name();
+            $billing_company = $this->order->get_billing_company();
+            $billing_address_1 = $this->order->get_billing_address_1();
+            $billing_address_2 = $this->order->get_billing_address_2();
+            $billing_city = $this->order->get_billing_city();
+            $billing_postcode = $this->order->get_billing_postcode();
+            $billing_country = $this->order->get_billing_country();
+            $billing_email = $this->order->get_billing_email();
+            $billing_phone = $this->order->get_billing_phone();
+
+            if ($billing_company) {
+                $customer_info .= $billing_company . "\n";
+            }
+            $customer_info .= $billing_first_name . ' ' . $billing_last_name . "\n";
+            $customer_info .= $billing_address_1 . "\n";
+            if ($billing_address_2) {
+                $customer_info .= $billing_address_2 . "\n";
+            }
+            $customer_info .= $billing_postcode . ' ' . $billing_city . "\n";
+            $customer_info .= $billing_country . "\n";
+            if ($billing_email) {
+                $customer_info .= $billing_email . "\n";
+            }
+            if ($billing_phone) {
+                $customer_info .= $billing_phone;
+            }
+        } else {
+            // Contenu factice si pas de commande
+            $customer_info .= "Jean Dupont\n123 Rue de la Paix\n75001 Paris\nFrance";
+        }
 
         // Positionner le curseur
         $this->pdf->SetXY($x, $y);
@@ -751,6 +786,50 @@ class PDF_Builder_Pro_Generator {
         $width = isset($element['width']) ? $element['width'] * $px_to_mm : 50;
         $height = isset($element['height']) ? $element['height'] * $px_to_mm : 30;
 
+        // Essayer d'abord de récupérer l'URL du logo depuis les propriétés de l'élément (canvas)
+        $logo_url = '';
+        if (isset($element['imageUrl']) && !empty($element['imageUrl'])) {
+            $logo_url = $element['imageUrl'];
+        } elseif (isset($element['src']) && !empty($element['src'])) {
+            $logo_url = $element['src'];
+        }
+
+        // Si pas d'URL dans l'élément, essayer les options WordPress
+        if (empty($logo_url)) {
+            $logo_url = get_option('woocommerce_store_logo') ?: get_option('site_icon');
+        }
+
+        $logo_path = '';
+
+        if ($logo_url) {
+            // Convertir l'URL en chemin de fichier
+            $upload_dir = wp_upload_dir();
+            $logo_path = str_replace($upload_dir['baseurl'], $upload_dir['basedir'], $logo_url);
+
+            // Si c'est un ID d'attachment, récupérer le chemin
+            if (is_numeric($logo_url)) {
+                $logo_path = get_attached_file($logo_url);
+            }
+        }
+
+        // Si on a un logo valide, l'afficher
+        if ($logo_path && file_exists($logo_path)) {
+            try {
+                $this->pdf->Image($logo_path, $x, $y, $width, $height, '', '', '', false, 300, '', false, false, 0, false, false, false);
+            } catch (Exception $e) {
+                // En cas d'erreur, afficher le placeholder
+                $this->render_logo_placeholder($x, $y, $width, $height);
+            }
+        } else {
+            // Afficher le placeholder si pas de logo
+            $this->render_logo_placeholder($x, $y, $width, $height);
+        }
+    }
+
+    /**
+     * Affiche un placeholder pour le logo
+     */
+    private function render_logo_placeholder($x, $y, $width, $height) {
         // Dessiner un rectangle placeholder avec du texte
         $this->pdf->SetFillColor(240, 240, 240);
         $this->pdf->Rect($x, $y, $width, $height, 'F');
@@ -926,26 +1005,48 @@ class PDF_Builder_Pro_Generator {
     }
 
     /**
+     * Rendu d'élément order_number
+     */
+    private function render_order_number_element($element, $px_to_mm) {
+        $x = isset($element['x']) ? $element['x'] * $px_to_mm : 10;
+        $y = isset($element['y']) ? $element['y'] * $px_to_mm : 10;
+        $width = isset($element['width']) ? $element['width'] * $px_to_mm : 50;
+        $height = isset($element['height']) ? $element['height'] * $px_to_mm : 15;
+
+        // Numéro de commande
+        $order_number = 'N° CMD-001'; // Valeur par défaut
+
+        if ($this->order) {
+            $order_number = 'N° ' . $this->order->get_order_number();
+        }
+
+        $this->pdf->SetXY($x, $y);
+        $this->pdf->SetFont('helvetica', 'B', 12);
+        $this->pdf->Cell($width, 8, utf8_decode($order_number), 0, 1, 'L');
+    }
+
+    /**
      * Détecte le type de document basé sur le statut de la commande
      */
     private function detect_document_type($order_status) {
+        // Nettoyer le statut (enlever le préfixe wc- si présent)
+        $clean_status = str_replace('wc-', '', $order_status);
+
         // Mapping des statuts WooCommerce vers les types de document
         $status_mapping = [
-            'wc-quote' => 'devis',           // Devis
-            'wc-quotation' => 'devis',      // Devis (variante)
-            'quote' => 'devis',             // Devis (sans préfixe)
-            'quotation' => 'devis',         // Devis (sans préfixe)
-            'wc-pending' => 'commande',     // En attente
-            'wc-processing' => 'commande',  // En cours
-            'wc-on-hold' => 'commande',     // En attente
-            'wc-completed' => 'facture',    // Terminée -> Facture
-            'wc-cancelled' => 'commande',   // Annulée
-            'wc-refunded' => 'facture',     // Remboursée -> Facture
-            'wc-failed' => 'commande',      // Échec
+            'quote' => 'devis',           // Devis
+            'quotation' => 'devis',      // Devis (variante)
+            'pending' => 'commande',     // En attente
+            'processing' => 'commande',  // En cours
+            'on-hold' => 'commande',     // En attente
+            'completed' => 'facture',    // Terminée -> Facture
+            'cancelled' => 'commande',   // Annulée
+            'refunded' => 'facture',     // Remboursée -> Facture
+            'failed' => 'commande',      // Échec
         ];
 
         // Retourner le type mappé ou 'commande' par défaut
-        return isset($status_mapping[$order_status]) ? $status_mapping[$order_status] : 'commande';
+        return isset($status_mapping[$clean_status]) ? $status_mapping[$clean_status] : 'commande';
     }
 
     /**
