@@ -785,11 +785,20 @@ class PDF_Builder_WooCommerce_Integration {
             error_log('✅ PDF BUILDER - ajax_preview_order_pdf: Instance créée');
 
             $result = $generator->generate_simple_preview($order_id, $template_id);
-            error_log('✅ PDF BUILDER - ajax_preview_order_pdf: generate_simple_preview appelée, résultat: ' . (is_wp_error($result) ? 'WP_Error' : 'URL'));
+            error_log('✅ PDF BUILDER - ajax_preview_order_pdf: generate_simple_preview appelée, résultat: ' . (is_wp_error($result) ? 'WP_Error: ' . $result->get_error_message() : 'URL: ' . $result));
 
             if (is_wp_error($result)) {
                 error_log('❌ PDF BUILDER - ajax_preview_order_pdf: Erreur génération aperçu: ' . $result->get_error_message());
                 wp_send_json_error($result->get_error_message());
+            }
+
+            // Vérifier si le fichier existe réellement
+            $file_path = str_replace(home_url('/'), ABSPATH, $result);
+            error_log('🔍 PDF BUILDER - ajax_preview_order_pdf: Vérification fichier - URL: ' . $result);
+            error_log('🔍 PDF BUILDER - ajax_preview_order_pdf: Vérification fichier - Chemin local: ' . $file_path);
+            error_log('🔍 PDF BUILDER - ajax_preview_order_pdf: Fichier existe: ' . (file_exists($file_path) ? 'OUI' : 'NON'));
+            if (file_exists($file_path)) {
+                error_log('🔍 PDF BUILDER - ajax_preview_order_pdf: Taille fichier: ' . filesize($file_path) . ' bytes');
             }
 
             error_log('✅ PDF BUILDER - ajax_preview_order_pdf: Aperçu généré avec succès: ' . $result);
