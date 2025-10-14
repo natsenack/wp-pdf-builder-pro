@@ -396,7 +396,7 @@ class PDF_Builder_WooCommerce_Integration {
                             height: 100%;
                             background: rgba(0,0,0,0.8);
                             z-index: 999999;
-                            display: none;
+                            display: flex;
                             align-items: center;
                             justify-content: center;
                             padding: 20px;
@@ -479,14 +479,16 @@ class PDF_Builder_WooCommerce_Integration {
                 function closePdfModal() {
                     $('#pdf-preview-modal > div').css('transform', 'scale(0.95)');
                     setTimeout(function() {
-                        $('#pdf-preview-modal').fadeOut();
+                        $('#pdf-preview-modal').fadeOut(function() {
+                            $(this).css('display', 'none');
+                        });
                         $('#pdf-preview-iframe').attr('src', '');
                     }, 200);
                 }
 
                 // Ouvrir la modale et charger le PDF
                 $('#pdf-preview-iframe').attr('src', pdfUrl);
-                $('#pdf-preview-modal').fadeIn(function() {
+                $('#pdf-preview-modal').css('display', 'flex').hide().fadeIn(function() {
                     // Animation d'ouverture
                     $('#pdf-preview-modal > div').css('transform', 'scale(1)');
                 });
