@@ -89,10 +89,8 @@ class PDF_Builder_Core {
         // Ajouter les pages d'administration
         add_action('admin_menu', array($this, 'add_admin_menu'));
 
-        // Forcer l'ajout du menu si ce n'est pas AJAX
-        if (!defined('DOING_AJAX') || !DOING_AJAX) {
-            $this->add_admin_menu();
-        }
+        // Forcer l'ajout du menu toujours
+        $this->add_admin_menu();
 
         // Enregistrer les paramètres
         add_action('admin_init', array($this, 'register_settings'));
@@ -509,6 +507,7 @@ class PDF_Builder_Core {
      * Page de test pour la sélection de templates
      */
     public function test_template_selection_page() {
+        error_log('PDF BUILDER - test_template_selection_page called');
         // Simuler une commande WooCommerce
         $order_id = isset($_GET['order_id']) ? intval($_GET['order_id']) : 9275;
         $order = wc_get_order($order_id);
