@@ -739,7 +739,7 @@ class PDF_Builder_WooCommerce_Integration {
 
         try {
             // Générer l'aperçu PDF
-            $result = $this->main->admin->generate_order_pdf($order_id, $template_id, true);
+            $result = $this->main->generate_order_pdf($order_id, $template_id, true);
 
             if (is_wp_error($result)) {
                 wp_send_json_error($result->get_error_message());
@@ -789,7 +789,7 @@ class PDF_Builder_WooCommerce_Integration {
 
         try {
             // Générer le PDF
-            $result = $this->main->admin->generate_order_pdf($order_id, $template_id, false);
+            $result = $this->main->generate_order_pdf($order_id, $template_id, false);
 
             if (is_wp_error($result)) {
                 wp_send_json_error($result->get_error_message());
