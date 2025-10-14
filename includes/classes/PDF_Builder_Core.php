@@ -91,11 +91,6 @@ class PDF_Builder_Core {
      */
     public function admin_init() {
         error_log('PDF BUILDER - admin_init called - is_admin: ' . (is_admin() ? 'yes' : 'no') . ' - DOING_AJAX: ' . (defined('DOING_AJAX') && DOING_AJAX ? 'yes' : 'no'));
-        // Ajouter les pages d'administration
-        add_action('admin_menu', array($this, 'add_admin_menu'));
-
-        // Forcer l'ajout du menu toujours
-        $this->add_admin_menu();
 
         // Enregistrer les paramètres
         add_action('admin_init', array($this, 'register_settings'));
