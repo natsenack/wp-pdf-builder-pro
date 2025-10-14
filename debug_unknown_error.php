@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 echo "<h1>🔍 Diagnostic - Erreur inconnue lors de la génération</h1>";
 
 // Simuler les paramètres d'une requête AJAX
-$order_id = 123; // Remplacer par un ID de commande réel
+$order_id = 1; // ID de commande à tester - modifier selon les commandes disponibles
 $template_id = 0; // 0 pour template par défaut
 
 echo "<h2>1. Test des dépendances</h2>";
