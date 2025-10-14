@@ -85,6 +85,7 @@ class PDF_Builder_Core {
      * Initialisation de l'administration
      */
     public function admin_init() {
+        error_log('PDF BUILDER - admin_init called');
         // Ajouter les pages d'administration
         add_action('admin_menu', array($this, 'add_admin_menu'));
 
