@@ -168,7 +168,13 @@ class PDF_Builder_Admin {
         add_action('admin_menu', [$this, 'add_admin_menu']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts'], 20);
 
-        // Les managers s'occupent de leurs propres hooks
+        // Hooks WooCommerce - Délégation vers le manager
+        if (class_exists('WooCommerce')) {
+            add_action('add_meta_boxes_shop_order', [$this->woocommerce_integration, 'add_woocommerce_order_meta_box']);
+            add_action('add_meta_boxes_woocommerce_page_wc-orders', [$this->woocommerce_integration, 'add_woocommerce_order_meta_box']);
+        }
+
+        // Les managers s'occupent de leurs propres hooks AJAX
         // Les hooks AJAX sont maintenant gérés par les managers respectifs
     }
 

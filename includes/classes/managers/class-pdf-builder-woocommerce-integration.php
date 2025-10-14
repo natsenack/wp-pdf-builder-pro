@@ -23,11 +23,7 @@ class PDF_Builder_WooCommerce_Integration {
      * Initialiser les hooks
      */
     private function init_hooks() {
-        // Hooks WooCommerce - Meta boxes pour les commandes
-        add_action('add_meta_boxes_shop_order', [$this, 'add_woocommerce_order_meta_box']);
-        add_action('add_meta_boxes_woocommerce_page_wc-orders', [$this, 'add_woocommerce_order_meta_box']);
-
-        // AJAX handlers pour WooCommerce
+        // AJAX handlers pour WooCommerce - gérés par le manager
         add_action('wp_ajax_pdf_builder_generate_order_pdf', [$this, 'ajax_generate_order_pdf']);
         add_action('wp_ajax_pdf_builder_pro_preview_order_pdf', [$this, 'ajax_preview_order_pdf']);
     }
@@ -36,11 +32,27 @@ class PDF_Builder_WooCommerce_Integration {
      * Ajoute la meta box PDF Builder dans les commandes WooCommerce
      */
     public function add_woocommerce_order_meta_box() {
+        // Vérifier que nous sommes sur la bonne page
+        if (!function_exists('get_current_screen')) {
+            return;
+        }
+
+        $screen = get_current_screen();
+        if (!$screen) {
+            return;
+        }
+
+        // Support both legacy (shop_order) and HPOS (woocommerce_page_wc-orders) screens
+        $valid_screens = ['shop_order', 'woocommerce_page_wc-orders'];
+        if (!in_array($screen->id, $valid_screens)) {
+            return;
+        }
+
         add_meta_box(
             'pdf-builder-order-actions',
             __('PDF Builder Pro', 'pdf-builder-pro'),
             [$this, 'render_woocommerce_order_meta_box'],
-            get_current_screen()->id,
+            $screen->id,
             'side',
             'high'
         );
