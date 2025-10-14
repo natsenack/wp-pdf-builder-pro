@@ -399,17 +399,22 @@ class PDF_Builder_WooCommerce_Integration {
                             display: none;
                             align-items: center;
                             justify-content: center;
+                            padding: 20px;
+                            box-sizing: border-box;
                         ">
                             <div style="
                                 background: white;
                                 border-radius: 8px;
-                                width: 90%;
-                                height: 90%;
+                                width: 100%;
+                                height: 100%;
                                 max-width: 1200px;
                                 max-height: 800px;
                                 position: relative;
                                 display: flex;
                                 flex-direction: column;
+                                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                                transform: scale(0.95);
+                                transition: transform 0.2s ease-out;
                             ">
                                 <div style="
                                     padding: 15px 20px;
@@ -472,13 +477,19 @@ class PDF_Builder_WooCommerce_Integration {
 
                 // Fonction pour fermer la modale
                 function closePdfModal() {
-                    $('#pdf-preview-modal').fadeOut();
-                    $('#pdf-preview-iframe').attr('src', '');
+                    $('#pdf-preview-modal > div').css('transform', 'scale(0.95)');
+                    setTimeout(function() {
+                        $('#pdf-preview-modal').fadeOut();
+                        $('#pdf-preview-iframe').attr('src', '');
+                    }, 200);
                 }
 
                 // Ouvrir la modale et charger le PDF
                 $('#pdf-preview-iframe').attr('src', pdfUrl);
-                $('#pdf-preview-modal').fadeIn();
+                $('#pdf-preview-modal').fadeIn(function() {
+                    // Animation d'ouverture
+                    $('#pdf-preview-modal > div').css('transform', 'scale(1)');
+                });
             }
 
             // Event handlers
