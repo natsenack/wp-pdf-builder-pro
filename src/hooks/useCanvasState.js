@@ -484,22 +484,18 @@ export const useCanvasState = ({
         throw new Error('Données JSON invalides côté client: ' + jsonError.message);
       }
 
-      // Sauvegarde directe via AJAX avec URLSearchParams au lieu de FormData
+      // Sauvegarde directe via AJAX avec FormData pour les données volumineuses
 
-      const requestData = {
-        action: 'pdf_builder_pro_save_template',
-        template_data: jsonString,
-        template_name: window.pdfBuilderData?.templateName || `Template ${window.pdfBuilderData?.templateId || 'New'}`,
-        template_id: window.pdfBuilderData?.templateId || '0',
-        nonce: window.pdfBuilderAjax?.nonce || window.pdfBuilderData?.nonce || ''
-      };
+      const formData = new FormData();
+      formData.append('action', 'pdf_builder_pro_save_template');
+      formData.append('template_data', jsonString);
+      formData.append('template_name', window.pdfBuilderData?.templateName || `Template ${window.pdfBuilderData?.templateId || 'New'}`);
+      formData.append('template_id', window.pdfBuilderData?.templateId || '0');
+      formData.append('nonce', window.pdfBuilderAjax?.nonce || window.pdfBuilderData?.nonce || '');
 
       const response = await fetch(window.pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams(requestData).toString()
+        body: formData
       });
 
       const result = await response.json();
