@@ -23,6 +23,14 @@ class PDF_Builder_WooCommerce_Integration {
      * Initialiser les hooks
      */
     private function init_hooks() {
+        // Enregistrer les hooks AJAX via l'action init pour s'assurer qu'ils sont disponibles
+        add_action('init', [$this, 'register_ajax_hooks']);
+    }
+
+    /**
+     * Enregistrer les hooks AJAX
+     */
+    public function register_ajax_hooks() {
         // AJAX handlers pour WooCommerce - gérés par le manager
         add_action('wp_ajax_pdf_builder_generate_order_pdf', [$this, 'ajax_generate_order_pdf']);
         add_action('wp_ajax_pdf_builder_pro_preview_order_pdf', [$this, 'ajax_preview_order_pdf']);
