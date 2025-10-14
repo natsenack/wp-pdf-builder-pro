@@ -31,10 +31,12 @@ class PDF_Builder_WooCommerce_Integration {
      * Enregistrer les hooks AJAX
      */
     public function register_ajax_hooks() {
+        error_log('PDF BUILDER - Registering AJAX hooks in WooCommerce integration');
         // AJAX handlers pour WooCommerce - gérés par le manager
         add_action('wp_ajax_pdf_builder_generate_order_pdf', [$this, 'ajax_generate_order_pdf']);
         add_action('wp_ajax_pdf_builder_pro_preview_order_pdf', [$this, 'ajax_preview_order_pdf']);
         add_action('wp_ajax_pdf_builder_save_order_canvas', [$this, 'ajax_save_order_canvas']);
+        error_log('PDF BUILDER - AJAX hooks registered: pdf_builder_generate_order_pdf, pdf_builder_pro_preview_order_pdf, pdf_builder_save_order_canvas');
     }
 
     /**
