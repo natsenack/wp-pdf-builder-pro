@@ -204,6 +204,8 @@ class PDF_Builder_Pro_Generator {
 
         if (!file_exists($cache_dir)) {
             wp_mkdir_p($cache_dir);
+            // Définir les permissions correctes pour l'accès web (755 pour les dossiers)
+            chmod($cache_dir, 0755);
         }
 
         return $cache_dir;
@@ -1190,6 +1192,8 @@ class PDF_Builder_Pro_Generator {
             $cache_dir = $upload_dir['basedir'] . '/pdf-builder-cache';
             if (!file_exists($cache_dir)) {
                 wp_mkdir_p($cache_dir);
+                // Définir les permissions correctes pour l'accès web (755 pour les dossiers)
+                chmod($cache_dir, 0755);
             }
 
             // Générer un nom de fichier unique
@@ -1199,6 +1203,9 @@ class PDF_Builder_Pro_Generator {
             // Sauvegarder le fichier
             error_log('🟡 PDF BUILDER - generate_simple_preview: Saving file to: ' . $filepath);
             file_put_contents($filepath, $pdf_content);
+
+            // Définir les permissions du fichier pour l'accès web (644)
+            chmod($filepath, 0644);
 
             // Retourner l'URL d'accès
             $url = $upload_dir['baseurl'] . '/pdf-builder-cache/' . $filename;
