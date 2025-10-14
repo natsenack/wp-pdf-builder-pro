@@ -737,6 +737,31 @@ class PDF_Builder_WooCommerce_Integration {
             wp_send_json_error('Commande non trouvée');
         }
 
+        // S'assurer que TCPDF est chargé avant la génération
+        if (!class_exists('TCPDF')) {
+            // Essayer de charger TCPDF depuis les chemins possibles
+            $tcpdf_paths = [
+                plugin_dir_path(__FILE__) . '../../lib/tcpdf/tcpdf_autoload.php',
+                plugin_dir_path(__FILE__) . '../../lib/tcpdf/tcpdf.php',
+                plugin_dir_path(__FILE__) . '../../vendor/tecnickcom/tcpdf/tcpdf.php'
+            ];
+
+            $tcpdf_loaded = false;
+            foreach ($tcpdf_paths as $path) {
+                if (file_exists($path)) {
+                    require_once $path;
+                    if (class_exists('TCPDF')) {
+                        $tcpdf_loaded = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!$tcpdf_loaded) {
+                wp_send_json_error('Impossible de charger TCPDF');
+            }
+        }
+
         try {
             // Générer l'aperçu PDF
             $result = $this->main->generate_order_pdf($order_id, $template_id, true);
@@ -785,6 +810,31 @@ class PDF_Builder_WooCommerce_Integration {
         $order = wc_get_order($order_id);
         if (!$order) {
             wp_send_json_error('Commande non trouvée');
+        }
+
+        // S'assurer que TCPDF est chargé avant la génération
+        if (!class_exists('TCPDF')) {
+            // Essayer de charger TCPDF depuis les chemins possibles
+            $tcpdf_paths = [
+                plugin_dir_path(__FILE__) . '../../lib/tcpdf/tcpdf_autoload.php',
+                plugin_dir_path(__FILE__) . '../../lib/tcpdf/tcpdf.php',
+                plugin_dir_path(__FILE__) . '../../vendor/tecnickcom/tcpdf/tcpdf.php'
+            ];
+
+            $tcpdf_loaded = false;
+            foreach ($tcpdf_paths as $path) {
+                if (file_exists($path)) {
+                    require_once $path;
+                    if (class_exists('TCPDF')) {
+                        $tcpdf_loaded = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!$tcpdf_loaded) {
+                wp_send_json_error('Impossible de charger TCPDF');
+            }
         }
 
         try {
