@@ -3289,8 +3289,22 @@ class PDF_Builder_Admin {
             $html_content = $this->generate_unified_html($template_data, $order, true);
             error_log('✅ PDF BUILDER - HTML generated, length: ' . strlen($html_content));
 
+            // Créer un fichier HTML temporaire pour l'aperçu
+            $upload_dir = wp_upload_dir();
+            $preview_dir = $upload_dir['basedir'] . '/pdf-builder-previews';
+            if (!file_exists($preview_dir)) {
+                wp_mkdir_p($preview_dir);
+            }
+
+            $preview_filename = 'preview_' . $order_id . '_' . time() . '.html';
+            $preview_path = $preview_dir . '/' . $preview_filename;
+            $preview_url = $upload_dir['baseurl'] . '/pdf-builder-previews/' . $preview_filename;
+
+            file_put_contents($preview_path, $html_content);
+            error_log('✅ PDF BUILDER - Preview file created: ' . $preview_path);
+
             $response = array(
-                'html' => $html_content,
+                'url' => $preview_url,
                 'width' => $template_data['canvas']['width'] ?? 595,
                 'height' => $template_data['canvas']['height'] ?? 842
             );
