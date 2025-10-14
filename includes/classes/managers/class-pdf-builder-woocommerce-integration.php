@@ -349,6 +349,11 @@ class PDF_Builder_WooCommerce_Integration {
         </div>
 
         <script type="text/javascript">
+        // Définir ajaxurl si ce n'est pas déjà fait
+        if (typeof ajaxurl === 'undefined') {
+            ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
+        }
+
         jQuery(document).ready(function($) {
             let currentTemplateId = <?php echo $selected_template ? intval($selected_template['id']) : 0; ?>;
             let currentZoom = 1.0;
