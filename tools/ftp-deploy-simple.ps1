@@ -1,14 +1,17 @@
-# 🚀 FTP DEPLOY - SIMPLE & FAST
-# ===================================
+# 🚀 FTP DEPLOY - SIMPLE & FAST - AUTO-OPTIMIZED
+# ================================================
 
-Write-Host "🚀 FTP DEPLOY - SIMPLE & FAST" -ForegroundColor Green
-Write-Host "================================" -ForegroundColor Green
+Write-Host "🚀 FTP DEPLOY - SIMPLE & FAST - AUTO-OPTIMIZED" -ForegroundColor Green
+Write-Host "================================================" -ForegroundColor Green
 
 # Configuration
 $projectRoot = Split-Path (Get-Location) -Parent
 $configFile = Join-Path $projectRoot "./tools/ftp-config.env"
+$perfFile = Join-Path $projectRoot "./tools/ftp-performance.json"
+
 Write-Host "Project root: $projectRoot" -ForegroundColor Yellow
 Write-Host "Config file: $configFile" -ForegroundColor Yellow
+Write-Host "Performance file: $perfFile" -ForegroundColor Yellow
 Write-Host "Config exists: $(Test-Path $configFile)" -ForegroundColor Yellow
 if (-not (Test-Path $configFile)) {
     Write-Host "❌ Config manquante : $configFile" -ForegroundColor Red
@@ -29,18 +32,44 @@ Write-Host "🎯 Serveur: $ftpHost" -ForegroundColor Cyan
 Write-Host "👤 User: $ftpUser" -ForegroundColor Cyan
 Write-Host "📁 Dest: $remotePath" -ForegroundColor Cyan
 
+# Système d'auto-optimisation des performances
+Write-Host "🧠 Chargement des données de performance..." -ForegroundColor Yellow
+$performanceData = if (Test-Path $perfFile) {
+    try {
+        Get-Content $perfFile | ConvertFrom-Json
+    } catch {
+        @{ LastDeployments = @(); OptimalSettings = @{ ConcurrentJobs = 20; Timeout = 2000; SleepMs = 25 } }
+    }
+} else {
+    @{ LastDeployments = @(); OptimalSettings = @{ ConcurrentJobs = 20; Timeout = 2000; SleepMs = 25 } }
+}
+
+# Paramètres optimaux (auto-adaptés)
+$maxConcurrentJobs = $performanceData.OptimalSettings.ConcurrentJobs
+$ftpTimeout = $performanceData.OptimalSettings.Timeout
+$sleepMs = $performanceData.OptimalSettings.SleepMs
+
+Write-Host "⚡ Paramètres optimaux chargés: $maxConcurrentJobs jobs, ${ftpTimeout}ms timeout, ${sleepMs}ms sleep" -ForegroundColor Cyan
+
 # Compilation
 Write-Host "🔨 Compilation en cours..." -ForegroundColor Yellow
+Write-Progress -Activity "🔨 Compilation" -Status "Compilation du projet en cours..." -PercentComplete 0
 Push-Location $projectRoot
 & npm run build  # Compilation optimisée
+Write-Progress -Activity "🔨 Compilation" -Status "Compilation terminée" -PercentComplete 100
 if ($LASTEXITCODE -ne 0) {
+    Write-Progress -Activity "🔨 Compilation" -Completed
     Write-Host "❌ Erreur de compilation" -ForegroundColor Red
     exit 1
 }
 Pop-Location
+Write-Progress -Activity "🔨 Compilation" -Completed
 Write-Host "✅ Compilation terminée" -ForegroundColor Green
 
 # Lister les fichiers
+Write-Host "📂 Analyse des fichiers..." -ForegroundColor Yellow
+Write-Progress -Activity "📂 Analyse des fichiers" -Status "Recherche des fichiers à déployer..." -PercentComplete 0
+
 # Exclusions: dossiers de développement, fichiers temporaires, archives, backups, logs, docs
 $files = Get-ChildItem -Path $projectRoot -Recurse -File | Where-Object {
     $relPath = $_.FullName.Substring($projectRoot.Length + 1).Replace('\', '/')
@@ -53,6 +82,9 @@ $files = Get-ChildItem -Path $projectRoot -Recurse -File | Where-Object {
     ($relPath -eq 'pdf-builder-pro.php') -or
     ($relPath -eq 'bootstrap.php')
 }
+
+Write-Progress -Activity "📂 Analyse des fichiers" -Status "Analyse terminée" -PercentComplete 100
+Write-Progress -Activity "📂 Analyse des fichiers" -Completed
 
 Write-Host "📊 Fichiers à envoyer: $($files.Count)" -ForegroundColor Yellow
 
@@ -193,9 +225,15 @@ $directories = $allDirectories | Sort-Object { ($_.Split('/')).Count }
 Write-Host "📁 Création des répertoires ($($directories.Count) répertoires)..." -ForegroundColor Yellow
 $createdCount = 0
 $skippedCount = 0
+$totalDirs = $directories.Count
 
 # Créer les répertoires de manière optimisée (pas de messages pour les existants)
+$dirIndex = 0
 foreach ($dir in $directories) {
+    $dirIndex++
+    $progressPercent = [math]::Round(($dirIndex / $totalDirs) * 100, 1)
+    Write-Progress -Activity "📁 Création des répertoires" -Status "Création: $dir ($dirIndex/$totalDirs)" -PercentComplete $progressPercent
+
     $remoteDir = "$remotePath/$dir"
     if (Create-FtpDirectory -ftpHost $ftpHost -ftpUser $ftpUser -ftpPassword $ftpPassword -remoteDir $remoteDir) {
         $createdCount++
@@ -203,6 +241,7 @@ foreach ($dir in $directories) {
         $skippedCount++
     }
 }
+Write-Progress -Activity "📁 Création des répertoires" -Completed
 Write-Host "✅ Répertoires prêts: $createdCount créés, $skippedCount ignorés (existants)" -ForegroundColor Green
 
 # Fonction pour uploader un fichier avec vérification d'existence (optimisée)
@@ -214,6 +253,35 @@ function Send-File {
         [string]$ftpUser,
         [string]$ftpPassword
     )
+
+    # Fonction auxiliaire Get-FtpFileInfo incluse pour les jobs
+    function Get-FtpFileInfo {
+        param(
+            [string]$ftpHost,
+            [string]$ftpUser,
+            [string]$ftpPassword,
+            [string]$remoteFile
+        )
+
+        try {
+            $ftpRequest = [System.Net.FtpWebRequest]::Create("ftp://$ftpHost$remoteFile")
+            $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::GetFileSize
+            $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
+            $ftpRequest.UseBinary = $true
+            $ftpRequest.KeepAlive = $false
+            $ftpRequest.Timeout = 1500
+
+            $response = $ftpRequest.GetResponse()
+            $fileSize = $response.ContentLength
+            $lastModified = $response.LastModified
+            $response.Close()
+
+            return @{ Exists = $true; Size = $fileSize; LastModified = $lastModified }
+        }
+        catch {
+            return @{ Exists = $false; Size = 0; LastModified = $null }
+        }
+    }
 
     try {
         # Vérifier d'abord si le fichier distant existe et est identique
@@ -270,9 +338,56 @@ $completedJobs = @()
 $uploaded = 0
 $skipped = 0
 $total = $files.Count
-$startTime = Get-Date
 $uploadedBytes = 0
 
+# Auto-optimisation des paramètres de transfert
+Write-Host "🎯 Auto-optimisation des paramètres de transfert..." -ForegroundColor Yellow
+$optimizationStart = Get-Date
+
+# Test rapide de connectivité pour ajuster les timeouts
+$connectivityTest = Test-Connection -ComputerName $ftpHost.Split('.')[0] -Count 1 -ErrorAction SilentlyContinue
+$latency = if ($connectivityTest) { $connectivityTest.ResponseTime } else { 50 }
+
+# Ajustement intelligent des paramètres basé sur la latence et l'historique
+if ($latency -lt 20) {
+    # Connexion très rapide
+    $maxConcurrentJobs = [Math]::Min(30, $maxConcurrentJobs + 2)
+    $ftpTimeout = [Math]::Max(1000, $ftpTimeout - 200)
+    $sleepMs = [Math]::Max(10, $sleepMs - 5)
+} elseif ($latency -lt 50) {
+    # Connexion normale
+    $maxConcurrentJobs = [Math]::Min(25, $maxConcurrentJobs + 1)
+    $ftpTimeout = [Math]::Max(1500, $ftpTimeout - 100)
+    $sleepMs = [Math]::Max(15, $sleepMs - 2)
+} else {
+    # Connexion lente
+    $maxConcurrentJobs = [Math]::Max(10, $maxConcurrentJobs - 1)
+    $ftpTimeout = [Math]::Min(3000, $ftpTimeout + 200)
+    $sleepMs = [Math]::Min(50, $sleepMs + 5)
+}
+
+# Vérifier les performances des derniers déploiements
+$lastDeployments = $performanceData.LastDeployments | Where-Object { $_.Timestamp -gt (Get-Date).AddDays(-7) }
+if ($lastDeployments.Count -ge 3) {
+    $avgTime = ($lastDeployments | Measure-Object -Property Duration -Average).Average
+    if ($avgTime -gt 15) {
+        # Déploiements lents récemment, augmenter l'agressivité
+        $maxConcurrentJobs = [Math]::Min(35, $maxConcurrentJobs + 3)
+        $ftpTimeout = [Math]::Max(800, $ftpTimeout - 300)
+        $sleepMs = [Math]::Max(5, $sleepMs - 10)
+    } elseif ($avgTime -lt 8) {
+        # Déploiements très rapides, stabiliser
+        $maxConcurrentJobs = [Math]::Max(15, $maxConcurrentJobs - 1)
+        $ftpTimeout = [Math]::Min(2500, $ftpTimeout + 100)
+        $sleepMs = [Math]::Min(30, $sleepMs + 2)
+    }
+}
+
+$optimizationTime = (Get-Date) - $optimizationStart
+Write-Host "✅ Optimisation terminée en $([math]::Round($optimizationTime.TotalMilliseconds, 0))ms" -ForegroundColor Green
+Write-Host "⚡ Paramètres adaptés: $maxConcurrentJobs jobs simultanés, ${ftpTimeout}ms timeout, ${sleepMs}ms sleep" -ForegroundColor Cyan
+
+$startTime = Get-Date
 Write-Host "📤 Upload en parallèle ($maxConcurrentJobs jobs max)..." -ForegroundColor Yellow
 
 try {
@@ -383,6 +498,63 @@ try {
 
 Write-Host "🎉 Déploiement terminé ! $uploaded fichiers uploadés, $skipped fichiers ignorés (inchangés)." -ForegroundColor Green
 
+# Résumé détaillé du déploiement
+$totalProcessed = $uploaded + $skipped
+$elapsed = (Get-Date) - $startTime
+$avgSpeed = if ($elapsed.TotalSeconds -gt 0) { $uploadedBytes / $elapsed.TotalSeconds } else { 0 }
+
+Write-Host "`n📊 RÉSUMÉ DU DÉPLOIEMENT" -ForegroundColor Cyan
+Write-Host "═══════════════════════════════" -ForegroundColor Cyan
+Write-Host "⏱️  Durée totale: $([math]::Round($elapsed.TotalSeconds, 1)) secondes" -ForegroundColor White
+Write-Host "📁 Fichiers traités: $totalProcessed/$total" -ForegroundColor White
+Write-Host "📤 Fichiers uploadés: $uploaded" -ForegroundColor Green
+Write-Host "⏭️  Fichiers ignorés: $skipped (inchangés)" -ForegroundColor Yellow
+Write-Host "💾 Données transférées: $([math]::Round($uploadedBytes / 1024 / 1024, 2)) MB" -ForegroundColor White
+Write-Host "⚡ Vitesse moyenne: $([math]::Round($avgSpeed / 1024, 1)) KB/s" -ForegroundColor White
+
+# Indicateur spécial pour objectif < 10 secondes
+if ($elapsed.TotalSeconds -lt 10) {
+    Write-Host "🎯 OBJECTIF ATTEINT: Déploiement en moins de 10 secondes !" -ForegroundColor Green -BackgroundColor Black
+} else {
+    $timeOver = [math]::Round($elapsed.TotalSeconds - 10, 1)
+    Write-Host "⚠️  Objectif non atteint: +${timeOver}s (optimisation en cours)" -ForegroundColor Yellow
+}
+
+Write-Host "═══════════════════════════════`n" -ForegroundColor Cyan
+
+# Sauvegarde des performances pour optimisation future
+Write-Host "💾 Sauvegarde des performances..." -ForegroundColor Yellow
+$currentDeployment = @{
+    Timestamp = Get-Date
+    Duration = $elapsed.TotalSeconds
+    FilesProcessed = $totalProcessed
+    FilesUploaded = $uploaded
+    FilesSkipped = $skipped
+    BytesTransferred = $uploadedBytes
+    AverageSpeed = $avgSpeed
+    ConcurrentJobs = $maxConcurrentJobs
+    Timeout = $ftpTimeout
+    SleepMs = $sleepMs
+    TargetReached = ($elapsed.TotalSeconds -lt 10)
+}
+
+# Ajouter aux derniers déploiements (garder seulement les 10 derniers)
+$performanceData.LastDeployments = @($currentDeployment) + ($performanceData.LastDeployments | Select-Object -First 9)
+
+# Mettre à jour les paramètres optimaux si ce déploiement était réussi et rapide
+if ($currentDeployment.TargetReached -and $uploaded -gt 0) {
+    $performanceData.OptimalSettings = @{
+        ConcurrentJobs = $maxConcurrentJobs
+        Timeout = $ftpTimeout
+        SleepMs = $sleepMs
+    }
+    Write-Host "🎯 Nouveaux paramètres optimaux sauvegardés" -ForegroundColor Green
+}
+
+# Sauvegarder dans le fichier
+$performanceData | ConvertTo-Json | Set-Content $perfFile -Encoding UTF8
+Write-Host "✅ Performances sauvegardées" -ForegroundColor Green
+
 # Push automatique vers Git après déploiement réussi
 Write-Host "🔄 Push vers Git..." -ForegroundColor Yellow
 
@@ -390,15 +562,27 @@ try {
     # Aller dans le répertoire du projet
     Push-Location $projectRoot
 
-    # Git add, commit, push
+    # Git add
+    Write-Progress -Activity "🔄 Push Git" -Status "Ajout des fichiers au staging..." -PercentComplete 0
     & git add .
+    Write-Progress -Activity "🔄 Push Git" -Status "Fichiers ajoutés" -PercentComplete 33
+
+    # Git commit
+    Write-Progress -Activity "🔄 Push Git" -Status "Création du commit..." -PercentComplete 33
     $commitMessage = "Déploiement automatique - $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
     & git commit -m $commitMessage
-    & git push origin dev
+    Write-Progress -Activity "🔄 Push Git" -Status "Commit créé" -PercentComplete 66
 
+    # Git push
+    Write-Progress -Activity "🔄 Push Git" -Status "Push vers le dépôt distant..." -PercentComplete 66
+    & git push origin dev
+    Write-Progress -Activity "🔄 Push Git" -Status "Push terminé" -PercentComplete 100
+
+    Write-Progress -Activity "🔄 Push Git" -Completed
     Write-Host "✅ Push Git réussi" -ForegroundColor Green
 
 } catch {
+    Write-Progress -Activity "🔄 Push Git" -Completed
     Write-Host "⚠️ Erreur Git: $($_.Exception.Message)" -ForegroundColor Yellow
 } finally {
     Pop-Location
