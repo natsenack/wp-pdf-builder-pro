@@ -203,58 +203,62 @@ class PDF_Builder_Core {
      * Ajouter le menu d'administration
      */
     public function add_admin_menu() {
-        error_log('PDF BUILDER - add_admin_menu called - start');
+        try {
+            error_log('PDF BUILDER - add_admin_menu called - start');
 
-        add_menu_page(
-            __('PDF Builder Pro', 'pdf-builder-pro'),
-            __('PDF Builder', 'pdf-builder-pro'),
-            'manage_options',
-            'pdf-builder-pro',
-            array($this, 'admin_page'),
-            'dashicons-pdf',
-            30
-        );
+            add_menu_page(
+                __('PDF Builder Pro', 'pdf-builder-pro'),
+                __('PDF Builder', 'pdf-builder-pro'),
+                'manage_options',
+                'pdf-builder-pro',
+                array($this, 'admin_page'),
+                'dashicons-pdf',
+                30
+            );
 
-        add_submenu_page(
-            'pdf-builder-pro',
-            __('Templates', 'pdf-builder-pro'),
-            __('Templates', 'pdf-builder-pro'),
-            'manage_options',
-            'pdf-builder-templates',
-            array($this, 'templates_page')
-        );
+            add_submenu_page(
+                'pdf-builder-pro',
+                __('Templates', 'pdf-builder-pro'),
+                __('Templates', 'pdf-builder-pro'),
+                'manage_options',
+                'pdf-builder-templates',
+                array($this, 'templates_page')
+            );
 
-        // Template Editor page is now handled by PDF_Builder_Admin class
-        // add_submenu_page(
-        //     null, // Hidden page
-        //     __('Template Editor', 'pdf-builder-pro'),
-        //     __('Template Editor', 'pdf-builder-pro'),
-        //     'manage_options',
-        //     'pdf-builder-editor',
-        //     array($this, 'template_editor_page')
-        // );
+            // Template Editor page is now handled by PDF_Builder_Admin class
+            // add_submenu_page(
+            //     null, // Hidden page
+            //     __('Template Editor', 'pdf-builder-pro'),
+            //     __('Template Editor', 'pdf-builder-pro'),
+            //     'manage_options',
+            //     'pdf-builder-editor',
+            //     array($this, 'template_editor_page')
+            // );
 
-        add_submenu_page(
-            'pdf-builder-pro',
-            __('Settings', 'pdf-builder-pro'),
-            __('Settings', 'pdf-builder-pro'),
-            'manage_options',
-            'pdf-builder-settings',
-            array($this, 'settings_page')
-        );
+            add_submenu_page(
+                'pdf-builder-pro',
+                __('Settings', 'pdf-builder-pro'),
+                __('Settings', 'pdf-builder-pro'),
+                'manage_options',
+                'pdf-builder-settings',
+                array($this, 'settings_page')
+            );
 
-        // Page de test pour le débogage
-        error_log('PDF BUILDER - Adding test templates submenu');
-        add_submenu_page(
-            'woocommerce',
-            __('🔧 Test Templates', 'pdf-builder-pro'),
-            __('🔧 Test Templates', 'pdf-builder-pro'),
-            'manage_options',
-            'pdf-builder-test',
-            array($this, 'test_template_selection_page')
-        );
-        error_log('PDF BUILDER - Test templates submenu added');
-        error_log('PDF BUILDER - add_admin_menu called - end');
+            // Page de test pour le débogage
+            error_log('PDF BUILDER - Adding test templates submenu');
+            add_submenu_page(
+                'woocommerce',
+                __('🔧 Test Templates', 'pdf-builder-pro'),
+                __('🔧 Test Templates', 'pdf-builder-pro'),
+                'manage_options',
+                'pdf-builder-test',
+                array($this, 'test_template_selection_page')
+            );
+            error_log('PDF BUILDER - Test templates submenu added');
+            error_log('PDF BUILDER - add_admin_menu called - end');
+        } catch (Exception $e) {
+            error_log('PDF BUILDER - ERROR in add_admin_menu: ' . $e->getMessage());
+        }
     }
 
     /**
