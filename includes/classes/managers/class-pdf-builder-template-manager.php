@@ -29,6 +29,7 @@ class PDF_Builder_Template_Manager {
     private function init_hooks() {
         // AJAX handlers pour les templates
         add_action('wp_ajax_pdf_builder_save_template', [$this, 'ajax_save_template']);
+        add_action('wp_ajax_pdf_builder_pro_save_template', [$this, 'ajax_save_template']); // Alias pour compatibilité
         add_action('wp_ajax_pdf_builder_load_template', [$this, 'ajax_load_template']);
         add_action('wp_ajax_pdf_builder_flush_rest_cache', [$this, 'ajax_flush_rest_cache']);
     }
@@ -59,8 +60,15 @@ class PDF_Builder_Template_Manager {
             wp_send_json_error('Permissions insuffisantes');
         }
 
-        // Vérification de sécurité avec nonce WordPress
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce')) {
+        // Vérification de sécurité avec nonce WordPress (accepter plusieurs types de nonce)
+        $nonce_valid = false;
+        if (isset($_POST['nonce'])) {
+            $nonce_valid = wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce') ||
+                          wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions') ||
+                          wp_verify_nonce($_POST['nonce'], 'pdf_builder_templates');
+        }
+
+        if (!$nonce_valid) {
             wp_send_json_error('Sécurité: Nonce invalide');
         }
 
