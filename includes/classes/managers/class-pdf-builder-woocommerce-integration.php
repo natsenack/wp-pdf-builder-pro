@@ -596,10 +596,18 @@ class PDF_Builder_WooCommerce_Integration {
 
             // Event handlers
             $('#pdf-preview-btn').on('click', function() {
+                console.log('PDF BUILDER - Preview button clicked');
                 showModal();
                 showLoading();
                 showStatus('Génération de l\'aperçu...', 'loading');
                 setButtonLoading($(this), true);
+
+                console.log('PDF BUILDER - Sending AJAX request for preview:', {
+                    action: 'pdf_builder_pro_preview_order_pdf',
+                    order_id: orderId,
+                    template_id: templateId,
+                    nonce: nonce.substring(0, 10) + '...'
+                });
 
                 $.ajax({
                     url: ajaxUrl,
@@ -611,16 +619,19 @@ class PDF_Builder_WooCommerce_Integration {
                         nonce: nonce
                     },
                     success: function(response) {
+                        console.log('PDF BUILDER - AJAX success response:', response);
                         if (response.success && response.data && response.data.url) {
                             showPreview(response.data.url);
                             showStatus('Aperçu généré avec succès', 'success');
                         } else {
                             var errorMsg = response.data || 'Erreur inconnue lors de la génération';
+                            console.error('PDF BUILDER - Preview error:', errorMsg);
                             showError(errorMsg);
                             showStatus('Erreur lors de l\'aperçu', 'error');
                         }
                     },
                     error: function(xhr, status, error) {
+                        console.error('PDF BUILDER - AJAX error:', xhr, status, error);
                         var errorMsg = 'Erreur de connexion: ' + error;
                         if (xhr.responseJSON && xhr.responseJSON.data) {
                             errorMsg = xhr.responseJSON.data;
@@ -635,8 +646,16 @@ class PDF_Builder_WooCommerce_Integration {
             });
 
             $('#pdf-generate-btn').on('click', function() {
+                console.log('PDF BUILDER - Generate button clicked');
                 showStatus('Génération du PDF...', 'loading');
                 setButtonLoading($(this), true);
+
+                console.log('PDF BUILDER - Sending AJAX request for generation:', {
+                    action: 'pdf_builder_generate_order_pdf',
+                    order_id: orderId,
+                    template_id: templateId,
+                    nonce: nonce.substring(0, 10) + '...'
+                });
 
                 $.ajax({
                     url: ajaxUrl,
@@ -648,6 +667,7 @@ class PDF_Builder_WooCommerce_Integration {
                         nonce: nonce
                     },
                     success: function(response) {
+                        console.log('PDF BUILDER - Generate AJAX success response:', response);
                         if (response.success && response.data && response.data.url) {
                             $('#pdf-download-btn').attr('href', response.data.url).show();
                             showStatus('PDF généré avec succès', 'success');
@@ -710,35 +730,48 @@ class PDF_Builder_WooCommerce_Integration {
      * AJAX handler pour générer l'aperçu PDF d'une commande
      */
     public function ajax_preview_order_pdf() {
+        error_log('🚨 PDF BUILDER - ajax_preview_order_pdf STARTED');
+
         // Vérifier les permissions
         if (!current_user_can('manage_woocommerce')) {
+            error_log('❌ PDF BUILDER - ajax_preview_order_pdf: Permissions insuffisantes');
             wp_send_json_error('Permissions insuffisantes');
         }
 
         // Vérification de sécurité
         if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions')) {
+            error_log('❌ PDF BUILDER - ajax_preview_order_pdf: Nonce invalide');
             wp_send_json_error('Sécurité: Nonce invalide');
         }
 
         $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
         $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
 
+        error_log('🟡 PDF BUILDER - ajax_preview_order_pdf: order_id=' . $order_id . ', template_id=' . $template_id);
+
         if (!$order_id) {
+            error_log('❌ PDF BUILDER - ajax_preview_order_pdf: ID commande manquant');
             wp_send_json_error('ID commande manquant');
         }
 
         // Vérifier que WooCommerce est actif
         if (!class_exists('WooCommerce')) {
+            error_log('❌ PDF BUILDER - ajax_preview_order_pdf: WooCommerce non actif');
             wp_send_json_error('WooCommerce n\'est pas installé ou activé');
         }
 
         $order = wc_get_order($order_id);
         if (!$order) {
+            error_log('❌ PDF BUILDER - ajax_preview_order_pdf: Commande non trouvée: ' . $order_id);
             wp_send_json_error('Commande non trouvée');
         }
 
+        error_log('✅ PDF BUILDER - ajax_preview_order_pdf: Commande trouvée');
+
         // S'assurer que TCPDF est chargé avant la génération
         if (!class_exists('TCPDF')) {
+            error_log('🟡 PDF BUILDER - ajax_preview_order_pdf: TCPDF non chargé, tentative de chargement');
+
             // Essayer de charger TCPDF depuis les chemins possibles
             $tcpdf_paths = [
                 plugin_dir_path(__FILE__) . '../../lib/tcpdf/tcpdf_autoload.php',
@@ -748,31 +781,46 @@ class PDF_Builder_WooCommerce_Integration {
 
             $tcpdf_loaded = false;
             foreach ($tcpdf_paths as $path) {
+                error_log('🔍 PDF BUILDER - ajax_preview_order_pdf: Test chemin TCPDF: ' . $path);
                 if (file_exists($path)) {
+                    error_log('✅ PDF BUILDER - ajax_preview_order_pdf: Fichier existe: ' . $path);
                     require_once $path;
                     if (class_exists('TCPDF')) {
+                        error_log('✅ PDF BUILDER - ajax_preview_order_pdf: TCPDF chargé avec succès depuis: ' . $path);
                         $tcpdf_loaded = true;
                         break;
+                    } else {
+                        error_log('❌ PDF BUILDER - ajax_preview_order_pdf: Échec chargement TCPDF depuis: ' . $path);
                     }
+                } else {
+                    error_log('❌ PDF BUILDER - ajax_preview_order_pdf: Fichier n\'existe pas: ' . $path);
                 }
             }
 
             if (!$tcpdf_loaded) {
+                error_log('❌ PDF BUILDER - ajax_preview_order_pdf: Impossible de charger TCPDF depuis tous les chemins');
                 wp_send_json_error('Impossible de charger TCPDF');
             }
+        } else {
+            error_log('✅ PDF BUILDER - ajax_preview_order_pdf: TCPDF déjà chargé');
         }
 
         // Définir les constantes TCPDF nécessaires
+        error_log('🟡 PDF BUILDER - ajax_preview_order_pdf: Définition des constantes TCPDF');
         $this->define_tcpdf_constants();
+        error_log('✅ PDF BUILDER - ajax_preview_order_pdf: Constantes TCPDF définies');
 
         try {
+            error_log('🟡 PDF BUILDER - ajax_preview_order_pdf: Génération PDF en cours');
             // Générer l'aperçu PDF
             $result = $this->main->generate_order_pdf($order_id, $template_id, true);
 
             if (is_wp_error($result)) {
+                error_log('❌ PDF BUILDER - ajax_preview_order_pdf: Erreur génération PDF: ' . $result->get_error_message());
                 wp_send_json_error($result->get_error_message());
             }
 
+            error_log('✅ PDF BUILDER - ajax_preview_order_pdf: PDF généré avec succès: ' . $result);
             wp_send_json_success([
                 'url' => $result,
                 'width' => 595, // A4 width in points
@@ -780,6 +828,7 @@ class PDF_Builder_WooCommerce_Integration {
             ]);
 
         } catch (Exception $e) {
+            error_log('❌ PDF BUILDER - ajax_preview_order_pdf: Exception: ' . $e->getMessage());
             wp_send_json_error('Erreur: ' . $e->getMessage());
         }
     }
@@ -788,35 +837,48 @@ class PDF_Builder_WooCommerce_Integration {
      * AJAX handler pour générer le PDF d'une commande
      */
     public function ajax_generate_order_pdf() {
+        error_log('🚨 PDF BUILDER - ajax_generate_order_pdf STARTED');
+
         // Vérifier les permissions
         if (!current_user_can('manage_woocommerce')) {
+            error_log('❌ PDF BUILDER - ajax_generate_order_pdf: Permissions insuffisantes');
             wp_send_json_error('Permissions insuffisantes');
         }
 
         // Vérification de sécurité
         if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions')) {
+            error_log('❌ PDF BUILDER - ajax_generate_order_pdf: Nonce invalide');
             wp_send_json_error('Sécurité: Nonce invalide');
         }
 
         $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
         $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
 
+        error_log('🟡 PDF BUILDER - ajax_generate_order_pdf: order_id=' . $order_id . ', template_id=' . $template_id);
+
         if (!$order_id) {
+            error_log('❌ PDF BUILDER - ajax_generate_order_pdf: ID commande manquant');
             wp_send_json_error('ID commande manquant');
         }
 
         // Vérifier que WooCommerce est actif
         if (!class_exists('WooCommerce')) {
+            error_log('❌ PDF BUILDER - ajax_generate_order_pdf: WooCommerce non actif');
             wp_send_json_error('WooCommerce n\'est pas installé ou activé');
         }
 
         $order = wc_get_order($order_id);
         if (!$order) {
+            error_log('❌ PDF BUILDER - ajax_generate_order_pdf: Commande non trouvée: ' . $order_id);
             wp_send_json_error('Commande non trouvée');
         }
 
+        error_log('✅ PDF BUILDER - ajax_generate_order_pdf: Commande trouvée');
+
         // S'assurer que TCPDF est chargé avant la génération
         if (!class_exists('TCPDF')) {
+            error_log('🟡 PDF BUILDER - ajax_generate_order_pdf: TCPDF non chargé, tentative de chargement');
+
             // Essayer de charger TCPDF depuis les chemins possibles
             $tcpdf_paths = [
                 plugin_dir_path(__FILE__) . '../../lib/tcpdf/tcpdf_autoload.php',
@@ -826,34 +888,50 @@ class PDF_Builder_WooCommerce_Integration {
 
             $tcpdf_loaded = false;
             foreach ($tcpdf_paths as $path) {
+                error_log('🔍 PDF BUILDER - ajax_generate_order_pdf: Test chemin TCPDF: ' . $path);
                 if (file_exists($path)) {
+                    error_log('✅ PDF BUILDER - ajax_generate_order_pdf: Fichier existe: ' . $path);
                     require_once $path;
                     if (class_exists('TCPDF')) {
+                        error_log('✅ PDF BUILDER - ajax_generate_order_pdf: TCPDF chargé avec succès depuis: ' . $path);
                         $tcpdf_loaded = true;
                         break;
+                    } else {
+                        error_log('❌ PDF BUILDER - ajax_generate_order_pdf: Échec chargement TCPDF depuis: ' . $path);
                     }
+                } else {
+                    error_log('❌ PDF BUILDER - ajax_generate_order_pdf: Fichier n\'existe pas: ' . $path);
                 }
             }
 
             if (!$tcpdf_loaded) {
+                error_log('❌ PDF BUILDER - ajax_generate_order_pdf: Impossible de charger TCPDF depuis tous les chemins');
                 wp_send_json_error('Impossible de charger TCPDF');
             }
+        } else {
+            error_log('✅ PDF BUILDER - ajax_generate_order_pdf: TCPDF déjà chargé');
         }
 
         // Définir les constantes TCPDF nécessaires
+        error_log('🟡 PDF BUILDER - ajax_generate_order_pdf: Définition des constantes TCPDF');
         $this->define_tcpdf_constants();
+        error_log('✅ PDF BUILDER - ajax_generate_order_pdf: Constantes TCPDF définies');
 
         try {
+            error_log('🟡 PDF BUILDER - ajax_generate_order_pdf: Génération PDF en cours');
             // Générer le PDF
             $result = $this->main->generate_order_pdf($order_id, $template_id, false);
 
             if (is_wp_error($result)) {
+                error_log('❌ PDF BUILDER - ajax_generate_order_pdf: Erreur génération PDF: ' . $result->get_error_message());
                 wp_send_json_error($result->get_error_message());
             }
 
+            error_log('✅ PDF BUILDER - ajax_generate_order_pdf: PDF généré avec succès: ' . $result);
             wp_send_json_success(['url' => $result]);
 
         } catch (Exception $e) {
+            error_log('❌ PDF BUILDER - ajax_generate_order_pdf: Exception: ' . $e->getMessage());
             wp_send_json_error('Erreur: ' . $e->getMessage());
         }
     }
