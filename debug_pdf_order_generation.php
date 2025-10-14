@@ -91,6 +91,12 @@ if (!$template_data) {
         $template_id
     ), ARRAY_A);
 
+if ($template_id > 0) {
+    $template = $wpdb->get_row($wpdb->prepare(
+        "SELECT * FROM $table_templates WHERE id = %d",
+        $template_id
+    ), ARRAY_A);
+
     if ($template) {
         echo "✅ Template #{$template_id} chargé<br>";
         $template_data = json_decode($template['template_data'], true);
@@ -102,6 +108,10 @@ if (!$template_data) {
     } else {
         echo "❌ Échec chargement template #{$template_id}<br>";
     }
+} else {
+    echo "🔄 Utilisation du template par défaut intégré<br>";
+    $template_data = null; // Sera géré par get_default_invoice_template()
+}
 } else {
     echo "❌ Aucun template trouvé<br>";
 }
