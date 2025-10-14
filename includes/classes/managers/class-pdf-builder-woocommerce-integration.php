@@ -704,7 +704,19 @@ class PDF_Builder_WooCommerce_Integration {
                 $template_id = $default_template['id'];
                 error_log('✅ PDF BUILDER - ajax_preview_order_pdf: Default template found: ' . $default_template['name'] . ' (ID: ' . $template_id . ')');
             } else {
-                error_log('⚠️ PDF BUILDER - ajax_preview_order_pdf: No default template found, using simple preview');
+                error_log('⚠️ PDF BUILDER - ajax_preview_order_pdf: No default template found, checking all templates...');
+
+                // Vérifier s'il y a des templates du tout
+                $all_templates = $wpdb->get_results("SELECT id, name, is_default FROM $table_templates LIMIT 5", ARRAY_A);
+                error_log('🔍 PDF BUILDER - ajax_preview_order_pdf: All templates in DB: ' . print_r($all_templates, true));
+
+                // Si pas de template par défaut, prendre le premier template disponible
+                if (!empty($all_templates)) {
+                    $template_id = $all_templates[0]['id'];
+                    error_log('🔄 PDF BUILDER - ajax_preview_order_pdf: Using first available template: ' . $all_templates[0]['name'] . ' (ID: ' . $template_id . ')');
+                } else {
+                    error_log('❌ PDF BUILDER - ajax_preview_order_pdf: No templates found in database');
+                }
             }
 
             $generator = new PDF_Builder_Pro_Generator();

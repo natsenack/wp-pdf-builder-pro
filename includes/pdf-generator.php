@@ -1173,7 +1173,7 @@ class PDF_Builder_Pro_Generator {
                 $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
                 $template = $wpdb->get_row(
-                    $wpdb->prepare("SELECT template_data FROM $table_templates WHERE id = %d", $template_id),
+                    $wpdb->prepare("SELECT id, name, template_data FROM $table_templates WHERE id = %d", $template_id),
                     ARRAY_A
                 );
 
@@ -1182,6 +1182,8 @@ class PDF_Builder_Pro_Generator {
                     throw new Exception('Template non trouvé');
                 }
 
+                error_log('✅ PDF BUILDER - generate_simple_preview: Template found: ' . $template['name']);
+
                 // Décoder les données JSON du template
                 $template_data = json_decode($template['template_data'], true);
                 if (json_last_error() !== JSON_ERROR_NONE) {
@@ -1189,11 +1191,14 @@ class PDF_Builder_Pro_Generator {
                     throw new Exception('Données du template invalides');
                 }
 
-                error_log('✅ PDF BUILDER - generate_simple_preview: Template data loaded successfully');
+                error_log('✅ PDF BUILDER - generate_simple_preview: Template data decoded successfully. Elements count: ' . (isset($template_data['elements']) ? count($template_data['elements']) : 'none'));
 
                 // Générer le PDF avec les données du template
                 $elements = isset($template_data['elements']) ? $template_data['elements'] : [];
+                error_log('🟡 PDF BUILDER - generate_simple_preview: Calling generate() with ' . count($elements) . ' elements');
                 $pdf_content = $this->generate($elements, ['title' => 'Aperçu Facture - Commande #' . $order_id]);
+
+                error_log('✅ PDF BUILDER - generate_simple_preview: PDF generated with template, content size: ' . strlen($pdf_content) . ' bytes');
 
                 // Utiliser le répertoire uploads standard au lieu d'un sous-répertoire
                 $upload_dir = wp_upload_dir();
