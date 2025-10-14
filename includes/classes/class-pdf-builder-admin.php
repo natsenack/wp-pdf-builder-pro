@@ -256,6 +256,16 @@ class PDF_Builder_Admin {
             [$this, 'diagnostic_page']
         );
 
+        // Page de test pour la sélection de templates
+        add_submenu_page(
+            'pdf-builder-pro',
+            __('Test Templates - PDF Builder Pro', 'pdf-builder-pro'),
+            __('🔧 Test Templates', 'pdf-builder-pro'),
+            'manage_options',
+            'pdf-builder-test-templates',
+            [$this->core, 'test_template_selection_page']
+        );
+
         // Test TCPDF (commenté - système de test nettoyé)
         // add_submenu_page(
         //     'pdf-builder-pro',

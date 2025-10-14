@@ -54,7 +54,6 @@ class PDF_Builder_Core {
     private function init_hooks() {
         add_action('init', array($this, 'init'));
         add_action('admin_init', array($this, 'admin_init'));
-        add_action('admin_menu', array($this, 'add_admin_menu'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
 
