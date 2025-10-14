@@ -42,6 +42,16 @@ function pdf_builder_deactivate() {
 // Charger le plugin de manière standard
 add_action('plugins_loaded', 'pdf_builder_init');
 
+// Charger les traductions
+add_action('init', 'pdf_builder_load_textdomain');
+
+/**
+ * Charger le domaine de traduction
+ */
+function pdf_builder_load_textdomain() {
+    load_plugin_textdomain('pdf-builder-pro', false, dirname(plugin_basename(__FILE__)) . '/languages');
+}
+
 /**
  * Initialiser le plugin
  */
