@@ -1464,6 +1464,7 @@ function pdf_builder_generate_pdf() {
         wp_send_json_error('Erreur fatale lors de la generation du PDF');
     }
 }
+}
 
 // Fin de la fonction pdf_builder_generate_pdf
 // Enregistrer la fonction AJAX
