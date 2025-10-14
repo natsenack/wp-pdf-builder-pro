@@ -390,32 +390,69 @@ function pdf_builder_ajax_generate_order_pdf_fallback() {
 function pdf_builder_ajax_preview_order_pdf_fallback() {
     error_log('PDF BUILDER - Fallback AJAX handler called for preview_order_pdf');
 
-    // Vérifier si les classes de base sont chargées
-    if (!class_exists('PDF_Builder_Core')) {
-        error_log('PDF BUILDER - PDF_Builder_Core class not found, loading bootstrap...');
-        pdf_builder_load_bootstrap();
+    try {
+        // Vérifications de sécurité de base
+        if (!current_user_can('manage_woocommerce')) {
+            error_log('PDF BUILDER - Fallback: Permissions insuffisantes');
+            wp_send_json_error('Permissions insuffisantes');
+            return;
+        }
+
+        if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions')) {
+            error_log('PDF BUILDER - Fallback: Nonce invalide');
+            wp_send_json_error('Sécurité: Nonce invalide');
+            return;
+        }
+
+        $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
+        error_log('PDF BUILDER - Fallback: order_id=' . $order_id);
+
+        if (!$order_id) {
+            error_log('PDF BUILDER - Fallback: ID commande manquant');
+            wp_send_json_error('ID commande manquant');
+            return;
+        }
+
+        // Charger les fichiers nécessaires directement
+        $plugin_dir = plugin_dir_path(__FILE__);
+        if (!class_exists('PDF_Builder_Pro_Generator')) {
+            $generator_file = $plugin_dir . 'includes/pdf-generator.php';
+            if (file_exists($generator_file)) {
+                error_log('PDF BUILDER - Fallback: Loading generator file');
+                require_once $generator_file;
+            } else {
+                error_log('PDF BUILDER - Fallback: Generator file not found: ' . $generator_file);
+                wp_send_json_error('Fichier générateur non trouvé');
+                return;
+            }
+        }
+
+        if (!class_exists('PDF_Builder_Pro_Generator')) {
+            error_log('PDF BUILDER - Fallback: PDF_Builder_Pro_Generator class still not available');
+            wp_send_json_error('Classe générateur non disponible');
+            return;
+        }
+
+        error_log('PDF BUILDER - Fallback: Creating generator instance');
+        $generator = new PDF_Builder_Pro_Generator();
+
+        error_log('PDF BUILDER - Fallback: Calling generate_simple_preview');
+        $result = $generator->generate_simple_preview($order_id);
+
+        if (is_wp_error($result)) {
+            error_log('PDF BUILDER - Fallback: Error from generate_simple_preview: ' . $result->get_error_message());
+            wp_send_json_error($result->get_error_message());
+        } else {
+            error_log('PDF BUILDER - Fallback: Success, URL: ' . $result);
+            wp_send_json_success(['url' => $result]);
+        }
+
+    } catch (Exception $e) {
+        error_log('PDF BUILDER - Fallback: Exception: ' . $e->getMessage());
+        error_log('PDF BUILDER - Fallback: Stack trace: ' . $e->getTraceAsString());
+        wp_send_json_error('Erreur: ' . $e->getMessage());
     }
-
-    if (!class_exists('PDF_Builder_Core')) {
-        error_log('PDF BUILDER - Still no PDF_Builder_Core after loading bootstrap');
-        wp_send_json_error('Core classes not available');
-        return;
-    }
-
-    $core = PDF_Builder_Core::getInstance();
-    $admin = PDF_Builder_Admin::getInstance();
-    $woocommerce_integration = $admin ? $admin->get_woocommerce_integration() : null;
-
-    if ($woocommerce_integration && method_exists($woocommerce_integration, 'ajax_preview_order_pdf')) {
-        error_log('PDF BUILDER - Calling primary AJAX handler via fallback');
-        $woocommerce_integration->ajax_preview_order_pdf();
-    } else {
-        error_log('PDF BUILDER - WooCommerce integration not available: admin=' . ($admin ? 'yes' : 'no') . ', integration=' . ($woocommerce_integration ? 'yes' : 'no'));
-        wp_send_json_error('WooCommerce integration not available');
-    }
-}
-
-function pdf_builder_ajax_save_order_canvas_fallback() {
+}function pdf_builder_ajax_save_order_canvas_fallback() {
     error_log('PDF BUILDER - Fallback AJAX handler called for save_order_canvas');
     
     // Charger le core si nécessaire
