@@ -798,8 +798,8 @@ class PDF_Builder_WooCommerce_Integration {
 
             // Essayer de charger TCPDF depuis les chemins possibles
             $tcpdf_paths = [
-                plugin_dir_path(__FILE__) . '../../lib/tcpdf/tcpdf_autoload.php',
                 plugin_dir_path(__FILE__) . '../../lib/tcpdf/tcpdf.php',
+                plugin_dir_path(__FILE__) . '../../lib/tcpdf/tcpdf_autoload.php',
                 plugin_dir_path(__FILE__) . '../../vendor/tecnickcom/tcpdf/tcpdf.php'
             ];
 
@@ -905,8 +905,8 @@ class PDF_Builder_WooCommerce_Integration {
 
             // Essayer de charger TCPDF depuis les chemins possibles
             $tcpdf_paths = [
-                plugin_dir_path(__FILE__) . '../../lib/tcpdf/tcpdf_autoload.php',
                 plugin_dir_path(__FILE__) . '../../lib/tcpdf/tcpdf.php',
+                plugin_dir_path(__FILE__) . '../../lib/tcpdf/tcpdf_autoload.php',
                 plugin_dir_path(__FILE__) . '../../vendor/tecnickcom/tcpdf/tcpdf.php'
             ];
 
