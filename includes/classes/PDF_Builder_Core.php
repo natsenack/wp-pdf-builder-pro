@@ -89,11 +89,6 @@ class PDF_Builder_Core {
         // Ajouter les pages d'administration
         add_action('admin_menu', array($this, 'add_admin_menu'));
 
-        // Si ce n'est pas une requête AJAX, ajouter le menu directement aussi
-        if (!defined('DOING_AJAX') || !DOING_AJAX) {
-            $this->add_admin_menu();
-        }
-
         // Enregistrer les paramètres
         add_action('admin_init', array($this, 'register_settings'));
     }
@@ -252,7 +247,7 @@ class PDF_Builder_Core {
             // Page de test pour le débogage
             error_log('PDF BUILDER - Adding test templates submenu');
             add_submenu_page(
-                null, // Top-level menu
+                'pdf-builder-pro',
                 __('🔧 Test Templates', 'pdf-builder-pro'),
                 __('🔧 Test Templates', 'pdf-builder-pro'),
                 'manage_options',
