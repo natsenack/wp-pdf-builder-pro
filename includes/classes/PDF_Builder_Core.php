@@ -212,7 +212,7 @@ class PDF_Builder_Core {
             add_menu_page(
                 __('PDF Builder Pro', 'pdf-builder-pro'),
                 __('PDF Builder', 'pdf-builder-pro'),
-                'read',
+                '',
                 'pdf-builder-pro',
                 array($this, 'admin_page'),
                 'dashicons-pdf',
@@ -223,7 +223,7 @@ class PDF_Builder_Core {
                 'pdf-builder-pro',
                 __('Templates', 'pdf-builder-pro'),
                 __('Templates', 'pdf-builder-pro'),
-                'read',
+                '',
                 'pdf-builder-templates',
                 array($this, 'templates_page')
             );
@@ -242,7 +242,7 @@ class PDF_Builder_Core {
                 'pdf-builder-pro',
                 __('Settings', 'pdf-builder-pro'),
                 __('Settings', 'pdf-builder-pro'),
-                'read',
+                '',
                 'pdf-builder-settings',
                 array($this, 'settings_page')
             );
@@ -253,7 +253,7 @@ class PDF_Builder_Core {
                 'pdf-builder-pro',
                 __('🔧 Test Templates', 'pdf-builder-pro'),
                 __('🔧 Test Templates', 'pdf-builder-pro'),
-                'read',
+                '',
                 'pdf-builder-test',
                 array($this, 'test_template_selection_page')
             );
