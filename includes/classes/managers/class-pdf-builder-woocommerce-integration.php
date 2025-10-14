@@ -34,36 +34,10 @@ class PDF_Builder_WooCommerce_Integration {
         error_log('PDF BUILDER - Registering AJAX hooks in WooCommerce integration');
         // AJAX handlers pour WooCommerce - gérés par le manager
         add_action('wp_ajax_pdf_builder_generate_order_pdf', [$this, 'ajax_generate_order_pdf'], 1);
-        add_action('wp_ajax_pdf_builder_pro_preview_order_pdf', [$this, 'ajax_preview_order_pdf'], 1);
+        add_action('wp_ajax_pdf_builder_pro_preview_order_pdf', [PDF_Builder_Admin::getInstance(), 'ajax_preview_order_pdf'], 1);
         add_action('wp_ajax_pdf_builder_save_order_canvas', [$this, 'ajax_save_order_canvas'], 1);
         error_log('PDF BUILDER - AJAX hooks registered: pdf_builder_generate_order_pdf, pdf_builder_pro_preview_order_pdf, pdf_builder_save_order_canvas');
-
-        // Ajouter un log global pour déboguer
-        add_action('wp_ajax_pdf_builder_pro_preview_order_pdf', function() {
-            error_log('PDF BUILDER - Global AJAX hook triggered for pdf_builder_pro_preview_order_pdf');
-        }, 1);
-
-        // Hook global pour toutes les actions AJAX
-        add_action('wp_ajax_nopriv_pdf_builder_pro_preview_order_pdf', function() {
-            error_log('PDF BUILDER - NOPRIV AJAX hook triggered for pdf_builder_pro_preview_order_pdf');
-        }, 1);
-
-        // Hook pour intercepter toutes les requêtes AJAX
-        add_action('admin_init', function() {
-            if (isset($_REQUEST['action']) && $_REQUEST['action'] === 'pdf_builder_pro_preview_order_pdf') {
-                error_log('PDF BUILDER - Action pdf_builder_pro_preview_order_pdf detected in admin_init');
-                if (has_action('wp_ajax_pdf_builder_pro_preview_order_pdf')) {
-                    error_log('PDF BUILDER - Hook wp_ajax_pdf_builder_pro_preview_order_pdf exists');
-                } else {
-                    error_log('PDF BUILDER - Hook wp_ajax_pdf_builder_pro_preview_order_pdf does NOT exist');
-                }
-            }
-        });
     }
-
-    /**
-     * Détecte automatiquement le type de document basé sur le statut de la commande
-     */
     private function detect_document_type($order_status) {
         $status_mapping = [
             'pending' => 'devis',
