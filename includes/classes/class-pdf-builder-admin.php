@@ -3100,7 +3100,7 @@ class PDF_Builder_Admin {
 
             // Générer le PDF avec les données de la commande
             $pdf_filename = 'order-' . $order_id . '-' . time() . '.pdf';
-            $pdf_path = $this->generate_order_pdf($order, $template_data, $pdf_filename);
+            $pdf_path = $this->generate_order_pdf_private($order, $template_data, $pdf_filename);
 
             if ($pdf_path && file_exists($pdf_path)) {
                 $upload_dir = wp_upload_dir();
@@ -3256,7 +3256,7 @@ class PDF_Builder_Admin {
     /**
      * Retourne le libellé du type de document
      */
-    private function generate_order_pdf($order, $template_data, $filename) {
+    private function generate_order_pdf_private($order, $template_data, $filename) {
         // Créer le répertoire de stockage s'il n'existe pas
         $upload_dir = wp_upload_dir();
         $pdf_dir = $upload_dir['basedir'] . '/pdf-builder/orders';
@@ -4959,6 +4959,73 @@ class PDF_Builder_Admin {
      */
     public function diagnostic_page() {
         return $this->diagnostic_manager->diagnostic_page();
+    }
+
+    /**
+     * Génère un PDF pour une commande WooCommerce (méthode publique pour l'intégration)
+     *
+     * @param int $order_id ID de la commande
+     * @param int $template_id ID du template (0 pour auto-détection)
+     * @param bool $is_preview True pour aperçu, false pour génération finale
+     * @return string|WP_Error URL du PDF généré ou erreur
+     */
+    public function generate_order_pdf($order_id, $template_id = 0, $is_preview = false) {
+        // Vérifier que WooCommerce est actif
+        if (!class_exists('WooCommerce')) {
+            return new WP_Error('woocommerce_missing', 'WooCommerce n\'est pas installé ou activé');
+        }
+
+        // Vérifier que les fonctions WooCommerce nécessaires existent
+        if (!function_exists('wc_get_order')) {
+            return new WP_Error('woocommerce_functions_missing', 'Fonction wc_get_order non disponible - WooCommerce mal installé');
+        }
+
+        $order = wc_get_order($order_id);
+        if (!$order) {
+            return new WP_Error('order_not_found', 'Commande non trouvée');
+        }
+
+        // Vérifier que l'objet order a les méthodes nécessaires
+        if (!method_exists($order, 'get_id') || !method_exists($order, 'get_total')) {
+            return new WP_Error('invalid_order_object', 'Objet commande WooCommerce invalide');
+        }
+
+        try {
+            // Charger le template de manière robuste
+            if ($template_id > 0) {
+                $template_data = $this->load_template_robust($template_id);
+            } else {
+                // Vérifier s'il y a un template spécifique pour le statut de la commande
+                $order_status = $order->get_status();
+                $status_templates = get_option('pdf_builder_order_status_templates', []);
+                $status_key = 'wc-' . $order_status;
+
+                if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
+                    $mapped_template_id = $status_templates[$status_key];
+                    $template_data = $this->load_template_robust($mapped_template_id);
+                } else {
+                    $template_data = $this->get_default_invoice_template();
+                }
+            }
+
+            // Générer le PDF avec les données de la commande
+            $prefix = $is_preview ? 'preview-' : '';
+            $pdf_filename = $prefix . 'order-' . $order_id . '-' . time() . '.pdf';
+            $pdf_path = $this->generate_order_pdf_private($order, $template_data, $pdf_filename);
+
+            if ($pdf_path && file_exists($pdf_path)) {
+                $upload_dir = wp_upload_dir();
+                $pdf_url = str_replace($upload_dir['basedir'], $upload_dir['baseurl'], $pdf_path);
+                return $pdf_url;
+            } else {
+                return new WP_Error('pdf_generation_failed', 'Erreur lors de la génération du PDF - fichier non créé');
+            }
+
+        } catch (Exception $e) {
+            return new WP_Error('generation_exception', 'Erreur: ' . $e->getMessage());
+        } catch (Error $e) {
+            return new WP_Error('generation_error', 'Erreur fatale: ' . $e->getMessage());
+        }
     }
 }
 
