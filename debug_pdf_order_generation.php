@@ -74,11 +74,18 @@ if (!empty($valid_templates)) {
     $valid_template_id = reset($valid_templates)['id'];
     echo "✅ Utilisation du template valide #{$valid_template_id}<br>";
 } else {
-    echo "❌ Aucun template valide trouvé, utilisation du template par défaut<br>";
+    echo "❌ Aucun template valide trouvé, utilisation du template par défaut intégré<br>";
     $valid_template_id = 0; // Utilisera le template par défaut
 }
 
 $template_id = $valid_template_id;
+
+// Pour le test, forçons l'utilisation du template par défaut si le template chargé est corrompu
+$template_data = json_decode($template['template_data'], true);
+if (!$template_data) {
+    echo "🔄 Template corrompu détecté, basculement vers template par défaut<br>";
+    $template_id = 0;
+}
     $template = $wpdb->get_row($wpdb->prepare(
         "SELECT * FROM $table_templates WHERE id = %d",
         $template_id
