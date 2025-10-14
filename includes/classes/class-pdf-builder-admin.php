@@ -4540,8 +4540,8 @@ class PDF_Builder_Admin {
         // Corriger les valeurs undefined/null malformées
         $cleaned = preg_replace('/:\s*undefined\b/', ':null', $cleaned);
 
-        // Supprimer les espaces blancs excessifs
-        $cleaned = preg_replace('/\s+/', ' ', $cleaned);
+        // Supprimer les espaces blancs excessifs - ATTENTION: NE PAS utiliser car ça casse le JSON !
+        // $cleaned = preg_replace('/\s+/', ' ', $cleaned);
 
         return $cleaned;
     }
@@ -4585,18 +4585,22 @@ class PDF_Builder_Admin {
                 error_log('PDF Builder - JSON de test OK, éléments décodés: ' . count($test_elements));
             }
 
-            // Essayer d'abord de décoder sans nettoyage
+            // Puisque le JSON du frontend est valide, essayons d'abord SANS nettoyage
             $elements = json_decode($elements_json, true);
             if (json_last_error() !== JSON_ERROR_NONE) {
-                error_log('PDF Builder - Erreur JSON brut: ' . json_last_error_msg() . ', tentative avec nettoyage...');
-                // Si ça échoue, essayer avec le nettoyage
+                error_log('PDF Builder - JSON brut échoue: ' . json_last_error_msg() . ', tentative avec nettoyage...');
+                // SEULEMENT si le JSON brut échoue, utiliser le nettoyage
                 $elements = json_decode($this->clean_json_data($elements_json), true);
                 if (json_last_error() !== JSON_ERROR_NONE) {
                     error_log('PDF Builder - Erreur JSON après nettoyage: ' . json_last_error_msg());
                     error_log('PDF Builder - Données après nettoyage: ' . substr($this->clean_json_data($elements_json), 0, 500));
                     wp_send_json_error(['message' => 'Erreur de décodage JSON des éléments: ' . json_last_error_msg()]);
                     return;
+                } else {
+                    error_log('PDF Builder - Décodage réussi avec nettoyage');
                 }
+            } else {
+                error_log('PDF Builder - Décodage réussi SANS nettoyage, éléments: ' . count($elements));
             }
 
             // Valider que c'est un tableau d'éléments
