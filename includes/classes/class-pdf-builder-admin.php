@@ -2485,24 +2485,40 @@ class PDF_Builder_Admin {
         $document_type = $this->detect_document_type($order_status);
         $document_type_label = $this->get_document_type_label($document_type);
 
-        // Récupérer le template par défaut adapté au type de document détecté
-        $default_template = null;
+        // Vérifier d'abord s'il y a un mapping spécifique pour ce statut de commande
+        $status_templates = get_option('pdf_builder_order_status_templates', []);
+        $status_key = 'wc-' . $order_status;
+        $mapped_template = null;
 
-        if (!empty($keywords)) {
-            // D'abord chercher un template par défaut dont le nom contient un mot-clé du type
-            $placeholders = str_repeat('%s,', count($keywords) - 1) . '%s';
-            $sql = $wpdb->prepare(
-                "SELECT id, name FROM $table_templates WHERE is_default = 1 AND (" .
-                implode(' OR ', array_fill(0, count($keywords), 'LOWER(name) LIKE LOWER(%s)')) .
-                ") LIMIT 1",
-                array_map(function($keyword) { return '%' . $keyword . '%'; }, $keywords)
-            );
-            $default_template = $wpdb->get_row($sql, ARRAY_A);
+        if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
+            // Il y a un mapping spécifique pour ce statut
+            $mapped_template = $wpdb->get_row($wpdb->prepare(
+                "SELECT id, name FROM $table_templates WHERE id = %d",
+                $status_templates[$status_key]
+            ), ARRAY_A);
         }
 
-        // Si aucun template spécifique trouvé, prendre n'importe quel template par défaut
+        // Si pas de mapping spécifique, utiliser la logique de détection automatique
+        $default_template = $mapped_template;
         if (!$default_template) {
-            $default_template = $wpdb->get_row("SELECT id, name FROM $table_templates WHERE is_default = 1 LIMIT 1", ARRAY_A);
+            $keywords = $this->get_document_keywords($document_type);
+
+            if (!empty($keywords)) {
+                // D'abord chercher un template par défaut dont le nom contient un mot-clé du type
+                $placeholders = str_repeat('%s,', count($keywords) - 1) . '%s';
+                $sql = $wpdb->prepare(
+                    "SELECT id, name FROM $table_templates WHERE is_default = 1 AND (" .
+                    implode(' OR ', array_fill(0, count($keywords), 'LOWER(name) LIKE LOWER(%s)')) .
+                    ") LIMIT 1",
+                    array_map(function($keyword) { return '%' . $keyword . '%'; }, $keywords)
+                );
+                $default_template = $wpdb->get_row($sql, ARRAY_A);
+            }
+
+            // Si aucun template spécifique trouvé, prendre n'importe quel template par défaut
+            if (!$default_template) {
+                $default_template = $wpdb->get_row("SELECT id, name FROM $table_templates WHERE is_default = 1 LIMIT 1", ARRAY_A);
+            }
         }
 
         wp_nonce_field('pdf_builder_order_actions', 'pdf_builder_order_nonce');
@@ -2705,11 +2721,15 @@ class PDF_Builder_Admin {
                     <label style="display: block; margin-bottom: 6px; font-weight: 500; color: #23282d; font-size: 13px;">
                         🎨 <?php _e('Template sélectionné:', 'pdf-builder-pro'); ?>
                     </label>
-                    <div style="padding: 10px; background: #e8f5e8; border: 1px solid #c3e6c3; border-radius: 6px; font-size: 14px; color: #155724;">
+                    <div style="padding: 10px; background: <?php echo $mapped_template ? '#e8f0ff' : '#e8f5e8'; ?>; border: 1px solid <?php echo $mapped_template ? '#b3d4ff' : '#c3e6c3'; ?>; border-radius: 6px; font-size: 14px; color: <?php echo $mapped_template ? '#0d47a1' : '#155724'; ?>;">
                         <?php if ($default_template): ?>
                             <strong><?php echo esc_html($default_template['name']); ?></strong>
                             <small style="color: #6c757d; display: block; margin-top: 4px;">
-                                <?php _e('Template automatiquement sélectionné pour ce type de document', 'pdf-builder-pro'); ?>
+                                <?php if ($mapped_template): ?>
+                                    <?php _e('Template assigné spécifiquement pour le statut "', 'pdf-builder-pro'); ?><?php echo esc_html(wc_get_order_status_name($order->get_status())); ?><?php _e('"', 'pdf-builder-pro'); ?>
+                                <?php else: ?>
+                                    <?php _e('Template automatiquement sélectionné pour ce type de document', 'pdf-builder-pro'); ?>
+                                <?php endif; ?>
                             </small>
                         <?php else: ?>
                             <em><?php _e('Aucun template par défaut trouvé', 'pdf-builder-pro'); ?></em>
@@ -3464,38 +3484,8 @@ class PDF_Builder_Admin {
     }
 
     /**
-     * Détecte automatiquement le type de document basé sur le statut de la commande
-     */
-    private function detect_document_type($order_status) {
-        $status_mapping = [
-            'processing' => 'invoice',
-            'completed' => 'invoice',
-            'pending' => 'quote',
-            'on-hold' => 'quote',
-            'wc-devis' => 'quote', // État personnalisé pour les devis
-            'devis' => 'quote', // Au cas où le préfixe n'est pas présent
-            'cancelled' => 'credit_note',
-            'refunded' => 'credit_note',
-            'failed' => 'credit_note'
-        ];
-
-        return $status_mapping[$order_status] ?? 'invoice';
-    }
-
-    /**
      * Retourne le libellé du type de document
      */
-    private function get_document_type_label($document_type) {
-        $labels = [
-            'invoice' => __('Facture', 'pdf-builder-pro'),
-            'quote' => __('Devis', 'pdf-builder-pro'),
-            'receipt' => __('Reçu', 'pdf-builder-pro'),
-            'credit_note' => __('Avoir', 'pdf-builder-pro'),
-            'order' => __('Commande', 'pdf-builder-pro')
-        ];
-
-        return $labels[$document_type] ?? __('Document', 'pdf-builder-pro');
-    }
     private function generate_order_pdf($order, $template_data, $filename) {
         // Créer le répertoire de stockage s'il n'existe pas
         $upload_dir = wp_upload_dir();
@@ -5015,6 +5005,59 @@ class PDF_Builder_Admin {
             'success' => true,
             'message' => sprintf(__('Paramètres réinitialisés avec succès. %d options supprimées.', 'pdf-builder-pro'), $reset_count)
         );
+    }
+
+    /**
+     * Détecte le type de document basé sur le statut de la commande
+     */
+    private function detect_document_type($order_status) {
+        // Mapping des statuts WooCommerce vers les types de document
+        $status_mapping = [
+            'wc-quote' => 'devis',           // Devis
+            'wc-quotation' => 'devis',      // Devis (variante)
+            'quote' => 'devis',             // Devis (sans préfixe)
+            'quotation' => 'devis',         // Devis (sans préfixe)
+            'wc-pending' => 'commande',     // En attente
+            'wc-processing' => 'commande',  // En cours
+            'wc-on-hold' => 'commande',     // En attente
+            'wc-completed' => 'facture',    // Terminée -> Facture
+            'wc-cancelled' => 'commande',   // Annulée
+            'wc-refunded' => 'facture',     // Remboursée -> Facture
+            'wc-failed' => 'commande',      // Échec
+        ];
+
+        // Retourner le type mappé ou 'commande' par défaut
+        return isset($status_mapping[$order_status]) ? $status_mapping[$order_status] : 'commande';
+    }
+
+    /**
+     * Retourne le libellé du type de document
+     */
+    private function get_document_type_label($document_type) {
+        $labels = [
+            'facture' => __('Facture', 'pdf-builder-pro'),
+            'devis' => __('Devis', 'pdf-builder-pro'),
+            'commande' => __('Commande', 'pdf-builder-pro'),
+            'contrat' => __('Contrat', 'pdf-builder-pro'),
+            'bon_livraison' => __('Bon de livraison', 'pdf-builder-pro'),
+        ];
+
+        return isset($labels[$document_type]) ? $labels[$document_type] : ucfirst($document_type);
+    }
+
+    /**
+     * Retourne les mots-clés pour rechercher des templates par type de document
+     */
+    private function get_document_keywords($document_type) {
+        $keywords_mapping = [
+            'facture' => ['facture', 'invoice', 'factura'],
+            'devis' => ['devis', 'quote', 'quotation', 'cotización', 'presupuesto'],
+            'commande' => ['commande', 'order', 'pedido', 'orden'],
+            'contrat' => ['contrat', 'contract', 'contrato'],
+            'bon_livraison' => ['livraison', 'delivery', 'entrega', 'bon'],
+        ];
+
+        return isset($keywords_mapping[$document_type]) ? $keywords_mapping[$document_type] : [$document_type];
     }
 }
 
