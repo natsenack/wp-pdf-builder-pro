@@ -389,11 +389,38 @@ const PreviewModal = ({
       console.log('Valeur du nonce envoyé:', freshNonce);
       console.log('Timestamp envoi:', Date.now());
 
+      // Vérifier la sérialisation JSON avant l'envoi
+      let jsonString;
+      try {
+        jsonString = JSON.stringify(elements);
+        console.log('✅ JSON stringify réussi pour validation, longueur:', jsonString.length);
+        console.log('Aperçu JSON validation (premiers 300 chars):', jsonString.substring(0, 300));
+      } catch (jsonError) {
+        console.error('❌ Erreur lors de JSON.stringify pour validation:', jsonError);
+        console.error('Éléments problématiques pour validation:', elements);
+
+        // Test avec des données simples
+        console.log('🔧 Test avec données JSON simples...');
+        const testElements = [{id: 'test_element', type: 'text', content: 'Test', x: 10, y: 10, width: 100, height: 50}];
+        try {
+          const testJson = JSON.stringify(testElements);
+          console.log('✅ JSON de test réussi:', testJson);
+        } catch (testError) {
+          console.error('❌ Même le JSON de test échoue:', testError);
+        }
+
+        setPreviewData(prev => ({
+          ...prev,
+          server_error: 'Erreur de sérialisation JSON côté client'
+        }));
+        return;
+      }
+
       // Préparer les données pour l'AJAX
       const formData = new FormData();
       formData.append('action', 'pdf_builder_generate_preview');
       formData.append('nonce', freshNonce);
-      formData.append('elements', JSON.stringify(elements));
+      formData.append('elements', jsonString);
 
       // Faire l'appel AJAX en arrière-plan
       const response = await fetch(ajaxUrl, {

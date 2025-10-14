@@ -4574,6 +4574,17 @@ class PDF_Builder_Admin {
             error_log('PDF Builder - Données JSON brutes reçues: ' . substr($elements_json, 0, 500));
             error_log('PDF Builder - Longueur des données: ' . strlen($elements_json));
 
+            // Test avec des données JSON simples d'abord
+            $test_json = '[{"id":"test_element","type":"text","content":"Test","x":10,"y":10,"width":100,"height":50}]';
+            error_log('PDF Builder - Test avec JSON simple: ' . $test_json);
+
+            $test_elements = json_decode($test_json, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                error_log('PDF Builder - Même le JSON de test échoue: ' . json_last_error_msg());
+            } else {
+                error_log('PDF Builder - JSON de test OK, éléments décodés: ' . count($test_elements));
+            }
+
             // Essayer d'abord de décoder sans nettoyage
             $elements = json_decode($elements_json, true);
             if (json_last_error() !== JSON_ERROR_NONE) {

@@ -136,11 +136,24 @@ export const PDFCanvasEditor = ({ options }) => {
         console.log(`- Dimensions: width=${element.width}, height=${element.height}`);
       });
 
+      // Vérifier la sérialisation JSON avant l'envoi
+      let jsonString;
+      try {
+        jsonString = JSON.stringify(elements);
+        console.log('✅ JSON stringify réussi, longueur:', jsonString.length);
+        console.log('Aperçu JSON (premiers 500 chars):', jsonString.substring(0, 500));
+      } catch (jsonError) {
+        console.error('❌ Erreur lors de JSON.stringify:', jsonError);
+        console.error('Éléments problématiques:', elements);
+        alert('Erreur de sérialisation des éléments. Vérifiez la console pour plus de détails.');
+        return;
+      }
+
       // Préparer les données pour l'AJAX
       const formData = new FormData();
       formData.append('action', 'pdf_builder_generate_pdf');
       formData.append('nonce', window.pdfBuilderAjax?.nonce);
-      formData.append('elements', JSON.stringify(elements));
+      formData.append('elements', jsonString);
 
       console.log('Envoi de', elements.length, 'éléments au serveur...');
       console.log('Données JSON envoyées:', JSON.stringify(elements, null, 2));
