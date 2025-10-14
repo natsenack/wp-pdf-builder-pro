@@ -255,8 +255,13 @@ class PDF_Builder_WooCommerce_Integration {
             color: white;
         }
 
-        .pdf-btn-download:hover {
-            background: #545b62;
+        .pdf-btn-preview {
+            background: #28a745;
+            color: white;
+        }
+
+        .pdf-btn-preview:hover {
+            background: #218838;
         }
 
         .pdf-status {
@@ -312,6 +317,11 @@ class PDF_Builder_WooCommerce_Integration {
 
             <!-- Action Buttons -->
             <div class="pdf-actions">
+                <button type="button" class="pdf-btn pdf-btn-preview" id="pdf-preview-btn">
+                    <span>👁️</span>
+                    Aperçu PDF
+                </button>
+
                 <button type="button" class="pdf-btn pdf-btn-generate" id="pdf-generate-btn">
                     <span>⚡</span>
                     Générer PDF
@@ -360,6 +370,45 @@ class PDF_Builder_WooCommerce_Integration {
             }
 
             // Event handlers
+            $('#pdf-preview-btn').on('click', function() {
+                console.log('PDF BUILDER - Preview button clicked');
+                showStatus('Génération de l\'aperçu...', 'loading');
+                setButtonLoading($(this), true);
+
+                console.log('PDF BUILDER - Sending AJAX request for preview:', {
+                    action: 'pdf_builder_preview_order_pdf',
+                    order_id: orderId,
+                    nonce: nonce.substring(0, 10) + '...'
+                });
+
+                $.ajax({
+                    url: ajaxUrl,
+                    type: 'POST',
+                    data: {
+                        action: 'pdf_builder_preview_order_pdf',
+                        order_id: orderId,
+                        nonce: nonce
+                    },
+                    success: function(response) {
+                        console.log('PDF BUILDER - Preview AJAX success response:', response);
+                        if (response.success && response.data && response.data.url) {
+                            // Ouvrir l'aperçu dans une nouvelle fenêtre/onglet
+                            window.open(response.data.url, '_blank');
+                            showStatus('Aperçu généré avec succès', 'success');
+                        } else {
+                            var errorMsg = response.data || 'Erreur lors de la génération de l\'aperçu';
+                            showStatus(errorMsg, 'error');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        showStatus('Erreur AJAX: ' + error, 'error');
+                    },
+                    complete: function() {
+                        setButtonLoading($('#pdf-preview-btn'), false);
+                    }
+                });
+            });
+
             $('#pdf-generate-btn').on('click', function() {
                 console.log('PDF BUILDER - Generate button clicked');
                 showStatus('Génération du PDF...', 'loading');
