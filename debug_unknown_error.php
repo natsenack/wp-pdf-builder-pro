@@ -30,19 +30,101 @@ if (class_exists('TCPDF')) {
     echo "✅ TCPDF déjà chargé<br>";
 } else {
     echo "❌ TCPDF non chargé - Tentative de chargement...<br>";
-    // Utiliser la même méthode que la classe principale
-    $core = PDF_Builder_Core::getInstance();
-    $admin = PDF_Builder_Admin::getInstance($core);
+    // Utiliser la même logique que PDF_Builder_Admin::load_tcpdf_library()
+    $tcpdf_paths = [
+        __DIR__ . '/lib/tcpdf/tcpdf.php',  // Essayer d'abord tcpdf.php directement
+        __DIR__ . '/lib/tcpdf/tcpdf_autoload.php',
+        __DIR__ . '/vendor/tecnickcom/tcpdf/tcpdf.php',
+        plugin_dir_path(__FILE__) . 'lib/tcpdf/tcpdf.php',
+        plugin_dir_path(__FILE__) . 'lib/tcpdf/tcpdf_autoload.php',
+        plugin_dir_path(__FILE__) . 'vendor/tecnickcom/tcpdf/tcpdf.php'
+    ];
 
-    if (method_exists($admin, 'load_tcpdf_library')) {
-        $loaded = $admin->load_tcpdf_library();
-        if ($loaded && class_exists('TCPDF')) {
-            echo "✅ TCPDF chargé avec succès via PDF_Builder_Admin<br>";
-        } else {
-            echo "❌ Échec du chargement TCPDF via PDF_Builder_Admin<br>";
+    $tcpdf_loaded = false;
+    foreach ($tcpdf_paths as $path) {
+        if (file_exists($path)) {
+            echo "Tentative de chargement depuis: " . basename(dirname($path)) . '/' . basename($path) . "<br>";
+            require_once $path;
+            if (class_exists('TCPDF')) {
+                $tcpdf_loaded = true;
+                echo "✅ TCPDF chargé depuis: " . basename(dirname($path)) . '/' . basename($path) . "<br>";
+
+                // Définir les constantes TCPDF si elles ne sont pas définies
+                if (!defined('K_PATH_FONTS')) {
+                    define('K_PATH_FONTS', __DIR__ . '/lib/tcpdf/fonts/');
+                }
+                if (!defined('K_PATH_CACHE')) {
+                    define('K_PATH_CACHE', __DIR__ . '/cache/');
+                }
+                if (!defined('K_PATH_URL_CACHE')) {
+                    define('K_PATH_URL_CACHE', plugin_dir_url(__FILE__) . 'cache/');
+                }
+                if (!defined('K_PATH_IMAGES')) {
+                    define('K_PATH_IMAGES', __DIR__ . '/lib/tcpdf/images/');
+                }
+                if (!defined('K_BLANK_IMAGE')) {
+                    define('K_BLANK_IMAGE', K_PATH_IMAGES . 'blank.png');
+                }
+                if (!defined('PDF_PAGE_FORMAT')) {
+                    define('PDF_PAGE_FORMAT', 'A4');
+                }
+                if (!defined('PDF_PAGE_ORIENTATION')) {
+                    define('PDF_PAGE_ORIENTATION', 'P');
+                }
+                if (!defined('PDF_CREATOR')) {
+                    define('PDF_CREATOR', 'PDF Builder Pro');
+                }
+                if (!defined('PDF_AUTHOR')) {
+                    define('PDF_AUTHOR', 'PDF Builder Pro');
+                }
+                if (!defined('PDF_HEADER_TITLE')) {
+                    define('PDF_HEADER_TITLE', 'PDF Builder Pro');
+                }
+                if (!defined('PDF_HEADER_STRING')) {
+                    define('PDF_HEADER_STRING', "par PDF Builder Pro\nwww.pdfbuilderpro.com");
+                }
+                if (!defined('PDF_UNIT')) {
+                    define('PDF_UNIT', 'mm');
+                }
+                if (!defined('PDF_MARGIN_HEADER')) {
+                    define('PDF_MARGIN_HEADER', 5);
+                }
+                if (!defined('PDF_MARGIN_FOOTER')) {
+                    define('PDF_MARGIN_FOOTER', 10);
+                }
+                if (!defined('PDF_MARGIN_TOP')) {
+                    define('PDF_MARGIN_TOP', 27);
+                }
+                if (!defined('PDF_MARGIN_BOTTOM')) {
+                    define('PDF_MARGIN_BOTTOM', 25);
+                }
+                if (!defined('PDF_MARGIN_LEFT')) {
+                    define('PDF_MARGIN_LEFT', 15);
+                }
+                if (!defined('PDF_MARGIN_RIGHT')) {
+                    define('PDF_MARGIN_RIGHT', 15);
+                }
+                if (!defined('PDF_FONT_SIZE_MAIN')) {
+                    define('PDF_FONT_SIZE_MAIN', 10);
+                }
+                if (!defined('PDF_FONT_SIZE_DATA')) {
+                    define('PDF_FONT_SIZE_DATA', 8);
+                }
+                if (!defined('PDF_FONT_MONOSPACED')) {
+                    define('PDF_FONT_MONOSPACED', 'courier');
+                }
+                if (!defined('PDF_IMAGE_SCALE_RATIO')) {
+                    define('PDF_IMAGE_SCALE_RATIO', 1.25);
+                }
+
+                break;
+            }
         }
-    } else {
-        echo "❌ Méthode load_tcpdf_library non disponible<br>";
+    }
+
+    if (!$tcpdf_loaded) {
+        echo "❌ Impossible de charger TCPDF<br>";
+        exit;
     }
 }
 
