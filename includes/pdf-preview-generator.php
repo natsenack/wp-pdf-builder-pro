@@ -289,12 +289,19 @@ class PDF_Preview_Generator {
                 return sprintf('<div style="%s">%s</div>', $base_style, $table_html);
 
             case 'customer_info':
+                // Récupérer les vraies informations client depuis la commande WooCommerce
+                $customer_info = $this->get_customer_info();
+                $customer_lines = explode("\n", $customer_info);
+
                 $customer_html = '<div style="padding: 8px; font-size: 12px; line-height: 1.4;">';
                 $customer_html .= '<div style="font-weight: bold; margin-bottom: 4px;">Client</div>';
-                $customer_html .= '<div>Jean Dupont</div>';
-                $customer_html .= '<div>123 Rue de la Paix</div>';
-                $customer_html .= '<div>75001 Paris</div>';
-                $customer_html .= '<div>France</div>';
+
+                foreach ($customer_lines as $line) {
+                    if (!empty(trim($line))) {
+                        $customer_html .= '<div>' . htmlspecialchars($line) . '</div>';
+                    }
+                }
+
                 $customer_html .= '</div>';
 
                 return sprintf('<div style="%s">%s</div>', $base_style, $customer_html);
@@ -483,6 +490,34 @@ function pdf_builder_generate_preview() {
         ob_end_clean();
         error_log('Erreur fatale aperçu PDF: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());
         wp_send_json_error('Erreur fatale serveur: ' . $e->getMessage());
+    }
+
+    /**
+     * Récupère les informations client depuis la commande WooCommerce
+     */
+    private function get_customer_info() {
+        // Pour l'aperçu, on utilise des données fictives mais réalistes
+        // Format cohérent avec format_complete_customer_info()
+        $customer_info = [];
+
+        // Nom complet
+        $customer_info[] = 'Jean Dupont';
+
+        // Société (optionnel)
+        $customer_info[] = 'ABC Company SARL';
+
+        // Adresse complète (formatée comme WooCommerce)
+        $customer_info[] = '123 Rue de la Paix';
+        $customer_info[] = '75001 Paris';
+        $customer_info[] = 'France';
+
+        // Email
+        $customer_info[] = 'Email: jean.dupont@email.com';
+
+        // Téléphone
+        $customer_info[] = 'Téléphone: +33 6 12 34 56 78';
+
+        return implode("\n", $customer_info);
     }
 }
 

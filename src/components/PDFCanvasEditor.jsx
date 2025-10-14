@@ -141,6 +141,7 @@ export const PDFCanvasEditor = ({ options }) => {
       formData.append('action', 'pdf_builder_generate_pdf');
       formData.append('nonce', window.pdfBuilderAjax?.nonce);
       formData.append('elements', JSON.stringify(elements));
+      formData.append('orderData', JSON.stringify(orderData));
 
       console.log('Envoi de', elements.length, 'éléments au serveur...');
       console.log('Données JSON envoyées:', JSON.stringify(elements, null, 2));
@@ -659,6 +660,7 @@ export const PDFCanvasEditor = ({ options }) => {
           canvasHeight={canvasState.canvasHeight}
           ajaxurl={window.pdfBuilderAjax?.ajaxurl}
           pdfBuilderNonce={window.pdfBuilderAjax?.nonce}
+          orderData={orderData}
           onOpenPDFModal={(pdfUrl) => {
             setPdfModalUrl(pdfUrl);
             setShowPDFModal(true);

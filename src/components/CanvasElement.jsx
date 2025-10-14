@@ -1019,7 +1019,7 @@ export const CanvasElement = ({
                     fontWeight: 'bold',
                     color: element.color || '#333'
                   }}>
-                    Jean Dupont
+                    Marie Dubois
                   </div>
                 </div>
               )}
@@ -1047,7 +1047,7 @@ export const CanvasElement = ({
                   <div style={{
                     color: '#1976d2'
                   }}>
-                    jean.dupont@email.com
+                    marie.dubois@tech-innov.fr
                   </div>
                 </div>
               )}
@@ -1075,7 +1075,7 @@ export const CanvasElement = ({
                   <div style={{
                     color: element.color || '#333'
                   }}>
-                    +33 6 12 34 56 78
+                    +33 1 42 86 95 47
                   </div>
                 </div>
               )}
@@ -1104,8 +1104,8 @@ export const CanvasElement = ({
                     color: element.color || '#333',
                     lineHeight: '1.4'
                   }}>
-                    123 Rue de la Paix<br />
-                    75001 Paris<br />
+                    15 Avenue des Entrepreneurs<br />
+                    75008 Paris<br />
                     France
                   </div>
                 </div>
@@ -1135,7 +1135,7 @@ export const CanvasElement = ({
                     fontWeight: 'bold',
                     color: element.color || '#333'
                   }}>
-                    ABC Company SARL
+                    Technologies Innovantes SARL
                   </div>
                 </div>
               )}

@@ -186,9 +186,12 @@ const PreviewModal = ({
           }}>
             <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>Client</div>
             <div>Jean Dupont</div>
+            <div>ABC Company SARL</div>
             <div>123 Rue de la Paix</div>
             <div>75001 Paris</div>
             <div>France</div>
+            <div style={{ marginTop: '4px' }}>Email: jean.dupont@email.com</div>
+            <div>Téléphone: +33 6 12 34 56 78</div>
           </div>
         );
 

@@ -38,7 +38,7 @@ class PDF_Builder_Pro_Generator {
     }
 
     /**
-     * Generateur principal - Interface unifiee
+     * Générateur principal - Interface unifiée
      */
     public function generate($elements, $options = []) {
         try {
@@ -46,7 +46,7 @@ class PDF_Builder_Pro_Generator {
             $this->validate_elements($elements);
             $this->initialize_tcpdf();
             $this->configure_pdf($options);
-            $this->render_elements($elements);
+            $this->render_elements($elements, $options);
             return $this->finalize_pdf();
 
         } catch (Exception $e) {
@@ -229,7 +229,7 @@ class PDF_Builder_Pro_Generator {
     /**
      * Rendu des elements optimise
      */
-    private function render_elements($elements) {
+    private function render_elements($elements, $options = []) {
         // Calcul précis du facteur de conversion basé sur les dimensions réelles
         // Canvas: 595×842 px | A4: 210×297 mm
         // Conversion: 210mm / 595px = 0.3529 mm/px
@@ -265,7 +265,7 @@ class PDF_Builder_Pro_Generator {
                     $GLOBALS['pdf_debug_logs'][] = "🔧 RENDU ÉLÉMENT: $element_type - POS: $element_pos - CONTENT: $element_content";
                 }
 
-                $this->render_single_element($element, $px_to_mm);
+                $this->render_single_element($element, $px_to_mm, $options);
                 error_log('PDF Builder Pro: Element rendu avec succes');
 
                 if (isset($GLOBALS['pdf_debug_logs'])) {
@@ -294,7 +294,7 @@ class PDF_Builder_Pro_Generator {
     /**
      * Rendu d'un element individuel
      */
-    private function render_single_element($element, $px_to_mm) {
+    private function render_single_element($element, $px_to_mm, $options = []) {
         $type = isset($element['type']) ? $element['type'] : 'unknown';
 
         switch ($type) {
@@ -311,7 +311,7 @@ class PDF_Builder_Pro_Generator {
                 $this->render_image_element($element, $px_to_mm);
                 break;
             case 'customer_info':
-                $this->render_customer_info_element($element, $px_to_mm);
+                $this->render_customer_info_element($element, $px_to_mm, $options);
                 break;
             case 'company_info':
                 $this->render_company_info_element($element, $px_to_mm);
@@ -615,14 +615,16 @@ class PDF_Builder_Pro_Generator {
     /**
      * Rendu d'élément customer_info
      */
-    private function render_customer_info_element($element, $px_to_mm) {
+    private function render_customer_info_element($element, $px_to_mm, $options = []) {
         $x = isset($element['x']) ? $element['x'] * $px_to_mm : 10;
         $y = isset($element['y']) ? $element['y'] * $px_to_mm : 10;
         $width = isset($element['width']) ? $element['width'] * $px_to_mm : 80;
         $height = isset($element['height']) ? $element['height'] * $px_to_mm : 30;
 
-        // Contenu factice pour l'instant (devrait venir des données WooCommerce)
-        $customer_info = "Client\nJean Dupont\n123 Rue de la Paix\n75001 Paris\nFrance";
+        // Utiliser les vraies données de commande si disponibles
+        $orderData = isset($options['orderData']) ? $options['orderData'] : null;
+        $customer_name = isset($orderData['customer_name']) ? $orderData['customer_name'] : 'Jean Dupont';
+        $billing_address = isset($orderData['billing_address']) ? $orderData['billing_address'] : "123 Rue de la Paix\n75001 Paris\nFrance";
 
         // Positionner le curseur
         $this->pdf->SetXY($x, $y);
@@ -633,7 +635,7 @@ class PDF_Builder_Pro_Generator {
 
         // Contenu
         $this->pdf->SetFont('helvetica', '', 10);
-        $this->pdf->MultiCell($width, 5, utf8_decode($customer_info), 0, 'L');
+        $this->pdf->MultiCell($width, 5, utf8_decode($customer_name . "\n" . $billing_address), 0, 'L');
     }
 
     /**
@@ -819,11 +821,27 @@ class PDF_Builder_Pro_Generator {
         $width = isset($element['width']) ? $element['width'] * $px_to_mm : 50;
         $height = isset($element['height']) ? $element['height'] * $px_to_mm : 20;
 
+        // Récupérer le type de document depuis l'élément
+        $doc_type = isset($element['documentType']) ? $element['documentType'] : '';
+
+        // Convertir le type en texte français
+        $doc_text = match($doc_type) {
+            'invoice' => 'FACTURE',
+            'quote' => 'DEVIS',
+            'receipt' => 'REÇU',
+            'order' => 'COMMANDE',
+            'credit_note' => 'AVOIR',
+            default => 'DOCUMENT'
+        };
+
+        // Récupérer la couleur depuis l'élément
+        $color = isset($element['color']) ? $element['color'] : '#1e293b';
+        $color_rgb = $this->parse_color($color);
+
         $this->pdf->SetXY($x, $y);
-        $this->pdf->SetFont('helvetica', 'B', 14);
-        $this->pdf->Cell($width, 8, utf8_decode('FACTURE'), 0, 1, 'R');
-        $this->pdf->SetFont('helvetica', '', 10);
-        $this->pdf->Cell($width, 6, utf8_decode('N° INV-001'), 0, 1, 'R');
+        $this->pdf->SetFont('helvetica', 'B', 18);
+        $this->pdf->SetTextColor($color_rgb['r'], $color_rgb['g'], $color_rgb['b']);
+        $this->pdf->Cell($width, 10, utf8_decode($doc_text), 0, 1, 'C');
     }
 
     /**
@@ -884,6 +902,11 @@ function pdf_builder_generate_pdf() {
         $debug_logs[] = "📊 " . count($elements) . " ÉLÉMENTS REÇUS DU FRONTEND";
         error_log('PDF Builder Pro: ' . count($elements) . ' elements recus');
 
+        // Récupérer les données de commande
+        $orderData = json_decode(stripslashes($_POST['orderData'] ?? '{}'), true);
+        $debug_logs[] = "📋 DONNÉES DE COMMANDE REÇUES: " . json_encode($orderData);
+        error_log('PDF Builder Pro: Donnees commande: ' . json_encode($orderData));
+
         if (empty($elements)) {
             $debug_logs[] = "❌ AUCUN ÉLÉMENT À TRAITER";
             ob_end_clean();
@@ -915,7 +938,7 @@ function pdf_builder_generate_pdf() {
         $debug_logs[] = "🏭 DÉMARRAGE GÉNÉRATION PDF AVEC PDF_Builder_Pro_Generator";
         // Generer le PDF avec le nouveau generateur
         $generator = new PDF_Builder_Pro_Generator();
-        $pdf_content = $generator->generate($elements);
+        $pdf_content = $generator->generate($elements, ['orderData' => $orderData]);
 
         $debug_logs[] = "📄 PDF CONTENT GÉNÉRÉ - TAILLE: " . strlen($pdf_content) . " OCTETS";
 

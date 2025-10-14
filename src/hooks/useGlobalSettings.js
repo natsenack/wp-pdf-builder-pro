@@ -184,7 +184,7 @@ export const useGlobalSettings = () => {
         zoomToSelection: wpSettings.zoom_to_selection !== undefined ? wpSettings.zoom_to_selection : prev.zoomToSelection,
 
         // Paramètres de sélection et manipulation
-        showResizeHandles: wpSettings.show_resize_handles !== undefined ? wpSettings.show_resize_handles : prev.showResizeHandles,
+        showResizeHandles: true, // Forcer à true pour corriger le bug des poignées
         handleSize: wpSettings.handle_size || prev.handleSize,
         handleColor: wpSettings.handle_color || prev.handleColor,
         enableRotation: wpSettings.enable_rotation !== undefined ? wpSettings.enable_rotation : prev.enableRotation,
@@ -242,6 +242,8 @@ export const useGlobalSettings = () => {
       if (savedSettings) {
         try {
           const parsedSettings = JSON.parse(savedSettings);
+          // Forcer showResizeHandles à true pour corriger le bug des poignées
+          parsedSettings.showResizeHandles = true;
           setSettings(prev => ({ ...prev, ...ajaxSettings, ...parsedSettings }));
         } catch (error) {
           setSettings(prev => ({ ...prev, ...ajaxSettings }));
@@ -282,6 +284,8 @@ export const useGlobalSettings = () => {
   const updateSettings = (newSettings) => {
     setSettings(prev => {
       const updated = { ...prev, ...newSettings };
+      // Forcer showResizeHandles à true pour corriger le bug des poignées
+      updated.showResizeHandles = true;
       // Sauvegarder dans localStorage pour la compatibilité
       localStorage.setItem('pdf-builder-global-settings', JSON.stringify(updated));
       return updated;
