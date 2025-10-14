@@ -2795,172 +2795,111 @@ class PDF_Builder_Admin {
                             left: 0;
                             width: 100%;
                             height: 100%;
-                            background: rgba(0, 0, 0, 0.85);
-                            backdrop-filter: blur(4px);
+                            background: rgba(0, 0, 0, 0.8);
                             z-index: 99999;
                             display: flex;
                             align-items: center;
                             justify-content: center;
                             opacity: 0;
-                            transition: all 0.3s ease;
+                            transition: opacity 0.3s ease;
                         ">
                             <div id="pdf-preview-content" style="
                                 background: white;
-                                border-radius: 12px;
-                                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-                                max-width: 95vw;
-                                max-height: 95vh;
-                                overflow: hidden;
+                                border-radius: 8px;
+                                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                                max-width: 90vw;
+                                max-height: 90vh;
+                                overflow: auto;
                                 position: relative;
-                                transform: scale(0.9) translateY(20px);
-                                transition: all 0.3s ease;
-                                display: flex;
-                                flex-direction: column;
+                                transform: scale(0.9);
+                                transition: transform 0.3s ease;
                             ">
                                 <div id="pdf-preview-header" style="
-                                    padding: 20px 24px;
+                                    padding: 15px 20px;
                                     border-bottom: 1px solid #e1e1e1;
                                     display: flex;
                                     justify-content: space-between;
                                     align-items: center;
-                                    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-                                    border-radius: 12px 12px 0 0;
+                                    background: #f8f9fa;
+                                    border-radius: 8px 8px 0 0;
                                 ">
                                     <div style="display: flex; align-items: center; gap: 15px;">
-                                        <h3 style="margin: 0; color: #333; font-size: 20px; font-weight: 600;"><?php echo esc_js(__('Aperçu PDF', 'pdf-builder-pro')); ?></h3>
-                                        <div style="font-size: 13px; color: #666; margin-top: 2px;">
-                                            <?php echo esc_js(__('Commande', 'pdf-builder-pro')); ?> #<?php echo esc_js($order->get_order_number()); ?> •
-                                            <?php echo esc_js(wc_get_order_status_name($order->get_status())); ?>
-                                        </div>
-                                        <div id="pdf-zoom-controls" style="display: flex; align-items: center; gap: 8px; background: white; border-radius: 8px; padding: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                        <h3 style="margin: 0; color: #333; font-size: 18px;"><?php echo esc_js(__('Aperçu PDF', 'pdf-builder-pro')); ?></h3>
+                                        <div id="pdf-zoom-controls" style="display: flex; align-items: center; gap: 10px;">
                                             <button id="pdf-zoom-out" style="
-                                                background: #f8f9fa;
-                                                border: 1px solid #dee2e6;
-                                                border-radius: 6px;
-                                                width: 32px;
-                                                height: 32px;
+                                                background: #fff;
+                                                border: 1px solid #ddd;
+                                                border-radius: 4px;
+                                                width: 30px;
+                                                height: 30px;
                                                 display: flex;
                                                 align-items: center;
                                                 justify-content: center;
                                                 cursor: pointer;
                                                 font-size: 16px;
-                                                color: #495057;
-                                                transition: all 0.2s ease;
-                                            " title="<?php echo esc_js(__('Zoom arrière (Ctrl+-)', 'pdf-builder-pro')); ?>">−</button>
-                                            <span id="pdf-zoom-level" style="font-size: 13px; color: #495057; min-width: 50px; text-align: center; font-weight: 600;">100%</span>
+                                                color: #666;
+                                            " title="<?php echo esc_js(__('Zoom arrière', 'pdf-builder-pro')); ?>">−</button>
+                                            <span id="pdf-zoom-level" style="font-size: 13px; color: #666; min-width: 45px; text-align: center;">100%</span>
                                             <button id="pdf-zoom-in" style="
-                                                background: #f8f9fa;
-                                                border: 1px solid #dee2e6;
-                                                border-radius: 6px;
-                                                width: 32px;
-                                                height: 32px;
+                                                background: #fff;
+                                                border: 1px solid #ddd;
+                                                border-radius: 4px;
+                                                width: 30px;
+                                                height: 30px;
                                                 display: flex;
                                                 align-items: center;
                                                 justify-content: center;
                                                 cursor: pointer;
                                                 font-size: 16px;
-                                                color: #495057;
-                                                transition: all 0.2s ease;
-                                            " title="<?php echo esc_js(__('Zoom avant (Ctrl++)', 'pdf-builder-pro')); ?>">+</button>
+                                                color: #666;
+                                            " title="<?php echo esc_js(__('Zoom avant', 'pdf-builder-pro')); ?>">+</button>
                                             <button id="pdf-zoom-fit" style="
-                                                background: #007cba;
-                                                border: 1px solid #007cba;
-                                                border-radius: 6px;
-                                                padding: 0 12px;
-                                                height: 32px;
+                                                background: #fff;
+                                                border: 1px solid #ddd;
+                                                border-radius: 4px;
+                                                padding: 0 8px;
+                                                height: 30px;
                                                 display: flex;
                                                 align-items: center;
                                                 justify-content: center;
                                                 cursor: pointer;
                                                 font-size: 12px;
-                                                color: white;
-                                                font-weight: 500;
-                                                transition: all 0.2s ease;
-                                            " title="<?php echo esc_js(__('Ajuster à la fenêtre (Ctrl+0)', 'pdf-builder-pro')); ?>"><?php echo esc_js(__('Ajuster', 'pdf-builder-pro')); ?></button>
+                                                color: #666;
+                                            " title="<?php echo esc_js(__('Ajuster à la fenêtre', 'pdf-builder-pro')); ?>"><?php echo esc_js(__('Ajuster', 'pdf-builder-pro')); ?></button>
                                         </div>
-                                        <div style="display: flex; gap: 8px;">
-                                            <button id="pdf-print-btn" style="
-                                                background: #28a745;
-                                                border: 1px solid #28a745;
-                                                border-radius: 6px;
-                                                width: 32px;
-                                                height: 32px;
-                                                display: flex;
-                                                align-items: center;
-                                                justify-content: center;
-                                                cursor: pointer;
-                                                font-size: 14px;
-                                                color: white;
-                                                transition: all 0.2s ease;
-                                            " title="<?php echo esc_js(__('Imprimer le PDF', 'pdf-builder-pro')); ?>">🖨️</button>
-                                            <button id="pdf-download-btn" style="
-                                                background: #ffc107;
-                                                border: 1px solid #ffc107;
-                                                border-radius: 6px;
-                                                width: 32px;
-                                                height: 32px;
-                                                display: flex;
-                                                align-items: center;
-                                                justify-content: center;
-                                                cursor: pointer;
-                                                font-size: 14px;
-                                                color: #212529;
-                                                transition: all 0.2s ease;
-                                            " title="<?php echo esc_js(__('Télécharger le PDF', 'pdf-builder-pro')); ?>">⬇️</button>
-                                        </div>
-                                        <button id="pdf-preview-close" style="
-                                            background: #dc3545;
-                                            border: 1px solid #dc3545;
-                                            border-radius: 6px;
-                                            width: 32px;
-                                            height: 32px;
-                                            display: flex;
-                                            align-items: center;
-                                            justify-content: center;
-                                            cursor: pointer;
-                                            font-size: 16px;
-                                            color: white;
-                                            transition: all 0.2s ease;
-                                        " title="<?php echo esc_js(__('Fermer (Échap)', 'pdf-builder-pro')); ?>">&times;</button>
-                                </div>
-                                <div id="pdf-preview-body" style="
-                                    flex: 1;
-                                    padding: 24px;
-                                    background: #f8f9fa;
-                                    border-radius: 0 0 12px 12px;
-                                    overflow: auto;
-                                ">
-                                    <div id="pdf-preview-iframe-container" style="
-                                        border: 2px solid #dee2e6;
-                                        border-radius: 8px;
-                                        background: white;
+                                    </div>
+                                    <button id="pdf-preview-close" style="
+                                        background: none;
+                                        border: none;
+                                        font-size: 24px;
+                                        cursor: pointer;
+                                        color: #666;
+                                        padding: 0;
+                                        width: 30px;
+                                        height: 30px;
                                         display: flex;
                                         align-items: center;
                                         justify-content: center;
-                                        min-height: 500px;
-                                        box-shadow: inset 0 2px 8px rgba(0,0,0,0.05);
-                                        position: relative;
+                                        border-radius: 50%;
+                                        transition: all 0.2s ease;
+                                    ">&times;</button>
+                                </div>
+                                <div id="pdf-preview-body" style="
+                                    padding: 20px;
+                                    background: white;
+                                    border-radius: 0 0 8px 8px;
+                                ">
+                                    <div id="pdf-preview-iframe-container" style="
+                                        border: 1px solid #ddd;
+                                        border-radius: 4px;
+                                        background: #f8f9fa;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        min-height: 400px;
                                     ">
-                                        <div id="pdf-preview-loading" style="
-                                            display: flex;
-                                            flex-direction: column;
-                                            align-items: center;
-                                            gap: 16px;
-                                            color: #666;
-                                            font-size: 16px;
-                                        ">
-                                            <div style="
-                                                width: 40px;
-                                                height: 40px;
-                                                border: 4px solid #e9ecef;
-                                                border-top: 4px solid #007cba;
-                                                border-radius: 50%;
-                                                animation: spin 1s linear infinite;
-                                            "></div>
-                                            <div style="text-align: center;">
-                                                <div style="font-weight: 600; margin-bottom: 4px;"><?php echo esc_js(__('Génération de l\'aperçu...', 'pdf-builder-pro')); ?></div>
-                                                <div style="font-size: 13px; color: #888;"><?php echo esc_js(__('Cela peut prendre quelques secondes', 'pdf-builder-pro')); ?></div>
-                                            </div>
+                                        <div id="pdf-preview-loading" style="color: #666; font-size: 16px;">
+                                            <?php echo esc_js(__('Chargement de l\'aperçu...', 'pdf-builder-pro')); ?>
                                         </div>
                                     </div>
                                 </div>
@@ -2980,51 +2919,6 @@ class PDF_Builder_Admin {
                         if (e.keyCode === 27) { // Échap
                             closePdfPreviewModal();
                         }
-                    });
-
-                    // Raccourcis clavier pour le zoom
-                    $(document).on('keydown', function(e) {
-                        if (!$('#pdf-preview-modal').is(':visible')) return;
-
-                        if (e.ctrlKey || e.metaKey) {
-                            switch(e.key) {
-                                case '+':
-                                case '=':
-                                    e.preventDefault();
-                                    $('#pdf-zoom-in').click();
-                                    break;
-                                case '-':
-                                    e.preventDefault();
-                                    $('#pdf-zoom-out').click();
-                                    break;
-                                case '0':
-                                    e.preventDefault();
-                                    $('#pdf-zoom-fit').click();
-                                    break;
-                            }
-                        }
-                    });
-
-                    // Gestionnaire pour imprimer
-                    $(document).on('click', '#pdf-print-btn', function() {
-                        var iframe = $('#pdf-preview-iframe-container iframe')[0];
-                        if (iframe && iframe.contentWindow) {
-                            iframe.contentWindow.print();
-                        }
-                    });
-
-                    // Gestionnaire pour télécharger
-                    $(document).on('click', '#pdf-download-btn', function() {
-                        // Déclencher la génération et téléchargement du PDF
-                        $('#pdf-builder-generate-btn').click();
-                        closePdfPreviewModal();
-                    });
-
-                    // Effets hover pour les boutons
-                    $(document).on('mouseenter', '#pdf-zoom-controls button, #pdf-print-btn, #pdf-download-btn, #pdf-preview-close', function() {
-                        $(this).css('transform', 'scale(1.05)');
-                    }).on('mouseleave', '#pdf-zoom-controls button, #pdf-print-btn, #pdf-download-btn, #pdf-preview-close', function() {
-                        $(this).css('transform', 'scale(1)');
                     });
                 }
 
@@ -3132,7 +3026,7 @@ class PDF_Builder_Admin {
 
                 // Afficher la modale avec animation
                 $('#pdf-preview-modal').show().animate({opacity: 1}, 300);
-                $('#pdf-preview-content').animate({scale: 1, y: 0}, 300);
+                $('#pdf-preview-content').animate({scale: 1}, 300);
             }
 
             // Aperçu PDF
