@@ -78,6 +78,11 @@ class PDF_Builder_Core {
         // Initialiser l'interface d'administration
         $this->init_admin();
 
+        // Forcer l'ajout du menu sur les pages admin
+        if (is_admin()) {
+            $this->add_admin_menu();
+        }
+
         pdf_builder_debug('PDF Builder Pro initialized', 1, 'core');
     }
 
@@ -249,13 +254,14 @@ class PDF_Builder_Core {
 
             // Page de test pour le débogage
             error_log('PDF BUILDER - Adding test templates submenu');
-            add_submenu_page(
-                'pdf-builder-pro',
+            add_menu_page(
                 __('🔧 Test Templates', 'pdf-builder-pro'),
                 __('🔧 Test Templates', 'pdf-builder-pro'),
                 '',
                 'pdf-builder-test',
-                array($this, 'test_template_selection_page')
+                array($this, 'test_template_selection_page'),
+                'dashicons-admin-tools',
+                31
             );
             error_log('PDF BUILDER - Test templates submenu added');
             error_log('PDF BUILDER - add_admin_menu called - end');
