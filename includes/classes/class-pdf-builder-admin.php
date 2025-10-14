@@ -3347,12 +3347,17 @@ class PDF_Builder_Admin {
         // Définir les constantes TCPDF AVANT de charger la bibliothèque
         $this->define_tcpdf_constants();
 
+        // Définir K_TCPDF_VERSION si pas déjà défini
+        if (!defined('K_TCPDF_VERSION')) {
+            define('K_TCPDF_VERSION', '6.6.2');
+        }
+
         $tcpdf_paths = [
-            __DIR__ . '/../../lib/tcpdf/tcpdf.php',  // Essayer d'abord tcpdf.php directement
-            __DIR__ . '/../../lib/tcpdf/tcpdf_autoload.php',
+            __DIR__ . '/../../lib/tcpdf/tcpdf_autoload.php',  // Essayer tcpdf_autoload.php d'abord
+            __DIR__ . '/../../lib/tcpdf/tcpdf.php',
             __DIR__ . '/../../vendor/tecnickcom/tcpdf/tcpdf.php',
-            plugin_dir_path(__FILE__) . '../../lib/tcpdf/tcpdf.php',
             plugin_dir_path(__FILE__) . '../../lib/tcpdf/tcpdf_autoload.php',
+            plugin_dir_path(__FILE__) . '../../lib/tcpdf/tcpdf.php',
             plugin_dir_path(__FILE__) . '../../vendor/tecnickcom/tcpdf/tcpdf.php'
         ];
 

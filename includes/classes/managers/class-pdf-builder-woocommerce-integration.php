@@ -806,6 +806,11 @@ class PDF_Builder_WooCommerce_Integration {
             // Définir les constantes TCPDF AVANT de charger la bibliothèque
             $this->define_tcpdf_constants();
 
+            // Définir K_TCPDF_VERSION si pas déjà défini
+            if (!defined('K_TCPDF_VERSION')) {
+                define('K_TCPDF_VERSION', '6.6.2');
+            }
+
             error_log('🟡 PDF BUILDER - ajax_preview_order_pdf: Constantes TCPDF définies, tentative de chargement TCPDF');
 
             // Essayer de charger TCPDF depuis les chemins possibles
@@ -942,6 +947,12 @@ class PDF_Builder_WooCommerce_Integration {
         // Définir les constantes TCPDF nécessaires AVANT de charger la bibliothèque
         error_log('🟡 PDF BUILDER - ajax_generate_order_pdf: Définition des constantes TCPDF avant chargement');
         $this->define_tcpdf_constants();
+
+        // Définir K_TCPDF_VERSION si pas déjà défini
+        if (!defined('K_TCPDF_VERSION')) {
+            define('K_TCPDF_VERSION', '6.6.2');
+        }
+
         error_log('✅ PDF BUILDER - ajax_generate_order_pdf: Constantes TCPDF définies');
 
         // S'assurer que TCPDF est chargé après la définition des constantes
