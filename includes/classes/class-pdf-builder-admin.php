@@ -2828,8 +2828,8 @@ class PDF_Builder_Admin {
                                 background: white;
                                 border-radius: 12px;
                                 box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-                                max-width: 95vw;
-                                max-height: 95vh;
+                                max-width: 98vw;
+                                max-height: 98vh;
                                 overflow: hidden;
                                 position: relative;
                                 transform: scale(0.9) translateY(20px);
@@ -2935,7 +2935,7 @@ class PDF_Builder_Admin {
                                         display: flex;
                                         align-items: center;
                                         justify-content: center;
-                                        min-height: 500px;
+                                        min-height: 700px;
                                         position: relative;
                                         overflow: hidden;
                                     ">
@@ -3027,8 +3027,8 @@ class PDF_Builder_Admin {
                 }
 
                 // Calculer les dimensions de l'aperçu
-                var modalWidth = Math.min(width + 40, window.innerWidth * 0.9);
-                var modalHeight = Math.min(height + 120, window.innerHeight * 0.9);
+                var modalWidth = Math.min(width + 40, window.innerWidth * 0.98);
+                var modalHeight = Math.min(height + 120, window.innerHeight * 0.98);
 
                 // Mettre à jour le contenu
                 $('#pdf-preview-content').css({
@@ -3122,7 +3122,7 @@ class PDF_Builder_Admin {
                 // Afficher la modale avec animation
                 $('#pdf-preview-modal').show().animate({opacity: 1}, 300);
                 $('#pdf-preview-content').animate({scale: 1}, 300);
-            }
+            });
 
             // Aperçu PDF
             $previewBtn.on('click', function() {
