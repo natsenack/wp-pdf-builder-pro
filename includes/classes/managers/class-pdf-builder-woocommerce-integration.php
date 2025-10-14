@@ -635,7 +635,7 @@ class PDF_Builder_WooCommerce_Integration {
      * AJAX handler pour générer l'aperçu PDF d'une commande
      */
     public function ajax_preview_order_pdf() {
-        error_log('🚨 PDF BUILDER - ajax_preview_order_pdf STARTED');
+        error_log('🚨 PDF BUILDER - ajax_preview_order_pdf: FUNCTION CALLED');
 
         // Vérifier les permissions
         if (!current_user_can('manage_woocommerce')) {
@@ -694,8 +694,7 @@ class PDF_Builder_WooCommerce_Integration {
 
             error_log('✅ PDF BUILDER - ajax_preview_order_pdf: Classe PDF_Builder_Pro_Generator trouvée');
 
-            // Récupérer l'état de la commande pour déterminer le bon template
-            $order_status = $order->get_status();
+            error_log('🚨 PDF BUILDER - ajax_preview_order_pdf: START - Order ID: ' . $order_id);
             error_log('🟡 PDF BUILDER - ajax_preview_order_pdf: Order status: ' . $order_status);
 
             // Vérifier s'il y a un mapping spécifique pour ce statut de commande
