@@ -89,6 +89,11 @@ class PDF_Builder_Core {
         // Ajouter les pages d'administration
         add_action('admin_menu', array($this, 'add_admin_menu'));
 
+        // Forcer l'ajout du menu si ce n'est pas AJAX
+        if (!defined('DOING_AJAX') || !DOING_AJAX) {
+            $this->add_admin_menu();
+        }
+
         // Enregistrer les paramètres
         add_action('admin_init', array($this, 'register_settings'));
     }
