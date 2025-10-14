@@ -37,6 +37,11 @@ class PDF_Builder_WooCommerce_Integration {
         add_action('wp_ajax_pdf_builder_pro_preview_order_pdf', [$this, 'ajax_preview_order_pdf']);
         add_action('wp_ajax_pdf_builder_save_order_canvas', [$this, 'ajax_save_order_canvas']);
         error_log('PDF BUILDER - AJAX hooks registered: pdf_builder_generate_order_pdf, pdf_builder_pro_preview_order_pdf, pdf_builder_save_order_canvas');
+
+        // Ajouter un log global pour déboguer
+        add_action('wp_ajax_pdf_builder_pro_preview_order_pdf', function() {
+            error_log('PDF BUILDER - Global AJAX hook triggered for pdf_builder_pro_preview_order_pdf');
+        }, 1);
     }
 
     /**
@@ -732,7 +737,7 @@ class PDF_Builder_WooCommerce_Integration {
      * AJAX handler pour générer l'aperçu PDF d'une commande
      */
     public function ajax_preview_order_pdf() {
-        error_log('🚨 PDF BUILDER - ajax_preview_order_pdf STARTED');
+        error_log('🚨 PDF BUILDER - ajax_preview_order_pdf METHOD CALLED - STARTING EXECUTION');
 
         // Vérifier les permissions
         if (!current_user_can('manage_woocommerce')) {
