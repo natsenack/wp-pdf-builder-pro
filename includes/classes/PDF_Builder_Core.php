@@ -255,7 +255,7 @@ class PDF_Builder_Core {
                 'pdf-builder-pro',
                 __('🔧 Test Templates', 'pdf-builder-pro'),
                 __('🔧 Test Templates', 'pdf-builder-pro'),
-                'manage_options',
+                'read',
                 'pdf-builder-test',
                 array($this, 'test_template_selection_page')
             );
