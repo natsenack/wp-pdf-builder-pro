@@ -1962,6 +1962,8 @@ class PDF_Builder_Admin {
                     }
                 }
 
+                $style = $tcpdf_style;
+
                 $content = $element['content'] ?? '';
 
                 // Remplacer les variables si on a une commande WooCommerce
@@ -3174,16 +3176,17 @@ class PDF_Builder_Admin {
         // Log immédiat pour vérifier si la fonction est appelée
         error_log('🚨 PDF BUILDER - ajax_preview_order_pdf FUNCTION STARTED');
 
+        // Démarrer la bufferisation de sortie pour éviter toute sortie HTML
+        ob_start();
+
+        // Désactiver complètement l'affichage des erreurs
+        ini_set('display_errors', 0);
+        error_reporting(0);
+
         // Logs de débogage détaillés
         error_log('🟡 PDF BUILDER - ajax_preview_order_pdf called');
         error_log('🟡 REQUEST METHOD: ' . $_SERVER['REQUEST_METHOD']);
         error_log('🟡 POST data: ' . print_r($_POST, true));
-
-        // Désactiver l'affichage des erreurs PHP pour éviter les réponses HTML
-        if (!defined('WP_DEBUG') || !WP_DEBUG) {
-            ini_set('display_errors', 0);
-            error_reporting(0);
-        }
 
         $this->check_admin_permissions();
         error_log('✅ PDF BUILDER - Permissions checked');
@@ -3284,16 +3287,21 @@ class PDF_Builder_Admin {
                 'height' => $template_data['canvas']['height'] ?? 842
             );
 
+            // Nettoyer le buffer de sortie avant d'envoyer la réponse JSON
+            ob_end_clean();
+
             error_log('✅ PDF BUILDER - Sending success response');
             wp_send_json_success($response);
 
         } catch (Exception $e) {
             error_log('❌ PDF BUILDER - Exception in ajax_preview_order_pdf: ' . $e->getMessage());
             error_log('❌ Stack trace: ' . $e->getTraceAsString());
+            ob_end_clean();
             wp_send_json_error('Erreur: ' . $e->getMessage());
         } catch (Error $e) {
             error_log('❌ PDF BUILDER - Fatal error in ajax_preview_order_pdf: ' . $e->getMessage());
             error_log('❌ Stack trace: ' . $e->getTraceAsString());
+            ob_end_clean();
             wp_send_json_error('Erreur fatale: ' . $e->getMessage());
         }
     }
