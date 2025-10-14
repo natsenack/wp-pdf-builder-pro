@@ -20,31 +20,6 @@ class PDF_Builder_Admin {
     private $main;
 
     /**
-     * Gestionnaire de templates
-     */
-    private $template_manager;
-
-    /**
-     * Générateur de PDF
-     */
-    private $pdf_generator;
-
-    /**
-     * Intégration WooCommerce
-     */
-    private $woocommerce_integration;
-
-    /**
-     * Gestionnaire de paramètres
-     */
-    private $settings_manager;
-
-    /**
-     * Gestionnaire de diagnostics
-     */
-    private $diagnostic_manager;
-
-    /**
      * Obtenir l'instance unique
      */
     public static function getInstance($main_instance = null) {
@@ -59,38 +34,7 @@ class PDF_Builder_Admin {
      */
     private function __construct($main_instance) {
         $this->main = $main_instance;
-
-        // Inclure les classes des managers
-        $this->include_managers();
-
-        // Instancier les managers
-        $this->init_managers();
-
         $this->init_hooks();
-    }
-
-    /**
-     * Inclure les fichiers des managers
-     */
-    private function include_managers() {
-        $managers_path = plugin_dir_path(__FILE__) . 'managers/';
-
-        require_once $managers_path . 'class-pdf-builder-template-manager.php';
-        require_once $managers_path . 'class-pdf-builder-pdf-generator.php';
-        require_once $managers_path . 'class-pdf-builder-woocommerce-integration.php';
-        require_once $managers_path . 'class-pdf-builder-settings-manager.php';
-        require_once $managers_path . 'class-pdf-builder-diagnostic-manager.php';
-    }
-
-    /**
-     * Instancier les managers
-     */
-    private function init_managers() {
-        $this->template_manager = new PDF_Builder_Template_Manager($this->main);
-        $this->pdf_generator = new PDF_Builder_PDF_Generator($this->main);
-        $this->woocommerce_integration = new PDF_Builder_WooCommerce_Integration($this->main);
-        $this->settings_manager = new PDF_Builder_Settings_Manager($this->main);
-        $this->diagnostic_manager = new PDF_Builder_Diagnostic_Manager($this->main);
     }
 
     /**
@@ -160,16 +104,53 @@ class PDF_Builder_Admin {
     /**
      * Initialise les hooks WordPress
      */
-    /**
-     * Initialise les hooks WordPress
-     */
     private function init_hooks() {
-        // Hooks de base de l'admin (restent dans cette classe)
         add_action('admin_menu', [$this, 'add_admin_menu']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts'], 20);
+        add_action('wp_ajax_pdf_builder_pro_generate_pdf', [$this, 'ajax_generate_pdf_from_canvas']);
+        add_action('wp_ajax_pdf_builder_generate_pdf', [$this, 'ajax_generate_pdf_from_canvas']); // Alias pour compatibilité
+        add_action('wp_ajax_pdf_builder_pro_preview_pdf', [$this, 'ajax_preview_pdf']);
+        // add_action('wp_ajax_pdf_builder_generate_preview', [$this, 'ajax_preview_pdf']); // Alias supprimé - conflit avec ajax_generate_preview
+        add_action('wp_ajax_pdf_builder_pro_download_pdf', [$this, 'ajax_download_pdf']);
+        add_action('wp_ajax_pdf_builder_pro_save_template', [$this, 'ajax_save_template']);
+        add_action('wp_ajax_pdf_builder_pro_load_template', [$this, 'ajax_load_template']);
+        add_action('wp_ajax_pdf_builder_get_templates', [$this, 'ajax_get_templates']);
+        add_action('wp_ajax_pdf_builder_delete_template', [$this, 'ajax_delete_template']);
+        add_action('wp_ajax_pdf_builder_duplicate_template', [$this, 'ajax_duplicate_template']);
+        add_action('wp_ajax_pdf_builder_set_default_template', [$this, 'ajax_set_default_template']);
+        add_action('wp_ajax_pdf_builder_get_template_data', [$this, 'ajax_get_template_data']);
+        add_action('wp_ajax_pdf_builder_update_template_params', [$this, 'ajax_update_template_params']);
+        add_action('wp_ajax_pdf_builder_save_template_settings', [$this, 'ajax_save_template_settings']);
+        add_action('wp_ajax_pdf_builder_get_authors', [$this, 'ajax_get_authors']);
+        add_action('wp_ajax_pdf_builder_flush_rest_cache', [$this, 'ajax_flush_rest_cache']);
+        add_action('wp_ajax_pdf_builder_save_settings', [$this, 'ajax_save_settings_page']);
+        add_action('wp_ajax_pdf_builder_generate_preview', [$this, 'ajax_generate_preview']);
 
-        // Les managers s'occupent de leurs propres hooks
-        // Les hooks AJAX sont maintenant gérés par les managers respectifs
+        // Actions de maintenance
+        add_action('wp_ajax_pdf_builder_check_database', [$this, 'ajax_check_database']);
+        add_action('wp_ajax_pdf_builder_repair_database', [$this, 'ajax_repair_database']);
+        add_action('wp_ajax_pdf_builder_execute_sql_repair', [$this, 'ajax_execute_sql_repair']);
+        add_action('wp_ajax_pdf_builder_clear_cache', [$this, 'ajax_clear_cache']);
+        add_action('wp_ajax_pdf_builder_optimize_database', [$this, 'ajax_optimize_database']);
+        add_action('wp_ajax_pdf_builder_view_logs', [$this, 'ajax_view_logs']);
+        add_action('wp_ajax_pdf_builder_clear_logs', [$this, 'ajax_clear_logs']);
+
+        // Hook pour les actions de maintenance générales
+        add_action('wp_ajax_pdf_builder_maintenance', [$this, 'handle_maintenance_action']);
+
+        // Actions de gestion des rôles
+        add_action('wp_ajax_pdf_builder_reset_role_permissions', [$this, 'ajax_reset_role_permissions']);
+        add_action('wp_ajax_pdf_builder_bulk_assign_permissions', [$this, 'ajax_bulk_assign_permissions']);
+
+        // WooCommerce integration hooks
+        if (class_exists('WooCommerce')) {
+            // Support for both legacy and HPOS order systems
+            add_action('add_meta_boxes_shop_order', [$this, 'add_woocommerce_order_meta_box']);
+            add_action('add_meta_boxes_woocommerce_page_wc-orders', [$this, 'add_woocommerce_order_meta_box']);
+            add_action('wp_ajax_pdf_builder_generate_order_pdf', [$this, 'ajax_generate_order_pdf']);
+            add_action('wp_ajax_pdf_builder_pro_preview_order_pdf', [$this, 'ajax_preview_order_pdf']);
+        } else {
+        }
     }
 
     /**
@@ -1651,21 +1632,194 @@ class PDF_Builder_Admin {
      * AJAX - Sauvegarder le template
      */
     public function ajax_save_template() {
-        return $this->template_manager->ajax_save_template();
+        $this->check_admin_permissions();
+
+        // Vérification de sécurité avec nonce WordPress
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce')) {
+            wp_send_json_error('Sécurité: Nonce invalide');
+        }
+
+        // DEBUG: Vérifier les données POST brutes
+
+        $template_data = isset($_POST['template_data']) ? $_POST['template_data'] : '';
+        $template_name = isset($_POST['template_name']) ? sanitize_text_field($_POST['template_name']) : '';
+        $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
+
+        // DEBUG: Vérifier la taille et le format des données reçues
+
+        // Vérifier si les données commencent et finissent par des accolades
+        $starts_with_brace = strpos($template_data, '{') === 0;
+        $ends_with_brace = strrpos($template_data, '}') === (strlen($template_data) - 1);
+
+        // Vérifier si les données sont déjà échappées (contiennent des backslashes)
+        $has_backslashes = strpos($template_data, '\\') !== false;
+
+        // Si les données contiennent des backslashes, essayer de les déséchapper
+        if ($has_backslashes) {
+            $unescaped_data = stripslashes($template_data);
+            $template_data = $unescaped_data;
+        }
+
+        // Valider que c'est du JSON valide
+        $decoded_test = json_decode($template_data, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            wp_send_json_error('Données JSON invalides: ' . json_last_error_msg());
+        }
+
+        if (empty($template_data) || empty($template_name)) {
+            wp_send_json_error('Données template ou nom manquant');
+        }
+
+        global $wpdb;
+        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+
+        $data = array(
+            'name' => $template_name,
+            'template_data' => $template_data,
+            'updated_at' => current_time('mysql')
+        );
+
+        if ($template_id > 0) {
+            // Update existing template
+            $result = $wpdb->update($table_templates, $data, array('id' => $template_id));
+        } else {
+            // Create new template
+            $data['created_at'] = current_time('mysql');
+            $result = $wpdb->insert($table_templates, $data);
+            $template_id = $wpdb->insert_id;
+        }
+
+        if ($result !== false) {
+            wp_send_json_success(array(
+                'message' => 'Template sauvegardé avec succès',
+                'template_id' => $template_id
+            ));
+        } else {
+            wp_send_json_error('Erreur lors de la sauvegarde du template');
+        }
     }
 
     /**
      * AJAX - Charger un template
      */
     public function ajax_load_template() {
-        return $this->template_manager->ajax_load_template();
+        $this->check_admin_permissions();
+
+        $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
+
+        if ($template_id <= 0) {
+            wp_send_json_error('ID template invalide');
+        }
+
+        global $wpdb;
+        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+
+        $template = $wpdb->get_row(
+            PDF_Builder_Debug_Helper::safe_wpdb_prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id),
+            ARRAY_A
+        );
+
+        if ($template) {
+            $template_data_raw = $template['template_data'];
+            $data_length = strlen($template_data_raw);
+            $is_null = $template_data_raw === null;
+            $is_empty = $template_data_raw === '';
+            $trimmed_length = strlen(trim($template_data_raw));
+
+            if ($is_null) {
+                wp_send_json_error('Données du template NULL - Longueur: ' . $data_length . ', NULL: ' . ($is_null ? 'oui' : 'non') . ', Vide: ' . ($is_empty ? 'oui' : 'non'));
+            }
+
+            if ($is_empty) {
+                // Auto-fix empty template by replacing with default template
+                $default_template_json = $this->get_default_template_json();
+                global $wpdb;
+                $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+
+                $update_result = $wpdb->update(
+                    $table_templates,
+                    array('template_data' => $default_template_json, 'updated_at' => current_time('mysql')),
+                    array('id' => $template_id)
+                );
+
+                if ($update_result !== false) {
+                    $template_data = json_decode($default_template_json, true);
+                } else {
+                    wp_send_json_error('Impossible de corriger le template vide');
+                }
+            } else {
+                // Vérifier si les données contiennent des backslashes (échappement PHP)
+                $has_backslashes = strpos($template_data_raw, '\\') !== false;
+                if ($has_backslashes) {
+                    $template_data_raw = stripslashes($template_data_raw);
+                    $data_length = strlen($template_data_raw); // Recalculer la longueur
+                }
+
+                $template_data = json_decode($template_data_raw, true);
+                if ($template_data === null && json_last_error() !== JSON_ERROR_NONE) {
+                    $json_error = json_last_error_msg();
+                    wp_send_json_error('Données du template corrompues - Erreur JSON: ' . $json_error);
+                }
+            }
+
+            wp_send_json_success(array(
+                'template' => $template_data,
+                'name' => $template['name']
+            ));
+        } else {
+            wp_send_json_error('Template non trouvé');
+        }
     }
 
     /**
      * Vide le cache des routes REST
      */
     public function ajax_flush_rest_cache() {
-        return $this->template_manager->ajax_flush_rest_cache();
+        $this->check_admin_permissions();
+
+        $results = array();
+
+        // Vider le cache des routes REST
+        if (function_exists('rest_get_server')) {
+            $server = rest_get_server();
+            if (method_exists($server, 'get_routes')) {
+                $routes = $server->get_routes();
+                $results['routes_count'] = count($routes);
+
+                // Forcer le rechargement des routes
+                if (function_exists('rest_api_init')) {
+                    rest_api_init();
+                    $results['rest_cache'] = 'flushed';
+                }
+            }
+        }
+
+        // Vider le cache objet si disponible
+        if (function_exists('wp_cache_flush')) {
+            wp_cache_flush();
+            $results['object_cache'] = 'flushed';
+        }
+
+        // Vider les transients liés aux routes
+        global $wpdb;
+        if ($wpdb) {
+            $deleted_transients = $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_wp_rest%'");
+            $deleted_timeouts = $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_timeout_wp_rest%'");
+            $results['transients_deleted'] = $deleted_transients;
+            $results['timeouts_deleted'] = $deleted_timeouts;
+        }
+
+        // Vider le cache des rewrite rules
+        global $wp_rewrite;
+        if ($wp_rewrite) {
+            $wp_rewrite->flush_rules();
+            $results['rewrite_rules'] = 'flushed';
+        }
+
+        wp_send_json_success(array(
+            'message' => 'Cache REST vidé avec succès',
+            'results' => $results
+        ));
     }
 
     /**
@@ -4923,36 +5077,6 @@ class PDF_Builder_Admin {
         ];
 
         return isset($keywords_mapping[$document_type]) ? $keywords_mapping[$document_type] : [$document_type];
-    }
-
-    /**
-     * Méthodes publiques pour accéder aux modules (pour compatibilité)
-     */
-    public function get_template_manager() {
-        return $this->template_manager;
-    }
-
-    public function get_pdf_generator() {
-        return $this->pdf_generator;
-    }
-
-    public function get_woocommerce_integration() {
-        return $this->woocommerce_integration;
-    }
-
-    public function get_settings_manager() {
-        return $this->settings_manager;
-    }
-
-    public function get_diagnostic_manager() {
-        return $this->diagnostic_manager;
-    }
-
-    /**
-     * Page de diagnostic (délégation au manager)
-     */
-    public function diagnostic_page() {
-        return $this->diagnostic_manager->diagnostic_page();
     }
 }
 
