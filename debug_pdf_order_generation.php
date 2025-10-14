@@ -66,20 +66,19 @@ if (!empty($templates)) {
     // Tester le chargement du premier template
     // Tester avec un template valide au lieu du corrompu
 $valid_template_id = null;
-foreach ($templates as $template) {
-    if (strpos($template['name'], '[CORROMPU]') === false) {
-        $valid_template_id = $template['id'];
-        break;
-    }
-}
+$valid_templates = array_filter($templates, function($template) {
+    return strpos($template['name'], '[CORROMPU]') === false;
+});
 
-if ($valid_template_id) {
-    $template_id = $valid_template_id;
-    echo "✅ Utilisation du template valide #{$template_id}<br>";
+if (!empty($valid_templates)) {
+    $valid_template_id = reset($valid_templates)['id'];
+    echo "✅ Utilisation du template valide #{$valid_template_id}<br>";
 } else {
     echo "❌ Aucun template valide trouvé, utilisation du template par défaut<br>";
-    $template_id = 0; // Utilisera le template par défaut
+    $valid_template_id = 0; // Utilisera le template par défaut
 }
+
+$template_id = $valid_template_id;
     $template = $wpdb->get_row($wpdb->prepare(
         "SELECT * FROM $table_templates WHERE id = %d",
         $template_id
