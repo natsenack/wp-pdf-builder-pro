@@ -340,14 +340,25 @@ class PDF_Builder_WooCommerce_Integration {
         <script type="text/javascript">
         // Simple & Robust PDF JavaScript
         (function($) {
+            console.log('🚀🚀 METABOXES.JS LOADED - WOO PDF INVOICE DEBUG 🚀🚀🚀');
+            console.log('MetaBoxes.js jQuery ready - WooCommerce PDF Invoice metabox initializing');
+
             // Configuration
             var orderId = <?php echo intval($order_id); ?>;
             var templateId = <?php echo $selected_template ? intval($selected_template['id']) : 0; ?>;
             var ajaxUrl = '<?php echo admin_url('admin-ajax.php'); ?>';
             var nonce = '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>';
 
+            console.log('MetaBoxes.js - Configuration loaded:', {
+                orderId: orderId,
+                templateId: templateId,
+                ajaxUrl: ajaxUrl,
+                nonceLength: nonce.length
+            });
+
             // Utility functions
             function showStatus(message, type) {
+                console.log('MetaBoxes.js - showStatus called:', message, type);
                 var $status = $('#pdf-status');
                 $status.removeClass('pdf-status-loading pdf-status-success pdf-status-error')
                        .addClass('pdf-status-' + type)
@@ -362,6 +373,7 @@ class PDF_Builder_WooCommerce_Integration {
             }
 
             function setButtonLoading($btn, loading) {
+                console.log('MetaBoxes.js - setButtonLoading:', loading ? 'loading' : 'not loading');
                 if (loading) {
                     $btn.prop('disabled', true).css('opacity', '0.6');
                 } else {
@@ -372,38 +384,55 @@ class PDF_Builder_WooCommerce_Integration {
             // Event handlers
             $('#pdf-preview-btn').on('click', function() {
                 console.log('PDF BUILDER - Preview button clicked');
+                console.log('MetaBoxes.js - Preview button element:', this);
+                console.log('MetaBoxes.js - Order ID for preview:', orderId);
+
                 showStatus('Génération de l\'aperçu...', 'loading');
                 setButtonLoading($(this), true);
 
-                console.log('PDF BUILDER - Sending AJAX request for preview:', {
+                var ajaxData = {
                     action: 'pdf_builder_preview_order_pdf',
                     order_id: orderId,
-                    nonce: nonce.substring(0, 10) + '...'
+                    nonce: nonce
+                };
+
+                console.log('PDF BUILDER - Sending AJAX request for preview:', {
+                    action: ajaxData.action,
+                    order_id: ajaxData.order_id,
+                    nonce: ajaxData.nonce.substring(0, 10) + '...',
+                    ajaxUrl: ajaxUrl
                 });
 
                 $.ajax({
                     url: ajaxUrl,
                     type: 'POST',
-                    data: {
-                        action: 'pdf_builder_preview_order_pdf',
-                        order_id: orderId,
-                        nonce: nonce
-                    },
+                    data: ajaxData,
                     success: function(response) {
                         console.log('PDF BUILDER - Preview AJAX success response:', response);
+                        console.log('MetaBoxes.js - Full response object:', JSON.stringify(response, null, 2));
+
                         if (response.success && response.data && response.data.url) {
+                            console.log('MetaBoxes.js - Opening preview URL:', response.data.url);
                             // Ouvrir l'aperçu dans une nouvelle fenêtre/onglet
                             window.open(response.data.url, '_blank');
                             showStatus('Aperçu généré avec succès', 'success');
                         } else {
                             var errorMsg = response.data || 'Erreur lors de la génération de l\'aperçu';
+                            console.log('MetaBoxes.js - Preview error:', errorMsg);
                             showStatus(errorMsg, 'error');
                         }
                     },
                     error: function(xhr, status, error) {
+                        console.log('MetaBoxes.js - Preview AJAX error:', {
+                            xhr: xhr,
+                            status: status,
+                            error: error,
+                            responseText: xhr.responseText
+                        });
                         showStatus('Erreur AJAX: ' + error, 'error');
                     },
                     complete: function() {
+                        console.log('MetaBoxes.js - Preview AJAX complete');
                         setButtonLoading($('#pdf-preview-btn'), false);
                     }
                 });
@@ -462,6 +491,7 @@ class PDF_Builder_WooCommerce_Integration {
                 }
             });
 
+            console.log('MetaBoxes.js initialization complete - button handler attached');
         })(jQuery);
         </script>
         <?php
