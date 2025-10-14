@@ -1228,7 +1228,7 @@ class PDF_Builder_Pro_Generator {
         // Date et statut
         $this->pdf->SetFont('helvetica', '', 10);
         $this->pdf->Cell(50, 6, 'Date:', 0, 0);
-        $this->pdf->Cell(0, 6, $this->order->get_date_created(->format('d/m/Y H:i')), 0, 1);
+        $this->pdf->Cell(0, 6, $this->order->get_date_created()->format('d/m/Y H:i'), 0, 1);
 
         $this->pdf->Cell(50, 6, 'Statut:', 0, 0);
         $status = $this->order->get_status();
