@@ -381,6 +381,106 @@ class PDF_Builder_WooCommerce_Integration {
                 }
             }
 
+            // Fonction pour ouvrir la modale PDF
+            function openPdfModal(pdfUrl) {
+                console.log('MetaBoxes.js - openPdfModal called with URL:', pdfUrl);
+
+                // Créer la modale si elle n'existe pas
+                if (!$('#pdf-preview-modal').length) {
+                    $('body').append(`
+                        <div id="pdf-preview-modal" style="
+                            position: fixed;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            background: rgba(0,0,0,0.8);
+                            z-index: 999999;
+                            display: none;
+                            align-items: center;
+                            justify-content: center;
+                        ">
+                            <div style="
+                                background: white;
+                                border-radius: 8px;
+                                width: 90%;
+                                height: 90%;
+                                max-width: 1200px;
+                                max-height: 800px;
+                                position: relative;
+                                display: flex;
+                                flex-direction: column;
+                            ">
+                                <div style="
+                                    padding: 15px 20px;
+                                    border-bottom: 1px solid #dee2e6;
+                                    display: flex;
+                                    justify-content: space-between;
+                                    align-items: center;
+                                    background: #f8f9fa;
+                                    border-radius: 8px 8px 0 0;
+                                ">
+                                    <h3 style="margin: 0; color: #495057; font-size: 18px;">
+                                        👁️ Aperçu PDF - Commande #${orderId}
+                                    </h3>
+                                    <button id="pdf-modal-close" style="
+                                        background: #dc3545;
+                                        color: white;
+                                        border: none;
+                                        border-radius: 4px;
+                                        padding: 8px 12px;
+                                        cursor: pointer;
+                                        font-size: 16px;
+                                        line-height: 1;
+                                    ">✕ Fermer</button>
+                                </div>
+                                <div style="
+                                    flex: 1;
+                                    padding: 0;
+                                    overflow: hidden;
+                                ">
+                                    <iframe id="pdf-preview-iframe" style="
+                                        width: 100%;
+                                        height: 100%;
+                                        border: none;
+                                        border-radius: 0 0 8px 8px;
+                                    "></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+
+                    // Gestionnaire pour fermer la modale
+                    $(document).on('click', '#pdf-modal-close', function() {
+                        closePdfModal();
+                    });
+
+                    // Fermer en cliquant sur le fond
+                    $(document).on('click', '#pdf-preview-modal', function(e) {
+                        if (e.target === this) {
+                            closePdfModal();
+                        }
+                    });
+
+                    // Fermer avec Échap
+                    $(document).on('keydown', function(e) {
+                        if (e.keyCode === 27) { // Échap
+                            closePdfModal();
+                        }
+                    });
+                }
+
+                // Fonction pour fermer la modale
+                function closePdfModal() {
+                    $('#pdf-preview-modal').fadeOut();
+                    $('#pdf-preview-iframe').attr('src', '');
+                }
+
+                // Ouvrir la modale et charger le PDF
+                $('#pdf-preview-iframe').attr('src', pdfUrl);
+                $('#pdf-preview-modal').fadeIn();
+            }
+
             // Event handlers
             $('#pdf-preview-btn').on('click', function() {
                 console.log('PDF BUILDER - Preview button clicked');
@@ -413,9 +513,9 @@ class PDF_Builder_WooCommerce_Integration {
                         console.log('MetaBoxes.js - Full response object:', JSON.stringify(response, null, 2));
 
                         if (response.success && response.data && response.data.url) {
-                            console.log('MetaBoxes.js - Opening preview URL:', response.data.url);
-                            // Ouvrir l'aperçu dans une nouvelle fenêtre/onglet
-                            window.open(response.data.url, '_blank');
+                            console.log('MetaBoxes.js - Opening preview URL in modal:', response.data.url);
+                            // Ouvrir l'aperçu dans une modale
+                            openPdfModal(response.data.url);
                             showStatus('Aperçu généré avec succès', 'success');
                         } else {
                             var errorMsg = response.data || 'Erreur lors de la génération de l\'aperçu';
