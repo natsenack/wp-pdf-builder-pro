@@ -1786,8 +1786,12 @@ class PDF_Builder_Admin {
      * @param WC_Order|null $order Commande WooCommerce (optionnel)
      * @return string HTML généré
      */
-    public function generate_unified_html($template, $order = null) {
-        $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' . ($order ? 'Order #' . $order->get_id() : 'PDF Preview') . '</title>';
+    public function generate_unified_html($template, $order = null, $for_preview = false) {
+        if (!$for_preview) {
+            $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' . ($order ? 'Order #' . $order->get_id() : 'PDF Preview') . '</title>';
+        } else {
+            $html = '';
+        }
 
         // Gestion des marges d'impression - utiliser la première page
         $margins = ['top' => 20, 'right' => 20, 'bottom' => 20, 'left' => 20];
@@ -1887,7 +1891,9 @@ class PDF_Builder_Admin {
             }
         }
         </style>';
-        $html .= '</head><body>';
+        if (!$for_preview) {
+            $html .= '</head><body>';
+        }
         $html .= '<div class="pdf-container" style="position: relative; width: 595px; height: 842px; background: white;">';
 
         // Utiliser les éléments de la première page
@@ -2245,7 +2251,9 @@ class PDF_Builder_Admin {
         }
 
         $html .= '</div>'; // Fermer le pdf-container
-        $html .= '</body></html>';
+        if (!$for_preview) {
+            $html .= '</body></html>';
+        }
         return $html;
     }
 
@@ -3278,7 +3286,7 @@ class PDF_Builder_Admin {
 
             error_log('🟡 PDF BUILDER - Generating HTML preview...');
             // Générer l'HTML d'aperçu avec les données de la commande (comme le builder)
-            $html_content = $this->generate_unified_html($template_data, $order);
+            $html_content = $this->generate_unified_html($template_data, $order, true);
             error_log('✅ PDF BUILDER - HTML generated, length: ' . strlen($html_content));
 
             $response = array(
