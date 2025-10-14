@@ -810,9 +810,9 @@ class PDF_Builder_WooCommerce_Integration {
 
             // Essayer de charger TCPDF depuis les chemins possibles
             $tcpdf_paths = [
-                plugin_dir_path(__FILE__) . '../../../lib/tcpdf/tcpdf.php',
-                plugin_dir_path(__FILE__) . '../../../lib/tcpdf/tcpdf_autoload.php',
-                plugin_dir_path(__FILE__) . '../../../vendor/tecnickcom/tcpdf/tcpdf.php'
+                plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'lib/tcpdf/tcpdf_autoload.php',
+                plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'lib/tcpdf/tcpdf.php',
+                plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'vendor/tecnickcom/tcpdf/tcpdf.php'
             ];
 
             $tcpdf_loaded = false;
@@ -950,9 +950,9 @@ class PDF_Builder_WooCommerce_Integration {
 
             // Essayer de charger TCPDF depuis les chemins possibles
             $tcpdf_paths = [
-                plugin_dir_path(__FILE__) . '../../../lib/tcpdf/tcpdf.php',
-                plugin_dir_path(__FILE__) . '../../../lib/tcpdf/tcpdf_autoload.php',
-                plugin_dir_path(__FILE__) . '../../../vendor/tecnickcom/tcpdf/tcpdf.php'
+                plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'lib/tcpdf/tcpdf_autoload.php',
+                plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'lib/tcpdf/tcpdf.php',
+                plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'vendor/tecnickcom/tcpdf/tcpdf.php'
             ];
 
             $tcpdf_loaded = false;
@@ -1089,8 +1089,9 @@ class PDF_Builder_WooCommerce_Integration {
     private function define_tcpdf_constants() {
         error_log('🟡 PDF BUILDER - define_tcpdf_constants: Début définition constantes');
 
-        $plugin_dir = plugin_dir_path(__FILE__) . '../../';
-        error_log('🟡 PDF BUILDER - define_tcpdf_constants: plugin_dir = ' . $plugin_dir);
+        // Utiliser des chemins absolus au lieu de chemins relatifs
+        $plugin_dir = plugin_dir_path(dirname(dirname(dirname(__FILE__))));
+        error_log('🟡 PDF BUILDER - define_tcpdf_constants: plugin_dir absolu = ' . $plugin_dir);
 
         $constants = [
             'PDF_PAGE_ORIENTATION' => 'P',
