@@ -2553,10 +2553,10 @@ class PDF_Builder_Admin {
             </div>
         </div>
 
-        <script type="text/javascript">
         jQuery(document).ready(function($) {
             var $generateBtn = $('#pdf-builder-generate-btn');
             var $downloadBtn = $('#pdf-builder-download-btn');
+            var $previewBtn = $('#pdf-builder-preview-btn');
             var $status = $('#pdf-builder-status');
 
             // Fonction pour afficher le statut
@@ -2649,14 +2649,14 @@ class PDF_Builder_Admin {
             });
 
             // Aperçu PDF
-            $('#pdf-builder-preview-btn').on('click', function() {
+            $previewBtn.on('click', function() {
                 var orderId = $(this).data('order-id');
 
                 console.log('PDF Builder: Preview button clicked');
                 console.log('PDF Builder: Order ID:', orderId);
 
                 showStatus('<?php echo esc_js(__('Génération de l\'aperçu en cours...', 'pdf-builder-pro')); ?>', 'loading');
-                setButtonLoading($(this), true);
+                setButtonLoading($previewBtn, true);
 
                 $.ajax({
                     url: ajaxurl,
@@ -2687,7 +2687,7 @@ class PDF_Builder_Admin {
                     },
                     complete: function() {
                         console.log('PDF Builder: Preview AJAX complete');
-                        setButtonLoading($('#pdf-builder-preview-btn'), false);
+                        setButtonLoading($previewBtn, false);
                     }
                 });
             });
