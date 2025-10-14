@@ -16,6 +16,7 @@ export const CanvasElement = ({
   dragAndDrop
 }) => {
   const elementRef = useRef(null);
+  const canvasRectRef = useRef(null);
 
   const resize = useResize({
     onElementResize: (newRect) => {
