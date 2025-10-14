@@ -935,7 +935,7 @@ class PDF_Builder_Pro_Generator {
             $this->pdf->SetFont('helvetica', 'B', 8);
             $this->pdf->Cell($col_widths[0], 8, 'Frais de port', 1, 0, 'L');
             $this->pdf->Cell($col_widths[1], 8, '1', 1, 0, 'C');
-            $this->pdf->Cell($col_widths[2], 8, '-', 1, 0, 'R');
+            $this->pdf->Cell($col_widths[2], 8, '1', 1, 0, 'R');
             $this->pdf->Cell($col_widths[3], 8, '5.00 ' . chr(128), 1, 1, 'R');
 
             // Total
@@ -1016,7 +1016,7 @@ class PDF_Builder_Pro_Generator {
                 $this->pdf->SetFont('helvetica', 'B', 8);
                 $this->pdf->Cell($col_widths[0], 8, $this->truncate_text($fee_name, 30), 1, 0, 'L');
                 $this->pdf->Cell($col_widths[1], 8, '1', 1, 0, 'C');
-                $this->pdf->Cell($col_widths[2], 8, '-', 1, 0, 'R');
+                $this->pdf->Cell($col_widths[2], 8, '1', 1, 0, 'R');
                 $this->pdf->Cell($col_widths[3], 8, number_format($fee_total, 2, ',', ' ') . ' ' . chr(128), 1, 1, 'R');
 
                 $current_y += 6;

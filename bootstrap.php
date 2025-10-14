@@ -109,6 +109,8 @@ function pdf_builder_load_bootstrap() {
         add_action('wp_ajax_pdf_builder_generate_order_pdf', 'pdf_builder_ajax_generate_order_pdf_fallback', 1);
         add_action('wp_ajax_pdf_builder_preview_order_pdf', 'pdf_builder_ajax_preview_order_pdf_fallback', 1);
         add_action('wp_ajax_pdf_builder_save_order_canvas', 'pdf_builder_ajax_save_order_canvas_fallback', 1);
+        add_action('wp_ajax_pdf_builder_get_fresh_nonce', 'pdf_builder_ajax_get_fresh_nonce', 1);
+        add_action('wp_ajax_pdf_builder_validate_preview', 'pdf_builder_ajax_validate_preview', 1);
 
         // Initialiser l'interface d'administration
         if (is_admin() && class_exists('PDF_Builder_Admin')) {
@@ -469,6 +471,87 @@ function pdf_builder_ajax_preview_order_pdf_fallback() {
         $woocommerce_integration->ajax_save_order_canvas();
     } else {
         wp_send_json_error('WooCommerce integration not available');
+    }
+}
+
+/**
+ * AJAX handler pour obtenir un nonce frais
+ */
+function pdf_builder_ajax_get_fresh_nonce() {
+    // Vérifier les permissions
+    if (!current_user_can('edit_posts')) {
+        wp_send_json_error('Permission denied');
+        return;
+    }
+
+    // Générer un nouveau nonce
+    $nonce = wp_create_nonce('pdf_builder_order_actions');
+
+    // Retourner le nonce
+    wp_send_json_success(array(
+        'nonce' => $nonce,
+        'timestamp' => time()
+    ));
+}
+
+/**
+ * AJAX handler pour valider l'aperçu côté serveur
+ */
+function pdf_builder_ajax_validate_preview() {
+    // Vérifier les permissions
+    if (!current_user_can('edit_posts')) {
+        wp_send_json_error('Permission denied');
+        return;
+    }
+
+    // Vérifier le nonce
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions')) {
+        wp_send_json_error('Invalid nonce');
+        return;
+    }
+
+    try {
+        // Récupérer les données JSON
+        $json_data = isset($_POST['elements']) ? $_POST['elements'] : '';
+        if (empty($json_data)) {
+            wp_send_json_error('No elements data provided');
+            return;
+        }
+
+        // Décoder le JSON
+        $elements = json_decode($json_data, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            wp_send_json_error('Invalid JSON data: ' . json_last_error_msg());
+            return;
+        }
+
+        // Validation basique des éléments
+        if (!is_array($elements)) {
+            wp_send_json_error('Elements must be an array');
+            return;
+        }
+
+        // Compter les éléments valides
+        $valid_count = 0;
+        foreach ($elements as $element) {
+            if (is_array($element) && isset($element['type']) && isset($element['id'])) {
+                $valid_count++;
+            }
+        }
+
+        // Retourner le succès avec les informations de validation
+        wp_send_json_success(array(
+            'success' => true,
+            'elements_count' => count($elements),
+            'valid_elements' => $valid_count,
+            'width' => 595, // A4 width in points
+            'height' => 842, // A4 height in points
+            'server_validated' => true,
+            'message' => 'Aperçu validé côté serveur avec succès'
+        ));
+
+    } catch (Exception $e) {
+        wp_send_json_error('Erreur lors de la validation: ' . $e->getMessage());
     }
 }
 
