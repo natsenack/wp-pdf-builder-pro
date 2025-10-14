@@ -174,9 +174,14 @@ class PDF_Builder_WooCommerce_Integration {
             </div>
 
             <?php if ($selected_template): ?>
-                <button type="button" id="generate-order-pdf" class="button button-primary" style="width: 100%; margin-bottom: 10px;">
-                    🚀 Générer <?php echo esc_html($document_type_label); ?>
-                </button>
+                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                    <button type="button" id="preview-order-pdf" class="button button-secondary" style="flex: 1;">
+                        👁️ Aperçu PDF
+                    </button>
+                    <button type="button" id="generate-order-pdf" class="button button-primary" style="flex: 1;">
+                        🚀 Générer <?php echo esc_html($document_type_label); ?>
+                    </button>
+                </div>
 
                 <div style="text-align: center; margin-bottom: 10px;">
                     <a href="#" id="change-template-link" style="font-size: 12px; color: #666; text-decoration: none;">
@@ -203,6 +208,26 @@ class PDF_Builder_WooCommerce_Integration {
             <div id="pdf-result" style="margin-top: 10px;"></div>
         </div>
 
+        <!-- Modale d'aperçu PDF -->
+        <div id="pdf-preview-modal" style="display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8);">
+            <div id="pdf-preview-content" style="position: relative; margin: 5% auto; width: 90%; max-width: 800px; background: white; border-radius: 8px; padding: 20px; max-height: 80vh; overflow-y: auto;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 10px;">
+                    <h3 style="margin: 0; color: #2271b1;">📄 Aperçu - <?php echo esc_html($document_type_label); ?></h3>
+                    <button type="button" id="close-preview-modal" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #666;">&times;</button>
+                </div>
+                <div id="pdf-preview-container" style="border: 1px solid #ddd; border-radius: 4px; padding: 10px; background: #f9f9f9; min-height: 400px;">
+                    <div style="text-align: center; color: #666; padding: 40px;">
+                        🔄 Chargement de l'aperçu...
+                    </div>
+                </div>
+                <div style="margin-top: 20px; text-align: center;">
+                    <button type="button" id="generate-from-preview" class="button button-primary">
+                        🚀 Générer le PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <script type="text/javascript">
         jQuery(document).ready(function($) {
             // Toggle du sélecteur de template alternatif
@@ -210,6 +235,64 @@ class PDF_Builder_WooCommerce_Integration {
                 e.preventDefault();
                 $('#template-selector').slideToggle();
                 $(this).text($(this).text() === 'Changer de template ▼' ? 'Masquer ▼' : 'Changer de template ▼');
+            });
+
+            // Aperçu PDF
+            $('#preview-order-pdf').on('click', function() {
+                var templateId = $('#pdf_template_select').val() || <?php echo intval($selected_template['id'] ?? 0); ?>;
+                var orderId = <?php echo intval($order_id); ?>;
+
+                // Ouvrir la modale
+                $('#pdf-preview-modal').show();
+                $('#pdf-preview-container').html('<div style="text-align: center; color: #666; padding: 40px;"><div>🔄 Chargement de l\'aperçu...</div></div>');
+
+                // Charger l'aperçu
+                $.ajax({
+                    url: ajaxurl,
+                    type: 'POST',
+                    data: {
+                        action: 'pdf_builder_pro_preview_order_pdf',
+                        order_id: orderId,
+                        template_id: templateId,
+                        nonce: '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            var scale = 0.5; // Échelle pour l'aperçu
+                            var width = (response.data.width * scale) + 'px';
+                            var height = (response.data.height * scale) + 'px';
+
+                            $('#pdf-preview-container').html(
+                                '<div style="transform: scale(' + scale + '); transform-origin: top left; width: ' + (response.data.width) + 'px; height: ' + (response.data.height) + 'px; border: 1px solid #ccc; background: white;">' +
+                                response.data.html +
+                                '</div>'
+                            );
+                        } else {
+                            $('#pdf-preview-container').html('<div style="text-align: center; color: #d9534f; padding: 40px;"><strong>❌ Erreur:</strong><br>' + response.data + '</div>');
+                        }
+                    },
+                    error: function() {
+                        $('#pdf-preview-container').html('<div style="text-align: center; color: #d9534f; padding: 40px;"><strong>❌ Erreur de connexion</strong></div>');
+                    }
+                });
+            });
+
+            // Fermer la modale
+            $('#close-preview-modal').on('click', function() {
+                $('#pdf-preview-modal').hide();
+            });
+
+            // Fermer la modale en cliquant en dehors
+            $('#pdf-preview-modal').on('click', function(e) {
+                if (e.target === this) {
+                    $(this).hide();
+                }
+            });
+
+            // Générer depuis l'aperçu
+            $('#generate-from-preview').on('click', function() {
+                $('#pdf-preview-modal').hide();
+                $('#generate-order-pdf').click();
             });
 
             $('#generate-order-pdf').on('click', function() {
@@ -361,9 +444,74 @@ class PDF_Builder_WooCommerce_Integration {
      * AJAX - Prévisualiser PDF pour une commande
      */
     public function ajax_preview_order_pdf() {
-        // Même logique que ajax_generate_order_pdf mais pour la prévisualisation
-        // (Code simplifié pour la démo)
-        wp_send_json_error('Fonction de prévisualisation à implémenter');
+        // Désactiver l'affichage des erreurs PHP pour éviter les réponses HTML
+        if (!defined('WP_DEBUG') || !WP_DEBUG) {
+            ini_set('display_errors', 0);
+            error_reporting(0);
+        }
+
+        // Vérifier les permissions
+        if (!current_user_can('manage_woocommerce')) {
+            wp_send_json_error('Permissions insuffisantes');
+        }
+
+        // Vérification de sécurité
+        if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions')) {
+            wp_send_json_error('Sécurité: Nonce invalide');
+        }
+
+        $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
+        $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
+
+        if (!$order_id) {
+            wp_send_json_error('ID commande manquant');
+        }
+
+        // Vérifier que WooCommerce est actif
+        if (!class_exists('WooCommerce')) {
+            wp_send_json_error('WooCommerce n\'est pas installé ou activé');
+        }
+
+        $order = wc_get_order($order_id);
+        if (!$order) {
+            wp_send_json_error('Commande non trouvée');
+        }
+
+        try {
+            // Charger le template
+            if ($template_id > 0) {
+                $template_data = $this->load_template_robust($template_id);
+            } else {
+                // Utiliser le template par défaut ou détecté automatiquement
+                $order_status = $order->get_status();
+                $status_templates = get_option('pdf_builder_order_status_templates', []);
+                $status_key = 'wc-' . $order_status;
+
+                if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
+                    $template_data = $this->load_template_robust($status_templates[$status_key]);
+                } else {
+                    $template_data = $this->get_default_invoice_template();
+                }
+            }
+
+            if (!$template_data) {
+                wp_send_json_error('Template non trouvé');
+            }
+
+            // Générer l'HTML d'aperçu avec les données de la commande
+            $html_content = $this->generate_unified_html($template_data, $order);
+
+            $response = array(
+                'html' => $html_content,
+                'width' => $template_data['canvas']['width'] ?? 595,
+                'height' => $template_data['canvas']['height'] ?? 842
+            );
+
+            wp_send_json_success($response);
+
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur: ' . $e->getMessage());
+        }
     }
 
     /**
