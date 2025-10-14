@@ -85,7 +85,7 @@ class PDF_Builder_Core {
      * Initialisation de l'administration
      */
     public function admin_init() {
-        error_log('PDF BUILDER - admin_init called');
+        error_log('PDF BUILDER - admin_init called - is_admin: ' . (is_admin() ? 'yes' : 'no') . ' - DOING_AJAX: ' . (defined('DOING_AJAX') && DOING_AJAX ? 'yes' : 'no'));
         // Ajouter les pages d'administration
         add_action('admin_menu', array($this, 'add_admin_menu'));
 
@@ -203,7 +203,7 @@ class PDF_Builder_Core {
      * Ajouter le menu d'administration
      */
     public function add_admin_menu() {
-        error_log('PDF BUILDER - add_admin_menu called');
+        error_log('PDF BUILDER - add_admin_menu called - start');
 
         add_menu_page(
             __('PDF Builder Pro', 'pdf-builder-pro'),
@@ -246,14 +246,15 @@ class PDF_Builder_Core {
         // Page de test pour le débogage
         error_log('PDF BUILDER - Adding test templates submenu');
         add_submenu_page(
-            'pdf-builder-pro',
+            'woocommerce',
             __('🔧 Test Templates', 'pdf-builder-pro'),
             __('🔧 Test Templates', 'pdf-builder-pro'),
             'manage_options',
-            'pdf-builder-test-templates',
+            'pdf-builder-test',
             array($this, 'test_template_selection_page')
         );
         error_log('PDF BUILDER - Test templates submenu added');
+        error_log('PDF BUILDER - add_admin_menu called - end');
     }
 
     /**
