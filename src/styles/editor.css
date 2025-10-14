@@ -887,7 +887,7 @@
   pointer-events: auto;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   transition: var(--selection-animation, all 0.15s ease);
-  z-index: 10;
+  z-index: 10000;
   display: var(--show-resize-handles, block);
 }
 
@@ -897,38 +897,38 @@
 }
 
 .resize-handle.nw {
-  top: calc(var(--resize-handle-offset, -6px) - var(--element-border-width, 0px));
-  left: calc(var(--resize-handle-offset, -6px) - var(--element-border-width, 0px));
+  top: calc(var(--resize-handle-offset, -7px) - var(--element-border-width, 0px));
+  left: calc(var(--resize-handle-offset, -7px) - var(--element-border-width, 0px));
   cursor: nw-resize;
 }
 
 .resize-handle.ne {
-  top: calc(var(--resize-handle-offset, -6px) - var(--element-border-width, 0px));
-  right: calc(var(--resize-handle-offset, -6px) - var(--element-border-width, 0px));
+  top: calc(var(--resize-handle-offset, -7px) - var(--element-border-width, 0px));
+  right: calc(var(--resize-handle-offset, -7px) - var(--element-border-width, 0px));
   cursor: ne-resize;
 }
 
 .resize-handle.sw {
-  bottom: calc(var(--resize-handle-offset, -6px) - var(--element-border-width, 0px));
-  left: calc(var(--resize-handle-offset, -6px) - var(--element-border-width, 0px));
+  bottom: calc(var(--resize-handle-offset, -7px) - var(--element-border-width, 0px));
+  left: calc(var(--resize-handle-offset, -7px) - var(--element-border-width, 0px));
   cursor: sw-resize;
 }
 
 .resize-handle.se {
-  bottom: calc(var(--resize-handle-offset, -6px) - var(--element-border-width, 0px));
-  right: calc(var(--resize-handle-offset, -6px) - var(--element-border-width, 0px));
+  bottom: calc(var(--resize-handle-offset, -7px) - var(--element-border-width, 0px));
+  right: calc(var(--resize-handle-offset, -7px) - var(--element-border-width, 0px));
   cursor: se-resize;
 }
 
 .resize-handle.n {
-  top: calc(var(--resize-handle-offset, -6px) - var(--element-border-width, 0px));
+  top: calc(var(--resize-handle-offset, -7px) - var(--element-border-width, 0px));
   left: 50%;
   transform: translateX(-50%);
   cursor: n-resize;
 }
 
 .resize-handle.s {
-  bottom: calc(var(--resize-handle-offset, -6px) - var(--element-border-width, 0px));
+  bottom: calc(var(--resize-handle-offset, -7px) - var(--element-border-width, 0px));
   left: 50%;
   transform: translateX(-50%);
   cursor: s-resize;
@@ -936,14 +936,14 @@
 
 .resize-handle.w {
   top: 50%;
-  left: calc(var(--resize-handle-offset, -6px) - var(--element-border-width, 0px));
+  left: calc(var(--resize-handle-offset, -7px) - var(--element-border-width, 0px));
   transform: translateY(-50%);
   cursor: w-resize;
 }
 
 .resize-handle.e {
   top: 50%;
-  right: calc(var(--resize-handle-offset, -6px) - var(--element-border-width, 0px));
+  right: calc(var(--resize-handle-offset, -7px) - var(--element-border-width, 0px));
   transform: translateY(-50%);
   cursor: e-resize;
 }

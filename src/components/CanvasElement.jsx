@@ -383,11 +383,13 @@ export const CanvasElement = ({
           '--selection-border-width': '2px',
           '--selection-border-color': '#3b82f6',
           '--selection-border-spacing': '2px',
+          '--selection-shadow-opacity': '0.1',
           '--show-resize-handles': isSelected ? 'block' : 'none',
           '--resize-handle-size': `${10 * zoom}px`,
           '--resize-handle-color': '#3b82f6',
           '--resize-handle-border-color': 'white',
           '--resize-handle-offset': `${-5 * zoom}px`,
+          '--element-border-width': '2px',
           // Pour les éléments spéciaux, utiliser une gestion différente des bordures
           ...(isSpecialElement(element.type) ? getSpecialElementBorderStyle(element) : {
             // Styles de base communs à tous les éléments non-spéciaux
@@ -1399,11 +1401,6 @@ export const CanvasElement = ({
           {/* Coins */}
           <div
             className="resize-handle nw"
-            style={{
-              pointerEvents: 'auto',
-              zIndex: 1000,
-              display: isSelected ? 'block' : 'none'
-            }}
             onMouseDown={(e) => {
               const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
               const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
@@ -1418,11 +1415,6 @@ export const CanvasElement = ({
           />
           <div
             className="resize-handle ne"
-            style={{
-              pointerEvents: 'auto',
-              zIndex: 1000,
-              display: isSelected ? 'block' : 'none'
-            }}
             onMouseDown={(e) => {
               const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
               const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
@@ -1437,9 +1429,6 @@ export const CanvasElement = ({
           />
           <div
             className="resize-handle sw"
-            style={{
-              pointerEvents: 'auto'
-            }}
             onMouseDown={(e) => {
               const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
               const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
@@ -1454,9 +1443,6 @@ export const CanvasElement = ({
           />
           <div
             className="resize-handle se"
-            style={{
-              pointerEvents: 'auto'
-            }}
             onMouseDown={(e) => {
               const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
               const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
@@ -1473,9 +1459,6 @@ export const CanvasElement = ({
           {/* Côtés */}
           <div
             className="resize-handle n"
-            style={{
-              pointerEvents: 'auto'
-            }}
             onMouseDown={(e) => {
               const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
               const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
@@ -1490,9 +1473,6 @@ export const CanvasElement = ({
           />
           <div
             className="resize-handle s"
-            style={{
-              pointerEvents: 'auto'
-            }}
             onMouseDown={(e) => {
               const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
               const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
@@ -1507,9 +1487,6 @@ export const CanvasElement = ({
           />
           <div
             className="resize-handle w"
-            style={{
-              pointerEvents: 'auto'
-            }}
             onMouseDown={(e) => {
               const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
               const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
@@ -1524,9 +1501,6 @@ export const CanvasElement = ({
           />
           <div
             className="resize-handle e"
-            style={{
-              pointerEvents: 'auto'
-            }}
             onMouseDown={(e) => {
               const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
               const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
