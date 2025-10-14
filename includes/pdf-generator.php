@@ -700,7 +700,25 @@ class PDF_Builder_Pro_Generator {
 
         // Contenu
         $this->pdf->SetFont('helvetica', '', 10);
-        $this->pdf->MultiCell($width, 5, $customer_info, 0, 'L');
+
+        // Protection contre les textes vides ou problématiques
+        if (empty($customer_info) || strlen($customer_info) < 2) {
+            $customer_info = "Client";
+        }
+
+        // Essayer d'utiliser Cell au lieu de MultiCell si le texte est simple
+        if (strpos($customer_info, "\n") === false) {
+            // Texte simple, utiliser Cell
+            $this->pdf->Cell($width, 5, $customer_info, 0, 2);
+        } else {
+            // Texte multi-ligne, utiliser MultiCell avec protection
+            try {
+                $this->pdf->MultiCell($width, 5, $customer_info, 0, 'L');
+            } catch (Exception $e) {
+                // En cas d'erreur, utiliser un texte simple
+                $this->pdf->Cell($width, 5, "Client", 0, 2);
+            }
+        }
     }
 
     /**
