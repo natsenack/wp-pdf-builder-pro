@@ -912,10 +912,10 @@ class PDF_Builder_Pro_Generator {
         $this->pdf->SetFillColor(245, 245, 245);
         $this->pdf->SetFont('helvetica', 'B', 9);
 
-        $this->pdf->Cell($col_widths[0], 8, 'Produit', 1, 0, 'L', true);
-        $this->pdf->Cell($col_widths[1], 8, 'Qté', 1, 0, 'C', true);
-        $this->pdf->Cell($col_widths[2], 8, 'Prix', 1, 0, 'R', true);
-        $this->pdf->Cell($col_widths[3], 8, 'Total', 1, 1, 'R', true);
+        $this->pdf->Cell($col_widths[0], 10, 'Produit', 1, 0, 'L', true);
+        $this->pdf->Cell($col_widths[1], 10, 'Qté', 1, 0, 'C', true);
+        $this->pdf->Cell($col_widths[2], 10, 'Prix', 1, 0, 'R', true);
+        $this->pdf->Cell($col_widths[3], 10, 'Total', 1, 1, 'R', true);
 
         // Vérifier si on a accès à l'objet commande
         if (isset($this->order) && $this->order) {
@@ -923,25 +923,25 @@ class PDF_Builder_Pro_Generator {
             $this->render_order_products_with_fees($x, $col_widths);
         } else {
             // Ligne de produit factice
-            $this->pdf->SetXY($x, $y + 8);
+            $this->pdf->SetXY($x, $y + 10);
             $this->pdf->SetFont('helvetica', '', 8);
-            $this->pdf->Cell($col_widths[0], 6, 'Produit A - Description', 1, 0, 'L');
-            $this->pdf->Cell($col_widths[1], 6, '2', 1, 0, 'C');
-            $this->pdf->Cell($col_widths[2], 6, '19.99 EUR', 1, 0, 'R');
-            $this->pdf->Cell($col_widths[3], 6, '39.98 EUR', 1, 1, 'R');
+            $this->pdf->Cell($col_widths[0], 8, 'Produit A - Description', 1, 0, 'L');
+            $this->pdf->Cell($col_widths[1], 8, '2', 1, 0, 'C');
+            $this->pdf->Cell($col_widths[2], 8, '19.99 ' . chr(128), 1, 0, 'R');
+            $this->pdf->Cell($col_widths[3], 8, '39.98 ' . chr(128), 1, 1, 'R');
 
             // Ligne de frais factice
-            $this->pdf->SetXY($x, $y + 14);
+            $this->pdf->SetXY($x, $y + 18);
             $this->pdf->SetFont('helvetica', 'B', 8);
-            $this->pdf->Cell($col_widths[0], 6, 'Frais de port', 1, 0, 'L');
-            $this->pdf->Cell($col_widths[1], 6, '-', 1, 0, 'C');
-            $this->pdf->Cell($col_widths[2], 6, '-', 1, 0, 'R');
-            $this->pdf->Cell($col_widths[3], 6, '5.00 EUR', 1, 1, 'R');
+            $this->pdf->Cell($col_widths[0], 8, 'Frais de port', 1, 0, 'L');
+            $this->pdf->Cell($col_widths[1], 8, '', 1, 0, 'C');
+            $this->pdf->Cell($col_widths[2], 8, '', 1, 0, 'R');
+            $this->pdf->Cell($col_widths[3], 8, '5.00 ' . chr(128), 1, 1, 'R');
 
             // Total
-            $this->pdf->SetXY($x + $col_widths[0] + $col_widths[1] + $col_widths[2], $y + 20);
+            $this->pdf->SetXY($x + $col_widths[0] + $col_widths[1] + $col_widths[2], $y + 30);
             $this->pdf->SetFont('helvetica', 'B', 9);
-            $this->pdf->Cell($col_widths[3], 6, 'Total: 44.98 EUR', 1, 1, 'R', true);
+            $this->pdf->Cell($col_widths[3], 10, 'Total: 44.98 ' . chr(128), 1, 1, 'R', true);
         }
     }
 
@@ -997,10 +997,10 @@ class PDF_Builder_Pro_Generator {
                 }
 
                 $this->pdf->SetXY($x, $current_y);
-                $this->pdf->Cell($col_widths[0], 6, $this->truncate_text($display_name, 30), 1, 0, 'L');
-                $this->pdf->Cell($col_widths[1], 6, $quantity, 1, 0, 'C');
-                $this->pdf->Cell($col_widths[2], 6, number_format($price, 2, ',', ' ') . ' €', 1, 0, 'R');
-                $this->pdf->Cell($col_widths[3], 6, number_format($total, 2, ',', ' ') . ' €', 1, 1, 'R');
+                $this->pdf->Cell($col_widths[0], 8, $this->truncate_text($display_name, 30), 1, 0, 'L');
+                $this->pdf->Cell($col_widths[1], 8, $quantity, 1, 0, 'C');
+                $this->pdf->Cell($col_widths[2], 8, number_format($price, 2, ',', ' ') . ' ' . chr(128), 1, 0, 'R');
+                $this->pdf->Cell($col_widths[3], 8, number_format($total, 2, ',', ' ') . ' ' . chr(128), 1, 1, 'R');
 
                 $current_y += 6;
             }
@@ -1014,10 +1014,10 @@ class PDF_Builder_Pro_Generator {
 
                 $this->pdf->SetXY($x, $current_y);
                 $this->pdf->SetFont('helvetica', 'B', 8);
-                $this->pdf->Cell($col_widths[0], 6, $this->truncate_text($fee_name, 30), 1, 0, 'L');
-                $this->pdf->Cell($col_widths[1], 6, '-', 1, 0, 'C');
-                $this->pdf->Cell($col_widths[2], 6, '-', 1, 0, 'R');
-                $this->pdf->Cell($col_widths[3], 6, number_format($fee_total, 2, ',', ' ') . ' €', 1, 1, 'R');
+                $this->pdf->Cell($col_widths[0], 8, $this->truncate_text($fee_name, 30), 1, 0, 'L');
+                $this->pdf->Cell($col_widths[1], 8, '', 1, 0, 'C');
+                $this->pdf->Cell($col_widths[2], 8, '', 1, 0, 'R');
+                $this->pdf->Cell($col_widths[3], 8, number_format($fee_total, 2, ',', ' ') . ' ' . chr(128), 1, 1, 'R');
 
                 $current_y += 6;
             }
@@ -1025,10 +1025,10 @@ class PDF_Builder_Pro_Generator {
 
         // Afficher le total de la commande
         $order_total = $this->order->get_total();
-        $this->pdf->SetXY($x + $col_widths[0] + $col_widths[1] + $col_widths[2], $current_y + 2);
+        $this->pdf->SetXY($x + $col_widths[0] + $col_widths[1] + $col_widths[2], $current_y + 4);
         $this->pdf->SetFont('helvetica', 'B', 9);
         $this->pdf->SetFillColor(245, 245, 245);
-        $this->pdf->Cell($col_widths[3], 8, 'Total: ' . number_format($order_total, 2, ',', ' ' . ' €'), 1, 1, 'R', true);
+        $this->pdf->Cell($col_widths[3], 10, 'Total: ' . number_format($order_total, 2, ',', ' ') . ' ' . chr(128), 1, 1, 'R', true);
     }
 
     /**
@@ -1087,7 +1087,7 @@ class PDF_Builder_Pro_Generator {
 
         $this->pdf->SetXY($x, $y);
         $this->pdf->SetFont('helvetica', 'B', 12);
-        $this->pdf->Cell($width, 8, $order_number, 0, 1, 'L');
+        $this->pdf->Cell($width, $height, $order_number, 0, 1, 'L');
     }
 
     /**
