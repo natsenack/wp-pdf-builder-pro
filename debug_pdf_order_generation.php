@@ -81,10 +81,12 @@ if (!empty($valid_templates)) {
 $template_id = $valid_template_id;
 
 // Pour le test, forçons l'utilisation du template par défaut si le template chargé est corrompu
-$template_data = json_decode($template['template_data'], true);
-if (!$template_data) {
-    echo "🔄 Template corrompu détecté, basculement vers template par défaut<br>";
-    $template_id = 0;
+if ($template_id > 0 && isset($template['template_data'])) {
+    $template_data = json_decode($template['template_data'], true);
+    if (!$template_data) {
+        echo "🔄 Template corrompu détecté, basculement vers template par défaut<br>";
+        $template_id = 0;
+    }
 }
     $template = $wpdb->get_row($wpdb->prepare(
         "SELECT * FROM $table_templates WHERE id = %d",
