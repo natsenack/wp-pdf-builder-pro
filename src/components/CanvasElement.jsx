@@ -17,9 +17,6 @@ export const CanvasElement = ({
 }) => {
   const elementRef = useRef(null);
 
-  // Debug log pour diagnostiquer les éléments
-  console.log('🎯 CanvasElement rendu pour élément:', element.id, element.type, element);
-
   const resize = useResize({
     onElementResize: (newRect) => {
       onUpdate({
@@ -171,6 +168,9 @@ export const CanvasElement = ({
       // Démarrer le drag avec les coordonnées relatives au canvas
       const canvas = elementRef.current.closest('.canvas-zoom-wrapper');
       const canvasRect = canvas.getBoundingClientRect();
+      
+      // Mettre à jour la référence du canvas
+      canvasRectRef.current = canvasRect;
       
       dragAndDrop.handleMouseDown(e, element.id, {
         left: element.x,
@@ -380,6 +380,14 @@ export const CanvasElement = ({
           height: element.height * zoom,
           cursor: dragAndDrop.isDragging ? 'grabbing' : 'grab',
           userSelect: 'none',
+          '--selection-border-width': '2px',
+          '--selection-border-color': '#3b82f6',
+          '--selection-border-spacing': '2px',
+          '--show-resize-handles': isSelected ? 'block' : 'none',
+          '--resize-handle-size': `${10 * zoom}px`,
+          '--resize-handle-color': '#3b82f6',
+          '--resize-handle-border-color': 'white',
+          '--resize-handle-offset': `${-5 * zoom}px`,
           // Pour les éléments spéciaux, utiliser une gestion différente des bordures
           ...(isSpecialElement(element.type) ? getSpecialElementBorderStyle(element) : {
             // Styles de base communs à tous les éléments non-spéciaux
@@ -1392,27 +1400,39 @@ export const CanvasElement = ({
           <div
             className="resize-handle nw"
             style={{
-              pointerEvents: 'auto'
+              pointerEvents: 'auto',
+              zIndex: 1000,
+              display: isSelected ? 'block' : 'none'
             }}
-            onMouseDown={(e) => resize.handleResizeStart(e, 'nw', {
-              x: element.x,
-              y: element.y,
-              width: element.width,
-              height: element.height
-            }, canvasRect, zoom)}
+            onMouseDown={(e) => {
+              const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
+              const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
+              resize.handleResizeStart(e, 'nw', {
+                x: element.x,
+                y: element.y,
+                width: element.width,
+                height: element.height
+              }, canvasRect, zoom);
+            }}
             onContextMenu={handleContextMenuEvent}
           />
           <div
             className="resize-handle ne"
             style={{
-              pointerEvents: 'auto'
+              pointerEvents: 'auto',
+              zIndex: 1000,
+              display: isSelected ? 'block' : 'none'
             }}
-            onMouseDown={(e) => resize.handleResizeStart(e, 'ne', {
-              x: element.x,
-              y: element.y,
-              width: element.width,
-              height: element.height
-            }, canvasRect, zoom)}
+            onMouseDown={(e) => {
+              const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
+              const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
+              resize.handleResizeStart(e, 'ne', {
+                x: element.x,
+                y: element.y,
+                width: element.width,
+                height: element.height
+              }, canvasRect, zoom);
+            }}
             onContextMenu={handleContextMenuEvent}
           />
           <div
@@ -1420,12 +1440,16 @@ export const CanvasElement = ({
             style={{
               pointerEvents: 'auto'
             }}
-            onMouseDown={(e) => resize.handleResizeStart(e, 'sw', {
-              x: element.x,
-              y: element.y,
-              width: element.width,
-              height: element.height
-            }, canvasRect, zoom)}
+            onMouseDown={(e) => {
+              const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
+              const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
+              resize.handleResizeStart(e, 'sw', {
+                x: element.x,
+                y: element.y,
+                width: element.width,
+                height: element.height
+              }, canvasRect, zoom);
+            }}
             onContextMenu={handleContextMenuEvent}
           />
           <div
@@ -1433,12 +1457,16 @@ export const CanvasElement = ({
             style={{
               pointerEvents: 'auto'
             }}
-            onMouseDown={(e) => resize.handleResizeStart(e, 'se', {
-              x: element.x,
-              y: element.y,
-              width: element.width,
-              height: element.height
-            }, canvasRect, zoom)}
+            onMouseDown={(e) => {
+              const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
+              const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
+              resize.handleResizeStart(e, 'se', {
+                x: element.x,
+                y: element.y,
+                width: element.width,
+                height: element.height
+              }, canvasRect, zoom);
+            }}
             onContextMenu={handleContextMenuEvent}
           />
 
@@ -1448,12 +1476,16 @@ export const CanvasElement = ({
             style={{
               pointerEvents: 'auto'
             }}
-            onMouseDown={(e) => resize.handleResizeStart(e, 'n', {
-              x: element.x,
-              y: element.y,
-              width: element.width,
-              height: element.height
-            }, canvasRect, zoom)}
+            onMouseDown={(e) => {
+              const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
+              const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
+              resize.handleResizeStart(e, 'n', {
+                x: element.x,
+                y: element.y,
+                width: element.width,
+                height: element.height
+              }, canvasRect, zoom);
+            }}
             onContextMenu={handleContextMenuEvent}
           />
           <div
@@ -1461,12 +1493,16 @@ export const CanvasElement = ({
             style={{
               pointerEvents: 'auto'
             }}
-            onMouseDown={(e) => resize.handleResizeStart(e, 's', {
-              x: element.x,
-              y: element.y,
-              width: element.width,
-              height: element.height
-            }, canvasRect, zoom)}
+            onMouseDown={(e) => {
+              const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
+              const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
+              resize.handleResizeStart(e, 's', {
+                x: element.x,
+                y: element.y,
+                width: element.width,
+                height: element.height
+              }, canvasRect, zoom);
+            }}
             onContextMenu={handleContextMenuEvent}
           />
           <div
@@ -1474,12 +1510,16 @@ export const CanvasElement = ({
             style={{
               pointerEvents: 'auto'
             }}
-            onMouseDown={(e) => resize.handleResizeStart(e, 'w', {
-              x: element.x,
-              y: element.y,
-              width: element.width,
-              height: element.height
-            }, canvasRect, zoom)}
+            onMouseDown={(e) => {
+              const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
+              const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
+              resize.handleResizeStart(e, 'w', {
+                x: element.x,
+                y: element.y,
+                width: element.width,
+                height: element.height
+              }, canvasRect, zoom);
+            }}
             onContextMenu={handleContextMenuEvent}
           />
           <div
@@ -1487,12 +1527,16 @@ export const CanvasElement = ({
             style={{
               pointerEvents: 'auto'
             }}
-            onMouseDown={(e) => resize.handleResizeStart(e, 'e', {
-              x: element.x,
-              y: element.y,
-              width: element.width,
-              height: element.height
-            }, canvasRect, zoom)}
+            onMouseDown={(e) => {
+              const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
+              const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
+              resize.handleResizeStart(e, 'e', {
+                x: element.x,
+                y: element.y,
+                width: element.width,
+                height: element.height
+              }, canvasRect, zoom);
+            }}
             onContextMenu={handleContextMenuEvent}
           />
 
