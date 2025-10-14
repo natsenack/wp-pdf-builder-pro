@@ -4550,11 +4550,6 @@ class PDF_Builder_Admin {
      * AJAX - Générer un aperçu du PDF depuis les éléments du canvas
      */
     public function ajax_generate_preview() {
-        // TEST POUR VÉRIFIER QUE LE NOUVEAU CODE EST DÉPLOYÉ
-        error_log('PDF BUILDER DEBUG - NOUVELLE VERSION DEPLOYEE - ' . date('Y-m-d H:i:s'));
-        wp_send_json_success(['message' => 'Test deployment réussi', 'timestamp' => time()]);
-        return;
-
         // Vérification de sécurité
         if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_nonce')) {
             wp_send_json_error(['message' => 'Nonce invalide pour la génération d\'aperçu']);
