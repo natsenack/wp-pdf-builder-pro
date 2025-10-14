@@ -1176,17 +1176,25 @@ class PDF_Builder_Pro_Generator {
             // Générer le PDF
             $pdf_content = $this->pdf->Output('', 'S');
 
-            return [
-                'success' => true,
-                'pdf_content' => base64_encode($pdf_content),
-                'filename' => 'preview-order-' . $order_id . '.pdf'
-            ];
+            // Créer le répertoire de cache s'il n'existe pas
+            $upload_dir = wp_upload_dir();
+            $cache_dir = $upload_dir['basedir'] . '/pdf-builder-cache';
+            if (!file_exists($cache_dir)) {
+                wp_mkdir_p($cache_dir);
+            }
+
+            // Générer un nom de fichier unique
+            $filename = 'preview-order-' . $order_id . '-' . time() . '.pdf';
+            $filepath = $cache_dir . '/' . $filename;
+
+            // Sauvegarder le fichier
+            file_put_contents($filepath, $pdf_content);
+
+            // Retourner l'URL d'accès
+            return $upload_dir['baseurl'] . '/pdf-builder-cache/' . $filename;
 
         } catch (Exception $e) {
-            return [
-                'success' => false,
-                'error' => 'Erreur lors de la génération du PDF: ' . $e->getMessage()
-            ];
+            return new WP_Error('pdf_generation_error', 'Erreur lors de la génération du PDF: ' . $e->getMessage());
         }
     }
 

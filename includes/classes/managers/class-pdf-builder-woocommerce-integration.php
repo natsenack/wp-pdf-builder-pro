@@ -645,20 +645,14 @@ class PDF_Builder_WooCommerce_Integration {
         try {
             error_log('🟡 PDF BUILDER - ajax_preview_order_pdf: Génération aperçu en cours');
 
-            // Inclure le fichier de test d'aperçu
-            $preview_file = plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'pdf-preview-test.php';
-            if (!file_exists($preview_file)) {
-                error_log('❌ PDF BUILDER - ajax_preview_order_pdf: Fichier aperçu non trouvé: ' . $preview_file);
-                wp_send_json_error('Fichier d\'aperçu non trouvé');
+            // Utiliser le générateur PDF principal pour créer un aperçu simple
+            if (!class_exists('PDF_Builder_Pro_Generator')) {
+                error_log('❌ PDF BUILDER - ajax_preview_order_pdf: Classe PDF_Builder_Pro_Generator non trouvée');
+                wp_send_json_error('Classe PDF_Builder_Pro_Generator non trouvée');
             }
 
-            require_once $preview_file;
-
-            // Créer une instance de la classe de test
-            $preview_test = new PDF_Preview_Test();
-
-            // Générer l'aperçu
-            $result = $preview_test->generate_preview_for_ajax($order_id);
+            $generator = new PDF_Builder_Pro_Generator();
+            $result = $generator->generate_simple_preview($order_id);
 
             if (is_wp_error($result)) {
                 error_log('❌ PDF BUILDER - ajax_preview_order_pdf: Erreur génération aperçu: ' . $result->get_error_message());
