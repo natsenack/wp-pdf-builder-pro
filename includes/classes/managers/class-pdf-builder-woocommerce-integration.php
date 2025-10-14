@@ -820,10 +820,25 @@ class PDF_Builder_WooCommerce_Integration {
                 error_log('🔍 PDF BUILDER - ajax_preview_order_pdf: Test chemin TCPDF: ' . $path);
                 if (file_exists($path)) {
                     error_log('✅ PDF BUILDER - ajax_preview_order_pdf: Fichier existe: ' . $path);
+
+                    // Vérifier les permissions du fichier
+                    if (!is_readable($path)) {
+                        error_log('❌ PDF BUILDER - ajax_preview_order_pdf: Fichier TCPDF non lisible: ' . $path);
+                        continue;
+                    }
+
+                    // Vérifier les chemins des constantes TCPDF avant le chargement
+                    error_log('🔧 PDF BUILDER - ajax_preview_order_pdf: Vérification des chemins TCPDF constants');
+                    $this->check_tcpdf_paths();
+
                     try {
                         error_log('📦 PDF BUILDER - ajax_preview_order_pdf: Tentative require_once de: ' . $path);
+                        $start_time = microtime(true);
                         require_once $path;
-                        error_log('📦 PDF BUILDER - ajax_preview_order_pdf: require_once réussi pour: ' . $path);
+                        $end_time = microtime(true);
+                        $load_time = round(($end_time - $start_time) * 1000, 2);
+                        error_log('📦 PDF BUILDER - ajax_preview_order_pdf: require_once réussi en ' . $load_time . 'ms pour: ' . $path);
+
                         if (class_exists('TCPDF')) {
                             error_log('✅ PDF BUILDER - ajax_preview_order_pdf: TCPDF chargé avec succès depuis: ' . $path);
                             $tcpdf_loaded = true;
@@ -945,13 +960,38 @@ class PDF_Builder_WooCommerce_Integration {
                 error_log('🔍 PDF BUILDER - ajax_generate_order_pdf: Test chemin TCPDF: ' . $path);
                 if (file_exists($path)) {
                     error_log('✅ PDF BUILDER - ajax_generate_order_pdf: Fichier existe: ' . $path);
-                    require_once $path;
-                    if (class_exists('TCPDF')) {
-                        error_log('✅ PDF BUILDER - ajax_generate_order_pdf: TCPDF chargé avec succès depuis: ' . $path);
-                        $tcpdf_loaded = true;
-                        break;
-                    } else {
-                        error_log('❌ PDF BUILDER - ajax_generate_order_pdf: Échec chargement TCPDF depuis: ' . $path);
+
+                    // Vérifier les permissions du fichier
+                    if (!is_readable($path)) {
+                        error_log('❌ PDF BUILDER - ajax_generate_order_pdf: Fichier TCPDF non lisible: ' . $path);
+                        continue;
+                    }
+
+                    // Vérifier les chemins des constantes TCPDF avant le chargement
+                    error_log('🔧 PDF BUILDER - ajax_generate_order_pdf: Vérification des chemins TCPDF constants');
+                    $this->check_tcpdf_paths();
+
+                    try {
+                        error_log('📦 PDF BUILDER - ajax_generate_order_pdf: Tentative require_once de: ' . $path);
+                        $start_time = microtime(true);
+                        require_once $path;
+                        $end_time = microtime(true);
+                        $load_time = round(($end_time - $start_time) * 1000, 2);
+                        error_log('📦 PDF BUILDER - ajax_generate_order_pdf: require_once réussi en ' . $load_time . 'ms pour: ' . $path);
+
+                        if (class_exists('TCPDF')) {
+                            error_log('✅ PDF BUILDER - ajax_generate_order_pdf: TCPDF chargé avec succès depuis: ' . $path);
+                            $tcpdf_loaded = true;
+                            break;
+                        } else {
+                            error_log('❌ PDF BUILDER - ajax_generate_order_pdf: Échec chargement TCPDF depuis: ' . $path . ' (classe TCPDF non trouvée)');
+                        }
+                    } catch (Exception $e) {
+                        error_log('❌ PDF BUILDER - ajax_generate_order_pdf: Exception lors du require_once: ' . $e->getMessage());
+                        error_log('❌ PDF BUILDER - ajax_generate_order_pdf: Stack trace: ' . $e->getTraceAsString());
+                    } catch (Error $e) {
+                        error_log('❌ PDF BUILDER - ajax_generate_order_pdf: Error fatale lors du require_once: ' . $e->getMessage());
+                        error_log('❌ PDF BUILDER - ajax_generate_order_pdf: Stack trace: ' . $e->getTraceAsString());
                     }
                 } else {
                     error_log('❌ PDF BUILDER - ajax_generate_order_pdf: Fichier n\'existe pas: ' . $path);
@@ -1073,5 +1113,48 @@ class PDF_Builder_WooCommerce_Integration {
         }
 
         error_log('✅ PDF BUILDER - define_tcpdf_constants: Toutes les constantes traitées');
+    }
+
+    /**
+     * Vérifie que les chemins définis dans les constantes TCPDF sont accessibles
+     */
+    private function check_tcpdf_paths() {
+        error_log('🔧 PDF BUILDER - check_tcpdf_paths: Vérification des chemins TCPDF');
+
+        $paths_to_check = [
+            'K_PATH_FONTS' => defined('K_PATH_FONTS') ? K_PATH_FONTS : null,
+            'K_PATH_CACHE' => defined('K_PATH_CACHE') ? K_PATH_CACHE : null,
+            'K_PATH_IMAGES' => defined('K_PATH_IMAGES') ? K_PATH_IMAGES : null,
+            'K_PATH_URL' => defined('K_PATH_URL') ? K_PATH_URL : null
+        ];
+
+        foreach ($paths_to_check as $const_name => $path) {
+            if ($path === null) {
+                error_log('❌ PDF BUILDER - check_tcpdf_paths: Constante ' . $const_name . ' non définie');
+                continue;
+            }
+
+            error_log('🔍 PDF BUILDER - check_tcpdf_paths: Vérification ' . $const_name . ' = ' . $path);
+
+            if (!file_exists($path)) {
+                error_log('❌ PDF BUILDER - check_tcpdf_paths: Chemin n\'existe pas: ' . $path);
+                // Tenter de créer le répertoire s'il n'existe pas
+                if (!mkdir($path, 0755, true)) {
+                    error_log('❌ PDF BUILDER - check_tcpdf_paths: Impossible de créer le répertoire: ' . $path);
+                } else {
+                    error_log('✅ PDF BUILDER - check_tcpdf_paths: Répertoire créé: ' . $path);
+                }
+            } elseif (!is_dir($path)) {
+                error_log('❌ PDF BUILDER - check_tcpdf_paths: Chemin n\'est pas un répertoire: ' . $path);
+            } elseif (!is_readable($path)) {
+                error_log('❌ PDF BUILDER - check_tcpdf_paths: Répertoire non lisible: ' . $path);
+            } elseif (!is_writable($path)) {
+                error_log('⚠️ PDF BUILDER - check_tcpdf_paths: Répertoire non accessible en écriture: ' . $path . ' (peut causer des problèmes)');
+            } else {
+                error_log('✅ PDF BUILDER - check_tcpdf_paths: Chemin OK: ' . $path);
+            }
+        }
+
+        error_log('✅ PDF BUILDER - check_tcpdf_paths: Vérification terminée');
     }
 }
