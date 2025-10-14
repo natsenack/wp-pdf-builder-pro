@@ -1193,7 +1193,11 @@ class PDF_Builder_Pro_Generator {
             if (!file_exists($cache_dir)) {
                 wp_mkdir_p($cache_dir);
                 // Définir les permissions correctes pour l'accès web (755 pour les dossiers)
-                chmod($cache_dir, 0755);
+                if (chmod($cache_dir, 0755)) {
+                    error_log('✅ PDF BUILDER - Cache directory permissions set to 755');
+                } else {
+                    error_log('❌ PDF BUILDER - Failed to set cache directory permissions');
+                }
             }
 
             // Générer un nom de fichier unique
@@ -1205,7 +1209,16 @@ class PDF_Builder_Pro_Generator {
             file_put_contents($filepath, $pdf_content);
 
             // Définir les permissions du fichier pour l'accès web (644)
-            chmod($filepath, 0644);
+            if (chmod($filepath, 0644)) {
+                error_log('✅ PDF BUILDER - PDF file permissions set to 644');
+            } else {
+                error_log('❌ PDF BUILDER - Failed to set PDF file permissions');
+            }
+
+            // Vérifier les permissions actuelles
+            $dir_perms = substr(sprintf('%o', fileperms($cache_dir)), -4);
+            $file_perms = substr(sprintf('%o', fileperms($filepath)), -4);
+            error_log('🔍 PDF BUILDER - Directory permissions: ' . $dir_perms . ', File permissions: ' . $file_perms);
 
             // Retourner l'URL d'accès
             $url = $upload_dir['baseurl'] . '/pdf-builder-cache/' . $filename;
