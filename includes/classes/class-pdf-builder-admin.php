@@ -4585,10 +4585,19 @@ class PDF_Builder_Admin {
                 error_log('PDF Builder - JSON de test OK, éléments décodés: ' . count($test_elements));
             }
 
+            // Vérifier l'encodage du JSON reçu
+            if (!mb_check_encoding($elements_json, 'UTF-8')) {
+                error_log('PDF Builder - JSON reçu n\'est pas en UTF-8 valide');
+                $elements_json = mb_convert_encoding($elements_json, 'UTF-8', 'auto');
+                error_log('PDF Builder - JSON converti en UTF-8');
+            }
+
             // Puisque le JSON du frontend est valide, essayons d'abord SANS nettoyage
+            error_log('PDF Builder - Tentative de décodage JSON brut...');
             $elements = json_decode($elements_json, true);
             if (json_last_error() !== JSON_ERROR_NONE) {
                 error_log('PDF Builder - JSON brut échoue: ' . json_last_error_msg() . ', tentative avec nettoyage...');
+                error_log('PDF Builder - JSON brut qui échoue: ' . substr($elements_json, 0, 200));
                 // SEULEMENT si le JSON brut échoue, utiliser le nettoyage
                 $elements = json_decode($this->clean_json_data($elements_json), true);
                 if (json_last_error() !== JSON_ERROR_NONE) {
