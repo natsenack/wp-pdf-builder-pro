@@ -247,7 +247,7 @@ class PDF_Builder_Core {
             // Page de test pour le débogage
             error_log('PDF BUILDER - Adding test templates submenu');
             add_submenu_page(
-                'woocommerce',
+                null, // Top-level menu
                 __('🔧 Test Templates', 'pdf-builder-pro'),
                 __('🔧 Test Templates', 'pdf-builder-pro'),
                 'manage_options',
