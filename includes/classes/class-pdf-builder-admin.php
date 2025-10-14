@@ -3269,6 +3269,11 @@ class PDF_Builder_Admin {
         // Générer le HTML d'abord
         $html_content = $this->generate_unified_html($template_data, $order);
 
+        // Charger TCPDF si nécessaire
+        if (!class_exists('TCPDF')) {
+            $this->load_tcpdf_library();
+        }
+
         // Utiliser une bibliothèque PDF si disponible
         if (class_exists('TCPDF')) {
             // Utiliser TCPDF si disponible
@@ -3287,6 +3292,45 @@ class PDF_Builder_Admin {
             file_put_contents($pdf_path, $html_content);
             return $pdf_path;
         }
+    }
+
+    /**
+     * Charge la bibliothèque TCPDF depuis différents chemins possibles
+     */
+    private function load_tcpdf_library() {
+        $tcpdf_paths = [
+            __DIR__ . '/../../lib/tcpdf/tcpdf_autoload.php',
+            __DIR__ . '/../../vendor/tecnickcom/tcpdf/tcpdf.php',
+            plugin_dir_path(__FILE__) . '../../lib/tcpdf/tcpdf_autoload.php',
+            plugin_dir_path(__FILE__) . '../../vendor/tecnickcom/tcpdf/tcpdf.php'
+        ];
+
+        foreach ($tcpdf_paths as $path) {
+            if (file_exists($path)) {
+                require_once $path;
+                if (class_exists('TCPDF')) {
+                    // Définir les constantes TCPDF si elles ne sont pas définies
+                    if (!defined('PDF_PAGE_ORIENTATION')) {
+                        define('PDF_PAGE_ORIENTATION', 'P');
+                        define('PDF_PAGE_FORMAT', 'A4');
+                        define('PDF_UNIT', 'mm');
+                    }
+                    return true;
+                }
+            }
+        }
+
+        // Si TCPDF n'est toujours pas chargé, essayer une approche alternative
+        $tcpdf_dir = plugin_dir_path(__FILE__) . '../../lib/tcpdf/';
+        if (file_exists($tcpdf_dir . 'tcpdf.php')) {
+            require_once $tcpdf_dir . 'tcpdf.php';
+            if (class_exists('TCPDF')) {
+                return true;
+            }
+        }
+
+        error_log('PDF Builder Pro: Impossible de charger TCPDF depuis tous les chemins testés');
+        return false;
     }
 
     /**
