@@ -2552,8 +2552,13 @@ class PDF_Builder_Admin {
                 <div id="pdf-builder-status" class="status-message" style="display: none;"></div>
             </div>
         </div>
-
+<script>
         jQuery(document).ready(function($) {
+            // Assurer que ajaxurl est défini
+            if (typeof ajaxurl === 'undefined') {
+                ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
+            }
+
             var $generateBtn = $('#pdf-builder-generate-btn');
             var $downloadBtn = $('#pdf-builder-download-btn');
             var $previewBtn = $('#pdf-builder-preview-btn');
