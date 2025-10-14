@@ -710,7 +710,7 @@ class PDF_Builder_Pro_Generator {
         }
 
         // Essayer d'utiliser Cell au lieu de MultiCell si le texte est simple
-        if (strpos($customer_info, "\n") === false) {
+        if ($customer_info && strpos($customer_info, "\n") === false) {
             // Texte simple, utiliser Cell
             $this->pdf->Cell($width, 5, $customer_info, 0, 2);
         } else {
