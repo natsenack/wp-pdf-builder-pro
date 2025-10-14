@@ -645,19 +645,93 @@ class PDF_Builder_Pro_Generator {
         $width = isset($element['width']) ? $element['width'] * $px_to_mm : 80;
         $height = isset($element['height']) ? $element['height'] * $px_to_mm : 30;
 
-        // Contenu factice pour l'instant
-        $company_info = "ABC Company SARL\n456 Avenue des Champs\n75008 Paris\nFrance\nTel: 01 23 45 67 89";
+        // Récupérer les informations de société
+        $company_info = $this->get_company_info();
+
+        // Séparer le nom de la société du reste des informations
+        $company_lines = explode("\n", $company_info);
+        $company_name = !empty($company_lines) ? array_shift($company_lines) : 'Société';
+        $company_details = implode("\n", $company_lines);
 
         // Positionner le curseur
         $this->pdf->SetXY($x, $y);
 
-        // Titre
+        // Titre (nom de la société)
         $this->pdf->SetFont('helvetica', 'B', 12);
-        $this->pdf->Cell($width, 6, utf8_decode('ABC Company SARL'), 0, 2);
+        $this->pdf->Cell($width, 6, utf8_decode($company_name), 0, 2);
 
-        // Contenu
-        $this->pdf->SetFont('helvetica', '', 10);
-        $this->pdf->MultiCell($width, 5, utf8_decode("456 Avenue des Champs\n75008 Paris\nFrance\nTel: 01 23 45 67 89"), 0, 'L');
+        // Contenu (détails)
+        if (!empty($company_details)) {
+            $this->pdf->SetFont('helvetica', '', 10);
+            $this->pdf->MultiCell($width, 5, utf8_decode($company_details), 0, 'L');
+        }
+    }
+
+    /**
+     * Récupère les informations de société depuis WooCommerce/WordPress
+     */
+    private function get_company_info() {
+        // Essayer d'abord de récupérer depuis l'option personnalisée
+        $company_info = get_option('pdf_builder_company_info', '');
+
+        // Si les informations sont configurées manuellement, les utiliser
+        if (!empty($company_info)) {
+            return $company_info;
+        }
+
+        // Sinon, récupérer automatiquement depuis WooCommerce/WordPress
+        $company_parts = [];
+
+        // Nom de la société (nom du site WordPress)
+        $company_name = get_bloginfo('name');
+        if (!empty($company_name)) {
+            $company_parts[] = $company_name;
+        }
+
+        // Adresse depuis WooCommerce
+        $address_parts = [];
+        $address1 = get_option('woocommerce_store_address');
+        $address2 = get_option('woocommerce_store_address_2');
+        $city = get_option('woocommerce_store_city');
+        $postcode = get_option('woocommerce_store_postcode');
+        $country = get_option('woocommerce_store_country');
+
+        if (!empty($address1)) $address_parts[] = $address1;
+        if (!empty($address2)) $address_parts[] = $address2;
+
+        $city_line = [];
+        if (!empty($postcode)) $city_line[] = $postcode;
+        if (!empty($city)) $city_line[] = $city;
+        if (!empty($city_line)) $address_parts[] = implode(' ', $city_line);
+
+        if (!empty($country)) {
+            // Convertir le code pays en nom complet si possible
+            if (function_exists('WC') && isset(WC()->countries)) {
+                $countries = WC()->countries->get_countries();
+                $country_name = isset($countries[$country]) ? $countries[$country] : $country;
+            } else {
+                $country_name = $country;
+            }
+            $address_parts[] = $country_name;
+        }
+
+        if (!empty($address_parts)) {
+            $company_parts = array_merge($company_parts, $address_parts);
+        }
+
+        // Email depuis WordPress
+        $email = get_bloginfo('admin_email');
+        if (!empty($email)) {
+            $company_parts[] = 'Email: ' . $email;
+        }
+
+        // Si on a au moins le nom, retourner les infos récupérées
+        if (!empty($company_parts)) {
+            return implode("\n", $company_parts);
+        }
+
+        // Sinon, données d'exemple par défaut
+        return "Votre Société SARL\n123 Rue de l'Entreprise\n75001 Paris\nFrance\nTél: 01 23 45 67 89\nEmail: contact@votresociete.com";
     }
 
     /**

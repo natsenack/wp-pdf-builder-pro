@@ -3530,14 +3530,63 @@ class PDF_Builder_Admin {
      * Formate les informations complètes de la société
      */
     private function format_complete_company_info() {
+        // Essayer d'abord de récupérer depuis l'option personnalisée
         $company_info = get_option('pdf_builder_company_info', '');
 
-        // Si les informations sont vides, retourner des données d'exemple
-        if (empty($company_info)) {
-            return "Votre Société SARL\n123 Rue de l'Entreprise\n75001 Paris\nFrance\nTél: 01 23 45 67 89\nEmail: contact@votresociete.com";
+        // Si les informations sont configurées manuellement, les utiliser
+        if (!empty($company_info)) {
+            return $company_info;
         }
 
-        return $company_info;
+        // Sinon, récupérer automatiquement depuis WooCommerce/WordPress
+        $company_parts = [];
+
+        // Nom de la société (nom du site WordPress)
+        $company_name = get_bloginfo('name');
+        if (!empty($company_name)) {
+            $company_parts[] = $company_name;
+        }
+
+        // Adresse depuis WooCommerce
+        $address_parts = [];
+        $address1 = get_option('woocommerce_store_address');
+        $address2 = get_option('woocommerce_store_address_2');
+        $city = get_option('woocommerce_store_city');
+        $postcode = get_option('woocommerce_store_postcode');
+        $country = get_option('woocommerce_store_country');
+
+        if (!empty($address1)) $address_parts[] = $address1;
+        if (!empty($address2)) $address_parts[] = $address2;
+
+        $city_line = [];
+        if (!empty($postcode)) $city_line[] = $postcode;
+        if (!empty($city)) $city_line[] = $city;
+        if (!empty($city_line)) $address_parts[] = implode(' ', $city_line);
+
+        if (!empty($country)) {
+            // Convertir le code pays en nom complet si possible
+            $countries = WC()->countries->get_countries();
+            $country_name = isset($countries[$country]) ? $countries[$country] : $country;
+            $address_parts[] = $country_name;
+        }
+
+        if (!empty($address_parts)) {
+            $company_parts = array_merge($company_parts, $address_parts);
+        }
+
+        // Email depuis WordPress
+        $email = get_bloginfo('admin_email');
+        if (!empty($email)) {
+            $company_parts[] = 'Email: ' . $email;
+        }
+
+        // Si on a au moins le nom, retourner les infos récupérées
+        if (!empty($company_parts)) {
+            return implode("\n", $company_parts);
+        }
+
+        // Sinon, données d'exemple par défaut
+        return "Votre Société SARL\n123 Rue de l'Entreprise\n75001 Paris\nFrance\nTél: 01 23 45 67 89\nEmail: contact@votresociete.com";
     }
     private function replace_order_variables($content, $order) {
         // Préparer les données de la commande
