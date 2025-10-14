@@ -54,6 +54,7 @@ class PDF_Builder_Core {
     private function init_hooks() {
         add_action('init', array($this, 'init'));
         add_action('admin_init', array($this, 'admin_init'));
+        add_action('admin_menu', array($this, 'add_admin_menu'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
 
@@ -82,14 +83,6 @@ class PDF_Builder_Core {
 
         // Initialiser l'interface d'administration
         $this->init_admin();
-
-        // Forcer l'ajout du menu sur les pages admin
-        if (is_admin()) {
-            error_log('PDF BUILDER - init: is_admin true, adding menu');
-            $this->add_admin_menu();
-        } else {
-            error_log('PDF BUILDER - init: is_admin false');
-        }
 
         pdf_builder_debug('PDF Builder Pro initialized', 1, 'core');
     }
