@@ -1151,7 +1151,7 @@ class PDF_Builder_Pro_Generator {
         try {
             // Initialiser TCPDF
             error_log('🟡 PDF BUILDER - generate_simple_preview: Initializing TCPDF');
-            $this->init_tcpdf();
+            $this->initialize_tcpdf();
 
             // Récupérer la commande WooCommerce
             error_log('🟡 PDF BUILDER - generate_simple_preview: Loading order');
