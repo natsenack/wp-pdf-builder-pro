@@ -2554,15 +2554,27 @@ class PDF_Builder_Admin {
         </div>
 <script>
         jQuery(document).ready(function($) {
+            // Vérifier que WordPress est chargé
+            if (typeof wp === 'undefined' || typeof ajaxurl === 'undefined') {
+                console.error('PDF Builder: WordPress AJAX non disponible');
+                return;
+            }
+
             // Assurer que ajaxurl est défini
             if (typeof ajaxurl === 'undefined') {
-                ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
+                ajaxurl = '<?php echo esc_js(admin_url('admin-ajax.php')); ?>';
             }
 
             var $generateBtn = $('#pdf-builder-generate-btn');
             var $downloadBtn = $('#pdf-builder-download-btn');
             var $previewBtn = $('#pdf-builder-preview-btn');
             var $status = $('#pdf-builder-status');
+
+            // Vérifier que les éléments existent
+            if ($generateBtn.length === 0 || $previewBtn.length === 0) {
+                console.error('PDF Builder: Éléments du metabox non trouvés');
+                return;
+            }
 
             // Fonction pour afficher le statut
             function showStatus(message, type) {
@@ -2598,7 +2610,7 @@ class PDF_Builder_Admin {
             // Générer PDF
             $generateBtn.on('click', function() {
                 var orderId = $(this).data('order-id');
-                var templateId = <?php echo $default_template ? esc_js($default_template['id']) : '0'; ?>;
+                var templateId = <?php echo isset($default_template) && $default_template ? esc_js($default_template['id']) : '0'; ?>;
 
                 console.log('PDF Builder: Generate button clicked');
                 console.log('PDF Builder: Order ID:', orderId);
@@ -2614,7 +2626,7 @@ class PDF_Builder_Admin {
                         action: 'pdf_builder_generate_order_pdf',
                         order_id: orderId,
                         template_id: templateId,
-                        nonce: '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>'
+                        nonce: '<?php echo esc_js(wp_create_nonce('pdf_builder_order_actions')); ?>'
                     },
                     success: function(response) {
                         console.log('PDF Builder: Generate AJAX success');
@@ -2669,7 +2681,7 @@ class PDF_Builder_Admin {
                     data: {
                         action: 'pdf_builder_preview_order_pdf',
                         order_id: orderId,
-                        nonce: '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>'
+                        nonce: '<?php echo esc_js(wp_create_nonce('pdf_builder_order_actions')); ?>'
                     },
                     success: function(response) {
                         console.log('PDF Builder: Preview AJAX success');
