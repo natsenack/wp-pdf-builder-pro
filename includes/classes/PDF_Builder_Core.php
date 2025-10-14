@@ -85,7 +85,10 @@ class PDF_Builder_Core {
 
         // Forcer l'ajout du menu sur les pages admin
         if (is_admin()) {
+            error_log('PDF BUILDER - init: is_admin true, adding menu');
             $this->add_admin_menu();
+        } else {
+            error_log('PDF BUILDER - init: is_admin false');
         }
 
         pdf_builder_debug('PDF Builder Pro initialized', 1, 'core');
