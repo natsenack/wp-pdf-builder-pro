@@ -393,6 +393,7 @@ class PDF_Builder_WooCommerce_Integration {
                 var ajaxData = {
                     action: 'pdf_builder_preview_order_pdf',
                     order_id: orderId,
+                    template_id: templateId,
                     nonce: nonce
                 };
 
@@ -650,8 +651,9 @@ class PDF_Builder_WooCommerce_Integration {
         }
 
         $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
+        $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : null;
 
-        error_log('🟡 PDF BUILDER - ajax_preview_order_pdf: order_id=' . $order_id);
+        error_log('🟡 PDF BUILDER - ajax_preview_order_pdf: order_id=' . $order_id . ', template_id=' . ($template_id ?: 'null'));
 
         if (!$order_id) {
             error_log('❌ PDF BUILDER - ajax_preview_order_pdf: ID commande manquant');
