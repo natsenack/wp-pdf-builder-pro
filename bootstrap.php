@@ -389,19 +389,28 @@ function pdf_builder_ajax_generate_order_pdf_fallback() {
 
 function pdf_builder_ajax_preview_order_pdf_fallback() {
     error_log('PDF BUILDER - Fallback AJAX handler called for preview_order_pdf');
-    
-    // Charger le core si nécessaire
+
+    // Vérifier si les classes de base sont chargées
     if (!class_exists('PDF_Builder_Core')) {
+        error_log('PDF BUILDER - PDF_Builder_Core class not found, loading bootstrap...');
+        pdf_builder_load_bootstrap();
+    }
+
+    if (!class_exists('PDF_Builder_Core')) {
+        error_log('PDF BUILDER - Still no PDF_Builder_Core after loading bootstrap');
+        wp_send_json_error('Core classes not available');
         return;
     }
-    
+
     $core = PDF_Builder_Core::getInstance();
     $admin = PDF_Builder_Admin::getInstance();
     $woocommerce_integration = $admin ? $admin->get_woocommerce_integration() : null;
-    
+
     if ($woocommerce_integration && method_exists($woocommerce_integration, 'ajax_preview_order_pdf')) {
+        error_log('PDF BUILDER - Calling primary AJAX handler via fallback');
         $woocommerce_integration->ajax_preview_order_pdf();
     } else {
+        error_log('PDF BUILDER - WooCommerce integration not available: admin=' . ($admin ? 'yes' : 'no') . ', integration=' . ($woocommerce_integration ? 'yes' : 'no'));
         wp_send_json_error('WooCommerce integration not available');
     }
 }
