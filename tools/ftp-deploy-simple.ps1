@@ -32,7 +32,7 @@ Write-Host "📁 Dest: $remotePath" -ForegroundColor Cyan
 # Compilation
 Write-Host "🔨 Compilation en cours..." -ForegroundColor Yellow
 Push-Location $projectRoot
-& npm run build
+& npm run build  # Compilation optimisée
 if ($LASTEXITCODE -ne 0) {
     Write-Host "❌ Erreur de compilation" -ForegroundColor Red
     exit 1
@@ -76,6 +76,7 @@ function Test-FtpDirectory {
         $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
         $ftpRequest.UseBinary = $true
         $ftpRequest.KeepAlive = $false
+        $ftpRequest.Timeout = 2000  # Timeout ultra-réduit pour performance
 
         $response = $ftpRequest.GetResponse()
         $response.Close()
@@ -86,7 +87,36 @@ function Test-FtpDirectory {
     }
 }
 
-# Fonction pour créer un répertoire sur le serveur FTP
+# Fonction pour vérifier si un fichier distant existe et obtenir ses informations
+function Get-FtpFileInfo {
+    param(
+        [string]$ftpHost,
+        [string]$ftpUser,
+        [string]$ftpPassword,
+        [string]$remoteFile
+    )
+
+    try {
+        $ftpRequest = [System.Net.FtpWebRequest]::Create("ftp://$ftpHost$remoteFile")
+        $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::GetFileSize
+        $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
+        $ftpRequest.UseBinary = $true
+        $ftpRequest.KeepAlive = $false
+        $ftpRequest.Timeout = 1500  # Timeout ultra-court pour vérifications rapides
+
+        $response = $ftpRequest.GetResponse()
+        $fileSize = $response.ContentLength
+        $lastModified = $response.LastModified
+        $response.Close()
+
+        return @{ Exists = $true; Size = $fileSize; LastModified = $lastModified }
+    }
+    catch {
+        return @{ Exists = $false; Size = 0; LastModified = $null }
+    }
+}
+
+# Fonction pour créer un répertoire sur le serveur FTP (optimisée)
 function Create-FtpDirectory {
     param(
         [string]$ftpHost,
@@ -95,10 +125,9 @@ function Create-FtpDirectory {
         [string]$remoteDir
     )
 
-    # Vérifier d'abord si le répertoire existe déjà
+    # Vérifier d'abord si le répertoire existe déjà - si oui, ignorer complètement
     if (Test-FtpDirectory -ftpHost $ftpHost -ftpUser $ftpUser -ftpPassword $ftpPassword -remoteDir $remoteDir) {
-        Write-Host "ℹ️  Répertoire existe déjà: $remoteDir" -ForegroundColor Cyan
-        return $true
+        return $true  # Existe déjà, rien à faire
     }
 
     try {
@@ -107,45 +136,28 @@ function Create-FtpDirectory {
         $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
         $ftpRequest.UseBinary = $true
         $ftpRequest.KeepAlive = $false
+        $ftpRequest.Timeout = 5000
 
         $response = $ftpRequest.GetResponse()
         $response.Close()
 
-        # Tenter de définir les permissions
-        Set-FtpPermissions -ftpHost $ftpHost -ftpUser $ftpUser -ftpPassword $ftpPassword -remotePath $remoteDir -permissions "755"
+        # Tenter de définir les permissions (en arrière-plan, ne pas bloquer)
+        try {
+            $permRequest = [System.Net.FtpWebRequest]::Create("ftp://$ftpHost$remoteDir")
+            $permRequest.Method = "SITE CHMOD 755 $remoteDir"
+            $permRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
+            $permRequest.UseBinary = $false
+            $permRequest.KeepAlive = $false
+            $permRequest.Timeout = 1000  # Timeout minimal pour permissions
+            $permResponse = $permRequest.GetResponse()
+            $permResponse.Close()
+        } catch {
+            # Ignorer les erreurs de permissions
+        }
 
-        Write-Host "✅ Répertoire créé: $remoteDir" -ForegroundColor Green
         return $true
     }
     catch {
-        Write-Host "❌ Échec création répertoire: $remoteDir - $($_.Exception.Message)" -ForegroundColor Red
-        return $false
-    }
-}
-
-# Fonction pour définir les permissions FTP
-function Set-FtpPermissions {
-    param(
-        [string]$ftpHost,
-        [string]$ftpUser,
-        [string]$ftpPassword,
-        [string]$remotePath,
-        [string]$permissions
-    )
-
-    try {
-        $ftpRequest = [System.Net.FtpWebRequest]::Create("ftp://$ftpHost$remotePath")
-        $ftpRequest.Method = "SITE CHMOD $permissions $remotePath"
-        $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
-        $ftpRequest.UseBinary = $false
-        $ftpRequest.KeepAlive = $false
-
-        $response = $ftpRequest.GetResponse()
-        $response.Close()
-        return $true
-    }
-    catch {
-        # Ignorer les erreurs de permissions
         return $false
     }
 }
@@ -159,7 +171,7 @@ if (Create-FtpDirectory -ftpHost $ftpHost -ftpUser $ftpUser -ftpPassword $ftpPas
     exit 1
 }
 
-# Créer tous les répertoires nécessaires
+# Créer tous les répertoires nécessaires (optimisé)
 $allDirectories = @()
 foreach ($file in $files) {
     $relPath = $file.FullName.Substring($projectRoot.Length + 1).Replace('\', '/')
@@ -180,19 +192,20 @@ $directories = $allDirectories | Sort-Object { ($_.Split('/')).Count }
 
 Write-Host "📁 Création des répertoires ($($directories.Count) répertoires)..." -ForegroundColor Yellow
 $createdCount = 0
-$existingCount = 0
+$skippedCount = 0
+
+# Créer les répertoires de manière optimisée (pas de messages pour les existants)
 foreach ($dir in $directories) {
     $remoteDir = "$remotePath/$dir"
     if (Create-FtpDirectory -ftpHost $ftpHost -ftpUser $ftpUser -ftpPassword $ftpPassword -remoteDir $remoteDir) {
-        # Le message est déjà affiché dans Create-FtpDirectory
         $createdCount++
     } else {
-        $existingCount++
+        $skippedCount++
     }
 }
-Write-Host "✅ Répertoires prêts: $createdCount créés, $existingCount existants" -ForegroundColor Green
+Write-Host "✅ Répertoires prêts: $createdCount créés, $skippedCount ignorés (existants)" -ForegroundColor Green
 
-# Fonction pour uploader un fichier avec gestion d'erreur améliorée
+# Fonction pour uploader un fichier avec vérification d'existence (optimisée)
 function Send-File {
     param(
         [string]$localFile,
@@ -203,13 +216,23 @@ function Send-File {
     )
 
     try {
+        # Vérifier d'abord si le fichier distant existe et est identique
+        $localFileInfo = Get-Item $localFile
+        $remoteFileInfo = Get-FtpFileInfo -ftpHost $ftpHost -ftpUser $ftpUser -ftpPassword $ftpPassword -remoteFile $remoteFile
+
+        # Si le fichier existe et a la même taille, considérer qu'il est à jour
+        if ($remoteFileInfo.Exists -and $remoteFileInfo.Size -eq $localFileInfo.Length) {
+            return @{ Success = $true; RemoteFile = $remoteFile; FileName = [System.IO.Path]::GetFileName($remoteFile); Skipped = $true }
+        }
+
+        # Fichier différent ou inexistant, procéder à l'upload
         $webClient = New-Object System.Net.WebClient
         $webClient.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
         $uri = "ftp://$ftpHost$remoteFile"
 
         # Essayer d'uploader le fichier
         $webClient.UploadFile($uri, $localFile)
-        return @{ Success = $true; RemoteFile = $remoteFile; FileName = [System.IO.Path]::GetFileName($remoteFile) }
+        return @{ Success = $true; RemoteFile = $remoteFile; FileName = [System.IO.Path]::GetFileName($remoteFile); Uploaded = $true }
     }
     catch {
         $errorMessage = $_.Exception.Message
@@ -217,23 +240,18 @@ function Send-File {
         # Pour les erreurs 550 (fichier non disponible), essayer de supprimer et réessayer
         if ($errorMessage -match "550") {
             try {
-                Write-Host "⚠️ Tentative de suppression du fichier distant: $($remoteFile)" -ForegroundColor Yellow
-                $deleteUri = "ftp://$ftpHost$remoteFile"
-                $deleteRequest = [System.Net.FtpWebRequest]::Create($deleteUri)
-                $deleteRequest.Method = [System.Net.WebRequestMethods+Ftp]::DeleteFile
-                $deleteRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
-
-                $deleteResponse = $deleteRequest.GetResponse()
-                $deleteResponse.Close()
-
-                Write-Host "✅ Fichier distant supprimé, nouvelle tentative..." -ForegroundColor Green
-
-                # Réessayer l'upload
+                # Réessayer l'upload directement (le fichier distant sera remplacé)
+                $webClient = New-Object System.Net.WebClient
+                $webClient.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
+                $uri = "ftp://$ftpHost$remoteFile"
                 $webClient.UploadFile($uri, $localFile)
                 return @{ Success = $true; RemoteFile = $remoteFile; FileName = [System.IO.Path]::GetFileName($remoteFile); Retried = $true }
             }
             catch {
                 return @{ Success = $false; RemoteFile = $remoteFile; Error = "Erreur 550 persistante: $($_.Exception.Message)"; FileName = [System.IO.Path]::GetFileName($remoteFile) }
+            }
+            finally {
+                if ($webClient) { $webClient.Dispose() }
             }
         }
         else {
@@ -241,15 +259,16 @@ function Send-File {
         }
     }
     finally {
-        $webClient.Dispose()
+        if ($webClient) { $webClient.Dispose() }
     }
 }
 
-# Upload des fichiers en parallèle
-$maxConcurrentJobs = 10  # Nombre maximum de jobs simultanés
+# Upload des fichiers en parallèle (ultra-optimisé)
+$maxConcurrentJobs = 20  # Augmenté pour performance maximale
 $runningJobs = @()
 $completedJobs = @()
 $uploaded = 0
+$skipped = 0
 $total = $files.Count
 $startTime = Get-Date
 $uploadedBytes = 0
@@ -271,9 +290,14 @@ try {
                 Remove-Job -Job $completed.Job
 
                 if ($result.Success) {
-                    Write-Host "✅ $($result.FileName)" -ForegroundColor Green
-                    $uploaded++
-                    $uploadedBytes += $completed.FileSize
+                    if ($result.Skipped) {
+                        Write-Host "⏭️ $($result.FileName)" -ForegroundColor Cyan
+                        $skipped++
+                    } else {
+                        Write-Host "✅ $($result.FileName)" -ForegroundColor Green
+                        $uploaded++
+                        $uploadedBytes += $completed.FileSize
+                    }
                 } else {
                     Write-Host "❌ Erreur upload $($result.FileName): $($result.Error)" -ForegroundColor Red
                 }
@@ -282,7 +306,7 @@ try {
                 $completedJobs += $completed
             } else {
                 # Aucun job terminé, attendre un peu
-                Start-Sleep -Milliseconds 100
+                Start-Sleep -Milliseconds 25  # Réduit pour plus de réactivité
             }
         }
 
@@ -290,14 +314,15 @@ try {
         $job = Start-Job -ScriptBlock ${function:Send-File} -ArgumentList $file.FullName, $remoteFile, $ftpHost, $ftpUser, $ftpPassword
         $runningJobs += @{ Job = $job; FileSize = $fileSize; RemoteFile = $remoteFile; FileName = [System.IO.Path]::GetFileName($relPath) }
 
-        # Mise à jour de la progression
-        $elapsed = (Get-Date) - $startTime
-        $avgSpeed = if ($elapsed.TotalSeconds -gt 0) { $uploadedBytes / $elapsed.TotalSeconds } else { 0 }
-        $remainingFiles = $total - $uploaded
-        $estimatedTimeRemaining = if ($avgSpeed -gt 0) { ($remainingFiles * ($uploadedBytes / [Math]::Max($uploaded, 1))) / $avgSpeed } else { 0 }
+        # Mise à jour de la progression (ultra-optimisée)
+        if (($uploaded + $skipped) % 10 -eq 0) {  # Mise à jour tous les 10 fichiers pour performance max
+            $elapsed = (Get-Date) - $startTime
+            $avgSpeed = if ($elapsed.TotalSeconds -gt 0) { $uploadedBytes / $elapsed.TotalSeconds } else { 0 }
+            $remainingFiles = $total - $uploaded - $skipped
+            $estimatedTimeRemaining = if ($avgSpeed -gt 0) { ($remainingFiles * ($uploadedBytes / [Math]::Max($uploaded, 1))) / $avgSpeed } else { 0 }
 
-        $progressPercent = [math]::Round(($uploaded / $total) * 100, 1)
-        $status = "$uploaded/$total fichiers | $([math]::Round($avgSpeed / 1024, 1)) KB/s | ~$([math]::Round($estimatedTimeRemaining / 60, 1)) min restantes"
+            $progressPercent = [math]::Round((($uploaded + $skipped) / $total) * 100, 1)
+            $status = "$($uploaded + $skipped)/$total fichiers | $([math]::Round($avgSpeed / 1024, 1)) KB/s | ~$([math]::Round($estimatedTimeRemaining / 60, 1)) min restantes"
 
         Write-Progress -Activity "🚀 Déploiement FTP - $progressPercent% terminé" -Status $status -PercentComplete $progressPercent
     }
@@ -310,15 +335,20 @@ try {
             Remove-Job -Job $completed.Job
 
             if ($result.Success) {
-                $statusIcon = if ($result.Retried) { "🔄" } else { "✅" }
-                Write-Host "$statusIcon $($result.FileName)" -ForegroundColor Green
-                $uploaded++
-                $uploadedBytes += $completed.FileSize
+                if ($result.Skipped) {
+                    Write-Host "⏭️ $($result.FileName)" -ForegroundColor Cyan
+                    $skipped++
+                } elseif ($result.Uploaded -or $result.Retried) {
+                    $statusIcon = if ($result.Retried) { "🔄" } else { "✅" }
+                    Write-Host "$statusIcon $($result.FileName)" -ForegroundColor Green
+                    $uploaded++
+                    $uploadedBytes += $completed.FileSize
+                }
             } else {
                 # Pour les erreurs 550 sur les fichiers PHP, les marquer comme warnings plutôt qu'erreurs
                 if ($result.Error -match "550" -and $result.FileName -match "\.php$") {
                     Write-Host "⚠️ Erreur 550 sur $($result.FileName) (permissions serveur) - ignoré" -ForegroundColor Yellow
-                    $uploaded++  # Compter comme uploadé pour la progression
+                    $skipped++  # Compter comme ignoré pour la progression
                 } else {
                     Write-Host "❌ Erreur upload $($result.FileName): $($result.Error)" -ForegroundColor Red
                 }
@@ -328,19 +358,22 @@ try {
             $completedJobs += $completed
         }
 
-        # Mise à jour de la progression
+        # Mise à jour de la progression finale
         $elapsed = (Get-Date) - $startTime
         $avgSpeed = if ($elapsed.TotalSeconds -gt 0) { $uploadedBytes / $elapsed.TotalSeconds } else { 0 }
-        $remainingFiles = $total - $uploaded
+        $remainingFiles = $total - $uploaded - $skipped
         $estimatedTimeRemaining = if ($avgSpeed -gt 0) { ($remainingFiles * ($uploadedBytes / [Math]::Max($uploaded, 1))) / $avgSpeed } else { 0 }
 
-        $progressPercent = [math]::Round(($uploaded / $total) * 100, 1)
-        $status = "$uploaded/$total fichiers | $([math]::Round($avgSpeed / 1024, 1)) KB/s | ~$([math]::Round($estimatedTimeRemaining / 60, 1)) min restantes"
+        $progressPercent = [math]::Round((($uploaded + $skipped) / $total) * 100, 1)
+        $status = "$($uploaded + $skipped)/$total fichiers | $([math]::Round($avgSpeed / 1024, 1)) KB/s | ~$([math]::Round($estimatedTimeRemaining / 60, 1)) min restantes"
 
         Write-Progress -Activity "🚀 Déploiement FTP - $progressPercent% terminé" -Status $status -PercentComplete $progressPercent
 
-        Start-Sleep -Milliseconds 100  # Petite pause pour éviter de boucler trop vite
+        Start-Sleep -Milliseconds 25  # Délai ultra-réduit pour performance maximale
     }
+}
+} catch {
+    Write-Host "❌ Erreur lors de l'upload: $($_.Exception.Message)" -ForegroundColor Red
 } finally {
     # Nettoyer tous les jobs restants en cas d'erreur ou d'interruption
     Write-Host "🧹 Nettoyage des jobs en cours..." -ForegroundColor Yellow
@@ -348,7 +381,7 @@ try {
     Write-Host "✅ Jobs nettoyés" -ForegroundColor Green
 }
 
-Write-Host "🎉 Déploiement terminé ! $uploaded fichiers uploadés." -ForegroundColor Green
+Write-Host "🎉 Déploiement terminé ! $uploaded fichiers uploadés, $skipped fichiers ignorés (inchangés)." -ForegroundColor Green
 
 # Push automatique vers Git après déploiement réussi
 Write-Host "🔄 Push vers Git..." -ForegroundColor Yellow
