@@ -70,8 +70,14 @@ Write-Host "✅ Compilation terminée" -ForegroundColor Green
 Write-Host "📂 Analyse des fichiers..." -ForegroundColor Yellow
 Write-Progress -Activity "📂 Analyse des fichiers" -Status "Recherche des fichiers à déployer..." -PercentComplete 0
 
+# Récupérer la date du dernier déploiement réussi
+$lastSuccessfulDeploy = $performanceData.LastDeployments | Where-Object { $_.FilesUploaded -gt 0 } | Select-Object -First 1
+$lastDeployTime = if ($lastSuccessfulDeploy) { $lastSuccessfulDeploy.Timestamp } else { (Get-Date).AddDays(-1) }
+
+Write-Host "📅 Dernier déploiement réussi: $($lastDeployTime.ToString('yyyy-MM-dd HH:mm:ss'))" -ForegroundColor Cyan
+
 # Exclusions: dossiers de développement, fichiers temporaires, archives, backups, logs, docs
-$files = Get-ChildItem -Path $projectRoot -Recurse -File | Where-Object {
+$allFiles = Get-ChildItem -Path $projectRoot -Recurse -File | Where-Object {
     $relPath = $_.FullName.Substring($projectRoot.Length + 1).Replace('\', '/')
     -not ($relPath -match '^(archive|\.git|\.vscode|node_modules|src|tools|docs|build-tools|dev-tools|vendor|dist|package\.json|package-lock\.json|webpack\.config\.js|tsconfig\.json|temp-restore)/|^(temp|backup|cache|extract|restore|canvas-extract|temp-canvas|backup-wp|archive-pdf|temp_backup|projet)/|^.*\.(bak|tmp|log|md)$')
 } | Where-Object {
@@ -83,14 +89,35 @@ $files = Get-ChildItem -Path $projectRoot -Recurse -File | Where-Object {
     ($relPath -eq 'bootstrap.php')
 }
 
+# Filtrage intelligent : seulement les fichiers modifiés depuis le dernier déploiement
+$files = $allFiles | Where-Object { $_.LastWriteTime -gt $lastDeployTime }
+$skippedByTime = $allFiles.Count - $files.Count
+
 Write-Progress -Activity "📂 Analyse des fichiers" -Status "Analyse terminée" -PercentComplete 100
 Write-Progress -Activity "📂 Analyse des fichiers" -Completed
 
-Write-Host "📊 Fichiers à envoyer: $($files.Count)" -ForegroundColor Yellow
+Write-Host "📊 Fichiers à envoyer: $($files.Count) (filtrés sur $($allFiles.Count) total, $skippedByTime ignorés par date)" -ForegroundColor Yellow
 
 if ($files.Count -eq 0) {
-    Write-Host "❌ Aucun fichier à envoyer" -ForegroundColor Red
-    exit 1
+    Write-Host "🎯 Aucun fichier modifié depuis le dernier déploiement - déploiement ultra-rapide !" -ForegroundColor Green
+
+    # Même si aucun fichier n'est modifié, on fait quand même le push Git pour les commits locaux
+    Write-Host "🔄 Push Git uniquement..." -ForegroundColor Yellow
+
+    try {
+        Push-Location $projectRoot
+        & git add .
+        $commitMessage = "Déploiement automatique - $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
+        & git commit -m $commitMessage
+        & git push origin dev
+        Write-Host "✅ Push Git réussi" -ForegroundColor Green
+    } catch {
+        Write-Host "⚠️ Erreur Git: $($_.Exception.Message)" -ForegroundColor Yellow
+    } finally {
+        Pop-Location
+    }
+
+    exit 0
 }
 
 # Fonction pour vérifier si un répertoire FTP existe
@@ -348,8 +375,20 @@ $optimizationStart = Get-Date
 $connectivityTest = Test-Connection -ComputerName $ftpHost.Split('.')[0] -Count 1 -ErrorAction SilentlyContinue
 $latency = if ($connectivityTest) { $connectivityTest.ResponseTime } else { 50 }
 
-# Ajustement intelligent des paramètres basé sur la latence et l'historique
-if ($latency -lt 20) {
+# Ajustement intelligent des paramètres basé sur la latence, l'historique et le nombre de fichiers
+if ($files.Count -le 5) {
+    # Très peu de fichiers - mode ultra-rapide
+    $maxConcurrentJobs = [Math]::Min(50, $files.Count * 10)  # Jobs = fichiers * 10, max 50
+    $ftpTimeout = 500  # Timeout très court
+    $sleepMs = 1       # Sleep minimal
+    Write-Host "🚀 Mode ultra-rapide activé: $($files.Count) fichiers seulement" -ForegroundColor Green
+} elseif ($files.Count -le 20) {
+    # Peu de fichiers - mode rapide
+    $maxConcurrentJobs = [Math]::Min(40, $files.Count * 3)
+    $ftpTimeout = 800
+    $sleepMs = 5
+    Write-Host "⚡ Mode rapide activé: $($files.Count) fichiers" -ForegroundColor Green
+} elseif ($latency -lt 20) {
     # Connexion très rapide
     $maxConcurrentJobs = [Math]::Min(30, $maxConcurrentJobs + 2)
     $ftpTimeout = [Math]::Max(1000, $ftpTimeout - 200)
