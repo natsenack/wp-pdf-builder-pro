@@ -4570,11 +4570,22 @@ class PDF_Builder_Admin {
                 return;
             }
 
-            // Décoder les éléments JSON
-            $elements = json_decode($this->clean_json_data($elements_json), true);
+            // Log des données brutes pour débogage
+            error_log('PDF Builder - Données JSON brutes reçues: ' . substr($elements_json, 0, 500));
+            error_log('PDF Builder - Longueur des données: ' . strlen($elements_json));
+
+            // Essayer d'abord de décoder sans nettoyage
+            $elements = json_decode($elements_json, true);
             if (json_last_error() !== JSON_ERROR_NONE) {
-                wp_send_json_error(['message' => 'Erreur de décodage JSON des éléments: ' . json_last_error_msg()]);
-                return;
+                error_log('PDF Builder - Erreur JSON brut: ' . json_last_error_msg() . ', tentative avec nettoyage...');
+                // Si ça échoue, essayer avec le nettoyage
+                $elements = json_decode($this->clean_json_data($elements_json), true);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    error_log('PDF Builder - Erreur JSON après nettoyage: ' . json_last_error_msg());
+                    error_log('PDF Builder - Données après nettoyage: ' . substr($this->clean_json_data($elements_json), 0, 500));
+                    wp_send_json_error(['message' => 'Erreur de décodage JSON des éléments: ' . json_last_error_msg()]);
+                    return;
+                }
             }
 
             // Valider que c'est un tableau d'éléments
