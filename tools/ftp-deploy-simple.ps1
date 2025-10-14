@@ -72,7 +72,7 @@ Write-Progress -Activity "📂 Analyse des fichiers" -Status "Recherche des fich
 
 # Récupérer la date du dernier déploiement réussi
 $lastSuccessfulDeploy = $performanceData.LastDeployments | Where-Object { $_.FilesUploaded -gt 0 } | Select-Object -First 1
-$lastDeployTime = if ($lastSuccessfulDeploy) { $lastSuccessfulDeploy.Timestamp } else { (Get-Date).AddDays(-1) }
+$lastDeployTime = if ($lastSuccessfulDeploy) { [DateTime]::Parse($lastSuccessfulDeploy.Timestamp) } else { (Get-Date).AddDays(-1) }
 
 Write-Host "📅 Dernier déploiement réussi: $($lastDeployTime.ToString('yyyy-MM-dd HH:mm:ss'))" -ForegroundColor Cyan
 
@@ -564,7 +564,7 @@ Write-Host "══════════════════════�
 # Sauvegarde des performances pour optimisation future
 Write-Host "💾 Sauvegarde des performances..." -ForegroundColor Yellow
 $currentDeployment = @{
-    Timestamp = Get-Date
+    Timestamp = (Get-Date).ToString('o')  # Format ISO 8601
     Duration = $elapsed.TotalSeconds
     FilesProcessed = $totalProcessed
     FilesUploaded = $uploaded
