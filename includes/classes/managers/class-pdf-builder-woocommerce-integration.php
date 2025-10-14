@@ -757,16 +757,20 @@ class PDF_Builder_WooCommerce_Integration {
         error_log('🚨 PDF BUILDER - ajax_preview_order_pdf METHOD CALLED - STARTING EXECUTION');
 
         // Vérifier les permissions
+        error_log('🔐 PDF BUILDER - ajax_preview_order_pdf: Vérification permissions');
         if (!current_user_can('manage_woocommerce')) {
             error_log('❌ PDF BUILDER - ajax_preview_order_pdf: Permissions insuffisantes');
             wp_send_json_error('Permissions insuffisantes');
         }
+        error_log('✅ PDF BUILDER - ajax_preview_order_pdf: Permissions OK');
 
         // Vérification de sécurité
+        error_log('🔒 PDF BUILDER - ajax_preview_order_pdf: Vérification nonce');
         if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions')) {
             error_log('❌ PDF BUILDER - ajax_preview_order_pdf: Nonce invalide');
             wp_send_json_error('Sécurité: Nonce invalide');
         }
+        error_log('✅ PDF BUILDER - ajax_preview_order_pdf: Nonce OK');
 
         $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
         $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
@@ -777,12 +781,15 @@ class PDF_Builder_WooCommerce_Integration {
             error_log('❌ PDF BUILDER - ajax_preview_order_pdf: ID commande manquant');
             wp_send_json_error('ID commande manquant');
         }
+        error_log('✅ PDF BUILDER - ajax_preview_order_pdf: order_id valide');
 
         // Vérifier que WooCommerce est actif
+        error_log('🛒 PDF BUILDER - ajax_preview_order_pdf: Vérification WooCommerce');
         if (!class_exists('WooCommerce')) {
             error_log('❌ PDF BUILDER - ajax_preview_order_pdf: WooCommerce non actif');
             wp_send_json_error('WooCommerce n\'est pas installé ou activé');
         }
+        error_log('✅ PDF BUILDER - ajax_preview_order_pdf: WooCommerce OK');
 
         $order = wc_get_order($order_id);
         if (!$order) {
@@ -1028,7 +1035,10 @@ class PDF_Builder_WooCommerce_Integration {
      * Définit les constantes TCPDF nécessaires
      */
     private function define_tcpdf_constants() {
+        error_log('🟡 PDF BUILDER - define_tcpdf_constants: Début définition constantes');
+
         $plugin_dir = plugin_dir_path(__FILE__) . '../../';
+        error_log('🟡 PDF BUILDER - define_tcpdf_constants: plugin_dir = ' . $plugin_dir);
 
         $constants = [
             'PDF_PAGE_ORIENTATION' => 'P',
@@ -1041,9 +1051,15 @@ class PDF_Builder_WooCommerce_Integration {
         ];
 
         foreach ($constants as $name => $value) {
+            error_log('🟡 PDF BUILDER - define_tcpdf_constants: Définition ' . $name . ' = ' . $value);
             if (!defined($name)) {
                 define($name, $value);
+                error_log('✅ PDF BUILDER - define_tcpdf_constants: ' . $name . ' défini');
+            } else {
+                error_log('ℹ️ PDF BUILDER - define_tcpdf_constants: ' . $name . ' déjà défini (valeur: ' . constant($name) . ')');
             }
         }
+
+        error_log('✅ PDF BUILDER - define_tcpdf_constants: Toutes les constantes traitées');
     }
 }
