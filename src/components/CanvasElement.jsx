@@ -390,6 +390,8 @@ export const CanvasElement = ({
           '--resize-handle-border-color': 'white',
           '--resize-handle-offset': `${-5 * zoom}px`,
           '--element-border-width': '2px',
+          '--resize-zone-size': '16px',
+          '--show-resize-zones': isSelected ? 'auto' : 'none',
           // Pour les éléments spéciaux, utiliser une gestion différente des bordures
           ...(isSpecialElement(element.type) ? getSpecialElementBorderStyle(element) : {
             // Styles de base communs à tous les éléments non-spéciaux
@@ -1372,6 +1374,165 @@ export const CanvasElement = ({
              element.documentType === 'credit_note' ? 'AVOIR' : 'DOCUMENT'}
           </div>
         )}
+
+        {/* Poignées de redimensionnement - rendues à l'intérieur de l'élément pour un positionnement correct */}
+        {isSelected && (
+          <>
+            {/* Coins */}
+            <div
+              className="resize-handle nw"
+              onMouseDown={(e) => {
+                const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
+                const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
+                resize.handleResizeStart(e, 'nw', {
+                  x: element.x,
+                  y: element.y,
+                  width: element.width,
+                  height: element.height
+                }, canvasRect, zoom);
+              }}
+              onContextMenu={handleContextMenuEvent}
+            />
+            <div
+              className="resize-handle ne"
+              onMouseDown={(e) => {
+                const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
+                const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
+                resize.handleResizeStart(e, 'ne', {
+                  x: element.x,
+                  y: element.y,
+                  width: element.width,
+                  height: element.height
+                }, canvasRect, zoom);
+              }}
+              onContextMenu={handleContextMenuEvent}
+            />
+            <div
+              className="resize-handle sw"
+              onMouseDown={(e) => {
+                const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
+                const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
+                resize.handleResizeStart(e, 'sw', {
+                  x: element.x,
+                  y: element.y,
+                  width: element.width,
+                  height: element.height
+                }, canvasRect, zoom);
+              }}
+              onContextMenu={handleContextMenuEvent}
+            />
+            <div
+              className="resize-handle se"
+              onMouseDown={(e) => {
+                const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
+                const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
+                resize.handleResizeStart(e, 'se', {
+                  x: element.x,
+                  y: element.y,
+                  width: element.width,
+                  height: element.height
+                }, canvasRect, zoom);
+              }}
+              onContextMenu={handleContextMenuEvent}
+            />
+
+            {/* Côtés */}
+            <div
+              className="resize-handle n"
+              onMouseDown={(e) => {
+                const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
+                const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
+                resize.handleResizeStart(e, 'n', {
+                  x: element.x,
+                  y: element.y,
+                  width: element.width,
+                  height: element.height
+                }, canvasRect, zoom);
+              }}
+              onContextMenu={handleContextMenuEvent}
+            />
+            <div
+              className="resize-handle s"
+              onMouseDown={(e) => {
+                const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
+                const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
+                resize.handleResizeStart(e, 's', {
+                  x: element.x,
+                  y: element.y,
+                  width: element.width,
+                  height: element.height
+                }, canvasRect, zoom);
+              }}
+              onContextMenu={handleContextMenuEvent}
+            />
+            <div
+              className="resize-handle w"
+              onMouseDown={(e) => {
+                const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
+                const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
+                resize.handleResizeStart(e, 'w', {
+                  x: element.x,
+                  y: element.y,
+                  width: element.width,
+                  height: element.height
+                }, canvasRect, zoom);
+              }}
+              onContextMenu={handleContextMenuEvent}
+            />
+            <div
+              className="resize-handle e"
+              onMouseDown={(e) => {
+                const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
+                const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
+                resize.handleResizeStart(e, 'e', {
+                  x: element.x,
+                  y: element.y,
+                  width: element.width,
+                  height: element.height
+                }, canvasRect, zoom);
+              }}
+              onContextMenu={handleContextMenuEvent}
+            />
+
+            {/* Zones de redimensionnement sur les bords */}
+            <div
+              className="resize-zone resize-zone-n"
+              onMouseDown={(e) => resize.handleResizeStart(e, 'n', {
+                x: element.x,
+                y: element.y,
+                width: element.width,
+                height: element.height
+              })}
+            />
+            <div
+              className="resize-zone resize-zone-s"
+              onMouseDown={(e) => resize.handleResizeStart(e, 's', {
+                x: element.x,
+                y: element.y,
+                width: element.width,
+                height: element.height
+              })}
+            />
+            <div
+              className="resize-zone resize-zone-w"
+              onMouseDown={(e) => resize.handleResizeStart(e, 'w', {
+                x: element.x,
+                y: element.y,
+                width: element.width,
+                height: element.height
+              })}
+            />
+            <div
+              className="resize-zone resize-zone-e"
+              onMouseDown={(e) => resize.handleResizeStart(e, 'e', {
+                x: element.x,
+                y: element.y,
+                width: element.width,
+                height: element.height
+              })}
+            />
+          </>
+        )}
       </div>
 
 
@@ -1393,165 +1554,6 @@ export const CanvasElement = ({
             boxSizing: 'border-box'
           }}
         />
-      )}
-
-      {/* Poignées de redimensionnement */}
-      {isSelected && (
-        <>
-          {/* Coins */}
-          <div
-            className="resize-handle nw"
-            onMouseDown={(e) => {
-              const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
-              const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
-              resize.handleResizeStart(e, 'nw', {
-                x: element.x,
-                y: element.y,
-                width: element.width,
-                height: element.height
-              }, canvasRect, zoom);
-            }}
-            onContextMenu={handleContextMenuEvent}
-          />
-          <div
-            className="resize-handle ne"
-            onMouseDown={(e) => {
-              const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
-              const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
-              resize.handleResizeStart(e, 'ne', {
-                x: element.x,
-                y: element.y,
-                width: element.width,
-                height: element.height
-              }, canvasRect, zoom);
-            }}
-            onContextMenu={handleContextMenuEvent}
-          />
-          <div
-            className="resize-handle sw"
-            onMouseDown={(e) => {
-              const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
-              const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
-              resize.handleResizeStart(e, 'sw', {
-                x: element.x,
-                y: element.y,
-                width: element.width,
-                height: element.height
-              }, canvasRect, zoom);
-            }}
-            onContextMenu={handleContextMenuEvent}
-          />
-          <div
-            className="resize-handle se"
-            onMouseDown={(e) => {
-              const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
-              const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
-              resize.handleResizeStart(e, 'se', {
-                x: element.x,
-                y: element.y,
-                width: element.width,
-                height: element.height
-              }, canvasRect, zoom);
-            }}
-            onContextMenu={handleContextMenuEvent}
-          />
-
-          {/* Côtés */}
-          <div
-            className="resize-handle n"
-            onMouseDown={(e) => {
-              const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
-              const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
-              resize.handleResizeStart(e, 'n', {
-                x: element.x,
-                y: element.y,
-                width: element.width,
-                height: element.height
-              }, canvasRect, zoom);
-            }}
-            onContextMenu={handleContextMenuEvent}
-          />
-          <div
-            className="resize-handle s"
-            onMouseDown={(e) => {
-              const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
-              const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
-              resize.handleResizeStart(e, 's', {
-                x: element.x,
-                y: element.y,
-                width: element.width,
-                height: element.height
-              }, canvasRect, zoom);
-            }}
-            onContextMenu={handleContextMenuEvent}
-          />
-          <div
-            className="resize-handle w"
-            onMouseDown={(e) => {
-              const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
-              const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
-              resize.handleResizeStart(e, 'w', {
-                x: element.x,
-                y: element.y,
-                width: element.width,
-                height: element.height
-              }, canvasRect, zoom);
-            }}
-            onContextMenu={handleContextMenuEvent}
-          />
-          <div
-            className="resize-handle e"
-            onMouseDown={(e) => {
-              const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
-              const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
-              resize.handleResizeStart(e, 'e', {
-                x: element.x,
-                y: element.y,
-                width: element.width,
-                height: element.height
-              }, canvasRect, zoom);
-            }}
-            onContextMenu={handleContextMenuEvent}
-          />
-
-          {/* Zones de redimensionnement sur les bords */}
-          <div
-            className="resize-zone resize-zone-n"
-            onMouseDown={(e) => resize.handleResizeStart(e, 'n', {
-              x: element.x,
-              y: element.y,
-              width: element.width,
-              height: element.height
-            })}
-          />
-          <div
-            className="resize-zone resize-zone-s"
-            onMouseDown={(e) => resize.handleResizeStart(e, 's', {
-              x: element.x,
-              y: element.y,
-              width: element.width,
-              height: element.height
-            })}
-          />
-          <div
-            className="resize-zone resize-zone-w"
-            onMouseDown={(e) => resize.handleResizeStart(e, 'w', {
-              x: element.x,
-              y: element.y,
-              width: element.width,
-              height: element.height
-            })}
-          />
-          <div
-            className="resize-zone resize-zone-e"
-            onMouseDown={(e) => resize.handleResizeStart(e, 'e', {
-              x: element.x,
-              y: element.y,
-              width: element.width,
-              height: element.height
-            })}
-          />
-        </>
       )}
     </>
   );
