@@ -206,6 +206,10 @@ class PDF_Builder_Core {
      * Ajouter le menu d'administration
      */
     public function add_admin_menu() {
+        static $menu_added = false;
+        if ($menu_added) return;
+        $menu_added = true;
+
         try {
             error_log('PDF BUILDER - add_admin_menu called - start');
 
