@@ -3257,40 +3257,70 @@ class PDF_Builder_Admin {
      * Retourne le libellé du type de document
      */
     private function generate_order_pdf_private($order, $template_data, $filename) {
+        error_log('🟡 PDF BUILDER - generate_order_pdf_private: Début génération PDF pour commande ' . $order->get_id());
+
         // Créer le répertoire de stockage s'il n'existe pas
         $upload_dir = wp_upload_dir();
         $pdf_dir = $upload_dir['basedir'] . '/pdf-builder/orders';
+        error_log('🟡 PDF BUILDER - generate_order_pdf_private: Répertoire PDF: ' . $pdf_dir);
+
         if (!file_exists($pdf_dir)) {
             wp_mkdir_p($pdf_dir);
+            error_log('✅ PDF BUILDER - generate_order_pdf_private: Répertoire créé');
         }
 
         $pdf_path = $pdf_dir . '/' . $filename;
+        error_log('🟡 PDF BUILDER - generate_order_pdf_private: Chemin PDF: ' . $pdf_path);
 
-        // Générer le HTML d'abord
-        $html_content = $this->generate_unified_html($template_data, $order);
+        try {
+            // Générer le HTML d'abord
+            error_log('🟡 PDF BUILDER - generate_order_pdf_private: Génération HTML...');
+            $html_content = $this->generate_unified_html($template_data, $order);
+            error_log('✅ PDF BUILDER - generate_order_pdf_private: HTML généré, longueur: ' . strlen($html_content) . ' caractères');
 
-        // Charger TCPDF si nécessaire
-        if (!class_exists('TCPDF')) {
-            $this->load_tcpdf_library();
-        }
+            // Charger TCPDF si nécessaire
+            if (!class_exists('TCPDF')) {
+                error_log('🟡 PDF BUILDER - generate_order_pdf_private: Chargement TCPDF...');
+                $this->load_tcpdf_library();
+                error_log('✅ PDF BUILDER - generate_order_pdf_private: TCPDF chargé');
+            } else {
+                error_log('✅ PDF BUILDER - generate_order_pdf_private: TCPDF déjà chargé');
+            }
 
-        // Utiliser une bibliothèque PDF si disponible
-        if (class_exists('TCPDF')) {
-            // Utiliser TCPDF si disponible
-            $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
-            $pdf->SetCreator('PDF Builder Pro');
-            $pdf->SetAuthor('PDF Builder Pro');
-            $pdf->SetTitle('Order #' . $order->get_id());
+            // Utiliser une bibliothèque PDF si disponible
+            if (class_exists('TCPDF')) {
+                error_log('🟡 PDF BUILDER - generate_order_pdf_private: Création instance TCPDF...');
+                // Utiliser TCPDF si disponible
+                $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+                $pdf->SetCreator('PDF Builder Pro');
+                $pdf->SetAuthor('PDF Builder Pro');
+                $pdf->SetTitle('Order #' . $order->get_id());
 
-            $pdf->AddPage();
-            $pdf->writeHTML($html_content, true, false, true, false, '');
-            $pdf->Output($pdf_path, 'F');
+                error_log('🟡 PDF BUILDER - generate_order_pdf_private: Ajout de page...');
+                $pdf->AddPage();
 
-            return $pdf_path;
-        } else {
-            // Fallback: créer un fichier HTML pour simulation
-            file_put_contents($pdf_path, $html_content);
-            return $pdf_path;
+                error_log('🟡 PDF BUILDER - generate_order_pdf_private: Écriture HTML...');
+                $pdf->writeHTML($html_content, true, false, true, false, '');
+
+                error_log('🟡 PDF BUILDER - generate_order_pdf_private: Génération fichier PDF...');
+                $pdf->Output($pdf_path, 'F');
+
+                error_log('✅ PDF BUILDER - generate_order_pdf_private: PDF généré avec succès: ' . $pdf_path);
+                return $pdf_path;
+            } else {
+                error_log('❌ PDF BUILDER - generate_order_pdf_private: TCPDF non disponible');
+                // Fallback: créer un fichier HTML pour simulation
+                file_put_contents($pdf_path, $html_content);
+                return $pdf_path;
+            }
+        } catch (Exception $e) {
+            error_log('❌ PDF BUILDER - generate_order_pdf_private: Exception: ' . $e->getMessage());
+            error_log('❌ PDF BUILDER - generate_order_pdf_private: Stack trace: ' . $e->getTraceAsString());
+            throw $e;
+        } catch (Error $e) {
+            error_log('❌ PDF BUILDER - generate_order_pdf_private: Error fatale: ' . $e->getMessage());
+            error_log('❌ PDF BUILDER - generate_order_pdf_private: Stack trace: ' . $e->getTraceAsString());
+            throw $e;
         }
     }
 
