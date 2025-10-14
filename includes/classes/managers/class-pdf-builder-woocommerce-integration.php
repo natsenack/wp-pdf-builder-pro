@@ -801,7 +801,12 @@ class PDF_Builder_WooCommerce_Integration {
 
         // S'assurer que TCPDF est chargé avant la génération
         if (!class_exists('TCPDF')) {
-            error_log('🟡 PDF BUILDER - ajax_preview_order_pdf: TCPDF non chargé, tentative de chargement');
+            error_log('🟡 PDF BUILDER - ajax_preview_order_pdf: TCPDF non chargé, définition des constantes d\'abord');
+
+            // Définir les constantes TCPDF AVANT de charger la bibliothèque
+            $this->define_tcpdf_constants();
+
+            error_log('🟡 PDF BUILDER - ajax_preview_order_pdf: Constantes TCPDF définies, tentative de chargement TCPDF');
 
             // Essayer de charger TCPDF depuis les chemins possibles
             $tcpdf_paths = [
@@ -815,13 +820,23 @@ class PDF_Builder_WooCommerce_Integration {
                 error_log('🔍 PDF BUILDER - ajax_preview_order_pdf: Test chemin TCPDF: ' . $path);
                 if (file_exists($path)) {
                     error_log('✅ PDF BUILDER - ajax_preview_order_pdf: Fichier existe: ' . $path);
-                    require_once $path;
-                    if (class_exists('TCPDF')) {
-                        error_log('✅ PDF BUILDER - ajax_preview_order_pdf: TCPDF chargé avec succès depuis: ' . $path);
-                        $tcpdf_loaded = true;
-                        break;
-                    } else {
-                        error_log('❌ PDF BUILDER - ajax_preview_order_pdf: Échec chargement TCPDF depuis: ' . $path);
+                    try {
+                        error_log('📦 PDF BUILDER - ajax_preview_order_pdf: Tentative require_once de: ' . $path);
+                        require_once $path;
+                        error_log('📦 PDF BUILDER - ajax_preview_order_pdf: require_once réussi pour: ' . $path);
+                        if (class_exists('TCPDF')) {
+                            error_log('✅ PDF BUILDER - ajax_preview_order_pdf: TCPDF chargé avec succès depuis: ' . $path);
+                            $tcpdf_loaded = true;
+                            break;
+                        } else {
+                            error_log('❌ PDF BUILDER - ajax_preview_order_pdf: Échec chargement TCPDF depuis: ' . $path . ' (classe TCPDF non trouvée)');
+                        }
+                    } catch (Exception $e) {
+                        error_log('❌ PDF BUILDER - ajax_preview_order_pdf: Exception lors du require_once: ' . $e->getMessage());
+                        error_log('❌ PDF BUILDER - ajax_preview_order_pdf: Stack trace: ' . $e->getTraceAsString());
+                    } catch (Error $e) {
+                        error_log('❌ PDF BUILDER - ajax_preview_order_pdf: Error fatale lors du require_once: ' . $e->getMessage());
+                        error_log('❌ PDF BUILDER - ajax_preview_order_pdf: Stack trace: ' . $e->getTraceAsString());
                     }
                 } else {
                     error_log('❌ PDF BUILDER - ajax_preview_order_pdf: Fichier n\'existe pas: ' . $path);
@@ -836,10 +851,7 @@ class PDF_Builder_WooCommerce_Integration {
             error_log('✅ PDF BUILDER - ajax_preview_order_pdf: TCPDF déjà chargé');
         }
 
-        // Définir les constantes TCPDF nécessaires
-        error_log('🟡 PDF BUILDER - ajax_preview_order_pdf: Définition des constantes TCPDF');
-        $this->define_tcpdf_constants();
-        error_log('✅ PDF BUILDER - ajax_preview_order_pdf: Constantes TCPDF définies');
+        // Les constantes TCPDF sont déjà définies plus haut
 
         try {
             error_log('🟡 PDF BUILDER - ajax_preview_order_pdf: Génération PDF en cours - appel de main->generate_order_pdf');
@@ -912,7 +924,12 @@ class PDF_Builder_WooCommerce_Integration {
 
         error_log('✅ PDF BUILDER - ajax_generate_order_pdf: Commande trouvée');
 
-        // S'assurer que TCPDF est chargé avant la génération
+        // Définir les constantes TCPDF nécessaires AVANT de charger la bibliothèque
+        error_log('🟡 PDF BUILDER - ajax_generate_order_pdf: Définition des constantes TCPDF avant chargement');
+        $this->define_tcpdf_constants();
+        error_log('✅ PDF BUILDER - ajax_generate_order_pdf: Constantes TCPDF définies');
+
+        // S'assurer que TCPDF est chargé après la définition des constantes
         if (!class_exists('TCPDF')) {
             error_log('🟡 PDF BUILDER - ajax_generate_order_pdf: TCPDF non chargé, tentative de chargement');
 
@@ -948,11 +965,6 @@ class PDF_Builder_WooCommerce_Integration {
         } else {
             error_log('✅ PDF BUILDER - ajax_generate_order_pdf: TCPDF déjà chargé');
         }
-
-        // Définir les constantes TCPDF nécessaires
-        error_log('🟡 PDF BUILDER - ajax_generate_order_pdf: Définition des constantes TCPDF');
-        $this->define_tcpdf_constants();
-        error_log('✅ PDF BUILDER - ajax_generate_order_pdf: Constantes TCPDF définies');
 
         try {
             error_log('🟡 PDF BUILDER - ajax_generate_order_pdf: Génération PDF en cours');

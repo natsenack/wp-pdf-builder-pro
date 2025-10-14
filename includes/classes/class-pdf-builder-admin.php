@@ -1186,6 +1186,10 @@ class PDF_Builder_Admin {
         echo "<pre>";
 
         try {
+            echo "📚 Définition des constantes TCPDF...\n";
+            $this->define_tcpdf_constants();
+            echo "✅ Constantes TCPDF définies\n";
+
             echo "📚 Chargement de TCPDF...\n";
 
             // Test de chargement TCPDF
@@ -3328,6 +3332,9 @@ class PDF_Builder_Admin {
      * Charge la bibliothèque TCPDF depuis différents chemins possibles
      */
     private function load_tcpdf_library() {
+        // Définir les constantes TCPDF AVANT de charger la bibliothèque
+        $this->define_tcpdf_constants();
+
         $tcpdf_paths = [
             __DIR__ . '/../../lib/tcpdf/tcpdf.php',  // Essayer d'abord tcpdf.php directement
             __DIR__ . '/../../lib/tcpdf/tcpdf_autoload.php',
@@ -3341,8 +3348,7 @@ class PDF_Builder_Admin {
             if (file_exists($path)) {
                 require_once $path;
                 if (class_exists('TCPDF')) {
-                    // Définir les constantes TCPDF si elles ne sont pas définies
-                    $this->define_tcpdf_constants();
+                    // TCPDF chargé avec succès (constantes déjà définies)
                     return true;
                 }
             }
