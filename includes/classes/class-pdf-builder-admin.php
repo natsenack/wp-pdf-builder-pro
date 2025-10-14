@@ -3313,56 +3313,20 @@ class PDF_Builder_Admin {
         }
 
         try {
-            error_log('🟡 PDF BUILDER - Loading template...');
+            error_log('🟡 PDF BUILDER - Generating simple PDF preview...');
 
-            // Charger le template de manière robuste
-            if ($template_id > 0) {
-                $template_data = $this->load_template_robust($template_id);
-                error_log('✅ PDF BUILDER - Template loaded from database: ' . $template_id);
-                if (is_array($template_data)) {
-                    error_log('🔍 PDF BUILDER - Template data structure: ' . print_r(array_keys($template_data), true));
-                    if (isset($template_data['pages'])) {
-                        error_log('🔍 PDF BUILDER - Pages count: ' . (is_array($template_data['pages']) ? count($template_data['pages']) : 'INVALID'));
-                        if (is_array($template_data['pages']) && !empty($template_data['pages'])) {
-                            error_log('🔍 PDF BUILDER - First page elements count: ' . (isset($template_data['pages'][0]['elements']) ? (is_array($template_data['pages'][0]['elements']) ? count($template_data['pages'][0]['elements']) : 'INVALID') : 'NO ELEMENTS'));
-                            if (isset($template_data['pages'][0]['elements']) && is_array($template_data['pages'][0]['elements']) && !empty($template_data['pages'][0]['elements'])) {
-                                error_log('🔍 PDF BUILDER - First few elements: ' . print_r(array_slice($template_data['pages'][0]['elements'], 0, 3), true));
-                            }
-                        }
-                    }
-                } else {
-                    error_log('❌ PDF BUILDER - Template data is not an array: ' . gettype($template_data));
-                }
-            } else {
-                // Vérifier s'il y a un template spécifique pour le statut de la commande
-                $order_status = $order->get_status();
-                $status_templates = get_option('pdf_builder_order_status_templates', []);
-                $status_key = 'wc-' . $order_status;
-
-                if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
-                    $mapped_template_id = $status_templates[$status_key];
-                    $template_data = $this->load_template_robust($mapped_template_id);
-                    error_log('✅ PDF BUILDER - Template loaded from status mapping: ' . $mapped_template_id . ' for status: ' . $order_status);
-                } else {
-                    $template_data = $this->get_default_invoice_template();
-                    error_log('✅ PDF BUILDER - Default template loaded (no status mapping found)');
-                }
-                error_log('✅ PDF BUILDER - Default template loaded');
-            }
-
-            error_log('🟡 PDF BUILDER - Generating PDF preview with TCPDF...');
-            // Générer un PDF d'aperçu avec TCPDF au lieu d'HTML
+            // Utiliser la nouvelle méthode simplifiée au lieu du système complexe
             require_once plugin_dir_path(__FILE__) . '../pdf-generator.php';
             $generator = new PDF_Generator();
-            $generator->set_order($order);
-            $pdf_content = $generator->generate_from_elements($this->convert_template_to_elements($template_data));
 
-            if (!$pdf_content) {
-                error_log('❌ PDF BUILDER - PDF generation failed');
-                wp_send_json_error('Erreur lors de la génération du PDF d\'aperçu');
+            $result = $generator->generate_simple_preview($order_id, $template_id);
+
+            if (!$result['success']) {
+                error_log('❌ PDF BUILDER - Simple PDF generation failed: ' . $result['error']);
+                wp_send_json_error('Erreur lors de la génération du PDF: ' . $result['error']);
             }
 
-            error_log('✅ PDF BUILDER - PDF generated, length: ' . strlen($pdf_content));
+            error_log('✅ PDF BUILDER - Simple PDF generated successfully');
 
             // Créer un fichier PDF temporaire pour l'aperçu
             $upload_dir = wp_upload_dir();
@@ -3375,19 +3339,22 @@ class PDF_Builder_Admin {
             $preview_path = $preview_dir . '/' . $preview_filename;
             $preview_url = $upload_dir['baseurl'] . '/pdf-builder-previews/' . $preview_filename;
 
+            // Décoder le contenu base64 et l'enregistrer
+            $pdf_content = base64_decode($result['pdf_content']);
             file_put_contents($preview_path, $pdf_content);
             error_log('✅ PDF BUILDER - Preview PDF file created: ' . $preview_path);
 
             $response = array(
                 'url' => $preview_url,
-                'width' => $template_data['canvas']['width'] ?? 595,
-                'height' => $template_data['canvas']['height'] ?? 842
+                'width' => 595, // A4 width in points
+                'height' => 842, // A4 height in points
+                'simple_mode' => true // Indicateur que c'est le mode simplifié
             );
 
             // Nettoyer le buffer de sortie avant d'envoyer la réponse JSON
             ob_end_clean();
 
-            error_log('✅ PDF BUILDER - Sending success response');
+            error_log('✅ PDF BUILDER - Sending success response for simple preview');
             wp_send_json_success($response);
 
         } catch (Exception $e) {

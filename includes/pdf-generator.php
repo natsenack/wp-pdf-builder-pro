@@ -1277,6 +1277,192 @@ function pdf_builder_generate_pdf() {
         wp_send_json_error('Erreur fatale lors de la generation du PDF');
     }
 }
+
+    /**
+     * Génération d'aperçu PDF simplifié (alternative au système canvas)
+     */
+    public function generate_simple_preview($order_id, $template_id = null) {
+        try {
+            // Initialiser TCPDF
+            $this->init_tcpdf();
+
+            // Récupérer la commande WooCommerce
+            $this->order = wc_get_order($order_id);
+            if (!$this->order) {
+                throw new Exception('Commande non trouvée');
+            }
+
+            // Configuration de base du PDF
+            $this->pdf->SetCreator('PDF Builder Pro');
+            $this->pdf->SetAuthor('Three Axe');
+            $this->pdf->SetTitle('Aperçu Facture - Commande #' . $order_id);
+            $this->pdf->SetSubject('Aperçu de facture PDF');
+
+            // Ajouter une page
+            $this->pdf->AddPage();
+
+            // Marges
+            $this->pdf->SetMargins(15, 15, 15);
+            $this->pdf->SetAutoPageBreak(true, 15);
+
+            // Générer le contenu simplifié
+            $this->generate_simple_pdf_content();
+
+            // Générer le PDF
+            $pdf_content = $this->pdf->Output('', 'S');
+
+            return [
+                'success' => true,
+                'pdf_content' => base64_encode($pdf_content),
+                'filename' => 'preview-order-' . $order_id . '.pdf'
+            ];
+
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'error' => 'Erreur lors de la génération du PDF: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Génère le contenu PDF simplifié
+     */
+    private function generate_simple_pdf_content() {
+        $this->pdf->SetFont('helvetica', 'B', 16);
+        $this->pdf->Cell(0, 10, utf8_decode('FACTURE - APERÇU'), 0, 1, 'C');
+        $this->pdf->Ln(5);
+
+        // Informations de la commande
+        $this->pdf->SetFont('helvetica', 'B', 12);
+        $this->pdf->Cell(0, 8, utf8_decode('Commande #' . $this->order->get_id()), 0, 1);
+        $this->pdf->Ln(3);
+
+        // Date et statut
+        $this->pdf->SetFont('helvetica', '', 10);
+        $this->pdf->Cell(50, 6, utf8_decode('Date:'), 0, 0);
+        $this->pdf->Cell(0, 6, utf8_decode($this->order->get_date_created()->format('d/m/Y H:i')), 0, 1);
+
+        $this->pdf->Cell(50, 6, utf8_decode('Statut:'), 0, 0);
+        $status = $this->order->get_status();
+        $status_label = $this->get_status_label($status);
+        $this->pdf->Cell(0, 6, utf8_decode($status_label), 0, 1);
+        $this->pdf->Ln(5);
+
+        // Informations client
+        $this->pdf->SetFont('helvetica', 'B', 12);
+        $this->pdf->Cell(0, 8, utf8_decode('Informations client'), 0, 1);
+        $this->pdf->Ln(2);
+
+        $this->pdf->SetFont('helvetica', '', 10);
+        $billing_info = $this->get_clean_billing_info();
+        foreach ($billing_info as $line) {
+            $this->pdf->Cell(0, 5, utf8_decode($line), 0, 1);
+        }
+        $this->pdf->Ln(5);
+
+        // Produits
+        $this->pdf->SetFont('helvetica', 'B', 12);
+        $this->pdf->Cell(0, 8, utf8_decode('Produits commandés'), 0, 1);
+        $this->pdf->Ln(2);
+
+        // En-têtes du tableau
+        $this->pdf->SetFont('helvetica', 'B', 9);
+        $this->pdf->SetFillColor(240, 240, 240);
+        $this->pdf->Cell(80, 7, utf8_decode('Produit'), 1, 0, 'L', true);
+        $this->pdf->Cell(20, 7, utf8_decode('Qté'), 1, 0, 'C', true);
+        $this->pdf->Cell(30, 7, utf8_decode('Prix'), 1, 0, 'R', true);
+        $this->pdf->Cell(30, 7, utf8_decode('Total'), 1, 1, 'R', true);
+
+        // Contenu du tableau
+        $this->pdf->SetFont('helvetica', '', 9);
+        $line_items = $this->order->get_items();
+        foreach ($line_items as $item) {
+            $product_name = $item->get_name();
+            $quantity = $item->get_quantity();
+            $price = $item->get_total() / max(1, $quantity);
+            $total = $item->get_total();
+
+            $this->pdf->Cell(80, 6, utf8_decode($this->truncate_text($product_name, 25)), 1, 0, 'L');
+            $this->pdf->Cell(20, 6, $quantity, 1, 0, 'C');
+            $this->pdf->Cell(30, 6, number_format($price, 2, ',', ' ') . ' €', 1, 0, 'R');
+            $this->pdf->Cell(30, 6, number_format($total, 2, ',', ' ') . ' €', 1, 1, 'R');
+        }
+
+        // Total
+        $this->pdf->Ln(3);
+        $this->pdf->SetFont('helvetica', 'B', 11);
+        $order_total = $this->order->get_total();
+        $this->pdf->Cell(130, 8, utf8_decode('TOTAL:'), 0, 0, 'R');
+        $this->pdf->Cell(30, 8, number_format($order_total, 2, ',', ' ') . ' €', 1, 1, 'R');
+    }
+
+    /**
+     * Récupère les informations de facturation nettoyées
+     */
+    private function get_clean_billing_info() {
+        if (!$this->order) {
+            return ['Client non trouvé'];
+        }
+
+        $info = [];
+
+        $first_name = trim($this->order->get_billing_first_name());
+        $last_name = trim($this->order->get_billing_last_name());
+        if ($first_name || $last_name) {
+            $info[] = $first_name . ' ' . $last_name;
+        }
+
+        $company = trim($this->order->get_billing_company());
+        if ($company) {
+            $info[] = $company;
+        }
+
+        $address_1 = trim($this->order->get_billing_address_1());
+        if ($address_1) {
+            $info[] = $address_1;
+        }
+
+        $address_2 = trim($this->order->get_billing_address_2());
+        if ($address_2) {
+            $info[] = $address_2;
+        }
+
+        $postcode = trim($this->order->get_billing_postcode());
+        $city = trim($this->order->get_billing_city());
+        if ($postcode || $city) {
+            $info[] = $postcode . ' ' . $city;
+        }
+
+        $country = trim($this->order->get_billing_country());
+        if ($country) {
+            $info[] = $country;
+        }
+
+        $email = trim($this->order->get_billing_email());
+        if ($email) {
+            $info[] = $email;
+        }
+
+        return $info ?: ['Client'];
+    }
+
+    /**
+     * Retourne le libellé du statut de commande
+     */
+    private function get_status_label($status) {
+        $labels = [
+            'pending' => 'En attente',
+            'processing' => 'En cours',
+            'on-hold' => 'En attente',
+            'completed' => 'Terminée',
+            'cancelled' => 'Annulée',
+            'refunded' => 'Remboursée',
+            'failed' => 'Échouée'
+        ];
+
+        return isset($labels[$status]) ? $labels[$status] : ucfirst($status);
+    }
 }
 
 // Enregistrer la fonction AJAX
