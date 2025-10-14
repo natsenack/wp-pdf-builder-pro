@@ -459,9 +459,19 @@ const PreviewModal = ({
       } else {
         console.warn('⚠️ Validation aperçu côté serveur échouée:', data.data);
         // Garder l'aperçu local mais marquer qu'il y a un problème serveur
+        // S'assurer que server_error est toujours une chaîne
+        let errorMessage = 'Erreur validation serveur';
+        if (typeof data.data === 'string') {
+          errorMessage = data.data;
+        } else if (data.data && typeof data.data === 'object' && data.data.message) {
+          errorMessage = data.data.message;
+        } else if (data.data && typeof data.data === 'object') {
+          errorMessage = JSON.stringify(data.data);
+        }
+
         setPreviewData(prev => ({
           ...prev,
-          server_error: data.data || 'Erreur validation serveur'
+          server_error: errorMessage
         }));
       }
 
@@ -470,7 +480,7 @@ const PreviewModal = ({
       // Ne pas afficher d'erreur car l'aperçu local fonctionne
       setPreviewData(prev => ({
         ...prev,
-        server_error: err.message
+        server_error: err.message || 'Erreur inconnue côté serveur'
       }));
     }
   };
