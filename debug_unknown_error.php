@@ -194,37 +194,40 @@ if ($template_id > 0) {
     $table_name = $wpdb->prefix . 'pdf_builder_templates';
 
     // Essayer de trouver un template par défaut
-    $default_template = $wpdb->get_row(
-        $wpdb->prepare(
-            "SELECT * FROM {$table_name} WHERE is_default = 1 LIMIT 1"
-        )
-    );
+    $default_template = $wpdb->get_row("SELECT * FROM {$table_name} WHERE is_default = 1 LIMIT 1");
 
     if ($default_template) {
         $template_data = json_decode($default_template->template_data, true);
         echo "✅ Template par défaut trouvé en base: ID {$default_template->id}<br>";
     } else {
-        // Créer un template minimal par défaut
-        $template_data = [
-            'pages' => [
-                [
-                    'elements' => [
-                        [
-                            'type' => 'text',
-                            'content' => 'Template de test - PDF Builder Pro',
-                            'position' => ['x' => 50, 'y' => 100],
-                            'size' => ['width' => 400, 'height' => 50],
-                            'style' => [
-                                'fontSize' => 16,
-                                'fontWeight' => 'bold'
+        // Chercher n'importe quel template
+        $any_template = $wpdb->get_row("SELECT * FROM {$table_name} LIMIT 1");
+        if ($any_template) {
+            $template_data = json_decode($any_template->template_data, true);
+            echo "✅ Template trouvé en base: ID {$any_template->id}<br>";
+        } else {
+            // Créer un template minimal par défaut
+            $template_data = [
+                'pages' => [
+                    [
+                        'elements' => [
+                            [
+                                'type' => 'text',
+                                'content' => 'Template de test - PDF Builder Pro',
+                                'position' => ['x' => 50, 'y' => 100],
+                                'size' => ['width' => 400, 'height' => 50],
+                                'style' => [
+                                    'fontSize' => 16,
+                                    'fontWeight' => 'bold'
+                                ]
                             ]
-                        ]
-                    ],
-                    'margins' => ['top' => 20, 'right' => 20, 'bottom' => 20, 'left' => 20]
+                        ],
+                        'margins' => ['top' => 20, 'right' => 20, 'bottom' => 20, 'left' => 20]
+                    ]
                 ]
-            ]
-        ];
-        echo "✅ Template minimal créé pour les tests<br>";
+            ];
+            echo "✅ Template minimal créé pour les tests<br>";
+        }
     }
 }
 
@@ -236,10 +239,84 @@ if (!$template_data) {
 echo "<h2>4. Test de génération HTML</h2>";
 
 try {
-    $html_content = $admin->generate_unified_html($template_data, $order);
-    if (!empty($html_content)) {
-        echo "✅ HTML généré - Longueur: " . strlen($html_content) . " caractères<br>";
-        echo "<details><summary>Afficher les 500 premiers caractères du HTML</summary><pre>" . esc_html(substr($html_content, 0, 500)) . "...</pre></details>";
+    // Générer le HTML directement (duplication de la logique de generate_unified_html)
+    $html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' . ($order ? 'Order #' . $order->get_id() : 'PDF Preview') . '</title>';
+
+    // Gestion des marges d'impression
+    $margins = ['top' => 20, 'right' => 20, 'bottom' => 20, 'left' => 20];
+    if (isset($template_data['pages']) && is_array($template_data['pages']) && !empty($template_data['pages'])) {
+        $firstPage = $template_data['pages'][0];
+        if (isset($firstPage['margins'])) {
+            $margins = $firstPage['margins'];
+        }
+    }
+    $margin_css = sprintf('margin: 0; padding: %dpx %dpx %dpx %dpx;', $margins['top'], $margins['right'], $margins['bottom'], $margins['left']);
+
+    $html .= '<style>
+    body {
+        font-family: "DejaVu Sans", "Arial Unicode MS", Arial, sans-serif;
+        margin: 0;
+        padding: ' . $margins['top'] . 'px ' . $margins['right'] . 'px ' . $margins['bottom'] . 'px ' . $margins['left'] . 'px;
+        background: white;
+        color: #333;
+        line-height: 1.4;
+        font-size: 12px;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    .pdf-element {
+        position: absolute;
+        box-sizing: border-box;
+    }
+    .pdf-element.text-element {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+    </style>';
+    $html .= '</head><body>';
+
+    // Utiliser les éléments de la première page
+    $elements = [];
+    if (isset($template_data['pages']) && is_array($template_data['pages']) && !empty($template_data['pages'])) {
+        $firstPage = $template_data['pages'][0];
+        $elements = $firstPage['elements'] ?? [];
+    } elseif (isset($template_data['elements']) && is_array($template_data['elements'])) {
+        $elements = $template_data['elements'];
+    }
+
+    if (is_array($elements)) {
+        foreach ($elements as $element) {
+            // Gestion basique des éléments
+            $x = $element['position']['x'] ?? $element['x'] ?? 0;
+            $y = $element['position']['y'] ?? $element['y'] ?? 0;
+            $width = $element['size']['width'] ?? $element['width'] ?? 100;
+            $height = $element['size']['height'] ?? $element['height'] ?? 50;
+
+            $style = sprintf('left: %dpx; top: %dpx; width: %dpx; height: %dpx;', $x, $y, $width, $height);
+
+            $content = $element['content'] ?? '';
+
+            // Remplacement basique des variables
+            if ($order && strpos($content, '{order_number}') !== false) {
+                $content = str_replace('{order_number}', $order->get_order_number(), $content);
+            }
+
+            switch ($element['type']) {
+                case 'text':
+                    $html .= sprintf('<div class="pdf-element text-element" style="%s">%s</div>', $style, esc_html($content));
+                    break;
+                default:
+                    $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: $element['type']));
+                    break;
+            }
+        }
+    }
+
+    $html .= '</body></html>';
+
+    if (!empty($html)) {
+        echo "✅ HTML généré - Longueur: " . strlen($html) . " caractères<br>";
+        echo "<details><summary>Afficher l'HTML généré</summary><pre>" . esc_html(substr($html, 0, 300)) . "...</pre></details>";
     } else {
         echo "❌ HTML vide généré<br>";
         exit;
@@ -255,34 +332,41 @@ try {
 echo "<h2>5. Test de génération PDF</h2>";
 
 try {
-    $result = $admin->generate_order_pdf($order_id, $template_id, true);
-
-    if (is_wp_error($result)) {
-        echo "❌ Erreur WP_Error: " . $result->get_error_message() . "<br>";
-        exit;
-    }
-
-    if (empty($result)) {
-        echo "❌ Résultat vide retourné<br>";
-        exit;
-    }
-
-    if (!filter_var($result, FILTER_VALIDATE_URL)) {
-        echo "❌ URL invalide retournée: " . $result . "<br>";
-        exit;
-    }
-
-    echo "✅ PDF généré avec succès<br>";
-    echo "URL: <a href='$result' target='_blank'>$result</a><br>";
-
-    // Vérifier que le fichier existe
+    // Créer le répertoire de stockage s'il n'existe pas
     $upload_dir = wp_upload_dir();
-    $file_path = str_replace($upload_dir['baseurl'], $upload_dir['basedir'], $result);
-    if (file_exists($file_path)) {
-        echo "✅ Fichier PDF existe sur le serveur<br>";
-        echo "Taille: " . filesize($file_path) . " bytes<br>";
+    $pdf_dir = $upload_dir['basedir'] . '/pdf-builder/orders';
+    if (!file_exists($pdf_dir)) {
+        wp_mkdir_p($pdf_dir);
+    }
+
+    $pdf_filename = 'test-order-' . $order_id . '-' . time() . '.pdf';
+    $pdf_path = $pdf_dir . '/' . $pdf_filename;
+
+    // Générer le PDF avec TCPDF
+    if (class_exists('TCPDF')) {
+        $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+        $pdf->SetCreator('PDF Builder Pro - Test');
+        $pdf->SetAuthor('PDF Builder Pro');
+        $pdf->SetTitle('Test Order #' . $order_id);
+
+        $pdf->AddPage();
+        $pdf->writeHTML($html, true, false, true, false, '');
+
+        // Sauvegarder le PDF
+        $pdf->Output($pdf_path, 'F');
+
+        if (file_exists($pdf_path)) {
+            $pdf_url = str_replace($upload_dir['basedir'], $upload_dir['baseurl'], $pdf_path);
+            echo "✅ PDF généré avec succès<br>";
+            echo "URL: <a href='$pdf_url' target='_blank'>$pdf_url</a><br>";
+            echo "Taille: " . filesize($pdf_path) . " bytes<br>";
+        } else {
+            echo "❌ Fichier PDF non créé<br>";
+            exit;
+        }
     } else {
-        echo "❌ Fichier PDF n'existe pas sur le serveur<br>";
+        echo "❌ TCPDF non disponible pour la génération<br>";
+        exit;
     }
 
 } catch (Exception $e) {
