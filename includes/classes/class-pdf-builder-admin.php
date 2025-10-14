@@ -263,7 +263,7 @@ class PDF_Builder_Admin {
             __('🔧 Test Templates', 'pdf-builder-pro'),
             'manage_options',
             'pdf-builder-test-templates',
-            [$this->core, 'test_template_selection_page']
+            [$this->main, 'test_template_selection_page']
         );
 
         // Test TCPDF (commenté - système de test nettoyé)
