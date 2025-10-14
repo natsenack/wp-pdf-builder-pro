@@ -83,7 +83,7 @@ class PDF_Builder_Template_Manager {
 
         error_log('PDF Builder: Nonce validation passed');
 
-        $template_data = isset($_POST['template_data']) ? $_POST['template_data'] : '';
+        $template_data = isset($_POST['template_data']) ? trim(wp_unslash($_POST['template_data'])) : '';
         $template_name = isset($_POST['template_name']) ? sanitize_text_field($_POST['template_name']) : '';
         $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
 
