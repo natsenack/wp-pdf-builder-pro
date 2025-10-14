@@ -1147,15 +1147,21 @@ class PDF_Builder_Pro_Generator {
      * Génération d'aperçu PDF simplifié (alternative au système canvas)
      */
     public function generate_simple_preview($order_id, $template_id = null) {
+        error_log('🚨 PDF BUILDER - generate_simple_preview STARTED for order: ' . $order_id);
         try {
             // Initialiser TCPDF
+            error_log('🟡 PDF BUILDER - generate_simple_preview: Initializing TCPDF');
             $this->init_tcpdf();
 
             // Récupérer la commande WooCommerce
+            error_log('🟡 PDF BUILDER - generate_simple_preview: Loading order');
             $this->order = wc_get_order($order_id);
             if (!$this->order) {
+                error_log('❌ PDF BUILDER - generate_simple_preview: Order not found');
                 throw new Exception('Commande non trouvée');
             }
+
+            error_log('✅ PDF BUILDER - generate_simple_preview: Order loaded successfully');
 
             // Configuration de base du PDF
             $this->pdf->SetCreator('PDF Builder Pro');
@@ -1164,6 +1170,7 @@ class PDF_Builder_Pro_Generator {
             $this->pdf->SetSubject('Aperçu de facture PDF');
 
             // Ajouter une page
+            error_log('🟡 PDF BUILDER - generate_simple_preview: Adding page');
             $this->pdf->AddPage();
 
             // Marges
@@ -1171,9 +1178,11 @@ class PDF_Builder_Pro_Generator {
             $this->pdf->SetAutoPageBreak(true, 15);
 
             // Générer le contenu simplifié
+            error_log('🟡 PDF BUILDER - generate_simple_preview: Generating content');
             $this->generate_simple_pdf_content();
 
             // Générer le PDF
+            error_log('🟡 PDF BUILDER - generate_simple_preview: Generating PDF content');
             $pdf_content = $this->pdf->Output('', 'S');
 
             // Créer le répertoire de cache s'il n'existe pas
@@ -1188,12 +1197,17 @@ class PDF_Builder_Pro_Generator {
             $filepath = $cache_dir . '/' . $filename;
 
             // Sauvegarder le fichier
+            error_log('🟡 PDF BUILDER - generate_simple_preview: Saving file to: ' . $filepath);
             file_put_contents($filepath, $pdf_content);
 
             // Retourner l'URL d'accès
-            return $upload_dir['baseurl'] . '/pdf-builder-cache/' . $filename;
+            $url = $upload_dir['baseurl'] . '/pdf-builder-cache/' . $filename;
+            error_log('✅ PDF BUILDER - generate_simple_preview: SUCCESS - URL: ' . $url);
+            return $url;
 
         } catch (Exception $e) {
+            error_log('❌ PDF BUILDER - generate_simple_preview: Exception: ' . $e->getMessage());
+            error_log('❌ PDF BUILDER - generate_simple_preview: Stack trace: ' . $e->getTraceAsString());
             return new WP_Error('pdf_generation_error', 'Erreur lors de la génération du PDF: ' . $e->getMessage());
         }
     }

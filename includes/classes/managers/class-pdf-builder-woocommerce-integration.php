@@ -645,14 +645,19 @@ class PDF_Builder_WooCommerce_Integration {
         try {
             error_log('🟡 PDF BUILDER - ajax_preview_order_pdf: Génération aperçu en cours');
 
-            // Utiliser le générateur PDF principal pour créer un aperçu simple
+            // Vérifier que la classe existe
             if (!class_exists('PDF_Builder_Pro_Generator')) {
                 error_log('❌ PDF BUILDER - ajax_preview_order_pdf: Classe PDF_Builder_Pro_Generator non trouvée');
                 wp_send_json_error('Classe PDF_Builder_Pro_Generator non trouvée');
             }
 
+            error_log('✅ PDF BUILDER - ajax_preview_order_pdf: Classe PDF_Builder_Pro_Generator trouvée');
+
             $generator = new PDF_Builder_Pro_Generator();
+            error_log('✅ PDF BUILDER - ajax_preview_order_pdf: Instance créée');
+
             $result = $generator->generate_simple_preview($order_id);
+            error_log('✅ PDF BUILDER - ajax_preview_order_pdf: generate_simple_preview appelée, résultat: ' . (is_wp_error($result) ? 'WP_Error' : 'URL'));
 
             if (is_wp_error($result)) {
                 error_log('❌ PDF BUILDER - ajax_preview_order_pdf: Erreur génération aperçu: ' . $result->get_error_message());
