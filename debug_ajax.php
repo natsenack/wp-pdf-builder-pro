@@ -15,8 +15,26 @@ $_POST = [
     'nonce' => 'test'
 ];
 
-// Inclure WordPress
-require_once('../../../wp-load.php');
+// Inclure WordPress - essayer plusieurs chemins possibles
+$paths = [
+    '../../../wp-load.php',      // Depuis plugins/plugin-name/
+    '../../../../wp-load.php',   // Depuis plugins/plugin-name/subdir/
+    '../../../../../wp-load.php' // Depuis plugins/plugin-name/subdir/subdir/
+];
+
+$wp_loaded = false;
+foreach ($paths as $path) {
+    if (file_exists($path)) {
+        require_once($path);
+        $wp_loaded = true;
+        echo "<p class='success'>✅ WordPress chargé depuis: $path</p>";
+        break;
+    }
+}
+
+if (!$wp_loaded) {
+    die("<p class='error'>❌ Impossible de trouver wp-load.php</p>");
+}
 
 echo "<h2>1. Environnement WordPress</h2>";
 echo "<p>WP_DEBUG: " . (WP_DEBUG ? 'true' : 'false') . "</p>";
@@ -47,12 +65,30 @@ if (has_action('wp_ajax_pdf_builder_pro_preview_order_pdf')) {
 
             // Tester l'appel
             try {
+                // Activer les erreurs pour le debug
+                ini_set('display_errors', 1);
+                error_reporting(E_ALL);
+
+                // Capturer les erreurs PHP
+                $error_output = '';
+                set_error_handler(function($errno, $errstr, $errfile, $errline) use (&$error_output) {
+                    $error_output .= "PHP Error [$errno]: $errstr in $errfile on line $errline\n";
+                });
+
                 ob_start();
                 $woo_integration->ajax_preview_order_pdf();
                 $output = ob_get_clean();
 
+                // Restaurer le handler d'erreur
+                restore_error_handler();
+
                 echo "<h4>Réponse de l'AJAX:</h4>";
                 echo "<pre>" . htmlspecialchars($output) . "</pre>";
+
+                if (!empty($error_output)) {
+                    echo "<h4>Erreurs PHP capturées:</h4>";
+                    echo "<pre class='error'>" . htmlspecialchars($error_output) . "</pre>";
+                }
 
                 // Vérifier si c'est du JSON
                 $json = json_decode($output, true);
@@ -61,13 +97,17 @@ if (has_action('wp_ajax_pdf_builder_pro_preview_order_pdf')) {
                     echo "<p>Success: " . ($json['success'] ? 'true' : 'false') . "</p>";
                     if (!$json['success']) {
                         echo "<p class='error'>Erreur: " . ($json['data'] ?? 'Inconnue') . "</p>";
+                    } else {
+                        echo "<p class='success'>✅ Aperçu généré avec succès</p>";
+                        echo "<p>Dimensions: " . ($json['data']['width'] ?? 'N/A') . "x" . ($json['data']['height'] ?? 'N/A') . "</p>";
                     }
                 } else {
-                    echo "<p class='error'>❌ Réponse n'est pas du JSON valide</p>";
+                    echo "<p class='error'>❌ Réponse n'est pas du JSON valide: " . json_last_error_msg() . "</p>";
                 }
 
             } catch (Exception $e) {
                 echo "<p class='error'>❌ Exception lors de l'appel: " . $e->getMessage() . "</p>";
+                echo "<p class='error'>Stack trace: " . nl2br(htmlspecialchars($e->getTraceAsString())) . "</p>";
             }
 
         } else {

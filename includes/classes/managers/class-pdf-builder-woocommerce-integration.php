@@ -713,6 +713,8 @@ class PDF_Builder_WooCommerce_Integration {
      * AJAX - Prévisualiser PDF pour une commande
      */
     public function ajax_preview_order_pdf() {
+        error_log('🚨 PDF BUILDER - ajax_preview_order_pdf STARTED');
+
         // Désactiver l'affichage des erreurs PHP pour éviter les réponses HTML
         if (!defined('WP_DEBUG') || !WP_DEBUG) {
             ini_set('display_errors', 0);
@@ -721,62 +723,88 @@ class PDF_Builder_WooCommerce_Integration {
 
         // Vérifier les permissions
         if (!current_user_can('manage_woocommerce')) {
+            error_log('❌ PDF BUILDER - Permissions insuffisantes');
             wp_send_json_error('Permissions insuffisantes');
         }
 
         // Vérification de sécurité
         if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions')) {
+            error_log('❌ PDF BUILDER - Nonce invalide: ' . $_POST['nonce']);
             wp_send_json_error('Sécurité: Nonce invalide');
         }
 
         $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
         $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
 
+        error_log('📋 PDF BUILDER - Order ID: ' . $order_id . ', Template ID: ' . $template_id);
+
         if (!$order_id) {
+            error_log('❌ PDF BUILDER - ID commande manquant');
             wp_send_json_error('ID commande manquant');
         }
 
         // Vérifier que WooCommerce est actif
         if (!class_exists('WooCommerce')) {
+            error_log('❌ PDF BUILDER - WooCommerce non installé');
             wp_send_json_error('WooCommerce n\'est pas installé ou activé');
         }
 
         $order = wc_get_order($order_id);
         if (!$order) {
+            error_log('❌ PDF BUILDER - Commande non trouvée: ' . $order_id);
             wp_send_json_error('Commande non trouvée');
         }
 
+        error_log('✅ PDF BUILDER - Commande trouvée, début du traitement');
+
         try {
+            error_log('🔍 PDF BUILDER - Tentative de chargement du canvas personnalisé');
+
             // Essayer d'abord de récupérer le canvas personnalisé de la commande
             $canvas_data = $this->load_order_canvas($order_id);
 
             if ($canvas_data) {
+                error_log('✅ PDF BUILDER - Canvas personnalisé trouvé');
                 // Utiliser le canvas personnalisé de la commande
                 $template_data = $canvas_data;
             } else {
+                error_log('ℹ️ PDF BUILDER - Aucun canvas personnalisé, chargement du template');
+
                 // Charger le template si aucun canvas personnalisé n'existe
                 if ($template_id > 0) {
+                    error_log('📄 PDF BUILDER - Chargement template ID: ' . $template_id);
                     $template_data = $this->load_template_robust($template_id);
                 } else {
+                    error_log('🔄 PDF BUILDER - Template automatique basé sur le statut');
+
                     // Utiliser le template par défaut ou détecté automatiquement
                     $order_status = $order->get_status();
                     $status_templates = get_option('pdf_builder_order_status_templates', []);
                     $status_key = 'wc-' . $order_status;
 
+                    error_log('📊 PDF BUILDER - Statut commande: ' . $order_status . ', clé: ' . $status_key);
+
                     if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
+                        error_log('🎯 PDF BUILDER - Template mappé trouvé: ' . $status_templates[$status_key]);
                         $template_data = $this->load_template_robust($status_templates[$status_key]);
                     } else {
+                        error_log('📋 PDF BUILDER - Utilisation template par défaut');
                         $template_data = $this->get_default_invoice_template();
                     }
                 }
             }
 
             if (!$template_data) {
+                error_log('❌ PDF BUILDER - Aucun template/canvas trouvé');
                 wp_send_json_error('Template ou canvas non trouvé');
             }
 
+            error_log('✅ PDF BUILDER - Template/canvas chargé, génération HTML');
+
             // Générer l'HTML d'aperçu avec les données de la commande
             $html_content = $this->generate_unified_html($template_data, $order);
+
+            error_log('✅ PDF BUILDER - HTML généré, longueur: ' . strlen($html_content));
 
             $response = array(
                 'html' => $html_content,
@@ -784,9 +812,12 @@ class PDF_Builder_WooCommerce_Integration {
                 'height' => $template_data['canvas']['height'] ?? 842
             );
 
+            error_log('✅ PDF BUILDER - Réponse préparée, envoi JSON');
             wp_send_json_success($response);
 
         } catch (Exception $e) {
+            error_log('❌ PDF BUILDER - Exception dans ajax_preview_order_pdf: ' . $e->getMessage());
+            error_log('❌ PDF BUILDER - Stack trace: ' . $e->getTraceAsString());
             wp_send_json_error('Erreur: ' . $e->getMessage());
         }
     }
