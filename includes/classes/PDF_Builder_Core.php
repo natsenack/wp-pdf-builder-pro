@@ -202,6 +202,8 @@ class PDF_Builder_Core {
      * Ajouter le menu d'administration
      */
     public function add_admin_menu() {
+        error_log('PDF BUILDER - add_admin_menu called');
+
         add_menu_page(
             __('PDF Builder Pro', 'pdf-builder-pro'),
             __('PDF Builder', 'pdf-builder-pro'),
@@ -241,6 +243,7 @@ class PDF_Builder_Core {
         );
 
         // Page de test pour le débogage
+        error_log('PDF BUILDER - Adding test templates submenu');
         add_submenu_page(
             'pdf-builder-pro',
             __('🔧 Test Templates', 'pdf-builder-pro'),
@@ -249,6 +252,7 @@ class PDF_Builder_Core {
             'pdf-builder-test-templates',
             array($this, 'test_template_selection_page')
         );
+        error_log('PDF BUILDER - Test templates submenu added');
     }
 
     /**
