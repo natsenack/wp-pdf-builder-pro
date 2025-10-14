@@ -1150,13 +1150,17 @@ class PDF_Builder_WooCommerce_Integration {
  * This function acts as a bridge to call the admin class method
  */
 function pdf_builder_ajax_preview_order_pdf_handler() {
+    error_log('PDF BUILDER - Global AJAX handler called');
+    
     if (class_exists('PDF_Builder_Admin')) {
+        error_log('PDF BUILDER - PDF_Builder_Admin class exists');
         $admin = PDF_Builder_Admin::getInstance();
-        if (method_exists($admin, 'ajax_preview_order_pdf')) {
+        if ($admin && method_exists($admin, 'ajax_preview_order_pdf')) {
+            error_log('PDF BUILDER - Calling admin ajax_preview_order_pdf method');
             $admin->ajax_preview_order_pdf();
         } else {
-            error_log('PDF BUILDER - ajax_preview_order_pdf method not found in admin class');
-            wp_send_json_error('Méthode non trouvée');
+            error_log('PDF BUILDER - Admin instance or method not available');
+            wp_send_json_error('Instance ou méthode admin non disponible');
         }
     } else {
         error_log('PDF BUILDER - PDF_Builder_Admin class not found');
