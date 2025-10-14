@@ -5057,6 +5057,39 @@ class PDF_Builder_Admin {
             return new WP_Error('generation_error', 'Erreur fatale: ' . $e->getMessage());
         }
     }
+
+    /**
+     * Remplacer les variables WooCommerce dans les données du template
+     *
+     * @param array $template_data Données du template
+     * @param array $woocommerce_data Données WooCommerce
+     * @return array Template avec variables remplacées
+     */
+    private function replace_woocommerce_variables($template_data, $woocommerce_data) {
+        $processed_data = $template_data;
+
+        // Fonction récursive pour remplacer les variables dans toutes les profondeurs
+        $replace_vars = function($data) use ($woocommerce_data, &$replace_vars) {
+            if (is_array($data)) {
+                $result = [];
+                foreach ($data as $key => $value) {
+                    $result[$key] = $replace_vars($value);
+                }
+                return $result;
+            } elseif (is_string($data)) {
+                // Remplacer les variables du type {order_number}, {customer_name}, etc.
+                $replaced = $data;
+                foreach ($woocommerce_data as $var => $value) {
+                    $replaced = str_replace('{' . $var . '}', $value, $replaced);
+                }
+                return $replaced;
+            } else {
+                return $data;
+            }
+        };
+
+        return $replace_vars($processed_data);
+    }
 }
 
 
