@@ -34,7 +34,7 @@ class PDF_Builder_WooCommerce_Integration {
         error_log('PDF BUILDER - Registering AJAX hooks in WooCommerce integration');
         // AJAX handlers pour WooCommerce - gérés par le manager
         add_action('wp_ajax_pdf_builder_generate_order_pdf', [$this, 'ajax_generate_order_pdf'], 1);
-        add_action('wp_ajax_pdf_builder_pro_preview_order_pdf', [PDF_Builder_Admin::getInstance(), 'ajax_preview_order_pdf'], 1);
+        add_action('wp_ajax_pdf_builder_pro_preview_order_pdf', 'pdf_builder_ajax_preview_order_pdf_handler', 1);
         add_action('wp_ajax_pdf_builder_save_order_canvas', [$this, 'ajax_save_order_canvas'], 1);
         error_log('PDF BUILDER - AJAX hooks registered: pdf_builder_generate_order_pdf, pdf_builder_pro_preview_order_pdf, pdf_builder_save_order_canvas');
     }
@@ -1142,5 +1142,24 @@ class PDF_Builder_WooCommerce_Integration {
         }
 
         error_log('✅ PDF BUILDER - check_tcpdf_paths: Vérification terminée');
+    }
+}
+
+/**
+ * Global AJAX handler for PDF preview order PDF
+ * This function acts as a bridge to call the admin class method
+ */
+function pdf_builder_ajax_preview_order_pdf_handler() {
+    if (class_exists('PDF_Builder_Admin')) {
+        $admin = PDF_Builder_Admin::getInstance();
+        if (method_exists($admin, 'ajax_preview_order_pdf')) {
+            $admin->ajax_preview_order_pdf();
+        } else {
+            error_log('PDF BUILDER - ajax_preview_order_pdf method not found in admin class');
+            wp_send_json_error('Méthode non trouvée');
+        }
+    } else {
+        error_log('PDF BUILDER - PDF_Builder_Admin class not found');
+        wp_send_json_error('Classe admin non trouvée');
     }
 }
