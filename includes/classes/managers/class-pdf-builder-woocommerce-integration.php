@@ -756,9 +756,6 @@ class PDF_Builder_WooCommerce_Integration {
     public function ajax_preview_order_pdf() {
         error_log('🚨 PDF BUILDER - ajax_preview_order_pdf METHOD CALLED - STARTING EXECUTION');
 
-        // Ajouter un log console côté client pour synchronisation
-        echo '<script>console.log("🔧 PDF BUILDER - SERVER: ajax_preview_order_pdf started");</script>';
-
         // Vérifier les permissions
         error_log('🔐 PDF BUILDER - ajax_preview_order_pdf: Vérification permissions');
         if (!current_user_can('manage_woocommerce')) {
@@ -779,7 +776,6 @@ class PDF_Builder_WooCommerce_Integration {
         $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
 
         error_log('🟡 PDF BUILDER - ajax_preview_order_pdf: order_id=' . $order_id . ', template_id=' . $template_id);
-        echo '<script>console.log("📋 PDF BUILDER - SERVER: Processing order_id=' . $order_id . ', template_id=' . $template_id . '");</script>';
 
         if (!$order_id) {
             error_log('❌ PDF BUILDER - ajax_preview_order_pdf: ID commande manquant');
@@ -837,13 +833,11 @@ class PDF_Builder_WooCommerce_Integration {
 
                     try {
                         error_log('📦 PDF BUILDER - ajax_preview_order_pdf: Tentative require_once de: ' . $path);
-                        echo '<script>console.log("📦 PDF BUILDER - SERVER: Attempting require_once of: ' . basename($path) . '");</script>';
                         $start_time = microtime(true);
                         require_once $path;
                         $end_time = microtime(true);
                         $load_time = round(($end_time - $start_time) * 1000, 2);
                         error_log('📦 PDF BUILDER - ajax_preview_order_pdf: require_once réussi en ' . $load_time . 'ms pour: ' . $path);
-                        echo '<script>console.log("✅ PDF BUILDER - SERVER: require_once successful in ' . $load_time . 'ms");</script>';
 
                         if (class_exists('TCPDF')) {
                             error_log('✅ PDF BUILDER - ajax_preview_order_pdf: TCPDF chargé avec succès depuis: ' . $path);
