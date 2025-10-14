@@ -171,49 +171,798 @@ class PDF_Builder_WooCommerce_Integration {
 
         wp_nonce_field('pdf_builder_order_actions', 'pdf_builder_order_nonce');
         ?>
-        <style>#pdf-builder-metabox{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;line-height:1.4;color:#333}.pdf-header{background:#f8f9fa;padding:15px 20px;border-bottom:1px solid #dee2e6;margin:-12px -12px 20px -12px}.pdf-order-title{font-size:16px;font-weight:600;margin:0 0 8px 0;display:flex;align-items:center;gap:8px}.pdf-order-meta{font-size:13px;color:#6c757d;display:flex;align-items:center;gap:12px}.pdf-status-badge{background:#e9ecef;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:500}.pdf-doc-type{background:#fff;border:1px solid #dee2e6;padding:12px 16px;margin-bottom:16px;border-radius:4px}.pdf-doc-type-content{display:flex;align-items:center;gap:10px}.pdf-doc-info h4{margin:0 0 2px 0;font-size:14px;font-weight:600}.pdf-doc-info p{margin:0;font-size:12px;color:#6c757d}.pdf-template-section{margin-bottom:16px}.pdf-template-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.pdf-template-title{font-size:13px;font-weight:600;color:#333}.pdf-template-toggle{font-size:12px;color:#007cba;cursor:pointer;padding:4px 8px;border-radius:3px;transition:background-color 0.2s}.pdf-template-toggle:hover{background:#f0f0f0}.pdf-template-display{background:#fff;border:1px solid #dee2e6;padding:12px 16px;border-radius:4px;cursor:pointer;transition:border-color 0.2s}.pdf-template-display:hover{border-color:#007cba}.pdf-template-info{display:flex;align-items:center;gap:10px}.pdf-template-name{font-weight:500;font-size:14px}.pdf-template-meta{font-size:12px;color:#6c757d}.pdf-template-selector{display:none;margin-top:8px;background:#f8f9fa;border:1px solid #dee2e6;border-radius:4px;padding:12px}.pdf-template-search{width:100%;padding:8px 12px;border:1px solid #ccc;border-radius:3px;margin-bottom:8px;font-size:13px}.pdf-template-list{max-height:200px;overflow-y:auto}.pdf-template-option{padding:8px 12px;cursor:pointer;border-radius:3px;transition:background-color 0.2s;margin-bottom:2px;display:flex;align-items:center;gap:8px}.pdf-template-option:hover{background:#e9ecef}.pdf-template-option.selected{background:#007cba;color:#fff}.pdf-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}.pdf-btn{padding:10px 16px;border:1px solid #ccc;border-radius:4px;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;background:#fff}.pdf-btn:hover{border-color:#007cba;background:#f0f8ff}.pdf-btn:disabled{opacity:0.6;cursor:not-allowed}.pdf-btn.loading{color:transparent}.pdf-btn.loading::after{content:'';position:absolute;width:16px;height:16px;border:2px solid #007cba;border-top:2px solid transparent;border-radius:50%;animation:spin 1s linear infinite}.pdf-btn-preview{border-color:#007cba;color:#007cba}.pdf-btn-preview:hover{background:#007cba;color:#fff}.pdf-btn-generate{background:#28a745;color:#fff;border-color:#28a745}.pdf-btn-generate:hover{background:#218838}.pdf-btn-download{background:#ffc107;color:#212529;border-color:#ffc107;display:none}.pdf-btn-download:hover{background:#e0a800}.pdf-status{padding:10px 14px;border-radius:4px;font-size:13px;font-weight:500;text-align:center;margin-top:12px;opacity:0;transition:opacity 0.3s;display:none}.pdf-status.show{opacity:1}.pdf-status-loading{background:#d1ecf1;color:#0c5460;border:1px solid #bee5eb}.pdf-status-success{background:#d4edda;color:#155724;border:1px solid #c3e6cb}.pdf-status-error{background:#f8d7da;color:#721c24;border:1px solid #f5c6cb}.pdf-modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);z-index:100000;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all 0.4s cubic-bezier(0.4, 0, 0.2, 1)}.pdf-modal-overlay.show{opacity:1;visibility:visible}.pdf-modal{background:#fff;border-radius:16px;max-width:95vw;max-height:95vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25),0 0 0 1px rgba(255,255,255,0.05),0 0 60px rgba(102, 126, 234, 0.15);border:1px solid rgba(0,0,0,0.1);transform:scale(0.85) translateY(20px);opacity:0;transition:all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)}.pdf-modal.show{transform:scale(1) translateY(0);opacity:1}.pdf-modal-header{padding:24px 32px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border-bottom:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;align-items:center}.pdf-modal-title{display:flex;align-items:center;gap:12px;margin:0;font-size:20px;font-weight:600;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.2)}.pdf-modal-controls{display:flex;align-items:center;gap:12px}.pdf-zoom-controls{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.2);border-radius:8px;padding:8px;border:1px solid rgba(255,255,255,0.3)}.pdf-zoom-btn{background:rgba(255,255,255,0.9);border:1px solid rgba(255,255,255,0.3);border-radius:6px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;font-weight:600;color:#4a5568;transition:all 0.2s;position:relative}.pdf-zoom-btn:hover{background:#fff;transform:translateY(-1px);box-shadow:0 4px 8px rgba(0,0,0,0.15)}.pdf-zoom-btn:active{transform:translateY(0)}.pdf-zoom-btn:focus{outline:none;box-shadow:0 0 0 3px rgba(102, 126, 234, 0.4)}.pdf-zoom-level{font-size:13px;font-weight:500;min-width:50px;text-align:center;color:#333}.pdf-close-btn{background:rgba(255,255,255,0.9);border:1px solid rgba(255,255,255,0.3);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;font-weight:600;color:#4a5568;transition:all 0.2s;position:relative}.pdf-close-btn:hover{background:#fff;transform:translateY(-1px) rotate(90deg);box-shadow:0 4px 8px rgba(0,0,0,0.15);color:#e53e3e}.pdf-close-btn:active{transform:translateY(0) rotate(90deg)}.pdf-close-btn:focus{outline:none;box-shadow:0 0 0 3px rgba(229, 62, 62, 0.4)}.pdf-modal-body{flex:1;padding:32px;overflow:auto;background:linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%)}.pdf-preview-container{background:#fff;border:2px solid rgba(0,0,0,0.08);border-radius:12px;display:flex;align-items:center;justify-content:center;min-height:700px;position:relative;overflow:hidden;box-shadow:0 10px 25px rgba(0,0,0,0.1),inset 0 0 0 1px rgba(255,255,255,0.6)}.pdf-preview-loading{display:flex;flex-direction:column;align-items:center;gap:20px;color:#6c757d;padding:40px}.pdf-spinner{width:50px;height:50px;border:4px solid rgba(102, 126, 234, 0.2);border-top:4px solid #667eea;border-radius:50%;animation:spin 1s linear infinite;filter:drop-shadow(0 2px 4px rgba(102, 126, 234, 0.3))}.pdf-loading-text{font-size:16px;font-weight:500;color:#4a5568;text-align:center}.pdf-loading-subtext{font-size:14px;color:#a0aec0;margin-top:8px;text-align:center}.pdf-preview-info{margin-top:24px;padding:24px;background:linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);border:1px solid rgba(226, 232, 240, 0.8);border-radius:12px;box-shadow:0 4px 6px rgba(0, 0, 0, 0.05);backdrop-filter:blur(10px)}.pdf-preview-info-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;font-weight:600;font-size:16px;color:#2d3748}.pdf-preview-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}.pdf-preview-stat{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-radius:8px;background:#fff;border:1px solid rgba(226, 232, 240, 0.6);transition:all 0.2s}.pdf-preview-stat:hover{transform:translateY(-1px);box-shadow:0 4px 8px rgba(0, 0, 0, 0.1)}.pdf-preview-stat:last-child{border-bottom:none}.pdf-preview-stat-label{color:#718096;font-weight:500;font-size:13px}.pdf-preview-stat-value{color:#2d3748;font-weight:600;background:linear-gradient(135deg, #e6fffa 0%, #b2f5ea 100%);padding:4px 12px;border-radius:20px;font-size:12px;border:1px solid rgba(72, 187, 120, 0.2)}@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}@media(max-width:768px){.pdf-actions{grid-template-columns:1fr}.pdf-modal{max-width:95vw;max-height:96vh;border-radius:4px}.pdf-modal-header{padding:16px 20px;flex-direction:column;gap:12px;text-align:center}.pdf-modal-title{font-size:16px;justify-content:center}.pdf-zoom-controls{display:none}.pdf-modal-controls{width:100%;justify-content:center}.pdf-btn{padding:12px 16px;font-size:14px}}
-
-        /* Indicateur de page PDF */
-        .pdf-page-indicator {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
+        <style>
+        /* Modern PDF Modal Styles */
+        .pdf-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 100000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .pdf-modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .pdf-modal {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25),
+                        0 0 0 1px rgba(255, 255, 255, 0.05),
+                        0 0 60px rgba(102, 126, 234, 0.15);
+            max-width: 95vw;
+            max-height: 95vh;
+            width: 1200px;
+            height: 800px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transform: scale(0.9) translateY(20px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .pdf-modal.show {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+
+        /* Modal Header */
+        .pdf-modal-header {
+            padding: 24px 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 10px;
-            font-family: 'Inter', sans-serif;
+        }
+
+        .pdf-modal-header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .pdf-modal-icon {
+            font-size: 32px;
+            opacity: 0.9;
+        }
+
+        .pdf-modal-info h2 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .pdf-modal-subtitle {
+            margin: 4px 0 0 0;
+            font-size: 14px;
+            opacity: 0.8;
+            color: white;
+        }
+
+        .pdf-modal-header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* Zoom Toolbar */
+        .pdf-zoom-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .pdf-zoom-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #4a5568;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .pdf-zoom-btn:hover {
+            background: #ffffff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .pdf-zoom-btn:active {
+            transform: translateY(0);
+        }
+
+        .pdf-zoom-display {
+            font-size: 14px;
+            font-weight: 600;
+            min-width: 50px;
+            text-align: center;
+            color: #2d3748;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .pdf-zoom-separator {
+            width: 1px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.3);
+            margin: 0 4px;
+        }
+
+        /* Action Buttons */
+        .pdf-action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .pdf-action-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .pdf-action-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .pdf-action-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Close Button */
+        .pdf-close-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .pdf-close-btn:hover {
+            background: rgba(239, 68, 68, 0.9);
+            transform: rotate(90deg);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        /* Modal Body */
+        .pdf-modal-body {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Preview Container */
+        .pdf-preview-container {
+            flex: 1;
+            background: #f8fafc;
+            position: relative;
+            overflow: hidden;
+            border-radius: 0 0 0 20px;
+        }
+
+        /* Loading State */
+        .pdf-preview-loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            z-index: 10;
+        }
+
+        .pdf-loading-spinner {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            margin-bottom: 24px;
+        }
+
+        .pdf-spinner-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 3px solid rgba(102, 126, 234, 0.1);
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: pdf-spin 1.5s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        }
+
+        .pdf-spinner-ring:nth-child(2) {
+            animation-delay: 0.2s;
+            border-top-color: #764ba2;
+        }
+
+        .pdf-spinner-ring:nth-child(3) {
+            animation-delay: 0.4s;
+            border-top-color: #f093fb;
+        }
+
+        @keyframes pdf-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .pdf-loading-content h3 {
+            margin: 0 0 8px 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3748;
+            text-align: center;
+        }
+
+        .pdf-loading-content p {
+            margin: 0 0 24px 0;
+            color: #718096;
+            text-align: center;
+        }
+
+        .pdf-loading-progress {
+            width: 200px;
+            height: 4px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .pdf-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Error State */
+        .pdf-preview-error {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #fef5e7;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .pdf-error-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .pdf-preview-error h3 {
+            margin: 0 0 8px 0;
+            color: #d97706;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .pdf-preview-error p {
+            margin: 0 0 24px 0;
+            color: #92400e;
+        }
+
+        .pdf-retry-btn {
+            background: #d97706;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .pdf-retry-btn:hover {
+            background: #b45309;
+            transform: translateY(-1px);
+        }
+
+        /* Preview Content */
+        .pdf-preview-content {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        #pdf-preview-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+            transform-origin: center top;
+            transition: transform 0.3s ease;
+        }
+
+        /* Info Panel */
+        .pdf-info-panel {
+            width: 320px;
+            background: white;
+            border-left: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pdf-info-tabs {
+            display: flex;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .pdf-info-tab {
+            flex: 1;
+            padding: 16px;
+            background: none;
+            border: none;
+            font-weight: 500;
+            color: #718096;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .pdf-info-tab.active {
+            color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .pdf-info-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #667eea;
+        }
+
+        .pdf-info-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .pdf-info-section {
+            display: none;
+        }
+
+        .pdf-info-section.active {
+            display: block;
+        }
+
+        /* Details Section */
+        .pdf-info-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .pdf-info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .pdf-info-label {
+            font-size: 13px;
+            color: #718096;
             font-weight: 500;
         }
 
-        /* Notification de zoom */
-        .pdf-zoom-notification {
-            position: fixed;
-            top: 20px;
+        .pdf-info-value {
+            font-size: 14px;
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        /* Stats Section */
+        .pdf-stats-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .pdf-stat-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+        }
+
+        .pdf-stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .pdf-stat-icon {
+            font-size: 24px;
+        }
+
+        .pdf-stat-content {
+            flex: 1;
+        }
+
+        .pdf-stat-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 2px;
+        }
+
+        .pdf-stat-label {
+            font-size: 12px;
+            color: #718096;
+            font-weight: 500;
+        }
+
+        /* Actions Section */
+        .pdf-actions-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .pdf-quick-action {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+
+        .pdf-quick-action:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .pdf-action-icon {
+            font-size: 20px;
+        }
+
+        .pdf-action-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .pdf-action-desc {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        /* Modal Footer */
+        .pdf-modal-footer {
+            padding: 20px 32px;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .pdf-footer-left {
+            display: flex;
+            gap: 16px;
+        }
+
+        .pdf-keyboard-hints {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .pdf-hint {
+            font-size: 12px;
+            color: #718096;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        kbd {
+            background: #e2e8f0;
+            color: #4a5568;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 500;
+            border: 1px solid #cbd5e0;
+        }
+
+        .pdf-footer-right {
+            display: flex;
+            gap: 12px;
+        }
+
+        .pdf-footer-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid #e2e8f0;
+        }
+
+        .pdf-footer-secondary {
+            background: white;
+            color: #718096;
+        }
+
+        .pdf-footer-secondary:hover {
+            background: #f8fafc;
+        }
+
+        .pdf-footer-primary {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .pdf-footer-primary:hover {
+            background: #5a67d8;
+            transform: translateY(-1px);
+        }
+
+        /* Tooltips */
+        [data-tooltip] {
+            position: relative;
+        }
+
+        [data-tooltip]:hover::before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
             left: 50%;
             transform: translateX(-50%);
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #2d3748;
             color: white;
-            padding: 12px 24px;
-            border-radius: 25px;
-            font-size: 14px;
-            font-weight: 500;
-            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
             z-index: 100001;
-            animation: slideDown 0.3s ease-out;
+            margin-bottom: 8px;
+            opacity: 0;
+            animation: tooltipFade 0.2s ease forwards;
         }
 
-        @keyframes slideDown {
+        [data-tooltip]:hover::after {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: #2d3748;
+            margin-bottom: 3px;
+            opacity: 0;
+            animation: tooltipFade 0.2s ease forwards;
+        }
+
+        @keyframes tooltipFade {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .pdf-modal {
+                width: 95vw;
+                height: 90vh;
+            }
+
+            .pdf-info-panel {
+                width: 280px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .pdf-modal {
+                width: 100vw;
+                height: 100vh;
+                border-radius: 0;
+                max-width: none;
+                max-height: none;
+            }
+
+            .pdf-modal-header {
+                padding: 16px 20px;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .pdf-modal-header-left {
+                flex-direction: column;
+                text-align: center;
+                gap: 8px;
+            }
+
+            .pdf-modal-header-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .pdf-zoom-toolbar {
+                order: 2;
+            }
+
+            .pdf-action-buttons {
+                order: 1;
+            }
+
+            .pdf-modal-body {
+                flex-direction: column;
+            }
+
+            .pdf-info-panel {
+                width: 100%;
+                height: 200px;
+                border-left: none;
+                border-top: 1px solid #e2e8f0;
+            }
+
+            .pdf-modal-footer {
+                padding: 16px 20px;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .pdf-footer-left {
+                justify-content: center;
+            }
+
+            .pdf-keyboard-hints {
+                display: none;
+            }
+
+            .pdf-footer-right {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .pdf-modal {
+                background: #1a202c;
+                color: #e2e8f0;
+            }
+
+            .pdf-preview-container {
+                background: #2d3748;
+            }
+
+            .pdf-info-panel {
+                background: #1a202c;
+                border-left-color: #4a5568;
+            }
+
+            .pdf-info-tabs {
+                border-bottom-color: #4a5568;
+            }
+
+            .pdf-info-item {
+                background: #2d3748;
+                border-color: #4a5568;
+            }
+
+            .pdf-info-value {
+                color: #e2e8f0;
+            }
+
+            .pdf-stat-card {
+                background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+                border-color: #4a5568;
+            }
+
+            .pdf-quick-action {
+                background: #2d3748;
+                border-color: #4a5568;
+                color: #e2e8f0;
+            }
+
+            .pdf-modal-footer {
+                background: #2d3748;
+                border-top-color: #4a5568;
+            }
+
+            .pdf-footer-secondary {
+                background: #4a5568;
+                color: #e2e8f0;
+            }
+        }
+
+        /* Animation classes */
+        .pdf-fade-in {
+            animation: pdfFadeIn 0.3s ease forwards;
+        }
+
+        .pdf-slide-up {
+            animation: pdfSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes pdfFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes pdfSlideUp {
             from {
                 opacity: 0;
-                transform: translateX(-50%) translateY(-20px);
+                transform: translateY(20px);
             }
             to {
                 opacity: 1;
-                transform: translateX(-50%) translateY(0);
+                transform: translateY(0);
             }
-        }</style>
+        }
+        </style>
 
         <div id="pdf-builder-metabox">
             <!-- Header Section -->
@@ -323,83 +1072,251 @@ class PDF_Builder_WooCommerce_Integration {
             <div class="pdf-status" id="pdf-status"></div>
         </div>
 
-        <!-- Clean PDF Preview Modal -->
+        <!-- Modern PDF Preview Modal -->
         <div class="pdf-modal-overlay" id="pdf-modal-overlay">
             <div class="pdf-modal">
+                <!-- Modal Header -->
                 <div class="pdf-modal-header">
-                    <h3 class="pdf-modal-title">
-                        <span class="modal-icon">🔍</span>
-                        Aperçu PDF - <?php echo esc_html($document_type_label); ?>
-                    </h3>
+                    <div class="pdf-modal-header-left">
+                        <div class="pdf-modal-icon">�</div>
+                        <div class="pdf-modal-info">
+                            <h2 class="pdf-modal-title">Aperçu PDF</h2>
+                            <p class="pdf-modal-subtitle">
+                                <?php echo esc_html($document_type_label); ?> • Commande #<?php echo esc_html($order->get_order_number()); ?>
+                            </p>
+                        </div>
+                    </div>
 
-                    <div class="pdf-modal-controls">
-                        <div class="pdf-zoom-controls">
-                            <button class="pdf-zoom-btn" id="pdf-zoom-out" title="Zoom arrière (Ctrl+-)">−</button>
-                            <span class="pdf-zoom-level" id="pdf-zoom-level">100%</span>
-                            <button class="pdf-zoom-btn" id="pdf-zoom-in" title="Zoom avant (Ctrl++)">+</button>
-                            <button class="pdf-zoom-btn" id="pdf-zoom-fit" title="Ajuster à la fenêtre (Ctrl+0)">🔍</button>
+                    <div class="pdf-modal-header-right">
+                        <!-- Zoom Controls -->
+                        <div class="pdf-zoom-toolbar">
+                            <button class="pdf-zoom-btn" id="pdf-zoom-out" data-tooltip="Zoom arrière (Ctrl+-)">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                            </button>
+                            <span class="pdf-zoom-display" id="pdf-zoom-level">100%</span>
+                            <button class="pdf-zoom-btn" id="pdf-zoom-in" data-tooltip="Zoom avant (Ctrl++)">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                            </button>
+                            <div class="pdf-zoom-separator"></div>
+                            <button class="pdf-zoom-btn" id="pdf-zoom-fit" data-tooltip="Ajuster à la fenêtre (Ctrl+0)">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                                    <polyline points="10,17 15,12 10,7"></polyline>
+                                    <line x1="15" y1="12" x2="3" y2="12"></line>
+                                </svg>
+                            </button>
+                            <button class="pdf-zoom-btn" id="pdf-zoom-reset" data-tooltip="Zoom 100%">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="23,4 23,10 17,10"></polyline>
+                                    <path d="M20.49,15A9,9,0,1,1,5.64,5.64L23,10"></path>
+                                </svg>
+                            </button>
                         </div>
 
-                        <button class="pdf-close-btn" id="pdf-close-modal" title="Fermer (Échap)">
-                            ×
+                        <!-- Action Buttons -->
+                        <div class="pdf-action-buttons">
+                            <button class="pdf-action-btn pdf-action-print" id="pdf-print-btn" data-tooltip="Imprimer (Ctrl+P)">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="6,9 6,2 18,2 18,9"></polyline>
+                                    <path d="M6,18H4a2,2,0,0,1-2-2V11a2,2,0,0,1,2-2H20a2,2,0,0,1,2,2v5a2,2,0,0,1-2,2H6"></path>
+                                    <rect x="6" y="14" width="12" height="8"></rect>
+                                </svg>
+                            </button>
+                            <button class="pdf-action-btn pdf-action-download" id="pdf-modal-download-btn" data-tooltip="Télécharger">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21,15v4a2,2,0,0,1-2,2H5a2,2,0,0,1-2-2V15"></path>
+                                    <polyline points="7,10 12,15 17,10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                            </button>
+                            <button class="pdf-action-btn pdf-action-share" id="pdf-share-btn" data-tooltip="Partager">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="18" cy="5" r="3"></circle>
+                                    <circle cx="6" cy="12" r="3"></circle>
+                                    <circle cx="18" cy="19" r="3"></circle>
+                                    <path d="M8.59,13.51l6.83,3.98"></path>
+                                    <path d="M15.41,6.51l-6.82,3.98"></path>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- Close Button -->
+                        <button class="pdf-close-btn" id="pdf-close-modal" data-tooltip="Fermer (Échap)">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
                         </button>
                     </div>
                 </div>
 
+                <!-- Modal Body -->
                 <div class="pdf-modal-body">
+                    <!-- Preview Container -->
                     <div class="pdf-preview-container">
+                        <!-- Loading State -->
                         <div class="pdf-preview-loading" id="pdf-preview-loading">
-                            <div class="pdf-spinner"></div>
-                            <div>
-                                <div style="font-weight: 600; margin-bottom: 8px;">Génération de l'aperçu...</div>
-                                <div style="font-size: 14px; opacity: 0.8;">Veuillez patienter</div>
+                            <div class="pdf-loading-spinner">
+                                <div class="pdf-spinner-ring"></div>
+                                <div class="pdf-spinner-ring"></div>
+                                <div class="pdf-spinner-ring"></div>
                             </div>
+                            <div class="pdf-loading-content">
+                                <h3>Génération de l'aperçu</h3>
+                                <p>Création du document PDF en cours...</p>
+                                <div class="pdf-loading-progress">
+                                    <div class="pdf-progress-bar" id="pdf-progress-bar"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Error State -->
+                        <div class="pdf-preview-error" id="pdf-preview-error" style="display: none;">
+                            <div class="pdf-error-icon">⚠️</div>
+                            <h3>Erreur de génération</h3>
+                            <p id="pdf-error-message">Une erreur inattendue s'est produite.</p>
+                            <button class="pdf-retry-btn" id="pdf-retry-btn">Réessayer</button>
+                        </div>
+
+                        <!-- Success State -->
+                        <div class="pdf-preview-content" id="pdf-preview-content" style="display: none;">
+                            <iframe id="pdf-preview-iframe" frameborder="0"></iframe>
                         </div>
                     </div>
 
-                    <div class="pdf-preview-info">
-                        <div class="pdf-preview-info-header">
-                            <span>📊</span>
-                            Informations de l'aperçu
+                    <!-- Info Panel -->
+                    <div class="pdf-info-panel">
+                        <div class="pdf-info-tabs">
+                            <button class="pdf-info-tab active" data-tab="details">Détails</button>
+                            <button class="pdf-info-tab" data-tab="stats">Statistiques</button>
+                            <button class="pdf-info-tab" data-tab="actions">Actions</button>
                         </div>
 
-                        <div class="pdf-preview-stats">
-                            <div class="pdf-preview-stat">
-                                <span class="pdf-preview-stat-label">Template actif:</span>
-                                <span class="pdf-preview-stat-value" id="pdf-info-template">
-                                    <?php echo $selected_template ? esc_html($selected_template['name']) : 'Par défaut'; ?>
-                                </span>
+                        <div class="pdf-info-content">
+                            <!-- Details Tab -->
+                            <div class="pdf-info-section active" data-section="details">
+                                <div class="pdf-info-grid">
+                                    <div class="pdf-info-item">
+                                        <span class="pdf-info-label">Template</span>
+                                        <span class="pdf-info-value" id="pdf-info-template">
+                                            <?php echo $selected_template ? esc_html($selected_template['name']) : 'Par défaut'; ?>
+                                        </span>
+                                    </div>
+                                    <div class="pdf-info-item">
+                                        <span class="pdf-info-label">Format</span>
+                                        <span class="pdf-info-value">A4 (210×297mm)</span>
+                                    </div>
+                                    <div class="pdf-info-item">
+                                        <span class="pdf-info-label">Orientation</span>
+                                        <span class="pdf-info-value">Portrait</span>
+                                    </div>
+                                    <div class="pdf-info-item">
+                                        <span class="pdf-info-label">Pages</span>
+                                        <span class="pdf-info-value" id="pdf-info-pages">1</span>
+                                    </div>
+                                    <div class="pdf-info-item">
+                                        <span class="pdf-info-label">Généré le</span>
+                                        <span class="pdf-info-value" id="pdf-info-date">
+                                            <?php echo esc_html(current_time('d/m/Y H:i')); ?>
+                                        </span>
+                                    </div>
+                                    <div class="pdf-info-item">
+                                        <span class="pdf-info-label">Temps</span>
+                                        <span class="pdf-info-value" id="pdf-info-time">--</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="pdf-preview-stat">
-                                <span class="pdf-preview-stat-label">Format du document:</span>
-                                <span class="pdf-preview-stat-value">A4 (210×297mm)</span>
+
+                            <!-- Stats Tab -->
+                            <div class="pdf-info-section" data-section="stats">
+                                <div class="pdf-stats-grid">
+                                    <div class="pdf-stat-card">
+                                        <div class="pdf-stat-icon">📊</div>
+                                        <div class="pdf-stat-content">
+                                            <div class="pdf-stat-value" id="pdf-stat-size">--</div>
+                                            <div class="pdf-stat-label">Taille estimée</div>
+                                        </div>
+                                    </div>
+                                    <div class="pdf-stat-card">
+                                        <div class="pdf-stat-icon">⚡</div>
+                                        <div class="pdf-stat-content">
+                                            <div class="pdf-stat-value" id="pdf-stat-performance">--</div>
+                                            <div class="pdf-stat-label">Performance</div>
+                                        </div>
+                                    </div>
+                                    <div class="pdf-stat-card">
+                                        <div class="pdf-stat-icon">🎨</div>
+                                        <div class="pdf-stat-content">
+                                            <div class="pdf-stat-value" id="pdf-stat-quality">--</div>
+                                            <div class="pdf-stat-label">Qualité</div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="pdf-preview-stat">
-                                <span class="pdf-preview-stat-label">Orientation:</span>
-                                <span class="pdf-preview-stat-value">Portrait</span>
-                            </div>
-                            <div class="pdf-preview-stat">
-                                <span class="pdf-preview-stat-label">Résolution:</span>
-                                <span class="pdf-preview-stat-value">HD</span>
-                            </div>
-                            <div class="pdf-preview-stat">
-                                <span class="pdf-preview-stat-label">Généré le:</span>
-                                <span class="pdf-preview-stat-value" id="pdf-info-date">
-                                    <?php echo esc_html(current_time('d/m/Y H:i')); ?>
-                                </span>
-                            </div>
-                            <div class="pdf-preview-stat">
-                                <span class="pdf-preview-stat-label">Temps de génération:</span>
-                                <span class="pdf-preview-stat-value" id="pdf-info-time">--</span>
+
+                            <!-- Actions Tab -->
+                            <div class="pdf-info-section" data-section="actions">
+                                <div class="pdf-actions-grid">
+                                    <button class="pdf-quick-action" id="pdf-quick-generate">
+                                        <div class="pdf-action-icon">⚡</div>
+                                        <div class="pdf-action-content">
+                                            <div class="pdf-action-title">Générer PDF</div>
+                                            <div class="pdf-action-desc">Créer le fichier PDF final</div>
+                                        </div>
+                                    </button>
+                                    <button class="pdf-quick-action" id="pdf-quick-email">
+                                        <div class="pdf-action-icon">📧</div>
+                                        <div class="pdf-action-content">
+                                            <div class="pdf-action-title">Envoyer par email</div>
+                                            <div class="pdf-action-desc">Envoyer directement au client</div>
+                                        </div>
+                                    </button>
+                                    <button class="pdf-quick-action" id="pdf-quick-save">
+                                        <div class="pdf-action-icon">💾</div>
+                                        <div class="pdf-action-content">
+                                            <div class="pdf-action-title">Sauvegarder</div>
+                                            <div class="pdf-action-desc">Conserver pour plus tard</div>
+                                        </div>
+                                    </button>
+                                </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="pdf-modal-footer">
+                    <div class="pdf-footer-left">
+                        <div class="pdf-keyboard-hints">
+                            <span class="pdf-hint">
+                                <kbd>Ctrl</kbd> + <kbd>+</kbd> Zoom avant
+                            </span>
+                            <span class="pdf-hint">
+                                <kbd>Ctrl</kbd> + <kbd>-</kbd> Zoom arrière
+                            </span>
+                            <span class="pdf-hint">
+                                <kbd>Ctrl</kbd> + <kbd>0</kbd> Ajuster
+                            </span>
+                            <span class="pdf-hint">
+                                <kbd>Échap</kbd> Fermer
+                            </span>
+                        </div>
+                    </div>
+                    <div class="pdf-footer-right">
+                        <button class="pdf-footer-btn pdf-footer-secondary" id="pdf-cancel-btn">Annuler</button>
+                        <button class="pdf-footer-btn pdf-footer-primary" id="pdf-confirm-generate">Générer PDF</button>
                     </div>
                 </div>
             </div>
         </div>
 
         <script type="text/javascript">
-        // Définir ajaxurl si ce n'est pas déjà fait
+        // Modern PDF Modal JavaScript
         if (typeof ajaxurl === 'undefined') {
             ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
         }
@@ -410,19 +1327,25 @@ class PDF_Builder_WooCommerce_Integration {
             let originalPdfWidth = 0;
             let originalPdfHeight = 0;
             let previewStartTime = 0;
+            let currentTab = 'details';
 
-            function showStatus(message, type) {
-                if (type === undefined) type = 'loading';
+            // Utility Functions
+            function showStatus(message, type = 'loading') {
                 const $status = $('#pdf-status');
-                const classes = {loading:'pdf-status-loading',success:'pdf-status-success',error:'pdf-status-error'};
-                $status.removeClass('pdf-status-loading pdf-status-success pdf-status-error show').addClass(classes[type]).html(message).show();
-                setTimeout(function(){$status.addClass('show')},10);
-                if (type !== 'loading') setTimeout(function(){hideStatus()},5000);
+                const classes = {
+                    loading: 'pdf-status-loading',
+                    success: 'pdf-status-success',
+                    error: 'pdf-status-error'
+                };
+                $status.removeClass('pdf-status-loading pdf-status-success pdf-status-error show')
+                       .addClass(classes[type]).html(message).show();
+                setTimeout(() => $status.addClass('show'), 10);
+                if (type !== 'loading') setTimeout(hideStatus, 5000);
             }
 
             function hideStatus() {
                 $('#pdf-status').removeClass('show');
-                setTimeout(function(){$('#pdf-status').hide()},300);
+                setTimeout(() => $('#pdf-status').hide(), 300);
             }
 
             function setButtonLoading($btn, loading) {
@@ -439,6 +1362,173 @@ class PDF_Builder_WooCommerce_Integration {
                 currentTemplateId = templateId;
             }
 
+            function showNotification(message, type = 'info') {
+                const notification = $(`
+                    <div class="pdf-notification pdf-notification-${type}">
+                        <div class="pdf-notification-content">
+                            <span class="pdf-notification-icon">
+                                ${type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'}
+                            </span>
+                            <span class="pdf-notification-text">${message}</span>
+                        </div>
+                    </div>
+                `);
+
+                $('.pdf-modal').append(notification);
+                setTimeout(() => {
+                    notification.addClass('show');
+                    setTimeout(() => {
+                        notification.removeClass('show');
+                        setTimeout(() => notification.remove(), 300);
+                    }, 2000);
+                }, 100);
+            }
+
+            // Modal Management
+            function openModal() {
+                previewStartTime = Date.now();
+                $('#pdf-modal-overlay').addClass('show');
+                $('body').addClass('pdf-modal-open');
+                $(document).on('keydown.pdf-modal', handleKeydown);
+
+                // Initialize progress bar
+                let progress = 0;
+                const progressInterval = setInterval(() => {
+                    progress += Math.random() * 15;
+                    if (progress > 90) progress = 90;
+                    $('#pdf-progress-bar').css('width', progress + '%');
+                }, 200);
+
+                // Store interval for cleanup
+                $('#pdf-modal-overlay').data('progressInterval', progressInterval);
+            }
+
+            function closeModal() {
+                $('#pdf-modal-overlay').removeClass('show');
+                $('body').removeClass('pdf-modal-open');
+                $(document).off('keydown.pdf-modal');
+
+                // Clear progress interval
+                const progressInterval = $('#pdf-modal-overlay').data('progressInterval');
+                if (progressInterval) {
+                    clearInterval(progressInterval);
+                }
+
+                // Reset state
+                currentZoom = 1.0;
+                $('#pdf-zoom-level').text('100%');
+                $('#pdf-preview-loading').show();
+                $('#pdf-preview-error').hide();
+                $('#pdf-preview-content').hide();
+            }
+
+            function handleKeydown(e) {
+                // Escape to close
+                if (e.keyCode === 27) {
+                    e.preventDefault();
+                    closeModal();
+                    return;
+                }
+
+                // Ctrl/Cmd shortcuts
+                if (e.ctrlKey || e.metaKey) {
+                    switch (e.key) {
+                        case '+':
+                        case '=':
+                            e.preventDefault();
+                            applyZoom(currentZoom * 1.2);
+                            showNotification('Zoom avant (Ctrl+)', 'info');
+                            break;
+                        case '-':
+                            e.preventDefault();
+                            applyZoom(currentZoom / 1.2);
+                            showNotification('Zoom arrière (Ctrl-)', 'info');
+                            break;
+                        case '0':
+                            e.preventDefault();
+                            applyZoom(1.0);
+                            showNotification('Zoom 100% (Ctrl+0)', 'info');
+                            break;
+                        case 'p':
+                            e.preventDefault();
+                            printPdf();
+                            break;
+                        case 's':
+                            e.preventDefault();
+                            downloadPdf();
+                            break;
+                    }
+                }
+
+                // Arrow keys for zoom
+                switch (e.key) {
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        applyZoom(currentZoom * 1.1);
+                        break;
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        applyZoom(currentZoom / 1.1);
+                        break;
+                    case 'Home':
+                        e.preventDefault();
+                        applyZoom(1.0);
+                        break;
+                }
+            }
+
+            function applyZoom(zoomLevel) {
+                currentZoom = Math.max(0.25, Math.min(4.0, zoomLevel));
+                $('#pdf-zoom-level').text(Math.round(currentZoom * 100) + '%');
+
+                const $iframe = $('#pdf-preview-iframe');
+                if ($iframe.length) {
+                    const baseHeight = originalPdfHeight || 842;
+                    const zoomedHeight = baseHeight * currentZoom;
+
+                    $iframe.css({
+                        'transform': `scale(${currentZoom})`,
+                        'transform-origin': 'top center',
+                        'width': `${100 / currentZoom}%`,
+                        'height': `${zoomedHeight}px`,
+                        'max-width': '100%'
+                    });
+
+                    const containerHeight = Math.max(zoomedHeight + 60, 700);
+                    $('.pdf-preview-container').css({
+                        'min-height': `${containerHeight}px`,
+                        'height': 'auto'
+                    });
+                }
+            }
+
+            function printPdf() {
+                const $iframe = $('#pdf-preview-iframe')[0];
+                if ($iframe && $iframe.contentWindow) {
+                    $iframe.contentWindow.print();
+                    showNotification('Impression lancée', 'success');
+                } else {
+                    showNotification('Aperçu non disponible pour l\'impression', 'error');
+                }
+            }
+
+            function downloadPdf() {
+                // Trigger the generate button
+                $('#pdf-confirm-generate').trigger('click');
+            }
+
+            // Tab Management
+            function switchTab(tabName) {
+                $('.pdf-info-tab').removeClass('active');
+                $(`.pdf-info-tab[data-tab="${tabName}"]`).addClass('active');
+
+                $('.pdf-info-section').removeClass('active');
+                $(`.pdf-info-section[data-section="${tabName}"]`).addClass('active');
+
+                currentTab = tabName;
+            }
+
+            // Event Handlers
             $('#pdf-template-toggle').on('click', function() {
                 const $selector = $('#pdf-template-selector');
                 const isVisible = $selector.is(':visible');
@@ -465,9 +1555,14 @@ class PDF_Builder_WooCommerce_Integration {
                         $option.hide();
                     }
                 });
+
                 if (visibleCount === 0 && searchTerm.length > 0) {
                     if (!$('.pdf-no-results').length) {
-                        $('#pdf-template-list').append('<div class="pdf-no-results" style="text-align: center; color: #6c757d; padding: 20px; font-style: italic;">Aucun template trouvé pour "' + searchTerm + '"</div>');
+                        $('#pdf-template-list').append(`
+                            <div class="pdf-no-results" style="text-align: center; color: #6c757d; padding: 20px; font-style: italic;">
+                                Aucun template trouvé pour "${searchTerm}"
+                            </div>
+                        `);
                     }
                 } else {
                     $('.pdf-no-results').remove();
@@ -485,115 +1580,31 @@ class PDF_Builder_WooCommerce_Integration {
                 showStatus('Template changé: ' + templateName, 'success');
             });
 
-            function openModal() {
-                previewStartTime = Date.now();
-                $('#pdf-modal-overlay').addClass('show');
-                $('body').addClass('pdf-modal-open');
-                $(document).on('keydown.pdf-modal', handleKeydown);
-            }
+            // Info Tabs
+            $('.pdf-info-tab').on('click', function() {
+                const tabName = $(this).data('tab');
+                switchTab(tabName);
+            });
 
-            function closeModal() {
-                $('#pdf-modal-overlay').removeClass('show');
-                $('body').removeClass('pdf-modal-open');
-                $(document).off('keydown.pdf-modal');
-                currentZoom = 1.0;
-                $('#pdf-zoom-level').text('100%');
-            }
+            // Quick Actions
+            $('#pdf-quick-generate').on('click', function() {
+                $('#pdf-confirm-generate').trigger('click');
+            });
 
-            function handleKeydown(e) {
-                // Échap pour fermer
-                if (e.keyCode === 27) {
-                    e.preventDefault();
-                    closeModal();
-                    return;
-                }
+            $('#pdf-quick-email').on('click', function() {
+                showNotification('Fonctionnalité d\'email à venir', 'info');
+            });
 
-                // Ctrl/Cmd + raccourcis
-                if (e.ctrlKey || e.metaKey) {
-                    switch (e.key) {
-                        case '+':
-                        case '=':
-                            e.preventDefault();
-                            applyZoom(currentZoom * 1.2);
-                            showZoomNotification('Zoom avant (Ctrl+)');
-                            break;
-                        case '-':
-                            e.preventDefault();
-                            applyZoom(currentZoom / 1.2);
-                            showZoomNotification('Zoom arrière (Ctrl-)');
-                            break;
-                        case '0':
-                            e.preventDefault();
-                            applyZoom(1.0);
-                            showZoomNotification('Zoom 100% (Ctrl+0)');
-                            break;
-                        case 'r':
-                            e.preventDefault();
-                            // Recharger l'aperçu
-                            $('#pdf-preview-btn').trigger('click');
-                            break;
-                    }
-                }
+            $('#pdf-quick-save').on('click', function() {
+                showNotification('Sauvegarde automatique activée', 'success');
+            });
 
-                // Raccourcis sans modificateur
-                switch (e.key) {
-                    case 'ArrowUp':
-                        e.preventDefault();
-                        applyZoom(currentZoom * 1.1);
-                        break;
-                    case 'ArrowDown':
-                        e.preventDefault();
-                        applyZoom(currentZoom / 1.1);
-                        break;
-                    case 'Home':
-                        e.preventDefault();
-                        applyZoom(1.0);
-                        break;
-                }
-            }
-
-            function showZoomNotification(message) {
-                // Créer une notification temporaire
-                const notification = $('<div class="pdf-zoom-notification">' + message + '</div>');
-                $('.pdf-modal').append(notification);
-
-                setTimeout(function() {
-                    notification.fadeOut(function() {
-                        $(this).remove();
-                    });
-                }, 1500);
-            }
-
-            function applyZoom(zoomLevel) {
-                currentZoom = Math.max(0.25, Math.min(4.0, zoomLevel));
-                $('#pdf-zoom-level').text(Math.round(currentZoom * 100) + '%');
-                const $iframe = $('.pdf-preview-container iframe');
-                if ($iframe.length) {
-                    // Calculer la nouvelle hauteur basée sur le zoom
-                    const baseHeight = originalPdfHeight || 842;
-                    const zoomedHeight = baseHeight * currentZoom;
-                    
-                    $iframe.css({
-                        'transform': 'scale(' + currentZoom + ')',
-                        'transform-origin': 'top center',
-                        'width': (100 / currentZoom) + '%',
-                        'height': zoomedHeight + 'px',
-                        'max-width': '100%'
-                    });
-                    
-                    // Ajuster la hauteur du conteneur
-                    const containerHeight = Math.max(zoomedHeight + 60, 700);
-                    $('.pdf-preview-container').css({
-                        'min-height': containerHeight + 'px',
-                        'height': 'auto'
-                    });
-                }
-            }
-
+            // Preview Button
             $('#pdf-preview-btn').on('click', function() {
                 showStatus('Génération de l\'aperçu...', 'loading');
                 setButtonLoading($(this), true);
                 openModal();
+
                 $.ajax({
                     url: ajaxurl,
                     type: 'POST',
@@ -604,66 +1615,77 @@ class PDF_Builder_WooCommerce_Integration {
                         nonce: '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>'
                     },
                     success: function(response) {
+                        const progressInterval = $('#pdf-modal-overlay').data('progressInterval');
+                        if (progressInterval) {
+                            clearInterval(progressInterval);
+                        }
+                        $('#pdf-progress-bar').css('width', '100%');
+
                         if (response.success) {
                             const generationTime = Date.now() - previewStartTime;
                             originalPdfWidth = response.data.width;
                             originalPdfHeight = response.data.height;
-                            const iframe = document.createElement('iframe');
-                            iframe.style.width = '100%';
-                            iframe.style.height = Math.max(originalPdfHeight, 600) + 'px';
-                            iframe.style.border = 'none';
-                            iframe.style.background = 'white';
-                            iframe.style.transformOrigin = 'top center';
-                            iframe.style.borderRadius = '8px';
-                            iframe.style.boxShadow = 'inset 0 0 0 1px rgba(0,0,0,0.1)';
-                            
-                            // S'assurer que l'iframe prend toute la hauteur disponible
-                            const container = $('.pdf-preview-container');
-                            const containerHeight = container.height();
-                            if (containerHeight > originalPdfHeight) {
-                                iframe.style.height = containerHeight + 'px';
-                            }
-                            
-                            $('.pdf-preview-container').html(iframe);
-                            
-                            // Écrire le contenu HTML dans l'iframe de manière sécurisée
-                            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+                            const $iframe = $('#pdf-preview-iframe');
+                            $iframe.css({
+                                'width': '100%',
+                                'height': Math.max(originalPdfHeight, 600) + 'px',
+                                'border': 'none',
+                                'background': 'white',
+                                'transform-origin': 'top center',
+                                'border-radius': '8px',
+                                'box-shadow': 'inset 0 0 0 1px rgba(0,0,0,0.1)'
+                            });
+
+                            // Write content to iframe
+                            const iframeDoc = $iframe[0].contentDocument || $iframe[0].contentWindow.document;
                             iframeDoc.open();
                             iframeDoc.write(response.data.html);
                             iframeDoc.close();
-                            
-                            // Attendre que l'iframe soit chargé avant d'appliquer le zoom
-                            iframe.onload = function() {
+
+                            // Handle iframe load
+                            $iframe.on('load', function() {
                                 $('#pdf-preview-loading').hide();
-                                // Ajuster la taille de l'iframe si nécessaire
-                                const iframeBody = iframe.contentDocument.body;
+                                $('#pdf-preview-content').show();
+
+                                const iframeBody = $iframe[0].contentDocument.body;
                                 if (iframeBody) {
                                     iframeBody.style.margin = '0';
                                     iframeBody.style.padding = '20px';
                                     iframeBody.style.boxSizing = 'border-box';
-                                    
-                                    // Ajuster la hauteur de l'iframe en fonction du contenu
+
                                     const contentHeight = iframeBody.scrollHeight;
                                     if (contentHeight > originalPdfHeight) {
-                                        iframe.style.height = contentHeight + 'px';
+                                        $iframe.css('height', contentHeight + 'px');
                                         $('.pdf-preview-container').css('min-height', contentHeight + 60 + 'px');
                                     }
                                 }
-                                
+
                                 applyZoom(1.0);
+
+                                // Update stats
                                 $('#pdf-info-time').text(generationTime + 'ms');
                                 $('#pdf-info-date').text(new Date().toLocaleString('fr-FR'));
-                                showStatus('Aperçu généré avec succès (' + generationTime + 'ms)', 'success');
-                            };
+                                $('#pdf-stat-size').text((response.data.html.length / 1024).toFixed(1) + ' KB');
+                                $('#pdf-stat-performance').text(generationTime < 1000 ? 'Excellent' : generationTime < 3000 ? 'Bon' : 'À améliorer');
+                                $('#pdf-stat-quality').text('HD');
+
+                                showStatus(`Aperçu généré avec succès (${generationTime}ms)`, 'success');
+                            });
+
                         } else {
-                            $('.pdf-preview-container').html('<div style="color: #dc3545; padding: 40px; text-align: center;"><div style="font-size: 48px; margin-bottom: 16px;">❌</div><strong>Erreur de génération</strong><br><small>' + response.data + '</small></div>');
+                            $('#pdf-preview-loading').hide();
+                            $('#pdf-preview-error').show();
+                            $('#pdf-error-message').text(response.data || 'Erreur inconnue');
                             showStatus('Erreur lors de l\'aperçu', 'error');
                         }
                     },
                     error: function(xhr, status, error) {
+                        $('#pdf-preview-loading').hide();
+                        $('#pdf-preview-error').show();
+                        $('#pdf-error-message').text(`Erreur de connexion: ${error}`);
                         console.error('PDF Preview Error:', xhr.responseText, status, error);
-                        $('.pdf-preview-container').html('<div style="color: #dc3545; padding: 40px; text-align: center;"><div style="font-size: 48px; margin-bottom: 16px;">🔌</div><strong>Erreur de connexion</strong><br><small>' + error + ' (Status: ' + xhr.status + ')</small><br><small>Vérifiez la console pour plus de détails</small></div>');
-                        showStatus('Erreur AJAX lors de l\'aperçu: ' + error, 'error');
+                        showStatus(`Erreur AJAX: ${error}`, 'error');
                     },
                     complete: function() {
                         setButtonLoading($('#pdf-preview-btn'), false);
@@ -671,9 +1693,12 @@ class PDF_Builder_WooCommerce_Integration {
                 });
             });
 
-            $('#pdf-generate-btn').on('click', function() {
+            // Generate Button
+            $('#pdf-generate-btn, #pdf-confirm-generate').on('click', function() {
                 showStatus('Génération du PDF...', 'loading');
-                setButtonLoading($(this), true);
+                setButtonLoading($('#pdf-generate-btn'), true);
+                setButtonLoading($('#pdf-confirm-generate'), true);
+
                 $.ajax({
                     url: ajaxurl,
                     type: 'POST',
@@ -686,33 +1711,31 @@ class PDF_Builder_WooCommerce_Integration {
                     success: function(response) {
                         if (response.success) {
                             $('#pdf-download-btn').attr('href', response.data.url).show();
+                            $('#pdf-modal-download-btn').attr('href', response.data.url);
                             showStatus('PDF généré avec succès', 'success');
+                            showNotification('PDF généré avec succès !', 'success');
+
                             setTimeout(function() {
                                 window.open(response.data.url, '_blank');
                             }, 500);
                         } else {
                             showStatus('Erreur lors de la génération', 'error');
+                            showNotification('Erreur lors de la génération', 'error');
                         }
                     },
                     error: function(xhr, status, error) {
                         showStatus('Erreur AJAX lors de la génération', 'error');
+                        showNotification('Erreur de connexion', 'error');
                     },
                     complete: function() {
                         setButtonLoading($('#pdf-generate-btn'), false);
+                        setButtonLoading($('#pdf-confirm-generate'), false);
                     }
                 });
             });
 
-            $('#pdf-download-btn').on('click', function() {
-                const pdfUrl = $(this).attr('href');
-                if (pdfUrl) {
-                    window.open(pdfUrl, '_blank');
-                }
-            });
-
-            $('#pdf-close-modal').on('click', function() {
-                closeModal();
-            });
+            // Modal Controls
+            $('#pdf-close-modal, #pdf-cancel-btn').on('click', closeModal);
 
             $('#pdf-modal-overlay').on('click', function(e) {
                 if (e.target === this) {
@@ -720,32 +1743,51 @@ class PDF_Builder_WooCommerce_Integration {
                 }
             });
 
-            $('#pdf-zoom-in').on('click', function() {
-                applyZoom(currentZoom * 1.2);
-            });
-
-            $('#pdf-zoom-out').on('click', function() {
-                applyZoom(currentZoom / 1.2);
-            });
-
+            // Zoom Controls
+            $('#pdf-zoom-in').on('click', () => applyZoom(currentZoom * 1.2));
+            $('#pdf-zoom-out').on('click', () => applyZoom(currentZoom / 1.2));
             $('#pdf-zoom-fit').on('click', function() {
                 if (originalPdfWidth > 0) {
                     const containerWidth = $('.pdf-preview-container').width() - 60;
                     const fitZoom = containerWidth / originalPdfWidth;
                     applyZoom(fitZoom);
+                    showNotification('Zoom ajusté à la fenêtre', 'info');
+                }
+            });
+            $('#pdf-zoom-reset').on('click', () => applyZoom(1.0));
+
+            // Action Buttons
+            $('#pdf-print-btn').on('click', printPdf);
+            $('#pdf-modal-download-btn').on('click', downloadPdf);
+            $('#pdf-download-btn').on('click', function() {
+                const pdfUrl = $(this).attr('href');
+                if (pdfUrl) {
+                    window.open(pdfUrl, '_blank');
                 }
             });
 
-            $(document).on('dblclick', '.pdf-preview-container iframe', function() {
+            // Retry Button
+            $('#pdf-retry-btn').on('click', function() {
+                $('#pdf-preview-error').hide();
+                $('#pdf-preview-btn').trigger('click');
+            });
+
+            // Double-click to fit
+            $(document).on('dblclick', '#pdf-preview-iframe', function() {
                 if (originalPdfWidth && originalPdfWidth > 0) {
                     const containerWidth = $('.pdf-preview-container').width() - 60;
                     const fitZoom = Math.min(containerWidth / originalPdfWidth, 1.0);
                     applyZoom(fitZoom);
-                    showZoomNotification('Zoom ajusté à la fenêtre');
+                    showNotification('Zoom ajusté à la fenêtre', 'info');
                 } else {
                     applyZoom(1.0);
-                    showZoomNotification('Zoom 100%');
+                    showNotification('Zoom 100%', 'info');
                 }
+            });
+
+            // Share functionality (placeholder)
+            $('#pdf-share-btn').on('click', function() {
+                showNotification('Fonctionnalité de partage à venir', 'info');
             });
         });
         </script>
