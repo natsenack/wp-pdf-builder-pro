@@ -3593,6 +3593,11 @@ class PDF_Builder_Admin {
         $billing_address = $order->get_formatted_billing_address();
         $shipping_address = $order->get_formatted_shipping_address();
 
+        // Détecter le type de document
+        $order_status = $order->get_status();
+        $document_type = $this->detect_document_type($order_status);
+        $document_type_label = $this->get_document_type_label($document_type);
+
         // Variables avec doubles accolades {{variable}}
         $double_brace_replacements = array(
             '{{order_id}}' => $order->get_id(),
@@ -3632,6 +3637,8 @@ class PDF_Builder_Admin {
             '{{payment_method}}' => $order->get_payment_method_title(),
             '{{order_status}}' => wc_get_order_status_name($order->get_status()),
             '{{currency}}' => $order->get_currency(),
+            '{{document_type}}' => $document_type,
+            '{{document_type_label}}' => $document_type_label,
         );
 
         // Variables avec crochets [variable]
@@ -3673,6 +3680,8 @@ class PDF_Builder_Admin {
             '[payment_method]' => $order->get_payment_method_title(),
             '[order_status]' => wc_get_order_status_name($order->get_status()),
             '[currency]' => $order->get_currency(),
+            '[document_type]' => $document_type,
+            '[document_type_label]' => $document_type_label,
         );
 
         // Variables avec accolades simples {variable}
@@ -3715,6 +3724,8 @@ class PDF_Builder_Admin {
             '{order_status}' => wc_get_order_status_name($order->get_status()),
             '{currency}' => $order->get_currency(),
             '{order_items_table}' => $this->generate_order_products_table($order),
+            '{document_type}' => $document_type,
+            '{document_type_label}' => $document_type_label,
         );
 
         // Appliquer les remplacements dans l'ordre : simples, doubles, crochets
