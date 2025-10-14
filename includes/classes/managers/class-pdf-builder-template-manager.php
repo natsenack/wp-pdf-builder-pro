@@ -91,10 +91,14 @@ class PDF_Builder_Template_Manager {
         error_log('PDF Builder: Template name: ' . $template_name);
         error_log('PDF Builder: Template ID: ' . $template_id);
 
+        // Log des premières 500 caractères des données pour débogage
+        error_log('PDF Builder: Template data preview: ' . substr($template_data, 0, 500));
+
         // Valider que c'est du JSON valide
         $decoded_test = json_decode($template_data, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
             error_log('PDF Builder: JSON decode error: ' . json_last_error_msg());
+            error_log('PDF Builder: Raw template data: ' . $template_data);
             wp_send_json_error('Données JSON invalides: ' . json_last_error_msg());
         }
 
