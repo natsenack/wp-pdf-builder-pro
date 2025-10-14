@@ -405,7 +405,8 @@ function pdf_builder_ajax_preview_order_pdf_fallback() {
         }
 
         $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
-        error_log('PDF BUILDER - Fallback: order_id=' . $order_id);
+        $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : null;
+        error_log('PDF BUILDER - Fallback: order_id=' . $order_id . ', template_id=' . ($template_id ?: 'null'));
 
         if (!$order_id) {
             error_log('PDF BUILDER - Fallback: ID commande manquant');
@@ -437,7 +438,7 @@ function pdf_builder_ajax_preview_order_pdf_fallback() {
         $generator = new PDF_Builder_Pro_Generator();
 
         error_log('PDF BUILDER - Fallback: Calling generate_simple_preview');
-        $result = $generator->generate_simple_preview($order_id);
+        $result = $generator->generate_simple_preview($order_id, $template_id);
 
         if (is_wp_error($result)) {
             error_log('PDF BUILDER - Fallback: Error from generate_simple_preview: ' . $result->get_error_message());
