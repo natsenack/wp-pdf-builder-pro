@@ -177,16 +177,55 @@ if ($order) {
 
 echo "<h2>3. Test de chargement template</h2>";
 
-// Instancier la classe admin
+// Instancier les classes nécessaires
 $core = PDF_Builder_Core::getInstance();
 $admin = PDF_Builder_Admin::getInstance($core);
 
 if ($template_id > 0) {
+    // Utiliser la méthode publique load_template_robust
     $template_data = $admin->load_template_robust($template_id);
     echo "✅ Template chargé depuis database: $template_id<br>";
 } else {
-    $template_data = $admin->get_default_invoice_template();
-    echo "✅ Template par défaut chargé<br>";
+    // Pour le template par défaut, utiliser une approche alternative
+    echo "🔍 Recherche du template par défaut...<br>";
+
+    // Chercher dans la base de données un template marqué comme défaut
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'pdf_builder_templates';
+
+    // Essayer de trouver un template par défaut
+    $default_template = $wpdb->get_row(
+        $wpdb->prepare(
+            "SELECT * FROM {$table_name} WHERE is_default = 1 LIMIT 1"
+        )
+    );
+
+    if ($default_template) {
+        $template_data = json_decode($default_template->template_data, true);
+        echo "✅ Template par défaut trouvé en base: ID {$default_template->id}<br>";
+    } else {
+        // Créer un template minimal par défaut
+        $template_data = [
+            'pages' => [
+                [
+                    'elements' => [
+                        [
+                            'type' => 'text',
+                            'content' => 'Template de test - PDF Builder Pro',
+                            'position' => ['x' => 50, 'y' => 100],
+                            'size' => ['width' => 400, 'height' => 50],
+                            'style' => [
+                                'fontSize' => 16,
+                                'fontWeight' => 'bold'
+                            ]
+                        ]
+                    ],
+                    'margins' => ['top' => 20, 'right' => 20, 'bottom' => 20, 'left' => 20]
+                ]
+            ]
+        ];
+        echo "✅ Template minimal créé pour les tests<br>";
+    }
 }
 
 if (!$template_data) {
