@@ -171,7 +171,7 @@ class PDF_Builder_WooCommerce_Integration {
 
         wp_nonce_field('pdf_builder_order_actions', 'pdf_builder_order_nonce');
         ?>
-        <style>#pdf-builder-metabox{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;line-height:1.4;color:#333}.pdf-header{background:#f8f9fa;padding:15px 20px;border-bottom:1px solid #dee2e6;margin:-12px -12px 20px -12px}.pdf-order-title{font-size:16px;font-weight:600;margin:0 0 8px 0;display:flex;align-items:center;gap:8px}.pdf-order-meta{font-size:13px;color:#6c757d;display:flex;align-items:center;gap:12px}.pdf-status-badge{background:#e9ecef;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:500}.pdf-doc-type{background:#fff;border:1px solid #dee2e6;padding:12px 16px;margin-bottom:16px;border-radius:4px}.pdf-doc-type-content{display:flex;align-items:center;gap:10px}.pdf-doc-info h4{margin:0 0 2px 0;font-size:14px;font-weight:600}.pdf-doc-info p{margin:0;font-size:12px;color:#6c757d}.pdf-template-section{margin-bottom:16px}.pdf-template-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.pdf-template-title{font-size:13px;font-weight:600;color:#333}.pdf-template-toggle{font-size:12px;color:#007cba;cursor:pointer;padding:4px 8px;border-radius:3px;transition:background-color 0.2s}.pdf-template-toggle:hover{background:#f0f0f0}.pdf-template-display{background:#fff;border:1px solid #dee2e6;padding:12px 16px;border-radius:4px;cursor:pointer;transition:border-color 0.2s}.pdf-template-display:hover{border-color:#007cba}.pdf-template-info{display:flex;align-items:center;gap:10px}.pdf-template-name{font-weight:500;font-size:14px}.pdf-template-meta{font-size:12px;color:#6c757d}.pdf-template-selector{display:none;margin-top:8px;background:#f8f9fa;border:1px solid #dee2e6;border-radius:4px;padding:12px}.pdf-template-search{width:100%;padding:8px 12px;border:1px solid #ccc;border-radius:3px;margin-bottom:8px;font-size:13px}.pdf-template-list{max-height:200px;overflow-y:auto}.pdf-template-option{padding:8px 12px;cursor:pointer;border-radius:3px;transition:background-color 0.2s;margin-bottom:2px;display:flex;align-items:center;gap:8px}.pdf-template-option:hover{background:#e9ecef}.pdf-template-option.selected{background:#007cba;color:#fff}.pdf-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}.pdf-btn{padding:10px 16px;border:1px solid #ccc;border-radius:4px;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;background:#fff}.pdf-btn:hover{border-color:#007cba;background:#f0f8ff}.pdf-btn:disabled{opacity:0.6;cursor:not-allowed}.pdf-btn.loading{color:transparent}.pdf-btn.loading::after{content:'';position:absolute;width:16px;height:16px;border:2px solid #007cba;border-top:2px solid transparent;border-radius:50%;animation:spin 1s linear infinite}.pdf-btn-preview{border-color:#007cba;color:#007cba}.pdf-btn-preview:hover{background:#007cba;color:#fff}.pdf-btn-generate{background:#28a745;color:#fff;border-color:#28a745}.pdf-btn-generate:hover{background:#218838}.pdf-btn-download{background:#ffc107;color:#212529;border-color:#ffc107;display:none}.pdf-btn-download:hover{background:#e0a800}.pdf-status{padding:10px 14px;border-radius:4px;font-size:13px;font-weight:500;text-align:center;margin-top:12px;opacity:0;transition:opacity 0.3s;display:none}.pdf-status.show{opacity:1}.pdf-status-loading{background:#d1ecf1;color:#0c5460;border:1px solid #bee5eb}.pdf-status-success{background:#d4edda;color:#155724;border:1px solid #c3e6cb}.pdf-status-error{background:#f8d7da;color:#721c24;border:1px solid #f5c6cb}.pdf-modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:100000;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity 0.3s}.pdf-modal-overlay.show{opacity:1;visibility:visible}.pdf-modal{background:#fff;border-radius:6px;max-width:98vw;max-height:98vh;overflow:hidden;display:flex;flex-direction:column;transform:scale(0.9);transition:transform 0.3s}.pdf-modal.show{transform:scale(1)}.pdf-modal-header{padding:20px 24px;background:#f8f9fa;border-bottom:1px solid #dee2e6;display:flex;justify-content:space-between;align-items:center}.pdf-modal-title{display:flex;align-items:center;gap:12px;margin:0;font-size:18px;font-weight:600}.pdf-modal-controls{display:flex;align-items:center;gap:12px}.pdf-zoom-controls{display:flex;align-items:center;gap:6px;background:#e9ecef;border-radius:4px;padding:6px}.pdf-zoom-btn{background:#fff;border:1px solid #ccc;border-radius:3px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:background-color 0.2s}.pdf-zoom-btn:hover{background:#f8f9fa}.pdf-zoom-level{font-size:13px;font-weight:500;min-width:50px;text-align:center;color:#333}.pdf-close-btn{background:#6c757d;border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:#fff;transition:background-color 0.2s}.pdf-close-btn:hover{background:#5a6268}.pdf-modal-body{flex:1;padding:24px;overflow:auto}.pdf-preview-container{background:#f8f9fa;border:1px solid #dee2e6;border-radius:4px;display:flex;align-items:center;justify-content:center;min-height:600px;position:relative;overflow:hidden}.pdf-preview-loading{display:flex;flex-direction:column;align-items:center;gap:16px;color:#6c757d}.pdf-spinner{width:40px;height:40px;border:3px solid #dee2e6;border-top:3px solid #007cba;border-radius:50%;animation:spin 1s linear infinite}.pdf-preview-info{margin-top:20px;padding:16px;background:#fff;border:1px solid #dee2e6;border-radius:4px}.pdf-preview-info-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-weight:600}.pdf-preview-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}.pdf-preview-stat{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f1f1f1}.pdf-preview-stat:last-child{border-bottom:none}.pdf-preview-stat-label{color:#6c757d;font-weight:500}.pdf-preview-stat-value{color:#333;font-weight:600;background:#e9ecef;padding:2px 8px;border-radius:3px;font-size:12px}@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}@media(max-width:768px){.pdf-actions{grid-template-columns:1fr}.pdf-modal{max-width:98vw;max-height:98vh;border-radius:4px}.pdf-modal-header{padding:16px 20px;flex-direction:column;gap:12px;text-align:center}.pdf-modal-title{font-size:16px;justify-content:center}.pdf-zoom-controls{display:none}.pdf-modal-controls{width:100%;justify-content:center}.pdf-btn{padding:12px 16px;font-size:14px}}</style>
+        <style>#pdf-builder-metabox{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;line-height:1.4;color:#333}.pdf-header{background:#f8f9fa;padding:15px 20px;border-bottom:1px solid #dee2e6;margin:-12px -12px 20px -12px}.pdf-order-title{font-size:16px;font-weight:600;margin:0 0 8px 0;display:flex;align-items:center;gap:8px}.pdf-order-meta{font-size:13px;color:#6c757d;display:flex;align-items:center;gap:12px}.pdf-status-badge{background:#e9ecef;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:500}.pdf-doc-type{background:#fff;border:1px solid #dee2e6;padding:12px 16px;margin-bottom:16px;border-radius:4px}.pdf-doc-type-content{display:flex;align-items:center;gap:10px}.pdf-doc-info h4{margin:0 0 2px 0;font-size:14px;font-weight:600}.pdf-doc-info p{margin:0;font-size:12px;color:#6c757d}.pdf-template-section{margin-bottom:16px}.pdf-template-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.pdf-template-title{font-size:13px;font-weight:600;color:#333}.pdf-template-toggle{font-size:12px;color:#007cba;cursor:pointer;padding:4px 8px;border-radius:3px;transition:background-color 0.2s}.pdf-template-toggle:hover{background:#f0f0f0}.pdf-template-display{background:#fff;border:1px solid #dee2e6;padding:12px 16px;border-radius:4px;cursor:pointer;transition:border-color 0.2s}.pdf-template-display:hover{border-color:#007cba}.pdf-template-info{display:flex;align-items:center;gap:10px}.pdf-template-name{font-weight:500;font-size:14px}.pdf-template-meta{font-size:12px;color:#6c757d}.pdf-template-selector{display:none;margin-top:8px;background:#f8f9fa;border:1px solid #dee2e6;border-radius:4px;padding:12px}.pdf-template-search{width:100%;padding:8px 12px;border:1px solid #ccc;border-radius:3px;margin-bottom:8px;font-size:13px}.pdf-template-list{max-height:200px;overflow-y:auto}.pdf-template-option{padding:8px 12px;cursor:pointer;border-radius:3px;transition:background-color 0.2s;margin-bottom:2px;display:flex;align-items:center;gap:8px}.pdf-template-option:hover{background:#e9ecef}.pdf-template-option.selected{background:#007cba;color:#fff}.pdf-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}.pdf-btn{padding:10px 16px;border:1px solid #ccc;border-radius:4px;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;background:#fff}.pdf-btn:hover{border-color:#007cba;background:#f0f8ff}.pdf-btn:disabled{opacity:0.6;cursor:not-allowed}.pdf-btn.loading{color:transparent}.pdf-btn.loading::after{content:'';position:absolute;width:16px;height:16px;border:2px solid #007cba;border-top:2px solid transparent;border-radius:50%;animation:spin 1s linear infinite}.pdf-btn-preview{border-color:#007cba;color:#007cba}.pdf-btn-preview:hover{background:#007cba;color:#fff}.pdf-btn-generate{background:#28a745;color:#fff;border-color:#28a745}.pdf-btn-generate:hover{background:#218838}.pdf-btn-download{background:#ffc107;color:#212529;border-color:#ffc107;display:none}.pdf-btn-download:hover{background:#e0a800}.pdf-status{padding:10px 14px;border-radius:4px;font-size:13px;font-weight:500;text-align:center;margin-top:12px;opacity:0;transition:opacity 0.3s;display:none}.pdf-status.show{opacity:1}.pdf-status-loading{background:#d1ecf1;color:#0c5460;border:1px solid #bee5eb}.pdf-status-success{background:#d4edda;color:#155724;border:1px solid #c3e6cb}.pdf-status-error{background:#f8d7da;color:#721c24;border:1px solid #f5c6cb}.pdf-modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:100000;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity 0.3s}.pdf-modal-overlay.show{opacity:1;visibility:visible}.pdf-modal{background:#fff;border-radius:16px;max-width:90vw;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 25px 50px -12px rgba(0,0,0,0.25),0 0 0 1px rgba(255,255,255,0.05);border:1px solid rgba(0,0,0,0.1)}.pdf-modal.show{transform:scale(1)}.pdf-modal-header{padding:24px 32px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border-bottom:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;align-items:center}.pdf-modal-title{display:flex;align-items:center;gap:12px;margin:0;font-size:20px;font-weight:600;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.2)}.pdf-modal-controls{display:flex;align-items:center;gap:12px}.pdf-zoom-controls{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.2);border-radius:8px;padding:8px;border:1px solid rgba(255,255,255,0.3)}.pdf-zoom-btn{background:rgba(255,255,255,0.9);border:1px solid rgba(255,255,255,0.3);border-radius:6px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;font-weight:600;color:#4a5568;transition:all 0.2s}.pdf-zoom-btn:hover{background:#fff;transform:translateY(-1px);box-shadow:0 4px 8px rgba(0,0,0,0.15)}.pdf-zoom-level{font-size:13px;font-weight:500;min-width:50px;text-align:center;color:#333}.pdf-close-btn{background:rgba(255,255,255,0.9);border:1px solid rgba(255,255,255,0.3);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;font-weight:600;color:#4a5568;transition:all 0.2s}.pdf-close-btn:hover{background:#fff;transform:translateY(-1px);box-shadow:0 4px 8px rgba(0,0,0,0.15)}.pdf-modal-body{flex:1;padding:32px;overflow:auto;background:linear-gradient(135deg,#f8fafc 0%,#e2e8f0 100%)}.pdf-preview-container{background:#fff;border:2px solid rgba(0,0,0,0.08);border-radius:12px;display:flex;align-items:center;justify-content:center;min-height:700px;position:relative;overflow:hidden;box-shadow:0 10px 25px rgba(0,0,0,0.1),inset 0 0 0 1px rgba(255,255,255,0.6)}.pdf-preview-loading{display:flex;flex-direction:column;align-items:center;gap:16px;color:#6c757d}.pdf-spinner{width:40px;height:40px;border:3px solid #dee2e6;border-top:3px solid #007cba;border-radius:50%;animation:spin 1s linear infinite}.pdf-preview-info{margin-top:20px;padding:16px;background:#fff;border:1px solid #dee2e6;border-radius:4px}.pdf-preview-info-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;font-weight:600}.pdf-preview-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}.pdf-preview-stat{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f1f1f1}.pdf-preview-stat:last-child{border-bottom:none}.pdf-preview-stat-label{color:#6c757d;font-weight:500}.pdf-preview-stat-value{color:#333;font-weight:600;background:#e9ecef;padding:2px 8px;border-radius:3px;font-size:12px}@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}@media(max-width:768px){.pdf-actions{grid-template-columns:1fr}.pdf-modal{max-width:98vw;max-height:98vh;border-radius:4px}.pdf-modal-header{padding:16px 20px;flex-direction:column;gap:12px;text-align:center}.pdf-modal-title{font-size:16px;justify-content:center}.pdf-zoom-controls{display:none}.pdf-modal-controls{width:100%;justify-content:center}.pdf-btn{padding:12px 16px;font-size:14px}}</style>
 
         <div id="pdf-builder-metabox">
             <!-- Header Section -->
@@ -868,22 +868,41 @@ class PDF_Builder_WooCommerce_Integration {
     private function generate_unified_html($template, $order = null) {
         $canvas_width = $template['canvas']['width'] ?? 595;
         $canvas_height = $template['canvas']['height'] ?? 842;
-        
+
         $html = '<!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aperçu PDF - PDF Builder Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background: white;
-            width: ' . $canvas_width . 'px;
-            height: ' . $canvas_height . 'px;
-            position: relative;
-            overflow: hidden;
+            padding: 20px;
+            font-family: \'Inter\', -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+
+        .pdf-preview-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow:
+                0 20px 25px -5px rgba(0, 0, 0, 0.1),
+                0 10px 10px -5px rgba(0, 0, 0, 0.04),
+                0 0 0 1px rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+            position: relative;
+        }
+
         .pdf-canvas {
             position: relative;
             width: ' . $canvas_width . 'px;
@@ -891,15 +910,173 @@ class PDF_Builder_WooCommerce_Integration {
             background: white;
             margin: 0;
             padding: 0;
+            box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
         }
+
         .pdf-element {
             position: absolute;
             box-sizing: border-box;
+            line-height: 1.4;
+        }
+
+        .pdf-element.text-element {
+            font-family: \'Inter\', sans-serif;
+            color: #1a202c;
+            font-weight: 400;
+        }
+
+        .pdf-element.invoice-title {
+            font-family: \'Poppins\', sans-serif;
+            font-weight: 700;
+            font-size: 28px;
+            color: #2d3748;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .pdf-element.order-info {
+            font-family: \'Inter\', sans-serif;
+            font-weight: 500;
+            font-size: 14px;
+            color: #4a5568;
+            background: rgba(66, 153, 225, 0.1);
+            padding: 8px 12px;
+            border-radius: 6px;
+            border-left: 3px solid #3182ce;
+        }
+
+        .pdf-element.customer-info {
+            font-family: \'Inter\', sans-serif;
+            font-weight: 500;
+            font-size: 13px;
+            color: #2d3748;
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+        }
+
+        .pdf-element.company-info {
+            font-family: \'Poppins\', sans-serif;
+            font-weight: 600;
+            font-size: 15px;
+            color: #1a202c;
+            line-height: 1.6;
+        }
+
+        .pdf-element.table-header {
+            font-family: \'Inter\', sans-serif;
+            font-weight: 600;
+            font-size: 12px;
+            color: #4a5568;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 12px;
+            border-radius: 6px 6px 0 0;
+        }
+
+        .pdf-element.table-row {
+            font-family: \'Inter\', sans-serif;
+            font-weight: 400;
+            font-size: 12px;
+            color: #2d3748;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 8px 12px;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+            transition: background-color 0.2s ease;
+        }
+
+        .pdf-element.table-row:hover {
+            background: rgba(66, 153, 225, 0.05);
+        }
+
+        .pdf-element.total-row {
+            font-family: \'Poppins\', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            color: #2d3748;
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 6px;
+            box-shadow: 0 4px 6px rgba(72, 187, 120, 0.2);
+        }
+
+        .pdf-element.invoice-number {
+            font-family: \'Poppins\', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            color: #e53e3e;
+            background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 2px solid #e53e3e;
+            box-shadow: 0 2px 4px rgba(229, 62, 62, 0.2);
+        }
+
+        /* Animations et effets */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .pdf-element {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .pdf-preview-container {
+                transform: scale(0.8);
+                transform-origin: top center;
+            }
+        }
+
+        /* Styles pour les éléments spéciaux */
+        .pdf-element.bold {
+            font-weight: 700;
+        }
+
+        .pdf-element.italic {
+            font-style: italic;
+        }
+
+        .pdf-element.underline {
+            text-decoration: underline;
+        }
+
+        /* Indicateur de page PDF */
+        .pdf-page-indicator {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-family: \'Inter\', sans-serif;
+            font-weight: 500;
         }
     </style>
 </head>
 <body>
-    <div class="pdf-canvas">';
+    <div class="pdf-preview-container">
+        <div class="pdf-canvas">';
 
         if (isset($template['pages']) && is_array($template['pages']) && !empty($template['pages'])) {
             $firstPage = $template['pages'][0];
@@ -911,7 +1088,7 @@ class PDF_Builder_WooCommerce_Integration {
         }
 
         if (is_array($elements)) {
-            foreach ($elements as $element) {
+            foreach ($elements as $index => $element) {
                 // Gérer les deux formats de structure des éléments
                 if (isset($element['position']) && isset($element['size'])) {
                     $x = $element['position']['x'] ?? 0;
@@ -926,26 +1103,47 @@ class PDF_Builder_WooCommerce_Integration {
                 }
 
                 $style = sprintf(
-                    'left: %dpx; top: %dpx; width: %dpx; height: %dpx;',
+                    'left: %dpx; top: %dpx; width: %dpx; min-height: %dpx;',
                     $x, $y, $width, $height
                 );
 
+                // Classes CSS spéciales basées sur le contenu
+                $css_classes = ['pdf-element'];
+                $content = $element['content'] ?? '';
+
+                if (stripos($content, 'facture') !== false || stripos($content, 'invoice') !== false) {
+                    $css_classes[] = 'invoice-title';
+                } elseif (stripos($content, 'commande') !== false || stripos($content, 'order') !== false) {
+                    $css_classes[] = 'order-info';
+                } elseif (stripos($content, 'client') !== false || stripos($content, 'customer') !== false) {
+                    $css_classes[] = 'customer-info';
+                } elseif (stripos($content, 'société') !== false || stripos($content, 'company') !== false) {
+                    $css_classes[] = 'company-info';
+                } elseif (stripos($content, 'total') !== false) {
+                    $css_classes[] = 'total-row';
+                } elseif (preg_match('/^\d+-\d+$/', $content)) {
+                    $css_classes[] = 'invoice-number';
+                } else {
+                    $css_classes[] = 'text-element';
+                }
+
                 if (isset($element['style'])) {
-                    if (isset($element['style']['color'])) {
-                        $style .= ' color: ' . $element['style']['color'] . ';';
-                    }
                     if (isset($element['style']['fontSize'])) {
                         $style .= ' font-size: ' . $element['style']['fontSize'] . 'px;';
                     }
-                    if (isset($element['style']['fontWeight'])) {
-                        $style .= ' font-weight: ' . $element['style']['fontWeight'] . ';';
+                    if (isset($element['style']['fontWeight']) && $element['style']['fontWeight'] > 500) {
+                        $css_classes[] = 'bold';
+                    }
+                    if (isset($element['style']['fontStyle']) && $element['style']['fontStyle'] === 'italic') {
+                        $css_classes[] = 'italic';
+                    }
+                    if (isset($element['style']['textDecoration']) && $element['style']['textDecoration'] === 'underline') {
+                        $css_classes[] = 'underline';
                     }
                     if (isset($element['style']['fillColor'])) {
                         $style .= ' background-color: ' . $element['style']['fillColor'] . ';';
                     }
                 }
-
-                $content = $element['content'] ?? '';
 
                 // Remplacer les variables si on a une commande WooCommerce
                 if ($order) {
@@ -955,24 +1153,27 @@ class PDF_Builder_WooCommerce_Integration {
                 switch ($element['type']) {
                     case 'text':
                         $final_content = $order ? $this->replace_order_variables($content, $order) : $content;
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($final_content));
+                        $html .= sprintf('<div class="%s" style="%s">%s</div>', implode(' ', $css_classes), $style, esc_html($final_content));
                         break;
 
                     case 'invoice_number':
                         if ($order) {
                             $invoice_number = $order->get_id() . '-' . time();
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($invoice_number));
+                            $html .= sprintf('<div class="%s" style="%s">%s</div>', implode(' ', $css_classes), $style, esc_html($invoice_number));
                         }
                         break;
 
                     default:
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content));
+                        $html .= sprintf('<div class="%s" style="%s">%s</div>', implode(' ', $css_classes), $style, esc_html($content));
                         break;
                 }
             }
         }
 
-        $html .= '</div></body></html>';
+        // Ajouter un indicateur de page
+        $html .= '<div class="pdf-page-indicator">Page 1/1</div>';
+
+        $html .= '</div></div></body></html>';
         return $html;
     }
 
