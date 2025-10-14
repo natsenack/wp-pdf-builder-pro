@@ -5106,11 +5106,13 @@ class PDF_Builder_Admin {
             }
 
         } catch (Exception $e) {
-            error_log('❌ PDF BUILDER - Exception: ' . $e->getMessage());
-            return new WP_Error('generation_exception', 'Erreur: ' . $e->getMessage());
+            error_log('❌ PDF BUILDER - Exception dans generate_order_pdf: ' . $e->getMessage());
+            error_log('❌ PDF BUILDER - Stack trace: ' . $e->getTraceAsString());
+            return new WP_Error('generation_exception', 'Erreur inconnue lors de la génération: ' . $e->getMessage());
         } catch (Error $e) {
-            error_log('❌ PDF BUILDER - Erreur fatale: ' . $e->getMessage());
-            return new WP_Error('generation_error', 'Erreur fatale: ' . $e->getMessage());
+            error_log('❌ PDF BUILDER - Erreur fatale dans generate_order_pdf: ' . $e->getMessage());
+            error_log('❌ PDF BUILDER - Stack trace: ' . $e->getTraceAsString());
+            return new WP_Error('generation_error', 'Erreur fatale lors de la génération: ' . $e->getMessage());
         }
     }
 

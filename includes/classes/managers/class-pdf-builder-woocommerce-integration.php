@@ -852,8 +852,13 @@ class PDF_Builder_WooCommerce_Integration {
             ]);
 
         } catch (Exception $e) {
-            error_log('❌ PDF BUILDER - ajax_preview_order_pdf: Exception: ' . $e->getMessage());
-            wp_send_json_error('Erreur: ' . $e->getMessage());
+            error_log('❌ PDF BUILDER - ajax_preview_order_pdf: Exception capturée: ' . $e->getMessage());
+            error_log('❌ PDF BUILDER - ajax_preview_order_pdf: Stack trace: ' . $e->getTraceAsString());
+            wp_send_json_error('Erreur inconnue lors de la génération: ' . $e->getMessage());
+        } catch (Error $e) {
+            error_log('❌ PDF BUILDER - ajax_preview_order_pdf: Error fatale capturée: ' . $e->getMessage());
+            error_log('❌ PDF BUILDER - ajax_preview_order_pdf: Stack trace: ' . $e->getTraceAsString());
+            wp_send_json_error('Erreur fatale lors de la génération: ' . $e->getMessage());
         }
     }
 
