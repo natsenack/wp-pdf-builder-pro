@@ -835,9 +835,10 @@ class PDF_Builder_WooCommerce_Integration {
         error_log('✅ PDF BUILDER - ajax_preview_order_pdf: Constantes TCPDF définies');
 
         try {
-            error_log('🟡 PDF BUILDER - ajax_preview_order_pdf: Génération PDF en cours');
+            error_log('🟡 PDF BUILDER - ajax_preview_order_pdf: Génération PDF en cours - appel de main->generate_order_pdf');
             // Générer l'aperçu PDF
             $result = $this->main->generate_order_pdf($order_id, $template_id, true);
+            error_log('✅ PDF BUILDER - ajax_preview_order_pdf: Retour de main->generate_order_pdf: ' . (is_wp_error($result) ? 'WP_Error' : 'string'));
 
             if (is_wp_error($result)) {
                 error_log('❌ PDF BUILDER - ajax_preview_order_pdf: Erreur génération PDF: ' . $result->get_error_message());
