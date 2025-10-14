@@ -819,6 +819,85 @@ class PDF_Builder_Pro_Generator {
     }
 
     /**
+     * Rendu des produits et frais de la commande WooCommerce
+     */
+    private function render_order_products_with_fees($x, $col_widths) {
+        if (!$this->order) {
+            return;
+        }
+
+        $current_y = $this->pdf->GetY() + 2; // Petite marge après l'en-tête
+        $this->pdf->SetFont('helvetica', '', 8);
+
+        // Récupérer les éléments de ligne de la commande
+        $line_items = $this->order->get_items();
+        $fees = $this->order->get_fees();
+
+        // Afficher les produits
+        foreach ($line_items as $item_id => $item) {
+            $product = $item->get_product();
+            $product_name = $item->get_name();
+            $quantity = $item->get_quantity();
+            $price = $item->get_total() / $quantity; // Prix unitaire
+            $total = $item->get_total();
+
+            // Nom du produit (avec variation si applicable)
+            $display_name = $product_name;
+            if ($product && $product->is_type('variation')) {
+                $variation_attributes = $product->get_variation_attributes();
+                if (!empty($variation_attributes)) {
+                    $variation_text = implode(', ', array_map(function($key, $value) {
+                        $key = str_replace('attribute_', '', $key);
+                        $key = str_replace('pa_', '', $key);
+                        return ucfirst($key) . ': ' . $value;
+                    }, array_keys($variation_attributes), $variation_attributes));
+                    $display_name .= ' (' . $variation_text . ')';
+                }
+            }
+
+            $this->pdf->SetXY($x, $current_y);
+            $this->pdf->Cell($col_widths[0], 6, utf8_decode($this->truncate_text($display_name, 30)), 1, 0, 'L');
+            $this->pdf->Cell($col_widths[1], 6, $quantity, 1, 0, 'C');
+            $this->pdf->Cell($col_widths[2], 6, number_format($price, 2, ',', ' ') . ' €', 1, 0, 'R');
+            $this->pdf->Cell($col_widths[3], 6, number_format($total, 2, ',', ' ') . ' €', 1, 1, 'R');
+
+            $current_y += 6;
+        }
+
+        // Afficher les frais (shipping, taxes, etc.)
+        foreach ($fees as $fee) {
+            $fee_name = $fee->get_name();
+            $fee_total = $fee->get_total();
+
+            $this->pdf->SetXY($x, $current_y);
+            $this->pdf->SetFont('helvetica', 'B', 8);
+            $this->pdf->Cell($col_widths[0], 6, utf8_decode($this->truncate_text($fee_name, 30)), 1, 0, 'L');
+            $this->pdf->Cell($col_widths[1], 6, '-', 1, 0, 'C');
+            $this->pdf->Cell($col_widths[2], 6, '-', 1, 0, 'R');
+            $this->pdf->Cell($col_widths[3], 6, number_format($fee_total, 2, ',', ' ') . ' €', 1, 1, 'R');
+
+            $current_y += 6;
+        }
+
+        // Afficher le total de la commande
+        $order_total = $this->order->get_total();
+        $this->pdf->SetXY($x + $col_widths[0] + $col_widths[1] + $col_widths[2], $current_y + 2);
+        $this->pdf->SetFont('helvetica', 'B', 9);
+        $this->pdf->SetFillColor(245, 245, 245);
+        $this->pdf->Cell($col_widths[3], 8, utf8_decode('Total: ' . number_format($order_total, 2, ',', ' ') . ' €'), 1, 1, 'R', true);
+    }
+
+    /**
+     * Tronque le texte à une longueur maximale
+     */
+    private function truncate_text($text, $max_length) {
+        if (strlen($text) <= $max_length) {
+            return $text;
+        }
+        return substr($text, 0, $max_length - 3) . '...';
+    }
+
+    /**
      * Rendu d'élément document_type
      */
     private function render_document_type_element($element, $px_to_mm) {
