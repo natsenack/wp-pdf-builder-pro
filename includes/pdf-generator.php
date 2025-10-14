@@ -1149,7 +1149,7 @@ class PDF_Builder_Pro_Generator {
      * Génération d'aperçu PDF simplifié (alternative au système canvas)
      */
     public function generate_simple_preview($order_id, $template_id = null) {
-        error_log('🚨 PDF BUILDER - generate_simple_preview STARTED for order: ' . $order_id);
+        error_log('🚨 PDF BUILDER - generate_simple_preview STARTED for order: ' . $order_id . ' with template_id: ' . ($template_id ?: 'null'));
         try {
             // Initialiser TCPDF
             error_log('🟡 PDF BUILDER - generate_simple_preview: Initializing TCPDF');
@@ -1165,62 +1165,129 @@ class PDF_Builder_Pro_Generator {
 
             error_log('✅ PDF BUILDER - generate_simple_preview: Order loaded successfully');
 
-            // Configuration de base du PDF
-            $this->pdf->SetCreator('PDF Builder Pro');
-            $this->pdf->SetAuthor('Three Axe');
-            $this->pdf->SetTitle('Aperçu Facture - Commande #' . $order_id);
-            $this->pdf->SetSubject('Aperçu de facture PDF');
+            // Si un template_id est fourni, récupérer les données du template
+            if ($template_id) {
+                error_log('🟡 PDF BUILDER - generate_simple_preview: Loading template data for ID: ' . $template_id);
 
-            // Ajouter une page
-            error_log('🟡 PDF BUILDER - generate_simple_preview: Adding page');
-            $this->pdf->AddPage();
+                global $wpdb;
+                $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
-            // Marges
-            $this->pdf->SetMargins(15, 15, 15);
-            $this->pdf->SetAutoPageBreak(true, 15);
+                $template = $wpdb->get_row(
+                    $wpdb->prepare("SELECT template_data FROM $table_templates WHERE id = %d", $template_id),
+                    ARRAY_A
+                );
 
-            // Générer le contenu simplifié
-            error_log('🟡 PDF BUILDER - generate_simple_preview: Generating content');
-            $this->generate_simple_pdf_content();
-
-            // Générer le PDF
-            error_log('🟡 PDF BUILDER - generate_simple_preview: Generating PDF content');
-            $pdf_content = $this->pdf->Output('', 'S');
-
-            // Utiliser le répertoire uploads standard au lieu d'un sous-répertoire
-            $upload_dir = wp_upload_dir();
-            $cache_dir = $upload_dir['basedir'];
-
-            // Générer un nom de fichier unique avec préfixe
-            $filename = 'pdf-builder-preview-order-' . $order_id . '-' . time() . '.pdf';
-            $filepath = $cache_dir . '/' . $filename;
-
-            // Sauvegarder le fichier
-            error_log('🟡 PDF BUILDER - generate_simple_preview: Saving file to: ' . $filepath);
-            if (file_put_contents($filepath, $pdf_content) !== false) {
-                error_log('✅ PDF BUILDER - File saved successfully');
-
-                // Essayer plusieurs méthodes pour définir les permissions du fichier
-                if (function_exists('wp_chmod')) {
-                    wp_chmod($filepath, 0644);
-                    error_log('✅ PDF BUILDER - Used wp_chmod for file');
-                } elseif (chmod($filepath, 0644)) {
-                    error_log('✅ PDF BUILDER - Used chmod() for file');
-                } else {
-                    error_log('❌ PDF BUILDER - Failed to set file permissions');
+                if (!$template) {
+                    error_log('❌ PDF BUILDER - generate_simple_preview: Template not found with ID: ' . $template_id);
+                    throw new Exception('Template non trouvé');
                 }
+
+                // Décoder les données JSON du template
+                $template_data = json_decode($template['template_data'], true);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    error_log('❌ PDF BUILDER - generate_simple_preview: Invalid JSON in template data: ' . json_last_error_msg());
+                    throw new Exception('Données du template invalides');
+                }
+
+                error_log('✅ PDF BUILDER - generate_simple_preview: Template data loaded successfully');
+
+                // Générer le PDF avec les données du template
+                $elements = isset($template_data['elements']) ? $template_data['elements'] : [];
+                $pdf_content = $this->generate($elements, ['title' => 'Aperçu Facture - Commande #' . $order_id]);
+
+                // Utiliser le répertoire uploads standard au lieu d'un sous-répertoire
+                $upload_dir = wp_upload_dir();
+                $cache_dir = $upload_dir['basedir'];
+
+                // Générer un nom de fichier unique avec préfixe
+                $filename = 'pdf-builder-preview-order-' . $order_id . '-' . time() . '.pdf';
+                $filepath = $cache_dir . '/' . $filename;
+
+                // Sauvegarder le fichier
+                error_log('🟡 PDF BUILDER - generate_simple_preview: Saving template-based PDF to: ' . $filepath);
+                if (file_put_contents($filepath, $pdf_content) !== false) {
+                    error_log('✅ PDF BUILDER - Template-based PDF saved successfully');
+
+                    // Essayer plusieurs méthodes pour définir les permissions du fichier
+                    if (function_exists('wp_chmod')) {
+                        wp_chmod($filepath, 0644);
+                        error_log('✅ PDF BUILDER - Used wp_chmod for template file');
+                    } elseif (chmod($filepath, 0644)) {
+                        error_log('✅ PDF BUILDER - Used chmod() for template file');
+                    } else {
+                        error_log('❌ PDF BUILDER - Failed to set template file permissions');
+                    }
+                } else {
+                    error_log('❌ PDF BUILDER - Failed to save template-based PDF');
+                    throw new Exception('Impossible de sauvegarder le PDF');
+                }
+
+                // Retourner l'URL d'accès
+                $url = $upload_dir['baseurl'] . '/' . $filename;
+                error_log('✅ PDF BUILDER - generate_simple_preview: Template-based SUCCESS - URL: ' . $url);
+                return $url;
+
             } else {
-                error_log('❌ PDF BUILDER - Failed to save file');
+                // Générer le contenu simplifié (fallback)
+                error_log('🟡 PDF BUILDER - generate_simple_preview: No template provided, using simple content');
+
+                // Configuration de base du PDF
+                $this->pdf->SetCreator('PDF Builder Pro');
+                $this->pdf->SetAuthor('Three Axe');
+                $this->pdf->SetTitle('Aperçu Facture - Commande #' . $order_id);
+                $this->pdf->SetSubject('Aperçu de facture PDF');
+
+                // Ajouter une page
+                error_log('🟡 PDF BUILDER - generate_simple_preview: Adding page');
+                $this->pdf->AddPage();
+
+                // Marges
+                $this->pdf->SetMargins(15, 15, 15);
+                $this->pdf->SetAutoPageBreak(true, 15);
+
+                // Générer le contenu simplifié
+                error_log('🟡 PDF BUILDER - generate_simple_preview: Generating simple content');
+                $this->generate_simple_pdf_content();
+
+                // Générer le PDF
+                error_log('🟡 PDF BUILDER - generate_simple_preview: Generating PDF content');
+                $pdf_content = $this->pdf->Output('', 'S');
+
+                // Utiliser le répertoire uploads standard au lieu d'un sous-répertoire
+                $upload_dir = wp_upload_dir();
+                $cache_dir = $upload_dir['basedir'];
+
+                // Générer un nom de fichier unique avec préfixe
+                $filename = 'pdf-builder-preview-order-' . $order_id . '-' . time() . '.pdf';
+                $filepath = $cache_dir . '/' . $filename;
+
+                // Sauvegarder le fichier
+                error_log('🟡 PDF BUILDER - generate_simple_preview: Saving file to: ' . $filepath);
+                if (file_put_contents($filepath, $pdf_content) !== false) {
+                    error_log('✅ PDF BUILDER - File saved successfully');
+
+                    // Essayer plusieurs méthodes pour définir les permissions du fichier
+                    if (function_exists('wp_chmod')) {
+                        wp_chmod($filepath, 0644);
+                        error_log('✅ PDF BUILDER - Used wp_chmod for file');
+                    } elseif (chmod($filepath, 0644)) {
+                        error_log('✅ PDF BUILDER - Used chmod() for file');
+                    } else {
+                        error_log('❌ PDF BUILDER - Failed to set file permissions');
+                    }
+                } else {
+                    error_log('❌ PDF BUILDER - Failed to save file');
+                }
+
+                // Vérifier les permissions actuelles
+                $file_perms = substr(sprintf('%o', fileperms($filepath)), -4);
+                error_log('🔍 PDF BUILDER - File permissions: ' . $file_perms);
+
+                // Retourner l'URL d'accès
+                $url = $upload_dir['baseurl'] . '/' . $filename;
+                error_log('✅ PDF BUILDER - generate_simple_preview: SUCCESS - URL: ' . $url);
+                return $url;
             }
-
-            // Vérifier les permissions actuelles
-            $file_perms = substr(sprintf('%o', fileperms($filepath)), -4);
-            error_log('🔍 PDF BUILDER - File permissions: ' . $file_perms);
-
-            // Retourner l'URL d'accès
-            $url = $upload_dir['baseurl'] . '/' . $filename;
-            error_log('✅ PDF BUILDER - generate_simple_preview: SUCCESS - URL: ' . $url);
-            return $url;
 
         } catch (Exception $e) {
             error_log('❌ PDF BUILDER - generate_simple_preview: Exception: ' . $e->getMessage());

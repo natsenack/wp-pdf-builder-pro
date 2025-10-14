@@ -694,10 +694,23 @@ class PDF_Builder_WooCommerce_Integration {
 
             error_log('✅ PDF BUILDER - ajax_preview_order_pdf: Classe PDF_Builder_Pro_Generator trouvée');
 
+            // Récupérer le template par défaut
+            global $wpdb;
+            $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+            $default_template = $wpdb->get_row("SELECT id, name FROM $table_templates WHERE is_default = 1 LIMIT 1", ARRAY_A);
+
+            $template_id = null;
+            if ($default_template) {
+                $template_id = $default_template['id'];
+                error_log('✅ PDF BUILDER - ajax_preview_order_pdf: Default template found: ' . $default_template['name'] . ' (ID: ' . $template_id . ')');
+            } else {
+                error_log('⚠️ PDF BUILDER - ajax_preview_order_pdf: No default template found, using simple preview');
+            }
+
             $generator = new PDF_Builder_Pro_Generator();
             error_log('✅ PDF BUILDER - ajax_preview_order_pdf: Instance créée');
 
-            $result = $generator->generate_simple_preview($order_id);
+            $result = $generator->generate_simple_preview($order_id, $template_id);
             error_log('✅ PDF BUILDER - ajax_preview_order_pdf: generate_simple_preview appelée, résultat: ' . (is_wp_error($result) ? 'WP_Error' : 'URL'));
 
             if (is_wp_error($result)) {
