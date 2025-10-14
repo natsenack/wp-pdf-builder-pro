@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 echo "<h1>🔍 Diagnostic - Erreur inconnue lors de la génération</h1>";
 
 // Simuler les paramètres d'une requête AJAX
-$order_id = 1; // ID de commande à tester - modifier selon les commandes disponibles
+$order_id = 9275; // ID de commande à tester - modifier selon les commandes disponibles
 $template_id = 0; // 0 pour template par défaut
 
 echo "<h2>1. Test des dépendances</h2>";
@@ -30,29 +30,19 @@ if (class_exists('TCPDF')) {
     echo "✅ TCPDF déjà chargé<br>";
 } else {
     echo "❌ TCPDF non chargé - Tentative de chargement...<br>";
-    // Essayer de charger TCPDF
-    $tcpdf_paths = [
-        plugin_dir_path(__FILE__) . '../../lib/tcpdf/tcpdf.php',
-        plugin_dir_path(__FILE__) . '../../lib/tcpdf/tcpdf_autoload.php',
-        plugin_dir_path(__FILE__) . '../../vendor/tecnickcom/tcpdf/tcpdf.php'
-    ];
+    // Utiliser la même méthode que la classe principale
+    $core = PDF_Builder_Core::getInstance();
+    $admin = PDF_Builder_Admin::getInstance($core);
 
-    $tcpdf_loaded = false;
-    foreach ($tcpdf_paths as $path) {
-        if (file_exists($path)) {
-            echo "Tentative de chargement depuis: " . basename($path) . "<br>";
-            require_once $path;
-            if (class_exists('TCPDF')) {
-                $tcpdf_loaded = true;
-                echo "✅ TCPDF chargé depuis: " . basename($path) . "<br>";
-                break;
-            }
+    if (method_exists($admin, 'load_tcpdf_library')) {
+        $loaded = $admin->load_tcpdf_library();
+        if ($loaded && class_exists('TCPDF')) {
+            echo "✅ TCPDF chargé avec succès via PDF_Builder_Admin<br>";
+        } else {
+            echo "❌ Échec du chargement TCPDF via PDF_Builder_Admin<br>";
         }
-    }
-
-    if (!$tcpdf_loaded) {
-        echo "❌ Impossible de charger TCPDF<br>";
-        exit;
+    } else {
+        echo "❌ Méthode load_tcpdf_library non disponible<br>";
     }
 }
 
