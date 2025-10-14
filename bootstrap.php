@@ -4,6 +4,11 @@
  * Chargement différé des fonctionnalités du plugin
  */
 
+// Empêcher l'accès direct
+if (!defined('ABSPATH')) {
+    exit('Accès direct interdit');
+}
+
 // Définir la constante du répertoire du plugin si elle n'existe pas
 if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
     define('PDF_BUILDER_PLUGIN_DIR', plugin_dir_path(__FILE__));

@@ -1,4 +1,8 @@
-<?php
+﻿<?php
+// Empêcher l'accès direct
+if (!defined('ABSPATH')) {
+    exit('Accès direct interdit');
+}
 /**
  * Exemple d'utilisation des managers d'interactions canvas
  * PDF Builder Pro

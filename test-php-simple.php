@@ -1,4 +1,8 @@
-<?php
+﻿<?php
+// Empêcher l'accès direct
+if (!defined('ABSPATH')) {
+    exit('Accès direct interdit');
+}
 // Test PHP simple pour diagnostiquer le serveur
 echo "<h1>Test PHP - threeaxe.fr</h1>";
 echo "<p>Si vous voyez ce message, PHP fonctionne correctement.</p>";

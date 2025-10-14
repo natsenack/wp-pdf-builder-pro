@@ -1,4 +1,8 @@
-<?php
+﻿<?php
+// Empêcher l'accès direct
+if (!defined('ABSPATH')) {
+    exit('Accès direct interdit');
+}
 /**
  * Autoload personnalisé pour TCPDF allégé
  * Remplace vendor/autoload.php

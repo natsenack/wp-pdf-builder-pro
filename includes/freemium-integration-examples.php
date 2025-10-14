@@ -1,4 +1,8 @@
-<?php
+﻿<?php
+// Empêcher l'accès direct
+if (!defined('ABSPATH')) {
+    exit('Accès direct interdit');
+}
 /**
  * PDF Builder Freemium Integration
  * Exemples d'intégration des restrictions freemium

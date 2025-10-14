@@ -1,4 +1,8 @@
-<?php
+﻿<?php
+// Empêcher l'accès direct
+if (!defined('ABSPATH')) {
+    exit('Accès direct interdit');
+}
 /**
  * PDF Builder Pro - Resize Manager
  * Gestion des interactions de redimensionnement des éléments

@@ -4,6 +4,11 @@
  * Version 5.1.0 - Canvas uniquement
  */
 
+// Empêcher l'accès direct
+if (!defined('ABSPATH')) {
+    exit('Accès direct interdit');
+}
+
 /**
  * Classe d'administration PDF Builder Pro
  */

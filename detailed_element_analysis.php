@@ -1,4 +1,8 @@
-<?php
+﻿<?php
+// Empêcher l'accès direct
+if (!defined('ABSPATH')) {
+    exit('Accès direct interdit');
+}
 /**
  * Script détaillé pour analyser la structure des éléments du template
  * Affiche la structure JSON complète des éléments pour diagnostiquer les problèmes

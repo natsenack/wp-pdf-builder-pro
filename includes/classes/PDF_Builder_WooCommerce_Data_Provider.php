@@ -1,4 +1,8 @@
-<?php
+﻿<?php
+// Empêcher l'accès direct
+if (!defined('ABSPATH')) {
+    exit('Accès direct interdit');
+}
 /**
  * PDF Builder Pro - WooCommerce Data Provider
  * Fournit les données WooCommerce pour les éléments du canvas

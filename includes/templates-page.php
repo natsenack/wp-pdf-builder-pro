@@ -1,4 +1,8 @@
-<?php
+﻿<?php
+// Empêcher l'accès direct
+if (!defined('ABSPATH')) {
+    exit('Accès direct interdit');
+}
 /**
  * Templates Page - PDF Builder Pro
  * Gestion des t                <!-- Template Bon de Commande -->

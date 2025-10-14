@@ -1,4 +1,8 @@
-<?php
+﻿<?php
+// Empêcher l'accès direct
+if (!defined('ABSPATH')) {
+    exit('Accès direct interdit');
+}
 /**
  * PDF Builder Debug Helper
  * Utilitaires de débogage pour le plugin PDF Builder Pro

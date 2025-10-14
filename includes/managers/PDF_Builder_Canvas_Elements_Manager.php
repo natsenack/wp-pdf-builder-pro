@@ -1,4 +1,8 @@
-<?php
+﻿<?php
+// Empêcher l'accès direct
+if (!defined('ABSPATH')) {
+    exit('Accès direct interdit');
+}
 /**
  * PDF Builder Pro - Canvas Elements Manager
  * Gestion des éléments du canvas (drag & drop, redimensionnement)

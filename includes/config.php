@@ -4,7 +4,10 @@
  * Configuration et constantes du plugin
  */
 
-
+// Empêcher l'accès direct
+if (!defined('ABSPATH')) {
+    exit('Accès direct interdit');
+}
 
 // === CONSTANTES DE BASE ===
 

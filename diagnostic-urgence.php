@@ -1,4 +1,8 @@
-<?php
+﻿<?php
+// Empêcher l'accès direct
+if (!defined('ABSPATH')) {
+    exit('Accès direct interdit');
+}
 /**
  * Diagnostic d'urgence - PDF Builder Pro
  * Ce fichier permet de diagnostiquer pourquoi du code PHP apparaît brut

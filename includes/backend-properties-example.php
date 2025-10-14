@@ -1,4 +1,8 @@
-<?php
+﻿<?php
+// Empêcher l'accès direct
+if (!defined('ABSPATH')) {
+    exit('Accès direct interdit');
+}
 /**
  * Exemple d'utilisation des propriétés uniformes des éléments
  * PDF Builder Pro - Backend Properties Example

@@ -1,4 +1,8 @@
-<?php
+﻿<?php
+// Empêcher l'accès direct
+if (!defined('ABSPATH')) {
+    exit('Accès direct interdit');
+}
 /**
  * Script de debug pour analyser les éléments du template PDF
  * Permet de voir quels éléments sont présents et lesquels sont traités

@@ -1,4 +1,8 @@
-<?php
+﻿<?php
+// Empêcher l'accès direct
+if (!defined('ABSPATH')) {
+    exit('Accès direct interdit');
+}
 /**
  * PDF Preview Test System - Isolated File
  * Système d'aperçu PDF isolé pour tester la génération avec TCPDF

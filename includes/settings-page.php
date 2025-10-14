@@ -3,7 +3,10 @@
  * Page des Paramètres - PDF Builder Pro
  */
 
-
+// Empêcher l'accès direct
+if (!defined('ABSPATH')) {
+    exit('Accès direct interdit');
+}
 
 // Vérifier les permissions - permettre à tous les utilisateurs connectés
 if (!defined('PDF_BUILDER_DEBUG_MODE') || !PDF_BUILDER_DEBUG_MODE) {
