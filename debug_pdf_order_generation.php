@@ -20,11 +20,33 @@ if (class_exists('WooCommerce')) {
     echo "❌ WooCommerce non actif<br>";
 }
 
-// Vérifier TCPDF
+// Vérifier TCPDF - Essayer de le charger d'abord
+$tcpdf_loaded = false;
 if (class_exists('TCPDF')) {
-    echo "✅ TCPDF disponible<br>";
+    $tcpdf_loaded = true;
+    echo "✅ TCPDF déjà chargé<br>";
 } else {
-    echo "❌ TCPDF non disponible<br>";
+    // Essayer de charger TCPDF depuis les chemins possibles
+    $tcpdf_paths = [
+        plugin_dir_path(__FILE__) . '../../lib/tcpdf/tcpdf.php',
+        plugin_dir_path(__FILE__) . '../../lib/tcpdf/tcpdf_autoload.php',
+        plugin_dir_path(__FILE__) . '../../vendor/tecnickcom/tcpdf/tcpdf.php'
+    ];
+
+    foreach ($tcpdf_paths as $path) {
+        if (file_exists($path)) {
+            require_once $path;
+            if (class_exists('TCPDF')) {
+                $tcpdf_loaded = true;
+                echo "✅ TCPDF chargé depuis: " . basename($path) . "<br>";
+                break;
+            }
+        }
+    }
+
+    if (!$tcpdf_loaded) {
+        echo "❌ TCPDF non disponible<br>";
+    }
 }
 
 // Vérifier les fonctions WooCommerce
