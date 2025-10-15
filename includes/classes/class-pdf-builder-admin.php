@@ -3996,8 +3996,9 @@ class PDF_Builder_Admin {
         }
 
         // Sauvegarde des paramètres
-        $config = new TempConfig();
-        $config->set_multiple($settings);
+        foreach ($settings as $key => $value) {
+            update_option('pdf_builder_' . $key, $value);
+        }
 
         // Traitement spécifique des rôles autorisés
         if (isset($_POST['pdf_builder_allowed_roles'])) {
