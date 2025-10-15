@@ -225,8 +225,7 @@ const PreviewModal = ({
               rowBorder: '#f1f5f9',
               altRowBg: '#fafbfc',
               borderWidth: 1,
-              headerTextColor: '#334155',
-              rowTextColor: '#475569',
+              textColor: '#334155',
               shadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
             },
             classic: {
@@ -235,8 +234,7 @@ const PreviewModal = ({
               rowBorder: '#334155',
               altRowBg: '#ffffff',
               borderWidth: 1.5,
-              headerTextColor: '#ffffff',
-              rowTextColor: '#1e293b',
+              textColor: '#ffffff',
               shadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
             },
             striped: {
@@ -245,8 +243,7 @@ const PreviewModal = ({
               rowBorder: '#e2e8f0',
               altRowBg: '#f8fafc',
               borderWidth: 1,
-              headerTextColor: '#ffffff',
-              rowTextColor: '#334155',
+              textColor: '#ffffff',
               shadow: '0 1px 4px rgba(59, 130, 246, 0.2)'
             },
             bordered: {
@@ -255,8 +252,7 @@ const PreviewModal = ({
               rowBorder: '#d1d5db',
               altRowBg: '#ffffff',
               borderWidth: 2,
-              headerTextColor: '#111827',
-              rowTextColor: '#374151',
+              textColor: '#111827',
               shadow: '0 4px 12px rgba(0, 0, 0, 0.1), inset 0 0 0 1px #e5e7eb'
             },
             minimal: {
@@ -265,19 +261,225 @@ const PreviewModal = ({
               rowBorder: '#f9fafb',
               altRowBg: '#ffffff',
               borderWidth: 0.5,
-              headerTextColor: '#6b7280',
-              rowTextColor: '#9ca3af',
+              textColor: '#6b7280',
               shadow: 'none'
             },
             modern: {
-              headerBg: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
               headerBorder: '#5b21b6',
               rowBorder: '#e9d5ff',
               altRowBg: '#faf5ff',
               borderWidth: 1,
-              headerTextColor: '#ffffff',
-              rowTextColor: '#6b21a8',
+              textColor: '#ffffff',
               shadow: '0 4px 20px rgba(102, 126, 234, 0.25)'
+            },
+            // Nouveaux styles colorés
+            blue_ocean: {
+              gradient: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
+              headerBorder: '#1e40af',
+              rowBorder: '#dbeafe',
+              altRowBg: '#eff6ff',
+              borderWidth: 1.5,
+              textColor: '#ffffff',
+              shadow: '0 4px 16px rgba(59, 130, 246, 0.3)'
+            },
+            emerald_forest: {
+              gradient: 'linear-gradient(135deg, #064e3b 0%, #10b981 100%)',
+              headerBorder: '#065f46',
+              rowBorder: '#d1fae5',
+              altRowBg: '#ecfdf5',
+              borderWidth: 1.5,
+              textColor: '#ffffff',
+              shadow: '0 4px 16px rgba(16, 185, 129, 0.3)'
+            },
+            sunset_orange: {
+              gradient: 'linear-gradient(135deg, #9a3412 0%, #f97316 100%)',
+              headerBorder: '#c2410c',
+              rowBorder: '#fed7aa',
+              altRowBg: '#fff7ed',
+              borderWidth: 1.5,
+              textColor: '#ffffff',
+              shadow: '0 4px 16px rgba(249, 115, 22, 0.3)'
+            },
+            royal_purple: {
+              gradient: 'linear-gradient(135deg, #581c87 0%, #a855f7 100%)',
+              headerBorder: '#7c3aed',
+              rowBorder: '#e9d5ff',
+              altRowBg: '#faf5ff',
+              borderWidth: 1.5,
+              textColor: '#ffffff',
+              shadow: '0 4px 16px rgba(168, 85, 247, 0.3)'
+            },
+            rose_pink: {
+              gradient: 'linear-gradient(135deg, #be185d 0%, #f472b6 100%)',
+              headerBorder: '#db2777',
+              rowBorder: '#fce7f3',
+              altRowBg: '#fdf2f8',
+              borderWidth: 1.5,
+              textColor: '#ffffff',
+              shadow: '0 4px 16px rgba(244, 114, 182, 0.3)'
+            },
+            teal_aqua: {
+              gradient: 'linear-gradient(135deg, #0f766e 0%, #14b8a6 100%)',
+              headerBorder: '#0d9488',
+              rowBorder: '#ccfbf1',
+              altRowBg: '#f0fdfa',
+              borderWidth: 1.5,
+              textColor: '#ffffff',
+              shadow: '0 4px 16px rgba(20, 184, 166, 0.3)'
+            },
+            crimson_red: {
+              gradient: 'linear-gradient(135deg, #991b1b 0%, #ef4444 100%)',
+              headerBorder: '#dc2626',
+              rowBorder: '#fecaca',
+              altRowBg: '#fef2f2',
+              borderWidth: 1.5,
+              textColor: '#ffffff',
+              shadow: '0 4px 16px rgba(239, 68, 68, 0.3)'
+            },
+            amber_gold: {
+              gradient: 'linear-gradient(135deg, #92400e 0%, #f59e0b 100%)',
+              headerBorder: '#d97706',
+              rowBorder: '#fef3c7',
+              altRowBg: '#fffbeb',
+              borderWidth: 1.5,
+              textColor: '#ffffff',
+              shadow: '0 4px 16px rgba(245, 158, 11, 0.3)'
+            },
+            indigo_night: {
+              gradient: 'linear-gradient(135deg, #312e81 0%, #6366f1 100%)',
+              headerBorder: '#4338ca',
+              rowBorder: '#e0e7ff',
+              altRowBg: '#eef2ff',
+              borderWidth: 1.5,
+              textColor: '#ffffff',
+              shadow: '0 4px 16px rgba(99, 102, 241, 0.3)'
+            },
+            slate_gray: {
+              gradient: 'linear-gradient(135deg, #374151 0%, #6b7280 100%)',
+              headerBorder: '#4b5563',
+              rowBorder: '#f3f4f6',
+              altRowBg: '#f9fafb',
+              borderWidth: 1.5,
+              textColor: '#ffffff',
+              shadow: '0 4px 16px rgba(107, 114, 128, 0.3)'
+            },
+            coral_sunset: {
+              gradient: 'linear-gradient(135deg, #c2410c 0%, #fb7185 100%)',
+              headerBorder: '#ea580c',
+              rowBorder: '#fed7d7',
+              altRowBg: '#fef7f7',
+              borderWidth: 1.5,
+              textColor: '#ffffff',
+              shadow: '0 4px 16px rgba(251, 113, 133, 0.3)'
+            },
+            mint_green: {
+              gradient: 'linear-gradient(135deg, #065f46 0%, #34d399 100%)',
+              headerBorder: '#047857',
+              rowBorder: '#d1fae5',
+              altRowBg: '#ecfdf5',
+              borderWidth: 1.5,
+              textColor: '#ffffff',
+              shadow: '0 4px 16px rgba(52, 211, 153, 0.3)'
+            },
+            violet_dream: {
+              gradient: 'linear-gradient(135deg, #6d28d9 0%, #c084fc 100%)',
+              headerBorder: '#8b5cf6',
+              rowBorder: '#ede9fe',
+              altRowBg: '#f5f3ff',
+              borderWidth: 1.5,
+              textColor: '#ffffff',
+              shadow: '0 4px 16px rgba(192, 132, 252, 0.3)'
+            },
+            sky_blue: {
+              gradient: 'linear-gradient(135deg, #0369a1 0%, #0ea5e9 100%)',
+              headerBorder: '#0284c7',
+              rowBorder: '#bae6fd',
+              altRowBg: '#f0f9ff',
+              borderWidth: 1.5,
+              textColor: '#ffffff',
+              shadow: '0 4px 16px rgba(14, 165, 233, 0.3)'
+            },
+            forest_green: {
+              gradient: 'linear-gradient(135deg, #14532d 0%, #22c55e 100%)',
+              headerBorder: '#15803d',
+              rowBorder: '#bbf7d0',
+              altRowBg: '#f0fdf4',
+              borderWidth: 1.5,
+              textColor: '#ffffff',
+              shadow: '0 4px 16px rgba(34, 197, 94, 0.3)'
+            },
+            ruby_red: {
+              gradient: 'linear-gradient(135deg, #b91c1c 0%, #f87171 100%)',
+              headerBorder: '#dc2626',
+              rowBorder: '#fecaca',
+              altRowBg: '#fef2f2',
+              borderWidth: 1.5,
+              textColor: '#ffffff',
+              shadow: '0 4px 16px rgba(248, 113, 113, 0.3)'
+            },
+            golden_yellow: {
+              gradient: 'linear-gradient(135deg, #a16207 0%, #eab308 100%)',
+              headerBorder: '#ca8a04',
+              rowBorder: '#fef08a',
+              altRowBg: '#fefce8',
+              borderWidth: 1.5,
+              textColor: '#ffffff',
+              shadow: '0 4px 16px rgba(234, 179, 8, 0.3)'
+            },
+            navy_blue: {
+              gradient: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
+              headerBorder: '#1e40af',
+              rowBorder: '#dbeafe',
+              altRowBg: '#eff6ff',
+              borderWidth: 1.5,
+              textColor: '#ffffff',
+              shadow: '0 4px 16px rgba(59, 130, 246, 0.3)'
+            },
+            burgundy_wine: {
+              gradient: 'linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%)',
+              headerBorder: '#991b1b',
+              rowBorder: '#fecaca',
+              altRowBg: '#fef2f2',
+              borderWidth: 1.5,
+              textColor: '#ffffff',
+              shadow: '0 4px 16px rgba(220, 38, 38, 0.3)'
+            },
+            lavender_purple: {
+              gradient: 'linear-gradient(135deg, #7c2d12 0%, #a855f7 100%)',
+              headerBorder: '#9333ea',
+              rowBorder: '#e9d5ff',
+              altRowBg: '#faf5ff',
+              borderWidth: 1.5,
+              textColor: '#ffffff',
+              shadow: '0 4px 16px rgba(168, 85, 247, 0.3)'
+            },
+            ocean_teal: {
+              gradient: 'linear-gradient(135deg, #134e4a 0%, #14b8a6 100%)',
+              headerBorder: '#0f766e',
+              rowBorder: '#ccfbf1',
+              altRowBg: '#f0fdfa',
+              borderWidth: 1.5,
+              textColor: '#ffffff',
+              shadow: '0 4px 16px rgba(20, 184, 166, 0.3)'
+            },
+            cherry_blossom: {
+              gradient: 'linear-gradient(135deg, #be185d 0%, #fb7185 100%)',
+              headerBorder: '#db2777',
+              rowBorder: '#fce7f3',
+              altRowBg: '#fdf2f8',
+              borderWidth: 1.5,
+              textColor: '#ffffff',
+              shadow: '0 4px 16px rgba(251, 113, 133, 0.3)'
+            },
+            autumn_orange: {
+              gradient: 'linear-gradient(135deg, #9a3412 0%, #fb923c 100%)',
+              headerBorder: '#ea580c',
+              rowBorder: '#fed7aa',
+              altRowBg: '#fff7ed',
+              borderWidth: 1.5,
+              textColor: '#ffffff',
+              shadow: '0 4px 16px rgba(251, 146, 60, 0.3)'
             }
           };
           return baseStyles[tableStyle] || baseStyles.default;
