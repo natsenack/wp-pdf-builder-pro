@@ -281,13 +281,107 @@ export const useGlobalSettings = () => {
 
   }, [settings]);
 
-  const updateSettings = (newSettings) => {
+  const updateSettings = async (newSettings) => {
     setSettings(prev => {
       const updated = { ...prev, ...newSettings };
       // Forcer showResizeHandles à true pour corriger le bug des poignées
       updated.showResizeHandles = true;
       // Sauvegarder dans localStorage pour la compatibilité
       localStorage.setItem('pdf-builder-global-settings', JSON.stringify(updated));
+
+      // Sauvegarder dans WordPress via AJAX
+      const ajaxSettings = getAjaxSettings();
+      if (ajaxSettings.ajaxurl && ajaxSettings.nonce) {
+        // Convertir les paramètres camelCase vers snake_case pour WordPress
+        const wpSettings = {
+          show_grid: updated.showGrid,
+          grid_size: updated.gridSize,
+          grid_color: updated.gridColor,
+          grid_opacity: updated.gridOpacity,
+          snap_to_grid: updated.snapToGrid,
+          snap_to_elements: updated.snapToElements,
+          snap_to_margins: updated.snapToMargins,
+          snap_tolerance: updated.snapTolerance,
+          show_guides: updated.showGuides,
+          lock_guides: updated.lockGuides,
+          default_zoom: updated.defaultZoom,
+          min_zoom: updated.minZoom,
+          max_zoom: updated.maxZoom,
+          zoom_step: updated.zoomStep,
+          pan_with_mouse: updated.panWithMouse,
+          smooth_zoom: updated.smoothZoom,
+          show_zoom_indicator: updated.showZoomIndicator,
+          zoom_with_wheel: updated.zoomWithWheel,
+          zoom_to_selection: updated.zoomToSelection,
+          show_resize_handles: updated.showResizeHandles,
+          handle_size: updated.handleSize,
+          handle_color: updated.handleColor,
+          enable_rotation: updated.enableRotation,
+          rotation_step: updated.rotationStep,
+          rotation_snap: updated.rotationSnap,
+          multi_select: updated.multiSelect,
+          select_all_shortcut: updated.selectAllShortcut,
+          show_selection_bounds: updated.showSelectionBounds,
+          copy_paste_enabled: updated.copyPasteEnabled,
+          duplicate_on_drag: updated.duplicateOnDrag,
+          export_quality: updated.exportQuality,
+          export_format: updated.exportFormat,
+          compress_images: updated.compressImages,
+          image_quality: updated.imageQuality,
+          max_image_size: updated.maxImageSize,
+          include_metadata: updated.includeMetadata,
+          pdf_author: updated.pdfAuthor,
+          pdf_subject: updated.pdfSubject,
+          auto_crop: updated.autoCrop,
+          embed_fonts: updated.embedFonts,
+          optimize_for_web: updated.optimizeForWeb,
+          enable_hardware_acceleration: updated.enableHardwareAcceleration,
+          limit_fps: updated.limitFps,
+          max_fps: updated.maxFps,
+          auto_save_enabled: updated.autoSaveEnabled,
+          auto_save_interval: updated.autoSaveInterval,
+          auto_save_versions: updated.autoSaveVersions,
+          undo_levels: updated.undoLevels,
+          redo_levels: updated.redoLevels,
+          enable_keyboard_shortcuts: updated.enableKeyboardShortcuts,
+          debug_mode: updated.debugMode,
+          show_fps: updated.showFps,
+          // Paramètres canvas
+          default_canvas_width: updated.defaultCanvasWidth,
+          default_canvas_height: updated.defaultCanvasHeight,
+          default_canvas_unit: updated.defaultCanvasUnit,
+          canvas_background_color: updated.canvasBackgroundColor,
+          canvas_show_transparency: updated.canvasShowTransparency,
+          margin_top: updated.marginTop,
+          margin_right: updated.marginRight,
+          margin_bottom: updated.marginBottom,
+          margin_left: updated.marginLeft,
+          show_margins: updated.showMargins
+        };
+
+        // Faire l'appel AJAX en arrière-plan (sans bloquer)
+        fetch(ajaxSettings.ajaxurl + '?action=pdf_builder_save_settings_page', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: new URLSearchParams({
+            ...wpSettings,
+            nonce: ajaxSettings.nonce
+          })
+        })
+        .then(response => {
+          if (!response.ok) {
+            console.warn('Erreur lors de la sauvegarde des paramètres dans WordPress:', response.status);
+          } else {
+            console.log('Paramètres sauvegardés avec succès dans WordPress');
+          }
+        })
+        .catch(error => {
+          console.warn('Erreur AJAX lors de la sauvegarde des paramètres:', error);
+        });
+      }
+
       return updated;
     });
   };

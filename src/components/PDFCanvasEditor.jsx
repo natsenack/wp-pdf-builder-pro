@@ -21,15 +21,19 @@ console.log('Timestamp de chargement:', Date.now());
 
 export const PDFCanvasEditor = ({ options }) => {
   const [tool, setTool] = useState('select');
-  const [showGrid, setShowGrid] = useState(false);
-  const [snapToGrid, setSnapToGrid] = useState(true); // Aimantation activée par défaut
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [showPDFModal, setShowPDFModal] = useState(false);
   const [pdfModalUrl, setPdfModalUrl] = useState(null);
   const [isPropertiesCollapsed, setIsPropertiesCollapsed] = useState(false);
 
-  // Hook pour les paramètres globaux
-  const globalSettings = useGlobalSettings();
+  // Fonctions pour mettre à jour les paramètres de grille
+  const handleShowGridChange = useCallback((value) => {
+    globalSettings.updateSettings({ showGrid: value });
+  }, [globalSettings]);
+
+  const handleSnapToGridChange = useCallback((value) => {
+    globalSettings.updateSettings({ snapToGrid: value });
+  }, [globalSettings]);
 
   // Données de commande WooCommerce (passées via options ou données de test)
   const orderData = options.orderData || {
@@ -78,7 +82,8 @@ export const PDFCanvasEditor = ({ options }) => {
     onElementDrop: (elementId, position) => {
       canvasState.updateElement(elementId, position);
     },
-    snapToGrid: snapToGrid,
+    snapToGrid: globalSettings.settings.snapToGrid,
+    gridSize: globalSettings.settings.gridSize,
     zoom: canvasState.zoom.zoom,
     canvasWidth: canvasState.canvasWidth,
     canvasHeight: canvasState.canvasHeight
@@ -485,10 +490,10 @@ export const PDFCanvasEditor = ({ options }) => {
         onToolSelect={setTool}
         zoom={canvasState.zoom.zoom}
         onZoomChange={canvasState.zoom.setZoomLevel}
-        showGrid={showGrid}
-        onShowGridChange={setShowGrid}
-        snapToGrid={snapToGrid}
-        onSnapToGridChange={setSnapToGrid}
+        showGrid={globalSettings.settings.showGrid}
+        onShowGridChange={handleShowGridChange}
+        snapToGrid={globalSettings.settings.snapToGrid}
+        onSnapToGridChange={handleSnapToGridChange}
         onUndo={canvasState.undo}
         onRedo={canvasState.redo}
         canUndo={canvasState.canUndo}
@@ -537,7 +542,7 @@ export const PDFCanvasEditor = ({ options }) => {
                 }}
               >
                 {/* Grille de fond */}
-                {showGrid && (
+                {globalSettings.settings.showGrid && (
                   <div
                     className="canvas-grid"
                     style={{
@@ -547,10 +552,10 @@ export const PDFCanvasEditor = ({ options }) => {
                       width: '100%',
                       height: '100%',
                       backgroundImage: `
-                        linear-gradient(to right, #f1f5f9 1px, transparent 1px),
-                        linear-gradient(to bottom, #f1f5f9 1px, transparent 1px)
+                        linear-gradient(to right, ${globalSettings.settings.gridColor}${Math.round(globalSettings.settings.gridOpacity * 2.55).toString(16).padStart(2, '0')} 1px, transparent 1px),
+                        linear-gradient(to bottom, ${globalSettings.settings.gridColor}${Math.round(globalSettings.settings.gridOpacity * 2.55).toString(16).padStart(2, '0')} 1px, transparent 1px)
                       `,
-                      backgroundSize: '10px 10px',
+                      backgroundSize: `${globalSettings.settings.gridSize}px ${globalSettings.settings.gridSize}px`,
                       pointerEvents: 'none'
                     }}
                   />
@@ -566,8 +571,8 @@ export const PDFCanvasEditor = ({ options }) => {
                         element={element}
                         isSelected={canvasState.selection.selectedElements.includes(element.id)}
                         zoom={1} // Le zoom est géré au niveau du wrapper
-                        snapToGrid={snapToGrid}
-                        gridSize={10}
+                        snapToGrid={globalSettings.settings.snapToGrid}
+                        gridSize={globalSettings.settings.gridSize}
                         canvasWidth={canvasState.canvasWidth}
                         canvasHeight={canvasState.canvasHeight}
                         onSelect={() => handleElementSelect(element.id)}
@@ -595,6 +600,8 @@ export const PDFCanvasEditor = ({ options }) => {
                         canvasHeight={canvasState.canvasHeight}
                         orderData={orderData}
                         onContextMenu={(e) => handleContextMenu(e, element.id)}
+                        snapToGrid={globalSettings.settings.snapToGrid}
+                        gridSize={globalSettings.settings.gridSize}
                       />
                     </React.Suspense>
                   ))}

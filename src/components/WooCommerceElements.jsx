@@ -114,7 +114,9 @@ const WooCommerceElement = ({
   canvasWidth,
   canvasHeight,
   orderData = {},
-  onContextMenu
+  onContextMenu,
+  snapToGrid = true,
+  gridSize = 10
 }) => {
   const elementRef = useRef(null);
 
@@ -127,8 +129,8 @@ const WooCommerceElement = ({
         height: newRect.height
       });
     },
-    snapToGrid: true,
-    gridSize: 10,
+    snapToGrid,
+    gridSize,
     canvasWidth,
     canvasHeight
   });
