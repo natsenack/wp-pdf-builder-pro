@@ -1090,7 +1090,8 @@ class PDF_Builder_Pro_Generator {
         }
 
         if (in_array('phone', $fields)) {
-            $phone = get_option('woocommerce_phone');
+            // Essayer d'abord WooCommerce, puis l'option personnalisée du plugin
+            $phone = get_option('woocommerce_phone') ?: get_option('pdf_builder_company_phone');
             if (!empty($phone)) {
                 $label = $showLabels ? 'Téléphone : ' : '';
                 if ($labelStyle === 'uppercase') $label = strtoupper($label);

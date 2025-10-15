@@ -476,7 +476,7 @@ class PDF_Preview_Test {
 
         // Email et téléphone
         $email = get_option('woocommerce_email_from_address');
-        $phone = get_option('woocommerce_phone');
+        $phone = get_option('woocommerce_phone') ?: get_option('pdf_builder_company_phone');
 
         if (!empty($email)) $company_parts[] = 'Email: ' . $email;
         if (!empty($phone)) $company_parts[] = 'Tél: ' . $phone;

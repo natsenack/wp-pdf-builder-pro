@@ -141,6 +141,20 @@ if ((isset($_POST['submit']) || isset($_POST['submit_roles']) || isset($_POST['s
 
         $config->set_multiple($settings);
 
+        // Sauvegarde des informations entreprise
+        if (isset($_POST['company_vat'])) {
+            update_option('pdf_builder_company_vat', sanitize_text_field($_POST['company_vat']));
+        }
+        if (isset($_POST['company_rcs'])) {
+            update_option('pdf_builder_company_rcs', sanitize_text_field($_POST['company_rcs']));
+        }
+        if (isset($_POST['company_siret'])) {
+            update_option('pdf_builder_company_siret', sanitize_text_field($_POST['company_siret']));
+        }
+        if (isset($_POST['company_phone'])) {
+            update_option('pdf_builder_company_phone', sanitize_text_field($_POST['company_phone']));
+        }
+
         // Traitement spécifique des rôles autorisés
         if (isset($_POST['pdf_builder_allowed_roles'])) {
             $allowed_roles = array_map('sanitize_text_field', (array) $_POST['pdf_builder_allowed_roles']);
@@ -479,7 +493,10 @@ window.addEventListener('load', function() {
                             $address = trim(get_option('woocommerce_store_address') . ' ' . get_option('woocommerce_store_address_2') . ' ' . get_option('woocommerce_store_postcode') . ' ' . get_option('woocommerce_store_city'));
                             echo esc_html($address ?: __('Non configurée', 'pdf-builder-pro'));
                         ?> <em>(<?php _e('WooCommerce > Réglages > Général', 'pdf-builder-pro'); ?>)</em></li>
-                        <li><strong><?php _e('Téléphone', 'pdf-builder-pro'); ?>:</strong> <?php echo esc_html(get_option('woocommerce_phone') ?: __('Non configuré', 'pdf-builder-pro')); ?> <em>(<?php _e('WooCommerce > Réglages > Général', 'pdf-builder-pro'); ?>)</em></li>
+                        <li><strong><?php _e('Téléphone', 'pdf-builder-pro'); ?>:</strong> <?php
+                            $phone = get_option('woocommerce_phone') ?: get_option('pdf_builder_company_phone');
+                            echo esc_html($phone ?: __('Non configuré', 'pdf-builder-pro'));
+                        ?> <em>(<?php _e('WooCommerce > Réglages > Général ou paramètres du plugin', 'pdf-builder-pro'); ?>)</em></li>
                         <li><strong><?php _e('Email', 'pdf-builder-pro'); ?>:</strong> <?php echo esc_html(get_option('woocommerce_email_from_address') ?: __('Non configuré', 'pdf-builder-pro')); ?> <em>(<?php _e('WooCommerce > Réglages > Emails', 'pdf-builder-pro'); ?>)</em></li>
                     </ul>
                 </div>
@@ -504,6 +521,13 @@ window.addEventListener('load', function() {
                         <td>
                             <input type="text" name="company_siret" value="<?php echo esc_attr(get_option('pdf_builder_company_siret', '')); ?>" class="regular-text" placeholder="123 456 789 00012">
                             <p class="description"><?php _e('Numéro SIRET de l\'entreprise (14 chiffres)', 'pdf-builder-pro'); ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php _e('Téléphone', 'pdf-builder-pro'); ?></th>
+                        <td>
+                            <input type="text" name="company_phone" value="<?php echo esc_attr(get_option('pdf_builder_company_phone', '')); ?>" class="regular-text" placeholder="+33 1 23 45 67 89">
+                            <p class="description"><?php _e('Numéro de téléphone de l\'entreprise (si non configuré dans WooCommerce)', 'pdf-builder-pro'); ?></p>
                         </td>
                     </tr>
                 </table>
