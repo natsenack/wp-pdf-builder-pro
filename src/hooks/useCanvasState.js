@@ -1095,6 +1095,24 @@ export const useCanvasState = ({
     contextMenu.showContextMenu(x, y, menuItems);
   }, [selection, contextMenu, duplicateElement, deleteElement, copySelectedElements, pasteElements, clipboard, duplicateSelectedElements, deleteSelectedElements]);
 
+  const zoomToSelection = useCallback(() => {
+    const selectedElementIds = selection.selectedElements;
+    if (selectedElementIds.length === 0) return;
+
+    const selectedElements = elements.filter(el => selectedElementIds.includes(el.id));
+    if (selectedElements.length === 0) return;
+
+    // Obtenir les dimensions du conteneur (viewport du canvas)
+    const containerElement = document.querySelector('.canvas-container');
+    if (!containerElement) return;
+
+    const containerRect = containerElement.getBoundingClientRect();
+    const containerWidth = containerRect.width;
+    const containerHeight = containerRect.height;
+
+    zoom.zoomToSelection(selectedElements, canvasWidth, canvasHeight, containerWidth, containerHeight);
+  }, [selection.selectedElements, elements, zoom, canvasWidth, canvasHeight]);
+
   return useMemo(() => ({
     // État
     elements,
@@ -1124,6 +1142,9 @@ export const useCanvasState = ({
     redo,
     canUndo: history.canUndo(),
     canRedo: history.canRedo(),
+
+    // Zoom
+    zoomToSelection,
 
     // Sauvegarde
     saveTemplate,
@@ -1158,6 +1179,7 @@ export const useCanvasState = ({
     redo,
     history,
     showContextMenu,
+    zoomToSelection,
     saveTemplate
   ]);
 

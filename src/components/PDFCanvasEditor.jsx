@@ -511,6 +511,20 @@ export const PDFCanvasEditor = ({ options }) => {
     setIsPanning(false);
   }, []);
 
+  // Gestionnaire pour double-clic
+  const handleDoubleClick = useCallback((e) => {
+    if (!globalSettings.settings.zoomToSelection) return;
+
+    // Vérifier qu'il n'y a pas d'élément cliqué (double-clic sur le fond)
+    const clickedElement = e.target.closest('[data-element-id]');
+    if (clickedElement) return;
+
+    // Si des éléments sont sélectionnés, zoomer dessus
+    if (canvasState.selection.selectedElements.length > 0) {
+      canvasState.zoomToSelection();
+    }
+  }, [globalSettings.settings.zoomToSelection, canvasState]);
+
   return (
     <div className="pdf-canvas-editor" ref={editorRef}>
       {/* Barre d'outils principale */}
@@ -583,6 +597,7 @@ export const PDFCanvasEditor = ({ options }) => {
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
+            onDoubleClick={handleDoubleClick}
             style={{ cursor: getCursorStyle() }}
           >
             <div
