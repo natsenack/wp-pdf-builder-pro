@@ -187,6 +187,7 @@ class PDF_Builder_Admin {
 
         // Hook AJAX pour sauvegarder les paramètres
         add_action('wp_ajax_pdf_builder_save_settings', [$this, 'ajax_save_settings']);
+        add_action('wp_ajax_pdf_builder_save_settings_page', [$this, 'ajax_save_settings_page']);
 
         // Endpoint pour le debug direct (accessible via URL)
         add_action('init', [$this, 'add_debug_endpoint']);
