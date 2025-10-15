@@ -30,6 +30,25 @@ export const PDFCanvasEditor = ({ options }) => {
   // Hook pour les paramètres globaux
   const globalSettings = useGlobalSettings();
 
+  // Debug des paramètres canvas
+  useEffect(() => {
+    console.log('=== DEBUG CANVAS PARAMETERS ===');
+    console.log('window.pdfBuilderCanvasSettings:', window.pdfBuilderCanvasSettings);
+
+    if (window.pdfBuilderCanvasSettings) {
+      console.log('pan_with_mouse:', window.pdfBuilderCanvasSettings.pan_with_mouse);
+      console.log('smooth_zoom:', window.pdfBuilderCanvasSettings.smooth_zoom);
+      console.log('zoom_with_wheel:', window.pdfBuilderCanvasSettings.zoom_with_wheel);
+    } else {
+      console.log('❌ window.pdfBuilderCanvasSettings is not defined!');
+    }
+
+    console.log('globalSettings.settings:', globalSettings.settings);
+    console.log('panWithMouse:', globalSettings.settings.panWithMouse);
+    console.log('smoothZoom:', globalSettings.settings.smoothZoom);
+    console.log('=== END DEBUG ===');
+  }, [globalSettings.settings]);
+
   // Fonctions pour mettre à jour les paramètres de grille
   const handleShowGridChange = useCallback((value) => {
     globalSettings.updateSettings({ showGrid: value });
