@@ -18,6 +18,28 @@ const PreviewModal = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Fonction de validation des éléments avant envoi
+  const validateElementsBeforeSend = (elements) => {
+    try {
+      const cleanedElements = cleanElementsForJSON(elements);
+      const jsonString = JSON.stringify(cleanedElements);
+      
+      // Vérifier que le JSON est valide
+      JSON.parse(jsonString);
+      
+      // Vérifier la longueur raisonnable
+      if (jsonString.length > 10000000) { // 10MB max
+        throw new Error('JSON trop volumineux');
+      }
+      
+      console.log('Client-side validation passed. JSON length:', jsonString.length);
+      return { success: true, jsonString, cleanedElements };
+    } catch (error) {
+      console.error('Client-side validation failed:', error);
+      return { success: false, error: error.message };
+    }
+  };
+
   // Fonction pour rendre le contenu du canvas en HTML
   const renderCanvasContent = (elements) => {
     if (!elements || elements.length === 0) {
@@ -836,28 +858,6 @@ const PreviewModal = ({
       console.log('Variables AJAX utilisées:', { ajaxUrl: ajaxUrl.substring(0, 50) + '...', nonceLength: freshNonce.length });
       console.log('Valeur du nonce envoyé:', freshNonce);
       console.log('Timestamp envoi:', Date.now());
-
-      // Validation côté client avant envoi
-      const validateElementsBeforeSend = (elements) => {
-        try {
-          const cleanedElements = cleanElementsForJSON(elements);
-          const jsonString = JSON.stringify(cleanedElements);
-          
-          // Vérifier que le JSON est valide
-          JSON.parse(jsonString);
-          
-          // Vérifier la longueur raisonnable
-          if (jsonString.length > 10000000) { // 10MB max
-            throw new Error('JSON trop volumineux');
-          }
-          
-          console.log('Client-side validation passed. JSON length:', jsonString.length);
-          return { success: true, jsonString, cleanedElements };
-        } catch (error) {
-          console.error('Client-side validation failed:', error);
-          return { success: false, error: error.message };
-        }
-      };
 
       // Fonction pour nettoyer les éléments avant sérialisation JSON
       const cleanElementsForJSON = (elements) => {

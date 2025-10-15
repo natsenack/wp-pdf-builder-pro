@@ -83,7 +83,7 @@ function testPreview() {
             'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: new URLSearchParams({
-            action: 'pdf_builder_preview_order_pdf',
+            action: 'pdf_builder_unified_preview',
             order_id: orderId,
             nonce: '" . wp_create_nonce('pdf_builder_order_actions') . "'
         })

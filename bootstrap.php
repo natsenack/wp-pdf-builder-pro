@@ -107,13 +107,12 @@ function pdf_builder_load_bootstrap() {
         
         // Enregistrer les actions AJAX pour WooCommerce immédiatement
         add_action('wp_ajax_pdf_builder_generate_order_pdf', 'pdf_builder_ajax_generate_order_pdf_fallback', 1);
-        add_action('wp_ajax_pdf_builder_preview_order_pdf', 'pdf_builder_ajax_preview_order_pdf_fallback', 1);
-        add_action('wp_ajax_pdf_builder_preview_synchronized', 'pdf_builder_ajax_preview_synchronized', 1);
         add_action('wp_ajax_pdf_builder_save_order_canvas', 'pdf_builder_ajax_save_order_canvas_fallback', 1);
         add_action('wp_ajax_pdf_builder_get_fresh_nonce', 'pdf_builder_ajax_get_fresh_nonce', 1);
         add_action('wp_ajax_pdf_builder_validate_preview', 'pdf_builder_ajax_validate_preview');
         add_action('wp_ajax_pdf_builder_get_settings', 'pdf_builder_ajax_get_settings_fallback');
         add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_ajax_save_settings_fallback');
+        add_action('wp_ajax_pdf_builder_unified_preview', 'pdf_builder_ajax_unified_preview_fallback', 1);
 
         // Initialiser l'interface d'administration
         if (is_admin() && class_exists('PDF_Builder_Admin')) {
@@ -392,73 +391,49 @@ function pdf_builder_ajax_generate_order_pdf_fallback() {
     }
 }
 
-function pdf_builder_ajax_preview_order_pdf_fallback() {
-    error_log('PDF BUILDER - Fallback AJAX handler called for preview_order_pdf');
+function pdf_builder_ajax_unified_preview_fallback() {
+    error_log('PDF BUILDER - Fallback AJAX handler called for unified_preview');
 
     try {
-        // Vérifications de sécurité de base
-        if (!current_user_can('manage_woocommerce')) {
-            error_log('PDF BUILDER - Fallback: Permissions insuffisantes');
-            wp_send_json_error('Permissions insuffisantes');
-            return;
-        }
-
-        if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions')) {
-            error_log('PDF BUILDER - Fallback: Nonce invalide');
-            wp_send_json_error('Sécurité: Nonce invalide');
-            return;
-        }
-
-        $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
-        $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : null;
-        error_log('PDF BUILDER - Fallback: order_id=' . $order_id . ', template_id=' . ($template_id ?: 'null'));
-
-        if (!$order_id) {
-            error_log('PDF BUILDER - Fallback: ID commande manquant');
-            wp_send_json_error('ID commande manquant');
-            return;
-        }
-
-        // Charger les fichiers nécessaires directement
-        $plugin_dir = plugin_dir_path(__FILE__);
-        if (!class_exists('PDF_Builder_Pro_Generator')) {
-            $generator_file = $plugin_dir . 'includes/pdf-generator.php';
-            if (file_exists($generator_file)) {
-                error_log('PDF BUILDER - Fallback: Loading generator file');
-                require_once $generator_file;
+        // Charger la classe WooCommerce integration si nécessaire
+        if (!class_exists('PDF_Builder_WooCommerce_Integration')) {
+            $integration_file = plugin_dir_path(__FILE__) . 'includes/classes/managers/class-pdf-builder-woocommerce-integration.php';
+            if (file_exists($integration_file)) {
+                error_log('PDF BUILDER - Fallback: Loading WooCommerce integration file');
+                require_once $integration_file;
             } else {
-                error_log('PDF BUILDER - Fallback: Generator file not found: ' . $generator_file);
-                wp_send_json_error('Fichier générateur non trouvé');
+                error_log('PDF BUILDER - Fallback: WooCommerce integration file not found: ' . $integration_file);
+                wp_send_json_error('Fichier d\'intégration WooCommerce non trouvé');
                 return;
             }
         }
 
-        if (!class_exists('PDF_Builder_Pro_Generator')) {
-            error_log('PDF BUILDER - Fallback: PDF_Builder_Pro_Generator class still not available');
-            wp_send_json_error('Classe générateur non disponible');
+        if (!class_exists('PDF_Builder_WooCommerce_Integration')) {
+            error_log('PDF BUILDER - Fallback: PDF_Builder_WooCommerce_Integration class not available');
+            wp_send_json_error('Classe d\'intégration WooCommerce non disponible');
             return;
         }
 
-        error_log('PDF BUILDER - Fallback: Creating generator instance');
-        $generator = new PDF_Builder_Pro_Generator();
+        error_log('PDF BUILDER - Fallback: Creating WooCommerce integration instance');
+        $integration = new PDF_Builder_WooCommerce_Integration();
 
-        error_log('PDF BUILDER - Fallback: Calling generate_simple_preview');
-        $result = $generator->generate_simple_preview($order_id, $template_id);
-
-        if (is_wp_error($result)) {
-            error_log('PDF BUILDER - Fallback: Error from generate_simple_preview: ' . $result->get_error_message());
-            wp_send_json_error($result->get_error_message());
-        } else {
-            error_log('PDF BUILDER - Fallback: Success, URL: ' . $result);
-            wp_send_json_success(['url' => $result]);
+        if (!method_exists($integration, 'ajax_unified_preview')) {
+            error_log('PDF BUILDER - Fallback: ajax_unified_preview method not found');
+            wp_send_json_error('Méthode ajax_unified_preview non trouvée');
+            return;
         }
+
+        error_log('PDF BUILDER - Fallback: Calling ajax_unified_preview method');
+        $integration->ajax_unified_preview();
 
     } catch (Exception $e) {
         error_log('PDF BUILDER - Fallback: Exception: ' . $e->getMessage());
         error_log('PDF BUILDER - Fallback: Stack trace: ' . $e->getTraceAsString());
         wp_send_json_error('Erreur: ' . $e->getMessage());
     }
-}function pdf_builder_ajax_save_order_canvas_fallback() {
+}
+
+function pdf_builder_ajax_save_order_canvas_fallback() {
     error_log('PDF BUILDER - Fallback AJAX handler called for save_order_canvas');
     
     // Charger le core si nécessaire
