@@ -137,6 +137,18 @@ class PDF_Builder_Template_Manager {
 
         if ($result !== false) {
             error_log('PDF Builder: Template saved successfully with ID: ' . $template_id);
+
+            // DEBUG: Log the saved data structure
+            $saved_data = json_decode($template_data, true);
+            if ($saved_data && isset($saved_data['elements'])) {
+                error_log('PDF Builder SAVE - Elements saved: ' . count($saved_data['elements']));
+                if (!empty($saved_data['elements'])) {
+                    $first_elem = $saved_data['elements'][0];
+                    error_log('PDF Builder SAVE - First element ID: ' . ($first_elem['id'] ?? 'NO ID'));
+                    error_log('PDF Builder SAVE - First element backgroundColor: ' . ($first_elem['backgroundColor'] ?? 'NO BGCOLOR'));
+                }
+            }
+
             wp_send_json_success(array(
                 'message' => 'Template sauvegardé avec succès',
                 'template_id' => $template_id

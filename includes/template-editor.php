@@ -59,12 +59,21 @@ if (!$is_new && $template_id > 0) {
                     if (isset($first_page['elements']) && is_array($first_page['elements'])) {
                         $initial_elements = $first_page['elements'];
                         error_log("PDF Builder LOAD - Elements loaded from pages[0].elements: " . count($initial_elements));
+
+                        // DEBUG: Log detailed element properties for first element
+                        if (!empty($initial_elements)) {
+                            $first_elem = $initial_elements[0];
+                            error_log("PDF Builder LOAD - First element ID: " . ($first_elem['id'] ?? 'NO ID'));
+                            error_log("PDF Builder LOAD - First element type: " . ($first_elem['type'] ?? 'NO TYPE'));
+                            error_log("PDF Builder LOAD - First element backgroundColor: " . ($first_elem['backgroundColor'] ?? 'NO BGCOLOR'));
+                            error_log("PDF Builder LOAD - First element all properties: " . implode(', ', array_keys($first_elem)));
+                        }
                     }
                 } elseif (isset($decoded_data['elements']) && is_array($decoded_data['elements'])) {
                     // Fallback pour l'ancienne structure
                     $initial_elements = $decoded_data['elements'];
                     error_log("PDF Builder LOAD - Elements loaded from elements (fallback): " . count($initial_elements));
-                    
+
                     // DEBUG: Log des propriétés des éléments
                     foreach ($initial_elements as $index => $element) {
                         if (is_array($element)) {
@@ -72,10 +81,14 @@ if (!$is_new && $template_id > 0) {
                             if (isset($element['type'])) {
                                 error_log("PDF Builder LOAD - Element $index type: " . $element['type']);
                             }
+                            if (isset($element['backgroundColor'])) {
+                                error_log("PDF Builder LOAD - Element $index backgroundColor: " . $element['backgroundColor']);
+                            }
                         }
                     }
                 } else {
                     error_log("PDF Builder LOAD - No elements found in any structure");
+                    error_log("PDF Builder LOAD - Available keys in decoded data: " . implode(', ', array_keys($decoded_data)));
                 }
             } else {
                 error_log("PDF Builder LOAD - JSON decode error: " . json_last_error_msg());
