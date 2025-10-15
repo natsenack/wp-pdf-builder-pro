@@ -518,10 +518,15 @@ function pdf_builder_ajax_validate_preview() {
             return;
         }
 
-        // DEBUG: Log des données reçues
+        // DEBUG: Log complet des données reçues
         error_log('PDF Builder Validation - Raw JSON data length: ' . strlen($json_data));
         error_log('PDF Builder Validation - First 500 chars: ' . substr($json_data, 0, 500));
         error_log('PDF Builder Validation - Last 500 chars: ' . substr($json_data, -500));
+
+        // DEBUG: Vérifier tous les headers et données POST
+        error_log('PDF Builder Validation - All POST data: ' . print_r($_POST, true));
+        error_log('PDF Builder Validation - Content-Type: ' . (isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : 'not set'));
+        error_log('PDF Builder Validation - Request method: ' . $_SERVER['REQUEST_METHOD']);
 
         // Vérifier si les données sont URL-encoded (peuvent arriver ainsi via FormData)
         if (strpos($json_data, '%') !== false) {
@@ -530,8 +535,14 @@ function pdf_builder_ajax_validate_preview() {
             error_log('PDF Builder Validation - Data was URL-encoded, original length: ' . $original_length . ', decoded length: ' . strlen($json_data));
         }
 
-        // DEBUG: Sauvegarder les données pour analyse
-        file_put_contents(__DIR__ . '/debug_received_json.txt', $json_data);
+        // DEBUG: Sauvegarder les données pour analyse détaillée
+        $debug_file = __DIR__ . '/debug_received_json.txt';
+        file_put_contents($debug_file, "=== DEBUG SESSION " . date('Y-m-d H:i:s') . " ===\n");
+        file_put_contents($debug_file, "Raw length: " . strlen($json_data) . "\n", FILE_APPEND);
+        file_put_contents($debug_file, "First 1000 chars:\n" . substr($json_data, 0, 1000) . "\n\n", FILE_APPEND);
+        file_put_contents($debug_file, "Last 1000 chars:\n" . substr($json_data, -1000) . "\n\n", FILE_APPEND);
+        file_put_contents($debug_file, "Full content:\n" . $json_data . "\n\n", FILE_APPEND);
+        file_put_contents($debug_file, "=== END DEBUG ===\n\n", FILE_APPEND);
 
         // Vérifier si les données semblent être du JSON valide
         $json_data_trimmed = trim($json_data);
@@ -547,12 +558,14 @@ function pdf_builder_ajax_validate_preview() {
 
         if ($first_char !== '[') {
             error_log('PDF Builder Validation - ERROR: JSON does not start with [ - this is not an array!');
+            file_put_contents($debug_file, "ERROR: Does not start with [\n", FILE_APPEND);
             wp_send_json_error('JSON data must start with [ (array)');
             return;
         }
 
         if ($last_char !== ']') {
             error_log('PDF Builder Validation - ERROR: JSON does not end with ]!');
+            file_put_contents($debug_file, "ERROR: Does not end with ]\n", FILE_APPEND);
             wp_send_json_error('JSON data must end with ] (array)');
             return;
         }
@@ -562,13 +575,22 @@ function pdf_builder_ajax_validate_preview() {
 
         // DEBUG: Log de l'erreur JSON si elle existe
         if (json_last_error() !== JSON_ERROR_NONE) {
-            error_log('PDF Builder Validation - JSON decode error: ' . json_last_error_msg());
-            error_log('PDF Builder Validation - JSON data that failed: ' . substr($json_data, 0, 1000));
+            $error_msg = json_last_error_msg();
+            $error_code = json_last_error();
+            error_log('PDF Builder Validation - JSON decode error: ' . $error_msg . ' (code: ' . $error_code . ')');
+            error_log('PDF Builder Validation - JSON data that failed (first 2000 chars): ' . substr($json_data, 0, 2000));
 
-            // Sauvegarder les données problématiques pour analyse
-            file_put_contents(__DIR__ . '/debug_failed_json.txt', $json_data);
+            // Sauvegarder les données problématiques pour analyse détaillée
+            $failed_file = __DIR__ . '/debug_failed_json.txt';
+            file_put_contents($failed_file, "=== FAILED JSON SESSION " . date('Y-m-d H:i:s') . " ===\n");
+            file_put_contents($failed_file, "Error: " . $error_msg . " (code: " . $error_code . ")\n", FILE_APPEND);
+            file_put_contents($failed_file, "Data length: " . strlen($json_data) . "\n", FILE_APPEND);
+            file_put_contents($failed_file, "First 2000 chars:\n" . substr($json_data, 0, 2000) . "\n\n", FILE_APPEND);
+            file_put_contents($failed_file, "Last 2000 chars:\n" . substr($json_data, -2000) . "\n\n", FILE_APPEND);
+            file_put_contents($failed_file, "Full content:\n" . $json_data . "\n\n", FILE_APPEND);
+            file_put_contents($failed_file, "=== END FAILED JSON ===\n\n", FILE_APPEND);
 
-            wp_send_json_error('Invalid JSON data: ' . json_last_error_msg());
+            wp_send_json_error('Invalid JSON data: ' . $error_msg);
             return;
         }
 
