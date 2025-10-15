@@ -789,13 +789,15 @@ class PDF_Builder_WooCommerce_Integration {
      * Gère à la fois les aperçus de template (éditeur) et les aperçus de commande (metabox)
      */
     public function ajax_unified_preview() {
-        error_log('🎯 PDF BUILDER - ajax_unified_preview: UNIFIED PREVIEW FUNCTION CALLED');
+        error_log('🎯 PDF BUILDER - ajax_unified_preview: UNIFIED PREVIEW FUNCTION CALLED - START');
 
         // Vérifier les permissions
         if (!current_user_can('manage_woocommerce') && !current_user_can('read')) {
             error_log('❌ PDF BUILDER - ajax_unified_preview: Permissions insuffisantes');
             wp_send_json_error('Permissions insuffisantes');
         }
+
+        error_log('✅ PDF BUILDER - ajax_unified_preview: Permissions OK');
 
         // Vérification de sécurité - accepter plusieurs nonces pour flexibilité
         $valid_nonces = ['pdf_builder_order_actions', 'pdf_builder_template_actions'];
@@ -813,18 +815,23 @@ class PDF_Builder_WooCommerce_Integration {
             wp_send_json_error('Sécurité: Nonce invalide');
         }
 
+        error_log('✅ PDF BUILDER - ajax_unified_preview: Nonce OK');
+
         $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : null;
         $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : null;
         $elements = isset($_POST['elements']) ? $_POST['elements'] : null;
 
-        error_log('🟡 PDF BUILDER - ajax_unified_preview: order_id=' . ($order_id ?: 'null') . ', template_id=' . ($template_id ?: 'null') . ', has_elements=' . (!empty($elements) ? 'yes' : 'no'));
+        error_log('🟡 PDF BUILDER - ajax_unified_preview: Params - order_id=' . ($order_id ?: 'null') . ', template_id=' . ($template_id ?: 'null') . ', has_elements=' . (!empty($elements) ? 'yes' : 'no'));
 
         try {
+            error_log('🟡 PDF BUILDER - ajax_unified_preview: Loading PDF generator...');
+
             // S'assurer que la classe PDF_Builder_Pro_Generator est chargée
             if (!class_exists('PDF_Builder_Pro_Generator')) {
                 $generator_path = plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'includes/pdf-generator.php';
+                error_log('🟡 PDF BUILDER - ajax_unified_preview: Generator path: ' . $generator_path);
                 if (file_exists($generator_path)) {
-                    error_log('🟡 PDF BUILDER - ajax_unified_preview: Chargement manuel du générateur PDF');
+                    error_log('🟡 PDF BUILDER - ajax_unified_preview: Including generator file...');
                     require_once $generator_path;
                 } else {
                     error_log('❌ PDF BUILDER - ajax_unified_preview: Fichier générateur PDF non trouvé: ' . $generator_path);
@@ -832,8 +839,10 @@ class PDF_Builder_WooCommerce_Integration {
                 }
             }
 
+            error_log('✅ PDF BUILDER - ajax_unified_preview: Generator class loaded');
+
             $generator = new PDF_Builder_Pro_Generator();
-            error_log('✅ PDF BUILDER - ajax_unified_preview: Générateur PDF chargé');
+            error_log('✅ PDF BUILDER - ajax_unified_preview: Generator instance created');
 
             // Déterminer le type d'aperçu
             if ($order_id && $order_id > 0) {
