@@ -511,6 +511,18 @@ function pdf_builder_ajax_validate_preview() {
     }
 
     try {
+        // DEBUG: Log complet des données reçues AVANT tout traitement
+        error_log('PDF Builder Validation - RAW $_POST[elements]: ' . print_r($_POST['elements'], true));
+        error_log('PDF Builder Validation - RAW strlen($_POST[elements]): ' . strlen($_POST['elements']));
+
+        // Sauvegarder immédiatement les données brutes
+        $raw_debug_file = __DIR__ . '/debug_raw_post_elements.txt';
+        file_put_contents($raw_debug_file, "=== RAW POST ELEMENTS " . date('Y-m-d H:i:s') . " ===\n");
+        file_put_contents($raw_debug_file, "Type: " . gettype($_POST['elements']) . "\n", FILE_APPEND);
+        file_put_contents($raw_debug_file, "Length: " . strlen($_POST['elements']) . "\n", FILE_APPEND);
+        file_put_contents($raw_debug_file, "Content:\n" . $_POST['elements'] . "\n", FILE_APPEND);
+        file_put_contents($raw_debug_file, "=== END RAW ===\n\n", FILE_APPEND);
+
         // Récupérer les données JSON
         $json_data = isset($_POST['elements']) ? $_POST['elements'] : '';
         if (empty($json_data)) {
