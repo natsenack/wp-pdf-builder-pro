@@ -50,14 +50,12 @@ const PreviewModal = ({
       <div
         style={{
           position: 'relative',
-          width: canvasWidth,
-          height: canvasHeight,
+          width: canvasWidth * zoom,
+          height: canvasHeight * zoom,
           backgroundColor: 'white',
           border: '1px solid #e2e8f0',
           borderRadius: '4px',
           overflow: 'hidden',
-          transform: `scale(${zoom})`,
-          transformOrigin: 'top left',
           margin: '0 auto'
         }}
       >
@@ -65,10 +63,10 @@ const PreviewModal = ({
           const elementPadding = element.padding || 0;
           const baseStyle = {
             position: 'absolute',
-            left: (element.x + elementPadding) || 0,
-            top: (element.y + elementPadding) || 0,
-            width: Math.max(1, (element.width - (elementPadding * 2))) || 100,
-            height: Math.max(1, (element.height - (elementPadding * 2))) || 50,
+            left: (element.x + elementPadding) * zoom,
+            top: (element.y + elementPadding) * zoom,
+            width: Math.max(1, (element.width - (elementPadding * 2))) * zoom,
+            height: Math.max(1, (element.height - (elementPadding * 2))) * zoom,
             zIndex: element.zIndex || index + 1
           };
 
@@ -91,7 +89,7 @@ const PreviewModal = ({
             style={{
               width: '100%',
               height: '100%',
-              fontSize: element.fontSize || 16,
+              fontSize: (element.fontSize || 16) * zoom,
               color: element.color || '#000000',
               fontWeight: element.fontWeight === 'bold' ? 'bold' : 'normal',
               fontStyle: element.fontStyle === 'italic' ? 'italic' : 'normal',
@@ -100,7 +98,7 @@ const PreviewModal = ({
               lineHeight: element.lineHeight || '1.2',
               whiteSpace: 'pre-wrap',
               overflow: 'hidden',
-              padding: '4px',
+              padding: `${4 * zoom}px`,
               boxSizing: 'border-box'
             }}
           >
@@ -116,9 +114,9 @@ const PreviewModal = ({
               height: '100%',
               backgroundColor: element.fillColor || 'transparent',
               border: element.borderWidth
-                ? `${element.borderWidth}px ${element.borderStyle || 'solid'} ${element.borderColor || '#000000'}`
+                ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#000000'}`
                 : 'none',
-              borderRadius: element.borderRadius || 0
+              borderRadius: (element.borderRadius || 0) * zoom
             }}
           />
         );
@@ -132,7 +130,7 @@ const PreviewModal = ({
               width: '100%',
               height: '100%',
               objectFit: element.objectFit || 'cover',
-              borderRadius: element.borderRadius || 0
+              borderRadius: (element.borderRadius || 0) * zoom
             }}
             onError={(e) => {
               e.target.style.display = 'none';
@@ -145,8 +143,8 @@ const PreviewModal = ({
           <div
             style={{
               width: '100%',
-              height: element.height || element.strokeWidth || 1,
-              borderTop: `${element.strokeWidth || 1}px solid ${element.strokeColor || '#000000'}`,
+              height: (element.height || element.strokeWidth || 1) * zoom,
+              borderTop: `${(element.strokeWidth || 1) * zoom}px solid ${element.strokeColor || '#000000'}`,
               height: 0
             }}
           />
@@ -159,9 +157,9 @@ const PreviewModal = ({
               width: '100%',
               height: '100%',
               backgroundColor: element.color || element.fillColor || '#cccccc',
-              height: `${element.thickness || element.height || 2}px`,
-              margin: `${element.margin || 10}px 0`,
-              borderRadius: element.borderRadius || 0
+              height: `${(element.thickness || element.height || 2) * zoom}px`,
+              margin: `${(element.margin || 10) * zoom}px 0`,
+              borderRadius: (element.borderRadius || 0) * zoom
             }}
           />
         );
@@ -273,10 +271,10 @@ const PreviewModal = ({
             height: '100%',
             display: 'flex',
             flexDirection: 'column',
-            fontSize: element.fontSize || '10px',
+            fontSize: `${(element.fontSize || 10) * zoom}px`,
             fontFamily: element.fontFamily || 'Arial, sans-serif',
-            border: element.borderWidth && element.borderWidth > 0 ? `${Math.max(1, element.borderWidth * 0.5)}px solid ${element.borderColor || '#e5e7eb'}` : 'none',
-            borderRadius: element.borderRadius ? `${element.borderRadius}px` : '2px',
+            border: element.borderWidth && element.borderWidth > 0 ? `${Math.max(1, element.borderWidth * 0.5) * zoom}px solid ${element.borderColor || '#e5e7eb'}` : 'none',
+            borderRadius: `${(element.borderRadius || 2) * zoom}px`,
             overflow: 'hidden',
             backgroundColor: element.backgroundColor || 'transparent',
             boxSizing: 'border-box'
@@ -286,16 +284,16 @@ const PreviewModal = ({
               <div style={{
                 display: 'flex',
                 backgroundColor: tableStyles.headerBg,
-                borderBottom: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.headerBorder}` : 'none',
+                borderBottom: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.headerBorder}` : 'none',
                 fontWeight: 'bold',
                 color: element.tableStyle === 'modern' ? '#ffffff' : '#000000'
               }}>
                 {columns.image && (
                   <div style={{
                     flex: '0 0 40px',
-                    padding: '4px',
+                    padding: `${4 * zoom}px`,
                     textAlign: 'center',
-                    borderRight: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.headerBorder}` : 'none'
+                    borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.headerBorder}` : 'none'
                   }}>
                     {getColumnHeader('image')}
                   </div>
@@ -303,9 +301,9 @@ const PreviewModal = ({
                 {columns.name && (
                   <div style={{
                     flex: 1,
-                    padding: '4px 6px',
+                    padding: `${4 * zoom}px ${6 * zoom}px`,
                     textAlign: 'left',
-                    borderRight: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.headerBorder}` : 'none'
+                    borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.headerBorder}` : 'none'
                   }}>
                     {getColumnHeader('name')}
                   </div>
@@ -313,9 +311,9 @@ const PreviewModal = ({
                 {columns.sku && (
                   <div style={{
                     flex: '0 0 80px',
-                    padding: '4px 6px',
+                    padding: `${4 * zoom}px ${6 * zoom}px`,
                     textAlign: 'left',
-                    borderRight: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.headerBorder}` : 'none'
+                    borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.headerBorder}` : 'none'
                   }}>
                     {getColumnHeader('sku')}
                   </div>
@@ -323,9 +321,9 @@ const PreviewModal = ({
                 {columns.quantity && (
                   <div style={{
                     flex: '0 0 60px',
-                    padding: '4px 6px',
+                    padding: `${4 * zoom}px ${6 * zoom}px`,
                     textAlign: 'center',
-                    borderRight: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.headerBorder}` : 'none'
+                    borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.headerBorder}` : 'none'
                   }}>
                     {getColumnHeader('quantity')}
                   </div>
@@ -333,9 +331,9 @@ const PreviewModal = ({
                 {columns.price && (
                   <div style={{
                     flex: '0 0 80px',
-                    padding: '4px 6px',
+                    padding: `${4 * zoom}px ${6 * zoom}px`,
                     textAlign: 'right',
-                    borderRight: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.headerBorder}` : 'none'
+                    borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.headerBorder}` : 'none'
                   }}>
                     {getColumnHeader('price')}
                   </div>
@@ -343,7 +341,7 @@ const PreviewModal = ({
                 {columns.total && (
                   <div style={{
                     flex: '0 0 80px',
-                    padding: '4px 6px',
+                    padding: `${4 * zoom}px ${6 * zoom}px`,
                     textAlign: 'right'
                   }}>
                     {getColumnHeader('total')}
@@ -363,9 +361,9 @@ const PreviewModal = ({
                   {columns.image && (
                     <div style={{
                       flex: '0 0 40px',
-                      padding: '4px',
+                      padding: `${4 * zoom}px`,
                       textAlign: 'center',
-                      borderRight: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.rowBorder}` : 'none'
+                      borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none'
                     }}>
                       📷
                     </div>
@@ -373,8 +371,8 @@ const PreviewModal = ({
                   {columns.name && (
                     <div style={{
                       flex: 1,
-                      padding: '4px 6px',
-                      borderRight: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.rowBorder}` : 'none'
+                      padding: `${4 * zoom}px ${6 * zoom}px`,
+                      borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none'
                     }}>
                       {product.name}
                     </div>
@@ -382,8 +380,8 @@ const PreviewModal = ({
                   {columns.sku && (
                     <div style={{
                       flex: '0 0 80px',
-                      padding: '4px 6px',
-                      borderRight: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.rowBorder}` : 'none'
+                      padding: `${4 * zoom}px ${6 * zoom}px`,
+                      borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none'
                     }}>
                       {product.sku}
                     </div>
@@ -391,9 +389,9 @@ const PreviewModal = ({
                   {columns.quantity && (
                     <div style={{
                       flex: '0 0 60px',
-                      padding: '4px 6px',
+                      padding: `${4 * zoom}px ${6 * zoom}px`,
                       textAlign: 'center',
-                      borderRight: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.rowBorder}` : 'none'
+                      borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none'
                     }}>
                       {product.quantity}
                     </div>
@@ -401,9 +399,9 @@ const PreviewModal = ({
                   {columns.price && (
                     <div style={{
                       flex: '0 0 80px',
-                      padding: '4px 6px',
+                      padding: `${4 * zoom}px ${6 * zoom}px`,
                       textAlign: 'right',
-                      borderRight: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.rowBorder}` : 'none'
+                      borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none'
                     }}>
                       {product.price.toFixed(2)}€
                     </div>
@@ -411,7 +409,7 @@ const PreviewModal = ({
                   {columns.total && (
                     <div style={{
                       flex: '0 0 80px',
-                      padding: '4px 6px',
+                      padding: `${4 * zoom}px ${6 * zoom}px`,
                       textAlign: 'right'
                     }}>
                       {product.total.toFixed(2)}€
@@ -427,7 +425,7 @@ const PreviewModal = ({
                 <div style={{
                   display: 'flex',
                   justifyContent: 'flex-end',
-                  padding: '4px 6px',
+                  padding: `${4 * zoom}px ${6 * zoom}px`,
                   fontWeight: 'bold'
                 }}>
                   <div style={{ width: '80px', textAlign: 'right' }}>
@@ -439,7 +437,7 @@ const PreviewModal = ({
                 <div style={{
                   display: 'flex',
                   justifyContent: 'flex-end',
-                  padding: '4px 6px'
+                  padding: `${4 * zoom}px ${6 * zoom}px`
                 }}>
                   <div style={{ width: '80px', textAlign: 'right' }}>
                     Port: {shipping.toFixed(2)}€
@@ -450,7 +448,7 @@ const PreviewModal = ({
                 <div style={{
                   display: 'flex',
                   justifyContent: 'flex-end',
-                  padding: '4px 6px'
+                  padding: `${4 * zoom}px ${6 * zoom}px`
                 }}>
                   <div style={{ width: '80px', textAlign: 'right' }}>
                     TVA: {tax.toFixed(2)}€
@@ -461,7 +459,7 @@ const PreviewModal = ({
                 <div style={{
                   display: 'flex',
                   justifyContent: 'flex-end',
-                  padding: '4px 6px'
+                  padding: `${4 * zoom}px ${6 * zoom}px`
                 }}>
                   <div style={{ width: '80px', textAlign: 'right' }}>
                     Remise: {Math.abs(discount).toFixed(2)}€
@@ -472,7 +470,7 @@ const PreviewModal = ({
                 <div style={{
                   display: 'flex',
                   justifyContent: 'flex-end',
-                  padding: '4px 6px',
+                  padding: `${4 * zoom}px ${6 * zoom}px`,
                   fontWeight: 'bold',
                   backgroundColor: tableStyles.headerBg,
                   color: element.tableStyle === 'modern' ? '#ffffff' : '#000000'
@@ -507,15 +505,15 @@ const PreviewModal = ({
         };
 
         const containerStyle = {
-          padding: '8px',
-          fontSize: element.fontSize || 12,
+          padding: `${8 * zoom}px`,
+          fontSize: (element.fontSize || 12) * zoom,
           lineHeight: element.lineHeight || '1.4',
           color: element.color || '#1e293b',
           fontFamily: element.fontFamily || 'Inter, sans-serif',
           textAlign: alignment,
           display: layout === 'horizontal' ? 'flex' : 'block',
           flexWrap: layout === 'horizontal' ? 'wrap' : 'nowrap',
-          gap: layout === 'horizontal' ? `${spacing}px` : '0'
+          gap: layout === 'horizontal' ? `${spacing * zoom}px` : '0'
         };
 
         return (
@@ -526,9 +524,9 @@ const PreviewModal = ({
 
               const fieldStyle = layout === 'horizontal' ? {
                 flex: '1',
-                minWidth: '120px'
+                minWidth: `${120 * zoom}px`
               } : {
-                marginBottom: index < customerFields.length - 1 ? `${spacing}px` : '0',
+                marginBottom: index < customerFields.length - 1 ? `${spacing * zoom}px` : '0',
                 display: 'flex',
                 alignItems: 'flex-start'
               };
@@ -538,11 +536,11 @@ const PreviewModal = ({
                   {showLabels && (
                     <div style={{
                       fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
-                      marginBottom: layout === 'horizontal' ? '2px' : '0',
-                      marginRight: layout === 'horizontal' ? '0' : '8px',
-                      fontSize: '11px',
+                      marginBottom: layout === 'horizontal' ? `${2 * zoom}px` : '0',
+                      marginRight: layout === 'horizontal' ? '0' : `${8 * zoom}px`,
+                      fontSize: `${11 * zoom}px`,
                       opacity: 0.8,
-                      minWidth: layout === 'horizontal' ? 'auto' : '80px',
+                      minWidth: layout === 'horizontal' ? 'auto' : `${80 * zoom}px`,
                       flexShrink: 0
                     }}>
                       {field === 'name' && 'Client'}
@@ -558,7 +556,7 @@ const PreviewModal = ({
                   )}
                   <div style={{
                     whiteSpace: 'pre-line',
-                    fontSize: element.fontSize || 12,
+                    fontSize: (element.fontSize || 12) * zoom,
                     flex: layout === 'horizontal' ? '1' : 'auto'
                   }}>
                     {fieldData}
@@ -590,15 +588,15 @@ const PreviewModal = ({
         };
 
         const companyContainerStyle = {
-          padding: '8px',
-          fontSize: element.fontSize || 12,
+          padding: `${8 * zoom}px`,
+          fontSize: (element.fontSize || 12) * zoom,
           lineHeight: element.lineHeight || '1.4',
           color: element.color || '#1e293b',
           fontFamily: element.fontFamily || 'Inter, sans-serif',
           textAlign: companyAlignment,
           display: companyLayout === 'horizontal' ? 'flex' : 'block',
           flexWrap: companyLayout === 'horizontal' ? 'wrap' : 'nowrap',
-          gap: companyLayout === 'horizontal' ? `${companySpacing}px` : '0'
+          gap: companyLayout === 'horizontal' ? `${companySpacing * zoom}px` : '0'
         };
 
         return (
@@ -609,9 +607,9 @@ const PreviewModal = ({
 
               const companyFieldStyle = companyLayout === 'horizontal' ? {
                 flex: '1',
-                minWidth: '120px'
+                minWidth: `${120 * zoom}px`
               } : {
-                marginBottom: index < companyFields.length - 1 ? `${companySpacing}px` : '0',
+                marginBottom: index < companyFields.length - 1 ? `${companySpacing * zoom}px` : '0',
                 display: 'flex',
                 alignItems: 'flex-start'
               };
@@ -621,11 +619,11 @@ const PreviewModal = ({
                   {showCompanyLabels && (
                     <div style={{
                       fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
-                      marginBottom: companyLayout === 'horizontal' ? '2px' : '0',
-                      marginRight: companyLayout === 'horizontal' ? '0' : '8px',
-                      fontSize: '11px',
+                      marginBottom: companyLayout === 'horizontal' ? `${2 * zoom}px` : '0',
+                      marginRight: companyLayout === 'horizontal' ? '0' : `${8 * zoom}px`,
+                      fontSize: `${11 * zoom}px`,
                       opacity: 0.8,
-                      minWidth: companyLayout === 'horizontal' ? 'auto' : '80px',
+                      minWidth: companyLayout === 'horizontal' ? 'auto' : `${80 * zoom}px`,
                       flexShrink: 0
                     }}>
                       {field === 'name' && 'Entreprise'}
@@ -641,7 +639,7 @@ const PreviewModal = ({
                   )}
                   <div style={{
                     whiteSpace: 'pre-line',
-                    fontSize: element.fontSize || 12,
+                    fontSize: (element.fontSize || 12) * zoom,
                     flex: companyLayout === 'horizontal' ? '1' : 'auto'
                   }}>
                     {fieldData}
@@ -660,10 +658,10 @@ const PreviewModal = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: element.padding || '8px',
+            padding: `${(element.padding || 8) * zoom}px`,
             backgroundColor: element.backgroundColor || 'transparent',
-            borderRadius: element.borderRadius || 0,
-            border: element.borderWidth ? `${element.borderWidth}px solid ${element.borderColor || '#e5e7eb'}` : 'none'
+            borderRadius: (element.borderRadius || 0) * zoom,
+            border: element.borderWidth ? `${element.borderWidth * zoom}px solid ${element.borderColor || '#e5e7eb'}` : 'none'
           }}>
             {element.imageUrl || element.src ? (
               <img
@@ -680,12 +678,12 @@ const PreviewModal = ({
                 width: '100%',
                 height: '100%',
                 backgroundColor: '#f0f0f0',
-                border: '2px dashed #ccc',
+                border: `${2 * zoom}px dashed #ccc`,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: '#666',
-                fontSize: element.fontSize || '12px'
+                fontSize: ((element.fontSize || 12) * zoom)
               }}>
                 🏢 Logo
               </div>
@@ -696,28 +694,28 @@ const PreviewModal = ({
       case 'order_number':
         return (
           <div style={{
-            padding: element.padding || '8px',
-            fontSize: element.fontSize || 14,
+            padding: `${(element.padding || 8) * zoom}px`,
+            fontSize: (element.fontSize || 14) * zoom,
             fontWeight: element.fontWeight || 'bold',
             color: element.color || '#333',
             fontFamily: element.fontFamily || 'Inter, sans-serif',
             textAlign: element.textAlign || 'left',
             backgroundColor: element.backgroundColor || 'transparent',
-            borderRadius: element.borderRadius || 0,
-            border: element.borderWidth ? `${element.borderWidth}px solid ${element.borderColor || '#e5e7eb'}` : 'none'
+            borderRadius: (element.borderRadius || 0) * zoom,
+            border: element.borderWidth ? `${element.borderWidth * zoom}px solid ${element.borderColor || '#e5e7eb'}` : 'none'
           }}>
             {element.showLabel !== false && (
               <div style={{
-                fontSize: (element.fontSize || 14) * 0.8,
+                fontSize: ((element.fontSize || 14) * 0.8) * zoom,
                 color: element.labelColor || '#666',
-                marginBottom: '2px',
+                marginBottom: `${2 * zoom}px`,
                 fontWeight: 'normal'
               }}>
                 {element.label || 'N° de commande'}:
               </div>
             )}
             <div style={{
-              fontSize: element.fontSize || 14,
+              fontSize: (element.fontSize || 14) * zoom,
               fontWeight: element.fontWeight || 'bold'
             }}>
               {element.prefix || 'CMD-'}{element.orderNumber || '2025-00123'}
@@ -728,14 +726,14 @@ const PreviewModal = ({
       case 'document_type':
         return (
           <div style={{
-            padding: element.padding || '8px',
-            fontSize: element.fontSize || '18px',
+            padding: `${(element.padding || 8) * zoom}px`,
+            fontSize: `${(element.fontSize || 18) * zoom}px`,
             fontWeight: element.fontWeight || 'bold',
             color: element.color || '#1e293b',
             fontFamily: element.fontFamily || 'Inter, sans-serif',
             textAlign: element.textAlign || 'center',
             backgroundColor: element.backgroundColor || 'transparent',
-            borderRadius: element.borderRadius || 0
+            borderRadius: (element.borderRadius || 0) * zoom
           }}>
             {element.documentType === 'invoice' ? 'FACTURE' :
              element.documentType === 'quote' ? 'DEVIS' :
@@ -749,17 +747,17 @@ const PreviewModal = ({
         return (
           <div style={{
             width: '100%',
-            height: element.height || '100%',
+            height: (element.height || 20) * zoom,
             backgroundColor: element.backgroundColor || '#e5e7eb',
-            borderRadius: element.borderRadius || '10px',
+            borderRadius: (element.borderRadius || 10) * zoom,
             overflow: 'hidden',
-            border: element.borderWidth ? `${element.borderWidth}px solid ${element.borderColor || '#d1d5db'}` : 'none'
+            border: element.borderWidth ? `${element.borderWidth * zoom}px solid ${element.borderColor || '#d1d5db'}` : 'none'
           }}>
             <div style={{
               width: `${Math.min(100, Math.max(0, element.progressValue || 75))}%`,
               height: '100%',
               backgroundColor: element.progressColor || '#3b82f6',
-              borderRadius: element.borderRadius || '10px',
+              borderRadius: (element.borderRadius || 10) * zoom,
               transition: element.animate !== false ? 'width 0.3s ease' : 'none'
             }} />
           </div>
