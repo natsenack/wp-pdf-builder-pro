@@ -105,10 +105,8 @@ $config = new TempConfig();
 $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 
 if ((isset($_POST['submit']) || isset($_POST['submit_roles']) || isset($_POST['submit_notifications']) || isset($_POST['submit_templates'])) && isset($_POST['pdf_builder_settings_nonce'])) {
-    error_log('PDF Builder: Bouton submit cliqué, nonce présent: ' . $_POST['pdf_builder_settings_nonce']);
 
     if (wp_verify_nonce($_POST['pdf_builder_settings_nonce'], 'pdf_builder_settings')) {
-        error_log('PDF Builder: Nonce valide, traitement des paramètres');
 
         $settings = [
             'debug_mode' => isset($_POST['debug_mode']),
@@ -202,9 +200,6 @@ if ((isset($_POST['submit']) || isset($_POST['submit_roles']) || isset($_POST['s
             'notification_log_level' => sanitize_text_field($_POST['notification_log_level'])
         ];
 
-        error_log('PDF Builder: Paramètres canvas - borders_enabled: ' . ($settings['canvas_element_borders_enabled'] ? 'true' : 'false'));
-        error_log('PDF Builder: Paramètres canvas - border_spacing: ' . $settings['canvas_border_spacing']);
-
         $config->set_multiple($settings);
 
         // Sauvegarde des informations entreprise
@@ -229,7 +224,6 @@ if ((isset($_POST['submit']) || isset($_POST['submit_roles']) || isset($_POST['s
                 $allowed_roles = ['administrator']; // Rôle par défaut
             }
             update_option('pdf_builder_allowed_roles', $allowed_roles);
-            error_log('PDF Builder: Rôles autorisés sauvegardés: ' . implode(', ', $allowed_roles));
         }
 
         // Traitement des mappings template par statut de commande
@@ -242,12 +236,9 @@ if ((isset($_POST['submit']) || isset($_POST['submit_roles']) || isset($_POST['s
                 }
             }
             update_option('pdf_builder_order_status_templates', $template_mappings);
-            error_log('PDF Builder: Mappings template par statut sauvegardés: ' . print_r($template_mappings, true));
         }
 
         // Vérification que les options sont bien sauvegardées
-        $saved_spacing = get_option('canvas_border_spacing', 'NOT_SET');
-        error_log('PDF Builder: Vérification sauvegarde - canvas_border_spacing: ' . $saved_spacing);
 
         if ($isAjax) {
             // Réponse AJAX - sortir immédiatement
@@ -2009,7 +2000,7 @@ window.addEventListener('load', function() {
         </div>
 
         <p class="submit">
-            <input type="submit" name="submit" id="submit" class="button button-primary" value="<?php _e('Enregistrer les paramètres', 'pdf-builder-pro'); ?>" onclick="console.log('Submit button clicked - type:', this.type, 'name:', this.name);">
+            <input type="submit" name="submit" id="submit" class="button button-primary" value="<?php _e('Enregistrer les paramètres', 'pdf-builder-pro'); ?>">
         </p>
     </form>
 </div>
@@ -2017,47 +2008,27 @@ window.addEventListener('load', function() {
 <!-- Debug script to check form submission -->
 <script type="text/javascript">
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Settings page JavaScript loaded');
-    
     // Définir les nonces en variables JavaScript (globales)
     window.pdfBuilderSettingsNonce = '<?php echo wp_create_nonce('pdf_builder_settings'); ?>';
     window.pdfBuilderMaintenanceNonce = '<?php echo wp_create_nonce('pdf_builder_maintenance'); ?>';
     
-    // Écouter tous les événements de soumission de formulaire
-    document.addEventListener('submit', function(e) {
-        console.log('Form submit event detected on:', e.target);
-        console.log('Form action:', e.target.action);
-        console.log('Form method:', e.target.method);
-    });
-    
     // Écouter les clics sur le bouton submit
     var submitBtn = document.getElementById('submit');
     if (submitBtn) {
-        console.log('Submit button found:', submitBtn);
         submitBtn.addEventListener('click', function(e) {
             e.preventDefault(); // Empêcher la soumission normale
-            console.log('Submit button click event:', e);
-            console.log('Default prevented?', e.defaultPrevented);
             
             // Soumission AJAX
             submitFormAjax();
         });
     } else {
-        console.error('Submit button not found!');
+        // Bouton submit non trouvé - ne rien faire
     }
-    
-    // Vérifier le formulaire
-    var form = document.querySelector('form[method="post"]');
     if (form) {
-        console.log('Form found:', form);
-        console.log('Form action:', form.action);
-        console.log('Form method:', form.method);
-        
         // Ajouter un écouteur d'événement submit sur le formulaire
         form.addEventListener('submit', function(e) {
-            console.log('FORM SUBMIT EVENT TRIGGERED!');
-            console.log('Submit event:', e);
-            console.log('Default prevented:', e.defaultPrevented);
+            e.preventDefault();
+            submitFormAjax();
         });
     } else {
         console.error('Form not found!');
@@ -2066,7 +2037,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Fonction pour soumettre le formulaire en AJAX
     function submitFormAjax() {
         if (!form) {
-            console.error('No form found for AJAX submission');
             return;
         }
         
@@ -2076,8 +2046,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Afficher un indicateur de chargement
         submitBtn.disabled = true;
         submitBtn.value = 'Enregistrement...';
-        
-        console.log('Submitting form via AJAX...');
         
         // Faire la requête AJAX vers l'endpoint WordPress
         fetch(ajaxurl + '?action=pdf_builder_save_settings', {
@@ -2091,11 +2059,8 @@ document.addEventListener('DOMContentLoaded', function() {
             })
         })
         .then(function(response) {
-            console.log('AJAX response received:', response);
             return response.text();
         })
-        .then(function(data) {
-            console.log('AJAX response data:', data);
             
             // Réactiver le bouton
             submitBtn.disabled = false;
@@ -2127,7 +2092,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         })
         .catch(function(error) {
-            console.error('AJAX error:', error);
             submitBtn.disabled = false;
             submitBtn.value = 'Enregistrer les paramètres';
             showNotification('Erreur de connexion.', 'error');
@@ -2136,8 +2100,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Fonction pour rafraîchir les paramètres globaux en temps réel
     function refreshGlobalSettings() {
-        console.log('Rafraîchissement des paramètres globaux...');
-        
         // Faire un appel AJAX pour récupérer les paramètres mis à jour
         fetch(ajaxurl + '?action=pdf_builder_get_settings', {
             method: 'GET',
@@ -2152,7 +2114,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.success && data.data) {
                 // Mettre à jour la variable globale JavaScript
                 window.pdfBuilderCanvasSettings = data.data;
-                console.log('Paramètres globaux mis à jour:', window.pdfBuilderCanvasSettings);
                 
                 // Déclencher un événement personnalisé pour notifier les composants React
                 var event = new CustomEvent('pdfBuilderSettingsUpdated', {
@@ -2162,12 +2123,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 showNotification('Paramètres appliqués en temps réel !', 'success');
             } else {
-                console.warn('Erreur lors de la récupération des paramètres:', data);
                 showNotification('Paramètres sauvegardés, mais rafraîchissement échoué.', 'error');
             }
         })
         .catch(function(error) {
-            console.error('Erreur AJAX lors du rafraîchissement:', error);
             showNotification('Paramètres sauvegardés, mais rafraîchissement échoué.', 'error');
         });
     }

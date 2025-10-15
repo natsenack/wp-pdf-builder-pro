@@ -261,7 +261,6 @@ export const useGlobalSettings = () => {
   // Écouter les mises à jour de paramètres en temps réel
   useEffect(() => {
     const handleSettingsUpdate = (event) => {
-      console.log('Réception de la mise à jour des paramètres:', event.detail);
       refreshSettings();
     };
 
