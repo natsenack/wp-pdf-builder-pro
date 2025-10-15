@@ -873,15 +873,18 @@ class PDF_Builder_WooCommerce_Integration {
             } elseif (!empty($elements)) {
                 // Aperçu de template depuis l'éditeur (éléments JSON)
                 error_log('🎨 PDF BUILDER - ajax_unified_preview: Mode template éditeur');
+                error_log('🎨 PDF BUILDER - ajax_unified_preview: Raw elements: ' . substr($elements, 0, 200) . '...');
 
                 // Décoder les éléments
                 $decoded_elements = json_decode($elements, true);
                 if (json_last_error() !== JSON_ERROR_NONE) {
                     error_log('❌ PDF BUILDER - ajax_unified_preview: JSON éléments invalide: ' . json_last_error_msg());
+                    error_log('❌ PDF BUILDER - ajax_unified_preview: JSON error code: ' . json_last_error());
                     wp_send_json_error('Données du template invalides');
                 }
 
                 error_log('✅ PDF BUILDER - ajax_unified_preview: ' . count($decoded_elements) . ' éléments décodés');
+                error_log('✅ PDF BUILDER - ajax_unified_preview: Premier élément: ' . json_encode($decoded_elements[0] ?? 'N/A'));
 
                 // Générer l'aperçu avec les éléments du template
                 $result = $generator->generate($decoded_elements, ['title' => 'Aperçu Template - ' . date('Y-m-d H:i:s')]);
