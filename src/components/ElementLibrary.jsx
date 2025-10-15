@@ -42,7 +42,7 @@ const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
       defaultProperties: {
         showHeaders: true,
         showBorders: false,
-        fields: ['name', 'email', 'phone', 'address', 'company', 'vat'],
+        fields: ['name', 'email', 'phone', 'address', 'company', 'vat', 'siret'],
         layout: 'vertical', // 'vertical' ou 'horizontal'
         showLabels: true,
         labelStyle: 'bold', // 'normal', 'bold', 'uppercase'
@@ -74,7 +74,7 @@ const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
       defaultProperties: {
         showHeaders: false,
         showBorders: false,
-        fields: ['name', 'address', 'phone', 'email', 'website', 'vat'],
+        fields: ['name', 'address', 'phone', 'email', 'website', 'vat', 'rcs', 'siret'],
         layout: 'vertical',
         showLabels: false,
         labelStyle: 'normal',

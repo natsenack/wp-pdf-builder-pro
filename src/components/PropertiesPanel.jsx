@@ -60,6 +60,13 @@ const ELEMENT_PROPERTY_PROFILES = {
     content: ['customer_fields'],
     effects: ['opacity', 'shadows', 'filters']
   },
+  // Informations entreprise
+  company_info: {
+    appearance: ['colors', 'font', 'borders', 'effects'],
+    layout: ['position', 'dimensions', 'transform', 'layers'],
+    content: ['company_fields'],
+    effects: ['opacity', 'shadows', 'filters']
+  },
   // Type de document
   document_type: {
     appearance: ['colors', 'font', 'borders', 'effects'],
@@ -1150,14 +1157,15 @@ const PropertiesPanel = React.memo(({
                       { key: 'phone', label: 'Téléphone' },
                       { key: 'address', label: 'Adresse' },
                       { key: 'company', label: 'Société' },
-                      { key: 'vat', label: 'N° TVA' }
+                      { key: 'vat', label: 'N° TVA' },
+                      { key: 'siret', label: 'SIRET' }
                     ].map(({ key, label }) => (
                       <label key={key} className="checkbox-item">
                         <input
                           type="checkbox"
                           checked={localProperties.fields?.includes(key) ?? true}
                           onChange={(e) => {
-                            const currentFields = localProperties.fields || ['name', 'email', 'phone', 'address', 'company', 'vat'];
+                            const currentFields = localProperties.fields || ['name', 'email', 'phone', 'address', 'company', 'vat', 'siret'];
                             const newFields = e.target.checked
                               ? [...currentFields, key]
                               : currentFields.filter(f => f !== key);
@@ -1187,6 +1195,96 @@ const PropertiesPanel = React.memo(({
                     <input
                       type="checkbox"
                       checked={localProperties.showLabels ?? true}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'showLabels', e.target.checked)}
+                    />
+                    <span className="toggle-slider"></span>
+                  </label>
+                </div>
+
+                {localProperties.showLabels && (
+                  <div className="property-row">
+                    <label>Style des étiquettes:</label>
+                    <select
+                      value={localProperties.labelStyle || 'normal'}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'labelStyle', e.target.value)}
+                    >
+                      <option value="normal">Normal</option>
+                      <option value="bold">Gras</option>
+                      <option value="uppercase">Majuscules</option>
+                    </select>
+                  </div>
+                )}
+
+                <div className="property-row">
+                  <label>Espacement:</label>
+                  <div className="slider-container">
+                    <input
+                      type="range"
+                      min="0"
+                      max="20"
+                      value={localProperties.spacing || 8}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'spacing', safeParseInt(e.target.value, 10))}
+                      className="slider"
+                    />
+                    <span className="slider-value">{localProperties.spacing || 8}px</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Contrôles informations entreprise (uniquement pour les éléments company_info) */}
+            {allowedControls.includes('company_fields') && selectedElement.type === 'company_info' && (
+              <div className="properties-group">
+                <h4>🏢 Informations Entreprise</h4>
+
+                <div className="property-row">
+                  <label>Champs à afficher:</label>
+                  <div className="checkbox-group">
+                    {[
+                      { key: 'name', label: 'Nom' },
+                      { key: 'address', label: 'Adresse' },
+                      { key: 'phone', label: 'Téléphone' },
+                      { key: 'email', label: 'Email' },
+                      { key: 'website', label: 'Site web' },
+                      { key: 'vat', label: 'N° TVA' },
+                      { key: 'rcs', label: 'RCS' },
+                      { key: 'siret', label: 'SIRET' }
+                    ].map(({ key, label }) => (
+                      <label key={key} className="checkbox-item">
+                        <input
+                          type="checkbox"
+                          checked={localProperties.fields?.includes(key) ?? true}
+                          onChange={(e) => {
+                            const currentFields = localProperties.fields || ['name', 'address', 'phone', 'email', 'website', 'vat', 'rcs', 'siret'];
+                            const newFields = e.target.checked
+                              ? [...currentFields, key]
+                              : currentFields.filter(f => f !== key);
+                            handlePropertyChange(selectedElement.id, 'fields', newFields);
+                          }}
+                        />
+                        {label}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="property-row">
+                  <label>Disposition:</label>
+                  <select
+                    value={localProperties.layout || 'vertical'}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'layout', e.target.value)}
+                  >
+                    <option value="vertical">Verticale</option>
+                    <option value="horizontal">Horizontale</option>
+                  </select>
+                </div>
+
+                <div className="property-row">
+                  <label>Afficher les étiquettes:</label>
+                  <label className="toggle">
+                    <input
+                      type="checkbox"
+                      checked={localProperties.showLabels ?? false}
                       onChange={(e) => handlePropertyChange(selectedElement.id, 'showLabels', e.target.checked)}
                     />
                     <span className="toggle-slider"></span>
