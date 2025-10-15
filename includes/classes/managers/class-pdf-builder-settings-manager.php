@@ -73,6 +73,9 @@ class PDF_Builder_Settings_Manager {
         register_setting('pdf_builder_settings', 'pdf_builder_company_address');
         register_setting('pdf_builder_settings', 'pdf_builder_company_phone');
         register_setting('pdf_builder_settings', 'pdf_builder_company_email');
+        register_setting('pdf_builder_settings', 'pdf_builder_company_vat');
+        register_setting('pdf_builder_settings', 'pdf_builder_company_rcs');
+        register_setting('pdf_builder_settings', 'pdf_builder_company_siret');
 
         // Paramètres de rendu canvas
         register_setting('pdf_builder_canvas_render', 'pdf_builder_canvas_dpi');
@@ -96,11 +99,17 @@ class PDF_Builder_Settings_Manager {
         $company_address = sanitize_textarea_field($_POST['company_address'] ?? '');
         $company_phone = sanitize_text_field($_POST['company_phone'] ?? '');
         $company_email = sanitize_email($_POST['company_email'] ?? '');
+        $company_vat = sanitize_text_field($_POST['company_vat'] ?? '');
+        $company_rcs = sanitize_text_field($_POST['company_rcs'] ?? '');
+        $company_siret = sanitize_text_field($_POST['company_siret'] ?? '');
 
         update_option('pdf_builder_company_name', $company_name);
         update_option('pdf_builder_company_address', $company_address);
         update_option('pdf_builder_company_phone', $company_phone);
         update_option('pdf_builder_company_email', $company_email);
+        update_option('pdf_builder_company_vat', $company_vat);
+        update_option('pdf_builder_company_rcs', $company_rcs);
+        update_option('pdf_builder_company_siret', $company_siret);
 
         // Templates par statut de commande
         $status_templates = [];

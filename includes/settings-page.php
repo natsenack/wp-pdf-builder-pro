@@ -494,6 +494,61 @@ window.addEventListener('load', function() {
                         </td>
                     </tr>
                 </table>
+
+                <h3><?php _e('Informations Entreprise', 'pdf-builder-pro'); ?></h3>
+                <p class="description"><?php _e('Configurez les informations légales de votre entreprise pour les documents PDF.', 'pdf-builder-pro'); ?></p>
+
+                <table class="form-table">
+                    <tr>
+                        <th scope="row"><?php _e('Nom de l\'entreprise', 'pdf-builder-pro'); ?></th>
+                        <td>
+                            <input type="text" name="company_name" value="<?php echo esc_attr(get_option('pdf_builder_company_name', '')); ?>" class="regular-text">
+                            <p class="description"><?php _e('Le nom officiel de votre entreprise', 'pdf-builder-pro'); ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php _e('Adresse', 'pdf-builder-pro'); ?></th>
+                        <td>
+                            <textarea name="company_address" rows="3" class="large-text"><?php echo esc_textarea(get_option('pdf_builder_company_address', '')); ?></textarea>
+                            <p class="description"><?php _e('Adresse complète de l\'entreprise', 'pdf-builder-pro'); ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php _e('Téléphone', 'pdf-builder-pro'); ?></th>
+                        <td>
+                            <input type="text" name="company_phone" value="<?php echo esc_attr(get_option('pdf_builder_company_phone', '')); ?>" class="regular-text">
+                            <p class="description"><?php _e('Numéro de téléphone de l\'entreprise', 'pdf-builder-pro'); ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php _e('Email', 'pdf-builder-pro'); ?></th>
+                        <td>
+                            <input type="email" name="company_email" value="<?php echo esc_attr(get_option('pdf_builder_company_email', '')); ?>" class="regular-text">
+                            <p class="description"><?php _e('Adresse email de contact de l\'entreprise', 'pdf-builder-pro'); ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php _e('Numéro TVA', 'pdf-builder-pro'); ?></th>
+                        <td>
+                            <input type="text" name="company_vat" value="<?php echo esc_attr(get_option('pdf_builder_company_vat', '')); ?>" class="regular-text" placeholder="FR12345678901">
+                            <p class="description"><?php _e('Numéro de TVA intracommunautaire (ex: FR12345678901)', 'pdf-builder-pro'); ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php _e('RCS', 'pdf-builder-pro'); ?></th>
+                        <td>
+                            <input type="text" name="company_rcs" value="<?php echo esc_attr(get_option('pdf_builder_company_rcs', '')); ?>" class="regular-text" placeholder="Paris B 123 456 789">
+                            <p class="description"><?php _e('Numéro d\'immatriculation au Registre du Commerce et des Sociétés', 'pdf-builder-pro'); ?></p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php _e('SIRET', 'pdf-builder-pro'); ?></th>
+                        <td>
+                            <input type="text" name="company_siret" value="<?php echo esc_attr(get_option('pdf_builder_company_siret', '')); ?>" class="regular-text" placeholder="123 456 789 00012">
+                            <p class="description"><?php _e('Numéro SIRET de l\'entreprise (14 chiffres)', 'pdf-builder-pro'); ?></p>
+                        </td>
+                    </tr>
+                </table>
             </div>
 
             <!-- Onglet Licence -->
