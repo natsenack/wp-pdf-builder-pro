@@ -817,7 +817,8 @@ export const useCanvasState = ({
 
           // Vérifier le type de valeur
           if (validatedValue === null || validatedValue === undefined) {
-            cleaned[key] = validatedValue;
+            // Ne pas inclure les propriétés null/undefined
+            return;
           } else if (typeof validatedValue === 'string' || typeof validatedValue === 'number' || typeof validatedValue === 'boolean') {
             cleaned[key] = validatedValue;
           } else if (Array.isArray(validatedValue)) {
@@ -879,12 +880,16 @@ export const useCanvasState = ({
       // Nettoyer tous les éléments avec protection contre les erreurs
       let cleanedElements = [];
       try {
-        cleanedElements = elements.map(cleanElementForSerialization);
+        cleanedElements = elements
+          .filter(element => element && typeof element === 'object' && element.id && element.type) // Filtrer les éléments invalides
+          .map(cleanElementForSerialization)
+          .filter(element => element && element.id && element.type); // Filtrer après nettoyage
 
         // Test de sérialisation de tous les éléments
         JSON.stringify(cleanedElements);
       } catch (e) {
         console.error('Erreur lors du nettoyage des éléments:', e);
+        console.error('Éléments originaux qui ont causé l\'erreur:', elements);
         // En cas d'erreur, utiliser un tableau vide pour éviter les crashes
         cleanedElements = [];
       }
@@ -951,6 +956,9 @@ export const useCanvasState = ({
           canvasWidth: testParse.canvasWidth,
           canvasHeight: testParse.canvasHeight
         });
+
+        // Log des données brutes envoyées au serveur pour debug
+        console.log('PDF Builder SAVE - Données JSON brutes envoyées au serveur (premiers 500 chars):', jsonString.substring(0, 500));
 
       } catch (jsonError) {
         console.error('Erreur de validation JSON côté client:', jsonError);

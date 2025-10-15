@@ -98,10 +98,14 @@ class PDF_Builder_Template_Manager {
         $decoded_test = json_decode($template_data, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
             error_log('PDF Builder: JSON decode error: ' . json_last_error_msg());
-            error_log('PDF Builder: Raw template data that failed: ' . substr($template_data, 0, 1000));
+            error_log('PDF Builder: Raw template data that failed (first 2000 chars): ' . substr($template_data, 0, 2000));
             error_log('PDF Builder: Template data length: ' . strlen($template_data));
+            error_log('PDF Builder: Last JSON error code: ' . json_last_error());
             wp_send_json_error('Données JSON invalides: ' . json_last_error_msg());
         }
+
+        // Log des données décodées pour debug
+        error_log('PDF Builder: Successfully decoded JSON. Element count: ' . (isset($decoded_test['elements']) ? count($decoded_test['elements']) : 'N/A'));
 
         if (empty($template_data) || empty($template_name)) {
             error_log('PDF Builder: Missing template data or name');
