@@ -1285,6 +1285,7 @@ window.addEventListener('load', function() {
                 </div>
 
                 <!-- Sous-onglet Grille & Aimants -->
+                <?php $canvas_settings = get_option('pdf_builder_settings', []); ?>
                 <div id="canvas-grid" class="sub-tab-content">
                     <h3><?php _e('Paramètres de Grille et Aimantation', 'pdf-builder-pro'); ?></h3>
 
@@ -1294,7 +1295,7 @@ window.addEventListener('load', function() {
                             <td>
                                 <fieldset>
                                     <label for="show_grid">
-                                        <input name="show_grid" type="checkbox" id="show_grid" value="1" <?php checked(get_option('pdf_builder_show_grid', true)); ?>>
+                                        <input name="show_grid" type="checkbox" id="show_grid" value="1" <?php checked($canvas_settings['show_grid'] ?? true); ?>>
                                         <?php _e('Afficher la grille d\'alignement dans l\'éditeur', 'pdf-builder-pro'); ?>
                                     </label>
                                 </fieldset>
@@ -1302,16 +1303,16 @@ window.addEventListener('load', function() {
                                 <div style="display: flex; gap: 20px; align-items: center;">
                                     <div>
                                         <label for="grid_size"><?php _e('Taille de la grille:', 'pdf-builder-pro'); ?></label>
-                                        <input name="grid_size" type="number" id="grid_size" value="<?php echo esc_attr(get_option('pdf_builder_grid_size', 10)); ?>" class="small-text" min="5" max="50" step="5"> px
+                                        <input name="grid_size" type="number" id="grid_size" value="<?php echo esc_attr($canvas_settings['grid_size'] ?? 10); ?>" class="small-text" min="5" max="50" step="5"> px
                                     </div>
                                     <div>
                                         <label for="grid_color"><?php _e('Couleur:', 'pdf-builder-pro'); ?></label>
-                                        <input name="grid_color" type="color" id="grid_color" value="<?php echo esc_attr(get_option('pdf_builder_grid_color', '#e0e0e0')); ?>">
+                                        <input name="grid_color" type="color" id="grid_color" value="<?php echo esc_attr($canvas_settings['grid_color'] ?? '#e0e0e0'); ?>">
                                     </div>
                                     <div>
                                         <label for="grid_opacity"><?php _e('Opacité:', 'pdf-builder-pro'); ?></label>
-                                        <input name="grid_opacity" type="range" id="grid_opacity" min="10" max="100" value="<?php echo esc_attr(get_option('pdf_builder_grid_opacity', 30)); ?>" style="width: 80px;">
-                                        <span id="grid_opacity_value"><?php echo esc_attr(get_option('pdf_builder_grid_opacity', 30)); ?>%</span>
+                                        <input name="grid_opacity" type="range" id="grid_opacity" min="10" max="100" value="<?php echo esc_attr($canvas_settings['grid_opacity'] ?? 30); ?>" style="width: 80px;">
+                                        <span id="grid_opacity_value"><?php echo esc_attr($canvas_settings['grid_opacity'] ?? 30); ?>%</span>
                                     </div>
                                 </div>
                             </td>

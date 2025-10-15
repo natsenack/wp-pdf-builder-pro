@@ -674,7 +674,8 @@ export const PDFCanvasEditor = ({ options }) => {
                         linear-gradient(to bottom, ${globalSettings.settings.gridColor}${Math.round(globalSettings.settings.gridOpacity * 2.55).toString(16).padStart(2, '0')} 1px, transparent 1px)
                       `,
                       backgroundSize: `${globalSettings.settings.gridSize}px ${globalSettings.settings.gridSize}px`,
-                      pointerEvents: 'none'
+                      pointerEvents: 'none',
+                      zIndex: 1
                     }}
                   />
                 )}
