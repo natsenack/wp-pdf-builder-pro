@@ -61,6 +61,12 @@ function pdf_builder_init() {
         return;
     }
 
+    // Charger le fichier de test admin
+    $test_path = plugin_dir_path(__FILE__) . 'admin-properties-test.php';
+    if (file_exists($test_path)) {
+        require_once $test_path;
+    }
+
     // Charger le bootstrap
     $bootstrap_path = plugin_dir_path(__FILE__) . 'bootstrap.php';
     if (file_exists($bootstrap_path)) {

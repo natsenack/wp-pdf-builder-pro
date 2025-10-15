@@ -110,7 +110,7 @@ function pdf_builder_load_bootstrap() {
         add_action('wp_ajax_pdf_builder_preview_order_pdf', 'pdf_builder_ajax_preview_order_pdf_fallback', 1);
         add_action('wp_ajax_pdf_builder_save_order_canvas', 'pdf_builder_ajax_save_order_canvas_fallback', 1);
         add_action('wp_ajax_pdf_builder_get_fresh_nonce', 'pdf_builder_ajax_get_fresh_nonce', 1);
-        add_action('wp_ajax_pdf_builder_validate_preview', 'pdf_builder_ajax_validate_preview', 1);
+        add_action('wp_ajax_pdf_builder_validate_preview', 'pdf_builder_ajax_validate_preview');
 
         // Initialiser l'interface d'administration
         if (is_admin() && class_exists('PDF_Builder_Admin')) {

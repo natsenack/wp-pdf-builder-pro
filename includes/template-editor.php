@@ -54,25 +54,10 @@ if (!$is_new && $template_id > 0) {
                 error_log("PDF Builder LOAD - Elements count in decoded data: " . (isset($decoded_data['elements']) ? count($decoded_data['elements']) : 'NO ELEMENTS KEY'));
 
                 // Extraire les éléments initiaux depuis la structure du template
-                if (isset($decoded_data['pages']) && is_array($decoded_data['pages']) && !empty($decoded_data['pages'])) {
-                    $first_page = $decoded_data['pages'][0];
-                    if (isset($first_page['elements']) && is_array($first_page['elements'])) {
-                        $initial_elements = $first_page['elements'];
-                        error_log("PDF Builder LOAD - Elements loaded from pages[0].elements: " . count($initial_elements));
-
-                        // DEBUG: Log detailed element properties for first element
-                        if (!empty($initial_elements)) {
-                            $first_elem = $initial_elements[0];
-                            error_log("PDF Builder LOAD - First element ID: " . ($first_elem['id'] ?? 'NO ID'));
-                            error_log("PDF Builder LOAD - First element type: " . ($first_elem['type'] ?? 'NO TYPE'));
-                            error_log("PDF Builder LOAD - First element backgroundColor: " . ($first_elem['backgroundColor'] ?? 'NO BGCOLOR'));
-                            error_log("PDF Builder LOAD - First element all properties: " . implode(', ', array_keys($first_elem)));
-                        }
-                    }
-                } elseif (isset($decoded_data['elements']) && is_array($decoded_data['elements'])) {
-                    // Fallback pour l'ancienne structure
+                // Structure actuelle : { elements: [...], canvasWidth, canvasHeight, version }
+                if (isset($decoded_data['elements']) && is_array($decoded_data['elements'])) {
                     $initial_elements = $decoded_data['elements'];
-                    error_log("PDF Builder LOAD - Elements loaded from elements (fallback): " . count($initial_elements));
+                    error_log("PDF Builder LOAD - Elements loaded from elements: " . count($initial_elements));
 
                     // DEBUG: Log des propriétés des éléments
                     foreach ($initial_elements as $index => $element) {
@@ -85,6 +70,13 @@ if (!$is_new && $template_id > 0) {
                                 error_log("PDF Builder LOAD - Element $index backgroundColor: " . $element['backgroundColor']);
                             }
                         }
+                    }
+                } elseif (isset($decoded_data['pages']) && is_array($decoded_data['pages']) && !empty($decoded_data['pages'])) {
+                    // Fallback pour l'ancienne structure (si elle existe)
+                    $first_page = $decoded_data['pages'][0];
+                    if (isset($first_page['elements']) && is_array($first_page['elements'])) {
+                        $initial_elements = $first_page['elements'];
+                        error_log("PDF Builder LOAD - Elements loaded from pages[0].elements (legacy): " . count($initial_elements));
                     }
                 } else {
                     error_log("PDF Builder LOAD - No elements found in any structure");
