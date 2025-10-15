@@ -2081,7 +2081,7 @@ const PropertiesPanel = React.memo(({
                 <label className="toggle">
                   <input
                     type="checkbox"
-                    checked={localProperties.showBorders ?? false}
+                    checked={localProperties.showBorders ?? true}
                     onChange={(e) => handlePropertyChange(selectedElement.id, 'showBorders', e.target.checked)}
                   />
                   <span className="toggle-slider"></span>

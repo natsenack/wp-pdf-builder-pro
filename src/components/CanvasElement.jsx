@@ -896,7 +896,7 @@ export const CanvasElement = ({
               {(element.showHeaders !== false) && (
                 <div style={{
                   display: 'flex',
-                  backgroundColor: tableStyles.headerBg,
+                  background: tableStyles.headerBg,
                   borderBottom: `${tableStyles.borderWidth}px solid ${tableStyles.headerBorder}`,
                   fontWeight: tableStyles.headerFontWeight,
                   color: tableStyles.headerTextColor,
