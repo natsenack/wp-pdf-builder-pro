@@ -9,6 +9,8 @@ export const useGlobalSettings = () => {
     defaultOrientation: 'portrait',
     canvasBackgroundColor: '#ffffff',
     canvasShowTransparency: false,
+    containerBackgroundColor: '#f8f9fa',
+    containerShowTransparency: false,
 
     // Marges de sécurité
     marginTop: 10,
@@ -148,6 +150,8 @@ export const useGlobalSettings = () => {
         defaultOrientation: wpSettings.default_orientation || prev.defaultOrientation,
         canvasBackgroundColor: wpSettings.canvas_background_color || prev.canvasBackgroundColor,
         canvasShowTransparency: wpSettings.canvas_show_transparency !== undefined ? wpSettings.canvas_show_transparency : prev.canvasShowTransparency,
+        containerBackgroundColor: wpSettings.container_background_color || prev.containerBackgroundColor,
+        containerShowTransparency: wpSettings.container_show_transparency !== undefined ? wpSettings.container_show_transparency : prev.containerShowTransparency,
 
         // Marges de sécurité
         marginTop: wpSettings.margin_top || prev.marginTop,

@@ -598,7 +598,21 @@ export const PDFCanvasEditor = ({ options }) => {
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
             onDoubleClick={handleDoubleClick}
-            style={{ cursor: getCursorStyle() }}
+            style={{
+              cursor: getCursorStyle(),
+              backgroundColor: globalSettings.settings.containerShowTransparency
+                ? 'transparent'
+                : (globalSettings.settings.containerBackgroundColor || '#f8f9fa'),
+              backgroundImage: globalSettings.settings.containerShowTransparency
+                ? `linear-gradient(45deg, #f0f0f0 25%, transparent 25%), linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f0f0f0 75%), linear-gradient(-45deg, transparent 75%, #f0f0f0 75%)`
+                : 'none',
+              backgroundSize: globalSettings.settings.containerShowTransparency
+                ? '20px 20px'
+                : 'auto',
+              backgroundPosition: globalSettings.settings.containerShowTransparency
+                ? '0 0, 0 10px, 10px -10px, -10px 0px'
+                : '0 0'
+            }}
           >
             <div
               className="canvas-zoom-wrapper"

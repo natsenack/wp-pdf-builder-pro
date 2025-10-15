@@ -138,6 +138,8 @@ if ((isset($_POST['submit']) || isset($_POST['submit_roles']) || isset($_POST['s
             'default_canvas_unit' => isset($_POST['default_canvas_unit']) ? sanitize_text_field($_POST['default_canvas_unit']) : 'mm',
             'canvas_background_color' => isset($_POST['canvas_background_color']) ? sanitize_text_field($_POST['canvas_background_color']) : '#ffffff',
             'canvas_show_transparency' => isset($_POST['canvas_show_transparency']),
+            'container_background_color' => isset($_POST['container_background_color']) ? sanitize_text_field($_POST['container_background_color']) : '#f8f9fa',
+            'container_show_transparency' => isset($_POST['container_show_transparency']),
             'show_margins' => isset($_POST['show_margins']),
             'margin_top' => isset($_POST['margin_top']) ? intval($_POST['margin_top']) : 10,
             'margin_right' => isset($_POST['margin_right']) ? intval($_POST['margin_right']) : 10,
@@ -1215,6 +1217,24 @@ window.addEventListener('load', function() {
                                 <fieldset>
                                     <label for="canvas_show_transparency">
                                         <input name="canvas_show_transparency" type="checkbox" id="canvas_show_transparency" value="1" <?php checked(get_option('pdf_builder_canvas_show_transparency', false)); ?>>
+                                        <?php _e('Afficher la transparence (motif de damier)', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?php _e('Fond du Container', 'pdf-builder-pro'); ?></th>
+                            <td>
+                                <fieldset>
+                                    <label for="container_background_color">
+                                        <input name="container_background_color" type="color" id="container_background_color" value="<?php echo esc_attr(get_option('pdf_builder_container_background_color', '#f8f9fa')); ?>">
+                                        <?php _e('Couleur de fond du container', 'pdf-builder-pro'); ?>
+                                    </label>
+                                </fieldset>
+                                <br>
+                                <fieldset>
+                                    <label for="container_show_transparency">
+                                        <input name="container_show_transparency" type="checkbox" id="container_show_transparency" value="1" <?php checked(get_option('pdf_builder_container_show_transparency', false)); ?>>
                                         <?php _e('Afficher la transparence (motif de damier)', 'pdf-builder-pro'); ?>
                                     </label>
                                 </fieldset>
