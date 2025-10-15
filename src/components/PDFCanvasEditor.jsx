@@ -617,7 +617,19 @@ export const PDFCanvasEditor = ({ options }) => {
                 style={{
                   width: canvasState.canvasWidth,
                   height: canvasState.canvasHeight,
-                  position: 'relative'
+                  position: 'relative',
+                  backgroundColor: globalSettings.settings.canvasShowTransparency
+                    ? 'transparent'
+                    : (globalSettings.settings.canvasBackgroundColor || '#ffffff'),
+                  backgroundImage: globalSettings.settings.canvasShowTransparency
+                    ? `linear-gradient(45deg, #f0f0f0 25%, transparent 25%), linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f0f0f0 75%), linear-gradient(-45deg, transparent 75%, #f0f0f0 75%)`
+                    : 'none',
+                  backgroundSize: globalSettings.settings.canvasShowTransparency
+                    ? '20px 20px'
+                    : 'auto',
+                  backgroundPosition: globalSettings.settings.canvasShowTransparency
+                    ? '0 0, 0 10px, 10px -10px, -10px 0px'
+                    : '0 0'
                 }}
               >
                 {/* Grille de fond */}
