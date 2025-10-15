@@ -2171,6 +2171,9 @@ document.addEventListener('DOMContentLoaded', function() {
             showNotification('Paramètres sauvegardés, mais rafraîchissement échoué.', 'error');
         });
     }
+    
+    // Fonction pour afficher les notifications
+    function showNotification(message, type) {
         // Supprimer les notifications existantes
         var existingNotifications = document.querySelectorAll('.pdf-builder-notification');
         existingNotifications.forEach(function(notif) {
