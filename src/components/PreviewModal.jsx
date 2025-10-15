@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 // Nouveau système d'aperçu côté serveur avec TCPDF
 
@@ -81,22 +81,14 @@ const PreviewModal = ({
   };
 
   // Fonction pour rendre le contenu du canvas en HTML
-  const renderCanvasContent = (elements) => {
-    console.log('🔍 renderCanvasContent called with', elements?.length || 0, 'elements');
-    console.log('🔍 Zoom value:', zoom, 'Type:', typeof zoom);
-
+  const renderCanvasContent = useCallback((elements) => {
+    // Réduire les logs pour éviter la boucle infinie - n'afficher que les erreurs importantes
     if (!elements || elements.length === 0) {
-      console.log('📭 No elements to render');
       return <div style={{ padding: '20px', textAlign: 'center', color: '#666' }}>Aucun élément à afficher</div>;
     }
 
     // Vérifier que zoom est valide
     const validZoom = typeof zoom === 'number' && !isNaN(zoom) && zoom > 0 ? zoom : 1;
-    if (validZoom !== zoom) {
-      console.warn('⚠️ Invalid zoom value, using default:', zoom, '->', validZoom);
-    }
-
-    console.log('🎨 Rendering canvas content with elements:', elements.map(e => ({ id: e.id, type: e.type })));
 
     return (
       <div
@@ -112,8 +104,6 @@ const PreviewModal = ({
         }}
       >
         {elements.map((element, index) => {
-          console.log('🔸 Rendering element', index, element.id, element.type);
-
           // Vérifier que les propriétés essentielles existent
           if (typeof element.x !== 'number' || typeof element.y !== 'number' ||
               typeof element.width !== 'number' || typeof element.height !== 'number') {
@@ -131,8 +121,6 @@ const PreviewModal = ({
             zIndex: element.zIndex || index + 1
           };
 
-          console.log('📐 Element style:', baseStyle);
-
           return (
             <div key={index} style={baseStyle}>
               {renderSpecialElement(element, validZoom)}
@@ -141,23 +129,11 @@ const PreviewModal = ({
         })}
       </div>
     );
-  };
+  }, [zoom, canvasWidth, canvasHeight]);
 
   // Fonction pour rendre un élément spécial (basée sur CanvasElement.jsx)
-  const renderSpecialElement = (element, zoom) => {
-    console.log('🎯 renderSpecialElement called for type:', element.type, 'with props:', {
-      id: element.id,
-      x: element.x,
-      y: element.y,
-      width: element.width,
-      height: element.height,
-      content: element.content?.substring(0, 50) + (element.content?.length > 50 ? '...' : ''),
-      text: element.text?.substring(0, 50) + (element.text?.length > 50 ? '...' : ''),
-      src: element.src?.substring(0, 50) + (element.src?.length > 50 ? '...' : ''),
-      fillColor: element.fillColor,
-      color: element.color
-    });
-
+  const renderSpecialElement = useCallback((element, zoom) => {
+    // Réduire les logs - n'afficher que les erreurs importantes
     switch (element.type) {
       case 'text':
         return (
@@ -860,7 +836,7 @@ const PreviewModal = ({
           </div>
         );
     }
-  };
+  }, []);
 
   // Générer l'aperçu quand la modale s'ouvre
   useEffect(() => {
