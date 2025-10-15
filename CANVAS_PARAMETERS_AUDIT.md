@@ -19,8 +19,8 @@ Après audit complet des 40 paramètres définis dans l'onglet "Canvas", **seule
 ### Général
 - ✅ `canvasBackgroundColor` - Couleur de fond du canvas (implémenté dans PDFCanvasEditor.jsx)
 - ✅ `canvasShowTransparency` - Affichage motif de damier (implémenté dans PDFCanvasEditor.jsx)
-- ✅ `containerBackgroundColor` - Couleur de fond du container (nouveau paramètre ajouté)
-- ✅ `containerShowTransparency` - Transparence du container (nouveau paramètre ajouté)
+- ✅ `containerBackgroundColor` - Couleur de fond du container (corrigé - localisation JavaScript fixée)
+- ✅ `containerShowTransparency` - Transparence du container (corrigé - localisation JavaScript fixée)
 
 ### Grille & Aimants
 - ✅ `showGrid` - Affichage de la grille (utilisé dans PDFCanvasEditor.jsx)
@@ -172,6 +172,25 @@ Après audit complet des 40 paramètres définis dans l'onglet "Canvas", **seule
 - **Migrer nomenclature** : Unifier les noms de paramètres (legacy vs nouveaux)
 - **Tests unitaires** : Ajouter tests pour chaque nouveau paramètre
 - **Documentation** : Mettre à jour README avec nouvelles fonctionnalités
+
+---
+
+## 🔧 CORRECTIONS RÉCENTES
+
+### 15 octobre 2025 - Fix paramètres container
+**Problème identifié :** Les paramètres "Arrière-plan du Canvas" (container) ne fonctionnaient pas malgré leur ajout récent.
+
+**Cause racine :** Incohérence dans la récupération des paramètres JavaScript :
+- PHP sauvegardait dans le tableau `pdf_builder_settings`
+- JavaScript récupérait depuis des options individuelles `get_option('pdf_builder_container_background_color')`
+
+**Solution appliquée :**
+- ✅ Modifié `class-pdf-builder-admin.php` pour récupérer depuis `$canvas_settings['container_background_color']`
+- ✅ Appliqué la même correction à tous les paramètres canvas (40+ paramètres)
+- ✅ Compilé et déployé les changements
+- ✅ Testé la fonctionnalité en production
+
+**Résultat :** Les paramètres container fonctionnent maintenant correctement.
 
 ---
 
