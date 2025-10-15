@@ -137,9 +137,6 @@ export const useGlobalSettings = () => {
     const wpSettings = getWordPressSettings();
     const ajaxSettings = getAjaxSettings();
 
-    console.log('useGlobalSettings - wpSettings:', wpSettings);
-    console.log('useGlobalSettings - canvas_background_color:', wpSettings?.canvas_background_color);
-
     if (wpSettings) {
       // Utiliser les paramètres WordPress
       setSettings(prev => ({

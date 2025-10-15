@@ -2089,7 +2089,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Essayer de parser comme JSON
                 var jsonResponse = JSON.parse(data);
                 if (jsonResponse.success) {
-                    showNotification(jsonResponse.data.message || 'Paramètres sauvegardés avec succès !', 'success');
+                    showNotification(jsonResponse.data || 'Paramètres sauvegardés avec succès !', 'success');
+                    // Recharger la page après 1 seconde pour appliquer les nouveaux paramètres
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 1000);
                 } else {
                     showNotification(jsonResponse.data || 'Erreur lors de la sauvegarde.', 'error');
                 }
@@ -2097,10 +2101,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Si ce n'est pas du JSON, vérifier le contenu HTML
                 if (data.includes('Paramètres sauvegardés avec succès') || data.includes('notice-success')) {
                     showNotification('Paramètres sauvegardés avec succès !', 'success');
+                    // Recharger la page après 1 seconde pour appliquer les nouveaux paramètres
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 1000);
                 } else if (data.includes('notice-error') || data.includes('Erreur')) {
                     showNotification('Erreur lors de la sauvegarde.', 'error');
                 } else {
                     showNotification('Paramètres sauvegardés.', 'success');
+                    // Recharger la page après 1 seconde pour appliquer les nouveaux paramètres
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 1000);
                 }
             }
         })

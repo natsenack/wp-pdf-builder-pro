@@ -632,13 +632,9 @@ export const PDFCanvasEditor = ({ options }) => {
                   width: canvasState.canvasWidth,
                   height: canvasState.canvasHeight,
                   position: 'relative',
-                  backgroundColor: (() => {
-                    const color = globalSettings.settings.canvasShowTransparency
-                      ? 'transparent'
-                      : (globalSettings.settings.canvasBackgroundColor || '#ffffff');
-                    console.log('Canvas background color:', color, 'canvasShowTransparency:', globalSettings.settings.canvasShowTransparency, 'canvasBackgroundColor:', globalSettings.settings.canvasBackgroundColor);
-                    return color;
-                  })(),
+                  backgroundColor: globalSettings.settings.canvasShowTransparency
+                    ? 'transparent'
+                    : (globalSettings.settings.canvasBackgroundColor || '#ffffff'),
                   backgroundImage: globalSettings.settings.canvasShowTransparency
                     ? `linear-gradient(45deg, #f0f0f0 25%, transparent 25%), linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f0f0f0 75%), linear-gradient(-45deg, transparent 75%, #f0f0f0 75%)`
                     : 'none',
