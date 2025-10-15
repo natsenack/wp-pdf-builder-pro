@@ -2061,7 +2061,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(function(response) {
             return response.text();
         })
-            
+        .then(function(data) {
             // Réactiver le bouton
             submitBtn.disabled = false;
             submitBtn.value = 'Enregistrer les paramètres';
