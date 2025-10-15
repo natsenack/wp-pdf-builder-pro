@@ -98,7 +98,8 @@ class PDF_Builder_Template_Manager {
         $decoded_test = json_decode($template_data, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
             error_log('PDF Builder: JSON decode error: ' . json_last_error_msg());
-            error_log('PDF Builder: Raw template data: ' . $template_data);
+            error_log('PDF Builder: Raw template data that failed: ' . substr($template_data, 0, 1000));
+            error_log('PDF Builder: Template data length: ' . strlen($template_data));
             wp_send_json_error('Données JSON invalides: ' . json_last_error_msg());
         }
 

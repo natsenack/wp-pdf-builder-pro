@@ -130,7 +130,10 @@ const ModalPDFViewer = ({
                   link.target = '_blank';
                   document.body.appendChild(link);
                   link.click();
-                  document.body.removeChild(link);
+                  // Vérifier que l'élément existe encore avant de le supprimer
+                  if (link.parentNode === document.body) {
+                    document.body.removeChild(link);
+                  }
                 }
               }}
               style={{

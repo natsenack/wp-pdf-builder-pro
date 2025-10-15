@@ -538,7 +538,9 @@ export const useCanvasState = ({
           'onMouseUp', 'onMouseMove', 'onContextMenu', 'onDoubleClick',
           'onDragStart', 'onDragEnd', 'onResize', 'component', 'render',
           'props', 'state', 'context', 'refs', '_reactInternalInstance',
-          '_reactInternals', '$$typeof', 'constructor', 'prototype'
+          '_reactInternals', '$$typeof', 'constructor', 'prototype',
+          // Propriétés React spécifiques
+          '_owner', '_store', 'key', 'ref', 'type', '_self', '_source'
         ];
 
         const cleaned = {};
@@ -546,6 +548,11 @@ export const useCanvasState = ({
         for (const [key, value] of Object.entries(element)) {
           // Exclure les propriétés problématiques
           if (excludedProps.includes(key)) {
+            continue;
+          }
+
+          // Exclure les propriétés qui commencent par underscore (privées React)
+          if (key.startsWith('_')) {
             continue;
           }
 
@@ -814,26 +821,24 @@ export const useCanvasState = ({
           } else if (typeof validatedValue === 'string' || typeof validatedValue === 'number' || typeof validatedValue === 'boolean') {
             cleaned[key] = validatedValue;
           } else if (Array.isArray(validatedValue)) {
-            // Pour les tableaux, nettoyer chaque élément
+            // Pour les tableaux, nettoyer chaque élément de manière très stricte
             try {
               const cleanedArray = validatedValue
                 .filter(item => item !== null && item !== undefined) // Filtrer les valeurs null/undefined
                 .map(item => {
                   if (typeof item === 'object' && item !== null) {
-                    return cleanElementForSerialization(item);
+                    // Pour les objets dans les tableaux, seulement garder les propriétés primitives
+                    const cleanedItem = {};
+                    for (const [itemKey, itemValue] of Object.entries(item)) {
+                      if (typeof itemValue === 'string' || typeof itemValue === 'number' || typeof itemValue === 'boolean') {
+                        cleanedItem[itemKey] = itemValue;
+                      }
+                    }
+                    return cleanedItem;
                   }
-                  return item;
+                  return (typeof item === 'string' || typeof item === 'number' || typeof item === 'boolean') ? item : null;
                 })
-                .filter(item => {
-                  // Filtrer les éléments qui ne peuvent pas être sérialisés
-                  try {
-                    JSON.stringify(item);
-                    return true;
-                  } catch (e) {
-                    console.warn(`Élément de tableau non sérialisable filtré pour ${key}:`, e);
-                    return false;
-                  }
-                });
+                .filter(item => item !== null); // Retirer les éléments null
 
               // Test final de sérialisation du tableau complet
               JSON.stringify(cleanedArray);
@@ -843,9 +848,18 @@ export const useCanvasState = ({
               cleaned[key] = [];
             }
           } else if (typeof validatedValue === 'object') {
-            // Pour les objets, nettoyer récursivement
+            // Pour les objets, nettoyer récursivement mais de manière très stricte
             try {
-              const cleanedObj = cleanElementForSerialization(validatedValue);
+              const cleanedObj = {};
+              for (const [objKey, objValue] of Object.entries(validatedValue)) {
+                // Exclure les propriétés problématiques des objets imbriqués
+                if (objKey.startsWith('_') || excludedProps.includes(objKey)) {
+                  continue;
+                }
+                if (typeof objValue === 'string' || typeof objValue === 'number' || typeof objValue === 'boolean') {
+                  cleanedObj[objKey] = objValue;
+                }
+              }
               // Test de sérialisation de l'objet nettoyé
               JSON.stringify(cleanedObj);
               cleaned[key] = cleanedObj;
@@ -929,8 +943,18 @@ export const useCanvasState = ({
           }
         }
 
+        // Log détaillé pour débogage
+        console.log('PDF Builder SAVE - Données validées côté client:', {
+          elementCount: testParse.elements.length,
+          firstElement: testParse.elements[0],
+          jsonLength: jsonString.length,
+          canvasWidth: testParse.canvasWidth,
+          canvasHeight: testParse.canvasHeight
+        });
+
       } catch (jsonError) {
-        console.error('Erreur de validation JSON:', jsonError);
+        console.error('Erreur de validation JSON côté client:', jsonError);
+        console.error('Données templateData qui ont causé l\'erreur:', templateData);
         throw new Error('Données JSON invalides côté client: ' + jsonError.message);
       }
 
