@@ -159,8 +159,29 @@ const Canvas = ({
     ctx.scale(zoom, zoom);
 
     // Dessiner le fond
-    ctx.fillStyle = 'white';
-    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    if (settings.canvasShowTransparency) {
+      // Fond transparent avec motif de damier
+      const patternSize = 20;
+      const patternCanvas = document.createElement('canvas');
+      patternCanvas.width = patternSize * 2;
+      patternCanvas.height = patternSize * 2;
+      const patternCtx = patternCanvas.getContext('2d');
+
+      // Créer le motif de damier
+      patternCtx.fillStyle = '#ffffff';
+      patternCtx.fillRect(0, 0, patternSize * 2, patternSize * 2);
+      patternCtx.fillStyle = '#f0f0f0';
+      patternCtx.fillRect(0, 0, patternSize, patternSize);
+      patternCtx.fillRect(patternSize, patternSize, patternSize, patternSize);
+
+      const pattern = ctx.createPattern(patternCanvas, 'repeat');
+      ctx.fillStyle = pattern;
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    } else {
+      // Fond uni avec la couleur choisie
+      ctx.fillStyle = settings.canvasBackgroundColor || '#ffffff';
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    }
 
     // Dessiner la grille
     drawGrid(ctx);
@@ -182,10 +203,10 @@ const Canvas = ({
   const memoizedCanvasStyle = useMemo(() => ({
     border: '1px solid #ccc',
     cursor: getCursor(),
-    backgroundColor: 'white',
+    backgroundColor: settings.canvasShowTransparency ? 'transparent' : (settings.canvasBackgroundColor || '#ffffff'),
     // Assurer que le canvas garde ses proportions A4
     aspectRatio: `${canvasWidth}/${canvasHeight}`
-  }), [getCursor, canvasWidth, canvasHeight]);
+  }), [getCursor, canvasWidth, canvasHeight, settings.canvasBackgroundColor, settings.canvasShowTransparency]);
 
   // Optimiser les dimensions du canvas avec useMemo
   const canvasDimensions = useMemo(() => ({
