@@ -177,20 +177,20 @@ Après audit complet des 40 paramètres définis dans l'onglet "Canvas", **seule
 
 ## 🔧 CORRECTIONS RÉCENTES
 
-### 15 octobre 2025 - Fix paramètres container
-**Problème identifié :** Les paramètres "Arrière-plan du Canvas" (container) ne fonctionnaient pas malgré leur ajout récent.
+### 15 octobre 2025 - Fix paramètres container + AJAX
+**Problème identifié :** Les paramètres "Arrière-plan du Canvas" fonctionnaient côté JavaScript mais n'étaient pas sauvegardés en base de données.
 
-**Cause racine :** Incohérence dans la récupération des paramètres JavaScript :
-- PHP sauvegardait dans le tableau `pdf_builder_settings`
-- JavaScript récupérait depuis des options individuelles `get_option('pdf_builder_container_background_color')`
+**Cause racine :** 
+1. **Localisation JavaScript** : Paramètres récupérés depuis des options individuelles au lieu du tableau `pdf_builder_settings`
+2. **Sauvegarde AJAX** : Méthode `ajax_save_settings` ne traitait pas les nouveaux paramètres canvas
 
 **Solution appliquée :**
-- ✅ Modifié `class-pdf-builder-admin.php` pour récupérer depuis `$canvas_settings['container_background_color']`
-- ✅ Appliqué la même correction à tous les paramètres canvas (40+ paramètres)
-- ✅ Compilé et déployé les changements
-- ✅ Testé la fonctionnalité en production
+- ✅ **Localisation** : Modifié `class-pdf-builder-admin.php` pour récupérer depuis `$canvas_settings['container_background_color']`
+- ✅ **AJAX** : Ajouté tous les paramètres canvas manquants (40+ paramètres) à la méthode `ajax_save_settings`
+- ✅ **Déploiement** : Compilé et déployé les corrections
+- ✅ **Test** : Vérifié que la sauvegarde AJAX fonctionne maintenant
 
-**Résultat :** Les paramètres container fonctionnent maintenant correctement.
+**Résultat :** Tous les paramètres canvas sont maintenant correctement sauvegardés et chargés.
 
 ---
 
