@@ -828,11 +828,14 @@ const PreviewModal = ({
 
   // Générer l'aperçu quand la modale s'ouvre
   useEffect(() => {
+    console.log('🔍 PreviewModal useEffect triggered:', { isOpen, elementsCount: elements.length, useServerPreview });
     if (isOpen && elements.length > 0) {
       if (useServerPreview) {
+        console.log('🚀 Calling generateServerPreview()');
         // Utiliser l'aperçu unifié côté serveur
         generateServerPreview();
       } else {
+        console.log('🎨 Setting up client-side preview');
         // Afficher immédiatement le contenu du canvas
         setPreviewData({
           success: true,
@@ -845,6 +848,7 @@ const PreviewModal = ({
         generatePreview();
       }
     } else if (isOpen && elements.length === 0) {
+      console.log('📭 No elements to preview');
       setPreviewData({
         success: true,
         elements_count: 0,
