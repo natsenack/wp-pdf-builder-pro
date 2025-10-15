@@ -63,9 +63,9 @@ export const useDragAndDrop = ({
     };
 
     const handleMouseMove = (moveEvent) => {
-      // Vérifier que l'élément existe toujours pendant le drag
-      if (!currentDragData.current || !currentDragData.current.element) {
-        console.warn('Drag element no longer exists during move');
+      // Vérifier que les données de drag existent toujours
+      if (!currentDragData.current) {
+        console.warn('Drag data no longer exists during move');
         return;
       }
 
@@ -91,9 +91,9 @@ export const useDragAndDrop = ({
     };
 
     const handleMouseUp = () => {
-      // Vérifier que l'élément existe toujours pendant le drop
-      if (!currentDragData.current || !currentDragData.current.element) {
-        console.warn('Drag element no longer exists during drop');
+      // Vérifier que les données de drag existent toujours
+      if (!currentDragData.current) {
+        console.warn('Drag data no longer exists during drop');
         setIsDragging(false);
         setDragOffset({ x: 0, y: 0 });
         return;
