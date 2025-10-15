@@ -50,15 +50,30 @@ class PDF_Builder_Pro_Generator {
      * Generateur principal - Interface unifiee
      */
     public function generate($elements, $options = []) {
+        error_log('🟡 PDF BUILDER - generate: START - ' . count($elements) . ' elements');
+
         try {
+            error_log('🟡 PDF BUILDER - generate: Calling reset()');
             $this->reset();
+
+            error_log('🟡 PDF BUILDER - generate: Calling validate_elements()');
             $this->validate_elements($elements);
+
+            error_log('🟡 PDF BUILDER - generate: Calling initialize_tcpdf()');
             $this->initialize_tcpdf();
+
+            error_log('🟡 PDF BUILDER - generate: Calling configure_pdf()');
             $this->configure_pdf($options);
+
+            error_log('🟡 PDF BUILDER - generate: Calling render_elements()');
             $this->render_elements($elements);
+
+            error_log('🟡 PDF BUILDER - generate: Calling finalize_pdf()');
             return $this->finalize_pdf();
 
         } catch (Exception $e) {
+            error_log('❌ PDF BUILDER - generate: EXCEPTION - ' . $e->getMessage());
+            error_log('❌ PDF BUILDER - generate: STACK TRACE - ' . $e->getTraceAsString());
             $this->log_error('Generation PDF echouee: ' . $e->getMessage());
             return $this->generate_fallback_pdf($elements);
         }
@@ -1904,12 +1919,17 @@ class PDF_Builder_Pro_Generator {
      * Génération d'aperçu PDF simplifié (alternative au système canvas)
      */
     public function generate_simple_preview($order_id, $template_id = null) {
+        error_log('🟡 PDF BUILDER - generate_simple_preview: START - order_id=' . $order_id . ', template_id=' . ($template_id ?: 'null'));
+
         try {
             // Récupérer la commande WooCommerce
+            error_log('🟡 PDF BUILDER - generate_simple_preview: Getting WooCommerce order...');
             $this->order = wc_get_order($order_id);
             if (!$this->order) {
+                error_log('❌ PDF BUILDER - generate_simple_preview: Order not found: ' . $order_id);
                 throw new Exception('Commande non trouvée');
             }
+            error_log('✅ PDF BUILDER - generate_simple_preview: Order found: ' . $this->order->get_id());
 
             // Si un template_id est fourni, récupérer les données du template
             if ($template_id) {
@@ -1940,6 +1960,8 @@ class PDF_Builder_Pro_Generator {
                 // Générer le PDF avec les données du template
                 $elements = isset($template_data['elements']) ? $template_data['elements'] : [];
                 error_log('🟡 PDF BUILDER - generate_simple_preview: Calling generate() with ' . count($elements) . ' elements');
+                error_log('🟡 PDF BUILDER - generate_simple_preview: First element: ' . json_encode($elements[0] ?? 'no elements'));
+
                 $pdf_content = $this->generate($elements, ['title' => 'Aperçu Facture - Commande #' . $order_id]);
 
                 error_log('✅ PDF BUILDER - generate_simple_preview: PDF generated with template, content size: ' . strlen($pdf_content) . ' bytes');
