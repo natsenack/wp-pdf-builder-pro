@@ -2769,7 +2769,7 @@ class PDF_Builder_Admin {
 
                 // Préparer les données AJAX
                 var ajaxData = {
-                    action: 'pdf_builder_preview_order_pdf',
+                    action: 'pdf_builder_unified_preview',
                     order_id: parseInt(orderId, 10),
                     template_id: templateId > 0 ? templateId : null,
                     nonce: '<?php echo esc_js(wp_create_nonce('pdf_builder_order_actions')); ?>'

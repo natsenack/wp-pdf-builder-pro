@@ -11,7 +11,8 @@ const PreviewModal = ({
   zoom = 1,
   ajaxurl,
   pdfBuilderNonce,
-  onOpenPDFModal = null
+  onOpenPDFModal = null,
+  useServerPreview = false
 }) => {
   const [previewData, setPreviewData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -767,16 +768,21 @@ const PreviewModal = ({
   // Générer l'aperçu quand la modale s'ouvre
   useEffect(() => {
     if (isOpen && elements.length > 0) {
-      // Afficher immédiatement le contenu du canvas
-      setPreviewData({
-        success: true,
-        elements_count: elements.length,
-        width: 400,
-        height: 566,
-        fallback: false
-      });
-      // Puis générer l'aperçu côté serveur en arrière-plan
-      generatePreview();
+      if (useServerPreview) {
+        // Utiliser l'aperçu unifié côté serveur
+        generateServerPreview();
+      } else {
+        // Afficher immédiatement le contenu du canvas
+        setPreviewData({
+          success: true,
+          elements_count: elements.length,
+          width: 400,
+          height: 566,
+          fallback: false
+        });
+        // Puis générer l'aperçu côté serveur en arrière-plan
+        generatePreview();
+      }
     } else if (isOpen && elements.length === 0) {
       setPreviewData({
         success: true,
@@ -1008,6 +1014,76 @@ const PreviewModal = ({
       setPreviewData(prev => ({
         ...prev,
         server_error: err.message || 'Erreur inconnue côté serveur'
+      }));
+    }
+  };
+
+  const generateServerPreview = async () => {
+    console.log('🖥️ Génération aperçu côté serveur unifié...');
+
+    try {
+      // Validation côté client avant envoi
+      const validationResult = validateElementsBeforeSend(elements);
+      if (!validationResult.success) {
+        console.error('❌ Validation côté client échouée:', validationResult.error);
+        setPreviewData(prev => ({
+          ...prev,
+          error: `Erreur de validation côté client: ${validationResult.error}`,
+          isLoading: false
+        }));
+        return;
+      }
+
+      const { jsonString } = validationResult;
+      console.log('✅ Validation côté client réussie, longueur JSON:', jsonString.length);
+
+      // Préparer les données pour l'AJAX unifié
+      const formData = new FormData();
+      formData.append('action', 'pdf_builder_unified_preview');
+      formData.append('nonce', pdfBuilderNonce || window.pdfBuilderAjax?.nonce || '');
+      formData.append('elements', jsonString);
+
+      console.log('🌐 Envoi requête aperçu unifié...');
+
+      const response = await fetch(ajaxurl || window.pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.success && data.data && data.data.url) {
+        console.log('✅ Aperçu côté serveur généré:', data.data.url);
+
+        // Ouvrir le PDF dans une nouvelle fenêtre
+        const previewWindow = window.open(data.data.url, '_blank');
+        if (!previewWindow) {
+          console.warn('Popup bloquée, tentative de téléchargement...');
+          const link = document.createElement('a');
+          link.href = data.data.url;
+          link.target = '_blank';
+          link.rel = 'noopener noreferrer';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+
+        // Fermer la modale d'aperçu
+        onClose();
+      } else {
+        throw new Error(data.data || 'Erreur génération aperçu côté serveur');
+      }
+
+    } catch (error) {
+      console.error('❌ Erreur génération aperçu côté serveur:', error);
+      setPreviewData(prev => ({
+        ...prev,
+        error: `Erreur aperçu côté serveur: ${error.message}`,
+        isLoading: false
       }));
     }
   };

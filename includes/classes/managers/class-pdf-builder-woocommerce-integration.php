@@ -39,8 +39,9 @@ class PDF_Builder_WooCommerce_Integration {
         // AJAX handlers pour WooCommerce - gérés par le manager
         add_action('wp_ajax_pdf_builder_generate_order_pdf', [$this, 'ajax_generate_order_pdf'], 1);
         add_action('wp_ajax_pdf_builder_preview_order_pdf', [$this, 'ajax_preview_order_pdf'], 1);
+        add_action('wp_ajax_pdf_builder_unified_preview', [$this, 'ajax_unified_preview'], 1);
         add_action('wp_ajax_pdf_builder_save_order_canvas', [$this, 'ajax_save_order_canvas'], 1);
-        error_log('PDF BUILDER - AJAX hooks registered: pdf_builder_generate_order_pdf, pdf_builder_save_order_canvas');
+        error_log('PDF BUILDER - AJAX hooks registered: pdf_builder_generate_order_pdf, pdf_builder_preview_order_pdf, pdf_builder_unified_preview, pdf_builder_save_order_canvas');
     }
     private function detect_document_type($order_status) {
         $status_mapping = [
@@ -929,6 +930,215 @@ class PDF_Builder_WooCommerce_Integration {
             error_log('❌ PDF BUILDER - ajax_preview_order_pdf: Exception: ' . $e->getMessage());
             wp_send_json_error('Erreur: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * AJAX handler unifié pour tous les aperçus PDF
+     * Gère à la fois les aperçus de template (éditeur) et les aperçus de commande (metabox)
+     */
+    public function ajax_unified_preview() {
+        error_log('🎯 PDF BUILDER - ajax_unified_preview: UNIFIED PREVIEW FUNCTION CALLED');
+
+        // Vérifier les permissions
+        if (!current_user_can('manage_woocommerce') && !current_user_can('read')) {
+            error_log('❌ PDF BUILDER - ajax_unified_preview: Permissions insuffisantes');
+            wp_send_json_error('Permissions insuffisantes');
+        }
+
+        // Vérification de sécurité - accepter plusieurs nonces pour flexibilité
+        $valid_nonces = ['pdf_builder_order_actions', 'pdf_builder_template_actions'];
+        $nonce_valid = false;
+
+        foreach ($valid_nonces as $nonce_action) {
+            if (wp_verify_nonce($_POST['nonce'] ?? '', $nonce_action)) {
+                $nonce_valid = true;
+                break;
+            }
+        }
+
+        if (!$nonce_valid) {
+            error_log('❌ PDF BUILDER - ajax_unified_preview: Nonce invalide');
+            wp_send_json_error('Sécurité: Nonce invalide');
+        }
+
+        $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : null;
+        $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : null;
+        $elements = isset($_POST['elements']) ? $_POST['elements'] : null;
+
+        error_log('🟡 PDF BUILDER - ajax_unified_preview: order_id=' . ($order_id ?: 'null') . ', template_id=' . ($template_id ?: 'null') . ', has_elements=' . (!empty($elements) ? 'yes' : 'no'));
+
+        try {
+            // S'assurer que la classe PDF_Builder_Pro_Generator est chargée
+            if (!class_exists('PDF_Builder_Pro_Generator')) {
+                $generator_path = plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'includes/pdf-generator.php';
+                if (file_exists($generator_path)) {
+                    error_log('🟡 PDF BUILDER - ajax_unified_preview: Chargement manuel du générateur PDF');
+                    require_once $generator_path;
+                } else {
+                    error_log('❌ PDF BUILDER - ajax_unified_preview: Fichier générateur PDF non trouvé: ' . $generator_path);
+                    wp_send_json_error('Fichier générateur PDF non trouvé');
+                }
+            }
+
+            $generator = new PDF_Builder_Pro_Generator();
+            error_log('✅ PDF BUILDER - ajax_unified_preview: Générateur PDF chargé');
+
+            // Déterminer le type d'aperçu
+            if ($order_id && $order_id > 0) {
+                // Aperçu de commande WooCommerce
+                error_log('📋 PDF BUILDER - ajax_unified_preview: Mode commande WooCommerce');
+
+                // Vérifier que WooCommerce est actif
+                if (!class_exists('WooCommerce')) {
+                    error_log('❌ PDF BUILDER - ajax_unified_preview: WooCommerce non actif');
+                    wp_send_json_error('WooCommerce n\'est pas installé ou activé');
+                }
+
+                $order = wc_get_order($order_id);
+                if (!$order) {
+                    error_log('❌ PDF BUILDER - ajax_unified_preview: Commande non trouvée: ' . $order_id);
+                    wp_send_json_error('Commande non trouvée');
+                }
+
+                // Déterminer le template à utiliser
+                if (!$template_id || $template_id <= 0) {
+                    $template_id = $this->get_template_for_order($order);
+                    error_log('✅ PDF BUILDER - ajax_unified_preview: Template déterminé automatiquement: ' . $template_id);
+                }
+
+                $result = $generator->generate_simple_preview($order_id, $template_id);
+                error_log('✅ PDF BUILDER - ajax_unified_preview: Aperçu commande généré: ' . (is_wp_error($result) ? 'WP_Error: ' . $result->get_error_message() : 'URL: ' . $result));
+
+            } elseif (!empty($elements)) {
+                // Aperçu de template depuis l'éditeur (éléments JSON)
+                error_log('🎨 PDF BUILDER - ajax_unified_preview: Mode template éditeur');
+
+                // Décoder les éléments
+                $decoded_elements = json_decode($elements, true);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    error_log('❌ PDF BUILDER - ajax_unified_preview: JSON éléments invalide: ' . json_last_error_msg());
+                    wp_send_json_error('Données du template invalides');
+                }
+
+                error_log('✅ PDF BUILDER - ajax_unified_preview: ' . count($decoded_elements) . ' éléments décodés');
+
+                // Générer l'aperçu avec les éléments du template
+                $result = $generator->generate($decoded_elements, ['title' => 'Aperçu Template - ' . date('Y-m-d H:i:s')]);
+                error_log('✅ PDF BUILDER - ajax_unified_preview: Aperçu template généré: ' . (is_wp_error($result) ? 'WP_Error: ' . $result->get_error_message() : 'URL: ' . $result));
+
+            } else {
+                error_log('❌ PDF BUILDER - ajax_unified_preview: Aucun contexte valide (ni order_id ni elements)');
+                wp_send_json_error('Contexte d\'aperçu invalide');
+            }
+
+            if (is_wp_error($result)) {
+                error_log('❌ PDF BUILDER - ajax_unified_preview: Erreur génération: ' . $result->get_error_message());
+                wp_send_json_error($result->get_error_message());
+            }
+
+            // Vérifier si le fichier existe réellement
+            $file_path = str_replace(home_url('/'), ABSPATH, $result);
+            error_log('🔍 PDF BUILDER - ajax_unified_preview: Vérification fichier - URL: ' . $result);
+            error_log('🔍 PDF BUILDER - ajax_unified_preview: Vérification fichier - Chemin local: ' . $file_path);
+            if (file_exists($file_path)) {
+                error_log('🔍 PDF BUILDER - ajax_unified_preview: Taille fichier: ' . filesize($file_path) . ' bytes');
+            }
+
+            error_log('✅ PDF BUILDER - ajax_unified_preview: Aperçu généré avec succès: ' . $result);
+            wp_send_json_success(['url' => $result]);
+
+        } catch (Exception $e) {
+            error_log('❌ PDF BUILDER - ajax_unified_preview: Exception: ' . $e->getMessage());
+            wp_send_json_error('Erreur: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Détermine le template approprié pour une commande
+     */
+    private function get_template_for_order($order) {
+        global $wpdb;
+        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+
+        $order_status = $order->get_status();
+        error_log('🔍 PDF BUILDER - get_template_for_order: Statut commande: ' . $order_status);
+
+        // Vérifier s'il y a un mapping spécifique pour ce statut de commande
+        $status_templates = get_option('pdf_builder_order_status_templates', []);
+        $status_key = 'wc-' . $order_status;
+
+        if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
+            $mapped_template = $wpdb->get_row($wpdb->prepare(
+                "SELECT id, name FROM $table_templates WHERE id = %d",
+                $status_templates[$status_key]
+            ), ARRAY_A);
+
+            if ($mapped_template) {
+                error_log('✅ PDF BUILDER - get_template_for_order: Template mappé trouvé: ' . $mapped_template['name'] . ' (ID: ' . $mapped_template['id'] . ')');
+                return $mapped_template['id'];
+            }
+        }
+
+        // Logique de détection automatique basée sur le statut
+        $keywords = [];
+        switch ($order_status) {
+            case 'pending':
+                $keywords = ['devis', 'quote', 'estimation'];
+                break;
+            case 'processing':
+            case 'on-hold':
+                $keywords = ['facture', 'invoice', 'commande'];
+                break;
+            case 'completed':
+                $keywords = ['facture', 'invoice', 'reçu', 'receipt'];
+                break;
+            case 'cancelled':
+            case 'refunded':
+                $keywords = ['avoir', 'credit', 'refund'];
+                break;
+            case 'failed':
+                $keywords = ['erreur', 'failed', 'échoué'];
+                break;
+            default:
+                $keywords = ['facture', 'invoice'];
+                break;
+        }
+
+        error_log('🟡 PDF BUILDER - get_template_for_order: Recherche par mots-clés: ' . implode(', ', $keywords));
+
+        if (!empty($keywords)) {
+            // Chercher un template par défaut dont le nom contient un mot-clé
+            $placeholders = str_repeat('%s,', count($keywords) - 1) . '%s';
+            $sql = $wpdb->prepare(
+                "SELECT id, name FROM $table_templates WHERE is_default = 1 AND (" .
+                implode(' OR ', array_fill(0, count($keywords), 'LOWER(name) LIKE LOWER(%s)')) .
+                ") LIMIT 1",
+                array_map(function($keyword) { return '%' . $keyword . '%'; }, $keywords)
+            );
+            $keyword_template = $wpdb->get_row($sql, ARRAY_A);
+
+            if ($keyword_template) {
+                error_log('✅ PDF BUILDER - get_template_for_order: Template par mot-clé trouvé: ' . $keyword_template['name'] . ' (ID: ' . $keyword_template['id'] . ')');
+                return $keyword_template['id'];
+            }
+        }
+
+        // Si aucun template spécifique trouvé, prendre n'importe quel template par défaut
+        $default_template = $wpdb->get_row("SELECT id, name FROM $table_templates WHERE is_default = 1 LIMIT 1", ARRAY_A);
+        if ($default_template) {
+            error_log('✅ PDF BUILDER - get_template_for_order: Template par défaut trouvé: ' . $default_template['name'] . ' (ID: ' . $default_template['id'] . ')');
+            return $default_template['id'];
+        }
+
+        // Si toujours pas de template, prendre le premier template disponible
+        $any_template = $wpdb->get_row("SELECT id, name FROM $table_templates ORDER BY id LIMIT 1", ARRAY_A);
+        if ($any_template) {
+            error_log('🔄 PDF BUILDER - get_template_for_order: Premier template disponible: ' . $any_template['name'] . ' (ID: ' . $any_template['id'] . ')');
+            return $any_template['id'];
+        }
+
+        error_log('❌ PDF BUILDER - get_template_for_order: Aucun template trouvé');
+        return null;
     }
 
     /**
