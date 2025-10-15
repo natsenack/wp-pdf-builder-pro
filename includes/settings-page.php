@@ -465,36 +465,6 @@ window.addEventListener('load', function() {
             <div id="general" class="tab-content active">
                 <h2><?php _e('Paramètres Généraux', 'pdf-builder-pro'); ?></h2>
 
-                <table class="form-table">
-                    <tr>
-                        <th scope="row"><?php _e('Mode Debug', 'pdf-builder-pro'); ?></th>
-                        <td>
-                            <label>
-                                <input type="checkbox" name="debug_mode" value="1" <?php checked($config->get('debug_mode'), true); ?>>
-                                <?php _e('Activer le mode debug pour les logs détaillés', 'pdf-builder-pro'); ?>
-                            </label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><?php _e('Niveau de Log', 'pdf-builder-pro'); ?></th>
-                        <td>
-                            <select name="log_level">
-                                <option value="debug" <?php selected($config->get('log_level'), 'debug'); ?>><?php _e('Debug', 'pdf-builder-pro'); ?></option>
-                                <option value="info" <?php selected($config->get('log_level'), 'info'); ?>><?php _e('Info', 'pdf-builder-pro'); ?></option>
-                                <option value="warning" <?php selected($config->get('log_level'), 'warning'); ?>><?php _e('Warning', 'pdf-builder-pro'); ?></option>
-                                <option value="error" <?php selected($config->get('log_level'), 'error'); ?>><?php _e('Error', 'pdf-builder-pro'); ?></option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><?php _e('Taille Max Template', 'pdf-builder-pro'); ?></th>
-                        <td>
-                            <input type="number" name="max_template_size" value="<?php echo esc_attr($config->get('max_template_size')); ?>" class="small-text">
-                            <span class="description"><?php _e('Taille maximale en octets (50MB par défaut)', 'pdf-builder-pro'); ?></span>
-                        </td>
-                    </tr>
-                </table>
-
                 <h3><?php _e('Informations Entreprise', 'pdf-builder-pro'); ?></h3>
                 <p class="description">
                     <?php _e('Les informations de base (nom, adresse, téléphone, email) sont automatiquement récupérées depuis les réglages WooCommerce et WordPress.', 'pdf-builder-pro'); ?><br>
@@ -822,6 +792,33 @@ window.addEventListener('load', function() {
                 <h2><?php _e('Paramètres de Sécurité', 'pdf-builder-pro'); ?></h2>
 
                 <table class="form-table">
+                    <tr>
+                        <th scope="row"><?php _e('Mode Debug', 'pdf-builder-pro'); ?></th>
+                        <td>
+                            <label>
+                                <input type="checkbox" name="debug_mode" value="1" <?php checked($config->get('debug_mode'), true); ?>>
+                                <?php _e('Activer le mode debug pour les logs détaillés', 'pdf-builder-pro'); ?>
+                            </label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php _e('Niveau de Log', 'pdf-builder-pro'); ?></th>
+                        <td>
+                            <select name="log_level">
+                                <option value="debug" <?php selected($config->get('log_level'), 'debug'); ?>><?php _e('Debug', 'pdf-builder-pro'); ?></option>
+                                <option value="info" <?php selected($config->get('log_level'), 'info'); ?>><?php _e('Info', 'pdf-builder-pro'); ?></option>
+                                <option value="warning" <?php selected($config->get('log_level'), 'warning'); ?>><?php _e('Warning', 'pdf-builder-pro'); ?></option>
+                                <option value="error" <?php selected($config->get('log_level'), 'error'); ?>><?php _e('Error', 'pdf-builder-pro'); ?></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row"><?php _e('Taille Max Template', 'pdf-builder-pro'); ?></th>
+                        <td>
+                            <input type="number" name="max_template_size" value="<?php echo esc_attr($config->get('max_template_size')); ?>" class="small-text">
+                            <span class="description"><?php _e('Taille maximale en octets (50MB par défaut)', 'pdf-builder-pro'); ?></span>
+                        </td>
+                    </tr>
                     <tr>
                         <th scope="row"><?php _e('Rate Limiting', 'pdf-builder-pro'); ?></th>
                         <td>
