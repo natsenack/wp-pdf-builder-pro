@@ -31,6 +31,12 @@ export const useResize = ({
       return;
     }
 
+    // Vérifier que l'élément parent existe encore
+    if (!e.target.parentNode || !e.target.parentNode.isConnected) {
+      console.warn('Resize handle parent no longer exists in DOM');
+      return;
+    }
+
     setIsResizing(true);
     setResizeHandle(handle);
 
@@ -44,6 +50,12 @@ export const useResize = ({
     originalRect.current = { ...elementRect };
 
     const handleMouseMove = (moveEvent) => {
+      // Vérifier que l'élément existe toujours pendant le resize
+      if (!currentResizeData.current || !currentResizeData.current.element) {
+        console.warn('Resize element no longer exists during move');
+        return;
+      }
+
       const mouseX = (moveEvent.clientX - currentCanvasRect.left) / currentZoom;
       const mouseY = (moveEvent.clientY - currentCanvasRect.top) / currentZoom;
       const deltaX = mouseX - resizeStartPos.current.x;
@@ -126,6 +138,14 @@ export const useResize = ({
     };
 
     const handleMouseUp = () => {
+      // Vérifier que l'élément existe toujours pendant le drop
+      if (!currentResizeData.current || !currentResizeData.current.element) {
+        console.warn('Resize element no longer exists during drop');
+        setIsResizing(false);
+        setResizeHandle(null);
+        return;
+      }
+
       setIsResizing(false);
       setResizeHandle(null);
 

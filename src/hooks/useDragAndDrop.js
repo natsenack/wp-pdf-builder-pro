@@ -39,6 +39,12 @@ export const useDragAndDrop = ({
       return;
     }
 
+    // Vérifier que l'élément parent existe encore
+    if (!e.target.parentNode || !e.target.parentNode.isConnected) {
+      console.warn('Drag target parent no longer exists in DOM');
+      return;
+    }
+
     e.preventDefault();
     setIsDragging(true);
 
@@ -57,6 +63,12 @@ export const useDragAndDrop = ({
     };
 
     const handleMouseMove = (moveEvent) => {
+      // Vérifier que l'élément existe toujours pendant le drag
+      if (!currentDragData.current || !currentDragData.current.element) {
+        console.warn('Drag element no longer exists during move');
+        return;
+      }
+
       const mouseX = (moveEvent.clientX - currentCanvasRect.left) / currentZoom;
       const mouseY = (moveEvent.clientY - currentCanvasRect.top) / currentZoom;
       lastMouseX = mouseX;
@@ -79,6 +91,14 @@ export const useDragAndDrop = ({
     };
 
     const handleMouseUp = () => {
+      // Vérifier que l'élément existe toujours pendant le drop
+      if (!currentDragData.current || !currentDragData.current.element) {
+        console.warn('Drag element no longer exists during drop');
+        setIsDragging(false);
+        setDragOffset({ x: 0, y: 0 });
+        return;
+      }
+
       setIsDragging(false);
       setDragOffset({ x: 0, y: 0 });
 
