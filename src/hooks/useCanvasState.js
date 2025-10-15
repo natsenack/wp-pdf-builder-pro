@@ -829,7 +829,7 @@ export const useCanvasState = ({
           // Vérifier le type de valeur
           if (validatedValue === null || validatedValue === undefined) {
             // Ne pas inclure les propriétés null/undefined
-            return;
+            continue; // Skip this property but continue cleaning the rest
           } else if (typeof validatedValue === 'string' || typeof validatedValue === 'number' || typeof validatedValue === 'boolean') {
             cleaned[key] = validatedValue;
           } else if (Array.isArray(validatedValue)) {
