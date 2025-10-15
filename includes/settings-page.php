@@ -510,7 +510,7 @@ window.addEventListener('load', function() {
                             echo esc_html($address ?: __('Non configurée', 'pdf-builder-pro'));
                         ?> <em>(<?php _e('WooCommerce > Réglages > Général', 'pdf-builder-pro'); ?>)</em></li>
                         <li><strong><?php _e('Téléphone', 'pdf-builder-pro'); ?>:</strong> <?php echo esc_html(get_option('woocommerce_store_phone') ?: __('Non configuré', 'pdf-builder-pro')); ?> <em>(<?php _e('WooCommerce > Réglages > Général', 'pdf-builder-pro'); ?>)</em></li>
-                        <li><strong><?php _e('Email', 'pdf-builder-pro'); ?>:</strong> <?php echo esc_html(get_option('woocommerce_store_email') ?: __('Non configuré', 'pdf-builder-pro')); ?> <em>(<?php _e('WooCommerce > Réglages > Général', 'pdf-builder-pro'); ?>)</em></li>
+                        <li><strong><?php _e('Email', 'pdf-builder-pro'); ?>:</strong> <?php echo esc_html(get_option('woocommerce_email_from_address') ?: __('Non configuré', 'pdf-builder-pro')); ?> <em>(<?php _e('WooCommerce > Réglages > Emails', 'pdf-builder-pro'); ?>)</em></li>
                     </ul>
                 </div>
 
