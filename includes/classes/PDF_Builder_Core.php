@@ -57,6 +57,9 @@ class PDF_Builder_Core {
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
 
+        // Actions AJAX
+        add_action('wp_ajax_pdf_builder_get_settings', array($this, 'ajax_get_settings'));
+
         // Hooks d'activation/désactivation
         register_activation_hook(PDF_BUILDER_PLUGIN_DIR . 'pdf-builder-pro.php', array($this, 'activate'));
         register_deactivation_hook(PDF_BUILDER_PLUGIN_DIR . 'pdf-builder-pro.php', array($this, 'deactivate'));
@@ -674,6 +677,24 @@ class PDF_Builder_Core {
         echo '<p><a href="?page=pdf-builder-test-templates&order_id=9275" class="button">Tester commande 9275</a> | ';
         echo '<a href="?page=pdf-builder-test-templates&order_id=9276" class="button">Tester commande 9276</a></p>';
         echo '</div>';
+    }
+
+    /**
+     * Action AJAX pour récupérer les paramètres
+     */
+    public function ajax_get_settings() {
+        // Vérifier le nonce
+        if (!isset($_GET['nonce']) || !wp_verify_nonce($_GET['nonce'], 'pdf_builder_settings')) {
+            wp_send_json_error(__('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro'));
+            exit;
+        }
+
+        // Récupérer les paramètres depuis la base de données
+        $settings = get_option('pdf_builder_settings', []);
+
+        // Retourner les paramètres
+        wp_send_json_success($settings);
+        exit;
     }
 }
 

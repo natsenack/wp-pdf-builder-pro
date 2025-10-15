@@ -274,22 +274,6 @@ if ((isset($_POST['submit']) || isset($_POST['submit_roles']) || isset($_POST['s
 if ($isAjax) {
     exit; // Sortir immédiatement pour les requêtes AJAX qui n'ont pas de données POST
 }
-
-// Gérer les requêtes AJAX GET pour récupérer les paramètres
-if (isset($_GET['action']) && $_GET['action'] === 'pdf_builder_get_settings' && $isAjax) {
-    // Vérifier le nonce si fourni
-    if (isset($_GET['nonce']) && !wp_verify_nonce($_GET['nonce'], 'pdf_builder_settings')) {
-        wp_send_json_error(__('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro'));
-        exit;
-    }
-
-    // Récupérer les paramètres depuis la base de données
-    $settings = get_option('pdf_builder_settings', []);
-
-    // Retourner les paramètres
-    wp_send_json_success($settings);
-    exit;
-}
 ?>
 
 <!-- Debug script to check React availability -->
@@ -315,6 +299,11 @@ window.addEventListener('load', function() {
     <h1><?php _e('Paramètres PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
 
     <script type="text/javascript">
+    // Définir les variables globales nécessaires
+    window.ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
+    window.pdfBuilderSettingsNonce = '<?php echo wp_create_nonce('pdf_builder_settings'); ?>';
+    window.pdfBuilderMaintenanceNonce = '<?php echo wp_create_nonce('pdf_builder_maintenance'); ?>';
+    
     // Vérification de sécurité pour éviter les erreurs JavaScript de plugins tiers
     if (typeof wp === 'undefined') {
         // Définir un objet wp complet pour éviter les erreurs de plugins tiers
@@ -2008,6 +1997,10 @@ window.addEventListener('load', function() {
 <!-- Debug script to check form submission -->
 <script type="text/javascript">
 document.addEventListener('DOMContentLoaded', function() {
+    // Définir les variables globales nécessaires
+    window.ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
+    window.pdfBuilderSettingsNonce = '<?php echo wp_create_nonce('pdf_builder_settings'); ?>';
+    window.pdfBuilderMaintenanceNonce = '<?php echo wp_create_nonce('pdf_builder_maintenance'); ?>';
     // Définir les nonces en variables JavaScript (globales)
     window.pdfBuilderSettingsNonce = '<?php echo wp_create_nonce('pdf_builder_settings'); ?>';
     window.pdfBuilderMaintenanceNonce = '<?php echo wp_create_nonce('pdf_builder_maintenance'); ?>';
@@ -2094,10 +2087,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Fonction pour rafraîchir les paramètres globaux en temps réel
     function refreshGlobalSettings() {
         // Faire un appel AJAX pour récupérer les paramètres mis à jour
-        fetch(ajaxurl + '?action=pdf_builder_get_settings', {
+        fetch(ajaxurl + '?action=pdf_builder_get_settings&nonce=' + pdfBuilderSettingsNonce, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
             }
         })
         .then(function(response) {

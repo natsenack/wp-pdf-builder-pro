@@ -111,6 +111,7 @@ function pdf_builder_load_bootstrap() {
         add_action('wp_ajax_pdf_builder_save_order_canvas', 'pdf_builder_ajax_save_order_canvas_fallback', 1);
         add_action('wp_ajax_pdf_builder_get_fresh_nonce', 'pdf_builder_ajax_get_fresh_nonce', 1);
         add_action('wp_ajax_pdf_builder_validate_preview', 'pdf_builder_ajax_validate_preview');
+        add_action('wp_ajax_pdf_builder_get_settings', 'pdf_builder_ajax_get_settings_fallback', 1);
 
         // Initialiser l'interface d'administration
         if (is_admin() && class_exists('PDF_Builder_Admin')) {
@@ -644,4 +645,22 @@ add_action('wp_ajax_pdf_builder_validate_preview', 'pdf_builder_ajax_validate_pr
 add_action('wp_ajax_nopriv_pdf_builder_validate_preview', 'pdf_builder_ajax_validate_preview');
 add_action('wp_ajax_pdf_builder_get_fresh_nonce', 'pdf_builder_ajax_get_fresh_nonce');
 add_action('wp_ajax_nopriv_pdf_builder_get_fresh_nonce', 'pdf_builder_ajax_get_fresh_nonce');
+add_action('wp_ajax_pdf_builder_get_settings', 'pdf_builder_ajax_get_settings_fallback');
+add_action('wp_ajax_nopriv_pdf_builder_get_settings', 'pdf_builder_ajax_get_settings_fallback');
+
+// Fonction fallback pour récupérer les paramètres
+function pdf_builder_ajax_get_settings_fallback() {
+    // Vérifier le nonce
+    if (!isset($_GET['nonce']) || !wp_verify_nonce($_GET['nonce'], 'pdf_builder_settings')) {
+        wp_send_json_error(__('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro'));
+        exit;
+    }
+
+    // Récupérer les paramètres depuis la base de données
+    $settings = get_option('pdf_builder_settings', []);
+
+    // Retourner les paramètres
+    wp_send_json_success($settings);
+    exit;
+}
 
