@@ -1346,7 +1346,8 @@ class PDF_Builder_Pro_Generator {
 
         // Propriétés spécifiques au tableau
         $show_headers = $element['showHeaders'] ?? true;
-        $show_borders = $element['showBorders'] ?? true;
+        // Forcer les bordures pour les tableaux de produits (correction du bug d'affichage)
+        $show_borders = ($element['type'] ?? '') === 'product_table' ? true : ($element['showBorders'] ?? true);
         $table_style = $element['tableStyle'] ?? 'default';
         $headers = $element['headers'] ?? ['Produit', 'Qté', 'Prix'];
         $columns = $element['columns'] ?? [
