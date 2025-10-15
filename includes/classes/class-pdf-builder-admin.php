@@ -3968,6 +3968,7 @@ class PDF_Builder_Admin {
             'max_template_size' => intval($_POST['max_template_size'] ?? 52428800),
             'email_notifications_enabled' => isset($_POST['email_notifications_enabled']),
             'notification_events' => isset($_POST['notification_events']) ? array_map('sanitize_text_field', $_POST['notification_events']) : [],
+            // Paramètres Canvas - anciens
             'canvas_element_borders_enabled' => isset($_POST['canvas_element_borders_enabled']),
             'canvas_border_width' => isset($_POST['canvas_border_width']) ? floatval($_POST['canvas_border_width']) : 1,
             'canvas_border_color' => isset($_POST['canvas_border_color']) ? sanitize_text_field($_POST['canvas_border_color']) : '#007cba',
@@ -3976,6 +3977,17 @@ class PDF_Builder_Admin {
             'canvas_handle_size' => isset($_POST['canvas_handle_size']) ? intval($_POST['canvas_handle_size']) : 8,
             'canvas_handle_color' => isset($_POST['canvas_handle_color']) ? sanitize_text_field($_POST['canvas_handle_color']) : '#007cba',
             'canvas_handle_hover_color' => isset($_POST['canvas_handle_hover_color']) ? sanitize_text_field($_POST['canvas_handle_hover_color']) : '#005a87',
+            // Paramètres Canvas - nouveaux sous-onglets
+            'default_canvas_width' => isset($_POST['default_canvas_width']) ? intval($_POST['default_canvas_width']) : 210,
+            'default_canvas_height' => isset($_POST['default_canvas_height']) ? intval($_POST['default_canvas_height']) : 297,
+            'default_canvas_unit' => isset($_POST['default_canvas_unit']) ? sanitize_text_field($_POST['default_canvas_unit']) : 'mm',
+            'canvas_background_color' => isset($_POST['canvas_background_color']) ? sanitize_text_field($_POST['canvas_background_color']) : '#ffffff',
+            'canvas_show_transparency' => isset($_POST['canvas_show_transparency']),
+            'show_margins' => isset($_POST['show_margins']),
+            'margin_top' => isset($_POST['margin_top']) ? intval($_POST['margin_top']) : 10,
+            'margin_right' => isset($_POST['margin_right']) ? intval($_POST['margin_right']) : 10,
+            'margin_bottom' => isset($_POST['margin_bottom']) ? intval($_POST['margin_bottom']) : 10,
+            'margin_left' => isset($_POST['margin_left']) ? intval($_POST['margin_left']) : 10,
             'email_notifications' => isset($_POST['email_notifications']),
             'admin_email' => sanitize_email($_POST['admin_email'] ?? ''),
             'notification_log_level' => sanitize_text_field($_POST['notification_log_level'] ?? 'info')
