@@ -257,8 +257,8 @@ const PreviewModal = ({
             },
             minimal: {
               headerBg: '#ffffff',
-              headerBorder: '#f3f4f6',
-              rowBorder: '#f9fafb',
+              headerBorder: '#d1d5db',
+              rowBorder: '#f3f4f6',
               altRowBg: '#ffffff',
               borderWidth: 0.5,
               textColor: '#6b7280',

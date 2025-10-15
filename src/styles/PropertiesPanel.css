@@ -686,7 +686,7 @@
   transform: translateY(0);
 }
 
-/* Styles pour le sélecteur de style de tableau */
+/* Styles pour le sélecteur de style de tableau dynamique */
 .table-style-selector {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -700,34 +700,85 @@
   align-items: center;
   padding: 8px 4px;
   border: 2px solid #e2e8f0;
-  border-radius: 6px;
+  border-radius: 8px;
   background: white;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   min-height: 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.table-style-option::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
 }
 
 .table-style-option:hover {
   border-color: #cbd5e1;
   background: #f8fafc;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.table-style-option:hover::before {
+  opacity: 1;
 }
 
 .table-style-option.active {
   border-color: #2563eb;
-  background: #eff6ff;
-  box-shadow: 0 0 0 2px #2563eb, 0 2px 8px rgba(37, 99, 235, 0.2);
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1), 0 8px 25px rgba(37, 99, 235, 0.2);
+  transform: translateY(-1px);
+}
+
+.table-style-option.active::after {
+  content: '✓';
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: #2563eb;
+  color: white;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .table-preview {
   width: 100%;
   height: 48px;
-  border-radius: 3px;
+  border-radius: 4px;
   overflow: hidden;
-  border: 1px solid #e2e8f0;
-  margin-bottom: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  margin-bottom: 6px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.table-preview::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 50%);
+  pointer-events: none;
 }
 
 .table-header {
@@ -738,6 +789,7 @@
   align-items: center;
   text-align: center;
   line-height: 1;
+  position: relative;
 }
 
 .table-row {
@@ -747,6 +799,7 @@
   align-items: center;
   text-align: center;
   line-height: 1;
+  position: relative;
 }
 
 .table-cell {
@@ -759,6 +812,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  position: relative;
 }
 
 .table-cell:not(:last-child) {
@@ -769,11 +823,55 @@
 
 .style-label {
   font-size: 10px;
-  font-weight: 500;
+  font-weight: 600;
   color: #374151;
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
+  text-transform: capitalize;
+  letter-spacing: 0.025em;
+}
+
+/* Animation d'entrée pour les options de style de tableau */
+.table-style-option:nth-child(1) { animation-delay: 0ms; }
+.table-style-option:nth-child(2) { animation-delay: 50ms; }
+.table-style-option:nth-child(3) { animation-delay: 100ms; }
+.table-style-option:nth-child(4) { animation-delay: 150ms; }
+.table-style-option:nth-child(5) { animation-delay: 200ms; }
+.table-style-option:nth-child(6) { animation-delay: 250ms; }
+.table-style-option:nth-child(7) { animation-delay: 300ms; }
+.table-style-option:nth-child(8) { animation-delay: 350ms; }
+.table-style-option:nth-child(9) { animation-delay: 400ms; }
+.table-style-option:nth-child(10) { animation-delay: 450ms; }
+.table-style-option:nth-child(11) { animation-delay: 500ms; }
+.table-style-option:nth-child(12) { animation-delay: 550ms; }
+.table-style-option:nth-child(13) { animation-delay: 600ms; }
+.table-style-option:nth-child(14) { animation-delay: 650ms; }
+.table-style-option:nth-child(15) { animation-delay: 700ms; }
+.table-style-option:nth-child(16) { animation-delay: 750ms; }
+.table-style-option:nth-child(17) { animation-delay: 800ms; }
+.table-style-option:nth-child(18) { animation-delay: 850ms; }
+.table-style-option:nth-child(19) { animation-delay: 900ms; }
+.table-style-option:nth-child(20) { animation-delay: 950ms; }
+.table-style-option:nth-child(21) { animation-delay: 1000ms; }
+.table-style-option:nth-child(22) { animation-delay: 1050ms; }
+.table-style-option:nth-child(23) { animation-delay: 1100ms; }
+.table-style-option:nth-child(24) { animation-delay: 1150ms; }
+.table-style-option:nth-child(25) { animation-delay: 1200ms; }
+
+.table-style-option {
+  animation: tableStyleFadeIn 0.6s ease-out both;
+}
+
+@keyframes tableStyleFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
