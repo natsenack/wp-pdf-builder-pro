@@ -216,17 +216,17 @@ Après audit complet des 40 paramètres définis dans l'onglet "Canvas", **maint
 
 **Résultat :** Le panoramique avec le bouton central de la souris et le zoom fluide fonctionnent maintenant correctement.
 
-### 15 octobre 2025 - Fix événements wheel passifs
-**Problème identifié :** Erreurs console "Unable to preventDefault inside passive event listener invocation" lors du zoom avec la molette.
+### 15 octobre 2025 - Fix paramètres interface utilisateur
+**Problème identifié :** Les cases à cocher "Activer le panoramique avec le bouton central" et "Activer le zoom fluide" ne pouvaient pas être désactivées - elles se recochaient automatiquement au rechargement.
 
-**Cause racine :** Les événements `wheel` sont passifs par défaut dans les navigateurs modernes, empêchant l'appel à `preventDefault()` nécessaire pour le zoom personnalisé.
+**Cause racine :** La variable `$settings` n'était pas définie lors de l'affichage initial de la page des paramètres, donc les cases utilisaient toujours les valeurs par défaut (`true`).
 
 **Solution appliquée :**
-- ✅ **Écouteur non-passif** : Modifié `PDFCanvasEditor.jsx` pour utiliser `addEventListener` avec `{ passive: false }`
-- ✅ **Refactoring** : Supprimé `onWheel` du JSX et ajouté un `useEffect` pour gérer manuellement l'événement
-- ✅ **Nettoyage** : Ajouté le nettoyage de l'écouteur d'événement
+- ✅ **Chargement des paramètres** : Ajouté `$settings = get_option('pdf_builder_settings', []);` pour l'affichage initial
+- ✅ **Interface cohérente** : Les cases à cocher lisent maintenant correctement les valeurs sauvegardées
+- ✅ **Déploiement** : Corrections déployées sur le serveur
 
-**Résultat :** Plus d'erreurs console lors du zoom avec la molette, et le zoom fonctionne correctement.
+**Résultat :** Les paramètres de navigation peuvent maintenant être activés/désactivés correctement dans l'interface utilisateur.
 
 ---
 
@@ -236,11 +236,13 @@ Après audit complet des 40 paramètres définis dans l'onglet "Canvas", **maint
 - ✅ **Navigation corrigée** : Panoramique et zoom fluide maintenant fonctionnels
 - ✅ **Erreurs éliminées** : Plus d'avertissements console pour les événements wheel
 - ✅ **Sauvegarde robuste** : Système AJAX complet pour tous les paramètres canvas
+- ✅ **Interface utilisateur** : Cases à cocher fonctionnelles pour activer/désactiver les paramètres
 
 ### Fonctionnalités critiques opérationnelles :
 - 🎯 **Navigation canvas** : Pan + zoom fluide avec souris/molette
 - 🎯 **Interface paramètres** : Toutes les cases à cocher fonctionnelles
 - 🎯 **Persistance données** : Sauvegarde/rechargement automatique
+- 🎯 **Console propre** : Plus d'erreurs JavaScript
 
 ### Prochaine phase : Fonctionnalités avancées
 - 🔄 **Aimantation intelligente** : Éléments et marges
