@@ -461,8 +461,8 @@ const PreviewModal = ({
 
       case 'customer_info':
         // Rendu dynamique des informations client utilisant les propriétés de l'élément
-        const customerFields = element.fields || ['name', 'phone', 'address', 'email'];
-        const showLabels = element.showLabels !== false && element.showLabel !== false;
+        const customerFields = element.fields || ['name', 'phone', 'address', 'email', 'company'];
+        const showLabels = element.showLabels !== false;
         const layout = element.layout || 'vertical';
         const alignment = element.alignment || 'left';
         const spacing = element.spacing || 3;
@@ -539,7 +539,7 @@ const PreviewModal = ({
       case 'company_info':
         // Rendu dynamique des informations entreprise utilisant les propriétés de l'élément
         const companyFields = element.fields || ['name', 'address', 'phone', 'email'];
-        const showCompanyLabels = element.showLabels !== false && element.showLabel !== false;
+        const showCompanyLabels = element.showLabels !== false;
         const companyLayout = element.layout || 'vertical';
         const companyAlignment = element.alignment || 'left';
         const companySpacing = element.spacing || 3;
