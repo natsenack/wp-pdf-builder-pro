@@ -1076,10 +1076,40 @@ const PreviewModal = ({
       const { jsonString } = validationResult;
       console.log('✅ Validation côté client réussie, longueur JSON:', jsonString.length);
 
+      // Vérifier que les variables AJAX sont disponibles
+      let ajaxUrl = window.pdfBuilderAjax?.ajaxurl || ajaxurl;
+
+      if (!ajaxUrl) {
+        alert('Erreur: Variables AJAX non disponibles. Rechargez la page.');
+        return;
+      }
+
+      // Obtenir un nonce frais pour l'aperçu
+      console.log('Obtention d\'un nonce frais pour aperçu...');
+      const nonceFormData = new FormData();
+      nonceFormData.append('action', 'pdf_builder_get_fresh_nonce');
+
+      const nonceResponse = await fetch(ajaxUrl, {
+        method: 'POST',
+        body: nonceFormData
+      });
+
+      if (!nonceResponse.ok) {
+        throw new Error(`Erreur HTTP nonce: ${nonceResponse.status}`);
+      }
+
+      const nonceData = await nonceResponse.json();
+      if (!nonceData.success) {
+        throw new Error('Impossible d\'obtenir un nonce frais');
+      }
+
+      const freshNonce = nonceData.data.nonce;
+      console.log('Nonce frais obtenu pour aperçu:', freshNonce);
+
       // Préparer les données pour l'AJAX unifié
       const formData = new FormData();
       formData.append('action', 'pdf_builder_unified_preview');
-      formData.append('nonce', pdfBuilderNonce || window.pdfBuilderAjax?.nonce || '');
+      formData.append('nonce', freshNonce);
       formData.append('elements', jsonString);
 
       console.log('🌐 Envoi requête aperçu unifié...');
