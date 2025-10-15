@@ -1113,17 +1113,63 @@ const PropertiesPanel = React.memo(({
 
                 <div className="property-row">
                   <label>Style du tableau:</label>
-                  <select
-                    value={localProperties.tableStyle || 'default'}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'tableStyle', e.target.value)}
-                  >
-                    <option value="default">Style par défaut</option>
-                    <option value="classic">Classique (noir/blanc)</option>
-                    <option value="striped">Lignes alternées</option>
-                    <option value="bordered">Encadré</option>
-                    <option value="minimal">Minimal</option>
-                    <option value="modern">Moderne</option>
-                  </select>
+                  <div className="table-style-selector">
+                    {[
+                      { value: 'default', label: 'Défaut', headerBg: '#f5f5f5', headerBorder: '#ddd', rowBorder: '#eee', altRowBg: '#fafafa', borderWidth: 1 },
+                      { value: 'classic', label: 'Classique', headerBg: '#ffffff', headerBorder: '#000000', rowBorder: '#000000', altRowBg: '#ffffff', borderWidth: 1 },
+                      { value: 'striped', label: 'Alterné', headerBg: '#f8f9fa', headerBorder: '#dee2e6', rowBorder: '#dee2e6', altRowBg: '#e9ecef', borderWidth: 1 },
+                      { value: 'bordered', label: 'Encadré', headerBg: '#ffffff', headerBorder: '#dee2e6', rowBorder: '#dee2e6', altRowBg: '#ffffff', borderWidth: 2 },
+                      { value: 'minimal', label: 'Minimal', headerBg: '#ffffff', headerBorder: '#f1f1f1', rowBorder: '#f8f8f8', altRowBg: '#ffffff', borderWidth: 0.5 },
+                      { value: 'modern', label: 'Moderne', headerBg: '#007bff', headerBorder: '#007bff', rowBorder: '#e3f2fd', altRowBg: '#f8f9ff', borderWidth: 1 }
+                    ].map((style) => (
+                      <button
+                        key={style.value}
+                        type="button"
+                        className={`table-style-option ${localProperties.tableStyle === style.value ? 'active' : ''}`}
+                        onClick={() => handlePropertyChange(selectedElement.id, 'tableStyle', style.value)}
+                        title={style.label}
+                      >
+                        <div className="table-preview">
+                          {/* Header row */}
+                          <div
+                            className="table-header"
+                            style={{
+                              backgroundColor: style.headerBg,
+                              border: `${style.borderWidth}px solid ${style.headerBorder}`,
+                              borderBottom: 'none'
+                            }}
+                          >
+                            <div className="table-cell" style={{ borderRight: `${style.borderWidth}px solid ${style.headerBorder}` }}>H</div>
+                            <div className="table-cell">H</div>
+                          </div>
+                          {/* Data rows */}
+                          <div
+                            className="table-row"
+                            style={{
+                              backgroundColor: style.altRowBg,
+                              border: `${style.borderWidth}px solid ${style.rowBorder}`,
+                              borderTop: 'none'
+                            }}
+                          >
+                            <div className="table-cell" style={{ borderRight: `${style.borderWidth}px solid ${style.rowBorder}` }}>D</div>
+                            <div className="table-cell">D</div>
+                          </div>
+                          <div
+                            className="table-row"
+                            style={{
+                              backgroundColor: 'white',
+                              border: `${style.borderWidth}px solid ${style.rowBorder}`,
+                              borderTop: 'none'
+                            }}
+                          >
+                            <div className="table-cell" style={{ borderRight: `${style.borderWidth}px solid ${style.rowBorder}` }}>D</div>
+                            <div className="table-cell">D</div>
+                          </div>
+                        </div>
+                        <span className="style-label">{style.label}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="property-row">
