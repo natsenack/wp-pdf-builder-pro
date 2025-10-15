@@ -71,8 +71,9 @@ const PreviewModal = ({
               color: element.color || '#000000',
               fontWeight: element.fontWeight === 'bold' ? 'bold' : 'normal',
               fontStyle: element.fontStyle === 'italic' ? 'italic' : 'normal',
+              textDecoration: element.textDecoration || 'none',
               textAlign: element.textAlign || 'left',
-              lineHeight: '1.2',
+              lineHeight: element.lineHeight || '1.2',
               whiteSpace: 'pre-wrap',
               overflow: 'hidden',
               padding: '4px',
@@ -91,7 +92,7 @@ const PreviewModal = ({
               height: '100%',
               backgroundColor: element.fillColor || 'transparent',
               border: element.borderWidth
-                ? `${element.borderWidth}px solid ${element.borderColor || '#000000'}`
+                ? `${element.borderWidth}px ${element.borderStyle || 'solid'} ${element.borderColor || '#000000'}`
                 : 'none',
               borderRadius: element.borderRadius || 0
             }}
@@ -101,12 +102,13 @@ const PreviewModal = ({
       case 'image':
         return (
           <img
-            src={element.src || ''}
+            src={element.src || element.imageUrl || ''}
             alt={element.alt || 'Image'}
             style={{
               width: '100%',
               height: '100%',
-              objectFit: 'cover'
+              objectFit: element.objectFit || 'cover',
+              borderRadius: element.borderRadius || 0
             }}
             onError={(e) => {
               e.target.style.display = 'none';
@@ -119,7 +121,7 @@ const PreviewModal = ({
           <div
             style={{
               width: '100%',
-              height: '100%',
+              height: element.height || element.strokeWidth || 1,
               borderTop: `${element.strokeWidth || 1}px solid ${element.strokeColor || '#000000'}`,
               height: 0
             }}
@@ -132,9 +134,10 @@ const PreviewModal = ({
             style={{
               width: '100%',
               height: '100%',
-              backgroundColor: element.color || '#cccccc',
-              height: `${element.thickness || 2}px`,
-              margin: `${element.margin || 10}px 0`
+              backgroundColor: element.color || element.fillColor || '#cccccc',
+              height: `${element.thickness || element.height || 2}px`,
+              margin: `${element.margin || 10}px 0`,
+              borderRadius: element.borderRadius || 0
             }}
           />
         );
@@ -246,8 +249,8 @@ const PreviewModal = ({
             height: '100%',
             display: 'flex',
             flexDirection: 'column',
-            fontSize: '10px',
-            fontFamily: 'Arial, sans-serif',
+            fontSize: element.fontSize || '10px',
+            fontFamily: element.fontFamily || 'Arial, sans-serif',
             border: element.borderWidth && element.borderWidth > 0 ? `${Math.max(1, element.borderWidth * 0.5)}px solid ${element.borderColor || '#e5e7eb'}` : 'none',
             borderRadius: element.borderRadius ? `${element.borderRadius}px` : '2px',
             overflow: 'hidden',
@@ -474,7 +477,9 @@ const PreviewModal = ({
           address: '123 Rue de la Paix\n75001 Paris\nFrance',
           email: 'jean.dupont@email.com',
           phone: '+33 6 12 34 56 78',
-          tva: 'FR 12 345 678 901'
+          tva: 'FR 12 345 678 901',
+          siret: '123 456 789 00012',
+          website: 'www.abc-company.com'
         };
 
         const containerStyle = {
@@ -522,6 +527,8 @@ const PreviewModal = ({
                       {field === 'email' && 'Email'}
                       {field === 'phone' && 'Téléphone'}
                       {field === 'tva' && 'N° TVA'}
+                      {field === 'siret' && 'SIRET'}
+                      {field === 'website' && 'Site web'}
                       :
                     </div>
                   )}
@@ -552,7 +559,10 @@ const PreviewModal = ({
           address: '456 Avenue des Champs\n75008 Paris\nFrance',
           phone: '01 23 45 67 89',
           email: 'contact@abc-company.com',
-          tva: 'FR 98 765 432 109'
+          tva: 'FR 98 765 432 109',
+          siret: '987 654 321 00098',
+          rcs: 'Paris B 123 456 789',
+          website: 'www.abc-company.com'
         };
 
         const companyContainerStyle = {
@@ -599,6 +609,9 @@ const PreviewModal = ({
                       {field === 'phone' && 'Téléphone'}
                       {field === 'email' && 'Email'}
                       {field === 'tva' && 'N° TVA'}
+                      {field === 'siret' && 'SIRET'}
+                      {field === 'rcs' && 'RCS'}
+                      {field === 'website' && 'Site web'}
                       :
                     </div>
                   )}
@@ -623,17 +636,19 @@ const PreviewModal = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: '8px',
-            backgroundColor: element.backgroundColor || 'transparent'
+            padding: element.padding || '8px',
+            backgroundColor: element.backgroundColor || 'transparent',
+            borderRadius: element.borderRadius || 0,
+            border: element.borderWidth ? `${element.borderWidth}px solid ${element.borderColor || '#e5e7eb'}` : 'none'
           }}>
-            {element.imageUrl ? (
+            {element.imageUrl || element.src ? (
               <img
-                src={element.imageUrl}
-                alt="Logo entreprise"
+                src={element.imageUrl || element.src}
+                alt={element.alt || "Logo entreprise"}
                 style={{
                   maxWidth: '100%',
                   maxHeight: '100%',
-                  objectFit: 'contain'
+                  objectFit: element.objectFit || 'contain'
                 }}
               />
             ) : (
@@ -646,7 +661,7 @@ const PreviewModal = ({
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: '#666',
-                fontSize: '12px'
+                fontSize: element.fontSize || '12px'
               }}>
                 🏢 Logo
               </div>
@@ -657,12 +672,15 @@ const PreviewModal = ({
       case 'order_number':
         return (
           <div style={{
-            padding: '8px',
+            padding: element.padding || '8px',
             fontSize: element.fontSize || 14,
             fontWeight: element.fontWeight || 'bold',
             color: element.color || '#333',
             fontFamily: element.fontFamily || 'Inter, sans-serif',
-            textAlign: element.textAlign || 'left'
+            textAlign: element.textAlign || 'left',
+            backgroundColor: element.backgroundColor || 'transparent',
+            borderRadius: element.borderRadius || 0,
+            border: element.borderWidth ? `${element.borderWidth}px solid ${element.borderColor || '#e5e7eb'}` : 'none'
           }}>
             {element.showLabel !== false && (
               <div style={{
@@ -686,11 +704,14 @@ const PreviewModal = ({
       case 'document_type':
         return (
           <div style={{
-            padding: '8px',
-            fontSize: '18px',
-            fontWeight: 'bold',
+            padding: element.padding || '8px',
+            fontSize: element.fontSize || '18px',
+            fontWeight: element.fontWeight || 'bold',
             color: element.color || '#1e293b',
-            textAlign: 'center'
+            fontFamily: element.fontFamily || 'Inter, sans-serif',
+            textAlign: element.textAlign || 'center',
+            backgroundColor: element.backgroundColor || 'transparent',
+            borderRadius: element.borderRadius || 0
           }}>
             {element.documentType === 'invoice' ? 'FACTURE' :
              element.documentType === 'quote' ? 'DEVIS' :
@@ -704,16 +725,18 @@ const PreviewModal = ({
         return (
           <div style={{
             width: '100%',
-            height: '100%',
-            backgroundColor: '#e5e7eb',
-            borderRadius: '10px',
-            overflow: 'hidden'
+            height: element.height || '100%',
+            backgroundColor: element.backgroundColor || '#e5e7eb',
+            borderRadius: element.borderRadius || '10px',
+            overflow: 'hidden',
+            border: element.borderWidth ? `${element.borderWidth}px solid ${element.borderColor || '#d1d5db'}` : 'none'
           }}>
             <div style={{
-              width: `${element.progressValue || 75}%`,
+              width: `${Math.min(100, Math.max(0, element.progressValue || 75))}%`,
               height: '100%',
               backgroundColor: element.progressColor || '#3b82f6',
-              borderRadius: '10px'
+              borderRadius: element.borderRadius || '10px',
+              transition: element.animate !== false ? 'width 0.3s ease' : 'none'
             }} />
           </div>
         );
