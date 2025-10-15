@@ -123,6 +123,7 @@ if ((isset($_POST['submit']) || isset($_POST['submit_roles']) || isset($_POST['s
             'max_template_size' => intval($_POST['max_template_size']),
             'email_notifications_enabled' => isset($_POST['email_notifications_enabled']),
             'notification_events' => isset($_POST['notification_events']) ? array_map('sanitize_text_field', $_POST['notification_events']) : [],
+            // Paramètres Canvas - anciens
             'canvas_element_borders_enabled' => isset($_POST['canvas_element_borders_enabled']),
             'canvas_border_width' => isset($_POST['canvas_border_width']) ? floatval($_POST['canvas_border_width']) : 1,
             'canvas_border_color' => isset($_POST['canvas_border_color']) ? sanitize_text_field($_POST['canvas_border_color']) : '#007cba',
@@ -131,6 +132,69 @@ if ((isset($_POST['submit']) || isset($_POST['submit_roles']) || isset($_POST['s
             'canvas_handle_size' => isset($_POST['canvas_handle_size']) ? intval($_POST['canvas_handle_size']) : 8,
             'canvas_handle_color' => isset($_POST['canvas_handle_color']) ? sanitize_text_field($_POST['canvas_handle_color']) : '#007cba',
             'canvas_handle_hover_color' => isset($_POST['canvas_handle_hover_color']) ? sanitize_text_field($_POST['canvas_handle_hover_color']) : '#005a87',
+            // Paramètres Canvas - nouveaux sous-onglets
+            'default_canvas_width' => isset($_POST['default_canvas_width']) ? intval($_POST['default_canvas_width']) : 210,
+            'default_canvas_height' => isset($_POST['default_canvas_height']) ? intval($_POST['default_canvas_height']) : 297,
+            'default_canvas_unit' => isset($_POST['default_canvas_unit']) ? sanitize_text_field($_POST['default_canvas_unit']) : 'mm',
+            'canvas_background_color' => isset($_POST['canvas_background_color']) ? sanitize_text_field($_POST['canvas_background_color']) : '#ffffff',
+            'canvas_show_transparency' => isset($_POST['canvas_show_transparency']),
+            'show_margins' => isset($_POST['show_margins']),
+            'margin_top' => isset($_POST['margin_top']) ? intval($_POST['margin_top']) : 10,
+            'margin_right' => isset($_POST['margin_right']) ? intval($_POST['margin_right']) : 10,
+            'margin_bottom' => isset($_POST['margin_bottom']) ? intval($_POST['margin_bottom']) : 10,
+            'margin_left' => isset($_POST['margin_left']) ? intval($_POST['margin_left']) : 10,
+            'show_grid' => isset($_POST['show_grid']),
+            'grid_size' => isset($_POST['grid_size']) ? intval($_POST['grid_size']) : 10,
+            'grid_color' => isset($_POST['grid_color']) ? sanitize_text_field($_POST['grid_color']) : '#e0e0e0',
+            'grid_opacity' => isset($_POST['grid_opacity']) ? intval($_POST['grid_opacity']) : 30,
+            'snap_to_grid' => isset($_POST['snap_to_grid']),
+            'snap_to_elements' => isset($_POST['snap_to_elements']),
+            'snap_to_margins' => isset($_POST['snap_to_margins']),
+            'snap_tolerance' => isset($_POST['snap_tolerance']) ? intval($_POST['snap_tolerance']) : 5,
+            'show_guides' => isset($_POST['show_guides']),
+            'lock_guides' => isset($_POST['lock_guides']),
+            'default_zoom' => isset($_POST['default_zoom']) ? sanitize_text_field($_POST['default_zoom']) : '100',
+            'zoom_step' => isset($_POST['zoom_step']) ? intval($_POST['zoom_step']) : 25,
+            'min_zoom' => isset($_POST['min_zoom']) ? intval($_POST['min_zoom']) : 10,
+            'max_zoom' => isset($_POST['max_zoom']) ? intval($_POST['max_zoom']) : 500,
+            'pan_with_mouse' => isset($_POST['pan_with_mouse']),
+            'smooth_zoom' => isset($_POST['smooth_zoom']),
+            'show_zoom_indicator' => isset($_POST['show_zoom_indicator']),
+            'zoom_with_wheel' => isset($_POST['zoom_with_wheel']),
+            'zoom_to_selection' => isset($_POST['zoom_to_selection']),
+            'show_resize_handles' => isset($_POST['show_resize_handles']),
+            'handle_size' => isset($_POST['handle_size']) ? intval($_POST['handle_size']) : 8,
+            'handle_color' => isset($_POST['handle_color']) ? sanitize_text_field($_POST['handle_color']) : '#007cba',
+            'enable_rotation' => isset($_POST['enable_rotation']),
+            'rotation_step' => isset($_POST['rotation_step']) ? intval($_POST['rotation_step']) : 15,
+            'rotation_snap' => isset($_POST['rotation_snap']),
+            'multi_select' => isset($_POST['multi_select']),
+            'select_all_shortcut' => isset($_POST['select_all_shortcut']),
+            'show_selection_bounds' => isset($_POST['show_selection_bounds']),
+            'copy_paste_enabled' => isset($_POST['copy_paste_enabled']),
+            'duplicate_on_drag' => isset($_POST['duplicate_on_drag']),
+            'export_quality' => isset($_POST['export_quality']) ? sanitize_text_field($_POST['export_quality']) : 'print',
+            'export_format' => isset($_POST['export_format']) ? sanitize_text_field($_POST['export_format']) : 'pdf',
+            'compress_images' => isset($_POST['compress_images']),
+            'image_quality' => isset($_POST['image_quality']) ? intval($_POST['image_quality']) : 85,
+            'max_image_size' => isset($_POST['max_image_size']) ? intval($_POST['max_image_size']) : 2048,
+            'include_metadata' => isset($_POST['include_metadata']),
+            'pdf_author' => isset($_POST['pdf_author']) ? sanitize_text_field($_POST['pdf_author']) : get_bloginfo('name'),
+            'pdf_subject' => isset($_POST['pdf_subject']) ? sanitize_text_field($_POST['pdf_subject']) : '',
+            'auto_crop' => isset($_POST['auto_crop']),
+            'embed_fonts' => isset($_POST['embed_fonts']),
+            'optimize_for_web' => isset($_POST['optimize_for_web']),
+            'enable_hardware_acceleration' => isset($_POST['enable_hardware_acceleration']),
+            'limit_fps' => isset($_POST['limit_fps']),
+            'max_fps' => isset($_POST['max_fps']) ? intval($_POST['max_fps']) : 60,
+            'auto_save_enabled' => isset($_POST['auto_save_enabled']),
+            'auto_save_interval' => isset($_POST['auto_save_interval']) ? intval($_POST['auto_save_interval']) : 30,
+            'auto_save_versions' => isset($_POST['auto_save_versions']) ? intval($_POST['auto_save_versions']) : 10,
+            'undo_levels' => isset($_POST['undo_levels']) ? intval($_POST['undo_levels']) : 50,
+            'redo_levels' => isset($_POST['redo_levels']) ? intval($_POST['redo_levels']) : 50,
+            'enable_keyboard_shortcuts' => isset($_POST['enable_keyboard_shortcuts']),
+            'debug_mode' => isset($_POST['debug_mode']),
+            'show_fps' => isset($_POST['show_fps']),
             'email_notifications' => isset($_POST['email_notifications']),
             'admin_email' => sanitize_email($_POST['admin_email']),
             'notification_log_level' => sanitize_text_field($_POST['notification_log_level'])
@@ -348,6 +412,11 @@ window.addEventListener('load', function() {
                 // This is the target - show it
                 tabContents[i].classList.add('active');
                 tabContents[i].style.cssText = 'display: block !important;';
+                
+                // Special handling for Canvas tab - initialize sub-tabs
+                if (tabContents[i].id === 'canvas') {
+                    initializeCanvasSubTabs();
+                }
             } else {
                 // This is not the target - hide it
                 tabContents[i].classList.remove('active');
@@ -363,6 +432,33 @@ window.addEventListener('load', function() {
         var activeNavTab = document.querySelector('.nav-tab[href="' + tabHref + '"]');
         if (activeNavTab) {
             activeNavTab.classList.add('nav-tab-active');
+        }
+    }
+    
+    // Function to initialize Canvas sub-tabs
+    function initializeCanvasSubTabs() {
+        // Hide all sub-tab contents
+        var subTabContents = document.querySelectorAll('.sub-tab-content');
+        for (var j = 0; j < subTabContents.length; j++) {
+            subTabContents[j].classList.remove('sub-tab-active');
+        }
+
+        // Remove active class from all sub-nav tabs
+        var allSubNavTabs = document.querySelectorAll('.sub-nav-tab');
+        for (var j = 0; j < allSubNavTabs.length; j++) {
+            allSubNavTabs[j].classList.remove('sub-nav-tab-active');
+        }
+
+        // Show first sub-tab content
+        var firstSubTabContent = document.querySelector('.sub-tab-content');
+        if (firstSubTabContent) {
+            firstSubTabContent.classList.add('sub-tab-active');
+        }
+
+        // Activate first sub-nav tab
+        var firstSubNavTab = document.querySelector('.sub-nav-tab');
+        if (firstSubNavTab) {
+            firstSubNavTab.classList.add('sub-nav-tab-active');
         }
     }
     
@@ -430,11 +526,23 @@ window.addEventListener('load', function() {
                 rangeInput.addEventListener('input', function() {
                     var display = document.getElementById(this.id + '_value');
                     if (display) {
-                        display.textContent = this.value + (this.id.includes('opacity') ? '%' : '%');
+                        var suffix = '';
+                        if (this.id.includes('opacity') || this.id.includes('quality')) {
+                            suffix = '%';
+                        } else if (this.id.includes('size')) {
+                            suffix = ' px';
+                        }
+                        display.textContent = this.value + suffix;
                     }
                 });
                 // Initialize display
-                valueDisplay.textContent = rangeInput.value + (rangeInput.id.includes('opacity') ? '%' : '%');
+                var initialSuffix = '';
+                if (rangeInput.id.includes('opacity') || rangeInput.id.includes('quality')) {
+                    initialSuffix = '%';
+                } else if (rangeInput.id.includes('size')) {
+                    initialSuffix = ' px';
+                }
+                valueDisplay.textContent = rangeInput.value + initialSuffix;
             }
         }
     });
@@ -1138,6 +1246,23 @@ window.addEventListener('load', function() {
                             </td>
                         </tr>
                     </table>
+
+                    <div class="canvas-settings-notice" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px;">
+                        <h4 style="margin-top: 0; color: #495057;"><?php _e('💡 Conseils d\'utilisation', 'pdf-builder-pro'); ?></h4>
+                        <ul style="margin: 10px 0; padding-left: 20px; color: #6c757d;">
+                            <li><?php _e('Les dimensions A4 (210x297mm) sont recommandées pour la plupart des documents', 'pdf-builder-pro'); ?></li>
+                            <li><?php _e('L\'unité "mm" est idéale pour l\'impression professionnelle', 'pdf-builder-pro'); ?></li>
+                            <li><?php _e('Activez l\'affichage des marges pour un meilleur contrôle de la mise en page', 'pdf-builder-pro'); ?></li>
+                            <li><?php _e('Le motif de damier facilite la visualisation des zones transparentes', 'pdf-builder-pro'); ?></li>
+                        </ul>
+                    </div>
+
+                    <div class="canvas-save-section" style="margin-top: 20px; padding: 15px; background: #e8f5e8; border: 1px solid #c3e6c3; border-radius: 6px;">
+                        <p style="margin: 0; color: #2d5a2d;">
+                            <strong><?php _e('💾 Sauvegarder les paramètres généraux', 'pdf-builder-pro'); ?></strong><br>
+                            <?php _e('Cliquez sur le bouton principal "Enregistrer les paramètres" en bas de la page.', 'pdf-builder-pro'); ?>
+                        </p>
+                    </div>
                 </div>
 
                 <!-- Sous-onglet Grille & Aimants -->
@@ -1222,6 +1347,23 @@ window.addEventListener('load', function() {
                             </td>
                         </tr>
                     </table>
+
+                    <div class="canvas-settings-notice" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px;">
+                        <h4 style="margin-top: 0; color: #495057;"><?php _e('💡 Conseils d\'utilisation', 'pdf-builder-pro'); ?></h4>
+                        <ul style="margin: 10px 0; padding-left: 20px; color: #6c757d;">
+                            <li><?php _e('Une grille de 10px est idéale pour l\'alignement précis des éléments', 'pdf-builder-pro'); ?></li>
+                            <li><?php _e('Activez l\'aimantation aux éléments pour un alignement automatique', 'pdf-builder-pro'); ?></li>
+                            <li><?php _e('Les guides peuvent être déplacés et verrouillés pour des références permanentes', 'pdf-builder-pro'); ?></li>
+                            <li><?php _e('Une tolérance de 5px offre un bon équilibre entre précision et facilité d\'usage', 'pdf-builder-pro'); ?></li>
+                        </ul>
+                    </div>
+
+                    <div class="canvas-save-section" style="margin-top: 20px; padding: 15px; background: #e8f5e8; border: 1px solid #c3e6c3; border-radius: 6px;">
+                        <p style="margin: 0; color: #2d5a2d;">
+                            <strong><?php _e('💾 Sauvegarder les paramètres de grille', 'pdf-builder-pro'); ?></strong><br>
+                            <?php _e('Cliquez sur le bouton principal "Enregistrer les paramètres" en bas de la page.', 'pdf-builder-pro'); ?>
+                        </p>
+                    </div>
                 </div>
 
                 <!-- Sous-onglet Zoom & Navigation -->
@@ -1236,14 +1378,14 @@ window.addEventListener('load', function() {
                                     <div>
                                         <label for="default_zoom"><?php _e('Niveau de zoom initial:', 'pdf-builder-pro'); ?></label>
                                         <select name="default_zoom" id="default_zoom">
-                                            <option value="25" <?php selected(get_option('pdf_builder_default_zoom', '100'), '25'); ?>>25%</option>
-                                            <option value="50" <?php selected(get_option('pdf_builder_default_zoom', '100'), '50'); ?>>50%</option>
-                                            <option value="75" <?php selected(get_option('pdf_builder_default_zoom', '100'), '75'); ?>>75%</option>
-                                            <option value="100" <?php selected(get_option('pdf_builder_default_zoom', '100'), '100'); ?>>100%</option>
-                                            <option value="125" <?php selected(get_option('pdf_builder_default_zoom', '100'), '125'); ?>>125%</option>
-                                            <option value="150" <?php selected(get_option('pdf_builder_default_zoom', '100'), '150'); ?>>150%</option>
-                                            <option value="200" <?php selected(get_option('pdf_builder_default_zoom', '100'), '200'); ?>>200%</option>
-                                            <option value="fit" <?php selected(get_option('pdf_builder_default_zoom', '100'), 'fit'); ?>>Ajuster à la page</option>
+                                            <option value="25" <?php selected(get_option('pdf_builder_default_zoom', 'fit'), '25'); ?>>25%</option>
+                                            <option value="50" <?php selected(get_option('pdf_builder_default_zoom', 'fit'), '50'); ?>>50%</option>
+                                            <option value="75" <?php selected(get_option('pdf_builder_default_zoom', 'fit'), '75'); ?>>75%</option>
+                                            <option value="100" <?php selected(get_option('pdf_builder_default_zoom', 'fit'), '100'); ?>>100%</option>
+                                            <option value="125" <?php selected(get_option('pdf_builder_default_zoom', 'fit'), '125'); ?>>125%</option>
+                                            <option value="150" <?php selected(get_option('pdf_builder_default_zoom', 'fit'), '150'); ?>>150%</option>
+                                            <option value="200" <?php selected(get_option('pdf_builder_default_zoom', 'fit'), '200'); ?>>200%</option>
+                                            <option value="fit" <?php selected(get_option('pdf_builder_default_zoom', 'fit'), 'fit'); ?>>Ajuster à la page</option>
                                         </select>
                                     </div>
                                     <div>
@@ -1312,6 +1454,23 @@ window.addEventListener('load', function() {
                             </td>
                         </tr>
                     </table>
+
+                    <div class="canvas-settings-notice" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px;">
+                        <h4 style="margin-top: 0; color: #495057;"><?php _e('💡 Conseils d\'utilisation', 'pdf-builder-pro'); ?></h4>
+                        <ul style="margin: 10px 0; padding-left: 20px; color: #6c757d;">
+                            <li><?php _e('"Ajuster à la page" offre la meilleure vue d\'ensemble lors de l\'ouverture', 'pdf-builder-pro'); ?></li>
+                            <li><?php _e('Le panoramique avec le bouton central facilite la navigation dans les grands documents', 'pdf-builder-pro'); ?></li>
+                            <li><?php _e('Ctrl+molette permet un zoom rapide et intuitif', 'pdf-builder-pro'); ?></li>
+                            <li><?php _e('Le double-clic pour zoomer sur la sélection améliore la productivité', 'pdf-builder-pro'); ?></li>
+                        </ul>
+                    </div>
+
+                    <div class="canvas-save-section" style="margin-top: 20px; padding: 15px; background: #e8f5e8; border: 1px solid #c3e6c3; border-radius: 6px;">
+                        <p style="margin: 0; color: #2d5a2d;">
+                            <strong><?php _e('💾 Sauvegarder les paramètres de zoom', 'pdf-builder-pro'); ?></strong><br>
+                            <?php _e('Cliquez sur le bouton principal "Enregistrer les paramètres" en bas de la page.', 'pdf-builder-pro'); ?>
+                        </p>
+                    </div>
                 </div>
 
                 <!-- Sous-onglet Sélection & Manipulation -->
@@ -1407,6 +1566,23 @@ window.addEventListener('load', function() {
                             </td>
                         </tr>
                     </table>
+
+                    <div class="canvas-settings-notice" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px;">
+                        <h4 style="margin-top: 0; color: #495057;"><?php _e('💡 Conseils d\'utilisation', 'pdf-builder-pro'); ?></h4>
+                        <ul style="margin: 10px 0; padding-left: 20px; color: #6c757d;">
+                            <li><?php _e('Les poignées de 8px offrent un bon équilibre entre visibilité et précision', 'pdf-builder-pro'); ?></li>
+                            <li><?php _e('La rotation par pas de 15° permet un contrôle précis des orientations', 'pdf-builder-pro'); ?></li>
+                            <li><?php _e('Ctrl+Clic permet de sélectionner plusieurs éléments simultanément', 'pdf-builder-pro'); ?></li>
+                            <li><?php _e('Alt+glisser duplique automatiquement l\'élément sélectionné', 'pdf-builder-pro'); ?></li>
+                        </ul>
+                    </div>
+
+                    <div class="canvas-save-section" style="margin-top: 20px; padding: 15px; background: #e8f5e8; border: 1px solid #c3e6c3; border-radius: 6px;">
+                        <p style="margin: 0; color: #2d5a2d;">
+                            <strong><?php _e('💾 Sauvegarder les paramètres de sélection', 'pdf-builder-pro'); ?></strong><br>
+                            <?php _e('Cliquez sur le bouton principal "Enregistrer les paramètres" en bas de la page.', 'pdf-builder-pro'); ?>
+                        </p>
+                    </div>
                 </div>
 
                 <!-- Sous-onglet Export & Qualité -->
@@ -1507,6 +1683,23 @@ window.addEventListener('load', function() {
                             </td>
                         </tr>
                     </table>
+
+                    <div class="canvas-settings-notice" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px;">
+                        <h4 style="margin-top: 0; color: #495057;"><?php _e('💡 Conseils d\'utilisation', 'pdf-builder-pro'); ?></h4>
+                        <ul style="margin: 10px 0; padding-left: 20px; color: #6c757d;">
+                            <li><?php _e('Haute qualité (600 DPI) est recommandée pour l\'impression professionnelle', 'pdf-builder-pro'); ?></li>
+                            <li><?php _e('Une qualité d\'image de 85% offre le meilleur équilibre taille/qualité', 'pdf-builder-pro'); ?></li>
+                            <li><?php _e('L\'intégration des polices garantit l\'affichage correct sur tous les appareils', 'pdf-builder-pro'); ?></li>
+                            <li><?php _e('L\'optimisation web réduit la taille du fichier pour un chargement plus rapide', 'pdf-builder-pro'); ?></li>
+                        </ul>
+                    </div>
+
+                    <div class="canvas-save-section" style="margin-top: 20px; padding: 15px; background: #e8f5e8; border: 1px solid #c3e6c3; border-radius: 6px;">
+                        <p style="margin: 0; color: #2d5a2d;">
+                            <strong><?php _e('💾 Sauvegarder les paramètres d\'export', 'pdf-builder-pro'); ?></strong><br>
+                            <?php _e('Cliquez sur le bouton principal "Enregistrer les paramètres" en bas de la page.', 'pdf-builder-pro'); ?>
+                        </p>
+                    </div>
                 </div>
 
                 <!-- Sous-onglet Avancé -->
@@ -1618,6 +1811,23 @@ window.addEventListener('load', function() {
                             </td>
                         </tr>
                     </table>
+
+                    <div class="canvas-settings-notice" style="margin-top: 30px; padding: 20px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px;">
+                        <h4 style="margin-top: 0; color: #495057;"><?php _e('💡 Conseils d\'utilisation', 'pdf-builder-pro'); ?></h4>
+                        <ul style="margin: 10px 0; padding-left: 20px; color: #6c757d;">
+                            <li><?php _e('L\'accélération GPU améliore considérablement les performances sur les machines récentes', 'pdf-builder-pro'); ?></li>
+                            <li><?php _e('La sauvegarde automatique toutes les 30 secondes protège contre la perte de travail', 'pdf-builder-pro'); ?></li>
+                            <li><?php _e('50 niveaux d\'annulation offrent une grande flexibilité dans l\'édition', 'pdf-builder-pro'); ?></li>
+                            <li><?php _e('Le mode débogage aide au développement mais peut ralentir l\'interface', 'pdf-builder-pro'); ?></li>
+                        </ul>
+                    </div>
+
+                    <div class="canvas-save-section" style="margin-top: 20px; padding: 15px; background: #e8f5e8; border: 1px solid #c3e6c3; border-radius: 6px;">
+                        <p style="margin: 0; color: #2d5a2d;">
+                            <strong><?php _e('💾 Sauvegarder les paramètres avancés', 'pdf-builder-pro'); ?></strong><br>
+                            <?php _e('Cliquez sur le bouton principal "Enregistrer les paramètres" en bas de la page.', 'pdf-builder-pro'); ?>
+                        </p>
+                    </div>
                 </div>
             </div>
 
