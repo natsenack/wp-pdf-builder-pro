@@ -248,7 +248,7 @@ class PDF_Builder_Pro_Generator {
         $canvas_height_px = 842;
         $page_width_mm = 210; // A4 largeur
         $page_height_mm = 297; // A4 hauteur
-        
+
         $px_to_mm = $page_width_mm / $canvas_width_px; // 0.3529 mm/px
         error_log('PDF Builder Pro: Debut rendu elements, facteur conversion: ' . $px_to_mm);
 
@@ -305,45 +305,77 @@ class PDF_Builder_Pro_Generator {
     private function render_single_element($element, $px_to_mm) {
         $type = isset($element['type']) ? $element['type'] : 'unknown';
 
-        switch ($type) {
-            case 'text':
-                $this->render_text_element($element, $px_to_mm);
-                break;
-            case 'multiline_text':
-                $this->render_multiline_text_element($element, $px_to_mm);
-                break;
-            case 'rectangle':
-                $this->render_rectangle_element($element, $px_to_mm);
-                break;
-            case 'image':
-                $this->render_image_element($element, $px_to_mm);
-                break;
-            case 'customer_info':
-                $this->render_customer_info_element($element, $px_to_mm);
-                break;
-            case 'company_info':
-                $this->render_company_info_element($element, $px_to_mm);
-                break;
-            case 'company_logo':
-                $this->render_company_logo_element($element, $px_to_mm);
-                break;
-            case 'product_table':
-                $this->render_product_table_element($element, $px_to_mm);
-                break;
-            case 'document_type':
-                $this->render_document_type_element($element, $px_to_mm);
-                break;
-            case 'order_number':
-                $this->render_order_number_element($element, $px_to_mm);
-                break;
-            case 'divider':
-                $this->render_divider_element($element, $px_to_mm);
-                break;
-            default:
-                $this->log_error("Type d'element non supporte: $type");
-                if (isset($GLOBALS['pdf_debug_logs'])) {
-                    $GLOBALS['pdf_debug_logs'][] = "❌ TYPE D'ÉLÉMENT NON SUPPORTÉ: $type";
-                }
+        // Validation de base de l'élément
+        if (!$this->validate_element($element)) {
+            $this->log_error("Element invalide ignoré: " . json_encode($element));
+            return;
+        }
+
+        try {
+            switch ($type) {
+                case 'text':
+                    $this->render_text_element($element, $px_to_mm);
+                    break;
+                case 'multiline_text':
+                    $this->render_multiline_text_element($element, $px_to_mm);
+                    break;
+                case 'rectangle':
+                    $this->render_rectangle_element($element, $px_to_mm);
+                    break;
+                case 'circle':
+                    $this->render_circle_element($element, $px_to_mm);
+                    break;
+                case 'line':
+                    $this->render_line_element($element, $px_to_mm);
+                    break;
+                case 'image':
+                    $this->render_image_element($element, $px_to_mm);
+                    break;
+                case 'customer_info':
+                    $this->render_customer_info_element($element, $px_to_mm);
+                    break;
+                case 'company_info':
+                    $this->render_company_info_element($element, $px_to_mm);
+                    break;
+                case 'company_logo':
+                    $this->render_company_logo_element($element, $px_to_mm);
+                    break;
+                case 'product_table':
+                    $this->render_product_table_element($element, $px_to_mm);
+                    break;
+                case 'document_type':
+                    $this->render_document_type_element($element, $px_to_mm);
+                    break;
+                case 'order_number':
+                    $this->render_order_number_element($element, $px_to_mm);
+                    break;
+                case 'order_date':
+                    $this->render_order_date_element($element, $px_to_mm);
+                    break;
+                case 'total':
+                    $this->render_total_element($element, $px_to_mm);
+                    break;
+                case 'divider':
+                    $this->render_divider_element($element, $px_to_mm);
+                    break;
+                case 'barcode':
+                    $this->render_barcode_element($element, $px_to_mm);
+                    break;
+                case 'qrcode':
+                    $this->render_qrcode_element($element, $px_to_mm);
+                    break;
+                default:
+                    // Élément non supporté - rendu de fallback
+                    $this->render_fallback_element($element, $px_to_mm, $type);
+                    $this->log_error("Type d'element non supporte: $type");
+                    if (isset($GLOBALS['pdf_debug_logs'])) {
+                        $GLOBALS['pdf_debug_logs'][] = "❌ TYPE D'ÉLÉMENT NON SUPPORTÉ: $type";
+                    }
+            }
+        } catch (Exception $e) {
+            $this->log_error("Erreur rendu element $type: " . $e->getMessage());
+            // Rendu de fallback en cas d'erreur
+            $this->render_error_fallback($element, $px_to_mm, $e->getMessage());
         }
     }
 
@@ -351,49 +383,82 @@ class PDF_Builder_Pro_Generator {
      * Rendu d'element texte optimise
      */
     private function render_text_element($element, $px_to_mm) {
-        // Extraction des proprietes avec valeurs par defaut sures
-        $text = $element['content'] ?? $element['text'] ?? '';
-        $x = ($element['x'] ?? 0) * $px_to_mm;
-        $y = ($element['y'] ?? 0) * $px_to_mm;
-        $width = ($element['width'] ?? 100) * $px_to_mm;
-        $height = ($element['height'] ?? 20) * $px_to_mm;
+        try {
+            // Extraction des propriétés avec valeurs par défaut sûres
+            $text = $element['content'] ?? $element['text'] ?? '';
+            if (empty($text)) {
+                return; // Ne rien rendre si pas de texte
+            }
 
-        // Styles
-        $font_size = ($element['fontSize'] ?? 12) * 0.75;
-        $font_family = $this->map_font_family($element['fontFamily'] ?? 'Arial, sans-serif');
-        $font_style = $this->get_font_style($element);
-        $color = $this->parse_color($element['color'] ?? '#000000');
+            // Conversion précise des dimensions (px vers mm)
+            $x = ($element['x'] ?? 0) * $px_to_mm;
+            $y = ($element['y'] ?? 0) * $px_to_mm;
+            $width = ($element['width'] ?? 100) * $px_to_mm;
+            $height = ($element['height'] ?? 20) * $px_to_mm;
 
-        // Configuration de la police
-        $this->pdf->SetFont($font_family, $font_style, $font_size);
-        $this->pdf->SetTextColor($color['r'], $color['g'], $color['b']);
+            // Conversion correcte de la taille de police (px vers pt)
+            // 1px = 0.75pt en CSS, mais pour PDF on utilise directement la valeur px comme pt
+            $font_size_px = $element['fontSize'] ?? 14;
+            $font_size_pt = $font_size_px; // PDF utilise les points directement
 
-        // Fond seulement si explicitement defini et non transparent/non defaut
-        $background_color = $element['backgroundColor'] ?? null;
-        if ($this->should_render_background($background_color)) {
-            $bg_color = $this->parse_color($background_color);
-            $this->pdf->SetFillColor($bg_color['r'], $bg_color['g'], $bg_color['b']);
-            $fill = true;
-        } else {
+            // Mapping des familles de polices
+            $font_family_css = $element['fontFamily'] ?? 'Arial, sans-serif';
+            $font_family = $this->map_font_family($font_family_css);
+
+            // Style de police (gras, italique)
+            $font_style = $this->get_font_style($element);
+
+            // Couleur du texte
+            $color = $this->parse_color($element['color'] ?? '#000000');
+
+            // Configuration de la police
+            $this->pdf->SetFont($font_family, $font_style, $font_size_pt);
+            $this->pdf->SetTextColor($color['r'], $color['g'], $color['b']);
+
+            // Fond seulement si explicitement défini et non transparent
+            $background_color = $element['backgroundColor'] ?? null;
             $fill = false;
+            if ($this->should_render_background($background_color)) {
+                $bg_color = $this->parse_color($background_color);
+                $this->pdf->SetFillColor($bg_color['r'], $bg_color['g'], $bg_color['b']);
+                $fill = true;
+            }
+
+            // Bordure
+            $border = $this->get_border_settings($element);
+
+            // Padding (conversion px vers mm)
+            $padding = isset($element['padding']) ? $element['padding'] * $px_to_mm : 0;
+
+            // Calcul des dimensions ajustées avec padding
+            $adjusted_width = max(1, $width - ($padding * 2));
+            $adjusted_height = max(1, $height - ($padding * 2));
+
+            // Positionnement avec padding
+            $final_x = $x + $padding;
+            $final_y = $y + $padding;
+
+            // S'assurer que la position est dans les limites de la page
+            $final_x = max(0, min($final_x, 210 - $adjusted_width)); // 210mm = largeur A4
+            $final_y = max(0, min($final_y, 297 - $adjusted_height)); // 297mm = hauteur A4
+
+            $this->pdf->SetXY($final_x, $final_y);
+
+            // Alignement du texte
+            $align = $this->get_text_alignment($element['textAlign'] ?? 'left');
+
+            // Remplacement des variables dans le texte
+            $processed_text = $this->replace_variables_in_text($text);
+
+            // Rendu du texte
+            $this->pdf->Cell($adjusted_width, $adjusted_height, $processed_text, $border, 0, $align, $fill);
+
+        } catch (Exception $e) {
+            $this->log_error("Erreur rendu texte: " . $e->getMessage());
+            // Rendu de fallback
+            $this->pdf->SetXY(($element['x'] ?? 0) * $px_to_mm, ($element['y'] ?? 0) * $px_to_mm);
+            $this->pdf->Cell(50, 10, '[Erreur texte]', 0, 0, 'L', false);
         }
-
-        // Bordure
-        $border = $this->get_border_settings($element);
-
-        // Pas de padding automatique - utiliser uniquement si défini explicitement
-        $padding = isset($element['padding']) ? $element['padding'] * $px_to_mm : 0;
-        $adjusted_width = $width - ($padding * 2);
-        $adjusted_height = $height - ($padding * 2);
-
-        // Positionnement exact selon le canvas
-        $this->pdf->SetXY($x + $padding, $y + $padding);
-
-        // Alignement
-        $align = $this->get_text_alignment($element['textAlign'] ?? 'left');
-
-        // Rendu du texte
-        $this->pdf->Cell($adjusted_width, $adjusted_height, $text, $border, 0, $align, $fill);
     }
 
     /**
@@ -479,7 +544,71 @@ class PDF_Builder_Pro_Generator {
     }
 
     /**
-     * Rendu d'element image
+     * Rendu d'élément cercle
+     */
+    private function render_circle_element($element, $px_to_mm) {
+        $x = ($element['x'] ?? 0) * $px_to_mm;
+        $y = ($element['y'] ?? 0) * $px_to_mm;
+        $width = ($element['width'] ?? 50) * $px_to_mm;
+        $height = ($element['height'] ?? 50) * $px_to_mm;
+
+        // Centre et rayon
+        $center_x = $x + ($width / 2);
+        $center_y = $y + ($height / 2);
+        $radius = min($width, $height) / 2;
+
+        // Style de remplissage
+        $background_color = $element['backgroundColor'] ?? null;
+        if ($this->should_render_background($background_color)) {
+            $bg_color = $this->parse_color($background_color);
+            $this->pdf->SetFillColor($bg_color['r'], $bg_color['g'], $bg_color['b']);
+            $fill = true;
+        } else {
+            $fill = false;
+        }
+
+        // Bordure
+        $border_width = ($element['borderWidth'] ?? 1) * $px_to_mm;
+        $this->pdf->SetLineWidth($border_width);
+
+        if (!empty($element['borderColor']) && $element['borderColor'] !== 'transparent') {
+            $border_color = $this->parse_color($element['borderColor']);
+            $this->pdf->SetDrawColor($border_color['r'], $border_color['g'], $border_color['b']);
+        }
+
+        // Dessin du cercle
+        $this->pdf->Circle($center_x, $center_y, $radius, 0, 360, 'DF', [], $fill ? [] : null);
+    }
+
+    /**
+     * Rendu d'élément ligne
+     */
+    private function render_line_element($element, $px_to_mm) {
+        $x = ($element['x'] ?? 0) * $px_to_mm;
+        $y = ($element['y'] ?? 0) * $px_to_mm;
+        $width = ($element['width'] ?? 100) * $px_to_mm;
+        $height = ($element['height'] ?? 1) * $px_to_mm;
+
+        // Couleur de ligne
+        $color = $this->parse_color($element['color'] ?? '#000000');
+        $this->pdf->SetDrawColor($color['r'], $color['g'], $color['b']);
+
+        // Épaisseur de ligne
+        $line_width = ($element['borderWidth'] ?? 1) * $px_to_mm;
+        $this->pdf->SetLineWidth($line_width);
+
+        // Dessin de la ligne
+        if ($width > $height) {
+            // Ligne horizontale
+            $this->pdf->Line($x, $y + ($height / 2), $x + $width, $y + ($height / 2));
+        } else {
+            // Ligne verticale
+            $this->pdf->Line($x + ($width / 2), $y, $x + ($width / 2), $y + $height);
+        }
+    }
+
+    /**
+     * Rendu d'élément image
      */
     private function render_image_element($element, $px_to_mm) {
         $src = $element['src'] ?? $element['url'] ?? '';
@@ -560,6 +689,100 @@ class PDF_Builder_Pro_Generator {
             case 'right': return 'R';
             default: return 'L';
         }
+    }
+
+    /**
+     * Validation d'un élément avant rendu
+     */
+    private function validate_element($element) {
+        // Vérifications de base
+        if (!is_array($element)) {
+            return false;
+        }
+
+        if (!isset($element['type']) || empty($element['type'])) {
+            return false;
+        }
+
+        // Vérifications de dimensions minimales
+        $width = $element['width'] ?? 0;
+        $height = $element['height'] ?? 0;
+
+        if ($width < 1 || $height < 1) {
+            return false;
+        }
+
+        // Vérifications de position (doivent être dans les limites du canvas A4)
+        $x = $element['x'] ?? 0;
+        $y = $element['y'] ?? 0;
+
+        if ($x < 0 || $y < 0 || $x > 595 || $y > 842) {
+            // Permettre une petite tolérance hors limites
+            if ($x < -50 || $y < -50 || $x > 645 || $y > 892) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Rendu de fallback pour éléments non supportés
+     */
+    private function render_fallback_element($element, $px_to_mm, $type) {
+        $x = ($element['x'] ?? 0) * $px_to_mm;
+        $y = ($element['y'] ?? 0) * $px_to_mm;
+        $width = ($element['width'] ?? 50) * $px_to_mm;
+        $height = ($element['height'] ?? 20) * $px_to_mm;
+
+        $this->pdf->SetXY($x, $y);
+        $this->pdf->SetFont('helvetica', 'I', 8);
+        $this->pdf->SetTextColor(150, 150, 150);
+        $this->pdf->Cell($width, $height, "[$type]", 1, 0, 'C', false);
+    }
+
+    /**
+     * Rendu de fallback en cas d'erreur
+     */
+    private function render_error_fallback($element, $px_to_mm, $error_message) {
+        $x = ($element['x'] ?? 0) * $px_to_mm;
+        $y = ($element['y'] ?? 0) * $px_to_mm;
+        $width = ($element['width'] ?? 100) * $px_to_mm;
+        $height = ($element['height'] ?? 15) * $px_to_mm;
+
+        $this->pdf->SetXY($x, $y);
+        $this->pdf->SetFont('helvetica', 'B', 6);
+        $this->pdf->SetTextColor(255, 0, 0);
+        $this->pdf->Cell($width, $height, "[ERREUR]", 1, 0, 'C', false);
+
+        $this->log_error("Fallback rendu pour élément: " . substr($error_message, 0, 100));
+    }
+
+    /**
+     * Remplacement des variables dans le texte
+     */
+    private function replace_variables_in_text($text) {
+        if (!$this->order || !is_string($text)) {
+            return $text;
+        }
+
+        $replacements = [
+            '{{order_number}}' => $this->order->get_order_number(),
+            '{{customer_name}}' => $this->order->get_billing_first_name() . ' ' . $this->order->get_billing_last_name(),
+            '{{customer_email}}' => $this->order->get_billing_email(),
+            '{{order_date}}' => $this->order->get_date_created()->format('d/m/Y'),
+            '{{total}}' => wc_price($this->order->get_total()),
+            '{{subtotal}}' => wc_price($this->order->get_subtotal()),
+            '{{tax}}' => wc_price($this->order->get_total_tax()),
+            '{{customer_address}}' => $this->order->get_formatted_billing_address(),
+            '{{company_name}}' => get_bloginfo('name'),
+            '{{company_address}}' => get_option('woocommerce_store_address') . ' ' .
+                                   get_option('woocommerce_store_address_2') . ' ' .
+                                   get_option('woocommerce_store_postcode') . ' ' .
+                                   get_option('woocommerce_store_city'),
+        ];
+
+        return str_replace(array_keys($replacements), array_values($replacements), $text);
     }
 
     /**

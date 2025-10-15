@@ -7,6 +7,13 @@ import { useContextMenu } from './useContextMenu';
 import { useDragAndDrop } from './useDragAndDrop';
 import { ELEMENT_TYPE_MAPPING, fixInvalidProperty } from '../utilities/elementPropertyRestrictions';
 
+// Hook utilitaire pour synchroniser les refs
+const useLatest = (value) => {
+  const ref = useRef(value);
+  ref.current = value;
+  return ref;
+};
+
 // Fallback notification system in case Toastr is not available
 if (typeof window !== 'undefined' && typeof window.toastr === 'undefined') {
   // Simple notification system
@@ -116,9 +123,19 @@ export const useCanvasState = ({
   canvasHeight = 842, // A4 height in points
   globalSettings = null
 }) => {
+  // Logs conditionnels selon l'environnement
+  const isDevelopment = process.env.NODE_ENV === 'development';
   const [elements, setElements] = useState(initialElements);
   const [nextId, setNextId] = useState(1);
   const [isSaving, setIsSaving] = useState(false);
+
+  // États de chargement granulaires pour meilleure UX
+  const [loadingStates, setLoadingStates] = useState({
+    saving: false,
+    loading: false,
+    duplicating: false,
+    deleting: false
+  });
 
   const history = useHistory();
   const selection = useSelection({
@@ -127,17 +144,9 @@ export const useCanvasState = ({
     }, [])
   });
 
-  const historyRef = useRef(history);
-  const selectionRef = useRef(selection);
-
-  // Mettre à jour les refs quand les valeurs changent
-  useEffect(() => {
-    historyRef.current = history;
-  }, [history]);
-
-  useEffect(() => {
-    selectionRef.current = selection;
-  }, [selection]);
+  // Synchronisation parfaite des refs avec useLatest
+  const historyRef = useLatest(history);
+  const selectionRef = useLatest(selection);
 
   const clipboard = useClipboard({
     onPaste: useCallback((data) => {
@@ -170,16 +179,47 @@ export const useCanvasState = ({
       const newElements = prev.map(element =>
         element.id === elementId ? { ...element, ...updates } : element
       );
-      // Sauvegarder dans l'historique
-      history.addToHistory({ elements: newElements, nextId });
       return newElements;
     });
-  }, [history, nextId]);
+  }, []); // Retirer les dépendances pour éviter les re-renders inutiles
 
-  // Calculer le prochain ID basé sur les éléments initiaux
+  // Effet séparé pour l'historique - optimisation des performances
   useEffect(() => {
-    if (initialElements && initialElements.length > 0) {
-      const maxId = Math.max(...initialElements.map(el => {
+    if (elements.length > 0) {
+      try {
+        if (historyRef.current && typeof historyRef.current.addToHistory === 'function') {
+          historyRef.current.addToHistory({ elements, nextId });
+        }
+      } catch (error) {
+        console.warn('Erreur lors de la sauvegarde dans l\'historique:', error);
+        // Continuer l'exécution malgré l'erreur d'historique
+      }
+    }
+  }, [elements, nextId]);
+
+  // Validation des données d'entrée (initialElements)
+  const validateInitialElements = useCallback((elements) => {
+    if (!Array.isArray(elements)) {
+      console.warn('initialElements doit être un tableau, reçu:', typeof elements);
+      return [];
+    }
+
+    return elements.map(element => {
+      if (!element.id || !element.type) {
+        console.warn('Élément invalide détecté, propriétés manquantes:', element);
+        return null;
+      }
+      return element;
+    }).filter(Boolean);
+  }, []);
+
+  // Calculer le prochain ID basé sur les éléments initiaux validés
+  useEffect(() => {
+    const validatedElements = validateInitialElements(initialElements);
+    setElements(validatedElements);
+
+    if (validatedElements && validatedElements.length > 0) {
+      const maxId = Math.max(...validatedElements.map(el => {
         const idParts = el.id?.split('_') || [];
         return parseInt(idParts[1] || 0);
       }));
@@ -187,7 +227,7 @@ export const useCanvasState = ({
     } else {
       setNextId(1);
     }
-  }, [initialElements]);
+  }, [initialElements, validateInitialElements]);
 
   const dragAndDrop = useDragAndDrop({
     onElementMove: useCallback((elementId, position) => {
@@ -262,15 +302,80 @@ export const useCanvasState = ({
       return;
     }
 
-    // Propriétés par défaut simplifiées
+    // Propriétés par défaut complètes et synchronisées
     const defaultProps = {
+      // Position et dimensions
       x: 50,
       y: 50,
       width: 100,
       height: 50,
-      color: '#000000',
+
+      // Apparence de base
+      backgroundColor: 'transparent',
+      borderColor: 'transparent',
+      borderWidth: 0,
+      borderStyle: 'solid',
+      borderRadius: 0,
+
+      // Typographie
+      color: '#1e293b',
+      fontFamily: 'Inter, sans-serif',
       fontSize: 14,
-      backgroundColor: 'transparent'
+      fontWeight: 'normal',
+      fontStyle: 'normal',
+      textAlign: 'left',
+      textDecoration: 'none',
+
+      // Contenu
+      text: 'Texte',
+
+      // Propriétés avancées
+      opacity: 100,
+      rotation: 0,
+      scale: 100,
+      visible: true,
+
+      // Images et médias
+      src: '',
+      alt: '',
+      objectFit: 'cover',
+      brightness: 100,
+      contrast: 100,
+      saturate: 100,
+
+      // Effets
+      shadow: false,
+      shadowColor: '#000000',
+      shadowOffsetX: 2,
+      shadowOffsetY: 2,
+
+      // Propriétés spécifiques aux tableaux
+      showHeaders: true,
+      showBorders: true,
+      dataSource: 'order_items',
+      showSubtotal: false,
+      showShipping: true,
+      showTaxes: true,
+      showDiscount: false,
+      showTotal: false,
+
+      // Propriétés de barre de progression
+      progressColor: '#3b82f6',
+      progressValue: 75,
+
+      // Propriétés de code et lignes
+      lineColor: '#64748b',
+      lineWidth: 2,
+
+      // Propriétés de document
+      documentType: 'invoice',
+      imageUrl: '',
+
+      // Propriétés de mise en page
+      spacing: 8,
+      layout: 'vertical',
+      alignment: 'left',
+      fit: 'contain'
     };
 
     const newElement = {
@@ -408,11 +513,11 @@ export const useCanvasState = ({
   }, [history, selection]);
 
   const saveTemplate = useCallback(async () => {
-    if (isSaving) {
+    if (loadingStates.saving) {
       return;
     }
 
-    setIsSaving(true);
+    setLoadingStates(prev => ({ ...prev, saving: true }));
 
     // Déterminer si c'est un template existant
     const isExistingTemplate = templateId && templateId !== '0' && templateId !== 0;
@@ -425,7 +530,7 @@ export const useCanvasState = ({
     const toastrAvailable = await checkToastrAvailability();
 
     try {
-      // Fonction pour nettoyer les données avant sérialisation
+      // Fonction pour nettoyer et valider les données avant sérialisation
       const cleanElementForSerialization = (element) => {
         // Liste des propriétés à exclure car elles ne sont pas sérialisables
         const excludedProps = [
@@ -444,15 +549,274 @@ export const useCanvasState = ({
             continue;
           }
 
+          // Validation et correction selon le type de propriété
+          let validatedValue = value;
+
+          // Propriétés numériques
+          const numericProps = [
+            'x', 'y', 'width', 'height', 'fontSize', 'opacity',
+            'lineHeight', 'letterSpacing', 'zIndex', 'borderWidth',
+            'borderRadius', 'rotation', 'padding', 'scale',
+            'shadowOffsetX', 'shadowOffsetY', 'brightness', 'contrast', 'saturate',
+            'progressValue', 'lineWidth', 'spacing'
+          ];
+
+          if (numericProps.includes(key)) {
+            if (typeof value === 'string' && value !== '' && !isNaN(value)) {
+              validatedValue = parseFloat(value);
+            } else if (typeof value !== 'number') {
+              // Valeurs par défaut
+              const defaults = {
+                x: 0, y: 0, width: 100, height: 50, fontSize: 14,
+                opacity: 1, lineHeight: 1.2, letterSpacing: 0, zIndex: 0,
+                borderWidth: 0, borderRadius: 0, rotation: 0, padding: 0
+              };
+              validatedValue = defaults[key] || 0;
+            }
+          }
+
+          // Propriétés de couleur
+          const colorProps = ['color', 'backgroundColor', 'borderColor', 'shadowColor', 'progressColor', 'lineColor'];
+          if (colorProps.includes(key)) {
+            if (value && value !== 'transparent') {
+              // Normaliser les couleurs
+              if (!/^#[0-9A-Fa-f]{3,6}$/i.test(value)) {
+                // Couleurs nommées communes
+                const namedColors = {
+                  'black': '#000000', 'white': '#ffffff', 'red': '#ff0000',
+                  'green': '#008000', 'blue': '#0000ff', 'gray': '#808080',
+                  'grey': '#808080', 'transparent': 'transparent'
+                };
+                validatedValue = namedColors[value.toLowerCase()] || '#000000';
+              }
+            }
+          }
+
+          // Propriétés de style de texte
+          if (key === 'fontWeight') {
+            const validWeights = ['normal', 'bold', '100', '200', '300', '400', '500', '600', '700', '800', '900'];
+            if (!validWeights.includes(value)) {
+              validatedValue = 'normal';
+            }
+          }
+
+          if (key === 'textAlign') {
+            const validAligns = ['left', 'center', 'right', 'justify'];
+            if (!validAligns.includes(value)) {
+              validatedValue = 'left';
+            }
+          }
+
+          if (key === 'textDecoration') {
+            const validDecorations = ['none', 'underline', 'overline', 'line-through'];
+            if (!validDecorations.includes(value)) {
+              validatedValue = 'none';
+            }
+          }
+
+          if (key === 'textTransform') {
+            const validTransforms = ['none', 'capitalize', 'uppercase', 'lowercase'];
+            if (!validTransforms.includes(value)) {
+              validatedValue = 'none';
+            }
+          }
+
+          if (key === 'borderStyle') {
+            const validStyles = ['solid', 'dashed', 'dotted', 'double', 'none'];
+            if (!validStyles.includes(value)) {
+              validatedValue = 'solid';
+            }
+          }
+
+          // Propriétés de texte et contenu
+          if (key === 'text' || key === 'content') {
+            if (typeof value !== 'string') {
+              validatedValue = '';
+            }
+          }
+
+          // Propriétés de police
+          if (key === 'fontFamily') {
+            if (typeof value !== 'string' || value.trim() === '') {
+              validatedValue = 'Inter, sans-serif';
+            }
+          }
+
+          if (key === 'fontStyle') {
+            const validStyles = ['normal', 'italic', 'oblique'];
+            if (!validStyles.includes(value)) {
+              validatedValue = 'normal';
+            }
+          }
+
+          // Propriétés de visibilité et transformation
+          if (key === 'visible') {
+            if (typeof value !== 'boolean') {
+              validatedValue = true;
+            }
+          }
+
+          if (key === 'scale') {
+            if (typeof value === 'string' && value !== '' && !isNaN(value)) {
+              validatedValue = parseFloat(value);
+            } else if (typeof value !== 'number') {
+              validatedValue = 100;
+            }
+            // Limiter la scale entre 10 et 500
+            validatedValue = Math.max(10, Math.min(500, validatedValue));
+          }
+
+          // Propriétés d'ombre
+          if (key === 'shadow') {
+            if (typeof value !== 'boolean') {
+              validatedValue = false;
+            }
+          }
+
+          if (key === 'shadowColor') {
+            if (value && value !== 'transparent') {
+              if (!/^#[0-9A-Fa-f]{3,6}$/i.test(value)) {
+                const namedColors = {
+                  'black': '#000000', 'white': '#ffffff', 'red': '#ff0000',
+                  'green': '#008000', 'blue': '#0000ff', 'gray': '#808080',
+                  'grey': '#808080', 'transparent': 'transparent'
+                };
+                validatedValue = namedColors[value.toLowerCase()] || '#000000';
+              }
+            }
+          }
+
+          const shadowOffsetProps = ['shadowOffsetX', 'shadowOffsetY'];
+          if (shadowOffsetProps.includes(key)) {
+            if (typeof value === 'string' && value !== '' && !isNaN(value)) {
+              validatedValue = parseFloat(value);
+            } else if (typeof value !== 'number') {
+              validatedValue = 2;
+            }
+          }
+
+          // Propriétés d'image et médias
+          if (key === 'brightness' || key === 'contrast' || key === 'saturate') {
+            if (typeof value === 'string' && value !== '' && !isNaN(value)) {
+              validatedValue = parseFloat(value);
+            } else if (typeof value !== 'number') {
+              validatedValue = 100;
+            }
+            // Limiter entre 0 et 200
+            validatedValue = Math.max(0, Math.min(200, validatedValue));
+          }
+
+          if (key === 'objectFit') {
+            const validFits = ['fill', 'contain', 'cover', 'none', 'scale-down'];
+            if (!validFits.includes(value)) {
+              validatedValue = 'cover';
+            }
+          }
+
+          // Propriétés de tableau
+          const booleanTableProps = [
+            'showHeaders', 'showBorders', 'showSubtotal', 'showShipping',
+            'showTaxes', 'showDiscount', 'showTotal'
+          ];
+          if (booleanTableProps.includes(key)) {
+            if (typeof value !== 'boolean') {
+              validatedValue = false;
+            }
+          }
+
+          if (key === 'dataSource') {
+            const validSources = ['order_items', 'cart_items', 'custom'];
+            if (!validSources.includes(value)) {
+              validatedValue = 'order_items';
+            }
+          }
+
+          // Propriétés de barre de progression
+          if (key === 'progressValue') {
+            if (typeof value === 'string' && value !== '' && !isNaN(value)) {
+              validatedValue = parseFloat(value);
+            } else if (typeof value !== 'number') {
+              validatedValue = 0;
+            }
+            validatedValue = Math.max(0, Math.min(100, validatedValue));
+          }
+
+          // Propriétés de ligne/code
+          if (key === 'lineWidth') {
+            if (typeof value === 'string' && value !== '' && !isNaN(value)) {
+              validatedValue = parseFloat(value);
+            } else if (typeof value !== 'number') {
+              validatedValue = 2;
+            }
+            validatedValue = Math.max(1, Math.min(10, validatedValue));
+          }
+
+          // Propriétés de mise en page
+          if (key === 'spacing') {
+            if (typeof value === 'string' && value !== '' && !isNaN(value)) {
+              validatedValue = parseFloat(value);
+            } else if (typeof value !== 'number') {
+              validatedValue = 8;
+            }
+          }
+
+          if (key === 'layout') {
+            const validLayouts = ['vertical', 'horizontal', 'grid'];
+            if (!validLayouts.includes(value)) {
+              validatedValue = 'vertical';
+            }
+          }
+
+          if (key === 'alignment') {
+            const validAlignments = ['left', 'center', 'right', 'justify'];
+            if (!validAlignments.includes(value)) {
+              validatedValue = 'left';
+            }
+          }
+
+          if (key === 'fit') {
+            const validFits = ['contain', 'cover', 'fill', 'none'];
+            if (!validFits.includes(value)) {
+              validatedValue = 'contain';
+            }
+          }
+
+          // Propriétés de document
+          if (key === 'documentType') {
+            const validTypes = ['invoice', 'quote', 'receipt', 'order'];
+            if (!validTypes.includes(value)) {
+              validatedValue = 'invoice';
+            }
+          }
+
+          // Propriétés d'objet complexes
+          if (key === 'columns') {
+            if (typeof value === 'object' && value !== null) {
+              validatedValue = {
+                image: value.image ?? true,
+                name: value.name ?? true,
+                sku: value.sku ?? false,
+                quantity: value.quantity ?? true,
+                price: value.price ?? true,
+                total: value.total ?? true
+              };
+            } else {
+              validatedValue = {
+                image: true, name: true, sku: false,
+                quantity: true, price: true, total: true
+              };
+            }
+          }
+
           // Vérifier le type de valeur
-          if (value === null || value === undefined) {
-            cleaned[key] = value;
-          } else if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
-            cleaned[key] = value;
-          } else if (Array.isArray(value)) {
-            // Pour les tableaux, vérifier chaque élément
+          if (validatedValue === null || validatedValue === undefined) {
+            cleaned[key] = validatedValue;
+          } else if (typeof validatedValue === 'string' || typeof validatedValue === 'number' || typeof validatedValue === 'boolean') {
+            cleaned[key] = validatedValue;
+          } else if (Array.isArray(validatedValue)) {
+            // Pour les tableaux, nettoyer chaque élément
             try {
-              const cleanedArray = value.map(item => {
+              const cleanedArray = validatedValue.map(item => {
                 if (typeof item === 'object' && item !== null) {
                   return cleanElementForSerialization(item);
                 }
@@ -461,13 +825,15 @@ export const useCanvasState = ({
               JSON.stringify(cleanedArray); // Test de sérialisation
               cleaned[key] = cleanedArray;
             } catch (e) {
+              console.warn(`Impossible de sérialiser le tableau pour ${key}:`, e);
             }
-          } else if (typeof value === 'object') {
+          } else if (typeof validatedValue === 'object') {
             // Pour les objets, nettoyer récursivement
             try {
-              const cleanedObj = cleanElementForSerialization(value);
+              const cleanedObj = cleanElementForSerialization(validatedValue);
               cleaned[key] = cleanedObj;
             } catch (e) {
+              console.warn(`Impossible de sérialiser l'objet pour ${key}:`, e);
             }
           } else {
             // Pour les autres types (functions, symbols, etc.), ignorer
@@ -480,25 +846,27 @@ export const useCanvasState = ({
       // Nettoyer tous les éléments
       const cleanedElements = elements.map(cleanElementForSerialization);
 
-      // Log détaillé des propriétés de chaque élément
-      elements.forEach((element, index) => {
-        console.log(`Élément ${index} (${element.type}) propriétés avant nettoyage:`, Object.keys(element));
-        if (element.type === 'product_table') {
-          console.log(`Tableau ${index} - paramètres:`, {
-            showHeaders: element.showHeaders,
-            showBorders: element.showBorders,
-            columns: element.columns,
-            tableStyle: element.tableStyle,
-            showSubtotal: element.showSubtotal,
-            showShipping: element.showShipping,
-            showTaxes: element.showTaxes,
-            showDiscount: element.showDiscount,
-            showTotal: element.showTotal
-          });
-        }
-      });
+      // Log détaillé des propriétés de chaque élément (mode développement uniquement)
+      if (isDevelopment) {
+        elements.forEach((element, index) => {
+          console.log(`Élément ${index} (${element.type}) propriétés avant nettoyage:`, Object.keys(element));
+          if (element.type === 'product_table') {
+            console.log(`Tableau ${index} - paramètres:`, {
+              showHeaders: element.showHeaders,
+              showBorders: element.showBorders,
+              columns: element.columns,
+              tableStyle: element.tableStyle,
+              showSubtotal: element.showSubtotal,
+              showShipping: element.showShipping,
+              showTaxes: element.showTaxes,
+              showDiscount: element.showDiscount,
+              showTotal: element.showTotal
+            });
+          }
+        });
 
-      console.log('Éléments nettoyés pour sauvegarde:', cleanedElements);
+        console.log('Éléments nettoyés pour sauvegarde:', cleanedElements);
+      }
 
       const templateData = {
         elements: cleanedElements,
@@ -507,7 +875,10 @@ export const useCanvasState = ({
         version: '1.0'
       };
 
-      console.log('Données template à sauvegarder:', templateData);
+      // Log des données en mode développement uniquement
+      if (isDevelopment) {
+        console.log('Données template à sauvegarder:', templateData);
+      }
 
       // Valider le JSON avant envoi
       let jsonString;
@@ -562,7 +933,7 @@ export const useCanvasState = ({
 
       throw error; // Re-throw pour permettre la gestion d'erreur en amont si nécessaire
     } finally {
-      setIsSaving(false);
+      setLoadingStates(prev => ({ ...prev, saving: false }));
     }
   }, [elements, canvasWidth, canvasHeight, isSaving, templateId]);
 
@@ -633,10 +1004,9 @@ export const useCanvasState = ({
     canUndo: history.canUndo(),
     canRedo: history.canRedo(),
 
-    // Template
-    saveTemplate,
-    loadTemplate,
-    isSaving,
+    // États de chargement pour feedback visuel
+    loadingStates,
+    isSaving: loadingStates.saving, // Alias pour compatibilité
 
     // Menu contextuel
     showContextMenu,
@@ -665,4 +1035,48 @@ export const useCanvasState = ({
     history,
     showContextMenu
   ]);
+
+  // Nettoyage mémoire au démontage
+  useEffect(() => {
+    return () => {
+      // Nettoyer les timers/intervalles si nécessaire
+      if (window.pdfBuilderTimeouts) {
+        window.pdfBuilderTimeouts.forEach(clearTimeout);
+        window.pdfBuilderTimeouts = [];
+      }
+      // Nettoyer les listeners d'événements locaux si nécessaire
+      if (window.pdfBuilderEventListeners) {
+        window.pdfBuilderEventListeners.forEach(({ element, event, handler }) => {
+          element.removeEventListener(event, handler);
+        });
+        window.pdfBuilderEventListeners = [];
+      }
+    };
+  }, []);
+
+  // Synchronisation temps réel entre onglets via localStorage
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === 'pdfBuilderTemplateUpdate' && e.newValue) {
+        try {
+          const updatedData = JSON.parse(e.newValue);
+          if (updatedData.templateId === templateId && updatedData.elements) {
+            setElements(updatedData.elements);
+            setNextId(updatedData.nextId || nextId);
+            // Notification discrète de synchronisation
+            if (isDevelopment) {
+              console.log('Template synchronisé depuis un autre onglet');
+            }
+          }
+        } catch (error) {
+          console.warn('Erreur lors de la synchronisation inter-onglets:', error);
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [templateId, nextId, isDevelopment]);
+
+  return canvasState;
 };

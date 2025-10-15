@@ -187,10 +187,19 @@ export const CanvasElement = ({
     e.stopPropagation();
 
     if (element.type === 'text') {
-      const newText = prompt('Modifier le texte:', element.content || element.text || '');
-      if (newText !== null) {
-        onUpdate({ text: newText });
+      const currentText = element.content || element.text || '';
+      const newText = prompt('Modifier le texte:', currentText);
+
+      // Annuler si l'utilisateur clique sur "Annuler" ou laisse vide
+      if (newText === null) {
+        return;
       }
+
+      // Utiliser la même propriété que celle actuellement utilisée par l'élément
+      const textProperty = element.content !== undefined ? 'content' : 'text';
+      const updates = { [textProperty]: newText };
+
+      onUpdate(updates);
     }
   }, [element, onUpdate]);
 

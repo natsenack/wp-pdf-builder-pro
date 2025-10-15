@@ -178,18 +178,76 @@ const Canvas = ({
     renderCanvas();
   }, [renderCanvas]);
 
-  // État pour le drag and drop
-  const [isDragging, setIsDragging] = useState(false);
-  const [draggedElement, setDraggedElement] = useState(null);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  // Optimiser le rendu avec useMemo pour éviter les re-renders inutiles
+  const memoizedCanvasStyle = useMemo(() => ({
+    border: '1px solid #ccc',
+    cursor: getCursor(),
+    backgroundColor: 'white',
+    // Assurer que le canvas garde ses proportions A4
+    aspectRatio: `${canvasWidth}/${canvasHeight}`
+  }), [getCursor, canvasWidth, canvasHeight]);
 
-  // État pour le redimensionnement
-  const [isResizing, setIsResizing] = useState(false);
-  const [resizedElement, setResizedElement] = useState(null);
-  const [resizeHandle, setResizeHandle] = useState(null);
-  const [resizeStartPos, setResizeStartPos] = useState({ x: 0, y: 0 });
-  const [resizeStartSize, setResizeStartSize] = useState({ width: 0, height: 0 });
-  const [hoveredHandle, setHoveredHandle] = useState(null);
+  // Optimiser les dimensions du canvas avec useMemo
+  const canvasDimensions = useMemo(() => ({
+    width: canvasWidth * zoom,
+    height: canvasHeight * zoom
+  }), [canvasWidth, canvasHeight, zoom]);
+
+  // Fonction pour obtenir les coordonnées souris de manière sécurisée
+  const getMouseCoordinates = useCallback((e) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return { x: 0, y: 0 };
+
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / zoom;
+    const y = (e.clientY - rect.top) / zoom;
+
+    // Contraindre aux limites du canvas A4
+    return {
+      x: Math.max(0, Math.min(x, canvasWidth)),
+      y: Math.max(0, Math.min(y, canvasHeight))
+    };
+  }, [zoom, canvasWidth, canvasHeight]);
+
+  // Fonction pour trouver l'élément sous le curseur (optimisée)
+  const findElementAtPosition = useCallback((x, y) => {
+    // Recherche en ordre inverse pour les éléments superposés (dernier = dessus)
+    for (let i = elements.length - 1; i >= 0; i--) {
+      const element = elements[i];
+      if (element &&
+          x >= element.x &&
+          x <= element.x + (element.width || 0) &&
+          y >= element.y &&
+          y <= element.y + (element.height || 0)) {
+        return element;
+      }
+    }
+    return null;
+  }, [elements]);
+
+  // Fonction pour vérifier si une poignée de redimensionnement est cliquée
+  const findClickedHandle = useCallback((element, x, y) => {
+    if (!element) return null;
+
+    const handleSize = 6 / zoom;
+    const handles = [
+      { name: 'nw', x: element.x, y: element.y },
+      { name: 'ne', x: element.x + element.width, y: element.y },
+      { name: 'sw', x: element.x, y: element.y + element.height },
+      { name: 'se', x: element.x + element.width, y: element.y + element.height },
+      { name: 'n', x: element.x + element.width / 2, y: element.y },
+      { name: 's', x: element.x + element.width / 2, y: element.y + element.height },
+      { name: 'w', x: element.x, y: element.y + element.height / 2 },
+      { name: 'e', x: element.x + element.width, y: element.y + element.height / 2 }
+    ];
+
+    return handles.find(handle =>
+      x >= handle.x - handleSize/2 &&
+      x <= handle.x + handleSize/2 &&
+      y >= handle.y - handleSize/2 &&
+      y <= handle.y + handleSize/2
+    );
+  }, [zoom]);
 
   // Fonction pour déterminer le curseur approprié
   const getCursor = useCallback(() => {
@@ -233,106 +291,69 @@ const Canvas = ({
     return tool === 'select' ? 'grab' : 'crosshair';
   }, [isDragging, isResizing, resizeHandle, hoveredHandle, tool]);
 
-  // Gestionnaire de mouse down pour commencer le drag ou le redimensionnement
+  // Gestionnaire de mouse down amélioré
   const handleMouseDown = useCallback((e) => {
     if (tool !== 'select') return;
 
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const { x, y } = getMouseCoordinates(e);
+    const clickedElement = findElementAtPosition(x, y);
 
-    const rect = canvas.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / zoom;
-    const y = (e.clientY - rect.top) / zoom;
-
-    // Trouver l'élément cliqué
-    let clickedElement = null;
-    for (let i = elements.length - 1; i >= 0; i--) {
-      const element = elements[i];
-      if (x >= element.x && x <= element.x + element.width &&
-          y >= element.y && y <= element.y + element.height) {
-        clickedElement = element;
-        break;
-      }
+    if (!clickedElement) {
+      // Clic dans le vide - désélectionner
+      selection.clearSelection();
+      return;
     }
 
-    if (clickedElement && selectedElements.includes(clickedElement.id)) {
-      // Vérifier si on clique sur une poignée de redimensionnement
-      const handleSize = 6 / zoom; // Taille correspondant au dessin (6x6 pixels)
-      const handles = [
-        { name: 'nw', x: clickedElement.x, y: clickedElement.y },
-        { name: 'ne', x: clickedElement.x + clickedElement.width, y: clickedElement.y },
-        { name: 'sw', x: clickedElement.x, y: clickedElement.y + clickedElement.height },
-        { name: 'se', x: clickedElement.x + clickedElement.width, y: clickedElement.y + clickedElement.height },
-        { name: 'n', x: clickedElement.x + clickedElement.width / 2, y: clickedElement.y },
-        { name: 's', x: clickedElement.x + clickedElement.width / 2, y: clickedElement.y + clickedElement.height },
-        { name: 'w', x: clickedElement.x, y: clickedElement.y + clickedElement.height / 2 },
-        { name: 'e', x: clickedElement.x + clickedElement.width, y: clickedElement.y + clickedElement.height / 2 }
-      ];
+    // Vérifier si l'élément est déjà sélectionné
+    const isSelected = selectedElements.includes(clickedElement.id);
 
-      const clickedHandle = handles.find(handle =>
-        x >= handle.x - handleSize/2 && x <= handle.x + handleSize/2 &&
-        y >= handle.y - handleSize/2 && y <= handle.y + handleSize/2
-      );
+    if (isSelected) {
+      // Vérifier si on clique sur une poignée de redimensionnement
+      const clickedHandle = findClickedHandle(clickedElement, x, y);
 
       if (clickedHandle) {
         // Commencer le redimensionnement
+        e.preventDefault();
         setIsResizing(true);
         setResizedElement(clickedElement);
         setResizeHandle(clickedHandle.name);
         setResizeStartPos({ x, y });
-        setResizeStartSize({ width: clickedElement.width, height: clickedElement.height });
+        setResizeStartSize({
+          width: clickedElement.width || 0,
+          height: clickedElement.height || 0
+        });
         return;
       }
+    } else {
+      // Sélectionner le nouvel élément
+      selection.selectElement(clickedElement.id);
+      onElementSelect(clickedElement.id);
     }
 
-    if (clickedElement) {
-      // Si l'élément n'est pas déjà sélectionné, le sélectionner
-      if (!selectedElements.includes(clickedElement.id)) {
-        onElementSelect(clickedElement.id);
-      }
-
+    // Commencer le drag si l'élément est sélectionné
+    if (selectedElements.includes(clickedElement.id)) {
+      e.preventDefault();
       setIsDragging(true);
       setDraggedElement(clickedElement);
       setDragOffset({
-        x: x - clickedElement.x,
-        y: y - clickedElement.y
+        x: x - (clickedElement.x || 0),
+        y: y - (clickedElement.y || 0)
       });
     }
-  }, [tool, zoom, elements, selectedElements, selection, onElementSelect]);
+  }, [tool, getMouseCoordinates, findElementAtPosition, selectedElements, selection, onElementSelect, findClickedHandle]);
 
-  // Gestionnaire de mouse move pour le drag et le redimensionnement
+  // Gestionnaire de mouse move amélioré
   const handleMouseMove = useCallback((e) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / zoom;
-    const y = (e.clientY - rect.top) / zoom;
+    const { x, y } = getMouseCoordinates(e);
 
     // Détecter le hover sur les poignées de redimensionnement
     let newHoveredHandle = null;
     if (tool === 'select' && !isDragging && !isResizing) {
       for (const element of elements) {
         if (selectedElements.includes(element.id)) {
-          const handleSize = 6 / zoom;
-          const handles = [
-            { name: 'nw', x: element.x, y: element.y },
-            { name: 'ne', x: element.x + element.width, y: element.y },
-            { name: 'sw', x: element.x, y: element.y + element.height },
-            { name: 'se', x: element.x + element.width, y: element.y + element.height },
-            { name: 'n', x: element.x + element.width / 2, y: element.y },
-            { name: 's', x: element.x + element.width / 2, y: element.y + element.height },
-            { name: 'w', x: element.x, y: element.y + element.height / 2 },
-            { name: 'e', x: element.x + element.width, y: element.y + element.height / 2 }
-          ];
-
-          const hovered = handles.find(handle =>
-            x >= handle.x - handleSize/2 && x <= handle.x + handleSize/2 &&
-            y >= handle.y - handleSize/2 && y <= handle.y + handleSize/2
-          );
-
-          if (hovered) {
-            newHoveredHandle = hovered.name;
+          const clickedHandle = findClickedHandle(element, x, y);
+          if (clickedHandle) {
+            newHoveredHandle = clickedHandle.name;
             break;
           }
         }
@@ -341,56 +362,56 @@ const Canvas = ({
     setHoveredHandle(newHoveredHandle);
 
     if (isResizing && resizedElement) {
-      // Gérer le redimensionnement
+      // Gérer le redimensionnement avec contraintes A4
       const deltaX = x - resizeStartPos.x;
       const deltaY = y - resizeStartPos.y;
 
-      let newX = resizedElement.x;
-      let newY = resizedElement.y;
+      let newX = resizedElement.x || 0;
+      let newY = resizedElement.y || 0;
       let newWidth = resizeStartSize.width;
       let newHeight = resizeStartSize.height;
 
       // Calculer les nouvelles dimensions selon la poignée
       switch (resizeHandle) {
         case 'nw':
-          newX = resizedElement.x + deltaX;
-          newY = resizedElement.y + deltaY;
-          newWidth = resizeStartSize.width - deltaX;
-          newHeight = resizeStartSize.height - deltaY;
+          newX = Math.max(0, resizedElement.x + deltaX);
+          newY = Math.max(0, resizedElement.y + deltaY);
+          newWidth = Math.max(10, resizeStartSize.width - deltaX);
+          newHeight = Math.max(10, resizeStartSize.height - deltaY);
           break;
         case 'ne':
-          newY = resizedElement.y + deltaY;
-          newWidth = resizeStartSize.width + deltaX;
-          newHeight = resizeStartSize.height - deltaY;
+          newY = Math.max(0, resizedElement.y + deltaY);
+          newWidth = Math.max(10, resizeStartSize.width + deltaX);
+          newHeight = Math.max(10, resizeStartSize.height - deltaY);
           break;
         case 'sw':
-          newX = resizedElement.x + deltaX;
-          newWidth = resizeStartSize.width - deltaX;
-          newHeight = resizeStartSize.height + deltaY;
+          newX = Math.max(0, resizedElement.x + deltaX);
+          newWidth = Math.max(10, resizeStartSize.width - deltaX);
+          newHeight = Math.max(10, resizeStartSize.height + deltaY);
           break;
         case 'se':
-          newWidth = resizeStartSize.width + deltaX;
-          newHeight = resizeStartSize.height + deltaY;
+          newWidth = Math.max(10, resizeStartSize.width + deltaX);
+          newHeight = Math.max(10, resizeStartSize.height + deltaY);
           break;
         case 'n':
-          newY = resizedElement.y + deltaY;
-          newHeight = resizeStartSize.height - deltaY;
+          newY = Math.max(0, resizedElement.y + deltaY);
+          newHeight = Math.max(10, resizeStartSize.height - deltaY);
           break;
         case 's':
-          newHeight = resizeStartSize.height + deltaY;
+          newHeight = Math.max(10, resizeStartSize.height + deltaY);
           break;
         case 'w':
-          newX = resizedElement.x + deltaX;
-          newWidth = resizeStartSize.width - deltaX;
+          newX = Math.max(0, resizedElement.x + deltaX);
+          newWidth = Math.max(10, resizeStartSize.width - deltaX);
           break;
         case 'e':
-          newWidth = resizeStartSize.width + deltaX;
+          newWidth = Math.max(10, resizeStartSize.width + deltaX);
           break;
       }
 
-      // Contraindre les dimensions minimales
-      newWidth = Math.max(10, newWidth);
-      newHeight = Math.max(10, newHeight);
+      // Contraindre aux limites du canvas A4
+      newWidth = Math.min(newWidth, canvasWidth - newX);
+      newHeight = Math.min(newHeight, canvasHeight - newY);
 
       // Appliquer le snap to grid si activé
       if (snapToGrid) {
@@ -400,16 +421,21 @@ const Canvas = ({
         newHeight = Math.round(newHeight / gridSize) * gridSize;
       }
 
-      onElementUpdate(resizedElement.id, { x: newX, y: newY, width: newWidth, height: newHeight });
+      onElementUpdate(resizedElement.id, {
+        x: Math.max(0, newX),
+        y: Math.max(0, newY),
+        width: Math.max(10, newWidth),
+        height: Math.max(10, newHeight)
+      });
 
     } else if (isDragging && draggedElement) {
-      // Gérer le drag
+      // Gérer le drag avec contraintes A4
       let newX = x - dragOffset.x;
       let newY = y - dragOffset.y;
 
-      // Contraindre aux limites du canvas
-      newX = Math.max(0, Math.min(newX, canvasWidth - draggedElement.width));
-      newY = Math.max(0, Math.min(newY, canvasHeight - draggedElement.height));
+      // Contraindre aux limites du canvas A4
+      newX = Math.max(0, Math.min(newX, canvasWidth - (draggedElement.width || 0)));
+      newY = Math.max(0, Math.min(newY, canvasHeight - (draggedElement.height || 0)));
 
       // Appliquer le snap to grid si activé
       if (snapToGrid) {
@@ -419,7 +445,11 @@ const Canvas = ({
 
       onElementUpdate(draggedElement.id, { x: newX, y: newY });
     }
-  }, [isDragging, draggedElement, dragOffset, isResizing, resizedElement, resizeHandle, resizeStartPos, resizeStartSize, zoom, canvasWidth, canvasHeight, snapToGrid, gridSize, onElementUpdate]);
+  }, [
+    getMouseCoordinates, tool, isDragging, isResizing, elements, selectedElements,
+    findClickedHandle, resizedElement, resizeHandle, resizeStartPos, resizeStartSize,
+    canvasWidth, canvasHeight, snapToGrid, gridSize, onElementUpdate, dragOffset, draggedElement
+  ]);
 
   // Gestionnaire de mouse up pour finir le drag et le redimensionnement
   const handleMouseUp = useCallback(() => {
@@ -458,95 +488,134 @@ const Canvas = ({
 
   // Gestionnaire de mouse leave pour annuler le drag
 
-  // Gestionnaire de clic sur le canvas
+  // Gestionnaire de clic sur le canvas amélioré
   const handleCanvasClick = useCallback((e) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / zoom;
-    const y = (e.clientY - rect.top) / zoom;
-
-    // Trouver l'élément cliqué (en ordre inverse pour les éléments superposés)
-    let clickedElement = null;
-    for (let i = elements.length - 1; i >= 0; i--) {
-      const element = elements[i];
-      if (x >= element.x && x <= element.x + element.width &&
-          y >= element.y && y <= element.y + element.height) {
-        clickedElement = element;
-        break;
-      }
-    }
+    const { x, y } = getMouseCoordinates(e);
+    const clickedElement = findElementAtPosition(x, y);
 
     if (tool === 'select') {
       if (clickedElement) {
-        selection.selectElement(clickedElement.id);
-        onElementSelect(clickedElement.id);
+        // Vérifier que l'élément a un ID valide
+        if (clickedElement.id) {
+          selection.selectElement(clickedElement.id);
+          onElementSelect(clickedElement.id);
+        }
       } else {
         selection.clearSelection();
       }
     } else if (tool.startsWith('add-')) {
+      // Créer un nouvel élément avec des propriétés sécurisées
       const elementType = tool.replace('add-', '');
+      const newElementId = `element_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
       const newElement = {
-        id: Date.now().toString(),
+        id: newElementId,
         type: elementType,
-        x: x - 50, // Centrer l'élément
-        y: y - 25,
-        width: 100,
-        height: 50,
+        x: Math.max(0, Math.min(x - 50, canvasWidth - 100)), // Centrer et contraindre
+        y: Math.max(0, Math.min(y - 25, canvasHeight - 50)),
+        width: Math.min(100, canvasWidth), // Ne pas dépasser la largeur A4
+        height: Math.min(50, canvasHeight), // Ne pas dépasser la hauteur A4
         content: elementType === 'text' ? 'Nouveau texte' : '',
-        backgroundColor: '#ffffff',
+        backgroundColor: 'transparent',
         borderColor: '#6b7280',
-        borderWidth: 1,
+        borderWidth: elementType === 'text' ? 0 : 1, // Pas de bordure par défaut pour le texte
         color: '#1e293b',
         fontSize: 14,
         fontFamily: 'Arial',
-        textAlign: 'left'
+        textAlign: 'left',
+        // Propriétés de sécurité par défaut
+        opacity: 1,
+        zIndex: 0,
+        borderRadius: 0,
+        padding: 0
       };
 
-      onElementUpdate(newElement.id, newElement);
-    }
-  }, [tool, zoom, elements, selection, onElementSelect, onElementUpdate]);
+      // Propriétés spécifiques selon le type
+      if (elementType === 'product_table') {
+        newElement.showHeaders = true;
+        newElement.showBorders = true;
+        newElement.tableStyle = 'default';
+        newElement.columns = {
+          name: true,
+          price: true,
+          quantity: true,
+          total: true
+        };
+      }
 
-  // Gestionnaire de clic droit
+      onElementUpdate(newElementId, newElement);
+    }
+  }, [tool, getMouseCoordinates, findElementAtPosition, selection, onElementSelect, onElementUpdate, canvasWidth, canvasHeight]);
+
+  // Gestionnaire de clic droit amélioré
   const handleContextMenuEvent = useCallback((e) => {
     e.preventDefault();
 
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const { x, y } = getMouseCoordinates(e);
+    const clickedElement = findElementAtPosition(x, y);
 
-    const rect = canvas.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / zoom;
-    const y = (e.clientY - rect.top) / zoom;
+    if (onContextMenu && clickedElement?.id) {
+      onContextMenu(e, clickedElement.id);
+    }
+  }, [getMouseCoordinates, findElementAtPosition, onContextMenu]);
 
-    // Trouver l'élément sous le curseur
-    let clickedElement = null;
-    for (let i = elements.length - 1; i >= 0; i--) {
-      const element = elements[i];
-      if (x >= element.x && x <= element.x + element.width &&
-          y >= element.y && y <= element.y + element.height) {
-        clickedElement = element;
-        break;
+  // Gestionnaire de drop amélioré avec contraintes A4
+  const handleDrop = useCallback((e) => {
+    e.preventDefault();
+
+    if (!onElementUpdate) return;
+
+    try {
+      const elementId = e.dataTransfer.getData('text/plain');
+      if (!elementId) return;
+
+      const { x, y } = getMouseCoordinates(e);
+
+      // Trouver l'élément déposé
+      const droppedElement = elements.find(el => el.id === elementId);
+      if (!droppedElement) return;
+
+      // Calculer la nouvelle position en centrant l'élément
+      let newX = x - (droppedElement.width || 0) / 2;
+      let newY = y - (droppedElement.height || 0) / 2;
+
+      // Contraindre aux limites A4
+      newX = Math.max(0, Math.min(newX, canvasWidth - (droppedElement.width || 0)));
+      newY = Math.max(0, Math.min(newY, canvasHeight - (droppedElement.height || 0)));
+
+      // Appliquer le snap to grid si activé
+      if (snapToGrid) {
+        newX = Math.round(newX / gridSize) * gridSize;
+        newY = Math.round(newY / gridSize) * gridSize;
       }
-    }
 
-    if (onContextMenu) {
-      onContextMenu(e, clickedElement?.id);
+      onElementUpdate(elementId, { x: newX, y: newY });
+    } catch (error) {
+      console.warn('Erreur lors du drop:', error);
     }
-  }, [elements, zoom, onContextMenu]);
+  }, [onElementUpdate, getMouseCoordinates, elements, canvasWidth, canvasHeight, snapToGrid, gridSize]);
+
+  // État pour le drag and drop
+  const [isDragging, setIsDragging] = useState(false);
+  const [draggedElement, setDraggedElement] = useState(null);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+
+  // État pour le redimensionnement
+  const [isResizing, setIsResizing] = useState(false);
+  const [resizedElement, setResizedElement] = useState(null);
+  const [resizeHandle, setResizeHandle] = useState(null);
+  const [resizeStartPos, setResizeStartPos] = useState({ x: 0, y: 0 });
+  const [resizeStartSize, setResizeStartSize] = useState({ width: 0, height: 0 });
+  const [hoveredHandle, setHoveredHandle] = useState(null);
 
   return (
-    <div className="canvas-wrapper">
+    <div className="canvas-wrapper" style={{ position: 'relative' }}>
       <canvas
         ref={canvasRef}
-        width={canvasWidth * zoom}
-        height={canvasHeight * zoom}
+        width={canvasDimensions.width}
+        height={canvasDimensions.height}
         className="canvas"
-        style={{
-          border: '1px solid #ccc',
-          cursor: getCursor(),
-          backgroundColor: 'white'
-        }}
+        style={memoizedCanvasStyle}
         onClick={handleCanvasClick}
         onContextMenu={handleContextMenuEvent}
         onMouseDown={handleMouseDown}
@@ -554,21 +623,26 @@ const Canvas = ({
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseLeave}
         onDragOver={(e) => e.preventDefault()}
-        onDrop={(e) => {
-          e.preventDefault();
-          // Forward to parent drop handler if available
-          if (onElementUpdate) {
-            // Handle drop of existing elements
-            const elementId = e.dataTransfer.getData('text/plain');
-            if (elementId) {
-              const rect = e.currentTarget.getBoundingClientRect();
-              const dropX = (e.clientX - rect.left) / zoom;
-              const dropY = (e.clientY - rect.top) / zoom;
-              onElementUpdate(elementId, { x: dropX, y: dropY });
-            }
-          }
-        }}
+        onDrop={handleDrop}
       />
+      {/* Indicateur de dimensions A4 pour le debug */}
+      {process.env.NODE_ENV === 'development' && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 5,
+            right: 5,
+            background: 'rgba(0,0,0,0.7)',
+            color: 'white',
+            padding: '2px 6px',
+            borderRadius: 3,
+            fontSize: '11px',
+            fontFamily: 'monospace'
+          }}
+        >
+          A4: {canvasWidth}×{canvasHeight}pt
+        </div>
+      )}
     </div>
   );
 };

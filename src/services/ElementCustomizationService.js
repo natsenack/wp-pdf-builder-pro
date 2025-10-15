@@ -63,7 +63,7 @@ export class ElementCustomizationService {
   }
 
   /**
-   * Valide une propriété selon son type
+   * Valide une propriété selon son type et applique des corrections automatiques
    */
   validateProperty(property, value) {
     // Pour les propriétés boolean, retourner la valeur telle quelle
@@ -79,11 +79,169 @@ export class ElementCustomizationService {
     // Chercher un validateur pour cette propriété
     const validator = this.propertyValidators.get(property);
     if (validator) {
-      return validator(value);
+      try {
+        return validator(value);
+      } catch (error) {
+        console.warn(`Erreur lors de la validation de ${property}:`, error);
+        return this.getDefaultValue(property);
+      }
+    }
+
+    // Validation spécifique selon le type de propriété
+    if (this.isNumericProperty(property)) {
+      return this.validateNumericProperty(property, value);
+    }
+
+    if (this.isColorProperty(property)) {
+      return this.validateColorProperty(value);
+    }
+
+    if (this.isTextStyleProperty(property)) {
+      return this.validateTextStyleProperty(property, value);
     }
 
     // Si pas de validateur spécifique, retourner la valeur telle quelle
     return value;
+  }
+
+  /**
+   * Vérifie si une propriété est numérique
+   */
+  isNumericProperty(property) {
+    const numericProps = [
+      'x', 'y', 'width', 'height', 'fontSize', 'opacity',
+      'lineHeight', 'letterSpacing', 'zIndex', 'borderWidth',
+      'borderRadius', 'rotation', 'padding'
+    ];
+    return numericProps.includes(property);
+  }
+
+  /**
+   * Vérifie si une propriété est une couleur
+   */
+  isColorProperty(property) {
+    const colorProps = ['color', 'backgroundColor', 'borderColor'];
+    return colorProps.includes(property);
+  }
+
+  /**
+   * Vérifie si une propriété est un style de texte
+   */
+  isTextStyleProperty(property) {
+    const textProps = ['fontWeight', 'textAlign', 'textDecoration', 'textTransform', 'borderStyle'];
+    return textProps.includes(property);
+  }
+
+  /**
+   * Valide une propriété numérique
+   */
+  validateNumericProperty(property, value) {
+    if (value === null || value === undefined || value === '') {
+      return this.getDefaultValue(property);
+    }
+
+    let numericValue;
+    if (typeof value === 'string') {
+      numericValue = parseFloat(value);
+      if (isNaN(numericValue)) {
+        return this.getDefaultValue(property);
+      }
+    } else if (typeof value === 'number') {
+      numericValue = value;
+    } else {
+      return this.getDefaultValue(property);
+    }
+
+    // Appliquer les contraintes selon la propriété
+    const constraints = {
+      fontSize: { min: 8, max: 72 },
+      opacity: { min: 0, max: 1 },
+      lineHeight: { min: 0.5, max: 3 },
+      letterSpacing: { min: -5, max: 10 },
+      zIndex: { min: -100, max: 1000 },
+      borderWidth: { min: 0, max: 20 },
+      borderRadius: { min: 0, max: 100 },
+      rotation: { min: -180, max: 180 },
+      padding: { min: 0, max: 100 }
+    };
+
+    if (constraints[property]) {
+      const { min, max } = constraints[property];
+      numericValue = Math.max(min, Math.min(max, numericValue));
+    }
+
+    return numericValue;
+  }
+
+  /**
+   * Valide une propriété de couleur
+   */
+  validateColorProperty(value) {
+    if (!value) return '#000000';
+    if (value === 'transparent') return value;
+
+    // Vérifier si c'est un code hex valide
+    if (/^#[0-9A-Fa-f]{6}$/.test(value) || /^#[0-9A-Fa-f]{3}$/.test(value)) {
+      return value;
+    }
+
+    // Vérifier si c'est un nom de couleur CSS valide
+    const tempElement = document.createElement('div');
+    tempElement.style.color = value;
+    const computedColor = tempElement.style.color;
+
+    // Si le navigateur reconnaît la couleur, la retourner
+    if (computedColor && computedColor !== '') {
+      return value;
+    }
+
+    return '#000000';
+  }
+
+  /**
+   * Valide une propriété de style de texte
+   */
+  validateTextStyleProperty(property, value) {
+    const validations = {
+      fontWeight: ['normal', 'bold', '100', '200', '300', '400', '500', '600', '700', '800', '900'],
+      textAlign: ['left', 'center', 'right', 'justify'],
+      textDecoration: ['none', 'underline', 'overline', 'line-through'],
+      textTransform: ['none', 'capitalize', 'uppercase', 'lowercase'],
+      borderStyle: ['solid', 'dashed', 'dotted', 'double', 'none']
+    };
+
+    if (validations[property] && validations[property].includes(value)) {
+      return value;
+    }
+
+    // Valeurs par défaut
+    const defaults = {
+      fontWeight: 'normal',
+      textAlign: 'left',
+      textDecoration: 'none',
+      textTransform: 'none',
+      borderStyle: 'solid'
+    };
+
+    return defaults[property] || value;
+  }
+
+  /**
+   * Obtient la valeur par défaut pour une propriété
+   */
+  getDefaultValue(property) {
+    const defaults = {
+      x: 0, y: 0, width: 100, height: 50,
+      fontSize: 14, opacity: 1, lineHeight: 1.2,
+      letterSpacing: 0, zIndex: 0, borderWidth: 0,
+      borderRadius: 0, rotation: 0, padding: 0,
+      color: '#333333', backgroundColor: 'transparent',
+      borderColor: '#dddddd', fontWeight: 'normal',
+      textAlign: 'left', textDecoration: 'none',
+      textTransform: 'none', borderStyle: 'solid'
+    };
+
+    return defaults[property] || null;
   }
 
   /**
@@ -230,7 +388,7 @@ export class ElementCustomizationService {
       textDecoration: 'none',
 
       // Contenu (pour éléments texte)
-      content: 'Texte',
+      text: 'Texte',
 
       // Images
       src: '',
@@ -330,7 +488,7 @@ export class ElementCustomizationService {
         width: 300,
         height: 200,
         opacity: 10,
-        content: 'CONFIDENTIEL'
+        text: 'CONFIDENTIEL'
       },
       'progress-bar': {
         width: 200,

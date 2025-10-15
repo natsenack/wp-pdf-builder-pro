@@ -9,44 +9,59 @@ if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
 
-// Ajouter une page de test dans l'admin
-function add_properties_test_page() {
+// Ajouter une page de diagnostic dans l'admin
+function add_diagnostic_page() {
     add_submenu_page(
         'wp-pdf-builder-pro',
-        'Test de persistance des propriétés',
-        'Test Propriétés',
+        'Diagnostic des propriétés',
+        'Diagnostic Propriétés',
         'manage_options',
-        'properties-persistence-test',
-        'render_properties_test_page'
+        'properties-diagnostic',
+        'render_diagnostic_page'
     );
 }
-add_action('admin_menu', 'add_properties_test_page');
+add_action('admin_menu', 'add_diagnostic_page');
 
-// Ajouter un endpoint direct pour le test
-function add_properties_test_endpoint() {
-    add_rewrite_rule('^pdf-builder-test/?$', 'index.php?pdf_builder_test=1', 'top');
-    add_rewrite_tag('%pdf_builder_test%', '([^&]+)');
+function render_diagnostic_page() {
+    if (!current_user_can('manage_options')) {
+        wp_die('Accès refusé');
+    }
+
+    echo '<div class="wrap">';
+    echo '<h1>Diagnostic complet des propriétés d\'éléments</h1>';
+    echo '<p>Cette page analyse et corrige automatiquement tous les problèmes de propriétés dans vos templates.</p>';
+
+    // Inclure le script de diagnostic
+    include_once plugin_dir_path(__FILE__) . 'diagnostic-properties-repair.php';
+
+    echo '</div>';
 }
-add_action('init', 'add_properties_test_endpoint');
 
-// Gérer l'endpoint direct
-function handle_properties_test_endpoint() {
-    if (get_query_var('pdf_builder_test') == '1') {
+// Ajouter un endpoint direct pour le diagnostic complet
+function add_diagnostic_endpoint() {
+    add_rewrite_rule('^pdf-builder-diagnostic/?$', 'index.php?pdf_builder_diagnostic=1', 'top');
+    add_rewrite_tag('%pdf_builder_diagnostic%', '([^&]+)');
+}
+add_action('init', 'add_diagnostic_endpoint');
+
+// Gérer l'endpoint direct du diagnostic
+function handle_diagnostic_endpoint() {
+    if (get_query_var('pdf_builder_diagnostic') == '1') {
         if (!current_user_can('manage_options')) {
             wp_die('Accès refusé');
         }
 
-        echo '<html><head><title>Test de persistance des propriétés</title>';
+        echo '<html><head><title>Diagnostic complet des propriétés</title>';
         echo '<style>body { font-family: Arial, sans-serif; margin: 20px; } table { border-collapse: collapse; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left; } th { background-color: #f2f2f2; }</style>';
         echo '</head><body>';
 
-        run_properties_persistence_test();
+        include_once plugin_dir_path(__FILE__) . 'diagnostic-properties-repair.php';
 
         echo '</body></html>';
         exit;
     }
 }
-add_action('template_redirect', 'handle_properties_test_endpoint');
+add_action('template_redirect', 'handle_diagnostic_endpoint');
 
 function render_properties_test_page() {
     if (!current_user_can('manage_options')) {
