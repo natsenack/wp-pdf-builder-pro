@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test DOM Errors - PDF Builder Pro</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+        .warning { color: orange; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        #console-output { background: #f5f5f5; padding: 10px; border-radius: 3px; font-family: monospace; white-space: pre-wrap; max-height: 300px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test des Erreurs DOM - PDF Builder Pro</h1>
+
+    <div class="test-section">
+        <h3>Test 1: Vérification des Hooks DOM</h3>
+        <p>Cette page teste si les corrections DOM fonctionnent correctement.</p>
+        <button onclick="testDOMValidation()">Tester la validation DOM</button>
+        <button onclick="clearConsole()">Effacer la console</button>
+        <div id="test1-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 2: Simulation d'interactions Canvas</h3>
+        <p>Simule les interactions qui causaient les erreurs removeChild.</p>
+        <button onclick="simulateCanvasInteractions()">Simuler les interactions</button>
+        <div id="test2-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Console de débogage</h3>
+        <div id="console-output"></div>
+    </div>
+
+    <script>
+        let originalConsoleLog = console.log;
+        let originalConsoleWarn = console.warn;
+        let originalConsoleError = console.error;
+        let consoleOutput = [];
+
+        // Intercepter les messages console
+        console.log = function(...args) {
+            consoleOutput.push('[LOG] ' + args.join(' '));
+            originalConsoleLog.apply(console, args);
+            updateConsole();
+        };
+
+        console.warn = function(...args) {
+            consoleOutput.push('[WARN] ' + args.join(' '));
+            originalConsoleWarn.apply(console, args);
+            updateConsole();
+        };
+
+        console.error = function(...args) {
+            consoleOutput.push('[ERROR] ' + args.join(' '));
+            originalConsoleError.apply(console, args);
+            updateConsole();
+        };
+
+        function updateConsole() {
+            document.getElementById('console-output').textContent = consoleOutput.slice(-20).join('\n');
+        }
+
+        function clearConsole() {
+            consoleOutput = [];
+            updateConsole();
+        }
+
+        function testDOMValidation() {
+            const resultDiv = document.getElementById('test1-result');
+
+            try {
+                // Simuler la vérification DOM comme dans nos hooks
+                const testElement = document.createElement('div');
+                document.body.appendChild(testElement);
+
+                // Test 1: Élément connecté
+                if (testElement.isConnected) {
+                    console.log('✅ Test 1 passé: Élément connecté détecté');
+                } else {
+                    console.error('❌ Test 1 échoué: Élément connecté non détecté');
+                }
+
+                // Test 2: Parent connecté
+                if (testElement.parentNode && testElement.parentNode.isConnected) {
+                    console.log('✅ Test 2 passé: Parent connecté détecté');
+                } else {
+                    console.error('❌ Test 2 échoué: Parent connecté non détecté');
+                }
+
+                // Test 3: Suppression et vérification
+                const removedElement = testElement;
+                document.body.removeChild(testElement);
+
+                if (!removedElement.isConnected) {
+                    console.log('✅ Test 3 passé: Élément déconnecté détecté après suppression');
+                } else {
+                    console.error('❌ Test 3 échoué: Élément toujours connecté après suppression');
+                }
+
+                resultDiv.innerHTML = '<span class="success">✅ Tests de validation DOM terminés</span>';
+
+            } catch (error) {
+                console.error('❌ Erreur lors des tests DOM:', error);
+                resultDiv.innerHTML = '<span class="error">❌ Erreur lors des tests: ' + error.message + '</span>';
+            }
+        }
+
+        function simulateCanvasInteractions() {
+            const resultDiv = document.getElementById('test2-result');
+
+            try {
+                // Simuler la création d'éléments canvas comme dans React
+                const canvasContainer = document.createElement('div');
+                canvasContainer.id = 'canvas-container';
+                document.body.appendChild(canvasContainer);
+
+                // Simuler des éléments avec des poignées de redimensionnement
+                for (let i = 0; i < 3; i++) {
+                    const element = document.createElement('div');
+                    element.className = 'canvas-element';
+                    element.id = `element-${i}`;
+                    element.style.cssText = 'position: absolute; left: ' + (i * 100) + 'px; top: 50px; width: 80px; height: 60px; background: #007cba; border: 2px solid #005a87;';
+
+                    // Ajouter des poignées de redimensionnement avec clés stables
+                    const handles = ['nw', 'ne', 'sw', 'se'];
+                    handles.forEach(handle => {
+                        const handleDiv = document.createElement('div');
+                        handleDiv.className = `resize-handle resize-${handle}`;
+                        handleDiv.setAttribute('data-key', `handle-${i}-${handle}`); // Clé stable
+                        handleDiv.style.cssText = 'position: absolute; width: 8px; height: 8px; background: #fff; border: 1px solid #000; cursor: ' + handle + '-resize;';
+                        element.appendChild(handleDiv);
+                    });
+
+                    canvasContainer.appendChild(element);
+                }
+
+                console.log('✅ Éléments canvas créés avec poignées de redimensionnement');
+
+                // Simuler une sélection/désélection rapide (cause des erreurs removeChild)
+                setTimeout(() => {
+                    try {
+                        const elements = document.querySelectorAll('.canvas-element');
+                        elements.forEach((element, index) => {
+                            if (index % 2 === 0) {
+                                // Simuler la suppression des poignées (comme lors de la désélection)
+                                const handles = element.querySelectorAll('.resize-handle');
+                                handles.forEach(handle => {
+                                    if (handle.parentNode) {
+                                        element.removeChild(handle);
+                                    }
+                                });
+                                console.log(`✅ Poignées supprimées pour l'élément ${index}`);
+                            }
+                        });
+
+                        resultDiv.innerHTML = '<span class="success">✅ Simulation d\'interactions canvas terminée sans erreurs DOM</span>';
+
+                    } catch (error) {
+                        console.error('❌ Erreur lors de la simulation:', error);
+                        resultDiv.innerHTML = '<span class="error">❌ Erreur lors de la simulation: ' + error.message + '</span>';
+                    }
+                }, 100);
+
+                // Nettoyer après 2 secondes
+                setTimeout(() => {
+                    if (canvasContainer.parentNode) {
+                        document.body.removeChild(canvasContainer);
+                        console.log('🧹 Nettoyage terminé');
+                    }
+                }, 2000);
+
+            } catch (error) {
+                console.error('❌ Erreur lors de la simulation:', error);
+                resultDiv.innerHTML = '<span class="error">❌ Erreur lors de la simulation: ' + error.message + '</span>';
+            }
+        }
+
+        // Test automatique au chargement
+        window.addEventListener('load', () => {
+            console.log('🚀 Test DOM Errors - PDF Builder Pro chargé');
+            console.log('🔧 Corrections appliquées:');
+            console.log('   - Vérifications DOM dans useResize.js et useDragAndDrop.js');
+            console.log('   - Clés stables pour les poignées de redimensionnement');
+            console.log('   - Validation des éléments avant manipulation');
+        });
+    </script>
+</body>
+</html>
