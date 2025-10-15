@@ -69,10 +69,6 @@ class PDF_Builder_Settings_Manager {
     public function register_settings() {
         // Paramètres généraux
         register_setting('pdf_builder_settings', 'pdf_builder_allowed_roles');
-        register_setting('pdf_builder_settings', 'pdf_builder_company_name');
-        register_setting('pdf_builder_settings', 'pdf_builder_company_address');
-        register_setting('pdf_builder_settings', 'pdf_builder_company_phone');
-        register_setting('pdf_builder_settings', 'pdf_builder_company_email');
         register_setting('pdf_builder_settings', 'pdf_builder_company_vat');
         register_setting('pdf_builder_settings', 'pdf_builder_company_rcs');
         register_setting('pdf_builder_settings', 'pdf_builder_company_siret');
@@ -94,19 +90,11 @@ class PDF_Builder_Settings_Manager {
         $allowed_roles = isset($_POST['allowed_roles']) ? $_POST['allowed_roles'] : ['administrator'];
         update_option('pdf_builder_allowed_roles', $allowed_roles);
 
-        // Informations société
-        $company_name = sanitize_text_field($_POST['company_name'] ?? '');
-        $company_address = sanitize_textarea_field($_POST['company_address'] ?? '');
-        $company_phone = sanitize_text_field($_POST['company_phone'] ?? '');
-        $company_email = sanitize_email($_POST['company_email'] ?? '');
+        // Informations société (seulement les champs non disponibles dans WooCommerce/WordPress)
         $company_vat = sanitize_text_field($_POST['company_vat'] ?? '');
         $company_rcs = sanitize_text_field($_POST['company_rcs'] ?? '');
         $company_siret = sanitize_text_field($_POST['company_siret'] ?? '');
 
-        update_option('pdf_builder_company_name', $company_name);
-        update_option('pdf_builder_company_address', $company_address);
-        update_option('pdf_builder_company_phone', $company_phone);
-        update_option('pdf_builder_company_email', $company_email);
         update_option('pdf_builder_company_vat', $company_vat);
         update_option('pdf_builder_company_rcs', $company_rcs);
         update_option('pdf_builder_company_siret', $company_siret);

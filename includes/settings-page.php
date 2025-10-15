@@ -496,37 +496,25 @@ window.addEventListener('load', function() {
                 </table>
 
                 <h3><?php _e('Informations Entreprise', 'pdf-builder-pro'); ?></h3>
-                <p class="description"><?php _e('Configurez les informations légales de votre entreprise pour les documents PDF.', 'pdf-builder-pro'); ?></p>
+                <p class="description">
+                    <?php _e('Les informations de base (nom, adresse, téléphone, email) sont automatiquement récupérées depuis les réglages WooCommerce et WordPress.', 'pdf-builder-pro'); ?><br>
+                    <?php _e('Configurez ici uniquement les informations légales spécifiques qui ne sont pas disponibles dans WooCommerce.', 'pdf-builder-pro'); ?>
+                </p>
+
+                <div style="background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                    <h4 style="margin-top: 0; color: #495057;"><?php _e('Informations récupérées automatiquement', 'pdf-builder-pro'); ?></h4>
+                    <ul style="margin: 0; padding-left: 20px; color: #6c757d;">
+                        <li><strong><?php _e('Nom de l\'entreprise', 'pdf-builder-pro'); ?>:</strong> <?php echo esc_html(get_bloginfo('name')); ?> <em>(<?php _e('Réglages WordPress > Général', 'pdf-builder-pro'); ?>)</em></li>
+                        <li><strong><?php _e('Adresse', 'pdf-builder-pro'); ?>:</strong> <?php
+                            $address = trim(get_option('woocommerce_store_address') . ' ' . get_option('woocommerce_store_address_2') . ' ' . get_option('woocommerce_store_postcode') . ' ' . get_option('woocommerce_store_city'));
+                            echo esc_html($address ?: __('Non configurée', 'pdf-builder-pro'));
+                        ?> <em>(<?php _e('WooCommerce > Réglages > Général', 'pdf-builder-pro'); ?>)</em></li>
+                        <li><strong><?php _e('Téléphone', 'pdf-builder-pro'); ?>:</strong> <?php echo esc_html(get_option('woocommerce_store_phone') ?: __('Non configuré', 'pdf-builder-pro')); ?> <em>(<?php _e('WooCommerce > Réglages > Général', 'pdf-builder-pro'); ?>)</em></li>
+                        <li><strong><?php _e('Email', 'pdf-builder-pro'); ?>:</strong> <?php echo esc_html(get_option('woocommerce_store_email') ?: __('Non configuré', 'pdf-builder-pro')); ?> <em>(<?php _e('WooCommerce > Réglages > Général', 'pdf-builder-pro'); ?>)</em></li>
+                    </ul>
+                </div>
 
                 <table class="form-table">
-                    <tr>
-                        <th scope="row"><?php _e('Nom de l\'entreprise', 'pdf-builder-pro'); ?></th>
-                        <td>
-                            <input type="text" name="company_name" value="<?php echo esc_attr(get_option('pdf_builder_company_name', '')); ?>" class="regular-text">
-                            <p class="description"><?php _e('Le nom officiel de votre entreprise', 'pdf-builder-pro'); ?></p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><?php _e('Adresse', 'pdf-builder-pro'); ?></th>
-                        <td>
-                            <textarea name="company_address" rows="3" class="large-text"><?php echo esc_textarea(get_option('pdf_builder_company_address', '')); ?></textarea>
-                            <p class="description"><?php _e('Adresse complète de l\'entreprise', 'pdf-builder-pro'); ?></p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><?php _e('Téléphone', 'pdf-builder-pro'); ?></th>
-                        <td>
-                            <input type="text" name="company_phone" value="<?php echo esc_attr(get_option('pdf_builder_company_phone', '')); ?>" class="regular-text">
-                            <p class="description"><?php _e('Numéro de téléphone de l\'entreprise', 'pdf-builder-pro'); ?></p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row"><?php _e('Email', 'pdf-builder-pro'); ?></th>
-                        <td>
-                            <input type="email" name="company_email" value="<?php echo esc_attr(get_option('pdf_builder_company_email', '')); ?>" class="regular-text">
-                            <p class="description"><?php _e('Adresse email de contact de l\'entreprise', 'pdf-builder-pro'); ?></p>
-                        </td>
-                    </tr>
                     <tr>
                         <th scope="row"><?php _e('Numéro TVA', 'pdf-builder-pro'); ?></th>
                         <td>
