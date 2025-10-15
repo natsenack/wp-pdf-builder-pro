@@ -464,7 +464,7 @@ const PreviewModal = ({
 
       case 'customer_info':
         // Rendu dynamique des informations client utilisant les propriétés de l'élément
-        const customerFields = element.fields || ['name', 'phone', 'address', 'email', 'company', 'tva'];
+        const customerFields = element.fields || ['name', 'email', 'phone', 'address', 'company', 'vat', 'siret'];
         const showLabels = element.showLabels !== false;
         const layout = element.layout || 'vertical';
         const alignment = element.alignment || 'left';
@@ -547,7 +547,7 @@ const PreviewModal = ({
 
       case 'company_info':
         // Rendu dynamique des informations entreprise utilisant les propriétés de l'élément
-        const companyFields = element.fields || ['name', 'address', 'phone', 'email', 'tva'];
+        const companyFields = element.fields || ['name', 'address', 'phone', 'email', 'website', 'vat', 'rcs', 'siret'];
         const showCompanyLabels = element.showLabels !== false;
         const companyLayout = element.layout || 'vertical';
         const companyAlignment = element.alignment || 'left';

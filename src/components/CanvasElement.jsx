@@ -1336,6 +1336,34 @@ export const CanvasElement = ({
                   </div>
                 </div>
               )}
+
+              {/* SIRET */}
+              {element.fields?.includes('siret') && (
+                <div style={{
+                  display: 'flex',
+                  flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
+                  alignItems: element.layout === 'horizontal' ? 'flex-start' : 'center',
+                  gap: `${4 * zoom}px`,
+                  flex: element.layout === 'horizontal' ? '1' : 'none'
+                }}>
+                  {element.showLabels && (
+                    <div style={{
+                      fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
+                      textTransform: element.labelStyle === 'uppercase' ? 'uppercase' : 'none',
+                      color: element.color || '#666',
+                      minWidth: element.layout === 'horizontal' ? 'auto' : '80px',
+                      fontSize: `${11 * zoom}px`
+                    }}>
+                      SIRET :
+                    </div>
+                  )}
+                  <div style={{
+                    color: element.color || '#333'
+                  }}>
+                    123 456 789 00012
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -1391,65 +1419,253 @@ export const CanvasElement = ({
           <div style={{
             width: '100%',
             height: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
             padding: `${8 * zoom}px`,
             fontSize: `${(element.fontSize || 12) * zoom}px`,
-            fontFamily: element.fontFamily || 'Arial',
+            fontFamily: element.fontFamily || 'Arial, sans-serif',
             fontWeight: element.fontWeight || 'normal',
-            textAlign: element.textAlign || 'left',
+            fontStyle: element.fontStyle || 'normal',
+            textDecoration: element.textDecoration || 'none',
             color: element.color || '#333',
-            lineHeight: '1.4',
             backgroundColor: element.backgroundColor || 'transparent',
             // Bordures subtiles pour les éléments spéciaux
             border: element.borderWidth && element.borderWidth > 0 ? `${Math.max(1, element.borderWidth * zoom * 0.5)}px solid ${element.borderColor || '#e5e7eb'}` : 'none',
             borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '2px',
             boxSizing: 'border-box'
           }}>
-            {/* Nom de l'entreprise */}
-            {element.fields?.includes('name') && (
-              <div style={{ fontWeight: 'bold', marginBottom: `${2 * zoom}px` }}>
-                Ma Société SARL
-              </div>
-            )}
+            <div style={{
+              display: 'flex',
+              flexDirection: element.layout === 'horizontal' ? 'row' : 'column',
+              gap: `${element.spacing * zoom || 8 * zoom}px`,
+              height: '100%'
+            }}>
+              {/* Nom de l'entreprise */}
+              {element.fields?.includes('name') && (
+                <div style={{
+                  display: 'flex',
+                  flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
+                  alignItems: element.layout === 'horizontal' ? 'flex-start' : 'center',
+                  gap: `${4 * zoom}px`,
+                  flex: element.layout === 'horizontal' ? '1' : 'none'
+                }}>
+                  {element.showLabels && (
+                    <div style={{
+                      fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
+                      textTransform: element.labelStyle === 'uppercase' ? 'uppercase' : 'none',
+                      color: element.color || '#666',
+                      minWidth: element.layout === 'horizontal' ? 'auto' : '80px',
+                      fontSize: `${11 * zoom}px`
+                    }}>
+                      Nom :
+                    </div>
+                  )}
+                  <div style={{
+                    fontWeight: 'bold',
+                    color: element.color || '#333'
+                  }}>
+                    Ma Société SARL
+                  </div>
+                </div>
+              )}
 
-            {/* Adresse */}
-            {element.fields?.includes('address') && (
-              <div style={{ marginBottom: `${2 * zoom}px` }}>
-                123 Rue de l'Entreprise<br />
-                75001 Paris<br />
-                France
-              </div>
-            )}
+              {/* Adresse */}
+              {element.fields?.includes('address') && (
+                <div style={{
+                  display: 'flex',
+                  flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
+                  alignItems: element.layout === 'horizontal' ? 'flex-start' : 'center',
+                  gap: `${4 * zoom}px`,
+                  flex: element.layout === 'horizontal' ? '1' : 'none'
+                }}>
+                  {element.showLabels && (
+                    <div style={{
+                      fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
+                      textTransform: element.labelStyle === 'uppercase' ? 'uppercase' : 'none',
+                      color: element.color || '#666',
+                      minWidth: element.layout === 'horizontal' ? 'auto' : '80px',
+                      fontSize: `${11 * zoom}px`
+                    }}>
+                      Adresse :
+                    </div>
+                  )}
+                  <div style={{
+                    color: element.color || '#333',
+                    lineHeight: '1.4'
+                  }}>
+                    123 Rue de l'Entreprise<br />
+                    75001 Paris<br />
+                    France
+                  </div>
+                </div>
+              )}
 
-            {/* Téléphone */}
-            {element.fields?.includes('phone') && (
-              <div style={{ marginBottom: `${2 * zoom}px` }}>
-                Tél: +33 1 23 45 67 89
-              </div>
-            )}
+              {/* Téléphone */}
+              {element.fields?.includes('phone') && (
+                <div style={{
+                  display: 'flex',
+                  flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
+                  alignItems: element.layout === 'horizontal' ? 'flex-start' : 'center',
+                  gap: `${4 * zoom}px`,
+                  flex: element.layout === 'horizontal' ? '1' : 'none'
+                }}>
+                  {element.showLabels && (
+                    <div style={{
+                      fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
+                      textTransform: element.labelStyle === 'uppercase' ? 'uppercase' : 'none',
+                      color: element.color || '#666',
+                      minWidth: element.layout === 'horizontal' ? 'auto' : '80px',
+                      fontSize: `${11 * zoom}px`
+                    }}>
+                      Téléphone :
+                    </div>
+                  )}
+                  <div style={{
+                    color: element.color || '#333'
+                  }}>
+                    +33 1 23 45 67 89
+                  </div>
+                </div>
+              )}
 
-            {/* Email */}
-            {element.fields?.includes('email') && (
-              <div style={{ marginBottom: `${2 * zoom}px` }}>
-                contact@masociete.com
-              </div>
-            )}
+              {/* Email */}
+              {element.fields?.includes('email') && (
+                <div style={{
+                  display: 'flex',
+                  flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
+                  alignItems: element.layout === 'horizontal' ? 'flex-start' : 'center',
+                  gap: `${4 * zoom}px`,
+                  flex: element.layout === 'horizontal' ? '1' : 'none'
+                }}>
+                  {element.showLabels && (
+                    <div style={{
+                      fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
+                      textTransform: element.labelStyle === 'uppercase' ? 'uppercase' : 'none',
+                      color: element.color || '#666',
+                      minWidth: element.layout === 'horizontal' ? 'auto' : '80px',
+                      fontSize: `${11 * zoom}px`
+                    }}>
+                      Email :
+                    </div>
+                  )}
+                  <div style={{
+                    color: '#1976d2'
+                  }}>
+                    contact@masociete.com
+                  </div>
+                </div>
+              )}
 
-            {/* Site web */}
-            {element.fields?.includes('website') && (
-              <div style={{ marginBottom: `${2 * zoom}px` }}>
-                www.masociete.com
-              </div>
-            )}
+              {/* Site web */}
+              {element.fields?.includes('website') && (
+                <div style={{
+                  display: 'flex',
+                  flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
+                  alignItems: element.layout === 'horizontal' ? 'flex-start' : 'center',
+                  gap: `${4 * zoom}px`,
+                  flex: element.layout === 'horizontal' ? '1' : 'none'
+                }}>
+                  {element.showLabels && (
+                    <div style={{
+                      fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
+                      textTransform: element.labelStyle === 'uppercase' ? 'uppercase' : 'none',
+                      color: element.color || '#666',
+                      minWidth: element.layout === 'horizontal' ? 'auto' : '80px',
+                      fontSize: `${11 * zoom}px`
+                    }}>
+                      Site web :
+                    </div>
+                  )}
+                  <div style={{
+                    color: '#1976d2'
+                  }}>
+                    www.masociete.com
+                  </div>
+                </div>
+              )}
 
-            {/* TVA */}
-            {element.fields?.includes('vat') && (
-              <div>
-                TVA: FR 12 345 678 901
-              </div>
-            )}
+              {/* TVA */}
+              {element.fields?.includes('vat') && (
+                <div style={{
+                  display: 'flex',
+                  flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
+                  alignItems: element.layout === 'horizontal' ? 'flex-start' : 'center',
+                  gap: `${4 * zoom}px`,
+                  flex: element.layout === 'horizontal' ? '1' : 'none'
+                }}>
+                  {element.showLabels && (
+                    <div style={{
+                      fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
+                      textTransform: element.labelStyle === 'uppercase' ? 'uppercase' : 'none',
+                      color: element.color || '#666',
+                      minWidth: element.layout === 'horizontal' ? 'auto' : '80px',
+                      fontSize: `${11 * zoom}px`
+                    }}>
+                      N° TVA :
+                    </div>
+                  )}
+                  <div style={{
+                    color: element.color || '#333'
+                  }}>
+                    FR 12 345 678 901
+                  </div>
+                </div>
+              )}
+
+              {/* RCS */}
+              {element.fields?.includes('rcs') && (
+                <div style={{
+                  display: 'flex',
+                  flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
+                  alignItems: element.layout === 'horizontal' ? 'flex-start' : 'center',
+                  gap: `${4 * zoom}px`,
+                  flex: element.layout === 'horizontal' ? '1' : 'none'
+                }}>
+                  {element.showLabels && (
+                    <div style={{
+                      fontWeight: element.labelStyle === 'bold' ? 'bold' : 'bold',
+                      textTransform: element.labelStyle === 'uppercase' ? 'uppercase' : 'none',
+                      color: element.color || '#666',
+                      minWidth: element.layout === 'horizontal' ? 'auto' : '80px',
+                      fontSize: `${11 * zoom}px`
+                    }}>
+                      RCS :
+                    </div>
+                  )}
+                  <div style={{
+                    color: element.color || '#333'
+                  }}>
+                    Paris B 123 456 789
+                  </div>
+                </div>
+              )}
+
+              {/* SIRET */}
+              {element.fields?.includes('siret') && (
+                <div style={{
+                  display: 'flex',
+                  flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
+                  alignItems: element.layout === 'horizontal' ? 'flex-start' : 'center',
+                  gap: `${4 * zoom}px`,
+                  flex: element.layout === 'horizontal' ? '1' : 'none'
+                }}>
+                  {element.showLabels && (
+                    <div style={{
+                      fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
+                      textTransform: element.labelStyle === 'uppercase' ? 'uppercase' : 'none',
+                      color: element.color || '#666',
+                      minWidth: element.layout === 'horizontal' ? 'auto' : '80px',
+                      fontSize: `${11 * zoom}px`
+                    }}>
+                      SIRET :
+                    </div>
+                  )}
+                  <div style={{
+                    color: element.color || '#333'
+                  }}>
+                    123 456 789 00012
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         )}
 

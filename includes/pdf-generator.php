@@ -856,7 +856,7 @@ class PDF_Builder_Pro_Generator {
         $height = isset($element['height']) ? $element['height'] * $px_to_mm : 30;
 
         // Récupérer les propriétés de l'élément (comme dans l'aperçu)
-        $fields = isset($element['fields']) ? $element['fields'] : ['name', 'email', 'phone', 'address'];
+        $fields = isset($element['fields']) ? $element['fields'] : ['name', 'email', 'phone', 'address', 'company', 'vat', 'siret'];
         $layout = isset($element['layout']) ? $element['layout'] : 'vertical';
         $showLabels = isset($element['showLabels']) ? $element['showLabels'] : true;
         $labelStyle = isset($element['labelStyle']) ? $element['labelStyle'] : 'normal';
@@ -944,6 +944,42 @@ class PDF_Builder_Pro_Generator {
                     $customer_info[] = $label . $company;
                 }
             }
+
+            if (in_array('vat', $fields)) {
+                // Essayer de récupérer le numéro TVA depuis les métadonnées utilisateur ou options
+                $customer_id = $this->order->get_customer_id();
+                $vat_number = '';
+                if ($customer_id) {
+                    $vat_number = get_user_meta($customer_id, 'billing_vat_number', true);
+                }
+                // Fallback vers une option globale ou valeur par défaut pour démo
+                if (empty($vat_number)) {
+                    $vat_number = get_option('pdf_builder_demo_vat', 'FR 12 345 678 901');
+                }
+                if (!empty($vat_number)) {
+                    $label = $showLabels ? 'N° TVA : ' : '';
+                    if ($labelStyle === 'uppercase') $label = strtoupper($label);
+                    $customer_info[] = $label . $vat_number;
+                }
+            }
+
+            if (in_array('siret', $fields)) {
+                // Essayer de récupérer le SIRET depuis les métadonnées utilisateur
+                $customer_id = $this->order->get_customer_id();
+                $siret = '';
+                if ($customer_id) {
+                    $siret = get_user_meta($customer_id, 'billing_siret', true);
+                }
+                // Fallback vers une valeur par défaut pour démo
+                if (empty($siret)) {
+                    $siret = get_option('pdf_builder_demo_siret', '123 456 789 00012');
+                }
+                if (!empty($siret)) {
+                    $label = $showLabels ? 'SIRET : ' : '';
+                    if ($labelStyle === 'uppercase') $label = strtoupper($label);
+                    $customer_info[] = $label . $siret;
+                }
+            }
         } else {
             // Contenu factice si pas de commande
             $customer_info = ["Client", "Jean Dupont", "jean@example.com", "01 23 45 67 89", "123 Rue de la Paix\n75001 Paris\nFrance"];
@@ -987,25 +1023,142 @@ class PDF_Builder_Pro_Generator {
         $width = isset($element['width']) ? $element['width'] * $px_to_mm : 80;
         $height = isset($element['height']) ? $element['height'] * $px_to_mm : 30;
 
-        // Récupérer les informations de société
-        $company_info = $this->get_company_info();
+        // Récupérer les propriétés de l'élément (cohérent avec l'aperçu)
+        $fields = isset($element['fields']) ? $element['fields'] : ['name', 'address', 'phone', 'email', 'website', 'vat', 'rcs', 'siret'];
+        $layout = isset($element['layout']) ? $element['layout'] : 'vertical';
+        $showLabels = isset($element['showLabels']) ? $element['showLabels'] : false;
+        $labelStyle = isset($element['labelStyle']) ? $element['labelStyle'] : 'normal';
+        $spacing = isset($element['spacing']) ? $element['spacing'] : 4;
+        $color = isset($element['color']) ? $element['color'] : '#333333';
+        $fontSize = isset($element['fontSize']) ? $element['fontSize'] : 12;
+        $fontFamily = isset($element['fontFamily']) ? $element['fontFamily'] : 'helvetica';
 
-        // Séparer le nom de la société du reste des informations
-        $company_lines = explode("\n", $company_info);
-        $company_name = !empty($company_lines) ? array_shift($company_lines) : 'Société';
-        $company_details = implode("\n", $company_lines);
+        // Appliquer la couleur du texte
+        if ($color && $color !== 'transparent') {
+            $textColor = $this->hex_to_rgb($color);
+            $this->pdf->SetTextColor($textColor[0], $textColor[1], $textColor[2]);
+        } else {
+            $this->pdf->SetTextColor(0, 0, 0); // Noir par défaut
+        }
+
+        // Appliquer la police et taille
+        $this->pdf->SetFont($fontFamily, '', $fontSize);
 
         // Positionner le curseur
         $this->pdf->SetXY($x, $y);
 
-        // Titre (nom de la société)
-        $this->pdf->SetFont('helvetica', 'B', 12);
-        $this->pdf->Cell($width, 6, $company_name, 0, 2);
+        $company_info = [];
 
-        // Contenu (détails)
-        if (!empty($company_details)) {
-            $this->pdf->SetFont('helvetica', '', 10);
-            $this->pdf->MultiCell($width, 5, $company_details, 0, 'L');
+        // Construire les informations entreprise selon les champs sélectionnés
+        if (in_array('name', $fields)) {
+            $company_name = get_bloginfo('name');
+            if (!empty($company_name)) {
+                $label = $showLabels ? 'Entreprise : ' : '';
+                if ($labelStyle === 'uppercase') $label = strtoupper($label);
+                $company_info[] = $label . $company_name;
+            }
+        }
+
+        if (in_array('address', $fields)) {
+            $address_parts = [];
+            $address1 = get_option('woocommerce_store_address');
+            $address2 = get_option('woocommerce_store_address_2');
+            $city = get_option('woocommerce_store_city');
+            $postcode = get_option('woocommerce_store_postcode');
+            $country = get_option('woocommerce_store_country');
+
+            if (!empty($address1)) $address_parts[] = $address1;
+            if (!empty($address2)) $address_parts[] = $address2;
+
+            $city_line = [];
+            if (!empty($postcode)) $city_line[] = $postcode;
+            if (!empty($city)) $city_line[] = $city;
+            if (!empty($city_line)) $address_parts[] = implode(' ', $city_line);
+
+            if (!empty($country)) {
+                // Essayer de convertir le code pays en nom
+                $country_name = $this->get_country_name($country);
+                $address_parts[] = $country_name ?: $country;
+            }
+
+            if (!empty($address_parts)) {
+                $full_address = implode("\n", $address_parts);
+                $label = $showLabels ? 'Adresse :' . "\n" : '';
+                if ($labelStyle === 'uppercase') $label = strtoupper($label);
+                $company_info[] = $label . $full_address;
+            }
+        }
+
+        if (in_array('phone', $fields)) {
+            $phone = get_option('woocommerce_store_phone');
+            if (!empty($phone)) {
+                $label = $showLabels ? 'Téléphone : ' : '';
+                if ($labelStyle === 'uppercase') $label = strtoupper($label);
+                $company_info[] = $label . $phone;
+            }
+        }
+
+        if (in_array('email', $fields)) {
+            $email = get_option('woocommerce_email_from_address');
+            if (!empty($email)) {
+                $label = $showLabels ? 'Email : ' : '';
+                if ($labelStyle === 'uppercase') $label = strtoupper($label);
+                $company_info[] = $label . $email;
+            }
+        }
+
+        if (in_array('website', $fields)) {
+            $website = get_option('woocommerce_store_website') ?: get_bloginfo('url');
+            if (!empty($website)) {
+                $label = $showLabels ? 'Site web : ' : '';
+                if ($labelStyle === 'uppercase') $label = strtoupper($label);
+                $company_info[] = $label . $website;
+            }
+        }
+
+        if (in_array('vat', $fields)) {
+            $vat_number = get_option('pdf_builder_company_vat', '');
+            if (empty($vat_number)) {
+                $vat_number = get_option('woocommerce_store_vat_number', 'FR 12 345 678 901');
+            }
+            if (!empty($vat_number)) {
+                $label = $showLabels ? 'N° TVA : ' : '';
+                if ($labelStyle === 'uppercase') $label = strtoupper($label);
+                $company_info[] = $label . $vat_number;
+            }
+        }
+
+        if (in_array('rcs', $fields)) {
+            $rcs = get_option('pdf_builder_company_rcs', '');
+            if (empty($rcs)) {
+                $rcs = get_option('woocommerce_store_rcs', 'Paris B 123 456 789');
+            }
+            if (!empty($rcs)) {
+                $label = $showLabels ? 'RCS : ' : '';
+                if ($labelStyle === 'uppercase') $label = strtoupper($label);
+                $company_info[] = $label . $rcs;
+            }
+        }
+
+        if (in_array('siret', $fields)) {
+            $siret = get_option('pdf_builder_company_siret', '');
+            if (empty($siret)) {
+                $siret = get_option('woocommerce_store_siret', '123 456 789 00012');
+            }
+            if (!empty($siret)) {
+                $label = $showLabels ? 'SIRET : ' : '';
+                if ($labelStyle === 'uppercase') $label = strtoupper($label);
+                $company_info[] = $label . $siret;
+            }
+        }
+
+        // Rendre le contenu
+        if (!empty($company_info)) {
+            $content = implode("\n", $company_info);
+            $this->pdf->MultiCell($width, $fontSize * 0.4, $content, 0, 'L', false);
+        } else {
+            // Contenu par défaut si rien n'est disponible
+            $this->pdf->Cell($width, $fontSize * 0.4, 'Entreprise', 0, 2);
         }
     }
 
@@ -2038,6 +2191,57 @@ class PDF_Builder_Pro_Generator {
         ];
 
         return isset($labels[$status]) ? $labels[$status] : ucfirst($status);
+    }
+
+    /**
+     * Convertit un code pays en nom complet
+     */
+    private function get_country_name($country_code) {
+        $countries = [
+            'FR' => 'France',
+            'BE' => 'Belgique',
+            'CH' => 'Suisse',
+            'LU' => 'Luxembourg',
+            'DE' => 'Allemagne',
+            'IT' => 'Italie',
+            'ES' => 'Espagne',
+            'PT' => 'Portugal',
+            'NL' => 'Pays-Bas',
+            'GB' => 'Royaume-Uni',
+            'US' => 'États-Unis',
+            'CA' => 'Canada',
+            'AU' => 'Australie',
+            'JP' => 'Japon',
+            'CN' => 'Chine',
+            'IN' => 'Inde',
+            'BR' => 'Brésil',
+            'MX' => 'Mexique',
+            'AR' => 'Argentine',
+            'CL' => 'Chili',
+            'CO' => 'Colombie',
+            'PE' => 'Pérou',
+            'VE' => 'Venezuela',
+            'EC' => 'Équateur',
+            'UY' => 'Uruguay',
+            'PY' => 'Paraguay',
+            'BO' => 'Bolivie',
+            'GY' => 'Guyana',
+            'SR' => 'Suriname',
+            'GF' => 'Guyane Française',
+            'MQ' => 'Martinique',
+            'GP' => 'Guadeloupe',
+            'RE' => 'Réunion',
+            'YT' => 'Mayotte',
+            'NC' => 'Nouvelle-Calédonie',
+            'PF' => 'Polynésie Française',
+            'WF' => 'Wallis-et-Futuna',
+            'TF' => 'Terres Australes Françaises',
+            'BL' => 'Saint-Barthélemy',
+            'MF' => 'Saint-Martin',
+            'PM' => 'Saint-Pierre-et-Miquelon'
+        ];
+
+        return isset($countries[strtoupper($country_code)]) ? $countries[strtoupper($country_code)] : $country_code;
     }
 }
 

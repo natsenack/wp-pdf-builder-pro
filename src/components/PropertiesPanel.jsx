@@ -74,6 +74,13 @@ const ELEMENT_PROPERTY_PROFILES = {
     content: ['document_type'],
     effects: ['opacity', 'shadows', 'filters']
   },
+  // Numéro de commande
+  order_number: {
+    appearance: ['colors', 'font', 'borders', 'effects'],
+    layout: ['position', 'dimensions', 'transform', 'layers'],
+    content: ['order_number'],
+    effects: ['opacity', 'shadows', 'filters']
+  },
   // Éléments par défaut (forme géométrique)
   default: {
     appearance: ['colors', 'borders', 'effects'],
@@ -1043,9 +1050,9 @@ const PropertiesPanel = React.memo(({
                   <label>URL de l'image:</label>
                   <input
                     type="url"
-                    value={localProperties.src || ''}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'src', e.target.value)}
-                    placeholder="https://exemple.com/image.jpg"
+                    value={localProperties.imageUrl || ''}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'imageUrl', e.target.value)}
+                    placeholder="https://exemple.com/logo.jpg"
                   />
                 </div>
 
@@ -1055,18 +1062,18 @@ const PropertiesPanel = React.memo(({
                     type="text"
                     value={localProperties.alt || ''}
                     onChange={(e) => handlePropertyChange(selectedElement.id, 'alt', e.target.value)}
-                    placeholder="Description de l'image"
+                    placeholder="Logo de l'entreprise"
                   />
                 </div>
 
                 <div className="property-row">
                   <label>Adaptation:</label>
                   <select
-                    value={localProperties.objectFit || 'cover'}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'objectFit', e.target.value)}
+                    value={localProperties.fit || 'contain'}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'fit', e.target.value)}
                   >
-                    <option value="cover">Couvrir (zoom)</option>
                     <option value="contain">Contenir (intégral)</option>
+                    <option value="cover">Couvrir (zoom)</option>
                     <option value="fill">Remplir</option>
                     <option value="none">Aucune</option>
                   </select>
@@ -1340,6 +1347,47 @@ const PropertiesPanel = React.memo(({
                     <option value="credit_note">Avoir</option>
                   </select>
                 </div>
+              </div>
+            )}
+
+            {/* Contrôles numéro de commande (uniquement pour les éléments order_number) */}
+            {allowedControls.includes('order_number') && selectedElement.type === 'order_number' && (
+              <div className="properties-group">
+                <h4>🔢 Numéro de Commande</h4>
+
+                <div className="property-row">
+                  <label>Format d'affichage:</label>
+                  <input
+                    type="text"
+                    value={localProperties.format || 'Commande #{order_number} - {order_date}'}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'format', e.target.value)}
+                    placeholder="Commande #{order_number} - {order_date}"
+                  />
+                </div>
+
+                <div className="property-row">
+                  <label>Afficher l'étiquette:</label>
+                  <label className="toggle">
+                    <input
+                      type="checkbox"
+                      checked={localProperties.showLabel ?? true}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'showLabel', e.target.checked)}
+                    />
+                    <span className="toggle-slider"></span>
+                  </label>
+                </div>
+
+                {localProperties.showLabel && (
+                  <div className="property-row">
+                    <label>Texte de l'étiquette:</label>
+                    <input
+                      type="text"
+                      value={localProperties.labelText || 'N° de commande:'}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'labelText', e.target.value)}
+                      placeholder="N° de commande:"
+                    />
+                  </div>
+                )}
               </div>
             )}
 
