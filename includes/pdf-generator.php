@@ -855,93 +855,127 @@ class PDF_Builder_Pro_Generator {
         $width = isset($element['width']) ? $element['width'] * $px_to_mm : 80;
         $height = isset($element['height']) ? $element['height'] * $px_to_mm : 30;
 
-        // Récupérer les vraies informations client depuis la commande WooCommerce
-        $customer_info_lines = ["Client"];
+        // Récupérer les propriétés de l'élément (comme dans l'aperçu)
+        $fields = isset($element['fields']) ? $element['fields'] : ['name', 'email', 'phone', 'address'];
+        $layout = isset($element['layout']) ? $element['layout'] : 'vertical';
+        $showLabels = isset($element['showLabels']) ? $element['showLabels'] : true;
+        $labelStyle = isset($element['labelStyle']) ? $element['labelStyle'] : 'normal';
+        $spacing = isset($element['spacing']) ? $element['spacing'] : 8;
+        $color = isset($element['color']) ? $element['color'] : '#333333';
+        $fontSize = isset($element['fontSize']) ? $element['fontSize'] : 12;
+        $fontFamily = isset($element['fontFamily']) ? $element['fontFamily'] : 'helvetica';
 
-        if ($this->order) {
-            $billing_first_name = $this->order->get_billing_first_name();
-            $billing_last_name = $this->order->get_billing_last_name();
-            $billing_company = $this->order->get_billing_company();
-            $billing_address_1 = $this->order->get_billing_address_1();
-            $billing_address_2 = $this->order->get_billing_address_2();
-            $billing_city = $this->order->get_billing_city();
-            $billing_postcode = $this->order->get_billing_postcode();
-            $billing_country = $this->order->get_billing_country();
-            $billing_email = $this->order->get_billing_email();
-            $billing_phone = $this->order->get_billing_phone();
-
-            // Ajouter chaque ligne seulement si elle contient du contenu valide
-            if (!empty(trim($billing_company))) {
-                $customer_info_lines[] = trim($billing_company);
-            }
-            $name_line = trim($billing_first_name . ' ' . $billing_last_name);
-            if (!empty($name_line)) {
-                $customer_info_lines[] = $name_line;
-            }
-            if (!empty(trim($billing_address_1))) {
-                $customer_info_lines[] = trim($billing_address_1);
-            }
-            if (!empty(trim($billing_address_2))) {
-                $customer_info_lines[] = trim($billing_address_2);
-            }
-            $city_line = trim($billing_postcode . ' ' . $billing_city);
-            if (!empty($city_line)) {
-                $customer_info_lines[] = $city_line;
-            }
-            if (!empty(trim($billing_country))) {
-                $customer_info_lines[] = trim($billing_country);
-            }
-            if (!empty(trim($billing_email))) {
-                $customer_info_lines[] = trim($billing_email);
-            }
-            if (!empty(trim($billing_phone))) {
-                $customer_info_lines[] = trim($billing_phone);
-            }
+        // Appliquer la couleur du texte
+        if ($color && $color !== 'transparent') {
+            $textColor = $this->hex_to_rgb($color);
+            $this->pdf->SetTextColor($textColor[0], $textColor[1], $textColor[2]);
         } else {
-            // Contenu factice si pas de commande
-            $customer_info_lines = ["Client", "Jean Dupont", "123 Rue de la Paix", "75001 Paris", "France"];
+            $this->pdf->SetTextColor(0, 0, 0); // Noir par défaut
         }
 
-        // Joindre les lignes avec des sauts de ligne
-        $customer_info = implode("\n", $customer_info_lines);
-
-        // Nettoyer le texte et s'assurer qu'il n'est pas vide
-        $customer_info = trim($customer_info);
-        if (empty($customer_info)) {
-            $customer_info = "Client";
-        }
-
-        // Encoder en UTF-8 et nettoyer les caractères problématiques
-        $customer_info = $customer_info;
+        // Appliquer la police et taille
+        $this->pdf->SetFont($fontFamily, '', $fontSize);
 
         // Positionner le curseur
         $this->pdf->SetXY($x, $y);
 
-        // Titre
-        $this->pdf->SetFont('helvetica', 'B', 12);
-        $this->pdf->Cell($width, 6, 'Client', 0, 2);
+        $customer_info = [];
 
-        // Contenu
-        $this->pdf->SetFont('helvetica', '', 10);
-
-        // Protection contre les textes vides ou problématiques
-        if (empty($customer_info) || strlen($customer_info) < 2) {
-            $customer_info = "Client";
-        }
-
-        // Essayer d'utiliser Cell au lieu de MultiCell si le texte est simple
-        if ($customer_info && strpos($customer_info, "\n") === false) {
-            // Texte simple, utiliser Cell
-            $this->pdf->Cell($width, 5, $customer_info, 0, 2);
-        } else {
-            // Texte multi-ligne, utiliser MultiCell avec protection
-            try {
-                $this->pdf->MultiCell($width, 5, $customer_info, 0, 'L');
-            } catch (Exception $e) {
-                // En cas d'erreur, utiliser un texte simple
-                $this->pdf->Cell($width, 5, "Client", 0, 2);
+        // Construire les informations client selon les champs sélectionnés (comme dans l'aperçu)
+        if ($this->order) {
+            if (in_array('name', $fields)) {
+                $name = trim($this->order->get_billing_first_name() . ' ' . $this->order->get_billing_last_name());
+                if (!empty($name)) {
+                    $label = $showLabels ? 'Nom : ' : '';
+                    if ($labelStyle === 'uppercase') $label = strtoupper($label);
+                    $customer_info[] = $label . $name;
+                }
             }
+
+            if (in_array('email', $fields)) {
+                $email = $this->order->get_billing_email();
+                if (!empty($email)) {
+                    $label = $showLabels ? 'Email : ' : '';
+                    if ($labelStyle === 'uppercase') $label = strtoupper($label);
+                    $customer_info[] = $label . $email;
+                }
+            }
+
+            if (in_array('phone', $fields)) {
+                $phone = $this->order->get_billing_phone();
+                if (!empty($phone)) {
+                    $label = $showLabels ? 'Téléphone : ' : '';
+                    if ($labelStyle === 'uppercase') $label = strtoupper($label);
+                    $customer_info[] = $label . $phone;
+                }
+            }
+
+            if (in_array('address', $fields)) {
+                $address_parts = [];
+
+                $address_1 = $this->order->get_billing_address_1();
+                if (!empty($address_1)) $address_parts[] = trim($address_1);
+
+                $address_2 = $this->order->get_billing_address_2();
+                if (!empty($address_2)) $address_parts[] = trim($address_2);
+
+                $city = $this->order->get_billing_city();
+                $postcode = $this->order->get_billing_postcode();
+                if (!empty($city) || !empty($postcode)) {
+                    $address_parts[] = trim($postcode . ' ' . $city);
+                }
+
+                $country = $this->order->get_billing_country();
+                if (!empty($country)) $address_parts[] = trim($country);
+
+                if (!empty($address_parts)) {
+                    $full_address = implode("\n", $address_parts);
+                    $label = $showLabels ? 'Adresse :' . "\n" : '';
+                    if ($labelStyle === 'uppercase') $label = strtoupper($label);
+                    $customer_info[] = $label . $full_address;
+                }
+            }
+
+            if (in_array('company', $fields)) {
+                $company = $this->order->get_billing_company();
+                if (!empty($company)) {
+                    $label = $showLabels ? 'Société : ' : '';
+                    if ($labelStyle === 'uppercase') $label = strtoupper($label);
+                    $customer_info[] = $label . $company;
+                }
+            }
+        } else {
+            // Contenu factice si pas de commande
+            $customer_info = ["Client", "Jean Dupont", "jean@example.com", "01 23 45 67 89", "123 Rue de la Paix\n75001 Paris\nFrance"];
         }
+
+        // Rendre le contenu
+        if (!empty($customer_info)) {
+            $content = implode("\n", $customer_info);
+
+            // Utiliser MultiCell pour gérer le texte multi-ligne
+            $this->pdf->MultiCell($width, $fontSize * 0.4, $content, 0, 'L', false);
+        } else {
+            // Contenu par défaut si rien n'est disponible
+            $this->pdf->Cell($width, $fontSize * 0.4, 'Client', 0, 2);
+        }
+    }
+
+    /**
+     * Convertir couleur hex vers RGB
+     */
+    private function hex_to_rgb($hex) {
+        $hex = ltrim($hex, '#');
+        if (strlen($hex) == 3) {
+            $hex = str_repeat(substr($hex, 0, 1), 2) .
+                   str_repeat(substr($hex, 1, 1), 2) .
+                   str_repeat(substr($hex, 2, 1), 2);
+        }
+        return [
+            hexdec(substr($hex, 0, 2)),
+            hexdec(substr($hex, 2, 2)),
+            hexdec(substr($hex, 4, 2))
+        ];
     }
 
     /**
