@@ -64,6 +64,16 @@ if (!$is_new && $template_id > 0) {
                     // Fallback pour l'ancienne structure
                     $initial_elements = $decoded_data['elements'];
                     error_log("PDF Builder LOAD - Elements loaded from elements (fallback): " . count($initial_elements));
+                    
+                    // DEBUG: Log des propriétés des éléments
+                    foreach ($initial_elements as $index => $element) {
+                        if (is_array($element)) {
+                            error_log("PDF Builder LOAD - Element $index properties: " . implode(', ', array_keys($element)));
+                            if (isset($element['type'])) {
+                                error_log("PDF Builder LOAD - Element $index type: " . $element['type']);
+                            }
+                        }
+                    }
                 } else {
                     error_log("PDF Builder LOAD - No elements found in any structure");
                 }

@@ -418,7 +418,7 @@ const PreviewModal = ({
 
       // Préparer les données pour l'AJAX
       const formData = new FormData();
-      formData.append('action', 'pdf_builder_generate_preview');
+      formData.append('action', 'pdf_builder_validate_preview');
       formData.append('nonce', freshNonce);
       formData.append('elements', jsonString);
 

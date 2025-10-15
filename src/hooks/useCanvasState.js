@@ -466,12 +466,16 @@ export const useCanvasState = ({
       // Nettoyer tous les éléments
       const cleanedElements = elements.map(cleanElementForSerialization);
 
+      console.log('Éléments nettoyés pour sauvegarde:', cleanedElements);
+
       const templateData = {
         elements: cleanedElements,
         canvasWidth,
         canvasHeight,
         version: '1.0'
       };
+
+      console.log('Données template à sauvegarder:', templateData);
 
       // Valider le JSON avant envoi
       let jsonString;
