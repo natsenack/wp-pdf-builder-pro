@@ -657,32 +657,117 @@ const PreviewModal = ({
       console.log('Valeur du nonce envoyé:', freshNonce);
       console.log('Timestamp envoi:', Date.now());
 
-      // Vérifier la sérialisation JSON avant l'envoi
-      let jsonString;
-      try {
-        jsonString = JSON.stringify(elements);
-        console.log('✅ JSON stringify réussi pour validation, longueur:', jsonString.length);
-        console.log('Aperçu JSON validation (premiers 300 chars):', jsonString.substring(0, 300));
-      } catch (jsonError) {
-        console.error('❌ Erreur lors de JSON.stringify pour validation:', jsonError);
-        console.error('Éléments problématiques pour validation:', elements);
-
-        // Test avec des données simples
-        console.log('🔧 Test avec données JSON simples...');
-        const testElements = [{id: 'test_element', type: 'text', content: 'Test', x: 10, y: 10, width: 100, height: 50}];
+      // Validation côté client avant envoi
+      const validateElementsBeforeSend = (elements) => {
         try {
-          const testJson = JSON.stringify(testElements);
-          console.log('✅ JSON de test réussi:', testJson);
-        } catch (testError) {
-          console.error('❌ Même le JSON de test échoue:', testError);
+          const cleanedElements = cleanElementsForJSON(elements);
+          const jsonString = JSON.stringify(cleanedElements);
+          
+          // Vérifier que le JSON est valide
+          JSON.parse(jsonString);
+          
+          // Vérifier la longueur raisonnable
+          if (jsonString.length > 10000000) { // 10MB max
+            throw new Error('JSON trop volumineux');
+          }
+          
+          console.log('Client-side validation passed. JSON length:', jsonString.length);
+          return { success: true, jsonString, cleanedElements };
+        } catch (error) {
+          console.error('Client-side validation failed:', error);
+          return { success: false, error: error.message };
         }
+      };
 
+      // Fonction pour nettoyer les éléments avant sérialisation JSON
+      const cleanElementsForJSON = (elements) => {
+        return elements.map(element => {
+          const cleaned = { ...element };
+
+          // Supprimer les propriétés non sérialisables
+          const propertiesToRemove = ['reactKey', 'tempId', 'style', '_internalId', 'ref', 'key'];
+          propertiesToRemove.forEach(prop => {
+            delete cleaned[prop];
+          });
+
+          // Nettoyer récursivement tous les objets imbriqués
+          const cleanObject = (obj) => {
+            if (obj === null || typeof obj !== 'object') {
+              return obj;
+            }
+
+            if (Array.isArray(obj)) {
+              return obj.map(cleanObject);
+            }
+
+            const cleanedObj = {};
+            for (const key in obj) {
+              if (obj.hasOwnProperty(key)) {
+                const value = obj[key];
+
+                // Ignorer les fonctions, symboles, et objets complexes
+                if (typeof value === 'function' || typeof value === 'symbol' ||
+                    (typeof value === 'object' && value !== null &&
+                     !(Array.isArray(value)) &&
+                     !(value instanceof Date) &&
+                     !(value instanceof RegExp))) {
+                  continue; // Skip this property
+                }
+
+                // Nettoyer récursivement
+                cleanedObj[key] = cleanObject(value);
+              }
+            }
+            return cleanedObj;
+          };
+
+          // Appliquer le nettoyage récursif
+          const fullyCleaned = cleanObject(cleaned);
+
+          // S'assurer que les propriétés numériques sont des nombres
+          ['x', 'y', 'width', 'height', 'fontSize', 'borderWidth', 'borderRadius'].forEach(prop => {
+            if (fullyCleaned[prop] !== undefined && fullyCleaned[prop] !== null) {
+              const num = parseFloat(fullyCleaned[prop]);
+              if (!isNaN(num)) {
+                fullyCleaned[prop] = num;
+              } else {
+                delete fullyCleaned[prop]; // Supprimer si pas un nombre valide
+              }
+            }
+          });
+
+          // S'assurer que les propriétés boolean sont des booléens
+          ['showLabels', 'showHeaders', 'showBorders', 'showSubtotal', 'showShipping', 'showTaxes', 'showDiscount', 'showTotal'].forEach(prop => {
+            if (fullyCleaned[prop] !== undefined) {
+              fullyCleaned[prop] = Boolean(fullyCleaned[prop]);
+            }
+          });
+
+          // S'assurer que les chaînes sont des chaînes
+          ['id', 'type', 'content', 'text', 'color', 'backgroundColor', 'borderColor', 'fontFamily', 'fontWeight', 'fontStyle', 'textDecoration', 'textAlign', 'borderStyle'].forEach(prop => {
+            if (fullyCleaned[prop] !== undefined && fullyCleaned[prop] !== null) {
+              fullyCleaned[prop] = String(fullyCleaned[prop]);
+            }
+          });
+
+          return fullyCleaned;
+        });
+      };
+
+      // Validation côté client avant envoi
+      const validationResult = validateElementsBeforeSend(elements);
+      if (!validationResult.success) {
+        console.error('❌ Validation côté client échouée:', validationResult.error);
         setPreviewData(prev => ({
           ...prev,
-          server_error: 'Erreur de sérialisation JSON côté client'
+          error: `Erreur de validation côté client: ${validationResult.error}`,
+          isLoading: false
         }));
         return;
       }
+
+      const { jsonString, cleanedElements } = validationResult;
+      console.log('✅ Validation côté client réussie, longueur JSON:', jsonString.length);
 
       // Préparer les données pour l'AJAX
       const formData = new FormData();

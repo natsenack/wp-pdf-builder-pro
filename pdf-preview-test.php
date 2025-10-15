@@ -315,62 +315,14 @@ class PDF_Preview_Test {
             }
         }
 
-        // Positionner le curseur
-        $pdf->SetXY($x, $y);
-
-        // Appliquer les styles
-        $pdf->SetFont($font_family, '', $font_size);
-        $pdf->SetTextColor($text_color[0], $text_color[1], $text_color[2]);
-
-        switch ($type) {
-            case 'text':
-                $pdf->MultiCell($width, $height, $content, 0, 'L', false);
-                break;
-
-            case 'invoice_number':
-                $invoice_number = $this->order->get_id() . '-' . time();
-                $pdf->MultiCell($width, $height, $invoice_number, 0, 'L', false);
-                break;
-
-            case 'order_number':
-                $pdf->MultiCell($width, $height, $this->order->get_order_number(), 0, 'L', false);
-                break;
-
-            case 'customer_name':
-                $customer_name = $this->order->get_billing_first_name() . ' ' . $this->order->get_billing_last_name();
-                $pdf->MultiCell($width, $height, $customer_name, 0, 'L', false);
-                break;
-
-            case 'customer_address':
-                $address = $this->order->get_formatted_billing_address();
-                $pdf->MultiCell($width, $height, $address, 0, 'L', false);
-                break;
-
-            case 'company_info':
-                $company_info = $this->get_company_info();
-                $pdf->MultiCell($width, $height, $company_info, 0, 'L', false);
-                break;
-
-            case 'total':
-                $total = $this->order->get_total();
-                $pdf->MultiCell($width, $height, wc_price($total), 0, 'R', false);
-                break;
-
-            case 'product_table':
-                $this->render_product_table($pdf, $x, $y, $width, $height);
-                break;
-
-            default:
-                // Élément non supporté - afficher le type
-                $pdf->MultiCell($width, $height, '[' . $type . ']', 0, 'L', false);
-                break;
-        }
+        // Appeler la méthode render_element avec l'élément complet
+        $this->render_element($pdf, $type, $x, $y, $width, $height, $element);
     }
 
     /**
      * Rendre le tableau de produits
      */
-    private function render_product_table($pdf, $x, $y, $width, $height) {
+    private function render_product_table($pdf, $x, $y, $width, $height, $element = null) {
         $pdf->SetXY($x, $y);
 
         // En-têtes du tableau
@@ -399,6 +351,74 @@ class PDF_Preview_Test {
         // Total
         $pdf->SetFont('helvetica', 'B', 10);
         $pdf->Cell(130, 8, 'Total: ' . wc_price($this->order->get_total()), 1, 1, 'R');
+    }
+
+    /**
+     * Rendre un élément selon son type
+     */
+    private function render_element($pdf, $type, $x, $y, $width, $height, $element) {
+        // Positionner le curseur
+        $pdf->SetXY($x, $y);
+
+        // Récupérer les propriétés de style de base
+        $font_size = isset($element['fontSize']) ? $element['fontSize'] : 12;
+        $font_family = isset($element['fontFamily']) ? $element['fontFamily'] : 'helvetica';
+        $color = isset($element['color']) ? $element['color'] : '#000000';
+
+        // Appliquer les styles de base
+        $pdf->SetFont($font_family, '', $font_size);
+        $text_color = $this->hex_to_rgb($color);
+        $pdf->SetTextColor($text_color[0], $text_color[1], $text_color[2]);
+
+        switch ($type) {
+            case 'text':
+                $content = isset($element['content']) ? $element['content'] : (isset($element['text']) ? $element['text'] : '');
+                $content = $this->replace_order_variables($content);
+                $pdf->MultiCell($width, $height, $content, 0, 'L', false);
+                break;
+
+            case 'invoice_number':
+                $invoice_number = $this->order->get_id() . '-' . time();
+                $pdf->MultiCell($width, $height, $invoice_number, 0, 'L', false);
+                break;
+
+            case 'order_number':
+                $pdf->MultiCell($width, $height, $this->order->get_order_number(), 0, 'L', false);
+                break;
+
+            case 'customer_name':
+                $customer_name = $this->order->get_billing_first_name() . ' ' . $this->order->get_billing_last_name();
+                $pdf->MultiCell($width, $height, $customer_name, 0, 'L', false);
+                break;
+
+            case 'customer_address':
+                $address = $this->order->get_formatted_billing_address();
+                $pdf->MultiCell($width, $height, $address, 0, 'L', false);
+                break;
+
+            case 'company_info':
+                $company_info = $this->get_company_info();
+                $pdf->MultiCell($width, $height, $company_info, 0, 'L', false);
+                break;
+
+            case 'customer_info':
+                $this->render_customer_info($pdf, $x, $y, $width, $height, $element);
+                break;
+
+            case 'total':
+                $total = $this->order->get_total();
+                $pdf->MultiCell($width, $height, wc_price($total), 0, 'R', false);
+                break;
+
+            case 'product_table':
+                $this->render_product_table($pdf, $x, $y, $width, $height, $element);
+                break;
+
+            default:
+                // Élément non supporté - afficher le type
+                $pdf->MultiCell($width, $height, '[' . $type . ']', 0, 'L', false);
+                break;
+        }
     }
 
     /**
@@ -462,6 +482,83 @@ class PDF_Preview_Test {
         if (!empty($phone)) $company_parts[] = 'Tél: ' . $phone;
 
         return implode("\n", $company_parts);
+    }
+
+    /**
+     * Rendre les informations client
+     */
+    private function render_customer_info($pdf, $x, $y, $width, $height, $element) {
+        $pdf->SetXY($x, $y);
+
+        // Récupérer les propriétés de l'élément
+        $fields = isset($element['fields']) ? $element['fields'] : ['name', 'email', 'phone', 'address'];
+        $layout = isset($element['layout']) ? $element['layout'] : 'vertical';
+        $showLabels = isset($element['showLabels']) ? $element['showLabels'] : true;
+        $labelStyle = isset($element['labelStyle']) ? $element['labelStyle'] : 'normal';
+        $spacing = isset($element['spacing']) ? $element['spacing'] : 8;
+        $color = isset($element['color']) ? $element['color'] : '#333333';
+        $fontSize = isset($element['fontSize']) ? $element['fontSize'] : 12;
+
+        // Appliquer la couleur du texte
+        $textColor = $this->hex_to_rgb($color);
+        $pdf->SetTextColor($textColor[0], $textColor[1], $textColor[2]);
+
+        // Appliquer la taille de police
+        $pdf->SetFont('helvetica', '', $fontSize);
+
+        $customer_info = [];
+
+        // Construire les informations client selon les champs sélectionnés
+        if (in_array('name', $fields)) {
+            $name = trim($this->order->get_billing_first_name() . ' ' . $this->order->get_billing_last_name());
+            if (!empty($name)) {
+                $label = $showLabels ? 'Nom : ' : '';
+                if ($labelStyle === 'uppercase') $label = strtoupper($label);
+                $customer_info[] = $label . $name;
+            }
+        }
+
+        if (in_array('email', $fields)) {
+            $email = $this->order->get_billing_email();
+            if (!empty($email)) {
+                $label = $showLabels ? 'Email : ' : '';
+                if ($labelStyle === 'uppercase') $label = strtoupper($label);
+                $customer_info[] = $label . $email;
+            }
+        }
+
+        if (in_array('phone', $fields)) {
+            $phone = $this->order->get_billing_phone();
+            if (!empty($phone)) {
+                $label = $showLabels ? 'Téléphone : ' : '';
+                if ($labelStyle === 'uppercase') $label = strtoupper($label);
+                $customer_info[] = $label . $phone;
+            }
+        }
+
+        if (in_array('address', $fields)) {
+            $address = $this->order->get_formatted_billing_address();
+            if (!empty($address)) {
+                $label = $showLabels ? 'Adresse :' . "\n" : '';
+                if ($labelStyle === 'uppercase') $label = strtoupper($label);
+                $customer_info[] = $label . $address;
+            }
+        }
+
+        if (in_array('company', $fields)) {
+            $company = $this->order->get_billing_company();
+            if (!empty($company)) {
+                $label = $showLabels ? 'Société : ' : '';
+                if ($labelStyle === 'uppercase') $label = strtoupper($label);
+                $customer_info[] = $label . $company;
+            }
+        }
+
+        // Rendre le contenu
+        if (!empty($customer_info)) {
+            $content = implode("\n", $customer_info);
+            $pdf->MultiCell($width, $height, $content, 0, 'L', false);
+        }
     }
 
     /**

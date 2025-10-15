@@ -521,20 +521,39 @@ function pdf_builder_ajax_validate_preview() {
         // DEBUG: Log des données reçues
         error_log('PDF Builder Validation - Raw JSON data length: ' . strlen($json_data));
         error_log('PDF Builder Validation - First 500 chars: ' . substr($json_data, 0, 500));
+        error_log('PDF Builder Validation - Last 500 chars: ' . substr($json_data, -500));
 
         // Vérifier si les données sont URL-encoded (peuvent arriver ainsi via FormData)
         if (strpos($json_data, '%') !== false) {
+            $original_length = strlen($json_data);
             $json_data = urldecode($json_data);
-            error_log('PDF Builder Validation - Data was URL-encoded, decoded length: ' . strlen($json_data));
+            error_log('PDF Builder Validation - Data was URL-encoded, original length: ' . $original_length . ', decoded length: ' . strlen($json_data));
         }
 
         // DEBUG: Sauvegarder les données pour analyse
-        file_put_contents(__DIR__ . '/debug_last_json.txt', $json_data);
+        file_put_contents(__DIR__ . '/debug_received_json.txt', $json_data);
 
         // Vérifier si les données semblent être du JSON valide
         $json_data_trimmed = trim($json_data);
         if (empty($json_data_trimmed)) {
             wp_send_json_error('Empty JSON data after trimming');
+            return;
+        }
+
+        // Vérifier les premiers et derniers caractères
+        $first_char = substr($json_data_trimmed, 0, 1);
+        $last_char = substr($json_data_trimmed, -1);
+        error_log('PDF Builder Validation - First char: ' . $first_char . ', Last char: ' . $last_char);
+
+        if ($first_char !== '[') {
+            error_log('PDF Builder Validation - ERROR: JSON does not start with [ - this is not an array!');
+            wp_send_json_error('JSON data must start with [ (array)');
+            return;
+        }
+
+        if ($last_char !== ']') {
+            error_log('PDF Builder Validation - ERROR: JSON does not end with ]!');
+            wp_send_json_error('JSON data must end with ] (array)');
             return;
         }
 
