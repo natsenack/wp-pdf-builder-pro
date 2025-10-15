@@ -113,7 +113,8 @@ const WooCommerceElement = ({
   zoom = 1,
   canvasWidth,
   canvasHeight,
-  orderData = {}
+  orderData = {},
+  onContextMenu
 }) => {
   const elementRef = useRef(null);
 
@@ -293,6 +294,7 @@ const WooCommerceElement = ({
         style={baseStyle}
         onClick={handleClick}
         onMouseDown={handleMouseDown}
+        onContextMenu={onContextMenu}
       >
         <div style={{
           fontWeight: 'bold',

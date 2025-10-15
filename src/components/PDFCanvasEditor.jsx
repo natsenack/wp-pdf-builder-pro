@@ -573,7 +573,7 @@ export const PDFCanvasEditor = ({ options }) => {
                         onSelect={() => handleElementSelect(element.id)}
                         onUpdate={(updates) => canvasState.updateElement(element.id, updates)}
                         onRemove={() => canvasState.deleteElement(element.id)}
-                        onContextMenu={handleContextMenu}
+                        onContextMenu={(e) => handleContextMenu(e, element.id)}
                         dragAndDrop={dragAndDrop}
                       />
                     );
@@ -594,6 +594,7 @@ export const PDFCanvasEditor = ({ options }) => {
                         canvasWidth={canvasState.canvasWidth}
                         canvasHeight={canvasState.canvasHeight}
                         orderData={orderData}
+                        onContextMenu={(e) => handleContextMenu(e, element.id)}
                       />
                     </React.Suspense>
                   ))}
@@ -644,6 +645,7 @@ export const PDFCanvasEditor = ({ options }) => {
             menu={canvasState.contextMenu.contextMenu}
             onAction={handleContextMenuAction}
             isAnimating={canvasState.contextMenu.isAnimating || false}
+            onClose={canvasState.contextMenu.hideContextMenu}
           />
         </React.Suspense>
       )}
