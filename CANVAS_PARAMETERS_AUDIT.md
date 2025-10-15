@@ -17,8 +17,8 @@ Après audit complet des 40 paramètres définis dans l'onglet "Canvas", **seule
 ## ✅ PARAMÈTRES FONCTIONNELS
 
 ### Général
-- ✅ `canvasBackgroundColor` - Couleur de fond du canvas (utilisé dans Canvas.jsx)
-- ✅ `canvasShowTransparency` - Affichage motif de damier (utilisé dans Canvas.jsx)
+- ✅ `canvasBackgroundColor` - Couleur de fond du canvas (implémenté dans PDFCanvasEditor.jsx)
+- ✅ `canvasShowTransparency` - Affichage motif de damier (implémenté dans PDFCanvasEditor.jsx)
 
 ### Grille & Aimants
 - ✅ `showGrid` - Affichage de la grille (utilisé dans PDFCanvasEditor.jsx)
@@ -120,7 +120,19 @@ Après audit complet des 40 paramètres définis dans l'onglet "Canvas", **seule
 
 ---
 
-## 🚀 PROCHAINES ÉTAPES
+## �️ CORRECTIONS RÉCENTES
+
+### 15 octobre 2025 - Fond du Canvas
+**Problème identifié :** Les paramètres `canvasBackgroundColor` et `canvasShowTransparency` n'étaient appliqués que dans le composant `Canvas.jsx` (canvas HTML5) mais pas dans `PDFCanvasEditor.jsx` qui utilise une div React.
+
+**Solution implémentée :**
+- Ajout du style `backgroundColor` à la div canvas dans `PDFCanvasEditor.jsx`
+- Implémentation du motif de damier CSS pour la transparence
+- Utilisation des paramètres `globalSettings.settings.canvasBackgroundColor` et `canvasShowTransparency`
+
+**Résultat :** Le fond du canvas change maintenant correctement selon les paramètres définis dans l'onglet "Général".
+
+---
 
 1. **Phase 1** : Implémenter aimantation avancée et guides
 2. **Phase 2** : Ajouter rotation et sélection multiple
