@@ -806,7 +806,7 @@ export const PDFCanvasEditor = ({ options }) => {
           canvasHeight={canvasState.canvasHeight}
           ajaxurl={window.pdfBuilderAjax?.ajaxurl}
           pdfBuilderNonce={window.pdfBuilderAjax?.nonce}
-          useServerPreview={true}
+          useServerPreview={false}
           onOpenPDFModal={(pdfUrl) => {
             setPdfModalUrl(pdfUrl);
             setShowPDFModal(true);
