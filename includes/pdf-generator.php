@@ -1958,7 +1958,7 @@ class PDF_Builder_Pro_Generator {
             $col_index++;
         }
         if ($columns['name']) {
-            $this->pdf->Cell($col_widths[$col_index], $row_height, 'Produit A - Description', $show_borders ? 1 : 0, 0, 'L');
+            $this->pdf->Cell($col_widths[$col_index], $row_height, 'Produit A - Description du produit', $show_borders ? 1 : 0, 0, 'L');
             $col_index++;
         }
         if ($columns['sku']) {
@@ -1988,7 +1988,7 @@ class PDF_Builder_Pro_Generator {
             $col_index++;
         }
         if ($columns['name']) {
-            $this->pdf->Cell($col_widths[$col_index], $row_height, 'Produit B - Article', $show_borders ? 1 : 0, 0, 'L');
+            $this->pdf->Cell($col_widths[$col_index], $row_height, 'Produit B - Un autre article', $show_borders ? 1 : 0, 0, 'L');
             $col_index++;
         }
         if ($columns['sku']) {
