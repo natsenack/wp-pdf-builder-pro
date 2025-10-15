@@ -2014,6 +2014,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Écouter les clics sur le bouton submit
     var submitBtn = document.getElementById('submit');
+    var form = document.querySelector('form[method="post"]');
+    
     if (submitBtn) {
         submitBtn.addEventListener('click', function(e) {
             e.preventDefault(); // Empêcher la soumission normale
@@ -2023,15 +2025,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     } else {
         // Bouton submit non trouvé - ne rien faire
-    }
-    if (form) {
-        // Ajouter un écouteur d'événement submit sur le formulaire
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            submitFormAjax();
-        });
-    } else {
-        console.error('Form not found!');
     }
     
     // Fonction pour soumettre le formulaire en AJAX
