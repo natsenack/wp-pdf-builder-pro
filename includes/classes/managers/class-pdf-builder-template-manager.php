@@ -173,14 +173,30 @@ class PDF_Builder_Template_Manager {
         if ($template) {
             $template_data_raw = $template['template_data'];
 
-            // Vérifier si les données contiennent des backslashes (échappement PHP)
-            if (strpos($template_data_raw, '\\') !== false) {
-                $template_data_raw = stripslashes($template_data_raw);
-            }
+            // DEBUG: Log complet des données de la DB
+            error_log("PDF Builder DB - Raw template_data from DB: " . $template_data_raw);
 
             $template_data = json_decode($template_data_raw, true);
             if ($template_data === null && json_last_error() !== JSON_ERROR_NONE) {
+                error_log("PDF Builder DB - JSON decode error: " . json_last_error_msg());
                 wp_send_json_error('Données du template corrompues - Erreur JSON: ' . json_last_error_msg());
+            } else {
+                // DEBUG: Log des données décodées
+                error_log("PDF Builder DB - Decoded template_data keys: " . implode(', ', array_keys($template_data)));
+                if (isset($template_data['elements'])) {
+                    error_log("PDF Builder DB - Number of elements: " . count($template_data['elements']));
+                    foreach ($template_data['elements'] as $index => $element) {
+                        if (is_array($element)) {
+                            error_log("PDF Builder DB - Element $index keys: " . implode(', ', array_keys($element)));
+                            if (isset($element['type'])) {
+                                error_log("PDF Builder DB - Element $index type: " . $element['type']);
+                                if ($element['type'] === 'product_table') {
+                                    error_log("PDF Builder DB - Table element $index properties: " . json_encode(array_intersect_key($element, array_flip(['showHeaders', 'showBorders', 'columns', 'tableStyle', 'showSubtotal', 'showShipping', 'showTaxes', 'showDiscount', 'showTotal']))));
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             wp_send_json_success(array(

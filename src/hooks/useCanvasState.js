@@ -466,6 +466,24 @@ export const useCanvasState = ({
       // Nettoyer tous les éléments
       const cleanedElements = elements.map(cleanElementForSerialization);
 
+      // Log détaillé des propriétés de chaque élément
+      elements.forEach((element, index) => {
+        console.log(`Élément ${index} (${element.type}) propriétés avant nettoyage:`, Object.keys(element));
+        if (element.type === 'product_table') {
+          console.log(`Tableau ${index} - paramètres:`, {
+            showHeaders: element.showHeaders,
+            showBorders: element.showBorders,
+            columns: element.columns,
+            tableStyle: element.tableStyle,
+            showSubtotal: element.showSubtotal,
+            showShipping: element.showShipping,
+            showTaxes: element.showTaxes,
+            showDiscount: element.showDiscount,
+            showTotal: element.showTotal
+          });
+        }
+      });
+
       console.log('Éléments nettoyés pour sauvegarde:', cleanedElements);
 
       const templateData = {
