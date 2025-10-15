@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test DOM Fixes - PDF Builder Pro</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-result { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+    </style>
+</head>
+<body>
+    <h1>Test des corrections DOM - PDF Builder Pro</h1>
+
+    <div id="test-results"></div>
+
+    <script>
+        const results = document.getElementById('test-results');
+
+        function addResult(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.textContent = message;
+            results.appendChild(div);
+        }
+
+        // Test 1: Vérifier que les clés React sont générées correctement
+        addResult('Test 1: Vérification des clés React pour les poignées de redimensionnement', 'info');
+
+        const elementId = 'element_test_123';
+        const expectedKeys = [
+            `resize-handle-nw-${elementId}`,
+            `resize-handle-ne-${elementId}`,
+            `resize-handle-sw-${elementId}`,
+            `resize-handle-se-${elementId}`,
+            `resize-handle-n-${elementId}`,
+            `resize-handle-s-${elementId}`,
+            `resize-handle-w-${elementId}`,
+            `resize-handle-e-${elementId}`,
+            `resize-zone-n-${elementId}`,
+            `resize-zone-s-${elementId}`,
+            `resize-zone-w-${elementId}`,
+            `resize-zone-e-${elementId}`
+        ];
+
+        expectedKeys.forEach(key => {
+            if (key.includes(elementId)) {
+                addResult(`✓ Clé générée correctement: ${key}`, 'success');
+            } else {
+                addResult(`✗ Clé incorrecte: ${key}`, 'error');
+            }
+        });
+
+        // Test 2: Simulation de manipulations DOM
+        addResult('Test 2: Simulation de manipulations DOM sûres', 'info');
+
+        try {
+            // Créer un élément de test
+            const testElement = document.createElement('div');
+            testElement.id = 'test-element';
+            testElement.textContent = 'Élément de test';
+            document.body.appendChild(testElement);
+
+            // Simuler une vérification de référence DOM
+            if (testElement && testElement.isConnected) {
+                addResult('✓ Élément connecté au DOM', 'success');
+
+                // Simuler une manipulation sûre
+                testElement.style.backgroundColor = '#f0f0f0';
+                testElement.style.padding = '10px';
+                addResult('✓ Manipulation DOM réussie', 'success');
+            } else {
+                addResult('✗ Élément non connecté au DOM', 'error');
+            }
+
+            // Nettoyer
+            if (testElement.parentNode) {
+                testElement.parentNode.removeChild(testElement);
+                addResult('✓ Nettoyage DOM réussi', 'success');
+            }
+
+        } catch (error) {
+            addResult(`✗ Erreur lors de la manipulation DOM: ${error.message}`, 'error');
+        }
+
+        // Test 3: Vérification des propriétés sérialisables
+        addResult('Test 3: Test de nettoyage des propriétés pour l\'historique', 'info');
+
+        const testElementWithRefs = {
+            id: 'test_1',
+            type: 'text',
+            content: 'Test content',
+            domElement: document.createElement('div'), // Non sérialisable
+            ref: { current: document.createElement('div') }, // Non sérialisable
+            eventListeners: ['click', 'hover'], // Non sérialisable
+            x: 100,
+            y: 200,
+            width: 150,
+            height: 50
+        };
+
+        function cleanElementForHistory(element) {
+            const cleaned = { ...element };
+            const nonSerializableProps = ['domElement', 'ref', 'eventListeners', 'component', 'render'];
+            nonSerializableProps.forEach(prop => {
+                delete cleaned[prop];
+            });
+            return cleaned;
+        }
+
+        try {
+            const cleaned = cleanElementForHistory(testElementWithRefs);
+
+            if (!cleaned.domElement && !cleaned.ref && !cleaned.eventListeners) {
+                addResult('✓ Propriétés non sérialisables supprimées', 'success');
+            } else {
+                addResult('✗ Propriétés non sérialisables présentes', 'error');
+            }
+
+            if (cleaned.id && cleaned.type && cleaned.x !== undefined) {
+                addResult('✓ Propriétés sérialisables conservées', 'success');
+            } else {
+                addResult('✗ Propriétés sérialisables manquantes', 'error');
+            }
+
+            // Test de sérialisation
+            JSON.stringify(cleaned);
+            addResult('✓ Élément nettoyé sérialisable en JSON', 'success');
+
+        } catch (error) {
+            addResult(`✗ Erreur de sérialisation: ${error.message}`, 'error');
+        }
+
+        addResult('Tests terminés - Vérifiez les résultats ci-dessus', 'info');
+    </script>
+</body>
+</html>

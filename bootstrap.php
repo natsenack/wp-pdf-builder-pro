@@ -518,12 +518,36 @@ function pdf_builder_ajax_validate_preview() {
             return;
         }
 
-        // Décoder le JSON
+        // DEBUG: Log des données reçues
+        error_log('PDF Builder Validation - Raw JSON data length: ' . strlen($json_data));
+        error_log('PDF Builder Validation - First 500 chars: ' . substr($json_data, 0, 500));
+
+        // Vérifier si les données sont URL-encoded (peuvent arriver ainsi via FormData)
+        if (strpos($json_data, '%') !== false) {
+            $json_data = urldecode($json_data);
+            error_log('PDF Builder Validation - Data was URL-encoded, decoded length: ' . strlen($json_data));
+        }
+
+        // Vérifier si les données semblent être du JSON valide
+        $json_data_trimmed = trim($json_data);
+        if (empty($json_data_trimmed)) {
+            wp_send_json_error('Empty JSON data after trimming');
+            return;
+        }
+
+        // Essayer de décoder le JSON
         $elements = json_decode($json_data, true);
+
+        // DEBUG: Log de l'erreur JSON si elle existe
         if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log('PDF Builder Validation - JSON decode error: ' . json_last_error_msg());
+            error_log('PDF Builder Validation - JSON data that failed: ' . substr($json_data, 0, 1000));
             wp_send_json_error('Invalid JSON data: ' . json_last_error_msg());
             return;
         }
+
+        // DEBUG: Log du succès du décodage
+        error_log('PDF Builder Validation - JSON decoded successfully, elements count: ' . count($elements));
 
         // Validation basique des éléments
         if (!is_array($elements)) {

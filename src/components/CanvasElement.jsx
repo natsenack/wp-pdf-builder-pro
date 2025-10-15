@@ -1381,6 +1381,7 @@ export const CanvasElement = ({
           <>
             {/* Coins */}
             <div
+              key={`resize-handle-nw-${element.id}`}
               className="resize-handle nw"
               onMouseDown={(e) => {
                 const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
@@ -1395,6 +1396,7 @@ export const CanvasElement = ({
               onContextMenu={handleContextMenuEvent}
             />
             <div
+              key={`resize-handle-ne-${element.id}`}
               className="resize-handle ne"
               onMouseDown={(e) => {
                 const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
@@ -1409,6 +1411,7 @@ export const CanvasElement = ({
               onContextMenu={handleContextMenuEvent}
             />
             <div
+              key={`resize-handle-sw-${element.id}`}
               className="resize-handle sw"
               onMouseDown={(e) => {
                 const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
@@ -1423,6 +1426,7 @@ export const CanvasElement = ({
               onContextMenu={handleContextMenuEvent}
             />
             <div
+              key={`resize-handle-se-${element.id}`}
               className="resize-handle se"
               onMouseDown={(e) => {
                 const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
@@ -1439,6 +1443,7 @@ export const CanvasElement = ({
 
             {/* Côtés */}
             <div
+              key={`resize-handle-n-${element.id}`}
               className="resize-handle n"
               onMouseDown={(e) => {
                 const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
@@ -1453,6 +1458,7 @@ export const CanvasElement = ({
               onContextMenu={handleContextMenuEvent}
             />
             <div
+              key={`resize-handle-s-${element.id}`}
               className="resize-handle s"
               onMouseDown={(e) => {
                 const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
@@ -1467,6 +1473,7 @@ export const CanvasElement = ({
               onContextMenu={handleContextMenuEvent}
             />
             <div
+              key={`resize-handle-w-${element.id}`}
               className="resize-handle w"
               onMouseDown={(e) => {
                 const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
@@ -1481,6 +1488,7 @@ export const CanvasElement = ({
               onContextMenu={handleContextMenuEvent}
             />
             <div
+              key={`resize-handle-e-${element.id}`}
               className="resize-handle e"
               onMouseDown={(e) => {
                 const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
@@ -1497,6 +1505,7 @@ export const CanvasElement = ({
 
             {/* Zones de redimensionnement sur les bords */}
             <div
+              key={`resize-zone-n-${element.id}`}
               className="resize-zone resize-zone-n"
               onMouseDown={(e) => resize.handleResizeStart(e, 'n', {
                 x: element.x,
@@ -1506,6 +1515,7 @@ export const CanvasElement = ({
               })}
             />
             <div
+              key={`resize-zone-s-${element.id}`}
               className="resize-zone resize-zone-s"
               onMouseDown={(e) => resize.handleResizeStart(e, 's', {
                 x: element.x,
@@ -1515,6 +1525,7 @@ export const CanvasElement = ({
               })}
             />
             <div
+              key={`resize-zone-w-${element.id}`}
               className="resize-zone resize-zone-w"
               onMouseDown={(e) => resize.handleResizeStart(e, 'w', {
                 x: element.x,
@@ -1524,6 +1535,7 @@ export const CanvasElement = ({
               })}
             />
             <div
+              key={`resize-zone-e-${element.id}`}
               className="resize-zone resize-zone-e"
               onMouseDown={(e) => resize.handleResizeStart(e, 'e', {
                 x: element.x,

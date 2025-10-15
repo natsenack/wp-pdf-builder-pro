@@ -33,6 +33,12 @@ export const useDragAndDrop = ({
   const handleMouseDown = useCallback((e, elementId, elementRect, canvasRect = null, zoomLevel = 1) => {
     if (e.button !== 0) return; // Only left mouse button
 
+    // Vérifier que l'élément source existe encore dans le DOM
+    if (!e.target || !e.target.isConnected) {
+      console.warn('Drag target no longer exists in DOM');
+      return;
+    }
+
     e.preventDefault();
     setIsDragging(true);
 

@@ -140,39 +140,307 @@ const PreviewModal = ({
         );
 
       case 'product_table':
-        // Rendu simplifié du tableau de produits
+        // Rendu dynamique du tableau de produits utilisant les propriétés de l'élément
+        const getTableStyles = (tableStyle = 'default') => {
+          const baseStyles = {
+            default: {
+              headerBg: '#f5f5f5',
+              headerBorder: '#ddd',
+              rowBorder: '#eee',
+              altRowBg: '#fafafa',
+              borderWidth: 1
+            },
+            classic: {
+              headerBg: '#ffffff',
+              headerBorder: '#000000',
+              rowBorder: '#000000',
+              altRowBg: '#ffffff',
+              borderWidth: 1
+            },
+            striped: {
+              headerBg: '#f8f9fa',
+              headerBorder: '#dee2e6',
+              rowBorder: '#dee2e6',
+              altRowBg: '#e9ecef',
+              borderWidth: 1
+            },
+            bordered: {
+              headerBg: '#ffffff',
+              headerBorder: '#dee2e6',
+              rowBorder: '#dee2e6',
+              altRowBg: '#ffffff',
+              borderWidth: 2
+            },
+            minimal: {
+              headerBg: '#ffffff',
+              headerBorder: '#f1f1f1',
+              rowBorder: '#f8f8f8',
+              altRowBg: '#ffffff',
+              borderWidth: 0.5
+            },
+            modern: {
+              headerBg: '#007bff',
+              headerBorder: '#007bff',
+              rowBorder: '#e3f2fd',
+              altRowBg: '#f8f9ff',
+              borderWidth: 1
+            }
+          };
+          return baseStyles[tableStyle] || baseStyles.default;
+        };
+
+        const tableStyles = getTableStyles(element.tableStyle);
+        const showHeaders = element.showHeaders !== false;
+        const showBorders = element.showBorders !== false;
+        const columns = element.columns || {
+          image: false,
+          name: true,
+          sku: false,
+          quantity: true,
+          price: true,
+          total: true
+        };
+
+        // Données d'exemple pour l'aperçu
+        const products = [
+          { name: 'Produit A - Description', sku: 'SKU001', quantity: 2, price: 19.99, total: 39.98 },
+          { name: 'Produit B - Article', sku: 'SKU002', quantity: 1, price: 29.99, total: 29.99 }
+        ];
+
+        // Calcul des totaux
+        const subtotal = products.reduce((sum, product) => sum + product.total, 0);
+        const shipping = element.showShipping ? 5.00 : 0;
+        const tax = element.showTaxes ? 2.25 : 0;
+        const discount = element.showDiscount ? -5.00 : 0;
+        const total = subtotal + shipping + tax + discount;
+
+        // Déterminer la dernière colonne visible pour les totaux
+        const getLastVisibleColumn = () => {
+          const columnKeys = ['image', 'name', 'sku', 'quantity', 'price', 'total'];
+          for (let i = columnKeys.length - 1; i >= 0; i--) {
+            if (columns[columnKeys[i]] !== false) {
+              return columnKeys[i];
+            }
+          }
+          return 'total';
+        };
+        const lastVisibleColumn = getLastVisibleColumn();
+
         return (
           <div style={{
             width: '100%',
             height: '100%',
-            border: '1px solid #ddd',
-            borderRadius: '4px',
-            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
             fontSize: '10px',
-            backgroundColor: 'white'
+            fontFamily: 'Arial, sans-serif',
+            border: element.borderWidth && element.borderWidth > 0 ? `${Math.max(1, element.borderWidth * 0.5)}px solid ${element.borderColor || '#e5e7eb'}` : 'none',
+            borderRadius: element.borderRadius ? `${element.borderRadius}px` : '2px',
+            overflow: 'hidden',
+            backgroundColor: element.backgroundColor || 'transparent',
+            boxSizing: 'border-box'
           }}>
-            <div style={{
-              display: 'flex',
-              backgroundColor: '#f5f5f5',
-              padding: '4px',
-              fontWeight: 'bold',
-              borderBottom: '1px solid #ddd'
-            }}>
-              <div style={{ flex: 1 }}>Produit</div>
-              <div style={{ width: '60px', textAlign: 'center' }}>Qté</div>
-              <div style={{ width: '80px', textAlign: 'right' }}>Prix</div>
-              <div style={{ width: '80px', textAlign: 'right' }}>Total</div>
-            </div>
-            <div style={{ padding: '4px', borderBottom: '1px solid #eee' }}>
-              <div style={{ display: 'flex' }}>
-                <div style={{ flex: 1 }}>Produit A - Description</div>
-                <div style={{ width: '60px', textAlign: 'center' }}>2</div>
-                <div style={{ width: '80px', textAlign: 'right' }}>19.99€</div>
-                <div style={{ width: '80px', textAlign: 'right' }}>39.98€</div>
+            {/* En-tête du tableau */}
+            {showHeaders && (
+              <div style={{
+                display: 'flex',
+                backgroundColor: tableStyles.headerBg,
+                borderBottom: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.headerBorder}` : 'none',
+                fontWeight: 'bold',
+                color: element.tableStyle === 'modern' ? '#ffffff' : '#000000'
+              }}>
+                {columns.image && (
+                  <div style={{
+                    flex: '0 0 40px',
+                    padding: '4px',
+                    textAlign: 'center',
+                    borderRight: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.headerBorder}` : 'none'
+                  }}>
+                    Img
+                  </div>
+                )}
+                {columns.name && (
+                  <div style={{
+                    flex: 1,
+                    padding: '4px 6px',
+                    textAlign: 'left',
+                    borderRight: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.headerBorder}` : 'none'
+                  }}>
+                    Produit
+                  </div>
+                )}
+                {columns.sku && (
+                  <div style={{
+                    flex: '0 0 80px',
+                    padding: '4px 6px',
+                    textAlign: 'left',
+                    borderRight: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.headerBorder}` : 'none'
+                  }}>
+                    SKU
+                  </div>
+                )}
+                {columns.quantity && (
+                  <div style={{
+                    flex: '0 0 60px',
+                    padding: '4px 6px',
+                    textAlign: 'center',
+                    borderRight: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.headerBorder}` : 'none'
+                  }}>
+                    Qté
+                  </div>
+                )}
+                {columns.price && (
+                  <div style={{
+                    flex: '0 0 80px',
+                    padding: '4px 6px',
+                    textAlign: 'right',
+                    borderRight: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.headerBorder}` : 'none'
+                  }}>
+                    Prix
+                  </div>
+                )}
+                {columns.total && (
+                  <div style={{
+                    flex: '0 0 80px',
+                    padding: '4px 6px',
+                    textAlign: 'right'
+                  }}>
+                    Total
+                  </div>
+                )}
               </div>
+            )}
+
+            {/* Lignes de données */}
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+              {products.map((product, index) => (
+                <div key={index} style={{
+                  display: 'flex',
+                  borderBottom: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.rowBorder}` : 'none',
+                  backgroundColor: element.tableStyle === 'striped' && index % 2 === 1 ? tableStyles.altRowBg : 'transparent'
+                }}>
+                  {columns.image && (
+                    <div style={{
+                      flex: '0 0 40px',
+                      padding: '4px',
+                      textAlign: 'center',
+                      borderRight: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.rowBorder}` : 'none'
+                    }}>
+                      📷
+                    </div>
+                  )}
+                  {columns.name && (
+                    <div style={{
+                      flex: 1,
+                      padding: '4px 6px',
+                      borderRight: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.rowBorder}` : 'none'
+                    }}>
+                      {product.name}
+                    </div>
+                  )}
+                  {columns.sku && (
+                    <div style={{
+                      flex: '0 0 80px',
+                      padding: '4px 6px',
+                      borderRight: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.rowBorder}` : 'none'
+                    }}>
+                      {product.sku}
+                    </div>
+                  )}
+                  {columns.quantity && (
+                    <div style={{
+                      flex: '0 0 60px',
+                      padding: '4px 6px',
+                      textAlign: 'center',
+                      borderRight: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.rowBorder}` : 'none'
+                    }}>
+                      {product.quantity}
+                    </div>
+                  )}
+                  {columns.price && (
+                    <div style={{
+                      flex: '0 0 80px',
+                      padding: '4px 6px',
+                      textAlign: 'right',
+                      borderRight: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.rowBorder}` : 'none'
+                    }}>
+                      {product.price.toFixed(2)}€
+                    </div>
+                  )}
+                  {columns.total && (
+                    <div style={{
+                      flex: '0 0 80px',
+                      padding: '4px 6px',
+                      textAlign: 'right'
+                    }}>
+                      {product.total.toFixed(2)}€
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
-            <div style={{ padding: '4px', fontWeight: 'bold', textAlign: 'right' }}>
-              Total: 39.98€
+
+            {/* Totaux */}
+            <div style={{ borderTop: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.headerBorder}` : 'none' }}>
+              {element.showSubtotal && (
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  padding: '4px 6px',
+                  fontWeight: 'bold'
+                }}>
+                  <div style={{ width: '80px', textAlign: 'right' }}>
+                    Sous-total: {subtotal.toFixed(2)}€
+                  </div>
+                </div>
+              )}
+              {element.showShipping && shipping > 0 && (
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  padding: '4px 6px'
+                }}>
+                  <div style={{ width: '80px', textAlign: 'right' }}>
+                    Port: {shipping.toFixed(2)}€
+                  </div>
+                </div>
+              )}
+              {element.showTaxes && tax > 0 && (
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  padding: '4px 6px'
+                }}>
+                  <div style={{ width: '80px', textAlign: 'right' }}>
+                    TVA: {tax.toFixed(2)}€
+                  </div>
+                </div>
+              )}
+              {element.showDiscount && discount < 0 && (
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  padding: '4px 6px'
+                }}>
+                  <div style={{ width: '80px', textAlign: 'right' }}>
+                    Remise: {Math.abs(discount).toFixed(2)}€
+                  </div>
+                </div>
+              )}
+              {element.showTotal && (
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  padding: '4px 6px',
+                  fontWeight: 'bold',
+                  backgroundColor: tableStyles.headerBg,
+                  color: element.tableStyle === 'modern' ? '#ffffff' : '#000000'
+                }}>
+                  <div style={{ width: '80px', textAlign: 'right' }}>
+                    TOTAL: {total.toFixed(2)}€
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         );

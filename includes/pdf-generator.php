@@ -258,12 +258,9 @@ class PDF_Builder_Pro_Generator {
             $GLOBALS['pdf_debug_logs'][] = "📏 FACTEUR CONVERSION PX->MM: " . $px_to_mm . " (Canvas: {$canvas_width_px}×{$canvas_height_px}px → PDF: {$page_width_mm}×{$page_height_mm}mm)";
         }
 
-        // Trier les éléments par position Y pour un meilleur rendu
-        usort($elements, function($a, $b) {
-            $a_y = isset($a['y']) ? $a['y'] : 0;
-            $b_y = isset($b['y']) ? $b['y'] : 0;
-            return $a_y <=> $b_y;
-        });
+        // ⚠️ IMPORTANT: Préserver l'ordre des éléments tel que défini dans le canvas
+        // Ne pas trier par position Y car cela casse l'ordre d'empilement (z-index)
+        // L'ordre du tableau elements doit être respecté pour maintenir la logique du design
 
         foreach ($elements as $element) {
             try {
@@ -891,144 +888,495 @@ class PDF_Builder_Pro_Generator {
      * Rendu d'élément product_table
      */
     private function render_product_table_element($element, $px_to_mm) {
-        $x = isset($element['x']) ? $element['x'] * $px_to_mm : 10;
-        $y = isset($element['y']) ? $element['y'] * $px_to_mm : 10;
-        $width = isset($element['width']) ? $element['width'] * $px_to_mm : 180;
-        $height = isset($element['height']) ? $element['height'] * $px_to_mm : 80;
+        // Extraction des propriétés avec valeurs par défaut sûres
+        $x = ($element['x'] ?? 0) * $px_to_mm;
+        $y = ($element['y'] ?? 0) * $px_to_mm;
+        $width = ($element['width'] ?? 550) * $px_to_mm;
+        $height = ($element['height'] ?? 200) * $px_to_mm;
 
-        // S'assurer que la largeur est valide (au minimum 50mm)
-        $width = max(50, $width);
+        // Propriétés de style visuel
+        $background_color = $element['backgroundColor'] ?? 'transparent';
+        $border_color = $element['borderColor'] ?? 'transparent';
+        $border_width = $element['borderWidth'] ?? 0;
+        $border_radius = $element['borderRadius'] ?? 0;
 
-        // Calculer les largeurs des colonnes avec protection contre les valeurs nulles
-        $col_widths = [
-            max(1, $width * 0.4),  // Produit
-            max(1, $width * 0.15), // Qté
-            max(1, $width * 0.2),  // Prix
-            max(1, $width * 0.25)  // Total
+        // Propriétés spécifiques au tableau
+        $show_headers = $element['showHeaders'] ?? true;
+        $show_borders = $element['showBorders'] ?? true;
+        $table_style = $element['tableStyle'] ?? 'default';
+        $headers = $element['headers'] ?? ['Produit', 'Qté', 'Prix'];
+        $columns = $element['columns'] ?? [
+            'image' => false,
+            'name' => true,
+            'sku' => false,
+            'quantity' => true,
+            'price' => true,
+            'total' => true
         ];
 
+        // Propriétés des totaux
+        $show_subtotal = $element['showSubtotal'] ?? false;
+        $show_shipping = $element['showShipping'] ?? true;
+        $show_taxes = $element['showTaxes'] ?? true;
+        $show_discount = $element['showDiscount'] ?? false;
+        $show_total = $element['showTotal'] ?? false;
+
+        // Styles de tableau selon le style choisi
+        $table_styles = $this->get_table_styles($table_style);
+
+        // Calcul des largeurs de colonnes dynamiques
+        $visible_columns = $this->get_visible_columns($columns);
+        $col_widths = $this->calculate_column_widths($width, $visible_columns, $columns);
+
+        // Position de départ
+        $current_y = $y;
+
+        // Fond du tableau si défini
+        if ($this->should_render_background($background_color)) {
+            $bg_color = $this->parse_color($background_color);
+            $this->pdf->SetFillColor($bg_color['r'], $bg_color['g'], $bg_color['b']);
+            $this->pdf->Rect($x, $y, $width, $height, 'F');
+        }
+
+        // Bordure du tableau si définie
+        if ($border_width > 0 && $border_color !== 'transparent') {
+            $border_rgb = $this->parse_color($border_color);
+            $this->pdf->SetDrawColor($border_rgb['r'], $border_rgb['g'], $border_rgb['b']);
+            $this->pdf->SetLineWidth($border_width * 0.1); // Conversion px vers points
+            $this->pdf->Rect($x, $y, $width, $height, 'D');
+        }
+
         // En-têtes du tableau
-        $this->pdf->SetXY($x, $y);
-        $this->pdf->SetFillColor(245, 245, 245);
-        $this->pdf->SetFont('helvetica', 'B', 9);
+        if ($show_headers) {
+            $this->pdf->SetXY($x, $current_y);
+            $this->pdf->SetFillColor($table_styles['header_bg']['r'], $table_styles['header_bg']['g'], $table_styles['header_bg']['b']);
+            $this->pdf->SetFont('helvetica', 'B', 9);
 
-        $this->pdf->Cell($col_widths[0], 10, 'Produit', 1, 0, 'L', true);
-        $this->pdf->Cell($col_widths[1], 10, 'Qté', 1, 0, 'C', true);
-        $this->pdf->Cell($col_widths[2], 10, 'Prix', 1, 0, 'R', true);
-        $this->pdf->Cell($col_widths[3], 10, 'Total', 1, 1, 'R', true);
+            $col_index = 0;
+            if ($columns['image']) {
+                $this->pdf->Cell($col_widths[$col_index], 8, 'Img', $show_borders ? 1 : 0, 0, 'C', true);
+                $col_index++;
+            }
+            if ($columns['name']) {
+                $this->pdf->Cell($col_widths[$col_index], 8, $headers[0] ?? 'Produit', $show_borders ? 1 : 0, 0, 'L', true);
+                $col_index++;
+            }
+            if ($columns['sku']) {
+                $this->pdf->Cell($col_widths[$col_index], 8, 'SKU', $show_borders ? 1 : 0, 0, 'L', true);
+                $col_index++;
+            }
+            if ($columns['quantity']) {
+                $this->pdf->Cell($col_widths[$col_index], 8, $headers[1] ?? 'Qté', $show_borders ? 1 : 0, 0, 'C', true);
+                $col_index++;
+            }
+            if ($columns['price']) {
+                $this->pdf->Cell($col_widths[$col_index], 8, $headers[2] ?? 'Prix', $show_borders ? 1 : 0, 0, 'R', true);
+                $col_index++;
+            }
+            if ($columns['total']) {
+                $this->pdf->Cell($col_widths[$col_index], 8, 'Total', $show_borders ? 1 : 0, 1, 'R', true);
+            }
 
-        // Vérifier si on a accès à l'objet commande
+            $current_y += 8;
+        }
+
+        // Contenu du tableau
+        $this->pdf->SetFont('helvetica', '', 8);
+
         if (isset($this->order) && $this->order) {
             // Rendre les vrais produits de la commande
-            $this->render_order_products_with_fees($x, $col_widths);
+            $current_y = $this->render_order_products_with_fees_pdf($x, $current_y, $col_widths, $columns, $show_borders, $element);
         } else {
-            // Ligne de produit factice
-            $this->pdf->SetXY($x, $y + 10);
-            $this->pdf->SetFont('helvetica', '', 8);
-            $this->pdf->Cell($col_widths[0], 8, 'Produit A - Description', 1, 0, 'L');
-            $this->pdf->Cell($col_widths[1], 8, '2', 1, 0, 'C');
-            $this->pdf->Cell($col_widths[2], 8, '19.99 ' . chr(128), 1, 0, 'R');
-            $this->pdf->Cell($col_widths[3], 8, '39.98 ' . chr(128), 1, 1, 'R');
-
-            // Ligne de frais factice
-            $this->pdf->SetXY($x, $y + 18);
-            $this->pdf->SetFont('helvetica', 'B', 8);
-            $this->pdf->Cell($col_widths[0], 8, 'Frais de port', 1, 0, 'L');
-            $this->pdf->Cell($col_widths[1], 8, '1', 1, 0, 'C');
-            $this->pdf->Cell($col_widths[2], 8, '1', 1, 0, 'R');
-            $this->pdf->Cell($col_widths[3], 8, '5.00 ' . chr(128), 1, 1, 'R');
-
-            // Total
-            $this->pdf->SetXY($x + $col_widths[0] + $col_widths[1] + $col_widths[2], $y + 30);
-            $this->pdf->SetFont('helvetica', 'B', 9);
-            $this->pdf->Cell($col_widths[3], 10, 'Total: 44.98 ' . chr(128), 1, 1, 'R', true);
+            // Données fictives pour l'aperçu
+            $current_y = $this->render_fake_products($x, $current_y, $col_widths, $columns, $show_borders);
         }
+
+        // Totaux
+        $current_y = $this->render_table_totals($x, $current_y, $col_widths, $columns, $show_borders, $element);
     }
 
     /**
-     * Rendu des produits et frais de la commande WooCommerce
+     * Obtenir les styles de tableau selon le style choisi
      */
-    private function render_order_products_with_fees($x, $col_widths) {
-        // Vérifier que les largeurs de colonnes sont valides
-        if (empty($col_widths) || count($col_widths) < 4) {
-            return;
+    private function get_table_styles($table_style) {
+        $styles = [
+            'default' => [
+                'header_bg' => ['r' => 245, 'g' => 245, 'b' => 245],
+                'header_border' => ['r' => 221, 'g' => 221, 'b' => 221],
+                'row_border' => ['r' => 238, 'g' => 238, 'b' => 238],
+                'alt_row_bg' => ['r' => 250, 'g' => 250, 'b' => 250],
+                'border_width' => 0.5
+            ],
+            'classic' => [
+                'header_bg' => ['r' => 255, 'g' => 255, 'b' => 255],
+                'header_border' => ['r' => 0, 'g' => 0, 'b' => 0],
+                'row_border' => ['r' => 0, 'g' => 0, 'b' => 0],
+                'alt_row_bg' => ['r' => 255, 'g' => 255, 'b' => 255],
+                'border_width' => 0.5
+            ],
+            'striped' => [
+                'header_bg' => ['r' => 248, 'g' => 249, 'b' => 250],
+                'header_border' => ['r' => 222, 'g' => 226, 'b' => 230],
+                'row_border' => ['r' => 222, 'g' => 226, 'b' => 230],
+                'alt_row_bg' => ['r' => 233, 'g' => 236, 'b' => 239],
+                'border_width' => 0.5
+            ],
+            'bordered' => [
+                'header_bg' => ['r' => 255, 'g' => 255, 'b' => 255],
+                'header_border' => ['r' => 222, 'g' => 226, 'b' => 230],
+                'row_border' => ['r' => 222, 'g' => 226, 'b' => 230],
+                'alt_row_bg' => ['r' => 255, 'g' => 255, 'b' => 255],
+                'border_width' => 1
+            ],
+            'minimal' => [
+                'header_bg' => ['r' => 255, 'g' => 255, 'b' => 255],
+                'header_border' => ['r' => 241, 'g' => 241, 'b' => 241],
+                'row_border' => ['r' => 248, 'g' => 248, 'b' => 248],
+                'alt_row_bg' => ['r' => 255, 'g' => 255, 'b' => 255],
+                'border_width' => 0.25
+            ],
+            'modern' => [
+                'header_bg' => ['r' => 0, 'g' => 123, 'b' => 255],
+                'header_border' => ['r' => 0, 'g' => 123, 'b' => 255],
+                'row_border' => ['r' => 227, 'g' => 242, 'b' => 253],
+                'alt_row_bg' => ['r' => 255, 'g' => 255, 'b' => 255],
+                'border_width' => 0.5
+            ]
+        ];
+
+        return $styles[$table_style] ?? $styles['default'];
+    }
+
+    /**
+     * Obtenir la liste des colonnes visibles
+     */
+    private function get_visible_columns($columns) {
+        $visible = [];
+        if ($columns['image']) $visible[] = 'image';
+        if ($columns['name']) $visible[] = 'name';
+        if ($columns['sku']) $visible[] = 'sku';
+        if ($columns['quantity']) $visible[] = 'quantity';
+        if ($columns['price']) $visible[] = 'price';
+        if ($columns['total']) $visible[] = 'total';
+        return $visible;
+    }
+
+    /**
+     * Calculer les largeurs des colonnes
+     */
+    private function calculate_column_widths($total_width, $visible_columns, $columns) {
+        $widths = [];
+        $remaining_width = $total_width;
+
+        // Largeurs fixes pour certaines colonnes
+        $fixed_widths = [
+            'image' => 15, // Largeur fixe pour l'image
+            'sku' => 25,   // Largeur fixe pour le SKU
+            'quantity' => 15 // Largeur fixe pour la quantité
+        ];
+
+        // Calculer la largeur disponible pour les colonnes flexibles
+        $flexible_columns = 0;
+        foreach ($visible_columns as $col) {
+            if (isset($fixed_widths[$col])) {
+                $widths[] = $fixed_widths[$col];
+                $remaining_width -= $fixed_widths[$col];
+            } else {
+                $flexible_columns++;
+            }
         }
 
+        // Répartir la largeur restante entre les colonnes flexibles
+        $flexible_width = $flexible_columns > 0 ? $remaining_width / $flexible_columns : 0;
+
+        // Construire le tableau final des largeurs
+        $result = [];
+        foreach ($visible_columns as $col) {
+            if (isset($fixed_widths[$col])) {
+                $result[] = $fixed_widths[$col];
+            } else {
+                $result[] = max(20, $flexible_width); // Largeur minimum de 20
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Rendre les produits réels de la commande WooCommerce
+     */
+    private function render_order_products_with_fees_pdf($x, $current_y, $col_widths, $columns, $show_borders, $element) {
         if (!$this->order) {
-            return;
+            return $current_y;
         }
 
-        $current_y = $this->pdf->GetY() + 2; // Petite marge après l'en-tête
-        $this->pdf->SetFont('helvetica', '', 8);
-
-        // Récupérer les éléments de ligne de la commande
+        $table_styles = $this->get_table_styles($element['tableStyle'] ?? 'default');
         $line_items = $this->order->get_items();
         $fees = $this->order->get_fees();
+        $row_height = 6;
+        $alt_row = false;
 
-        // Vérifier que nous avons des données valides
-        if (empty($line_items) && empty($fees)) {
-            // Si pas de produits ni frais, afficher un message
-            $this->pdf->SetXY($x, $current_y);
-            $this->pdf->Cell(array_sum($col_widths), 6, 'Aucun produit dans cette commande', 1, 1, 'C');
-            return;
-        }
-
-        // Afficher les produits
+        // Produits
         if (!empty($line_items)) {
             foreach ($line_items as $item_id => $item) {
                 $product = $item->get_product();
                 $product_name = $item->get_name();
                 $quantity = $item->get_quantity();
-                $price = $item->get_total() / max(1, $quantity); // Éviter division par zéro
+                $price = $item->get_total() / max(1, $quantity);
                 $total = $item->get_total();
 
-                // Nom du produit (avec variation si applicable)
-                $display_name = $product_name;
-                if ($product && $product->is_type('variation')) {
-                    $variation_attributes = $product->get_variation_attributes();
-                    if (!empty($variation_attributes)) {
-                        $variation_text = implode(', ', array_map(function($key, $value) {
-                            $key = str_replace('attribute_', '', $key);
-                            $key = str_replace('pa_', '', $key);
-                            return ucfirst($key) . ': ' . $value;
-                        }, array_keys($variation_attributes), $variation_attributes));
-                        $display_name .= ' (' . $variation_text . ')';
-                    }
+                // Fond alterné si striped
+                if ($alt_row && ($element['tableStyle'] ?? 'default') === 'striped') {
+                    $this->pdf->SetFillColor($table_styles['alt_row_bg']['r'], $table_styles['alt_row_bg']['g'], $table_styles['alt_row_bg']['b']);
+                    $this->pdf->Rect($x, $current_y, array_sum($col_widths), $row_height, 'F');
                 }
 
                 $this->pdf->SetXY($x, $current_y);
-                $this->pdf->Cell($col_widths[0], 8, $this->truncate_text($display_name, 30), 1, 0, 'L');
-                $this->pdf->Cell($col_widths[1], 8, $quantity, 1, 0, 'C');
-                $this->pdf->Cell($col_widths[2], 8, number_format($price, 2, ',', ' ') . ' ' . chr(128), 1, 0, 'R');
-                $this->pdf->Cell($col_widths[3], 8, number_format($total, 2, ',', ' ') . ' ' . chr(128), 1, 1, 'R');
+                $col_index = 0;
 
-                $current_y += 6;
+                // Image (si activée)
+                if ($columns['image']) {
+                    $this->pdf->Cell($col_widths[$col_index], $row_height, '[Img]', $show_borders ? 1 : 0, 0, 'C');
+                    $col_index++;
+                }
+
+                // Nom du produit
+                if ($columns['name']) {
+                    $display_name = $this->truncate_text($product_name, 25);
+                    $this->pdf->Cell($col_widths[$col_index], $row_height, $display_name, $show_borders ? 1 : 0, 0, 'L');
+                    $col_index++;
+                }
+
+                // SKU
+                if ($columns['sku']) {
+                    $sku = $product ? $product->get_sku() : '';
+                    $this->pdf->Cell($col_widths[$col_index], $row_height, $sku, $show_borders ? 1 : 0, 0, 'L');
+                    $col_index++;
+                }
+
+                // Quantité
+                if ($columns['quantity']) {
+                    $this->pdf->Cell($col_widths[$col_index], $row_height, $quantity, $show_borders ? 1 : 0, 0, 'C');
+                    $col_index++;
+                }
+
+                // Prix unitaire
+                if ($columns['price']) {
+                    $price_text = number_format($price, 2, ',', ' ') . ' ' . chr(128);
+                    $this->pdf->Cell($col_widths[$col_index], $row_height, $price_text, $show_borders ? 1 : 0, 0, 'R');
+                    $col_index++;
+                }
+
+                // Total
+                if ($columns['total']) {
+                    $total_text = number_format($total, 2, ',', ' ') . ' ' . chr(128);
+                    $this->pdf->Cell($col_widths[$col_index], $row_height, $total_text, $show_borders ? 1 : 0, 1, 'R');
+                }
+
+                $current_y += $row_height;
+                $alt_row = !$alt_row;
             }
         }
 
-        // Afficher les frais (shipping, taxes, etc.)
+        // Frais (shipping, taxes, etc.)
         if (!empty($fees)) {
             foreach ($fees as $fee) {
                 $fee_name = $fee->get_name();
                 $fee_total = $fee->get_total();
 
-                $this->pdf->SetXY($x, $current_y);
-                $this->pdf->SetFont('helvetica', 'B', 8);
-                $this->pdf->Cell($col_widths[0], 8, $this->truncate_text($fee_name, 30), 1, 0, 'L');
-                $this->pdf->Cell($col_widths[1], 8, '1', 1, 0, 'C');
-                $this->pdf->Cell($col_widths[2], 8, '1', 1, 0, 'R');
-                $this->pdf->Cell($col_widths[3], 8, number_format($fee_total, 2, ',', ' ') . ' ' . chr(128), 1, 1, 'R');
+                // Fond alterné si striped
+                if ($alt_row && ($element['tableStyle'] ?? 'default') === 'striped') {
+                    $this->pdf->SetFillColor($table_styles['alt_row_bg']['r'], $table_styles['alt_row_bg']['g'], $table_styles['alt_row_bg']['b']);
+                    $this->pdf->Rect($x, $current_y, array_sum($col_widths), $row_height, 'F');
+                }
 
-                $current_y += 6;
+                $this->pdf->SetXY($x, $current_y);
+                $col_index = 0;
+
+                // Sauter les colonnes image et SKU pour les frais
+                if ($columns['image']) $col_index++;
+                if ($columns['name']) {
+                    $this->pdf->Cell($col_widths[$col_index], $row_height, $fee_name, $show_borders ? 1 : 0, 0, 'L');
+                    $col_index++;
+                }
+                if ($columns['sku']) $col_index++;
+                if ($columns['quantity']) {
+                    $this->pdf->Cell($col_widths[$col_index], $row_height, '1', $show_borders ? 1 : 0, 0, 'C');
+                    $col_index++;
+                }
+                if ($columns['price']) $col_index++;
+                if ($columns['total']) {
+                    $fee_text = number_format($fee_total, 2, ',', ' ') . ' ' . chr(128);
+                    $this->pdf->Cell($col_widths[$col_index], $row_height, $fee_text, $show_borders ? 1 : 0, 1, 'R');
+                }
+
+                $current_y += $row_height;
+                $alt_row = !$alt_row;
             }
         }
 
-        // Afficher le total de la commande
-        $order_total = $this->order->get_total();
-        $this->pdf->SetXY($x + $col_widths[0] + $col_widths[1] + $col_widths[2], $current_y + 4);
-        $this->pdf->SetFont('helvetica', 'B', 9);
-        $this->pdf->SetFillColor(245, 245, 245);
-        $this->pdf->Cell($col_widths[3], 10, 'Total: ' . number_format($order_total, 2, ',', ' ') . ' ' . chr(128), 1, 1, 'R', true);
+        return $current_y;
+    }
+
+    /**
+     * Rendre des produits fictifs pour l'aperçu
+     */
+    private function render_fake_products($x, $current_y, $col_widths, $columns, $show_borders) {
+        $table_styles = $this->get_table_styles('default');
+        $row_height = 6;
+
+        // Produit fictif 1
+        $this->pdf->SetXY($x, $current_y);
+        $col_index = 0;
+
+        if ($columns['image']) {
+            $this->pdf->Cell($col_widths[$col_index], $row_height, '[Img]', $show_borders ? 1 : 0, 0, 'C');
+            $col_index++;
+        }
+        if ($columns['name']) {
+            $this->pdf->Cell($col_widths[$col_index], $row_height, 'Produit A - Description', $show_borders ? 1 : 0, 0, 'L');
+            $col_index++;
+        }
+        if ($columns['sku']) {
+            $this->pdf->Cell($col_widths[$col_index], $row_height, 'SKU001', $show_borders ? 1 : 0, 0, 'L');
+            $col_index++;
+        }
+        if ($columns['quantity']) {
+            $this->pdf->Cell($col_widths[$col_index], $row_height, '2', $show_borders ? 1 : 0, 0, 'C');
+            $col_index++;
+        }
+        if ($columns['price']) {
+            $this->pdf->Cell($col_widths[$col_index], $row_height, '19.99 ' . chr(128), $show_borders ? 1 : 0, 0, 'R');
+            $col_index++;
+        }
+        if ($columns['total']) {
+            $this->pdf->Cell($col_widths[$col_index], $row_height, '39.98 ' . chr(128), $show_borders ? 1 : 0, 1, 'R');
+        }
+
+        $current_y += $row_height;
+
+        // Produit fictif 2
+        $this->pdf->SetXY($x, $current_y);
+        $col_index = 0;
+
+        if ($columns['image']) {
+            $this->pdf->Cell($col_widths[$col_index], $row_height, '[Img]', $show_borders ? 1 : 0, 0, 'C');
+            $col_index++;
+        }
+        if ($columns['name']) {
+            $this->pdf->Cell($col_widths[$col_index], $row_height, 'Produit B - Article', $show_borders ? 1 : 0, 0, 'L');
+            $col_index++;
+        }
+        if ($columns['sku']) {
+            $this->pdf->Cell($col_widths[$col_index], $row_height, 'SKU002', $show_borders ? 1 : 0, 0, 'L');
+            $col_index++;
+        }
+        if ($columns['quantity']) {
+            $this->pdf->Cell($col_widths[$col_index], $row_height, '1', $show_borders ? 1 : 0, 0, 'C');
+            $col_index++;
+        }
+        if ($columns['price']) {
+            $this->pdf->Cell($col_widths[$col_index], $row_height, '29.99 ' . chr(128), $show_borders ? 1 : 0, 0, 'R');
+            $col_index++;
+        }
+        if ($columns['total']) {
+            $this->pdf->Cell($col_widths[$col_index], $row_height, '29.99 ' . chr(128), $show_borders ? 1 : 0, 1, 'R');
+        }
+
+        return $current_y + $row_height;
+    }
+
+    /**
+     * Rendre les totaux du tableau
+     */
+    private function render_table_totals($x, $current_y, $col_widths, $columns, $show_borders, $element) {
+        $show_subtotal = $element['showSubtotal'] ?? false;
+        $show_shipping = $element['showShipping'] ?? true;
+        $show_taxes = $element['showTaxes'] ?? true;
+        $show_discount = $element['showDiscount'] ?? false;
+        $show_total = $element['showTotal'] ?? false;
+
+        $table_styles = $this->get_table_styles($element['tableStyle'] ?? 'default');
+        $row_height = 6;
+
+        // Calculer les totaux
+        $subtotal = 0;
+        $shipping = 0;
+        $taxes = 0;
+        $discount = 0;
+
+        if ($this->order) {
+            $subtotal = $this->order->get_subtotal();
+            $shipping = $this->order->get_shipping_total();
+            $taxes = $this->order->get_total_tax();
+            $discount = $this->order->get_discount_total();
+        } else {
+            // Valeurs fictives
+            $subtotal = 69.97;
+            $shipping = 5.00;
+            $taxes = 2.50;
+            $discount = -5.00;
+        }
+
+        $total = $subtotal + $shipping + $taxes - $discount;
+
+        // Déterminer la colonne de droite pour les totaux
+        $rightmost_col_index = 0;
+        $col_keys = array_keys($columns);
+        for ($i = count($col_keys) - 1; $i >= 0; $i--) {
+            if ($columns[$col_keys[$i]]) {
+                $rightmost_col_index = array_search($col_keys[$i], array_keys($columns));
+                break;
+            }
+        }
+
+        $total_x = $x;
+        for ($i = 0; $i < $rightmost_col_index; $i++) {
+            $total_x += $col_widths[$i];
+        }
+
+        // Sous-total
+        if ($show_subtotal) {
+            $this->pdf->SetXY($total_x, $current_y);
+            $this->pdf->SetFont('helvetica', 'B', 8);
+            $subtotal_text = 'Sous-total: ' . number_format($subtotal, 2, ',', ' ') . ' ' . chr(128);
+            $this->pdf->Cell($col_widths[$rightmost_col_index], $row_height, $subtotal_text, $show_borders ? 1 : 0, 1, 'R');
+            $current_y += $row_height;
+        }
+
+        // Frais de port
+        if ($show_shipping && $shipping > 0) {
+            $this->pdf->SetXY($total_x, $current_y);
+            $shipping_text = 'Port: ' . number_format($shipping, 2, ',', ' ') . ' ' . chr(128);
+            $this->pdf->Cell($col_widths[$rightmost_col_index], $row_height, $shipping_text, $show_borders ? 1 : 0, 1, 'R');
+            $current_y += $row_height;
+        }
+
+        // Taxes
+        if ($show_taxes && $taxes > 0) {
+            $this->pdf->SetXY($total_x, $current_y);
+            $taxes_text = 'TVA: ' . number_format($taxes, 2, ',', ' ') . ' ' . chr(128);
+            $this->pdf->Cell($col_widths[$rightmost_col_index], $row_height, $taxes_text, $show_borders ? 1 : 0, 1, 'R');
+            $current_y += $row_height;
+        }
+
+        // Remise
+        if ($show_discount && $discount > 0) {
+            $this->pdf->SetXY($total_x, $current_y);
+            $discount_text = 'Remise: -' . number_format($discount, 2, ',', ' ') . ' ' . chr(128);
+            $this->pdf->Cell($col_widths[$rightmost_col_index], $row_height, $discount_text, $show_borders ? 1 : 0, 1, 'R');
+            $current_y += $row_height;
+        }
+
+        // Total final
+        if ($show_total) {
+            $this->pdf->SetXY($total_x, $current_y);
+            $this->pdf->SetFillColor($table_styles['header_bg']['r'], $table_styles['header_bg']['g'], $table_styles['header_bg']['b']);
+            $total_text = 'TOTAL: ' . number_format($total, 2, ',', ' ') . ' ' . chr(128);
+            $this->pdf->Cell($col_widths[$rightmost_col_index], $row_height + 2, $total_text, $show_borders ? 1 : 0, 1, 'R', true);
+        }
+
+        return $current_y;
     }
 
     /**
@@ -1152,26 +1500,18 @@ class PDF_Builder_Pro_Generator {
      * Génération d'aperçu PDF simplifié (alternative au système canvas)
      */
     public function generate_simple_preview($order_id, $template_id = null) {
-        error_log('🚨 PDF BUILDER - generate_simple_preview STARTED for order: ' . $order_id . ' with template_id: ' . ($template_id ?: 'null'));
         try {
             // Initialiser TCPDF
-            error_log('🟡 PDF BUILDER - generate_simple_preview: Initializing TCPDF');
             $this->initialize_tcpdf();
 
             // Récupérer la commande WooCommerce
-            error_log('🟡 PDF BUILDER - generate_simple_preview: Loading order');
             $this->order = wc_get_order($order_id);
             if (!$this->order) {
-                error_log('❌ PDF BUILDER - generate_simple_preview: Order not found');
                 throw new Exception('Commande non trouvée');
             }
 
-            error_log('✅ PDF BUILDER - generate_simple_preview: Order loaded successfully');
-
             // Si un template_id est fourni, récupérer les données du template
             if ($template_id) {
-                error_log('🟡 PDF BUILDER - generate_simple_preview: Loading template data for ID: ' . $template_id);
-
                 global $wpdb;
                 $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 

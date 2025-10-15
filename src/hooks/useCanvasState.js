@@ -201,12 +201,26 @@ export const useCanvasState = ({
     }, [updateElement, history, elements, nextId])
   });
 
+  // Fonction utilitaire pour nettoyer les éléments avant sauvegarde (éviter les références DOM)
+  const cleanElementsForHistory = useCallback((elementsToClean) => {
+    return elementsToClean.map(element => {
+      const cleaned = { ...element };
+      // Supprimer les propriétés non sérialisables qui pourraient contenir des références DOM
+      const nonSerializableProps = ['domElement', 'ref', 'eventListeners', 'component', 'render'];
+      nonSerializableProps.forEach(prop => {
+        delete cleaned[prop];
+      });
+      return cleaned;
+    });
+  }, []);
+
   // Sauvegarder l'état dans l'historique à chaque changement
   useEffect(() => {
     if (elements.length > 0 || history.historySize === 0) {
-      history.addToHistory({ elements, nextId });
+      const cleanedElements = cleanElementsForHistory(elements);
+      history.addToHistory({ elements: cleanedElements, nextId });
     }
-  }, [elements, nextId, history]);
+  }, [elements, nextId, history, cleanElementsForHistory]);
 
   // Correction automatique des éléments spéciaux existants
   useEffect(() => {

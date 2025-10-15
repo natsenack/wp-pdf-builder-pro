@@ -25,6 +25,12 @@ export const useResize = ({
     e.preventDefault();
     e.stopPropagation();
 
+    // Vérifier que l'élément source existe encore dans le DOM
+    if (!e.target || !e.target.isConnected) {
+      console.warn('Resize handle target no longer exists in DOM');
+      return;
+    }
+
     setIsResizing(true);
     setResizeHandle(handle);
 

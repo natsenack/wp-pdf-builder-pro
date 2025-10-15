@@ -145,7 +145,7 @@ function pdf_builder_create_example_element() {
         'showShipping' => true,
         'showTaxes' => true,
         'showDiscount' => false,
-        'showTotal' => true,
+        'showTotal' => false,
 
         'visible' => true
     ];
