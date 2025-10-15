@@ -1169,19 +1169,19 @@ window.addEventListener('load', function() {
                                 <div style="display: flex; gap: 20px; align-items: center;">
                                     <div>
                                         <label for="default_canvas_width"><?php _e('Largeur:', 'pdf-builder-pro'); ?></label>
-                                        <input name="default_canvas_width" type="number" id="default_canvas_width" value="<?php echo esc_attr(get_option('pdf_builder_default_canvas_width', 210)); ?>" class="small-text" min="50" max="1000"> mm
+                                        <input name="default_canvas_width" type="number" id="default_canvas_width" value="<?php echo esc_attr($this->get('default_canvas_width', 210)); ?>" class="small-text" min="50" max="1000"> mm
                                     </div>
                                     <div>
                                         <label for="default_canvas_height"><?php _e('Hauteur:', 'pdf-builder-pro'); ?></label>
-                                        <input name="default_canvas_height" type="number" id="default_canvas_height" value="<?php echo esc_attr(get_option('pdf_builder_default_canvas_height', 297)); ?>" class="small-text" min="50" max="1000"> mm
+                                        <input name="default_canvas_height" type="number" id="default_canvas_height" value="<?php echo esc_attr($this->get('default_canvas_height', 297)); ?>" class="small-text" min="50" max="1000"> mm
                                     </div>
                                     <div>
                                         <label for="default_canvas_unit"><?php _e('Unité:', 'pdf-builder-pro'); ?></label>
                                         <select name="default_canvas_unit" id="default_canvas_unit">
-                                            <option value="mm" <?php selected(get_option('pdf_builder_default_canvas_unit', 'mm'), 'mm'); ?>>mm</option>
-                                            <option value="cm" <?php selected(get_option('pdf_builder_default_canvas_unit', 'mm'), 'cm'); ?>>cm</option>
-                                            <option value="in" <?php selected(get_option('pdf_builder_default_canvas_unit', 'mm'), 'in'); ?>>inches</option>
-                                            <option value="px" <?php selected(get_option('pdf_builder_default_canvas_unit', 'mm'), 'px'); ?>>pixels</option>
+                                            <option value="mm" <?php selected($this->get('default_canvas_unit', 'mm'), 'mm'); ?>>mm</option>
+                                            <option value="cm" <?php selected($this->get('default_canvas_unit', 'mm'), 'cm'); ?>>cm</option>
+                                            <option value="in" <?php selected($this->get('default_canvas_unit', 'mm'), 'in'); ?>>inches</option>
+                                            <option value="px" <?php selected($this->get('default_canvas_unit', 'mm'), 'px'); ?>>pixels</option>
                                         </select>
                                     </div>
                                 </div>
@@ -1193,12 +1193,12 @@ window.addEventListener('load', function() {
                             <td>
                                 <fieldset>
                                     <label for="default_orientation_portrait">
-                                        <input name="default_orientation" type="radio" id="default_orientation_portrait" value="portrait" <?php checked(get_option('pdf_builder_default_orientation', 'portrait'), 'portrait'); ?>>
+                                        <input name="default_orientation" type="radio" id="default_orientation_portrait" value="portrait" <?php checked($this->get('default_orientation', 'portrait'), 'portrait'); ?>>
                                         <?php _e('Portrait', 'pdf-builder-pro'); ?>
                                     </label>
                                     <br>
                                     <label for="default_orientation_landscape">
-                                        <input name="default_orientation" type="radio" id="default_orientation_landscape" value="landscape" <?php checked(get_option('pdf_builder_default_orientation', 'portrait'), 'landscape'); ?>>
+                                        <input name="default_orientation" type="radio" id="default_orientation_landscape" value="landscape" <?php checked($this->get('default_orientation', 'portrait'), 'landscape'); ?>>
                                         <?php _e('Paysage', 'pdf-builder-pro'); ?>
                                     </label>
                                 </fieldset>
@@ -1209,14 +1209,14 @@ window.addEventListener('load', function() {
                             <td>
                                 <fieldset>
                                     <label for="canvas_background_color">
-                                        <input name="canvas_background_color" type="color" id="canvas_background_color" value="<?php echo esc_attr(get_option('pdf_builder_canvas_background_color', '#ffffff')); ?>">
+                                        <input name="canvas_background_color" type="color" id="canvas_background_color" value="<?php echo esc_attr($this->get('canvas_background_color', '#ffffff')); ?>">
                                         <?php _e('Couleur de fond', 'pdf-builder-pro'); ?>
                                     </label>
                                 </fieldset>
                                 <br>
                                 <fieldset>
                                     <label for="canvas_show_transparency">
-                                        <input name="canvas_show_transparency" type="checkbox" id="canvas_show_transparency" value="1" <?php checked(get_option('pdf_builder_canvas_show_transparency', false)); ?>>
+                                        <input name="canvas_show_transparency" type="checkbox" id="canvas_show_transparency" value="1" <?php checked($this->get('canvas_show_transparency', false)); ?>>
                                         <?php _e('Afficher la transparence (motif de damier)', 'pdf-builder-pro'); ?>
                                     </label>
                                 </fieldset>
@@ -1227,14 +1227,14 @@ window.addEventListener('load', function() {
                             <td>
                                 <fieldset>
                                     <label for="container_background_color">
-                                        <input name="container_background_color" type="color" id="container_background_color" value="<?php echo esc_attr(get_option('pdf_builder_container_background_color', '#f8f9fa')); ?>">
+                                        <input name="container_background_color" type="color" id="container_background_color" value="<?php echo esc_attr($this->get('container_background_color', '#f8f9fa')); ?>">
                                         <?php _e('Couleur de fond du container', 'pdf-builder-pro'); ?>
                                     </label>
                                 </fieldset>
                                 <br>
                                 <fieldset>
                                     <label for="container_show_transparency">
-                                        <input name="container_show_transparency" type="checkbox" id="container_show_transparency" value="1" <?php checked(get_option('pdf_builder_container_show_transparency', false)); ?>>
+                                        <input name="container_show_transparency" type="checkbox" id="container_show_transparency" value="1" <?php checked($this->get('container_show_transparency', false)); ?>>
                                         <?php _e('Afficher la transparence (motif de damier)', 'pdf-builder-pro'); ?>
                                     </label>
                                 </fieldset>
@@ -1245,23 +1245,23 @@ window.addEventListener('load', function() {
                             <td>
                                 <fieldset>
                                     <label for="show_margins">
-                                        <input name="show_margins" type="checkbox" id="show_margins" value="1" <?php checked(get_option('pdf_builder_show_margins', true)); ?>>
+                                        <input name="show_margins" type="checkbox" id="show_margins" value="1" <?php checked($this->get('show_margins', true)); ?>>
                                         <?php _e('Afficher les marges de sécurité dans l\'éditeur', 'pdf-builder-pro'); ?>
                                     </label>
                                 </fieldset>
                                 <br>
                                 <div style="display: flex; gap: 10px; align-items: center;">
                                     <label for="margin_top"><?php _e('Haut:', 'pdf-builder-pro'); ?></label>
-                                    <input name="margin_top" type="number" id="margin_top" value="<?php echo esc_attr(get_option('pdf_builder_margin_top', 10)); ?>" class="tiny-text" min="0" max="50"> mm
+                                    <input name="margin_top" type="number" id="margin_top" value="<?php echo esc_attr($this->get('margin_top', 10)); ?>" class="tiny-text" min="0" max="50"> mm
 
                                     <label for="margin_right"><?php _e('Droite:', 'pdf-builder-pro'); ?></label>
-                                    <input name="margin_right" type="number" id="margin_right" value="<?php echo esc_attr(get_option('pdf_builder_margin_right', 10)); ?>" class="tiny-text" min="0" max="50"> mm
+                                    <input name="margin_right" type="number" id="margin_right" value="<?php echo esc_attr($this->get('margin_right', 10)); ?>" class="tiny-text" min="0" max="50"> mm
 
                                     <label for="margin_bottom"><?php _e('Bas:', 'pdf-builder-pro'); ?></label>
-                                    <input name="margin_bottom" type="number" id="margin_bottom" value="<?php echo esc_attr(get_option('pdf_builder_margin_bottom', 10)); ?>" class="tiny-text" min="0" max="50"> mm
+                                    <input name="margin_bottom" type="number" id="margin_bottom" value="<?php echo esc_attr($this->get('margin_bottom', 10)); ?>" class="tiny-text" min="0" max="50"> mm
 
                                     <label for="margin_left"><?php _e('Gauche:', 'pdf-builder-pro'); ?></label>
-                                    <input name="margin_left" type="number" id="margin_left" value="<?php echo esc_attr(get_option('pdf_builder_margin_left', 10)); ?>" class="tiny-text" min="0" max="50"> mm
+                                    <input name="margin_left" type="number" id="margin_left" value="<?php echo esc_attr($this->get('margin_left', 10)); ?>" class="tiny-text" min="0" max="50"> mm
                                 </div>
                             </td>
                         </tr>
