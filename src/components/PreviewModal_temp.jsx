@@ -72,6 +72,7 @@ const PreviewModal = ({
         throw new Error('JSON trop volumineux');
       }
       
+      
       return { success: true, jsonString, cleanedElements };
     } catch (error) {
       console.error('Client-side validation failed:', error);
@@ -900,7 +901,11 @@ const PreviewModal = ({
       }
 
       const freshNonce = nonceData.data.nonce;
+      
 
+      
+      
+      
 
       // Fonction pour nettoyer les éléments avant sérialisation JSON
       const cleanElementsForJSON = (elements) => {
@@ -990,6 +995,7 @@ const PreviewModal = ({
       }
 
       const { jsonString, cleanedElements } = validationResult;
+      
 
       // Préparer les données pour l'AJAX
       const formData = new FormData();
@@ -1024,6 +1030,7 @@ const PreviewModal = ({
       }
 
       if (data.success) {
+        
         // Mettre à jour previewData avec les données du serveur si nécessaire
         setPreviewData(prev => ({
           ...prev,
@@ -1060,6 +1067,7 @@ const PreviewModal = ({
   };
 
   const generateServerPreview = async () => {
+    
 
     setLoading(true);
     setError(null);
@@ -1067,6 +1075,7 @@ const PreviewModal = ({
 
     // Timeout de fallback - si l'aperçu côté serveur prend trop de temps, afficher l'aperçu côté client
     const fallbackTimeout = setTimeout(() => {
+      
       setPreviewData({
         success: true,
         elements_count: elements.length,
@@ -1092,6 +1101,7 @@ const PreviewModal = ({
       }
 
       const { jsonString } = validationResult;
+      
 
       // Vérifier que les variables AJAX sont disponibles
       let ajaxUrl = window.pdfBuilderAjax?.ajaxurl || ajaxurl;
@@ -1102,6 +1112,7 @@ const PreviewModal = ({
       }
 
       // Obtenir un nonce frais pour l'aperçu
+      
       const nonceFormData = new FormData();
       nonceFormData.append('action', 'pdf_builder_get_fresh_nonce');
 
@@ -1120,6 +1131,7 @@ const PreviewModal = ({
       }
 
       const freshNonce = nonceData.data.nonce;
+      
 
       // Préparer les données pour l'AJAX unifié
       const formData = new FormData();
@@ -1127,6 +1139,7 @@ const PreviewModal = ({
       formData.append('nonce', freshNonce);
       formData.append('elements', jsonString);
 
+      
 
       const response = await fetch(ajaxurl || window.pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
         method: 'POST',
@@ -1140,6 +1153,7 @@ const PreviewModal = ({
       const data = await response.json();
 
       if (data.success && data.data && data.data.url) {
+        
 
         // Nettoyer le timeout de fallback
         clearTimeout(fallbackTimeout);
@@ -1172,6 +1186,7 @@ const PreviewModal = ({
   };
 
   const handlePrint = async () => {
+    
 
     let printButton = null;
 
@@ -1185,6 +1200,7 @@ const PreviewModal = ({
       }
 
       // Obtenir un nonce frais
+      
       const nonceFormData = new FormData();
       nonceFormData.append('action', 'pdf_builder_get_fresh_nonce');
 
@@ -1203,6 +1219,7 @@ const PreviewModal = ({
       }
 
       const freshNonce = nonceData.data.nonce;
+      
 
       // Préparer les données pour l'AJAX
       const formData = new FormData();
@@ -1210,6 +1227,7 @@ const PreviewModal = ({
       formData.append('nonce', freshNonce);
       formData.append('elements', JSON.stringify(elements));
 
+      
 
       // Afficher un indicateur de chargement
       printButton = document.querySelector('.btn-primary');
@@ -1225,6 +1243,7 @@ const PreviewModal = ({
         body: formData
       });
 
+      
       if (!response.ok) {
         throw new Error('Erreur réseau: ' + response.status);
       }
@@ -1234,11 +1253,15 @@ const PreviewModal = ({
         throw new Error('Réponse invalide du serveur (pas du JSON)');
       });
 
+      
 
       // 🚨🚨🚨 AFFICHAGE DES LOGS DE DEBUG SERVEUR 🚨🚨🚨
       if (data.data && data.data.debug_logs) {
+        
         data.data.debug_logs.forEach((log, index) => {
+          
         });
+        
       }
 
       if (!data.success) {
@@ -1262,6 +1285,7 @@ const PreviewModal = ({
         { type: 'application/pdf' }
       );
 
+      
 
       if (pdfBlob.size === 0) {
         throw new Error('Le PDF généré est vide');
@@ -1299,6 +1323,7 @@ const PreviewModal = ({
         }, 1000);
       }
 
+      
 
     } catch (error) {
       console.error('Erreur génération PDF:', error);

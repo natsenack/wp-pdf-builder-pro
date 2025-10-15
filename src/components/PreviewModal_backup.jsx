@@ -72,6 +72,7 @@ const PreviewModal = ({
         throw new Error('JSON trop volumineux');
       }
       
+      console.log('Client-side validation passed. JSON length:', jsonString.length);
       return { success: true, jsonString, cleanedElements };
     } catch (error) {
       console.error('Client-side validation failed:', error);
@@ -900,7 +901,11 @@ const PreviewModal = ({
       }
 
       const freshNonce = nonceData.data.nonce;
+      console.log('Nonce frais obtenu pour validation:', freshNonce);
 
+      console.log('Variables AJAX utilisées:', { ajaxUrl: ajaxUrl.substring(0, 50) + '...', nonceLength: freshNonce.length });
+      console.log('Valeur du nonce envoyé:', freshNonce);
+      console.log('Timestamp envoi:', Date.now());
 
       // Fonction pour nettoyer les éléments avant sérialisation JSON
       const cleanElementsForJSON = (elements) => {
@@ -990,6 +995,7 @@ const PreviewModal = ({
       }
 
       const { jsonString, cleanedElements } = validationResult;
+      console.log('✅ Validation côté client réussie, longueur JSON:', jsonString.length);
 
       // Préparer les données pour l'AJAX
       const formData = new FormData();
@@ -1024,6 +1030,7 @@ const PreviewModal = ({
       }
 
       if (data.success) {
+        console.log('✅ Validation aperçu côté serveur réussie:', data.data);
         // Mettre à jour previewData avec les données du serveur si nécessaire
         setPreviewData(prev => ({
           ...prev,
@@ -1060,6 +1067,7 @@ const PreviewModal = ({
   };
 
   const generateServerPreview = async () => {
+    console.log('🖥️ Génération aperçu côté serveur unifié...');
 
     setLoading(true);
     setError(null);
@@ -1067,6 +1075,7 @@ const PreviewModal = ({
 
     // Timeout de fallback - si l'aperçu côté serveur prend trop de temps, afficher l'aperçu côté client
     const fallbackTimeout = setTimeout(() => {
+      console.log('⏰ Timeout aperçu côté serveur, affichage aperçu côté client en fallback');
       setPreviewData({
         success: true,
         elements_count: elements.length,
@@ -1092,6 +1101,7 @@ const PreviewModal = ({
       }
 
       const { jsonString } = validationResult;
+      console.log('✅ Validation côté client réussie, longueur JSON:', jsonString.length);
 
       // Vérifier que les variables AJAX sont disponibles
       let ajaxUrl = window.pdfBuilderAjax?.ajaxurl || ajaxurl;
@@ -1102,6 +1112,7 @@ const PreviewModal = ({
       }
 
       // Obtenir un nonce frais pour l'aperçu
+      console.log('Obtention d\'un nonce frais pour aperçu...');
       const nonceFormData = new FormData();
       nonceFormData.append('action', 'pdf_builder_get_fresh_nonce');
 
@@ -1120,6 +1131,7 @@ const PreviewModal = ({
       }
 
       const freshNonce = nonceData.data.nonce;
+      console.log('Nonce frais obtenu pour aperçu:', freshNonce);
 
       // Préparer les données pour l'AJAX unifié
       const formData = new FormData();
@@ -1127,6 +1139,7 @@ const PreviewModal = ({
       formData.append('nonce', freshNonce);
       formData.append('elements', jsonString);
 
+      console.log('🌐 Envoi requête aperçu unifié...');
 
       const response = await fetch(ajaxurl || window.pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
         method: 'POST',
@@ -1140,6 +1153,7 @@ const PreviewModal = ({
       const data = await response.json();
 
       if (data.success && data.data && data.data.url) {
+        console.log('✅ Aperçu côté serveur généré:', data.data.url);
 
         // Nettoyer le timeout de fallback
         clearTimeout(fallbackTimeout);
@@ -1172,6 +1186,7 @@ const PreviewModal = ({
   };
 
   const handlePrint = async () => {
+    console.log('Génération PDF finale...');
 
     let printButton = null;
 
@@ -1185,6 +1200,7 @@ const PreviewModal = ({
       }
 
       // Obtenir un nonce frais
+      console.log('Obtention d\'un nonce frais pour PDF...');
       const nonceFormData = new FormData();
       nonceFormData.append('action', 'pdf_builder_get_fresh_nonce');
 
@@ -1203,6 +1219,7 @@ const PreviewModal = ({
       }
 
       const freshNonce = nonceData.data.nonce;
+      console.log('Nonce frais obtenu pour PDF:', freshNonce);
 
       // Préparer les données pour l'AJAX
       const formData = new FormData();
@@ -1210,6 +1227,7 @@ const PreviewModal = ({
       formData.append('nonce', freshNonce);
       formData.append('elements', JSON.stringify(elements));
 
+      console.log('Envoi requête génération PDF...');
 
       // Afficher un indicateur de chargement
       printButton = document.querySelector('.btn-primary');
@@ -1225,6 +1243,7 @@ const PreviewModal = ({
         body: formData
       });
 
+      console.log('Réponse reçue:', response.status);
       if (!response.ok) {
         throw new Error('Erreur réseau: ' + response.status);
       }
@@ -1234,11 +1253,15 @@ const PreviewModal = ({
         throw new Error('Réponse invalide du serveur (pas du JSON)');
       });
 
+      console.log('Données reçues:', data);
 
       // 🚨🚨🚨 AFFICHAGE DES LOGS DE DEBUG SERVEUR 🚨🚨🚨
       if (data.data && data.data.debug_logs) {
+        console.log('🚨 LOGS DE DEBUG SERVEUR ULTRA-VISIBLES:');
         data.data.debug_logs.forEach((log, index) => {
+          console.log(`🔥 LOG ${index}: ${log}`);
         });
+        console.log('🚨 FIN DES LOGS DE DEBUG SERVEUR 🚨');
       }
 
       if (!data.success) {
@@ -1262,6 +1285,7 @@ const PreviewModal = ({
         { type: 'application/pdf' }
       );
 
+      console.log('Blob PDF créé, taille:', pdfBlob.size, 'bytes');
 
       if (pdfBlob.size === 0) {
         throw new Error('Le PDF généré est vide');
@@ -1299,6 +1323,7 @@ const PreviewModal = ({
         }, 1000);
       }
 
+      console.log('PDF généré et ouvert avec succès');
 
     } catch (error) {
       console.error('Erreur génération PDF:', error);
