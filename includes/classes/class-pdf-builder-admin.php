@@ -185,6 +185,9 @@ class PDF_Builder_Admin {
         // Hook AJAX pour le debug PDF metabox
         add_action('wp_ajax_pdf_debug_metabox', [$this, 'ajax_debug_pdf_metabox']);
 
+        // Hook AJAX pour sauvegarder les paramètres
+        add_action('wp_ajax_pdf_builder_save_settings', [$this, 'ajax_save_settings']);
+
         // Endpoint pour le debug direct (accessible via URL)
         add_action('init', [$this, 'add_debug_endpoint']);
         add_action('template_redirect', [$this, 'handle_debug_endpoint']);
@@ -3940,7 +3943,7 @@ class PDF_Builder_Admin {
      */
     public function ajax_save_settings() {
         // Vérification de sécurité
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_admin_nonce')) {
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_settings')) {
             wp_send_json_error('Nonce invalide');
             return;
         }
@@ -3951,21 +3954,72 @@ class PDF_Builder_Admin {
             return;
         }
 
-        // Récupération et validation des paramètres
-        $settings = $_POST['settings'] ?? [];
-        if (empty($settings) || !is_array($settings)) {
-            wp_send_json_error('Paramètres invalides');
-            return;
-        }
+        // Traitement des paramètres comme dans la logique non-AJAX
+        $settings = [
+            'debug_mode' => isset($_POST['debug_mode']),
+            'cache_enabled' => isset($_POST['cache_enabled']),
+            'cache_ttl' => intval($_POST['cache_ttl'] ?? 3600),
+            'max_execution_time' => intval($_POST['max_execution_time'] ?? 300),
+            'memory_limit' => sanitize_text_field($_POST['memory_limit'] ?? '256M'),
+            'pdf_quality' => sanitize_text_field($_POST['pdf_quality'] ?? 'high'),
+            'default_format' => sanitize_text_field($_POST['default_format'] ?? 'A4'),
+            'default_orientation' => sanitize_text_field($_POST['default_orientation'] ?? 'portrait'),
+            'log_level' => sanitize_text_field($_POST['log_level'] ?? 'info'),
+            'max_template_size' => intval($_POST['max_template_size'] ?? 52428800),
+            'email_notifications_enabled' => isset($_POST['email_notifications_enabled']),
+            'notification_events' => isset($_POST['notification_events']) ? array_map('sanitize_text_field', $_POST['notification_events']) : [],
+            'canvas_element_borders_enabled' => isset($_POST['canvas_element_borders_enabled']),
+            'canvas_border_width' => isset($_POST['canvas_border_width']) ? floatval($_POST['canvas_border_width']) : 1,
+            'canvas_border_color' => isset($_POST['canvas_border_color']) ? sanitize_text_field($_POST['canvas_border_color']) : '#007cba',
+            'canvas_border_spacing' => isset($_POST['canvas_border_spacing']) ? intval($_POST['canvas_border_spacing']) : 2,
+            'canvas_resize_handles_enabled' => isset($_POST['canvas_resize_handles_enabled']),
+            'canvas_handle_size' => isset($_POST['canvas_handle_size']) ? intval($_POST['canvas_handle_size']) : 8,
+            'canvas_handle_color' => isset($_POST['canvas_handle_color']) ? sanitize_text_field($_POST['canvas_handle_color']) : '#007cba',
+            'canvas_handle_hover_color' => isset($_POST['canvas_handle_hover_color']) ? sanitize_text_field($_POST['canvas_handle_hover_color']) : '#005a87',
+            'email_notifications' => isset($_POST['email_notifications']),
+            'admin_email' => sanitize_email($_POST['admin_email'] ?? ''),
+            'notification_log_level' => sanitize_text_field($_POST['notification_log_level'] ?? 'info')
+        ];
 
-        // Nettoyage des valeurs
-        $sanitized_settings = [];
-        foreach ($settings as $key => $value) {
-            $sanitized_settings[$key] = $this->sanitize_setting_value($value);
+        // Sauvegarde des informations entreprise
+        if (isset($_POST['company_vat'])) {
+            update_option('pdf_builder_company_vat', sanitize_text_field($_POST['company_vat']));
+        }
+        if (isset($_POST['company_rcs'])) {
+            update_option('pdf_builder_company_rcs', sanitize_text_field($_POST['company_rcs']));
+        }
+        if (isset($_POST['company_siret'])) {
+            update_option('pdf_builder_company_siret', sanitize_text_field($_POST['company_siret']));
+        }
+        if (isset($_POST['company_phone'])) {
+            update_option('pdf_builder_company_phone', sanitize_text_field($_POST['company_phone']));
         }
 
         // Sauvegarde des paramètres
-        update_option('pdf_builder_settings', $sanitized_settings);
+        $config = new TempConfig();
+        $config->set_multiple($settings);
+
+        // Traitement spécifique des rôles autorisés
+        if (isset($_POST['pdf_builder_allowed_roles'])) {
+            $allowed_roles = array_map('sanitize_text_field', (array) $_POST['pdf_builder_allowed_roles']);
+            // S'assurer qu'au moins un rôle est sélectionné
+            if (empty($allowed_roles)) {
+                $allowed_roles = ['administrator']; // Rôle par défaut
+            }
+            update_option('pdf_builder_allowed_roles', $allowed_roles);
+        }
+
+        // Traitement des mappings template par statut de commande
+        if (isset($_POST['order_status_templates']) && is_array($_POST['order_status_templates'])) {
+            $template_mappings = [];
+            foreach ($_POST['order_status_templates'] as $status => $template_id) {
+                $template_id = intval($template_id);
+                if ($template_id > 0) {
+                    $template_mappings[sanitize_text_field($status)] = $template_id;
+                }
+            }
+            update_option('pdf_builder_order_status_templates', $template_mappings);
+        }
 
         wp_send_json_success('Paramètres sauvegardés avec succès');
     }
