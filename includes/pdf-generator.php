@@ -1400,6 +1400,13 @@ class PDF_Builder_Pro_Generator {
 
         // En-têtes du tableau
         if ($show_headers) {
+            // Définir la couleur de trait pour les bordures des en-têtes
+            if ($show_borders) {
+                $header_border_rgb = $this->hex_to_rgb($table_styles['headerBorder']);
+                $this->pdf->SetDrawColor($header_border_rgb[0], $header_border_rgb[1], $header_border_rgb[2]);
+                $this->pdf->SetLineWidth($table_styles['border_width'] * 0.3);
+            }
+
             // Appliquer la couleur de texte des en-têtes
             if (isset($table_styles['headerTextColor'])) {
                 $header_text_rgb = $this->hex_to_rgb($table_styles['headerTextColor']);
@@ -1447,12 +1454,32 @@ class PDF_Builder_Pro_Generator {
             $this->pdf->SetTextColor($row_text_rgb[0], $row_text_rgb[1], $row_text_rgb[2]);
         }
 
+        // Définir la couleur de trait pour les bordures des lignes de données (APRÈS la définition du texte)
+        if ($show_borders) {
+            $row_border_rgb = $this->hex_to_rgb($table_styles['rowBorder']);
+            $this->pdf->SetDrawColor($row_border_rgb[0], $row_border_rgb[1], $row_border_rgb[2]);
+            $this->pdf->SetLineWidth($table_styles['border_width'] * 0.2);
+        }
+
         if (isset($this->order) && $this->order) {
             // Rendre les vrais produits de la commande
             $current_y = $this->render_order_products_with_fees_pdf($x, $current_y, $col_widths, $columns, $show_borders, $element);
         } else {
+            // Définir les couleurs de trait pour l'aperçu avant le rendu
+            if ($show_borders) {
+                $row_border_rgb = $this->hex_to_rgb($table_styles['rowBorder']);
+                $this->pdf->SetDrawColor($row_border_rgb[0], $row_border_rgb[1], $row_border_rgb[2]);
+                $this->pdf->SetLineWidth($table_styles['border_width'] * 0.2);
+            }
             // Données fictives pour l'aperçu
             $current_y = $this->render_fake_products($x, $current_y, $col_widths, $columns, $show_borders, $table_style);
+        }
+
+        // Définir les couleurs de trait pour les totaux
+        if ($show_borders) {
+            $row_border_rgb = $this->hex_to_rgb($table_styles['rowBorder']);
+            $this->pdf->SetDrawColor($row_border_rgb[0], $row_border_rgb[1], $row_border_rgb[2]);
+            $this->pdf->SetLineWidth($table_styles['border_width'] * 0.2);
         }
 
         // Totaux
@@ -1799,6 +1826,13 @@ class PDF_Builder_Pro_Generator {
         $fees = $this->order->get_fees();
         $row_height = 6;
         $alt_row = false;
+
+        // Définir les couleurs de trait pour les bordures des lignes de données
+        if ($show_borders) {
+            $row_border_rgb = $this->hex_to_rgb($table_styles['rowBorder']);
+            $this->pdf->SetDrawColor($row_border_rgb[0], $row_border_rgb[1], $row_border_rgb[2]);
+            $this->pdf->SetLineWidth($table_styles['border_width'] * 0.2);
+        }
 
         // Produits
         if (!empty($line_items)) {
