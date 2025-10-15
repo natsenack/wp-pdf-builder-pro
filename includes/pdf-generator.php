@@ -320,6 +320,24 @@ class PDF_Builder_Pro_Generator {
     private function render_single_element($element, $px_to_mm) {
         $type = isset($element['type']) ? $element['type'] : 'unknown';
 
+        // LOG DEBUG DES POSITIONS - AJOUTER AU DEBUG LOGS
+        $element_x = isset($element['x']) ? $element['x'] : 0;
+        $element_y = isset($element['y']) ? $element['y'] : 0;
+        $element_width = isset($element['width']) ? $element['width'] : 0;
+        $element_height = isset($element['height']) ? $element['height'] : 0;
+
+        $pdf_x = $element_x * $px_to_mm;
+        $pdf_y = $element_y * $px_to_mm;
+        $pdf_width = $element_width * $px_to_mm;
+        $pdf_height = $element_height * $px_to_mm;
+
+        error_log("PDF Builder Pro: Element $type - Canvas coords: ($element_x, $element_y, {$element_width}x{$element_height}) - PDF coords: ($pdf_x, $pdf_y, {$pdf_width}x{$pdf_height}) mm");
+
+        if (isset($GLOBALS['pdf_debug_logs'])) {
+            $GLOBALS['pdf_debug_logs'][] = "📍 ÉLÉMENT $type - CANVAS: x={$element_x}px, y={$element_y}px, w={$element_width}px, h={$element_height}px";
+            $GLOBALS['pdf_debug_logs'][] = "📍 ÉLÉMENT $type - PDF: x={$pdf_x}mm, y={$pdf_y}mm, w={$pdf_width}mm, h={$pdf_height}mm";
+        }
+
         // Validation de base de l'élément
         if (!$this->validate_element($element)) {
             $this->log_error("Element invalide ignoré: " . json_encode($element));

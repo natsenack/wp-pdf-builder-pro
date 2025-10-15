@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useCallback, useEffect } from 'react';
 import { useResize } from '../hooks/useResize';
 
 export const CanvasElement = ({
@@ -17,6 +17,18 @@ export const CanvasElement = ({
 }) => {
   const elementRef = useRef(null);
   const canvasRectRef = useRef(null);
+
+  // DEBUG: Logger les positions des éléments dans l'éditeur
+  useEffect(() => {
+    if (element && element.id) {
+      const displayX = element.x * zoom;
+      const displayY = element.y * zoom;
+      const displayWidth = element.width * zoom;
+      const displayHeight = element.height * zoom;
+
+      console.log(`🎨 EDITOR Element ${element.type} (${element.id}): Canvas coords: (${element.x}, ${element.y}, ${element.width}x${element.height}) - Display coords: (${displayX}, ${displayY}, ${displayWidth}x${displayHeight}) px (zoom: ${zoom})`);
+    }
+  }, [element.x, element.y, element.width, element.height, zoom, element.id, element.type]);
 
   const resize = useResize({
     onElementResize: (newRect) => {
@@ -445,6 +457,9 @@ export const CanvasElement = ({
     }
   };
 
+  // Calcul du padding pour cohérence avec le PDF
+  const elementPadding = element.padding || 0;
+
   return (
     <>
       {/* Élément principal */}
@@ -454,10 +469,10 @@ export const CanvasElement = ({
         className={`canvas-element ${isSelected ? 'selected' : ''}`}
         style={{
           position: 'absolute',
-          left: element.x * zoom,
-          top: element.y * zoom,
-          width: element.width * zoom,
-          height: element.height * zoom,
+          left: (element.x + elementPadding) * zoom,
+          top: (element.y + elementPadding) * zoom,
+          width: Math.max(1, (element.width - (elementPadding * 2))) * zoom,
+          height: Math.max(1, (element.height - (elementPadding * 2))) * zoom,
           cursor: dragAndDrop.isDragging ? 'grabbing' : 'grab',
           userSelect: 'none',
           '--selection-border-width': '2px',

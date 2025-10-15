@@ -62,12 +62,13 @@ const PreviewModal = ({
         }}
       >
         {elements.map((element, index) => {
+          const elementPadding = element.padding || 0;
           const baseStyle = {
             position: 'absolute',
-            left: element.x || 0,
-            top: element.y || 0,
-            width: element.width || 100,
-            height: element.height || 50,
+            left: (element.x + elementPadding) || 0,
+            top: (element.y + elementPadding) || 0,
+            width: Math.max(1, (element.width - (elementPadding * 2))) || 100,
+            height: Math.max(1, (element.height - (elementPadding * 2))) || 50,
             zIndex: element.zIndex || index + 1
           };
 
