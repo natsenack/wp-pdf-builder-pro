@@ -689,7 +689,7 @@ const PreviewModal = ({
             flexDirection: 'column',
             fontSize: `${(element.fontSize || 10) * zoom}px`,
             fontFamily: element.fontFamily || 'Arial, sans-serif',
-            border: element.borderWidth && element.borderWidth > 0 ? `${Math.max(1, element.borderWidth * 0.5) * zoom}px solid ${element.borderColor || '#e5e7eb'}` : 'none',
+            border: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.headerBorder}` : (element.borderWidth && element.borderWidth > 0 ? `${Math.max(1, element.borderWidth * 0.5) * zoom}px solid ${element.borderColor || '#e5e7eb'}` : 'none'),
             borderRadius: `${(element.borderRadius || 2) * zoom}px`,
             overflow: 'hidden',
             backgroundColor: element.backgroundColor || 'transparent',

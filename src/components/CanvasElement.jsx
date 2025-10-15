@@ -872,6 +872,7 @@ export const CanvasElement = ({
           };
           const lastVisibleColumn = getLastVisibleColumn();
           const tableStyles = getTableStyles(element.tableStyle);
+          const showBorders = element.showBorders !== false;
           return (
             <div style={{
               width: '100%',
@@ -880,8 +881,8 @@ export const CanvasElement = ({
               flexDirection: 'column',
               fontSize: 10 * zoom,
               fontFamily: '"Inter", "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont, sans-serif',
-              // Utiliser des bordures subtiles qui ne sont pas affectées par les paramètres globaux
-              border: element.borderWidth && element.borderWidth > 0 ? `${Math.max(1, element.borderWidth * zoom * 0.5)}px solid ${element.borderColor || '#e5e7eb'}` : 'none',
+              // Utiliser les bordures du style de tableau si showBorders est activé
+              border: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.headerBorder}` : (element.borderWidth && element.borderWidth > 0 ? `${Math.max(1, element.borderWidth * zoom * 0.5)}px solid ${element.borderColor || '#e5e7eb'}` : 'none'),
               borderRadius: tableStyles.borderRadius ? `${tableStyles.borderRadius * zoom}px` : '2px',
               overflow: 'hidden',
               // Assurer que le background ne cache pas les bordures

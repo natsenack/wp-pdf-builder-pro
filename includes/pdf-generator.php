@@ -1382,8 +1382,15 @@ class PDF_Builder_Pro_Generator {
             $this->pdf->Rect($x, $y, $width, $height, 'F');
         }
 
-        // Bordure du tableau si définie
-        if ($border_width > 0 && $border_color !== 'transparent') {
+        // Bordure du tableau selon le style choisi
+        if ($show_borders) {
+            // Utiliser les couleurs du style de tableau pour la bordure
+            $header_border_rgb = $this->hex_to_rgb($table_styles['headerBorder']);
+            $this->pdf->SetDrawColor($header_border_rgb[0], $header_border_rgb[1], $header_border_rgb[2]);
+            $this->pdf->SetLineWidth($table_styles['border_width'] * 0.5); // Utiliser l'épaisseur du style
+            $this->pdf->Rect($x, $y, $width, $height, 'D');
+        } elseif ($border_width > 0 && $border_color !== 'transparent') {
+            // Fallback vers les propriétés générales de l'élément
             $border_rgb = $this->parse_color($border_color);
             $this->pdf->SetDrawColor($border_rgb['r'], $border_rgb['g'], $border_rgb['b']);
             $this->pdf->SetLineWidth($border_width * 0.1); // Conversion px vers points
