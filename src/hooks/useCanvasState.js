@@ -166,9 +166,10 @@ export const useCanvasState = ({
   });
 
   const zoom = useZoom({
-    initialZoom: 1,
-    minZoom: 0.25,
-    maxZoom: 3
+    initialZoom: globalSettings ? parseFloat(globalSettings.defaultZoom) / 100 : 1,
+    minZoom: globalSettings ? globalSettings.minZoom / 100 : 0.25,
+    maxZoom: globalSettings ? globalSettings.maxZoom / 100 : 3,
+    zoomStep: globalSettings ? globalSettings.zoomStep / 100 : 0.1
   });
 
   const contextMenu = useContextMenu();

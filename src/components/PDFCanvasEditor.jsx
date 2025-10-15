@@ -26,6 +26,11 @@ export const PDFCanvasEditor = ({ options }) => {
   const [pdfModalUrl, setPdfModalUrl] = useState(null);
   const [isPropertiesCollapsed, setIsPropertiesCollapsed] = useState(false);
 
+  // États pour le pan et la navigation
+  const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
+  const [isPanning, setIsPanning] = useState(false);
+  const [lastPanPoint, setLastPanPoint] = useState({ x: 0, y: 0 });
+
   // Hook pour les paramètres globaux
   const globalSettings = useGlobalSettings();
 
@@ -71,7 +76,8 @@ export const PDFCanvasEditor = ({ options }) => {
     initialElements: options.initialElements || [],
     templateId: options.templateId || null,
     canvasWidth: options.width || 595,
-    canvasHeight: options.height || 842
+    canvasHeight: options.height || 842,
+    globalSettings: globalSettings.settings
   });
 
   const editorRef = useRef(null);
@@ -404,6 +410,8 @@ export const PDFCanvasEditor = ({ options }) => {
 
   // Fonction pour déterminer le curseur selon l'outil sélectionné
   const getCursorStyle = useCallback(() => {
+    if (isPanning) return 'grabbing';
+
     switch (tool) {
       case 'select':
         return 'default';
@@ -423,7 +431,7 @@ export const PDFCanvasEditor = ({ options }) => {
       default:
         return 'default';
     }
-  }, [tool]);
+  }, [tool, isPanning]);
 
   // Gestionnaire pour le drag over
   const handleDragOver = useCallback((e) => {
@@ -457,6 +465,51 @@ export const PDFCanvasEditor = ({ options }) => {
       console.error('Erreur lors du drop:', error);
     }
   }, [canvasState]);
+
+  // Gestionnaire pour le zoom avec la molette
+  const handleWheel = useCallback((e) => {
+    if (!globalSettings.settings.zoomWithWheel) return;
+
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -1 : 1;
+    const zoomFactor = 1 + (globalSettings.settings.zoomStep / 100);
+
+    if (delta > 0) {
+      canvasState.zoom.zoomIn();
+    } else {
+      canvasState.zoom.zoomOut();
+    }
+  }, [globalSettings.settings.zoomWithWheel, globalSettings.settings.zoomStep, canvasState.zoom]);
+
+  // Gestionnaire pour le pan avec la souris (clic milieu ou espace + drag)
+  const handleMouseDown = useCallback((e) => {
+    if (!globalSettings.settings.panWithMouse) return;
+
+    // Pan avec le bouton du milieu ou espace + clic gauche
+    if (e.button === 1 || (e.button === 0 && e.altKey)) {
+      e.preventDefault();
+      setIsPanning(true);
+      setLastPanPoint({ x: e.clientX, y: e.clientY });
+    }
+  }, [globalSettings.settings.panWithMouse]);
+
+  const handleMouseMove = useCallback((e) => {
+    if (!isPanning) return;
+
+    const deltaX = e.clientX - lastPanPoint.x;
+    const deltaY = e.clientY - lastPanPoint.y;
+
+    setPanOffset(prev => ({
+      x: prev.x + deltaX,
+      y: prev.y + deltaY
+    }));
+
+    setLastPanPoint({ x: e.clientX, y: e.clientY });
+  }, [isPanning, lastPanPoint]);
+
+  const handleMouseUp = useCallback(() => {
+    setIsPanning(false);
+  }, []);
 
   return (
     <div className="pdf-canvas-editor" ref={editorRef}>
@@ -525,13 +578,19 @@ export const PDFCanvasEditor = ({ options }) => {
             onContextMenu={handleContextMenu}
             onDragOver={handleDragOver}
             onDrop={handleDrop}
+            onWheel={handleWheel}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
             style={{ cursor: getCursorStyle() }}
           >
             <div
               className="canvas-zoom-wrapper"
               style={{
-                transform: `scale(${canvasState.zoom.zoom})`,
-                transformOrigin: 'center'
+                transform: `translate(${panOffset.x}px, ${panOffset.y}px) scale(${canvasState.zoom.zoom})`,
+                transformOrigin: 'center',
+                cursor: isPanning ? 'grabbing' : 'default'
               }}
             >
               <div
