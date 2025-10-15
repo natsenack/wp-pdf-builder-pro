@@ -200,6 +200,20 @@ const PreviewModal = ({
           price: true,
           total: true
         };
+        const headers = element.headers || ['Produit', 'Qté', 'Prix'];
+
+        // Fonction pour obtenir l'en-tête d'une colonne
+        const getColumnHeader = (columnType) => {
+          const defaultHeaders = {
+            image: 'Img',
+            name: headers[0] || 'Produit',
+            sku: 'SKU',
+            quantity: headers[1] || 'Qté',
+            price: headers[2] || 'Prix',
+            total: 'Total'
+          };
+          return defaultHeaders[columnType] || columnType;
+        };
 
         // Données d'exemple pour l'aperçu
         const products = [
@@ -256,7 +270,7 @@ const PreviewModal = ({
                     textAlign: 'center',
                     borderRight: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.headerBorder}` : 'none'
                   }}>
-                    Img
+                    {getColumnHeader('image')}
                   </div>
                 )}
                 {columns.name && (
@@ -266,7 +280,7 @@ const PreviewModal = ({
                     textAlign: 'left',
                     borderRight: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.headerBorder}` : 'none'
                   }}>
-                    Produit
+                    {getColumnHeader('name')}
                   </div>
                 )}
                 {columns.sku && (
@@ -276,7 +290,7 @@ const PreviewModal = ({
                     textAlign: 'left',
                     borderRight: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.headerBorder}` : 'none'
                   }}>
-                    SKU
+                    {getColumnHeader('sku')}
                   </div>
                 )}
                 {columns.quantity && (
@@ -286,7 +300,7 @@ const PreviewModal = ({
                     textAlign: 'center',
                     borderRight: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.headerBorder}` : 'none'
                   }}>
-                    Qté
+                    {getColumnHeader('quantity')}
                   </div>
                 )}
                 {columns.price && (
@@ -296,7 +310,7 @@ const PreviewModal = ({
                     textAlign: 'right',
                     borderRight: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.headerBorder}` : 'none'
                   }}>
-                    Prix
+                    {getColumnHeader('price')}
                   </div>
                 )}
                 {columns.total && (
@@ -305,7 +319,7 @@ const PreviewModal = ({
                     padding: '4px 6px',
                     textAlign: 'right'
                   }}>
-                    Total
+                    {getColumnHeader('total')}
                   </div>
                 )}
               </div>
@@ -447,8 +461,8 @@ const PreviewModal = ({
 
       case 'customer_info':
         // Rendu dynamique des informations client utilisant les propriétés de l'élément
-        const customerFields = element.fields || ['name', 'company', 'address', 'email', 'phone'];
-        const showLabels = element.showLabels !== false;
+        const customerFields = element.fields || ['name', 'phone', 'address', 'email'];
+        const showLabels = element.showLabels !== false && element.showLabel !== false;
         const layout = element.layout || 'vertical';
         const alignment = element.alignment || 'left';
         const spacing = element.spacing || 3;
@@ -525,7 +539,7 @@ const PreviewModal = ({
       case 'company_info':
         // Rendu dynamique des informations entreprise utilisant les propriétés de l'élément
         const companyFields = element.fields || ['name', 'address', 'phone', 'email'];
-        const showCompanyLabels = element.showLabels !== false;
+        const showCompanyLabels = element.showLabels !== false && element.showLabel !== false;
         const companyLayout = element.layout || 'vertical';
         const companyAlignment = element.alignment || 'left';
         const companySpacing = element.spacing || 3;
