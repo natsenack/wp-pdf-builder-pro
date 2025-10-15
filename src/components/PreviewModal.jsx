@@ -18,6 +18,46 @@ const PreviewModal = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Fonction pour nettoyer les éléments avant sérialisation JSON
+  const cleanElementsForJSON = (elements) => {
+    if (!Array.isArray(elements)) {
+      throw new Error('Les éléments doivent être un tableau');
+    }
+
+    return elements.map(element => {
+      if (!element || typeof element !== 'object') {
+        throw new Error('Chaque élément doit être un objet valide');
+      }
+
+      // Créer une copie profonde de l'élément
+      const cleaned = JSON.parse(JSON.stringify(element));
+
+      // S'assurer que les propriétés numériques sont des nombres
+      const numericProps = ['x', 'y', 'width', 'height', 'fontSize', 'padding', 'zIndex', 'borderWidth'];
+      numericProps.forEach(prop => {
+        if (cleaned[prop] !== undefined) {
+          const numValue = parseFloat(cleaned[prop]);
+          if (isNaN(numValue)) {
+            throw new Error(`Propriété ${prop} doit être un nombre valide`);
+          }
+          cleaned[prop] = numValue;
+        }
+      });
+
+      // Valider les propriétés requises
+      if (typeof cleaned.type !== 'string') {
+        throw new Error('Chaque élément doit avoir un type string');
+      }
+
+      // Nettoyer les propriétés potentiellement problématiques
+      delete cleaned.tempId; // Supprimer les IDs temporaires si présents
+      delete cleaned.isDragging; // Supprimer les états d'interaction
+      delete cleaned.isResizing; // Supprimer les états d'interaction
+
+      return cleaned;
+    });
+  };
+
   // Fonction de validation des éléments avant envoi
   const validateElementsBeforeSend = (elements) => {
     try {
