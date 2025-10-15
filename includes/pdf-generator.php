@@ -1392,6 +1392,12 @@ class PDF_Builder_Pro_Generator {
 
         // En-têtes du tableau
         if ($show_headers) {
+            // Appliquer la couleur de texte des en-têtes
+            if (isset($table_styles['headerTextColor'])) {
+                $header_text_rgb = $this->hex_to_rgb($table_styles['headerTextColor']);
+                $this->pdf->SetTextColor($header_text_rgb[0], $header_text_rgb[1], $header_text_rgb[2]);
+            }
+
             $this->pdf->SetXY($x, $current_y);
             $this->pdf->SetFillColor($table_styles['header_bg']['r'], $table_styles['header_bg']['g'], $table_styles['header_bg']['b']);
             $this->pdf->SetFont('helvetica', 'B', 9);
@@ -1427,12 +1433,18 @@ class PDF_Builder_Pro_Generator {
         // Contenu du tableau
         $this->pdf->SetFont('helvetica', '', 8);
 
+        // Appliquer la couleur de texte des lignes de données
+        if (isset($table_styles['rowTextColor'])) {
+            $row_text_rgb = $this->hex_to_rgb($table_styles['rowTextColor']);
+            $this->pdf->SetTextColor($row_text_rgb[0], $row_text_rgb[1], $row_text_rgb[2]);
+        }
+
         if (isset($this->order) && $this->order) {
             // Rendre les vrais produits de la commande
             $current_y = $this->render_order_products_with_fees_pdf($x, $current_y, $col_widths, $columns, $show_borders, $element);
         } else {
             // Données fictives pour l'aperçu
-            $current_y = $this->render_fake_products($x, $current_y, $col_widths, $columns, $show_borders);
+            $current_y = $this->render_fake_products($x, $current_y, $col_widths, $columns, $show_borders, $table_style);
         }
 
         // Totaux
@@ -1449,6 +1461,8 @@ class PDF_Builder_Pro_Generator {
                 'header_border' => ['r' => 221, 'g' => 221, 'b' => 221],
                 'row_border' => ['r' => 238, 'g' => 238, 'b' => 238],
                 'alt_row_bg' => ['r' => 250, 'g' => 250, 'b' => 250],
+                'headerTextColor' => '#334155',
+                'rowTextColor' => '#334155',
                 'border_width' => 0.5
             ],
             'classic' => [
@@ -1456,6 +1470,8 @@ class PDF_Builder_Pro_Generator {
                 'header_border' => ['r' => 51, 'g' => 65, 'b' => 85],
                 'row_border' => ['r' => 51, 'g' => 65, 'b' => 85],
                 'alt_row_bg' => ['r' => 255, 'g' => 255, 'b' => 255],
+                'headerTextColor' => '#ffffff',
+                'rowTextColor' => '#1e293b',
                 'border_width' => 1.5
             ],
             'striped' => [
@@ -1463,6 +1479,8 @@ class PDF_Builder_Pro_Generator {
                 'header_border' => ['r' => 37, 'g' => 99, 'b' => 235],
                 'row_border' => ['r' => 226, 'g' => 232, 'b' => 240],
                 'alt_row_bg' => ['r' => 248, 'g' => 250, 'b' => 252],
+                'headerTextColor' => '#ffffff',
+                'rowTextColor' => '#334155',
                 'border_width' => 1
             ],
             'bordered' => [
@@ -1470,6 +1488,8 @@ class PDF_Builder_Pro_Generator {
                 'header_border' => ['r' => 55, 'g' => 65, 'b' => 81],
                 'row_border' => ['r' => 209, 'g' => 213, 'b' => 219],
                 'alt_row_bg' => ['r' => 255, 'g' => 255, 'b' => 255],
+                'headerTextColor' => '#111827',
+                'rowTextColor' => '#111827',
                 'border_width' => 2
             ],
             'minimal' => [
@@ -1477,6 +1497,8 @@ class PDF_Builder_Pro_Generator {
                 'header_border' => ['r' => 209, 'g' => 213, 'b' => 219],
                 'row_border' => ['r' => 243, 'g' => 244, 'b' => 246],
                 'alt_row_bg' => ['r' => 255, 'g' => 255, 'b' => 255],
+                'headerTextColor' => '#6b7280',
+                'rowTextColor' => '#6b7280',
                 'border_width' => 0.5
             ],
             'modern' => [
@@ -1484,6 +1506,8 @@ class PDF_Builder_Pro_Generator {
                 'header_border' => ['r' => 91, 'g' => 33, 'b' => 182],
                 'row_border' => ['r' => 233, 'g' => 213, 'b' => 255],
                 'alt_row_bg' => ['r' => 250, 'g' => 245, 'b' => 255],
+                'headerTextColor' => '#ffffff',
+                'rowTextColor' => '#6b21a8',
                 'border_width' => 1
             ],
             // Nouveaux styles colorés
@@ -1492,6 +1516,8 @@ class PDF_Builder_Pro_Generator {
                 'header_border' => ['r' => 30, 'g' => 64, 'b' => 175],
                 'row_border' => ['r' => 219, 'g' => 234, 'b' => 254],
                 'alt_row_bg' => ['r' => 239, 'g' => 246, 'b' => 255],
+                'headerTextColor' => '#ffffff',
+                'rowTextColor' => '#1e3a8a',
                 'border_width' => 1.5
             ],
             'emerald_forest' => [
@@ -1499,6 +1525,8 @@ class PDF_Builder_Pro_Generator {
                 'header_border' => ['r' => 6, 'g' => 95, 'b' => 70],
                 'row_border' => ['r' => 209, 'g' => 250, 'b' => 229],
                 'alt_row_bg' => ['r' => 236, 'g' => 253, 'b' => 245],
+                'headerTextColor' => '#ffffff',
+                'rowTextColor' => '#064e3b',
                 'border_width' => 1.5
             ],
             'sunset_orange' => [
@@ -1506,6 +1534,8 @@ class PDF_Builder_Pro_Generator {
                 'header_border' => ['r' => 194, 'g' => 65, 'b' => 12],
                 'row_border' => ['r' => 254, 'g' => 215, 'b' => 170],
                 'alt_row_bg' => ['r' => 255, 'g' => 247, 'b' => 237],
+                'headerTextColor' => '#ffffff',
+                'rowTextColor' => '#9a3412',
                 'border_width' => 1.5
             ],
             'royal_purple' => [
@@ -1513,6 +1543,8 @@ class PDF_Builder_Pro_Generator {
                 'header_border' => ['r' => 124, 'g' => 58, 'b' => 237],
                 'row_border' => ['r' => 233, 'g' => 213, 'b' => 255],
                 'alt_row_bg' => ['r' => 250, 'g' => 245, 'b' => 255],
+                'headerTextColor' => '#ffffff',
+                'rowTextColor' => '#581c87',
                 'border_width' => 1.5
             ],
             'rose_pink' => [
@@ -1520,6 +1552,8 @@ class PDF_Builder_Pro_Generator {
                 'header_border' => ['r' => 219, 'g' => 39, 'b' => 119],
                 'row_border' => ['r' => 252, 'g' => 231, 'b' => 243],
                 'alt_row_bg' => ['r' => 253, 'g' => 244, 'b' => 248],
+                'headerTextColor' => '#ffffff',
+                'rowTextColor' => '#be185d',
                 'border_width' => 1.5
             ],
             'teal_aqua' => [
@@ -1527,6 +1561,8 @@ class PDF_Builder_Pro_Generator {
                 'header_border' => ['r' => 13, 'g' => 148, 'b' => 136],
                 'row_border' => ['r' => 204, 'g' => 251, 'b' => 241],
                 'alt_row_bg' => ['r' => 240, 'g' => 253, 'b' => 250],
+                'headerTextColor' => '#ffffff',
+                'rowTextColor' => '#0f766e',
                 'border_width' => 1.5
             ],
             'crimson_red' => [
@@ -1534,6 +1570,8 @@ class PDF_Builder_Pro_Generator {
                 'header_border' => ['r' => 220, 'g' => 38, 'b' => 38],
                 'row_border' => ['r' => 254, 'g' => 202, 'b' => 202],
                 'alt_row_bg' => ['r' => 254, 'g' => 242, 'b' => 242],
+                'headerTextColor' => '#ffffff',
+                'rowTextColor' => '#dc2626',
                 'border_width' => 1.5
             ],
             'amber_gold' => [
@@ -1541,6 +1579,8 @@ class PDF_Builder_Pro_Generator {
                 'header_border' => ['r' => 217, 'g' => 119, 'b' => 6],
                 'row_border' => ['r' => 254, 'g' => 243, 'b' => 199],
                 'alt_row_bg' => ['r' => 254, 'g' => 243, 'b' => 235],
+                'headerTextColor' => '#ffffff',
+                'rowTextColor' => '#d97706',
                 'border_width' => 1.5
             ],
             'indigo_night' => [
@@ -1548,6 +1588,8 @@ class PDF_Builder_Pro_Generator {
                 'header_border' => ['r' => 67, 'g' => 56, 'b' => 202],
                 'row_border' => ['r' => 224, 'g' => 231, 'b' => 255],
                 'alt_row_bg' => ['r' => 238, 'g' => 242, 'b' => 255],
+                'headerTextColor' => '#ffffff',
+                'rowTextColor' => '#4338ca',
                 'border_width' => 1.5
             ],
             'slate_gray' => [
@@ -1555,6 +1597,8 @@ class PDF_Builder_Pro_Generator {
                 'header_border' => ['r' => 75, 'g' => 85, 'b' => 99],
                 'row_border' => ['r' => 243, 'g' => 244, 'b' => 246],
                 'alt_row_bg' => ['r' => 249, 'g' => 250, 'b' => 251],
+                'headerTextColor' => '#ffffff',
+                'rowTextColor' => '#374151',
                 'border_width' => 1.5
             ],
             'coral_sunset' => [
@@ -1562,6 +1606,8 @@ class PDF_Builder_Pro_Generator {
                 'header_border' => ['r' => 234, 'g' => 88, 'b' => 12],
                 'row_border' => ['r' => 254, 'g' => 215, 'b' => 215],
                 'alt_row_bg' => ['r' => 254, 'g' => 247, 'b' => 247],
+                'headerTextColor' => '#ffffff',
+                'rowTextColor' => '#ea580c',
                 'border_width' => 1.5
             ],
             'mint_green' => [
@@ -1569,6 +1615,8 @@ class PDF_Builder_Pro_Generator {
                 'header_border' => ['r' => 4, 'g' => 120, 'b' => 87],
                 'row_border' => ['r' => 209, 'g' => 250, 'b' => 229],
                 'alt_row_bg' => ['r' => 236, 'g' => 253, 'b' => 245],
+                'headerTextColor' => '#ffffff',
+                'rowTextColor' => '#047857',
                 'border_width' => 1.5
             ],
             'violet_dream' => [
@@ -1576,6 +1624,8 @@ class PDF_Builder_Pro_Generator {
                 'header_border' => ['r' => 139, 'g' => 92, 'b' => 246],
                 'row_border' => ['r' => 237, 'g' => 233, 'b' => 254],
                 'alt_row_bg' => ['r' => 245, 'g' => 243, 'b' => 255],
+                'headerTextColor' => '#ffffff',
+                'rowTextColor' => '#8b5cf6',
                 'border_width' => 1.5
             ],
             'sky_blue' => [
@@ -1583,6 +1633,8 @@ class PDF_Builder_Pro_Generator {
                 'header_border' => ['r' => 2, 'g' => 132, 'b' => 199],
                 'row_border' => ['r' => 186, 'g' => 230, 'b' => 253],
                 'alt_row_bg' => ['r' => 240, 'g' => 249, 'b' => 255],
+                'headerTextColor' => '#ffffff',
+                'rowTextColor' => '#0284c7',
                 'border_width' => 1.5
             ],
             'forest_green' => [
@@ -1590,6 +1642,8 @@ class PDF_Builder_Pro_Generator {
                 'header_border' => ['r' => 21, 'g' => 128, 'b' => 61],
                 'row_border' => ['r' => 187, 'g' => 247, 'b' => 208],
                 'alt_row_bg' => ['r' => 240, 'g' => 253, 'b' => 244],
+                'headerTextColor' => '#ffffff',
+                'rowTextColor' => '#15803d',
                 'border_width' => 1.5
             ],
             'ruby_red' => [
@@ -1597,6 +1651,8 @@ class PDF_Builder_Pro_Generator {
                 'header_border' => ['r' => 220, 'g' => 38, 'b' => 38],
                 'row_border' => ['r' => 254, 'g' => 202, 'b' => 202],
                 'alt_row_bg' => ['r' => 254, 'g' => 242, 'b' => 242],
+                'headerTextColor' => '#ffffff',
+                'rowTextColor' => '#dc2626',
                 'border_width' => 1.5
             ],
             'golden_yellow' => [
@@ -1604,6 +1660,8 @@ class PDF_Builder_Pro_Generator {
                 'header_border' => ['r' => 202, 'g' => 138, 'b' => 4],
                 'row_border' => ['r' => 254, 'g' => 240, 'b' => 138],
                 'alt_row_bg' => ['r' => 254, 'g' => 252, 'b' => 232],
+                'headerTextColor' => '#ffffff',
+                'rowTextColor' => '#ca8a04',
                 'border_width' => 1.5
             ],
             'navy_blue' => [
@@ -1611,6 +1669,8 @@ class PDF_Builder_Pro_Generator {
                 'header_border' => ['r' => 30, 'g' => 64, 'b' => 175],
                 'row_border' => ['r' => 219, 'g' => 234, 'b' => 254],
                 'alt_row_bg' => ['r' => 239, 'g' => 246, 'b' => 255],
+                'headerTextColor' => '#ffffff',
+                'rowTextColor' => '#1e40af',
                 'border_width' => 1.5
             ],
             'burgundy_wine' => [
@@ -1618,6 +1678,8 @@ class PDF_Builder_Pro_Generator {
                 'header_border' => ['r' => 153, 'g' => 27, 'b' => 27],
                 'row_border' => ['r' => 254, 'g' => 202, 'b' => 202],
                 'alt_row_bg' => ['r' => 254, 'g' => 242, 'b' => 242],
+                'headerTextColor' => '#ffffff',
+                'rowTextColor' => '#991b1b',
                 'border_width' => 1.5
             ],
             'lavender_purple' => [
@@ -1625,6 +1687,8 @@ class PDF_Builder_Pro_Generator {
                 'header_border' => ['r' => 147, 'g' => 51, 'b' => 234],
                 'row_border' => ['r' => 233, 'g' => 213, 'b' => 255],
                 'alt_row_bg' => ['r' => 250, 'g' => 245, 'b' => 255],
+                'headerTextColor' => '#ffffff',
+                'rowTextColor' => '#9333ea',
                 'border_width' => 1.5
             ],
             'ocean_teal' => [
@@ -1632,6 +1696,8 @@ class PDF_Builder_Pro_Generator {
                 'header_border' => ['r' => 15, 'g' => 118, 'b' => 110],
                 'row_border' => ['r' => 204, 'g' => 251, 'b' => 241],
                 'alt_row_bg' => ['r' => 240, 'g' => 253, 'b' => 250],
+                'headerTextColor' => '#ffffff',
+                'rowTextColor' => '#0f766e',
                 'border_width' => 1.5
             ],
             'cherry_blossom' => [
@@ -1639,6 +1705,8 @@ class PDF_Builder_Pro_Generator {
                 'header_border' => ['r' => 219, 'g' => 39, 'b' => 119],
                 'row_border' => ['r' => 252, 'g' => 231, 'b' => 243],
                 'alt_row_bg' => ['r' => 253, 'g' => 244, 'b' => 248],
+                'headerTextColor' => '#ffffff',
+                'rowTextColor' => '#db2777',
                 'border_width' => 1.5
             ],
             'autumn_orange' => [
@@ -1646,6 +1714,8 @@ class PDF_Builder_Pro_Generator {
                 'header_border' => ['r' => 234, 'g' => 88, 'b' => 12],
                 'row_border' => ['r' => 254, 'g' => 215, 'b' => 170],
                 'alt_row_bg' => ['r' => 255, 'g' => 247, 'b' => 237],
+                'headerTextColor' => '#ffffff',
+                'rowTextColor' => '#ea580c',
                 'border_width' => 1.5
             ]
         ];
@@ -1827,9 +1897,15 @@ class PDF_Builder_Pro_Generator {
     /**
      * Rendre des produits fictifs pour l'aperçu
      */
-    private function render_fake_products($x, $current_y, $col_widths, $columns, $show_borders) {
-        $table_styles = $this->get_table_styles('default');
+    private function render_fake_products($x, $current_y, $col_widths, $columns, $show_borders, $table_style = 'default') {
+        $table_styles = $this->get_table_styles($table_style);
         $row_height = 6;
+
+        // Appliquer la couleur de texte des lignes de données
+        if (isset($table_styles['rowTextColor'])) {
+            $row_text_rgb = $this->hex_to_rgb($table_styles['rowTextColor']);
+            $this->pdf->SetTextColor($row_text_rgb[0], $row_text_rgb[1], $row_text_rgb[2]);
+        }
 
         // Produit fictif 1
         $this->pdf->SetXY($x, $current_y);
@@ -1969,6 +2045,12 @@ class PDF_Builder_Pro_Generator {
 
         // Total final
         if ($show_total) {
+            // Appliquer la couleur de texte des en-têtes pour le total
+            if (isset($table_styles['headerTextColor'])) {
+                $header_text_rgb = $this->hex_to_rgb($table_styles['headerTextColor']);
+                $this->pdf->SetTextColor($header_text_rgb[0], $header_text_rgb[1], $header_text_rgb[2]);
+            }
+
             $this->pdf->SetXY($total_x, $current_y);
             $this->pdf->SetFillColor($table_styles['header_bg']['r'], $table_styles['header_bg']['g'], $table_styles['header_bg']['b']);
             $total_text = 'TOTAL: ' . number_format($total, 2, ',', ' ') . ' ' . chr(128);

@@ -225,8 +225,13 @@ const PreviewModal = ({
               rowBorder: '#f1f5f9',
               altRowBg: '#fafbfc',
               borderWidth: 1,
-              textColor: '#334155',
-              shadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
+              headerTextColor: '#334155',
+              rowTextColor: '#334155',
+              headerFontWeight: '600',
+              headerFontSize: '11px',
+              rowFontSize: '10px',
+              shadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+              borderRadius: '4px'
             },
             classic: {
               headerBg: '#1e293b',
@@ -234,8 +239,13 @@ const PreviewModal = ({
               rowBorder: '#334155',
               altRowBg: '#ffffff',
               borderWidth: 1.5,
-              textColor: '#ffffff',
-              shadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
+              headerTextColor: '#ffffff',
+              rowTextColor: '#1e293b',
+              headerFontWeight: '700',
+              headerFontSize: '11px',
+              rowFontSize: '10px',
+              shadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+              borderRadius: '0px'
             },
             striped: {
               headerBg: '#3b82f6',
@@ -243,8 +253,13 @@ const PreviewModal = ({
               rowBorder: '#e2e8f0',
               altRowBg: '#f8fafc',
               borderWidth: 1,
-              textColor: '#ffffff',
-              shadow: '0 1px 4px rgba(59, 130, 246, 0.2)'
+              headerTextColor: '#ffffff',
+              rowTextColor: '#334155',
+              headerFontWeight: '600',
+              headerFontSize: '11px',
+              rowFontSize: '10px',
+              shadow: '0 1px 4px rgba(59, 130, 246, 0.2)',
+              borderRadius: '6px'
             },
             bordered: {
               headerBg: '#ffffff',
@@ -252,8 +267,13 @@ const PreviewModal = ({
               rowBorder: '#d1d5db',
               altRowBg: '#ffffff',
               borderWidth: 2,
-              textColor: '#111827',
-              shadow: '0 4px 12px rgba(0, 0, 0, 0.1), inset 0 0 0 1px #e5e7eb'
+              headerTextColor: '#111827',
+              rowTextColor: '#111827',
+              headerFontWeight: '600',
+              headerFontSize: '11px',
+              rowFontSize: '10px',
+              shadow: '0 4px 12px rgba(0, 0, 0, 0.1), inset 0 0 0 1px #e5e7eb',
+              borderRadius: '8px'
             },
             minimal: {
               headerBg: '#ffffff',
@@ -261,8 +281,13 @@ const PreviewModal = ({
               rowBorder: '#f3f4f6',
               altRowBg: '#ffffff',
               borderWidth: 0.5,
-              textColor: '#6b7280',
-              shadow: 'none'
+              headerTextColor: '#6b7280',
+              rowTextColor: '#6b7280',
+              headerFontWeight: '500',
+              headerFontSize: '10px',
+              rowFontSize: '9px',
+              shadow: 'none',
+              borderRadius: '0px'
             },
             modern: {
               gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
@@ -270,8 +295,13 @@ const PreviewModal = ({
               rowBorder: '#e9d5ff',
               altRowBg: '#faf5ff',
               borderWidth: 1,
-              textColor: '#ffffff',
-              shadow: '0 4px 20px rgba(102, 126, 234, 0.25)'
+              headerTextColor: '#ffffff',
+              rowTextColor: '#6b21a8',
+              headerFontWeight: '600',
+              headerFontSize: '11px',
+              rowFontSize: '10px',
+              shadow: '0 4px 20px rgba(102, 126, 234, 0.25)',
+              borderRadius: '8px'
             },
             // Nouveaux styles colorés
             blue_ocean: {
@@ -280,8 +310,13 @@ const PreviewModal = ({
               rowBorder: '#dbeafe',
               altRowBg: '#eff6ff',
               borderWidth: 1.5,
-              textColor: '#ffffff',
-              shadow: '0 4px 16px rgba(59, 130, 246, 0.3)'
+              headerTextColor: '#ffffff',
+              rowTextColor: '#1e3a8a',
+              headerFontWeight: '600',
+              headerFontSize: '11px',
+              rowFontSize: '10px',
+              shadow: '0 4px 16px rgba(59, 130, 246, 0.3)',
+              borderRadius: '6px'
             },
             emerald_forest: {
               gradient: 'linear-gradient(135deg, #064e3b 0%, #10b981 100%)',
@@ -289,8 +324,13 @@ const PreviewModal = ({
               rowBorder: '#d1fae5',
               altRowBg: '#ecfdf5',
               borderWidth: 1.5,
-              textColor: '#ffffff',
-              shadow: '0 4px 16px rgba(16, 185, 129, 0.3)'
+              headerTextColor: '#ffffff',
+              rowTextColor: '#064e3b',
+              headerFontWeight: '600',
+              headerFontSize: '11px',
+              rowFontSize: '10px',
+              shadow: '0 4px 16px rgba(16, 185, 129, 0.3)',
+              borderRadius: '6px'
             },
             sunset_orange: {
               gradient: 'linear-gradient(135deg, #9a3412 0%, #f97316 100%)',
@@ -298,8 +338,13 @@ const PreviewModal = ({
               rowBorder: '#fed7aa',
               altRowBg: '#fff7ed',
               borderWidth: 1.5,
-              textColor: '#ffffff',
-              shadow: '0 4px 16px rgba(249, 115, 22, 0.3)'
+              headerTextColor: '#ffffff',
+              rowTextColor: '#9a3412',
+              headerFontWeight: '600',
+              headerFontSize: '11px',
+              rowFontSize: '10px',
+              shadow: '0 4px 16px rgba(249, 115, 22, 0.3)',
+              borderRadius: '6px'
             },
             royal_purple: {
               gradient: 'linear-gradient(135deg, #581c87 0%, #a855f7 100%)',
@@ -307,8 +352,13 @@ const PreviewModal = ({
               rowBorder: '#e9d5ff',
               altRowBg: '#faf5ff',
               borderWidth: 1.5,
-              textColor: '#ffffff',
-              shadow: '0 4px 16px rgba(168, 85, 247, 0.3)'
+              headerTextColor: '#ffffff',
+              rowTextColor: '#581c87',
+              headerFontWeight: '600',
+              headerFontSize: '11px',
+              rowFontSize: '10px',
+              shadow: '0 4px 16px rgba(168, 85, 247, 0.3)',
+              borderRadius: '6px'
             },
             rose_pink: {
               gradient: 'linear-gradient(135deg, #be185d 0%, #f472b6 100%)',
@@ -316,8 +366,13 @@ const PreviewModal = ({
               rowBorder: '#fce7f3',
               altRowBg: '#fdf2f8',
               borderWidth: 1.5,
-              textColor: '#ffffff',
-              shadow: '0 4px 16px rgba(244, 114, 182, 0.3)'
+              headerTextColor: '#ffffff',
+              rowTextColor: '#be185d',
+              headerFontWeight: '600',
+              headerFontSize: '11px',
+              rowFontSize: '10px',
+              shadow: '0 4px 16px rgba(244, 114, 182, 0.3)',
+              borderRadius: '6px'
             },
             teal_aqua: {
               gradient: 'linear-gradient(135deg, #0f766e 0%, #14b8a6 100%)',
@@ -325,8 +380,13 @@ const PreviewModal = ({
               rowBorder: '#ccfbf1',
               altRowBg: '#f0fdfa',
               borderWidth: 1.5,
-              textColor: '#ffffff',
-              shadow: '0 4px 16px rgba(20, 184, 166, 0.3)'
+              headerTextColor: '#ffffff',
+              rowTextColor: '#0f766e',
+              headerFontWeight: '600',
+              headerFontSize: '11px',
+              rowFontSize: '10px',
+              shadow: '0 4px 16px rgba(20, 184, 166, 0.3)',
+              borderRadius: '6px'
             },
             crimson_red: {
               gradient: 'linear-gradient(135deg, #991b1b 0%, #ef4444 100%)',
@@ -334,8 +394,13 @@ const PreviewModal = ({
               rowBorder: '#fecaca',
               altRowBg: '#fef2f2',
               borderWidth: 1.5,
-              textColor: '#ffffff',
-              shadow: '0 4px 16px rgba(239, 68, 68, 0.3)'
+              headerTextColor: '#ffffff',
+              rowTextColor: '#991b1b',
+              headerFontWeight: '600',
+              headerFontSize: '11px',
+              rowFontSize: '10px',
+              shadow: '0 4px 16px rgba(239, 68, 68, 0.3)',
+              borderRadius: '6px'
             },
             amber_gold: {
               gradient: 'linear-gradient(135deg, #92400e 0%, #f59e0b 100%)',
@@ -343,8 +408,13 @@ const PreviewModal = ({
               rowBorder: '#fef3c7',
               altRowBg: '#fffbeb',
               borderWidth: 1.5,
-              textColor: '#ffffff',
-              shadow: '0 4px 16px rgba(245, 158, 11, 0.3)'
+              headerTextColor: '#ffffff',
+              rowTextColor: '#92400e',
+              headerFontWeight: '600',
+              headerFontSize: '11px',
+              rowFontSize: '10px',
+              shadow: '0 4px 16px rgba(245, 158, 11, 0.3)',
+              borderRadius: '6px'
             },
             indigo_night: {
               gradient: 'linear-gradient(135deg, #312e81 0%, #6366f1 100%)',
@@ -352,8 +422,13 @@ const PreviewModal = ({
               rowBorder: '#e0e7ff',
               altRowBg: '#eef2ff',
               borderWidth: 1.5,
-              textColor: '#ffffff',
-              shadow: '0 4px 16px rgba(99, 102, 241, 0.3)'
+              headerTextColor: '#ffffff',
+              rowTextColor: '#312e81',
+              headerFontWeight: '600',
+              headerFontSize: '11px',
+              rowFontSize: '10px',
+              shadow: '0 4px 16px rgba(99, 102, 241, 0.3)',
+              borderRadius: '6px'
             },
             slate_gray: {
               gradient: 'linear-gradient(135deg, #374151 0%, #6b7280 100%)',
@@ -361,8 +436,13 @@ const PreviewModal = ({
               rowBorder: '#f3f4f6',
               altRowBg: '#f9fafb',
               borderWidth: 1.5,
-              textColor: '#ffffff',
-              shadow: '0 4px 16px rgba(107, 114, 128, 0.3)'
+              headerTextColor: '#ffffff',
+              rowTextColor: '#374151',
+              headerFontWeight: '600',
+              headerFontSize: '11px',
+              rowFontSize: '10px',
+              shadow: '0 4px 16px rgba(107, 114, 128, 0.3)',
+              borderRadius: '6px'
             },
             coral_sunset: {
               gradient: 'linear-gradient(135deg, #c2410c 0%, #fb7185 100%)',
@@ -370,8 +450,13 @@ const PreviewModal = ({
               rowBorder: '#fed7d7',
               altRowBg: '#fef7f7',
               borderWidth: 1.5,
-              textColor: '#ffffff',
-              shadow: '0 4px 16px rgba(251, 113, 133, 0.3)'
+              headerTextColor: '#ffffff',
+              rowTextColor: '#c2410c',
+              headerFontWeight: '600',
+              headerFontSize: '11px',
+              rowFontSize: '10px',
+              shadow: '0 4px 16px rgba(251, 113, 133, 0.3)',
+              borderRadius: '6px'
             },
             mint_green: {
               gradient: 'linear-gradient(135deg, #065f46 0%, #34d399 100%)',
@@ -379,8 +464,13 @@ const PreviewModal = ({
               rowBorder: '#d1fae5',
               altRowBg: '#ecfdf5',
               borderWidth: 1.5,
-              textColor: '#ffffff',
-              shadow: '0 4px 16px rgba(52, 211, 153, 0.3)'
+              headerTextColor: '#ffffff',
+              rowTextColor: '#065f46',
+              headerFontWeight: '600',
+              headerFontSize: '11px',
+              rowFontSize: '10px',
+              shadow: '0 4px 16px rgba(52, 211, 153, 0.3)',
+              borderRadius: '6px'
             },
             violet_dream: {
               gradient: 'linear-gradient(135deg, #6d28d9 0%, #c084fc 100%)',
@@ -388,8 +478,13 @@ const PreviewModal = ({
               rowBorder: '#ede9fe',
               altRowBg: '#f5f3ff',
               borderWidth: 1.5,
-              textColor: '#ffffff',
-              shadow: '0 4px 16px rgba(192, 132, 252, 0.3)'
+              headerTextColor: '#ffffff',
+              rowTextColor: '#6d28d9',
+              headerFontWeight: '600',
+              headerFontSize: '11px',
+              rowFontSize: '10px',
+              shadow: '0 4px 16px rgba(192, 132, 252, 0.3)',
+              borderRadius: '6px'
             },
             sky_blue: {
               gradient: 'linear-gradient(135deg, #0369a1 0%, #0ea5e9 100%)',
@@ -397,8 +492,13 @@ const PreviewModal = ({
               rowBorder: '#bae6fd',
               altRowBg: '#f0f9ff',
               borderWidth: 1.5,
-              textColor: '#ffffff',
-              shadow: '0 4px 16px rgba(14, 165, 233, 0.3)'
+              headerTextColor: '#ffffff',
+              rowTextColor: '#0369a1',
+              headerFontWeight: '600',
+              headerFontSize: '11px',
+              rowFontSize: '10px',
+              shadow: '0 4px 16px rgba(14, 165, 233, 0.3)',
+              borderRadius: '6px'
             },
             forest_green: {
               gradient: 'linear-gradient(135deg, #14532d 0%, #22c55e 100%)',
@@ -406,8 +506,13 @@ const PreviewModal = ({
               rowBorder: '#bbf7d0',
               altRowBg: '#f0fdf4',
               borderWidth: 1.5,
-              textColor: '#ffffff',
-              shadow: '0 4px 16px rgba(34, 197, 94, 0.3)'
+              headerTextColor: '#ffffff',
+              rowTextColor: '#14532d',
+              headerFontWeight: '600',
+              headerFontSize: '11px',
+              rowFontSize: '10px',
+              shadow: '0 4px 16px rgba(34, 197, 94, 0.3)',
+              borderRadius: '6px'
             },
             ruby_red: {
               gradient: 'linear-gradient(135deg, #b91c1c 0%, #f87171 100%)',
@@ -415,8 +520,13 @@ const PreviewModal = ({
               rowBorder: '#fecaca',
               altRowBg: '#fef2f2',
               borderWidth: 1.5,
-              textColor: '#ffffff',
-              shadow: '0 4px 16px rgba(248, 113, 113, 0.3)'
+              headerTextColor: '#ffffff',
+              rowTextColor: '#b91c1b',
+              headerFontWeight: '600',
+              headerFontSize: '11px',
+              rowFontSize: '10px',
+              shadow: '0 4px 16px rgba(248, 113, 113, 0.3)',
+              borderRadius: '6px'
             },
             golden_yellow: {
               gradient: 'linear-gradient(135deg, #a16207 0%, #eab308 100%)',
@@ -424,8 +534,13 @@ const PreviewModal = ({
               rowBorder: '#fef08a',
               altRowBg: '#fefce8',
               borderWidth: 1.5,
-              textColor: '#ffffff',
-              shadow: '0 4px 16px rgba(234, 179, 8, 0.3)'
+              headerTextColor: '#ffffff',
+              rowTextColor: '#a16207',
+              headerFontWeight: '600',
+              headerFontSize: '11px',
+              rowFontSize: '10px',
+              shadow: '0 4px 16px rgba(234, 179, 8, 0.3)',
+              borderRadius: '6px'
             },
             navy_blue: {
               gradient: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
@@ -433,8 +548,13 @@ const PreviewModal = ({
               rowBorder: '#dbeafe',
               altRowBg: '#eff6ff',
               borderWidth: 1.5,
-              textColor: '#ffffff',
-              shadow: '0 4px 16px rgba(59, 130, 246, 0.3)'
+              headerTextColor: '#ffffff',
+              rowTextColor: '#1e3a8a',
+              headerFontWeight: '600',
+              headerFontSize: '11px',
+              rowFontSize: '10px',
+              shadow: '0 4px 16px rgba(59, 130, 246, 0.3)',
+              borderRadius: '6px'
             },
             burgundy_wine: {
               gradient: 'linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%)',
@@ -442,8 +562,13 @@ const PreviewModal = ({
               rowBorder: '#fecaca',
               altRowBg: '#fef2f2',
               borderWidth: 1.5,
-              textColor: '#ffffff',
-              shadow: '0 4px 16px rgba(220, 38, 38, 0.3)'
+              headerTextColor: '#ffffff',
+              rowTextColor: '#7f1d1d',
+              headerFontWeight: '600',
+              headerFontSize: '11px',
+              rowFontSize: '10px',
+              shadow: '0 4px 16px rgba(220, 38, 38, 0.3)',
+              borderRadius: '6px'
             },
             lavender_purple: {
               gradient: 'linear-gradient(135deg, #7c2d12 0%, #a855f7 100%)',
@@ -451,8 +576,13 @@ const PreviewModal = ({
               rowBorder: '#e9d5ff',
               altRowBg: '#faf5ff',
               borderWidth: 1.5,
-              textColor: '#ffffff',
-              shadow: '0 4px 16px rgba(168, 85, 247, 0.3)'
+              headerTextColor: '#ffffff',
+              rowTextColor: '#7c2d12',
+              headerFontWeight: '600',
+              headerFontSize: '11px',
+              rowFontSize: '10px',
+              shadow: '0 4px 16px rgba(168, 85, 247, 0.3)',
+              borderRadius: '6px'
             },
             ocean_teal: {
               gradient: 'linear-gradient(135deg, #134e4a 0%, #14b8a6 100%)',
@@ -460,8 +590,13 @@ const PreviewModal = ({
               rowBorder: '#ccfbf1',
               altRowBg: '#f0fdfa',
               borderWidth: 1.5,
-              textColor: '#ffffff',
-              shadow: '0 4px 16px rgba(20, 184, 166, 0.3)'
+              headerTextColor: '#ffffff',
+              rowTextColor: '#134e4a',
+              headerFontWeight: '600',
+              headerFontSize: '11px',
+              rowFontSize: '10px',
+              shadow: '0 4px 16px rgba(20, 184, 166, 0.3)',
+              borderRadius: '6px'
             },
             cherry_blossom: {
               gradient: 'linear-gradient(135deg, #be185d 0%, #fb7185 100%)',
@@ -469,8 +604,13 @@ const PreviewModal = ({
               rowBorder: '#fce7f3',
               altRowBg: '#fdf2f8',
               borderWidth: 1.5,
-              textColor: '#ffffff',
-              shadow: '0 4px 16px rgba(251, 113, 133, 0.3)'
+              headerTextColor: '#ffffff',
+              rowTextColor: '#be185d',
+              headerFontWeight: '600',
+              headerFontSize: '11px',
+              rowFontSize: '10px',
+              shadow: '0 4px 16px rgba(251, 113, 133, 0.3)',
+              borderRadius: '6px'
             },
             autumn_orange: {
               gradient: 'linear-gradient(135deg, #9a3412 0%, #fb923c 100%)',
@@ -478,8 +618,13 @@ const PreviewModal = ({
               rowBorder: '#fed7aa',
               altRowBg: '#fff7ed',
               borderWidth: 1.5,
-              textColor: '#ffffff',
-              shadow: '0 4px 16px rgba(251, 146, 60, 0.3)'
+              headerTextColor: '#ffffff',
+              rowTextColor: '#9a3412',
+              headerFontWeight: '600',
+              headerFontSize: '11px',
+              rowFontSize: '10px',
+              shadow: '0 4px 16px rgba(251, 146, 60, 0.3)',
+              borderRadius: '6px'
             }
           };
           return baseStyles[tableStyle] || baseStyles.default;
@@ -558,7 +703,7 @@ const PreviewModal = ({
                 background: tableStyles.gradient || tableStyles.headerBg,
                 borderBottom: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.headerBorder}` : 'none',
                 fontWeight: 'bold',
-                color: tableStyles.textColor || (element.tableStyle === 'modern' ? '#ffffff' : '#000000'),
+                color: tableStyles.headerTextColor || (element.tableStyle === 'modern' ? '#ffffff' : '#000000'),
                 boxShadow: tableStyles.shadow ? `0 2px 4px ${tableStyles.shadow}` : 'none'
               }}>
                 {columns.image && (
@@ -630,7 +775,7 @@ const PreviewModal = ({
                   display: 'flex',
                   borderBottom: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.rowBorder}` : 'none',
                   backgroundColor: element.tableStyle === 'striped' && index % 2 === 1 ? tableStyles.altRowBg : 'transparent',
-                  color: tableStyles.textColor || '#000000',
+                  color: tableStyles.rowTextColor || '#000000',
                   boxShadow: tableStyles.shadow ? `0 1px 2px ${tableStyles.shadow}` : 'none'
                 }}>
                   {columns.image && (
@@ -748,7 +893,7 @@ const PreviewModal = ({
                   padding: `${4 * zoom}px ${6 * zoom}px`,
                   fontWeight: 'bold',
                   background: tableStyles.gradient || tableStyles.headerBg,
-                  color: tableStyles.textColor || (element.tableStyle === 'modern' ? '#ffffff' : '#000000'),
+                  color: tableStyles.headerTextColor || (element.tableStyle === 'modern' ? '#ffffff' : '#000000'),
                   boxShadow: tableStyles.shadow ? `0 2px 4px ${tableStyles.shadow}` : 'none'
                 }}>
                   <div style={{ width: `${80 * zoom}px`, textAlign: 'right' }}>
