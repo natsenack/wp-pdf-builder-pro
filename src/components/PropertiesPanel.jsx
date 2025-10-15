@@ -1115,19 +1115,84 @@ const PropertiesPanel = React.memo(({
                   <label>Style du tableau:</label>
                   <div className="table-style-selector">
                     {[
-                      { value: 'default', label: 'Défaut', headerBg: '#f5f5f5', headerBorder: '#ddd', rowBorder: '#eee', altRowBg: '#fafafa', borderWidth: 1 },
-                      { value: 'classic', label: 'Classique', headerBg: '#ffffff', headerBorder: '#000000', rowBorder: '#000000', altRowBg: '#ffffff', borderWidth: 1 },
-                      { value: 'striped', label: 'Alterné', headerBg: '#f8f9fa', headerBorder: '#dee2e6', rowBorder: '#dee2e6', altRowBg: '#e9ecef', borderWidth: 1 },
-                      { value: 'bordered', label: 'Encadré', headerBg: '#ffffff', headerBorder: '#dee2e6', rowBorder: '#dee2e6', altRowBg: '#ffffff', borderWidth: 2 },
-                      { value: 'minimal', label: 'Minimal', headerBg: '#ffffff', headerBorder: '#f1f1f1', rowBorder: '#f8f8f8', altRowBg: '#ffffff', borderWidth: 0.5 },
-                      { value: 'modern', label: 'Moderne', headerBg: '#007bff', headerBorder: '#007bff', rowBorder: '#e3f2fd', altRowBg: '#f8f9ff', borderWidth: 1 }
+                      {
+                        value: 'default',
+                        label: 'Défaut',
+                        headerBg: '#f5f5f5',
+                        headerBorder: '#ddd',
+                        rowBorder: '#eee',
+                        altRowBg: '#fafafa',
+                        borderWidth: 1,
+                        headerTextColor: '#333',
+                        rowTextColor: '#666'
+                      },
+                      {
+                        value: 'classic',
+                        label: 'Classique',
+                        headerBg: '#ffffff',
+                        headerBorder: '#000000',
+                        rowBorder: '#000000',
+                        altRowBg: '#ffffff',
+                        borderWidth: 1,
+                        headerTextColor: '#000',
+                        rowTextColor: '#333'
+                      },
+                      {
+                        value: 'striped',
+                        label: 'Alterné',
+                        headerBg: '#f8f9fa',
+                        headerBorder: '#dee2e6',
+                        rowBorder: '#dee2e6',
+                        altRowBg: '#e9ecef',
+                        borderWidth: 1,
+                        headerTextColor: '#495057',
+                        rowTextColor: '#6c757d'
+                      },
+                      {
+                        value: 'bordered',
+                        label: 'Encadré',
+                        headerBg: '#ffffff',
+                        headerBorder: '#dee2e6',
+                        rowBorder: '#dee2e6',
+                        altRowBg: '#ffffff',
+                        borderWidth: 2,
+                        headerTextColor: '#495057',
+                        rowTextColor: '#6c757d'
+                      },
+                      {
+                        value: 'minimal',
+                        label: 'Minimal',
+                        headerBg: '#ffffff',
+                        headerBorder: '#f1f1f1',
+                        rowBorder: '#f8f8f8',
+                        altRowBg: '#ffffff',
+                        borderWidth: 0.5,
+                        headerTextColor: '#6c757d',
+                        rowTextColor: '#9ca3af'
+                      },
+                      {
+                        value: 'modern',
+                        label: 'Moderne',
+                        headerBg: '#007bff',
+                        headerBorder: '#007bff',
+                        rowBorder: '#e3f2fd',
+                        altRowBg: '#f8f9ff',
+                        borderWidth: 1,
+                        headerTextColor: '#ffffff',
+                        rowTextColor: '#1976d2'
+                      }
                     ].map((style) => (
                       <button
                         key={style.value}
                         type="button"
                         className={`table-style-option ${localProperties.tableStyle === style.value ? 'active' : ''}`}
                         onClick={() => handlePropertyChange(selectedElement.id, 'tableStyle', style.value)}
-                        title={style.label}
+                        title={`${style.label} - ${style.value === 'default' ? 'Fond gris avec bordures subtiles' :
+                                                 style.value === 'classic' ? 'Style traditionnel noir et blanc' :
+                                                 style.value === 'striped' ? 'Lignes alternées pour une meilleure lisibilité' :
+                                                 style.value === 'bordered' ? 'Bordures épaisses autour de toutes les cellules' :
+                                                 style.value === 'minimal' ? 'Design épuré avec bordures légères' :
+                                                 'Style moderne avec couleurs vives'}`}
                       >
                         <div className="table-preview">
                           {/* Header row */}
@@ -1136,11 +1201,13 @@ const PropertiesPanel = React.memo(({
                             style={{
                               backgroundColor: style.headerBg,
                               border: `${style.borderWidth}px solid ${style.headerBorder}`,
-                              borderBottom: 'none'
+                              borderBottom: 'none',
+                              color: style.headerTextColor
                             }}
                           >
-                            <div className="table-cell" style={{ borderRight: `${style.borderWidth}px solid ${style.headerBorder}` }}>H</div>
-                            <div className="table-cell">H</div>
+                            <div className="table-cell" style={{ borderRight: `${style.borderWidth}px solid ${style.headerBorder}` }}>Produit</div>
+                            <div className="table-cell" style={{ borderRight: `${style.borderWidth}px solid ${style.headerBorder}` }}>Qté</div>
+                            <div className="table-cell">Prix</div>
                           </div>
                           {/* Data rows */}
                           <div
@@ -1148,22 +1215,26 @@ const PropertiesPanel = React.memo(({
                             style={{
                               backgroundColor: style.altRowBg,
                               border: `${style.borderWidth}px solid ${style.rowBorder}`,
-                              borderTop: 'none'
+                              borderTop: 'none',
+                              color: style.rowTextColor
                             }}
                           >
-                            <div className="table-cell" style={{ borderRight: `${style.borderWidth}px solid ${style.rowBorder}` }}>D</div>
-                            <div className="table-cell">D</div>
+                            <div className="table-cell" style={{ borderRight: `${style.borderWidth}px solid ${style.rowBorder}` }}>Article 1</div>
+                            <div className="table-cell" style={{ borderRight: `${style.borderWidth}px solid ${style.rowBorder}` }}>2</div>
+                            <div className="table-cell">15.99€</div>
                           </div>
                           <div
                             className="table-row"
                             style={{
                               backgroundColor: 'white',
                               border: `${style.borderWidth}px solid ${style.rowBorder}`,
-                              borderTop: 'none'
+                              borderTop: 'none',
+                              color: style.rowTextColor
                             }}
                           >
-                            <div className="table-cell" style={{ borderRight: `${style.borderWidth}px solid ${style.rowBorder}` }}>D</div>
-                            <div className="table-cell">D</div>
+                            <div className="table-cell" style={{ borderRight: `${style.borderWidth}px solid ${style.rowBorder}` }}>Article 2</div>
+                            <div className="table-cell" style={{ borderRight: `${style.borderWidth}px solid ${style.rowBorder}` }}>1</div>
+                            <div className="table-cell">8.50€</div>
                           </div>
                         </div>
                         <span className="style-label">{style.label}</span>

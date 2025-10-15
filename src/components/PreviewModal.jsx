@@ -220,46 +220,64 @@ const PreviewModal = ({
         const getTableStyles = (tableStyle = 'default') => {
           const baseStyles = {
             default: {
-              headerBg: '#f5f5f5',
-              headerBorder: '#ddd',
-              rowBorder: '#eee',
-              altRowBg: '#fafafa',
-              borderWidth: 1
+              headerBg: '#f8fafc',
+              headerBorder: '#e2e8f0',
+              rowBorder: '#f1f5f9',
+              altRowBg: '#fafbfc',
+              borderWidth: 1,
+              headerTextColor: '#334155',
+              rowTextColor: '#475569',
+              shadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
             },
             classic: {
-              headerBg: '#ffffff',
-              headerBorder: '#000000',
-              rowBorder: '#000000',
+              headerBg: '#1e293b',
+              headerBorder: '#334155',
+              rowBorder: '#334155',
               altRowBg: '#ffffff',
-              borderWidth: 1
+              borderWidth: 1.5,
+              headerTextColor: '#ffffff',
+              rowTextColor: '#1e293b',
+              shadow: '0 2px 8px rgba(0, 0, 0, 0.15)'
             },
             striped: {
-              headerBg: '#f8f9fa',
-              headerBorder: '#dee2e6',
-              rowBorder: '#dee2e6',
-              altRowBg: '#e9ecef',
-              borderWidth: 1
+              headerBg: '#3b82f6',
+              headerBorder: '#2563eb',
+              rowBorder: '#e2e8f0',
+              altRowBg: '#f8fafc',
+              borderWidth: 1,
+              headerTextColor: '#ffffff',
+              rowTextColor: '#334155',
+              shadow: '0 1px 4px rgba(59, 130, 246, 0.2)'
             },
             bordered: {
               headerBg: '#ffffff',
-              headerBorder: '#dee2e6',
-              rowBorder: '#dee2e6',
+              headerBorder: '#374151',
+              rowBorder: '#d1d5db',
               altRowBg: '#ffffff',
-              borderWidth: 2
+              borderWidth: 2,
+              headerTextColor: '#111827',
+              rowTextColor: '#374151',
+              shadow: '0 4px 12px rgba(0, 0, 0, 0.1), inset 0 0 0 1px #e5e7eb'
             },
             minimal: {
               headerBg: '#ffffff',
-              headerBorder: '#f1f1f1',
-              rowBorder: '#f8f8f8',
+              headerBorder: '#f3f4f6',
+              rowBorder: '#f9fafb',
               altRowBg: '#ffffff',
-              borderWidth: 0.5
+              borderWidth: 0.5,
+              headerTextColor: '#6b7280',
+              rowTextColor: '#9ca3af',
+              shadow: 'none'
             },
             modern: {
-              headerBg: '#007bff',
-              headerBorder: '#007bff',
-              rowBorder: '#e3f2fd',
-              altRowBg: '#f8f9ff',
-              borderWidth: 1
+              headerBg: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              headerBorder: '#5b21b6',
+              rowBorder: '#e9d5ff',
+              altRowBg: '#faf5ff',
+              borderWidth: 1,
+              headerTextColor: '#ffffff',
+              rowTextColor: '#6b21a8',
+              shadow: '0 4px 20px rgba(102, 126, 234, 0.25)'
             }
           };
           return baseStyles[tableStyle] || baseStyles.default;
@@ -328,16 +346,18 @@ const PreviewModal = ({
             borderRadius: `${(element.borderRadius || 2) * zoom}px`,
             overflow: 'hidden',
             backgroundColor: element.backgroundColor || 'transparent',
-            boxSizing: 'border-box'
+            boxSizing: 'border-box',
+            boxShadow: tableStyles.shadow && element.tableStyle === 'modern' ? `0 4px 8px ${tableStyles.shadow}` : 'none'
           }}>
             {/* En-tête du tableau */}
             {showHeaders && (
               <div style={{
                 display: 'flex',
-                backgroundColor: tableStyles.headerBg,
+                background: tableStyles.gradient || tableStyles.headerBg,
                 borderBottom: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.headerBorder}` : 'none',
                 fontWeight: 'bold',
-                color: element.tableStyle === 'modern' ? '#ffffff' : '#000000'
+                color: tableStyles.textColor || (element.tableStyle === 'modern' ? '#ffffff' : '#000000'),
+                boxShadow: tableStyles.shadow ? `0 2px 4px ${tableStyles.shadow}` : 'none'
               }}>
                 {columns.image && (
                   <div style={{
@@ -407,7 +427,9 @@ const PreviewModal = ({
                 <div key={index} style={{
                   display: 'flex',
                   borderBottom: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.rowBorder}` : 'none',
-                  backgroundColor: element.tableStyle === 'striped' && index % 2 === 1 ? tableStyles.altRowBg : 'transparent'
+                  backgroundColor: element.tableStyle === 'striped' && index % 2 === 1 ? tableStyles.altRowBg : 'transparent',
+                  color: tableStyles.textColor || '#000000',
+                  boxShadow: tableStyles.shadow ? `0 1px 2px ${tableStyles.shadow}` : 'none'
                 }}>
                   {columns.image && (
                     <div style={{
@@ -523,8 +545,9 @@ const PreviewModal = ({
                   justifyContent: 'flex-end',
                   padding: `${4 * zoom}px ${6 * zoom}px`,
                   fontWeight: 'bold',
-                  backgroundColor: tableStyles.headerBg,
-                  color: element.tableStyle === 'modern' ? '#ffffff' : '#000000'
+                  background: tableStyles.gradient || tableStyles.headerBg,
+                  color: tableStyles.textColor || (element.tableStyle === 'modern' ? '#ffffff' : '#000000'),
+                  boxShadow: tableStyles.shadow ? `0 2px 4px ${tableStyles.shadow}` : 'none'
                 }}>
                   <div style={{ width: `${80 * zoom}px`, textAlign: 'right' }}>
                     TOTAL: {total.toFixed(2)}€
