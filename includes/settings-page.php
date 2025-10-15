@@ -1431,21 +1431,21 @@ window.addEventListener('load', function() {
                             <td>
                                 <fieldset>
                                     <label for="pan_with_mouse">
-                                        <input name="pan_with_mouse" type="checkbox" id="pan_with_mouse" value="1" <?php checked(get_option('pdf_builder_pan_with_mouse', true)); ?>>
+                                        <input name="pan_with_mouse" type="checkbox" id="pan_with_mouse" value="1" <?php checked($settings['pan_with_mouse'] ?? true); ?>>
                                         <?php _e('Activer le panoramique avec le bouton central de la souris', 'pdf-builder-pro'); ?>
                                     </label>
                                 </fieldset>
                                 <br>
                                 <fieldset>
                                     <label for="smooth_zoom">
-                                        <input name="smooth_zoom" type="checkbox" id="smooth_zoom" value="1" <?php checked(get_option('pdf_builder_smooth_zoom', true)); ?>>
+                                        <input name="smooth_zoom" type="checkbox" id="smooth_zoom" value="1" <?php checked($settings['smooth_zoom'] ?? true); ?>>
                                         <?php _e('Activer le zoom fluide (animation)', 'pdf-builder-pro'); ?>
                                     </label>
                                 </fieldset>
                                 <br>
                                 <fieldset>
                                     <label for="show_zoom_indicator">
-                                        <input name="show_zoom_indicator" type="checkbox" id="show_zoom_indicator" value="1" <?php checked(get_option('pdf_builder_show_zoom_indicator', true)); ?>>
+                                        <input name="show_zoom_indicator" type="checkbox" id="show_zoom_indicator" value="1" <?php checked($settings['show_zoom_indicator'] ?? true); ?>>
                                         <?php _e('Afficher l\'indicateur de niveau de zoom', 'pdf-builder-pro'); ?>
                                     </label>
                                 </fieldset>
@@ -1456,14 +1456,14 @@ window.addEventListener('load', function() {
                             <td>
                                 <fieldset>
                                     <label for="zoom_with_wheel">
-                                        <input name="zoom_with_wheel" type="checkbox" id="zoom_with_wheel" value="1" <?php checked(get_option('pdf_builder_zoom_with_wheel', true)); ?>>
+                                        <input name="zoom_with_wheel" type="checkbox" id="zoom_with_wheel" value="1" <?php checked($settings['zoom_with_wheel'] ?? true); ?>>
                                         <?php _e('Zoom avec la molette de la souris (Ctrl+molette)', 'pdf-builder-pro'); ?>
                                     </label>
                                 </fieldset>
                                 <br>
                                 <fieldset>
                                     <label for="zoom_to_selection">
-                                        <input name="zoom_to_selection" type="checkbox" id="zoom_to_selection" value="1" <?php checked(get_option('pdf_builder_zoom_to_selection', true)); ?>>
+                                        <input name="zoom_to_selection" type="checkbox" id="zoom_to_selection" value="1" <?php checked($settings['zoom_to_selection'] ?? true); ?>>
                                         <?php _e('Double-clic pour zoomer sur la sélection', 'pdf-builder-pro'); ?>
                                     </label>
                                 </fieldset>
