@@ -484,7 +484,9 @@ const PreviewModal = ({
                 flex: '1',
                 minWidth: '120px'
               } : {
-                marginBottom: index < customerFields.length - 1 ? `${spacing}px` : '0'
+                marginBottom: index < customerFields.length - 1 ? `${spacing}px` : '0',
+                display: 'flex',
+                alignItems: 'flex-start'
               };
 
               return (
@@ -492,9 +494,12 @@ const PreviewModal = ({
                   {showLabels && (
                     <div style={{
                       fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
-                      marginBottom: '2px',
+                      marginBottom: layout === 'horizontal' ? '2px' : '0',
+                      marginRight: layout === 'horizontal' ? '0' : '8px',
                       fontSize: '11px',
-                      opacity: element.showLabel !== false ? 1 : 0.7
+                      opacity: 0.8,
+                      minWidth: layout === 'horizontal' ? 'auto' : '80px',
+                      flexShrink: 0
                     }}>
                       {field === 'name' && 'Client'}
                       {field === 'company' && 'Entreprise'}
@@ -506,7 +511,8 @@ const PreviewModal = ({
                   )}
                   <div style={{
                     whiteSpace: 'pre-line',
-                    fontSize: element.fontSize || 12
+                    fontSize: element.fontSize || 12,
+                    flex: layout === 'horizontal' ? '1' : 'auto'
                   }}>
                     {fieldData}
                   </div>
@@ -517,17 +523,77 @@ const PreviewModal = ({
         );
 
       case 'company_info':
+        // Rendu dynamique des informations entreprise utilisant les propriétés de l'élément
+        const companyFields = element.fields || ['name', 'address', 'phone', 'email'];
+        const showCompanyLabels = element.showLabels !== false;
+        const companyLayout = element.layout || 'vertical';
+        const companyAlignment = element.alignment || 'left';
+        const companySpacing = element.spacing || 3;
+
+        // Données fictives pour l'aperçu (seront remplacées par les vraies données lors de la génération)
+        const companyData = {
+          name: 'ABC Company SARL',
+          address: '456 Avenue des Champs\n75008 Paris\nFrance',
+          phone: '01 23 45 67 89',
+          email: 'contact@abc-company.com'
+        };
+
+        const companyContainerStyle = {
+          padding: '8px',
+          fontSize: element.fontSize || 12,
+          lineHeight: element.lineHeight || '1.4',
+          color: element.color || '#1e293b',
+          fontFamily: element.fontFamily || 'Inter, sans-serif',
+          textAlign: companyAlignment,
+          display: companyLayout === 'horizontal' ? 'flex' : 'block',
+          flexWrap: companyLayout === 'horizontal' ? 'wrap' : 'nowrap',
+          gap: companyLayout === 'horizontal' ? `${companySpacing}px` : '0'
+        };
+
         return (
-          <div style={{
-            padding: '8px',
-            fontSize: '12px',
-            lineHeight: '1.4'
-          }}>
-            <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>ABC Company SARL</div>
-            <div>456 Avenue des Champs</div>
-            <div>75008 Paris</div>
-            <div>France</div>
-            <div>Tél: 01 23 45 67 89</div>
+          <div style={companyContainerStyle}>
+            {companyFields.map((field, index) => {
+              const fieldData = companyData[field];
+              if (!fieldData) return null;
+
+              const companyFieldStyle = companyLayout === 'horizontal' ? {
+                flex: '1',
+                minWidth: '120px'
+              } : {
+                marginBottom: index < companyFields.length - 1 ? `${companySpacing}px` : '0',
+                display: 'flex',
+                alignItems: 'flex-start'
+              };
+
+              return (
+                <div key={field} style={companyFieldStyle}>
+                  {showCompanyLabels && (
+                    <div style={{
+                      fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
+                      marginBottom: companyLayout === 'horizontal' ? '2px' : '0',
+                      marginRight: companyLayout === 'horizontal' ? '0' : '8px',
+                      fontSize: '11px',
+                      opacity: 0.8,
+                      minWidth: companyLayout === 'horizontal' ? 'auto' : '80px',
+                      flexShrink: 0
+                    }}>
+                      {field === 'name' && 'Entreprise'}
+                      {field === 'address' && 'Adresse'}
+                      {field === 'phone' && 'Téléphone'}
+                      {field === 'email' && 'Email'}
+                      :
+                    </div>
+                  )}
+                  <div style={{
+                    whiteSpace: 'pre-line',
+                    fontSize: element.fontSize || 12,
+                    flex: companyLayout === 'horizontal' ? '1' : 'auto'
+                  }}>
+                    {fieldData}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         );
 
@@ -574,14 +640,28 @@ const PreviewModal = ({
         return (
           <div style={{
             padding: '8px',
-            fontSize: '14px',
-            fontWeight: 'bold',
-            color: element.color || '#333'
+            fontSize: element.fontSize || 14,
+            fontWeight: element.fontWeight || 'bold',
+            color: element.color || '#333',
+            fontFamily: element.fontFamily || 'Inter, sans-serif',
+            textAlign: element.textAlign || 'left'
           }}>
-            <div style={{ fontSize: '12px', color: '#666', marginBottom: '2px' }}>
-              N° de commande:
+            {element.showLabel !== false && (
+              <div style={{
+                fontSize: (element.fontSize || 14) * 0.8,
+                color: element.labelColor || '#666',
+                marginBottom: '2px',
+                fontWeight: 'normal'
+              }}>
+                {element.label || 'N° de commande'}:
+              </div>
+            )}
+            <div style={{
+              fontSize: element.fontSize || 14,
+              fontWeight: element.fontWeight || 'bold'
+            }}>
+              {element.prefix || 'CMD-'}{element.orderNumber || '2025-00123'}
             </div>
-            <div>CMD-2025-00123</div>
           </div>
         );
 
