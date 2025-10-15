@@ -1397,6 +1397,8 @@ class PDF_Builder_Admin {
             'default_orientation' => get_option('pdf_builder_default_orientation', 'portrait'),
             'canvas_background_color' => get_option('pdf_builder_canvas_background_color', '#ffffff'),
             'canvas_show_transparency' => get_option('pdf_builder_canvas_show_transparency', false),
+            'container_background_color' => get_option('pdf_builder_container_background_color', '#f8f9fa'),
+            'container_show_transparency' => get_option('pdf_builder_container_show_transparency', false),
 
             // Marges de sécurité
             'margin_top' => get_option('pdf_builder_margin_top', 10),
