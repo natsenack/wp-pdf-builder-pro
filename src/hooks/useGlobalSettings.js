@@ -258,6 +258,20 @@ export const useGlobalSettings = () => {
     }
   }, []);
 
+  // Écouter les mises à jour de paramètres en temps réel
+  useEffect(() => {
+    const handleSettingsUpdate = (event) => {
+      console.log('Réception de la mise à jour des paramètres:', event.detail);
+      refreshSettings();
+    };
+
+    window.addEventListener('pdfBuilderSettingsUpdated', handleSettingsUpdate);
+
+    return () => {
+      window.removeEventListener('pdfBuilderSettingsUpdated', handleSettingsUpdate);
+    };
+  }, []);
+
   // Appliquer les paramètres aux variables CSS
   useEffect(() => {
     const root = document.documentElement;
@@ -408,9 +422,119 @@ export const useGlobalSettings = () => {
     setSettings(defaultSettings);
   };
 
+  // Fonction pour rafraîchir les paramètres depuis WordPress (pour mise à jour en temps réel)
+  const refreshSettings = () => {
+    const wpSettings = getWordPressSettings();
+    const ajaxSettings = getAjaxSettings();
+
+    if (wpSettings) {
+      setSettings(prev => ({
+        ...prev,
+        ...ajaxSettings, // Ajouter ajaxurl et nonce
+
+        // Paramètres généraux du canvas
+        defaultCanvasWidth: wpSettings.default_canvas_width || prev.defaultCanvasWidth,
+        defaultCanvasHeight: wpSettings.default_canvas_height || prev.defaultCanvasHeight,
+        defaultCanvasUnit: wpSettings.default_canvas_unit || prev.defaultCanvasUnit,
+        defaultOrientation: wpSettings.default_orientation || prev.defaultOrientation,
+        canvasBackgroundColor: wpSettings.canvas_background_color || prev.canvasBackgroundColor,
+        canvasShowTransparency: wpSettings.canvas_show_transparency !== undefined ? wpSettings.canvas_show_transparency : prev.canvasShowTransparency,
+        containerBackgroundColor: wpSettings.container_background_color || prev.containerBackgroundColor,
+        containerShowTransparency: wpSettings.container_show_transparency !== undefined ? wpSettings.container_show_transparency : prev.containerShowTransparency,
+
+        // Marges de sécurité
+        marginTop: wpSettings.margin_top || prev.marginTop,
+        marginRight: wpSettings.margin_right || prev.marginRight,
+        marginBottom: wpSettings.margin_bottom || prev.marginBottom,
+        marginLeft: wpSettings.margin_left || prev.marginLeft,
+        showMargins: wpSettings.show_margins !== undefined ? wpSettings.show_margins : prev.showMargins,
+
+        // Paramètres de grille
+        showGrid: wpSettings.show_grid !== undefined ? wpSettings.show_grid : prev.showGrid,
+        gridSize: wpSettings.grid_size || prev.gridSize,
+        gridColor: wpSettings.grid_color || prev.gridColor,
+        gridOpacity: wpSettings.grid_opacity || prev.gridOpacity,
+
+        // Aimantation
+        snapToGrid: wpSettings.snap_to_grid !== undefined ? wpSettings.snap_to_grid : prev.snapToGrid,
+        snapToElements: wpSettings.snap_to_elements !== undefined ? wpSettings.snap_to_elements : prev.snapToElements,
+        snapToMargins: wpSettings.snap_to_margins !== undefined ? wpSettings.snap_to_margins : prev.snapToMargins,
+        snapTolerance: wpSettings.snap_tolerance || prev.snapTolerance,
+
+        // Lignes guides
+        showGuides: wpSettings.show_guides !== undefined ? wpSettings.show_guides : prev.showGuides,
+        lockGuides: wpSettings.lock_guides !== undefined ? wpSettings.lock_guides : prev.lockGuides,
+
+        // Paramètres de zoom et navigation
+        defaultZoom: wpSettings.default_zoom || prev.defaultZoom,
+        minZoom: wpSettings.min_zoom || prev.minZoom,
+        maxZoom: wpSettings.max_zoom || prev.maxZoom,
+        zoomStep: wpSettings.zoom_step || prev.zoomStep,
+        panWithMouse: wpSettings.pan_with_mouse !== undefined ? wpSettings.pan_with_mouse : prev.panWithMouse,
+        smoothZoom: wpSettings.smooth_zoom !== undefined ? wpSettings.smooth_zoom : prev.smoothZoom,
+        showZoomIndicator: wpSettings.show_zoom_indicator !== undefined ? wpSettings.show_zoom_indicator : prev.showZoomIndicator,
+        zoomWithWheel: wpSettings.zoom_with_wheel !== undefined ? wpSettings.zoom_with_wheel : prev.zoomWithWheel,
+        zoomToSelection: wpSettings.zoom_to_selection !== undefined ? wpSettings.zoom_to_selection : prev.zoomToSelection,
+
+        // Paramètres de sélection et manipulation
+        showResizeHandles: true, // Forcer à true pour corriger le bug des poignées
+        handleSize: wpSettings.handle_size || prev.handleSize,
+        handleColor: wpSettings.handle_color || prev.handleColor,
+        enableRotation: wpSettings.enable_rotation !== undefined ? wpSettings.enable_rotation : prev.enableRotation,
+        rotationStep: wpSettings.rotation_step || prev.rotationStep,
+        rotationSnap: wpSettings.rotation_snap !== undefined ? wpSettings.rotation_snap : prev.rotationSnap,
+        multiSelect: wpSettings.multi_select !== undefined ? wpSettings.multi_select : prev.multiSelect,
+        selectAllShortcut: wpSettings.select_all_shortcut !== undefined ? wpSettings.select_all_shortcut : prev.selectAllShortcut,
+        showSelectionBounds: wpSettings.show_selection_bounds !== undefined ? wpSettings.show_selection_bounds : prev.showSelectionBounds,
+        copyPasteEnabled: wpSettings.copy_paste_enabled !== undefined ? wpSettings.copy_paste_enabled : prev.copyPasteEnabled,
+        duplicateOnDrag: wpSettings.duplicate_on_drag !== undefined ? wpSettings.duplicate_on_drag : prev.duplicateOnDrag,
+
+        // Paramètres d'export et qualité
+        exportQuality: wpSettings.export_quality || prev.exportQuality,
+        exportFormat: wpSettings.export_format || prev.exportFormat,
+        compressImages: wpSettings.compress_images !== undefined ? wpSettings.compress_images : prev.compressImages,
+        imageQuality: wpSettings.image_quality || prev.imageQuality,
+        maxImageSize: wpSettings.max_image_size || prev.maxImageSize,
+        includeMetadata: wpSettings.include_metadata !== undefined ? wpSettings.include_metadata : prev.includeMetadata,
+        pdfAuthor: wpSettings.pdf_author || prev.pdfAuthor,
+        pdfSubject: wpSettings.pdf_subject || prev.pdfSubject,
+        autoCrop: wpSettings.auto_crop !== undefined ? wpSettings.auto_crop : prev.autoCrop,
+        embedFonts: wpSettings.embed_fonts !== undefined ? wpSettings.embed_fonts : prev.embedFonts,
+        optimizeForWeb: wpSettings.optimize_for_web !== undefined ? wpSettings.optimize_for_web : prev.optimizeForWeb,
+
+        // Paramètres avancés
+        enableHardwareAcceleration: wpSettings.enable_hardware_acceleration !== undefined ? wpSettings.enable_hardware_acceleration : prev.enableHardwareAcceleration,
+        limitFps: wpSettings.limit_fps !== undefined ? wpSettings.limit_fps : prev.limitFps,
+        maxFps: wpSettings.max_fps || prev.maxFps,
+        autoSaveEnabled: wpSettings.auto_save_enabled !== undefined ? wpSettings.auto_save_enabled : prev.autoSaveEnabled,
+        autoSaveInterval: wpSettings.auto_save_interval || prev.autoSaveInterval,
+        autoSaveVersions: wpSettings.auto_save_versions || prev.autoSaveVersions,
+        undoLevels: wpSettings.undo_levels || prev.undoLevels,
+        redoLevels: wpSettings.redo_levels || prev.redoLevels,
+        enableKeyboardShortcuts: wpSettings.enable_keyboard_shortcuts !== undefined ? wpSettings.enable_keyboard_shortcuts : prev.enableKeyboardShortcuts,
+        debugMode: wpSettings.debug_mode !== undefined ? wpSettings.debug_mode : prev.debugMode,
+        showFps: wpSettings.show_fps !== undefined ? wpSettings.show_fps : prev.showFps,
+
+        // Anciens paramètres (pour compatibilité)
+        resizeHandleSize: wpSettings.canvas_handle_size || prev.resizeHandleSize,
+        resizeHandleColor: wpSettings.canvas_handle_color || prev.resizeHandleColor,
+        resizeHandleBorderColor: wpSettings.canvas_handle_hover_color || prev.resizeHandleBorderColor,
+        selectionBorderWidth: wpSettings.canvas_border_width || prev.selectionBorderWidth,
+        selectionBorderColor: wpSettings.canvas_border_color || prev.selectionBorderColor,
+        selectionBorderSpacing: wpSettings.canvas_border_spacing || prev.selectionBorderSpacing,
+        showResizeHandlesLegacy: wpSettings.canvas_resize_handles_enabled !== undefined ? wpSettings.canvas_resize_handles_enabled : prev.showResizeHandlesLegacy,
+        showResizeZones: wpSettings.canvas_element_borders_enabled !== undefined ? wpSettings.canvas_element_borders_enabled : prev.showResizeZones,
+        defaultTextColor: wpSettings.default_text_color || prev.defaultTextColor,
+        defaultBackgroundColor: wpSettings.default_background_color || prev.defaultBackgroundColor,
+        defaultFontSize: wpSettings.default_font_size || prev.defaultFontSize
+      }));
+    }
+  };
+
   return {
     settings,
     updateSettings,
-    resetToDefaults
+    resetToDefaults,
+    refreshSettings
   };
 };

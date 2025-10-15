@@ -283,6 +283,22 @@ if ((isset($_POST['submit']) || isset($_POST['submit_roles']) || isset($_POST['s
 if ($isAjax) {
     exit; // Sortir immédiatement pour les requêtes AJAX qui n'ont pas de données POST
 }
+
+// Gérer les requêtes AJAX GET pour récupérer les paramètres
+if (isset($_GET['action']) && $_GET['action'] === 'pdf_builder_get_settings' && $isAjax) {
+    // Vérifier le nonce si fourni
+    if (isset($_GET['nonce']) && !wp_verify_nonce($_GET['nonce'], 'pdf_builder_settings')) {
+        wp_send_json_error(__('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro'));
+        exit;
+    }
+
+    // Récupérer les paramètres depuis la base de données
+    $settings = get_option('pdf_builder_settings', []);
+
+    // Retourner les paramètres
+    wp_send_json_success($settings);
+    exit;
+}
 ?>
 
 <!-- Debug script to check React availability -->
@@ -2090,10 +2106,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 var jsonResponse = JSON.parse(data);
                 if (jsonResponse.success) {
                     showNotification(jsonResponse.data || 'Paramètres sauvegardés avec succès !', 'success');
-                    // Recharger la page après 1 seconde pour appliquer les nouveaux paramètres
-                    setTimeout(function() {
-                        window.location.reload();
-                    }, 1000);
+                    // Au lieu de recharger la page, rafraîchir les paramètres en temps réel
+                    refreshGlobalSettings();
                 } else {
                     showNotification(jsonResponse.data || 'Erreur lors de la sauvegarde.', 'error');
                 }
@@ -2101,18 +2115,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Si ce n'est pas du JSON, vérifier le contenu HTML
                 if (data.includes('Paramètres sauvegardés avec succès') || data.includes('notice-success')) {
                     showNotification('Paramètres sauvegardés avec succès !', 'success');
-                    // Recharger la page après 1 seconde pour appliquer les nouveaux paramètres
-                    setTimeout(function() {
-                        window.location.reload();
-                    }, 1000);
+                    // Au lieu de recharger la page, rafraîchir les paramètres en temps réel
+                    refreshGlobalSettings();
                 } else if (data.includes('notice-error') || data.includes('Erreur')) {
                     showNotification('Erreur lors de la sauvegarde.', 'error');
                 } else {
                     showNotification('Paramètres sauvegardés.', 'success');
-                    // Recharger la page après 1 seconde pour appliquer les nouveaux paramètres
-                    setTimeout(function() {
-                        window.location.reload();
-                    }, 1000);
+                    // Au lieu de recharger la page, rafraîchir les paramètres en temps réel
+                    refreshGlobalSettings();
                 }
             }
         })
@@ -2124,8 +2134,43 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Fonction pour afficher les notifications
-    function showNotification(message, type) {
+    // Fonction pour rafraîchir les paramètres globaux en temps réel
+    function refreshGlobalSettings() {
+        console.log('Rafraîchissement des paramètres globaux...');
+        
+        // Faire un appel AJAX pour récupérer les paramètres mis à jour
+        fetch(ajaxurl + '?action=pdf_builder_get_settings', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }
+        })
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+            if (data.success && data.data) {
+                // Mettre à jour la variable globale JavaScript
+                window.pdfBuilderCanvasSettings = data.data;
+                console.log('Paramètres globaux mis à jour:', window.pdfBuilderCanvasSettings);
+                
+                // Déclencher un événement personnalisé pour notifier les composants React
+                var event = new CustomEvent('pdfBuilderSettingsUpdated', {
+                    detail: { settings: data.data }
+                });
+                window.dispatchEvent(event);
+                
+                showNotification('Paramètres appliqués en temps réel !', 'success');
+            } else {
+                console.warn('Erreur lors de la récupération des paramètres:', data);
+                showNotification('Paramètres sauvegardés, mais rafraîchissement échoué.', 'error');
+            }
+        })
+        .catch(function(error) {
+            console.error('Erreur AJAX lors du rafraîchissement:', error);
+            showNotification('Paramètres sauvegardés, mais rafraîchissement échoué.', 'error');
+        });
+    }
         // Supprimer les notifications existantes
         var existingNotifications = document.querySelectorAll('.pdf-builder-notification');
         existingNotifications.forEach(function(notif) {
