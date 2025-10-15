@@ -461,7 +461,7 @@ const PreviewModal = ({
 
       case 'customer_info':
         // Rendu dynamique des informations client utilisant les propriétés de l'élément
-        const customerFields = element.fields || ['name', 'phone', 'address', 'email', 'company'];
+        const customerFields = element.fields || ['name', 'phone', 'address', 'email', 'company', 'tva'];
         const showLabels = element.showLabels !== false;
         const layout = element.layout || 'vertical';
         const alignment = element.alignment || 'left';
@@ -473,7 +473,8 @@ const PreviewModal = ({
           company: 'ABC Company SARL',
           address: '123 Rue de la Paix\n75001 Paris\nFrance',
           email: 'jean.dupont@email.com',
-          phone: '+33 6 12 34 56 78'
+          phone: '+33 6 12 34 56 78',
+          tva: 'FR 12 345 678 901'
         };
 
         const containerStyle = {
@@ -520,6 +521,7 @@ const PreviewModal = ({
                       {field === 'address' && 'Adresse'}
                       {field === 'email' && 'Email'}
                       {field === 'phone' && 'Téléphone'}
+                      {field === 'tva' && 'N° TVA'}
                       :
                     </div>
                   )}
@@ -538,7 +540,7 @@ const PreviewModal = ({
 
       case 'company_info':
         // Rendu dynamique des informations entreprise utilisant les propriétés de l'élément
-        const companyFields = element.fields || ['name', 'address', 'phone', 'email'];
+        const companyFields = element.fields || ['name', 'address', 'phone', 'email', 'tva'];
         const showCompanyLabels = element.showLabels !== false;
         const companyLayout = element.layout || 'vertical';
         const companyAlignment = element.alignment || 'left';
@@ -549,7 +551,8 @@ const PreviewModal = ({
           name: 'ABC Company SARL',
           address: '456 Avenue des Champs\n75008 Paris\nFrance',
           phone: '01 23 45 67 89',
-          email: 'contact@abc-company.com'
+          email: 'contact@abc-company.com',
+          tva: 'FR 98 765 432 109'
         };
 
         const companyContainerStyle = {
@@ -595,6 +598,7 @@ const PreviewModal = ({
                       {field === 'address' && 'Adresse'}
                       {field === 'phone' && 'Téléphone'}
                       {field === 'email' && 'Email'}
+                      {field === 'tva' && 'N° TVA'}
                       :
                     </div>
                   )}
