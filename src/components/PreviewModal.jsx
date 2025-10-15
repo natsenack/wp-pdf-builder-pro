@@ -82,16 +82,28 @@ const PreviewModal = ({
 
   // Fonction pour rendre le contenu du canvas en HTML
   const renderCanvasContent = (elements) => {
+    console.log('🔍 renderCanvasContent called with', elements?.length || 0, 'elements');
+    console.log('🔍 Zoom value:', zoom, 'Type:', typeof zoom);
+
     if (!elements || elements.length === 0) {
+      console.log('📭 No elements to render');
       return <div style={{ padding: '20px', textAlign: 'center', color: '#666' }}>Aucun élément à afficher</div>;
     }
+
+    // Vérifier que zoom est valide
+    const validZoom = typeof zoom === 'number' && !isNaN(zoom) && zoom > 0 ? zoom : 1;
+    if (validZoom !== zoom) {
+      console.warn('⚠️ Invalid zoom value, using default:', zoom, '->', validZoom);
+    }
+
+    console.log('🎨 Rendering canvas content with elements:', elements.map(e => ({ id: e.id, type: e.type })));
 
     return (
       <div
         style={{
           position: 'relative',
-          width: canvasWidth * zoom,
-          height: canvasHeight * zoom,
+          width: canvasWidth * validZoom,
+          height: canvasHeight * validZoom,
           backgroundColor: 'white',
           border: '1px solid #e2e8f0',
           borderRadius: '4px',
@@ -100,19 +112,30 @@ const PreviewModal = ({
         }}
       >
         {elements.map((element, index) => {
+          console.log('🔸 Rendering element', index, element.id, element.type);
+
+          // Vérifier que les propriétés essentielles existent
+          if (typeof element.x !== 'number' || typeof element.y !== 'number' ||
+              typeof element.width !== 'number' || typeof element.height !== 'number') {
+            console.error('❌ Element missing required properties:', element);
+            return null;
+          }
+
           const elementPadding = element.padding || 0;
           const baseStyle = {
             position: 'absolute',
-            left: (element.x + elementPadding) * zoom,
-            top: (element.y + elementPadding) * zoom,
-            width: Math.max(1, (element.width - (elementPadding * 2))) * zoom,
-            height: Math.max(1, (element.height - (elementPadding * 2))) * zoom,
+            left: (element.x + elementPadding) * validZoom,
+            top: (element.y + elementPadding) * validZoom,
+            width: Math.max(1, (element.width - (elementPadding * 2))) * validZoom,
+            height: Math.max(1, (element.height - (elementPadding * 2))) * validZoom,
             zIndex: element.zIndex || index + 1
           };
 
+          console.log('📐 Element style:', baseStyle);
+
           return (
             <div key={index} style={baseStyle}>
-              {renderSpecialElement(element, zoom)}
+              {renderSpecialElement(element, validZoom)}
             </div>
           );
         })}
@@ -122,6 +145,19 @@ const PreviewModal = ({
 
   // Fonction pour rendre un élément spécial (basée sur CanvasElement.jsx)
   const renderSpecialElement = (element, zoom) => {
+    console.log('🎯 renderSpecialElement called for type:', element.type, 'with props:', {
+      id: element.id,
+      x: element.x,
+      y: element.y,
+      width: element.width,
+      height: element.height,
+      content: element.content?.substring(0, 50) + (element.content?.length > 50 ? '...' : ''),
+      text: element.text?.substring(0, 50) + (element.text?.length > 50 ? '...' : ''),
+      src: element.src?.substring(0, 50) + (element.src?.length > 50 ? '...' : ''),
+      fillColor: element.fillColor,
+      color: element.color
+    });
+
     switch (element.type) {
       case 'text':
         return (
