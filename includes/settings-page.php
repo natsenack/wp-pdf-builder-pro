@@ -509,7 +509,7 @@ window.addEventListener('load', function() {
                             $address = trim(get_option('woocommerce_store_address') . ' ' . get_option('woocommerce_store_address_2') . ' ' . get_option('woocommerce_store_postcode') . ' ' . get_option('woocommerce_store_city'));
                             echo esc_html($address ?: __('Non configurée', 'pdf-builder-pro'));
                         ?> <em>(<?php _e('WooCommerce > Réglages > Général', 'pdf-builder-pro'); ?>)</em></li>
-                        <li><strong><?php _e('Téléphone', 'pdf-builder-pro'); ?>:</strong> <?php echo esc_html(get_option('woocommerce_store_phone') ?: __('Non configuré', 'pdf-builder-pro')); ?> <em>(<?php _e('WooCommerce > Réglages > Général', 'pdf-builder-pro'); ?>)</em></li>
+                        <li><strong><?php _e('Téléphone', 'pdf-builder-pro'); ?>:</strong> <?php echo esc_html(get_option('woocommerce_phone') ?: __('Non configuré', 'pdf-builder-pro')); ?> <em>(<?php _e('WooCommerce > Réglages > Général', 'pdf-builder-pro'); ?>)</em></li>
                         <li><strong><?php _e('Email', 'pdf-builder-pro'); ?>:</strong> <?php echo esc_html(get_option('woocommerce_email_from_address') ?: __('Non configuré', 'pdf-builder-pro')); ?> <em>(<?php _e('WooCommerce > Réglages > Emails', 'pdf-builder-pro'); ?>)</em></li>
                     </ul>
                 </div>

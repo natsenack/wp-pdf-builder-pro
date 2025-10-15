@@ -1090,7 +1090,7 @@ class PDF_Builder_Pro_Generator {
         }
 
         if (in_array('phone', $fields)) {
-            $phone = get_option('woocommerce_store_phone');
+            $phone = get_option('woocommerce_phone');
             if (!empty($phone)) {
                 $label = $showLabels ? 'Téléphone : ' : '';
                 if ($labelStyle === 'uppercase') $label = strtoupper($label);
