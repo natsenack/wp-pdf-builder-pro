@@ -524,7 +524,7 @@ function pdf_builder_ajax_validate_preview() {
         file_put_contents($raw_debug_file, "=== END RAW ===\n\n", FILE_APPEND);
 
         // Récupérer les données JSON
-        $json_data = isset($_POST['elements']) ? $_POST['elements'] : '';
+        $json_data = isset($_POST['elements']) ? wp_unslash($_POST['elements']) : '';
         if (empty($json_data)) {
             wp_send_json_error('No elements data provided');
             return;
