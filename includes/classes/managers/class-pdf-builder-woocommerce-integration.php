@@ -809,28 +809,33 @@ class PDF_Builder_WooCommerce_Integration {
 
             error_log('✅ PDF BUILDER - ajax_preview_order_pdf: Classe PDF_Builder_Pro_Generator trouvée');
 
+            $order_status = $order->get_status();
             error_log('🚨 PDF BUILDER - ajax_preview_order_pdf: START - Order ID: ' . $order_id);
             error_log('🟡 PDF BUILDER - ajax_preview_order_pdf: Order status: ' . $order_status);
 
-            // Vérifier s'il y a un mapping spécifique pour ce statut de commande
-            $status_templates = get_option('pdf_builder_order_status_templates', []);
-            $status_key = 'wc-' . $order_status;
-            $mapped_template = null;
-
-            if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
-                $mapped_template = $wpdb->get_row($wpdb->prepare(
-                    "SELECT id, name FROM $table_templates WHERE id = %d",
-                    $status_templates[$status_key]
-                ), ARRAY_A);
-                error_log('✅ PDF BUILDER - ajax_preview_order_pdf: Found specific mapping for status ' . $order_status . ': ' . ($mapped_template ? $mapped_template['name'] : 'none'));
-            }
-
-            // Si pas de mapping spécifique, utiliser la logique de détection automatique
-            $template_id = null;
-            if ($mapped_template) {
-                $template_id = $mapped_template['id'];
-                error_log('✅ PDF BUILDER - ajax_preview_order_pdf: Using mapped template: ' . $mapped_template['name'] . ' (ID: ' . $template_id . ')');
+            // Si un template_id est explicitement passé, l'utiliser en priorité
+            if ($template_id && $template_id > 0) {
+                error_log('✅ PDF BUILDER - ajax_preview_order_pdf: Using explicitly provided template_id: ' . $template_id);
             } else {
+                // Vérifier s'il y a un mapping spécifique pour ce statut de commande
+                $status_templates = get_option('pdf_builder_order_status_templates', []);
+                $status_key = 'wc-' . $order_status;
+                $mapped_template = null;
+
+                if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
+                    $mapped_template = $wpdb->get_row($wpdb->prepare(
+                        "SELECT id, name FROM $table_templates WHERE id = %d",
+                        $status_templates[$status_key]
+                    ), ARRAY_A);
+                    error_log('✅ PDF BUILDER - ajax_preview_order_pdf: Found specific mapping for status ' . $order_status . ': ' . ($mapped_template ? $mapped_template['name'] : 'none'));
+                }
+
+                // Si pas de mapping spécifique, utiliser la logique de détection automatique
+                $template_id = null;
+                if ($mapped_template) {
+                    $template_id = $mapped_template['id'];
+                    error_log('✅ PDF BUILDER - ajax_preview_order_pdf: Using mapped template: ' . $mapped_template['name'] . ' (ID: ' . $template_id . ')');
+                } else {
                 // Logique de détection automatique basée sur le statut
                 $keywords = [];
                 switch ($order_status) {
@@ -894,6 +899,7 @@ class PDF_Builder_WooCommerce_Integration {
                         error_log('❌ PDF BUILDER - ajax_preview_order_pdf: No templates found in database');
                     }
                 }
+            }
             }
 
             $generator = new PDF_Builder_Pro_Generator();

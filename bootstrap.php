@@ -108,6 +108,7 @@ function pdf_builder_load_bootstrap() {
         // Enregistrer les actions AJAX pour WooCommerce immédiatement
         add_action('wp_ajax_pdf_builder_generate_order_pdf', 'pdf_builder_ajax_generate_order_pdf_fallback', 1);
         add_action('wp_ajax_pdf_builder_preview_order_pdf', 'pdf_builder_ajax_preview_order_pdf_fallback', 1);
+        add_action('wp_ajax_pdf_builder_preview_synchronized', 'pdf_builder_ajax_preview_synchronized', 1);
         add_action('wp_ajax_pdf_builder_save_order_canvas', 'pdf_builder_ajax_save_order_canvas_fallback', 1);
         add_action('wp_ajax_pdf_builder_get_fresh_nonce', 'pdf_builder_ajax_get_fresh_nonce', 1);
         add_action('wp_ajax_pdf_builder_validate_preview', 'pdf_builder_ajax_validate_preview');
