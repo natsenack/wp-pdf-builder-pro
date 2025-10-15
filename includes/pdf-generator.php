@@ -1905,9 +1905,6 @@ class PDF_Builder_Pro_Generator {
      */
     public function generate_simple_preview($order_id, $template_id = null) {
         try {
-            // Initialiser TCPDF
-            $this->initialize_tcpdf();
-
             // Récupérer la commande WooCommerce
             $this->order = wc_get_order($order_id);
             if (!$this->order) {
@@ -1947,6 +1944,12 @@ class PDF_Builder_Pro_Generator {
 
                 error_log('✅ PDF BUILDER - generate_simple_preview: PDF generated with template, content size: ' . strlen($pdf_content) . ' bytes');
 
+                // Vérifier que nous avons du contenu PDF valide
+                if (empty($pdf_content) || strlen($pdf_content) < 100) {
+                    error_log('❌ PDF BUILDER - generate_simple_preview: PDF content too small or empty');
+                    throw new Exception('Contenu PDF invalide généré');
+                }
+
                 // Utiliser le répertoire uploads standard au lieu d'un sous-répertoire
                 $upload_dir = wp_upload_dir();
                 $cache_dir = $upload_dir['basedir'];
@@ -1982,6 +1985,9 @@ class PDF_Builder_Pro_Generator {
             } else {
                 // Générer le contenu simplifié (fallback)
                 error_log('🟡 PDF BUILDER - generate_simple_preview: No template provided, using simple content');
+
+                // Initialiser TCPDF pour le contenu simple
+                $this->initialize_tcpdf();
 
                 // Configuration de base du PDF
                 $this->pdf->SetCreator('PDF Builder Pro');
