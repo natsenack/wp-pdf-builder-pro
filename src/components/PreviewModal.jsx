@@ -446,20 +446,73 @@ const PreviewModal = ({
         );
 
       case 'customer_info':
+        // Rendu dynamique des informations client utilisant les propriétés de l'élément
+        const customerFields = element.fields || ['name', 'company', 'address', 'email', 'phone'];
+        const showLabels = element.showLabels !== false;
+        const layout = element.layout || 'vertical';
+        const alignment = element.alignment || 'left';
+        const spacing = element.spacing || 3;
+
+        // Données fictives pour l'aperçu (seront remplacées par les vraies données lors de la génération)
+        const customerData = {
+          name: 'Jean Dupont',
+          company: 'ABC Company SARL',
+          address: '123 Rue de la Paix\n75001 Paris\nFrance',
+          email: 'jean.dupont@email.com',
+          phone: '+33 6 12 34 56 78'
+        };
+
+        const containerStyle = {
+          padding: '8px',
+          fontSize: element.fontSize || 12,
+          lineHeight: element.lineHeight || '1.4',
+          color: element.color || '#1e293b',
+          fontFamily: element.fontFamily || 'Inter, sans-serif',
+          textAlign: alignment,
+          display: layout === 'horizontal' ? 'flex' : 'block',
+          flexWrap: layout === 'horizontal' ? 'wrap' : 'nowrap',
+          gap: layout === 'horizontal' ? `${spacing}px` : '0'
+        };
+
         return (
-          <div style={{
-            padding: '8px',
-            fontSize: '12px',
-            lineHeight: '1.4'
-          }}>
-            <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>Client</div>
-            <div>Jean Dupont</div>
-            <div>ABC Company SARL</div>
-            <div>123 Rue de la Paix</div>
-            <div>75001 Paris</div>
-            <div>France</div>
-            <div style={{ marginTop: '4px' }}>Email: jean.dupont@email.com</div>
-            <div>Téléphone: +33 6 12 34 56 78</div>
+          <div style={containerStyle}>
+            {customerFields.map((field, index) => {
+              const fieldData = customerData[field];
+              if (!fieldData) return null;
+
+              const fieldStyle = layout === 'horizontal' ? {
+                flex: '1',
+                minWidth: '120px'
+              } : {
+                marginBottom: index < customerFields.length - 1 ? `${spacing}px` : '0'
+              };
+
+              return (
+                <div key={field} style={fieldStyle}>
+                  {showLabels && (
+                    <div style={{
+                      fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
+                      marginBottom: '2px',
+                      fontSize: '11px',
+                      opacity: element.showLabel !== false ? 1 : 0.7
+                    }}>
+                      {field === 'name' && 'Client'}
+                      {field === 'company' && 'Entreprise'}
+                      {field === 'address' && 'Adresse'}
+                      {field === 'email' && 'Email'}
+                      {field === 'phone' && 'Téléphone'}
+                      :
+                    </div>
+                  )}
+                  <div style={{
+                    whiteSpace: 'pre-line',
+                    fontSize: element.fontSize || 12
+                  }}>
+                    {fieldData}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         );
 
