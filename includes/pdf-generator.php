@@ -863,7 +863,7 @@ class PDF_Builder_Pro_Generator {
         $spacing = isset($element['spacing']) ? $element['spacing'] : 8;
         $color = isset($element['color']) ? $element['color'] : '#333333';
         $fontSize = isset($element['fontSize']) ? $element['fontSize'] : 12;
-        $fontFamily = isset($element['fontFamily']) ? $element['fontFamily'] : 'helvetica';
+        $fontFamily = isset($element['fontFamily']) ? $this->map_font_family($element['fontFamily']) : 'helvetica';
 
         // Appliquer la couleur du texte
         if ($color && $color !== 'transparent') {
@@ -1031,7 +1031,7 @@ class PDF_Builder_Pro_Generator {
         $spacing = isset($element['spacing']) ? $element['spacing'] : 4;
         $color = isset($element['color']) ? $element['color'] : '#333333';
         $fontSize = isset($element['fontSize']) ? $element['fontSize'] : 12;
-        $fontFamily = isset($element['fontFamily']) ? $element['fontFamily'] : 'helvetica';
+        $fontFamily = isset($element['fontFamily']) ? $this->map_font_family($element['fontFamily']) : 'helvetica';
 
         // Appliquer la couleur du texte
         if ($color && $color !== 'transparent') {
@@ -1731,15 +1731,8 @@ class PDF_Builder_Pro_Generator {
 
         $total = $subtotal + $shipping + $taxes - $discount;
 
-        // Déterminer la colonne de droite pour les totaux
-        $rightmost_col_index = 0;
-        $col_keys = array_keys($columns);
-        for ($i = count($col_keys) - 1; $i >= 0; $i--) {
-            if ($columns[$col_keys[$i]]) {
-                $rightmost_col_index = array_search($col_keys[$i], array_keys($columns));
-                break;
-            }
-        }
+        // Déterminer la colonne de droite pour les totaux (dernière colonne visible)
+        $rightmost_col_index = count($col_widths) - 1;
 
         $total_x = $x;
         for ($i = 0; $i < $rightmost_col_index; $i++) {
