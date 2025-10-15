@@ -1452,39 +1452,201 @@ class PDF_Builder_Pro_Generator {
                 'border_width' => 0.5
             ],
             'classic' => [
-                'header_bg' => ['r' => 255, 'g' => 255, 'b' => 255],
-                'header_border' => ['r' => 0, 'g' => 0, 'b' => 0],
-                'row_border' => ['r' => 0, 'g' => 0, 'b' => 0],
+                'header_bg' => ['r' => 30, 'g' => 41, 'b' => 59],
+                'header_border' => ['r' => 51, 'g' => 65, 'b' => 85],
+                'row_border' => ['r' => 51, 'g' => 65, 'b' => 85],
                 'alt_row_bg' => ['r' => 255, 'g' => 255, 'b' => 255],
-                'border_width' => 0.5
+                'border_width' => 1.5
             ],
             'striped' => [
-                'header_bg' => ['r' => 248, 'g' => 249, 'b' => 250],
-                'header_border' => ['r' => 222, 'g' => 226, 'b' => 230],
-                'row_border' => ['r' => 222, 'g' => 226, 'b' => 230],
-                'alt_row_bg' => ['r' => 233, 'g' => 236, 'b' => 239],
-                'border_width' => 0.5
+                'header_bg' => ['r' => 59, 'g' => 130, 'b' => 246],
+                'header_border' => ['r' => 37, 'g' => 99, 'b' => 235],
+                'row_border' => ['r' => 226, 'g' => 232, 'b' => 240],
+                'alt_row_bg' => ['r' => 248, 'g' => 250, 'b' => 252],
+                'border_width' => 1
             ],
             'bordered' => [
                 'header_bg' => ['r' => 255, 'g' => 255, 'b' => 255],
-                'header_border' => ['r' => 222, 'g' => 226, 'b' => 230],
-                'row_border' => ['r' => 222, 'g' => 226, 'b' => 230],
+                'header_border' => ['r' => 55, 'g' => 65, 'b' => 81],
+                'row_border' => ['r' => 209, 'g' => 213, 'b' => 219],
                 'alt_row_bg' => ['r' => 255, 'g' => 255, 'b' => 255],
-                'border_width' => 1
+                'border_width' => 2
             ],
             'minimal' => [
                 'header_bg' => ['r' => 255, 'g' => 255, 'b' => 255],
-                'header_border' => ['r' => 241, 'g' => 241, 'b' => 241],
-                'row_border' => ['r' => 248, 'g' => 248, 'b' => 248],
-                'alt_row_bg' => ['r' => 255, 'g' => 255, 'b' => 255],
-                'border_width' => 0.25
-            ],
-            'modern' => [
-                'header_bg' => ['r' => 0, 'g' => 123, 'b' => 255],
-                'header_border' => ['r' => 0, 'g' => 123, 'b' => 255],
-                'row_border' => ['r' => 227, 'g' => 242, 'b' => 253],
+                'header_border' => ['r' => 209, 'g' => 213, 'b' => 219],
+                'row_border' => ['r' => 243, 'g' => 244, 'b' => 246],
                 'alt_row_bg' => ['r' => 255, 'g' => 255, 'b' => 255],
                 'border_width' => 0.5
+            ],
+            'modern' => [
+                'header_bg' => ['r' => 102, 'g' => 126, 'b' => 234], // Couleur moyenne du dégradé
+                'header_border' => ['r' => 91, 'g' => 33, 'b' => 182],
+                'row_border' => ['r' => 233, 'g' => 213, 'b' => 255],
+                'alt_row_bg' => ['r' => 250, 'g' => 245, 'b' => 255],
+                'border_width' => 1
+            ],
+            // Nouveaux styles colorés
+            'blue_ocean' => [
+                'header_bg' => ['r' => 30, 'g' => 58, 'b' => 138], // Couleur moyenne du dégradé
+                'header_border' => ['r' => 30, 'g' => 64, 'b' => 175],
+                'row_border' => ['r' => 219, 'g' => 234, 'b' => 254],
+                'alt_row_bg' => ['r' => 239, 'g' => 246, 'b' => 255],
+                'border_width' => 1.5
+            ],
+            'emerald_forest' => [
+                'header_bg' => ['r' => 6, 'g' => 78, 'b' => 59], // Couleur moyenne du dégradé
+                'header_border' => ['r' => 6, 'g' => 95, 'b' => 70],
+                'row_border' => ['r' => 209, 'g' => 250, 'b' => 229],
+                'alt_row_bg' => ['r' => 236, 'g' => 253, 'b' => 245],
+                'border_width' => 1.5
+            ],
+            'sunset_orange' => [
+                'header_bg' => ['r' => 154, 'g' => 52, 'b' => 18], // Couleur moyenne du dégradé
+                'header_border' => ['r' => 194, 'g' => 65, 'b' => 12],
+                'row_border' => ['r' => 254, 'g' => 215, 'b' => 170],
+                'alt_row_bg' => ['r' => 255, 'g' => 247, 'b' => 237],
+                'border_width' => 1.5
+            ],
+            'royal_purple' => [
+                'header_bg' => ['r' => 88, 'g' => 28, 'b' => 135], // Couleur moyenne du dégradé
+                'header_border' => ['r' => 124, 'g' => 58, 'b' => 237],
+                'row_border' => ['r' => 233, 'g' => 213, 'b' => 255],
+                'alt_row_bg' => ['r' => 250, 'g' => 245, 'b' => 255],
+                'border_width' => 1.5
+            ],
+            'rose_pink' => [
+                'header_bg' => ['r' => 190, 'g' => 24, 'b' => 93], // Couleur moyenne du dégradé
+                'header_border' => ['r' => 219, 'g' => 39, 'b' => 119],
+                'row_border' => ['r' => 252, 'g' => 231, 'b' => 243],
+                'alt_row_bg' => ['r' => 253, 'g' => 244, 'b' => 248],
+                'border_width' => 1.5
+            ],
+            'teal_aqua' => [
+                'header_bg' => ['r' => 15, 'g' => 118, 'b' => 110], // Couleur moyenne du dégradé
+                'header_border' => ['r' => 13, 'g' => 148, 'b' => 136],
+                'row_border' => ['r' => 204, 'g' => 251, 'b' => 241],
+                'alt_row_bg' => ['r' => 240, 'g' => 253, 'b' => 250],
+                'border_width' => 1.5
+            ],
+            'crimson_red' => [
+                'header_bg' => ['r' => 153, 'g' => 27, 'b' => 27], // Couleur moyenne du dégradé
+                'header_border' => ['r' => 220, 'g' => 38, 'b' => 38],
+                'row_border' => ['r' => 254, 'g' => 202, 'b' => 202],
+                'alt_row_bg' => ['r' => 254, 'g' => 242, 'b' => 242],
+                'border_width' => 1.5
+            ],
+            'amber_gold' => [
+                'header_bg' => ['r' => 146, 'g' => 64, 'b' => 14], // Couleur moyenne du dégradé
+                'header_border' => ['r' => 217, 'g' => 119, 'b' => 6],
+                'row_border' => ['r' => 254, 'g' => 243, 'b' => 199],
+                'alt_row_bg' => ['r' => 254, 'g' => 243, 'b' => 235],
+                'border_width' => 1.5
+            ],
+            'indigo_night' => [
+                'header_bg' => ['r' => 49, 'g' => 46, 'b' => 129], // Couleur moyenne du dégradé
+                'header_border' => ['r' => 67, 'g' => 56, 'b' => 202],
+                'row_border' => ['r' => 224, 'g' => 231, 'b' => 255],
+                'alt_row_bg' => ['r' => 238, 'g' => 242, 'b' => 255],
+                'border_width' => 1.5
+            ],
+            'slate_gray' => [
+                'header_bg' => ['r' => 55, 'g' => 65, 'b' => 81], // Couleur moyenne du dégradé
+                'header_border' => ['r' => 75, 'g' => 85, 'b' => 99],
+                'row_border' => ['r' => 243, 'g' => 244, 'b' => 246],
+                'alt_row_bg' => ['r' => 249, 'g' => 250, 'b' => 251],
+                'border_width' => 1.5
+            ],
+            'coral_sunset' => [
+                'header_bg' => ['r' => 194, 'g' => 65, 'b' => 12], // Couleur moyenne du dégradé
+                'header_border' => ['r' => 234, 'g' => 88, 'b' => 12],
+                'row_border' => ['r' => 254, 'g' => 215, 'b' => 215],
+                'alt_row_bg' => ['r' => 254, 'g' => 247, 'b' => 247],
+                'border_width' => 1.5
+            ],
+            'mint_green' => [
+                'header_bg' => ['r' => 6, 'g' => 95, 'b' => 70], // Couleur moyenne du dégradé
+                'header_border' => ['r' => 4, 'g' => 120, 'b' => 87],
+                'row_border' => ['r' => 209, 'g' => 250, 'b' => 229],
+                'alt_row_bg' => ['r' => 236, 'g' => 253, 'b' => 245],
+                'border_width' => 1.5
+            ],
+            'violet_dream' => [
+                'header_bg' => ['r' => 109, 'g' => 40, 'b' => 217], // Couleur moyenne du dégradé
+                'header_border' => ['r' => 139, 'g' => 92, 'b' => 246],
+                'row_border' => ['r' => 237, 'g' => 233, 'b' => 254],
+                'alt_row_bg' => ['r' => 245, 'g' => 243, 'b' => 255],
+                'border_width' => 1.5
+            ],
+            'sky_blue' => [
+                'header_bg' => ['r' => 3, 'g' => 105, 'b' => 161], // Couleur moyenne du dégradé
+                'header_border' => ['r' => 2, 'g' => 132, 'b' => 199],
+                'row_border' => ['r' => 186, 'g' => 230, 'b' => 253],
+                'alt_row_bg' => ['r' => 240, 'g' => 249, 'b' => 255],
+                'border_width' => 1.5
+            ],
+            'forest_green' => [
+                'header_bg' => ['r' => 20, 'g' => 83, 'b' => 45], // Couleur moyenne du dégradé
+                'header_border' => ['r' => 21, 'g' => 128, 'b' => 61],
+                'row_border' => ['r' => 187, 'g' => 247, 'b' => 208],
+                'alt_row_bg' => ['r' => 240, 'g' => 253, 'b' => 244],
+                'border_width' => 1.5
+            ],
+            'ruby_red' => [
+                'header_bg' => ['r' => 185, 'g' => 28, 'b' => 28], // Couleur moyenne du dégradé
+                'header_border' => ['r' => 220, 'g' => 38, 'b' => 38],
+                'row_border' => ['r' => 254, 'g' => 202, 'b' => 202],
+                'alt_row_bg' => ['r' => 254, 'g' => 242, 'b' => 242],
+                'border_width' => 1.5
+            ],
+            'golden_yellow' => [
+                'header_bg' => ['r' => 161, 'g' => 98, 'b' => 7], // Couleur moyenne du dégradé
+                'header_border' => ['r' => 202, 'g' => 138, 'b' => 4],
+                'row_border' => ['r' => 254, 'g' => 240, 'b' => 138],
+                'alt_row_bg' => ['r' => 254, 'g' => 252, 'b' => 232],
+                'border_width' => 1.5
+            ],
+            'navy_blue' => [
+                'header_bg' => ['r' => 30, 'g' => 58, 'b' => 138], // Couleur moyenne du dégradé
+                'header_border' => ['r' => 30, 'g' => 64, 'b' => 175],
+                'row_border' => ['r' => 219, 'g' => 234, 'b' => 254],
+                'alt_row_bg' => ['r' => 239, 'g' => 246, 'b' => 255],
+                'border_width' => 1.5
+            ],
+            'burgundy_wine' => [
+                'header_bg' => ['r' => 127, 'g' => 29, 'b' => 29], // Couleur moyenne du dégradé
+                'header_border' => ['r' => 153, 'g' => 27, 'b' => 27],
+                'row_border' => ['r' => 254, 'g' => 202, 'b' => 202],
+                'alt_row_bg' => ['r' => 254, 'g' => 242, 'b' => 242],
+                'border_width' => 1.5
+            ],
+            'lavender_purple' => [
+                'header_bg' => ['r' => 124, 'g' => 45, 'b' => 18], // Couleur moyenne du dégradé
+                'header_border' => ['r' => 147, 'g' => 51, 'b' => 234],
+                'row_border' => ['r' => 233, 'g' => 213, 'b' => 255],
+                'alt_row_bg' => ['r' => 250, 'g' => 245, 'b' => 255],
+                'border_width' => 1.5
+            ],
+            'ocean_teal' => [
+                'header_bg' => ['r' => 19, 'g' => 78, 'b' => 74], // Couleur moyenne du dégradé
+                'header_border' => ['r' => 15, 'g' => 118, 'b' => 110],
+                'row_border' => ['r' => 204, 'g' => 251, 'b' => 241],
+                'alt_row_bg' => ['r' => 240, 'g' => 253, 'b' => 250],
+                'border_width' => 1.5
+            ],
+            'cherry_blossom' => [
+                'header_bg' => ['r' => 190, 'g' => 24, 'b' => 93], // Couleur moyenne du dégradé
+                'header_border' => ['r' => 219, 'g' => 39, 'b' => 119],
+                'row_border' => ['r' => 252, 'g' => 231, 'b' => 243],
+                'alt_row_bg' => ['r' => 253, 'g' => 244, 'b' => 248],
+                'border_width' => 1.5
+            ],
+            'autumn_orange' => [
+                'header_bg' => ['r' => 154, 'g' => 52, 'b' => 18], // Couleur moyenne du dégradé
+                'header_border' => ['r' => 234, 'g' => 88, 'b' => 12],
+                'row_border' => ['r' => 254, 'g' => 215, 'b' => 170],
+                'alt_row_bg' => ['r' => 255, 'g' => 247, 'b' => 237],
+                'border_width' => 1.5
             ]
         ];
 
