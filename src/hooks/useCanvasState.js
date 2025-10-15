@@ -513,10 +513,21 @@ export const useCanvasState = ({
   }, [history, selection]);
 
   const saveTemplate = useCallback(async () => {
+    console.log('🔄 PDF Builder SAVE - Bouton "modifier" cliqué');
+    console.log('📊 PDF Builder SAVE - État actuel:', {
+      templateId,
+      elementsCount: elements.length,
+      isSaving: loadingStates.saving,
+      canvasWidth,
+      canvasHeight
+    });
+
     if (loadingStates.saving) {
+      console.log('⚠️ PDF Builder SAVE - Sauvegarde déjà en cours, annulation');
       return;
     }
 
+    console.log('🚀 PDF Builder SAVE - Démarrage de la sauvegarde');
     setLoadingStates(prev => ({ ...prev, saving: true }));
 
     // Déterminer si c'est un template existant
@@ -880,16 +891,20 @@ export const useCanvasState = ({
       // Nettoyer tous les éléments avec protection contre les erreurs
       let cleanedElements = [];
       try {
+        console.log('🧹 PDF Builder SAVE - Nettoyage des éléments commencé, éléments bruts:', elements.length);
         cleanedElements = elements
           .filter(element => element && typeof element === 'object' && element.id && element.type) // Filtrer les éléments invalides
           .map(cleanElementForSerialization)
           .filter(element => element && element.id && element.type); // Filtrer après nettoyage
 
+        console.log('✅ PDF Builder SAVE - Nettoyage terminé, éléments nettoyés:', cleanedElements.length);
+
         // Test de sérialisation de tous les éléments
         JSON.stringify(cleanedElements);
+        console.log('✅ PDF Builder SAVE - Test de sérialisation réussi');
       } catch (e) {
-        console.error('Erreur lors du nettoyage des éléments:', e);
-        console.error('Éléments originaux qui ont causé l\'erreur:', elements);
+        console.error('❌ PDF Builder SAVE - Erreur lors du nettoyage des éléments:', e);
+        console.error('❌ PDF Builder SAVE - Éléments originaux qui ont causé l\'erreur:', elements);
         // En cas d'erreur, utiliser un tableau vide pour éviter les crashes
         cleanedElements = [];
       }
@@ -967,7 +982,7 @@ export const useCanvasState = ({
       }
 
       // Sauvegarde directe via AJAX avec FormData pour les données volumineuses
-
+      console.log('📤 PDF Builder SAVE - Préparation des données pour envoi au serveur');
       const formData = new FormData();
       formData.append('action', 'pdf_builder_pro_save_template');
       formData.append('template_data', jsonString);
@@ -975,12 +990,23 @@ export const useCanvasState = ({
       formData.append('template_id', window.pdfBuilderData?.templateId || '0');
       formData.append('nonce', window.pdfBuilderAjax?.nonce || window.pdfBuilderData?.nonce || '');
 
+      console.log('📤 PDF Builder SAVE - Données FormData préparées:', {
+        action: 'pdf_builder_pro_save_template',
+        templateName: window.pdfBuilderData?.templateName || `Template ${window.pdfBuilderData?.templateId || 'New'}`,
+        templateId: window.pdfBuilderData?.templateId || '0',
+        nonce: window.pdfBuilderAjax?.nonce || window.pdfBuilderData?.nonce || '',
+        jsonLength: jsonString.length
+      });
+
+      console.log('🌐 PDF Builder SAVE - Envoi de la requête AJAX...');
       const response = await fetch(window.pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
         method: 'POST',
         body: formData
       });
 
+      console.log('📥 PDF Builder SAVE - Réponse reçue du serveur, status:', response.status);
       const result = await response.json();
+      console.log('📥 PDF Builder SAVE - Résultat du serveur:', result);
 
       if (!result.success) {
         throw new Error(result.data?.message || 'Erreur lors de la sauvegarde');
@@ -997,6 +1023,12 @@ export const useCanvasState = ({
 
       return templateData;
     } catch (error) {
+      console.error('❌ PDF Builder SAVE - Erreur lors de la sauvegarde:', error);
+      console.error('❌ PDF Builder SAVE - Détails de l\'erreur:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
 
       // Notification d'erreur
       const errorMessage = error.message || 'Erreur inconnue lors de la sauvegarde';
@@ -1008,6 +1040,7 @@ export const useCanvasState = ({
 
       throw error; // Re-throw pour permettre la gestion d'erreur en amont si nécessaire
     } finally {
+      console.log('🏁 PDF Builder SAVE - Fin du processus de sauvegarde');
       setLoadingStates(prev => ({ ...prev, saving: false }));
     }
   }, [elements, canvasWidth, canvasHeight, isSaving, templateId]);

@@ -468,7 +468,10 @@ export const PDFCanvasEditor = ({ options }) => {
           </button>
           <button
             className="btn btn-primary"
-            onClick={canvasState.saveTemplate}
+            onClick={() => {
+              console.log('🖱️ PDF Builder - Bouton "Modifier" cliqué dans PDFCanvasEditor');
+              canvasState.saveTemplate();
+            }}
             disabled={canvasState.isSaving}
           >
             {canvasState.isSaving ? '⏳ Sauvegarde...' : (options.isNew ? '💾 Sauvegarder' : '✏️ Modifier')}
