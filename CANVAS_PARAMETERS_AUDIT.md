@@ -148,6 +148,15 @@ Après audit complet des 40 paramètres définis dans l'onglet "Canvas", **seule
 
 **Résultat :** Contrôle indépendant des couleurs du canvas et de son container.
 
+### 15 octobre 2025 - Correction paramètres container
+**Problème identifié :** Les paramètres `container_background_color` et `container_show_transparency` n'étaient pas passés à JavaScript via `wp_localize_script`.
+
+**Solution implémentée :**
+- Ajout des paramètres manquants dans `wp_localize_script` dans `class-pdf-builder-admin.php`
+- Paramètres maintenant correctement transmis du PHP vers JavaScript
+
+**Résultat :** Les paramètres "Arrière-plan du Canvas" fonctionnent maintenant correctement.
+
 ---
 
 1. **Phase 1** : Implémenter aimantation avancée et guides
