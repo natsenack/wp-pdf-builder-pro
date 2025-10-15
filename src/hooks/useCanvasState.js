@@ -1112,6 +1112,9 @@ export const useCanvasState = ({
     canUndo: history.canUndo(),
     canRedo: history.canRedo(),
 
+    // Sauvegarde
+    saveTemplate,
+
     // États de chargement pour feedback visuel
     loadingStates,
     isSaving: loadingStates.saving, // Alias pour compatibilité
@@ -1141,7 +1144,8 @@ export const useCanvasState = ({
     undo,
     redo,
     history,
-    showContextMenu
+    showContextMenu,
+    saveTemplate
   ]);
 
   // Nettoyage mémoire au démontage
