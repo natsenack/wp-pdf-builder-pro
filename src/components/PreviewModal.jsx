@@ -1060,6 +1060,10 @@ const PreviewModal = ({
   const generateServerPreview = async () => {
     console.log('🖥️ Génération aperçu côté serveur unifié...');
 
+    setLoading(true);
+    setError(null);
+    setPreviewData(null);
+
     try {
       // Validation côté client avant envoi
       const validationResult = validateElementsBeforeSend(elements);
@@ -1128,32 +1132,28 @@ const PreviewModal = ({
       if (data.success && data.data && data.data.url) {
         console.log('✅ Aperçu côté serveur généré:', data.data.url);
 
-        // Ouvrir le PDF dans une nouvelle fenêtre
-        const previewWindow = window.open(data.data.url, '_blank');
-        if (!previewWindow) {
-          console.warn('Popup bloquée, tentative de téléchargement...');
-          const link = document.createElement('a');
-          link.href = data.data.url;
-          link.target = '_blank';
-          link.rel = 'noopener noreferrer';
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        }
+        // Mettre à jour l'état pour afficher le PDF dans la modale
+        setPreviewData({
+          url: data.data.url,
+          server_validated: true,
+          elements_count: elements.length,
+          width: canvasWidth,
+          height: canvasHeight,
+          zoom: zoom
+        });
+        setLoading(false);
+        setError(null);
 
-        // Fermer la modale d'aperçu
-        onClose();
+        // Ne pas ouvrir de nouvel onglet - le PDF s'affichera dans la modale
+        return;
       } else {
         throw new Error(data.data || 'Erreur génération aperçu côté serveur');
       }
 
     } catch (error) {
       console.error('❌ Erreur génération aperçu côté serveur:', error);
-      setPreviewData(prev => ({
-        ...prev,
-        error: `Erreur aperçu côté serveur: ${error.message}`,
-        isLoading: false
-      }));
+      setError(`Erreur aperçu côté serveur: ${error.message}`);
+      setLoading(false);
     }
   };
 
@@ -1362,7 +1362,23 @@ const PreviewModal = ({
                 borderRadius: '8px',
                 padding: '20px'
               }}>
-                {renderCanvasContent(elements)}
+                {previewData.url ? (
+                  // Aperçu côté serveur - afficher le PDF dans un iframe
+                  <iframe
+                    src={previewData.url}
+                    style={{
+                      width: '100%',
+                      height: '600px',
+                      border: '1px solid #dee2e6',
+                      borderRadius: '4px',
+                      backgroundColor: 'white'
+                    }}
+                    title="Aperçu PDF côté serveur"
+                  />
+                ) : (
+                  // Aperçu côté client - rendre le HTML
+                  renderCanvasContent(elements)
+                )}
               </div>
 
               {previewData.server_error && (
