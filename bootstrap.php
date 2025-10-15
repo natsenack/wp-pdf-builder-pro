@@ -414,8 +414,15 @@ function pdf_builder_ajax_unified_preview_fallback() {
             return;
         }
 
+        error_log('PDF BUILDER - Fallback: Creating main instance for WooCommerce integration');
+
+        // Créer une instance principale basique pour la fallback
+        $main_instance = new stdClass();
+        $main_instance->version = '1.0.2';
+        $main_instance->plugin_dir = plugin_dir_path(__FILE__);
+
         error_log('PDF BUILDER - Fallback: Creating WooCommerce integration instance');
-        $integration = new PDF_Builder_WooCommerce_Integration();
+        $integration = new PDF_Builder_WooCommerce_Integration($main_instance);
 
         if (!method_exists($integration, 'ajax_unified_preview')) {
             error_log('PDF BUILDER - Fallback: ajax_unified_preview method not found');
