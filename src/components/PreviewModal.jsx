@@ -290,7 +290,7 @@ const PreviewModal = ({
               }}>
                 {columns.image && (
                   <div style={{
-                    flex: '0 0 40px',
+                    flex: `0 0 ${40 * zoom}px`,
                     padding: `${4 * zoom}px`,
                     textAlign: 'center',
                     borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.headerBorder}` : 'none'
@@ -310,7 +310,7 @@ const PreviewModal = ({
                 )}
                 {columns.sku && (
                   <div style={{
-                    flex: '0 0 80px',
+                    flex: `0 0 ${80 * zoom}px`,
                     padding: `${4 * zoom}px ${6 * zoom}px`,
                     textAlign: 'left',
                     borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.headerBorder}` : 'none'
@@ -320,7 +320,7 @@ const PreviewModal = ({
                 )}
                 {columns.quantity && (
                   <div style={{
-                    flex: '0 0 60px',
+                    flex: `0 0 ${60 * zoom}px`,
                     padding: `${4 * zoom}px ${6 * zoom}px`,
                     textAlign: 'center',
                     borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.headerBorder}` : 'none'
@@ -330,7 +330,7 @@ const PreviewModal = ({
                 )}
                 {columns.price && (
                   <div style={{
-                    flex: '0 0 80px',
+                    flex: `0 0 ${80 * zoom}px`,
                     padding: `${4 * zoom}px ${6 * zoom}px`,
                     textAlign: 'right',
                     borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.headerBorder}` : 'none'
@@ -360,7 +360,7 @@ const PreviewModal = ({
                 }}>
                   {columns.image && (
                     <div style={{
-                      flex: '0 0 40px',
+                      flex: `0 0 ${40 * zoom}px`,
                       padding: `${4 * zoom}px`,
                       textAlign: 'center',
                       borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none'
@@ -379,7 +379,7 @@ const PreviewModal = ({
                   )}
                   {columns.sku && (
                     <div style={{
-                      flex: '0 0 80px',
+                      flex: `0 0 ${80 * zoom}px`,
                       padding: `${4 * zoom}px ${6 * zoom}px`,
                       borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none'
                     }}>
@@ -388,7 +388,7 @@ const PreviewModal = ({
                   )}
                   {columns.quantity && (
                     <div style={{
-                      flex: '0 0 60px',
+                      flex: `0 0 ${60 * zoom}px`,
                       padding: `${4 * zoom}px ${6 * zoom}px`,
                       textAlign: 'center',
                       borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none'
@@ -398,7 +398,7 @@ const PreviewModal = ({
                   )}
                   {columns.price && (
                     <div style={{
-                      flex: '0 0 80px',
+                      flex: `0 0 ${80 * zoom}px`,
                       padding: `${4 * zoom}px ${6 * zoom}px`,
                       textAlign: 'right',
                       borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none'
@@ -408,7 +408,7 @@ const PreviewModal = ({
                   )}
                   {columns.total && (
                     <div style={{
-                      flex: '0 0 80px',
+                      flex: `0 0 ${80 * zoom}px`,
                       padding: `${4 * zoom}px ${6 * zoom}px`,
                       textAlign: 'right'
                     }}>
@@ -428,7 +428,7 @@ const PreviewModal = ({
                   padding: `${4 * zoom}px ${6 * zoom}px`,
                   fontWeight: 'bold'
                 }}>
-                  <div style={{ width: '80px', textAlign: 'right' }}>
+                  <div style={{ width: `${80 * zoom}px`, textAlign: 'right' }}>
                     Sous-total: {subtotal.toFixed(2)}€
                   </div>
                 </div>
@@ -439,7 +439,7 @@ const PreviewModal = ({
                   justifyContent: 'flex-end',
                   padding: `${4 * zoom}px ${6 * zoom}px`
                 }}>
-                  <div style={{ width: '80px', textAlign: 'right' }}>
+                  <div style={{ width: `${80 * zoom}px`, textAlign: 'right' }}>
                     Port: {shipping.toFixed(2)}€
                   </div>
                 </div>
@@ -450,7 +450,7 @@ const PreviewModal = ({
                   justifyContent: 'flex-end',
                   padding: `${4 * zoom}px ${6 * zoom}px`
                 }}>
-                  <div style={{ width: '80px', textAlign: 'right' }}>
+                  <div style={{ width: `${80 * zoom}px`, textAlign: 'right' }}>
                     TVA: {tax.toFixed(2)}€
                   </div>
                 </div>
@@ -461,7 +461,7 @@ const PreviewModal = ({
                   justifyContent: 'flex-end',
                   padding: `${4 * zoom}px ${6 * zoom}px`
                 }}>
-                  <div style={{ width: '80px', textAlign: 'right' }}>
+                  <div style={{ width: `${80 * zoom}px`, textAlign: 'right' }}>
                     Remise: {Math.abs(discount).toFixed(2)}€
                   </div>
                 </div>
@@ -475,7 +475,7 @@ const PreviewModal = ({
                   backgroundColor: tableStyles.headerBg,
                   color: element.tableStyle === 'modern' ? '#ffffff' : '#000000'
                 }}>
-                  <div style={{ width: '80px', textAlign: 'right' }}>
+                  <div style={{ width: `${80 * zoom}px`, textAlign: 'right' }}>
                     TOTAL: {total.toFixed(2)}€
                   </div>
                 </div>
@@ -770,13 +770,13 @@ const PreviewModal = ({
               width: '100%',
               height: '100%',
               backgroundColor: '#f0f0f0',
-              border: '1px dashed #ccc',
+              border: `${1 * zoom}px dashed #ccc`,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '12px',
+              fontSize: `${12 * zoom}px`,
               color: '#666',
-              padding: '4px',
+              padding: `${4 * zoom}px`,
               boxSizing: 'border-box'
             }}
           >
