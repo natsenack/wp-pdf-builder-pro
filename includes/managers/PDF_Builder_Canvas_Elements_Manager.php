@@ -146,8 +146,8 @@ class PDF_Builder_Canvas_Elements_Manager {
      * Obtenir les propriétés par défaut pour un élément
      */
     public function get_default_element_properties($element_type = 'text') {
-        // Propriétés communes à tous les éléments
-        $defaults = [
+        // Propriétés communes à TOUS les éléments (sans propriétés spécifiques)
+        $common_defaults = [
             // Propriétés de base
             'x' => 50,
             'y' => 50,
@@ -173,6 +173,7 @@ class PDF_Builder_Canvas_Elements_Manager {
             'fontStyle' => 'normal',
             'textAlign' => 'left',
             'textDecoration' => 'none',
+            'lineHeight' => 1.2,
 
             // Contenu
             'content' => 'Texte',
@@ -192,36 +193,6 @@ class PDF_Builder_Canvas_Elements_Manager {
             'contrast' => 100,
             'saturate' => 100,
 
-            // Propriétés spécifiques aux tableaux
-            'showHeaders' => true,
-            'showBorders' => true,
-            'headers' => ['Produit', 'Qté', 'Prix'],
-            'dataSource' => 'order_items',
-            'columns' => [
-                'image' => true,
-                'name' => true,
-                'sku' => false,
-                'quantity' => true,
-                'price' => true,
-                'total' => true
-            ],
-            'showSubtotal' => false,
-            'showShipping' => true,
-            'showTaxes' => true,
-            'showDiscount' => false,
-            'showTotal' => false,
-
-            // Propriétés pour les barres de progression
-            'progressColor' => '#3b82f6',
-            'progressValue' => 75,
-
-            // Propriétés pour les codes
-            'lineColor' => '#64748b',
-            'lineWidth' => 2,
-
-            // Propriétés pour les types de document
-            'documentType' => 'invoice',
-
             // Propriétés d'espacement et mise en page
             'spacing' => 8,
             'layout' => 'vertical',
@@ -231,14 +202,11 @@ class PDF_Builder_Canvas_Elements_Manager {
             // Propriétés pour les champs et options
             'fields' => [],
             'showLabel' => false,
-            'labelText' => '',
-
-            // Propriétés pour les lignes
-            'lineHeight' => 1.2
+            'labelText' => ''
         ];
 
-        // Ajustements spécifiques selon le type d'élément
-        $type_adjustments = [
+        // Propriétés spécifiques selon le type d'élément
+        $type_specific_defaults = [
             'text' => [
                 'width' => 150,
                 'height' => 30
@@ -255,7 +223,27 @@ class PDF_Builder_Canvas_Elements_Manager {
             ],
             'product_table' => [
                 'width' => 300,
-                'height' => 150
+                'height' => 150,
+                // Propriétés spécifiques aux tableaux
+                'showHeaders' => true,
+                'showBorders' => true,
+                'showLabels' => true,
+                'tableStyle' => 'default',
+                'headers' => ['Produit', 'Qté', 'Prix'],
+                'dataSource' => 'order_items',
+                'columns' => [
+                    'image' => true,
+                    'name' => true,
+                    'sku' => false,
+                    'quantity' => true,
+                    'price' => true,
+                    'total' => true
+                ],
+                'showSubtotal' => false,
+                'showShipping' => true,
+                'showTaxes' => true,
+                'showDiscount' => false,
+                'showTotal' => false
             ],
             'customer_info' => [
                 'width' => 200,
@@ -275,7 +263,8 @@ class PDF_Builder_Canvas_Elements_Manager {
             ],
             'document_type' => [
                 'width' => 120,
-                'height' => 40
+                'height' => 40,
+                'documentType' => 'invoice'
             ],
             'watermark' => [
                 'width' => 300,
@@ -285,15 +274,21 @@ class PDF_Builder_Canvas_Elements_Manager {
             ],
             'progress-bar' => [
                 'width' => 200,
-                'height' => 20
+                'height' => 20,
+                'progressColor' => '#3b82f6',
+                'progressValue' => 75
             ],
             'barcode' => [
                 'width' => 150,
-                'height' => 60
+                'height' => 60,
+                'lineColor' => '#64748b',
+                'lineWidth' => 2
             ],
             'qrcode' => [
                 'width' => 80,
-                'height' => 80
+                'height' => 80,
+                'lineColor' => '#64748b',
+                'lineWidth' => 2
             ],
             'icon' => [
                 'width' => 50,
@@ -305,9 +300,10 @@ class PDF_Builder_Canvas_Elements_Manager {
             ]
         ];
 
-        // Fusionner les propriétés par défaut avec les ajustements spécifiques
-        if (isset($type_adjustments[$element_type])) {
-            $defaults = array_merge($defaults, $type_adjustments[$element_type]);
+        // Fusionner les propriétés communes avec les propriétés spécifiques du type
+        $defaults = $common_defaults;
+        if (isset($type_specific_defaults[$element_type])) {
+            $defaults = array_merge($defaults, $type_specific_defaults[$element_type]);
         }
 
         return $defaults;
@@ -316,7 +312,13 @@ class PDF_Builder_Canvas_Elements_Manager {
     /**
      * Nettoyer et sanitiser les propriétés d'un élément
      */
-    public function sanitize_element_properties($element_data) {
+    public function sanitize_element_properties($element_data, $element_type = 'text') {
+        // Obtenir les valeurs par défaut complètes selon le type
+        $defaults = $this->get_default_element_properties($element_type);
+
+        // Fusionner les données fournies avec les valeurs par défaut
+        $element_data = array_merge($defaults, $element_data);
+
         $sanitized = [];
 
         // Sanitisation des champs de base
@@ -324,10 +326,10 @@ class PDF_Builder_Canvas_Elements_Manager {
         $sanitized['type'] = sanitize_text_field($element_data['type'] ?? 'text');
 
         // Sanitisation des coordonnées et dimensions
-        $sanitized['x'] = floatval($element_data['x'] ?? 50);
-        $sanitized['y'] = floatval($element_data['y'] ?? 50);
-        $sanitized['width'] = max(1, floatval($element_data['width'] ?? 100));
-        $sanitized['height'] = max(1, floatval($element_data['height'] ?? 50));
+        $sanitized['x'] = floatval($element_data['x']);
+        $sanitized['y'] = floatval($element_data['y']);
+        $sanitized['width'] = max(1, floatval($element_data['width']));
+        $sanitized['height'] = max(1, floatval($element_data['height']));
 
         // Sanitisation des propriétés numériques avec contraintes
         $numeric_constraints = [
@@ -354,19 +356,22 @@ class PDF_Builder_Canvas_Elements_Manager {
             $sanitized[$field] = max($min, min($max, floatval($value)));
         }
 
-        // Sanitisation des couleurs
+        // Sanitisation étendue des couleurs (support RGB, HSL, noms CSS)
         $color_fields = ['color', 'backgroundColor', 'borderColor', 'shadowColor', 'progressColor', 'lineColor'];
         foreach ($color_fields as $field) {
             $color = $element_data[$field] ?? '';
-            if (preg_match('/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/', $color) || $color === 'transparent') {
+            if ($this->is_valid_color($color)) {
                 $sanitized[$field] = $color;
+            } else {
+                $sanitized[$field] = $defaults[$field] ?? 'transparent';
             }
         }
 
         // Sanitisation des chaînes de caractères
         $text_fields = [
             'content', 'fontFamily', 'fontWeight', 'fontStyle', 'textAlign', 'textDecoration',
-            'src', 'alt', 'objectFit', 'imageUrl', 'documentType', 'layout', 'alignment', 'fit', 'labelText'
+            'src', 'alt', 'objectFit', 'imageUrl', 'documentType', 'layout', 'alignment', 'fit', 'labelText',
+            'tableStyle', 'dataSource'
         ];
         foreach ($text_fields as $field) {
             if (isset($element_data[$field])) {
@@ -374,8 +379,11 @@ class PDF_Builder_Canvas_Elements_Manager {
             }
         }
 
-        // Sanitisation des booléens
-        $boolean_fields = ['visible', 'shadow', 'showLabel', 'showBorders', 'showHeaders', 'showSubtotal', 'showShipping', 'showTaxes', 'showDiscount', 'showTotal'];
+        // Sanitisation étendue des booléens
+        $boolean_fields = [
+            'visible', 'shadow', 'showLabel', 'showBorders', 'showHeaders', 'showLabels',
+            'showSubtotal', 'showShipping', 'showTaxes', 'showDiscount', 'showTotal'
+        ];
         foreach ($boolean_fields as $field) {
             $sanitized[$field] = (bool) ($element_data[$field] ?? false);
         }
@@ -404,16 +412,101 @@ class PDF_Builder_Canvas_Elements_Manager {
             'fit' => ['cover', 'contain', 'fill', 'none', 'scale-down'],
             'layout' => ['vertical', 'horizontal'],
             'alignment' => ['left', 'center', 'right'],
-            'documentType' => ['invoice', 'quote', 'receipt', 'order', 'credit_note']
+            'documentType' => ['invoice', 'quote', 'receipt', 'order', 'credit_note'],
+            'tableStyle' => ['default', 'classic', 'striped', 'bordered', 'minimal', 'modern', 'blue_ocean', 'emerald_forest', 'sunset_orange', 'royal_purple', 'rose_pink', 'teal_aqua', 'crimson_red', 'amber_gold', 'indigo_night', 'slate_gray', 'coral_sunset', 'mint_green', 'violet_dream', 'sky_blue', 'forest_green', 'ruby_red']
         ];
 
         foreach ($enum_fields as $field => $allowed_values) {
             if (isset($element_data[$field]) && in_array($element_data[$field], $allowed_values)) {
                 $sanitized[$field] = $element_data[$field];
+            } elseif (isset($defaults[$field])) {
+                $sanitized[$field] = $defaults[$field];
             }
         }
 
         return $sanitized;
+    }
+
+    /**
+     * Valider un format de couleur (support étendu)
+     */
+    private function is_valid_color($color) {
+        if (!$color || $color === 'transparent') {
+            return true;
+        }
+
+        // Couleurs hexadécimales
+        if (preg_match('/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/', $color)) {
+            return true;
+        }
+
+        // Couleurs RGB/RGBA
+        if (preg_match('/^rgb\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})\)$/', $color, $matches)) {
+            foreach ($matches as $i => $value) {
+                if ($i > 0 && ($value < 0 || $value > 255)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        if (preg_match('/^rgba\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3}),\s*([0-1](\.\d+)?)\)$/', $color, $matches)) {
+            if ($matches[4] < 0 || $matches[4] > 1) return false;
+            foreach ([$matches[1], $matches[2], $matches[3]] as $value) {
+                if ($value < 0 || $value > 255) return false;
+            }
+            return true;
+        }
+
+        // Couleurs HSL/HSLA
+        if (preg_match('/^hsl\((\d{1,3}),\s*(\d{1,3})%,\s*(\d{1,3})%\)$/', $color, $matches)) {
+            if ($matches[1] < 0 || $matches[1] > 360) return false;
+            if ($matches[2] < 0 || $matches[2] > 100) return false;
+            if ($matches[3] < 0 || $matches[3] > 100) return false;
+            return true;
+        }
+
+        if (preg_match('/^hsla\((\d{1,3}),\s*(\d{1,3})%,\s*(\d{1,3})%,\s*([0-1](\.\d+)?)\)$/', $color, $matches)) {
+            if ($matches[1] < 0 || $matches[1] > 360) return false;
+            if ($matches[2] < 0 || $matches[2] > 100) return false;
+            if ($matches[3] < 0 || $matches[3] > 100) return false;
+            if ($matches[4] < 0 || $matches[4] > 1) return false;
+            return true;
+        }
+
+        // Noms de couleurs CSS courants
+        $css_color_names = [
+            'black', 'silver', 'gray', 'white', 'maroon', 'red', 'purple', 'fuchsia', 'green',
+            'lime', 'olive', 'yellow', 'navy', 'blue', 'teal', 'aqua', 'orange', 'aliceblue',
+            'antiquewhite', 'aquamarine', 'azure', 'beige', 'bisque', 'blanchedalmond',
+            'blueviolet', 'brown', 'burlywood', 'cadetblue', 'chartreuse', 'chocolate',
+            'coral', 'cornflowerblue', 'cornsilk', 'crimson', 'cyan', 'darkblue', 'darkcyan',
+            'darkgoldenrod', 'darkgray', 'darkgreen', 'darkgrey', 'darkkhaki', 'darkmagenta',
+            'darkolivegreen', 'darkorange', 'darkorchid', 'darkred', 'darksalmon', 'darkseagreen',
+            'darkslateblue', 'darkslategray', 'darkslategrey', 'darkturquoise', 'darkviolet',
+            'deeppink', 'deepskyblue', 'dimgray', 'dimgrey', 'dodgerblue', 'firebrick',
+            'floralwhite', 'forestgreen', 'gainsboro', 'ghostwhite', 'gold', 'goldenrod',
+            'greenyellow', 'grey', 'honeydew', 'hotpink', 'indianred', 'indigo', 'ivory',
+            'khaki', 'lavender', 'lavenderblush', 'lawngreen', 'lemonchiffon', 'lightblue',
+            'lightcoral', 'lightcyan', 'lightgoldenrodyellow', 'lightgray', 'lightgreen',
+            'lightgrey', 'lightpink', 'lightsalmon', 'lightseagreen', 'lightskyblue',
+            'lightslategray', 'lightslategrey', 'lightsteelblue', 'lightyellow', 'limegreen',
+            'linen', 'magenta', 'mediumaquamarine', 'mediumblue', 'mediumorchid', 'mediumpurple',
+            'mediumseagreen', 'mediumslateblue', 'mediumspringgreen', 'mediumturquoise',
+            'mediumvioletred', 'midnightblue', 'mintcream', 'mistyrose', 'moccasin', 'navajowhite',
+            'oldlace', 'olivedrab', 'orangered', 'orchid', 'palegoldenrod', 'palegreen',
+            'paleturquoise', 'palevioletred', 'papayawhip', 'peachpuff', 'peru', 'pink',
+            'plum', 'powderblue', 'rosybrown', 'royalblue', 'saddlebrown', 'salmon',
+            'sandybrown', 'seagreen', 'seashell', 'sienna', 'skyblue', 'slateblue',
+            'slategray', 'slategrey', 'snow', 'springgreen', 'steelblue', 'tan', 'thistle',
+            'tomato', 'turquoise', 'violet', 'wheat', 'whitesmoke', 'yellowgreen'
+        ];
+
+        if (in_array(strtolower($color), $css_color_names)) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -666,7 +759,7 @@ class PDF_Builder_Canvas_Elements_Manager {
             }
 
             // Sanitiser les propriétés de l'élément
-            $sanitized_elements[] = $this->sanitize_element_properties($element);
+            $sanitized_elements[] = $this->sanitize_element_properties($element, $element['type']);
         }
 
         // Charger le template existant

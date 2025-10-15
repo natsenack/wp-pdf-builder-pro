@@ -161,9 +161,9 @@ function pdf_builder_create_example_element() {
     }
 
     // Sanitiser les éléments
-    $sanitized_text = $elements_manager->sanitize_element_properties($text_element);
-    $sanitized_image = $elements_manager->sanitize_element_properties($image_element);
-    $sanitized_table = $elements_manager->sanitize_element_properties($table_element);
+    $sanitized_text = $elements_manager->sanitize_element_properties($text_element, 'text');
+    $sanitized_image = $elements_manager->sanitize_element_properties($image_element, 'image');
+    $sanitized_table = $elements_manager->sanitize_element_properties($table_element, 'product_table');
 
     return [
         'text_element' => $sanitized_text,
