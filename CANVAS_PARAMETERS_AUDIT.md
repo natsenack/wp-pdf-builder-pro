@@ -19,6 +19,8 @@ Après audit complet des 40 paramètres définis dans l'onglet "Canvas", **seule
 ### Général
 - ✅ `canvasBackgroundColor` - Couleur de fond du canvas (implémenté dans PDFCanvasEditor.jsx)
 - ✅ `canvasShowTransparency` - Affichage motif de damier (implémenté dans PDFCanvasEditor.jsx)
+- ✅ `containerBackgroundColor` - Couleur de fond du container (nouveau paramètre ajouté)
+- ✅ `containerShowTransparency` - Transparence du container (nouveau paramètre ajouté)
 
 ### Grille & Aimants
 - ✅ `showGrid` - Affichage de la grille (utilisé dans PDFCanvasEditor.jsx)
@@ -120,7 +122,7 @@ Après audit complet des 40 paramètres définis dans l'onglet "Canvas", **seule
 
 ---
 
-## �️ CORRECTIONS RÉCENTES
+## 🛠️ CORRECTIONS RÉCENTES
 
 ### 15 octobre 2025 - Fond du Canvas
 **Problème identifié :** Les paramètres `canvasBackgroundColor` et `canvasShowTransparency` n'étaient appliqués que dans le composant `Canvas.jsx` (canvas HTML5) mais pas dans `PDFCanvasEditor.jsx` qui utilise une div React.
@@ -131,6 +133,20 @@ Après audit complet des 40 paramètres définis dans l'onglet "Canvas", **seule
 - Utilisation des paramètres `globalSettings.settings.canvasBackgroundColor` et `canvasShowTransparency`
 
 **Résultat :** Le fond du canvas change maintenant correctement selon les paramètres définis dans l'onglet "Général".
+
+### 15 octobre 2025 - Paramètres du Container
+**Amélioration ajoutée :** Paramètres dédiés pour la couleur du container du canvas.
+
+**Nouveaux paramètres :**
+- `containerBackgroundColor` : Couleur de fond du container (défaut : #f8f9fa)
+- `containerShowTransparency` : Affichage motif de damier pour le container
+
+**Fichiers modifiés :**
+- `settings-page.php` : Ajout des champs dans l'interface
+- `useGlobalSettings.js` : Ajout des paramètres par défaut et chargement WordPress
+- `PDFCanvasEditor.jsx` : Application des paramètres au container
+
+**Résultat :** Contrôle indépendant des couleurs du canvas et de son container.
 
 ---
 
