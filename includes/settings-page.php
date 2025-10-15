@@ -274,6 +274,9 @@ if ((isset($_POST['submit']) || isset($_POST['submit_roles']) || isset($_POST['s
 if ($isAjax) {
     exit; // Sortir immédiatement pour les requêtes AJAX qui n'ont pas de données POST
 }
+
+// Charger les paramètres pour l'affichage
+$settings = get_option('pdf_builder_settings', []);
 ?>
 
 <!-- Debug script to check React availability -->
