@@ -892,6 +892,18 @@ export const useCanvasState = ({
       let cleanedElements = [];
       try {
         console.log('🧹 PDF Builder SAVE - Nettoyage des éléments commencé, éléments bruts:', elements.length);
+
+        // Log détaillé de chaque élément avant filtrage
+        elements.forEach((element, index) => {
+          const hasElement = element && typeof element === 'object';
+          const hasId = element && element.id;
+          const hasType = element && element.type;
+          console.log(`📋 Élément ${index} - valide: ${hasElement}, id: ${hasId ? element.id : 'MISSING'}, type: ${hasType ? element.type : 'MISSING'}`);
+          if (!hasElement || !hasId || !hasType) {
+            console.log(`❌ Élément ${index} sera filtré:`, element);
+          }
+        });
+
         cleanedElements = elements
           .filter(element => element && typeof element === 'object' && element.id && element.type) // Filtrer les éléments invalides
           .map(cleanElementForSerialization)
