@@ -34,6 +34,27 @@ if (!$is_new && $template_id > 0) {
         $wpdb->prepare("SELECT name, template_data FROM $table_templates WHERE id = %d", $template_id),
         ARRAY_A
     );
+
+    // LOG SPÉCIFIQUE POUR TEMPLATE 1
+    if ($template_id == 1) {
+        error_log("=== DIAGNOSTIC TEMPLATE 1 ===");
+        error_log("Template ID: $template_id");
+        error_log("Is new: $is_new");
+        error_log("Table name: $table_templates");
+        error_log("Template found in DB: " . ($template ? 'YES' : 'NO'));
+        if ($template) {
+            error_log("Template name: " . $template['name']);
+            error_log("Template data length: " . strlen($template['template_data']));
+            error_log("Template data preview: " . substr($template['template_data'], 0, 200));
+        } else {
+            error_log("No template found in database for ID 1");
+            // Vérifier s'il y a d'autres templates
+            $all_templates = $wpdb->get_results("SELECT id, name FROM $table_templates ORDER BY id", ARRAY_A);
+            error_log("All templates in DB: " . json_encode($all_templates));
+        }
+        error_log("=== END DIAGNOSTIC TEMPLATE 1 ===");
+    }
+
     if ($template) {
         $template_name = $template['name'];
 
@@ -48,6 +69,19 @@ if (!$is_new && $template_id > 0) {
             $decoded_data = json_decode($template_data_raw, true);
             if (json_last_error() === JSON_ERROR_NONE && is_array($decoded_data)) {
                 $template_data = $decoded_data;
+
+                // LOG SPÉCIFIQUE POUR TEMPLATE 1
+                if ($template_id == 1) {
+                    error_log("TEMPLATE 1 - JSON decode successful");
+                    error_log("TEMPLATE 1 - Decoded data keys: " . implode(', ', array_keys($decoded_data)));
+                    error_log("TEMPLATE 1 - Has elements key: " . (isset($decoded_data['elements']) ? 'YES' : 'NO'));
+                    if (isset($decoded_data['elements'])) {
+                        error_log("TEMPLATE 1 - Elements count: " . count($decoded_data['elements']));
+                        if (count($decoded_data['elements']) > 0) {
+                            error_log("TEMPLATE 1 - First element: " . json_encode($decoded_data['elements'][0]));
+                        }
+                    }
+                }
 
                 // DEBUG: Log des données décodées
                 error_log("PDF Builder LOAD - Decoded data keys: " . implode(', ', array_keys($decoded_data)));
@@ -174,6 +208,17 @@ if (!$is_new && $template_id > 0) {
             const initApp = () => {
                 if (checkScriptsLoaded()) {
                     try {
+                        // LOG SPÉCIFIQUE POUR TEMPLATE 1
+                        if (<?php echo $template_id; ?> == 1) {
+                            console.log('=== TEMPLATE 1 - INITIALISATION REACT ===');
+                            console.log('Template ID:', <?php echo $template_id ?: 'null'; ?>);
+                            console.log('Template Name:', <?php echo $template_name ? json_encode($template_name) : 'null'; ?>);
+                            console.log('Is New:', <?php echo $is_new ? 'true' : 'false'; ?>);
+                            console.log('Initial Elements Count:', <?php echo count($initial_elements); ?>);
+                            console.log('Initial Elements:', <?php echo json_encode($initial_elements); ?>);
+                            console.log('=== END TEMPLATE 1 - INITIALISATION REACT ===');
+                        }
+
                         // Définir les données globales pour le JavaScript
                         window.pdfBuilderData = {
                             templateId: <?php echo $template_id ?: 'null'; ?>,
