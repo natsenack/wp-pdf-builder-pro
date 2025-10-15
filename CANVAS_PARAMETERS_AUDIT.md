@@ -190,7 +190,9 @@ Après audit complet des 40 paramètres définis dans l'onglet "Canvas", **seule
 - ✅ **Déploiement** : Compilé et déployé les corrections
 - ✅ **Test** : Vérifié que la sauvegarde AJAX fonctionne maintenant
 
-**Résultat :** Tous les paramètres canvas sont maintenant correctement sauvegardés et chargés.
+**Résultat :** Tous les paramètres canvas sont maintenant correctement sauvegardés et chargés depuis le tableau `pdf_builder_settings`.
+
+**Correction supplémentaire :** Interface utilisateur corrigée pour charger les valeurs depuis le tableau au lieu des options individuelles.
 
 ---
 
