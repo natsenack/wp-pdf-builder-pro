@@ -816,35 +816,64 @@ export const useCanvasState = ({
           } else if (Array.isArray(validatedValue)) {
             // Pour les tableaux, nettoyer chaque élément
             try {
-              const cleanedArray = validatedValue.map(item => {
-                if (typeof item === 'object' && item !== null) {
-                  return cleanElementForSerialization(item);
-                }
-                return item;
-              });
-              JSON.stringify(cleanedArray); // Test de sérialisation
+              const cleanedArray = validatedValue
+                .filter(item => item !== null && item !== undefined) // Filtrer les valeurs null/undefined
+                .map(item => {
+                  if (typeof item === 'object' && item !== null) {
+                    return cleanElementForSerialization(item);
+                  }
+                  return item;
+                })
+                .filter(item => {
+                  // Filtrer les éléments qui ne peuvent pas être sérialisés
+                  try {
+                    JSON.stringify(item);
+                    return true;
+                  } catch (e) {
+                    console.warn(`Élément de tableau non sérialisable filtré pour ${key}:`, e);
+                    return false;
+                  }
+                });
+
+              // Test final de sérialisation du tableau complet
+              JSON.stringify(cleanedArray);
               cleaned[key] = cleanedArray;
             } catch (e) {
-              console.warn(`Impossible de sérialiser le tableau pour ${key}:`, e);
+              console.warn(`Impossible de sérialiser le tableau pour ${key}, utilisation tableau vide:`, e);
+              cleaned[key] = [];
             }
           } else if (typeof validatedValue === 'object') {
             // Pour les objets, nettoyer récursivement
             try {
               const cleanedObj = cleanElementForSerialization(validatedValue);
+              // Test de sérialisation de l'objet nettoyé
+              JSON.stringify(cleanedObj);
               cleaned[key] = cleanedObj;
             } catch (e) {
-              console.warn(`Impossible de sérialiser l'objet pour ${key}:`, e);
+              console.warn(`Impossible de sérialiser l'objet pour ${key}, utilisation objet vide:`, e);
+              cleaned[key] = {};
             }
           } else {
-            // Pour les autres types (functions, symbols, etc.), ignorer
+            // Pour les autres types (functions, symbols, etc.), ignorer silencieusement
+            console.warn(`Type non supporté ignoré pour ${key}: ${typeof validatedValue}`);
           }
         }
 
         return cleaned;
       };
 
-      // Nettoyer tous les éléments
-      const cleanedElements = elements.map(cleanElementForSerialization);
+      // Nettoyer tous les éléments avec protection contre les erreurs
+      let cleanedElements = [];
+      try {
+        cleanedElements = elements.map(cleanElementForSerialization);
+
+        // Test de sérialisation de tous les éléments
+        JSON.stringify(cleanedElements);
+      } catch (e) {
+        console.error('Erreur lors du nettoyage des éléments:', e);
+        // En cas d'erreur, utiliser un tableau vide pour éviter les crashes
+        cleanedElements = [];
+      }
 
       // Log détaillé des propriétés de chaque élément (mode développement uniquement)
       if (isDevelopment) {
@@ -880,14 +909,28 @@ export const useCanvasState = ({
         console.log('Données template à sauvegarder:', templateData);
       }
 
-      // Valider le JSON avant envoi
+      // Valider le JSON avant envoi avec protection renforcée
       let jsonString;
       try {
         jsonString = JSON.stringify(templateData);
 
         // Tester le parsing pour valider
         const testParse = JSON.parse(jsonString);
+
+        // Vérifier que les données essentielles sont présentes
+        if (!testParse.elements || !Array.isArray(testParse.elements)) {
+          throw new Error('Structure de données invalide: éléments manquants ou incorrects');
+        }
+
+        // Vérifier que chaque élément a au moins un ID et un type
+        for (const element of testParse.elements) {
+          if (!element.id || !element.type) {
+            throw new Error(`Élément invalide détecté: ID ou type manquant pour ${JSON.stringify(element)}`);
+          }
+        }
+
       } catch (jsonError) {
+        console.error('Erreur de validation JSON:', jsonError);
         throw new Error('Données JSON invalides côté client: ' + jsonError.message);
       }
 

@@ -1321,7 +1321,12 @@ const PropertiesPanel = React.memo(({
                           font-size: 20px;
                           cursor: pointer;
                         `;
-                        closeBtn.onclick = () => document.body.removeChild(modal);
+                        closeBtn.onclick = () => {
+                          // Vérifier que la modale existe encore avant de la supprimer
+                          if (modal && modal.parentNode === document.body) {
+                            document.body.removeChild(modal);
+                          }
+                        };
 
                         const grid = document.createElement('div');
                         grid.style.cssText = `
@@ -1366,7 +1371,10 @@ const PropertiesPanel = React.memo(({
                           imgContainer.onclick = () => {
                             handlePropertyChange(selectedElement.id, 'imageUrl', item.source_url);
                             handlePropertyChange(selectedElement.id, 'src', item.source_url);
-                            document.body.removeChild(modal);
+                            // Vérifier que la modale existe encore avant de la supprimer
+                            if (modal && modal.parentNode === document.body) {
+                              document.body.removeChild(modal);
+                            }
                           };
 
                           imgContainer.appendChild(img);
