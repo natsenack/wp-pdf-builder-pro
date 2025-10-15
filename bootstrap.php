@@ -528,6 +528,9 @@ function pdf_builder_ajax_validate_preview() {
             error_log('PDF Builder Validation - Data was URL-encoded, decoded length: ' . strlen($json_data));
         }
 
+        // DEBUG: Sauvegarder les données pour analyse
+        file_put_contents(__DIR__ . '/debug_last_json.txt', $json_data);
+
         // Vérifier si les données semblent être du JSON valide
         $json_data_trimmed = trim($json_data);
         if (empty($json_data_trimmed)) {
@@ -542,6 +545,10 @@ function pdf_builder_ajax_validate_preview() {
         if (json_last_error() !== JSON_ERROR_NONE) {
             error_log('PDF Builder Validation - JSON decode error: ' . json_last_error_msg());
             error_log('PDF Builder Validation - JSON data that failed: ' . substr($json_data, 0, 1000));
+
+            // Sauvegarder les données problématiques pour analyse
+            file_put_contents(__DIR__ . '/debug_failed_json.txt', $json_data);
+
             wp_send_json_error('Invalid JSON data: ' . json_last_error_msg());
             return;
         }
@@ -578,4 +585,10 @@ function pdf_builder_ajax_validate_preview() {
         wp_send_json_error('Erreur lors de la validation: ' . $e->getMessage());
     }
 }
+
+// Enregistrer les actions AJAX
+add_action('wp_ajax_pdf_builder_validate_preview', 'pdf_builder_ajax_validate_preview');
+add_action('wp_ajax_nopriv_pdf_builder_validate_preview', 'pdf_builder_ajax_validate_preview');
+add_action('wp_ajax_pdf_builder_get_fresh_nonce', 'pdf_builder_ajax_get_fresh_nonce');
+add_action('wp_ajax_nopriv_pdf_builder_get_fresh_nonce', 'pdf_builder_ajax_get_fresh_nonce');
 
