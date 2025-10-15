@@ -1068,6 +1068,20 @@ const PreviewModal = ({
     setError(null);
     setPreviewData(null);
 
+    // Timeout de fallback - si l'aperçu côté serveur prend trop de temps, afficher l'aperçu côté client
+    const fallbackTimeout = setTimeout(() => {
+      console.log('⏰ Timeout aperçu côté serveur, affichage aperçu côté client en fallback');
+      setPreviewData({
+        success: true,
+        elements_count: elements.length,
+        width: canvasWidth,
+        height: canvasHeight,
+        fallback: true,
+        server_timeout: true
+      });
+      setLoading(false);
+    }, 10000); // 10 secondes timeout
+
     try {
       // Validation côté client avant envoi
       const validationResult = validateElementsBeforeSend(elements);
@@ -1136,6 +1150,9 @@ const PreviewModal = ({
       if (data.success && data.data && data.data.url) {
         console.log('✅ Aperçu côté serveur généré:', data.data.url);
 
+        // Nettoyer le timeout de fallback
+        clearTimeout(fallbackTimeout);
+
         // Mettre à jour l'état pour afficher le PDF dans la modale
         setPreviewData({
           url: data.data.url,
@@ -1156,6 +1173,8 @@ const PreviewModal = ({
 
     } catch (error) {
       console.error('❌ Erreur génération aperçu côté serveur:', error);
+      // Nettoyer le timeout de fallback
+      clearTimeout(fallbackTimeout);
       setError(`Erreur aperçu côté serveur: ${error.message}`);
       setLoading(false);
     }
