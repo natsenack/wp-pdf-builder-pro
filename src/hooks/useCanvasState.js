@@ -551,7 +551,7 @@ export const useCanvasState = ({
           'props', 'state', 'context', 'refs', '_reactInternalInstance',
           '_reactInternals', '$$typeof', 'constructor', 'prototype',
           // Propriétés React spécifiques
-          '_owner', '_store', 'key', 'ref', 'type', '_self', '_source'
+          '_owner', '_store', 'key', 'ref', '_self', '_source'
         ];
 
         const cleaned = {};
