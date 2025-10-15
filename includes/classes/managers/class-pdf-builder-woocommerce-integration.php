@@ -875,9 +875,9 @@ class PDF_Builder_WooCommerce_Integration {
                 error_log('🎨 PDF BUILDER - ajax_unified_preview: Mode template éditeur');
                 error_log('🎨 PDF BUILDER - ajax_unified_preview: Raw elements: ' . substr($elements, 0, 200) . '...');
 
-                // Nettoyer les slashes échappés par PHP
+                // Nettoyer les slashes échappés par PHP (correction force)
                 $clean_elements = stripslashes($elements);
-                error_log('🎨 PDF BUILDER - ajax_unified_preview: Elements after stripslashes: ' . substr($clean_elements, 0, 200) . '...');
+                error_log('🎨 PDF BUILDER - ajax_unified_preview: Elements after stripslashes (force): ' . substr($clean_elements, 0, 200) . '...');
 
                 // Décoder les éléments
                 $decoded_elements = json_decode($clean_elements, true);
