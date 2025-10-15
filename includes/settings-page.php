@@ -1223,7 +1223,7 @@ window.addEventListener('load', function() {
                             </td>
                         </tr>
                         <tr>
-                            <th scope="row"><?php _e('Fond du Container', 'pdf-builder-pro'); ?></th>
+                            <th scope="row"><?php _e('Arrière-plan du Canvas', 'pdf-builder-pro'); ?></th>
                             <td>
                                 <fieldset>
                                     <label for="container_background_color">
