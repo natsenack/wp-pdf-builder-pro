@@ -194,6 +194,8 @@ Après audit complet des 40 paramètres définis dans l'onglet "Canvas", **seule
 
 **Correction supplémentaire :** Interface utilisateur corrigée pour charger les valeurs depuis le tableau au lieu des options individuelles.
 
+**Correction critique :** Erreur fatale résolue - `$this->get()` remplacé par `$config->get()` dans settings-page.php.
+
 ---
 
 *Rapport généré automatiquement par audit du code source JavaScript/TypeScript*</content>
