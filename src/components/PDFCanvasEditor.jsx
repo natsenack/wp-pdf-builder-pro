@@ -26,6 +26,9 @@ export const PDFCanvasEditor = ({ options }) => {
   const [pdfModalUrl, setPdfModalUrl] = useState(null);
   const [isPropertiesCollapsed, setIsPropertiesCollapsed] = useState(false);
 
+  // Hook pour les paramètres globaux
+  const globalSettings = useGlobalSettings();
+
   // Fonctions pour mettre à jour les paramètres de grille
   const handleShowGridChange = useCallback((value) => {
     globalSettings.updateSettings({ showGrid: value });
