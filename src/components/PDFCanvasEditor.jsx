@@ -590,7 +590,9 @@ export const PDFCanvasEditor = ({ options }) => {
               style={{
                 transform: `translate(${panOffset.x}px, ${panOffset.y}px) scale(${canvasState.zoom.zoom})`,
                 transformOrigin: 'center',
-                cursor: isPanning ? 'grabbing' : 'default'
+                cursor: isPanning ? 'grabbing' : 'default',
+                transition: globalSettings.settings.smoothZoom ? 'transform 0.2s ease-out' : 'none',
+                willChange: globalSettings.settings.enableHardwareAcceleration ? 'transform' : 'auto'
               }}
             >
               <div
@@ -723,8 +725,12 @@ export const PDFCanvasEditor = ({ options }) => {
       <div className="editor-status">
         <span>Éléments: {canvasState.elements.length}</span>
         <span>|</span>
-        <span>Zoom: {Math.round(canvasState.zoom.zoom * 100)}%</span>
-        <span>|</span>
+        {globalSettings.settings.showZoomIndicator && (
+          <>
+            <span>Zoom: {Math.round(canvasState.zoom.zoom * 100)}%</span>
+            <span>|</span>
+          </>
+        )}
         <span>Outil: {tool}</span>
         {canvasState.selection.selectedElements.length > 0 && (
           <>
