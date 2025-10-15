@@ -78,6 +78,7 @@ export const PDFCanvasEditor = ({ options }) => {
 
   const editorRef = useRef(null);
   const canvasRef = useRef(null);
+  const canvasContainerRef = useRef(null);
 
   // Hook pour le drag and drop
   const dragAndDrop = useDragAndDrop({
@@ -477,6 +478,22 @@ export const PDFCanvasEditor = ({ options }) => {
     }
   }, [globalSettings.settings.zoomWithWheel, globalSettings.settings.zoomStep, canvasState.zoom]);
 
+  // Attacher le gestionnaire de roue de manière non-passive pour permettre preventDefault
+  useEffect(() => {
+    const container = canvasContainerRef.current;
+    if (!container) return;
+
+    const handleWheelEvent = (e) => {
+      handleWheel(e);
+    };
+
+    container.addEventListener('wheel', handleWheelEvent, { passive: false });
+
+    return () => {
+      container.removeEventListener('wheel', handleWheelEvent);
+    };
+  }, [handleWheel]);
+
   // Gestionnaire pour le pan avec la souris (clic milieu ou espace + drag)
   const handleMouseDown = useCallback((e) => {
     if (!globalSettings.settings.panWithMouse) return;
@@ -585,10 +602,10 @@ export const PDFCanvasEditor = ({ options }) => {
           {/* Canvas avec éléments interactifs */}
           <div
             className="canvas-container"
+            ref={canvasContainerRef}
             onContextMenu={handleContextMenu}
             onDragOver={handleDragOver}
             onDrop={handleDrop}
-            onWheel={handleWheel}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
