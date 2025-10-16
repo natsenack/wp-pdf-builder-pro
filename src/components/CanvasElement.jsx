@@ -50,7 +50,8 @@ export const CanvasElement = ({
     canvasWidth,
     canvasHeight,
     guides,
-    snapToGuides
+    snapToGuides,
+    elementType: element.type
   });
 
   const rotation = useRotation(
@@ -754,7 +755,7 @@ export const CanvasElement = ({
       case 'divider':
         return {
           backgroundColor: element.backgroundColor || '#e5e7eb',
-          height: '16px', // Hauteur augmentée à 16px pour faciliter le clic
+          height: '16px', // Hauteur fixe pour les séparateurs
           cursor: 'pointer',
           borderRadius: '2px'
         };

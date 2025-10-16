@@ -178,9 +178,17 @@ export const useCanvasState = ({
   // Fonction updateElement définie après history
   const updateElement = useCallback((elementId, updates) => {
     setElements(prev => {
-      const newElements = prev.map(element =>
-        element.id === elementId ? { ...element, ...updates } : element
-      );
+      const newElements = prev.map(element => {
+        if (element.id === elementId) {
+          const updatedElement = { ...element, ...updates };
+          // Pour les dividers, forcer la hauteur à 16px
+          if (element.type === 'divider') {
+            updatedElement.height = 16;
+          }
+          return updatedElement;
+        }
+        return element;
+      });
       return newElements;
     });
   }, []); // Retirer les dépendances pour éviter les re-renders inutiles
@@ -389,10 +397,10 @@ export const useCanvasState = ({
 
     // Ajustements spécifiques selon le type d'élément
     if (elementType === 'line') {
-      newElement.height = 12; // Hauteur augmentée pour faciliter le clic
+      newElement.height = 12; // Hauteur fixe pour les lignes
       newElement.width = 200; // Largeur par défaut pour les lignes
     } else if (elementType === 'divider') {
-      newElement.height = 16; // Hauteur augmentée pour faciliter le clic
+      newElement.height = 16; // Hauteur fixe pour les séparateurs
       newElement.width = 200; // Largeur par défaut pour les séparateurs
     }
 

@@ -11,7 +11,8 @@ export const useResize = ({
   canvasWidth = 595,
   canvasHeight = 842,
   guides = { horizontal: [], vertical: [] },
-  snapToGuides = true
+  snapToGuides = true,
+  elementType = null
 }) => {
   const [isResizing, setIsResizing] = useState(false);
   const [resizeHandle, setResizeHandle] = useState(null);
@@ -86,29 +87,40 @@ export const useResize = ({
 
       let newRect = { ...originalRect.current };
 
+      // Pour les dividers, empêcher la modification de la hauteur
+      const isDivider = elementType === 'divider';
+
       switch (handle) {
         case 'nw':
           newRect.x = snapValue(originalRect.current.x + deltaX, false);
           newRect.y = snapValue(originalRect.current.y + deltaY, true);
           newRect.width = snapValue(originalRect.current.width - deltaX, false);
-          newRect.height = snapValue(originalRect.current.height - deltaY, true);
+          if (!isDivider) {
+            newRect.height = snapValue(originalRect.current.height - deltaY, true);
+          }
           break;
 
         case 'ne':
           newRect.y = snapValue(originalRect.current.y + deltaY, true);
           newRect.width = snapValue(originalRect.current.width + deltaX, false);
-          newRect.height = snapValue(originalRect.current.height - deltaY, true);
+          if (!isDivider) {
+            newRect.height = snapValue(originalRect.current.height - deltaY, true);
+          }
           break;
 
         case 'sw':
           newRect.x = snapValue(originalRect.current.x + deltaX, false);
           newRect.width = snapValue(originalRect.current.width - deltaX, false);
-          newRect.height = snapValue(originalRect.current.height + deltaY, true);
+          if (!isDivider) {
+            newRect.height = snapValue(originalRect.current.height + deltaY, true);
+          }
           break;
 
         case 'se':
           newRect.width = snapValue(originalRect.current.width + deltaX, false);
-          newRect.height = snapValue(originalRect.current.height + deltaY, true);
+          if (!isDivider) {
+            newRect.height = snapValue(originalRect.current.height + deltaY, true);
+          }
           break;
 
         case 'n':
