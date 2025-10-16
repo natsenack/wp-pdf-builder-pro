@@ -653,8 +653,9 @@ export const CanvasElement = ({
       case 'line':
         return {
           borderTop: `${element.lineWidth || 1}px solid ${element.lineColor || '#6b7280'}`,
-          height: '0px',
-          width: '100%'
+          height: `${Math.max(element.lineWidth || 1, 6)}px`, // Hauteur minimale de 6px pour la cliquabilité
+          width: '100%',
+          cursor: 'pointer'
         };
 
       case 'layout-header':
@@ -751,8 +752,10 @@ export const CanvasElement = ({
 
       case 'divider':
         return {
-          backgroundColor: element.backgroundColor || 'transparent',
-          height: '1px'
+          backgroundColor: element.backgroundColor || '#e5e7eb',
+          height: '8px', // Hauteur augmentée pour la cliquabilité
+          cursor: 'pointer',
+          borderRadius: '2px'
         };
 
       // Styles par défaut pour les autres types
