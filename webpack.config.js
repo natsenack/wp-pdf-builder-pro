@@ -3,11 +3,16 @@ const path = require('path');
 module.exports = {
   entry: {
     'pdf-builder-admin': './src/index.js',
-    'pdf-builder-nonce-fix': './src/pdf-builder-nonce-fix.js'
+    'pdf-builder-nonce-fix': './src/pdf-builder-nonce-fix.js',
+    'react-vendors': './src/react-global.js'
   },
   output: {
     filename: '[name].js',
     path: path.resolve(__dirname, 'assets/js/dist'),
+  },
+  externals: {
+    'react': 'React',
+    'react-dom': 'ReactDOM'
   },
   mode: 'production',
   optimization: {
@@ -23,13 +28,6 @@ module.exports = {
           chunks: 'all',
           enforce: true, // Forcer la séparation des vendors
           priority: 10
-        },
-        react: {
-          test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
-          name: 'react-vendors',
-          chunks: 'all',
-          enforce: true,
-          priority: 20
         }
       },
     },
