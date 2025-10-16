@@ -38,7 +38,7 @@ export const Toolbar = ({
           {tools.map(tool => (
             <button
               key={tool.id}
-              className={	ool-button }
+              className={`tool-button ${selectedTool === tool.id ? 'active' : ''}`}
               onClick={() => onToolSelect(tool.id)}
               title={tool.label}
             >
