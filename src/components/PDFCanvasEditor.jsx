@@ -556,7 +556,7 @@ export const PDFCanvasEditor = ({ options }) => {
   // Attacher le gestionnaire de roue de manière non-passive pour permettre preventDefault
   useEffect(() => {
     const container = canvasContainerRef.current;
-    if (!container) return;
+    if (!container || !globalSettings.settings.zoomWithWheel) return;
 
     const handleWheelEvent = (e) => {
       handleWheel(e);
@@ -567,7 +567,7 @@ export const PDFCanvasEditor = ({ options }) => {
     return () => {
       container.removeEventListener('wheel', handleWheelEvent);
     };
-  }, [handleWheel]);
+  }, [handleWheel, globalSettings.settings.zoomWithWheel]);
 
   // Gestionnaire pour le pan avec la souris (clic milieu ou espace + drag)
   const handleMouseDown = useCallback((e) => {
