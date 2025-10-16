@@ -90,7 +90,7 @@ export const CanvasElement = ({
       default: {
         headerBg: '#f8fafc',
         headerBorder: '#e2e8f0',
-        rowBorder: '#666666',
+        rowBorder: '#000000',
         altRowBg: '#fafbfc',
         borderWidth: 2,
         headerTextColor: '#334155',
@@ -889,7 +889,7 @@ export const CanvasElement = ({
           const lastVisibleColumn = getLastVisibleColumn();
           const tableStyles = getTableStyles(element.tableStyle);
           // Forcer les bordures pour les tableaux de produits (correction du bug d'affichage)
-          const showBorders = element.type === 'product_table' ? true : (element.showBorders !== false);
+          const showBorders = true; // Forcer les bordures pour les tableaux de produits
           return (
             <div style={{
               width: '100%',
