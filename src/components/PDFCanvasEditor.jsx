@@ -527,19 +527,27 @@ export const PDFCanvasEditor = ({ options }) => {
   // Gestionnaire pour le drop
   const handleDrop = useCallback((e) => {
     e.preventDefault();
-    
+
     try {
-      const data = JSON.parse(e.dataTransfer.getData('application/json'));
-      
+      const jsonData = e.dataTransfer.getData('application/json');
+
+      // Vérifier si les données existent et ne sont pas vides
+      if (!jsonData || jsonData.trim() === '') {
+        // C'est probablement un drop normal (image, fichier, etc.) - ignorer silencieusement
+        return;
+      }
+
+      const data = JSON.parse(jsonData);
+
       if (data.type === 'new-element') {
         const canvasRect = e.currentTarget.getBoundingClientRect();
         const dropX = e.clientX - canvasRect.left;
         const dropY = e.clientY - canvasRect.top;
-        
+
         // Ajuster pour le zoom
         const adjustedX = dropX / canvasState.zoom.zoom;
         const adjustedY = dropY / canvasState.zoom.zoom;
-        
+
         canvasState.addElement(data.elementType, {
           x: Math.max(0, adjustedX - 50), // Centrer l'élément sur le point de drop
           y: Math.max(0, adjustedY - 25),
@@ -547,7 +555,11 @@ export const PDFCanvasEditor = ({ options }) => {
         });
       }
     } catch (error) {
-      console.error('Erreur lors du drop:', error);
+      // Ne logger que les vraies erreurs (pas les drops normaux)
+      if (error instanceof SyntaxError && e.dataTransfer.getData('application/json')) {
+        console.error('Erreur lors du parsing des données de drop:', error);
+      }
+      // Pour les autres types de drop (fichiers, images, etc.), ignorer silencieusement
     }
   }, [canvasState]);
 
