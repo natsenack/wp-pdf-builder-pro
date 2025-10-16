@@ -237,19 +237,25 @@ if (!$is_new && $template_id > 0) {
                             nonce: window.pdfBuilderAjax?.nonce || ''
                         };
 
-                        window.PDFBuilderPro.init('invoice-quote-builder-container', {
-                            templateId: <?php echo $template_id ?: 'null'; ?>,
-                            templateName: <?php echo $template_name ? json_encode($template_name) : 'null'; ?>,
-                            isNew: <?php echo $is_new ? 'true' : 'false'; ?>,
-                            initialElements: <?php echo json_encode($initial_elements); ?>,
-                            width: 595,
-                            height: 842,
-                            zoom: 1,
-                            gridSize: 10,
-                            snapToGrid: true,
-                            maxHistorySize: 50
-                        });
-                        
+                        // Vérifier si PDFBuilderPro est disponible pour l'initialisation
+                        if (typeof window.PDFBuilderPro !== 'undefined' && typeof window.PDFBuilderPro.init === 'function') {
+                            console.log('📋 Initialisation via PDFBuilderPro.init()...');
+                            window.PDFBuilderPro.init('invoice-quote-builder-container', {
+                                templateId: <?php echo $template_id ?: 'null'; ?>,
+                                templateName: <?php echo $template_name ? json_encode($template_name) : 'null'; ?>,
+                                isNew: <?php echo $is_new ? 'true' : 'false'; ?>,
+                                initialElements: <?php echo json_encode($initial_elements); ?>,
+                                width: 595,
+                                height: 842,
+                                zoom: 1,
+                                gridSize: 10,
+                                snapToGrid: true,
+                                maxHistorySize: 50
+                            });
+                        } else {
+                            console.log('📋 React déjà rendu, données globales définies - pas d\'initialisation nécessaire');
+                        }
+
                         return;
                     } catch (error) {
                         console.error('PDF Builder Pro: Erreur lors de l\'initialisation:', error);
