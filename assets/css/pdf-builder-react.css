@@ -9,7 +9,8 @@
   position: relative !important;
   z-index: 10 !important; /* Réduit pour laisser l'admin bar au-dessus */
   width: 100% !important;
-  height: calc(100vh - 72px) !important; /* Ajusté pour l'admin bar (32px) + marge (40px) */
+  height: auto !important; /* Laisser le CSS contrôler la hauteur (130vh) */
+  min-height: calc(100vh - 72px) !important; /* Hauteur minimale pour compatibilité */
   margin: 0 !important;
   padding: 0 !important;
   background: #ffffff !important; /* Blanc pur au lieu de gris */
