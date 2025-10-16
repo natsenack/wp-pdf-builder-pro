@@ -11,11 +11,7 @@ module.exports = {
     library: 'React',
     libraryTarget: 'window'
   },
-  // Utiliser React fourni par WordPress via wp-element
-  externals: {
-    'react': 'React',
-    'react-dom': 'ReactDOM'
-  },
+  // React est maintenant bundlé directement
   mode: 'production',
   optimization: {
     usedExports: true, // Activer l'élimination des exports non utilisés
