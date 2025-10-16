@@ -4,6 +4,12 @@ import { render, unmountComponentAtNode } from 'react-dom';
 import { PDFCanvasEditor } from './components/PDFCanvasEditor';
 import './styles/editor.css';
 
+// Exposer React globalement pour compatibilité
+if (typeof window !== 'undefined') {
+    window.React = React;
+    window.ReactDOM = require('react-dom');
+}
+
 // Forcer l'inclusion de tous les hooks personnalisés
 import /* webpackMode: "eager" */ * as hooks from './hooks';
 

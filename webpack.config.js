@@ -49,9 +49,6 @@ module.exports = {
     // 'react-dom': 'ReactDOM'
   },
   plugins: [
-    new webpack.ProvidePlugin({
-      React: 'react',
-      ReactDOM: 'react-dom'
-    })
+    // ProvidePlugin retiré - on expose React globalement dans le code
   ]
 };
