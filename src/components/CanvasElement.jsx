@@ -32,7 +32,7 @@ export const CanvasElement = ({
       const displayWidth = element.width * zoom;
       const displayHeight = element.height * zoom;
 
-      console.log(`🎨 EDITOR Element ${element.type} (${element.id}): Canvas coords: (${element.x}, ${element.y}, ${element.width}x${element.height}) - Display coords: (${displayX}, ${displayY}, ${displayWidth}x${displayHeight}) px (zoom: ${zoom})`);
+      // Log supprimé pour la production
     }
   }, [element.x, element.y, element.width, element.height, zoom, element.id, element.type]);
 
