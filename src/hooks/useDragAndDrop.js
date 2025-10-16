@@ -123,8 +123,6 @@ export const useDragAndDrop = ({
       const deltaX = mouseX - startX;
       const deltaY = mouseY - startY;
 
-      console.log('[DEBUG] handleMouseMove - delta:', { deltaX, deltaY }, 'startPos:', { startX, startY }, 'mouse:', { mouseX, mouseY });
-
       const effectiveCanvasWidth = canvasRect ? canvasRect.width / zoomLevel : canvasWidth;
       const effectiveCanvasHeight = canvasRect ? canvasRect.height / zoomLevel : canvasHeight;
 
@@ -139,7 +137,6 @@ export const useDragAndDrop = ({
       }
 
       const newOffset = { x: newX - elementRect.left, y: newY - elementRect.top };
-      console.log('[DEBUG] handleMouseMove - setting dragOffset:', newOffset);
       setDragOffset(newOffset);
       currentDragOffset.current = newOffset;
 
@@ -157,8 +154,6 @@ export const useDragAndDrop = ({
       }
 
       const { elementId, elementType } = currentDragData.current;
-      console.log('[DEBUG] handleMouseUp - currentDragData:', currentDragData.current);
-      console.log('[DEBUG] handleMouseUp - elementId:', elementId, 'elementType:', elementType);
 
       setIsDragging(false);
 
@@ -166,8 +161,6 @@ export const useDragAndDrop = ({
         // Calculer la position finale en utilisant les coordonnées initiales de l'élément + le déplacement
         const finalX = elementStartPos.current.x + currentDragOffset.current.x;
         const finalY = elementStartPos.current.y + currentDragOffset.current.y;
-
-        console.log('[DEBUG] handleMouseUp - elementStartPos:', elementStartPos.current, 'currentDragOffset:', currentDragOffset.current);
 
         // Log pour le séparateur lors du drop
         const isSeparator = elementType === 'divider';
@@ -178,7 +171,6 @@ export const useDragAndDrop = ({
           console.log(`[SEPARATOR LOG] Drop - Appel onElementDrop avec élément: ${elementId}`);
         }
 
-        console.log('[DEBUG] Calling onElementDrop with elementId:', elementId, 'position:', { x: finalX, y: finalY });
         onElementDrop(elementId, { x: finalX, y: finalY });
       } else {
         console.warn('[DEBUG] onElementDrop not called - elementId:', elementId, 'onElementDrop:', !!onElementDrop);
@@ -196,7 +188,6 @@ export const useDragAndDrop = ({
     };
 
     // Stocker les références pour le nettoyage
-    console.log('[DEBUG] Storing drag data - elementId:', elementId, 'elementType:', elementType);
     currentDragData.current = { handleMouseMove, handleMouseUp, elementId, elementType };
 
     document.addEventListener('mousemove', handleMouseMove);
