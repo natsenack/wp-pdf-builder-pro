@@ -204,19 +204,27 @@ if (!$is_new && $template_id > 0) {
             const checkScriptsLoaded = () => {
                 lastPdfBuilderProExists = typeof window.PDFBuilderPro !== 'undefined';
                 lastInitExists = typeof window.PDFBuilderPro?.init === 'function';
-                lastReactContainerExists = document.getElementById('invoice-quote-builder-container') &&
-                                          document.getElementById('invoice-quote-builder-container').children.length > 0;
+
+                const container = document.getElementById('invoice-quote-builder-container');
+                lastReactContainerExists = container && container.children.length > 0;
+
+                // Vérifier si React a réellement remplacé le contenu de chargement
+                const hasReactContent = container && !container.querySelector('p')?.textContent?.includes('Chargement de l\'éditeur React/TypeScript avancé');
+                const hasLoadingSpinner = container && container.querySelector('.spin') !== null;
 
                 console.log('Script check details:', {
                     pdfBuilderProExists: lastPdfBuilderProExists,
                     initExists: lastInitExists,
                     reactContainerExists: lastReactContainerExists,
+                    hasReactContent,
+                    hasLoadingSpinner,
                     PDFBuilderPro: typeof window.PDFBuilderPro,
-                    containerChildren: document.getElementById('invoice-quote-builder-container')?.children?.length || 0
+                    containerChildren: container?.children?.length || 0,
+                    loadingText: container?.querySelector('p')?.textContent || 'no p found'
                 });
 
-                // Accepter soit PDFBuilderPro chargé, soit le conteneur React rendu
-                return (lastPdfBuilderProExists && lastInitExists) || lastReactContainerExists;
+                // Accepter soit PDFBuilderPro chargé, soit le contenu React réellement affiché (pas le message de chargement)
+                return (lastPdfBuilderProExists && lastInitExists) || hasReactContent;
             };
 
             // Initialisation optimisée avec polling intelligent
@@ -258,35 +266,30 @@ if (!$is_new && $template_id > 0) {
                                 maxHistorySize: 50
                             });
                         } else if (lastReactContainerExists) {
-                            console.log('📋 React déjà rendu, données globales définies - vérification du contenu...');
-                            // Vérifier si le contenu React est réellement affiché
-                            const container = document.getElementById('invoice-quote-builder-container');
-                            if (container && container.querySelector('[data-reactroot]') === null) {
-                                console.log('⚠️ React détecté mais pas de contenu React visible, tentative de forçage...');
-                                // Essayer de forcer le montage si PDFBuilderPro devient disponible plus tard
-                                const forceInit = () => {
-                                    if (typeof window.PDFBuilderPro !== 'undefined' && typeof window.PDFBuilderPro.init === 'function') {
-                                        console.log('✅ PDFBuilderPro maintenant disponible, initialisation forcée...');
-                                        window.PDFBuilderPro.init('invoice-quote-builder-container', {
-                                            templateId: <?php echo $template_id ?: 'null'; ?>,
-                                            templateName: <?php echo $template_name ? json_encode($template_name) : 'null'; ?>,
-                                            isNew: <?php echo $is_new ? 'true' : 'false'; ?>,
-                                            initialElements: <?php echo json_encode($initial_elements); ?>,
-                                            width: 595,
-                                            height: 842,
-                                            zoom: 1,
-                                            gridSize: 10,
-                                            snapToGrid: true,
-                                            maxHistorySize: 50
-                                        });
-                                    } else {
-                                        setTimeout(forceInit, 100);
-                                    }
-                                };
-                                setTimeout(forceInit, 100);
-                            }
+                            console.log('📋 Conteneur React détecté avec contenu de chargement - en attente de PDFBuilderPro...');
+                            // Attendre que PDFBuilderPro devienne disponible pour remplacer le contenu
+                            const waitForPDFBuilderPro = () => {
+                                if (typeof window.PDFBuilderPro !== 'undefined' && typeof window.PDFBuilderPro.init === 'function') {
+                                    console.log('✅ PDFBuilderPro maintenant disponible, remplacement du contenu de chargement...');
+                                    window.PDFBuilderPro.init('invoice-quote-builder-container', {
+                                        templateId: <?php echo $template_id ?: 'null'; ?>,
+                                        templateName: <?php echo $template_name ? json_encode($template_name) : 'null'; ?>,
+                                        isNew: <?php echo $is_new ? 'true' : 'false'; ?>,
+                                        initialElements: <?php echo json_encode($initial_elements); ?>,
+                                        width: 595,
+                                        height: 842,
+                                        zoom: 1,
+                                        gridSize: 10,
+                                        snapToGrid: true,
+                                        maxHistorySize: 50
+                                    });
+                                } else {
+                                    setTimeout(waitForPDFBuilderPro, 100);
+                                }
+                            };
+                            setTimeout(waitForPDFBuilderPro, 100);
                         } else {
-                            console.log('❌ Ni PDFBuilderPro ni React détectés - en attente...');
+                            console.log('❌ Aucun contenu détecté - en attente...');
                         }
 
                         return;
