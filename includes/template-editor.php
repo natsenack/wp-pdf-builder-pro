@@ -80,6 +80,12 @@ wp_enqueue_style('pdf-builder-canvas-editor', PDF_BUILDER_PRO_ASSETS_URL . 'css/
 
 error_log("PDF Builder Debug: Scripts enqueued in template-editor.php");
 
+// Forcer l'impression des scripts enqueued (au cas où wp_head n'ait pas encore été appelé)
+add_action('wp_print_scripts', function() {
+    wp_print_scripts(['pdf-builder-admin-v3', 'pdf-builder-nonce-fix-v2', 'toastr']);
+    wp_print_styles(['pdf-builder-admin', 'toastr', 'pdf-builder-canvas-editor']);
+}, 100);
+
 // Get template ID from URL
 $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
 $is_new = $template_id === 0;
@@ -209,6 +215,14 @@ if (!$is_new && $template_id > 0) {
         </div>
     </div>
 </div>
+
+<!-- SCRIPTS DE SECOURS - Chargement direct si wp_enqueue_script ne fonctionne pas -->
+<script src="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'js/toastr/toastr.min.js?ver=' . time(); ?>"></script>
+<link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/toastr/toastr.min.css?ver=' . time(); ?>" />
+<script src="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js?ver=' . time(); ?>"></script>
+<script src="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js?ver=' . time(); ?>"></script>
+<link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css?ver=' . time(); ?>" />
+<link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-canvas.css?ver=' . time(); ?>" />
 
 <style>
 @keyframes spin {
