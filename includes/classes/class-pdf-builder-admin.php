@@ -1380,7 +1380,8 @@ class PDF_Builder_Admin {
         ');
 
         // Scripts JavaScript - VERSION ULTRA FORCEE
-        wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'wp-api'], '8.0.0_force_' . microtime(true), true);
+        wp_enqueue_script('pdf-builder-react-vendors', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/react-vendors.js', ['jquery'], '1.0.0_force_' . microtime(true), true);
+        wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'wp-api', 'pdf-builder-react-vendors'], '8.0.0_force_' . microtime(true), true);
 
         // DEBUG: Vérifier que le script est enqueued
         error_log('PDF Builder: Script enqueued - URL: ' . PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js');

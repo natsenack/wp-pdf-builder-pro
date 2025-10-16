@@ -21,7 +21,16 @@ module.exports = {
           test: /[\\/]node_modules[\\/]/,
           name: 'vendors',
           chunks: 'all',
+          enforce: true, // Forcer la séparation des vendors
+          priority: 10
         },
+        react: {
+          test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+          name: 'react-vendors',
+          chunks: 'all',
+          enforce: true,
+          priority: 20
+        }
       },
     },
   },
