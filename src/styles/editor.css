@@ -336,7 +336,7 @@
 }
 
 .tool-button, .edit-button {
-  padding: 8px;
+  padding: 12px;
   border: 1px solid var(--border-color);
   background: var(--surface-color);
   border-radius: 4px;
@@ -344,12 +344,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px; /* Espace réduit entre icône et texte */
-  font-size: 11px;
+  gap: 4px; /* Espace réduit entre icône et texte */
+  font-size: 12px;
   transition: all 0.1s ease;
   position: relative;
-  min-width: 48px; /* Plus large pour faciliter la sélection */
-  height: 48px; /* Hauteur augmentée pour faciliter le clic */
+  min-width: 60px; /* Encore plus large pour faciliter la sélection */
+  height: 60px; /* Hauteur encore plus augmentée pour faciliter le clic */
   justify-content: center;
 }
 
