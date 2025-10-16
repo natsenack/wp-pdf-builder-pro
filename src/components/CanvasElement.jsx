@@ -783,6 +783,53 @@ export const CanvasElement = ({
   // Calcul du padding pour cohérence avec le PDF
   const elementPadding = element.padding || 0;
 
+  // Styles élément optimisés avec useMemo pour éviter les recalculs inutiles
+  const elementStyles = useMemo(() => ({
+    position: 'absolute',
+    left: (element.x + elementPadding) * zoom,
+    top: (element.y + elementPadding) * zoom,
+    width: Math.max(1, (element.width - (elementPadding * 2))) * zoom,
+    height: Math.max(1, (element.height - (elementPadding * 2))) * zoom,
+    cursor: dragAndDrop.isDragging ? 'grabbing' : 'grab',
+    userSelect: 'none',
+    '--selection-border-width': '2px',
+    '--selection-border-color': '#3b82f6',
+    '--selection-border-spacing': '2px',
+    '--selection-shadow-opacity': '0.1',
+    '--show-resize-handles': isSelected ? 'block' : 'none',
+    '--resize-handle-size': `${10 * zoom}px`,
+    '--resize-handle-color': '#3b82f6',
+    '--resize-handle-border-color': 'white',
+    '--resize-handle-offset': `${-5 * zoom}px`,
+    '--element-border-width': '2px',
+    '--resize-zone-size': '16px',
+    '--show-resize-zones': isSelected ? 'auto' : 'none',
+    // Pour les éléments spéciaux, utiliser une gestion différente des bordures
+    ...(isSpecialElement(element.type) ? getSpecialElementBorderStyle(element) : {
+      // Styles de base communs à tous les éléments non-spéciaux
+      backgroundColor: element.backgroundOpacity && element.backgroundColor && element.backgroundColor !== 'transparent' ?
+        element.backgroundColor + Math.round(element.backgroundOpacity * 255).toString(16).padStart(2, '0') :
+        (element.backgroundColor || 'transparent'),
+      border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || 'transparent'}` : 'none',
+    }),
+    borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0px',
+    opacity: (element.opacity || 100) / 100,
+    transform: `${dragAndDrop.draggedElementId === element.id ? `translate(${dragAndDrop.dragOffset.x * zoom}px, ${dragAndDrop.dragOffset.y * zoom}px) ` : ''}rotate(${element.rotation || 0}deg) scale(${element.scale || 100}%)`,
+    filter: `brightness(${element.brightness || 100}%) contrast(${element.contrast || 100}%) saturate(${element.saturate || 100}%)`,
+    boxShadow: element.boxShadowColor ?
+      `0px ${element.boxShadowSpread || 0}px ${element.boxShadowBlur || 0}px ${element.boxShadowColor}` :
+      (element.shadow ? `${element.shadowOffsetX || 2}px ${element.shadowOffsetY || 2}px 4px ${element.shadowColor || '#000000'}40` : 'none'),
+
+    // Styles spécifiques selon le type d'élément
+    ...getElementTypeStyles(element, zoom)
+  }), [
+    element.x, element.y, element.width, element.height, element.rotation, element.scale,
+    element.backgroundColor, element.backgroundOpacity, element.borderWidth, element.borderStyle, element.borderColor, element.borderRadius,
+    element.opacity, element.brightness, element.contrast, element.saturate,
+    element.boxShadowColor, element.boxShadowSpread, element.boxShadowBlur, element.shadow, element.shadowOffsetX, element.shadowOffsetY, element.shadowColor,
+    element.type, elementPadding, zoom, isSelected, dragAndDrop.isDragging, dragAndDrop.draggedElementId, dragAndDrop.dragOffset
+  ]);
+
   return (
     <>
       {/* Élément principal */}
@@ -790,45 +837,7 @@ export const CanvasElement = ({
         ref={elementRef}
         data-element-id={element.id}
         className={`canvas-element ${isSelected ? 'selected' : ''}`}
-        style={{
-          position: 'absolute',
-          left: (element.x + elementPadding) * zoom,
-          top: (element.y + elementPadding) * zoom,
-          width: Math.max(1, (element.width - (elementPadding * 2))) * zoom,
-          height: Math.max(1, (element.height - (elementPadding * 2))) * zoom,
-          cursor: dragAndDrop.isDragging ? 'grabbing' : 'grab',
-          userSelect: 'none',
-          '--selection-border-width': '2px',
-          '--selection-border-color': '#3b82f6',
-          '--selection-border-spacing': '2px',
-          '--selection-shadow-opacity': '0.1',
-          '--show-resize-handles': isSelected ? 'block' : 'none',
-          '--resize-handle-size': `${10 * zoom}px`,
-          '--resize-handle-color': '#3b82f6',
-          '--resize-handle-border-color': 'white',
-          '--resize-handle-offset': `${-5 * zoom}px`,
-          '--element-border-width': '2px',
-          '--resize-zone-size': '16px',
-          '--show-resize-zones': isSelected ? 'auto' : 'none',
-          // Pour les éléments spéciaux, utiliser une gestion différente des bordures
-          ...(isSpecialElement(element.type) ? getSpecialElementBorderStyle(element) : {
-            // Styles de base communs à tous les éléments non-spéciaux
-            backgroundColor: element.backgroundOpacity && element.backgroundColor && element.backgroundColor !== 'transparent' ? 
-              element.backgroundColor + Math.round(element.backgroundOpacity * 255).toString(16).padStart(2, '0') : 
-              (element.backgroundColor || 'transparent'),
-            border: element.borderWidth ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || 'transparent'}` : 'none',
-          }),
-          borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0px',
-          opacity: (element.opacity || 100) / 100,
-          transform: `${dragAndDrop.draggedElementId === element.id ? `translate(${dragAndDrop.dragOffset.x * zoom}px, ${dragAndDrop.dragOffset.y * zoom}px) ` : ''}rotate(${element.rotation || 0}deg) scale(${element.scale || 100}%)`,
-          filter: `brightness(${element.brightness || 100}%) contrast(${element.contrast || 100}%) saturate(${element.saturate || 100}%)`,
-          boxShadow: element.boxShadowColor ? 
-            `0px ${element.boxShadowSpread || 0}px ${element.boxShadowBlur || 0}px ${element.boxShadowColor}` : 
-            (element.shadow ? `${element.shadowOffsetX || 2}px ${element.shadowOffsetY || 2}px 4px ${element.shadowColor || '#000000'}40` : 'none'),
-
-          // Styles spécifiques selon le type d'élément
-          ...getElementTypeStyles(element, zoom)
-        }}
+        style={elementStyles}
         onMouseDown={handleMouseDown}
         onDoubleClick={handleDoubleClick}
         onContextMenu={handleContextMenuEvent}
