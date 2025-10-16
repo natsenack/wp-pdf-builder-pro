@@ -1,4 +1,4 @@
-﻿import React from 'react';
+﻿import React from '@wordpress/element';
 
 export const Toolbar = ({
   selectedTool,
@@ -168,3 +168,4 @@ export const Toolbar = ({
     </div>
   );
 };
+

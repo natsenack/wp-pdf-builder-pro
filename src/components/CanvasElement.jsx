@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useEffect } from 'react';
+﻿import React, { useRef, useCallback, useEffect } from '@wordpress/element';
 import { useResize } from '../hooks/useResize';
 import { useRotation } from '../hooks/useRotation.js';
 
@@ -2328,3 +2328,4 @@ export const CanvasElement = ({
     </>
   );
 };
+

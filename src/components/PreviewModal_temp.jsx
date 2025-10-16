@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+﻿import React, { useState, useEffect, useCallback } from '@wordpress/element';
 
 // Nouveau système d'aperçu côté serveur avec TCPDF
 
@@ -1463,3 +1463,4 @@ const PreviewModal = ({
 };
 
 export default PreviewModal;
+

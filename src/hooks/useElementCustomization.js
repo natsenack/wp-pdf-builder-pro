@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect, useMemo } from '@wordpress/element';
 import { elementCustomizationService } from '../services/ElementCustomizationService';
 import {
   isPropertyAllowed,

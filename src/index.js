@@ -1,4 +1,4 @@
-﻿import React from 'react';
+﻿import React from '@wordpress/element';
 import ReactDOM from 'react-dom';
 import { PDFCanvasEditor } from './components/PDFCanvasEditor';
 import './styles/editor.css';
@@ -103,3 +103,4 @@ if (typeof window !== 'undefined') {
 
 // Export pour les modules ES6
 export default pdfBuilderPro;
+

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from '@wordpress/element';
 
 export const FPSCounter = ({ showFps }) => {
   const [fps, setFps] = useState(0);

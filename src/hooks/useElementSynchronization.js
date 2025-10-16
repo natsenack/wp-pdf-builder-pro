@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+﻿import { useCallback, useEffect, useRef } from '@wordpress/element';
 
 /**
  * Hook pour gérer la synchronisation des personnalisations d'éléments

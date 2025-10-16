@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+﻿import { useState, useCallback, useRef } from '@wordpress/element';
 
 export const useHistory = (options = {}) => {
   const { maxHistorySize = 50 } = options;

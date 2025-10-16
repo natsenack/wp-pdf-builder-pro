@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+﻿import { useState, useCallback } from '@wordpress/element';
 
 export const useSelection = ({
   onSelectionChange,

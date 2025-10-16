@@ -3,17 +3,13 @@ const path = require('path');
 module.exports = {
   entry: {
     'pdf-builder-admin': './src/index.js',
-    'pdf-builder-nonce-fix': './src/pdf-builder-nonce-fix.js',
-    'react-vendors': './src/react-global.js'
+    'pdf-builder-nonce-fix': './src/pdf-builder-nonce-fix.js'
   },
   output: {
     filename: '[name].js',
     path: path.resolve(__dirname, 'assets/js/dist'),
   },
-  externals: {
-    'react': 'React',
-    'react-dom': 'ReactDOM'
-  },
+  // Plus d'externals - WordPress fournit React via wp-element
   mode: 'production',
   optimization: {
     usedExports: true, // Activer l'élimination des exports non utilisés
