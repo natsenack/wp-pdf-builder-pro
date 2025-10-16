@@ -222,6 +222,10 @@ console.log('🔍 PDF Builder: Starting direct script loading...');
 console.log('Assets URL:', '<?php echo PDF_BUILDER_PRO_ASSETS_URL; ?>');
 </script>
 <script>
+console.log('📋 Loading vendors (React)...');
+</script>
+<script src="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/vendors.js?ver=' . time(); ?>" onerror="console.error('❌ Vendors script failed to load');"></script>
+<script>
 console.log('📋 Loading toastr...');
 </script>
 <script src="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'js/toastr/toastr.min.js?ver=' . time(); ?>"></script>
