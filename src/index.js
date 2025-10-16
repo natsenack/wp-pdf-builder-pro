@@ -1,3 +1,4 @@
+import React from 'react';
 import { createElement } from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
 import { PDFCanvasEditor } from './components/PDFCanvasEditor';

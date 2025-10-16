@@ -1380,11 +1380,11 @@ class PDF_Builder_Admin {
         ');
 
         // Scripts JavaScript - VERSION ULTRA FORCEE
-        // CHARGER React DIRECTEMENT DE WORDPRESS !
-        wp_enqueue_script('react');
-        wp_enqueue_script('react-dom', ['react']);
+        // React et ReactDOM sont maintenant bundlés dans le script principal
+        // wp_enqueue_script('react');
+        // wp_enqueue_script('react-dom', ['react']);
 
-        wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'wp-api', 'react-dom'], '8.0.0_force_' . microtime(true), true);
+        wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'wp-api'], '8.0.0_force_' . microtime(true), true);
 
         // DEBUG: Vérifier que le script est enqueued
         error_log('PDF Builder: Script enqueued - URL: ' . PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js');
