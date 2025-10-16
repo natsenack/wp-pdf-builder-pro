@@ -1304,6 +1304,9 @@ class PDF_Builder_Admin {
      * Charge les scripts et styles d'administration
      */
     public function enqueue_admin_scripts($hook) {
+        // DEBUG: Log pour vérifier que la méthode est appelée
+        error_log('PDF Builder: enqueue_admin_scripts called with hook: ' . $hook);
+
         // Charger seulement sur nos pages admin
         if (!in_array($hook, [
             'toplevel_page_pdf-builder-pro',
@@ -1314,8 +1317,11 @@ class PDF_Builder_Admin {
             // 'pdf-builder_page_pdf-builder-test-tcpdf', // Commenté - système de test nettoyé
             'pdf-builder_page_pdf-builder-developer'
         ])) {
+            error_log('PDF Builder: Hook ' . $hook . ' not in allowed list, returning');
             return;
         }
+
+        error_log('PDF Builder: Hook ' . $hook . ' allowed, proceeding with script loading');
 
         // Styles CSS de base
         wp_enqueue_style('pdf-builder-admin', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css', [], PDF_BUILDER_PRO_VERSION);
