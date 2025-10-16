@@ -7,61 +7,6 @@ const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
   // Bibliothèque d'éléments - boutons simples
   const elements = [
     {
-      type: 'text',
-      fieldID: 'text',
-      label: 'Texte',
-      icon: '📝',
-      description: 'Bloc de texte personnalisable',
-      defaultProperties: {
-        text: 'Votre texte ici',
-        fontSize: 14,
-        fontFamily: 'Arial',
-        fontWeight: 'normal',
-        textAlign: 'left',
-        color: '#333333'
-      }
-    },
-    {
-      type: 'image',
-      fieldID: 'image',
-      label: 'Image',
-      icon: '🖼️',
-      description: 'Insérer une image depuis une URL',
-      defaultProperties: {
-        src: '',
-        width: 200,
-        height: 150,
-        fit: 'contain',
-        alignment: 'center'
-      }
-    },
-    {
-      type: 'line',
-      fieldID: 'line',
-      label: 'Ligne',
-      icon: '📏',
-      description: 'Ligne horizontale ou verticale',
-      defaultProperties: {
-        orientation: 'horizontal',
-        thickness: 2,
-        color: '#333333',
-        style: 'solid'
-      }
-    },
-    {
-      type: 'rectangle',
-      fieldID: 'rectangle',
-      label: 'Rectangle',
-      icon: '▭',
-      description: 'Forme rectangulaire',
-      defaultProperties: {
-        backgroundColor: 'transparent',
-        borderColor: '#333333',
-        borderWidth: 2,
-        borderRadius: 0
-      }
-    },
-    {
       type: 'product_table',
       fieldID: 'products_table',
       label: 'Tableau Produits',
