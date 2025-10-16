@@ -7,13 +7,13 @@ import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import { useGlobalSettings } from '../hooks/useGlobalSettings';
 import { FPSCounter } from './FPSCounter';
 
-// Chargement lazy des composants conditionnels
-const ContextMenu = React.lazy(() => import('./ContextMenu'));
-const PreviewModal = React.lazy(() => import('./PreviewModal'));
-const ModalPDFViewer = React.lazy(() => import('./ModalPDFViewer'));
-const WooCommerceElement = React.lazy(() => import('./WooCommerceElements'));
-const ElementLibrary = React.lazy(() => import('./ElementLibrary'));
-const PropertiesPanel = React.lazy(() => import('./PropertiesPanel'));
+// Import direct des composants (plus de lazy loading)
+import ContextMenu from './ContextMenu';
+import PreviewModal from './PreviewModal';
+import ModalPDFViewer from './ModalPDFViewer';
+import WooCommerceElement from './WooCommerceElements';
+import ElementLibrary from './ElementLibrary';
+import PropertiesPanel from './PropertiesPanel';
 
 export const PDFCanvasEditor = ({ options }) => {
   const [tool, setTool] = useState('select');
@@ -656,13 +656,11 @@ export const PDFCanvasEditor = ({ options }) => {
         {/* Bibliothèque d'éléments - masquée en mode aperçu */}
         {!showPreviewModal && (
           <aside className="editor-sidebar left-sidebar">
-            <React.Suspense fallback={<div className="loading">Chargement...</div>}>
-              <ElementLibrary
-                onAddElement={handleAddElement}
-                selectedTool={tool}
-                onToolSelect={setTool}
-              />
-            </React.Suspense>
+            <ElementLibrary
+              onAddElement={handleAddElement}
+              selectedTool={tool}
+              onToolSelect={setTool}
+            />
           </aside>
         )}
 
@@ -832,24 +830,23 @@ export const PDFCanvasEditor = ({ options }) => {
               {canvasState.elements
                 .filter(el => el.type.startsWith('woocommerce-'))
                 .map(element => (
-                  <React.Suspense key={element.id} fallback={null}>
-                    <WooCommerceElement
-                      element={element}
-                      isSelected={canvasState.selection.selectedElements.includes(element.id)}
-                      onSelect={handleElementSelect}
-                      onUpdate={canvasState.updateElement}
-                      dragAndDrop={dragAndDrop}
-                      zoom={1}
-                      canvasWidth={canvasState.canvasWidth}
-                      canvasHeight={canvasState.canvasHeight}
-                      orderData={orderData}
-                      onContextMenu={(e) => handleContextMenu(e, element.id)}
-                      snapToGrid={globalSettings.settings.snapToGrid}
-                      gridSize={globalSettings.settings.gridSize}
-                      guides={guides}
-                      snapToGuides={globalSettings.settings.snapToElements}
-                    />
-                  </React.Suspense>
+                  <WooCommerceElement
+                    key={element.id}
+                    element={element}
+                    isSelected={canvasState.selection.selectedElements.includes(element.id)}
+                    onSelect={handleElementSelect}
+                    onUpdate={canvasState.updateElement}
+                    dragAndDrop={dragAndDrop}
+                    zoom={1}
+                    canvasWidth={canvasState.canvasWidth}
+                    canvasHeight={canvasState.canvasHeight}
+                    orderData={orderData}
+                    onContextMenu={(e) => handleContextMenu(e, element.id)}
+                    snapToGrid={globalSettings.settings.snapToGrid}
+                    gridSize={globalSettings.settings.gridSize}
+                    guides={guides}
+                    snapToGuides={globalSettings.settings.snapToElements}
+                  />
                 ))}
             </div>
           </div>
@@ -859,14 +856,12 @@ export const PDFCanvasEditor = ({ options }) => {
         {!showPreviewModal && (
           <aside className={`editor-sidebar right-sidebar ${isPropertiesCollapsed ? 'collapsed' : ''}`}>
             {!isPropertiesCollapsed && (
-              <React.Suspense fallback={<div className="loading">Chargement...</div>}>
-                <PropertiesPanel
-                  selectedElements={canvasState.selection.selectedElements}
-                  elements={canvasState.elements}
-                  onPropertyChange={handlePropertyChange}
-                  onBatchUpdate={handleBatchUpdate}
-                />
-              </React.Suspense>
+              <PropertiesPanel
+                selectedElements={canvasState.selection.selectedElements}
+                elements={canvasState.elements}
+                onPropertyChange={handlePropertyChange}
+                onBatchUpdate={handleBatchUpdate}
+              />
             )}
           </aside>
         )}
@@ -892,14 +887,12 @@ export const PDFCanvasEditor = ({ options }) => {
 
       {/* Menu contextuel */}
       {canvasState.contextMenu.contextMenu && (
-        <React.Suspense fallback={null}>
-          <ContextMenu
-            menu={canvasState.contextMenu.contextMenu}
-            onAction={handleContextMenuAction}
-            isAnimating={canvasState.contextMenu.isAnimating || false}
-            onClose={canvasState.contextMenu.hideContextMenu}
-          />
-        </React.Suspense>
+        <ContextMenu
+          menu={canvasState.contextMenu.contextMenu}
+          onAction={handleContextMenuAction}
+          isAnimating={canvasState.contextMenu.isAnimating || false}
+          onClose={canvasState.contextMenu.hideContextMenu}
+        />
       )}
 
       {/* Indicateur d'état */}
@@ -922,42 +915,38 @@ export const PDFCanvasEditor = ({ options }) => {
       </footer>
 
       {/* Modale d'aperçu */}
-      <React.Suspense fallback={null}>
-        <PreviewModal
-          isOpen={showPreviewModal}
-          onClose={() => {
-            setShowPreviewModal(false);
-          }}
-          elements={canvasState.elements}
-          canvasWidth={canvasState.canvasWidth}
-          canvasHeight={canvasState.canvasHeight}
-          ajaxurl={window.pdfBuilderAjax?.ajaxurl}
-          pdfBuilderNonce={window.pdfBuilderAjax?.nonce}
-          useServerPreview={false}
-          onOpenPDFModal={(pdfUrl) => {
-            setPdfModalUrl(pdfUrl);
-            setShowPDFModal(true);
-            setShowPreviewModal(false);
-          }}
-        />
-      </React.Suspense>
+      <PreviewModal
+        isOpen={showPreviewModal}
+        onClose={() => {
+          setShowPreviewModal(false);
+        }}
+        elements={canvasState.elements}
+        canvasWidth={canvasState.canvasWidth}
+        canvasHeight={canvasState.canvasHeight}
+        ajaxurl={window.pdfBuilderAjax?.ajaxurl}
+        pdfBuilderNonce={window.pdfBuilderAjax?.nonce}
+        useServerPreview={false}
+        onOpenPDFModal={(pdfUrl) => {
+          setPdfModalUrl(pdfUrl);
+          setShowPDFModal(true);
+          setShowPreviewModal(false);
+        }}
+      />
 
-      <React.Suspense fallback={null}>
-        <ModalPDFViewer
-          isOpen={showPDFModal}
-          onClose={() => {
-            setShowPDFModal(false);
-            if (pdfModalUrl && pdfModalUrl.startsWith('blob:')) {
-              setTimeout(() => {
-                URL.revokeObjectURL(pdfModalUrl);
-              }, 100);
-            }
-            setPdfModalUrl(null);
-          }}
-          pdfUrl={pdfModalUrl}
-          title="PDF Généré"
-        />
-      </React.Suspense>
+      <ModalPDFViewer
+        isOpen={showPDFModal}
+        onClose={() => {
+          setShowPDFModal(false);
+          if (pdfModalUrl && pdfModalUrl.startsWith('blob:')) {
+            setTimeout(() => {
+              URL.revokeObjectURL(pdfModalUrl);
+            }, 100);
+          }
+          setPdfModalUrl(null);
+        }}
+        pdfUrl={pdfModalUrl}
+        title="PDF Généré"
+      />
 
       {/* Compteur FPS */}
       <FPSCounter showFps={globalSettings.settings.showFps} />

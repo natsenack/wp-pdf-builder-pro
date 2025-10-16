@@ -17,18 +17,7 @@ module.exports = {
     usedExports: true, // Activer l'élimination des exports non utilisés
     sideEffects: true,  // Activer l'analyse des effets de bord pour optimisation
     minimize: true,     // Activer la minification
-    // splitChunks: {
-    //   chunks: 'all',
-    //   cacheGroups: {
-    //     vendor: {
-    //       test: /[\\/]node_modules[\\/]/,
-    //       name: 'vendors',
-    //       chunks: 'all',
-    //       enforce: true, // Forcer la séparation des vendors
-    //       priority: 10
-    //     }
-    //   },
-    // },
+    splitChunks: false, // Désactiver le split des chunks pour tout mettre dans un bundle
   },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json']
