@@ -87,6 +87,9 @@ class PDF_Builder_Template_Manager {
         $template_name = isset($_POST['template_name']) ? sanitize_text_field($_POST['template_name']) : '';
         $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
 
+        // Décoder les entités HTML qui peuvent être présentes dans le JSON
+        $template_data = html_entity_decode($template_data, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
         error_log('PDF Builder: Template data length: ' . strlen($template_data));
         error_log('PDF Builder: Template name: ' . $template_name);
         error_log('PDF Builder: Template ID: ' . $template_id);
