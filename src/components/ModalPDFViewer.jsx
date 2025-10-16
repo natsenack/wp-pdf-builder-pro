@@ -1,6 +1,4 @@
-﻿import React from '@wordpress/element';
-
-const ModalPDFViewer = ({
+﻿const ModalPDFViewer = ({
   isOpen,
   onClose,
   pdfUrl,

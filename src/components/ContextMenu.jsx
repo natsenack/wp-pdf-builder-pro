@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useRef } from '@wordpress/element';
+﻿import { useEffect, useRef } from '@wordpress/element';
 
 const ContextMenu = ({ menu, onAction, isAnimating = false, onClose }) => {
   const menuRef = useRef(null);

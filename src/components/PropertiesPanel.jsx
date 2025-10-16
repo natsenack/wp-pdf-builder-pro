@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback, useMemo } from '@wordpress/element';
+﻿import { useState, useEffect, useCallback, useMemo, memo } from '@wordpress/element';
 import { useElementCustomization } from '../hooks/useElementCustomization';
 import { useElementSynchronization } from '../hooks/useElementSynchronization';
 import { elementCustomizationService } from '../services/ElementCustomizationService';
@@ -341,7 +341,7 @@ const FontControls = ({ elementId, properties, onPropertyChange }) => (
   </div>
 );
 
-const PropertiesPanel = React.memo(({
+const PropertiesPanel = memo(({
   selectedElements,
   elements,
   onPropertyChange,
