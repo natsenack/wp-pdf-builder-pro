@@ -8,6 +8,8 @@ module.exports = {
   output: {
     filename: '[name].js',
     path: path.resolve(__dirname, 'assets/js/dist'),
+    library: 'React',
+    libraryTarget: 'window'
   },
   // Utiliser React fourni par WordPress via wp-element
   externals: {
