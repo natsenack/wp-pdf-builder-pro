@@ -8,6 +8,7 @@ import /* webpackMode: "eager" */ * as hooks from './hooks';
 
 // DEBUG: Vérifier que le script se charge
 console.log('🚀🚀 PDF BUILDER PRO SCRIPT LOADED 🚀🚀');
+console.log('Script URL check:', document.currentScript ? document.currentScript.src : 'No currentScript');
 
 // Classe principale pour l'éditeur PDF
 class PDFBuilderPro {
