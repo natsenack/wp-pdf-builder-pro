@@ -1,5 +1,4 @@
-import React from 'react';
-const { useState, useRef, useEffect } = React;
+import React, { useState, useRef, useEffect } from 'react';
 
 interface CanvasBuilderProps {
   width?: number;

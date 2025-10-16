@@ -1,5 +1,4 @@
-import React, { memo } from 'react';
-const { useState, useEffect, useCallback, useMemo } = React;
+import { useState, useEffect, useCallback, useMemo, memo } from 'react';
 import { useElementCustomization } from '../hooks/useElementCustomization';
 import { useElementSynchronization } from '../hooks/useElementSynchronization';
 import { elementCustomizationService } from '../services/ElementCustomizationService';

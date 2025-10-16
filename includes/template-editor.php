@@ -25,25 +25,14 @@ wp_enqueue_style('toastr', PDF_BUILDER_PRO_ASSETS_URL . 'css/toastr/toastr.min.c
 wp_enqueue_script('toastr', PDF_BUILDER_PRO_ASSETS_URL . 'js/toastr/toastr.min.js', ['jquery'], '2.1.4', true);
 
 // Scripts JavaScript principaux
-// CHARGER REACT DIRECTEMENT DANS LE HEADER VIA SCRIPT TAGS POUR ÉVITER LES PROBLÈMES DE TIMING
-// wp_enqueue_script('react-cdn', 'https://unpkg.com/react@18/umd/react.production.min.js', [], '18.0.0', false); // COMMENTÉ
-// wp_enqueue_script('react-dom-cdn', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js', ['react-cdn'], '18.0.0', false); // COMMENTÉ
+// REACT EST MAINTENANT BUNDLÉ DIRECTEMENT DANS LE BUNDLE
 wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'wp-api'], '8.0.0_force_' . microtime(true), true);
 wp_enqueue_script('pdf-builder-nonce-fix-v2', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js', ['jquery'], '4.0.0_force_reload_' . time(), true);
 
 // Ajouter un script inline pour vérifier que React est chargé
 wp_add_inline_script('pdf-builder-admin-v3', '
-    console.log("🔍 Vérification React (chargé directement)...");
-    console.log("window.React:", typeof window.React);
-    if (typeof window.React === "undefined") {
-        console.error("❌ React n\'est toujours pas chargé - vérifiez les scripts HTML");
-    } else {
-        console.log("✅ React chargé avec succès");
-        console.log("React.version:", window.React.version);
-        console.log("React.useState:", typeof window.React.useState);
-        console.log("React.createElement:", typeof window.React.createElement);
-        console.log("ReactDOM:", typeof window.ReactDOM);
-    }
+    console.log("🔍 Vérification React (bundlé)...");
+    console.log("Bundle chargé, React devrait être disponible dans le bundle");
 ');
 
 // Variables JavaScript pour AJAX
@@ -180,10 +169,6 @@ if (!$is_new && $template_id > 0) {
     }
 }
 ?>
-<!-- CHARGER REACT DIRECTEMENT POUR ÉVITER LES PROBLÈMES DE wp_enqueue_script -->
-<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-
 <div class="wrap">
     
     <div id="invoice-quote-builder-container" data-is-new="<?php echo $is_new ? 'true' : 'false'; ?>" class="pdf-builder-container">

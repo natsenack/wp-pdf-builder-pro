@@ -1,5 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createElement } from 'react';
+import { render, unmountComponentAtNode } from 'react-dom';
 import { PDFCanvasEditor } from './components/PDFCanvasEditor';
 import './styles/editor.css';
 
@@ -56,11 +57,11 @@ try {
     };
 
     // Créer l'éditeur React
-    const editorElement = React.createElement(PDFCanvasEditor, {
+    const editorElement = createElement(PDFCanvasEditor, {
       options: defaultOptions
     });
 
-    ReactDOM.render(editorElement, container);
+    render(editorElement, container);
     this.editors.set(containerId, { container, options: defaultOptions });
   }
 
@@ -68,7 +69,7 @@ try {
   destroy(containerId) {
     const editor = this.editors.get(containerId);
     if (editor) {
-      ReactDOM.unmountComponentAtNode(editor.container);
+      unmountComponentAtNode(editor.container);
       this.editors.delete(containerId);
     }
   }

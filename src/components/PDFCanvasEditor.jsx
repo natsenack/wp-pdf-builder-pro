@@ -1,5 +1,4 @@
-import React from 'react';
-const { useState, useRef, useEffect, useCallback, useMemo } = React;
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { CanvasElement } from './CanvasElement';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { Toolbar } from './Toolbar';

@@ -1,5 +1,4 @@
-import React from 'react';
-const { useEffect } = React;
+import { useEffect } from 'react';
 
 export const useKeyboardShortcuts = ({
   onDelete,

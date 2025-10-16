@@ -1,5 +1,4 @@
-import React from 'react';
-const { useState, useCallback } = React;
+import { useState, useCallback } from 'react';
 
 export const useRotation = (onElementRotate, rotationStep = 15, rotationSnap = true) => {
   const [isRotating, setIsRotating] = useState(false);

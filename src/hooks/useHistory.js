@@ -1,5 +1,4 @@
-import React from 'react';
-const { useState, useCallback, useRef } = React;
+import { useState, useCallback, useRef } from 'react';
 
 export const useHistory = (options = {}) => {
   const { maxHistorySize = 50 } = options;

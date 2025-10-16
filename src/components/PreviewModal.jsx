@@ -1,5 +1,4 @@
-import React from 'react';
-const { useState, useEffect, useCallback } = React;
+import { useState, useEffect, useCallback } from 'react';
 
 // Nouveau système d'aperçu côté serveur avec TCPDF
 

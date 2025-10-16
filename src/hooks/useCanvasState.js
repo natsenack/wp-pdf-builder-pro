@@ -1,5 +1,4 @@
-import React from 'react';
-const { useState, useCallback, useEffect, useMemo, useRef } = React;
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useHistory } from './useHistory';
 import { useSelection } from './useSelection';
 import { useClipboard } from './useClipboard';

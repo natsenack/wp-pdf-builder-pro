@@ -1,5 +1,4 @@
-import React from 'react';
-const { useCallback, useEffect, useRef } = React;
+import { useCallback, useEffect, useRef } from 'react';
 
 /**
  * Hook pour gérer la synchronisation des personnalisations d'éléments

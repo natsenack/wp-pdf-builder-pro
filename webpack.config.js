@@ -43,7 +43,8 @@ module.exports = {
     ]
   },
   externals: {
-    'react': 'React',
-    'react-dom': 'ReactDOM'
+    // Temporairement désactivé pour résoudre les problèmes de hooks React
+    // 'react': 'React',
+    // 'react-dom': 'ReactDOM'
   }
 };

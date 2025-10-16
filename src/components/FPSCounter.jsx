@@ -1,5 +1,4 @@
-import React from 'react';
-const { useState, useEffect, useRef } = React;
+import { useState, useEffect, useRef } from 'react';
 
 export const FPSCounter = ({ showFps }) => {
   const [fps, setFps] = useState(0);

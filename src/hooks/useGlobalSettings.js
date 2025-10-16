@@ -1,5 +1,4 @@
-import React from 'react';
-const { useState, useEffect } = React;
+import { useState, useEffect } from 'react';
 
 export const useGlobalSettings = () => {
   const [settings, setSettings] = useState({
