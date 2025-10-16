@@ -15,6 +15,7 @@ export const useDragAndDrop = ({
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [draggedElementId, setDraggedElementId] = useState(null);
   const dragStartPos = useRef({ x: 0, y: 0 });
+  const elementStartPos = useRef({ x: 0, y: 0 });
   const currentDragData = useRef(null);
 
   const snapToGridValue = useCallback((value) => {
@@ -93,6 +94,12 @@ export const useDragAndDrop = ({
       y: startY - elementRect.top
     };
 
+    // Stocker les coordonnées initiales de l'élément pour le calcul de la position finale
+    elementStartPos.current = {
+      x: elementRect.left,
+      y: elementRect.top
+    };
+
     const handleMouseMove = (moveEvent) => {
       // Vérifier que les données de drag existent toujours
       if (!currentDragData.current) {
@@ -130,10 +137,13 @@ export const useDragAndDrop = ({
 
       setIsDragging(false);
       setDragOffset({ x: 0, y: 0 });
+      setDraggedElementId(null);
+      elementStartPos.current = { x: 0, y: 0 };
 
       if (onElementDrop) {
-        const finalX = elementRect.left + dragOffset.x;
-        const finalY = elementRect.top + dragOffset.y;
+        // Calculer la position finale en utilisant les coordonnées initiales de l'élément + le déplacement
+        const finalX = elementStartPos.current.x + dragOffset.x;
+        const finalY = elementStartPos.current.y + dragOffset.y;
         onElementDrop(elementId, { x: finalX, y: finalY });
       }
 
