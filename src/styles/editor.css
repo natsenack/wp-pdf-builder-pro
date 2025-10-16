@@ -348,8 +348,8 @@
   font-size: 11px;
   transition: all 0.1s ease;
   position: relative;
-  min-width: 48px; /* Augmenté pour meilleure accessibilité */
-  height: 48px; /* Augmenté pour meilleure accessibilité */
+  min-width: 48px; /* Plus large pour faciliter la sélection */
+  height: 48px; /* Hauteur augmentée pour faciliter le clic */
   justify-content: center;
 }
 
@@ -1120,8 +1120,8 @@
 
   .tool-button {
     min-width: 60px;
+    height: 60px;
     padding: 12px;
-    height: 60px; /* Augmenté pour mobile aussi */
   }
 }
 
