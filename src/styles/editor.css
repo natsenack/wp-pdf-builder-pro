@@ -336,7 +336,7 @@
 }
 
 .tool-button, .edit-button {
-  padding: 6px;
+  padding: 8px;
   border: 1px solid var(--border-color);
   background: var(--surface-color);
   border-radius: 4px;
@@ -348,8 +348,8 @@
   font-size: 11px;
   transition: all 0.1s ease;
   position: relative;
-  min-width: 36px; /* Plus compact sans texte */
-  height: 36px; /* Plus compact sans texte */
+  min-width: 48px; /* Augmenté pour meilleure accessibilité */
+  height: 48px; /* Augmenté pour meilleure accessibilité */
   justify-content: center;
 }
 
@@ -1119,8 +1119,9 @@
   }
 
   .tool-button {
-    min-width: 50px;
-    padding: 10px;
+    min-width: 60px;
+    padding: 12px;
+    height: 60px; /* Augmenté pour mobile aussi */
   }
 }
 
