@@ -221,40 +221,20 @@ if (!$is_new && $template_id > 0) {
 console.log('🔍 PDF Builder: Starting direct script loading...');
 console.log('Assets URL:', '<?php echo PDF_BUILDER_PRO_ASSETS_URL; ?>');
 </script>
-<script>
-console.log('📋 Loading vendors (React)...');
-</script>
 <script src="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/vendors.js?ver=' . time(); ?>" onerror="console.error('❌ Vendors script failed to load');"></script>
-<script>
-console.log('📋 Loading toastr...');
-</script>
 <script src="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'js/toastr/toastr.min.js?ver=' . time(); ?>"></script>
-<script>
-console.log('📋 Toastr loaded, loading main script...');
-console.log('Main script URL:', '<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js?ver=' . time(); ?>');
-</script>
 <script src="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js?ver=' . time(); ?>" onerror="console.error('❌ Main script failed to load');"></script>
-<script>
-console.log('🎯 Main script loaded, loading nonce fix...');
-console.log('Nonce fix URL:', '<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js?ver=' . time(); ?>');
-</script>
 <script src="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js?ver=' . time(); ?>" onerror="console.error('❌ Nonce fix script failed to load');"></script>
 <script>
-console.log('✅ All scripts loaded, checking PDFBuilderPro...');
-console.log('PDFBuilderPro exists:', typeof window.PDFBuilderPro);
-console.log('PDFBuilderPro.init exists:', typeof window.PDFBuilderPro?.init);
 if (typeof window.PDFBuilderPro === 'undefined') {
     console.error('❌ PDFBuilderPro is undefined - script execution failed');
 }
 </script>
-<script>
-console.log('🎨 Loading CSS files...');
-</script>
-<link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css?ver=' . time(); ?>" onload="console.log('✅ pdf-builder-admin.css loaded')" onerror="console.error('❌ pdf-builder-admin.css failed to load')" />
-<link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-canvas.css?ver=' . time(); ?>" onload="console.log('✅ pdf-builder-canvas.css loaded')" onerror="console.error('❌ pdf-builder-canvas.css failed to load')" />
-<link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-react.css?ver=' . time(); ?>" onload="console.log('✅ pdf-builder-react.css loaded')" onerror="console.error('❌ pdf-builder-react.css failed to load')" />
-<link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/woocommerce-elements.css?ver=' . time(); ?>" onload="console.log('✅ woocommerce-elements.css loaded')" onerror="console.error('❌ woocommerce-elements.css failed to load')" />
-<link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/toastr/toastr.min.css?ver=' . time(); ?>" onload="console.log('✅ toastr.min.css loaded')" onerror="console.error('❌ toastr.min.css failed to load')" />
+<link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css?ver=' . time(); ?>" onerror="console.error('❌ pdf-builder-admin.css failed to load')" />
+<link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-canvas.css?ver=' . time(); ?>" onerror="console.error('❌ pdf-builder-canvas.css failed to load')" />
+<link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-react.css?ver=' . time(); ?>" onerror="console.error('❌ pdf-builder-react.css failed to load')" />
+<link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/woocommerce-elements.css?ver=' . time(); ?>" onerror="console.error('❌ woocommerce-elements.css failed to load')" />
+<link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/toastr/toastr.min.css?ver=' . time(); ?>" onerror="console.error('❌ toastr.min.css failed to load')" />
 
 <style>
 @keyframes spin {
