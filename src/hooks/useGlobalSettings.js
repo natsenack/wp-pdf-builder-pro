@@ -391,7 +391,7 @@ export const useGlobalSettings = () => {
           if (!response.ok) {
             console.warn('Erreur lors de la sauvegarde des paramètres dans WordPress:', response.status);
           } else {
-            console.log('Paramètres sauvegardés avec succès dans WordPress');
+            // console.log('Paramètres sauvegardés avec succès dans WordPress');
           }
         })
         .catch(error => {
