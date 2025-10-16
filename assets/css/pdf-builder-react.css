@@ -508,47 +508,76 @@ body.pdf-builder-active .pdf-canvas-editor {
 
 .tool-buttons {
   display: flex;
-  gap: 4px;
+  gap: 2px;
   flex-wrap: wrap;
 }
 
 .tool-button {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 4px;
-  padding: 8px 12px;
+  justify-content: center;
+  gap: 0;
+  padding: 6px;
   border: 1px solid #e8eaed;
   background: white;
   border-radius: 4px;
   cursor: pointer;
   font-size: 12px;
   transition: all 0.2s ease;
-  min-width: 60px;
+  width: 36px;
+  height: 36px;
 }
 
 .tool-button:hover {
   background: #fafbfc;
   border-color: #d1d5db;
+  transform: scale(1.05);
 }
 
 .tool-button.active {
   background: #2563eb;
   color: white;
   border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
 }
 
 .tool-icon {
-  font-size: 16px;
+  font-size: 18px;
+  line-height: 1;
 }
 
-.tool-label {
-  font-size: 10px;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 60px;
+/* Boutons d'édition */
+.edit-buttons {
+  display: flex;
+  gap: 4px;
+}
+
+.edit-button {
+  padding: 6px 12px;
+  border: 1px solid #e8eaed;
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.edit-button:hover:not(:disabled) {
+  background: #fafbfc;
+  border-color: #d1d5db;
+}
+
+.edit-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.edit-button:disabled:hover {
+  background: white;
+  border-color: #e8eaed;
 }
 
 /* ===== AUTRES CLASSES MANQUANTES ===== */

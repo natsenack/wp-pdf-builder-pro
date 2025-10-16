@@ -43,7 +43,6 @@ export const Toolbar = ({
               title={tool.label}
             >
               <span className="tool-icon">{tool.icon}</span>
-              <span className="tool-label">{tool.label}</span>
             </button>
           ))}
         </div>
