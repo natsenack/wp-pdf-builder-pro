@@ -199,6 +199,7 @@ if (!$is_new && $template_id > 0) {
             let lastPdfBuilderProExists = false;
             let lastInitExists = false;
             let lastReactContainerExists = false;
+            let lastHasReactContent = false;
 
             // Fonction pour vérifier si les scripts sont chargés
             const checkScriptsLoaded = () => {
@@ -209,14 +210,14 @@ if (!$is_new && $template_id > 0) {
                 lastReactContainerExists = container && container.children.length > 0;
 
                 // Vérifier si React a réellement remplacé le contenu de chargement
-                const hasReactContent = container && !container.querySelector('p')?.textContent?.includes('Chargement de l\'éditeur React/TypeScript avancé');
+                lastHasReactContent = container && !container.querySelector('p')?.textContent?.includes('Chargement de l\'éditeur React/TypeScript avancé');
                 const hasLoadingSpinner = container && container.querySelector('.spin') !== null;
 
                 console.log('Script check details:', {
                     pdfBuilderProExists: lastPdfBuilderProExists,
                     initExists: lastInitExists,
                     reactContainerExists: lastReactContainerExists,
-                    hasReactContent,
+                    hasReactContent: lastHasReactContent,
                     hasLoadingSpinner,
                     PDFBuilderPro: typeof window.PDFBuilderPro,
                     containerChildren: container?.children?.length || 0,
@@ -224,14 +225,20 @@ if (!$is_new && $template_id > 0) {
                 });
 
                 // Accepter soit PDFBuilderPro chargé, soit le contenu React réellement affiché (pas le message de chargement)
-                return (lastPdfBuilderProExists && lastInitExists) || hasReactContent;
+                return (lastPdfBuilderProExists && lastInitExists) || lastHasReactContent;
             };
 
             // Initialisation optimisée avec polling intelligent
             let attempts = 0;
             const maxAttempts = 200; // ~10 secondes max
+            let waitingForPDFBuilderPro = false; // Flag pour éviter la boucle infinie
 
             const initApp = () => {
+                // Éviter de boucler si on attend déjà PDFBuilderPro
+                if (waitingForPDFBuilderPro) {
+                    return;
+                }
+
                 console.log('Checking scripts loaded...', {
                     PDFBuilderPro: typeof window.PDFBuilderPro,
                     init: typeof window.PDFBuilderPro?.init
@@ -265,9 +272,13 @@ if (!$is_new && $template_id > 0) {
                                 snapToGrid: true,
                                 maxHistorySize: 50
                             });
-                        } else if (lastReactContainerExists) {
+                        } else if (lastReactContainerExists && !lastHasReactContent) {
                             console.log('📋 Conteneur React détecté avec contenu de chargement - en attente de PDFBuilderPro...');
+                            waitingForPDFBuilderPro = true; // Marquer qu'on attend
                             // Attendre que PDFBuilderPro devienne disponible pour remplacer le contenu
+                            let waitAttempts = 0;
+                            const maxWaitAttempts = 100; // 10 secondes max d'attente
+
                             const waitForPDFBuilderPro = () => {
                                 if (typeof window.PDFBuilderPro !== 'undefined' && typeof window.PDFBuilderPro.init === 'function') {
                                     console.log('✅ PDFBuilderPro maintenant disponible, remplacement du contenu de chargement...');
@@ -283,8 +294,26 @@ if (!$is_new && $template_id > 0) {
                                         snapToGrid: true,
                                         maxHistorySize: 50
                                     });
-                                } else {
+                                } else if (++waitAttempts < maxWaitAttempts) {
                                     setTimeout(waitForPDFBuilderPro, 100);
+                                } else {
+                                    console.error('⏰ Timeout: PDFBuilderPro n\'est jamais devenu disponible');
+                                    // Afficher un message d'erreur au lieu de boucler
+                                    const container = document.getElementById('invoice-quote-builder-container');
+                                    if (container) {
+                                        container.innerHTML = `
+                                            <div style="text-align: center; padding: 40px; color: #dc3545;">
+                                                <div style="font-size: 3rem; margin-bottom: 1rem;">❌</div>
+                                                <h2>Erreur de chargement</h2>
+                                                <p>L'éditeur React n'a pas pu s'initialiser correctement.</p>
+                                                <p>PDFBuilderPro n'est pas disponible après 10 secondes d'attente.</p>
+                                                <p>Vérifiez la console pour plus de détails.</p>
+                                                <button onclick="location.reload()" style="background: #dc3545; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin-top: 10px;">
+                                                    Recharger la page
+                                                </button>
+                                            </div>
+                                        `;
+                                    }
                                 }
                             };
                             setTimeout(waitForPDFBuilderPro, 100);
@@ -328,9 +357,7 @@ if (!$is_new && $template_id > 0) {
                         `;
                     }
                 }
-            };
-
-            // Démarrer l'initialisation après DOM ready
+            };            // Démarrer l'initialisation après DOM ready
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', initApp);
             } else {
