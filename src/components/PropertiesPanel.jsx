@@ -1483,6 +1483,18 @@ const PropertiesPanel = React.memo(({
                     ))}
                   </div>
                 </div>
+
+                <div className="property-row">
+                  <label>Afficher les bordures des cellules:</label>
+                  <label className="toggle">
+                    <input
+                      type="checkbox"
+                      checked={localProperties.showBorders ?? true}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'showBorders', e.target.checked)}
+                    />
+                    <span className="toggle-slider"></span>
+                  </label>
+                </div>
               </div>
             )}
 
