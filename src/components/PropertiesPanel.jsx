@@ -599,8 +599,8 @@ const PropertiesPanel = React.memo(({
               </div>
             </div>
 
-            {/* Contrôles de police (uniquement pour les éléments qui les supportent) */}
-            {allowedControls.includes('font') && (
+            {/* Contrôles de police (uniquement pour les éléments qui les supportent, sauf les tableaux de produits) */}
+            {allowedControls.includes('font') && selectedElement.type !== 'product_table' && (
               <FontControls
                 elementId={selectedElement.id}
                 properties={localProperties}
@@ -912,8 +912,8 @@ const PropertiesPanel = React.memo(({
               </div>
             )}
 
-            {/* Calques et profondeur (toujours disponible) */}
-            {allowedControls.includes('layers') && (
+            {/* Calques et profondeur (toujours disponible sauf pour les tableaux de produits) */}
+            {allowedControls.includes('layers') && selectedElement.type !== 'product_table' && (
               <div className="properties-group">
                 <h4>📚 Calques</h4>
 
@@ -1987,44 +1987,46 @@ const PropertiesPanel = React.memo(({
               </div>
             )}
 
-            {/* Contrôles de contenu disponibles pour tous les éléments */}
-            <div className="properties-group">
-              <h4>� Contenu</h4>
+            {/* Contrôles de contenu disponibles pour tous les éléments sauf les tableaux de produits */}
+            {selectedElement.type !== 'product_table' && (
+              <div className="properties-group">
+                <h4>� Contenu</h4>
 
-              <div className="property-row">
-                <label>Texte/Contenu:</label>
-                <input
-                  type="text"
-                  value={localProperties.content || ''}
-                  onChange={(e) => handlePropertyChange(selectedElement.id, 'content', e.target.value)}
-                  placeholder="Texte à afficher"
-                />
-              </div>
+                <div className="property-row">
+                  <label>Texte/Contenu:</label>
+                  <input
+                    type="text"
+                    value={localProperties.content || ''}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'content', e.target.value)}
+                    placeholder="Texte à afficher"
+                  />
+                </div>
 
-              <div className="property-row">
-                <label>Format:</label>
-                <input
-                  type="text"
-                  value={localProperties.format || ''}
-                  onChange={(e) => handlePropertyChange(selectedElement.id, 'format', e.target.value)}
-                  placeholder="Format d'affichage (optionnel)"
-                />
-              </div>
+                <div className="property-row">
+                  <label>Format:</label>
+                  <input
+                    type="text"
+                    value={localProperties.format || ''}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'format', e.target.value)}
+                    placeholder="Format d'affichage (optionnel)"
+                  />
+                </div>
 
-              <div className="property-row">
-                <label>Type de document:</label>
-                <select
-                  value={localProperties.documentType || 'invoice'}
-                  onChange={(e) => handlePropertyChange(selectedElement.id, 'documentType', e.target.value)}
-                >
-                  <option value="invoice">Facture</option>
-                  <option value="quote">Devis</option>
-                  <option value="receipt">Reçu</option>
-                  <option value="order">Commande</option>
-                  <option value="credit_note">Avoir</option>
-                </select>
+                <div className="property-row">
+                  <label>Type de document:</label>
+                  <select
+                    value={localProperties.documentType || 'invoice'}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'documentType', e.target.value)}
+                  >
+                    <option value="invoice">Facture</option>
+                    <option value="quote">Devis</option>
+                    <option value="receipt">Reçu</option>
+                    <option value="order">Commande</option>
+                    <option value="credit_note">Avoir</option>
+                  </select>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Contrôles de champs disponibles pour tous les éléments sauf les tableaux de produits */}
             {selectedElement.type !== 'product_table' && (
