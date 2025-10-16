@@ -92,58 +92,65 @@ export const useDragAndDrop = ({
     };
 
     const handleMouseMove = (moveEvent) => {
-      // Vérifier que les données de drag existent toujours
-      if (!currentDragData.current) {
-        console.warn('Drag data no longer exists during move');
-        return;
-      }
+      try {
+        // Vérifier que les données de drag existent toujours
+        if (!currentDragData.current) {
+          console.warn('Drag data no longer exists during move');
+          return;
+        }
+        const mouseX = (moveEvent.clientX - currentCanvasRect.left) / currentZoom;
+        const mouseY = (moveEvent.clientY - currentCanvasRect.top) / currentZoom;
+        lastMouseX = mouseX;
+        lastMouseY = mouseY;
 
-      const mouseX = (moveEvent.clientX - currentCanvasRect.left) / currentZoom;
-      const mouseY = (moveEvent.clientY - currentCanvasRect.top) / currentZoom;
-      lastMouseX = mouseX;
-      lastMouseY = mouseY;
+        const deltaX = mouseX - startX;
+        const deltaY = mouseY - startY;
 
-      const deltaX = mouseX - startX;
-      const deltaY = mouseY - startY;
+        const effectiveCanvasWidth = canvasRect ? canvasRect.width / zoomLevel : canvasWidth;
+        const effectiveCanvasHeight = canvasRect ? canvasRect.height / zoomLevel : canvasHeight;
 
-      const effectiveCanvasWidth = canvasRect ? canvasRect.width / zoomLevel : canvasWidth;
-      const effectiveCanvasHeight = canvasRect ? canvasRect.height / zoomLevel : canvasHeight;
+        const newX = Math.max(0, Math.min(effectiveCanvasWidth - elementRect.width, snapValue(elementRect.left + deltaX, false)));
+        const newY = Math.max(0, Math.min(effectiveCanvasHeight - elementRect.height, snapValue(elementRect.top + deltaY, true)));
 
-      const newX = Math.max(0, Math.min(effectiveCanvasWidth - elementRect.width, snapValue(elementRect.left + deltaX, false)));
-      const newY = Math.max(0, Math.min(effectiveCanvasHeight - elementRect.height, snapValue(elementRect.top + deltaY, true)));
+        setDragOffset({ x: newX - elementRect.left, y: newY - elementRect.top });
 
-      setDragOffset({ x: newX - elementRect.left, y: newY - elementRect.top });
-
-      if (onElementMove) {
-        onElementMove(elementId, { x: newX, y: newY });
+        if (onElementMove) {
+          onElementMove(elementId, { x: newX, y: newY });
+        }
+      } catch (error) {
+        console.error('Error in handleMouseMove:', error);
       }
     };
 
     const handleMouseUp = () => {
-      // Vérifier que les données de drag existent toujours
-      if (!currentDragData.current) {
-        console.warn('Drag data no longer exists during drop');
+      try {
+        // Vérifier que les données de drag existent toujours
+        if (!currentDragData.current) {
+          console.warn('Drag data no longer exists during drop');
+          setIsDragging(false);
+          setDragOffset({ x: 0, y: 0 });
+          return;
+        }
+
         setIsDragging(false);
         setDragOffset({ x: 0, y: 0 });
-        return;
+
+        if (onElementDrop) {
+          const effectiveCanvasWidth = canvasRect ? canvasRect.width / zoomLevel : canvasWidth;
+          const effectiveCanvasHeight = canvasRect ? canvasRect.height / zoomLevel : canvasHeight;
+
+          const finalX = Math.max(0, Math.min(effectiveCanvasWidth - elementRect.width, snapValue(elementRect.left + (lastMouseX - startX), false)));
+          const finalY = Math.max(0, Math.min(effectiveCanvasHeight - elementRect.height, snapValue(elementRect.top + (lastMouseY - startY), true)));
+          onElementDrop(elementId, { x: finalX, y: finalY });
+        }
+
+        // Nettoyer les event listeners
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+        currentDragData.current = null;
+      } catch (error) {
+        console.error('Error in handleMouseUp:', error);
       }
-
-      setIsDragging(false);
-      setDragOffset({ x: 0, y: 0 });
-
-      if (onElementDrop) {
-        const effectiveCanvasWidth = canvasRect ? canvasRect.width / zoomLevel : canvasWidth;
-        const effectiveCanvasHeight = canvasRect ? canvasRect.height / zoomLevel : canvasHeight;
-
-        const finalX = Math.max(0, Math.min(effectiveCanvasWidth - elementRect.width, snapValue(elementRect.left + (lastMouseX - startX), false)));
-        const finalY = Math.max(0, Math.min(effectiveCanvasHeight - elementRect.height, snapValue(elementRect.top + (lastMouseY - startY), true)));
-        onElementDrop(elementId, { x: finalX, y: finalY });
-      }
-
-      // Nettoyer les event listeners
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-      currentDragData.current = null;
     };
 
     // Stocker les références pour le nettoyage
@@ -154,13 +161,17 @@ export const useDragAndDrop = ({
   }, [snapToGridValue, onElementMove, onElementDrop, zoom, canvasWidth, canvasHeight]);
 
   const handleDragStart = useCallback((e, elementId, elementRect) => {
-    e.dataTransfer.setData('text/plain', elementId);
-    e.dataTransfer.effectAllowed = 'move';
+    try {
+      e.dataTransfer.setData('text/plain', elementId);
+      e.dataTransfer.effectAllowed = 'move';
 
-    dragStartPos.current = {
-      x: e.clientX - elementRect.left,
-      y: e.clientY - elementRect.top
-    };
+      dragStartPos.current = {
+        x: e.clientX - elementRect.left,
+        y: e.clientY - elementRect.top
+      };
+    } catch (error) {
+      console.error('Error in handleDragStart:', error);
+    }
   }, []);
 
   const handleDragOver = useCallback((e) => {
@@ -169,22 +180,26 @@ export const useDragAndDrop = ({
   }, []);
 
   const handleDrop = useCallback((e, canvasRect, elementRect) => {
-    e.preventDefault();
+    try {
+      e.preventDefault();
 
-    const elementId = e.dataTransfer.getData('text/plain');
-    if (!elementId) return;
+      const elementId = e.dataTransfer.getData('text/plain');
+      if (!elementId) return;
 
-    const dropX = (e.clientX - canvasRect.left - dragStartPos.current.x) / zoom;
-    const dropY = (e.clientY - canvasRect.top - dragStartPos.current.y) / zoom;
+      const dropX = (e.clientX - canvasRect.left - dragStartPos.current.x) / zoom;
+      const dropY = (e.clientY - canvasRect.top - dragStartPos.current.y) / zoom;
 
-    const effectiveCanvasWidth = canvasRect ? canvasRect.width / zoom : canvasWidth;
-    const effectiveCanvasHeight = canvasRect ? canvasRect.height / zoom : canvasHeight;
+      const effectiveCanvasWidth = canvasRect ? canvasRect.width / zoom : canvasWidth;
+      const effectiveCanvasHeight = canvasRect ? canvasRect.height / zoom : canvasHeight;
 
-    const snappedX = Math.max(0, Math.min(effectiveCanvasWidth - elementRect.width, snapValue(dropX, false)));
-    const snappedY = Math.max(0, Math.min(effectiveCanvasHeight - elementRect.height, snapValue(dropY, true)));
+      const snappedX = Math.max(0, Math.min(effectiveCanvasWidth - elementRect.width, snapValue(dropX, false)));
+      const snappedY = Math.max(0, Math.min(effectiveCanvasHeight - elementRect.height, snapValue(dropY, true)));
 
-    if (onElementDrop) {
-      onElementDrop(elementId, { x: snappedX, y: snappedY });
+      if (onElementDrop) {
+        onElementDrop(elementId, { x: snappedX, y: snappedY });
+      }
+    } catch (error) {
+      console.error('Error in handleDrop:', error);
     }
   }, [snapToGridValue, onElementDrop, zoom, canvasWidth, canvasHeight]);
 
