@@ -220,12 +220,12 @@ body.pdf-builder-active #wpadminbar {
   flex: 1;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start; /* Changé de center à flex-start pour plus d'espace en haut */
   background: #fafbfc;
   overflow: auto;
-  padding: 60px 40px; /* Espace généreux autour du canvas */
+  padding: 120px 60px 200px 60px; /* Espace beaucoup plus généreux autour du canvas */
   position: relative;
-  min-height: 400px;
+  min-height: 600px; /* Augmenté pour plus d'espace */
 }
 
 /* Wrapper de zoom du canvas */

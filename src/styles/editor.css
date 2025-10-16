@@ -216,8 +216,8 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 60px 40px 140px 60px; /* Espace généreux autour du canvas */
-  min-height: fit-content;
+  padding: 120px 60px 200px 60px; /* Espace beaucoup plus généreux autour du canvas */
+  min-height: 600px; /* Augmenté pour plus d'espace */
   z-index: 0;
 }
 
