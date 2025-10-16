@@ -1,1 +1,1 @@
-document.addEventListener("DOMContentLoaded",function(){}),window.React={};
+document.addEventListener("DOMContentLoaded",function(){});

@@ -103,5 +103,5 @@ if (typeof window !== 'undefined') {
 }
 
 // Export pour les modules ES6
-export default React;
+// export default React;
 

@@ -7,9 +7,7 @@ module.exports = {
   },
   output: {
     filename: '[name].js',
-    path: path.resolve(__dirname, 'assets/js/dist'),
-    library: 'React',
-    libraryTarget: 'window'
+    path: path.resolve(__dirname, 'assets/js/dist')
   },
   // React est maintenant bundlé directement
   mode: 'production',
