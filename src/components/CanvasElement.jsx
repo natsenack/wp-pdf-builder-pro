@@ -90,9 +90,9 @@ export const CanvasElement = ({
       default: {
         headerBg: '#f8fafc',
         headerBorder: '#e2e8f0',
-        rowBorder: '#f1f5f9',
+        rowBorder: '#666666',
         altRowBg: '#fafbfc',
-        borderWidth: 1,
+        borderWidth: 2,
         headerTextColor: '#334155',
         rowTextColor: '#334155',
         headerFontWeight: '600',
