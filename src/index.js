@@ -6,9 +6,13 @@ import './styles/editor.css';
 // Forcer l'inclusion de tous les hooks personnalisés
 import /* webpackMode: "eager" */ * as hooks from './hooks';
 
+// DEBUG: Vérifier que le script se charge
+console.log('🚀🚀 PDF BUILDER PRO SCRIPT LOADED 🚀🚀');
+
 // Classe principale pour l'éditeur PDF
 class PDFBuilderPro {
   constructor() {
+    console.log('📦 PDFBuilderPro constructor called');
     this.version = '2.0.0';
     this.editors = new Map();
     
@@ -88,6 +92,8 @@ if (typeof window !== 'undefined') {
   window.PDFBuilderPro = pdfBuilderPro;
   // Alias pour compatibilité
   window.pdfBuilderPro = pdfBuilderPro;
+  console.log('✅ PDFBuilderPro attached to window:', window.PDFBuilderPro);
+  console.log('✅ PDFBuilderPro.init available:', typeof window.PDFBuilderPro.init);
 }
 
 // Export pour les modules ES6
