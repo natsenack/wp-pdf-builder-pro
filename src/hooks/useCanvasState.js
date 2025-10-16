@@ -536,21 +536,21 @@ export const useCanvasState = ({
   }, [history, selection]);
 
   const saveTemplate = useCallback(async () => {
-    console.log('🔄 PDF Builder SAVE - Bouton "modifier" cliqué');
-    console.log('📊 PDF Builder SAVE - État actuel:', {
-      templateId,
-      elementsCount: elements.length,
-      isSaving: loadingStates.saving,
-      canvasWidth,
-      canvasHeight
-    });
+    // console.log('🔄 PDF Builder SAVE - Bouton "modifier" cliqué');
+    // console.log('📊 PDF Builder SAVE - État actuel:', {
+    //   templateId,
+    //   elementsCount: elements.length,
+    //   isSaving: loadingStates.saving,
+    //   canvasWidth,
+    //   canvasHeight
+    // });
 
     if (loadingStates.saving) {
-      console.log('⚠️ PDF Builder SAVE - Sauvegarde déjà en cours, annulation');
+      // console.log('⚠️ PDF Builder SAVE - Sauvegarde déjà en cours, annulation');
       return;
     }
 
-    console.log('🚀 PDF Builder SAVE - Démarrage de la sauvegarde');
+    // console.log('🚀 PDF Builder SAVE - Démarrage de la sauvegarde');
     setLoadingStates(prev => ({ ...prev, saving: true }));
 
     // Déterminer si c'est un template existant
@@ -914,16 +914,16 @@ export const useCanvasState = ({
       // Nettoyer tous les éléments avec protection contre les erreurs
       let cleanedElements = [];
       try {
-        console.log('🧹 PDF Builder SAVE - Nettoyage des éléments commencé, éléments bruts:', elements.length);
+        // console.log('🧹 PDF Builder SAVE - Nettoyage des éléments commencé, éléments bruts:', elements.length);
 
         // Log détaillé de chaque élément avant filtrage
         elements.forEach((element, index) => {
           const hasElement = element && typeof element === 'object';
           const hasId = element && element.id;
           const hasType = element && element.type;
-          console.log(`📋 Élément ${index} - valide: ${hasElement}, id: ${hasId ? element.id : 'MISSING'}, type: ${hasType ? element.type : 'MISSING'}`);
+          // console.log(`📋 Élément ${index} - valide: ${hasElement}, id: ${hasId ? element.id : 'MISSING'}, type: ${hasType ? element.type : 'MISSING'}`);
           if (!hasElement || !hasId || !hasType) {
-            console.log(`❌ Élément ${index} sera filtré:`, element);
+            // console.log(`❌ Élément ${index} sera filtré:`, element);
           }
         });
 
@@ -932,11 +932,11 @@ export const useCanvasState = ({
           .map(cleanElementForSerialization)
           .filter(element => element && element.id && element.type); // Filtrer après nettoyage
 
-        console.log('✅ PDF Builder SAVE - Nettoyage terminé, éléments nettoyés:', cleanedElements.length);
+        // console.log('✅ PDF Builder SAVE - Nettoyage terminé, éléments nettoyés:', cleanedElements.length);
 
         // Test de sérialisation de tous les éléments
         JSON.stringify(cleanedElements);
-        console.log('✅ PDF Builder SAVE - Test de sérialisation réussi');
+        // console.log('✅ PDF Builder SAVE - Test de sérialisation réussi');
       } catch (e) {
         console.error('❌ PDF Builder SAVE - Erreur lors du nettoyage des éléments:', e);
         console.error('❌ PDF Builder SAVE - Éléments originaux qui ont causé l\'erreur:', elements);
@@ -947,23 +947,23 @@ export const useCanvasState = ({
       // Log détaillé des propriétés de chaque élément (mode développement uniquement)
       if (isDevelopment) {
         elements.forEach((element, index) => {
-          console.log(`Élément ${index} (${element.type}) propriétés avant nettoyage:`, Object.keys(element));
+          // console.log(`Élément ${index} (${element.type}) propriétés avant nettoyage:`, Object.keys(element));
           if (element.type === 'product_table') {
-            console.log(`Tableau ${index} - paramètres:`, {
-              showHeaders: element.showHeaders,
-              showBorders: element.showBorders,
-              columns: element.columns,
-              tableStyle: element.tableStyle,
-              showSubtotal: element.showSubtotal,
-              showShipping: element.showShipping,
-              showTaxes: element.showTaxes,
-              showDiscount: element.showDiscount,
-              showTotal: element.showTotal
-            });
+            // console.log(`Tableau ${index} - paramètres:`, {
+            //   showHeaders: element.showHeaders,
+            //   showBorders: element.showBorders,
+            //   columns: element.columns,
+            //   tableStyle: element.tableStyle,
+            //   showSubtotal: element.showSubtotal,
+            //   showShipping: element.showShipping,
+            //   showTaxes: element.showTaxes,
+            //   showDiscount: element.showDiscount,
+            //   showTotal: element.showTotal
+            // });
           }
         });
 
-        console.log('Éléments nettoyés pour sauvegarde:', cleanedElements);
+        // console.log('Éléments nettoyés pour sauvegarde:', cleanedElements);
       }
 
       const templateData = {
@@ -975,7 +975,7 @@ export const useCanvasState = ({
 
       // Log des données en mode développement uniquement
       if (isDevelopment) {
-        console.log('Données template à sauvegarder:', templateData);
+        // console.log('Données template à sauvegarder:', templateData);
       }
 
       // Valider le JSON avant envoi avec protection renforcée
@@ -999,16 +999,16 @@ export const useCanvasState = ({
         }
 
         // Log détaillé pour débogage
-        console.log('PDF Builder SAVE - Données validées côté client:', {
-          elementCount: testParse.elements.length,
-          firstElement: testParse.elements[0],
-          jsonLength: jsonString.length,
-          canvasWidth: testParse.canvasWidth,
-          canvasHeight: testParse.canvasHeight
-        });
+        // console.log('PDF Builder SAVE - Données validées côté client:', {
+        //   elementCount: testParse.elements.length,
+        //   firstElement: testParse.elements[0],
+        //   jsonLength: jsonString.length,
+        //   canvasWidth: testParse.canvasWidth,
+        //   canvasHeight: testParse.canvasHeight
+        // });
 
         // Log des données brutes envoyées au serveur pour debug
-        console.log('PDF Builder SAVE - Données JSON brutes envoyées au serveur (premiers 500 chars):', jsonString.substring(0, 500));
+        // console.log('PDF Builder SAVE - Données JSON brutes envoyées au serveur (premiers 500 chars):', jsonString.substring(0, 500));
 
       } catch (jsonError) {
         console.error('Erreur de validation JSON côté client:', jsonError);
@@ -1017,7 +1017,7 @@ export const useCanvasState = ({
       }
 
       // Sauvegarde directe via AJAX avec FormData pour les données volumineuses
-      console.log('📤 PDF Builder SAVE - Préparation des données pour envoi au serveur');
+      // console.log('📤 PDF Builder SAVE - Préparation des données pour envoi au serveur');
       const formData = new FormData();
       formData.append('action', 'pdf_builder_pro_save_template');
       formData.append('template_data', jsonString);
@@ -1025,23 +1025,23 @@ export const useCanvasState = ({
       formData.append('template_id', window.pdfBuilderData?.templateId || '0');
       formData.append('nonce', window.pdfBuilderAjax?.nonce || window.pdfBuilderData?.nonce || '');
 
-      console.log('📤 PDF Builder SAVE - Données FormData préparées:', {
-        action: 'pdf_builder_pro_save_template',
-        templateName: window.pdfBuilderData?.templateName || `Template ${window.pdfBuilderData?.templateId || 'New'}`,
-        templateId: window.pdfBuilderData?.templateId || '0',
-        nonce: window.pdfBuilderAjax?.nonce || window.pdfBuilderData?.nonce || '',
-        jsonLength: jsonString.length
-      });
+      // console.log('📤 PDF Builder SAVE - Données FormData préparées:', {
+      //   action: 'pdf_builder_pro_save_template',
+      //   templateName: window.pdfBuilderData?.templateName || `Template ${window.pdfBuilderData?.templateId || 'New'}`,
+      //   templateId: window.pdfBuilderData?.templateId || '0',
+      //   nonce: window.pdfBuilderAjax?.nonce || window.pdfBuilderData?.nonce || '',
+      //   jsonLength: jsonString.length
+      // });
 
-      console.log('🌐 PDF Builder SAVE - Envoi de la requête AJAX...');
+      // console.log('🌐 PDF Builder SAVE - Envoi de la requête AJAX...');
       const response = await fetch(window.pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
         method: 'POST',
         body: formData
       });
 
-      console.log('📥 PDF Builder SAVE - Réponse reçue du serveur, status:', response.status);
+      // console.log('📥 PDF Builder SAVE - Réponse reçue du serveur, status:', response.status);
       const result = await response.json();
-      console.log('📥 PDF Builder SAVE - Résultat du serveur:', result);
+      // console.log('📥 PDF Builder SAVE - Résultat du serveur:', result);
 
       if (!result.success) {
         throw new Error(result.data?.message || 'Erreur lors de la sauvegarde');
@@ -1075,7 +1075,7 @@ export const useCanvasState = ({
 
       throw error; // Re-throw pour permettre la gestion d'erreur en amont si nécessaire
     } finally {
-      console.log('🏁 PDF Builder SAVE - Fin du processus de sauvegarde');
+      // console.log('🏁 PDF Builder SAVE - Fin du processus de sauvegarde');
       setLoadingStates(prev => ({ ...prev, saving: false }));
     }
   }, [elements, canvasWidth, canvasHeight, isSaving, templateId]);

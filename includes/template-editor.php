@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
  * React/TypeScript Canvas Editor
  */
 
-error_log("PDF Builder Debug: Début de template-editor.php");
+// error_log("PDF Builder Debug: Début de template-editor.php");
 
 // Permissions are checked by WordPress via add_submenu_page capability parameter
 // Additional check for logged-in users as fallback
@@ -21,6 +21,8 @@ if (!defined('PDF_BUILDER_DEBUG_MODE') || !PDF_BUILDER_DEBUG_MODE) {
 // CHARGER LES SCRIPTS DIRECTEMENT POUR CETTE PAGE
 // Charger les scripts et styles nécessaires pour l'éditeur
 wp_enqueue_style('pdf-builder-admin', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css', [], PDF_BUILDER_PRO_VERSION);
+wp_enqueue_style('pdf-builder-react', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-react.css', [], PDF_BUILDER_PRO_VERSION);
+wp_enqueue_style('woocommerce-elements', PDF_BUILDER_PRO_ASSETS_URL . 'css/woocommerce-elements.css', [], PDF_BUILDER_PRO_VERSION);
 wp_enqueue_style('toastr', PDF_BUILDER_PRO_ASSETS_URL . 'css/toastr/toastr.min.css', [], '2.1.4');
 wp_enqueue_script('toastr', PDF_BUILDER_PRO_ASSETS_URL . 'js/toastr/toastr.min.js', ['jquery'], '2.1.4', true);
 
@@ -78,7 +80,7 @@ wp_localize_script('pdf-builder-admin-v3', 'pdfBuilderCanvasSettings', [
 // Styles pour l'éditeur canvas
 wp_enqueue_style('pdf-builder-canvas-editor', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-canvas.css', [], PDF_BUILDER_PRO_VERSION);
 
-error_log("PDF Builder Debug: Scripts enqueued in template-editor.php");
+// error_log("PDF Builder Debug: Scripts enqueued in template-editor.php");
 
 // Forcer l'impression des scripts enqueued (au cas où wp_head n'ait pas encore été appelé)
 add_action('wp_print_scripts', function() {

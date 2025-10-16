@@ -16,7 +16,6 @@ const ElementLibrary = React.lazy(() => import('./ElementLibrary'));
 const PropertiesPanel = React.lazy(() => import('./PropertiesPanel'));
 
 export const PDFCanvasEditor = ({ options }) => {
-  console.log('🎨 PDFCanvasEditor component rendering with options:', options);
   const [tool, setTool] = useState('select');
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [showPDFModal, setShowPDFModal] = useState(false);
@@ -185,17 +184,17 @@ export const PDFCanvasEditor = ({ options }) => {
 
   // Gestionnaire pour l'impression
   const handlePrint = useCallback(async () => {
-    console.log('� HANDLE PRINT DÉCLENCHÉ - FONCTION IMPRIMER CLIQUEE 🔥');
-    console.log('�🚀 NOUVEAUX LOGS DE DEBUG - VERSION 2.0 - DÉBUT');
-    console.log('🔍 Début de la génération PDF avec logs détaillés');
+    // console.log('� HANDLE PRINT DÉCLENCHÉ - FONCTION IMPRIMER CLIQUEE 🔥');
+    // console.log('�🚀 NOUVEAUX LOGS DE DEBUG - VERSION 2.0 - DÉBUT');
+    // console.log('🔍 Début de la génération PDF avec logs détaillés');
 
     try {
-      console.log('Génération PDF pour impression...');
+      // console.log('Génération PDF pour impression...');
 
       // Récupérer tous les éléments du canvas
       const elements = canvasState.getAllElements();
-      console.log('Éléments récupérés:', elements);
-      console.log('Nombre d\'éléments récupérés:', elements.length);
+      // console.log('Éléments récupérés:', elements);
+      // console.log('Nombre d\'éléments récupérés:', elements.length);
 
       if (elements.length === 0) {
         alert('Aucun élément à imprimer. Ajoutez des éléments au canvas d\'abord.');
@@ -204,20 +203,20 @@ export const PDFCanvasEditor = ({ options }) => {
 
       // Vérifier la structure des éléments
       elements.forEach((element, index) => {
-        console.log(`Élément ${index}:`, element);
-        console.log(`- Type: ${element.type}`);
-        console.log(`- ID: ${element.id}`);
-        console.log(`- Content/Text: ${element.content || element.text}`);
-        console.log(`- Position: x=${element.x}, y=${element.y}`);
-        console.log(`- Dimensions: width=${element.width}, height=${element.height}`);
+        // console.log(`Élément ${index}:`, element);
+        // console.log(`- Type: ${element.type}`);
+        // console.log(`- ID: ${element.id}`);
+        // console.log(`- Content/Text: ${element.content || element.text}`);
+        // console.log(`- Position: x=${element.x}, y=${element.y}`);
+        // console.log(`- Dimensions: width=${element.width}, height=${element.height}`);
       });
 
       // Vérifier la sérialisation JSON avant l'envoi
       let jsonString;
       try {
         jsonString = JSON.stringify(elements);
-        console.log('✅ JSON stringify réussi, longueur:', jsonString.length);
-        console.log('Aperçu JSON (premiers 500 chars):', jsonString.substring(0, 500));
+        // console.log('✅ JSON stringify réussi, longueur:', jsonString.length);
+        // console.log('Aperçu JSON (premiers 500 chars):', jsonString.substring(0, 500));
       } catch (jsonError) {
         console.error('❌ Erreur lors de JSON.stringify:', jsonError);
         console.error('Éléments problématiques:', elements);
@@ -231,10 +230,10 @@ export const PDFCanvasEditor = ({ options }) => {
       formData.append('nonce', window.pdfBuilderAjax?.nonce);
       formData.append('elements', jsonString);
 
-      console.log('Envoi de', elements.length, 'éléments au serveur...');
-      console.log('Données JSON envoyées:', JSON.stringify(elements, null, 2));
+      // console.log('Envoi de', elements.length, 'éléments au serveur...');
+      // console.log('Données JSON envoyées:', JSON.stringify(elements, null, 2));
 
-      console.log('Envoi de', elements.length, 'éléments au serveur...');
+      // console.log('Envoi de', elements.length, 'éléments au serveur...');
 
       // Faire l'appel AJAX
       const response = await fetch(window.pdfBuilderAjax?.ajaxurl, {
@@ -247,21 +246,21 @@ export const PDFCanvasEditor = ({ options }) => {
       }
 
       const data = await response.json();
-      console.log('Données complètes reçues du serveur:', data);
-      console.log('🔍 FIN DES LOGS DE DEBUG - VERSION 2.0');
+      // console.log('Données complètes reçues du serveur:', data);
+      // console.log('🔍 FIN DES LOGS DE DEBUG - VERSION 2.0');
 
       if (data.success) {
-        console.log('PDF généré avec succès côté serveur');
-        console.log('Logs de debug serveur:', data.data?.debug_logs || []);
-        console.log('Nombre d\'éléments traités:', data.data?.elements_count || 0);
-        console.log('Taille du PDF:', data.data?.pdf_size || 0, 'octets');
+        // console.log('PDF généré avec succès côté serveur');
+        // console.log('Logs de debug serveur:', data.data?.debug_logs || []);
+        // console.log('Nombre d\'éléments traités:', data.data?.elements_count || 0);
+        // console.log('Taille du PDF:', data.data?.pdf_size || 0, 'octets');
 
         // Créer l'URL du PDF
         const pdfDataUrl = `data:application/pdf;base64,${data.data.pdf}`;
-        console.log('URL du PDF créée:', pdfDataUrl.substring(0, 100) + '...');
+        // console.log('URL du PDF créée:', pdfDataUrl.substring(0, 100) + '...');
 
         // Ouvrir le PDF dans une modale
-        console.log('Ouverture du PDF dans une modale...');
+        // console.log('Ouverture du PDF dans une modale...');
         setPdfModalUrl(pdfDataUrl);
         setShowPDFModal(true);
       } else {
