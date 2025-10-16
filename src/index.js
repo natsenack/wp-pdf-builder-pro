@@ -3,11 +3,35 @@ import ReactDOM from 'react-dom';
 import { PDFCanvasEditor } from './components/PDFCanvasEditor';
 import './styles/editor.css';
 
+// Forcer l'inclusion de tous les hooks personnalisés
+import /* webpackMode: "eager" */ * as hooks from './hooks';
+
 // Classe principale pour l'éditeur PDF
 class PDFBuilderPro {
   constructor() {
     this.version = '2.0.0';
     this.editors = new Map();
+    
+    // Forcer l'inclusion des hooks (ne pas supprimer cette ligne)
+    this._hooks = hooks;
+    console.log('Hooks loaded:', Object.keys(hooks));
+    
+    // Références explicites pour forcer l'inclusion
+    this._forceInclude = {
+      useHistory: hooks.useHistory,
+      useRotation: hooks.useRotation,
+      useResize: hooks.useResize
+    };
+    
+    // Forcer l'appel des hooks pour éviter le tree shaking
+    try {
+      const dummyHistory = hooks.useHistory();
+      const dummyRotation = hooks.useRotation(() => {});
+      const dummyResize = hooks.useResize();
+      this._dummyInstances = { dummyHistory, dummyRotation, dummyResize };
+    } catch (e) {
+      // Ignorer les erreurs en mode SSR
+    }
   }
 
   // Initialiser l'éditeur dans un conteneur

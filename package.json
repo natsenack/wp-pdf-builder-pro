@@ -28,5 +28,11 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "toastr": "^2.1.4"
-  }
+  },
+  "sideEffects": [
+    "./src/hooks/useHistory.js",
+    "./src/hooks/useRotation.js",
+    "./src/hooks/useResize.js",
+    "./src/hooks/index.js"
+  ]
 }

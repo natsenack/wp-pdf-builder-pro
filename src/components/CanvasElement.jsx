@@ -1,6 +1,6 @@
 import React, { useRef, useCallback, useEffect } from 'react';
 import { useResize } from '../hooks/useResize';
-import { useRotation } from '../hooks/useRotation';
+import { useRotation } from '../hooks/useRotation.js';
 
 export const CanvasElement = ({
   element,

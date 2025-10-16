@@ -10,6 +10,10 @@ module.exports = {
     path: path.resolve(__dirname, 'assets/js/dist'),
   },
   mode: 'production',
+  optimization: {
+    usedExports: false, // Désactiver l'élimination des exports non utilisés
+    sideEffects: true   // Conserver tous les effets de bord
+  },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json']
   },

@@ -1,5 +1,5 @@
 export { useCanvasState } from './useCanvasState';
-export { useHistory } from './useHistory';
+export { useHistory } from './useHistory.js';
 export { useSelection } from './useSelection';
 export { useClipboard } from './useClipboard';
 export { useZoom } from './useZoom';
@@ -7,3 +7,4 @@ export { useContextMenu } from './useContextMenu';
 export { useKeyboardShortcuts } from './useKeyboardShortcuts';
 export { useDragAndDrop } from './useDragAndDrop';
 export { useResize } from './useResize';
+export { useRotation } from './useRotation.js';

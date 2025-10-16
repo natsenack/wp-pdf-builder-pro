@@ -5,7 +5,7 @@ import { Toolbar } from './Toolbar';
 import { useCanvasState } from '../hooks/useCanvasState';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import { useGlobalSettings } from '../hooks/useGlobalSettings';
-import { useHistory } from '../hooks/useHistory';
+import { useHistory } from '../hooks/useHistory.js';
 import { FPSCounter } from './FPSCounter';
 
 // Chargement lazy des composants conditionnels
