@@ -223,9 +223,9 @@ body.pdf-builder-active #wpadminbar {
   align-items: flex-start; /* Changé de center à flex-start pour plus d'espace en haut */
   background: #fafbfc;
   overflow: auto;
-  padding: 120px 60px 300px 60px; /* Espace ENCORE plus généreux en bas */
+  padding: 120px 60px 100px 60px; /* Padding réduit en bas maintenant que le canvas est plus grand */
   position: relative;
-  min-height: 800px; /* Hauteur minimale encore augmentée */
+  min-height: 1400px; /* Hauteur minimale ajustée pour le nouveau canvas */
 }
 
 /* Wrapper de zoom du canvas */
@@ -241,6 +241,8 @@ body.pdf-builder-active #wpadminbar {
   border: 1px solid #f1f3f4;
   position: relative;
   cursor: default;
+  height: 1200px; /* Hauteur fixe beaucoup plus grande pour agrandir le canvas */
+  width: auto; /* Largeur automatique pour maintenir les proportions */
 }
 
 /* Guides du canvas */
