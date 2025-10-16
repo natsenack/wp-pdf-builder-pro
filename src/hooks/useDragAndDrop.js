@@ -122,6 +122,8 @@ export const useDragAndDrop = ({
       const deltaX = mouseX - startX;
       const deltaY = mouseY - startY;
 
+      console.log('[DEBUG] handleMouseMove - delta:', { deltaX, deltaY }, 'startPos:', { startX, startY }, 'mouse:', { mouseX, mouseY });
+
       const effectiveCanvasWidth = canvasRect ? canvasRect.width / zoomLevel : canvasWidth;
       const effectiveCanvasHeight = canvasRect ? canvasRect.height / zoomLevel : canvasHeight;
 
@@ -129,12 +131,15 @@ export const useDragAndDrop = ({
       const newY = Math.max(0, Math.min(effectiveCanvasHeight - elementRect.height, snapValue(elementRect.top + deltaY, true)));
 
       // Log pour le séparateur pendant le mouvement
-      const isSeparator = elementId && (elementId.includes('separator') || elementId.includes('divider'));
+      const { elementType } = currentDragData.current;
+      const isSeparator = elementType === 'divider';
       if (isSeparator) {
         console.log(`[SEPARATOR LOG] Mouvement - Position calculée: x=${newX}, y=${newY}, delta: x=${deltaX}, y=${deltaY}`);
       }
 
-      setDragOffset({ x: newX - elementRect.left, y: newY - elementRect.top });
+      const newOffset = { x: newX - elementRect.left, y: newY - elementRect.top };
+      console.log('[DEBUG] handleMouseMove - setting dragOffset:', newOffset);
+      setDragOffset(newOffset);
 
       // Removed onElementMove call for performance - visual feedback via transform
     };
@@ -159,6 +164,8 @@ export const useDragAndDrop = ({
         // Calculer la position finale en utilisant les coordonnées initiales de l'élément + le déplacement
         const finalX = elementStartPos.current.x + dragOffset.x;
         const finalY = elementStartPos.current.y + dragOffset.y;
+
+        console.log('[DEBUG] handleMouseUp - elementStartPos:', elementStartPos.current, 'dragOffset:', dragOffset);
 
         // Log pour le séparateur lors du drop
         const isSeparator = elementType === 'divider';
