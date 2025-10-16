@@ -28,17 +28,41 @@ export const PDFCanvasEditor = ({ options }) => {
   const [isPanning, setIsPanning] = useState(false);
   const [lastPanPoint, setLastPanPoint] = useState({ x: 0, y: 0 });
 
+  // États pour les guides
+  const [guides, setGuides] = useState({ horizontal: [], vertical: [] });
+  const [isCreatingGuide, setIsCreatingGuide] = useState(false);
+  const [guideCreationType, setGuideCreationType] = useState(null); // 'horizontal' or 'vertical'
+
   // Hook pour les paramètres globaux
   const globalSettings = useGlobalSettings();
 
-  // Fonctions pour mettre à jour les paramètres de grille
-  const handleShowGridChange = useCallback((value) => {
-    globalSettings.updateSettings({ showGrid: value });
-  }, [globalSettings]);
+  // Fonctions pour gérer les guides
+  const addHorizontalGuide = useCallback((y) => {
+    if (!globalSettings.settings.lockGuides) {
+      setGuides(prev => ({
+        ...prev,
+        horizontal: [...prev.horizontal, y].sort((a, b) => a - b)
+      }));
+    }
+  }, [globalSettings.settings.lockGuides]);
 
-  const handleSnapToGridChange = useCallback((value) => {
-    globalSettings.updateSettings({ snapToGrid: value });
-  }, [globalSettings]);
+  const addVerticalGuide = useCallback((x) => {
+    if (!globalSettings.settings.lockGuides) {
+      setGuides(prev => ({
+        ...prev,
+        vertical: [...prev.vertical, x].sort((a, b) => a - b)
+      }));
+    }
+  }, [globalSettings.settings.lockGuides]);
+
+  const removeGuide = useCallback((type, position) => {
+    if (!globalSettings.settings.lockGuides) {
+      setGuides(prev => ({
+        ...prev,
+        [type]: prev[type].filter(pos => pos !== position)
+      }));
+    }
+  }, [globalSettings.settings.lockGuides]);
 
   // Données de commande WooCommerce (passées via options ou données de test)
   const orderData = options.orderData || {
@@ -121,7 +145,9 @@ export const PDFCanvasEditor = ({ options }) => {
     gridSize: globalSettings.settings.gridSize,
     zoom: canvasState.zoom.zoom,
     canvasWidth: canvasState.canvasWidth,
-    canvasHeight: canvasState.canvasHeight
+    canvasHeight: canvasState.canvasHeight,
+    guides: guides,
+    snapToGuides: globalSettings.settings.snapToElements
   });
 
   // Gestion des raccourcis clavier
@@ -143,8 +169,9 @@ export const PDFCanvasEditor = ({ options }) => {
   }, [canvasState]);
 
   // Gestionnaire pour la sélection d'élément
-  const handleElementSelect = useCallback((elementId) => {
-    canvasState.selection.selectElement(elementId);
+  const handleElementSelect = useCallback((elementId, event) => {
+    const addToSelection = event?.ctrlKey || event?.metaKey; // Ctrl ou Cmd pour multi-sélection
+    canvasState.selection.selectElement(elementId, addToSelection);
   }, [canvasState.selection]);
 
   // Gestionnaire pour l'impression
@@ -241,6 +268,30 @@ export const PDFCanvasEditor = ({ options }) => {
 
   // Gestionnaire pour la désélection et création d'éléments
   const handleCanvasClick = useCallback((e) => {
+    // Vérifier si c'est un Ctrl+clic pour créer un guide
+    if (e.ctrlKey && globalSettings.settings.showGuides && !globalSettings.settings.lockGuides) {
+      const canvasRect = e.currentTarget.getBoundingClientRect();
+      const clickX = e.clientX - canvasRect.left;
+      const clickY = e.clientY - canvasRect.top;
+
+      // Ajuster pour le zoom et le pan
+      const adjustedX = (clickX - panOffset.x) / canvasState.zoom.zoom;
+      const adjustedY = (clickY - panOffset.y) / canvasState.zoom.zoom;
+
+      // Créer un guide horizontal ou vertical selon la position relative au centre
+      const centerX = canvasState.canvasWidth / 2;
+      const centerY = canvasState.canvasHeight / 2;
+
+      if (Math.abs(adjustedX - centerX) < Math.abs(adjustedY - centerY)) {
+        // Plus proche verticalement, créer guide horizontal
+        addHorizontalGuide(Math.round(adjustedY));
+      } else {
+        // Plus proche horizontalement, créer guide vertical
+        addVerticalGuide(Math.round(adjustedX));
+      }
+      return;
+    }
+
     // Vérifier si le clic vient de la zone vide du canvas (pas d'un élément)
     const clickedElement = e.target.closest('[data-element-id]');
     if (clickedElement) {
@@ -709,6 +760,62 @@ export const PDFCanvasEditor = ({ options }) => {
                   />
                 )}
 
+                {/* Guides */}
+                {globalSettings.settings.showGuides && (
+                  <>
+                    {/* Guides horizontaux */}
+                    {guides.horizontal.map((y, index) => (
+                      <div
+                        key={`h-guide-${index}`}
+                        className="canvas-guide horizontal-guide"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (!globalSettings.settings.lockGuides) {
+                            removeGuide('horizontal', y);
+                          }
+                        }}
+                        style={{
+                          position: 'absolute',
+                          top: `${y}px`,
+                          left: 0,
+                          width: '100%',
+                          height: '2px',
+                          backgroundColor: '#007cba',
+                          cursor: globalSettings.settings.lockGuides ? 'default' : 'pointer',
+                          zIndex: 2,
+                          opacity: 0.7
+                        }}
+                        title={`Guide horizontal à ${y}px - ${globalSettings.settings.lockGuides ? 'Verrouillé' : 'Cliquer pour supprimer'}`}
+                      />
+                    ))}
+                    {/* Guides verticaux */}
+                    {guides.vertical.map((x, index) => (
+                      <div
+                        key={`v-guide-${index}`}
+                        className="canvas-guide vertical-guide"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (!globalSettings.settings.lockGuides) {
+                            removeGuide('vertical', x);
+                          }
+                        }}
+                        style={{
+                          position: 'absolute',
+                          top: 0,
+                          left: `${x}px`,
+                          height: '100%',
+                          width: '2px',
+                          backgroundColor: '#007cba',
+                          cursor: globalSettings.settings.lockGuides ? 'default' : 'pointer',
+                          zIndex: 2,
+                          opacity: 0.7
+                        }}
+                        title={`Guide vertical à ${x}px - ${globalSettings.settings.lockGuides ? 'Verrouillé' : 'Cliquer pour supprimer'}`}
+                      />
+                    ))}
+                  </>
+                )}
+
                 {/* Éléments normaux rendus comme composants interactifs */}
                 {canvasState.elements
                   .filter(el => !el.type.startsWith('woocommerce-'))
@@ -728,6 +835,8 @@ export const PDFCanvasEditor = ({ options }) => {
                         onRemove={() => canvasState.deleteElement(element.id)}
                         onContextMenu={(e) => handleContextMenu(e, element.id)}
                         dragAndDrop={dragAndDrop}
+                        guides={guides}
+                        snapToGuides={globalSettings.settings.snapToElements}
                       />
                     );
                   })}
@@ -750,6 +859,8 @@ export const PDFCanvasEditor = ({ options }) => {
                         onContextMenu={(e) => handleContextMenu(e, element.id)}
                         snapToGrid={globalSettings.settings.snapToGrid}
                         gridSize={globalSettings.settings.gridSize}
+                        guides={guides}
+                        snapToGuides={globalSettings.settings.snapToElements}
                       />
                     </React.Suspense>
                   ))}

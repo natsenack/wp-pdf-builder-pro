@@ -7,7 +7,9 @@ export const useDragAndDrop = ({
   gridSize = 10,
   zoom = 1,
   canvasWidth = 595,
-  canvasHeight = 842
+  canvasHeight = 842,
+  guides = { horizontal: [], vertical: [] },
+  snapToGuides = true
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -18,6 +20,33 @@ export const useDragAndDrop = ({
     if (!snapToGrid) return value;
     return Math.round(value / gridSize) * gridSize;
   }, [snapToGrid, gridSize]);
+
+  const snapToGuidesValue = useCallback((value, isHorizontal = true) => {
+    if (!snapToGuides) return value;
+
+    const guideArray = isHorizontal ? guides.horizontal : guides.vertical;
+    const snapTolerance = 5; // pixels
+
+    for (const guide of guideArray) {
+      if (Math.abs(value - guide) <= snapTolerance) {
+        return guide;
+      }
+    }
+
+    return value;
+  }, [snapToGuides, guides]);
+
+  const snapValue = useCallback((value, isHorizontal = true) => {
+    let snapped = value;
+
+    // Appliquer l'aimantation à la grille d'abord
+    snapped = snapToGridValue(snapped);
+
+    // Puis appliquer l'aimantation aux guides
+    snapped = snapToGuidesValue(snapped, isHorizontal);
+
+    return snapped;
+  }, [snapToGridValue, snapToGuidesValue]);
 
   // Nettoyer les event listeners quand le composant se démonte
   useEffect(() => {
@@ -80,8 +109,8 @@ export const useDragAndDrop = ({
       const effectiveCanvasWidth = canvasRect ? canvasRect.width / zoomLevel : canvasWidth;
       const effectiveCanvasHeight = canvasRect ? canvasRect.height / zoomLevel : canvasHeight;
 
-      const newX = Math.max(0, Math.min(effectiveCanvasWidth - elementRect.width, snapToGridValue(elementRect.left + deltaX)));
-      const newY = Math.max(0, Math.min(effectiveCanvasHeight - elementRect.height, snapToGridValue(elementRect.top + deltaY)));
+      const newX = Math.max(0, Math.min(effectiveCanvasWidth - elementRect.width, snapValue(elementRect.left + deltaX, false)));
+      const newY = Math.max(0, Math.min(effectiveCanvasHeight - elementRect.height, snapValue(elementRect.top + deltaY, true)));
 
       setDragOffset({ x: newX - elementRect.left, y: newY - elementRect.top });
 
@@ -106,8 +135,8 @@ export const useDragAndDrop = ({
         const effectiveCanvasWidth = canvasRect ? canvasRect.width / zoomLevel : canvasWidth;
         const effectiveCanvasHeight = canvasRect ? canvasRect.height / zoomLevel : canvasHeight;
 
-        const finalX = Math.max(0, Math.min(effectiveCanvasWidth - elementRect.width, snapToGridValue(elementRect.left + (lastMouseX - startX))));
-        const finalY = Math.max(0, Math.min(effectiveCanvasHeight - elementRect.height, snapToGridValue(elementRect.top + (lastMouseY - startY))));
+        const finalX = Math.max(0, Math.min(effectiveCanvasWidth - elementRect.width, snapValue(elementRect.left + (lastMouseX - startX), false)));
+        const finalY = Math.max(0, Math.min(effectiveCanvasHeight - elementRect.height, snapValue(elementRect.top + (lastMouseY - startY), true)));
         onElementDrop(elementId, { x: finalX, y: finalY });
       }
 
@@ -151,8 +180,8 @@ export const useDragAndDrop = ({
     const effectiveCanvasWidth = canvasRect ? canvasRect.width / zoom : canvasWidth;
     const effectiveCanvasHeight = canvasRect ? canvasRect.height / zoom : canvasHeight;
 
-    const snappedX = Math.max(0, Math.min(effectiveCanvasWidth - elementRect.width, snapToGridValue(dropX)));
-    const snappedY = Math.max(0, Math.min(effectiveCanvasHeight - elementRect.height, snapToGridValue(dropY)));
+    const snappedX = Math.max(0, Math.min(effectiveCanvasWidth - elementRect.width, snapValue(dropX, false)));
+    const snappedY = Math.max(0, Math.min(effectiveCanvasHeight - elementRect.height, snapValue(dropY, true)));
 
     if (onElementDrop) {
       onElementDrop(elementId, { x: snappedX, y: snappedY });

@@ -17,7 +17,9 @@ export const CanvasElement = ({
   dragAndDrop,
   enableRotation = true,
   rotationStep = 15,
-  rotationSnap = true
+  rotationSnap = true,
+  guides = { horizontal: [], vertical: [] },
+  snapToGuides = true
 }) => {
   const elementRef = useRef(null);
   const canvasRectRef = useRef(null);
@@ -46,7 +48,9 @@ export const CanvasElement = ({
     snapToGrid,
     gridSize,
     canvasWidth,
-    canvasHeight
+    canvasHeight,
+    guides,
+    snapToGuides
   });
 
   const rotation = useRotation(

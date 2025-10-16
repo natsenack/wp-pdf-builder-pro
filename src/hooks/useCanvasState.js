@@ -141,7 +141,8 @@ export const useCanvasState = ({
   const selection = useSelection({
     onSelectionChange: useCallback((selectedIds) => {
       // Callback pour les changements de sélection
-    }, [])
+    }, []),
+    multiSelect: globalSettings?.multiSelect ?? true
   });
 
   // Synchronisation parfaite des refs avec useLatest

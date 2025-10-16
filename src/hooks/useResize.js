@@ -9,7 +9,9 @@ export const useResize = ({
   zoom = 1,
   canvasRect = null,
   canvasWidth = 595,
-  canvasHeight = 842
+  canvasHeight = 842,
+  guides = { horizontal: [], vertical: [] },
+  snapToGuides = true
 }) => {
   const [isResizing, setIsResizing] = useState(false);
   const [resizeHandle, setResizeHandle] = useState(null);
@@ -20,6 +22,33 @@ export const useResize = ({
     if (!snapToGrid) return value;
     return Math.round(value / gridSize) * gridSize;
   }, [snapToGrid, gridSize]);
+
+  const snapToGuidesValue = useCallback((value, isHorizontal = true) => {
+    if (!snapToGuides) return value;
+
+    const guideArray = isHorizontal ? guides.horizontal : guides.vertical;
+    const snapTolerance = 5; // pixels
+
+    for (const guide of guideArray) {
+      if (Math.abs(value - guide) <= snapTolerance) {
+        return guide;
+      }
+    }
+
+    return value;
+  }, [snapToGuides, guides]);
+
+  const snapValue = useCallback((value, isHorizontal = true) => {
+    let snapped = value;
+
+    // Appliquer l'aimantation à la grille d'abord
+    snapped = snapToGridValue(snapped);
+
+    // Puis appliquer l'aimantation aux guides
+    snapped = snapToGuidesValue(snapped, isHorizontal);
+
+    return snapped;
+  }, [snapToGridValue, snapToGuidesValue]);
 
   const handleResizeStart = useCallback((e, handle, elementRect, canvasRectParam = null, zoomLevel = 1) => {
     e.preventDefault();
@@ -59,45 +88,45 @@ export const useResize = ({
 
       switch (handle) {
         case 'nw':
-          newRect.x = snapToGridValue(originalRect.current.x + deltaX);
-          newRect.y = snapToGridValue(originalRect.current.y + deltaY);
-          newRect.width = snapToGridValue(originalRect.current.width - deltaX);
-          newRect.height = snapToGridValue(originalRect.current.height - deltaY);
+          newRect.x = snapValue(originalRect.current.x + deltaX, false);
+          newRect.y = snapValue(originalRect.current.y + deltaY, true);
+          newRect.width = snapValue(originalRect.current.width - deltaX, false);
+          newRect.height = snapValue(originalRect.current.height - deltaY, true);
           break;
 
         case 'ne':
-          newRect.y = snapToGridValue(originalRect.current.y + deltaY);
-          newRect.width = snapToGridValue(originalRect.current.width + deltaX);
-          newRect.height = snapToGridValue(originalRect.current.height - deltaY);
+          newRect.y = snapValue(originalRect.current.y + deltaY, true);
+          newRect.width = snapValue(originalRect.current.width + deltaX, false);
+          newRect.height = snapValue(originalRect.current.height - deltaY, true);
           break;
 
         case 'sw':
-          newRect.x = snapToGridValue(originalRect.current.x + deltaX);
-          newRect.width = snapToGridValue(originalRect.current.width - deltaX);
-          newRect.height = snapToGridValue(originalRect.current.height + deltaY);
+          newRect.x = snapValue(originalRect.current.x + deltaX, false);
+          newRect.width = snapValue(originalRect.current.width - deltaX, false);
+          newRect.height = snapValue(originalRect.current.height + deltaY, true);
           break;
 
         case 'se':
-          newRect.width = snapToGridValue(originalRect.current.width + deltaX);
-          newRect.height = snapToGridValue(originalRect.current.height + deltaY);
+          newRect.width = snapValue(originalRect.current.width + deltaX, false);
+          newRect.height = snapValue(originalRect.current.height + deltaY, true);
           break;
 
         case 'n':
-          newRect.y = snapToGridValue(originalRect.current.y + deltaY);
-          newRect.height = snapToGridValue(originalRect.current.height - deltaY);
+          newRect.y = snapValue(originalRect.current.y + deltaY, true);
+          newRect.height = snapValue(originalRect.current.height - deltaY, true);
           break;
 
         case 's':
-          newRect.height = snapToGridValue(originalRect.current.height + deltaY);
+          newRect.height = snapValue(originalRect.current.height + deltaY, true);
           break;
 
         case 'w':
-          newRect.x = snapToGridValue(originalRect.current.x + deltaX);
-          newRect.width = snapToGridValue(originalRect.current.width - deltaX);
+          newRect.x = snapValue(originalRect.current.x + deltaX, false);
+          newRect.width = snapValue(originalRect.current.width - deltaX, false);
           break;
 
         case 'e':
-          newRect.width = snapToGridValue(originalRect.current.width + deltaX);
+          newRect.width = snapValue(originalRect.current.width + deltaX, false);
           break;
 
         default:

@@ -73,12 +73,6 @@ function pdf_builder_init() {
         require_once $diagnostic_path;
     }
 
-    // Charger le fichier de vérification des assets
-    $assets_check_path = plugin_dir_path(__FILE__) . 'assets-check.php';
-    if (file_exists($assets_check_path)) {
-        require_once $assets_check_path;
-    }
-
     // Charger le bootstrap
     $bootstrap_path = plugin_dir_path(__FILE__) . 'bootstrap.php';
     if (file_exists($bootstrap_path)) {
@@ -88,6 +82,12 @@ function pdf_builder_init() {
         if (function_exists('pdf_builder_load_bootstrap')) {
             pdf_builder_load_bootstrap();
         }
+    }
+
+    // Charger le fichier de vérification des assets APRÈS le bootstrap
+    $assets_check_path = plugin_dir_path(__FILE__) . 'assets-check.php';
+    if (file_exists($assets_check_path)) {
+        require_once $assets_check_path;
     }
 }
 
