@@ -572,7 +572,7 @@ export const CanvasElement = ({
         top: element.y,
         width: element.width,
         height: element.height
-      }, canvasRect, zoom);
+      }, canvasRect, zoom, element.type);
     }
   }, [isSelected, onSelect, element, zoom, resize, dragAndDrop]);
 

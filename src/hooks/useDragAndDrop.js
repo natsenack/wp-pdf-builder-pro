@@ -61,7 +61,7 @@ export const useDragAndDrop = ({
     };
   }, []);
 
-  const handleMouseDown = useCallback((e, elementId, elementRect, canvasRect = null, zoomLevel = 1) => {
+  const handleMouseDown = useCallback((e, elementId, elementRect, canvasRect = null, zoomLevel = 1, elementType = null) => {
     if (e.button !== 0) return; // Only left mouse button
 
     // Vérifier que l'élément source existe encore dans le DOM
@@ -77,9 +77,9 @@ export const useDragAndDrop = ({
     }
 
     // Log spécifique pour l'outil séparateur
-    const isSeparator = elementId && (elementId.includes('separator') || elementId.includes('divider'));
+    const isSeparator = elementType === 'divider';
     if (isSeparator) {
-      console.log(`[SEPARATOR LOG] Début du drag pour élément: ${elementId}`);
+      console.log(`[SEPARATOR LOG] Début du drag pour élément: ${elementId} (type: ${elementType})`);
       console.log(`[SEPARATOR LOG] Position initiale élément: x=${elementRect.left}, y=${elementRect.top}`);
       console.log(`[SEPARATOR LOG] Dimensions élément: width=${elementRect.width}, height=${elementRect.height}`);
     }
@@ -149,6 +149,8 @@ export const useDragAndDrop = ({
         return;
       }
 
+      const { elementId, elementType } = currentDragData.current;
+
       setIsDragging(false);
 
       if (onElementDrop) {
@@ -157,7 +159,7 @@ export const useDragAndDrop = ({
         const finalY = elementStartPos.current.y + dragOffset.y;
 
         // Log pour le séparateur lors du drop
-        const isSeparator = elementId && (elementId.includes('separator') || elementId.includes('divider'));
+        const isSeparator = elementType === 'divider';
         if (isSeparator) {
           console.log(`[SEPARATOR LOG] Drop - Position initiale stockée: x=${elementStartPos.current.x}, y=${elementStartPos.current.y}`);
           console.log(`[SEPARATOR LOG] Drop - Offset appliqué: x=${dragOffset.x}, y=${dragOffset.y}`);
@@ -179,7 +181,7 @@ export const useDragAndDrop = ({
     };
 
     // Stocker les références pour le nettoyage
-    currentDragData.current = { handleMouseMove, handleMouseUp };
+    currentDragData.current = { handleMouseMove, handleMouseUp, elementId, elementType };
 
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
