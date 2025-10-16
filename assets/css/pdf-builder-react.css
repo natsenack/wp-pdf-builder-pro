@@ -89,12 +89,42 @@ body.pdf-builder-active .pdf-canvas-editor {
 }
 
 .editor-sidebar.right-sidebar {
-  width: 320px;
+  width: 400px;
   border-left: 1px solid #f1f3f4;
+  transition: width 0.3s ease;
 }
 
 .editor-sidebar.collapsed {
-  width: 50px;
+  width: 60px !important;
+  overflow: hidden;
+}
+
+/* Bouton toggle du sidebar */
+.sidebar-toggle-fixed {
+  position: fixed !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  z-index: 999999 !important;
+  width: 32px !important;
+  height: 32px !important;
+  background: #ffffff !important;
+  border: 2px solid #e1e5e9 !important;
+  border-radius: 50% !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 16px !important;
+  color: #007bff !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
+  transition: all 0.3s ease !important;
+}
+
+.sidebar-toggle-fixed:hover {
+  background: #f8f9fa !important;
+  border-color: #007bff !important;
+  transform: translateY(-50%) scale(1.1) !important;
+  box-shadow: 0 4px 12px rgba(0,123,255,0.25) !important;
 }
 
 /* Zone principale de l'éditeur */
