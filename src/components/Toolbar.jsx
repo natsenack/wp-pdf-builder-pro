@@ -12,7 +12,9 @@ export const Toolbar = ({
   onUndo,
   onRedo,
   canUndo,
-  canRedo
+  canRedo,
+  onNewTemplate,
+  onPreview
 }) => {
   const [activeTab, setActiveTab] = React.useState('home');
 
@@ -63,6 +65,29 @@ export const Toolbar = ({
       <div className="toolbar-content">
         {activeTab === 'home' && (
           <div className="tab-content">
+            {/* Groupe Actions principales */}
+            <div className="toolbar-group">
+              <h5>Actions</h5>
+              <div className="group-buttons">
+                <button
+                  className="tool-button"
+                  onClick={onNewTemplate}
+                  title="Créer un nouveau template"
+                >
+                  <span className="button-icon">➕</span>
+                  <span className="button-text">Nouveau template</span>
+                </button>
+                <button
+                  className="tool-button"
+                  onClick={onPreview}
+                  title="Aperçu du PDF"
+                >
+                  <span className="button-icon">👁️</span>
+                  <span className="button-text">Aperçu</span>
+                </button>
+              </div>
+            </div>
+
             {/* Groupe Presse-papiers */}
             <div className="toolbar-group">
               <h5>Presse-papiers</h5>

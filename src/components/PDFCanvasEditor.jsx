@@ -14,10 +14,12 @@ import ModalPDFViewer from './ModalPDFViewer';
 import WooCommerceElement from './WooCommerceElements';
 import ElementLibrary from './ElementLibrary';
 import PropertiesPanel from './PropertiesPanel';
+import NewTemplateModal from './NewTemplateModal';
 
 export const PDFCanvasEditor = ({ options }) => {
   const [tool, setTool] = useState('select');
   const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [showNewTemplateModal, setShowNewTemplateModal] = useState(false);
   const [showPDFModal, setShowPDFModal] = useState(false);
   const [pdfModalUrl, setPdfModalUrl] = useState(null);
   const [isPropertiesCollapsed, setIsPropertiesCollapsed] = useState(false);
@@ -127,6 +129,14 @@ export const PDFCanvasEditor = ({ options }) => {
       canvasState.setElements(nextState);
     }
   }, [canvasState]);
+
+  // Handler pour créer un nouveau template
+  const handleCreateTemplate = useCallback((templateData) => {
+    // TODO: Implémenter la logique de création du template
+    // Pour l'instant, on ferme juste la modale et on affiche les données
+    console.log('Création du template:', templateData);
+    alert(`Template "${templateData.name}" créé avec succès!\n\nModèle: ${templateData.defaultModel}\nFormat: ${templateData.paperFormat}\nOrientation: ${templateData.orientation}\nCatégorie: ${templateData.category}`);
+  }, []);
 
   // Handlers pour les paramètres de grille
   const handleShowGridChange = useCallback((showGrid) => {
@@ -649,6 +659,8 @@ export const PDFCanvasEditor = ({ options }) => {
         onRedo={handleRedo}
         canUndo={canvasState.history.canUndo()}
         canRedo={canvasState.history.canRedo()}
+        onNewTemplate={() => setShowNewTemplateModal(true)}
+        onPreview={() => setShowPreviewModal(true)}
       />
 
       {/* Zone de travail principale - simplifiée */}
@@ -946,6 +958,13 @@ export const PDFCanvasEditor = ({ options }) => {
         }}
         pdfUrl={pdfModalUrl}
         title="PDF Généré"
+      />
+
+      {/* Modale Nouveau Template */}
+      <NewTemplateModal
+        isOpen={showNewTemplateModal}
+        onClose={() => setShowNewTemplateModal(false)}
+        onCreateTemplate={handleCreateTemplate}
       />
 
       {/* Compteur FPS */}
