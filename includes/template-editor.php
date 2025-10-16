@@ -33,7 +33,9 @@ wp_add_inline_script('pdf-builder-admin-v3', '
     if (typeof window.React === "undefined") {
         console.error("React n\'est pas disponible globalement");
     } else {
-        console.log("React disponible globalement:", typeof window.React, typeof window.React.useMemo);
+        console.log("React disponible globalement:", typeof window.React, Object.keys(window.React));
+        console.log("React.useMemo:", typeof window.React.useMemo);
+        console.log("React object:", window.React);
     }
 ');
 
