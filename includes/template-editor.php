@@ -252,8 +252,36 @@ if (!$is_new && $template_id > 0) {
                                 snapToGrid: true,
                                 maxHistorySize: 50
                             });
+                        } else if (reactContainerExists) {
+                            console.log('📋 React déjà rendu, données globales définies - vérification du contenu...');
+                            // Vérifier si le contenu React est réellement affiché
+                            const container = document.getElementById('invoice-quote-builder-container');
+                            if (container && container.querySelector('[data-reactroot]') === null) {
+                                console.log('⚠️ React détecté mais pas de contenu React visible, tentative de forçage...');
+                                // Essayer de forcer le montage si PDFBuilderPro devient disponible plus tard
+                                const forceInit = () => {
+                                    if (typeof window.PDFBuilderPro !== 'undefined' && typeof window.PDFBuilderPro.init === 'function') {
+                                        console.log('✅ PDFBuilderPro maintenant disponible, initialisation forcée...');
+                                        window.PDFBuilderPro.init('invoice-quote-builder-container', {
+                                            templateId: <?php echo $template_id ?: 'null'; ?>,
+                                            templateName: <?php echo $template_name ? json_encode($template_name) : 'null'; ?>,
+                                            isNew: <?php echo $is_new ? 'true' : 'false'; ?>,
+                                            initialElements: <?php echo json_encode($initial_elements); ?>,
+                                            width: 595,
+                                            height: 842,
+                                            zoom: 1,
+                                            gridSize: 10,
+                                            snapToGrid: true,
+                                            maxHistorySize: 50
+                                        });
+                                    } else {
+                                        setTimeout(forceInit, 100);
+                                    }
+                                };
+                                setTimeout(forceInit, 100);
+                            }
                         } else {
-                            console.log('📋 React déjà rendu, données globales définies - pas d\'initialisation nécessaire');
+                            console.log('❌ Ni PDFBuilderPro ni React détectés - en attente...');
                         }
 
                         return;
