@@ -183,7 +183,7 @@ if (!$is_new && $template_id > 0) {
 <style>
 /* Styles essentiels pour l'éditeur PDF */
 .pdf-builder-container {
-    min-height: calc(100vh - 200px);
+    min-height: 130vh; /* Étendu pour plus d'espace de travail vertical */
     background: #ffffff;
     border-radius: 8px;
     margin: 10px 0;
