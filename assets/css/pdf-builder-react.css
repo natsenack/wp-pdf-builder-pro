@@ -214,7 +214,7 @@ body.pdf-builder-active #wpadminbar {
   align-items: flex-start; /* Changé de center à flex-start pour plus d'espace en haut */
   background: #fafbfc;
   overflow: auto;
-  padding: 120px 60px 120px 60px; /* Padding équilibré */
+  padding: 80px 60px 80px 60px; /* Padding réduit pour mieux utiliser l'espace vertical */
   position: relative;
 }
 
@@ -231,7 +231,9 @@ body.pdf-builder-active #wpadminbar {
   border: 1px solid #f1f3f4;
   position: relative;
   cursor: default;
-  height: 1000px; /* Hauteur plus raisonnable */
+  height: 100%; /* S'adapte à l'espace disponible (130vh) */
+  min-height: 1000px; /* Hauteur minimale pour éviter la compression excessive */
+  max-height: calc(130vh - 160px); /* Limite maximale pour rester dans le conteneur avec padding */
   width: auto;
 }
 
