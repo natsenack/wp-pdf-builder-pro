@@ -13,6 +13,7 @@ export const useDragAndDrop = ({
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [draggedElementId, setDraggedElementId] = useState(null);
   const dragStartPos = useRef({ x: 0, y: 0 });
   const currentDragData = useRef(null);
 
@@ -76,6 +77,7 @@ export const useDragAndDrop = ({
 
     e.preventDefault();
     setIsDragging(true);
+    setDraggedElementId(elementId);
 
     // Obtenir le canvasRect dynamiquement si non fourni
     const currentCanvasRect = canvasRect || { left: 0, top: 0, width: canvasWidth, height: canvasHeight };
@@ -113,9 +115,7 @@ export const useDragAndDrop = ({
 
       setDragOffset({ x: newX - elementRect.left, y: newY - elementRect.top });
 
-      if (onElementMove) {
-        onElementMove(elementId, { x: newX, y: newY });
-      }
+      // Removed onElementMove call for performance - visual feedback via transform
     };
 
     const handleMouseUp = () => {
@@ -124,6 +124,7 @@ export const useDragAndDrop = ({
         console.warn('Drag data no longer exists during drop');
         setIsDragging(false);
         setDragOffset({ x: 0, y: 0 });
+        setDraggedElementId(null);
         return;
       }
 
@@ -131,11 +132,8 @@ export const useDragAndDrop = ({
       setDragOffset({ x: 0, y: 0 });
 
       if (onElementDrop) {
-        const effectiveCanvasWidth = canvasRect ? canvasRect.width / zoomLevel : canvasWidth;
-        const effectiveCanvasHeight = canvasRect ? canvasRect.height / zoomLevel : canvasHeight;
-
-        const finalX = Math.max(0, Math.min(effectiveCanvasWidth - elementRect.width, snapValue(elementRect.left + (lastMouseX - startX), false)));
-        const finalY = Math.max(0, Math.min(effectiveCanvasHeight - elementRect.height, snapValue(elementRect.top + (lastMouseY - startY), true)));
+        const finalX = elementRect.left + dragOffset.x;
+        const finalY = elementRect.top + dragOffset.y;
         onElementDrop(elementId, { x: finalX, y: finalY });
       }
 
@@ -190,6 +188,7 @@ export const useDragAndDrop = ({
   return {
     isDragging,
     dragOffset,
+    draggedElementId,
     handleMouseDown,
     handleDragStart,
     handleDragOver,

@@ -808,7 +808,7 @@ export const CanvasElement = ({
           }),
           borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0px',
           opacity: (element.opacity || 100) / 100,
-          transform: `rotate(${element.rotation || 0}deg) scale(${element.scale || 100}%)`,
+          transform: `${dragAndDrop.draggedElementId === element.id ? `translate(${dragAndDrop.dragOffset.x * zoom}px, ${dragAndDrop.dragOffset.y * zoom}px) ` : ''}rotate(${element.rotation || 0}deg) scale(${element.scale || 100}%)`,
           filter: `brightness(${element.brightness || 100}%) contrast(${element.contrast || 100}%) saturate(${element.saturate || 100}%)`,
           boxShadow: element.boxShadowColor ? 
             `0px ${element.boxShadowSpread || 0}px ${element.boxShadowBlur || 0}px ${element.boxShadowColor}` : 
