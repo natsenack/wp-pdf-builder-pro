@@ -35,14 +35,13 @@ if (!wp_script_is('react-dom', 'enqueued')) {
 wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'react', 'react-dom', 'wp-api'], '8.0.0_force_' . microtime(true), true);
 wp_enqueue_script('pdf-builder-nonce-fix-v2', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js', ['jquery'], '4.0.0_force_reload_' . time(), true);
 
-// Ajouter un script inline pour s'assurer que React est disponible globalement
+// Ajouter un script inline pour vérifier que React est chargé
 wp_add_inline_script('pdf-builder-admin-v3', '
+    console.log("React chargé depuis:", typeof window.React === "object" ? "CDN/WordPress" : "non chargé");
     if (typeof window.React === "undefined") {
-        console.error("React n\'est pas disponible globalement");
+        console.error("React n\'est toujours pas disponible");
     } else {
-        console.log("React disponible globalement:", typeof window.React, Object.keys(window.React));
-        console.log("React.useMemo:", typeof window.React.useMemo);
-        console.log("React object:", window.React);
+        console.log("✅ React disponible avec hooks:", typeof window.React.useState);
     }
 ');
 
