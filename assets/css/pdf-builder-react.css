@@ -223,7 +223,7 @@ body.pdf-builder-active #wpadminbar {
   align-items: center;
   background: #fafbfc;
   overflow: auto;
-  padding: 24px;
+  padding: 60px 40px; /* Espace généreux autour du canvas */
   position: relative;
   min-height: 400px;
 }
