@@ -87,74 +87,72 @@ export const useResize = ({
 
       let newRect = { ...originalRect.current };
 
-      // Pour les dividers et lignes, empêcher la modification de la hauteur et de la largeur
-      const isFixedSize = elementType === 'divider' || elementType === 'line';
+      // Pour les dividers et lignes, empêcher la modification de la hauteur seulement
+      const isFixedHeight = elementType === 'divider' || elementType === 'line';
 
       switch (handle) {
         case 'nw':
-          if (!isFixedSize) {
+          if (!isFixedHeight) {
             newRect.x = snapValue(originalRect.current.x + deltaX, false);
             newRect.y = snapValue(originalRect.current.y + deltaY, true);
             newRect.width = snapValue(originalRect.current.width - deltaX, false);
             newRect.height = snapValue(originalRect.current.height - deltaY, true);
           } else {
-            newRect.y = snapValue(originalRect.current.y + deltaY, true);
+            newRect.x = snapValue(originalRect.current.x + deltaX, false);
+            newRect.width = snapValue(originalRect.current.width - deltaX, false);
           }
           break;
 
         case 'ne':
-          if (!isFixedSize) {
+          if (!isFixedHeight) {
             newRect.y = snapValue(originalRect.current.y + deltaY, true);
             newRect.width = snapValue(originalRect.current.width + deltaX, false);
             newRect.height = snapValue(originalRect.current.height - deltaY, true);
           } else {
-            newRect.y = snapValue(originalRect.current.y + deltaY, true);
+            newRect.width = snapValue(originalRect.current.width + deltaX, false);
           }
           break;
 
         case 'sw':
-          if (!isFixedSize) {
+          if (!isFixedHeight) {
             newRect.x = snapValue(originalRect.current.x + deltaX, false);
             newRect.width = snapValue(originalRect.current.width - deltaX, false);
             newRect.height = snapValue(originalRect.current.height + deltaY, true);
           } else {
-            newRect.y = snapValue(originalRect.current.y + deltaY, true);
+            newRect.x = snapValue(originalRect.current.x + deltaX, false);
+            newRect.width = snapValue(originalRect.current.width - deltaX, false);
           }
           break;
 
         case 'se':
-          if (!isFixedSize) {
+          if (!isFixedHeight) {
             newRect.width = snapValue(originalRect.current.width + deltaX, false);
             newRect.height = snapValue(originalRect.current.height + deltaY, true);
+          } else {
+            newRect.width = snapValue(originalRect.current.width + deltaX, false);
           }
           break;
 
         case 'n':
-          if (!isFixedSize) {
+          if (!isFixedHeight) {
             newRect.y = snapValue(originalRect.current.y + deltaY, true);
             newRect.height = snapValue(originalRect.current.height - deltaY, true);
-          } else {
-            newRect.y = snapValue(originalRect.current.y + deltaY, true);
           }
           break;
 
         case 's':
-          if (!isFixedSize) {
+          if (!isFixedHeight) {
             newRect.height = snapValue(originalRect.current.height + deltaY, true);
           }
           break;
 
         case 'w':
-          if (!isFixedSize) {
-            newRect.x = snapValue(originalRect.current.x + deltaX, false);
-            newRect.width = snapValue(originalRect.current.width - deltaX, false);
-          }
+          newRect.x = snapValue(originalRect.current.x + deltaX, false);
+          newRect.width = snapValue(originalRect.current.width - deltaX, false);
           break;
 
         case 'e':
-          if (!isFixedSize) {
-            newRect.width = snapValue(originalRect.current.width + deltaX, false);
-          }
+          newRect.width = snapValue(originalRect.current.width + deltaX, false);
           break;
 
         default:

@@ -2086,54 +2086,58 @@ export const CanvasElement = ({
         )}
 
         {/* Poignées de redimensionnement - rendues à l'intérieur de l'élément pour un positionnement correct */}
-        {isSelected && element.type !== 'divider' && element.type !== 'line' && (
+        {isSelected && (
           <>
-            {/* Coins */}
-            <div
-              key={`resize-handle-nw-${element.id}`}
-              className="resize-handle nw"
-              onMouseDown={(e) => {
-                const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
-                const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
-                resize.handleResizeStart(e, 'nw', {
-                  x: element.x,
-                  y: element.y,
-                  width: element.width,
-                  height: element.height
-                }, canvasRect, zoom);
-              }}
-              onContextMenu={handleContextMenuEvent}
-            />
-            <div
-              key={`resize-handle-ne-${element.id}`}
-              className="resize-handle ne"
-              onMouseDown={(e) => {
-                const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
-                const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
-                resize.handleResizeStart(e, 'ne', {
-                  x: element.x,
-                  y: element.y,
-                  width: element.width,
-                  height: element.height
-                }, canvasRect, zoom);
-              }}
-              onContextMenu={handleContextMenuEvent}
-            />
-            <div
-              key={`resize-handle-sw-${element.id}`}
-              className="resize-handle sw"
-              onMouseDown={(e) => {
-                const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
-                const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
-                resize.handleResizeStart(e, 'sw', {
-                  x: element.x,
-                  y: element.y,
-                  width: element.width,
-                  height: element.height
-                }, canvasRect, zoom);
-              }}
-              onContextMenu={handleContextMenuEvent}
-            />
+            {/* Coins - masqués pour les lignes */}
+            {element.type !== 'line' && element.type !== 'divider' && (
+              <>
+                <div
+                  key={`resize-handle-nw-${element.id}`}
+                  className="resize-handle nw"
+                  onMouseDown={(e) => {
+                    const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
+                    const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
+                    resize.handleResizeStart(e, 'nw', {
+                      x: element.x,
+                      y: element.y,
+                      width: element.width,
+                      height: element.height
+                    }, canvasRect, zoom);
+                  }}
+                  onContextMenu={handleContextMenuEvent}
+                />
+                <div
+                  key={`resize-handle-ne-${element.id}`}
+                  className="resize-handle ne"
+                  onMouseDown={(e) => {
+                    const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
+                    const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
+                    resize.handleResizeStart(e, 'ne', {
+                      x: element.x,
+                      y: element.y,
+                      width: element.width,
+                      height: element.height
+                    }, canvasRect, zoom);
+                  }}
+                  onContextMenu={handleContextMenuEvent}
+                />
+                <div
+                  key={`resize-handle-sw-${element.id}`}
+                  className="resize-handle sw"
+                  onMouseDown={(e) => {
+                    const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
+                    const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
+                    resize.handleResizeStart(e, 'sw', {
+                      x: element.x,
+                      y: element.y,
+                      width: element.width,
+                      height: element.height
+                    }, canvasRect, zoom);
+                  }}
+                  onContextMenu={handleContextMenuEvent}
+                />
+              </>
+            )}
             <div
               key={`resize-handle-se-${element.id}`}
               className="resize-handle se"
@@ -2150,37 +2154,41 @@ export const CanvasElement = ({
               onContextMenu={handleContextMenuEvent}
             />
 
-            {/* Côtés */}
-            <div
-              key={`resize-handle-n-${element.id}`}
-              className="resize-handle n"
-              onMouseDown={(e) => {
-                const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
-                const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
-                resize.handleResizeStart(e, 'n', {
-                  x: element.x,
-                  y: element.y,
-                  width: element.width,
-                  height: element.height
-                }, canvasRect, zoom);
-              }}
-              onContextMenu={handleContextMenuEvent}
-            />
-            <div
-              key={`resize-handle-s-${element.id}`}
-              className="resize-handle s"
-              onMouseDown={(e) => {
-                const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
-                const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
-                resize.handleResizeStart(e, 's', {
-                  x: element.x,
-                  y: element.y,
-                  width: element.width,
-                  height: element.height
-                }, canvasRect, zoom);
-              }}
-              onContextMenu={handleContextMenuEvent}
-            />
+            {/* Côtés - n et s masqués pour les lignes */}
+            {element.type !== 'line' && element.type !== 'divider' && (
+              <>
+                <div
+                  key={`resize-handle-n-${element.id}`}
+                  className="resize-handle n"
+                  onMouseDown={(e) => {
+                    const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
+                    const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
+                    resize.handleResizeStart(e, 'n', {
+                      x: element.x,
+                      y: element.y,
+                      width: element.width,
+                      height: element.height
+                    }, canvasRect, zoom);
+                  }}
+                  onContextMenu={handleContextMenuEvent}
+                />
+                <div
+                  key={`resize-handle-s-${element.id}`}
+                  className="resize-handle s"
+                  onMouseDown={(e) => {
+                    const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
+                    const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
+                    resize.handleResizeStart(e, 's', {
+                      x: element.x,
+                      y: element.y,
+                      width: element.width,
+                      height: element.height
+                    }, canvasRect, zoom);
+                  }}
+                  onContextMenu={handleContextMenuEvent}
+                />
+              </>
+            )}
             <div
               key={`resize-handle-w-${element.id}`}
               className="resize-handle w"
@@ -2212,27 +2220,31 @@ export const CanvasElement = ({
               onContextMenu={handleContextMenuEvent}
             />
 
-            {/* Zones de redimensionnement sur les bords */}
-            <div
-              key={`resize-zone-n-${element.id}`}
-              className="resize-zone resize-zone-n"
-              onMouseDown={(e) => resize.handleResizeStart(e, 'n', {
-                x: element.x,
-                y: element.y,
-                width: element.width,
-                height: element.height
-              })}
-            />
-            <div
-              key={`resize-zone-s-${element.id}`}
-              className="resize-zone resize-zone-s"
-              onMouseDown={(e) => resize.handleResizeStart(e, 's', {
-                x: element.x,
-                y: element.y,
-                width: element.width,
-                height: element.height
-              })}
-            />
+            {/* Zones de redimensionnement sur les bords - n et s masqués pour les lignes */}
+            {element.type !== 'line' && element.type !== 'divider' && (
+              <>
+                <div
+                  key={`resize-zone-n-${element.id}`}
+                  className="resize-zone resize-zone-n"
+                  onMouseDown={(e) => resize.handleResizeStart(e, 'n', {
+                    x: element.x,
+                    y: element.y,
+                    width: element.width,
+                    height: element.height
+                  })}
+                />
+                <div
+                  key={`resize-zone-s-${element.id}`}
+                  className="resize-zone resize-zone-s"
+                  onMouseDown={(e) => resize.handleResizeStart(e, 's', {
+                    x: element.x,
+                    y: element.y,
+                    width: element.width,
+                    height: element.height
+                  })}
+                />
+              </>
+            )}
             <div
               key={`resize-zone-w-${element.id}`}
               className="resize-zone resize-zone-w"
