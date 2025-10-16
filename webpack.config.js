@@ -19,13 +19,13 @@ module.exports = {
     splitChunks: {
       chunks: 'all',
       cacheGroups: {
-        // Séparer React et ReactDOM dans un chunk partagé
-        react: {
-          test: /[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/,
-          name: 'react-vendor',
-          chunks: 'all',
-          priority: 10
-        },
+        // Désactiver la séparation de React pour éviter les problèmes de chargement asynchrone
+        // react: {
+        //   test: /[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/,
+        //   name: 'react-vendor',
+        //   chunks: 'all',
+        //   priority: 10
+        // },
         // Séparer les autres vendors
         vendor: {
           test: /[\\/]node_modules[\\/]/,

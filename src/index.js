@@ -1,12 +1,12 @@
 import React from 'react';
 import { createElement } from 'react';
-import { render, unmountComponentAtNode } from 'react-dom';
+import ReactDOM from 'react-dom';
 import { PDFCanvasEditor } from './components/PDFCanvasEditor';
 
 // Exposer React globalement pour compatibilité
 if (typeof window !== 'undefined') {
     window.React = React;
-    window.ReactDOM = require('react-dom');
+    window.ReactDOM = ReactDOM;
 }
 
 // Forcer l'inclusion de tous les hooks personnalisés

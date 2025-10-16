@@ -352,16 +352,28 @@ body.wp-admin .pdf-builder-container {
     const checkScriptsLoaded = () => {
         scriptCheckAttempts++;
 
+        // Vérifier que tous les chunks sont chargés avec le code splitting
         const pdfBuilderProExists = typeof window.PDFBuilderPro !== 'undefined';
         const initExists = typeof window.PDFBuilderPro?.init === 'function';
+        
+        // Avec le code splitting, vérifier aussi que React est disponible
+        const reactExists = typeof window.React !== 'undefined';
+        const reactDomExists = typeof window.ReactDOM !== 'undefined';
 
-        if (pdfBuilderProExists && initExists) {
+        if (pdfBuilderProExists && initExists && reactExists && reactDomExists) {
             initApp();
         } else if (scriptCheckAttempts < maxScriptCheckAttempts) {
             // Réessayer dans 100ms
             setTimeout(checkScriptsLoaded, 100);
         } else {
             console.error('❌ Timeout: Scripts PDF Builder Pro n\'ont pas pu être chargés après 5 secondes');
+            console.error('Debug info:', {
+                pdfBuilderProExists,
+                initExists,
+                reactExists,
+                reactDomExists,
+                attempts: scriptCheckAttempts
+            });
             // Afficher un message d'erreur à l'utilisateur
             const container = document.getElementById('invoice-quote-builder-container');
             if (container) {
