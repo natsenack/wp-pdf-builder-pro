@@ -3,7 +3,7 @@
 .pdf-builder-app {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 130vh; /* Étendu pour plus d'espace de travail vertical */
   background-color: #ffffff; /* BLANC PUR - Background principal */
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   position: relative;
@@ -31,7 +31,7 @@ body.wp-admin .pdf-builder-app {
 
 /* S'assurer que le contenu du builder prend toute la hauteur disponible */
 .pdf-builder-app .pdf-canvas-editor {
-  height: 100vh;
+  height: 130vh; /* Étendu pour plus d'espace de travail vertical */
   overflow: hidden;
 }
 
@@ -130,7 +130,7 @@ body.wp-admin .pdf-builder-app {
   flex-direction: column;
   background: #ffffff; /* BLANC PUR */
   overflow-y: auto;
-  max-height: 100vh;
+  max-height: 130vh; /* Étendu pour plus d'espace de travail vertical */
 }
 
 /* Toolbar Styles */
