@@ -103,6 +103,5 @@ if (typeof window !== 'undefined') {
 }
 
 // Export pour les modules ES6
-export default pdfBuilderPro;
-export { React };
+export default React;
 
