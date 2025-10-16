@@ -1068,12 +1068,14 @@ class PDF_Builder_Pro_Generator {
             $city_line = [];
             if (!empty($postcode)) $city_line[] = $postcode;
             if (!empty($city)) $city_line[] = $city;
-            if (!empty($city_line)) $address_parts[] = implode(' ', $city_line);
-
-            if (!empty($country)) {
-                // Essayer de convertir le code pays en nom
-                $country_name = $this->get_country_name($country);
-                $address_parts[] = $country_name ?: $country;
+            if (!empty($city_line)) {
+                $city_part = implode(' ', $city_line);
+                if (!empty($country)) {
+                    // Essayer de convertir le code pays en nom
+                    $country_name = $this->get_country_name($country);
+                    $city_part .= ' - ' . ($country_name ?: $country);
+                }
+                $address_parts[] = $city_part;
             }
 
             if (!empty($address_parts)) {

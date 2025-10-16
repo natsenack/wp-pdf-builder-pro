@@ -1841,8 +1841,7 @@ export const CanvasElement = ({
                     lineHeight: '1.4'
                   }}>
                     123 Rue de l'Entreprise<br />
-                    75001 Paris<br />
-                    France
+                    75001 Paris - France
                   </div>
                 </div>
               )}
