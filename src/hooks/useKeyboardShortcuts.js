@@ -8,7 +8,12 @@ export const useKeyboardShortcuts = ({
   onRedo,
   onSave,
   onZoomIn,
-  onZoomOut
+  onZoomOut,
+  onSelectAll,
+  onDeselectAll,
+  onToolSelect,
+  onToggleGrid,
+  onTogglePreview
 }) => {
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -82,6 +87,70 @@ export const useKeyboardShortcuts = ({
           }
           break;
 
+        case 'a':
+          if (isCtrl && onSelectAll) {
+            e.preventDefault();
+            onSelectAll();
+          }
+          break;
+
+        case 'd':
+          if (isCtrl && onDeselectAll) {
+            e.preventDefault();
+            onDeselectAll();
+          }
+          break;
+
+        case 'g':
+          if (isCtrl && onToggleGrid) {
+            e.preventDefault();
+            onToggleGrid();
+          }
+          break;
+
+        case 'p':
+          if (isCtrl && onTogglePreview) {
+            e.preventDefault();
+            onTogglePreview();
+          }
+          break;
+
+        // Raccourcis pour les outils
+        case 'v':
+          if (!isCtrl && onToolSelect) {
+            e.preventDefault();
+            onToolSelect('select');
+          }
+          break;
+
+        case 'r':
+          if (!isCtrl && onToolSelect) {
+            e.preventDefault();
+            onToolSelect('rectangle');
+          }
+          break;
+
+        case 't':
+          if (!isCtrl && onToolSelect) {
+            e.preventDefault();
+            onToolSelect('text');
+          }
+          break;
+
+        case 'i':
+          if (!isCtrl && onToolSelect) {
+            e.preventDefault();
+            onToolSelect('image');
+          }
+          break;
+
+        case 'l':
+          if (!isCtrl && onToolSelect) {
+            e.preventDefault();
+            onToolSelect('line');
+          }
+          break;
+
         default:
           break;
       }
@@ -92,5 +161,5 @@ export const useKeyboardShortcuts = ({
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [onDelete, onCopy, onPaste, onUndo, onRedo, onSave, onZoomIn, onZoomOut]);
+  }, [onDelete, onCopy, onPaste, onUndo, onRedo, onSave, onZoomIn, onZoomOut, onSelectAll, onDeselectAll, onToolSelect, onToggleGrid, onTogglePreview]);
 };

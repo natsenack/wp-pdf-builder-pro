@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { CanvasElement } from './CanvasElement';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { Toolbar } from './Toolbar';
@@ -964,3 +964,6 @@ export const PDFCanvasEditor = ({ options }) => {
     </div>
   );
 };
+
+// Optimisation : éviter les re-renders inutiles
+export default React.memo(PDFCanvasEditor);
