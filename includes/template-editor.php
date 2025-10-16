@@ -224,8 +224,8 @@ if (!$is_new && $template_id > 0) {
                     loadingText: container?.querySelector('p')?.textContent || 'no p found'
                 });
 
-                // Accepter soit PDFBuilderPro chargé, soit le contenu React réellement affiché (pas le message de chargement)
-                return (lastPdfBuilderProExists && lastInitExists) || lastHasReactContent;
+                // Accepter soit PDFBuilderPro chargé, soit le contenu React réellement affiché (pas le message de chargement), soit le conteneur de chargement détecté
+                return (lastPdfBuilderProExists && lastInitExists) || lastHasReactContent || (lastReactContainerExists && !lastHasReactContent);
             };
 
             // Initialisation optimisée avec polling intelligent
