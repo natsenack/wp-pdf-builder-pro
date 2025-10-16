@@ -223,9 +223,9 @@ body.pdf-builder-active #wpadminbar {
   align-items: flex-start; /* Changé de center à flex-start pour plus d'espace en haut */
   background: #fafbfc;
   overflow: auto;
-  padding: 120px 60px 200px 60px; /* Espace beaucoup plus généreux autour du canvas */
+  padding: 120px 60px 300px 60px; /* Espace ENCORE plus généreux en bas */
   position: relative;
-  min-height: 600px; /* Augmenté pour plus d'espace */
+  min-height: 800px; /* Hauteur minimale encore augmentée */
 }
 
 /* Wrapper de zoom du canvas */
