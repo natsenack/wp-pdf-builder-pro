@@ -197,8 +197,21 @@ if (!$is_new && $template_id > 0) {
 
             // Fonction pour vérifier si les scripts sont chargés
             const checkScriptsLoaded = () => {
-                return typeof window.PDFBuilderPro !== 'undefined' &&
-                       typeof window.PDFBuilderPro.init === 'function';
+                const pdfBuilderProExists = typeof window.PDFBuilderPro !== 'undefined';
+                const initExists = typeof window.PDFBuilderPro?.init === 'function';
+                const reactContainerExists = document.getElementById('invoice-quote-builder-container') &&
+                                           document.getElementById('invoice-quote-builder-container').children.length > 0;
+
+                console.log('Script check details:', {
+                    pdfBuilderProExists,
+                    initExists,
+                    reactContainerExists,
+                    PDFBuilderPro: typeof window.PDFBuilderPro,
+                    containerChildren: document.getElementById('invoice-quote-builder-container')?.children?.length || 0
+                });
+
+                // Accepter soit PDFBuilderPro chargé, soit le conteneur React rendu
+                return (pdfBuilderProExists && initExists) || reactContainerExists;
             };
 
             // Initialisation optimisée avec polling intelligent
@@ -248,10 +261,19 @@ if (!$is_new && $template_id > 0) {
                     setTimeout(initApp, 50); // Attendre 50ms et réessayer
                 } else {
                     console.error('PDF Builder Pro: Timeout - Scripts non chargés après', maxAttempts * 50, 'ms');
+                    console.log('Tentative d\'initialisation de secours malgré le timeout...');
+
+                    // Tentative d'initialisation de secours - vérifier si React est déjà rendu
+                    const errorContainer = document.getElementById('invoice-quote-builder-container');
+                    if (errorContainer && errorContainer.children.length > 0) {
+                        console.log('✅ Conteneur React détecté, initialisation de secours réussie');
+                        // Les données globales sont déjà définies plus haut
+                        return;
+                    }
+
                     // Afficher un message d'erreur à l'utilisateur
-                    const container = document.getElementById('invoice-quote-builder-container');
-                    if (container) {
-                        container.innerHTML = `
+                    if (errorContainer) {
+                        errorContainer.innerHTML = `
                             <div style="text-align: center; padding: 40px; color: #dc3545;">
                                 <div style="font-size: 3rem; margin-bottom: 1rem;">❌</div>
                                 <h2>Erreur de chargement</h2>
