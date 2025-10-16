@@ -216,8 +216,8 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 120px 60px 100px 60px; /* Padding réduit en bas maintenant que le canvas est plus grand */
-  min-height: 1400px; /* Hauteur minimale ajustée pour le nouveau canvas */
+  padding: 120px 60px 120px 60px; /* Padding équilibré */
+  min-height: 1200px; /* Ajusté pour le canvas de 1000px */
   z-index: 0;
 }
 
@@ -231,9 +231,9 @@
   border: 1px solid #e2e8f0;
   position: relative;
   overflow: hidden;
-  /* Dimensions agrandies */
+  /* Dimensions agrandies mais raisonnables */
   width: 595px;
-  height: 1200px; /* Hauteur augmentée pour agrandir le canvas */
+  height: 1000px; /* Hauteur plus raisonnable */
 }
 
 .canvas {
