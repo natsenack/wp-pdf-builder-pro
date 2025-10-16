@@ -7,6 +7,61 @@ const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
   // Bibliothèque d'éléments - boutons simples
   const elements = [
     {
+      type: 'text',
+      fieldID: 'text',
+      label: 'Texte',
+      icon: '📝',
+      description: 'Bloc de texte personnalisable',
+      defaultProperties: {
+        text: 'Votre texte ici',
+        fontSize: 14,
+        fontFamily: 'Arial',
+        fontWeight: 'normal',
+        textAlign: 'left',
+        color: '#333333'
+      }
+    },
+    {
+      type: 'image',
+      fieldID: 'image',
+      label: 'Image',
+      icon: '🖼️',
+      description: 'Insérer une image depuis une URL',
+      defaultProperties: {
+        src: '',
+        width: 200,
+        height: 150,
+        fit: 'contain',
+        alignment: 'center'
+      }
+    },
+    {
+      type: 'line',
+      fieldID: 'line',
+      label: 'Ligne',
+      icon: '📏',
+      description: 'Ligne horizontale ou verticale',
+      defaultProperties: {
+        orientation: 'horizontal',
+        thickness: 2,
+        color: '#333333',
+        style: 'solid'
+      }
+    },
+    {
+      type: 'rectangle',
+      fieldID: 'rectangle',
+      label: 'Rectangle',
+      icon: '▭',
+      description: 'Forme rectangulaire',
+      defaultProperties: {
+        backgroundColor: 'transparent',
+        borderColor: '#333333',
+        borderWidth: 2,
+        borderRadius: 0
+      }
+    },
+    {
       type: 'product_table',
       fieldID: 'products_table',
       label: 'Tableau Produits',
@@ -105,20 +160,39 @@ const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
       }
     },
     {
-      type: 'document_type',
-      fieldID: 'document_type',
-      label: 'Type de Document',
-      icon: '📋',
-      description: 'Devis, Facture, Reçu, etc.',
+      type: 'dynamic-text',
+      fieldID: 'dynamic_text',
+      label: 'Texte Dynamique',
+      icon: '�',
+      description: 'Texte avec variables dynamiques',
       defaultProperties: {
-        documentType: 'invoice', // 'invoice', 'quote', 'receipt', 'order', 'credit_note'
-        fontSize: 18,
+        content: '{{order_total}} €',
+        fontSize: 14,
         fontFamily: 'Arial',
-        fontWeight: 'bold',
-        textAlign: 'center',
-        color: '#1e293b',
-        showBorder: false,
-        backgroundColor: 'transparent'
+        fontWeight: 'normal',
+        textAlign: 'left',
+        color: '#333333'
+      }
+    },
+    {
+      type: 'order_totals',
+      fieldID: 'order_totals',
+      label: 'Totaux Commande',
+      icon: '💰',
+      description: 'Sous-total, TVA, frais de port, total',
+      defaultProperties: {
+        showSubtotal: true,
+        showShipping: true,
+        showTaxes: true,
+        showDiscount: true,
+        showTotal: true,
+        layout: 'vertical',
+        fontSize: 12,
+        fontFamily: 'Arial',
+        fontWeight: 'normal',
+        labelAlign: 'left',
+        valueAlign: 'right',
+        spacing: 4
       }
     }
   ];
