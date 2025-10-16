@@ -217,10 +217,24 @@ if (!$is_new && $template_id > 0) {
 </div>
 
 <!-- SCRIPTS DE SECOURS - Chargement direct si wp_enqueue_script ne fonctionne pas -->
+<script>
+console.log('🔍 PDF Builder: Starting direct script loading...');
+</script>
 <script src="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'js/toastr/toastr.min.js?ver=' . time(); ?>"></script>
 <link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/toastr/toastr.min.css?ver=' . time(); ?>" />
+<script>
+console.log('📋 Toastr loaded, loading main script...');
+</script>
 <script src="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js?ver=' . time(); ?>"></script>
+<script>
+console.log('🎯 Main script loaded, loading nonce fix...');
+</script>
 <script src="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js?ver=' . time(); ?>"></script>
+<script>
+console.log('✅ All scripts loaded, checking PDFBuilderPro...');
+console.log('PDFBuilderPro exists:', typeof window.PDFBuilderPro);
+console.log('PDFBuilderPro.init exists:', typeof window.PDFBuilderPro?.init);
+</script>
 <link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css?ver=' . time(); ?>" />
 <link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-canvas.css?ver=' . time(); ?>" />
 
