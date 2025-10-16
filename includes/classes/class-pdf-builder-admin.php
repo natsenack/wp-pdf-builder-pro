@@ -1383,7 +1383,7 @@ class PDF_Builder_Admin {
         // CHARGER WP-ELEMENT (React + hooks) DE WORDPRESS !
         wp_enqueue_script('wp-element');
 
-        wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'wp-api'], '8.0.0_force_' . microtime(true), true);
+        wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'wp-api', 'wp-element'], '8.0.0_force_' . microtime(true), true);
 
         // DEBUG: Vérifier que le script est enqueued
         error_log('PDF Builder: Script enqueued - URL: ' . PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js');

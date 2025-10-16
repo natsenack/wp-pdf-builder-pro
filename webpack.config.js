@@ -9,7 +9,11 @@ module.exports = {
     filename: '[name].js',
     path: path.resolve(__dirname, 'assets/js/dist'),
   },
-  // Bundler React avec le projet pour éviter les conflits avec WordPress
+  // Utiliser React fourni par WordPress via wp-element
+  externals: {
+    'react': 'React',
+    'react-dom': 'ReactDOM'
+  },
   mode: 'production',
   optimization: {
     usedExports: true, // Activer l'élimination des exports non utilisés
