@@ -198,12 +198,14 @@ if (!$is_new && $template_id > 0) {
             // Fonction pour vérifier si les scripts sont chargés
             const checkScriptsLoaded = () => {
                 return typeof window.PDFBuilderPro !== 'undefined' &&
-                       typeof window.PDFBuilderPro.init === 'function';
+                       typeof window.PDFBuilderPro.init === 'function' &&
+                       typeof window.React !== 'undefined' &&
+                       typeof window.ReactDOM !== 'undefined';
             };
 
             // Initialisation optimisée avec polling intelligent
             let attempts = 0;
-            const maxAttempts = 100; // ~5 secondes max
+            const maxAttempts = 200; // ~10 secondes max
 
             const initApp = () => {
                 if (checkScriptsLoaded()) {
