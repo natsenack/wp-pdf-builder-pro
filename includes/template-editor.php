@@ -247,11 +247,14 @@ if (typeof window.PDFBuilderPro === 'undefined') {
     console.error('❌ PDFBuilderPro is undefined - script execution failed');
 }
 </script>
-<link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css?ver=' . time(); ?>" />
-<link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-canvas.css?ver=' . time(); ?>" />
-<link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-react.css?ver=' . time(); ?>" />
-<link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/woocommerce-elements.css?ver=' . time(); ?>" />
-<link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/toastr/toastr.min.css?ver=' . time(); ?>" />
+<script>
+console.log('🎨 Loading CSS files...');
+</script>
+<link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css?ver=' . time(); ?>" onload="console.log('✅ pdf-builder-admin.css loaded')" onerror="console.error('❌ pdf-builder-admin.css failed to load')" />
+<link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-canvas.css?ver=' . time(); ?>" onload="console.log('✅ pdf-builder-canvas.css loaded')" onerror="console.error('❌ pdf-builder-canvas.css failed to load')" />
+<link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-react.css?ver=' . time(); ?>" onload="console.log('✅ pdf-builder-react.css loaded')" onerror="console.error('❌ pdf-builder-react.css failed to load')" />
+<link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/woocommerce-elements.css?ver=' . time(); ?>" onload="console.log('✅ woocommerce-elements.css loaded')" onerror="console.error('❌ woocommerce-elements.css failed to load')" />
+<link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/toastr/toastr.min.css?ver=' . time(); ?>" onload="console.log('✅ toastr.min.css loaded')" onerror="console.error('❌ toastr.min.css failed to load')" />
 
 <style>
 @keyframes spin {
