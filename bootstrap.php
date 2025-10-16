@@ -9,9 +9,21 @@ if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
 
-// Définir la constante du répertoire du plugin si elle n'existe pas
+// Définir les constantes essentielles du plugin
 if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
     define('PDF_BUILDER_PLUGIN_DIR', plugin_dir_path(__FILE__));
+}
+
+if (!defined('PDF_BUILDER_PLUGIN_URL')) {
+    define('PDF_BUILDER_PLUGIN_URL', plugin_dir_url(__FILE__));
+}
+
+if (!defined('PDF_BUILDER_PRO_ASSETS_URL')) {
+    define('PDF_BUILDER_PRO_ASSETS_URL', PDF_BUILDER_PLUGIN_URL . 'assets/');
+}
+
+if (!defined('PDF_BUILDER_PRO_VERSION')) {
+    define('PDF_BUILDER_PRO_VERSION', '1.0.2');
 }
 
 // Fonction pour charger le core du plugin
