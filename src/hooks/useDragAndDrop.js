@@ -17,6 +17,7 @@ export const useDragAndDrop = ({
   const dragStartPos = useRef({ x: 0, y: 0 });
   const elementStartPos = useRef({ x: 0, y: 0 });
   const currentDragData = useRef(null);
+  const currentDragOffset = useRef({ x: 0, y: 0 });
 
   const snapToGridValue = useCallback((value) => {
     if (!snapToGrid) return value;
@@ -140,6 +141,7 @@ export const useDragAndDrop = ({
       const newOffset = { x: newX - elementRect.left, y: newY - elementRect.top };
       console.log('[DEBUG] handleMouseMove - setting dragOffset:', newOffset);
       setDragOffset(newOffset);
+      currentDragOffset.current = newOffset;
 
       // Removed onElementMove call for performance - visual feedback via transform
     };
@@ -162,16 +164,16 @@ export const useDragAndDrop = ({
 
       if (onElementDrop && elementId) {
         // Calculer la position finale en utilisant les coordonnées initiales de l'élément + le déplacement
-        const finalX = elementStartPos.current.x + dragOffset.x;
-        const finalY = elementStartPos.current.y + dragOffset.y;
+        const finalX = elementStartPos.current.x + currentDragOffset.current.x;
+        const finalY = elementStartPos.current.y + currentDragOffset.current.y;
 
-        console.log('[DEBUG] handleMouseUp - elementStartPos:', elementStartPos.current, 'dragOffset:', dragOffset);
+        console.log('[DEBUG] handleMouseUp - elementStartPos:', elementStartPos.current, 'currentDragOffset:', currentDragOffset.current);
 
         // Log pour le séparateur lors du drop
         const isSeparator = elementType === 'divider';
         if (isSeparator) {
           console.log(`[SEPARATOR LOG] Drop - Position initiale stockée: x=${elementStartPos.current.x}, y=${elementStartPos.current.y}`);
-          console.log(`[SEPARATOR LOG] Drop - Offset appliqué: x=${dragOffset.x}, y=${dragOffset.y}`);
+          console.log(`[SEPARATOR LOG] Drop - Offset appliqué: x=${currentDragOffset.current.x}, y=${currentDragOffset.current.y}`);
           console.log(`[SEPARATOR LOG] Drop - Position finale calculée: x=${finalX}, y=${finalY}`);
           console.log(`[SEPARATOR LOG] Drop - Appel onElementDrop avec élément: ${elementId}`);
         }
@@ -185,6 +187,7 @@ export const useDragAndDrop = ({
       setDragOffset({ x: 0, y: 0 });
       setDraggedElementId(null);
       elementStartPos.current = { x: 0, y: 0 };
+      currentDragOffset.current = { x: 0, y: 0 };
 
       // Nettoyer les event listeners
       document.removeEventListener('mousemove', handleMouseMove);
