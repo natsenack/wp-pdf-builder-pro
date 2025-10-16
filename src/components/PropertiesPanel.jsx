@@ -1413,7 +1413,7 @@ const PropertiesPanel = React.memo(({
                         onClick={() => handlePropertyChange(selectedElement.id, 'tableStyle', style.value)}
                         title={`${style.label} - Style ${style.label.toLowerCase()} avec dégradé moderne`}
                       >
-                        <div className="table-preview">
+                        <div className="table-preview" style={{ maxHeight: '60px', overflow: 'hidden' }}>
                           {/* Header row */}
                           <div
                             className="table-header"
