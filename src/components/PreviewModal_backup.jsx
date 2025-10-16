@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback } from '@wordpress/element';
+import React, { useState, useEffect, useCallback } from 'react';
 
 // Nouveau système d'aperçu côté serveur avec TCPDF
 

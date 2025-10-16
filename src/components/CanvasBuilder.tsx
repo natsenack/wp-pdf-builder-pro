@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef, useEffect } from '@wordpress/element';
+import React, { useState, useRef, useEffect } from 'react';
 
 interface CanvasBuilderProps {
   width?: number;

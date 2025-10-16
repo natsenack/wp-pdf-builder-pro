@@ -1,4 +1,5 @@
-﻿import { createElement, render, unmountComponentAtNode } from '@wordpress/element';
+import { createElement } from 'react';
+import { render, unmountComponentAtNode } from 'react-dom';
 import { PDFCanvasEditor } from './components/PDFCanvasEditor';
 import './styles/editor.css';
 

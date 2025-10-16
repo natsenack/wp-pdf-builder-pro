@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from '@wordpress/element';
+import { useState, useEffect } from 'react';
 
 export const useGlobalSettings = () => {
   const [settings, setSettings] = useState({

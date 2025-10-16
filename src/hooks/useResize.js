@@ -1,4 +1,4 @@
-﻿import { useState, useCallback, useRef } from '@wordpress/element';
+import { useState, useCallback, useRef } from 'react';
 
 export const useResize = ({
   onElementResize,

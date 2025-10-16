@@ -1,5 +1,5 @@
-﻿// Force include all components and hooks by actually using them
-import React from '@wordpress/element';
+// Force include all components and hooks by actually using them
+import React from 'react';
 import ReactDOM from 'react-dom';
 import { useHistory } from './hooks/useHistory.js';
 import { useRotation } from './hooks/useRotation.js';

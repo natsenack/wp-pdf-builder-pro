@@ -1,5 +1,5 @@
-﻿// Test file to check if components are accessible
-import React from '@wordpress/element';
+// Test file to check if components are accessible
+import React from 'react';
 import { CanvasElement } from './components/CanvasElement.jsx';
 import { PDFCanvasEditor } from './components/PDFCanvasEditor.jsx';
 import { useRotation } from './hooks/useRotation.js';

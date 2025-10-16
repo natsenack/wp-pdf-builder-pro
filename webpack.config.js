@@ -10,6 +10,10 @@ module.exports = {
     path: path.resolve(__dirname, 'assets/js/dist'),
   },
   // Plus d'externals - WordPress fournit React via wp-element
+  externals: {
+    'react': 'React',
+    'react-dom': 'ReactDOM'
+  },
   mode: 'production',
   optimization: {
     usedExports: true, // Activer l'élimination des exports non utilisés

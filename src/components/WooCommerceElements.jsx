@@ -1,4 +1,4 @@
-﻿import { useRef, useCallback } from '@wordpress/element';
+import { useRef, useCallback } from 'react';
 import { useResize } from '../hooks/useResize';
 
 /**

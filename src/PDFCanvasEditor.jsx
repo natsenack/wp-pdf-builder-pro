@@ -1,2 +1,2 @@
-﻿import React from '@wordpress/element';
+import React from 'react';
 

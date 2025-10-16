@@ -1,4 +1,4 @@
-﻿export const Toolbar = ({
+export const Toolbar = ({
   selectedTool,
   onToolSelect,
   zoom,

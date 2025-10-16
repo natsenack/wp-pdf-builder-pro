@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useMemo, useRef } from '@wordpress/element';
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useHistory } from './useHistory';
 import { useSelection } from './useSelection';
 import { useClipboard } from './useClipboard';

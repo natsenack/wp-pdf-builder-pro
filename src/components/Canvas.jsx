@@ -1,4 +1,4 @@
-﻿import React, { useRef, useEffect, useCallback, useState } from '@wordpress/element';
+import React, { useRef, useEffect, useCallback, useState } from 'react';
 import { useGlobalSettings } from '../hooks/useGlobalSettings';
 
 const Canvas = ({

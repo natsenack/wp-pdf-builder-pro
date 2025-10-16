@@ -1,4 +1,4 @@
-﻿import { useState, useCallback } from '@wordpress/element';
+import { useState, useCallback } from 'react';
 
 export const useRotation = (onElementRotate, rotationStep = 15, rotationSnap = true) => {
   const [isRotating, setIsRotating] = useState(false);

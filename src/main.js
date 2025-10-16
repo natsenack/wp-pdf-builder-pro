@@ -1,8 +1,8 @@
-﻿// Import global fallbacks first
+// Import global fallbacks first
 import './globalFallback.js';
 
 // Main application entry point that actually uses all components
-import React from '@wordpress/element';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import { PDFCanvasEditor } from './components/PDFCanvasEditor.jsx';
 import { CanvasElement } from './components/CanvasElement.jsx';
