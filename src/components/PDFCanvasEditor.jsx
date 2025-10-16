@@ -710,7 +710,8 @@ export const PDFCanvasEditor = ({ options }) => {
               onClick={handleCanvasClick}
               style={{
                 width: canvasState.canvasWidth,
-                height: canvasState.canvasHeight,
+                height: 'auto', // Laisser le CSS contrôler la hauteur pour s'adapter au conteneur 130vh
+                minHeight: canvasState.canvasHeight, // Hauteur minimale pour éviter la compression excessive
                 position: 'relative',
                 backgroundColor: globalSettings.settings.canvasShowTransparency
                   ? 'transparent'
