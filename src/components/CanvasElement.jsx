@@ -1,5 +1,6 @@
 import React, { useRef, useCallback, useEffect } from 'react';
 import { useResize } from '../hooks/useResize';
+import { useRotation } from '../hooks/useRotation';
 
 export const CanvasElement = ({
   element,
@@ -13,7 +14,10 @@ export const CanvasElement = ({
   onUpdate,
   onRemove,
   onContextMenu,
-  dragAndDrop
+  dragAndDrop,
+  enableRotation = true,
+  rotationStep = 15,
+  rotationSnap = true
 }) => {
   const elementRef = useRef(null);
   const canvasRectRef = useRef(null);
@@ -44,6 +48,14 @@ export const CanvasElement = ({
     canvasWidth,
     canvasHeight
   });
+
+  const rotation = useRotation(
+    (newRotation) => {
+      onUpdate({ rotation: newRotation });
+    },
+    rotationStep,
+    rotationSnap
+  );
 
   // Fonction helper pour déterminer si un élément est spécial
   const isSpecialElement = (type) => {
@@ -2226,6 +2238,33 @@ export const CanvasElement = ({
               })}
             />
           </>
+        )}
+
+        {/* Poignée de rotation */}
+        {isSelected && enableRotation && (
+          <div
+            key={`rotation-handle-${element.id}`}
+            className="rotation-handle"
+            style={{
+              position: 'absolute',
+              top: `${-20 * zoom}px`,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: `${12 * zoom}px`,
+              height: `${12 * zoom}px`,
+              backgroundColor: '#3b82f6',
+              border: `${2 * zoom}px solid white`,
+              borderRadius: '50%',
+              cursor: 'alias',
+              zIndex: 1000,
+              boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+            }}
+            onMouseDown={(e) => {
+              e.stopPropagation();
+              rotation.handleRotationStart(e, element);
+            }}
+            title="Faire pivoter l'élément"
+          />
         )}
       </div>
 

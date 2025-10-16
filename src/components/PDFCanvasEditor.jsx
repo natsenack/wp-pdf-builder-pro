@@ -5,6 +5,7 @@ import { Toolbar } from './Toolbar';
 import { useCanvasState } from '../hooks/useCanvasState';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import { useGlobalSettings } from '../hooks/useGlobalSettings';
+import { useHistory } from '../hooks/useHistory';
 import { FPSCounter } from './FPSCounter';
 
 // Chargement lazy des composants conditionnels
@@ -76,6 +77,34 @@ export const PDFCanvasEditor = ({ options }) => {
     globalSettings: globalSettings.settings
   });
 
+  // Hook pour l'historique Undo/Redo
+  const history = useHistory({ maxHistorySize: globalSettings.settings.undoLevels || 50 });
+
+  // Fonction wrapper pour les mises à jour avec historique
+  const updateElementWithHistory = useCallback((elementId, updates, description = 'Modifier élément') => {
+    // Sauvegarder l'état actuel avant modification
+    const currentElements = canvasState.getAllElements();
+    history.addToHistory(currentElements, description);
+
+    // Appliquer la mise à jour
+    canvasState.updateElement(elementId, updates);
+  }, [canvasState, history]);
+
+  // Fonctions Undo/Redo
+  const handleUndo = useCallback(() => {
+    const previousState = history.undo();
+    if (previousState) {
+      canvasState.setElements(previousState);
+    }
+  }, [history, canvasState]);
+
+  const handleRedo = useCallback(() => {
+    const nextState = history.redo();
+    if (nextState) {
+      canvasState.setElements(nextState);
+    }
+  }, [history, canvasState]);
+
   const editorRef = useRef(null);
   const canvasRef = useRef(null);
   const canvasContainerRef = useRef(null);
@@ -83,10 +112,10 @@ export const PDFCanvasEditor = ({ options }) => {
   // Hook pour le drag and drop
   const dragAndDrop = useDragAndDrop({
     onElementMove: (elementId, position) => {
-      canvasState.updateElement(elementId, position);
+      updateElementWithHistory(elementId, position, 'Déplacer élément');
     },
     onElementDrop: (elementId, position) => {
-      canvasState.updateElement(elementId, position);
+      updateElementWithHistory(elementId, position, 'Déposer élément');
     },
     snapToGrid: globalSettings.settings.snapToGrid,
     gridSize: globalSettings.settings.gridSize,
@@ -100,8 +129,8 @@ export const PDFCanvasEditor = ({ options }) => {
     onDelete: canvasState.deleteSelectedElements,
     onCopy: canvasState.copySelectedElements,
     onPaste: canvasState.pasteElements,
-    onUndo: canvasState.undo,
-    onRedo: canvasState.redo,
+    onUndo: handleUndo,
+    onRedo: handleRedo,
     onSave: canvasState.saveTemplate,
     onZoomIn: canvasState.zoom.zoomIn,
     onZoomOut: canvasState.zoom.zoomOut
@@ -346,8 +375,8 @@ export const PDFCanvasEditor = ({ options }) => {
       updates[property] = value;
     }
 
-    canvasState.updateElement(elementId, updates);
-  }, [canvasState]);
+    updateElementWithHistory(elementId, updates, `Modifier ${property}`);
+  }, [canvasState, updateElementWithHistory]);
 
   // Gestionnaire pour les mises à jour par lot
   const handleBatchUpdate = useCallback((updates) => {
@@ -577,10 +606,10 @@ export const PDFCanvasEditor = ({ options }) => {
         onShowGridChange={handleShowGridChange}
         snapToGrid={globalSettings.settings.snapToGrid}
         onSnapToGridChange={handleSnapToGridChange}
-        onUndo={canvasState.undo}
-        onRedo={canvasState.redo}
-        canUndo={canvasState.canUndo}
-        canRedo={canvasState.canRedo}
+        onUndo={handleUndo}
+        onRedo={handleRedo}
+        canUndo={history.canUndo}
+        canRedo={history.canRedo}
       />
 
       <div className="editor-workspace">
