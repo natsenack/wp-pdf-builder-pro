@@ -1,4 +1,5 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import React from 'react';
+const { useState, useCallback, useRef, useEffect } = React;
 
 export const useDragAndDrop = ({
   onElementMove,

@@ -1,4 +1,5 @@
-import React, { useRef, useEffect, useCallback, useState } from 'react';
+import React from 'react';
+const { useRef, useEffect, useCallback, useState } = React;
 import { useGlobalSettings } from '../hooks/useGlobalSettings';
 
 const Canvas = ({

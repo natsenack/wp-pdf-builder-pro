@@ -1,4 +1,5 @@
-import { useState, useCallback, useEffect } from 'react';
+import React from 'react';
+const { useState, useCallback, useEffect } = React;
 
 export const useContextMenu = () => {
   const [contextMenu, setContextMenu] = useState(null);

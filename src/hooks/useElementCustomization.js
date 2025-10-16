@@ -1,4 +1,5 @@
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import React from 'react';
+const { useState, useCallback, useEffect, useMemo } = React;
 import { elementCustomizationService } from '../services/ElementCustomizationService';
 import {
   isPropertyAllowed,

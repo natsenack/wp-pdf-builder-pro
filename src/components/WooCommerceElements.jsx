@@ -1,4 +1,5 @@
-import { useRef, useCallback } from 'react';
+import React from 'react';
+const { useRef, useCallback } = React;
 import { useResize } from '../hooks/useResize';
 
 /**

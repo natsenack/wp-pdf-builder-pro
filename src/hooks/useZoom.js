@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react';
+import React from 'react';
+const { useState, useCallback } = React;
 
 export const useZoom = ({
   initialZoom = 1,
