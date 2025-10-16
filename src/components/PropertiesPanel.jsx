@@ -3,7 +3,6 @@ import { useElementCustomization } from '../hooks/useElementCustomization';
 import { useElementSynchronization } from '../hooks/useElementSynchronization';
 import { elementCustomizationService } from '../services/ElementCustomizationService';
 import { isPropertyAllowed, ELEMENT_TYPE_MAPPING } from '../utilities/elementPropertyRestrictions';
-import '../styles/PropertiesPanel.css';
 
 // Profils de propriétés contextuelles par type d'élément
 const ELEMENT_PROPERTY_PROFILES = {
