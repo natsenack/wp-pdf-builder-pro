@@ -216,7 +216,6 @@ body.pdf-builder-active #wpadminbar {
   overflow: auto;
   padding: 120px 60px 120px 60px; /* Padding équilibré */
   position: relative;
-  min-height: 1200px; /* Ajusté pour le canvas de 1000px */
 }
 
 /* Wrapper de zoom du canvas */
