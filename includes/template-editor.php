@@ -206,18 +206,14 @@ if (!$is_new && $template_id > 0) {
             const maxAttempts = 200; // ~10 secondes max
 
             const initApp = () => {
+                console.log('Checking scripts loaded...', {
+                    PDFBuilderPro: typeof window.PDFBuilderPro,
+                    init: typeof window.PDFBuilderPro?.init
+                });
+
                 if (checkScriptsLoaded()) {
                     try {
-                        // LOG SPÉCIFIQUE POUR TEMPLATE 1
-                        if (<?php echo $template_id; ?> == 1) {
-                            console.log('=== TEMPLATE 1 - INITIALISATION REACT ===');
-                            console.log('Template ID:', <?php echo $template_id ?: 'null'; ?>);
-                            console.log('Template Name:', <?php echo $template_name ? json_encode($template_name) : 'null'; ?>);
-                            console.log('Is New:', <?php echo $is_new ? 'true' : 'false'; ?>);
-                            console.log('Initial Elements Count:', <?php echo count($initial_elements); ?>);
-                            console.log('Initial Elements:', <?php echo json_encode($initial_elements); ?>);
-                            console.log('=== END TEMPLATE 1 - INITIALISATION REACT ===');
-                        }
+                        console.log('✅ Scripts loaded successfully, initializing canvas editor...');
 
                         // Définir les données globales pour le JavaScript
                         window.pdfBuilderData = {
