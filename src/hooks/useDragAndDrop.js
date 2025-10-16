@@ -76,6 +76,14 @@ export const useDragAndDrop = ({
       return;
     }
 
+    // Log spécifique pour l'outil séparateur
+    const isSeparator = elementId && (elementId.includes('separator') || elementId.includes('divider'));
+    if (isSeparator) {
+      console.log(`[SEPARATOR LOG] Début du drag pour élément: ${elementId}`);
+      console.log(`[SEPARATOR LOG] Position initiale élément: x=${elementRect.left}, y=${elementRect.top}`);
+      console.log(`[SEPARATOR LOG] Dimensions élément: width=${elementRect.width}, height=${elementRect.height}`);
+    }
+
     e.preventDefault();
     setIsDragging(true);
     setDraggedElementId(elementId);
@@ -120,6 +128,12 @@ export const useDragAndDrop = ({
       const newX = Math.max(0, Math.min(effectiveCanvasWidth - elementRect.width, snapValue(elementRect.left + deltaX, false)));
       const newY = Math.max(0, Math.min(effectiveCanvasHeight - elementRect.height, snapValue(elementRect.top + deltaY, true)));
 
+      // Log pour le séparateur pendant le mouvement
+      const isSeparator = elementId && (elementId.includes('separator') || elementId.includes('divider'));
+      if (isSeparator) {
+        console.log(`[SEPARATOR LOG] Mouvement - Position calculée: x=${newX}, y=${newY}, delta: x=${deltaX}, y=${deltaY}`);
+      }
+
       setDragOffset({ x: newX - elementRect.left, y: newY - elementRect.top });
 
       // Removed onElementMove call for performance - visual feedback via transform
@@ -141,6 +155,16 @@ export const useDragAndDrop = ({
         // Calculer la position finale en utilisant les coordonnées initiales de l'élément + le déplacement
         const finalX = elementStartPos.current.x + dragOffset.x;
         const finalY = elementStartPos.current.y + dragOffset.y;
+
+        // Log pour le séparateur lors du drop
+        const isSeparator = elementId && (elementId.includes('separator') || elementId.includes('divider'));
+        if (isSeparator) {
+          console.log(`[SEPARATOR LOG] Drop - Position initiale stockée: x=${elementStartPos.current.x}, y=${elementStartPos.current.y}`);
+          console.log(`[SEPARATOR LOG] Drop - Offset appliqué: x=${dragOffset.x}, y=${dragOffset.y}`);
+          console.log(`[SEPARATOR LOG] Drop - Position finale calculée: x=${finalX}, y=${finalY}`);
+          console.log(`[SEPARATOR LOG] Drop - Appel onElementDrop avec élément: ${elementId}`);
+        }
+
         onElementDrop(elementId, { x: finalX, y: finalY });
       }
 
