@@ -103,33 +103,33 @@ if (!$is_new && $template_id > 0) {
         ARRAY_A
     );
 
-    // LOG SPÉCIFIQUE POUR TEMPLATE 1
-    if ($template_id == 1) {
-        error_log("=== DIAGNOSTIC TEMPLATE 1 ===");
-        error_log("Template ID: $template_id");
-        error_log("Is new: $is_new");
-        error_log("Table name: $table_templates");
-        error_log("Template found in DB: " . ($template ? 'YES' : 'NO'));
-        if ($template) {
-            error_log("Template name: " . $template['name']);
-            error_log("Template data length: " . strlen($template['template_data']));
-            error_log("Template data preview: " . substr($template['template_data'], 0, 200));
-        } else {
-            error_log("No template found in database for ID 1");
-            // Vérifier s'il y a d'autres templates
-            $all_templates = $wpdb->get_results("SELECT id, name FROM $table_templates ORDER BY id", ARRAY_A);
-            error_log("All templates in DB: " . json_encode($all_templates));
-        }
-        error_log("=== END DIAGNOSTIC TEMPLATE 1 ===");
-    }
+    // LOG SPÉCIFIQUE POUR TEMPLATE 1 - COMMENTÉ
+    // if ($template_id == 1) {
+    //     error_log("=== DIAGNOSTIC TEMPLATE 1 ===");
+    //     error_log("Template ID: $template_id");
+    //     error_log("Is new: $is_new");
+    //     error_log("Table name: $table_templates");
+    //     error_log("Template found in DB: " . ($template ? 'YES' : 'NO'));
+    //     if ($template) {
+    //         error_log("Template name: " . $template['name']);
+    //         error_log("Template data length: " . strlen($template['template_data']));
+    //         error_log("Template data preview: " . substr($template['template_data'], 0, 200));
+    //     } else {
+    //         error_log("No template found in database for ID 1");
+    //         // Vérifier s'il y a d'autres templates
+    //         $all_templates = $wpdb->get_results("SELECT id, name FROM $table_templates ORDER BY id", ARRAY_A);
+    //         error_log("All templates in DB: " . json_encode($all_templates));
+    //     }
+    //     error_log("=== END DIAGNOSTIC TEMPLATE 1 ===");
+    // }
 
     if ($template) {
         $template_name = $template['name'];
 
         // DEBUG: Log des données brutes du template
-        error_log("PDF Builder LOAD - Template name: '{$template_name}'");
-        error_log("PDF Builder LOAD - Raw template_data length: " . strlen($template['template_data']));
-        error_log("PDF Builder LOAD - Raw template_data: " . substr($template['template_data'], 0, 500) . (strlen($template['template_data']) > 500 ? '... (truncated)' : ''));
+        // error_log("PDF Builder LOAD - Template name: '{$template_name}'");
+        // error_log("PDF Builder LOAD - Raw template_data length: " . strlen($template['template_data']));
+        // error_log("PDF Builder LOAD - Raw template_data: " . substr($template['template_data'], 0, 500) . (strlen($template['template_data']) > 500 ? '... (truncated)' : ''));
 
         // Décoder et préparer les données du template
         $template_data_raw = $template['template_data'];
@@ -138,39 +138,39 @@ if (!$is_new && $template_id > 0) {
             if (json_last_error() === JSON_ERROR_NONE && is_array($decoded_data)) {
                 $template_data = $decoded_data;
 
-                // LOG SPÉCIFIQUE POUR TEMPLATE 1
-                if ($template_id == 1) {
-                    error_log("TEMPLATE 1 - JSON decode successful");
-                    error_log("TEMPLATE 1 - Decoded data keys: " . implode(', ', array_keys($decoded_data)));
-                    error_log("TEMPLATE 1 - Has elements key: " . (isset($decoded_data['elements']) ? 'YES' : 'NO'));
-                    if (isset($decoded_data['elements'])) {
-                        error_log("TEMPLATE 1 - Elements count: " . count($decoded_data['elements']));
-                        if (count($decoded_data['elements']) > 0) {
-                            error_log("TEMPLATE 1 - First element: " . json_encode($decoded_data['elements'][0]));
-                        }
-                    }
-                }
+                // LOG SPÉCIFIQUE POUR TEMPLATE 1 - COMMENTÉ
+                // if ($template_id == 1) {
+                //     error_log("TEMPLATE 1 - JSON decode successful");
+                //     error_log("TEMPLATE 1 - Decoded data keys: " . implode(', ', array_keys($decoded_data)));
+                //     error_log("TEMPLATE 1 - Has elements key: " . (isset($decoded_data['elements']) ? 'YES' : 'NO'));
+                //     if (isset($decoded_data['elements'])) {
+                //         error_log("TEMPLATE 1 - Elements count: " . count($decoded_data['elements']));
+                //         if (count($decoded_data['elements']) > 0) {
+                //             error_log("TEMPLATE 1 - First element: " . json_encode($decoded_data['elements'][0]));
+                //         }
+                //     }
+                // }
 
                 // DEBUG: Log des données décodées
-                error_log("PDF Builder LOAD - Decoded data keys: " . implode(', ', array_keys($decoded_data)));
-                error_log("PDF Builder LOAD - Elements count in decoded data: " . (isset($decoded_data['elements']) ? count($decoded_data['elements']) : 'NO ELEMENTS KEY'));
+                // error_log("PDF Builder LOAD - Decoded data keys: " . implode(', ', array_keys($decoded_data)));
+                // error_log("PDF Builder LOAD - Elements count in decoded data: " . (isset($decoded_data['elements']) ? count($decoded_data['elements']) : 'NO ELEMENTS KEY'));
 
                 // Extraire les éléments initiaux depuis la structure du template
                 // Structure actuelle : { elements: [...], canvasWidth, canvasHeight, version }
                 if (isset($decoded_data['elements']) && is_array($decoded_data['elements'])) {
                     $initial_elements = $decoded_data['elements'];
-                    error_log("PDF Builder LOAD - Elements loaded from elements: " . count($initial_elements));
+                    // error_log("PDF Builder LOAD - Elements loaded from elements: " . count($initial_elements));
 
                     // DEBUG: Log des propriétés des éléments
                     foreach ($initial_elements as $index => $element) {
                         if (is_array($element)) {
-                            error_log("PDF Builder LOAD - Element $index properties: " . implode(', ', array_keys($element)));
-                            if (isset($element['type'])) {
-                                error_log("PDF Builder LOAD - Element $index type: " . $element['type']);
-                            }
-                            if (isset($element['backgroundColor'])) {
-                                error_log("PDF Builder LOAD - Element $index backgroundColor: " . $element['backgroundColor']);
-                            }
+                            // error_log("PDF Builder LOAD - Element $index properties: " . implode(', ', array_keys($element)));
+                            // if (isset($element['type'])) {
+                            //     error_log("PDF Builder LOAD - Element $index type: " . $element['type']);
+                            // }
+                            // if (isset($element['backgroundColor'])) {
+                            //     error_log("PDF Builder LOAD - Element $index backgroundColor: " . $element['backgroundColor']);
+                            // }
                         }
                     }
                 } elseif (isset($decoded_data['pages']) && is_array($decoded_data['pages']) && !empty($decoded_data['pages'])) {
@@ -178,20 +178,20 @@ if (!$is_new && $template_id > 0) {
                     $first_page = $decoded_data['pages'][0];
                     if (isset($first_page['elements']) && is_array($first_page['elements'])) {
                         $initial_elements = $first_page['elements'];
-                        error_log("PDF Builder LOAD - Elements loaded from pages[0].elements (legacy): " . count($initial_elements));
+                        // error_log("PDF Builder LOAD - Elements loaded from pages[0].elements (legacy): " . count($initial_elements));
                     }
                 } else {
-                    error_log("PDF Builder LOAD - No elements found in any structure");
-                    error_log("PDF Builder LOAD - Available keys in decoded data: " . implode(', ', array_keys($decoded_data)));
+                    // error_log("PDF Builder LOAD - No elements found in any structure");
+                    // error_log("PDF Builder LOAD - Available keys in decoded data: " . implode(', ', array_keys($decoded_data)));
                 }
             } else {
-                error_log("PDF Builder LOAD - JSON decode error: " . json_last_error_msg());
+                // error_log("PDF Builder LOAD - JSON decode error: " . json_last_error_msg());
             }
         } else {
-            error_log("PDF Builder LOAD - Template data is empty");
+            // error_log("PDF Builder LOAD - Template data is empty");
         }
     } else {
-        error_log("PDF Builder LOAD - Template not found in database for ID: {$template_id}");
+        // error_log("PDF Builder LOAD - Template not found in database for ID: {$template_id}");
     }
 }
 ?>

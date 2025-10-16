@@ -229,6 +229,11 @@ if (!defined('PDF_BUILDER_DEBUG_MODE')) {
     define('PDF_BUILDER_DEBUG_MODE', defined('WP_DEBUG') && WP_DEBUG);
 }
 
+// Désactiver les logs de debug verbeux (niveau 0 = seulement erreurs critiques)
+if (!defined('PDF_BUILDER_DEBUG')) {
+    define('PDF_BUILDER_DEBUG', 0);
+}
+
 // Activer la compression GZIP (true/false)
 if (!defined('PDF_BUILDER_ENABLE_COMPRESSION')) {
     define('PDF_BUILDER_ENABLE_COMPRESSION', true);
