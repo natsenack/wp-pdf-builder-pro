@@ -1315,7 +1315,7 @@ class PDF_Builder_Admin {
         error_log('PDF Builder: enqueue_admin_scripts_late called for editor page');
 
         // Charger les scripts comme dans enqueue_admin_scripts
-        $this->load_admin_scripts();
+        $this->load_admin_scripts('pdf-builder_page_pdf-builder-editor');
     }
 
     /**
@@ -1341,13 +1341,13 @@ class PDF_Builder_Admin {
 
         error_log('PDF Builder: Hook ' . $hook . ' allowed, proceeding with script loading');
 
-        $this->load_admin_scripts();
+        $this->load_admin_scripts($hook);
     }
 
     /**
      * Méthode commune pour charger les scripts admin
      */
-    private function load_admin_scripts() {
+    private function load_admin_scripts($hook = null) {
 
         // Styles CSS de base
         wp_enqueue_style('pdf-builder-admin', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css', [], PDF_BUILDER_PRO_VERSION);
