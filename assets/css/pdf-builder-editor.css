@@ -481,24 +481,24 @@
   display: flex;
   background: #ffffff;
   border-bottom: 1px solid #dee2e6;
-  padding: 0 8px;
-  gap: 2px;
+  padding: 0 4px;
+  gap: 1px;
 }
 
 .ribbon-toolbar .tab-button {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
+  gap: 2px;
+  padding: 4px 8px;
   border: 1px solid transparent;
   background: transparent;
   color: #6c757d;
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 500;
   cursor: pointer;
-  border-radius: 4px 4px 0 0;
+  border-radius: 3px 3px 0 0;
   transition: all 0.2s ease;
-  min-height: 40px;
+  min-height: 32px;
 }
 
 .ribbon-toolbar .tab-button:hover {
@@ -517,7 +517,7 @@
 }
 
 .ribbon-toolbar .tab-icon {
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .ribbon-toolbar .tab-label {
@@ -526,53 +526,53 @@
 
 .ribbon-toolbar .toolbar-content {
   background: #ffffff;
-  padding: 12px 16px;
-  min-height: 80px;
+  padding: 6px 8px;
+  min-height: 48px;
 }
 
 .ribbon-toolbar .tab-content {
   display: flex;
-  gap: 24px;
+  gap: 12px;
   align-items: flex-start;
 }
 
 .ribbon-toolbar .toolbar-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  min-width: 120px;
+  gap: 2px;
+  min-width: 100px;
 }
 
 .ribbon-toolbar .toolbar-group h5 {
   margin: 0;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   color: #6c757d;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   text-align: center;
-  padding: 4px 0;
+  padding: 2px 0;
   border-bottom: 1px solid #e9ecef;
 }
 
 .ribbon-toolbar .group-buttons {
   display: flex;
-  gap: 4px;
+  gap: 2px;
   flex-wrap: wrap;
   align-items: center;
 }
 
 .ribbon-toolbar .group-buttons.shapes-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
-  gap: 4px;
-  max-width: 200px;
+  grid-template-columns: repeat(auto-fit, minmax(32px, 1fr));
+  gap: 2px;
+  max-width: 160px;
 }
 
 .ribbon-toolbar .tool-button {
-  min-width: 40px;
-  height: 40px;
-  padding: 4px;
+  min-width: 32px;
+  height: 32px;
+  padding: 2px;
   border: 1px solid #dee2e6;
   background: #ffffff;
   border-radius: 4px;
@@ -581,9 +581,9 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
+  gap: 1px;
   transition: all 0.2s ease;
-  font-size: 12px;
+  font-size: 10px;
   color: #495057;
 }
 
@@ -685,31 +685,31 @@
   min-width: 50px;
   text-align: center;
   font-weight: 600;
-  font-size: 12px;
+  font-size: 10px;
   color: #007bff;
-  padding: 0 8px;
+  padding: 0 4px;
 }
 
 .ribbon-toolbar .display-options {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .ribbon-toolbar .toggle-label {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 10px;
   color: #495057;
   font-weight: 500;
 }
 
 .ribbon-toolbar .toggle-label input[type="checkbox"] {
   margin: 0;
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
 }
 
 .ribbon-toolbar .toggle-text {
