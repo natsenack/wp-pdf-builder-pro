@@ -39,7 +39,7 @@
   position: relative;
 }
 
-.editor-title h2 {
+.editor-header h2 {
   margin: 0;
   color: var(--text-primary);
   font-size: 20px;
@@ -49,7 +49,7 @@
   z-index: 1;
 }
 
-.editor-actions {
+.editor-header nav {
   display: flex;
   gap: 12px;
   position: relative;
@@ -196,18 +196,7 @@
   left: -20px;
 }
 
-.editor-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background: var(--surface-color);
-  position: relative;
-  min-height: 0; /* Permet au flex de fonctionner correctement */
-  overflow-y: scroll; /* Ajouté overflow vertical sur editor-main */
-  overflow-x: hidden;
-}
-
-.canvas-container {
+.canvas-section {
   flex: 1;
   /* overflow-y: scroll; retiré - maintenant sur editor-main */
   overflow-x: hidden;
@@ -1109,7 +1098,7 @@
     padding: 12px 20px;
   }
 
-  .editor-title h2 {
+  .editor-header h2 {
     font-size: 18px;
   }
 }

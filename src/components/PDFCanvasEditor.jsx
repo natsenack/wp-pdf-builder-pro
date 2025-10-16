@@ -615,33 +615,27 @@ export const PDFCanvasEditor = ({ options }) => {
 
   return (
     <div className="pdf-canvas-editor" ref={editorRef}>
-      {/* Barre d'outils principale */}
-      <div className="editor-header">
-        <div className="editor-title">
-          <h2>Éditeur PDF - {options.isNew ? 'Nouveau Template' : options.templateName}</h2>
-        </div>
-        <div className="editor-actions">
+      {/* Header avec titre et actions */}
+      <header className="editor-header">
+        <h2>Éditeur PDF - {options.isNew ? 'Nouveau Template' : options.templateName}</h2>
+        <nav className="editor-actions">
           <button
             className="btn btn-secondary"
-            onClick={() => {
-              setShowPreviewModal(true);
-            }}
+            onClick={() => setShowPreviewModal(true)}
           >
             👁️ Aperçu
           </button>
           <button
             className="btn btn-primary"
-            onClick={() => {
-              canvasState.saveTemplate();
-            }}
+            onClick={() => canvasState.saveTemplate()}
             disabled={canvasState.isSaving}
           >
             {canvasState.isSaving ? '⏳ Sauvegarde...' : (options.isNew ? '💾 Sauvegarder' : '✏️ Modifier')}
           </button>
-        </div>
-      </div>
+        </nav>
+      </header>
 
-      {/* Barre d'outils - déplacée sous le header pour prendre toute la largeur */}
+      {/* Barre d'outils */}
       <Toolbar
         selectedTool={tool}
         onToolSelect={setTool}
@@ -657,231 +651,220 @@ export const PDFCanvasEditor = ({ options }) => {
         canRedo={canvasState.history.canRedo()}
       />
 
-      <div className="editor-workspace">
+      {/* Zone de travail principale - simplifiée */}
+      <main className="editor-workspace">
         {/* Bibliothèque d'éléments - masquée en mode aperçu */}
         {!showPreviewModal && (
-          <div className="editor-sidebar left-sidebar">
-            <React.Suspense fallback={<div className="loading">Chargement...</div>}>
-              <ElementLibrary
-                onAddElement={handleAddElement}
-                selectedTool={tool}
-                onToolSelect={setTool}
-              />
-            </React.Suspense>
-          </div>
+          <aside className="editor-sidebar left-sidebar">
+            <ElementLibrary
+              onAddElement={handleAddElement}
+              selectedTool={tool}
+              onToolSelect={setTool}
+            />
+          </aside>
         )}
 
-        {/* Zone de travail principale */}
-        <div className="editor-main">
-          {/* Canvas avec éléments interactifs */}
+        {/* Canvas avec éléments interactifs - structure simplifiée */}
+        <section
+          className="canvas-section"
+          ref={canvasContainerRef}
+          onContextMenu={handleContextMenu}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+          onDoubleClick={handleDoubleClick}
+          style={{
+            cursor: getCursorStyle(),
+            backgroundColor: globalSettings.settings.containerShowTransparency
+              ? 'transparent'
+              : (globalSettings.settings.containerBackgroundColor || '#f8f9fa'),
+            backgroundImage: globalSettings.settings.containerShowTransparency
+              ? `linear-gradient(45deg, #f0f0f0 25%, transparent 25%), linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f0f0f0 75%), linear-gradient(-45deg, transparent 75%, #f0f0f0 75%)`
+              : 'none',
+            backgroundSize: globalSettings.settings.containerShowTransparency
+              ? '20px 20px'
+              : 'auto',
+            backgroundPosition: globalSettings.settings.containerShowTransparency
+              ? '0 0, 0 10px, 10px -10px, -10px 0px'
+              : '0 0'
+          }}
+        >
           <div
-            className="canvas-container"
-            ref={canvasContainerRef}
-            onContextMenu={handleContextMenu}
-            onDragOver={handleDragOver}
-            onDrop={handleDrop}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-            onDoubleClick={handleDoubleClick}
+            className="canvas-zoom-wrapper"
             style={{
-              cursor: getCursorStyle(),
-              backgroundColor: globalSettings.settings.containerShowTransparency
-                ? 'transparent'
-                : (globalSettings.settings.containerBackgroundColor || '#f8f9fa'),
-              backgroundImage: globalSettings.settings.containerShowTransparency
-                ? `linear-gradient(45deg, #f0f0f0 25%, transparent 25%), linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f0f0f0 75%), linear-gradient(-45deg, transparent 75%, #f0f0f0 75%)`
-                : 'none',
-              backgroundSize: globalSettings.settings.containerShowTransparency
-                ? '20px 20px'
-                : 'auto',
-              backgroundPosition: globalSettings.settings.containerShowTransparency
-                ? '0 0, 0 10px, 10px -10px, -10px 0px'
-                : '0 0'
+              transform: `translate(${panOffset.x}px, ${panOffset.y}px) scale(${canvasState.zoom.zoom})`,
+              transformOrigin: 'center',
+              cursor: isPanning ? 'grabbing' : 'default',
+              transition: globalSettings.settings.smoothZoom ? 'transform 0.2s ease-out' : 'none',
+              willChange: globalSettings.settings.enableHardwareAcceleration ? 'transform' : 'auto'
             }}
           >
             <div
-              className="canvas-zoom-wrapper"
+              className="canvas"
+              ref={canvasRef}
+              onClick={handleCanvasClick}
               style={{
-                transform: `translate(${panOffset.x}px, ${panOffset.y}px) scale(${canvasState.zoom.zoom})`,
-                transformOrigin: 'center',
-                cursor: isPanning ? 'grabbing' : 'default',
-                transition: globalSettings.settings.smoothZoom ? 'transform 0.2s ease-out' : 'none',
-                willChange: globalSettings.settings.enableHardwareAcceleration ? 'transform' : 'auto'
+                width: canvasState.canvasWidth,
+                height: canvasState.canvasHeight,
+                position: 'relative',
+                backgroundColor: globalSettings.settings.canvasShowTransparency
+                  ? 'transparent'
+                  : (globalSettings.settings.canvasBackgroundColor || '#ffffff'),
+                backgroundImage: globalSettings.settings.canvasShowTransparency
+                  ? `linear-gradient(45deg, #f0f0f0 25%, transparent 25%), linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f0f0f0 75%), linear-gradient(-45deg, transparent 75%, #f0f0f0 75%)`
+                  : 'none',
+                backgroundSize: globalSettings.settings.canvasShowTransparency
+                  ? '20px 20px'
+                  : 'auto',
+                backgroundPosition: globalSettings.settings.canvasShowTransparency
+                  ? '0 0, 0 10px, 10px -10px, -10px 0px'
+                  : '0 0'
               }}
             >
-              <div
-                className="canvas"
-                ref={canvasRef}
-                onClick={handleCanvasClick}
-                style={{
-                  width: canvasState.canvasWidth,
-                  height: canvasState.canvasHeight,
-                  position: 'relative',
-                  backgroundColor: globalSettings.settings.canvasShowTransparency
-                    ? 'transparent'
-                    : (globalSettings.settings.canvasBackgroundColor || '#ffffff'),
-                  backgroundImage: globalSettings.settings.canvasShowTransparency
-                    ? `linear-gradient(45deg, #f0f0f0 25%, transparent 25%), linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f0f0f0 75%), linear-gradient(-45deg, transparent 75%, #f0f0f0 75%)`
-                    : 'none',
-                  backgroundSize: globalSettings.settings.canvasShowTransparency
-                    ? '20px 20px'
-                    : 'auto',
-                  backgroundPosition: globalSettings.settings.canvasShowTransparency
-                    ? '0 0, 0 10px, 10px -10px, -10px 0px'
-                    : '0 0'
-                }}
-              >
-                {/* Grille de fond */}
-                {globalSettings.settings.showGrid && (
-                  <div
-                    className="canvas-grid"
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: '100%',
-                      height: '100%',
-                      backgroundImage: `
-                        linear-gradient(to right, ${globalSettings.settings.gridColor}${Math.round(globalSettings.settings.gridOpacity * 2.55).toString(16).padStart(2, '0')} 1px, transparent 1px),
-                        linear-gradient(to bottom, ${globalSettings.settings.gridColor}${Math.round(globalSettings.settings.gridOpacity * 2.55).toString(16).padStart(2, '0')} 1px, transparent 1px)
-                      `,
-                      backgroundSize: `${globalSettings.settings.gridSize}px ${globalSettings.settings.gridSize}px`,
-                      pointerEvents: 'none',
-                      zIndex: 1
-                    }}
-                  />
-                )}
+              {/* Grille de fond */}
+              {globalSettings.settings.showGrid && (
+                <div
+                  className="canvas-grid"
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    backgroundImage: `
+                      linear-gradient(to right, ${globalSettings.settings.gridColor}${Math.round(globalSettings.settings.gridOpacity * 2.55).toString(16).padStart(2, '0')} 1px, transparent 1px),
+                      linear-gradient(to bottom, ${globalSettings.settings.gridColor}${Math.round(globalSettings.settings.gridOpacity * 2.55).toString(16).padStart(2, '0')} 1px, transparent 1px)
+                    `,
+                    backgroundSize: `${globalSettings.settings.gridSize}px ${globalSettings.settings.gridSize}px`,
+                    pointerEvents: 'none',
+                    zIndex: 1
+                  }}
+                />
+              )}
 
-                {/* Guides */}
-                {globalSettings.settings.showGuides && (
-                  <>
-                    {/* Guides horizontaux */}
-                    {guides.horizontal.map((y, index) => (
-                      <div
-                        key={`h-guide-${index}`}
-                        className="canvas-guide horizontal-guide"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (!globalSettings.settings.lockGuides) {
-                            removeGuide('horizontal', y);
-                          }
-                        }}
-                        style={{
-                          position: 'absolute',
-                          top: `${y}px`,
-                          left: 0,
-                          width: '100%',
-                          height: '2px',
-                          backgroundColor: '#007cba',
-                          cursor: globalSettings.settings.lockGuides ? 'default' : 'pointer',
-                          zIndex: 2,
-                          opacity: 0.7
-                        }}
-                        title={`Guide horizontal à ${y}px - ${globalSettings.settings.lockGuides ? 'Verrouillé' : 'Cliquer pour supprimer'}`}
-                      />
-                    ))}
-                    {/* Guides verticaux */}
-                    {guides.vertical.map((x, index) => (
-                      <div
-                        key={`v-guide-${index}`}
-                        className="canvas-guide vertical-guide"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (!globalSettings.settings.lockGuides) {
-                            removeGuide('vertical', x);
-                          }
-                        }}
-                        style={{
-                          position: 'absolute',
-                          top: 0,
-                          left: `${x}px`,
-                          height: '100%',
-                          width: '2px',
-                          backgroundColor: '#007cba',
-                          cursor: globalSettings.settings.lockGuides ? 'default' : 'pointer',
-                          zIndex: 2,
-                          opacity: 0.7
-                        }}
-                        title={`Guide vertical à ${x}px - ${globalSettings.settings.lockGuides ? 'Verrouillé' : 'Cliquer pour supprimer'}`}
-                      />
-                    ))}
-                  </>
-                )}
-
-                {/* Éléments normaux rendus comme composants interactifs */}
-                {canvasState.elements
-                  .filter(el => !el.type.startsWith('woocommerce-'))
-                  .map(element => {
-                    return (
-                      <CanvasElement
-                        key={element.id}
-                        element={element}
-                        isSelected={canvasState.selection.selectedElements.includes(element.id)}
-                        zoom={1} // Le zoom est géré au niveau du wrapper
-                        snapToGrid={globalSettings.settings.snapToGrid}
-                        gridSize={globalSettings.settings.gridSize}
-                        canvasWidth={canvasState.canvasWidth}
-                        canvasHeight={canvasState.canvasHeight}
-                        onSelect={() => handleElementSelect(element.id)}
-                        onUpdate={(updates) => canvasState.updateElement(element.id, updates)}
-                        onRemove={() => canvasState.deleteElement(element.id)}
-                        onContextMenu={(e) => handleContextMenu(e, element.id)}
-                        dragAndDrop={dragAndDrop}
-                        enableRotation={globalSettings.settings.enableRotation}
-                        rotationStep={globalSettings.settings.rotationStep}
-                        rotationSnap={globalSettings.settings.rotationSnap}
-                        guides={guides}
-                        snapToGuides={globalSettings.settings.snapToElements}
-                      />
-                    );
-                  })}
-
-                {/* Éléments WooCommerce superposés */}
-                {canvasState.elements
-                  .filter(el => el.type.startsWith('woocommerce-'))
-                  .map(element => (
-                    <React.Suspense key={element.id} fallback={null}>
-                      <WooCommerceElement
-                        element={element}
-                        isSelected={canvasState.selection.selectedElements.includes(element.id)}
-                        onSelect={handleElementSelect}
-                        onUpdate={canvasState.updateElement}
-                        dragAndDrop={dragAndDrop}
-                        zoom={1} // Le zoom est géré au niveau du wrapper
-                        canvasWidth={canvasState.canvasWidth}
-                        canvasHeight={canvasState.canvasHeight}
-                        orderData={orderData}
-                        onContextMenu={(e) => handleContextMenu(e, element.id)}
-                        snapToGrid={globalSettings.settings.snapToGrid}
-                        gridSize={globalSettings.settings.gridSize}
-                        guides={guides}
-                        snapToGuides={globalSettings.settings.snapToElements}
-                      />
-                    </React.Suspense>
+              {/* Guides */}
+              {globalSettings.settings.showGuides && (
+                <div className="canvas-guides">
+                  {guides.horizontal.map((y, index) => (
+                    <div
+                      key={`h-guide-${index}`}
+                      className="canvas-guide horizontal-guide"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (!globalSettings.settings.lockGuides) {
+                          removeGuide('horizontal', y);
+                        }
+                      }}
+                      style={{
+                        position: 'absolute',
+                        top: `${y}px`,
+                        left: 0,
+                        width: '100%',
+                        height: '2px',
+                        backgroundColor: '#007cba',
+                        cursor: globalSettings.settings.lockGuides ? 'default' : 'pointer',
+                        zIndex: 2,
+                        opacity: 0.7
+                      }}
+                      title={`Guide horizontal à ${y}px - ${globalSettings.settings.lockGuides ? 'Verrouillé' : 'Cliquer pour supprimer'}`}
+                    />
                   ))}
-              </div>
+                  {guides.vertical.map((x, index) => (
+                    <div
+                      key={`v-guide-${index}`}
+                      className="canvas-guide vertical-guide"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (!globalSettings.settings.lockGuides) {
+                          removeGuide('vertical', x);
+                        }
+                      }}
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: `${x}px`,
+                        height: '100%',
+                        width: '2px',
+                        backgroundColor: '#007cba',
+                        cursor: globalSettings.settings.lockGuides ? 'default' : 'pointer',
+                        zIndex: 2,
+                        opacity: 0.7
+                      }}
+                      title={`Guide vertical à ${x}px - ${globalSettings.settings.lockGuides ? 'Verrouillé' : 'Cliquer pour supprimer'}`}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {/* Éléments normaux rendus comme composants interactifs */}
+              {canvasState.elements
+                .filter(el => !el.type.startsWith('woocommerce-'))
+                .map(element => (
+                  <CanvasElement
+                    key={element.id}
+                    element={element}
+                    isSelected={canvasState.selection.selectedElements.includes(element.id)}
+                    zoom={1}
+                    snapToGrid={globalSettings.settings.snapToGrid}
+                    gridSize={globalSettings.settings.gridSize}
+                    canvasWidth={canvasState.canvasWidth}
+                    canvasHeight={canvasState.canvasHeight}
+                    onSelect={() => handleElementSelect(element.id)}
+                    onUpdate={(updates) => canvasState.updateElement(element.id, updates)}
+                    onRemove={() => canvasState.deleteElement(element.id)}
+                    onContextMenu={(e) => handleContextMenu(e, element.id)}
+                    dragAndDrop={dragAndDrop}
+                    enableRotation={globalSettings.settings.enableRotation}
+                    rotationStep={globalSettings.settings.rotationStep}
+                    rotationSnap={globalSettings.settings.rotationSnap}
+                    guides={guides}
+                    snapToGuides={globalSettings.settings.snapToElements}
+                  />
+                ))}
+
+              {/* Éléments WooCommerce superposés */}
+              {canvasState.elements
+                .filter(el => el.type.startsWith('woocommerce-'))
+                .map(element => (
+                  <WooCommerceElement
+                    key={element.id}
+                    element={element}
+                    isSelected={canvasState.selection.selectedElements.includes(element.id)}
+                    onSelect={handleElementSelect}
+                    onUpdate={canvasState.updateElement}
+                    dragAndDrop={dragAndDrop}
+                    zoom={1}
+                    canvasWidth={canvasState.canvasWidth}
+                    canvasHeight={canvasState.canvasHeight}
+                    orderData={orderData}
+                    onContextMenu={(e) => handleContextMenu(e, element.id)}
+                    snapToGrid={globalSettings.settings.snapToGrid}
+                    gridSize={globalSettings.settings.gridSize}
+                    guides={guides}
+                    snapToGuides={globalSettings.settings.snapToElements}
+                  />
+                ))}
             </div>
           </div>
-        </div>
+        </section>
 
         {/* Panneau de propriétés - masqué en mode aperçu */}
         {!showPreviewModal && (
-          <div className={`editor-sidebar right-sidebar ${isPropertiesCollapsed ? 'collapsed' : ''}`}>
+          <aside className={`editor-sidebar right-sidebar ${isPropertiesCollapsed ? 'collapsed' : ''}`}>
             {!isPropertiesCollapsed && (
-              <React.Suspense fallback={<div className="loading">Chargement...</div>}>
-                <PropertiesPanel
-                  selectedElements={canvasState.selection.selectedElements}
-                  elements={canvasState.elements}
-                  onPropertyChange={handlePropertyChange}
-                  onBatchUpdate={handleBatchUpdate}
-                />
-              </React.Suspense>
+              <PropertiesPanel
+                selectedElements={canvasState.selection.selectedElements}
+                elements={canvasState.elements}
+                onPropertyChange={handlePropertyChange}
+                onBatchUpdate={handleBatchUpdate}
+              />
             )}
-          </div>
+          </aside>
         )}
-      </div>
+      </main>
 
       {/* Bouton de toggle repositionné à la fin pour être au-dessus de tout - masqué en mode aperçu */}
       {!showPreviewModal && (
@@ -903,18 +886,16 @@ export const PDFCanvasEditor = ({ options }) => {
 
       {/* Menu contextuel */}
       {canvasState.contextMenu.contextMenu && (
-        <React.Suspense fallback={null}>
-          <ContextMenu
-            menu={canvasState.contextMenu.contextMenu}
-            onAction={handleContextMenuAction}
-            isAnimating={canvasState.contextMenu.isAnimating || false}
-            onClose={canvasState.contextMenu.hideContextMenu}
-          />
-        </React.Suspense>
+        <ContextMenu
+          menu={canvasState.contextMenu.contextMenu}
+          onAction={handleContextMenuAction}
+          isAnimating={canvasState.contextMenu.isAnimating || false}
+          onClose={canvasState.contextMenu.hideContextMenu}
+        />
       )}
 
       {/* Indicateur d'état */}
-      <div className="editor-status">
+      <footer className="editor-status">
         <span>Éléments: {canvasState.elements.length}</span>
         <span>|</span>
         {globalSettings.settings.showZoomIndicator && (
@@ -930,46 +911,41 @@ export const PDFCanvasEditor = ({ options }) => {
             <span>Éléments sélectionnés: {canvasState.selection.selectedElements.length}</span>
           </>
         )}
-      </div>
+      </footer>
 
       {/* Modale d'aperçu */}
-      <React.Suspense fallback={null}>
-        <PreviewModal
-          isOpen={showPreviewModal}
-          onClose={() => {
-            setShowPreviewModal(false);
-          }}
-          elements={canvasState.elements}
-          canvasWidth={canvasState.canvasWidth}
-          canvasHeight={canvasState.canvasHeight}
-          ajaxurl={window.pdfBuilderAjax?.ajaxurl}
-          pdfBuilderNonce={window.pdfBuilderAjax?.nonce}
-          useServerPreview={false}
-          onOpenPDFModal={(pdfUrl) => {
-            setPdfModalUrl(pdfUrl);
-            setShowPDFModal(true);
-            setShowPreviewModal(false); // Fermer la modale d'aperçu
-          }}
-        />
-      </React.Suspense>
+      <PreviewModal
+        isOpen={showPreviewModal}
+        onClose={() => {
+          setShowPreviewModal(false);
+        }}
+        elements={canvasState.elements}
+        canvasWidth={canvasState.canvasWidth}
+        canvasHeight={canvasState.canvasHeight}
+        ajaxurl={window.pdfBuilderAjax?.ajaxurl}
+        pdfBuilderNonce={window.pdfBuilderAjax?.nonce}
+        useServerPreview={false}
+        onOpenPDFModal={(pdfUrl) => {
+          setPdfModalUrl(pdfUrl);
+          setShowPDFModal(true);
+          setShowPreviewModal(false);
+        }}
+      />
 
-      <React.Suspense fallback={null}>
-        <ModalPDFViewer
-          isOpen={showPDFModal}
-          onClose={() => {
-            setShowPDFModal(false);
-            // Libérer l'URL du blob après la fermeture
-            if (pdfModalUrl && pdfModalUrl.startsWith('blob:')) {
-              setTimeout(() => {
-                URL.revokeObjectURL(pdfModalUrl);
-              }, 100);
-            }
-            setPdfModalUrl(null);
-          }}
-          pdfUrl={pdfModalUrl}
-          title="PDF Généré"
-        />
-      </React.Suspense>
+      <ModalPDFViewer
+        isOpen={showPDFModal}
+        onClose={() => {
+          setShowPDFModal(false);
+          if (pdfModalUrl && pdfModalUrl.startsWith('blob:')) {
+            setTimeout(() => {
+              URL.revokeObjectURL(pdfModalUrl);
+            }, 100);
+          }
+          setPdfModalUrl(null);
+        }}
+        pdfUrl={pdfModalUrl}
+        title="PDF Généré"
+      />
 
       {/* Compteur FPS */}
       <FPSCounter showFps={globalSettings.settings.showFps} />
