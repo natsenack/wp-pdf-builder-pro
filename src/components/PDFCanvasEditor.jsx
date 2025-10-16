@@ -16,6 +16,7 @@ const ElementLibrary = React.lazy(() => import('./ElementLibrary'));
 const PropertiesPanel = React.lazy(() => import('./PropertiesPanel'));
 
 export const PDFCanvasEditor = ({ options }) => {
+  console.log('🎨 PDFCanvasEditor component rendering with options:', options);
   const [tool, setTool] = useState('select');
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [showPDFModal, setShowPDFModal] = useState(false);

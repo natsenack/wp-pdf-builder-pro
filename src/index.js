@@ -66,7 +66,19 @@ try {
       options: defaultOptions
     });
 
-    ReactDOM.render(editorElement, container);
+    console.log('🎨 RENDERING React element to container:', containerId, container);
+    console.log('🎨 Container exists:', !!container);
+    console.log('🎨 Container children before render:', container.children.length);
+    
+    try {
+      ReactDOM.render(editorElement, container);
+      console.log('✅ ReactDOM.render completed successfully');
+      console.log('🎨 Container children after render:', container.children.length);
+    } catch (renderError) {
+      console.error('❌ ReactDOM.render failed:', renderError);
+      throw renderError;
+    }
+    
     this.editors.set(containerId, { container, options: defaultOptions });
   }
 

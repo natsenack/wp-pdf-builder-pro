@@ -249,6 +249,9 @@ if (typeof window.PDFBuilderPro === 'undefined') {
 </script>
 <link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css?ver=' . time(); ?>" />
 <link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-canvas.css?ver=' . time(); ?>" />
+<link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-react.css?ver=' . time(); ?>" />
+<link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/woocommerce-elements.css?ver=' . time(); ?>" />
+<link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/toastr/toastr.min.css?ver=' . time(); ?>" />
 
 <style>
 @keyframes spin {
