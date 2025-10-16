@@ -39,7 +39,12 @@ export const useDragAndDrop = ({
     return value;
   }, [snapToGuides, guides]);
 
-  const snapValue = useCallback((value, isHorizontal = true) => {
+  const snapValue = useCallback((value, isHorizontal = true, elementType = null) => {
+    // Pour les lignes, désactiver le snap horizontal pour permettre le déplacement libre
+    if (elementType === 'line' && !isHorizontal) {
+      return value;
+    }
+
     let snapped = value;
 
     // Appliquer l'aimantation à la grille d'abord
@@ -126,8 +131,8 @@ export const useDragAndDrop = ({
       const effectiveCanvasWidth = canvasRect ? canvasRect.width / zoomLevel : canvasWidth;
       const effectiveCanvasHeight = canvasRect ? canvasRect.height / zoomLevel : canvasHeight;
 
-      const newX = Math.max(0, Math.min(effectiveCanvasWidth - elementRect.width, snapValue(elementRect.left + deltaX, false)));
-      const newY = Math.max(0, Math.min(effectiveCanvasHeight - elementRect.height, snapValue(elementRect.top + deltaY, true)));
+      const newX = Math.max(0, Math.min(effectiveCanvasWidth - elementRect.width, snapValue(elementRect.left + deltaX, false, elementType)));
+      const newY = Math.max(0, Math.min(effectiveCanvasHeight - elementRect.height, snapValue(elementRect.top + deltaY, true, elementType)));
 
       // Log pour le séparateur pendant le mouvement
       const { elementType } = currentDragData.current;
