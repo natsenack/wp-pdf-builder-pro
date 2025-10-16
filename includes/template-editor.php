@@ -18,6 +18,68 @@ if (!defined('PDF_BUILDER_DEBUG_MODE') || !PDF_BUILDER_DEBUG_MODE) {
     }
 }
 
+// CHARGER LES SCRIPTS DIRECTEMENT POUR CETTE PAGE
+// Charger les scripts et styles nécessaires pour l'éditeur
+wp_enqueue_style('pdf-builder-admin', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css', [], PDF_BUILDER_PRO_VERSION);
+wp_enqueue_style('toastr', PDF_BUILDER_PRO_ASSETS_URL . 'css/toastr/toastr.min.css', [], '2.1.4');
+wp_enqueue_script('toastr', PDF_BUILDER_PRO_ASSETS_URL . 'js/toastr/toastr.min.js', ['jquery'], '2.1.4', true);
+
+// Scripts JavaScript principaux
+wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'wp-api'], '8.0.0_force_' . microtime(true), true);
+wp_enqueue_script('pdf-builder-nonce-fix-v2', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js', ['jquery'], '4.0.0_force_reload_' . time(), true);
+
+// Variables JavaScript pour AJAX
+wp_localize_script('pdf-builder-admin-v3', 'pdfBuilderAjax', [
+    'ajaxurl' => admin_url('admin-ajax.php'),
+    'nonce' => wp_create_nonce('pdf_builder_nonce'),
+    'version' => '7.0.0_force_reload_' . time(),
+    'timestamp' => time(),
+    'strings' => [
+        'loading' => __('Chargement...', 'pdf-builder-pro'),
+        'error' => __('Erreur', 'pdf-builder-pro'),
+        'success' => __('Succès', 'pdf-builder-pro'),
+        'confirm_delete' => __('Êtes-vous sûr de vouloir supprimer ce template ?', 'pdf-builder-pro'),
+        'confirm_duplicate' => __('Dupliquer ce template ?', 'pdf-builder-pro'),
+    ]
+]);
+
+// Variables globales
+wp_add_inline_script('pdf-builder-admin-v3', '
+    window.pdfBuilderAjax = window.pdfBuilderAjax || ' . json_encode([
+        'ajaxurl' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('pdf_builder_nonce'),
+        'version' => '8.0.0_force_' . time(),
+        'timestamp' => time(),
+        'strings' => [
+            'loading' => __('Chargement...', 'pdf-builder-pro'),
+            'error' => __('Erreur', 'pdf-builder-pro'),
+            'success' => __('Succès', 'pdf-builder-pro'),
+            'confirm_delete' => __('Êtes-vous sûr de vouloir supprimer ce template ?', 'pdf-builder-pro'),
+            'confirm_duplicate' => __('Dupliquer ce template ?', 'pdf-builder-pro'),
+        ]
+    ]) . ';
+    console.log("PDF Builder: Variables AJAX définies globalement:", window.pdfBuilderAjax);
+', 'before');
+
+// Paramètres du canvas
+$canvas_settings = get_option('pdf_builder_settings', []);
+wp_localize_script('pdf-builder-admin-v3', 'pdfBuilderCanvasSettings', [
+    'default_canvas_width' => $canvas_settings['default_canvas_width'] ?? 210,
+    'default_canvas_height' => $canvas_settings['default_canvas_height'] ?? 297,
+    'default_canvas_unit' => $canvas_settings['default_canvas_unit'] ?? 'mm',
+    'default_orientation' => $canvas_settings['default_orientation'] ?? 'portrait',
+    'canvas_background_color' => $canvas_settings['canvas_background_color'] ?? '#ffffff',
+    'canvas_show_transparency' => $canvas_settings['canvas_show_transparency'] ?? false,
+    'enable_rotation' => $canvas_settings['enable_rotation'] ?? true,
+    'rotation_step' => $canvas_settings['rotation_step'] ?? 15,
+    'rotation_snap' => $canvas_settings['rotation_snap'] ?? true,
+]);
+
+// Styles pour l'éditeur canvas
+wp_enqueue_style('pdf-builder-canvas-editor', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-canvas.css', [], PDF_BUILDER_PRO_VERSION);
+
+error_log("PDF Builder Debug: Scripts enqueued in template-editor.php");
+
 // Get template ID from URL
 $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
 $is_new = $template_id === 0;
