@@ -137,6 +137,10 @@ export const PDFCanvasEditor = ({ options }) => {
     globalSettings.updateSettings({ snapToGrid });
   }, [globalSettings]);
 
+  const handleZoomWithWheelChange = useCallback((zoomWithWheel) => {
+    globalSettings.updateSettings({ zoomWithWheel });
+  }, [globalSettings]);
+
   const editorRef = useRef(null);
   const canvasRef = useRef(null);
   const canvasContainerRef = useRef(null);
@@ -651,6 +655,8 @@ export const PDFCanvasEditor = ({ options }) => {
         onShowGridChange={handleShowGridChange}
         snapToGrid={globalSettings.settings.snapToGrid}
         onSnapToGridChange={handleSnapToGridChange}
+        zoomWithWheel={globalSettings.settings.zoomWithWheel}
+        onZoomWithWheelChange={handleZoomWithWheelChange}
         onUndo={handleUndo}
         onRedo={handleRedo}
         canUndo={canvasState.history.canUndo()}

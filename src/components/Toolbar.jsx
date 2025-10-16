@@ -9,6 +9,8 @@ export const Toolbar = ({
   onShowGridChange,
   snapToGrid,
   onSnapToGridChange,
+  zoomWithWheel,
+  onZoomWithWheelChange,
   onUndo,
   onRedo,
   canUndo,
@@ -116,6 +118,17 @@ export const Toolbar = ({
                   onChange={(e) => onSnapToGridChange(e.target.checked)}
                 />
                 Aimantation
+              </label>
+            </div>
+
+            <div className="control-group">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={zoomWithWheel}
+                  onChange={(e) => onZoomWithWheelChange(e.target.checked)}
+                />
+                Zoom molette
               </label>
             </div>
           </div>

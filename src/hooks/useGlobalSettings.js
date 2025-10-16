@@ -43,7 +43,7 @@ export const useGlobalSettings = () => {
     panWithMouse: true,
     smoothZoom: true,
     showZoomIndicator: true,
-    zoomWithWheel: true,
+    zoomWithWheel: false,
     zoomToSelection: true,
 
     // Paramètres de sélection et manipulation
