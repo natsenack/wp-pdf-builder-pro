@@ -1164,6 +1164,7 @@ export const useCanvasState = ({
     redo,
     canUndo: history.canUndo(),
     canRedo: history.canRedo(),
+    history,
 
     // Zoom
     zoomToSelection,
