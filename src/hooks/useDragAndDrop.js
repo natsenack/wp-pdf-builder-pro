@@ -150,6 +150,8 @@ export const useDragAndDrop = ({
       }
 
       const { elementId, elementType } = currentDragData.current;
+      console.log('[DEBUG] handleMouseUp - currentDragData:', currentDragData.current);
+      console.log('[DEBUG] handleMouseUp - elementId:', elementId, 'elementType:', elementType);
 
       setIsDragging(false);
 
@@ -181,6 +183,7 @@ export const useDragAndDrop = ({
     };
 
     // Stocker les références pour le nettoyage
+    console.log('[DEBUG] Storing drag data - elementId:', elementId, 'elementType:', elementType);
     currentDragData.current = { handleMouseMove, handleMouseUp, elementId, elementType };
 
     document.addEventListener('mousemove', handleMouseMove);
