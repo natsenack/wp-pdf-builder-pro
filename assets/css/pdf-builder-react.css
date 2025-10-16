@@ -7,17 +7,17 @@
 .pdf-builder-container,
 .pdf-canvas-editor {
   position: relative !important;
-  z-index: 1000 !important;
+  z-index: 10 !important; /* Réduit pour laisser l'admin bar au-dessus */
   width: 100% !important;
-  height: calc(100vh - 40px) !important; /* Maximisé : de 80px à 40px */
+  height: calc(100vh - 72px) !important; /* Ajusté pour l'admin bar (32px) + marge (40px) */
   margin: 0 !important;
   padding: 0 !important;
   background: #ffffff !important; /* Blanc pur au lieu de gris */
 }
 
-/* Ajuster le z-index pour que le builder apparaisse au-dessus des éléments WordPress */
+/* Ajuster le z-index pour que l'admin bar reste au-dessus du builder */
 body.pdf-builder-active #wpadminbar {
-  z-index: 999 !important;
+  z-index: 1000 !important; /* Admin bar au-dessus de l'éditeur */
 }
 
 body.pdf-builder-active .invoice-quote-builder-container,
@@ -101,7 +101,7 @@ body.pdf-builder-active .pdf-canvas-editor {
   flex: 1;
   overflow: hidden;
   background: #ffffff;
-  height: calc(100vh - 140px - 60px); /* Soustrait header (80px) + toolbar (60px) + status bar (60px) */
+  height: calc(100vh - 140px - 32px); /* Ajusté pour l'admin bar */
 }
 
 /* Sidebars */
