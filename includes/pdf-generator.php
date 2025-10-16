@@ -1494,11 +1494,11 @@ class PDF_Builder_Pro_Generator {
             'default' => [
                 'header_bg' => ['r' => 245, 'g' => 245, 'b' => 245],
                 'header_border' => ['r' => 221, 'g' => 221, 'b' => 221],
-                'row_border' => ['r' => 238, 'g' => 238, 'b' => 238],
+                'row_border' => ['r' => 200, 'g' => 200, 'b' => 200],
                 'alt_row_bg' => ['r' => 250, 'g' => 250, 'b' => 250],
                 'headerTextColor' => '#334155',
                 'rowTextColor' => '#334155',
-                'border_width' => 0.5
+                'border_width' => 1.0
             ],
             'classic' => [
                 'header_bg' => ['r' => 30, 'g' => 41, 'b' => 59],
@@ -1827,11 +1827,19 @@ class PDF_Builder_Pro_Generator {
         $row_height = 6;
         $alt_row = false;
 
+        // DEBUG: Log des paramètres de bordure
+        error_log('🟡 PDF BORDER DEBUG - show_borders: ' . ($show_borders ? 'true' : 'false'));
+        error_log('🟡 PDF BORDER DEBUG - table_style: ' . ($element['tableStyle'] ?? 'default'));
+        error_log('🟡 PDF BORDER DEBUG - row_border color: ' . json_encode($table_styles['rowBorder']));
+        error_log('🟡 PDF BORDER DEBUG - border_width: ' . $table_styles['border_width']);
+
         // Définir les couleurs de trait pour les bordures des lignes de données
         if ($show_borders) {
             $row_border_rgb = $this->hex_to_rgb($table_styles['rowBorder']);
             $this->pdf->SetDrawColor($row_border_rgb[0], $row_border_rgb[1], $row_border_rgb[2]);
             $this->pdf->SetLineWidth($table_styles['border_width'] * 0.2);
+            error_log('🟡 PDF BORDER DEBUG - SetDrawColor: ' . $row_border_rgb[0] . ',' . $row_border_rgb[1] . ',' . $row_border_rgb[2]);
+            error_log('🟡 PDF BORDER DEBUG - SetLineWidth: ' . ($table_styles['border_width'] * 0.2));
         }
 
         // Produits
@@ -1942,6 +1950,12 @@ class PDF_Builder_Pro_Generator {
     private function render_fake_products($x, $current_y, $col_widths, $columns, $show_borders, $table_style = 'default', $element = null) {
         $table_styles = $this->get_table_styles($table_style);
         $row_height = 6;
+
+        // DEBUG: Log des paramètres de bordure pour l'aperçu
+        error_log('🟢 PDF PREVIEW BORDER DEBUG - show_borders: ' . ($show_borders ? 'true' : 'false'));
+        error_log('🟢 PDF PREVIEW BORDER DEBUG - table_style: ' . $table_style);
+        error_log('🟢 PDF PREVIEW BORDER DEBUG - row_border color: ' . json_encode($table_styles['rowBorder']));
+        error_log('🟢 PDF PREVIEW BORDER DEBUG - border_width: ' . $table_styles['border_width']);
 
         // Utiliser les données d'aperçu de l'élément si disponibles, sinon utiliser les données par défaut
         $preview_products = $element['previewProducts'] ?? [
