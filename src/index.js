@@ -2,7 +2,6 @@ import React from 'react';
 import { createElement } from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
 import { PDFCanvasEditor } from './components/PDFCanvasEditor';
-import './styles/editor.css';
 
 // Exposer React globalement pour compatibilité
 if (typeof window !== 'undefined') {
