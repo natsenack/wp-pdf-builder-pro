@@ -11,7 +11,7 @@ module.exports = {
     library: 'React',
     libraryTarget: 'window'
   },
-  // Bundler React et ReactDOM directement
+  // React est partagé entre les chunks
   mode: 'production',
   optimization: {
     usedExports: true, // Activer l'élimination des exports non utilisés
