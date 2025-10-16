@@ -67,6 +67,12 @@ function pdf_builder_init() {
         require_once $test_path;
     }
 
+    // Charger le fichier de diagnostic JSON
+    $diagnostic_path = plugin_dir_path(__FILE__) . 'diagnostic-json.php';
+    if (file_exists($diagnostic_path)) {
+        require_once $diagnostic_path;
+    }
+
     // Charger le bootstrap
     $bootstrap_path = plugin_dir_path(__FILE__) . 'bootstrap.php';
     if (file_exists($bootstrap_path)) {
