@@ -113,6 +113,20 @@
   box-shadow: var(--shadow-hover);
 }
 
+.btn-outline {
+  background: transparent;
+  color: var(--primary-color);
+  border: 1.5px solid var(--primary-color);
+  box-shadow: none;
+}
+
+.btn-outline:hover {
+  background: var(--primary-color);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+}
+
 .editor-workspace {
   display: flex;
   flex: 1;

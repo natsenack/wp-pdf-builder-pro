@@ -630,6 +630,13 @@ export const PDFCanvasEditor = ({ options }) => {
         <h2>Éditeur PDF - {options.isNew ? 'Nouveau Template' : options.templateName}</h2>
         <nav className="editor-actions">
           <button
+            className="btn btn-outline"
+            onClick={() => setShowNewTemplateModal(true)}
+            title="Créer un nouveau template"
+          >
+            ➕ Nouveau template
+          </button>
+          <button
             className="btn btn-secondary"
             onClick={() => setShowPreviewModal(true)}
           >
@@ -659,7 +666,6 @@ export const PDFCanvasEditor = ({ options }) => {
         onRedo={handleRedo}
         canUndo={canvasState.history.canUndo()}
         canRedo={canvasState.history.canRedo()}
-        onNewTemplate={() => setShowNewTemplateModal(true)}
         onPreview={() => setShowPreviewModal(true)}
       />
 
