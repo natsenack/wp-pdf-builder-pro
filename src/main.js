@@ -1,3 +1,6 @@
+// Import global fallbacks first
+import './globalFallback.js';
+
 // Main application entry point that actually uses all components
 import React from 'react';
 import ReactDOM from 'react-dom';
