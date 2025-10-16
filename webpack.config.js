@@ -7,7 +7,9 @@ module.exports = {
   },
   output: {
     filename: '[name].js',
-    path: path.resolve(__dirname, 'assets/js/dist')
+    path: path.resolve(__dirname, 'assets/js/dist'),
+    library: 'React',
+    libraryTarget: 'window'
   },
   // Bundler React et ReactDOM directement
   mode: 'production',
