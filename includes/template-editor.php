@@ -25,9 +25,7 @@ wp_enqueue_style('toastr', PDF_BUILDER_PRO_ASSETS_URL . 'css/toastr/toastr.min.c
 wp_enqueue_script('toastr', PDF_BUILDER_PRO_ASSETS_URL . 'js/toastr/toastr.min.js', ['jquery'], '2.1.4', true);
 
 // Scripts JavaScript principaux
-wp_enqueue_script('pdf-builder-react-vendors', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/react-vendors.js', ['jquery'], '1.0.0_force_' . microtime(true), true);
-wp_enqueue_script('pdf-builder-vendors', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/vendors.js', ['jquery', 'pdf-builder-react-vendors'], '1.0.0_force_' . microtime(true), true);
-wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'pdf-builder-vendors'], '8.0.0_force_' . microtime(true), true);
+wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'wp-api'], '8.0.0_force_' . microtime(true), true);
 wp_enqueue_script('pdf-builder-nonce-fix-v2', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js', ['jquery'], '4.0.0_force_reload_' . time(), true);
 
 // Variables JavaScript pour AJAX
