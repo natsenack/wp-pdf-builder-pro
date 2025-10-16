@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 
 export const Toolbar = ({
   selectedTool,
@@ -15,18 +15,18 @@ export const Toolbar = ({
   canRedo
 }) => {
   const tools = [
-    { id: 'select', label: 'Sélection', icon: '👆' },
-    { id: 'add-text', label: 'Texte Simple', icon: '📝' },
-    { id: 'add-text-title', label: 'Titre', icon: '📄' },
-    { id: 'add-text-subtitle', label: 'Sous-titre', icon: '📋' },
-    { id: 'add-rectangle', label: 'Rectangle', icon: '▭' },
-    { id: 'add-circle', label: 'Cercle', icon: '○' },
-    { id: 'add-line', label: 'Ligne', icon: '━' },
-    { id: 'add-arrow', label: 'Flèche', icon: '➤' },
-    { id: 'add-triangle', label: 'Triangle', icon: '△' },
-    { id: 'add-star', label: 'Étoile', icon: '⭐' },
-    { id: 'add-divider', label: 'Séparateur', icon: '⎯' },
-    { id: 'add-image', label: 'Image', icon: '🖼️' }
+    { id: 'select', label: 'Sélection (V)', icon: '👆', shortcut: 'V' },
+    { id: 'add-text', label: 'Texte Simple (T)', icon: '📝', shortcut: 'T' },
+    { id: 'add-text-title', label: 'Titre (H)', icon: '📄', shortcut: 'H' },
+    { id: 'add-text-subtitle', label: 'Sous-titre (S)', icon: '📋', shortcut: 'S' },
+    { id: 'add-rectangle', label: 'Rectangle (R)', icon: '▭', shortcut: 'R' },
+    { id: 'add-circle', label: 'Cercle (C)', icon: '○', shortcut: 'C' },
+    { id: 'add-line', label: 'Ligne (L)', icon: '━', shortcut: 'L' },
+    { id: 'add-arrow', label: 'Flèche (A)', icon: '➤', shortcut: 'A' },
+    { id: 'add-triangle', label: 'Triangle (3)', icon: '△', shortcut: '3' },
+    { id: 'add-star', label: 'Étoile (5)', icon: '⭐', shortcut: '5' },
+    { id: 'add-divider', label: 'Séparateur (D)', icon: '⎯', shortcut: 'D' },
+    { id: 'add-image', label: 'Image (I)', icon: '🖼️', shortcut: 'I' }
   ];
 
   return (
@@ -38,11 +38,14 @@ export const Toolbar = ({
           {tools.map(tool => (
             <button
               key={tool.id}
-              className={`tool-button ${selectedTool === tool.id ? 'active' : ''}`}
+              className={	ool-button }
               onClick={() => onToolSelect(tool.id)}
               title={tool.label}
             >
-              <span className="tool-icon">{tool.icon}</span>
+              <div className="tool-content">
+                <span className="tool-icon">{tool.icon}</span>
+                <span className="tool-shortcut">{tool.shortcut}</span>
+              </div>
             </button>
           ))}
         </div>
@@ -58,7 +61,11 @@ export const Toolbar = ({
             disabled={!canUndo}
             title="Annuler (Ctrl+Z)"
           >
-            ↶ Annuler
+            <div className="button-content">
+              <span className="button-icon">↶</span>
+              <span className="button-text">Annuler</span>
+              <span className="button-shortcut">Ctrl+Z</span>
+            </div>
           </button>
           <button
             className="edit-button"
@@ -66,7 +73,11 @@ export const Toolbar = ({
             disabled={!canRedo}
             title="Rétablir (Ctrl+Y)"
           >
-            ↷ Rétablir
+            <div className="button-content">
+              <span className="button-icon">↷</span>
+              <span className="button-text">Rétablir</span>
+              <span className="button-shortcut">Ctrl+Y</span>
+            </div>
           </button>
         </div>
       </div>
@@ -81,17 +92,25 @@ export const Toolbar = ({
               <button
                 className="zoom-button"
                 onClick={() => onZoomChange(Math.max(0.1, zoom - 0.1))}
-                title="Zoom arrière"
+                title="Zoom arrière (Ctrl+-)"
               >
-                🔍-
+                <div className="button-content">
+                  <span className="button-icon">🔍</span>
+                  <span className="button-text">-</span>
+                  <span className="button-shortcut">Ctrl+-</span>
+                </div>
               </button>
               <span className="zoom-value">{Math.round(zoom * 100)}%</span>
               <button
                 className="zoom-button"
                 onClick={() => onZoomChange(Math.min(3, zoom + 0.1))}
-                title="Zoom avant"
+                title="Zoom avant (Ctrl+=)"
               >
-                🔍+
+                <div className="button-content">
+                  <span className="button-icon">🔍</span>
+                  <span className="button-text">+</span>
+                  <span className="button-shortcut">Ctrl+=</span>
+                </div>
               </button>
             </div>
           </div>
@@ -105,6 +124,7 @@ export const Toolbar = ({
                   onChange={(e) => onShowGridChange(e.target.checked)}
                 />
                 Grille
+                <span className="control-shortcut">(G)</span>
               </label>
             </div>
 
@@ -116,8 +136,32 @@ export const Toolbar = ({
                   onChange={(e) => onSnapToGridChange(e.target.checked)}
                 />
                 Aimantation
+                <span className="control-shortcut">(M)</span>
               </label>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Section d'aide avec raccourcis */}
+      <div className="toolbar-section">
+        <h4>Raccourcis</h4>
+        <div className="shortcuts-help">
+          <div className="shortcut-group">
+            <span className="shortcut-label">Outils:</span>
+            <span className="shortcut-keys">V T H S R C L A 3 5 D I</span>
+          </div>
+          <div className="shortcut-group">
+            <span className="shortcut-label">Édition:</span>
+            <span className="shortcut-keys">Ctrl+Z/Y</span>
+          </div>
+          <div className="shortcut-group">
+            <span className="shortcut-label">Zoom:</span>
+            <span className="shortcut-keys">Ctrl+/- Roulette</span>
+          </div>
+          <div className="shortcut-group">
+            <span className="shortcut-label">Affichage:</span>
+            <span className="shortcut-keys">G M</span>
           </div>
         </div>
       </div>

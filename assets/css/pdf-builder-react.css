@@ -52,6 +52,9 @@ body.pdf-builder-active .pdf-canvas-editor {
   background: #ffffff;
   border-bottom: 1px solid #f8f9fa;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  position: sticky;
+  top: 0;
+  z-index: 200;
 }
 
 .editor-title h2 {
@@ -63,7 +66,33 @@ body.pdf-builder-active .pdf-canvas-editor {
 
 .editor-actions {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.75rem;
+}
+
+/* Boutons du header */
+.editor-actions button {
+  padding: 8px 16px;
+  border: 1px solid #e1e5e9;
+  background: #ffffff;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.editor-actions button:hover {
+  background: #f8f9fa;
+  border-color: #d1d5db;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.editor-actions button:active {
+  transform: translateY(0);
 }
 
 /* Workspace principal */
@@ -72,7 +101,7 @@ body.pdf-builder-active .pdf-canvas-editor {
   flex: 1;
   overflow: hidden;
   background: #ffffff;
-  height: calc(100vh - 5px); /* Maximisé : de 20px à 5px */
+  height: calc(100vh - 140px - 60px); /* Soustrait header (80px) + toolbar (60px) + status bar (60px) */
 }
 
 /* Sidebars */
@@ -80,18 +109,67 @@ body.pdf-builder-active .pdf-canvas-editor {
   background: #fafbfc;
   border: 1px solid #f1f3f4;
   overflow-y: auto;
-  transition: width 0.3s ease;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  min-width: 250px;
+  max-width: 350px;
+  width: 280px;
+  box-shadow: -2px 0 8px rgba(0,0,0,0.08);
+}
+
+.editor-sidebar.collapsed {
+  width: 0;
+  min-width: 0;
+  max-width: 0;
+  padding: 0;
+  border: none;
+  box-shadow: none;
+}
+
+.left-sidebar {
+  border-right: 1px solid #e1e5e9;
+}
+
+.right-sidebar {
+  border-left: 1px solid #e1e5e9;
 }
 
 .editor-sidebar.left-sidebar {
-  width: 280px;
+  width: 260px;
   border-right: 1px solid #f1f3f4;
 }
 
 .editor-sidebar.right-sidebar {
-  width: 400px;
+  width: 320px;
   border-left: 1px solid #f1f3f4;
   transition: width 0.3s ease;
+}
+
+/* Media queries pour la réactivité */
+@media (max-width: 1200px) {
+  .editor-sidebar.left-sidebar {
+    width: 240px;
+  }
+  .editor-sidebar.right-sidebar {
+    width: 280px;
+  }
+}
+
+@media (max-width: 992px) {
+  .editor-sidebar.left-sidebar {
+    width: 220px;
+  }
+  .editor-sidebar.right-sidebar {
+    width: 260px;
+  }
+}
+
+@media (max-width: 768px) {
+  .editor-sidebar.left-sidebar,
+  .editor-sidebar.right-sidebar {
+    width: 200px;
+  }
 }
 
 .editor-sidebar.collapsed {
@@ -103,28 +181,32 @@ body.pdf-builder-active .pdf-canvas-editor {
 .sidebar-toggle-fixed {
   position: fixed !important;
   top: 50% !important;
+  right: 15px !important;
   transform: translateY(-50%) !important;
-  z-index: 999999 !important;
-  width: 32px !important;
-  height: 32px !important;
-  background: #ffffff !important;
-  border: 2px solid #e1e5e9 !important;
+  z-index: 1000 !important;
+  width: 40px !important;
+  height: 40px !important;
+  background: linear-gradient(135deg, #007bff, #0056b3) !important;
+  border: none !important;
   border-radius: 50% !important;
   cursor: pointer !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  font-size: 16px !important;
-  color: #007bff !important;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
+  font-size: 18px !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(0,123,255,0.3) !important;
   transition: all 0.3s ease !important;
 }
 
 .sidebar-toggle-fixed:hover {
-  background: #f8f9fa !important;
-  border-color: #007bff !important;
+  background: linear-gradient(135deg, #0056b3, #004085) !important;
   transform: translateY(-50%) scale(1.1) !important;
-  box-shadow: 0 4px 12px rgba(0,123,255,0.25) !important;
+  box-shadow: 0 6px 16px rgba(0,123,255,0.4) !important;
+}
+
+.sidebar-toggle-fixed:active {
+  transform: translateY(-50%) scale(0.95) !important;
 }
 
 /* Zone principale de l'éditeur */
@@ -144,8 +226,9 @@ body.pdf-builder-active .pdf-canvas-editor {
   align-items: center;
   background: #fafbfc;
   overflow: auto;
-  padding: 20px;
+  padding: 24px;
   position: relative;
+  min-height: 400px;
 }
 
 /* Wrapper de zoom du canvas */
@@ -194,13 +277,156 @@ body.pdf-builder-active .pdf-canvas-editor {
   z-index: 1;
 }
 
-/* États de chargement */
-.loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  color: #9ca3af;
+/* Indicateurs visuels pour la sélection */
+.canvas-element.selected {
+  box-shadow: 0 0 0 2px #007bff, 0 4px 12px rgba(0,123,255,0.3) !important;
+  position: relative;
+}
+
+.canvas-element.selected::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 2px solid #007bff;
+  border-radius: 2px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Indicateurs de zoom */
+.zoom-indicator {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(0,0,0,0.8);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  backdrop-filter: blur(8px);
+}
+
+/* Amélioration des tooltips */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltip-text {
+  visibility: hidden;
+  width: 200px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px 12px;
+  position: absolute;
+  z-index: 1000;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -100px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+.tooltip .tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #333 transparent transparent transparent;
+}
+
+/* Indicateurs visuels pour la sélection */
+.canvas-element.selected {
+  box-shadow: 0 0 0 2px #007bff, 0 4px 12px rgba(0,123,255,0.3) !important;
+  position: relative;
+}
+
+.canvas-element.selected::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 2px solid #007bff;
+  border-radius: 2px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Indicateurs de zoom */
+.zoom-indicator {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(0,0,0,0.8);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  backdrop-filter: blur(8px);
+}
+
+/* Amélioration des tooltips */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltip-text {
+  visibility: hidden;
+  width: 200px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px 12px;
+  position: absolute;
+  z-index: 1000;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -100px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+.tooltip .tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #333 transparent transparent transparent;
 }
 
 /* ===== CLASSES EXISTANTES (préservées) ===== */
@@ -484,19 +710,22 @@ body.pdf-builder-active .pdf-canvas-editor {
 
 .toolbar {
   display: flex;
-  gap: 8px;
-  padding: 12px 16px;
+  gap: 12px;
+  padding: 12px 20px;
   background: #ffffff;
   border-bottom: 1px solid #f1f3f4;
-  align-items: center;
+  align-items: flex-start;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   overflow-x: auto;
+  overflow-y: visible;
+  min-height: 60px;
 }
 
 .toolbar-section {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  min-width: fit-content;
 }
 
 .toolbar-section h4 {
@@ -504,6 +733,7 @@ body.pdf-builder-active .pdf-canvas-editor {
   font-size: 0.875rem;
   font-weight: 600;
   color: #374151;
+  white-space: nowrap;
 }
 
 .tool-buttons {
@@ -544,6 +774,124 @@ body.pdf-builder-active .pdf-canvas-editor {
 .tool-icon {
   font-size: 18px;
   line-height: 1;
+}
+
+/* Nouveaux styles pour les raccourcis clavier */
+.tool-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.tool-shortcut {
+  font-size: 9px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+
+.tool-button:hover .tool-shortcut {
+  color: #374151;
+}
+
+.tool-button.active .tool-shortcut {
+  color: #ffffff;
+}
+
+/* Styles pour les boutons d'édition avec raccourcis */
+.button-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.button-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.button-text {
+  font-size: 10px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.button-shortcut {
+  font-size: 8px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 1px;
+}
+
+.edit-button:hover:not(:disabled) .button-shortcut {
+  color: #374151;
+}
+
+.edit-button:disabled .button-shortcut {
+  opacity: 0.5;
+}
+
+/* Styles pour les contrôles d'affichage */
+.control-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.control-shortcut {
+  font-size: 10px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-left: auto;
+}
+
+.control-group label:hover .control-shortcut {
+  color: #374151;
+}
+
+/* Styles pour la section d'aide avec raccourcis */
+.shortcuts-help {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 11px;
+  color: #6b7280;
+}
+
+.shortcut-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 0;
+}
+
+.shortcut-label {
+  font-weight: 600;
+  color: #374151;
+  min-width: 60px;
+}
+
+.shortcut-keys {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  background: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 3px;
+  color: #2563eb;
+  font-weight: 500;
+  letter-spacing: 0.5px;
 }
 
 /* Boutons d'édition */
@@ -611,12 +959,45 @@ body.pdf-builder-active .pdf-canvas-editor {
 
 /* Status de l'éditeur */
 .editor-status {
-  padding: 8px 16px;
-  background: #f8f9fa;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px 24px;
+  background: linear-gradient(135deg, #ffffff, #f8f9fa);
   border-top: 1px solid #e9ecef;
-  font-size: 0.875rem;
-  color: #6c757d;
+  font-size: 0.8125rem;
+  color: #495057;
   text-align: center;
+  box-shadow: 0 -1px 4px rgba(0,0,0,0.06);
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  backdrop-filter: blur(8px);
+}
+
+.editor-status > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(255,255,255,0.9);
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  font-size: 0.8125rem;
+}
+
+.editor-status > span:hover {
+  background: #ffffff;
+  border-color: #007bff;
+  color: #007bff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0,123,255,0.15);
 }
 
 /* Modal overlay */
