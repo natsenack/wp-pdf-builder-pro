@@ -221,6 +221,52 @@ function Create-FtpDirectory {
     }
 }
 
+# Fonction pour créer un répertoire sur le serveur FTP (optimisée)
+function Create-FtpDirectory {
+    param(
+        [string]$ftpHost,
+        [string]$ftpUser,
+        [string]$ftpPassword,
+        [string]$remoteDir
+    )
+
+    # Vérifier d'abord si le répertoire existe déjà - si oui, ignorer complètement
+    if (Test-FtpDirectory -ftpHost $ftpHost -ftpUser $ftpUser -ftpPassword $ftpPassword -remoteDir $remoteDir) {
+        return $true  # Existe déjà, rien à faire
+    }
+
+    try {
+        $ftpRequest = [System.Net.FtpWebRequest]::Create("ftp://$ftpHost$remoteDir")
+        $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
+        $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
+        $ftpRequest.UseBinary = $true
+        $ftpRequest.KeepAlive = $false
+        $ftpRequest.Timeout = 5000
+
+        $response = $ftpRequest.GetResponse()
+        $response.Close()
+
+        # Tenter de définir les permissions (en arrière-plan, ne pas bloquer)
+        try {
+            $permRequest = [System.Net.FtpWebRequest]::Create("ftp://$ftpHost$remoteDir")
+            $permRequest.Method = "SITE CHMOD 755 $remoteDir"
+            $permRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
+            $permRequest.UseBinary = $false
+            $permRequest.KeepAlive = $false
+            $permRequest.Timeout = 1000  # Timeout minimal pour permissions
+            $permResponse = $permRequest.GetResponse()
+            $permResponse.Close()
+        } catch {
+            # Ignorer les erreurs de permissions
+        }
+
+        return $true
+    }
+    catch {
+        return $false
+    }
+}
+
 # Créer le répertoire de base si nécessaire
 Write-Host "📁 Vérification du répertoire de base: $remotePath" -ForegroundColor Yellow
 if (Create-FtpDirectory -ftpHost $ftpHost -ftpUser $ftpUser -ftpPassword $ftpPassword -remoteDir $remotePath) {
