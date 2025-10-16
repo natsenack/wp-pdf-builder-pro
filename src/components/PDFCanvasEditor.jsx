@@ -129,6 +129,15 @@ export const PDFCanvasEditor = ({ options }) => {
     }
   }, [history, canvasState]);
 
+  // Handlers pour les paramètres de grille
+  const handleShowGridChange = useCallback((showGrid) => {
+    globalSettings.updateSettings({ showGrid });
+  }, [globalSettings]);
+
+  const handleSnapToGridChange = useCallback((snapToGrid) => {
+    globalSettings.updateSettings({ snapToGrid });
+  }, [globalSettings]);
+
   const editorRef = useRef(null);
   const canvasRef = useRef(null);
   const canvasContainerRef = useRef(null);
