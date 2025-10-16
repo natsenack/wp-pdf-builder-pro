@@ -5,7 +5,6 @@ import { Toolbar } from './Toolbar';
 import { useCanvasState } from '../hooks/useCanvasState';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import { useGlobalSettings } from '../hooks/useGlobalSettings';
-import { useHistory } from '../hooks/useHistory.js';
 import { FPSCounter } from './FPSCounter';
 
 // Chargement lazy des composants conditionnels
@@ -101,33 +100,33 @@ export const PDFCanvasEditor = ({ options }) => {
     globalSettings: globalSettings.settings
   });
 
-  // Hook pour l'historique Undo/Redo
-  const history = useHistory({ maxHistorySize: globalSettings.settings.undoLevels || 50 });
+  // Hook pour l'historique Undo/Redo - REMOVED: utilise maintenant canvasState.history
+  // const history = useHistory({ maxHistorySize: globalSettings.settings.undoLevels || 50 });
 
   // Fonction wrapper pour les mises à jour avec historique
   const updateElementWithHistory = useCallback((elementId, updates, description = 'Modifier élément') => {
     // Sauvegarder l'état actuel avant modification
     const currentElements = canvasState.getAllElements();
-    history.addToHistory(currentElements, description);
+    canvasState.history.addToHistory(currentElements, description);
 
     // Appliquer la mise à jour
     canvasState.updateElement(elementId, updates);
-  }, [canvasState, history]);
+  }, [canvasState]);
 
   // Fonctions Undo/Redo
   const handleUndo = useCallback(() => {
-    const previousState = history.undo();
+    const previousState = canvasState.history.undo();
     if (previousState) {
       canvasState.setElements(previousState);
     }
-  }, [history, canvasState]);
+  }, [canvasState]);
 
   const handleRedo = useCallback(() => {
-    const nextState = history.redo();
+    const nextState = canvasState.history.redo();
     if (nextState) {
       canvasState.setElements(nextState);
     }
-  }, [history, canvasState]);
+  }, [canvasState]);
 
   // Handlers pour les paramètres de grille
   const handleShowGridChange = useCallback((showGrid) => {
@@ -668,8 +667,8 @@ export const PDFCanvasEditor = ({ options }) => {
         onSnapToGridChange={handleSnapToGridChange}
         onUndo={handleUndo}
         onRedo={handleRedo}
-        canUndo={history.canUndo}
-        canRedo={history.canRedo}
+        canUndo={canvasState.history.canUndo()}
+        canRedo={canvasState.history.canRedo()}
       />
 
       <div className="editor-workspace">
@@ -844,6 +843,9 @@ export const PDFCanvasEditor = ({ options }) => {
                         onRemove={() => canvasState.deleteElement(element.id)}
                         onContextMenu={(e) => handleContextMenu(e, element.id)}
                         dragAndDrop={dragAndDrop}
+                        enableRotation={globalSettings.settings.enableRotation}
+                        rotationStep={globalSettings.settings.rotationStep}
+                        rotationSnap={globalSettings.settings.rotationSnap}
                         guides={guides}
                         snapToGuides={globalSettings.settings.snapToElements}
                       />

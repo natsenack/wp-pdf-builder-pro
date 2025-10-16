@@ -1349,7 +1349,19 @@ class PDF_Builder_Pro_Generator {
         // Forcer les bordures pour les tableaux de produits (correction du bug d'affichage)
         $show_borders = ($element['type'] ?? '') === 'product_table' ? true : ($element['showBorders'] ?? true);
         $table_style = $element['tableStyle'] ?? 'default';
-        $headers = $element['headers'] ?? ['Produit', 'Qté', 'Prix'];
+
+        // Validation et extraction sécurisée des headers
+        $headers = [];
+        if (isset($element['headers']) && is_array($element['headers'])) {
+            $headers = $element['headers'];
+        } elseif (isset($element['header']) && is_array($element['header'])) {
+            // Correction: si 'header' au singulier est utilisé au lieu de 'headers'
+            $headers = $element['header'];
+            error_log('⚠️ PDF BUILDER - render_product_table_element: Utilisation de \'header\' au lieu de \'headers\' détectée, correction automatique');
+        } else {
+            $headers = ['Produit', 'Qté', 'Prix'];
+        }
+
         $columns = $element['columns'] ?? [
             'image' => false,
             'name' => true,

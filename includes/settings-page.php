@@ -1525,7 +1525,7 @@ window.addEventListener('load', function() {
                             <td>
                                 <fieldset>
                                     <label for="enable_rotation">
-                                        <input name="enable_rotation" type="checkbox" id="enable_rotation" value="1" <?php checked(get_option('pdf_builder_enable_rotation', true)); ?>>
+                                        <input name="enable_rotation" type="checkbox" id="enable_rotation" value="1" <?php checked($settings['enable_rotation'] ?? true); ?>>
                                         <?php _e('Activer la rotation des éléments', 'pdf-builder-pro'); ?>
                                     </label>
                                 </fieldset>
@@ -1533,11 +1533,11 @@ window.addEventListener('load', function() {
                                 <div style="display: flex; gap: 20px; align-items: center;">
                                     <div>
                                         <label for="rotation_step"><?php _e('Pas de rotation:', 'pdf-builder-pro'); ?></label>
-                                        <input name="rotation_step" type="number" id="rotation_step" value="<?php echo esc_attr(get_option('pdf_builder_rotation_step', 15)); ?>" class="small-text" min="1" max="45"> °
+                                        <input name="rotation_step" type="number" id="rotation_step" value="<?php echo esc_attr($settings['rotation_step'] ?? 15); ?>" class="small-text" min="1" max="45"> °
                                     </div>
                                     <div>
                                         <label for="rotation_snap"><?php _e('Aimantation angulaire:', 'pdf-builder-pro'); ?></label>
-                                        <input name="rotation_snap" type="checkbox" id="rotation_snap" value="1" <?php checked(get_option('pdf_builder_rotation_snap', true)); ?>>
+                                        <input name="rotation_snap" type="checkbox" id="rotation_snap" value="1" <?php checked($settings['rotation_snap'] ?? true); ?>>
                                     </div>
                                 </div>
                             </td>

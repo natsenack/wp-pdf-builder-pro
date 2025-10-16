@@ -9,10 +9,21 @@ module.exports = {
     filename: '[name].js',
     path: path.resolve(__dirname, 'assets/js/dist'),
   },
-  mode: 'development',
+  mode: 'production',
   optimization: {
-    usedExports: false, // Désactiver l'élimination des exports non utilisés
-    sideEffects: false   // Désactiver complètement l'analyse des effets de bord
+    usedExports: true, // Activer l'élimination des exports non utilisés
+    sideEffects: true,  // Activer l'analyse des effets de bord pour optimisation
+    minimize: true,     // Activer la minification
+    splitChunks: {
+      chunks: 'all',
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all',
+        },
+      },
+    },
   },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json']

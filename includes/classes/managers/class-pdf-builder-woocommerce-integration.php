@@ -791,39 +791,56 @@ class PDF_Builder_WooCommerce_Integration {
     public function ajax_unified_preview() {
         error_log('🎯 PDF BUILDER - ajax_unified_preview: UNIFIED PREVIEW FUNCTION CALLED - START');
 
-        // Vérifier les permissions
-        if (!current_user_can('manage_woocommerce') && !current_user_can('read')) {
-            error_log('❌ PDF BUILDER - ajax_unified_preview: Permissions insuffisantes');
-            wp_send_json_error('Permissions insuffisantes');
+        // S'assurer que les headers JSON sont envoyés en premier
+        if (!headers_sent()) {
+            header('Content-Type: application/json; charset=UTF-8');
+            header('Cache-Control: no-cache, must-revalidate');
+            header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
         }
 
-        error_log('✅ PDF BUILDER - ajax_unified_preview: Permissions OK');
-
-        // Vérification de sécurité - accepter plusieurs nonces pour flexibilité
-        $valid_nonces = ['pdf_builder_order_actions', 'pdf_builder_template_actions'];
-        $nonce_valid = false;
-
-        foreach ($valid_nonces as $nonce_action) {
-            if (wp_verify_nonce($_POST['nonce'] ?? '', $nonce_action)) {
-                $nonce_valid = true;
-                break;
+        // Gestionnaire d'erreur temporaire pour capturer les warnings PHP
+        $original_error_handler = set_error_handler(function($errno, $errstr, $errfile, $errline) {
+            // Convertir les warnings et erreurs en exceptions
+            if ($errno & (E_WARNING | E_NOTICE | E_USER_WARNING | E_USER_NOTICE)) {
+                error_log('⚠️ PDF BUILDER - PHP Warning capturé: ' . $errstr . ' in ' . $errfile . ':' . $errline);
+                throw new Exception('PHP Warning: ' . $errstr . ' in ' . $errfile . ':' . $errline);
             }
-        }
-
-        if (!$nonce_valid) {
-            error_log('❌ PDF BUILDER - ajax_unified_preview: Nonce invalide');
-            wp_send_json_error('Sécurité: Nonce invalide');
-        }
-
-        error_log('✅ PDF BUILDER - ajax_unified_preview: Nonce OK');
-
-        $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : null;
-        $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : null;
-        $elements = isset($_POST['elements']) ? $_POST['elements'] : null;
-
-        error_log('🟡 PDF BUILDER - ajax_unified_preview: Params - order_id=' . ($order_id ?: 'null') . ', template_id=' . ($template_id ?: 'null') . ', has_elements=' . (!empty($elements) ? 'yes' : 'no'));
+            return false;
+        });
 
         try {
+            // Vérifier les permissions
+            if (!current_user_can('manage_woocommerce') && !current_user_can('read')) {
+                error_log('❌ PDF BUILDER - ajax_unified_preview: Permissions insuffisantes');
+                wp_send_json_error('Permissions insuffisantes');
+            }
+
+            error_log('✅ PDF BUILDER - ajax_unified_preview: Permissions OK');
+
+            // Vérification de sécurité - accepter plusieurs nonces pour flexibilité
+            $valid_nonces = ['pdf_builder_order_actions', 'pdf_builder_template_actions'];
+            $nonce_valid = false;
+
+            foreach ($valid_nonces as $nonce_action) {
+                if (wp_verify_nonce($_POST['nonce'] ?? '', $nonce_action)) {
+                    $nonce_valid = true;
+                    break;
+                }
+            }
+
+            if (!$nonce_valid) {
+                error_log('❌ PDF BUILDER - ajax_unified_preview: Nonce invalide');
+                wp_send_json_error('Sécurité: Nonce invalide');
+            }
+
+            error_log('✅ PDF BUILDER - ajax_unified_preview: Nonce OK');
+
+            $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : null;
+            $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : null;
+            $elements = isset($_POST['elements']) ? $_POST['elements'] : null;
+
+            error_log('🟡 PDF BUILDER - ajax_unified_preview: Params - order_id=' . ($order_id ?: 'null') . ', template_id=' . ($template_id ?: 'null') . ', has_elements=' . (!empty($elements) ? 'yes' : 'no'));
+
             error_log('🟡 PDF BUILDER - ajax_unified_preview: Loading PDF generator...');
 
             // S'assurer que la classe PDF_Builder_Pro_Generator est chargée
@@ -917,7 +934,17 @@ class PDF_Builder_WooCommerce_Integration {
 
         } catch (Exception $e) {
             error_log('❌ PDF BUILDER - ajax_unified_preview: Exception: ' . $e->getMessage());
+            error_log('❌ PDF BUILDER - ajax_unified_preview: Stack trace: ' . $e->getTraceAsString());
             wp_send_json_error('Erreur: ' . $e->getMessage());
+        } catch (Throwable $t) {
+            error_log('❌ PDF BUILDER - ajax_unified_preview: Throwable: ' . $t->getMessage());
+            error_log('❌ PDF BUILDER - ajax_unified_preview: Stack trace: ' . $t->getTraceAsString());
+            wp_send_json_error('Erreur fatale: ' . $t->getMessage());
+        } finally {
+            // Restaurer le gestionnaire d'erreur original
+            if (isset($original_error_handler)) {
+                set_error_handler($original_error_handler);
+            }
         }
     }
 
