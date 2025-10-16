@@ -132,8 +132,12 @@ export const useDragAndDrop = ({
       // Log pour le séparateur pendant le mouvement
       const { elementType } = currentDragData.current;
       const isSeparator = elementType === 'divider';
+      const isLine = elementType === 'line';
       if (isSeparator) {
         console.log(`[SEPARATOR LOG] Mouvement - Position calculée: x=${newX}, y=${newY}, delta: x=${deltaX}, y=${deltaY}`);
+      }
+      if (isLine) {
+        console.log(`[LINE LOG] Mouvement - Position calculée: x=${newX}, y=${newY}, delta: x=${deltaX}, y=${deltaY}, startX: ${startX}, mouseX: ${mouseX}`);
       }
 
       const newOffset = { x: newX - elementRect.left, y: newY - elementRect.top };
@@ -164,11 +168,18 @@ export const useDragAndDrop = ({
 
         // Log pour le séparateur lors du drop
         const isSeparator = elementType === 'divider';
+        const isLine = elementType === 'line';
         if (isSeparator) {
           console.log(`[SEPARATOR LOG] Drop - Position initiale stockée: x=${elementStartPos.current.x}, y=${elementStartPos.current.y}`);
           console.log(`[SEPARATOR LOG] Drop - Offset appliqué: x=${currentDragOffset.current.x}, y=${currentDragOffset.current.y}`);
           console.log(`[SEPARATOR LOG] Drop - Position finale calculée: x=${finalX}, y=${finalY}`);
           console.log(`[SEPARATOR LOG] Drop - Appel onElementDrop avec élément: ${elementId}`);
+        }
+        if (isLine) {
+          console.log(`[LINE LOG] Drop - Position initiale stockée: x=${elementStartPos.current.x}, y=${elementStartPos.current.y}`);
+          console.log(`[LINE LOG] Drop - Offset appliqué: x=${currentDragOffset.current.x}, y=${currentDragOffset.current.y}`);
+          console.log(`[LINE LOG] Drop - Position finale calculée: x=${finalX}, y=${finalY}`);
+          console.log(`[LINE LOG] Drop - Appel onElementDrop avec élément: ${elementId}`);
         }
 
         onElementDrop(elementId, { x: finalX, y: finalY });
