@@ -87,58 +87,74 @@ export const useResize = ({
 
       let newRect = { ...originalRect.current };
 
-      // Pour les dividers et lignes, empêcher la modification de la hauteur
-      const isFixedHeight = elementType === 'divider' || elementType === 'line';
+      // Pour les dividers et lignes, empêcher la modification de la hauteur et de la largeur
+      const isFixedSize = elementType === 'divider' || elementType === 'line';
 
       switch (handle) {
         case 'nw':
-          newRect.x = snapValue(originalRect.current.x + deltaX, false);
-          newRect.y = snapValue(originalRect.current.y + deltaY, true);
-          newRect.width = snapValue(originalRect.current.width - deltaX, false);
-          if (!isFixedHeight) {
+          if (!isFixedSize) {
+            newRect.x = snapValue(originalRect.current.x + deltaX, false);
+            newRect.y = snapValue(originalRect.current.y + deltaY, true);
+            newRect.width = snapValue(originalRect.current.width - deltaX, false);
             newRect.height = snapValue(originalRect.current.height - deltaY, true);
+          } else {
+            newRect.y = snapValue(originalRect.current.y + deltaY, true);
           }
           break;
 
         case 'ne':
-          newRect.y = snapValue(originalRect.current.y + deltaY, true);
-          newRect.width = snapValue(originalRect.current.width + deltaX, false);
-          if (!isFixedHeight) {
+          if (!isFixedSize) {
+            newRect.y = snapValue(originalRect.current.y + deltaY, true);
+            newRect.width = snapValue(originalRect.current.width + deltaX, false);
             newRect.height = snapValue(originalRect.current.height - deltaY, true);
+          } else {
+            newRect.y = snapValue(originalRect.current.y + deltaY, true);
           }
           break;
 
         case 'sw':
-          newRect.x = snapValue(originalRect.current.x + deltaX, false);
-          newRect.width = snapValue(originalRect.current.width - deltaX, false);
-          if (!isFixedHeight) {
+          if (!isFixedSize) {
+            newRect.x = snapValue(originalRect.current.x + deltaX, false);
+            newRect.width = snapValue(originalRect.current.width - deltaX, false);
             newRect.height = snapValue(originalRect.current.height + deltaY, true);
+          } else {
+            newRect.y = snapValue(originalRect.current.y + deltaY, true);
           }
           break;
 
         case 'se':
-          newRect.width = snapValue(originalRect.current.width + deltaX, false);
-          if (!isFixedHeight) {
+          if (!isFixedSize) {
+            newRect.width = snapValue(originalRect.current.width + deltaX, false);
             newRect.height = snapValue(originalRect.current.height + deltaY, true);
           }
           break;
 
         case 'n':
-          newRect.y = snapValue(originalRect.current.y + deltaY, true);
-          newRect.height = snapValue(originalRect.current.height - deltaY, true);
+          if (!isFixedSize) {
+            newRect.y = snapValue(originalRect.current.y + deltaY, true);
+            newRect.height = snapValue(originalRect.current.height - deltaY, true);
+          } else {
+            newRect.y = snapValue(originalRect.current.y + deltaY, true);
+          }
           break;
 
         case 's':
-          newRect.height = snapValue(originalRect.current.height + deltaY, true);
+          if (!isFixedSize) {
+            newRect.height = snapValue(originalRect.current.height + deltaY, true);
+          }
           break;
 
         case 'w':
-          newRect.x = snapValue(originalRect.current.x + deltaX, false);
-          newRect.width = snapValue(originalRect.current.width - deltaX, false);
+          if (!isFixedSize) {
+            newRect.x = snapValue(originalRect.current.x + deltaX, false);
+            newRect.width = snapValue(originalRect.current.width - deltaX, false);
+          }
           break;
 
         case 'e':
-          newRect.width = snapValue(originalRect.current.width + deltaX, false);
+          if (!isFixedSize) {
+            newRect.width = snapValue(originalRect.current.width + deltaX, false);
+          }
           break;
 
         default:

@@ -2086,7 +2086,7 @@ export const CanvasElement = ({
         )}
 
         {/* Poignées de redimensionnement - rendues à l'intérieur de l'élément pour un positionnement correct */}
-        {isSelected && (
+        {isSelected && element.type !== 'divider' && element.type !== 'line' && (
           <>
             {/* Coins */}
             <div
