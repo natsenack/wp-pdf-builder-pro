@@ -8,8 +8,6 @@ if (!defined('ABSPATH')) {
  * React/TypeScript Canvas Editor
  */
 
-// error_log("PDF Builder Debug: Début de template-editor.php");
-
 // Permissions are checked by WordPress via add_submenu_page capability parameter
 // Additional check for logged-in users as fallback
 if (!defined('PDF_BUILDER_DEBUG_MODE') || !PDF_BUILDER_DEBUG_MODE) {
@@ -81,8 +79,6 @@ wp_localize_script('pdf-builder-admin-v3', 'pdfBuilderCanvasSettings', [
 // Styles pour l'éditeur canvas
 wp_enqueue_style('pdf-builder-canvas-editor', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-canvas.css', [], PDF_BUILDER_PRO_VERSION);
 
-// error_log("PDF Builder Debug: Scripts enqueued in template-editor.php");
-
 // Forcer l'impression des scripts enqueued (au cas où wp_head n'ait pas encore été appelé)
 add_action('wp_print_scripts', function() {
     wp_print_scripts(['pdf-builder-admin-v3', 'pdf-builder-nonce-fix-v2', 'toastr']);
@@ -141,41 +137,10 @@ if (!$is_new && $template_id > 0) {
             if (json_last_error() === JSON_ERROR_NONE && is_array($decoded_data)) {
                 $template_data = $decoded_data;
 
-                // LOG SPÉCIFIQUE POUR TEMPLATE 1 - COMMENTÉ
-                // if ($template_id == 1) {
-                //     error_log("TEMPLATE 1 - JSON decode successful");
-                //     error_log("TEMPLATE 1 - Decoded data keys: " . implode(', ', array_keys($decoded_data)));
-                //     error_log("TEMPLATE 1 - Has elements key: " . (isset($decoded_data['elements']) ? 'YES' : 'NO'));
-                //     if (isset($decoded_data['elements'])) {
-                //         error_log("TEMPLATE 1 - Elements count: " . count($decoded_data['elements']));
-                //         if (count($decoded_data['elements']) > 0) {
-                //             error_log("TEMPLATE 1 - First element: " . json_encode($decoded_data['elements'][0]));
-                //         }
-                //     }
-                // }
-
-                // DEBUG: Log des données décodées
-                // error_log("PDF Builder LOAD - Decoded data keys: " . implode(', ', array_keys($decoded_data)));
-                // error_log("PDF Builder LOAD - Elements count in decoded data: " . (isset($decoded_data['elements']) ? count($decoded_data['elements']) : 'NO ELEMENTS KEY'));
-
                 // Extraire les éléments initiaux depuis la structure du template
                 // Structure actuelle : { elements: [...], canvasWidth, canvasHeight, version }
                 if (isset($decoded_data['elements']) && is_array($decoded_data['elements'])) {
                     $initial_elements = $decoded_data['elements'];
-                    // error_log("PDF Builder LOAD - Elements loaded from elements: " . count($initial_elements));
-
-                    // DEBUG: Log des propriétés des éléments
-                    foreach ($initial_elements as $index => $element) {
-                        if (is_array($element)) {
-                            // error_log("PDF Builder LOAD - Element $index properties: " . implode(', ', array_keys($element)));
-                            // if (isset($element['type'])) {
-                            //     error_log("PDF Builder LOAD - Element $index type: " . $element['type']);
-                            // }
-                            // if (isset($element['backgroundColor'])) {
-                            //     error_log("PDF Builder LOAD - Element $index backgroundColor: " . $element['backgroundColor']);
-                            // }
-                        }
-                    }
                 } elseif (isset($decoded_data['pages']) && is_array($decoded_data['pages']) && !empty($decoded_data['pages'])) {
                     // Fallback pour l'ancienne structure (si elle existe)
                     $first_page = $decoded_data['pages'][0];

@@ -82,7 +82,6 @@ export class ElementCustomizationService {
       try {
         return validator(value);
       } catch (error) {
-        console.warn(`Erreur lors de la validation de ${property}:`, error);
         return this.getDefaultValue(property);
       }
     }

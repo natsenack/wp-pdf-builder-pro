@@ -116,7 +116,6 @@ function pdf_builder_handle_pdf_downloads() {
                         }
                     } catch (Exception $e) {
                         // Gérer l'erreur silencieusement
-                        error_log('PDF Builder Pro Error: ' . $e->getMessage());
                     }
                 }
             }

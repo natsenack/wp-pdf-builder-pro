@@ -1604,13 +1604,6 @@ const PreviewModal = ({
         throw new Error('Réponse invalide du serveur (pas du JSON)');
       });
 
-
-      // 🚨🚨🚨 AFFICHAGE DES LOGS DE DEBUG SERVEUR 🚨🚨🚨
-      if (data.data && data.data.debug_logs) {
-        data.data.debug_logs.forEach((log, index) => {
-        });
-      }
-
       if (!data.success) {
         let errorMessage = 'Erreur inconnue lors de la génération du PDF';
         if (typeof data.data === 'string') {

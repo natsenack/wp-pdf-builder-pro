@@ -265,13 +265,6 @@ class PDF_Builder_Pro_Generator {
         $page_height_mm = 297; // A4 hauteur
 
         $px_to_mm = $page_width_mm / $canvas_width_px; // 0.3529 mm/px
-        error_log('PDF Builder Pro: Debut rendu elements, facteur conversion: ' . $px_to_mm);
-
-        // 🚨 LOG DEBUG ULTRA-VISIBLE - AJOUTER AU DEBUG LOGS SI DISPONIBLE
-        if (isset($GLOBALS['pdf_debug_logs'])) {
-            $GLOBALS['pdf_debug_logs'][] = "🎨 DÉBUT RENDU ÉLÉMENTS - " . count($elements) . " ÉLÉMENTS";
-            $GLOBALS['pdf_debug_logs'][] = "📏 FACTEUR CONVERSION PX->MM: " . $px_to_mm . " (Canvas: {$canvas_width_px}×{$canvas_height_px}px → PDF: {$page_width_mm}×{$page_height_mm}mm)";
-        }
 
         // ⚠️ IMPORTANT: Préserver l'ordre des éléments tel que défini dans le canvas
         // Ne pas trier par position Y car cela casse l'ordre d'empilement (z-index)
@@ -280,38 +273,17 @@ class PDF_Builder_Pro_Generator {
         foreach ($elements as $element) {
             try {
                 $element_type = isset($element['type']) ? $element['type'] : 'unknown';
-                error_log('PDF Builder Pro: Rendu element type: ' . $element_type);
-
-                if (isset($GLOBALS['pdf_debug_logs'])) {
-                    $element_content = isset($element['content']) ? substr($element['content'], 0, 30) : (isset($element['text']) ? substr($element['text'], 0, 30) : 'empty');
-                    $element_pos = isset($element['x']) && isset($element['y']) ? '(' . $element['x'] . ',' . $element['y'] . ')' : '(0,0)';
-                    $GLOBALS['pdf_debug_logs'][] = "🔧 RENDU ÉLÉMENT: $element_type - POS: $element_pos - CONTENT: $element_content";
-                }
 
                 $this->render_single_element($element, $px_to_mm);
-                error_log('PDF Builder Pro: Element rendu avec succes');
-
-                if (isset($GLOBALS['pdf_debug_logs'])) {
-                    $GLOBALS['pdf_debug_logs'][] = "✅ ÉLÉMENT RENDU AVEC SUCCÈS";
-                }
 
             } catch (Exception $e) {
                 $element_id = isset($element['id']) ? $element['id'] : 'unknown';
                 $this->log_error("Erreur rendu element " . $element_id . ": " . $e->getMessage());
-
-                if (isset($GLOBALS['pdf_debug_logs'])) {
-                    $GLOBALS['pdf_debug_logs'][] = "❌ ERREUR RENDU ÉLÉMENT: " . $e->getMessage();
-                }
                 // Continuer avec les autres elements
             }
         }
 
         $this->performance_metrics['elements_rendered'] = microtime(true);
-        error_log('PDF Builder Pro: Rendu elements termine');
-
-        if (isset($GLOBALS['pdf_debug_logs'])) {
-            $GLOBALS['pdf_debug_logs'][] = "🏁 RENDU ÉLÉMENTS TERMINÉ";
-        }
     }
 
     /**
@@ -320,7 +292,7 @@ class PDF_Builder_Pro_Generator {
     private function render_single_element($element, $px_to_mm) {
         $type = isset($element['type']) ? $element['type'] : 'unknown';
 
-        // LOG DEBUG DES POSITIONS - AJOUTER AU DEBUG LOGS
+        // Calcul des coordonnées PDF
         $element_x = isset($element['x']) ? $element['x'] : 0;
         $element_y = isset($element['y']) ? $element['y'] : 0;
         $element_width = isset($element['width']) ? $element['width'] : 0;
@@ -330,13 +302,6 @@ class PDF_Builder_Pro_Generator {
         $pdf_y = $element_y * $px_to_mm;
         $pdf_width = $element_width * $px_to_mm;
         $pdf_height = $element_height * $px_to_mm;
-
-        error_log("PDF Builder Pro: Element $type - Canvas coords: ($element_x, $element_y, {$element_width}x{$element_height}) - PDF coords: ($pdf_x, $pdf_y, {$pdf_width}x{$pdf_height}) mm");
-
-        if (isset($GLOBALS['pdf_debug_logs'])) {
-            $GLOBALS['pdf_debug_logs'][] = "📍 ÉLÉMENT $type - CANVAS: x={$element_x}px, y={$element_y}px, w={$element_width}px, h={$element_height}px";
-            $GLOBALS['pdf_debug_logs'][] = "📍 ÉLÉMENT $type - PDF: x={$pdf_x}mm, y={$pdf_y}mm, w={$pdf_width}mm, h={$pdf_height}mm";
-        }
 
         // Validation de base de l'élément
         if (!$this->validate_element($element)) {
@@ -401,9 +366,6 @@ class PDF_Builder_Pro_Generator {
                     // Élément non supporté - rendu de fallback
                     $this->render_fallback_element($element, $px_to_mm, $type);
                     $this->log_error("Type d'element non supporte: $type");
-                    if (isset($GLOBALS['pdf_debug_logs'])) {
-                        $GLOBALS['pdf_debug_logs'][] = "❌ TYPE D'ÉLÉMENT NON SUPPORTÉ: $type";
-                    }
             }
         } catch (Exception $e) {
             $this->log_error("Erreur rendu element $type: " . $e->getMessage());
@@ -2590,28 +2552,16 @@ function pdf_builder_generate_pdf() {
     ob_start();
 
     try {
-        // 🚨🚨🚨 LOGS DE DEBUG ULTRA-VISIBLES - DÉBUT 🚨🚨🚨
-        $debug_logs = [];
-        $debug_logs[] = "🚨 DÉBUT GÉNÉRATION PDF - TIMESTAMP: " . date('Y-m-d H:i:s');
-        $debug_logs[] = "🚨 VERSION DEBUG: 5.0 - LOGS ULTRA-VISIBLES";
-
-        // Initialiser la variable globale pour les logs de rendu
-        $GLOBALS['pdf_debug_logs'] = &$debug_logs;
-
-        // Log du nonce recu pour debogage
-        $received_nonce = $_POST['nonce'] ?? '';
-        $debug_logs[] = "🔑 NONCE REÇU: " . $received_nonce;
-        error_log('PDF Builder Pro: Nonce recu: ' . $received_nonce);
-
         // Verifier la securite
-        if (!wp_verify_nonce($received_nonce, 'pdf_builder_nonce')) {
-            $debug_logs[] = "❌ ÉCHEC VÉRIFICATION NONCE";
-            error_log('PDF Builder Pro: echec verification nonce');
-            // Pour le debogage, accepter temporairement
-            $debug_logs[] = "⚠️ NONCE INVALIDE MAIS ACCEPTATION TEMPORAIRE POUR DEBUG";
-            error_log('PDF Builder Pro: Nonce invalide mais acceptation temporaire pour debogage');
-        } else {
-            $debug_logs[] = "✅ NONCE VALIDE";
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_nonce')) {
+            ob_end_clean();
+            wp_send_json_error(array(
+                'message' => 'Sécurité: Nonce invalide',
+                'debug_logs' => [],
+                'elements_count' => 0,
+                'pdf_size' => 0
+            ));
+            return;
         }
 
         // Récupérer et valider les éléments avec la nouvelle validation robuste
@@ -2623,98 +2573,49 @@ function pdf_builder_generate_pdf() {
 
         // Gérer les erreurs de validation JSON
         if (is_wp_error($elements)) {
-            $debug_logs[] = "❌ ERREUR VALIDATION JSON: " . $elements->get_error_message();
-            error_log('PDF Builder Pro: Erreur validation JSON: ' . $elements->get_error_message());
             ob_end_clean();
             wp_send_json_error(array(
                 'message' => 'Erreur de validation des données: ' . $elements->get_error_message(),
-                'debug_logs' => $debug_logs,
+                'debug_logs' => [],
                 'elements_count' => 0,
                 'pdf_size' => 0
             ));
             return;
         }
 
-        $debug_logs[] = "📊 " . count($elements) . " ÉLÉMENTS VALIDÉS ET NETTOYÉS";
-        error_log('PDF Builder Pro: ' . count($elements) . ' elements validés et nettoyés');
-
-        // Valider et logger chaque element
-        $debug_logs[] = "🔍 DÉTAIL DES ÉLÉMENTS REÇUS:";
-        foreach ($elements as $index => $element) {
-            $element_info = "📋 ÉLÉMENT $index: " .
-                "TYPE=" . (isset($element['type']) ? $element['type'] : 'unknown') . " | " .
-                "CONTENT=" . substr((isset($element['content']) ? $element['content'] : (isset($element['text']) ? $element['text'] : 'empty')), 0, 50) . " | " .
-                "POS=(" . (isset($element['x']) ? $element['x'] : 0) . "," . (isset($element['y']) ? $element['y'] : 0) . ") | " .
-                "SIZE=(" . (isset($element['width']) ? $element['width'] : 0) . "," . (isset($element['height']) ? $element['height'] : 0) . ")";
-            $debug_logs[] = $element_info;
-
-            error_log("PDF Builder Pro: Element $index - Type: " . (isset($element['type']) ? $element['type'] : 'unknown'));
-            error_log("PDF Builder Pro: Element $index - Content: " . (isset($element['content']) ? $element['content'] : (isset($element['text']) ? $element['text'] : 'empty')));
-            error_log("PDF Builder Pro: Element $index - Position: x=" . (isset($element['x']) ? $element['x'] : 0) . ", y=" . (isset($element['y']) ? $element['y'] : 0));
-            error_log("PDF Builder Pro: Element $index - Dimensions: w=" . (isset($element['width']) ? $element['width'] : 0) . ", h=" . (isset($element['height']) ? $element['height'] : 0));
-        }
-
-        $debug_logs[] = "🏭 DÉMARRAGE GÉNÉRATION PDF AVEC PDF_Builder_Pro_Generator";
         // Generer le PDF avec le nouveau generateur
         $generator = new PDF_Builder_Pro_Generator();
         $pdf_content = $generator->generate($elements);
 
-        $debug_logs[] = "📄 PDF CONTENT GÉNÉRÉ - TAILLE: " . strlen($pdf_content) . " OCTETS";
-
-        // Fusionner les logs de rendu depuis la variable globale
-        if (isset($GLOBALS['pdf_debug_logs'])) {
-            $debug_logs = array_merge($debug_logs, $GLOBALS['pdf_debug_logs']);
-            unset($GLOBALS['pdf_debug_logs']);
-        }
-
         if (empty($pdf_content)) {
-            $debug_logs[] = "❌ CONTENU PDF VIDE - PROBLÈME DE GÉNÉRATION";
-            error_log('PDF Builder Pro: Contenu PDF vide');
             ob_end_clean();
             wp_send_json_error(array(
                 'message' => 'Erreur lors de la generation du PDF',
-                'debug_logs' => $debug_logs,
+                'debug_logs' => [],
                 'elements_count' => count($elements),
                 'pdf_size' => 0
             ));
             return;
         }
 
-        $debug_logs[] = "✅ PDF GÉNÉRÉ AVEC SUCCÈS";
-        error_log('PDF Builder Pro: PDF genere avec succes, taille: ' . strlen($pdf_content) . ' octets');
-
-        // Collecter tous les logs de debug
-        if (function_exists('error_log')) {
-            // Récupérer les dernières lignes de logs si possible
-            $debug_logs[] = 'Génération PDF démarrée';
-            $debug_logs[] = count($elements) . ' éléments reçus';
-            foreach ($elements as $index => $element) {
-                $debug_logs[] = "Élément $index: " . ($element['type'] ?? 'unknown') . ' - ' . ($element['content'] ?? $element['text'] ?? 'empty');
-            }
-        }
-
-        $debug_logs[] = "🎉 FIN GÉNÉRATION PDF - PRÊT POUR ENVOI AU FRONTEND";
-
         // Vider le buffer avant d'envoyer la reponse
         ob_end_clean();
 
-        // Retourner le PDF en base64 avec les logs de debug
+        // Retourner le PDF en base64
         wp_send_json_success(array(
             'pdf' => base64_encode($pdf_content),
             'filename' => 'pdf-builder-pro-document.pdf',
             'performance' => $generator->get_performance_metrics(),
             'errors' => $generator->get_errors(),
-            'debug_logs' => $debug_logs,
+            'debug_logs' => [],
             'elements_count' => count($elements),
             'pdf_size' => strlen($pdf_content)
         ));
 
     } catch (Exception $e) {
-        error_log('Erreur generation PDF: ' . $e->getMessage());
         ob_end_clean();
         wp_send_json_error('Erreur lors de la generation du PDF: ' . $e->getMessage());
     } catch (Throwable $t) {
-        error_log('Erreur fatale generation PDF: ' . $t->getMessage());
         ob_end_clean();
         wp_send_json_error('Erreur fatale lors de la generation du PDF');
     }

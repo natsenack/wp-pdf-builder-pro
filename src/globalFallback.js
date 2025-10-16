@@ -3,7 +3,6 @@ if (typeof window !== 'undefined') {
   // Fallback for handleShowGridChange
   if (typeof window.handleShowGridChange === 'undefined') {
     window.handleShowGridChange = function() {
-      console.log('handleShowGridChange fallback triggered');
       // TODO: Implement grid show/hide logic
     };
   }
@@ -11,7 +10,6 @@ if (typeof window !== 'undefined') {
   // Fallback for handleSnapToGridChange
   if (typeof window.handleSnapToGridChange === 'undefined') {
     window.handleSnapToGridChange = function() {
-      console.log('handleSnapToGridChange fallback triggered');
       // TODO: Implement snap to grid toggle logic
     };
   }

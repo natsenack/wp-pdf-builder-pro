@@ -205,7 +205,6 @@ export const useCanvasState = ({
           historyRef.current.addToHistory({ elements, nextId });
         }
       } catch (error) {
-        console.warn('Erreur lors de la sauvegarde dans l\'historique:', error);
         // Continuer l'exécution malgré l'erreur d'historique
       }
     }
@@ -214,13 +213,11 @@ export const useCanvasState = ({
   // Validation des données d'entrée (initialElements)
   const validateInitialElements = useCallback((elements) => {
     if (!Array.isArray(elements)) {
-      console.warn('initialElements doit être un tableau, reçu:', typeof elements);
       return [];
     }
 
     return elements.map(element => {
       if (!element.id || !element.type) {
-        console.warn('Élément invalide détecté, propriétés manquantes:', element);
         return null;
       }
       return element;
