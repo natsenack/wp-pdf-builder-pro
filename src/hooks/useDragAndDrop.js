@@ -136,9 +136,6 @@ export const useDragAndDrop = ({
       }
 
       setIsDragging(false);
-      setDragOffset({ x: 0, y: 0 });
-      setDraggedElementId(null);
-      elementStartPos.current = { x: 0, y: 0 };
 
       if (onElementDrop) {
         // Calculer la position finale en utilisant les coordonnées initiales de l'élément + le déplacement
@@ -146,6 +143,10 @@ export const useDragAndDrop = ({
         const finalY = elementStartPos.current.y + dragOffset.y;
         onElementDrop(elementId, { x: finalX, y: finalY });
       }
+
+      setDragOffset({ x: 0, y: 0 });
+      setDraggedElementId(null);
+      elementStartPos.current = { x: 0, y: 0 };
 
       // Nettoyer les event listeners
       document.removeEventListener('mousemove', handleMouseMove);
