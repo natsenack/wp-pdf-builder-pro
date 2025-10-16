@@ -1,4 +1,0 @@
-open ftp://votre_utilisateur:votre_mot_de_passe@ftp.votreserveur.com
-option transfer binary
-synchronize remote /chemin/vers/le/dossier/remote g:\wp-pdf-builder-pro\
-exit
