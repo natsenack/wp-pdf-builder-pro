@@ -520,3 +520,350 @@ body.pdf-builder-active .pdf-canvas-editor {
   text-overflow: ellipsis;
   max-width: 60px;
 }
+
+/* ===== AUTRES CLASSES MANQUANTES ===== */
+
+/* Bouton toggle sidebar */
+.sidebar-toggle-fixed {
+  position: fixed;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  z-index: 1000;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  transition: all 0.2s ease;
+}
+
+.sidebar-toggle-fixed:hover {
+  background: #1d4ed8;
+  transform: translateY(-50%) scale(1.05);
+}
+
+/* Status de l'éditeur */
+.editor-status {
+  padding: 8px 16px;
+  background: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+  font-size: 0.875rem;
+  color: #6c757d;
+  text-align: center;
+}
+
+/* Modal overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Modal content */
+.modal-content {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Modal header */
+.modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #e9ecef;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+/* Context menu */
+.context-menu {
+  position: absolute;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  min-width: 160px;
+  padding: 4px 0;
+}
+
+.context-menu-item {
+  display: block;
+  width: 100%;
+  padding: 8px 16px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: #374151;
+  transition: background-color 0.15s ease;
+}
+
+.context-menu-item:hover {
+  background: #f3f4f6;
+}
+
+.context-menu-item:focus {
+  outline: none;
+  background: #f3f4f6;
+}
+
+/* Canvas wrapper */
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* ===== STYLES POUR LE PANNEAU DE PROPRIÉTÉS ===== */
+
+/* Groupe de propriétés */
+.properties-group {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: #fafbfc;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+}
+
+.properties-group h3 {
+  margin: 0 0 16px 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+/* Ligne de propriété */
+.property-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.property-row label {
+  min-width: 80px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+/* Container du slider */
+.slider-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.slider {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: #e5e7eb;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #2563eb;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #2563eb;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.slider-value {
+  min-width: 40px;
+  font-size: 0.875rem;
+  color: #6b7280;
+  text-align: right;
+}
+
+/* Color picker */
+.color-picker-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.color-input {
+  width: 40px;
+  height: 32px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  cursor: pointer;
+  background: none;
+}
+
+.color-presets {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.color-preset {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: 2px solid #e5e7eb;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.color-preset:hover {
+  transform: scale(1.1);
+  border-color: #9ca3af;
+}
+
+.color-preset.active {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+.color-preset.transparent {
+  background: url("data:image/svg+xml,%3csvg width='24' height='24' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M0 0h24v24H0z' fill='none'/%3e%3cpath d='M2 2h20v20H2z' fill='%23f3f4f6'/%3e%3cpath d='M2 2l20 20' stroke='%239ca3af' stroke-width='2'/%3e%3c/svg%3e") center center no-repeat;
+  background-size: 16px 16px;
+}
+
+/* ===== STYLES POUR LES ÉLÉMENTS SÉLECTIONNÉS ===== */
+
+/* Élément canvas sélectionné */
+.canvas-element.selected {
+  position: relative;
+}
+
+.canvas-element.selected::before,
+.canvas-element.selected::after {
+  content: '';
+  position: absolute;
+  background: #2563eb;
+  z-index: 10;
+}
+
+.canvas-element.selected::before {
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  height: 2px;
+}
+
+.canvas-element.selected::after {
+  top: -2px;
+  left: -2px;
+  bottom: -2px;
+  width: 2px;
+}
+
+/* Zones de redimensionnement pour éléments sélectionnés */
+.resize-zone {
+  position: absolute;
+  background: rgba(37, 99, 235, 0.1);
+  border: 1px solid #2563eb;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.canvas-element.selected .resize-zone-n {
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 8px;
+  cursor: n-resize;
+  opacity: 1;
+}
+
+.canvas-element.selected .resize-zone-s {
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 8px;
+  cursor: s-resize;
+  opacity: 1;
+}
+
+.canvas-element.selected .resize-zone-w {
+  top: 50%;
+  left: -4px;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 20px;
+  cursor: w-resize;
+  opacity: 1;
+}
+
+.canvas-element.selected .resize-zone-e {
+  top: 50%;
+  right: -4px;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 20px;
+  cursor: e-resize;
+  opacity: 1;
+}
+
+/* Poignée de rotation */
+.rotation-handle {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 12px;
+  background: #2563eb;
+  border: 2px solid white;
+  border-radius: 50%;
+  cursor: alias;
+  z-index: 15;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.canvas-element.selected .rotation-handle {
+  opacity: 1;
+}
