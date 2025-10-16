@@ -28,6 +28,15 @@ wp_enqueue_script('toastr', PDF_BUILDER_PRO_ASSETS_URL . 'js/toastr/toastr.min.j
 wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'wp-api'], '8.0.0_force_' . microtime(true), true);
 wp_enqueue_script('pdf-builder-nonce-fix-v2', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js', ['jquery'], '4.0.0_force_reload_' . time(), true);
 
+// Ajouter un script inline pour s'assurer que React est disponible globalement
+wp_add_inline_script('pdf-builder-admin-v3', '
+    if (typeof window.React === "undefined") {
+        console.error("React n\'est pas disponible globalement");
+    } else {
+        console.log("React disponible globalement:", typeof window.React, typeof window.React.useMemo);
+    }
+');
+
 // Variables JavaScript pour AJAX
 wp_localize_script('pdf-builder-admin-v3', 'pdfBuilderAjax', [
     'ajaxurl' => admin_url('admin-ajax.php'),
