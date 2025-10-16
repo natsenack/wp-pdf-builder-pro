@@ -23,7 +23,7 @@ if (typeof window !== 'undefined' && typeof window.toastr === 'undefined') {
       position: fixed;
       top: 20px;
       right: 20px;
-      z-index: 999999;
+      z-index: 100;
       padding: 15px 20px;
       margin-bottom: 10px;
       border-radius: 5px;

@@ -2143,7 +2143,7 @@ document.addEventListener('DOMContentLoaded', function() {
             padding: 12px 20px;
             border-radius: 4px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            z-index: 9999;
+            z-index: 100;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             font-size: 14px;
             opacity: 0;

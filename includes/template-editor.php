@@ -249,11 +249,11 @@ body.wp-admin .pdf-builder-container {
 }
 
 body.wp-admin #wpadminbar {
-    z-index: 999 !important;
+    z-index: 1000 !important;
 }
 
 body.wp-admin .pdf-builder-container {
-    z-index: 1000 !important;
+    z-index: 10 !important;
 }
 </style>
 

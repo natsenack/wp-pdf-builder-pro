@@ -156,7 +156,7 @@ if (!defined('ABSPATH')) {
         </div>
 
         <!-- Modale des paramètres du template -->
-        <div id="template-settings-modal" class="template-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; align-items: center; justify-content: center;">
+        <div id="template-settings-modal" class="template-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 100; align-items: center; justify-content: center;">
             <div class="template-modal-content" style="background: #fff; border-radius: 8px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
                 <div class="template-modal-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid #dee2e6; padding-bottom: 15px;">
                     <h2 style="margin: 0; color: #23282d;">⚙️ Paramètres du Template</h2>
@@ -454,7 +454,7 @@ function showSuccessMessage(message) {
         padding: 12px 20px;
         border-radius: 4px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        z-index: 9999;
+        z-index: 100;
         font-weight: bold;
         max-width: 400px;
     `;
@@ -488,7 +488,7 @@ function showErrorMessage(message) {
         padding: 12px 20px;
         border-radius: 4px;
         box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        z-index: 9999;
+        z-index: 100;
         font-weight: bold;
         max-width: 400px;
     `;
