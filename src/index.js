@@ -6,22 +6,23 @@ import './styles/editor.css';
 // Forcer l'inclusion de tous les hooks personnalisés
 import /* webpackMode: "eager" */ * as hooks from './hooks';
 
-// DEBUG: Vérifier que le script se charge
-console.log('🚀🚀 PDF BUILDER PRO SCRIPT LOADED 🚀🚀');
-console.log('Script URL check:', document.currentScript ? document.currentScript.src : 'No currentScript');
+try {
+    // DEBUG: Vérifier que le script se charge
+    console.log('🚀🚀 PDF BUILDER PRO SCRIPT LOADED 🚀🚀');
+    console.log('Script URL check:', document.currentScript ? document.currentScript.src : 'No currentScript');
 
-// Classe principale pour l'éditeur PDF
-class PDFBuilderPro {
-  constructor() {
-    console.log('📦 PDFBuilderPro constructor called');
-    this.version = '2.0.0';
-    this.editors = new Map();
-    
-    // Forcer l'inclusion des hooks (ne pas supprimer cette ligne)
-    this._hooks = hooks;
-    console.log('Hooks loaded:', Object.keys(hooks));
-    
-    // Références explicites pour forcer l'inclusion
+    // Classe principale pour l'éditeur PDF
+    class PDFBuilderPro {
+        constructor() {
+            console.log('📦 PDFBuilderPro constructor called');
+            this.version = '2.0.0';
+            this.editors = new Map();
+
+            // Forcer l'inclusion des hooks (ne pas supprimer cette ligne)
+            this._hooks = hooks;
+            console.log('Hooks loaded:', Object.keys(hooks));
+
+            // Références explicites pour forcer l'inclusion
     this._forceInclude = {
       useHistory: hooks.useHistory,
       useRotation: hooks.useRotation,
@@ -95,6 +96,20 @@ if (typeof window !== 'undefined') {
   window.pdfBuilderPro = pdfBuilderPro;
   console.log('✅ PDFBuilderPro attached to window:', window.PDFBuilderPro);
   console.log('✅ PDFBuilderPro.init available:', typeof window.PDFBuilderPro.init);
+}
+
+} catch (error) {
+    console.error('❌ CRITICAL ERROR in PDF Builder Pro script:', error);
+    console.error('Stack trace:', error.stack);
+    // Tenter de définir quand même une version basique
+    window.PDFBuilderPro = {
+        init: function() {
+            console.error('PDFBuilderPro.init called but script failed to load properly');
+            return null;
+        },
+        version: 'error'
+    };
+    window.pdfBuilderPro = window.PDFBuilderPro;
 }
 
 // Export pour les modules ES6
