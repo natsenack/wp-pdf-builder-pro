@@ -60,7 +60,7 @@ wp_add_inline_script('pdf-builder-admin-v3', '
             'confirm_duplicate' => __('Dupliquer ce template ?', 'pdf-builder-pro'),
         ]
     ]) . ';
-    console.log("PDF Builder: Variables AJAX définies globalement:", window.pdfBuilderAjax);
+    // console.log("PDF Builder: Variables AJAX définies globalement:", window.pdfBuilderAjax);
 ', 'before');
 
 // Paramètres du canvas
@@ -85,7 +85,7 @@ wp_enqueue_style('pdf-builder-canvas-editor', PDF_BUILDER_PRO_ASSETS_URL . 'css/
 // Forcer l'impression des scripts enqueued (au cas où wp_head n'ait pas encore été appelé)
 add_action('wp_print_scripts', function() {
     wp_print_scripts(['pdf-builder-admin-v3', 'pdf-builder-nonce-fix-v2', 'toastr']);
-    wp_print_styles(['pdf-builder-admin', 'toastr', 'pdf-builder-canvas-editor']);
+    wp_print_styles(['pdf-builder-admin', 'pdf-builder-react', 'woocommerce-elements', 'toastr', 'pdf-builder-canvas-editor']);
 }, 100);
 
 // Get template ID from URL
@@ -199,52 +199,98 @@ if (!$is_new && $template_id > 0) {
 ?>
 <div class="wrap">
     
-    <div id="invoice-quote-builder-container" data-is-new="<?php echo $is_new ? 'true' : 'false'; ?>" style="padding: 20px; background: #ffffff; border-radius: 8px; margin: 10px 0;">
-        <!-- React App will be mounted here -->
-        <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: #ffffff; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-            <div style="text-align: center;">
-                <div style="font-size: 3rem; margin-bottom: 1rem;">📄</div>
+    <div id="invoice-quote-builder-container" data-is-new="<?php echo $is_new ? 'true' : 'false'; ?>" class="pdf-builder-container">
+        <!-- Loading state -->
+        <div class="pdf-builder-loading">
+            <div>
+                <div class="icon">📄</div>
                 <h2><?php echo $is_new ? __('Créer un nouveau template', 'pdf-builder-pro') : __('Éditer le template', 'pdf-builder-pro'); ?></h2>
                 <p><?php _e('Chargement de l\'éditeur React/TypeScript avancé...', 'pdf-builder-pro'); ?></p>
-                <div style="margin-top: 2rem;">
-                    <button id="flush-rest-cache-btn" style="background: #94a3b8; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-right: 10px;">
-                        🔄 Vider Cache REST
-                    </button>
-                    <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #007cba; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-                </div>
-                <div id="cache-status" style="margin-top: 1rem; font-size: 12px; color: #666;"></div>
+                <div class="spinner"></div>
             </div>
         </div>
+        <!-- React App will be mounted here -->
     </div>
 </div>
 
-<!-- SCRIPTS DE SECOURS - Chargement direct si wp_enqueue_script ne fonctionne pas -->
-<script>
-console.log('🔍 PDF Builder: Starting direct script loading...');
-console.log('Assets URL:', '<?php echo PDF_BUILDER_PRO_ASSETS_URL; ?>');
-</script>
-<script src="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/vendors.js?ver=' . time(); ?>" onerror="console.error('❌ Vendors script failed to load');"></script>
-<script src="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'js/toastr/toastr.min.js?ver=' . time(); ?>"></script>
-<script src="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js?ver=' . time(); ?>" onerror="console.error('❌ Main script failed to load');"></script>
-<script src="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js?ver=' . time(); ?>" onerror="console.error('❌ Nonce fix script failed to load');"></script>
-<script>
-if (typeof window.PDFBuilderPro === 'undefined') {
-    console.error('❌ PDFBuilderPro is undefined - script execution failed');
-}
-</script>
-<link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css?ver=' . time(); ?>" onerror="console.error('❌ pdf-builder-admin.css failed to load')" />
-<link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-canvas.css?ver=' . time(); ?>" onerror="console.error('❌ pdf-builder-canvas.css failed to load')" />
-<link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-react.css?ver=' . time(); ?>" onerror="console.error('❌ pdf-builder-react.css failed to load')" />
-<link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/woocommerce-elements.css?ver=' . time(); ?>" onerror="console.error('❌ woocommerce-elements.css failed to load')" />
-<link rel="stylesheet" href="<?php echo PDF_BUILDER_PRO_ASSETS_URL . 'css/toastr/toastr.min.css?ver=' . time(); ?>" onerror="console.error('❌ toastr.min.css failed to load')" />
-
 <style>
+/* Styles essentiels pour l'éditeur PDF */
+.pdf-builder-container {
+    min-height: calc(100vh - 200px);
+    background: #ffffff;
+    border-radius: 8px;
+    margin: 10px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.pdf-builder-container .pdf-canvas-editor {
+    width: 100%;
+    height: 100%;
+    min-height: 600px;
+}
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+/* Styles de chargement temporaires */
+.pdf-builder-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background: #ffffff;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.pdf-builder-loading > div {
+    text-align: center;
+}
+
+.pdf-builder-loading .icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.pdf-builder-loading h2 {
+    margin: 0 0 1rem 0;
+    color: #1e293b;
+}
+
+.pdf-builder-loading .spinner {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #007cba;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Assurer la priorité des styles CSS sur les styles inline */
+.pdf-builder-container[style] {
+    padding: 0 !important;
+}
+
+/* Styles pour éviter les conflits avec WordPress admin */
+body.wp-admin .pdf-builder-container {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+body.wp-admin #wpadminbar {
+    z-index: 999 !important;
+}
+
+body.wp-admin .pdf-builder-container {
+    z-index: 1000 !important;
+}
 </style>
 
+<!-- Initialisation JavaScript -->
 <script>
 (function() {
     'use strict';
@@ -254,14 +300,14 @@ if (typeof window.PDFBuilderPro === 'undefined') {
 
     const initApp = () => {
         if (isInitialized) {
-            console.log('PDF Builder already initialized, skipping...');
+            // console.log('PDF Builder already initialized, skipping...');
             return;
         }
 
-        console.log('Checking scripts loaded...', {
-            PDFBuilderPro: typeof window.PDFBuilderPro,
-            init: typeof window.PDFBuilderPro?.init
-        });
+        // console.log('Checking scripts loaded...', {
+        //     PDFBuilderPro: typeof window.PDFBuilderPro,
+        //     init: typeof window.PDFBuilderPro?.init
+        // });
 
         const pdfBuilderProExists = typeof window.PDFBuilderPro !== 'undefined';
         const initExists = typeof window.PDFBuilderPro?.init === 'function';
@@ -269,7 +315,7 @@ if (typeof window.PDFBuilderPro === 'undefined') {
         if (pdfBuilderProExists && initExists) {
             try {
                 isInitialized = true;
-                console.log('✅ Scripts loaded successfully, initializing canvas editor...');
+                // console.log('✅ Scripts loaded successfully, initializing canvas editor...');
 
                 // Définir les données globales pour le JavaScript
                 window.pdfBuilderData = {
@@ -280,7 +326,7 @@ if (typeof window.PDFBuilderPro === 'undefined') {
                     nonce: window.pdfBuilderAjax?.nonce || ''
                 };
 
-                console.log('📋 Initialisation via PDFBuilderPro.init()...');
+                // console.log('📋 Initialisation via PDFBuilderPro.init()...');
                 window.PDFBuilderPro.init('invoice-quote-builder-container', {
                     templateId: <?php echo $template_id ?: 'null'; ?>,
                     templateName: <?php echo $template_name ? json_encode($template_name) : 'null'; ?>,
@@ -300,7 +346,9 @@ if (typeof window.PDFBuilderPro === 'undefined') {
         } else {
             console.error('❌ Scripts non chargés - PDFBuilderPro ou init manquant');
         }
-    };    // Démarrer l'initialisation après DOM ready
+    };
+
+    // Démarrer l'initialisation après DOM ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initApp);
     } else {
