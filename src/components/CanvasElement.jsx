@@ -760,6 +760,13 @@ export const CanvasElement = ({
           borderRadius: '2px'
         };
 
+      case 'line':
+        return {
+          backgroundColor: element.backgroundColor || '#64748b',
+          height: '12px', // Hauteur fixe pour les lignes
+          cursor: 'pointer'
+        };
+
       // Styles par défaut pour les autres types
       default:
         return {

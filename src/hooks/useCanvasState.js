@@ -185,6 +185,10 @@ export const useCanvasState = ({
           if (element.type === 'divider') {
             updatedElement.height = 16;
           }
+          // Pour les lignes, forcer la hauteur à 12px
+          if (element.type === 'line') {
+            updatedElement.height = 12;
+          }
           return updatedElement;
         }
         return element;

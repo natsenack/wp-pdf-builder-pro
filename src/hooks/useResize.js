@@ -87,15 +87,15 @@ export const useResize = ({
 
       let newRect = { ...originalRect.current };
 
-      // Pour les dividers, empêcher la modification de la hauteur
-      const isDivider = elementType === 'divider';
+      // Pour les dividers et lignes, empêcher la modification de la hauteur
+      const isFixedHeight = elementType === 'divider' || elementType === 'line';
 
       switch (handle) {
         case 'nw':
           newRect.x = snapValue(originalRect.current.x + deltaX, false);
           newRect.y = snapValue(originalRect.current.y + deltaY, true);
           newRect.width = snapValue(originalRect.current.width - deltaX, false);
-          if (!isDivider) {
+          if (!isFixedHeight) {
             newRect.height = snapValue(originalRect.current.height - deltaY, true);
           }
           break;
@@ -103,7 +103,7 @@ export const useResize = ({
         case 'ne':
           newRect.y = snapValue(originalRect.current.y + deltaY, true);
           newRect.width = snapValue(originalRect.current.width + deltaX, false);
-          if (!isDivider) {
+          if (!isFixedHeight) {
             newRect.height = snapValue(originalRect.current.height - deltaY, true);
           }
           break;
@@ -111,14 +111,14 @@ export const useResize = ({
         case 'sw':
           newRect.x = snapValue(originalRect.current.x + deltaX, false);
           newRect.width = snapValue(originalRect.current.width - deltaX, false);
-          if (!isDivider) {
+          if (!isFixedHeight) {
             newRect.height = snapValue(originalRect.current.height + deltaY, true);
           }
           break;
 
         case 'se':
           newRect.width = snapValue(originalRect.current.width + deltaX, false);
-          if (!isDivider) {
+          if (!isFixedHeight) {
             newRect.height = snapValue(originalRect.current.height + deltaY, true);
           }
           break;
