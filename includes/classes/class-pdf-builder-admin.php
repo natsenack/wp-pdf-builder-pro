@@ -173,6 +173,9 @@ class PDF_Builder_Admin {
         add_action('admin_menu', [$this, 'add_admin_menu']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts'], 20);
 
+        // Hook supplémentaire pour les pages qui chargent du contenu dynamiquement
+        add_action('wp_enqueue_scripts', [$this, 'enqueue_admin_scripts_late'], 20);
+
         // Hooks WooCommerce - Délégation vers le manager
         if (class_exists('WooCommerce')) {
             add_action('add_meta_boxes_shop_order', [$this->woocommerce_integration, 'add_woocommerce_order_meta_box']);
@@ -1301,6 +1304,21 @@ class PDF_Builder_Admin {
     }
 
     /**
+     * Charge les scripts d'administration en retard (pour les pages qui chargent du contenu dynamiquement)
+     */
+    public function enqueue_admin_scripts_late() {
+        // Vérifier si on est dans l'admin et sur la page de l'éditeur
+        if (!is_admin() || !isset($_GET['page']) || $_GET['page'] !== 'pdf-builder-editor') {
+            return;
+        }
+
+        error_log('PDF Builder: enqueue_admin_scripts_late called for editor page');
+
+        // Charger les scripts comme dans enqueue_admin_scripts
+        $this->load_admin_scripts();
+    }
+
+    /**
      * Charge les scripts et styles d'administration
      */
     public function enqueue_admin_scripts($hook) {
@@ -1322,6 +1340,14 @@ class PDF_Builder_Admin {
         }
 
         error_log('PDF Builder: Hook ' . $hook . ' allowed, proceeding with script loading');
+
+        $this->load_admin_scripts();
+    }
+
+    /**
+     * Méthode commune pour charger les scripts admin
+     */
+    private function load_admin_scripts() {
 
         // Styles CSS de base
         wp_enqueue_style('pdf-builder-admin', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css', [], PDF_BUILDER_PRO_VERSION);
