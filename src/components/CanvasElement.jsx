@@ -1,4 +1,4 @@
-import { useRef, useCallback, useEffect } from 'react';
+import { useRef, useCallback, useEffect, useMemo } from 'react';
 import { useResize } from '../hooks/useResize';
 import { useRotation } from '../hooks/useRotation.js';
 
