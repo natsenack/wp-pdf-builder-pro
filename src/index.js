@@ -89,10 +89,6 @@ if (typeof window !== 'undefined') {
   window.PDFBuilderPro = pdfBuilderPro;
   // Alias pour compatibilité
   window.pdfBuilderPro = pdfBuilderPro;
-  // Exposer React globalement pour les composants
-  window.React = React;
-  // Exposer ReactDOM également
-  window.ReactDOM = { render, unmountComponentAtNode };
 }
 
 } catch (error) {
