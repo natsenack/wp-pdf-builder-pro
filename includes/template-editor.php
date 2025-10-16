@@ -198,9 +198,7 @@ if (!$is_new && $template_id > 0) {
             // Fonction pour vérifier si les scripts sont chargés
             const checkScriptsLoaded = () => {
                 return typeof window.PDFBuilderPro !== 'undefined' &&
-                       typeof window.PDFBuilderPro.init === 'function' &&
-                       typeof window.React !== 'undefined' &&
-                       typeof window.ReactDOM !== 'undefined';
+                       typeof window.PDFBuilderPro.init === 'function';
             };
 
             // Initialisation optimisée avec polling intelligent
