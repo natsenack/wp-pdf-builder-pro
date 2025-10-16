@@ -20,11 +20,8 @@ body.pdf-builder-active #wpadminbar {
   z-index: 1000 !important; /* Admin bar au-dessus de l'éditeur */
 }
 
-body.pdf-builder-active .invoice-quote-builder-container,
-body.pdf-builder-active .pdf-builder-container,
-body.pdf-builder-active .pdf-canvas-editor {
-  z-index: 1000 !important;
-}
+/* Les conteneurs de l'éditeur gardent un z-index bas pour ne pas masquer l'admin bar */
+/* REMOVED: body.pdf-builder-active .invoice-quote-builder-container, etc. with z-index: 1000 */
 
 /* S'assurer que le contenu du builder ne dépasse pas */
 .invoice-quote-builder-container .pdf-canvas-editor,
@@ -54,7 +51,7 @@ body.pdf-builder-active .pdf-canvas-editor {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
   position: sticky;
   top: 0;
-  z-index: 200;
+  z-index: 50;
 }
 
 .editor-title h2 {
@@ -183,7 +180,7 @@ body.pdf-builder-active .pdf-canvas-editor {
   top: 50% !important;
   right: 15px !important;
   transform: translateY(-50%) !important;
-  z-index: 1000 !important;
+  z-index: 50 !important; /* Réduit pour ne pas masquer l'admin bar */
   width: 40px !important;
   height: 40px !important;
   background: linear-gradient(135deg, #007bff, #0056b3) !important;
@@ -307,7 +304,7 @@ body.pdf-builder-active .pdf-canvas-editor {
   border-radius: 6px;
   font-size: 0.875rem;
   font-weight: 600;
-  z-index: 1000;
+  z-index: 50;
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   backdrop-filter: blur(8px);
 }
@@ -327,7 +324,7 @@ body.pdf-builder-active .pdf-canvas-editor {
   border-radius: 6px;
   padding: 8px 12px;
   position: absolute;
-  z-index: 1000;
+  z-index: 50;
   bottom: 125%;
   left: 50%;
   margin-left: -100px;
@@ -383,7 +380,7 @@ body.pdf-builder-active .pdf-canvas-editor {
   border-radius: 6px;
   font-size: 0.875rem;
   font-weight: 600;
-  z-index: 1000;
+  z-index: 50;
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   backdrop-filter: blur(8px);
 }
@@ -403,7 +400,7 @@ body.pdf-builder-active .pdf-canvas-editor {
   border-radius: 6px;
   padding: 8px 12px;
   position: absolute;
-  z-index: 1000;
+  z-index: 50;
   bottom: 125%;
   left: 50%;
   margin-left: -100px;
@@ -936,7 +933,7 @@ body.pdf-builder-active .pdf-canvas-editor {
   top: 50%;
   right: 10px;
   transform: translateY(-50%);
-  z-index: 1000;
+  z-index: 50;
   background: #2563eb;
   color: white;
   border: none;
@@ -1008,7 +1005,7 @@ body.pdf-builder-active .pdf-canvas-editor {
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 10000;
+  z-index: 100;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1049,7 +1046,7 @@ body.pdf-builder-active .pdf-canvas-editor {
   border: 1px solid #d1d5db;
   border-radius: 6px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
+  z-index: 50;
   min-width: 160px;
   padding: 4px 0;
 }
@@ -1450,7 +1447,7 @@ body.pdf-builder-active .pdf-canvas-editor {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 50;
 }
 
 .modal-content {
