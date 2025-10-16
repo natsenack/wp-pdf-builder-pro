@@ -27,7 +27,8 @@ wp_enqueue_style('toastr', PDF_BUILDER_PRO_ASSETS_URL . 'css/toastr/toastr.min.c
 wp_enqueue_script('toastr', PDF_BUILDER_PRO_ASSETS_URL . 'js/toastr/toastr.min.js', ['jquery'], '2.1.4', true);
 
 // Scripts JavaScript principaux
-wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'wp-api'], '8.0.0_force_' . microtime(true), true);
+wp_enqueue_script('pdf-builder-vendors', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/vendors.js', ['jquery'], '1.0.0_force_' . microtime(true), true);
+wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'pdf-builder-vendors'], '8.0.0_force_' . microtime(true), true);
 wp_enqueue_script('pdf-builder-nonce-fix-v2', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js', ['jquery'], '4.0.0_force_reload_' . time(), true);
 
 // Variables JavaScript pour AJAX
@@ -206,6 +207,7 @@ if (!$is_new && $template_id > 0) {
                 <div class="icon">📄</div>
                 <h2><?php echo $is_new ? __('Créer un nouveau template', 'pdf-builder-pro') : __('Éditer le template', 'pdf-builder-pro'); ?></h2>
                 <p><?php _e('Chargement de l\'éditeur React/TypeScript avancé...', 'pdf-builder-pro'); ?></p>
+                <p style="font-size: 12px; color: #666; margin-top: 10px;">Chargement des scripts JavaScript...</p>
                 <div class="spinner"></div>
             </div>
         </div>
@@ -304,6 +306,12 @@ body.wp-admin .pdf-builder-container {
             return;
         }
 
+        // Cacher l'état de chargement
+        const loadingElement = document.querySelector('.pdf-builder-loading');
+        if (loadingElement) {
+            loadingElement.style.display = 'none';
+        }
+
         // console.log('Checking scripts loaded...', {
         //     PDFBuilderPro: typeof window.PDFBuilderPro,
         //     init: typeof window.PDFBuilderPro?.init
@@ -342,17 +350,62 @@ body.wp-admin .pdf-builder-container {
             } catch (error) {
                 console.error('PDF Builder Pro: Erreur lors de l\'initialisation:', error);
                 isInitialized = false; // Reset on error
+
+                // Afficher l'erreur dans l'interface
+                const container = document.getElementById('invoice-quote-builder-container');
+                if (container) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: #dc3545;">
+                            <h3>Erreur d'initialisation</h3>
+                            <p>Une erreur s'est produite lors du chargement de l'éditeur.</p>
+                            <p>Vérifiez la console pour plus de détails.</p>
+                            <button onclick="location.reload()">Recharger la page</button>
+                        </div>
+                    `;
+                }
             }
         } else {
             console.error('❌ Scripts non chargés - PDFBuilderPro ou init manquant');
         }
     };
 
-    // Démarrer l'initialisation après DOM ready
+    // Attendre que tous les scripts soient chargés avant d'initialiser
+    let scriptCheckAttempts = 0;
+    const maxScriptCheckAttempts = 50; // 5 secondes maximum
+
+    const checkScriptsLoaded = () => {
+        scriptCheckAttempts++;
+
+        const pdfBuilderProExists = typeof window.PDFBuilderPro !== 'undefined';
+        const initExists = typeof window.PDFBuilderPro?.init === 'function';
+
+        if (pdfBuilderProExists && initExists) {
+            initApp();
+        } else if (scriptCheckAttempts < maxScriptCheckAttempts) {
+            // Réessayer dans 100ms
+            setTimeout(checkScriptsLoaded, 100);
+        } else {
+            console.error('❌ Timeout: Scripts PDF Builder Pro n\'ont pas pu être chargés après 5 secondes');
+            // Afficher un message d'erreur à l'utilisateur
+            const container = document.getElementById('invoice-quote-builder-container');
+            if (container) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #dc3545;">
+                        <h3>Erreur de chargement</h3>
+                        <p>Les scripts de l'éditeur PDF n'ont pas pu être chargés.</p>
+                        <p>Vérifiez la console pour plus de détails.</p>
+                        <button onclick="location.reload()">Recharger la page</button>
+                    </div>
+                `;
+            }
+        }
+    };
+
+    // Démarrer la vérification dès que le DOM est prêt
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initApp);
+        document.addEventListener('DOMContentLoaded', checkScriptsLoaded);
     } else {
-        initApp();
+        checkScriptsLoaded();
     }
 
 })();
