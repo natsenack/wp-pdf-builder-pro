@@ -533,14 +533,24 @@ export const PDFCanvasEditor = ({ options }) => {
     if (!globalSettings.settings.zoomWithWheel) return;
 
     e.preventDefault();
-    const delta = e.deltaY > 0 ? -1 : 1;
+
+    // Calculer le facteur de zoom basé sur les paramètres globaux
     const zoomFactor = 1 + (globalSettings.settings.zoomStep / 100);
 
-    if (delta > 0) {
-      canvasState.zoom.zoomIn();
-    } else {
-      canvasState.zoom.zoomOut();
-    }
+    // Déterminer si on zoome ou dézoome
+    const delta = e.deltaY > 0 ? -1 : 1;
+
+    // Calculer les coordonnées de la souris relatives au conteneur
+    const container = canvasContainerRef.current;
+    if (!container) return;
+
+    const rect = container.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+
+    // Appliquer le zoom vers le point de la souris
+    const finalZoomFactor = delta > 0 ? zoomFactor : 1 / zoomFactor;
+    canvasState.zoom.zoomToPoint(mouseX, mouseY, finalZoomFactor);
   }, [globalSettings.settings.zoomWithWheel, globalSettings.settings.zoomStep, canvasState.zoom]);
 
   // Attacher le gestionnaire de roue de manière non-passive pour permettre preventDefault
