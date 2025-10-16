@@ -25,23 +25,22 @@ wp_enqueue_style('toastr', PDF_BUILDER_PRO_ASSETS_URL . 'css/toastr/toastr.min.c
 wp_enqueue_script('toastr', PDF_BUILDER_PRO_ASSETS_URL . 'js/toastr/toastr.min.js', ['jquery'], '2.1.4', true);
 
 // Scripts JavaScript principaux
-// Charger React depuis CDN si WordPress ne l'a pas
-if (!wp_script_is('react', 'enqueued')) {
-    wp_enqueue_script('react', 'https://unpkg.com/react@18/umd/react.production.min.js', [], '18.0.0', true);
-}
-if (!wp_script_is('react-dom', 'enqueued')) {
-    wp_enqueue_script('react-dom', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js', ['react'], '18.0.0', true);
-}
-wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'react', 'react-dom', 'wp-api'], '8.0.0_force_' . microtime(true), true);
+// Charger React depuis CDN (solution fiable)
+wp_enqueue_script('react-cdn', 'https://unpkg.com/react@18/umd/react.production.min.js', [], '18.0.0', false); // false = header
+wp_enqueue_script('react-dom-cdn', 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js', ['react-cdn'], '18.0.0', false); // false = header
+wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'react-cdn', 'react-dom-cdn', 'wp-api'], '8.0.0_force_' . microtime(true), true);
 wp_enqueue_script('pdf-builder-nonce-fix-v2', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js', ['jquery'], '4.0.0_force_reload_' . time(), true);
 
 // Ajouter un script inline pour vérifier que React est chargé
 wp_add_inline_script('pdf-builder-admin-v3', '
-    console.log("React chargé depuis:", typeof window.React === "object" ? "CDN/WordPress" : "non chargé");
+    console.log("🔍 Vérification React...");
+    console.log("window.React:", typeof window.React);
     if (typeof window.React === "undefined") {
-        console.error("React n\'est toujours pas disponible");
+        console.error("❌ React n\'est pas chargé");
     } else {
-        console.log("✅ React disponible avec hooks:", typeof window.React.useState);
+        console.log("✅ React chargé avec succès");
+        console.log("React.useState:", typeof window.React.useState);
+        console.log("React.createElement:", typeof window.React.createElement);
     }
 ');
 
