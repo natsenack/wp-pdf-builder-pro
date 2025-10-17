@@ -10108,6 +10108,12 @@ var safeParseFloat = function safeParseFloat(value) {
   var parsed = parseFloat(value);
   return isNaN(parsed) ? defaultValue : parsed;
 };
+var safeParseInt = function safeParseInt(value) {
+  var defaultValue = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+  if (value === null || value === undefined || value === '') return defaultValue;
+  var parsed = parseInt(value, 10);
+  return isNaN(parsed) ? defaultValue : parsed;
+};
 
 // Fonction pour obtenir l'ordre intelligent des propriétés selon le type d'élément
 var getSmartPropertyOrder = function getSmartPropertyOrder(elementType, tab) {

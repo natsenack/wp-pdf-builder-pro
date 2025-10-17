@@ -463,6 +463,12 @@ const safeParseFloat = (value, defaultValue = 0) => {
   return isNaN(parsed) ? defaultValue : parsed;
 };
 
+const safeParseInt = (value, defaultValue = 0) => {
+  if (value === null || value === undefined || value === '') return defaultValue;
+  const parsed = parseInt(value, 10);
+  return isNaN(parsed) ? defaultValue : parsed;
+};
+
 // Fonction pour obtenir l'ordre intelligent des propriétés selon le type d'élément
 const getSmartPropertyOrder = (elementType, tab) => {
   const orders = {
