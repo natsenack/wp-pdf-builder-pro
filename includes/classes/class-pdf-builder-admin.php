@@ -65,11 +65,11 @@ class PDF_Builder_Admin {
     private function __construct($main_instance) {
         $this->main = $main_instance;
 
-        // Inclure les classes des managers
-        $this->include_managers();
+        // Inclure les classes des managers - COMMENTÉ POUR DEBUG
+        // $this->include_managers();
 
-        // Instancier les managers
-        $this->init_managers();
+        // Instancier les managers - COMMENTÉ POUR DEBUG
+        // $this->init_managers();
 
         $this->init_hooks();
     }
@@ -1334,12 +1334,12 @@ class PDF_Builder_Admin {
         // Charger seulement sur nos pages admin
         $allowed_hooks = [
             'toplevel_page_pdf-builder-pro',
-            'pdf-builder_page_pdf-builder-templates',
-            'pdf-builder_page_pdf-builder-editor',
-            'pdf-builder_page_pdf-builder-settings',
-            'pdf-builder_page_pdf-builder-diagnostic',
-            // 'pdf-builder_page_pdf-builder-test-tcpdf', // Commenté - système de test nettoyé
-            'pdf-builder_page_pdf-builder-developer'
+            'pdf-builder-pro_page_pdf-builder-templates',
+            'pdf-builder-pro_page_pdf-builder-editor',
+            'pdf-builder-pro_page_pdf-builder-settings',
+            'pdf-builder-pro_page_pdf-builder-diagnostic',
+            // 'pdf-builder-pro_page_pdf-builder-test-tcpdf', // Commenté - système de test nettoyé
+            'pdf-builder-pro_page_pdf-builder-developer'
         ];
 
         error_log('PDF Builder: Checking if hook "' . $hook . '" is in allowed list: ' . (in_array($hook, $allowed_hooks) ? 'YES' : 'NO'));
@@ -1407,14 +1407,14 @@ class PDF_Builder_Admin {
         // wp_enqueue_script('react');
         // wp_enqueue_script('react-dom', ['react']);
 
-        wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery'], '8.0.0_force_' . microtime(true), true);
+        wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery'], '8.0.0_force_' . microtime(true), false);
 
         // DEBUG: Vérifier que le script est enqueued
         error_log('PDF Builder: Script enqueued - URL: ' . PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js');
         error_log('PDF Builder: File exists check: ' . (file_exists(str_replace(PDF_BUILDER_PRO_ASSETS_URL, plugin_dir_path(__FILE__) . '../../assets/', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js')) ? 'YES' : 'NO'));
 
         // Script de correction de nonce - NOUVEAU HANDLE POUR FORCER LE RECHARGEMENT
-        wp_enqueue_script('pdf-builder-nonce-fix-v2', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js', ['jquery'], '4.0.0_force_reload_' . time(), true);
+        wp_enqueue_script('pdf-builder-nonce-fix-v2', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js', ['jquery'], '4.0.0_force_reload_' . time(), false);
 
         // Variables JavaScript pour AJAX - VERSION FORCEE - CORRECTION: Localiser dans le script principal
         wp_localize_script('pdf-builder-admin-v3', 'pdfBuilderAjax', [

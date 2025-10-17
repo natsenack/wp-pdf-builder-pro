@@ -7,6 +7,7 @@ import { PDFCanvasEditor } from './components/PDFCanvasEditor';
 if (typeof window !== 'undefined') {
     window.React = React;
     window.ReactDOM = ReactDOM;
+    console.log('PDF Builder Pro: Script loaded, React exposed globally');
 }
 
 // Forcer l'inclusion de tous les hooks personnalisés
@@ -88,12 +89,14 @@ try {
 
 // Instance globale
 const pdfBuilderPro = new PDFBuilderPro();
+console.log('PDF Builder Pro: PDFBuilderPro instance created');
 
 // Attacher à window pour WordPress - avec vérification
 if (typeof window !== 'undefined') {
   window.PDFBuilderPro = pdfBuilderPro;
   // Alias pour compatibilité
   window.pdfBuilderPro = pdfBuilderPro;
+  console.log('PDF Builder Pro: PDFBuilderPro attached to window');
 }
 
 } catch (error) {

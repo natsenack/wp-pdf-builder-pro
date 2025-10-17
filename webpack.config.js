@@ -15,7 +15,7 @@ module.exports = {
   optimization: {
     usedExports: true, // Activer l'élimination des exports non utilisés
     sideEffects: true,  // Activer l'analyse des effets de bord pour optimisation
-    minimize: true,     // Activer la minification
+    minimize: false,     // Désactiver la minification pour le debug
     splitChunks: {
       chunks: 'all',
       cacheGroups: {
