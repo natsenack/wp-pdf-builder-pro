@@ -598,15 +598,16 @@ class PDF_Builder_Pro_Generator {
     private function render_line_element($element, $px_to_mm) {
         $x = ($element['x'] ?? 0) * $px_to_mm;
         $y = ($element['y'] ?? 0) * $px_to_mm;
-        $width = ($element['width'] ?? 100) * $px_to_mm;
-        $height = ($element['height'] ?? 1) * $px_to_mm;
+        $scale = $element['scale'] ?? 1;
+        $width = ($element['width'] ?? 100) * $px_to_mm * $scale;
+        $height = ($element['height'] ?? 1) * $px_to_mm * $scale;
 
         // Couleur de ligne (utilise lineColor ou strokeColor ou color)
         $color = $this->parse_color($element['lineColor'] ?? $element['strokeColor'] ?? $element['color'] ?? '#000000');
         $this->pdf->SetDrawColor($color['r'], $color['g'], $color['b']);
 
         // Épaisseur de ligne (utilise lineWidth ou strokeWidth ou borderWidth)
-        $line_width = ($element['lineWidth'] ?? $element['strokeWidth'] ?? $element['borderWidth'] ?? 1) * $px_to_mm;
+        $line_width = ($element['lineWidth'] ?? $element['strokeWidth'] ?? $element['borderWidth'] ?? 1) * $px_to_mm * $scale;
         $this->pdf->SetLineWidth($line_width);
 
         // Dessin de la ligne - toutes les lignes sont horizontales et prennent toute la largeur comme dans le canvas
