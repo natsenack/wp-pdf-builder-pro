@@ -1870,7 +1870,7 @@ body.pdf-builder-active #wpadminbar {
 /* ===== STYLES POUR LE PANNEAU DE PROPRIÉTÉS ===== */
 
 .properties-panel {
-  width: 100%; /* S'adapte à la largeur du sidebar conteneur */
+  width: auto; /* S'adapte à la largeur du sidebar conteneur */
   background: #ffffff;
   border-left: 1px solid #e2e8f0;
   display: flex;
