@@ -2103,6 +2103,7 @@ export const CanvasElement = ({
                   key={`resize-handle-nw-${element.id}`}
                   className="resize-handle nw"
                   onMouseDown={(e) => {
+                    e.stopPropagation();
                     const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
                     const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
                     resize.handleResizeStart(e, 'nw', {
@@ -2118,6 +2119,7 @@ export const CanvasElement = ({
                   key={`resize-handle-ne-${element.id}`}
                   className="resize-handle ne"
                   onMouseDown={(e) => {
+                    e.stopPropagation();
                     const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
                     const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
                     resize.handleResizeStart(e, 'ne', {
@@ -2150,6 +2152,7 @@ export const CanvasElement = ({
               key={`resize-handle-se-${element.id}`}
               className="resize-handle se"
               onMouseDown={(e) => {
+                e.stopPropagation();
                 const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
                 const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
                 resize.handleResizeStart(e, 'se', {
@@ -2169,6 +2172,7 @@ export const CanvasElement = ({
                   key={`resize-handle-n-${element.id}`}
                   className="resize-handle n"
                   onMouseDown={(e) => {
+                    e.stopPropagation();
                     const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
                     const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
                     resize.handleResizeStart(e, 'n', {
@@ -2184,6 +2188,7 @@ export const CanvasElement = ({
                   key={`resize-handle-s-${element.id}`}
                   className="resize-handle s"
                   onMouseDown={(e) => {
+                    e.stopPropagation();
                     const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
                     const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
                     resize.handleResizeStart(e, 's', {
@@ -2201,6 +2206,7 @@ export const CanvasElement = ({
               key={`resize-handle-w-${element.id}`}
               className="resize-handle w"
               onMouseDown={(e) => {
+                e.stopPropagation();
                 const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
                 const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
                 resize.handleResizeStart(e, 'w', {
@@ -2216,6 +2222,7 @@ export const CanvasElement = ({
               key={`resize-handle-e-${element.id}`}
               className="resize-handle e"
               onMouseDown={(e) => {
+                e.stopPropagation();
                 const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
                 const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
                 resize.handleResizeStart(e, 'e', {
@@ -2234,44 +2241,56 @@ export const CanvasElement = ({
                 <div
                   key={`resize-zone-n-${element.id}`}
                   className="resize-zone resize-zone-n"
-                  onMouseDown={(e) => resize.handleResizeStart(e, 'n', {
-                    x: element.x,
-                    y: element.y,
-                    width: element.width,
-                    height: element.height
-                  })}
+                  onMouseDown={(e) => {
+                    e.stopPropagation();
+                    resize.handleResizeStart(e, 'n', {
+                      x: element.x,
+                      y: element.y,
+                      width: element.width,
+                      height: element.height
+                    });
+                  }}
                 />
                 <div
                   key={`resize-zone-s-${element.id}`}
                   className="resize-zone resize-zone-s"
-                  onMouseDown={(e) => resize.handleResizeStart(e, 's', {
-                    x: element.x,
-                    y: element.y,
-                    width: element.width,
-                    height: element.height
-                  })}
+                  onMouseDown={(e) => {
+                    e.stopPropagation();
+                    resize.handleResizeStart(e, 's', {
+                      x: element.x,
+                      y: element.y,
+                      width: element.width,
+                      height: element.height
+                    });
+                  }}
                 />
               </>
             )}
             <div
               key={`resize-zone-w-${element.id}`}
               className="resize-zone resize-zone-w"
-              onMouseDown={(e) => resize.handleResizeStart(e, 'w', {
-                x: element.x,
-                y: element.y,
-                width: element.width,
-                height: element.height
-              })}
+              onMouseDown={(e) => {
+                e.stopPropagation();
+                resize.handleResizeStart(e, 'w', {
+                  x: element.x,
+                  y: element.y,
+                  width: element.width,
+                  height: element.height
+                });
+              }}
             />
             <div
               key={`resize-zone-e-${element.id}`}
               className="resize-zone resize-zone-e"
-              onMouseDown={(e) => resize.handleResizeStart(e, 'e', {
-                x: element.x,
-                y: element.y,
-                width: element.width,
-                height: element.height
-              })}
+              onMouseDown={(e) => {
+                e.stopPropagation();
+                resize.handleResizeStart(e, 'e', {
+                  x: element.x,
+                  y: element.y,
+                  width: element.width,
+                  height: element.height
+                });
+              }}
             />
           </>
         )}

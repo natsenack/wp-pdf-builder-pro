@@ -2620,6 +2620,7 @@ var CanvasElement = function CanvasElement(_ref) {
     className: "resize-handle nw",
     onMouseDown: function onMouseDown(e) {
       var _elementRef$current;
+      e.stopPropagation();
       var canvas = (_elementRef$current = elementRef.current) === null || _elementRef$current === void 0 ? void 0 : _elementRef$current.closest('.canvas-zoom-wrapper');
       var canvasRect = canvas ? canvas.getBoundingClientRect() : null;
       resize.handleResizeStart(e, 'nw', {
@@ -2635,6 +2636,7 @@ var CanvasElement = function CanvasElement(_ref) {
     className: "resize-handle ne",
     onMouseDown: function onMouseDown(e) {
       var _elementRef$current2;
+      e.stopPropagation();
       var canvas = (_elementRef$current2 = elementRef.current) === null || _elementRef$current2 === void 0 ? void 0 : _elementRef$current2.closest('.canvas-zoom-wrapper');
       var canvasRect = canvas ? canvas.getBoundingClientRect() : null;
       resize.handleResizeStart(e, 'ne', {
@@ -2665,6 +2667,7 @@ var CanvasElement = function CanvasElement(_ref) {
     className: "resize-handle se",
     onMouseDown: function onMouseDown(e) {
       var _elementRef$current4;
+      e.stopPropagation();
       var canvas = (_elementRef$current4 = elementRef.current) === null || _elementRef$current4 === void 0 ? void 0 : _elementRef$current4.closest('.canvas-zoom-wrapper');
       var canvasRect = canvas ? canvas.getBoundingClientRect() : null;
       resize.handleResizeStart(e, 'se', {
@@ -2680,6 +2683,7 @@ var CanvasElement = function CanvasElement(_ref) {
     className: "resize-handle n",
     onMouseDown: function onMouseDown(e) {
       var _elementRef$current5;
+      e.stopPropagation();
       var canvas = (_elementRef$current5 = elementRef.current) === null || _elementRef$current5 === void 0 ? void 0 : _elementRef$current5.closest('.canvas-zoom-wrapper');
       var canvasRect = canvas ? canvas.getBoundingClientRect() : null;
       resize.handleResizeStart(e, 'n', {
@@ -2695,6 +2699,7 @@ var CanvasElement = function CanvasElement(_ref) {
     className: "resize-handle s",
     onMouseDown: function onMouseDown(e) {
       var _elementRef$current6;
+      e.stopPropagation();
       var canvas = (_elementRef$current6 = elementRef.current) === null || _elementRef$current6 === void 0 ? void 0 : _elementRef$current6.closest('.canvas-zoom-wrapper');
       var canvasRect = canvas ? canvas.getBoundingClientRect() : null;
       resize.handleResizeStart(e, 's', {
@@ -2710,6 +2715,7 @@ var CanvasElement = function CanvasElement(_ref) {
     className: "resize-handle w",
     onMouseDown: function onMouseDown(e) {
       var _elementRef$current7;
+      e.stopPropagation();
       var canvas = (_elementRef$current7 = elementRef.current) === null || _elementRef$current7 === void 0 ? void 0 : _elementRef$current7.closest('.canvas-zoom-wrapper');
       var canvasRect = canvas ? canvas.getBoundingClientRect() : null;
       resize.handleResizeStart(e, 'w', {
@@ -2725,6 +2731,7 @@ var CanvasElement = function CanvasElement(_ref) {
     className: "resize-handle e",
     onMouseDown: function onMouseDown(e) {
       var _elementRef$current8;
+      e.stopPropagation();
       var canvas = (_elementRef$current8 = elementRef.current) === null || _elementRef$current8 === void 0 ? void 0 : _elementRef$current8.closest('.canvas-zoom-wrapper');
       var canvasRect = canvas ? canvas.getBoundingClientRect() : null;
       resize.handleResizeStart(e, 'e', {
@@ -2739,7 +2746,8 @@ var CanvasElement = function CanvasElement(_ref) {
     key: "resize-zone-n-".concat(element.id),
     className: "resize-zone resize-zone-n",
     onMouseDown: function onMouseDown(e) {
-      return resize.handleResizeStart(e, 'n', {
+      e.stopPropagation();
+      resize.handleResizeStart(e, 'n', {
         x: element.x,
         y: element.y,
         width: element.width,
@@ -2750,7 +2758,8 @@ var CanvasElement = function CanvasElement(_ref) {
     key: "resize-zone-s-".concat(element.id),
     className: "resize-zone resize-zone-s",
     onMouseDown: function onMouseDown(e) {
-      return resize.handleResizeStart(e, 's', {
+      e.stopPropagation();
+      resize.handleResizeStart(e, 's', {
         x: element.x,
         y: element.y,
         width: element.width,
@@ -2761,7 +2770,8 @@ var CanvasElement = function CanvasElement(_ref) {
     key: "resize-zone-w-".concat(element.id),
     className: "resize-zone resize-zone-w",
     onMouseDown: function onMouseDown(e) {
-      return resize.handleResizeStart(e, 'w', {
+      e.stopPropagation();
+      resize.handleResizeStart(e, 'w', {
         x: element.x,
         y: element.y,
         width: element.width,
@@ -2772,7 +2782,8 @@ var CanvasElement = function CanvasElement(_ref) {
     key: "resize-zone-e-".concat(element.id),
     className: "resize-zone resize-zone-e",
     onMouseDown: function onMouseDown(e) {
-      return resize.handleResizeStart(e, 'e', {
+      e.stopPropagation();
+      resize.handleResizeStart(e, 'e', {
         x: element.x,
         y: element.y,
         width: element.width,
