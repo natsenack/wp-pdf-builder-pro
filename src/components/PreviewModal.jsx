@@ -802,9 +802,13 @@ const PreviewModal = ({
               {products.map((product, index) => (
                 <div key={index} style={{
                   display: 'flex',
-                  borderBottom: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.rowBorder}` : 'none',
-                  backgroundColor: product.backgroundColor || product.bgColor || (index % 2 === 1 ? tableStyles.altRowBg : tableStyles.rowBg),
-                  color: product.color || product.textColor || (tableStyles.rowTextColor || '#000000'),
+                  borderBottom: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none',
+                  backgroundColor: index % 2 === 0
+                    ? (element.evenRowBg || tableStyles.rowBg)
+                    : (element.oddRowBg || tableStyles.altRowBg),
+                  color: index % 2 === 0
+                    ? (element.evenRowTextColor || tableStyles.rowTextColor)
+                    : (element.oddRowTextColor || tableStyles.rowTextColor),
                   boxShadow: tableStyles.shadow ? `0 1px 2px ${tableStyles.shadow}` : 'none'
                 }}>
                   {element.columns?.image !== false && (

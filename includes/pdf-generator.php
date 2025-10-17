@@ -2196,14 +2196,20 @@ class PDF_Builder_Pro_Generator {
                 $price = $item->get_total() / max(1, $quantity);
                 $total = $item->get_total();
 
-                // Fond alterné selon le style
-                if ($alt_row && isset($table_styles['alt_row_bg'])) {
-                    // Ligne impaire : couleur d'alternance du style
-                    $this->pdf->SetFillColor($table_styles['alt_row_bg']['r'], $table_styles['alt_row_bg']['g'], $table_styles['alt_row_bg']['b']);
+                // Fond alterné selon les propriétés personnalisées ou le style par défaut
+                if (!$alt_row && isset($element['evenRowBg']) && $element['evenRowBg'] !== 'transparent') {
+                    // Ligne paire : couleur personnalisée pour les lignes paires
+                    $bg_rgb = $this->parse_color($element['evenRowBg']);
+                    $this->pdf->SetFillColor($bg_rgb['r'], $bg_rgb['g'], $bg_rgb['b']);
                     $this->pdf->Rect($x, $current_y, array_sum($col_widths), $row_height, 'F');
-                } elseif (!$alt_row && isset($table_styles['row_bg']) && $table_styles['row_bg'] !== 'transparent') {
-                    // Ligne paire : couleur de base du style si définie
-                    $this->pdf->SetFillColor($table_styles['row_bg']['r'], $table_styles['row_bg']['g'], $table_styles['row_bg']['b']);
+                } elseif ($alt_row && isset($element['oddRowBg']) && $element['oddRowBg'] !== 'transparent') {
+                    // Ligne impaire : couleur personnalisée pour les lignes impaires
+                    $bg_rgb = $this->parse_color($element['oddRowBg']);
+                    $this->pdf->SetFillColor($bg_rgb['r'], $bg_rgb['g'], $bg_rgb['b']);
+                    $this->pdf->Rect($x, $current_y, array_sum($col_widths), $row_height, 'F');
+                } elseif ($alt_row && isset($table_styles['alt_row_bg'])) {
+                    // Fallback : alternance par défaut du style de tableau
+                    $this->pdf->SetFillColor($table_styles['alt_row_bg']['r'], $table_styles['alt_row_bg']['g'], $table_styles['alt_row_bg']['b']);
                     $this->pdf->Rect($x, $current_y, array_sum($col_widths), $row_height, 'F');
                 }
 
@@ -2323,28 +2329,43 @@ class PDF_Builder_Pro_Generator {
 
         // Rendre chaque produit d'aperçu
         foreach ($preview_products as $index => $product) {
-            // Appliquer la couleur de fond spécifique au produit si définie
+            // Appliquer la couleur de fond selon la parité des lignes
             $product_bg_color = $product['backgroundColor'] ?? $product['bgColor'] ?? null;
             if ($product_bg_color && $product_bg_color !== 'transparent') {
                 $bg_rgb = $this->parse_color($product_bg_color);
                 $this->pdf->SetFillColor($bg_rgb['r'], $bg_rgb['g'], $bg_rgb['b']);
                 $this->pdf->Rect($x, $current_y, array_sum($col_widths), $row_height, 'F');
-            } elseif ($index % 2 === 1 && isset($table_styles['alt_row_bg'])) {
-                // Alternance des couleurs de fond par défaut - ligne impaire
-                $this->pdf->SetFillColor($table_styles['alt_row_bg']['r'], $table_styles['alt_row_bg']['g'], $table_styles['alt_row_bg']['b']);
+            } elseif ($index % 2 === 0 && isset($element['evenRowBg']) && $element['evenRowBg'] !== 'transparent') {
+                // Ligne paire : couleur personnalisée pour les lignes paires
+                $bg_rgb = $this->parse_color($element['evenRowBg']);
+                $this->pdf->SetFillColor($bg_rgb['r'], $bg_rgb['g'], $bg_rgb['b']);
                 $this->pdf->Rect($x, $current_y, array_sum($col_widths), $row_height, 'F');
-            } elseif ($index % 2 === 0 && isset($table_styles['row_bg']) && $table_styles['row_bg'] !== 'transparent') {
-                // Couleur de fond pour les lignes paires si définie
-                $this->pdf->SetFillColor($table_styles['row_bg']['r'], $table_styles['row_bg']['g'], $table_styles['row_bg']['b']);
+            } elseif ($index % 2 === 1 && isset($element['oddRowBg']) && $element['oddRowBg'] !== 'transparent') {
+                // Ligne impaire : couleur personnalisée pour les lignes impaires
+                $bg_rgb = $this->parse_color($element['oddRowBg']);
+                $this->pdf->SetFillColor($bg_rgb['r'], $bg_rgb['g'], $bg_rgb['b']);
+                $this->pdf->Rect($x, $current_y, array_sum($col_widths), $row_height, 'F');
+            } elseif ($index % 2 === 1 && isset($table_styles['alt_row_bg'])) {
+                // Fallback : alternance par défaut du style de tableau
+                $this->pdf->SetFillColor($table_styles['alt_row_bg']['r'], $table_styles['alt_row_bg']['g'], $table_styles['alt_row_bg']['b']);
                 $this->pdf->Rect($x, $current_y, array_sum($col_widths), $row_height, 'F');
             }
 
-            // Appliquer la couleur de texte spécifique au produit si définie
+            // Appliquer la couleur de texte selon la parité des lignes
             $product_text_color = $product['color'] ?? $product['textColor'] ?? null;
             if ($product_text_color) {
                 $text_rgb = $this->parse_color($product_text_color);
                 $this->pdf->SetTextColor($text_rgb['r'], $text_rgb['g'], $text_rgb['b']);
+            } elseif ($index % 2 === 0 && isset($element['evenRowTextColor'])) {
+                // Ligne paire : couleur de texte personnalisée
+                $text_rgb = $this->parse_color($element['evenRowTextColor']);
+                $this->pdf->SetTextColor($text_rgb['r'], $text_rgb['g'], $text_rgb['b']);
+            } elseif ($index % 2 === 1 && isset($element['oddRowTextColor'])) {
+                // Ligne impaire : couleur de texte personnalisée
+                $text_rgb = $this->parse_color($element['oddRowTextColor']);
+                $this->pdf->SetTextColor($text_rgb['r'], $text_rgb['g'], $text_rgb['b']);
             } elseif (isset($table_styles['rowTextColor'])) {
+                // Fallback : couleur par défaut du style de tableau
                 $row_text_rgb = $this->hex_to_rgb($table_styles['rowTextColor']);
                 $this->pdf->SetTextColor($row_text_rgb[0], $row_text_rgb[1], $row_text_rgb[2]);
             }

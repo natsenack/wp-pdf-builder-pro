@@ -1365,8 +1365,8 @@ var CanvasElement = function CanvasElement(_ref) {
         style: {
           display: 'flex',
           borderBottom: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
-          backgroundColor: product.backgroundColor || product.bgColor || (index % 2 === 1 ? tableStyles.altRowBg : tableStyles.rowBg),
-          color: product.color || product.textColor || tableStyles.rowTextColor,
+          backgroundColor: index % 2 === 0 ? element.evenRowBg || tableStyles.rowBg : element.oddRowBg || tableStyles.altRowBg,
+          color: index % 2 === 0 ? element.evenRowTextColor || tableStyles.rowTextColor : element.oddRowTextColor || tableStyles.rowTextColor,
           fontSize: "".concat(tableStyles.rowFontSize * zoom, "px"),
           transition: 'background-color 0.15s ease'
         }
@@ -6278,9 +6278,9 @@ var PreviewModal = function PreviewModal(_ref) {
             key: index,
             style: {
               display: 'flex',
-              borderBottom: showBorders ? "".concat(tableStyles.borderWidth, "px solid ").concat(tableStyles.rowBorder) : 'none',
-              backgroundColor: product.backgroundColor || product.bgColor || (index % 2 === 1 ? tableStyles.altRowBg : tableStyles.rowBg),
-              color: product.color || product.textColor || tableStyles.rowTextColor || '#000000',
+              borderBottom: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
+              backgroundColor: index % 2 === 0 ? element.evenRowBg || tableStyles.rowBg : element.oddRowBg || tableStyles.altRowBg,
+              color: index % 2 === 0 ? element.evenRowTextColor || tableStyles.rowTextColor : element.oddRowTextColor || tableStyles.rowTextColor,
               boxShadow: tableStyles.shadow ? "0 1px 2px ".concat(tableStyles.shadow) : 'none'
             }
           }, ((_element$columns8 = element.columns) === null || _element$columns8 === void 0 ? void 0 : _element$columns8.image) !== false && /*#__PURE__*/React.createElement("div", {
@@ -9662,16 +9662,10 @@ var useElementSynchronization = function useElementSynchronization(elements, onP
   };
 };
 ;// ./src/components/PropertiesPanel.jsx
-function PropertiesPanel_typeof(o) { "@babel/helpers - typeof"; return PropertiesPanel_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, PropertiesPanel_typeof(o); }
 function PropertiesPanel_regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return PropertiesPanel_regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (PropertiesPanel_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, PropertiesPanel_regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, PropertiesPanel_regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), PropertiesPanel_regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", PropertiesPanel_regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), PropertiesPanel_regeneratorDefine2(u), PropertiesPanel_regeneratorDefine2(u, o, "Generator"), PropertiesPanel_regeneratorDefine2(u, n, function () { return this; }), PropertiesPanel_regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (PropertiesPanel_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
 function PropertiesPanel_regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } PropertiesPanel_regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { PropertiesPanel_regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, PropertiesPanel_regeneratorDefine2(e, r, n, t); }
 function PropertiesPanel_asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
 function PropertiesPanel_asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { PropertiesPanel_asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { PropertiesPanel_asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
-function PropertiesPanel_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
-function PropertiesPanel_objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? PropertiesPanel_ownKeys(Object(t), !0).forEach(function (r) { PropertiesPanel_defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : PropertiesPanel_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-function PropertiesPanel_defineProperty(e, r, t) { return (r = PropertiesPanel_toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
-function PropertiesPanel_toPropertyKey(t) { var i = PropertiesPanel_toPrimitive(t, "string"); return "symbol" == PropertiesPanel_typeof(i) ? i : i + ""; }
-function PropertiesPanel_toPrimitive(t, r) { if ("object" != PropertiesPanel_typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != PropertiesPanel_typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function PropertiesPanel_slicedToArray(r, e) { return PropertiesPanel_arrayWithHoles(r) || PropertiesPanel_iterableToArrayLimit(r, e) || PropertiesPanel_unsupportedIterableToArray(r, e) || PropertiesPanel_nonIterableRest(); }
 function PropertiesPanel_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function PropertiesPanel_iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
@@ -11764,97 +11758,83 @@ var PropertiesPanel = /*#__PURE__*/(0,react.memo)(function (_ref4) {
           }
         }, "\uD83C\uDFA8 Couleurs individuelles des produits"), /*#__PURE__*/React.createElement("div", {
           className: "product-colors-editor"
-        }, (localProperties.previewProducts || [{
-          name: 'Produit 1',
-          quantity: 2,
-          price: 15.99,
-          total: 31.98
-        }, {
-          name: 'Produit 2',
-          quantity: 1,
-          price: 8.50,
-          total: 8.50
-        }, {
-          name: 'Produit 3',
-          quantity: 3,
-          price: 12.00,
-          total: 36.00
-        }]).map(function (product, index) {
-          return /*#__PURE__*/React.createElement("div", {
-            key: index,
-            className: "product-color-item"
-          }, /*#__PURE__*/React.createElement("div", {
-            className: "product-header"
-          }, /*#__PURE__*/React.createElement("span", {
-            className: "product-name"
-          }, product.name || "Produit ".concat(index + 1)), /*#__PURE__*/React.createElement("span", {
-            className: "product-index"
-          }, "#", index + 1)), /*#__PURE__*/React.createElement("div", {
-            className: "color-controls"
-          }, /*#__PURE__*/React.createElement("div", {
-            className: "color-control"
-          }, /*#__PURE__*/React.createElement("label", null, "\uD83C\uDFAF Fond:"), /*#__PURE__*/React.createElement("div", {
-            className: "color-input-wrapper"
-          }, /*#__PURE__*/React.createElement("input", {
-            type: "color",
-            value: product.backgroundColor || '#ffffff',
-            onChange: function onChange(e) {
-              var newProducts = PropertiesPanel_toConsumableArray(localProperties.previewProducts || [{
-                name: 'Produit 1',
-                quantity: 2,
-                price: 15.99,
-                total: 31.98
-              }, {
-                name: 'Produit 2',
-                quantity: 1,
-                price: 8.50,
-                total: 8.50
-              }, {
-                name: 'Produit 3',
-                quantity: 3,
-                price: 12.00,
-                total: 36.00
-              }]);
-              newProducts[index] = PropertiesPanel_objectSpread(PropertiesPanel_objectSpread({}, newProducts[index]), {}, {
-                backgroundColor: e.target.value
-              });
-              handlePropertyChange(selectedElement.id, 'previewProducts', newProducts);
-            }
-          }), /*#__PURE__*/React.createElement("span", {
-            className: "color-value"
-          }, product.backgroundColor || '#ffffff'))), /*#__PURE__*/React.createElement("div", {
-            className: "color-control"
-          }, /*#__PURE__*/React.createElement("label", null, "\uD83D\uDCDD Texte:"), /*#__PURE__*/React.createElement("div", {
-            className: "color-input-wrapper"
-          }, /*#__PURE__*/React.createElement("input", {
-            type: "color",
-            value: product.color || '#000000',
-            onChange: function onChange(e) {
-              var newProducts = PropertiesPanel_toConsumableArray(localProperties.previewProducts || [{
-                name: 'Produit 1',
-                quantity: 2,
-                price: 15.99,
-                total: 31.98
-              }, {
-                name: 'Produit 2',
-                quantity: 1,
-                price: 8.50,
-                total: 8.50
-              }, {
-                name: 'Produit 3',
-                quantity: 3,
-                price: 12.00,
-                total: 36.00
-              }]);
-              newProducts[index] = PropertiesPanel_objectSpread(PropertiesPanel_objectSpread({}, newProducts[index]), {}, {
-                color: e.target.value
-              });
-              handlePropertyChange(selectedElement.id, 'previewProducts', newProducts);
-            }
-          }), /*#__PURE__*/React.createElement("span", {
-            className: "color-value"
-          }, product.color || '#000000')))));
-        })))), allowedControls.includes('customer_fields') && selectedElement.type === 'customer_info' && /*#__PURE__*/React.createElement("div", {
+        }, /*#__PURE__*/React.createElement("div", {
+          className: "color-scheme-info"
+        }, /*#__PURE__*/React.createElement("p", {
+          style: {
+            fontSize: '0.875rem',
+            color: '#6b7280',
+            margin: '0 0 12px 0'
+          }
+        }, "D\xE9finissez les couleurs pour les produits pairs et impairs :")), /*#__PURE__*/React.createElement("div", {
+          className: "product-color-item"
+        }, /*#__PURE__*/React.createElement("div", {
+          className: "product-header"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "product-name"
+        }, "\uD83D\uDCCF Produits pairs (1er, 3\xE8me, 5\xE8me...)"), /*#__PURE__*/React.createElement("span", {
+          className: "product-index"
+        }, "Even")), /*#__PURE__*/React.createElement("div", {
+          className: "color-controls"
+        }, /*#__PURE__*/React.createElement("div", {
+          className: "color-control"
+        }, /*#__PURE__*/React.createElement("label", null, "\uD83C\uDFAF Fond:"), /*#__PURE__*/React.createElement("div", {
+          className: "color-input-wrapper"
+        }, /*#__PURE__*/React.createElement("input", {
+          type: "color",
+          value: localProperties.evenRowBg || '#ffffff',
+          onChange: function onChange(e) {
+            return handlePropertyChange(selectedElement.id, 'evenRowBg', e.target.value);
+          }
+        }), /*#__PURE__*/React.createElement("span", {
+          className: "color-value"
+        }, localProperties.evenRowBg || '#ffffff'))), /*#__PURE__*/React.createElement("div", {
+          className: "color-control"
+        }, /*#__PURE__*/React.createElement("label", null, "\uD83D\uDCDD Texte:"), /*#__PURE__*/React.createElement("div", {
+          className: "color-input-wrapper"
+        }, /*#__PURE__*/React.createElement("input", {
+          type: "color",
+          value: localProperties.evenRowTextColor || '#000000',
+          onChange: function onChange(e) {
+            return handlePropertyChange(selectedElement.id, 'evenRowTextColor', e.target.value);
+          }
+        }), /*#__PURE__*/React.createElement("span", {
+          className: "color-value"
+        }, localProperties.evenRowTextColor || '#000000'))))), /*#__PURE__*/React.createElement("div", {
+          className: "product-color-item"
+        }, /*#__PURE__*/React.createElement("div", {
+          className: "product-header"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "product-name"
+        }, "\uD83D\uDCD0 Produits impairs (2\xE8me, 4\xE8me, 6\xE8me...)"), /*#__PURE__*/React.createElement("span", {
+          className: "product-index"
+        }, "Odd")), /*#__PURE__*/React.createElement("div", {
+          className: "color-controls"
+        }, /*#__PURE__*/React.createElement("div", {
+          className: "color-control"
+        }, /*#__PURE__*/React.createElement("label", null, "\uD83C\uDFAF Fond:"), /*#__PURE__*/React.createElement("div", {
+          className: "color-input-wrapper"
+        }, /*#__PURE__*/React.createElement("input", {
+          type: "color",
+          value: localProperties.oddRowBg || '#f9fafb',
+          onChange: function onChange(e) {
+            return handlePropertyChange(selectedElement.id, 'oddRowBg', e.target.value);
+          }
+        }), /*#__PURE__*/React.createElement("span", {
+          className: "color-value"
+        }, localProperties.oddRowBg || '#f9fafb'))), /*#__PURE__*/React.createElement("div", {
+          className: "color-control"
+        }, /*#__PURE__*/React.createElement("label", null, "\uD83D\uDCDD Texte:"), /*#__PURE__*/React.createElement("div", {
+          className: "color-input-wrapper"
+        }, /*#__PURE__*/React.createElement("input", {
+          type: "color",
+          value: localProperties.oddRowTextColor || '#000000',
+          onChange: function onChange(e) {
+            return handlePropertyChange(selectedElement.id, 'oddRowTextColor', e.target.value);
+          }
+        }), /*#__PURE__*/React.createElement("span", {
+          className: "color-value"
+        }, localProperties.oddRowTextColor || '#000000')))))))), allowedControls.includes('customer_fields') && selectedElement.type === 'customer_info' && /*#__PURE__*/React.createElement("div", {
           className: "properties-group"
         }, /*#__PURE__*/React.createElement("h4", null, "\uD83D\uDC64 Informations client"), /*#__PURE__*/React.createElement("div", {
           className: "property-row"

@@ -2132,58 +2132,73 @@ const PropertiesPanel = memo(({
                     🎨 Couleurs individuelles des produits
                   </label>
                   <div className="product-colors-editor">
-                    {(localProperties.previewProducts || [
-                      { name: 'Produit 1', quantity: 2, price: 15.99, total: 31.98 },
-                      { name: 'Produit 2', quantity: 1, price: 8.50, total: 8.50 },
-                      { name: 'Produit 3', quantity: 3, price: 12.00, total: 36.00 }
-                    ]).map((product, index) => (
-                      <div key={index} className="product-color-item">
-                        <div className="product-header">
-                          <span className="product-name">{product.name || `Produit ${index + 1}`}</span>
-                          <span className="product-index">#{index + 1}</span>
-                        </div>
-                        <div className="color-controls">
-                          <div className="color-control">
-                            <label>🎯 Fond:</label>
-                            <div className="color-input-wrapper">
-                              <input
-                                type="color"
-                                value={product.backgroundColor || '#ffffff'}
-                                onChange={(e) => {
-                                  const newProducts = [...(localProperties.previewProducts || [
-                                    { name: 'Produit 1', quantity: 2, price: 15.99, total: 31.98 },
-                                    { name: 'Produit 2', quantity: 1, price: 8.50, total: 8.50 },
-                                    { name: 'Produit 3', quantity: 3, price: 12.00, total: 36.00 }
-                                  ])];
-                                  newProducts[index] = { ...newProducts[index], backgroundColor: e.target.value };
-                                  handlePropertyChange(selectedElement.id, 'previewProducts', newProducts);
-                                }}
-                              />
-                              <span className="color-value">{product.backgroundColor || '#ffffff'}</span>
-                            </div>
+                    <div className="color-scheme-info">
+                      <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: '0 0 12px 0' }}>
+                        Définissez les couleurs pour les produits pairs et impairs :
+                      </p>
+                    </div>
+
+                    <div className="product-color-item">
+                      <div className="product-header">
+                        <span className="product-name">📏 Produits pairs (1er, 3ème, 5ème...)</span>
+                        <span className="product-index">Even</span>
+                      </div>
+                      <div className="color-controls">
+                        <div className="color-control">
+                          <label>🎯 Fond:</label>
+                          <div className="color-input-wrapper">
+                            <input
+                              type="color"
+                              value={localProperties.evenRowBg || '#ffffff'}
+                              onChange={(e) => handlePropertyChange(selectedElement.id, 'evenRowBg', e.target.value)}
+                            />
+                            <span className="color-value">{localProperties.evenRowBg || '#ffffff'}</span>
                           </div>
-                          <div className="color-control">
-                            <label>📝 Texte:</label>
-                            <div className="color-input-wrapper">
-                              <input
-                                type="color"
-                                value={product.color || '#000000'}
-                                onChange={(e) => {
-                                  const newProducts = [...(localProperties.previewProducts || [
-                                    { name: 'Produit 1', quantity: 2, price: 15.99, total: 31.98 },
-                                    { name: 'Produit 2', quantity: 1, price: 8.50, total: 8.50 },
-                                    { name: 'Produit 3', quantity: 3, price: 12.00, total: 36.00 }
-                                  ])];
-                                  newProducts[index] = { ...newProducts[index], color: e.target.value };
-                                  handlePropertyChange(selectedElement.id, 'previewProducts', newProducts);
-                                }}
-                              />
-                              <span className="color-value">{product.color || '#000000'}</span>
-                            </div>
+                        </div>
+                        <div className="color-control">
+                          <label>📝 Texte:</label>
+                          <div className="color-input-wrapper">
+                            <input
+                              type="color"
+                              value={localProperties.evenRowTextColor || '#000000'}
+                              onChange={(e) => handlePropertyChange(selectedElement.id, 'evenRowTextColor', e.target.value)}
+                            />
+                            <span className="color-value">{localProperties.evenRowTextColor || '#000000'}</span>
                           </div>
                         </div>
                       </div>
-                    ))}
+                    </div>
+
+                    <div className="product-color-item">
+                      <div className="product-header">
+                        <span className="product-name">📐 Produits impairs (2ème, 4ème, 6ème...)</span>
+                        <span className="product-index">Odd</span>
+                      </div>
+                      <div className="color-controls">
+                        <div className="color-control">
+                          <label>🎯 Fond:</label>
+                          <div className="color-input-wrapper">
+                            <input
+                              type="color"
+                              value={localProperties.oddRowBg || '#f9fafb'}
+                              onChange={(e) => handlePropertyChange(selectedElement.id, 'oddRowBg', e.target.value)}
+                            />
+                            <span className="color-value">{localProperties.oddRowBg || '#f9fafb'}</span>
+                          </div>
+                        </div>
+                        <div className="color-control">
+                          <label>📝 Texte:</label>
+                          <div className="color-input-wrapper">
+                            <input
+                              type="color"
+                              value={localProperties.oddRowTextColor || '#000000'}
+                              onChange={(e) => handlePropertyChange(selectedElement.id, 'oddRowTextColor', e.target.value)}
+                            />
+                            <span className="color-value">{localProperties.oddRowTextColor || '#000000'}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

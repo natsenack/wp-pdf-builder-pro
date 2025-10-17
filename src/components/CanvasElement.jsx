@@ -1079,8 +1079,12 @@ export const CanvasElement = ({
                 <div key={`row-${index}`} style={{
                   display: 'flex',
                   borderBottom: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none',
-                  backgroundColor: product.backgroundColor || product.bgColor || (index % 2 === 1 ? tableStyles.altRowBg : tableStyles.rowBg),
-                  color: product.color || product.textColor || tableStyles.rowTextColor,
+                  backgroundColor: index % 2 === 0
+                    ? (element.evenRowBg || tableStyles.rowBg)
+                    : (element.oddRowBg || tableStyles.altRowBg),
+                  color: index % 2 === 0
+                    ? (element.evenRowTextColor || tableStyles.rowTextColor)
+                    : (element.oddRowTextColor || tableStyles.rowTextColor),
                   fontSize: `${tableStyles.rowFontSize * zoom}px`,
                   transition: 'background-color 0.15s ease'
                 }}>
