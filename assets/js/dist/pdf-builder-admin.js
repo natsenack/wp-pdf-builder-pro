@@ -1721,7 +1721,7 @@ var CanvasElement = function CanvasElement(_ref) {
       color: element.color || '#333',
       lineHeight: '1.4'
     }
-  }, "123 Rue de l'Entreprise", /*#__PURE__*/React.createElement("br", null), "75001 Paris - France")), ((_element$fields0 = element.fields) === null || _element$fields0 === void 0 ? void 0 : _element$fields0.includes('phone')) && /*#__PURE__*/React.createElement("div", {
+  }, "123 Rue de l'Entreprise", /*#__PURE__*/React.createElement("br", null), "75001 Paris, France")), ((_element$fields0 = element.fields) === null || _element$fields0 === void 0 ? void 0 : _element$fields0.includes('phone')) && /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
@@ -6299,7 +6299,7 @@ var PreviewModal = function PreviewModal(_ref) {
         // Données fictives pour l'aperçu (seront remplacées par les vraies données lors de la génération)
         var companyData = {
           name: 'ABC Company SARL',
-          address: '456 Avenue des Champs\n75008 Paris\nFrance',
+          address: '456 Avenue des Champs\n75008 Paris - France',
           phone: '01 23 45 67 89',
           email: 'contact@abc-company.com',
           tva: 'FR 98 765 432 109',
