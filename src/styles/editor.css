@@ -134,10 +134,12 @@
 
 .left-sidebar {
   border-right: 1px solid var(--border-color);
+  width: 360px; /* Bibliothèque d'Éléments - largeur réduite */
 }
 
 .right-sidebar {
   border-left: 1px solid var(--border-color);
+  width: 420px; /* Propriétés - largeur augmentée */
 }
 
 /* Bouton de toggle pour réduire/agrandir le panneau */
