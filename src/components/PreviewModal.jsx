@@ -111,7 +111,9 @@ const PreviewModal = ({
           }
 
           const elementPadding = element.padding || 0;
-          const baseStyle = {
+          
+          // Styles spéciaux pour certains types d'éléments
+          let baseStyle = {
             position: 'absolute',
             left: (element.x + elementPadding) * validZoom,
             top: (element.y + elementPadding) * validZoom,
@@ -119,6 +121,15 @@ const PreviewModal = ({
             height: Math.max(1, (element.height - (elementPadding * 2))) * validZoom,
             zIndex: element.zIndex || index + 1
           };
+
+          // Pour les lignes, utiliser toute la largeur du canvas
+          if (element.type === 'line') {
+            baseStyle = {
+              ...baseStyle,
+              left: 0,
+              width: canvasWidth * validZoom
+            };
+          }
 
           return (
             <div key={index} style={baseStyle}>
