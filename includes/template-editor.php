@@ -38,6 +38,10 @@ if ($template_id > 0) {
     ));
 
     if ($template) {
+        // Vérifier l'existence de la propriété 'elements' et lui assigner une valeur par défaut si elle n'est pas définie
+        if (!isset($template->elements)) {
+            $template->elements = [];
+        }
         $template_name = $template->name;
         $initial_elements = $template->elements ?: '[]';
     }
