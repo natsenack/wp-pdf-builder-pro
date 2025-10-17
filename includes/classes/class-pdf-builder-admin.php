@@ -1556,8 +1556,7 @@ class PDF_Builder_Admin {
             wp_enqueue_style('pdf-builder-canvas-editor', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-canvas.css', [], PDF_BUILDER_PRO_VERSION);
 
             // Styles supplémentaires pour l'éditeur
-            wp_enqueue_style('pdf-builder-react', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-react.css', [], PDF_BUILDER_PRO_VERSION);
-            wp_enqueue_style('pdf-builder-editor', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-editor.css', [], PDF_BUILDER_PRO_VERSION);
+            wp_enqueue_style('pdf-builder-editor-consolidated', plugin_dir_url(__FILE__) . '../../src/styles/editor.css', [], PDF_BUILDER_PRO_VERSION);
             wp_enqueue_style('woocommerce-elements', PDF_BUILDER_PRO_ASSETS_URL . 'css/woocommerce-elements.css', [], PDF_BUILDER_PRO_VERSION);
 
             // Script inline pour vérifier React

@@ -26,20 +26,20 @@ if (!defined('PDF_BUILDER_PLUGIN_DIR')) {
     define('PDF_BUILDER_PLUGIN_DIR', plugin_dir_path(__FILE__) . '../');
 }
 
-// URL du plugin
-if (!defined('PDF_BUILDER_PLUGIN_URL')) {
-    define('PDF_BUILDER_PLUGIN_URL', plugin_dir_url(__FILE__) . '../');
-}
+// URL du plugin (défini dans bootstrap.php)
+// if (!defined('PDF_BUILDER_PLUGIN_URL')) {
+//     define('PDF_BUILDER_PLUGIN_URL', plugin_dir_url(__FILE__) . '../');
+// }
 
 // Répertoire des assets
 if (!defined('PDF_BUILDER_PRO_ASSETS_DIR')) {
     define('PDF_BUILDER_PRO_ASSETS_DIR', PDF_BUILDER_PLUGIN_DIR . 'assets/');
 }
 
-// URL des assets
-if (!defined('PDF_BUILDER_PRO_ASSETS_URL')) {
-    define('PDF_BUILDER_PRO_ASSETS_URL', PDF_BUILDER_PLUGIN_URL . 'assets/');
-}
+// URL des assets (défini dans bootstrap.php)
+// if (!defined('PDF_BUILDER_PRO_ASSETS_URL')) {
+//     define('PDF_BUILDER_PRO_ASSETS_URL', PDF_BUILDER_PLUGIN_URL . 'assets/');
+// }
 
 // Chemin absolu des assets (pour file_exists)
 if (!defined('PDF_BUILDER_PRO_ASSETS_PATH')) {

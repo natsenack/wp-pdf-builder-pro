@@ -788,13 +788,13 @@
 }
 
 .properties-group {
-  margin-bottom: 24px;
+  margin-bottom: 32px;
   background: var(--surface-color);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 16px;
+  border-radius: 8px;
+  padding: 10px;
   box-shadow: var(--shadow);
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 .properties-group:hover {
@@ -824,13 +824,11 @@
 }
 
 .property-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 10px;
-  padding: 8px 0;
-  border-radius: 8px;
-  transition: background-color 0.15s ease;
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding: 5px 0;
+    align-items: center;
 }
 
 .property-row:hover {
@@ -842,28 +840,25 @@
 }
 
 .property-row label {
-  min-width: 100px;
-  max-width: 100px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  text-align: right;
-  flex-shrink: 0;
+    min-width: 35px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-align: right;
 }
 
 .property-row input,
 .property-row select,
 .property-row textarea {
-  flex: 1;
-  max-width: 140px;
-  padding: 10px 12px;
-  border: 1.5px solid var(--border-color);
-  border-radius: 8px;
-  font-size: 14px;
-  font-family: inherit;
-  transition: all 0.2s ease;
-  background: var(--surface-color);
-  color: var(--text-primary);
+    flex: 1;
+    padding: 3px 4px;
+    border: 1.5px solid var(--border-color);
+    border-radius: var(--radius);
+    font-size: 13px;
+    font-family: inherit;
+    transition: all 0.15s ease;
+    background: var(--surface-color);
+    color: var(--text-primary);
 }
 
 .property-row input:focus,
@@ -1311,6 +1306,32 @@
   }
 }
 
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.05); }
+  70% { transform: scale(0.9); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
 .element-item, .properties-group, .tool-button {
   animation: fadeIn 0.3s ease-out;
 }
@@ -1701,4 +1722,62 @@
     opacity: 0;
     transform: scale(0.95);
   }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Styles spécifiques à l'intégration React/WordPress */
+.modal-footer {
+  padding: 20px 24px;
+  border-top: 1px solid #e9ecef;
+  background: #f8f9fa;
+  border-radius: 0 0 8px 8px;
+}
+
+/* ===== STYLES REACT/WORDPRESS INTEGRATION ===== */
+
+.invoice-quote-builder-container,
+.pdf-builder-container,
+.pdf-canvas-editor {
+  position: relative !important;
+  z-index: 10 !important; /* Réduit pour laisser l'admin bar au-dessus */
+  width: 100% !important;
+  height: auto !important; /* Laisser le CSS contrôler la hauteur (130vh) */
+  min-height: calc(100vh - 72px) !important; /* Hauteur minimale pour compatibilité */
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #ffffff !important; /* Blanc pur au lieu de gris */
+}
+
+/* Ajuster le z-index pour que l'admin bar reste au-dessus du builder */
+body.pdf-builder-active #wpadminbar {
+  z-index: 1000 !important; /* Admin bar au-dessus de l'éditeur */
+}
+
+/* S'assurer que le contenu du builder ne dépasse pas */
+.invoice-quote-builder-container .pdf-canvas-editor,
+.pdf-builder-container .pdf-canvas-editor {
+  overflow: hidden;
+  border-radius: 0;
+}
+
+.invoice-quote-builder-container,
+.pdf-builder-container {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  height: 130vh; /* Étendu pour plus d'espace de travail vertical */
+}
+
+.properties-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 5px;
 }
