@@ -11227,42 +11227,7 @@ var PropertiesPanel = /*#__PURE__*/(0,react.memo)(function (_ref4) {
             var currentText = localProperties.text || '';
             handlePropertyChange(selectedElement.id, 'text', currentText + '{{total}}');
           }
-        }, "\uD83D\uDCB0 Total")))), allowedControls.includes('image') && (selectedElement.type === 'logo' || selectedElement.type === 'company_logo') && /*#__PURE__*/React.createElement("div", {
-          className: "properties-group"
-        }, /*#__PURE__*/React.createElement("h4", null, "[Img] Image"), /*#__PURE__*/React.createElement("div", {
-          className: "property-row"
-        }, /*#__PURE__*/React.createElement("label", null, "URL de l'image:"), /*#__PURE__*/React.createElement("input", {
-          type: "url",
-          value: localProperties.imageUrl || '',
-          onChange: function onChange(e) {
-            return handlePropertyChange(selectedElement.id, 'imageUrl', e.target.value);
-          },
-          placeholder: "https://exemple.com/logo.jpg"
-        })), /*#__PURE__*/React.createElement("div", {
-          className: "property-row"
-        }, /*#__PURE__*/React.createElement("label", null, "Alt text:"), /*#__PURE__*/React.createElement("input", {
-          type: "text",
-          value: localProperties.alt || '',
-          onChange: function onChange(e) {
-            return handlePropertyChange(selectedElement.id, 'alt', e.target.value);
-          },
-          placeholder: "Logo de l'entreprise"
-        })), /*#__PURE__*/React.createElement("div", {
-          className: "property-row"
-        }, /*#__PURE__*/React.createElement("label", null, "Adaptation:"), /*#__PURE__*/React.createElement("select", {
-          value: localProperties.fit || 'contain',
-          onChange: function onChange(e) {
-            return handlePropertyChange(selectedElement.id, 'fit', e.target.value);
-          }
-        }, /*#__PURE__*/React.createElement("option", {
-          value: "contain"
-        }, "Contenir (int\xE9gral)"), /*#__PURE__*/React.createElement("option", {
-          value: "cover"
-        }, "Couvrir (zoom)"), /*#__PURE__*/React.createElement("option", {
-          value: "fill"
-        }, "Remplir"), /*#__PURE__*/React.createElement("option", {
-          value: "none"
-        }, "Aucune")))), allowedControls.includes('table') && selectedElement.type === 'product_table' && /*#__PURE__*/React.createElement("div", {
+        }, "\uD83D\uDCB0 Total")))), allowedControls.includes('table') && selectedElement.type === 'product_table' && /*#__PURE__*/React.createElement("div", {
           className: "properties-group"
         }, /*#__PURE__*/React.createElement("h4", null, "\uD83D\uDCCA Tableau produits"), /*#__PURE__*/React.createElement("div", {
           className: "property-row"

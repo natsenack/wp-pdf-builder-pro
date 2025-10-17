@@ -1671,46 +1671,6 @@ const PropertiesPanel = memo(({
               </div>
             )}
 
-            {/* Contrôles image (uniquement pour les éléments logo) */}
-            {allowedControls.includes('image') && (selectedElement.type === 'logo' || selectedElement.type === 'company_logo') && (
-              <div className="properties-group">
-                <h4>[Img] Image</h4>
-
-                <div className="property-row">
-                  <label>URL de l'image:</label>
-                  <input
-                    type="url"
-                    value={localProperties.imageUrl || ''}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'imageUrl', e.target.value)}
-                    placeholder="https://exemple.com/logo.jpg"
-                  />
-                </div>
-
-                <div className="property-row">
-                  <label>Alt text:</label>
-                  <input
-                    type="text"
-                    value={localProperties.alt || ''}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'alt', e.target.value)}
-                    placeholder="Logo de l'entreprise"
-                  />
-                </div>
-
-                <div className="property-row">
-                  <label>Adaptation:</label>
-                  <select
-                    value={localProperties.fit || 'contain'}
-                    onChange={(e) => handlePropertyChange(selectedElement.id, 'fit', e.target.value)}
-                  >
-                    <option value="contain">Contenir (intégral)</option>
-                    <option value="cover">Couvrir (zoom)</option>
-                    <option value="fill">Remplir</option>
-                    <option value="none">Aucune</option>
-                  </select>
-                </div>
-              </div>
-            )}
-
             {/* Contrôles tableau produits (uniquement pour les éléments product_table) */}
             {allowedControls.includes('table') && selectedElement.type === 'product_table' && (
               <div className="properties-group">
