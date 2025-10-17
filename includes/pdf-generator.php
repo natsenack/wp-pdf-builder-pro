@@ -526,6 +526,79 @@ class PDF_Builder_Pro_Generator {
     }
 
     /**
+     * Rendu d'élément product_table
+     */
+    private function render_product_table_element($element, $px_to_mm) {
+        try {
+            $x = ($element['x'] ?? 0) * $px_to_mm;
+            $y = ($element['y'] ?? 0) * $px_to_mm;
+            $width = ($element['width'] ?? 400) * $px_to_mm;
+            $height = ($element['height'] ?? 200) * $px_to_mm;
+
+            // Récupérer le style du tableau
+            $table_style = $element['tableStyle'] ?? 'default';
+            $table_styles = $this->get_table_styles($table_style);
+
+            // Propriétés du tableau
+            $columns = $element['columns'] ?? [
+                'image' => false,
+                'name' => true,
+                'sku' => false,
+                'quantity' => true,
+                'price' => true,
+                'total' => true
+            ];
+            $show_headers = $element['showHeaders'] ?? true;
+            $show_borders = $element['showBorders'] ?? true;
+
+            // Calcul des largeurs de colonnes
+            $col_widths = $this->calculate_table_column_widths($width, $columns);
+
+            // Position de départ
+            $current_y = $y;
+
+            // DEBUG: Log couleur de fond extraite
+            $background_color = $element['backgroundColor'] ?? null;
+            error_log('PDF Builder: Background color from element: ' . ($background_color ?? 'null'));
+
+            // Vérifier si on doit rendre le fond
+            $should_render_bg = $this->should_render_background($background_color);
+            error_log('PDF Builder: Should render background: ' . ($should_render_bg ? 'true' : 'false'));
+
+            // Si on doit rendre un fond pour tout le tableau
+            if ($should_render_bg) {
+                $bg_color = $this->parse_color($background_color);
+                error_log('PDF Builder: Parsed color: R=' . $bg_color['r'] . ', G=' . $bg_color['g'] . ', B=' . $bg_color['b']);
+
+                $this->pdf->SetFillColor($bg_color['r'], $bg_color['g'], $bg_color['b']);
+                $this->pdf->Rect($x, $y, $width, $height, 'F');
+                error_log('PDF Builder: Rendering background rect with color: R=' . $bg_color['r'] . ', G=' . $bg_color['g'] . ', B=' . $bg_color['b']);
+            }
+
+            // Rendre les en-têtes si demandés
+            if ($show_headers) {
+                $current_y = $this->render_table_headers($x, $current_y, $col_widths, $columns, $show_borders, $table_styles);
+            }
+
+            // Rendre les produits
+            if ($this->order) {
+                $current_y = $this->render_order_products($x, $current_y, $col_widths, $columns, $show_borders, $table_style, $element);
+            } else {
+                $current_y = $this->render_fake_products($x, $current_y, $col_widths, $columns, $show_borders, $table_style, $element);
+            }
+
+            // Rendre les totaux
+            $this->render_table_totals($x, $current_y, $col_widths, $columns, $show_borders, $element);
+
+        } catch (Exception $e) {
+            $this->log_error("Erreur rendu tableau produits: " . $e->getMessage());
+            // Rendu de fallback
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell($width, 20, '[Erreur tableau produits]', 1, 0, 'C', false);
+        }
+    }
+
+    /**
      * Rendu d'element rectangle
      */
     private function render_rectangle_element($element, $px_to_mm) {
@@ -1529,6 +1602,8 @@ class PDF_Builder_Pro_Generator {
      * Rendu d'élément product_table
      */
     private function render_product_table_element($element, $px_to_mm) {
+        error_log('PDF Builder: render_product_table_element called with tableStyle: ' . ($element['tableStyle'] ?? 'default'));
+
         // Extraction des propriétés avec valeurs par défaut sûres
         $x = ($element['x'] ?? 0) * $px_to_mm;
         $y = ($element['y'] ?? 0) * $px_to_mm;
