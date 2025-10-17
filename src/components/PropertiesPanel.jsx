@@ -1766,13 +1766,13 @@ const PropertiesPanel = memo(({
                 <div className="property-row" style={{ marginTop: '12px', padding: '8px', backgroundColor: '#f8fafc', borderRadius: '4px' }}>
                   <label style={{ fontWeight: 'bold', marginBottom: '4px', display: 'block' }}>Variables disponibles:</label>
                   <div style={{ fontSize: '12px', color: '#666', lineHeight: '1.4' }}>
-                    <div><code>{{order_total}}</code> - Montant total</div>
-                    <div><code>{{order_number}}</code> - Numéro de commande</div>
-                    <div><code>{{customer_name}}</code> - Nom du client</div>
-                    <div><code>{{customer_email}}</code> - Email client</div>
-                    <div><code>{{date}}</code> - Date actuelle</div>
-                    <div><code>{{order_date}}</code> - Date de commande</div>
-                    <div><code>{{due_date}}</code> - Date d'échéance</div>
+                    <div><code>{'{{order_total}}'}</code> - Montant total</div>
+                    <div><code>{'{{order_number}}'}</code> - Numéro de commande</div>
+                    <div><code>{'{{customer_name}}'}</code> - Nom du client</div>
+                    <div><code>{'{{customer_email}}'}</code> - Email client</div>
+                    <div><code>{'{{date}}'}</code> - Date actuelle</div>
+                    <div><code>{'{{order_date}}'}</code> - Date de commande</div>
+                    <div><code>{'{{due_date}}'}</code> - Date d'échéance</div>
                   </div>
                 </div>
               </div>

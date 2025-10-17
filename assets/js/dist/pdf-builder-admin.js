@@ -11367,21 +11367,7 @@ var PropertiesPanel = /*#__PURE__*/(0,react.memo)(function (_ref4) {
             color: '#666',
             lineHeight: '1.4'
           }
-        }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, {
-          order_total: order_total
-        }), " - Montant total"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, {
-          order_number: order_number
-        }), " - Num\xE9ro de commande"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, {
-          customer_name: customer_name
-        }), " - Nom du client"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, {
-          customer_email: customer_email
-        }), " - Email client"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, {
-          date: date
-        }), " - Date actuelle"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, {
-          order_date: order_date
-        }), " - Date de commande"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, {
-          due_date: due_date
-        }), " - Date d'\xE9ch\xE9ance")))), allowedControls.includes('company_fields') && selectedElement.type === 'company_info' && /*#__PURE__*/React.createElement("div", {
+        }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{order_total}}'), " - Montant total"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{order_number}}'), " - Num\xE9ro de commande"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{customer_name}}'), " - Nom du client"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{customer_email}}'), " - Email client"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{date}}'), " - Date actuelle"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{order_date}}'), " - Date de commande"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{due_date}}'), " - Date d'\xE9ch\xE9ance")))), allowedControls.includes('company_fields') && selectedElement.type === 'company_info' && /*#__PURE__*/React.createElement("div", {
           className: "properties-group"
         }, /*#__PURE__*/React.createElement("h4", null, "\uD83C\uDFE2 Informations Entreprise"), /*#__PURE__*/React.createElement("div", {
           className: "property-row"
