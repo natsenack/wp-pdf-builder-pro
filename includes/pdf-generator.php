@@ -1856,7 +1856,7 @@ class PDF_Builder_Pro_Generator {
                 'header_bg' => ['r' => 6, 'g' => 78, 'b' => 59], // #064e3b (moyenne du gradient)
                 'header_border' => ['r' => 6, 'g' => 95, 'b' => 70], // #065f46
                 'row_border' => ['r' => 209, 'g' => 250, 'b' => 229], // #d1fae5
-                'alt_row_bg' => ['r' => 236, 'g' => 253, 'b' => 245], // #ecfdf5
+                'alt_row_bg' => ['r' => 167, 'g' => 243, 'b' => 208], // #a7f3d0 (couleur pour les lignes impaires)
                 'headerTextColor' => '#ffffff',
                 'rowTextColor' => '#064e3b',
                 'border_width' => 1.5,
@@ -2192,8 +2192,19 @@ class PDF_Builder_Pro_Generator {
                 $price = $item->get_total() / max(1, $quantity);
                 $total = $item->get_total();
 
-                // Fond alterné si striped
-                if ($alt_row && ($element['tableStyle'] ?? 'default') === 'striped') {
+                // Fond alterné selon le style
+                $table_style = $element['tableStyle'] ?? 'default';
+                if ($table_style === 'emerald_forest') {
+                    // Logique spéciale pour emerald_forest : alternance spécifique des couleurs
+                    if ($alt_row) {
+                        // Ligne impaire : couleur plus foncée #a7f3d0
+                        $this->pdf->SetFillColor(167, 243, 208);
+                    } else {
+                        // Ligne paire : couleur claire #d1fae5
+                        $this->pdf->SetFillColor(209, 250, 229);
+                    }
+                    $this->pdf->Rect($x, $current_y, array_sum($col_widths), $row_height, 'F');
+                } elseif ($alt_row && $table_style === 'striped') {
                     $this->pdf->SetFillColor($table_styles['alt_row_bg']['r'], $table_styles['alt_row_bg']['g'], $table_styles['alt_row_bg']['b']);
                     $this->pdf->Rect($x, $current_y, array_sum($col_widths), $row_height, 'F');
                 }
@@ -2320,8 +2331,18 @@ class PDF_Builder_Pro_Generator {
                 $bg_rgb = $this->parse_color($product_bg_color);
                 $this->pdf->SetFillColor($bg_rgb['r'], $bg_rgb['g'], $bg_rgb['b']);
                 $this->pdf->Rect($x, $current_y, array_sum($col_widths), $row_height, 'F');
+            } elseif ($table_style === 'emerald_forest') {
+                // Logique spéciale pour emerald_forest : alternance spécifique des couleurs
+                if ($index % 2 === 0) {
+                    // Ligne paire : couleur claire #d1fae5
+                    $this->pdf->SetFillColor(209, 250, 229);
+                } else {
+                    // Ligne impaire : couleur plus foncée #a7f3d0
+                    $this->pdf->SetFillColor(167, 243, 208);
+                }
+                $this->pdf->Rect($x, $current_y, array_sum($col_widths), $row_height, 'F');
             } elseif ($index % 2 === 1 && isset($table_styles['alt_row_bg'])) {
-                // Alternance des couleurs de fond par défaut
+                // Alternance des couleurs de fond par défaut pour les autres styles
                 $this->pdf->SetFillColor($table_styles['alt_row_bg']['r'], $table_styles['alt_row_bg']['g'], $table_styles['alt_row_bg']['b']);
                 $this->pdf->Rect($x, $current_y, array_sum($col_widths), $row_height, 'F');
             }
