@@ -10360,6 +10360,9 @@ var FontControls = function FontControls(_ref2) {
 var renderColorsSection = function renderColorsSection(selectedElement, localProperties, handlePropertyChange, isBackgroundEnabled, activeTab) {
   var _ELEMENT_PROPERTY_PRO, _localProperties$back, _localProperties$back2;
   var allowedProperties = ((_ELEMENT_PROPERTY_PRO = ELEMENT_PROPERTY_PROFILES[selectedElement.type]) === null || _ELEMENT_PROPERTY_PRO === void 0 || (_ELEMENT_PROPERTY_PRO = _ELEMENT_PROPERTY_PRO[activeTab]) === null || _ELEMENT_PROPERTY_PRO === void 0 || (_ELEMENT_PROPERTY_PRO = _ELEMENT_PROPERTY_PRO.properties) === null || _ELEMENT_PROPERTY_PRO === void 0 ? void 0 : _ELEMENT_PROPERTY_PRO.colors) || [];
+
+  // Ne pas afficher la section si aucune propriété de couleur n'est autorisée
+  if (allowedProperties.length === 0) return null;
   return /*#__PURE__*/React.createElement("div", {
     key: "colors",
     className: "properties-group"
@@ -10619,8 +10622,12 @@ var renderTypographySection = function renderTypographySection(selectedElement, 
     className: "slider-value"
   }, localProperties.letterSpacing || 0, "px"))));
 };
-var renderBordersSection = function renderBordersSection(selectedElement, localProperties, handlePropertyChange, isBorderEnabled, setIsBorderEnabled, setPreviousBorderWidth, setPreviousBorderColor, previousBorderWidth, previousBorderColor) {
-  var _localProperties$bord, _localProperties$bord2, _localProperties$bord3, _localProperties$bord4;
+var renderBordersSection = function renderBordersSection(selectedElement, localProperties, handlePropertyChange, isBorderEnabled, setIsBorderEnabled, setPreviousBorderWidth, setPreviousBorderColor, previousBorderWidth, previousBorderColor, activeTab) {
+  var _ELEMENT_PROPERTY_PRO3, _localProperties$bord, _localProperties$bord2, _localProperties$bord3, _localProperties$bord4;
+  var allowedProperties = ((_ELEMENT_PROPERTY_PRO3 = ELEMENT_PROPERTY_PROFILES[selectedElement.type]) === null || _ELEMENT_PROPERTY_PRO3 === void 0 || (_ELEMENT_PROPERTY_PRO3 = _ELEMENT_PROPERTY_PRO3[activeTab]) === null || _ELEMENT_PROPERTY_PRO3 === void 0 || (_ELEMENT_PROPERTY_PRO3 = _ELEMENT_PROPERTY_PRO3.properties) === null || _ELEMENT_PROPERTY_PRO3 === void 0 ? void 0 : _ELEMENT_PROPERTY_PRO3.borders) || [];
+
+  // Ne pas afficher la section si aucune propriété de bordure n'est autorisée
+  if (allowedProperties.length === 0) return null;
   if (!isBorderEnabled && localProperties.borderWidth <= 0) return null;
   return /*#__PURE__*/React.createElement("div", {
     key: "borders",
@@ -10710,8 +10717,12 @@ var renderBordersSection = function renderBordersSection(selectedElement, localP
     className: "slider-value"
   }, (_localProperties$bord4 = localProperties.borderRadius) !== null && _localProperties$bord4 !== void 0 ? _localProperties$bord4 : 4, "px")))));
 };
-var renderEffectsSection = function renderEffectsSection(selectedElement, localProperties, handlePropertyChange) {
-  var _localProperties$boxS, _localProperties$boxS2, _localProperties$boxS3, _localProperties$boxS4;
+var renderEffectsSection = function renderEffectsSection(selectedElement, localProperties, handlePropertyChange, activeTab) {
+  var _ELEMENT_PROPERTY_PRO4, _localProperties$boxS, _localProperties$boxS2, _localProperties$boxS3, _localProperties$boxS4;
+  var allowedProperties = ((_ELEMENT_PROPERTY_PRO4 = ELEMENT_PROPERTY_PROFILES[selectedElement.type]) === null || _ELEMENT_PROPERTY_PRO4 === void 0 || (_ELEMENT_PROPERTY_PRO4 = _ELEMENT_PROPERTY_PRO4[activeTab]) === null || _ELEMENT_PROPERTY_PRO4 === void 0 || (_ELEMENT_PROPERTY_PRO4 = _ELEMENT_PROPERTY_PRO4.properties) === null || _ELEMENT_PROPERTY_PRO4 === void 0 ? void 0 : _ELEMENT_PROPERTY_PRO4.effects) || [];
+
+  // Ne pas afficher la section si aucune propriété d'effet n'est autorisée
+  if (allowedProperties.length === 0) return null;
   return /*#__PURE__*/React.createElement("div", {
     key: "effects",
     className: "properties-group"
@@ -10973,9 +10984,9 @@ var PropertiesPanel = /*#__PURE__*/(0,react.memo)(function (_ref4) {
             case 'typography':
               return renderTypographySection(selectedElement, localProperties, handlePropertyChange, activeTab);
             case 'borders':
-              return allowedControls.includes('borders') ? renderBordersSection(selectedElement, localProperties, handlePropertyChange, isBorderEnabled, setIsBorderEnabled, setPreviousBorderWidth, setPreviousBorderColor, previousBorderWidth, previousBorderColor) : null;
+              return allowedControls.includes('borders') ? renderBordersSection(selectedElement, localProperties, handlePropertyChange, isBorderEnabled, setIsBorderEnabled, setPreviousBorderWidth, setPreviousBorderColor, previousBorderWidth, previousBorderColor, activeTab) : null;
             case 'effects':
-              return allowedControls.includes('effects') ? renderEffectsSection(selectedElement, localProperties, handlePropertyChange) : null;
+              return allowedControls.includes('effects') ? renderEffectsSection(selectedElement, localProperties, handlePropertyChange, activeTab) : null;
             default:
               return null;
           }

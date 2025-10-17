@@ -711,6 +711,9 @@ const FontControls = ({ elementId, properties, onPropertyChange }) => (
 const renderColorsSection = (selectedElement, localProperties, handlePropertyChange, isBackgroundEnabled, activeTab) => {
   const allowedProperties = ELEMENT_PROPERTY_PROFILES[selectedElement.type]?.[activeTab]?.properties?.colors || [];
 
+  // Ne pas afficher la section si aucune propriété de couleur n'est autorisée
+  if (allowedProperties.length === 0) return null;
+
   return (
     <div key="colors" className="properties-group">
       <h4>🎨 Couleurs & Apparence</h4>
@@ -1001,7 +1004,12 @@ const renderTypographySection = (selectedElement, localProperties, handlePropert
   );
 };
 
-const renderBordersSection = (selectedElement, localProperties, handlePropertyChange, isBorderEnabled, setIsBorderEnabled, setPreviousBorderWidth, setPreviousBorderColor, previousBorderWidth, previousBorderColor) => {
+const renderBordersSection = (selectedElement, localProperties, handlePropertyChange, isBorderEnabled, setIsBorderEnabled, setPreviousBorderWidth, setPreviousBorderColor, previousBorderWidth, previousBorderColor, activeTab) => {
+  const allowedProperties = ELEMENT_PROPERTY_PROFILES[selectedElement.type]?.[activeTab]?.properties?.borders || [];
+
+  // Ne pas afficher la section si aucune propriété de bordure n'est autorisée
+  if (allowedProperties.length === 0) return null;
+
   if (!isBorderEnabled && localProperties.borderWidth <= 0) return null;
 
   return (
@@ -1096,48 +1104,55 @@ const renderBordersSection = (selectedElement, localProperties, handlePropertyCh
   );
 };
 
-const renderEffectsSection = (selectedElement, localProperties, handlePropertyChange) => (
-  <div key="effects" className="properties-group">
-    <h4>✨ Effets</h4>
+const renderEffectsSection = (selectedElement, localProperties, handlePropertyChange, activeTab) => {
+  const allowedProperties = ELEMENT_PROPERTY_PROFILES[selectedElement.type]?.[activeTab]?.properties?.effects || [];
 
-    <ColorPicker
-      label="Ombre"
-      value={localProperties.boxShadowColor || '#000000'}
-      onChange={(value) => handlePropertyChange(selectedElement.id, 'boxShadowColor', value)}
-      presets={['#000000', '#ffffff', '#64748b', '#ef4444', '#3b82f6']}
-    />
+  // Ne pas afficher la section si aucune propriété d'effet n'est autorisée
+  if (allowedProperties.length === 0) return null;
 
-    <div className="property-row">
-      <label>Flou ombre:</label>
-      <div className="slider-container">
-        <input
-          type="range"
-          min="0"
-          max="20"
-          value={localProperties.boxShadowBlur ?? 0}
-          onChange={(e) => handlePropertyChange(selectedElement.id, 'boxShadowBlur', safeParseInt(e.target.value, 0))}
-          className="slider"
-        />
-        <span className="slider-value">{localProperties.boxShadowBlur ?? 0}px</span>
+  return (
+    <div key="effects" className="properties-group">
+      <h4>✨ Effets</h4>
+
+      <ColorPicker
+        label="Ombre"
+        value={localProperties.boxShadowColor || '#000000'}
+        onChange={(value) => handlePropertyChange(selectedElement.id, 'boxShadowColor', value)}
+        presets={['#000000', '#ffffff', '#64748b', '#ef4444', '#3b82f6']}
+      />
+
+      <div className="property-row">
+        <label>Flou ombre:</label>
+        <div className="slider-container">
+          <input
+            type="range"
+            min="0"
+            max="20"
+            value={localProperties.boxShadowBlur ?? 0}
+            onChange={(e) => handlePropertyChange(selectedElement.id, 'boxShadowBlur', safeParseInt(e.target.value, 0))}
+            className="slider"
+          />
+          <span className="slider-value">{localProperties.boxShadowBlur ?? 0}px</span>
+        </div>
+      </div>
+
+      <div className="property-row">
+        <label>Décalage ombre:</label>
+        <div className="slider-container">
+          <input
+            type="range"
+            min="0"
+            max="10"
+            value={localProperties.boxShadowSpread ?? 0}
+            onChange={(e) => handlePropertyChange(selectedElement.id, 'boxShadowSpread', safeParseInt(e.target.value, 0))}
+            className="slider"
+          />
+          <span className="slider-value">{localProperties.boxShadowSpread ?? 0}px</span>
+        </div>
       </div>
     </div>
-
-    <div className="property-row">
-      <label>Décalage ombre:</label>
-      <div className="slider-container">
-        <input
-          type="range"
-          min="0"
-          max="10"
-          value={localProperties.boxShadowSpread ?? 0}
-          onChange={(e) => handlePropertyChange(selectedElement.id, 'boxShadowSpread', safeParseInt(e.target.value, 0))}
-          className="slider"
-        />
-        <span className="slider-value">{localProperties.boxShadowSpread ?? 0}px</span>
-      </div>
-    </div>
-  </div>
-);
+  );
+};
 
 const PropertiesPanel = memo(({
   selectedElements,
@@ -1350,10 +1365,10 @@ const PropertiesPanel = memo(({
                   return renderTypographySection(selectedElement, localProperties, handlePropertyChange, activeTab);
                 case 'borders':
                   return allowedControls.includes('borders') ?
-                    renderBordersSection(selectedElement, localProperties, handlePropertyChange, isBorderEnabled, setIsBorderEnabled, setPreviousBorderWidth, setPreviousBorderColor, previousBorderWidth, previousBorderColor) : null;
+                    renderBordersSection(selectedElement, localProperties, handlePropertyChange, isBorderEnabled, setIsBorderEnabled, setPreviousBorderWidth, setPreviousBorderColor, previousBorderWidth, previousBorderColor, activeTab) : null;
                 case 'effects':
                   return allowedControls.includes('effects') ?
-                    renderEffectsSection(selectedElement, localProperties, handlePropertyChange) : null;
+                    renderEffectsSection(selectedElement, localProperties, handlePropertyChange, activeTab) : null;
                 default:
                   return null;
               }
