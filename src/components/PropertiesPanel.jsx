@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback, useMemo, memo } from 'react';
 import { useElementCustomization } from '../hooks/useElementCustomization';
 import { useElementSynchronization } from '../hooks/useElementSynchronization';
 import { elementCustomizationService } from '../services/ElementCustomizationService';
-import { isPropertyAllowed, ELEMENT_TYPE_MAPPING } from '../utilities/elementPropertyRestrictions';
 
 // Configuration des presets par template pour le texte dynamique
 const TEMPLATE_PRESETS = {
@@ -1244,7 +1243,7 @@ const PropertiesPanel = memo(({
   // Gestionnaire pour le toggle "Aucun fond"
   const handleNoBackgroundToggle = useCallback((elementId, checked) => {
     // Vérifier si la propriété backgroundColor est autorisée pour ce type d'élément
-    const isBackgroundAllowed = selectedElement?.type ? isPropertyAllowed(selectedElement.type, 'backgroundColor') : true;
+    const isBackgroundAllowed = selectedElement?.type ? isPropertyAllowedForElement(selectedElement.type, activeTab, 'backgroundColor') : true;
     if (!isBackgroundAllowed) {
       console.warn('Fond non contrôlable pour ce type d\'élément');
       return;

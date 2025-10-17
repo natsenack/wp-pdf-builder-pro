@@ -9648,7 +9648,6 @@ function PropertiesPanel_arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 
 
 
-
 // Configuration des presets par template pour le texte dynamique
 var TEMPLATE_PRESETS = {
   'total_only': {
@@ -10874,7 +10873,7 @@ var PropertiesPanel = /*#__PURE__*/(0,react.memo)(function (_ref4) {
   // Gestionnaire pour le toggle "Aucun fond"
   var handleNoBackgroundToggle = (0,react.useCallback)(function (elementId, checked) {
     // Vérifier si la propriété backgroundColor est autorisée pour ce type d'élément
-    var isBackgroundAllowed = selectedElement !== null && selectedElement !== void 0 && selectedElement.type ? isPropertyAllowed(selectedElement.type, 'backgroundColor') : true;
+    var isBackgroundAllowed = selectedElement !== null && selectedElement !== void 0 && selectedElement.type ? isPropertyAllowedForElement(selectedElement.type, activeTab, 'backgroundColor') : true;
     if (!isBackgroundAllowed) {
       console.warn('Fond non contrôlable pour ce type d\'élément');
       return;
