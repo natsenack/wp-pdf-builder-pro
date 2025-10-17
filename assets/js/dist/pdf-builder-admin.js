@@ -5519,15 +5519,16 @@ var PreviewModal = function PreviewModal(_ref) {
           style: {
             width: '100%',
             height: '100%',
-            fontSize: (element.fontSize || 14) * zoom,
-            color: element.color || '#1e293b',
+            fontSize: (element.fontSize || 16) * zoom,
+            color: element.color || '#000000',
             fontWeight: element.fontWeight === 'bold' ? 'bold' : 'normal',
             fontStyle: element.fontStyle === 'italic' ? 'italic' : 'normal',
             textDecoration: element.textDecoration || 'none',
             textAlign: element.textAlign || 'left',
-            lineHeight: element.lineHeight || 'normal',
+            lineHeight: element.lineHeight || '1.2',
             whiteSpace: 'pre-wrap',
             overflow: 'hidden',
+            padding: "".concat(4 * zoom, "px"),
             boxSizing: 'border-box'
           }
         }, element.content || element.text || 'Texte');
@@ -5536,7 +5537,7 @@ var PreviewModal = function PreviewModal(_ref) {
           style: {
             width: '100%',
             height: '100%',
-            backgroundColor: element.backgroundColor || 'transparent',
+            backgroundColor: element.fillColor || 'transparent',
             border: element.borderWidth ? "".concat(element.borderWidth * zoom, "px ").concat(element.borderStyle || 'solid', " ").concat(element.borderColor || '#000000') : 'none',
             borderRadius: (element.borderRadius || 0) * zoom
           }
@@ -5567,7 +5568,7 @@ var PreviewModal = function PreviewModal(_ref) {
         return /*#__PURE__*/React.createElement("div", {
           style: {
             width: '100%',
-            backgroundColor: element.backgroundColor || element.color || '#cccccc',
+            backgroundColor: element.color || element.fillColor || '#cccccc',
             height: "".concat((element.thickness || element.height || 2) * zoom, "px"),
             margin: "".concat((element.margin || 10) * zoom, "px 0"),
             borderRadius: (element.borderRadius || 0) * zoom
