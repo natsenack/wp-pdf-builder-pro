@@ -1904,14 +1904,30 @@ const PropertiesPanel = memo(({
                     value={localProperties.template || 'total_only'}
                     onChange={(e) => {
                       const newTemplate = e.target.value;
+                      const oldTemplate = localProperties.template;
+                      
                       handlePropertyChange(selectedElement.id, 'template', newTemplate);
                       
-                      // Appliquer automatiquement les propriétés du preset
-                      const preset = TEMPLATE_PRESETS[newTemplate];
-                      if (preset) {
-                        Object.entries(preset).forEach(([property, value]) => {
-                          handlePropertyChange(selectedElement.id, property, value);
-                        });
+                      // Appliquer les presets seulement si c'est un changement de template
+                      // et seulement pour les propriétés qui ne sont pas déjà définies
+                      if (newTemplate !== oldTemplate) {
+                        const preset = TEMPLATE_PRESETS[newTemplate];
+                        if (preset) {
+                          Object.entries(preset).forEach(([property, defaultValue]) => {
+                            // Appliquer seulement si la propriété n'est pas déjà personnalisée
+                            // ou si elle a la valeur par défaut du template précédent
+                            const currentValue = localProperties[property];
+                            const oldPreset = oldTemplate ? TEMPLATE_PRESETS[oldTemplate] : null;
+                            const oldDefaultValue = oldPreset ? oldPreset[property] : null;
+                            
+                            // Appliquer le preset si :
+                            // 1. La propriété n'est pas définie, ou
+                            // 2. Elle a la valeur par défaut du template précédent
+                            if (currentValue === undefined || currentValue === oldDefaultValue) {
+                              handlePropertyChange(selectedElement.id, property, defaultValue);
+                            }
+                          });
+                        }
                       }
                     }}
                   >
@@ -1942,6 +1958,37 @@ const PropertiesPanel = memo(({
                     <option value="custom">🎨 Personnalisé</option>
                   </select>
                 </div>
+
+                {/* Bouton pour revenir aux valeurs par défaut du template */}
+                {localProperties.template && localProperties.template !== 'custom' && (
+                  <div className="property-row">
+                    <label></label>
+                    <button
+                      className="reset-template-btn"
+                      onClick={() => {
+                        const preset = TEMPLATE_PRESETS[localProperties.template];
+                        if (preset) {
+                          Object.entries(preset).forEach(([property, value]) => {
+                            handlePropertyChange(selectedElement.id, property, value);
+                          });
+                        }
+                      }}
+                      title="Réinitialiser aux valeurs par défaut du template"
+                      style={{
+                        padding: '6px 12px',
+                        backgroundColor: '#f3f4f6',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '4px',
+                        color: '#374151',
+                        fontSize: '12px',
+                        cursor: 'pointer',
+                        marginTop: '4px'
+                      }}
+                    >
+                      🔄 Valeurs par défaut
+                    </button>
+                  </div>
+                )}
 
                 {localProperties.template === 'custom' && (
                   <div className="property-row">

@@ -11521,17 +11521,32 @@ var PropertiesPanel = /*#__PURE__*/(0,react.memo)(function (_ref4) {
           value: localProperties.template || 'total_only',
           onChange: function onChange(e) {
             var newTemplate = e.target.value;
+            var oldTemplate = localProperties.template;
             handlePropertyChange(selectedElement.id, 'template', newTemplate);
 
-            // Appliquer automatiquement les propriétés du preset
-            var preset = TEMPLATE_PRESETS[newTemplate];
-            if (preset) {
-              Object.entries(preset).forEach(function (_ref9) {
-                var _ref0 = PropertiesPanel_slicedToArray(_ref9, 2),
-                  property = _ref0[0],
-                  value = _ref0[1];
-                handlePropertyChange(selectedElement.id, property, value);
-              });
+            // Appliquer les presets seulement si c'est un changement de template
+            // et seulement pour les propriétés qui ne sont pas déjà définies
+            if (newTemplate !== oldTemplate) {
+              var preset = TEMPLATE_PRESETS[newTemplate];
+              if (preset) {
+                Object.entries(preset).forEach(function (_ref9) {
+                  var _ref0 = PropertiesPanel_slicedToArray(_ref9, 2),
+                    property = _ref0[0],
+                    defaultValue = _ref0[1];
+                  // Appliquer seulement si la propriété n'est pas déjà personnalisée
+                  // ou si elle a la valeur par défaut du template précédent
+                  var currentValue = localProperties[property];
+                  var oldPreset = oldTemplate ? TEMPLATE_PRESETS[oldTemplate] : null;
+                  var oldDefaultValue = oldPreset ? oldPreset[property] : null;
+
+                  // Appliquer le preset si :
+                  // 1. La propriété n'est pas définie, ou
+                  // 2. Elle a la valeur par défaut du template précédent
+                  if (currentValue === undefined || currentValue === oldDefaultValue) {
+                    handlePropertyChange(selectedElement.id, property, defaultValue);
+                  }
+                });
+              }
             }
           }
         }, /*#__PURE__*/React.createElement("option", {
@@ -11584,7 +11599,33 @@ var PropertiesPanel = /*#__PURE__*/(0,react.memo)(function (_ref4) {
           value: "follow_up"
         }, "\uD83D\uDCCA Suivi commande"), /*#__PURE__*/React.createElement("option", {
           value: "custom"
-        }, "\uD83C\uDFA8 Personnalis\xE9"))), localProperties.template === 'custom' && /*#__PURE__*/React.createElement("div", {
+        }, "\uD83C\uDFA8 Personnalis\xE9"))), localProperties.template && localProperties.template !== 'custom' && /*#__PURE__*/React.createElement("div", {
+          className: "property-row"
+        }, /*#__PURE__*/React.createElement("label", null), /*#__PURE__*/React.createElement("button", {
+          className: "reset-template-btn",
+          onClick: function onClick() {
+            var preset = TEMPLATE_PRESETS[localProperties.template];
+            if (preset) {
+              Object.entries(preset).forEach(function (_ref1) {
+                var _ref10 = PropertiesPanel_slicedToArray(_ref1, 2),
+                  property = _ref10[0],
+                  value = _ref10[1];
+                handlePropertyChange(selectedElement.id, property, value);
+              });
+            }
+          },
+          title: "R\xE9initialiser aux valeurs par d\xE9faut du template",
+          style: {
+            padding: '6px 12px',
+            backgroundColor: '#f3f4f6',
+            border: '1px solid #d1d5db',
+            borderRadius: '4px',
+            color: '#374151',
+            fontSize: '12px',
+            cursor: 'pointer',
+            marginTop: '4px'
+          }
+        }, "\uD83D\uDD04 Valeurs par d\xE9faut")), localProperties.template === 'custom' && /*#__PURE__*/React.createElement("div", {
           className: "property-row"
         }, /*#__PURE__*/React.createElement("label", null, "Contenu personnalis\xE9:"), /*#__PURE__*/React.createElement("textarea", {
           value: localProperties.customContent || '',
@@ -11648,10 +11689,10 @@ var PropertiesPanel = /*#__PURE__*/(0,react.memo)(function (_ref4) {
         }, {
           key: 'siret',
           label: 'SIRET'
-        }].map(function (_ref1) {
+        }].map(function (_ref11) {
           var _localProperties$fiel3, _localProperties$fiel4;
-          var key = _ref1.key,
-            label = _ref1.label;
+          var key = _ref11.key,
+            label = _ref11.label;
           return /*#__PURE__*/React.createElement("label", {
             key: key,
             className: "checkbox-item"
@@ -12032,10 +12073,10 @@ var PropertiesPanel = /*#__PURE__*/(0,react.memo)(function (_ref4) {
         }, {
           key: 'total',
           label: 'Total'
-        }].map(function (_ref11) {
+        }].map(function (_ref13) {
           var _localProperties$fiel5, _localProperties$fiel6;
-          var key = _ref11.key,
-            label = _ref11.label;
+          var key = _ref13.key,
+            label = _ref13.label;
           return /*#__PURE__*/React.createElement("label", {
             key: key,
             className: "checkbox-item"
