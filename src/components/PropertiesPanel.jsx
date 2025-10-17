@@ -1822,7 +1822,7 @@ const PropertiesPanel = memo(({
                         gradient: 'linear-gradient(135deg, #064e3b 0%, #10b981 100%)',
                         headerBorder: '#065f46',
                         rowBorder: '#d1fae5',
-                        altRowBg: '#ecfdf5',
+                        altRowBg: '#a7f3d0',
                         borderWidth: 1.5,
                         textColor: '#ffffff'
                       },
