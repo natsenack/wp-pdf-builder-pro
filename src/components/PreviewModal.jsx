@@ -194,8 +194,8 @@ const PreviewModal = ({
           <div
             style={{
               width: '100%',
-              height: (element.strokeWidth || 1) * zoom,
-              borderTop: `${(element.strokeWidth || 1) * zoom}px solid ${element.strokeColor || '#000000'}`
+              height: (element.lineWidth || element.strokeWidth || 1) * zoom,
+              borderTop: `${(element.lineWidth || element.strokeWidth || 1) * zoom}px solid ${element.lineColor || element.strokeColor || '#000000'}`
             }}
           />
         );

@@ -1007,8 +1007,8 @@ var CanvasElement = function CanvasElement(_ref) {
         };
       case 'line':
         return {
-          borderTop: "".concat(element.lineWidth || 1, "px solid ").concat(element.lineColor || '#6b7280'),
-          height: "".concat(Math.max(element.lineWidth || 1, 12), "px"),
+          borderTop: "".concat(element.lineWidth || element.strokeWidth || 1, "px solid ").concat(element.lineColor || element.strokeColor || '#6b7280'),
+          height: "".concat(Math.max(element.lineWidth || element.strokeWidth || 1, 12), "px"),
           // Hauteur augmentée à 12px minimum pour faciliter le clic
           width: '100%',
           cursor: 'pointer',
@@ -1105,8 +1105,8 @@ var CanvasElement = function CanvasElement(_ref) {
         };
       case 'line':
         return {
-          borderTop: "".concat(element.lineWidth || 1, "px solid ").concat(element.lineColor || '#6b7280'),
-          height: "".concat(Math.max(element.lineWidth || 1, 12), "px"),
+          borderTop: "".concat(element.lineWidth || element.strokeWidth || 1, "px solid ").concat(element.lineColor || element.strokeColor || '#6b7280'),
+          height: "".concat(Math.max(element.lineWidth || element.strokeWidth || 1, 12), "px"),
           // Hauteur augmentée à 12px minimum pour faciliter le clic
           width: '100%',
           cursor: 'pointer',
@@ -5548,8 +5548,8 @@ var PreviewModal = function PreviewModal(_ref) {
         return /*#__PURE__*/React.createElement("div", {
           style: {
             width: '100%',
-            height: (element.strokeWidth || 1) * zoom,
-            borderTop: "".concat((element.strokeWidth || 1) * zoom, "px solid ").concat(element.strokeColor || '#000000')
+            height: (element.lineWidth || element.strokeWidth || 1) * zoom,
+            borderTop: "".concat((element.lineWidth || element.strokeWidth || 1) * zoom, "px solid ").concat(element.lineColor || element.strokeColor || '#000000')
           }
         });
       case 'divider':
