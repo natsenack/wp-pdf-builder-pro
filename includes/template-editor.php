@@ -233,9 +233,7 @@ body.wp-admin .pdf-builder-container {
     console.log('🔍 PDF Builder Debug: Found ' + allScripts.length + ' scripts in DOM:');
     allScripts.forEach((script, index) => {
         const src = script.getAttribute('src');
-        if (src && src.includes('pdf-builder')) {
-            console.log('🔍 PDF Builder Debug: Script ' + index + ': ' + src);
-        }
+        console.log('🔍 PDF Builder Debug: Script ' + index + ': ' + src);
     });
 
     // Vérifier spécifiquement nos scripts
