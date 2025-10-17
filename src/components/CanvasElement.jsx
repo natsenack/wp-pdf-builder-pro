@@ -830,6 +830,7 @@ export const CanvasElement = ({
     element.backgroundColor, element.backgroundOpacity, element.borderWidth, element.borderStyle, element.borderColor, element.borderRadius,
     element.opacity, element.brightness, element.contrast, element.saturate,
     element.boxShadowColor, element.boxShadowSpread, element.boxShadowBlur, element.shadow, element.shadowOffsetX, element.shadowOffsetY, element.shadowColor,
+    element.color, element.fontSize, element.fontFamily, element.fontWeight, element.fontStyle, element.textAlign, element.textDecoration, element.lineHeight,
     element.type, elementPadding, zoom, isSelected, dragAndDrop.isDragging, dragAndDrop.draggedElementId, dragAndDrop.dragOffset
   ]);
 
