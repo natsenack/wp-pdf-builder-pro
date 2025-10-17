@@ -563,10 +563,11 @@
 }
 
 .ribbon-toolbar .group-buttons.shapes-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
-  gap: 4px;
-  max-width: 200px;
+    display: grid
+;
+    grid-template-columns: repeat(auto-fit, minmax(32px, 1fr));
+    gap: 2px;
+    max-width: 250px;
 }
 
 .ribbon-toolbar .tool-button {
