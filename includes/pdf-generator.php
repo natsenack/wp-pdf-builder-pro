@@ -584,12 +584,12 @@ class PDF_Builder_Pro_Generator {
         $width = ($element['width'] ?? 100) * $px_to_mm;
         $height = ($element['height'] ?? 1) * $px_to_mm;
 
-        // Couleur de ligne
-        $color = $this->parse_color($element['color'] ?? '#000000');
+        // Couleur de ligne (utilise lineColor ou strokeColor ou color)
+        $color = $this->parse_color($element['lineColor'] ?? $element['strokeColor'] ?? $element['color'] ?? '#000000');
         $this->pdf->SetDrawColor($color['r'], $color['g'], $color['b']);
 
-        // Épaisseur de ligne
-        $line_width = ($element['borderWidth'] ?? 1) * $px_to_mm;
+        // Épaisseur de ligne (utilise lineWidth ou strokeWidth ou borderWidth)
+        $line_width = ($element['lineWidth'] ?? $element['strokeWidth'] ?? $element['borderWidth'] ?? 1) * $px_to_mm;
         $this->pdf->SetLineWidth($line_width);
 
         // Dessin de la ligne
