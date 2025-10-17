@@ -122,7 +122,7 @@
 }
 
 .editor-sidebar {
-  width: 480px;
+  width: 360px;
   background: var(--surface-color);
   border-right: 1px solid var(--border-color);
   display: flex;
