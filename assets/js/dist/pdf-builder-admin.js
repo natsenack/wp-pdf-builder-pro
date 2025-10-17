@@ -1176,7 +1176,7 @@ var CanvasElement = function CanvasElement(_ref) {
   // Le contenu sera rendu plus bas dans le même conteneur
   element.type === 'customer_info' ? null :
   // Le contenu sera rendu plus bas dans le même conteneur
-  element.type !== 'image' && element.type !== 'rectangle' && element.type !== 'company_logo' && element.type !== 'order_number' && element.type !== 'company_info' && element.type !== 'document_type' ? element.type : null, element.type === 'product_table' && function (_element$columns2, _element$columns3, _element$columns4, _element$columns5, _element$columns6, _element$columns7, _element$columns8, _element$columns9, _element$columns0, _element$columns1, _element$columns10, _element$columns11, _element$columns12, _element$columns13, _element$columns14, _element$columns15, _element$columns16, _element$columns17, _element$columns18, _element$columns19, _element$columns20, _element$columns21, _element$columns22, _element$columns23, _element$columns24, _element$columns25, _element$columns26, _element$columns27, _element$columns28, _element$columns29, _element$columns30) {
+  element.type !== 'image' && element.type !== 'rectangle' && element.type !== 'company_logo' && element.type !== 'order_number' && element.type !== 'company_info' && element.type !== 'document_type' ? element.type : null, element.type === 'product_table' && function (_element$columns2, _element$columns3, _element$columns4, _element$columns5, _element$columns6, _element$columns7, _element$columns12, _element$columns13, _element$columns14, _element$columns15, _element$columns16, _element$columns17, _element$columns18, _element$columns19, _element$columns20, _element$columns21, _element$columns22, _element$columns23, _element$columns24) {
     // Données des produits (pourrait venir de props ou d'un état global)
     var products = [{
       name: 'Produit A - Description du produit',
@@ -1307,145 +1307,76 @@ var CanvasElement = function CanvasElement(_ref) {
         display: 'flex',
         flexDirection: 'column'
       }
-    }, /*#__PURE__*/React.createElement("div", {
-      key: "row-1",
-      style: {
-        display: 'flex',
-        borderBottom: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
-        backgroundColor: tableStyles.altRowBg,
-        fontSize: "".concat(tableStyles.rowFontSize * zoom, "px"),
-        transition: 'background-color 0.15s ease'
-      }
-    }, ((_element$columns8 = element.columns) === null || _element$columns8 === void 0 ? void 0 : _element$columns8.image) !== false && /*#__PURE__*/React.createElement("div", {
-      key: "row-1-image",
-      style: {
-        flex: '0 0 40px',
-        padding: "".concat(5 * zoom, "px ").concat(4 * zoom, "px"),
-        textAlign: 'center',
-        borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
-        color: tableStyles.rowTextColor,
-        opacity: 0.7,
-        fontSize: "".concat(tableStyles.rowFontSize * zoom * 0.9, "px")
-      }
-    }, "\uD83D\uDCF7"), ((_element$columns9 = element.columns) === null || _element$columns9 === void 0 ? void 0 : _element$columns9.name) !== false && /*#__PURE__*/React.createElement("div", {
-      key: "row-1-name",
-      style: {
-        flex: 1,
-        padding: "".concat(5 * zoom, "px ").concat(8 * zoom, "px"),
-        borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
-        color: tableStyles.rowTextColor,
-        fontWeight: '500',
-        lineHeight: '1.3'
-      }
-    }, "Produit A - Description du produit"), ((_element$columns0 = element.columns) === null || _element$columns0 === void 0 ? void 0 : _element$columns0.sku) !== false && /*#__PURE__*/React.createElement("div", {
-      key: "row-1-sku",
-      style: {
-        flex: '0 0 80px',
-        padding: "".concat(5 * zoom, "px ").concat(8 * zoom, "px"),
-        borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
-        color: tableStyles.rowTextColor,
-        opacity: 0.8,
-        fontFamily: 'monospace',
-        fontSize: "".concat(tableStyles.rowFontSize * zoom * 0.9, "px")
-      }
-    }, "SKU001"), ((_element$columns1 = element.columns) === null || _element$columns1 === void 0 ? void 0 : _element$columns1.quantity) !== false && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: '0 0 60px',
-        padding: "".concat(5 * zoom, "px ").concat(8 * zoom, "px"),
-        textAlign: 'center',
-        borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
-        color: tableStyles.rowTextColor,
-        fontWeight: '600'
-      }
-    }, "2"), ((_element$columns10 = element.columns) === null || _element$columns10 === void 0 ? void 0 : _element$columns10.price) !== false && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: '0 0 80px',
-        padding: "".concat(5 * zoom, "px ").concat(8 * zoom, "px"),
-        textAlign: 'right',
-        borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
-        color: tableStyles.rowTextColor,
-        fontWeight: '500',
-        fontFamily: '"Inter", system-ui, sans-serif'
-      }
-    }, "\u20AC19.99"), ((_element$columns11 = element.columns) === null || _element$columns11 === void 0 ? void 0 : _element$columns11.total) !== false && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: '0 0 80px',
-        padding: "".concat(5 * zoom, "px ").concat(8 * zoom, "px"),
-        textAlign: 'right',
-        color: tableStyles.rowTextColor,
-        fontWeight: '600',
-        fontFamily: '"Inter", system-ui, sans-serif'
-      }
-    }, "\u20AC39.98")), /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        borderBottom: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
-        backgroundColor: 'transparent',
-        // Ligne normale sans alternance
-        fontSize: "".concat(tableStyles.rowFontSize * zoom, "px"),
-        transition: 'background-color 0.15s ease'
-      }
-    }, ((_element$columns12 = element.columns) === null || _element$columns12 === void 0 ? void 0 : _element$columns12.image) !== false && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: '0 0 40px',
-        padding: "".concat(5 * zoom, "px ").concat(4 * zoom, "px"),
-        textAlign: 'center',
-        borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
-        color: tableStyles.rowTextColor,
-        opacity: 0.7,
-        fontSize: "".concat(tableStyles.rowFontSize * zoom * 0.9, "px")
-      }
-    }, "\uD83D\uDCF7"), ((_element$columns13 = element.columns) === null || _element$columns13 === void 0 ? void 0 : _element$columns13.name) !== false && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: 1,
-        padding: "".concat(5 * zoom, "px ").concat(8 * zoom, "px"),
-        borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
-        color: tableStyles.rowTextColor,
-        fontWeight: '500',
-        lineHeight: '1.3'
-      }
-    }, "Produit B - Un autre article"), ((_element$columns14 = element.columns) === null || _element$columns14 === void 0 ? void 0 : _element$columns14.sku) !== false && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: '0 0 80px',
-        padding: "".concat(5 * zoom, "px ").concat(8 * zoom, "px"),
-        borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
-        color: tableStyles.rowTextColor,
-        opacity: 0.8,
-        fontFamily: 'monospace',
-        fontSize: "".concat(tableStyles.rowFontSize * zoom * 0.9, "px")
-      }
-    }, "SKU002"), ((_element$columns15 = element.columns) === null || _element$columns15 === void 0 ? void 0 : _element$columns15.quantity) !== false && /*#__PURE__*/React.createElement("div", {
-      key: "row-1-quantity",
-      style: {
-        flex: '0 0 60px',
-        padding: "".concat(5 * zoom, "px ").concat(8 * zoom, "px"),
-        textAlign: 'center',
-        borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
-        color: tableStyles.rowTextColor,
-        fontWeight: '600'
-      }
-    }, "1"), ((_element$columns16 = element.columns) === null || _element$columns16 === void 0 ? void 0 : _element$columns16.price) !== false && /*#__PURE__*/React.createElement("div", {
-      key: "row-1-price",
-      style: {
-        flex: '0 0 80px',
-        padding: "".concat(5 * zoom, "px ").concat(8 * zoom, "px"),
-        textAlign: 'right',
-        borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
-        color: tableStyles.rowTextColor,
-        fontWeight: '500',
-        fontFamily: '"Inter", system-ui, sans-serif'
-      }
-    }, "\u20AC29.99"), ((_element$columns17 = element.columns) === null || _element$columns17 === void 0 ? void 0 : _element$columns17.total) !== false && /*#__PURE__*/React.createElement("div", {
-      key: "row-1-total",
-      style: {
-        flex: '0 0 80px',
-        padding: "".concat(5 * zoom, "px ").concat(8 * zoom, "px"),
-        textAlign: 'right',
-        color: tableStyles.rowTextColor,
-        fontWeight: '600',
-        fontFamily: '"Inter", system-ui, sans-serif'
-      }
-    }, "\u20AC29.99"))), (element.showSubtotal || element.showShipping || element.showTaxes || element.showDiscount || element.showTotal) && /*#__PURE__*/React.createElement("div", {
+    }, products.map(function (product, index) {
+      var _element$columns8, _element$columns9, _element$columns0, _element$columns1, _element$columns10, _element$columns11;
+      return /*#__PURE__*/React.createElement("div", {
+        key: "row-".concat(index),
+        style: {
+          display: 'flex',
+          borderBottom: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
+          backgroundColor: index % 2 === 1 ? tableStyles.altRowBg : 'transparent',
+          fontSize: "".concat(tableStyles.rowFontSize * zoom, "px"),
+          transition: 'background-color 0.15s ease'
+        }
+      }, ((_element$columns8 = element.columns) === null || _element$columns8 === void 0 ? void 0 : _element$columns8.image) !== false && /*#__PURE__*/React.createElement("div", {
+        style: {
+          flex: '0 0 40px',
+          padding: "".concat(5 * zoom, "px ").concat(4 * zoom, "px"),
+          textAlign: 'center',
+          borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
+          color: tableStyles.rowTextColor,
+          opacity: 0.7,
+          fontSize: "".concat(tableStyles.rowFontSize * zoom * 0.9, "px")
+        }
+      }, "\uD83D\uDCF7"), ((_element$columns9 = element.columns) === null || _element$columns9 === void 0 ? void 0 : _element$columns9.name) !== false && /*#__PURE__*/React.createElement("div", {
+        style: {
+          flex: 1,
+          padding: "".concat(5 * zoom, "px ").concat(8 * zoom, "px"),
+          borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
+          color: tableStyles.rowTextColor,
+          fontWeight: '500',
+          lineHeight: '1.3'
+        }
+      }, product.name), ((_element$columns0 = element.columns) === null || _element$columns0 === void 0 ? void 0 : _element$columns0.sku) !== false && /*#__PURE__*/React.createElement("div", {
+        style: {
+          flex: '0 0 80px',
+          padding: "".concat(5 * zoom, "px ").concat(8 * zoom, "px"),
+          borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
+          color: tableStyles.rowTextColor,
+          opacity: 0.8,
+          fontFamily: 'monospace',
+          fontSize: "".concat(tableStyles.rowFontSize * zoom * 0.9, "px")
+        }
+      }, product.sku), ((_element$columns1 = element.columns) === null || _element$columns1 === void 0 ? void 0 : _element$columns1.quantity) !== false && /*#__PURE__*/React.createElement("div", {
+        style: {
+          flex: '0 0 60px',
+          padding: "".concat(5 * zoom, "px ").concat(8 * zoom, "px"),
+          textAlign: 'center',
+          borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
+          color: tableStyles.rowTextColor,
+          fontWeight: '600'
+        }
+      }, product.quantity), ((_element$columns10 = element.columns) === null || _element$columns10 === void 0 ? void 0 : _element$columns10.price) !== false && /*#__PURE__*/React.createElement("div", {
+        style: {
+          flex: '0 0 80px',
+          padding: "".concat(5 * zoom, "px ").concat(8 * zoom, "px"),
+          textAlign: 'right',
+          borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
+          color: tableStyles.rowTextColor,
+          fontWeight: '500',
+          fontFamily: '"Inter", system-ui, sans-serif'
+        }
+      }, product.price.toFixed(2), "\u20AC"), ((_element$columns11 = element.columns) === null || _element$columns11 === void 0 ? void 0 : _element$columns11.total) !== false && /*#__PURE__*/React.createElement("div", {
+        style: {
+          flex: '0 0 80px',
+          padding: "".concat(5 * zoom, "px ").concat(8 * zoom, "px"),
+          textAlign: 'right',
+          color: tableStyles.rowTextColor,
+          fontWeight: '600',
+          fontFamily: '"Inter", system-ui, sans-serif'
+        }
+      }, product.total.toFixed(2), "\u20AC"));
+    })), (element.showSubtotal || element.showShipping || element.showTaxes || element.showDiscount || element.showTotal) && /*#__PURE__*/React.createElement("div", {
       style: {
         flex: 1,
         display: 'flex',
@@ -1467,13 +1398,13 @@ var CanvasElement = function CanvasElement(_ref) {
         fontWeight: 'bold',
         color: element.color || '#666'
       }
-    }), ((_element$columns18 = element.columns) === null || _element$columns18 === void 0 ? void 0 : _element$columns18.quantity) !== false && /*#__PURE__*/React.createElement("div", {
+    }), ((_element$columns12 = element.columns) === null || _element$columns12 === void 0 ? void 0 : _element$columns12.quantity) !== false && /*#__PURE__*/React.createElement("div", {
       style: {
         flex: '0 0 60px',
         padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
         textAlign: 'center'
       }
-    }), ((_element$columns19 = element.columns) === null || _element$columns19 === void 0 ? void 0 : _element$columns19.price) !== false && /*#__PURE__*/React.createElement("div", {
+    }), ((_element$columns13 = element.columns) === null || _element$columns13 === void 0 ? void 0 : _element$columns13.price) !== false && /*#__PURE__*/React.createElement("div", {
       style: {
         flex: '0 0 80px',
         padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
@@ -1481,7 +1412,7 @@ var CanvasElement = function CanvasElement(_ref) {
         fontWeight: 'bold',
         color: element.color || '#666'
       }
-    }), ((_element$columns20 = element.columns) === null || _element$columns20 === void 0 ? void 0 : _element$columns20.total) !== false && /*#__PURE__*/React.createElement("div", {
+    }), ((_element$columns14 = element.columns) === null || _element$columns14 === void 0 ? void 0 : _element$columns14.total) !== false && /*#__PURE__*/React.createElement("div", {
       style: {
         flex: '0 0 80px',
         padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
@@ -1504,7 +1435,107 @@ var CanvasElement = function CanvasElement(_ref) {
         color: tableStyles.rowTextColor,
         fontWeight: '600'
       }
-    }, "Sous-total"), ((_element$columns21 = element.columns) === null || _element$columns21 === void 0 ? void 0 : _element$columns21.quantity) !== false && /*#__PURE__*/React.createElement("div", {
+    }, "Sous-total"), ((_element$columns15 = element.columns) === null || _element$columns15 === void 0 ? void 0 : _element$columns15.quantity) !== false && /*#__PURE__*/React.createElement("div", {
+      style: {
+        flex: '0 0 60px',
+        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
+        textAlign: 'center'
+      }
+    }), ((_element$columns16 = element.columns) === null || _element$columns16 === void 0 ? void 0 : _element$columns16.price) !== false && /*#__PURE__*/React.createElement("div", {
+      style: {
+        flex: '0 0 80px',
+        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
+        textAlign: 'right'
+      }
+    }), lastVisibleColumn === 'total' && /*#__PURE__*/React.createElement("div", {
+      style: {
+        flex: '0 0 80px',
+        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
+        textAlign: 'right',
+        fontWeight: 'bold'
+      }
+    }, subtotal.toFixed(2), "\u20AC")), element.showShipping && /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'flex',
+        borderBottom: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
+        backgroundColor: 'transparent',
+        fontSize: "".concat(tableStyles.rowFontSize * zoom, "px")
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        flex: 1,
+        padding: "".concat(5 * zoom, "px ").concat(8 * zoom, "px"),
+        textAlign: 'right',
+        color: tableStyles.rowTextColor,
+        fontWeight: '500'
+      }
+    }, "Port"), ((_element$columns17 = element.columns) === null || _element$columns17 === void 0 ? void 0 : _element$columns17.quantity) !== false && /*#__PURE__*/React.createElement("div", {
+      style: {
+        flex: '0 0 60px',
+        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
+        textAlign: 'center'
+      }
+    }), ((_element$columns18 = element.columns) === null || _element$columns18 === void 0 ? void 0 : _element$columns18.price) !== false && /*#__PURE__*/React.createElement("div", {
+      style: {
+        flex: '0 0 80px',
+        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
+        textAlign: 'right'
+      }
+    }), lastVisibleColumn === 'total' && /*#__PURE__*/React.createElement("div", {
+      style: {
+        flex: '0 0 80px',
+        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
+        textAlign: 'right'
+      }
+    }, shipping.toFixed(2), "\u20AC")), element.showTaxes && /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'flex',
+        borderBottom: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
+        backgroundColor: 'transparent',
+        fontSize: "".concat(tableStyles.rowFontSize * zoom, "px")
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        flex: 1,
+        padding: "".concat(5 * zoom, "px ").concat(8 * zoom, "px"),
+        textAlign: 'right',
+        color: tableStyles.rowTextColor,
+        fontWeight: '500'
+      }
+    }, "TVA"), ((_element$columns19 = element.columns) === null || _element$columns19 === void 0 ? void 0 : _element$columns19.quantity) !== false && /*#__PURE__*/React.createElement("div", {
+      style: {
+        flex: '0 0 60px',
+        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
+        textAlign: 'center'
+      }
+    }), ((_element$columns20 = element.columns) === null || _element$columns20 === void 0 ? void 0 : _element$columns20.price) !== false && /*#__PURE__*/React.createElement("div", {
+      style: {
+        flex: '0 0 80px',
+        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
+        textAlign: 'right'
+      }
+    }), lastVisibleColumn === 'total' && /*#__PURE__*/React.createElement("div", {
+      style: {
+        flex: '0 0 80px',
+        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
+        textAlign: 'right'
+      }
+    }, tax.toFixed(2), "\u20AC")), element.showDiscount && /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: 'flex',
+        borderBottom: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
+        backgroundColor: 'transparent',
+        fontSize: "".concat(tableStyles.rowFontSize * zoom, "px")
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        flex: 1,
+        padding: "".concat(5 * zoom, "px ").concat(8 * zoom, "px"),
+        textAlign: 'right',
+        color: '#dc3545',
+        fontWeight: '500'
+      }
+    }, "Remise"), ((_element$columns21 = element.columns) === null || _element$columns21 === void 0 ? void 0 : _element$columns21.quantity) !== false && /*#__PURE__*/React.createElement("div", {
       style: {
         flex: '0 0 60px',
         padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
@@ -1521,109 +1552,9 @@ var CanvasElement = function CanvasElement(_ref) {
         flex: '0 0 80px',
         padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
         textAlign: 'right',
-        fontWeight: 'bold'
-      }
-    }, "\u20AC", subtotal.toFixed(2))), element.showShipping && /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        borderBottom: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
-        backgroundColor: 'transparent',
-        fontSize: "".concat(tableStyles.rowFontSize * zoom, "px")
-      }
-    }, /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: 1,
-        padding: "".concat(5 * zoom, "px ").concat(8 * zoom, "px"),
-        textAlign: 'right',
-        color: tableStyles.rowTextColor,
-        fontWeight: '500'
-      }
-    }, "Frais de port"), ((_element$columns23 = element.columns) === null || _element$columns23 === void 0 ? void 0 : _element$columns23.quantity) !== false && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: '0 0 60px',
-        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-        textAlign: 'center'
-      }
-    }), ((_element$columns24 = element.columns) === null || _element$columns24 === void 0 ? void 0 : _element$columns24.price) !== false && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: '0 0 80px',
-        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-        textAlign: 'right'
-      }
-    }), lastVisibleColumn === 'total' && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: '0 0 80px',
-        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-        textAlign: 'right'
-      }
-    }, "\u20AC", shipping.toFixed(2))), element.showTaxes && /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        borderBottom: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
-        backgroundColor: 'transparent',
-        fontSize: "".concat(tableStyles.rowFontSize * zoom, "px")
-      }
-    }, /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: 1,
-        padding: "".concat(5 * zoom, "px ").concat(8 * zoom, "px"),
-        textAlign: 'right',
-        color: tableStyles.rowTextColor,
-        fontWeight: '500'
-      }
-    }, "Taxes (TVA 20%)"), ((_element$columns25 = element.columns) === null || _element$columns25 === void 0 ? void 0 : _element$columns25.quantity) !== false && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: '0 0 60px',
-        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-        textAlign: 'center'
-      }
-    }), ((_element$columns26 = element.columns) === null || _element$columns26 === void 0 ? void 0 : _element$columns26.price) !== false && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: '0 0 80px',
-        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-        textAlign: 'right'
-      }
-    }), lastVisibleColumn === 'total' && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: '0 0 80px',
-        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-        textAlign: 'right'
-      }
-    }, "\u20AC", tax.toFixed(2))), element.showDiscount && /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        borderBottom: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
-        backgroundColor: 'transparent',
-        fontSize: "".concat(tableStyles.rowFontSize * zoom, "px")
-      }
-    }, /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: 1,
-        padding: "".concat(5 * zoom, "px ").concat(8 * zoom, "px"),
-        textAlign: 'right',
-        color: '#dc3545',
-        fontWeight: '500'
-      }
-    }, "Remise"), ((_element$columns27 = element.columns) === null || _element$columns27 === void 0 ? void 0 : _element$columns27.quantity) !== false && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: '0 0 60px',
-        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-        textAlign: 'center'
-      }
-    }), ((_element$columns28 = element.columns) === null || _element$columns28 === void 0 ? void 0 : _element$columns28.price) !== false && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: '0 0 80px',
-        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-        textAlign: 'right'
-      }
-    }), lastVisibleColumn === 'total' && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: '0 0 80px',
-        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-        textAlign: 'right',
         color: '#d32f2f'
       }
-    }, "\u20AC", discount.toFixed(2))), element.showTotal && /*#__PURE__*/React.createElement("div", {
+    }, "-", Math.abs(discount).toFixed(2), "\u20AC")), element.showTotal && /*#__PURE__*/React.createElement("div", {
       style: {
         display: 'flex',
         borderTop: showBorders ? "".concat(tableStyles.borderWidth * 2 * zoom, "px solid ").concat(tableStyles.headerBorder) : 'none',
@@ -1643,13 +1574,13 @@ var CanvasElement = function CanvasElement(_ref) {
         textTransform: 'uppercase',
         letterSpacing: '0.05em'
       }
-    }, "TOTAL TTC"), ((_element$columns29 = element.columns) === null || _element$columns29 === void 0 ? void 0 : _element$columns29.quantity) !== false && /*#__PURE__*/React.createElement("div", {
+    }, "TOTAL"), ((_element$columns23 = element.columns) === null || _element$columns23 === void 0 ? void 0 : _element$columns23.quantity) !== false && /*#__PURE__*/React.createElement("div", {
       style: {
         flex: '0 0 60px',
         padding: "".concat(6 * zoom, "px ").concat(8 * zoom, "px"),
         textAlign: 'center'
       }
-    }), ((_element$columns30 = element.columns) === null || _element$columns30 === void 0 ? void 0 : _element$columns30.price) !== false && /*#__PURE__*/React.createElement("div", {
+    }), ((_element$columns24 = element.columns) === null || _element$columns24 === void 0 ? void 0 : _element$columns24.price) !== false && /*#__PURE__*/React.createElement("div", {
       style: {
         flex: '0 0 80px',
         padding: "".concat(6 * zoom, "px ").concat(8 * zoom, "px"),
@@ -1665,7 +1596,7 @@ var CanvasElement = function CanvasElement(_ref) {
         color: tableStyles.headerTextColor,
         fontFamily: '"Inter", system-ui, sans-serif'
       }
-    }, "\u20AC", total.toFixed(2)))));
+    }, total.toFixed(2), "\u20AC"))));
   }(), element.type === 'customer_info' && /*#__PURE__*/React.createElement("div", {
     style: {
       width: '100%',

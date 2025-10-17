@@ -1014,175 +1014,91 @@ export const CanvasElement = ({
             
             {/* Lignes de données d'exemple */}
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-              {/* Ligne 1 */}
-              <div key="row-1" style={{
-                display: 'flex',
-                borderBottom: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none',
-                backgroundColor: tableStyles.altRowBg,
-                fontSize: `${tableStyles.rowFontSize * zoom}px`,
-                transition: 'background-color 0.15s ease'
-              }}>
-                {(element.columns?.image !== false) && (
-                  <div key="row-1-image" style={{
-                    flex: '0 0 40px',
-                    padding: `${5 * zoom}px ${4 * zoom}px`,
-                    textAlign: 'center',
-                    borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none',
-                    color: tableStyles.rowTextColor,
-                    opacity: 0.7,
-                    fontSize: `${tableStyles.rowFontSize * zoom * 0.9}px`
-                  }}>
-                    📷
-                  </div>
-                )}
-                {(element.columns?.name !== false) && (
-                  <div key="row-1-name" style={{
-                    flex: 1,
-                    padding: `${5 * zoom}px ${8 * zoom}px`,
-                    borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none',
-                    color: tableStyles.rowTextColor,
-                    fontWeight: '500',
-                    lineHeight: '1.3'
-                  }}>
-                    Produit A - Description du produit
-                  </div>
-                )}
-                {(element.columns?.sku !== false) && (
-                  <div key="row-1-sku" style={{
-                    flex: '0 0 80px',
-                    padding: `${5 * zoom}px ${8 * zoom}px`,
-                    borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none',
-                    color: tableStyles.rowTextColor,
-                    opacity: 0.8,
-                    fontFamily: 'monospace',
-                    fontSize: `${tableStyles.rowFontSize * zoom * 0.9}px`
-                  }}>
-                    SKU001
-                  </div>
-                )}
-                {(element.columns?.quantity !== false) && (
-                  <div style={{
-                    flex: '0 0 60px',
-                    padding: `${5 * zoom}px ${8 * zoom}px`,
-                    textAlign: 'center',
-                    borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none',
-                    color: tableStyles.rowTextColor,
-                    fontWeight: '600'
-                  }}>
-                    2
-                  </div>
-                )}
-                {(element.columns?.price !== false) && (
-                  <div style={{
-                    flex: '0 0 80px',
-                    padding: `${5 * zoom}px ${8 * zoom}px`,
-                    textAlign: 'right',
-                    borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none',
-                    color: tableStyles.rowTextColor,
-                    fontWeight: '500',
-                    fontFamily: '"Inter", system-ui, sans-serif'
-                  }}>
-                    €19.99
-                  </div>
-                )}
-                {(element.columns?.total !== false) && (
-                  <div style={{
-                    flex: '0 0 80px',
-                    padding: `${5 * zoom}px ${8 * zoom}px`,
-                    textAlign: 'right',
-                    color: tableStyles.rowTextColor,
-                    fontWeight: '600',
-                    fontFamily: '"Inter", system-ui, sans-serif'
-                  }}>
-                    €39.98
-                  </div>
-                )}
-              </div>
-              
-              {/* Ligne 2 */}
-              <div style={{
-                display: 'flex',
-                borderBottom: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none',
-                backgroundColor: 'transparent', // Ligne normale sans alternance
-                fontSize: `${tableStyles.rowFontSize * zoom}px`,
-                transition: 'background-color 0.15s ease'
-              }}>
-                {(element.columns?.image !== false) && (
-                  <div style={{
-                    flex: '0 0 40px',
-                    padding: `${5 * zoom}px ${4 * zoom}px`,
-                    textAlign: 'center',
-                    borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none',
-                    color: tableStyles.rowTextColor,
-                    opacity: 0.7,
-                    fontSize: `${tableStyles.rowFontSize * zoom * 0.9}px`
-                  }}>
-                    📷
-                  </div>
-                )}
-                {(element.columns?.name !== false) && (
-                  <div style={{
-                    flex: 1,
-                    padding: `${5 * zoom}px ${8 * zoom}px`,
-                    borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none',
-                    color: tableStyles.rowTextColor,
-                    fontWeight: '500',
-                    lineHeight: '1.3'
-                  }}>
-                    Produit B - Un autre article
-                  </div>
-                )}
-                {(element.columns?.sku !== false) && (
-                  <div style={{
-                    flex: '0 0 80px',
-                    padding: `${5 * zoom}px ${8 * zoom}px`,
-                    borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none',
-                    color: tableStyles.rowTextColor,
-                    opacity: 0.8,
-                    fontFamily: 'monospace',
-                    fontSize: `${tableStyles.rowFontSize * zoom * 0.9}px`
-                  }}>
-                    SKU002
-                  </div>
-                )}
-                {(element.columns?.quantity !== false) && (
-                  <div key="row-1-quantity" style={{
-                    flex: '0 0 60px',
-                    padding: `${5 * zoom}px ${8 * zoom}px`,
-                    textAlign: 'center',
-                    borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none',
-                    color: tableStyles.rowTextColor,
-                    fontWeight: '600'
-                  }}>
-                    1
-                  </div>
-                )}
-                {(element.columns?.price !== false) && (
-                  <div key="row-1-price" style={{
-                    flex: '0 0 80px',
-                    padding: `${5 * zoom}px ${8 * zoom}px`,
-                    textAlign: 'right',
-                    borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none',
-                    color: tableStyles.rowTextColor,
-                    fontWeight: '500',
-                    fontFamily: '"Inter", system-ui, sans-serif'
-                  }}>
-                    €29.99
-                  </div>
-                )}
-                {(element.columns?.total !== false) && (
-                  <div key="row-1-total" style={{
-                    flex: '0 0 80px',
-                    padding: `${5 * zoom}px ${8 * zoom}px`,
-                    textAlign: 'right',
-                    color: tableStyles.rowTextColor,
-                    fontWeight: '600',
-                    fontFamily: '"Inter", system-ui, sans-serif'
-                  }}>
-                    €29.99
-                  </div>
-                )}
-              </div>
+              {products.map((product, index) => (
+                <div key={`row-${index}`} style={{
+                  display: 'flex',
+                  borderBottom: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none',
+                  backgroundColor: index % 2 === 1 ? tableStyles.altRowBg : 'transparent',
+                  fontSize: `${tableStyles.rowFontSize * zoom}px`,
+                  transition: 'background-color 0.15s ease'
+                }}>
+                  {(element.columns?.image !== false) && (
+                    <div style={{
+                      flex: '0 0 40px',
+                      padding: `${5 * zoom}px ${4 * zoom}px`,
+                      textAlign: 'center',
+                      borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none',
+                      color: tableStyles.rowTextColor,
+                      opacity: 0.7,
+                      fontSize: `${tableStyles.rowFontSize * zoom * 0.9}px`
+                    }}>
+                      📷
+                    </div>
+                  )}
+                  {(element.columns?.name !== false) && (
+                    <div style={{
+                      flex: 1,
+                      padding: `${5 * zoom}px ${8 * zoom}px`,
+                      borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none',
+                      color: tableStyles.rowTextColor,
+                      fontWeight: '500',
+                      lineHeight: '1.3'
+                    }}>
+                      {product.name}
+                    </div>
+                  )}
+                  {(element.columns?.sku !== false) && (
+                    <div style={{
+                      flex: '0 0 80px',
+                      padding: `${5 * zoom}px ${8 * zoom}px`,
+                      borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none',
+                      color: tableStyles.rowTextColor,
+                      opacity: 0.8,
+                      fontFamily: 'monospace',
+                      fontSize: `${tableStyles.rowFontSize * zoom * 0.9}px`
+                    }}>
+                      {product.sku}
+                    </div>
+                  )}
+                  {(element.columns?.quantity !== false) && (
+                    <div style={{
+                      flex: '0 0 60px',
+                      padding: `${5 * zoom}px ${8 * zoom}px`,
+                      textAlign: 'center',
+                      borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none',
+                      color: tableStyles.rowTextColor,
+                      fontWeight: '600'
+                    }}>
+                      {product.quantity}
+                    </div>
+                  )}
+                  {(element.columns?.price !== false) && (
+                    <div style={{
+                      flex: '0 0 80px',
+                      padding: `${5 * zoom}px ${8 * zoom}px`,
+                      textAlign: 'right',
+                      borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none',
+                      color: tableStyles.rowTextColor,
+                      fontWeight: '500',
+                      fontFamily: '"Inter", system-ui, sans-serif'
+                    }}>
+                      {product.price.toFixed(2)}€
+                    </div>
+                  )}
+                  {(element.columns?.total !== false) && (
+                    <div style={{
+                      flex: '0 0 80px',
+                      padding: `${5 * zoom}px ${8 * zoom}px`,
+                      textAlign: 'right',
+                      color: tableStyles.rowTextColor,
+                      fontWeight: '600',
+                      fontFamily: '"Inter", system-ui, sans-serif'
+                    }}>
+                      {product.total.toFixed(2)}€
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
 
             {/* Lignes de totaux */}
@@ -1280,7 +1196,7 @@ export const CanvasElement = ({
                         textAlign: 'right',
                         fontWeight: 'bold'
                       }}>
-                        €{subtotal.toFixed(2)}
+                        {subtotal.toFixed(2)}€
                       </div>
                     )}
                   </div>
@@ -1301,7 +1217,7 @@ export const CanvasElement = ({
                       color: tableStyles.rowTextColor,
                       fontWeight: '500'
                     }}>
-                      Frais de port
+                      Port
                     </div>
                     {(element.columns?.quantity !== false) && (
                       <div style={{
@@ -1327,7 +1243,7 @@ export const CanvasElement = ({
                         padding: `${4 * zoom}px ${6 * zoom}px`,
                         textAlign: 'right'
                       }}>
-                        €{shipping.toFixed(2)}
+                        {shipping.toFixed(2)}€
                       </div>
                     )}
                   </div>
@@ -1348,7 +1264,7 @@ export const CanvasElement = ({
                       color: tableStyles.rowTextColor,
                       fontWeight: '500'
                     }}>
-                      Taxes (TVA 20%)
+                      TVA
                     </div>
                     {(element.columns?.quantity !== false) && (
                       <div style={{
@@ -1374,7 +1290,7 @@ export const CanvasElement = ({
                         padding: `${4 * zoom}px ${6 * zoom}px`,
                         textAlign: 'right'
                       }}>
-                        €{tax.toFixed(2)}
+                        {tax.toFixed(2)}€
                       </div>
                     )}
                   </div>
@@ -1422,7 +1338,7 @@ export const CanvasElement = ({
                         textAlign: 'right',
                         color: '#d32f2f'
                       }}>
-                        €{discount.toFixed(2)}
+                        -{Math.abs(discount).toFixed(2)}€
                       </div>
                     )}
                   </div>
@@ -1448,7 +1364,7 @@ export const CanvasElement = ({
                       textTransform: 'uppercase',
                       letterSpacing: '0.05em'
                     }}>
-                      TOTAL TTC
+                      TOTAL
                     </div>
                     {(element.columns?.quantity !== false) && (
                       <div style={{
@@ -1478,7 +1394,7 @@ export const CanvasElement = ({
                         color: tableStyles.headerTextColor,
                         fontFamily: '"Inter", system-ui, sans-serif'
                       }}>
-                        €{total.toFixed(2)}
+                        {total.toFixed(2)}€
                       </div>
                     )}
                   </div>
