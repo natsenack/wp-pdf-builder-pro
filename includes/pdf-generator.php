@@ -665,12 +665,18 @@ class PDF_Builder_Pro_Generator {
      * Rendu d'élément ligne
      */
     private function render_line_element($element, $px_to_mm) {
-        // Utiliser extract_element_coordinates pour cohérence avec l'éditeur
+        // Pour les lignes, utiliser toute la largeur de la page comme dans l'éditeur
+        $page_width_mm = 210; // Largeur A4 en mm
+        $x = 0; // Commencer à gauche de la page
+        $width = $page_width_mm; // Utiliser toute la largeur
+
+        // Utiliser extract_element_coordinates pour la position Y uniquement
         $coords = $this->extract_element_coordinates($element, $px_to_mm);
-        $x = $coords['x'];
         $y = $coords['y'];
-        $width = $coords['width'];
         $height = $coords['height'];
+
+        // LOG: Ligne avec largeur pleine
+        error_log("📏 RENDER_LINE - FULL WIDTH: x=$x, y=$y, w=$width, h=$height");
 
         // Couleur de ligne (utilise lineColor ou strokeColor ou color)
         $color = $this->parse_color($element['lineColor'] ?? $element['strokeColor'] ?? $element['color'] ?? '#000000');
@@ -683,6 +689,8 @@ class PDF_Builder_Pro_Generator {
         // Dessin de la ligne horizontale centrée verticalement dans son rectangle
         $line_y = $y + ($height / 2);
         $this->pdf->Line($x, $line_y, $x + $width, $line_y);
+
+        error_log("📏 RENDER_LINE - DRAWN: from ($x, $line_y) to (" . ($x + $width) . ", $line_y) with width $line_width");
     }
 
     /**
