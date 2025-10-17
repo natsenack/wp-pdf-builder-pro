@@ -59,6 +59,13 @@ const ELEMENT_PROPERTY_PROFILES = {
     content: ['customer_fields'],
     effects: ['opacity', 'shadows', 'filters']
   },
+  // Texte dynamique
+  'dynamic-text': {
+    appearance: ['colors', 'font', 'borders', 'effects'],
+    layout: ['position', 'dimensions', 'transform', 'layers'],
+    content: ['dynamic_text'],
+    effects: ['opacity', 'shadows', 'filters']
+  },
   // Mentions légales
   mentions: {
     appearance: ['colors', 'font', 'borders', 'effects'],
@@ -1718,6 +1725,54 @@ const PropertiesPanel = memo(({
                       className="slider"
                     />
                     <span className="slider-value">{localProperties.lineHeight || 1.2}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Contrôles texte dynamique (uniquement pour les éléments dynamic-text) */}
+            {allowedControls.includes('dynamic_text') && selectedElement.type === 'dynamic-text' && (
+              <div className="properties-group">
+                <h4>📝 Texte Dynamique</h4>
+
+                <div className="property-row">
+                  <label>Modèle:</label>
+                  <select
+                    value={localProperties.template || 'total_only'}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'template', e.target.value)}
+                  >
+                    <option value="total_only">Total uniquement</option>
+                    <option value="order_info">Informations commande</option>
+                    <option value="customer_info">Informations client</option>
+                    <option value="full_header">En-tête complet</option>
+                    <option value="payment_info">Informations paiement</option>
+                    <option value="custom">Personnalisé</option>
+                  </select>
+                </div>
+
+                {localProperties.template === 'custom' && (
+                  <div className="property-row">
+                    <label>Contenu personnalisé:</label>
+                    <textarea
+                      value={localProperties.customContent || ''}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'customContent', e.target.value)}
+                      placeholder="Utilisez des variables comme {{order_total}}, {{customer_name}}, etc."
+                      rows={4}
+                      style={{ width: '100%', resize: 'vertical', minHeight: '80px' }}
+                    />
+                  </div>
+                )}
+
+                <div className="property-row" style={{ marginTop: '12px', padding: '8px', backgroundColor: '#f8fafc', borderRadius: '4px' }}>
+                  <label style={{ fontWeight: 'bold', marginBottom: '4px', display: 'block' }}>Variables disponibles:</label>
+                  <div style={{ fontSize: '12px', color: '#666', lineHeight: '1.4' }}>
+                    <div><code>{{order_total}}</code> - Montant total</div>
+                    <div><code>{{order_number}}</code> - Numéro de commande</div>
+                    <div><code>{{customer_name}}</code> - Nom du client</div>
+                    <div><code>{{customer_email}}</code> - Email client</div>
+                    <div><code>{{date}}</code> - Date actuelle</div>
+                    <div><code>{{order_date}}</code> - Date de commande</div>
+                    <div><code>{{due_date}}</code> - Date d'échéance</div>
                   </div>
                 </div>
               </div>

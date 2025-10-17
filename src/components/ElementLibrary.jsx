@@ -110,7 +110,8 @@ const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
       icon: '�',
       description: 'Texte avec variables dynamiques',
       defaultProperties: {
-        content: '{{order_total}} €',
+        template: 'total_only',
+        customContent: '{{order_total}} €',
         fontSize: 14,
         fontFamily: 'Arial',
         fontWeight: 'normal',

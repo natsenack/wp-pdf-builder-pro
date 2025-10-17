@@ -868,13 +868,29 @@ export const CanvasElement = ({
          element.type === 'qrcode' || element.type === 'qrcode-dynamic' ? '📱 QR' :
          element.type === 'icon' ? (element.content || '🎯') :
          element.type === 'dynamic-text' ? (() => {
-           const content = element.content || '{{order_total}} €';
+           // Fonction pour obtenir le contenu selon le template
+           const getTemplateContent = (template, customContent) => {
+             const templates = {
+               'total_only': '{{order_total}} €',
+               'order_info': 'Commande {{order_number}} - {{order_date}}',
+               'customer_info': '{{customer_name}} - {{customer_email}}',
+               'full_header': 'Facture N° {{order_number}}\nClient: {{customer_name}}\nTotal: {{order_total}} €',
+               'payment_info': 'Échéance: {{due_date}}\nMontant: {{order_total}} €',
+               'custom': customContent || '{{order_total}} €'
+             };
+             return templates[template] || templates['total_only'];
+           };
+
+           const content = getTemplateContent(element.template, element.customContent);
            // Remplacement basique pour l'aperçu canvas
            return content
              .replace(/\{\{order_total\}\}/g, '125.99 €')
              .replace(/\{\{order_number\}\}/g, 'CMD-2025-001')
              .replace(/\{\{customer_name\}\}/g, 'Jean Dupont')
-             .replace(/\{\{date\}\}/g, '17/10/2025');
+             .replace(/\{\{customer_email\}\}/g, 'jean@example.com')
+             .replace(/\{\{date\}\}/g, '17/10/2025')
+             .replace(/\{\{order_date\}\}/g, '15/10/2025')
+             .replace(/\{\{due_date\}\}/g, '15/11/2025');
          })() :
          element.type === 'formula' ? (element.content || '{{prix * quantite}}') :
          element.type === 'conditional-text' ? (element.content || '{{condition ? "Oui" : "Non"}}') :

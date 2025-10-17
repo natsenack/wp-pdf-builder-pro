@@ -1254,8 +1254,20 @@ const PreviewModal = ({
         );
 
       case 'dynamic-text':
-        // Rendu du texte dynamique avec remplacement des variables
-        const dynamicContent = element.content || '{{order_total}} €';
+        // Rendu du texte dynamique avec système de templates
+        const getTemplateContent = (template, customContent) => {
+          const templates = {
+            'total_only': '{{order_total}} €',
+            'order_info': 'Commande {{order_number}} - {{order_date}}',
+            'customer_info': '{{customer_name}} - {{customer_email}}',
+            'full_header': 'Facture N° {{order_number}}\nClient: {{customer_name}}\nTotal: {{order_total}} €',
+            'payment_info': 'Échéance: {{due_date}}\nMontant: {{order_total}} €',
+            'custom': customContent || '{{order_total}} €'
+          };
+          return templates[template] || templates['total_only'];
+        };
+
+        const dynamicContent = getTemplateContent(element.template, element.customContent);
 
         // Fonction simple de remplacement des variables pour l'aperçu
         const replaceVariables = (content) => {

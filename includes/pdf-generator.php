@@ -1127,13 +1127,17 @@ class PDF_Builder_Pro_Generator {
         $height = isset($element['height']) ? $element['height'] * $px_to_mm : 20;
 
         // Récupérer les propriétés de l'élément
-        $content = isset($element['content']) ? $element['content'] : '{{order_total}} €';
+        $template = isset($element['template']) ? $element['template'] : 'total_only';
+        $customContent = isset($element['customContent']) ? $element['customContent'] : '{{order_total}} €';
         $color = isset($element['color']) ? $element['color'] : '#333333';
         $fontSize = isset($element['fontSize']) ? $element['fontSize'] : 14;
         $fontFamily = isset($element['fontFamily']) ? $this->map_font_family($element['fontFamily']) : 'helvetica';
         $fontWeight = isset($element['fontWeight']) ? $element['fontWeight'] : 'normal';
         $textAlign = isset($element['textAlign']) ? $element['textAlign'] : 'left';
         $lineHeight = isset($element['lineHeight']) ? $element['lineHeight'] : 1.4;
+
+        // Fonction pour obtenir le contenu selon le template
+        $content = $this->get_template_content($template, $customContent);
 
         // Appliquer la couleur du texte
         if ($color && $color !== 'transparent') {
@@ -1197,6 +1201,22 @@ class PDF_Builder_Pro_Generator {
         ];
 
         return str_replace(array_keys($replacements), array_values($replacements), $content);
+    }
+
+    /**
+     * Obtenir le contenu selon le template sélectionné
+     */
+    private function get_template_content($template, $customContent) {
+        $templates = [
+            'total_only' => '{{order_total}} €',
+            'order_info' => 'Commande {{order_number}} - {{order_date}}',
+            'customer_info' => '{{customer_name}} - {{customer_email}}',
+            'full_header' => 'Facture N° {{order_number}}\nClient: {{customer_name}}\nTotal: {{order_total}} €',
+            'payment_info' => 'Échéance: {{due_date}}\nMontant: {{order_total}} €',
+            'custom' => $customContent ?: '{{order_total}} €'
+        ];
+
+        return isset($templates[$template]) ? $templates[$template] : $templates['total_only'];
     }
 
     /**

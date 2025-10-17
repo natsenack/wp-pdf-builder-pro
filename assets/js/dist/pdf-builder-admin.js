@@ -1177,9 +1177,21 @@ var CanvasElement = function CanvasElement(_ref) {
   }, element.type === 'text' ? element.content || element.text || 'Texte' : element.type === 'product_table' ? null :
   // Le contenu sera rendu plus bas pour les tableaux
   element.type === 'image' && !element.src ? '📷 Image' : element.type === 'line' ? null : element.type === 'layout-header' ? '[H] En-tête' : element.type === 'layout-footer' ? '📄 Pied de Page' : element.type === 'layout-sidebar' ? '📄 Barre Latérale' : element.type === 'layout-section' ? '📄 Section' : element.type === 'layout-container' ? '📦 Conteneur' : element.type === 'shape-rectangle' ? '▭' : element.type === 'shape-circle' ? '○' : element.type === 'shape-line' ? null : element.type === 'shape-arrow' ? '→' : element.type === 'shape-triangle' ? '△' : element.type === 'shape-star' ? '⭐' : element.type === 'divider' ? null : element.type === 'image-upload' ? '📤 Télécharger' : element.type === 'logo' ? '🏷️ Logo' : element.type === 'barcode' ? '📊 123456' : element.type === 'qrcode' || element.type === 'qrcode-dynamic' ? '📱 QR' : element.type === 'icon' ? element.content || '🎯' : element.type === 'dynamic-text' ? function () {
-    var content = element.content || '{{order_total}} €';
+    // Fonction pour obtenir le contenu selon le template
+    var getTemplateContent = function getTemplateContent(template, customContent) {
+      var templates = {
+        'total_only': '{{order_total}} €',
+        'order_info': 'Commande {{order_number}} - {{order_date}}',
+        'customer_info': '{{customer_name}} - {{customer_email}}',
+        'full_header': 'Facture N° {{order_number}}\nClient: {{customer_name}}\nTotal: {{order_total}} €',
+        'payment_info': 'Échéance: {{due_date}}\nMontant: {{order_total}} €',
+        'custom': customContent || '{{order_total}} €'
+      };
+      return templates[template] || templates['total_only'];
+    };
+    var content = getTemplateContent(element.template, element.customContent);
     // Remplacement basique pour l'aperçu canvas
-    return content.replace(/\{\{order_total\}\}/g, '125.99 €').replace(/\{\{order_number\}\}/g, 'CMD-2025-001').replace(/\{\{customer_name\}\}/g, 'Jean Dupont').replace(/\{\{date\}\}/g, '17/10/2025');
+    return content.replace(/\{\{order_total\}\}/g, '125.99 €').replace(/\{\{order_number\}\}/g, 'CMD-2025-001').replace(/\{\{customer_name\}\}/g, 'Jean Dupont').replace(/\{\{customer_email\}\}/g, 'jean@example.com').replace(/\{\{date\}\}/g, '17/10/2025').replace(/\{\{order_date\}\}/g, '15/10/2025').replace(/\{\{due_date\}\}/g, '15/11/2025');
   }() : element.type === 'formula' ? element.content || '{{prix * quantite}}' : element.type === 'conditional-text' ? element.content || '{{condition ? "Oui" : "Non"}}' : element.type === 'counter' ? element.content || '1' : element.type === 'date-dynamic' ? element.content || '{{date|format:Y-m-d}}' : element.type === 'currency' ? element.content || '{{montant|currency:EUR}}' : element.type === 'table-dynamic' ? '📊 Tableau' : element.type === 'gradient-box' ? '🌈 Dégradé' : element.type === 'shadow-box' ? '📦 Ombre' : element.type === 'rounded-box' ? '🔄 Arrondi' : element.type === 'border-box' ? '🔲 Bordure' : element.type === 'background-pattern' ? '🎨 Motif' : element.type === 'watermark' ? element.content || 'CONFIDENTIEL' : element.type === 'progress-bar' ? null : element.type === 'product_table' ? null :
   // Le contenu sera rendu plus bas dans le même conteneur
   element.type === 'customer_info' ? null :
@@ -6603,8 +6615,19 @@ var PreviewModal = function PreviewModal(_ref) {
           }
         }, mentionsContent));
       case 'dynamic-text':
-        // Rendu du texte dynamique avec remplacement des variables
-        var dynamicContent = element.content || '{{order_total}} €';
+        // Rendu du texte dynamique avec système de templates
+        var getTemplateContent = function getTemplateContent(template, customContent) {
+          var templates = {
+            'total_only': '{{order_total}} €',
+            'order_info': 'Commande {{order_number}} - {{order_date}}',
+            'customer_info': '{{customer_name}} - {{customer_email}}',
+            'full_header': 'Facture N° {{order_number}}\nClient: {{customer_name}}\nTotal: {{order_total}} €',
+            'payment_info': 'Échéance: {{due_date}}\nMontant: {{order_total}} €',
+            'custom': customContent || '{{order_total}} €'
+          };
+          return templates[template] || templates['total_only'];
+        };
+        var dynamicContent = getTemplateContent(element.template, element.customContent);
 
         // Fonction simple de remplacement des variables pour l'aperçu
         var replaceVariables = function replaceVariables(content) {
@@ -7895,7 +7918,8 @@ var ElementLibrary = function ElementLibrary(_ref) {
     icon: '�',
     description: 'Texte avec variables dynamiques',
     defaultProperties: {
-      content: '{{order_total}} €',
+      template: 'total_only',
+      customContent: '{{order_total}} €',
       fontSize: 14,
       fontFamily: 'Arial',
       fontWeight: 'normal',
@@ -9642,6 +9666,13 @@ var ELEMENT_PROPERTY_PROFILES = {
     content: ['customer_fields'],
     effects: ['opacity', 'shadows', 'filters']
   },
+  // Texte dynamique
+  'dynamic-text': {
+    appearance: ['colors', 'font', 'borders', 'effects'],
+    layout: ['position', 'dimensions', 'transform', 'layers'],
+    content: ['dynamic_text'],
+    effects: ['opacity', 'shadows', 'filters']
+  },
   // Mentions légales
   mentions: {
     appearance: ['colors', 'font', 'borders', 'effects'],
@@ -11281,7 +11312,76 @@ var PropertiesPanel = /*#__PURE__*/(0,react.memo)(function (_ref4) {
           className: "slider"
         }), /*#__PURE__*/React.createElement("span", {
           className: "slider-value"
-        }, localProperties.lineHeight || 1.2)))), allowedControls.includes('company_fields') && selectedElement.type === 'company_info' && /*#__PURE__*/React.createElement("div", {
+        }, localProperties.lineHeight || 1.2)))), allowedControls.includes('dynamic_text') && selectedElement.type === 'dynamic-text' && /*#__PURE__*/React.createElement("div", {
+          className: "properties-group"
+        }, /*#__PURE__*/React.createElement("h4", null, "\uD83D\uDCDD Texte Dynamique"), /*#__PURE__*/React.createElement("div", {
+          className: "property-row"
+        }, /*#__PURE__*/React.createElement("label", null, "Mod\xE8le:"), /*#__PURE__*/React.createElement("select", {
+          value: localProperties.template || 'total_only',
+          onChange: function onChange(e) {
+            return handlePropertyChange(selectedElement.id, 'template', e.target.value);
+          }
+        }, /*#__PURE__*/React.createElement("option", {
+          value: "total_only"
+        }, "Total uniquement"), /*#__PURE__*/React.createElement("option", {
+          value: "order_info"
+        }, "Informations commande"), /*#__PURE__*/React.createElement("option", {
+          value: "customer_info"
+        }, "Informations client"), /*#__PURE__*/React.createElement("option", {
+          value: "full_header"
+        }, "En-t\xEAte complet"), /*#__PURE__*/React.createElement("option", {
+          value: "payment_info"
+        }, "Informations paiement"), /*#__PURE__*/React.createElement("option", {
+          value: "custom"
+        }, "Personnalis\xE9"))), localProperties.template === 'custom' && /*#__PURE__*/React.createElement("div", {
+          className: "property-row"
+        }, /*#__PURE__*/React.createElement("label", null, "Contenu personnalis\xE9:"), /*#__PURE__*/React.createElement("textarea", {
+          value: localProperties.customContent || '',
+          onChange: function onChange(e) {
+            return handlePropertyChange(selectedElement.id, 'customContent', e.target.value);
+          },
+          placeholder: "Utilisez des variables comme {{order_total}}, {{customer_name}}, etc.",
+          rows: 4,
+          style: {
+            width: '100%',
+            resize: 'vertical',
+            minHeight: '80px'
+          }
+        })), /*#__PURE__*/React.createElement("div", {
+          className: "property-row",
+          style: {
+            marginTop: '12px',
+            padding: '8px',
+            backgroundColor: '#f8fafc',
+            borderRadius: '4px'
+          }
+        }, /*#__PURE__*/React.createElement("label", {
+          style: {
+            fontWeight: 'bold',
+            marginBottom: '4px',
+            display: 'block'
+          }
+        }, "Variables disponibles:"), /*#__PURE__*/React.createElement("div", {
+          style: {
+            fontSize: '12px',
+            color: '#666',
+            lineHeight: '1.4'
+          }
+        }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, {
+          order_total: order_total
+        }), " - Montant total"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, {
+          order_number: order_number
+        }), " - Num\xE9ro de commande"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, {
+          customer_name: customer_name
+        }), " - Nom du client"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, {
+          customer_email: customer_email
+        }), " - Email client"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, {
+          date: date
+        }), " - Date actuelle"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, {
+          order_date: order_date
+        }), " - Date de commande"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, {
+          due_date: due_date
+        }), " - Date d'\xE9ch\xE9ance")))), allowedControls.includes('company_fields') && selectedElement.type === 'company_info' && /*#__PURE__*/React.createElement("div", {
           className: "properties-group"
         }, /*#__PURE__*/React.createElement("h4", null, "\uD83C\uDFE2 Informations Entreprise"), /*#__PURE__*/React.createElement("div", {
           className: "property-row"
