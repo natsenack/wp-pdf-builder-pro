@@ -1622,34 +1622,35 @@ class PDF_Builder_Pro_Generator {
             
             // Utiliser la taille de police du style pour les en-têtes
             $header_font_size = isset($table_styles['headerFontSize']) ? (int) filter_var($table_styles['headerFontSize'], FILTER_SANITIZE_NUMBER_INT) : 9;
+            $header_cell_height = $header_font_size * 1.2; // Hauteur de cellule basée sur la taille de police
             $this->pdf->SetFont('helvetica', 'B', $header_font_size);
 
             $col_index = 0;
             if ($columns['image']) {
-                $this->pdf->Cell($col_widths[$col_index], 8, 'Img', $show_borders ? 1 : 0, 0, 'C', true);
+                $this->pdf->Cell($col_widths[$col_index], $header_cell_height, 'Img', $show_borders ? 1 : 0, 0, 'C', true);
                 $col_index++;
             }
             if ($columns['name']) {
-                $this->pdf->Cell($col_widths[$col_index], 8, $headers[0] ?? 'Produit', $show_borders ? 1 : 0, 0, 'L', true);
+                $this->pdf->Cell($col_widths[$col_index], $header_cell_height, $headers[0] ?? 'Produit', $show_borders ? 1 : 0, 0, 'L', true);
                 $col_index++;
             }
             if ($columns['sku']) {
-                $this->pdf->Cell($col_widths[$col_index], 8, 'SKU', $show_borders ? 1 : 0, 0, 'L', true);
+                $this->pdf->Cell($col_widths[$col_index], $header_cell_height, 'SKU', $show_borders ? 1 : 0, 0, 'L', true);
                 $col_index++;
             }
             if ($columns['quantity']) {
-                $this->pdf->Cell($col_widths[$col_index], 8, $headers[1] ?? 'Qté', $show_borders ? 1 : 0, 0, 'C', true);
+                $this->pdf->Cell($col_widths[$col_index], $header_cell_height, $headers[1] ?? 'Qté', $show_borders ? 1 : 0, 0, 'C', true);
                 $col_index++;
             }
             if ($columns['price']) {
-                $this->pdf->Cell($col_widths[$col_index], 8, $headers[2] ?? 'Prix', $show_borders ? 1 : 0, 0, 'R', true);
+                $this->pdf->Cell($col_widths[$col_index], $header_cell_height, $headers[2] ?? 'Prix', $show_borders ? 1 : 0, 0, 'R', true);
                 $col_index++;
             }
             if ($columns['total']) {
-                $this->pdf->Cell($col_widths[$col_index], 8, 'Total', $show_borders ? 1 : 0, 1, 'R', true);
+                $this->pdf->Cell($col_widths[$col_index], $header_cell_height, 'Total', $show_borders ? 1 : 0, 1, 'R', true);
             }
 
-            $current_y += 8;
+            $current_y += $header_cell_height;
         }
 
         // Contenu du tableau
@@ -1699,8 +1700,14 @@ class PDF_Builder_Pro_Generator {
      * Calcule la hauteur totale du tableau produits
      */
     private function calculate_table_height($element, $columns) {
-        $row_height = 6;
-        $header_height = ($element['showHeaders'] ?? true) ? 8 : 0;
+        // Obtenir les styles pour calculer les hauteurs dynamiques
+        $table_styles = $this->get_table_styles($element['tableStyle'] ?? 'default');
+        
+        $header_font_size = isset($table_styles['headerFontSize']) ? (int) filter_var($table_styles['headerFontSize'], FILTER_SANITIZE_NUMBER_INT) : 9;
+        $row_font_size = isset($table_styles['rowFontSize']) ? (int) filter_var($table_styles['rowFontSize'], FILTER_SANITIZE_NUMBER_INT) : 8;
+        
+        $header_height = ($element['showHeaders'] ?? true) ? $header_font_size * 1.2 : 0;
+        $row_height = $row_font_size * 1.2;
         
         // Compter les produits
         $product_count = 0;
@@ -1962,7 +1969,12 @@ class PDF_Builder_Pro_Generator {
                 'alt_row_bg' => ['r' => 254, 'g' => 247, 'b' => 247],
                 'headerTextColor' => '#ffffff',
                 'rowTextColor' => '#ea580c',
-                'border_width' => 1.5
+                'border_width' => 1.5,
+                'headerFontWeight' => '600',
+                'headerFontSize' => '11px',
+                'rowFontSize' => '10px',
+                'shadow' => '0 4px 16px rgba(249, 115, 22, 0.3)',
+                'borderRadius' => '6px'
             ],
             'mint_green' => [
                 'header_bg' => ['r' => 6, 'g' => 95, 'b' => 70], // Couleur moyenne du dégradé
@@ -2148,7 +2160,9 @@ class PDF_Builder_Pro_Generator {
         $table_styles = $this->get_table_styles($element['tableStyle'] ?? 'default');
         $line_items = $this->order->get_items();
         $fees = $this->order->get_fees();
-        $row_height = 6;
+        // Utiliser la taille de police du style pour calculer la hauteur des lignes
+        $row_font_size = isset($table_styles['rowFontSize']) ? (int) filter_var($table_styles['rowFontSize'], FILTER_SANITIZE_NUMBER_INT) : 8;
+        $row_height = $row_font_size * 1.2; // Hauteur de ligne basée sur la taille de police
         $alt_row = false;
 
         // Définir les couleurs de trait pour les bordures des lignes de données
@@ -2265,7 +2279,9 @@ class PDF_Builder_Pro_Generator {
      */
     private function render_fake_products($x, $current_y, $col_widths, $columns, $show_borders, $table_style = 'default', $element = null) {
         $table_styles = $this->get_table_styles($table_style);
-        $row_height = 6;
+        // Utiliser la taille de police du style pour calculer la hauteur des lignes
+        $row_font_size = isset($table_styles['rowFontSize']) ? (int) filter_var($table_styles['rowFontSize'], FILTER_SANITIZE_NUMBER_INT) : 8;
+        $row_height = $row_font_size * 1.2; // Hauteur de ligne basée sur la taille de police
 
         // Utiliser les données d'aperçu de l'élément si disponibles, sinon utiliser les données par défaut
         $preview_products = $element['previewProducts'] ?? [
