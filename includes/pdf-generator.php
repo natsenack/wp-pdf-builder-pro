@@ -424,11 +424,12 @@ class PDF_Builder_Pro_Generator {
                 return; // Ne rien rendre si pas de texte
             }
 
-            // Conversion précise des dimensions (px vers mm)
-            $x = ($element['x'] ?? 0) * $px_to_mm;
-            $y = ($element['y'] ?? 0) * $px_to_mm;
-            $width = ($element['width'] ?? 100) * $px_to_mm;
-            $height = ($element['height'] ?? 20) * $px_to_mm;
+            // Utiliser extract_element_coordinates pour cohérence avec l'éditeur
+            $coords = $this->extract_element_coordinates($element, $px_to_mm);
+            $x = $coords['x'];
+            $y = $coords['y'];
+            $width = $coords['width'];
+            $height = $coords['height'];
 
             // Conversion correcte de la taille de police (px vers pt)
             // 1px = 0.75pt en CSS, mais pour PDF on utilise directement la valeur px comme pt
@@ -461,14 +462,14 @@ class PDF_Builder_Pro_Generator {
             // Bordure
             $border = $this->get_border_settings($element);
 
-            // Padding (conversion px vers mm)
+            // Padding (conversion px vers mm) - même logique que l'éditeur
             $padding = isset($element['padding']) ? $element['padding'] * $px_to_mm : 0;
 
-            // Calcul des dimensions ajustées avec padding
+            // Calcul des dimensions ajustées avec padding (comme dans l'éditeur)
             $adjusted_width = max(1, $width - ($padding * 2));
             $adjusted_height = max(1, $height - ($padding * 2));
 
-            // Positionnement avec padding
+            // Positionnement avec padding (comme dans l'éditeur)
             $final_x = $x + $padding;
             $final_y = $y + $padding;
 
@@ -490,7 +491,8 @@ class PDF_Builder_Pro_Generator {
         } catch (Exception $e) {
             $this->log_error("Erreur rendu texte: " . $e->getMessage());
             // Rendu de fallback
-            $this->pdf->SetXY(($element['x'] ?? 0) * $px_to_mm, ($element['y'] ?? 0) * $px_to_mm);
+            $coords = $this->extract_element_coordinates($element, $px_to_mm);
+            $this->pdf->SetXY($coords['x'], $coords['y']);
             $this->pdf->Cell(50, 10, '[Erreur texte]', 0, 0, 'L', false);
         }
     }
@@ -545,13 +547,15 @@ class PDF_Builder_Pro_Generator {
      * Rendu d'element rectangle
      */
     private function render_rectangle_element($element, $px_to_mm) {
-        $x = ($element['x'] ?? 0) * $px_to_mm;
-        $y = ($element['y'] ?? 0) * $px_to_mm;
-        $width = ($element['width'] ?? 100) * $px_to_mm;
-        $height = ($element['height'] ?? 20) * $px_to_mm;
+        // Utiliser extract_element_coordinates pour cohérence avec l'éditeur
+        $coords = $this->extract_element_coordinates($element, $px_to_mm);
+        $x = $coords['x'];
+        $y = $coords['y'];
+        $width = $coords['width'];
+        $height = $coords['height'];
 
-        // Style de remplissage
-        $background_color = $element['backgroundColor'] ?? null;
+        // Style de remplissage - utiliser fillColor comme dans l'éditeur
+        $background_color = $element['fillColor'] ?? $element['backgroundColor'] ?? null;
         if ($this->should_render_background($background_color)) {
             $bg_color = $this->parse_color($background_color);
             $this->pdf->SetFillColor($bg_color['r'], $bg_color['g'], $bg_color['b']);
@@ -581,18 +585,20 @@ class PDF_Builder_Pro_Generator {
      * Rendu d'élément cercle
      */
     private function render_circle_element($element, $px_to_mm) {
-        $x = ($element['x'] ?? 0) * $px_to_mm;
-        $y = ($element['y'] ?? 0) * $px_to_mm;
-        $width = ($element['width'] ?? 50) * $px_to_mm;
-        $height = ($element['height'] ?? 50) * $px_to_mm;
+        // Utiliser extract_element_coordinates pour cohérence avec l'éditeur
+        $coords = $this->extract_element_coordinates($element, $px_to_mm);
+        $x = $coords['x'];
+        $y = $coords['y'];
+        $width = $coords['width'];
+        $height = $coords['height'];
 
         // Centre et rayon
         $center_x = $x + ($width / 2);
         $center_y = $y + ($height / 2);
         $radius = min($width, $height) / 2;
 
-        // Style de remplissage
-        $background_color = $element['backgroundColor'] ?? null;
+        // Style de remplissage - utiliser fillColor comme dans l'éditeur
+        $background_color = $element['fillColor'] ?? $element['backgroundColor'] ?? null;
         if ($this->should_render_background($background_color)) {
             $bg_color = $this->parse_color($background_color);
             $this->pdf->SetFillColor($bg_color['r'], $bg_color['g'], $bg_color['b']);
@@ -618,37 +624,41 @@ class PDF_Builder_Pro_Generator {
      * Rendu d'élément ligne
      */
     private function render_line_element($element, $px_to_mm) {
-        $x = ($element['x'] ?? 0) * $px_to_mm;
-        $y = ($element['y'] ?? 0) * $px_to_mm;
-        $scale = $element['scale'] ?? 1;
-        $width = ($element['width'] ?? 100) * $px_to_mm * $scale;
-        $height = ($element['height'] ?? 1) * $px_to_mm * $scale;
+        // Utiliser extract_element_coordinates pour cohérence avec l'éditeur
+        $coords = $this->extract_element_coordinates($element, $px_to_mm);
+        $x = $coords['x'];
+        $y = $coords['y'];
+        $width = $coords['width'];
+        $height = $coords['height'];
 
         // Couleur de ligne (utilise lineColor ou strokeColor ou color)
         $color = $this->parse_color($element['lineColor'] ?? $element['strokeColor'] ?? $element['color'] ?? '#000000');
         $this->pdf->SetDrawColor($color['r'], $color['g'], $color['b']);
 
         // Épaisseur de ligne (utilise lineWidth ou strokeWidth ou borderWidth)
-        $line_width = ($element['lineWidth'] ?? $element['strokeWidth'] ?? $element['borderWidth'] ?? 1) * $px_to_mm * $scale;
+        $line_width = ($element['lineWidth'] ?? $element['strokeWidth'] ?? $element['borderWidth'] ?? 1) * $px_to_mm;
         $this->pdf->SetLineWidth($line_width);
 
-        // Dessin de la ligne - toutes les lignes sont horizontales et prennent toute la largeur comme dans le canvas
-        $this->pdf->Line(0, $y + ($height / 2), $this->pdf->getPageWidth(), $y + ($height / 2));
+        // Dessin de la ligne horizontale centrée verticalement dans son rectangle
+        $line_y = $y + ($height / 2);
+        $this->pdf->Line($x, $line_y, $x + $width, $line_y);
     }
 
     /**
      * Rendu d'élément image
      */
     private function render_image_element($element, $px_to_mm) {
-        $src = $element['src'] ?? $element['url'] ?? '';
+        $src = $element['src'] ?? $element['imageUrl'] ?? $element['url'] ?? '';
         if (empty($src)) {
             return;
         }
 
-        $x = ($element['x'] ?? 0) * $px_to_mm;
-        $y = ($element['y'] ?? 0) * $px_to_mm;
-        $width = ($element['width'] ?? 100) * $px_to_mm;
-        $height = ($element['height'] ?? 100) * $px_to_mm;
+        // Utiliser extract_element_coordinates pour cohérence avec l'éditeur
+        $coords = $this->extract_element_coordinates($element, $px_to_mm);
+        $x = $coords['x'];
+        $y = $coords['y'];
+        $width = $coords['width'];
+        $height = $coords['height'];
 
         try {
             $this->pdf->Image($src, $x, $y, $width, $height);
@@ -2624,16 +2634,22 @@ class PDF_Builder_Pro_Generator {
      * Rendu d'élément divider
      */
     private function render_divider_element($element, $px_to_mm) {
-        $x = isset($element['x']) ? $element['x'] * $px_to_mm : 10;
-        $y = isset($element['y']) ? $element['y'] * $px_to_mm : 10;
-        $width = isset($element['width']) ? $element['width'] * $px_to_mm : 180;
-        $height = isset($element['height']) ? $element['height'] * $px_to_mm : 5;
+        // Utiliser extract_element_coordinates pour cohérence avec l'éditeur
+        $coords = $this->extract_element_coordinates($element, $px_to_mm);
+        $x = $coords['x'];
+        $y = $coords['y'];
+        $width = $coords['width'];
+        $height = $coords['height'];
 
-        // Ligne de séparation horizontale
-        $this->pdf->SetDrawColor(200, 200, 200);
-        $this->pdf->SetLineWidth(0.5);
-        $this->pdf->Line($x, $y + $height/2, $x + $width, $y + $height/2);
-        $this->pdf->SetLineWidth(0.2); // Remettre la largeur par défaut
+        // Couleur de fond (comme dans l'éditeur)
+        $color = $this->parse_color($element['color'] ?? $element['fillColor'] ?? '#cccccc');
+        $this->pdf->SetFillColor($color['r'], $color['g'], $color['b']);
+
+        // Épaisseur (thickness ou height, comme dans l'éditeur)
+        $thickness = ($element['thickness'] ?? $element['height'] ?? 2) * $px_to_mm;
+
+        // Dessiner un rectangle rempli pour le divider
+        $this->pdf->Rect($x, $y, $width, $thickness, 'F');
     }
 
     /**
