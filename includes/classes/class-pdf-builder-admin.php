@@ -169,6 +169,8 @@ class PDF_Builder_Admin {
      * Initialise les hooks WordPress
      */
     private function init_hooks() {
+        error_log('PDF Builder: init_hooks called');
+
         // Hooks de base de l'admin (restent dans cette classe)
         add_action('admin_menu', [$this, 'add_admin_menu']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts'], 20);
@@ -196,6 +198,8 @@ class PDF_Builder_Admin {
         add_action('init', [$this, 'add_debug_endpoint']);
         add_action('template_redirect', [$this, 'handle_debug_endpoint']);
         add_filter('query_vars', [$this, 'add_debug_query_vars']);
+
+        error_log('PDF Builder: init_hooks completed');
     }
 
     /**
@@ -1325,9 +1329,10 @@ class PDF_Builder_Admin {
         // DEBUG: Log pour vérifier que la méthode est appelée
         error_log('PDF Builder: enqueue_admin_scripts called with hook: ' . $hook);
         error_log('PDF Builder: Current page: ' . (isset($_GET['page']) ? $_GET['page'] : 'unknown'));
+        error_log('PDF Builder: All GET params: ' . print_r($_GET, true));
 
         // Charger seulement sur nos pages admin
-        if (!in_array($hook, [
+        $allowed_hooks = [
             'toplevel_page_pdf-builder-pro',
             'pdf-builder_page_pdf-builder-templates',
             'pdf-builder_page_pdf-builder-editor',
@@ -1335,7 +1340,12 @@ class PDF_Builder_Admin {
             'pdf-builder_page_pdf-builder-diagnostic',
             // 'pdf-builder_page_pdf-builder-test-tcpdf', // Commenté - système de test nettoyé
             'pdf-builder_page_pdf-builder-developer'
-        ])) {
+        ];
+
+        error_log('PDF Builder: Checking if hook "' . $hook . '" is in allowed list: ' . (in_array($hook, $allowed_hooks) ? 'YES' : 'NO'));
+        error_log('PDF Builder: Allowed hooks: ' . implode(', ', $allowed_hooks));
+
+        if (!in_array($hook, $allowed_hooks)) {
             error_log('PDF Builder: Hook ' . $hook . ' not in allowed list, returning');
             return;
         }
@@ -1349,6 +1359,7 @@ class PDF_Builder_Admin {
      * Méthode commune pour charger les scripts admin
      */
     private function load_admin_scripts($hook = null) {
+        error_log('PDF Builder: load_admin_scripts called with hook: ' . $hook);
 
         // Styles CSS de base
         wp_enqueue_style('pdf-builder-admin', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css', [], PDF_BUILDER_PRO_VERSION);
