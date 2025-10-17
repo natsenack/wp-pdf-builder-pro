@@ -1578,7 +1578,7 @@ body.pdf-builder-active #wpadminbar {
   width: 20px;
   height: 8px;
   cursor: n-resize;
-  opacity: 1;
+  opacity: 0; /* Masqué pour éviter les carrés visibles */
 }
 
 .canvas-element.selected .resize-zone-s {
@@ -1588,7 +1588,7 @@ body.pdf-builder-active #wpadminbar {
   width: 20px;
   height: 8px;
   cursor: s-resize;
-  opacity: 1;
+  opacity: 0; /* Masqué pour éviter les carrés visibles */
 }
 
 .canvas-element.selected .resize-zone-w {
@@ -1598,7 +1598,7 @@ body.pdf-builder-active #wpadminbar {
   width: 8px;
   height: 20px;
   cursor: w-resize;
-  opacity: 1;
+  opacity: 0; /* Masqué pour éviter les carrés visibles */
 }
 
 .canvas-element.selected .resize-zone-e {
@@ -1608,7 +1608,7 @@ body.pdf-builder-active #wpadminbar {
   width: 8px;
   height: 20px;
   cursor: e-resize;
-  opacity: 1;
+  opacity: 0; /* Masqué pour éviter les carrés visibles */
 }
 
 /* Poignée de rotation */
