@@ -502,7 +502,7 @@ function pdf_builder_ajax_validate_preview() {
     }
 
     // Vérifier le nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions')) {
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce')) {
         wp_send_json_error('Invalid nonce');
         return;
     }
