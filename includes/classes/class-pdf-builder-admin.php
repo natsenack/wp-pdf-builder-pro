@@ -5086,6 +5086,14 @@ class PDF_Builder_Admin {
     }
 
     /**
+     * Ajouter l'endpoint de debug
+     */
+    public function add_debug_endpoint() {
+        add_rewrite_rule('^pdf-builder-debug/?$', 'index.php?pdf_builder_debug=1', 'top');
+        add_rewrite_rule('^pdf-builder-debug/([^/]*)/?$', 'index.php?pdf_builder_debug=1&debug_action=$matches[1]', 'top');
+    }
+
+    /**
      * Gérer l'endpoint de debug
      */
     public function handle_debug_endpoint() {
