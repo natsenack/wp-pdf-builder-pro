@@ -331,7 +331,7 @@ const PreviewModal = ({
               gradient: 'linear-gradient(135deg, #064e3b 0%, #10b981 100%)',
               headerBorder: '#065f46',
               rowBorder: '#d1fae5',
-              altRowBg: '#ecfdf5',
+              altRowBg: '#a7f3d0', // Couleur plus visible pour l'aperçu PDF
               borderWidth: 1.5,
               headerTextColor: '#ffffff',
               rowTextColor: '#064e3b',
@@ -775,7 +775,7 @@ const PreviewModal = ({
                 <div key={index} style={{
                   display: 'flex',
                   borderBottom: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.rowBorder}` : 'none',
-                  backgroundColor: product.backgroundColor || product.bgColor || (element.tableStyle === 'striped' && index % 2 === 1 ? tableStyles.altRowBg : 'transparent'),
+                  backgroundColor: product.backgroundColor || product.bgColor || (index % 2 === 1 ? tableStyles.altRowBg : '#d1fae5'),
                   color: product.color || product.textColor || (tableStyles.rowTextColor || '#000000'),
                   boxShadow: tableStyles.shadow ? `0 1px 2px ${tableStyles.shadow}` : 'none'
                 }}>
