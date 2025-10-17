@@ -5499,7 +5499,7 @@ var PreviewModal = function PreviewModal(_ref) {
       if (element.type === 'line') {
         baseStyle = PreviewModal_objectSpread(PreviewModal_objectSpread({}, baseStyle), {}, {
           left: 0,
-          width: canvasWidth * validZoom
+          width: '100%'
         });
       }
       return /*#__PURE__*/React.createElement("div", {

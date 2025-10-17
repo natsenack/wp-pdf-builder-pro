@@ -127,7 +127,7 @@ const PreviewModal = ({
             baseStyle = {
               ...baseStyle,
               left: 0,
-              width: canvasWidth * validZoom
+              width: '100%'
             };
           }
 
