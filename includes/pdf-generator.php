@@ -1785,169 +1785,189 @@ class PDF_Builder_Pro_Generator {
             error_log('PDF TABLE BG: element backgroundColor = ' . ($element['backgroundColor'] ?? 'NOT SET'));
             error_log('PDF TABLE BG: resolved background_color = ' . $background_color);
 
-        // Propriétés spécifiques au tableau
-        $show_headers = $element['showHeaders'] ?? true;
-        $show_borders = $element['showBorders'] ?? false;
-        $table_style = $element['tableStyle'] ?? 'default';
+            // Propriétés spécifiques au tableau
+            $show_headers = $element['showHeaders'] ?? true;
+            $show_borders = $element['showBorders'] ?? false;
+            $table_style = $element['tableStyle'] ?? 'default';
 
-        // Validation et extraction sécurisée des headers
-        $headers = [];
-        if (isset($element['headers']) && is_array($element['headers'])) {
-            $headers = $element['headers'];
-        } elseif (isset($element['header']) && is_array($element['header'])) {
-            // Correction: si 'header' au singulier est utilisé au lieu de 'headers'
-            $headers = $element['header'];
-            error_log('⚠️ PDF BUILDER - render_product_table_element: Utilisation de \'header\' au lieu de \'headers\' détectée, correction automatique');
-        } else {
-            $headers = ['Produit', 'Qté', 'Prix'];
-        }
+            // Validation et extraction sécurisée des headers
+            $headers = [];
+            if (isset($element['headers']) && is_array($element['headers'])) {
+                $headers = $element['headers'];
+            } elseif (isset($element['header']) && is_array($element['header'])) {
+                // Correction: si 'header' au singulier est utilisé au lieu de 'headers'
+                $headers = $element['header'];
+                error_log('⚠️ PDF BUILDER - render_product_table_element: Utilisation de \'header\' au lieu de \'headers\' détectée, correction automatique');
+            } else {
+                $headers = ['Produit', 'Qté', 'Prix'];
+            }
 
-        $columns = $element['columns'] ?? [
-            'image' => true,
-            'name' => true,
-            'sku' => false,
-            'quantity' => true,
-            'price' => true,
-            'total' => true
-        ];
+            $columns = $element['columns'] ?? [
+                'image' => true,
+                'name' => true,
+                'sku' => false,
+                'quantity' => true,
+                'price' => true,
+                'total' => true
+            ];
 
-        // Propriétés des totaux
-        $show_subtotal = $element['showSubtotal'] ?? false;
-        $show_shipping = $element['showShipping'] ?? true;
-        $show_taxes = $element['showTaxes'] ?? true;
-        $show_discount = $element['showDiscount'] ?? false;
-        $show_total = $element['showTotal'] ?? false;
+            // Propriétés des totaux
+            $show_subtotal = $element['showSubtotal'] ?? false;
+            $show_shipping = $element['showShipping'] ?? true;
+            $show_taxes = $element['showTaxes'] ?? true;
+            $show_discount = $element['showDiscount'] ?? false;
+            $show_total = $element['showTotal'] ?? false;
 
-        // Styles de tableau selon le style choisi
-        $table_styles = $this->get_table_styles($table_style);
+            // Styles de tableau selon le style choisi
+            $table_styles = $this->get_table_styles($table_style);
 
-        // Calcul des largeurs de colonnes dynamiques
-        $visible_columns = $this->get_visible_columns($columns);
-        $col_widths = $this->calculate_column_widths($width, $visible_columns, $columns);
+            // Calcul des largeurs de colonnes dynamiques
+            $visible_columns = $this->get_visible_columns($columns);
+            $col_widths = $this->calculate_column_widths($width, $visible_columns, $columns);
 
-        // Calculer la hauteur totale du tableau pour le fond
-        $table_height = $this->calculate_table_height($element, $columns);
+            // Calculer la hauteur totale du tableau pour le fond
+            $table_height = $this->calculate_table_height($element, $columns);
 
-        // Position de départ
-        $current_y = $y;
+            // Position de départ
+            $current_y = $y;
 
-        // Fond du tableau si défini (utiliser la hauteur calculée du tableau)
-        if ($this->should_render_background($background_color)) {
-            $bg_color = $this->parse_color($background_color);
-            error_log('PDF TABLE BG: Applying background color ' . $background_color . ' -> RGB(' . $bg_color['r'] . ',' . $bg_color['g'] . ',' . $bg_color['b'] . ')');
-            $this->pdf->SetFillColor($bg_color['r'], $bg_color['g'], $bg_color['b']);
-            $this->pdf->Rect($x, $y, $width, $table_height, 'F');
-        } else {
-            error_log('PDF TABLE BG: NOT applying background (should_render_background returned false)');
-        }
+            // Fond du tableau si défini (utiliser la hauteur calculée du tableau)
+            if ($this->should_render_background($background_color)) {
+                $bg_color = $this->parse_color($background_color);
+                error_log('PDF TABLE BG: Applying background color ' . $background_color . ' -> RGB(' . $bg_color['r'] . ',' . $bg_color['g'] . ',' . $bg_color['b'] . ')');
+                $this->pdf->SetFillColor($bg_color['r'], $bg_color['g'], $bg_color['b']);
+                $this->pdf->Rect($x, $y, $width, $table_height, 'F');
+            } else {
+                error_log('PDF TABLE BG: NOT applying background (should_render_background returned false)');
+            }
 
-        // Bordure du tableau selon le style choisi
-        if ($show_borders) {
-            // Utiliser les couleurs du style de tableau pour la bordure
-            $header_border_rgb = $this->hex_to_rgb($table_styles['headerBorder']);
-            $this->pdf->SetDrawColor($header_border_rgb[0], $header_border_rgb[1], $header_border_rgb[2]);
-            $this->pdf->SetLineWidth($table_styles['border_width'] * 0.5); // Utiliser l'épaisseur du style
-            $this->pdf->Rect($x, $y, $width, $table_height, 'D');
-        } elseif ($border_width > 0 && $border_color !== 'transparent') {
-            // Fallback vers les propriétés générales de l'élément
-            $border_rgb = $this->parse_color($border_color);
-            $this->pdf->SetDrawColor($border_rgb['r'], $border_rgb['g'], $border_rgb['b']);
-            $this->pdf->SetLineWidth($border_width * 0.1); // Conversion px vers points
-            $this->pdf->Rect($x, $y, $width, $table_height, 'D');
-        }
-
-        // En-têtes du tableau
-        if ($show_headers) {
-            // Définir la couleur de trait pour les bordures des en-têtes
+            // Bordure du tableau selon le style choisi
             if ($show_borders) {
-                $header_border_rgb = $this->hex_to_rgb($table_styles['headerBorder']);
-                $this->pdf->SetDrawColor($header_border_rgb[0], $header_border_rgb[1], $header_border_rgb[2]);
-                $this->pdf->SetLineWidth($table_styles['border_width'] * 0.3);
+                // Utiliser les couleurs du style de tableau pour la bordure
+                if (is_array($table_styles['header_border'])) {
+                    $this->pdf->SetDrawColor($table_styles['header_border']['r'], $table_styles['header_border']['g'], $table_styles['header_border']['b']);
+                } else {
+                    $header_border_rgb = $this->hex_to_rgb($table_styles['header_border']);
+                    $this->pdf->SetDrawColor($header_border_rgb[0], $header_border_rgb[1], $header_border_rgb[2]);
+                }
+                $this->pdf->SetLineWidth($table_styles['border_width'] * 0.5); // Utiliser l'épaisseur du style
+                $this->pdf->Rect($x, $y, $width, $table_height, 'D');
+            } elseif ($border_width > 0 && $border_color !== 'transparent') {
+                // Fallback vers les propriétés générales de l'élément
+                $border_rgb = $this->parse_color($border_color);
+                $this->pdf->SetDrawColor($border_rgb['r'], $border_rgb['g'], $border_rgb['b']);
+                $this->pdf->SetLineWidth($border_width * 0.1); // Conversion px vers points
+                $this->pdf->Rect($x, $y, $width, $table_height, 'D');
             }
 
-            // Appliquer la couleur de texte des en-têtes
-            if (isset($table_styles['headerTextColor'])) {
-                $header_text_rgb = $this->hex_to_rgb($table_styles['headerTextColor']);
-                $this->pdf->SetTextColor($header_text_rgb[0], $header_text_rgb[1], $header_text_rgb[2]);
+            // En-têtes du tableau
+            if ($show_headers) {
+                // Définir la couleur de trait pour les bordures des en-têtes
+                if ($show_borders) {
+                    if (is_array($table_styles['header_border'])) {
+                        $this->pdf->SetDrawColor($table_styles['header_border']['r'], $table_styles['header_border']['g'], $table_styles['header_border']['b']);
+                    } else {
+                        $header_border_rgb = $this->hex_to_rgb($table_styles['header_border']);
+                        $this->pdf->SetDrawColor($header_border_rgb[0], $header_border_rgb[1], $header_border_rgb[2]);
+                    }
+                    $this->pdf->SetLineWidth($table_styles['border_width'] * 0.3);
+                }
+
+                // Appliquer la couleur de texte des en-têtes
+                if (isset($table_styles['headerTextColor'])) {
+                    $header_text_rgb = $this->hex_to_rgb($table_styles['headerTextColor']);
+                    $this->pdf->SetTextColor($header_text_rgb[0], $header_text_rgb[1], $header_text_rgb[2]);
+                }
+
+                $this->pdf->SetXY($x, $current_y);
+                $this->pdf->SetFillColor($table_styles['header_bg']['r'], $table_styles['header_bg']['g'], $table_styles['header_bg']['b']);
+                
+                // Utiliser la taille de police du style pour les en-têtes
+                $header_font_size = isset($table_styles['headerFontSize']) ? (int) filter_var($table_styles['headerFontSize'], FILTER_SANITIZE_NUMBER_INT) : 9;
+                $header_cell_height = $header_font_size * 1.2; // Hauteur de cellule basée sur la taille de police
+                $this->pdf->SetFont('helvetica', 'B', $header_font_size);
+
+                $col_index = 0;
+                if ($columns['image']) {
+                    $this->pdf->Cell($col_widths[$col_index], $header_cell_height, 'Img', $show_borders ? 1 : 0, 0, 'C', true);
+                    $col_index++;
+                }
+                if ($columns['name']) {
+                    $this->pdf->Cell($col_widths[$col_index], $header_cell_height, $headers[0] ?? 'Produit', $show_borders ? 1 : 0, 0, 'L', true);
+                    $col_index++;
+                }
+                if ($columns['sku']) {
+                    $this->pdf->Cell($col_widths[$col_index], $header_cell_height, 'SKU', $show_borders ? 1 : 0, 0, 'L', true);
+                    $col_index++;
+                }
+                if ($columns['quantity']) {
+                    $this->pdf->Cell($col_widths[$col_index], $header_cell_height, $headers[1] ?? 'Qté', $show_borders ? 1 : 0, 0, 'C', true);
+                    $col_index++;
+                }
+                if ($columns['price']) {
+                    $this->pdf->Cell($col_widths[$col_index], $header_cell_height, $headers[2] ?? 'Prix', $show_borders ? 1 : 0, 0, 'R', true);
+                    $col_index++;
+                }
+                if ($columns['total']) {
+                    $this->pdf->Cell($col_widths[$col_index], $header_cell_height, 'Total', $show_borders ? 1 : 0, 1, 'R', true);
+                }
+
+                $current_y += $header_cell_height;
             }
 
-            $this->pdf->SetXY($x, $current_y);
-            $this->pdf->SetFillColor($table_styles['header_bg']['r'], $table_styles['header_bg']['g'], $table_styles['header_bg']['b']);
-            
-            // Utiliser la taille de police du style pour les en-têtes
-            $header_font_size = isset($table_styles['headerFontSize']) ? (int) filter_var($table_styles['headerFontSize'], FILTER_SANITIZE_NUMBER_INT) : 9;
-            $header_cell_height = $header_font_size * 1.2; // Hauteur de cellule basée sur la taille de police
-            $this->pdf->SetFont('helvetica', 'B', $header_font_size);
+            // Contenu du tableau
+            // Utiliser la taille de police du style pour les données
+            $row_font_size = isset($table_styles['rowFontSize']) ? (int) filter_var($table_styles['rowFontSize'], FILTER_SANITIZE_NUMBER_INT) : 8;
+            $this->pdf->SetFont('helvetica', '', $row_font_size);
 
-            $col_index = 0;
-            if ($columns['image']) {
-                $this->pdf->Cell($col_widths[$col_index], $header_cell_height, 'Img', $show_borders ? 1 : 0, 0, 'C', true);
-                $col_index++;
-            }
-            if ($columns['name']) {
-                $this->pdf->Cell($col_widths[$col_index], $header_cell_height, $headers[0] ?? 'Produit', $show_borders ? 1 : 0, 0, 'L', true);
-                $col_index++;
-            }
-            if ($columns['sku']) {
-                $this->pdf->Cell($col_widths[$col_index], $header_cell_height, 'SKU', $show_borders ? 1 : 0, 0, 'L', true);
-                $col_index++;
-            }
-            if ($columns['quantity']) {
-                $this->pdf->Cell($col_widths[$col_index], $header_cell_height, $headers[1] ?? 'Qté', $show_borders ? 1 : 0, 0, 'C', true);
-                $col_index++;
-            }
-            if ($columns['price']) {
-                $this->pdf->Cell($col_widths[$col_index], $header_cell_height, $headers[2] ?? 'Prix', $show_borders ? 1 : 0, 0, 'R', true);
-                $col_index++;
-            }
-            if ($columns['total']) {
-                $this->pdf->Cell($col_widths[$col_index], $header_cell_height, 'Total', $show_borders ? 1 : 0, 1, 'R', true);
+            // Appliquer la couleur de texte des lignes de données
+            if (isset($table_styles['rowTextColor'])) {
+                $row_text_rgb = $this->hex_to_rgb($table_styles['rowTextColor']);
+                $this->pdf->SetTextColor($row_text_rgb[0], $row_text_rgb[1], $row_text_rgb[2]);
             }
 
-            $current_y += $header_cell_height;
-        }
-
-        // Contenu du tableau
-        // Utiliser la taille de police du style pour les données
-        $row_font_size = isset($table_styles['rowFontSize']) ? (int) filter_var($table_styles['rowFontSize'], FILTER_SANITIZE_NUMBER_INT) : 8;
-        $this->pdf->SetFont('helvetica', '', $row_font_size);
-
-        // Appliquer la couleur de texte des lignes de données
-        if (isset($table_styles['rowTextColor'])) {
-            $row_text_rgb = $this->hex_to_rgb($table_styles['rowTextColor']);
-            $this->pdf->SetTextColor($row_text_rgb[0], $row_text_rgb[1], $row_text_rgb[2]);
-        }
-
-        // Définir la couleur de trait pour les bordures des lignes de données (APRÈS la définition du texte)
-        if ($show_borders) {
-            $row_border_rgb = $this->hex_to_rgb($table_styles['rowBorder']);
-            $this->pdf->SetDrawColor($row_border_rgb[0], $row_border_rgb[1], $row_border_rgb[2]);
-            $this->pdf->SetLineWidth($table_styles['border_width'] * 0.2);
-        }
-
-        if (isset($this->order) && $this->order) {
-            // Rendre les vrais produits de la commande
-            $current_y = $this->render_order_products_with_fees_pdf($x, $current_y, $col_widths, $columns, $show_borders, $element);
-        } else {
-            // Définir les couleurs de trait pour l'aperçu avant le rendu
+            // Définir la couleur de trait pour les bordures des lignes de données (APRÈS la définition du texte)
             if ($show_borders) {
-                $row_border_rgb = $this->hex_to_rgb($table_styles['rowBorder']);
-                $this->pdf->SetDrawColor($row_border_rgb[0], $row_border_rgb[1], $row_border_rgb[2]);
+                if (is_array($table_styles['row_border'])) {
+                    $this->pdf->SetDrawColor($table_styles['row_border']['r'], $table_styles['row_border']['g'], $table_styles['row_border']['b']);
+                } else {
+                    $row_border_rgb = $this->hex_to_rgb($table_styles['row_border']);
+                    $this->pdf->SetDrawColor($row_border_rgb[0], $row_border_rgb[1], $row_border_rgb[2]);
+                }
                 $this->pdf->SetLineWidth($table_styles['border_width'] * 0.2);
             }
-            // Données fictives pour l'aperçu
-            $current_y = $this->render_fake_products($x, $current_y, $col_widths, $columns, $show_borders, $table_style, $element);
-        }
 
-        // Définir les couleurs de trait pour les totaux
-        if ($show_borders) {
-            $row_border_rgb = $this->hex_to_rgb($table_styles['rowBorder']);
-            $this->pdf->SetDrawColor($row_border_rgb[0], $row_border_rgb[1], $row_border_rgb[2]);
-            $this->pdf->SetLineWidth($table_styles['border_width'] * 0.2);
-        }
+            if (isset($this->order) && $this->order) {
+                // Rendre les vrais produits de la commande
+                $current_y = $this->render_order_products_with_fees_pdf($x, $current_y, $col_widths, $columns, $show_borders, $element);
+            } else {
+                // Définir les couleurs de trait pour l'aperçu avant le rendu
+                if ($show_borders) {
+                    if (is_array($table_styles['row_border'])) {
+                        $this->pdf->SetDrawColor($table_styles['row_border']['r'], $table_styles['row_border']['g'], $table_styles['row_border']['b']);
+                    } else {
+                        $row_border_rgb = $this->hex_to_rgb($table_styles['row_border']);
+                        $this->pdf->SetDrawColor($row_border_rgb[0], $row_border_rgb[1], $row_border_rgb[2]);
+                    }
+                    $this->pdf->SetLineWidth($table_styles['border_width'] * 0.2);
+                }
+                // Données fictives pour l'aperçu
+                $current_y = $this->render_fake_products($x, $current_y, $col_widths, $columns, $show_borders, $table_style, $element);
+            }
 
-        // Totaux
-        $current_y = $this->render_table_totals($x, $current_y, $col_widths, $columns, $show_borders, $element);
+            // Définir les couleurs de trait pour les totaux
+            if ($show_borders) {
+                if (is_array($table_styles['row_border'])) {
+                    $this->pdf->SetDrawColor($table_styles['row_border']['r'], $table_styles['row_border']['g'], $table_styles['row_border']['b']);
+                } else {
+                    $row_border_rgb = $this->hex_to_rgb($table_styles['row_border']);
+                    $this->pdf->SetDrawColor($row_border_rgb[0], $row_border_rgb[1], $row_border_rgb[2]);
+                }
+                $this->pdf->SetLineWidth($table_styles['border_width'] * 0.2);
+            }
+
+            // Totaux
+            $current_y = $this->render_table_totals($x, $current_y, $col_widths, $columns, $show_borders, $element);
 
         } catch (Exception $e) {
             // LOG: Erreur dans le rendu du tableau produits
