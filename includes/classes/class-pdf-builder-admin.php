@@ -3407,6 +3407,8 @@ class PDF_Builder_Admin {
      * Génère le tableau des produits de la commande
      */
     private function generate_order_products_table($order, $table_style = 'default', $element = null) {
+        error_log('🟡 PDF BUILDER - generate_order_products_table: Style demandé: ' . $table_style);
+
         // Définir les styles de tableau disponibles (même que dans pdf-generator.php)
         $table_styles = [
             'default' => [
@@ -3437,6 +3439,7 @@ class PDF_Builder_Admin {
 
         // Utiliser le style demandé ou default si non trouvé
         $style = isset($table_styles[$table_style]) ? $table_styles[$table_style] : $table_styles['default'];
+        error_log('🟡 PDF BUILDER - generate_order_products_table: Style appliqué: ' . $table_style . ' - Header BG: rgb(' . $style['header_bg']['r'] . ',' . $style['header_bg']['g'] . ',' . $style['header_bg']['b'] . ') - Alt Row BG: rgb(' . $style['alt_row_bg']['r'] . ',' . $style['alt_row_bg']['g'] . ',' . $style['alt_row_bg']['b'] . ')');
 
         // Fonction helper pour convertir RGB en couleur CSS
         $rgb_to_css = function($rgb) {
