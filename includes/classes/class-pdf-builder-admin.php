@@ -3028,6 +3028,17 @@ class PDF_Builder_Admin {
         try {
             // Générer le HTML d'abord
             error_log('🟡 PDF BUILDER - generate_order_pdf_private: Génération HTML...');
+            error_log('🟡 PDF BUILDER - generate_order_pdf_private: Template data keys: ' . implode(', ', array_keys($template_data)));
+            if (isset($template_data['elements'])) {
+                error_log('🟡 PDF BUILDER - generate_order_pdf_private: Elements count: ' . count($template_data['elements']));
+                foreach ($template_data['elements'] as $i => $element) {
+                    if (isset($element['type']) && $element['type'] === 'product_table') {
+                        error_log('🟡 PDF BUILDER - generate_order_pdf_private: Found table element at index ' . $i);
+                        error_log('🟡 PDF BUILDER - generate_order_pdf_private: Table style: ' . ($element['tableStyle'] ?? 'none'));
+                        error_log('🟡 PDF BUILDER - generate_order_pdf_private: Table background: ' . ($element['backgroundColor'] ?? 'none'));
+                    }
+                }
+            }
             $html_content = $this->generate_unified_html($template_data, $order);
             error_log('✅ PDF BUILDER - generate_order_pdf_private: HTML généré, longueur: ' . strlen($html_content) . ' caractères');
 
