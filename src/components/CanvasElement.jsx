@@ -2135,6 +2135,7 @@ export const CanvasElement = ({
                   key={`resize-handle-sw-${element.id}`}
                   className="resize-handle sw"
                   onMouseDown={(e) => {
+                    e.stopPropagation();
                     const canvas = elementRef.current?.closest('.canvas-zoom-wrapper');
                     const canvasRect = canvas ? canvas.getBoundingClientRect() : null;
                     resize.handleResizeStart(e, 'sw', {

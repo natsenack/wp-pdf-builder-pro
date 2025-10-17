@@ -2652,6 +2652,7 @@ var CanvasElement = function CanvasElement(_ref) {
     className: "resize-handle sw",
     onMouseDown: function onMouseDown(e) {
       var _elementRef$current3;
+      e.stopPropagation();
       var canvas = (_elementRef$current3 = elementRef.current) === null || _elementRef$current3 === void 0 ? void 0 : _elementRef$current3.closest('.canvas-zoom-wrapper');
       var canvasRect = canvas ? canvas.getBoundingClientRect() : null;
       resize.handleResizeStart(e, 'sw', {
