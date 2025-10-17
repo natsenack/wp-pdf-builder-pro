@@ -9649,7 +9649,170 @@ function PropertiesPanel_arrayLikeToArray(r, a) { (null == a || a > r.length) &&
 
 
 
-// Profils de propriétés contextuelles par type d'élément
+// Configuration des presets par template pour le texte dynamique
+var TEMPLATE_PRESETS = {
+  'total_only': {
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'right',
+    color: '#2563eb'
+  },
+  'order_info': {
+    fontSize: 12,
+    fontWeight: 'normal',
+    textAlign: 'left',
+    color: '#374151'
+  },
+  'customer_info': {
+    fontSize: 12,
+    fontWeight: 'normal',
+    textAlign: 'left',
+    color: '#374151'
+  },
+  'customer_address': {
+    fontSize: 11,
+    fontWeight: 'normal',
+    textAlign: 'left',
+    color: '#374151',
+    lineHeight: 1.3
+  },
+  'full_header': {
+    fontSize: 14,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#1f2937'
+  },
+  'invoice_header': {
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#1f2937',
+    fontFamily: 'Arial'
+  },
+  'order_summary': {
+    fontSize: 11,
+    fontWeight: 'normal',
+    textAlign: 'right',
+    color: '#374151',
+    lineHeight: 1.4
+  },
+  'payment_info': {
+    fontSize: 12,
+    fontWeight: 'bold',
+    textAlign: 'left',
+    color: '#059669'
+  },
+  'payment_terms': {
+    fontSize: 10,
+    fontWeight: 'normal',
+    textAlign: 'left',
+    color: '#6b7280',
+    lineHeight: 1.3
+  },
+  'shipping_info': {
+    fontSize: 11,
+    fontWeight: 'normal',
+    textAlign: 'left',
+    color: '#374151',
+    lineHeight: 1.3
+  },
+  'thank_you': {
+    fontSize: 14,
+    fontWeight: 'normal',
+    textAlign: 'center',
+    color: '#059669',
+    fontStyle: 'italic'
+  },
+  'legal_notice': {
+    fontSize: 9,
+    fontWeight: 'normal',
+    textAlign: 'left',
+    color: '#6b7280',
+    lineHeight: 1.2
+  },
+  'bank_details': {
+    fontSize: 10,
+    fontWeight: 'normal',
+    textAlign: 'left',
+    color: '#374151',
+    fontFamily: 'Courier New'
+  },
+  'contact_info': {
+    fontSize: 11,
+    fontWeight: 'normal',
+    textAlign: 'left',
+    color: '#374151'
+  },
+  'order_confirmation': {
+    fontSize: 14,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#059669'
+  },
+  'delivery_note': {
+    fontSize: 12,
+    fontWeight: 'bold',
+    textAlign: 'left',
+    color: '#1f2937'
+  },
+  'warranty_info': {
+    fontSize: 10,
+    fontWeight: 'normal',
+    textAlign: 'left',
+    color: '#059669',
+    lineHeight: 1.3
+  },
+  'return_policy': {
+    fontSize: 10,
+    fontWeight: 'normal',
+    textAlign: 'left',
+    color: '#dc2626',
+    lineHeight: 1.3
+  },
+  'signature_line': {
+    fontSize: 11,
+    fontWeight: 'normal',
+    textAlign: 'left',
+    color: '#374151'
+  },
+  'invoice_footer': {
+    fontSize: 9,
+    fontWeight: 'normal',
+    textAlign: 'center',
+    color: '#6b7280'
+  },
+  'terms_conditions': {
+    fontSize: 9,
+    fontWeight: 'normal',
+    textAlign: 'left',
+    color: '#6b7280',
+    lineHeight: 1.2
+  },
+  'quality_guarantee': {
+    fontSize: 11,
+    fontWeight: 'normal',
+    textAlign: 'center',
+    color: '#059669'
+  },
+  'eco_friendly': {
+    fontSize: 11,
+    fontWeight: 'normal',
+    textAlign: 'center',
+    color: '#059669'
+  },
+  'follow_up': {
+    fontSize: 10,
+    fontWeight: 'normal',
+    textAlign: 'left',
+    color: '#374151'
+  },
+  'custom': {
+    fontSize: 14,
+    fontWeight: 'normal',
+    textAlign: 'left',
+    color: '#374151'
+  }
+};
 var ELEMENT_PROPERTY_PROFILES = {
   // Éléments texte
   text: {
@@ -11357,7 +11520,19 @@ var PropertiesPanel = /*#__PURE__*/(0,react.memo)(function (_ref4) {
         }, /*#__PURE__*/React.createElement("label", null, "Mod\xE8le:"), /*#__PURE__*/React.createElement("select", {
           value: localProperties.template || 'total_only',
           onChange: function onChange(e) {
-            return handlePropertyChange(selectedElement.id, 'template', e.target.value);
+            var newTemplate = e.target.value;
+            handlePropertyChange(selectedElement.id, 'template', newTemplate);
+
+            // Appliquer automatiquement les propriétés du preset
+            var preset = TEMPLATE_PRESETS[newTemplate];
+            if (preset) {
+              Object.entries(preset).forEach(function (_ref9) {
+                var _ref0 = PropertiesPanel_slicedToArray(_ref9, 2),
+                  property = _ref0[0],
+                  value = _ref0[1];
+                handlePropertyChange(selectedElement.id, property, value);
+              });
+            }
           }
         }, /*#__PURE__*/React.createElement("option", {
           value: "total_only"
@@ -11473,10 +11648,10 @@ var PropertiesPanel = /*#__PURE__*/(0,react.memo)(function (_ref4) {
         }, {
           key: 'siret',
           label: 'SIRET'
-        }].map(function (_ref9) {
+        }].map(function (_ref1) {
           var _localProperties$fiel3, _localProperties$fiel4;
-          var key = _ref9.key,
-            label = _ref9.label;
+          var key = _ref1.key,
+            label = _ref1.label;
           return /*#__PURE__*/React.createElement("label", {
             key: key,
             className: "checkbox-item"
@@ -11857,10 +12032,10 @@ var PropertiesPanel = /*#__PURE__*/(0,react.memo)(function (_ref4) {
         }, {
           key: 'total',
           label: 'Total'
-        }].map(function (_ref1) {
+        }].map(function (_ref11) {
           var _localProperties$fiel5, _localProperties$fiel6;
-          var key = _ref1.key,
-            label = _ref1.label;
+          var key = _ref11.key,
+            label = _ref11.label;
           return /*#__PURE__*/React.createElement("label", {
             key: key,
             className: "checkbox-item"
