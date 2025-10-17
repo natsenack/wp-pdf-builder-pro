@@ -6299,7 +6299,7 @@ var PreviewModal = function PreviewModal(_ref) {
         // Données fictives pour l'aperçu (seront remplacées par les vraies données lors de la génération)
         var companyData = {
           name: 'ABC Company SARL',
-          address: '456 Avenue des Champs\n75008 Paris - France',
+          address: '456 Avenue des Champs\n75008 Paris, France',
           phone: '01 23 45 67 89',
           email: 'contact@abc-company.com',
           tva: 'FR 98 765 432 109',
