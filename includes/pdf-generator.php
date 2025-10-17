@@ -531,8 +531,7 @@ class PDF_Builder_Pro_Generator {
         }
 
         // Epaisseur de bordure
-        $border_width_px = $element['borderWidth'] ?? 1;
-        $border_width = $border_width_px * ($px_to_mm * 3); // Approximation pour garder la proportion visuelle
+        $border_width = ($element['borderWidth'] ?? 1) * $px_to_mm;
         $this->pdf->SetLineWidth($border_width);
 
         // Dessin du rectangle
@@ -590,19 +589,25 @@ class PDF_Builder_Pro_Generator {
         $this->pdf->SetDrawColor($color['r'], $color['g'], $color['b']);
 
         // Épaisseur de ligne (utilise lineWidth ou strokeWidth ou borderWidth)
-        // ⚠️ IMPORTANT: Pour les épaisseurs de trait, on utilise un facteur de conversion réduit
-        // car $px_to_mm (0.35) rend les lignes trop fines. On utilise ~1/3 pour garder la proportion
-        $line_width_px = $element['lineWidth'] ?? $element['strokeWidth'] ?? $element['borderWidth'] ?? 1;
-        $line_width = $line_width_px * ($px_to_mm * 3); // Approximation pour garder la proportion visuelle
+        $line_width = ($element['lineWidth'] ?? $element['strokeWidth'] ?? $element['borderWidth'] ?? 1) * $px_to_mm;
         $this->pdf->SetLineWidth($line_width);
 
-        // Dessin de la ligne
+        // Longueur fixe pour la ligne dans le PDF (7/8 mm = 0.875 mm)
+        $fixed_length = 0.875; // 7/8 mm
+
+        // Dessin de la ligne avec longueur fixe
         if ($width > $height) {
-            // Ligne horizontale
-            $this->pdf->Line($x, $y + ($height / 2), $x + $width, $y + ($height / 2));
+            // Ligne horizontale - longueur fixe centrée
+            $start_x = $x + ($width - $fixed_length) / 2;
+            $end_x = $start_x + $fixed_length;
+            $line_y = $y + ($height / 2);
+            $this->pdf->Line($start_x, $line_y, $end_x, $line_y);
         } else {
-            // Ligne verticale
-            $this->pdf->Line($x + ($width / 2), $y, $x + ($width / 2), $y + $height);
+            // Ligne verticale - longueur fixe centrée
+            $start_y = $y + ($height - $fixed_length) / 2;
+            $end_y = $start_y + $fixed_length;
+            $line_x = $x + ($width / 2);
+            $this->pdf->Line($line_x, $start_y, $line_x, $end_y);
         }
     }
 
