@@ -592,22 +592,13 @@ class PDF_Builder_Pro_Generator {
         $line_width = ($element['lineWidth'] ?? $element['strokeWidth'] ?? $element['borderWidth'] ?? 1) * $px_to_mm;
         $this->pdf->SetLineWidth($line_width);
 
-        // Longueur fixe pour la ligne dans le PDF (7/8 mm = 0.875 mm)
-        $fixed_length = 0.875; // 7/8 mm
-
-        // Dessin de la ligne avec longueur fixe
+        // Dessin de la ligne
         if ($width > $height) {
-            // Ligne horizontale - longueur fixe centrée
-            $start_x = $x + ($width - $fixed_length) / 2;
-            $end_x = $start_x + $fixed_length;
-            $line_y = $y + ($height / 2);
-            $this->pdf->Line($start_x, $line_y, $end_x, $line_y);
+            // Ligne horizontale - utilise toute la largeur de la page comme dans le canvas
+            $this->pdf->Line(0, $y + ($height / 2), $this->pdf->w, $y + ($height / 2));
         } else {
-            // Ligne verticale - longueur fixe centrée
-            $start_y = $y + ($height - $fixed_length) / 2;
-            $end_y = $start_y + $fixed_length;
-            $line_x = $x + ($width / 2);
-            $this->pdf->Line($line_x, $start_y, $line_x, $end_y);
+            // Ligne verticale
+            $this->pdf->Line($x + ($width / 2), $y, $x + ($width / 2), $y + $height);
         }
     }
 
