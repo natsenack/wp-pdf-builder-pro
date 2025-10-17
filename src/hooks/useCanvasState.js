@@ -399,7 +399,7 @@ export const useCanvasState = ({
     // Ajustements spécifiques selon le type d'élément
     if (elementType === 'line') {
       newElement.height = 12; // Hauteur fixe pour les lignes
-      newElement.width = 200; // Largeur par défaut pour les lignes
+      // Supprimé: newElement.width = 200; // Les lignes utilisent maintenant la largeur complète
     } else if (elementType === 'divider') {
       newElement.height = 16; // Hauteur fixe pour les séparateurs
       newElement.width = 200; // Largeur par défaut pour les séparateurs
