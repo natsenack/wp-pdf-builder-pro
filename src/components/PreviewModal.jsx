@@ -151,16 +151,15 @@ const PreviewModal = ({
             style={{
               width: '100%',
               height: '100%',
-              fontSize: (element.fontSize || 16) * zoom,
-              color: element.color || '#000000',
+              fontSize: (element.fontSize || 14) * zoom,
+              color: element.color || '#1e293b',
               fontWeight: element.fontWeight === 'bold' ? 'bold' : 'normal',
               fontStyle: element.fontStyle === 'italic' ? 'italic' : 'normal',
               textDecoration: element.textDecoration || 'none',
               textAlign: element.textAlign || 'left',
-              lineHeight: element.lineHeight || '1.2',
+              lineHeight: element.lineHeight || 'normal',
               whiteSpace: 'pre-wrap',
               overflow: 'hidden',
-              padding: `${4 * zoom}px`,
               boxSizing: 'border-box'
             }}
           >
@@ -174,7 +173,7 @@ const PreviewModal = ({
             style={{
               width: '100%',
               height: '100%',
-              backgroundColor: element.fillColor || 'transparent',
+              backgroundColor: element.backgroundColor || 'transparent',
               border: element.borderWidth
                 ? `${element.borderWidth * zoom}px ${element.borderStyle || 'solid'} ${element.borderColor || '#000000'}`
                 : 'none',
@@ -216,8 +215,7 @@ const PreviewModal = ({
           <div
             style={{
               width: '100%',
-              height: '100%',
-              backgroundColor: element.color || element.fillColor || '#cccccc',
+              backgroundColor: element.backgroundColor || element.color || '#cccccc',
               height: `${(element.thickness || element.height || 2) * zoom}px`,
               margin: `${(element.margin || 10) * zoom}px 0`,
               borderRadius: (element.borderRadius || 0) * zoom

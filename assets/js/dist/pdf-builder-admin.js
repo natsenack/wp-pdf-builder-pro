@@ -5519,16 +5519,15 @@ var PreviewModal = function PreviewModal(_ref) {
           style: {
             width: '100%',
             height: '100%',
-            fontSize: (element.fontSize || 16) * zoom,
-            color: element.color || '#000000',
+            fontSize: (element.fontSize || 14) * zoom,
+            color: element.color || '#1e293b',
             fontWeight: element.fontWeight === 'bold' ? 'bold' : 'normal',
             fontStyle: element.fontStyle === 'italic' ? 'italic' : 'normal',
             textDecoration: element.textDecoration || 'none',
             textAlign: element.textAlign || 'left',
-            lineHeight: element.lineHeight || '1.2',
+            lineHeight: element.lineHeight || 'normal',
             whiteSpace: 'pre-wrap',
             overflow: 'hidden',
-            padding: "".concat(4 * zoom, "px"),
             boxSizing: 'border-box'
           }
         }, element.content || element.text || 'Texte');
@@ -5537,7 +5536,7 @@ var PreviewModal = function PreviewModal(_ref) {
           style: {
             width: '100%',
             height: '100%',
-            backgroundColor: element.fillColor || 'transparent',
+            backgroundColor: element.backgroundColor || 'transparent',
             border: element.borderWidth ? "".concat(element.borderWidth * zoom, "px ").concat(element.borderStyle || 'solid', " ").concat(element.borderColor || '#000000') : 'none',
             borderRadius: (element.borderRadius || 0) * zoom
           }
@@ -5566,11 +5565,13 @@ var PreviewModal = function PreviewModal(_ref) {
         });
       case 'divider':
         return /*#__PURE__*/React.createElement("div", {
-          style: PreviewModal_defineProperty(PreviewModal_defineProperty(PreviewModal_defineProperty({
+          style: {
             width: '100%',
-            height: '100%',
-            backgroundColor: element.color || element.fillColor || '#cccccc'
-          }, "height", "".concat((element.thickness || element.height || 2) * zoom, "px")), "margin", "".concat((element.margin || 10) * zoom, "px 0")), "borderRadius", (element.borderRadius || 0) * zoom)
+            backgroundColor: element.backgroundColor || element.color || '#cccccc',
+            height: "".concat((element.thickness || element.height || 2) * zoom, "px"),
+            margin: "".concat((element.margin || 10) * zoom, "px 0"),
+            borderRadius: (element.borderRadius || 0) * zoom
+          }
         });
       case 'product_table':
         // Rendu dynamique du tableau de produits utilisant les propriétés de l'élément
@@ -6506,7 +6507,7 @@ var PreviewModal = function PreviewModal(_ref) {
     }
   }, [isOpen, elements.length, useServerPreview]);
   var generatePreview = /*#__PURE__*/function () {
-    var _ref3 = PreviewModal_asyncToGenerator(/*#__PURE__*/PreviewModal_regenerator().m(function _callee() {
+    var _ref2 = PreviewModal_asyncToGenerator(/*#__PURE__*/PreviewModal_regenerator().m(function _callee() {
       var _window$pdfBuilderAja, ajaxUrl, nonceFormData, nonceResponse, nonceData, freshNonce, _cleanElementsForJSON, validationResult, jsonString, cleanedElements, formData, response, data, responseText, errorMessage, _t, _t2;
       return PreviewModal_regenerator().w(function (_context) {
         while (1) switch (_context.p = _context.n) {
@@ -6720,11 +6721,11 @@ var PreviewModal = function PreviewModal(_ref) {
       }, _callee, null, [[9, 11], [1, 14]]);
     }));
     return function generatePreview() {
-      return _ref3.apply(this, arguments);
+      return _ref2.apply(this, arguments);
     };
   }();
   var generateServerPreview = /*#__PURE__*/function () {
-    var _ref4 = PreviewModal_asyncToGenerator(/*#__PURE__*/PreviewModal_regenerator().m(function _callee2() {
+    var _ref3 = PreviewModal_asyncToGenerator(/*#__PURE__*/PreviewModal_regenerator().m(function _callee2() {
       var fallbackTimeout, _window$pdfBuilderAja2, _window$pdfBuilderAja3, validationResult, jsonString, ajaxUrl, nonceFormData, nonceResponse, nonceData, freshNonce, formData, response, data, _t3;
       return PreviewModal_regenerator().w(function (_context2) {
         while (1) switch (_context2.p = _context2.n) {
@@ -6858,11 +6859,11 @@ var PreviewModal = function PreviewModal(_ref) {
       }, _callee2, null, [[1, 13]]);
     }));
     return function generateServerPreview() {
-      return _ref4.apply(this, arguments);
+      return _ref3.apply(this, arguments);
     };
   }();
   var handlePrint = /*#__PURE__*/function () {
-    var _ref5 = PreviewModal_asyncToGenerator(/*#__PURE__*/PreviewModal_regenerator().m(function _callee3() {
+    var _ref4 = PreviewModal_asyncToGenerator(/*#__PURE__*/PreviewModal_regenerator().m(function _callee3() {
       var printButton, _window$pdfBuilderAja4, ajaxUrl, nonceFormData, nonceResponse, nonceData, freshNonce, formData, originalText, response, data, errorMessage, pdfBase64, pdfBlob, pdfUrl, previewWindow, link, _t4;
       return PreviewModal_regenerator().w(function (_context3) {
         while (1) switch (_context3.p = _context3.n) {
@@ -7019,7 +7020,7 @@ var PreviewModal = function PreviewModal(_ref) {
       }, _callee3, null, [[1, 13, 14, 15]]);
     }));
     return function handlePrint() {
-      return _ref5.apply(this, arguments);
+      return _ref4.apply(this, arguments);
     };
   }();
   if (!isOpen) return null;
