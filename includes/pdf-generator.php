@@ -63,12 +63,20 @@ class PDF_Builder_Pro_Generator {
         $element_width = isset($element['size']['width']) ? $element['size']['width'] : (isset($element['width']) ? $element['width'] : 0);
         $element_height = isset($element['size']['height']) ? $element['size']['height'] : (isset($element['height']) ? $element['height'] : 0);
 
-        return [
+        // LOG: Coordonnées extraites
+        error_log("🔍 EXTRACT_COORDS - Element: " . json_encode($element));
+        error_log("🔍 EXTRACT_COORDS - Raw coords: x=$element_x, y=$element_y, w=$element_width, h=$element_height, px_to_mm=$px_to_mm");
+
+        $result = [
             'x' => $element_x * $px_to_mm,
             'y' => $element_y * $px_to_mm,
             'width' => $element_width * $px_to_mm,
             'height' => $element_height * $px_to_mm
         ];
+
+        error_log("🔍 EXTRACT_COORDS - Final coords: x={$result['x']}, y={$result['y']}, w={$result['width']}, h={$result['height']}");
+
+        return $result;
     }
 
     /**
@@ -106,7 +114,11 @@ class PDF_Builder_Pro_Generator {
             $this->render_elements($elements);
 
             error_log('🟡 PDF BUILDER - generate: Calling finalize_pdf()');
-            return $this->finalize_pdf();
+            $pdf_content = $this->finalize_pdf();
+
+            error_log('🟡 PDF BUILDER - generate: SUCCESS - PDF generated, size: ' . strlen($pdf_content) . ' bytes');
+
+            return $pdf_content;
 
         } catch (Exception $e) {
             error_log('❌ PDF BUILDER - generate: EXCEPTION - ' . $e->getMessage());
@@ -293,6 +305,9 @@ class PDF_Builder_Pro_Generator {
      * Rendu des elements optimise
      */
     private function render_elements($elements) {
+        // LOG: Début rendu éléments
+        error_log("🎨 RENDER_ELEMENTS - START: " . count($elements) . " elements to render");
+
         // Calcul précis du facteur de conversion basé sur les dimensions réelles
         // Canvas: 595×842 px | A4: 210×297 mm
         // Conversion: 210mm / 595px = 0.3529 mm/px
@@ -303,6 +318,9 @@ class PDF_Builder_Pro_Generator {
 
         $px_to_mm = $page_width_mm / $canvas_width_px; // 0.3529 mm/px
 
+        // LOG: Facteur de conversion
+        error_log("🎨 RENDER_ELEMENTS - CONVERSION: canvas={$canvas_width_px}x{$canvas_height_px}px, page={$page_width_mm}x{$page_height_mm}mm, px_to_mm=$px_to_mm");
+
         // ⚠️ IMPORTANT: Préserver l'ordre des éléments tel que défini dans le canvas
         // Ne pas trier par position Y car cela casse l'ordre d'empilement (z-index)
         // L'ordre du tableau elements doit être respecté pour maintenir la logique du design
@@ -310,6 +328,9 @@ class PDF_Builder_Pro_Generator {
         foreach ($elements as $element) {
             try {
                 $element_type = isset($element['type']) ? $element['type'] : 'unknown';
+
+                // LOG: Élément en cours de traitement
+                error_log("🎨 RENDER_ELEMENTS - PROCESSING: type=$element_type, id=" . (isset($element['id']) ? $element['id'] : 'unknown'));
 
                 $this->render_single_element($element, $px_to_mm);
 
@@ -320,6 +341,9 @@ class PDF_Builder_Pro_Generator {
             }
         }
 
+        // LOG: Fin rendu éléments
+        error_log("🎨 RENDER_ELEMENTS - END: all elements processed");
+
         $this->performance_metrics['elements_rendered'] = microtime(true);
     }
 
@@ -329,12 +353,18 @@ class PDF_Builder_Pro_Generator {
     private function render_single_element($element, $px_to_mm) {
         $type = isset($element['type']) ? $element['type'] : 'unknown';
 
+        // LOG: Début rendu élément
+        error_log("🎨 RENDER_ELEMENT - START: type=$type, px_to_mm=$px_to_mm");
+
         // Calcul des coordonnées PDF avec support des deux formats
         $coords = $this->extract_element_coordinates($element, $px_to_mm);
         $pdf_x = $coords['x'];
         $pdf_y = $coords['y'];
         $pdf_width = $coords['width'];
         $pdf_height = $coords['height'];
+
+        // LOG: Coordonnées calculées
+        error_log("🎨 RENDER_ELEMENT - COORDS: x=$pdf_x, y=$pdf_y, w=$pdf_width, h=$pdf_height");
 
         // Validation de base de l'élément
         if (!$this->validate_element($element)) {
@@ -345,6 +375,7 @@ class PDF_Builder_Pro_Generator {
         try {
             switch ($type) {
                 case 'text':
+                    error_log("🎨 RENDER_ELEMENT - Calling render_text_element");
                     $this->render_text_element($element, $px_to_mm);
                     break;
                 case 'multiline_text':
@@ -418,9 +449,13 @@ class PDF_Builder_Pro_Generator {
      */
     private function render_text_element($element, $px_to_mm) {
         try {
+            // LOG: Début rendu texte
+            error_log("📝 RENDER_TEXT - START: " . json_encode($element));
+
             // Extraction des propriétés avec valeurs par défaut sûres
             $text = $element['content'] ?? $element['text'] ?? '';
             if (empty($text)) {
+                error_log("📝 RENDER_TEXT - SKIP: empty text");
                 return; // Ne rien rendre si pas de texte
             }
 
@@ -430,6 +465,9 @@ class PDF_Builder_Pro_Generator {
             $y = $coords['y'];
             $width = $coords['width'];
             $height = $coords['height'];
+
+            // LOG: Coordonnées texte
+            error_log("📝 RENDER_TEXT - COORDS: x=$x, y=$y, w=$width, h=$height");
 
             // Conversion correcte de la taille de police (px vers pt)
             // 1px = 0.75pt en CSS, mais pour PDF on utilise directement la valeur px comme pt
@@ -445,6 +483,9 @@ class PDF_Builder_Pro_Generator {
 
             // Couleur du texte
             $color = $this->parse_color($element['color'] ?? '#000000');
+
+            // LOG: Propriétés police
+            error_log("📝 RENDER_TEXT - FONT: family=$font_family, style=$font_style, size=$font_size_pt, color=" . json_encode($color));
 
             // Configuration de la police
             $this->pdf->SetFont($font_family, $font_style, $font_size_pt);
