@@ -264,15 +264,6 @@ class PDF_Builder_WooCommerce_Integration {
             background: #218838;
         }
 
-        .pdf-btn-preview-html {
-            background: #17a2b8;
-            color: white;
-        }
-
-        .pdf-btn-preview-html:hover {
-            background: #138496;
-        }
-
         .pdf-status {
             padding: 10px;
             border-radius: 6px;
@@ -355,13 +346,8 @@ class PDF_Builder_WooCommerce_Integration {
             <!-- Action Buttons -->
             <div class="pdf-actions">
                 <button type="button" class="pdf-btn pdf-btn-preview" id="pdf-preview-btn">
-                    <span>👁️</span>
+                    <span>📄</span>
                     Aperçu PDF final
-                </button>
-
-                <button type="button" class="pdf-btn pdf-btn-preview-html" id="pdf-preview-html-btn">
-                    <span>🎨</span>
-                    Aperçu HTML (éditeur)
                 </button>
 
                 <button type="button" class="pdf-btn pdf-btn-generate" id="pdf-generate-btn">
@@ -432,14 +418,14 @@ class PDF_Builder_WooCommerce_Integration {
                 }
             }
 
-            // Fonction pour ouvrir la modale PDF
-            function openPdfModal(pdfUrl) {
-                console.log('MetaBoxes.js - openPdfModal called with URL:', pdfUrl);
+            // Fonction pour ouvrir la modale HTML
+            function openHtmlModal(htmlUrl) {
+                console.log('MetaBoxes.js - openHtmlModal called with URL:', htmlUrl);
 
                 // Créer la modale si elle n'existe pas
-                if (!$('#pdf-preview-modal').length) {
+                if (!$('#html-preview-modal').length) {
                     $('body').append(`
-                        <div id="pdf-preview-modal" style="
+                        <div id="html-preview-modal" style="
                             position: fixed;
                             top: 0;
                             left: 0;
@@ -477,9 +463,9 @@ class PDF_Builder_WooCommerce_Integration {
                                     border-radius: 8px 8px 0 0;
                                 ">
                                     <h3 style="margin: 0; color: #495057; font-size: 18px;">
-                                        👁️ Aperçu PDF - Commande #${orderId}
+                                        👁️ Aperçu HTML - Commande #${orderId}
                                     </h3>
-                                    <button id="pdf-modal-close" style="
+                                    <button id="html-modal-close" style="
                                         background: #dc3545;
                                         color: white;
                                         border: none;
@@ -495,7 +481,7 @@ class PDF_Builder_WooCommerce_Integration {
                                     padding: 0;
                                     overflow: hidden;
                                 ">
-                                    <iframe id="pdf-preview-iframe" style="
+                                    <iframe id="html-preview-iframe" style="
                                         width: 100%;
                                         height: 100%;
                                         border: none;
@@ -507,42 +493,41 @@ class PDF_Builder_WooCommerce_Integration {
                     `);
 
                     // Gestionnaire pour fermer la modale
-                    $(document).on('click', '#pdf-modal-close', function() {
-                        closePdfModal();
+                    $(document).on('click', '#html-modal-close', function() {
+                        closeHtmlModal();
                     });
 
                     // Fermer en cliquant sur le fond
-                    $(document).on('click', '#pdf-preview-modal', function(e) {
+                    $(document).on('click', '#html-preview-modal', function(e) {
                         if (e.target === this) {
-                            closePdfModal();
+                            closeHtmlModal();
                         }
                     });
 
                     // Fermer avec Échap
                     $(document).on('keydown', function(e) {
                         if (e.keyCode === 27) { // Échap
-                            closePdfModal();
+                            closeHtmlModal();
                         }
                     });
                 }
 
                 // Fonction pour fermer la modale
-                function closePdfModal() {
-                    $('#pdf-preview-modal > div').css('transform', 'scale(0.95)');
+                function closeHtmlModal() {
+                    $('#html-preview-modal > div').css('transform', 'scale(0.95)');
                     setTimeout(function() {
-                        $('#pdf-preview-modal').fadeOut(function() {
+                        $('#html-preview-modal').fadeOut(function() {
                             $(this).css('display', 'none');
                         });
-                        $('#pdf-preview-iframe').attr('src', '');
+                        $('#html-preview-iframe').attr('src', '');
                     }, 200);
                 }
 
-                // Ouvrir la modale et charger le PDF
-                $('#pdf-preview-iframe').attr('src', pdfUrl);
-                $('#pdf-preview-modal').css('display', 'flex').hide().fadeIn(function() {
+                // Ouvrir la modale et charger le HTML
+                $('#html-preview-iframe').attr('src', htmlUrl);
+                $('#html-preview-modal').css('display', 'flex').hide().fadeIn(function() {
                     // Animation d'ouverture
-                    $('#pdf-preview-modal > div').css('transform', 'scale(1)');
-                });
+                    $('#html-preview-modal > div').css('transform', 'scale(1)');
             }
 
             // Event handlers
@@ -599,65 +584,6 @@ class PDF_Builder_WooCommerce_Integration {
                     complete: function() {
                         console.log('MetaBoxes.js - Preview AJAX complete');
                         setButtonLoading($('#pdf-preview-btn'), false);
-                    }
-                });
-            });
-
-            $('#pdf-preview-html-btn').on('click', function() {
-                console.log('PDF BUILDER - HTML Preview button clicked');
-                console.log('MetaBoxes.js - HTML Preview button element:', this);
-                console.log('MetaBoxes.js - Order ID for HTML preview:', orderId);
-
-                showStatus('Génération de l\'aperçu HTML...', 'loading');
-                setButtonLoading($(this), true);
-
-                var ajaxData = {
-                    action: 'pdf_builder_unified_preview',
-                    order_id: orderId,
-                    template_id: templateId,
-                    preview_type: 'html',
-                    nonce: nonce
-                };
-
-                console.log('PDF BUILDER - Sending AJAX request for HTML preview:', {
-                    action: ajaxData.action,
-                    order_id: ajaxData.order_id,
-                    preview_type: ajaxData.preview_type,
-                    nonce: ajaxData.nonce.substring(0, 10) + '...',
-                    ajaxUrl: ajaxUrl
-                });
-
-                $.ajax({
-                    url: ajaxUrl,
-                    type: 'POST',
-                    data: ajaxData,
-                    success: function(response) {
-                        console.log('PDF BUILDER - HTML Preview AJAX success response:', response);
-                        console.log('MetaBoxes.js - Full HTML preview response object:', JSON.stringify(response, null, 2));
-
-                        if (response.success && response.data && response.data.url) {
-                            console.log('MetaBoxes.js - Opening HTML preview URL in modal:', response.data.url);
-                            // Ouvrir l'aperçu HTML dans une modale
-                            openPdfModal(response.data.url);
-                            showStatus('Aperçu HTML généré avec succès', 'success');
-                        } else {
-                            var errorMsg = response.data || 'Erreur lors de la génération de l\'aperçu HTML';
-                            console.log('MetaBoxes.js - HTML Preview error:', errorMsg);
-                            showStatus(errorMsg, 'error');
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.log('MetaBoxes.js - HTML Preview AJAX error:', {
-                            xhr: xhr,
-                            status: status,
-                            error: error,
-                            responseText: xhr.responseText
-                        });
-                        showStatus('Erreur AJAX: ' + error, 'error');
-                    },
-                    complete: function() {
-                        console.log('MetaBoxes.js - HTML Preview AJAX complete');
-                        setButtonLoading($('#pdf-preview-html-btn'), false);
                     }
                 });
             });
@@ -958,14 +884,8 @@ class PDF_Builder_WooCommerce_Integration {
                     error_log('✅ PDF BUILDER - ajax_unified_preview: Template déterminé automatiquement: ' . $template_id);
                 }
 
-                // Générer l'aperçu selon le type demandé
-                if ($preview_type === 'html') {
-                    $result = $this->generate_html_preview($order_id, $template_id);
-                    error_log('✅ PDF BUILDER - ajax_unified_preview: Aperçu HTML généré: ' . (is_wp_error($result) ? 'WP_Error: ' . $result->get_error_message() : 'URL: ' . $result));
-                } else {
-                    $result = $generator->generate_simple_preview($order_id, $template_id);
-                    error_log('✅ PDF BUILDER - ajax_unified_preview: Aperçu PDF généré: ' . (is_wp_error($result) ? 'WP_Error: ' . $result->get_error_message() : 'URL: ' . $result));
-                }
+                $result = $generator->generate_simple_preview($order_id, $template_id);
+                error_log('✅ PDF BUILDER - ajax_unified_preview: PDF preview generated: ' . (is_wp_error($result) ? 'WP_Error: ' . $result->get_error_message() : 'URL: ' . $result));
 
             } elseif (!empty($elements)) {
                 // Aperçu de template depuis l'éditeur (éléments JSON)
@@ -1248,324 +1168,6 @@ class PDF_Builder_WooCommerce_Integration {
         }
 
         error_log('✅ PDF BUILDER - check_tcpdf_paths: Vérification terminée');
-    }
-
-    /**
-     * Génère un aperçu HTML stylisé qui ressemble à l'éditeur
-     */
-    public function generate_html_preview($order_id, $template_id) {
-        error_log('🎨 PDF BUILDER - generate_html_preview: Génération aperçu HTML pour commande ' . $order_id);
-
-        try {
-            // Récupérer la commande
-            $order = wc_get_order($order_id);
-            if (!$order) {
-                throw new Exception('Commande non trouvée');
-            }
-
-            // Récupérer les éléments du template depuis la base de données
-            global $wpdb;
-            $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-
-            $template_data = $wpdb->get_row($wpdb->prepare(
-                "SELECT * FROM $table_templates WHERE id = %d",
-                $template_id
-            ), ARRAY_A);
-
-            if (!$template_data) {
-                throw new Exception('Template non trouvé');
-            }
-
-            // Décoder les éléments du template
-            $elements = json_decode($template_data['data'], true);
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                throw new Exception('Erreur décodage template: ' . json_last_error_msg());
-            }
-
-            // Générer le HTML stylisé
-            $html = $this->render_html_preview($elements, $order);
-
-            // Créer un fichier temporaire pour l'aperçu
-            $temp_dir = wp_upload_dir()['basedir'] . '/pdf-builder-previews';
-            if (!file_exists($temp_dir)) {
-                wp_mkdir_p($temp_dir);
-            }
-
-            $temp_file = $temp_dir . '/preview_' . $order_id . '_' . time() . '.html';
-            file_put_contents($temp_file, $html);
-
-            $preview_url = str_replace(ABSPATH, home_url('/'), $temp_file);
-            error_log('✅ PDF BUILDER - generate_html_preview: Aperçu HTML généré: ' . $preview_url);
-
-            return $preview_url;
-
-        } catch (Exception $e) {
-            error_log('❌ PDF BUILDER - generate_html_preview: Erreur: ' . $e->getMessage());
-            throw $e;
-        }
-    }
-
-    /**
-     * Rend le HTML stylisé pour l'aperçu (similaire à l'éditeur)
-     */
-    private function render_html_preview($elements, $order) {
-        $canvas_width = 595; // A4 width in points
-        $canvas_height = 842; // A4 height in points
-
-        // Convertir en pixels pour l'affichage web (approximation)
-        $scale = 1.333; // points to pixels approximation
-        $display_width = $canvas_width * $scale;
-        $display_height = $canvas_height * $scale;
-
-        $html = '<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aperçu PDF Builder - ' . esc_html($order->get_id()) . '</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 20px;
-            background: #f8fafc;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-        .preview-container {
-            max-width: ' . $display_width . 'px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-        .preview-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        .preview-header h1 {
-            margin: 0;
-            font-size: 24px;
-            font-weight: 600;
-        }
-        .preview-header p {
-            margin: 5px 0 0 0;
-            opacity: 0.9;
-            font-size: 14px;
-        }
-        .canvas-container {
-            position: relative;
-            width: ' . $display_width . 'px;
-            height: ' . $display_height . 'px;
-            background: white;
-            transform: scale(0.8);
-            transform-origin: top center;
-            margin: 20px auto;
-        }
-        .canvas-element {
-            position: absolute;
-            box-sizing: border-box;
-        }
-        .text-element {
-            white-space: pre-wrap;
-            overflow: hidden;
-        }
-        .rectangle-element {
-            border-radius: 4px;
-        }
-        .image-element {
-            border-radius: 4px;
-        }
-        .line-element {
-            border-radius: 2px;
-        }
-        .divider-element {
-            border-radius: 4px;
-        }
-        .product-table-element {
-            border-collapse: collapse;
-            width: 100%;
-            font-size: 12px;
-        }
-        .product-table-element th {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            padding: 8px;
-            text-align: left;
-            font-weight: 600;
-            color: #334155;
-        }
-        .product-table-element td {
-            border: 1px solid #f1f5f9;
-            padding: 8px;
-            color: #334155;
-        }
-        .product-table-element tr:nth-child(even) {
-            background: #fafbfc;
-        }
-        .preview-notice {
-            background: #fef3c7;
-            border: 1px solid #f59e0b;
-            color: #92400e;
-            padding: 15px;
-            margin: 20px;
-            border-radius: 6px;
-            text-align: center;
-            font-weight: 500;
-        }
-    </style>
-</head>
-<body>
-    <div class="preview-notice">
-        🎨 APERÇU HTML - Style éditeur (pas un PDF réel)
-    </div>
-
-    <div class="preview-container">
-        <div class="preview-header">
-            <h1>Facture #' . esc_html($order->get_id()) . '</h1>
-            <p>Commande WooCommerce - Aperçu stylisé</p>
-        </div>
-
-        <div class="canvas-container">';
-
-        // Rendre chaque élément
-        foreach ($elements as $element) {
-            $html .= $this->render_html_element($element, $scale);
-        }
-
-        $html .= '
-        </div>
-    </div>
-</body>
-</html>';
-
-        return $html;
-    }
-
-    /**
-     * Rend un élément individuel en HTML
-     */
-    private function render_html_element($element, $scale = 1) {
-        if (!isset($element['type'])) {
-            return '';
-        }
-
-        $style = $this->build_element_style($element, $scale);
-
-        switch ($element['type']) {
-            case 'text':
-                $content = isset($element['content']) ? $element['content'] : (isset($element['text']) ? $element['text'] : 'Texte');
-                return '<div class="canvas-element text-element" style="' . $style . '">' . esc_html($content) . '</div>';
-
-            case 'rectangle':
-                return '<div class="canvas-element rectangle-element" style="' . $style . '"></div>';
-
-            case 'image':
-                $src = isset($element['src']) ? $element['src'] : (isset($element['imageUrl']) ? $element['imageUrl'] : '');
-                if ($src) {
-                    return '<img class="canvas-element image-element" src="' . esc_url($src) . '" style="' . $style . '" alt="Image" />';
-                }
-                return '<div class="canvas-element image-element" style="' . $style . '; background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #999;">📷</div>';
-
-            case 'line':
-                return '<div class="canvas-element line-element" style="' . $style . '"></div>';
-
-            case 'divider':
-                return '<div class="canvas-element divider-element" style="' . $style . '"></div>';
-
-            case 'product_table':
-                return $this->render_product_table_html($element, $scale);
-
-            default:
-                return '<div class="canvas-element" style="' . $style . '; background: #ffebee; border: 1px solid #f44336; display: flex; align-items: center; justify-content: center; color: #c62828; font-size: 10px;">' . esc_html($element['type']) . '</div>';
-        }
-    }
-
-    /**
-     * Construit le style CSS pour un élément
-     */
-    private function build_element_style($element, $scale = 1) {
-        $styles = [];
-
-        // Position et dimensions
-        if (isset($element['x'])) $styles[] = 'left: ' . ($element['x'] * $scale) . 'px';
-        if (isset($element['y'])) $styles[] = 'top: ' . ($element['y'] * $scale) . 'px';
-        if (isset($element['width'])) $styles[] = 'width: ' . ($element['width'] * $scale) . 'px';
-        if (isset($element['height'])) $styles[] = 'height: ' . ($element['height'] * $scale) . 'px';
-
-        // Styles spécifiques selon le type
-        switch ($element['type']) {
-            case 'text':
-                if (isset($element['fontSize'])) $styles[] = 'font-size: ' . ($element['fontSize'] * $scale) . 'px';
-                if (isset($element['color'])) $styles[] = 'color: ' . $element['color'];
-                if (isset($element['fontWeight']) && $element['fontWeight'] === 'bold') $styles[] = 'font-weight: bold';
-                if (isset($element['fontStyle']) && $element['fontStyle'] === 'italic') $styles[] = 'font-style: italic';
-                if (isset($element['textDecoration'])) $styles[] = 'text-decoration: ' . $element['textDecoration'];
-                if (isset($element['textAlign'])) $styles[] = 'text-align: ' . $element['textAlign'];
-                if (isset($element['lineHeight'])) $styles[] = 'line-height: ' . $element['lineHeight'];
-                break;
-
-            case 'rectangle':
-                if (isset($element['fillColor'])) $styles[] = 'background-color: ' . $element['fillColor'];
-                if (isset($element['borderWidth'])) $styles[] = 'border: ' . ($element['borderWidth'] * $scale) . 'px ' . ($element['borderStyle'] ?? 'solid') . ' ' . ($element['borderColor'] ?? '#000000');
-                if (isset($element['borderRadius'])) $styles[] = 'border-radius: ' . ($element['borderRadius'] * $scale) . 'px';
-                break;
-
-            case 'line':
-                $line_width = isset($element['lineWidth']) ? $element['lineWidth'] : (isset($element['strokeWidth']) ? $element['strokeWidth'] : 1);
-                $line_color = isset($element['lineColor']) ? $element['lineColor'] : (isset($element['strokeColor']) ? $element['strokeColor'] : '#000000');
-                $styles[] = 'height: ' . ($line_width * $scale) . 'px';
-                $styles[] = 'background-color: ' . $line_color;
-                break;
-
-            case 'divider':
-                if (isset($element['color'])) $styles[] = 'background-color: ' . $element['color'];
-                elseif (isset($element['fillColor'])) $styles[] = 'background-color: ' . $element['fillColor'];
-                else $styles[] = 'background-color: #cccccc';
-                break;
-        }
-
-        return implode('; ', $styles);
-    }
-
-    /**
-     * Rend un tableau de produits en HTML
-     */
-    private function render_product_table_html($element, $scale = 1) {
-        $style = $this->build_element_style($element, $scale);
-
-        $html = '<table class="canvas-element product-table-element" style="' . $style . '">';
-
-        // En-têtes du tableau
-        $html .= '<thead><tr>';
-        $headers = ['Produit', 'Qté', 'Prix', 'Total'];
-        foreach ($headers as $header) {
-            $html .= '<th>' . esc_html($header) . '</th>';
-        }
-        $html .= '</tr></thead>';
-
-        // Corps du tableau avec des données d'exemple
-        $html .= '<tbody>';
-        $sample_products = [
-            ['name' => 'Produit Premium A', 'qty' => 2, 'price' => 49.99, 'total' => 99.98],
-            ['name' => 'Service Express B', 'qty' => 1, 'price' => 29.99, 'total' => 29.99],
-        ];
-
-        foreach ($sample_products as $index => $product) {
-            $row_class = $index % 2 === 0 ? 'even' : 'odd';
-            $html .= '<tr class="' . $row_class . '">';
-            $html .= '<td>' . esc_html($product['name']) . '</td>';
-            $html .= '<td style="text-align: center;">' . $product['qty'] . '</td>';
-            $html .= '<td style="text-align: right;">' . number_format($product['price'], 2, ',', ' ') . ' €</td>';
-            $html .= '<td style="text-align: right;">' . number_format($product['total'], 2, ',', ' ') . ' €</td>';
-            $html .= '</tr>';
-        }
-        $html .= '</tbody>';
-
-        $html .= '</table>';
-
-        return $html;
     }
 }
 

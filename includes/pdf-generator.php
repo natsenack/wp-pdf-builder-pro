@@ -2779,6 +2779,226 @@ class PDF_Builder_Pro_Generator {
     }
 
     /**
+     * Rend les éléments en HTML avec le même style que PreviewModal.jsx
+     */
+    private function render_html_preview($elements, $order_id) {
+        // Dimensions A4 en pixels (72 DPI)
+        $canvas_width = 595;
+        $canvas_height = 842;
+        $zoom = 1;
+
+        $html = '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aperçu PDF - Commande #' . $order_id . '</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+        }
+        .preview-container {
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin: 0 auto;
+            max-width: ' . ($canvas_width + 40) . 'px;
+            position: relative;
+        }
+        .preview-header {
+            background: #2563eb;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .canvas {
+            width: ' . $canvas_width . 'px;
+            height: ' . $canvas_height . 'px;
+            background: white;
+            position: relative;
+            margin: 0 auto;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+        .element {
+            position: absolute;
+            box-sizing: border-box;
+        }
+        .text-element {
+            font-size: 16px;
+            color: #000000;
+            font-weight: normal;
+            font-style: normal;
+            text-decoration: none;
+            text-align: left;
+            line-height: 1.2;
+            white-space: pre-wrap;
+            overflow: hidden;
+            padding: 4px;
+        }
+        .rectangle-element {
+            background-color: transparent;
+            border: none;
+            border-radius: 0;
+        }
+        .image-element {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 0;
+        }
+        .line-element {
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: #000000;
+        }
+    </style>
+</head>
+<body>
+    <div class="preview-container">
+        <div class="preview-header">
+            👁️ Aperçu PDF - Commande #' . $order_id . '
+        </div>
+        <div class="canvas">';
+
+        // Rendre chaque élément
+        foreach ($elements as $index => $element) {
+            if (!isset($element['x'], $element['y'], $element['width'], $element['height'])) {
+                continue;
+            }
+
+            $element_padding = $element['padding'] ?? 0;
+            $z_index = $element['zIndex'] ?? ($index + 1);
+
+            $style = 'position: absolute; ' .
+                    'left: ' . (($element['x'] + $element_padding) * $zoom) . 'px; ' .
+                    'top: ' . (($element['y'] + $element_padding) * $zoom) . 'px; ' .
+                    'width: ' . (max(1, ($element['width'] - ($element_padding * 2))) * $zoom) . 'px; ' .
+                    'height: ' . (max(1, ($element['height'] - ($element_padding * 2))) * $zoom) . 'px; ' .
+                    'z-index: ' . $z_index . ';';
+
+            // Styles spéciaux pour certains types
+            if ($element['type'] === 'line') {
+                $style = 'position: absolute; left: 0; width: 100%; z-index: ' . $z_index . ';';
+            }
+
+            $html .= '<div class="element ' . $element['type'] . '-element" style="' . $style . '">';
+
+            switch ($element['type']) {
+                case 'text':
+                    $text_style = 'width: 100%; height: 100%; ' .
+                                 'font-size: ' . (($element['fontSize'] ?? 16) * $zoom) . 'px; ' .
+                                 'color: ' . ($element['color'] ?? '#000000') . '; ' .
+                                 'font-weight: ' . (($element['fontWeight'] === 'bold') ? 'bold' : 'normal') . '; ' .
+                                 'font-style: ' . (($element['fontStyle'] === 'italic') ? 'italic' : 'normal') . '; ' .
+                                 'text-decoration: ' . ($element['textDecoration'] ?? 'none') . '; ' .
+                                 'text-align: ' . ($element['textAlign'] ?? 'left') . '; ' .
+                                 'line-height: ' . ($element['lineHeight'] ?? '1.2') . '; ' .
+                                 'white-space: pre-wrap; ' .
+                                 'overflow: hidden; ' .
+                                 'padding: ' . (4 * $zoom) . 'px; ' .
+                                 'box-sizing: border-box;';
+
+                    $html .= '<div style="' . $text_style . '">' .
+                             htmlspecialchars($element['content'] ?? $element['text'] ?? 'Texte') .
+                             '</div>';
+                    break;
+
+                case 'rectangle':
+                    $rect_style = 'width: 100%; height: 100%; ' .
+                                 'background-color: ' . ($element['fillColor'] ?? 'transparent') . '; ' .
+                                 'border: ' . ($element['borderWidth'] ? (($element['borderWidth'] * $zoom) . 'px ' . ($element['borderStyle'] ?? 'solid') . ' ' . ($element['borderColor'] ?? '#000000')) : 'none') . '; ' .
+                                 'border-radius: ' . (($element['borderRadius'] ?? 0) * $zoom) . 'px;';
+
+                    $html .= '<div style="' . $rect_style . '"></div>';
+                    break;
+
+                case 'image':
+                    $img_style = 'width: 100%; height: 100%; ' .
+                                'object-fit: ' . ($element['objectFit'] ?? 'cover') . '; ' .
+                                'border-radius: ' . (($element['borderRadius'] ?? 0) * $zoom) . 'px;';
+
+                    $html .= '<img src="' . htmlspecialchars($element['src'] ?? $element['imageUrl'] ?? '') . '" ' .
+                             'alt="' . htmlspecialchars($element['alt'] ?? 'Image') . '" ' .
+                             'style="' . $img_style . '" ' .
+                             'onerror="this.style.display=\'none\'">';
+                    break;
+
+                case 'line':
+                    $line_style = 'width: 100%; height: ' . (($element['borderWidth'] ?? 1) * $zoom) . 'px; ' .
+                                 'background-color: ' . ($element['borderColor'] ?? '#000000') . ';';
+
+                    $html .= '<div style="' . $line_style . '"></div>';
+                    break;
+
+                case 'product_table':
+                    // Rendu simplifié du tableau produits
+                    $html .= $this->render_product_table_html($element, $zoom);
+                    break;
+
+                default:
+                    $html .= '<div style="width: 100%; height: 100%; background: #f0f0f0; border: 1px dashed #ccc; display: flex; align-items: center; justify-content: center; color: #666;">' .
+                             htmlspecialchars($element['type'] ?? 'unknown') .
+                             '</div>';
+                    break;
+            }
+
+            $html .= '</div>';
+        }
+
+        $html .= '        </div>
+    </div>
+</body>
+</html>';
+
+        return $html;
+    }
+
+    /**
+     * Rend un tableau de produits en HTML
+     */
+    private function render_product_table_html($element, $zoom) {
+        $html = '<table style="width: 100%; border-collapse: collapse; font-size: ' . (12 * $zoom) . 'px;">';
+
+        // En-têtes si activés
+        if ($element['showHeaders'] ?? false) {
+            $html .= '<thead><tr>';
+            $headers = ['Produit', 'Quantité', 'Prix', 'Total'];
+            foreach ($headers as $header) {
+                $html .= '<th style="border: 1px solid #ddd; padding: 8px; background: #f8f9fa; text-align: left;">' . $header . '</th>';
+            }
+            $html .= '</tr></thead>';
+        }
+
+        $html .= '<tbody>';
+
+        // Données fictives pour l'aperçu
+        $products = [
+            ['name' => 'Produit exemple 1', 'qty' => 2, 'price' => 25.00, 'total' => 50.00],
+            ['name' => 'Produit exemple 2', 'qty' => 1, 'price' => 15.50, 'total' => 15.50],
+        ];
+
+        foreach ($products as $index => $product) {
+            $row_bg = ($index % 2 === 0) ? ($element['evenRowBg'] ?? '#ffffff') : ($element['oddRowBg'] ?? '#f9fafb');
+            $row_text_color = ($index % 2 === 0) ? ($element['evenRowTextColor'] ?? '#000000') : ($element['oddRowTextColor'] ?? '#000000');
+
+            $html .= '<tr style="background-color: ' . $row_bg . '; color: ' . $row_text_color . ';">';
+            $html .= '<td style="border: ' . (($element['showBorders'] ?? true) ? '1px solid #ddd' : 'none') . '; padding: 8px;">' . htmlspecialchars($product['name']) . '</td>';
+            $html .= '<td style="border: ' . (($element['showBorders'] ?? true) ? '1px solid #ddd' : 'none') . '; padding: 8px; text-align: center;">' . $product['qty'] . '</td>';
+            $html .= '<td style="border: ' . (($element['showBorders'] ?? true) ? '1px solid #ddd' : 'none') . '; padding: 8px; text-align: right;">' . number_format($product['price'], 2) . ' €</td>';
+            $html .= '<td style="border: ' . (($element['showBorders'] ?? true) ? '1px solid #ddd' : 'none') . '; padding: 8px; text-align: right; font-weight: bold;">' . number_format($product['total'], 2) . ' €</td>';
+            $html .= '</tr>';
+        }
+
+        $html .= '</tbody></table>';
+    }
+
+    /**
      * Génère le contenu PDF simplifié
      */
     private function generate_simple_pdf_content() {
