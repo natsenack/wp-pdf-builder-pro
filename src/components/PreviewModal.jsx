@@ -840,8 +840,9 @@ const PreviewModal = ({
                   padding: `${4 * zoom}px ${6 * zoom}px`,
                   fontWeight: 'bold'
                 }}>
-                  <div style={{ width: `${80 * zoom}px`, textAlign: 'right' }}>
-                    Sous-total: {subtotal.toFixed(2)}€
+                  <div style={{ width: `${80 * zoom}px`, textAlign: 'right', display: 'flex', justifyContent: 'space-between' }}>
+                    <span>Sous-total:</span>
+                    <span>{subtotal.toFixed(2)}€</span>
                   </div>
                 </div>
               )}
@@ -851,8 +852,9 @@ const PreviewModal = ({
                   justifyContent: 'flex-end',
                   padding: `${4 * zoom}px ${6 * zoom}px`
                 }}>
-                  <div style={{ width: `${80 * zoom}px`, textAlign: 'right' }}>
-                    Port: {shipping.toFixed(2)}€
+                  <div style={{ width: `${80 * zoom}px`, textAlign: 'right', display: 'flex', justifyContent: 'space-between' }}>
+                    <span>Port:</span>
+                    <span>{shipping.toFixed(2)}€</span>
                   </div>
                 </div>
               )}
@@ -862,8 +864,9 @@ const PreviewModal = ({
                   justifyContent: 'flex-end',
                   padding: `${4 * zoom}px ${6 * zoom}px`
                 }}>
-                  <div style={{ width: `${80 * zoom}px`, textAlign: 'right' }}>
-                    TVA: {tax.toFixed(2)}€
+                  <div style={{ width: `${80 * zoom}px`, textAlign: 'right', display: 'flex', justifyContent: 'space-between' }}>
+                    <span>TVA:</span>
+                    <span>{tax.toFixed(2)}€</span>
                   </div>
                 </div>
               )}
@@ -873,8 +876,9 @@ const PreviewModal = ({
                   justifyContent: 'flex-end',
                   padding: `${4 * zoom}px ${6 * zoom}px`
                 }}>
-                  <div style={{ width: `${80 * zoom}px`, textAlign: 'right' }}>
-                    Remise: {Math.abs(discount).toFixed(2)}€
+                  <div style={{ width: `${80 * zoom}px`, textAlign: 'right', display: 'flex', justifyContent: 'space-between' }}>
+                    <span>Remise:</span>
+                    <span>{Math.abs(discount).toFixed(2)}€</span>
                   </div>
                 </div>
               )}
@@ -888,8 +892,9 @@ const PreviewModal = ({
                   color: tableStyles.headerTextColor || (element.tableStyle === 'modern' ? '#ffffff' : '#000000'),
                   boxShadow: tableStyles.shadow ? `0 2px 4px ${tableStyles.shadow}` : 'none'
                 }}>
-                  <div style={{ width: `${80 * zoom}px`, textAlign: 'right' }}>
-                    TOTAL: {total.toFixed(2)}€
+                  <div style={{ width: `${80 * zoom}px`, textAlign: 'right', display: 'flex', justifyContent: 'space-between' }}>
+                    <span>TOTAL:</span>
+                    <span>{total.toFixed(2)}€</span>
                   </div>
                 </div>
               )}
