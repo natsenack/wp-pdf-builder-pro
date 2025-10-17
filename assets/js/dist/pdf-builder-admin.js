@@ -11755,7 +11755,14 @@ var PropertiesPanel = /*#__PURE__*/(0,react.memo)(function (_ref4) {
           className: "toggle-slider"
         }))), /*#__PURE__*/React.createElement("div", {
           className: "property-row"
-        }, /*#__PURE__*/React.createElement("label", null, "Couleurs individuelles des produits:"), /*#__PURE__*/React.createElement("div", {
+        }, /*#__PURE__*/React.createElement("label", {
+          style: {
+            fontWeight: '600',
+            color: '#2563eb',
+            marginBottom: '8px',
+            display: 'block'
+          }
+        }, "\uD83C\uDFA8 Couleurs individuelles des produits"), /*#__PURE__*/React.createElement("div", {
           className: "product-colors-editor"
         }, (localProperties.previewProducts || [{
           name: 'Produit 1',
@@ -11776,13 +11783,19 @@ var PropertiesPanel = /*#__PURE__*/(0,react.memo)(function (_ref4) {
           return /*#__PURE__*/React.createElement("div", {
             key: index,
             className: "product-color-item"
+          }, /*#__PURE__*/React.createElement("div", {
+            className: "product-header"
           }, /*#__PURE__*/React.createElement("span", {
             className: "product-name"
-          }, product.name || "Produit ".concat(index + 1)), /*#__PURE__*/React.createElement("div", {
+          }, product.name || "Produit ".concat(index + 1)), /*#__PURE__*/React.createElement("span", {
+            className: "product-index"
+          }, "#", index + 1)), /*#__PURE__*/React.createElement("div", {
             className: "color-controls"
           }, /*#__PURE__*/React.createElement("div", {
             className: "color-control"
-          }, /*#__PURE__*/React.createElement("label", null, "Fond:"), /*#__PURE__*/React.createElement("input", {
+          }, /*#__PURE__*/React.createElement("label", null, "\uD83C\uDFAF Fond:"), /*#__PURE__*/React.createElement("div", {
+            className: "color-input-wrapper"
+          }, /*#__PURE__*/React.createElement("input", {
             type: "color",
             value: product.backgroundColor || '#ffffff',
             onChange: function onChange(e) {
@@ -11807,9 +11820,13 @@ var PropertiesPanel = /*#__PURE__*/(0,react.memo)(function (_ref4) {
               });
               handlePropertyChange(selectedElement.id, 'previewProducts', newProducts);
             }
-          })), /*#__PURE__*/React.createElement("div", {
+          }), /*#__PURE__*/React.createElement("span", {
+            className: "color-value"
+          }, product.backgroundColor || '#ffffff'))), /*#__PURE__*/React.createElement("div", {
             className: "color-control"
-          }, /*#__PURE__*/React.createElement("label", null, "Texte:"), /*#__PURE__*/React.createElement("input", {
+          }, /*#__PURE__*/React.createElement("label", null, "\uD83D\uDCDD Texte:"), /*#__PURE__*/React.createElement("div", {
+            className: "color-input-wrapper"
+          }, /*#__PURE__*/React.createElement("input", {
             type: "color",
             value: product.color || '#000000',
             onChange: function onChange(e) {
@@ -11834,7 +11851,9 @@ var PropertiesPanel = /*#__PURE__*/(0,react.memo)(function (_ref4) {
               });
               handlePropertyChange(selectedElement.id, 'previewProducts', newProducts);
             }
-          }))));
+          }), /*#__PURE__*/React.createElement("span", {
+            className: "color-value"
+          }, product.color || '#000000')))));
         })))), allowedControls.includes('customer_fields') && selectedElement.type === 'customer_info' && /*#__PURE__*/React.createElement("div", {
           className: "properties-group"
         }, /*#__PURE__*/React.createElement("h4", null, "\uD83D\uDC64 Informations client"), /*#__PURE__*/React.createElement("div", {

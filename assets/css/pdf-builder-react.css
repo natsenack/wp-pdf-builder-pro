@@ -2796,3 +2796,108 @@ body.pdf-builder-active #wpadminbar {
     width: 100%;
   }
 }
+
+/* ===== STYLES POUR LES COULEURS INDIVIDUELLES DES PRODUITS ===== */
+
+.product-colors-editor {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.product-color-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.product-color-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border-color: #d1d5db;
+}
+
+.product-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.product-name {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.product-index {
+  background: #f3f4f6;
+  color: #6b7280;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.color-controls {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.color-control {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.color-control label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6b7280;
+  margin: 0;
+}
+
+.color-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.color-input-wrapper input[type="color"] {
+  width: 40px;
+  height: 32px;
+  border: 2px solid #e5e7eb;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.color-input-wrapper input[type="color"]:hover {
+  border-color: #d1d5db;
+  transform: scale(1.05);
+}
+
+.color-input-wrapper input[type="color"]:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+.color-value {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.75rem;
+  color: #6b7280;
+  background: #f9fafb;
+  padding: 4px 8px;
+  border-radius: 3px;
+  border: 1px solid #e5e7eb;
+  min-width: 70px;
+  text-align: center;
+}

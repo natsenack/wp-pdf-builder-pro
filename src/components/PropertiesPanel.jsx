@@ -2128,7 +2128,9 @@ const PropertiesPanel = memo(({
                 </div>
 
                 <div className="property-row">
-                  <label>Couleurs individuelles des produits:</label>
+                  <label style={{ fontWeight: '600', color: '#2563eb', marginBottom: '8px', display: 'block' }}>
+                    🎨 Couleurs individuelles des produits
+                  </label>
                   <div className="product-colors-editor">
                     {(localProperties.previewProducts || [
                       { name: 'Produit 1', quantity: 2, price: 15.99, total: 31.98 },
@@ -2136,39 +2138,48 @@ const PropertiesPanel = memo(({
                       { name: 'Produit 3', quantity: 3, price: 12.00, total: 36.00 }
                     ]).map((product, index) => (
                       <div key={index} className="product-color-item">
-                        <span className="product-name">{product.name || `Produit ${index + 1}`}</span>
+                        <div className="product-header">
+                          <span className="product-name">{product.name || `Produit ${index + 1}`}</span>
+                          <span className="product-index">#{index + 1}</span>
+                        </div>
                         <div className="color-controls">
                           <div className="color-control">
-                            <label>Fond:</label>
-                            <input
-                              type="color"
-                              value={product.backgroundColor || '#ffffff'}
-                              onChange={(e) => {
-                                const newProducts = [...(localProperties.previewProducts || [
-                                  { name: 'Produit 1', quantity: 2, price: 15.99, total: 31.98 },
-                                  { name: 'Produit 2', quantity: 1, price: 8.50, total: 8.50 },
-                                  { name: 'Produit 3', quantity: 3, price: 12.00, total: 36.00 }
-                                ])];
-                                newProducts[index] = { ...newProducts[index], backgroundColor: e.target.value };
-                                handlePropertyChange(selectedElement.id, 'previewProducts', newProducts);
-                              }}
-                            />
+                            <label>🎯 Fond:</label>
+                            <div className="color-input-wrapper">
+                              <input
+                                type="color"
+                                value={product.backgroundColor || '#ffffff'}
+                                onChange={(e) => {
+                                  const newProducts = [...(localProperties.previewProducts || [
+                                    { name: 'Produit 1', quantity: 2, price: 15.99, total: 31.98 },
+                                    { name: 'Produit 2', quantity: 1, price: 8.50, total: 8.50 },
+                                    { name: 'Produit 3', quantity: 3, price: 12.00, total: 36.00 }
+                                  ])];
+                                  newProducts[index] = { ...newProducts[index], backgroundColor: e.target.value };
+                                  handlePropertyChange(selectedElement.id, 'previewProducts', newProducts);
+                                }}
+                              />
+                              <span className="color-value">{product.backgroundColor || '#ffffff'}</span>
+                            </div>
                           </div>
                           <div className="color-control">
-                            <label>Texte:</label>
-                            <input
-                              type="color"
-                              value={product.color || '#000000'}
-                              onChange={(e) => {
-                                const newProducts = [...(localProperties.previewProducts || [
-                                  { name: 'Produit 1', quantity: 2, price: 15.99, total: 31.98 },
-                                  { name: 'Produit 2', quantity: 1, price: 8.50, total: 8.50 },
-                                  { name: 'Produit 3', quantity: 3, price: 12.00, total: 36.00 }
-                                ])];
-                                newProducts[index] = { ...newProducts[index], color: e.target.value };
-                                handlePropertyChange(selectedElement.id, 'previewProducts', newProducts);
-                              }}
-                            />
+                            <label>📝 Texte:</label>
+                            <div className="color-input-wrapper">
+                              <input
+                                type="color"
+                                value={product.color || '#000000'}
+                                onChange={(e) => {
+                                  const newProducts = [...(localProperties.previewProducts || [
+                                    { name: 'Produit 1', quantity: 2, price: 15.99, total: 31.98 },
+                                    { name: 'Produit 2', quantity: 1, price: 8.50, total: 8.50 },
+                                    { name: 'Produit 3', quantity: 3, price: 12.00, total: 36.00 }
+                                  ])];
+                                  newProducts[index] = { ...newProducts[index], color: e.target.value };
+                                  handlePropertyChange(selectedElement.id, 'previewProducts', newProducts);
+                                }}
+                              />
+                              <span className="color-value">{product.color || '#000000'}</span>
+                            </div>
                           </div>
                         </div>
                       </div>
