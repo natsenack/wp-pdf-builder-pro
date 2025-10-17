@@ -634,21 +634,13 @@ body.pdf-builder-active #wpadminbar {
 
 /* Indicateurs visuels pour la sélection */
 .canvas-element.selected {
-  box-shadow: 0 0 0 2px #007bff, 0 4px 12px rgba(0,123,255,0.3) !important;
+  border: 2px solid #3b82f6;
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
   position: relative;
 }
 
 .canvas-element.selected::after {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  border: 2px solid #007bff;
-  border-radius: 2px;
-  pointer-events: none;
-  z-index: 10;
+  display: none; /* Supprimé pour éviter les conflits */
 }
 
 /* Indicateurs de zoom */
@@ -710,21 +702,13 @@ body.pdf-builder-active #wpadminbar {
 
 /* Indicateurs visuels pour la sélection */
 .canvas-element.selected {
-  box-shadow: 0 0 0 2px #007bff, 0 4px 12px rgba(0,123,255,0.3) !important;
+  border: 2px solid #3b82f6;
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
   position: relative;
 }
 
 .canvas-element.selected::after {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  border: 2px solid #007bff;
-  border-radius: 2px;
-  pointer-events: none;
-  z-index: 10;
+  display: none; /* Supprimé pour éviter les conflits */
 }
 
 /* Indicateurs de zoom */
@@ -1568,29 +1552,14 @@ body.pdf-builder-active #wpadminbar {
 
 /* Élément canvas sélectionné */
 .canvas-element.selected {
+  border: 2px solid #3b82f6;
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
   position: relative;
 }
 
 .canvas-element.selected::before,
 .canvas-element.selected::after {
-  content: '';
-  position: absolute;
-  background: #2563eb;
-  z-index: 10;
-}
-
-.canvas-element.selected::before {
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  height: 2px;
-}
-
-.canvas-element.selected::after {
-  top: -2px;
-  left: -2px;
-  bottom: -2px;
-  width: 2px;
+  display: none; /* Supprimé pour éviter les conflits */
 }
 
 /* Zones de redimensionnement pour éléments sélectionnés */

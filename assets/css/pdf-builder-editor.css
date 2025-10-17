@@ -1175,38 +1175,38 @@
 }
 
 .resize-handle.nw {
-  top: calc(var(--resize-handle-offset, 0px) - var(--element-border-width, 0px));
-  left: calc(var(--resize-handle-offset, 0px) - var(--element-border-width, 0px));
+  top: -6px;
+  left: -6px;
   cursor: nw-resize;
 }
 
 .resize-handle.ne {
-  top: calc(var(--resize-handle-offset, 0px) - var(--element-border-width, 0px));
-  right: calc(var(--resize-handle-offset, 0px) - var(--element-border-width, 0px));
+  top: -6px;
+  right: -6px;
   cursor: ne-resize;
 }
 
 .resize-handle.sw {
-  bottom: calc(var(--resize-handle-offset, 0px) - var(--element-border-width, 0px));
-  left: calc(var(--resize-handle-offset, 0px) - var(--element-border-width, 0px));
+  bottom: -6px;
+  left: -6px;
   cursor: sw-resize;
 }
 
 .resize-handle.se {
-  bottom: calc(var(--resize-handle-offset, 0px) - var(--element-border-width, 0px));
-  right: calc(var(--resize-handle-offset, 0px) - var(--element-border-width, 0px));
+  bottom: -6px;
+  right: -6px;
   cursor: se-resize;
 }
 
 .resize-handle.n {
-  top: calc(var(--resize-handle-offset, 0px) - var(--element-border-width, 0px));
+  top: -6px;
   left: 50%;
   transform: translateX(-50%);
   cursor: n-resize;
 }
 
 .resize-handle.s {
-  bottom: calc(var(--resize-handle-offset, 0px) - var(--element-border-width, 0px));
+  bottom: -6px;
   left: 50%;
   transform: translateX(-50%);
   cursor: s-resize;
@@ -1214,25 +1214,23 @@
 
 .resize-handle.w {
   top: 50%;
-  left: calc(var(--resize-handle-offset, 0px) - var(--element-border-width, 0px));
+  left: -6px;
   transform: translateY(-50%);
   cursor: w-resize;
 }
 
 .resize-handle.e {
   top: 50%;
-  right: calc(var(--resize-handle-offset, 0px) - var(--element-border-width, 0px));
+  right: -6px;
   transform: translateY(-50%);
   cursor: e-resize;
 }
 
 .canvas-element.selected {
-  outline: var(--selection-border-width, 2px) solid var(--selection-border-color, var(--primary-color));
-  outline-offset: var(--selection-border-spacing, 2px);
-  box-shadow: 0 0 0 1px white, 0 0 0 calc(var(--selection-border-width, 2px) * 2 + var(--selection-border-spacing, 2px)) rgba(37, 99, 235, var(--selection-shadow-opacity, 0.1));
+  border: 2px solid #3b82f6;
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
   border-radius: 4px;
   position: relative;
-  --element-border-width: var(--selection-border-width, 2px);
 }
 
 /* Zones de redimensionnement sur les bords de l'élément sélectionné */
@@ -1246,34 +1244,34 @@
 }
 
 .canvas-element.selected .resize-zone-n {
-  top: calc(var(--resize-zone-size, 16px) / -2 - var(--element-border-width, 0px));
+  top: -10px;
   left: 0;
   right: 0;
-  height: var(--resize-zone-size, 16px);
+  height: 16px;
   cursor: n-resize;
 }
 
 .canvas-element.selected .resize-zone-s {
-  bottom: calc(var(--resize-zone-size, 16px) / -2 - var(--element-border-width, 0px));
+  bottom: -10px;
   left: 0;
   right: 0;
-  height: var(--resize-zone-size, 16px);
+  height: 16px;
   cursor: s-resize;
 }
 
 .canvas-element.selected .resize-zone-w {
   top: 0;
-  left: calc(var(--resize-zone-size, 16px) / -2 - var(--element-border-width, 0px));
+  left: -10px;
   bottom: 0;
-  width: var(--resize-zone-size, 16px);
+  width: 16px;
   cursor: w-resize;
 }
 
 .canvas-element.selected .resize-zone-e {
   top: 0;
-  right: calc(var(--resize-zone-size, 16px) / -2 - var(--element-border-width, 0px));
+  right: -10px;
   bottom: 0;
-  width: var(--resize-zone-size, 16px);
+  width: 16px;
   cursor: e-resize;
 }
 

@@ -1214,11 +1214,9 @@
 }
 
 .canvas-element.selected {
-  outline: 2px solid #3b82f6;
-  outline-offset: 1px;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.8), 0 0 0 4px rgba(59, 130, 246, 0.1);
-  border-radius: 2px;
   position: relative;
+  border: 2px solid #3b82f6;
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
 }
 
 /* Zones de redimensionnement sur les bords de l'élément sélectionné */
@@ -1268,18 +1266,13 @@
 .canvas-element.selected::after {
   content: '';
   position: absolute;
-  pointer-events: auto;
+  pointer-events: none;
   z-index: 5;
 }
 
 .canvas-element.selected::before {
-  top: -10px;
-  left: -10px;
-  right: -10px;
-  bottom: -10px;
-  border: 8px solid transparent;
-  /* Bordure diagonale supprimée - redondante avec les poignées de redimensionnement */
-  cursor: move;
+  /* Zone de sélection supprimée - utilise border à la place */
+  display: none;
 }
 
 
