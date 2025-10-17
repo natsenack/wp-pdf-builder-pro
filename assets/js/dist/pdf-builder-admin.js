@@ -1255,7 +1255,6 @@ var CanvasElement = function CanvasElement(_ref) {
     };
     var lastVisibleColumn = getLastVisibleColumn();
     var tableStyles = getTableStyles(element.tableStyle);
-    console.log('CanvasElement - Table style:', element.tableStyle, 'Styles:', tableStyles);
     // Forcer les bordures pour les tableaux de produits (correction du bug d'affichage)
     var showBorders = element.showBorders !== false; // Utiliser la propriété showBorders de l'élément
     return /*#__PURE__*/React.createElement("div", {
@@ -1356,7 +1355,7 @@ var CanvasElement = function CanvasElement(_ref) {
         style: {
           display: 'flex',
           borderBottom: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
-          backgroundColor: product.backgroundColor || product.bgColor || (index % 2 === 1 ? tableStyles.altRowBg : 'transparent'),
+          backgroundColor: product.backgroundColor || product.bgColor || (index % 2 === 1 ? tableStyles.altRowBg : '#f8fafc'),
           color: product.color || product.textColor || tableStyles.rowTextColor,
           fontSize: "".concat(tableStyles.rowFontSize * zoom, "px"),
           transition: 'background-color 0.15s ease'

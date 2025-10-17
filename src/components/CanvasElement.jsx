@@ -962,7 +962,6 @@ export const CanvasElement = ({
           };
           const lastVisibleColumn = getLastVisibleColumn();
           const tableStyles = getTableStyles(element.tableStyle);
-          console.log('CanvasElement - Table style:', element.tableStyle, 'Styles:', tableStyles);
           // Forcer les bordures pour les tableaux de produits (correction du bug d'affichage)
           const showBorders = element.showBorders !== false; // Utiliser la propriété showBorders de l'élément
           return (
@@ -1072,7 +1071,7 @@ export const CanvasElement = ({
                 <div key={`row-${index}`} style={{
                   display: 'flex',
                   borderBottom: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none',
-                  backgroundColor: product.backgroundColor || product.bgColor || (index % 2 === 1 ? tableStyles.altRowBg : 'transparent'),
+                  backgroundColor: product.backgroundColor || product.bgColor || (index % 2 === 1 ? tableStyles.altRowBg : '#f8fafc'),
                   color: product.color || product.textColor || tableStyles.rowTextColor,
                   fontSize: `${tableStyles.rowFontSize * zoom}px`,
                   transition: 'background-color 0.15s ease'
