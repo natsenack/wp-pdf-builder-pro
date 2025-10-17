@@ -1741,12 +1741,31 @@ const PropertiesPanel = memo(({
                     value={localProperties.template || 'total_only'}
                     onChange={(e) => handlePropertyChange(selectedElement.id, 'template', e.target.value)}
                   >
-                    <option value="total_only">Total uniquement</option>
-                    <option value="order_info">Informations commande</option>
-                    <option value="customer_info">Informations client</option>
-                    <option value="full_header">En-tête complet</option>
-                    <option value="payment_info">Informations paiement</option>
-                    <option value="custom">Personnalisé</option>
+                    <option value="total_only">💰 Total uniquement</option>
+                    <option value="order_info">📋 Informations commande</option>
+                    <option value="customer_info">👤 Informations client</option>
+                    <option value="customer_address">🏠 Adresse client complète</option>
+                    <option value="full_header">📄 En-tête complet</option>
+                    <option value="invoice_header">📋 En-tête facture détaillé</option>
+                    <option value="order_summary">🧾 Récapitulatif commande</option>
+                    <option value="payment_info">💳 Informations paiement</option>
+                    <option value="payment_terms">📅 Conditions de paiement</option>
+                    <option value="shipping_info">🚚 Adresse de livraison</option>
+                    <option value="thank_you">🙏 Message de remerciement</option>
+                    <option value="legal_notice">⚖️ Mentions légales</option>
+                    <option value="bank_details">🏦 Coordonnées bancaires</option>
+                    <option value="contact_info">📞 Informations de contact</option>
+                    <option value="order_confirmation">✅ Confirmation de commande</option>
+                    <option value="delivery_note">📦 Bon de livraison</option>
+                    <option value="warranty_info">🛡️ Garantie produit</option>
+                    <option value="return_policy">↩️ Politique de retour</option>
+                    <option value="signature_line">✍️ Ligne de signature</option>
+                    <option value="invoice_footer">📄 Pied de facture</option>
+                    <option value="terms_conditions">📋 CGV</option>
+                    <option value="quality_guarantee">⭐ Garantie qualité</option>
+                    <option value="eco_friendly">🌱 Engagement écologique</option>
+                    <option value="follow_up">📊 Suivi commande</option>
+                    <option value="custom">🎨 Personnalisé</option>
                   </select>
                 </div>
 

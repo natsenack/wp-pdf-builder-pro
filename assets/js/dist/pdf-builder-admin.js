@@ -11361,17 +11361,55 @@ var PropertiesPanel = /*#__PURE__*/(0,react.memo)(function (_ref4) {
           }
         }, /*#__PURE__*/React.createElement("option", {
           value: "total_only"
-        }, "Total uniquement"), /*#__PURE__*/React.createElement("option", {
+        }, "\uD83D\uDCB0 Total uniquement"), /*#__PURE__*/React.createElement("option", {
           value: "order_info"
-        }, "Informations commande"), /*#__PURE__*/React.createElement("option", {
+        }, "\uD83D\uDCCB Informations commande"), /*#__PURE__*/React.createElement("option", {
           value: "customer_info"
-        }, "Informations client"), /*#__PURE__*/React.createElement("option", {
+        }, "\uD83D\uDC64 Informations client"), /*#__PURE__*/React.createElement("option", {
+          value: "customer_address"
+        }, "\uD83C\uDFE0 Adresse client compl\xE8te"), /*#__PURE__*/React.createElement("option", {
           value: "full_header"
-        }, "En-t\xEAte complet"), /*#__PURE__*/React.createElement("option", {
+        }, "\uD83D\uDCC4 En-t\xEAte complet"), /*#__PURE__*/React.createElement("option", {
+          value: "invoice_header"
+        }, "\uD83D\uDCCB En-t\xEAte facture d\xE9taill\xE9"), /*#__PURE__*/React.createElement("option", {
+          value: "order_summary"
+        }, "\uD83E\uDDFE R\xE9capitulatif commande"), /*#__PURE__*/React.createElement("option", {
           value: "payment_info"
-        }, "Informations paiement"), /*#__PURE__*/React.createElement("option", {
+        }, "\uD83D\uDCB3 Informations paiement"), /*#__PURE__*/React.createElement("option", {
+          value: "payment_terms"
+        }, "\uD83D\uDCC5 Conditions de paiement"), /*#__PURE__*/React.createElement("option", {
+          value: "shipping_info"
+        }, "\uD83D\uDE9A Adresse de livraison"), /*#__PURE__*/React.createElement("option", {
+          value: "thank_you"
+        }, "\uD83D\uDE4F Message de remerciement"), /*#__PURE__*/React.createElement("option", {
+          value: "legal_notice"
+        }, "\u2696\uFE0F Mentions l\xE9gales"), /*#__PURE__*/React.createElement("option", {
+          value: "bank_details"
+        }, "\uD83C\uDFE6 Coordonn\xE9es bancaires"), /*#__PURE__*/React.createElement("option", {
+          value: "contact_info"
+        }, "\uD83D\uDCDE Informations de contact"), /*#__PURE__*/React.createElement("option", {
+          value: "order_confirmation"
+        }, "\u2705 Confirmation de commande"), /*#__PURE__*/React.createElement("option", {
+          value: "delivery_note"
+        }, "\uD83D\uDCE6 Bon de livraison"), /*#__PURE__*/React.createElement("option", {
+          value: "warranty_info"
+        }, "\uD83D\uDEE1\uFE0F Garantie produit"), /*#__PURE__*/React.createElement("option", {
+          value: "return_policy"
+        }, "\u21A9\uFE0F Politique de retour"), /*#__PURE__*/React.createElement("option", {
+          value: "signature_line"
+        }, "\u270D\uFE0F Ligne de signature"), /*#__PURE__*/React.createElement("option", {
+          value: "invoice_footer"
+        }, "\uD83D\uDCC4 Pied de facture"), /*#__PURE__*/React.createElement("option", {
+          value: "terms_conditions"
+        }, "\uD83D\uDCCB CGV"), /*#__PURE__*/React.createElement("option", {
+          value: "quality_guarantee"
+        }, "\u2B50 Garantie qualit\xE9"), /*#__PURE__*/React.createElement("option", {
+          value: "eco_friendly"
+        }, "\uD83C\uDF31 Engagement \xE9cologique"), /*#__PURE__*/React.createElement("option", {
+          value: "follow_up"
+        }, "\uD83D\uDCCA Suivi commande"), /*#__PURE__*/React.createElement("option", {
           value: "custom"
-        }, "Personnalis\xE9"))), localProperties.template === 'custom' && /*#__PURE__*/React.createElement("div", {
+        }, "\uD83C\uDFA8 Personnalis\xE9"))), localProperties.template === 'custom' && /*#__PURE__*/React.createElement("div", {
           className: "property-row"
         }, /*#__PURE__*/React.createElement("label", null, "Contenu personnalis\xE9:"), /*#__PURE__*/React.createElement("textarea", {
           value: localProperties.customContent || '',
