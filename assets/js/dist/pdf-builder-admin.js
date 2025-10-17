@@ -1183,15 +1183,34 @@ var CanvasElement = function CanvasElement(_ref) {
         'total_only': '{{order_total}} €',
         'order_info': 'Commande {{order_number}} - {{order_date}}',
         'customer_info': '{{customer_name}} - {{customer_email}}',
+        'customer_address': '{{customer_name}}\n{{billing_address}}',
         'full_header': 'Facture N° {{order_number}}\nClient: {{customer_name}}\nTotal: {{order_total}} €',
+        'invoice_header': 'FACTURE N° {{order_number}}\nDate: {{date}}\nClient: {{customer_name}}\n{{billing_address}}',
+        'order_summary': 'Sous-total: {{order_subtotal}} €\nFrais de port: {{order_shipping}} €\nTVA: {{order_tax}} €\nTotal: {{order_total}} €',
         'payment_info': 'Échéance: {{due_date}}\nMontant: {{order_total}} €',
+        'payment_terms': 'Conditions de paiement: 30 jours\nÉchéance: {{due_date}}\nMontant dû: {{order_total}} €',
+        'shipping_info': 'Adresse de livraison:\n{{shipping_address}}',
+        'thank_you': 'Merci pour votre commande !\nNous vous remercions de votre confiance.',
+        'legal_notice': 'TVA non applicable - art. 293 B du CGI\nPaiement à 30 jours fin de mois',
+        'bank_details': 'Coordonnées bancaires:\nIBAN: FR76 1234 5678 9012 3456 7890 123\nBIC: BNPAFRPP',
+        'contact_info': 'Contact: contact@monentreprise.com\nTél: 01 23 45 67 89',
+        'order_confirmation': 'CONFIRMATION DE COMMANDE\nCommande {{order_number}} du {{order_date}}\nStatut: Confirmée',
+        'delivery_note': 'BON DE LIVRAISON\nCommande {{order_number}}\nDestinataire: {{customer_name}}\n{{shipping_address}}',
+        'warranty_info': 'Garantie: 2 ans pièces et main d\'œuvre\nService après-vente: sav@monentreprise.com',
+        'return_policy': 'Droit de rétractation: 14 jours\nRetour sous 30 jours pour défauts',
+        'signature_line': 'Signature du client:\n\n_______________________________\nDate: {{date}}',
+        'invoice_footer': 'Facture générée automatiquement le {{date}}\nConservez cette facture pour vos archives',
+        'terms_conditions': 'Conditions générales de vente disponibles sur notre site\nwww.monentreprise.com/conditions',
+        'quality_guarantee': 'Tous nos produits sont garantis contre les défauts\nService qualité: qualite@monentreprise.com',
+        'eco_friendly': 'Entreprise engagée pour l\'environnement\nEmballages recyclables et biodégradables',
+        'follow_up': 'Suivi de commande: {{order_number}}\nContact: suivi@monentreprise.com',
         'custom': customContent || '{{order_total}} €'
       };
       return templates[template] || templates['total_only'];
     };
     var content = getTemplateContent(element.template, element.customContent);
     // Remplacement basique pour l'aperçu canvas
-    return content.replace(/\{\{order_total\}\}/g, '125.99 €').replace(/\{\{order_number\}\}/g, 'CMD-2025-001').replace(/\{\{customer_name\}\}/g, 'Jean Dupont').replace(/\{\{customer_email\}\}/g, 'jean@example.com').replace(/\{\{date\}\}/g, '17/10/2025').replace(/\{\{order_date\}\}/g, '15/10/2025').replace(/\{\{due_date\}\}/g, '15/11/2025');
+    return content.replace(/\{\{order_total\}\}/g, '125.99 €').replace(/\{\{order_number\}\}/g, 'CMD-2025-001').replace(/\{\{customer_name\}\}/g, 'Jean Dupont').replace(/\{\{customer_email\}\}/g, 'jean@example.com').replace(/\{\{date\}\}/g, '17/10/2025').replace(/\{\{order_date\}\}/g, '15/10/2025').replace(/\{\{due_date\}\}/g, '15/11/2025').replace(/\{\{order_subtotal\}\}/g, '100.00 €').replace(/\{\{order_tax\}\}/g, '25.99 €').replace(/\{\{order_shipping\}\}/g, '15.00 €').replace(/\{\{billing_address\}\}/g, '123 Rue de la Paix\n75001 Paris\nFrance').replace(/\{\{shipping_address\}\}/g, '456 Avenue des Champs\n75008 Paris\nFrance');
   }() : element.type === 'formula' ? element.content || '{{prix * quantite}}' : element.type === 'conditional-text' ? element.content || '{{condition ? "Oui" : "Non"}}' : element.type === 'counter' ? element.content || '1' : element.type === 'date-dynamic' ? element.content || '{{date|format:Y-m-d}}' : element.type === 'currency' ? element.content || '{{montant|currency:EUR}}' : element.type === 'table-dynamic' ? '📊 Tableau' : element.type === 'gradient-box' ? '🌈 Dégradé' : element.type === 'shadow-box' ? '📦 Ombre' : element.type === 'rounded-box' ? '🔄 Arrondi' : element.type === 'border-box' ? '🔲 Bordure' : element.type === 'background-pattern' ? '🎨 Motif' : element.type === 'watermark' ? element.content || 'CONFIDENTIEL' : element.type === 'progress-bar' ? null : element.type === 'product_table' ? null :
   // Le contenu sera rendu plus bas dans le même conteneur
   element.type === 'customer_info' ? null :
@@ -6621,8 +6640,27 @@ var PreviewModal = function PreviewModal(_ref) {
             'total_only': '{{order_total}} €',
             'order_info': 'Commande {{order_number}} - {{order_date}}',
             'customer_info': '{{customer_name}} - {{customer_email}}',
+            'customer_address': '{{customer_name}}\n{{billing_address}}',
             'full_header': 'Facture N° {{order_number}}\nClient: {{customer_name}}\nTotal: {{order_total}} €',
+            'invoice_header': 'FACTURE N° {{order_number}}\nDate: {{date}}\nClient: {{customer_name}}\n{{billing_address}}',
+            'order_summary': 'Sous-total: {{order_subtotal}} €\nFrais de port: {{order_shipping}} €\nTVA: {{order_tax}} €\nTotal: {{order_total}} €',
             'payment_info': 'Échéance: {{due_date}}\nMontant: {{order_total}} €',
+            'payment_terms': 'Conditions de paiement: 30 jours\nÉchéance: {{due_date}}\nMontant dû: {{order_total}} €',
+            'shipping_info': 'Adresse de livraison:\n{{shipping_address}}',
+            'thank_you': 'Merci pour votre commande !\nNous vous remercions de votre confiance.',
+            'legal_notice': 'TVA non applicable - art. 293 B du CGI\nPaiement à 30 jours fin de mois',
+            'bank_details': 'Coordonnées bancaires:\nIBAN: FR76 1234 5678 9012 3456 7890 123\nBIC: BNPAFRPP',
+            'contact_info': 'Contact: contact@monentreprise.com\nTél: 01 23 45 67 89',
+            'order_confirmation': 'CONFIRMATION DE COMMANDE\nCommande {{order_number}} du {{order_date}}\nStatut: Confirmée',
+            'delivery_note': 'BON DE LIVRAISON\nCommande {{order_number}}\nDestinataire: {{customer_name}}\n{{shipping_address}}',
+            'warranty_info': 'Garantie: 2 ans pièces et main d\'œuvre\nService après-vente: sav@monentreprise.com',
+            'return_policy': 'Droit de rétractation: 14 jours\nRetour sous 30 jours pour défauts',
+            'signature_line': 'Signature du client:\n\n_______________________________\nDate: {{date}}',
+            'invoice_footer': 'Facture générée automatiquement le {{date}}\nConservez cette facture pour vos archives',
+            'terms_conditions': 'Conditions générales de vente disponibles sur notre site\nwww.monentreprise.com/conditions',
+            'quality_guarantee': 'Tous nos produits sont garantis contre les défauts\nService qualité: qualite@monentreprise.com',
+            'eco_friendly': 'Entreprise engagée pour l\'environnement\nEmballages recyclables et biodégradables',
+            'follow_up': 'Suivi de commande: {{order_number}}\nContact: suivi@monentreprise.com',
             'custom': customContent || '{{order_total}} €'
           };
           return templates[template] || templates['total_only'];
@@ -6631,7 +6669,7 @@ var PreviewModal = function PreviewModal(_ref) {
 
         // Fonction simple de remplacement des variables pour l'aperçu
         var replaceVariables = function replaceVariables(content) {
-          return content.replace(/\{\{order_total\}\}/g, '125.99 €').replace(/\{\{order_number\}\}/g, 'CMD-2025-00123').replace(/\{\{customer_name\}\}/g, 'Jean Dupont').replace(/\{\{customer_email\}\}/g, 'jean@example.com').replace(/\{\{date\}\}/g, '17/10/2025').replace(/\{\{order_date\}\}/g, '15/10/2025').replace(/\{\{due_date\}\}/g, '15/11/2025');
+          return content.replace(/\{\{order_total\}\}/g, '125.99 €').replace(/\{\{order_number\}\}/g, 'CMD-2025-00123').replace(/\{\{customer_name\}\}/g, 'Jean Dupont').replace(/\{\{customer_email\}\}/g, 'jean@example.com').replace(/\{\{date\}\}/g, '17/10/2025').replace(/\{\{order_date\}\}/g, '15/10/2025').replace(/\{\{due_date\}\}/g, '15/11/2025').replace(/\{\{order_subtotal\}\}/g, '100.00 €').replace(/\{\{order_tax\}\}/g, '25.99 €').replace(/\{\{order_shipping\}\}/g, '15.00 €').replace(/\{\{billing_address\}\}/g, '123 Rue de la Paix\n75001 Paris\nFrance').replace(/\{\{shipping_address\}\}/g, '456 Avenue des Champs\n75008 Paris\nFrance');
         };
         var processedContent = replaceVariables(dynamicContent);
         return /*#__PURE__*/React.createElement("div", {
@@ -11367,7 +11405,7 @@ var PropertiesPanel = /*#__PURE__*/(0,react.memo)(function (_ref4) {
             color: '#666',
             lineHeight: '1.4'
           }
-        }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{order_total}}'), " - Montant total"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{order_number}}'), " - Num\xE9ro de commande"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{customer_name}}'), " - Nom du client"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{customer_email}}'), " - Email client"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{date}}'), " - Date actuelle"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{order_date}}'), " - Date de commande"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{due_date}}'), " - Date d'\xE9ch\xE9ance")))), allowedControls.includes('company_fields') && selectedElement.type === 'company_info' && /*#__PURE__*/React.createElement("div", {
+        }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{order_total}}'), " - Montant total"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{order_number}}'), " - Num\xE9ro de commande"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{customer_name}}'), " - Nom du client"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{customer_email}}'), " - Email client"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{date}}'), " - Date actuelle"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{order_date}}'), " - Date de commande"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{due_date}}'), " - Date d'\xE9ch\xE9ance"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{order_subtotal}}'), " - Sous-total HT"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{order_tax}}'), " - Montant TVA"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{order_shipping}}'), " - Frais de port"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{billing_address}}'), " - Adresse de facturation"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{shipping_address}}'), " - Adresse de livraison")))), allowedControls.includes('company_fields') && selectedElement.type === 'company_info' && /*#__PURE__*/React.createElement("div", {
           className: "properties-group"
         }, /*#__PURE__*/React.createElement("h4", null, "\uD83C\uDFE2 Informations Entreprise"), /*#__PURE__*/React.createElement("div", {
           className: "property-row"

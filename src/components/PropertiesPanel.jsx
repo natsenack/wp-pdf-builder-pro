@@ -1773,6 +1773,11 @@ const PropertiesPanel = memo(({
                     <div><code>{'{{date}}'}</code> - Date actuelle</div>
                     <div><code>{'{{order_date}}'}</code> - Date de commande</div>
                     <div><code>{'{{due_date}}'}</code> - Date d'échéance</div>
+                    <div><code>{'{{order_subtotal}}'}</code> - Sous-total HT</div>
+                    <div><code>{'{{order_tax}}'}</code> - Montant TVA</div>
+                    <div><code>{'{{order_shipping}}'}</code> - Frais de port</div>
+                    <div><code>{'{{billing_address}}'}</code> - Adresse de facturation</div>
+                    <div><code>{'{{shipping_address}}'}</code> - Adresse de livraison</div>
                   </div>
                 </div>
               </div>
