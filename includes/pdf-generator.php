@@ -52,6 +52,26 @@ class PDF_Builder_Pro_Generator {
     }
 
     /**
+     * Extrait les coordonnées d'un élément avec support des deux formats
+     * Format éditeur: position.x/y, size.width/height
+     * Format legacy: x/y, width/height
+     */
+    private function extract_element_coordinates($element, $px_to_mm = 1) {
+        // Support pour les deux formats : position/size (éditeur) et x/y/width/height direct
+        $element_x = isset($element['position']['x']) ? $element['position']['x'] : (isset($element['x']) ? $element['x'] : 0);
+        $element_y = isset($element['position']['y']) ? $element['position']['y'] : (isset($element['y']) ? $element['y'] : 0);
+        $element_width = isset($element['size']['width']) ? $element['size']['width'] : (isset($element['width']) ? $element['width'] : 0);
+        $element_height = isset($element['size']['height']) ? $element['size']['height'] : (isset($element['height']) ? $element['height'] : 0);
+
+        return [
+            'x' => $element_x * $px_to_mm,
+            'y' => $element_y * $px_to_mm,
+            'width' => $element_width * $px_to_mm,
+            'height' => $element_height * $px_to_mm
+        ];
+    }
+
+    /**
      * Définit l'ordre pour la génération du PDF
      */
     public function set_order($order) {
@@ -309,16 +329,12 @@ class PDF_Builder_Pro_Generator {
     private function render_single_element($element, $px_to_mm) {
         $type = isset($element['type']) ? $element['type'] : 'unknown';
 
-        // Calcul des coordonnées PDF
-        $element_x = isset($element['x']) ? $element['x'] : 0;
-        $element_y = isset($element['y']) ? $element['y'] : 0;
-        $element_width = isset($element['width']) ? $element['width'] : 0;
-        $element_height = isset($element['height']) ? $element['height'] : 0;
-
-        $pdf_x = $element_x * $px_to_mm;
-        $pdf_y = $element_y * $px_to_mm;
-        $pdf_width = $element_width * $px_to_mm;
-        $pdf_height = $element_height * $px_to_mm;
+        // Calcul des coordonnées PDF avec support des deux formats
+        $coords = $this->extract_element_coordinates($element, $px_to_mm);
+        $pdf_x = $coords['x'];
+        $pdf_y = $coords['y'];
+        $pdf_width = $coords['width'];
+        $pdf_height = $coords['height'];
 
         // Validation de base de l'élément
         if (!$this->validate_element($element)) {
@@ -1532,10 +1548,11 @@ class PDF_Builder_Pro_Generator {
         error_log('PDF Builder: render_product_table_element called with tableStyle: ' . ($element['tableStyle'] ?? 'default'));
 
         // Extraction des propriétés avec valeurs par défaut sûres
-        $x = ($element['x'] ?? 0) * $px_to_mm;
-        $y = ($element['y'] ?? 0) * $px_to_mm;
-        $width = ($element['width'] ?? 550) * $px_to_mm;
-        $height = ($element['height'] ?? 200) * $px_to_mm;
+        $coords = $this->extract_element_coordinates($element, $px_to_mm);
+        $x = $coords['x'];
+        $y = $coords['y'];
+        $width = $coords['width'] ?: 550 * $px_to_mm;
+        $height = $coords['height'] ?: 200 * $px_to_mm;
 
         // Propriétés de style visuel
         $background_color = $element['backgroundColor'] ?? 'transparent';
