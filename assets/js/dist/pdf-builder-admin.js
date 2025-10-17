@@ -1255,6 +1255,7 @@ var CanvasElement = function CanvasElement(_ref) {
     };
     var lastVisibleColumn = getLastVisibleColumn();
     var tableStyles = getTableStyles(element.tableStyle);
+    console.log('CanvasElement - Table style:', element.tableStyle, 'Styles:', tableStyles);
     // Forcer les bordures pour les tableaux de produits (correction du bug d'affichage)
     var showBorders = element.showBorders !== false; // Utiliser la propriété showBorders de l'élément
     return /*#__PURE__*/React.createElement("div", {

@@ -962,6 +962,7 @@ export const CanvasElement = ({
           };
           const lastVisibleColumn = getLastVisibleColumn();
           const tableStyles = getTableStyles(element.tableStyle);
+          console.log('CanvasElement - Table style:', element.tableStyle, 'Styles:', tableStyles);
           // Forcer les bordures pour les tableaux de produits (correction du bug d'affichage)
           const showBorders = element.showBorders !== false; // Utiliser la propriété showBorders de l'élément
           return (
