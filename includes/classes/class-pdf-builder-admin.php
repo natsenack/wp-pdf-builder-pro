@@ -2144,7 +2144,8 @@ class PDF_Builder_Admin {
 
                     case 'product_table':
                         if ($order) {
-                            $table_html = $this->generate_order_products_table($order);
+                            $table_style = $element['tableStyle'] ?? 'default';
+                            $table_html = $this->generate_order_products_table($order, $table_style, $element);
                             $html .= '<div class="pdf-element table-element" style="' . $style . '">' . $table_html . '</div>';
                         } else {
                             // Aperçu fictif du tableau de produits avec un meilleur style
@@ -3350,7 +3351,7 @@ class PDF_Builder_Admin {
             '{payment_method}' => $order->get_payment_method_title(),
             '{order_status}' => wc_get_order_status_name($order->get_status()),
             '{currency}' => $order->get_currency(),
-            '{order_items_table}' => $this->generate_order_products_table($order),
+            '{order_items_table}' => $this->generate_order_products_table($order, 'default'),
             '{document_type}' => $document_type,
             '{document_type_label}' => $document_type_label,
         );
@@ -3405,36 +3406,104 @@ class PDF_Builder_Admin {
     /**
      * Génère le tableau des produits de la commande
      */
-    private function generate_order_products_table($order) {
-        $html = '<table style="width: 100%; border-collapse: collapse;">';
+    private function generate_order_products_table($order, $table_style = 'default', $element = null) {
+        // Définir les styles de tableau disponibles (même que dans pdf-generator.php)
+        $table_styles = [
+            'default' => [
+                'header_bg' => ['r' => 248, 'g' => 249, 'b' => 250], // #f8f9fa
+                'header_border' => ['r' => 226, 'g' => 232, 'b' => 240], // #e2e8f0
+                'row_border' => ['r' => 241, 'g' => 245, 'b' => 249], // #f1f5f9
+                'alt_row_bg' => ['r' => 250, 'g' => 251, 'b' => 252], // #fafbfc
+                'headerTextColor' => '#000000',
+                'rowTextColor' => '#000000',
+                'border_width' => 1,
+                'headerFontWeight' => 'bold',
+                'headerFontSize' => '12px',
+                'rowFontSize' => '11px'
+            ],
+            'emerald_forest' => [
+                'header_bg' => ['r' => 6, 'g' => 78, 'b' => 59], // #064e3b (moyenne du gradient)
+                'header_border' => ['r' => 6, 'g' => 95, 'b' => 70], // #065f46
+                'row_border' => ['r' => 209, 'g' => 250, 'b' => 229], // #d1fae5
+                'alt_row_bg' => ['r' => 236, 'g' => 253, 'b' => 245], // #ecfdf5
+                'headerTextColor' => '#ffffff',
+                'rowTextColor' => '#064e3b',
+                'border_width' => 1.5,
+                'headerFontWeight' => '600',
+                'headerFontSize' => '11px',
+                'rowFontSize' => '10px'
+            ]
+        ];
+
+        // Utiliser le style demandé ou default si non trouvé
+        $style = isset($table_styles[$table_style]) ? $table_styles[$table_style] : $table_styles['default'];
+
+        // Fonction helper pour convertir RGB en couleur CSS
+        $rgb_to_css = function($rgb) {
+            return sprintf('rgb(%d, %d, %d)', $rgb['r'], $rgb['g'], $rgb['b']);
+        };
+
+        // Styles CSS pour le tableau
+        $table_style_css = sprintf(
+            'width: 100%%; border-collapse: collapse; border: %dpx solid %s;',
+            $style['border_width'],
+            $rgb_to_css($style['row_border'])
+        );
+
+        $header_style_css = sprintf(
+            'background-color: %s; color: %s; border: %dpx solid %s; padding: 6px 8px; font-weight: %s; font-size: %s; text-align: left;',
+            $rgb_to_css($style['header_bg']),
+            $style['headerTextColor'],
+            $style['border_width'],
+            $rgb_to_css($style['header_border']),
+            $style['headerFontWeight'],
+            $style['headerFontSize']
+        );
+
+        $cell_style_css = sprintf(
+            'border: %dpx solid %s; padding: 6px 8px; font-size: %s; color: %s;',
+            $style['border_width'],
+            $rgb_to_css($style['row_border']),
+            $style['rowFontSize'],
+            $style['rowTextColor']
+        );
+
+        $alt_row_style_css = $cell_style_css . sprintf(' background-color: %s;', $rgb_to_css($style['alt_row_bg']));
+
+        $html = '<table style="' . $table_style_css . '">';
         $html .= '<thead><tr>';
-        $html .= '<th style="border: 1px solid #ddd; padding: 5px;">Produit</th>';
-        $html .= '<th style="border: 1px solid #ddd; padding: 5px;">Qté</th>';
-        $html .= '<th style="border: 1px solid #ddd; padding: 5px;">Prix</th>';
-        $html .= '<th style="border: 1px solid #ddd; padding: 5px;">Total</th>';
+        $html .= '<th style="' . $header_style_css . '">Produit</th>';
+        $html .= '<th style="' . $header_style_css . '">Qté</th>';
+        $html .= '<th style="' . $header_style_css . '">Prix</th>';
+        $html .= '<th style="' . $header_style_css . '">Total</th>';
         $html .= '</tr></thead><tbody>';
 
+        $row_count = 0;
         foreach ($order->get_items() as $item) {
             $product = $item->get_product();
+            $row_style = ($row_count % 2 == 1) ? $alt_row_style_css : $cell_style_css;
             $html .= '<tr>';
-            $html .= '<td style="border: 1px solid #ddd; padding: 5px;">' . esc_html($item->get_name()) . '</td>';
-            $html .= '<td style="border: 1px solid #ddd; padding: 5px;">' . $item->get_quantity() . '</td>';
-            $html .= '<td style="border: 1px solid #ddd; padding: 5px;">' . wc_price($item->get_total() / $item->get_quantity()) . '</td>';
-            $html .= '<td style="border: 1px solid #ddd; padding: 5px;">' . wc_price($item->get_total()) . '</td>';
+            $html .= '<td style="' . $row_style . '">' . esc_html($item->get_name()) . '</td>';
+            $html .= '<td style="' . $row_style . ' text-align: center;">' . $item->get_quantity() . '</td>';
+            $html .= '<td style="' . $row_style . ' text-align: right;">' . wc_price($item->get_total() / $item->get_quantity()) . '</td>';
+            $html .= '<td style="' . $row_style . ' text-align: right;">' . wc_price($item->get_total()) . '</td>';
             $html .= '</tr>';
+            $row_count++;
         }
 
         // Ajouter les frais de commande personnalisés
         foreach ($order->get_fees() as $fee) {
             $fee_name = $fee->get_name();
             $fee_total = $fee->get_total();
+            $row_style = ($row_count % 2 == 1) ? $alt_row_style_css : $cell_style_css;
 
             $html .= '<tr>';
-            $html .= '<td style="border: 1px solid #ddd; padding: 5px; font-weight: bold;">' . esc_html($fee_name) . '</td>';
-            $html .= '<td style="border: 1px solid #ddd; padding: 5px;">-</td>';
-            $html .= '<td style="border: 1px solid #ddd; padding: 5px;">-</td>';
-            $html .= '<td style="border: 1px solid #ddd; padding: 5px; font-weight: bold;">' . wc_price($fee_total) . '</td>';
+            $html .= '<td style="' . $row_style . ' font-weight: bold;">' . esc_html($fee_name) . '</td>';
+            $html .= '<td style="' . $row_style . ' text-align: center;">-</td>';
+            $html .= '<td style="' . $row_style . ' text-align: right;">-</td>';
+            $html .= '<td style="' . $row_style . ' text-align: right; font-weight: bold;">' . wc_price($fee_total) . '</td>';
             $html .= '</tr>';
+            $row_count++;
         }
 
         $html .= '</tbody></table>';
