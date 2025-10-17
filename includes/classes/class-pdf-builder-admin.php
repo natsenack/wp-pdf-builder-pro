@@ -1345,12 +1345,13 @@ class PDF_Builder_Admin {
         error_log('PDF Builder: Checking if hook "' . $hook . '" is in allowed list: ' . (in_array($hook, $allowed_hooks) ? 'YES' : 'NO'));
         error_log('PDF Builder: Allowed hooks: ' . implode(', ', $allowed_hooks));
 
-        if (!in_array($hook, $allowed_hooks)) {
-            error_log('PDF Builder: Hook ' . $hook . ' not in allowed list, returning');
-            return;
-        }
+        // Temporairement désactiver la vérification des hooks pour debug
+        // if (!in_array($hook, $allowed_hooks)) {
+        //     error_log('PDF Builder: Hook ' . $hook . ' not in allowed list, returning');
+        //     return;
+        // }
 
-        error_log('PDF Builder: Hook ' . $hook . ' allowed, proceeding with script loading');
+        error_log('PDF Builder: Proceeding with script loading for hook: ' . $hook);
 
         $this->load_admin_scripts($hook);
     }
