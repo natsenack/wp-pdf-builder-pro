@@ -17,39 +17,8 @@ module.exports = {
     usedExports: true, // Activer l'élimination des exports non utilisés
     sideEffects: true,  // Activer l'analyse des effets de bord pour optimisation
     minimize: false,     // Désactiver la minification pour le debug
-    splitChunks: {
-      chunks: 'all',
-      cacheGroups: {
-        // Désactiver la séparation de React pour éviter les problèmes de chargement asynchrone
-        // react: {
-        //   test: /[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/,
-        //   name: 'react-vendor',
-        //   chunks: 'all',
-        //   priority: 10
-        // },
-        // Séparer les autres vendors
-        vendor: {
-          test: /[\\/]node_modules[\\/]/,
-          name: 'vendor',
-          chunks: 'all',
-          priority: 5
-        },
-        // Séparer les modales (PreviewModal, NewTemplateModal)
-        modals: {
-          test: /[\\/]src[\\/]components[\\/](PreviewModal|NewTemplateModal)/,
-          name: 'modals',
-          chunks: 'all',
-          priority: 8
-        },
-        // Séparer les utilitaires et helpers
-        utils: {
-          test: /[\\/]src[\\/](hooks|utils|services)[\\/]/,
-          name: 'utils',
-          chunks: 'all',
-          priority: 7
-        }
-      }
-    }
+    // Désactiver le code splitting pour éviter les problèmes de chargement asynchrone
+    splitChunks: false
   },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json']
