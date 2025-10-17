@@ -1006,16 +1006,16 @@ const PropertiesPanel = memo(({
             {smartOrder.map(section => {
               switch (section) {
                 case 'colors':
-                  return renderColorsSection(selectedElement, localProperties, handlePropertyChange, isBackgroundEnabled, allowedControls);
+                  return renderColorsSection(selectedElement, localProperties, handlePropertyChange, isBackgroundEnabled);
                 case 'font':
                   return allowedControls.includes('font') && selectedElement.type !== 'product_table' ?
-                    renderFontSection(selectedElement, localProperties, handlePropertyChange, allowedControls) : null;
+                    renderFontSection(selectedElement, localProperties, handlePropertyChange) : null;
                 case 'borders':
                   return allowedControls.includes('borders') ?
-                    renderBordersSection(selectedElement, localProperties, handlePropertyChange, isBorderEnabled, setIsBorderEnabled, setPreviousBorderWidth, setPreviousBorderColor, previousBorderWidth, previousBorderColor, allowedControls) : null;
+                    renderBordersSection(selectedElement, localProperties, handlePropertyChange, isBorderEnabled, setIsBorderEnabled, setPreviousBorderWidth, setPreviousBorderColor, previousBorderWidth, previousBorderColor) : null;
                 case 'effects':
                   return allowedControls.includes('effects') ?
-                    renderEffectsSection(selectedElement, localProperties, handlePropertyChange, allowedControls) : null;
+                    renderEffectsSection(selectedElement, localProperties, handlePropertyChange) : null;
                 default:
                   return null;
               }
