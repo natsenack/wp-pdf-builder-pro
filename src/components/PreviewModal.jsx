@@ -633,14 +633,6 @@ const PreviewModal = ({
         const tableStyles = getTableStyles(element.tableStyle);
         const showHeaders = element.showHeaders !== false;
         const showBorders = element.showBorders !== false;
-        const columns = element.columns || {
-          image: false,
-          name: true,
-          sku: false,
-          quantity: true,
-          price: true,
-          total: true
-        };
         const headers = element.headers || ['Produit', 'Qté', 'Prix'];
 
         // Fonction pour obtenir l'en-tête d'une colonne
@@ -656,10 +648,10 @@ const PreviewModal = ({
           return defaultHeaders[columnType] || columnType;
         };
 
-        // Données d'exemple pour l'aperçu
+        // Données d'exemple pour l'aperçu (cohérentes avec le canvas)
         const products = [
-          { name: 'Produit A - Description', sku: 'SKU001', quantity: 2, price: 19.99, total: 39.98 },
-          { name: 'Produit B - Article', sku: 'SKU002', quantity: 1, price: 29.99, total: 29.99 }
+          { name: 'Produit A - Description du produit', sku: 'SKU001', quantity: 2, price: 19.99, total: 39.98 },
+          { name: 'Produit B - Un autre article', sku: 'SKU002', quantity: 1, price: 29.99, total: 29.99 }
         ];
 
         // Calcul des totaux
@@ -673,7 +665,7 @@ const PreviewModal = ({
         const getLastVisibleColumn = () => {
           const columnKeys = ['image', 'name', 'sku', 'quantity', 'price', 'total'];
           for (let i = columnKeys.length - 1; i >= 0; i--) {
-            if (columns[columnKeys[i]] !== false) {
+            if (element.columns?.[columnKeys[i]] !== false) {
               return columnKeys[i];
             }
           }
@@ -706,7 +698,7 @@ const PreviewModal = ({
                 color: tableStyles.headerTextColor || (element.tableStyle === 'modern' ? '#ffffff' : '#000000'),
                 boxShadow: tableStyles.shadow ? `0 2px 4px ${tableStyles.shadow}` : 'none'
               }}>
-                {columns.image && (
+                {element.columns?.image !== false && (
                   <div style={{
                     flex: `0 0 ${40 * zoom}px`,
                     padding: `${4 * zoom}px`,
@@ -716,7 +708,7 @@ const PreviewModal = ({
                     {getColumnHeader('image')}
                   </div>
                 )}
-                {columns.name && (
+                {element.columns?.name !== false && (
                   <div style={{
                     flex: 1,
                     padding: `${4 * zoom}px ${6 * zoom}px`,
@@ -726,7 +718,7 @@ const PreviewModal = ({
                     {getColumnHeader('name')}
                   </div>
                 )}
-                {columns.sku && (
+                {element.columns?.sku !== false && (
                   <div style={{
                     flex: `0 0 ${80 * zoom}px`,
                     padding: `${4 * zoom}px ${6 * zoom}px`,
@@ -736,7 +728,7 @@ const PreviewModal = ({
                     {getColumnHeader('sku')}
                   </div>
                 )}
-                {columns.quantity && (
+                {element.columns?.quantity !== false && (
                   <div style={{
                     flex: `0 0 ${60 * zoom}px`,
                     padding: `${4 * zoom}px ${6 * zoom}px`,
@@ -746,7 +738,7 @@ const PreviewModal = ({
                     {getColumnHeader('quantity')}
                   </div>
                 )}
-                {columns.price && (
+                {element.columns?.price !== false && (
                   <div style={{
                     flex: `0 0 ${80 * zoom}px`,
                     padding: `${4 * zoom}px ${6 * zoom}px`,
@@ -756,7 +748,7 @@ const PreviewModal = ({
                     {getColumnHeader('price')}
                   </div>
                 )}
-                {columns.total && (
+                {element.columns?.total !== false && (
                   <div style={{
                     flex: '0 0 80px',
                     padding: `${4 * zoom}px ${6 * zoom}px`,
@@ -778,7 +770,7 @@ const PreviewModal = ({
                   color: tableStyles.rowTextColor || '#000000',
                   boxShadow: tableStyles.shadow ? `0 1px 2px ${tableStyles.shadow}` : 'none'
                 }}>
-                  {columns.image && (
+                  {element.columns?.image !== false && (
                     <div style={{
                       flex: `0 0 ${40 * zoom}px`,
                       padding: `${4 * zoom}px`,
@@ -788,7 +780,7 @@ const PreviewModal = ({
                       📷
                     </div>
                   )}
-                  {columns.name && (
+                  {element.columns?.name !== false && (
                     <div style={{
                       flex: 1,
                       padding: `${4 * zoom}px ${6 * zoom}px`,
@@ -797,7 +789,7 @@ const PreviewModal = ({
                       {product.name}
                     </div>
                   )}
-                  {columns.sku && (
+                  {element.columns?.sku !== false && (
                     <div style={{
                       flex: `0 0 ${80 * zoom}px`,
                       padding: `${4 * zoom}px ${6 * zoom}px`,
@@ -806,7 +798,7 @@ const PreviewModal = ({
                       {product.sku}
                     </div>
                   )}
-                  {columns.quantity && (
+                  {element.columns?.quantity !== false && (
                     <div style={{
                       flex: `0 0 ${60 * zoom}px`,
                       padding: `${4 * zoom}px ${6 * zoom}px`,
@@ -816,7 +808,7 @@ const PreviewModal = ({
                       {product.quantity}
                     </div>
                   )}
-                  {columns.price && (
+                  {element.columns?.price !== false && (
                     <div style={{
                       flex: `0 0 ${80 * zoom}px`,
                       padding: `${4 * zoom}px ${6 * zoom}px`,
@@ -826,7 +818,7 @@ const PreviewModal = ({
                       {product.price.toFixed(2)}€
                     </div>
                   )}
-                  {columns.total && (
+                  {element.columns?.total !== false && (
                     <div style={{
                       flex: `0 0 ${80 * zoom}px`,
                       padding: `${4 * zoom}px ${6 * zoom}px`,

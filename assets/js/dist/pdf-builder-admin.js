@@ -5712,6 +5712,7 @@ var PreviewModal = function PreviewModal(_ref) {
 
   // Fonction pour rendre un élément spécial (basée sur CanvasElement.jsx)
   var renderSpecialElement = (0,react.useCallback)(function (element, zoom) {
+    var _element$columns2, _element$columns3, _element$columns4, _element$columns5, _element$columns6, _element$columns7;
     // Réduire les logs - n'afficher que les erreurs importantes
     switch (element.type) {
       case 'text':
@@ -6190,14 +6191,6 @@ var PreviewModal = function PreviewModal(_ref) {
         var tableStyles = getTableStyles(element.tableStyle);
         var showHeaders = element.showHeaders !== false;
         var showBorders = element.showBorders !== false;
-        var columns = element.columns || {
-          image: false,
-          name: true,
-          sku: false,
-          quantity: true,
-          price: true,
-          total: true
-        };
         var headers = element.headers || ['Produit', 'Qté', 'Prix'];
 
         // Fonction pour obtenir l'en-tête d'une colonne
@@ -6213,15 +6206,15 @@ var PreviewModal = function PreviewModal(_ref) {
           return defaultHeaders[columnType] || columnType;
         };
 
-        // Données d'exemple pour l'aperçu
+        // Données d'exemple pour l'aperçu (cohérentes avec le canvas)
         var products = [{
-          name: 'Produit A - Description',
+          name: 'Produit A - Description du produit',
           sku: 'SKU001',
           quantity: 2,
           price: 19.99,
           total: 39.98
         }, {
-          name: 'Produit B - Article',
+          name: 'Produit B - Un autre article',
           sku: 'SKU002',
           quantity: 1,
           price: 29.99,
@@ -6241,7 +6234,8 @@ var PreviewModal = function PreviewModal(_ref) {
         var getLastVisibleColumn = function getLastVisibleColumn() {
           var columnKeys = ['image', 'name', 'sku', 'quantity', 'price', 'total'];
           for (var i = columnKeys.length - 1; i >= 0; i--) {
-            if (columns[columnKeys[i]] !== false) {
+            var _element$columns;
+            if (((_element$columns = element.columns) === null || _element$columns === void 0 ? void 0 : _element$columns[columnKeys[i]]) !== false) {
               return columnKeys[i];
             }
           }
@@ -6272,42 +6266,42 @@ var PreviewModal = function PreviewModal(_ref) {
             color: tableStyles.headerTextColor || (element.tableStyle === 'modern' ? '#ffffff' : '#000000'),
             boxShadow: tableStyles.shadow ? "0 2px 4px ".concat(tableStyles.shadow) : 'none'
           }
-        }, columns.image && /*#__PURE__*/React.createElement("div", {
+        }, ((_element$columns2 = element.columns) === null || _element$columns2 === void 0 ? void 0 : _element$columns2.image) !== false && /*#__PURE__*/React.createElement("div", {
           style: {
             flex: "0 0 ".concat(40 * zoom, "px"),
             padding: "".concat(4 * zoom, "px"),
             textAlign: 'center',
             borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.headerBorder) : 'none'
           }
-        }, getColumnHeader('image')), columns.name && /*#__PURE__*/React.createElement("div", {
+        }, getColumnHeader('image')), ((_element$columns3 = element.columns) === null || _element$columns3 === void 0 ? void 0 : _element$columns3.name) !== false && /*#__PURE__*/React.createElement("div", {
           style: {
             flex: 1,
             padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
             textAlign: 'left',
             borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.headerBorder) : 'none'
           }
-        }, getColumnHeader('name')), columns.sku && /*#__PURE__*/React.createElement("div", {
+        }, getColumnHeader('name')), ((_element$columns4 = element.columns) === null || _element$columns4 === void 0 ? void 0 : _element$columns4.sku) !== false && /*#__PURE__*/React.createElement("div", {
           style: {
             flex: "0 0 ".concat(80 * zoom, "px"),
             padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
             textAlign: 'left',
             borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.headerBorder) : 'none'
           }
-        }, getColumnHeader('sku')), columns.quantity && /*#__PURE__*/React.createElement("div", {
+        }, getColumnHeader('sku')), ((_element$columns5 = element.columns) === null || _element$columns5 === void 0 ? void 0 : _element$columns5.quantity) !== false && /*#__PURE__*/React.createElement("div", {
           style: {
             flex: "0 0 ".concat(60 * zoom, "px"),
             padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
             textAlign: 'center',
             borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.headerBorder) : 'none'
           }
-        }, getColumnHeader('quantity')), columns.price && /*#__PURE__*/React.createElement("div", {
+        }, getColumnHeader('quantity')), ((_element$columns6 = element.columns) === null || _element$columns6 === void 0 ? void 0 : _element$columns6.price) !== false && /*#__PURE__*/React.createElement("div", {
           style: {
             flex: "0 0 ".concat(80 * zoom, "px"),
             padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
             textAlign: 'right',
             borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.headerBorder) : 'none'
           }
-        }, getColumnHeader('price')), columns.total && /*#__PURE__*/React.createElement("div", {
+        }, getColumnHeader('price')), ((_element$columns7 = element.columns) === null || _element$columns7 === void 0 ? void 0 : _element$columns7.total) !== false && /*#__PURE__*/React.createElement("div", {
           style: {
             flex: '0 0 80px',
             padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
@@ -6320,6 +6314,7 @@ var PreviewModal = function PreviewModal(_ref) {
             flexDirection: 'column'
           }
         }, products.map(function (product, index) {
+          var _element$columns8, _element$columns9, _element$columns0, _element$columns1, _element$columns10, _element$columns11;
           return /*#__PURE__*/React.createElement("div", {
             key: index,
             style: {
@@ -6329,40 +6324,40 @@ var PreviewModal = function PreviewModal(_ref) {
               color: tableStyles.rowTextColor || '#000000',
               boxShadow: tableStyles.shadow ? "0 1px 2px ".concat(tableStyles.shadow) : 'none'
             }
-          }, columns.image && /*#__PURE__*/React.createElement("div", {
+          }, ((_element$columns8 = element.columns) === null || _element$columns8 === void 0 ? void 0 : _element$columns8.image) !== false && /*#__PURE__*/React.createElement("div", {
             style: {
               flex: "0 0 ".concat(40 * zoom, "px"),
               padding: "".concat(4 * zoom, "px"),
               textAlign: 'center',
               borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none'
             }
-          }, "\uD83D\uDCF7"), columns.name && /*#__PURE__*/React.createElement("div", {
+          }, "\uD83D\uDCF7"), ((_element$columns9 = element.columns) === null || _element$columns9 === void 0 ? void 0 : _element$columns9.name) !== false && /*#__PURE__*/React.createElement("div", {
             style: {
               flex: 1,
               padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
               borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none'
             }
-          }, product.name), columns.sku && /*#__PURE__*/React.createElement("div", {
+          }, product.name), ((_element$columns0 = element.columns) === null || _element$columns0 === void 0 ? void 0 : _element$columns0.sku) !== false && /*#__PURE__*/React.createElement("div", {
             style: {
               flex: "0 0 ".concat(80 * zoom, "px"),
               padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
               borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none'
             }
-          }, product.sku), columns.quantity && /*#__PURE__*/React.createElement("div", {
+          }, product.sku), ((_element$columns1 = element.columns) === null || _element$columns1 === void 0 ? void 0 : _element$columns1.quantity) !== false && /*#__PURE__*/React.createElement("div", {
             style: {
               flex: "0 0 ".concat(60 * zoom, "px"),
               padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
               textAlign: 'center',
               borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none'
             }
-          }, product.quantity), columns.price && /*#__PURE__*/React.createElement("div", {
+          }, product.quantity), ((_element$columns10 = element.columns) === null || _element$columns10 === void 0 ? void 0 : _element$columns10.price) !== false && /*#__PURE__*/React.createElement("div", {
             style: {
               flex: "0 0 ".concat(80 * zoom, "px"),
               padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
               textAlign: 'right',
               borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none'
             }
-          }, product.price.toFixed(2), "\u20AC"), columns.total && /*#__PURE__*/React.createElement("div", {
+          }, product.price.toFixed(2), "\u20AC"), ((_element$columns11 = element.columns) === null || _element$columns11 === void 0 ? void 0 : _element$columns11.total) !== false && /*#__PURE__*/React.createElement("div", {
             style: {
               flex: "0 0 ".concat(80 * zoom, "px"),
               padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
