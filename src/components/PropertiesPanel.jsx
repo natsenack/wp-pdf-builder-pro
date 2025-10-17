@@ -999,6 +999,10 @@ const PropertiesPanel = memo(({
     // Obtenir l'ordre intelligent des propriétés pour ce type d'élément
     const smartOrder = getSmartPropertyOrder(selectedElement.type, activeTab);
 
+    // Obtenir le profil de propriétés pour ce type d'élément
+    const elementProfile = ELEMENT_PROPERTY_PROFILES[selectedElement.type] || ELEMENT_PROPERTY_PROFILES['default'];
+    const allowedControls = elementProfile[activeTab] || [];
+
     switch (activeTab) {
       case 'appearance':
         return (

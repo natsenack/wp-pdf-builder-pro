@@ -10641,6 +10641,10 @@ var PropertiesPanel = /*#__PURE__*/(0,react.memo)(function (_ref4) {
 
     // Obtenir l'ordre intelligent des propriétés pour ce type d'élément
     var smartOrder = getSmartPropertyOrder(selectedElement.type, activeTab);
+
+    // Obtenir le profil de propriétés pour ce type d'élément
+    var elementProfile = ELEMENT_PROPERTY_PROFILES[selectedElement.type] || ELEMENT_PROPERTY_PROFILES['default'];
+    var allowedControls = elementProfile[activeTab] || [];
     switch (activeTab) {
       case 'appearance':
         return /*#__PURE__*/React.createElement("div", {
