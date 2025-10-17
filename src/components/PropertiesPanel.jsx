@@ -847,8 +847,7 @@ const renderColorsSection = (selectedElement, localProperties, handlePropertyCha
             </div>
           </div>
         </div>
-        </>
-      )}
+      </>
     </div>
   );
 };

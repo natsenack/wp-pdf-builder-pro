@@ -10482,7 +10482,7 @@ var renderColorsSection = function renderColorsSection(selectedElement, localPro
     className: "slider"
   }), /*#__PURE__*/React.createElement("span", {
     className: "slider-value"
-  }, Math.round(((_localProperties$back2 = localProperties.backgroundOpacity) !== null && _localProperties$back2 !== void 0 ? _localProperties$back2 : 1) * 100), "%"))))), ")}");
+  }, Math.round(((_localProperties$back2 = localProperties.backgroundOpacity) !== null && _localProperties$back2 !== void 0 ? _localProperties$back2 : 1) * 100), "%"))))));
 };
 var renderFontSection = function renderFontSection(selectedElement, localProperties, handlePropertyChange) {
   return /*#__PURE__*/React.createElement(FontControls, {
