@@ -1324,6 +1324,7 @@ class PDF_Builder_Admin {
     public function enqueue_admin_scripts($hook) {
         // DEBUG: Log pour vérifier que la méthode est appelée
         error_log('PDF Builder: enqueue_admin_scripts called with hook: ' . $hook);
+        error_log('PDF Builder: Current page: ' . (isset($_GET['page']) ? $_GET['page'] : 'unknown'));
 
         // Charger seulement sur nos pages admin
         if (!in_array($hook, [
@@ -5082,14 +5083,6 @@ class PDF_Builder_Admin {
         };
 
         return $replace_vars($processed_data);
-    }
-
-    /**
-     * Ajouter l'endpoint de debug
-     */
-    public function add_debug_endpoint() {
-        add_rewrite_rule('^pdf-builder-debug/?$', 'index.php?pdf_builder_debug=1', 'top');
-        add_rewrite_rule('^pdf-builder-debug/([^/]*)/?$', 'index.php?pdf_builder_debug=1&debug_action=$matches[1]', 'top');
     }
 
     /**
