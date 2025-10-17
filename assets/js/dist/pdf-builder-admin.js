@@ -535,7 +535,8 @@ var CanvasElement = function CanvasElement(_ref) {
         headerBg: 'linear-gradient(135deg, #064e3b 0%, #10b981 100%)',
         headerBorder: '#065f46',
         rowBorder: '#d1fae5',
-        altRowBg: '#ecfdf5',
+        altRowBg: '#a7f3d0',
+        // Plus foncé pour être visible
         borderWidth: 1.5,
         headerTextColor: '#ffffff',
         rowTextColor: '#064e3b',
@@ -1355,7 +1356,7 @@ var CanvasElement = function CanvasElement(_ref) {
         style: {
           display: 'flex',
           borderBottom: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
-          backgroundColor: product.backgroundColor || product.bgColor || (index % 2 === 1 ? tableStyles.altRowBg : '#f8fafc'),
+          backgroundColor: product.backgroundColor || product.bgColor || (index % 2 === 1 ? tableStyles.altRowBg : '#d1fae5'),
           color: product.color || product.textColor || tableStyles.rowTextColor,
           fontSize: "".concat(tableStyles.rowFontSize * zoom, "px"),
           transition: 'background-color 0.15s ease'
