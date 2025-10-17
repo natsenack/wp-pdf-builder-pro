@@ -473,9 +473,9 @@ body.pdf-builder-active #wpadminbar {
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
-  min-width: 250px;
-  max-width: 350px;
-  width: 280px;
+  min-width: 300px;
+  max-width: 500px;
+  width: 480px;
   box-shadow: -2px 0 8px rgba(0,0,0,0.08);
   height: 100%; /* S'adapte à la hauteur du workspace (130vh) */
 }
@@ -498,12 +498,12 @@ body.pdf-builder-active #wpadminbar {
 }
 
 .editor-sidebar.left-sidebar {
-  width: 260px;
+  width: 480px;
   border-right: 1px solid #f1f3f4;
 }
 
 .editor-sidebar.right-sidebar {
-  width: 320px;
+  width: 480px;
   border-left: 1px solid #f1f3f4;
   transition: width 0.3s ease;
 }
@@ -511,10 +511,10 @@ body.pdf-builder-active #wpadminbar {
 /* Media queries pour la réactivité */
 @media (max-width: 1200px) {
   .editor-sidebar.left-sidebar {
-    width: 240px;
+    width: 420px;
   }
   .editor-sidebar.right-sidebar {
-    width: 280px;
+    width: 420px;
   }
 }
 
