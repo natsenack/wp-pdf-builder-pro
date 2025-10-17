@@ -1619,7 +1619,10 @@ class PDF_Builder_Pro_Generator {
 
             $this->pdf->SetXY($x, $current_y);
             $this->pdf->SetFillColor($table_styles['header_bg']['r'], $table_styles['header_bg']['g'], $table_styles['header_bg']['b']);
-            $this->pdf->SetFont('helvetica', 'B', 9);
+            
+            // Utiliser la taille de police du style pour les en-têtes
+            $header_font_size = isset($table_styles['headerFontSize']) ? (int) filter_var($table_styles['headerFontSize'], FILTER_SANITIZE_NUMBER_INT) : 9;
+            $this->pdf->SetFont('helvetica', 'B', $header_font_size);
 
             $col_index = 0;
             if ($columns['image']) {
@@ -1650,7 +1653,9 @@ class PDF_Builder_Pro_Generator {
         }
 
         // Contenu du tableau
-        $this->pdf->SetFont('helvetica', '', 8);
+        // Utiliser la taille de police du style pour les données
+        $row_font_size = isset($table_styles['rowFontSize']) ? (int) filter_var($table_styles['rowFontSize'], FILTER_SANITIZE_NUMBER_INT) : 8;
+        $this->pdf->SetFont('helvetica', '', $row_font_size);
 
         // Appliquer la couleur de texte des lignes de données
         if (isset($table_styles['rowTextColor'])) {
@@ -1732,140 +1737,214 @@ class PDF_Builder_Pro_Generator {
     private function get_table_styles($table_style) {
         $styles = [
             'default' => [
-                'header_bg' => ['r' => 245, 'g' => 245, 'b' => 245],
-                'header_border' => ['r' => 221, 'g' => 221, 'b' => 221],
-                'row_border' => ['r' => 200, 'g' => 200, 'b' => 200],
-                'alt_row_bg' => ['r' => 250, 'g' => 250, 'b' => 250],
+                'header_bg' => ['r' => 248, 'g' => 250, 'b' => 252], // #f8fafc
+                'header_border' => ['r' => 226, 'g' => 232, 'b' => 240], // #e2e8f0
+                'row_border' => ['r' => 0, 'g' => 0, 'b' => 0], // #000000
+                'alt_row_bg' => ['r' => 250, 'g' => 251, 'b' => 252], // #fafbfc
                 'headerTextColor' => '#334155',
                 'rowTextColor' => '#334155',
-                'border_width' => 1.0
+                'border_width' => 2.0,
+                'headerFontWeight' => '600',
+                'headerFontSize' => '11px',
+                'rowFontSize' => '10px',
+                'shadow' => '0 1px 3px rgba(0, 0, 0, 0.1)',
+                'borderRadius' => '4px'
             ],
             'classic' => [
-                'header_bg' => ['r' => 30, 'g' => 41, 'b' => 59],
-                'header_border' => ['r' => 51, 'g' => 65, 'b' => 85],
-                'row_border' => ['r' => 51, 'g' => 65, 'b' => 85],
-                'alt_row_bg' => ['r' => 255, 'g' => 255, 'b' => 255],
+                'header_bg' => ['r' => 30, 'g' => 41, 'b' => 59], // #1e293b
+                'header_border' => ['r' => 51, 'g' => 65, 'b' => 85], // #334155
+                'row_border' => ['r' => 51, 'g' => 65, 'b' => 85], // #334155
+                'alt_row_bg' => ['r' => 255, 'g' => 255, 'b' => 255], // #ffffff
                 'headerTextColor' => '#ffffff',
                 'rowTextColor' => '#1e293b',
-                'border_width' => 1.5
+                'border_width' => 1.5,
+                'headerFontWeight' => '700',
+                'headerFontSize' => '11px',
+                'rowFontSize' => '10px',
+                'shadow' => '0 2px 8px rgba(0, 0, 0, 0.15)',
+                'borderRadius' => '0px'
             ],
             'striped' => [
-                'header_bg' => ['r' => 59, 'g' => 130, 'b' => 246],
-                'header_border' => ['r' => 37, 'g' => 99, 'b' => 235],
-                'row_border' => ['r' => 226, 'g' => 232, 'b' => 240],
-                'alt_row_bg' => ['r' => 248, 'g' => 250, 'b' => 252],
+                'header_bg' => ['r' => 59, 'g' => 130, 'b' => 246], // #3b82f6
+                'header_border' => ['r' => 37, 'g' => 99, 'b' => 235], // #2563eb
+                'row_border' => ['r' => 226, 'g' => 232, 'b' => 240], // #e2e8f0
+                'alt_row_bg' => ['r' => 248, 'g' => 250, 'b' => 252], // #f8fafc
                 'headerTextColor' => '#ffffff',
                 'rowTextColor' => '#334155',
-                'border_width' => 1
+                'border_width' => 1.0,
+                'headerFontWeight' => '600',
+                'headerFontSize' => '11px',
+                'rowFontSize' => '10px',
+                'shadow' => '0 1px 4px rgba(59, 130, 246, 0.2)',
+                'borderRadius' => '6px'
             ],
             'bordered' => [
-                'header_bg' => ['r' => 255, 'g' => 255, 'b' => 255],
-                'header_border' => ['r' => 55, 'g' => 65, 'b' => 81],
-                'row_border' => ['r' => 209, 'g' => 213, 'b' => 219],
-                'alt_row_bg' => ['r' => 255, 'g' => 255, 'b' => 255],
+                'header_bg' => ['r' => 255, 'g' => 255, 'b' => 255], // #ffffff
+                'header_border' => ['r' => 55, 'g' => 65, 'b' => 81], // #374151
+                'row_border' => ['r' => 209, 'g' => 213, 'b' => 219], // #d1d5db
+                'alt_row_bg' => ['r' => 255, 'g' => 255, 'b' => 255], // #ffffff
                 'headerTextColor' => '#111827',
                 'rowTextColor' => '#111827',
-                'border_width' => 2
+                'border_width' => 2.0,
+                'headerFontWeight' => '600',
+                'headerFontSize' => '11px',
+                'rowFontSize' => '10px',
+                'shadow' => '0 4px 12px rgba(0, 0, 0, 0.1), inset 0 0 0 1px #e5e7eb',
+                'borderRadius' => '8px'
             ],
             'minimal' => [
-                'header_bg' => ['r' => 255, 'g' => 255, 'b' => 255],
-                'header_border' => ['r' => 209, 'g' => 213, 'b' => 219],
-                'row_border' => ['r' => 243, 'g' => 244, 'b' => 246],
-                'alt_row_bg' => ['r' => 255, 'g' => 255, 'b' => 255],
+                'header_bg' => ['r' => 255, 'g' => 255, 'b' => 255], // #ffffff
+                'header_border' => ['r' => 209, 'g' => 213, 'b' => 219], // #d1d5db
+                'row_border' => ['r' => 243, 'g' => 244, 'b' => 246], // #f3f4f6
+                'alt_row_bg' => ['r' => 255, 'g' => 255, 'b' => 255], // #ffffff
                 'headerTextColor' => '#6b7280',
                 'rowTextColor' => '#6b7280',
-                'border_width' => 0.5
+                'border_width' => 0.5,
+                'headerFontWeight' => '500',
+                'headerFontSize' => '10px',
+                'rowFontSize' => '9px',
+                'shadow' => 'none',
+                'borderRadius' => '0px'
             ],
             'modern' => [
-                'header_bg' => ['r' => 102, 'g' => 126, 'b' => 234], // Couleur moyenne du dégradé
-                'header_border' => ['r' => 91, 'g' => 33, 'b' => 182],
-                'row_border' => ['r' => 233, 'g' => 213, 'b' => 255],
-                'alt_row_bg' => ['r' => 250, 'g' => 245, 'b' => 255],
+                'header_bg' => ['r' => 102, 'g' => 126, 'b' => 234], // #667eea (moyenne du gradient)
+                'header_border' => ['r' => 91, 'g' => 33, 'b' => 182], // #5b21b6
+                'row_border' => ['r' => 233, 'g' => 213, 'b' => 255], // #e9d5ff
+                'alt_row_bg' => ['r' => 250, 'g' => 245, 'b' => 255], // #faf5ff
                 'headerTextColor' => '#ffffff',
                 'rowTextColor' => '#6b21a8',
-                'border_width' => 1
+                'border_width' => 1.0,
+                'headerFontWeight' => '600',
+                'headerFontSize' => '11px',
+                'rowFontSize' => '10px',
+                'shadow' => '0 4px 20px rgba(102, 126, 234, 0.25)',
+                'borderRadius' => '8px'
             ],
-            // Nouveaux styles colorés
             'blue_ocean' => [
-                'header_bg' => ['r' => 30, 'g' => 58, 'b' => 138], // Couleur moyenne du dégradé
-                'header_border' => ['r' => 30, 'g' => 64, 'b' => 175],
-                'row_border' => ['r' => 219, 'g' => 234, 'b' => 254],
-                'alt_row_bg' => ['r' => 239, 'g' => 246, 'b' => 255],
+                'header_bg' => ['r' => 30, 'g' => 58, 'b' => 138], // #1e3a8a (moyenne du gradient)
+                'header_border' => ['r' => 30, 'g' => 64, 'b' => 175], // #1e40af
+                'row_border' => ['r' => 219, 'g' => 234, 'b' => 254], // #dbeafe
+                'alt_row_bg' => ['r' => 239, 'g' => 246, 'b' => 255], // #eff6ff
                 'headerTextColor' => '#ffffff',
                 'rowTextColor' => '#1e3a8a',
-                'border_width' => 1.5
+                'border_width' => 1.5,
+                'headerFontWeight' => '600',
+                'headerFontSize' => '11px',
+                'rowFontSize' => '10px',
+                'shadow' => '0 4px 16px rgba(59, 130, 246, 0.3)',
+                'borderRadius' => '6px'
             ],
             'emerald_forest' => [
-                'header_bg' => ['r' => 6, 'g' => 78, 'b' => 59], // Couleur moyenne du dégradé
-                'header_border' => ['r' => 6, 'g' => 95, 'b' => 70],
-                'row_border' => ['r' => 209, 'g' => 250, 'b' => 229],
-                'alt_row_bg' => ['r' => 236, 'g' => 253, 'b' => 245],
+                'header_bg' => ['r' => 6, 'g' => 78, 'b' => 59], // #064e3b (moyenne du gradient)
+                'header_border' => ['r' => 6, 'g' => 95, 'b' => 70], // #065f46
+                'row_border' => ['r' => 209, 'g' => 250, 'b' => 229], // #d1fae5
+                'alt_row_bg' => ['r' => 236, 'g' => 253, 'b' => 245], // #ecfdf5
                 'headerTextColor' => '#ffffff',
                 'rowTextColor' => '#064e3b',
-                'border_width' => 1.5
+                'border_width' => 1.5,
+                'headerFontWeight' => '600',
+                'headerFontSize' => '11px',
+                'rowFontSize' => '10px',
+                'shadow' => '0 4px 16px rgba(16, 185, 129, 0.3)',
+                'borderRadius' => '6px'
             ],
             'sunset_orange' => [
-                'header_bg' => ['r' => 154, 'g' => 52, 'b' => 18], // Couleur moyenne du dégradé
-                'header_border' => ['r' => 194, 'g' => 65, 'b' => 12],
-                'row_border' => ['r' => 254, 'g' => 215, 'b' => 170],
-                'alt_row_bg' => ['r' => 255, 'g' => 247, 'b' => 237],
+                'header_bg' => ['r' => 154, 'g' => 52, 'b' => 18], // #9a3412 (moyenne du gradient)
+                'header_border' => ['r' => 194, 'g' => 65, 'b' => 12], // #c2410c
+                'row_border' => ['r' => 254, 'g' => 215, 'b' => 170], // #fed7aa
+                'alt_row_bg' => ['r' => 255, 'g' => 247, 'b' => 237], // #fff7ed
                 'headerTextColor' => '#ffffff',
                 'rowTextColor' => '#9a3412',
-                'border_width' => 1.5
+                'border_width' => 1.5,
+                'headerFontWeight' => '600',
+                'headerFontSize' => '11px',
+                'rowFontSize' => '10px',
+                'shadow' => '0 4px 16px rgba(249, 115, 22, 0.3)',
+                'borderRadius' => '6px'
             ],
             'royal_purple' => [
-                'header_bg' => ['r' => 88, 'g' => 28, 'b' => 135], // Couleur moyenne du dégradé
-                'header_border' => ['r' => 124, 'g' => 58, 'b' => 237],
-                'row_border' => ['r' => 233, 'g' => 213, 'b' => 255],
-                'alt_row_bg' => ['r' => 250, 'g' => 245, 'b' => 255],
+                'header_bg' => ['r' => 88, 'g' => 28, 'b' => 135], // #581c87 (moyenne du gradient)
+                'header_border' => ['r' => 124, 'g' => 58, 'b' => 237], // #7c3aed
+                'row_border' => ['r' => 233, 'g' => 213, 'b' => 255], // #e9d5ff
+                'alt_row_bg' => ['r' => 250, 'g' => 245, 'b' => 255], // #faf5ff
                 'headerTextColor' => '#ffffff',
                 'rowTextColor' => '#581c87',
-                'border_width' => 1.5
+                'border_width' => 1.5,
+                'headerFontWeight' => '600',
+                'headerFontSize' => '11px',
+                'rowFontSize' => '10px',
+                'shadow' => '0 4px 16px rgba(168, 85, 247, 0.3)',
+                'borderRadius' => '6px'
             ],
             'rose_pink' => [
-                'header_bg' => ['r' => 190, 'g' => 24, 'b' => 93], // Couleur moyenne du dégradé
-                'header_border' => ['r' => 219, 'g' => 39, 'b' => 119],
-                'row_border' => ['r' => 252, 'g' => 231, 'b' => 243],
-                'alt_row_bg' => ['r' => 253, 'g' => 244, 'b' => 248],
+                'header_bg' => ['r' => 190, 'g' => 24, 'b' => 93], // #be185d (moyenne du gradient)
+                'header_border' => ['r' => 219, 'g' => 39, 'b' => 119], // #db2777
+                'row_border' => ['r' => 252, 'g' => 231, 'b' => 243], // #fce7f3
+                'alt_row_bg' => ['r' => 253, 'g' => 244, 'b' => 248], // #fdf2f8
                 'headerTextColor' => '#ffffff',
                 'rowTextColor' => '#be185d',
-                'border_width' => 1.5
+                'border_width' => 1.5,
+                'headerFontWeight' => '600',
+                'headerFontSize' => '11px',
+                'rowFontSize' => '10px',
+                'shadow' => '0 4px 16px rgba(244, 114, 182, 0.3)',
+                'borderRadius' => '6px'
             ],
             'teal_aqua' => [
-                'header_bg' => ['r' => 15, 'g' => 118, 'b' => 110], // Couleur moyenne du dégradé
-                'header_border' => ['r' => 13, 'g' => 148, 'b' => 136],
-                'row_border' => ['r' => 204, 'g' => 251, 'b' => 241],
-                'alt_row_bg' => ['r' => 240, 'g' => 253, 'b' => 250],
+                'header_bg' => ['r' => 15, 'g' => 118, 'b' => 110], // #0f766e (moyenne du gradient)
+                'header_border' => ['r' => 13, 'g' => 148, 'b' => 136], // #0d9488
+                'row_border' => ['r' => 204, 'g' => 251, 'b' => 241], // #ccfbf1
+                'alt_row_bg' => ['r' => 240, 'g' => 253, 'b' => 250], // #f0fdfa
                 'headerTextColor' => '#ffffff',
                 'rowTextColor' => '#0f766e',
-                'border_width' => 1.5
+                'border_width' => 1.5,
+                'headerFontWeight' => '600',
+                'headerFontSize' => '11px',
+                'rowFontSize' => '10px',
+                'shadow' => '0 4px 16px rgba(20, 184, 166, 0.3)',
+                'borderRadius' => '6px'
             ],
             'crimson_red' => [
-                'header_bg' => ['r' => 153, 'g' => 27, 'b' => 27], // Couleur moyenne du dégradé
-                'header_border' => ['r' => 220, 'g' => 38, 'b' => 38],
-                'row_border' => ['r' => 254, 'g' => 202, 'b' => 202],
-                'alt_row_bg' => ['r' => 254, 'g' => 242, 'b' => 242],
+                'header_bg' => ['r' => 153, 'g' => 27, 'b' => 27], // #991b1b (moyenne du gradient)
+                'header_border' => ['r' => 220, 'g' => 38, 'b' => 38], // #dc2626
+                'row_border' => ['r' => 254, 'g' => 202, 'b' => 202], // #fecaca
+                'alt_row_bg' => ['r' => 254, 'g' => 242, 'b' => 242], // #fef2f2
                 'headerTextColor' => '#ffffff',
                 'rowTextColor' => '#dc2626',
-                'border_width' => 1.5
+                'border_width' => 1.5,
+                'headerFontWeight' => '600',
+                'headerFontSize' => '11px',
+                'rowFontSize' => '10px',
+                'shadow' => '0 4px 16px rgba(220, 38, 38, 0.3)',
+                'borderRadius' => '6px'
             ],
             'amber_gold' => [
-                'header_bg' => ['r' => 146, 'g' => 64, 'b' => 14], // Couleur moyenne du dégradé
-                'header_border' => ['r' => 217, 'g' => 119, 'b' => 6],
-                'row_border' => ['r' => 254, 'g' => 243, 'b' => 199],
-                'alt_row_bg' => ['r' => 254, 'g' => 243, 'b' => 235],
+                'header_bg' => ['r' => 146, 'g' => 64, 'b' => 14], // #92400e (moyenne du gradient)
+                'header_border' => ['r' => 217, 'g' => 119, 'b' => 6], // #d97706
+                'row_border' => ['r' => 254, 'g' => 243, 'b' => 199], // #fef3c7
+                'alt_row_bg' => ['r' => 254, 'g' => 250, 'b' => 235], // #fef3eb
                 'headerTextColor' => '#ffffff',
                 'rowTextColor' => '#d97706',
-                'border_width' => 1.5
+                'border_width' => 1.5,
+                'headerFontWeight' => '600',
+                'headerFontSize' => '11px',
+                'rowFontSize' => '10px',
+                'shadow' => '0 4px 16px rgba(217, 119, 6, 0.3)',
+                'borderRadius' => '6px'
             ],
             'indigo_night' => [
-                'header_bg' => ['r' => 49, 'g' => 46, 'b' => 129], // Couleur moyenne du dégradé
-                'header_border' => ['r' => 67, 'g' => 56, 'b' => 202],
-                'row_border' => ['r' => 224, 'g' => 231, 'b' => 255],
-                'alt_row_bg' => ['r' => 238, 'g' => 242, 'b' => 255],
+                'header_bg' => ['r' => 49, 'g' => 46, 'b' => 129], // #312e81 (moyenne du gradient)
+                'header_border' => ['r' => 67, 'g' => 56, 'b' => 202], // #4338ca
+                'row_border' => ['r' => 224, 'g' => 231, 'b' => 255], // #e0e7ff
+                'alt_row_bg' => ['r' => 238, 'g' => 242, 'b' => 255], // #eef2ff
                 'headerTextColor' => '#ffffff',
                 'rowTextColor' => '#4338ca',
-                'border_width' => 1.5
+                'border_width' => 1.5,
+                'headerFontWeight' => '600',
+                'headerFontSize' => '11px',
+                'rowFontSize' => '10px',
+                'shadow' => '0 4px 16px rgba(67, 56, 202, 0.3)',
+                'borderRadius' => '6px'
             ],
             'slate_gray' => [
                 'header_bg' => ['r' => 55, 'g' => 65, 'b' => 81], // Couleur moyenne du dégradé
