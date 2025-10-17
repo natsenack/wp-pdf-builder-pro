@@ -1,3 +1,5 @@
+console.log('PDF Builder Pro: Script execution started');
+
 import React from 'react';
 import { createElement } from 'react';
 import ReactDOM from 'react-dom';
