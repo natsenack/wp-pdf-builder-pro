@@ -1,7 +1,26 @@
-// Script de test minimal pour diagnostiquer les problèmes de chargement
+// Imports doivent être au niveau supérieur du module
+import React from 'react';
+import ReactDOM from 'react-dom';
+
 console.log('PDF Builder Pro: Script execution started');
 
-// Test immédiat de définition de variable globale
+// Test des imports de base
+try {
+    console.log('Testing React availability...');
+    console.log('React version:', React.version);
+    console.log('ReactDOM available:', typeof ReactDOM);
+
+    // Exposer React globalement pour compatibilité
+    if (typeof window !== 'undefined') {
+        window.React = React;
+        window.ReactDOM = ReactDOM;
+        console.log('PDF Builder Pro: React exposed globally');
+    }
+} catch (error) {
+    console.error('React test failed:', error);
+}
+
+// Définition basique de PDFBuilderPro
 if (typeof window !== 'undefined') {
     window.PDFBuilderPro = {
         test: 'ok',
@@ -11,16 +30,6 @@ if (typeof window !== 'undefined') {
             return { success: true };
         }
     };
-    console.log('PDF Builder Pro: Minimal PDFBuilderPro defined on window');
+    console.log('PDF Builder Pro: Basic PDFBuilderPro defined on window');
 }
-
-// Test de chargement React (commenté pour éviter les erreurs)
-// try {
-//     console.log('Testing React import...');
-//     import React from 'react';
-//     import ReactDOM from 'react-dom';
-//     console.log('React loaded successfully');
-// } catch (error) {
-//     console.error('React loading failed:', error);
-// }
 
