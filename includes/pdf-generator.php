@@ -18,6 +18,7 @@ class PDF_Builder_Pro_Generator {
     private $errors = [];
     private $performance_metrics = [];
     private $order = null; // Ajout de la propriété order
+    private $is_preview = false; // Mode aperçu
 
     // Configuration par defaut
     private $config = [
@@ -40,6 +41,17 @@ class PDF_Builder_Pro_Generator {
     }
 
     /**
+     * Définit si c'est pour l'aperçu
+     */
+    public function set_preview_mode($is_preview = false) {
+        $this->is_preview = $is_preview;
+        if ($is_preview) {
+            // Dimensions d'aperçu : 400x566px
+            $this->config['format'] = [105.8, 149.8]; // Conversion px vers mm à 96dpi
+        }
+    }
+
+    /**
      * Définit l'ordre pour la génération du PDF
      */
     public function set_order($order) {
@@ -51,6 +63,11 @@ class PDF_Builder_Pro_Generator {
      */
     public function generate($elements, $options = []) {
         error_log('🟡 PDF BUILDER - generate: START - ' . count($elements) . ' elements');
+
+        // Configurer le mode aperçu si demandé
+        if (isset($options['is_preview']) && $options['is_preview']) {
+            $this->set_preview_mode(true);
+        }
 
         try {
             error_log('🟡 PDF BUILDER - generate: Calling reset()');
@@ -593,7 +610,7 @@ class PDF_Builder_Pro_Generator {
         $this->pdf->SetLineWidth($line_width);
 
         // Dessin de la ligne - toutes les lignes sont horizontales et prennent toute la largeur comme dans le canvas
-        $this->pdf->Line(0, $y + ($height / 2), 210, $y + ($height / 2));
+        $this->pdf->Line(0, $y + ($height / 2), $this->pdf->getPageWidth(), $y + ($height / 2));
     }
 
     /**
@@ -2585,7 +2602,7 @@ function pdf_builder_generate_pdf() {
 
         // Generer le PDF avec le nouveau generateur
         $generator = new PDF_Builder_Pro_Generator();
-        $pdf_content = $generator->generate($elements);
+        $pdf_content = $generator->generate($elements, ['is_preview' => true]);
 
         if (empty($pdf_content)) {
             ob_end_clean();
