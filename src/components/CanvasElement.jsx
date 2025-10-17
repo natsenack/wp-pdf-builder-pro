@@ -607,7 +607,7 @@ export const CanvasElement = ({
   }, [onContextMenu, element.id]);
 
   // Fonction helper pour obtenir les styles spécifiques au type d'élément
-  const getElementTypeStyles = (element, zoom) => {
+  const getElementTypeStyles = (element, zoom, canvasWidth) => {
     switch (element.type) {
       case 'text':
         return {
@@ -764,7 +764,8 @@ export const CanvasElement = ({
         return {
           borderTop: `${element.lineWidth || element.strokeWidth || 1}px solid ${element.lineColor || element.strokeColor || '#6b7280'}`,
           height: `${Math.max(element.lineWidth || element.strokeWidth || 1, 12)}px`, // Hauteur augmentée à 12px minimum pour faciliter le clic
-          width: '100%',
+          left: 0, // Les lignes s'étendent toujours sur toute la largeur du canvas
+          width: `${canvasWidth}px`,
           cursor: 'pointer',
           backgroundColor: 'transparent' // S'assurer qu'il n'y a pas de fond qui cache
         };
@@ -823,7 +824,7 @@ export const CanvasElement = ({
       (element.shadow ? `${element.shadowOffsetX || 2}px ${element.shadowOffsetY || 2}px 4px ${element.shadowColor || '#000000'}40` : 'none'),
 
     // Styles spécifiques selon le type d'élément
-    ...getElementTypeStyles(element, zoom)
+    ...getElementTypeStyles(element, zoom, canvasWidth)
   }), [
     element.x, element.y, element.width, element.height, element.rotation, element.scale,
     element.backgroundColor, element.backgroundOpacity, element.borderWidth, element.borderStyle, element.borderColor, element.borderRadius,

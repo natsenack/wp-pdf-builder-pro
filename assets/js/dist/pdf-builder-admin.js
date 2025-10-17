@@ -965,7 +965,7 @@ var CanvasElement = function CanvasElement(_ref) {
   }, [onContextMenu, element.id]);
 
   // Fonction helper pour obtenir les styles spécifiques au type d'élément
-  var getElementTypeStyles = function getElementTypeStyles(element, zoom) {
+  var getElementTypeStyles = function getElementTypeStyles(element, zoom, canvasWidth) {
     switch (element.type) {
       case 'text':
         return {
@@ -1108,7 +1108,9 @@ var CanvasElement = function CanvasElement(_ref) {
           borderTop: "".concat(element.lineWidth || element.strokeWidth || 1, "px solid ").concat(element.lineColor || element.strokeColor || '#6b7280'),
           height: "".concat(Math.max(element.lineWidth || element.strokeWidth || 1, 12), "px"),
           // Hauteur augmentée à 12px minimum pour faciliter le clic
-          width: '100%',
+          left: 0,
+          // Les lignes s'étendent toujours sur toute la largeur du canvas
+          width: "".concat(canvasWidth, "px"),
           cursor: 'pointer',
           backgroundColor: 'transparent' // S'assurer qu'il n'y a pas de fond qui cache
         };
@@ -1161,7 +1163,7 @@ var CanvasElement = function CanvasElement(_ref) {
       transform: "".concat(dragAndDrop.draggedElementId === element.id ? "translate(".concat(dragAndDrop.dragOffset.x * zoom, "px, ").concat(dragAndDrop.dragOffset.y * zoom, "px) ") : '', "rotate(").concat(element.rotation || 0, "deg) scale(").concat(element.scale || 100, "%)"),
       filter: "brightness(".concat(element.brightness || 100, "%) contrast(").concat(element.contrast || 100, "%) saturate(").concat(element.saturate || 100, "%)"),
       boxShadow: element.boxShadowColor ? "0px ".concat(element.boxShadowSpread || 0, "px ").concat(element.boxShadowBlur || 0, "px ").concat(element.boxShadowColor) : element.shadow ? "".concat(element.shadowOffsetX || 2, "px ").concat(element.shadowOffsetY || 2, "px 4px ").concat(element.shadowColor || '#000000', "40") : 'none'
-    }, getElementTypeStyles(element, zoom));
+    }, getElementTypeStyles(element, zoom, canvasWidth));
   }, [element.x, element.y, element.width, element.height, element.rotation, element.scale, element.backgroundColor, element.backgroundOpacity, element.borderWidth, element.borderStyle, element.borderColor, element.borderRadius, element.opacity, element.brightness, element.contrast, element.saturate, element.boxShadowColor, element.boxShadowSpread, element.boxShadowBlur, element.shadow, element.shadowOffsetX, element.shadowOffsetY, element.shadowColor, element.type, elementPadding, zoom, isSelected, dragAndDrop.isDragging, dragAndDrop.draggedElementId, dragAndDrop.dragOffset]);
   return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     ref: elementRef,
