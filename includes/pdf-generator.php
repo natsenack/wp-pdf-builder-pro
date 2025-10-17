@@ -2551,9 +2551,16 @@ class PDF_Builder_Pro_Generator {
 
         // Frais (shipping, taxes, etc.)
         if (!empty($fees)) {
+            error_log("🛍️ RENDER_ORDER_PRODUCTS - STARTING FEES PROCESSING: " . count($fees) . " fees found");
             foreach ($fees as $fee) {
+                // LOG: Traitement d'un frais
+                error_log("🛍️ RENDER_ORDER_PRODUCTS - PROCESSING FEE: " . json_encode($fee));
+                
                 $fee_name = $fee->get_name();
                 $fee_total = $fee->get_total();
+                
+                // LOG: Détails du frais
+                error_log("🛍️ RENDER_ORDER_PRODUCTS - FEE DETAILS: name='$fee_name', total='$fee_total'");
 
                 // Fond alterné si striped
                 if ($alt_row && ($element['tableStyle'] ?? 'default') === 'striped') {
@@ -2584,6 +2591,9 @@ class PDF_Builder_Pro_Generator {
                 $current_y += $row_height;
                 $alt_row = !$alt_row;
             }
+            error_log("🛍️ RENDER_ORDER_PRODUCTS - FEES PROCESSING COMPLETED");
+        } else {
+            error_log("🛍️ RENDER_ORDER_PRODUCTS - NO FEES TO PROCESS");
         }
 
         return $current_y;
