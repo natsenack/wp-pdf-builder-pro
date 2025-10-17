@@ -588,6 +588,9 @@ class PDF_Builder_Pro_Generator {
      * Rendu d'element rectangle
      */
     private function render_rectangle_element($element, $px_to_mm) {
+        // LOG: Début rendu rectangle
+        error_log("▭ RENDER_RECTANGLE - START: " . json_encode($element));
+
         // Utiliser extract_element_coordinates pour cohérence avec l'éditeur
         $coords = $this->extract_element_coordinates($element, $px_to_mm);
         $x = $coords['x'];
@@ -595,14 +598,19 @@ class PDF_Builder_Pro_Generator {
         $width = $coords['width'];
         $height = $coords['height'];
 
+        // LOG: Coordonnées rectangle
+        error_log("▭ RENDER_RECTANGLE - COORDS: x=$x, y=$y, w=$width, h=$height");
+
         // Style de remplissage - utiliser fillColor comme dans l'éditeur
         $background_color = $element['fillColor'] ?? $element['backgroundColor'] ?? null;
         if ($this->should_render_background($background_color)) {
             $bg_color = $this->parse_color($background_color);
             $this->pdf->SetFillColor($bg_color['r'], $bg_color['g'], $bg_color['b']);
             $fill = true;
+            error_log("▭ RENDER_RECTANGLE - FILL: color=$background_color (RGB: {$bg_color['r']},{$bg_color['g']},{$bg_color['b']})");
         } else {
             $fill = false;
+            error_log("▭ RENDER_RECTANGLE - FILL: none");
         }
 
         // Bordure
@@ -612,20 +620,28 @@ class PDF_Builder_Pro_Generator {
         if (!empty($element['borderColor']) && $element['borderColor'] !== 'transparent') {
             $border_color = $this->parse_color($element['borderColor']);
             $this->pdf->SetDrawColor($border_color['r'], $border_color['g'], $border_color['b']);
+            error_log("▭ RENDER_RECTANGLE - BORDER: color={$element['borderColor']} (RGB: {$border_color['r']},{$border_color['g']},{$border_color['b']})");
+        } else {
+            error_log("▭ RENDER_RECTANGLE - BORDER: none");
         }
 
         // Epaisseur de bordure
         $border_width = ($element['borderWidth'] ?? 1) * $px_to_mm;
         $this->pdf->SetLineWidth($border_width);
+        error_log("▭ RENDER_RECTANGLE - BORDER_WIDTH: {$border_width}mm (from " . ($element['borderWidth'] ?? 1) . "px)");
 
         // Dessin du rectangle
         $this->pdf->Rect($x, $y, $width, $height, 'DF', [], $fill ? [] : null);
+        error_log("▭ RENDER_RECTANGLE - DRAWN: Rect($x, $y, $width, $height, 'DF', [], " . ($fill ? 'filled' : 'outline') . ")");
     }
 
     /**
      * Rendu d'élément cercle
      */
     private function render_circle_element($element, $px_to_mm) {
+        // LOG: Début rendu cercle
+        error_log("⭕ RENDER_CIRCLE - START: " . json_encode($element));
+
         // Utiliser extract_element_coordinates pour cohérence avec l'éditeur
         $coords = $this->extract_element_coordinates($element, $px_to_mm);
         $x = $coords['x'];
@@ -638,27 +654,133 @@ class PDF_Builder_Pro_Generator {
         $center_y = $y + ($height / 2);
         $radius = min($width, $height) / 2;
 
+        // LOG: Géométrie cercle
+        error_log("⭕ RENDER_CIRCLE - GEOMETRY: center=($center_x,$center_y), radius=$radius (from w=$width,h=$height)");
+
         // Style de remplissage - utiliser fillColor comme dans l'éditeur
         $background_color = $element['fillColor'] ?? $element['backgroundColor'] ?? null;
         if ($this->should_render_background($background_color)) {
             $bg_color = $this->parse_color($background_color);
             $this->pdf->SetFillColor($bg_color['r'], $bg_color['g'], $bg_color['b']);
             $fill = true;
+            error_log("⭕ RENDER_CIRCLE - FILL: color=$background_color (RGB: {$bg_color['r']},{$bg_color['g']},{$bg_color['b']})");
         } else {
             $fill = false;
+            error_log("⭕ RENDER_CIRCLE - FILL: none");
         }
 
         // Bordure
         $border_width = ($element['borderWidth'] ?? 1) * $px_to_mm;
         $this->pdf->SetLineWidth($border_width);
+        error_log("⭕ RENDER_CIRCLE - BORDER_WIDTH: {$border_width}mm (from " . ($element['borderWidth'] ?? 1) . "px)");
 
         if (!empty($element['borderColor']) && $element['borderColor'] !== 'transparent') {
             $border_color = $this->parse_color($element['borderColor']);
             $this->pdf->SetDrawColor($border_color['r'], $border_color['g'], $border_color['b']);
+            error_log("⭕ RENDER_CIRCLE - BORDER: color={$element['borderColor']} (RGB: {$border_color['r']},{$border_color['g']},{$border_color['b']})");
+        } else {
+            error_log("⭕ RENDER_CIRCLE - BORDER: none");
         }
 
         // Dessin du cercle
         $this->pdf->Circle($center_x, $center_y, $radius, 0, 360, 'DF', [], $fill ? [] : null);
+        error_log("⭕ RENDER_CIRCLE - DRAWN: Circle($center_x, $center_y, $radius, 0, 360, 'DF', [], " . ($fill ? 'filled' : 'outline') . ")");
+    }
+
+    /**
+     * Rendu d'élément numéro de commande
+     */
+    private function render_order_number_element($element, $px_to_mm) {
+        // LOG: Début rendu numéro de commande
+        error_log("🔢 RENDER_ORDER_NUMBER - START: " . json_encode($element));
+
+        if (!$this->order) {
+            error_log("🔢 RENDER_ORDER_NUMBER - SKIP: no order data");
+            return;
+        }
+
+        // Utiliser extract_element_coordinates pour cohérence avec l'éditeur
+        $coords = $this->extract_element_coordinates($element, $px_to_mm);
+        $x = $coords['x'];
+        $y = $coords['y'];
+        $width = $coords['width'];
+        $height = $coords['height'];
+
+        // LOG: Coordonnées
+        error_log("🔢 RENDER_ORDER_NUMBER - COORDS: x=$x, y=$y, w=$width, h=$height");
+
+        // Format du numéro de commande
+        $format = $element['format'] ?? 'Commande #{order_number}';
+        $order_number = $this->order->get_order_number();
+        $text = str_replace('{order_number}', $order_number, $format);
+
+        // LOG: Contenu généré
+        error_log("🔢 RENDER_ORDER_NUMBER - CONTENT: format='$format', order_number='$order_number', text='$text'");
+
+        // Propriétés de style
+        $font_size = ($element['fontSize'] ?? 14) * 0.75; // Conversion px vers pt
+        $color = $this->parse_color($element['color'] ?? '#000000');
+        $font_family = $this->map_font_family($element['fontFamily'] ?? 'Arial');
+        $font_style = $this->get_font_style($element);
+        $text_align = $element['textAlign'] ?? 'left';
+
+        // LOG: Styles
+        error_log("🔢 RENDER_ORDER_NUMBER - STYLE: font=$font_family, size={$font_size}pt, color={$element['color']}, align=$text_align");
+
+        // Configuration de la police
+        $this->pdf->SetFont($font_family, $font_style, $font_size);
+        $this->pdf->SetTextColor($color['r'], $color['g'], $color['b']);
+
+        // Positionnement et rendu
+        $this->pdf->SetXY($x, $y);
+        $this->pdf->Cell($width, $height, $text, 0, 0, strtoupper(substr($text_align, 0, 1)));
+
+        error_log("🔢 RENDER_ORDER_NUMBER - RENDERED: Cell($x, $y, $width, $height, '$text', 0, 0, '" . strtoupper(substr($text_align, 0, 1)) . "')");
+    }
+
+    /**
+     * Rendu d'élément type de document
+     */
+    private function render_document_type_element($element, $px_to_mm) {
+        // LOG: Début rendu type de document
+        error_log("📄 RENDER_DOCUMENT_TYPE - START: " . json_encode($element));
+
+        // Utiliser extract_element_coordinates pour cohérence avec l'éditeur
+        $coords = $this->extract_element_coordinates($element, $px_to_mm);
+        $x = $coords['x'];
+        $y = $coords['y'];
+        $width = $coords['width'];
+        $height = $coords['height'];
+
+        // LOG: Coordonnées
+        error_log("📄 RENDER_DOCUMENT_TYPE - COORDS: x=$x, y=$y, w=$width, h=$height");
+
+        // Type de document
+        $doc_type = $element['documentType'] ?? 'invoice';
+        $text = $doc_type === 'invoice' ? 'FACTURE' : 'DEVIS';
+
+        // LOG: Contenu
+        error_log("📄 RENDER_DOCUMENT_TYPE - CONTENT: documentType='$doc_type', text='$text'");
+
+        // Propriétés de style
+        $font_size = ($element['fontSize'] ?? 18) * 0.75; // Conversion px vers pt
+        $color = $this->parse_color($element['color'] ?? '#1e293b');
+        $font_family = $this->map_font_family($element['fontFamily'] ?? 'Arial');
+        $font_style = $this->get_font_style($element);
+        $text_align = $element['textAlign'] ?? 'center';
+
+        // LOG: Styles
+        error_log("📄 RENDER_DOCUMENT_TYPE - STYLE: font=$font_family, size={$font_size}pt, color={$element['color']}, align=$text_align");
+
+        // Configuration de la police
+        $this->pdf->SetFont($font_family, $font_style, $font_size);
+        $this->pdf->SetTextColor($color['r'], $color['g'], $color['b']);
+
+        // Positionnement et rendu
+        $this->pdf->SetXY($x, $y);
+        $this->pdf->Cell($width, $height, $text, 0, 0, strtoupper(substr($text_align, 0, 1)));
+
+        error_log("📄 RENDER_DOCUMENT_TYPE - RENDERED: Cell($x, $y, $width, $height, '$text', 0, 0, '" . strtoupper(substr($text_align, 0, 1)) . "')");
     }
 
     /**
@@ -699,8 +821,12 @@ class PDF_Builder_Pro_Generator {
     private function render_image_element($element, $px_to_mm) {
         $src = $element['src'] ?? $element['imageUrl'] ?? $element['url'] ?? '';
         if (empty($src)) {
+            error_log("🖼️ RENDER_IMAGE - SKIP: empty src for element " . json_encode($element));
             return;
         }
+
+        // LOG: Début rendu image
+        error_log("🖼️ RENDER_IMAGE - START: src=$src, element=" . json_encode($element));
 
         // Utiliser extract_element_coordinates pour cohérence avec l'éditeur
         $coords = $this->extract_element_coordinates($element, $px_to_mm);
@@ -709,9 +835,19 @@ class PDF_Builder_Pro_Generator {
         $width = $coords['width'];
         $height = $coords['height'];
 
+        // LOG: Coordonnées image
+        error_log("🖼️ RENDER_IMAGE - COORDS: x=$x, y=$y, w=$width, h=$height");
+
         try {
+            // Vérifier si l'image existe
+            if (!file_exists($src) && !filter_var($src, FILTER_VALIDATE_URL)) {
+                error_log("🖼️ RENDER_IMAGE - WARNING: file not found or invalid URL: $src");
+            }
+
             $this->pdf->Image($src, $x, $y, $width, $height);
+            error_log("🖼️ RENDER_IMAGE - SUCCESS: Image($src, $x, $y, $width, $height)");
         } catch (Exception $e) {
+            error_log("🖼️ RENDER_IMAGE - ERROR: " . $e->getMessage());
             $this->log_error("Erreur chargement image $src: " . $e->getMessage());
         }
     }
@@ -1110,10 +1246,16 @@ class PDF_Builder_Pro_Generator {
      * Rendu d'élément mentions légales
      */
     private function render_mentions_element($element, $px_to_mm) {
+        // LOG: Début rendu mentions
+        error_log("📝 RENDER_MENTIONS - START: " . json_encode($element));
+
         $x = isset($element['x']) ? $element['x'] * $px_to_mm : 10;
         $y = isset($element['y']) ? $element['y'] * $px_to_mm : 10;
         $width = isset($element['width']) ? $element['width'] * $px_to_mm : 80;
         $height = isset($element['height']) ? $element['height'] * $px_to_mm : 15;
+
+        // LOG: Coordonnées
+        error_log("📝 RENDER_MENTIONS - COORDS: x=$x, y=$y, w=$width, h=$height");
 
         // Récupérer les propriétés de l'élément
         $color = isset($element['color']) ? $element['color'] : '#666666';
@@ -1122,6 +1264,9 @@ class PDF_Builder_Pro_Generator {
         $textAlign = isset($element['textAlign']) ? $element['textAlign'] : 'center';
         $layout = isset($element['layout']) ? $element['layout'] : 'horizontal';
         $separator = isset($element['separator']) ? $element['separator'] : ' • ';
+
+        // LOG: Propriétés de style
+        error_log("📝 RENDER_MENTIONS - STYLE: color=$color, fontSize={$fontSize}px, fontFamily=$fontFamily, align=$textAlign, layout=$layout, separator='$separator'");
         $lineHeight = isset($element['lineHeight']) ? $element['lineHeight'] : 1.2;
 
         // Appliquer la couleur du texte
@@ -1177,7 +1322,13 @@ class PDF_Builder_Pro_Generator {
 
         // Rendre le contenu
         if (!empty($mentions)) {
+            // LOG: Mentions collectées
+            error_log("📝 RENDER_MENTIONS - MENTIONS: " . json_encode($mentions));
+
             if ($layout === 'vertical') {
+                // LOG: Rendu vertical
+                error_log("📝 RENDER_MENTIONS - RENDER: vertical layout, " . count($mentions) . " items");
+
                 // Affichage vertical
                 $currentY = $y;
                 foreach ($mentions as $mention) {
@@ -1188,9 +1339,16 @@ class PDF_Builder_Pro_Generator {
             } else {
                 // Affichage horizontal avec séparateur
                 $content = implode($separator, $mentions);
+
+                // LOG: Rendu horizontal
+                error_log("📝 RENDER_MENTIONS - RENDER: horizontal layout, content='$content'");
+
                 $this->pdf->MultiCell($width, $fontSize * $lineHeight * $px_to_mm, $content, 0, $textAlign === 'center' ? 'C' : ($textAlign === 'right' ? 'R' : 'L'), false);
             }
         } else {
+            // LOG: Aucun contenu
+            error_log("📝 RENDER_MENTIONS - RENDER: no mentions configured, using default");
+
             // Contenu par défaut si rien n'est configuré
             $this->pdf->Cell($width, $fontSize * $lineHeight * $px_to_mm, 'Mentions légales', 0, 0, 'C');
         }
@@ -1604,6 +1762,9 @@ class PDF_Builder_Pro_Generator {
      * Rendu d'élément product_table
      */
     private function render_product_table_element($element, $px_to_mm) {
+        // LOG: Début rendu tableau produits
+        error_log("📊 RENDER_PRODUCT_TABLE - START: " . json_encode($element));
+
         error_log('PDF Builder: render_product_table_element called with tableStyle: ' . ($element['tableStyle'] ?? 'default'));
 
         // Extraction des propriétés avec valeurs par défaut sûres
@@ -1612,6 +1773,9 @@ class PDF_Builder_Pro_Generator {
         $y = $coords['y'];
         $width = $coords['width'] ?: 550 * $px_to_mm;
         $height = $coords['height'] ?: 200 * $px_to_mm;
+
+        // LOG: Coordonnées et dimensions
+        error_log("📊 RENDER_PRODUCT_TABLE - COORDS: x=$x, y=$y, w=$width, h=$height");
 
         // Propriétés de style visuel
         $background_color = $element['backgroundColor'] ?? 'transparent';
@@ -2586,55 +2750,6 @@ class PDF_Builder_Pro_Generator {
             return $text;
         }
         return substr($text, 0, $max_length - 3) . '...';
-    }
-
-    /**
-     * Rendu d'élément document_type
-     */
-    private function render_document_type_element($element, $px_to_mm) {
-        $x = isset($element['x']) ? $element['x'] * $px_to_mm : 10;
-        $y = isset($element['y']) ? $element['y'] * $px_to_mm : 10;
-        $width = isset($element['width']) ? $element['width'] * $px_to_mm : 50;
-        $height = isset($element['height']) ? $element['height'] * $px_to_mm : 20;
-
-        // Déterminer le type de document dynamiquement
-        $document_type = 'facture'; // Valeur par défaut
-        $document_type_label = 'FACTURE';
-        $invoice_number = 'N° INV-001';
-
-        if ($this->order) {
-            $order_status = $this->order->get_status();
-            $document_type = $this->detect_document_type($order_status);
-            $document_type_label = $this->get_document_type_label($document_type);
-            $invoice_number = 'N° ' . strtoupper($document_type) . '-' . $this->order->get_id();
-        }
-
-        $this->pdf->SetXY($x, $y);
-        $this->pdf->SetFont('helvetica', 'B', 14);
-        $this->pdf->Cell($width, 8, $document_type_label, 0, 1, 'R');
-        $this->pdf->SetFont('helvetica', '', 10);
-        $this->pdf->Cell($width, 6, $invoice_number, 0, 1, 'R');
-    }
-
-    /**
-     * Rendu d'élément order_number
-     */
-    private function render_order_number_element($element, $px_to_mm) {
-        $x = isset($element['x']) ? $element['x'] * $px_to_mm : 10;
-        $y = isset($element['y']) ? $element['y'] * $px_to_mm : 10;
-        $width = isset($element['width']) ? $element['width'] * $px_to_mm : 50;
-        $height = isset($element['height']) ? $element['height'] * $px_to_mm : 15;
-
-        // Numéro de commande
-        $order_number = 'N° CMD-001'; // Valeur par défaut
-
-        if ($this->order) {
-            $order_number = 'N° ' . $this->order->get_order_number();
-        }
-
-        $this->pdf->SetXY($x, $y);
-        $this->pdf->SetFont('helvetica', 'B', 12);
-        $this->pdf->Cell($width, $height, $order_number, 0, 1, 'L');
     }
 
     /**
