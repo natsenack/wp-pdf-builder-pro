@@ -36,12 +36,16 @@ if (typeof window !== 'undefined') {
     version: 'debug-test',
     init: function init(containerId, options) {
       console.log('PDFBuilderPro.init called with:', containerId, options);
-      return {
-        success: true
-      };
+      // Forcer une erreur visible pour confirmer que le script s'exécute
+      throw new Error('PDF Builder Pro: Script is executing! This is a test error.');
+      // removed by dead control flow
+
     }
   };
   console.log('PDF Builder Pro: Basic PDFBuilderPro defined on window');
+
+  // Forcer une erreur visible immédiatement
+  throw new Error('PDF Builder Pro: Script loaded and PDFBuilderPro defined! This confirms execution.');
 }
 
 /***/ })
