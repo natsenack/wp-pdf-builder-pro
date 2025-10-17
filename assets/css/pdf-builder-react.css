@@ -539,37 +539,7 @@ body.pdf-builder-active #wpadminbar {
   overflow: hidden;
 }
 
-/* Bouton toggle du sidebar */
-.sidebar-toggle-fixed {
-  position: fixed !important;
-  top: 50% !important;
-  right: 15px !important;
-  transform: translateY(-50%) !important;
-  z-index: 50 !important; /* Réduit pour ne pas masquer l'admin bar */
-  width: 40px !important;
-  height: 40px !important;
-  background: linear-gradient(135deg, #007bff, #0056b3) !important;
-  border: none !important;
-  border-radius: 50% !important;
-  cursor: pointer !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  font-size: 18px !important;
-  color: #ffffff !important;
-  box-shadow: 0 4px 12px rgba(0,123,255,0.3) !important;
-  transition: all 0.3s ease !important;
-}
-
-.sidebar-toggle-fixed:hover {
-  background: linear-gradient(135deg, #0056b3, #004085) !important;
-  transform: translateY(-50%) scale(1.1) !important;
-  box-shadow: 0 6px 16px rgba(0,123,255,0.4) !important;
-}
-
-.sidebar-toggle-fixed:active {
-  transform: translateY(-50%) scale(0.95) !important;
-}
+/* Bouton toggle du sidebar - RETIRÉ car conflit avec positionnement dynamique */
 
 /* Container du canvas */
 .canvas-section {
