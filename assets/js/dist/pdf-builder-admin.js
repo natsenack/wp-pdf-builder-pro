@@ -9633,16 +9633,16 @@ function PropertiesPanel_objectSpread(e) { for (var r = 1; r < arguments.length;
 function PropertiesPanel_defineProperty(e, r, t) { return (r = PropertiesPanel_toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function PropertiesPanel_toPropertyKey(t) { var i = PropertiesPanel_toPrimitive(t, "string"); return "symbol" == PropertiesPanel_typeof(i) ? i : i + ""; }
 function PropertiesPanel_toPrimitive(t, r) { if ("object" != PropertiesPanel_typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != PropertiesPanel_typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function PropertiesPanel_slicedToArray(r, e) { return PropertiesPanel_arrayWithHoles(r) || PropertiesPanel_iterableToArrayLimit(r, e) || PropertiesPanel_unsupportedIterableToArray(r, e) || PropertiesPanel_nonIterableRest(); }
-function PropertiesPanel_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function PropertiesPanel_iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
-function PropertiesPanel_arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 function PropertiesPanel_toConsumableArray(r) { return PropertiesPanel_arrayWithoutHoles(r) || PropertiesPanel_iterableToArray(r) || PropertiesPanel_unsupportedIterableToArray(r) || PropertiesPanel_nonIterableSpread(); }
 function PropertiesPanel_nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function PropertiesPanel_unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return PropertiesPanel_arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? PropertiesPanel_arrayLikeToArray(r, a) : void 0; } }
 function PropertiesPanel_iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
 function PropertiesPanel_arrayWithoutHoles(r) { if (Array.isArray(r)) return PropertiesPanel_arrayLikeToArray(r); }
+function PropertiesPanel_slicedToArray(r, e) { return PropertiesPanel_arrayWithHoles(r) || PropertiesPanel_iterableToArrayLimit(r, e) || PropertiesPanel_unsupportedIterableToArray(r, e) || PropertiesPanel_nonIterableRest(); }
+function PropertiesPanel_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function PropertiesPanel_unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return PropertiesPanel_arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? PropertiesPanel_arrayLikeToArray(r, a) : void 0; } }
 function PropertiesPanel_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function PropertiesPanel_iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function PropertiesPanel_arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 
 
 
@@ -9816,107 +9816,227 @@ var TEMPLATE_PRESETS = {
 var ELEMENT_PROPERTY_PROFILES = {
   // Éléments texte
   text: {
-    appearance: ['colors', 'font', 'borders', 'effects'],
-    layout: ['position', 'dimensions', 'transform', 'layers'],
-    content: ['text', 'variables'],
-    effects: ['opacity', 'shadows', 'filters']
+    appearance: {
+      sections: ['colors', 'typography', 'borders', 'effects'],
+      properties: {
+        colors: ['color', 'backgroundColor'],
+        typography: ['fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'textDecoration', 'textAlign', 'textTransform', 'lineHeight', 'letterSpacing'],
+        borders: ['borderWidth', 'borderColor', 'borderRadius'],
+        effects: ['opacity', 'shadow']
+      }
+    },
+    layout: {
+      sections: ['position', 'dimensions', 'transform', 'layers'],
+      properties: {
+        position: ['x', 'y'],
+        dimensions: ['width', 'height'],
+        transform: ['rotation'],
+        layers: ['zIndex']
+      }
+    },
+    content: {
+      sections: ['text', 'variables'],
+      properties: {
+        text: ['text'],
+        variables: ['variables']
+      }
+    },
+    effects: {
+      sections: ['opacity', 'shadows', 'filters'],
+      properties: {
+        opacity: ['opacity'],
+        shadows: ['shadow', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY'],
+        filters: ['brightness', 'contrast', 'saturate']
+      }
+    }
   },
-  'layout-header': {
-    appearance: ['colors', 'font', 'borders', 'effects'],
-    layout: ['position', 'dimensions', 'transform', 'layers'],
-    content: ['text', 'variables'],
-    effects: ['opacity', 'shadows', 'filters']
-  },
-  'layout-footer': {
-    appearance: ['colors', 'font', 'borders', 'effects'],
-    layout: ['position', 'dimensions', 'transform', 'layers'],
-    content: ['text', 'variables'],
-    effects: ['opacity', 'shadows', 'filters']
-  },
-  'layout-section': {
-    appearance: ['colors', 'font', 'borders', 'effects'],
-    layout: ['position', 'dimensions', 'transform', 'layers'],
-    content: ['text', 'variables'],
-    effects: ['opacity', 'shadows', 'filters']
-  },
-  // Éléments image/logo
+  // Éléments image/logo (pas de propriétés texte)
   logo: {
-    appearance: ['colors', 'borders', 'effects'],
-    layout: ['position', 'dimensions', 'transform', 'layers'],
-    content: ['image'],
-    effects: ['opacity', 'shadows', 'filters']
+    appearance: {
+      sections: ['colors', 'borders', 'effects'],
+      properties: {
+        colors: ['backgroundColor'],
+        // seulement le fond, pas de couleur texte
+        borders: ['borderWidth', 'borderColor', 'borderRadius'],
+        effects: ['opacity', 'shadow']
+      }
+    },
+    layout: {
+      sections: ['position', 'dimensions', 'transform', 'layers'],
+      properties: {
+        position: ['x', 'y'],
+        dimensions: ['width', 'height'],
+        transform: ['rotation'],
+        layers: ['zIndex']
+      }
+    },
+    content: {
+      sections: ['image'],
+      properties: {
+        image: ['imageUrl', 'alt', 'objectFit']
+      }
+    },
+    effects: {
+      sections: ['opacity', 'shadows'],
+      properties: {
+        opacity: ['opacity'],
+        shadows: ['shadow', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY']
+        // pas de filters pour les images
+      }
+    }
   },
   // Logo entreprise (même propriétés que logo)
   company_logo: {
-    appearance: ['colors', 'borders', 'effects'],
-    layout: ['position', 'dimensions', 'transform', 'layers'],
-    content: ['image'],
-    effects: ['opacity', 'shadows', 'filters']
+    appearance: {
+      sections: ['colors', 'borders', 'effects'],
+      properties: {
+        colors: ['backgroundColor'],
+        borders: ['borderWidth', 'borderColor', 'borderRadius'],
+        effects: ['opacity', 'shadow']
+      }
+    },
+    layout: {
+      sections: ['position', 'dimensions', 'transform', 'layers'],
+      properties: {
+        position: ['x', 'y'],
+        dimensions: ['width', 'height'],
+        transform: ['rotation'],
+        layers: ['zIndex']
+      }
+    },
+    content: {
+      sections: ['image'],
+      properties: {
+        image: ['imageUrl', 'alt', 'objectFit']
+      }
+    },
+    effects: {
+      sections: ['opacity', 'shadows'],
+      properties: {
+        opacity: ['opacity'],
+        shadows: ['shadow', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY']
+      }
+    }
   },
-  // Tableaux produits
+  // Tableaux produits (propriétés spécifiques)
   product_table: {
-    appearance: ['colors', 'font', 'borders', 'effects'],
-    layout: ['position', 'dimensions', 'transform', 'layers'],
-    content: ['table'],
-    effects: ['opacity', 'shadows', 'filters']
+    appearance: {
+      sections: ['colors', 'typography', 'borders', 'effects'],
+      properties: {
+        colors: ['color', 'backgroundColor'],
+        typography: ['fontFamily', 'fontSize', 'fontWeight'],
+        borders: ['borderWidth', 'borderColor', 'borderRadius'],
+        effects: ['opacity', 'shadow']
+      }
+    },
+    layout: {
+      sections: ['position', 'dimensions', 'transform', 'layers'],
+      properties: {
+        position: ['x', 'y'],
+        dimensions: ['width', 'height'],
+        transform: ['rotation'],
+        layers: ['zIndex']
+      }
+    },
+    content: {
+      sections: ['table'],
+      properties: {
+        table: ['columns', 'showHeaders', 'showBorders', 'tableStyle']
+      }
+    },
+    effects: {
+      sections: ['opacity', 'shadows'],
+      properties: {
+        opacity: ['opacity'],
+        shadows: ['shadow', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY']
+      }
+    }
   },
-  // Informations client
-  customer_info: {
-    appearance: ['colors', 'font', 'borders', 'effects'],
-    layout: ['position', 'dimensions', 'transform', 'layers'],
-    content: ['customer_fields'],
-    effects: ['opacity', 'shadows', 'filters']
-  },
-  // Texte dynamique
+  // Éléments texte dynamiques (même propriétés que text)
   'dynamic-text': {
-    appearance: ['colors', 'font', 'borders', 'effects'],
-    layout: ['position', 'dimensions', 'transform', 'layers'],
-    content: ['dynamic_text'],
-    effects: ['opacity', 'shadows', 'filters']
-  },
-  // Mentions légales
-  mentions: {
-    appearance: ['colors', 'font', 'borders', 'effects'],
-    layout: ['position', 'dimensions', 'transform', 'layers'],
-    content: ['mentions'],
-    effects: ['opacity', 'shadows', 'filters']
-  },
-  // Informations entreprise
-  company_info: {
-    appearance: ['colors', 'font', 'borders', 'effects'],
-    layout: ['position', 'dimensions', 'transform', 'layers'],
-    content: ['company_fields'],
-    effects: ['opacity', 'shadows', 'filters']
-  },
-  // Type de document
-  document_type: {
-    appearance: ['colors', 'font', 'borders', 'effects'],
-    layout: ['position', 'dimensions', 'transform', 'layers'],
-    content: ['document_type'],
-    effects: ['opacity', 'shadows', 'filters']
-  },
-  // Numéro de commande
-  order_number: {
-    appearance: ['colors', 'font', 'borders', 'effects'],
-    layout: ['position', 'dimensions', 'transform', 'layers'],
-    content: ['order_number'],
-    effects: ['opacity', 'shadows', 'filters']
+    appearance: {
+      sections: ['colors', 'typography', 'borders', 'effects'],
+      properties: {
+        colors: ['color', 'backgroundColor'],
+        typography: ['fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'textDecoration', 'textAlign', 'textTransform', 'lineHeight', 'letterSpacing'],
+        borders: ['borderWidth', 'borderColor', 'borderRadius'],
+        effects: ['opacity', 'shadow']
+      }
+    },
+    layout: {
+      sections: ['position', 'dimensions', 'transform', 'layers'],
+      properties: {
+        position: ['x', 'y'],
+        dimensions: ['width', 'height'],
+        transform: ['rotation'],
+        layers: ['zIndex']
+      }
+    },
+    content: {
+      sections: ['dynamic_text', 'variables'],
+      properties: {
+        dynamic_text: ['dynamicText'],
+        variables: ['variables']
+      }
+    },
+    effects: {
+      sections: ['opacity', 'shadows', 'filters'],
+      properties: {
+        opacity: ['opacity'],
+        shadows: ['shadow', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY'],
+        filters: ['brightness', 'contrast', 'saturate']
+      }
+    }
   },
   // Éléments par défaut (forme géométrique)
   "default": {
-    appearance: ['colors', 'borders', 'effects'],
-    layout: ['position', 'dimensions', 'transform', 'layers'],
-    content: [],
-    effects: ['opacity', 'shadows', 'filters']
+    appearance: {
+      sections: ['colors', 'borders', 'effects'],
+      properties: {
+        colors: ['backgroundColor'],
+        borders: ['borderWidth', 'borderColor', 'borderRadius'],
+        effects: ['opacity', 'shadow']
+      }
+    },
+    layout: {
+      sections: ['position', 'dimensions', 'transform', 'layers'],
+      properties: {
+        position: ['x', 'y'],
+        dimensions: ['width', 'height'],
+        transform: ['rotation'],
+        layers: ['zIndex']
+      }
+    },
+    content: {
+      sections: [],
+      properties: {}
+    },
+    effects: {
+      sections: ['opacity', 'shadows'],
+      properties: {
+        opacity: ['opacity'],
+        shadows: ['shadow', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY']
+      }
+    }
   }
 };
 
-// Fonction helper pour parser les valeurs numériques de manière sécurisée
-var safeParseInt = function safeParseInt(value) {
-  var defaultValue = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-  if (value === null || value === undefined || value === '') return defaultValue;
-  var parsed = parseInt(value, 10);
-  return isNaN(parsed) ? defaultValue : parsed;
+// Fonction helper pour vérifier si une propriété spécifique est autorisée pour un élément
+var isPropertyAllowedForElement = function isPropertyAllowedForElement(elementType, activeTab, propertyName) {
+  var elementProfile = ELEMENT_PROPERTY_PROFILES[elementType] || ELEMENT_PROPERTY_PROFILES['default'];
+  var tabProfile = elementProfile[activeTab];
+  if (!tabProfile) return false;
+
+  // Vérifier dans toutes les sections de l'onglet si la propriété est autorisée
+  for (var _i = 0, _Object$entries = Object.entries(tabProfile.properties); _i < _Object$entries.length; _i++) {
+    var _Object$entries$_i = PropertiesPanel_slicedToArray(_Object$entries[_i], 2),
+      sectionName = _Object$entries$_i[0],
+      properties = _Object$entries$_i[1];
+    if (properties.includes(propertyName)) {
+      return true;
+    }
+  }
+  return false;
 };
 var safeParseFloat = function safeParseFloat(value) {
   var defaultValue = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
@@ -9932,22 +10052,22 @@ var getSmartPropertyOrder = function getSmartPropertyOrder(elementType, tab) {
     // Ordre pour l'onglet Apparence
     appearance: {
       // Éléments texte : couleur et police en premier
-      text: ['colors', 'font', 'borders', 'effects'],
-      'dynamic-text': ['colors', 'font', 'borders', 'effects'],
-      'layout-header': ['colors', 'font', 'borders', 'effects'],
-      'layout-footer': ['colors', 'font', 'borders', 'effects'],
-      'layout-section': ['colors', 'font', 'borders', 'effects'],
+      text: ['colors', 'typography', 'borders', 'effects'],
+      'dynamic-text': ['colors', 'typography', 'borders', 'effects'],
+      'layout-header': ['colors', 'typography', 'borders', 'effects'],
+      'layout-footer': ['colors', 'typography', 'borders', 'effects'],
+      'layout-section': ['colors', 'typography', 'borders', 'effects'],
       // Éléments image : couleur de fond et bordures en premier
       logo: ['colors', 'borders', 'effects'],
       company_logo: ['colors', 'borders', 'effects'],
       // Tableaux : couleurs, police, bordures
-      product_table: ['colors', 'font', 'borders', 'effects'],
+      product_table: ['colors', 'typography', 'borders', 'effects'],
       // Éléments de données : couleurs et police
-      customer_info: ['colors', 'font', 'borders', 'effects'],
-      company_info: ['colors', 'font', 'borders', 'effects'],
-      document_type: ['colors', 'font', 'borders', 'effects'],
-      order_number: ['colors', 'font', 'borders', 'effects'],
-      mentions: ['colors', 'font', 'borders', 'effects'],
+      customer_info: ['colors', 'typography', 'borders', 'effects'],
+      company_info: ['colors', 'typography', 'borders', 'effects'],
+      document_type: ['colors', 'typography', 'borders', 'effects'],
+      order_number: ['colors', 'typography', 'borders', 'effects'],
+      mentions: ['colors', 'typography', 'borders', 'effects'],
       // Par défaut
       "default": ['colors', 'borders', 'effects']
     },
@@ -10238,12 +10358,13 @@ var FontControls = function FontControls(_ref2) {
 };
 
 // Fonctions helper pour rendre chaque section de propriétés dans l'ordre intelligent
-var renderColorsSection = function renderColorsSection(selectedElement, localProperties, handlePropertyChange, isBackgroundEnabled) {
-  var _localProperties$back, _localProperties$back2;
+var renderColorsSection = function renderColorsSection(selectedElement, localProperties, handlePropertyChange, isBackgroundEnabled, activeTab) {
+  var _ELEMENT_PROPERTY_PRO, _localProperties$back, _localProperties$back2;
+  var allowedProperties = ((_ELEMENT_PROPERTY_PRO = ELEMENT_PROPERTY_PROFILES[selectedElement.type]) === null || _ELEMENT_PROPERTY_PRO === void 0 || (_ELEMENT_PROPERTY_PRO = _ELEMENT_PROPERTY_PRO[activeTab]) === null || _ELEMENT_PROPERTY_PRO === void 0 || (_ELEMENT_PROPERTY_PRO = _ELEMENT_PROPERTY_PRO.properties) === null || _ELEMENT_PROPERTY_PRO === void 0 ? void 0 : _ELEMENT_PROPERTY_PRO.colors) || [];
   return /*#__PURE__*/React.createElement("div", {
     key: "colors",
     className: "properties-group"
-  }, /*#__PURE__*/React.createElement("h4", null, "\uD83C\uDFA8 Couleurs & Apparence"), /*#__PURE__*/React.createElement(ColorPicker, {
+  }, /*#__PURE__*/React.createElement("h4", null, "\uD83C\uDFA8 Couleurs & Apparence"), allowedProperties.includes('color') && /*#__PURE__*/React.createElement(ColorPicker, {
     label: "Texte",
     value: localProperties.color,
     onChange: function onChange(value) {
@@ -10251,7 +10372,7 @@ var renderColorsSection = function renderColorsSection(selectedElement, localPro
     },
     presets: ['#1e293b', '#334155', '#475569', '#64748b', '#94a3b8', '#cbd5e1', '#000000'],
     defaultColor: "#333333"
-  }), /*#__PURE__*/React.createElement("div", {
+  }), allowedProperties.includes('backgroundColor') && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "property-row"
   }, /*#__PURE__*/React.createElement("span", null, "Fond activ\xE9:"), /*#__PURE__*/React.createElement("label", {
     className: "toggle"
@@ -10296,7 +10417,7 @@ var renderColorsSection = function renderColorsSection(selectedElement, localPro
     className: "slider"
   }), /*#__PURE__*/React.createElement("span", {
     className: "slider-value"
-  }, Math.round(((_localProperties$back2 = localProperties.backgroundOpacity) !== null && _localProperties$back2 !== void 0 ? _localProperties$back2 : 1) * 100), "%")))));
+  }, Math.round(((_localProperties$back2 = localProperties.backgroundOpacity) !== null && _localProperties$back2 !== void 0 ? _localProperties$back2 : 1) * 100), "%"))))));
 };
 var renderFontSection = function renderFontSection(selectedElement, localProperties, handlePropertyChange) {
   return /*#__PURE__*/React.createElement(FontControls, {
@@ -10305,6 +10426,199 @@ var renderFontSection = function renderFontSection(selectedElement, localPropert
     properties: localProperties,
     onPropertyChange: handlePropertyChange
   });
+};
+
+// Section Typographie - seulement si autorisée
+var renderTypographySection = function renderTypographySection(selectedElement, localProperties, handlePropertyChange, activeTab) {
+  var _ELEMENT_PROPERTY_PRO2;
+  var allowedProperties = ((_ELEMENT_PROPERTY_PRO2 = ELEMENT_PROPERTY_PROFILES[selectedElement.type]) === null || _ELEMENT_PROPERTY_PRO2 === void 0 || (_ELEMENT_PROPERTY_PRO2 = _ELEMENT_PROPERTY_PRO2[activeTab]) === null || _ELEMENT_PROPERTY_PRO2 === void 0 || (_ELEMENT_PROPERTY_PRO2 = _ELEMENT_PROPERTY_PRO2.properties) === null || _ELEMENT_PROPERTY_PRO2 === void 0 ? void 0 : _ELEMENT_PROPERTY_PRO2.typography) || [];
+  if (allowedProperties.length === 0) return null;
+  return /*#__PURE__*/React.createElement("div", {
+    key: "typography",
+    className: "properties-group"
+  }, /*#__PURE__*/React.createElement("h4", null, "\uD83D\uDCDD Typographie"), allowedProperties.includes('fontFamily') && /*#__PURE__*/React.createElement("div", {
+    className: "property-row"
+  }, /*#__PURE__*/React.createElement("label", null, "Police:"), /*#__PURE__*/React.createElement("select", {
+    value: localProperties.fontFamily || 'Arial',
+    onChange: function onChange(e) {
+      return handlePropertyChange(selectedElement.id, 'fontFamily', e.target.value);
+    },
+    className: "property-select"
+  }, /*#__PURE__*/React.createElement("option", {
+    value: "Arial"
+  }, "Arial"), /*#__PURE__*/React.createElement("option", {
+    value: "Helvetica"
+  }, "Helvetica"), /*#__PURE__*/React.createElement("option", {
+    value: "Times New Roman"
+  }, "Times New Roman"), /*#__PURE__*/React.createElement("option", {
+    value: "Courier New"
+  }, "Courier New"), /*#__PURE__*/React.createElement("option", {
+    value: "Georgia"
+  }, "Georgia"), /*#__PURE__*/React.createElement("option", {
+    value: "Verdana"
+  }, "Verdana"), /*#__PURE__*/React.createElement("option", {
+    value: "Trebuchet MS"
+  }, "Trebuchet MS"), /*#__PURE__*/React.createElement("option", {
+    value: "Comic Sans MS"
+  }, "Comic Sans MS"), /*#__PURE__*/React.createElement("option", {
+    value: "Impact"
+  }, "Impact"), /*#__PURE__*/React.createElement("option", {
+    value: "Lucida Console"
+  }, "Lucida Console"))), allowedProperties.includes('fontSize') && /*#__PURE__*/React.createElement("div", {
+    className: "property-row"
+  }, /*#__PURE__*/React.createElement("label", null, "Taille:"), /*#__PURE__*/React.createElement("div", {
+    className: "slider-container"
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "range",
+    min: "8",
+    max: "72",
+    step: "1",
+    value: localProperties.fontSize || 12,
+    onChange: function onChange(e) {
+      return handlePropertyChange(selectedElement.id, 'fontSize', safeParseInt(e.target.value, 12));
+    },
+    className: "slider"
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "slider-value"
+  }, localProperties.fontSize || 12, "px"))), allowedProperties.includes('fontWeight') && /*#__PURE__*/React.createElement("div", {
+    className: "property-row"
+  }, /*#__PURE__*/React.createElement("label", null, "\xC9paisseur:"), /*#__PURE__*/React.createElement("select", {
+    value: localProperties.fontWeight || 'normal',
+    onChange: function onChange(e) {
+      return handlePropertyChange(selectedElement.id, 'fontWeight', e.target.value);
+    },
+    className: "property-select"
+  }, /*#__PURE__*/React.createElement("option", {
+    value: "normal"
+  }, "Normal"), /*#__PURE__*/React.createElement("option", {
+    value: "bold"
+  }, "Gras"), /*#__PURE__*/React.createElement("option", {
+    value: "lighter"
+  }, "Fin"), /*#__PURE__*/React.createElement("option", {
+    value: "100"
+  }, "100"), /*#__PURE__*/React.createElement("option", {
+    value: "200"
+  }, "200"), /*#__PURE__*/React.createElement("option", {
+    value: "300"
+  }, "300"), /*#__PURE__*/React.createElement("option", {
+    value: "400"
+  }, "400"), /*#__PURE__*/React.createElement("option", {
+    value: "500"
+  }, "500"), /*#__PURE__*/React.createElement("option", {
+    value: "600"
+  }, "600"), /*#__PURE__*/React.createElement("option", {
+    value: "700"
+  }, "700"), /*#__PURE__*/React.createElement("option", {
+    value: "800"
+  }, "800"), /*#__PURE__*/React.createElement("option", {
+    value: "900"
+  }, "900"))), allowedProperties.includes('fontStyle') && /*#__PURE__*/React.createElement("div", {
+    className: "property-row"
+  }, /*#__PURE__*/React.createElement("label", null, "Style:"), /*#__PURE__*/React.createElement("select", {
+    value: localProperties.fontStyle || 'normal',
+    onChange: function onChange(e) {
+      return handlePropertyChange(selectedElement.id, 'fontStyle', e.target.value);
+    },
+    className: "property-select"
+  }, /*#__PURE__*/React.createElement("option", {
+    value: "normal"
+  }, "Normal"), /*#__PURE__*/React.createElement("option", {
+    value: "italic"
+  }, "Italique"), /*#__PURE__*/React.createElement("option", {
+    value: "oblique"
+  }, "Oblique"))), allowedProperties.includes('textDecoration') && /*#__PURE__*/React.createElement("div", {
+    className: "property-row"
+  }, /*#__PURE__*/React.createElement("label", null, "D\xE9coration:"), /*#__PURE__*/React.createElement("select", {
+    value: localProperties.textDecoration || 'none',
+    onChange: function onChange(e) {
+      return handlePropertyChange(selectedElement.id, 'textDecoration', e.target.value);
+    },
+    className: "property-select"
+  }, /*#__PURE__*/React.createElement("option", {
+    value: "none"
+  }, "Aucune"), /*#__PURE__*/React.createElement("option", {
+    value: "underline"
+  }, "Soulign\xE9"), /*#__PURE__*/React.createElement("option", {
+    value: "overline"
+  }, "Surlign\xE9"), /*#__PURE__*/React.createElement("option", {
+    value: "line-through"
+  }, "Barr\xE9"))), allowedProperties.includes('textAlign') && /*#__PURE__*/React.createElement("div", {
+    className: "property-row"
+  }, /*#__PURE__*/React.createElement("label", null, "Alignement:"), /*#__PURE__*/React.createElement("div", {
+    className: "alignment-buttons"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "alignment-btn ".concat(localProperties.textAlign === 'left' ? 'active' : ''),
+    onClick: function onClick() {
+      return handlePropertyChange(selectedElement.id, 'textAlign', 'left');
+    },
+    title: "Aligner \xE0 gauche"
+  }, "\u2B05\uFE0F"), /*#__PURE__*/React.createElement("button", {
+    className: "alignment-btn ".concat(localProperties.textAlign === 'center' ? 'active' : ''),
+    onClick: function onClick() {
+      return handlePropertyChange(selectedElement.id, 'textAlign', 'center');
+    },
+    title: "Centrer"
+  }, "\u2B0C"), /*#__PURE__*/React.createElement("button", {
+    className: "alignment-btn ".concat(localProperties.textAlign === 'right' ? 'active' : ''),
+    onClick: function onClick() {
+      return handlePropertyChange(selectedElement.id, 'textAlign', 'right');
+    },
+    title: "Aligner \xE0 droite"
+  }, "\u27A1\uFE0F"), /*#__PURE__*/React.createElement("button", {
+    className: "alignment-btn ".concat(localProperties.textAlign === 'justify' ? 'active' : ''),
+    onClick: function onClick() {
+      return handlePropertyChange(selectedElement.id, 'textAlign', 'justify');
+    },
+    title: "Justifier"
+  }, "\u2B0C\u2B05\uFE0F"))), allowedProperties.includes('textTransform') && /*#__PURE__*/React.createElement("div", {
+    className: "property-row"
+  }, /*#__PURE__*/React.createElement("label", null, "Casse:"), /*#__PURE__*/React.createElement("select", {
+    value: localProperties.textTransform || 'none',
+    onChange: function onChange(e) {
+      return handlePropertyChange(selectedElement.id, 'textTransform', e.target.value);
+    },
+    className: "property-select"
+  }, /*#__PURE__*/React.createElement("option", {
+    value: "none"
+  }, "Aucune"), /*#__PURE__*/React.createElement("option", {
+    value: "uppercase"
+  }, "Majuscules"), /*#__PURE__*/React.createElement("option", {
+    value: "lowercase"
+  }, "Minuscules"), /*#__PURE__*/React.createElement("option", {
+    value: "capitalize"
+  }, "Premi\xE8re lettre"))), allowedProperties.includes('lineHeight') && /*#__PURE__*/React.createElement("div", {
+    className: "property-row"
+  }, /*#__PURE__*/React.createElement("label", null, "Interligne:"), /*#__PURE__*/React.createElement("div", {
+    className: "slider-container"
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "range",
+    min: "0.8",
+    max: "3",
+    step: "0.1",
+    value: localProperties.lineHeight || 1.2,
+    onChange: function onChange(e) {
+      return handlePropertyChange(selectedElement.id, 'lineHeight', safeParseFloat(e.target.value, 1.2));
+    },
+    className: "slider"
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "slider-value"
+  }, localProperties.lineHeight || 1.2))), allowedProperties.includes('letterSpacing') && /*#__PURE__*/React.createElement("div", {
+    className: "property-row"
+  }, /*#__PURE__*/React.createElement("label", null, "Espacement:"), /*#__PURE__*/React.createElement("div", {
+    className: "slider-container"
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "range",
+    min: "-2",
+    max: "10",
+    step: "0.5",
+    value: localProperties.letterSpacing || 0,
+    onChange: function onChange(e) {
+      return handlePropertyChange(selectedElement.id, 'letterSpacing', safeParseFloat(e.target.value, 0));
+    },
+    className: "slider"
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "slider-value"
+  }, localProperties.letterSpacing || 0, "px"))));
 };
 var renderBordersSection = function renderBordersSection(selectedElement, localProperties, handlePropertyChange, isBorderEnabled, setIsBorderEnabled, setPreviousBorderWidth, setPreviousBorderColor, previousBorderWidth, previousBorderColor) {
   var _localProperties$bord, _localProperties$bord2, _localProperties$bord3, _localProperties$bord4;
@@ -10644,7 +10958,11 @@ var PropertiesPanel = /*#__PURE__*/(0,react.memo)(function (_ref4) {
 
     // Obtenir le profil de propriétés pour ce type d'élément
     var elementProfile = ELEMENT_PROPERTY_PROFILES[selectedElement.type] || ELEMENT_PROPERTY_PROFILES['default'];
-    var allowedControls = elementProfile[activeTab] || [];
+    var tabProfile = elementProfile[activeTab] || {
+      sections: [],
+      properties: {}
+    };
+    var allowedControls = tabProfile.sections || [];
     switch (activeTab) {
       case 'appearance':
         return /*#__PURE__*/React.createElement("div", {
@@ -10652,9 +10970,9 @@ var PropertiesPanel = /*#__PURE__*/(0,react.memo)(function (_ref4) {
         }, smartOrder.map(function (section) {
           switch (section) {
             case 'colors':
-              return renderColorsSection(selectedElement, localProperties, handlePropertyChange, isBackgroundEnabled);
-            case 'font':
-              return allowedControls.includes('font') && selectedElement.type !== 'product_table' ? renderFontSection(selectedElement, localProperties, handlePropertyChange) : null;
+              return renderColorsSection(selectedElement, localProperties, handlePropertyChange, isBackgroundEnabled, activeTab);
+            case 'typography':
+              return renderTypographySection(selectedElement, localProperties, handlePropertyChange, activeTab);
             case 'borders':
               return allowedControls.includes('borders') ? renderBordersSection(selectedElement, localProperties, handlePropertyChange, isBorderEnabled, setIsBorderEnabled, setPreviousBorderWidth, setPreviousBorderColor, previousBorderWidth, previousBorderColor) : null;
             case 'effects':

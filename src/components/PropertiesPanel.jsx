@@ -171,106 +171,225 @@ const TEMPLATE_PRESETS = {
 const ELEMENT_PROPERTY_PROFILES = {
   // Éléments texte
   text: {
-    appearance: ['colors', 'font', 'borders', 'effects'],
-    layout: ['position', 'dimensions', 'transform', 'layers'],
-    content: ['text', 'variables'],
-    effects: ['opacity', 'shadows', 'filters']
+    appearance: {
+      sections: ['colors', 'typography', 'borders', 'effects'],
+      properties: {
+        colors: ['color', 'backgroundColor'],
+        typography: ['fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'textDecoration', 'textAlign', 'textTransform', 'lineHeight', 'letterSpacing'],
+        borders: ['borderWidth', 'borderColor', 'borderRadius'],
+        effects: ['opacity', 'shadow']
+      }
+    },
+    layout: {
+      sections: ['position', 'dimensions', 'transform', 'layers'],
+      properties: {
+        position: ['x', 'y'],
+        dimensions: ['width', 'height'],
+        transform: ['rotation'],
+        layers: ['zIndex']
+      }
+    },
+    content: {
+      sections: ['text', 'variables'],
+      properties: {
+        text: ['text'],
+        variables: ['variables']
+      }
+    },
+    effects: {
+      sections: ['opacity', 'shadows', 'filters'],
+      properties: {
+        opacity: ['opacity'],
+        shadows: ['shadow', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY'],
+        filters: ['brightness', 'contrast', 'saturate']
+      }
+    }
   },
-  'layout-header': {
-    appearance: ['colors', 'font', 'borders', 'effects'],
-    layout: ['position', 'dimensions', 'transform', 'layers'],
-    content: ['text', 'variables'],
-    effects: ['opacity', 'shadows', 'filters']
-  },
-  'layout-footer': {
-    appearance: ['colors', 'font', 'borders', 'effects'],
-    layout: ['position', 'dimensions', 'transform', 'layers'],
-    content: ['text', 'variables'],
-    effects: ['opacity', 'shadows', 'filters']
-  },
-  'layout-section': {
-    appearance: ['colors', 'font', 'borders', 'effects'],
-    layout: ['position', 'dimensions', 'transform', 'layers'],
-    content: ['text', 'variables'],
-    effects: ['opacity', 'shadows', 'filters']
-  },
-  // Éléments image/logo
+  // Éléments image/logo (pas de propriétés texte)
   logo: {
-    appearance: ['colors', 'borders', 'effects'],
-    layout: ['position', 'dimensions', 'transform', 'layers'],
-    content: ['image'],
-    effects: ['opacity', 'shadows', 'filters']
+    appearance: {
+      sections: ['colors', 'borders', 'effects'],
+      properties: {
+        colors: ['backgroundColor'], // seulement le fond, pas de couleur texte
+        borders: ['borderWidth', 'borderColor', 'borderRadius'],
+        effects: ['opacity', 'shadow']
+      }
+    },
+    layout: {
+      sections: ['position', 'dimensions', 'transform', 'layers'],
+      properties: {
+        position: ['x', 'y'],
+        dimensions: ['width', 'height'],
+        transform: ['rotation'],
+        layers: ['zIndex']
+      }
+    },
+    content: {
+      sections: ['image'],
+      properties: {
+        image: ['imageUrl', 'alt', 'objectFit']
+      }
+    },
+    effects: {
+      sections: ['opacity', 'shadows'],
+      properties: {
+        opacity: ['opacity'],
+        shadows: ['shadow', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY']
+        // pas de filters pour les images
+      }
+    }
   },
   // Logo entreprise (même propriétés que logo)
   company_logo: {
-    appearance: ['colors', 'borders', 'effects'],
-    layout: ['position', 'dimensions', 'transform', 'layers'],
-    content: ['image'],
-    effects: ['opacity', 'shadows', 'filters']
+    appearance: {
+      sections: ['colors', 'borders', 'effects'],
+      properties: {
+        colors: ['backgroundColor'],
+        borders: ['borderWidth', 'borderColor', 'borderRadius'],
+        effects: ['opacity', 'shadow']
+      }
+    },
+    layout: {
+      sections: ['position', 'dimensions', 'transform', 'layers'],
+      properties: {
+        position: ['x', 'y'],
+        dimensions: ['width', 'height'],
+        transform: ['rotation'],
+        layers: ['zIndex']
+      }
+    },
+    content: {
+      sections: ['image'],
+      properties: {
+        image: ['imageUrl', 'alt', 'objectFit']
+      }
+    },
+    effects: {
+      sections: ['opacity', 'shadows'],
+      properties: {
+        opacity: ['opacity'],
+        shadows: ['shadow', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY']
+      }
+    }
   },
-  // Tableaux produits
+  // Tableaux produits (propriétés spécifiques)
   product_table: {
-    appearance: ['colors', 'font', 'borders', 'effects'],
-    layout: ['position', 'dimensions', 'transform', 'layers'],
-    content: ['table'],
-    effects: ['opacity', 'shadows', 'filters']
+    appearance: {
+      sections: ['colors', 'typography', 'borders', 'effects'],
+      properties: {
+        colors: ['color', 'backgroundColor'],
+        typography: ['fontFamily', 'fontSize', 'fontWeight'],
+        borders: ['borderWidth', 'borderColor', 'borderRadius'],
+        effects: ['opacity', 'shadow']
+      }
+    },
+    layout: {
+      sections: ['position', 'dimensions', 'transform', 'layers'],
+      properties: {
+        position: ['x', 'y'],
+        dimensions: ['width', 'height'],
+        transform: ['rotation'],
+        layers: ['zIndex']
+      }
+    },
+    content: {
+      sections: ['table'],
+      properties: {
+        table: ['columns', 'showHeaders', 'showBorders', 'tableStyle']
+      }
+    },
+    effects: {
+      sections: ['opacity', 'shadows'],
+      properties: {
+        opacity: ['opacity'],
+        shadows: ['shadow', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY']
+      }
+    }
   },
-  // Informations client
-  customer_info: {
-    appearance: ['colors', 'font', 'borders', 'effects'],
-    layout: ['position', 'dimensions', 'transform', 'layers'],
-    content: ['customer_fields'],
-    effects: ['opacity', 'shadows', 'filters']
-  },
-  // Texte dynamique
+  // Éléments texte dynamiques (même propriétés que text)
   'dynamic-text': {
-    appearance: ['colors', 'font', 'borders', 'effects'],
-    layout: ['position', 'dimensions', 'transform', 'layers'],
-    content: ['dynamic_text'],
-    effects: ['opacity', 'shadows', 'filters']
-  },
-  // Mentions légales
-  mentions: {
-    appearance: ['colors', 'font', 'borders', 'effects'],
-    layout: ['position', 'dimensions', 'transform', 'layers'],
-    content: ['mentions'],
-    effects: ['opacity', 'shadows', 'filters']
-  },
-  // Informations entreprise
-  company_info: {
-    appearance: ['colors', 'font', 'borders', 'effects'],
-    layout: ['position', 'dimensions', 'transform', 'layers'],
-    content: ['company_fields'],
-    effects: ['opacity', 'shadows', 'filters']
-  },
-  // Type de document
-  document_type: {
-    appearance: ['colors', 'font', 'borders', 'effects'],
-    layout: ['position', 'dimensions', 'transform', 'layers'],
-    content: ['document_type'],
-    effects: ['opacity', 'shadows', 'filters']
-  },
-  // Numéro de commande
-  order_number: {
-    appearance: ['colors', 'font', 'borders', 'effects'],
-    layout: ['position', 'dimensions', 'transform', 'layers'],
-    content: ['order_number'],
-    effects: ['opacity', 'shadows', 'filters']
+    appearance: {
+      sections: ['colors', 'typography', 'borders', 'effects'],
+      properties: {
+        colors: ['color', 'backgroundColor'],
+        typography: ['fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'textDecoration', 'textAlign', 'textTransform', 'lineHeight', 'letterSpacing'],
+        borders: ['borderWidth', 'borderColor', 'borderRadius'],
+        effects: ['opacity', 'shadow']
+      }
+    },
+    layout: {
+      sections: ['position', 'dimensions', 'transform', 'layers'],
+      properties: {
+        position: ['x', 'y'],
+        dimensions: ['width', 'height'],
+        transform: ['rotation'],
+        layers: ['zIndex']
+      }
+    },
+    content: {
+      sections: ['dynamic_text', 'variables'],
+      properties: {
+        dynamic_text: ['dynamicText'],
+        variables: ['variables']
+      }
+    },
+    effects: {
+      sections: ['opacity', 'shadows', 'filters'],
+      properties: {
+        opacity: ['opacity'],
+        shadows: ['shadow', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY'],
+        filters: ['brightness', 'contrast', 'saturate']
+      }
+    }
   },
   // Éléments par défaut (forme géométrique)
   default: {
-    appearance: ['colors', 'borders', 'effects'],
-    layout: ['position', 'dimensions', 'transform', 'layers'],
-    content: [],
-    effects: ['opacity', 'shadows', 'filters']
+    appearance: {
+      sections: ['colors', 'borders', 'effects'],
+      properties: {
+        colors: ['backgroundColor'],
+        borders: ['borderWidth', 'borderColor', 'borderRadius'],
+        effects: ['opacity', 'shadow']
+      }
+    },
+    layout: {
+      sections: ['position', 'dimensions', 'transform', 'layers'],
+      properties: {
+        position: ['x', 'y'],
+        dimensions: ['width', 'height'],
+        transform: ['rotation'],
+        layers: ['zIndex']
+      }
+    },
+    content: {
+      sections: [],
+      properties: {}
+    },
+    effects: {
+      sections: ['opacity', 'shadows'],
+      properties: {
+        opacity: ['opacity'],
+        shadows: ['shadow', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY']
+      }
+    }
   }
 };
 
-// Fonction helper pour parser les valeurs numériques de manière sécurisée
-const safeParseInt = (value, defaultValue = 0) => {
-  if (value === null || value === undefined || value === '') return defaultValue;
-  const parsed = parseInt(value, 10);
-  return isNaN(parsed) ? defaultValue : parsed;
+// Fonction helper pour vérifier si une propriété spécifique est autorisée pour un élément
+const isPropertyAllowedForElement = (elementType, activeTab, propertyName) => {
+  const elementProfile = ELEMENT_PROPERTY_PROFILES[elementType] || ELEMENT_PROPERTY_PROFILES['default'];
+  const tabProfile = elementProfile[activeTab];
+
+  if (!tabProfile) return false;
+
+  // Vérifier dans toutes les sections de l'onglet si la propriété est autorisée
+  for (const [sectionName, properties] of Object.entries(tabProfile.properties)) {
+    if (properties.includes(propertyName)) {
+      return true;
+    }
+  }
+
+  return false;
 };
 
 const safeParseFloat = (value, defaultValue = 0) => {
@@ -285,25 +404,25 @@ const getSmartPropertyOrder = (elementType, tab) => {
     // Ordre pour l'onglet Apparence
     appearance: {
       // Éléments texte : couleur et police en premier
-      text: ['colors', 'font', 'borders', 'effects'],
-      'dynamic-text': ['colors', 'font', 'borders', 'effects'],
-      'layout-header': ['colors', 'font', 'borders', 'effects'],
-      'layout-footer': ['colors', 'font', 'borders', 'effects'],
-      'layout-section': ['colors', 'font', 'borders', 'effects'],
+      text: ['colors', 'typography', 'borders', 'effects'],
+      'dynamic-text': ['colors', 'typography', 'borders', 'effects'],
+      'layout-header': ['colors', 'typography', 'borders', 'effects'],
+      'layout-footer': ['colors', 'typography', 'borders', 'effects'],
+      'layout-section': ['colors', 'typography', 'borders', 'effects'],
 
       // Éléments image : couleur de fond et bordures en premier
       logo: ['colors', 'borders', 'effects'],
       company_logo: ['colors', 'borders', 'effects'],
 
       // Tableaux : couleurs, police, bordures
-      product_table: ['colors', 'font', 'borders', 'effects'],
+      product_table: ['colors', 'typography', 'borders', 'effects'],
 
       // Éléments de données : couleurs et police
-      customer_info: ['colors', 'font', 'borders', 'effects'],
-      company_info: ['colors', 'font', 'borders', 'effects'],
-      document_type: ['colors', 'font', 'borders', 'effects'],
-      order_number: ['colors', 'font', 'borders', 'effects'],
-      mentions: ['colors', 'font', 'borders', 'effects'],
+      customer_info: ['colors', 'typography', 'borders', 'effects'],
+      company_info: ['colors', 'typography', 'borders', 'effects'],
+      document_type: ['colors', 'typography', 'borders', 'effects'],
+      order_number: ['colors', 'typography', 'borders', 'effects'],
+      mentions: ['colors', 'typography', 'borders', 'effects'],
 
       // Par défaut
       default: ['colors', 'borders', 'effects']
@@ -590,73 +709,84 @@ const FontControls = ({ elementId, properties, onPropertyChange }) => (
 );
 
 // Fonctions helper pour rendre chaque section de propriétés dans l'ordre intelligent
-const renderColorsSection = (selectedElement, localProperties, handlePropertyChange, isBackgroundEnabled) => (
-  <div key="colors" className="properties-group">
-    <h4>🎨 Couleurs & Apparence</h4>
+const renderColorsSection = (selectedElement, localProperties, handlePropertyChange, isBackgroundEnabled, activeTab) => {
+  const allowedProperties = ELEMENT_PROPERTY_PROFILES[selectedElement.type]?.[activeTab]?.properties?.colors || [];
 
-    <ColorPicker
-      label="Texte"
-      value={localProperties.color}
-      onChange={(value) => {
-        handlePropertyChange(selectedElement.id, 'color', value);
-      }}
-      presets={['#1e293b', '#334155', '#475569', '#64748b', '#94a3b8', '#cbd5e1', '#000000']}
-      defaultColor="#333333"
-    />
+  return (
+    <div key="colors" className="properties-group">
+      <h4>🎨 Couleurs & Apparence</h4>
 
-    {/* Contrôle du fond */}
-    <div className="property-row">
-      <span>Fond activé:</span>
-      <label className="toggle">
-        <input
-          type="checkbox"
-          checked={isBackgroundEnabled}
-          disabled={false}
-          onChange={(e) => {
-            if (e.target.checked) {
-              handlePropertyChange(selectedElement.id, 'backgroundColor', '#ffffff');
-            } else {
-              handlePropertyChange(selectedElement.id, 'backgroundColor', 'transparent');
-            }
+      {/* Couleur du texte - seulement si autorisée */}
+      {allowedProperties.includes('color') && (
+        <ColorPicker
+          label="Texte"
+          value={localProperties.color}
+          onChange={(value) => {
+            handlePropertyChange(selectedElement.id, 'color', value);
           }}
+          presets={['#1e293b', '#334155', '#475569', '#64748b', '#94a3b8', '#cbd5e1', '#000000']}
+          defaultColor="#333333"
         />
-        <span className="toggle-slider"></span>
-      </label>
-    </div>
+      )}
 
-    {/* Couleur du fond (conditionnelle) */}
-    <div style={{
-      display: isBackgroundEnabled ? 'block' : 'none',
-      transition: 'opacity 0.3s ease'
-    }}>
-      <ColorPicker
-        label="Fond"
-        value={localProperties.backgroundColor === 'transparent' ? '#ffffff' : localProperties.backgroundColor}
-        onChange={(value) => {
-          handlePropertyChange(selectedElement.id, 'backgroundColor', value);
-        }}
-        presets={['transparent', '#ffffff', '#f8fafc', '#f1f5f9', '#e2e8f0', '#cbd5e1', '#94a3b8']}
-      />
+      {/* Contrôle du fond - seulement si autorisé */}
+      {allowedProperties.includes('backgroundColor') && (
+        <>
+          <div className="property-row">
+            <span>Fond activé:</span>
+            <label className="toggle">
+              <input
+                type="checkbox"
+                checked={isBackgroundEnabled}
+                disabled={false}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    handlePropertyChange(selectedElement.id, 'backgroundColor', '#ffffff');
+                  } else {
+                    handlePropertyChange(selectedElement.id, 'backgroundColor', 'transparent');
+                  }
+                }}
+              />
+              <span className="toggle-slider"></span>
+            </label>
+          </div>
 
-      {/* Opacité du fond */}
-      <div className="property-row">
-        <label>Opacité fond:</label>
-        <div className="slider-container">
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="0.1"
-            value={localProperties.backgroundOpacity ?? 1}
-            onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundOpacity', safeParseFloat(e.target.value, 1))}
-            className="slider"
-          />
-          <span className="slider-value">{Math.round((localProperties.backgroundOpacity ?? 1) * 100)}%</span>
-        </div>
-      </div>
+          {/* Couleur du fond (conditionnelle) */}
+          <div style={{
+            display: isBackgroundEnabled ? 'block' : 'none',
+            transition: 'opacity 0.3s ease'
+          }}>
+            <ColorPicker
+              label="Fond"
+              value={localProperties.backgroundColor === 'transparent' ? '#ffffff' : localProperties.backgroundColor}
+              onChange={(value) => {
+                handlePropertyChange(selectedElement.id, 'backgroundColor', value);
+              }}
+              presets={['transparent', '#ffffff', '#f8fafc', '#f1f5f9', '#e2e8f0', '#cbd5e1', '#94a3b8']}
+            />
+
+            {/* Opacité du fond */}
+            <div className="property-row">
+              <label>Opacité fond:</label>
+              <div className="slider-container">
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.1"
+                  value={localProperties.backgroundOpacity ?? 1}
+                  onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundOpacity', safeParseFloat(e.target.value, 1))}
+                  className="slider"
+                />
+                <span className="slider-value">{Math.round((localProperties.backgroundOpacity ?? 1) * 100)}%</span>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
-  </div>
-);
+  );
+};
 
 const renderFontSection = (selectedElement, localProperties, handlePropertyChange) => (
   <FontControls
@@ -666,6 +796,211 @@ const renderFontSection = (selectedElement, localProperties, handlePropertyChang
     onPropertyChange={handlePropertyChange}
   />
 );
+
+// Section Typographie - seulement si autorisée
+const renderTypographySection = (selectedElement, localProperties, handlePropertyChange, activeTab) => {
+  const allowedProperties = ELEMENT_PROPERTY_PROFILES[selectedElement.type]?.[activeTab]?.properties?.typography || [];
+
+  if (allowedProperties.length === 0) return null;
+
+  return (
+    <div key="typography" className="properties-group">
+      <h4>📝 Typographie</h4>
+
+      {/* Famille de police */}
+      {allowedProperties.includes('fontFamily') && (
+        <div className="property-row">
+          <label>Police:</label>
+          <select
+            value={localProperties.fontFamily || 'Arial'}
+            onChange={(e) => handlePropertyChange(selectedElement.id, 'fontFamily', e.target.value)}
+            className="property-select"
+          >
+            <option value="Arial">Arial</option>
+            <option value="Helvetica">Helvetica</option>
+            <option value="Times New Roman">Times New Roman</option>
+            <option value="Courier New">Courier New</option>
+            <option value="Georgia">Georgia</option>
+            <option value="Verdana">Verdana</option>
+            <option value="Trebuchet MS">Trebuchet MS</option>
+            <option value="Comic Sans MS">Comic Sans MS</option>
+            <option value="Impact">Impact</option>
+            <option value="Lucida Console">Lucida Console</option>
+          </select>
+        </div>
+      )}
+
+      {/* Taille de police */}
+      {allowedProperties.includes('fontSize') && (
+        <div className="property-row">
+          <label>Taille:</label>
+          <div className="slider-container">
+            <input
+              type="range"
+              min="8"
+              max="72"
+              step="1"
+              value={localProperties.fontSize || 12}
+              onChange={(e) => handlePropertyChange(selectedElement.id, 'fontSize', safeParseInt(e.target.value, 12))}
+              className="slider"
+            />
+            <span className="slider-value">{localProperties.fontSize || 12}px</span>
+          </div>
+        </div>
+      )}
+
+      {/* Poids de police */}
+      {allowedProperties.includes('fontWeight') && (
+        <div className="property-row">
+          <label>Épaisseur:</label>
+          <select
+            value={localProperties.fontWeight || 'normal'}
+            onChange={(e) => handlePropertyChange(selectedElement.id, 'fontWeight', e.target.value)}
+            className="property-select"
+          >
+            <option value="normal">Normal</option>
+            <option value="bold">Gras</option>
+            <option value="lighter">Fin</option>
+            <option value="100">100</option>
+            <option value="200">200</option>
+            <option value="300">300</option>
+            <option value="400">400</option>
+            <option value="500">500</option>
+            <option value="600">600</option>
+            <option value="700">700</option>
+            <option value="800">800</option>
+            <option value="900">900</option>
+          </select>
+        </div>
+      )}
+
+      {/* Style de police */}
+      {allowedProperties.includes('fontStyle') && (
+        <div className="property-row">
+          <label>Style:</label>
+          <select
+            value={localProperties.fontStyle || 'normal'}
+            onChange={(e) => handlePropertyChange(selectedElement.id, 'fontStyle', e.target.value)}
+            className="property-select"
+          >
+            <option value="normal">Normal</option>
+            <option value="italic">Italique</option>
+            <option value="oblique">Oblique</option>
+          </select>
+        </div>
+      )}
+
+      {/* Décoration de texte */}
+      {allowedProperties.includes('textDecoration') && (
+        <div className="property-row">
+          <label>Décoration:</label>
+          <select
+            value={localProperties.textDecoration || 'none'}
+            onChange={(e) => handlePropertyChange(selectedElement.id, 'textDecoration', e.target.value)}
+            className="property-select"
+          >
+            <option value="none">Aucune</option>
+            <option value="underline">Souligné</option>
+            <option value="overline">Surligné</option>
+            <option value="line-through">Barré</option>
+          </select>
+        </div>
+      )}
+
+      {/* Alignement du texte */}
+      {allowedProperties.includes('textAlign') && (
+        <div className="property-row">
+          <label>Alignement:</label>
+          <div className="alignment-buttons">
+            <button
+              className={`alignment-btn ${localProperties.textAlign === 'left' ? 'active' : ''}`}
+              onClick={() => handlePropertyChange(selectedElement.id, 'textAlign', 'left')}
+              title="Aligner à gauche"
+            >
+              ⬅️
+            </button>
+            <button
+              className={`alignment-btn ${localProperties.textAlign === 'center' ? 'active' : ''}`}
+              onClick={() => handlePropertyChange(selectedElement.id, 'textAlign', 'center')}
+              title="Centrer"
+            >
+              ⬌
+            </button>
+            <button
+              className={`alignment-btn ${localProperties.textAlign === 'right' ? 'active' : ''}`}
+              onClick={() => handlePropertyChange(selectedElement.id, 'textAlign', 'right')}
+              title="Aligner à droite"
+            >
+              ➡️
+            </button>
+            <button
+              className={`alignment-btn ${localProperties.textAlign === 'justify' ? 'active' : ''}`}
+              onClick={() => handlePropertyChange(selectedElement.id, 'textAlign', 'justify')}
+              title="Justifier"
+            >
+              ⬌⬅️
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Transformation du texte */}
+      {allowedProperties.includes('textTransform') && (
+        <div className="property-row">
+          <label>Casse:</label>
+          <select
+            value={localProperties.textTransform || 'none'}
+            onChange={(e) => handlePropertyChange(selectedElement.id, 'textTransform', e.target.value)}
+            className="property-select"
+          >
+            <option value="none">Aucune</option>
+            <option value="uppercase">Majuscules</option>
+            <option value="lowercase">Minuscules</option>
+            <option value="capitalize">Première lettre</option>
+          </select>
+        </div>
+      )}
+
+      {/* Interligne */}
+      {allowedProperties.includes('lineHeight') && (
+        <div className="property-row">
+          <label>Interligne:</label>
+          <div className="slider-container">
+            <input
+              type="range"
+              min="0.8"
+              max="3"
+              step="0.1"
+              value={localProperties.lineHeight || 1.2}
+              onChange={(e) => handlePropertyChange(selectedElement.id, 'lineHeight', safeParseFloat(e.target.value, 1.2))}
+              className="slider"
+            />
+            <span className="slider-value">{localProperties.lineHeight || 1.2}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Espacement des lettres */}
+      {allowedProperties.includes('letterSpacing') && (
+        <div className="property-row">
+          <label>Espacement:</label>
+          <div className="slider-container">
+            <input
+              type="range"
+              min="-2"
+              max="10"
+              step="0.5"
+              value={localProperties.letterSpacing || 0}
+              onChange={(e) => handlePropertyChange(selectedElement.id, 'letterSpacing', safeParseFloat(e.target.value, 0))}
+              className="slider"
+            />
+            <span className="slider-value">{localProperties.letterSpacing || 0}px</span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const renderBordersSection = (selectedElement, localProperties, handlePropertyChange, isBorderEnabled, setIsBorderEnabled, setPreviousBorderWidth, setPreviousBorderColor, previousBorderWidth, previousBorderColor) => {
   if (!isBorderEnabled && localProperties.borderWidth <= 0) return null;
@@ -1001,7 +1336,8 @@ const PropertiesPanel = memo(({
 
     // Obtenir le profil de propriétés pour ce type d'élément
     const elementProfile = ELEMENT_PROPERTY_PROFILES[selectedElement.type] || ELEMENT_PROPERTY_PROFILES['default'];
-    const allowedControls = elementProfile[activeTab] || [];
+    const tabProfile = elementProfile[activeTab] || { sections: [], properties: {} };
+    const allowedControls = tabProfile.sections || [];
 
     switch (activeTab) {
       case 'appearance':
@@ -1010,10 +1346,9 @@ const PropertiesPanel = memo(({
             {smartOrder.map(section => {
               switch (section) {
                 case 'colors':
-                  return renderColorsSection(selectedElement, localProperties, handlePropertyChange, isBackgroundEnabled);
-                case 'font':
-                  return allowedControls.includes('font') && selectedElement.type !== 'product_table' ?
-                    renderFontSection(selectedElement, localProperties, handlePropertyChange) : null;
+                  return renderColorsSection(selectedElement, localProperties, handlePropertyChange, isBackgroundEnabled, activeTab);
+                case 'typography':
+                  return renderTypographySection(selectedElement, localProperties, handlePropertyChange, activeTab);
                 case 'borders':
                   return allowedControls.includes('borders') ?
                     renderBordersSection(selectedElement, localProperties, handlePropertyChange, isBorderEnabled, setIsBorderEnabled, setPreviousBorderWidth, setPreviousBorderColor, previousBorderWidth, previousBorderColor) : null;
