@@ -867,7 +867,15 @@ export const CanvasElement = ({
          element.type === 'barcode' ? '📊 123456' :
          element.type === 'qrcode' || element.type === 'qrcode-dynamic' ? '📱 QR' :
          element.type === 'icon' ? (element.content || '🎯') :
-         element.type === 'dynamic-text' ? (element.content || '{{variable}}') :
+         element.type === 'dynamic-text' ? (() => {
+           const content = element.content || '{{order_total}} €';
+           // Remplacement basique pour l'aperçu canvas
+           return content
+             .replace(/\{\{order_total\}\}/g, '125.99 €')
+             .replace(/\{\{order_number\}\}/g, 'CMD-2025-001')
+             .replace(/\{\{customer_name\}\}/g, 'Jean Dupont')
+             .replace(/\{\{date\}\}/g, '17/10/2025');
+         })() :
          element.type === 'formula' ? (element.content || '{{prix * quantite}}') :
          element.type === 'conditional-text' ? (element.content || '{{condition ? "Oui" : "Non"}}') :
          element.type === 'counter' ? (element.content || '1') :

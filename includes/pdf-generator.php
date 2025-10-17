@@ -376,6 +376,9 @@ class PDF_Builder_Pro_Generator {
                 case 'divider':
                     $this->render_divider_element($element, $px_to_mm);
                     break;
+                case 'dynamic-text':
+                    $this->render_dynamic_text_element($element, $px_to_mm);
+                    break;
                 case 'barcode':
                     $this->render_barcode_element($element, $px_to_mm);
                     break;
@@ -1112,6 +1115,88 @@ class PDF_Builder_Pro_Generator {
             // Contenu par défaut si rien n'est configuré
             $this->pdf->Cell($width, $fontSize * $lineHeight * $px_to_mm, 'Mentions légales', 0, 0, 'C');
         }
+    }
+
+    /**
+     * Rendu d'élément dynamic-text
+     */
+    private function render_dynamic_text_element($element, $px_to_mm) {
+        $x = isset($element['x']) ? $element['x'] * $px_to_mm : 10;
+        $y = isset($element['y']) ? $element['y'] * $px_to_mm : 10;
+        $width = isset($element['width']) ? $element['width'] * $px_to_mm : 80;
+        $height = isset($element['height']) ? $element['height'] * $px_to_mm : 20;
+
+        // Récupérer les propriétés de l'élément
+        $content = isset($element['content']) ? $element['content'] : '{{order_total}} €';
+        $color = isset($element['color']) ? $element['color'] : '#333333';
+        $fontSize = isset($element['fontSize']) ? $element['fontSize'] : 14;
+        $fontFamily = isset($element['fontFamily']) ? $this->map_font_family($element['fontFamily']) : 'helvetica';
+        $fontWeight = isset($element['fontWeight']) ? $element['fontWeight'] : 'normal';
+        $textAlign = isset($element['textAlign']) ? $element['textAlign'] : 'left';
+        $lineHeight = isset($element['lineHeight']) ? $element['lineHeight'] : 1.4;
+
+        // Appliquer la couleur du texte
+        if ($color && $color !== 'transparent') {
+            $textColor = $this->hex_to_rgb($color);
+            $this->pdf->SetTextColor($textColor[0], $textColor[1], $textColor[2]);
+        } else {
+            $this->pdf->SetTextColor(51, 51, 51); // Gris foncé par défaut
+        }
+
+        // Appliquer la police et taille
+        $this->pdf->SetFont($fontFamily, '', $fontSize);
+
+        // Positionner le curseur
+        $this->pdf->SetXY($x, $y);
+
+        // Remplacer les variables dynamiques
+        $processedContent = $this->replace_dynamic_variables($content);
+
+        // Convertir l'alignement pour TCPDF
+        $tcpdfAlign = 'L'; // Left par défaut
+        if ($textAlign === 'center') {
+            $tcpdfAlign = 'C';
+        } elseif ($textAlign === 'right') {
+            $tcpdfAlign = 'R';
+        }
+
+        // Calculer la hauteur de ligne
+        $lineHeightPx = $fontSize * $lineHeight;
+
+        // Utiliser MultiCell pour gérer le texte multi-ligne avec retour à la ligne automatique
+        $this->pdf->MultiCell($width, $lineHeightPx * $px_to_mm, $processedContent, 0, $tcpdfAlign, false);
+    }
+
+    /**
+     * Remplacement des variables dynamiques dans le contenu
+     */
+    private function replace_dynamic_variables($content) {
+        if (!$this->order) {
+            // Valeurs par défaut pour l'aperçu quand pas de commande
+            return str_replace(
+                ['{{order_total}}', '{{order_number}}', '{{customer_name}}', '{{customer_email}}', '{{date}}', '{{order_date}}', '{{due_date}}'],
+                ['125.99 €', 'CMD-2025-00123', 'Jean Dupont', 'jean@example.com', date('d/m/Y'), date('d/m/Y', strtotime('-2 days')), date('d/m/Y', strtotime('+30 days'))],
+                $content
+            );
+        }
+
+        // Remplacement avec les vraies données de la commande
+        $replacements = [
+            '{{order_total}}' => wc_price($this->order->get_total()),
+            '{{order_number}}' => $this->order->get_order_number(),
+            '{{customer_name}}' => trim($this->order->get_billing_first_name() . ' ' . $this->order->get_billing_last_name()),
+            '{{customer_email}}' => $this->order->get_billing_email(),
+            '{{date}}' => date('d/m/Y'),
+            '{{order_date}}' => date('d/m/Y', strtotime($this->order->get_date_created())),
+            '{{due_date}}' => date('d/m/Y', strtotime('+30 days')),
+            '{{order_subtotal}}' => wc_price($this->order->get_subtotal()),
+            '{{order_tax}}' => wc_price($this->order->get_total_tax()),
+            '{{order_shipping}}' => wc_price($this->order->get_shipping_total()),
+            '{{billing_address}}' => $this->order->get_formatted_billing_address(),
+            '{{shipping_address}}' => $this->order->get_formatted_shipping_address(),
+        ];
+
+        return str_replace(array_keys($replacements), array_values($replacements), $content);
     }
 
     /**

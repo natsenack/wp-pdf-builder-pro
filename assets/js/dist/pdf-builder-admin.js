@@ -1176,7 +1176,11 @@ var CanvasElement = function CanvasElement(_ref) {
     draggable: false
   }, element.type === 'text' ? element.content || element.text || 'Texte' : element.type === 'product_table' ? null :
   // Le contenu sera rendu plus bas pour les tableaux
-  element.type === 'image' && !element.src ? '📷 Image' : element.type === 'line' ? null : element.type === 'layout-header' ? '[H] En-tête' : element.type === 'layout-footer' ? '📄 Pied de Page' : element.type === 'layout-sidebar' ? '📄 Barre Latérale' : element.type === 'layout-section' ? '📄 Section' : element.type === 'layout-container' ? '📦 Conteneur' : element.type === 'shape-rectangle' ? '▭' : element.type === 'shape-circle' ? '○' : element.type === 'shape-line' ? null : element.type === 'shape-arrow' ? '→' : element.type === 'shape-triangle' ? '△' : element.type === 'shape-star' ? '⭐' : element.type === 'divider' ? null : element.type === 'image-upload' ? '📤 Télécharger' : element.type === 'logo' ? '🏷️ Logo' : element.type === 'barcode' ? '📊 123456' : element.type === 'qrcode' || element.type === 'qrcode-dynamic' ? '📱 QR' : element.type === 'icon' ? element.content || '🎯' : element.type === 'dynamic-text' ? element.content || '{{variable}}' : element.type === 'formula' ? element.content || '{{prix * quantite}}' : element.type === 'conditional-text' ? element.content || '{{condition ? "Oui" : "Non"}}' : element.type === 'counter' ? element.content || '1' : element.type === 'date-dynamic' ? element.content || '{{date|format:Y-m-d}}' : element.type === 'currency' ? element.content || '{{montant|currency:EUR}}' : element.type === 'table-dynamic' ? '📊 Tableau' : element.type === 'gradient-box' ? '🌈 Dégradé' : element.type === 'shadow-box' ? '📦 Ombre' : element.type === 'rounded-box' ? '🔄 Arrondi' : element.type === 'border-box' ? '🔲 Bordure' : element.type === 'background-pattern' ? '🎨 Motif' : element.type === 'watermark' ? element.content || 'CONFIDENTIEL' : element.type === 'progress-bar' ? null : element.type === 'product_table' ? null :
+  element.type === 'image' && !element.src ? '📷 Image' : element.type === 'line' ? null : element.type === 'layout-header' ? '[H] En-tête' : element.type === 'layout-footer' ? '📄 Pied de Page' : element.type === 'layout-sidebar' ? '📄 Barre Latérale' : element.type === 'layout-section' ? '📄 Section' : element.type === 'layout-container' ? '📦 Conteneur' : element.type === 'shape-rectangle' ? '▭' : element.type === 'shape-circle' ? '○' : element.type === 'shape-line' ? null : element.type === 'shape-arrow' ? '→' : element.type === 'shape-triangle' ? '△' : element.type === 'shape-star' ? '⭐' : element.type === 'divider' ? null : element.type === 'image-upload' ? '📤 Télécharger' : element.type === 'logo' ? '🏷️ Logo' : element.type === 'barcode' ? '📊 123456' : element.type === 'qrcode' || element.type === 'qrcode-dynamic' ? '📱 QR' : element.type === 'icon' ? element.content || '🎯' : element.type === 'dynamic-text' ? function () {
+    var content = element.content || '{{order_total}} €';
+    // Remplacement basique pour l'aperçu canvas
+    return content.replace(/\{\{order_total\}\}/g, '125.99 €').replace(/\{\{order_number\}\}/g, 'CMD-2025-001').replace(/\{\{customer_name\}\}/g, 'Jean Dupont').replace(/\{\{date\}\}/g, '17/10/2025');
+  }() : element.type === 'formula' ? element.content || '{{prix * quantite}}' : element.type === 'conditional-text' ? element.content || '{{condition ? "Oui" : "Non"}}' : element.type === 'counter' ? element.content || '1' : element.type === 'date-dynamic' ? element.content || '{{date|format:Y-m-d}}' : element.type === 'currency' ? element.content || '{{montant|currency:EUR}}' : element.type === 'table-dynamic' ? '📊 Tableau' : element.type === 'gradient-box' ? '🌈 Dégradé' : element.type === 'shadow-box' ? '📦 Ombre' : element.type === 'rounded-box' ? '🔄 Arrondi' : element.type === 'border-box' ? '🔲 Bordure' : element.type === 'background-pattern' ? '🎨 Motif' : element.type === 'watermark' ? element.content || 'CONFIDENTIEL' : element.type === 'progress-bar' ? null : element.type === 'product_table' ? null :
   // Le contenu sera rendu plus bas dans le même conteneur
   element.type === 'customer_info' ? null :
   // Le contenu sera rendu plus bas dans le même conteneur
@@ -6598,6 +6602,43 @@ var PreviewModal = function PreviewModal(_ref) {
             wordBreak: 'break-word'
           }
         }, mentionsContent));
+      case 'dynamic-text':
+        // Rendu du texte dynamique avec remplacement des variables
+        var dynamicContent = element.content || '{{order_total}} €';
+
+        // Fonction simple de remplacement des variables pour l'aperçu
+        var replaceVariables = function replaceVariables(content) {
+          return content.replace(/\{\{order_total\}\}/g, '125.99 €').replace(/\{\{order_number\}\}/g, 'CMD-2025-00123').replace(/\{\{customer_name\}\}/g, 'Jean Dupont').replace(/\{\{customer_email\}\}/g, 'jean@example.com').replace(/\{\{date\}\}/g, '17/10/2025').replace(/\{\{order_date\}\}/g, '15/10/2025').replace(/\{\{due_date\}\}/g, '15/11/2025');
+        };
+        var processedContent = replaceVariables(dynamicContent);
+        return /*#__PURE__*/React.createElement("div", {
+          style: {
+            padding: "".concat((element.padding || 4) * zoom, "px"),
+            fontSize: (element.fontSize || 14) * zoom,
+            fontFamily: element.fontFamily || 'Inter, sans-serif',
+            fontWeight: element.fontWeight || 'normal',
+            color: element.color || '#333333',
+            textAlign: element.textAlign || 'left',
+            lineHeight: element.lineHeight || '1.4',
+            backgroundColor: element.backgroundColor || 'transparent',
+            border: element.borderWidth ? "".concat(element.borderWidth * zoom, "px solid ").concat(element.borderColor || '#e5e7eb') : 'none',
+            borderRadius: element.borderRadius ? "".concat(element.borderRadius * zoom, "px") : '0',
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start',
+            boxSizing: 'border-box',
+            wordBreak: 'break-word',
+            overflow: 'hidden'
+          }
+        }, /*#__PURE__*/React.createElement("div", {
+          style: {
+            width: '100%',
+            whiteSpace: 'pre-wrap',
+            overflowWrap: 'break-word'
+          }
+        }, processedContent));
       default:
         return /*#__PURE__*/React.createElement("div", {
           style: {

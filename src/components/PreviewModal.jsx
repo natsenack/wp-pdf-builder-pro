@@ -1253,6 +1253,56 @@ const PreviewModal = ({
           </div>
         );
 
+      case 'dynamic-text':
+        // Rendu du texte dynamique avec remplacement des variables
+        const dynamicContent = element.content || '{{order_total}} €';
+
+        // Fonction simple de remplacement des variables pour l'aperçu
+        const replaceVariables = (content) => {
+          return content
+            .replace(/\{\{order_total\}\}/g, '125.99 €')
+            .replace(/\{\{order_number\}\}/g, 'CMD-2025-00123')
+            .replace(/\{\{customer_name\}\}/g, 'Jean Dupont')
+            .replace(/\{\{customer_email\}\}/g, 'jean@example.com')
+            .replace(/\{\{date\}\}/g, '17/10/2025')
+            .replace(/\{\{order_date\}\}/g, '15/10/2025')
+            .replace(/\{\{due_date\}\}/g, '15/11/2025');
+        };
+
+        const processedContent = replaceVariables(dynamicContent);
+
+        return (
+          <div style={{
+            padding: `${(element.padding || 4) * zoom}px`,
+            fontSize: (element.fontSize || 14) * zoom,
+            fontFamily: element.fontFamily || 'Inter, sans-serif',
+            fontWeight: element.fontWeight || 'normal',
+            color: element.color || '#333333',
+            textAlign: element.textAlign || 'left',
+            lineHeight: element.lineHeight || '1.4',
+            backgroundColor: element.backgroundColor || 'transparent',
+            border: element.borderWidth ? `${element.borderWidth * zoom}px solid ${element.borderColor || '#e5e7eb'}` : 'none',
+            borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0',
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: element.textAlign === 'center' ? 'center' :
+                           element.textAlign === 'right' ? 'flex-end' : 'flex-start',
+            boxSizing: 'border-box',
+            wordBreak: 'break-word',
+            overflow: 'hidden'
+          }}>
+            <div style={{
+              width: '100%',
+              whiteSpace: 'pre-wrap',
+              overflowWrap: 'break-word'
+            }}>
+              {processedContent}
+            </div>
+          </div>
+        );
+
       default:
         return (
           <div
