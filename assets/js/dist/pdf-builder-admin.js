@@ -9633,16 +9633,16 @@ function PropertiesPanel_objectSpread(e) { for (var r = 1; r < arguments.length;
 function PropertiesPanel_defineProperty(e, r, t) { return (r = PropertiesPanel_toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
 function PropertiesPanel_toPropertyKey(t) { var i = PropertiesPanel_toPrimitive(t, "string"); return "symbol" == PropertiesPanel_typeof(i) ? i : i + ""; }
 function PropertiesPanel_toPrimitive(t, r) { if ("object" != PropertiesPanel_typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != PropertiesPanel_typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function PropertiesPanel_toConsumableArray(r) { return PropertiesPanel_arrayWithoutHoles(r) || PropertiesPanel_iterableToArray(r) || PropertiesPanel_unsupportedIterableToArray(r) || PropertiesPanel_nonIterableSpread(); }
-function PropertiesPanel_nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function PropertiesPanel_iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
-function PropertiesPanel_arrayWithoutHoles(r) { if (Array.isArray(r)) return PropertiesPanel_arrayLikeToArray(r); }
 function PropertiesPanel_slicedToArray(r, e) { return PropertiesPanel_arrayWithHoles(r) || PropertiesPanel_iterableToArrayLimit(r, e) || PropertiesPanel_unsupportedIterableToArray(r, e) || PropertiesPanel_nonIterableRest(); }
 function PropertiesPanel_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function PropertiesPanel_unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return PropertiesPanel_arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? PropertiesPanel_arrayLikeToArray(r, a) : void 0; } }
-function PropertiesPanel_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 function PropertiesPanel_iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
 function PropertiesPanel_arrayWithHoles(r) { if (Array.isArray(r)) return r; }
+function PropertiesPanel_toConsumableArray(r) { return PropertiesPanel_arrayWithoutHoles(r) || PropertiesPanel_iterableToArray(r) || PropertiesPanel_unsupportedIterableToArray(r) || PropertiesPanel_nonIterableSpread(); }
+function PropertiesPanel_nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function PropertiesPanel_unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return PropertiesPanel_arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? PropertiesPanel_arrayLikeToArray(r, a) : void 0; } }
+function PropertiesPanel_iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function PropertiesPanel_arrayWithoutHoles(r) { if (Array.isArray(r)) return PropertiesPanel_arrayLikeToArray(r); }
+function PropertiesPanel_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 
 
 
@@ -10088,22 +10088,19 @@ var ELEMENT_PROPERTY_PROFILES = {
   }
 };
 
-// Fonction helper pour vérifier si une propriété spécifique est autorisée pour un élément
-var isPropertyAllowedForElement = function isPropertyAllowedForElement(elementType, activeTab, propertyName) {
-  var elementProfile = ELEMENT_PROPERTY_PROFILES[elementType] || ELEMENT_PROPERTY_PROFILES['default'];
-  var tabProfile = elementProfile[activeTab];
-  if (!tabProfile) return false;
-
-  // Vérifier dans toutes les sections de l'onglet si la propriété est autorisée
-  for (var _i = 0, _Object$entries = Object.entries(tabProfile.properties); _i < _Object$entries.length; _i++) {
-    var _Object$entries$_i = PropertiesPanel_slicedToArray(_Object$entries[_i], 2),
-      sectionName = _Object$entries$_i[0],
-      properties = _Object$entries$_i[1];
-    if (properties.includes(propertyName)) {
-      return true;
-    }
-  }
-  return false;
+// Système simplifié : toutes les propriétés sont disponibles pour tous les éléments
+// On cache seulement quelques sections pour certains types d'éléments
+var shouldShowSection = function shouldShowSection(sectionName, elementType) {
+  // Sections à cacher selon le type d'élément
+  var hiddenSections = {
+    // Pour les logos : pas de typographie
+    logo: ['typography'],
+    company_logo: ['typography'],
+    // Pour les tableaux : pas de typographie (trop complexe)
+    product_table: ['typography']
+  };
+  var elementHiddenSections = hiddenSections[elementType] || [];
+  return !elementHiddenSections.includes(sectionName);
 };
 var safeParseFloat = function safeParseFloat(value) {
   var defaultValue = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
@@ -10426,15 +10423,13 @@ var FontControls = function FontControls(_ref2) {
 
 // Fonctions helper pour rendre chaque section de propriétés dans l'ordre intelligent
 var renderColorsSection = function renderColorsSection(selectedElement, localProperties, handlePropertyChange, isBackgroundEnabled, activeTab) {
-  var _ELEMENT_PROPERTY_PRO, _localProperties$back, _localProperties$back2;
-  var allowedProperties = ((_ELEMENT_PROPERTY_PRO = ELEMENT_PROPERTY_PROFILES[selectedElement.type]) === null || _ELEMENT_PROPERTY_PRO === void 0 || (_ELEMENT_PROPERTY_PRO = _ELEMENT_PROPERTY_PRO[activeTab]) === null || _ELEMENT_PROPERTY_PRO === void 0 || (_ELEMENT_PROPERTY_PRO = _ELEMENT_PROPERTY_PRO.properties) === null || _ELEMENT_PROPERTY_PRO === void 0 ? void 0 : _ELEMENT_PROPERTY_PRO.colors) || [];
-
-  // Ne pas afficher la section si aucune propriété de couleur n'est autorisée
-  if (allowedProperties.length === 0) return null;
+  var _localProperties$back, _localProperties$back2;
+  // Vérifier si la section colors doit être affichée pour ce type d'élément
+  if (!shouldShowSection('colors', selectedElement.type)) return null;
   return /*#__PURE__*/React.createElement("div", {
     key: "colors",
     className: "properties-group"
-  }, /*#__PURE__*/React.createElement("h4", null, "\uD83C\uDFA8 Couleurs & Apparence"), allowedProperties.includes('color') && /*#__PURE__*/React.createElement(ColorPicker, {
+  }, /*#__PURE__*/React.createElement("h4", null, "\uD83C\uDFA8 Couleurs & Apparence"), selectedElement.type !== 'logo' && selectedElement.type !== 'company_logo' && /*#__PURE__*/React.createElement(ColorPicker, {
     label: "Texte",
     value: localProperties.color,
     onChange: function onChange(value) {
@@ -10500,9 +10495,8 @@ var renderFontSection = function renderFontSection(selectedElement, localPropert
 
 // Section Typographie - seulement si autorisée
 var renderTypographySection = function renderTypographySection(selectedElement, localProperties, handlePropertyChange, activeTab) {
-  var _ELEMENT_PROPERTY_PRO2;
-  var allowedProperties = ((_ELEMENT_PROPERTY_PRO2 = ELEMENT_PROPERTY_PROFILES[selectedElement.type]) === null || _ELEMENT_PROPERTY_PRO2 === void 0 || (_ELEMENT_PROPERTY_PRO2 = _ELEMENT_PROPERTY_PRO2[activeTab]) === null || _ELEMENT_PROPERTY_PRO2 === void 0 || (_ELEMENT_PROPERTY_PRO2 = _ELEMENT_PROPERTY_PRO2.properties) === null || _ELEMENT_PROPERTY_PRO2 === void 0 ? void 0 : _ELEMENT_PROPERTY_PRO2.typography) || [];
-  if (allowedProperties.length === 0) return null;
+  // Vérifier si la section typography doit être affichée pour ce type d'élément
+  if (!shouldShowSection('typography', selectedElement.type)) return null;
   return /*#__PURE__*/React.createElement("div", {
     key: "typography",
     className: "properties-group"
@@ -10691,11 +10685,8 @@ var renderTypographySection = function renderTypographySection(selectedElement, 
   }, localProperties.letterSpacing || 0, "px"))));
 };
 var renderBordersSection = function renderBordersSection(selectedElement, localProperties, handlePropertyChange, isBorderEnabled, setIsBorderEnabled, setPreviousBorderWidth, setPreviousBorderColor, previousBorderWidth, previousBorderColor, activeTab) {
-  var _ELEMENT_PROPERTY_PRO3, _localProperties$bord, _localProperties$bord2, _localProperties$bord3, _localProperties$bord4;
-  var allowedProperties = ((_ELEMENT_PROPERTY_PRO3 = ELEMENT_PROPERTY_PROFILES[selectedElement.type]) === null || _ELEMENT_PROPERTY_PRO3 === void 0 || (_ELEMENT_PROPERTY_PRO3 = _ELEMENT_PROPERTY_PRO3[activeTab]) === null || _ELEMENT_PROPERTY_PRO3 === void 0 || (_ELEMENT_PROPERTY_PRO3 = _ELEMENT_PROPERTY_PRO3.properties) === null || _ELEMENT_PROPERTY_PRO3 === void 0 ? void 0 : _ELEMENT_PROPERTY_PRO3.borders) || [];
-
-  // Ne pas afficher la section si aucune propriété de bordure n'est autorisée
-  if (allowedProperties.length === 0) return null;
+  var _localProperties$bord, _localProperties$bord2, _localProperties$bord3, _localProperties$bord4;
+  // Les bordures sont disponibles pour tous les éléments
   if (!isBorderEnabled && localProperties.borderWidth <= 0) return null;
   return /*#__PURE__*/React.createElement("div", {
     key: "borders",
@@ -10786,11 +10777,8 @@ var renderBordersSection = function renderBordersSection(selectedElement, localP
   }, (_localProperties$bord4 = localProperties.borderRadius) !== null && _localProperties$bord4 !== void 0 ? _localProperties$bord4 : 4, "px")))));
 };
 var renderEffectsSection = function renderEffectsSection(selectedElement, localProperties, handlePropertyChange, activeTab) {
-  var _ELEMENT_PROPERTY_PRO4, _localProperties$boxS, _localProperties$boxS2, _localProperties$boxS3, _localProperties$boxS4;
-  var allowedProperties = ((_ELEMENT_PROPERTY_PRO4 = ELEMENT_PROPERTY_PROFILES[selectedElement.type]) === null || _ELEMENT_PROPERTY_PRO4 === void 0 || (_ELEMENT_PROPERTY_PRO4 = _ELEMENT_PROPERTY_PRO4[activeTab]) === null || _ELEMENT_PROPERTY_PRO4 === void 0 || (_ELEMENT_PROPERTY_PRO4 = _ELEMENT_PROPERTY_PRO4.properties) === null || _ELEMENT_PROPERTY_PRO4 === void 0 ? void 0 : _ELEMENT_PROPERTY_PRO4.effects) || [];
-
-  // Ne pas afficher la section si aucune propriété d'effet n'est autorisée
-  if (allowedProperties.length === 0) return null;
+  var _localProperties$boxS, _localProperties$boxS2, _localProperties$boxS3, _localProperties$boxS4;
+  // Les effets sont disponibles pour tous les éléments
   return /*#__PURE__*/React.createElement("div", {
     key: "effects",
     className: "properties-group"

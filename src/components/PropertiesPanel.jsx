@@ -441,21 +441,20 @@ const ELEMENT_PROPERTY_PROFILES = {
   }
 };
 
-// Fonction helper pour vérifier si une propriété spécifique est autorisée pour un élément
-const isPropertyAllowedForElement = (elementType, activeTab, propertyName) => {
-  const elementProfile = ELEMENT_PROPERTY_PROFILES[elementType] || ELEMENT_PROPERTY_PROFILES['default'];
-  const tabProfile = elementProfile[activeTab];
+// Système simplifié : toutes les propriétés sont disponibles pour tous les éléments
+// On cache seulement quelques sections pour certains types d'éléments
+const shouldShowSection = (sectionName, elementType) => {
+  // Sections à cacher selon le type d'élément
+  const hiddenSections = {
+    // Pour les logos : pas de typographie
+    logo: ['typography'],
+    company_logo: ['typography'],
+    // Pour les tableaux : pas de typographie (trop complexe)
+    product_table: ['typography']
+  };
 
-  if (!tabProfile) return false;
-
-  // Vérifier dans toutes les sections de l'onglet si la propriété est autorisée
-  for (const [sectionName, properties] of Object.entries(tabProfile.properties)) {
-    if (properties.includes(propertyName)) {
-      return true;
-    }
-  }
-
-  return false;
+  const elementHiddenSections = hiddenSections[elementType] || [];
+  return !elementHiddenSections.includes(sectionName);
 };
 
 const safeParseFloat = (value, defaultValue = 0) => {
@@ -776,17 +775,15 @@ const FontControls = ({ elementId, properties, onPropertyChange }) => (
 
 // Fonctions helper pour rendre chaque section de propriétés dans l'ordre intelligent
 const renderColorsSection = (selectedElement, localProperties, handlePropertyChange, isBackgroundEnabled, activeTab) => {
-  const allowedProperties = ELEMENT_PROPERTY_PROFILES[selectedElement.type]?.[activeTab]?.properties?.colors || [];
-
-  // Ne pas afficher la section si aucune propriété de couleur n'est autorisée
-  if (allowedProperties.length === 0) return null;
+  // Vérifier si la section colors doit être affichée pour ce type d'élément
+  if (!shouldShowSection('colors', selectedElement.type)) return null;
 
   return (
     <div key="colors" className="properties-group">
       <h4>🎨 Couleurs & Apparence</h4>
 
-      {/* Couleur du texte - seulement si autorisée */}
-      {allowedProperties.includes('color') && (
+      {/* Couleur du texte - toujours disponible sauf pour les éléments qui n'ont pas de texte */}
+      {selectedElement.type !== 'logo' && selectedElement.type !== 'company_logo' && (
         <ColorPicker
           label="Texte"
           value={localProperties.color}
@@ -868,9 +865,8 @@ const renderFontSection = (selectedElement, localProperties, handlePropertyChang
 
 // Section Typographie - seulement si autorisée
 const renderTypographySection = (selectedElement, localProperties, handlePropertyChange, activeTab) => {
-  const allowedProperties = ELEMENT_PROPERTY_PROFILES[selectedElement.type]?.[activeTab]?.properties?.typography || [];
-
-  if (allowedProperties.length === 0) return null;
+  // Vérifier si la section typography doit être affichée pour ce type d'élément
+  if (!shouldShowSection('typography', selectedElement.type)) return null;
 
   return (
     <div key="typography" className="properties-group">
@@ -1072,11 +1068,7 @@ const renderTypographySection = (selectedElement, localProperties, handlePropert
 };
 
 const renderBordersSection = (selectedElement, localProperties, handlePropertyChange, isBorderEnabled, setIsBorderEnabled, setPreviousBorderWidth, setPreviousBorderColor, previousBorderWidth, previousBorderColor, activeTab) => {
-  const allowedProperties = ELEMENT_PROPERTY_PROFILES[selectedElement.type]?.[activeTab]?.properties?.borders || [];
-
-  // Ne pas afficher la section si aucune propriété de bordure n'est autorisée
-  if (allowedProperties.length === 0) return null;
-
+  // Les bordures sont disponibles pour tous les éléments
   if (!isBorderEnabled && localProperties.borderWidth <= 0) return null;
 
   return (
@@ -1172,11 +1164,7 @@ const renderBordersSection = (selectedElement, localProperties, handlePropertyCh
 };
 
 const renderEffectsSection = (selectedElement, localProperties, handlePropertyChange, activeTab) => {
-  const allowedProperties = ELEMENT_PROPERTY_PROFILES[selectedElement.type]?.[activeTab]?.properties?.effects || [];
-
-  // Ne pas afficher la section si aucune propriété d'effet n'est autorisée
-  if (allowedProperties.length === 0) return null;
-
+  // Les effets sont disponibles pour tous les éléments
   return (
     <div key="effects" className="properties-group">
       <h4>✨ Effets</h4>
