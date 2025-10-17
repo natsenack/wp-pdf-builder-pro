@@ -503,7 +503,7 @@ body.pdf-builder-active #wpadminbar {
 }
 
 .editor-sidebar.right-sidebar {
-  width: 420px; /* Propriétés - largeur augmentée */
+  width: 380px; /* Propriétés - largeur réduite */
   border-left: 1px solid #f1f3f4;
   transition: width 0.3s ease;
 }
@@ -514,7 +514,7 @@ body.pdf-builder-active #wpadminbar {
     width: 320px; /* Bibliothèque d'Éléments - mobile */
   }
   .editor-sidebar.right-sidebar {
-    width: 380px; /* Propriétés - mobile, plus large */
+    width: 340px; /* Propriétés - mobile, plus compact */
   }
 }
 
