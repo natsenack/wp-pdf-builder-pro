@@ -2012,20 +2012,38 @@ const PropertiesPanel = memo(({
                 )}
 
                 <div className="property-row" style={{ marginTop: '12px', padding: '8px', backgroundColor: '#f8fafc', borderRadius: '4px' }}>
-                  <label style={{ fontWeight: 'bold', marginBottom: '4px', display: 'block' }}>Variables disponibles:</label>
-                  <div style={{ fontSize: '12px', color: '#666', lineHeight: '1.4' }}>
-                    <div><code>{'{{order_total}}'}</code> - Montant total</div>
-                    <div><code>{'{{order_number}}'}</code> - Numéro de commande</div>
-                    <div><code>{'{{customer_name}}'}</code> - Nom du client</div>
-                    <div><code>{'{{customer_email}}'}</code> - Email client</div>
-                    <div><code>{'{{date}}'}</code> - Date actuelle</div>
-                    <div><code>{'{{order_date}}'}</code> - Date de commande</div>
-                    <div><code>{'{{due_date}}'}</code> - Date d'échéance</div>
-                    <div><code>{'{{order_subtotal}}'}</code> - Sous-total HT</div>
-                    <div><code>{'{{order_tax}}'}</code> - Montant TVA</div>
-                    <div><code>{'{{order_shipping}}'}</code> - Frais de port</div>
-                    <div><code>{'{{billing_address}}'}</code> - Adresse de facturation</div>
-                    <div><code>{'{{shipping_address}}'}</code> - Adresse de livraison</div>
+                  <label style={{ fontWeight: 'bold', marginBottom: '8px', display: 'block' }}>Variables disponibles:</label>
+                  <div className="variables-badges">
+                    <div className="variable-group">
+                      <span className="group-icon">💰</span>
+                      <span className="group-label">Commande:</span>
+                      <span className="variable-badges">
+                        <span className="variable-badge" title="Montant total de la commande">{{order_total}}</span>
+                        <span className="variable-badge" title="Numéro de commande">{{order_number}}</span>
+                        <span className="variable-badge" title="Date de la commande">{{order_date}}</span>
+                        <span className="variable-badge" title="Sous-total HT">{{order_subtotal}}</span>
+                        <span className="variable-badge" title="Montant TVA">{{order_tax}}</span>
+                        <span className="variable-badge" title="Frais de port">{{order_shipping}}</span>
+                      </span>
+                    </div>
+                    <div className="variable-group">
+                      <span className="group-icon">👤</span>
+                      <span className="group-label">Client:</span>
+                      <span className="variable-badges">
+                        <span className="variable-badge" title="Nom du client">{{customer_name}}</span>
+                        <span className="variable-badge" title="Email du client">{{customer_email}}</span>
+                        <span className="variable-badge" title="Adresse de facturation">{{billing_address}}</span>
+                        <span className="variable-badge" title="Adresse de livraison">{{shipping_address}}</span>
+                      </span>
+                    </div>
+                    <div className="variable-group">
+                      <span className="group-icon">📅</span>
+                      <span className="group-label">Dates:</span>
+                      <span className="variable-badges">
+                        <span className="variable-badge" title="Date actuelle">{{date}}</span>
+                        <span className="variable-badge" title="Date d'échéance">{{due_date}}</span>
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>

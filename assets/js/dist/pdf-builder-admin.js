@@ -11663,16 +11663,96 @@ var PropertiesPanel = /*#__PURE__*/(0,react.memo)(function (_ref4) {
         }, /*#__PURE__*/React.createElement("label", {
           style: {
             fontWeight: 'bold',
-            marginBottom: '4px',
+            marginBottom: '8px',
             display: 'block'
           }
         }, "Variables disponibles:"), /*#__PURE__*/React.createElement("div", {
-          style: {
-            fontSize: '12px',
-            color: '#666',
-            lineHeight: '1.4'
-          }
-        }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{order_total}}'), " - Montant total"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{order_number}}'), " - Num\xE9ro de commande"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{customer_name}}'), " - Nom du client"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{customer_email}}'), " - Email client"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{date}}'), " - Date actuelle"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{order_date}}'), " - Date de commande"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{due_date}}'), " - Date d'\xE9ch\xE9ance"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{order_subtotal}}'), " - Sous-total HT"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{order_tax}}'), " - Montant TVA"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{order_shipping}}'), " - Frais de port"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{billing_address}}'), " - Adresse de facturation"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("code", null, '{{shipping_address}}'), " - Adresse de livraison")))), allowedControls.includes('company_fields') && selectedElement.type === 'company_info' && /*#__PURE__*/React.createElement("div", {
+          className: "variables-badges"
+        }, /*#__PURE__*/React.createElement("div", {
+          className: "variable-group"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "group-icon"
+        }, "\uD83D\uDCB0"), /*#__PURE__*/React.createElement("span", {
+          className: "group-label"
+        }, "Commande:"), /*#__PURE__*/React.createElement("span", {
+          className: "variable-badges"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "variable-badge",
+          title: "Montant total de la commande"
+        }, {
+          order_total: order_total
+        }), /*#__PURE__*/React.createElement("span", {
+          className: "variable-badge",
+          title: "Num\xE9ro de commande"
+        }, {
+          order_number: order_number
+        }), /*#__PURE__*/React.createElement("span", {
+          className: "variable-badge",
+          title: "Date de la commande"
+        }, {
+          order_date: order_date
+        }), /*#__PURE__*/React.createElement("span", {
+          className: "variable-badge",
+          title: "Sous-total HT"
+        }, {
+          order_subtotal: order_subtotal
+        }), /*#__PURE__*/React.createElement("span", {
+          className: "variable-badge",
+          title: "Montant TVA"
+        }, {
+          order_tax: order_tax
+        }), /*#__PURE__*/React.createElement("span", {
+          className: "variable-badge",
+          title: "Frais de port"
+        }, {
+          order_shipping: order_shipping
+        }))), /*#__PURE__*/React.createElement("div", {
+          className: "variable-group"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "group-icon"
+        }, "\uD83D\uDC64"), /*#__PURE__*/React.createElement("span", {
+          className: "group-label"
+        }, "Client:"), /*#__PURE__*/React.createElement("span", {
+          className: "variable-badges"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "variable-badge",
+          title: "Nom du client"
+        }, {
+          customer_name: customer_name
+        }), /*#__PURE__*/React.createElement("span", {
+          className: "variable-badge",
+          title: "Email du client"
+        }, {
+          customer_email: customer_email
+        }), /*#__PURE__*/React.createElement("span", {
+          className: "variable-badge",
+          title: "Adresse de facturation"
+        }, {
+          billing_address: billing_address
+        }), /*#__PURE__*/React.createElement("span", {
+          className: "variable-badge",
+          title: "Adresse de livraison"
+        }, {
+          shipping_address: shipping_address
+        }))), /*#__PURE__*/React.createElement("div", {
+          className: "variable-group"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "group-icon"
+        }, "\uD83D\uDCC5"), /*#__PURE__*/React.createElement("span", {
+          className: "group-label"
+        }, "Dates:"), /*#__PURE__*/React.createElement("span", {
+          className: "variable-badges"
+        }, /*#__PURE__*/React.createElement("span", {
+          className: "variable-badge",
+          title: "Date actuelle"
+        }, {
+          date: date
+        }), /*#__PURE__*/React.createElement("span", {
+          className: "variable-badge",
+          title: "Date d'\xE9ch\xE9ance"
+        }, {
+          due_date: due_date
+        })))))), allowedControls.includes('company_fields') && selectedElement.type === 'company_info' && /*#__PURE__*/React.createElement("div", {
           className: "properties-group"
         }, /*#__PURE__*/React.createElement("h4", null, "\uD83C\uDFE2 Informations Entreprise"), /*#__PURE__*/React.createElement("div", {
           className: "property-row"
