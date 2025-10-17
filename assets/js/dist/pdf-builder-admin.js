@@ -10437,7 +10437,7 @@ var renderColorsSection = function renderColorsSection(selectedElement, localPro
     },
     presets: ['#1e293b', '#334155', '#475569', '#64748b', '#94a3b8', '#cbd5e1', '#000000'],
     defaultColor: "#333333"
-  }), allowedProperties.includes('backgroundColor') && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+  }), /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "property-row"
   }, /*#__PURE__*/React.createElement("span", null, "Fond activ\xE9:"), /*#__PURE__*/React.createElement("label", {
     className: "toggle"
@@ -10482,7 +10482,7 @@ var renderColorsSection = function renderColorsSection(selectedElement, localPro
     className: "slider"
   }), /*#__PURE__*/React.createElement("span", {
     className: "slider-value"
-  }, Math.round(((_localProperties$back2 = localProperties.backgroundOpacity) !== null && _localProperties$back2 !== void 0 ? _localProperties$back2 : 1) * 100), "%"))))));
+  }, Math.round(((_localProperties$back2 = localProperties.backgroundOpacity) !== null && _localProperties$back2 !== void 0 ? _localProperties$back2 : 1) * 100), "%"))))), ")}");
 };
 var renderFontSection = function renderFontSection(selectedElement, localProperties, handlePropertyChange) {
   return /*#__PURE__*/React.createElement(FontControls, {
@@ -10500,7 +10500,7 @@ var renderTypographySection = function renderTypographySection(selectedElement, 
   return /*#__PURE__*/React.createElement("div", {
     key: "typography",
     className: "properties-group"
-  }, /*#__PURE__*/React.createElement("h4", null, "\uD83D\uDCDD Typographie"), allowedProperties.includes('fontFamily') && /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("h4", null, "\uD83D\uDCDD Typographie"), /*#__PURE__*/React.createElement("div", {
     className: "property-row"
   }, /*#__PURE__*/React.createElement("label", null, "Police:"), /*#__PURE__*/React.createElement("select", {
     value: localProperties.fontFamily || 'Arial',
@@ -10528,7 +10528,7 @@ var renderTypographySection = function renderTypographySection(selectedElement, 
     value: "Impact"
   }, "Impact"), /*#__PURE__*/React.createElement("option", {
     value: "Lucida Console"
-  }, "Lucida Console"))), allowedProperties.includes('fontSize') && /*#__PURE__*/React.createElement("div", {
+  }, "Lucida Console"))), /*#__PURE__*/React.createElement("div", {
     className: "property-row"
   }, /*#__PURE__*/React.createElement("label", null, "Taille:"), /*#__PURE__*/React.createElement("div", {
     className: "slider-container"
@@ -10544,7 +10544,7 @@ var renderTypographySection = function renderTypographySection(selectedElement, 
     className: "slider"
   }), /*#__PURE__*/React.createElement("span", {
     className: "slider-value"
-  }, localProperties.fontSize || 12, "px"))), allowedProperties.includes('fontWeight') && /*#__PURE__*/React.createElement("div", {
+  }, localProperties.fontSize || 12, "px"))), /*#__PURE__*/React.createElement("div", {
     className: "property-row"
   }, /*#__PURE__*/React.createElement("label", null, "\xC9paisseur:"), /*#__PURE__*/React.createElement("select", {
     value: localProperties.fontWeight || 'normal',
@@ -10576,7 +10576,7 @@ var renderTypographySection = function renderTypographySection(selectedElement, 
     value: "800"
   }, "800"), /*#__PURE__*/React.createElement("option", {
     value: "900"
-  }, "900"))), allowedProperties.includes('fontStyle') && /*#__PURE__*/React.createElement("div", {
+  }, "900"))), /*#__PURE__*/React.createElement("div", {
     className: "property-row"
   }, /*#__PURE__*/React.createElement("label", null, "Style:"), /*#__PURE__*/React.createElement("select", {
     value: localProperties.fontStyle || 'normal',
@@ -10590,7 +10590,7 @@ var renderTypographySection = function renderTypographySection(selectedElement, 
     value: "italic"
   }, "Italique"), /*#__PURE__*/React.createElement("option", {
     value: "oblique"
-  }, "Oblique"))), allowedProperties.includes('textDecoration') && /*#__PURE__*/React.createElement("div", {
+  }, "Oblique"))), /*#__PURE__*/React.createElement("div", {
     className: "property-row"
   }, /*#__PURE__*/React.createElement("label", null, "D\xE9coration:"), /*#__PURE__*/React.createElement("select", {
     value: localProperties.textDecoration || 'none',
@@ -10606,7 +10606,7 @@ var renderTypographySection = function renderTypographySection(selectedElement, 
     value: "overline"
   }, "Surlign\xE9"), /*#__PURE__*/React.createElement("option", {
     value: "line-through"
-  }, "Barr\xE9"))), allowedProperties.includes('textAlign') && /*#__PURE__*/React.createElement("div", {
+  }, "Barr\xE9"))), /*#__PURE__*/React.createElement("div", {
     className: "property-row"
   }, /*#__PURE__*/React.createElement("label", null, "Alignement:"), /*#__PURE__*/React.createElement("div", {
     className: "alignment-buttons"
@@ -10634,7 +10634,7 @@ var renderTypographySection = function renderTypographySection(selectedElement, 
       return handlePropertyChange(selectedElement.id, 'textAlign', 'justify');
     },
     title: "Justifier"
-  }, "\u2B0C\u2B05\uFE0F"))), allowedProperties.includes('textTransform') && /*#__PURE__*/React.createElement("div", {
+  }, "\u2B0C\u2B05\uFE0F"))), /*#__PURE__*/React.createElement("div", {
     className: "property-row"
   }, /*#__PURE__*/React.createElement("label", null, "Casse:"), /*#__PURE__*/React.createElement("select", {
     value: localProperties.textTransform || 'none',
@@ -10650,7 +10650,7 @@ var renderTypographySection = function renderTypographySection(selectedElement, 
     value: "lowercase"
   }, "Minuscules"), /*#__PURE__*/React.createElement("option", {
     value: "capitalize"
-  }, "Premi\xE8re lettre"))), allowedProperties.includes('lineHeight') && /*#__PURE__*/React.createElement("div", {
+  }, "Premi\xE8re lettre"))), /*#__PURE__*/React.createElement("div", {
     className: "property-row"
   }, /*#__PURE__*/React.createElement("label", null, "Interligne:"), /*#__PURE__*/React.createElement("div", {
     className: "slider-container"
@@ -10666,7 +10666,7 @@ var renderTypographySection = function renderTypographySection(selectedElement, 
     className: "slider"
   }), /*#__PURE__*/React.createElement("span", {
     className: "slider-value"
-  }, localProperties.lineHeight || 1.2))), allowedProperties.includes('letterSpacing') && /*#__PURE__*/React.createElement("div", {
+  }, localProperties.lineHeight || 1.2))), /*#__PURE__*/React.createElement("div", {
     className: "property-row"
   }, /*#__PURE__*/React.createElement("label", null, "Espacement:"), /*#__PURE__*/React.createElement("div", {
     className: "slider-container"
