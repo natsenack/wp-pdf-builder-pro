@@ -506,7 +506,6 @@ export class ElementCustomizationService {
         height: 50
       },
       'line': {
-        width: 200,
         height: 2
       }
     };

@@ -8593,7 +8593,6 @@ var ElementCustomizationService = /*#__PURE__*/function () {
           height: 50
         },
         'line': {
-          width: 200,
           height: 2
         }
       };
