@@ -1758,6 +1758,7 @@ class PDF_Builder_Pro_Generator {
                 'header_bg' => ['r' => 248, 'g' => 250, 'b' => 252], // #f8fafc
                 'header_border' => ['r' => 226, 'g' => 232, 'b' => 240], // #e2e8f0
                 'row_border' => ['r' => 0, 'g' => 0, 'b' => 0], // #000000
+                'row_bg' => 'transparent',
                 'alt_row_bg' => ['r' => 250, 'g' => 251, 'b' => 252], // #fafbfc
                 'headerTextColor' => '#334155',
                 'rowTextColor' => '#334155',
@@ -1772,6 +1773,7 @@ class PDF_Builder_Pro_Generator {
                 'header_bg' => ['r' => 30, 'g' => 41, 'b' => 59], // #1e293b
                 'header_border' => ['r' => 51, 'g' => 65, 'b' => 85], // #334155
                 'row_border' => ['r' => 51, 'g' => 65, 'b' => 85], // #334155
+                'row_bg' => 'transparent',
                 'alt_row_bg' => ['r' => 255, 'g' => 255, 'b' => 255], // #ffffff
                 'headerTextColor' => '#ffffff',
                 'rowTextColor' => '#1e293b',
@@ -1786,6 +1788,7 @@ class PDF_Builder_Pro_Generator {
                 'header_bg' => ['r' => 59, 'g' => 130, 'b' => 246], // #3b82f6
                 'header_border' => ['r' => 37, 'g' => 99, 'b' => 235], // #2563eb
                 'row_border' => ['r' => 226, 'g' => 232, 'b' => 240], // #e2e8f0
+                'row_bg' => 'transparent',
                 'alt_row_bg' => ['r' => 248, 'g' => 250, 'b' => 252], // #f8fafc
                 'headerTextColor' => '#ffffff',
                 'rowTextColor' => '#334155',
@@ -1856,7 +1859,8 @@ class PDF_Builder_Pro_Generator {
                 'header_bg' => ['r' => 6, 'g' => 78, 'b' => 59], // #064e3b (moyenne du gradient)
                 'header_border' => ['r' => 6, 'g' => 95, 'b' => 70], // #065f46
                 'row_border' => ['r' => 209, 'g' => 250, 'b' => 229], // #d1fae5
-                'alt_row_bg' => ['r' => 167, 'g' => 243, 'b' => 208], // #a7f3d0 (couleur pour les lignes impaires)
+                'row_bg' => ['r' => 209, 'g' => 250, 'b' => 229], // #d1fae5 (lignes paires)
+                'alt_row_bg' => ['r' => 167, 'g' => 243, 'b' => 208], // #a7f3d0 (lignes impaires)
                 'headerTextColor' => '#ffffff',
                 'rowTextColor' => '#064e3b',
                 'border_width' => 1.5,
@@ -2193,19 +2197,13 @@ class PDF_Builder_Pro_Generator {
                 $total = $item->get_total();
 
                 // Fond alterné selon le style
-                $table_style = $element['tableStyle'] ?? 'default';
-                if ($table_style === 'emerald_forest') {
-                    // Logique spéciale pour emerald_forest : alternance spécifique des couleurs
-                    if ($alt_row) {
-                        // Ligne impaire : couleur plus foncée #a7f3d0
-                        $this->pdf->SetFillColor(167, 243, 208);
-                    } else {
-                        // Ligne paire : couleur claire #d1fae5
-                        $this->pdf->SetFillColor(209, 250, 229);
-                    }
-                    $this->pdf->Rect($x, $current_y, array_sum($col_widths), $row_height, 'F');
-                } elseif ($alt_row && $table_style === 'striped') {
+                if ($alt_row && isset($table_styles['alt_row_bg'])) {
+                    // Ligne impaire : couleur d'alternance du style
                     $this->pdf->SetFillColor($table_styles['alt_row_bg']['r'], $table_styles['alt_row_bg']['g'], $table_styles['alt_row_bg']['b']);
+                    $this->pdf->Rect($x, $current_y, array_sum($col_widths), $row_height, 'F');
+                } elseif (!$alt_row && isset($table_styles['row_bg']) && $table_styles['row_bg'] !== 'transparent') {
+                    // Ligne paire : couleur de base du style si définie
+                    $this->pdf->SetFillColor($table_styles['row_bg']['r'], $table_styles['row_bg']['g'], $table_styles['row_bg']['b']);
                     $this->pdf->Rect($x, $current_y, array_sum($col_widths), $row_height, 'F');
                 }
 
@@ -2331,19 +2329,13 @@ class PDF_Builder_Pro_Generator {
                 $bg_rgb = $this->parse_color($product_bg_color);
                 $this->pdf->SetFillColor($bg_rgb['r'], $bg_rgb['g'], $bg_rgb['b']);
                 $this->pdf->Rect($x, $current_y, array_sum($col_widths), $row_height, 'F');
-            } elseif ($table_style === 'emerald_forest') {
-                // Logique spéciale pour emerald_forest : alternance spécifique des couleurs
-                if ($index % 2 === 0) {
-                    // Ligne paire : couleur claire #d1fae5
-                    $this->pdf->SetFillColor(209, 250, 229);
-                } else {
-                    // Ligne impaire : couleur plus foncée #a7f3d0
-                    $this->pdf->SetFillColor(167, 243, 208);
-                }
-                $this->pdf->Rect($x, $current_y, array_sum($col_widths), $row_height, 'F');
             } elseif ($index % 2 === 1 && isset($table_styles['alt_row_bg'])) {
-                // Alternance des couleurs de fond par défaut pour les autres styles
+                // Alternance des couleurs de fond par défaut - ligne impaire
                 $this->pdf->SetFillColor($table_styles['alt_row_bg']['r'], $table_styles['alt_row_bg']['g'], $table_styles['alt_row_bg']['b']);
+                $this->pdf->Rect($x, $current_y, array_sum($col_widths), $row_height, 'F');
+            } elseif ($index % 2 === 0 && isset($table_styles['row_bg']) && $table_styles['row_bg'] !== 'transparent') {
+                // Couleur de fond pour les lignes paires si définie
+                $this->pdf->SetFillColor($table_styles['row_bg']['r'], $table_styles['row_bg']['g'], $table_styles['row_bg']['b']);
                 $this->pdf->Rect($x, $current_y, array_sum($col_widths), $row_height, 'F');
             }
 

@@ -542,9 +542,10 @@ var CanvasElement = function CanvasElement(_ref) {
         headerBg: 'linear-gradient(135deg, #064e3b 0%, #10b981 100%)',
         headerBorder: '#065f46',
         rowBorder: '#d1fae5',
-        rowBg: 'transparent',
+        rowBg: '#d1fae5',
+        // Couleur pour les lignes paires
         altRowBg: '#a7f3d0',
-        // Plus foncé pour être visible
+        // Couleur pour les lignes impaires
         borderWidth: 1.5,
         headerTextColor: '#ffffff',
         rowTextColor: '#064e3b',
@@ -1364,7 +1365,7 @@ var CanvasElement = function CanvasElement(_ref) {
         style: {
           display: 'flex',
           borderBottom: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
-          backgroundColor: product.backgroundColor || product.bgColor || (index % 2 === 1 ? tableStyles.altRowBg : element.tableStyle === 'emerald_forest' ? '#d1fae5' : tableStyles.rowBg),
+          backgroundColor: product.backgroundColor || product.bgColor || (index % 2 === 1 ? tableStyles.altRowBg : tableStyles.rowBg),
           color: product.color || product.textColor || tableStyles.rowTextColor,
           fontSize: "".concat(tableStyles.rowFontSize * zoom, "px"),
           transition: 'background-color 0.15s ease'
@@ -5817,7 +5818,7 @@ var PreviewModal = function PreviewModal(_ref) {
               gradient: 'linear-gradient(135deg, #064e3b 0%, #10b981 100%)',
               headerBorder: '#065f46',
               rowBorder: '#d1fae5',
-              rowBg: 'transparent',
+              rowBg: '#d1fae5',
               altRowBg: '#a7f3d0',
               // Couleur plus visible pour l'aperçu PDF
               borderWidth: 1.5,
@@ -6278,7 +6279,7 @@ var PreviewModal = function PreviewModal(_ref) {
             style: {
               display: 'flex',
               borderBottom: showBorders ? "".concat(tableStyles.borderWidth, "px solid ").concat(tableStyles.rowBorder) : 'none',
-              backgroundColor: product.backgroundColor || product.bgColor || (index % 2 === 1 ? tableStyles.altRowBg : element.tableStyle === 'emerald_forest' ? '#d1fae5' : tableStyles.rowBg),
+              backgroundColor: product.backgroundColor || product.bgColor || (index % 2 === 1 ? tableStyles.altRowBg : tableStyles.rowBg),
               color: product.color || product.textColor || tableStyles.rowTextColor || '#000000',
               boxShadow: tableStyles.shadow ? "0 1px 2px ".concat(tableStyles.shadow) : 'none'
             }
