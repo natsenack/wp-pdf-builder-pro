@@ -2528,10 +2528,12 @@ body.pdf-builder-active #wpadminbar {
 
 /* Styles pour le sélecteur de style de tableau dynamique */
 .table-style-selector {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  margin-top: 4px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 4px;
+    max-height: 400px;
+    overflow-y: auto;
 }
 
 .table-style-option {
