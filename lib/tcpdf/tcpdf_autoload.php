@@ -19,11 +19,11 @@ if (!isset($_SERVER['DOCUMENT_ROOT']) || empty($_SERVER['DOCUMENT_ROOT'])) {
 }
 
 // Charger directement tcpdf.php sans passer par autoload.php qui peut causer des problèmes
-require_once __DIR__ . '/include/tcpdf_static.php';
-require_once __DIR__ . '/include/tcpdf_font_data.php';
-require_once __DIR__ . '/include/tcpdf_fonts.php';
-require_once __DIR__ . '/include/tcpdf_colors.php';
-require_once __DIR__ . '/include/tcpdf_images.php';
+require_once __DIR__ . '/tcpdf_static.php';
+// require_once __DIR__ . '/tcpdf_font_data.php'; // Fichier manquant, commenté temporairement
+require_once __DIR__ . '/tcpdf_fonts.php';
+require_once __DIR__ . '/tcpdf_colors.php';
+require_once __DIR__ . '/tcpdf_images.php';
 require_once __DIR__ . '/tcpdf.php';
 
 // Autoloader pour les classes optionnelles

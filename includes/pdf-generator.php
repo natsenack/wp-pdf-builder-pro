@@ -1767,22 +1767,23 @@ class PDF_Builder_Pro_Generator {
 
         error_log('PDF Builder: render_product_table_element called with tableStyle: ' . ($element['tableStyle'] ?? 'default'));
 
-        // Extraction des propriétés avec valeurs par défaut sûres
-        $coords = $this->extract_element_coordinates($element, $px_to_mm);
-        $x = $coords['x'];
-        $y = $coords['y'];
-        $width = $coords['width'] ?: 550 * $px_to_mm;
-        $height = $coords['height'] ?: 200 * $px_to_mm;
+        try {
+            // Extraction des propriétés avec valeurs par défaut sûres
+            $coords = $this->extract_element_coordinates($element, $px_to_mm);
+            $x = $coords['x'];
+            $y = $coords['y'];
+            $width = $coords['width'] ?: 550 * $px_to_mm;
+            $height = $coords['height'] ?: 200 * $px_to_mm;
 
-        // LOG: Coordonnées et dimensions
-        error_log("📊 RENDER_PRODUCT_TABLE - COORDS: x=$x, y=$y, w=$width, h=$height");
+            // LOG: Coordonnées et dimensions
+            error_log("📊 RENDER_PRODUCT_TABLE - COORDS: x=$x, y=$y, w=$width, h=$height");
 
-        // Propriétés de style visuel
-        $background_color = $element['backgroundColor'] ?? 'transparent';
-        $border_width = ($element['borderWidth'] ?? 1) * $px_to_mm;
-        $border_color = $element['borderColor'] ?? 'transparent';
-        error_log('PDF TABLE BG: element backgroundColor = ' . ($element['backgroundColor'] ?? 'NOT SET'));
-        error_log('PDF TABLE BG: resolved background_color = ' . $background_color);
+            // Propriétés de style visuel
+            $background_color = $element['backgroundColor'] ?? 'transparent';
+            $border_width = ($element['borderWidth'] ?? 1) * $px_to_mm;
+            $border_color = $element['borderColor'] ?? 'transparent';
+            error_log('PDF TABLE BG: element backgroundColor = ' . ($element['backgroundColor'] ?? 'NOT SET'));
+            error_log('PDF TABLE BG: resolved background_color = ' . $background_color);
 
         // Propriétés spécifiques au tableau
         $show_headers = $element['showHeaders'] ?? true;
@@ -1947,6 +1948,15 @@ class PDF_Builder_Pro_Generator {
 
         // Totaux
         $current_y = $this->render_table_totals($x, $current_y, $col_widths, $columns, $show_borders, $element);
+
+        } catch (Exception $e) {
+            // LOG: Erreur dans le rendu du tableau produits
+            error_log("📊 RENDER_PRODUCT_TABLE - ERROR: " . $e->getMessage());
+            error_log("📊 RENDER_PRODUCT_TABLE - STACK: " . $e->getTraceAsString());
+            
+            // Rendu de secours pour l'élément en erreur
+            $this->render_error_fallback($element, $px_to_mm, 'Erreur tableau produits: ' . $e->getMessage());
+        }
     }
 
     /**
