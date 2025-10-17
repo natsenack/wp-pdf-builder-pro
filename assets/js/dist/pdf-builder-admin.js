@@ -13670,7 +13670,60 @@ function src_typeof(o) { "@babel/helpers - typeof"; return src_typeof = "functio
 
 console.log('PDF Builder Pro: Script execution started - with proper imports');
 
-// Test des imports de base
+// Système de protection et monitoring
+var PDFBuilderSecurity = {
+  healthChecks: [],
+  errors: [],
+  initialized: false,
+  // Health check pour vérifier que toutes les dépendances sont disponibles
+  performHealthCheck: function performHealthCheck() {
+    console.log('PDF Builder Pro: Performing health check...');
+    var checks = {
+      react: src_typeof(react) === 'object' && react.version,
+      reactDom: src_typeof(react_dom) === 'object',
+      pdfCanvasEditor: typeof PDFCanvasEditor === 'function',
+      hooks: src_typeof(hooks_namespaceObject) === 'object',
+      window: typeof window !== 'undefined',
+      document: typeof document !== 'undefined'
+    };
+    this.healthChecks = checks;
+    var allHealthy = Object.values(checks).every(Boolean);
+    if (allHealthy) {
+      console.log('PDF Builder Pro: All health checks passed ✅');
+      this.initialized = true;
+    } else {
+      console.error('PDF Builder Pro: Health check failed ❌', checks);
+      this.initialized = false;
+    }
+    return allHealthy;
+  },
+  // Log sécurisé des erreurs
+  logError: function logError(error) {
+    var _navigator, _window;
+    var context = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+    var errorInfo = {
+      message: error.message,
+      stack: error.stack,
+      context: context,
+      timestamp: new Date().toISOString(),
+      userAgent: (_navigator = navigator) === null || _navigator === void 0 ? void 0 : _navigator.userAgent,
+      url: (_window = window) === null || _window === void 0 || (_window = _window.location) === null || _window === void 0 ? void 0 : _window.href
+    };
+    this.errors.push(errorInfo);
+    console.error('PDF Builder Pro Security Error:', errorInfo);
+  },
+  // Protection contre les appels multiples
+  preventMultipleInit: function preventMultipleInit() {
+    if (window._pdfBuilderInitialized) {
+      console.warn('PDF Builder Pro: Multiple initialization attempt prevented');
+      return false;
+    }
+    window._pdfBuilderInitialized = true;
+    return true;
+  }
+};
+
+// Test des imports de base avec protection
 try {
   console.log('Testing React availability...');
   console.log('React version:', react.version);
@@ -13683,6 +13736,7 @@ try {
     console.log('PDF Builder Pro: React exposed globally');
   }
 } catch (error) {
+  PDFBuilderSecurity.logError(error, 'React initialization');
   console.error('React test failed:', error);
 }
 
@@ -13724,39 +13778,77 @@ var PDFBuilderPro = /*#__PURE__*/function () {
     value: function init(containerId) {
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       console.log('PDFBuilderPro.init called with:', containerId, options);
-      var container = document.getElementById(containerId);
-      if (!container) {
-        console.error('Container not found:', containerId);
-        return;
-      }
-
-      // Options par défaut
-      var defaultOptions = src_objectSpread({
-        templateId: null,
-        templateName: null,
-        isNew: true,
-        initialElements: [],
-        width: 595,
-        // A4 width in points
-        height: 842,
-        // A4 height in points
-        zoom: 1,
-        gridSize: 10,
-        snapToGrid: true
-      }, options);
       try {
-        // Créer l'éditeur React
+        // Vérification stricte du containerId
+        if (!containerId || typeof containerId !== 'string') {
+          throw new Error('ContainerId must be a non-empty string');
+        }
+        var container = document.getElementById(containerId);
+        if (!container) {
+          throw new Error("Container with ID \"".concat(containerId, "\" does not exist in the DOM"));
+        }
+
+        // Vérifier la disponibilité de React et ReactDOM
+        if (!react || !react_dom) {
+          throw new Error('React or ReactDOM is not available. Make sure the scripts are loaded properly.');
+        }
+
+        // Vérifier que PDFCanvasEditor est disponible
+        if (!PDFCanvasEditor) {
+          throw new Error('PDFCanvasEditor component is not available. Check for compilation errors.');
+        }
+
+        // Options par défaut avec validation
+        var defaultOptions = src_objectSpread({
+          templateId: null,
+          templateName: null,
+          isNew: true,
+          initialElements: [],
+          width: 595,
+          // A4 width in points
+          height: 842,
+          // A4 height in points
+          zoom: 1,
+          gridSize: 10,
+          snapToGrid: true
+        }, options);
+
+        // Validation des options critiques
+        if (typeof defaultOptions.width !== 'number' || defaultOptions.width <= 0) {
+          console.warn('PDFBuilderPro: Invalid width, using default A4 width');
+          defaultOptions.width = 595;
+        }
+        if (typeof defaultOptions.height !== 'number' || defaultOptions.height <= 0) {
+          console.warn('PDFBuilderPro: Invalid height, using default A4 height');
+          defaultOptions.height = 842;
+        }
+
+        // Créer l'éditeur React avec protection
         var editorElement = /*#__PURE__*/(0,react.createElement)(PDFCanvasEditor, {
           options: defaultOptions
         });
+
+        // Vérifier que l'élément a été créé correctement
+        if (!editorElement) {
+          throw new Error('Failed to create React element for PDFCanvasEditor');
+        }
         react_dom.render(editorElement, container);
         this.editors.set(containerId, {
           container: container,
           options: defaultOptions
         });
-        console.log('PDFBuilderPro: Editor initialized successfully');
+        console.log('PDFBuilderPro: Editor initialized successfully for container:', containerId);
       } catch (error) {
         console.error('PDFBuilderPro: Failed to initialize editor:', error);
+
+        // Fallback visuel pour l'utilisateur
+        var _container = document.getElementById(containerId);
+        if (_container) {
+          _container.innerHTML = "\n                    <div style=\"\n                        color: #721c24;\n                        background-color: #f8d7da;\n                        border: 1px solid #f5c6cb;\n                        border-radius: 4px;\n                        padding: 15px;\n                        margin: 10px 0;\n                        font-family: Arial, sans-serif;\n                        font-size: 14px;\n                    \">\n                        <strong>Erreur PDF Builder Pro</strong><br>\n                        Impossible d'initialiser l'\xE9diteur. V\xE9rifiez la console pour plus de d\xE9tails.<br>\n                        <small>Erreur: ".concat(error.message, "</small>\n                    </div>\n                ");
+        }
+
+        // Re-throw pour permettre la gestion en amont si nécessaire
+        throw error;
       }
     }
 
@@ -13764,9 +13856,19 @@ var PDFBuilderPro = /*#__PURE__*/function () {
   }, {
     key: "destroy",
     value: function destroy(containerId) {
-      var editor = this.editors.get(containerId);
-      if (editor) {
-        react_dom.unmountComponentAtNode(editor.container);
+      try {
+        var editor = this.editors.get(containerId);
+        if (editor) {
+          // Vérifier que ReactDOM est disponible avant de démonter
+          if (react_dom && react_dom.unmountComponentAtNode) {
+            react_dom.unmountComponentAtNode(editor.container);
+          }
+          this.editors["delete"](containerId);
+          console.log('PDFBuilderPro: Editor destroyed for container:', containerId);
+        }
+      } catch (error) {
+        console.error('PDFBuilderPro: Error during destroy:', error);
+        // Forcer la suppression même en cas d'erreur
         this.editors["delete"](containerId);
       }
     }
@@ -13783,12 +13885,27 @@ var PDFBuilderPro = /*#__PURE__*/function () {
 var pdfBuilderPro = new PDFBuilderPro();
 console.log('PDF Builder Pro: PDFBuilderPro instance created');
 
-// Attacher à window pour WordPress - avec vérification
+// Attacher à window pour WordPress - avec vérification et protection
 if (typeof window !== 'undefined') {
-  window.PDFBuilderPro = pdfBuilderPro;
-  // Alias pour compatibilité
-  window.pdfBuilderPro = pdfBuilderPro;
-  console.log('PDF Builder Pro: PDFBuilderPro attached to window');
+  // Effectuer le health check avant d'exposer l'instance
+  if (PDFBuilderSecurity.performHealthCheck()) {
+    window.PDFBuilderPro = pdfBuilderPro;
+    // Alias pour compatibilité
+    window.pdfBuilderPro = pdfBuilderPro;
+    console.log('PDF Builder Pro: PDFBuilderPro attached to window');
+
+    // Marquer comme initialisé pour éviter les conflits
+    PDFBuilderSecurity.preventMultipleInit();
+  } else {
+    console.error('PDF Builder Pro: Not attaching to window due to health check failure');
+    // Exposer quand même une version limitée pour le debugging
+    window.PDFBuilderPro = {
+      version: '2.0.0',
+      status: 'unhealthy',
+      errors: PDFBuilderSecurity.errors,
+      healthChecks: PDFBuilderSecurity.healthChecks
+    };
+  }
 }
 
 // Export par défaut pour webpack
