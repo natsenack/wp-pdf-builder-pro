@@ -1361,6 +1361,16 @@ class PDF_Builder_Admin {
     private function load_admin_scripts($hook = null) {
         error_log('PDF Builder: load_admin_scripts called with hook: ' . $hook);
 
+        // DEBUG: Vérifier que les constantes sont définies
+        error_log('PDF Builder: PDF_BUILDER_PRO_ASSETS_URL = ' . (defined('PDF_BUILDER_PRO_ASSETS_URL') ? PDF_BUILDER_PRO_ASSETS_URL : 'NOT DEFINED'));
+        error_log('PDF Builder: PDF_BUILDER_PRO_VERSION = ' . (defined('PDF_BUILDER_PRO_VERSION') ? PDF_BUILDER_PRO_VERSION : 'NOT DEFINED'));
+
+        // Vérifier que les fichiers existent
+        $admin_js_path = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js';
+        $nonce_fix_path = PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js';
+        error_log('PDF Builder: Admin JS URL: ' . $admin_js_path);
+        error_log('PDF Builder: Nonce fix URL: ' . $nonce_fix_path);
+
         // Styles CSS de base
         wp_enqueue_style('pdf-builder-admin', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css', [], PDF_BUILDER_PRO_VERSION);
 
@@ -1400,7 +1410,7 @@ class PDF_Builder_Admin {
 
         // DEBUG: Vérifier que le script est enqueued
         error_log('PDF Builder: Script enqueued - URL: ' . PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js');
-        error_log('PDF Builder: File exists check: ' . (file_exists(PDF_BUILDER_PRO_ASSETS_PATH . 'js/dist/pdf-builder-admin.js') ? 'YES' : 'NO'));
+        error_log('PDF Builder: File exists check: ' . (file_exists(str_replace(PDF_BUILDER_PRO_ASSETS_URL, plugin_dir_path(__FILE__) . '../../assets/', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js')) ? 'YES' : 'NO'));
 
         // Script de correction de nonce - NOUVEAU HANDLE POUR FORCER LE RECHARGEMENT
         wp_enqueue_script('pdf-builder-nonce-fix-v2', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js', ['jquery'], '4.0.0_force_reload_' . time(), true);
@@ -1543,6 +1553,28 @@ class PDF_Builder_Admin {
         // Styles pour l'éditeur canvas
         if ($hook === 'pdf-builder_page_pdf-builder-editor') {
             wp_enqueue_style('pdf-builder-canvas-editor', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-canvas.css', [], PDF_BUILDER_PRO_VERSION);
+
+            // Styles supplémentaires pour l'éditeur
+            wp_enqueue_style('pdf-builder-react', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-react.css', [], PDF_BUILDER_PRO_VERSION);
+            wp_enqueue_style('pdf-builder-editor', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-editor.css', [], PDF_BUILDER_PRO_VERSION);
+            wp_enqueue_style('woocommerce-elements', PDF_BUILDER_PRO_ASSETS_URL . 'css/woocommerce-elements.css', [], PDF_BUILDER_PRO_VERSION);
+
+            // Script inline pour vérifier React
+            wp_add_inline_script('pdf-builder-admin-v3', '
+                console.log("🔍 Vérification React (bundlé)...");
+                console.log("Bundle chargé, React devrait être disponible dans le bundle");
+            ', 'after');
+
+            // Variables globales pour l'éditeur
+            wp_add_inline_script('pdf-builder-admin-v3', '
+                window.pdfBuilderData = {
+                    templateId: ' . (isset($_GET['template_id']) ? intval($_GET['template_id']) : 'null') . ',
+                    templateName: null,
+                    isNew: ' . (isset($_GET['template_id']) ? 'false' : 'true') . ',
+                    ajaxurl: "' . admin_url('admin-ajax.php') . '",
+                    nonce: "' . wp_create_nonce('pdf_builder_nonce') . '"
+                };
+            ', 'after');
         }
     }
 
