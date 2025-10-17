@@ -6152,7 +6152,7 @@ var PreviewModal = function PreviewModal(_ref) {
           }
         }, /*#__PURE__*/React.createElement("div", {
           style: {
-            width: "".concat(80 * zoom, "px"),
+            width: 'auto',
             textAlign: 'right',
             display: 'flex',
             justifyContent: 'space-between'
@@ -6165,7 +6165,7 @@ var PreviewModal = function PreviewModal(_ref) {
           }
         }, /*#__PURE__*/React.createElement("div", {
           style: {
-            width: "".concat(80 * zoom, "px"),
+            width: 'auto',
             textAlign: 'right',
             display: 'flex',
             justifyContent: 'space-between'
@@ -6178,7 +6178,7 @@ var PreviewModal = function PreviewModal(_ref) {
           }
         }, /*#__PURE__*/React.createElement("div", {
           style: {
-            width: "".concat(80 * zoom, "px"),
+            width: 'auto',
             textAlign: 'right',
             display: 'flex',
             justifyContent: 'space-between'
@@ -6191,7 +6191,7 @@ var PreviewModal = function PreviewModal(_ref) {
           }
         }, /*#__PURE__*/React.createElement("div", {
           style: {
-            width: "".concat(80 * zoom, "px"),
+            width: 'auto',
             textAlign: 'right',
             display: 'flex',
             justifyContent: 'space-between'
@@ -6208,7 +6208,7 @@ var PreviewModal = function PreviewModal(_ref) {
           }
         }, /*#__PURE__*/React.createElement("div", {
           style: {
-            width: "".concat(80 * zoom, "px"),
+            width: 'auto',
             textAlign: 'right',
             display: 'flex',
             justifyContent: 'space-between'
