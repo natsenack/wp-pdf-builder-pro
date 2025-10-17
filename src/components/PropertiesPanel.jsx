@@ -605,8 +605,16 @@ const PropertiesPanel = memo(({
     // Utiliser le hook de personnalisation pour la gestion locale
     customizationChange(elementId, property, validatedValue);
 
-    // Synchronisation immédiate pour les changements critiques
-    if (['x', 'y', 'width', 'height'].includes(property)) {
+    // Synchronisation immédiate pour les changements critiques et de style
+    if ([
+      'x', 'y', 'width', 'height', // Position et dimensions
+      'color', 'fontSize', 'fontFamily', 'fontWeight', 'fontStyle', // Texte et typographie
+      'textAlign', 'lineHeight', 'letterSpacing', 'textDecoration', // Mise en forme texte
+      'backgroundColor', 'backgroundOpacity', // Fond
+      'borderColor', 'borderWidth', 'borderStyle', 'borderRadius', // Bordures
+      'boxShadowColor', 'boxShadowBlur', 'boxShadowSpread', // Ombres
+      'opacity', 'textShadowBlur' // Transparence et effets
+    ].includes(property)) {
       syncImmediate(elementId, property, validatedValue);
     }
   }, [customizationChange, syncImmediate]);
