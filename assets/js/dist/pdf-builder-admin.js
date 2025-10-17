@@ -11679,34 +11679,22 @@ var PropertiesPanel = /*#__PURE__*/(0,react.memo)(function (_ref4) {
         }, /*#__PURE__*/React.createElement("span", {
           className: "variable-badge",
           title: "Montant total de la commande"
-        }, {
-          order_total: order_total
-        }), /*#__PURE__*/React.createElement("span", {
+        }, '{{order_total}}'), /*#__PURE__*/React.createElement("span", {
           className: "variable-badge",
           title: "Num\xE9ro de commande"
-        }, {
-          order_number: order_number
-        }), /*#__PURE__*/React.createElement("span", {
+        }, '{{order_number}}'), /*#__PURE__*/React.createElement("span", {
           className: "variable-badge",
           title: "Date de la commande"
-        }, {
-          order_date: order_date
-        }), /*#__PURE__*/React.createElement("span", {
+        }, '{{order_date}}'), /*#__PURE__*/React.createElement("span", {
           className: "variable-badge",
           title: "Sous-total HT"
-        }, {
-          order_subtotal: order_subtotal
-        }), /*#__PURE__*/React.createElement("span", {
+        }, '{{order_subtotal}}'), /*#__PURE__*/React.createElement("span", {
           className: "variable-badge",
           title: "Montant TVA"
-        }, {
-          order_tax: order_tax
-        }), /*#__PURE__*/React.createElement("span", {
+        }, '{{order_tax}}'), /*#__PURE__*/React.createElement("span", {
           className: "variable-badge",
           title: "Frais de port"
-        }, {
-          order_shipping: order_shipping
-        }))), /*#__PURE__*/React.createElement("div", {
+        }, '{{order_shipping}}'))), /*#__PURE__*/React.createElement("div", {
           className: "variable-group"
         }, /*#__PURE__*/React.createElement("span", {
           className: "group-icon"
@@ -11717,24 +11705,16 @@ var PropertiesPanel = /*#__PURE__*/(0,react.memo)(function (_ref4) {
         }, /*#__PURE__*/React.createElement("span", {
           className: "variable-badge",
           title: "Nom du client"
-        }, {
-          customer_name: customer_name
-        }), /*#__PURE__*/React.createElement("span", {
+        }, '{{customer_name}}'), /*#__PURE__*/React.createElement("span", {
           className: "variable-badge",
           title: "Email du client"
-        }, {
-          customer_email: customer_email
-        }), /*#__PURE__*/React.createElement("span", {
+        }, '{{customer_email}}'), /*#__PURE__*/React.createElement("span", {
           className: "variable-badge",
           title: "Adresse de facturation"
-        }, {
-          billing_address: billing_address
-        }), /*#__PURE__*/React.createElement("span", {
+        }, '{{billing_address}}'), /*#__PURE__*/React.createElement("span", {
           className: "variable-badge",
           title: "Adresse de livraison"
-        }, {
-          shipping_address: shipping_address
-        }))), /*#__PURE__*/React.createElement("div", {
+        }, '{{shipping_address}}'))), /*#__PURE__*/React.createElement("div", {
           className: "variable-group"
         }, /*#__PURE__*/React.createElement("span", {
           className: "group-icon"
@@ -11745,14 +11725,10 @@ var PropertiesPanel = /*#__PURE__*/(0,react.memo)(function (_ref4) {
         }, /*#__PURE__*/React.createElement("span", {
           className: "variable-badge",
           title: "Date actuelle"
-        }, {
-          date: date
-        }), /*#__PURE__*/React.createElement("span", {
+        }, '{{date}}'), /*#__PURE__*/React.createElement("span", {
           className: "variable-badge",
           title: "Date d'\xE9ch\xE9ance"
-        }, {
-          due_date: due_date
-        })))))), allowedControls.includes('company_fields') && selectedElement.type === 'company_info' && /*#__PURE__*/React.createElement("div", {
+        }, '{{due_date}}')))))), allowedControls.includes('company_fields') && selectedElement.type === 'company_info' && /*#__PURE__*/React.createElement("div", {
           className: "properties-group"
         }, /*#__PURE__*/React.createElement("h4", null, "\uD83C\uDFE2 Informations Entreprise"), /*#__PURE__*/React.createElement("div", {
           className: "property-row"

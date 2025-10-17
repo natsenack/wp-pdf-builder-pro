@@ -2018,30 +2018,30 @@ const PropertiesPanel = memo(({
                       <span className="group-icon">💰</span>
                       <span className="group-label">Commande:</span>
                       <span className="variable-badges">
-                        <span className="variable-badge" title="Montant total de la commande">{{order_total}}</span>
-                        <span className="variable-badge" title="Numéro de commande">{{order_number}}</span>
-                        <span className="variable-badge" title="Date de la commande">{{order_date}}</span>
-                        <span className="variable-badge" title="Sous-total HT">{{order_subtotal}}</span>
-                        <span className="variable-badge" title="Montant TVA">{{order_tax}}</span>
-                        <span className="variable-badge" title="Frais de port">{{order_shipping}}</span>
+                        <span className="variable-badge" title="Montant total de la commande">{'{{order_total}}'}</span>
+                        <span className="variable-badge" title="Numéro de commande">{'{{order_number}}'}</span>
+                        <span className="variable-badge" title="Date de la commande">{'{{order_date}}'}</span>
+                        <span className="variable-badge" title="Sous-total HT">{'{{order_subtotal}}'}</span>
+                        <span className="variable-badge" title="Montant TVA">{'{{order_tax}}'}</span>
+                        <span className="variable-badge" title="Frais de port">{'{{order_shipping}}'}</span>
                       </span>
                     </div>
                     <div className="variable-group">
                       <span className="group-icon">👤</span>
                       <span className="group-label">Client:</span>
                       <span className="variable-badges">
-                        <span className="variable-badge" title="Nom du client">{{customer_name}}</span>
-                        <span className="variable-badge" title="Email du client">{{customer_email}}</span>
-                        <span className="variable-badge" title="Adresse de facturation">{{billing_address}}</span>
-                        <span className="variable-badge" title="Adresse de livraison">{{shipping_address}}</span>
+                        <span className="variable-badge" title="Nom du client">{'{{customer_name}}'}</span>
+                        <span className="variable-badge" title="Email du client">{'{{customer_email}}'}</span>
+                        <span className="variable-badge" title="Adresse de facturation">{'{{billing_address}}'}</span>
+                        <span className="variable-badge" title="Adresse de livraison">{'{{shipping_address}}'}</span>
                       </span>
                     </div>
                     <div className="variable-group">
                       <span className="group-icon">📅</span>
                       <span className="group-label">Dates:</span>
                       <span className="variable-badges">
-                        <span className="variable-badge" title="Date actuelle">{{date}}</span>
-                        <span className="variable-badge" title="Date d'échéance">{{due_date}}</span>
+                        <span className="variable-badge" title="Date actuelle">{'{{date}}'}</span>
+                        <span className="variable-badge" title="Date d'échéance">{'{{due_date}}'}</span>
                       </span>
                     </div>
                   </div>
