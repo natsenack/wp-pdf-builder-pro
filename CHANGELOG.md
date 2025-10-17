@@ -42,6 +42,7 @@ et ce projet respecte le [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - ✅ **Erreurs JSON** : Validation et réparation automatique des données
 - ✅ **Propriétés contaminées** : Sanitisation type-aware des éléments
 - ✅ **Dépendances manquantes** : Gestion robuste des imports React
+- ✅ **Erreur fatale WooCommerce** : Correction initialisation managers PHP dans `class-pdf-builder-admin.php`
 
 #### **Sécurité**
 - ✅ **Input validation** : Validation stricte de tous les paramètres utilisateur

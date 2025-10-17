@@ -65,11 +65,11 @@ class PDF_Builder_Admin {
     private function __construct($main_instance) {
         $this->main = $main_instance;
 
-        // Inclure les classes des managers - COMMENTÉ POUR DEBUG
-        // $this->include_managers();
+        // Inclure les classes des managers
+        $this->include_managers();
 
-        // Instancier les managers - COMMENTÉ POUR DEBUG
-        // $this->init_managers();
+        // Instancier les managers
+        $this->init_managers();
 
         $this->init_hooks();
     }
