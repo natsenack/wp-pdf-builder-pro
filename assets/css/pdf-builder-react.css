@@ -1,10 +1,10 @@
-﻿
+
 /* PDF Builder Pro - React/TypeScript Styles */
 /* Generated: 2025-10-04T15:09:27.425Z */
 
 /* ===== ANIMATIONS ET TRANSITIONS FLUIDES - PHASE 2 ===== */
 
-/* Transitions gÃ©nÃ©rales pour une UX fluide */
+/* Transitions générales pour une UX fluide */
 * {
   transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
 }
@@ -33,7 +33,7 @@
   box-shadow: -2px 0 12px rgba(0,0,0,0.12);
 }
 
-/* Animation pour les Ã©lÃ©ments du canvas */
+/* Animation pour les éléments du canvas */
 .canvas-element {
   transition: box-shadow 0.2s ease, transform 0.15s ease;
 }
@@ -90,7 +90,7 @@ input:focus, select:focus, textarea:focus {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
-/* Animation pour la bibliothÃ¨que d'Ã©lÃ©ments */
+/* Animation pour la bibliothèque d'éléments */
 .element-button {
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -233,7 +233,7 @@ input:focus, select:focus, textarea:focus {
   font-weight: 500;
 }
 
-/* Indicateurs de succÃ¨s */
+/* Indicateurs de succès */
 .success-indicator {
   position: absolute;
   top: 10px;
@@ -252,7 +252,7 @@ input:focus, select:focus, textarea:focus {
 }
 
 .success-indicator::before {
-  content: 'â';
+  content: '✓';
   font-size: 14px;
 }
 
@@ -275,7 +275,7 @@ input:focus, select:focus, textarea:focus {
 }
 
 .error-indicator::before {
-  content: 'â';
+  content: '✕';
   font-size: 14px;
 }
 
@@ -370,10 +370,10 @@ input:focus, select:focus, textarea:focus {
 .pdf-builder-container,
 .pdf-canvas-editor {
   position: relative !important;
-  z-index: 10 !important; /* RÃ©duit pour laisser l'admin bar au-dessus */
+  z-index: 10 !important; /* Réduit pour laisser l'admin bar au-dessus */
   width: 100% !important;
-  height: auto !important; /* Laisser le CSS contrÃ´ler la hauteur (130vh) */
-  min-height: calc(100vh - 72px) !important; /* Hauteur minimale pour compatibilitÃ© */
+  height: auto !important; /* Laisser le CSS contrôler la hauteur (130vh) */
+  min-height: calc(100vh - 72px) !important; /* Hauteur minimale pour compatibilité */
   margin: 0 !important;
   padding: 0 !important;
   background: #ffffff !important; /* Blanc pur au lieu de gris */
@@ -381,13 +381,13 @@ input:focus, select:focus, textarea:focus {
 
 /* Ajuster le z-index pour que l'admin bar reste au-dessus du builder */
 body.pdf-builder-active #wpadminbar {
-  z-index: 1000 !important; /* Admin bar au-dessus de l'Ã©diteur */
+  z-index: 1000 !important; /* Admin bar au-dessus de l'éditeur */
 }
 
-/* Les conteneurs de l'Ã©diteur gardent un z-index bas pour ne pas masquer l'admin bar */
+/* Les conteneurs de l'éditeur gardent un z-index bas pour ne pas masquer l'admin bar */
 /* REMOVED: body.pdf-builder-active .invoice-quote-builder-container, etc. with z-index: 1000 */
 
-/* S'assurer que le contenu du builder ne dÃ©passe pas */
+/* S'assurer que le contenu du builder ne dépasse pas */
 .invoice-quote-builder-container .pdf-canvas-editor,
 .pdf-builder-container .pdf-canvas-editor {
   overflow: hidden;
@@ -397,14 +397,14 @@ body.pdf-builder-active #wpadminbar {
 .invoice-quote-builder-container,
 .pdf-builder-container {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  height: 130vh; /* Ãtendu pour plus d'espace de travail vertical */
+  height: 130vh; /* Étendu pour plus d'espace de travail vertical */
   overflow: hidden;
   background: #ffffff; /* Blanc pur */
 }
 
 /* ===== NOUVELLES CLASSES POUR LE JSX ===== */
 
-/* Header de l'Ã©diteur */
+/* Header de l'éditeur */
 .editor-header {
   display: flex;
   justify-content: space-between;
@@ -477,7 +477,7 @@ body.pdf-builder-active #wpadminbar {
   max-width: 400px;
   width: 360px;
   box-shadow: -2px 0 8px rgba(0,0,0,0.08);
-  height: 100%; /* S'adapte Ã  la hauteur du workspace (130vh) */
+  height: 100%; /* S'adapte à la hauteur du workspace (130vh) */
 }
 
 .editor-sidebar.collapsed {
@@ -498,23 +498,23 @@ body.pdf-builder-active #wpadminbar {
 }
 
 .editor-sidebar.left-sidebar {
-  width: 360px; /* BibliothÃ¨que d'ÃlÃ©ments - largeur rÃ©duite */
+  width: 360px; /* Bibliothèque d'Éléments - largeur réduite */
   border-right: 1px solid #f1f3f4;
 }
 
 .editor-sidebar.right-sidebar {
-  width: 340px; /* PropriÃ©tÃ©s - largeur rÃ©duite pour plus de compacitÃ© */
+  width: 340px; /* Propriétés - largeur réduite pour plus de compacité */
   border-left: 1px solid #f1f3f4;
   transition: width 0.3s ease;
 }
 
-/* Media queries pour la rÃ©activitÃ© */
+/* Media queries pour la réactivité */
 @media (max-width: 1200px) {
   .editor-sidebar.left-sidebar {
-    width: 320px; /* BibliothÃ¨que d'ÃlÃ©ments - mobile */
+    width: 320px; /* Bibliothèque d'Éléments - mobile */
   }
   .editor-sidebar.right-sidebar {
-    width: 300px; /* PropriÃ©tÃ©s - mobile, trÃ¨s compact */
+    width: 300px; /* Propriétés - mobile, très compact */
   }
 }
 
@@ -545,7 +545,7 @@ body.pdf-builder-active #wpadminbar {
   top: 50% !important;
   right: 15px !important;
   transform: translateY(-50%) !important;
-  z-index: 50 !important; /* RÃ©duit pour ne pas masquer l'admin bar */
+  z-index: 50 !important; /* Réduit pour ne pas masquer l'admin bar */
   width: 40px !important;
   height: 40px !important;
   background: linear-gradient(135deg, #007bff, #0056b3) !important;
@@ -576,10 +576,10 @@ body.pdf-builder-active #wpadminbar {
   flex: 1;
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* ChangÃ© de center Ã  flex-start pour plus d'espace en haut */
+  align-items: flex-start; /* Changé de center à flex-start pour plus d'espace en haut */
   background: #fafbfc;
   overflow: auto;
-  padding: 80px 60px 80px 60px; /* Padding rÃ©duit pour mieux utiliser l'espace vertical */
+  padding: 80px 60px 80px 60px; /* Padding réduit pour mieux utiliser l'espace vertical */
   position: relative;
 }
 
@@ -597,7 +597,7 @@ body.pdf-builder-active #wpadminbar {
   position: relative;
   cursor: default;
   height: auto; /* S'adapte automatiquement au contenu et au conteneur */
-  min-height: 1000px; /* Hauteur minimale pour Ã©viter la compression excessive */
+  min-height: 1000px; /* Hauteur minimale pour éviter la compression excessive */
   width: auto;
 }
 
@@ -632,7 +632,7 @@ body.pdf-builder-active #wpadminbar {
   z-index: 1;
 }
 
-/* Indicateurs visuels pour la sÃ©lection */
+/* Indicateurs visuels pour la sélection */
 .canvas-element.selected {
   border: 2px solid #3b82f6;
   box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
@@ -640,7 +640,7 @@ body.pdf-builder-active #wpadminbar {
 }
 
 .canvas-element.selected::after {
-  display: none; /* SupprimÃ© pour Ã©viter les conflits */
+  display: none; /* Supprimé pour éviter les conflits */
 }
 
 /* Indicateurs de zoom */
@@ -659,7 +659,7 @@ body.pdf-builder-active #wpadminbar {
   backdrop-filter: blur(8px);
 }
 
-/* AmÃ©lioration des tooltips */
+/* Amélioration des tooltips */
 .tooltip {
   position: relative;
   display: inline-block;
@@ -700,7 +700,7 @@ body.pdf-builder-active #wpadminbar {
   border-color: #333 transparent transparent transparent;
 }
 
-/* Indicateurs visuels pour la sÃ©lection */
+/* Indicateurs visuels pour la sélection */
 .canvas-element.selected {
   border: 2px solid #3b82f6;
   box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
@@ -708,7 +708,7 @@ body.pdf-builder-active #wpadminbar {
 }
 
 .canvas-element.selected::after {
-  display: none; /* SupprimÃ© pour Ã©viter les conflits */
+  display: none; /* Supprimé pour éviter les conflits */
 }
 
 /* Indicateurs de zoom */
@@ -727,7 +727,7 @@ body.pdf-builder-active #wpadminbar {
   backdrop-filter: blur(8px);
 }
 
-/* AmÃ©lioration des tooltips */
+/* Amélioration des tooltips */
 .tooltip {
   position: relative;
   display: inline-block;
@@ -768,21 +768,21 @@ body.pdf-builder-active #wpadminbar {
   border-color: #333 transparent transparent transparent;
 }
 
-/* ===== CLASSES EXISTANTES (prÃ©servÃ©es) ===== */
+/* ===== CLASSES EXISTANTES (préservées) ===== */
 
 .pdf-builder-toolbar {
   display: flex;
   gap: 8px;
   padding: 12px 16px;
   background: #ffffff; /* Blanc pur */
-  border-bottom: 1px solid #f1f3f4; /* Gris trÃ¨s clair */
+  border-bottom: 1px solid #f1f3f4; /* Gris très clair */
   align-items: center;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* Ombre subtile */
 }
 
 .pdf-builder-toolbar button {
   padding: 8px 12px;
-  border: 1px solid #e8eaed; /* Gris trÃ¨s clair */
+  border: 1px solid #e8eaed; /* Gris très clair */
   background: white;
   border-radius: 4px;
   cursor: pointer;
@@ -791,7 +791,7 @@ body.pdf-builder-active #wpadminbar {
 }
 
 .pdf-builder-toolbar button:hover {
-  background: #fafbfc; /* Gris trÃ¨s trÃ¨s clair */
+  background: #fafbfc; /* Gris très très clair */
   border-color: #d1d5db; /* Gris plus subtil */
 }
 
@@ -801,7 +801,7 @@ body.pdf-builder-active #wpadminbar {
   border-color: #2563eb;
 }
 
-/* Boutons gÃ©nÃ©riques */
+/* Boutons génériques */
 .btn {
   padding: 0.5rem 1rem;
   border: 1px solid #f8f9fa;
@@ -855,8 +855,8 @@ body.pdf-builder-active #wpadminbar {
 
 .pdf-builder-sidebar {
   width: 280px;
-  background: #fafbfc; /* Gris trÃ¨s trÃ¨s clair */
-  border-right: 1px solid #f1f3f4; /* Bordure trÃ¨s subtile */
+  background: #fafbfc; /* Gris très très clair */
+  border-right: 1px solid #f1f3f4; /* Bordure très subtile */
   overflow-y: auto;
 }
 
@@ -865,7 +865,7 @@ body.pdf-builder-active #wpadminbar {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #fafbfc; /* Gris trÃ¨s trÃ¨s clair au lieu de gris foncÃ© */
+  background: #fafbfc; /* Gris très très clair au lieu de gris foncé */
   overflow: auto;
   padding: 20px;
 }
@@ -873,14 +873,14 @@ body.pdf-builder-active #wpadminbar {
 .pdf-builder-canvas {
   background: white;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); /* Ombre plus subtile */
-  border: 1px solid #f1f3f4; /* Bordure trÃ¨s claire */
+  border: 1px solid #f1f3f4; /* Bordure très claire */
   position: relative;
 }
 
 .pdf-builder-properties {
   width: 320px;
-  background: #fafbfc; /* Gris trÃ¨s trÃ¨s clair */
-  border-left: 1px solid #f1f3f4; /* Bordure trÃ¨s subtile */
+  background: #fafbfc; /* Gris très très clair */
+  border-left: 1px solid #f1f3f4; /* Bordure très subtile */
   overflow-y: auto;
 }
 
@@ -889,13 +889,13 @@ body.pdf-builder-active #wpadminbar {
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  border-bottom: 1px solid #f1f3f4; /* Bordure trÃ¨s claire */
+  border-bottom: 1px solid #f1f3f4; /* Bordure très claire */
   cursor: pointer;
   transition: background 0.2s ease;
 }
 
 .pdf-builder-element-item:hover {
-  background: #f5f7fa; /* Gris trÃ¨s clair au hover */
+  background: #f5f7fa; /* Gris très clair au hover */
 }
 
 .pdf-builder-element-item.selected {
@@ -911,7 +911,7 @@ body.pdf-builder-active #wpadminbar {
   display: block;
   font-weight: 500;
   margin-bottom: 4px;
-  color: #374151; /* Gris plus foncÃ© pour le contraste */
+  color: #374151; /* Gris plus foncé pour le contraste */
 }
 
 .pdf-builder-property-group input,
@@ -1140,7 +1140,7 @@ body.pdf-builder-active #wpadminbar {
   color: #ffffff;
 }
 
-/* Styles pour les boutons d'Ã©dition avec raccourcis */
+/* Styles pour les boutons d'édition avec raccourcis */
 .button-content {
   display: flex;
   flex-direction: column;
@@ -1176,7 +1176,7 @@ body.pdf-builder-active #wpadminbar {
   opacity: 0.5;
 }
 
-/* Styles pour les contrÃ´les d'affichage */
+/* Styles pour les contrôles d'affichage */
 .control-group label {
   display: flex;
   align-items: center;
@@ -1233,7 +1233,7 @@ body.pdf-builder-active #wpadminbar {
   letter-spacing: 0.5px;
 }
 
-/* Boutons d'Ã©dition */
+/* Boutons d'édition */
 .edit-buttons {
   display: flex;
   gap: 4px;
@@ -1296,7 +1296,7 @@ body.pdf-builder-active #wpadminbar {
   transform: translateY(-50%) scale(1.05);
 }
 
-/* Status de l'Ã©diteur */
+/* Status de l'éditeur */
 .editor-status {
   position: fixed;
   bottom: 0;
@@ -1422,9 +1422,9 @@ body.pdf-builder-active #wpadminbar {
   height: 100%;
 }
 
-/* ===== STYLES POUR LE PANNEAU DE PROPRIÃTÃS ===== */
+/* ===== STYLES POUR LE PANNEAU DE PROPRIÉTÉS ===== */
 
-/* Groupe de propriÃ©tÃ©s */
+/* Groupe de propriétés */
 .properties-group {
   margin-bottom: 24px;
   padding: 16px;
@@ -1440,7 +1440,7 @@ body.pdf-builder-active #wpadminbar {
   color: #374151;
 }
 
-/* Ligne de propriÃ©tÃ© */
+/* Ligne de propriété */
 .property-row {
   display: flex;
   align-items: center;
@@ -1548,9 +1548,9 @@ body.pdf-builder-active #wpadminbar {
   background-size: 16px 16px;
 }
 
-/* ===== STYLES POUR LES ÃLÃMENTS SÃLECTIONNÃS ===== */
+/* ===== STYLES POUR LES ÉLÉMENTS SÉLECTIONNÉS ===== */
 
-/* ÃlÃ©ment canvas sÃ©lectionnÃ© */
+/* Élément canvas sélectionné */
 .canvas-element.selected {
   border: 2px solid #3b82f6;
   box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
@@ -1559,10 +1559,10 @@ body.pdf-builder-active #wpadminbar {
 
 .canvas-element.selected::before,
 .canvas-element.selected::after {
-  display: none; /* SupprimÃ© pour Ã©viter les conflits */
+  display: none; /* Supprimé pour éviter les conflits */
 }
 
-/* Zones de redimensionnement pour Ã©lÃ©ments sÃ©lectionnÃ©s */
+/* Zones de redimensionnement pour éléments sélectionnés */
 .resize-zone {
   position: absolute;
   background: rgba(37, 99, 235, 0.1);
@@ -1578,7 +1578,7 @@ body.pdf-builder-active #wpadminbar {
   width: 20px;
   height: 8px;
   cursor: n-resize;
-  opacity: 0; /* MasquÃ© pour Ã©viter les carrÃ©s visibles */
+  opacity: 0; /* Masqué pour éviter les carrés visibles */
 }
 
 .canvas-element.selected .resize-zone-s {
@@ -1588,7 +1588,7 @@ body.pdf-builder-active #wpadminbar {
   width: 20px;
   height: 8px;
   cursor: s-resize;
-  opacity: 0; /* MasquÃ© pour Ã©viter les carrÃ©s visibles */
+  opacity: 0; /* Masqué pour éviter les carrés visibles */
 }
 
 .canvas-element.selected .resize-zone-w {
@@ -1598,7 +1598,7 @@ body.pdf-builder-active #wpadminbar {
   width: 8px;
   height: 20px;
   cursor: w-resize;
-  opacity: 0; /* MasquÃ© pour Ã©viter les carrÃ©s visibles */
+  opacity: 0; /* Masqué pour éviter les carrés visibles */
 }
 
 .canvas-element.selected .resize-zone-e {
@@ -1608,10 +1608,10 @@ body.pdf-builder-active #wpadminbar {
   width: 8px;
   height: 20px;
   cursor: e-resize;
-  opacity: 0; /* MasquÃ© pour Ã©viter les carrÃ©s visibles */
+  opacity: 0; /* Masqué pour éviter les carrés visibles */
 }
 
-/* PoignÃ©e de rotation */
+/* Poignée de rotation */
 .rotation-handle {
   position: absolute;
   top: -20px;
@@ -1632,7 +1632,7 @@ body.pdf-builder-active #wpadminbar {
   opacity: 1;
 }
 
-/* ===== STYLES POUR LA BIBLIOTHÃQUE D'ÃLÃMENTS ===== */
+/* ===== STYLES POUR LA BIBLIOTHÈQUE D'ÉLÉMENTS ===== */
 
 .element-library {
   width: 100%;
@@ -1670,7 +1670,7 @@ body.pdf-builder-active #wpadminbar {
   background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
 }
 
-/* Liste simple d'Ã©lÃ©ments avec boutons */
+/* Liste simple d'éléments avec boutons */
 .elements-list {
   display: flex;
   flex-direction: column;
@@ -1867,10 +1867,10 @@ body.pdf-builder-active #wpadminbar {
   text-align: center;
 }
 
-/* ===== STYLES POUR LE PANNEAU DE PROPRIÃTÃS ===== */
+/* ===== STYLES POUR LE PANNEAU DE PROPRIÉTÉS ===== */
 
 .properties-panel {
-  width: 100%; /* S'adapte Ã  la largeur du sidebar conteneur */
+  width: 100%; /* S'adapte à la largeur du sidebar conteneur */
   background: #ffffff;
   border-left: 1px solid #e2e8f0;
   display: flex;
@@ -1926,7 +1926,7 @@ body.pdf-builder-active #wpadminbar {
 }
 
 .color-preset.transparent::after {
-  content: 'Ã';
+  content: '×';
   position: absolute;
   top: 50%;
   left: 50%;
@@ -1937,7 +1937,7 @@ body.pdf-builder-active #wpadminbar {
   pointer-events: none;
 }
 
-/* Styles pour les selects stylisÃ©s */
+/* Styles pour les selects stylisés */
 .styled-select {
   width: 100%;
   padding: 8px 12px;
@@ -1960,7 +1960,7 @@ body.pdf-builder-active #wpadminbar {
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-/* AmÃ©lioration des toggles */
+/* Amélioration des toggles */
 .toggle {
   position: relative;
   display: inline-block;
@@ -2144,7 +2144,7 @@ body.pdf-builder-active #wpadminbar {
   background: #ffffff;
 }
 
-/* Contenu des propriÃ©tÃ©s */
+/* Contenu des propriétés */
 .properties-content {
   flex: 1;
   overflow-y: auto;
@@ -2219,7 +2219,7 @@ body.pdf-builder-active #wpadminbar {
   min-height: 60px;
 }
 
-/* Sliders personnalisÃ©s */
+/* Sliders personnalisés */
 .slider-container {
   flex: 1;
   display: flex;
@@ -2355,7 +2355,7 @@ body.pdf-builder-active #wpadminbar {
   accent-color: #2563eb;
 }
 
-/* Ãtat sans sÃ©lection */
+/* État sans sélection */
 .no-selection {
   text-align: center;
   padding: 40px 20px;
@@ -2387,7 +2387,7 @@ body.pdf-builder-active #wpadminbar {
   }
 }
 
-/* Styles pour les contrÃ´les d'alignement */
+/* Styles pour les contrôles d'alignement */
 .alignment-controls {
   display: flex;
   flex-direction: column;
@@ -2422,7 +2422,7 @@ body.pdf-builder-active #wpadminbar {
   background: #cbd5e1;
 }
 
-/* Styles pour les inputs avec unitÃ©s */
+/* Styles pour les inputs avec unités */
 .input-with-unit {
   display: flex;
   align-items: center;
@@ -2521,7 +2521,7 @@ body.pdf-builder-active #wpadminbar {
   background: #cbd5e1;
 }
 
-/* Styles pour le sÃ©lecteur de mÃ©dia */
+/* Styles pour le sélecteur de média */
 .input-with-button {
   display: flex;
   gap: 8px;
@@ -2556,7 +2556,7 @@ body.pdf-builder-active #wpadminbar {
   transform: translateY(0);
 }
 
-/* Styles pour le sÃ©lecteur de style de tableau dynamique */
+/* Styles pour le sélecteur de style de tableau dynamique */
 .table-style-selector {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -2611,7 +2611,7 @@ body.pdf-builder-active #wpadminbar {
 }
 
 .table-style-option.active::after {
-  content: 'â';
+  content: '✓';
   position: absolute;
   top: 4px;
   right: 4px;
@@ -2704,7 +2704,7 @@ body.pdf-builder-active #wpadminbar {
   letter-spacing: 0.025em;
 }
 
-/* Animation d'entrÃ©e pour les options de style de tableau */
+/* Animation d'entrée pour les options de style de tableau */
 .table-style-option:nth-child(1) { animation-delay: 0ms; }
 .table-style-option:nth-child(2) { animation-delay: 50ms; }
 .table-style-option:nth-child(3) { animation-delay: 100ms; }
@@ -2745,4 +2745,3 @@ body.pdf-builder-active #wpadminbar {
     transform: translateY(0) scale(1);
   }
 }
-
