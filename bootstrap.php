@@ -481,8 +481,8 @@ function pdf_builder_ajax_get_fresh_nonce() {
         return;
     }
 
-    // Générer un nouveau nonce
-    $nonce = wp_create_nonce('pdf_builder_order_actions');
+    // Générer un nouveau nonce pour la génération PDF
+    $nonce = wp_create_nonce('pdf_builder_nonce');
 
     // Retourner le nonce
     wp_send_json_success(array(
