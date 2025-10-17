@@ -817,36 +817,36 @@ const renderColorsSection = (selectedElement, localProperties, handlePropertyCha
         </div>
 
         {/* Couleur du fond (conditionnelle) */}
-          <div style={{
-            display: isBackgroundEnabled ? 'block' : 'none',
-            transition: 'opacity 0.3s ease'
-          }}>
-            <ColorPicker
-              label="Fond"
-              value={localProperties.backgroundColor === 'transparent' ? '#ffffff' : localProperties.backgroundColor}
-              onChange={(value) => {
-                handlePropertyChange(selectedElement.id, 'backgroundColor', value);
-              }}
-              presets={['transparent', '#ffffff', '#f8fafc', '#f1f5f9', '#e2e8f0', '#cbd5e1', '#94a3b8']}
-            />
+        <div style={{
+          display: isBackgroundEnabled ? 'block' : 'none',
+          transition: 'opacity 0.3s ease'
+        }}>
+          <ColorPicker
+            label="Fond"
+            value={localProperties.backgroundColor === 'transparent' ? '#ffffff' : localProperties.backgroundColor}
+            onChange={(value) => {
+              handlePropertyChange(selectedElement.id, 'backgroundColor', value);
+            }}
+            presets={['transparent', '#ffffff', '#f8fafc', '#f1f5f9', '#e2e8f0', '#cbd5e1', '#94a3b8']}
+          />
 
-            {/* Opacité du fond */}
-            <div className="property-row">
-              <label>Opacité fond:</label>
-              <div className="slider-container">
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.1"
-                  value={localProperties.backgroundOpacity ?? 1}
-                  onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundOpacity', safeParseFloat(e.target.value, 1))}
-                  className="slider"
-                />
-                <span className="slider-value">{Math.round((localProperties.backgroundOpacity ?? 1) * 100)}%</span>
-              </div>
+          {/* Opacité du fond */}
+          <div className="property-row">
+            <label>Opacité fond:</label>
+            <div className="slider-container">
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.1"
+                value={localProperties.backgroundOpacity ?? 1}
+                onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundOpacity', safeParseFloat(e.target.value, 1))}
+                className="slider"
+              />
+              <span className="slider-value">{Math.round((localProperties.backgroundOpacity ?? 1) * 100)}%</span>
             </div>
           </div>
+        </div>
         </>
       )}
     </div>
