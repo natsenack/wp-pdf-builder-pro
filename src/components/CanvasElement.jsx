@@ -762,9 +762,11 @@ export const CanvasElement = ({
 
       case 'line':
         return {
-          backgroundColor: element.backgroundColor || '#64748b',
-          height: '12px', // Hauteur fixe pour les lignes
-          cursor: 'pointer'
+          borderTop: `${element.lineWidth || 1}px solid ${element.lineColor || '#6b7280'}`,
+          height: `${Math.max(element.lineWidth || 1, 12)}px`, // Hauteur augmentée à 12px minimum pour faciliter le clic
+          width: '100%',
+          cursor: 'pointer',
+          backgroundColor: 'transparent' // S'assurer qu'il n'y a pas de fond qui cache
         };
 
       // Styles par défaut pour les autres types

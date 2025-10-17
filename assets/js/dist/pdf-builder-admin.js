@@ -1105,10 +1105,12 @@ var CanvasElement = function CanvasElement(_ref) {
         };
       case 'line':
         return {
-          backgroundColor: element.backgroundColor || '#64748b',
-          height: '12px',
-          // Hauteur fixe pour les lignes
-          cursor: 'pointer'
+          borderTop: "".concat(element.lineWidth || 1, "px solid ").concat(element.lineColor || '#6b7280'),
+          height: "".concat(Math.max(element.lineWidth || 1, 12), "px"),
+          // Hauteur augmentée à 12px minimum pour faciliter le clic
+          width: '100%',
+          cursor: 'pointer',
+          backgroundColor: 'transparent' // S'assurer qu'il n'y a pas de fond qui cache
         };
 
       // Styles par défaut pour les autres types
@@ -5544,11 +5546,11 @@ var PreviewModal = function PreviewModal(_ref) {
         });
       case 'line':
         return /*#__PURE__*/React.createElement("div", {
-          style: PreviewModal_defineProperty({
+          style: {
             width: '100%',
-            height: (element.height || element.strokeWidth || 1) * zoom,
+            height: (element.strokeWidth || 1) * zoom,
             borderTop: "".concat((element.strokeWidth || 1) * zoom, "px solid ").concat(element.strokeColor || '#000000')
-          }, "height", 0)
+          }
         });
       case 'divider':
         return /*#__PURE__*/React.createElement("div", {
@@ -6492,7 +6494,7 @@ var PreviewModal = function PreviewModal(_ref) {
     }
   }, [isOpen, elements.length, useServerPreview]);
   var generatePreview = /*#__PURE__*/function () {
-    var _ref4 = PreviewModal_asyncToGenerator(/*#__PURE__*/PreviewModal_regenerator().m(function _callee() {
+    var _ref3 = PreviewModal_asyncToGenerator(/*#__PURE__*/PreviewModal_regenerator().m(function _callee() {
       var _window$pdfBuilderAja, ajaxUrl, nonceFormData, nonceResponse, nonceData, freshNonce, _cleanElementsForJSON, validationResult, jsonString, cleanedElements, formData, response, data, responseText, errorMessage, _t, _t2;
       return PreviewModal_regenerator().w(function (_context) {
         while (1) switch (_context.p = _context.n) {
@@ -6706,11 +6708,11 @@ var PreviewModal = function PreviewModal(_ref) {
       }, _callee, null, [[9, 11], [1, 14]]);
     }));
     return function generatePreview() {
-      return _ref4.apply(this, arguments);
+      return _ref3.apply(this, arguments);
     };
   }();
   var generateServerPreview = /*#__PURE__*/function () {
-    var _ref5 = PreviewModal_asyncToGenerator(/*#__PURE__*/PreviewModal_regenerator().m(function _callee2() {
+    var _ref4 = PreviewModal_asyncToGenerator(/*#__PURE__*/PreviewModal_regenerator().m(function _callee2() {
       var fallbackTimeout, _window$pdfBuilderAja2, _window$pdfBuilderAja3, validationResult, jsonString, ajaxUrl, nonceFormData, nonceResponse, nonceData, freshNonce, formData, response, data, _t3;
       return PreviewModal_regenerator().w(function (_context2) {
         while (1) switch (_context2.p = _context2.n) {
@@ -6844,11 +6846,11 @@ var PreviewModal = function PreviewModal(_ref) {
       }, _callee2, null, [[1, 13]]);
     }));
     return function generateServerPreview() {
-      return _ref5.apply(this, arguments);
+      return _ref4.apply(this, arguments);
     };
   }();
   var handlePrint = /*#__PURE__*/function () {
-    var _ref6 = PreviewModal_asyncToGenerator(/*#__PURE__*/PreviewModal_regenerator().m(function _callee3() {
+    var _ref5 = PreviewModal_asyncToGenerator(/*#__PURE__*/PreviewModal_regenerator().m(function _callee3() {
       var printButton, _window$pdfBuilderAja4, ajaxUrl, nonceFormData, nonceResponse, nonceData, freshNonce, formData, originalText, response, data, errorMessage, pdfBase64, pdfBlob, pdfUrl, previewWindow, link, _t4;
       return PreviewModal_regenerator().w(function (_context3) {
         while (1) switch (_context3.p = _context3.n) {
@@ -7005,7 +7007,7 @@ var PreviewModal = function PreviewModal(_ref) {
       }, _callee3, null, [[1, 13, 14, 15]]);
     }));
     return function handlePrint() {
-      return _ref6.apply(this, arguments);
+      return _ref5.apply(this, arguments);
     };
   }();
   if (!isOpen) return null;
