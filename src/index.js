@@ -119,3 +119,6 @@ if (typeof window !== 'undefined') {
     console.log('PDF Builder Pro: PDFBuilderPro attached to window');
 }
 
+// Export par défaut pour webpack
+export default pdfBuilderPro;
+

@@ -6,6 +6,8 @@
 /***/ ((__unused_webpack_module, __unused_webpack___webpack_exports__, __webpack_require__) => {
 
 
+// UNUSED EXPORTS: default
+
 // EXTERNAL MODULE: ./node_modules/react/index.js
 var react = __webpack_require__(540);
 // EXTERNAL MODULE: ./node_modules/react-dom/index.js
@@ -6716,6 +6718,9 @@ if (typeof window !== 'undefined') {
   window.pdfBuilderPro = pdfBuilderPro;
   console.log('PDF Builder Pro: PDFBuilderPro attached to window');
 }
+
+// Export par défaut pour webpack
+/* harmony default export */ const src = ((/* unused pure expression or super */ null && (pdfBuilderPro)));
 
 /***/ }),
 
