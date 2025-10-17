@@ -17,8 +17,22 @@ module.exports = {
     usedExports: true, // Activer l'élimination des exports non utilisés
     sideEffects: true,  // Activer l'analyse des effets de bord pour optimisation
     minimize: false,     // Désactiver la minification pour le debug
-    // Désactiver le code splitting pour éviter les problèmes de chargement asynchrone
-    splitChunks: false
+    // Réactiver le code splitting pour les composants dynamiques
+    splitChunks: {
+      chunks: 'all',
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all',
+        },
+        react: {
+          test: /[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/,
+          name: 'react-vendor',
+          chunks: 'all',
+        }
+      }
+    }
   },
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json']
