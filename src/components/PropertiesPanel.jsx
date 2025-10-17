@@ -271,13 +271,12 @@ const ELEMENT_PROPERTY_PROFILES = {
       }
     }
   },
-  // Tableaux produits (propriétés spécifiques)
+  // Tableaux produits (propriétés simplifiées - focus sur la structure)
   product_table: {
     appearance: {
-      sections: ['colors', 'typography', 'borders', 'effects'],
+      sections: ['colors', 'borders', 'effects'],
       properties: {
-        colors: ['color', 'backgroundColor'],
-        typography: ['fontFamily', 'fontSize', 'fontWeight'],
+        colors: ['backgroundColor'], // seulement le fond du tableau, pas de couleur texte individuelle
         borders: ['borderWidth', 'borderColor', 'borderRadius'],
         effects: ['opacity', 'shadow']
       }
@@ -295,6 +294,74 @@ const ELEMENT_PROPERTY_PROFILES = {
       sections: ['table'],
       properties: {
         table: ['columns', 'showHeaders', 'showBorders', 'tableStyle']
+      }
+    },
+    effects: {
+      sections: ['opacity', 'shadows'],
+      properties: {
+        opacity: ['opacity'],
+        shadows: ['shadow', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY']
+      }
+    }
+  },
+  // Éléments d'informations client (accès aux couleurs et apparence)
+  customer_info: {
+    appearance: {
+      sections: ['colors', 'typography', 'borders', 'effects'],
+      properties: {
+        colors: ['color', 'backgroundColor'],
+        typography: ['fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'textDecoration', 'textAlign', 'textTransform', 'lineHeight'],
+        borders: ['borderWidth', 'borderColor', 'borderRadius'],
+        effects: ['opacity', 'shadow']
+      }
+    },
+    layout: {
+      sections: ['position', 'dimensions', 'transform', 'layers'],
+      properties: {
+        position: ['x', 'y'],
+        dimensions: ['width', 'height'],
+        transform: ['rotation'],
+        layers: ['zIndex']
+      }
+    },
+    content: {
+      sections: ['customer_fields'],
+      properties: {
+        customer_fields: ['customerName', 'customerAddress', 'customerPhone', 'customerEmail']
+      }
+    },
+    effects: {
+      sections: ['opacity', 'shadows'],
+      properties: {
+        opacity: ['opacity'],
+        shadows: ['shadow', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY']
+      }
+    }
+  },
+  // Éléments d'informations entreprise (accès aux couleurs et apparence)
+  company_info: {
+    appearance: {
+      sections: ['colors', 'typography', 'borders', 'effects'],
+      properties: {
+        colors: ['color', 'backgroundColor'],
+        typography: ['fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'textDecoration', 'textAlign', 'textTransform', 'lineHeight'],
+        borders: ['borderWidth', 'borderColor', 'borderRadius'],
+        effects: ['opacity', 'shadow']
+      }
+    },
+    layout: {
+      sections: ['position', 'dimensions', 'transform', 'layers'],
+      properties: {
+        position: ['x', 'y'],
+        dimensions: ['width', 'height'],
+        transform: ['rotation'],
+        layers: ['zIndex']
+      }
+    },
+    content: {
+      sections: ['company_fields'],
+      properties: {
+        company_fields: ['companyName', 'companyAddress', 'companyPhone', 'companyEmail', 'companyLogo']
       }
     },
     effects: {
