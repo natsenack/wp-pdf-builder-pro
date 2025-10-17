@@ -1103,300 +1103,65 @@ export const CanvasElement = ({
 
             {/* Lignes de totaux */}
             {(element.showSubtotal || element.showShipping || element.showTaxes || element.showDiscount || element.showTotal) && (
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                {/* Ligne de séparation */}
-                <div style={{
-                  display: 'flex',
-                  borderTop: showBorders ? `${tableStyles.borderWidth * 2 * zoom}px solid ${tableStyles.headerBorder}` : 'none',
-                  marginTop: `${10 * zoom}px`,
-                  paddingTop: `${10 * zoom}px`,
-                  fontSize: `${tableStyles.rowFontSize * zoom}px`
-                }}>
-                  <div style={{
-                    flex: 1,
-                    padding: `${4 * zoom}px ${6 * zoom}px`,
-                    textAlign: 'right',
-                    fontWeight: 'bold',
-                    color: element.color || '#666'
-                  }}>
-                    {/* Colonne vide pour l'alignement */}
-                  </div>
-                  {(element.columns?.quantity !== false) && (
-                    <div style={{
-                      flex: '0 0 60px',
-                      padding: `${4 * zoom}px ${6 * zoom}px`,
-                      textAlign: 'center'
-                    }}>
-                      {/* Quantité vide */}
-                    </div>
-                  )}
-                  {(element.columns?.price !== false) && (
-                    <div style={{
-                      flex: '0 0 80px',
-                      padding: `${4 * zoom}px ${6 * zoom}px`,
-                      textAlign: 'right',
-                      fontWeight: 'bold',
-                      color: element.color || '#666'
-                    }}>
-                      {/* Prix vide */}
-                    </div>
-                  )}
-                  {(element.columns?.total !== false) && (
-                    <div style={{
-                      flex: '0 0 80px',
-                      padding: `${4 * zoom}px ${6 * zoom}px`,
-                      textAlign: 'right',
-                      fontWeight: 'bold',
-                      color: element.color || '#666'
-                    }}>
-                      Total
-                    </div>
-                  )}
-                </div>
-
-                {/* Sous-total */}
+              <div style={{ borderTop: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.headerBorder}` : 'none' }}>
                 {element.showSubtotal && (
                   <div style={{
                     display: 'flex',
-                    borderBottom: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none',
-                    backgroundColor: tableStyles.altRowBg,
-                    fontSize: `${tableStyles.rowFontSize * zoom}px`
+                    justifyContent: 'flex-end',
+                    padding: `${4 * zoom}px ${6 * zoom}px`,
+                    fontWeight: 'bold'
                   }}>
-                    <div style={{
-                      flex: 1,
-                      padding: `${5 * zoom}px ${8 * zoom}px`,
-                      textAlign: 'right',
-                      color: tableStyles.rowTextColor,
-                      fontWeight: '600'
-                    }}>
-                      Sous-total
+                    <div style={{ width: `${80 * zoom}px`, textAlign: 'right' }}>
+                      Sous-total: {subtotal.toFixed(2)}€
                     </div>
-                    {(element.columns?.quantity !== false) && (
-                      <div style={{
-                        flex: '0 0 60px',
-                        padding: `${4 * zoom}px ${6 * zoom}px`,
-                        textAlign: 'center'
-                      }}>
-                        {/* Quantité vide */}
-                      </div>
-                    )}
-                    {(element.columns?.price !== false) && (
-                      <div style={{
-                        flex: '0 0 80px',
-                        padding: `${4 * zoom}px ${6 * zoom}px`,
-                        textAlign: 'right'
-                      }}>
-                        {/* Prix vide */}
-                      </div>
-                    )}
-                    {(lastVisibleColumn === 'total') && (
-                      <div style={{
-                        flex: '0 0 80px',
-                        padding: `${4 * zoom}px ${6 * zoom}px`,
-                        textAlign: 'right',
-                        fontWeight: 'bold'
-                      }}>
-                        {subtotal.toFixed(2)}€
-                      </div>
-                    )}
                   </div>
                 )}
-
-                {/* Frais de port */}
-                {element.showShipping && (
+                {element.showShipping && shipping > 0 && (
                   <div style={{
                     display: 'flex',
-                    borderBottom: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none',
-                    backgroundColor: 'transparent',
-                    fontSize: `${tableStyles.rowFontSize * zoom}px`
+                    justifyContent: 'flex-end',
+                    padding: `${4 * zoom}px ${6 * zoom}px`
                   }}>
-                    <div style={{
-                      flex: 1,
-                      padding: `${5 * zoom}px ${8 * zoom}px`,
-                      textAlign: 'right',
-                      color: tableStyles.rowTextColor,
-                      fontWeight: '500'
-                    }}>
-                      Port
+                    <div style={{ width: `${80 * zoom}px`, textAlign: 'right' }}>
+                      Port: {shipping.toFixed(2)}€
                     </div>
-                    {(element.columns?.quantity !== false) && (
-                      <div style={{
-                        flex: '0 0 60px',
-                        padding: `${4 * zoom}px ${6 * zoom}px`,
-                        textAlign: 'center'
-                      }}>
-                        {/* Quantité vide */}
-                      </div>
-                    )}
-                    {(element.columns?.price !== false) && (
-                      <div style={{
-                        flex: '0 0 80px',
-                        padding: `${4 * zoom}px ${6 * zoom}px`,
-                        textAlign: 'right'
-                      }}>
-                        {/* Prix vide */}
-                      </div>
-                    )}
-                    {(lastVisibleColumn === 'total') && (
-                      <div style={{
-                        flex: '0 0 80px',
-                        padding: `${4 * zoom}px ${6 * zoom}px`,
-                        textAlign: 'right'
-                      }}>
-                        {shipping.toFixed(2)}€
-                      </div>
-                    )}
                   </div>
                 )}
-
-                {/* Taxes */}
-                {element.showTaxes && (
+                {element.showTaxes && tax > 0 && (
                   <div style={{
                     display: 'flex',
-                    borderBottom: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none',
-                    backgroundColor: 'transparent',
-                    fontSize: `${tableStyles.rowFontSize * zoom}px`
+                    justifyContent: 'flex-end',
+                    padding: `${4 * zoom}px ${6 * zoom}px`
                   }}>
-                    <div style={{
-                      flex: 1,
-                      padding: `${5 * zoom}px ${8 * zoom}px`,
-                      textAlign: 'right',
-                      color: tableStyles.rowTextColor,
-                      fontWeight: '500'
-                    }}>
-                      TVA
+                    <div style={{ width: `${80 * zoom}px`, textAlign: 'right' }}>
+                      TVA: {tax.toFixed(2)}€
                     </div>
-                    {(element.columns?.quantity !== false) && (
-                      <div style={{
-                        flex: '0 0 60px',
-                        padding: `${4 * zoom}px ${6 * zoom}px`,
-                        textAlign: 'center'
-                      }}>
-                        {/* Quantité vide */}
-                      </div>
-                    )}
-                    {(element.columns?.price !== false) && (
-                      <div style={{
-                        flex: '0 0 80px',
-                        padding: `${4 * zoom}px ${6 * zoom}px`,
-                        textAlign: 'right'
-                      }}>
-                        {/* Prix vide */}
-                      </div>
-                    )}
-                    {(lastVisibleColumn === 'total') && (
-                      <div style={{
-                        flex: '0 0 80px',
-                        padding: `${4 * zoom}px ${6 * zoom}px`,
-                        textAlign: 'right'
-                      }}>
-                        {tax.toFixed(2)}€
-                      </div>
-                    )}
                   </div>
                 )}
-
-                {/* Remise */}
-                {element.showDiscount && (
+                {element.showDiscount && discount < 0 && (
                   <div style={{
                     display: 'flex',
-                    borderBottom: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none',
-                    backgroundColor: 'transparent',
-                    fontSize: `${tableStyles.rowFontSize * zoom}px`
+                    justifyContent: 'flex-end',
+                    padding: `${4 * zoom}px ${6 * zoom}px`
                   }}>
-                    <div style={{
-                      flex: 1,
-                      padding: `${5 * zoom}px ${8 * zoom}px`,
-                      textAlign: 'right',
-                      color: '#dc3545',
-                      fontWeight: '500'
-                    }}>
-                      Remise
+                    <div style={{ width: `${80 * zoom}px`, textAlign: 'right' }}>
+                      Remise: {Math.abs(discount).toFixed(2)}€
                     </div>
-                    {(element.columns?.quantity !== false) && (
-                      <div style={{
-                        flex: '0 0 60px',
-                        padding: `${4 * zoom}px ${6 * zoom}px`,
-                        textAlign: 'center'
-                      }}>
-                        {/* Quantité vide */}
-                      </div>
-                    )}
-                    {(element.columns?.price !== false) && (
-                      <div style={{
-                        flex: '0 0 80px',
-                        padding: `${4 * zoom}px ${6 * zoom}px`,
-                        textAlign: 'right'
-                      }}>
-                        {/* Prix vide */}
-                      </div>
-                    )}
-                    {(lastVisibleColumn === 'total') && (
-                      <div style={{
-                        flex: '0 0 80px',
-                        padding: `${4 * zoom}px ${6 * zoom}px`,
-                        textAlign: 'right',
-                        color: '#d32f2f'
-                      }}>
-                        -{Math.abs(discount).toFixed(2)}€
-                      </div>
-                    )}
                   </div>
                 )}
-
-                {/* Total général */}
                 {element.showTotal && (
                   <div style={{
                     display: 'flex',
-                    borderTop: showBorders ? `${tableStyles.borderWidth * 2 * zoom}px solid ${tableStyles.headerBorder}` : 'none',
-                    backgroundColor: tableStyles.headerBg,
-                    marginTop: `${6 * zoom}px`,
-                    paddingTop: `${6 * zoom}px`,
-                    color: tableStyles.headerTextColor,
-                    fontWeight: tableStyles.headerFontWeight,
-                    fontSize: `${tableStyles.headerFontSize * zoom}px`
+                    justifyContent: 'flex-end',
+                    padding: `${4 * zoom}px ${6 * zoom}px`,
+                    fontWeight: 'bold',
+                    background: tableStyles.gradient || tableStyles.headerBg,
+                    color: tableStyles.headerTextColor || (element.tableStyle === 'modern' ? '#ffffff' : '#000000'),
+                    boxShadow: tableStyles.shadow ? `0 2px 4px ${tableStyles.shadow}` : 'none'
                   }}>
-                    <div style={{
-                      flex: 1,
-                      padding: `${6 * zoom}px ${8 * zoom}px`,
-                      textAlign: 'right',
-                      fontSize: `${tableStyles.headerFontSize * zoom}px`,
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.05em'
-                    }}>
-                      TOTAL
+                    <div style={{ width: `${80 * zoom}px`, textAlign: 'right' }}>
+                      TOTAL: {total.toFixed(2)}€
                     </div>
-                    {(element.columns?.quantity !== false) && (
-                      <div style={{
-                        flex: '0 0 60px',
-                        padding: `${6 * zoom}px ${8 * zoom}px`,
-                        textAlign: 'center'
-                      }}>
-                        {/* Quantité vide */}
-                      </div>
-                    )}
-                    {(element.columns?.price !== false) && (
-                      <div style={{
-                        flex: '0 0 80px',
-                        padding: `${6 * zoom}px ${8 * zoom}px`,
-                        textAlign: 'right'
-                      }}>
-                        {/* Prix vide */}
-                      </div>
-                    )}
-                    {(lastVisibleColumn === 'total') && (
-                      <div style={{
-                        flex: '0 0 80px',
-                        padding: `${6 * zoom}px ${8 * zoom}px`,
-                        textAlign: 'right',
-                        fontSize: `${tableStyles.headerFontSize * zoom * 1.2}px`,
-                        fontWeight: '700',
-                        color: tableStyles.headerTextColor,
-                        fontFamily: '"Inter", system-ui, sans-serif'
-                      }}>
-                        {total.toFixed(2)}€
-                      </div>
-                    )}
                   </div>
                 )}
               </div>

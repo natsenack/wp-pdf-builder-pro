@@ -1176,7 +1176,7 @@ var CanvasElement = function CanvasElement(_ref) {
   // Le contenu sera rendu plus bas dans le même conteneur
   element.type === 'customer_info' ? null :
   // Le contenu sera rendu plus bas dans le même conteneur
-  element.type !== 'image' && element.type !== 'rectangle' && element.type !== 'company_logo' && element.type !== 'order_number' && element.type !== 'company_info' && element.type !== 'document_type' ? element.type : null, element.type === 'product_table' && function (_element$columns2, _element$columns3, _element$columns4, _element$columns5, _element$columns6, _element$columns7, _element$columns12, _element$columns13, _element$columns14, _element$columns15, _element$columns16, _element$columns17, _element$columns18, _element$columns19, _element$columns20, _element$columns21, _element$columns22, _element$columns23, _element$columns24) {
+  element.type !== 'image' && element.type !== 'rectangle' && element.type !== 'company_logo' && element.type !== 'order_number' && element.type !== 'company_info' && element.type !== 'document_type' ? element.type : null, element.type === 'product_table' && function (_element$columns2, _element$columns3, _element$columns4, _element$columns5, _element$columns6, _element$columns7) {
     // Données des produits (pourrait venir de props ou d'un état global)
     var products = [{
       name: 'Produit A - Description du produit',
@@ -1378,225 +1378,69 @@ var CanvasElement = function CanvasElement(_ref) {
       }, product.total.toFixed(2), "\u20AC"));
     })), (element.showSubtotal || element.showShipping || element.showTaxes || element.showDiscount || element.showTotal) && /*#__PURE__*/React.createElement("div", {
       style: {
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column'
+        borderTop: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.headerBorder) : 'none'
       }
-    }, /*#__PURE__*/React.createElement("div", {
+    }, element.showSubtotal && /*#__PURE__*/React.createElement("div", {
       style: {
         display: 'flex',
-        borderTop: showBorders ? "".concat(tableStyles.borderWidth * 2 * zoom, "px solid ").concat(tableStyles.headerBorder) : 'none',
-        marginTop: "".concat(10 * zoom, "px"),
-        paddingTop: "".concat(10 * zoom, "px"),
-        fontSize: "".concat(tableStyles.rowFontSize * zoom, "px")
-      }
-    }, /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: 1,
+        justifyContent: 'flex-end',
         padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-        textAlign: 'right',
-        fontWeight: 'bold',
-        color: element.color || '#666'
-      }
-    }), ((_element$columns12 = element.columns) === null || _element$columns12 === void 0 ? void 0 : _element$columns12.quantity) !== false && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: '0 0 60px',
-        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-        textAlign: 'center'
-      }
-    }), ((_element$columns13 = element.columns) === null || _element$columns13 === void 0 ? void 0 : _element$columns13.price) !== false && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: '0 0 80px',
-        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-        textAlign: 'right',
-        fontWeight: 'bold',
-        color: element.color || '#666'
-      }
-    }), ((_element$columns14 = element.columns) === null || _element$columns14 === void 0 ? void 0 : _element$columns14.total) !== false && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: '0 0 80px',
-        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-        textAlign: 'right',
-        fontWeight: 'bold',
-        color: element.color || '#666'
-      }
-    }, "Total")), element.showSubtotal && /*#__PURE__*/React.createElement("div", {
-      style: {
-        display: 'flex',
-        borderBottom: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
-        backgroundColor: tableStyles.altRowBg,
-        fontSize: "".concat(tableStyles.rowFontSize * zoom, "px")
-      }
-    }, /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: 1,
-        padding: "".concat(5 * zoom, "px ").concat(8 * zoom, "px"),
-        textAlign: 'right',
-        color: tableStyles.rowTextColor,
-        fontWeight: '600'
-      }
-    }, "Sous-total"), ((_element$columns15 = element.columns) === null || _element$columns15 === void 0 ? void 0 : _element$columns15.quantity) !== false && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: '0 0 60px',
-        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-        textAlign: 'center'
-      }
-    }), ((_element$columns16 = element.columns) === null || _element$columns16 === void 0 ? void 0 : _element$columns16.price) !== false && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: '0 0 80px',
-        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-        textAlign: 'right'
-      }
-    }), lastVisibleColumn === 'total' && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: '0 0 80px',
-        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-        textAlign: 'right',
         fontWeight: 'bold'
       }
-    }, subtotal.toFixed(2), "\u20AC")), element.showShipping && /*#__PURE__*/React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        width: "".concat(80 * zoom, "px"),
+        textAlign: 'right'
+      }
+    }, "Sous-total: ", subtotal.toFixed(2), "\u20AC")), element.showShipping && shipping > 0 && /*#__PURE__*/React.createElement("div", {
       style: {
         display: 'flex',
-        borderBottom: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
-        backgroundColor: 'transparent',
-        fontSize: "".concat(tableStyles.rowFontSize * zoom, "px")
+        justifyContent: 'flex-end',
+        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px")
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
-        flex: 1,
-        padding: "".concat(5 * zoom, "px ").concat(8 * zoom, "px"),
-        textAlign: 'right',
-        color: tableStyles.rowTextColor,
-        fontWeight: '500'
-      }
-    }, "Port"), ((_element$columns17 = element.columns) === null || _element$columns17 === void 0 ? void 0 : _element$columns17.quantity) !== false && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: '0 0 60px',
-        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-        textAlign: 'center'
-      }
-    }), ((_element$columns18 = element.columns) === null || _element$columns18 === void 0 ? void 0 : _element$columns18.price) !== false && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: '0 0 80px',
-        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
+        width: "".concat(80 * zoom, "px"),
         textAlign: 'right'
       }
-    }), lastVisibleColumn === 'total' && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: '0 0 80px',
-        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-        textAlign: 'right'
-      }
-    }, shipping.toFixed(2), "\u20AC")), element.showTaxes && /*#__PURE__*/React.createElement("div", {
+    }, "Port: ", shipping.toFixed(2), "\u20AC")), element.showTaxes && tax > 0 && /*#__PURE__*/React.createElement("div", {
       style: {
         display: 'flex',
-        borderBottom: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
-        backgroundColor: 'transparent',
-        fontSize: "".concat(tableStyles.rowFontSize * zoom, "px")
+        justifyContent: 'flex-end',
+        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px")
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
-        flex: 1,
-        padding: "".concat(5 * zoom, "px ").concat(8 * zoom, "px"),
-        textAlign: 'right',
-        color: tableStyles.rowTextColor,
-        fontWeight: '500'
-      }
-    }, "TVA"), ((_element$columns19 = element.columns) === null || _element$columns19 === void 0 ? void 0 : _element$columns19.quantity) !== false && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: '0 0 60px',
-        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-        textAlign: 'center'
-      }
-    }), ((_element$columns20 = element.columns) === null || _element$columns20 === void 0 ? void 0 : _element$columns20.price) !== false && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: '0 0 80px',
-        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
+        width: "".concat(80 * zoom, "px"),
         textAlign: 'right'
       }
-    }), lastVisibleColumn === 'total' && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: '0 0 80px',
-        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-        textAlign: 'right'
-      }
-    }, tax.toFixed(2), "\u20AC")), element.showDiscount && /*#__PURE__*/React.createElement("div", {
+    }, "TVA: ", tax.toFixed(2), "\u20AC")), element.showDiscount && discount < 0 && /*#__PURE__*/React.createElement("div", {
       style: {
         display: 'flex',
-        borderBottom: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
-        backgroundColor: 'transparent',
-        fontSize: "".concat(tableStyles.rowFontSize * zoom, "px")
+        justifyContent: 'flex-end',
+        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px")
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
-        flex: 1,
-        padding: "".concat(5 * zoom, "px ").concat(8 * zoom, "px"),
-        textAlign: 'right',
-        color: '#dc3545',
-        fontWeight: '500'
-      }
-    }, "Remise"), ((_element$columns21 = element.columns) === null || _element$columns21 === void 0 ? void 0 : _element$columns21.quantity) !== false && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: '0 0 60px',
-        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-        textAlign: 'center'
-      }
-    }), ((_element$columns22 = element.columns) === null || _element$columns22 === void 0 ? void 0 : _element$columns22.price) !== false && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: '0 0 80px',
-        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
+        width: "".concat(80 * zoom, "px"),
         textAlign: 'right'
       }
-    }), lastVisibleColumn === 'total' && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: '0 0 80px',
-        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-        textAlign: 'right',
-        color: '#d32f2f'
-      }
-    }, "-", Math.abs(discount).toFixed(2), "\u20AC")), element.showTotal && /*#__PURE__*/React.createElement("div", {
+    }, "Remise: ", Math.abs(discount).toFixed(2), "\u20AC")), element.showTotal && /*#__PURE__*/React.createElement("div", {
       style: {
         display: 'flex',
-        borderTop: showBorders ? "".concat(tableStyles.borderWidth * 2 * zoom, "px solid ").concat(tableStyles.headerBorder) : 'none',
-        backgroundColor: tableStyles.headerBg,
-        marginTop: "".concat(6 * zoom, "px"),
-        paddingTop: "".concat(6 * zoom, "px"),
-        color: tableStyles.headerTextColor,
-        fontWeight: tableStyles.headerFontWeight,
-        fontSize: "".concat(tableStyles.headerFontSize * zoom, "px")
+        justifyContent: 'flex-end',
+        padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
+        fontWeight: 'bold',
+        background: tableStyles.gradient || tableStyles.headerBg,
+        color: tableStyles.headerTextColor || (element.tableStyle === 'modern' ? '#ffffff' : '#000000'),
+        boxShadow: tableStyles.shadow ? "0 2px 4px ".concat(tableStyles.shadow) : 'none'
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
-        flex: 1,
-        padding: "".concat(6 * zoom, "px ").concat(8 * zoom, "px"),
-        textAlign: 'right',
-        fontSize: "".concat(tableStyles.headerFontSize * zoom, "px"),
-        textTransform: 'uppercase',
-        letterSpacing: '0.05em'
-      }
-    }, "TOTAL"), ((_element$columns23 = element.columns) === null || _element$columns23 === void 0 ? void 0 : _element$columns23.quantity) !== false && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: '0 0 60px',
-        padding: "".concat(6 * zoom, "px ").concat(8 * zoom, "px"),
-        textAlign: 'center'
-      }
-    }), ((_element$columns24 = element.columns) === null || _element$columns24 === void 0 ? void 0 : _element$columns24.price) !== false && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: '0 0 80px',
-        padding: "".concat(6 * zoom, "px ").concat(8 * zoom, "px"),
+        width: "".concat(80 * zoom, "px"),
         textAlign: 'right'
       }
-    }), lastVisibleColumn === 'total' && /*#__PURE__*/React.createElement("div", {
-      style: {
-        flex: '0 0 80px',
-        padding: "".concat(6 * zoom, "px ").concat(8 * zoom, "px"),
-        textAlign: 'right',
-        fontSize: "".concat(tableStyles.headerFontSize * zoom * 1.2, "px"),
-        fontWeight: '700',
-        color: tableStyles.headerTextColor,
-        fontFamily: '"Inter", system-ui, sans-serif'
-      }
-    }, total.toFixed(2), "\u20AC"))));
+    }, "TOTAL: ", total.toFixed(2), "\u20AC"))));
   }(), element.type === 'customer_info' && /*#__PURE__*/React.createElement("div", {
     style: {
       width: '100%',
