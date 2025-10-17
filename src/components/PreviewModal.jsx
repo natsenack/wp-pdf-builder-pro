@@ -914,7 +914,7 @@ const PreviewModal = ({
         const customerData = {
           name: 'Jean Dupont',
           company: 'ABC Company SARL',
-          address: '123 Rue de la Paix\n75001 Paris\nFrance',
+          address: '123 Rue de la Paix\n75001 Paris, France',
           email: 'jean.dupont@email.com',
           phone: '+33 6 12 34 56 78',
           tva: 'FR 12 345 678 901',

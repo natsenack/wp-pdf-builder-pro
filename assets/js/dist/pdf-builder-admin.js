@@ -1557,7 +1557,7 @@ var CanvasElement = function CanvasElement(_ref) {
       color: element.color || '#333',
       lineHeight: '1.4'
     }
-  }, "123 Rue de la Paix", /*#__PURE__*/React.createElement("br", null), "75001 Paris", /*#__PURE__*/React.createElement("br", null), "France")), ((_element$fields5 = element.fields) === null || _element$fields5 === void 0 ? void 0 : _element$fields5.includes('company')) && /*#__PURE__*/React.createElement("div", {
+  }, "123 Rue de la Paix", /*#__PURE__*/React.createElement("br", null), "75001 Paris, France")), ((_element$fields5 = element.fields) === null || _element$fields5 === void 0 ? void 0 : _element$fields5.includes('company')) && /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
@@ -6236,7 +6236,7 @@ var PreviewModal = function PreviewModal(_ref) {
         var customerData = {
           name: 'Jean Dupont',
           company: 'ABC Company SARL',
-          address: '123 Rue de la Paix\n75001 Paris\nFrance',
+          address: '123 Rue de la Paix\n75001 Paris, France',
           email: 'jean.dupont@email.com',
           phone: '+33 6 12 34 56 78',
           tva: 'FR 12 345 678 901',
