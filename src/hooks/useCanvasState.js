@@ -1020,7 +1020,32 @@ export const useCanvasState = ({
       formData.append('template_data', jsonString);
       formData.append('template_name', window.pdfBuilderData?.templateName || `Template ${window.pdfBuilderData?.templateId || 'New'}`);
       formData.append('template_id', window.pdfBuilderData?.templateId || '0');
-      formData.append('nonce', window.pdfBuilderAjax?.nonce || window.pdfBuilderData?.nonce || '');
+      // Obtenir un nonce frais avant la sauvegarde
+      try {
+        const nonceResponse = await fetch(window.pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: new URLSearchParams({
+            action: 'pdf_builder_get_fresh_nonce'
+          })
+        });
+
+        if (nonceResponse.ok) {
+          const nonceData = await nonceResponse.json();
+          if (nonceData.success) {
+            formData.append('nonce', nonceData.data.nonce);
+          } else {
+            formData.append('nonce', window.pdfBuilderAjax?.nonce || window.pdfBuilderData?.nonce || '');
+          }
+        } else {
+          formData.append('nonce', window.pdfBuilderAjax?.nonce || window.pdfBuilderData?.nonce || '');
+        }
+      } catch (error) {
+        console.warn('Erreur lors de l\'obtention du nonce frais:', error);
+        formData.append('nonce', window.pdfBuilderAjax?.nonce || window.pdfBuilderData?.nonce || '');
+      }
 
       // console.log('📤 PDF Builder SAVE - Données FormData préparées:', {
       //   action: 'pdf_builder_pro_save_template',

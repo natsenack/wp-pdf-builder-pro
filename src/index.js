@@ -57,13 +57,21 @@ const PDFBuilderSecurity = {
         console.error('PDF Builder Pro Security Error:', errorInfo);
     },
 
-    // Protection contre les appels multiples
+    // Protection contre les appels multiples - améliorée
     preventMultipleInit() {
-        if (window._pdfBuilderInitialized) {
-            console.warn('PDF Builder Pro: Multiple initialization attempt prevented');
+        const now = Date.now();
+        const lastInit = window._pdfBuilderLastInit || 0;
+        const timeSinceLastInit = now - lastInit;
+
+        // Si plus de 30 secondes se sont écoulées depuis la dernière initialisation,
+        // permettre une réinitialisation (utile pour les rechargements de page)
+        if (window._pdfBuilderInitialized && timeSinceLastInit < 30000) {
+            console.warn('PDF Builder Pro: Multiple initialization attempt prevented (last init:', new Date(lastInit).toLocaleTimeString() + ')');
             return false;
         }
+
         window._pdfBuilderInitialized = true;
+        window._pdfBuilderLastInit = now;
         return true;
     }
 };

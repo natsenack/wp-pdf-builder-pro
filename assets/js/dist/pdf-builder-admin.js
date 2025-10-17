@@ -3746,7 +3746,7 @@ var useCanvasState = function useCanvasState(_ref) {
     }
   }, [history, selection]);
   var saveTemplate = (0,react.useCallback)(/*#__PURE__*/_asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
-    var isExistingTemplate, checkToastrAvailability, toastrAvailable, _window$pdfBuilderDat, _window$pdfBuilderDat2, _window$pdfBuilderDat3, _window$pdfBuilderAja, _window$pdfBuilderDat4, _window$pdfBuilderAja2, cleanElementForSerialization, cleanedElements, templateData, jsonString, testParse, _iterator, _step, element, formData, response, result, _result$data, errorMessage, _t, _t2, _t3;
+    var isExistingTemplate, checkToastrAvailability, toastrAvailable, _window$pdfBuilderDat, _window$pdfBuilderDat2, _window$pdfBuilderDat3, _window$pdfBuilderAja5, cleanElementForSerialization, cleanedElements, templateData, jsonString, testParse, _iterator, _step, element, formData, _window$pdfBuilderAja, nonceResponse, nonceData, _window$pdfBuilderAja2, _window$pdfBuilderDat4, _window$pdfBuilderAja3, _window$pdfBuilderDat5, _window$pdfBuilderAja4, _window$pdfBuilderDat6, response, result, _result$data, errorMessage, _t, _t2, _t3, _t4;
     return _regenerator().w(function (_context) {
       while (1) switch (_context.p = _context.n) {
         case 0:
@@ -4245,34 +4245,63 @@ var useCanvasState = function useCanvasState(_ref) {
           formData.append('template_data', jsonString);
           formData.append('template_name', ((_window$pdfBuilderDat = window.pdfBuilderData) === null || _window$pdfBuilderDat === void 0 ? void 0 : _window$pdfBuilderDat.templateName) || "Template ".concat(((_window$pdfBuilderDat2 = window.pdfBuilderData) === null || _window$pdfBuilderDat2 === void 0 ? void 0 : _window$pdfBuilderDat2.templateId) || 'New'));
           formData.append('template_id', ((_window$pdfBuilderDat3 = window.pdfBuilderData) === null || _window$pdfBuilderDat3 === void 0 ? void 0 : _window$pdfBuilderDat3.templateId) || '0');
-          formData.append('nonce', ((_window$pdfBuilderAja = window.pdfBuilderAjax) === null || _window$pdfBuilderAja === void 0 ? void 0 : _window$pdfBuilderAja.nonce) || ((_window$pdfBuilderDat4 = window.pdfBuilderData) === null || _window$pdfBuilderDat4 === void 0 ? void 0 : _window$pdfBuilderDat4.nonce) || '');
-
-          // console.log('📤 PDF Builder SAVE - Données FormData préparées:', {
-          //   action: 'pdf_builder_pro_save_template',
-          //   templateName: window.pdfBuilderData?.templateName || `Template ${window.pdfBuilderData?.templateId || 'New'}`,
-          //   templateId: window.pdfBuilderData?.templateId || '0',
-          //   nonce: window.pdfBuilderAjax?.nonce || window.pdfBuilderData?.nonce || '',
-          //   jsonLength: jsonString.length
-          // });
-
-          // console.log('🌐 PDF Builder SAVE - Envoi de la requête AJAX...');
-          _context.n = 15;
-          return fetch(((_window$pdfBuilderAja2 = window.pdfBuilderAjax) === null || _window$pdfBuilderAja2 === void 0 ? void 0 : _window$pdfBuilderAja2.ajaxurl) || '/wp-admin/admin-ajax.php', {
+          // Obtenir un nonce frais avant la sauvegarde
+          _context.p = 15;
+          _context.n = 16;
+          return fetch(((_window$pdfBuilderAja = window.pdfBuilderAjax) === null || _window$pdfBuilderAja === void 0 ? void 0 : _window$pdfBuilderAja.ajaxurl) || '/wp-admin/admin-ajax.php', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({
+              action: 'pdf_builder_get_fresh_nonce'
+            })
+          });
+        case 16:
+          nonceResponse = _context.v;
+          if (!nonceResponse.ok) {
+            _context.n = 18;
+            break;
+          }
+          _context.n = 17;
+          return nonceResponse.json();
+        case 17:
+          nonceData = _context.v;
+          if (nonceData.success) {
+            formData.append('nonce', nonceData.data.nonce);
+          } else {
+            formData.append('nonce', ((_window$pdfBuilderAja2 = window.pdfBuilderAjax) === null || _window$pdfBuilderAja2 === void 0 ? void 0 : _window$pdfBuilderAja2.nonce) || ((_window$pdfBuilderDat4 = window.pdfBuilderData) === null || _window$pdfBuilderDat4 === void 0 ? void 0 : _window$pdfBuilderDat4.nonce) || '');
+          }
+          _context.n = 19;
+          break;
+        case 18:
+          formData.append('nonce', ((_window$pdfBuilderAja3 = window.pdfBuilderAjax) === null || _window$pdfBuilderAja3 === void 0 ? void 0 : _window$pdfBuilderAja3.nonce) || ((_window$pdfBuilderDat5 = window.pdfBuilderData) === null || _window$pdfBuilderDat5 === void 0 ? void 0 : _window$pdfBuilderDat5.nonce) || '');
+        case 19:
+          _context.n = 21;
+          break;
+        case 20:
+          _context.p = 20;
+          _t3 = _context.v;
+          console.warn('Erreur lors de l\'obtention du nonce frais:', _t3);
+          formData.append('nonce', ((_window$pdfBuilderAja4 = window.pdfBuilderAjax) === null || _window$pdfBuilderAja4 === void 0 ? void 0 : _window$pdfBuilderAja4.nonce) || ((_window$pdfBuilderDat6 = window.pdfBuilderData) === null || _window$pdfBuilderDat6 === void 0 ? void 0 : _window$pdfBuilderDat6.nonce) || '');
+        case 21:
+          _context.n = 22;
+          return fetch(((_window$pdfBuilderAja5 = window.pdfBuilderAjax) === null || _window$pdfBuilderAja5 === void 0 ? void 0 : _window$pdfBuilderAja5.ajaxurl) || '/wp-admin/admin-ajax.php', {
             method: 'POST',
             body: formData
           });
-        case 15:
+        case 22:
           response = _context.v;
-          _context.n = 16;
+          _context.n = 23;
           return response.json();
-        case 16:
+        case 23:
           result = _context.v;
           if (result.success) {
-            _context.n = 17;
+            _context.n = 24;
             break;
           }
           throw new Error(((_result$data = result.data) === null || _result$data === void 0 ? void 0 : _result$data.message) || 'Erreur lors de la sauvegarde');
-        case 17:
+        case 24:
           // Notification de succès pour les templates existants
           if (isExistingTemplate) {
             if (toastrAvailable) {
@@ -4282,37 +4311,37 @@ var useCanvasState = function useCanvasState(_ref) {
             }
           }
           return _context.a(2, templateData);
-        case 18:
-          _context.p = 18;
-          _t3 = _context.v;
-          console.error('❌ PDF Builder SAVE - Erreur lors de la sauvegarde:', _t3);
+        case 25:
+          _context.p = 25;
+          _t4 = _context.v;
+          console.error('❌ PDF Builder SAVE - Erreur lors de la sauvegarde:', _t4);
           console.error('❌ PDF Builder SAVE - Détails de l\'erreur:', {
-            message: _t3.message,
-            stack: _t3.stack,
-            name: _t3.name
+            message: _t4.message,
+            stack: _t4.stack,
+            name: _t4.name
           });
 
           // Notification d'erreur
-          errorMessage = _t3.message || 'Erreur inconnue lors de la sauvegarde';
+          errorMessage = _t4.message || 'Erreur inconnue lors de la sauvegarde';
           if (toastrAvailable) {
             toastr.error("Erreur lors de la sauvegarde: ".concat(errorMessage));
           } else {
             alert("Erreur lors de la sauvegarde: ".concat(errorMessage));
           }
-          throw _t3;
-        case 19:
-          _context.p = 19;
+          throw _t4;
+        case 26:
+          _context.p = 26;
           // console.log('🏁 PDF Builder SAVE - Fin du processus de sauvegarde');
           setLoadingStates(function (prev) {
             return useCanvasState_objectSpread(useCanvasState_objectSpread({}, prev), {}, {
               saving: false
             });
           });
-          return _context.f(19);
-        case 20:
+          return _context.f(26);
+        case 27:
           return _context.a(2);
       }
-    }, _callee, null, [[6, 10, 11, 12], [4, 13], [3, 18, 19, 20]]);
+    }, _callee, null, [[15, 20], [6, 10, 11, 12], [4, 13], [3, 25, 26, 27]]);
   })), [elements, canvasWidth, canvasHeight, isSaving, templateId]);
   var loadTemplate = (0,react.useCallback)(function (templateData) {
     if (templateData.elements) {
@@ -13025,13 +13054,20 @@ var PDFBuilderSecurity = {
     this.errors.push(errorInfo);
     console.error('PDF Builder Pro Security Error:', errorInfo);
   },
-  // Protection contre les appels multiples
+  // Protection contre les appels multiples - améliorée
   preventMultipleInit: function preventMultipleInit() {
-    if (window._pdfBuilderInitialized) {
-      console.warn('PDF Builder Pro: Multiple initialization attempt prevented');
+    var now = Date.now();
+    var lastInit = window._pdfBuilderLastInit || 0;
+    var timeSinceLastInit = now - lastInit;
+
+    // Si plus de 30 secondes se sont écoulées depuis la dernière initialisation,
+    // permettre une réinitialisation (utile pour les rechargements de page)
+    if (window._pdfBuilderInitialized && timeSinceLastInit < 30000) {
+      console.warn('PDF Builder Pro: Multiple initialization attempt prevented (last init:', new Date(lastInit).toLocaleTimeString() + ')');
       return false;
     }
     window._pdfBuilderInitialized = true;
+    window._pdfBuilderLastInit = now;
     return true;
   }
 };
