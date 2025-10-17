@@ -531,7 +531,8 @@ class PDF_Builder_Pro_Generator {
         }
 
         // Epaisseur de bordure
-        $border_width = ($element['borderWidth'] ?? 1) * $px_to_mm;
+        $border_width_px = $element['borderWidth'] ?? 1;
+        $border_width = $border_width_px * ($px_to_mm * 3); // Approximation pour garder la proportion visuelle
         $this->pdf->SetLineWidth($border_width);
 
         // Dessin du rectangle
@@ -589,7 +590,10 @@ class PDF_Builder_Pro_Generator {
         $this->pdf->SetDrawColor($color['r'], $color['g'], $color['b']);
 
         // Épaisseur de ligne (utilise lineWidth ou strokeWidth ou borderWidth)
-        $line_width = ($element['lineWidth'] ?? $element['strokeWidth'] ?? $element['borderWidth'] ?? 1) * $px_to_mm;
+        // ⚠️ IMPORTANT: Pour les épaisseurs de trait, on utilise un facteur de conversion réduit
+        // car $px_to_mm (0.35) rend les lignes trop fines. On utilise ~1/3 pour garder la proportion
+        $line_width_px = $element['lineWidth'] ?? $element['strokeWidth'] ?? $element['borderWidth'] ?? 1;
+        $line_width = $line_width_px * ($px_to_mm * 3); // Approximation pour garder la proportion visuelle
         $this->pdf->SetLineWidth($line_width);
 
         // Dessin de la ligne
