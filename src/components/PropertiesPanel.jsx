@@ -279,6 +279,77 @@ const safeParseFloat = (value, defaultValue = 0) => {
   return isNaN(parsed) ? defaultValue : parsed;
 };
 
+// Fonction pour obtenir l'ordre intelligent des propriétés selon le type d'élément
+const getSmartPropertyOrder = (elementType, tab) => {
+  const orders = {
+    // Ordre pour l'onglet Apparence
+    appearance: {
+      // Éléments texte : couleur et police en premier
+      text: ['colors', 'font', 'borders', 'effects'],
+      'dynamic-text': ['colors', 'font', 'borders', 'effects'],
+      'layout-header': ['colors', 'font', 'borders', 'effects'],
+      'layout-footer': ['colors', 'font', 'borders', 'effects'],
+      'layout-section': ['colors', 'font', 'borders', 'effects'],
+
+      // Éléments image : couleur de fond et bordures en premier
+      logo: ['colors', 'borders', 'effects'],
+      company_logo: ['colors', 'borders', 'effects'],
+
+      // Tableaux : couleurs, police, bordures
+      product_table: ['colors', 'font', 'borders', 'effects'],
+
+      // Éléments de données : couleurs et police
+      customer_info: ['colors', 'font', 'borders', 'effects'],
+      company_info: ['colors', 'font', 'borders', 'effects'],
+      document_type: ['colors', 'font', 'borders', 'effects'],
+      order_number: ['colors', 'font', 'borders', 'effects'],
+      mentions: ['colors', 'font', 'borders', 'effects'],
+
+      // Par défaut
+      default: ['colors', 'borders', 'effects']
+    },
+
+    // Ordre pour l'onglet Mise en page
+    layout: {
+      // Tous les éléments : position et dimensions d'abord
+      default: ['position', 'dimensions', 'transform', 'layers']
+    },
+
+    // Ordre pour l'onglet Contenu
+    content: {
+      // Éléments texte : contenu textuel en premier
+      text: ['text', 'variables'],
+      'dynamic-text': ['dynamic_text', 'variables'],
+      'layout-header': ['text', 'variables'],
+      'layout-footer': ['text', 'variables'],
+      'layout-section': ['text', 'variables'],
+
+      // Éléments image : propriétés d'image
+      logo: ['image'],
+      company_logo: ['image'],
+
+      // Éléments de données : champs spécifiques
+      customer_info: ['customer_fields'],
+      company_info: ['company_fields'],
+      product_table: ['table'],
+      document_type: ['document_type'],
+      order_number: ['order_number'],
+      mentions: ['mentions'],
+
+      // Par défaut
+      default: []
+    },
+
+    // Ordre pour l'onglet Effets
+    effects: {
+      // Tous les éléments : opacité en premier, puis effets visuels
+      default: ['opacity', 'shadows', 'filters']
+    }
+  };
+
+  return orders[tab]?.[elementType] || orders[tab]?.default || [];
+};
+
 // Composant amélioré pour les contrôles de couleur avec presets
 const ColorPicker = ({ label, value, onChange, presets = [], defaultColor = '#ffffff' }) => {
   // Fonction pour valider et normaliser une couleur hex
@@ -518,6 +589,222 @@ const FontControls = ({ elementId, properties, onPropertyChange }) => (
   </div>
 );
 
+// Fonctions helper pour rendre chaque section de propriétés dans l'ordre intelligent
+const renderColorsSection = (selectedElement, localProperties, handlePropertyChange, isBackgroundEnabled) => (
+  <div key="colors" className="properties-group">
+    <h4>🎨 Couleurs & Apparence</h4>
+
+    <ColorPicker
+      label="Texte"
+      value={localProperties.color}
+      onChange={(value) => {
+        handlePropertyChange(selectedElement.id, 'color', value);
+      }}
+      presets={['#1e293b', '#334155', '#475569', '#64748b', '#94a3b8', '#cbd5e1', '#000000']}
+      defaultColor="#333333"
+    />
+
+    {/* Contrôle du fond */}
+    <div className="property-row">
+      <span>Fond activé:</span>
+      <label className="toggle">
+        <input
+          type="checkbox"
+          checked={isBackgroundEnabled}
+          disabled={false}
+          onChange={(e) => {
+            if (e.target.checked) {
+              handlePropertyChange(selectedElement.id, 'backgroundColor', '#ffffff');
+            } else {
+              handlePropertyChange(selectedElement.id, 'backgroundColor', 'transparent');
+            }
+          }}
+        />
+        <span className="toggle-slider"></span>
+      </label>
+    </div>
+
+    {/* Couleur du fond (conditionnelle) */}
+    <div style={{
+      display: isBackgroundEnabled ? 'block' : 'none',
+      transition: 'opacity 0.3s ease'
+    }}>
+      <ColorPicker
+        label="Fond"
+        value={localProperties.backgroundColor === 'transparent' ? '#ffffff' : localProperties.backgroundColor}
+        onChange={(value) => {
+          handlePropertyChange(selectedElement.id, 'backgroundColor', value);
+        }}
+        presets={['transparent', '#ffffff', '#f8fafc', '#f1f5f9', '#e2e8f0', '#cbd5e1', '#94a3b8']}
+      />
+
+      {/* Opacité du fond */}
+      <div className="property-row">
+        <label>Opacité fond:</label>
+        <div className="slider-container">
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.1"
+            value={localProperties.backgroundOpacity ?? 1}
+            onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundOpacity', safeParseFloat(e.target.value, 1))}
+            className="slider"
+          />
+          <span className="slider-value">{Math.round((localProperties.backgroundOpacity ?? 1) * 100)}%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const renderFontSection = (selectedElement, localProperties, handlePropertyChange) => (
+  <FontControls
+    key="font"
+    elementId={selectedElement.id}
+    properties={localProperties}
+    onPropertyChange={handlePropertyChange}
+  />
+);
+
+const renderBordersSection = (selectedElement, localProperties, handlePropertyChange, isBorderEnabled, setIsBorderEnabled, setPreviousBorderWidth, setPreviousBorderColor, previousBorderWidth, previousBorderColor) => {
+  if (!isBorderEnabled && localProperties.borderWidth <= 0) return null;
+
+  return (
+    <div key="borders" className="properties-group">
+      <h4>🔲 Bordures & Coins Arrondis</h4>
+
+      {/* Contrôle d'activation des bordures */}
+      <div className="property-row">
+        <span>Bordures activées:</span>
+        <label className="toggle">
+          <input
+            type="checkbox"
+            checked={isBorderEnabled}
+            onChange={(e) => {
+              if (e.target.checked) {
+                const widthToSet = previousBorderWidth || 1;
+                const colorToSet = previousBorderColor || '#000000';
+                handlePropertyChange(selectedElement.id, 'border', true);
+                handlePropertyChange(selectedElement.id, 'borderWidth', widthToSet);
+                handlePropertyChange(selectedElement.id, 'borderColor', colorToSet);
+                setIsBorderEnabled(true);
+              } else {
+                setPreviousBorderWidth(localProperties.borderWidth || 1);
+                setPreviousBorderColor(localProperties.borderColor || '#000000');
+                handlePropertyChange(selectedElement.id, 'border', false);
+                handlePropertyChange(selectedElement.id, 'borderWidth', 0);
+                setIsBorderEnabled(false);
+              }
+            }}
+          />
+          <span className="toggle-slider"></span>
+        </label>
+      </div>
+
+      {/* Contrôles des bordures (conditionnels) */}
+      <div style={{
+        display: localProperties.borderWidth > 0 ? 'block' : 'none',
+        transition: 'opacity 0.3s ease'
+      }}>
+        <ColorPicker
+          label="Couleur bordure"
+          value={localProperties.borderColor || '#000000'}
+          onChange={(value) => handlePropertyChange(selectedElement.id, 'borderColor', value)}
+          presets={['#e2e8f0', '#cbd5e1', '#94a3b8', '#64748b', '#475569', '#334155', '#000000']}
+        />
+
+        <div className="property-row">
+          <label>Style bordure:</label>
+          <select
+            value={localProperties.borderStyle || 'solid'}
+            onChange={(e) => handlePropertyChange(selectedElement.id, 'borderStyle', e.target.value)}
+            className="styled-select"
+          >
+            <option value="solid">Continue</option>
+            <option value="dashed">Tirets</option>
+            <option value="dotted">Pointillés</option>
+            <option value="double">Double</option>
+          </select>
+        </div>
+
+        <div className="property-row">
+          <label>Épaisseur bordure:</label>
+          <div className="slider-container">
+            <input
+              type="range"
+              min="0"
+              max="10"
+              value={localProperties.borderWidth ?? 1}
+              onChange={(e) => handlePropertyChange(selectedElement.id, 'borderWidth', safeParseInt(e.target.value, 1))}
+              className="slider"
+            />
+            <span className="slider-value">{localProperties.borderWidth ?? 1}px</span>
+          </div>
+        </div>
+
+        <div className="property-row">
+          <label>Coins arrondis:</label>
+          <div className="slider-container">
+            <input
+              type="range"
+              min="0"
+              max="50"
+              value={localProperties.borderRadius ?? 4}
+              onChange={(e) => handlePropertyChange(selectedElement.id, 'borderRadius', safeParseInt(e.target.value, 0))}
+              className="slider"
+            />
+            <span className="slider-value">{localProperties.borderRadius ?? 4}px</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const renderEffectsSection = (selectedElement, localProperties, handlePropertyChange) => (
+  <div key="effects" className="properties-group">
+    <h4>✨ Effets</h4>
+
+    <ColorPicker
+      label="Ombre"
+      value={localProperties.boxShadowColor || '#000000'}
+      onChange={(value) => handlePropertyChange(selectedElement.id, 'boxShadowColor', value)}
+      presets={['#000000', '#ffffff', '#64748b', '#ef4444', '#3b82f6']}
+    />
+
+    <div className="property-row">
+      <label>Flou ombre:</label>
+      <div className="slider-container">
+        <input
+          type="range"
+          min="0"
+          max="20"
+          value={localProperties.boxShadowBlur ?? 0}
+          onChange={(e) => handlePropertyChange(selectedElement.id, 'boxShadowBlur', safeParseInt(e.target.value, 0))}
+          className="slider"
+        />
+        <span className="slider-value">{localProperties.boxShadowBlur ?? 0}px</span>
+      </div>
+    </div>
+
+    <div className="property-row">
+      <label>Décalage ombre:</label>
+      <div className="slider-container">
+        <input
+          type="range"
+          min="0"
+          max="10"
+          value={localProperties.boxShadowSpread ?? 0}
+          onChange={(e) => handlePropertyChange(selectedElement.id, 'boxShadowSpread', safeParseInt(e.target.value, 0))}
+          className="slider"
+        />
+        <span className="slider-value">{localProperties.boxShadowSpread ?? 0}px</span>
+      </div>
+    </div>
+  </div>
+);
+
 const PropertiesPanel = memo(({
   selectedElements,
   elements,
@@ -709,224 +996,30 @@ const PropertiesPanel = memo(({
       );
     }
 
-    // Obtenir le profil de propriétés pour ce type d'élément
-    const elementProfile = ELEMENT_PROPERTY_PROFILES[selectedElement.type] || ELEMENT_PROPERTY_PROFILES.default;
-    const allowedControls = elementProfile[activeTab] || [];
+    // Obtenir l'ordre intelligent des propriétés pour ce type d'élément
+    const smartOrder = getSmartPropertyOrder(selectedElement.type, activeTab);
 
     switch (activeTab) {
       case 'appearance':
         return (
           <div className="tab-content">
-            <div className="properties-group">
-              <h4>🎨 Couleurs & Apparence</h4>
-
-              <ColorPicker
-                label="Texte"
-                value={localProperties.color}
-                onChange={(value) => {
-                  handlePropertyChange(selectedElement.id, 'color', value);
-                }}
-                presets={['#1e293b', '#334155', '#475569', '#64748b', '#94a3b8', '#cbd5e1', '#000000']}
-                defaultColor="#333333"
-              />
-
-              {/* Contrôle du fond */}
-              <div className="property-row">
-                <span>Fond activé:</span>
-                <label className="toggle">
-                  <input
-                    type="checkbox"
-                    checked={isBackgroundEnabled}
-                    disabled={false}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        handlePropertyChange(selectedElement.id, 'backgroundColor', '#ffffff');
-                      } else {
-                        handlePropertyChange(selectedElement.id, 'backgroundColor', 'transparent');
-                      }
-                    }}
-                  />
-                  <span className="toggle-slider"></span>
-                </label>
-              </div>
-
-              {/* Couleur du fond (conditionnelle) */}
-              <div style={{
-                display: isBackgroundEnabled ? 'block' : 'none',
-                transition: 'opacity 0.3s ease'
-              }}>
-                <ColorPicker
-                  label="Fond"
-                  value={localProperties.backgroundColor === 'transparent' ? '#ffffff' : localProperties.backgroundColor}
-                  onChange={(value) => {
-                    handlePropertyChange(selectedElement.id, 'backgroundColor', value);
-                  }}
-                  presets={['transparent', '#ffffff', '#f8fafc', '#f1f5f9', '#e2e8f0', '#cbd5e1', '#94a3b8']}
-                />
-
-                {/* Opacité du fond */}
-                <div className="property-row">
-                  <label>Opacité fond:</label>
-                  <div className="slider-container">
-                    <input
-                      type="range"
-                      min="0"
-                      max="1"
-                      step="0.1"
-                      value={localProperties.backgroundOpacity ?? 1}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundOpacity', safeParseFloat(e.target.value, 1))}
-                      className="slider"
-                    />
-                    <span className="slider-value">{Math.round((localProperties.backgroundOpacity ?? 1) * 100)}%</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Contrôles de police (uniquement pour les éléments qui les supportent, sauf les tableaux de produits) */}
-            {allowedControls.includes('font') && selectedElement.type !== 'product_table' && (
-              <FontControls
-                elementId={selectedElement.id}
-                properties={localProperties}
-                onPropertyChange={handlePropertyChange}
-              />
-            )}
-
-            {/* Bordures (uniquement si activées et autorisées) */}
-            {allowedControls.includes('borders') && localProperties.borderWidth >= 0 && (
-              <div className="properties-group">
-                <h4>🔲 Bordures & Coins Arrondis</h4>
-
-                {/* Contrôle d'activation des bordures */}
-                <div className="property-row">
-                  <span>Bordures activées:</span>
-                  <label className="toggle">
-                    <input
-                      type="checkbox"
-                      checked={isBorderEnabled}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          const widthToSet = previousBorderWidth || 1;
-                          const colorToSet = previousBorderColor || '#000000';
-                          handlePropertyChange(selectedElement.id, 'border', true);
-                          handlePropertyChange(selectedElement.id, 'borderWidth', widthToSet);
-                          handlePropertyChange(selectedElement.id, 'borderColor', colorToSet);
-                          setIsBorderEnabled(true);
-                        } else {
-                          setPreviousBorderWidth(localProperties.borderWidth || 1);
-                          setPreviousBorderColor(localProperties.borderColor || '#000000');
-                          handlePropertyChange(selectedElement.id, 'border', false);
-                          handlePropertyChange(selectedElement.id, 'borderWidth', 0);
-                          setIsBorderEnabled(false);
-                        }
-                      }}
-                    />
-                    <span className="toggle-slider"></span>
-                  </label>
-                </div>
-
-                {/* Contrôles des bordures (conditionnels) */}
-                <div style={{
-                  display: localProperties.borderWidth > 0 ? 'block' : 'none',
-                  transition: 'opacity 0.3s ease'
-                }}>
-                  <ColorPicker
-                    label="Couleur bordure"
-                    value={localProperties.borderColor || '#000000'}
-                    onChange={(value) => handlePropertyChange(selectedElement.id, 'borderColor', value)}
-                    presets={['#e2e8f0', '#cbd5e1', '#94a3b8', '#64748b', '#475569', '#334155', '#000000']}
-                  />
-
-                  <div className="property-row">
-                    <label>Style bordure:</label>
-                    <select
-                      value={localProperties.borderStyle || 'solid'}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'borderStyle', e.target.value)}
-                      className="styled-select"
-                    >
-                      <option value="solid">Continue</option>
-                      <option value="dashed">Tirets</option>
-                      <option value="dotted">Pointillés</option>
-                      <option value="double">Double</option>
-                    </select>
-                  </div>
-
-                  <div className="property-row">
-                    <label>Épaisseur bordure:</label>
-                    <div className="slider-container">
-                      <input
-                        type="range"
-                        min="0"
-                        max="10"
-                        value={localProperties.borderWidth ?? 1}
-                        onChange={(e) => handlePropertyChange(selectedElement.id, 'borderWidth', safeParseInt(e.target.value, 1))}
-                        className="slider"
-                      />
-                      <span className="slider-value">{localProperties.borderWidth ?? 1}px</span>
-                    </div>
-                  </div>
-
-                  <div className="property-row">
-                    <label>Coins arrondis:</label>
-                    <div className="slider-container">
-                      <input
-                        type="range"
-                        min="0"
-                        max="50"
-                        value={localProperties.borderRadius ?? 4}
-                        onChange={(e) => handlePropertyChange(selectedElement.id, 'borderRadius', safeParseInt(e.target.value, 0))}
-                        className="slider"
-                      />
-                      <span className="slider-value">{localProperties.borderRadius ?? 4}px</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Effets (uniquement si autorisés) */}
-            {allowedControls.includes('effects') && (
-              <div className="properties-group">
-                <h4>✨ Effets</h4>
-
-                <ColorPicker
-                  label="Ombre"
-                  value={localProperties.boxShadowColor || '#000000'}
-                  onChange={(value) => handlePropertyChange(selectedElement.id, 'boxShadowColor', value)}
-                  presets={['#000000', '#ffffff', '#64748b', '#ef4444', '#3b82f6']}
-                />
-
-                <div className="property-row">
-                  <label>Flou ombre:</label>
-                  <div className="slider-container">
-                    <input
-                      type="range"
-                      min="0"
-                      max="20"
-                      value={localProperties.boxShadowBlur ?? 0}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'boxShadowBlur', safeParseInt(e.target.value, 0))}
-                      className="slider"
-                    />
-                    <span className="slider-value">{localProperties.boxShadowBlur ?? 0}px</span>
-                  </div>
-                </div>
-
-                <div className="property-row">
-                  <label>Décalage ombre:</label>
-                  <div className="slider-container">
-                    <input
-                      type="range"
-                      min="0"
-                      max="10"
-                      value={localProperties.boxShadowSpread ?? 0}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'boxShadowSpread', safeParseInt(e.target.value, 0))}
-                      className="slider"
-                    />
-                    <span className="slider-value">{localProperties.boxShadowSpread ?? 0}px</span>
-                  </div>
-                </div>
-              </div>
-            )}
+            {smartOrder.map(section => {
+              switch (section) {
+                case 'colors':
+                  return renderColorsSection(selectedElement, localProperties, handlePropertyChange, isBackgroundEnabled);
+                case 'font':
+                  return allowedControls.includes('font') && selectedElement.type !== 'product_table' ?
+                    renderFontSection(selectedElement, localProperties, handlePropertyChange) : null;
+                case 'borders':
+                  return allowedControls.includes('borders') ?
+                    renderBordersSection(selectedElement, localProperties, handlePropertyChange, isBorderEnabled, setIsBorderEnabled, setPreviousBorderWidth, setPreviousBorderColor, previousBorderWidth, previousBorderColor) : null;
+                case 'effects':
+                  return allowedControls.includes('effects') ?
+                    renderEffectsSection(selectedElement, localProperties, handlePropertyChange) : null;
+                default:
+                  return null;
+              }
+            })}
           </div>
         );
 

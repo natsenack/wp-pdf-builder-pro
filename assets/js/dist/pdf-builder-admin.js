@@ -9925,6 +9925,67 @@ var safeParseFloat = function safeParseFloat(value) {
   return isNaN(parsed) ? defaultValue : parsed;
 };
 
+// Fonction pour obtenir l'ordre intelligent des propriétés selon le type d'élément
+var getSmartPropertyOrder = function getSmartPropertyOrder(elementType, tab) {
+  var _orders$tab, _orders$tab2;
+  var orders = {
+    // Ordre pour l'onglet Apparence
+    appearance: {
+      // Éléments texte : couleur et police en premier
+      text: ['colors', 'font', 'borders', 'effects'],
+      'dynamic-text': ['colors', 'font', 'borders', 'effects'],
+      'layout-header': ['colors', 'font', 'borders', 'effects'],
+      'layout-footer': ['colors', 'font', 'borders', 'effects'],
+      'layout-section': ['colors', 'font', 'borders', 'effects'],
+      // Éléments image : couleur de fond et bordures en premier
+      logo: ['colors', 'borders', 'effects'],
+      company_logo: ['colors', 'borders', 'effects'],
+      // Tableaux : couleurs, police, bordures
+      product_table: ['colors', 'font', 'borders', 'effects'],
+      // Éléments de données : couleurs et police
+      customer_info: ['colors', 'font', 'borders', 'effects'],
+      company_info: ['colors', 'font', 'borders', 'effects'],
+      document_type: ['colors', 'font', 'borders', 'effects'],
+      order_number: ['colors', 'font', 'borders', 'effects'],
+      mentions: ['colors', 'font', 'borders', 'effects'],
+      // Par défaut
+      "default": ['colors', 'borders', 'effects']
+    },
+    // Ordre pour l'onglet Mise en page
+    layout: {
+      // Tous les éléments : position et dimensions d'abord
+      "default": ['position', 'dimensions', 'transform', 'layers']
+    },
+    // Ordre pour l'onglet Contenu
+    content: {
+      // Éléments texte : contenu textuel en premier
+      text: ['text', 'variables'],
+      'dynamic-text': ['dynamic_text', 'variables'],
+      'layout-header': ['text', 'variables'],
+      'layout-footer': ['text', 'variables'],
+      'layout-section': ['text', 'variables'],
+      // Éléments image : propriétés d'image
+      logo: ['image'],
+      company_logo: ['image'],
+      // Éléments de données : champs spécifiques
+      customer_info: ['customer_fields'],
+      company_info: ['company_fields'],
+      product_table: ['table'],
+      document_type: ['document_type'],
+      order_number: ['order_number'],
+      mentions: ['mentions'],
+      // Par défaut
+      "default": []
+    },
+    // Ordre pour l'onglet Effets
+    effects: {
+      // Tous les éléments : opacité en premier, puis effets visuels
+      "default": ['opacity', 'shadows', 'filters']
+    }
+  };
+  return ((_orders$tab = orders[tab]) === null || _orders$tab === void 0 ? void 0 : _orders$tab[elementType]) || ((_orders$tab2 = orders[tab]) === null || _orders$tab2 === void 0 ? void 0 : _orders$tab2["default"]) || [];
+};
+
 // Composant amélioré pour les contrôles de couleur avec presets
 var ColorPicker = function ColorPicker(_ref) {
   var label = _ref.label,
@@ -10175,6 +10236,211 @@ var FontControls = function FontControls(_ref2) {
     }, icon);
   }))));
 };
+
+// Fonctions helper pour rendre chaque section de propriétés dans l'ordre intelligent
+var renderColorsSection = function renderColorsSection(selectedElement, localProperties, handlePropertyChange, isBackgroundEnabled) {
+  var _localProperties$back, _localProperties$back2;
+  return /*#__PURE__*/React.createElement("div", {
+    key: "colors",
+    className: "properties-group"
+  }, /*#__PURE__*/React.createElement("h4", null, "\uD83C\uDFA8 Couleurs & Apparence"), /*#__PURE__*/React.createElement(ColorPicker, {
+    label: "Texte",
+    value: localProperties.color,
+    onChange: function onChange(value) {
+      handlePropertyChange(selectedElement.id, 'color', value);
+    },
+    presets: ['#1e293b', '#334155', '#475569', '#64748b', '#94a3b8', '#cbd5e1', '#000000'],
+    defaultColor: "#333333"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "property-row"
+  }, /*#__PURE__*/React.createElement("span", null, "Fond activ\xE9:"), /*#__PURE__*/React.createElement("label", {
+    className: "toggle"
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "checkbox",
+    checked: isBackgroundEnabled,
+    disabled: false,
+    onChange: function onChange(e) {
+      if (e.target.checked) {
+        handlePropertyChange(selectedElement.id, 'backgroundColor', '#ffffff');
+      } else {
+        handlePropertyChange(selectedElement.id, 'backgroundColor', 'transparent');
+      }
+    }
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "toggle-slider"
+  }))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: isBackgroundEnabled ? 'block' : 'none',
+      transition: 'opacity 0.3s ease'
+    }
+  }, /*#__PURE__*/React.createElement(ColorPicker, {
+    label: "Fond",
+    value: localProperties.backgroundColor === 'transparent' ? '#ffffff' : localProperties.backgroundColor,
+    onChange: function onChange(value) {
+      handlePropertyChange(selectedElement.id, 'backgroundColor', value);
+    },
+    presets: ['transparent', '#ffffff', '#f8fafc', '#f1f5f9', '#e2e8f0', '#cbd5e1', '#94a3b8']
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "property-row"
+  }, /*#__PURE__*/React.createElement("label", null, "Opacit\xE9 fond:"), /*#__PURE__*/React.createElement("div", {
+    className: "slider-container"
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "range",
+    min: "0",
+    max: "1",
+    step: "0.1",
+    value: (_localProperties$back = localProperties.backgroundOpacity) !== null && _localProperties$back !== void 0 ? _localProperties$back : 1,
+    onChange: function onChange(e) {
+      return handlePropertyChange(selectedElement.id, 'backgroundOpacity', safeParseFloat(e.target.value, 1));
+    },
+    className: "slider"
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "slider-value"
+  }, Math.round(((_localProperties$back2 = localProperties.backgroundOpacity) !== null && _localProperties$back2 !== void 0 ? _localProperties$back2 : 1) * 100), "%")))));
+};
+var renderFontSection = function renderFontSection(selectedElement, localProperties, handlePropertyChange) {
+  return /*#__PURE__*/React.createElement(FontControls, {
+    key: "font",
+    elementId: selectedElement.id,
+    properties: localProperties,
+    onPropertyChange: handlePropertyChange
+  });
+};
+var renderBordersSection = function renderBordersSection(selectedElement, localProperties, handlePropertyChange, isBorderEnabled, setIsBorderEnabled, setPreviousBorderWidth, setPreviousBorderColor, previousBorderWidth, previousBorderColor) {
+  var _localProperties$bord, _localProperties$bord2, _localProperties$bord3, _localProperties$bord4;
+  if (!isBorderEnabled && localProperties.borderWidth <= 0) return null;
+  return /*#__PURE__*/React.createElement("div", {
+    key: "borders",
+    className: "properties-group"
+  }, /*#__PURE__*/React.createElement("h4", null, "\uD83D\uDD32 Bordures & Coins Arrondis"), /*#__PURE__*/React.createElement("div", {
+    className: "property-row"
+  }, /*#__PURE__*/React.createElement("span", null, "Bordures activ\xE9es:"), /*#__PURE__*/React.createElement("label", {
+    className: "toggle"
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "checkbox",
+    checked: isBorderEnabled,
+    onChange: function onChange(e) {
+      if (e.target.checked) {
+        var widthToSet = previousBorderWidth || 1;
+        var colorToSet = previousBorderColor || '#000000';
+        handlePropertyChange(selectedElement.id, 'border', true);
+        handlePropertyChange(selectedElement.id, 'borderWidth', widthToSet);
+        handlePropertyChange(selectedElement.id, 'borderColor', colorToSet);
+        setIsBorderEnabled(true);
+      } else {
+        setPreviousBorderWidth(localProperties.borderWidth || 1);
+        setPreviousBorderColor(localProperties.borderColor || '#000000');
+        handlePropertyChange(selectedElement.id, 'border', false);
+        handlePropertyChange(selectedElement.id, 'borderWidth', 0);
+        setIsBorderEnabled(false);
+      }
+    }
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "toggle-slider"
+  }))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: localProperties.borderWidth > 0 ? 'block' : 'none',
+      transition: 'opacity 0.3s ease'
+    }
+  }, /*#__PURE__*/React.createElement(ColorPicker, {
+    label: "Couleur bordure",
+    value: localProperties.borderColor || '#000000',
+    onChange: function onChange(value) {
+      return handlePropertyChange(selectedElement.id, 'borderColor', value);
+    },
+    presets: ['#e2e8f0', '#cbd5e1', '#94a3b8', '#64748b', '#475569', '#334155', '#000000']
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "property-row"
+  }, /*#__PURE__*/React.createElement("label", null, "Style bordure:"), /*#__PURE__*/React.createElement("select", {
+    value: localProperties.borderStyle || 'solid',
+    onChange: function onChange(e) {
+      return handlePropertyChange(selectedElement.id, 'borderStyle', e.target.value);
+    },
+    className: "styled-select"
+  }, /*#__PURE__*/React.createElement("option", {
+    value: "solid"
+  }, "Continue"), /*#__PURE__*/React.createElement("option", {
+    value: "dashed"
+  }, "Tirets"), /*#__PURE__*/React.createElement("option", {
+    value: "dotted"
+  }, "Pointill\xE9s"), /*#__PURE__*/React.createElement("option", {
+    value: "double"
+  }, "Double"))), /*#__PURE__*/React.createElement("div", {
+    className: "property-row"
+  }, /*#__PURE__*/React.createElement("label", null, "\xC9paisseur bordure:"), /*#__PURE__*/React.createElement("div", {
+    className: "slider-container"
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "range",
+    min: "0",
+    max: "10",
+    value: (_localProperties$bord = localProperties.borderWidth) !== null && _localProperties$bord !== void 0 ? _localProperties$bord : 1,
+    onChange: function onChange(e) {
+      return handlePropertyChange(selectedElement.id, 'borderWidth', safeParseInt(e.target.value, 1));
+    },
+    className: "slider"
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "slider-value"
+  }, (_localProperties$bord2 = localProperties.borderWidth) !== null && _localProperties$bord2 !== void 0 ? _localProperties$bord2 : 1, "px"))), /*#__PURE__*/React.createElement("div", {
+    className: "property-row"
+  }, /*#__PURE__*/React.createElement("label", null, "Coins arrondis:"), /*#__PURE__*/React.createElement("div", {
+    className: "slider-container"
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "range",
+    min: "0",
+    max: "50",
+    value: (_localProperties$bord3 = localProperties.borderRadius) !== null && _localProperties$bord3 !== void 0 ? _localProperties$bord3 : 4,
+    onChange: function onChange(e) {
+      return handlePropertyChange(selectedElement.id, 'borderRadius', safeParseInt(e.target.value, 0));
+    },
+    className: "slider"
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "slider-value"
+  }, (_localProperties$bord4 = localProperties.borderRadius) !== null && _localProperties$bord4 !== void 0 ? _localProperties$bord4 : 4, "px")))));
+};
+var renderEffectsSection = function renderEffectsSection(selectedElement, localProperties, handlePropertyChange) {
+  var _localProperties$boxS, _localProperties$boxS2, _localProperties$boxS3, _localProperties$boxS4;
+  return /*#__PURE__*/React.createElement("div", {
+    key: "effects",
+    className: "properties-group"
+  }, /*#__PURE__*/React.createElement("h4", null, "\u2728 Effets"), /*#__PURE__*/React.createElement(ColorPicker, {
+    label: "Ombre",
+    value: localProperties.boxShadowColor || '#000000',
+    onChange: function onChange(value) {
+      return handlePropertyChange(selectedElement.id, 'boxShadowColor', value);
+    },
+    presets: ['#000000', '#ffffff', '#64748b', '#ef4444', '#3b82f6']
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "property-row"
+  }, /*#__PURE__*/React.createElement("label", null, "Flou ombre:"), /*#__PURE__*/React.createElement("div", {
+    className: "slider-container"
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "range",
+    min: "0",
+    max: "20",
+    value: (_localProperties$boxS = localProperties.boxShadowBlur) !== null && _localProperties$boxS !== void 0 ? _localProperties$boxS : 0,
+    onChange: function onChange(e) {
+      return handlePropertyChange(selectedElement.id, 'boxShadowBlur', safeParseInt(e.target.value, 0));
+    },
+    className: "slider"
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "slider-value"
+  }, (_localProperties$boxS2 = localProperties.boxShadowBlur) !== null && _localProperties$boxS2 !== void 0 ? _localProperties$boxS2 : 0, "px"))), /*#__PURE__*/React.createElement("div", {
+    className: "property-row"
+  }, /*#__PURE__*/React.createElement("label", null, "D\xE9calage ombre:"), /*#__PURE__*/React.createElement("div", {
+    className: "slider-container"
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "range",
+    min: "0",
+    max: "10",
+    value: (_localProperties$boxS3 = localProperties.boxShadowSpread) !== null && _localProperties$boxS3 !== void 0 ? _localProperties$boxS3 : 0,
+    onChange: function onChange(e) {
+      return handlePropertyChange(selectedElement.id, 'boxShadowSpread', safeParseInt(e.target.value, 0));
+    },
+    className: "slider"
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "slider-value"
+  }, (_localProperties$boxS4 = localProperties.boxShadowSpread) !== null && _localProperties$boxS4 !== void 0 ? _localProperties$boxS4 : 0, "px"))));
+};
 var PropertiesPanel = /*#__PURE__*/(0,react.memo)(function (_ref4) {
   var selectedElements = _ref4.selectedElements,
     elements = _ref4.elements,
@@ -10362,7 +10628,7 @@ var PropertiesPanel = /*#__PURE__*/(0,react.memo)(function (_ref4) {
 
   // Rendu du contenu selon l'onglet actif
   var renderTabContent = (0,react.useCallback)(function () {
-    var _localProperties$back, _localProperties$back2, _localProperties$bord, _localProperties$bord2, _localProperties$bord3, _localProperties$bord4, _localProperties$boxS, _localProperties$boxS2, _localProperties$boxS3, _localProperties$boxS4, _localProperties$show, _localProperties$show2, _localProperties$show3, _localProperties$show4, _localProperties$show5, _localProperties$show6, _localProperties$show7;
+    var _localProperties$show, _localProperties$show2, _localProperties$show3, _localProperties$show4, _localProperties$show5, _localProperties$show6, _localProperties$show7;
     if (!selectedElement) {
       return /*#__PURE__*/React.createElement("div", {
         className: "no-selection"
@@ -10373,197 +10639,26 @@ var PropertiesPanel = /*#__PURE__*/(0,react.memo)(function (_ref4) {
       }, selectedElements.length, " \xE9l\xE9ments s\xE9lectionn\xE9s"));
     }
 
-    // Obtenir le profil de propriétés pour ce type d'élément
-    var elementProfile = ELEMENT_PROPERTY_PROFILES[selectedElement.type] || ELEMENT_PROPERTY_PROFILES["default"];
-    var allowedControls = elementProfile[activeTab] || [];
+    // Obtenir l'ordre intelligent des propriétés pour ce type d'élément
+    var smartOrder = getSmartPropertyOrder(selectedElement.type, activeTab);
     switch (activeTab) {
       case 'appearance':
         return /*#__PURE__*/React.createElement("div", {
           className: "tab-content"
-        }, /*#__PURE__*/React.createElement("div", {
-          className: "properties-group"
-        }, /*#__PURE__*/React.createElement("h4", null, "\uD83C\uDFA8 Couleurs & Apparence"), /*#__PURE__*/React.createElement(ColorPicker, {
-          label: "Texte",
-          value: localProperties.color,
-          onChange: function onChange(value) {
-            handlePropertyChange(selectedElement.id, 'color', value);
-          },
-          presets: ['#1e293b', '#334155', '#475569', '#64748b', '#94a3b8', '#cbd5e1', '#000000'],
-          defaultColor: "#333333"
-        }), /*#__PURE__*/React.createElement("div", {
-          className: "property-row"
-        }, /*#__PURE__*/React.createElement("span", null, "Fond activ\xE9:"), /*#__PURE__*/React.createElement("label", {
-          className: "toggle"
-        }, /*#__PURE__*/React.createElement("input", {
-          type: "checkbox",
-          checked: isBackgroundEnabled,
-          disabled: false,
-          onChange: function onChange(e) {
-            if (e.target.checked) {
-              handlePropertyChange(selectedElement.id, 'backgroundColor', '#ffffff');
-            } else {
-              handlePropertyChange(selectedElement.id, 'backgroundColor', 'transparent');
-            }
+        }, smartOrder.map(function (section) {
+          switch (section) {
+            case 'colors':
+              return renderColorsSection(selectedElement, localProperties, handlePropertyChange, isBackgroundEnabled);
+            case 'font':
+              return allowedControls.includes('font') && selectedElement.type !== 'product_table' ? renderFontSection(selectedElement, localProperties, handlePropertyChange) : null;
+            case 'borders':
+              return allowedControls.includes('borders') ? renderBordersSection(selectedElement, localProperties, handlePropertyChange, isBorderEnabled, setIsBorderEnabled, setPreviousBorderWidth, setPreviousBorderColor, previousBorderWidth, previousBorderColor) : null;
+            case 'effects':
+              return allowedControls.includes('effects') ? renderEffectsSection(selectedElement, localProperties, handlePropertyChange) : null;
+            default:
+              return null;
           }
-        }), /*#__PURE__*/React.createElement("span", {
-          className: "toggle-slider"
-        }))), /*#__PURE__*/React.createElement("div", {
-          style: {
-            display: isBackgroundEnabled ? 'block' : 'none',
-            transition: 'opacity 0.3s ease'
-          }
-        }, /*#__PURE__*/React.createElement(ColorPicker, {
-          label: "Fond",
-          value: localProperties.backgroundColor === 'transparent' ? '#ffffff' : localProperties.backgroundColor,
-          onChange: function onChange(value) {
-            handlePropertyChange(selectedElement.id, 'backgroundColor', value);
-          },
-          presets: ['transparent', '#ffffff', '#f8fafc', '#f1f5f9', '#e2e8f0', '#cbd5e1', '#94a3b8']
-        }), /*#__PURE__*/React.createElement("div", {
-          className: "property-row"
-        }, /*#__PURE__*/React.createElement("label", null, "Opacit\xE9 fond:"), /*#__PURE__*/React.createElement("div", {
-          className: "slider-container"
-        }, /*#__PURE__*/React.createElement("input", {
-          type: "range",
-          min: "0",
-          max: "1",
-          step: "0.1",
-          value: (_localProperties$back = localProperties.backgroundOpacity) !== null && _localProperties$back !== void 0 ? _localProperties$back : 1,
-          onChange: function onChange(e) {
-            return handlePropertyChange(selectedElement.id, 'backgroundOpacity', safeParseFloat(e.target.value, 1));
-          },
-          className: "slider"
-        }), /*#__PURE__*/React.createElement("span", {
-          className: "slider-value"
-        }, Math.round(((_localProperties$back2 = localProperties.backgroundOpacity) !== null && _localProperties$back2 !== void 0 ? _localProperties$back2 : 1) * 100), "%"))))), allowedControls.includes('font') && selectedElement.type !== 'product_table' && /*#__PURE__*/React.createElement(FontControls, {
-          elementId: selectedElement.id,
-          properties: localProperties,
-          onPropertyChange: handlePropertyChange
-        }), allowedControls.includes('borders') && localProperties.borderWidth >= 0 && /*#__PURE__*/React.createElement("div", {
-          className: "properties-group"
-        }, /*#__PURE__*/React.createElement("h4", null, "\uD83D\uDD32 Bordures & Coins Arrondis"), /*#__PURE__*/React.createElement("div", {
-          className: "property-row"
-        }, /*#__PURE__*/React.createElement("span", null, "Bordures activ\xE9es:"), /*#__PURE__*/React.createElement("label", {
-          className: "toggle"
-        }, /*#__PURE__*/React.createElement("input", {
-          type: "checkbox",
-          checked: isBorderEnabled,
-          onChange: function onChange(e) {
-            if (e.target.checked) {
-              var widthToSet = previousBorderWidth || 1;
-              var colorToSet = previousBorderColor || '#000000';
-              handlePropertyChange(selectedElement.id, 'border', true);
-              handlePropertyChange(selectedElement.id, 'borderWidth', widthToSet);
-              handlePropertyChange(selectedElement.id, 'borderColor', colorToSet);
-              setIsBorderEnabled(true);
-            } else {
-              setPreviousBorderWidth(localProperties.borderWidth || 1);
-              setPreviousBorderColor(localProperties.borderColor || '#000000');
-              handlePropertyChange(selectedElement.id, 'border', false);
-              handlePropertyChange(selectedElement.id, 'borderWidth', 0);
-              setIsBorderEnabled(false);
-            }
-          }
-        }), /*#__PURE__*/React.createElement("span", {
-          className: "toggle-slider"
-        }))), /*#__PURE__*/React.createElement("div", {
-          style: {
-            display: localProperties.borderWidth > 0 ? 'block' : 'none',
-            transition: 'opacity 0.3s ease'
-          }
-        }, /*#__PURE__*/React.createElement(ColorPicker, {
-          label: "Couleur bordure",
-          value: localProperties.borderColor || '#000000',
-          onChange: function onChange(value) {
-            return handlePropertyChange(selectedElement.id, 'borderColor', value);
-          },
-          presets: ['#e2e8f0', '#cbd5e1', '#94a3b8', '#64748b', '#475569', '#334155', '#000000']
-        }), /*#__PURE__*/React.createElement("div", {
-          className: "property-row"
-        }, /*#__PURE__*/React.createElement("label", null, "Style bordure:"), /*#__PURE__*/React.createElement("select", {
-          value: localProperties.borderStyle || 'solid',
-          onChange: function onChange(e) {
-            return handlePropertyChange(selectedElement.id, 'borderStyle', e.target.value);
-          },
-          className: "styled-select"
-        }, /*#__PURE__*/React.createElement("option", {
-          value: "solid"
-        }, "Continue"), /*#__PURE__*/React.createElement("option", {
-          value: "dashed"
-        }, "Tirets"), /*#__PURE__*/React.createElement("option", {
-          value: "dotted"
-        }, "Pointill\xE9s"), /*#__PURE__*/React.createElement("option", {
-          value: "double"
-        }, "Double"))), /*#__PURE__*/React.createElement("div", {
-          className: "property-row"
-        }, /*#__PURE__*/React.createElement("label", null, "\xC9paisseur bordure:"), /*#__PURE__*/React.createElement("div", {
-          className: "slider-container"
-        }, /*#__PURE__*/React.createElement("input", {
-          type: "range",
-          min: "0",
-          max: "10",
-          value: (_localProperties$bord = localProperties.borderWidth) !== null && _localProperties$bord !== void 0 ? _localProperties$bord : 1,
-          onChange: function onChange(e) {
-            return handlePropertyChange(selectedElement.id, 'borderWidth', safeParseInt(e.target.value, 1));
-          },
-          className: "slider"
-        }), /*#__PURE__*/React.createElement("span", {
-          className: "slider-value"
-        }, (_localProperties$bord2 = localProperties.borderWidth) !== null && _localProperties$bord2 !== void 0 ? _localProperties$bord2 : 1, "px"))), /*#__PURE__*/React.createElement("div", {
-          className: "property-row"
-        }, /*#__PURE__*/React.createElement("label", null, "Coins arrondis:"), /*#__PURE__*/React.createElement("div", {
-          className: "slider-container"
-        }, /*#__PURE__*/React.createElement("input", {
-          type: "range",
-          min: "0",
-          max: "50",
-          value: (_localProperties$bord3 = localProperties.borderRadius) !== null && _localProperties$bord3 !== void 0 ? _localProperties$bord3 : 4,
-          onChange: function onChange(e) {
-            return handlePropertyChange(selectedElement.id, 'borderRadius', safeParseInt(e.target.value, 0));
-          },
-          className: "slider"
-        }), /*#__PURE__*/React.createElement("span", {
-          className: "slider-value"
-        }, (_localProperties$bord4 = localProperties.borderRadius) !== null && _localProperties$bord4 !== void 0 ? _localProperties$bord4 : 4, "px"))))), allowedControls.includes('effects') && /*#__PURE__*/React.createElement("div", {
-          className: "properties-group"
-        }, /*#__PURE__*/React.createElement("h4", null, "\u2728 Effets"), /*#__PURE__*/React.createElement(ColorPicker, {
-          label: "Ombre",
-          value: localProperties.boxShadowColor || '#000000',
-          onChange: function onChange(value) {
-            return handlePropertyChange(selectedElement.id, 'boxShadowColor', value);
-          },
-          presets: ['#000000', '#ffffff', '#64748b', '#ef4444', '#3b82f6']
-        }), /*#__PURE__*/React.createElement("div", {
-          className: "property-row"
-        }, /*#__PURE__*/React.createElement("label", null, "Flou ombre:"), /*#__PURE__*/React.createElement("div", {
-          className: "slider-container"
-        }, /*#__PURE__*/React.createElement("input", {
-          type: "range",
-          min: "0",
-          max: "20",
-          value: (_localProperties$boxS = localProperties.boxShadowBlur) !== null && _localProperties$boxS !== void 0 ? _localProperties$boxS : 0,
-          onChange: function onChange(e) {
-            return handlePropertyChange(selectedElement.id, 'boxShadowBlur', safeParseInt(e.target.value, 0));
-          },
-          className: "slider"
-        }), /*#__PURE__*/React.createElement("span", {
-          className: "slider-value"
-        }, (_localProperties$boxS2 = localProperties.boxShadowBlur) !== null && _localProperties$boxS2 !== void 0 ? _localProperties$boxS2 : 0, "px"))), /*#__PURE__*/React.createElement("div", {
-          className: "property-row"
-        }, /*#__PURE__*/React.createElement("label", null, "D\xE9calage ombre:"), /*#__PURE__*/React.createElement("div", {
-          className: "slider-container"
-        }, /*#__PURE__*/React.createElement("input", {
-          type: "range",
-          min: "0",
-          max: "10",
-          value: (_localProperties$boxS3 = localProperties.boxShadowSpread) !== null && _localProperties$boxS3 !== void 0 ? _localProperties$boxS3 : 0,
-          onChange: function onChange(e) {
-            return handlePropertyChange(selectedElement.id, 'boxShadowSpread', safeParseInt(e.target.value, 0));
-          },
-          className: "slider"
-        }), /*#__PURE__*/React.createElement("span", {
-          className: "slider-value"
-        }, (_localProperties$boxS4 = localProperties.boxShadowSpread) !== null && _localProperties$boxS4 !== void 0 ? _localProperties$boxS4 : 0, "px")))));
+        }));
       case 'layout':
         return /*#__PURE__*/React.createElement("div", {
           className: "tab-content"
