@@ -20,8 +20,8 @@ const PDFBuilderSecurity = {
         console.log('PDF Builder Pro: Performing health check...');
 
         const checks = {
-            react: typeof React === 'object' && React.version,
-            reactDom: typeof ReactDOM === 'object',
+            react: typeof React === 'object' && React.createElement,
+            reactDom: typeof ReactDOM === 'object' && ReactDOM.render,
             pdfCanvasEditor: typeof PDFCanvasEditor === 'function',
             hooks: typeof hooks === 'object',
             window: typeof window !== 'undefined',

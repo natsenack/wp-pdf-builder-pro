@@ -13187,8 +13187,8 @@ var PDFBuilderSecurity = {
   performHealthCheck: function performHealthCheck() {
     console.log('PDF Builder Pro: Performing health check...');
     var checks = {
-      react: src_typeof(react) === 'object' && react.version,
-      reactDom: src_typeof(react_dom) === 'object',
+      react: src_typeof(react) === 'object' && react.createElement,
+      reactDom: src_typeof(react_dom) === 'object' && react_dom.render,
       pdfCanvasEditor: typeof PDFCanvasEditor === 'function',
       hooks: src_typeof(hooks_namespaceObject) === 'object',
       window: typeof window !== 'undefined',
