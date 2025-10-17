@@ -1754,40 +1754,43 @@ class PDF_Builder_Pro_Generator {
      */
     private function calculate_column_widths($total_width, $visible_columns, $columns) {
         $widths = [];
-        $remaining_width = $total_width;
 
-        // Largeurs fixes pour certaines colonnes
+        // Largeurs fixes proportionnelles au Canvas/Aperçu (ratio conservé)
+        // Canvas: sku=80px, quantity=60px, price=80px, total=80px
+        // Ratio sku:quantity = 4:3, price:total = 1:1
         $fixed_widths = [
-            'image' => 15, // Largeur fixe pour l'image
-            'sku' => 25,   // Largeur fixe pour le SKU
-            'quantity' => 15 // Largeur fixe pour la quantité
+            'image' => 15,  // Largeur fixe pour l'image
+            'sku' => 25,    // Largeur fixe pour le SKU (équivalent 80px)
+            'quantity' => 19, // Largeur fixe pour la quantité (équivalent 60px)
+            'price' => 25,  // Largeur fixe pour le prix (équivalent 80px)
+            'total' => 25   // Largeur fixe pour le total (équivalent 80px)
         ];
 
-        // Calculer la largeur disponible pour les colonnes flexibles
-        $flexible_columns = 0;
+        // La colonne 'name' prend tout l'espace restant (comme flex: 1 dans CSS)
+        $used_width = 0;
+        $has_name_column = false;
+
+        foreach ($visible_columns as $col) {
+            if (isset($fixed_widths[$col])) {
+                $used_width += $fixed_widths[$col];
+            } elseif ($col === 'name') {
+                $has_name_column = true;
+            }
+        }
+
+        // Calculer la largeur de la colonne name (espace restant)
+        $name_width = $has_name_column ? max(30, $total_width - $used_width) : 0;
+
+        // Construire le tableau final des largeurs dans l'ordre des colonnes visibles
         foreach ($visible_columns as $col) {
             if (isset($fixed_widths[$col])) {
                 $widths[] = $fixed_widths[$col];
-                $remaining_width -= $fixed_widths[$col];
-            } else {
-                $flexible_columns++;
+            } elseif ($col === 'name') {
+                $widths[] = $name_width;
             }
         }
 
-        // Répartir la largeur restante entre les colonnes flexibles
-        $flexible_width = $flexible_columns > 0 ? $remaining_width / $flexible_columns : 0;
-
-        // Construire le tableau final des largeurs
-        $result = [];
-        foreach ($visible_columns as $col) {
-            if (isset($fixed_widths[$col])) {
-                $result[] = $fixed_widths[$col];
-            } else {
-                $result[] = max(20, $flexible_width); // Largeur minimum de 20
-            }
-        }
-
-        return $result;
+        return $widths;
     }
 
     /**
