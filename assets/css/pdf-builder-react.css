@@ -1258,7 +1258,7 @@ body.pdf-builder-active #wpadminbar {
   justify-content: center;
   font-size: 18px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .sidebar-toggle-fixed:hover {
