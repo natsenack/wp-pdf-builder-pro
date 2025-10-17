@@ -1334,14 +1334,12 @@ class PDF_Builder_Admin {
         // Charger seulement sur nos pages admin
         $allowed_hooks = [
             'toplevel_page_pdf-builder-pro',
-            'pdf-builder-pro_page_pdf-builder-templates',
-            'pdf-builder-pro_page_pdf-builder-editor',
-            'pdf-builder_page_pdf-builder-editor', // Alternative
-            'admin_page_pdf-builder-editor', // Alternative
-            'pdf-builder-pro_page_pdf-builder-settings',
-            'pdf-builder-pro_page_pdf-builder-diagnostic',
+            'pdf-builder_page_pdf-builder-templates',
+            'pdf-builder_page_pdf-builder-editor',
+            'pdf-builder_page_pdf-builder-settings',
+            'pdf-builder_page_pdf-builder-diagnostic',
             // 'pdf-builder_page_pdf-builder-test-tcpdf', // Commenté - système de test nettoyé
-            'pdf-builder-pro_page_pdf-builder-developer'
+            'pdf-builder_page_pdf-builder-developer'
         ];
 
         error_log('PDF Builder: Checking if hook "' . $hook . '" is in allowed list: ' . (in_array($hook, $allowed_hooks) ? 'YES' : 'NO'));
