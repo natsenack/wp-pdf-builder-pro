@@ -1,40 +1,25 @@
-// Imports doivent être au niveau supérieur du module
-import React from 'react';
-import ReactDOM from 'react-dom';
+// Script ultra-minimal pour tester l'exécution de base
+(function() {
+    'use strict';
 
-console.log('PDF Builder Pro: Script execution started');
-
-// Test des imports de base
-try {
-    console.log('Testing React availability...');
-    console.log('React version:', React.version);
-    console.log('ReactDOM available:', typeof ReactDOM);
-
-    // Exposer React globalement pour compatibilité
+    // Définition immédiate de la variable globale
     if (typeof window !== 'undefined') {
-        window.React = React;
-        window.ReactDOM = ReactDOM;
-        console.log('PDF Builder Pro: React exposed globally');
+        window.PDFBuilderPro = {
+            test: 'EXECUTED',
+            version: 'ultra-minimal',
+            timestamp: Date.now(),
+            init: function(containerId, options) {
+                console.log('PDFBuilderPro.init executed:', containerId, options);
+                return { success: true, executed: true };
+            }
+        };
+
+        // Log visible immédiatement
+        console.log('🚀 PDF Builder Pro: ULTRA MINIMAL SCRIPT EXECUTED SUCCESSFULLY 🚀');
+        console.log('window.PDFBuilderPro:', window.PDFBuilderPro);
+
+        // Erreur visible pour confirmer
+        throw new Error('✅ CONFIRMATION: PDF Builder Pro script executed at ' + new Date().toISOString());
     }
-} catch (error) {
-    console.error('React test failed:', error);
-}
-
-// Définition basique de PDFBuilderPro
-if (typeof window !== 'undefined') {
-    window.PDFBuilderPro = {
-        test: 'ok',
-        version: 'debug-test',
-        init: function(containerId, options) {
-            console.log('PDFBuilderPro.init called with:', containerId, options);
-            // Forcer une erreur visible pour confirmer que le script s'exécute
-            throw new Error('PDF Builder Pro: Script is executing! This is a test error.');
-            return { success: true };
-        }
-    };
-    console.log('PDF Builder Pro: Basic PDFBuilderPro defined on window');
-
-    // Forcer une erreur visible immédiatement
-    throw new Error('PDF Builder Pro: Script loaded and PDFBuilderPro defined! This confirms execution.');
-}
+})();
 
