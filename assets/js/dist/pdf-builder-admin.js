@@ -1389,10 +1389,12 @@ var CanvasElement = function CanvasElement(_ref) {
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
-        width: "".concat(80 * zoom, "px"),
-        textAlign: 'right'
+        width: 'auto',
+        textAlign: 'right',
+        display: 'flex',
+        justifyContent: 'space-between'
       }
-    }, "Sous-total: ", subtotal.toFixed(2), "\u20AC")), element.showShipping && shipping > 0 && /*#__PURE__*/React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("span", null, "Sous-total:"), /*#__PURE__*/React.createElement("span", null, subtotal.toFixed(2), "\u20AC"))), element.showShipping && shipping > 0 && /*#__PURE__*/React.createElement("div", {
       style: {
         display: 'flex',
         justifyContent: 'flex-end',
@@ -1400,10 +1402,12 @@ var CanvasElement = function CanvasElement(_ref) {
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
-        width: "".concat(80 * zoom, "px"),
-        textAlign: 'right'
+        width: 'auto',
+        textAlign: 'right',
+        display: 'flex',
+        justifyContent: 'space-between'
       }
-    }, "Port: ", shipping.toFixed(2), "\u20AC")), element.showTaxes && tax > 0 && /*#__PURE__*/React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("span", null, "Port:"), /*#__PURE__*/React.createElement("span", null, shipping.toFixed(2), "\u20AC"))), element.showTaxes && tax > 0 && /*#__PURE__*/React.createElement("div", {
       style: {
         display: 'flex',
         justifyContent: 'flex-end',
@@ -1411,10 +1415,12 @@ var CanvasElement = function CanvasElement(_ref) {
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
-        width: "".concat(80 * zoom, "px"),
-        textAlign: 'right'
+        width: 'auto',
+        textAlign: 'right',
+        display: 'flex',
+        justifyContent: 'space-between'
       }
-    }, "TVA: ", tax.toFixed(2), "\u20AC")), element.showDiscount && discount < 0 && /*#__PURE__*/React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("span", null, "TVA:"), /*#__PURE__*/React.createElement("span", null, tax.toFixed(2), "\u20AC"))), element.showDiscount && discount < 0 && /*#__PURE__*/React.createElement("div", {
       style: {
         display: 'flex',
         justifyContent: 'flex-end',
@@ -1422,10 +1428,12 @@ var CanvasElement = function CanvasElement(_ref) {
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
-        width: "".concat(80 * zoom, "px"),
-        textAlign: 'right'
+        width: 'auto',
+        textAlign: 'right',
+        display: 'flex',
+        justifyContent: 'space-between'
       }
-    }, "Remise: ", Math.abs(discount).toFixed(2), "\u20AC")), element.showTotal && /*#__PURE__*/React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("span", null, "Remise:"), /*#__PURE__*/React.createElement("span", null, Math.abs(discount).toFixed(2), "\u20AC"))), element.showTotal && /*#__PURE__*/React.createElement("div", {
       style: {
         display: 'flex',
         justifyContent: 'flex-end',
@@ -1437,10 +1445,12 @@ var CanvasElement = function CanvasElement(_ref) {
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
-        width: "".concat(80 * zoom, "px"),
-        textAlign: 'right'
+        width: 'auto',
+        textAlign: 'right',
+        display: 'flex',
+        justifyContent: 'space-between'
       }
-    }, "TOTAL: ", total.toFixed(2), "\u20AC"))));
+    }, /*#__PURE__*/React.createElement("span", null, "TOTAL:"), /*#__PURE__*/React.createElement("span", null, total.toFixed(2), "\u20AC")))));
   }(), element.type === 'customer_info' && /*#__PURE__*/React.createElement("div", {
     style: {
       width: '100%',
