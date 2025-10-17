@@ -883,12 +883,13 @@ export const CanvasElement = ({
          element.type === 'progress-bar' ? null :
          element.type === 'product_table' ? null : // Le contenu sera rendu plus bas dans le même conteneur
          element.type === 'customer_info' ? null : // Le contenu sera rendu plus bas dans le même conteneur
+         element.type === 'mentions' ? null : // Le contenu sera rendu plus bas dans le même conteneur
          element.type !== 'image' && element.type !== 'rectangle' && element.type !== 'company_logo' && element.type !== 'order_number' && element.type !== 'company_info' && element.type !== 'document_type' ? element.type : null}
 
         {/* Rendu spécial pour les tableaux de produits */}
         {element.type === 'product_table' && (() => {
-          // Données des produits (pourrait venir de props ou d'un état global)
-          const products = [
+          // Données des produits (utiliser previewProducts si disponible, sinon données par défaut)
+          const products = element.previewProducts || [
             { name: 'Produit A - Description du produit', sku: 'SKU001', quantity: 2, price: 19.99, total: 39.98 },
             { name: 'Produit B - Un autre article', sku: 'SKU002', quantity: 1, price: 29.99, total: 29.99 }
           ];
@@ -1021,7 +1022,8 @@ export const CanvasElement = ({
                 <div key={`row-${index}`} style={{
                   display: 'flex',
                   borderBottom: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none',
-                  backgroundColor: index % 2 === 1 ? tableStyles.altRowBg : 'transparent',
+                  backgroundColor: product.backgroundColor || product.bgColor || (index % 2 === 1 ? tableStyles.altRowBg : 'transparent'),
+                  color: product.color || product.textColor || tableStyles.rowTextColor,
                   fontSize: `${tableStyles.rowFontSize * zoom}px`,
                   transition: 'background-color 0.15s ease'
                 }}>
@@ -1404,6 +1406,68 @@ export const CanvasElement = ({
             </div>
           </div>
         )}
+
+        {/* Rendu spécial pour les mentions légales */}
+        {element.type === 'mentions' && (() => {
+          const mentions = [];
+
+          if (element.showEmail) mentions.push('contact@monsite.com');
+          if (element.showPhone) mentions.push('01 23 45 67 89');
+          if (element.showSiret) mentions.push('SIRET: 123 456 789 00012');
+          if (element.showVat) mentions.push('TVA: FR 12 345 678 901');
+          if (element.showAddress) mentions.push('123 Rue de la Paix, 75001 Paris');
+          if (element.showWebsite) mentions.push('www.monsite.com');
+          if (element.showCustomText && element.customText) mentions.push(element.customText);
+
+          const content = mentions.join(element.separator || ' • ');
+
+          return (
+            <div style={{
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: element.textAlign === 'center' ? 'center' :
+                             element.textAlign === 'right' ? 'flex-end' : 'flex-start',
+              padding: `${4 * zoom}px`,
+              fontSize: `${(element.fontSize || 8) * zoom}px`,
+              fontFamily: element.fontFamily || 'Arial, sans-serif',
+              fontWeight: element.fontWeight || 'normal',
+              color: element.color || '#666666',
+              lineHeight: element.lineHeight || 1.2,
+              backgroundColor: element.backgroundColor || 'transparent',
+              border: element.borderWidth && element.borderWidth > 0 ? `${Math.max(1, element.borderWidth * zoom * 0.5)}px solid ${element.borderColor || '#e5e7eb'}` : 'none',
+              borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '2px',
+              boxSizing: 'border-box',
+              wordBreak: 'break-word',
+              overflow: 'hidden'
+            }}>
+              {element.layout === 'vertical' ? (
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: `${2 * zoom}px`,
+                  width: '100%',
+                  textAlign: element.textAlign || 'center'
+                }}>
+                  {mentions.map((mention, index) => (
+                    <div key={index} style={{ lineHeight: element.lineHeight || 1.2 }}>
+                      {mention}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div style={{
+                  textAlign: element.textAlign || 'center',
+                  lineHeight: element.lineHeight || 1.2,
+                  width: '100%'
+                }}>
+                  {content}
+                </div>
+              )}
+            </div>
+          );
+        })()}
 
         {/* Rendu spécial pour le logo entreprise */}
         {element.type === 'company_logo' && (

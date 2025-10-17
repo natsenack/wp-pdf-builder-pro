@@ -658,7 +658,7 @@ const PreviewModal = ({
         };
 
         // Données d'exemple pour l'aperçu (cohérentes avec le canvas)
-        const products = [
+        const products = element.previewProducts || [
           { name: 'Produit A - Description du produit', sku: 'SKU001', quantity: 2, price: 19.99, total: 39.98 },
           { name: 'Produit B - Un autre article', sku: 'SKU002', quantity: 1, price: 29.99, total: 29.99 }
         ];
@@ -775,8 +775,8 @@ const PreviewModal = ({
                 <div key={index} style={{
                   display: 'flex',
                   borderBottom: showBorders ? `${tableStyles.borderWidth}px solid ${tableStyles.rowBorder}` : 'none',
-                  backgroundColor: element.tableStyle === 'striped' && index % 2 === 1 ? tableStyles.altRowBg : 'transparent',
-                  color: tableStyles.rowTextColor || '#000000',
+                  backgroundColor: product.backgroundColor || product.bgColor || (element.tableStyle === 'striped' && index % 2 === 1 ? tableStyles.altRowBg : 'transparent'),
+                  color: product.color || product.textColor || (tableStyles.rowTextColor || '#000000'),
                   boxShadow: tableStyles.shadow ? `0 1px 2px ${tableStyles.shadow}` : 'none'
                 }}>
                   {element.columns?.image !== false && (
@@ -1187,6 +1187,69 @@ const PreviewModal = ({
               borderRadius: (element.borderRadius || 10) * zoom,
               transition: element.animate !== false ? 'width 0.3s ease' : 'none'
             }} />
+          </div>
+        );
+
+      case 'mentions':
+        // Rendu des mentions légales
+        const mentions = [];
+
+        if (element.showEmail) mentions.push('contact@monsite.com');
+        if (element.showPhone) mentions.push('01 23 45 67 89');
+        if (element.showSiret) mentions.push('SIRET: 123 456 789 00012');
+        if (element.showVat) mentions.push('TVA: FR 12 345 678 901');
+        if (element.showAddress) mentions.push('123 Rue de la Paix, 75001 Paris');
+        if (element.showWebsite) mentions.push('www.monsite.com');
+        if (element.showCustomText && element.customText) mentions.push(element.customText);
+
+        const mentionsContent = mentions.join(element.separator || ' • ');
+        const mentionsLayout = element.layout || 'horizontal';
+
+        const mentionsContainerStyle = {
+          padding: `${4 * zoom}px`,
+          fontSize: (element.fontSize || 8) * zoom,
+          lineHeight: element.lineHeight || 1.2,
+          color: element.color || '#666666',
+          fontFamily: element.fontFamily || 'Inter, sans-serif',
+          textAlign: element.textAlign || 'center',
+          backgroundColor: element.backgroundColor || 'transparent',
+          border: element.borderWidth ? `${element.borderWidth * zoom}px solid ${element.borderColor || '#d1d5db'}` : 'none',
+          borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '0',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: element.textAlign === 'center' ? 'center' :
+                         element.textAlign === 'right' ? 'flex-end' : 'flex-start',
+          width: '100%',
+          height: '100%',
+          boxSizing: 'border-box'
+        };
+
+        return (
+          <div style={mentionsContainerStyle}>
+            {mentionsLayout === 'vertical' ? (
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: `${2 * zoom}px`,
+                width: '100%',
+                textAlign: element.textAlign || 'center'
+              }}>
+                {mentions.map((mention, index) => (
+                  <div key={index} style={{ lineHeight: element.lineHeight || 1.2 }}>
+                    {mention}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div style={{
+                textAlign: element.textAlign || 'center',
+                lineHeight: element.lineHeight || 1.2,
+                width: '100%',
+                wordBreak: 'break-word'
+              }}>
+                {mentionsContent}
+              </div>
+            )}
           </div>
         );
 

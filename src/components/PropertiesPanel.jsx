@@ -59,6 +59,13 @@ const ELEMENT_PROPERTY_PROFILES = {
     content: ['customer_fields'],
     effects: ['opacity', 'shadows', 'filters']
   },
+  // Mentions légales
+  mentions: {
+    appearance: ['colors', 'font', 'borders', 'effects'],
+    layout: ['position', 'dimensions', 'transform', 'layers'],
+    content: ['mentions'],
+    effects: ['opacity', 'shadows', 'filters']
+  },
   // Informations entreprise
   company_info: {
     appearance: ['colors', 'font', 'borders', 'effects'],
@@ -1494,6 +1501,55 @@ const PropertiesPanel = memo(({
                     <span className="toggle-slider"></span>
                   </label>
                 </div>
+
+                <div className="property-row">
+                  <label>Couleurs individuelles des produits:</label>
+                  <div className="product-colors-editor">
+                    {(localProperties.previewProducts || [
+                      { name: 'Produit 1', quantity: 2, price: 15.99, total: 31.98 },
+                      { name: 'Produit 2', quantity: 1, price: 8.50, total: 8.50 },
+                      { name: 'Produit 3', quantity: 3, price: 12.00, total: 36.00 }
+                    ]).map((product, index) => (
+                      <div key={index} className="product-color-item">
+                        <span className="product-name">{product.name || `Produit ${index + 1}`}</span>
+                        <div className="color-controls">
+                          <div className="color-control">
+                            <label>Fond:</label>
+                            <input
+                              type="color"
+                              value={product.backgroundColor || '#ffffff'}
+                              onChange={(e) => {
+                                const newProducts = [...(localProperties.previewProducts || [
+                                  { name: 'Produit 1', quantity: 2, price: 15.99, total: 31.98 },
+                                  { name: 'Produit 2', quantity: 1, price: 8.50, total: 8.50 },
+                                  { name: 'Produit 3', quantity: 3, price: 12.00, total: 36.00 }
+                                ])];
+                                newProducts[index] = { ...newProducts[index], backgroundColor: e.target.value };
+                                handlePropertyChange(selectedElement.id, 'previewProducts', newProducts);
+                              }}
+                            />
+                          </div>
+                          <div className="color-control">
+                            <label>Texte:</label>
+                            <input
+                              type="color"
+                              value={product.color || '#000000'}
+                              onChange={(e) => {
+                                const newProducts = [...(localProperties.previewProducts || [
+                                  { name: 'Produit 1', quantity: 2, price: 15.99, total: 31.98 },
+                                  { name: 'Produit 2', quantity: 1, price: 8.50, total: 8.50 },
+                                  { name: 'Produit 3', quantity: 3, price: 12.00, total: 36.00 }
+                                ])];
+                                newProducts[index] = { ...newProducts[index], color: e.target.value };
+                                handlePropertyChange(selectedElement.id, 'previewProducts', newProducts);
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
 
@@ -1581,6 +1637,87 @@ const PropertiesPanel = memo(({
                       className="slider"
                     />
                     <span className="slider-value">{localProperties.spacing || 8}px</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Contrôles mentions légales (uniquement pour les éléments mentions) */}
+            {allowedControls.includes('mentions') && selectedElement.type === 'mentions' && (
+              <div className="properties-group">
+                <h4>📄 Mentions légales</h4>
+
+                <div className="property-row">
+                  <label>Informations à afficher:</label>
+                  <div className="checkbox-group">
+                    {[
+                      { key: 'showEmail', label: 'Email' },
+                      { key: 'showPhone', label: 'Téléphone' },
+                      { key: 'showSiret', label: 'SIRET' },
+                      { key: 'showVat', label: 'N° TVA' },
+                      { key: 'showAddress', label: 'Adresse' },
+                      { key: 'showWebsite', label: 'Site web' },
+                      { key: 'showCustomText', label: 'Texte personnalisé' }
+                    ].map(({ key, label }) => (
+                      <label key={key} className="checkbox-item">
+                        <input
+                          type="checkbox"
+                          checked={localProperties[key] || false}
+                          onChange={(e) => handlePropertyChange(selectedElement.id, key, e.target.checked)}
+                        />
+                        {label}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {localProperties.showCustomText && (
+                  <div className="property-row">
+                    <label>Texte personnalisé:</label>
+                    <input
+                      type="text"
+                      value={localProperties.customText || ''}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'customText', e.target.value)}
+                      placeholder="Ex: Mentions légales personnalisées..."
+                    />
+                  </div>
+                )}
+
+                <div className="property-row">
+                  <label>Disposition:</label>
+                  <select
+                    value={localProperties.layout || 'horizontal'}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'layout', e.target.value)}
+                  >
+                    <option value="horizontal">Horizontale</option>
+                    <option value="vertical">Verticale</option>
+                  </select>
+                </div>
+
+                <div className="property-row">
+                  <label>Séparateur:</label>
+                  <input
+                    type="text"
+                    value={localProperties.separator || ' • '}
+                    onChange={(e) => handlePropertyChange(selectedElement.id, 'separator', e.target.value)}
+                    placeholder=" • "
+                    style={{ width: '60px' }}
+                  />
+                </div>
+
+                <div className="property-row">
+                  <label>Interligne:</label>
+                  <div className="slider-container">
+                    <input
+                      type="range"
+                      min="0.8"
+                      max="2.0"
+                      step="0.1"
+                      value={localProperties.lineHeight || 1.2}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'lineHeight', parseFloat(e.target.value))}
+                      className="slider"
+                    />
+                    <span className="slider-value">{localProperties.lineHeight || 1.2}</span>
                   </div>
                 </div>
               </div>

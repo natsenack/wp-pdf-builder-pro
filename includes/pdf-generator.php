@@ -349,6 +349,9 @@ class PDF_Builder_Pro_Generator {
                 case 'customer_info':
                     $this->render_customer_info_element($element, $px_to_mm);
                     break;
+                case 'mentions':
+                    $this->render_mentions_element($element, $px_to_mm);
+                    break;
                 case 'company_info':
                     $this->render_company_info_element($element, $px_to_mm);
                     break;
@@ -1019,6 +1022,96 @@ class PDF_Builder_Pro_Generator {
             hexdec(substr($hex, 2, 2)),
             hexdec(substr($hex, 4, 2))
         ];
+    }
+
+    /**
+     * Rendu d'élément mentions légales
+     */
+    private function render_mentions_element($element, $px_to_mm) {
+        $x = isset($element['x']) ? $element['x'] * $px_to_mm : 10;
+        $y = isset($element['y']) ? $element['y'] * $px_to_mm : 10;
+        $width = isset($element['width']) ? $element['width'] * $px_to_mm : 80;
+        $height = isset($element['height']) ? $element['height'] * $px_to_mm : 15;
+
+        // Récupérer les propriétés de l'élément
+        $color = isset($element['color']) ? $element['color'] : '#666666';
+        $fontSize = isset($element['fontSize']) ? $element['fontSize'] : 8;
+        $fontFamily = isset($element['fontFamily']) ? $this->map_font_family($element['fontFamily']) : 'helvetica';
+        $textAlign = isset($element['textAlign']) ? $element['textAlign'] : 'center';
+        $layout = isset($element['layout']) ? $element['layout'] : 'horizontal';
+        $separator = isset($element['separator']) ? $element['separator'] : ' • ';
+        $lineHeight = isset($element['lineHeight']) ? $element['lineHeight'] : 1.2;
+
+        // Appliquer la couleur du texte
+        if ($color && $color !== 'transparent') {
+            $textColor = $this->hex_to_rgb($color);
+            $this->pdf->SetTextColor($textColor[0], $textColor[1], $textColor[2]);
+        } else {
+            $this->pdf->SetTextColor(102, 102, 102); // Gris par défaut
+        }
+
+        // Appliquer la police et taille
+        $this->pdf->SetFont($fontFamily, '', $fontSize);
+
+        // Positionner le curseur
+        $this->pdf->SetXY($x, $y);
+
+        $mentions = [];
+
+        // Construire les mentions selon les options sélectionnées
+        if (isset($element['showEmail']) && $element['showEmail']) {
+            $email = get_option('pdf_builder_company_email', 'contact@monsite.com');
+            $mentions[] = $email;
+        }
+
+        if (isset($element['showPhone']) && $element['showPhone']) {
+            $phone = get_option('pdf_builder_company_phone', '01 23 45 67 89');
+            $mentions[] = $phone;
+        }
+
+        if (isset($element['showSiret']) && $element['showSiret']) {
+            $siret = get_option('pdf_builder_company_siret', '123 456 789 00012');
+            $mentions[] = 'SIRET: ' . $siret;
+        }
+
+        if (isset($element['showVat']) && $element['showVat']) {
+            $vat = get_option('pdf_builder_company_vat', 'FR 12 345 678 901');
+            $mentions[] = 'TVA: ' . $vat;
+        }
+
+        if (isset($element['showAddress']) && $element['showAddress']) {
+            $address = get_option('pdf_builder_company_address', '123 Rue de la Paix, 75001 Paris');
+            $mentions[] = $address;
+        }
+
+        if (isset($element['showWebsite']) && $element['showWebsite']) {
+            $website = get_option('pdf_builder_company_website', 'www.monsite.com');
+            $mentions[] = $website;
+        }
+
+        if (isset($element['showCustomText']) && $element['showCustomText'] && isset($element['customText'])) {
+            $mentions[] = $element['customText'];
+        }
+
+        // Rendre le contenu
+        if (!empty($mentions)) {
+            if ($layout === 'vertical') {
+                // Affichage vertical
+                $currentY = $y;
+                foreach ($mentions as $mention) {
+                    $this->pdf->SetXY($x, $currentY);
+                    $this->pdf->Cell($width, $fontSize * $lineHeight * $px_to_mm, $mention, 0, 0, $textAlign === 'center' ? 'C' : ($textAlign === 'right' ? 'R' : 'L'));
+                    $currentY += $fontSize * $lineHeight * $px_to_mm;
+                }
+            } else {
+                // Affichage horizontal avec séparateur
+                $content = implode($separator, $mentions);
+                $this->pdf->MultiCell($width, $fontSize * $lineHeight * $px_to_mm, $content, 0, $textAlign === 'center' ? 'C' : ($textAlign === 'right' ? 'R' : 'L'), false);
+            }
+        } else {
+            // Contenu par défaut si rien n'est configuré
+            $this->pdf->Cell($width, $fontSize * $lineHeight * $px_to_mm, 'Mentions légales', 0, 0, 'C');
+        }
     }
 
     /**
@@ -1953,14 +2046,32 @@ class PDF_Builder_Pro_Generator {
             ]
         ];
 
-        // Appliquer la couleur de texte des lignes de données
-        if (isset($table_styles['rowTextColor'])) {
-            $row_text_rgb = $this->hex_to_rgb($table_styles['rowTextColor']);
-            $this->pdf->SetTextColor($row_text_rgb[0], $row_text_rgb[1], $row_text_rgb[2]);
-        }
-
         // Rendre chaque produit d'aperçu
-        foreach ($preview_products as $product) {
+        foreach ($preview_products as $index => $product) {
+            // Appliquer la couleur de fond spécifique au produit si définie
+            $product_bg_color = $product['backgroundColor'] ?? $product['bgColor'] ?? null;
+            if ($product_bg_color && $product_bg_color !== 'transparent') {
+                $bg_rgb = $this->parse_color($product_bg_color);
+                $this->pdf->SetFillColor($bg_rgb['r'], $bg_rgb['g'], $bg_rgb['b']);
+                $this->pdf->Rect($x, $current_y, array_sum($col_widths), $row_height, 'F');
+            } elseif ($index % 2 === 1 && isset($table_styles['alt_row_bg'])) {
+                // Alternance des couleurs de fond par défaut
+                $this->pdf->SetFillColor($table_styles['alt_row_bg']['r'], $table_styles['alt_row_bg']['g'], $table_styles['alt_row_bg']['b']);
+                $this->pdf->Rect($x, $current_y, array_sum($col_widths), $row_height, 'F');
+            }
+
+            // Appliquer la couleur de texte spécifique au produit si définie
+            $product_text_color = $product['color'] ?? $product['textColor'] ?? null;
+            if ($product_text_color) {
+                $text_rgb = $this->parse_color($product_text_color);
+                $this->pdf->SetTextColor($text_rgb['r'], $text_rgb['g'], $text_rgb['b']);
+            } elseif (isset($table_styles['rowTextColor'])) {
+                $row_text_rgb = $this->hex_to_rgb($table_styles['rowTextColor']);
+                $this->pdf->SetTextColor($row_text_rgb[0], $row_text_rgb[1], $row_text_rgb[2]);
+            }
+
+            $this->pdf->SetXY($x, $current_y);
+            $col_index = 0;
             $this->pdf->SetXY($x, $current_y);
             $col_index = 0;
 

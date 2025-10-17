@@ -1781,6 +1781,89 @@ body.pdf-builder-active #wpadminbar {
     overflow-y: auto;
     padding: 5px;
 }
-  
+
+/* ===== STYLES POUR LES COULEURS INDIVIDUELLES DES PRODUITS ===== */
+
+.product-colors-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  background: var(--background-color);
+}
+
+.product-color-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  gap: 12px;
+}
+
+.product-color-item:hover {
+  background: rgba(59, 130, 246, 0.02);
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+.product-name {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 13px;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.color-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.color-control {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.color-control label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-align: center;
+  min-width: 35px;
+}
+
+.color-control input[type="color"] {
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--border-color);
+  border-radius: 4px;
+  cursor: pointer;
+  background: none;
+  padding: 0;
+  transition: all 0.15s ease;
+}
+
+.color-control input[type="color"]:hover {
+  border-color: var(--primary-color);
+  transform: scale(1.05);
+}
+
+.color-control input[type="color"]:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}  
  
  

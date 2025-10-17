@@ -119,24 +119,28 @@ const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
       }
     },
     {
-      type: 'order_totals',
-      fieldID: 'order_totals',
-      label: 'Totaux Commande',
-      icon: '💰',
-      description: 'Sous-total, TVA, frais de port, total',
+      type: 'mentions',
+      fieldID: 'mentions',
+      label: 'Mentions légales',
+      icon: '📄',
+      description: 'Informations légales (email, SIRET, téléphone, etc.)',
       defaultProperties: {
-        showSubtotal: true,
-        showShipping: true,
-        showTaxes: true,
-        showDiscount: true,
-        showTotal: true,
-        layout: 'vertical',
-        fontSize: 12,
+        showEmail: true,
+        showPhone: true,
+        showSiret: true,
+        showVat: false,
+        showAddress: false,
+        showWebsite: false,
+        showCustomText: false,
+        customText: '',
+        fontSize: 8,
         fontFamily: 'Arial',
         fontWeight: 'normal',
-        labelAlign: 'left',
-        valueAlign: 'right',
-        spacing: 4
+        textAlign: 'center',
+        color: '#666666',
+        lineHeight: 1.2,
+        separator: ' • ',
+        layout: 'horizontal' // 'horizontal' ou 'vertical'
       }
     }
   ];
