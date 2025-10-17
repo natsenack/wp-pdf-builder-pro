@@ -1310,8 +1310,7 @@ class PDF_Builder_Pro_Generator {
 
         // Propriétés spécifiques au tableau
         $show_headers = $element['showHeaders'] ?? true;
-        // Forcer les bordures pour les tableaux de produits (correction du bug d'affichage)
-        $show_borders = ($element['type'] ?? '') === 'product_table' ? true : ($element['showBorders'] ?? true);
+        $show_borders = $element['showBorders'] ?? false;
         $table_style = $element['tableStyle'] ?? 'default';
 
         // Validation et extraction sécurisée des headers
@@ -1327,7 +1326,7 @@ class PDF_Builder_Pro_Generator {
         }
 
         $columns = $element['columns'] ?? [
-            'image' => false,
+            'image' => true,
             'name' => true,
             'sku' => false,
             'quantity' => true,
@@ -1739,12 +1738,14 @@ class PDF_Builder_Pro_Generator {
      */
     private function get_visible_columns($columns) {
         $visible = [];
-        if ($columns['image']) $visible[] = 'image';
-        if ($columns['name']) $visible[] = 'name';
-        if ($columns['sku']) $visible[] = 'sku';
-        if ($columns['quantity']) $visible[] = 'quantity';
-        if ($columns['price']) $visible[] = 'price';
-        if ($columns['total']) $visible[] = 'total';
+        $column_keys = ['image', 'name', 'sku', 'quantity', 'price', 'total'];
+
+        foreach ($column_keys as $key) {
+            if (isset($columns[$key]) && $columns[$key] !== false) {
+                $visible[] = $key;
+            }
+        }
+
         return $visible;
     }
 
@@ -2009,7 +2010,7 @@ class PDF_Builder_Pro_Generator {
             // Valeurs fictives
             $subtotal = 69.97;
             $shipping = 5.00;
-            $taxes = 2.50;
+            $taxes = 2.25;
             $discount = -5.00;
         }
 
