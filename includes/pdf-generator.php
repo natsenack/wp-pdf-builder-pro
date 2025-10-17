@@ -1533,9 +1533,6 @@ class PDF_Builder_Pro_Generator {
 
         // Propriétés de style visuel
         $background_color = $element['backgroundColor'] ?? 'transparent';
-        $border_color = $element['borderColor'] ?? 'transparent';
-        $border_width = $element['borderWidth'] ?? 0;
-        $border_radius = $element['borderRadius'] ?? 0;
 
         // Propriétés spécifiques au tableau
         $show_headers = $element['showHeaders'] ?? true;
@@ -1577,14 +1574,17 @@ class PDF_Builder_Pro_Generator {
         $visible_columns = $this->get_visible_columns($columns);
         $col_widths = $this->calculate_column_widths($width, $visible_columns, $columns);
 
+        // Calculer la hauteur totale du tableau pour le fond
+        $table_height = $this->calculate_table_height($element, $columns);
+
         // Position de départ
         $current_y = $y;
 
-        // Fond du tableau si défini
+        // Fond du tableau si défini (utiliser la hauteur calculée du tableau)
         if ($this->should_render_background($background_color)) {
             $bg_color = $this->parse_color($background_color);
             $this->pdf->SetFillColor($bg_color['r'], $bg_color['g'], $bg_color['b']);
-            $this->pdf->Rect($x, $y, $width, $height, 'F');
+            $this->pdf->Rect($x, $y, $width, $table_height, 'F');
         }
 
         // Bordure du tableau selon le style choisi
@@ -1593,13 +1593,13 @@ class PDF_Builder_Pro_Generator {
             $header_border_rgb = $this->hex_to_rgb($table_styles['headerBorder']);
             $this->pdf->SetDrawColor($header_border_rgb[0], $header_border_rgb[1], $header_border_rgb[2]);
             $this->pdf->SetLineWidth($table_styles['border_width'] * 0.5); // Utiliser l'épaisseur du style
-            $this->pdf->Rect($x, $y, $width, $height, 'D');
+            $this->pdf->Rect($x, $y, $width, $table_height, 'D');
         } elseif ($border_width > 0 && $border_color !== 'transparent') {
             // Fallback vers les propriétés générales de l'élément
             $border_rgb = $this->parse_color($border_color);
             $this->pdf->SetDrawColor($border_rgb['r'], $border_rgb['g'], $border_rgb['b']);
             $this->pdf->SetLineWidth($border_width * 0.1); // Conversion px vers points
-            $this->pdf->Rect($x, $y, $width, $height, 'D');
+            $this->pdf->Rect($x, $y, $width, $table_height, 'D');
         }
 
         // En-têtes du tableau
@@ -1688,6 +1688,42 @@ class PDF_Builder_Pro_Generator {
 
         // Totaux
         $current_y = $this->render_table_totals($x, $current_y, $col_widths, $columns, $show_borders, $element);
+    }
+
+    /**
+     * Calcule la hauteur totale du tableau produits
+     */
+    private function calculate_table_height($element, $columns) {
+        $row_height = 6;
+        $header_height = ($element['showHeaders'] ?? true) ? 8 : 0;
+        
+        // Compter les produits
+        $product_count = 0;
+        if (isset($this->order) && $this->order) {
+            $line_items = $this->order->get_items();
+            $product_count = count($line_items);
+            // Ajouter les frais s'il y en a
+            $fees = $this->order->get_fees();
+            if (!empty($fees)) {
+                $product_count += count($fees);
+            }
+        } else {
+            // Données fictives pour l'aperçu
+            $product_count = 2;
+        }
+        
+        // Hauteur des lignes de produits
+        $products_height = $product_count * $row_height;
+        
+        // Hauteur des totaux
+        $totals_height = 0;
+        if ($element['showSubtotal'] ?? false) $totals_height += $row_height;
+        if ($element['showShipping'] ?? true) $totals_height += $row_height;
+        if ($element['showTaxes'] ?? true) $totals_height += $row_height;
+        if ($element['showDiscount'] ?? false) $totals_height += $row_height;
+        if ($element['showTotal'] ?? false) $totals_height += $row_height + 2; // Total a une hauteur supplémentaire
+        
+        return $header_height + $products_height + $totals_height;
     }
 
     /**
