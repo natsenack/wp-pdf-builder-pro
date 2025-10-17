@@ -681,14 +681,18 @@ class PDF_Builder_Pro_Generator {
     }
 
     private function should_render_background($background_color) {
+        error_log('PDF TABLE BG: should_render_background called with: ' . $background_color);
         if (empty($background_color) || $background_color === 'transparent') {
+            error_log('PDF TABLE BG: returning false - empty or transparent');
             return false;
         }
 
         // Liste des couleurs de fond par defaut a ignorer
         $default_colors = ['#d1d5db', '#ffffff', '#f9fafb', '#f3f4f6'];
 
-        return !in_array(strtolower($background_color), $default_colors);
+        $result = !in_array(strtolower($background_color), $default_colors);
+        error_log('PDF TABLE BG: should_render_background result: ' . ($result ? 'true' : 'false'));
+        return $result;
     }
 
     private function get_border_settings($element) {
@@ -1533,6 +1537,8 @@ class PDF_Builder_Pro_Generator {
 
         // Propriétés de style visuel
         $background_color = $element['backgroundColor'] ?? 'transparent';
+        error_log('PDF TABLE BG: element backgroundColor = ' . ($element['backgroundColor'] ?? 'NOT SET'));
+        error_log('PDF TABLE BG: resolved background_color = ' . $background_color);
 
         // Propriétés spécifiques au tableau
         $show_headers = $element['showHeaders'] ?? true;
@@ -1583,8 +1589,11 @@ class PDF_Builder_Pro_Generator {
         // Fond du tableau si défini (utiliser la hauteur calculée du tableau)
         if ($this->should_render_background($background_color)) {
             $bg_color = $this->parse_color($background_color);
+            error_log('PDF TABLE BG: Applying background color ' . $background_color . ' -> RGB(' . $bg_color['r'] . ',' . $bg_color['g'] . ',' . $bg_color['b'] . ')');
             $this->pdf->SetFillColor($bg_color['r'], $bg_color['g'], $bg_color['b']);
             $this->pdf->Rect($x, $y, $width, $table_height, 'F');
+        } else {
+            error_log('PDF TABLE BG: NOT applying background (should_render_background returned false)');
         }
 
         // Bordure du tableau selon le style choisi
