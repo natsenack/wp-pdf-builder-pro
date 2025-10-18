@@ -6154,11 +6154,17 @@ class PDF_Builder_Admin {
 
         // Récupérer le template
         global $wpdb;
-        $status_templates = get_option('pdf_builder_order_status_templates', []);
-        $order_status = $order->get_status();
-        $status_key = 'wc-' . $order_status;
         
-        $template_id = isset($status_templates[$status_key]) ? $status_templates[$status_key] : 1; // Fallback to ID 1
+        // Récupérer le template_id fourni en GET ou le détecter automatiquement
+        $template_id = isset($_GET['template_id']) ? absint($_GET['template_id']) : 0;
+        
+        // Si pas de template_id en GET, utiliser la logique de détection
+        if (!$template_id) {
+            $status_templates = get_option('pdf_builder_order_status_templates', []);
+            $order_status = $order->get_status();
+            $status_key = 'wc-' . $order_status;
+            $template_id = isset($status_templates[$status_key]) ? $status_templates[$status_key] : 1; // Fallback to ID 1
+        }
         
         if (!$template_id) {
             wp_die('Aucun template trouvé');
