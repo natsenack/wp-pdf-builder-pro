@@ -824,6 +824,7 @@ class PDF_Builder_WooCommerce_Integration {
                 e.preventDefault();
                 
                 console.log("PDF Preview - Aperçu PDF clicked");
+                console.log("Using nonce:", nonce.substring(0, 5) + "...");
                 
                 // Afficher la modale avec loading
                 var $modal = $('#woo-pdf-preview-modal');
@@ -840,8 +841,11 @@ class PDF_Builder_WooCommerce_Integration {
                 // L'aperçu Canvas est identique à l'éditeur et s'affiche plus rapidement
                 var previewUrl = "<?php echo admin_url('admin-ajax.php'); ?>" +
                     "?action=pdf_builder_canvas_preview" +
-                    "&order_id=" + orderId +
-                    "&nonce=" + nonce;
+                    "&order_id=" + encodeURIComponent(orderId) +
+                    "&template_id=" + encodeURIComponent(templateId) +
+                    "&nonce=" + encodeURIComponent(nonce);
+                
+                console.log("Loading canvas preview from:", previewUrl);
                 
                 // Charger l'iframe avec l'aperçu Canvas
                 $iframe.attr('src', previewUrl);

@@ -5944,7 +5944,7 @@ class PDF_Builder_Admin {
 
         // Vérifier le nonce
         $nonce = isset($_GET['nonce']) ? sanitize_text_field($_GET['nonce']) : '';
-        if (!wp_verify_nonce($nonce, 'pdf_builder_preview_' . $order_id)) {
+        if (!wp_verify_nonce($nonce, 'pdf_builder_order_actions')) {
             wp_die('Nonce invalide');
         }
 
