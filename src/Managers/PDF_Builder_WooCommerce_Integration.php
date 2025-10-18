@@ -1015,11 +1015,6 @@ class PDF_Builder_WooCommerce_Integration {
         error_log('PDF BUILDER DEBUG: POST data: ' . print_r($_POST, true));
         error_log('PDF BUILDER DEBUG: REQUEST data: ' . print_r($_REQUEST, true));
 
-        // Test simple pour vérifier si l'AJAX fonctionne
-        error_log('PDF BUILDER TEST: ajax_generate_order_pdf called - basic test');
-        wp_send_json_success(['test' => 'AJAX endpoint reached']);
-        return;
-
         // Vérifier les permissions
         if (!current_user_can('manage_woocommerce')) {
             error_log('PDF BUILDER DEBUG: Permission check failed');
@@ -1042,89 +1037,21 @@ class PDF_Builder_WooCommerce_Integration {
             wp_send_json_error('ID commande manquant');
         }
 
-        // Vérifier que WooCommerce est actif
-        if (!class_exists('WooCommerce')) {
-            wp_send_json_error('WooCommerce n\'est pas installé ou activé');
-        }
-
-        $order = wc_get_order($order_id);
-        if (!$order) {
-            wp_send_json_error('Commande non trouvée');
-        }
-
-
-        // Définir les constantes TCPDF nécessaires AVANT de charger la bibliothèque
-        $this->define_tcpdf_constants();
-
-        // Définir K_TCPDF_VERSION si pas déjà défini
-        if (!defined('K_TCPDF_VERSION')) {
-            define('K_TCPDF_VERSION', '6.6.2');
-        }
-
-
-        // S'assurer que TCPDF est chargé après la définition des constantes
-        if (!class_exists('TCPDF')) {
-
-            // Essayer de charger TCPDF depuis les chemins possibles
-            $tcpdf_paths = [
-                plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'lib/tcpdf/tcpdf_autoload.php',
-                plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'lib/tcpdf/tcpdf.php',
-                plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'vendor/tecnickcom/tcpdf/tcpdf.php'
-            ];
-
-            $tcpdf_loaded = false;
-            foreach ($tcpdf_paths as $path) {
-                if (file_exists($path)) {
-
-                    // Vérifier les permissions du fichier
-                    if (!is_readable($path)) {
-                        continue;
-                    }
-
-                    // Vérifier les chemins des constantes TCPDF avant le chargement
-                    $this->check_tcpdf_paths();
-
-                    try {
-                        $start_time = microtime(true);
-                        require_once $path;
-                        $end_time = microtime(true);
-                        $load_time = round(($end_time - $start_time) * 1000, 2);
-
-                        if (class_exists('TCPDF')) {
-                            $tcpdf_loaded = true;
-                            break;
-                        } else {
-                        }
-                    } catch (Exception $e) {
-                    } catch (Error $e) {
-                    }
-                } else {
-                }
-            }
-
-            if (!$tcpdf_loaded) {
-                wp_send_json_error('Impossible de charger TCPDF');
-            }
-        } else {
-        }
-
         try {
-            // Générer le PDF
-            error_log('PDF BUILDER DEBUG: About to call generate_order_pdf');
-            $result = $this->main->generate_order_pdf($order_id, $template_id);
-            error_log('PDF BUILDER DEBUG: generate_order_pdf returned: ' . print_r($result, true));
+            // Générer le PDF SANS TCPDF - utiliser une approche alternative
+            error_log('PDF BUILDER DEBUG: About to generate PDF without TCPDF');
 
-            if (is_wp_error($result)) {
-                wp_send_json_error($result->get_error_message());
-            }
-
-            wp_send_json_success(['url' => $result]);
+            // Pour l'instant, retourner une erreur explicite
+            wp_send_json_error('Génération PDF temporairement désactivée - TCPDF retiré');
 
         } catch (Exception $e) {
+            error_log('PDF BUILDER DEBUG: Exception: ' . $e->getMessage());
             wp_send_json_error('Erreur Exception: ' . $e->getMessage());
         } catch (Error $e) {
+            error_log('PDF BUILDER DEBUG: Error: ' . $e->getMessage());
             wp_send_json_error('Erreur PHP: ' . $e->getMessage());
         } catch (Throwable $e) {
+            error_log('PDF BUILDER DEBUG: Throwable: ' . $e->getMessage());
             wp_send_json_error('Erreur Throwable: ' . $e->getMessage());
         }
     }
@@ -1175,7 +1102,7 @@ class PDF_Builder_WooCommerce_Integration {
             $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : null;
             $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : null;
             $elements = isset($_POST['elements']) ? $_POST['elements'] : null;
-            $preview_type = isset($_POST['preview_type']) ? $_POST['preview_type'] : 'pdf'; // 'pdf' ou 'html'
+            $preview_type = isset($_POST['preview_type']) ? $_POST['preview_type'] : 'html'; // 'pdf' ou 'html' - FORCER HTML POUR ÉVITER TCPDF
 
 
 
@@ -1207,11 +1134,11 @@ class PDF_Builder_WooCommerce_Integration {
 
 
                 if ($preview_type === 'html') {
-                    // Générer l'aperçu HTML avec les éléments du Canvas
-                    $result = $generator->render_html_preview($decoded_elements, $order_id ?: 0);
+                    // Générer l'aperçu HTML avec les éléments du Canvas - SANS TCPDF
+                    $result = $this->generate_html_preview_without_tcpdf($decoded_elements, $order_id ?: 0);
                 } else {
-                    // Générer l'aperçu PDF avec les éléments du Canvas
-                    $result = $generator->generate($decoded_elements, ['title' => 'Aperçu Template - ' . date('Y-m-d H:i:s')]);
+                    // PLUS DE GÉNÉRATION PDF AVEC TCPDF - Forcer HTML
+                    $result = $this->generate_html_preview_without_tcpdf($decoded_elements, $order_id ?: 0);
                 }
 
             } elseif ($order_id && $order_id > 0) {
@@ -1228,11 +1155,11 @@ class PDF_Builder_WooCommerce_Integration {
 
 
                 if ($preview_type === 'html') {
-                    // Générer l'aperçu HTML avec les éléments du template
-                    $result = $generator->render_html_preview($decoded_elements, $order_id ?: 0);
+                    // Générer l'aperçu HTML avec les éléments du template - SANS TCPDF
+                    $result = $this->generate_html_preview_without_tcpdf($decoded_elements, $order_id ?: 0);
                 } else {
-                    // Générer l'aperçu PDF avec les éléments du template
-                    $result = $generator->generate($decoded_elements, ['title' => 'Aperçu Template - ' . date('Y-m-d H:i:s')]);
+                    // PLUS DE GÉNÉRATION PDF AVEC TCPDF - Forcer HTML
+                    $result = $this->generate_html_preview_without_tcpdf($decoded_elements, $order_id ?: 0);
                 }
 
             } elseif ($order_id && $order_id > 0) {
@@ -1516,6 +1443,121 @@ class PDF_Builder_WooCommerce_Integration {
             }
         }
 
+    }
+
+    /**
+     * Génère un aperçu HTML sans utiliser TCPDF
+     */
+    private function generate_html_preview_without_tcpdf($elements, $order_id = 0) {
+        try {
+            // Générer le HTML directement depuis les éléments
+            $html = $this->render_elements_to_html($elements, $order_id);
+
+            // Retourner le HTML avec les styles inline pour l'aperçu
+            return [
+                'success' => true,
+                'html' => $html,
+                'type' => 'html'
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'error' => 'Erreur génération aperçu HTML: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Convertit les éléments Canvas en HTML pour l'aperçu
+     */
+    private function render_elements_to_html($elements, $order_id = 0) {
+        if (!is_array($elements)) {
+            return '<div class="preview-error">Aucun élément à afficher</div>';
+        }
+
+        $html = '<div class="pdf-preview-container" style="font-family: Arial, sans-serif; max-width: 210mm; margin: 0 auto; background: white; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">';
+
+        foreach ($elements as $element) {
+            $html .= $this->render_single_element_to_html($element, $order_id);
+        }
+
+        $html .= '</div>';
+
+        // Ajouter des styles CSS pour l'aperçu
+        $html .= '<style>
+            .pdf-preview-container { background: white !important; }
+            .preview-element { margin: 10px 0; }
+            .preview-text { white-space: pre-wrap; }
+            .preview-rectangle { border: 1px solid #000; min-height: 50px; }
+            .preview-circle { border: 1px solid #000; border-radius: 50%; width: 50px; height: 50px; }
+        </style>';
+
+        return $html;
+    }
+
+    /**
+     * Rend un élément individuel en HTML
+     */
+    private function render_single_element_to_html($element, $order_id = 0) {
+        if (!isset($element['type'])) {
+            return '';
+        }
+
+        $styles = $this->extract_element_styles($element);
+        $content = $element['content'] ?? '';
+
+        switch ($element['type']) {
+            case 'text':
+                return "<div class='preview-element preview-text' style='$styles'>$content</div>";
+
+            case 'rectangle':
+                return "<div class='preview-element preview-rectangle' style='$styles'></div>";
+
+            case 'circle':
+                return "<div class='preview-element preview-circle' style='$styles'></div>";
+
+            case 'image':
+                $src = $element['src'] ?? '';
+                return "<div class='preview-element'><img src='$src' style='$styles' alt='Image' /></div>";
+
+            default:
+                return "<div class='preview-element' style='$styles'>$content</div>";
+        }
+    }
+
+    /**
+     * Extrait les styles CSS d'un élément pour l'aperçu HTML
+     */
+    private function extract_element_styles($element) {
+        $styles = [];
+
+        // Positionnement
+        if (isset($element['x'])) $styles[] = "left: {$element['x']}px";
+        if (isset($element['y'])) $styles[] = "top: {$element['y']}px";
+
+        // Dimensions
+        if (isset($element['width'])) $styles[] = "width: {$element['width']}px";
+        if (isset($element['height'])) $styles[] = "height: {$element['height']}px";
+
+        // Couleurs
+        if (isset($element['color'])) $styles[] = "color: {$element['color']}";
+        if (isset($element['backgroundColor'])) $styles[] = "background-color: {$element['backgroundColor']}";
+
+        // Police
+        if (isset($element['fontSize'])) $styles[] = "font-size: {$element['fontSize']}px";
+        if (isset($element['fontFamily'])) $styles[] = "font-family: {$element['fontFamily']}";
+
+        // Propriétés CSS ajoutées récemment
+        if (isset($element['textDecoration'])) $styles[] = "text-decoration: {$element['textDecoration']}";
+        if (isset($element['lineHeight'])) $styles[] = "line-height: {$element['lineHeight']}";
+        if (isset($element['borderStyle'])) $styles[] = "border-style: {$element['borderStyle']}";
+        if (isset($element['shadow'])) $styles[] = "box-shadow: {$element['shadow']}";
+
+        // Rotation et échelle
+        if (isset($element['rotation'])) $styles[] = "transform: rotate({$element['rotation']}deg)";
+        if (isset($element['scale'])) $styles[] = "transform: scale({$element['scale']})";
+
+        return implode('; ', $styles);
     }
 }
 
