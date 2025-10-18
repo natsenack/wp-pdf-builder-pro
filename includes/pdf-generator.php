@@ -2430,8 +2430,14 @@ class PDF_Builder_Pro_Generator {
                 $price = $item->get_total() / max(1, $quantity);
                 $total = $item->get_total();
 
-                // Debug temporaire
-                error_log("PRODUCT_DEBUG: {$product_name} - qty:{$quantity}, line_total:{$item->get_total()}, unit_price:{$price}, subtotal:{$item->get_subtotal()}, total_tax:{$item->get_total_tax()}");
+                // Debug détaillé pour les totaux
+                error_log("TOTAL_DEBUG: {$product_name}");
+                error_log("  - Quantity: {$quantity}");
+                error_log("  - get_total(): " . $item->get_total());
+                error_log("  - get_subtotal(): " . $item->get_subtotal());
+                error_log("  - get_total_tax(): " . $item->get_total_tax());
+                error_log("  - Calculated unit price: {$price}");
+                error_log("  - Displayed total: {$total}");
 
                 // Fond alterné selon les propriétés personnalisées ou le style par défaut
                 if (!$alt_row && isset($element['evenRowBg']) && $element['evenRowBg'] !== 'transparent') {
