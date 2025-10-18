@@ -2314,7 +2314,11 @@ class PDF_Builder_Pro_Generator {
                     $this->pdf->Cell($col_widths[$col_index], $row_height, '1', $show_borders ? 1 : 0, 0, 'C');
                     $col_index++;
                 }
-                if ($columns['price']) $col_index++;
+                if ($columns['price']) {
+                    $price_text = number_format($fee_total, 2, ',', ' ') . ' ' . '€';
+                    $this->pdf->Cell($col_widths[$col_index], $row_height, $price_text, $show_borders ? 1 : 0, 0, 'R');
+                    $col_index++;
+                }
                 if ($columns['total']) {
                     $fee_text = number_format($fee_total, 2, ',', ' ') . ' ' . '€';
                     error_log("RENDER_DEBUG: Displaying fee total for {$fee_name}: {$fee_text} (raw: {$fee_total})");
