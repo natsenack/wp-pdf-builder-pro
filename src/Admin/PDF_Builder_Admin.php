@@ -1467,7 +1467,7 @@ class PDF_Builder_Admin {
         // Charger d'abord les vendors (React, etc.)
         wp_enqueue_script('pdf-builder-vendors', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/vendors.js', [], '8.0.0_force_' . microtime(true), false);
 
-        wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'pdf-builder-vendors'], '8.0.0_force_' . microtime(true), false);
+        // wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'pdf-builder-vendors'], '8.0.0_force_' . microtime(true), false);
 
         // DEBUG: Vérifier que le script est enqueued
 
@@ -1475,45 +1475,47 @@ class PDF_Builder_Admin {
         wp_enqueue_script('pdf-builder-nonce-fix-v2', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js', ['jquery'], '4.0.0_force_reload_' . time(), false);
 
         // Variables JavaScript pour AJAX - VERSION FORCEE - CORRECTION: Localiser dans le script principal
-        wp_localize_script('pdf-builder-admin-v3', 'pdfBuilderAjax', [
-            'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_nonce'),
-            'version' => '7.0.0_force_reload_' . time(),
-            'timestamp' => time(),
-            'strings' => [
-                'loading' => __('Chargement...', 'pdf-builder-pro'),
-                'error' => __('Erreur', 'pdf-builder-pro'),
-                'success' => __('Succès', 'pdf-builder-pro'),
-                'confirm_delete' => __('Êtes-vous sûr de vouloir supprimer ce template ?', 'pdf-builder-pro'),
-                'confirm_duplicate' => __('Dupliquer ce template ?', 'pdf-builder-pro'),
-            ]
-        ]);
+        // wp_localize_script('pdf-builder-admin-v3', 'pdfBuilderAjax', [
+        //     'ajaxurl' => admin_url('admin-ajax.php'),
+        //     'nonce' => wp_create_nonce('pdf_builder_nonce'),
+        //     'version' => '7.0.0_force_reload_' . time(),
+        //     'timestamp' => time(),
+        //     'strings' => [
+        //         'loading' => __('Chargement...', 'pdf-builder-pro'),
+        //         'error' => __('Erreur', 'pdf-builder-pro'),
+        //         'success' => __('Succès', 'pdf-builder-pro'),
+        //         'confirm_delete' => __('Êtes-vous sûr de vouloir supprimer ce template ?', 'pdf-builder-pro'),
+        //         'confirm_duplicate' => __('Dupliquer ce template ?', 'pdf-builder-pro'),
+        //     ]
+        // ]);
 
         // SÉCURITÉ SUPPLÉMENTAIRE: Définir les variables globales directement dans le HTML
-        wp_add_inline_script('pdf-builder-admin-v3', '
-            // Forcer la définition globale des variables AJAX
-            window.pdfBuilderAjax = window.pdfBuilderAjax || ' . json_encode([
-                'ajaxurl' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('pdf_builder_nonce'),
-                'version' => '8.0.0_force_' . time(),
-                'timestamp' => time(),
-                'strings' => [
-                    'loading' => __('Chargement...', 'pdf-builder-pro'),
-                    'error' => __('Erreur', 'pdf-builder-pro'),
-                    'success' => __('Succès', 'pdf-builder-pro'),
-                    'confirm_delete' => __('Êtes-vous sûr de vouloir supprimer ce template ?', 'pdf-builder-pro'),
-                    'confirm_duplicate' => __('Dupliquer ce template ?', 'pdf-builder-pro'),
-                ]
-            ]) . ';
-            console.log("PDF Builder: Variables AJAX définies globalement:", window.pdfBuilderAjax);
-        ', 'before');
+        // wp_add_inline_script('pdf-builder-admin-v3', '
+        //     // Forcer la définition globale des variables AJAX
+        //     window.pdfBuilderAjax = window.pdfBuilderAjax || ' . json_encode([
+        //         'ajaxurl' => admin_url('admin-ajax.php'),
+        //         'nonce' => wp_create_nonce('pdf_builder_nonce'),
+        //         'version' => '8.0.0_force_' . time(),
+        //         'timestamp' => time(),
+        //         'strings' => [
+        //             'loading' => __('Chargement...', 'pdf-builder-pro'),
+        //             'error' => __('Erreur', 'pdf-builder-pro'),
+        //             'success' => __('Succès', 'pdf-builder-pro'),
+        //             'confirm_delete' => __('Êtes-vous sûr de vouloir supprimer ce template ?', 'pdf-builder-pro'),
+        //             'confirm_duplicate' => __('Dupliquer ce template ?', 'pdf-builder-pro'),
+        //         ]
+        //     ]) . ';
+        //     console.log("PDF Builder: Variables AJAX définies globalement:", window.pdfBuilderAjax);
+        // ', 'before');
 
         // Paramètres du canvas pour le JavaScript
         // Récupérer les paramètres canvas depuis le tableau pdf_builder_settings
         $canvas_settings = get_option('pdf_builder_settings', []);
-        wp_localize_script('pdf-builder-admin-v3', 'pdfBuilderCanvasSettings', [
-            // Paramètres généraux du canvas
-            'default_canvas_width' => $canvas_settings['default_canvas_width'] ?? 210,
+        // wp_localize_script('pdf-builder-admin-v3', 'pdfBuilderCanvasSettings', [
+        //     array
+        // ]);
+
+        // Sauvegarde des informations entreprise
             'default_canvas_height' => $canvas_settings['default_canvas_height'] ?? 297,
             'default_canvas_unit' => $canvas_settings['default_canvas_unit'] ?? 'mm',
             'default_orientation' => $canvas_settings['default_orientation'] ?? 'portrait',
