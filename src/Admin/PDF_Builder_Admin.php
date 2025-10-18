@@ -260,6 +260,10 @@ class PDF_Builder_Admin {
         // Hook AJAX pour l'aperçu PDF unifié
         add_action('wp_ajax_pdf_builder_unified_preview', [$this, 'ajax_unified_pdf_preview']);
 
+        // Hook AJAX pour servir les aperçus PDF en cache
+        add_action('wp_ajax_pdf_builder_serve_preview', [$this, 'ajax_serve_preview']);
+        add_action('wp_ajax_nopriv_pdf_builder_serve_preview', [$this, 'ajax_serve_preview']);
+
         // Hook AJAX pour sauvegarder les paramètres
         add_action('wp_ajax_pdf_builder_save_settings', [$this, 'ajax_save_settings']);
         add_action('wp_ajax_pdf_builder_save_settings_page', [$this, 'ajax_save_settings_page']);
@@ -5567,6 +5571,35 @@ class PDF_Builder_Admin {
     }
 
     /**
+     * Sert un aperçu PDF en cache via un transient
+     */
+    public function ajax_serve_preview() {
+        $preview_key = isset($_GET['preview_key']) ? sanitize_text_field($_GET['preview_key']) : '';
+
+        if (empty($preview_key)) {
+            wp_die('Preview key manquante', 'Invalid Request', ['response' => 400]);
+        }
+
+        // Récupérer le PDF du cache transient
+        $pdf_content = get_transient($preview_key);
+
+        if ($pdf_content === false) {
+            wp_die('Aperçu PDF expiré ou non trouvé', 'Not Found', ['response' => 404]);
+        }
+
+        // Servir le PDF
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: inline; filename="apercu.pdf"');
+        header('Content-Length: ' . strlen($pdf_content));
+        header('Cache-Control: no-cache, no-store, must-revalidate');
+        header('Pragma: no-cache');
+        header('Expires: 0');
+
+        echo $pdf_content;
+        wp_die();
+    }
+
+    /**
      * Génère l'aperçu PDF
      */
     private function generate_pdf_preview($order, $template_data) {
@@ -5619,36 +5652,18 @@ class PDF_Builder_Admin {
 
             error_log('[PDF Builder] generate_pdf_preview - PDF généré: ' . strlen($pdf_content) . ' bytes');
 
-            // Sauvegarder temporairement le PDF d'aperçu
-            $upload_dir = wp_upload_dir();
-            $pdf_dir = $upload_dir['basedir'] . '/pdf-builder-cache/previews/';
+            // Au lieu de sauvegarder le fichier, stocker en cache temporaire avec une clé unique
+            // et retourner une URL d'endpoint WordPress pour servir le PDF
+            $random_string = substr(md5(microtime() . rand()), 0, 8);
+            $preview_key = 'pdf_preview_' . $order->get_id() . '_' . time() . '_' . $random_string;
+            
+            // Stocker le contenu PDF en cache temporaire (1 heure)
+            set_transient($preview_key, $pdf_content, HOUR_IN_SECONDS);
+            
+            error_log('[PDF Builder] generate_pdf_preview - PDF stocké en cache: ' . $preview_key);
 
-            error_log('[PDF Builder] generate_pdf_preview - Répertoire cache: ' . $pdf_dir);
-
-            if (!file_exists($pdf_dir)) {
-                error_log('[PDF Builder] generate_pdf_preview - Création du répertoire cache');
-                $mkdir_result = wp_mkdir_p($pdf_dir);
-                if (!$mkdir_result) {
-                    error_log('[PDF Builder] generate_pdf_preview - Erreur création répertoire');
-                    return false;
-                }
-            }
-
-            $filename = 'preview_order_' . $order->get_id() . '_' . time() . '.pdf';
-            $filepath = $pdf_dir . $filename;
-
-            error_log('[PDF Builder] generate_pdf_preview - Sauvegarde en: ' . $filepath);
-
-            $write_result = file_put_contents($filepath, $pdf_content);
-            if ($write_result === false) {
-                error_log('[PDF Builder] generate_pdf_preview - Erreur écriture fichier');
-                return false;
-            }
-
-            error_log('[PDF Builder] generate_pdf_preview - Fichier écrit: ' . $write_result . ' bytes');
-
-            // Retourner l'URL accessible
-            $pdf_url = $upload_dir['baseurl'] . '/pdf-builder-cache/previews/' . $filename;
+            // Retourner l'URL via un endpoint WordPress
+            $pdf_url = admin_url('admin-ajax.php?action=pdf_builder_serve_preview&preview_key=' . urlencode($preview_key));
 
             error_log('[PDF Builder] generate_pdf_preview - URL retournée: ' . $pdf_url);
 
