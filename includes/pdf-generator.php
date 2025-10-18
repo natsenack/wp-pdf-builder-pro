@@ -2430,6 +2430,9 @@ class PDF_Builder_Pro_Generator {
                 $price = $item->get_total() / max(1, $quantity);
                 $total = $item->get_total();
 
+                // Debug temporaire
+                error_log("PRODUCT_DEBUG: {$product_name} - qty:{$quantity}, line_total:{$item->get_total()}, unit_price:{$price}, subtotal:{$item->get_subtotal()}, total_tax:{$item->get_total_tax()}");
+
                 // Fond alterné selon les propriétés personnalisées ou le style par défaut
                 if (!$alt_row && isset($element['evenRowBg']) && $element['evenRowBg'] !== 'transparent') {
                     // Ligne paire : couleur personnalisée pour les lignes paires
@@ -2478,14 +2481,14 @@ class PDF_Builder_Pro_Generator {
 
                 // Prix unitaire
                 if ($columns['price']) {
-                    $price_text = number_format($price, 2, ',', ' ') . ' ' . chr(128);
+                    $price_text = number_format($price, 2, ',', ' ') . ' ' . '€';
                     $this->pdf->Cell($col_widths[$col_index], $row_height, $price_text, $show_borders ? 1 : 0, 0, 'R');
                     $col_index++;
                 }
 
                 // Total
                 if ($columns['total']) {
-                    $total_text = number_format($total, 2, ',', ' ') . ' ' . chr(128);
+                    $total_text = number_format($total, 2, ',', ' ') . ' ' . '€';
                     $this->pdf->Cell($col_widths[$col_index], $row_height, $total_text, $show_borders ? 1 : 0, 1, 'R');
                 }
 
@@ -2522,7 +2525,7 @@ class PDF_Builder_Pro_Generator {
                 }
                 if ($columns['price']) $col_index++;
                 if ($columns['total']) {
-                    $fee_text = number_format($fee_total, 2, ',', ' ') . ' ' . chr(128);
+                    $fee_text = number_format($fee_total, 2, ',', ' ') . ' ' . '€';
                     $this->pdf->Cell($col_widths[$col_index], $row_height, $fee_text, $show_borders ? 1 : 0, 1, 'R');
                 }
 
@@ -2628,12 +2631,12 @@ class PDF_Builder_Pro_Generator {
                 $col_index++;
             }
             if ($columns['price']) {
-                $price_text = number_format($product['price'], 2, ',', ' ') . ' ' . chr(128);
+                $price_text = number_format($product['price'], 2, ',', ' ') . ' ' . '€';
                 $this->pdf->Cell($col_widths[$col_index], $row_height, $price_text, $show_borders ? 1 : 0, 0, 'R');
                 $col_index++;
             }
             if ($columns['total']) {
-                $total_text = number_format($product['total'], 2, ',', ' ') . ' ' . chr(128);
+                $total_text = number_format($product['total'], 2, ',', ' ') . ' ' . '€';
                 $this->pdf->Cell($col_widths[$col_index], $row_height, $total_text, $show_borders ? 1 : 0, 1, 'R');
             }
 
@@ -2689,7 +2692,7 @@ class PDF_Builder_Pro_Generator {
         if ($show_subtotal) {
             $this->pdf->SetXY($total_x, $current_y);
             $this->pdf->SetFont('helvetica', 'B', 8);
-            $subtotal_text = 'Sous-total: ' . number_format($subtotal, 2, ',', ' ') . ' ' . chr(128);
+            $subtotal_text = 'Sous-total: ' . number_format($subtotal, 2, ',', ' ') . ' ' . '€';
             $this->pdf->Cell($col_widths[$rightmost_col_index], $row_height, $subtotal_text, $show_borders ? 1 : 0, 1, 'R');
             $current_y += $row_height;
         }
@@ -2697,7 +2700,7 @@ class PDF_Builder_Pro_Generator {
         // Frais de port
         if ($show_shipping && $shipping > 0) {
             $this->pdf->SetXY($total_x, $current_y);
-            $shipping_text = 'Port: ' . number_format($shipping, 2, ',', ' ') . ' ' . chr(128);
+            $shipping_text = 'Port: ' . number_format($shipping, 2, ',', ' ') . ' ' . '€';
             $this->pdf->Cell($col_widths[$rightmost_col_index], $row_height, $shipping_text, $show_borders ? 1 : 0, 1, 'R');
             $current_y += $row_height;
         }
@@ -2705,7 +2708,7 @@ class PDF_Builder_Pro_Generator {
         // Taxes
         if ($show_taxes && $taxes > 0) {
             $this->pdf->SetXY($total_x, $current_y);
-            $taxes_text = 'TVA: ' . number_format($taxes, 2, ',', ' ') . ' ' . chr(128);
+            $taxes_text = 'TVA: ' . number_format($taxes, 2, ',', ' ') . ' ' . '€';
             $this->pdf->Cell($col_widths[$rightmost_col_index], $row_height, $taxes_text, $show_borders ? 1 : 0, 1, 'R');
             $current_y += $row_height;
         }
@@ -2713,7 +2716,7 @@ class PDF_Builder_Pro_Generator {
         // Remise
         if ($show_discount && $discount > 0) {
             $this->pdf->SetXY($total_x, $current_y);
-            $discount_text = 'Remise: -' . number_format($discount, 2, ',', ' ') . ' ' . chr(128);
+            $discount_text = 'Remise: -' . number_format($discount, 2, ',', ' ') . ' ' . '€';
             $this->pdf->Cell($col_widths[$rightmost_col_index], $row_height, $discount_text, $show_borders ? 1 : 0, 1, 'R');
             $current_y += $row_height;
         }
@@ -2728,7 +2731,7 @@ class PDF_Builder_Pro_Generator {
 
             $this->pdf->SetXY($total_x, $current_y);
             $this->pdf->SetFillColor($table_styles['header_bg']['r'], $table_styles['header_bg']['g'], $table_styles['header_bg']['b']);
-            $total_text = 'TOTAL: ' . number_format($total, 2, ',', ' ') . ' ' . chr(128);
+            $total_text = 'TOTAL: ' . number_format($total, 2, ',', ' ') . ' ' . '€';
             $this->pdf->Cell($col_widths[$rightmost_col_index], $row_height + 2, $total_text, $show_borders ? 1 : 0, 1, 'R', true);
         }
 
