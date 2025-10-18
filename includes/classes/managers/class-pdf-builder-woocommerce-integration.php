@@ -664,7 +664,7 @@ class PDF_Builder_WooCommerce_Integration {
                 try {
                     if (window.PDFBuilderPro && window.PDFBuilderPro.canvas && window.PDFBuilderPro.canvas.getElements) {
                         canvasElements = window.PDFBuilderPro.canvas.getElements();
-                        console.log('MetaBoxes.js - Éléments récupérés depuis Canvas pour PDF:', canvasElements ? canvasElements.length + ' éléments' : 'null');
+                        console.log('MetaBoxes.js - Éléments récupérés depuis Canvas pour PDF:', canvasElements ? 'object avec ' + (Array.isArray(canvasElements) ? canvasElements.length : 'N/A') + ' éléments' : 'null');
                     }
                 } catch (e) {
                     console.log('MetaBoxes.js - Impossible de récupérer les éléments depuis Canvas pour PDF:', e.message);
@@ -677,10 +677,17 @@ class PDF_Builder_WooCommerce_Integration {
                     nonce: nonce
                 };
 
-                // Ajouter les éléments du Canvas si disponibles
+                // Ajouter les éléments du Canvas si disponibles et sérialisables
                 if (canvasElements) {
-                    ajaxData.elements = JSON.stringify(canvasElements);
-                    console.log('MetaBoxes.js - Éléments du Canvas ajoutés à la requête PDF');
+                    try {
+                        var elementsJson = JSON.stringify(canvasElements);
+                        ajaxData.elements = elementsJson;
+                        console.log('MetaBoxes.js - Éléments du Canvas sérialisés avec succès, longueur:', elementsJson.length);
+                    } catch (jsonError) {
+                        console.log('MetaBoxes.js - Erreur lors de la sérialisation JSON des éléments du Canvas:', jsonError.message);
+                        console.log('MetaBoxes.js - Type des éléments:', typeof canvasElements, Array.isArray(canvasElements) ? 'array' : 'not array');
+                        // Ne pas ajouter les éléments si la sérialisation échoue
+                    }
                 }
 
                 console.log('PDF BUILDER - Sending AJAX request for preview:', {
