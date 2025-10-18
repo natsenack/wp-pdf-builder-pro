@@ -762,7 +762,7 @@ class PDF_Builder_Admin {
      */
     public function templates_page() {
         $this->check_admin_permissions();
-        include plugin_dir_path(dirname(__FILE__)) . 'templates-page.php';
+        include plugin_dir_path(dirname(__FILE__)) . '../templates/admin/templates-page.php';
     }
 
     /**
@@ -782,7 +782,7 @@ class PDF_Builder_Admin {
         ?>
         <div class="wrap">
         <?php
-        include plugin_dir_path(dirname(__FILE__)) . 'settings-page.php';
+        include plugin_dir_path(dirname(__FILE__)) . '../templates/admin/settings-page.php';
         ?>
         </div>
         <?php
@@ -1277,7 +1277,7 @@ class PDF_Builder_Admin {
      */
     public function developer_page() {
         $this->check_admin_permissions();
-        include plugin_dir_path(dirname(__FILE__)) . 'developer-page.php';
+        include plugin_dir_path(dirname(__FILE__)) . '../templates/admin/developer-page.php';
     }
 
     /**
@@ -1287,7 +1287,7 @@ class PDF_Builder_Admin {
 
         $this->check_admin_permissions();
 
-        include plugin_dir_path(dirname(__FILE__)) . 'template-editor.php';
+        include plugin_dir_path(dirname(__FILE__)) . '../templates/admin/template-editor.php';
     }
 
     /**
