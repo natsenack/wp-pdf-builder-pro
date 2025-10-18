@@ -377,9 +377,21 @@ class PDF_Builder_WooCommerce_Integration {
                     </button>
                 </div>
                 <div class="woo-pdf-preview-modal-body">
-                    <iframe id="woo-pdf-preview-iframe" 
-                            style="width: 100%; height: 100%; border: none; border-radius: 4px;"
-                            title="Aperçu PDF"></iframe>
+                    <div class="woo-pdf-preview-toolbar">
+                        <div class="zoom-controls">
+                            <button class="zoom-btn" id="zoom-in-btn" title="Agrandir (Ctrl++)">🔍+ 125%</button>
+                            <button class="zoom-btn" id="zoom-fit-btn" title="Ajuster à la page">⬜ Ajuster</button>
+                            <button class="zoom-btn" id="zoom-out-btn" title="Réduire (Ctrl+-)">🔍- 100%</button>
+                            <span class="zoom-display" id="zoom-display">100%</span>
+                        </div>
+                    </div>
+                    <div class="woo-pdf-preview-container">
+                        <div class="pdf-page-wrapper">
+                            <iframe id="woo-pdf-preview-iframe" 
+                                    style="width: 100%; height: 100%; border: none; background: white;"
+                                    title="Aperçu PDF"></iframe>
+                        </div>
+                    </div>
                     <div class="woo-pdf-preview-loading" style="display: none; text-align: center; padding: 40px;">
                         <div style="font-size: 3em; margin-bottom: 20px;">&#128196;</div>
                         <p>Chargement de l'aperçu...</p>
@@ -414,8 +426,8 @@ class PDF_Builder_WooCommerce_Integration {
                 left: 0;
                 right: 0;
                 bottom: 0;
-                background: rgba(0, 0, 0, 0.5);
-                backdrop-filter: blur(2px);
+                background: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(3px);
             }
 
             .woo-pdf-preview-modal-container {
@@ -424,24 +436,25 @@ class PDF_Builder_WooCommerce_Integration {
                 left: 50%;
                 transform: translate(-50%, -50%);
                 background: white;
-                border-radius: 8px;
-                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-                width: 90%;
-                max-width: 900px;
-                height: 80vh;
+                border-radius: 12px;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 0, 0, 0.05);
+                width: 95%;
+                max-width: 1000px;
+                height: 85vh;
                 display: flex;
                 flex-direction: column;
                 animation: wooSlideIn 0.3s ease-out;
+                overflow: hidden;
             }
 
             @keyframes wooSlideIn {
                 from {
                     opacity: 0;
-                    transform: translate(-50%, -48%);
+                    transform: translate(-50%, -48%) scale(0.95);
                 }
                 to {
                     opacity: 1;
-                    transform: translate(-50%, -50%);
+                    transform: translate(-50%, -50%) scale(1);
                 }
             }
 
@@ -449,17 +462,19 @@ class PDF_Builder_WooCommerce_Integration {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                padding: 20px;
-                border-bottom: 1px solid #e2e8f0;
-                background: #f8fafc;
-                border-radius: 8px 8px 0 0;
+                padding: 20px 24px;
+                border-bottom: 1px solid #e5e7eb;
+                background: linear-gradient(135deg, #f8fafb 0%, #f3f4f6 100%);
+                border-radius: 12px 12px 0 0;
+                flex-shrink: 0;
             }
 
             .woo-pdf-preview-modal-header h3 {
                 margin: 0;
                 font-size: 18px;
-                font-weight: 600;
-                color: #1e293b;
+                font-weight: 700;
+                color: #111827;
+                letter-spacing: -0.3px;
             }
 
             .woo-pdf-preview-modal-close {
@@ -467,67 +482,157 @@ class PDF_Builder_WooCommerce_Integration {
                 border: none;
                 cursor: pointer;
                 font-size: 24px;
-                color: #64748b;
+                color: #9ca3af;
                 padding: 0;
-                width: 32px;
-                height: 32px;
+                width: 36px;
+                height: 36px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                border-radius: 4px;
-                transition: all 0.2s;
+                border-radius: 6px;
+                transition: all 0.2s ease;
             }
 
             .woo-pdf-preview-modal-close:hover {
-                background: #e2e8f0;
-                color: #1e293b;
+                background: rgba(0, 0, 0, 0.05);
+                color: #374151;
             }
 
             .woo-pdf-preview-modal-body {
                 flex: 1;
                 overflow: auto;
+                background: #f9fafb;
+                display: flex;
+                flex-direction: column;
                 padding: 20px;
-                background: #ffffff;
+                gap: 0;
+            }
+
+            .woo-pdf-preview-toolbar {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 12px 16px;
+                background: white;
+                border: 1px solid #e5e7eb;
+                border-radius: 8px;
+                margin-bottom: 16px;
+                flex-shrink: 0;
+                gap: 12px;
+            }
+
+            .zoom-controls {
+                display: flex;
+                gap: 8px;
+                align-items: center;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .zoom-btn {
+                padding: 6px 12px;
+                border: 1px solid #d1d5db;
+                border-radius: 6px;
+                background: white;
+                color: #374151;
+                cursor: pointer;
+                font-size: 12px;
+                font-weight: 500;
+                transition: all 0.2s ease;
+                white-space: nowrap;
+            }
+
+            .zoom-btn:hover {
+                background: #f3f4f6;
+                border-color: #9ca3af;
+                color: #111827;
+            }
+
+            .zoom-btn.active {
+                background: #3b82f6;
+                color: white;
+                border-color: #3b82f6;
+            }
+
+            .zoom-display {
+                font-size: 12px;
+                font-weight: 600;
+                color: #6b7280;
+                min-width: 50px;
+                text-align: center;
+            }
+
+            .woo-pdf-preview-container {
+                flex: 1;
+                overflow: auto;
+                background: #f9fafb;
+                display: flex;
+                justify-content: center;
+                align-items: flex-start;
+                padding: 20px;
+            }
+
+            .pdf-page-wrapper {
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+                aspect-ratio: 210 / 297;
+                width: 100%;
+                max-width: 600px;
+                height: auto;
+                min-height: 400px;
+                overflow: hidden;
+                border: 1px solid #e5e7eb;
             }
 
             .woo-pdf-preview-modal-footer {
                 display: flex;
                 justify-content: flex-end;
-                gap: 10px;
-                padding: 15px 20px;
-                border-top: 1px solid #e2e8f0;
-                background: #f8fafc;
-                border-radius: 0 0 8px 8px;
+                gap: 12px;
+                padding: 16px 24px;
+                border-top: 1px solid #e5e7eb;
+                background: linear-gradient(135deg, #f8fafb 0%, #f3f4f6 100%);
+                border-radius: 0 0 12px 12px;
+                flex-shrink: 0;
             }
 
             .woo-pdf-preview-download-btn,
             .woo-pdf-preview-modal-close-btn {
-                padding: 8px 16px;
+                padding: 10px 18px;
                 border: 1px solid #d1d5db;
-                border-radius: 4px;
+                border-radius: 6px;
                 background: white;
-                color: #1f2937;
+                color: #374151;
                 cursor: pointer;
                 font-size: 14px;
-                font-weight: 500;
-                transition: all 0.2s;
+                font-weight: 600;
+                transition: all 0.2s ease;
+            }
+
+            .woo-pdf-preview-download-btn {
+                background: #3b82f6;
+                color: white;
+                border-color: #3b82f6;
             }
 
             .woo-pdf-preview-download-btn:hover {
-                background: #f3f4f6;
-                border-color: #9ca3af;
+                background: #2563eb;
+                border-color: #2563eb;
+                box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
             }
 
             .woo-pdf-preview-modal-close-btn:hover {
                 background: #f3f4f6;
+                border-color: #9ca3af;
+                color: #111827;
             }
 
             .woo-pdf-preview-spinner {
                 display: inline-block;
                 width: 40px;
                 height: 40px;
-                border: 4px solid #f3f3f3;
-                border-top: 4px solid #2563eb;
+                border: 4px solid #f3f4f6;
+                border-top: 4px solid #3b82f6;
                 border-radius: 50%;
                 animation: wooSpin 1s linear infinite;
                 margin-top: 20px;
@@ -538,10 +643,49 @@ class PDF_Builder_WooCommerce_Integration {
                 100% { transform: rotate(360deg); }
             }
 
+            /* Scrollbar personnalisée pour le PDF */
+            .woo-pdf-preview-container::-webkit-scrollbar {
+                width: 8px;
+                height: 8px;
+            }
+
+            .woo-pdf-preview-container::-webkit-scrollbar-track {
+                background: #f3f4f6;
+                border-radius: 4px;
+            }
+
+            .woo-pdf-preview-container::-webkit-scrollbar-thumb {
+                background: #d1d5db;
+                border-radius: 4px;
+            }
+
+            .woo-pdf-preview-container::-webkit-scrollbar-thumb:hover {
+                background: #9ca3af;
+            }
+
             @media (max-width: 768px) {
                 .woo-pdf-preview-modal-container {
-                    width: 95%;
+                    width: 98%;
                     height: 90vh;
+                    border-radius: 0;
+                }
+
+                .woo-pdf-preview-modal-header,
+                .woo-pdf-preview-modal-footer {
+                    border-radius: 0;
+                }
+
+                .zoom-controls {
+                    flex-direction: column;
+                    gap: 6px;
+                }
+
+                .zoom-btn {
+                    width: 100%;
+                }
+
+                .pdf-page-wrapper {
+                    max-width: 100%;
                 }
             }
         </style>
@@ -713,6 +857,49 @@ class PDF_Builder_WooCommerce_Integration {
                     e.preventDefault();
                     $('#woo-pdf-preview-modal').hide();
                 }
+            });
+
+            // Gestion du zoom pour l'aperçu PDF
+            var currentZoom = 100;
+            var minZoom = 50;
+            var maxZoom = 200;
+            var zoomStep = 25;
+
+            function updateZoomDisplay() {
+                $('#zoom-display').text(currentZoom + '%');
+            }
+
+            function applyZoom() {
+                var $wrapper = $('.pdf-page-wrapper');
+                var scale = currentZoom / 100;
+                $wrapper.css({
+                    'transform': 'scale(' + scale + ')',
+                    'transform-origin': 'top center',
+                    'transition': 'transform 0.2s ease'
+                });
+                updateZoomDisplay();
+            }
+
+            $('#zoom-in-btn').on('click', function(e) {
+                e.preventDefault();
+                if (currentZoom < maxZoom) {
+                    currentZoom = Math.min(currentZoom + zoomStep, maxZoom);
+                    applyZoom();
+                }
+            });
+
+            $('#zoom-out-btn').on('click', function(e) {
+                e.preventDefault();
+                if (currentZoom > minZoom) {
+                    currentZoom = Math.max(currentZoom - zoomStep, minZoom);
+                    applyZoom();
+                }
+            });
+
+            $('#zoom-fit-btn').on('click', function(e) {
+                e.preventDefault();
+                currentZoom = 100;
+                applyZoom();
             });
 
             // Télécharger le PDF depuis la modale
