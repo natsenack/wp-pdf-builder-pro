@@ -1424,6 +1424,8 @@ const PreviewModal = ({
   }, [isOpen, elements.length, useServerPreview]);
 
   const generatePreview = async () => {
+    console.log('🔍 [JS DEBUG] generatePreview called with', elements.length, 'elements');
+
     // Ne pas définir loading=true car l'aperçu s'affiche déjà
     setError(null);
 
@@ -1548,6 +1550,13 @@ const PreviewModal = ({
 
       const { jsonString, cleanedElements } = validationResult;
 
+      console.log('📤 [JS DEBUG] Sending elements to server:', {
+        originalCount: elements.length,
+        cleanedCount: cleanedElements.length,
+        hasProductTable: cleanedElements.some(el => el.type === 'product_table'),
+        elements: cleanedElements
+      });
+
       // Préparer les données pour l'AJAX
       const formData = new FormData();
       formData.append('action', 'pdf_builder_validate_preview');
@@ -1581,6 +1590,8 @@ const PreviewModal = ({
       }
 
       if (data.success) {
+        console.log('✅ [JS DEBUG] Server validation successful:', data.data);
+
         // Mettre à jour previewData avec les données du serveur si nécessaire
         setPreviewData(prev => ({
           ...prev,
@@ -1588,7 +1599,7 @@ const PreviewModal = ({
           server_validated: true
         }));
       } else {
-        console.warn('⚠️ Validation aperçu côté serveur échouée:', data.data);
+        console.warn('⚠️ [JS DEBUG] Server validation failed:', data.data);
         // Garder l'aperçu local mais marquer qu'il y a un problème serveur
         // S'assurer que server_error est toujours une chaîne
         let errorMessage = 'Erreur validation serveur';

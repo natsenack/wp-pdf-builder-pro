@@ -6792,6 +6792,8 @@ var PreviewModal = function PreviewModal(_ref) {
       return PreviewModal_regenerator().w(function (_context) {
         while (1) switch (_context.p = _context.n) {
           case 0:
+            console.log('🔍 [JS DEBUG] generatePreview called with', elements.length, 'elements');
+
             // Ne pas définir loading=true car l'aperçu s'affiche déjà
             setError(null);
             _context.p = 1;
@@ -6913,7 +6915,17 @@ var PreviewModal = function PreviewModal(_ref) {
             });
             return _context.a(2);
           case 7:
-            jsonString = validationResult.jsonString, cleanedElements = validationResult.cleanedElements; // Préparer les données pour l'AJAX
+            jsonString = validationResult.jsonString, cleanedElements = validationResult.cleanedElements;
+            console.log('📤 [JS DEBUG] Sending elements to server:', {
+              originalCount: elements.length,
+              cleanedCount: cleanedElements.length,
+              hasProductTable: cleanedElements.some(function (el) {
+                return el.type === 'product_table';
+              }),
+              elements: cleanedElements
+            });
+
+            // Préparer les données pour l'AJAX
             formData = new FormData();
             formData.append('action', 'pdf_builder_validate_preview');
             formData.append('nonce', freshNonce);
@@ -6959,6 +6971,8 @@ var PreviewModal = function PreviewModal(_ref) {
             return _context.a(2);
           case 13:
             if (data.success) {
+              console.log('✅ [JS DEBUG] Server validation successful:', data.data);
+
               // Mettre à jour previewData avec les données du serveur si nécessaire
               setPreviewData(function (prev) {
                 return PreviewModal_objectSpread(PreviewModal_objectSpread(PreviewModal_objectSpread({}, prev), data.data), {}, {
@@ -6966,7 +6980,7 @@ var PreviewModal = function PreviewModal(_ref) {
                 });
               });
             } else {
-              console.warn('⚠️ Validation aperçu côté serveur échouée:', data.data);
+              console.warn('⚠️ [JS DEBUG] Server validation failed:', data.data);
               // Garder l'aperçu local mais marquer qu'il y a un problème serveur
               // S'assurer que server_error est toujours une chaîne
               errorMessage = 'Erreur validation serveur';
