@@ -549,7 +549,7 @@ class PDF_Builder_WooCommerce_Integration {
         <script type="text/javascript">
         // Simple & Robust PDF JavaScript
         jQuery(document).ready(function($) {
-            console.log('🚀🚀 METABOXES.JS LOADED - WOO PDF INVOICE DEBUG 🚀🚀🚀');
+            console.log('METABOXES.JS LOADED - WOO PDF INVOICE DEBUG');
             console.log('MetaBoxes.js jQuery ready - WooCommerce PDF Invoice metabox initializing');
 
             // Configuration
@@ -643,7 +643,7 @@ class PDF_Builder_WooCommerce_Integration {
                 }
             });
 
-            // 👁️ Handler pour le bouton APERÇU PDF
+            // Handler pour le bouton APERÇU PDF
             $('#pdf-preview-btn').on('click', function(e) {
                 e.preventDefault();
                 
