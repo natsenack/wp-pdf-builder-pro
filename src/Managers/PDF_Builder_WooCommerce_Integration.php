@@ -547,15 +547,18 @@ class PDF_Builder_WooCommerce_Integration {
                 position: relative;
                 width: 100%;
                 height: 100%;
+                padding-top: 0;
             }
 
-            .woo-pdf-preview-modal-body iframe {
-                width: 100%;
-                height: 100%;
-                border: none;
-                flex: 1;
-                min-height: 500px;
-                background: white;
+            #woo-pdf-preview-iframe {
+                width: 100% !important;
+                height: 100% !important;
+                border: none !important;
+                display: block !important;
+                background: white !important;
+                min-height: 600px !important;
+                flex: 1 !important;
+                object-fit: contain !important;
             }
 
             .woo-pdf-preview-toolbar {
@@ -852,8 +855,10 @@ class PDF_Builder_WooCommerce_Integration {
                             // Charger le PDF dans l'iframe avec les paramètres de vue optimisée
                             var pdfUrl = response.data.url;
                             // Ajouter des paramètres au PDF pour optimiser l'affichage
+                            // zoom=150 pour zoom plus haut (compensate le 1/4 affichage)
+                            // page=1 pour démarrer à la première page
                             if (pdfUrl.indexOf('#') === -1) {
-                                pdfUrl += '#zoom=page-fit&toolbar=0&navpanes=0';
+                                pdfUrl += '#page=1&zoom=150&toolbar=0&navpanes=0&view=FitH';
                             }
                             $iframe.attr('src', pdfUrl);
                             
@@ -865,6 +870,10 @@ class PDF_Builder_WooCommerce_Integration {
                                 $loading.hide();
                                 // Forcer le recalcul de la hauteur
                                 $iframe.css('display', 'block');
+                                // Attendre que l'iframe soit chargé
+                                $iframe.on('load', function() {
+                                    console.log('PDF iframe loaded');
+                                });
                             }, 300);
                             
                             showStatus("Aperçu généré avec succès ✓", "success");
