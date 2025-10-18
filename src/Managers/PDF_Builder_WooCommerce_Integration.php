@@ -548,7 +548,7 @@ class PDF_Builder_WooCommerce_Integration {
 
         <script type="text/javascript">
         // Simple & Robust PDF JavaScript
-        (function($) {
+        jQuery(document).ready(function($) {
             console.log('🚀🚀 METABOXES.JS LOADED - WOO PDF INVOICE DEBUG 🚀🚀🚀');
             console.log('MetaBoxes.js jQuery ready - WooCommerce PDF Invoice metabox initializing');
 
@@ -739,7 +739,7 @@ class PDF_Builder_WooCommerce_Integration {
                 'pdf-preview-btn': $('#pdf-preview-btn').length,
                 'pdf-download-btn': $('#pdf-download-btn').length
             });
-        })(jQuery);
+        });
         </script>
         
         <!-- DEBUG: Button test script -->
