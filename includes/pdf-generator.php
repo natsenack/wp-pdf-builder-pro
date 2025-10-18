@@ -2175,6 +2175,10 @@ class PDF_Builder_Pro_Generator {
             return $current_y;
         }
 
+        error_log("RENDER_DEBUG: Starting render_order_products_with_fees_pdf");
+        error_log("RENDER_DEBUG: columns config: " . json_encode($columns));
+        error_log("RENDER_DEBUG: total column enabled: " . ($columns['total'] ? 'YES' : 'NO'));
+
         $table_styles = $this->get_table_styles($element['tableStyle'] ?? 'default');
         $line_items = $this->order->get_items();
         $fees = $this->order->get_fees();
@@ -2265,7 +2269,10 @@ class PDF_Builder_Pro_Generator {
                 // Total
                 if ($columns['total']) {
                     $total_text = number_format($total, 2, ',', ' ') . ' ' . '€';
+                    error_log("RENDER_DEBUG: Displaying total for {$product_name}: {$total_text} (raw: {$total})");
                     $this->pdf->Cell($col_widths[$col_index], $row_height, $total_text, $show_borders ? 1 : 0, 1, 'R');
+                } else {
+                    error_log("RENDER_DEBUG: Total column disabled for {$product_name}");
                 }
 
                 $current_y += $row_height;
@@ -2426,11 +2433,11 @@ class PDF_Builder_Pro_Generator {
      * Rendre les totaux du tableau
      */
     private function render_table_totals($x, $current_y, $col_widths, $columns, $show_borders, $element) {
-        $show_subtotal = $element['showSubtotal'] ?? false;
+        $show_subtotal = $element['showSubtotal'] ?? true;
         $show_shipping = $element['showShipping'] ?? true;
         $show_taxes = $element['showTaxes'] ?? true;
         $show_discount = $element['showDiscount'] ?? false;
-        $show_total = $element['showTotal'] ?? false;
+        $show_total = $element['showTotal'] ?? true;
 
         $table_styles = $this->get_table_styles($element['tableStyle'] ?? 'default');
         $row_height = 6;
