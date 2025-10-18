@@ -159,6 +159,7 @@ body.wp-admin .pdf-builder-container {
 </style>
 
 <!-- Initialisation JavaScript -->
+<!-- Note: Tous les styles essentiels pour l'éditeur ont été consolidés ci-dessus. -->
 <script>
 (function() {
     'use strict';
@@ -311,8 +312,3 @@ body.wp-admin .pdf-builder-container {
 
 })();
 </script>
-
-
-
-
-
