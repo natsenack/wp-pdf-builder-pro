@@ -43,7 +43,7 @@ class PDF_Builder_Diagnostic_Manager {
             $this->run_diagnostic();
         }
 
-        include plugin_dir_path(dirname(__FILE__)) . '../diagnostic-page.php';
+        include plugin_dir_path(dirname(__FILE__)) . '../../templates/admin/diagnostic-page.php';
     }
 
     /**
@@ -59,7 +59,8 @@ class PDF_Builder_Diagnostic_Manager {
             $result = $this->run_simple_tcpdf_test();
         }
 
-        include plugin_dir_path(dirname(__FILE__)) . '../test-tcpdf-page.php';
+        // TODO: Créer le fichier test-tcpdf-page.php dans templates/admin/
+        // include plugin_dir_path(dirname(__FILE__)) . '../../templates/admin/test-tcpdf-page.php';
     }
 
     /**
@@ -70,7 +71,7 @@ class PDF_Builder_Diagnostic_Manager {
             wp_die(__('Vous n\'avez pas les permissions nécessaires.'));
         }
 
-        include plugin_dir_path(dirname(__FILE__)) . '../developer-page.php';
+        include plugin_dir_path(dirname(__FILE__)) . '../../templates/admin/developer-page.php';
     }
 
     /**

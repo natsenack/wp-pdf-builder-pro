@@ -44,7 +44,7 @@ class PDF_Builder_Settings_Manager {
             echo '<div class="notice notice-success"><p>Paramètres sauvegardés avec succès.</p></div>';
         }
 
-        include plugin_dir_path(dirname(__FILE__)) . '../settings-page.php';
+        include plugin_dir_path(dirname(__FILE__)) . '../../templates/admin/settings-page.php';
     }
 
     /**
@@ -60,7 +60,8 @@ class PDF_Builder_Settings_Manager {
             echo '<div class="notice notice-success"><p>Paramètres de rendu sauvegardés avec succès.</p></div>';
         }
 
-        include plugin_dir_path(dirname(__FILE__)) . '../canvas-render-settings-page.php';
+        // TODO: Créer le fichier canvas-render-settings-page.php dans templates/admin/
+        // include plugin_dir_path(dirname(__FILE__)) . '../../templates/admin/canvas-render-settings-page.php';
     }
 
     /**
