@@ -1,14 +1,14 @@
 /******/ (() => { // webpackBootstrap
-/******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 984:
+/***/ 11:
 /***/ ((__unused_webpack_module, __unused_webpack___webpack_exports__, __webpack_require__) => {
 
+"use strict";
 
 // UNUSED EXPORTS: default
 
-// NAMESPACE OBJECT: ./src/hooks/index.js
+// NAMESPACE OBJECT: ./resources/js/hooks/index.js
 var hooks_namespaceObject = {};
 __webpack_require__.r(hooks_namespaceObject);
 __webpack_require__.d(hooks_namespaceObject, {
@@ -28,7 +28,7 @@ __webpack_require__.d(hooks_namespaceObject, {
 var react = __webpack_require__(540);
 // EXTERNAL MODULE: ./node_modules/react-dom/index.js
 var react_dom = __webpack_require__(961);
-;// ./src/hooks/useResize.js
+;// ./resources/js/hooks/useResize.js
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
@@ -263,7 +263,7 @@ var useResize = function useResize(_ref) {
     handleResizeStart: handleResizeStart
   };
 };
-;// ./src/hooks/useRotation.js
+;// ./resources/js/hooks/useRotation.js
 function useRotation_slicedToArray(r, e) { return useRotation_arrayWithHoles(r) || useRotation_iterableToArrayLimit(r, e) || useRotation_unsupportedIterableToArray(r, e) || useRotation_nonIterableRest(); }
 function useRotation_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function useRotation_unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return useRotation_arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? useRotation_arrayLikeToArray(r, a) : void 0; } }
@@ -336,7 +336,7 @@ var useRotation = function useRotation(onElementRotate) {
     handleRotationStart: handleRotationStart
   };
 };
-;// ./src/components/CanvasElement.jsx
+;// ./resources/js/components/CanvasElement.jsx
 function CanvasElement_typeof(o) { "@babel/helpers - typeof"; return CanvasElement_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, CanvasElement_typeof(o); }
 function CanvasElement_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function CanvasElement_objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? CanvasElement_ownKeys(Object(t), !0).forEach(function (r) { CanvasElement_defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : CanvasElement_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
@@ -379,22 +379,7 @@ var CanvasElement = function CanvasElement(_ref) {
   // DEBUG: Logger les propriétés des tableaux produits pour comparaison avec PHP
   (0,react.useEffect)(function () {
     if (element && element.type === 'product_table' && element.id) {
-      var _element$previewProdu;
-      console.log('🔍 CanvasElement product_table properties:', {
-        tableStyle: element.tableStyle,
-        showHeaders: element.showHeaders,
-        showBorders: element.showBorders,
-        columns: element.columns,
-        showSubtotal: element.showSubtotal,
-        showShipping: element.showShipping,
-        showTaxes: element.showTaxes,
-        showDiscount: element.showDiscount,
-        showTotal: element.showTotal,
-        previewProductsCount: ((_element$previewProdu = element.previewProducts) === null || _element$previewProdu === void 0 ? void 0 : _element$previewProdu.length) || 0,
-        backgroundColor: element.backgroundColor,
-        borderWidth: element.borderWidth,
-        borderColor: element.borderColor
-      });
+      // Logging removed for production
     }
   }, [element === null || element === void 0 ? void 0 : element.id, element === null || element === void 0 ? void 0 : element.type]); // Utiliser seulement id et type pour éviter les re-renders
 
@@ -1968,7 +1953,7 @@ var CanvasElement = function CanvasElement(_ref) {
     }
   }));
 };
-;// ./src/hooks/useDragAndDrop.js
+;// ./resources/js/hooks/useDragAndDrop.js
 function useDragAndDrop_createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = useDragAndDrop_unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t["return"] || t["return"](); } finally { if (u) throw o; } } }; }
 function useDragAndDrop_slicedToArray(r, e) { return useDragAndDrop_arrayWithHoles(r) || useDragAndDrop_iterableToArrayLimit(r, e) || useDragAndDrop_unsupportedIterableToArray(r, e) || useDragAndDrop_nonIterableRest(); }
 function useDragAndDrop_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -2097,11 +2082,7 @@ var useDragAndDrop = function useDragAndDrop(_ref) {
 
     // Log spécifique pour l'outil séparateur
     var isSeparator = elementType === 'divider';
-    if (isSeparator) {
-      // console.log(`[SEPARATOR LOG] Début du drag pour élément: ${elementId} (type: ${elementType})`);
-      // console.log(`[SEPARATOR LOG] Position initiale élément: x=${elementRect.left}, y=${elementRect.top}`);
-      // console.log(`[SEPARATOR LOG] Dimensions élément: width=${elementRect.width}, height=${elementRect.height}`);
-    }
+    if (isSeparator) {}
     e.preventDefault();
     setIsDragging(true);
     setDraggedElementId(elementId);
@@ -2149,12 +2130,8 @@ var useDragAndDrop = function useDragAndDrop(_ref) {
       var elementType = currentDragData.current.elementType;
       var isSeparator = elementType === 'divider';
       var isLine = elementType === 'line';
-      if (isSeparator) {
-        // console.log(`[SEPARATOR LOG] Mouvement - Position calculée: x=${newX}, y=${newY}, delta: x=${deltaX}, y=${deltaY}`);
-      }
-      if (isLine) {
-        // console.log(`[LINE LOG] Mouvement - Position calculée: x=${newX}, y=${newY}, delta: x=${deltaX}, y=${deltaY}, startX: ${startX}, mouseX: ${mouseX}`);
-      }
+      if (isSeparator) {}
+      if (isLine) {}
       var newOffset = {
         x: newX - elementRect.left,
         y: newY - elementRect.top
@@ -2188,18 +2165,8 @@ var useDragAndDrop = function useDragAndDrop(_ref) {
         // Log pour le séparateur lors du drop
         var _isSeparator = elementType === 'divider';
         var isLine = elementType === 'line';
-        if (_isSeparator) {
-          // console.log(`[SEPARATOR LOG] Drop - Position initiale stockée: x=${elementStartPos.current.x}, y=${elementStartPos.current.y}`);
-          // console.log(`[SEPARATOR LOG] Drop - Offset appliqué: x=${currentDragOffset.current.x}, y=${currentDragOffset.current.y}`);
-          // console.log(`[SEPARATOR LOG] Drop - Position finale calculée: x=${finalX}, y=${finalY}`);
-          // console.log(`[SEPARATOR LOG] Drop - Appel onElementDrop avec élément: ${elementId}`);
-        }
-        if (isLine) {
-          // console.log(`[LINE LOG] Drop - Position initiale stockée: x=${elementStartPos.current.x}, y=${elementStartPos.current.y}`);
-          // console.log(`[LINE LOG] Drop - Offset appliqué: x=${currentDragOffset.current.x}, y=${currentDragOffset.current.y}`);
-          // console.log(`[LINE LOG] Drop - Position finale calculée: x=${finalX}, y=${finalY}`);
-          // console.log(`[LINE LOG] Drop - Appel onElementDrop avec élément: ${elementId}`);
-        }
+        if (_isSeparator) {}
+        if (isLine) {}
         onElementDrop(elementId, {
           x: finalX,
           y: finalY
@@ -2276,7 +2243,7 @@ var useDragAndDrop = function useDragAndDrop(_ref) {
     handleDrop: handleDrop
   };
 };
-;// ./src/components/Toolbar.jsx
+;// ./resources/js/components/Toolbar.jsx
 function Toolbar_slicedToArray(r, e) { return Toolbar_arrayWithHoles(r) || Toolbar_iterableToArrayLimit(r, e) || Toolbar_unsupportedIterableToArray(r, e) || Toolbar_nonIterableRest(); }
 function Toolbar_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function Toolbar_unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return Toolbar_arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? Toolbar_arrayLikeToArray(r, a) : void 0; } }
@@ -2557,7 +2524,7 @@ var Toolbar = function Toolbar(_ref) {
     className: "toggle-shortcut"
   }, "(M)"))))))));
 };
-;// ./src/hooks/useHistory.js
+;// ./resources/js/hooks/useHistory.js
 function useHistory_slicedToArray(r, e) { return useHistory_arrayWithHoles(r) || useHistory_iterableToArrayLimit(r, e) || useHistory_unsupportedIterableToArray(r, e) || useHistory_nonIterableRest(); }
 function useHistory_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function useHistory_unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return useHistory_arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? useHistory_arrayLikeToArray(r, a) : void 0; } }
@@ -2645,7 +2612,7 @@ var useHistory = function useHistory() {
     currentIndex: currentIndex
   };
 };
-;// ./src/hooks/useSelection.js
+;// ./resources/js/hooks/useSelection.js
 function useSelection_typeof(o) { "@babel/helpers - typeof"; return useSelection_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, useSelection_typeof(o); }
 function useSelection_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function useSelection_objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? useSelection_ownKeys(Object(t), !0).forEach(function (r) { useSelection_defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : useSelection_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
@@ -2773,7 +2740,7 @@ var useSelection = function useSelection(_ref) {
     duplicateSelected: duplicateSelected
   };
 };
-;// ./src/hooks/useClipboard.js
+;// ./resources/js/hooks/useClipboard.js
 function useClipboard_slicedToArray(r, e) { return useClipboard_arrayWithHoles(r) || useClipboard_iterableToArrayLimit(r, e) || useClipboard_unsupportedIterableToArray(r, e) || useClipboard_nonIterableRest(); }
 function useClipboard_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function useClipboard_unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return useClipboard_arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? useClipboard_arrayLikeToArray(r, a) : void 0; } }
@@ -2818,7 +2785,7 @@ var useClipboard = function useClipboard(_ref) {
     clipboardData: clipboardData
   };
 };
-;// ./src/hooks/useZoom.js
+;// ./resources/js/hooks/useZoom.js
 function useZoom_slicedToArray(r, e) { return useZoom_arrayWithHoles(r) || useZoom_iterableToArrayLimit(r, e) || useZoom_unsupportedIterableToArray(r, e) || useZoom_nonIterableRest(); }
 function useZoom_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function useZoom_unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return useZoom_arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? useZoom_arrayLikeToArray(r, a) : void 0; } }
@@ -2957,7 +2924,7 @@ var useZoom = function useZoom(_ref) {
     canvasToScreen: canvasToScreen
   };
 };
-;// ./src/hooks/useContextMenu.js
+;// ./resources/js/hooks/useContextMenu.js
 function useContextMenu_slicedToArray(r, e) { return useContextMenu_arrayWithHoles(r) || useContextMenu_iterableToArrayLimit(r, e) || useContextMenu_unsupportedIterableToArray(r, e) || useContextMenu_nonIterableRest(); }
 function useContextMenu_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function useContextMenu_unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return useContextMenu_arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? useContextMenu_arrayLikeToArray(r, a) : void 0; } }
@@ -3043,7 +3010,7 @@ var useContextMenu = function useContextMenu() {
     isAnimating: isAnimating
   };
 };
-;// ./src/hooks/useCanvasState.js
+;// ./resources/js/hooks/useCanvasState.js
 function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
 function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
 function useCanvasState_createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = useCanvasState_unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t["return"] || t["return"](); } finally { if (u) throw o; } } }; }
@@ -4333,7 +4300,7 @@ var useCanvasState = function useCanvasState(_ref) {
   // removed by dead control flow
 
 };
-;// ./src/hooks/useKeyboardShortcuts.js
+;// ./resources/js/hooks/useKeyboardShortcuts.js
 
 var useKeyboardShortcuts = function useKeyboardShortcuts(_ref) {
   var onDelete = _ref.onDelete,
@@ -4477,7 +4444,7 @@ var useKeyboardShortcuts = function useKeyboardShortcuts(_ref) {
     };
   }, [onDelete, onCopy, onPaste, onUndo, onRedo, onSave, onZoomIn, onZoomOut, onSelectAll, onDeselectAll, onToolSelect, onToggleGrid, onTogglePreview]);
 };
-;// ./src/hooks/useGlobalSettings.js
+;// ./resources/js/hooks/useGlobalSettings.js
 function useGlobalSettings_typeof(o) { "@babel/helpers - typeof"; return useGlobalSettings_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, useGlobalSettings_typeof(o); }
 function useGlobalSettings_regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return useGlobalSettings_regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (useGlobalSettings_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, useGlobalSettings_regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, useGlobalSettings_regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), useGlobalSettings_regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", useGlobalSettings_regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), useGlobalSettings_regeneratorDefine2(u), useGlobalSettings_regeneratorDefine2(u, o, "Generator"), useGlobalSettings_regeneratorDefine2(u, n, function () { return this; }), useGlobalSettings_regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (useGlobalSettings_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
 function useGlobalSettings_regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } useGlobalSettings_regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { useGlobalSettings_regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, useGlobalSettings_regeneratorDefine2(e, r, n, t); }
@@ -4874,9 +4841,7 @@ var useGlobalSettings = function useGlobalSettings() {
                 }).then(function (response) {
                   if (!response.ok) {
                     console.warn('Erreur lors de la sauvegarde des paramètres dans WordPress:', response.status);
-                  } else {
-                    // console.log('Paramètres sauvegardés avec succès dans WordPress');
-                  }
+                  } else {}
                 })["catch"](function (error) {
                   console.warn('Erreur AJAX lors de la sauvegarde des paramètres:', error);
                 });
@@ -5017,7 +4982,7 @@ var useGlobalSettings = function useGlobalSettings() {
     refreshSettings: refreshSettings
   };
 };
-;// ./src/components/FPSCounter.jsx
+;// ./resources/js/components/FPSCounter.jsx
 function FPSCounter_slicedToArray(r, e) { return FPSCounter_arrayWithHoles(r) || FPSCounter_iterableToArrayLimit(r, e) || FPSCounter_unsupportedIterableToArray(r, e) || FPSCounter_nonIterableRest(); }
 function FPSCounter_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function FPSCounter_unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return FPSCounter_arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? FPSCounter_arrayLikeToArray(r, a) : void 0; } }
@@ -5074,7 +5039,7 @@ var FPSCounter = function FPSCounter(_ref) {
     }
   }, "FPS: ", fps);
 };
-;// ./src/components/ContextMenu.jsx
+;// ./resources/js/components/ContextMenu.jsx
 
 var ContextMenu = function ContextMenu(_ref) {
   var menu = _ref.menu,
@@ -5216,7 +5181,7 @@ var getKeyboardShortcut = function getKeyboardShortcut(label) {
   return shortcutMap[label];
 };
 /* harmony default export */ const components_ContextMenu = (ContextMenu);
-;// ./src/components/PreviewModal.jsx
+;// ./resources/js/components/PreviewModal.jsx
 function PreviewModal_regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return PreviewModal_regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (PreviewModal_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, PreviewModal_regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, PreviewModal_regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), PreviewModal_regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", PreviewModal_regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), PreviewModal_regeneratorDefine2(u), PreviewModal_regeneratorDefine2(u, o, "Generator"), PreviewModal_regeneratorDefine2(u, n, function () { return this; }), PreviewModal_regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (PreviewModal_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
 function PreviewModal_regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } PreviewModal_regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { PreviewModal_regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, PreviewModal_regeneratorDefine2(e, r, n, t); }
 function PreviewModal_asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
@@ -6379,16 +6344,7 @@ var PreviewModal = function PreviewModal(_ref) {
             });
             return _context.a(2);
           case 7:
-            jsonString = validationResult.jsonString, cleanedElements = validationResult.cleanedElements;
-            console.log('📤 [JS DEBUG] Sending elements to server:', {
-              originalCount: elements.length,
-              cleanedCount: cleanedElements.length,
-              hasProductTable: cleanedElements.some(function (el) {
-                return el.type === 'product_table';
-              }),
-              elements: cleanedElements
-            });
-
+            jsonString = validationResult.jsonString, cleanedElements = validationResult.cleanedElements; // Logging removed for production
             // Préparer les données pour l'AJAX
             formData = new FormData();
             formData.append('action', 'pdf_builder_validate_preview');
@@ -6435,7 +6391,7 @@ var PreviewModal = function PreviewModal(_ref) {
             return _context.a(2);
           case 13:
             if (data.success) {
-              console.log('✅ [JS DEBUG] Server validation successful:', data.data);
+              // Logging removed for production
 
               // Mettre à jour previewData avec les données du serveur si nécessaire
               setPreviewData(function (prev) {
@@ -6726,7 +6682,7 @@ var PreviewModal = function PreviewModal(_ref) {
   }, "\u274C Fermer"))));
 };
 /* harmony default export */ const components_PreviewModal = (PreviewModal);
-;// ./src/components/ModalPDFViewer.jsx
+;// ./resources/js/components/ModalPDFViewer.jsx
 var ModalPDFViewer = function ModalPDFViewer(_ref) {
   var isOpen = _ref.isOpen,
     onClose = _ref.onClose,
@@ -6883,7 +6839,7 @@ var ModalPDFViewer = function ModalPDFViewer(_ref) {
   }, "Fermer")))));
 };
 /* harmony default export */ const components_ModalPDFViewer = (ModalPDFViewer);
-;// ./src/components/WooCommerceElements.jsx
+;// ./resources/js/components/WooCommerceElements.jsx
 
 
 
@@ -7345,7 +7301,7 @@ var WooCommerceElement = function WooCommerceElement(_ref) {
   })));
 };
 /* harmony default export */ const WooCommerceElements = (WooCommerceElement);
-;// ./src/components/ElementLibrary.jsx
+;// ./resources/js/components/ElementLibrary.jsx
 function ElementLibrary_typeof(o) { "@babel/helpers - typeof"; return ElementLibrary_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, ElementLibrary_typeof(o); }
 function ElementLibrary_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function ElementLibrary_objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ElementLibrary_ownKeys(Object(t), !0).forEach(function (r) { ElementLibrary_defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ElementLibrary_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
@@ -7626,7 +7582,7 @@ var ElementLibrary = function ElementLibrary(_ref) {
   })))));
 };
 /* harmony default export */ const components_ElementLibrary = (ElementLibrary);
-;// ./src/services/ElementCustomizationService.js
+;// ./resources/js/services/ElementCustomizationService.js
 function ElementCustomizationService_typeof(o) { "@babel/helpers - typeof"; return ElementCustomizationService_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, ElementCustomizationService_typeof(o); }
 function ElementCustomizationService_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function ElementCustomizationService_objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ElementCustomizationService_ownKeys(Object(t), !0).forEach(function (r) { ElementCustomizationService_defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ElementCustomizationService_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
@@ -8331,258 +8287,9 @@ var ElementCustomizationService = /*#__PURE__*/function () {
 
 // Instance singleton du service
 var elementCustomizationService = new ElementCustomizationService();
-;// ./src/utilities/elementPropertyRestrictions.js
-// Système de gestion des propriétés d'éléments
-// Définit les restrictions et validations pour chaque type d'élément
-
-var ELEMENT_PROPERTY_RESTRICTIONS = {
-  // Éléments spéciaux - contrôle du fond autorisé mais valeur par défaut transparente
-  special: {
-    backgroundColor: {
-      disabled: false,
-      // Maintenant autorisé
-      "default": 'transparent' // Valeur par défaut transparente
-    },
-    borderColor: {
-      disabled: false
-    },
-    borderWidth: {
-      disabled: false
-    }
-  },
-  // Éléments de mise en page - contrôle complet
-  layout: {
-    backgroundColor: {
-      disabled: false,
-      "default": '#f8fafc'
-    },
-    borderColor: {
-      disabled: false
-    },
-    borderWidth: {
-      disabled: false
-    }
-  },
-  // Éléments de texte - contrôle complet
-  text: {
-    backgroundColor: {
-      disabled: false,
-      "default": 'transparent'
-    },
-    borderColor: {
-      disabled: false
-    },
-    borderWidth: {
-      disabled: false
-    }
-  },
-  // Éléments graphiques - contrôle complet
-  shape: {
-    backgroundColor: {
-      disabled: false,
-      "default": '#e5e7eb'
-    },
-    borderColor: {
-      disabled: false
-    },
-    borderWidth: {
-      disabled: false
-    }
-  },
-  // Éléments médias - contrôle limité
-  media: {
-    backgroundColor: {
-      disabled: false,
-      "default": '#f3f4f6'
-    },
-    borderColor: {
-      disabled: false
-    },
-    borderWidth: {
-      disabled: false
-    }
-  },
-  // Éléments dynamiques - contrôle complet
-  dynamic: {
-    backgroundColor: {
-      disabled: false,
-      "default": 'transparent'
-    },
-    borderColor: {
-      disabled: false
-    },
-    borderWidth: {
-      disabled: false
-    }
-  }
-};
-
-// Mapping des types d'éléments vers leurs catégories
-var ELEMENT_TYPE_MAPPING = {
-  // Spéciaux
-  'product_table': 'special',
-  'customer_info': 'special',
-  'company_logo': 'special',
-  'company_info': 'special',
-  'order_number': 'special',
-  'document_type': 'special',
-  'progress-bar': 'special',
-  // Mise en page
-  'layout-header': 'layout',
-  'layout-footer': 'layout',
-  'layout-sidebar': 'layout',
-  'layout-section': 'layout',
-  'layout-container': 'layout',
-  'layout-section-divider': 'layout',
-  'layout-spacer': 'layout',
-  'layout-two-column': 'layout',
-  'layout-three-column': 'layout',
-  // Texte
-  'text': 'text',
-  'dynamic-text': 'text',
-  'conditional-text': 'text',
-  'counter': 'text',
-  'date-dynamic': 'text',
-  'currency': 'text',
-  'formula': 'text',
-  // Formes
-  'rectangle': 'shape',
-  'line': 'shape',
-  'shape-rectangle': 'shape',
-  'shape-circle': 'shape',
-  'shape-line': 'shape',
-  'shape-arrow': 'shape',
-  'shape-triangle': 'shape',
-  'shape-star': 'shape',
-  'divider': 'shape',
-  // Médias
-  'image': 'media',
-  'image-upload': 'media',
-  'logo': 'media',
-  'barcode': 'media',
-  'qrcode': 'media',
-  'qrcode-dynamic': 'media',
-  'icon': 'media',
-  // Dynamiques
-  'table-dynamic': 'dynamic',
-  'gradient-box': 'dynamic',
-  'shadow-box': 'dynamic',
-  'rounded-box': 'dynamic',
-  'border-box': 'dynamic',
-  'background-pattern': 'dynamic',
-  'watermark': 'dynamic',
-  // Factures (mélange de catégories)
-  'invoice-header': 'layout',
-  'invoice-address-block': 'layout',
-  'invoice-info-block': 'layout',
-  'invoice-products-table': 'special',
-  'invoice-totals-block': 'layout',
-  'invoice-payment-terms': 'layout',
-  'invoice-legal-footer': 'layout',
-  'invoice-signature-block': 'layout'
-};
-
-// Fonction pour vérifier si une propriété est autorisée pour un type d'élément
-var isPropertyAllowed = function isPropertyAllowed(elementType, propertyName) {
-  var category = ELEMENT_TYPE_MAPPING[elementType] || 'text'; // défaut texte
-  var restrictions = ELEMENT_PROPERTY_RESTRICTIONS[category];
-  if (!restrictions || !restrictions[propertyName]) {
-    return true; // propriété autorisée par défaut
-  }
-  return !restrictions[propertyName].disabled;
-};
-
-// Fonction pour obtenir la valeur par défaut d'une propriété
-var getPropertyDefault = function getPropertyDefault(elementType, propertyName) {
-  var category = ELEMENT_TYPE_MAPPING[elementType] || 'text';
-  var restrictions = ELEMENT_PROPERTY_RESTRICTIONS[category];
-  if (restrictions && restrictions[propertyName] && restrictions[propertyName]["default"] !== undefined) {
-    return restrictions[propertyName]["default"];
-  }
-  return null; // pas de valeur par défaut spécifique
-};
-
-// Fonction pour valider une propriété
-var validateProperty = function validateProperty(elementType, propertyName, value) {
-  if (!isPropertyAllowed(elementType, propertyName)) {
-    var _ELEMENT_PROPERTY_RES;
-    return {
-      valid: false,
-      reason: ((_ELEMENT_PROPERTY_RES = ELEMENT_PROPERTY_RESTRICTIONS[ELEMENT_TYPE_MAPPING[elementType] || 'text'][propertyName]) === null || _ELEMENT_PROPERTY_RES === void 0 ? void 0 : _ELEMENT_PROPERTY_RES.reason) || 'Propriété non autorisée'
-    };
-  }
-
-  // Validations spécifiques selon le type de propriété
-  switch (propertyName) {
-    case 'backgroundColor':
-      if (typeof value !== 'string') {
-        return {
-          valid: false,
-          reason: 'La couleur doit être une chaîne'
-        };
-      }
-      // Plus de restriction pour les éléments spéciaux - ils peuvent maintenant avoir un fond
-      break;
-    case 'borderWidth':
-      if (typeof value !== 'number' || value < 0) {
-        return {
-          valid: false,
-          reason: 'La largeur de bordure doit être un nombre positif'
-        };
-      }
-      break;
-    case 'fontSize':
-      if (typeof value !== 'number' || value <= 0) {
-        return {
-          valid: false,
-          reason: 'La taille de police doit être un nombre positif'
-        };
-      }
-      break;
-    case 'width':
-    case 'height':
-      if (typeof value !== 'number' || value <= 0) {
-        return {
-          valid: false,
-          reason: 'Les dimensions doivent être positives'
-        };
-      }
-      break;
-    default:
-      break;
-  }
-  return {
-    valid: true
-  };
-};
-
-// Fonction pour corriger automatiquement une propriété invalide
-var fixInvalidProperty = function fixInvalidProperty(elementType, propertyName, invalidValue) {
-  // Pour les éléments spéciaux, backgroundColor peut maintenant être contrôlé
-  // (pas de forçage automatique à 'transparent')
-
-  // Valeurs par défaut pour les propriétés numériques
-  var numericDefaults = {
-    borderWidth: 0,
-    fontSize: 14,
-    width: 100,
-    height: 50,
-    padding: 8
-  };
-  if (numericDefaults[propertyName] !== undefined) {
-    return numericDefaults[propertyName];
-  }
-
-  // Valeurs par défaut pour les chaînes
-  var stringDefaults = {
-    backgroundColor: 'transparent',
-    borderColor: 'transparent',
-    color: '#000000',
-    fontFamily: 'Arial, sans-serif'
-  };
-  return stringDefaults[propertyName] || invalidValue;
-};
-;// ./src/hooks/useElementCustomization.js
+// EXTERNAL MODULE: ./resources/js/utils/elementPropertyRestrictions.js
+var elementPropertyRestrictions = __webpack_require__(957);
+;// ./resources/js/hooks/useElementCustomization.js
 function useElementCustomization_typeof(o) { "@babel/helpers - typeof"; return useElementCustomization_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, useElementCustomization_typeof(o); }
 function useElementCustomization_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function useElementCustomization_objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? useElementCustomization_ownKeys(Object(t), !0).forEach(function (r) { useElementCustomization_defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : useElementCustomization_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
@@ -8647,13 +8354,13 @@ var useElementCustomization = function useElementCustomization(selectedElements,
 
       // Pour les propriétés restreintes, utiliser les valeurs par défaut spécifiques
       Object.keys(defaultProperties).forEach(function (property) {
-        var specificDefault = getPropertyDefault(elementType, property);
+        var specificDefault = (0,elementPropertyRestrictions.getPropertyDefault)(elementType, property);
         if (specificDefault !== null) {
           restrictedDefaults[property] = specificDefault;
         }
 
         // Pour les éléments spéciaux, forcer backgroundColor à transparent
-        if (ELEMENT_TYPE_MAPPING[elementType] === 'special' && property === 'backgroundColor') {
+        if (elementPropertyRestrictions.ELEMENT_TYPE_MAPPING[elementType] === 'special' && property === 'backgroundColor') {
           restrictedDefaults[property] = 'transparent';
         }
       });
@@ -8661,24 +8368,24 @@ var useElementCustomization = function useElementCustomization(selectedElements,
 
       // Pour les propriétés restreintes, forcer les valeurs corrigées
       Object.keys(restrictedDefaults).forEach(function (property) {
-        var isRestricted = !isPropertyAllowed(elementType, property);
+        var isRestricted = !(0,elementPropertyRestrictions.isPropertyAllowed)(elementType, property);
         if (isRestricted) {
-          var correctedValue = fixInvalidProperty(elementType, property, newProperties[property]);
+          var correctedValue = (0,elementPropertyRestrictions.fixInvalidProperty)(elementType, property, newProperties[property]);
           if (correctedValue !== newProperties[property]) {
             newProperties[property] = correctedValue;
           }
         }
         // Pour les éléments spéciaux, garder backgroundColor à transparent par défaut seulement si pas défini
-        else if (ELEMENT_TYPE_MAPPING[elementType] === 'special' && property === 'backgroundColor' && !newProperties[property]) {
+        else if (elementPropertyRestrictions.ELEMENT_TYPE_MAPPING[elementType] === 'special' && property === 'backgroundColor' && !newProperties[property]) {
           newProperties[property] = 'transparent';
         }
       });
 
       // Validation finale des propriétés
       Object.keys(newProperties).forEach(function (property) {
-        var validation = validateProperty(elementType, property, newProperties[property]);
+        var validation = (0,elementPropertyRestrictions.validateProperty)(elementType, property, newProperties[property]);
         if (!validation.valid) {
-          newProperties[property] = fixInvalidProperty(elementType, property, newProperties[property]);
+          newProperties[property] = (0,elementPropertyRestrictions.fixInvalidProperty)(elementType, property, newProperties[property]);
         }
       });
       setLocalProperties(newProperties);
@@ -8696,7 +8403,7 @@ var useElementCustomization = function useElementCustomization(selectedElements,
     var validatedValue = value;
 
     // Validation selon le système de restrictions
-    var validation = validateProperty(element.type, property, value);
+    var validation = (0,elementPropertyRestrictions.validateProperty)(element.type, property, value);
     if (!validation.valid) {
       // Ne pas appliquer le changement si la propriété n'est pas autorisée
       return;
@@ -8914,7 +8621,7 @@ var useElementCustomization = function useElementCustomization(selectedElements,
     validatePropertyValue: validatePropertyValue
   };
 };
-;// ./src/hooks/useElementSynchronization.js
+;// ./resources/js/hooks/useElementSynchronization.js
 
 
 /**
@@ -9139,7 +8846,7 @@ var useElementSynchronization = function useElementSynchronization(elements, onP
     pendingChangesCount: pendingChangesRef.current.size
   };
 };
-;// ./src/components/PropertiesPanel.jsx
+;// ./resources/js/components/PropertiesPanel.jsx
 function PropertiesPanel_regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return PropertiesPanel_regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (PropertiesPanel_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, PropertiesPanel_regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, PropertiesPanel_regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), PropertiesPanel_regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", PropertiesPanel_regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), PropertiesPanel_regeneratorDefine2(u), PropertiesPanel_regeneratorDefine2(u, o, "Generator"), PropertiesPanel_regeneratorDefine2(u, n, function () { return this; }), PropertiesPanel_regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (PropertiesPanel_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
 function PropertiesPanel_regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } PropertiesPanel_regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { PropertiesPanel_regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, PropertiesPanel_regeneratorDefine2(e, r, n, t); }
 function PropertiesPanel_asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
@@ -12235,7 +11942,7 @@ var PropertiesPanel = /*#__PURE__*/(0,react.memo)(function (_ref4) {
   }, renderTabContent()));
 });
 /* harmony default export */ const components_PropertiesPanel = (PropertiesPanel);
-;// ./src/components/NewTemplateModal.jsx
+;// ./resources/js/components/NewTemplateModal.jsx
 function NewTemplateModal_typeof(o) { "@babel/helpers - typeof"; return NewTemplateModal_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, NewTemplateModal_typeof(o); }
 function NewTemplateModal_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function NewTemplateModal_objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? NewTemplateModal_ownKeys(Object(t), !0).forEach(function (r) { NewTemplateModal_defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : NewTemplateModal_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
@@ -12458,7 +12165,7 @@ var NewTemplateModal = function NewTemplateModal(_ref) {
   }, "Ouvrir le template")))));
 };
 /* harmony default export */ const components_NewTemplateModal = (NewTemplateModal);
-;// ./src/components/PDFCanvasEditor.jsx
+;// ./resources/js/components/PDFCanvasEditor.jsx
 function PDFCanvasEditor_typeof(o) { "@babel/helpers - typeof"; return PDFCanvasEditor_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, PDFCanvasEditor_typeof(o); }
 function PDFCanvasEditor_regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return PDFCanvasEditor_regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (PDFCanvasEditor_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, PDFCanvasEditor_regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, PDFCanvasEditor_regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), PDFCanvasEditor_regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", PDFCanvasEditor_regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), PDFCanvasEditor_regeneratorDefine2(u), PDFCanvasEditor_regeneratorDefine2(u, o, "Generator"), PDFCanvasEditor_regeneratorDefine2(u, n, function () { return this; }), PDFCanvasEditor_regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (PDFCanvasEditor_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
 function PDFCanvasEditor_regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } PDFCanvasEditor_regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { PDFCanvasEditor_regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, PDFCanvasEditor_regeneratorDefine2(e, r, n, t); }
@@ -12672,7 +12379,7 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
   var handleCreateTemplate = (0,react.useCallback)(function (templateData) {
     // TODO: Implémenter la logique de création du template
     // Pour l'instant, on ferme juste la modale et on affiche les données
-    console.log('Création du template:', templateData);
+    // Logging removed for production
     alert("Template \"".concat(templateData.name, "\" cr\xE9\xE9 avec succ\xE8s!\n\nMod\xE8le: ").concat(templateData.defaultModel, "\nFormat: ").concat(templateData.paperFormat, "\nOrientation: ").concat(templateData.orientation, "\nCat\xE9gorie: ").concat(templateData.category));
   }, []);
 
@@ -12699,7 +12406,7 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
       },
       getRenderedHtml: function getRenderedHtml() {
         // Cette méthode pourrait être implémentée pour retourner le HTML rendu
-        console.log('getRenderedHtml called - not yet implemented');
+        // Logging removed for production
         return '<div>HTML rendering not yet implemented</div>';
       }
     };
@@ -13504,7 +13211,7 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
 
 // Optimisation : éviter les re-renders inutiles
 /* harmony default export */ const components_PDFCanvasEditor = (/*#__PURE__*/(/* unused pure expression or super */ null && (React.memo(/*#__PURE__*/forwardRef(PDFCanvasEditor)))));
-;// ./src/hooks/index.js
+;// ./resources/js/hooks/index.js
 
 
 
@@ -13515,16 +13222,16 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
 
 
 
-;// ./src/index.js
-function src_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
-function src_objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? src_ownKeys(Object(t), !0).forEach(function (r) { src_defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : src_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-function src_defineProperty(e, r, t) { return (r = src_toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
-function src_classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function src_defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, src_toPropertyKey(o.key), o); } }
-function src_createClass(e, r, t) { return r && src_defineProperties(e.prototype, r), t && src_defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function src_toPropertyKey(t) { var i = src_toPrimitive(t, "string"); return "symbol" == src_typeof(i) ? i : i + ""; }
-function src_toPrimitive(t, r) { if ("object" != src_typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != src_typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function src_typeof(o) { "@babel/helpers - typeof"; return src_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, src_typeof(o); }
+;// ./resources/js/index.js
+function js_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function js_objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? js_ownKeys(Object(t), !0).forEach(function (r) { js_defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : js_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function js_defineProperty(e, r, t) { return (r = js_toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function js_classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function js_defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, js_toPropertyKey(o.key), o); } }
+function js_createClass(e, r, t) { return r && js_defineProperties(e.prototype, r), t && js_defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function js_toPropertyKey(t) { var i = js_toPrimitive(t, "string"); return "symbol" == js_typeof(i) ? i : i + ""; }
+function js_toPrimitive(t, r) { if ("object" != js_typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != js_typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function js_typeof(o) { "@babel/helpers - typeof"; return js_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, js_typeof(o); }
 // Tous les imports doivent être au niveau supérieur du module
 
 
@@ -13533,7 +13240,6 @@ function src_typeof(o) { "@babel/helpers - typeof"; return src_typeof = "functio
 
 // Forcer l'inclusion de tous les hooks personnalisés
 
-console.log('PDF Builder Pro: Script execution started - with proper imports');
 
 // Système de protection et monitoring
 var PDFBuilderSecurity = {
@@ -13542,19 +13248,17 @@ var PDFBuilderSecurity = {
   initialized: false,
   // Health check pour vérifier que toutes les dépendances sont disponibles
   performHealthCheck: function performHealthCheck() {
-    console.log('PDF Builder Pro: Performing health check...');
     var checks = {
-      react: src_typeof(react) === 'object' && react.createElement,
-      reactDom: src_typeof(react_dom) === 'object' && react_dom.render,
-      pdfCanvasEditor: PDFCanvasEditor && (typeof PDFCanvasEditor === 'function' || src_typeof(PDFCanvasEditor) === 'object'),
-      hooks: src_typeof(hooks_namespaceObject) === 'object',
+      react: js_typeof(react) === 'object' && react.createElement,
+      reactDom: js_typeof(react_dom) === 'object' && react_dom.render,
+      pdfCanvasEditor: PDFCanvasEditor && (typeof PDFCanvasEditor === 'function' || js_typeof(PDFCanvasEditor) === 'object'),
+      hooks: js_typeof(hooks_namespaceObject) === 'object',
       window: typeof window !== 'undefined',
       document: typeof document !== 'undefined'
     };
     this.healthChecks = checks;
     var allHealthy = Object.values(checks).every(Boolean);
     if (allHealthy) {
-      console.log('PDF Builder Pro: All health checks passed ✅');
       this.initialized = true;
     } else {
       console.error('PDF Builder Pro: Health check failed ❌', checks);
@@ -13597,15 +13301,10 @@ var PDFBuilderSecurity = {
 
 // Test des imports de base avec protection
 try {
-  console.log('Testing React availability...');
-  console.log('React version:', react.version);
-  console.log('ReactDOM available:', src_typeof(react_dom));
-
   // Exposer React globalement pour compatibilité
   if (typeof window !== 'undefined') {
     window.React = react;
     window.ReactDOM = react_dom;
-    console.log('PDF Builder Pro: React exposed globally');
   }
 } catch (error) {
   PDFBuilderSecurity.logError(error, 'React initialization');
@@ -13615,7 +13314,7 @@ try {
 // Classe principale pour l'éditeur PDF
 var PDFBuilderPro = /*#__PURE__*/function () {
   function PDFBuilderPro() {
-    src_classCallCheck(this, PDFBuilderPro);
+    js_classCallCheck(this, PDFBuilderPro);
     this.version = '2.0.0';
     this.editors = new Map();
 
@@ -13645,12 +13344,11 @@ var PDFBuilderPro = /*#__PURE__*/function () {
   }
 
   // Initialiser l'éditeur dans un conteneur
-  return src_createClass(PDFBuilderPro, [{
+  return js_createClass(PDFBuilderPro, [{
     key: "init",
     value: function init(containerId) {
       var _this = this;
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      console.log('PDFBuilderPro.init called with:', containerId, options);
       try {
         // Vérification stricte du containerId
         if (!containerId || typeof containerId !== 'string') {
@@ -13672,7 +13370,7 @@ var PDFBuilderPro = /*#__PURE__*/function () {
         }
 
         // Options par défaut avec validation
-        var defaultOptions = src_objectSpread({
+        var defaultOptions = js_objectSpread({
           templateId: null,
           templateName: null,
           isNew: true,
@@ -13714,7 +13412,6 @@ var PDFBuilderPro = /*#__PURE__*/function () {
           container: container,
           options: defaultOptions
         });
-        console.log('PDFBuilderPro: Editor initialized successfully for container:', containerId);
       } catch (error) {
         console.error('PDFBuilderPro: Failed to initialize editor:', error);
 
@@ -13741,7 +13438,6 @@ var PDFBuilderPro = /*#__PURE__*/function () {
             react_dom.unmountComponentAtNode(editor.container);
           }
           this.editors["delete"](containerId);
-          console.log('PDFBuilderPro: Editor destroyed for container:', containerId);
         }
       } catch (error) {
         console.error('PDFBuilderPro: Error during destroy:', error);
@@ -13776,7 +13472,6 @@ var PDFBuilderPro = /*#__PURE__*/function () {
   }]);
 }(); // Instance globale
 var pdfBuilderPro = new PDFBuilderPro();
-console.log('PDF Builder Pro: PDFBuilderPro instance created');
 
 // Attacher à window pour WordPress - avec vérification et protection
 if (typeof window !== 'undefined') {
@@ -13785,7 +13480,6 @@ if (typeof window !== 'undefined') {
     window.PDFBuilderPro = pdfBuilderPro;
     // Alias pour compatibilité
     window.pdfBuilderPro = pdfBuilderPro;
-    console.log('PDF Builder Pro: PDFBuilderPro attached to window');
 
     // Marquer comme initialisé pour éviter les conflits
     PDFBuilderSecurity.preventMultipleInit();
@@ -13802,7 +13496,14 @@ if (typeof window !== 'undefined') {
 }
 
 // Export par défaut pour webpack
-/* harmony default export */ const src = ((/* unused pure expression or super */ null && (pdfBuilderPro)));
+/* harmony default export */ const js = ((/* unused pure expression or super */ null && (pdfBuilderPro)));
+
+/***/ }),
+
+/***/ 957:
+/***/ (() => {
+
+
 
 /***/ })
 
@@ -13954,7 +13655,7 @@ if (typeof window !== 'undefined') {
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, [96], () => (__webpack_require__(984)))
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, [96], () => (__webpack_require__(11)))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	
 /******/ })()

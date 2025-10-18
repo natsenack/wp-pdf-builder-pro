@@ -74,13 +74,13 @@ function pdf_builder_init() {
     }
 
     // Charger le bootstrap
-    $bootstrap_path = plugin_dir_path(__FILE__) . 'bootstrap.php';
+    $bootstrap_path = plugin_dir_path(__FILE__) . 'core/bootstrap.php';
     if (file_exists($bootstrap_path)) {
         require_once $bootstrap_path;
         
         // Démarrer le plugin
-        if (function_exists('pdf_builder_load_bootstrap')) {
-            pdf_builder_load_bootstrap();
+        if (function_exists('pdf_builder_load_core')) {
+            pdf_builder_load_core();
         }
     }
 
@@ -100,11 +100,11 @@ add_action('init', 'pdf_builder_handle_pdf_downloads');
 function pdf_builder_handle_pdf_downloads() {
     if (isset($_GET['pdf_download'])) {
         // Charger le plugin pour gérer le téléchargement
-        $bootstrap_path = plugin_dir_path(__FILE__) . 'bootstrap.php';
+        $bootstrap_path = plugin_dir_path(__FILE__) . 'core/bootstrap.php';
         if (file_exists($bootstrap_path)) {
             require_once $bootstrap_path;
-            if (function_exists('pdf_builder_load_bootstrap')) {
-                pdf_builder_load_bootstrap();
+            if (function_exists('pdf_builder_load_core')) {
+                pdf_builder_load_core();
                 
                 // Traiter le téléchargement
                 if (class_exists('PDF_Builder_Core')) {

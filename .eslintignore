@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Build outputs
+assets/js/dist/
+build/
+dist/
+
+# WordPress core files
+wp-admin/
+wp-includes/
+
+# Logs
+*.log
+logs/
+
+# Cache
+.cache/
+*.cache
+
+# Temporary files
+*.tmp
+*.temp
+
+# Archives
+*.zip
+*.tar.gz
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# PHP files (ESLint is for JS/TS)
+*.php
+
+# WordPress uploads
+uploads/
+pdf-builder-cache/
+pdf-builder-logs/

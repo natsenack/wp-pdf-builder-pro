@@ -50,12 +50,6 @@ function pdf_builder_load_core() {
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'includes/managers/PDF_Builder_Cache_Manager.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'includes/managers/PDF_Builder_Cache_Manager.php';
     }
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'includes/utilities/PDF_Builder_Logger.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'includes/utilities/PDF_Builder_Logger.php';
-    }
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'includes/utilities/PDF_Builder_Debug_Helper.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'includes/utilities/PDF_Builder_Debug_Helper.php';
-    }
 
     // Charger les managers canvas
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'includes/managers/PDF_Builder_Canvas_Elements_Manager.php')) {
@@ -115,7 +109,6 @@ function pdf_builder_load_bootstrap() {
         }
 
         // Enregistrer l'action AJAX dès que possible
-        error_log('PDF Builder Bootstrap: AJAX action registered in bootstrap');
         
         // Enregistrer les actions AJAX pour WooCommerce immédiatement
         add_action('wp_ajax_pdf_builder_generate_order_pdf', 'pdf_builder_ajax_generate_order_pdf_fallback', 1);
@@ -124,7 +117,6 @@ function pdf_builder_load_bootstrap() {
         add_action('wp_ajax_pdf_builder_validate_preview', 'pdf_builder_ajax_validate_preview');
         add_action('wp_ajax_pdf_builder_get_settings', 'pdf_builder_ajax_get_settings_fallback');
         add_action('wp_ajax_pdf_builder_save_settings', 'pdf_builder_ajax_save_settings_fallback');
-        add_action('wp_ajax_pdf_builder_unified_preview', 'pdf_builder_ajax_unified_preview_fallback', 1);
 
         // Initialiser l'interface d'administration
         if (is_admin() && class_exists('PDF_Builder_Admin')) {
@@ -385,7 +377,6 @@ function pdf_builder_init_canvas_defaults() {
  * Fonctions de fallback AJAX pour s'assurer que les actions sont toujours disponibles
  */
 function pdf_builder_ajax_generate_order_pdf_fallback() {
-    error_log('PDF BUILDER - Fallback AJAX handler called for generate_order_pdf');
     
     // Charger le core si nécessaire
     if (!class_exists('PDF_Builder_Core')) {
@@ -403,57 +394,7 @@ function pdf_builder_ajax_generate_order_pdf_fallback() {
     }
 }
 
-function pdf_builder_ajax_unified_preview_fallback() {
-    error_log('PDF BUILDER - Fallback AJAX handler called for unified_preview');
-
-    try {
-        // Charger la classe WooCommerce integration si nécessaire
-        if (!class_exists('PDF_Builder_WooCommerce_Integration')) {
-            $integration_file = plugin_dir_path(__FILE__) . 'includes/classes/managers/class-pdf-builder-woocommerce-integration.php';
-            if (file_exists($integration_file)) {
-                error_log('PDF BUILDER - Fallback: Loading WooCommerce integration file');
-                require_once $integration_file;
-            } else {
-                error_log('PDF BUILDER - Fallback: WooCommerce integration file not found: ' . $integration_file);
-                wp_send_json_error('Fichier d\'intégration WooCommerce non trouvé');
-                return;
-            }
-        }
-
-        if (!class_exists('PDF_Builder_WooCommerce_Integration')) {
-            error_log('PDF BUILDER - Fallback: PDF_Builder_WooCommerce_Integration class not available');
-            wp_send_json_error('Classe d\'intégration WooCommerce non disponible');
-            return;
-        }
-
-        error_log('PDF BUILDER - Fallback: Creating main instance for WooCommerce integration');
-
-        // Créer une instance principale basique pour la fallback
-        $main_instance = new stdClass();
-        $main_instance->version = '1.0.2';
-        $main_instance->plugin_dir = plugin_dir_path(__FILE__);
-
-        error_log('PDF BUILDER - Fallback: Creating WooCommerce integration instance');
-        $integration = new PDF_Builder_WooCommerce_Integration($main_instance);
-
-        if (!method_exists($integration, 'ajax_unified_preview')) {
-            error_log('PDF BUILDER - Fallback: ajax_unified_preview method not found');
-            wp_send_json_error('Méthode ajax_unified_preview non trouvée');
-            return;
-        }
-
-        error_log('PDF BUILDER - Fallback: Calling ajax_unified_preview method');
-        $integration->ajax_unified_preview();
-
-    } catch (Exception $e) {
-        error_log('PDF BUILDER - Fallback: Exception: ' . $e->getMessage());
-        error_log('PDF BUILDER - Fallback: Stack trace: ' . $e->getTraceAsString());
-        wp_send_json_error('Erreur: ' . $e->getMessage());
-    }
-}
-
 function pdf_builder_ajax_save_order_canvas_fallback() {
-    error_log('PDF BUILDER - Fallback AJAX handler called for save_order_canvas');
     
     // Charger le core si nécessaire
     if (!class_exists('PDF_Builder_Core')) {
@@ -509,8 +450,6 @@ function pdf_builder_ajax_validate_preview() {
 
     try {
         // DEBUG: Log complet des données reçues AVANT tout traitement
-        error_log('PDF Builder Validation - RAW $_POST[elements]: ' . print_r($_POST['elements'], true));
-        error_log('PDF Builder Validation - RAW strlen($_POST[elements]): ' . strlen($_POST['elements']));
 
         // Sauvegarder immédiatement les données brutes
         $raw_debug_file = __DIR__ . '/debug_raw_post_elements.txt';
@@ -528,20 +467,13 @@ function pdf_builder_ajax_validate_preview() {
         }
 
         // DEBUG: Log complet des données reçues
-        error_log('PDF Builder Validation - Raw JSON data length: ' . strlen($json_data));
-        error_log('PDF Builder Validation - First 500 chars: ' . substr($json_data, 0, 500));
-        error_log('PDF Builder Validation - Last 500 chars: ' . substr($json_data, -500));
 
         // DEBUG: Vérifier tous les headers et données POST
-        error_log('PDF Builder Validation - All POST data: ' . print_r($_POST, true));
-        error_log('PDF Builder Validation - Content-Type: ' . (isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : 'not set'));
-        error_log('PDF Builder Validation - Request method: ' . $_SERVER['REQUEST_METHOD']);
 
         // Vérifier si les données sont URL-encoded (peuvent arriver ainsi via FormData)
         if (strpos($json_data, '%') !== false) {
             $original_length = strlen($json_data);
             $json_data = urldecode($json_data);
-            error_log('PDF Builder Validation - Data was URL-encoded, original length: ' . $original_length . ', decoded length: ' . strlen($json_data));
         }
 
         // DEBUG: Sauvegarder les données pour analyse détaillée
@@ -563,17 +495,14 @@ function pdf_builder_ajax_validate_preview() {
         // Vérifier les premiers et derniers caractères
         $first_char = substr($json_data_trimmed, 0, 1);
         $last_char = substr($json_data_trimmed, -1);
-        error_log('PDF Builder Validation - First char: ' . $first_char . ', Last char: ' . $last_char);
 
         if ($first_char !== '[') {
-            error_log('PDF Builder Validation - ERROR: JSON does not start with [ - this is not an array!');
             file_put_contents($debug_file, "ERROR: Does not start with [\n", FILE_APPEND);
             wp_send_json_error('JSON data must start with [ (array)');
             return;
         }
 
         if ($last_char !== ']') {
-            error_log('PDF Builder Validation - ERROR: JSON does not end with ]!');
             file_put_contents($debug_file, "ERROR: Does not end with ]\n", FILE_APPEND);
             wp_send_json_error('JSON data must end with ] (array)');
             return;
@@ -586,8 +515,6 @@ function pdf_builder_ajax_validate_preview() {
         if (json_last_error() !== JSON_ERROR_NONE) {
             $error_msg = json_last_error_msg();
             $error_code = json_last_error();
-            error_log('PDF Builder Validation - JSON decode error: ' . $error_msg . ' (code: ' . $error_code . ')');
-            error_log('PDF Builder Validation - JSON data that failed (first 2000 chars): ' . substr($json_data, 0, 2000));
 
             // Sauvegarder les données problématiques pour analyse détaillée
             $failed_file = __DIR__ . '/debug_failed_json.txt';
@@ -604,7 +531,6 @@ function pdf_builder_ajax_validate_preview() {
         }
 
         // DEBUG: Log du succès du décodage
-        error_log('PDF Builder Validation - JSON decoded successfully, elements count: ' . count($elements));
 
         // Validation basique des éléments
         if (!is_array($elements)) {
