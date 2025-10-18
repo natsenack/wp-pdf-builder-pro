@@ -64,8 +64,6 @@ class PDF_Builder_Pro_Generator {
         $element_height = isset($element['size']['height']) ? $element['size']['height'] : (isset($element['height']) ? $element['height'] : 0);
 
         // LOG: Coordonnées extraites
-        error_log("🔍 EXTRACT_COORDS - Element: " . json_encode($element));
-        error_log("🔍 EXTRACT_COORDS - Raw coords: x=$element_x, y=$element_y, w=$element_width, h=$element_height, px_to_mm=$px_to_mm");
 
         $result = [
             'x' => $element_x * $px_to_mm,
@@ -74,7 +72,6 @@ class PDF_Builder_Pro_Generator {
             'height' => $element_height * $px_to_mm
         ];
 
-        error_log("🔍 EXTRACT_COORDS - Final coords: x={$result['x']}, y={$result['y']}, w={$result['width']}, h={$result['height']}");
 
         return $result;
     }
@@ -90,8 +87,6 @@ class PDF_Builder_Pro_Generator {
      * Generateur principal - Interface unifiee
      */
     public function generate($elements, $options = []) {
-        error_log('�🚨🚨🚨🚨🚨🚨🚨🚨🚨 GENERATE CALLED WITH ' . count($elements) . ' ELEMENTS 🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨');
-        error_log('�🟡 PDF BUILDER - generate: START - ' . count($elements) . ' elements');
 
         // Configurer le mode aperçu si demandé
         if (isset($options['is_preview']) && $options['is_preview']) {
@@ -99,37 +94,22 @@ class PDF_Builder_Pro_Generator {
         }
 
         try {
-            error_log('🟡 PDF BUILDER - generate: Calling reset()');
             $this->reset();
-            error_log('✅ PDF BUILDER - generate: reset() completed');
 
-            error_log('🟡 PDF BUILDER - generate: Calling validate_elements()');
             $this->validate_elements($elements);
-            error_log('✅ PDF BUILDER - generate: validate_elements() completed');
 
-            error_log('🟡 PDF BUILDER - generate: Calling initialize_tcpdf()');
             $this->initialize_tcpdf();
-            error_log('✅ PDF BUILDER - generate: initialize_tcpdf() completed');
 
-            error_log('🟡 PDF BUILDER - generate: Calling configure_pdf()');
             $this->configure_pdf($options);
-            error_log('✅ PDF BUILDER - generate: configure_pdf() completed');
 
-            error_log('🟡 PDF BUILDER - generate: Calling render_elements()');
             $this->render_elements($elements);
-            error_log('✅ PDF BUILDER - generate: render_elements() completed');
 
-            error_log('🟡 PDF BUILDER - generate: Calling finalize_pdf()');
             $pdf_content = $this->finalize_pdf();
-            error_log('✅ PDF BUILDER - generate: finalize_pdf() completed');
 
-            error_log('🟡 PDF BUILDER - generate: SUCCESS - PDF generated, size: ' . strlen($pdf_content) . ' bytes');
 
             return $pdf_content;
 
         } catch (Exception $e) {
-            error_log('❌ PDF BUILDER - generate: EXCEPTION - ' . $e->getMessage());
-            error_log('❌ PDF BUILDER - generate: STACK TRACE - ' . $e->getTraceAsString());
             $this->log_error('Generation PDF echouee: ' . $e->getMessage());
             return $this->generate_fallback_pdf($elements);
         }
@@ -312,26 +292,20 @@ class PDF_Builder_Pro_Generator {
      * Rendu des elements optimise
      */
     private function render_elements($elements) {
-        error_log("🚨🚨🚨 RENDER_ELEMENTS CALLED WITH " . count($elements) . " ELEMENTS 🚨🚨🚨");
 
-        error_log("[DEBUG] RENDER_ELEMENTS: Called with " . count($elements) . " elements");
 
         // Vérifier si un élément product_table existe déjà
         $has_product_table = false;
         foreach ($elements as $element) {
             if (isset($element['type']) && $element['type'] === 'product_table') {
                 $has_product_table = true;
-                error_log("[DEBUG] AUTO_INJECT: Template already has product_table element - no injection needed");
                 break;
             }
         }
 
-        error_log("[DEBUG] AUTO_INJECT: has_product_table = " . ($has_product_table ? 'true' : 'false'));
-        error_log("[DEBUG] AUTO_INJECT: Checking " . count($elements) . " elements for product_table");
 
         // Si aucun élément product_table n'existe, en ajouter un par défaut
         if (!$has_product_table) {
-            error_log("[DEBUG] AUTO_INJECT: Template has " . count($elements) . " elements, no product_table found - injecting default one");
 
             $default_product_table = [
                 'id' => 'auto_product_table_' . time(),
@@ -367,11 +341,8 @@ class PDF_Builder_Pro_Generator {
             ];
 
             $elements[] = $default_product_table;
-            error_log("[DEBUG] AUTO_INJECT: Default product_table injected, new total elements: " . count($elements));
-            error_log("[DEBUG] AUTO_INJECT: Injected element: " . json_encode($default_product_table));
         }
 
-        error_log("🔄 RENDER_ELEMENTS: About to process " . count($elements) . " elements after injection");
 
         // Calcul précis du facteur de conversion basé sur les dimensions réelles
         // Canvas: 595×842 px | A4: 210×297 mm
@@ -392,7 +363,6 @@ class PDF_Builder_Pro_Generator {
                 $element_type = isset($element['type']) ? $element['type'] : 'unknown';
                 $element_id = isset($element['id']) ? $element['id'] : 'no-id';
 
-                error_log("🔄 RENDER_ELEMENTS: Processing element ID=$element_id, TYPE=$element_type");
 
                 $this->render_single_element($element, $px_to_mm);
 
@@ -413,7 +383,6 @@ class PDF_Builder_Pro_Generator {
         $type = isset($element['type']) ? $element['type'] : 'unknown';
 
         // LOG: Début rendu élément
-        error_log("🎨 RENDER_ELEMENT - START: type=$type, px_to_mm=$px_to_mm");
 
         // Calcul des coordonnées PDF avec support des deux formats
         $coords = $this->extract_element_coordinates($element, $px_to_mm);
@@ -423,7 +392,6 @@ class PDF_Builder_Pro_Generator {
         $pdf_height = $coords['height'];
 
         // LOG: Coordonnées calculées
-        error_log("🎨 RENDER_ELEMENT - COORDS: x=$pdf_x, y=$pdf_y, w=$pdf_width, h=$pdf_height");
 
         // Validation de base de l'élément
         if (!$this->validate_element($element)) {
@@ -434,7 +402,6 @@ class PDF_Builder_Pro_Generator {
         try {
             switch ($type) {
                 case 'text':
-                    error_log("🎨 RENDER_ELEMENT - Calling render_text_element");
                     $this->render_text_element($element, $px_to_mm);
                     break;
                 case 'multiline_text':
@@ -509,12 +476,10 @@ class PDF_Builder_Pro_Generator {
     private function render_text_element($element, $px_to_mm) {
         try {
             // LOG: Début rendu texte
-            error_log("📝 RENDER_TEXT - START: " . json_encode($element));
 
             // Extraction des propriétés avec valeurs par défaut sûres
             $text = $element['content'] ?? $element['text'] ?? '';
             if (empty($text)) {
-                error_log("📝 RENDER_TEXT - SKIP: empty text");
                 return; // Ne rien rendre si pas de texte
             }
 
@@ -526,7 +491,6 @@ class PDF_Builder_Pro_Generator {
             $height = $coords['height'];
 
             // LOG: Coordonnées texte
-            error_log("📝 RENDER_TEXT - COORDS: x=$x, y=$y, w=$width, h=$height");
 
             // Conversion correcte de la taille de police (px vers pt)
             // 1px = 0.75pt en CSS, mais pour PDF on utilise directement la valeur px comme pt
@@ -544,7 +508,6 @@ class PDF_Builder_Pro_Generator {
             $color = $this->parse_color($element['color'] ?? '#000000');
 
             // LOG: Propriétés police
-            error_log("📝 RENDER_TEXT - FONT: family=$font_family, style=$font_style, size=$font_size_pt, color=" . json_encode($color));
 
             // Configuration de la police
             $this->pdf->SetFont($font_family, $font_style, $font_size_pt);
@@ -648,7 +611,6 @@ class PDF_Builder_Pro_Generator {
      */
     private function render_rectangle_element($element, $px_to_mm) {
         // LOG: Début rendu rectangle
-        error_log("▭ RENDER_RECTANGLE - START: " . json_encode($element));
 
         // Utiliser extract_element_coordinates pour cohérence avec l'éditeur
         $coords = $this->extract_element_coordinates($element, $px_to_mm);
@@ -658,7 +620,6 @@ class PDF_Builder_Pro_Generator {
         $height = $coords['height'];
 
         // LOG: Coordonnées rectangle
-        error_log("▭ RENDER_RECTANGLE - COORDS: x=$x, y=$y, w=$width, h=$height");
 
         // Style de remplissage - utiliser fillColor comme dans l'éditeur
         $background_color = $element['fillColor'] ?? $element['backgroundColor'] ?? null;
@@ -666,10 +627,8 @@ class PDF_Builder_Pro_Generator {
             $bg_color = $this->parse_color($background_color);
             $this->pdf->SetFillColor($bg_color['r'], $bg_color['g'], $bg_color['b']);
             $fill = true;
-            error_log("▭ RENDER_RECTANGLE - FILL: color=$background_color (RGB: {$bg_color['r']},{$bg_color['g']},{$bg_color['b']})");
         } else {
             $fill = false;
-            error_log("▭ RENDER_RECTANGLE - FILL: none");
         }
 
         // Bordure
@@ -679,19 +638,15 @@ class PDF_Builder_Pro_Generator {
         if (!empty($element['borderColor']) && $element['borderColor'] !== 'transparent') {
             $border_color = $this->parse_color($element['borderColor']);
             $this->pdf->SetDrawColor($border_color['r'], $border_color['g'], $border_color['b']);
-            error_log("▭ RENDER_RECTANGLE - BORDER: color={$element['borderColor']} (RGB: {$border_color['r']},{$border_color['g']},{$border_color['b']})");
         } else {
-            error_log("▭ RENDER_RECTANGLE - BORDER: none");
         }
 
         // Epaisseur de bordure
         $border_width = ($element['borderWidth'] ?? 1) * $px_to_mm;
         $this->pdf->SetLineWidth($border_width);
-        error_log("▭ RENDER_RECTANGLE - BORDER_WIDTH: {$border_width}mm (from " . ($element['borderWidth'] ?? 1) . "px)");
 
         // Dessin du rectangle
         $this->pdf->Rect($x, $y, $width, $height, 'DF', [], $fill ? [] : null);
-        error_log("▭ RENDER_RECTANGLE - DRAWN: Rect($x, $y, $width, $height, 'DF', [], " . ($fill ? 'filled' : 'outline') . ")");
     }
 
     /**
@@ -699,7 +654,6 @@ class PDF_Builder_Pro_Generator {
      */
     private function render_circle_element($element, $px_to_mm) {
         // LOG: Début rendu cercle
-        error_log("⭕ RENDER_CIRCLE - START: " . json_encode($element));
 
         // Utiliser extract_element_coordinates pour cohérence avec l'éditeur
         $coords = $this->extract_element_coordinates($element, $px_to_mm);
@@ -714,7 +668,6 @@ class PDF_Builder_Pro_Generator {
         $radius = min($width, $height) / 2;
 
         // LOG: Géométrie cercle
-        error_log("⭕ RENDER_CIRCLE - GEOMETRY: center=($center_x,$center_y), radius=$radius (from w=$width,h=$height)");
 
         // Style de remplissage - utiliser fillColor comme dans l'éditeur
         $background_color = $element['fillColor'] ?? $element['backgroundColor'] ?? null;
@@ -722,28 +675,22 @@ class PDF_Builder_Pro_Generator {
             $bg_color = $this->parse_color($background_color);
             $this->pdf->SetFillColor($bg_color['r'], $bg_color['g'], $bg_color['b']);
             $fill = true;
-            error_log("⭕ RENDER_CIRCLE - FILL: color=$background_color (RGB: {$bg_color['r']},{$bg_color['g']},{$bg_color['b']})");
         } else {
             $fill = false;
-            error_log("⭕ RENDER_CIRCLE - FILL: none");
         }
 
         // Bordure
         $border_width = ($element['borderWidth'] ?? 1) * $px_to_mm;
         $this->pdf->SetLineWidth($border_width);
-        error_log("⭕ RENDER_CIRCLE - BORDER_WIDTH: {$border_width}mm (from " . ($element['borderWidth'] ?? 1) . "px)");
 
         if (!empty($element['borderColor']) && $element['borderColor'] !== 'transparent') {
             $border_color = $this->parse_color($element['borderColor']);
             $this->pdf->SetDrawColor($border_color['r'], $border_color['g'], $border_color['b']);
-            error_log("⭕ RENDER_CIRCLE - BORDER: color={$element['borderColor']} (RGB: {$border_color['r']},{$border_color['g']},{$border_color['b']})");
         } else {
-            error_log("⭕ RENDER_CIRCLE - BORDER: none");
         }
 
         // Dessin du cercle
         $this->pdf->Circle($center_x, $center_y, $radius, 0, 360, 'DF', [], $fill ? [] : null);
-        error_log("⭕ RENDER_CIRCLE - DRAWN: Circle($center_x, $center_y, $radius, 0, 360, 'DF', [], " . ($fill ? 'filled' : 'outline') . ")");
     }
 
     /**
@@ -751,10 +698,8 @@ class PDF_Builder_Pro_Generator {
      */
     private function render_order_number_element($element, $px_to_mm) {
         // LOG: Début rendu numéro de commande
-        error_log("🔢 RENDER_ORDER_NUMBER - START: " . json_encode($element));
 
         if (!$this->order) {
-            error_log("🔢 RENDER_ORDER_NUMBER - SKIP: no order data");
             return;
         }
 
@@ -766,7 +711,6 @@ class PDF_Builder_Pro_Generator {
         $height = $coords['height'];
 
         // LOG: Coordonnées
-        error_log("🔢 RENDER_ORDER_NUMBER - COORDS: x=$x, y=$y, w=$width, h=$height");
 
         // Format du numéro de commande
         $format = $element['format'] ?? 'Commande #{order_number}';
@@ -774,7 +718,6 @@ class PDF_Builder_Pro_Generator {
         $text = str_replace('{order_number}', $order_number, $format);
 
         // LOG: Contenu généré
-        error_log("🔢 RENDER_ORDER_NUMBER - CONTENT: format='$format', order_number='$order_number', text='$text'");
 
         // Propriétés de style
         $font_size = ($element['fontSize'] ?? 14) * 0.75; // Conversion px vers pt
@@ -784,7 +727,6 @@ class PDF_Builder_Pro_Generator {
         $text_align = $element['textAlign'] ?? 'left';
 
         // LOG: Styles
-        error_log("🔢 RENDER_ORDER_NUMBER - STYLE: font=$font_family, size={$font_size}pt, color={$element['color']}, align=$text_align");
 
         // Configuration de la police
         $this->pdf->SetFont($font_family, $font_style, $font_size);
@@ -794,7 +736,6 @@ class PDF_Builder_Pro_Generator {
         $this->pdf->SetXY($x, $y);
         $this->pdf->Cell($width, $height, $text, 0, 0, strtoupper(substr($text_align, 0, 1)));
 
-        error_log("🔢 RENDER_ORDER_NUMBER - RENDERED: Cell($x, $y, $width, $height, '$text', 0, 0, '" . strtoupper(substr($text_align, 0, 1)) . "')");
     }
 
     /**
@@ -802,7 +743,6 @@ class PDF_Builder_Pro_Generator {
      */
     private function render_document_type_element($element, $px_to_mm) {
         // LOG: Début rendu type de document
-        error_log("📄 RENDER_DOCUMENT_TYPE - START: " . json_encode($element));
 
         // Utiliser extract_element_coordinates pour cohérence avec l'éditeur
         $coords = $this->extract_element_coordinates($element, $px_to_mm);
@@ -812,14 +752,12 @@ class PDF_Builder_Pro_Generator {
         $height = $coords['height'];
 
         // LOG: Coordonnées
-        error_log("📄 RENDER_DOCUMENT_TYPE - COORDS: x=$x, y=$y, w=$width, h=$height");
 
         // Type de document
         $doc_type = $element['documentType'] ?? 'invoice';
         $text = $doc_type === 'invoice' ? 'FACTURE' : 'DEVIS';
 
         // LOG: Contenu
-        error_log("📄 RENDER_DOCUMENT_TYPE - CONTENT: documentType='$doc_type', text='$text'");
 
         // Propriétés de style
         $font_size = ($element['fontSize'] ?? 18) * 0.75; // Conversion px vers pt
@@ -829,7 +767,6 @@ class PDF_Builder_Pro_Generator {
         $text_align = $element['textAlign'] ?? 'center';
 
         // LOG: Styles
-        error_log("📄 RENDER_DOCUMENT_TYPE - STYLE: font=$font_family, size={$font_size}pt, color={$element['color']}, align=$text_align");
 
         // Configuration de la police
         $this->pdf->SetFont($font_family, $font_style, $font_size);
@@ -839,7 +776,6 @@ class PDF_Builder_Pro_Generator {
         $this->pdf->SetXY($x, $y);
         $this->pdf->Cell($width, $height, $text, 0, 0, strtoupper(substr($text_align, 0, 1)));
 
-        error_log("📄 RENDER_DOCUMENT_TYPE - RENDERED: Cell($x, $y, $width, $height, '$text', 0, 0, '" . strtoupper(substr($text_align, 0, 1)) . "')");
     }
 
     /**
@@ -857,7 +793,6 @@ class PDF_Builder_Pro_Generator {
         $height = $coords['height'];
 
         // LOG: Ligne avec largeur pleine
-        error_log("📏 RENDER_LINE - FULL WIDTH: x=$x, y=$y, w=$width, h=$height");
 
         // Couleur de ligne (utilise lineColor ou strokeColor ou color)
         $color = $this->parse_color($element['lineColor'] ?? $element['strokeColor'] ?? $element['color'] ?? '#000000');
@@ -871,7 +806,6 @@ class PDF_Builder_Pro_Generator {
         $line_y = $y + ($height / 2);
         $this->pdf->Line($x, $line_y, $x + $width, $line_y);
 
-        error_log("📏 RENDER_LINE - DRAWN: from ($x, $line_y) to (" . ($x + $width) . ", $line_y) with width $line_width");
     }
 
     /**
@@ -880,12 +814,10 @@ class PDF_Builder_Pro_Generator {
     private function render_image_element($element, $px_to_mm) {
         $src = $element['src'] ?? $element['imageUrl'] ?? $element['url'] ?? '';
         if (empty($src)) {
-            error_log("🖼️ RENDER_IMAGE - SKIP: empty src for element " . json_encode($element));
             return;
         }
 
         // LOG: Début rendu image
-        error_log("🖼️ RENDER_IMAGE - START: src=$src, element=" . json_encode($element));
 
         // Utiliser extract_element_coordinates pour cohérence avec l'éditeur
         $coords = $this->extract_element_coordinates($element, $px_to_mm);
@@ -895,18 +827,14 @@ class PDF_Builder_Pro_Generator {
         $height = $coords['height'];
 
         // LOG: Coordonnées image
-        error_log("🖼️ RENDER_IMAGE - COORDS: x=$x, y=$y, w=$width, h=$height");
 
         try {
             // Vérifier si l'image existe
             if (!file_exists($src) && !filter_var($src, FILTER_VALIDATE_URL)) {
-                error_log("🖼️ RENDER_IMAGE - WARNING: file not found or invalid URL: $src");
             }
 
             $this->pdf->Image($src, $x, $y, $width, $height);
-            error_log("🖼️ RENDER_IMAGE - SUCCESS: Image($src, $x, $y, $width, $height)");
         } catch (Exception $e) {
-            error_log("🖼️ RENDER_IMAGE - ERROR: " . $e->getMessage());
             $this->log_error("Erreur chargement image $src: " . $e->getMessage());
         }
     }
@@ -951,9 +879,7 @@ class PDF_Builder_Pro_Generator {
     }
 
     private function should_render_background($background_color) {
-        error_log('PDF TABLE BG: should_render_background called with: ' . $background_color);
         if (empty($background_color) || $background_color === 'transparent') {
-            error_log('PDF TABLE BG: returning false - empty or transparent');
             return false;
         }
 
@@ -961,7 +887,6 @@ class PDF_Builder_Pro_Generator {
         $default_colors = ['#d1d5db', '#ffffff', '#f9fafb', '#f3f4f6'];
 
         $result = !in_array(strtolower($background_color), $default_colors);
-        error_log('PDF TABLE BG: should_render_background result: ' . ($result ? 'true' : 'false'));
         return $result;
     }
 
@@ -1112,7 +1037,6 @@ class PDF_Builder_Pro_Generator {
      */
     private function log_error($message) {
         $this->errors[] = $message;
-        error_log('PDF Builder Pro: ' . $message);
     }
 
     /**
@@ -1306,7 +1230,6 @@ class PDF_Builder_Pro_Generator {
      */
     private function render_mentions_element($element, $px_to_mm) {
         // LOG: Début rendu mentions
-        error_log("📝 RENDER_MENTIONS - START: " . json_encode($element));
 
         $x = isset($element['x']) ? $element['x'] * $px_to_mm : 10;
         $y = isset($element['y']) ? $element['y'] * $px_to_mm : 10;
@@ -1314,7 +1237,6 @@ class PDF_Builder_Pro_Generator {
         $height = isset($element['height']) ? $element['height'] * $px_to_mm : 15;
 
         // LOG: Coordonnées
-        error_log("📝 RENDER_MENTIONS - COORDS: x=$x, y=$y, w=$width, h=$height");
 
         // Récupérer les propriétés de l'élément
         $color = isset($element['color']) ? $element['color'] : '#666666';
@@ -1325,7 +1247,6 @@ class PDF_Builder_Pro_Generator {
         $separator = isset($element['separator']) ? $element['separator'] : ' • ';
 
         // LOG: Propriétés de style
-        error_log("📝 RENDER_MENTIONS - STYLE: color=$color, fontSize={$fontSize}px, fontFamily=$fontFamily, align=$textAlign, layout=$layout, separator='$separator'");
         $lineHeight = isset($element['lineHeight']) ? $element['lineHeight'] : 1.2;
 
         // Appliquer la couleur du texte
@@ -1382,11 +1303,9 @@ class PDF_Builder_Pro_Generator {
         // Rendre le contenu
         if (!empty($mentions)) {
             // LOG: Mentions collectées
-            error_log("📝 RENDER_MENTIONS - MENTIONS: " . json_encode($mentions));
 
             if ($layout === 'vertical') {
                 // LOG: Rendu vertical
-                error_log("📝 RENDER_MENTIONS - RENDER: vertical layout, " . count($mentions) . " items");
 
                 // Affichage vertical
                 $currentY = $y;
@@ -1400,13 +1319,11 @@ class PDF_Builder_Pro_Generator {
                 $content = implode($separator, $mentions);
 
                 // LOG: Rendu horizontal
-                error_log("📝 RENDER_MENTIONS - RENDER: horizontal layout, content='$content'");
 
                 $this->pdf->MultiCell($width, $fontSize * $lineHeight * $px_to_mm, $content, 0, $textAlign === 'center' ? 'C' : ($textAlign === 'right' ? 'R' : 'L'), false);
             }
         } else {
             // LOG: Aucun contenu
-            error_log("📝 RENDER_MENTIONS - RENDER: no mentions configured, using default");
 
             // Contenu par défaut si rien n'est configuré
             $this->pdf->Cell($width, $fontSize * $lineHeight * $px_to_mm, 'Mentions légales', 0, 0, 'C');
@@ -1821,7 +1738,6 @@ class PDF_Builder_Pro_Generator {
      * Rendu d'élément product_table
      */
     private function render_product_table_element($element, $px_to_mm) {
-        error_log('PDF Builder: render_product_table_element called with tableStyle: ' . ($element['tableStyle'] ?? 'default'));
 
         try {
             // Extraction des propriétés avec valeurs par défaut sûres
@@ -1835,8 +1751,6 @@ class PDF_Builder_Pro_Generator {
             $background_color = $element['backgroundColor'] ?? 'transparent';
             $border_width = ($element['borderWidth'] ?? 1) * $px_to_mm;
             $border_color = $element['borderColor'] ?? 'transparent';
-            error_log('PDF TABLE BG: element backgroundColor = ' . ($element['backgroundColor'] ?? 'NOT SET'));
-            error_log('PDF TABLE BG: resolved background_color = ' . $background_color);
 
             // Propriétés spécifiques au tableau
             $show_headers = $element['showHeaders'] ?? true;
@@ -1850,7 +1764,6 @@ class PDF_Builder_Pro_Generator {
             } elseif (isset($element['header']) && is_array($element['header'])) {
                 // Correction: si 'header' au singulier est utilisé au lieu de 'headers'
                 $headers = $element['header'];
-                error_log('⚠️ PDF BUILDER - render_product_table_element: Utilisation de \'header\' au lieu de \'headers\' détectée, correction automatique');
             } else {
                 $headers = ['Produit', 'Qté', 'Prix'];
             }
@@ -1887,11 +1800,9 @@ class PDF_Builder_Pro_Generator {
             // Fond du tableau si défini (utiliser la hauteur calculée du tableau)
             if ($this->should_render_background($background_color)) {
                 $bg_color = $this->parse_color($background_color);
-                error_log('PDF TABLE BG: Applying background color ' . $background_color . ' -> RGB(' . $bg_color['r'] . ',' . $bg_color['g'] . ',' . $bg_color['b'] . ')');
                 $this->pdf->SetFillColor($bg_color['r'], $bg_color['g'], $bg_color['b']);
                 $this->pdf->Rect($x, $y, $width, $table_height, 'F');
             } else {
-                error_log('PDF TABLE BG: NOT applying background (should_render_background returned false)');
             }
 
             // Bordure du tableau selon le style choisi
@@ -1992,7 +1903,6 @@ class PDF_Builder_Pro_Generator {
 
             if (isset($this->order) && $this->order) {
                 // LOG: Utilisation des vraies données de commande
-                error_log("📊 RENDER_PRODUCT_TABLE - USING REAL ORDER DATA");
                 // Rendre les vrais produits de la commande
                 $current_y = $this->render_order_products_with_fees_pdf($x, $current_y, $col_widths, $columns, $show_borders, $element);
             } else {
@@ -2902,17 +2812,13 @@ class PDF_Builder_Pro_Generator {
      * Génération d'aperçu PDF simplifié (alternative au système canvas)
      */
     public function generate_simple_preview($order_id, $template_id = null) {
-        error_log('🟡 PDF BUILDER - generate_simple_preview: START - order_id=' . $order_id . ', template_id=' . ($template_id ?: 'null'));
 
         try {
             // Récupérer la commande WooCommerce
-            error_log('🟡 PDF BUILDER - generate_simple_preview: Getting WooCommerce order...');
             $this->order = wc_get_order($order_id);
             if (!$this->order) {
-                error_log('❌ PDF BUILDER - generate_simple_preview: Order not found: ' . $order_id);
                 throw new Exception('Commande non trouvée');
             }
-            error_log('✅ PDF BUILDER - generate_simple_preview: Order found: ' . $this->order->get_id());
 
             // Si un template_id est fourni, récupérer les données du template
             if ($template_id) {
@@ -2925,34 +2831,25 @@ class PDF_Builder_Pro_Generator {
                 );
 
                 if (!$template) {
-                    error_log('❌ PDF BUILDER - generate_simple_preview: Template not found with ID: ' . $template_id);
                     throw new Exception('Template non trouvé');
                 }
 
-                error_log('✅ PDF BUILDER - generate_simple_preview: Template found: ' . $template['name']);
 
                 // Décoder les données JSON du template
                 $template_data = json_decode($template['template_data'], true);
                 if (json_last_error() !== JSON_ERROR_NONE) {
-                    error_log('❌ PDF BUILDER - generate_simple_preview: Invalid JSON in template data: ' . json_last_error_msg());
                     throw new Exception('Données du template invalides');
                 }
 
-                error_log('✅ PDF BUILDER - generate_simple_preview: Template data decoded successfully. Elements count: ' . (isset($template_data['elements']) ? count($template_data['elements']) : 'none'));
 
                 // Générer le PDF avec les données du template
                 $elements = isset($template_data['elements']) ? $template_data['elements'] : [];
-                error_log('🟡 PDF BUILDER - generate_simple_preview: Calling generate() with ' . count($elements) . ' elements');
-                error_log('🟡 PDF BUILDER - generate_simple_preview: First element: ' . json_encode($elements[0] ?? 'no elements'));
 
                 $pdf_content = $this->generate($elements, ['title' => 'Aperçu Facture - Commande #' . $order_id]);
-                error_log('🔍 [DEBUG] generate() returned content of length: ' . strlen($pdf_content ?? 'null'));
 
-                error_log('✅ PDF BUILDER - generate_simple_preview: PDF generated with template, content size: ' . strlen($pdf_content) . ' bytes');
 
                 // Vérifier que nous avons du contenu PDF valide
                 if (empty($pdf_content) || strlen($pdf_content) < 100) {
-                    error_log('❌ PDF BUILDER - generate_simple_preview: PDF content too small or empty');
                     throw new Exception('Contenu PDF invalide généré');
                 }
 
@@ -2965,32 +2862,24 @@ class PDF_Builder_Pro_Generator {
                 $filepath = $cache_dir . '/' . $filename;
 
                 // Sauvegarder le fichier
-                error_log('🟡 PDF BUILDER - generate_simple_preview: Saving template-based PDF to: ' . $filepath);
                 if (file_put_contents($filepath, $pdf_content) !== false) {
-                    error_log('✅ PDF BUILDER - Template-based PDF saved successfully');
 
                     // Essayer plusieurs méthodes pour définir les permissions du fichier
                     if (function_exists('wp_chmod')) {
                         wp_chmod($filepath, 0644);
-                        error_log('✅ PDF BUILDER - Used wp_chmod for template file');
                     } elseif (chmod($filepath, 0644)) {
-                        error_log('✅ PDF BUILDER - Used chmod() for template file');
                     } else {
-                        error_log('❌ PDF BUILDER - Failed to set template file permissions');
                     }
                 } else {
-                    error_log('❌ PDF BUILDER - Failed to save template-based PDF');
                     throw new Exception('Impossible de sauvegarder le PDF');
                 }
 
                 // Retourner l'URL d'accès
                 $url = $upload_dir['baseurl'] . '/' . $filename;
-                error_log('✅ PDF BUILDER - generate_simple_preview: Template-based SUCCESS - URL: ' . $url);
                 return $url;
 
             } else {
                 // Générer le contenu simplifié (fallback)
-                error_log('🟡 PDF BUILDER - generate_simple_preview: No template provided, using simple content');
 
                 // Initialiser TCPDF pour le contenu simple
                 $this->initialize_tcpdf();
@@ -3002,7 +2891,6 @@ class PDF_Builder_Pro_Generator {
                 $this->pdf->SetSubject('Aperçu de facture PDF');
 
                 // Ajouter une page
-                error_log('🟡 PDF BUILDER - generate_simple_preview: Adding page');
                 $this->pdf->AddPage();
 
                 // Marges
@@ -3010,11 +2898,9 @@ class PDF_Builder_Pro_Generator {
                 $this->pdf->SetAutoPageBreak(true, 15);
 
                 // Générer le contenu simplifié
-                error_log('🟡 PDF BUILDER - generate_simple_preview: Generating simple content');
                 $this->generate_simple_pdf_content();
 
                 // Générer le PDF
-                error_log('🟡 PDF BUILDER - generate_simple_preview: Generating PDF content');
                 $pdf_content = $this->pdf->Output('', 'S');
 
                 // Utiliser le répertoire uploads standard au lieu d'un sous-répertoire
@@ -3026,36 +2912,26 @@ class PDF_Builder_Pro_Generator {
                 $filepath = $cache_dir . '/' . $filename;
 
                 // Sauvegarder le fichier
-                error_log('🟡 PDF BUILDER - generate_simple_preview: Saving file to: ' . $filepath);
                 if (file_put_contents($filepath, $pdf_content) !== false) {
-                    error_log('✅ PDF BUILDER - File saved successfully');
 
                     // Essayer plusieurs méthodes pour définir les permissions du fichier
                     if (function_exists('wp_chmod')) {
                         wp_chmod($filepath, 0644);
-                        error_log('✅ PDF BUILDER - Used wp_chmod for file');
                     } elseif (chmod($filepath, 0644)) {
-                        error_log('✅ PDF BUILDER - Used chmod() for file');
                     } else {
-                        error_log('❌ PDF BUILDER - Failed to set file permissions');
                     }
                 } else {
-                    error_log('❌ PDF BUILDER - Failed to save file');
                 }
 
                 // Vérifier les permissions actuelles
                 $file_perms = substr(sprintf('%o', fileperms($filepath)), -4);
-                error_log('🔍 PDF BUILDER - File permissions: ' . $file_perms);
 
                 // Retourner l'URL d'accès
                 $url = $upload_dir['baseurl'] . '/' . $filename;
-                error_log('✅ PDF BUILDER - generate_simple_preview: SUCCESS - URL: ' . $url);
                 return $url;
             }
 
         } catch (Exception $e) {
-            error_log('❌ PDF BUILDER - generate_simple_preview: Exception: ' . $e->getMessage());
-            error_log('❌ PDF BUILDER - generate_simple_preview: Stack trace: ' . $e->getTraceAsString());
             return new WP_Error('pdf_generation_error', 'Erreur lors de la génération du PDF: ' . $e->getMessage());
         }
     }
