@@ -563,8 +563,32 @@ class PDF_Builder_Pro_Generator {
             // Remplacement des variables dans le texte
             $processed_text = $this->replace_variables_in_text($text);
 
+            // Appliquer les effets (log les non-supportées)
+            $this->apply_element_effects($element);
+
+            // Appliquer textDecoration (underline)
+            $textDecoration = $this->get_text_decoration_style($element);
+            $fontStyle = $this->get_font_style($element);
+            if ($textDecoration['underline']) {
+                $fontStyle .= 'U';
+                $this->pdf->SetFont($this->map_font_family($element['fontFamily'] ?? 'Arial'), $fontStyle, $font_size_pt);
+            }
+
+            // Calculer la hauteur de ligne
+            $lineHeight = $this->calculate_line_height($font_size_pt, $element);
+            $cellHeight = $lineHeight * $px_to_mm;
+
             // Rendu du texte
-            $this->pdf->Cell($adjusted_width, $adjusted_height, $processed_text, $border, 0, $align, $fill);
+            $this->pdf->Cell($adjusted_width, $cellHeight, $processed_text, $border, 0, $align, $fill);
+
+            // Tracer line-through si nécessaire
+            if ($textDecoration['line_through']) {
+                $textWidth = $this->pdf->GetStringWidth($processed_text);
+                $lineY = $final_y + ($cellHeight / 2);
+                $color = $this->parse_color($element['color'] ?? '#000000');
+                $this->pdf->SetDrawColor($color['r'], $color['g'], $color['b']);
+                $this->pdf->Line($final_x, $lineY, $final_x + $textWidth, $lineY);
+            }
 
         } catch (Exception $e) {
             $this->log_error("Erreur rendu texte: " . $e->getMessage());
@@ -634,6 +658,23 @@ class PDF_Builder_Pro_Generator {
         $width = $coords['width'];
         $height = $coords['height'];
 
+        // Tracer l'ombre en premier (elle sera en dessous)
+        $this->draw_element_shadow($element, $px_to_mm, $x, $y, $width, $height);
+
+        // Appliquer scale
+        $scaled = $this->apply_scale_to_dimensions($width, $height, $element);
+        $width = $scaled['width'];
+        $height = $scaled['height'];
+
+        // Centrer le rectangle si scale a changé les dimensions
+        $scale = floatval($element['scale'] ?? 100) / 100;
+        if ($scale !== 1) {
+            $scaleDiffX = ($coords['width'] - $width) / 2;
+            $scaleDiffY = ($coords['height'] - $height) / 2;
+            $x += $scaleDiffX;
+            $y += $scaleDiffY;
+        }
+
         // LOG: Coordonnées rectangle
 
         // Style de remplissage - utiliser fillColor comme dans l'éditeur
@@ -656,12 +697,18 @@ class PDF_Builder_Pro_Generator {
         } else {
         }
 
+        // Appliquer le style de bordure (dashed, dotted)
+        $this->apply_border_style($element);
+
         // Epaisseur de bordure
         $border_width = ($element['borderWidth'] ?? 1) * $px_to_mm;
         $this->pdf->SetLineWidth($border_width);
 
         // Dessin du rectangle
         $this->pdf->Rect($x, $y, $width, $height, 'DF', [], $fill ? [] : null);
+
+        // Réinitialiser le style de bordure
+        $this->pdf->SetDash(0, 0);
     }
 
     /**
@@ -676,6 +723,23 @@ class PDF_Builder_Pro_Generator {
         $y = $coords['y'];
         $width = $coords['width'];
         $height = $coords['height'];
+
+        // Tracer l'ombre en premier
+        $this->draw_element_shadow($element, $px_to_mm, $x, $y, $width, $height);
+
+        // Appliquer scale
+        $scaled = $this->apply_scale_to_dimensions($width, $height, $element);
+        $width = $scaled['width'];
+        $height = $scaled['height'];
+
+        // Centrer le cercle si scale a changé
+        $scale = floatval($element['scale'] ?? 100) / 100;
+        if ($scale !== 1) {
+            $scaleDiffX = ($coords['width'] - $width) / 2;
+            $scaleDiffY = ($coords['height'] - $height) / 2;
+            $x += $scaleDiffX;
+            $y += $scaleDiffY;
+        }
 
         // Centre et rayon
         $center_x = $x + ($width / 2);
@@ -694,6 +758,9 @@ class PDF_Builder_Pro_Generator {
             $fill = false;
         }
 
+        // Appliquer le style de bordure
+        $this->apply_border_style($element);
+
         // Bordure
         $border_width = ($element['borderWidth'] ?? 1) * $px_to_mm;
         $this->pdf->SetLineWidth($border_width);
@@ -706,6 +773,9 @@ class PDF_Builder_Pro_Generator {
 
         // Dessin du cercle
         $this->pdf->Circle($center_x, $center_y, $radius, 0, 360, 'DF', [], $fill ? [] : null);
+
+        // Réinitialiser le style de bordure
+        $this->pdf->SetDash(0, 0);
     }
 
     /**
@@ -916,6 +986,95 @@ class PDF_Builder_Pro_Generator {
             case 'right': return 'R';
             default: return 'L';
         }
+    }
+
+    /**
+     * Appliquer les effets visuels à un élément
+     */
+    private function apply_element_effects($element) {
+        if (!empty($element['opacity']) && $element['opacity'] < 100) {
+            $this->log_error("⚠️ Propriété 'opacity' non supportée par TCPDF");
+        }
+        if (!empty($element['brightness']) && $element['brightness'] !== 100) {
+            $this->log_error("⚠️ Propriété 'brightness' non supportée par TCPDF");
+        }
+        if (!empty($element['contrast']) && $element['contrast'] !== 100) {
+            $this->log_error("⚠️ Propriété 'contrast' non supportée par TCPDF");
+        }
+        if (!empty($element['saturate']) && $element['saturate'] !== 100) {
+            $this->log_error("⚠️ Propriété 'saturate' non supportée par TCPDF");
+        }
+    }
+
+    /**
+     * Obtenir le style de décoration du texte
+     */
+    private function get_text_decoration_style($element) {
+        $textDecoration = $element['textDecoration'] ?? 'none';
+        return [
+            'underline' => $textDecoration === 'underline',
+            'line_through' => $textDecoration === 'line-through'
+        ];
+    }
+
+    /**
+     * Calculer la hauteur de ligne
+     */
+    private function calculate_line_height($fontSize, $element) {
+        $lineHeight = floatval($element['lineHeight'] ?? 1.2);
+        if ($lineHeight > 10) {
+            $lineHeight = $lineHeight / $fontSize;
+        }
+        return $fontSize * $lineHeight;
+    }
+
+    /**
+     * Appliquer le style de bordure
+     */
+    private function apply_border_style($element) {
+        $borderStyle = $element['borderStyle'] ?? 'solid';
+        switch ($borderStyle) {
+            case 'dashed':
+                $this->pdf->SetDash(3, 2);
+                break;
+            case 'dotted':
+                $this->pdf->SetDash(0.5, 1);
+                break;
+            default:
+                $this->pdf->SetDash(0, 0);
+                break;
+        }
+    }
+
+    /**
+     * Obtenir les dimensions ajustées pour scale
+     */
+    private function apply_scale_to_dimensions($width, $height, $element) {
+        $scale = floatval($element['scale'] ?? 100) / 100;
+        if ($scale !== 1) {
+            return ['width' => $width * $scale, 'height' => $height * $scale];
+        }
+        return ['width' => $width, 'height' => $height];
+    }
+
+    /**
+     * Tracer une ombre pour un élément
+     */
+    private function draw_element_shadow($element, $px_to_mm, $x, $y, $width, $height) {
+        $shadow = isset($element['shadow']) ? (bool)$element['shadow'] : false;
+        if (!$shadow) return;
+        
+        $offsetX = floatval($element['shadowOffsetX'] ?? 2) * $px_to_mm;
+        $offsetY = floatval($element['shadowOffsetY'] ?? 2) * $px_to_mm;
+        $shadowColor = $element['shadowColor'] ?? '#000000';
+        
+        $color = $this->parse_color($shadowColor);
+        $gray = intval(($color['r'] + $color['g'] + $color['b']) / 3 * 0.5);
+        
+        $this->pdf->SetDrawColor($gray, $gray, $gray);
+        $this->pdf->SetFillColor($gray, $gray, $gray);
+        $this->pdf->Rect($x + $offsetX, $y + $offsetY, $width, $height, 'F');
+        $this->pdf->SetDrawColor(0, 0, 0);
     }
 
     /**
@@ -1395,7 +1554,7 @@ class PDF_Builder_Pro_Generator {
         $separator = isset($element['separator']) ? $element['separator'] : ' • ';
 
         // LOG: Propriétés de style
-        $lineHeight = isset($element['lineHeight']) ? $element['lineHeight'] : 1.2;
+        $lineHeight = $this->calculate_line_height($fontSize, $element);
 
         // Appliquer la couleur du texte
         if ($color && $color !== 'transparent') {
@@ -1495,7 +1654,6 @@ class PDF_Builder_Pro_Generator {
         $fontFamily = isset($element['fontFamily']) ? $this->map_font_family($element['fontFamily']) : 'helvetica';
         $fontWeight = isset($element['fontWeight']) ? $element['fontWeight'] : 'normal';
         $textAlign = isset($element['textAlign']) ? $element['textAlign'] : 'left';
-        $lineHeight = isset($element['lineHeight']) ? $element['lineHeight'] : 1.4;
 
         // Fonction pour obtenir le contenu selon le template
         $content = $this->get_template_content($template, $customContent);
@@ -1508,8 +1666,18 @@ class PDF_Builder_Pro_Generator {
             $this->pdf->SetTextColor(51, 51, 51); // Gris foncé par défaut
         }
 
-        // Appliquer la police et taille
-        $this->pdf->SetFont($fontFamily, '', $fontSize);
+        // Appliquer les effets visuels
+        $this->apply_element_effects($element);
+
+        // Appliquer textDecoration
+        $textDecoration = $this->get_text_decoration_style($element);
+        $fontStyle = '';
+        if (($element['fontWeight'] ?? '') === 'bold') $fontStyle .= 'B';
+        if (($element['fontStyle'] ?? '') === 'italic') $fontStyle .= 'I';
+        if ($textDecoration['underline']) $fontStyle .= 'U';
+
+        // Appliquer la police et taille avec style
+        $this->pdf->SetFont($fontFamily, $fontStyle, $fontSize);
 
         // Positionner le curseur
         $this->pdf->SetXY($x, $y);
@@ -1526,10 +1694,20 @@ class PDF_Builder_Pro_Generator {
         }
 
         // Calculer la hauteur de ligne
-        $lineHeightPx = $fontSize * $lineHeight;
+        $lineHeight = $this->calculate_line_height($fontSize, $element);
+        $lineHeightPx = $lineHeight * $px_to_mm;
 
         // Utiliser MultiCell pour gérer le texte multi-ligne avec retour à la ligne automatique
-        $this->pdf->MultiCell($width, $lineHeightPx * $px_to_mm, $processedContent, 0, $tcpdfAlign, false);
+        $this->pdf->MultiCell($width, $lineHeightPx, $processedContent, 0, $tcpdfAlign, false);
+
+        // Tracer line-through si nécessaire
+        if ($textDecoration['line_through']) {
+            $textWidth = $this->pdf->GetStringWidth($processedContent);
+            $lineY = $y + ($lineHeightPx / 2);
+            $textColor = $this->hex_to_rgb($color);
+            $this->pdf->SetDrawColor($textColor[0], $textColor[1], $textColor[2]);
+            $this->pdf->Line($x, $lineY, $x + $textWidth, $lineY);
+        }
     }
 
     /**
@@ -3615,6 +3793,183 @@ class PDF_Builder_Pro_Generator {
         ];
 
         return isset($countries[strtoupper($country_code)]) ? $countries[strtoupper($country_code)] : $country_code;
+    }
+
+    /**
+     * Rendu d'élément order_date (date de commande)
+     */
+    private function render_order_date_element($element, $px_to_mm) {
+        try {
+            if (!$this->order) {
+                return;
+            }
+
+            $coords = $this->extract_element_coordinates($element, $px_to_mm);
+            $x = $coords['x'];
+            $y = $coords['y'];
+            $width = $coords['width'];
+            $height = $coords['height'];
+
+            $format = $element['format'] ?? 'd/m/Y';
+            $order_date = $this->order->get_date_created()->format($format);
+
+            $font_size = ($element['fontSize'] ?? 12);
+            $color = $this->parse_color($element['color'] ?? '#000000');
+            $font_family = $this->map_font_family($element['fontFamily'] ?? 'Arial');
+            $font_style = $this->get_font_style($element);
+            $text_align = $element['textAlign'] ?? 'left';
+
+            $this->pdf->SetFont($font_family, $font_style, $font_size);
+            $this->pdf->SetTextColor($color['r'], $color['g'], $color['b']);
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell($width, $height, $order_date, 0, 0, $this->get_text_alignment($text_align));
+        } catch (Exception $e) {
+            $this->log_error("Erreur rendu date commande: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Rendu d'élément total (montant total de la commande)
+     */
+    private function render_total_element($element, $px_to_mm) {
+        try {
+            $total_amount = '125.99 €';
+            if ($this->order) {
+                $total_amount = wc_price($this->order->get_total());
+            }
+
+            $coords = $this->extract_element_coordinates($element, $px_to_mm);
+            $x = $coords['x'];
+            $y = $coords['y'];
+            $width = $coords['width'];
+            $height = $coords['height'];
+
+            $font_size = ($element['fontSize'] ?? 14);
+            $color = $this->parse_color($element['color'] ?? '#000000');
+            $font_family = $this->map_font_family($element['fontFamily'] ?? 'Arial');
+            $font_style = $element['fontWeight'] === 'bold' ? 'B' : '';
+            if (($element['fontStyle'] ?? '') === 'italic') $font_style .= 'I';
+            $text_align = $element['textAlign'] ?? 'left';
+
+            $background_color = $element['backgroundColor'] ?? null;
+            $fill = false;
+            if ($this->should_render_background($background_color)) {
+                $bg_color = $this->parse_color($background_color);
+                $this->pdf->SetFillColor($bg_color['r'], $bg_color['g'], $bg_color['b']);
+                $fill = true;
+            }
+
+            $border = $this->get_border_settings($element);
+
+            $this->pdf->SetFont($font_family, $font_style, $font_size);
+            $this->pdf->SetTextColor($color['r'], $color['g'], $color['b']);
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell($width, $height, $total_amount, $border, 0, $this->get_text_alignment($text_align), $fill);
+        } catch (Exception $e) {
+            $this->log_error("Erreur rendu total: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Rendu d'élément progress-bar (barre de progression)
+     */
+    private function render_progress_bar_element($element, $px_to_mm) {
+        try {
+            $coords = $this->extract_element_coordinates($element, $px_to_mm);
+            $x = $coords['x'];
+            $y = $coords['y'];
+            $width = $coords['width'];
+            $height = $coords['height'];
+
+            $progress_value = min(100, max(0, $element['progressValue'] ?? 75));
+
+            $background_color = $element['backgroundColor'] ?? '#e5e7eb';
+            $bg_color = $this->parse_color($background_color);
+            $this->pdf->SetFillColor($bg_color['r'], $bg_color['g'], $bg_color['b']);
+            $this->pdf->Rect($x, $y, $width, $height, 'F');
+
+            $progress_color = $element['progressColor'] ?? '#3b82f6';
+            $progress_rgb = $this->parse_color($progress_color);
+            $this->pdf->SetFillColor($progress_rgb['r'], $progress_rgb['g'], $progress_rgb['b']);
+            $progress_width = ($width * $progress_value) / 100;
+            $this->pdf->Rect($x, $y, $progress_width, $height, 'F');
+
+            $border_width = ($element['borderWidth'] ?? 1) * $px_to_mm;
+            if ($border_width > 0) {
+                $border_color = $element['borderColor'] ?? '#d1d5db';
+                $border_rgb = $this->parse_color($border_color);
+                $this->pdf->SetDrawColor($border_rgb['r'], $border_rgb['g'], $border_rgb['b']);
+                $this->pdf->SetLineWidth($border_width);
+                $this->pdf->Rect($x, $y, $width, $height, 'D');
+            }
+
+            if (isset($element['showLabel']) && $element['showLabel']) {
+                $this->pdf->SetFont('helvetica', 'B', 8);
+                $this->pdf->SetTextColor(255, 255, 255);
+                $text = $progress_value . '%';
+                $this->pdf->SetXY($x, $y + $height / 3);
+                $this->pdf->Cell($width, $height / 3, $text, 0, 0, 'C');
+            }
+        } catch (Exception $e) {
+            $this->log_error("Erreur rendu barre de progression: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Rendu d'élément barcode (code-barres)
+     */
+    private function render_barcode_element($element, $px_to_mm) {
+        try {
+            $coords = $this->extract_element_coordinates($element, $px_to_mm);
+            $x = $coords['x'];
+            $y = $coords['y'];
+            $width = $coords['width'];
+            $height = $coords['height'];
+
+            $barcode_data = $element['barcodeData'] ?? ($this->order ? $this->order->get_id() : '123456789');
+            $barcode_format = $element['barcodeFormat'] ?? 'CODE128';
+
+            if (method_exists($this->pdf, 'write1DBarcode')) {
+                $this->pdf->write1DBarcode($barcode_data, $barcode_format, $x, $y, $width, $height);
+            } else {
+                $this->pdf->SetXY($x, $y);
+                $this->pdf->SetFont('courier', '', 8);
+                $this->pdf->Cell($width, $height, '[' . $barcode_format . ': ' . htmlspecialchars(substr($barcode_data, 0, 15)) . ']', 1, 0, 'C');
+            }
+        } catch (Exception $e) {
+            $this->log_error("Erreur rendu code-barres: " . $e->getMessage());
+            $coords = $this->extract_element_coordinates($element, $px_to_mm);
+            $this->pdf->SetXY($coords['x'], $coords['y']);
+            $this->pdf->Cell(50, 10, '[Barcode]', 1, 0, 'C');
+        }
+    }
+
+    /**
+     * Rendu d'élément QR code
+     */
+    private function render_qrcode_element($element, $px_to_mm) {
+        try {
+            $coords = $this->extract_element_coordinates($element, $px_to_mm);
+            $x = $coords['x'];
+            $y = $coords['y'];
+            $width = $coords['width'];
+            $height = $coords['height'];
+
+            $qr_data = $element['qrData'] ?? ($this->order ? home_url('/order/' . $this->order->get_id()) : 'https://example.com');
+
+            if (method_exists($this->pdf, 'write2DBarcode')) {
+                $this->pdf->write2DBarcode($qr_data, 'QRCODE', $x, $y, $width, $height, [], 'N');
+            } else {
+                $this->pdf->SetXY($x, $y);
+                $this->pdf->SetFont('courier', '', 8);
+                $this->pdf->Cell($width, $height, '[QR Code]', 1, 0, 'C');
+            }
+        } catch (Exception $e) {
+            $this->log_error("Erreur rendu QR code: " . $e->getMessage());
+            $coords = $this->extract_element_coordinates($element, $px_to_mm);
+            $this->pdf->SetXY($coords['x'], $coords['y']);
+            $this->pdf->Cell(50, 10, '[QR Code]', 1, 0, 'C');
+        }
     }
 }
 
