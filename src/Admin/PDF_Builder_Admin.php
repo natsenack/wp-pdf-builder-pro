@@ -2631,6 +2631,187 @@ class PDF_Builder_Admin {
                 <div id="pdf-builder-status" class="status-message" style="display: none;"></div>
             </div>
         </div>
+
+        <!-- 🎨 MODALE D'APERÇU PDF -->
+        <div id="pdf-builder-preview-modal" class="pdf-preview-modal" style="display: none;">
+            <div class="pdf-preview-modal-overlay"></div>
+            <div class="pdf-preview-modal-container">
+                <div class="pdf-preview-modal-header">
+                    <h3><?php _e('Aperçu PDF', 'pdf-builder-pro'); ?></h3>
+                    <button class="pdf-preview-modal-close" title="<?php _e('Fermer', 'pdf-builder-pro'); ?>">
+                        <span>✕</span>
+                    </button>
+                </div>
+                <div class="pdf-preview-modal-body">
+                    <iframe id="pdf-preview-iframe" 
+                            style="width: 100%; height: 100%; border: none; border-radius: 4px;"
+                            title="<?php _e('Aperçu PDF', 'pdf-builder-pro'); ?>"></iframe>
+                    <div class="pdf-preview-loading" style="display: none; text-align: center; padding: 40px;">
+                        <div style="font-size: 3em; margin-bottom: 20px;">📄</div>
+                        <p><?php _e('Chargement de l\'aperçu...', 'pdf-builder-pro'); ?></p>
+                        <div class="pdf-preview-spinner"></div>
+                    </div>
+                </div>
+                <div class="pdf-preview-modal-footer">
+                    <button class="pdf-preview-download-btn" title="<?php _e('Télécharger', 'pdf-builder-pro'); ?>">
+                        💾 <?php _e('Télécharger', 'pdf-builder-pro'); ?>
+                    </button>
+                    <button class="pdf-preview-modal-close-btn">
+                        <?php _e('Fermer', 'pdf-builder-pro'); ?>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🎨 STYLES MODALE -->
+        <style>
+            .pdf-preview-modal {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 9999;
+            }
+
+            .pdf-preview-modal-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                backdrop-filter: blur(2px);
+            }
+
+            .pdf-preview-modal-container {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+                width: 90%;
+                max-width: 900px;
+                height: 80vh;
+                display: flex;
+                flex-direction: column;
+                animation: slideIn 0.3s ease-out;
+            }
+
+            @keyframes slideIn {
+                from {
+                    opacity: 0;
+                    transform: translate(-50%, -48%);
+                }
+                to {
+                    opacity: 1;
+                    transform: translate(-50%, -50%);
+                }
+            }
+
+            .pdf-preview-modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 20px;
+                border-bottom: 1px solid #e2e8f0;
+                background: #f8fafc;
+                border-radius: 8px 8px 0 0;
+            }
+
+            .pdf-preview-modal-header h3 {
+                margin: 0;
+                font-size: 18px;
+                font-weight: 600;
+                color: #1e293b;
+            }
+
+            .pdf-preview-modal-close {
+                background: none;
+                border: none;
+                cursor: pointer;
+                font-size: 24px;
+                color: #64748b;
+                padding: 0;
+                width: 32px;
+                height: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 4px;
+                transition: all 0.2s;
+            }
+
+            .pdf-preview-modal-close:hover {
+                background: #e2e8f0;
+                color: #1e293b;
+            }
+
+            .pdf-preview-modal-body {
+                flex: 1;
+                overflow: auto;
+                padding: 20px;
+                background: #ffffff;
+            }
+
+            .pdf-preview-modal-footer {
+                display: flex;
+                justify-content: flex-end;
+                gap: 10px;
+                padding: 15px 20px;
+                border-top: 1px solid #e2e8f0;
+                background: #f8fafc;
+                border-radius: 0 0 8px 8px;
+            }
+
+            .pdf-preview-download-btn,
+            .pdf-preview-modal-close-btn {
+                padding: 8px 16px;
+                border: 1px solid #d1d5db;
+                border-radius: 4px;
+                background: white;
+                color: #1f2937;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: 500;
+                transition: all 0.2s;
+            }
+
+            .pdf-preview-download-btn:hover {
+                background: #f3f4f6;
+                border-color: #9ca3af;
+            }
+
+            .pdf-preview-modal-close-btn:hover {
+                background: #f3f4f6;
+            }
+
+            .pdf-preview-spinner {
+                display: inline-block;
+                width: 40px;
+                height: 40px;
+                border: 4px solid #f3f3f3;
+                border-top: 4px solid #2563eb;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                margin-top: 20px;
+            }
+
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+
+            @media (max-width: 768px) {
+                .pdf-preview-modal-container {
+                    width: 95%;
+                    height: 90vh;
+                }
+            }
+        </style>
+
 <script>
         jQuery(document).ready(function($) {
             // Vérifier que WordPress et jQuery sont chargés
@@ -2818,6 +2999,15 @@ class PDF_Builder_Admin {
                 console.log('PDF Builder: Preview button clicked');
                 console.log('PDF Builder: Order ID:', orderId);
 
+                // Afficher la modale avec loading
+                var $modal = $('#pdf-builder-preview-modal');
+                var $loading = $modal.find('.pdf-preview-loading');
+                var $iframe = $modal.find('#pdf-preview-iframe');
+                
+                $modal.show();
+                $loading.show();
+                $iframe.hide();
+
                 showStatus('<?php echo esc_js(__('Génération de l\'aperçu en cours...', 'pdf-builder-pro')); ?>', 'loading');
                 setButtonLoading($previewBtn, true);
 
@@ -2841,6 +3031,10 @@ class PDF_Builder_Admin {
 
                         // Validation de la réponse
                         if (typeof response !== 'object' || response === null) {
+                            $loading.hide();
+                            $modal.find('.pdf-preview-modal-body').html(
+                                '<div style="text-align: center; padding: 40px; color: #dc3545;"><p><?php echo esc_js(__('Réponse serveur invalide', 'pdf-builder-pro')); ?></p></div>'
+                            );
                             showStatus('<?php echo esc_js(__('Réponse serveur invalide', 'pdf-builder-pro')); ?>', 'error');
                             return;
                         }
@@ -2848,17 +3042,33 @@ class PDF_Builder_Admin {
                         if (response.success) {
                             // Validation de l'URL
                             if (response.data && typeof response.data.url === 'string' && response.data.url.length > 0) {
-                                // Ouvrir l'aperçu dans un nouvel onglet
+                                // Charger le PDF dans l'iframe
+                                $iframe.attr('src', response.data.url);
+                                
+                                // Stocker l'URL pour le téléchargement
+                                $modal.data('pdf-url', response.data.url);
+                                
+                                // Masquer le loading et afficher l'iframe
                                 setTimeout(function() {
-                                    window.open(response.data.url, '_blank');
+                                    $loading.hide();
+                                    $iframe.show();
                                 }, 500);
+                                
                                 showStatus('<?php echo esc_js(__('Aperçu généré avec succès ✅', 'pdf-builder-pro')); ?>', 'success');
                             } else {
+                                $loading.hide();
+                                $modal.find('.pdf-preview-modal-body').html(
+                                    '<div style="text-align: center; padding: 40px; color: #dc3545;"><p><?php echo esc_js(__('URL de l\'aperçu manquante', 'pdf-builder-pro')); ?></p></div>'
+                                );
                                 showStatus('<?php echo esc_js(__('URL de l\'aperçu manquante', 'pdf-builder-pro')); ?>', 'error');
                             }
                         } else {
                             var errorMsg = (response.data && typeof response.data === 'string') ? response.data : '<?php echo esc_js(__('Erreur lors de l\'aperçu ❌', 'pdf-builder-pro')); ?>';
                             console.error('PDF Builder: Preview failed:', errorMsg);
+                            $loading.hide();
+                            $modal.find('.pdf-preview-modal-body').html(
+                                '<div style="text-align: center; padding: 40px; color: #dc3545;"><p>' + errorMsg + '</p></div>'
+                            );
                             showStatus(errorMsg, 'error');
                         }
                     },
@@ -2874,6 +3084,12 @@ class PDF_Builder_Admin {
                         } else if (status === 'parsererror') {
                             errorMsg = '<?php echo esc_js(__('Erreur de parsing JSON', 'pdf-builder-pro')); ?>';
                         }
+                        
+                        $loading.hide();
+                        var $modal = $('#pdf-builder-preview-modal');
+                        $modal.find('.pdf-preview-modal-body').html(
+                            '<div style="text-align: center; padding: 40px; color: #dc3545;"><p>' + errorMsg + '</p></div>'
+                        );
                         showStatus(errorMsg, 'error');
                     },
                     complete: function(xhr, status) {
@@ -2881,6 +3097,32 @@ class PDF_Builder_Admin {
                         setButtonLoading($previewBtn, false);
                     }
                 });
+            });
+
+            // Gérer la fermeture de la modale
+            $('#pdf-builder-preview-modal .pdf-preview-modal-close,
+               #pdf-builder-preview-modal .pdf-preview-modal-close-btn,
+               #pdf-builder-preview-modal .pdf-preview-modal-overlay').on('click', function(e) {
+                if ($(this).hasClass('pdf-preview-modal-overlay') || $(this).closest('.pdf-preview-modal-header, .pdf-preview-modal-footer').length) {
+                    e.preventDefault();
+                    $('#pdf-builder-preview-modal').hide();
+                }
+            });
+
+            // Télécharger le PDF
+            $('#pdf-builder-preview-modal .pdf-preview-download-btn').on('click', function(e) {
+                e.preventDefault();
+                var $modal = $('#pdf-builder-preview-modal');
+                var pdfUrl = $modal.data('pdf-url');
+                
+                if (pdfUrl) {
+                    var link = document.createElement('a');
+                    link.href = pdfUrl;
+                    link.download = 'apercu-facture.pdf';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
             });
         });
         </script>
