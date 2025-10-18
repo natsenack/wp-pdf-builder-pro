@@ -3081,7 +3081,7 @@ class PDF_Builder_Pro_Generator {
                     'flex: 1; padding: %dpx %dpx; text-align: left; border-right: %s; font-size: %dpx;',
                     6 * $zoom, 8 * $zoom,
                     $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $this->rgb_to_hex($table_styles['header_border']) : 'none',
-                    ($table_styles['headerFontSize'] ?? '11px') * $zoom
+                    ($table_styles['headerFontSize'] ?? 11) * $zoom
                 );
                 $html .= '<div style="' . $header_cell_style . '">Produit</div>';
             }
@@ -3090,7 +3090,7 @@ class PDF_Builder_Pro_Generator {
                     'flex: 0 0 %dpx; padding: %dpx %dpx; text-align: left; border-right: %s; font-size: %dpx;',
                     80, 6 * $zoom, 8 * $zoom,
                     $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $this->rgb_to_hex($table_styles['header_border']) : 'none',
-                    ($table_styles['headerFontSize'] ?? '11px') * $zoom
+                    ($table_styles['headerFontSize'] ?? 11) * $zoom
                 );
                 $html .= '<div style="' . $header_cell_style . '">SKU</div>';
             }
