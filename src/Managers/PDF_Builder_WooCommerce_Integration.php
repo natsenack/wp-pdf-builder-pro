@@ -236,6 +236,9 @@ class PDF_Builder_WooCommerce_Integration {
             justify-content: center;
             gap: 8px;
             font-size: 14px;
+            position: relative;
+            z-index: 1;
+            pointer-events: auto;
         }
 
         .pdf-btn-generate {
@@ -731,7 +734,31 @@ class PDF_Builder_WooCommerce_Integration {
             });
 
             console.log('MetaBoxes.js initialization complete - button handler attached');
+            console.log('BUTTONS STATUS:', {
+                'pdf-generate-btn': $('#pdf-generate-btn').length,
+                'pdf-preview-btn': $('#pdf-preview-btn').length,
+                'pdf-download-btn': $('#pdf-download-btn').length
+            });
         })(jQuery);
+        </script>
+        
+        <!-- DEBUG: Button test script -->
+        <script>
+        jQuery(function($) {
+            console.log('DEBUG: Document ready check');
+            console.log('DEBUG: #pdf-generate-btn exists:', $('#pdf-generate-btn').length > 0);
+            console.log('DEBUG: #pdf-preview-btn exists:', $('#pdf-preview-btn').length > 0);
+            
+            // Direct onclick test
+            document.addEventListener('click', function(e) {
+                if (e.target.id === 'pdf-generate-btn' || e.target.closest('#pdf-generate-btn')) {
+                    console.log('DEBUG: Generate btn clicked directly');
+                }
+                if (e.target.id === 'pdf-preview-btn' || e.target.closest('#pdf-preview-btn')) {
+                    console.log('DEBUG: Preview btn clicked directly');
+                }
+            }, true);
+        });
         </script>
         <?php
     }
