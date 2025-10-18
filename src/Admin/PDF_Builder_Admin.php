@@ -5928,7 +5928,7 @@ class PDF_Builder_Admin {
 
     /**
      * Rendre un tableau produit en HTML pour l'aperçu Canvas
-     * Respecte toutes les propriétés CSS de l'élément du canvas
+     * Respecte toutes les propriétés CSS de l'élément du canvas - SANS enveloppe supplémentaire
      */
     private function render_product_table_html($order, $element, $text_color = null, $font_family = null, $font_size = null) {
         if (!$order) {
@@ -5936,23 +5936,18 @@ class PDF_Builder_Admin {
         }
 
         // Extraire les propriétés CSS de l'élément (par ordre de priorité)
-        $bg_color = $element['backgroundColor'] ?? 'transparent';
-        $border_width = $element['borderWidth'] ?? 1;
-        $border_color = $element['borderColor'] ?? '#ddd';
-        $border_style = $element['borderStyle'] ?? 'solid';
-        $padding = $element['padding'] ?? 10;
-        $border_radius = $element['borderRadius'] ?? 0;
-        $opacity = intval($element['opacity'] ?? 100) / 100;
         $text_color = $text_color ?? ($element['color'] ?? '#000');
         $font_family = $font_family ?? ($element['fontFamily'] ?? 'Arial');
-        $font_size = $font_size ?? ($element['fontSize'] ?? 14);
+        $font_size = $font_size ?? ($element['fontSize'] ?? 10);
         $font_weight = $element['fontWeight'] ?? 'normal';
         $text_align = $element['textAlign'] ?? 'left';
+        $border_style = $element['borderStyle'] ?? 'solid';
         
         // Propriétés spécifiques au tableau
         $table_style = $element['tableStyle'] ?? 'default';
         $show_headers = isset($element['showHeaders']) ? (bool)$element['showHeaders'] : true;
         $show_borders = isset($element['showBorders']) ? (bool)$element['showBorders'] : true;
+        $border_width = max(0, ($element['borderWidth'] ?? 0));
 
         // Extraire les colonnes à afficher
         $columns = $element['columns'] ?? ['name' => true, 'quantity' => true, 'price' => true, 'total' => true];
@@ -6013,12 +6008,8 @@ class PDF_Builder_Admin {
         
         $style_config = $table_styles[$table_style] ?? $table_styles['default'];
         
-        // Construire le style du conteneur
-        $container_style = "border: {$border_width}px {$border_style} {$border_color}; background-color: {$bg_color}; border-radius: {$border_radius}px; padding: {$padding}px; opacity: {$opacity};";
-        
-        // Construire le HTML du tableau
-        $html = '<div style="' . esc_attr($container_style) . '">';
-        $html .= '<table style="width: 100%; border-collapse: collapse; font-family: ' . esc_attr($font_family) . '; font-size: ' . esc_attr($font_size) . 'px; color: ' . esc_attr($text_color) . '; font-weight: ' . esc_attr($font_weight) . '; text-align: ' . esc_attr($text_align) . ';">';
+        // Construire le HTML du tableau SANS enveloppe - juste le tableau brut
+        $html = '<table style="width: 100%; height: 100%; border-collapse: collapse; font-family: ' . esc_attr($font_family) . '; font-size: ' . esc_attr($font_size) . 'px; color: ' . esc_attr($text_color) . '; font-weight: ' . esc_attr($font_weight) . '; text-align: ' . esc_attr($text_align) . ';">';
         
 
         // En-têtes
@@ -6031,7 +6022,7 @@ class PDF_Builder_Admin {
             $html .= '<thead><tr style="background-color: ' . esc_attr($header_bg) . '; color: ' . esc_attr($header_color) . '; ' . $border_display . '">';
             foreach ($visible_columns as $col_key => $col_value) {
                 $col_header = $headers[$col_key] ?? $default_headers[$col_key] ?? ucfirst($col_key);
-                $html .= '<th style="padding: 8px; text-align: ' . esc_attr($text_align) . '; font-weight: 700;">' . esc_html($col_header) . '</th>';
+                $html .= '<th style="padding: 3px 4px; text-align: ' . esc_attr($text_align) . '; font-weight: 700; word-break: break-word;">' . esc_html($col_header) . '</th>';
             }
             $html .= '</tr></thead>';
         }
@@ -6048,7 +6039,7 @@ class PDF_Builder_Admin {
             
             $html .= '<tr style="background-color: ' . esc_attr($row_bg) . '; ' . $border_display . '">';
             foreach ($visible_columns as $col_key => $col_value) {
-                $html .= '<td style="padding: 8px;">';
+                $html .= '<td style="padding: 3px 4px; word-break: break-word;">';
                 
                 switch ($col_key) {
                     case 'name':
@@ -6095,28 +6086,28 @@ class PDF_Builder_Admin {
         $html .= '<tfoot style="' . $border_display . '">';
         
         if ($element['showSubtotal'] ?? false) {
-            $html .= '<tr style="background-color: ' . esc_attr($footer_bg) . '; color: ' . esc_attr($footer_color) . ';"><td colspan="' . count($visible_columns) . '" style="text-align: right; padding: 8px;"><strong>Subtotal:</strong> ' . wc_price($order->get_subtotal()) . '</td></tr>';
+            $html .= '<tr style="background-color: ' . esc_attr($footer_bg) . '; color: ' . esc_attr($footer_color) . ';"><td colspan="' . count($visible_columns) . '" style="text-align: right; padding: 3px 4px;"><strong>Subtotal:</strong> ' . wc_price($order->get_subtotal()) . '</td></tr>';
         }
         if ($element['showShipping'] ?? true) {
             $shipping = $order->get_shipping_total();
             if ($shipping > 0) {
-                $html .= '<tr style="background-color: ' . esc_attr($footer_bg) . '; color: ' . esc_attr($footer_color) . ';"><td colspan="' . count($visible_columns) . '" style="text-align: right; padding: 8px;"><strong>Frais de port:</strong> ' . wc_price($shipping) . '</td></tr>';
+                $html .= '<tr style="background-color: ' . esc_attr($footer_bg) . '; color: ' . esc_attr($footer_color) . ';"><td colspan="' . count($visible_columns) . '" style="text-align: right; padding: 3px 4px;"><strong>Frais de port:</strong> ' . wc_price($shipping) . '</td></tr>';
             }
         }
         if ($element['showTaxes'] ?? true) {
             $tax = $order->get_total_tax();
             if ($tax > 0) {
-                $html .= '<tr style="background-color: ' . esc_attr($footer_bg) . '; color: ' . esc_attr($footer_color) . ';"><td colspan="' . count($visible_columns) . '" style="text-align: right; padding: 8px;"><strong>Taxes:</strong> ' . wc_price($tax) . '</td></tr>';
+                $html .= '<tr style="background-color: ' . esc_attr($footer_bg) . '; color: ' . esc_attr($footer_color) . ';"><td colspan="' . count($visible_columns) . '" style="text-align: right; padding: 3px 4px;"><strong>Taxes:</strong> ' . wc_price($tax) . '</td></tr>';
             }
         }
         if ($element['showDiscount'] ?? false) {
             $discount = abs($order->get_total_discount());
             if ($discount > 0) {
-                $html .= '<tr style="background-color: ' . esc_attr($footer_bg) . '; color: ' . esc_attr($footer_color) . ';"><td colspan="' . count($visible_columns) . '" style="text-align: right; padding: 8px;"><strong>Remise:</strong> -' . wc_price($discount) . '</td></tr>';
+                $html .= '<tr style="background-color: ' . esc_attr($footer_bg) . '; color: ' . esc_attr($footer_color) . ';"><td colspan="' . count($visible_columns) . '" style="text-align: right; padding: 3px 4px;"><strong>Remise:</strong> -' . wc_price($discount) . '</td></tr>';
             }
         }
         if ($element['showTotal'] ?? true) {
-            $html .= '<tr style="background-color: ' . esc_attr($footer_bg) . '; color: ' . esc_attr($footer_color) . '; font-weight: 700;"><td colspan="' . count($visible_columns) . '" style="text-align: right; padding: 10px;"><strong>Total:</strong> ' . wc_price($order->get_total()) . '</td></tr>';
+            $html .= '<tr style="background-color: ' . esc_attr($footer_bg) . '; color: ' . esc_attr($footer_color) . '; font-weight: 700;"><td colspan="' . count($visible_columns) . '" style="text-align: right; padding: 4px 4px;"><strong>Total:</strong> ' . wc_price($order->get_total()) . '</td></tr>';
         }
         
         $html .= '</tfoot></table>';
@@ -6253,11 +6244,43 @@ class PDF_Builder_Admin {
                 .canvas-element {
                     position: absolute;
                     overflow: hidden;
+                    display: flex;
+                    align-items: flex-start;
+                    justify-content: flex-start;
                 }
                 .element-text {
                     font-family: Arial, sans-serif;
                     word-wrap: break-word;
                     white-space: pre-wrap;
+                    width: 100%;
+                    height: 100%;
+                    overflow: hidden;
+                }
+                .canvas-table {
+                    width: 100%;
+                    height: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    overflow: hidden;
+                }
+                .canvas-table table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+                .canvas-table thead,
+                .canvas-table tbody,
+                .canvas-table tfoot {
+                    display: table-row-group;
+                }
+                .canvas-table tr {
+                    display: table-row;
+                }
+                .canvas-table th,
+                .canvas-table td {
+                    display: table-cell;
+                    word-break: break-word;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
             </style>
         </head>
