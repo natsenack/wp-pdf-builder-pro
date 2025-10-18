@@ -739,6 +739,17 @@ class PDF_Builder_WooCommerce_Integration {
                     // Fallback vers AJAX si Canvas non disponible
                     console.log('MetaBoxes.js - Canvas not available, using AJAX fallback');
 
+                    // Essayer de récupérer les éléments actuels du Canvas si disponible
+                    var canvasElements = null;
+                    try {
+                        if (window.PDFBuilderPro && window.PDFBuilderPro.canvas && window.PDFBuilderPro.canvas.getElements) {
+                            canvasElements = window.PDFBuilderPro.canvas.getElements();
+                            console.log('MetaBoxes.js - Éléments récupérés depuis Canvas:', canvasElements ? canvasElements.length + ' éléments' : 'null');
+                        }
+                    } catch (e) {
+                        console.log('MetaBoxes.js - Impossible de récupérer les éléments depuis Canvas:', e.message);
+                    }
+
                     var ajaxData = {
                         action: 'pdf_builder_unified_preview',
                         order_id: orderId,
@@ -747,6 +758,12 @@ class PDF_Builder_WooCommerce_Integration {
                         nonce: nonce,
                         cache_bust: Date.now() // Force reload to bypass OPcache
                     };
+
+                    // Ajouter les éléments du Canvas si disponibles
+                    if (canvasElements) {
+                        ajaxData.elements = JSON.stringify(canvasElements);
+                        console.log('MetaBoxes.js - Éléments du Canvas ajoutés à la requête AJAX');
+                    }
 
                     console.log('PDF BUILDER - Sending AJAX request for HTML preview:', {
                         action: ajaxData.action,
@@ -1066,55 +1083,36 @@ class PDF_Builder_WooCommerce_Integration {
             error_log('✅ PDF BUILDER - ajax_unified_preview: Generator instance created');
 
             // Déterminer le type d'aperçu
-            if ($order_id && $order_id > 0) {
-                // Aperçu de commande WooCommerce
-                error_log('📋 PDF BUILDER - ajax_unified_preview: Mode commande WooCommerce');
+            if (!empty($elements)) {
+                // Priorité aux éléments passés directement (depuis l'éditeur Canvas)
+                error_log('🎨 PDF BUILDER - ajax_unified_preview: Mode éléments directs (Canvas)');
 
-                // Vérifier que WooCommerce est actif
-                if (!class_exists('WooCommerce')) {
-                    error_log('❌ PDF BUILDER - ajax_unified_preview: WooCommerce non actif');
-                    wp_send_json_error('WooCommerce n\'est pas installé ou activé');
+                // Nettoyer les slashes échappés par PHP (correction force)
+                $clean_elements = stripslashes($elements);
+                error_log('🎨 PDF BUILDER - ajax_unified_preview: Elements after stripslashes (force): ' . substr($clean_elements, 0, 200) . '...');
+
+                // Décoder les éléments
+                $decoded_elements = json_decode($clean_elements, true);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    error_log('❌ PDF BUILDER - ajax_unified_preview: JSON éléments invalide: ' . json_last_error_msg());
+                    error_log('❌ PDF BUILDER - ajax_unified_preview: JSON error code: ' . json_last_error());
+                    wp_send_json_error('Données du template invalides');
                 }
 
-                $order = wc_get_order($order_id);
-                if (!$order) {
-                    error_log('❌ PDF BUILDER - ajax_unified_preview: Commande non trouvée: ' . $order_id);
-                    wp_send_json_error('Commande non trouvée');
-                }
-
-                // Déterminer le template à utiliser
-                if (!$template_id || $template_id <= 0) {
-                    $template_id = $this->get_template_for_order($order);
-                    error_log('✅ PDF BUILDER - ajax_unified_preview: Template déterminé automatiquement: ' . $template_id);
-                }
+                error_log('✅ PDF BUILDER - ajax_unified_preview: ' . count($decoded_elements) . ' éléments décodés depuis Canvas');
+                error_log('✅ PDF BUILDER - ajax_unified_preview: Premier élément: ' . json_encode($decoded_elements[0] ?? 'N/A'));
 
                 if ($preview_type === 'html') {
-                    // Pour l'aperçu HTML, récupérer les éléments du template et les rendre en HTML
-                    global $wpdb;
-                    $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-                    $template = $wpdb->get_row($wpdb->prepare("SELECT template_data FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
-                    
-                    if (!$template) {
-                        error_log('❌ PDF BUILDER - ajax_unified_preview: Template non trouvé pour HTML: ' . $template_id);
-                        wp_send_json_error('Template non trouvé');
-                    }
-                    
-                    $template_data = json_decode($template['template_data'], true);
-                    if (json_last_error() !== JSON_ERROR_NONE) {
-                        error_log('❌ PDF BUILDER - ajax_unified_preview: Données template invalides pour HTML');
-                        wp_send_json_error('Données du template invalides');
-                    }
-                    
-                    $elements_for_html = isset($template_data['elements']) ? $template_data['elements'] : [];
-                    $result = $generator->render_html_preview($elements_for_html, $order_id);
-                    error_log('✅ PDF BUILDER - ajax_unified_preview: HTML preview generated for order: ' . $order_id);
+                    // Générer l'aperçu HTML avec les éléments du Canvas
+                    $result = $generator->render_html_preview($decoded_elements, $order_id ?: 0);
+                    error_log('✅ PDF BUILDER - ajax_unified_preview: HTML preview generated from Canvas elements');
                 } else {
-                    // Aperçu PDF normal
-                    $result = $generator->generate_simple_preview($order_id, $template_id);
-                    error_log('✅ PDF BUILDER - ajax_unified_preview: PDF preview generated: ' . (is_wp_error($result) ? 'WP_Error: ' . $result->get_error_message() : 'URL: ' . $result));
+                    // Générer l'aperçu PDF avec les éléments du Canvas
+                    $result = $generator->generate($decoded_elements, ['title' => 'Aperçu Template - ' . date('Y-m-d H:i:s')]);
+                    error_log('✅ PDF BUILDER - ajax_unified_preview: PDF preview generated from Canvas elements');
                 }
 
-            } elseif (!empty($elements)) {
+            } elseif ($order_id && $order_id > 0) {
                 // Aperçu de template depuis l'éditeur (éléments JSON)
                 error_log('🎨 PDF BUILDER - ajax_unified_preview: Mode template éditeur');
                 error_log('🎨 PDF BUILDER - ajax_unified_preview: Raw elements: ' . substr($elements, 0, 200) . '...');
