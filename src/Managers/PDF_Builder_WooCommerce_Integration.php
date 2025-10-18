@@ -1106,7 +1106,11 @@ class PDF_Builder_WooCommerce_Integration {
             wp_send_json_success(['url' => $result]);
 
         } catch (Exception $e) {
-            wp_send_json_error('Erreur: ' . $e->getMessage());
+            wp_send_json_error('Erreur Exception: ' . $e->getMessage());
+        } catch (Error $e) {
+            wp_send_json_error('Erreur PHP: ' . $e->getMessage());
+        } catch (Throwable $e) {
+            wp_send_json_error('Erreur Throwable: ' . $e->getMessage());
         }
     }
 

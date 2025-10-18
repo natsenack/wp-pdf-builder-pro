@@ -3375,7 +3375,10 @@ class PDF_Builder_Admin {
                     }
                 }
             }
+            
+            error_log('[PDF Builder] Début generate_unified_html');
             $html_content = $this->generate_unified_html($template_data, $order);
+            error_log('[PDF Builder] HTML généré, longueur: ' . strlen($html_content));
 
             // Charger TCPDF si nécessaire
             if (!class_exists('TCPDF')) {
@@ -3386,16 +3389,20 @@ class PDF_Builder_Admin {
             // Utiliser une bibliothèque PDF si disponible
             if (class_exists('TCPDF')) {
                 // Utiliser TCPDF si disponible
+                error_log('[PDF Builder] Création TCPDF');
                 $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
                 $pdf->SetCreator('PDF Builder Pro');
                 $pdf->SetAuthor('PDF Builder Pro');
                 $pdf->SetTitle('Order #' . $order->get_id());
 
                 $pdf->AddPage();
+                error_log('[PDF Builder] Avant writeHTML');
 
                 $pdf->writeHTML($html_content, true, false, true, false, '');
 
+                error_log('[PDF Builder] Avant Output - fichier: ' . $pdf_path);
                 $pdf->Output($pdf_path, 'F');
+                error_log('[PDF Builder] PDF généré: ' . $pdf_path);
 
                 return $pdf_path;
             } else {
@@ -3404,8 +3411,12 @@ class PDF_Builder_Admin {
                 return $pdf_path;
             }
         } catch (Exception $e) {
+            error_log('[PDF Builder] Exception: ' . $e->getMessage());
+            error_log('[PDF Builder] Stack trace: ' . $e->getTraceAsString());
             throw $e;
         } catch (Error $e) {
+            error_log('[PDF Builder] Error: ' . $e->getMessage());
+            error_log('[PDF Builder] Stack trace: ' . $e->getTraceAsString());
             throw $e;
         }
     }
