@@ -2111,6 +2111,7 @@ class PDF_Builder_Admin {
                 }
 
                 $style = $base_style;
+                $safe_style = esc_attr($style);  // Échapper le style pour l'utilisation dans HTML
 
                 $content = $element['content'] ?? '';
 
@@ -2122,17 +2123,17 @@ class PDF_Builder_Admin {
                 switch ($element['type']) {
                     case 'text':
                         $final_content = $order ? $this->replace_order_variables($content, $order) : $content;
-                        $html .= sprintf('<div class="pdf-element text-element" style="%s">%s</div>', $style, esc_html($final_content));
+                        $html .= sprintf('<div class="pdf-element text-element" style="%s">%s</div>', $safe_style, esc_html($final_content));
                         break;
 
                     case 'dynamic-text':
                         $final_content = $order ? $this->replace_order_variables($content, $order) : $content;
-                        $html .= sprintf('<div class="pdf-element text-element" style="%s">%s</div>', $style, esc_html($final_content));
+                        $html .= sprintf('<div class="pdf-element text-element" style="%s">%s</div>', $safe_style, esc_html($final_content));
                         break;
 
                     case 'multiline_text':
                         $final_content = $order ? $this->replace_order_variables($content, $order) : $content;
-                        $html .= sprintf('<div class="pdf-element text-element" style="%s">%s</div>', $style, nl2br(esc_html($final_content)));
+                        $html .= sprintf('<div class="pdf-element text-element" style="%s">%s</div>', $safe_style, nl2br(esc_html($final_content)));
                         break;
 
                     case 'mentions':
@@ -2156,92 +2157,92 @@ class PDF_Builder_Admin {
                         }
                         $separator = isset($element['separator']) ? $element['separator'] : ' • ';
                         $mentions_text = implode($separator, $mentions);
-                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($mentions_text));
+                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($mentions_text));
                         break;
 
                     case 'order_date':
                         if ($order) {
                             $date = $order->get_date_created() ? $order->get_date_created()->date('d/m/Y') : date('d/m/Y');
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($date));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($date));
                         } else {
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: 'Date'));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'Date'));
                         }
                         break;
 
                     case 'invoice_number':
                         if ($order) {
                             $invoice_number = $order->get_id() . '-' . time();
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($invoice_number));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($invoice_number));
                         } else {
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: 'N° de facture'));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'N° de facture'));
                         }
                         break;
 
                     case 'order_number':
                         if ($order) {
                             $order_number = $order->get_order_number();
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($order_number));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($order_number));
                         } else {
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: 'N° de commande'));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'N° de commande'));
                         }
                         break;
 
                     case 'invoice_date':
                         if ($order) {
                             $date = $order->get_date_created() ? $order->get_date_created()->date('d/m/Y') : date('d/m/Y');
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($date));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($date));
                         } else {
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: 'Date'));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'Date'));
                         }
                         break;
 
                     case 'customer_name':
                         if ($order) {
                             $customer_name = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($customer_name));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($customer_name));
                         } else {
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: 'Nom du client'));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'Nom du client'));
                         }
                         break;
 
                     case 'customer_address':
                         if ($order) {
                             $address = $order->get_formatted_billing_address();
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, nl2br(esc_html($address)));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, nl2br(esc_html($address)));
                         } else {
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: 'Adresse du client'));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'Adresse du client'));
                         }
                         break;
 
                     case 'subtotal':
                         if ($order) {
                             $subtotal = $order->get_subtotal();
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, wc_price($subtotal));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, wc_price($subtotal));
                         } else {
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: 'Sous-total'));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'Sous-total'));
                         }
                         break;
 
                     case 'tax':
                         if ($order) {
                             $tax = $order->get_total_tax();
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, wc_price($tax));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, wc_price($tax));
                         } else {
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: 'Taxes'));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'Taxes'));
                         }
                         break;
 
                     case 'total':
                         if ($order) {
                             $total = $order->get_total();
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, wc_price($total));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, wc_price($total));
                         } else {
-                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: 'Total'));
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $safe_style, esc_html($content ?: 'Total'));
                         }
                         break;
 
                     case 'rectangle':
-                        $html .= sprintf('<div class="pdf-element" style="%s"></div>', $style);
+                        $html .= sprintf('<div class="pdf-element" style="%s"></div>', $safe_style);
                         break;
 
                     case 'image':
