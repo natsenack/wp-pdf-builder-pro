@@ -305,6 +305,7 @@ class PDF_Builder_Pro_Generator {
      * Rendu des elements optimise
      */
     private function render_elements($elements) {
+        error_log("[DEBUG] RENDER_ELEMENTS: Called with " . count($elements) . " elements");
 
         // Vérifier si un élément product_table existe déjà
         $has_product_table = false;
@@ -316,10 +317,12 @@ class PDF_Builder_Pro_Generator {
             }
         }
 
+        error_log("[DEBUG] AUTO_INJECT: has_product_table = " . ($has_product_table ? 'true' : 'false'));
+
         // Si aucun élément product_table n'existe, en ajouter un par défaut
         if (!$has_product_table) {
             error_log("[DEBUG] AUTO_INJECT: Template has " . count($elements) . " elements, no product_table found - injecting default one");
-            
+
             $default_product_table = [
                 'id' => 'auto_product_table_' . time(),
                 'type' => 'product_table',
@@ -354,6 +357,7 @@ class PDF_Builder_Pro_Generator {
             ];
 
             $elements[] = $default_product_table;
+            error_log("[DEBUG] AUTO_INJECT: Default product_table injected, new total elements: " . count($elements));
         }
 
         // Calcul précis du facteur de conversion basé sur les dimensions réelles
