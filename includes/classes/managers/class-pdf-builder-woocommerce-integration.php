@@ -721,7 +721,8 @@ class PDF_Builder_WooCommerce_Integration {
                     order_id: orderId,
                     template_id: templateId,
                     preview_type: 'html',
-                    nonce: nonce
+                    nonce: nonce,
+                    cache_bust: Date.now() // Force reload to bypass OPcache
                 };
 
                 console.log('PDF BUILDER - Sending AJAX request for HTML preview:', {
