@@ -659,12 +659,29 @@ class PDF_Builder_WooCommerce_Integration {
                 showStatus('Génération de l\'aperçu...', 'loading');
                 setButtonLoading($(this), true);
 
+                // Essayer de récupérer les éléments actuels du Canvas si disponible
+                var canvasElements = null;
+                try {
+                    if (window.PDFBuilderPro && window.PDFBuilderPro.canvas && window.PDFBuilderPro.canvas.getElements) {
+                        canvasElements = window.PDFBuilderPro.canvas.getElements();
+                        console.log('MetaBoxes.js - Éléments récupérés depuis Canvas pour PDF:', canvasElements ? canvasElements.length + ' éléments' : 'null');
+                    }
+                } catch (e) {
+                    console.log('MetaBoxes.js - Impossible de récupérer les éléments depuis Canvas pour PDF:', e.message);
+                }
+
                 var ajaxData = {
                     action: 'pdf_builder_unified_preview',
                     order_id: orderId,
                     template_id: templateId,
                     nonce: nonce
                 };
+
+                // Ajouter les éléments du Canvas si disponibles
+                if (canvasElements) {
+                    ajaxData.elements = JSON.stringify(canvasElements);
+                    console.log('MetaBoxes.js - Éléments du Canvas ajoutés à la requête PDF');
+                }
 
                 console.log('PDF BUILDER - Sending AJAX request for preview:', {
                     action: ajaxData.action,
