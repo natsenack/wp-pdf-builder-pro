@@ -855,10 +855,10 @@ class PDF_Builder_WooCommerce_Integration {
                             // Charger le PDF dans l'iframe avec les paramètres de vue optimisée
                             var pdfUrl = response.data.url;
                             // Ajouter des paramètres au PDF pour optimiser l'affichage
-                            // zoom=150 pour zoom plus haut (compensate le 1/4 affichage)
+                            // zoom=page-fit pour adapter à la largeur
                             // page=1 pour démarrer à la première page
                             if (pdfUrl.indexOf('#') === -1) {
-                                pdfUrl += '#page=1&zoom=150&toolbar=0&navpanes=0&view=FitH';
+                                pdfUrl += '#page=1&zoom=page-fit&toolbar=0&navpanes=0';
                             }
                             $iframe.attr('src', pdfUrl);
                             
