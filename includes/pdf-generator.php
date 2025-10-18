@@ -299,13 +299,16 @@ class PDF_Builder_Pro_Generator {
         foreach ($elements as $element) {
             if (isset($element['type']) && $element['type'] === 'product_table') {
                 $has_product_table = true;
+                error_log('🔍 PDF BUILDER - render_elements: Élément product_table trouvé avec ID: ' . ($element['id'] ?? 'unknown'));
                 break;
             }
         }
 
+        error_log('🔍 PDF BUILDER - render_elements: has_product_table = ' . ($has_product_table ? 'true' : 'false'));
 
         // Si aucun élément product_table n'existe, en ajouter un par défaut
         if (!$has_product_table) {
+            error_log('🔍 PDF BUILDER - render_elements: Auto-injection d\'un élément product_table par défaut');
 
             $default_product_table = [
                 'id' => 'auto_product_table_' . time(),
@@ -1740,6 +1743,14 @@ class PDF_Builder_Pro_Generator {
     private function render_product_table_element($element, $px_to_mm) {
 
         try {
+            // DEBUG: Log des propriétés reçues pour l'aperçu
+            error_log('🔍 PDF BUILDER - render_product_table_element: Propriétés reçues:');
+            error_log('🔍 PDF BUILDER - showSubtotal: ' . ($element['showSubtotal'] ?? 'not set'));
+            error_log('🔍 PDF BUILDER - showShipping: ' . ($element['showShipping'] ?? 'not set'));
+            error_log('🔍 PDF BUILDER - showTaxes: ' . ($element['showTaxes'] ?? 'not set'));
+            error_log('🔍 PDF BUILDER - showDiscount: ' . ($element['showDiscount'] ?? 'not set'));
+            error_log('🔍 PDF BUILDER - showTotal: ' . ($element['showTotal'] ?? 'not set'));
+
             // Extraction des propriétés avec valeurs par défaut sûres
             $coords = $this->extract_element_coordinates($element, $px_to_mm);
             $x = $coords['x'];
