@@ -24,17 +24,41 @@ export const CanvasElement = ({
   const elementRef = useRef(null);
   const canvasRectRef = useRef(null);
 
-  // DEBUG: Logger les positions des éléments dans l'éditeur
+  // DEBUG: Logger les propriétés des tableaux produits pour comparaison avec PHP
   useEffect(() => {
-    if (element && element.id) {
-      const displayX = element.x * zoom;
-      const displayY = element.y * zoom;
-      const displayWidth = element.width * zoom;
-      const displayHeight = element.height * zoom;
-
-      // Log supprimé pour la production
+    if (element && element.type === 'product_table') {
+      console.log('🔍 CanvasElement product_table properties:', {
+        tableStyle: element.tableStyle,
+        showHeaders: element.showHeaders,
+        showBorders: element.showBorders,
+        columns: element.columns,
+        showSubtotal: element.showSubtotal,
+        showShipping: element.showShipping,
+        showTaxes: element.showTaxes,
+        showDiscount: element.showDiscount,
+        showTotal: element.showTotal,
+        previewProductsCount: element.previewProducts?.length || 0,
+        backgroundColor: element.backgroundColor,
+        borderWidth: element.borderWidth,
+        borderColor: element.borderColor
+      });
     }
-  }, [element.x, element.y, element.width, element.height, zoom, element.id, element.type]);
+  }, [
+    element?.type,
+    element?.tableStyle,
+    element?.showHeaders,
+    element?.showBorders,
+    element?.columns,
+    element?.showSubtotal,
+    element?.showShipping,
+    element?.showTaxes,
+    element?.showDiscount,
+    element?.showTotal,
+    element?.previewProducts?.length,
+    element?.backgroundColor,
+    element?.borderWidth,
+    element?.borderColor
+  ]);
 
   const resize = useResize({
     onElementResize: (newRect) => {

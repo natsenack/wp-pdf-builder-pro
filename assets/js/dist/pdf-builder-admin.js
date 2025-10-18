@@ -347,7 +347,7 @@ function CanvasElement_toPrimitive(t, r) { if ("object" != CanvasElement_typeof(
 
 
 var CanvasElement = function CanvasElement(_ref) {
-  var _element$fields, _element$fields2, _element$fields3, _element$fields4, _element$fields5, _element$fields6, _element$fields7, _element$fields8, _element$fields9, _element$fields0, _element$fields1, _element$fields10, _element$fields11, _element$fields12, _element$fields13;
+  var _element$previewProdu2, _element$fields, _element$fields2, _element$fields3, _element$fields4, _element$fields5, _element$fields6, _element$fields7, _element$fields8, _element$fields9, _element$fields0, _element$fields1, _element$fields10, _element$fields11, _element$fields12, _element$fields13;
   var element = _ref.element,
     isSelected = _ref.isSelected,
     zoom = _ref.zoom,
@@ -376,17 +376,27 @@ var CanvasElement = function CanvasElement(_ref) {
   var elementRef = (0,react.useRef)(null);
   var canvasRectRef = (0,react.useRef)(null);
 
-  // DEBUG: Logger les positions des éléments dans l'éditeur
+  // DEBUG: Logger les propriétés des tableaux produits pour comparaison avec PHP
   (0,react.useEffect)(function () {
-    if (element && element.id) {
-      var displayX = element.x * zoom;
-      var displayY = element.y * zoom;
-      var displayWidth = element.width * zoom;
-      var displayHeight = element.height * zoom;
-
-      // Log supprimé pour la production
+    if (element && element.type === 'product_table') {
+      var _element$previewProdu;
+      console.log('🔍 CanvasElement product_table properties:', {
+        tableStyle: element.tableStyle,
+        showHeaders: element.showHeaders,
+        showBorders: element.showBorders,
+        columns: element.columns,
+        showSubtotal: element.showSubtotal,
+        showShipping: element.showShipping,
+        showTaxes: element.showTaxes,
+        showDiscount: element.showDiscount,
+        showTotal: element.showTotal,
+        previewProductsCount: ((_element$previewProdu = element.previewProducts) === null || _element$previewProdu === void 0 ? void 0 : _element$previewProdu.length) || 0,
+        backgroundColor: element.backgroundColor,
+        borderWidth: element.borderWidth,
+        borderColor: element.borderColor
+      });
     }
-  }, [element.x, element.y, element.width, element.height, zoom, element.id, element.type]);
+  }, [element === null || element === void 0 ? void 0 : element.type, element === null || element === void 0 ? void 0 : element.tableStyle, element === null || element === void 0 ? void 0 : element.showHeaders, element === null || element === void 0 ? void 0 : element.showBorders, element === null || element === void 0 ? void 0 : element.columns, element === null || element === void 0 ? void 0 : element.showSubtotal, element === null || element === void 0 ? void 0 : element.showShipping, element === null || element === void 0 ? void 0 : element.showTaxes, element === null || element === void 0 ? void 0 : element.showDiscount, element === null || element === void 0 ? void 0 : element.showTotal, element === null || element === void 0 || (_element$previewProdu2 = element.previewProducts) === null || _element$previewProdu2 === void 0 ? void 0 : _element$previewProdu2.length, element === null || element === void 0 ? void 0 : element.backgroundColor, element === null || element === void 0 ? void 0 : element.borderWidth, element === null || element === void 0 ? void 0 : element.borderColor]);
   var resize = useResize({
     onElementResize: function onElementResize(newRect) {
       onUpdate({

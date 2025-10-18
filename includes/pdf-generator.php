@@ -2972,10 +2972,22 @@ class PDF_Builder_Pro_Generator {
      * Rend un tableau de produits en HTML
      */
     private function render_product_table_html($element, $zoom) {
-        // Log de debug simple pour diagnostiquer la boucle infinie
+        // Log de debug simple pour diagnostiquer la boucle infinie - REMPLACÉ PAR LOG DE COMPARAISON
         static $call_count = 0;
         $call_count++;
-        error_log('PDF Generator render_product_table_html called #' . $call_count . ' - element type: ' . ($element['type'] ?? 'unknown'));
+        error_log('🔍 PHP render_product_table_html properties: tableStyle=' . ($element['tableStyle'] ?? 'default') . 
+                  ', showHeaders=' . ($element['showHeaders'] ?? 'true') . 
+                  ', showBorders=' . ($element['showBorders'] ?? 'true') . 
+                  ', columns=' . json_encode($element['columns'] ?? []) . 
+                  ', showSubtotal=' . ($element['showSubtotal'] ?? 'true') . 
+                  ', showShipping=' . ($element['showShipping'] ?? 'true') . 
+                  ', showTaxes=' . ($element['showTaxes'] ?? 'true') . 
+                  ', showDiscount=' . ($element['showDiscount'] ?? 'false') . 
+                  ', showTotal=' . ($element['showTotal'] ?? 'true') . 
+                  ', previewProductsCount=' . count($element['previewProducts'] ?? []) . 
+                  ', backgroundColor=' . ($element['backgroundColor'] ?? 'transparent') . 
+                  ', borderWidth=' . ($element['borderWidth'] ?? 'null') . 
+                  ', borderColor=' . ($element['borderColor'] ?? 'null'));
 
         // Vérifier si l'élément est valide
         if (!is_array($element)) {
