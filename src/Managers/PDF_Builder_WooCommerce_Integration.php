@@ -1010,8 +1010,10 @@ class PDF_Builder_WooCommerce_Integration {
      * AJAX handler pour générer le PDF d'une commande
      */
     public function ajax_generate_order_pdf() {
-        // Log d'entrée pour debug
-        error_log('PDF BUILDER DEBUG: ajax_generate_order_pdf called with POST data: ' . print_r($_POST, true));
+        // Test simple pour vérifier si l'AJAX fonctionne
+        error_log('PDF BUILDER TEST: ajax_generate_order_pdf called - basic test');
+        wp_send_json_success(['test' => 'AJAX endpoint reached']);
+        return;
 
         // Vérifier les permissions
         if (!current_user_can('manage_woocommerce')) {
