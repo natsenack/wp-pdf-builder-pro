@@ -101,21 +101,27 @@ class PDF_Builder_Pro_Generator {
         try {
             error_log('🟡 PDF BUILDER - generate: Calling reset()');
             $this->reset();
+            error_log('✅ PDF BUILDER - generate: reset() completed');
 
             error_log('🟡 PDF BUILDER - generate: Calling validate_elements()');
             $this->validate_elements($elements);
+            error_log('✅ PDF BUILDER - generate: validate_elements() completed');
 
             error_log('🟡 PDF BUILDER - generate: Calling initialize_tcpdf()');
             $this->initialize_tcpdf();
+            error_log('✅ PDF BUILDER - generate: initialize_tcpdf() completed');
 
             error_log('🟡 PDF BUILDER - generate: Calling configure_pdf()');
             $this->configure_pdf($options);
+            error_log('✅ PDF BUILDER - generate: configure_pdf() completed');
 
             error_log('🟡 PDF BUILDER - generate: Calling render_elements()');
             $this->render_elements($elements);
+            error_log('✅ PDF BUILDER - generate: render_elements() completed');
 
             error_log('🟡 PDF BUILDER - generate: Calling finalize_pdf()');
             $pdf_content = $this->finalize_pdf();
+            error_log('✅ PDF BUILDER - generate: finalize_pdf() completed');
 
             error_log('🟡 PDF BUILDER - generate: SUCCESS - PDF generated, size: ' . strlen($pdf_content) . ' bytes');
 
