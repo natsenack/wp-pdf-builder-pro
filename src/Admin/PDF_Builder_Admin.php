@@ -66,15 +66,10 @@ use function selected;
 use function submit_button;
 use function is_admin;
 use function wp_add_inline_script;
-use function get_bloginfo;
-use function wc_get_order;
-use function wc_get_order_status_name;
-use function wc_price;
-use function get_theme_mod;
-use function wp_get_attachment_image_url;
-use function wp_get_attachment_image;
-use function get_the_post_thumbnail_url;
-use function WC;
+use function get_query_var;
+use function add_rewrite_rule;
+use function add_rewrite_tag;
+use function home_url;
 
 // Importer les types/classes
 use TCPDF;
@@ -264,14 +259,13 @@ class PDF_Builder_Admin {
         add_action('wp_ajax_pdf_builder_serve_preview', [$this, 'ajax_serve_preview']);
         add_action('wp_ajax_nopriv_pdf_builder_serve_preview', [$this, 'ajax_serve_preview']);
 
+        // Endpoint public pour servir les aperçus PDF (accessible via GET)
+        add_action('init', [$this, 'register_pdf_preview_endpoint']);
+        add_action('template_redirect', [$this, 'handle_pdf_preview_request']);
+
         // Hook AJAX pour sauvegarder les paramètres
         add_action('wp_ajax_pdf_builder_save_settings', [$this, 'ajax_save_settings']);
         add_action('wp_ajax_pdf_builder_save_settings_page', [$this, 'ajax_save_settings_page']);
-
-        // Endpoint pour le debug direct (accessible via URL) - TODO: Implémenter ces méthodes
-        // add_action('init', [$this, 'add_debug_endpoint']);
-        // add_action('template_redirect', [$this, 'handle_debug_endpoint']);
-        // add_filter('query_vars', [$this, 'add_debug_query_vars']);
 
     }
 
@@ -5600,6 +5594,58 @@ class PDF_Builder_Admin {
     }
 
     /**
+     * Enregistre l'endpoint pour servir les aperçus PDF
+     */
+    public function register_pdf_preview_endpoint() {
+        \add_rewrite_rule(
+            '^pdf-preview/([a-zA-Z0-9_]+)$',
+            'index.php?pdf_preview_key=$matches[1]',
+            'top'
+        );
+        
+        \add_rewrite_tag('%pdf_preview_key%', '([a-zA-Z0-9_]+)');
+    }
+
+    /**
+     * Gère les requêtes d'aperçu PDF
+     */
+    public function handle_pdf_preview_request() {
+        $preview_key = \get_query_var('pdf_preview_key');
+        
+        if (empty($preview_key)) {
+            return;
+        }
+
+        error_log('[PDF Builder] Serving PDF preview: ' . $preview_key);
+
+        // Vérifier les permissions
+        if (!current_user_can('manage_woocommerce')) {
+            wp_die('Permissions insuffisantes', 'Forbidden', ['response' => 403]);
+        }
+
+        // Récupérer le PDF du cache transient
+        $pdf_content = get_transient($preview_key);
+
+        if ($pdf_content === false) {
+            error_log('[PDF Builder] PDF preview not found: ' . $preview_key);
+            wp_die('Aperçu PDF expiré ou non trouvé', 'Not Found', ['response' => 404]);
+        }
+
+        error_log('[PDF Builder] Serving PDF preview, size: ' . strlen($pdf_content) . ' bytes');
+
+        // Servir le PDF
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: inline; filename="apercu.pdf"');
+        header('Content-Length: ' . strlen($pdf_content));
+        header('Cache-Control: public, max-age=3600');
+        header('Pragma: public');
+        header('Accept-Ranges: bytes');
+
+        echo $pdf_content;
+        wp_die();
+    }
+
+    /**
      * Génère l'aperçu PDF
      */
     private function generate_pdf_preview($order, $template_data) {
@@ -5660,8 +5706,8 @@ class PDF_Builder_Admin {
             
             error_log('[PDF Builder] generate_pdf_preview - PDF sauvegardé en cache: ' . $preview_key);
             
-            // Retourner l'URL du service d'aperçu
-            $preview_url = admin_url('admin-ajax.php?action=pdf_builder_serve_preview&preview_key=' . $preview_key . '&nonce=' . wp_create_nonce('pdf_builder_preview_' . $preview_key));
+            // Retourner l'URL du nouvel endpoint (route rewrite)
+            $preview_url = home_url('/pdf-preview/' . $preview_key);
             
             error_log('[PDF Builder] generate_pdf_preview - URL créée: ' . $preview_url);
 
