@@ -6120,7 +6120,7 @@ class PDF_Builder_Admin {
      * Affiche l'aperçu identique à l'éditeur Canvas
      */
     public function ajax_canvas_preview() {
-        // Vérifier les permissions - accepter les administrateurs et éditeurs
+        // Vérifier les permissions
         if (!current_user_can('edit_posts') && !current_user_can('manage_woocommerce')) {
             wp_die('Permissions insuffisantes');
         }
@@ -6143,71 +6143,23 @@ class PDF_Builder_Admin {
             wp_die('Commande introuvable');
         }
 
-        // Récupérer le template
-        global $wpdb;
+        // Charger les données de la commande
+        $line_items = $order->get_items();
+        $order_number = $order->get_order_number();
+        $order_date = $order->get_date_created()->format('d/m/Y');
+        $customer_name = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
+        $customer_email = $order->get_billing_email();
+        $customer_phone = $order->get_billing_phone();
+        $customer_address = $order->get_billing_address_1() . ', ' . $order->get_billing_postcode() . ' ' . $order->get_billing_city();
         
-        // Récupérer le template_id fourni en GET ou le détecter automatiquement
-        $template_id = isset($_GET['template_id']) ? absint($_GET['template_id']) : 0;
-        
-        // Si pas de template_id en GET, utiliser la logique de détection
-        if (!$template_id) {
-            $status_templates = get_option('pdf_builder_order_status_templates', []);
-            $order_status = $order->get_status();
-            $status_key = 'wc-' . $order_status;
-            $template_id = isset($status_templates[$status_key]) ? $status_templates[$status_key] : 1; // Fallback to ID 1
-        }
-        
-        if (!$template_id) {
-            wp_die('Aucun template trouvé');
-        }
-
-        // Charger le template
-        $table = $wpdb->prefix . 'pdf_builder_templates';
-        $template_json = $wpdb->get_var($wpdb->prepare(
-            "SELECT template_data FROM $table WHERE id = %d",
-            $template_id
-        ));
-
-        if (!$template_json) {
-            wp_die('Template non trouvé');
-        }
-
-        $template = json_decode($template_json, true);
-        if (!is_array($template) || empty($template['elements'])) {
-            wp_die('Template vide');
-        }
-
-        // Générer le HTML de l'aperçu Canvas
-        // Cela rend le même aperçu que l'éditeur
-        $canvas_width = intval($template['canvasWidth'] ?? 595);
-        $canvas_height = intval($template['canvasHeight'] ?? 842);
-        $elements = $template['elements'] ?? [];
-
-        // Récupérer les données de la commande pour les éléments dynamiques
-        $order_data = [
-            'order_number' => $order->get_order_number(),
-            'order_date' => $order->get_date_created()->format('Y-m-d'),
-            'customer_name' => $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
-            'customer_email' => $order->get_billing_email(),
-            'customer_phone' => $order->get_billing_phone(),
-            'customer_address' => $order->get_billing_address_1() . ', ' . $order->get_billing_postcode() . ' ' . $order->get_billing_city(),
-            'total' => $order->get_total(),
-            'subtotal' => $order->get_subtotal(),
-            'shipping_total' => $order->get_shipping_total(),
-            'total_tax' => $order->get_total_tax(),
-            'order_status' => $order->get_status(),
-            'payment_method' => $order->get_payment_method_title(),
-            'shipping_method' => $order->get_shipping_method() ?: 'N/A',
-        ];
-
-        // Commencer le HTML
+        // Commencer le HTML simple et lisible
         ?>
         <!DOCTYPE html>
         <html lang="fr">
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Aperçu - Commande <?php echo esc_attr($order_data['order_number']); ?></title>
+            <title>Aperçu - Commande <?php echo esc_attr($order_number); ?></title>
             <style>
                 * {
                     margin: 0;
@@ -6216,131 +6168,205 @@ class PDF_Builder_Admin {
                 }
                 body {
                     background: #f5f5f5;
-                    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+                    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
                     padding: 20px;
                 }
-                .canvas-container {
-                    width: 100%;
-                    max-width: 800px;
+                .preview-container {
+                    max-width: 900px;
                     margin: 0 auto;
                     background: white;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                    padding: 30px;
                     border-radius: 4px;
-                    overflow: auto;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
                 }
-                .canvas-page {
-                    width: <?php echo esc_attr($canvas_width); ?>px;
-                    height: <?php echo esc_attr($canvas_height); ?>px;
-                    position: relative;
-                    background: white;
-                    margin: 0 auto;
-                    border: 1px solid #ddd;
-                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                    transform: scale(0.6);
-                    transform-origin: top center;
-                    margin-top: 20px;
+                h1 {
+                    font-size: 24px;
                     margin-bottom: 20px;
+                    color: #333;
+                    border-bottom: 2px solid #3b82f6;
+                    padding-bottom: 10px;
                 }
-                .canvas-element {
-                    position: absolute;
-                    overflow: hidden;
+                .section {
+                    margin-bottom: 30px;
+                }
+                .section-title {
+                    font-size: 16px;
+                    font-weight: 600;
+                    color: #555;
+                    margin-bottom: 10px;
+                    background: #f8f9fa;
+                    padding: 8px 12px;
+                    border-left: 4px solid #3b82f6;
+                }
+                .info-row {
                     display: flex;
-                    align-items: flex-start;
-                    justify-content: flex-start;
+                    padding: 8px 0;
+                    border-bottom: 1px solid #eee;
                 }
-                .element-text {
-                    font-family: Arial, sans-serif;
-                    word-wrap: break-word;
-                    white-space: pre-wrap;
-                    width: 100%;
-                    height: 100%;
-                    overflow: hidden;
+                .info-label {
+                    font-weight: 600;
+                    color: #666;
+                    min-width: 150px;
                 }
-                .canvas-table {
-                    width: 100%;
-                    height: 100%;
-                    display: flex;
-                    flex-direction: column;
-                    overflow: hidden;
+                .info-value {
+                    color: #333;
+                    flex: 1;
                 }
-                .canvas-table table {
+                table {
                     width: 100%;
                     border-collapse: collapse;
+                    margin: 15px 0;
                 }
-                .canvas-table thead,
-                .canvas-table tbody,
-                .canvas-table tfoot {
-                    display: table-row-group;
+                thead {
+                    background: #f8f9fa;
                 }
-                .canvas-table tr {
-                    display: table-row;
+                th {
+                    padding: 10px;
+                    text-align: left;
+                    font-weight: 600;
+                    color: #333;
+                    border-bottom: 2px solid #ddd;
                 }
-                .canvas-table th,
-                .canvas-table td {
-                    display: table-cell;
-                    word-break: break-word;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
+                td {
+                    padding: 10px;
+                    border-bottom: 1px solid #eee;
+                    color: #555;
+                }
+                tr:hover {
+                    background: #f9fafb;
+                }
+                .total-row {
+                    background: #f8f9fa;
+                    font-weight: 600;
+                }
+                .total-row td {
+                    border-bottom: 2px solid #ddd;
+                }
+                .price {
+                    text-align: right;
+                }
+                .summary {
+                    background: #f8f9fa;
+                    padding: 15px;
+                    border-radius: 4px;
+                    margin-top: 20px;
+                }
+                .summary-row {
+                    display: flex;
+                    justify-content: space-between;
+                    padding: 8px 0;
+                    border-bottom: 1px solid #ddd;
+                }
+                .summary-row:last-child {
+                    border-bottom: none;
+                }
+                .summary-label {
+                    font-weight: 600;
+                    color: #333;
+                }
+                .summary-value {
+                    color: #333;
+                    font-weight: 600;
                 }
             </style>
         </head>
         <body>
-            <div class="canvas-container">
-                <div class="canvas-page">
-                    <?php
-                    // Afficher chaque élément du canvas
-                    foreach ($elements as $element) {
-                        $x = floatval($element['x'] ?? 0);
-                        $y = floatval($element['y'] ?? 0);
-                        $width = floatval($element['width'] ?? 100);
-                        $height = floatval($element['height'] ?? 50);
-                        $type = $element['type'] ?? 'text';
-                        $bg_color = $element['backgroundColor'] ?? 'transparent';
-                        $color = $element['color'] ?? '#000';
-                        $font_family = $element['fontFamily'] ?? 'Arial';
-                        $font_size = floatval($element['fontSize'] ?? 14);
-                        $visible = isset($element['visible']) ? $element['visible'] : true;
+            <div class="preview-container">
+                <h1>📄 Aperçu - Commande #<?php echo esc_html($order_number); ?></h1>
+                
+                <!-- Infos commande -->
+                <div class="section">
+                    <div class="section-title">📋 Informations Commande</div>
+                    <div class="info-row">
+                        <div class="info-label">N° Commande:</div>
+                        <div class="info-value"><?php echo esc_html($order_number); ?></div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Date:</div>
+                        <div class="info-value"><?php echo esc_html($order_date); ?></div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Statut:</div>
+                        <div class="info-value"><?php echo esc_html(wc_get_order_status_name($order->get_status())); ?></div>
+                    </div>
+                </div>
 
-                        if (!$visible) {
-                            continue;
-                        }
+                <!-- Infos client -->
+                <div class="section">
+                    <div class="section-title">👤 Informations Client</div>
+                    <div class="info-row">
+                        <div class="info-label">Nom:</div>
+                        <div class="info-value"><?php echo esc_html($customer_name); ?></div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">Email:</div>
+                        <div class="info-value"><?php echo esc_html($customer_email); ?></div>
+                    </div>
+                    <?php if ($customer_phone) : ?>
+                    <div class="info-row">
+                        <div class="info-label">Téléphone:</div>
+                        <div class="info-value"><?php echo esc_html($customer_phone); ?></div>
+                    </div>
+                    <?php endif; ?>
+                    <div class="info-row">
+                        <div class="info-label">Adresse:</div>
+                        <div class="info-value"><?php echo esc_html($customer_address); ?></div>
+                    </div>
+                </div>
 
-                        $style = "left: {$x}px; top: {$y}px; width: {$width}px; height: {$height}px; background-color: {$bg_color}; border: 1px solid #eee;";
-                    ?>
-                        <div class="canvas-element" style="<?php echo esc_attr($style); ?>">
-                            <?php
-                            if ($type === 'text' || $type === 'dynamic-text') {
-                                $text = $element['text'] ?? 'Texte';
-                                if ($type === 'dynamic-text' && !empty($element['customContent'])) {
-                                    // Remplacer les variables dynamiques
-                                    $text = str_replace('{{order_number}}', $order_data['order_number'], $element['customContent']);
-                                    $text = str_replace('{{order_date}}', $order_data['order_date'], $text);
-                                    $text = str_replace('{{order_total}}', wc_price($order_data['total']), $text);
-                                    $text = str_replace('{{order_subtotal}}', wc_price($order_data['subtotal']), $text);
-                                    $text = str_replace('{{shipping_total}}', wc_price($order_data['shipping_total']), $text);
-                                    $text = str_replace('{{total_tax}}', wc_price($order_data['total_tax']), $text);
-                                    $text = str_replace('{{customer_name}}', $order_data['customer_name'], $text);
-                                    $text = str_replace('{{customer_email}}', $order_data['customer_email'], $text);
-                                    $text = str_replace('{{customer_phone}}', $order_data['customer_phone'], $text);
-                                    $text = str_replace('{{customer_address}}', $order_data['customer_address'], $text);
-                                    $text = str_replace('{{order_status}}', ucfirst(str_replace('wc-', '', $order_data['order_status'])), $text);
-                                    $text = str_replace('{{payment_method}}', $order_data['payment_method'], $text);
-                                    $text = str_replace('{{shipping_method}}', $order_data['shipping_method'], $text);
-                                }
-                                echo '<div class="element-text" style="color: ' . esc_attr($color) . '; font-family: ' . esc_attr($font_family) . '; font-size: ' . esc_attr($font_size) . 'px; padding: 5px;">' . esc_html($text) . '</div>';
-                            } elseif ($type === 'image' || $type === 'company_logo') {
-                                $src = $element['src'] ?? $element['imageUrl'] ?? '';
-                                if ($src) {
-                                    echo '<img src="' . esc_url($src) . '" style="width: 100%; height: 100%; object-fit: cover;" />';
-                                }
-                            } elseif ($type === 'product_table') {
-                                echo $this->render_product_table_html($order, $element);
-                            }
-                            ?>
-                        </div>
-                    <?php
-                    }
-                    ?>
+                <!-- Produits -->
+                <div class="section">
+                    <div class="section-title">📦 Produits</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Produit</th>
+                                <th class="price">Quantité</th>
+                                <th class="price">Prix Unit.</th>
+                                <th class="price">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($line_items as $item) : ?>
+                            <tr>
+                                <td><?php echo esc_html($item->get_name()); ?></td>
+                                <td class="price"><?php echo intval($item->get_quantity()); ?></td>
+                                <td class="price"><?php echo wc_price($item->get_total() / $item->get_quantity()); ?></td>
+                                <td class="price"><?php echo wc_price($item->get_total()); ?></td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Résumé totaux -->
+                <div class="summary">
+                    <div class="summary-row">
+                        <span class="summary-label">Sous-total:</span>
+                        <span class="summary-value"><?php echo wc_price($order->get_subtotal()); ?></span>
+                    </div>
+                    <?php if ($order->get_shipping_total() > 0) : ?>
+                    <div class="summary-row">
+                        <span class="summary-label">Frais de port:</span>
+                        <span class="summary-value"><?php echo wc_price($order->get_shipping_total()); ?></span>
+                    </div>
+                    <?php endif; ?>
+                    <?php if ($order->get_total_tax() > 0) : ?>
+                    <div class="summary-row">
+                        <span class="summary-label">Taxes:</span>
+                        <span class="summary-value"><?php echo wc_price($order->get_total_tax()); ?></span>
+                    </div>
+                    <?php endif; ?>
+                    <?php if (abs($order->get_total_discount()) > 0) : ?>
+                    <div class="summary-row">
+                        <span class="summary-label">Remise:</span>
+                        <span class="summary-value">-<?php echo wc_price(abs($order->get_total_discount())); ?></span>
+                    </div>
+                    <?php endif; ?>
+                    <div class="summary-row" style="border-top: 2px solid #ddd; margin-top: 10px; padding-top: 10px; font-size: 18px;">
+                        <span class="summary-label">TOTAL:</span>
+                        <span class="summary-value" style="color: #3b82f6; font-size: 18px;"><?php echo wc_price($order->get_total()); ?></span>
+                    </div>
                 </div>
             </div>
         </body>

@@ -433,6 +433,9 @@ class PDF_Builder_WooCommerce_Integration {
                     </div>
                 </div>
                 <div class="woo-pdf-preview-modal-footer">
+                    <button class="woo-pdf-preview-print-btn" title="Imprimer">
+                        🖨️ Imprimer
+                    </button>
                     <button class="woo-pdf-preview-download-btn" title="Télécharger">
                         &#128190; Télécharger
                     </button>
@@ -629,6 +632,7 @@ class PDF_Builder_WooCommerce_Integration {
             }
 
             .woo-pdf-preview-download-btn,
+            .woo-pdf-preview-print-btn,
             .woo-pdf-preview-modal-close-btn {
                 padding: 10px 18px;
                 border: 1px solid #d1d5db;
@@ -651,6 +655,18 @@ class PDF_Builder_WooCommerce_Integration {
                 background: #2563eb;
                 border-color: #2563eb;
                 box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            }
+
+            .woo-pdf-preview-print-btn {
+                background: #10b981;
+                color: white;
+                border-color: #10b981;
+            }
+
+            .woo-pdf-preview-print-btn:hover {
+                background: #059669;
+                border-color: #059669;
+                box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
             }
 
             .woo-pdf-preview-modal-close-btn:hover {
@@ -899,17 +915,65 @@ class PDF_Builder_WooCommerce_Integration {
             // Télécharger le PDF depuis la modale
             $('#woo-pdf-preview-modal .woo-pdf-preview-download-btn').on('click', function(e) {
                 e.preventDefault();
-                var $modal = $('#woo-pdf-preview-modal');
-                var pdfUrl = $modal.data('pdf-url');
+                showStatus("Génération du PDF en cours...", "loading");
                 
-                if (pdfUrl) {
-                    var link = document.createElement('a');
-                    link.href = pdfUrl;
-                    link.download = 'apercu-commande-' + orderId + '.pdf';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                }
+                $.ajax({
+                    url: ajaxUrl,
+                    type: "POST",
+                    data: {
+                        action: "pdf_builder_generate_order_pdf",
+                        order_id: orderId,
+                        template_id: templateId,
+                        nonce: nonce
+                    },
+                    success: function(response) {
+                        if (response.success && response.data && response.data.url) {
+                            var link = document.createElement('a');
+                            link.href = response.data.url;
+                            link.download = 'commande-' + orderId + '.pdf';
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                            showStatus("PDF téléchargé avec succès ✓", "success");
+                        } else {
+                            var errorMsg = response.data || "Erreur lors de la génération";
+                            showStatus(errorMsg, "error");
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        showStatus("Erreur: " + error, "error");
+                    }
+                });
+            });
+
+            // Imprimer le PDF depuis la modale
+            $('#woo-pdf-preview-modal .woo-pdf-preview-print-btn').on('click', function(e) {
+                e.preventDefault();
+                showStatus("Génération du PDF pour impression...", "loading");
+                
+                $.ajax({
+                    url: ajaxUrl,
+                    type: "POST",
+                    data: {
+                        action: "pdf_builder_generate_order_pdf",
+                        order_id: orderId,
+                        template_id: templateId,
+                        nonce: nonce
+                    },
+                    success: function(response) {
+                        if (response.success && response.data && response.data.url) {
+                            // Ouvrir le PDF en nouveau onglet pour permettre l'impression
+                            window.open(response.data.url, "_blank");
+                            showStatus("PDF ouvert pour impression ✓", "success");
+                        } else {
+                            var errorMsg = response.data || "Erreur lors de la génération";
+                            showStatus(errorMsg, "error");
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        showStatus("Erreur: " + error, "error");
+                    }
+                });
             });
 
             console.log('MetaBoxes.js initialization complete - button handler attached');
