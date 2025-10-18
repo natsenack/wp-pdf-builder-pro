@@ -996,6 +996,20 @@ var CanvasElement = function CanvasElement(_ref) {
     var tableStyles = getTableStyles(element.tableStyle);
     // Forcer les bordures pour les tableaux de produits (correction du bug d'affichage)
     var showBorders = element.showBorders !== false; // Utiliser la propriété showBorders de l'élément
+
+    // Log de debug pour voir les propriétés utilisées
+    console.log('CanvasElement product_table debug:', {
+      element: element,
+      products: products,
+      showBorders: showBorders,
+      tableStyles: tableStyles,
+      subtotal: subtotal,
+      shipping: shipping,
+      tax: tax,
+      discount: discount,
+      total: total,
+      lastVisibleColumn: lastVisibleColumn
+    });
     return /*#__PURE__*/React.createElement("div", {
       style: {
         width: '100%',
