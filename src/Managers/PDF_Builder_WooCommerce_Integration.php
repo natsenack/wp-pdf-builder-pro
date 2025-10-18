@@ -1041,8 +1041,11 @@ class PDF_Builder_WooCommerce_Integration {
             // Générer le PDF SANS TCPDF - utiliser une approche alternative
             error_log('PDF BUILDER DEBUG: About to generate PDF without TCPDF');
 
-            // Pour l'instant, retourner une erreur explicite
-            wp_send_json_error('Génération PDF temporairement désactivée - TCPDF retiré');
+            // Retourner un message informatif au lieu d'une erreur
+            wp_send_json_success([
+                'message' => 'Génération PDF temporairement désactivée - TCPDF retiré pour éviter les conflits avec l\'aperçu',
+                'url' => null
+            ]);
 
         } catch (Exception $e) {
             error_log('PDF BUILDER DEBUG: Exception: ' . $e->getMessage());
