@@ -6324,8 +6324,19 @@ class PDF_Builder_Admin {
             // Style de base - positionnement
             $style = "position: absolute; left: {$x}px; top: {$y}px; width: {$width}px; height: {$height}px; ";
 
+            // DEBUG: Log les propriétés de l'élément pour debug
+            error_log('[PDF Builder Preview] Élément #' . $index . ' - Type: ' . $type . ' - Propriétés: ' . json_encode(array_keys($element)));
+            
             // Ajouter TOUS les styles CSS via build_element_style
+            $style_before = $style;
             $style = $this->build_element_style($element, $style);
+            
+            // DEBUG: Log le style généré
+            if ($style !== $style_before) {
+                error_log('[PDF Builder Preview] Élément #' . $index . ' - Style CSS ajouté: ' . substr($style, strlen($style_before), 200));
+            } else {
+                error_log('[PDF Builder Preview] Élément #' . $index . ' - AUCUN style CSS trouvé!');
+            }
 
             // Rendre l'élément selon son type
             $html .= '<div class="canvas-element" style="' . esc_attr($style) . '">';
@@ -6341,60 +6352,72 @@ class PDF_Builder_Admin {
      */
     private function build_element_style($element, $base_style = '') {
         $style = $base_style;
+        $properties_found = [];
 
         // Couleur du texte
         if (isset($element['color']) && !empty($element['color'])) {
             $style .= "color: {$element['color']}; ";
+            $properties_found[] = 'color=' . $element['color'];
         }
 
         // Taille de police
         if (isset($element['fontSize']) && $element['fontSize'] > 0) {
             $style .= "font-size: " . floatval($element['fontSize']) . "px; ";
+            $properties_found[] = 'fontSize=' . $element['fontSize'];
         }
 
         // Poids de la police
         if (isset($element['fontWeight'])) {
             $style .= "font-weight: {$element['fontWeight']}; ";
+            $properties_found[] = 'fontWeight=' . $element['fontWeight'];
         }
 
         // Style de la police (italic)
         if (isset($element['fontStyle']) && $element['fontStyle'] === 'italic') {
             $style .= "font-style: italic; ";
+            $properties_found[] = 'fontStyle=italic';
         }
 
         // Famille de police
         if (isset($element['fontFamily']) && !empty($element['fontFamily'])) {
             $style .= "font-family: {$element['fontFamily']}; ";
+            $properties_found[] = 'fontFamily=' . $element['fontFamily'];
         }
 
         // Alignement du texte
         if (isset($element['textAlign'])) {
             $style .= "text-align: {$element['textAlign']}; ";
+            $properties_found[] = 'textAlign=' . $element['textAlign'];
         }
 
         // Hauteur de ligne
         if (isset($element['lineHeight'])) {
             $style .= "line-height: {$element['lineHeight']}; ";
+            $properties_found[] = 'lineHeight=' . $element['lineHeight'];
         }
 
         // Décoration du texte
         if (isset($element['textDecoration'])) {
             $style .= "text-decoration: {$element['textDecoration']}; ";
+            $properties_found[] = 'textDecoration=' . $element['textDecoration'];
         }
 
         // Couleur de fond
         if (isset($element['backgroundColor']) && $element['backgroundColor'] !== 'transparent' && !empty($element['backgroundColor'])) {
             $style .= "background-color: {$element['backgroundColor']}; ";
+            $properties_found[] = 'backgroundColor=' . $element['backgroundColor'];
         }
 
         // Padding
         if (isset($element['padding']) && $element['padding'] > 0) {
             $style .= "padding: " . floatval($element['padding']) . "px; ";
+            $properties_found[] = 'padding=' . $element['padding'];
         }
 
         // Margin
         if (isset($element['margin']) && $element['margin'] > 0) {
             $style .= "margin: " . floatval($element['margin']) . "px; ";
+            $properties_found[] = 'margin=' . $element['margin'];
         }
 
         // Bordure
@@ -6402,25 +6425,36 @@ class PDF_Builder_Admin {
             $border_color = $element['borderColor'] ?? '#000000';
             $border_style = $element['borderStyle'] ?? 'solid';
             $style .= "border: " . floatval($element['borderWidth']) . "px {$border_style} {$border_color}; ";
+            $properties_found[] = 'border=' . $element['borderWidth'] . 'px ' . $border_style . ' ' . $border_color;
         }
 
         // Border radius
         if (isset($element['borderRadius']) && $element['borderRadius'] > 0) {
             $style .= "border-radius: " . floatval($element['borderRadius']) . "px; ";
+            $properties_found[] = 'borderRadius=' . $element['borderRadius'];
         }
 
         // Opacité
         if (isset($element['opacity']) && $element['opacity'] < 1) {
             $style .= "opacity: " . floatval($element['opacity']) . "; ";
+            $properties_found[] = 'opacity=' . $element['opacity'];
         }
 
         // Rotation
         if (isset($element['rotation']) && $element['rotation'] != 0) {
             $style .= "transform: rotate(" . floatval($element['rotation']) . "deg); ";
+            $properties_found[] = 'rotation=' . $element['rotation'];
         }
 
         // Box-sizing
         $style .= "box-sizing: border-box; ";
+
+        // DEBUG: Log les propriétés trouvées
+        if (!empty($properties_found)) {
+            error_log('[PDF Builder] Styles CSS appliqués: ' . implode(', ', $properties_found));
+        } else {
+            error_log('[PDF Builder] AUCUN style CSS trouvé dans l\'élément! Clés disponibles: ' . implode(', ', array_keys($element)));
+        }
 
         return $style;
     }
