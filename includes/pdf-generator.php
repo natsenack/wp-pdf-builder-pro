@@ -2972,17 +2972,16 @@ class PDF_Builder_Pro_Generator {
      * Rend un tableau de produits en HTML
      */
     private function render_product_table_html($element, $zoom) {
-        // Log de debug pour voir les propriétés reçues depuis l'aperçu - évite les références circulaires
-        error_log('PDF Generator product_table debug: tableStyle=' . ($element['tableStyle'] ?? 'default') . 
-                  ', showHeaders=' . ($element['showHeaders'] ?? 'true') . 
-                  ', showBorders=' . ($element['showBorders'] ?? 'true') . 
-                  ', columns_count=' . count($element['columns'] ?? []) . 
-                  ', showSubtotal=' . ($element['showSubtotal'] ?? 'true') . 
-                  ', showShipping=' . ($element['showShipping'] ?? 'true') . 
-                  ', showTaxes=' . ($element['showTaxes'] ?? 'true') . 
-                  ', showDiscount=' . ($element['showDiscount'] ?? 'false') . 
-                  ', showTotal=' . ($element['showTotal'] ?? 'true') . 
-                  ', previewProducts_count=' . count($element['previewProducts'] ?? []));
+        // Log de debug simple pour diagnostiquer la boucle infinie
+        static $call_count = 0;
+        $call_count++;
+        error_log('PDF Generator render_product_table_html called #' . $call_count . ' - element type: ' . ($element['type'] ?? 'unknown'));
+
+        // Vérifier si l'élément est valide
+        if (!is_array($element)) {
+            error_log('PDF Generator render_product_table_html: element is not an array');
+            return '<div>Erreur: élément invalide</div>';
+        }
 
         $table_style = $element['tableStyle'] ?? 'default';
         $show_headers = $element['showHeaders'] ?? true;
@@ -3013,9 +3012,15 @@ class PDF_Builder_Pro_Generator {
             ['name' => 'Produit B - Un autre article', 'sku' => 'SKU002', 'quantity' => 1, 'price' => 29.99, 'total' => 29.99]
         ];
 
+        // Vérifier que $products est un tableau valide
+        if (!is_array($products)) {
+            error_log('PDF Generator render_product_table_html: products is not an array, type: ' . gettype($products));
+            $products = [];
+        }
+
         // Calcul des totaux (cohérent avec CanvasElement.jsx)
         $subtotal = array_reduce($products, function($sum, $product) {
-            return $sum + $product['total'];
+            return $sum + ($product['total'] ?? 0);
         }, 0);
         $shipping = $show_shipping ? 5.00 : 0;
         $taxes = $show_taxes ? 2.25 : 0;
