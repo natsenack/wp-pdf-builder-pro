@@ -2464,7 +2464,12 @@ class PDF_Builder_Pro_Generator {
         $discount = 0;
 
         if ($this->order) {
-            $subtotal = $this->order->get_subtotal();
+            // Calculer le subtotal manuellement en additionnant les totaux des lignes
+            $subtotal = 0;
+            $line_items = $this->order->get_items();
+            foreach ($line_items as $item) {
+                $subtotal += $item->get_total();
+            }
             $shipping = $this->order->get_shipping_total();
             $taxes = $this->order->get_total_tax();
             $discount = $this->order->get_discount_total();
