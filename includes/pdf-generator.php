@@ -311,12 +311,15 @@ class PDF_Builder_Pro_Generator {
         foreach ($elements as $element) {
             if (isset($element['type']) && $element['type'] === 'product_table') {
                 $has_product_table = true;
+                error_log("[DEBUG] AUTO_INJECT: Template already has product_table element - no injection needed");
                 break;
             }
         }
 
         // Si aucun élément product_table n'existe, en ajouter un par défaut
         if (!$has_product_table) {
+            error_log("[DEBUG] AUTO_INJECT: Template has " . count($elements) . " elements, no product_table found - injecting default one");
+            
             $default_product_table = [
                 'id' => 'auto_product_table_' . time(),
                 'type' => 'product_table',
