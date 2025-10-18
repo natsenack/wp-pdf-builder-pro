@@ -1760,7 +1760,7 @@ class PDF_Builder_Pro_Generator {
 
             // Propriétés spécifiques au tableau
             $show_headers = $element['showHeaders'] ?? true;
-            $show_borders = $element['showBorders'] ?? false;
+            $show_borders = $element['showBorders'] ?? true;
             $table_style = $element['tableStyle'] ?? 'default';
 
             // Validation et extraction sécurisée des headers
@@ -1820,7 +1820,7 @@ class PDF_Builder_Pro_Generator {
                     $header_border_rgb = $this->hex_to_rgb($table_styles['header_border']);
                     $this->pdf->SetDrawColor($header_border_rgb[0], $header_border_rgb[1], $header_border_rgb[2]);
                 }
-                $this->pdf->SetLineWidth($table_styles['border_width'] * 0.5); // Utiliser l'épaisseur du style
+                    $this->pdf->SetLineWidth($table_styles['border_width'] * 0.3);
                 $this->pdf->Rect($x, $y, $width, $table_height, 'D');
             } elseif ($border_width > 0 && $border_color !== 'transparent') {
                 // Fallback vers les propriétés générales de l'élément
@@ -1900,7 +1900,7 @@ class PDF_Builder_Pro_Generator {
                     $row_border_rgb = $this->hex_to_rgb($table_styles['row_border']);
                     $this->pdf->SetDrawColor($row_border_rgb[0], $row_border_rgb[1], $row_border_rgb[2]);
                 }
-                $this->pdf->SetLineWidth($table_styles['border_width'] * 0.2);
+                $this->pdf->SetLineWidth($table_styles['border_width'] * 0.3);
             }
 
             if (isset($this->order) && $this->order) {
@@ -1916,7 +1916,7 @@ class PDF_Builder_Pro_Generator {
                         $row_border_rgb = $this->hex_to_rgb($table_styles['row_border']);
                         $this->pdf->SetDrawColor($row_border_rgb[0], $row_border_rgb[1], $row_border_rgb[2]);
                     }
-                    $this->pdf->SetLineWidth($table_styles['border_width'] * 0.2);
+                    $this->pdf->SetLineWidth($table_styles['border_width'] * 0.3);
                 }
                 // Données fictives pour l'aperçu
                 $current_y = $this->render_fake_products($x, $current_y, $col_widths, $columns, $show_borders, $table_style, $element);
@@ -1930,7 +1930,7 @@ class PDF_Builder_Pro_Generator {
                     $row_border_rgb = $this->hex_to_rgb($table_styles['row_border']);
                     $this->pdf->SetDrawColor($row_border_rgb[0], $row_border_rgb[1], $row_border_rgb[2]);
                 }
-                $this->pdf->SetLineWidth($table_styles['border_width'] * 0.2);
+                $this->pdf->SetLineWidth($table_styles['border_width'] * 0.3);
             }
 
             // Totaux
