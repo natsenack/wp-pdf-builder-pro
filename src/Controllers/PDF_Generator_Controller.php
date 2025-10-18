@@ -1248,6 +1248,132 @@ class PDF_Builder_Pro_Generator {
     }
 
     /**
+     * Fonction générique pour extraire les propriétés d'un élément avec types correctement castés
+     * Respecte dynamiquement toutes les configurations du Canvas
+     */
+    private function extract_element_properties($element, $element_type = 'text') {
+        $props = [];
+        
+        // Propriétés communes à tous les éléments
+        $props['x'] = floatval($element['x'] ?? 0);
+        $props['y'] = floatval($element['y'] ?? 0);
+        $props['width'] = floatval($element['width'] ?? 100);
+        $props['height'] = floatval($element['height'] ?? 50);
+        
+        // Apparence
+        $props['backgroundColor'] = $element['backgroundColor'] ?? 'transparent';
+        $props['borderColor'] = $element['borderColor'] ?? '#6b7280';
+        $props['borderWidth'] = floatval($element['borderWidth'] ?? 0);
+        $props['borderStyle'] = $element['borderStyle'] ?? 'solid';
+        $props['borderRadius'] = floatval($element['borderRadius'] ?? 0);
+        
+        // Typographie
+        $props['color'] = $element['color'] ?? '#1e293b';
+        $props['fontFamily'] = $element['fontFamily'] ?? 'Arial';
+        $props['fontSize'] = floatval($element['fontSize'] ?? 14);
+        $props['fontWeight'] = $element['fontWeight'] ?? 'normal';
+        $props['fontStyle'] = $element['fontStyle'] ?? 'normal';
+        $props['textAlign'] = $element['textAlign'] ?? 'left';
+        $props['textDecoration'] = $element['textDecoration'] ?? 'none';
+        $props['lineHeight'] = floatval($element['lineHeight'] ?? 1.2);
+        
+        // Effets
+        $props['opacity'] = intval($element['opacity'] ?? 100);
+        $props['rotation'] = floatval($element['rotation'] ?? 0);
+        $props['scale'] = floatval($element['scale'] ?? 100);
+        $props['shadow'] = isset($element['shadow']) ? (bool)$element['shadow'] : false;
+        $props['shadowColor'] = $element['shadowColor'] ?? '#000000';
+        $props['shadowOffsetX'] = floatval($element['shadowOffsetX'] ?? 2);
+        $props['shadowOffsetY'] = floatval($element['shadowOffsetY'] ?? 2);
+        $props['brightness'] = floatval($element['brightness'] ?? 100);
+        $props['contrast'] = floatval($element['contrast'] ?? 100);
+        $props['saturate'] = floatval($element['saturate'] ?? 100);
+        
+        // Propriétés de mise en page
+        $props['spacing'] = floatval($element['spacing'] ?? 8);
+        $props['layout'] = $element['layout'] ?? 'vertical';
+        $props['alignment'] = $element['alignment'] ?? 'left';
+        $props['fit'] = $element['fit'] ?? 'contain';
+        
+        // Propriétés spécifiques par type
+        switch ($element_type) {
+            case 'product_table':
+                // Colonnes - respecter exactement ce qui est configuré
+                $props['columns'] = [];
+                if (isset($element['columns']) && is_array($element['columns'])) {
+                    // Format {'name': true, 'quantity': true, ...}
+                    if (isset($element['columns']['name']) || isset($element['columns']['quantity']) || isset($element['columns']['price'])) {
+                        $props['columns'] = $element['columns'];
+                    } else {
+                        // Format ancien array indexé
+                        $props['columns'] = array_fill_keys($element['columns'], true);
+                    }
+                } else {
+                    // Valeurs par défaut
+                    $props['columns'] = [
+                        'image' => false,
+                        'name' => true,
+                        'sku' => false,
+                        'quantity' => true,
+                        'price' => true,
+                        'total' => true
+                    ];
+                }
+                
+                // Headers - générer selon les colonnes visibles si nécessaire
+                $props['headers'] = [];
+                if (isset($element['headers']) && is_array($element['headers'])) {
+                    $props['headers'] = array_values($element['headers']);
+                }
+                
+                // Affichage du tableau
+                $props['showHeaders'] = isset($element['showHeaders']) ? (bool)$element['showHeaders'] : true;
+                $props['showBorders'] = isset($element['showBorders']) ? (bool)$element['showBorders'] : true;
+                $props['tableStyle'] = $element['tableStyle'] ?? 'default';
+                
+                // Affichage des totaux - VALEURS PAR DÉFAUT DU CANVAS
+                $props['showSubtotal'] = isset($element['showSubtotal']) ? (bool)$element['showSubtotal'] : false;
+                $props['showShipping'] = isset($element['showShipping']) ? (bool)$element['showShipping'] : true;
+                $props['showTaxes'] = isset($element['showTaxes']) ? (bool)$element['showTaxes'] : true;
+                $props['showDiscount'] = isset($element['showDiscount']) ? (bool)$element['showDiscount'] : false;
+                $props['showTotal'] = isset($element['showTotal']) ? (bool)$element['showTotal'] : false;
+                break;
+                
+            case 'customer_info':
+            case 'company_info':
+                $props['fields'] = [];
+                if (isset($element['fields']) && is_array($element['fields'])) {
+                    $props['fields'] = $element['fields'];
+                }
+                $props['showLabels'] = isset($element['showLabels']) ? (bool)$element['showLabels'] : true;
+                $props['labelStyle'] = $element['labelStyle'] ?? 'normal';
+                break;
+                
+            case 'order_number':
+                $props['format'] = $element['format'] ?? 'Commande #{order_number} - {order_date}';
+                $props['showLabel'] = isset($element['showLabel']) ? (bool)$element['showLabel'] : true;
+                $props['labelText'] = $element['labelText'] ?? 'N° de commande:';
+                break;
+                
+            case 'document_type':
+                $props['documentType'] = $element['documentType'] ?? 'invoice';
+                break;
+                
+            case 'image':
+                $props['src'] = $element['src'] ?? '';
+                $props['alt'] = $element['alt'] ?? '';
+                $props['objectFit'] = $element['objectFit'] ?? 'cover';
+                break;
+                
+            case 'company_logo':
+                $props['imageUrl'] = $element['imageUrl'] ?? '';
+                break;
+        }
+        
+        return $props;
+    }
+
+    /**
      * Rendu d'élément mentions légales
      */
     private function render_mentions_element($element, $px_to_mm) {
@@ -1769,45 +1895,95 @@ class PDF_Builder_Pro_Generator {
             $width = $coords['width'] ?: 550 * $px_to_mm;
             $height = $coords['height'] ?: 200 * $px_to_mm;
 
-            // Propriétés de style visuel
+            // Propriétés de style visuel - extraction dynamique de toutes les propriétés d'apparence
             $background_color = $element['backgroundColor'] ?? 'transparent';
-            $border_width = ($element['borderWidth'] ?? 1) * $px_to_mm;
+            $border_width = ($element['borderWidth'] ?? 0) * $px_to_mm;
             $border_color = $element['borderColor'] ?? 'transparent';
+            $color = $element['color'] ?? '#1e293b';
+            $font_family = $element['fontFamily'] ?? 'Arial';
+            $font_size = floatval($element['fontSize'] ?? 12);
+            $font_weight = $element['fontWeight'] ?? 'normal';
+            $font_style = $element['fontStyle'] ?? 'normal';
+            $text_align = $element['textAlign'] ?? 'left';
+            $opacity = intval($element['opacity'] ?? 100);
 
-            // Propriétés spécifiques au tableau
-            $show_headers = $element['showHeaders'] ?? true;
-            $show_borders = $element['showBorders'] ?? true;
+            // Propriétés spécifiques au tableau - extraire directement du template
+            $show_headers = isset($element['showHeaders']) ? (bool)$element['showHeaders'] : true;
+            $show_borders = isset($element['showBorders']) ? (bool)$element['showBorders'] : true;
             $table_style = $element['tableStyle'] ?? 'default';
 
-            // Validation et extraction sécurisée des headers
-            $headers = [];
-            if (isset($element['headers']) && is_array($element['headers'])) {
-                $headers = $element['headers'];
-            } elseif (isset($element['header']) && is_array($element['header'])) {
-                // Correction: si 'header' au singulier est utilisé au lieu de 'headers'
-                $headers = $element['header'];
+            // Colonnes du tableau - utiliser la configuration exacte du template
+            $columns = [];
+            if (isset($element['columns']) && is_array($element['columns'])) {
+                // Vérifier si c'est un array avec clés (format correct)
+                if (isset($element['columns']['name']) || isset($element['columns']['quantity']) || isset($element['columns']['price'])) {
+                    // Format: ['name' => true, 'quantity' => true, 'price' => true, ...]
+                    $columns = $element['columns'];
+                } else {
+                    // Format ancien array indexé: ['name', 'quantity', 'price']
+                    $columns = array_fill_keys($element['columns'], true);
+                }
             } else {
-                $headers = ['Produit', 'Qté', 'Prix'];
+                // Valeurs par défaut si non spécifiées
+                $columns = [
+                    'image' => false,
+                    'name' => true,
+                    'sku' => false,
+                    'quantity' => true,
+                    'price' => true,
+                    'total' => true
+                ];
             }
 
-            $columns = $element['columns'] ?? [
-                'image' => true,
-                'name' => true,
-                'sku' => false,
-                'quantity' => true,
-                'price' => true,
-                'total' => true
+            // Validation et extraction sécurisée des headers - correspondre exactement aux colonnes visibles
+            $default_headers_map = [
+                'image' => 'Image',
+                'name' => 'Produit',
+                'sku' => 'SKU',
+                'quantity' => 'Qté',
+                'price' => 'Prix',
+                'total' => 'Total'
             ];
+            
+            // Récupérer ou générer les headers en fonction des colonnes VISIBLES
+            $headers = [];
+            if (isset($element['headers']) && is_array($element['headers'])) {
+                $headers = array_values($element['headers']); // Réindexer pour éviter les trous
+            }
+            
+            // Générer les headers automatiques selon les colonnes visibles
+            $generated_headers = [];
+            foreach ($columns as $col_name => $col_visible) {
+                if ($col_visible) {
+                    $generated_headers[] = $default_headers_map[$col_name] ?? ucfirst($col_name);
+                }
+            }
+            
+            // Utiliser les headers fournis si complets, sinon utiliser les générés
+            if (count($headers) !== count($generated_headers)) {
+                $headers = $generated_headers;
+            }
 
-            // Propriétés des totaux - valeurs par défaut cohérentes avec l'interface
-            $show_subtotal = $element['showSubtotal'] ?? true;   // Activé par défaut
-            $show_shipping = $element['showShipping'] ?? true;  // Activé par défaut
-            $show_taxes = $element['showTaxes'] ?? true;        // Activé par défaut
-            $show_discount = $element['showDiscount'] ?? false; // Désactivé par défaut
-            $show_total = $element['showTotal'] ?? true;        // Activé par défaut
+            // Propriétés des totaux - extraire directement du template avec les bonnes valeurs par défaut
+            $show_subtotal = isset($element['showSubtotal']) ? (bool)$element['showSubtotal'] : false;
+            $show_shipping = isset($element['showShipping']) ? (bool)$element['showShipping'] : true;
+            $show_taxes = isset($element['showTaxes']) ? (bool)$element['showTaxes'] : true;
+            $show_discount = isset($element['showDiscount']) ? (bool)$element['showDiscount'] : false;
+            $show_total = isset($element['showTotal']) ? (bool)$element['showTotal'] : false;
 
             // Styles de tableau selon le style choisi
             $table_styles = $this->get_table_styles($table_style);
+
+            // LOGGING: Diagnostic des propriétés du tableau
+            error_log('[PDF Builder] render_product_table_element - Configuration du tableau:');
+            error_log('[PDF Builder] - Colonnes configurées: ' . json_encode($columns));
+            error_log('[PDF Builder] - Headers: ' . json_encode($headers));
+            error_log('[PDF Builder] - Style: ' . $table_style);
+            error_log('[PDF Builder] - Affichage: headers=' . ($show_headers ? 'oui' : 'non') . ', borders=' . ($show_borders ? 'oui' : 'non'));
+            error_log('[PDF Builder] - Totaux: subtotal=' . ($show_subtotal ? 'oui' : 'non') . ', shipping=' . ($show_shipping ? 'oui' : 'non') . ', taxes=' . ($show_taxes ? 'oui' : 'non') . ', discount=' . ($show_discount ? 'oui' : 'non') . ', total=' . ($show_total ? 'oui' : 'non'));
+            error_log('[PDF Builder] - Dimensions: x=' . $x . ', y=' . $y . ', width=' . $width . ', height=' . $height);
+            error_log('[PDF Builder] - Couleurs: bg=' . $background_color . ', border=' . $border_color . ', text=' . $color);
+            error_log('[PDF Builder] - Police: ' . $font_family . ', size=' . $font_size . ', weight=' . $font_weight);
 
             // Calcul des largeurs de colonnes dynamiques
             $visible_columns = $this->get_visible_columns($columns);
@@ -1872,28 +2048,39 @@ class PDF_Builder_Pro_Generator {
                 $this->pdf->SetFont('helvetica', 'B', $header_font_size);
 
                 $col_index = 0;
+                $header_index = 0; // Index séparé pour les headers dynamiques
+                
                 if ($columns['image']) {
                     $this->pdf->Cell($col_widths[$col_index], $header_cell_height, 'Img', $show_borders ? 1 : 0, 0, 'C', true);
                     $col_index++;
                 }
                 if ($columns['name']) {
-                    $this->pdf->Cell($col_widths[$col_index], $header_cell_height, $headers[0] ?? 'Produit', $show_borders ? 1 : 0, 0, 'L', true);
+                    $header_text = isset($headers[$header_index]) ? $headers[$header_index] : 'Produit';
+                    $this->pdf->Cell($col_widths[$col_index], $header_cell_height, $header_text, $show_borders ? 1 : 0, 0, 'L', true);
                     $col_index++;
+                    $header_index++;
                 }
                 if ($columns['sku']) {
-                    $this->pdf->Cell($col_widths[$col_index], $header_cell_height, 'SKU', $show_borders ? 1 : 0, 0, 'L', true);
+                    $header_text = isset($headers[$header_index]) ? $headers[$header_index] : 'SKU';
+                    $this->pdf->Cell($col_widths[$col_index], $header_cell_height, $header_text, $show_borders ? 1 : 0, 0, 'L', true);
                     $col_index++;
+                    $header_index++;
                 }
                 if ($columns['quantity']) {
-                    $this->pdf->Cell($col_widths[$col_index], $header_cell_height, $headers[1] ?? 'Qté', $show_borders ? 1 : 0, 0, 'C', true);
+                    $header_text = isset($headers[$header_index]) ? $headers[$header_index] : 'Qté';
+                    $this->pdf->Cell($col_widths[$col_index], $header_cell_height, $header_text, $show_borders ? 1 : 0, 0, 'C', true);
                     $col_index++;
+                    $header_index++;
                 }
                 if ($columns['price']) {
-                    $this->pdf->Cell($col_widths[$col_index], $header_cell_height, $headers[2] ?? 'Prix', $show_borders ? 1 : 0, 0, 'R', true);
+                    $header_text = isset($headers[$header_index]) ? $headers[$header_index] : 'Prix';
+                    $this->pdf->Cell($col_widths[$col_index], $header_cell_height, $header_text, $show_borders ? 1 : 0, 0, 'R', true);
                     $col_index++;
+                    $header_index++;
                 }
                 if ($columns['total']) {
-                    $this->pdf->Cell($col_widths[$col_index], $header_cell_height, 'Total', $show_borders ? 1 : 0, 1, 'R', true);
+                    $header_text = isset($headers[$header_index]) ? $headers[$header_index] : 'Total';
+                    $this->pdf->Cell($col_widths[$col_index], $header_cell_height, $header_text, $show_borders ? 1 : 0, 1, 'R', true);
                 }
 
                 $current_y += $header_cell_height;
