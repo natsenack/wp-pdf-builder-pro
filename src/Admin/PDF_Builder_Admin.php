@@ -66,10 +66,15 @@ use function selected;
 use function submit_button;
 use function is_admin;
 use function wp_add_inline_script;
-use function get_query_var;
-use function add_rewrite_rule;
-use function add_rewrite_tag;
-use function home_url;
+use function get_bloginfo;
+use function wc_get_order;
+use function wc_get_order_status_name;
+use function wc_price;
+use function get_theme_mod;
+use function wp_get_attachment_image_url;
+use function wp_get_attachment_image;
+use function get_the_post_thumbnail_url;
+use function WC;
 
 // Importer les types/classes
 use TCPDF;
@@ -259,16 +264,14 @@ class PDF_Builder_Admin {
         add_action('wp_ajax_pdf_builder_serve_preview', [$this, 'ajax_serve_preview']);
         add_action('wp_ajax_nopriv_pdf_builder_serve_preview', [$this, 'ajax_serve_preview']);
 
-        // Hook AJAX pour flush les rewrite rules
-        add_action('wp_ajax_pdf_builder_flush_rewrites', [$this, 'ajax_flush_rewrites']);
-
-        // Endpoint public pour servir les aperçus PDF (accessible via GET)
-        add_action('init', [$this, 'register_pdf_preview_endpoint']);
-        add_action('template_redirect', [$this, 'handle_pdf_preview_request']);
-
         // Hook AJAX pour sauvegarder les paramètres
         add_action('wp_ajax_pdf_builder_save_settings', [$this, 'ajax_save_settings']);
         add_action('wp_ajax_pdf_builder_save_settings_page', [$this, 'ajax_save_settings_page']);
+
+        // Endpoint pour le debug direct (accessible via URL) - TODO: Implémenter ces méthodes
+        // add_action('init', [$this, 'add_debug_endpoint']);
+        // add_action('template_redirect', [$this, 'handle_debug_endpoint']);
+        // add_filter('query_vars', [$this, 'add_debug_query_vars']);
 
     }
 
@@ -1467,7 +1470,7 @@ class PDF_Builder_Admin {
         // Charger d'abord les vendors (React, etc.)
         wp_enqueue_script('pdf-builder-vendors', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/vendors.js', [], '8.0.0_force_' . microtime(true), false);
 
-        // wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'pdf-builder-vendors'], '8.0.0_force_' . microtime(true), false);
+        wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'pdf-builder-vendors'], '8.0.0_force_' . microtime(true), false);
 
         // DEBUG: Vérifier que le script est enqueued
 
@@ -1475,47 +1478,45 @@ class PDF_Builder_Admin {
         wp_enqueue_script('pdf-builder-nonce-fix-v2', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js', ['jquery'], '4.0.0_force_reload_' . time(), false);
 
         // Variables JavaScript pour AJAX - VERSION FORCEE - CORRECTION: Localiser dans le script principal
-        // wp_localize_script('pdf-builder-admin-v3', 'pdfBuilderAjax', [
-        //     'ajaxurl' => admin_url('admin-ajax.php'),
-        //     'nonce' => wp_create_nonce('pdf_builder_nonce'),
-        //     'version' => '7.0.0_force_reload_' . time(),
-        //     'timestamp' => time(),
-        //     'strings' => [
-        //         'loading' => __('Chargement...', 'pdf-builder-pro'),
-        //         'error' => __('Erreur', 'pdf-builder-pro'),
-        //         'success' => __('Succès', 'pdf-builder-pro'),
-        //         'confirm_delete' => __('Êtes-vous sûr de vouloir supprimer ce template ?', 'pdf-builder-pro'),
-        //         'confirm_duplicate' => __('Dupliquer ce template ?', 'pdf-builder-pro'),
-        //     ]
-        // ]);
+        wp_localize_script('pdf-builder-admin-v3', 'pdfBuilderAjax', [
+            'ajaxurl' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('pdf_builder_nonce'),
+            'version' => '7.0.0_force_reload_' . time(),
+            'timestamp' => time(),
+            'strings' => [
+                'loading' => __('Chargement...', 'pdf-builder-pro'),
+                'error' => __('Erreur', 'pdf-builder-pro'),
+                'success' => __('Succès', 'pdf-builder-pro'),
+                'confirm_delete' => __('Êtes-vous sûr de vouloir supprimer ce template ?', 'pdf-builder-pro'),
+                'confirm_duplicate' => __('Dupliquer ce template ?', 'pdf-builder-pro'),
+            ]
+        ]);
 
         // SÉCURITÉ SUPPLÉMENTAIRE: Définir les variables globales directement dans le HTML
-        // wp_add_inline_script('pdf-builder-admin-v3', '
-        //     // Forcer la définition globale des variables AJAX
-        //     window.pdfBuilderAjax = window.pdfBuilderAjax || ' . json_encode([
-        //         'ajaxurl' => admin_url('admin-ajax.php'),
-        //         'nonce' => wp_create_nonce('pdf_builder_nonce'),
-        //         'version' => '8.0.0_force_' . time(),
-        //         'timestamp' => time(),
-        //         'strings' => [
-        //             'loading' => __('Chargement...', 'pdf-builder-pro'),
-        //             'error' => __('Erreur', 'pdf-builder-pro'),
-        //             'success' => __('Succès', 'pdf-builder-pro'),
-        //             'confirm_delete' => __('Êtes-vous sûr de vouloir supprimer ce template ?', 'pdf-builder-pro'),
-        //             'confirm_duplicate' => __('Dupliquer ce template ?', 'pdf-builder-pro'),
-        //         ]
-        //     ]) . ';
-        //     console.log("PDF Builder: Variables AJAX définies globalement:", window.pdfBuilderAjax);
-        // ', 'before');
+        wp_add_inline_script('pdf-builder-admin-v3', '
+            // Forcer la définition globale des variables AJAX
+            window.pdfBuilderAjax = window.pdfBuilderAjax || ' . json_encode([
+                'ajaxurl' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('pdf_builder_nonce'),
+                'version' => '8.0.0_force_' . time(),
+                'timestamp' => time(),
+                'strings' => [
+                    'loading' => __('Chargement...', 'pdf-builder-pro'),
+                    'error' => __('Erreur', 'pdf-builder-pro'),
+                    'success' => __('Succès', 'pdf-builder-pro'),
+                    'confirm_delete' => __('Êtes-vous sûr de vouloir supprimer ce template ?', 'pdf-builder-pro'),
+                    'confirm_duplicate' => __('Dupliquer ce template ?', 'pdf-builder-pro'),
+                ]
+            ]) . ';
+            console.log("PDF Builder: Variables AJAX définies globalement:", window.pdfBuilderAjax);
+        ', 'before');
 
         // Paramètres du canvas pour le JavaScript
         // Récupérer les paramètres canvas depuis le tableau pdf_builder_settings
         $canvas_settings = get_option('pdf_builder_settings', []);
-        // wp_localize_script('pdf-builder-admin-v3', 'pdfBuilderCanvasSettings', [
-        //     array
-        // ]);
-
-        // Sauvegarde des informations entreprise
+        wp_localize_script('pdf-builder-admin-v3', 'pdfBuilderCanvasSettings', [
+            // Paramètres généraux du canvas
+            'default_canvas_width' => $canvas_settings['default_canvas_width'] ?? 210,
             'default_canvas_height' => $canvas_settings['default_canvas_height'] ?? 297,
             'default_canvas_unit' => $canvas_settings['default_canvas_unit'] ?? 'mm',
             'default_orientation' => $canvas_settings['default_orientation'] ?? 'portrait',
@@ -1609,448 +1610,35 @@ class PDF_Builder_Admin {
             'default_text_color' => $canvas_settings['default_text_color'] ?? '#000000',
             'default_background_color' => $canvas_settings['default_background_color'] ?? '#ffffff',
             'default_font_size' => $canvas_settings['default_font_size'] ?? 14
-        ];
+        ]);
 
-        // Sauvegarde des informations entreprise
-        if (isset($_POST['company_vat'])) {
-            update_option('pdf_builder_company_vat', sanitize_text_field($_POST['company_vat']));
-        }
-        if (isset($_POST['company_rcs'])) {
-            update_option('pdf_builder_company_rcs', sanitize_text_field($_POST['company_rcs']));
-        }
-        if (isset($_POST['company_siret'])) {
-            update_option('pdf_builder_company_siret', sanitize_text_field($_POST['company_siret']));
-        }
-        if (isset($_POST['company_phone'])) {
-            update_option('pdf_builder_company_phone', sanitize_text_field($_POST['company_phone']));
-        }
+        // Styles pour l'éditeur canvas
+        if ($hook === 'pdf-builder_page_pdf-builder-editor') {
+            wp_enqueue_style('pdf-builder-react', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-react.css', [], PDF_BUILDER_PRO_VERSION);
+            // Styles supplémentaires pour l'éditeur
+            wp_enqueue_style('pdf-builder-editor-consolidated', PDF_BUILDER_PRO_ASSETS_URL . 'css/editor.css', [], PDF_BUILDER_PRO_VERSION);
 
-        // Sauvegarde des paramètres
-        foreach ($settings as $key => $value) {
-            update_option('pdf_builder_' . $key, $value);
-        }
+            // Script inline pour vérifier React
+            wp_add_inline_script('pdf-builder-admin-v3', '
+                console.log("🔍 Vérification React (bundlé)...");
+                console.log("Bundle chargé, React devrait être disponible dans le bundle");
+            ', 'after');
 
-        // Traitement spécifique des rôles autorisés
-        if (isset($_POST['pdf_builder_allowed_roles'])) {
-            $allowed_roles = array_map('sanitize_text_field', (array) $_POST['pdf_builder_allowed_roles']);
-            // S'assurer qu'au moins un rôle est sélectionné
-            if (empty($allowed_roles)) {
-                $allowed_roles = ['administrator']; // Rôle par défaut
-            }
-            update_option('pdf_builder_allowed_roles', $allowed_roles);
-        }
-
-        // Traitement des mappings template par statut de commande
-        if (isset($_POST['order_status_templates']) && is_array($_POST['order_status_templates'])) {
-            $template_mappings = [];
-            foreach ($_POST['order_status_templates'] as $status => $template_id) {
-                $template_id = intval($template_id);
-                if ($template_id > 0) {
-                    $template_mappings[sanitize_text_field($status)] = $template_id;
-                }
-            }
-            update_option('pdf_builder_order_status_templates', $template_mappings);
-        }
-
-        wp_send_json_success('Paramètres sauvegardés avec succès');
-    }
-
-    /**
-     * Page de diagnostic (délégation au manager)
-     */
-    public function diagnostic_page() {
-        return $this->diagnostic_manager->diagnostic_page();
-    }
-
-    /**
-     * Génère un PDF pour une commande WooCommerce (méthode publique pour l'intégration)
-     *
-     * @param int $order_id ID de la commande
-     * @param int $template_id ID du template (0 pour auto-détection)
-     * @return string|WP_Error URL du PDF généré ou erreur
-     */
-    public function generate_order_pdf($order_id, $template_id = 0) {
-        // Désactiver l'affichage des erreurs PHP pour éviter les réponses HTML
-        if (!defined('WP_DEBUG') || !WP_DEBUG) {
-            ini_set('display_errors', 0);
-            error_reporting(0);
-        }
-
-
-        // Vérifier que WooCommerce est actif
-        if (!class_exists('WooCommerce')) {
-            return new WP_Error('woocommerce_missing', 'WooCommerce n\'est pas installé ou activé');
-        }
-
-        // Vérifier que les fonctions WooCommerce nécessaires existent
-        if (!function_exists('wc_get_order')) {
-            return new WP_Error('woocommerce_functions_missing', 'Fonction wc_get_order non disponible - WooCommerce mal installé');
-        }
-
-        $order = wc_get_order($order_id);
-        if (!$order) {
-            return new WP_Error('order_not_found', 'Commande non trouvée');
-        }
-
-
-        // Vérifier que l'objet order a les méthodes nécessaires
-        if (!method_exists($order, 'get_id') || !method_exists($order, 'get_total')) {
-            return new WP_Error('invalid_order_object', 'Objet commande WooCommerce invalide');
-        }
-
-        try {
-
-            // Charger le template de manière robuste
-            if ($template_id > 0) {
-                $template_data = $this->load_template_robust($template_id);
-            } else {
-                // Vérifier s'il y a un template spécifique pour le statut de la commande
-                $order_status = $order->get_status();
-                $status_templates = get_option('pdf_builder_order_status_templates', []);
-                $status_key = 'wc-' . $order_status;
-
-                if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
-                    $mapped_template_id = $status_templates[$status_key];
-                    $template_data = $this->load_template_robust($mapped_template_id);
-                } else {
-                    $template_data = $this->get_default_invoice_template();
-                }
-            }
-
-            if (!$template_data) {
-                return new WP_Error('template_load_failed', 'Impossible de charger le template');
-            }
-
-            // Générer le PDF avec les données de la commande
-            $pdf_filename = 'order-' . $order_id . '-' . time() . '.pdf';
-
-            $pdf_path = $this->generate_order_pdf_private($order, $template_data, $pdf_filename);
-
-            if ($pdf_path && file_exists($pdf_path)) {
-                $upload_dir = wp_upload_dir();
-                $pdf_url = str_replace($upload_dir['basedir'], $upload_dir['baseurl'], $pdf_path);
-                return $pdf_url;
-            } else {
-                return new WP_Error('pdf_generation_failed', 'Erreur lors de la génération du PDF - fichier non créé');
-            }
-
-        } catch (Exception $e) {
-            return new WP_Error('generation_exception', 'Erreur inconnue lors de la génération: ' . $e->getMessage());
-        } catch (Error $e) {
-            return new WP_Error('generation_error', 'Erreur fatale lors de la génération: ' . $e->getMessage());
+            // Variables globales pour l'éditeur
+            wp_add_inline_script('pdf-builder-admin-v3', '
+                window.pdfBuilderData = {
+                    templateId: ' . (isset($_GET['template_id']) ? intval($_GET['template_id']) : 'null') . ',
+                    templateName: null,
+                    isNew: ' . (isset($_GET['template_id']) ? 'false' : 'true') . ',
+                    ajaxurl: "' . admin_url('admin-ajax.php') . '",
+                    nonce: "' . wp_create_nonce('pdf_builder_nonce') . '"
+                };
+            ', 'after');
         }
     }
 
     /**
-     * Remplacer les variables WooCommerce dans les données du template
-     *
-     * @param array $template_data Données du template
-     * @param array $woocommerce_data Données WooCommerce
-     * @return array Template avec variables remplacées
-     */
-    private function replace_woocommerce_variables($template_data, $woocommerce_data) {
-        $processed_data = $template_data;
-
-        // Fonction récursive pour remplacer les variables dans toutes les profondeurs
-        $replace_vars = function($data) use ($woocommerce_data, &$replace_vars) {
-            if (is_array($data)) {
-                $result = [];
-                foreach ($data as $key => $value) {
-                    $result[$key] = $replace_vars($value);
-                }
-                return $result;
-            } elseif (is_string($data)) {
-                // Remplacer les variables du type {order_number}, {customer_name}, etc.
-                $replaced = $data;
-                foreach ($woocommerce_data as $var => $value) {
-                    $replaced = str_replace('{' . $var . '}', $value, $replaced);
-                }
-                return $replaced;
-            } else {
-                return $data;
-            }
-        };
-
-        return $replace_vars($processed_data);
-    }
-
-    /**
-     * AJAX - Aperçu PDF unifié (metabox)
-     */
-    public function ajax_unified_pdf_preview() {
-        try {
-            error_log('[PDF Builder] AJAX Preview - Début du traitement');
-
-            // Vérifier les permissions
-            if (!current_user_can('manage_woocommerce')) {
-                error_log('[PDF Builder] AJAX Preview - Permissions insuffisantes');
-                wp_send_json_error(['message' => 'Permissions insuffisantes']);
-                return;
-            }
-
-            // Vérifier le nonce
-            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions')) {
-                error_log('[PDF Builder] AJAX Preview - Nonce invalide');
-                wp_send_json_error(['message' => 'Nonce invalide']);
-                return;
-            }
-
-            $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
-            $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
-
-            error_log('[PDF Builder] AJAX Preview - order_id: ' . $order_id . ', template_id: ' . $template_id);
-
-            if (!$order_id) {
-                error_log('[PDF Builder] AJAX Preview - ID de commande manquant');
-                wp_send_json_error(['message' => 'ID de commande manquant']);
-                return;
-            }
-
-            // Charger la commande WooCommerce
-            $order = wc_get_order($order_id);
-            if (!$order) {
-                error_log('[PDF Builder] AJAX Preview - Commande ' . $order_id . ' non trouvée');
-                wp_send_json_error(['message' => 'Commande non trouvée']);
-                return;
-            }
-
-            error_log('[PDF Builder] AJAX Preview - Commande chargée: ' . $order->get_id());
-
-            // Charger ou détecter le template
-            $template_data = null;
-            if ($template_id > 0) {
-                error_log('[PDF Builder] AJAX Preview - Chargement du template ID: ' . $template_id);
-                $template_data = $this->load_template_by_id($template_id);
-            } else {
-                // Détection automatique basée sur le statut de commande
-                error_log('[PDF Builder] AJAX Preview - Détection automatique du template');
-                $template_data = $this->auto_detect_template($order);
-            }
-
-            if (!$template_data) {
-                error_log('[PDF Builder] AJAX Preview - Aucun template trouvé');
-                wp_send_json_error(['message' => 'Aucun template trouvé']);
-                return;
-            }
-
-            error_log('[PDF Builder] AJAX Preview - Template chargé: ' . (isset($template_data['id']) ? $template_data['id'] : 'sans ID'));
-            error_log('[PDF Builder] AJAX Preview - Nombre d\'éléments: ' . (isset($template_data['elements']) ? count($template_data['elements']) : 0));
-
-            // Générer l'aperçu PDF
-            $pdf_url = $this->generate_pdf_preview($order, $template_data);
-
-            if (!$pdf_url) {
-                error_log('[PDF Builder] AJAX Preview - Erreur lors de la génération de l\'aperçu');
-                wp_send_json_error(['message' => 'Erreur lors de la génération de l\'aperçu']);
-                return;
-            }
-
-            error_log('[PDF Builder] AJAX Preview - Succès! URL: ' . $pdf_url);
-
-            wp_send_json_success([
-                'url' => $pdf_url,
-                'message' => 'Aperçu généré avec succès'
-            ]);
-
-        } catch (Exception $e) {
-            error_log('[PDF Builder] AJAX Preview Error: ' . $e->getMessage() . ' - ' . $e->getTraceAsString());
-            wp_send_json_error(['message' => 'Erreur interne: ' . $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Charge un template par son ID
-     */
-    private function load_template_by_id($template_id) {
-        global $wpdb;
-        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-
-        $template_data = $wpdb->get_var($wpdb->prepare(
-            "SELECT template_data FROM $table_templates WHERE id = %d",
-            $template_id
-        ));
-
-        return $template_data ? json_decode($template_data, true) : null;
-    }
-
-    /**
-     * Détection automatique du template basé sur le statut de commande
-     */
-    private function auto_detect_template($order) {
-        $order_status = $order->get_status();
-        $status_templates = get_option('pdf_builder_order_status_templates', []);
-
-        $status_key = 'wc-' . $order_status;
-
-        if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
-            return $this->load_template_by_id($status_templates[$status_key]);
-        }
-
-        // Template par défaut si aucun trouvé
-        global $wpdb;
-        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-        $default_template = $wpdb->get_var("SELECT template_data FROM $table_templates ORDER BY id ASC LIMIT 1");
-
-        return $default_template ? json_decode($default_template, true) : null;
-    }
-
-    /**
-     * Sert un aperçu PDF en cache via un transient
-     */
-    public function ajax_serve_preview() {
-        $preview_key = isset($_GET['preview_key']) ? sanitize_text_field($_GET['preview_key']) : '';
-
-        if (empty($preview_key)) {
-            wp_die('Preview key manquante', 'Invalid Request', ['response' => 400]);
-        }
-
-        // Récupérer le PDF du cache transient
-        $pdf_content = get_transient($preview_key);
-
-        if ($pdf_content === false) {
-            wp_die('Aperçu PDF expiré ou non trouvé', 'Not Found', ['response' => 404]);
-        }
-
-        // Servir le PDF
-        header('Content-Type: application/pdf');
-        header('Content-Disposition: inline; filename="apercu.pdf"');
-        header('Content-Length: ' . strlen($pdf_content));
-        header('Cache-Control: no-cache, no-store, must-revalidate');
-        header('Pragma: no-cache');
-        header('Expires: 0');
-
-        echo $pdf_content;
-        wp_die();
-    }
-
-    /**
-     * Enregistre l'endpoint pour servir les aperçus PDF
-     */
-    public function register_pdf_preview_endpoint() {
-        \add_rewrite_rule(
-            '^pdf-preview/([a-zA-Z0-9_]+)$',
-            'index.php?pdf_preview_key=$matches[1]',
-            'top'
-        );
-        
-        \add_rewrite_tag('%pdf_preview_key%', '([a-zA-Z0-9_]+)');
-    }
-
-    /**
-     * Gère les requêtes d'aperçu PDF
-     */
-    public function handle_pdf_preview_request() {
-        $preview_key = \get_query_var('pdf_preview_key');
-        
-        if (empty($preview_key)) {
-            return;
-        }
-
-        error_log('[PDF Builder] Serving PDF preview: ' . $preview_key);
-
-        // Vérifier les permissions
-        if (!current_user_can('manage_woocommerce')) {
-            wp_die('Permissions insuffisantes', 'Forbidden', ['response' => 403]);
-        }
-
-        // Récupérer le PDF du cache transient
-        $pdf_content = get_transient($preview_key);
-
-        if ($pdf_content === false) {
-            error_log('[PDF Builder] PDF preview not found: ' . $preview_key);
-            wp_die('Aperçu PDF expiré ou non trouvé', 'Not Found', ['response' => 404]);
-        }
-
-        error_log('[PDF Builder] Serving PDF preview, size: ' . strlen($pdf_content) . ' bytes');
-
-        // Servir le PDF
-        header('Content-Type: application/pdf');
-        header('Content-Disposition: inline; filename="apercu.pdf"');
-        header('Content-Length: ' . strlen($pdf_content));
-        header('Cache-Control: public, max-age=3600');
-        header('Pragma: public');
-        header('Accept-Ranges: bytes');
-
-        echo $pdf_content;
-        wp_die();
-    }
-
-    /**
-     * Génère l'aperçu PDF
-     */
-    private function generate_pdf_preview($order, $template_data) {
-        try {
-            error_log('[PDF Builder] generate_pdf_preview - Début');
-
-            // Vérifier que template_data est valide
-            if (!is_array($template_data)) {
-                error_log('[PDF Builder] generate_pdf_preview - template_data n\'est pas un array: ' . gettype($template_data));
-                return false;
-            }
-
-            // Vérifier les éléments du template
-            $elements = isset($template_data['elements']) ? $template_data['elements'] : [];
-            if (!is_array($elements)) {
-                error_log('[PDF Builder] generate_pdf_preview - template_data[elements] n\'est pas un array: ' . gettype($elements));
-                return false;
-            }
-
-            if (empty($elements)) {
-                error_log('[PDF Builder] generate_pdf_preview - Aucun élément trouvé dans le template');
-                return false;
-            }
-
-            error_log('[PDF Builder] generate_pdf_preview - Éléments à traiter: ' . count($elements));
-
-            // Utiliser le contrôleur de génération PDF existant
-            if (!class_exists('PDF_Builder_Pro_Generator')) {
-                $path = PDF_BUILDER_SRC_DIR . 'Controllers/PDF_Generator_Controller.php';
-                if (!file_exists($path)) {
-                    error_log('[PDF Builder] generate_pdf_preview - Fichier non trouvé: ' . $path);
-                    return false;
-                }
-                require_once $path;
-            }
-
-            $generator = new PDF_Builder_Pro_Generator();
-            $generator->set_order($order);
-            $generator->set_preview_mode(true); // Mode aperçu
-
-            error_log('[PDF Builder] generate_pdf_preview - Générateur créé');
-
-            // Générer le PDF avec les éléments du template
-            $pdf_content = $generator->generate($elements, ['is_preview' => true]);
-
-            if (!$pdf_content) {
-                error_log('[PDF Builder] generate_pdf_preview - generate() a retourné null/false');
-                return false;
-            }
-
-            error_log('[PDF Builder] generate_pdf_preview - PDF généré: ' . strlen($pdf_content) . ' bytes');
-
-            // Créer une clé unique pour le cache du PDF
-            $preview_key = 'pdf_preview_' . $order->get_id() . '_' . md5(json_encode($template_data)) . '_' . time();
-            
-            // Stocker le PDF en cache transient (disponible 1 heure)
-            set_transient($preview_key, $pdf_content, HOUR_IN_SECONDS);
-            
-            error_log('[PDF Builder] generate_pdf_preview - PDF sauvegardé en cache: ' . $preview_key);
-            
-            // Retourner l'URL du nouvel endpoint (route rewrite)
-            $preview_url = home_url('/pdf-preview/' . $preview_key);
-            
-            error_log('[PDF Builder] generate_pdf_preview - URL créée: ' . $preview_url);
-
-            return $preview_url;
-
-        } catch (Exception $e) {
-            error_log('[PDF Builder] generate_pdf_preview - Exception: ' . $e->getMessage() . ' - ' . $e->getTraceAsString());
-            return false;
-        }
-    }
-
-    /**
-     * AJAX - Générer PDF depuis le canvas
+     * AJAX - Génère un PDF depuis le canvas
      */
     public function ajax_generate_pdf_from_canvas() {
         $this->check_admin_permissions();
@@ -3632,6 +3220,419 @@ class PDF_Builder_Admin {
      * AJAX - Générer PDF pour une commande WooCommerce
      */
     public function ajax_generate_order_pdf() {
+        // Désactiver l'affichage des erreurs PHP pour éviter les réponses HTML
+        if (!defined('WP_DEBUG') || !WP_DEBUG) {
+            ini_set('display_errors', 0);
+            error_reporting(0);
+        }
+
+        $this->check_admin_permissions();
+
+        // Vérification de sécurité
+        if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions')) {
+            wp_send_json_error('Sécurité: Nonce invalide');
+        }
+
+        $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
+        $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
+
+        if (!$order_id) {
+            wp_send_json_error('ID commande manquant');
+        }
+
+        // Vérifier que WooCommerce est actif
+        if (!class_exists('WooCommerce')) {
+            wp_send_json_error('WooCommerce n\'est pas installé ou activé');
+        }
+
+        // Vérifier que les fonctions WooCommerce nécessaires existent
+        if (!function_exists('wc_get_order')) {
+            wp_send_json_error('Fonction wc_get_order non disponible - WooCommerce mal installé');
+        }
+
+        $order = wc_get_order($order_id);
+        if (!$order) {
+            wp_send_json_error('Commande non trouvée');
+        }
+
+        // Vérifier que l'objet order a les méthodes nécessaires
+        if (!method_exists($order, 'get_id') || !method_exists($order, 'get_total')) {
+            wp_send_json_error('Objet commande WooCommerce invalide');
+        }
+
+        try {
+            // Charger le template de manière robuste
+            if ($template_id > 0) {
+                $template_data = $this->load_template_robust($template_id);
+            } else {
+                // Vérifier s'il y a un template spécifique pour le statut de la commande
+                $order_status = $order ? $order->get_status() : 'pending';
+                $status_templates = get_option('pdf_builder_order_status_templates', []);
+                $status_key = 'wc-' . $order_status;
+
+                if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
+                    $mapped_template_id = $status_templates[$status_key];
+                    $template_data = $this->load_template_robust($mapped_template_id);
+                } else {
+                    $template_data = $this->get_default_invoice_template();
+                }
+            }
+
+            // Générer le PDF avec les données de la commande
+            $pdf_filename = 'order-' . $order_id . '-' . time() . '.pdf';
+            $pdf_path = $this->generate_order_pdf_private($order, $template_data, $pdf_filename);
+
+            if ($pdf_path && file_exists($pdf_path)) {
+                $upload_dir = wp_upload_dir();
+                $pdf_url = str_replace($upload_dir['basedir'], $upload_dir['baseurl'], $pdf_path);
+
+                wp_send_json_success(array(
+                    'message' => 'PDF généré avec succès',
+                    'url' => $pdf_url,
+                    'filename' => $pdf_filename
+                ));
+            } else {
+                wp_send_json_error('Erreur lors de la génération du PDF - fichier non créé');
+            }
+
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur: ' . $e->getMessage());
+        } catch (Error $e) {
+            wp_send_json_error('Erreur fatale: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Retourne le libellé du type de document
+     */
+    private function generate_order_pdf_private($order, $template_data, $filename) {
+
+        // Créer le répertoire de stockage s'il n'existe pas
+        $upload_dir = wp_upload_dir();
+        $pdf_dir = $upload_dir['basedir'] . '/pdf-builder/orders';
+
+        if (!file_exists($pdf_dir)) {
+            wp_mkdir_p($pdf_dir);
+        }
+
+        $pdf_path = $pdf_dir . '/' . $filename;
+
+        try {
+            // Générer le HTML d'abord
+            if (isset($template_data['elements'])) {
+                foreach ($template_data['elements'] as $i => $element) {
+                    if (isset($element['type']) && $element['type'] === 'product_table') {
+                    }
+                }
+            }
+            $html_content = $this->generate_unified_html($template_data, $order);
+
+            // Charger TCPDF si nécessaire
+            if (!class_exists('TCPDF')) {
+                $this->load_tcpdf_library();
+            } else {
+            }
+
+            // Utiliser une bibliothèque PDF si disponible
+            if (class_exists('TCPDF')) {
+                // Utiliser TCPDF si disponible
+                $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+                $pdf->SetCreator('PDF Builder Pro');
+                $pdf->SetAuthor('PDF Builder Pro');
+                $pdf->SetTitle('Order #' . $order->get_id());
+
+                $pdf->AddPage();
+
+                $pdf->writeHTML($html_content, true, false, true, false, '');
+
+                $pdf->Output($pdf_path, 'F');
+
+                return $pdf_path;
+            } else {
+                // Fallback: créer un fichier HTML pour simulation
+                file_put_contents($pdf_path, $html_content);
+                return $pdf_path;
+            }
+        } catch (Exception $e) {
+            throw $e;
+        } catch (Error $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Charge la bibliothèque TCPDF depuis différents chemins possibles
+     */
+    private function load_tcpdf_library() {
+        // Définir les constantes TCPDF AVANT de charger la bibliothèque
+        $this->define_tcpdf_constants();
+
+        // Définir K_TCPDF_VERSION si pas déjà défini
+        if (!defined('K_TCPDF_VERSION')) {
+            define('K_TCPDF_VERSION', '6.6.2');
+        }
+
+        $tcpdf_paths = [
+            __DIR__ . '/../../lib/tcpdf/tcpdf_autoload.php',  // Essayer tcpdf_autoload.php d'abord
+            __DIR__ . '/../../lib/tcpdf/tcpdf.php',
+            __DIR__ . '/../../vendor/tecnickcom/tcpdf/tcpdf.php',
+            plugin_dir_path(__FILE__) . '../../lib/tcpdf/tcpdf_autoload.php',
+            plugin_dir_path(__FILE__) . '../../lib/tcpdf/tcpdf.php',
+            plugin_dir_path(__FILE__) . '../../vendor/tecnickcom/tcpdf/tcpdf.php'
+        ];
+
+        foreach ($tcpdf_paths as $path) {
+            if (file_exists($path)) {
+                require_once $path;
+                if (class_exists('TCPDF')) {
+                    // TCPDF chargé avec succès (constantes déjà définies)
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Définit les constantes TCPDF nécessaires
+     */
+    private function define_tcpdf_constants() {
+        $plugin_dir = plugin_dir_path(__FILE__) . '../../';
+
+        $constants = [
+            'PDF_PAGE_ORIENTATION' => 'P',
+            'PDF_UNIT' => 'mm',
+            'PDF_PAGE_FORMAT' => 'A4',
+            'K_PATH_FONTS' => $plugin_dir . 'lib/tcpdf/fonts/',
+            'K_PATH_CACHE' => $plugin_dir . 'uploads/pdf-builder-cache/',
+            'K_PATH_IMAGES' => $plugin_dir . 'lib/tcpdf/images/',
+            'K_PATH_URL' => $plugin_dir . 'lib/tcpdf/'
+        ];
+
+        foreach ($constants as $name => $value) {
+            if (!defined($name)) {
+                define($name, $value);
+            }
+        }
+    }
+
+    /**
+     * Génère du HTML pour une commande WooCommerce
+     */
+    private function generate_order_html($order, $template_data) {
+        return $this->generate_unified_html($template_data, $order);
+    }
+
+    /**
+     * Formate les informations complètes de la société
+     */
+    private function format_complete_company_info() {
+        // Essayer d'abord de récupérer depuis l'option personnalisée
+        $company_info = get_option('pdf_builder_company_info', '');
+
+        // Si les informations sont configurées manuellement, les utiliser
+        if (!empty($company_info)) {
+            return $company_info;
+        }
+
+        // Sinon, récupérer automatiquement depuis WooCommerce/WordPress
+        $company_parts = [];
+
+        // Nom de la société (nom du site WordPress)
+        $company_name = get_bloginfo('name');
+        if (!empty($company_name)) {
+            $company_parts[] = $company_name;
+        }
+
+        // Adresse depuis WooCommerce
+        $address_parts = [];
+        $address1 = get_option('woocommerce_store_address');
+        $address2 = get_option('woocommerce_store_address_2');
+        $city = get_option('woocommerce_store_city');
+        $postcode = get_option('woocommerce_store_postcode');
+        $country = get_option('woocommerce_store_country');
+
+        if (!empty($address1)) $address_parts[] = $address1;
+        if (!empty($address2)) $address_parts[] = $address2;
+
+        $city_line = [];
+        if (!empty($postcode)) $city_line[] = $postcode;
+        if (!empty($city)) $city_line[] = $city;
+        if (!empty($city_line)) $address_parts[] = implode(' ', $city_line);
+
+        if (!empty($country)) {
+            // Convertir le code pays en nom complet si possible
+            $wc = WC();
+            $countries = $wc ? $wc->countries->get_countries() : [];
+            $country_name = isset($countries[$country]) ? $countries[$country] : $country;
+            $address_parts[] = $country_name;
+        }
+
+        if (!empty($address_parts)) {
+            $company_parts = array_merge($company_parts, $address_parts);
+        }
+
+        // Email depuis WordPress
+        $email = get_bloginfo('admin_email');
+        if (!empty($email)) {
+            $company_parts[] = 'Email: ' . $email;
+        }
+
+        // Si on a au moins le nom, retourner les infos récupérées
+        if (!empty($company_parts)) {
+            return implode("\n", $company_parts);
+        }
+
+        // Sinon, données d'exemple par défaut
+        return "Votre Société SARL\n123 Rue de l'Entreprise\n75001 Paris\nFrance\nTél: 01 23 45 67 89\nEmail: contact@votresociete.com";
+    }
+    private function replace_order_variables($content, $order) {
+        // Préparer les données de la commande
+        $billing_address = $order->get_formatted_billing_address();
+        $shipping_address = $order->get_formatted_shipping_address();
+
+        // Détecter le type de document
+        $order_status = $order->get_status();
+        $document_type = $this->detect_document_type($order_status);
+        $document_type_label = $this->get_document_type_label($document_type);
+
+        // Variables avec doubles accolades {{variable}}
+        $double_brace_replacements = array(
+            '{{order_id}}' => $order->get_id(),
+            '{{order_number}}' => $order->get_order_number(),
+            '{{order_date}}' => $order->get_date_created() ? $order->get_date_created()->date('d/m/Y') : date('d/m/Y'),
+            '{{order_date_time}}' => $order->get_date_created() ? $order->get_date_created()->date('d/m/Y H:i:s') : date('d/m/Y H:i:s'),
+            '{{customer_name}}' => trim($order->get_billing_first_name() . ' ' . $order->get_billing_last_name()),
+            '{{customer_first_name}}' => $order->get_billing_first_name(),
+            '{{customer_last_name}}' => $order->get_billing_last_name(),
+            '{{customer_email}}' => $order->get_billing_email(),
+            '{{customer_phone}}' => $order->get_billing_phone(),
+            '{{billing_company}}' => $order->get_billing_company(),
+            '{{billing_address_1}}' => $order->get_billing_address_1(),
+            '{{billing_address_2}}' => $order->get_billing_address_2(),
+            '{{billing_city}}' => $order->get_billing_city(),
+            '{{billing_state}}' => $order->get_billing_state(),
+            '{{billing_postcode}}' => $order->get_billing_postcode(),
+            '{{billing_country}}' => $order->get_billing_country(),
+            '{{billing_address}}' => $billing_address ?: 'Adresse de facturation non disponible',
+            '{{complete_customer_info}}' => $this->format_complete_customer_info($order),
+            '{{complete_billing_address}}' => $billing_address ?: 'Adresse de facturation non disponible',
+            '{{shipping_first_name}}' => $order->get_shipping_first_name(),
+            '{{shipping_last_name}}' => $order->get_shipping_last_name(),
+            '{{shipping_company}}' => $order->get_shipping_company(),
+            '{{shipping_address_1}}' => $order->get_shipping_address_1(),
+            '{{shipping_address_2}}' => $order->get_shipping_address_2(),
+            '{{shipping_city}}' => $order->get_shipping_city(),
+            '{{shipping_state}}' => $order->get_shipping_state(),
+            '{{shipping_postcode}}' => $order->get_shipping_postcode(),
+            '{{shipping_country}}' => $order->get_shipping_country(),
+            '{{shipping_address}}' => $shipping_address ?: 'Adresse de livraison non disponible',
+            '{{total}}' => wc_price($order->get_total()),
+            '{{subtotal}}' => wc_price($order->get_subtotal()),
+            '{{tax}}' => wc_price($order->get_total_tax()),
+            '{{shipping_total}}' => wc_price($order->get_shipping_total()),
+            '{{discount_total}}' => wc_price($order->get_discount_total()),
+            '{{payment_method}}' => $order->get_payment_method_title(),
+            '{{order_status}}' => wc_get_order_status_name($order->get_status()),
+            '{{currency}}' => $order->get_currency(),
+            '{{document_type}}' => $document_type,
+            '{{document_type_label}}' => $document_type_label,
+        );
+
+        // Variables avec crochets [variable]
+        $bracket_replacements = array(
+            '[order_id]' => $order->get_id(),
+            '[order_number]' => $order->get_order_number(),
+            '[order_date]' => $order->get_date_created() ? $order->get_date_created()->date('d/m/Y') : date('d/m/Y'),
+            '[order_date_time]' => $order->get_date_created() ? $order->get_date_created()->date('d/m/Y H:i:s') : date('d/m/Y H:i:s'),
+            '[customer_name]' => trim($order->get_billing_first_name() . ' ' . $order->get_billing_last_name()),
+            '[billing_first_name]' => $order->get_billing_first_name(),
+            '[billing_last_name]' => $order->get_billing_last_name(),
+            '[billing_company]' => $order->get_billing_company(),
+            '[billing_address_1]' => $order->get_billing_address_1(),
+            '[billing_address_2]' => $order->get_billing_address_2(),
+            '[billing_city]' => $order->get_billing_city(),
+            '[billing_state]' => $order->get_billing_state(),
+            '[billing_postcode]' => $order->get_billing_postcode(),
+            '[billing_country]' => $order->get_billing_country(),
+            '[billing_address]' => $billing_address ?: 'Adresse de facturation non disponible',
+            '[complete_customer_info]' => $this->format_complete_customer_info($order),
+            '[complete_billing_address]' => $billing_address ?: 'Adresse de facturation non disponible',
+            '[shipping_first_name]' => $order->get_shipping_first_name(),
+            '[shipping_last_name]' => $order->get_shipping_last_name(),
+            '[shipping_company]' => $order->get_shipping_company(),
+            '[shipping_address_1]' => $order->get_shipping_address_1(),
+            '[shipping_address_2]' => $order->get_shipping_address_2(),
+            '[shipping_city]' => $order->get_shipping_city(),
+            '[shipping_state]' => $order->get_shipping_state(),
+            '[shipping_postcode]' => $order->get_shipping_postcode(),
+            '[shipping_country]' => $order->get_shipping_country(),
+            '[shipping_address]' => $shipping_address ?: 'Adresse de livraison non disponible',
+            '[customer_email]' => $order->get_billing_email(),
+            '[customer_phone]' => $order->get_billing_phone(),
+            '[total]' => wc_price($order->get_total()),
+            '[subtotal]' => wc_price($order->get_subtotal()),
+            '[tax]' => wc_price($order->get_total_tax()),
+            '[shipping_total]' => wc_price($order->get_shipping_total()),
+            '[discount_total]' => wc_price($order->get_discount_total()),
+            '[payment_method]' => $order->get_payment_method_title(),
+            '[order_status]' => wc_get_order_status_name($order->get_status()),
+            '[currency]' => $order->get_currency(),
+            '[document_type]' => $document_type,
+            '[document_type_label]' => $document_type_label,
+        );
+
+        // Variables avec accolades simples {variable}
+        $single_brace_replacements = array(
+            '{order_id}' => $order->get_id(),
+            '{order_number}' => $order->get_order_number(),
+            '{order_date}' => $order->get_date_created() ? $order->get_date_created()->date('d/m/Y') : date('d/m/Y'),
+            '{order_date_time}' => $order->get_date_created() ? $order->get_date_created()->date('d/m/Y H:i:s') : date('d/m/Y H:i:s'),
+            '{customer_name}' => trim($order->get_billing_first_name() . ' ' . $order->get_billing_last_name()),
+            '{billing_first_name}' => $order->get_billing_first_name(),
+            '{billing_last_name}' => $order->get_billing_last_name(),
+            '{billing_company}' => $order->get_billing_company(),
+            '{billing_address_1}' => $order->get_billing_address_1(),
+            '{billing_address_2}' => $order->get_billing_address_2(),
+            '{billing_city}' => $order->get_billing_city(),
+            '{billing_state}' => $order->get_billing_state(),
+            '{billing_postcode}' => $order->get_billing_postcode(),
+            '{billing_country}' => $order->get_billing_country(),
+            '{billing_address}' => $billing_address ?: 'Adresse de facturation non disponible',
+            '{complete_customer_info}' => $this->format_complete_customer_info($order),
+            '{complete_billing_address}' => $billing_address ?: 'Adresse de facturation non disponible',
+            '{shipping_first_name}' => $order->get_shipping_first_name(),
+            '{shipping_last_name}' => $order->get_shipping_last_name(),
+            '{shipping_company}' => $order->get_shipping_company(),
+            '{shipping_address_1}' => $order->get_shipping_address_1(),
+            '{shipping_address_2}' => $order->get_shipping_address_2(),
+            '{shipping_city}' => $order->get_shipping_city(),
+            '{shipping_state}' => $order->get_shipping_state(),
+            '{shipping_postcode}' => $order->get_shipping_postcode(),
+            '{shipping_country}' => $order->get_shipping_country(),
+            '{shipping_address}' => $shipping_address ?: 'Adresse de livraison non disponible',
+            '{customer_email}' => $order->get_billing_email(),
+            '{customer_phone}' => $order->get_billing_phone(),
+            '{total}' => wc_price($order->get_total()),
+            '{subtotal}' => wc_price($order->get_subtotal()),
+            '{tax}' => wc_price($order->get_total_tax()),
+            '{shipping_total}' => wc_price($order->get_shipping_total()),
+            '{discount_total}' => wc_price($order->get_discount_total()),
+            '{payment_method}' => $order->get_payment_method_title(),
+            '{order_status}' => wc_get_order_status_name($order->get_status()),
+            '{currency}' => $order->get_currency(),
+            '{order_items_table}' => $this->generate_order_products_table($order, 'default'),
+            '{document_type}' => $document_type,
+            '{document_type_label}' => $document_type_label,
+        );
+
+        // Appliquer les remplacements dans l'ordre : simples, doubles, crochets
+        $content = str_replace(array_keys($single_brace_replacements), array_values($single_brace_replacements), $content);
+        $content = str_replace(array_keys($double_brace_replacements), array_values($double_brace_replacements), $content);
+        $content = str_replace(array_keys($bracket_replacements), array_values($bracket_replacements), $content);
+
+        return $content;
     }
 
     /**
@@ -5599,58 +5600,6 @@ class PDF_Builder_Admin {
     }
 
     /**
-     * Enregistre l'endpoint pour servir les aperçus PDF
-     */
-    public function register_pdf_preview_endpoint() {
-        \add_rewrite_rule(
-            '^pdf-preview/([a-zA-Z0-9_]+)$',
-            'index.php?pdf_preview_key=$matches[1]',
-            'top'
-        );
-        
-        \add_rewrite_tag('%pdf_preview_key%', '([a-zA-Z0-9_]+)');
-    }
-
-    /**
-     * Gère les requêtes d'aperçu PDF
-     */
-    public function handle_pdf_preview_request() {
-        $preview_key = \get_query_var('pdf_preview_key');
-        
-        if (empty($preview_key)) {
-            return;
-        }
-
-        error_log('[PDF Builder] Serving PDF preview: ' . $preview_key);
-
-        // Vérifier les permissions
-        if (!current_user_can('manage_woocommerce')) {
-            wp_die('Permissions insuffisantes', 'Forbidden', ['response' => 403]);
-        }
-
-        // Récupérer le PDF du cache transient
-        $pdf_content = get_transient($preview_key);
-
-        if ($pdf_content === false) {
-            error_log('[PDF Builder] PDF preview not found: ' . $preview_key);
-            wp_die('Aperçu PDF expiré ou non trouvé', 'Not Found', ['response' => 404]);
-        }
-
-        error_log('[PDF Builder] Serving PDF preview, size: ' . strlen($pdf_content) . ' bytes');
-
-        // Servir le PDF
-        header('Content-Type: application/pdf');
-        header('Content-Disposition: inline; filename="apercu.pdf"');
-        header('Content-Length: ' . strlen($pdf_content));
-        header('Cache-Control: public, max-age=3600');
-        header('Pragma: public');
-        header('Accept-Ranges: bytes');
-
-        echo $pdf_content;
-        wp_die();
-    }
-
-    /**
      * Génère l'aperçu PDF
      */
     private function generate_pdf_preview($order, $template_data) {
@@ -5711,8 +5660,8 @@ class PDF_Builder_Admin {
             
             error_log('[PDF Builder] generate_pdf_preview - PDF sauvegardé en cache: ' . $preview_key);
             
-            // Retourner l'URL du nouvel endpoint (route rewrite)
-            $preview_url = home_url('/pdf-preview/' . $preview_key);
+            // Retourner l'URL du service d'aperçu
+            $preview_url = admin_url('admin-ajax.php?action=pdf_builder_serve_preview&preview_key=' . $preview_key . '&nonce=' . wp_create_nonce('pdf_builder_preview_' . $preview_key));
             
             error_log('[PDF Builder] generate_pdf_preview - URL créée: ' . $preview_url);
 
