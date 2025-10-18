@@ -6189,6 +6189,23 @@ class PDF_Builder_Admin {
         $customer_phone = $order->get_billing_phone();
         $customer_address = $order->get_billing_address_1() . ', ' . $order->get_billing_postcode() . ' ' . $order->get_billing_city();
         
+        // Préparer les données pour remplacer les variables
+        $order_data = [
+            'order_number' => $order_number,
+            'order_date' => $order_date,
+            'customer_name' => $customer_name,
+            'customer_email' => $customer_email,
+            'customer_phone' => $customer_phone,
+            'customer_address' => $customer_address,
+            'total' => $order->get_total(),
+            'subtotal' => $order->get_subtotal(),
+            'shipping_total' => $order->get_shipping_total(),
+            'total_tax' => $order->get_total_tax(),
+            'order_status' => $order->get_status(),
+            'payment_method' => $order->get_payment_method_title(),
+            'shipping_method' => $order->get_shipping_method() ?: 'N/A',
+        ];
+
         // Commencer le HTML avec le rendu du template
         ?>
         <!DOCTYPE html>
@@ -6203,10 +6220,18 @@ class PDF_Builder_Admin {
                     padding: 0;
                     box-sizing: border-box;
                 }
+                html, body {
+                    margin: 0;
+                    padding: 0;
+                    width: 100%;
+                    height: 100%;
+                }
                 body {
                     background: #f5f5f5;
                     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
                     padding: 20px;
+                    display: flex;
+                    justify-content: center;
                 }
                 .canvas-wrapper {
                     width: 100%;
@@ -6216,19 +6241,18 @@ class PDF_Builder_Admin {
                     min-height: 100vh;
                 }
                 .canvas-page {
-                    width: <?php echo esc_attr($canvas_width); ?>px;
+                    width: <?php echo intval($canvas_width); ?>px;
                     height: auto;
                     background: white;
                     position: relative;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-                    margin: 20px 0;
+                    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+                    overflow: hidden;
+                    margin: 20px auto;
                 }
                 .canvas-element {
                     position: absolute;
                     overflow: hidden;
-                    display: flex;
-                    align-items: flex-start;
-                    justify-content: flex-start;
+                    box-sizing: border-box;
                 }
                 .element-text {
                     word-wrap: break-word;
@@ -6236,35 +6260,34 @@ class PDF_Builder_Admin {
                     width: 100%;
                     height: 100%;
                     overflow: hidden;
+                    display: flex;
+                    align-items: flex-start;
+                    justify-content: flex-start;
                 }
                 .element-image {
                     width: 100%;
                     height: 100%;
-                    object-fit: cover;
+                    object-fit: contain;
+                }
+                table.product-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+                table.product-table th,
+                table.product-table td {
+                    padding: 8px;
+                    text-align: left;
+                    border: 1px solid #ddd;
+                }
+                table.product-table th {
+                    font-weight: bold;
                 }
             </style>
         </head>
         <body>
             <div class="canvas-wrapper">
-                <div class="canvas-page" style="min-height: <?php echo esc_attr($canvas_height); ?>px;">
+                <div class="canvas-page" style="min-height: <?php echo intval($canvas_height); ?>px;">
                     <?php
-                    // Données dynamiques de la commande
-                    $order_data = [
-                        'order_number' => $order_number,
-                        'order_date' => $order_date,
-                        'customer_name' => $customer_name,
-                        'customer_email' => $customer_email,
-                        'customer_phone' => $customer_phone,
-                        'customer_address' => $customer_address,
-                        'total' => $order->get_total(),
-                        'subtotal' => $order->get_subtotal(),
-                        'shipping_total' => $order->get_shipping_total(),
-                        'total_tax' => $order->get_total_tax(),
-                        'order_status' => $order->get_status(),
-                        'payment_method' => $order->get_payment_method_title(),
-                        'shipping_method' => $order->get_shipping_method() ?: 'N/A',
-                    ];
-
                     // Afficher chaque élément du canvas
                     foreach ($elements as $element) {
                         $x = floatval($element['x'] ?? 0);
@@ -6272,7 +6295,7 @@ class PDF_Builder_Admin {
                         $width = floatval($element['width'] ?? 100);
                         $height = floatval($element['height'] ?? 50);
                         $type = $element['type'] ?? 'text';
-                        $visible = isset($element['visible']) ? $element['visible'] : true;
+                        $visible = isset($element['visible']) ? (bool)$element['visible'] : true;
 
                         if (!$visible) {
                             continue;
@@ -6285,45 +6308,61 @@ class PDF_Builder_Admin {
                         $font_size = floatval($element['fontSize'] ?? 14);
                         $font_weight = $element['fontWeight'] ?? 'normal';
                         $text_align = $element['textAlign'] ?? 'left';
-                        $border = $element['borderWidth'] ?? 0;
+                        $border = floatval($element['borderWidth'] ?? 0);
                         $border_color = $element['borderColor'] ?? '#000000';
                         $padding = floatval($element['padding'] ?? 5);
+                        $rotation = floatval($element['rotation'] ?? 0);
+                        $opacity = floatval($element['opacity'] ?? 1);
 
-                        $style = "position: absolute; left: {$x}px; top: {$y}px; width: {$width}px; height: {$height}px; ";
+                        // Construire le style CSS
+                        $style = "position: absolute; ";
+                        $style .= "left: {$x}px; top: {$y}px; ";
+                        $style .= "width: {$width}px; height: {$height}px; ";
                         $style .= "background-color: {$bg_color}; ";
                         if ($border > 0) {
                             $style .= "border: {$border}px solid {$border_color}; ";
                         }
                         $style .= "color: {$color}; font-family: {$font_family}; font-size: {$font_size}px; font-weight: {$font_weight}; ";
                         $style .= "text-align: {$text_align}; padding: {$padding}px; overflow: hidden; ";
+                        if ($rotation != 0) {
+                            $style .= "transform: rotate({$rotation}deg); ";
+                        }
+                        if ($opacity < 1) {
+                            $style .= "opacity: {$opacity}; ";
+                        }
                     ?>
                         <div class="canvas-element" style="<?php echo esc_attr($style); ?>">
                             <?php
-                            if ($type === 'text' || $type === 'dynamic-text') {
-                                $text = $element['text'] ?? 'Texte';
-                                if ($type === 'dynamic-text' && !empty($element['customContent'])) {
-                                    $text = $element['customContent'];
-                                    // Remplacer les variables dynamiques
-                                    $text = str_replace('{{order_number}}', $order_data['order_number'], $text);
-                                    $text = str_replace('{{order_date}}', $order_data['order_date'], $text);
-                                    $text = str_replace('{{order_total}}', wc_price($order_data['total']), $text);
-                                    $text = str_replace('{{order_subtotal}}', wc_price($order_data['subtotal']), $text);
-                                    $text = str_replace('{{shipping_total}}', wc_price($order_data['shipping_total']), $text);
-                                    $text = str_replace('{{total_tax}}', wc_price($order_data['total_tax']), $text);
-                                    $text = str_replace('{{customer_name}}', $order_data['customer_name'], $text);
-                                    $text = str_replace('{{customer_email}}', $order_data['customer_email'], $text);
-                                    $text = str_replace('{{customer_phone}}', $order_data['customer_phone'], $text);
-                                    $text = str_replace('{{customer_address}}', $order_data['customer_address'], $text);
-                                    $text = str_replace('{{order_status}}', ucfirst(str_replace('wc-', '', $order_data['order_status'])), $text);
-                                    $text = str_replace('{{payment_method}}', $order_data['payment_method'], $text);
-                                    $text = str_replace('{{shipping_method}}', $order_data['shipping_method'], $text);
-                                }
+                            if ($type === 'text') {
+                                $text = $element['text'] ?? '';
+                                echo '<div class="element-text">' . esc_html($text) . '</div>';
+                                
+                            } elseif ($type === 'dynamic-text') {
+                                $text = $element['customContent'] ?? '';
+                                
+                                // Remplacer toutes les variables dynamiques
+                                $text = str_replace('{{order_number}}', $order_data['order_number'], $text);
+                                $text = str_replace('{{order_date}}', $order_data['order_date'], $text);
+                                $text = str_replace('{{order_total}}', wc_price($order_data['total']), $text);
+                                $text = str_replace('{{order_subtotal}}', wc_price($order_data['subtotal']), $text);
+                                $text = str_replace('{{shipping_total}}', wc_price($order_data['shipping_total']), $text);
+                                $text = str_replace('{{total_tax}}', wc_price($order_data['total_tax']), $text);
+                                $text = str_replace('{{customer_name}}', $order_data['customer_name'], $text);
+                                $text = str_replace('{{customer_email}}', $order_data['customer_email'], $text);
+                                $text = str_replace('{{customer_phone}}', $order_data['customer_phone'], $text);
+                                $text = str_replace('{{customer_address}}', $order_data['customer_address'], $text);
+                                $text = str_replace('{{order_status}}', ucfirst(str_replace('wc-', '', $order_data['order_status'])), $text);
+                                $text = str_replace('{{payment_method}}', $order_data['payment_method'], $text);
+                                $text = str_replace('{{shipping_method}}', $order_data['shipping_method'], $text);
+                                
                                 echo '<div class="element-text">' . wp_kses_post($text) . '</div>';
+                                
                             } elseif ($type === 'image' || $type === 'company_logo') {
                                 $src = $element['src'] ?? $element['imageUrl'] ?? '';
                                 if ($src) {
-                                    echo '<img src="' . esc_url($src) . '" class="element-image" />';
+                                    echo '<img src="' . esc_url($src) . '" class="element-image" alt="" />';
                                 }
+                                
                             } elseif ($type === 'product_table') {
                                 echo $this->render_product_table_html($order, $element);
                             }
