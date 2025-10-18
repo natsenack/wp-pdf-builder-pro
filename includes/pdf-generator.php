@@ -334,11 +334,11 @@ class PDF_Builder_Pro_Generator {
                     'total' => true
                 ],
                 'headers' => ['Produit', 'Qté', 'Prix'],
-                'showSubtotal' => true,
-                'showShipping' => true,
-                'showTaxes' => true,
-                'showDiscount' => true,
-                'showTotal' => true,
+                'showSubtotal' => false,  // Désactivé par défaut pour l'auto-injection
+                'showShipping' => false,  // Désactivé par défaut pour l'auto-injection
+                'showTaxes' => false,     // Désactivé par défaut pour l'auto-injection
+                'showDiscount' => false,  // Désactivé par défaut pour l'auto-injection
+                'showTotal' => true,      // Total activé par défaut
                 'visible' => true,
                 'opacity' => 100
             ];
@@ -1788,12 +1788,12 @@ class PDF_Builder_Pro_Generator {
                 'total' => true
             ];
 
-            // Propriétés des totaux
-            $show_subtotal = $element['showSubtotal'] ?? false;
-            $show_shipping = $element['showShipping'] ?? true;
-            $show_taxes = $element['showTaxes'] ?? true;
-            $show_discount = $element['showDiscount'] ?? false;
-            $show_total = $element['showTotal'] ?? false;
+            // Propriétés des totaux - valeurs par défaut cohérentes avec l'interface
+            $show_subtotal = $element['showSubtotal'] ?? true;   // Activé par défaut
+            $show_shipping = $element['showShipping'] ?? true;  // Activé par défaut
+            $show_taxes = $element['showTaxes'] ?? true;        // Activé par défaut
+            $show_discount = $element['showDiscount'] ?? false; // Désactivé par défaut
+            $show_total = $element['showTotal'] ?? true;        // Activé par défaut
 
             // Styles de tableau selon le style choisi
             $table_styles = $this->get_table_styles($table_style);
