@@ -423,7 +423,7 @@ class PDF_Builder_WooCommerce_Integration {
                         </div>
                     </div>
                     <iframe id="woo-pdf-preview-iframe" 
-                            style="width: 100%; height: 100%; border: none; background: white; flex: 1;"
+                            style="width: 100%; height: 100%; border: none; background: white; display: block; flex: 1;"
                             title="Aperçu PDF"
                             allow="fullscreen"></iframe>
                     <div class="woo-pdf-preview-loading" style="display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.9); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; border-radius: 4px;">
@@ -473,8 +473,9 @@ class PDF_Builder_WooCommerce_Integration {
                 border-radius: 12px;
                 box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 0, 0, 0.05);
                 width: 95%;
-                max-width: 1000px;
-                height: 85vh;
+                max-width: 1200px;
+                height: 90vh;
+                max-height: 900px;
                 display: flex;
                 flex-direction: column;
                 animation: wooSlideIn 0.3s ease-out;
@@ -534,14 +535,27 @@ class PDF_Builder_WooCommerce_Integration {
 
             .woo-pdf-preview-modal-body {
                 flex: 1;
-                overflow: hidden;
-                background: #ffffff;
+                overflow: auto;
+                background: #f0f0f0;
                 display: flex;
                 flex-direction: column;
+                align-items: center;
+                justify-content: flex-start;
                 padding: 0;
                 gap: 0;
                 min-height: 0;
                 position: relative;
+                width: 100%;
+                height: 100%;
+            }
+
+            .woo-pdf-preview-modal-body iframe {
+                width: 100%;
+                height: 100%;
+                border: none;
+                flex: 1;
+                min-height: 500px;
+                background: white;
             }
 
             .woo-pdf-preview-toolbar {
@@ -835,8 +849,13 @@ class PDF_Builder_WooCommerce_Integration {
                         console.log('PDF Preview - Success:', response);
 
                         if (response.success && response.data && response.data.url) {
-                            // Charger le PDF dans l'iframe
-                            $iframe.attr('src', response.data.url);
+                            // Charger le PDF dans l'iframe avec les paramètres de vue optimisée
+                            var pdfUrl = response.data.url;
+                            // Ajouter des paramètres au PDF pour optimiser l'affichage
+                            if (pdfUrl.indexOf('#') === -1) {
+                                pdfUrl += '#zoom=page-fit&toolbar=0&navpanes=0';
+                            }
+                            $iframe.attr('src', pdfUrl);
                             
                             // Stocker l'URL pour le téléchargement
                             $modal.data('pdf-url', response.data.url);
@@ -844,6 +863,8 @@ class PDF_Builder_WooCommerce_Integration {
                             // Masquer le loading et afficher l'iframe
                             setTimeout(function() {
                                 $loading.hide();
+                                // Forcer le recalcul de la hauteur
+                                $iframe.css('display', 'block');
                             }, 300);
                             
                             showStatus("Aperçu généré avec succès ✓", "success");
