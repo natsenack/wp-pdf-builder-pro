@@ -567,10 +567,8 @@ class PDF_Builder_WooCommerce_Integration {
 
     /**
      * AJAX handler pour générer l'aperçu PDF d'une commande
-    /**
-     * Détermine le template approprié pour une commande
      */
-
+    public function ajax_generate_order_pdf_preview() {
         // S'assurer que les headers JSON sont envoyés en premier
         if (!headers_sent()) {
             header('Content-Type: application/json; charset=UTF-8');
