@@ -76,17 +76,67 @@ $lastDeployTime = if ($lastSuccessfulDeploy) { [DateTime]::Parse($lastSuccessful
 
 Write-Host "📅 Dernier déploiement réussi: $($lastDeployTime.ToString('yyyy-MM-dd HH:mm:ss'))" -ForegroundColor Cyan
 
-# Exclusions: dossiers de développement, fichiers temporaires, archives, backups, logs, docs
+# Dossiers et fichiers du plugin à inclure obligatoirement
+$pluginIncludes = @(
+    'assets/',
+    'config/',
+    'core/',
+    'database/',
+    'languages/',
+    'lib/',
+    'resources/',
+    'src/',
+    'templates/',
+    'uploads/',
+    '\.htaccess$',
+    'pdf-builder-pro\.php$',
+    'bootstrap\.php$',
+    'readme\.txt$'
+)
+
+# Dossiers et fichiers à exclure (développement, non-plugin)
+$pluginExcludes = @(
+    '\.git',
+    '\.vscode',
+    'node_modules',
+    'tools',
+    'tests',
+    'xdebug',
+    'build-tools',
+    'dev-tools',
+    'temp',
+    'backup',
+    'cache',
+    'extract',
+    'restore',
+    'archive',
+    'vendor',
+    'dist',
+    '\.bak$',
+    '\.tmp$',
+    '\.log$',
+    '\.md$'
+)
+
+# Construire la regex d'inclusion (seulement fichiers du plugin)
+$includePattern = "^(" + ($pluginIncludes -join "|") + ")"
+
+# Construire la regex d'exclusion
+$excludePattern = ($pluginExcludes | ForEach-Object { "^(?!.*$_)" }) -join ""
+$excludePattern = "(" + ($pluginExcludes -join "|") + ")"
+
+# Récupérer tous les fichiers du plugin
 $allFiles = Get-ChildItem -Path $projectRoot -Recurse -File | Where-Object {
     $relPath = $_.FullName.Substring($projectRoot.Length + 1).Replace('\', '/')
-    -not ($relPath -match '^(archive|\.git|\.vscode|node_modules|src|tools|docs|build-tools|dev-tools|vendor|dist|package\.json|package-lock\.json|webpack\.config\.js|tsconfig\.json|temp-restore)/|^(temp|backup|cache|extract|restore|canvas-extract|temp-canvas|backup-wp|archive-pdf|temp_backup|projet)/|^.*\.(bak|tmp|log|md)$')
-} | Where-Object {
-    $relPath = $_.FullName.Substring($projectRoot.Length + 1).Replace('\', '/')
-    ($relPath -match '^(assets|includes|languages|lib)/') -or
-    ($relPath -match '\.(php|css|js|html|htaccess)$') -or
-    ($relPath -eq 'readme.txt') -or
-    ($relPath -eq 'pdf-builder-pro.php') -or
-    ($relPath -eq 'bootstrap.php')
+    
+    # Inclure si le chemin correspond à l'un des dossiers/fichiers du plugin
+    $isIncluded = $relPath -match $includePattern
+    
+    # Exclure si le chemin correspond à l'un des dossiers d'exclusion
+    $isExcluded = $relPath -match $excludePattern
+    
+    # Fichier valide = inclus ET non exclu
+    $isIncluded -and -not $isExcluded
 }
 
 # Filtrage intelligent : seulement les fichiers modifiés depuis le dernier déploiement
