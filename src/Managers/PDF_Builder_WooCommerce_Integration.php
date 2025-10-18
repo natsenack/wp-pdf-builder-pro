@@ -1010,22 +1010,28 @@ class PDF_Builder_WooCommerce_Integration {
      * AJAX handler pour générer le PDF d'une commande
      */
     public function ajax_generate_order_pdf() {
+        // Log d'entrée pour debug
+        error_log('PDF BUILDER DEBUG: ajax_generate_order_pdf called with POST data: ' . print_r($_POST, true));
 
         // Vérifier les permissions
         if (!current_user_can('manage_woocommerce')) {
+            error_log('PDF BUILDER DEBUG: Permission check failed');
             wp_send_json_error('Permissions insuffisantes');
         }
 
         // Vérification de sécurité
         if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions')) {
+            error_log('PDF BUILDER DEBUG: Nonce verification failed');
             wp_send_json_error('Sécurité: Nonce invalide');
         }
 
         $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
         $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
 
+        error_log("PDF BUILDER DEBUG: Parameters - order_id: $order_id, template_id: $template_id");
 
         if (!$order_id) {
+            error_log('PDF BUILDER DEBUG: Order ID missing');
             wp_send_json_error('ID commande manquant');
         }
 
@@ -1097,7 +1103,9 @@ class PDF_Builder_WooCommerce_Integration {
 
         try {
             // Générer le PDF
+            error_log('PDF BUILDER DEBUG: About to call generate_order_pdf');
             $result = $this->main->generate_order_pdf($order_id, $template_id);
+            error_log('PDF BUILDER DEBUG: generate_order_pdf returned: ' . print_r($result, true));
 
             if (is_wp_error($result)) {
                 wp_send_json_error($result->get_error_message());
