@@ -62,7 +62,7 @@ Pop-Location
 # ============================================================================
 # 3. DÉTECTION DES FICHIERS MODIFIÉS (OPTIMISÉ)
 # ============================================================================
-Write-Host "`n� 3. Détection des fichiers modifiés..." -ForegroundColor Cyan
+Write-Host "`n✓ 3. Détection des fichiers modifiés..." -ForegroundColor Cyan
 
 Push-Location $projectRoot
 
@@ -77,10 +77,12 @@ $modifiedFiles = git status --porcelain | ForEach-Object {
     }
 }
 
-# Obtenir aussi les fichiers trackés modifiés par rapport au dernier commit
-$committedChanges = git diff --name-only HEAD~1 2>$null
-if ($committedChanges) {
-    $modifiedFiles += $committedChanges
+# Obtenir aussi les fichiers du dernier commit
+if (-not $modifiedFiles -or $modifiedFiles.Count -eq 0) {
+    $committedChanges = git diff-tree --no-commit-id --name-only -r HEAD 2>$null
+    if ($committedChanges) {
+        $modifiedFiles = $committedChanges
+    }
 }
 
 # Éliminer les doublons et filtrer
