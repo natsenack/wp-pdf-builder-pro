@@ -2100,6 +2100,11 @@ class PDF_Builder_Admin {
                         $html .= sprintf('<div class="pdf-element text-element" style="%s">%s</div>', $style, esc_html($final_content));
                         break;
 
+                    case 'dynamic-text':
+                        $final_content = $order ? $this->replace_order_variables($content, $order) : $content;
+                        $html .= sprintf('<div class="pdf-element text-element" style="%s">%s</div>', $style, esc_html($final_content));
+                        break;
+
                     case 'invoice_number':
                         if ($order) {
                             $invoice_number = $order->get_id() . '-' . time();
