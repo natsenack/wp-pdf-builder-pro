@@ -2032,7 +2032,8 @@ class PDF_Builder_Pro_Generator {
                 'headerFontSize' => '11px',
                 'rowFontSize' => '10px',
                 'shadow' => '0 1px 4px rgba(59, 130, 246, 0.2)',
-                'borderRadius' => '6px'
+                'borderRadius' => '6px',
+                'gradient' => 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
             ],
             'minimal' => [
                 'header_bg' => ['r' => 255, 'g' => 255, 'b' => 255], // #ffffff
@@ -2055,7 +2056,12 @@ class PDF_Builder_Pro_Generator {
                 'alt_row_bg' => ['r' => 249, 'g' => 250, 'b' => 251],
                 'headerTextColor' => '#ffffff',
                 'rowTextColor' => '#374151',
-                'border_width' => 1.5
+                'border_width' => 1.5,
+                'headerFontWeight' => '600',
+                'headerFontSize' => '11px',
+                'rowFontSize' => '10px',
+                'shadow' => '0 2px 8px rgba(0, 0, 0, 0.1)',
+                'borderRadius' => '6px'
             ],
             'coral' => [
                 'header_bg' => ['r' => 248, 'g' => 113, 'b' => 113], // Corail
@@ -2069,7 +2075,8 @@ class PDF_Builder_Pro_Generator {
                 'headerFontSize' => '11px',
                 'rowFontSize' => '10px',
                 'shadow' => '0 4px 16px rgba(248, 113, 113, 0.3)',
-                'borderRadius' => '6px'
+                'borderRadius' => '6px',
+                'gradient' => 'linear-gradient(135deg, #f87171 0%, #fb7185 100%)'
             ],
             'teal' => [
                 'header_bg' => ['r' => 20, 'g' => 184, 'b' => 166], // Sarcelle
@@ -2078,7 +2085,13 @@ class PDF_Builder_Pro_Generator {
                 'alt_row_bg' => ['r' => 240, 'g' => 253, 'b' => 250],
                 'headerTextColor' => '#ffffff',
                 'rowTextColor' => '#0f766e',
-                'border_width' => 1.5
+                'border_width' => 1.5,
+                'headerFontWeight' => '600',
+                'headerFontSize' => '11px',
+                'rowFontSize' => '10px',
+                'shadow' => '0 4px 16px rgba(20, 184, 166, 0.3)',
+                'borderRadius' => '6px',
+                'gradient' => 'linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%)'
             ],
             'indigo' => [
                 'header_bg' => ['r' => 99, 'g' => 102, 'b' => 241], // Indigo
@@ -2087,7 +2100,13 @@ class PDF_Builder_Pro_Generator {
                 'alt_row_bg' => ['r' => 238, 'g' => 242, 'b' => 255],
                 'headerTextColor' => '#ffffff',
                 'rowTextColor' => '#3730a3',
-                'border_width' => 1.5
+                'border_width' => 1.5,
+                'headerFontWeight' => '600',
+                'headerFontSize' => '11px',
+                'rowFontSize' => '10px',
+                'shadow' => '0 4px 16px rgba(99, 102, 241, 0.3)',
+                'borderRadius' => '6px',
+                'gradient' => 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)'
             ],
             'amber' => [
                 'header_bg' => ['r' => 245, 'g' => 158, 'b' => 11], // Ambre
@@ -2096,7 +2115,13 @@ class PDF_Builder_Pro_Generator {
                 'alt_row_bg' => ['r' => 255, 'g' => 251, 'b' => 235],
                 'headerTextColor' => '#92400e',
                 'rowTextColor' => '#92400e',
-                'border_width' => 1.5
+                'border_width' => 1.5,
+                'headerFontWeight' => '600',
+                'headerFontSize' => '11px',
+                'rowFontSize' => '10px',
+                'shadow' => '0 4px 16px rgba(245, 158, 11, 0.3)',
+                'borderRadius' => '6px',
+                'gradient' => 'linear-gradient(135deg, #f59e0b 0%, #f97316 100%)'
             ]
         ];
 
@@ -2978,7 +3003,7 @@ class PDF_Builder_Pro_Generator {
         $container_style = sprintf(
             'width: 100%%; height: 100%%; display: flex; flex-direction: column; font-size: %dpx; font-family: "Inter", "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont, sans-serif; border: %s; border-radius: %dpx; overflow: hidden; background-color: %s; box-sizing: border-box; box-shadow: %s; line-height: 1.4; color: %s;',
             10 * $zoom,
-            $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $table_styles['headerBorder'] : 'none',
+            $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $this->rgb_to_hex($table_styles['header_border']) : 'none',
             isset($table_styles['borderRadius']) ? $table_styles['borderRadius'] * $zoom : 2,
             $element['backgroundColor'] ?? 'transparent',
             $table_styles['shadow'] ?? 'none',
@@ -2989,13 +3014,14 @@ class PDF_Builder_Pro_Generator {
 
         // En-têtes du tableau
         if ($show_headers) {
+            $header_bg = isset($table_styles['gradient']) ? $table_styles['gradient'] : $this->rgb_to_hex($table_styles['header_bg']);
             $header_container_style = sprintf(
                 'display: flex; background: %s; border-bottom: %s; font-weight: %s; color: %s; font-size: %dpx; text-transform: uppercase; letter-spacing: 0.025em;',
-                $table_styles['headerBg'],
-                $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $table_styles['headerBorder'] : 'none',
-                $table_styles['headerFontWeight'],
+                $header_bg,
+                $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $this->rgb_to_hex($table_styles['header_border']) : 'none',
+                $table_styles['headerFontWeight'] ?? '600',
                 $table_styles['headerTextColor'],
-                $table_styles['headerFontSize'] * $zoom
+                ($table_styles['headerFontSize'] ?? '11px') * $zoom
             );
 
             $html .= '<div style="' . $header_container_style . '">';
@@ -3005,8 +3031,8 @@ class PDF_Builder_Pro_Generator {
                 $header_cell_style = sprintf(
                     'flex: 0 0 %dpx; padding: %dpx %dpx; text-align: center; border-right: %s; font-size: %dpx; opacity: 0.9;',
                     40, 6 * $zoom, 4 * $zoom,
-                    $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $table_styles['headerBorder'] : 'none',
-                    $table_styles['headerFontSize'] * $zoom * 0.9
+                    $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $this->rgb_to_hex($table_styles['header_border']) : 'none',
+                    (($table_styles['headerFontSize'] ?? '11px') * $zoom * 0.9)
                 );
                 $html .= '<div style="' . $header_cell_style . '">Img</div>';
             }
@@ -3015,8 +3041,8 @@ class PDF_Builder_Pro_Generator {
                 $header_cell_style = sprintf(
                     'flex: 1; padding: %dpx %dpx; text-align: left; border-right: %s; font-size: %dpx;',
                     6 * $zoom, 8 * $zoom,
-                    $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $table_styles['headerBorder'] : 'none',
-                    $table_styles['headerFontSize'] * $zoom
+                    $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $this->rgb_to_hex($table_styles['header_border']) : 'none',
+                    ($table_styles['headerFontSize'] ?? '11px') * $zoom
                 );
                 $html .= '<div style="' . $header_cell_style . '">' . htmlspecialchars($headers[0] ?? 'Produit') . '</div>';
             }
@@ -3024,8 +3050,8 @@ class PDF_Builder_Pro_Generator {
                 $header_cell_style = sprintf(
                     'flex: 0 0 %dpx; padding: %dpx %dpx; text-align: left; border-right: %s; font-size: %dpx;',
                     80, 6 * $zoom, 8 * $zoom,
-                    $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $table_styles['headerBorder'] : 'none',
-                    $table_styles['headerFontSize'] * $zoom
+                    $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $this->rgb_to_hex($table_styles['header_border']) : 'none',
+                    ($table_styles['headerFontSize'] ?? '11px') * $zoom
                 );
                 $html .= '<div style="' . $header_cell_style . '">SKU</div>';
             }
@@ -3033,8 +3059,8 @@ class PDF_Builder_Pro_Generator {
                 $header_cell_style = sprintf(
                     'flex: 0 0 %dpx; padding: %dpx %dpx; text-align: center; border-right: %s; font-size: %dpx;',
                     60, 6 * $zoom, 8 * $zoom,
-                    $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $table_styles['headerBorder'] : 'none',
-                    $table_styles['headerFontSize'] * $zoom
+                    $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $this->rgb_to_hex($table_styles['header_border']) : 'none',
+                    ($table_styles['headerFontSize'] ?? '11px') * $zoom
                 );
                 $html .= '<div style="' . $header_cell_style . '">' . htmlspecialchars($headers[1] ?? 'Qté') . '</div>';
             }
@@ -3042,8 +3068,8 @@ class PDF_Builder_Pro_Generator {
                 $header_cell_style = sprintf(
                     'flex: 0 0 %dpx; padding: %dpx %dpx; text-align: right; border-right: %s; font-size: %dpx;',
                     80, 6 * $zoom, 8 * $zoom,
-                    $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $table_styles['headerBorder'] : 'none',
-                    $table_styles['headerFontSize'] * $zoom
+                    $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $this->rgb_to_hex($table_styles['header_border']) : 'none',
+                    ($table_styles['headerFontSize'] ?? '11px') * $zoom
                 );
                 $html .= '<div style="' . $header_cell_style . '">' . htmlspecialchars($headers[2] ?? 'Prix') . '</div>';
             }
@@ -3051,7 +3077,7 @@ class PDF_Builder_Pro_Generator {
                 $header_cell_style = sprintf(
                     'flex: 0 0 %dpx; padding: %dpx %dpx; text-align: right; font-size: %dpx;',
                     80, 6 * $zoom, 8 * $zoom,
-                    $table_styles['headerFontSize'] * $zoom
+                    ($table_styles['headerFontSize'] ?? '11px') * $zoom
                 );
                 $html .= '<div style="' . $header_cell_style . '">Total</div>';
             }
@@ -3065,18 +3091,19 @@ class PDF_Builder_Pro_Generator {
 
         foreach ($products as $index => $product) {
             $row_bg = ($index % 2 === 0)
-                ? ($element['evenRowBg'] ?? $table_styles['rowBg'])
-                : ($element['oddRowBg'] ?? $table_styles['altRowBg']);
+                ? ($element['evenRowBg'] ?? (isset($table_styles['row_bg']) ? $this->rgb_to_hex($table_styles['row_bg']) : 'transparent'))
+                : ($element['oddRowBg'] ?? (isset($table_styles['alt_row_bg']) ? $this->rgb_to_hex($table_styles['alt_row_bg']) : '#fafbfc'));
             $row_text_color = ($index % 2 === 0)
                 ? ($element['evenRowTextColor'] ?? $table_styles['rowTextColor'])
                 : ($element['oddRowTextColor'] ?? $table_styles['rowTextColor']);
 
+            $row_border_color = isset($table_styles['row_border']) ? $this->rgb_to_hex($table_styles['row_border']) : '#000000';
             $row_style = sprintf(
                 'display: flex; border-bottom: %s; background-color: %s; color: %s; font-size: %dpx; transition: background-color 0.15s ease;',
-                $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $table_styles['rowBorder'] : 'none',
+                $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $row_border_color : 'none',
                 $row_bg,
                 $row_text_color,
-                $table_styles['rowFontSize'] * $zoom
+                ($table_styles['rowFontSize'] ?? '10px') * $zoom
             );
 
             $html .= '<div style="' . $row_style . '">';
@@ -3086,9 +3113,9 @@ class PDF_Builder_Pro_Generator {
                 $cell_style = sprintf(
                     'flex: 0 0 %dpx; padding: %dpx %dpx; text-align: center; border-right: %s; color: %s; opacity: 0.7; font-size: %dpx;',
                     40, 5 * $zoom, 4 * $zoom,
-                    $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $table_styles['rowBorder'] : 'none',
+                    $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $row_border_color : 'none',
                     $table_styles['rowTextColor'],
-                    $table_styles['rowFontSize'] * $zoom * 0.9
+                    (($table_styles['rowFontSize'] ?? '10px') * $zoom * 0.9)
                 );
                 $html .= '<div style="' . $cell_style . '">📷</div>';
             }
@@ -3096,7 +3123,7 @@ class PDF_Builder_Pro_Generator {
                 $cell_style = sprintf(
                     'flex: 1; padding: %dpx %dpx; border-right: %s; color: %s; font-weight: 500; line-height: 1.3;',
                     5 * $zoom, 8 * $zoom,
-                    $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $table_styles['rowBorder'] : 'none',
+                    $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $row_border_color : 'none',
                     $table_styles['rowTextColor']
                 );
                 $html .= '<div style="' . $cell_style . '">' . htmlspecialchars($product['name']) . '</div>';
@@ -3105,9 +3132,9 @@ class PDF_Builder_Pro_Generator {
                 $cell_style = sprintf(
                     'flex: 0 0 %dpx; padding: %dpx %dpx; border-right: %s; color: %s; opacity: 0.8; font-family: monospace; font-size: %dpx;',
                     80, 5 * $zoom, 8 * $zoom,
-                    $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $table_styles['rowBorder'] : 'none',
+                    $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $row_border_color : 'none',
                     $table_styles['rowTextColor'],
-                    $table_styles['rowFontSize'] * $zoom * 0.9
+                    (($table_styles['rowFontSize'] ?? '10px') * $zoom * 0.9)
                 );
                 $html .= '<div style="' . $cell_style . '">' . htmlspecialchars($product['sku']) . '</div>';
             }
@@ -3115,7 +3142,7 @@ class PDF_Builder_Pro_Generator {
                 $cell_style = sprintf(
                     'flex: 0 0 %dpx; padding: %dpx %dpx; text-align: center; border-right: %s; color: %s; font-weight: 600;',
                     60, 5 * $zoom, 8 * $zoom,
-                    $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $table_styles['rowBorder'] : 'none',
+                    $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $row_border_color : 'none',
                     $table_styles['rowTextColor']
                 );
                 $html .= '<div style="' . $cell_style . '">' . $product['quantity'] . '</div>';
@@ -3124,7 +3151,7 @@ class PDF_Builder_Pro_Generator {
                 $cell_style = sprintf(
                     'flex: 0 0 %dpx; padding: %dpx %dpx; text-align: right; border-right: %s; color: %s; font-weight: 500; font-family: "Inter", system-ui, sans-serif;',
                     80, 5 * $zoom, 8 * $zoom,
-                    $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $table_styles['rowBorder'] : 'none',
+                    $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $row_border_color : 'none',
                     $table_styles['rowTextColor']
                 );
                 $html .= '<div style="' . $cell_style . '">' . number_format($product['price'], 2, ',', ' ') . ' €</div>';
@@ -3145,7 +3172,8 @@ class PDF_Builder_Pro_Generator {
 
         // Lignes de totaux
         if ($show_subtotal || $show_shipping || $show_taxes || $show_discount || $show_total) {
-            $totals_style = 'border-top: ' . ($show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $table_styles['headerBorder'] : 'none') . ';';
+            $totals_border_color = isset($table_styles['header_border']) ? $this->rgb_to_hex($table_styles['header_border']) : '#e2e8f0';
+            $totals_style = 'border-top: ' . ($show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $totals_border_color : 'none') . ';';
             $html .= '<div style="' . $totals_style . '">';
 
             if ($show_subtotal) {
@@ -3185,10 +3213,11 @@ class PDF_Builder_Pro_Generator {
             }
 
             if ($show_total) {
+                $total_bg = isset($table_styles['gradient']) ? $table_styles['gradient'] : (isset($table_styles['header_bg']) ? $this->rgb_to_hex($table_styles['header_bg']) : '#f8fafc');
                 $total_row_style = sprintf(
                     'display: flex; justify-content: flex-end; padding: %dpx %dpx; font-weight: bold; background: %s; color: %s; box-shadow: %s;',
                     4 * $zoom, 6 * $zoom,
-                    isset($table_styles['gradient']) ? $table_styles['gradient'] : $table_styles['headerBg'],
+                    $total_bg,
                     $table_styles['headerTextColor'],
                     isset($table_styles['shadow']) ? '0 2px 4px ' . $table_styles['shadow'] : 'none'
                 );
