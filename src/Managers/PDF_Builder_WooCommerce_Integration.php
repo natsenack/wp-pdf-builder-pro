@@ -834,60 +834,28 @@ class PDF_Builder_WooCommerce_Integration {
                 $modal.show();
                 $loading.show();
 
-                showStatus("Génération de l'aperçu en cours...", "loading");
+                showStatus("Chargement de l'aperçu en cours...", "loading");
 
-                // Effectuer l'AJAX pour générer l'aperçu
-                $.ajax({
-                    url: "<?php echo admin_url('admin-ajax.php'); ?>",
-                    type: "POST",
-                    dataType: "json",
-                    timeout: 30000,
-                    data: {
-                        action: "pdf_builder_unified_preview",
-                        order_id: orderId,
-                        template_id: templateId > 0 ? templateId : null,
-                        nonce: nonce
-                    },
-                    success: function(response) {
-                        console.log('PDF Preview - Success:', response);
-
-                        if (response.success && response.data && response.data.url) {
-                            // Charger le PDF dans l'iframe avec les paramètres de vue optimisée
-                            var pdfUrl = response.data.url;
-                            // Ajouter des paramètres au PDF pour optimiser l'affichage
-                            // zoom=page-fit pour adapter à la largeur
-                            // page=1 pour démarrer à la première page
-                            if (pdfUrl.indexOf('#') === -1) {
-                                pdfUrl += '#page=1&zoom=page-fit&toolbar=0&navpanes=0';
-                            }
-                            $iframe.attr('src', pdfUrl);
-                            
-                            // Stocker l'URL pour le téléchargement
-                            $modal.data('pdf-url', response.data.url);
-                            
-                            // Masquer le loading et afficher l'iframe
-                            setTimeout(function() {
-                                $loading.hide();
-                                // Forcer le recalcul de la hauteur
-                                $iframe.css('display', 'block');
-                                // Attendre que l'iframe soit chargé
-                                $iframe.on('load', function() {
-                                    console.log('PDF iframe loaded');
-                                });
-                            }, 300);
-                            
-                            showStatus("Aperçu généré avec succès ✓", "success");
-                        } else {
-                            $loading.html("<div style='text-align: center; color: #dc3545;'><p>Erreur: " + (response.data || 'Erreur inconnue') + "</p></div>");
-                            showStatus("Erreur lors de l'aperçu", "error");
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('PDF Preview - Error:', status, error);
-                        $loading.html("<div style='text-align: center; color: #dc3545;'><p>Erreur AJAX: " + error + "</p></div>");
-                        showStatus("Erreur AJAX", "error");
-                    }
-                });
+                // Charger directement la page d'aperçu Canvas au lieu de générer un PDF TCPDF
+                // L'aperçu Canvas est identique à l'éditeur et s'affiche plus rapidement
+                var previewUrl = "<?php echo admin_url('admin-ajax.php'); ?>" +
+                    "?action=pdf_builder_canvas_preview" +
+                    "&order_id=" + orderId +
+                    "&nonce=" + nonce;
+                
+                // Charger l'iframe avec l'aperçu Canvas
+                $iframe.attr('src', previewUrl);
+                
+                // Masquer le loading et afficher l'iframe
+                setTimeout(function() {
+                    $loading.hide();
+                    $iframe.css('display', 'block');
+                    // Attendre que l'iframe soit chargé
+                    $iframe.on('load', function() {
+                        console.log('Canvas preview iframe loaded');
+                        showStatus("Aperçu chargé avec succès ✓", "success");
+                    });
+                }, 300);
             });
 
             // Gérer la fermeture de la modale

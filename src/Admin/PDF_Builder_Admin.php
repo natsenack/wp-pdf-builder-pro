@@ -271,6 +271,10 @@ class PDF_Builder_Admin {
         // Hook AJAX pour migrer les templates obsolètes
         add_action('wp_ajax_pdf_builder_migrate_templates', [$this, 'ajax_migrate_templates']);
 
+        // Hook AJAX pour afficher l'aperçu Canvas (au lieu du PDF TCPDF)
+        add_action('wp_ajax_nopriv_pdf_builder_canvas_preview', [$this, 'ajax_canvas_preview']);
+        add_action('wp_ajax_pdf_builder_canvas_preview', [$this, 'ajax_canvas_preview']);
+
         // Endpoint pour le debug direct (accessible via URL) - TODO: Implémenter ces méthodes
         // add_action('init', [$this, 'add_debug_endpoint']);
         // add_action('template_redirect', [$this, 'handle_debug_endpoint']);
@@ -5920,6 +5924,184 @@ class PDF_Builder_Admin {
         }
         
         return $statements;
+    }
+
+    /**
+     * AJAX pour afficher l'aperçu Canvas d'une commande
+     * Affiche l'aperçu identique à l'éditeur Canvas
+     */
+    public function ajax_canvas_preview() {
+        // Vérifier les permissions
+        if (!current_user_can('manage_woocommerce_orders')) {
+            wp_die('Permissions insuffisantes');
+        }
+
+        // Récupérer l'ID de la commande
+        $order_id = isset($_GET['order_id']) ? absint($_GET['order_id']) : 0;
+        if (!$order_id) {
+            wp_die('Order ID manquant');
+        }
+
+        // Vérifier le nonce
+        $nonce = isset($_GET['nonce']) ? sanitize_text_field($_GET['nonce']) : '';
+        if (!wp_verify_nonce($nonce, 'pdf_builder_preview_' . $order_id)) {
+            wp_die('Nonce invalide');
+        }
+
+        // Charger la commande
+        $order = wc_get_order($order_id);
+        if (!$order) {
+            wp_die('Commande introuvable');
+        }
+
+        // Récupérer le template
+        global $wpdb;
+        $status_templates = get_option('pdf_builder_order_status_templates', []);
+        $order_status = $order->get_status();
+        $status_key = 'wc-' . $order_status;
+        
+        $template_id = isset($status_templates[$status_key]) ? $status_templates[$status_key] : 1; // Fallback to ID 1
+        
+        if (!$template_id) {
+            wp_die('Aucun template trouvé');
+        }
+
+        // Charger le template
+        $table = $wpdb->prefix . 'pdf_builder_templates';
+        $template_json = $wpdb->get_var($wpdb->prepare(
+            "SELECT template_data FROM $table WHERE id = %d",
+            $template_id
+        ));
+
+        if (!$template_json) {
+            wp_die('Template non trouvé');
+        }
+
+        $template = json_decode($template_json, true);
+        if (!is_array($template) || empty($template['elements'])) {
+            wp_die('Template vide');
+        }
+
+        // Générer le HTML de l'aperçu Canvas
+        // Cela rend le même aperçu que l'éditeur
+        $canvas_width = intval($template['canvasWidth'] ?? 595);
+        $canvas_height = intval($template['canvasHeight'] ?? 842);
+        $elements = $template['elements'] ?? [];
+
+        // Récupérer les données de la commande pour les éléments dynamiques
+        $order_data = [
+            'order_number' => $order->get_order_number(),
+            'order_date' => $order->get_date_created()->format('Y-m-d'),
+            'customer_name' => $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
+            'customer_email' => $order->get_billing_email(),
+            'total' => $order->get_total(),
+        ];
+
+        // Commencer le HTML
+        ?>
+        <!DOCTYPE html>
+        <html lang="fr">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Aperçu - Commande <?php echo esc_attr($order_data['order_number']); ?></title>
+            <style>
+                * {
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
+                }
+                body {
+                    background: #f5f5f5;
+                    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+                    padding: 20px;
+                }
+                .canvas-container {
+                    width: 100%;
+                    max-width: 800px;
+                    margin: 0 auto;
+                    background: white;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                    border-radius: 4px;
+                    overflow: auto;
+                }
+                .canvas-page {
+                    width: <?php echo esc_attr($canvas_width); ?>px;
+                    height: <?php echo esc_attr($canvas_height); ?>px;
+                    position: relative;
+                    background: white;
+                    margin: 0 auto;
+                    border: 1px solid #ddd;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                    transform: scale(0.6);
+                    transform-origin: top center;
+                    margin-top: 20px;
+                    margin-bottom: 20px;
+                }
+                .canvas-element {
+                    position: absolute;
+                    overflow: hidden;
+                }
+                .element-text {
+                    font-family: Arial, sans-serif;
+                    word-wrap: break-word;
+                    white-space: pre-wrap;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="canvas-container">
+                <div class="canvas-page">
+                    <?php
+                    // Afficher chaque élément du canvas
+                    foreach ($elements as $element) {
+                        $x = floatval($element['x'] ?? 0);
+                        $y = floatval($element['y'] ?? 0);
+                        $width = floatval($element['width'] ?? 100);
+                        $height = floatval($element['height'] ?? 50);
+                        $type = $element['type'] ?? 'text';
+                        $bg_color = $element['backgroundColor'] ?? 'transparent';
+                        $color = $element['color'] ?? '#000';
+                        $font_family = $element['fontFamily'] ?? 'Arial';
+                        $font_size = floatval($element['fontSize'] ?? 14);
+                        $visible = isset($element['visible']) ? $element['visible'] : true;
+
+                        if (!$visible) {
+                            continue;
+                        }
+
+                        $style = "left: {$x}px; top: {$y}px; width: {$width}px; height: {$height}px; background-color: {$bg_color}; border: 1px solid #eee;";
+                    ?>
+                        <div class="canvas-element" style="<?php echo esc_attr($style); ?>">
+                            <?php
+                            if ($type === 'text' || $type === 'dynamic-text') {
+                                $text = $element['text'] ?? 'Texte';
+                                if ($type === 'dynamic-text' && !empty($element['customContent'])) {
+                                    // Remplacer les variables dynamiques
+                                    $text = str_replace('{{order_number}}', $order_data['order_number'], $element['customContent']);
+                                    $text = str_replace('{{order_date}}', $order_data['order_date'], $text);
+                                    $text = str_replace('{{order_total}}', wc_price($order_data['total']), $text);
+                                }
+                                echo '<div class="element-text" style="color: ' . esc_attr($color) . '; font-family: ' . esc_attr($font_family) . '; font-size: ' . esc_attr($font_size) . 'px; padding: 5px;">' . esc_html($text) . '</div>';
+                            } elseif ($type === 'image' || $type === 'company_logo') {
+                                $src = $element['src'] ?? $element['imageUrl'] ?? '';
+                                if ($src) {
+                                    echo '<img src="' . esc_url($src) . '" style="width: 100%; height: 100%; object-fit: cover;" />';
+                                }
+                            } elseif ($type === 'product_table') {
+                                echo '<div style="color: ' . esc_attr($color) . '; font-family: ' . esc_attr($font_family) . '; font-size: ' . esc_attr($font_size) . 'px; padding: 10px;"><strong>[Tableau Produits]</strong></div>';
+                            }
+                            ?>
+                        </div>
+                    <?php
+                    }
+                    ?>
+                </div>
+            </div>
+        </body>
+        </html>
+        <?php
+        wp_die();
     }
 
     /**
