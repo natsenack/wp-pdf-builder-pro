@@ -2470,9 +2470,13 @@ class PDF_Builder_Pro_Generator {
             foreach ($line_items as $item) {
                 $subtotal += $item->get_total();
             }
+            error_log("DEBUG_TOTALS: Manual subtotal calculation: {$subtotal}");
             $shipping = $this->order->get_shipping_total();
             $taxes = $this->order->get_total_tax();
             $discount = $this->order->get_discount_total();
+            error_log("DEBUG_TOTALS: Shipping: {$shipping}, Taxes: {$taxes}, Discount: {$discount}");
+            error_log("DEBUG_TOTALS: WooCommerce get_subtotal(): " . $this->order->get_subtotal());
+            error_log("DEBUG_TOTALS: WooCommerce get_total(): " . $this->order->get_total());
         } else {
             // Valeurs fictives
             $subtotal = 69.97;
