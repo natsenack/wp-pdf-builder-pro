@@ -6324,52 +6324,8 @@ class PDF_Builder_Admin {
             // Style de base - positionnement
             $style = "position: absolute; left: {$x}px; top: {$y}px; width: {$width}px; height: {$height}px; ";
 
-            // Ajouter les styles CSS
-            if (isset($element['style'])) {
-                $style_obj = $element['style'];
-                if (isset($style_obj['color'])) {
-                    $style .= "color: {$style_obj['color']}; ";
-                }
-                if (isset($style_obj['fontSize'])) {
-                    $style .= "font-size: " . floatval($style_obj['fontSize']) . "px; ";
-                }
-                if (isset($style_obj['fontWeight'])) {
-                    $style .= "font-weight: {$style_obj['fontWeight']}; ";
-                }
-                if (isset($style_obj['fillColor'])) {
-                    $style .= "background-color: {$style_obj['fillColor']}; ";
-                }
-            }
-
-            // Récupérer les propriétés du niveau racine aussi
-            if (isset($element['color'])) {
-                $style .= "color: {$element['color']}; ";
-            }
-            if (isset($element['fontSize'])) {
-                $style .= "font-size: " . floatval($element['fontSize']) . "px; ";
-            }
-            if (isset($element['fontWeight'])) {
-                $style .= "font-weight: {$element['fontWeight']}; ";
-            }
-            if (isset($element['backgroundColor'])) {
-                $style .= "background-color: {$element['backgroundColor']}; ";
-            }
-            if (isset($element['fontFamily'])) {
-                $style .= "font-family: {$element['fontFamily']}; ";
-            }
-            if (isset($element['textAlign'])) {
-                $style .= "text-align: {$element['textAlign']}; ";
-            }
-            if (isset($element['borderWidth']) && $element['borderWidth'] > 0) {
-                $border_color = $element['borderColor'] ?? '#000000';
-                $style .= "border: " . floatval($element['borderWidth']) . "px solid {$border_color}; ";
-            }
-            if (isset($element['lineHeight'])) {
-                $style .= "line-height: {$element['lineHeight']}; ";
-            }
-            if (isset($element['padding'])) {
-                $style .= "padding: " . floatval($element['padding']) . "px; ";
-            }
+            // Ajouter TOUS les styles CSS via build_element_style
+            $style = $this->build_element_style($element, $style);
 
             // Rendre l'élément selon son type
             $html .= '<div class="canvas-element" style="' . esc_attr($style) . '">';
@@ -6381,7 +6337,96 @@ class PDF_Builder_Admin {
     }
 
     /**
-     * Rend un élément individuel selon son type
+     * Construit le style CSS d'un élément en récupérant TOUTES les propriétés
+     */
+    private function build_element_style($element, $base_style = '') {
+        $style = $base_style;
+
+        // Couleur du texte
+        if (isset($element['color']) && !empty($element['color'])) {
+            $style .= "color: {$element['color']}; ";
+        }
+
+        // Taille de police
+        if (isset($element['fontSize']) && $element['fontSize'] > 0) {
+            $style .= "font-size: " . floatval($element['fontSize']) . "px; ";
+        }
+
+        // Poids de la police
+        if (isset($element['fontWeight'])) {
+            $style .= "font-weight: {$element['fontWeight']}; ";
+        }
+
+        // Style de la police (italic)
+        if (isset($element['fontStyle']) && $element['fontStyle'] === 'italic') {
+            $style .= "font-style: italic; ";
+        }
+
+        // Famille de police
+        if (isset($element['fontFamily']) && !empty($element['fontFamily'])) {
+            $style .= "font-family: {$element['fontFamily']}; ";
+        }
+
+        // Alignement du texte
+        if (isset($element['textAlign'])) {
+            $style .= "text-align: {$element['textAlign']}; ";
+        }
+
+        // Hauteur de ligne
+        if (isset($element['lineHeight'])) {
+            $style .= "line-height: {$element['lineHeight']}; ";
+        }
+
+        // Décoration du texte
+        if (isset($element['textDecoration'])) {
+            $style .= "text-decoration: {$element['textDecoration']}; ";
+        }
+
+        // Couleur de fond
+        if (isset($element['backgroundColor']) && $element['backgroundColor'] !== 'transparent' && !empty($element['backgroundColor'])) {
+            $style .= "background-color: {$element['backgroundColor']}; ";
+        }
+
+        // Padding
+        if (isset($element['padding']) && $element['padding'] > 0) {
+            $style .= "padding: " . floatval($element['padding']) . "px; ";
+        }
+
+        // Margin
+        if (isset($element['margin']) && $element['margin'] > 0) {
+            $style .= "margin: " . floatval($element['margin']) . "px; ";
+        }
+
+        // Bordure
+        if (isset($element['borderWidth']) && $element['borderWidth'] > 0) {
+            $border_color = $element['borderColor'] ?? '#000000';
+            $border_style = $element['borderStyle'] ?? 'solid';
+            $style .= "border: " . floatval($element['borderWidth']) . "px {$border_style} {$border_color}; ";
+        }
+
+        // Border radius
+        if (isset($element['borderRadius']) && $element['borderRadius'] > 0) {
+            $style .= "border-radius: " . floatval($element['borderRadius']) . "px; ";
+        }
+
+        // Opacité
+        if (isset($element['opacity']) && $element['opacity'] < 1) {
+            $style .= "opacity: " . floatval($element['opacity']) . "; ";
+        }
+
+        // Rotation
+        if (isset($element['rotation']) && $element['rotation'] != 0) {
+            $style .= "transform: rotate(" . floatval($element['rotation']) . "deg); ";
+        }
+
+        // Box-sizing
+        $style .= "box-sizing: border-box; ";
+
+        return $style;
+    }
+
+    /**
+     * Rend un élément en HTML en appliquant tous les styles
      */
     private function render_preview_element($element, $order) {
         $type = $element['type'] ?? 'text';
