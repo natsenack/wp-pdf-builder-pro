@@ -78,11 +78,11 @@ class PDF_Builder_Admin {
      * Instancier les managers
      */
     private function init_managers() {
-        $this->template_manager = new PDF_Builder_Template_Manager($this->main);
-        $this->pdf_generator = new PDF_Builder_PDF_Generator($this->main);
-        $this->woocommerce_integration = new PDF_Builder_WooCommerce_Integration($this->main);
-        $this->settings_manager = new PDF_Builder_Settings_Manager($this->main);
-        $this->diagnostic_manager = new PDF_Builder_Diagnostic_Manager($this->main);
+        $this->template_manager = new \PDF_Builder_Template_Manager($this->main);
+        $this->pdf_generator = new \PDF_Builder_PDF_Generator($this->main);
+        $this->woocommerce_integration = new \PDF_Builder_WooCommerce_Integration($this->main);
+        $this->settings_manager = new \PDF_Builder_Settings_Manager($this->main);
+        $this->diagnostic_manager = new \PDF_Builder_Diagnostic_Manager($this->main);
     }
 
     /**
