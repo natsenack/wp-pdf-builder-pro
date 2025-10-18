@@ -3001,7 +3001,7 @@ class PDF_Builder_Pro_Generator {
 
         // Styles CSS pour le conteneur principal
         $container_style = sprintf(
-            'width: 100%%; height: 100%%; display: flex; flex-direction: column; font-size: %dpx; font-family: "Inter", "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont, sans-serif; border: %s; border-radius: %dpx; overflow: hidden; background-color: %s; box-sizing: border-box; box-shadow: %s; line-height: 1.4; color: %s;',
+            'width: 100%%; border-collapse: collapse; font-size: %dpx; font-family: "Inter", "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont, sans-serif; border: %s; border-radius: %dpx; overflow: hidden; background-color: %s; box-sizing: border-box; box-shadow: %s; line-height: 1.4; color: %s;',
             10 * $zoom,
             $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $this->rgb_to_hex($table_styles['header_border']) : 'none',
             isset($table_styles['borderRadius']) ? $table_styles['borderRadius'] * $zoom : 2,
@@ -3010,84 +3010,48 @@ class PDF_Builder_Pro_Generator {
             $table_styles['rowTextColor']
         );
 
-        $html = '<div style="' . $container_style . '">';
+        $html = '<table style="' . $container_style . '">';
 
         // En-têtes du tableau
         if ($show_headers) {
             $header_bg = isset($table_styles['gradient']) ? $table_styles['gradient'] : $this->rgb_to_hex($table_styles['header_bg']);
-            $header_container_style = sprintf(
-                'display: flex; background: %s; border-bottom: %s; font-weight: %s; color: %s; font-size: %dpx; text-transform: uppercase; letter-spacing: 0.025em;',
+            $header_style = sprintf(
+                'background: %s; color: %s; font-weight: %s; font-size: %dpx; padding: %dpx; border: %s; text-transform: uppercase; letter-spacing: 0.025em;',
                 $header_bg,
-                $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $this->rgb_to_hex($table_styles['header_border']) : 'none',
-                $table_styles['headerFontWeight'] ?? '600',
                 $table_styles['headerTextColor'],
-                ($table_styles['headerFontSize'] ?? '11px') * $zoom
+                $table_styles['headerFontWeight'] ?? '600',
+                ($table_styles['headerFontSize'] ?? '11px') * $zoom,
+                6 * $zoom,
+                $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $this->rgb_to_hex($table_styles['header_border']) : 'none'
             );
 
-            $html .= '<div style="' . $header_container_style . '">';
+            $html .= '<thead><tr>';
 
             // Utiliser la même logique que CanvasElement.jsx : element.columns?.column !== false
             if (($element['columns']['image'] ?? true) !== false) {
-                $header_cell_style = sprintf(
-                    'flex: 0 0 %dpx; padding: %dpx %dpx; text-align: center; border-right: %s; font-size: %dpx; opacity: 0.9;',
-                    40, 6 * $zoom, 4 * $zoom,
-                    $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $this->rgb_to_hex($table_styles['header_border']) : 'none',
-                    (($table_styles['headerFontSize'] ?? '11px') * $zoom * 0.9)
-                );
-                $html .= '<div style="' . $header_cell_style . '">Img</div>';
+                $html .= '<th style="' . $header_style . ' text-align: center;">Img</th>';
             }
             if (($element['columns']['name'] ?? true) !== false) {
                 $headers = $element['headers'] ?? ['Produit', 'Qté', 'Prix'];
-                $header_cell_style = sprintf(
-                    'flex: 1; padding: %dpx %dpx; text-align: left; border-right: %s; font-size: %dpx;',
-                    6 * $zoom, 8 * $zoom,
-                    $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $this->rgb_to_hex($table_styles['header_border']) : 'none',
-                    ($table_styles['headerFontSize'] ?? '11px') * $zoom
-                );
-                $html .= '<div style="' . $header_cell_style . '">' . htmlspecialchars($headers[0] ?? 'Produit') . '</div>';
+                $html .= '<th style="' . $header_style . ' text-align: left;">' . htmlspecialchars($headers[0] ?? 'Produit') . '</th>';
             }
             if (($element['columns']['sku'] ?? false) !== false) {
-                $header_cell_style = sprintf(
-                    'flex: 0 0 %dpx; padding: %dpx %dpx; text-align: left; border-right: %s; font-size: %dpx;',
-                    80, 6 * $zoom, 8 * $zoom,
-                    $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $this->rgb_to_hex($table_styles['header_border']) : 'none',
-                    ($table_styles['headerFontSize'] ?? '11px') * $zoom
-                );
-                $html .= '<div style="' . $header_cell_style . '">SKU</div>';
+                $html .= '<th style="' . $header_style . ' text-align: left;">SKU</th>';
             }
             if (($element['columns']['quantity'] ?? true) !== false) {
-                $header_cell_style = sprintf(
-                    'flex: 0 0 %dpx; padding: %dpx %dpx; text-align: center; border-right: %s; font-size: %dpx;',
-                    60, 6 * $zoom, 8 * $zoom,
-                    $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $this->rgb_to_hex($table_styles['header_border']) : 'none',
-                    ($table_styles['headerFontSize'] ?? '11px') * $zoom
-                );
-                $html .= '<div style="' . $header_cell_style . '">' . htmlspecialchars($headers[1] ?? 'Qté') . '</div>';
+                $html .= '<th style="' . $header_style . ' text-align: center;">' . htmlspecialchars($headers[1] ?? 'Qté') . '</th>';
             }
             if (($element['columns']['price'] ?? true) !== false) {
-                $header_cell_style = sprintf(
-                    'flex: 0 0 %dpx; padding: %dpx %dpx; text-align: right; border-right: %s; font-size: %dpx;',
-                    80, 6 * $zoom, 8 * $zoom,
-                    $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $this->rgb_to_hex($table_styles['header_border']) : 'none',
-                    ($table_styles['headerFontSize'] ?? '11px') * $zoom
-                );
-                $html .= '<div style="' . $header_cell_style . '">' . htmlspecialchars($headers[2] ?? 'Prix') . '</div>';
+                $html .= '<th style="' . $header_style . ' text-align: right;">' . htmlspecialchars($headers[2] ?? 'Prix') . '</th>';
             }
             if (($element['columns']['total'] ?? true) !== false) {
-                $header_cell_style = sprintf(
-                    'flex: 0 0 %dpx; padding: %dpx %dpx; text-align: right; font-size: %dpx;',
-                    80, 6 * $zoom, 8 * $zoom,
-                    ($table_styles['headerFontSize'] ?? '11px') * $zoom
-                );
-                $html .= '<div style="' . $header_cell_style . '">Total</div>';
+                $html .= '<th style="' . $header_style . ' text-align: right;">Total</th>';
             }
 
-            $html .= '</div>';
+            $html .= '</tr></thead>';
         }
 
-        // Corps du tableau
-        $body_style = 'flex: 1; display: flex; flex-direction: column;';
-        $html .= '<div style="' . $body_style . '">';
+        $html .= '<tbody>';
 
         foreach ($products as $index => $product) {
             $row_bg = ($index % 2 === 0)
@@ -3099,82 +3063,45 @@ class PDF_Builder_Pro_Generator {
 
             $row_border_color = isset($table_styles['row_border']) ? $this->rgb_to_hex($table_styles['row_border']) : '#000000';
             $row_style = sprintf(
-                'display: flex; border-bottom: %s; background-color: %s; color: %s; font-size: %dpx; transition: background-color 0.15s ease;',
-                $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $row_border_color : 'none',
+                'background-color: %s; color: %s; font-size: %dpx; padding: %dpx; border: %s;',
                 $row_bg,
                 $row_text_color,
-                ($table_styles['rowFontSize'] ?? '10px') * $zoom
+                ($table_styles['rowFontSize'] ?? '10px') * $zoom,
+                5 * $zoom,
+                $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $row_border_color : 'none'
             );
 
-            $html .= '<div style="' . $row_style . '">';
+            $html .= '<tr>';
 
             // Utiliser la même logique que CanvasElement.jsx : element.columns?.column !== false
             if (($element['columns']['image'] ?? true) !== false) {
-                $cell_style = sprintf(
-                    'flex: 0 0 %dpx; padding: %dpx %dpx; text-align: center; border-right: %s; color: %s; opacity: 0.7; font-size: %dpx;',
-                    40, 5 * $zoom, 4 * $zoom,
-                    $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $row_border_color : 'none',
-                    $table_styles['rowTextColor'],
-                    (($table_styles['rowFontSize'] ?? '10px') * $zoom * 0.9)
-                );
-                $html .= '<div style="' . $cell_style . '">📷</div>';
+                $html .= '<td style="' . $row_style . ' text-align: center;">📷</td>';
             }
             if (($element['columns']['name'] ?? true) !== false) {
-                $cell_style = sprintf(
-                    'flex: 1; padding: %dpx %dpx; border-right: %s; color: %s; font-weight: 500; line-height: 1.3;',
-                    5 * $zoom, 8 * $zoom,
-                    $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $row_border_color : 'none',
-                    $table_styles['rowTextColor']
-                );
-                $html .= '<div style="' . $cell_style . '">' . htmlspecialchars($product['name']) . '</div>';
+                $html .= '<td style="' . $row_style . ' text-align: left; font-weight: 500; line-height: 1.3;">' . htmlspecialchars($product['name']) . '</td>';
             }
             if (($element['columns']['sku'] ?? false) !== false) {
-                $cell_style = sprintf(
-                    'flex: 0 0 %dpx; padding: %dpx %dpx; border-right: %s; color: %s; opacity: 0.8; font-family: monospace; font-size: %dpx;',
-                    80, 5 * $zoom, 8 * $zoom,
-                    $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $row_border_color : 'none',
-                    $table_styles['rowTextColor'],
-                    (($table_styles['rowFontSize'] ?? '10px') * $zoom * 0.9)
-                );
-                $html .= '<div style="' . $cell_style . '">' . htmlspecialchars($product['sku']) . '</div>';
+                $html .= '<td style="' . $row_style . ' text-align: left; opacity: 0.8; font-family: monospace; font-size: ' . (($table_styles['rowFontSize'] ?? '10px') * $zoom * 0.9) . 'px;">' . htmlspecialchars($product['sku']) . '</td>';
             }
             if (($element['columns']['quantity'] ?? true) !== false) {
-                $cell_style = sprintf(
-                    'flex: 0 0 %dpx; padding: %dpx %dpx; text-align: center; border-right: %s; color: %s; font-weight: 600;',
-                    60, 5 * $zoom, 8 * $zoom,
-                    $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $row_border_color : 'none',
-                    $table_styles['rowTextColor']
-                );
-                $html .= '<div style="' . $cell_style . '">' . $product['quantity'] . '</div>';
+                $html .= '<td style="' . $row_style . ' text-align: center; font-weight: 600;">' . $product['quantity'] . '</td>';
             }
             if (($element['columns']['price'] ?? true) !== false) {
-                $cell_style = sprintf(
-                    'flex: 0 0 %dpx; padding: %dpx %dpx; text-align: right; border-right: %s; color: %s; font-weight: 500; font-family: "Inter", system-ui, sans-serif;',
-                    80, 5 * $zoom, 8 * $zoom,
-                    $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $row_border_color : 'none',
-                    $table_styles['rowTextColor']
-                );
-                $html .= '<div style="' . $cell_style . '">' . number_format($product['price'], 2, ',', ' ') . ' €</div>';
+                $html .= '<td style="' . $row_style . ' text-align: right; font-weight: 500; font-family: "Inter", system-ui, sans-serif;">' . number_format($product['price'], 2, ',', ' ') . ' €</td>';
             }
             if (($element['columns']['total'] ?? true) !== false) {
-                $cell_style = sprintf(
-                    'flex: 0 0 %dpx; padding: %dpx %dpx; text-align: right; color: %s; font-weight: 600; font-family: "Inter", system-ui, sans-serif;',
-                    80, 5 * $zoom, 8 * $zoom,
-                    $table_styles['rowTextColor']
-                );
-                $html .= '<div style="' . $cell_style . '">' . number_format($product['total'], 2, ',', ' ') . ' €</div>';
+                $html .= '<td style="' . $row_style . ' text-align: right; font-weight: 600; font-family: "Inter", system-ui, sans-serif;">' . number_format($product['total'], 2, ',', ' ') . ' €</td>';
             }
 
-            $html .= '</div>';
+            $html .= '</tr>';
         }
 
-        $html .= '</div>';
+        $html .= '</tbody></table>';
 
-        // Lignes de totaux
+        // Lignes de totaux (en dehors du tableau)
         if ($show_subtotal || $show_shipping || $show_taxes || $show_discount || $show_total) {
-            $totals_border_color = isset($table_styles['header_border']) ? $this->rgb_to_hex($table_styles['header_border']) : '#e2e8f0';
-            $totals_style = 'border-top: ' . ($show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $totals_border_color : 'none') . ';';
-            $html .= '<div style="' . $totals_style . '">';
+            $totals_container_style = 'width: 100%; border-top: ' . ($show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $this->rgb_to_hex($table_styles['header_border']) : 'none') . '; margin-top: ' . (2 * $zoom) . 'px;';
+            $html .= '<div style="' . $totals_container_style . '">';
 
             if ($show_subtotal) {
                 $total_row_style = 'display: flex; justify-content: flex-end; padding: ' . (4 * $zoom) . 'px ' . (6 * $zoom) . 'px; font-weight: bold;';
@@ -3230,8 +3157,6 @@ class PDF_Builder_Pro_Generator {
 
             $html .= '</div>';
         }
-
-        $html .= '</div>';
 
         return $html;
     }
