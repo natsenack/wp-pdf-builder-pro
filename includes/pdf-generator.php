@@ -1231,6 +1231,13 @@ class PDF_Builder_Pro_Generator {
         ];
     }
 
+    private function rgb_to_hex($rgb) {
+        if (is_array($rgb) && count($rgb) >= 3) {
+            return sprintf('#%02x%02x%02x', $rgb['r'] ?? $rgb[0], $rgb['g'] ?? $rgb[1], $rgb['b'] ?? $rgb[2]);
+        }
+        return '#000000'; // Couleur par défaut si le format est invalide
+    }
+
     /**
      * Rendu d'élément mentions légales
      */
