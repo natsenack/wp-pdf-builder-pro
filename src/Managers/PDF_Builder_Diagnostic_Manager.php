@@ -47,23 +47,6 @@ class PDF_Builder_Diagnostic_Manager {
     }
 
     /**
-     * Page de test TCPDF
-     */
-    public function test_tcpdf_page() {
-        if (!current_user_can('manage_options')) {
-            wp_die(__('Vous n\'avez pas les permissions nécessaires.'));
-        }
-
-        $result = '';
-        if (isset($_POST['run_tcpdf_test'])) {
-            $result = $this->run_simple_tcpdf_test();
-        }
-
-        // TODO: Créer le fichier test-tcpdf-page.php dans templates/admin/
-        // include plugin_dir_path(dirname(__FILE__)) . '../../templates/admin/test-tcpdf-page.php';
-    }
-
-    /**
      * Page développeur
      */
     public function developer_page() {
@@ -72,78 +55,6 @@ class PDF_Builder_Diagnostic_Manager {
         }
 
         include plugin_dir_path(dirname(__FILE__)) . '../../templates/admin/developer-page.php';
-    }
-
-    /**
-     * Exécuter le test TCPDF
-     */
-    private function run_simple_tcpdf_test() {
-        ob_start();
-
-        echo "<div class='test-section info'>";
-        echo "<h3>🚀 Test simple TCPDF...</h3>";
-        echo "<pre>";
-
-        try {
-            echo "📚 Chargement de TCPDF...\n";
-
-            // Test de chargement TCPDF
-            require_once plugin_dir_path(dirname(__FILE__)) . '../../lib/tcpdf/tcpdf_autoload.php';
-
-            echo "✅ TCPDF chargé\n";
-
-            echo "🔨 Création d'une instance TCPDF...\n";
-
-            $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
-
-            echo "✅ Instance TCPDF créée\n";
-
-            $version = TCPDF_STATIC::getTCPDFVersion();
-            echo "📊 Version TCPDF : {$version}\n";
-
-            echo "📝 Ajout d'une page...\n";
-
-            $pdf->AddPage();
-
-            echo "✅ Page ajoutée\n";
-
-            echo "✍️ Ajout de texte...\n";
-
-            $pdf->SetFont('helvetica', '', 12);
-            $pdf->Cell(0, 10, 'Test TCPDF réussi - ' . date('d/m/Y H:i:s'), 0, 1, 'C');
-
-            echo "✅ Texte ajouté\n";
-
-            echo "💾 Génération du PDF...\n";
-
-            $pdf_content = $pdf->Output('', 'S');
-
-            $size = strlen($pdf_content);
-            echo "✅ PDF généré avec succès !\n";
-            echo "📊 Taille : " . number_format($size) . " octets\n";
-
-            echo "</pre>";
-            echo "</div>";
-
-            echo "<div class='test-section success'>";
-            echo "<h3>🎉 Test réussi !</h3>";
-            echo "<p>TCPDF fonctionne correctement.</p>";
-            echo "</div>";
-
-        } catch (Exception $e) {
-            echo "❌ Erreur : " . $e->getMessage() . "\n";
-            echo "📍 Fichier : " . $e->getFile() . " ligne " . $e->getLine() . "\n";
-
-            echo "</pre>";
-            echo "</div>";
-
-            echo "<div class='test-section error'>";
-            echo "<h3>💥 Erreur détectée</h3>";
-            echo "<p>Le test TCPDF a échoué. Vérifiez les détails ci-dessus.</p>";
-            echo "</div>";
-        }
-
-        return ob_get_clean();
     }
 
     /**

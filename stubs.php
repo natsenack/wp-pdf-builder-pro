@@ -442,41 +442,6 @@ if (!function_exists('get_the_post_thumbnail_url')) {
     }
 }
 
-// Classe TCPDF stub
-if (!class_exists('TCPDF')) {
-    class TCPDF {
-        public function __construct($orientation = 'P', $unit = 'mm', $format = 'A4', $unicode = true, $encoding = 'UTF-8', $diskcache = false) {}
-        public function setFont($family, $style = '', $size = 0) {}
-        public function setFontSize($size) {}
-        public function setTextColor($r, $g = null, $b = null) {}
-        public function setFillColor($r, $g = null, $b = null) {}
-        public function setLineColor($r, $g = null, $b = null) {}
-        public function cell($w, $h = 0, $txt = '', $border = 0, $ln = 0, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'T', $valign = 'M') {}
-        public function multi_cell($w, $h, $txt = '', $border = 0, $align = 'J', $fill = false, $ln = 1, $x = '', $y = '', $reseth = true, $stretch = 0, $ishtml = false, $autopadding = true, $maxh = 0, $valign = 'T', $fitcell = false) {}
-        public function writeHTML($html = '', $ln = true, $fill = false, $reseth = false, $cell = false, $align = '') {}
-        public function image($file, $x = null, $y = null, $w = 0, $h = 0, $type = '', $link = '', $align = 'T', $resize = false, $dpi = 300, $palignment = null, $ismask = false, $imgmask = false, $border = 0, $fitbox = false, $hidden = false, $fitonpage = false, $alt = false, $alttext = '') {}
-        public function addPage($orientation = '', $format = '') {}
-        public function output($name = '', $dest = '') { return ''; }
-        public function setMargins($left, $top, $right = -1, $keepmargin = false) {}
-        public function setAutoPageBreak($auto, $margin = 0) {}
-        public function getPageHeight() { return 0; }
-        public function getPageWidth() { return 0; }
-        public function getY() { return 0; }
-        public function setY($y, $resetx = true) {}
-        public function setX($x) {}
-        public function ln($h = null) {}
-    }
-}
-
-// Classe TCPDF_STATIC stub
-if (!class_exists('TCPDF_STATIC')) {
-    class TCPDF_STATIC {
-        public static function getTCPDFVersion() { return '6.0.0'; }
-        public static function empty_string($str) { return empty($str); }
-        public static function checkSSLVersion($version = '') { return true; }
-    }
-}
-
 // Classe Exception stub
 if (!class_exists('Exception')) {
     class Exception {

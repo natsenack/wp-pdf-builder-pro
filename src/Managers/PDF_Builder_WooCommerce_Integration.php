@@ -1038,13 +1038,15 @@ class PDF_Builder_WooCommerce_Integration {
         }
 
         try {
-            // Générer le PDF SANS TCPDF - utiliser une approche alternative
-            error_log('PDF BUILDER DEBUG: About to generate PDF without TCPDF');
+            // Générer le PDF SANS TCPDF - utiliser la nouvelle approche HTML
+            error_log('PDF BUILDER DEBUG: About to generate PDF without TCPDF using new HTML approach');
 
-            // Retourner un message informatif au lieu d'une erreur
+            // Pour l'instant, retourner un message informatif
+            // TODO: Implémenter une vraie génération PDF depuis HTML
             wp_send_json_success([
-                'message' => 'Génération PDF temporairement désactivée - TCPDF retiré pour éviter les conflits avec l\'aperçu',
-                'url' => null
+                'message' => 'Génération PDF temporairement remplacée par HTML - TCPDF supprimé complètement',
+                'html_url' => null,
+                'pdf_url' => null
             ]);
 
         } catch (Exception $e) {
@@ -1138,10 +1140,10 @@ class PDF_Builder_WooCommerce_Integration {
 
                 if ($preview_type === 'html') {
                     // Générer l'aperçu HTML avec les éléments du Canvas - SANS TCPDF
-                    $result = $this->generate_html_preview_without_tcpdf($decoded_elements, $order_id ?: 0);
+                    $result = $generator->generate($decoded_elements, ['is_preview' => true]);
                 } else {
                     // PLUS DE GÉNÉRATION PDF AVEC TCPDF - Forcer HTML
-                    $result = $this->generate_html_preview_without_tcpdf($decoded_elements, $order_id ?: 0);
+                    $result = $generator->generate($decoded_elements, ['is_preview' => true]);
                 }
 
             } elseif ($order_id && $order_id > 0) {
@@ -1159,10 +1161,10 @@ class PDF_Builder_WooCommerce_Integration {
 
                 if ($preview_type === 'html') {
                     // Générer l'aperçu HTML avec les éléments du template - SANS TCPDF
-                    $result = $this->generate_html_preview_without_tcpdf($decoded_elements, $order_id ?: 0);
+                    $result = $generator->generate($decoded_elements, ['is_preview' => true]);
                 } else {
                     // PLUS DE GÉNÉRATION PDF AVEC TCPDF - Forcer HTML
-                    $result = $this->generate_html_preview_without_tcpdf($decoded_elements, $order_id ?: 0);
+                    $result = $generator->generate($decoded_elements, ['is_preview' => true]);
                 }
 
             } elseif ($order_id && $order_id > 0) {
@@ -1241,326 +1243,4 @@ class PDF_Builder_WooCommerce_Integration {
             }
         }
     }
-
-    /**
-     * Détermine le template approprié pour une commande
-     */
-    private function get_template_for_order($order) {
-        global $wpdb;
-        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-
-        $order_status = $order->get_status();
-
-        // Vérifier s'il y a un mapping spécifique pour ce statut de commande
-        $status_templates = get_option('pdf_builder_order_status_templates', []);
-        $status_key = 'wc-' . $order_status;
-
-        if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
-            $mapped_template = $wpdb->get_row($wpdb->prepare(
-                "SELECT id, name FROM $table_templates WHERE id = %d",
-                $status_templates[$status_key]
-            ), ARRAY_A);
-
-            if ($mapped_template) {
-                return $mapped_template['id'];
-            }
-        }
-
-        // Logique de détection automatique basée sur le statut
-        $keywords = [];
-        switch ($order_status) {
-            case 'pending':
-                $keywords = ['devis', 'quote', 'estimation'];
-                break;
-            case 'processing':
-            case 'on-hold':
-                $keywords = ['facture', 'invoice', 'commande'];
-                break;
-            case 'completed':
-                $keywords = ['facture', 'invoice', 'reçu', 'receipt'];
-                break;
-            case 'cancelled':
-            case 'refunded':
-                $keywords = ['avoir', 'credit', 'refund'];
-                break;
-            case 'failed':
-                $keywords = ['erreur', 'failed', 'échoué'];
-                break;
-            default:
-                $keywords = ['facture', 'invoice'];
-                break;
-        }
-
-
-        if (!empty($keywords)) {
-            // Chercher un template par défaut dont le nom contient un mot-clé
-            $placeholders = str_repeat('%s,', count($keywords) - 1) . '%s';
-            $sql = $wpdb->prepare(
-                "SELECT id, name FROM $table_templates WHERE is_default = 1 AND (" .
-                implode(' OR ', array_fill(0, count($keywords), 'LOWER(name) LIKE LOWER(%s)')) .
-                ") LIMIT 1",
-                array_map(function($keyword) { return '%' . $keyword . '%'; }, $keywords)
-            );
-            $keyword_template = $wpdb->get_row($sql, ARRAY_A);
-
-            if ($keyword_template) {
-                return $keyword_template['id'];
-            }
-        }
-
-        // Si aucun template spécifique trouvé, prendre n'importe quel template par défaut
-        $default_template = $wpdb->get_row("SELECT id, name FROM $table_templates WHERE is_default = 1 LIMIT 1", ARRAY_A);
-        if ($default_template) {
-            return $default_template['id'];
-        }
-
-        // Si toujours pas de template, prendre le premier template disponible
-        $any_template = $wpdb->get_row("SELECT id, name FROM $table_templates ORDER BY id LIMIT 1", ARRAY_A);
-        if ($any_template) {
-            return $any_template['id'];
-        }
-
-        return null;
-    }
-
-    /**
-     * AJAX handler pour sauvegarder le canvas d'une commande
-     */
-    public function ajax_save_order_canvas() {
-        // Vérifier les permissions
-        if (!current_user_can('manage_woocommerce')) {
-            wp_send_json_error('Permissions insuffisantes');
-        }
-
-        // Vérification de sécurité
-        if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions')) {
-            wp_send_json_error('Sécurité: Nonce invalide');
-        }
-
-        $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
-        $canvas_data = isset($_POST['canvas_data']) ? $_POST['canvas_data'] : null;
-        $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : null;
-
-        if (!$order_id) {
-            wp_send_json_error('ID commande manquant');
-        }
-
-        if (!$canvas_data || !is_array($canvas_data)) {
-            wp_send_json_error('Données canvas manquantes ou invalides');
-        }
-
-        // Vérifier que WooCommerce est actif
-        if (!class_exists('WooCommerce')) {
-            wp_send_json_error('WooCommerce n\'est pas installé ou activé');
-        }
-
-        $order = wc_get_order($order_id);
-        if (!$order) {
-            wp_send_json_error('Commande non trouvée');
-        }
-
-        try {
-            $result = $this->save_order_canvas($order_id, $canvas_data, $template_id);
-
-            if (is_wp_error($result)) {
-                wp_send_json_error($result->get_error_message());
-            }
-
-            wp_send_json_success('Canvas sauvegardé avec succès');
-
-        } catch (Exception $e) {
-            wp_send_json_error('Erreur: ' . $e->getMessage());
-        }
-    }
-
-    /**
-     * Sauvegarde le canvas d'une commande
-     */
-    /**
-     * Sauvegarde le canvas pour une commande
-     * 
-     * @param int $order_id
-     * @param array $canvas_data
-     * @param int|null $template_id
-     * @return bool|\WP_Error
-     */
-    private function save_order_canvas($order_id, $canvas_data, $template_id = null) {
-        // Cette méthode peut être implémentée selon les besoins
-        return true;
-    }
-
-    /**
-     * Définit les constantes TCPDF nécessaires
-     */
-    private function define_tcpdf_constants() {
-
-        // Utiliser des chemins absolus au lieu de chemins relatifs
-        $plugin_dir = plugin_dir_path(dirname(dirname(dirname(__FILE__))));
-
-        $constants = [
-            'PDF_PAGE_ORIENTATION' => 'P',
-            'PDF_UNIT' => 'mm',
-            'PDF_PAGE_FORMAT' => 'A4',
-            'K_PATH_FONTS' => $plugin_dir . 'lib/tcpdf/fonts/',
-            'K_PATH_CACHE' => $plugin_dir . 'uploads/pdf-builder-cache/',
-            'K_PATH_IMAGES' => $plugin_dir . 'lib/tcpdf/images/',
-            'K_PATH_URL' => $plugin_dir . 'lib/tcpdf/'
-        ];
-
-        foreach ($constants as $name => $value) {
-            if (!defined($name)) {
-                define($name, $value);
-            } else {
-            }
-        }
-
-    }
-
-    /**
-     * Vérifie que les chemins définis dans les constantes TCPDF sont accessibles
-     */
-    private function check_tcpdf_paths() {
-
-        $paths_to_check = [
-            'K_PATH_FONTS' => defined('K_PATH_FONTS') ? K_PATH_FONTS : null,
-            'K_PATH_CACHE' => defined('K_PATH_CACHE') ? K_PATH_CACHE : null,
-            'K_PATH_IMAGES' => defined('K_PATH_IMAGES') ? K_PATH_IMAGES : null,
-            'K_PATH_URL' => defined('K_PATH_URL') ? K_PATH_URL : null
-        ];
-
-        foreach ($paths_to_check as $const_name => $path) {
-            if ($path === null) {
-                continue;
-            }
-
-
-            if (!file_exists($path)) {
-                // Tenter de créer le répertoire s'il n'existe pas
-                if (!mkdir($path, 0755, true)) {
-                } else {
-                }
-            } elseif (!is_dir($path)) {
-            } elseif (!is_readable($path)) {
-            } elseif (!is_writable($path)) {
-            } else {
-            }
-        }
-
-    }
-
-    /**
-     * Génère un aperçu HTML sans utiliser TCPDF
-     */
-    private function generate_html_preview_without_tcpdf($elements, $order_id = 0) {
-        try {
-            // Générer le HTML directement depuis les éléments
-            $html = $this->render_elements_to_html($elements, $order_id);
-
-            // Retourner le HTML avec les styles inline pour l'aperçu
-            return [
-                'success' => true,
-                'html' => $html,
-                'type' => 'html'
-            ];
-        } catch (Exception $e) {
-            return [
-                'success' => false,
-                'error' => 'Erreur génération aperçu HTML: ' . $e->getMessage()
-            ];
-        }
-    }
-
-    /**
-     * Convertit les éléments Canvas en HTML pour l'aperçu
-     */
-    private function render_elements_to_html($elements, $order_id = 0) {
-        if (!is_array($elements)) {
-            return '<div class="preview-error">Aucun élément à afficher</div>';
-        }
-
-        $html = '<div class="pdf-preview-container" style="font-family: Arial, sans-serif; max-width: 210mm; margin: 0 auto; background: white; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">';
-
-        foreach ($elements as $element) {
-            $html .= $this->render_single_element_to_html($element, $order_id);
-        }
-
-        $html .= '</div>';
-
-        // Ajouter des styles CSS pour l'aperçu
-        $html .= '<style>
-            .pdf-preview-container { background: white !important; }
-            .preview-element { margin: 10px 0; }
-            .preview-text { white-space: pre-wrap; }
-            .preview-rectangle { border: 1px solid #000; min-height: 50px; }
-            .preview-circle { border: 1px solid #000; border-radius: 50%; width: 50px; height: 50px; }
-        </style>';
-
-        return $html;
-    }
-
-    /**
-     * Rend un élément individuel en HTML
-     */
-    private function render_single_element_to_html($element, $order_id = 0) {
-        if (!isset($element['type'])) {
-            return '';
-        }
-
-        $styles = $this->extract_element_styles($element);
-        $content = $element['content'] ?? '';
-
-        switch ($element['type']) {
-            case 'text':
-                return "<div class='preview-element preview-text' style='$styles'>$content</div>";
-
-            case 'rectangle':
-                return "<div class='preview-element preview-rectangle' style='$styles'></div>";
-
-            case 'circle':
-                return "<div class='preview-element preview-circle' style='$styles'></div>";
-
-            case 'image':
-                $src = $element['src'] ?? '';
-                return "<div class='preview-element'><img src='$src' style='$styles' alt='Image' /></div>";
-
-            default:
-                return "<div class='preview-element' style='$styles'>$content</div>";
-        }
-    }
-
-    /**
-     * Extrait les styles CSS d'un élément pour l'aperçu HTML
-     */
-    private function extract_element_styles($element) {
-        $styles = [];
-
-        // Positionnement
-        if (isset($element['x'])) $styles[] = "left: {$element['x']}px";
-        if (isset($element['y'])) $styles[] = "top: {$element['y']}px";
-
-        // Dimensions
-        if (isset($element['width'])) $styles[] = "width: {$element['width']}px";
-        if (isset($element['height'])) $styles[] = "height: {$element['height']}px";
-
-        // Couleurs
-        if (isset($element['color'])) $styles[] = "color: {$element['color']}";
-        if (isset($element['backgroundColor'])) $styles[] = "background-color: {$element['backgroundColor']}";
-
-        // Police
-        if (isset($element['fontSize'])) $styles[] = "font-size: {$element['fontSize']}px";
-        if (isset($element['fontFamily'])) $styles[] = "font-family: {$element['fontFamily']}";
-
-        // Propriétés CSS ajoutées récemment
-        if (isset($element['textDecoration'])) $styles[] = "text-decoration: {$element['textDecoration']}";
-        if (isset($element['lineHeight'])) $styles[] = "line-height: {$element['lineHeight']}";
-        if (isset($element['borderStyle'])) $styles[] = "border-style: {$element['borderStyle']}";
-        if (isset($element['shadow'])) $styles[] = "box-shadow: {$element['shadow']}";
-
-        // Rotation et échelle
-        if (isset($element['rotation'])) $styles[] = "transform: rotate({$element['rotation']}deg)";
-        if (isset($element['scale'])) $styles[] = "transform: scale({$element['scale']})";
-
-        return implode('; ', $styles);
-    }
 }
-
