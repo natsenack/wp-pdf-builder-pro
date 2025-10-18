@@ -317,6 +317,8 @@ class PDF_Builder_Pro_Generator {
 
         // Si aucun élément product_table n'existe, en ajouter un par défaut
         if (!$has_product_table) {
+            error_log("AUTO_INJECT: Adding default product_table to template with " . count($elements) . " elements");
+            
             $default_product_table = [
                 'id' => 'auto_product_table_' . time(),
                 'type' => 'product_table',
