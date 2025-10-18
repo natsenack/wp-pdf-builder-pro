@@ -705,7 +705,8 @@ class PDF_Builder_Pro_Generator {
         $this->pdf->SetLineWidth($border_width);
 
         // Dessin du rectangle
-        $this->pdf->Rect($x, $y, $width, $height, 'DF', [], $fill ? [] : null);
+        $rect_style = $fill ? 'DF' : 'D';  // DF = Draw and Fill, D = Draw only
+        $this->pdf->Rect($x, $y, $width, $height, $rect_style);
 
         // Réinitialiser le style de bordure
         $this->pdf->SetDash(0, 0);
@@ -1704,8 +1705,8 @@ class PDF_Builder_Pro_Generator {
         if ($textDecoration['line_through']) {
             $textWidth = $this->pdf->GetStringWidth($processedContent);
             $lineY = $y + ($lineHeightPx / 2);
-            $textColor = $this->hex_to_rgb($color);
-            $this->pdf->SetDrawColor($textColor[0], $textColor[1], $textColor[2]);
+            $lineColor = ($color && $color !== 'transparent') ? $this->hex_to_rgb($color) : [51, 51, 51];
+            $this->pdf->SetDrawColor($lineColor[0], $lineColor[1], $lineColor[2]);
             $this->pdf->Line($x, $lineY, $x + $textWidth, $lineY);
         }
     }
