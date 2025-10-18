@@ -61,33 +61,18 @@ function pdf_builder_init() {
         return;
     }
 
-    // Charger le fichier de test admin
-    $test_path = plugin_dir_path(__FILE__) . 'admin-properties-test.php';
-    if (file_exists($test_path)) {
-        require_once $test_path;
-    }
-
-    // Charger le fichier de diagnostic JSON
-    $diagnostic_path = plugin_dir_path(__FILE__) . 'diagnostic-json.php';
-    if (file_exists($diagnostic_path)) {
-        require_once $diagnostic_path;
-    }
-
-    // Charger le bootstrap
-    $bootstrap_path = plugin_dir_path(__FILE__) . 'core/bootstrap.php';
+    // Charger le bootstrap (à la racine du plugin)
+    $bootstrap_path = plugin_dir_path(__FILE__) . 'bootstrap.php';
     if (file_exists($bootstrap_path)) {
         require_once $bootstrap_path;
         
         // Démarrer le plugin
-        if (function_exists('pdf_builder_load_core')) {
-            pdf_builder_load_core();
+        if (function_exists('pdf_builder_load_bootstrap')) {
+            pdf_builder_load_bootstrap();
         }
-    }
-
-    // Charger le fichier de vérification des assets APRÈS le bootstrap
-    $assets_check_path = plugin_dir_path(__FILE__) . 'assets-check.php';
-    if (file_exists($assets_check_path)) {
-        require_once $assets_check_path;
+    } else {
+        // Log si bootstrap n'existe pas
+        error_log('PDF Builder Pro: bootstrap.php not found at ' . $bootstrap_path);
     }
 }
 
@@ -99,25 +84,12 @@ add_action('init', 'pdf_builder_handle_pdf_downloads');
  */
 function pdf_builder_handle_pdf_downloads() {
     if (isset($_GET['pdf_download'])) {
-        // Charger le plugin pour gérer le téléchargement
-        $bootstrap_path = plugin_dir_path(__FILE__) . 'core/bootstrap.php';
+        // Charger le bootstrap pour gérer le téléchargement
+        $bootstrap_path = plugin_dir_path(__FILE__) . 'bootstrap.php';
         if (file_exists($bootstrap_path)) {
             require_once $bootstrap_path;
-            if (function_exists('pdf_builder_load_core')) {
-                pdf_builder_load_core();
-                
-                // Traiter le téléchargement
-                if (class_exists('PDF_Builder_Core')) {
-                    try {
-                        $core = PDF_Builder_Core::getInstance();
-                        $woocommerce_integration = $core->get_woocommerce_integration();
-                        if ($woocommerce_integration && method_exists($woocommerce_integration, 'handle_pdf_download')) {
-                            $woocommerce_integration->handle_pdf_download();
-                        }
-                    } catch (Exception $e) {
-                        // Gérer l'erreur silencieusement
-                    }
-                }
+            if (function_exists('pdf_builder_load_bootstrap')) {
+                pdf_builder_load_bootstrap();
             }
         }
     }
