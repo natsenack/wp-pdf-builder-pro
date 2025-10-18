@@ -379,23 +379,19 @@ class PDF_Builder_WooCommerce_Integration {
                 <div class="woo-pdf-preview-modal-body">
                     <div class="woo-pdf-preview-toolbar">
                         <div class="zoom-controls">
-                            <button class="zoom-btn" id="zoom-in-btn" title="Agrandir (Ctrl++)">🔍+ 125%</button>
-                            <button class="zoom-btn" id="zoom-fit-btn" title="Ajuster à la page">⬜ Ajuster</button>
-                            <button class="zoom-btn" id="zoom-out-btn" title="Réduire (Ctrl+-)">🔍- 100%</button>
+                            <button class="zoom-btn" id="zoom-in-btn" title="Agrandir">+ 125%</button>
+                            <button class="zoom-btn" id="zoom-fit-btn" title="Ajuster à la page">Ajuster</button>
+                            <button class="zoom-btn" id="zoom-out-btn" title="Réduire">- 75%</button>
                             <span class="zoom-display" id="zoom-display">100%</span>
                         </div>
                     </div>
-                    <div class="woo-pdf-preview-container">
-                        <div class="pdf-page-wrapper">
-                            <embed id="woo-pdf-preview-iframe" 
-                                   type="application/pdf"
-                                   style="width: 100%; height: 100%; display: block; background: white;"
-                                   title="Aperçu PDF" />
-                        </div>
-                    </div>
-                    <div class="woo-pdf-preview-loading" style="display: none; text-align: center; padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                    <iframe id="woo-pdf-preview-iframe" 
+                            style="width: 100%; height: 100%; border: none; background: white; flex: 1;"
+                            title="Aperçu PDF"
+                            allow="fullscreen"></iframe>
+                    <div class="woo-pdf-preview-loading" style="display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.9); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; border-radius: 4px;">
                         <div style="font-size: 3em; margin-bottom: 20px;">📄</div>
-                        <p>Chargement de l'aperçu...</p>
+                        <p style="margin: 0 0 20px 0; color: #374151; font-weight: 500; font-size: 16px;">Génération de l'aperçu...</p>
                         <div class="woo-pdf-preview-spinner"></div>
                     </div>
                 </div>
@@ -501,13 +497,14 @@ class PDF_Builder_WooCommerce_Integration {
 
             .woo-pdf-preview-modal-body {
                 flex: 1;
-                overflow: auto;
-                background: #f9fafb;
+                overflow: hidden;
+                background: #ffffff;
                 display: flex;
                 flex-direction: column;
-                padding: 20px;
+                padding: 0;
                 gap: 0;
                 min-height: 0;
+                position: relative;
             }
 
             .woo-pdf-preview-toolbar {
@@ -515,10 +512,8 @@ class PDF_Builder_WooCommerce_Integration {
                 justify-content: center;
                 align-items: center;
                 padding: 12px 16px;
-                background: white;
-                border: 1px solid #e5e7eb;
-                border-radius: 8px;
-                margin-bottom: 16px;
+                background: #f8fafc;
+                border-bottom: 1px solid #e5e7eb;
                 flex-shrink: 0;
                 gap: 12px;
             }
@@ -532,7 +527,7 @@ class PDF_Builder_WooCommerce_Integration {
             }
 
             .zoom-btn {
-                padding: 6px 12px;
+                padding: 6px 14px;
                 border: 1px solid #d1d5db;
                 border-radius: 6px;
                 background: white;
@@ -560,37 +555,12 @@ class PDF_Builder_WooCommerce_Integration {
                 font-size: 12px;
                 font-weight: 600;
                 color: #6b7280;
-                min-width: 50px;
+                min-width: 55px;
                 text-align: center;
             }
 
             .woo-pdf-preview-container {
-                flex: 1;
-                overflow: auto;
-                background: #f9fafb;
-                display: flex;
-                justify-content: center;
-                align-items: flex-start;
-                padding: 20px;
-                min-height: 0;
-            }
-
-            .pdf-page-wrapper {
-                background: white;
-                border-radius: 8px;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-                width: 100%;
-                max-width: 650px;
-                min-height: 600px;
-                overflow: hidden;
-                border: 1px solid #e5e7eb;
-                flex-shrink: 0;
-            }
-
-            .pdf-page-wrapper iframe {
-                width: 100%;
-                height: 100%;
-                display: block;
+                display: none;
             }
 
             .woo-pdf-preview-modal-footer {
@@ -799,23 +769,22 @@ class PDF_Builder_WooCommerce_Integration {
             $('#pdf-preview-btn').on('click', function(e) {
                 e.preventDefault();
                 
-                console.log("MetaBoxes.js - Aperçu PDF clicked");
+                console.log("PDF Preview - Aperçu PDF clicked");
                 
                 // Afficher la modale avec loading
                 var $modal = $('#woo-pdf-preview-modal');
                 var $loading = $modal.find('.woo-pdf-preview-loading');
-                var $embed = $modal.find('#woo-pdf-preview-iframe');
-                var $container = $modal.find('.woo-pdf-preview-container');
+                var $iframe = $modal.find('#woo-pdf-preview-iframe');
+                var $body = $modal.find('.woo-pdf-preview-modal-body');
                 
                 $modal.show();
                 $loading.show();
-                $container.hide();
 
                 showStatus("Génération de l'aperçu en cours...", "loading");
 
                 // Effectuer l'AJAX pour générer l'aperçu
                 $.ajax({
-                    url: ajaxUrl,
+                    url: "<?php echo admin_url('admin-ajax.php'); ?>",
                     type: "POST",
                     dataType: "json",
                     timeout: 30000,
@@ -826,37 +795,29 @@ class PDF_Builder_WooCommerce_Integration {
                         nonce: nonce
                     },
                     success: function(response) {
-                        console.log('MetaBoxes.js - Aperçu success:', response);
+                        console.log('PDF Preview - Success:', response);
 
                         if (response.success && response.data && response.data.url) {
-                            // Charger le PDF dans l'embed
-                            $embed.attr('src', response.data.url);
+                            // Charger le PDF dans l'iframe
+                            $iframe.attr('src', response.data.url);
                             
                             // Stocker l'URL pour le téléchargement
                             $modal.data('pdf-url', response.data.url);
                             
-                            // Masquer le loading et afficher le conteneur
+                            // Masquer le loading et afficher l'iframe
                             setTimeout(function() {
                                 $loading.hide();
-                                $container.show();
                             }, 300);
                             
-                            showStatus("Aperçu généré avec succès", "success");
+                            showStatus("Aperçu généré avec succès ✓", "success");
                         } else {
-                            $loading.hide();
-                            $container.show();
-                            $modal.find('.woo-pdf-preview-modal-body').html(
-                                "<div style='text-align: center; padding: 40px; color: #dc3545;'><p>Erreur: " + (response.data || 'Erreur inconnue') + "</p></div>"
-                            );
+                            $loading.html("<div style='text-align: center; color: #dc3545;'><p>Erreur: " + (response.data || 'Erreur inconnue') + "</p></div>");
                             showStatus("Erreur lors de l'aperçu", "error");
                         }
                     },
-                    error: function() {
-                        $loading.hide();
-                        $container.show();
-                        $modal.find('.woo-pdf-preview-modal-body').html(
-                            "<div style='text-align: center; padding: 40px; color: #dc3545;'><p>Erreur AJAX lors de l'aperçu</p></div>"
-                        );
+                    error: function(xhr, status, error) {
+                        console.error('PDF Preview - Error:', status, error);
+                        $loading.html("<div style='text-align: center; color: #dc3545;'><p>Erreur AJAX: " + error + "</p></div>");
                         showStatus("Erreur AJAX", "error");
                     }
                 });
@@ -871,51 +832,29 @@ class PDF_Builder_WooCommerce_Integration {
             });
 
             // Gestion du zoom pour l'aperçu PDF
+            // Note: Le zoom avec iframe n'est pas aussi efficace, utilisons plutôt les outils du PDF natif
             var currentZoom = 100;
-            var minZoom = 50;
-            var maxZoom = 200;
-            var zoomStep = 25;
 
             function updateZoomDisplay() {
                 $('#zoom-display').text(currentZoom + '%');
             }
 
-            function applyZoom() {
-                var $wrapper = $('.pdf-page-wrapper');
-                var scale = currentZoom / 100;
-                $wrapper.css({
-                    'transform': 'scale(' + scale + ')',
-                    'transform-origin': 'top center',
-                    'transition': 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)'
-                });
-                updateZoomDisplay();
-                
-                // Réinitialiser le scroll si zoom < 100%
-                if (currentZoom <= 100) {
-                    $('.woo-pdf-preview-container').scrollLeft(0);
-                }
-            }
-
             $('#zoom-in-btn').on('click', function(e) {
                 e.preventDefault();
-                if (currentZoom < maxZoom) {
-                    currentZoom = Math.min(currentZoom + zoomStep, maxZoom);
-                    applyZoom();
-                }
+                currentZoom = Math.min(currentZoom + 25, 200);
+                updateZoomDisplay();
             });
 
             $('#zoom-out-btn').on('click', function(e) {
                 e.preventDefault();
-                if (currentZoom > minZoom) {
-                    currentZoom = Math.max(currentZoom - zoomStep, minZoom);
-                    applyZoom();
-                }
+                currentZoom = Math.max(currentZoom - 25, 50);
+                updateZoomDisplay();
             });
 
             $('#zoom-fit-btn').on('click', function(e) {
                 e.preventDefault();
                 currentZoom = 100;
-                applyZoom();
+                updateZoomDisplay();
             });
 
             // Télécharger le PDF depuis la modale
