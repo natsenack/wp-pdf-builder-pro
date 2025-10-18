@@ -5451,14 +5451,18 @@ class PDF_Builder_Admin {
      */
     public function ajax_unified_pdf_preview() {
         try {
+            error_log('[PDF Builder] AJAX Preview - Début du traitement');
+
             // Vérifier les permissions
             if (!current_user_can('manage_woocommerce')) {
+                error_log('[PDF Builder] AJAX Preview - Permissions insuffisantes');
                 wp_send_json_error(['message' => 'Permissions insuffisantes']);
                 return;
             }
 
             // Vérifier le nonce
             if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions')) {
+                error_log('[PDF Builder] AJAX Preview - Nonce invalide');
                 wp_send_json_error(['message' => 'Nonce invalide']);
                 return;
             }
@@ -5466,7 +5470,10 @@ class PDF_Builder_Admin {
             $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
             $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
 
+            error_log('[PDF Builder] AJAX Preview - order_id: ' . $order_id . ', template_id: ' . $template_id);
+
             if (!$order_id) {
+                error_log('[PDF Builder] AJAX Preview - ID de commande manquant');
                 wp_send_json_error(['message' => 'ID de commande manquant']);
                 return;
             }
@@ -5474,31 +5481,43 @@ class PDF_Builder_Admin {
             // Charger la commande WooCommerce
             $order = wc_get_order($order_id);
             if (!$order) {
+                error_log('[PDF Builder] AJAX Preview - Commande ' . $order_id . ' non trouvée');
                 wp_send_json_error(['message' => 'Commande non trouvée']);
                 return;
             }
 
+            error_log('[PDF Builder] AJAX Preview - Commande chargée: ' . $order->get_id());
+
             // Charger ou détecter le template
             $template_data = null;
             if ($template_id > 0) {
+                error_log('[PDF Builder] AJAX Preview - Chargement du template ID: ' . $template_id);
                 $template_data = $this->load_template_by_id($template_id);
             } else {
                 // Détection automatique basée sur le statut de commande
+                error_log('[PDF Builder] AJAX Preview - Détection automatique du template');
                 $template_data = $this->auto_detect_template($order);
             }
 
             if (!$template_data) {
+                error_log('[PDF Builder] AJAX Preview - Aucun template trouvé');
                 wp_send_json_error(['message' => 'Aucun template trouvé']);
                 return;
             }
+
+            error_log('[PDF Builder] AJAX Preview - Template chargé: ' . (isset($template_data['id']) ? $template_data['id'] : 'sans ID'));
+            error_log('[PDF Builder] AJAX Preview - Nombre d\'éléments: ' . (isset($template_data['elements']) ? count($template_data['elements']) : 0));
 
             // Générer l'aperçu PDF
             $pdf_url = $this->generate_pdf_preview($order, $template_data);
 
             if (!$pdf_url) {
+                error_log('[PDF Builder] AJAX Preview - Erreur lors de la génération de l\'aperçu');
                 wp_send_json_error(['message' => 'Erreur lors de la génération de l\'aperçu']);
                 return;
             }
+
+            error_log('[PDF Builder] AJAX Preview - Succès! URL: ' . $pdf_url);
 
             wp_send_json_success([
                 'url' => $pdf_url,
@@ -5506,7 +5525,7 @@ class PDF_Builder_Admin {
             ]);
 
         } catch (Exception $e) {
-            error_log('PDF Builder Preview Error: ' . $e->getMessage());
+            error_log('[PDF Builder] AJAX Preview Error: ' . $e->getMessage() . ' - ' . $e->getTraceAsString());
             wp_send_json_error(['message' => 'Erreur interne: ' . $e->getMessage()]);
         }
     }
@@ -5552,45 +5571,91 @@ class PDF_Builder_Admin {
      */
     private function generate_pdf_preview($order, $template_data) {
         try {
+            error_log('[PDF Builder] generate_pdf_preview - Début');
+
+            // Vérifier que template_data est valide
+            if (!is_array($template_data)) {
+                error_log('[PDF Builder] generate_pdf_preview - template_data n\'est pas un array: ' . gettype($template_data));
+                return false;
+            }
+
+            // Vérifier les éléments du template
+            $elements = isset($template_data['elements']) ? $template_data['elements'] : [];
+            if (!is_array($elements)) {
+                error_log('[PDF Builder] generate_pdf_preview - template_data[elements] n\'est pas un array: ' . gettype($elements));
+                return false;
+            }
+
+            if (empty($elements)) {
+                error_log('[PDF Builder] generate_pdf_preview - Aucun élément trouvé dans le template');
+                return false;
+            }
+
+            error_log('[PDF Builder] generate_pdf_preview - Éléments à traiter: ' . count($elements));
+
             // Utiliser le contrôleur de génération PDF existant
             if (!class_exists('PDF_Builder_Pro_Generator')) {
-                require_once PDF_BUILDER_SRC_DIR . 'Controllers/PDF_Generator_Controller.php';
+                $path = PDF_BUILDER_SRC_DIR . 'Controllers/PDF_Generator_Controller.php';
+                if (!file_exists($path)) {
+                    error_log('[PDF Builder] generate_pdf_preview - Fichier non trouvé: ' . $path);
+                    return false;
+                }
+                require_once $path;
             }
 
             $generator = new PDF_Builder_Pro_Generator();
             $generator->set_order($order);
             $generator->set_preview_mode(true); // Mode aperçu
 
+            error_log('[PDF Builder] generate_pdf_preview - Générateur créé');
+
             // Générer le PDF avec les éléments du template
-            $elements = isset($template_data['elements']) ? $template_data['elements'] : [];
             $pdf_content = $generator->generate($elements, ['is_preview' => true]);
 
             if (!$pdf_content) {
+                error_log('[PDF Builder] generate_pdf_preview - generate() a retourné null/false');
                 return false;
             }
+
+            error_log('[PDF Builder] generate_pdf_preview - PDF généré: ' . strlen($pdf_content) . ' bytes');
 
             // Sauvegarder temporairement le PDF d'aperçu
             $upload_dir = wp_upload_dir();
             $pdf_dir = $upload_dir['basedir'] . '/pdf-builder-cache/previews/';
 
+            error_log('[PDF Builder] generate_pdf_preview - Répertoire cache: ' . $pdf_dir);
+
             if (!file_exists($pdf_dir)) {
-                wp_mkdir_p($pdf_dir);
+                error_log('[PDF Builder] generate_pdf_preview - Création du répertoire cache');
+                $mkdir_result = wp_mkdir_p($pdf_dir);
+                if (!$mkdir_result) {
+                    error_log('[PDF Builder] generate_pdf_preview - Erreur création répertoire');
+                    return false;
+                }
             }
 
             $filename = 'preview_order_' . $order->get_id() . '_' . time() . '.pdf';
             $filepath = $pdf_dir . $filename;
 
-            if (file_put_contents($filepath, $pdf_content) === false) {
+            error_log('[PDF Builder] generate_pdf_preview - Sauvegarde en: ' . $filepath);
+
+            $write_result = file_put_contents($filepath, $pdf_content);
+            if ($write_result === false) {
+                error_log('[PDF Builder] generate_pdf_preview - Erreur écriture fichier');
                 return false;
             }
+
+            error_log('[PDF Builder] generate_pdf_preview - Fichier écrit: ' . $write_result . ' bytes');
 
             // Retourner l'URL accessible
             $pdf_url = $upload_dir['baseurl'] . '/pdf-builder-cache/previews/' . $filename;
 
+            error_log('[PDF Builder] generate_pdf_preview - URL retournée: ' . $pdf_url);
+
             return $pdf_url;
 
         } catch (Exception $e) {
-            error_log('PDF Preview Generation Error: ' . $e->getMessage());
+            error_log('[PDF Builder] generate_pdf_preview - Exception: ' . $e->getMessage() . ' - ' . $e->getTraceAsString());
             return false;
         }
     }
