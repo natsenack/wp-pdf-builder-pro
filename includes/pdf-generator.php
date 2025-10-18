@@ -2464,13 +2464,18 @@ class PDF_Builder_Pro_Generator {
         $discount = 0;
 
         if ($this->order) {
-            // Calculer le subtotal manuellement en additionnant les totaux des lignes
+            // Calculer le subtotal manuellement en additionnant les totaux des lignes et frais
             $subtotal = 0;
             $line_items = $this->order->get_items();
             foreach ($line_items as $item) {
                 $subtotal += $item->get_total();
             }
-            error_log("DEBUG_TOTALS: Manual subtotal calculation: {$subtotal}");
+            // Ajouter les frais au subtotal
+            $fees = $this->order->get_fees();
+            foreach ($fees as $fee) {
+                $subtotal += $fee->get_total();
+            }
+            error_log("DEBUG_TOTALS: Manual subtotal calculation (with fees): {$subtotal}");
             $shipping = $this->order->get_shipping_total();
             $taxes = $this->order->get_total_tax();
             $discount = $this->order->get_discount_total();
