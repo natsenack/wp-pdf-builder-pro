@@ -977,3 +977,5 @@ Console JavaScript affiche toutes les étapes d'initialisation.
 ---
 
 **Plugin PDF Builder Pro v5.0.0 - Interface Ultra-Moderne !** 🎉
+#   F i x   c a n v a s   p r e v i e w   -   r e a d y   f o r   d e p l o y m e n t  
+ 
