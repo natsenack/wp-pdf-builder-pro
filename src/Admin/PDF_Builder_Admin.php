@@ -5575,9 +5575,15 @@ class PDF_Builder_Admin {
      */
     public function ajax_serve_preview() {
         $preview_key = isset($_GET['preview_key']) ? sanitize_text_field($_GET['preview_key']) : '';
+        $nonce = isset($_GET['nonce']) ? sanitize_text_field($_GET['nonce']) : '';
 
         if (empty($preview_key)) {
             wp_die('Preview key manquante', 'Invalid Request', ['response' => 400]);
+        }
+
+        // Vérifier le nonce
+        if (!wp_verify_nonce($nonce, 'pdf_builder_preview_' . $preview_key)) {
+            wp_die('Nonce invalide', 'Unauthorized', ['response' => 403]);
         }
 
         // Récupérer le PDF du cache transient

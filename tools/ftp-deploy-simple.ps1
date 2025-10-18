@@ -10,8 +10,9 @@ Write-Host "=========================================" -ForegroundColor Green
 # ============================================================================
 Write-Host "`n📋 1. Chargement de la configuration..." -ForegroundColor Cyan
 
-$projectRoot = Split-Path (Get-Location) -Parent
-$configFile = Join-Path $projectRoot "tools/ftp-config.env"
+$scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
+$projectRoot = Split-Path -Parent $scriptPath
+$configFile = Join-Path $scriptPath "ftp-config.env"
 
 if (-not (Test-Path $configFile)) {
     Write-Host "❌ Erreur: Fichier de configuration manquant: $configFile" -ForegroundColor Red
