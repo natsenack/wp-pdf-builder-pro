@@ -2781,6 +2781,9 @@ class PDF_Builder_Pro_Generator {
      * Rend les éléments en HTML avec le même style que PreviewModal.jsx
      */
     private function render_html_preview($elements, $order_id) {
+        // Log de debug pour vérifier que l'aperçu HTML est appelé
+        error_log('PDF Generator render_html_preview called with ' . count($elements) . ' elements');
+
         // Dimensions A4 en pixels (72 DPI)
         $canvas_width = 595;
         $canvas_height = 842;
