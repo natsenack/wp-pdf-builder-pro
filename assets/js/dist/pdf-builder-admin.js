@@ -1006,7 +1006,7 @@ var CanvasElement = function CanvasElement(_ref) {
         fontFamily: '"Inter", "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont, sans-serif',
         // Utiliser les bordures du style de tableau si showBorders est activé
         border: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.headerBorder) : element.borderWidth && element.borderWidth > 0 ? "".concat(Math.max(1, element.borderWidth * zoom * 0.5), "px solid ").concat(element.borderColor || '#e5e7eb') : 'none',
-        borderRadius: tableStyles.borderRadius ? "".concat(tableStyles.borderRadius * zoom, "px") : '2px',
+        borderRadius: "".concat(tableStyles.borderRadius * zoom, "px"),
         overflow: 'hidden',
         // Assurer que le background ne cache pas les bordures
         backgroundColor: element.backgroundColor || 'transparent',

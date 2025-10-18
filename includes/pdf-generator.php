@@ -1844,10 +1844,8 @@ class PDF_Builder_Pro_Generator {
                 }
 
                 // Appliquer la couleur de texte des en-têtes
-                if (isset($table_styles['headerTextColor'])) {
-                    $header_text_rgb = $this->hex_to_rgb($table_styles['headerTextColor']);
-                    $this->pdf->SetTextColor($header_text_rgb[0], $header_text_rgb[1], $header_text_rgb[2]);
-                }
+                $header_text_rgb = $this->hex_to_rgb($table_styles['headerTextColor']);
+                $this->pdf->SetTextColor($header_text_rgb[0], $header_text_rgb[1], $header_text_rgb[2]);
 
                 $this->pdf->SetXY($x, $current_y);
                 $this->pdf->SetFillColor($table_styles['header_bg']['r'], $table_styles['header_bg']['g'], $table_styles['header_bg']['b']);
@@ -1891,10 +1889,8 @@ class PDF_Builder_Pro_Generator {
             $this->pdf->SetFont('helvetica', '', $row_font_size);
 
             // Appliquer la couleur de texte des lignes de données
-            if (isset($table_styles['rowTextColor'])) {
-                $row_text_rgb = $this->hex_to_rgb($table_styles['rowTextColor']);
-                $this->pdf->SetTextColor($row_text_rgb[0], $row_text_rgb[1], $row_text_rgb[2]);
-            }
+            $row_text_rgb = $this->hex_to_rgb($table_styles['rowTextColor']);
+            $this->pdf->SetTextColor($row_text_rgb[0], $row_text_rgb[1], $row_text_rgb[2]);
 
             // Définir la couleur de trait pour les bordures des lignes de données (APRÈS la définition du texte)
             if ($show_borders) {
