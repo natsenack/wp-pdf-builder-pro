@@ -110,6 +110,7 @@ class PDF_Builder_Pro_Generator {
             return $pdf_content;
 
         } catch (Exception $e) {
+            error_log('[PDF Builder] PDF_Builder_Pro_Generator exception: ' . $e->getMessage() . ' - Stack: ' . $e->getTraceAsString());
             $this->log_error('Generation PDF echouee: ' . $e->getMessage());
             return $this->generate_fallback_pdf($elements);
         }
