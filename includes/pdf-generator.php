@@ -327,6 +327,7 @@ class PDF_Builder_Pro_Generator {
         }
 
         error_log("[DEBUG] AUTO_INJECT: has_product_table = " . ($has_product_table ? 'true' : 'false'));
+        error_log("[DEBUG] AUTO_INJECT: Checking " . count($elements) . " elements for product_table");
 
         // Si aucun élément product_table n'existe, en ajouter un par défaut
         if (!$has_product_table) {
