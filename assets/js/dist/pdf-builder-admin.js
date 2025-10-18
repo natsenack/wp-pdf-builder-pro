@@ -12496,7 +12496,7 @@ function PDFCanvasEditor_arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 
 
 
-var PDFCanvasEditor = function PDFCanvasEditor(_ref) {
+var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
   var _window$pdfBuilderAja3, _window$pdfBuilderAja4;
   var options = _ref.options;
   var _useState = (0,react.useState)('select'),
@@ -12690,6 +12690,20 @@ var PDFCanvasEditor = function PDFCanvasEditor(_ref) {
   var editorRef = (0,react.useRef)(null);
   var canvasRef = (0,react.useRef)(null);
   var canvasContainerRef = (0,react.useRef)(null);
+
+  // Exposer les méthodes du composant via ref
+  (0,react.useImperativeHandle)(ref, function () {
+    return {
+      getElements: function getElements() {
+        return canvasState.getAllElements();
+      },
+      getRenderedHtml: function getRenderedHtml() {
+        // Cette méthode pourrait être implémentée pour retourner le HTML rendu
+        console.log('getRenderedHtml called - not yet implemented');
+        return '<div>HTML rendering not yet implemented</div>';
+      }
+    };
+  }, [canvasState]);
 
   // Hook pour le drag and drop
   var dragAndDrop = useDragAndDrop({
@@ -13486,10 +13500,10 @@ var PDFCanvasEditor = function PDFCanvasEditor(_ref) {
   }), /*#__PURE__*/react.createElement(FPSCounter, {
     showFps: globalSettings.settings.showFps
   }));
-};
+});
 
 // Optimisation : éviter les re-renders inutiles
-/* harmony default export */ const components_PDFCanvasEditor = (/*#__PURE__*/(/* unused pure expression or super */ null && (React.memo(PDFCanvasEditor))));
+/* harmony default export */ const components_PDFCanvasEditor = (/*#__PURE__*/(/* unused pure expression or super */ null && (React.memo(/*#__PURE__*/forwardRef(PDFCanvasEditor)))));
 ;// ./src/hooks/index.js
 
 
@@ -13634,6 +13648,7 @@ var PDFBuilderPro = /*#__PURE__*/function () {
   return src_createClass(PDFBuilderPro, [{
     key: "init",
     value: function init(containerId) {
+      var _this = this;
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       console.log('PDFBuilderPro.init called with:', containerId, options);
       try {
@@ -13683,7 +13698,11 @@ var PDFBuilderPro = /*#__PURE__*/function () {
 
         // Créer l'éditeur React avec protection
         var editorElement = /*#__PURE__*/(0,react.createElement)(PDFCanvasEditor, {
-          options: defaultOptions
+          options: defaultOptions,
+          ref: function ref(_ref) {
+            // Stocker la référence du composant
+            _this.canvas = _ref;
+          }
         });
 
         // Vérifier que l'élément a été créé correctement
@@ -13737,6 +13756,22 @@ var PDFBuilderPro = /*#__PURE__*/function () {
     value: function getData(containerId) {
       // Cette méthode pourrait être étendue pour récupérer l'état actuel
       return null;
+    }
+
+    // Obtenir les éléments du canvas actif
+  }, {
+    key: "getElements",
+    value: function getElements() {
+      try {
+        if (this.canvas && typeof this.canvas.getElements === 'function') {
+          return this.canvas.getElements();
+        }
+        console.warn('PDFBuilderPro: No active canvas or getElements method not available');
+        return [];
+      } catch (error) {
+        console.error('PDFBuilderPro: Error getting elements:', error);
+        return [];
+      }
     }
   }]);
 }(); // Instance globale

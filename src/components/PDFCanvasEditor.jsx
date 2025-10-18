@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo, forwardRef, useImperativeHandle } from 'react';
 import { CanvasElement } from './CanvasElement';
 import { useDragAndDrop } from '../hooks/useDragAndDrop';
 import { Toolbar } from './Toolbar';
@@ -16,7 +16,7 @@ import ElementLibrary from './ElementLibrary';
 import PropertiesPanel from './PropertiesPanel';
 import NewTemplateModal from './NewTemplateModal';
 
-export const PDFCanvasEditor = ({ options }) => {
+export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
   const [tool, setTool] = useState('select');
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [showNewTemplateModal, setShowNewTemplateModal] = useState(false);
@@ -150,6 +150,16 @@ export const PDFCanvasEditor = ({ options }) => {
   const editorRef = useRef(null);
   const canvasRef = useRef(null);
   const canvasContainerRef = useRef(null);
+
+  // Exposer les méthodes du composant via ref
+  useImperativeHandle(ref, () => ({
+    getElements: () => canvasState.getAllElements(),
+    getRenderedHtml: () => {
+      // Cette méthode pourrait être implémentée pour retourner le HTML rendu
+      console.log('getRenderedHtml called - not yet implemented');
+      return '<div>HTML rendering not yet implemented</div>';
+    }
+  }), [canvasState]);
 
   // Hook pour le drag and drop
   const dragAndDrop = useDragAndDrop({
@@ -977,7 +987,7 @@ export const PDFCanvasEditor = ({ options }) => {
       <FPSCounter showFps={globalSettings.settings.showFps} />
     </div>
   );
-};
+});
 
 // Optimisation : éviter les re-renders inutiles
-export default React.memo(PDFCanvasEditor);
+export default React.memo(forwardRef(PDFCanvasEditor));

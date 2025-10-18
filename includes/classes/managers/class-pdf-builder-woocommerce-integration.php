@@ -661,19 +661,16 @@ class PDF_Builder_WooCommerce_Integration {
 
                 // Essayer de récupérer les éléments actuels du Canvas si disponible
                 var canvasElements = null;
-                console.log('MetaBoxes.js - Checking for PDFBuilderPro.canvas availability...');
+                console.log('MetaBoxes.js - Checking for PDFBuilderPro availability...');
                 console.log('MetaBoxes.js - window.PDFBuilderPro exists:', !!window.PDFBuilderPro);
                 if (window.PDFBuilderPro) {
-                    console.log('MetaBoxes.js - PDFBuilderPro.canvas exists:', !!window.PDFBuilderPro.canvas);
-                    if (window.PDFBuilderPro.canvas) {
-                        console.log('MetaBoxes.js - PDFBuilderPro.canvas.getElements exists:', typeof window.PDFBuilderPro.canvas.getElements);
-                    }
+                    console.log('MetaBoxes.js - PDFBuilderPro.getElements exists:', typeof window.PDFBuilderPro.getElements);
                 }
 
                 try {
-                    if (window.PDFBuilderPro && window.PDFBuilderPro.canvas && window.PDFBuilderPro.canvas.getElements) {
-                        canvasElements = window.PDFBuilderPro.canvas.getElements();
-                        console.log('MetaBoxes.js - Éléments récupérés depuis Canvas pour PDF:', canvasElements);
+                    if (window.PDFBuilderPro && typeof window.PDFBuilderPro.getElements === 'function') {
+                        canvasElements = window.PDFBuilderPro.getElements();
+                        console.log('MetaBoxes.js - Éléments récupérés depuis PDFBuilderPro.getElements():', canvasElements);
                         console.log('MetaBoxes.js - Type des éléments:', typeof canvasElements);
                         if (canvasElements !== null && canvasElements !== undefined) {
                             console.log('MetaBoxes.js - Éléments isArray:', Array.isArray(canvasElements));
@@ -682,10 +679,10 @@ class PDF_Builder_WooCommerce_Integration {
                             }
                         }
                     } else {
-                        console.log('MetaBoxes.js - Conditions non remplies pour récupérer les éléments du canvas');
+                        console.log('MetaBoxes.js - PDFBuilderPro.getElements non disponible');
                     }
                 } catch (e) {
-                    console.log('MetaBoxes.js - Exception lors de la récupération des éléments depuis Canvas:', e.message);
+                    console.log('MetaBoxes.js - Exception lors de la récupération des éléments depuis PDFBuilderPro:', e.message);
                     console.log('MetaBoxes.js - Stack trace:', e.stack);
                 }
 

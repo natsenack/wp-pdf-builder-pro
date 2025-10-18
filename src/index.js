@@ -171,7 +171,11 @@ class PDFBuilderPro {
 
             // Créer l'éditeur React avec protection
             const editorElement = createElement(PDFCanvasEditor, {
-                options: defaultOptions
+                options: defaultOptions,
+                ref: (ref) => {
+                    // Stocker la référence du composant
+                    this.canvas = ref;
+                }
             });
 
             // Vérifier que l'élément a été créé correctement
@@ -236,6 +240,20 @@ class PDFBuilderPro {
     getData(containerId) {
         // Cette méthode pourrait être étendue pour récupérer l'état actuel
         return null;
+    }
+
+    // Obtenir les éléments du canvas actif
+    getElements() {
+        try {
+            if (this.canvas && typeof this.canvas.getElements === 'function') {
+                return this.canvas.getElements();
+            }
+            console.warn('PDFBuilderPro: No active canvas or getElements method not available');
+            return [];
+        } catch (error) {
+            console.error('PDFBuilderPro: Error getting elements:', error);
+            return [];
+        }
     }
 }
 
