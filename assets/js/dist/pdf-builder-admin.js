@@ -997,19 +997,19 @@ var CanvasElement = function CanvasElement(_ref) {
     // Forcer les bordures pour les tableaux de produits (correction du bug d'affichage)
     var showBorders = element.showBorders !== false; // Utiliser la propriété showBorders de l'élément
 
-    // Log de debug pour voir les propriétés utilisées
-    console.log('CanvasElement product_table debug:', {
-      element: element,
-      products: products,
-      showBorders: showBorders,
-      tableStyles: tableStyles,
-      subtotal: subtotal,
-      shipping: shipping,
-      tax: tax,
-      discount: discount,
-      total: total,
-      lastVisibleColumn: lastVisibleColumn
-    });
+    // Log de debug pour voir les propriétés utilisées - COMMENTÉ POUR ÉVITER LA BOUCLE INFINIE
+    // console.log('CanvasElement product_table debug:', {
+    //   element: element,
+    //   products: products,
+    //   showBorders: showBorders,
+    //   tableStyles: tableStyles,
+    //   subtotal: subtotal,
+    //   shipping: shipping,
+    //   tax: tax,
+    //   discount: discount,
+    //   total: total,
+    //   lastVisibleColumn: lastVisibleColumn
+    // });
     return /*#__PURE__*/React.createElement("div", {
       style: {
         width: '100%',
@@ -6245,7 +6245,7 @@ var PreviewModal = function PreviewModal(_ref) {
       return PreviewModal_regenerator().w(function (_context) {
         while (1) switch (_context.p = _context.n) {
           case 0:
-            console.log('🔍 [JS DEBUG] generatePreview called with', elements.length, 'elements');
+            // console.log('🔍 [JS DEBUG] generatePreview called with', elements.length, 'elements'); // COMMENTÉ TEMPORAIREMENT
 
             // Ne pas définir loading=true car l'aperçu s'affiche déjà
             setError(null);

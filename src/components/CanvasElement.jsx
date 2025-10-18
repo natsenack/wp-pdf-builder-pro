@@ -704,19 +704,19 @@ export const CanvasElement = ({
           // Forcer les bordures pour les tableaux de produits (correction du bug d'affichage)
           const showBorders = element.showBorders !== false; // Utiliser la propriété showBorders de l'élément
 
-          // Log de debug pour voir les propriétés utilisées
-          console.log('CanvasElement product_table debug:', {
-            element: element,
-            products: products,
-            showBorders: showBorders,
-            tableStyles: tableStyles,
-            subtotal: subtotal,
-            shipping: shipping,
-            tax: tax,
-            discount: discount,
-            total: total,
-            lastVisibleColumn: lastVisibleColumn
-          });
+          // Log de debug pour voir les propriétés utilisées - COMMENTÉ POUR ÉVITER LA BOUCLE INFINIE
+          // console.log('CanvasElement product_table debug:', {
+          //   element: element,
+          //   products: products,
+          //   showBorders: showBorders,
+          //   tableStyles: tableStyles,
+          //   subtotal: subtotal,
+          //   shipping: shipping,
+          //   tax: tax,
+          //   discount: discount,
+          //   total: total,
+          //   lastVisibleColumn: lastVisibleColumn
+          // });
           return (
             <div style={{
               width: '100%',

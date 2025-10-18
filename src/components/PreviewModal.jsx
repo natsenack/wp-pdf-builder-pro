@@ -1135,7 +1135,7 @@ const PreviewModal = ({
   }, [isOpen, elements.length, useServerPreview]);
 
   const generatePreview = async () => {
-    console.log('🔍 [JS DEBUG] generatePreview called with', elements.length, 'elements');
+    // console.log('🔍 [JS DEBUG] generatePreview called with', elements.length, 'elements'); // COMMENTÉ TEMPORAIREMENT
 
     // Ne pas définir loading=true car l'aperçu s'affiche déjà
     setError(null);
