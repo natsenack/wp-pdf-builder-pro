@@ -555,10 +555,10 @@ class PDF_Builder_WooCommerce_Integration {
             // Configuration
             var orderId = <?php echo intval($order_id); ?>;
             var templateId = <?php echo $selected_template ? intval($selected_template['id']) : 0; ?>;
-            var ajaxUrl = '<?php echo admin_url('admin-ajax.php'); ?>';
-            var nonce = '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>';
+            var ajaxUrl = "<?php echo esc_js(admin_url('admin-ajax.php')); ?>";
+            var nonce = "<?php echo esc_js(wp_create_nonce('pdf_builder_order_actions')); ?>";
 
-            console.log('MetaBoxes.js - Configuration loaded:', {
+            console.log("MetaBoxes.js - Configuration loaded:", {
                 orderId: orderId,
                 templateId: templateId,
                 ajaxUrl: ajaxUrl,
@@ -567,14 +567,14 @@ class PDF_Builder_WooCommerce_Integration {
 
             // Utility functions
             function showStatus(message, type) {
-                console.log('MetaBoxes.js - showStatus called:', message, type);
-                var $status = $('#pdf-status');
-                $status.removeClass('pdf-status-loading pdf-status-success pdf-status-error')
-                       .addClass('pdf-status-' + type)
+                console.log("MetaBoxes.js - showStatus called:", message, type);
+                var $status = $("#pdf-status");
+                $status.removeClass("pdf-status-loading pdf-status-success pdf-status-error")
+                       .addClass("pdf-status-" + type)
                        .html(message)
                        .show();
 
-                if (type !== 'loading') {
+                if (type !== "loading") {
                     setTimeout(function() {
                         $status.fadeOut();
                     }, 5000);
@@ -582,17 +582,17 @@ class PDF_Builder_WooCommerce_Integration {
             }
 
             function setButtonLoading($btn, loading) {
-                console.log('MetaBoxes.js - setButtonLoading:', loading ? 'loading' : 'not loading');
+                console.log("MetaBoxes.js - setButtonLoading:", loading ? "loading" : "not loading");
                 if (loading) {
-                    $btn.prop('disabled', true).css('opacity', '0.6');
+                    $btn.prop("disabled", true).css("opacity", "0.6");
                 } else {
-                    $btn.prop('disabled', false).css('opacity', '1');
+                    $btn.prop("disabled", false).css("opacity", "1");
                 }
             }
 
-            $('#pdf-generate-btn').on('click', function() {
-                console.log('PDF BUILDER - Generate button clicked');
-                showStatus('Génération du PDF...', 'loading');
+            $("#pdf-generate-btn").on("click", function() {
+                console.log("PDF BUILDER - Generate button clicked");
+                showStatus("Génération du PDF...", "loading");
                 setButtonLoading($(this), true);
 
                 console.log('PDF BUILDER - Sending AJAX request for generation:', {
