@@ -6210,10 +6210,22 @@ class PDF_Builder_Admin {
                 wp_die('Template non trouvé');
             }
 
-            // Générer le HTML UNIFIÉ - c'est EXACTEMENT comme le PDF !
-            $html_content = $this->generate_unified_html($template_data, $order);
+            // Récupérer les dimensions du canvas
+            $canvas_width = intval($template_data['canvasWidth'] ?? $template_data['canvas']['width'] ?? 595);
+            $canvas_height = intval($template_data['canvasHeight'] ?? $template_data['canvas']['height'] ?? 842);
+            
+            // Récupérer les éléments - supportent les deux formats
+            $elements = [];
+            if (isset($template_data['pages']) && is_array($template_data['pages']) && !empty($template_data['pages'])) {
+                $elements = $template_data['pages'][0]['elements'] ?? [];
+            } elseif (isset($template_data['elements'])) {
+                $elements = $template_data['elements'];
+            }
 
-            // Afficher le HTML directement dans le navigateur
+            // Générer le HTML du preview
+            $preview_html = $this->render_preview_canvas($elements, $order, $canvas_width, $canvas_height);
+
+            // Afficher la page HTML
             ?>
             <!DOCTYPE html>
             <html lang="fr">
@@ -6228,8 +6240,6 @@ class PDF_Builder_Admin {
                         box-sizing: border-box;
                     }
                     html, body {
-                        margin: 0;
-                        padding: 0;
                         width: 100%;
                         height: 100%;
                     }
@@ -6237,29 +6247,34 @@ class PDF_Builder_Admin {
                         background: #f5f5f5;
                         font-family: Arial, Helvetica, sans-serif;
                         padding: 20px;
-                        display: flex;
-                        justify-content: center;
                     }
                     .preview-wrapper {
                         width: 100%;
-                        max-width: 900px;
+                        display: flex;
+                        justify-content: center;
+                    }
+                    .canvas-container {
                         background: white;
                         box-shadow: 0 2px 12px rgba(0,0,0,0.15);
-                        padding: 40px;
+                        position: relative;
                         margin: 20px auto;
+                    }
+                    .canvas-element {
+                        position: absolute;
+                        overflow: hidden;
+                        box-sizing: border-box;
                     }
                     table {
                         border-collapse: collapse;
                         width: 100%;
-                        margin: 10px 0;
                     }
                     table td, table th {
-                        border: 1px solid #333;
-                        padding: 8px;
+                        border: 1px solid #ddd;
+                        padding: 6px 8px;
+                        text-align: left;
                     }
                     table th {
-                        background-color: #333;
-                        color: white;
+                        background-color: #f8f9fa;
                         font-weight: bold;
                     }
                     img {
@@ -6270,7 +6285,9 @@ class PDF_Builder_Admin {
             </head>
             <body>
                 <div class="preview-wrapper">
-                    <?php echo $html_content; ?>
+                    <div class="canvas-container" style="width: <?php echo intval($canvas_width); ?>px; height: auto; min-height: <?php echo intval($canvas_height); ?>px;">
+                        <?php echo $preview_html; ?>
+                    </div>
                 </div>
             </body>
             </html>
@@ -6279,6 +6296,213 @@ class PDF_Builder_Admin {
             wp_die('Erreur: ' . esc_html($e->getMessage()));
         }
         wp_die();
+    }
+
+    /**
+     * Rend le canvas comme HTML - exactement comme l'éditeur React le fait
+     */
+    private function render_preview_canvas($elements, $order, $canvas_width, $canvas_height) {
+        $html = '';
+
+        if (!is_array($elements) || empty($elements)) {
+            return $html;
+        }
+
+        foreach ($elements as $index => $element) {
+            // Vérifier les propriétés essentielles
+            $x = floatval($element['position']['x'] ?? $element['x'] ?? 0);
+            $y = floatval($element['position']['y'] ?? $element['y'] ?? 0);
+            $width = floatval($element['position']['width'] ?? $element['size']['width'] ?? $element['width'] ?? 100);
+            $height = floatval($element['position']['height'] ?? $element['size']['height'] ?? $element['height'] ?? 50);
+            $type = $element['type'] ?? 'text';
+            $visible = isset($element['visible']) ? (bool)$element['visible'] : true;
+
+            if (!$visible) {
+                continue;
+            }
+
+            // Style de base - positionnement
+            $style = "position: absolute; left: {$x}px; top: {$y}px; width: {$width}px; height: {$height}px; ";
+
+            // Ajouter les styles CSS
+            if (isset($element['style'])) {
+                $style_obj = $element['style'];
+                if (isset($style_obj['color'])) {
+                    $style .= "color: {$style_obj['color']}; ";
+                }
+                if (isset($style_obj['fontSize'])) {
+                    $style .= "font-size: " . floatval($style_obj['fontSize']) . "px; ";
+                }
+                if (isset($style_obj['fontWeight'])) {
+                    $style .= "font-weight: {$style_obj['fontWeight']}; ";
+                }
+                if (isset($style_obj['fillColor'])) {
+                    $style .= "background-color: {$style_obj['fillColor']}; ";
+                }
+            }
+
+            // Récupérer les propriétés du niveau racine aussi
+            if (isset($element['color'])) {
+                $style .= "color: {$element['color']}; ";
+            }
+            if (isset($element['fontSize'])) {
+                $style .= "font-size: " . floatval($element['fontSize']) . "px; ";
+            }
+            if (isset($element['fontWeight'])) {
+                $style .= "font-weight: {$element['fontWeight']}; ";
+            }
+            if (isset($element['backgroundColor'])) {
+                $style .= "background-color: {$element['backgroundColor']}; ";
+            }
+            if (isset($element['fontFamily'])) {
+                $style .= "font-family: {$element['fontFamily']}; ";
+            }
+            if (isset($element['textAlign'])) {
+                $style .= "text-align: {$element['textAlign']}; ";
+            }
+            if (isset($element['borderWidth']) && $element['borderWidth'] > 0) {
+                $border_color = $element['borderColor'] ?? '#000000';
+                $style .= "border: " . floatval($element['borderWidth']) . "px solid {$border_color}; ";
+            }
+            if (isset($element['lineHeight'])) {
+                $style .= "line-height: {$element['lineHeight']}; ";
+            }
+            if (isset($element['padding'])) {
+                $style .= "padding: " . floatval($element['padding']) . "px; ";
+            }
+
+            // Rendre l'élément selon son type
+            $html .= '<div class="canvas-element" style="' . esc_attr($style) . '">';
+            $html .= $this->render_preview_element($element, $order);
+            $html .= '</div>';
+        }
+
+        return $html;
+    }
+
+    /**
+     * Rend un élément individuel selon son type
+     */
+    private function render_preview_element($element, $order) {
+        $type = $element['type'] ?? 'text';
+        $content = $element['content'] ?? $element['text'] ?? '';
+
+        // Remplacer les variables dynamiques
+        if ($order) {
+            $content = $this->replace_order_variables($content, $order);
+        }
+
+        switch ($type) {
+            case 'text':
+            case 'dynamic-text':
+            case 'multiline_text':
+                return '<div style="width: 100%; height: 100%; overflow: hidden; white-space: pre-wrap; word-wrap: break-word;">' . wp_kses_post($content) . '</div>';
+
+            case 'image':
+            case 'company_logo':
+                $src = $element['imageUrl'] ?? $element['src'] ?? '';
+                if (!$src && $type === 'company_logo') {
+                    $custom_logo_id = get_theme_mod('custom_logo');
+                    if ($custom_logo_id) {
+                        $src = wp_get_attachment_image_url($custom_logo_id, 'full');
+                    }
+                }
+                if ($src) {
+                    return '<img src="' . esc_url($src) . '" style="width: 100%; height: 100%; object-fit: contain;" alt="" />';
+                }
+                return '<div style="width: 100%; height: 100%; background: #f0f0f0; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center;">Logo</div>';
+
+            case 'product_table':
+                if ($order) {
+                    return $this->generate_order_products_table($order, 'default', $element);
+                }
+                return 'Tableau produits';
+
+            case 'customer_info':
+                if ($order) {
+                    $html = '<div style="font-size: 12px; line-height: 1.4;">';
+                    $html .= '<div style="font-weight: bold;">' . esc_html($order->get_billing_first_name() . ' ' . $order->get_billing_last_name()) . '</div>';
+                    $billing = $order->get_formatted_billing_address();
+                    if ($billing) {
+                        $html .= nl2br(esc_html($billing));
+                    }
+                    if ($order->get_billing_email()) {
+                        $html .= '<div>' . esc_html($order->get_billing_email()) . '</div>';
+                    }
+                    if ($order->get_billing_phone()) {
+                        $html .= '<div>' . esc_html($order->get_billing_phone()) . '</div>';
+                    }
+                    $html .= '</div>';
+                    return $html;
+                }
+                return 'Client';
+
+            case 'order_number':
+                if ($order) {
+                    return esc_html($order->get_order_number());
+                }
+                return 'N° commande';
+
+            case 'order_date':
+                if ($order) {
+                    $date = $order->get_date_created() ? $order->get_date_created()->format('d/m/Y') : date('d/m/Y');
+                    return esc_html($date);
+                }
+                return 'Date';
+
+            case 'total':
+                if ($order) {
+                    return wc_price($order->get_total());
+                }
+                return 'Total';
+
+            case 'subtotal':
+                if ($order) {
+                    return wc_price($order->get_subtotal());
+                }
+                return 'Sous-total';
+
+            case 'mentions':
+                $mentions = [];
+                if (isset($element['showEmail']) && $element['showEmail']) {
+                    $email = get_option('pdf_builder_company_email', '');
+                    if ($email) $mentions[] = $email;
+                }
+                if (isset($element['showPhone']) && $element['showPhone']) {
+                    $phone = get_option('pdf_builder_company_phone', '');
+                    if ($phone) $mentions[] = $phone;
+                }
+                if (isset($element['showSiret']) && $element['showSiret']) {
+                    $siret = get_option('pdf_builder_company_siret', '');
+                    if ($siret) $mentions[] = 'SIRET: ' . $siret;
+                }
+                if (isset($element['showVat']) && $element['showVat']) {
+                    $vat = get_option('pdf_builder_company_vat', '');
+                    if ($vat) $mentions[] = 'TVA: ' . $vat;
+                }
+                $separator = isset($element['separator']) ? $element['separator'] : ' • ';
+                return esc_html(implode($separator, $mentions));
+
+            case 'company_info':
+                return nl2br(esc_html($this->format_complete_company_info()));
+
+            case 'document_type':
+                if ($order) {
+                    $order_status = $order->get_status();
+                    $document_type = $this->detect_document_type($order_status);
+                    return esc_html($this->get_document_type_label($document_type));
+                }
+                return 'FACTURE';
+
+            case 'rectangle':
+                return '';
+
+            case 'divider':
+                return '';
+
+            default:
+                return wp_kses_post($content);
+        }
     }
 
     /**
