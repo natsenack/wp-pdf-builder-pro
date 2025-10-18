@@ -2187,6 +2187,12 @@ class PDF_Builder_Pro_Generator {
         $row_height = $row_font_size * 1.2; // Hauteur de ligne basée sur la taille de police
         $alt_row = false;
 
+        error_log("RENDER_DEBUG: Order ID: " . $this->order->get_id());
+        error_log("RENDER_DEBUG: Line items count: " . count($line_items));
+        error_log("RENDER_DEBUG: Fees count: " . count($fees));
+        error_log("RENDER_DEBUG: Order total: " . $this->order->get_total());
+        error_log("RENDER_DEBUG: Order subtotal: " . $this->order->get_subtotal());
+
         // Définir les couleurs de trait pour les bordures des lignes de données
         if ($show_borders) {
             $row_border_color = isset($table_styles['rowBorder']) ? $table_styles['rowBorder'] : '#e2e8f0';
@@ -2197,6 +2203,7 @@ class PDF_Builder_Pro_Generator {
 
         // Produits
         if (!empty($line_items)) {
+            error_log("RENDER_DEBUG: Processing " . count($line_items) . " line items");
             foreach ($line_items as $item_id => $item) {
                 $product = $item->get_product();
                 $product_name = $item->get_name();
