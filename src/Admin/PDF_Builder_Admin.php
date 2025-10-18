@@ -5931,8 +5931,8 @@ class PDF_Builder_Admin {
      * Affiche l'aperçu identique à l'éditeur Canvas
      */
     public function ajax_canvas_preview() {
-        // Vérifier les permissions
-        if (!current_user_can('manage_woocommerce_orders')) {
+        // Vérifier les permissions - accepter les administrateurs et éditeurs
+        if (!current_user_can('edit_posts') && !current_user_can('manage_woocommerce')) {
             wp_die('Permissions insuffisantes');
         }
 
