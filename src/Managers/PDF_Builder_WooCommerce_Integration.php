@@ -366,14 +366,14 @@ class PDF_Builder_WooCommerce_Integration {
             <div class="pdf-status" id="pdf-status"></div>
         </div>
 
-        <!-- 🎨 MODALE D'APERÇU PDF -->
+        <!-- MODALE D'APERÇU PDF -->
         <div id="woo-pdf-preview-modal" class="woo-pdf-preview-modal" style="display: none;">
             <div class="woo-pdf-preview-modal-overlay"></div>
             <div class="woo-pdf-preview-modal-container">
                 <div class="woo-pdf-preview-modal-header">
                     <h3>Aperçu PDF - Commande #<?php echo intval($order_id); ?></h3>
                     <button class="woo-pdf-preview-modal-close" title="Fermer">
-                        <span>✕</span>
+                        <span>&times;</span>
                     </button>
                 </div>
                 <div class="woo-pdf-preview-modal-body">
@@ -381,14 +381,14 @@ class PDF_Builder_WooCommerce_Integration {
                             style="width: 100%; height: 100%; border: none; border-radius: 4px;"
                             title="Aperçu PDF"></iframe>
                     <div class="woo-pdf-preview-loading" style="display: none; text-align: center; padding: 40px;">
-                        <div style="font-size: 3em; margin-bottom: 20px;">📄</div>
+                        <div style="font-size: 3em; margin-bottom: 20px;">&#128196;</div>
                         <p>Chargement de l'aperçu...</p>
                         <div class="woo-pdf-preview-spinner"></div>
                     </div>
                 </div>
                 <div class="woo-pdf-preview-modal-footer">
                     <button class="woo-pdf-preview-download-btn" title="Télécharger">
-                        💾 Télécharger
+                        &#128190; Télécharger
                     </button>
                     <button class="woo-pdf-preview-modal-close-btn">
                         Fermer
@@ -397,7 +397,7 @@ class PDF_Builder_WooCommerce_Integration {
             </div>
         </div>
 
-        <!-- 🎨 STYLES MODALE -->
+        <!-- STYLES MODALE -->
         <style>
             .woo-pdf-preview-modal {
                 position: fixed;
