@@ -3009,11 +3009,11 @@ class PDF_Builder_Pro_Generator {
         ];
 
         // Propriétés des totaux - cohérence avec CanvasElement.jsx
-        $show_subtotal = $element['showSubtotal'] ?? true;
-        $show_shipping = $element['showShipping'] ?? true;
-        $show_taxes = $element['showTaxes'] ?? true;
-        $show_discount = $element['showDiscount'] ?? false;
-        $show_total = $element['showTotal'] ?? true;
+        $show_subtotal = !empty($element['showSubtotal']) && $element['showSubtotal'] !== 'false' && $element['showSubtotal'] !== false;
+        $show_shipping = !empty($element['showShipping']) && $element['showShipping'] !== 'false' && $element['showShipping'] !== false;
+        $show_taxes = !empty($element['showTaxes']) && $element['showTaxes'] !== 'false' && $element['showTaxes'] !== false;
+        $show_discount = !empty($element['showDiscount']) && $element['showDiscount'] !== 'false' && $element['showDiscount'] !== false;
+        $show_total = !empty($element['showTotal']) && $element['showTotal'] !== 'false' && $element['showTotal'] !== false;
 
         // Obtenir les styles du tableau
         $table_styles = $this->get_table_styles($table_style);
