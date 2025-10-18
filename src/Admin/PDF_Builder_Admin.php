@@ -2085,6 +2085,31 @@ class PDF_Builder_Admin {
                     }
                 }
 
+                // Ajouter les 8 propriétés CSS manquantes
+                if (isset($element['textDecoration']) && $element['textDecoration'] !== 'none') {
+                    $base_style .= ' text-decoration: ' . $element['textDecoration'] . ';';
+                }
+                if (isset($element['lineHeight']) && $element['lineHeight']) {
+                    $base_style .= ' line-height: ' . floatval($element['lineHeight']) . ';';
+                }
+                if (isset($element['borderStyle']) && $element['borderStyle'] !== 'solid') {
+                    $base_style .= ' border-style: ' . $element['borderStyle'] . ';';
+                }
+                if (isset($element['shadow']) && $element['shadow']) {
+                    $offsetX = floatval($element['shadowOffsetX'] ?? 2);
+                    $offsetY = floatval($element['shadowOffsetY'] ?? 2);
+                    $shadowColor = $element['shadowColor'] ?? 'rgba(0,0,0,0.2)';
+                    $base_style .= ' box-shadow: ' . $offsetX . 'px ' . $offsetY . 'px 4px ' . $shadowColor . ';';
+                }
+                if (isset($element['rotation']) && $element['rotation'] !== 0) {
+                    $rotation = floatval($element['rotation']);
+                    $base_style .= ' transform: rotate(' . $rotation . 'deg);';
+                }
+                if (isset($element['scale']) && $element['scale'] !== 100) {
+                    $scale = floatval($element['scale']) / 100;
+                    $base_style .= ' transform: scale(' . $scale . ');';
+                }
+
                 $style = $base_style;
 
                 $content = $element['content'] ?? '';
