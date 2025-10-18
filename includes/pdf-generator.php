@@ -305,6 +305,8 @@ class PDF_Builder_Pro_Generator {
      * Rendu des elements optimise
      */
     private function render_elements($elements) {
+        error_log("🚨🚨🚨 RENDER_ELEMENTS CALLED WITH " . count($elements) . " ELEMENTS 🚨🚨🚨");
+
         error_log("[DEBUG] RENDER_ELEMENTS: Called with " . count($elements) . " elements");
 
         // Vérifier si un élément product_table existe déjà
