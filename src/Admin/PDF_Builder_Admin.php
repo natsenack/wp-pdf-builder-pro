@@ -5472,9 +5472,8 @@ class PDF_Builder_Admin {
             }
 
             $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
-            $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
 
-            error_log('[PDF Builder] AJAX Preview - order_id: ' . $order_id . ', template_id: ' . $template_id);
+            error_log('[PDF Builder] AJAX Preview - order_id: ' . $order_id);
 
             if (!$order_id) {
                 error_log('[PDF Builder] AJAX Preview - ID de commande manquant');
@@ -5491,17 +5490,13 @@ class PDF_Builder_Admin {
             }
 
             error_log('[PDF Builder] AJAX Preview - Commande chargée: ' . $order->get_id());
+            $order_status = $order->get_status();
+            error_log('[PDF Builder] AJAX Preview - Statut de la commande: ' . $order_status);
 
-            // Charger ou détecter le template
-            $template_data = null;
-            if ($template_id > 0) {
-                error_log('[PDF Builder] AJAX Preview - Chargement du template ID: ' . $template_id);
-                $template_data = $this->load_template_by_id($template_id);
-            } else {
-                // Détection automatique basée sur le statut de commande
-                error_log('[PDF Builder] AJAX Preview - Détection automatique du template');
-                $template_data = $this->auto_detect_template($order);
-            }
+            // TOUJOURS utiliser la détection automatique basée sur le statut de commande
+            // Ignorer le template_id passé en paramètre pour garantir la cohérence
+            error_log('[PDF Builder] AJAX Preview - Détection automatique du template selon le statut');
+            $template_data = $this->auto_detect_template($order);
 
             if (!$template_data) {
                 error_log('[PDF Builder] AJAX Preview - Aucun template trouvé');
@@ -5588,23 +5583,35 @@ class PDF_Builder_Admin {
 
         error_log('[PDF Builder] Preview key reçue: ' . $preview_key);
 
-        // Vérifier le nonce avec une tolérance - le nonce peut être de la session précédente
-        // On accepte le nonce même s'il a expiré (12h max par défaut WordPress)
+        // Vérifier le nonce avec une tolérance
         if (!empty($nonce)) {
             $verified = wp_verify_nonce($nonce, 'pdf_builder_preview_' . $preview_key);
             error_log('[PDF Builder] Nonce verification result: ' . $verified);
-            // Accepter les nonces valides ou légèrement expirés (valeur 1 ou 2)
             if ($verified !== 1 && $verified !== 2) {
                 error_log('[PDF Builder] Nonce invalide pour la clé: ' . $preview_key . ' - Nonce reçu: ' . $nonce);
-                // Continuer quand même si c'est une requête GET (pas de données sensibles)
             }
         }
 
-        // Récupérer le PDF du cache transient
-        $pdf_content = get_transient($preview_key);
-        error_log('[PDF Builder] Transient lookup result: ' . ($pdf_content !== false ? 'Found' : 'Not Found'));
+        // Chercher le PDF en priorité dans les fichiers temporaires, puis en transient
+        $pdf_content = null;
+        
+        // 1. Vérifier les fichiers temporaires (plus fiable)
+        $upload_dir = wp_upload_dir();
+        $preview_dir = $upload_dir['basedir'] . '/pdf-builder-cache/preview';
+        $preview_file = $preview_dir . '/' . sanitize_file_name($preview_key) . '.pdf';
 
-        if ($pdf_content === false) {
+        if (file_exists($preview_file)) {
+            error_log('[PDF Builder] PDF trouvé dans fichier: ' . $preview_file);
+            $pdf_content = file_get_contents($preview_file);
+        } else {
+            error_log('[PDF Builder] Fichier temporaire non trouvé: ' . $preview_file);
+            
+            // 2. Fallback sur transient
+            $pdf_content = get_transient($preview_key);
+            error_log('[PDF Builder] Transient lookup result: ' . ($pdf_content !== false ? 'Found' : 'Not Found'));
+        }
+
+        if ($pdf_content === false || empty($pdf_content)) {
             error_log('[PDF Builder] ERROR: Aperçu PDF expiré ou non trouvé pour clé: ' . $preview_key);
             header('HTTP/1.1 404 Not Found');
             wp_die('Aperçu PDF expiré ou non trouvé', 'Not Found', ['response' => 404]);
@@ -5680,10 +5687,28 @@ class PDF_Builder_Admin {
             // Créer une clé unique pour le cache du PDF
             $preview_key = 'pdf_preview_' . $order->get_id() . '_' . md5(json_encode($template_data)) . '_' . time();
             
-            // Stocker le PDF en cache transient (disponible 1 heure)
-            set_transient($preview_key, $pdf_content, HOUR_IN_SECONDS);
+            // Sauvegarder le PDF dans un fichier temporaire (plus fiable que les transients)
+            $upload_dir = wp_upload_dir();
+            $preview_dir = $upload_dir['basedir'] . '/pdf-builder-cache/preview';
             
-            error_log('[PDF Builder] generate_pdf_preview - PDF sauvegardé en cache: ' . $preview_key);
+            // Créer le répertoire s'il n'existe pas
+            if (!file_exists($preview_dir)) {
+                wp_mkdir_p($preview_dir);
+            }
+            
+            $preview_file = $preview_dir . '/' . sanitize_file_name($preview_key) . '.pdf';
+            
+            // Écrire le fichier
+            $written = file_put_contents($preview_file, $pdf_content);
+            
+            if ($written === false) {
+                error_log('[PDF Builder] generate_pdf_preview - Erreur lors de l\'écriture du fichier: ' . $preview_file);
+                // Fallback sur transient
+                set_transient($preview_key, $pdf_content, HOUR_IN_SECONDS);
+                error_log('[PDF Builder] generate_pdf_preview - Fallback sur transient');
+            } else {
+                error_log('[PDF Builder] generate_pdf_preview - PDF sauvegardé en fichier: ' . $preview_file);
+            }
             
             // Retourner l'URL du service d'aperçu
             $preview_url = admin_url('admin-ajax.php?action=pdf_builder_serve_preview&preview_key=' . $preview_key . '&nonce=' . wp_create_nonce('pdf_builder_preview_' . $preview_key));

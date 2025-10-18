@@ -166,6 +166,16 @@ class PDF_Builder_WooCommerce_Integration {
         }
 
         wp_nonce_field('pdf_builder_order_actions', 'pdf_builder_order_nonce');
+        
+        // Récupérer le label du statut WooCommerce
+        $order_statuses = wc_get_order_statuses();
+        $status_label = isset($order_statuses['wc-' . $order_status]) ? $order_statuses['wc-' . $order_status] : ucfirst($order_status);
+        
+        // Déterminer si le template a été trouvé via mapping ou fallback
+        $template_source = 'par défaut';
+        if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
+            $template_source = 'configuré pour ce statut';
+        }
         ?>
         <style>
         /* Meta Box Styles */
@@ -311,21 +321,48 @@ class PDF_Builder_WooCommerce_Integration {
         </style>
 
         <div class="pdf-meta-box">
+            <!-- Status Section -->
+            <div class="pdf-template-section" style="background: #e3f2fd; border-color: #bbdefb;">
+                <div class="pdf-template-title" style="color: #1565c0;">
+                    📊 État de la commande
+                </div>
+                <div class="pdf-template-display" style="background: white; justify-content: space-between;">
+                    <div>
+                        <div class="pdf-template-name"><?php echo esc_html($status_label); ?></div>
+                        <div class="pdf-template-meta">Statut actuel de la commande</div>
+                    </div>
+                    <div style="font-size: 24px;">
+                        <?php
+                        $status_icons = [
+                            'pending' => '⏳',
+                            'processing' => '⚙️',
+                            'on-hold' => '⏸️',
+                            'completed' => '✅',
+                            'cancelled' => '❌',
+                            'refunded' => '💰',
+                            'failed' => '⚠️'
+                        ];
+                        echo isset($status_icons[$order_status]) ? $status_icons[$order_status] : '❓';
+                        ?>
+                    </div>
+                </div>
+            </div>
+
             <!-- Template Section -->
             <div class="pdf-template-section">
                 <div class="pdf-template-title">
-                    Template sélectionné
+                    📋 Template sélectionné
                 </div>
 
                 <div class="pdf-template-display">
-                    <span class="pdf-template-icon">📋</span>
+                    <span class="pdf-template-icon">�</span>
                     <div class="pdf-template-info">
                         <div class="pdf-template-name">
                             <?php echo $selected_template ? esc_html($selected_template['name']) : 'Aucun template disponible'; ?>
                         </div>
                         <div class="pdf-template-meta">
                             <?php if ($selected_template): ?>
-                                Template automatiquement détecté • Prêt pour génération
+                                <?php echo esc_html($template_source); ?> • Prêt pour génération
                             <?php else: ?>
                                 Aucun template trouvé dans la base de données
                             <?php endif; ?>
