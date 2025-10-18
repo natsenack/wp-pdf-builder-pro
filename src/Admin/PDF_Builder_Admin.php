@@ -6471,11 +6471,41 @@ class PDF_Builder_Admin {
             $content = $this->replace_order_variables($content, $order);
         }
 
+        // Construire les styles CSS de l'élément pour les appliquer au contenu
+        $element_style = '';
+        if (isset($element['color']) && !empty($element['color'])) {
+            $element_style .= "color: {$element['color']}; ";
+        }
+        if (isset($element['fontSize']) && $element['fontSize'] > 0) {
+            $element_style .= "font-size: " . floatval($element['fontSize']) . "px; ";
+        }
+        if (isset($element['fontWeight'])) {
+            $element_style .= "font-weight: {$element['fontWeight']}; ";
+        }
+        if (isset($element['fontFamily']) && !empty($element['fontFamily'])) {
+            $element_style .= "font-family: {$element['fontFamily']}; ";
+        }
+        if (isset($element['textAlign'])) {
+            $element_style .= "text-align: {$element['textAlign']}; ";
+        }
+        if (isset($element['textDecoration'])) {
+            $element_style .= "text-decoration: {$element['textDecoration']}; ";
+        }
+        if (isset($element['lineHeight'])) {
+            $element_style .= "line-height: {$element['lineHeight']}; ";
+        }
+        if (isset($element['backgroundColor']) && !empty($element['backgroundColor']) && $element['backgroundColor'] !== 'transparent') {
+            $element_style .= "background-color: {$element['backgroundColor']}; ";
+        }
+        if (isset($element['padding']) && $element['padding'] > 0) {
+            $element_style .= "padding: " . floatval($element['padding']) . "px; ";
+        }
+
         switch ($type) {
             case 'text':
             case 'dynamic-text':
             case 'multiline_text':
-                return '<div style="width: 100%; height: 100%; overflow: hidden; white-space: pre-wrap; word-wrap: break-word;">' . wp_kses_post($content) . '</div>';
+                return '<div style="width: 100%; height: 100%; overflow: hidden; white-space: pre-wrap; word-wrap: break-word; ' . esc_attr($element_style) . '">' . wp_kses_post($content) . '</div>';
 
             case 'image':
             case 'company_logo':
@@ -6487,19 +6517,21 @@ class PDF_Builder_Admin {
                     }
                 }
                 if ($src) {
-                    return '<img src="' . esc_url($src) . '" style="width: 100%; height: 100%; object-fit: contain;" alt="" />';
+                    return '<img src="' . esc_url($src) . '" style="width: 100%; height: 100%; object-fit: contain; ' . esc_attr($element_style) . '" alt="" />';
                 }
-                return '<div style="width: 100%; height: 100%; background: #f0f0f0; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center;">Logo</div>';
+                return '<div style="width: 100%; height: 100%; background: #f0f0f0; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center; ' . esc_attr($element_style) . '">Logo</div>';
 
             case 'product_table':
                 if ($order) {
-                    return $this->generate_order_products_table($order, 'default', $element);
+                    $table_html = $this->generate_order_products_table($order, 'default', $element);
+                    // Wrapper avec styles
+                    return '<div style="width: 100%; height: 100%; overflow: auto; ' . esc_attr($element_style) . '">' . $table_html . '</div>';
                 }
-                return 'Tableau produits';
+                return '<div style="' . esc_attr($element_style) . '">Tableau produits</div>';
 
             case 'customer_info':
                 if ($order) {
-                    $html = '<div style="font-size: 12px; line-height: 1.4;">';
+                    $html = '<div style="font-size: 12px; line-height: 1.4; ' . esc_attr($element_style) . '">';
                     $html .= '<div style="font-weight: bold;">' . esc_html($order->get_billing_first_name() . ' ' . $order->get_billing_last_name()) . '</div>';
                     $billing = $order->get_formatted_billing_address();
                     if ($billing) {
@@ -6514,32 +6546,32 @@ class PDF_Builder_Admin {
                     $html .= '</div>';
                     return $html;
                 }
-                return 'Client';
+                return '<div style="' . esc_attr($element_style) . '">Client</div>';
 
             case 'order_number':
                 if ($order) {
-                    return esc_html($order->get_order_number());
+                    return '<div style="' . esc_attr($element_style) . '">' . esc_html($order->get_order_number()) . '</div>';
                 }
-                return 'N° commande';
+                return '<div style="' . esc_attr($element_style) . '">N° commande</div>';
 
             case 'order_date':
                 if ($order) {
                     $date = $order->get_date_created() ? $order->get_date_created()->format('d/m/Y') : date('d/m/Y');
-                    return esc_html($date);
+                    return '<div style="' . esc_attr($element_style) . '">' . esc_html($date) . '</div>';
                 }
-                return 'Date';
+                return '<div style="' . esc_attr($element_style) . '">Date</div>';
 
             case 'total':
                 if ($order) {
-                    return wc_price($order->get_total());
+                    return '<div style="' . esc_attr($element_style) . '">' . wc_price($order->get_total()) . '</div>';
                 }
-                return 'Total';
+                return '<div style="' . esc_attr($element_style) . '">Total</div>';
 
             case 'subtotal':
                 if ($order) {
-                    return wc_price($order->get_subtotal());
+                    return '<div style="' . esc_attr($element_style) . '">' . wc_price($order->get_subtotal()) . '</div>';
                 }
-                return 'Sous-total';
+                return '<div style="' . esc_attr($element_style) . '">Sous-total</div>';
 
             case 'mentions':
                 $mentions = [];
@@ -6560,27 +6592,27 @@ class PDF_Builder_Admin {
                     if ($vat) $mentions[] = 'TVA: ' . $vat;
                 }
                 $separator = isset($element['separator']) ? $element['separator'] : ' • ';
-                return esc_html(implode($separator, $mentions));
+                return '<div style="' . esc_attr($element_style) . '">' . esc_html(implode($separator, $mentions)) . '</div>';
 
             case 'company_info':
-                return nl2br(esc_html($this->format_complete_company_info()));
+                return '<div style="' . esc_attr($element_style) . '">' . nl2br(esc_html($this->format_complete_company_info())) . '</div>';
 
             case 'document_type':
                 if ($order) {
                     $order_status = $order->get_status();
                     $document_type = $this->detect_document_type($order_status);
-                    return esc_html($this->get_document_type_label($document_type));
+                    return '<div style="' . esc_attr($element_style) . '">' . esc_html($this->get_document_type_label($document_type)) . '</div>';
                 }
-                return 'FACTURE';
+                return '<div style="' . esc_attr($element_style) . '">FACTURE</div>';
 
             case 'rectangle':
                 return '';
 
             case 'divider':
-                return '';
+                return '<div style="width: 100%; height: 2px; background-color: #cccccc; ' . esc_attr($element_style) . '"></div>';
 
             default:
-                return wp_kses_post($content);
+                return '<div style="' . esc_attr($element_style) . '">' . wp_kses_post($content) . '</div>';
         }
     }
 
