@@ -1175,7 +1175,7 @@ var CanvasElement = function CanvasElement(_ref) {
         display: 'flex',
         justifyContent: 'space-between'
       }
-    }, /*#__PURE__*/React.createElement("span", null, "Sous-total:"), /*#__PURE__*/React.createElement("span", null, subtotal.toFixed(2), "\u20AC"))), element.showShipping && shipping > 0 && /*#__PURE__*/React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("span", null, "Sous-total:"), /*#__PURE__*/React.createElement("span", null, subtotal.toFixed(2), "\u20AC"))), element.showShipping && /*#__PURE__*/React.createElement("div", {
       style: {
         display: 'flex',
         justifyContent: 'flex-end',
@@ -1188,7 +1188,7 @@ var CanvasElement = function CanvasElement(_ref) {
         display: 'flex',
         justifyContent: 'space-between'
       }
-    }, /*#__PURE__*/React.createElement("span", null, "Port:"), /*#__PURE__*/React.createElement("span", null, shipping.toFixed(2), "\u20AC"))), element.showTaxes && tax > 0 && /*#__PURE__*/React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("span", null, "Port:"), /*#__PURE__*/React.createElement("span", null, shipping.toFixed(2), "\u20AC"))), element.showTaxes && /*#__PURE__*/React.createElement("div", {
       style: {
         display: 'flex',
         justifyContent: 'flex-end',
@@ -1201,7 +1201,7 @@ var CanvasElement = function CanvasElement(_ref) {
         display: 'flex',
         justifyContent: 'space-between'
       }
-    }, /*#__PURE__*/React.createElement("span", null, "TVA:"), /*#__PURE__*/React.createElement("span", null, tax.toFixed(2), "\u20AC"))), element.showDiscount && discount < 0 && /*#__PURE__*/React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("span", null, "TVA:"), /*#__PURE__*/React.createElement("span", null, tax.toFixed(2), "\u20AC"))), element.showDiscount && /*#__PURE__*/React.createElement("div", {
       style: {
         display: 'flex',
         justifyContent: 'flex-end',

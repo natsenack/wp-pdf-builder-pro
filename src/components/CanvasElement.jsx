@@ -914,7 +914,7 @@ export const CanvasElement = ({
                     </div>
                   </div>
                 )}
-                {element.showShipping && shipping > 0 && (
+                {element.showShipping && (
                   <div style={{
                     display: 'flex',
                     justifyContent: 'flex-end',
@@ -926,7 +926,7 @@ export const CanvasElement = ({
                     </div>
                   </div>
                 )}
-                {element.showTaxes && tax > 0 && (
+                {element.showTaxes && (
                   <div style={{
                     display: 'flex',
                     justifyContent: 'flex-end',
@@ -938,7 +938,7 @@ export const CanvasElement = ({
                     </div>
                   </div>
                 )}
-                {element.showDiscount && discount < 0 && (
+                {element.showDiscount && (
                   <div style={{
                     display: 'flex',
                     justifyContent: 'flex-end',
