@@ -5574,17 +5574,25 @@ class PDF_Builder_Admin {
      * Sert un aperçu PDF en cache via un transient
      */
     public function ajax_serve_preview() {
+        error_log('[PDF Builder] AJAX serve_preview called - ' . date('Y-m-d H:i:s'));
+        error_log('[PDF Builder] GET params: ' . json_encode($_GET));
+        
         $preview_key = isset($_GET['preview_key']) ? sanitize_text_field($_GET['preview_key']) : '';
         $nonce = isset($_GET['nonce']) ? sanitize_text_field($_GET['nonce']) : '';
 
         if (empty($preview_key)) {
+            error_log('[PDF Builder] ERROR: Preview key manquante');
+            header('HTTP/1.1 400 Bad Request');
             wp_die('Preview key manquante', 'Invalid Request', ['response' => 400]);
         }
+
+        error_log('[PDF Builder] Preview key reçue: ' . $preview_key);
 
         // Vérifier le nonce avec une tolérance - le nonce peut être de la session précédente
         // On accepte le nonce même s'il a expiré (12h max par défaut WordPress)
         if (!empty($nonce)) {
             $verified = wp_verify_nonce($nonce, 'pdf_builder_preview_' . $preview_key);
+            error_log('[PDF Builder] Nonce verification result: ' . $verified);
             // Accepter les nonces valides ou légèrement expirés (valeur 1 ou 2)
             if ($verified !== 1 && $verified !== 2) {
                 error_log('[PDF Builder] Nonce invalide pour la clé: ' . $preview_key . ' - Nonce reçu: ' . $nonce);
@@ -5594,10 +5602,15 @@ class PDF_Builder_Admin {
 
         // Récupérer le PDF du cache transient
         $pdf_content = get_transient($preview_key);
+        error_log('[PDF Builder] Transient lookup result: ' . ($pdf_content !== false ? 'Found' : 'Not Found'));
 
         if ($pdf_content === false) {
+            error_log('[PDF Builder] ERROR: Aperçu PDF expiré ou non trouvé pour clé: ' . $preview_key);
+            header('HTTP/1.1 404 Not Found');
             wp_die('Aperçu PDF expiré ou non trouvé', 'Not Found', ['response' => 404]);
         }
+
+        error_log('[PDF Builder] PDF found, serving ' . strlen($pdf_content) . ' bytes');
 
         // Servir le PDF
         header('Content-Type: application/pdf');
