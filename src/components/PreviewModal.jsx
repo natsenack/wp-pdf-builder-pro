@@ -304,7 +304,7 @@ const PreviewModal = ({
               borderRadius: '0px'
             },
             modern: {
-              gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              headerBg: '#667eea',
               headerBorder: '#5b21b6',
               rowBorder: '#e9d5ff',
               rowBg: 'transparent',
@@ -320,7 +320,7 @@ const PreviewModal = ({
             },
             // Nouveaux styles colorés
             blue_ocean: {
-              gradient: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
+              headerBg: '#3b82f6',
               headerBorder: '#1e40af',
               rowBorder: '#dbeafe',
               rowBg: 'transparent',
@@ -335,7 +335,7 @@ const PreviewModal = ({
               borderRadius: '6px'
             },
             emerald_forest: {
-              gradient: 'linear-gradient(135deg, #064e3b 0%, #10b981 100%)',
+              headerBg: '#10b981',
               headerBorder: '#065f46',
               rowBorder: '#d1fae5',
               rowBg: '#d1fae5',
@@ -350,7 +350,7 @@ const PreviewModal = ({
               borderRadius: '6px'
             },
             sunset_orange: {
-              gradient: 'linear-gradient(135deg, #9a3412 0%, #f97316 100%)',
+              headerBg: '#f97316',
               headerBorder: '#c2410c',
               rowBorder: '#fed7aa',
               rowBg: 'transparent',
@@ -365,7 +365,7 @@ const PreviewModal = ({
               borderRadius: '6px'
             },
             royal_purple: {
-              gradient: 'linear-gradient(135deg, #581c87 0%, #a855f7 100%)',
+              headerBg: '#6366f1',
               headerBorder: '#7c3aed',
               rowBorder: '#e9d5ff',
               rowBg: 'transparent',
@@ -380,7 +380,7 @@ const PreviewModal = ({
               borderRadius: '6px'
             },
             rose_pink: {
-              gradient: 'linear-gradient(135deg, #be185d 0%, #f472b6 100%)',
+              headerBg: '#6366f1',
               headerBorder: '#db2777',
               rowBorder: '#fce7f3',
               rowBg: 'transparent',
@@ -395,7 +395,7 @@ const PreviewModal = ({
               borderRadius: '6px'
             },
             teal_aqua: {
-              gradient: 'linear-gradient(135deg, #0f766e 0%, #14b8a6 100%)',
+              headerBg: '#6366f1',
               headerBorder: '#0d9488',
               rowBorder: '#ccfbf1',
               altRowBg: '#f0fdfa',
@@ -409,7 +409,7 @@ const PreviewModal = ({
               borderRadius: '6px'
             },
             crimson_red: {
-              gradient: 'linear-gradient(135deg, #991b1b 0%, #ef4444 100%)',
+              headerBg: '#6366f1',
               headerBorder: '#dc2626',
               rowBorder: '#fecaca',
               rowBg: 'transparent',
@@ -424,7 +424,7 @@ const PreviewModal = ({
               borderRadius: '6px'
             },
             amber_gold: {
-              gradient: 'linear-gradient(135deg, #92400e 0%, #f59e0b 100%)',
+              headerBg: '#6366f1',
               headerBorder: '#d97706',
               rowBorder: '#fef3c7',
               rowBg: 'transparent',
@@ -439,7 +439,7 @@ const PreviewModal = ({
               borderRadius: '6px'
             },
             indigo_night: {
-              gradient: 'linear-gradient(135deg, #312e81 0%, #6366f1 100%)',
+              headerBg: '#6366f1',
               headerBorder: '#4338ca',
               rowBorder: '#e0e7ff',
               rowBg: 'transparent',
@@ -454,7 +454,7 @@ const PreviewModal = ({
               borderRadius: '6px'
             },
             slate_gray: {
-              gradient: 'linear-gradient(135deg, #374151 0%, #6b7280 100%)',
+              headerBg: '#6366f1',
               headerBorder: '#4b5563',
               rowBorder: '#f3f4f6',
               rowBg: 'transparent',
@@ -469,7 +469,7 @@ const PreviewModal = ({
               borderRadius: '6px'
             },
             coral_sunset: {
-              gradient: 'linear-gradient(135deg, #c2410c 0%, #fb7185 100%)',
+              headerBg: '#6366f1',
               headerBorder: '#ea580c',
               rowBorder: '#fed7d7',
               rowBg: 'transparent',
@@ -484,7 +484,7 @@ const PreviewModal = ({
               borderRadius: '6px'
             },
             mint_green: {
-              gradient: 'linear-gradient(135deg, #065f46 0%, #34d399 100%)',
+              headerBg: '#6366f1',
               headerBorder: '#047857',
               rowBorder: '#d1fae5',
               rowBg: 'transparent',
@@ -499,7 +499,7 @@ const PreviewModal = ({
               borderRadius: '6px'
             },
             violet_dream: {
-              gradient: 'linear-gradient(135deg, #6d28d9 0%, #c084fc 100%)',
+              headerBg: '#6366f1',
               headerBorder: '#8b5cf6',
               rowBorder: '#ede9fe',
               rowBg: 'transparent',
@@ -514,7 +514,7 @@ const PreviewModal = ({
               borderRadius: '6px'
             },
             sky_blue: {
-              gradient: 'linear-gradient(135deg, #0369a1 0%, #0ea5e9 100%)',
+              headerBg: '#6366f1',
               headerBorder: '#0284c7',
               rowBorder: '#bae6fd',
               rowBg: 'transparent',
@@ -529,7 +529,7 @@ const PreviewModal = ({
               borderRadius: '6px'
             },
             forest_green: {
-              gradient: 'linear-gradient(135deg, #14532d 0%, #22c55e 100%)',
+              headerBg: '#6366f1',
               headerBorder: '#15803d',
               rowBorder: '#bbf7d0',
               rowBg: 'transparent',
@@ -544,7 +544,7 @@ const PreviewModal = ({
               borderRadius: '6px'
             },
             ruby_red: {
-              gradient: 'linear-gradient(135deg, #b91c1c 0%, #f87171 100%)',
+              headerBg: '#6366f1',
               headerBorder: '#dc2626',
               rowBorder: '#fecaca',
               rowBg: 'transparent',
@@ -559,7 +559,7 @@ const PreviewModal = ({
               borderRadius: '6px'
             },
             golden_yellow: {
-              gradient: 'linear-gradient(135deg, #a16207 0%, #eab308 100%)',
+              headerBg: '#6366f1',
               headerBorder: '#ca8a04',
               rowBorder: '#fef08a',
               rowBg: 'transparent',
@@ -574,7 +574,7 @@ const PreviewModal = ({
               borderRadius: '6px'
             },
             navy_blue: {
-              gradient: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
+              headerBg: '#3b82f6',
               headerBorder: '#1e40af',
               rowBorder: '#dbeafe',
               rowBg: 'transparent',
@@ -589,7 +589,7 @@ const PreviewModal = ({
               borderRadius: '6px'
             },
             burgundy_wine: {
-              gradient: 'linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%)',
+              headerBg: '#6366f1',
               headerBorder: '#991b1b',
               rowBorder: '#fecaca',
               rowBg: 'transparent',
@@ -604,7 +604,7 @@ const PreviewModal = ({
               borderRadius: '6px'
             },
             lavender_purple: {
-              gradient: 'linear-gradient(135deg, #7c2d12 0%, #a855f7 100%)',
+              headerBg: '#6366f1',
               headerBorder: '#9333ea',
               rowBorder: '#e9d5ff',
               rowBg: 'transparent',
@@ -619,7 +619,7 @@ const PreviewModal = ({
               borderRadius: '6px'
             },
             ocean_teal: {
-              gradient: 'linear-gradient(135deg, #134e4a 0%, #14b8a6 100%)',
+              headerBg: '#6366f1',
               headerBorder: '#0f766e',
               rowBorder: '#ccfbf1',
               rowBg: 'transparent',
@@ -634,7 +634,7 @@ const PreviewModal = ({
               borderRadius: '6px'
             },
             cherry_blossom: {
-              gradient: 'linear-gradient(135deg, #be185d 0%, #fb7185 100%)',
+              headerBg: '#6366f1',
               headerBorder: '#db2777',
               rowBorder: '#fce7f3',
               rowBg: 'transparent',
@@ -649,7 +649,7 @@ const PreviewModal = ({
               borderRadius: '6px'
             },
             autumn_orange: {
-              gradient: 'linear-gradient(135deg, #9a3412 0%, #fb923c 100%)',
+              headerBg: '#6366f1',
               headerBorder: '#ea580c',
               rowBorder: '#fed7aa',
               rowBg: 'transparent',

@@ -382,6 +382,12 @@ class PDF_Builder_Pro_Generator {
     private function render_single_element($element, $px_to_mm) {
         $type = isset($element['type']) ? $element['type'] : 'unknown';
 
+        // Vérifier si l'élément est visible - si non visible, ne pas le rendre
+        $is_visible = $element['visible'] ?? true;
+        if (!$is_visible) {
+            return; // Élément invisible, ignorer le rendu
+        }
+
         // LOG: Début rendu élément
 
         // Calcul des coordonnées PDF avec support des deux formats
@@ -2061,7 +2067,7 @@ class PDF_Builder_Pro_Generator {
                 'borderRadius' => '0px'
             ],
             'modern' => [
-                'header_bg' => ['r' => 102, 'g' => 126, 'b' => 234], // #667eea (moyenne du gradient)
+                'header_bg' => ['r' => 102, 'g' => 126, 'b' => 234], // Bleu moderne
                 'header_border' => ['r' => 91, 'g' => 33, 'b' => 182], // #5b21b6
                 'row_border' => ['r' => 233, 'g' => 213, 'b' => 255], // #e9d5ff
                 'alt_row_bg' => ['r' => 250, 'g' => 245, 'b' => 255], // #faf5ff
@@ -2075,7 +2081,7 @@ class PDF_Builder_Pro_Generator {
                 'borderRadius' => '8px'
             ],
             'blue_ocean' => [
-                'header_bg' => ['r' => 30, 'g' => 58, 'b' => 138], // #1e3a8a (moyenne du gradient)
+                'header_bg' => ['r' => 59, 'g' => 130, 'b' => 246], // Bleu océan
                 'header_border' => ['r' => 30, 'g' => 64, 'b' => 175], // #1e40af
                 'row_border' => ['r' => 219, 'g' => 234, 'b' => 254], // #dbeafe
                 'alt_row_bg' => ['r' => 239, 'g' => 246, 'b' => 255], // #eff6ff
@@ -2089,7 +2095,7 @@ class PDF_Builder_Pro_Generator {
                 'borderRadius' => '6px'
             ],
             'emerald_forest' => [
-                'header_bg' => ['r' => 6, 'g' => 78, 'b' => 59], // #064e3b (moyenne du gradient)
+                'header_bg' => ['r' => 16, 'g' => 185, 'b' => 129], // Vert émeraude
                 'header_border' => ['r' => 6, 'g' => 95, 'b' => 70], // #065f46
                 'row_border' => ['r' => 209, 'g' => 250, 'b' => 229], // #d1fae5
                 'row_bg' => ['r' => 209, 'g' => 250, 'b' => 229], // #d1fae5 (lignes paires)
@@ -2104,7 +2110,7 @@ class PDF_Builder_Pro_Generator {
                 'borderRadius' => '6px'
             ],
             'sunset_orange' => [
-                'header_bg' => ['r' => 154, 'g' => 52, 'b' => 18], // #9a3412 (moyenne du gradient)
+                'header_bg' => ['r' => 249, 'g' => 115, 'b' => 22], // Orange coucher
                 'header_border' => ['r' => 194, 'g' => 65, 'b' => 12], // #c2410c
                 'row_border' => ['r' => 254, 'g' => 215, 'b' => 170], // #fed7aa
                 'alt_row_bg' => ['r' => 255, 'g' => 247, 'b' => 237], // #fff7ed
