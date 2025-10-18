@@ -2105,6 +2105,44 @@ class PDF_Builder_Admin {
                         $html .= sprintf('<div class="pdf-element text-element" style="%s">%s</div>', $style, esc_html($final_content));
                         break;
 
+                    case 'multiline_text':
+                        $final_content = $order ? $this->replace_order_variables($content, $order) : $content;
+                        $html .= sprintf('<div class="pdf-element text-element" style="%s">%s</div>', $style, nl2br(esc_html($final_content)));
+                        break;
+
+                    case 'mentions':
+                        // Construire les mentions de contact
+                        $mentions = [];
+                        if (isset($element['showEmail']) && $element['showEmail']) {
+                            $email = get_option('pdf_builder_company_email', '');
+                            if ($email) $mentions[] = $email;
+                        }
+                        if (isset($element['showPhone']) && $element['showPhone']) {
+                            $phone = get_option('pdf_builder_company_phone', '');
+                            if ($phone) $mentions[] = $phone;
+                        }
+                        if (isset($element['showSiret']) && $element['showSiret']) {
+                            $siret = get_option('pdf_builder_company_siret', '');
+                            if ($siret) $mentions[] = 'SIRET: ' . $siret;
+                        }
+                        if (isset($element['showVat']) && $element['showVat']) {
+                            $vat = get_option('pdf_builder_company_vat', '');
+                            if ($vat) $mentions[] = 'TVA: ' . $vat;
+                        }
+                        $separator = isset($element['separator']) ? $element['separator'] : ' • ';
+                        $mentions_text = implode($separator, $mentions);
+                        $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($mentions_text));
+                        break;
+
+                    case 'order_date':
+                        if ($order) {
+                            $date = $order->get_date_created() ? $order->get_date_created()->date('d/m/Y') : date('d/m/Y');
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($date));
+                        } else {
+                            $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, esc_html($content ?: 'Date'));
+                        }
+                        break;
+
                     case 'invoice_number':
                         if ($order) {
                             $invoice_number = $order->get_id() . '-' . time();
