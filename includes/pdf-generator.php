@@ -2965,21 +2965,17 @@ class PDF_Builder_Pro_Generator {
      * Rend un tableau de produits en HTML
      */
     private function render_product_table_html($element, $zoom) {
-        // Log de debug pour voir les propriétés reçues depuis l'aperçu
-        error_log('PDF Generator product_table debug: ' . print_r([
-            'element' => $element,
-            'zoom' => $zoom,
-            'tableStyle' => $element['tableStyle'] ?? 'default',
-            'showHeaders' => $element['showHeaders'] ?? true,
-            'showBorders' => $element['showBorders'] ?? true,
-            'columns' => $element['columns'] ?? [],
-            'showSubtotal' => $element['showSubtotal'] ?? true,
-            'showShipping' => $element['showShipping'] ?? true,
-            'showTaxes' => $element['showTaxes'] ?? true,
-            'showDiscount' => $element['showDiscount'] ?? false,
-            'showTotal' => $element['showTotal'] ?? true,
-            'previewProducts' => $element['previewProducts'] ?? []
-        ], true));
+        // Log de debug pour voir les propriétés reçues depuis l'aperçu - évite les références circulaires
+        error_log('PDF Generator product_table debug: tableStyle=' . ($element['tableStyle'] ?? 'default') . 
+                  ', showHeaders=' . ($element['showHeaders'] ?? 'true') . 
+                  ', showBorders=' . ($element['showBorders'] ?? 'true') . 
+                  ', columns_count=' . count($element['columns'] ?? []) . 
+                  ', showSubtotal=' . ($element['showSubtotal'] ?? 'true') . 
+                  ', showShipping=' . ($element['showShipping'] ?? 'true') . 
+                  ', showTaxes=' . ($element['showTaxes'] ?? 'true') . 
+                  ', showDiscount=' . ($element['showDiscount'] ?? 'false') . 
+                  ', showTotal=' . ($element['showTotal'] ?? 'true') . 
+                  ', previewProducts_count=' . count($element['previewProducts'] ?? []));
 
         $table_style = $element['tableStyle'] ?? 'default';
         $show_headers = $element['showHeaders'] ?? true;
