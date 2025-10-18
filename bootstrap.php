@@ -51,10 +51,14 @@ function pdf_builder_load_core() {
         'PDF_Builder_Cache_Manager.php',
         'PDF_Builder_Canvas_Elements_Manager.php',
         'PDF_Builder_Canvas_Interactions_Manager.php',
+        'PDF_Builder_Diagnostic_Manager.php',
         'PDF_Builder_Drag_Drop_Manager.php',
-        'PDF_Builder_Resize_Manager.php',
         'PDF_Builder_Logger.php',
-        'PDF_Builder_Settings_Manager.php'
+        'PDF_Builder_PDF_Generator.php',
+        'PDF_Builder_Resize_Manager.php',
+        'PDF_Builder_Settings_Manager.php',
+        'PDF_Builder_Template_Manager.php',
+        'PDF_Builder_WooCommerce_Integration.php'
     );
 
     foreach ($managers as $manager) {
@@ -182,9 +186,9 @@ function pdf_builder_load_core_when_needed() {
 
     if ($load_core) {
         pdf_builder_load_core();
-        if (class_exists('PDF_Builder_Core')) {
+        if (class_exists('PDF_Builder\Core\PDF_Builder_Core')) {
             try {
-                PDF_Builder_Core::getInstance()->init();
+                \PDF_Builder\Core\PDF_Builder_Core::getInstance()->init();
                 $core_loaded = true;
             } catch (Exception $e) {
                 // Gestion silencieuse des erreurs pour éviter les logs
@@ -218,7 +222,7 @@ function pdf_builder_ensure_admin_menu() {
             }
 
             pdf_builder_load_core_when_needed();
-            $core = PDF_Builder_Core::getInstance();
+            $core = \PDF_Builder\Core\PDF_Builder_Core::getInstance();
             global $pdf_builder_core;
             $pdf_builder_core = $core;
             $core->render_main_page();
@@ -231,7 +235,7 @@ function pdf_builder_ensure_admin_menu() {
             }
 
             pdf_builder_load_core_when_needed();
-            $core = PDF_Builder_Core::getInstance();
+            $core = \PDF_Builder\Core\PDF_Builder_Core::getInstance();
             global $pdf_builder_core;
             $pdf_builder_core = $core;
             $core->render_templates_page();
@@ -244,7 +248,7 @@ function pdf_builder_ensure_admin_menu() {
             }
 
             pdf_builder_load_core_when_needed();
-            $core = PDF_Builder_Core::getInstance();
+            $core = \PDF_Builder\Core\PDF_Builder_Core::getInstance();
             global $pdf_builder_core;
             $pdf_builder_core = $core;
             $core->render_documents_page();
@@ -257,7 +261,7 @@ function pdf_builder_ensure_admin_menu() {
             }
 
             pdf_builder_load_core_when_needed();
-            $core = PDF_Builder_Core::getInstance();
+            $core = \PDF_Builder\Core\PDF_Builder_Core::getInstance();
             global $pdf_builder_core;
             $pdf_builder_core = $core;
             $core->render_settings_page();
@@ -350,12 +354,12 @@ function pdf_builder_init_canvas_defaults() {
 function pdf_builder_ajax_generate_order_pdf_fallback() {
     
     // Charger le core si nécessaire
-    if (!class_exists('PDF_Builder_Core')) {
+    if (!class_exists('PDF_Builder\Core\PDF_Builder_Core')) {
         return;
     }
     
-    $core = PDF_Builder_Core::getInstance();
-    $admin = PDF_Builder_Admin::getInstance();
+    $core = \PDF_Builder\Core\PDF_Builder_Core::getInstance();
+    $admin = \PDF_Builder\Admin\PDF_Builder_Admin::getInstance();
     $woocommerce_integration = $admin ? $admin->get_woocommerce_integration() : null;
     
     if ($woocommerce_integration && method_exists($woocommerce_integration, 'ajax_generate_order_pdf')) {
@@ -368,12 +372,12 @@ function pdf_builder_ajax_generate_order_pdf_fallback() {
 function pdf_builder_ajax_save_order_canvas_fallback() {
     
     // Charger le core si nécessaire
-    if (!class_exists('PDF_Builder_Core')) {
+    if (!class_exists('PDF_Builder\Core\PDF_Builder_Core')) {
         return;
     }
     
-    $core = PDF_Builder_Core::getInstance();
-    $admin = PDF_Builder_Admin::getInstance();
+    $core = \PDF_Builder\Core\PDF_Builder_Core::getInstance();
+    $admin = \PDF_Builder\Admin\PDF_Builder_Admin::getInstance();
     $woocommerce_integration = $admin ? $admin->get_woocommerce_integration() : null;
     
     if ($woocommerce_integration && method_exists($woocommerce_integration, 'ajax_save_order_canvas')) {

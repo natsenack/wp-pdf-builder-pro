@@ -15,10 +15,10 @@ if (!is_user_logged_in() || !current_user_can('read')) {
 
 // Utiliser l'instance globale si elle existe, sinon créer une nouvelle
 global $pdf_builder_core;
-if (isset($pdf_builder_core) && $pdf_builder_core instanceof PDF_Builder_Core) {
+if (isset($pdf_builder_core) && $pdf_builder_core instanceof \PDF_Builder\Core\PDF_Builder_Core) {
     $core = $pdf_builder_core;
 } else {
-    $core = PDF_Builder_Core::getInstance();
+    $core = \PDF_Builder\Core\PDF_Builder_Core::getInstance();
     // Temporaire : supprimer la vérification d'initialisation qui ne fonctionne pas
     // if (!$core->is_initialized()) {
     //     $core->init();

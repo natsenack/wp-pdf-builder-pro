@@ -219,8 +219,8 @@ class PDF_Builder_PDF_Generator {
      */
     private function generate_html_from_template_data($template) {
         // Utiliser la même fonction que l'aperçu commande pour la cohérence
-        if (class_exists('PDF_Builder_Admin')) {
-            $admin = PDF_Builder_Admin::getInstance();
+        if (class_exists('PDF_Builder\Admin\PDF_Builder_Admin')) {
+            $admin = \PDF_Builder\Admin\PDF_Builder_Admin::getInstance();
             if (method_exists($admin, 'generate_unified_html')) {
                 return $admin->generate_unified_html($template);
             }

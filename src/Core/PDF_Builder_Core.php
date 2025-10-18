@@ -452,12 +452,12 @@ class PDF_Builder_Core {
         }
 
         // Inclure et instancier la classe d'administration
-        if (!class_exists('PDF_Builder_Admin')) {
+        if (!class_exists('PDF_Builder\Admin\PDF_Builder_Admin')) {
             require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
         }
 
-        if (class_exists('PDF_Builder_Admin')) {
-            $this->admin = PDF_Builder_Admin::getInstance($this);
+        if (class_exists('PDF_Builder\Admin\PDF_Builder_Admin')) {
+            $this->admin = \PDF_Builder\Admin\PDF_Builder_Admin::getInstance($this);
         }
     }
 
