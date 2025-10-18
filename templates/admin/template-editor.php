@@ -23,30 +23,6 @@ $is_new = $template_id === 0;
 
 // Récupérer les données complètes du template si c'est un template existant
 $template_name = '';
-$initial_elements = '[]';
-
-if ($template_id > 0) {
-    // Récupérer le template depuis la base de données
-    global $wpdb;
-    $table_name = $wpdb->prefix . 'pdf_builder_templates';
-
-    $template = $wpdb->get_row($wpdb->prepare(
-        "SELECT * FROM {$table_name} WHERE id = %d",
-        $template_id
-    ));
-
-    if ($template) {
-        // Vérifier l'existence de la propriété 'elements' et lui assigner une valeur par défaut si elle n'est pas définie
-        if (!isset($template->elements)) {
-            $template->elements = [];
-        }
-        $template_name = $template->name;
-        $initial_elements = $template->elements ?: '[]';
-    }
-}
-
-// Récupérer les données complètes du template si c'est un template existant
-$template_name = '';
 $template_data = null;
 $initial_elements = [];
 
@@ -78,9 +54,11 @@ if (!$is_new && $template_id > 0) {
                     if (isset($first_page['elements']) && is_array($first_page['elements'])) {
                         $initial_elements = $first_page['elements'];
                     }
-                } else {
-                    // No elements found in any structure
                 }
+            }
+        }
+    }
+}
 ?>
 <div class="wrap">
     
