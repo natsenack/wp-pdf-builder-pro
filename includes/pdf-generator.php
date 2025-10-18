@@ -2514,7 +2514,7 @@ class PDF_Builder_Pro_Generator {
         }
 
         // Frais de port
-        if ($show_shipping && $shipping != 0) {
+        if ($show_shipping) {
             $this->pdf->SetXY($total_x, $current_y);
             $shipping_text = 'Port: ' . number_format($shipping, 2, ',', ' ') . ' ' . '€';
             $this->pdf->Cell($total_width, $row_height + 2, $shipping_text, $show_borders ? 1 : 0, 1, 'R');
@@ -2522,7 +2522,7 @@ class PDF_Builder_Pro_Generator {
         }
 
         // Taxes
-        if ($show_taxes && $taxes != 0) {
+        if ($show_taxes) {
             $this->pdf->SetXY($total_x, $current_y);
             $taxes_text = 'TVA: ' . number_format($taxes, 2, ',', ' ') . ' ' . '€';
             $this->pdf->Cell($total_width, $row_height + 2, $taxes_text, $show_borders ? 1 : 0, 1, 'R');
@@ -2530,7 +2530,7 @@ class PDF_Builder_Pro_Generator {
         }
 
         // Remise
-        if ($show_discount && $discount != 0) {
+        if ($show_discount) {
             $this->pdf->SetXY($total_x, $current_y);
             $discount_text = 'Remise: ' . ($discount > 0 ? '-' : '') . number_format(abs($discount), 2, ',', ' ') . ' ' . '€';
             $this->pdf->Cell($total_width, $row_height + 2, $discount_text, $show_borders ? 1 : 0, 1, 'R');
