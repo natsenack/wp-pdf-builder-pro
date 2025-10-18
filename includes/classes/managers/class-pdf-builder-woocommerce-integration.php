@@ -1142,6 +1142,57 @@ class PDF_Builder_WooCommerce_Integration {
                     error_log('✅ PDF BUILDER - ajax_unified_preview: PDF preview generated: ' . (is_wp_error($result) ? 'WP_Error: ' . $result->get_error_message() : 'URL: ' . $result));
                 }
 
+            } elseif ($order_id && $order_id > 0) {
+                // Aperçu de commande WooCommerce - récupérer depuis la base de données
+                error_log('📋 PDF BUILDER - ajax_unified_preview: Mode commande WooCommerce (base de données)');
+
+                // Vérifier que WooCommerce est actif
+                if (!class_exists('WooCommerce')) {
+                    error_log('❌ PDF BUILDER - ajax_unified_preview: WooCommerce non actif');
+                    wp_send_json_error('WooCommerce n\'est pas installé ou activé');
+                }
+
+                $order = wc_get_order($order_id);
+                if (!$order) {
+                    error_log('❌ PDF BUILDER - ajax_unified_preview: Commande non trouvée: ' . $order_id);
+                    wp_send_json_error('Commande non trouvée');
+                }
+
+                // Déterminer le template à utiliser
+                if (!$template_id || $template_id <= 0) {
+                    $template_id = $this->get_template_for_order($order);
+                    error_log('✅ PDF BUILDER - ajax_unified_preview: Template déterminé automatiquement: ' . $template_id);
+                }
+
+                if ($preview_type === 'html') {
+                    // Pour l'aperçu HTML, récupérer les éléments du template depuis la base de données
+                    global $wpdb;
+                    $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+                    $template = $wpdb->get_row($wpdb->prepare("SELECT template_data FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
+
+                    if (!$template) {
+                        error_log('❌ PDF BUILDER - ajax_unified_preview: Template non trouvé pour HTML: ' . $template_id);
+                        wp_send_json_error('Template non trouvé');
+                    }
+
+                    $template_data = json_decode($template['template_data'], true);
+                    if (json_last_error() !== JSON_ERROR_NONE) {
+                        error_log('❌ PDF BUILDER - ajax_unified_preview: Données template invalides pour HTML');
+                        wp_send_json_error('Données du template invalides');
+                    }
+
+                    $elements_for_html = isset($template_data['elements']) ? $template_data['elements'] : [];
+                    error_log('✅ PDF BUILDER - ajax_unified_preview: ' . count($elements_for_html) . ' éléments récupérés depuis base de données');
+                    error_log('✅ PDF BUILDER - ajax_unified_preview: Premier élément DB: ' . json_encode($elements_for_html[0] ?? 'N/A'));
+
+                    $result = $generator->render_html_preview($elements_for_html, $order_id);
+                    error_log('✅ PDF BUILDER - ajax_unified_preview: HTML preview generated from database for order: ' . $order_id);
+                } else {
+                    // Aperçu PDF normal
+                    $result = $generator->generate_simple_preview($order_id, $template_id);
+                    error_log('✅ PDF BUILDER - ajax_unified_preview: PDF preview generated: ' . (is_wp_error($result) ? 'WP_Error: ' . $result->get_error_message() : 'URL: ' . $result));
+                }
+
             } else {
                 error_log('❌ PDF BUILDER - ajax_unified_preview: Aucun contexte valide (ni order_id ni elements)');
                 wp_send_json_error('Contexte d\'aperçu invalide');
