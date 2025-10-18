@@ -1,6 +1,6 @@
-# 🚀 FTP DEPLOY - SIMPLE & ROBUST
+# 🚀 FTP DEPLOY - VERSION OPTIMISÉE
 # ================================
-# Version simplifiée - Déploiement FTP stable et rapide
+# Version optimisée - Déploiement FTP avec vérification des changements et parallélisation
 
 Write-Host "🚀 FTP DEPLOY - VERSION SIMPLE & ROBUSTE" -ForegroundColor Green
 Write-Host "=========================================" -ForegroundColor Green
@@ -59,82 +59,133 @@ Write-Host "✅ Compilation réussie" -ForegroundColor Green
 Pop-Location
 
 # ============================================================================
-# 3. PRÉPARATION DES FICHIERS
+# 3. DÉTECTION DES FICHIERS MODIFIÉS (OPTIMISÉ)
 # ============================================================================
-Write-Host "`n📂 3. Préparation des fichiers..." -ForegroundColor Cyan
+Write-Host "`n� 3. Détection des fichiers modifiés..." -ForegroundColor Cyan
 
-$filesToDeploy = @()
+Push-Location $projectRoot
 
-# Ajouter les dossiers essentiels
-$essentialDirs = @(
-    'src',
-    'templates',
-    'assets',
-    'core',
-    'config',
-    'resources',
-    'lib',
-    'languages'
-)
+# Obtenir la liste des fichiers modifiés/stagés/ajoutés via git
+$modifiedFiles = git status --porcelain | ForEach-Object {
+    $status = $_.Substring(0, 2)
+    $filePath = $_.Substring(3)
 
-$essentialFiles = @(
-    'bootstrap.php',
-    'pdf-builder-pro.php',
-    'readme.txt'
-)
-
-foreach ($dir in $essentialDirs) {
-    $path = Join-Path $projectRoot $dir
-    if (Test-Path $path) {
-        Get-ChildItem -Path $path -Recurse -File | ForEach-Object {
-            $filesToDeploy += @{
-                FullPath = $_.FullName
-                RelativePath = $_.FullName.Replace($projectRoot, "").TrimStart('\')
-            }
-        }
+    # Inclure les fichiers modifiés, ajoutés, renommés, et non trackés
+    if ($status -match '[MARC?]') {
+        $filePath
     }
 }
 
-foreach ($file in $essentialFiles) {
-    $path = Join-Path $projectRoot $file
-    if (Test-Path $path) {
+# Obtenir aussi les fichiers trackés modifiés par rapport au dernier commit
+$committedChanges = git diff --name-only HEAD~1 2>$null
+if ($committedChanges) {
+    $modifiedFiles += $committedChanges
+}
+
+# Éliminer les doublons et filtrer
+$modifiedFiles = $modifiedFiles | Select-Object -Unique | Where-Object {
+    $file = $_
+    # Inclure seulement les fichiers dans les dossiers essentiels
+    $essentialDirs = @('src', 'templates', 'assets', 'core', 'config', 'resources', 'lib', 'languages')
+    $essentialFiles = @('bootstrap.php', 'pdf-builder-pro.php', 'readme.txt')
+
+    $isInEssentialDir = $essentialDirs | Where-Object { $file.StartsWith("$_\") -or $file.StartsWith($_ + '/') }
+    $isEssentialFile = $essentialFiles -contains $file
+
+    $isInEssentialDir -or $isEssentialFile
+}
+
+$filesToDeploy = @()
+foreach ($file in $modifiedFiles) {
+    $fullPath = Join-Path $projectRoot $file
+    if (Test-Path $fullPath) {
         $filesToDeploy += @{
-            FullPath = $path
+            FullPath = $fullPath
             RelativePath = $file
         }
     }
 }
 
-Write-Host "✅ $($filesToDeploy.Count) fichiers à déployer" -ForegroundColor Green
+Pop-Location
+
+Write-Host "✅ $($filesToDeploy.Count) fichiers modifiés à déployer" -ForegroundColor Green
+if ($filesToDeploy.Count -eq 0) {
+    Write-Host "ℹ️  Aucun fichier modifié détecté. Déploiement annulé." -ForegroundColor Yellow
+    exit 0
+}
 
 # ============================================================================
-# 4. CONNEXION FTP ET UPLOAD
+# 4. CONNEXION FTP ET UPLOAD PARALLÈLE (OPTIMISÉ)
 # ============================================================================
-Write-Host "`n📤 4. Connexion FTP et upload..." -ForegroundColor Cyan
+Write-Host "`n📤 4. Connexion FTP et upload parallèle..." -ForegroundColor Cyan
 
-# Créer une session FTP
 $ftpUri = "ftp://$ftpHost/$remotePath/"
 $credential = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
 
 $uploadedCount = 0
 $failedCount = 0
+$maxConcurrentUploads = 5  # Nombre maximum d'uploads simultanés
 
-foreach ($fileInfo in $filesToDeploy) {
+# Fonction d'upload pour un fichier
+function Send-FtpFile {
+    param($fileInfo, $ftpUri, $ftpUser, $ftpPassword)
+
     try {
         $localFile = $fileInfo.FullPath
         $remoteFile = $ftpUri + ($fileInfo.RelativePath -replace '\\', '/')
-        
-        # Télécharger le fichier via WebClient
+
+        $credential = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
         $webClient = New-Object System.Net.WebClient
         $webClient.Credentials = $credential
         $webClient.UploadFile($remoteFile, $localFile)
-        
-        Write-Host "✅ $($fileInfo.RelativePath)" -ForegroundColor Green
-        $uploadedCount++
+
+        return @{
+            Success = $true
+            FilePath = $fileInfo.RelativePath
+        }
     }
     catch {
-        Write-Host "❌ Erreur uploading $($fileInfo.RelativePath): $_" -ForegroundColor Red
-        $failedCount++
+        return @{
+            Success = $false
+            FilePath = $fileInfo.RelativePath
+            Error = $_.Exception.Message
+        }
+    }
+}
+
+# Upload en parallèle par lots
+$results = @()
+for ($i = 0; $i -lt $filesToDeploy.Count; $i += $maxConcurrentUploads) {
+    $batch = $filesToDeploy[$i..([Math]::Min($i + $maxConcurrentUploads - 1, $filesToDeploy.Count - 1))]
+
+    Write-Host "📦 Traitement du lot $($i / $maxConcurrentUploads + 1) ($($batch.Count) fichiers)..." -ForegroundColor Gray
+
+    # Lancer les uploads en parallèle
+    $jobs = $batch | ForEach-Object {
+        Start-Job -ScriptBlock ${function:Send-FtpFile} -ArgumentList $_, $ftpUri, $ftpUser, $ftpPassword
+    }
+
+    # Attendre la fin de tous les jobs du lot
+    $jobs | Wait-Job | Out-Null
+
+    # Récupérer les résultats
+    $batchResults = $jobs | ForEach-Object {
+        $result = Receive-Job -Job $_
+        Remove-Job -Job $_
+        $result
+    }
+
+    $results += $batchResults
+
+    # Afficher les résultats du lot
+    foreach ($result in $batchResults) {
+        if ($result.Success) {
+            Write-Host "✅ $($result.FilePath)" -ForegroundColor Green
+            $uploadedCount++
+        } else {
+            Write-Host "❌ Erreur uploading $($result.FilePath): $($result.Error)" -ForegroundColor Red
+            $failedCount++
+        }
     }
 }
 
