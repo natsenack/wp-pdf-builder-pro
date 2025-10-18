@@ -6143,239 +6143,98 @@ class PDF_Builder_Admin {
             wp_die('Commande introuvable');
         }
 
-        // Récupérer le template_id fourni en GET ou le détecter automatiquement
-        global $wpdb;
-        $template_id = isset($_GET['template_id']) ? absint($_GET['template_id']) : 0;
-        
-        // Si pas de template_id en GET, utiliser la logique de détection
-        if (!$template_id) {
-            $status_templates = get_option('pdf_builder_order_status_templates', []);
-            $order_status = $order->get_status();
-            $status_key = 'wc-' . $order_status;
-            $template_id = isset($status_templates[$status_key]) ? $status_templates[$status_key] : 1;
-        }
-        
-        if (!$template_id) {
-            wp_die('Aucun template trouvé');
-        }
+        try {
+            // Récupérer le template_id fourni en GET ou le détecter automatiquement
+            $template_id = isset($_GET['template_id']) ? absint($_GET['template_id']) : 0;
+            
+            // Si pas de template_id en GET, utiliser la logique de détection par statut
+            if ($template_id > 0) {
+                $template_data = $this->load_template_robust($template_id);
+            } else {
+                $order_status = $order->get_status();
+                $status_templates = get_option('pdf_builder_order_status_templates', []);
+                $status_key = 'wc-' . $order_status;
 
-        // Charger le template
-        $table = $wpdb->prefix . 'pdf_builder_templates';
-        $template_json = $wpdb->get_var($wpdb->prepare(
-            "SELECT template_data FROM $table WHERE id = %d",
-            $template_id
-        ));
+                if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
+                    $mapped_template_id = $status_templates[$status_key];
+                    $template_data = $this->load_template_robust($mapped_template_id);
+                } else {
+                    $template_data = $this->get_default_invoice_template();
+                }
+            }
 
-        if (!$template_json) {
-            wp_die('Template non trouvé');
-        }
+            if (!$template_data) {
+                wp_die('Template non trouvé');
+            }
 
-        $template = json_decode($template_json, true);
-        if (!is_array($template) || empty($template['elements'])) {
-            wp_die('Template vide');
-        }
+            // Générer le HTML UNIFIÉ - c'est EXACTEMENT comme le PDF !
+            $html_content = $this->generate_unified_html($template_data, $order);
 
-        // Récupérer les dimensions du canvas
-        $canvas_width = intval($template['canvasWidth'] ?? 595);
-        $canvas_height = intval($template['canvasHeight'] ?? 842);
-        $elements = $template['elements'] ?? [];
-
-        // Charger les données de la commande
-        $line_items = $order->get_items();
-        $order_number = $order->get_order_number();
-        $order_date = $order->get_date_created()->format('d/m/Y H:i');
-        $customer_name = $order->get_billing_first_name() . ' ' . $order->get_billing_last_name();
-        $customer_email = $order->get_billing_email();
-        $customer_phone = $order->get_billing_phone();
-        $customer_address = $order->get_billing_address_1() . ', ' . $order->get_billing_postcode() . ' ' . $order->get_billing_city();
-        
-        // Préparer les données pour remplacer les variables
-        $order_data = [
-            'order_number' => $order_number,
-            'order_date' => $order_date,
-            'customer_name' => $customer_name,
-            'customer_email' => $customer_email,
-            'customer_phone' => $customer_phone,
-            'customer_address' => $customer_address,
-            'total' => $order->get_total(),
-            'subtotal' => $order->get_subtotal(),
-            'shipping_total' => $order->get_shipping_total(),
-            'total_tax' => $order->get_total_tax(),
-            'order_status' => $order->get_status(),
-            'payment_method' => $order->get_payment_method_title(),
-            'shipping_method' => $order->get_shipping_method() ?: 'N/A',
-        ];
-
-        // Commencer le HTML avec le rendu du template
-        ?>
-        <!DOCTYPE html>
-        <html lang="fr">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Aperçu - Commande <?php echo esc_attr($order_number); ?></title>
-            <style>
-                * {
-                    margin: 0;
-                    padding: 0;
-                    box-sizing: border-box;
-                }
-                html, body {
-                    margin: 0;
-                    padding: 0;
-                    width: 100%;
-                    height: 100%;
-                }
-                body {
-                    background: #f5f5f5;
-                    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-                    padding: 20px;
-                    display: flex;
-                    justify-content: center;
-                }
-                .canvas-wrapper {
-                    width: 100%;
-                    display: flex;
-                    justify-content: center;
-                    align-items: flex-start;
-                    min-height: 100vh;
-                }
-                .canvas-page {
-                    width: <?php echo intval($canvas_width); ?>px;
-                    height: auto;
-                    background: white;
-                    position: relative;
-                    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
-                    overflow: hidden;
-                    margin: 20px auto;
-                }
-                .canvas-element {
-                    position: absolute;
-                    overflow: hidden;
-                    box-sizing: border-box;
-                }
-                .element-text {
-                    word-wrap: break-word;
-                    white-space: pre-wrap;
-                    width: 100%;
-                    height: 100%;
-                    overflow: hidden;
-                    display: flex;
-                    align-items: flex-start;
-                    justify-content: flex-start;
-                }
-                .element-image {
-                    width: 100%;
-                    height: 100%;
-                    object-fit: contain;
-                }
-                table.product-table {
-                    width: 100%;
-                    border-collapse: collapse;
-                }
-                table.product-table th,
-                table.product-table td {
-                    padding: 8px;
-                    text-align: left;
-                    border: 1px solid #ddd;
-                }
-                table.product-table th {
-                    font-weight: bold;
-                }
-            </style>
-        </head>
-        <body>
-            <div class="canvas-wrapper">
-                <div class="canvas-page" style="min-height: <?php echo intval($canvas_height); ?>px;">
-                    <?php
-                    // Afficher chaque élément du canvas
-                    foreach ($elements as $element) {
-                        $x = floatval($element['x'] ?? 0);
-                        $y = floatval($element['y'] ?? 0);
-                        $width = floatval($element['width'] ?? 100);
-                        $height = floatval($element['height'] ?? 50);
-                        $type = $element['type'] ?? 'text';
-                        $visible = isset($element['visible']) ? (bool)$element['visible'] : true;
-
-                        if (!$visible) {
-                            continue;
-                        }
-
-                        // Récupérer les styles
-                        $bg_color = $element['backgroundColor'] ?? 'transparent';
-                        $color = $element['color'] ?? '#000000';
-                        $font_family = $element['fontFamily'] ?? 'Arial';
-                        $font_size = floatval($element['fontSize'] ?? 14);
-                        $font_weight = $element['fontWeight'] ?? 'normal';
-                        $text_align = $element['textAlign'] ?? 'left';
-                        $border = floatval($element['borderWidth'] ?? 0);
-                        $border_color = $element['borderColor'] ?? '#000000';
-                        $padding = floatval($element['padding'] ?? 5);
-                        $rotation = floatval($element['rotation'] ?? 0);
-                        $opacity = floatval($element['opacity'] ?? 1);
-
-                        // Construire le style CSS
-                        $style = "position: absolute; ";
-                        $style .= "left: {$x}px; top: {$y}px; ";
-                        $style .= "width: {$width}px; height: {$height}px; ";
-                        $style .= "background-color: {$bg_color}; ";
-                        if ($border > 0) {
-                            $style .= "border: {$border}px solid {$border_color}; ";
-                        }
-                        $style .= "color: {$color}; font-family: {$font_family}; font-size: {$font_size}px; font-weight: {$font_weight}; ";
-                        $style .= "text-align: {$text_align}; padding: {$padding}px; overflow: hidden; ";
-                        if ($rotation != 0) {
-                            $style .= "transform: rotate({$rotation}deg); ";
-                        }
-                        if ($opacity < 1) {
-                            $style .= "opacity: {$opacity}; ";
-                        }
-                    ?>
-                        <div class="canvas-element" style="<?php echo esc_attr($style); ?>">
-                            <?php
-                            if ($type === 'text') {
-                                $text = $element['text'] ?? '';
-                                echo '<div class="element-text">' . esc_html($text) . '</div>';
-                                
-                            } elseif ($type === 'dynamic-text') {
-                                $text = $element['customContent'] ?? '';
-                                
-                                // Remplacer toutes les variables dynamiques
-                                $text = str_replace('{{order_number}}', $order_data['order_number'], $text);
-                                $text = str_replace('{{order_date}}', $order_data['order_date'], $text);
-                                $text = str_replace('{{order_total}}', wc_price($order_data['total']), $text);
-                                $text = str_replace('{{order_subtotal}}', wc_price($order_data['subtotal']), $text);
-                                $text = str_replace('{{shipping_total}}', wc_price($order_data['shipping_total']), $text);
-                                $text = str_replace('{{total_tax}}', wc_price($order_data['total_tax']), $text);
-                                $text = str_replace('{{customer_name}}', $order_data['customer_name'], $text);
-                                $text = str_replace('{{customer_email}}', $order_data['customer_email'], $text);
-                                $text = str_replace('{{customer_phone}}', $order_data['customer_phone'], $text);
-                                $text = str_replace('{{customer_address}}', $order_data['customer_address'], $text);
-                                $text = str_replace('{{order_status}}', ucfirst(str_replace('wc-', '', $order_data['order_status'])), $text);
-                                $text = str_replace('{{payment_method}}', $order_data['payment_method'], $text);
-                                $text = str_replace('{{shipping_method}}', $order_data['shipping_method'], $text);
-                                
-                                echo '<div class="element-text">' . wp_kses_post($text) . '</div>';
-                                
-                            } elseif ($type === 'image' || $type === 'company_logo') {
-                                $src = $element['src'] ?? $element['imageUrl'] ?? '';
-                                if ($src) {
-                                    echo '<img src="' . esc_url($src) . '" class="element-image" alt="" />';
-                                }
-                                
-                            } elseif ($type === 'product_table') {
-                                echo $this->render_product_table_html($order, $element);
-                            }
-                            ?>
-                        </div>
-                    <?php
+            // Afficher le HTML directement dans le navigateur
+            ?>
+            <!DOCTYPE html>
+            <html lang="fr">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Aperçu - Commande <?php echo esc_attr($order->get_order_number()); ?></title>
+                <style>
+                    * {
+                        margin: 0;
+                        padding: 0;
+                        box-sizing: border-box;
                     }
-                    ?>
+                    html, body {
+                        margin: 0;
+                        padding: 0;
+                        width: 100%;
+                        height: 100%;
+                    }
+                    body {
+                        background: #f5f5f5;
+                        font-family: Arial, Helvetica, sans-serif;
+                        padding: 20px;
+                        display: flex;
+                        justify-content: center;
+                    }
+                    .preview-wrapper {
+                        width: 100%;
+                        max-width: 900px;
+                        background: white;
+                        box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+                        padding: 40px;
+                        margin: 20px auto;
+                    }
+                    table {
+                        border-collapse: collapse;
+                        width: 100%;
+                        margin: 10px 0;
+                    }
+                    table td, table th {
+                        border: 1px solid #333;
+                        padding: 8px;
+                    }
+                    table th {
+                        background-color: #333;
+                        color: white;
+                        font-weight: bold;
+                    }
+                    img {
+                        max-width: 100%;
+                        height: auto;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="preview-wrapper">
+                    <?php echo $html_content; ?>
                 </div>
-            </div>
-        </body>
-        </html>
-        <?php
+            </body>
+            </html>
+            <?php
+        } catch (Exception $e) {
+            wp_die('Erreur: ' . esc_html($e->getMessage()));
+        }
         wp_die();
     }
 
