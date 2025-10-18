@@ -661,13 +661,32 @@ class PDF_Builder_WooCommerce_Integration {
 
                 // Essayer de récupérer les éléments actuels du Canvas si disponible
                 var canvasElements = null;
+                console.log('MetaBoxes.js - Checking for PDFBuilderPro.canvas availability...');
+                console.log('MetaBoxes.js - window.PDFBuilderPro exists:', !!window.PDFBuilderPro);
+                if (window.PDFBuilderPro) {
+                    console.log('MetaBoxes.js - PDFBuilderPro.canvas exists:', !!window.PDFBuilderPro.canvas);
+                    if (window.PDFBuilderPro.canvas) {
+                        console.log('MetaBoxes.js - PDFBuilderPro.canvas.getElements exists:', typeof window.PDFBuilderPro.canvas.getElements);
+                    }
+                }
+
                 try {
                     if (window.PDFBuilderPro && window.PDFBuilderPro.canvas && window.PDFBuilderPro.canvas.getElements) {
                         canvasElements = window.PDFBuilderPro.canvas.getElements();
-                        console.log('MetaBoxes.js - Éléments récupérés depuis Canvas pour PDF:', canvasElements ? 'object avec ' + (Array.isArray(canvasElements) ? canvasElements.length : 'N/A') + ' éléments' : 'null');
+                        console.log('MetaBoxes.js - Éléments récupérés depuis Canvas pour PDF:', canvasElements);
+                        console.log('MetaBoxes.js - Type des éléments:', typeof canvasElements);
+                        if (canvasElements !== null && canvasElements !== undefined) {
+                            console.log('MetaBoxes.js - Éléments isArray:', Array.isArray(canvasElements));
+                            if (Array.isArray(canvasElements)) {
+                                console.log('MetaBoxes.js - Nombre d\'éléments:', canvasElements.length);
+                            }
+                        }
+                    } else {
+                        console.log('MetaBoxes.js - Conditions non remplies pour récupérer les éléments du canvas');
                     }
                 } catch (e) {
-                    console.log('MetaBoxes.js - Impossible de récupérer les éléments depuis Canvas pour PDF:', e.message);
+                    console.log('MetaBoxes.js - Exception lors de la récupération des éléments depuis Canvas:', e.message);
+                    console.log('MetaBoxes.js - Stack trace:', e.stack);
                 }
 
                 var ajaxData = {
@@ -679,15 +698,20 @@ class PDF_Builder_WooCommerce_Integration {
 
                 // Ajouter les éléments du Canvas si disponibles et sérialisables
                 if (canvasElements) {
+                    console.log('MetaBoxes.js - Tentative de sérialisation JSON des éléments du canvas...');
                     try {
                         var elementsJson = JSON.stringify(canvasElements);
                         ajaxData.elements = elementsJson;
                         console.log('MetaBoxes.js - Éléments du Canvas sérialisés avec succès, longueur:', elementsJson.length);
+                        console.log('MetaBoxes.js - Premier caractères du JSON:', elementsJson.substring(0, 200) + (elementsJson.length > 200 ? '...' : ''));
                     } catch (jsonError) {
                         console.log('MetaBoxes.js - Erreur lors de la sérialisation JSON des éléments du Canvas:', jsonError.message);
                         console.log('MetaBoxes.js - Type des éléments:', typeof canvasElements, Array.isArray(canvasElements) ? 'array' : 'not array');
+                        console.log('MetaBoxes.js - Valeur des éléments:', canvasElements);
                         // Ne pas ajouter les éléments si la sérialisation échoue
                     }
+                } else {
+                    console.log('MetaBoxes.js - Aucun élément du canvas à sérialiser (canvasElements est falsy)');
                 }
 
                 console.log('PDF BUILDER - Sending AJAX request for preview:', {
