@@ -3008,7 +3008,7 @@ class PDF_Builder_Pro_Generator {
             'total' => true
         ];
 
-        // Propriétés des totaux - cohérence avec CanvasElement.jsx
+        // Propriétés des totaux - cohérence avec CanvasElement.jsx (correction déployée)
         $show_subtotal = !empty($element['showSubtotal']) && $element['showSubtotal'] !== 'false' && $element['showSubtotal'] !== false;
         $show_shipping = !empty($element['showShipping']) && $element['showShipping'] !== 'false' && $element['showShipping'] !== false;
         $show_taxes = !empty($element['showTaxes']) && $element['showTaxes'] !== 'false' && $element['showTaxes'] !== false;
