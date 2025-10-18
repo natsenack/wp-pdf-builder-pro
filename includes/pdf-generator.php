@@ -2289,6 +2289,7 @@ class PDF_Builder_Pro_Generator {
 
         // Frais (shipping, taxes, etc.)
         if (!empty($fees)) {
+            error_log("RENDER_DEBUG: Processing " . count($fees) . " fees");
             foreach ($fees as $fee) {
                 $fee_name = $fee->get_name();
                 $fee_total = $fee->get_total();
@@ -2316,7 +2317,10 @@ class PDF_Builder_Pro_Generator {
                 if ($columns['price']) $col_index++;
                 if ($columns['total']) {
                     $fee_text = number_format($fee_total, 2, ',', ' ') . ' ' . '€';
+                    error_log("RENDER_DEBUG: Displaying fee total for {$fee_name}: {$fee_text} (raw: {$fee_total})");
                     $this->pdf->Cell($col_widths[$col_index], $row_height, $fee_text, $show_borders ? 1 : 0, 1, 'R');
+                } else {
+                    error_log("RENDER_DEBUG: Fee total column disabled for {$fee_name}");
                 }
 
                 $current_y += $row_height;
