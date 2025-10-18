@@ -5652,22 +5652,14 @@ class PDF_Builder_Admin {
 
             error_log('[PDF Builder] generate_pdf_preview - PDF généré: ' . strlen($pdf_content) . ' bytes');
 
-            // Au lieu de sauvegarder le fichier, stocker en cache temporaire avec une clé unique
-            // et retourner une URL d'endpoint WordPress pour servir le PDF
-            $random_string = substr(md5(microtime() . rand()), 0, 8);
-            $preview_key = 'pdf_preview_' . $order->get_id() . '_' . time() . '_' . $random_string;
-            
-            // Stocker le contenu PDF en cache temporaire (1 heure)
-            set_transient($preview_key, $pdf_content, HOUR_IN_SECONDS);
-            
-            error_log('[PDF Builder] generate_pdf_preview - PDF stocké en cache: ' . $preview_key);
+            // Retourner le PDF en base64 directement dans la réponse AJAX
+            // Cela évite les problèmes de permissions et d'endpoints
+            $pdf_base64 = base64_encode($pdf_content);
+            $data_url = 'data:application/pdf;base64,' . $pdf_base64;
 
-            // Retourner l'URL via un endpoint WordPress
-            $pdf_url = admin_url('admin-ajax.php?action=pdf_builder_serve_preview&preview_key=' . urlencode($preview_key));
+            error_log('[PDF Builder] generate_pdf_preview - Data URL créée: ' . strlen($data_url) . ' bytes');
 
-            error_log('[PDF Builder] generate_pdf_preview - URL retournée: ' . $pdf_url);
-
-            return $pdf_url;
+            return $data_url;
 
         } catch (Exception $e) {
             error_log('[PDF Builder] generate_pdf_preview - Exception: ' . $e->getMessage() . ' - ' . $e->getTraceAsString());
