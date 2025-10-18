@@ -2976,7 +2976,7 @@ class PDF_Builder_Pro_Generator {
 
         // Styles CSS pour le conteneur principal
         $container_style = sprintf(
-            'width: 100%%; display: flex; flex-direction: column; font-size: %dpx; font-family: "Inter", "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont, sans-serif; border: %s; border-radius: %dpx; overflow: hidden; background-color: %s; box-sizing: border-box; box-shadow: %s; line-height: 1.4; color: %s;',
+            'width: 100%%; height: 100%%; display: flex; flex-direction: column; font-size: %dpx; font-family: "Inter", "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont, sans-serif; border: %s; border-radius: %dpx; overflow: hidden; background-color: %s; box-sizing: border-box; box-shadow: %s; line-height: 1.4; color: %s;',
             10 * $zoom,
             $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $table_styles['headerBorder'] : 'none',
             isset($table_styles['borderRadius']) ? $table_styles['borderRadius'] * $zoom : 2,
@@ -3000,7 +3000,8 @@ class PDF_Builder_Pro_Generator {
 
             $html .= '<div style="' . $header_container_style . '">';
 
-            if ($columns['image']) {
+            // Utiliser la même logique que CanvasElement.jsx : element.columns?.column !== false
+            if (($element['columns']['image'] ?? true) !== false) {
                 $header_cell_style = sprintf(
                     'flex: 0 0 %dpx; padding: %dpx %dpx; text-align: center; border-right: %s; font-size: %dpx; opacity: 0.9;',
                     40, 6 * $zoom, 4 * $zoom,
@@ -3009,7 +3010,7 @@ class PDF_Builder_Pro_Generator {
                 );
                 $html .= '<div style="' . $header_cell_style . '">Img</div>';
             }
-            if ($columns['name']) {
+            if (($element['columns']['name'] ?? true) !== false) {
                 $headers = $element['headers'] ?? ['Produit', 'Qté', 'Prix'];
                 $header_cell_style = sprintf(
                     'flex: 1; padding: %dpx %dpx; text-align: left; border-right: %s; font-size: %dpx;',
@@ -3019,7 +3020,7 @@ class PDF_Builder_Pro_Generator {
                 );
                 $html .= '<div style="' . $header_cell_style . '">' . htmlspecialchars($headers[0] ?? 'Produit') . '</div>';
             }
-            if ($columns['sku']) {
+            if (($element['columns']['sku'] ?? false) !== false) {
                 $header_cell_style = sprintf(
                     'flex: 0 0 %dpx; padding: %dpx %dpx; text-align: left; border-right: %s; font-size: %dpx;',
                     80, 6 * $zoom, 8 * $zoom,
@@ -3028,7 +3029,7 @@ class PDF_Builder_Pro_Generator {
                 );
                 $html .= '<div style="' . $header_cell_style . '">SKU</div>';
             }
-            if ($columns['quantity']) {
+            if (($element['columns']['quantity'] ?? true) !== false) {
                 $header_cell_style = sprintf(
                     'flex: 0 0 %dpx; padding: %dpx %dpx; text-align: center; border-right: %s; font-size: %dpx;',
                     60, 6 * $zoom, 8 * $zoom,
@@ -3037,7 +3038,7 @@ class PDF_Builder_Pro_Generator {
                 );
                 $html .= '<div style="' . $header_cell_style . '">' . htmlspecialchars($headers[1] ?? 'Qté') . '</div>';
             }
-            if ($columns['price']) {
+            if (($element['columns']['price'] ?? true) !== false) {
                 $header_cell_style = sprintf(
                     'flex: 0 0 %dpx; padding: %dpx %dpx; text-align: right; border-right: %s; font-size: %dpx;',
                     80, 6 * $zoom, 8 * $zoom,
@@ -3046,7 +3047,7 @@ class PDF_Builder_Pro_Generator {
                 );
                 $html .= '<div style="' . $header_cell_style . '">' . htmlspecialchars($headers[2] ?? 'Prix') . '</div>';
             }
-            if ($columns['total']) {
+            if (($element['columns']['total'] ?? true) !== false) {
                 $header_cell_style = sprintf(
                     'flex: 0 0 %dpx; padding: %dpx %dpx; text-align: right; font-size: %dpx;',
                     80, 6 * $zoom, 8 * $zoom,
@@ -3080,7 +3081,8 @@ class PDF_Builder_Pro_Generator {
 
             $html .= '<div style="' . $row_style . '">';
 
-            if ($columns['image']) {
+            // Utiliser la même logique que CanvasElement.jsx : element.columns?.column !== false
+            if (($element['columns']['image'] ?? true) !== false) {
                 $cell_style = sprintf(
                     'flex: 0 0 %dpx; padding: %dpx %dpx; text-align: center; border-right: %s; color: %s; opacity: 0.7; font-size: %dpx;',
                     40, 5 * $zoom, 4 * $zoom,
@@ -3090,7 +3092,7 @@ class PDF_Builder_Pro_Generator {
                 );
                 $html .= '<div style="' . $cell_style . '">📷</div>';
             }
-            if ($columns['name']) {
+            if (($element['columns']['name'] ?? true) !== false) {
                 $cell_style = sprintf(
                     'flex: 1; padding: %dpx %dpx; border-right: %s; color: %s; font-weight: 500; line-height: 1.3;',
                     5 * $zoom, 8 * $zoom,
@@ -3099,7 +3101,7 @@ class PDF_Builder_Pro_Generator {
                 );
                 $html .= '<div style="' . $cell_style . '">' . htmlspecialchars($product['name']) . '</div>';
             }
-            if ($columns['sku']) {
+            if (($element['columns']['sku'] ?? false) !== false) {
                 $cell_style = sprintf(
                     'flex: 0 0 %dpx; padding: %dpx %dpx; border-right: %s; color: %s; opacity: 0.8; font-family: monospace; font-size: %dpx;',
                     80, 5 * $zoom, 8 * $zoom,
@@ -3109,7 +3111,7 @@ class PDF_Builder_Pro_Generator {
                 );
                 $html .= '<div style="' . $cell_style . '">' . htmlspecialchars($product['sku']) . '</div>';
             }
-            if ($columns['quantity']) {
+            if (($element['columns']['quantity'] ?? true) !== false) {
                 $cell_style = sprintf(
                     'flex: 0 0 %dpx; padding: %dpx %dpx; text-align: center; border-right: %s; color: %s; font-weight: 600;',
                     60, 5 * $zoom, 8 * $zoom,
@@ -3118,7 +3120,7 @@ class PDF_Builder_Pro_Generator {
                 );
                 $html .= '<div style="' . $cell_style . '">' . $product['quantity'] . '</div>';
             }
-            if ($columns['price']) {
+            if (($element['columns']['price'] ?? true) !== false) {
                 $cell_style = sprintf(
                     'flex: 0 0 %dpx; padding: %dpx %dpx; text-align: right; border-right: %s; color: %s; font-weight: 500; font-family: "Inter", system-ui, sans-serif;',
                     80, 5 * $zoom, 8 * $zoom,
@@ -3127,7 +3129,7 @@ class PDF_Builder_Pro_Generator {
                 );
                 $html .= '<div style="' . $cell_style . '">' . number_format($product['price'], 2, ',', ' ') . ' €</div>';
             }
-            if ($columns['total']) {
+            if (($element['columns']['total'] ?? true) !== false) {
                 $cell_style = sprintf(
                     'flex: 0 0 %dpx; padding: %dpx %dpx; text-align: right; color: %s; font-weight: 600; font-family: "Inter", system-ui, sans-serif;',
                     80, 5 * $zoom, 8 * $zoom,
