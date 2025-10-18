@@ -305,8 +305,53 @@ class PDF_Builder_Pro_Generator {
      * Rendu des elements optimise
      */
     private function render_elements($elements) {
-        // LOG: Début rendu éléments
-        error_log("🎨 RENDER_ELEMENTS - START: " . count($elements) . " elements to render");
+
+        // Vérifier si un élément product_table existe déjà
+        $has_product_table = false;
+        foreach ($elements as $element) {
+            if (isset($element['type']) && $element['type'] === 'product_table') {
+                $has_product_table = true;
+                break;
+            }
+        }
+
+        // Si aucun élément product_table n'existe, en ajouter un par défaut
+        if (!$has_product_table) {
+            $default_product_table = [
+                'id' => 'auto_product_table_' . time(),
+                'type' => 'product_table',
+                'x' => 20,
+                'y' => 120,
+                'width' => 550,
+                'height' => 200,
+                'backgroundColor' => 'transparent',
+                'borderColor' => 'transparent',
+                'borderWidth' => 0,
+                'borderStyle' => 'solid',
+                'borderRadius' => 0,
+                'showHeaders' => true,
+                'showBorders' => false,
+                'tableStyle' => 'default',
+                'columns' => [
+                    'image' => false,
+                    'name' => true,
+                    'sku' => false,
+                    'quantity' => true,
+                    'price' => true,
+                    'total' => true
+                ],
+                'headers' => ['Produit', 'Qté', 'Prix'],
+                'showSubtotal' => false,
+                'showShipping' => true,
+                'showTaxes' => true,
+                'showDiscount' => false,
+                'showTotal' => true,
+                'visible' => true,
+                'opacity' => 100
+            ];
+
+            $elements[] = $default_product_table;
+        }
 
         // Calcul précis du facteur de conversion basé sur les dimensions réelles
         // Canvas: 595×842 px | A4: 210×297 mm
@@ -318,9 +363,6 @@ class PDF_Builder_Pro_Generator {
 
         $px_to_mm = $page_width_mm / $canvas_width_px; // 0.3529 mm/px
 
-        // LOG: Facteur de conversion
-        error_log("🎨 RENDER_ELEMENTS - CONVERSION: canvas={$canvas_width_px}x{$canvas_height_px}px, page={$page_width_mm}x{$page_height_mm}mm, px_to_mm=$px_to_mm");
-
         // ⚠️ IMPORTANT: Préserver l'ordre des éléments tel que défini dans le canvas
         // Ne pas trier par position Y car cela casse l'ordre d'empilement (z-index)
         // L'ordre du tableau elements doit être respecté pour maintenir la logique du design
@@ -328,9 +370,6 @@ class PDF_Builder_Pro_Generator {
         foreach ($elements as $element) {
             try {
                 $element_type = isset($element['type']) ? $element['type'] : 'unknown';
-
-                // LOG: Élément en cours de traitement
-                error_log("🎨 RENDER_ELEMENTS - PROCESSING: type=$element_type, id=" . (isset($element['id']) ? $element['id'] : 'unknown'));
 
                 $this->render_single_element($element, $px_to_mm);
 
@@ -340,9 +379,6 @@ class PDF_Builder_Pro_Generator {
                 // Continuer avec les autres elements
             }
         }
-
-        // LOG: Fin rendu éléments
-        error_log("🎨 RENDER_ELEMENTS - END: all elements processed");
 
         $this->performance_metrics['elements_rendered'] = microtime(true);
     }
@@ -1762,9 +1798,6 @@ class PDF_Builder_Pro_Generator {
      * Rendu d'élément product_table
      */
     private function render_product_table_element($element, $px_to_mm) {
-        // LOG: Début rendu tableau produits
-        error_log("📊 RENDER_PRODUCT_TABLE - START: " . json_encode($element));
-
         error_log('PDF Builder: render_product_table_element called with tableStyle: ' . ($element['tableStyle'] ?? 'default'));
 
         try {
@@ -1774,9 +1807,6 @@ class PDF_Builder_Pro_Generator {
             $y = $coords['y'];
             $width = $coords['width'] ?: 550 * $px_to_mm;
             $height = $coords['height'] ?: 200 * $px_to_mm;
-
-            // LOG: Coordonnées et dimensions
-            error_log("📊 RENDER_PRODUCT_TABLE - COORDS: x=$x, y=$y, w=$width, h=$height");
 
             // Propriétés de style visuel
             $background_color = $element['backgroundColor'] ?? 'transparent';
@@ -1943,8 +1973,6 @@ class PDF_Builder_Pro_Generator {
                 // Rendre les vrais produits de la commande
                 $current_y = $this->render_order_products_with_fees_pdf($x, $current_y, $col_widths, $columns, $show_borders, $element);
             } else {
-                // LOG: Utilisation des données fictives pour l'aperçu
-                error_log("📊 RENDER_PRODUCT_TABLE - USING FAKE PREVIEW DATA");
                 // Définir les couleurs de trait pour l'aperçu avant le rendu
                 if ($show_borders) {
                     if (is_array($table_styles['row_border'])) {
@@ -1974,10 +2002,6 @@ class PDF_Builder_Pro_Generator {
             $current_y = $this->render_table_totals($x, $current_y, $col_widths, $columns, $show_borders, $element);
 
         } catch (Exception $e) {
-            // LOG: Erreur dans le rendu du tableau produits
-            error_log("📊 RENDER_PRODUCT_TABLE - ERROR: " . $e->getMessage());
-            error_log("📊 RENDER_PRODUCT_TABLE - STACK: " . $e->getTraceAsString());
-            
             // Rendu de secours pour l'élément en erreur
             $this->render_error_fallback($element, $px_to_mm, 'Erreur tableau produits: ' . $e->getMessage());
         }
@@ -2444,23 +2468,13 @@ class PDF_Builder_Pro_Generator {
      * Rendre les produits réels de la commande WooCommerce
      */
     private function render_order_products_with_fees_pdf($x, $current_y, $col_widths, $columns, $show_borders, $element) {
-        // LOG: Début rendu produits commande
-        error_log("🛍️ RENDER_ORDER_PRODUCTS - START: x=$x, y=$current_y");
-
         if (!$this->order) {
-            error_log("🛍️ RENDER_ORDER_PRODUCTS - NO ORDER OBJECT");
             return $current_y;
         }
-
-        error_log("🛍️ RENDER_ORDER_PRODUCTS - ORDER EXISTS: " . get_class($this->order));
 
         $table_styles = $this->get_table_styles($element['tableStyle'] ?? 'default');
         $line_items = $this->order->get_items();
         $fees = $this->order->get_fees();
-
-        // LOG: Items de commande récupérés
-        error_log("🛍️ RENDER_ORDER_PRODUCTS - LINE ITEMS COUNT: " . count($line_items));
-        error_log("🛍️ RENDER_ORDER_PRODUCTS - FEES COUNT: " . count($fees));
         // Utiliser la taille de police du style pour calculer la hauteur des lignes
         $row_font_size = isset($table_styles['rowFontSize']) ? (int) filter_var($table_styles['rowFontSize'], FILTER_SANITIZE_NUMBER_INT) : 8;
         $row_height = $row_font_size * 1.2; // Hauteur de ligne basée sur la taille de police
@@ -2476,9 +2490,6 @@ class PDF_Builder_Pro_Generator {
         // Produits
         if (!empty($line_items)) {
             foreach ($line_items as $item_id => $item) {
-                // LOG: Traitement d'un item
-                error_log("🛍️ RENDER_ORDER_PRODUCTS - PROCESSING ITEM: $item_id");
-
                 $product = $item->get_product();
                 $product_name = $item->get_name();
                 $quantity = $item->get_quantity();
@@ -2551,16 +2562,9 @@ class PDF_Builder_Pro_Generator {
 
         // Frais (shipping, taxes, etc.)
         if (!empty($fees)) {
-            error_log("🛍️ RENDER_ORDER_PRODUCTS - STARTING FEES PROCESSING: " . count($fees) . " fees found");
             foreach ($fees as $fee) {
-                // LOG: Traitement d'un frais
-                error_log("🛍️ RENDER_ORDER_PRODUCTS - PROCESSING FEE: " . json_encode($fee));
-                
                 $fee_name = $fee->get_name();
                 $fee_total = $fee->get_total();
-                
-                // LOG: Détails du frais
-                error_log("🛍️ RENDER_ORDER_PRODUCTS - FEE DETAILS: name='$fee_name', total='$fee_total'");
 
                 // Fond alterné si striped
                 if ($alt_row && ($element['tableStyle'] ?? 'default') === 'striped') {
@@ -2591,9 +2595,6 @@ class PDF_Builder_Pro_Generator {
                 $current_y += $row_height;
                 $alt_row = !$alt_row;
             }
-            error_log("🛍️ RENDER_ORDER_PRODUCTS - FEES PROCESSING COMPLETED");
-        } else {
-            error_log("🛍️ RENDER_ORDER_PRODUCTS - NO FEES TO PROCESS");
         }
 
         return $current_y;
@@ -2603,11 +2604,6 @@ class PDF_Builder_Pro_Generator {
      * Rendre des produits fictifs pour l'aperçu
      */
     private function render_fake_products($x, $current_y, $col_widths, $columns, $show_borders, $table_style = 'default', $element = null) {
-        // LOG: Début rendu produits fictifs
-        error_log("🛒 RENDER_FAKE_PRODUCTS - START: x=$x, y=$current_y, table_style=$table_style");
-        error_log("🛒 RENDER_FAKE_PRODUCTS - COLUMNS: " . json_encode($columns));
-        error_log("🛒 RENDER_FAKE_PRODUCTS - COL_WIDTHS: " . json_encode($col_widths));
-
         $table_styles = $this->get_table_styles($table_style);
         // Utiliser la taille de police du style pour calculer la hauteur des lignes
         $row_font_size = isset($table_styles['rowFontSize']) ? (int) filter_var($table_styles['rowFontSize'], FILTER_SANITIZE_NUMBER_INT) : 8;
@@ -2632,13 +2628,8 @@ class PDF_Builder_Pro_Generator {
         ];
 
         // LOG: Produits d'aperçu préparés
-        error_log("🛒 RENDER_FAKE_PRODUCTS - PRODUCTS COUNT: " . count($preview_products));
-        error_log("🛒 RENDER_FAKE_PRODUCTS - PRODUCTS DATA: " . json_encode($preview_products));
-
         // Rendre chaque produit d'aperçu
         foreach ($preview_products as $index => $product) {
-            // LOG: Produit en cours de rendu
-            error_log("🛒 RENDER_FAKE_PRODUCTS - RENDERING PRODUCT $index: " . json_encode($product));
             // Appliquer la couleur de fond selon la parité des lignes
             $product_bg_color = $product['backgroundColor'] ?? $product['bgColor'] ?? null;
             if ($product_bg_color && $product_bg_color !== 'transparent') {
@@ -2715,9 +2706,6 @@ class PDF_Builder_Pro_Generator {
             $current_y += $row_height;
         }
 
-        // LOG: Fin rendu produits fictifs
-        error_log("🛒 RENDER_FAKE_PRODUCTS - END: final_y=$current_y");
-
         return $current_y;
     }
 
@@ -2725,9 +2713,6 @@ class PDF_Builder_Pro_Generator {
      * Rendre les totaux du tableau
      */
     private function render_table_totals($x, $current_y, $col_widths, $columns, $show_borders, $element) {
-        // LOG: Début rendu totaux
-        error_log("💰 RENDER_TABLE_TOTALS - START: x=$x, y=$current_y");
-
         $show_subtotal = $element['showSubtotal'] ?? false;
         $show_shipping = $element['showShipping'] ?? true;
         $show_taxes = $element['showTaxes'] ?? true;
