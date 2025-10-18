@@ -556,7 +556,7 @@ class PDF_Builder_WooCommerce_Integration {
             var orderId = <?php echo intval($order_id); ?>;
             var templateId = <?php echo $selected_template ? intval($selected_template['id']) : 0; ?>;
             var ajaxUrl = "https://threeaxe.fr/wp-admin/admin-ajax.php";
-            var nonce = "test_nonce_123";
+            var nonce = "<?php echo esc_js(wp_create_nonce('pdf_builder_order_actions')); ?>";
 
             console.log("MetaBoxes.js - Configuration loaded:", {
                 orderId: orderId,
