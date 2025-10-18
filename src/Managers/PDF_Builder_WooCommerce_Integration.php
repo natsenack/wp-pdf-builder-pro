@@ -333,14 +333,19 @@ class PDF_Builder_WooCommerce_Integration {
 
             <!-- Action Buttons -->
             <div class="pdf-actions">
-                <button type="button" class="pdf-btn pdf-btn-generate" id="pdf-generate-btn">
+                <button type="button" class="pdf-btn pdf-btn-generate" id="pdf-generate-btn" style="flex: 0.7;">
                     <span>⚡</span>
                     Générer PDF
                 </button>
 
-                <button type="button" class="pdf-btn pdf-btn-download" id="pdf-download-btn" style="display: none;">
+                <button type="button" class="pdf-btn" id="pdf-preview-btn" style="flex: 0.6; background: #17a2b8; color: white;">
+                    <span>👁️</span>
+                    Aperçu
+                </button>
+
+                <button type="button" class="pdf-btn pdf-btn-download" id="pdf-download-btn" style="display: none; flex: 0.7;">
                     <span>⬇️</span>
-                    Télécharger PDF
+                    Télécharger
                 </button>
             </div>
 
@@ -357,6 +362,186 @@ class PDF_Builder_WooCommerce_Integration {
             <!-- Status Messages -->
             <div class="pdf-status" id="pdf-status"></div>
         </div>
+
+        <!-- 🎨 MODALE D'APERÇU PDF -->
+        <div id="woo-pdf-preview-modal" class="woo-pdf-preview-modal" style="display: none;">
+            <div class="woo-pdf-preview-modal-overlay"></div>
+            <div class="woo-pdf-preview-modal-container">
+                <div class="woo-pdf-preview-modal-header">
+                    <h3>Aperçu PDF - Commande #<?php echo intval($order_id); ?></h3>
+                    <button class="woo-pdf-preview-modal-close" title="Fermer">
+                        <span>✕</span>
+                    </button>
+                </div>
+                <div class="woo-pdf-preview-modal-body">
+                    <iframe id="woo-pdf-preview-iframe" 
+                            style="width: 100%; height: 100%; border: none; border-radius: 4px;"
+                            title="Aperçu PDF"></iframe>
+                    <div class="woo-pdf-preview-loading" style="display: none; text-align: center; padding: 40px;">
+                        <div style="font-size: 3em; margin-bottom: 20px;">📄</div>
+                        <p>Chargement de l'aperçu...</p>
+                        <div class="woo-pdf-preview-spinner"></div>
+                    </div>
+                </div>
+                <div class="woo-pdf-preview-modal-footer">
+                    <button class="woo-pdf-preview-download-btn" title="Télécharger">
+                        💾 Télécharger
+                    </button>
+                    <button class="woo-pdf-preview-modal-close-btn">
+                        Fermer
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🎨 STYLES MODALE -->
+        <style>
+            .woo-pdf-preview-modal {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 9999;
+            }
+
+            .woo-pdf-preview-modal-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                backdrop-filter: blur(2px);
+            }
+
+            .woo-pdf-preview-modal-container {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: white;
+                border-radius: 8px;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+                width: 90%;
+                max-width: 900px;
+                height: 80vh;
+                display: flex;
+                flex-direction: column;
+                animation: wooSlideIn 0.3s ease-out;
+            }
+
+            @keyframes wooSlideIn {
+                from {
+                    opacity: 0;
+                    transform: translate(-50%, -48%);
+                }
+                to {
+                    opacity: 1;
+                    transform: translate(-50%, -50%);
+                }
+            }
+
+            .woo-pdf-preview-modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 20px;
+                border-bottom: 1px solid #e2e8f0;
+                background: #f8fafc;
+                border-radius: 8px 8px 0 0;
+            }
+
+            .woo-pdf-preview-modal-header h3 {
+                margin: 0;
+                font-size: 18px;
+                font-weight: 600;
+                color: #1e293b;
+            }
+
+            .woo-pdf-preview-modal-close {
+                background: none;
+                border: none;
+                cursor: pointer;
+                font-size: 24px;
+                color: #64748b;
+                padding: 0;
+                width: 32px;
+                height: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 4px;
+                transition: all 0.2s;
+            }
+
+            .woo-pdf-preview-modal-close:hover {
+                background: #e2e8f0;
+                color: #1e293b;
+            }
+
+            .woo-pdf-preview-modal-body {
+                flex: 1;
+                overflow: auto;
+                padding: 20px;
+                background: #ffffff;
+            }
+
+            .woo-pdf-preview-modal-footer {
+                display: flex;
+                justify-content: flex-end;
+                gap: 10px;
+                padding: 15px 20px;
+                border-top: 1px solid #e2e8f0;
+                background: #f8fafc;
+                border-radius: 0 0 8px 8px;
+            }
+
+            .woo-pdf-preview-download-btn,
+            .woo-pdf-preview-modal-close-btn {
+                padding: 8px 16px;
+                border: 1px solid #d1d5db;
+                border-radius: 4px;
+                background: white;
+                color: #1f2937;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: 500;
+                transition: all 0.2s;
+            }
+
+            .woo-pdf-preview-download-btn:hover {
+                background: #f3f4f6;
+                border-color: #9ca3af;
+            }
+
+            .woo-pdf-preview-modal-close-btn:hover {
+                background: #f3f4f6;
+            }
+
+            .woo-pdf-preview-spinner {
+                display: inline-block;
+                width: 40px;
+                height: 40px;
+                border: 4px solid #f3f3f3;
+                border-top: 4px solid #2563eb;
+                border-radius: 50%;
+                animation: wooSpin 1s linear infinite;
+                margin-top: 20px;
+            }
+
+            @keyframes wooSpin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+
+            @media (max-width: 768px) {
+                .woo-pdf-preview-modal-container {
+                    width: 95%;
+                    height: 90vh;
+                }
+            }
+        </style>
 
         <script type="text/javascript">
         // Simple & Robust PDF JavaScript
@@ -452,6 +637,96 @@ class PDF_Builder_WooCommerce_Integration {
                 var url = $(this).attr('href');
                 if (url) {
                     window.open(url, '_blank');
+                }
+            });
+
+            // 👁️ Handler pour le bouton APERÇU PDF
+            $('#pdf-preview-btn').on('click', function(e) {
+                e.preventDefault();
+                
+                console.log('MetaBoxes.js - Aperçu PDF clicked');
+                
+                // Afficher la modale avec loading
+                var $modal = $('#woo-pdf-preview-modal');
+                var $loading = $modal.find('.woo-pdf-preview-loading');
+                var $iframe = $modal.find('#woo-pdf-preview-iframe');
+                
+                $modal.show();
+                $loading.show();
+                $iframe.hide();
+
+                showStatus('Génération de l\'aperçu en cours...', 'loading');
+
+                // Effectuer l'AJAX pour générer l'aperçu
+                $.ajax({
+                    url: ajaxUrl,
+                    type: 'POST',
+                    dataType: 'json',
+                    timeout: 30000,
+                    data: {
+                        action: 'pdf_builder_unified_preview',
+                        order_id: orderId,
+                        template_id: templateId > 0 ? templateId : null,
+                        nonce: nonce
+                    },
+                    success: function(response) {
+                        console.log('MetaBoxes.js - Aperçu success:', response);
+
+                        if (response.success && response.data && response.data.url) {
+                            // Charger le PDF dans l'iframe
+                            $iframe.attr('src', response.data.url);
+                            
+                            // Stocker l'URL pour le téléchargement
+                            $modal.data('pdf-url', response.data.url);
+                            
+                            // Masquer le loading et afficher l'iframe
+                            setTimeout(function() {
+                                $loading.hide();
+                                $iframe.show();
+                            }, 500);
+                            
+                            showStatus('Aperçu généré avec succès ✅', 'success');
+                        } else {
+                            $loading.hide();
+                            $modal.find('.woo-pdf-preview-modal-body').html(
+                                '<div style="text-align: center; padding: 40px; color: #dc3545;"><p>Erreur: ' + (response.data || 'Erreur inconnue') + '</p></div>'
+                            );
+                            showStatus('Erreur lors de l\'aperçu', 'error');
+                        }
+                    },
+                    error: function() {
+                        $loading.hide();
+                        $modal.find('.woo-pdf-preview-modal-body').html(
+                            '<div style="text-align: center; padding: 40px; color: #dc3545;"><p>Erreur AJAX lors de l\'aperçu</p></div>'
+                        );
+                        showStatus('Erreur AJAX', 'error');
+                    }
+                });
+            });
+
+            // Gérer la fermeture de la modale
+            $('#woo-pdf-preview-modal .woo-pdf-preview-modal-close,
+               #woo-pdf-preview-modal .woo-pdf-preview-modal-close-btn,
+               #woo-pdf-preview-modal .woo-pdf-preview-modal-overlay').on('click', function(e) {
+                if ($(this).hasClass('woo-pdf-preview-modal-overlay') || $(this).closest('.woo-pdf-preview-modal-header, .woo-pdf-preview-modal-footer').length) {
+                    e.preventDefault();
+                    $('#woo-pdf-preview-modal').hide();
+                }
+            });
+
+            // Télécharger le PDF depuis la modale
+            $('#woo-pdf-preview-modal .woo-pdf-preview-download-btn').on('click', function(e) {
+                e.preventDefault();
+                var $modal = $('#woo-pdf-preview-modal');
+                var pdfUrl = $modal.data('pdf-url');
+                
+                if (pdfUrl) {
+                    var link = document.createElement('a');
+                    link.href = pdfUrl;
+                    link.download = 'apercu-commande-' + orderId + '.pdf';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
                 }
             });
 
