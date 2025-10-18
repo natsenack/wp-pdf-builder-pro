@@ -90,7 +90,8 @@ class PDF_Builder_Pro_Generator {
      * Generateur principal - Interface unifiee
      */
     public function generate($elements, $options = []) {
-        error_log('🟡 PDF BUILDER - generate: START - ' . count($elements) . ' elements');
+        error_log('�🚨🚨🚨🚨🚨🚨🚨🚨🚨 GENERATE CALLED WITH ' . count($elements) . ' ELEMENTS 🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨');
+        error_log('�🟡 PDF BUILDER - generate: START - ' . count($elements) . ' elements');
 
         // Configurer le mode aperçu si demandé
         if (isset($options['is_preview']) && $options['is_preview']) {
