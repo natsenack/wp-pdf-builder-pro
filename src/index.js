@@ -22,7 +22,7 @@ const PDFBuilderSecurity = {
         const checks = {
             react: typeof React === 'object' && React.createElement,
             reactDom: typeof ReactDOM === 'object' && ReactDOM.render,
-            pdfCanvasEditor: typeof PDFCanvasEditor === 'function',
+            pdfCanvasEditor: PDFCanvasEditor && (typeof PDFCanvasEditor === 'function' || typeof PDFCanvasEditor === 'object'),
             hooks: typeof hooks === 'object',
             window: typeof window !== 'undefined',
             document: typeof document !== 'undefined'

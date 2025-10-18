@@ -13546,7 +13546,7 @@ var PDFBuilderSecurity = {
     var checks = {
       react: src_typeof(react) === 'object' && react.createElement,
       reactDom: src_typeof(react_dom) === 'object' && react_dom.render,
-      pdfCanvasEditor: typeof PDFCanvasEditor === 'function',
+      pdfCanvasEditor: PDFCanvasEditor && (typeof PDFCanvasEditor === 'function' || src_typeof(PDFCanvasEditor) === 'object'),
       hooks: src_typeof(hooks_namespaceObject) === 'object',
       window: typeof window !== 'undefined',
       document: typeof document !== 'undefined'
