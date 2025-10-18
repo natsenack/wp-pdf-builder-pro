@@ -5927,6 +5927,204 @@ class PDF_Builder_Admin {
     }
 
     /**
+     * Rendre un tableau produit en HTML pour l'aperçu Canvas
+     * Respecte toutes les propriétés CSS de l'élément du canvas
+     */
+    private function render_product_table_html($order, $element, $text_color = null, $font_family = null, $font_size = null) {
+        if (!$order) {
+            return '<div style="padding: 10px; color: #999; font-size: 12px;">Aucune commande</div>';
+        }
+
+        // Extraire les propriétés CSS de l'élément (par ordre de priorité)
+        $bg_color = $element['backgroundColor'] ?? 'transparent';
+        $border_width = $element['borderWidth'] ?? 1;
+        $border_color = $element['borderColor'] ?? '#ddd';
+        $border_style = $element['borderStyle'] ?? 'solid';
+        $padding = $element['padding'] ?? 10;
+        $border_radius = $element['borderRadius'] ?? 0;
+        $opacity = intval($element['opacity'] ?? 100) / 100;
+        $text_color = $text_color ?? ($element['color'] ?? '#000');
+        $font_family = $font_family ?? ($element['fontFamily'] ?? 'Arial');
+        $font_size = $font_size ?? ($element['fontSize'] ?? 14);
+        $font_weight = $element['fontWeight'] ?? 'normal';
+        $text_align = $element['textAlign'] ?? 'left';
+        
+        // Propriétés spécifiques au tableau
+        $table_style = $element['tableStyle'] ?? 'default';
+        $show_headers = isset($element['showHeaders']) ? (bool)$element['showHeaders'] : true;
+        $show_borders = isset($element['showBorders']) ? (bool)$element['showBorders'] : true;
+
+        // Extraire les colonnes à afficher
+        $columns = $element['columns'] ?? ['name' => true, 'quantity' => true, 'price' => true, 'total' => true];
+        if (is_array($columns) && !isset($columns['name'])) {
+            // Ancien format array indexé
+            $columns = array_fill_keys($columns, true);
+        }
+
+        // Filtrer pour ne garder que les colonnes visibles
+        $visible_columns = array_filter($columns, function($v) { return (bool) $v; });
+        
+        // Récupérer les headers
+        $headers = $element['headers'] ?? [];
+        $default_headers = [
+            'image' => 'Image',
+            'name' => 'Produit',
+            'sku' => 'SKU',
+            'quantity' => 'Qté',
+            'price' => 'Prix',
+            'total' => 'Total'
+        ];
+
+        // Styles de tableau prédéfinis
+        $table_styles = [
+            'default' => [
+                'header_bg' => '#f8fafc',
+                'header_color' => '#334155',
+                'header_border' => '#e2e8f0',
+                'row_bg' => 'transparent',
+                'row_border' => '#e2e8f0',
+                'alt_row_bg' => '#fafbfc',
+            ],
+            'classic' => [
+                'header_bg' => '#1e293b',
+                'header_color' => '#ffffff',
+                'header_border' => '#334155',
+                'row_bg' => 'transparent',
+                'row_border' => '#334155',
+                'alt_row_bg' => '#ffffff',
+            ],
+            'modern' => [
+                'header_bg' => '#3b82f6',
+                'header_color' => '#ffffff',
+                'header_border' => '#2563eb',
+                'row_bg' => 'transparent',
+                'row_border' => '#e2e8f0',
+                'alt_row_bg' => '#f8fafc',
+            ],
+            'minimal' => [
+                'header_bg' => '#ffffff',
+                'header_color' => '#6b7280',
+                'header_border' => '#d1d5db',
+                'row_bg' => 'transparent',
+                'row_border' => '#f3f4f6',
+                'alt_row_bg' => '#ffffff',
+            ]
+        ];
+        
+        $style_config = $table_styles[$table_style] ?? $table_styles['default'];
+        
+        // Construire le style du conteneur
+        $container_style = "border: {$border_width}px {$border_style} {$border_color}; background-color: {$bg_color}; border-radius: {$border_radius}px; padding: {$padding}px; opacity: {$opacity};";
+        
+        // Construire le HTML du tableau
+        $html = '<div style="' . esc_attr($container_style) . '">';
+        $html .= '<table style="width: 100%; border-collapse: collapse; font-family: ' . esc_attr($font_family) . '; font-size: ' . esc_attr($font_size) . 'px; color: ' . esc_attr($text_color) . '; font-weight: ' . esc_attr($font_weight) . '; text-align: ' . esc_attr($text_align) . ';">';
+        
+
+        // En-têtes
+        if ($show_headers) {
+            $header_bg = $style_config['header_bg'];
+            $header_color = $style_config['header_color'];
+            $header_border = $style_config['header_border'];
+            $border_display = $show_borders ? "border-bottom: {$border_width}px {$border_style} {$header_border};" : '';
+            
+            $html .= '<thead><tr style="background-color: ' . esc_attr($header_bg) . '; color: ' . esc_attr($header_color) . '; ' . $border_display . '">';
+            foreach ($visible_columns as $col_key => $col_value) {
+                $col_header = $headers[$col_key] ?? $default_headers[$col_key] ?? ucfirst($col_key);
+                $html .= '<th style="padding: 8px; text-align: ' . esc_attr($text_align) . '; font-weight: 700;">' . esc_html($col_header) . '</th>';
+            }
+            $html .= '</tr></thead>';
+        }
+
+        // Lignes produits
+        $html .= '<tbody>';
+        $line_items = $order->get_items();
+        $row_index = 0;
+        
+        foreach ($line_items as $item) {
+            $row_bg = ($row_index % 2 === 0) ? $style_config['row_bg'] : $style_config['alt_row_bg'];
+            $row_border = $style_config['row_border'];
+            $border_display = $show_borders ? "border-bottom: {$border_width}px {$border_style} {$row_border};" : '';
+            
+            $html .= '<tr style="background-color: ' . esc_attr($row_bg) . '; ' . $border_display . '">';
+            foreach ($visible_columns as $col_key => $col_value) {
+                $html .= '<td style="padding: 8px;">';
+                
+                switch ($col_key) {
+                    case 'name':
+                        $html .= esc_html($item->get_name());
+                        break;
+                    case 'sku':
+                        $product = $item->get_product();
+                        $html .= $product ? esc_html($product->get_sku()) : '-';
+                        break;
+                    case 'quantity':
+                        $html .= esc_html($item->get_quantity());
+                        break;
+                    case 'price':
+                        $html .= wc_price($item->get_total() / $item->get_quantity());
+                        break;
+                    case 'total':
+                        $html .= wc_price($item->get_total());
+                        break;
+                    case 'image':
+                        $product = $item->get_product();
+                        if ($product && $product->get_image_id()) {
+                            $image = wp_get_attachment_image_url($product->get_image_id(), 'thumbnail');
+                            if ($image) {
+                                $html .= '<img src="' . esc_url($image) . '" style="max-width: 40px; max-height: 40px;" />';
+                            }
+                        }
+                        break;
+                }
+                
+                $html .= '</td>';
+            }
+            $html .= '</tr>';
+            $row_index++;
+        }
+
+        // Totaux si configurés
+        $html .= '</tbody>';
+        
+        $footer_bg = $style_config['header_bg'];
+        $footer_color = $style_config['header_color'];
+        $footer_border = $style_config['header_border'];
+        $border_display = $show_borders ? "border-top: {$border_width}px {$border_style} {$footer_border};" : '';
+        
+        $html .= '<tfoot style="' . $border_display . '">';
+        
+        if ($element['showSubtotal'] ?? false) {
+            $html .= '<tr style="background-color: ' . esc_attr($footer_bg) . '; color: ' . esc_attr($footer_color) . ';"><td colspan="' . count($visible_columns) . '" style="text-align: right; padding: 8px;"><strong>Subtotal:</strong> ' . wc_price($order->get_subtotal()) . '</td></tr>';
+        }
+        if ($element['showShipping'] ?? true) {
+            $shipping = $order->get_shipping_total();
+            if ($shipping > 0) {
+                $html .= '<tr style="background-color: ' . esc_attr($footer_bg) . '; color: ' . esc_attr($footer_color) . ';"><td colspan="' . count($visible_columns) . '" style="text-align: right; padding: 8px;"><strong>Frais de port:</strong> ' . wc_price($shipping) . '</td></tr>';
+            }
+        }
+        if ($element['showTaxes'] ?? true) {
+            $tax = $order->get_total_tax();
+            if ($tax > 0) {
+                $html .= '<tr style="background-color: ' . esc_attr($footer_bg) . '; color: ' . esc_attr($footer_color) . ';"><td colspan="' . count($visible_columns) . '" style="text-align: right; padding: 8px;"><strong>Taxes:</strong> ' . wc_price($tax) . '</td></tr>';
+            }
+        }
+        if ($element['showDiscount'] ?? false) {
+            $discount = abs($order->get_total_discount());
+            if ($discount > 0) {
+                $html .= '<tr style="background-color: ' . esc_attr($footer_bg) . '; color: ' . esc_attr($footer_color) . ';"><td colspan="' . count($visible_columns) . '" style="text-align: right; padding: 8px;"><strong>Remise:</strong> -' . wc_price($discount) . '</td></tr>';
+            }
+        }
+        if ($element['showTotal'] ?? true) {
+            $html .= '<tr style="background-color: ' . esc_attr($footer_bg) . '; color: ' . esc_attr($footer_color) . '; font-weight: 700;"><td colspan="' . count($visible_columns) . '" style="text-align: right; padding: 10px;"><strong>Total:</strong> ' . wc_price($order->get_total()) . '</td></tr>';
+        }
+        
+        $html .= '</tfoot></table>';
+        
+        return $html;
+    }
+
+    /**
      * AJAX pour afficher l'aperçu Canvas d'une commande
      * Affiche l'aperçu identique à l'éditeur Canvas
      */
@@ -5994,7 +6192,15 @@ class PDF_Builder_Admin {
             'order_date' => $order->get_date_created()->format('Y-m-d'),
             'customer_name' => $order->get_billing_first_name() . ' ' . $order->get_billing_last_name(),
             'customer_email' => $order->get_billing_email(),
+            'customer_phone' => $order->get_billing_phone(),
+            'customer_address' => $order->get_billing_address_1() . ', ' . $order->get_billing_postcode() . ' ' . $order->get_billing_city(),
             'total' => $order->get_total(),
+            'subtotal' => $order->get_subtotal(),
+            'shipping_total' => $order->get_shipping_total(),
+            'total_tax' => $order->get_total_tax(),
+            'order_status' => $order->get_status(),
+            'payment_method' => $order->get_payment_method_title(),
+            'shipping_method' => $order->get_shipping_method() ?: 'N/A',
         ];
 
         // Commencer le HTML
@@ -6081,6 +6287,16 @@ class PDF_Builder_Admin {
                                     $text = str_replace('{{order_number}}', $order_data['order_number'], $element['customContent']);
                                     $text = str_replace('{{order_date}}', $order_data['order_date'], $text);
                                     $text = str_replace('{{order_total}}', wc_price($order_data['total']), $text);
+                                    $text = str_replace('{{order_subtotal}}', wc_price($order_data['subtotal']), $text);
+                                    $text = str_replace('{{shipping_total}}', wc_price($order_data['shipping_total']), $text);
+                                    $text = str_replace('{{total_tax}}', wc_price($order_data['total_tax']), $text);
+                                    $text = str_replace('{{customer_name}}', $order_data['customer_name'], $text);
+                                    $text = str_replace('{{customer_email}}', $order_data['customer_email'], $text);
+                                    $text = str_replace('{{customer_phone}}', $order_data['customer_phone'], $text);
+                                    $text = str_replace('{{customer_address}}', $order_data['customer_address'], $text);
+                                    $text = str_replace('{{order_status}}', ucfirst(str_replace('wc-', '', $order_data['order_status'])), $text);
+                                    $text = str_replace('{{payment_method}}', $order_data['payment_method'], $text);
+                                    $text = str_replace('{{shipping_method}}', $order_data['shipping_method'], $text);
                                 }
                                 echo '<div class="element-text" style="color: ' . esc_attr($color) . '; font-family: ' . esc_attr($font_family) . '; font-size: ' . esc_attr($font_size) . 'px; padding: 5px;">' . esc_html($text) . '</div>';
                             } elseif ($type === 'image' || $type === 'company_logo') {
@@ -6089,7 +6305,7 @@ class PDF_Builder_Admin {
                                     echo '<img src="' . esc_url($src) . '" style="width: 100%; height: 100%; object-fit: cover;" />';
                                 }
                             } elseif ($type === 'product_table') {
-                                echo '<div style="color: ' . esc_attr($color) . '; font-family: ' . esc_attr($font_family) . '; font-size: ' . esc_attr($font_size) . 'px; padding: 10px;"><strong>[Tableau Produits]</strong></div>';
+                                echo $this->render_product_table_html($order, $element);
                             }
                             ?>
                         </div>
