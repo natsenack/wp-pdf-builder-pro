@@ -688,7 +688,7 @@ class PDF_Builder_WooCommerce_Integration {
                                 $iframe.show();
                             }, 500);
                             
-                            showStatus("Aperçu généré avec succès ✅", "success");
+                            showStatus("Aperçu généré avec succès", "success");
                         } else {
                             $loading.hide();
                             $modal.find('.woo-pdf-preview-modal-body').html(
