@@ -45,9 +45,11 @@ class PDF_Builder_Pro_Generator {
      */
     public function set_preview_mode($is_preview = false) {
         $this->is_preview = $is_preview;
+        // L'aperçu utilise le même format que le PDF normal (A4)
+        // On ne change pas les dimensions pour l'aperçu - on génère en A4 complet
         if ($is_preview) {
-            // Dimensions d'aperçu : 400x566px
-            $this->config['format'] = [105.8, 149.8]; // Conversion px vers mm à 96dpi
+            // Garder le format A4 normal pour l'aperçu aussi
+            error_log('[PDF Builder] Mode aperçu activé - Utilisation du format A4 complet');
         }
     }
 
