@@ -36,7 +36,7 @@ class PDF_Builder_WooCommerce_Integration {
      */
     public function register_ajax_hooks() {
         // AJAX handlers pour WooCommerce - gérés par le manager
-        add_action('wp_ajax_pdf_builder_generate_order_pdf', [$this, 'ajax_generate_order_pdf'], 1);
+        add_action('wp_ajax_pdf_builder_generate_order_pdf_test', [$this, 'ajax_generate_order_pdf'], 1);
         add_action('wp_ajax_pdf_builder_save_order_canvas', [$this, 'ajax_save_order_canvas'], 1);
     }
     private function detect_document_type($order_status) {
@@ -788,7 +788,7 @@ class PDF_Builder_WooCommerce_Integration {
                 setButtonLoading($(this), true);
 
                 console.log('PDF BUILDER - Sending AJAX request for generation:', {
-                    action: 'pdf_builder_generate_order_pdf',
+                    action: 'pdf_builder_generate_order_pdf_test',
                     order_id: orderId,
                     template_id: templateId,
                     nonce: nonce.substring(0, 10) + '...'
@@ -798,7 +798,7 @@ class PDF_Builder_WooCommerce_Integration {
                     url: ajaxUrl,
                     type: "POST",
                     data: {
-                        action: "pdf_builder_generate_order_pdf",
+                        action: "pdf_builder_generate_order_pdf_test",
                         order_id: orderId,
                         template_id: templateId,
                         nonce: nonce
