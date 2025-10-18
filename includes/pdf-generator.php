@@ -2930,6 +2930,7 @@ class PDF_Builder_Pro_Generator {
                 error_log('🟡 PDF BUILDER - generate_simple_preview: First element: ' . json_encode($elements[0] ?? 'no elements'));
 
                 $pdf_content = $this->generate($elements, ['title' => 'Aperçu Facture - Commande #' . $order_id]);
+                error_log('🔍 [DEBUG] generate() returned content of length: ' . strlen($pdf_content ?? 'null'));
 
                 error_log('✅ PDF BUILDER - generate_simple_preview: PDF generated with template, content size: ' . strlen($pdf_content) . ' bytes');
 
