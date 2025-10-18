@@ -1731,9 +1731,7 @@ class PDF_Builder_Admin {
         $html_content = $this->generate_unified_html($template);
 
         // Utiliser notre générateur PDF personnalisé
-        require_once plugin_dir_path(__FILE__) . '../pdf-generator.php';
         $generator = new PDF_Generator();
-        $generator->set_order($order); // Passer l'ordre au générateur
         $pdf_content = $generator->generate_from_elements($this->convert_template_to_elements($template));
 
         if ($pdf_content) {
