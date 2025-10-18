@@ -199,23 +199,29 @@ class PDF_Builder_Pro_Generator {
      * Chargement TCPDF avec gestion d'erreurs
      */
     private function load_tcpdf() {
+        // Chemin correct : depuis src/Controllers/, on remonte de 2 niveaux pour aller à la racine du plugin
+        $plugin_root = dirname(dirname(__DIR__));
+        
         $tcpdf_paths = [
-            __DIR__ . '/../lib/tcpdf/tcpdf_autoload.php',
-            __DIR__ . '/../vendor/tecnickcom/tcpdf/tcpdf.php',
-            dirname(__DIR__) . '/lib/tcpdf/tcpdf_autoload.php',
-            dirname(__DIR__) . '/vendor/tecnickcom/tcpdf/tcpdf.php'
+            $plugin_root . '/lib/tcpdf/tcpdf_autoload.php',
+            $plugin_root . '/lib/tcpdf/tcpdf.php',
+            $plugin_root . '/vendor/tecnickcom/tcpdf/tcpdf.php',
         ];
 
+        error_log('[PDF Builder] Recherche TCPDF dans les chemins:');
         foreach ($tcpdf_paths as $path) {
+            error_log('[PDF Builder] - Vérification: ' . $path);
             if (file_exists($path)) {
+                error_log('[PDF Builder] - Fichier trouvé: ' . $path);
                 require_once $path;
                 if (class_exists('TCPDF')) {
+                    error_log('[PDF Builder] - TCPDF chargé avec succès');
                     return;
                 }
             }
         }
 
-        throw new Exception('TCPDF introuvable dans tous les chemins testes');
+        throw new Exception('TCPDF introuvable dans tous les chemins testes: ' . implode(', ', $tcpdf_paths));
     }
 
     /**
