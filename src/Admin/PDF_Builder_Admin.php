@@ -6354,6 +6354,8 @@ class PDF_Builder_Admin {
         $style = $base_style;
         $properties_found = [];
 
+        // ========== PROPRIÉTÉS DE TEXTE ==========
+        
         // Couleur du texte
         if (isset($element['color']) && !empty($element['color'])) {
             $style .= "color: {$element['color']}; ";
@@ -6372,10 +6374,10 @@ class PDF_Builder_Admin {
             $properties_found[] = 'fontWeight=' . $element['fontWeight'];
         }
 
-        // Style de la police (italic)
-        if (isset($element['fontStyle']) && $element['fontStyle'] === 'italic') {
-            $style .= "font-style: italic; ";
-            $properties_found[] = 'fontStyle=italic';
+        // Style de la police (italic, normal, oblique)
+        if (isset($element['fontStyle']) && !empty($element['fontStyle'])) {
+            $style .= "font-style: {$element['fontStyle']}; ";
+            $properties_found[] = 'fontStyle=' . $element['fontStyle'];
         }
 
         // Famille de police
@@ -6385,27 +6387,50 @@ class PDF_Builder_Admin {
         }
 
         // Alignement du texte
-        if (isset($element['textAlign'])) {
+        if (isset($element['textAlign']) && !empty($element['textAlign'])) {
             $style .= "text-align: {$element['textAlign']}; ";
             $properties_found[] = 'textAlign=' . $element['textAlign'];
         }
 
         // Hauteur de ligne
-        if (isset($element['lineHeight'])) {
-            $style .= "line-height: {$element['lineHeight']}; ";
+        if (isset($element['lineHeight']) && !empty($element['lineHeight'])) {
+            $line_height = is_numeric($element['lineHeight']) ? floatval($element['lineHeight']) . 'px' : $element['lineHeight'];
+            $style .= "line-height: {$line_height}; ";
             $properties_found[] = 'lineHeight=' . $element['lineHeight'];
         }
 
-        // Décoration du texte
-        if (isset($element['textDecoration'])) {
+        // Décoration du texte (none, underline, overline, line-through)
+        if (isset($element['textDecoration']) && !empty($element['textDecoration'])) {
             $style .= "text-decoration: {$element['textDecoration']}; ";
             $properties_found[] = 'textDecoration=' . $element['textDecoration'];
         }
 
-        // Couleur de fond
+        // Transformation du texte (none, capitalize, uppercase, lowercase)
+        if (isset($element['textTransform']) && !empty($element['textTransform'])) {
+            $style .= "text-transform: {$element['textTransform']}; ";
+            $properties_found[] = 'textTransform=' . $element['textTransform'];
+        }
+
+        // Espacement des lettres
+        if (isset($element['letterSpacing']) && $element['letterSpacing'] != 0) {
+            $style .= "letter-spacing: " . floatval($element['letterSpacing']) . "px; ";
+            $properties_found[] = 'letterSpacing=' . $element['letterSpacing'];
+        }
+
+        // ========== PROPRIÉTÉS DE FOND ET BORDURES ==========
+
+        // Couleur de fond avec opacité
         if (isset($element['backgroundColor']) && $element['backgroundColor'] !== 'transparent' && !empty($element['backgroundColor'])) {
-            $style .= "background-color: {$element['backgroundColor']}; ";
-            $properties_found[] = 'backgroundColor=' . $element['backgroundColor'];
+            $bg_color = $element['backgroundColor'];
+            // Appliquer l'opacité si elle existe
+            if (isset($element['backgroundOpacity']) && $element['backgroundOpacity'] > 0 && $element['backgroundOpacity'] < 1) {
+                // Convertir RGB/Hex en RGBA
+                $opacity_hex = dechex(round($element['backgroundOpacity'] * 255));
+                $bg_color = substr($bg_color, 0, 7) . $opacity_hex;
+                $properties_found[] = 'backgroundOpacity=' . $element['backgroundOpacity'];
+            }
+            $style .= "background-color: {$bg_color}; ";
+            $properties_found[] = 'backgroundColor=' . $bg_color;
         }
 
         // Padding
@@ -6434,16 +6459,87 @@ class PDF_Builder_Admin {
             $properties_found[] = 'borderRadius=' . $element['borderRadius'];
         }
 
+        // ========== PROPRIÉTÉS DE TRANSFORMATION ET EFFETS ==========
+
         // Opacité
         if (isset($element['opacity']) && $element['opacity'] < 1) {
-            $style .= "opacity: " . floatval($element['opacity']) . "; ";
+            $opacity = is_numeric($element['opacity']) && $element['opacity'] <= 1 
+                ? floatval($element['opacity']) 
+                : floatval($element['opacity']) / 100;
+            $style .= "opacity: {$opacity}; ";
             $properties_found[] = 'opacity=' . $element['opacity'];
         }
 
-        // Rotation
+        // Rotation et scale combinés dans transform
+        $transform_parts = [];
         if (isset($element['rotation']) && $element['rotation'] != 0) {
-            $style .= "transform: rotate(" . floatval($element['rotation']) . "deg); ";
+            $transform_parts[] = "rotate(" . floatval($element['rotation']) . "deg)";
             $properties_found[] = 'rotation=' . $element['rotation'];
+        }
+        if (isset($element['scale']) && $element['scale'] != 100) {
+            $scale_value = floatval($element['scale']) / 100;
+            $transform_parts[] = "scale({$scale_value})";
+            $properties_found[] = 'scale=' . $element['scale'];
+        }
+        if (!empty($transform_parts)) {
+            $style .= "transform: " . implode(' ', $transform_parts) . "; ";
+        }
+
+        // Filtre (brightness, contrast, saturate)
+        $filter_parts = [];
+        if (isset($element['brightness']) && $element['brightness'] != 100) {
+            $filter_parts[] = "brightness(" . floatval($element['brightness']) . "%)";
+            $properties_found[] = 'brightness=' . $element['brightness'];
+        }
+        if (isset($element['contrast']) && $element['contrast'] != 100) {
+            $filter_parts[] = "contrast(" . floatval($element['contrast']) . "%)";
+            $properties_found[] = 'contrast=' . $element['contrast'];
+        }
+        if (isset($element['saturate']) && $element['saturate'] != 100) {
+            $filter_parts[] = "saturate(" . floatval($element['saturate']) . "%)";
+            $properties_found[] = 'saturate=' . $element['saturate'];
+        }
+        if (!empty($filter_parts)) {
+            $style .= "filter: " . implode(' ', $filter_parts) . "; ";
+        }
+
+        // ========== PROPRIÉTÉS D'OMBRE ==========
+
+        // Box shadow (nouvelles propriétés)
+        if (isset($element['boxShadowColor']) && !empty($element['boxShadowColor'])) {
+            $shadow_spread = isset($element['boxShadowSpread']) ? floatval($element['boxShadowSpread']) : 0;
+            $shadow_blur = isset($element['boxShadowBlur']) ? floatval($element['boxShadowBlur']) : 0;
+            $style .= "box-shadow: 0px {$shadow_spread}px {$shadow_blur}px {$element['boxShadowColor']}; ";
+            $properties_found[] = 'boxShadow=' . $element['boxShadowColor'];
+        }
+        // Ancien système d'ombre (shadow, shadowColor, shadowOffsetX, shadowOffsetY)
+        else if (isset($element['shadow']) && $element['shadow']) {
+            $shadow_color = $element['shadowColor'] ?? '#000000';
+            $shadow_offset_x = isset($element['shadowOffsetX']) ? floatval($element['shadowOffsetX']) : 2;
+            $shadow_offset_y = isset($element['shadowOffsetY']) ? floatval($element['shadowOffsetY']) : 2;
+            $style .= "box-shadow: {$shadow_offset_x}px {$shadow_offset_y}px 4px {$shadow_color}40; ";
+            $properties_found[] = 'shadow=true';
+        }
+
+        // ========== PROPRIÉTÉS D'IMAGE ==========
+
+        // Object-fit pour les images
+        if (isset($element['objectFit']) && !empty($element['objectFit'])) {
+            $style .= "object-fit: {$element['objectFit']}; ";
+            $properties_found[] = 'objectFit=' . $element['objectFit'];
+        }
+        // Fallback ancien système
+        else if (isset($element['fit']) && !empty($element['fit'])) {
+            $style .= "object-fit: {$element['fit']}; ";
+            $properties_found[] = 'fit=' . $element['fit'];
+        }
+
+        // ========== AUTRES PROPRIÉTÉS ==========
+
+        // Z-index
+        if (isset($element['zIndex']) && $element['zIndex'] > 0) {
+            $style .= "z-index: " . intval($element['zIndex']) . "; ";
+            $properties_found[] = 'zIndex=' . $element['zIndex'];
         }
 
         // Box-sizing
@@ -6451,7 +6547,7 @@ class PDF_Builder_Admin {
 
         // DEBUG: Log les propriétés trouvées
         if (!empty($properties_found)) {
-            error_log('[PDF Builder] Styles CSS appliqués: ' . implode(', ', $properties_found));
+            error_log('[PDF Builder] Styles CSS appliqués (' . count($properties_found) . ' propriétés): ' . implode(', ', $properties_found));
         } else {
             error_log('[PDF Builder] AUCUN style CSS trouvé dans l\'élément! Clés disponibles: ' . implode(', ', array_keys($element)));
         }
@@ -6471,35 +6567,8 @@ class PDF_Builder_Admin {
             $content = $this->replace_order_variables($content, $order);
         }
 
-        // Construire les styles CSS de l'élément pour les appliquer au contenu
-        $element_style = '';
-        if (isset($element['color']) && !empty($element['color'])) {
-            $element_style .= "color: {$element['color']}; ";
-        }
-        if (isset($element['fontSize']) && $element['fontSize'] > 0) {
-            $element_style .= "font-size: " . floatval($element['fontSize']) . "px; ";
-        }
-        if (isset($element['fontWeight'])) {
-            $element_style .= "font-weight: {$element['fontWeight']}; ";
-        }
-        if (isset($element['fontFamily']) && !empty($element['fontFamily'])) {
-            $element_style .= "font-family: {$element['fontFamily']}; ";
-        }
-        if (isset($element['textAlign'])) {
-            $element_style .= "text-align: {$element['textAlign']}; ";
-        }
-        if (isset($element['textDecoration'])) {
-            $element_style .= "text-decoration: {$element['textDecoration']}; ";
-        }
-        if (isset($element['lineHeight'])) {
-            $element_style .= "line-height: {$element['lineHeight']}; ";
-        }
-        if (isset($element['backgroundColor']) && !empty($element['backgroundColor']) && $element['backgroundColor'] !== 'transparent') {
-            $element_style .= "background-color: {$element['backgroundColor']}; ";
-        }
-        if (isset($element['padding']) && $element['padding'] > 0) {
-            $element_style .= "padding: " . floatval($element['padding']) . "px; ";
-        }
+        // Construire le style complet de l'élément (TOUS les styles CSS)
+        $element_style = $this->build_element_style($element);
 
         switch ($type) {
             case 'text':
