@@ -5757,25 +5757,6 @@ class PDF_Builder_Admin {
     }
 
     /**
-     * AJAX: Flush les règles de réécriture WordPress
-     */
-    public function ajax_flush_rewrites() {
-        // Vérifier les permissions
-        if (!current_user_can('manage_options')) {
-            wp_die('Permissions insuffisantes', 'Forbidden', ['response' => 403]);
-        }
-
-        // Flush les rewrite rules
-        flush_rewrite_rules(true);
-
-        error_log('[PDF Builder] Rewrite rules flushed via AJAX');
-
-        wp_send_json_success([
-            'message' => 'Règles de réécriture flushées avec succès'
-        ]);
-    }
-
-    /**
      * Get a logger instance
      *
      * @return object Logger instance
