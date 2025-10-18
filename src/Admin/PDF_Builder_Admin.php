@@ -3728,6 +3728,25 @@ class PDF_Builder_Admin {
      * Génère le tableau des produits de la commande
      */
     private function generate_order_products_table($order, $table_style = 'default', $element = null) {
+        // Récupérer les options depuis l'élément
+        $show_headers = isset($element['showHeaders']) ? (bool)$element['showHeaders'] : true;
+        $show_borders = isset($element['showBorders']) ? (bool)$element['showBorders'] : true;
+        $show_subtotal = isset($element['showSubtotal']) ? (bool)$element['showSubtotal'] : false;
+        $show_shipping = isset($element['showShipping']) ? (bool)$element['showShipping'] : true;
+        $show_taxes = isset($element['showTaxes']) ? (bool)$element['showTaxes'] : true;
+        $show_discount = isset($element['showDiscount']) ? (bool)$element['showDiscount'] : true;
+        $show_total = isset($element['showTotal']) ? (bool)$element['showTotal'] : true;
+        
+        // Récupérer les colonnes à afficher depuis l'élément
+        $columns = isset($element['columns']) && is_array($element['columns']) ? $element['columns'] : [
+            'image' => false,
+            'name' => true,
+            'sku' => false,
+            'quantity' => true,
+            'price' => true,
+            'total' => true
+        ];
+        
         // Définir les styles de tableau disponibles (même que dans pdf-generator.php)
         $table_styles = [
             'default' => [
@@ -3741,6 +3760,54 @@ class PDF_Builder_Admin {
                 'headerFontWeight' => 'bold',
                 'headerFontSize' => '12px',
                 'rowFontSize' => '11px'
+            ],
+            'classic' => [
+                'header_bg' => ['r' => 30, 'g' => 41, 'b' => 59], // #1e293b
+                'header_border' => ['r' => 51, 'g' => 65, 'b' => 85], // #334155
+                'row_border' => ['r' => 51, 'g' => 65, 'b' => 85], // #334155
+                'alt_row_bg' => ['r' => 255, 'g' => 255, 'b' => 255], // #ffffff
+                'headerTextColor' => '#ffffff',
+                'rowTextColor' => '#1e293b',
+                'border_width' => 1.5,
+                'headerFontWeight' => '700',
+                'headerFontSize' => '11px',
+                'rowFontSize' => '10px'
+            ],
+            'blue' => [
+                'header_bg' => ['r' => 59, 'g' => 130, 'b' => 246], // #3b82f6
+                'header_border' => ['r' => 37, 'g' => 99, 'b' => 235], // #2563eb
+                'row_border' => ['r' => 226, 'g' => 232, 'b' => 240], // #e2e8f0
+                'alt_row_bg' => ['r' => 248, 'g' => 249, 'b' => 250], // #f8fafc
+                'headerTextColor' => '#ffffff',
+                'rowTextColor' => '#1e293b',
+                'border_width' => 1,
+                'headerFontWeight' => 'bold',
+                'headerFontSize' => '11px',
+                'rowFontSize' => '10px'
+            ],
+            'minimal' => [
+                'header_bg' => ['r' => 255, 'g' => 255, 'b' => 255], // #ffffff
+                'header_border' => ['r' => 55, 'g' => 65, 'b' => 81], // #374151
+                'row_border' => ['r' => 209, 'g' => 213, 'b' => 219], // #d1d5db
+                'alt_row_bg' => ['r' => 255, 'g' => 255, 'b' => 255], // #ffffff
+                'headerTextColor' => '#374151',
+                'rowTextColor' => '#374151',
+                'border_width' => 1,
+                'headerFontWeight' => '600',
+                'headerFontSize' => '11px',
+                'rowFontSize' => '10px'
+            ],
+            'light' => [
+                'header_bg' => ['r' => 255, 'g' => 255, 'b' => 255], // #ffffff
+                'header_border' => ['r' => 243, 'g' => 244, 'b' => 246], // #f3f4f6
+                'row_border' => ['r' => 249, 'g' => 250, 'b' => 251], // #f9fafb
+                'alt_row_bg' => ['r' => 255, 'g' => 255, 'b' => 255], // #ffffff
+                'headerTextColor' => '#1e293b',
+                'rowTextColor' => '#1e293b',
+                'border_width' => 1,
+                'headerFontWeight' => '500',
+                'headerFontSize' => '11px',
+                'rowFontSize' => '10px'
             ],
             'emerald_forest' => [
                 'header_bg' => ['r' => 6, 'g' => 78, 'b' => 59], // #064e3b (moyenne du gradient)
@@ -3764,27 +3831,28 @@ class PDF_Builder_Admin {
             return sprintf('rgb(%d, %d, %d)', $rgb['r'], $rgb['g'], $rgb['b']);
         };
 
+        // Déterminer la largeur des bordures selon showBorders
+        $border_width = $show_borders ? $style['border_width'] : 0;
+        $row_border_color = $rgb_to_css($style['row_border']);
+        
         // Styles CSS pour le tableau
         $table_style_css = sprintf(
-            'width: 100%%; border-collapse: collapse; border: %dpx solid %s;',
-            $style['border_width'],
-            $rgb_to_css($style['row_border'])
+            'width: 100%%; border-collapse: collapse;%s',
+            $show_borders ? ' border: ' . $border_width . 'px solid ' . $row_border_color . ';' : ''
         );
 
         $header_style_css = sprintf(
-            'background-color: %s; color: %s; border: %dpx solid %s; padding: 6px 8px; font-weight: %s; font-size: %s; text-align: left;',
+            'background-color: %s; color: %s;%s padding: 6px 8px; font-weight: %s; font-size: %s; text-align: left;',
             $rgb_to_css($style['header_bg']),
             $style['headerTextColor'],
-            $style['border_width'],
-            $rgb_to_css($style['header_border']),
+            $show_borders ? ' border: ' . $border_width . 'px solid ' . $rgb_to_css($style['header_border']) . ';' : '',
             $style['headerFontWeight'],
             $style['headerFontSize']
         );
 
         $cell_style_css = sprintf(
-            'border: %dpx solid %s; padding: 6px 8px; font-size: %s; color: %s;',
-            $style['border_width'],
-            $rgb_to_css($style['row_border']),
+            '%s padding: 6px 8px; font-size: %s; color: %s;',
+            $show_borders ? 'border: ' . $border_width . 'px solid ' . $row_border_color . ';' : '',
             $style['rowFontSize'],
             $style['rowTextColor']
         );
@@ -3792,22 +3860,69 @@ class PDF_Builder_Admin {
         $alt_row_style_css = $cell_style_css . sprintf(' background-color: %s;', $rgb_to_css($style['alt_row_bg']));
 
         $html = '<table style="' . $table_style_css . '">';
-        $html .= '<thead><tr>';
-        $html .= '<th style="' . $header_style_css . '">Produit</th>';
-        $html .= '<th style="' . $header_style_css . '">Qté</th>';
-        $html .= '<th style="' . $header_style_css . '">Prix</th>';
-        $html .= '<th style="' . $header_style_css . '">Total</th>';
-        $html .= '</tr></thead><tbody>';
+        
+        // Entête du tableau (si activée)
+        if ($show_headers) {
+            $html .= '<thead><tr>';
+            if ($columns['image'] ?? false) {
+                $html .= '<th style="' . $header_style_css . '">Image</th>';
+            }
+            if ($columns['name'] ?? true) {
+                $html .= '<th style="' . $header_style_css . '">Produit</th>';
+            }
+            if ($columns['sku'] ?? false) {
+                $html .= '<th style="' . $header_style_css . '">SKU</th>';
+            }
+            if ($columns['quantity'] ?? true) {
+                $html .= '<th style="' . $header_style_css . '">Qté</th>';
+            }
+            if ($columns['price'] ?? true) {
+                $html .= '<th style="' . $header_style_css . '">Prix</th>';
+            }
+            if ($columns['total'] ?? true) {
+                $html .= '<th style="' . $header_style_css . '">Total</th>';
+            }
+            $html .= '</tr></thead>';
+        }
+        
+        $html .= '<tbody>';
 
         $row_count = 0;
         foreach ($order->get_items() as $item) {
             $product = $item->get_product();
             $row_style = ($row_count % 2 == 1) ? $alt_row_style_css : $cell_style_css;
             $html .= '<tr>';
-            $html .= '<td style="' . $row_style . '">' . esc_html($item->get_name()) . '</td>';
-            $html .= '<td style="' . $row_style . ' text-align: center;">' . $item->get_quantity() . '</td>';
-            $html .= '<td style="' . $row_style . ' text-align: right;">' . wc_price($item->get_total() / $item->get_quantity()) . '</td>';
-            $html .= '<td style="' . $row_style . ' text-align: right;">' . wc_price($item->get_total()) . '</td>';
+            
+            if ($columns['image'] ?? false) {
+                $image_url = $product ? wp_get_attachment_image_url($product->get_image_id(), 'thumbnail') : '';
+                $html .= '<td style="' . $row_style . ' text-align: center;">';
+                if ($image_url) {
+                    $html .= '<img src="' . esc_url($image_url) . '" style="max-width: 40px; max-height: 40px; object-fit: contain;" />';
+                }
+                $html .= '</td>';
+            }
+            
+            if ($columns['name'] ?? true) {
+                $html .= '<td style="' . $row_style . '">' . esc_html($item->get_name()) . '</td>';
+            }
+            
+            if ($columns['sku'] ?? false) {
+                $sku = $product ? $product->get_sku() : '';
+                $html .= '<td style="' . $row_style . ' text-align: center;">' . esc_html($sku) . '</td>';
+            }
+            
+            if ($columns['quantity'] ?? true) {
+                $html .= '<td style="' . $row_style . ' text-align: center;">' . $item->get_quantity() . '</td>';
+            }
+            
+            if ($columns['price'] ?? true) {
+                $html .= '<td style="' . $row_style . ' text-align: right;">' . wc_price($item->get_total() / $item->get_quantity()) . '</td>';
+            }
+            
+            if ($columns['total'] ?? true) {
+                $html .= '<td style="' . $row_style . ' text-align: right;">' . wc_price($item->get_total()) . '</td>';
+            }
+            
             $html .= '</tr>';
             $row_count++;
         }
@@ -3819,12 +3934,46 @@ class PDF_Builder_Admin {
             $row_style = ($row_count % 2 == 1) ? $alt_row_style_css : $cell_style_css;
 
             $html .= '<tr>';
-            $html .= '<td style="' . $row_style . ' font-weight: bold;">' . esc_html($fee_name) . '</td>';
-            $html .= '<td style="' . $row_style . ' text-align: center;">-</td>';
-            $html .= '<td style="' . $row_style . ' text-align: right;">-</td>';
-            $html .= '<td style="' . $row_style . ' text-align: right; font-weight: bold;">' . wc_price($fee_total) . '</td>';
+            if ($columns['image'] ?? false) {
+                $html .= '<td style="' . $row_style . '"></td>';
+            }
+            if ($columns['name'] ?? true) {
+                $html .= '<td style="' . $row_style . ' font-weight: bold;">' . esc_html($fee_name) . '</td>';
+            }
+            if ($columns['sku'] ?? false) {
+                $html .= '<td style="' . $row_style . '"></td>';
+            }
+            if ($columns['quantity'] ?? true) {
+                $html .= '<td style="' . $row_style . ' text-align: center;">-</td>';
+            }
+            if ($columns['price'] ?? true) {
+                $html .= '<td style="' . $row_style . ' text-align: right;">-</td>';
+            }
+            if ($columns['total'] ?? true) {
+                $html .= '<td style="' . $row_style . ' text-align: right; font-weight: bold;">' . wc_price($fee_total) . '</td>';
+            }
             $html .= '</tr>';
             $row_count++;
+        }
+        
+        // Ajouter les lignes de totaux si demandées
+        if ($show_subtotal) {
+            $row_style = $cell_style_css;
+            $html .= '<tr>';
+            $colspan = 0;
+            if ($columns['image'] ?? false) $colspan++;
+            if ($columns['name'] ?? true) $colspan++;
+            if ($columns['sku'] ?? false) $colspan++;
+            if ($columns['quantity'] ?? true) $colspan++;
+            if ($columns['price'] ?? true) $colspan++;
+            
+            if ($colspan > 0) {
+                $html .= '<td colspan="' . $colspan . '" style="' . $row_style . ' text-align: right; font-weight: bold;">Sous-total:</td>';
+            }
+            if ($columns['total'] ?? true) {
+                $html .= '<td style="' . $row_style . ' text-align: right; font-weight: bold;">' . wc_price($order->get_subtotal()) . '</td>';
+            }
+            $html .= '</tr>';
         }
 
         $html .= '</tbody></table>';
@@ -6592,7 +6741,9 @@ class PDF_Builder_Admin {
 
             case 'product_table':
                 if ($order) {
-                    $table_html = $this->generate_order_products_table($order, 'default', $element);
+                    // Récupérer le style du tableau depuis l'élément
+                    $table_style = $element['tableStyle'] ?? 'default';
+                    $table_html = $this->generate_order_products_table($order, $table_style, $element);
                     // Wrapper avec styles
                     return '<div style="width: 100%; height: 100%; overflow: auto; ' . esc_attr($element_style) . '">' . $table_html . '</div>';
                 }
@@ -6679,6 +6830,36 @@ class PDF_Builder_Admin {
 
             case 'divider':
                 return '<div style="width: 100%; height: 2px; background-color: #cccccc; ' . esc_attr($element_style) . '"></div>';
+
+            case 'line':
+                // Ligne horizontale (divider)
+                $line_color = $element['lineColor'] ?? $element['strokeColor'] ?? '#6b7280';
+                $line_width = intval($element['lineWidth'] ?? $element['strokeWidth'] ?? 1);
+                return '<div style="width: 100%; height: ' . $line_width . 'px; background-color: ' . esc_attr($line_color) . '; ' . esc_attr($element_style) . '"></div>';
+
+            case 'layout-header':
+            case 'layout-footer':
+            case 'layout-section':
+                // Éléments de mise en page avec du texte
+                $layout_text = $element['text'] ?? '';
+                if ($order) {
+                    $layout_text = $this->replace_order_variables($layout_text, $order);
+                }
+                return '<div style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; ' . esc_attr($element_style) . '">' . wp_kses_post($layout_text) . '</div>';
+
+            case 'shape-rectangle':
+            case 'shape-circle':
+            case 'shape-line':
+            case 'shape-arrow':
+            case 'shape-triangle':
+            case 'shape-star':
+                // Formes géométriques - juste un div avec les styles appropriés
+                if ($type === 'shape-circle') {
+                    $additional_style = 'border-radius: 50%; ';
+                } else {
+                    $additional_style = '';
+                }
+                return '<div style="width: 100%; height: 100%; ' . $additional_style . esc_attr($element_style) . '"></div>';
 
             default:
                 return '<div style="' . esc_attr($element_style) . '">' . wp_kses_post($content) . '</div>';
