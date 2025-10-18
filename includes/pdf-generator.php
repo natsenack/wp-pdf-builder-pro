@@ -2415,7 +2415,8 @@ class PDF_Builder_Pro_Generator {
 
         // Définir les couleurs de trait pour les bordures des lignes de données
         if ($show_borders) {
-            $row_border_rgb = $this->hex_to_rgb($table_styles['rowBorder']);
+            $row_border_color = isset($table_styles['rowBorder']) ? $table_styles['rowBorder'] : '#e2e8f0';
+            $row_border_rgb = $this->hex_to_rgb($row_border_color);
             $this->pdf->SetDrawColor($row_border_rgb[0], $row_border_rgb[1], $row_border_rgb[2]);
             $this->pdf->SetLineWidth($table_styles['border_width'] * 0.2);
         }
