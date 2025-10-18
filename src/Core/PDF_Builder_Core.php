@@ -134,10 +134,11 @@ class PDF_Builder_Core {
     private function init_canvas_managers() {
         try {
             // Initialiser les managers (autoloader gère le chargement automatique)
-            $elements_manager = PDF_Builder_Canvas_Elements_Manager::getInstance();
-            $drag_manager = PDF_Builder_Drag_Drop_Manager::getInstance();
-            $resize_manager = PDF_Builder_Resize_Manager::getInstance();
-            $interactions_manager = PDF_Builder_Canvas_Interactions_Manager::getInstance();
+            // Note: Ces classes sont dans le namespace global (pas de namespace déclaré)
+            $elements_manager = \PDF_Builder_Canvas_Elements_Manager::getInstance();
+            $drag_manager = \PDF_Builder_Drag_Drop_Manager::getInstance();
+            $resize_manager = \PDF_Builder_Resize_Manager::getInstance();
+            $interactions_manager = \PDF_Builder_Canvas_Interactions_Manager::getInstance();
 
         } catch (Exception $e) {
             // Gestion silencieuse des erreurs d'initialisation
