@@ -268,6 +268,9 @@ class PDF_Builder_Admin {
         add_action('wp_ajax_pdf_builder_save_settings', [$this, 'ajax_save_settings']);
         add_action('wp_ajax_pdf_builder_save_settings_page', [$this, 'ajax_save_settings_page']);
 
+        // Hook AJAX pour migrer les templates obsolètes
+        add_action('wp_ajax_pdf_builder_migrate_templates', [$this, 'ajax_migrate_templates']);
+
         // Endpoint pour le debug direct (accessible via URL) - TODO: Implémenter ces méthodes
         // add_action('init', [$this, 'add_debug_endpoint']);
         // add_action('template_redirect', [$this, 'handle_debug_endpoint']);
@@ -5541,7 +5544,53 @@ class PDF_Builder_Admin {
             $template_id
         ));
 
-        return $template_data ? json_decode($template_data, true) : null;
+        if (!$template_data) {
+            return null;
+        }
+
+        $template = json_decode($template_data, true);
+        
+        // MIGRATION: Corriger les valeurs par défaut obsolètes dans les templates
+        // Les templates créés avant cette correction peuvent avoir des valeurs par défaut incorrectes
+        if (is_array($template) && isset($template['elements']) && is_array($template['elements'])) {
+            foreach ($template['elements'] as &$element) {
+                if ($element['type'] === 'product_table') {
+                    // Valeurs par défaut correctes du Canvas Elements Manager
+                    // showSubtotal, showDiscount, showTotal doivent être false par défaut
+                    // showShipping et showTaxes doivent être true par défaut
+                    
+                    // Générer les headers automatiquement s'ils ne correspondent pas aux colonnes
+                    $columns = $element['columns'] ?? [];
+                    $headers = $element['headers'] ?? [];
+                    
+                    $visible_count = count(array_filter($columns));
+                    
+                    if (is_array($headers) && count($headers) !== $visible_count) {
+                        // Les headers ne correspondent pas au nombre de colonnes visibles
+                        // Les régénérer automatiquement
+                        $default_headers_map = [
+                            'image' => 'Image',
+                            'name' => 'Produit',
+                            'sku' => 'SKU',
+                            'quantity' => 'Qté',
+                            'price' => 'Prix',
+                            'total' => 'Total'
+                        ];
+                        
+                        $element['headers'] = [];
+                        foreach ($columns as $col_name => $col_visible) {
+                            if ($col_visible) {
+                                $element['headers'][] = $default_headers_map[$col_name] ?? ucfirst($col_name);
+                            }
+                        }
+                        
+                        error_log('[PDF Builder] Template migration - Headers régénérés pour le tableau');
+                    }
+                }
+            }
+        }
+        
+        return $template;
     }
 
     /**
@@ -5735,6 +5784,107 @@ class PDF_Builder_Admin {
         } catch (Exception $e) {
             error_log('[PDF Builder] generate_pdf_preview - Exception: ' . $e->getMessage() . ' - ' . $e->getTraceAsString());
             return false;
+        }
+    }
+
+    /**
+     * AJAX pour migrer les templates obsolètes aux nouvelles valeurs par défaut
+     * Appelé via /wp-admin/admin-ajax.php?action=pdf_builder_migrate_templates
+     */
+    public function ajax_migrate_templates() {
+        // Vérifier les permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => 'Permissions insuffisantes']);
+            return;
+        }
+
+        global $wpdb;
+        $table = $wpdb->prefix . 'pdf_builder_templates';
+
+        try {
+            // Récupérer tous les templates
+            $templates = $wpdb->get_results("SELECT id, template_data FROM $table");
+
+            if (empty($templates)) {
+                wp_send_json_success(['message' => 'Aucun template à migrer', 'migrated' => 0, 'total' => 0]);
+                return;
+            }
+
+            $migrated_count = 0;
+            $errors = [];
+
+            foreach ($templates as $row) {
+                $template = json_decode($row->template_data, true);
+
+                if (!is_array($template) || empty($template['elements'])) {
+                    continue;
+                }
+
+                $template_modified = false;
+
+                // Migrer chaque élément product_table
+                foreach ($template['elements'] as &$element) {
+                    if ($element['type'] === 'product_table') {
+                        // Vérifier et corriger les headers
+                        $columns = $element['columns'] ?? [];
+                        $headers = $element['headers'] ?? [];
+
+                        $visible_count = count(array_filter($columns));
+                        
+                        if (!is_array($headers) || count($headers) !== $visible_count) {
+                            // Régénérer les headers
+                            $default_headers_map = [
+                                'image' => 'Image',
+                                'name' => 'Produit',
+                                'sku' => 'SKU',
+                                'quantity' => 'Qté',
+                                'price' => 'Prix',
+                                'total' => 'Total'
+                            ];
+
+                            $element['headers'] = [];
+                            foreach ($columns as $col_name => $col_visible) {
+                                if ($col_visible) {
+                                    $element['headers'][] = $default_headers_map[$col_name] ?? ucfirst($col_name);
+                                }
+                            }
+
+                            $template_modified = true;
+                            error_log("[PDF Builder] Migration template ID={$row->id}: Headers régénérés");
+                        }
+                    }
+                }
+
+                // Sauvegarder si modifié
+                if ($template_modified) {
+                    $updated = $wpdb->update(
+                        $table,
+                        ['template_data' => json_encode($template)],
+                        ['id' => $row->id],
+                        ['%s'],
+                        ['%d']
+                    );
+
+                    if ($updated !== false) {
+                        $migrated_count++;
+                    } else {
+                        $errors[] = "Erreur lors de la migration du template ID={$row->id}";
+                    }
+                }
+            }
+
+            error_log("[PDF Builder] Migration terminée: $migrated_count templates migrés");
+
+            wp_send_json_success([
+                'message' => "Migration terminée: $migrated_count template(s) corrigé(s)",
+                'migrated' => $migrated_count,
+                'total' => count($templates),
+                'errors' => $errors
+            ]);
+
+        } catch (Exception $e) {
+            error_log('[PDF Builder] Erreur lors de la migration: ' . $e->getMessage());
+            wp_send_json_error(['message' => 'Erreur lors de la migration: ' . $e->getMessage()]);
         }
     }
 
