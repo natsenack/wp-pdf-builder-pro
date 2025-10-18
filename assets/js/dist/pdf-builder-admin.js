@@ -5242,7 +5242,7 @@ var PreviewModal = function PreviewModal(_ref) {
     _ref$onOpenPDFModal = _ref.onOpenPDFModal,
     onOpenPDFModal = _ref$onOpenPDFModal === void 0 ? null : _ref$onOpenPDFModal,
     _ref$useServerPreview = _ref.useServerPreview,
-    useServerPreview = _ref$useServerPreview === void 0 ? false : _ref$useServerPreview;
+    useServerPreview = _ref$useServerPreview === void 0 ? true : _ref$useServerPreview;
   var _useState = (0,react.useState)(null),
     _useState2 = PreviewModal_slicedToArray(_useState, 2),
     previewData = _useState2[0],

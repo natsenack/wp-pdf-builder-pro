@@ -12,7 +12,7 @@ const PreviewModal = ({
   ajaxurl,
   pdfBuilderNonce,
   onOpenPDFModal = null,
-  useServerPreview = false // Forcé à false pour utiliser l'aperçu HTML côté client - MODIFIE
+  useServerPreview = true // Forcé à true temporairement pour capturer les logs PHP - MODIFIE
 }) => {
   const [previewData, setPreviewData] = useState(null);
   const [loading, setLoading] = useState(false);
