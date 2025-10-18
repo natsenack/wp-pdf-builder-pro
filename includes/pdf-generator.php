@@ -2492,45 +2492,49 @@ class PDF_Builder_Pro_Generator {
 
         $total = $subtotal + $shipping + $taxes - $discount;
 
-        // Déterminer la colonne de droite pour les totaux (dernière colonne visible)
+        // Déterminer les colonnes pour les totaux (2 dernières colonnes pour plus de place)
         $rightmost_col_index = count($col_widths) - 1;
+        $second_rightmost_col_index = max(0, count($col_widths) - 2);
 
         $total_x = $x;
-        for ($i = 0; $i < $rightmost_col_index; $i++) {
+        for ($i = 0; $i < $second_rightmost_col_index; $i++) {
             $total_x += $col_widths[$i];
         }
+
+        // Largeur totale pour les totaux (2 dernières colonnes)
+        $total_width = $col_widths[$second_rightmost_col_index] + $col_widths[$rightmost_col_index];
 
         // Sous-total
         if ($show_subtotal) {
             $this->pdf->SetXY($total_x, $current_y);
             $this->pdf->SetFont('helvetica', 'B', 8);
             $subtotal_text = 'Sous-total: ' . number_format($subtotal, 2, ',', ' ') . ' ' . '€';
-            $this->pdf->Cell($col_widths[$rightmost_col_index], $row_height, $subtotal_text, $show_borders ? 1 : 0, 1, 'R');
-            $current_y += $row_height;
+            $this->pdf->Cell($total_width, $row_height + 2, $subtotal_text, $show_borders ? 1 : 0, 1, 'R');
+            $current_y += $row_height + 2;
         }
 
         // Frais de port
         if ($show_shipping && $shipping != 0) {
             $this->pdf->SetXY($total_x, $current_y);
             $shipping_text = 'Port: ' . number_format($shipping, 2, ',', ' ') . ' ' . '€';
-            $this->pdf->Cell($col_widths[$rightmost_col_index], $row_height, $shipping_text, $show_borders ? 1 : 0, 1, 'R');
-            $current_y += $row_height;
+            $this->pdf->Cell($total_width, $row_height + 2, $shipping_text, $show_borders ? 1 : 0, 1, 'R');
+            $current_y += $row_height + 2;
         }
 
         // Taxes
         if ($show_taxes && $taxes != 0) {
             $this->pdf->SetXY($total_x, $current_y);
             $taxes_text = 'TVA: ' . number_format($taxes, 2, ',', ' ') . ' ' . '€';
-            $this->pdf->Cell($col_widths[$rightmost_col_index], $row_height, $taxes_text, $show_borders ? 1 : 0, 1, 'R');
-            $current_y += $row_height;
+            $this->pdf->Cell($total_width, $row_height + 2, $taxes_text, $show_borders ? 1 : 0, 1, 'R');
+            $current_y += $row_height + 2;
         }
 
         // Remise
         if ($show_discount && $discount != 0) {
             $this->pdf->SetXY($total_x, $current_y);
             $discount_text = 'Remise: ' . ($discount > 0 ? '-' : '') . number_format(abs($discount), 2, ',', ' ') . ' ' . '€';
-            $this->pdf->Cell($col_widths[$rightmost_col_index], $row_height, $discount_text, $show_borders ? 1 : 0, 1, 'R');
-            $current_y += $row_height;
+            $this->pdf->Cell($total_width, $row_height + 2, $discount_text, $show_borders ? 1 : 0, 1, 'R');
+            $current_y += $row_height + 2;
         }
 
         // Total final
@@ -2544,7 +2548,7 @@ class PDF_Builder_Pro_Generator {
             $this->pdf->SetXY($total_x, $current_y);
             $this->pdf->SetFillColor($table_styles['header_bg']['r'], $table_styles['header_bg']['g'], $table_styles['header_bg']['b']);
             $total_text = 'TOTAL: ' . number_format($total, 2, ',', ' ') . ' ' . '€';
-            $this->pdf->Cell($col_widths[$rightmost_col_index], $row_height + 2, $total_text, $show_borders ? 1 : 0, 1, 'R', true);
+            $this->pdf->Cell($total_width, $row_height + 2, $total_text, $show_borders ? 1 : 0, 1, 'R', true);
         }
 
         return $current_y;
