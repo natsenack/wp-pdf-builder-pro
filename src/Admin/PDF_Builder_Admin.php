@@ -5552,17 +5552,32 @@ class PDF_Builder_Admin {
         $status_templates = get_option('pdf_builder_order_status_templates', []);
 
         $status_key = 'wc-' . $order_status;
+        
+        error_log('[PDF Builder] auto_detect_template - Statut commande: ' . $order_status);
+        error_log('[PDF Builder] auto_detect_template - Clé statut: ' . $status_key);
+        error_log('[PDF Builder] auto_detect_template - Status templates config: ' . json_encode($status_templates));
 
         if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
-            return $this->load_template_by_id($status_templates[$status_key]);
+            $template_id = $status_templates[$status_key];
+            error_log('[PDF Builder] auto_detect_template - Template trouvé pour ce statut: ID ' . $template_id);
+            $template = $this->load_template_by_id($template_id);
+            error_log('[PDF Builder] auto_detect_template - Template chargé: ' . json_encode($template));
+            return $template;
         }
 
         // Template par défaut si aucun trouvé
+        error_log('[PDF Builder] auto_detect_template - Aucun template pour ce statut, utilisation du template par défaut');
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
         $default_template = $wpdb->get_var("SELECT template_data FROM $table_templates ORDER BY id ASC LIMIT 1");
 
-        return $default_template ? json_decode($default_template, true) : null;
+        if ($default_template) {
+            error_log('[PDF Builder] auto_detect_template - Template par défaut trouvé');
+            return json_decode($default_template, true);
+        }
+        
+        error_log('[PDF Builder] auto_detect_template - Aucun template disponible!');
+        return null;
     }
 
     /**
