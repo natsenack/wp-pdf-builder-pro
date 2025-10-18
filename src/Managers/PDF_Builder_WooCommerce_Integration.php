@@ -700,7 +700,7 @@ class PDF_Builder_WooCommerce_Integration {
                     error: function() {
                         $loading.hide();
                         $modal.find('.woo-pdf-preview-modal-body').html(
-                            "<div style='text-align: center; padding: 40px; color: #dc3545;'><p>Erreur AJAX lors de l" + "'" + "aperçu</p></div>"
+                            "<div style='text-align: center; padding: 40px; color: #dc3545;'><p>Erreur AJAX lors de l'aperçu</p></div>"
                         );
                         showStatus("Erreur AJAX", "error");
                     }
