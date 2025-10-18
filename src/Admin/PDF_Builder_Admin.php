@@ -178,10 +178,10 @@ class PDF_Builder_Admin {
         add_action('wp_ajax_pdf_builder_save_settings', [$this, 'ajax_save_settings']);
         add_action('wp_ajax_pdf_builder_save_settings_page', [$this, 'ajax_save_settings_page']);
 
-        // Endpoint pour le debug direct (accessible via URL)
-        add_action('init', [$this, 'add_debug_endpoint']);
-        add_action('template_redirect', [$this, 'handle_debug_endpoint']);
-        add_filter('query_vars', [$this, 'add_debug_query_vars']);
+        // Endpoint pour le debug direct (accessible via URL) - TODO: Implémenter ces méthodes
+        // add_action('init', [$this, 'add_debug_endpoint']);
+        // add_action('template_redirect', [$this, 'handle_debug_endpoint']);
+        // add_filter('query_vars', [$this, 'add_debug_query_vars']);
 
     }
 
