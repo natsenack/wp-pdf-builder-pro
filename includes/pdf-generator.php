@@ -2023,8 +2023,8 @@ class PDF_Builder_Pro_Generator {
                 'shadow' => '0 2px 8px rgba(0, 0, 0, 0.15)',
                 'borderRadius' => '0px'
             ],
-            'striped' => [
-                'header_bg' => ['r' => 59, 'g' => 130, 'b' => 246], // #3b82f6
+            'modern' => [
+                'header_bg' => ['r' => 59, 'g' => 130, 'b' => 246], // Bleu moderne
                 'header_border' => ['r' => 37, 'g' => 99, 'b' => 235], // #2563eb
                 'row_border' => ['r' => 226, 'g' => 232, 'b' => 240], // #e2e8f0
                 'row_bg' => 'transparent',
@@ -2037,20 +2037,6 @@ class PDF_Builder_Pro_Generator {
                 'rowFontSize' => '10px',
                 'shadow' => '0 1px 4px rgba(59, 130, 246, 0.2)',
                 'borderRadius' => '6px'
-            ],
-            'bordered' => [
-                'header_bg' => ['r' => 255, 'g' => 255, 'b' => 255], // #ffffff
-                'header_border' => ['r' => 55, 'g' => 65, 'b' => 81], // #374151
-                'row_border' => ['r' => 209, 'g' => 213, 'b' => 219], // #d1d5db
-                'alt_row_bg' => ['r' => 255, 'g' => 255, 'b' => 255], // #ffffff
-                'headerTextColor' => '#111827',
-                'rowTextColor' => '#111827',
-                'border_width' => 2.0,
-                'headerFontWeight' => '600',
-                'headerFontSize' => '11px',
-                'rowFontSize' => '10px',
-                'shadow' => '0 4px 12px rgba(0, 0, 0, 0.1), inset 0 0 0 1px #e5e7eb',
-                'borderRadius' => '8px'
             ],
             'minimal' => [
                 'header_bg' => ['r' => 255, 'g' => 255, 'b' => 255], // #ffffff
@@ -2066,149 +2052,8 @@ class PDF_Builder_Pro_Generator {
                 'shadow' => 'none',
                 'borderRadius' => '0px'
             ],
-            'modern' => [
-                'header_bg' => ['r' => 102, 'g' => 126, 'b' => 234], // Bleu moderne
-                'header_border' => ['r' => 91, 'g' => 33, 'b' => 182], // #5b21b6
-                'row_border' => ['r' => 233, 'g' => 213, 'b' => 255], // #e9d5ff
-                'alt_row_bg' => ['r' => 250, 'g' => 245, 'b' => 255], // #faf5ff
-                'headerTextColor' => '#ffffff',
-                'rowTextColor' => '#6b21a8',
-                'border_width' => 1.0,
-                'headerFontWeight' => '600',
-                'headerFontSize' => '11px',
-                'rowFontSize' => '10px',
-                'shadow' => '0 4px 20px rgba(102, 126, 234, 0.25)',
-                'borderRadius' => '8px'
-            ],
-            'blue_ocean' => [
-                'header_bg' => ['r' => 59, 'g' => 130, 'b' => 246], // Bleu océan
-                'header_border' => ['r' => 30, 'g' => 64, 'b' => 175], // #1e40af
-                'row_border' => ['r' => 219, 'g' => 234, 'b' => 254], // #dbeafe
-                'alt_row_bg' => ['r' => 239, 'g' => 246, 'b' => 255], // #eff6ff
-                'headerTextColor' => '#ffffff',
-                'rowTextColor' => '#1e3a8a',
-                'border_width' => 1.5,
-                'headerFontWeight' => '600',
-                'headerFontSize' => '11px',
-                'rowFontSize' => '10px',
-                'shadow' => '0 4px 16px rgba(59, 130, 246, 0.3)',
-                'borderRadius' => '6px'
-            ],
-            'emerald_forest' => [
-                'header_bg' => ['r' => 16, 'g' => 185, 'b' => 129], // Vert émeraude
-                'header_border' => ['r' => 6, 'g' => 95, 'b' => 70], // #065f46
-                'row_border' => ['r' => 209, 'g' => 250, 'b' => 229], // #d1fae5
-                'row_bg' => ['r' => 209, 'g' => 250, 'b' => 229], // #d1fae5 (lignes paires)
-                'alt_row_bg' => ['r' => 167, 'g' => 243, 'b' => 208], // #a7f3d0 (lignes impaires)
-                'headerTextColor' => '#ffffff',
-                'rowTextColor' => '#064e3b',
-                'border_width' => 1.5,
-                'headerFontWeight' => '600',
-                'headerFontSize' => '11px',
-                'rowFontSize' => '10px',
-                'shadow' => '0 4px 16px rgba(16, 185, 129, 0.3)',
-                'borderRadius' => '6px'
-            ],
-            'sunset_orange' => [
-                'header_bg' => ['r' => 249, 'g' => 115, 'b' => 22], // Orange coucher
-                'header_border' => ['r' => 194, 'g' => 65, 'b' => 12], // #c2410c
-                'row_border' => ['r' => 254, 'g' => 215, 'b' => 170], // #fed7aa
-                'alt_row_bg' => ['r' => 255, 'g' => 247, 'b' => 237], // #fff7ed
-                'headerTextColor' => '#ffffff',
-                'rowTextColor' => '#9a3412',
-                'border_width' => 1.5,
-                'headerFontWeight' => '600',
-                'headerFontSize' => '11px',
-                'rowFontSize' => '10px',
-                'shadow' => '0 4px 16px rgba(249, 115, 22, 0.3)',
-                'borderRadius' => '6px'
-            ],
-            'royal_purple' => [
-                'header_bg' => ['r' => 88, 'g' => 28, 'b' => 135], // #581c87 (moyenne du gradient)
-                'header_border' => ['r' => 124, 'g' => 58, 'b' => 237], // #7c3aed
-                'row_border' => ['r' => 233, 'g' => 213, 'b' => 255], // #e9d5ff
-                'alt_row_bg' => ['r' => 250, 'g' => 245, 'b' => 255], // #faf5ff
-                'headerTextColor' => '#ffffff',
-                'rowTextColor' => '#581c87',
-                'border_width' => 1.5,
-                'headerFontWeight' => '600',
-                'headerFontSize' => '11px',
-                'rowFontSize' => '10px',
-                'shadow' => '0 4px 16px rgba(168, 85, 247, 0.3)',
-                'borderRadius' => '6px'
-            ],
-            'rose_pink' => [
-                'header_bg' => ['r' => 190, 'g' => 24, 'b' => 93], // #be185d (moyenne du gradient)
-                'header_border' => ['r' => 219, 'g' => 39, 'b' => 119], // #db2777
-                'row_border' => ['r' => 252, 'g' => 231, 'b' => 243], // #fce7f3
-                'alt_row_bg' => ['r' => 253, 'g' => 244, 'b' => 248], // #fdf2f8
-                'headerTextColor' => '#ffffff',
-                'rowTextColor' => '#be185d',
-                'border_width' => 1.5,
-                'headerFontWeight' => '600',
-                'headerFontSize' => '11px',
-                'rowFontSize' => '10px',
-                'shadow' => '0 4px 16px rgba(244, 114, 182, 0.3)',
-                'borderRadius' => '6px'
-            ],
-            'teal_aqua' => [
-                'header_bg' => ['r' => 15, 'g' => 118, 'b' => 110], // #0f766e (moyenne du gradient)
-                'header_border' => ['r' => 13, 'g' => 148, 'b' => 136], // #0d9488
-                'row_border' => ['r' => 204, 'g' => 251, 'b' => 241], // #ccfbf1
-                'alt_row_bg' => ['r' => 240, 'g' => 253, 'b' => 250], // #f0fdfa
-                'headerTextColor' => '#ffffff',
-                'rowTextColor' => '#0f766e',
-                'border_width' => 1.5,
-                'headerFontWeight' => '600',
-                'headerFontSize' => '11px',
-                'rowFontSize' => '10px',
-                'shadow' => '0 4px 16px rgba(20, 184, 166, 0.3)',
-                'borderRadius' => '6px'
-            ],
-            'crimson_red' => [
-                'header_bg' => ['r' => 153, 'g' => 27, 'b' => 27], // #991b1b (moyenne du gradient)
-                'header_border' => ['r' => 220, 'g' => 38, 'b' => 38], // #dc2626
-                'row_border' => ['r' => 254, 'g' => 202, 'b' => 202], // #fecaca
-                'alt_row_bg' => ['r' => 254, 'g' => 242, 'b' => 242], // #fef2f2
-                'headerTextColor' => '#ffffff',
-                'rowTextColor' => '#dc2626',
-                'border_width' => 1.5,
-                'headerFontWeight' => '600',
-                'headerFontSize' => '11px',
-                'rowFontSize' => '10px',
-                'shadow' => '0 4px 16px rgba(220, 38, 38, 0.3)',
-                'borderRadius' => '6px'
-            ],
-            'amber_gold' => [
-                'header_bg' => ['r' => 146, 'g' => 64, 'b' => 14], // #92400e (moyenne du gradient)
-                'header_border' => ['r' => 217, 'g' => 119, 'b' => 6], // #d97706
-                'row_border' => ['r' => 254, 'g' => 243, 'b' => 199], // #fef3c7
-                'alt_row_bg' => ['r' => 254, 'g' => 250, 'b' => 235], // #fef3eb
-                'headerTextColor' => '#ffffff',
-                'rowTextColor' => '#d97706',
-                'border_width' => 1.5,
-                'headerFontWeight' => '600',
-                'headerFontSize' => '11px',
-                'rowFontSize' => '10px',
-                'shadow' => '0 4px 16px rgba(217, 119, 6, 0.3)',
-                'borderRadius' => '6px'
-            ],
-            'indigo_night' => [
-                'header_bg' => ['r' => 49, 'g' => 46, 'b' => 129], // #312e81 (moyenne du gradient)
-                'header_border' => ['r' => 67, 'g' => 56, 'b' => 202], // #4338ca
-                'row_border' => ['r' => 224, 'g' => 231, 'b' => 255], // #e0e7ff
-                'alt_row_bg' => ['r' => 238, 'g' => 242, 'b' => 255], // #eef2ff
-                'headerTextColor' => '#ffffff',
-                'rowTextColor' => '#4338ca',
-                'border_width' => 1.5,
-                'headerFontWeight' => '600',
-                'headerFontSize' => '11px',
-                'rowFontSize' => '10px',
-                'shadow' => '0 4px 16px rgba(67, 56, 202, 0.3)',
-                'borderRadius' => '6px'
-            ],
             'slate_gray' => [
-                'header_bg' => ['r' => 55, 'g' => 65, 'b' => 81], // Couleur moyenne du dégradé
+                'header_bg' => ['r' => 55, 'g' => 65, 'b' => 81], // Gris ardoise
                 'header_border' => ['r' => 75, 'g' => 85, 'b' => 99],
                 'row_border' => ['r' => 243, 'g' => 244, 'b' => 246],
                 'alt_row_bg' => ['r' => 249, 'g' => 250, 'b' => 251],
@@ -2216,126 +2061,45 @@ class PDF_Builder_Pro_Generator {
                 'rowTextColor' => '#374151',
                 'border_width' => 1.5
             ],
-            'coral_sunset' => [
-                'header_bg' => ['r' => 194, 'g' => 65, 'b' => 12], // Couleur moyenne du dégradé
-                'header_border' => ['r' => 234, 'g' => 88, 'b' => 12],
-                'row_border' => ['r' => 254, 'g' => 215, 'b' => 215],
-                'alt_row_bg' => ['r' => 254, 'g' => 247, 'b' => 247],
+            'coral' => [
+                'header_bg' => ['r' => 248, 'g' => 113, 'b' => 113], // Corail
+                'header_border' => ['r' => 252, 'g' => 165, 'b' => 165],
+                'row_border' => ['r' => 254, 'g' => 226, 'b' => 226],
+                'alt_row_bg' => ['r' => 255, 'g' => 245, 'b' => 245],
                 'headerTextColor' => '#ffffff',
-                'rowTextColor' => '#ea580c',
+                'rowTextColor' => '#dc2626',
                 'border_width' => 1.5,
                 'headerFontWeight' => '600',
                 'headerFontSize' => '11px',
                 'rowFontSize' => '10px',
-                'shadow' => '0 4px 16px rgba(249, 115, 22, 0.3)',
+                'shadow' => '0 4px 16px rgba(248, 113, 113, 0.3)',
                 'borderRadius' => '6px'
             ],
-            'mint_green' => [
-                'header_bg' => ['r' => 6, 'g' => 95, 'b' => 70], // Couleur moyenne du dégradé
-                'header_border' => ['r' => 4, 'g' => 120, 'b' => 87],
-                'row_border' => ['r' => 209, 'g' => 250, 'b' => 229],
-                'alt_row_bg' => ['r' => 236, 'g' => 253, 'b' => 245],
-                'headerTextColor' => '#ffffff',
-                'rowTextColor' => '#047857',
-                'border_width' => 1.5
-            ],
-            'violet_dream' => [
-                'header_bg' => ['r' => 109, 'g' => 40, 'b' => 217], // Couleur moyenne du dégradé
-                'header_border' => ['r' => 139, 'g' => 92, 'b' => 246],
-                'row_border' => ['r' => 237, 'g' => 233, 'b' => 254],
-                'alt_row_bg' => ['r' => 245, 'g' => 243, 'b' => 255],
-                'headerTextColor' => '#ffffff',
-                'rowTextColor' => '#8b5cf6',
-                'border_width' => 1.5
-            ],
-            'sky_blue' => [
-                'header_bg' => ['r' => 3, 'g' => 105, 'b' => 161], // Couleur moyenne du dégradé
-                'header_border' => ['r' => 2, 'g' => 132, 'b' => 199],
-                'row_border' => ['r' => 186, 'g' => 230, 'b' => 253],
-                'alt_row_bg' => ['r' => 240, 'g' => 249, 'b' => 255],
-                'headerTextColor' => '#ffffff',
-                'rowTextColor' => '#0284c7',
-                'border_width' => 1.5
-            ],
-            'forest_green' => [
-                'header_bg' => ['r' => 20, 'g' => 83, 'b' => 45], // Couleur moyenne du dégradé
-                'header_border' => ['r' => 21, 'g' => 128, 'b' => 61],
-                'row_border' => ['r' => 187, 'g' => 247, 'b' => 208],
-                'alt_row_bg' => ['r' => 240, 'g' => 253, 'b' => 244],
-                'headerTextColor' => '#ffffff',
-                'rowTextColor' => '#15803d',
-                'border_width' => 1.5
-            ],
-            'ruby_red' => [
-                'header_bg' => ['r' => 185, 'g' => 28, 'b' => 28], // Couleur moyenne du dégradé
-                'header_border' => ['r' => 220, 'g' => 38, 'b' => 38],
-                'row_border' => ['r' => 254, 'g' => 202, 'b' => 202],
-                'alt_row_bg' => ['r' => 254, 'g' => 242, 'b' => 242],
-                'headerTextColor' => '#ffffff',
-                'rowTextColor' => '#dc2626',
-                'border_width' => 1.5
-            ],
-            'golden_yellow' => [
-                'header_bg' => ['r' => 161, 'g' => 98, 'b' => 7], // Couleur moyenne du dégradé
-                'header_border' => ['r' => 202, 'g' => 138, 'b' => 4],
-                'row_border' => ['r' => 254, 'g' => 240, 'b' => 138],
-                'alt_row_bg' => ['r' => 254, 'g' => 252, 'b' => 232],
-                'headerTextColor' => '#ffffff',
-                'rowTextColor' => '#ca8a04',
-                'border_width' => 1.5
-            ],
-            'navy_blue' => [
-                'header_bg' => ['r' => 30, 'g' => 58, 'b' => 138], // Couleur moyenne du dégradé
-                'header_border' => ['r' => 30, 'g' => 64, 'b' => 175],
-                'row_border' => ['r' => 219, 'g' => 234, 'b' => 254],
-                'alt_row_bg' => ['r' => 239, 'g' => 246, 'b' => 255],
-                'headerTextColor' => '#ffffff',
-                'rowTextColor' => '#1e40af',
-                'border_width' => 1.5
-            ],
-            'burgundy_wine' => [
-                'header_bg' => ['r' => 127, 'g' => 29, 'b' => 29], // Couleur moyenne du dégradé
-                'header_border' => ['r' => 153, 'g' => 27, 'b' => 27],
-                'row_border' => ['r' => 254, 'g' => 202, 'b' => 202],
-                'alt_row_bg' => ['r' => 254, 'g' => 242, 'b' => 242],
-                'headerTextColor' => '#ffffff',
-                'rowTextColor' => '#991b1b',
-                'border_width' => 1.5
-            ],
-            'lavender_purple' => [
-                'header_bg' => ['r' => 124, 'g' => 45, 'b' => 18], // Couleur moyenne du dégradé
-                'header_border' => ['r' => 147, 'g' => 51, 'b' => 234],
-                'row_border' => ['r' => 233, 'g' => 213, 'b' => 255],
-                'alt_row_bg' => ['r' => 250, 'g' => 245, 'b' => 255],
-                'headerTextColor' => '#ffffff',
-                'rowTextColor' => '#9333ea',
-                'border_width' => 1.5
-            ],
-            'ocean_teal' => [
-                'header_bg' => ['r' => 19, 'g' => 78, 'b' => 74], // Couleur moyenne du dégradé
-                'header_border' => ['r' => 15, 'g' => 118, 'b' => 110],
+            'teal' => [
+                'header_bg' => ['r' => 20, 'g' => 184, 'b' => 166], // Sarcelle
+                'header_border' => ['r' => 13, 'g' => 148, 'b' => 136],
                 'row_border' => ['r' => 204, 'g' => 251, 'b' => 241],
                 'alt_row_bg' => ['r' => 240, 'g' => 253, 'b' => 250],
                 'headerTextColor' => '#ffffff',
                 'rowTextColor' => '#0f766e',
                 'border_width' => 1.5
             ],
-            'cherry_blossom' => [
-                'header_bg' => ['r' => 190, 'g' => 24, 'b' => 93], // Couleur moyenne du dégradé
-                'header_border' => ['r' => 219, 'g' => 39, 'b' => 119],
-                'row_border' => ['r' => 252, 'g' => 231, 'b' => 243],
-                'alt_row_bg' => ['r' => 253, 'g' => 244, 'b' => 248],
+            'indigo' => [
+                'header_bg' => ['r' => 99, 'g' => 102, 'b' => 241], // Indigo
+                'header_border' => ['r' => 129, 'g' => 140, 'b' => 248],
+                'row_border' => ['r' => 224, 'g' => 231, 'b' => 255],
+                'alt_row_bg' => ['r' => 238, 'g' => 242, 'b' => 255],
                 'headerTextColor' => '#ffffff',
-                'rowTextColor' => '#db2777',
+                'rowTextColor' => '#3730a3',
                 'border_width' => 1.5
             ],
-            'autumn_orange' => [
-                'header_bg' => ['r' => 154, 'g' => 52, 'b' => 18], // Couleur moyenne du dégradé
-                'header_border' => ['r' => 234, 'g' => 88, 'b' => 12],
-                'row_border' => ['r' => 254, 'g' => 215, 'b' => 170],
-                'alt_row_bg' => ['r' => 255, 'g' => 247, 'b' => 237],
-                'headerTextColor' => '#ffffff',
-                'rowTextColor' => '#ea580c',
+            'amber' => [
+                'header_bg' => ['r' => 245, 'g' => 158, 'b' => 11], // Ambre
+                'header_border' => ['r' => 251, 'g' => 191, 'b' => 36],
+                'row_border' => ['r' => 254, 'g' => 240, 'b' => 138],
+                'alt_row_bg' => ['r' => 255, 'g' => 251, 'b' => 235],
+                'headerTextColor' => '#92400e',
+                'rowTextColor' => '#92400e',
                 'border_width' => 1.5
             ]
         ];

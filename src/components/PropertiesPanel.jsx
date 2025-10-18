@@ -1899,7 +1899,7 @@ const PropertiesPanel = memo(({
                       {
                         value: 'slate_gray',
                         label: 'Ardoise',
-                        gradient: 'linear-gradient(135deg, #374151 0%, #6b7280 100%)',
+                        headerBg: '#374151',
                         headerBorder: '#4b5563',
                         rowBorder: '#f3f4f6',
                         altRowBg: '#f9fafb',
@@ -1907,134 +1907,44 @@ const PropertiesPanel = memo(({
                         textColor: '#ffffff'
                       },
                       {
-                        value: 'coral_sunset',
-                        label: 'Corail Couchant',
-                        gradient: 'linear-gradient(135deg, #c2410c 0%, #fb7185 100%)',
-                        headerBorder: '#ea580c',
-                        rowBorder: '#fed7d7',
-                        altRowBg: '#fef7f7',
-                        borderWidth: 1.5,
-                        textColor: '#ffffff'
-                      },
-                      {
-                        value: 'mint_green',
-                        label: 'Menthe Fraîche',
-                        gradient: 'linear-gradient(135deg, #065f46 0%, #34d399 100%)',
-                        headerBorder: '#047857',
-                        rowBorder: '#d1fae5',
-                        altRowBg: '#ecfdf5',
-                        borderWidth: 1.5,
-                        textColor: '#ffffff'
-                      },
-                      {
-                        value: 'violet_dream',
-                        label: 'Rêve Violet',
-                        gradient: 'linear-gradient(135deg, #6d28d9 0%, #c084fc 100%)',
-                        headerBorder: '#8b5cf6',
-                        rowBorder: '#ede9fe',
-                        altRowBg: '#f5f3ff',
-                        borderWidth: 1.5,
-                        textColor: '#ffffff'
-                      },
-                      {
-                        value: 'sky_blue',
-                        label: 'Ciel Bleu',
-                        gradient: 'linear-gradient(135deg, #0369a1 0%, #0ea5e9 100%)',
-                        headerBorder: '#0284c7',
-                        rowBorder: '#bae6fd',
-                        altRowBg: '#f0f9ff',
-                        borderWidth: 1.5,
-                        textColor: '#ffffff'
-                      },
-                      {
-                        value: 'forest_green',
-                        label: 'Vert Forêt',
-                        gradient: 'linear-gradient(135deg, #14532d 0%, #22c55e 100%)',
-                        headerBorder: '#15803d',
-                        rowBorder: '#bbf7d0',
-                        altRowBg: '#f0fdf4',
-                        borderWidth: 1.5,
-                        textColor: '#ffffff'
-                      },
-                      {
-                        value: 'ruby_red',
-                        label: 'Rouge Rubis',
-                        gradient: 'linear-gradient(135deg, #b91c1c 0%, #f87171 100%)',
-                        headerBorder: '#dc2626',
-                        rowBorder: '#fecaca',
+                        value: 'coral',
+                        label: 'Corail',
+                        headerBg: '#f87171',
+                        headerBorder: '#fca5a5',
+                        rowBorder: '#fef2f2',
                         altRowBg: '#fef2f2',
                         borderWidth: 1.5,
                         textColor: '#ffffff'
                       },
                       {
-                        value: 'golden_yellow',
-                        label: 'Jaune Doré',
-                        gradient: 'linear-gradient(135deg, #a16207 0%, #eab308 100%)',
-                        headerBorder: '#ca8a04',
-                        rowBorder: '#fef08a',
-                        altRowBg: '#fefce8',
-                        borderWidth: 1.5,
-                        textColor: '#ffffff'
-                      },
-                      {
-                        value: 'navy_blue',
-                        label: 'Bleu Marine',
-                        gradient: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
-                        headerBorder: '#1e40af',
-                        rowBorder: '#dbeafe',
-                        altRowBg: '#eff6ff',
-                        borderWidth: 1.5,
-                        textColor: '#ffffff'
-                      },
-                      {
-                        value: 'burgundy_wine',
-                        label: 'Vin Bordeaux',
-                        gradient: 'linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%)',
-                        headerBorder: '#991b1b',
-                        rowBorder: '#fecaca',
-                        altRowBg: '#fef2f2',
-                        borderWidth: 1.5,
-                        textColor: '#ffffff'
-                      },
-                      {
-                        value: 'lavender_purple',
-                        label: 'Lavande',
-                        gradient: 'linear-gradient(135deg, #7c2d12 0%, #a855f7 100%)',
-                        headerBorder: '#9333ea',
-                        rowBorder: '#e9d5ff',
-                        altRowBg: '#faf5ff',
-                        borderWidth: 1.5,
-                        textColor: '#ffffff'
-                      },
-                      {
-                        value: 'ocean_teal',
-                        label: 'Océan Sarcelle',
-                        gradient: 'linear-gradient(135deg, #134e4a 0%, #14b8a6 100%)',
-                        headerBorder: '#0f766e',
+                        value: 'teal',
+                        label: 'Sarcelle',
+                        headerBg: '#14b8a6',
+                        headerBorder: '#0d9488',
                         rowBorder: '#ccfbf1',
                         altRowBg: '#f0fdfa',
                         borderWidth: 1.5,
                         textColor: '#ffffff'
                       },
                       {
-                        value: 'cherry_blossom',
-                        label: 'Cerisier',
-                        gradient: 'linear-gradient(135deg, #be185d 0%, #fb7185 100%)',
-                        headerBorder: '#db2777',
-                        rowBorder: '#fce7f3',
-                        altRowBg: '#fdf2f8',
+                        value: 'indigo',
+                        label: 'Indigo',
+                        headerBg: '#6366f1',
+                        headerBorder: '#818cf8',
+                        rowBorder: '#e0e7ff',
+                        altRowBg: '#eef2ff',
                         borderWidth: 1.5,
                         textColor: '#ffffff'
                       },
                       {
-                        value: 'autumn_orange',
-                        label: 'Automne',
-                        gradient: 'linear-gradient(135deg, #9a3412 0%, #fb923c 100%)',
-                        headerBorder: '#ea580c',
-                        rowBorder: '#fed7aa',
-                        altRowBg: '#fff7ed',
+                        value: 'amber',
+                        label: 'Ambre',
+                        headerBg: '#f59e0b',
+                        headerBorder: '#fbbf24',
+                        rowBorder: '#fef3c7',
+                        altRowBg: '#fffbeb',
                         borderWidth: 1.5,
-                        textColor: '#ffffff'
+                        textColor: '#92400e'
                       }
                     ].map((style) => (
                       <button
