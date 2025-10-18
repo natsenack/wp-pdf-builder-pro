@@ -91,6 +91,9 @@
     "zlib",
     "wordpress"
   ],
+  "intelephense.scanFiles": [
+    "${workspaceFolder}/stubs.php"
+  ],
   "intelephense.completion.insertUseDeclaration": true,
   "intelephense.completion.fullyQualifyGlobalConstantsAndFunctions": false,
   "intelephense.format.codeStyle": "PSR-12",

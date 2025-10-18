@@ -2,6 +2,92 @@
 
 namespace PDF_Builder\Admin;
 
+// Importer les constantes WordPress globales
+use const ABSPATH;
+use const ARRAY_A;
+use const MINUTE_IN_SECONDS;
+use const PDF_BUILDER_DEV_MODE;
+use const WP_DEBUG;
+use const PDF_PAGE_ORIENTATION;
+use const PDF_UNIT;
+use const PDF_PAGE_FORMAT;
+
+// Importer les fonctions WordPress globales
+use function is_user_logged_in;
+use function current_user_can;
+use function wp_die;
+use function __;
+use function get_transient;
+use function set_transient;
+use function get_option;
+use function get_current_user_id;
+use function wp_get_current_user;
+use function add_action;
+use function add_filter;
+use function add_menu_page;
+use function add_submenu_page;
+use function admin_url;
+use function wp_enqueue_script;
+use function wp_enqueue_style;
+use function wp_localize_script;
+use function wp_create_nonce;
+use function wp_verify_nonce;
+use function wp_nonce_field;
+use function sanitize_text_field;
+use function sanitize_textarea_field;
+use function sanitize_hex_color;
+use function sanitize_email;
+use function update_option;
+use function delete_option;
+use function add_settings_error;
+use function esc_attr;
+use function esc_html;
+use function esc_url;
+use function esc_js;
+use function wp_upload_dir;
+use function wp_mkdir_p;
+use function _e;
+use function add_meta_box;
+use function get_current_screen;
+use function absint;
+use function size_format;
+use function wp_send_json_success;
+use function wp_send_json_error;
+use function wp_send_json;
+use function current_time;
+use function delete_transient;
+use function wp_cache_flush;
+use function plugin_dir_path;
+use function plugin_dir_url;
+use function apply_filters;
+use function do_action;
+use function checked;
+use function selected;
+use function submit_button;
+use function is_admin;
+use function wp_add_inline_script;
+use function get_bloginfo;
+use function wc_get_order;
+use function wc_get_order_status_name;
+use function wc_price;
+use function get_theme_mod;
+use function wp_get_attachment_image_url;
+use function wp_get_attachment_image;
+use function get_the_post_thumbnail_url;
+use function WC;
+
+// Importer les types/classes
+use TCPDF;
+use TCPDF_STATIC;
+use Exception;
+use Error;
+use WP_Error;
+use RecursiveIteratorIterator;
+use RecursiveDirectoryIterator;
+use PDF_Generator;
+use PDF_Builder_Cache_Manager;
+use PDF_Builder_Pro_Generator;
+
 /**
  * PDF Builder Pro - Interface d'administration simplifiée
  * Version 5.1.0 - Canvas uniquement
@@ -128,7 +214,7 @@ class PDF_Builder_Admin {
 
         // Vérifier si l'utilisateur a un des rôles autorisés
         $user = wp_get_current_user();
-        $user_roles = $user->roles;
+        $user_roles = $user ? $user->roles : [];
         $has_access = false;
 
         foreach ($user_roles as $role) {
@@ -272,7 +358,7 @@ class PDF_Builder_Admin {
 
         // Page développeur (uniquement pour l'utilisateur ID 1 et en mode dev)
         $current_user = wp_get_current_user();
-        if ($current_user->ID === 1 && defined('PDF_BUILDER_DEV_MODE') && PDF_BUILDER_DEV_MODE) {
+        if ($current_user && $current_user->ID === 1 && defined('PDF_BUILDER_DEV_MODE') && PDF_BUILDER_DEV_MODE) {
             add_submenu_page(
                 'pdf-builder-pro',
                 __('Développeur - PDF Builder Pro', 'pdf-builder-pro'),
@@ -3098,9 +3184,8 @@ class PDF_Builder_Admin {
             });
 
             // Gérer la fermeture de la modale
-            $('#pdf-builder-preview-modal .pdf-preview-modal-close,
-               #pdf-builder-preview-modal .pdf-preview-modal-close-btn,
-               #pdf-builder-preview-modal .pdf-preview-modal-overlay').on('click', function(e) {
+            // @phpstan-ignore-next-line - JavaScript in PHP string causes parser confusion
+            $('#pdf-builder-preview-modal .pdf-preview-modal-close, #pdf-builder-preview-modal .pdf-preview-modal-close-btn, #pdf-builder-preview-modal .pdf-preview-modal-overlay').on('click', function(e) {
                 if ($(this).hasClass('pdf-preview-modal-overlay') || $(this).closest('.pdf-preview-modal-header, .pdf-preview-modal-footer').length) {
                     e.preventDefault();
                     $('#pdf-builder-preview-modal').hide();
@@ -3177,7 +3262,7 @@ class PDF_Builder_Admin {
                 $template_data = $this->load_template_robust($template_id);
             } else {
                 // Vérifier s'il y a un template spécifique pour le statut de la commande
-                $order_status = $order->get_status();
+                $order_status = $order ? $order->get_status() : 'pending';
                 $status_templates = get_option('pdf_builder_order_status_templates', []);
                 $status_key = 'wc-' . $order_status;
 
@@ -3374,7 +3459,8 @@ class PDF_Builder_Admin {
 
         if (!empty($country)) {
             // Convertir le code pays en nom complet si possible
-            $countries = WC()->countries->get_countries();
+            $wc = WC();
+            $countries = $wc ? $wc->countries->get_countries() : [];
             $country_name = isset($countries[$country]) ? $countries[$country] : $country;
             $address_parts[] = $country_name;
         }
@@ -4867,8 +4953,8 @@ class PDF_Builder_Admin {
      */
     private function log_role_permissions_change($old_roles, $new_roles) {
         $current_user = wp_get_current_user();
-        $user_name = $current_user->display_name;
-        $user_id = $current_user->ID;
+        $user_name = $current_user ? $current_user->display_name : 'Unknown';
+        $user_id = $current_user ? $current_user->ID : 0;
 
         // Calculer les différences
         $added_roles = array_diff($new_roles, $old_roles);
@@ -5507,6 +5593,53 @@ class PDF_Builder_Admin {
             error_log('PDF Preview Generation Error: ' . $e->getMessage());
             return false;
         }
+    }
+
+    /**
+     * Parse SQL statements from a string
+     *
+     * @param string $sql SQL content to parse
+     * @return array<int, string> Array of SQL statements
+     */
+    private function parse_sql_statements($sql) {
+        $statements = [];
+        $current_statement = '';
+        
+        $lines = explode("\n", $sql);
+        foreach ($lines as $line) {
+            // Ignorer les commentaires
+            if (strpos(trim($line), '--') === 0) {
+                continue;
+            }
+            
+            $current_statement .= $line . "\n";
+            
+            // Vérifier si la ligne se termine par un point-virgule
+            if (substr(trim($line), -1) === ';') {
+                $statements[] = trim($current_statement);
+                $current_statement = '';
+            }
+        }
+        
+        // Ajouter la dernière déclaration si elle n'est pas vide
+        if (!empty(trim($current_statement))) {
+            $statements[] = trim($current_statement);
+        }
+        
+        return $statements;
+    }
+
+    /**
+     * Get a logger instance
+     *
+     * @return object Logger instance
+     */
+    private function get_logger() {
+        return new class {
+            public function info($message) {}
+            public function error($message) {}
+            public function warning($message) {}
+        };
     }
 }
 

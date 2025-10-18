@@ -708,9 +708,7 @@ class PDF_Builder_WooCommerce_Integration {
             });
 
             // Gérer la fermeture de la modale
-            $('#woo-pdf-preview-modal .woo-pdf-preview-modal-close,
-               #woo-pdf-preview-modal .woo-pdf-preview-modal-close-btn,
-               #woo-pdf-preview-modal .woo-pdf-preview-modal-overlay').on('click', function(e) {
+            $('#woo-pdf-preview-modal .woo-pdf-preview-modal-close, #woo-pdf-preview-modal .woo-pdf-preview-modal-close-btn, #woo-pdf-preview-modal .woo-pdf-preview-modal-overlay').on('click', function(e) {
                 if ($(this).hasClass('woo-pdf-preview-modal-overlay') || $(this).closest('.woo-pdf-preview-modal-header, .woo-pdf-preview-modal-footer').length) {
                     e.preventDefault();
                     $('#woo-pdf-preview-modal').hide();
@@ -1183,6 +1181,14 @@ class PDF_Builder_WooCommerce_Integration {
 
     /**
      * Sauvegarde le canvas d'une commande
+     */
+    /**
+     * Sauvegarde le canvas pour une commande
+     * 
+     * @param int $order_id
+     * @param array $canvas_data
+     * @param int|null $template_id
+     * @return bool|\WP_Error
      */
     private function save_order_canvas($order_id, $canvas_data, $template_id = null) {
         // Cette méthode peut être implémentée selon les besoins

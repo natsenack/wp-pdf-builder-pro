@@ -66,8 +66,8 @@ class PDF_Builder_Core {
         add_action('wp_ajax_pdf_builder_get_settings', array($this, 'ajax_get_settings'));
 
         // Hooks d'activation/désactivation
-        register_activation_hook(PDF_BUILDER_PLUGIN_DIR . 'pdf-builder-pro.php', array($this, 'activate'));
-        register_deactivation_hook(PDF_BUILDER_PLUGIN_DIR . 'pdf-builder-pro.php', array($this, 'deactivate'));
+        \register_activation_hook(PDF_BUILDER_PLUGIN_DIR . 'pdf-builder-pro.php', array($this, 'activate'));
+        \register_deactivation_hook(PDF_BUILDER_PLUGIN_DIR . 'pdf-builder-pro.php', array($this, 'deactivate'));
     }
 
     /**
@@ -140,7 +140,7 @@ class PDF_Builder_Core {
             $resize_manager = \PDF_Builder_Resize_Manager::getInstance();
             $interactions_manager = \PDF_Builder_Canvas_Interactions_Manager::getInstance();
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             // Gestion silencieuse des erreurs d'initialisation
         }
     }
@@ -246,7 +246,7 @@ class PDF_Builder_Core {
                 'dashicons-admin-tools',
                 31
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
         }
     }
 
@@ -254,9 +254,9 @@ class PDF_Builder_Core {
      * Enregistrer les paramètres
      */
     public function register_settings() {
-        register_setting('pdf_builder_options', 'pdf_builder_settings');
+        \register_setting('pdf_builder_options', 'pdf_builder_settings');
 
-        add_settings_section(
+        \add_settings_section(
             'pdf_builder_main',
             __('Main Settings', 'pdf-builder-pro'),
             array($this, 'settings_section_callback'),
@@ -345,8 +345,8 @@ class PDF_Builder_Core {
             <h1><?php _e('PDF Builder Settings', 'pdf-builder-pro'); ?></h1>
             <form method="post" action="options.php">
                 <?php
-                settings_fields('pdf_builder_options');
-                do_settings_sections('pdf_builder_settings');
+                \settings_fields('pdf_builder_options');
+                \do_settings_sections('pdf_builder_settings');
                 submit_button();
                 ?>
             </form>
@@ -416,8 +416,8 @@ class PDF_Builder_Core {
         ) $charset_collate;";
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        dbDelta($sql_templates);
-        dbDelta($sql_order_canvases);
+        \dbDelta($sql_templates);
+        \dbDelta($sql_order_canvases);
     }
 
     /**
@@ -473,13 +473,13 @@ class PDF_Builder_Core {
      *
      * @param int $order_id ID de la commande
      * @param int $template_id ID du template (0 pour auto-détection)
-     * @return string|WP_Error URL du PDF généré ou erreur
+     * @return string|\WP_Error URL du PDF généré ou erreur
      */
     public function generate_order_pdf($order_id, $template_id = 0) {
         if ($this->admin && method_exists($this->admin, 'generate_order_pdf')) {
             return $this->admin->generate_order_pdf($order_id, $template_id);
         } else {
-            return new WP_Error('admin_not_initialized', 'Interface d\'administration non initialisée');
+            return new \WP_Error('admin_not_initialized', 'Interface d\'administration non initialisée');
         }
     }
 
