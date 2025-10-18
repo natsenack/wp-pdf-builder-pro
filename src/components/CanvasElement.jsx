@@ -26,7 +26,7 @@ export const CanvasElement = ({
 
   // DEBUG: Logger les propriétés des tableaux produits pour comparaison avec PHP
   useEffect(() => {
-    if (element && element.type === 'product_table') {
+    if (element && element.type === 'product_table' && element.id) {
       console.log('🔍 CanvasElement product_table properties:', {
         tableStyle: element.tableStyle,
         showHeaders: element.showHeaders,
@@ -43,22 +43,7 @@ export const CanvasElement = ({
         borderColor: element.borderColor
       });
     }
-  }, [
-    element?.type,
-    element?.tableStyle,
-    element?.showHeaders,
-    element?.showBorders,
-    element?.columns,
-    element?.showSubtotal,
-    element?.showShipping,
-    element?.showTaxes,
-    element?.showDiscount,
-    element?.showTotal,
-    element?.previewProducts?.length,
-    element?.backgroundColor,
-    element?.borderWidth,
-    element?.borderColor
-  ]);
+  }, [element?.id, element?.type]); // Utiliser seulement id et type pour éviter les re-renders
 
   const resize = useResize({
     onElementResize: (newRect) => {
