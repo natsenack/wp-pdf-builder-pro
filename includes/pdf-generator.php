@@ -2006,10 +2006,10 @@ class PDF_Builder_Pro_Generator {
                 'rowTextColor' => '#334155',
                 'border_width' => 2.0,
                 'headerFontWeight' => '600',
-                'headerFontSize' => '11px',
-                'rowFontSize' => '10px',
+                'headerFontSize' => 11,
+                'rowFontSize' => 10,
                 'shadow' => '0 1px 3px rgba(0, 0, 0, 0.1)',
-                'borderRadius' => '4px'
+                'borderRadius' => 4
             ],
             'classic' => [
                 'header_bg' => ['r' => 30, 'g' => 41, 'b' => 59], // #1e293b
@@ -2021,10 +2021,10 @@ class PDF_Builder_Pro_Generator {
                 'rowTextColor' => '#1e293b',
                 'border_width' => 1.5,
                 'headerFontWeight' => '700',
-                'headerFontSize' => '11px',
-                'rowFontSize' => '10px',
+                'headerFontSize' => 11,
+                'rowFontSize' => 10,
                 'shadow' => '0 2px 8px rgba(0, 0, 0, 0.15)',
-                'borderRadius' => '0px'
+                'borderRadius' => 0
             ],
             'modern' => [
                 'header_bg' => ['r' => 59, 'g' => 130, 'b' => 246], // Bleu moderne
@@ -2036,10 +2036,10 @@ class PDF_Builder_Pro_Generator {
                 'rowTextColor' => '#334155',
                 'border_width' => 1.0,
                 'headerFontWeight' => '600',
-                'headerFontSize' => '11px',
-                'rowFontSize' => '10px',
+                'headerFontSize' => 11,
+                'rowFontSize' => 10,
                 'shadow' => '0 1px 4px rgba(59, 130, 246, 0.2)',
-                'borderRadius' => '6px',
+                'borderRadius' => 6,
                 'gradient' => 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
             ],
             'minimal' => [
@@ -2051,10 +2051,10 @@ class PDF_Builder_Pro_Generator {
                 'rowTextColor' => '#6b7280',
                 'border_width' => 0.5,
                 'headerFontWeight' => '500',
-                'headerFontSize' => '10px',
-                'rowFontSize' => '9px',
+                'headerFontSize' => 10,
+                'rowFontSize' => 9,
                 'shadow' => 'none',
-                'borderRadius' => '0px'
+                'borderRadius' => 0
             ],
             'slate_gray' => [
                 'header_bg' => ['r' => 55, 'g' => 65, 'b' => 81], // Gris ardoise
@@ -2065,10 +2065,10 @@ class PDF_Builder_Pro_Generator {
                 'rowTextColor' => '#374151',
                 'border_width' => 1.5,
                 'headerFontWeight' => '600',
-                'headerFontSize' => '11px',
-                'rowFontSize' => '10px',
+                'headerFontSize' => 11,
+                'rowFontSize' => 10,
                 'shadow' => '0 2px 8px rgba(0, 0, 0, 0.1)',
-                'borderRadius' => '6px'
+                'borderRadius' => 6
             ],
             'coral' => [
                 'header_bg' => ['r' => 248, 'g' => 113, 'b' => 113], // Corail
@@ -2079,10 +2079,10 @@ class PDF_Builder_Pro_Generator {
                 'rowTextColor' => '#dc2626',
                 'border_width' => 1.5,
                 'headerFontWeight' => '600',
-                'headerFontSize' => '11px',
-                'rowFontSize' => '10px',
+                'headerFontSize' => 11,
+                'rowFontSize' => 10,
                 'shadow' => '0 4px 16px rgba(248, 113, 113, 0.3)',
-                'borderRadius' => '6px',
+                'borderRadius' => 6,
                 'gradient' => 'linear-gradient(135deg, #f87171 0%, #fb7185 100%)'
             ],
             'teal' => [
@@ -2094,10 +2094,10 @@ class PDF_Builder_Pro_Generator {
                 'rowTextColor' => '#0f766e',
                 'border_width' => 1.5,
                 'headerFontWeight' => '600',
-                'headerFontSize' => '11px',
-                'rowFontSize' => '10px',
+                'headerFontSize' => 11,
+                'rowFontSize' => 10,
                 'shadow' => '0 4px 16px rgba(20, 184, 166, 0.3)',
-                'borderRadius' => '6px',
+                'borderRadius' => 6,
                 'gradient' => 'linear-gradient(135deg, #14b8a6 0%, #06b6d4 100%)'
             ],
             'indigo' => [
@@ -2109,10 +2109,10 @@ class PDF_Builder_Pro_Generator {
                 'rowTextColor' => '#3730a3',
                 'border_width' => 1.5,
                 'headerFontWeight' => '600',
-                'headerFontSize' => '11px',
-                'rowFontSize' => '10px',
+                'headerFontSize' => 11,
+                'rowFontSize' => 10,
                 'shadow' => '0 4px 16px rgba(99, 102, 241, 0.3)',
-                'borderRadius' => '6px',
+                'borderRadius' => 6,
                 'gradient' => 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)'
             ],
             'amber' => [
@@ -2124,10 +2124,10 @@ class PDF_Builder_Pro_Generator {
                 'rowTextColor' => '#92400e',
                 'border_width' => 1.5,
                 'headerFontWeight' => '600',
-                'headerFontSize' => '11px',
-                'rowFontSize' => '10px',
+                'headerFontSize' => 11,
+                'rowFontSize' => 10,
                 'shadow' => '0 4px 16px rgba(245, 158, 11, 0.3)',
-                'borderRadius' => '6px',
+                'borderRadius' => 6,
                 'gradient' => 'linear-gradient(135deg, #f59e0b 0%, #f97316 100%)'
             ]
         ];
@@ -3043,8 +3043,8 @@ class PDF_Builder_Pro_Generator {
         $container_style = sprintf(
             'width: 100%%; height: 100%%; display: flex; flex-direction: column; font-size: %dpx; font-family: "Inter", "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont, sans-serif; border: %s; border-radius: %dpx; overflow: hidden; background-color: %s; box-sizing: border-box; box-shadow: %s; line-height: 1.4; color: %s;',
             10 * $zoom,
-            $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $this->rgb_to_hex($table_styles['header_border']) : ($element['borderWidth'] && $element['borderWidth'] > 0 ? max(1, $element['borderWidth'] * $zoom * 0.5) . 'px solid ' . ($element['borderColor'] ?? '#e5e7eb') : 'none'),
-            isset($table_styles['borderRadius']) ? $table_styles['borderRadius'] * $zoom : 2,
+            $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $this->rgb_to_hex($table_styles['header_border']) : ($element['borderWidth'] && $element['borderWidth'] > 0 ? max(1, (float)$element['borderWidth'] * $zoom * 0.5) . 'px solid ' . ($element['borderColor'] ?? '#e5e7eb') : 'none'),
+            (float)($table_styles['borderRadius'] ?? 2) * $zoom,
             $element['backgroundColor'] ?? 'transparent',
             $table_styles['shadow'] ?? 'none',
             $table_styles['rowTextColor']
@@ -3061,7 +3061,7 @@ class PDF_Builder_Pro_Generator {
                 $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $this->rgb_to_hex($table_styles['header_border']) : 'none',
                 $table_styles['headerFontWeight'] ?? '600',
                 $table_styles['headerTextColor'],
-                ($table_styles['headerFontSize'] ?? '11px') * $zoom
+                (float)($table_styles['headerFontSize'] ?? 11) * $zoom
             );
 
             $html .= '<div style="' . $header_container_style . '">';
@@ -3072,7 +3072,7 @@ class PDF_Builder_Pro_Generator {
                     'flex: 0 0 %dpx; padding: %dpx %dpx; text-align: center; border-right: %s; font-size: %dpx; opacity: 0.9;',
                     40, 6 * $zoom, 4 * $zoom,
                     $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $this->rgb_to_hex($table_styles['header_border']) : 'none',
-                    (($table_styles['headerFontSize'] ?? '11px') * $zoom * 0.9)
+                    (($table_styles['headerFontSize'] ?? 11) * $zoom * 0.9)
                 );
                 $html .= '<div style="' . $header_cell_style . '">Img</div>';
             }
@@ -3099,7 +3099,7 @@ class PDF_Builder_Pro_Generator {
                     'flex: 0 0 %dpx; padding: %dpx %dpx; text-align: center; border-right: %s; font-size: %dpx;',
                     60, 6 * $zoom, 8 * $zoom,
                     $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $this->rgb_to_hex($table_styles['header_border']) : 'none',
-                    ($table_styles['headerFontSize'] ?? '11px') * $zoom
+                    (float)($table_styles['headerFontSize'] ?? 11) * $zoom
                 );
                 $html .= '<div style="' . $header_cell_style . '">Qté</div>';
             }
@@ -3108,7 +3108,7 @@ class PDF_Builder_Pro_Generator {
                     'flex: 0 0 %dpx; padding: %dpx %dpx; text-align: right; border-right: %s; font-size: %dpx;',
                     80, 6 * $zoom, 8 * $zoom,
                     $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $this->rgb_to_hex($table_styles['header_border']) : 'none',
-                    ($table_styles['headerFontSize'] ?? '11px') * $zoom
+                    (float)($table_styles['headerFontSize'] ?? 11) * $zoom
                 );
                 $html .= '<div style="' . $header_cell_style . '">Prix</div>';
             }
@@ -3116,7 +3116,7 @@ class PDF_Builder_Pro_Generator {
                 $header_cell_style = sprintf(
                     'flex: 0 0 %dpx; padding: %dpx %dpx; text-align: right; font-size: %dpx;',
                     80, 6 * $zoom, 8 * $zoom,
-                    ($table_styles['headerFontSize'] ?? '11px') * $zoom
+                    (float)($table_styles['headerFontSize'] ?? 11) * $zoom
                 );
                 $html .= '<div style="' . $header_cell_style . '">Total</div>';
             }
@@ -3142,7 +3142,7 @@ class PDF_Builder_Pro_Generator {
                 $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $row_border_color : 'none',
                 $row_bg,
                 $row_text_color,
-                ($table_styles['rowFontSize'] ?? '10px') * $zoom
+                (float)($table_styles['rowFontSize'] ?? 10) * $zoom
             );
 
             $html .= '<div style="' . $row_style . '">';
@@ -3154,7 +3154,7 @@ class PDF_Builder_Pro_Generator {
                     40, 5 * $zoom, 4 * $zoom,
                     $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $row_border_color : 'none',
                     $table_styles['rowTextColor'],
-                    (($table_styles['rowFontSize'] ?? '10px') * $zoom * 0.9)
+                    (float)(($table_styles['rowFontSize'] ?? 10) * $zoom * 0.9)
                 );
                 $html .= '<div style="' . $cell_style . '">📷</div>';
             }
@@ -3173,7 +3173,7 @@ class PDF_Builder_Pro_Generator {
                     80, 5 * $zoom, 8 * $zoom,
                     $show_borders ? ($table_styles['border_width'] * $zoom) . 'px solid ' . $row_border_color : 'none',
                     $table_styles['rowTextColor'],
-                    (($table_styles['rowFontSize'] ?? '10px') * $zoom * 0.9)
+                    (float)(($table_styles['rowFontSize'] ?? 10) * $zoom * 0.9)
                 );
                 $html .= '<div style="' . $cell_style . '">' . htmlspecialchars($product['sku']) . '</div>';
             }

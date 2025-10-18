@@ -368,10 +368,11 @@ class PDF_Builder_WooCommerce_Integration {
 
             <!-- Info Section -->
             <div class="pdf-info-notice">
-                <div class="pdf-info-icon">ℹ️</div>
+                <div class="pdf-info-icon">✅</div>
                 <div class="pdf-info-content">
-                    <strong>Aperçu du template sauvegardé</strong><br>
-                    <small>Cet aperçu utilise le dernier template enregistré en base de données, pas les modifications en cours dans l'éditeur.</small>
+                    <strong>Template synchronisé</strong><br>
+                    <small>Cet aperçu utilise le template actuellement enregistré.<br>
+                    <em>Modifiez et sauvegardez votre template dans l'éditeur pour mettre à jour cet aperçu.</em></small>
                 </div>
             </div>
 
@@ -716,56 +717,79 @@ class PDF_Builder_WooCommerce_Integration {
                 showStatus('Génération de l\'aperçu HTML...', 'loading');
                 setButtonLoading($(this), true);
 
-                var ajaxData = {
-                    action: 'pdf_builder_unified_preview',
-                    order_id: orderId,
-                    template_id: templateId,
-                    preview_type: 'html',
-                    nonce: nonce,
-                    cache_bust: Date.now() // Force reload to bypass OPcache
-                };
-
-                console.log('PDF BUILDER - Sending AJAX request for HTML preview:', {
-                    action: ajaxData.action,
-                    order_id: ajaxData.order_id,
-                    preview_type: ajaxData.preview_type,
-                    nonce: ajaxData.nonce.substring(0, 10) + '...',
-                    ajaxUrl: ajaxUrl
-                });
-
-                $.ajax({
-                    url: ajaxUrl,
-                    type: 'POST',
-                    data: ajaxData,
-                    success: function(response) {
-                        console.log('PDF BUILDER - HTML Preview AJAX success response:', response);
-                        console.log('MetaBoxes.js - Full HTML response object:', JSON.stringify(response, null, 2));
-
-                        if (response.success && response.data && response.data.html) {
-                            console.log('MetaBoxes.js - Opening HTML preview in modal:', response.data.html.substring(0, 200) + '...');
-                            // Ouvrir l'aperçu HTML dans une modale
-                            openHtmlModal(response.data.html);
-                            showStatus('Aperçu HTML généré avec succès', 'success');
-                        } else {
-                            var errorMsg = response.data || 'Erreur lors de la génération de l\'aperçu HTML';
-                            console.log('MetaBoxes.js - HTML Preview error:', errorMsg);
-                            showStatus(errorMsg, 'error');
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.log('MetaBoxes.js - HTML Preview AJAX error:', {
-                            xhr: xhr,
-                            status: status,
-                            error: error,
-                            responseText: xhr.responseText
-                        });
-                        showStatus('Erreur AJAX: ' + error, 'error');
-                    },
-                    complete: function() {
-                        console.log('MetaBoxes.js - HTML Preview AJAX complete');
-                        setButtonLoading($('#pdf-html-preview-btn'), false);
+                // NOUVELLE APPROCHE : Récupérer directement le HTML du Canvas si disponible
+                var canvasHtml = null;
+                try {
+                    // Essayer de récupérer le HTML depuis l'éditeur Canvas (si on est sur la page d'édition)
+                    if (window.PDFBuilderPro && window.PDFBuilderPro.canvas) {
+                        canvasHtml = window.PDFBuilderPro.canvas.getRenderedHtml();
+                        console.log('MetaBoxes.js - HTML récupéré directement depuis Canvas:', canvasHtml ? 'OK' : 'null');
                     }
-                });
+                } catch (e) {
+                    console.log('MetaBoxes.js - Impossible de récupérer HTML depuis Canvas:', e.message);
+                }
+
+                if (canvasHtml) {
+                    // Utiliser le HTML du Canvas directement
+                    console.log('MetaBoxes.js - Using Canvas HTML for preview');
+                    openHtmlModal(canvasHtml);
+                    showStatus('Aperçu HTML généré avec succès', 'success');
+                    setButtonLoading($('#pdf-html-preview-btn'), false);
+                } else {
+                    // Fallback vers AJAX si Canvas non disponible
+                    console.log('MetaBoxes.js - Canvas not available, using AJAX fallback');
+
+                    var ajaxData = {
+                        action: 'pdf_builder_unified_preview',
+                        order_id: orderId,
+                        template_id: templateId,
+                        preview_type: 'html',
+                        nonce: nonce,
+                        cache_bust: Date.now() // Force reload to bypass OPcache
+                    };
+
+                    console.log('PDF BUILDER - Sending AJAX request for HTML preview:', {
+                        action: ajaxData.action,
+                        order_id: ajaxData.order_id,
+                        preview_type: ajaxData.preview_type,
+                        nonce: ajaxData.nonce.substring(0, 10) + '...',
+                        ajaxUrl: ajaxUrl
+                    });
+
+                    $.ajax({
+                        url: ajaxUrl,
+                        type: 'POST',
+                        data: ajaxData,
+                        success: function(response) {
+                            console.log('PDF BUILDER - HTML Preview AJAX success response:', response);
+                            console.log('MetaBoxes.js - Full HTML response object:', JSON.stringify(response, null, 2));
+
+                            if (response.success && response.data && response.data.html) {
+                                console.log('MetaBoxes.js - Opening HTML preview in modal:', response.data.html.substring(0, 200) + '...');
+                                // Ouvrir l'aperçu HTML dans une modale
+                                openHtmlModal(response.data.html);
+                                showStatus('Aperçu HTML généré avec succès', 'success');
+                            } else {
+                                var errorMsg = response.data || 'Erreur lors de la génération de l\'aperçu HTML';
+                                console.log('MetaBoxes.js - HTML Preview error:', errorMsg);
+                                showStatus(errorMsg, 'error');
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.log('MetaBoxes.js - HTML Preview AJAX error:', {
+                                xhr: xhr,
+                                status: status,
+                                error: error,
+                                responseText: xhr.responseText
+                            });
+                            showStatus('Erreur AJAX: ' + error, 'error');
+                        },
+                        complete: function() {
+                            console.log('MetaBoxes.js - HTML Preview AJAX complete');
+                            setButtonLoading($('#pdf-html-preview-btn'), false);
+                        }
+                    });
+                }
             });
 
             $('#pdf-generate-btn').on('click', function() {
