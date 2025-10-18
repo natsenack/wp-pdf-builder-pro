@@ -367,7 +367,10 @@ class PDF_Builder_Pro_Generator {
 
             $elements[] = $default_product_table;
             error_log("[DEBUG] AUTO_INJECT: Default product_table injected, new total elements: " . count($elements));
+            error_log("[DEBUG] AUTO_INJECT: Injected element: " . json_encode($default_product_table));
         }
+
+        error_log("🔄 RENDER_ELEMENTS: About to process " . count($elements) . " elements after injection");
 
         // Calcul précis du facteur de conversion basé sur les dimensions réelles
         // Canvas: 595×842 px | A4: 210×297 mm
