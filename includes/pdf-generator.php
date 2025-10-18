@@ -386,6 +386,9 @@ class PDF_Builder_Pro_Generator {
         foreach ($elements as $element) {
             try {
                 $element_type = isset($element['type']) ? $element['type'] : 'unknown';
+                $element_id = isset($element['id']) ? $element['id'] : 'no-id';
+
+                error_log("🔄 RENDER_ELEMENTS: Processing element ID=$element_id, TYPE=$element_type");
 
                 $this->render_single_element($element, $px_to_mm);
 
