@@ -387,13 +387,14 @@ class PDF_Builder_WooCommerce_Integration {
                     </div>
                     <div class="woo-pdf-preview-container">
                         <div class="pdf-page-wrapper">
-                            <iframe id="woo-pdf-preview-iframe" 
-                                    style="width: 100%; height: 100%; border: none; background: white;"
-                                    title="Aperçu PDF"></iframe>
+                            <embed id="woo-pdf-preview-iframe" 
+                                   type="application/pdf"
+                                   style="width: 100%; height: 100%; display: block; background: white;"
+                                   title="Aperçu PDF" />
                         </div>
                     </div>
-                    <div class="woo-pdf-preview-loading" style="display: none; text-align: center; padding: 40px;">
-                        <div style="font-size: 3em; margin-bottom: 20px;">&#128196;</div>
+                    <div class="woo-pdf-preview-loading" style="display: none; text-align: center; padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div style="font-size: 3em; margin-bottom: 20px;">📄</div>
                         <p>Chargement de l'aperçu...</p>
                         <div class="woo-pdf-preview-spinner"></div>
                     </div>
@@ -506,6 +507,7 @@ class PDF_Builder_WooCommerce_Integration {
                 flex-direction: column;
                 padding: 20px;
                 gap: 0;
+                min-height: 0;
             }
 
             .woo-pdf-preview-toolbar {
@@ -570,19 +572,25 @@ class PDF_Builder_WooCommerce_Integration {
                 justify-content: center;
                 align-items: flex-start;
                 padding: 20px;
+                min-height: 0;
             }
 
             .pdf-page-wrapper {
                 background: white;
                 border-radius: 8px;
                 box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-                aspect-ratio: 210 / 297;
                 width: 100%;
-                max-width: 600px;
-                height: auto;
-                min-height: 400px;
+                max-width: 650px;
+                min-height: 600px;
                 overflow: hidden;
                 border: 1px solid #e5e7eb;
+                flex-shrink: 0;
+            }
+
+            .pdf-page-wrapper iframe {
+                width: 100%;
+                height: 100%;
+                display: block;
             }
 
             .woo-pdf-preview-modal-footer {
@@ -796,11 +804,12 @@ class PDF_Builder_WooCommerce_Integration {
                 // Afficher la modale avec loading
                 var $modal = $('#woo-pdf-preview-modal');
                 var $loading = $modal.find('.woo-pdf-preview-loading');
-                var $iframe = $modal.find('#woo-pdf-preview-iframe');
+                var $embed = $modal.find('#woo-pdf-preview-iframe');
+                var $container = $modal.find('.woo-pdf-preview-container');
                 
                 $modal.show();
                 $loading.show();
-                $iframe.hide();
+                $container.hide();
 
                 showStatus("Génération de l'aperçu en cours...", "loading");
 
@@ -820,21 +829,22 @@ class PDF_Builder_WooCommerce_Integration {
                         console.log('MetaBoxes.js - Aperçu success:', response);
 
                         if (response.success && response.data && response.data.url) {
-                            // Charger le PDF dans l'iframe
-                            $iframe.attr('src', response.data.url);
+                            // Charger le PDF dans l'embed
+                            $embed.attr('src', response.data.url);
                             
                             // Stocker l'URL pour le téléchargement
                             $modal.data('pdf-url', response.data.url);
                             
-                            // Masquer le loading et afficher l'iframe
+                            // Masquer le loading et afficher le conteneur
                             setTimeout(function() {
                                 $loading.hide();
-                                $iframe.show();
-                            }, 500);
+                                $container.show();
+                            }, 300);
                             
                             showStatus("Aperçu généré avec succès", "success");
                         } else {
                             $loading.hide();
+                            $container.show();
                             $modal.find('.woo-pdf-preview-modal-body').html(
                                 "<div style='text-align: center; padding: 40px; color: #dc3545;'><p>Erreur: " + (response.data || 'Erreur inconnue') + "</p></div>"
                             );
@@ -843,6 +853,7 @@ class PDF_Builder_WooCommerce_Integration {
                     },
                     error: function() {
                         $loading.hide();
+                        $container.show();
                         $modal.find('.woo-pdf-preview-modal-body').html(
                             "<div style='text-align: center; padding: 40px; color: #dc3545;'><p>Erreur AJAX lors de l'aperçu</p></div>"
                         );
@@ -875,9 +886,14 @@ class PDF_Builder_WooCommerce_Integration {
                 $wrapper.css({
                     'transform': 'scale(' + scale + ')',
                     'transform-origin': 'top center',
-                    'transition': 'transform 0.2s ease'
+                    'transition': 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)'
                 });
                 updateZoomDisplay();
+                
+                // Réinitialiser le scroll si zoom < 100%
+                if (currentZoom <= 100) {
+                    $('.woo-pdf-preview-container').scrollLeft(0);
+                }
             }
 
             $('#zoom-in-btn').on('click', function(e) {
