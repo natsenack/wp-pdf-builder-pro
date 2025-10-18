@@ -2682,10 +2682,16 @@ class PDF_Builder_Pro_Generator {
                     throw new Exception('Template non trouvé');
                 }
 
+                error_log('✅ PDF Generator - generate_simple_preview: Template trouvé - ID: ' . $template['id'] . ', Name: ' . $template['name']);
+                error_log('✅ PDF Generator - generate_simple_preview: Template data length: ' . strlen($template['template_data']));
+                error_log('✅ PDF Generator - generate_simple_preview: Template data preview: ' . substr($template['template_data'], 0, 200) . '...');
 
                 // Décoder les données JSON du template
                 $template_data = json_decode($template['template_data'], true);
                 if (json_last_error() !== JSON_ERROR_NONE) {
+                    error_log('❌ PDF Generator - generate_simple_preview: JSON decode error: ' . json_last_error_msg());
+                    error_log('❌ PDF Generator - generate_simple_preview: JSON error code: ' . json_last_error());
+                    error_log('❌ PDF Generator - generate_simple_preview: Raw template data: ' . $template['template_data']);
                     throw new Exception('Données du template invalides');
                 }
 

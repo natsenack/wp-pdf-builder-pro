@@ -1185,16 +1185,22 @@ class PDF_Builder_WooCommerce_Integration {
                     // Pour l'aperçu HTML, récupérer les éléments du template depuis la base de données
                     global $wpdb;
                     $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-                    $template = $wpdb->get_row($wpdb->prepare("SELECT template_data FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
+                    $template = $wpdb->get_row($wpdb->prepare("SELECT id, name, template_data FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
 
                     if (!$template) {
                         error_log('❌ PDF BUILDER - ajax_unified_preview: Template non trouvé pour HTML: ' . $template_id);
                         wp_send_json_error('Template non trouvé');
                     }
 
+                    error_log('✅ PDF BUILDER - ajax_unified_preview: Template trouvé - ID: ' . $template['id'] . ', Name: ' . $template['name']);
+                    error_log('✅ PDF BUILDER - ajax_unified_preview: Template data length: ' . strlen($template['template_data']));
+                    error_log('✅ PDF BUILDER - ajax_unified_preview: Template data preview: ' . substr($template['template_data'], 0, 200) . '...');
+
                     $template_data = json_decode($template['template_data'], true);
                     if (json_last_error() !== JSON_ERROR_NONE) {
-                        error_log('❌ PDF BUILDER - ajax_unified_preview: Données template invalides pour HTML');
+                        error_log('❌ PDF BUILDER - ajax_unified_preview: JSON decode error: ' . json_last_error_msg());
+                        error_log('❌ PDF BUILDER - ajax_unified_preview: JSON error code: ' . json_last_error());
+                        error_log('❌ PDF BUILDER - ajax_unified_preview: Raw template data: ' . $template['template_data']);
                         wp_send_json_error('Données du template invalides');
                     }
 
