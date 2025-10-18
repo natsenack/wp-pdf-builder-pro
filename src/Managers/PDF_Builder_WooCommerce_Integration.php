@@ -604,30 +604,30 @@ class PDF_Builder_WooCommerce_Integration {
 
                 $.ajax({
                     url: ajaxUrl,
-                    type: 'POST',
+                    type: "POST",
                     data: {
-                        action: 'pdf_builder_generate_order_pdf',
+                        action: "pdf_builder_generate_order_pdf",
                         order_id: orderId,
                         template_id: templateId,
                         nonce: nonce
                     },
                     success: function(response) {
-                        console.log('PDF BUILDER - Generate AJAX success response:', response);
+                        console.log("PDF BUILDER - Generate AJAX success response:", response);
                         if (response.success && response.data && response.data.url) {
                             $('#pdf-download-btn').attr('href', response.data.url).show();
-                            showStatus('PDF généré avec succès', 'success');
+                            showStatus("PDF généré avec succès", "success");
 
                             // Auto-download after a short delay
                             setTimeout(function() {
-                                window.open(response.data.url, '_blank');
+                                window.open(response.data.url, "_blank");
                             }, 500);
                         } else {
-                            var errorMsg = response.data || 'Erreur lors de la génération';
-                            showStatus(errorMsg, 'error');
+                            var errorMsg = response.data || "Erreur lors de la génération";
+                            showStatus(errorMsg, "error");
                         }
                     },
                     error: function(xhr, status, error) {
-                        showStatus('Erreur AJAX: ' + error, 'error');
+                        showStatus("Erreur AJAX: " + error, "error");
                     },
                     complete: function() {
                         setButtonLoading($('#pdf-generate-btn'), false);
@@ -639,7 +639,7 @@ class PDF_Builder_WooCommerce_Integration {
                 e.preventDefault();
                 var url = $(this).attr('href');
                 if (url) {
-                    window.open(url, '_blank');
+                    window.open(url, "_blank");
                 }
             });
 
@@ -647,7 +647,7 @@ class PDF_Builder_WooCommerce_Integration {
             $('#pdf-preview-btn').on('click', function(e) {
                 e.preventDefault();
                 
-                console.log('MetaBoxes.js - Aperçu PDF clicked');
+                console.log("MetaBoxes.js - Aperçu PDF clicked");
                 
                 // Afficher la modale avec loading
                 var $modal = $('#woo-pdf-preview-modal');
@@ -658,16 +658,16 @@ class PDF_Builder_WooCommerce_Integration {
                 $loading.show();
                 $iframe.hide();
 
-                showStatus('Génération de l\'aperçu en cours...', 'loading');
+                showStatus("Génération de l'aperçu en cours...", "loading");
 
                 // Effectuer l'AJAX pour générer l'aperçu
                 $.ajax({
                     url: ajaxUrl,
-                    type: 'POST',
-                    dataType: 'json',
+                    type: "POST",
+                    dataType: "json",
                     timeout: 30000,
                     data: {
-                        action: 'pdf_builder_unified_preview',
+                        action: "pdf_builder_unified_preview",
                         order_id: orderId,
                         template_id: templateId > 0 ? templateId : null,
                         nonce: nonce
@@ -688,21 +688,21 @@ class PDF_Builder_WooCommerce_Integration {
                                 $iframe.show();
                             }, 500);
                             
-                            showStatus('Aperçu généré avec succès ✅', 'success');
+                            showStatus("Aperçu généré avec succès ✅", "success");
                         } else {
                             $loading.hide();
                             $modal.find('.woo-pdf-preview-modal-body').html(
                                 '<div style="text-align: center; padding: 40px; color: #dc3545;"><p>Erreur: ' + (response.data || 'Erreur inconnue') + '</p></div>'
                             );
-                            showStatus('Erreur lors de l\'aperçu', 'error');
+                            showStatus("Erreur lors de l'aperçu", "error");
                         }
                     },
                     error: function() {
                         $loading.hide();
                         $modal.find('.woo-pdf-preview-modal-body').html(
-                            '<div style="text-align: center; padding: 40px; color: #dc3545;"><p>Erreur AJAX lors de l\'aperçu</p></div>'
+                            '<div style="text-align: center; padding: 40px; color: #dc3545;"><p>Erreur AJAX lors de l' + String.fromCharCode(39) + 'aperçu</p></div>'
                         );
-                        showStatus('Erreur AJAX', 'error');
+                        showStatus("Erreur AJAX", "error");
                     }
                 });
             });
