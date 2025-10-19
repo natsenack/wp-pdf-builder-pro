@@ -527,7 +527,10 @@ class PDF_Builder_WooCommerce_Integration {
             $generator = new PDF_Builder_Pro_Generator();
 
             // Déterminer le type d'aperçu
+            error_log('PDF PREVIEW DEBUG - About to check elements condition');
             if (!empty($elements)) {
+                error_log('PDF PREVIEW DEBUG - Entering elements branch (Canvas editor)');
+                // Première branche pour les éléments du Canvas
                 // Priorité aux éléments passés directement (depuis l'éditeur Canvas)
 
                 // Récupérer l'order pour les variables dynamiques si order_id est fourni
@@ -620,6 +623,7 @@ class PDF_Builder_WooCommerce_Integration {
                 }
 
             } elseif ($order_id && $order_id > 0) {
+                error_log('PDF PREVIEW DEBUG - Entering order_id branch (WooCommerce metabox), order_id: ' . $order_id);
                 // Aperçu de commande WooCommerce - récupérer depuis la base de données
 
                 // Vérifier que WooCommerce est actif
@@ -691,6 +695,7 @@ class PDF_Builder_WooCommerce_Integration {
                 error_log('PDF PREVIEW DEBUG - Generator result length: ' . (is_string($result) ? strlen($result) : 'N/A'));
 
             } else {
+                error_log('PDF PREVIEW DEBUG - Entering invalid context branch - no valid conditions met');
                 wp_send_json_error('Contexte d\'aperçu invalide');
             }
 
