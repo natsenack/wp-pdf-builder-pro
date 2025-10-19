@@ -508,8 +508,8 @@ class PDF_Builder_WooCommerce_Integration {
             error_log('PDF PREVIEW DEBUG - Order ID: ' . $order_id);
             error_log('PDF PREVIEW DEBUG - Template ID: ' . $template_id);
             error_log('PDF PREVIEW DEBUG - Preview Type: ' . $preview_type);
-            error_log('PDF PREVIEW DEBUG - Elements received: ' . substr($elements, 0, 500) . '...');
-            error_log('PDF PREVIEW DEBUG - Elements length: ' . strlen($elements));
+            error_log('PDF PREVIEW DEBUG - Elements received: ' . (is_null($elements) ? 'NULL' : substr($elements, 0, 500) . '...'));
+            error_log('PDF PREVIEW DEBUG - Elements is empty: ' . (empty($elements) ? 'YES' : 'NO'));
 
 
 
@@ -642,13 +642,22 @@ class PDF_Builder_WooCommerce_Integration {
                 $table_templates = $wpdb->prefix . 'pdf_builder_templates';
                 $template = $wpdb->get_row($wpdb->prepare("SELECT id, name, template_data FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
 
+                error_log('PDF PREVIEW DEBUG - Template query result: ' . ($template ? 'FOUND' : 'NOT FOUND'));
+                if ($template) {
+                    error_log('PDF PREVIEW DEBUG - Template name: ' . $template['name']);
+                    error_log('PDF PREVIEW DEBUG - Template data length: ' . strlen($template['template_data']));
+                    error_log('PDF PREVIEW DEBUG - Template data preview: ' . substr($template['template_data'], 0, 200));
+                }
+
                 if (!$template) {
                     wp_send_json_error('Template non trouvé');
                 }
 
                 $template_data = json_decode($template['template_data'], true);
                 if (json_last_error() !== JSON_ERROR_NONE) {
-                    wp_send_json_error('Données du template invalides');
+                    error_log('PDF PREVIEW DEBUG - Template data decode error: ' . json_last_error_msg());
+                    error_log('PDF PREVIEW DEBUG - Raw template_data: ' . substr($template['template_data'], 0, 500));
+                    wp_send_json_error('Données du template invalides: ' . json_last_error_msg());
                 }
 
                 $elements_for_pdf = isset($template_data['elements']) ? $template_data['elements'] : [];
