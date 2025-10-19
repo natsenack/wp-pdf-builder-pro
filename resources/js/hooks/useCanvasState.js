@@ -1061,16 +1061,7 @@ export const useCanvasState = ({
         body: formData
       });
 
-      console.log('📥 PDF Builder SAVE - Réponse brute du serveur:', {
-        status: response.status,
-        statusText: response.statusText,
-        headers: Object.fromEntries(response.headers.entries()),
-        url: response.url
-      });
-
-      // console.log('📥 PDF Builder SAVE - Réponse reçue du serveur, status:', response.status);
       const result = await response.json();
-      console.log('📥 PDF Builder SAVE - Résultat JSON du serveur:', result);
 
       if (!result.success) {
         console.error('❌ PDF Builder SAVE - Échec côté serveur:', {

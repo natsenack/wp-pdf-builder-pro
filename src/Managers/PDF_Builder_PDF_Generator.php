@@ -31,6 +31,7 @@ class PDF_Builder_PDF_Generator {
         add_action('wp_ajax_pdf_builder_generate_pdf_from_canvas', [$this, 'ajax_generate_pdf_from_canvas']);
         add_action('wp_ajax_pdf_builder_preview_pdf', [$this, 'ajax_preview_pdf']);
         add_action('wp_ajax_pdf_builder_download_pdf', [$this, 'ajax_download_pdf']);
+        add_action('wp_ajax_pdf_builder_unified_preview', [$this, 'ajax_unified_preview']);
     }
 
     /**
@@ -54,7 +55,14 @@ class PDF_Builder_PDF_Generator {
         }
 
         try {
-            $pdf_path = $this->generate_pdf_from_canvas_data($canvas_data);
+            // Décoder les données canvas
+            $canvas_elements = json_decode($canvas_data, true);
+            
+            if (!$canvas_elements || !is_array($canvas_elements)) {
+                wp_send_json_error('Format JSON invalide pour les données canvas');
+            }
+
+            $pdf_path = $this->generate_pdf_from_template_data($canvas_elements, 'canvas-' . time() . '.pdf');
 
             if ($pdf_path && file_exists($pdf_path)) {
                 $upload_dir = wp_upload_dir();
@@ -149,21 +157,51 @@ class PDF_Builder_PDF_Generator {
     }
 
     /**
-     * Générer PDF depuis les données canvas
+     * AJAX - Aperçu unifié (pour le canvas editor)
      */
-    private function generate_pdf_from_canvas_data($canvas_data) {
-        // Décoder les données JSON
-        $canvas_elements = json_decode($canvas_data, true);
-
-        if (!$canvas_elements || !is_array($canvas_elements)) {
-            throw new Exception('Données canvas invalides');
+    public function ajax_unified_preview() {
+        // Vérifier les permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Permissions insuffisantes');
         }
 
-        // Convertir les éléments canvas en format template
-        $template_data = $this->convert_elements_to_template($canvas_elements);
+        // Vérification de sécurité
+        if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions')) {
+            wp_send_json_error('Sécurité: Nonce invalide');
+        }
 
-        // Générer le PDF
-        return $this->generate_pdf_from_template_data($template_data, 'canvas-' . time() . '.pdf');
+        $elements = isset($_POST['elements']) ? $_POST['elements'] : '';
+
+        if (empty($elements)) {
+            wp_send_json_error('Données éléments manquantes');
+        }
+
+        try {
+            // Décoder les éléments JSON
+            $canvas_elements = json_decode($elements, true);
+            
+            if (!$canvas_elements || !is_array($canvas_elements)) {
+                wp_send_json_error('Format JSON invalide pour les éléments');
+            }
+
+            // Générer le PDF en utilisant les éléments comme template
+            $pdf_path = $this->generate_pdf_from_template_data($canvas_elements, 'preview-' . time() . '.pdf');
+
+            if ($pdf_path && file_exists($pdf_path)) {
+                $upload_dir = wp_upload_dir();
+                $pdf_url = str_replace($upload_dir['basedir'], $upload_dir['baseurl'], $pdf_path);
+
+                wp_send_json_success(array(
+                    'url' => $pdf_url,
+                    'path' => $pdf_path,
+                    'elements_count' => count($canvas_elements)
+                ));
+            } else {
+                wp_send_json_error('Erreur lors de la génération du PDF d\'aperçu');
+            }
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur aperçu: ' . $e->getMessage());
+        }
     }
 
     /**

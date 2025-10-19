@@ -53,79 +53,50 @@ class PDF_Builder_Template_Manager {
 
     /**
      * AJAX - Sauvegarder un template
-     * Avec validation stricte et logging complet
      */
     public function ajax_save_template() {
-        $log_prefix = '[PDF Builder] Template Save';
-
         try {
-            // ========== LOGGING INITIAL ==========
-            error_log($log_prefix . ' - 🚀 DÉBUT DE LA SAUVEGARDE');
-            error_log($log_prefix . ' - PHP Version: ' . PHP_VERSION);
-            error_log($log_prefix . ' - Memory limit: ' . ini_get('memory_limit'));
-            error_log($log_prefix . ' - POST data keys: ' . implode(', ', array_keys($_POST)));
-
-            // ========== ÉTAPE 1 : Vérification des permissions ==========
+            // Vérification des permissions
             if (!current_user_can('manage_options')) {
-                error_log($log_prefix . ' - ❌ ERREUR: Permissions insuffisantes pour user ID ' . get_current_user_id());
                 wp_send_json_error('Permissions insuffisantes');
             }
 
-            error_log($log_prefix . ' - ✅ Permissions vérifiées pour user ID ' . get_current_user_id());        // ========== ÉTAPE 2 : Vérification du nonce ==========
-        $received_nonce = isset($_POST['nonce']) ? $_POST['nonce'] : 'none';
-        
-        $nonce_valid = false;
-        if (isset($_POST['nonce'])) {
-            $nonce_valid = wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce') ||
-                          wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions') ||
-                          wp_verify_nonce($_POST['nonce'], 'pdf_builder_templates');
-        }
-
-        if (!$nonce_valid) {
-            error_log($log_prefix . ' - ❌ ERREUR: Nonce invalide reçu');
-            wp_send_json_error('Sécurité: Nonce invalide');
-        }
-        
-        error_log($log_prefix . ' - ✅ Nonce valide');
-
-        // ========== ÉTAPE 3 : Récupération et nettoyage des données ==========
-        $template_data = isset($_POST['template_data']) ? trim(wp_unslash($_POST['template_data'])) : '';
-        $template_name = isset($_POST['template_name']) ? sanitize_text_field($_POST['template_name']) : '';
-        $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
-
-        error_log($log_prefix . " - Données reçues: nom='$template_name', id=$template_id, taille JSON=" . strlen($template_data) . ' bytes');
-
-        // Décoder les entités HTML
-        $template_data = html_entity_decode($template_data, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-
-        // ========== ÉTAPE 4 : Validation du JSON ==========
-        $decoded_test = json_decode($template_data, true);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            $json_error = json_last_error_msg();
-            error_log($log_prefix . " - ❌ ERREUR JSON: $json_error");
-            wp_send_json_error('Données JSON invalides: ' . $json_error);
-        }
-        
-        error_log($log_prefix . ' - ✅ JSON valide');
-
-        // ========== ÉTAPE 5 : Validation de la structure du template ==========
-        $validation_errors = $this->validate_template_structure($decoded_test, $log_prefix);
-        if (!empty($validation_errors)) {
-            foreach ($validation_errors as $error) {
-                error_log($log_prefix . ' - ❌ ' . $error);
+            // Vérification du nonce
+            $nonce_valid = false;
+            if (isset($_POST['nonce'])) {
+                $nonce_valid = wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce') ||
+                              wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions') ||
+                              wp_verify_nonce($_POST['nonce'], 'pdf_builder_templates');
             }
-            wp_send_json_error('Structure invalide: ' . implode(', ', $validation_errors));
-        }
-        
-        error_log($log_prefix . ' - ✅ Structure valide');
 
-        // ========== ÉTAPE 6 : Validation des données obligatoires ==========
-        if (empty($template_data) || empty($template_name)) {
-            error_log($log_prefix . ' - ❌ ERREUR: Données manquantes (nom ou data)');
-            wp_send_json_error('Données template ou nom manquant');
-        }
+            if (!$nonce_valid) {
+                wp_send_json_error('Sécurité: Nonce invalide');
+            }
 
-        // ========== ÉTAPE 7 : Sauvegarde en base de données ==========
+            // Récupération et nettoyage des données
+            $template_data = isset($_POST['template_data']) ? trim(wp_unslash($_POST['template_data'])) : '';
+            $template_name = isset($_POST['template_name']) ? sanitize_text_field($_POST['template_name']) : '';
+            $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
+
+            // Validation du JSON
+            $decoded_test = json_decode($template_data, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                $json_error = json_last_error_msg();
+                wp_send_json_error('Données JSON invalides: ' . $json_error);
+            }
+
+            // Validation de la structure du template
+            $validation_errors = $this->validate_template_structure($decoded_test);
+            if (!empty($validation_errors)) {
+                wp_send_json_error('Structure invalide: ' . implode(', ', $validation_errors));
+            }
+
+            // Validation des données obligatoires
+            if (empty($template_data) || empty($template_name)) {
+                wp_send_json_error('Données template ou nom manquant');
+            }
+
+        // Sauvegarde en base de données
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
@@ -138,45 +109,36 @@ class PDF_Builder_Template_Manager {
         try {
             if ($template_id > 0) {
                 // Mise à jour d'un template existant
-                error_log($log_prefix . " - Mise à jour du template ID=$template_id");
                 $result = $wpdb->update($table_templates, $data, array('id' => $template_id));
                 
                 if ($result === false) {
                     $db_error = $wpdb->last_error;
-                    error_log($log_prefix . " - ❌ ERREUR DB UPDATE: $db_error");
                     throw new Exception('Erreur de mise à jour en base de données: ' . $db_error);
                 }
-                
-                error_log($log_prefix . " - ✅ Template ID=$template_id mis à jour (rows affected: $result)");
             } else {
                 // Création d'un nouveau template
                 $data['created_at'] = current_time('mysql');
-                error_log($log_prefix . ' - Création d\'un nouveau template');
                 
                 $result = $wpdb->insert($table_templates, $data);
                 if ($result === false) {
                     $db_error = $wpdb->last_error;
-                    error_log($log_prefix . " - ❌ ERREUR DB INSERT: $db_error");
                     throw new Exception('Erreur d\'insertion en base de données: ' . $db_error);
                 }
                 
                 $template_id = $wpdb->insert_id;
-                error_log($log_prefix . " - ✅ Nouveau template créé avec ID=$template_id");
             }
         } catch (Exception $e) {
-            error_log($log_prefix . ' - ❌ Exception: ' . $e->getMessage());
             wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());
             return;
         }
 
-        // ========== ÉTAPE 8 : Vérification post-sauvegarde ==========
+        // Vérification post-sauvegarde
         $saved_template = $wpdb->get_row(
             $wpdb->prepare("SELECT id, name, template_data FROM $table_templates WHERE id = %d", $template_id),
             ARRAY_A
         );
 
         if (!$saved_template) {
-            error_log($log_prefix . " - ❌ ERREUR: Template ID=$template_id introuvable après sauvegarde");
             wp_send_json_error('Erreur: Template introuvable après sauvegarde');
             return;
         }
@@ -184,49 +146,34 @@ class PDF_Builder_Template_Manager {
         $saved_data = json_decode($saved_template['template_data'], true);
         $element_count = isset($saved_data['elements']) ? count($saved_data['elements']) : 0;
 
-        error_log($log_prefix . " - ✅ Vérification post-sauvegarde: ID=$template_id, nom='{$saved_template['name']}', éléments=$element_count");
-
-        // ========== ÉTAPE 9 : Réponse de succès ==========
-        error_log($log_prefix . " - ✅ SUCCÈS: Template ID=$template_id sauvegardé avec $element_count éléments");
-        
+        // Réponse de succès
         wp_send_json_success(array(
             'message' => 'Template sauvegardé avec succès',
             'template_id' => $template_id,
             'element_count' => $element_count
         ));
         } catch (Exception $e) {
-            error_log($log_prefix . ' - 💥 EXCEPTION GLOBALE: ' . $e->getMessage());
-            error_log($log_prefix . ' - Stack trace: ' . $e->getTraceAsString());
             wp_send_json_error('Erreur critique lors de la sauvegarde: ' . $e->getMessage());
         }
     }
 
     /**
      * AJAX - Charger un template
-     * Avec logging complet et gestion d'erreurs améliorée
      */
     public function ajax_load_template() {
-        $log_prefix = '[PDF Builder] Template Load';
-        
-        // ===== ÉTAPE 1 : Vérification des permissions =====
+        // Vérification des permissions
         if (!current_user_can('manage_options')) {
-            error_log($log_prefix . ' - ❌ Permissions insuffisantes pour user ID ' . get_current_user_id());
             wp_send_json_error('Permissions insuffisantes');
         }
-        
-        error_log($log_prefix . ' - ✅ Permissions vérifiées');
 
-        // ===== ÉTAPE 2 : Récupération et validation de l'ID =====
+        // Récupération et validation de l'ID
         $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
 
         if (!$template_id) {
-            error_log($log_prefix . ' - ❌ ID template invalide: ' . (isset($_POST['template_id']) ? $_POST['template_id'] : 'none'));
             wp_send_json_error('ID template invalide');
         }
 
-        error_log($log_prefix . " - Chargement du template ID=$template_id");
-
-        // ===== ÉTAPE 3 : Récupération depuis la base de données =====
+        // Récupération depuis la base de données
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
@@ -236,46 +183,29 @@ class PDF_Builder_Template_Manager {
         );
 
         if (!$template) {
-            error_log($log_prefix . " - ❌ Template ID=$template_id introuvable en base de données");
             wp_send_json_error('Template non trouvé');
             return;
         }
 
-        error_log($log_prefix . " - ✅ Template trouvé: nom='{$template['name']}', taille JSON=" . strlen($template['template_data']) . ' bytes');
-
-        // ===== ÉTAPE 4 : Décodage du JSON =====
+        // Décodage du JSON
         $template_data_raw = $template['template_data'];
 
         $template_data = json_decode($template_data_raw, true);
         if ($template_data === null && json_last_error() !== JSON_ERROR_NONE) {
             $json_error = json_last_error_msg();
-            error_log($log_prefix . " - ❌ Erreur JSON au décodage: $json_error");
-            error_log($log_prefix . " - ❌ Premières 500 caractères: " . substr($template_data_raw, 0, 500));
             wp_send_json_error('Données du template corrompues - Erreur JSON: ' . $json_error);
             return;
         }
 
-        error_log($log_prefix . ' - ✅ JSON décodé avec succès');
-
-        // ===== ÉTAPE 5 : Validation de la structure =====
-        $validation_errors = $this->validate_template_structure($template_data, $log_prefix);
+        // Validation de la structure
+        $validation_errors = $this->validate_template_structure($template_data);
         if (!empty($validation_errors)) {
-            error_log($log_prefix . ' - ⚠️ Erreurs de validation détectées:');
-            foreach ($validation_errors as $error) {
-                error_log($log_prefix . '   - ' . $error);
-            }
             // On log mais on envoie quand même les données (backward compatibility)
-            error_log($log_prefix . ' - ⚠️ Envoi des données malgré les erreurs (mode compatibilité)');
-        } else {
-            error_log($log_prefix . ' - ✅ Structure validée');
+            error_log('[PDF Builder] Erreurs de validation template ID=' . $template_id . ': ' . implode(', ', $validation_errors));
         }
 
-        // ===== ÉTAPE 6 : Analyse du contenu =====
+        // Analyse du contenu
         $element_count = isset($template_data['elements']) ? count($template_data['elements']) : 0;
-        error_log($log_prefix . " - Analyse: $element_count éléments, version " . 
-                 ($template_data['version'] ?? 'unknown') . 
-                 ', dimensions ' . ($template_data['canvasWidth'] ?? 'N/A') . 'x' . 
-                 ($template_data['canvasHeight'] ?? 'N/A'));
 
         // Analyser les types d'éléments
         $element_types = [];
@@ -283,12 +213,8 @@ class PDF_Builder_Template_Manager {
             $type = $element['type'] ?? 'unknown';
             $element_types[$type] = ($element_types[$type] ?? 0) + 1;
         }
-        
-        error_log($log_prefix . ' - Types d\'éléments: ' . json_encode($element_types));
 
-        // ===== ÉTAPE 7 : Réponse de succès =====
-        error_log($log_prefix . " - ✅ SUCCÈS: Template ID=$template_id chargé avec $element_count éléments");
-        
+        // Réponse de succès
         wp_send_json_success(array(
             'template' => $template_data,
             'name' => $template['name'],
@@ -349,10 +275,9 @@ class PDF_Builder_Template_Manager {
      * Retourne un tableau d'erreurs (vide si valide)
      * 
      * @param array $template_data Données du template décodées
-     * @param string $log_prefix Préfixe pour le logging
      * @return array Tableau d'erreurs de validation
      */
-    private function validate_template_structure($template_data, $log_prefix = '[PDF Builder]') {
+    private function validate_template_structure($template_data) {
         $errors = [];
 
         // ===== Vérification 1 : Type et structure de base =====
@@ -422,13 +347,6 @@ class PDF_Builder_Template_Manager {
                 $errors[] = '... et plus d\'erreurs détectées';
                 break;
             }
-        }
-
-        // Log du résumé de la validation
-        if (empty($errors)) {
-            error_log($log_prefix . " - ✅ Validation structure OK: $element_count éléments, dimensions {$width}x{$height}");
-        } else {
-            error_log($log_prefix . ' - ⚠️ Validation structure révèle ' . count($errors) . ' erreur(s)');
         }
 
         return $errors;

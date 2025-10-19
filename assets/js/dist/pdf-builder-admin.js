@@ -4113,19 +4113,10 @@ var useCanvasState = function useCanvasState(_ref) {
           });
         case 22:
           response = _context.v;
-          console.log('📥 PDF Builder SAVE - Réponse brute du serveur:', {
-            status: response.status,
-            statusText: response.statusText,
-            headers: Object.fromEntries(response.headers.entries()),
-            url: response.url
-          });
-
-          // console.log('📥 PDF Builder SAVE - Réponse reçue du serveur, status:', response.status);
           _context.n = 23;
           return response.json();
         case 23:
           result = _context.v;
-          console.log('📥 PDF Builder SAVE - Résultat JSON du serveur:', result);
           if (result.success) {
             _context.n = 24;
             break;
