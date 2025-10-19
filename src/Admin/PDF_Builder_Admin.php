@@ -6612,7 +6612,8 @@ class PDF_Builder_Admin {
             error_log("[PDF Preview] Élément {$index} HTML: " . substr($element_html, 0, 100) . "...");
         }
 
-        return $html;
+        // Retourner le HTML avec un conteneur canvas dimensionné
+        return '<div class="pdf-canvas" style="position: relative; width: ' . $canvas_width . 'px; height: ' . $canvas_height . 'px; background: white; border: 1px solid #ddd; margin: 0 auto;">' . $html . '</div>';
     }
 
     /**
