@@ -897,11 +897,14 @@ class PDF_Builder_WooCommerce_Integration {
                                     
                                     // Log des éléments avec du contenu textuel
                                     var textElements = iframeContent.querySelectorAll('*');
+                                    var textElementsCount = 0;
                                     textElements.forEach(function(el, index) {
-                                        if (el.textContent && el.textContent.trim()) {
+                                        if (el.textContent && el.textContent.trim() && el.textContent.trim().length > 2) {
+                                            textElementsCount++;
                                             console.log('Element ' + index + ':', el.tagName, el.className, 'Content:', el.textContent.trim().substring(0, 100));
                                         }
                                     });
+                                    console.log('Total text elements with content:', textElementsCount);
                                     
                                     // Log des éléments dynamic-text spécifiquement
                                     var dynamicElements = iframeContent.querySelectorAll('[data-dynamic]');
@@ -909,6 +912,25 @@ class PDF_Builder_WooCommerce_Integration {
                                     dynamicElements.forEach(function(el, index) {
                                         console.log('Dynamic element ' + index + ':', el.getAttribute('data-dynamic'), 'Content:', el.textContent);
                                     });
+                                    
+                                    // Log des éléments avec des variables {{}}
+                                    var variableElements = iframeContent.querySelectorAll('*');
+                                    var variablesFound = [];
+                                    variableElements.forEach(function(el) {
+                                        var text = el.textContent || '';
+                                        var matches = text.match(/\{\{[^}]+\}\}/g);
+                                        if (matches) {
+                                            matches.forEach(function(match) {
+                                                if (variablesFound.indexOf(match) === -1) {
+                                                    variablesFound.push(match);
+                                                }
+                                            });
+                                        }
+                                    });
+                                    console.log('Variables {{}} found in content:', variablesFound);
+                                    
+                                    // Log du contenu HTML complet de l'iframe
+                                    console.log('Full iframe HTML content (first 1000 chars):', iframeContent.documentElement.outerHTML.substring(0, 1000));
                                     
                                 } catch (e) {
                                     console.error('Error logging iframe elements:', e);
@@ -1302,6 +1324,9 @@ class PDF_Builder_WooCommerce_Integration {
                     $options = ['is_preview' => true];
                     if ($order) {
                         $options['order'] = $order;
+                        error_log('PDF PREVIEW DEBUG - Passing order to generator (Canvas elements), order ID: ' . $order->get_id());
+                    } else {
+                        error_log('PDF PREVIEW DEBUG - No order passed to generator (Canvas elements)');
                     }
                     $result = $generator->generate($decoded_elements, $options);
                 } else {
@@ -1309,6 +1334,9 @@ class PDF_Builder_WooCommerce_Integration {
                     $options = ['is_preview' => true];
                     if ($order) {
                         $options['order'] = $order;
+                        error_log('PDF PREVIEW DEBUG - Passing order to generator (Canvas elements, PDF mode), order ID: ' . $order->get_id());
+                    } else {
+                        error_log('PDF PREVIEW DEBUG - No order passed to generator (Canvas elements, PDF mode)');
                     }
                     $result = $generator->generate($decoded_elements, $options);
                 }
@@ -1341,9 +1369,11 @@ class PDF_Builder_WooCommerce_Integration {
 
                 if ($preview_type === 'html') {
                     // Générer l'aperçu HTML avec les éléments du template - SANS TCPDF
+                    error_log('PDF PREVIEW DEBUG - Generating HTML preview for template elements with order ID: ' . ($order ? $order->get_id() : 'NULL'));
                     $result = $generator->generate($decoded_elements, ['is_preview' => true, 'order' => $order]);
                 } else {
                     // PLUS DE GÉNÉRATION PDF AVEC TCPDF - Forcer HTML
+                    error_log('PDF PREVIEW DEBUG - Generating PDF preview for template elements with order ID: ' . ($order ? $order->get_id() : 'NULL'));
                     $result = $generator->generate($decoded_elements, ['is_preview' => true, 'order' => $order]);
                 }
 
@@ -1381,8 +1411,14 @@ class PDF_Builder_WooCommerce_Integration {
 
                 $elements_for_pdf = isset($template_data['elements']) ? $template_data['elements'] : [];
 
+                error_log('PDF PREVIEW DEBUG - Elements for PDF generation: ' . json_encode($elements_for_pdf));
+                error_log('PDF PREVIEW DEBUG - Order object for generation: ' . ($order ? 'EXISTS (ID: ' . $order->get_id() . ')' : 'NULL'));
+
                 // Générer l'aperçu PDF
                 $result = $generator->generate($elements_for_pdf, ['is_preview' => true, 'order' => $order]);
+
+                error_log('PDF PREVIEW DEBUG - Generator result type: ' . gettype($result));
+                error_log('PDF PREVIEW DEBUG - Generator result length: ' . (is_string($result) ? strlen($result) : 'N/A'));
 
             } else {
                 wp_send_json_error('Contexte d\'aperçu invalide');
@@ -1800,9 +1836,18 @@ class PDF_Builder_WooCommerce_Integration {
      * Remplace les variables de commande dans le contenu
      */
     private function replace_order_variables($content, $order) {
+        error_log('REPLACE VARIABLES - Input content: ' . substr($content, 0, 200) . '...');
+        error_log('REPLACE VARIABLES - Order object exists: ' . ($order ? 'YES' : 'NO'));
+        
         if (!$order) {
+            error_log('REPLACE VARIABLES - No order object, returning original content');
             return $content;
         }
+
+        error_log('REPLACE VARIABLES - Order ID: ' . $order->get_id());
+        error_log('REPLACE VARIABLES - Order status: ' . $order->get_status());
+        error_log('REPLACE VARIABLES - Order total: ' . $order->get_total());
+        error_log('REPLACE VARIABLES - Order date: ' . ($order->get_date_created() ? $order->get_date_created()->format('Y-m-d H:i:s') : 'null'));
 
         // Basic order information
         $replacements = [
@@ -1886,6 +1931,15 @@ class PDF_Builder_WooCommerce_Integration {
 
         $replacements = array_merge($replacements, $billing_address, $shipping_address);
 
-        return str_replace(array_keys($replacements), array_values($replacements), $content);
+        error_log('REPLACE VARIABLES - Total replacements available: ' . count($replacements));
+        error_log('REPLACE VARIABLES - Replacement keys: ' . json_encode(array_keys($replacements)));
+        error_log('REPLACE VARIABLES - Sample values: ' . json_encode(array_slice($replacements, 0, 10, true)));
+
+        $result = str_replace(array_keys($replacements), array_values($replacements), $content);
+        
+        error_log('REPLACE VARIABLES - Final result: ' . substr($result, 0, 200) . '...');
+        error_log('REPLACE VARIABLES - Content was modified: ' . ($content !== $result ? 'YES' : 'NO'));
+        
+        return $result;
     }
 }
