@@ -404,6 +404,11 @@ class PDF_Builder_PDF_Generator {
      * Générer le HTML à partir des éléments du canvas
      */
     private function generate_html_from_elements($elements) {
+        // Si aucun élément n'est fourni, ajouter des éléments d'exemple
+        if (empty($elements)) {
+            $elements = $this->get_sample_elements();
+        }
+
         $html = '<!DOCTYPE html>
 <html>
 <head>
@@ -412,11 +417,11 @@ class PDF_Builder_PDF_Generator {
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
-        .pdf-container { 
+        .pdf-container {
             position: relative;
-            width: 595px; 
-            height: 842px; 
-            background: white; 
+            width: 595px;
+            height: 842px;
+            background: white;
             margin: 0 auto;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             overflow: hidden;
@@ -437,6 +442,118 @@ class PDF_Builder_PDF_Generator {
 </html>';
 
         return $html;
+    }
+
+    /**
+     * Générer des éléments d'exemple pour l'aperçu
+     */
+    private function get_sample_elements() {
+        return [
+            [
+                'type' => 'text',
+                'content' => 'APERÇU PDF BUILDER PRO',
+                'position' => ['x' => 50, 'y' => 50],
+                'size' => ['width' => 300, 'height' => 40],
+                'properties' => [
+                    'color' => '#2563eb',
+                    'fontSize' => 24,
+                    'fontWeight' => 'bold',
+                    'textAlign' => 'center'
+                ]
+            ],
+            [
+                'type' => 'text',
+                'content' => 'Bienvenue dans le générateur de PDF !',
+                'position' => ['x' => 50, 'y' => 100],
+                'size' => ['width' => 300, 'height' => 30],
+                'properties' => [
+                    'color' => '#374151',
+                    'fontSize' => 16,
+                    'textAlign' => 'center'
+                ]
+            ],
+            [
+                'type' => 'rectangle',
+                'position' => ['x' => 50, 'y' => 150],
+                'size' => ['width' => 200, 'height' => 100],
+                'properties' => [
+                    'backgroundColor' => '#f3f4f6',
+                    'border' => '2px solid #d1d5db',
+                    'borderRadius' => '8px'
+                ]
+            ],
+            [
+                'type' => 'text',
+                'content' => 'Zone de contenu',
+                'position' => ['x' => 70, 'y' => 170],
+                'size' => ['width' => 160, 'height' => 60],
+                'properties' => [
+                    'color' => '#6b7280',
+                    'fontSize' => 14,
+                    'textAlign' => 'center'
+                ]
+            ],
+            [
+                'type' => 'line',
+                'position' => ['x' => 50, 'y' => 280],
+                'size' => ['width' => 200, 'height' => 2],
+                'properties' => [
+                    'lineColor' => '#d1d5db',
+                    'lineWidth' => 2
+                ]
+            ],
+            [
+                'type' => 'text',
+                'content' => '• Texte dynamique',
+                'position' => ['x' => 50, 'y' => 300],
+                'size' => ['width' => 150, 'height' => 25],
+                'properties' => [
+                    'color' => '#059669',
+                    'fontSize' => 14
+                ]
+            ],
+            [
+                'type' => 'text',
+                'content' => '• Images et logos',
+                'position' => ['x' => 50, 'y' => 330],
+                'size' => ['width' => 150, 'height' => 25],
+                'properties' => [
+                    'color' => '#059669',
+                    'fontSize' => 14
+                ]
+            ],
+            [
+                'type' => 'text',
+                'content' => '• Tableaux de produits',
+                'position' => ['x' => 50, 'y' => 360],
+                'size' => ['width' => 150, 'height' => 25],
+                'properties' => [
+                    'color' => '#059669',
+                    'fontSize' => 14
+                ]
+            ],
+            [
+                'type' => 'text',
+                'content' => '• Informations client',
+                'position' => ['x' => 50, 'y' => 390],
+                'size' => ['width' => 150, 'height' => 25],
+                'properties' => [
+                    'color' => '#059669',
+                    'fontSize' => 14
+                ]
+            ],
+            [
+                'type' => 'text',
+                'content' => 'Fonctionnalités disponibles :',
+                'position' => ['x' => 50, 'y' => 270],
+                'size' => ['width' => 200, 'height' => 25],
+                'properties' => [
+                    'color' => '#1f2937',
+                    'fontSize' => 16,
+                    'fontWeight' => 'bold'
+                ]
+            ]
+        ];
     }
 
     /**
