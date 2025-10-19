@@ -1041,11 +1041,35 @@ class PDF_Builder_WooCommerce_Integration {
             // Générer le PDF SANS TCPDF - utiliser la nouvelle approche HTML
             error_log('PDF BUILDER DEBUG: About to generate PDF without TCPDF using new HTML approach');
 
-            // Pour l'instant, retourner un message informatif
-            // TODO: Implémenter une vraie génération PDF depuis HTML
+            // Générer le HTML depuis les éléments du template
+            $generator = new PDF_Builder_Pro_Generator();
+            $html_content = $generator->generate([], ['is_preview' => false]);
+
+            // Créer un fichier HTML temporaire pour le téléchargement
+            $upload_dir = wp_upload_dir();
+            $temp_dir = $upload_dir['basedir'] . '/pdf-builder-temp';
+
+            // Créer le dossier temporaire s'il n'existe pas
+            if (!file_exists($temp_dir)) {
+                wp_mkdir_p($temp_dir);
+            }
+
+            // Générer un nom de fichier unique
+            $filename = 'pdf-preview-' . $order_id . '-' . time() . '.html';
+            $file_path = $temp_dir . '/' . $filename;
+
+            // Sauvegarder le HTML dans le fichier
+            if (file_put_contents($file_path, $html_content) === false) {
+                wp_send_json_error('Erreur lors de la création du fichier HTML');
+            }
+
+            // Créer l'URL de téléchargement
+            $download_url = $upload_dir['baseurl'] . '/pdf-builder-temp/' . $filename;
+
             wp_send_json_success([
-                'message' => 'Génération PDF temporairement remplacée par HTML - TCPDF supprimé complètement',
-                'html_url' => null,
+                'message' => 'HTML généré avec succès - TCPDF supprimé complètement',
+                'url' => $download_url,
+                'html_url' => $download_url,
                 'pdf_url' => null
             ]);
 
