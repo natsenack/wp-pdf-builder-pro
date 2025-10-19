@@ -245,9 +245,17 @@ class PDF_Builder_Pro_Generator {
                 return "<div class='canvas-element' style='" . esc_attr($style) . ";'></div>";
 
             case 'product_table':
+                // LOGS DÉTAILLÉS POUR DIAGNOSTIC
+                error_log('[PDF Generator] === PRODUCT_TABLE RENDERING START ===');
+                error_log('[PDF Generator] Element ID: ' . ($element['id'] ?? 'unknown'));
+                error_log('[PDF Generator] Element properties count: ' . count($element));
+                error_log('[PDF Generator] Element properties: ' . json_encode($element));
+
                 $table_html = '';
                 if ($this->order) {
                     $items = $this->order->get_items();
+                    error_log('[PDF Generator] Order items count: ' . count($items));
+
                     $show_headers = $element['showHeaders'] ?? true;
                     $show_borders = $element['showBorders'] ?? true;
                     $headers = $element['headers'] ?? ['Produit', 'Qté', 'Prix', 'Total'];
@@ -256,56 +264,124 @@ class PDF_Builder_Pro_Generator {
                     $even_row_bg = $element['evenRowBg'] ?? '#ffffff';
                     $odd_row_bg = $element['oddRowBg'] ?? '#ebebeb';
                     $odd_row_text_color = $element['oddRowTextColor'] ?? '#666666';
-                    
-                    $border_style = $show_borders ? 'border: 1px solid #ddd; border-collapse: collapse;' : '';
-                    
-                    $table_html .= "<table style='width: 100%; {$border_style} font-size: 12px;'>";
-                    
-                    // Headers
-                    if ($show_headers) {
-                        $table_html .= "<thead><tr style='background-color: #f5f5f5;'>";
-                        foreach ($headers as $header) {
-                            $table_html .= "<th style='padding: 8px; text-align: left; {$border_style} font-weight: bold;'>{$header}</th>";
-                        }
-                        $table_html .= "</tr></thead>";
+
+                    error_log('[PDF Generator] Table config - show_headers: ' . ($show_headers ? 'true' : 'false') . ', show_borders: ' . ($show_borders ? 'true' : 'false'));
+                    error_log('[PDF Generator] Table config - headers: ' . json_encode($headers));
+                    error_log('[PDF Generator] Table config - columns: ' . json_encode($columns));
+                    error_log('[PDF Generator] Table config - table_style: ' . $table_style);
+                    error_log('[PDF Generator] Table config - colors: even_bg=' . $even_row_bg . ', odd_bg=' . $odd_row_bg . ', odd_text=' . $odd_row_text_color);
+
+                    // Appliquer les propriétés CSS générales au tableau
+                    $table_css = 'width: 100%; font-size: 12px;';
+
+                    // Couleur de fond générale du tableau
+                    if (isset($element['backgroundColor']) && $element['backgroundColor'] !== 'transparent') {
+                        $table_css .= ' background-color: ' . esc_attr($element['backgroundColor']) . ';';
+                        error_log('[PDF Generator] Table background color: ' . $element['backgroundColor']);
                     }
-                    
-                    // Products
+
+                    // Couleur du texte générale
+                    if (isset($element['color'])) {
+                        $table_css .= ' color: ' . esc_attr($element['color']) . ';';
+                        error_log('[PDF Generator] Table text color: ' . $element['color']);
+                    }
+
+                    // Taille de police
+                    if (isset($element['fontSize'])) {
+                        $table_css .= ' font-size: ' . intval($element['fontSize']) . 'px;';
+                        error_log('[PDF Generator] Table font size: ' . $element['fontSize']);
+                    }
+
+                    // Famille de police
+                    if (isset($element['fontFamily'])) {
+                        $table_css .= ' font-family: ' . esc_attr($element['fontFamily']) . ';';
+                        error_log('[PDF Generator] Table font family: ' . $element['fontFamily']);
+                    }
+
+                    // Poids de la police
+                    if (isset($element['fontWeight'])) {
+                        $table_css .= ' font-weight: ' . esc_attr($element['fontWeight']) . ';';
+                        error_log('[PDF Generator] Table font weight: ' . $element['fontWeight']);
+                    }
+
+                    // Style de la police
+                    if (isset($element['fontStyle'])) {
+                        $table_css .= ' font-style: ' . esc_attr($element['fontStyle']) . ';';
+                        error_log('[PDF Generator] Table font style: ' . $element['fontStyle']);
+                    }
+
+                    // Bordures générales
+                    $border_width = $element['borderWidth'] ?? 0;
+                    $border_style = $element['borderStyle'] ?? 'solid';
+                    $border_color = $element['borderColor'] ?? '#000000';
+                    if ($border_width > 0) {
+                        $table_css .= " border: {$border_width}px {$border_style} {$border_color};";
+                        error_log('[PDF Generator] Table border: ' . $border_width . 'px ' . $border_style . ' ' . $border_color);
+                    }
+
+                    // Rayon des bordures
+                    $border_radius = $element['borderRadius'] ?? 0;
+                    if ($border_radius > 0) {
+                        $table_css .= " border-radius: {$border_radius}px;";
+                        error_log('[PDF Generator] Table border radius: ' . $border_radius);
+                    }
+
+                    // Ombres
+                    if (isset($element['shadow']) && $element['shadow']) {
+                        $shadow_color = $element['shadowColor'] ?? '#000000';
+                        $shadow_offset_x = $element['shadowOffsetX'] ?? 2;
+                        $shadow_offset_y = $element['shadowOffsetY'] ?? 2;
+                        $shadow_blur = $element['shadowBlur'] ?? 1;
+                        $table_css .= " box-shadow: {$shadow_offset_x}px {$shadow_offset_y}px {$shadow_blur}px {$shadow_color};";
+                        error_log('[PDF Generator] Table shadow: ' . $shadow_offset_x . 'px ' . $shadow_offset_y . 'px ' . $shadow_blur . 'px ' . $shadow_color);
+                    }
+
+                    $table_css .= $border_style; // Ajouter le border_style des cellules si nécessaire
+
+                    $table_html .= "<table style='{$table_css}'>";
+
+                    error_log('[PDF Generator] Final table CSS: ' . $table_css);                    // Products
                     $table_html .= "<tbody>";
                     $row_count = 0;
                     foreach ($items as $item) {
                         $row_count++;
                         $bg_color = ($row_count % 2 === 0) ? $even_row_bg : $odd_row_bg;
                         $text_color = ($row_count % 2 === 0) ? 'inherit' : $odd_row_text_color;
-                        
+
+                        error_log('[PDF Generator] Rendering row ' . $row_count . ' - bg: ' . $bg_color . ', text: ' . $text_color);
+
                         $table_html .= "<tr style='background-color: {$bg_color}; color: {$text_color};'>";
-                        
+
                         // Product Name
                         if ($columns['name']) {
                             $product_name = $item->get_name();
+                            error_log('[PDF Generator] Product name: ' . $product_name);
                             $table_html .= "<td style='padding: 8px; {$border_style}'>{$product_name}</td>";
                         }
-                        
+
                         // Quantity
                         if ($columns['quantity']) {
                             $quantity = $item->get_quantity();
+                            error_log('[PDF Generator] Quantity: ' . $quantity);
                             $table_html .= "<td style='padding: 8px; {$border_style} text-align: center;'>{$quantity}</td>";
                         }
-                        
+
                         // Price
                         if ($columns['price']) {
                             $product = $item->get_product();
                             $price = $product ? $product->get_price() : 0;
                             $price_formatted = function_exists('wc_price') ? wc_price($price) : $price;
+                            error_log('[PDF Generator] Price: ' . $price . ' -> ' . $price_formatted);
                             $table_html .= "<td style='padding: 8px; {$border_style} text-align: right;'>{$price_formatted}</td>";
                         }
-                        
+
                         // Total
                         if ($columns['total']) {
                             $total = function_exists('wc_price') ? wc_price($item->get_total()) : $item->get_total();
+                            error_log('[PDF Generator] Total: ' . $total);
                             $table_html .= "<td style='padding: 8px; {$border_style} text-align: right; font-weight: bold;'>{$total}</td>";
                         }
-                        
+
                         $table_html .= "</tr>";
                     }
                     
@@ -352,6 +428,11 @@ class PDF_Builder_Pro_Generator {
                     
                     $table_html .= "</tbody></table>";
                 }
+
+                error_log('[PDF Generator] === PRODUCT_TABLE RENDERING END ===');
+                error_log('[PDF Generator] Generated HTML length: ' . strlen($table_html));
+                error_log('[PDF Generator] Generated HTML preview: ' . substr($table_html, 0, 200) . '...');
+
                 return "<div class='canvas-element' style='" . esc_attr($style) . "; overflow: auto;'>" . $table_html . "</div>";
 
             case 'customer_info':
