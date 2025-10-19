@@ -127,6 +127,15 @@ class PDF_Builder_Pro_Generator {
 <body>
     <div class="pdf-container">';
 
+        // LOG DE DIAGNOSTIC - TOUS LES ÉLÉMENTS REÇUS
+        error_log('[PDF Generator] === ELEMENTS RECEIVED FOR RENDERING ===');
+        error_log('[PDF Generator] Total elements count: ' . count($elements));
+        foreach ($elements as $index => $element) {
+            $element_type = $element['type'] ?? 'unknown';
+            $element_id = $element['id'] ?? 'unknown';
+            error_log('[PDF Generator] Element ' . $index . ': type=' . $element_type . ', id=' . $element_id);
+        }
+
         foreach ($elements as $element) {
             $html .= $this->render_element_to_html($element);
         }
