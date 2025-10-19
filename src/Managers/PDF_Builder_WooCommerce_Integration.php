@@ -38,6 +38,9 @@ class PDF_Builder_WooCommerce_Integration {
         // AJAX handlers pour WooCommerce - gérés par le manager
         add_action('wp_ajax_pdf_builder_generate_pdf', [$this, 'ajax_generate_order_pdf'], 1);
         add_action('wp_ajax_pdf_builder_save_order_canvas', [$this, 'ajax_save_order_canvas'], 1);
+        add_action('wp_ajax_pdf_builder_preview_mirror', [$this, 'ajax_preview_mirror'], 1);
+        add_action('wp_ajax_pdf_builder_preview_print', [$this, 'ajax_preview_print'], 1);
+        add_action('wp_ajax_pdf_builder_preview_download', [$this, 'ajax_preview_download'], 1);
     }
     private function detect_document_type($order_status) {
         $status_mapping = [
@@ -381,6 +384,11 @@ class PDF_Builder_WooCommerce_Integration {
                 <button type="button" class="pdf-btn" id="pdf-preview-btn" style="flex: 0.6; background: #17a2b8; color: white;">
                     <span>👁️</span>
                     Aperçu
+                </button>
+
+                <button type="button" class="pdf-btn" id="pdf-preview-mirror-btn" style="flex: 0.8; background: #28a745; color: white;">
+                    <span>🔄</span>
+                    Aperçu Miroir
                 </button>
 
                 <button type="button" class="pdf-btn pdf-btn-download" id="pdf-download-btn" style="display: none; flex: 0.7;">
@@ -886,6 +894,47 @@ class PDF_Builder_WooCommerce_Integration {
                 }
             });
 
+            // Gestionnaire pour le bouton Aperçu Miroir
+            $('#pdf-preview-mirror-btn').on('click', function(e) {
+                e.preventDefault();
+                console.log("PDF Preview Mirror - Aperçu Miroir clicked");
+                
+                showStatus("Génération de l'aperçu miroir...", "loading");
+                
+                var data = {
+                    action: 'pdf_builder_preview_mirror',
+                    nonce: nonce,
+                    order_id: orderId,
+                    template_id: templateId
+                };
+                
+                $.ajax({
+                    url: ajaxUrl,
+                    type: 'POST',
+                    data: data,
+                    dataType: 'json',
+                    success: function(response) {
+                        console.log("Preview mirror response:", response);
+                        
+                        if (response.success && response.data.html) {
+                            // Ouvrir le miroir PDF dans une nouvelle fenêtre
+                            var mirrorWindow = window.open('', 'pdf_preview_mirror', 'width=1200,height=800,scrollbars=yes,resizable=yes');
+                            mirrorWindow.document.write(response.data.html);
+                            mirrorWindow.document.close();
+                            
+                            showStatus("Aperçu miroir généré avec succès ✓", "success");
+                        } else {
+                            var errorMsg = response.data || "Erreur lors de la génération";
+                            showStatus("Erreur: " + errorMsg, "error");
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Preview mirror error:", error);
+                        showStatus("Erreur: " + error, "error");
+                    }
+                });
+            });
+
             // Gestion du zoom pour l'aperçu PDF
             // Note: Le zoom avec iframe n'est pas aussi efficace, utilisons plutôt les outils du PDF natif
             var currentZoom = 100;
@@ -1320,5 +1369,299 @@ class PDF_Builder_WooCommerce_Integration {
                 set_error_handler($original_error_handler);
             }
         }
+    }
+
+    /**
+     * AJAX handler pour générer l'aperçu miroir du PDF avec les vraies données
+     */
+    public function ajax_preview_mirror() {
+        check_ajax_referer('pdf_builder_order_actions', 'nonce');
+        
+        if (!current_user_can('manage_woocommerce')) {
+            wp_send_json_error('Permissions insuffisantes');
+        }
+
+        $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
+        $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
+
+        if (!$order_id) {
+            wp_send_json_error('ID commande manquant');
+        }
+
+        try {
+            $order = wc_get_order($order_id);
+            if (!$order) {
+                wp_send_json_error('Commande introuvable');
+            }
+
+            // Charger le template
+            if ($template_id > 0) {
+                $templates = get_option('pdf_builder_templates', []);
+                $template_data = isset($templates[$template_id]) ? $templates[$template_id] : null;
+            } else {
+                $order_status = $order->get_status();
+                $status_templates = get_option('pdf_builder_order_status_templates', []);
+                $status_key = 'wc-' . $order_status;
+
+                if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
+                    $mapped_template_id = $status_templates[$status_key];
+                    $templates = get_option('pdf_builder_templates', []);
+                    $template_data = isset($templates[$mapped_template_id]) ? $templates[$mapped_template_id] : null;
+                } else {
+                    $templates = get_option('pdf_builder_templates', []);
+                    $template_data = !empty($templates) ? reset($templates) : null;
+                }
+            }
+
+            if (!$template_data) {
+                wp_send_json_error('Template non trouvé');
+            }
+
+            // Extraire les éléments
+            $elements = [];
+            if (isset($template_data['pages']) && is_array($template_data['pages']) && !empty($template_data['pages'])) {
+                $elements = $template_data['pages'][0]['elements'] ?? [];
+            } elseif (isset($template_data['elements'])) {
+                $elements = $template_data['elements'];
+            }
+
+            $canvas_width = intval($template_data['canvasWidth'] ?? $template_data['canvas']['width'] ?? 595);
+            $canvas_height = intval($template_data['canvasHeight'] ?? $template_data['canvas']['height'] ?? 842);
+
+            // Générer le HTML avec les vraies données de la commande
+            $preview_html = $this->render_preview_canvas($elements, $order, $canvas_width, $canvas_height);
+
+            // Créer le HTML complet avec styles pour l'impression et téléchargement
+            $full_html = <<<HTML
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aperçu - Commande {$order->get_order_number()}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+        body {
+            background: #f5f5f5;
+            font-family: Arial, Helvetica, sans-serif;
+            padding: 20px;
+        }
+        .preview-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        .canvas-container {
+            background: white;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+            position: relative;
+            margin: 20px auto;
+            page-break-after: always;
+        }
+        .canvas-element {
+            position: absolute;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .toolbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-bottom: 1px solid #ddd;
+            padding: 10px 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+        }
+        .toolbar button {
+            padding: 8px 16px;
+            background: #0073aa;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .toolbar button:hover {
+            background: #005a87;
+        }
+        .content {
+            margin-top: 60px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        table td, table th {
+            border: 1px solid #ddd;
+            padding: 6px 8px;
+            text-align: left;
+        }
+        table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        @media print {
+            .toolbar {
+                display: none;
+            }
+            body {
+                padding: 0;
+                background: white;
+            }
+            .content {
+                margin-top: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="toolbar">
+        <button onclick="window.print()">🖨️ Imprimer</button>
+        <button onclick="downloadPDF()">⬇️ Télécharger PDF</button>
+        <button onclick="window.close()">✕ Fermer</button>
+    </div>
+    <div class="content">
+        <div class="preview-wrapper">
+            <div class="canvas-container" style="width: {$canvas_width}px; height: auto; min-height: {$canvas_height}px;">
+                {$preview_html}
+            </div>
+        </div>
+    </div>
+    <script>
+        function downloadPDF() {
+            const data = {
+                action: 'pdf_builder_preview_download',
+                nonce: '{$this->get_nonce()}',
+                order_id: {$order_id},
+                template_id: {$template_id}
+            };
+            
+            fetch('{$this->get_ajax_url()}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success && result.data.url) {
+                    const link = document.createElement('a');
+                    link.href = result.data.url;
+                    link.download = 'commande-{$order_id}.pdf';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } else {
+                    alert('Erreur: ' + (result.data || 'Impossible de télécharger le PDF'));
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+HTML;
+
+            wp_send_json_success([
+                'html' => $full_html,
+                'order_id' => $order_id,
+                'template_id' => $template_id
+            ]);
+
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * AJAX handler pour télécharger le PDF depuis l'aperçu miroir
+     */
+    public function ajax_preview_download() {
+        check_ajax_referer('pdf_builder_order_actions', 'nonce');
+        
+        if (!current_user_can('manage_woocommerce')) {
+            wp_send_json_error('Permissions insuffisantes');
+        }
+
+        $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
+        $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
+
+        if (!$order_id) {
+            wp_send_json_error('ID commande manquant');
+        }
+
+        try {
+            $order = wc_get_order($order_id);
+            if (!$order) {
+                wp_send_json_error('Commande introuvable');
+            }
+
+            // Charger le template et générer le PDF
+            // Pour l'instant, on retourne une URL HTML temporaire
+            // TODO: Convertir en vrai PDF avec une bibliothèque
+            $upload_dir = wp_upload_dir();
+            $temp_dir = $upload_dir['basedir'] . '/pdf-builder-temp';
+            
+            if (!file_exists($temp_dir)) {
+                wp_mkdir_p($temp_dir);
+            }
+
+            $filename = 'commande-' . $order_id . '-' . time() . '.pdf';
+            $file_path = $temp_dir . '/' . $filename;
+            
+            // Pour l'instant, générer un fichier HTML
+            $html = 'Commande #' . $order_id;
+            file_put_contents($file_path, $html);
+
+            $download_url = $upload_dir['baseurl'] . '/pdf-builder-temp/' . $filename;
+            
+            wp_send_json_success(['url' => $download_url]);
+
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * AJAX handler pour imprimer l'aperçu miroir
+     */
+    public function ajax_preview_print() {
+        check_ajax_referer('pdf_builder_order_actions', 'nonce');
+        
+        if (!current_user_can('manage_woocommerce')) {
+            wp_send_json_error('Permissions insuffisantes');
+        }
+
+        wp_send_json_success(['message' => 'Impression lancée']);
+    }
+
+    /**
+     * Helper pour obtenir le nonce
+     */
+    private function get_nonce() {
+        return wp_create_nonce('pdf_builder_order_actions');
+    }
+
+    /**
+     * Helper pour obtenir l'URL AJAX
+     */
+    private function get_ajax_url() {
+        return admin_url('admin-ajax.php');
     }
 }
