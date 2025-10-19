@@ -634,9 +634,14 @@ class PDF_Builder_WooCommerce_Integration {
                 // Aperçu de commande WooCommerce - récupérer depuis la base de données
 
                 // Vérifier que WooCommerce est actif
-                if (!class_exists('WooCommerce')) {
+                error_log('PDF PREVIEW DEBUG - Checking WooCommerce class existence');
+                $woocommerce_exists = class_exists('WooCommerce');
+                error_log('PDF PREVIEW DEBUG - WooCommerce class exists: ' . ($woocommerce_exists ? 'YES' : 'NO'));
+                if (!$woocommerce_exists) {
+                    error_log('PDF PREVIEW DEBUG - WooCommerce not found, sending error');
                     wp_send_json_error('WooCommerce n\'est pas installé ou activé');
                 }
+                error_log('PDF PREVIEW DEBUG - WooCommerce check passed');
 
                 error_log('PDF PREVIEW DEBUG - About to call wc_get_order with ID: ' . $order_id);
                 try {
