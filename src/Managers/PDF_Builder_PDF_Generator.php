@@ -693,9 +693,11 @@ class PDF_Builder_PDF_Generator {
             // Ajouter une page
             $pdf->AddPage();
 
-            // Pour l'aperçu dans l'éditeur, utiliser toujours les éléments d'exemple
-            // pour montrer un rendu représentatif du PDF final
-            $elements = $this->get_sample_elements();
+            // Pour l'aperçu dans l'éditeur, utiliser les éléments du canvas s'ils existent,
+            // sinon utiliser les éléments d'exemple
+            if (empty($elements)) {
+                $elements = $this->get_sample_elements();
+            }
 
             // Rendre chaque élément dans le PDF
             foreach ($elements as $index => $element) {
