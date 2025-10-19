@@ -6563,16 +6563,23 @@ class PDF_Builder_Admin {
         }
 
         foreach ($elements as $index => $element) {
-            // Vérifier les propriétés essentielles
-            $x = floatval($element['position']['x'] ?? $element['x'] ?? 0);
-            $y = floatval($element['position']['y'] ?? $element['y'] ?? 0);
-            $width = floatval($element['position']['width'] ?? $element['size']['width'] ?? $element['width'] ?? 100);
-            $height = floatval($element['position']['height'] ?? $element['size']['height'] ?? $element['height'] ?? 50);
+            // DEBUG: Log complet de l'élément pour voir sa structure
+            error_log("[PDF Preview] Élément {$index} - Structure complète: " . json_encode($element, JSON_PRETTY_PRINT));
+
+            // Vérifier les propriétés essentielles - CORRECTION: utiliser les propriétés directes en priorité
+            $x = floatval($element['x'] ?? $element['position']['x'] ?? 0);
+            $y = floatval($element['y'] ?? $element['position']['y'] ?? 0);
+            $width = floatval($element['width'] ?? $element['size']['width'] ?? $element['position']['width'] ?? 100);
+            $height = floatval($element['height'] ?? $element['size']['height'] ?? $element['position']['height'] ?? 50);
             $type = $element['type'] ?? 'text';
             $visible = isset($element['visible']) ? (bool)$element['visible'] : true;
 
-            // DEBUG: Log des coordonnées extraites
-            error_log("[PDF Preview] Élément {$index} ({$type}): x={$x}, y={$y}, w={$width}, h={$height}, visible=" . ($visible ? 'true' : 'false'));
+            // DEBUG: Log des coordonnées extraites avec les sources
+            $x_source = isset($element['x']) ? 'x' : (isset($element['position']['x']) ? 'position.x' : 'défaut');
+            $y_source = isset($element['y']) ? 'y' : (isset($element['position']['y']) ? 'position.y' : 'défaut');
+            $w_source = isset($element['width']) ? 'width' : (isset($element['size']['width']) ? 'size.width' : (isset($element['position']['width']) ? 'position.width' : 'défaut'));
+            $h_source = isset($element['height']) ? 'height' : (isset($element['size']['height']) ? 'size.height' : (isset($element['position']['height']) ? 'position.height' : 'défaut'));
+            error_log("[PDF Preview] Élément {$index} ({$type}): x={$x} (de {$x_source}), y={$y} (de {$y_source}), w={$width} (de {$w_source}), h={$height} (de {$h_source}), visible=" . ($visible ? 'true' : 'false'));
 
             if (!$visible) {
                 continue;
