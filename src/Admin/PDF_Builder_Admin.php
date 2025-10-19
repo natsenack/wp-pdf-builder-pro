@@ -5743,19 +5743,19 @@ class PDF_Builder_Admin {
             error_log('[PDF Builder] AJAX Preview - Template chargé: ' . (isset($template_data['id']) ? $template_data['id'] : 'sans ID'));
             error_log('[PDF Builder] AJAX Preview - Nombre d\'éléments: ' . (isset($template_data['elements']) ? count($template_data['elements']) : 0));
 
-            // Générer l'aperçu PDF
-            $pdf_url = $this->generate_pdf_preview($order, $template_data);
+            // Générer l'aperçu HTML directement (pas de conversion PDF pour l'instant)
+            $html_content = $this->generate_html_preview($order, $template_data);
 
-            if (!$pdf_url) {
-                error_log('[PDF Builder] AJAX Preview - Erreur lors de la génération de l\'aperçu');
+            if (!$html_content) {
+                error_log('[PDF Builder] AJAX Preview - Erreur lors de la génération de l\'aperçu HTML');
                 wp_send_json_error(['message' => 'Erreur lors de la génération de l\'aperçu']);
                 return;
             }
 
-            error_log('[PDF Builder] AJAX Preview - Succès! URL: ' . $pdf_url);
+            error_log('[PDF Builder] AJAX Preview - HTML généré: ' . strlen($html_content) . ' caractères');
 
             wp_send_json_success([
-                'url' => $pdf_url,
+                'html' => $html_content,
                 'message' => 'Aperçu généré avec succès'
             ]);
 
@@ -5766,8 +5766,72 @@ class PDF_Builder_Admin {
     }
 
     /**
-     * Charge un template par son ID
+     * Génère un aperçu HTML directement (sans conversion PDF)
      */
+    private function generate_html_preview($order, $template_data) {
+        try {
+            error_log('[PDF Builder] generate_html_preview - Début');
+
+            // Vérifier que l'ordre est valide
+            if (!$order || !is_object($order)) {
+                error_log('[PDF Builder] generate_html_preview - Order invalide');
+                return false;
+            }
+
+            // Vérifier que template_data est valide
+            if (!is_array($template_data)) {
+                error_log('[PDF Builder] generate_html_preview - template_data n\'est pas un array: ' . gettype($template_data));
+                return false;
+            }
+
+            // Récupérer les éléments
+            $elements = isset($template_data['elements']) ? $template_data['elements'] : [];
+            if (!is_array($elements)) {
+                error_log('[PDF Builder] generate_html_preview - template_data[elements] n\'est pas un array: ' . gettype($elements));
+                return false;
+            }
+
+            if (empty($elements)) {
+                error_log('[PDF Builder] generate_html_preview - Aucun élément trouvé dans le template');
+                return false;
+            }
+
+            error_log('[PDF Builder] generate_html_preview - Éléments à traiter: ' . count($elements));
+
+            // Utiliser le contrôleur de génération PDF existant
+            if (!class_exists('PDF_Builder_Pro_Generator')) {
+                $path = PDF_BUILDER_SRC_DIR . 'Controllers/PDF_Generator_Controller.php';
+                if (!file_exists($path)) {
+                    error_log('[PDF Builder] generate_html_preview - Fichier non trouvé: ' . $path);
+                    return false;
+                }
+                require_once $path;
+            }
+
+            $generator = new PDF_Builder_Pro_Generator();
+            $generator->set_order($order);
+            $generator->set_preview_mode(true); // Mode aperçu
+
+            error_log('[PDF Builder] generate_html_preview - Générateur créé');
+
+            // Générer l'HTML avec les éléments du template
+            $html_content = $generator->generate($elements, ['is_preview' => true]);
+
+            if (!$html_content) {
+                error_log('[PDF Builder] generate_html_preview - generate() a retourné null/false');
+                return false;
+            }
+
+            error_log('[PDF Builder] generate_html_preview - HTML généré: ' . strlen($html_content) . ' caractères');
+
+            // Retourner l'HTML directement
+            return $html_content;
+
+        } catch (Exception $e) {
+            error_log('[PDF Builder] generate_html_preview - Exception: ' . $e->getMessage() . ' - ' . $e->getTraceAsString());
+            return false;
+        }
+    }
     private function load_template_by_id($template_id) {
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
@@ -6380,13 +6444,17 @@ class PDF_Builder_Admin {
             if ($template_id > 0) {
                 $template_data = $this->load_template_robust($template_id);
             } else {
-                $order_status = $order->get_status();
-                $status_templates = get_option('pdf_builder_order_status_templates', []);
-                $status_key = 'wc-' . $order_status;
+                if ($order && is_object($order)) {
+                    $order_status = $order->get_status();
+                    $status_templates = get_option('pdf_builder_order_status_templates', []);
+                    $status_key = 'wc-' . $order_status;
 
-                if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
-                    $mapped_template_id = $status_templates[$status_key];
-                    $template_data = $this->load_template_robust($mapped_template_id);
+                    if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
+                        $mapped_template_id = $status_templates[$status_key];
+                        $template_data = $this->load_template_robust($mapped_template_id);
+                    } else {
+                        $template_data = $this->get_default_invoice_template();
+                    }
                 } else {
                     $template_data = $this->get_default_invoice_template();
                 }
@@ -6418,7 +6486,7 @@ class PDF_Builder_Admin {
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Aperçu - Commande <?php echo esc_attr($order->get_order_number()); ?></title>
+                <title>Aperçu - Commande <?php echo $order && is_object($order) ? esc_attr($order->get_order_number()) : 'N/A'; ?></title>
                 <style>
                     * {
                         margin: 0;

@@ -877,16 +877,21 @@ class PDF_Builder_WooCommerce_Integration {
                     success: function(response) {
                         console.log("PDF Preview response:", response);
 
-                        if (response.success && response.data && response.data.url) {
-                            // Charger l'URL du PDF dans l'iframe
-                            $iframe.attr('src', response.data.url);
+                        if (response.success && response.data && response.data.html) {
+                            // Afficher l'HTML directement dans l'iframe
+                            var iframe = $iframe[0];
+                            var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                            iframeDoc.open();
+                            iframeDoc.write(response.data.html);
+                            iframeDoc.close();
+                            
                             $loading.hide();
                             $iframe.show();
-
+                            
                             // Attendre que l'iframe soit chargé
                             $iframe.on('load', function() {
-                                console.log('PDF preview iframe loaded');
-                                showStatus("Aperçu PDF chargé avec succès ✓", "success");
+                                console.log('HTML preview iframe loaded');
+                                showStatus("Aperçu HTML chargé avec succès ✓", "success");
                             });
                         } else {
                             var errorMsg = response.data || "Erreur lors de la génération de l'aperçu";
