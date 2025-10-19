@@ -211,7 +211,11 @@ class PDF_Builder_PDF_Generator {
             error_log('[PDF Builder Preview] Successfully decoded ' . count($canvas_elements) . ' elements');
 
             // Générer le PDF en utilisant le nouveau générateur SANS TCPDF
-            require_once plugin_dir_path(dirname(__FILE__)) . '../Controllers/PDF_Generator_Controller.php';
+            $controller_path = plugin_dir_path(dirname(__FILE__)) . '../Controllers/PDF_Generator_Controller.php';
+            error_log('[PDF Builder Preview] Controller path: ' . $controller_path);
+            error_log('[PDF Builder Preview] Controller exists: ' . (file_exists($controller_path) ? 'YES' : 'NO'));
+            
+            require_once $controller_path;
             
             $generator = new PDF_Builder_Pro_Generator();
             $generator->set_preview_mode(true);
