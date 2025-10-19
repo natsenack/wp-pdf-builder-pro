@@ -165,16 +165,20 @@ class PDF_Builder_PDF_Generator {
             wp_send_json_error('Permissions insuffisantes');
         }
 
+        // Lire le JSON du body de la requête
+        $request_body = file_get_contents('php://input');
+        $request_data = json_decode($request_body, true);
+
+        if (!$request_data || !isset($request_data['nonce']) || !isset($request_data['elements'])) {
+            wp_send_json_error('Données de requête invalides');
+        }
+
         // Vérification de sécurité
-        if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce')) {
+        if (!wp_verify_nonce($request_data['nonce'], 'pdf_builder_nonce')) {
             wp_send_json_error('Sécurité: Nonce invalide');
         }
 
-        $elements = isset($_POST['elements']) ? $_POST['elements'] : '';
-
-        if (empty($elements)) {
-            wp_send_json_error('Données éléments manquantes');
-        }
+        $elements = $request_data['elements'];
 
         try {
             // Décoder les éléments JSON

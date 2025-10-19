@@ -57,14 +57,18 @@ const PreviewModal = ({
       }
 
       // Préparer l'appel pour l'aperçu unifié
-      const formData = new FormData();
-      formData.append('action', 'pdf_builder_unified_preview');
-      formData.append('nonce', nonceData.data.nonce);
-      formData.append('elements', jsonString);
+      const requestData = {
+        action: 'pdf_builder_unified_preview',
+        nonce: nonceData.data.nonce,
+        elements: jsonString
+      };
 
       const response = await fetch(ajaxurl || window.pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
         method: 'POST',
-        body: formData
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData)
       });
 
       if (!response.ok) {
