@@ -124,6 +124,9 @@ class PDF_Builder_Core {
         // Initialiser les managers canvas (récupérés depuis l'archive)
         $this->init_canvas_managers();
 
+        // Initialiser l'intégration WooCommerce
+        $this->init_woocommerce_integration();
+
         // Ici seront initialisées les autres fonctionnalités du plugin
         // (gestionnaire de templates, générateur PDF, etc.)
     }
@@ -140,6 +143,21 @@ class PDF_Builder_Core {
             $resize_manager = \PDF_Builder_Resize_Manager::getInstance();
             $interactions_manager = \PDF_Builder_Canvas_Interactions_Manager::getInstance();
 
+        } catch (\Exception $e) {
+            // Gestion silencieuse des erreurs d'initialisation
+        }
+    }
+
+    /**
+     * Initialiser l'intégration WooCommerce
+     */
+    private function init_woocommerce_integration() {
+        try {
+            // Vérifier si WooCommerce est actif
+            if (class_exists('WooCommerce')) {
+                // Instancier l'intégration WooCommerce pour enregistrer les hooks AJAX
+                $woocommerce_integration = new \PDF_Builder_WooCommerce_Integration($this);
+            }
         } catch (\Exception $e) {
             // Gestion silencieuse des erreurs d'initialisation
         }
