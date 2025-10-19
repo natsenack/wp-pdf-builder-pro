@@ -343,6 +343,22 @@ class PDF_Builder_Pro_Generator {
                         $table_css .= ' border-collapse: collapse;';
                     }
 
+                    // Couleurs spécifiques pour les colonnes (utiliser les propriétés variables ou valeurs par défaut)
+                    $name_color = $element['nameColor'] ?? 'inherit';
+                    $quantity_color = $element['quantityColor'] ?? '#2563eb';
+                    $price_color = $element['priceColor'] ?? '#16a34a';
+                    $total_color = $element['totalColor'] ?? '#dc2626';
+
+                    error_log('[PDF Generator] Column colors - name: ' . $name_color . ', quantity: ' . $quantity_color . ', price: ' . $price_color . ', total: ' . $total_color);
+
+                    // Styles spécifiques pour les colonnes
+                    $name_style = $element['nameStyle'] ?? 'font-weight: 500;';
+                    $quantity_style = $element['quantityStyle'] ?? 'text-align: center;';
+                    $price_style = $element['priceStyle'] ?? 'text-align: right;';
+                    $total_style = $element['totalStyle'] ?? 'text-align: right; font-weight: bold;';
+
+                    error_log('[PDF Generator] Column styles - name: ' . $name_style . ', quantity: ' . $quantity_style . ', price: ' . $price_style . ', total: ' . $total_style);
+
                     // Style des bordures pour les cellules
                     $cell_border_style = $show_borders ? 'border: 1px solid #ddd;' : '';
 
@@ -380,14 +396,14 @@ class PDF_Builder_Pro_Generator {
                         if ($columns['name']) {
                             $product_name = $item->get_name();
                             error_log('[PDF Generator] Product name: ' . $product_name);
-                            $table_html .= "<td style='padding: 8px; {$cell_border_style} font-weight: 500;'>{$product_name}</td>";
+                            $table_html .= "<td style='padding: 8px; {$cell_border_style} {$name_style} color: {$name_color};'>{$product_name}</td>";
                         }
 
                         // Quantity
                         if ($columns['quantity']) {
                             $quantity = $item->get_quantity();
                             error_log('[PDF Generator] Quantity: ' . $quantity);
-                            $table_html .= "<td style='padding: 8px; {$cell_border_style} text-align: center; color: #2563eb;'>{$quantity}</td>";
+                            $table_html .= "<td style='padding: 8px; {$cell_border_style} {$quantity_style} color: {$quantity_color};'>{$quantity}</td>";
                         }
 
                         // Price
@@ -396,14 +412,14 @@ class PDF_Builder_Pro_Generator {
                             $price = $product ? $product->get_price() : 0;
                             $price_formatted = function_exists('wc_price') ? wc_price($price) : $price;
                             error_log('[PDF Generator] Price: ' . $price . ' -> ' . $price_formatted);
-                            $table_html .= "<td style='padding: 8px; {$cell_border_style} text-align: right; color: #16a34a;'>{$price_formatted}</td>";
+                            $table_html .= "<td style='padding: 8px; {$cell_border_style} {$price_style} color: {$price_color};'>{$price_formatted}</td>";
                         }
 
                         // Total
                         if ($columns['total']) {
                             $total = function_exists('wc_price') ? wc_price($item->get_total()) : $item->get_total();
                             error_log('[PDF Generator] Total: ' . $total);
-                            $table_html .= "<td style='padding: 8px; {$cell_border_style} text-align: right; font-weight: bold; color: #dc2626;'>{$total}</td>";
+                            $table_html .= "<td style='padding: 8px; {$cell_border_style} {$total_style} color: {$total_color};'>{$total}</td>";
                         }
 
                         $table_html .= "</tr>";
