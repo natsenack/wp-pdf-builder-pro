@@ -107,9 +107,18 @@ class PDF_Builder_Pro_Generator {
     <meta charset="UTF-8">
     <title>PDF Preview</title>
     <style>
-        body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
-        .pdf-container { width: 210mm; min-height: 297mm; background: white; margin: 0 auto; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        .canvas-element { position: absolute; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
+        .pdf-container { 
+            position: relative;
+            width: 595px; 
+            height: 842px; 
+            background: white; 
+            margin: 0 auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .canvas-element { position: absolute; overflow: hidden; }
     </style>
 </head>
 <body>
@@ -134,6 +143,14 @@ class PDF_Builder_Pro_Generator {
         $type = $element['type'] ?? 'text';
         $coords = $this->extract_element_coordinates($element, 1); // Garder en pixels pour HTML
 
+        // Donner des dimensions par défaut si manquantes
+        if (empty($coords['width']) || $coords['width'] <= 0) {
+            $coords['width'] = 100; // Largeur par défaut
+        }
+        if (empty($coords['height']) || $coords['height'] <= 0) {
+            $coords['height'] = 50; // Hauteur par défaut
+        }
+
         // CONTRAINTE: S'assurer que l'élément reste dans les limites A4 (595x842 pixels)
         $canvas_width = 595;
         $canvas_height = 842;
@@ -146,24 +163,74 @@ class PDF_Builder_Pro_Generator {
         );
 
         // Appliquer les styles CSS des propriétés
+        $style .= 'box-sizing: border-box; ';
+        
         if (isset($element['properties'])) {
             $style .= $this->extract_element_styles($element['properties']);
+        }
+        
+        // Ajouter les styles directement de l'élément s'ils existent
+        if (isset($element['color'])) {
+            $style .= 'color: ' . esc_attr($element['color']) . '; ';
+        }
+        if (isset($element['backgroundColor'])) {
+            $style .= 'background-color: ' . esc_attr($element['backgroundColor']) . '; ';
+        }
+        if (isset($element['fontSize'])) {
+            $style .= 'font-size: ' . intval($element['fontSize']) . 'px; ';
+        }
+        if (isset($element['fontWeight'])) {
+            $style .= 'font-weight: ' . esc_attr($element['fontWeight']) . '; ';
+        }
+        if (isset($element['textAlign'])) {
+            $style .= 'text-align: ' . esc_attr($element['textAlign']) . '; ';
+        }
+        if (isset($element['border'])) {
+            $style .= 'border: ' . esc_attr($element['border']) . '; ';
+        }
+        if (isset($element['borderColor'])) {
+            $style .= 'border-color: ' . esc_attr($element['borderColor']) . '; ';
+        }
+        if (isset($element['borderWidth'])) {
+            $style .= 'border-width: ' . intval($element['borderWidth']) . 'px; ';
         }
 
         switch ($type) {
             case 'text':
-                $content = $element['content'] ?? '';
-                return "<div class='canvas-element' style='$style'>$content</div>";
+            case 'dynamic-text':
+            case 'multiline_text':
+                $content = $element['content'] ?? $element['text'] ?? '';
+                return "<div class='canvas-element' style='" . esc_attr($style) . "; white-space: pre-wrap; word-wrap: break-word;'>" . wp_kses_post($content) . "</div>";
 
             case 'image':
-                $src = $element['src'] ?? '';
-                return "<img class='canvas-element' src='$src' style='$style' />";
+            case 'company_logo':
+                $src = $element['imageUrl'] ?? $element['src'] ?? '';
+                if (!$src && $type === 'company_logo') {
+                    $custom_logo_id = get_theme_mod('custom_logo');
+                    if ($custom_logo_id) {
+                        $src = wp_get_attachment_image_url($custom_logo_id, 'full');
+                    }
+                }
+                if ($src) {
+                    return "<img class='canvas-element' src='" . esc_url($src) . "' style='" . esc_attr($style) . "; object-fit: contain;' />";
+                }
+                return "<div class='canvas-element' style='" . esc_attr($style) . "; background: #f0f0f0; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center;'>Logo</div>";
 
             case 'rectangle':
-                return "<div class='canvas-element' style='$style border: 1px solid black;'></div>";
+                return "<div class='canvas-element' style='" . esc_attr($style) . "; border: 1px solid #ccc;'></div>";
+
+            case 'divider':
+            case 'line':
+                return "<div class='canvas-element' style='" . esc_attr($style) . "; background-color: #cccccc;'></div>";
+
+            case 'product_table':
+                return "<div class='canvas-element' style='" . esc_attr($style) . "; border: 1px solid #ddd; overflow: auto;'>Tableau produits</div>";
+
+            case 'customer_info':
+                return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 12px; line-height: 1.4;'>Informations client</div>";
 
             default:
-                return "<div class='canvas-element' style='$style'>Element type: $type</div>";
+                return "<div class='canvas-element' style='" . esc_attr($style) . "'>[$type]</div>";
         }
     }
 
