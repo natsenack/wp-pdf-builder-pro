@@ -210,14 +210,6 @@ class PDF_Builder_PDF_Generator {
 
             error_log('[PDF Builder Preview] Successfully decoded ' . count($canvas_elements) . ' elements');
 
-            // Créer un template à partir des éléments canvas
-            $template_data = array(
-                'elements' => $canvas_elements,
-                'canvasWidth' => 595, // A4 width in points
-                'canvasHeight' => 842, // A4 height in points
-                'version' => '1.0'
-            );
-            
             // Générer le PDF en utilisant le nouveau générateur SANS TCPDF
             require_once plugin_dir_path(dirname(__FILE__)) . '../Controllers/PDF_Generator_Controller.php';
             
@@ -235,7 +227,8 @@ class PDF_Builder_PDF_Generator {
                     wp_mkdir_p($html_dir);
                 }
 
-                $html_path = $html_dir . '/' . $filename . '.html';
+                $filename = 'preview-' . time() . '.html';
+                $html_path = $html_dir . '/' . $filename;
                 file_put_contents($html_path, $html_content);
                 
                 $html_url = str_replace($upload_dir['basedir'], $upload_dir['baseurl'], $html_path);
