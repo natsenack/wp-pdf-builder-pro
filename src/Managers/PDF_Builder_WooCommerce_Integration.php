@@ -1038,6 +1038,49 @@ class PDF_Builder_WooCommerce_Integration {
         }
 
         try {
+            // Charger la commande WooCommerce
+            $order = wc_get_order($order_id);
+            if (!$order) {
+                error_log('PDF BUILDER DEBUG: Order not found');
+                wp_send_json_error('Commande introuvable');
+            }
+
+            // Charger le template
+            if ($template_id > 0) {
+                $templates = get_option('pdf_builder_templates', []);
+                $template_data = isset($templates[$template_id]) ? $templates[$template_id] : null;
+            } else {
+                // Détecter automatiquement le template basé sur le statut de la commande
+                $order_status = $order->get_status();
+                $status_templates = get_option('pdf_builder_order_status_templates', []);
+                $status_key = 'wc-' . $order_status;
+
+                if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
+                    $mapped_template_id = $status_templates[$status_key];
+                    $templates = get_option('pdf_builder_templates', []);
+                    $template_data = isset($templates[$mapped_template_id]) ? $templates[$mapped_template_id] : null;
+                } else {
+                    // Template par défaut - prendre le premier template disponible
+                    $templates = get_option('pdf_builder_templates', []);
+                    $template_data = !empty($templates) ? reset($templates) : null;
+                }
+            }
+
+            if (!$template_data) {
+                error_log('PDF BUILDER DEBUG: Template not found');
+                wp_send_json_error('Template non trouvé');
+            }
+
+            // Extraire les éléments du template
+            $elements = [];
+            if (isset($template_data['pages']) && is_array($template_data['pages']) && !empty($template_data['pages'])) {
+                $elements = $template_data['pages'][0]['elements'] ?? [];
+            } elseif (isset($template_data['elements'])) {
+                $elements = $template_data['elements'];
+            }
+
+            error_log('PDF BUILDER DEBUG: Elements count: ' . count($elements));
+
             // Générer le PDF SANS TCPDF - utiliser la nouvelle approche HTML
             error_log('PDF BUILDER DEBUG: About to generate PDF without TCPDF using new HTML approach');
 
@@ -1045,7 +1088,7 @@ class PDF_Builder_WooCommerce_Integration {
             $generator = new PDF_Builder_Pro_Generator();
             error_log('PDF BUILDER DEBUG: PDF_Builder_Pro_Generator instantiated');
 
-            $html_content = $generator->generate([], ['is_preview' => false]);
+            $html_content = $generator->generate($elements, ['is_preview' => false, 'order' => $order]);
             error_log('PDF BUILDER DEBUG: HTML generated, length: ' . strlen($html_content));
 
             // Créer un fichier HTML temporaire pour le téléchargement
