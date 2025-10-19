@@ -657,10 +657,29 @@ class PDF_Builder_WooCommerce_Integration {
                 if (json_last_error() !== JSON_ERROR_NONE) {
                     error_log('PDF PREVIEW DEBUG - Template data decode error: ' . json_last_error_msg());
                     error_log('PDF PREVIEW DEBUG - Raw template_data: ' . substr($template['template_data'], 0, 500));
-                    wp_send_json_error('Données du template invalides: ' . json_last_error_msg());
+                    // Essayer de récupérer avec stripslashes au cas où
+                    $clean_template_data = stripslashes($template['template_data']);
+                    $template_data = json_decode($clean_template_data, true);
+                    if (json_last_error() !== JSON_ERROR_NONE) {
+                        wp_send_json_error('Données du template invalides: ' . json_last_error_msg());
+                    }
                 }
 
                 $elements_for_pdf = isset($template_data['elements']) ? $template_data['elements'] : [];
+
+                if (empty($elements_for_pdf)) {
+                    error_log('PDF PREVIEW DEBUG - Template has no elements, using fallback');
+                    // Template vide, utiliser un élément de fallback
+                    $elements_for_pdf = [
+                        [
+                            'type' => 'text',
+                            'content' => 'Template vide - Veuillez ajouter des éléments dans l\'éditeur',
+                            'position' => ['x' => 20, 'y' => 50],
+                            'size' => ['width' => 150, 'height' => 20],
+                            'style' => ['fontSize' => 12, 'fontWeight' => 'normal']
+                        ]
+                    ];
+                }
 
                 error_log('PDF PREVIEW DEBUG - Elements for PDF generation: ' . json_encode($elements_for_pdf));
                 error_log('PDF PREVIEW DEBUG - Order object for generation: ' . ($order ? 'EXISTS (ID: ' . $order->get_id() . ')' : 'NULL'));
