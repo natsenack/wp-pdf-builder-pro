@@ -404,7 +404,8 @@ class PDF_Builder_WooCommerce_Integration {
         </div>
 
         <!-- NOUVEAU SYSTÈME D'APERÇU PDF COMPLET -->
-        <div id="pdf-preview-system" class="pdf-preview-system" data-order-id="<?php echo intval($order_id); ?>" data-template-id="<?php echo $selected_template ? intval($selected_template['id']) : 0; ?>">
+        <div id="pdf-preview-system-container">
+            <div id="pdf-preview-system" class="pdf-preview-system" data-order-id="<?php echo intval($order_id); ?>" data-template-id="<?php echo $selected_template ? intval($selected_template['id']) : 0; ?>">
 
             <!-- État du système d'aperçu -->
             <div id="pdf-preview-state" class="pdf-preview-state" style="display: none;">
@@ -588,9 +589,172 @@ class PDF_Builder_WooCommerce_Integration {
                 </div>
             </div>
         </div>
+        </div>
 
         <!-- NOUVEAU SYSTÈME D'APERÇU PDF COMPLET - STYLES -->
         <style>
+        /* === MODALE D'APERÇU PDF === */
+        .woo-pdf-preview-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 9999;
+            display: none;
+        }
+
+        .woo-pdf-preview-modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(3px);
+        }
+
+        .woo-pdf-preview-modal-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 0, 0, 0.05);
+            width: 95%;
+            max-width: 1200px;
+            height: 90vh;
+            max-height: 900px;
+            display: flex;
+            flex-direction: column;
+            animation: wooSlideIn 0.3s ease-out;
+            overflow: hidden;
+        }
+
+        @keyframes wooSlideIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -48%) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .woo-pdf-preview-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid #e5e7eb;
+            background: linear-gradient(135deg, #f8fafb 0%, #f3f4f6 100%);
+            border-radius: 12px 12px 0 0;
+            flex-shrink: 0;
+        }
+
+        .woo-pdf-preview-modal-header h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 700;
+            color: #111827;
+            letter-spacing: -0.3px;
+        }
+
+        .woo-pdf-preview-modal-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            color: #9ca3af;
+            padding: 0;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .woo-pdf-preview-modal-close:hover {
+            background: rgba(0, 0, 0, 0.05);
+            color: #374151;
+        }
+
+        .woo-pdf-preview-modal-body {
+            flex: 1;
+            overflow: auto;
+            background: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 0;
+            gap: 0;
+            min-height: 0;
+            position: relative;
+            width: 100%;
+            height: 100%;
+            padding-top: 0;
+        }
+
+        .woo-pdf-preview-modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            padding: 16px 24px;
+            border-top: 1px solid #e5e7eb;
+            background: linear-gradient(135deg, #f8fafb 0%, #f3f4f6 100%);
+            border-radius: 0 0 12px 12px;
+            flex-shrink: 0;
+        }
+
+        .woo-pdf-preview-download-btn,
+        .woo-pdf-preview-print-btn,
+        .woo-pdf-preview-modal-close-btn {
+            padding: 10px 18px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            background: white;
+            color: #374151;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .woo-pdf-preview-download-btn {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .woo-pdf-preview-download-btn:hover {
+            background: #2563eb;
+            border-color: #2563eb;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .woo-pdf-preview-print-btn {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+
+        .woo-pdf-preview-print-btn:hover {
+            background: #059669;
+            border-color: #059669;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .woo-pdf-preview-modal-close-btn:hover {
+            background: #f3f4f6;
+            border-color: #9ca3af;
+            color: #111827;
+        }
+
         /* === NOUVEAU SYSTÈME D'APERÇU PDF - STYLES COMPLETS === */
 
         /* === CONTENEUR PRINCIPAL === */
@@ -879,6 +1043,7 @@ class PDF_Builder_WooCommerce_Integration {
             border-radius: 2px;
             background: #e5e7eb;
             outline: none;
+            appearance: none;
             -webkit-appearance: none;
         }
 
@@ -1728,11 +1893,26 @@ class PDF_Builder_WooCommerce_Integration {
 
                 // === MÉTHODES PRINCIPALES ===
 
-                // Afficher l'aperçu
+                // Afficher l'aperçu dans une modale
                 showPreview() {
-                    console.log('Affichage de l\'aperçu...');
+                    console.log('Affichage de l\'aperçu en modale...');
+
+                    // Créer la modale si elle n'existe pas
+                    if (!this.elements.modal) {
+                        this.createModal();
+                    }
+
+                    // Afficher la modale
+                    this.elements.modal.show();
+                    this.elements.modalOverlay.show();
+
+                    // Initialiser l'état
                     this.updateStateDisplay('Chargement de l\'aperçu...', 'loading');
                     this.showLoading('Génération de l\'aperçu PDF...');
+
+                    // Masquer l'ancien contenu et afficher le nouveau système
+                    this.elements.modal.find('.woo-pdf-preview-modal-body').html('');
+                    this.elements.modal.find('.woo-pdf-preview-modal-body').append(this.elements.system);
 
                     this.elements.container.show();
                     this.elements.state.hide();
@@ -1740,12 +1920,71 @@ class PDF_Builder_WooCommerce_Integration {
                     this.loadPreview();
                 }
 
-                // Masquer l'aperçu
+                // Créer la modale
+                createModal() {
+                    if (this.elements.modal) return;
+
+                    const modalHTML = `
+                        <div id="woo-pdf-preview-modal" class="woo-pdf-preview-modal" style="display: none;">
+                            <div class="woo-pdf-preview-modal-overlay"></div>
+                            <div class="woo-pdf-preview-modal-container">
+                                <div class="woo-pdf-preview-modal-header">
+                                    <h3>Aperçu PDF - Commande #${this.config.orderId}</h3>
+                                    <button class="woo-pdf-preview-modal-close">×</button>
+                                </div>
+                                <div class="woo-pdf-preview-modal-body">
+                                    <!-- Le système d'aperçu sera inséré ici -->
+                                </div>
+                                <div class="woo-pdf-preview-modal-footer">
+                                    <button class="woo-pdf-preview-modal-close-btn">Fermer</button>
+                                    <button class="woo-pdf-preview-download-btn">Télécharger PDF</button>
+                                    <button class="woo-pdf-preview-print-btn">Imprimer</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    $('body').append(modalHTML);
+
+                    this.elements.modal = $('#woo-pdf-preview-modal');
+                    this.elements.modalOverlay = $('.woo-pdf-preview-modal-overlay');
+
+                    // Événements de fermeture
+                    var self = this;
+                    this.elements.modal.find('.woo-pdf-preview-modal-close, .woo-pdf-preview-modal-close-btn, .woo-pdf-preview-modal-overlay').on('click', function(e) {
+                        if ($(this).hasClass('woo-pdf-preview-modal-overlay') ||
+                            $(this).hasClass('woo-pdf-preview-modal-close') ||
+                            $(this).hasClass('woo-pdf-preview-modal-close-btn')) {
+                            e.preventDefault();
+                            self.hidePreview();
+                        }
+                    });
+
+                    // Boutons d'action
+                    this.elements.modal.find('.woo-pdf-preview-download-btn').on('click', function(e) {
+                        e.preventDefault();
+                        self.downloadPDF();
+                    });
+
+                    this.elements.modal.find('.woo-pdf-preview-print-btn').on('click', function(e) {
+                        e.preventDefault();
+                        self.printPDF();
+                    });
+                }
+
+                // Masquer l'aperçu (fermer la modale)
                 hidePreview() {
-                    console.log('Masquage de l\'aperçu');
-                    this.elements.container.hide();
-                    this.elements.state.show();
-                    this.updateStateDisplay('Aperçu masqué', 'ready');
+                    console.log('Fermeture de la modale d\'aperçu');
+                    if (this.elements.modal) {
+                        this.elements.modal.hide();
+                        this.elements.modalOverlay.hide();
+
+                        // Remettre le système dans la métabox
+                        $('#pdf-preview-system-container').append(this.elements.system);
+                        this.elements.container.hide();
+                        this.elements.state.show();
+                        this.updateStateDisplay('Aperçu fermé', 'ready');
+                    }
                 }
 
                 // Charger l'aperçu
