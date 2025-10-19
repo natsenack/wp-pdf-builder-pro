@@ -166,7 +166,7 @@ class PDF_Builder_PDF_Generator {
         }
 
         // Vérification de sécurité
-        if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions')) {
+        if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce')) {
             wp_send_json_error('Sécurité: Nonce invalide');
         }
 
