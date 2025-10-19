@@ -160,20 +160,27 @@ class PDF_Builder_PDF_Generator {
      * AJAX - Aperçu unifié (pour le canvas editor)
      */
     public function ajax_unified_preview() {
+        error_log('[PDF Builder Preview] ajax_unified_preview called');
+
         // Vérifier les permissions
         if (!current_user_can('manage_options')) {
+            error_log('[PDF Builder Preview] Permission denied');
             wp_send_json_error('Permissions insuffisantes');
         }
 
         // Lire les données depuis POST (FormData)
         if (!isset($_POST['nonce']) || !isset($_POST['elements'])) {
+            error_log('[PDF Builder Preview] Missing POST data');
             wp_send_json_error('Données de requête invalides');
         }
 
         // Vérification de sécurité
         if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce')) {
+            error_log('[PDF Builder Preview] Invalid nonce');
             wp_send_json_error('Sécurité: Nonce invalide');
         }
+
+        error_log('[PDF Builder Preview] Security checks passed');
 
         $elements = $_POST['elements'];
 
@@ -656,11 +663,18 @@ class PDF_Builder_PDF_Generator {
             // Indicateur de version TCPDF
             error_log('[PDF Builder] 🔄 NOUVELLE VERSION TCPDF - Génération d\'aperçu avec rendu haute fidélité');
 
+            // Vérifier que le fichier TCPDF existe
+            $tcpdf_path = plugin_dir_path(dirname(__FILE__)) . '../../lib/tcpdf/tcpdf.php';
+            error_log('[PDF Builder] TCPDF path: ' . $tcpdf_path);
+            error_log('[PDF Builder] TCPDF file exists: ' . (file_exists($tcpdf_path) ? 'YES' : 'NO'));
+
             // Charger TCPDF
-            require_once plugin_dir_path(dirname(__FILE__)) . '../../lib/tcpdf/tcpdf.php';
+            require_once $tcpdf_path;
+            error_log('[PDF Builder] TCPDF loaded successfully');
 
             // Créer une instance TCPDF pour l'aperçu
             $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
+            error_log('[PDF Builder] TCPDF instance created successfully');
 
             // Configuration de base
             $pdf->SetCreator('PDF Builder Pro');
