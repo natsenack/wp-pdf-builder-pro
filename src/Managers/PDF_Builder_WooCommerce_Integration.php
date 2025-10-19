@@ -421,6 +421,9 @@ class PDF_Builder_WooCommerce_Integration {
                             <button class="zoom-btn" id="zoom-out-btn" title="Réduire">- 75%</button>
                             <span class="zoom-display" id="zoom-display">100%</span>
                         </div>
+                        <div class="preview-controls">
+                            <button class="preview-btn" id="preview-restart-btn" title="Redémarrer l'aperçu complètement" style="background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-left: 10px;">🔄 Restart</button>
+                        </div>
                     </div>
                     <iframe id="woo-pdf-preview-iframe" 
                             style="width: 100%; height: 100%; border: none; background: white; display: block; flex: 1;"
@@ -581,6 +584,31 @@ class PDF_Builder_WooCommerce_Integration {
                 align-items: center;
                 flex-wrap: wrap;
                 justify-content: center;
+            }
+
+            .preview-controls {
+                display: flex;
+                gap: 8px;
+                align-items: center;
+                margin-left: auto;
+            }
+
+            .preview-btn {
+                padding: 8px 16px;
+                border: 1px solid #d1d5db;
+                border-radius: 6px;
+                background: #dc3545;
+                color: white;
+                cursor: pointer;
+                font-size: 12px;
+                font-weight: 500;
+                transition: all 0.2s ease;
+                white-space: nowrap;
+            }
+
+            .preview-btn:hover {
+                background: #c82333;
+                border-color: #bd2130;
             }
 
             .zoom-btn {
@@ -839,8 +867,11 @@ class PDF_Builder_WooCommerce_Integration {
             $('#pdf-preview-btn').on('click', function(e) {
                 e.preventDefault();
 
-                console.log("PDF Preview - Aperçu PDF clicked");
+                console.log("PDF Preview - Aperçu PDF clicked - RESTART COMPLET");
                 console.log("Using nonce:", nonce.substring(0, 5) + "...");
+
+                // RESTART COMPLET DE L'APERÇU
+                restartPreviewCompletely();
 
                 // Afficher la modale avec loading
                 var $modal = $('#woo-pdf-preview-modal');
@@ -852,7 +883,7 @@ class PDF_Builder_WooCommerce_Integration {
                 $loading.show();
                 $iframe.hide();
 
-                showStatus("Génération de l'aperçu PDF...", "loading");
+                showStatus("Génération de l'aperçu PDF (restart complet)...", "loading");
 
                 // Utiliser l'API unifiée pour générer l'aperçu PDF
                 var data = {
@@ -971,10 +1002,69 @@ class PDF_Builder_WooCommerce_Integration {
                 });
             });
 
+            // FONCTION DE RESTART COMPLET DE L'APERÇU
+            function restartPreviewCompletely() {
+                console.log("=== RESTART COMPLET DE L'APERÇU PDF ===");
+
+                try {
+                    // 1. Vider complètement l'iframe
+                    var $iframe = $('#woo-pdf-preview-iframe');
+                    if ($iframe.length > 0) {
+                        var iframe = $iframe[0];
+                        try {
+                            var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                            iframeDoc.open();
+                            iframeDoc.write('<html><body><div style="text-align:center;padding:50px;font-family:Arial;">Rechargement de l\'aperçu...</div></body></html>');
+                            iframeDoc.close();
+                            console.log("Iframe vidé complètement");
+                        } catch (e) {
+                            console.error("Erreur lors du vidage de l'iframe:", e);
+                        }
+                    }
+
+                    // 2. Masquer la modale si elle est visible
+                    var $modal = $('#woo-pdf-preview-modal');
+                    if ($modal.is(':visible')) {
+                        $modal.hide();
+                        console.log("Modale masquée");
+                    }
+
+                    // 3. Réinitialiser l'état des boutons
+                    setButtonLoading($('#pdf-preview-btn'), false);
+                    setButtonLoading($('#pdf-generate-btn'), false);
+
+                    // 4. Vider le cache AJAX jQuery pour forcer un nouveau chargement
+                    if ($.ajaxSetup && $.ajaxSettings) {
+                        console.log("Cache AJAX vidé");
+                    }
+
+                    // 5. Forcer le garbage collection si disponible
+                    if (window.gc) {
+                        window.gc();
+                        console.log("Garbage collection forcé");
+                    }
+
+                    // 6. Réinitialiser les variables d'état
+                    currentZoom = 100;
+                    updateZoomDisplay();
+
+                    // 7. Nettoyer les event listeners potentiellement dupliqués
+                    $('#pdf-preview-btn').off('click.restart');
+                    $('#woo-pdf-preview-modal .woo-pdf-preview-modal-close, #woo-pdf-preview-modal .woo-pdf-preview-modal-close-btn, #woo-pdf-preview-modal .woo-pdf-preview-modal-overlay').off('click.restart');
+
+                    console.log("=== RESTART COMPLET TERMINÉ ===");
+
+                } catch (error) {
+                    console.error("Erreur lors du restart complet:", error);
+                }
+            }
+
             // Gérer la fermeture de la modale
             $('#woo-pdf-preview-modal .woo-pdf-preview-modal-close, #woo-pdf-preview-modal .woo-pdf-preview-modal-close-btn, #woo-pdf-preview-modal .woo-pdf-preview-modal-overlay').on('click', function(e) {
                 if ($(this).hasClass('woo-pdf-preview-modal-overlay') || $(this).closest('.woo-pdf-preview-modal-header, .woo-pdf-preview-modal-footer').length) {
                     e.preventDefault();
+                    console.log("Fermeture de la modale - restart complet");
+                    restartPreviewCompletely();
                     $('#woo-pdf-preview-modal').hide();
                 }
             });
@@ -1003,6 +1093,22 @@ class PDF_Builder_WooCommerce_Integration {
                 e.preventDefault();
                 currentZoom = 100;
                 updateZoomDisplay();
+            });
+
+            // Bouton RESTART COMPLET
+            $('#preview-restart-btn').on('click', function(e) {
+                e.preventDefault();
+                console.log("Bouton Restart cliqué - restart complet manuel");
+                showStatus("Redémarrage complet de l'aperçu...", "loading");
+                
+                // Restart complet
+                restartPreviewCompletely();
+                
+                // Relancer automatiquement l'aperçu après un court délai
+                setTimeout(function() {
+                    console.log("Relancement automatique de l'aperçu après restart");
+                    $('#pdf-preview-btn').trigger('click');
+                }, 500);
             });
 
             // Télécharger le PDF depuis la modale
