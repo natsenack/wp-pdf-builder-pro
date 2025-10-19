@@ -364,10 +364,12 @@ class PDF_Builder_Pro_Generator {
                     $row_count = 0;
                     foreach ($items as $item) {
                         $row_count++;
-                        $bg_color = ($row_count % 2 === 0) ? $even_row_bg : $odd_row_bg;
-                        $text_color = ($row_count % 2 === 0) ? 'inherit' : $odd_row_text_color;
+                        $is_even = ($row_count % 2 === 0);
+                        $bg_color = $is_even ? $even_row_bg : $odd_row_bg;
+                        $text_color = $is_even ? ($even_row_text_color ?? 'inherit') : $odd_row_text_color;
 
-                        error_log('[PDF Generator] Rendering row ' . $row_count . ' - bg: ' . $bg_color . ', text: ' . $text_color);
+                        error_log('[PDF Generator] Row ' . $row_count . ' - is_even: ' . ($is_even ? 'true' : 'false') . ', bg: ' . $bg_color . ', text: ' . $text_color);
+                        error_log('[PDF Generator] Colors config - even_bg: ' . $even_row_bg . ', odd_bg: ' . $odd_row_bg . ', odd_text: ' . $odd_row_text_color);
 
                         $table_html .= "<tr style='background-color: {$bg_color}; color: {$text_color};'>";
 
