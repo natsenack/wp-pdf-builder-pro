@@ -134,6 +134,12 @@ class PDF_Builder_Pro_Generator {
         $type = $element['type'] ?? 'text';
         $coords = $this->extract_element_coordinates($element, 1); // Garder en pixels pour HTML
 
+        // CONTRAINTE: S'assurer que l'élément reste dans les limites A4 (595x842 pixels)
+        $canvas_width = 595;
+        $canvas_height = 842;
+        $coords['x'] = max(0, min($canvas_width - $coords['width'], $coords['x']));
+        $coords['y'] = max(0, min($canvas_height - $coords['height'], $coords['y']));
+
         $style = sprintf(
             'position: absolute; left: %dpx; top: %dpx; width: %dpx; height: %dpx;',
             $coords['x'], $coords['y'], $coords['width'], $coords['height']
