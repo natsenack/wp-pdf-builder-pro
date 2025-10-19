@@ -643,6 +643,13 @@ class PDF_Builder_WooCommerce_Integration {
 
                 $template_elements = isset($decoded_template_data['elements']) ? $decoded_template_data['elements'] : [];
 
+                // LOG POUR DIAGNOSTIC - TEMPLATE CHARGÉ DEPUIS DB
+                error_log('[PDF Generator] WooCommerce Preview - Template loaded from DB, ID: ' . $template_id);
+                error_log('[PDF Generator] WooCommerce Preview - Template elements count: ' . count($template_elements));
+                foreach ($template_elements as $index => $element) {
+                    error_log('[PDF Generator] Template Element ' . $index . ': type=' . ($element['type'] ?? 'unknown') . ', id=' . ($element['id'] ?? 'unknown'));
+                }
+
                 if (empty($template_elements)) {
                     // Template vide, utiliser un élément de fallback
                     $template_elements = [
