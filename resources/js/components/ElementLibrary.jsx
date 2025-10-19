@@ -155,7 +155,7 @@ const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
       y: 50,
       width: 300,
       height: 60,
-      text: template.preview.replace('\\n', '\n'),
+      text: template.sample.replace('\\n', '\n'),
       fontSize: template.fontSize || 16,
       fontWeight: template.fontWeight || 'normal'
     });
@@ -165,28 +165,28 @@ const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
     {
       id: 'classic',
       name: 'Classique',
-      preview: '🏢 ENTREPRISE\n123 Rue de la Paix\n75000 Paris',
+      sample: '🏢 ENTREPRISE\n123 Rue de la Paix\n75000 Paris',
       fontSize: 14,
       fontWeight: 'bold'
     },
     {
       id: 'modern',
       name: 'Moderne',
-      preview: '✨ ENTREPRISE MODERNE\nInnovation & Qualité\ncontact@entreprise.com',
+      sample: '✨ ENTREPRISE MODERNE\nInnovation & Qualité\ncontact@entreprise.com',
       fontSize: 16,
       fontWeight: 'bold'
     },
     {
       id: 'minimal',
       name: 'Minimal',
-      preview: 'ENTREPRISE\nAdresse • Téléphone • Email',
+      sample: 'ENTREPRISE\nAdresse • Téléphone • Email',
       fontSize: 12,
       fontWeight: 'normal'
     },
     {
       id: 'elegant',
       name: 'Élégant',
-      preview: '🎩 Maison Élégante\nParis, France\nwww.entreprise.com',
+      sample: '🎩 Maison Élégante\nParis, France\nwww.entreprise.com',
       fontSize: 15,
       fontWeight: 'bold'
     }
@@ -212,8 +212,8 @@ const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
                     className="template-item"
                     onClick={() => handleHeaderTemplateSelect(template)}
                   >
-                    <div className="template-preview">
-                      {template.preview.split('\n').map((line, index) => (
+                    <div className="template-sample">
+                      {template.sample.split('\n').map((line, index) => (
                         <div key={index} style={{
                           fontSize: template.fontSize,
                           fontWeight: template.fontWeight,

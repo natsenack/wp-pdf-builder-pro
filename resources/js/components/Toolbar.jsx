@@ -12,8 +12,7 @@ export const Toolbar = ({
   onUndo,
   onRedo,
   canUndo,
-  canRedo,
-  onPreview
+  canRedo
 }) => {
   const [activeTab, setActiveTab] = React.useState('home');
 
@@ -68,14 +67,7 @@ export const Toolbar = ({
             <div className="toolbar-group">
               <h5>Actions</h5>
               <div className="group-buttons">
-                <button
-                  className="tool-button"
-                  onClick={onPreview}
-                  title="Aperçu du PDF"
-                >
-                  <span className="button-icon">👁️</span>
-                  <span className="button-text">Aperçu</span>
-                </button>
+                {/* Bouton aperçu supprimé */}
               </div>
             </div>
 

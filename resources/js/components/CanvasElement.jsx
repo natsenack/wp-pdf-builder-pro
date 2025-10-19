@@ -671,8 +671,8 @@ export const CanvasElement = ({
 
         {/* Rendu spécial pour les tableaux de produits */}
         {element.type === 'product_table' && (() => {
-          // Données des produits (utiliser previewProducts si disponible, sinon données par défaut)
-          const products = element.previewProducts || [
+          // Données des produits (utiliser sampleProducts si disponible, sinon données par défaut)
+          const products = element.sampleProducts || [
             { name: 'Produit A - Description du produit', sku: 'SKU001', quantity: 2, price: 19.99, total: 39.98 },
             { name: 'Produit B - Un autre article', sku: 'SKU002', quantity: 1, price: 29.99, total: 29.99 }
           ];

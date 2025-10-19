@@ -12,8 +12,7 @@ export const useKeyboardShortcuts = ({
   onSelectAll,
   onDeselectAll,
   onToolSelect,
-  onToggleGrid,
-  onTogglePreview
+  onToggleGrid
 }) => {
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -108,13 +107,6 @@ export const useKeyboardShortcuts = ({
           }
           break;
 
-        case 'p':
-          if (isCtrl && onTogglePreview) {
-            e.preventDefault();
-            onTogglePreview();
-          }
-          break;
-
         // Raccourcis pour les outils
         case 'v':
           if (!isCtrl && onToolSelect) {
@@ -161,5 +153,5 @@ export const useKeyboardShortcuts = ({
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [onDelete, onCopy, onPaste, onUndo, onRedo, onSave, onZoomIn, onZoomOut, onSelectAll, onDeselectAll, onToolSelect, onToggleGrid, onTogglePreview]);
+  }, [onDelete, onCopy, onPaste, onUndo, onRedo, onSave, onZoomIn, onZoomOut, onSelectAll, onDeselectAll, onToolSelect, onToggleGrid]);
 };

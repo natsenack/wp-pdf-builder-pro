@@ -2,7 +2,7 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 72:
+/***/ 626:
 /***/ ((__unused_webpack_module, __unused_webpack___webpack_exports__, __webpack_require__) => {
 
 
@@ -953,8 +953,8 @@ var CanvasElement = function CanvasElement(_ref) {
   element.type === 'mentions' ? null :
   // Le contenu sera rendu plus bas dans le même conteneur
   element.type !== 'image' && element.type !== 'rectangle' && element.type !== 'company_logo' && element.type !== 'order_number' && element.type !== 'company_info' && element.type !== 'document_type' ? element.type : null, element.type === 'product_table' && function (_element$columns2, _element$columns3, _element$columns4, _element$columns5, _element$columns6, _element$columns7) {
-    // Données des produits (utiliser previewProducts si disponible, sinon données par défaut)
-    var products = element.previewProducts || [{
+    // Données des produits (utiliser sampleProducts si disponible, sinon données par défaut)
+    var products = element.sampleProducts || [{
       name: 'Produit A - Description du produit',
       sku: 'SKU001',
       quantity: 2,
@@ -2263,8 +2263,7 @@ var Toolbar = function Toolbar(_ref) {
     onUndo = _ref.onUndo,
     onRedo = _ref.onRedo,
     canUndo = _ref.canUndo,
-    canRedo = _ref.canRedo,
-    onPreview = _ref.onPreview;
+    canRedo = _ref.canRedo;
   var _React$useState = react.useState('home'),
     _React$useState2 = Toolbar_slicedToArray(_React$useState, 2),
     activeTab = _React$useState2[0],
@@ -2369,15 +2368,7 @@ var Toolbar = function Toolbar(_ref) {
     className: "toolbar-group"
   }, /*#__PURE__*/react.createElement("h5", null, "Actions"), /*#__PURE__*/react.createElement("div", {
     className: "group-buttons"
-  }, /*#__PURE__*/react.createElement("button", {
-    className: "tool-button",
-    onClick: onPreview,
-    title: "Aper\xE7u du PDF"
-  }, /*#__PURE__*/react.createElement("span", {
-    className: "button-icon"
-  }, "\uD83D\uDC41\uFE0F"), /*#__PURE__*/react.createElement("span", {
-    className: "button-text"
-  }, "Aper\xE7u")))), /*#__PURE__*/react.createElement("div", {
+  })), /*#__PURE__*/react.createElement("div", {
     className: "toolbar-group"
   }, /*#__PURE__*/react.createElement("h5", null, "Presse-papiers"), /*#__PURE__*/react.createElement("div", {
     className: "group-buttons"
@@ -4319,8 +4310,7 @@ var useKeyboardShortcuts = function useKeyboardShortcuts(_ref) {
     onSelectAll = _ref.onSelectAll,
     onDeselectAll = _ref.onDeselectAll,
     onToolSelect = _ref.onToolSelect,
-    onToggleGrid = _ref.onToggleGrid,
-    onTogglePreview = _ref.onTogglePreview;
+    onToggleGrid = _ref.onToggleGrid;
   (0,react.useEffect)(function () {
     var handleKeyDown = function handleKeyDown(e) {
       // Ignorer si on est dans un champ de saisie
@@ -4401,12 +4391,6 @@ var useKeyboardShortcuts = function useKeyboardShortcuts(_ref) {
             onToggleGrid();
           }
           break;
-        case 'p':
-          if (isCtrl && onTogglePreview) {
-            e.preventDefault();
-            onTogglePreview();
-          }
-          break;
 
         // Raccourcis pour les outils
         case 'v':
@@ -4447,7 +4431,7 @@ var useKeyboardShortcuts = function useKeyboardShortcuts(_ref) {
     return function () {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [onDelete, onCopy, onPaste, onUndo, onRedo, onSave, onZoomIn, onZoomOut, onSelectAll, onDeselectAll, onToolSelect, onToggleGrid, onTogglePreview]);
+  }, [onDelete, onCopy, onPaste, onUndo, onRedo, onSave, onZoomIn, onZoomOut, onSelectAll, onDeselectAll, onToolSelect, onToggleGrid]);
 };
 ;// ./resources/js/hooks/useGlobalSettings.js
 function useGlobalSettings_typeof(o) { "@babel/helpers - typeof"; return useGlobalSettings_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, useGlobalSettings_typeof(o); }
@@ -5186,498 +5170,6 @@ var getKeyboardShortcut = function getKeyboardShortcut(label) {
   return shortcutMap[label];
 };
 /* harmony default export */ const components_ContextMenu = (ContextMenu);
-;// ./resources/js/components/PreviewModalSimple.jsx
-function PreviewModalSimple_typeof(o) { "@babel/helpers - typeof"; return PreviewModalSimple_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, PreviewModalSimple_typeof(o); }
-function PreviewModalSimple_regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return PreviewModalSimple_regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (PreviewModalSimple_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, PreviewModalSimple_regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, PreviewModalSimple_regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), PreviewModalSimple_regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", PreviewModalSimple_regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), PreviewModalSimple_regeneratorDefine2(u), PreviewModalSimple_regeneratorDefine2(u, o, "Generator"), PreviewModalSimple_regeneratorDefine2(u, n, function () { return this; }), PreviewModalSimple_regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (PreviewModalSimple_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
-function PreviewModalSimple_regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } PreviewModalSimple_regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { PreviewModalSimple_regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, PreviewModalSimple_regeneratorDefine2(e, r, n, t); }
-function PreviewModalSimple_asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
-function PreviewModalSimple_asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { PreviewModalSimple_asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { PreviewModalSimple_asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
-function PreviewModalSimple_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
-function PreviewModalSimple_objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? PreviewModalSimple_ownKeys(Object(t), !0).forEach(function (r) { PreviewModalSimple_defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : PreviewModalSimple_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-function PreviewModalSimple_defineProperty(e, r, t) { return (r = PreviewModalSimple_toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
-function PreviewModalSimple_toPropertyKey(t) { var i = PreviewModalSimple_toPrimitive(t, "string"); return "symbol" == PreviewModalSimple_typeof(i) ? i : i + ""; }
-function PreviewModalSimple_toPrimitive(t, r) { if ("object" != PreviewModalSimple_typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != PreviewModalSimple_typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function PreviewModalSimple_slicedToArray(r, e) { return PreviewModalSimple_arrayWithHoles(r) || PreviewModalSimple_iterableToArrayLimit(r, e) || PreviewModalSimple_unsupportedIterableToArray(r, e) || PreviewModalSimple_nonIterableRest(); }
-function PreviewModalSimple_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function PreviewModalSimple_unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return PreviewModalSimple_arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? PreviewModalSimple_arrayLikeToArray(r, a) : void 0; } }
-function PreviewModalSimple_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
-function PreviewModalSimple_iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
-function PreviewModalSimple_arrayWithHoles(r) { if (Array.isArray(r)) return r; }
-
-
-// Aperçu simplifié - utilise uniquement le serveur pour générer l'aperçu
-
-var PreviewModal = function PreviewModal(_ref) {
-  var isOpen = _ref.isOpen,
-    onClose = _ref.onClose,
-    _ref$elements = _ref.elements,
-    elements = _ref$elements === void 0 ? [] : _ref$elements,
-    _ref$canvasWidth = _ref.canvasWidth,
-    canvasWidth = _ref$canvasWidth === void 0 ? 595 : _ref$canvasWidth,
-    _ref$canvasHeight = _ref.canvasHeight,
-    canvasHeight = _ref$canvasHeight === void 0 ? 842 : _ref$canvasHeight,
-    ajaxurl = _ref.ajaxurl,
-    pdfBuilderNonce = _ref.pdfBuilderNonce;
-  var _useState = (0,react.useState)(null),
-    _useState2 = PreviewModalSimple_slicedToArray(_useState, 2),
-    previewData = _useState2[0],
-    setPreviewData = _useState2[1];
-  var _useState3 = (0,react.useState)(false),
-    _useState4 = PreviewModalSimple_slicedToArray(_useState3, 2),
-    loading = _useState4[0],
-    setLoading = _useState4[1];
-  var _useState5 = (0,react.useState)(null),
-    _useState6 = PreviewModalSimple_slicedToArray(_useState5, 2),
-    error = _useState6[0],
-    setError = _useState6[1];
-
-  // Fonction simplifiée pour nettoyer les éléments avant envoi
-  var cleanElementsForJSON = function cleanElementsForJSON(elements) {
-    return elements.map(function (element) {
-      var cleaned = PreviewModalSimple_objectSpread({}, element);
-      // Supprimer seulement les propriétés non sérialisables de base
-      delete cleaned.tempId;
-      delete cleaned.isDragging;
-      delete cleaned.isResizing;
-      return cleaned;
-    });
-  };
-
-  // Générer l'aperçu côté serveur uniquement
-  var generateServerPreview = /*#__PURE__*/function () {
-    var _ref2 = PreviewModalSimple_asyncToGenerator(/*#__PURE__*/PreviewModalSimple_regenerator().m(function _callee() {
-      var _window$pdfBuilderAja, _window$pdfBuilderAja2, cleanedElements, jsonString, nonceFormData, nonceResponse, nonceData, formData, base64Json, response, data, _t;
-      return PreviewModalSimple_regenerator().w(function (_context) {
-        while (1) switch (_context.p = _context.n) {
-          case 0:
-            setLoading(true);
-            setError(null);
-            setPreviewData(null);
-            _context.p = 1;
-            // Nettoyer les éléments
-            cleanedElements = cleanElementsForJSON(elements);
-            jsonString = JSON.stringify(cleanedElements); // Obtenir un nonce frais
-            nonceFormData = new FormData();
-            nonceFormData.append('action', 'pdf_builder_get_fresh_nonce');
-            _context.n = 2;
-            return fetch(ajaxurl || ((_window$pdfBuilderAja = window.pdfBuilderAjax) === null || _window$pdfBuilderAja === void 0 ? void 0 : _window$pdfBuilderAja.ajaxurl) || '/wp-admin/admin-ajax.php', {
-              method: 'POST',
-              body: nonceFormData
-            });
-          case 2:
-            nonceResponse = _context.v;
-            if (nonceResponse.ok) {
-              _context.n = 3;
-              break;
-            }
-            throw new Error("Erreur nonce: ".concat(nonceResponse.status));
-          case 3:
-            _context.n = 4;
-            return nonceResponse.json();
-          case 4:
-            nonceData = _context.v;
-            if (nonceData.success) {
-              _context.n = 5;
-              break;
-            }
-            throw new Error('Impossible d\'obtenir un nonce');
-          case 5:
-            // Préparer l'appel pour l'aperçu unifié avec FormData (base64 encoded)
-            formData = new FormData();
-            formData.append('action', 'pdf_builder_unified_preview');
-            formData.append('nonce', nonceData.data.nonce);
-            // Encoder le JSON en base64 pour éviter les problèmes d'encodage
-            base64Json = btoa(unescape(encodeURIComponent(jsonString)));
-            formData.append('elements', base64Json);
-            _context.n = 6;
-            return fetch(ajaxurl || ((_window$pdfBuilderAja2 = window.pdfBuilderAjax) === null || _window$pdfBuilderAja2 === void 0 ? void 0 : _window$pdfBuilderAja2.ajaxurl) || '/wp-admin/admin-ajax.php', {
-              method: 'POST',
-              body: formData
-            });
-          case 6:
-            response = _context.v;
-            if (response.ok) {
-              _context.n = 7;
-              break;
-            }
-            throw new Error("Erreur HTTP: ".concat(response.status));
-          case 7:
-            _context.n = 8;
-            return response.json();
-          case 8:
-            data = _context.v;
-            if (!(data.success && data.data && data.data.url)) {
-              _context.n = 9;
-              break;
-            }
-            setPreviewData({
-              url: data.data.url,
-              elements_count: elements.length,
-              width: canvasWidth,
-              height: canvasHeight,
-              type: data.data.type || 'pdf',
-              version: data.data.version,
-              renderer: data.data.renderer
-            });
-            _context.n = 10;
-            break;
-          case 9:
-            throw new Error(data.data || 'Erreur génération aperçu');
-          case 10:
-            _context.n = 12;
-            break;
-          case 11:
-            _context.p = 11;
-            _t = _context.v;
-            console.error('Erreur aperçu:', _t);
-            setError(_t.message);
-          case 12:
-            _context.p = 12;
-            setLoading(false);
-            return _context.f(12);
-          case 13:
-            return _context.a(2);
-        }
-      }, _callee, null, [[1, 11, 12, 13]]);
-    }));
-    return function generateServerPreview() {
-      return _ref2.apply(this, arguments);
-    };
-  }();
-
-  // Générer l'aperçu quand la modale s'ouvre
-  (0,react.useEffect)(function () {
-    if (isOpen && elements.length > 0) {
-      generateServerPreview();
-    }
-  }, [isOpen, elements.length]);
-  if (!isOpen) return null;
-  return /*#__PURE__*/React.createElement("div", {
-    style: {
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: 'rgba(0, 0, 0, 0.7)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 10000
-    },
-    onClick: onClose
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      backgroundColor: 'white',
-      borderRadius: '8px',
-      width: '90%',
-      maxWidth: '1200px',
-      height: '90%',
-      maxHeight: '800px',
-      display: 'flex',
-      flexDirection: 'column',
-      boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)'
-    },
-    onClick: function onClick(e) {
-      return e.stopPropagation();
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      padding: '20px',
-      borderBottom: '1px solid #e2e8f0',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center'
-    }
-  }, /*#__PURE__*/React.createElement("h3", {
-    style: {
-      margin: 0,
-      color: '#1e293b'
-    }
-  }, "\uD83D\uDCC4 Aper\xE7u PDF"), /*#__PURE__*/React.createElement("button", {
-    onClick: onClose,
-    style: {
-      background: 'none',
-      border: 'none',
-      fontSize: '24px',
-      cursor: 'pointer',
-      color: '#64748b',
-      padding: '0',
-      width: '30px',
-      height: '30px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center'
-    }
-  }, "\xD7")), /*#__PURE__*/React.createElement("div", {
-    style: {
-      flex: 1,
-      padding: '20px',
-      display: 'flex',
-      flexDirection: 'column',
-      overflow: 'hidden'
-    }
-  }, loading && /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      flex: 1,
-      color: '#64748b'
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      width: '40px',
-      height: '40px',
-      border: '4px solid #e2e8f0',
-      borderTop: '4px solid #3b82f6',
-      borderRadius: '50%',
-      animation: 'spin 1s linear infinite',
-      marginBottom: '16px'
-    }
-  }), /*#__PURE__*/React.createElement("p", {
-    style: {
-      margin: 0
-    }
-  }, "G\xE9n\xE9ration de l'aper\xE7u...")), error && /*#__PURE__*/React.createElement("div", {
-    style: {
-      backgroundColor: '#fef2f2',
-      border: '1px solid #fecaca',
-      borderRadius: '6px',
-      padding: '16px',
-      color: '#dc2626',
-      textAlign: 'center'
-    }
-  }, /*#__PURE__*/React.createElement("h4", {
-    style: {
-      margin: '0 0 8px 0'
-    }
-  }, "\u274C Erreur"), /*#__PURE__*/React.createElement("p", {
-    style: {
-      margin: 0
-    }
-  }, error)), previewData && !loading && /*#__PURE__*/React.createElement("div", {
-    style: {
-      flex: 1,
-      display: 'flex',
-      flexDirection: 'column'
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      backgroundColor: '#f8fafc',
-      border: '1px solid #e2e8f0',
-      borderRadius: '6px',
-      padding: '12px',
-      marginBottom: '16px',
-      fontSize: '14px',
-      color: '#475569'
-    }
-  }, /*#__PURE__*/React.createElement("strong", null, previewData.elements_count, " \xE9l\xE9ment", previewData.elements_count !== 1 ? 's' : ''), " \u2022 Dimensions: ", previewData.width, "\xD7", previewData.height, "px", previewData.version && /*#__PURE__*/React.createElement("div", {
-    style: {
-      marginTop: '8px',
-      padding: '6px 10px',
-      backgroundColor: '#dbeafe',
-      border: '1px solid #bfdbfe',
-      borderRadius: '4px',
-      color: '#1e40af',
-      fontSize: '12px',
-      fontWeight: 'bold',
-      display: 'inline-block'
-    }
-  }, "\uD83D\uDE80 NOUVELLE VERSION TCPDF ", previewData.version)), /*#__PURE__*/React.createElement("div", {
-    style: {
-      flex: 1,
-      border: '1px solid #e2e8f0',
-      borderRadius: '6px',
-      overflow: 'hidden'
-    }
-  }, /*#__PURE__*/React.createElement("iframe", {
-    src: previewData.url,
-    style: {
-      width: '100%',
-      height: '100%',
-      border: 'none'
-    },
-    title: "Aper\xE7u"
-  })))), /*#__PURE__*/React.createElement("div", {
-    style: {
-      padding: '20px',
-      borderTop: '1px solid #e2e8f0',
-      display: 'flex',
-      justifyContent: 'flex-end'
-    }
-  }, /*#__PURE__*/React.createElement("button", {
-    onClick: onClose,
-    style: {
-      backgroundColor: '#64748b',
-      color: 'white',
-      border: 'none',
-      padding: '8px 16px',
-      borderRadius: '4px',
-      cursor: 'pointer',
-      fontSize: '14px'
-    }
-  }, "Fermer"))));
-};
-/* harmony default export */ const PreviewModalSimple = (PreviewModal);
-;// ./resources/js/components/ModalPDFViewer.jsx
-var ModalPDFViewer = function ModalPDFViewer(_ref) {
-  var isOpen = _ref.isOpen,
-    onClose = _ref.onClose,
-    pdfUrl = _ref.pdfUrl,
-    _ref$title = _ref.title,
-    title = _ref$title === void 0 ? 'Aperçu PDF' : _ref$title;
-  if (!isOpen) return null;
-  return /*#__PURE__*/React.createElement("div", {
-    style: {
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: 'rgba(0, 0, 0, 0.7)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 9999
-    },
-    onClick: onClose
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      backgroundColor: 'white',
-      borderRadius: '8px',
-      width: '90%',
-      height: '90%',
-      maxWidth: '1200px',
-      maxHeight: '800px',
-      display: 'flex',
-      flexDirection: 'column',
-      boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)'
-    },
-    onClick: function onClick(e) {
-      return e.stopPropagation();
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      padding: '16px 20px',
-      borderBottom: '1px solid #e2e8f0',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      backgroundColor: '#f8f9fa',
-      borderRadius: '8px 8px 0 0'
-    }
-  }, /*#__PURE__*/React.createElement("h3", {
-    style: {
-      margin: 0,
-      color: '#1a202c',
-      fontSize: '18px',
-      fontWeight: '600'
-    }
-  }, title), /*#__PURE__*/React.createElement("button", {
-    onClick: onClose,
-    style: {
-      background: 'none',
-      border: 'none',
-      fontSize: '24px',
-      cursor: 'pointer',
-      color: '#718096',
-      padding: '4px 8px',
-      borderRadius: '4px',
-      transition: 'all 0.2s'
-    },
-    onMouseOver: function onMouseOver(e) {
-      return e.target.style.backgroundColor = '#e2e8f0';
-    },
-    onMouseOut: function onMouseOut(e) {
-      return e.target.style.backgroundColor = 'transparent';
-    }
-  }, "\xD7")), /*#__PURE__*/React.createElement("div", {
-    style: {
-      flex: 1,
-      padding: '0',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: '#f5f5f5'
-    }
-  }, pdfUrl ? /*#__PURE__*/React.createElement("iframe", {
-    src: pdfUrl,
-    style: {
-      width: '100%',
-      height: '100%',
-      border: 'none',
-      borderRadius: '0 0 8px 8px'
-    },
-    title: title
-  }) : /*#__PURE__*/React.createElement("div", {
-    style: {
-      textAlign: 'center',
-      color: '#718096',
-      fontSize: '16px'
-    }
-  }, "Chargement du PDF...")), /*#__PURE__*/React.createElement("div", {
-    style: {
-      padding: '16px 20px',
-      borderTop: '1px solid #e2e8f0',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      backgroundColor: '#f8f9fa',
-      borderRadius: '0 0 8px 8px'
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: '14px',
-      color: '#718096'
-    }
-  }, "Utilisez Ctrl+P (Cmd+P sur Mac) pour imprimer"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("button", {
-    onClick: function onClick() {
-      if (pdfUrl) {
-        var link = document.createElement('a');
-        link.href = pdfUrl;
-        link.download = 'document.pdf';
-        link.target = '_blank';
-        document.body.appendChild(link);
-        link.click();
-        // Vérifier que l'élément existe encore avant de le supprimer
-        if (link.parentNode === document.body) {
-          document.body.removeChild(link);
-        }
-      }
-    },
-    style: {
-      backgroundColor: '#4299e1',
-      color: 'white',
-      border: 'none',
-      padding: '8px 16px',
-      borderRadius: '4px',
-      cursor: 'pointer',
-      fontSize: '14px',
-      marginRight: '8px',
-      transition: 'background-color 0.2s'
-    },
-    onMouseOver: function onMouseOver(e) {
-      return e.target.style.backgroundColor = '#3182ce';
-    },
-    onMouseOut: function onMouseOut(e) {
-      return e.target.style.backgroundColor = '#4299e1';
-    }
-  }, "\uD83D\uDCE5 T\xE9l\xE9charger"), /*#__PURE__*/React.createElement("button", {
-    onClick: onClose,
-    style: {
-      backgroundColor: '#e2e8f0',
-      color: '#4a5568',
-      border: 'none',
-      padding: '8px 16px',
-      borderRadius: '4px',
-      cursor: 'pointer',
-      fontSize: '14px'
-    }
-  }, "Fermer")))));
-};
-/* harmony default export */ const components_ModalPDFViewer = (ModalPDFViewer);
 ;// ./resources/js/components/WooCommerceElements.jsx
 
 
@@ -6310,7 +5802,7 @@ var ElementLibrary = function ElementLibrary(_ref) {
       y: 50,
       width: 300,
       height: 60,
-      text: template.preview.replace('\\n', '\n'),
+      text: template.sample.replace('\\n', '\n'),
       fontSize: template.fontSize || 16,
       fontWeight: template.fontWeight || 'normal'
     });
@@ -6318,25 +5810,25 @@ var ElementLibrary = function ElementLibrary(_ref) {
   var headerTemplates = [{
     id: 'classic',
     name: 'Classique',
-    preview: '🏢 ENTREPRISE\n123 Rue de la Paix\n75000 Paris',
+    sample: '🏢 ENTREPRISE\n123 Rue de la Paix\n75000 Paris',
     fontSize: 14,
     fontWeight: 'bold'
   }, {
     id: 'modern',
     name: 'Moderne',
-    preview: '✨ ENTREPRISE MODERNE\nInnovation & Qualité\ncontact@entreprise.com',
+    sample: '✨ ENTREPRISE MODERNE\nInnovation & Qualité\ncontact@entreprise.com',
     fontSize: 16,
     fontWeight: 'bold'
   }, {
     id: 'minimal',
     name: 'Minimal',
-    preview: 'ENTREPRISE\nAdresse • Téléphone • Email',
+    sample: 'ENTREPRISE\nAdresse • Téléphone • Email',
     fontSize: 12,
     fontWeight: 'normal'
   }, {
     id: 'elegant',
     name: 'Élégant',
-    preview: '🎩 Maison Élégante\nParis, France\nwww.entreprise.com',
+    sample: '🎩 Maison Élégante\nParis, France\nwww.entreprise.com',
     fontSize: 15,
     fontWeight: 'bold'
   }];
@@ -6372,8 +5864,8 @@ var ElementLibrary = function ElementLibrary(_ref) {
         return handleHeaderTemplateSelect(template);
       }
     }, /*#__PURE__*/React.createElement("div", {
-      className: "template-preview"
-    }, template.preview.split('\n').map(function (line, index) {
+      className: "template-sample"
+    }, template.sample.split('\n').map(function (line, index) {
       return /*#__PURE__*/React.createElement("div", {
         key: index,
         style: {
@@ -9827,7 +9319,7 @@ var PropertiesPanel = /*#__PURE__*/(0,react.memo)(function (_ref4) {
             },
             title: "".concat(style.label, " - Style ").concat(style.label.toLowerCase(), " avec d\xE9grad\xE9 moderne")
           }, /*#__PURE__*/React.createElement("div", {
-            className: "table-preview",
+            className: "table-sample",
             style: {
               maxHeight: '60px',
               overflow: 'hidden'
@@ -11289,10 +10781,7 @@ function PDFCanvasEditor_arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 
 
 
-
-
 var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
-  var _window$pdfBuilderAja3, _window$pdfBuilderAja4;
   var options = _ref.options;
   var _useState = (0,react.useState)('select'),
     _useState2 = PDFCanvasEditor_slicedToArray(_useState, 2),
@@ -11300,61 +10789,49 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
     setTool = _useState2[1];
   var _useState3 = (0,react.useState)(false),
     _useState4 = PDFCanvasEditor_slicedToArray(_useState3, 2),
-    showPreviewModal = _useState4[0],
-    setShowPreviewModal = _useState4[1];
+    showNewTemplateModal = _useState4[0],
+    setShowNewTemplateModal = _useState4[1];
   var _useState5 = (0,react.useState)(false),
     _useState6 = PDFCanvasEditor_slicedToArray(_useState5, 2),
-    showNewTemplateModal = _useState6[0],
-    setShowNewTemplateModal = _useState6[1];
-  var _useState7 = (0,react.useState)(false),
-    _useState8 = PDFCanvasEditor_slicedToArray(_useState7, 2),
-    showPDFModal = _useState8[0],
-    setShowPDFModal = _useState8[1];
-  var _useState9 = (0,react.useState)(null),
-    _useState0 = PDFCanvasEditor_slicedToArray(_useState9, 2),
-    pdfModalUrl = _useState0[0],
-    setPdfModalUrl = _useState0[1];
-  var _useState1 = (0,react.useState)(false),
-    _useState10 = PDFCanvasEditor_slicedToArray(_useState1, 2),
-    isPropertiesCollapsed = _useState10[0],
-    setIsPropertiesCollapsed = _useState10[1];
+    isPropertiesCollapsed = _useState6[0],
+    setIsPropertiesCollapsed = _useState6[1];
 
   // États pour le pan et la navigation
-  var _useState11 = (0,react.useState)({
+  var _useState7 = (0,react.useState)({
       x: 0,
       y: 0
     }),
-    _useState12 = PDFCanvasEditor_slicedToArray(_useState11, 2),
-    panOffset = _useState12[0],
-    setPanOffset = _useState12[1];
-  var _useState13 = (0,react.useState)(false),
-    _useState14 = PDFCanvasEditor_slicedToArray(_useState13, 2),
-    isPanning = _useState14[0],
-    setIsPanning = _useState14[1];
-  var _useState15 = (0,react.useState)({
+    _useState8 = PDFCanvasEditor_slicedToArray(_useState7, 2),
+    panOffset = _useState8[0],
+    setPanOffset = _useState8[1];
+  var _useState9 = (0,react.useState)(false),
+    _useState0 = PDFCanvasEditor_slicedToArray(_useState9, 2),
+    isPanning = _useState0[0],
+    setIsPanning = _useState0[1];
+  var _useState1 = (0,react.useState)({
       x: 0,
       y: 0
     }),
-    _useState16 = PDFCanvasEditor_slicedToArray(_useState15, 2),
-    lastPanPoint = _useState16[0],
-    setLastPanPoint = _useState16[1];
+    _useState10 = PDFCanvasEditor_slicedToArray(_useState1, 2),
+    lastPanPoint = _useState10[0],
+    setLastPanPoint = _useState10[1];
 
   // États pour les guides
-  var _useState17 = (0,react.useState)({
+  var _useState11 = (0,react.useState)({
       horizontal: [],
       vertical: []
     }),
-    _useState18 = PDFCanvasEditor_slicedToArray(_useState17, 2),
-    guides = _useState18[0],
-    setGuides = _useState18[1];
-  var _useState19 = (0,react.useState)(false),
-    _useState20 = PDFCanvasEditor_slicedToArray(_useState19, 2),
-    isCreatingGuide = _useState20[0],
-    setIsCreatingGuide = _useState20[1];
-  var _useState21 = (0,react.useState)(null),
-    _useState22 = PDFCanvasEditor_slicedToArray(_useState21, 2),
-    guideCreationType = _useState22[0],
-    setGuideCreationType = _useState22[1]; // 'horizontal' or 'vertical'
+    _useState12 = PDFCanvasEditor_slicedToArray(_useState11, 2),
+    guides = _useState12[0],
+    setGuides = _useState12[1];
+  var _useState13 = (0,react.useState)(false),
+    _useState14 = PDFCanvasEditor_slicedToArray(_useState13, 2),
+    isCreatingGuide = _useState14[0],
+    setIsCreatingGuide = _useState14[1];
+  var _useState15 = (0,react.useState)(null),
+    _useState16 = PDFCanvasEditor_slicedToArray(_useState15, 2),
+    guideCreationType = _useState16[0],
+    setGuideCreationType = _useState16[1]; // 'horizontal' or 'vertical'
 
   // Hook pour les paramètres globaux
   var globalSettings = useGlobalSettings();
@@ -11598,10 +11075,8 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
             _context.n = 7;
             break;
           }
-          // Ouvrir le PDF dans une modale
-          // console.log('Ouverture du PDF dans une modale...');
-          setPdfModalUrl(pdfDataUrl);
-          setShowPDFModal(true);
+          // PDF généré avec succès
+          console.log('PDF généré avec succès');
           _context.n = 8;
           break;
         case 7:
@@ -12039,11 +11514,6 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
     },
     title: "Cr\xE9er un nouveau template"
   }, "\u2795 Nouveau template"), /*#__PURE__*/react.createElement("button", {
-    className: "btn btn-secondary",
-    onClick: function onClick() {
-      return setShowPreviewModal(true);
-    }
-  }, "\uD83D\uDC41\uFE0F Aper\xE7u"), /*#__PURE__*/react.createElement("button", {
     className: "btn btn-primary",
     onClick: function onClick() {
       return canvasState.saveTemplate();
@@ -12061,13 +11531,10 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
     onUndo: handleUndo,
     onRedo: handleRedo,
     canUndo: canvasState.history.canUndo(),
-    canRedo: canvasState.history.canRedo(),
-    onPreview: function onPreview() {
-      return setShowPreviewModal(true);
-    }
+    canRedo: canvasState.history.canRedo()
   }), /*#__PURE__*/react.createElement("main", {
     className: "editor-workspace"
-  }, !showPreviewModal && /*#__PURE__*/react.createElement("aside", {
+  }, /*#__PURE__*/react.createElement("aside", {
     className: "editor-sidebar left-sidebar"
   }, /*#__PURE__*/react.createElement(components_ElementLibrary, {
     onAddElement: handleAddElement,
@@ -12230,14 +11697,14 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
       guides: guides,
       snapToGuides: globalSettings.settings.snapToElements
     });
-  })))), !showPreviewModal && /*#__PURE__*/react.createElement("aside", {
+  })))), /*#__PURE__*/react.createElement("aside", {
     className: "editor-sidebar right-sidebar ".concat(isPropertiesCollapsed ? 'collapsed' : '')
   }, !isPropertiesCollapsed && /*#__PURE__*/react.createElement(components_PropertiesPanel, {
     selectedElements: canvasState.selection.selectedElements,
     elements: canvasState.elements,
     onPropertyChange: handlePropertyChange,
     onBatchUpdate: handleBatchUpdate
-  }))), !showPreviewModal && /*#__PURE__*/react.createElement("button", {
+  }))), /*#__PURE__*/react.createElement("button", {
     className: "sidebar-toggle-fixed",
     onClick: function onClick() {
       return setIsPropertiesCollapsed(!isPropertiesCollapsed);
@@ -12257,36 +11724,7 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
     onClose: canvasState.contextMenu.hideContextMenu
   }), /*#__PURE__*/react.createElement("footer", {
     className: "editor-status"
-  }, /*#__PURE__*/react.createElement("span", null, "\xC9l\xE9ments: ", canvasState.elements.length), /*#__PURE__*/react.createElement("span", null, "|"), globalSettings.settings.showZoomIndicator && /*#__PURE__*/react.createElement(react.Fragment, null, /*#__PURE__*/react.createElement("span", null, "Zoom: ", Math.round(canvasState.zoom.zoom * 100), "%"), /*#__PURE__*/react.createElement("span", null, "|")), /*#__PURE__*/react.createElement("span", null, "Outil: ", tool), canvasState.selection.selectedElements.length > 0 && /*#__PURE__*/react.createElement(react.Fragment, null, /*#__PURE__*/react.createElement("span", null, "|"), /*#__PURE__*/react.createElement("span", null, "\xC9l\xE9ments s\xE9lectionn\xE9s: ", canvasState.selection.selectedElements.length))), /*#__PURE__*/react.createElement(PreviewModalSimple, {
-    isOpen: showPreviewModal,
-    onClose: function onClose() {
-      setShowPreviewModal(false);
-    },
-    elements: canvasState.elements,
-    canvasWidth: canvasState.canvasWidth,
-    canvasHeight: canvasState.canvasHeight,
-    ajaxurl: (_window$pdfBuilderAja3 = window.pdfBuilderAjax) === null || _window$pdfBuilderAja3 === void 0 ? void 0 : _window$pdfBuilderAja3.ajaxurl,
-    pdfBuilderNonce: (_window$pdfBuilderAja4 = window.pdfBuilderAjax) === null || _window$pdfBuilderAja4 === void 0 ? void 0 : _window$pdfBuilderAja4.nonce,
-    useServerPreview: false,
-    onOpenPDFModal: function onOpenPDFModal(pdfUrl) {
-      setPdfModalUrl(pdfUrl);
-      setShowPDFModal(true);
-      setShowPreviewModal(false);
-    }
-  }), /*#__PURE__*/react.createElement(components_ModalPDFViewer, {
-    isOpen: showPDFModal,
-    onClose: function onClose() {
-      setShowPDFModal(false);
-      if (pdfModalUrl && pdfModalUrl.startsWith('blob:')) {
-        setTimeout(function () {
-          URL.revokeObjectURL(pdfModalUrl);
-        }, 100);
-      }
-      setPdfModalUrl(null);
-    },
-    pdfUrl: pdfModalUrl,
-    title: "PDF G\xE9n\xE9r\xE9"
-  }), /*#__PURE__*/react.createElement(components_NewTemplateModal, {
+  }, /*#__PURE__*/react.createElement("span", null, "\xC9l\xE9ments: ", canvasState.elements.length), /*#__PURE__*/react.createElement("span", null, "|"), globalSettings.settings.showZoomIndicator && /*#__PURE__*/react.createElement(react.Fragment, null, /*#__PURE__*/react.createElement("span", null, "Zoom: ", Math.round(canvasState.zoom.zoom * 100), "%"), /*#__PURE__*/react.createElement("span", null, "|")), /*#__PURE__*/react.createElement("span", null, "Outil: ", tool), canvasState.selection.selectedElements.length > 0 && /*#__PURE__*/react.createElement(react.Fragment, null, /*#__PURE__*/react.createElement("span", null, "|"), /*#__PURE__*/react.createElement("span", null, "\xC9l\xE9ments s\xE9lectionn\xE9s: ", canvasState.selection.selectedElements.length))), /*#__PURE__*/react.createElement(components_NewTemplateModal, {
     isOpen: showNewTemplateModal,
     onClose: function onClose() {
       return setShowNewTemplateModal(false);
@@ -12736,7 +12174,7 @@ if (typeof window !== 'undefined') {
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, [96], () => (__webpack_require__(72)))
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, [96], () => (__webpack_require__(626)))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	
 /******/ })()

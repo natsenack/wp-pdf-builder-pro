@@ -19,7 +19,6 @@ class PDF_Builder_Pro_Generator {
     private $errors = [];
     private $performance_metrics = [];
     private $order = null;
-    private $is_preview = false;
 
     // Configuration par defaut
     private $config = [
@@ -39,13 +38,6 @@ class PDF_Builder_Pro_Generator {
     public function __construct($config = []) {
         $this->config = array_merge($this->config, $config);
         $this->performance_metrics['start_time'] = microtime(true);
-    }
-
-    /**
-     * Définit si c'est pour l'aperçu
-     */
-    public function set_preview_mode($is_preview = false) {
-        $this->is_preview = $is_preview;
     }
 
     /**
@@ -77,10 +69,6 @@ class PDF_Builder_Pro_Generator {
      * Generateur principal - Interface unifiee SANS TCPDF
      */
     public function generate($elements, $options = []) {
-        if (isset($options['is_preview']) && $options['is_preview']) {
-            $this->set_preview_mode(true);
-        }
-
         error_log('[PDF Generator] Generate called with ' . count($elements) . ' elements, order: ' . ($this->order ? $this->order->get_id() : 'null'));
 
         try {
@@ -109,7 +97,7 @@ class PDF_Builder_Pro_Generator {
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>PDF Preview</title>
+    <title>PDF Document</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }

@@ -38,7 +38,6 @@ class PDF_Builder_WooCommerce_Integration {
         // AJAX handlers pour WooCommerce - gérés par le manager
         add_action('wp_ajax_pdf_builder_generate_pdf', [$this, 'ajax_generate_order_pdf'], 1);
         add_action('wp_ajax_pdf_builder_generate_order_pdf', [$this, 'ajax_generate_order_pdf'], 1); // Alias pour compatibilité
-        add_action('wp_ajax_pdf_builder_generate_order_pdf_preview', [$this, 'ajax_generate_order_pdf_preview'], 1);
         add_action('wp_ajax_pdf_builder_save_order_canvas', [$this, 'ajax_save_order_canvas'], 1);
     }
     private function detect_document_type($order_status) {
@@ -191,10 +190,6 @@ class PDF_Builder_WooCommerce_Integration {
                 </div>
 
                 <div style="display: flex; gap: 10px; align-items: center;">
-                    <button type="button" id="pdf-preview-btn" class="button button-primary" style="padding: 8px 16px;">
-                        👁️ Aperçu PDF
-                    </button>
-
                     <?php if ($selected_template): ?>
                     <button type="button" id="pdf-generate-btn" class="button button-secondary" style="padding: 8px 16px;">
                         📄 Générer PDF
@@ -205,120 +200,6 @@ class PDF_Builder_WooCommerce_Integration {
         </div>
 
         <!-- Modal d'aperçu simplifié -->
-        <div id="pdf-preview-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center;">
-            <div style="background: white; border-radius: 8px; width: 90%; max-width: 1200px; height: 90%; display: flex; flex-direction: column;">
-                <div style="padding: 20px; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center;">
-                    <h3 style="margin: 0;">Aperçu PDF - Commande #<?php echo esc_html($order->get_order_number()); ?></h3>
-                    <button type="button" id="pdf-preview-close" style="background: none; border: none; font-size: 24px; cursor: pointer; padding: 0;">&times;</button>
-                </div>
-                <div style="flex: 1; padding: 20px; overflow: auto;">
-                    <div id="pdf-preview-content" style="width: 100%; height: 100%; border: 1px solid #ddd; background: #f8f9fa;">
-                        <div style="display: flex; justify-content: center; align-items: center; height: 100%; color: #6c757d;">
-                            <div style="text-align: center;">
-                                <div style="font-size: 48px; margin-bottom: 20px;">📄</div>
-                                <div>Cliquez sur "Aperçu PDF" pour générer l'aperçu</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <script type="text/javascript">
-        jQuery(document).ready(function($) {
-            var modal = $('#pdf-preview-modal');
-            var previewContent = $('#pdf-preview-content');
-            var isLoading = false;
-
-            // Ouvrir le modal d'aperçu
-            $('#pdf-preview-btn').on('click', function() {
-                if (isLoading) return;
-
-                modal.show();
-                loadPreview();
-            });
-
-            // Fermer le modal
-            $('#pdf-preview-close').on('click', function() {
-                modal.hide();
-            });
-
-            // Fermer en cliquant en dehors
-            modal.on('click', function(e) {
-                if (e.target === this) {
-                    modal.hide();
-                }
-            });
-
-            // Générer le PDF
-            $('#pdf-generate-btn').on('click', function() {
-                if (isLoading) return;
-
-                isLoading = true;
-                var $btn = $(this);
-                var originalText = $btn.text();
-
-                $btn.text('⏳ Génération...').prop('disabled', true);
-
-                $.ajax({
-                    url: ajaxurl,
-                    type: 'POST',
-                    data: {
-                        action: 'pdf_builder_generate_order_pdf',
-                        nonce: $('#pdf_builder_order_nonce').val(),
-                        order_id: <?php echo intval($order_id); ?>,
-                        template_id: <?php echo intval($selected_template ? $selected_template['id'] : 0); ?>
-                    },
-                    success: function(response) {
-                        if (response.success && response.data && response.data.url) {
-                            window.open(response.data.url, '_blank');
-                        } else {
-                            alert('Erreur lors de la génération du PDF: ' + (response.data || 'Erreur inconnue'));
-                        }
-                    },
-                    error: function() {
-                        alert('Erreur de communication lors de la génération du PDF');
-                    },
-                    complete: function() {
-                        $btn.text(originalText).prop('disabled', false);
-                        isLoading = false;
-                    }
-                });
-            });
-
-            function loadPreview() {
-                if (isLoading) return;
-
-                isLoading = true;
-                previewContent.html('<div style="display: flex; justify-content: center; align-items: center; height: 100%;"><div style="text-align: center;"><div style="font-size: 24px; margin-bottom: 10px;">⏳</div>Chargement de l\'aperçu...</div></div>');
-
-                $.ajax({
-                    url: ajaxurl,
-                    type: 'POST',
-                    data: {
-                        action: 'pdf_builder_generate_order_pdf_preview',
-                        nonce: $('#pdf_builder_order_nonce').val(),
-                        order_id: <?php echo intval($order_id); ?>,
-                        template_id: <?php echo intval($selected_template ? $selected_template['id'] : 0); ?>,
-                        preview_type: 'html'
-                    },
-                    success: function(response) {
-                        if (response.success && response.data && response.data.html) {
-                            previewContent.html(response.data.html);
-                        } else {
-                            previewContent.html('<div style="display: flex; justify-content: center; align-items: center; height: 100%; color: #dc3545;"><div style="text-align: center;"><div style="font-size: 48px; margin-bottom: 20px;">❌</div>Erreur lors du chargement de l\'aperçu<br><small>' + (response.data || 'Erreur inconnue') + '</small></div></div>');
-                        }
-                    },
-                    error: function() {
-                        previewContent.html('<div style="display: flex; justify-content: center; align-items: center; height: 100%; color: #dc3545;"><div style="text-align: center;"><div style="font-size: 48px; margin-bottom: 20px;">❌</div>Erreur de communication</div></div>');
-                    },
-                    complete: function() {
-                        isLoading = false;
-                    }
-                });
-            }
-        });
-        </script>
         <?php
     }
 
@@ -405,7 +286,7 @@ class PDF_Builder_WooCommerce_Integration {
             $generator = new PDF_Builder_Pro_Generator();
             error_log('PDF BUILDER DEBUG: PDF_Builder_Pro_Generator instantiated');
 
-            $html_content = $generator->generate($elements, ['is_preview' => false, 'order' => $order]);
+            $html_content = $generator->generate($elements, ['order' => $order]);
             error_log('PDF BUILDER DEBUG: HTML generated, length: ' . strlen($html_content));
 
             // Créer un fichier HTML temporaire pour le téléchargement
@@ -421,7 +302,7 @@ class PDF_Builder_WooCommerce_Integration {
             }
 
             // Générer un nom de fichier unique
-            $filename = 'pdf-preview-' . $order_id . '-' . time() . '.html';
+            $filename = 'pdf-document-' . $order_id . '-' . time() . '.html';
             $file_path = $temp_dir . '/' . $filename;
             error_log('PDF BUILDER DEBUG: File path: ' . $file_path);
 
@@ -459,235 +340,6 @@ class PDF_Builder_WooCommerce_Integration {
     /**
      * AJAX handler pour générer l'aperçu PDF d'une commande
      */
-    public function ajax_generate_order_pdf_preview() {
-        // S'assurer que les headers JSON sont envoyés en premier
-        if (!headers_sent()) {
-            header('Content-Type: application/json; charset=UTF-8');
-            header('Cache-Control: no-cache, must-revalidate');
-            header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-        }
-
-        // Gestionnaire d'erreur temporaire pour capturer les warnings PHP
-        $original_error_handler = set_error_handler(function($errno, $errstr, $errfile, $errline) {
-            // Convertir les warnings et erreurs en exceptions
-            if ($errno & (E_WARNING | E_NOTICE | E_USER_WARNING | E_USER_NOTICE)) {
-                throw new Exception('PHP Warning: ' . $errstr . ' in ' . $errfile . ':' . $errline);
-            }
-            return false;
-        });
-
-        try {
-            // Vérifier les permissions
-            if (!current_user_can('manage_woocommerce') && !current_user_can('read')) {
-                wp_send_json_error('Permissions insuffisantes');
-            }
-
-
-            // Vérification de sécurité - accepter plusieurs nonces pour flexibilité
-            $valid_nonces = ['pdf_builder_order_actions', 'pdf_builder_template_actions'];
-            $nonce_valid = false;
-
-            foreach ($valid_nonces as $nonce_action) {
-                if (wp_verify_nonce($_POST['nonce'] ?? '', $nonce_action)) {
-                    $nonce_valid = true;
-                    break;
-                }
-            }
-
-            if (!$nonce_valid) {
-                wp_send_json_error('Sécurité: Nonce invalide');
-            }
-
-
-            $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : null;
-            $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : null;
-            $elements = isset($_POST['elements']) ? $_POST['elements'] : null;
-            $preview_type = isset($_POST['preview_type']) ? $_POST['preview_type'] : 'html'; // 'pdf' ou 'html' - FORCER HTML POUR ÉVITER TCPDF
-
-            // S'assurer que la classe PDF_Builder_Pro_Generator est chargée
-            if (!class_exists('PDF_Builder_Pro_Generator')) {
-                $generator_path = plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'includes/pdf-generator.php';
-                if (file_exists($generator_path)) {
-                    require_once $generator_path;
-                } else {
-                    wp_send_json_error('Fichier générateur PDF non trouvé');
-                }
-            }
-
-            try {
-                $generator = new PDF_Builder_Pro_Generator();
-            } catch (Exception $e) {
-                wp_send_json_error('Erreur d\'instanciation du générateur: ' . $e->getMessage());
-            }
-
-            // Déterminer le type d'aperçu
-            $elements_is_empty = empty($elements);
-            if (!$elements_is_empty) {
-                // Première branche pour les éléments du Canvas
-                // Priorité aux éléments passés directement (depuis l'éditeur Canvas)
-
-                // Récupérer l'order pour les variables dynamiques si order_id est fourni
-                $order = null;
-                if ($order_id && $order_id > 0) {
-                    if (!class_exists('WooCommerce')) {
-                        wp_send_json_error('WooCommerce n\'est pas installé ou activé');
-                    }
-                    $order = wc_get_order($order_id);
-                    if (!$order) {
-                        wp_send_json_error('Commande non trouvée');
-                    }
-                }
-
-                // Nettoyer les slashes échappés par PHP (correction force)
-                $clean_elements = stripslashes($elements);
-
-                // Décoder les éléments
-                $decoded_elements = json_decode($clean_elements, true);
-                if (json_last_error() !== JSON_ERROR_NONE) {
-                    wp_send_json_error('Données du template invalides');
-                }
-
-                if ($preview_type === 'html') {
-                    // Générer l'aperçu HTML avec les éléments du Canvas - SANS TCPDF
-                    $options = ['is_preview' => true];
-                    if ($order) {
-                        $options['order'] = $order;
-                    }
-                    $result = $generator->generate($decoded_elements, $options);
-                } else {
-                    // PLUS DE GÉNÉRATION PDF AVEC TCPDF - Forcer HTML
-                    $options = ['is_preview' => true];
-                    if ($order) {
-                        $options['order'] = $order;
-                    }
-                    $result = $generator->generate($decoded_elements, $options);
-                }
-
-            } else {
-                // Aperçu de commande WooCommerce - récupérer depuis la base de données
-
-                // Vérifier que WooCommerce est actif
-                if (!class_exists('WooCommerce')) {
-                    wp_send_json_error('WooCommerce n\'est pas installé ou activé');
-                }
-
-                $order = wc_get_order($order_id);
-                if (!$order) {
-                    wp_send_json_error('Commande non trouvée');
-                }
-
-                // Déterminer le template à utiliser
-                if (!$template_id || $template_id <= 0) {
-                    // Logique de détermination automatique du template basée sur le statut de la commande
-                    global $wpdb;
-                    $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-                    
-                    $order_status = $order->get_status();
-                    $status_templates = get_option('pdf_builder_order_status_templates', []);
-                    $status_key = 'wc-' . $order_status;
-                    
-                    if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
-                        // Il y a un mapping spécifique pour ce statut
-                        $template_id = $status_templates[$status_key];
-                    } else {
-                        // Détection automatique basée sur le type de document
-                        $document_type = $this->detect_document_type($order_status);
-                        $document_type_label = $this->get_document_type_label($document_type);
-                        
-                        $all_templates = $wpdb->get_results("SELECT id, name FROM $table_templates ORDER BY name ASC", ARRAY_A);
-                        
-                        // Chercher un template dont le nom contient le type de document détecté
-                        foreach ($all_templates as $template) {
-                            if (stripos($template['name'], $document_type_label) !== false) {
-                                $template_id = $template['id'];
-                                break;
-                            }
-                        }
-                        
-                        if (!$template_id) {
-                            // Si aucun template trouvé, prendre le premier disponible
-                            if (!empty($all_templates)) {
-                                $template_id = $all_templates[0]['id'];
-                            } else {
-                                wp_send_json_error('Aucun template disponible');
-                            }
-                        }
-                    }
-                }
-
-                // Récupérer les éléments du template depuis la base de données
-                global $wpdb;
-                $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-                $template_data = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
-                
-                if (!$template_data) {
-                    wp_send_json_error('Template non trouvé');
-                }
-
-                // Décoder les données du template (qui contient les éléments)
-                $decoded_template_data = json_decode($template_data['template_data'], true);
-                if (json_last_error() !== JSON_ERROR_NONE) {
-                    // Essayer de récupérer avec stripslashes au cas où
-                    $clean_template_data = stripslashes($template_data['template_data']);
-                    $decoded_template_data = json_decode($clean_template_data, true);
-                    if (json_last_error() !== JSON_ERROR_NONE) {
-                        wp_send_json_error('Données du template invalides: ' . json_last_error_msg());
-                    }
-                }
-
-                $template_elements = isset($decoded_template_data['elements']) ? $decoded_template_data['elements'] : [];
-
-                if (empty($template_elements)) {
-                    // Template vide, utiliser un élément de fallback
-                    $template_elements = [
-                        [
-                            'type' => 'text',
-                            'content' => 'Template vide - Veuillez ajouter des éléments dans l\'éditeur',
-                            'position' => ['x' => 20, 'y' => 50],
-                            'size' => ['width' => 150, 'height' => 20],
-                            'style' => ['fontSize' => 12, 'fontWeight' => 'normal']
-                        ]
-                    ];
-                }
-
-                // Générer l'aperçu
-                if ($preview_type === 'html') {
-                    $result = $generator->generate($template_elements, ['is_preview' => true, 'order' => $order]);
-                } else {
-                    $result = $generator->generate($template_elements, ['is_preview' => true, 'order' => $order]);
-                }
-            }
-
-            if (!$result) {
-                wp_send_json_error('Erreur lors de la génération de l\'aperçu');
-            }
-
-            // Gérer les différents types d'aperçu
-            if ($preview_type === 'html') {
-                // Pour l'aperçu HTML, retourner directement le HTML généré
-                wp_send_json_success(['html' => $result]);
-            } else {
-                // Pour l'aperçu PDF, vérifier le fichier et retourner l'URL
-
-                // Vérifier si le fichier existe réellement
-                $file_path = str_replace(home_url('/'), ABSPATH, $result);
-                if (file_exists($file_path)) {
-                }
-
-                wp_send_json_success(['url' => $result]);
-            }
-
-        } catch (Exception $e) {
-            wp_send_json_error('Erreur: ' . $e->getMessage());
-        } catch (Throwable $t) {
-            wp_send_json_error('Erreur fatale: ' . $t->getMessage());
-        } finally {
-            // Restaurer le gestionnaire d'erreur original
-            if (isset($original_error_handler)) {
-                set_error_handler($original_error_handler);
-            }
-        }
-    }
 
     /**
      * Helper pour obtenir le nonce
@@ -733,54 +385,6 @@ class PDF_Builder_WooCommerce_Integration {
         }
 
         return null;
-    }
-
-    /**
-     * Rend le HTML du canvas d'aperçu avec les vraies données de la commande
-     */
-    private function render_preview_canvas($elements, $order, $canvas_width, $canvas_height) {
-        error_log('PDF Builder: render_preview_canvas called with ' . count($elements) . ' elements');
-        $html = '';
-
-        if (!is_array($elements) || empty($elements)) {
-            error_log('PDF Builder: No elements to render');
-            return $html;
-        }
-
-        error_log('PDF Builder: Processing elements loop');
-        foreach ($elements as $index => $element) {
-            // Vérifier les propriétés essentielles
-            $x = floatval($element['position']['x'] ?? $element['x'] ?? 0);
-            $y = floatval($element['position']['y'] ?? $element['y'] ?? 0);
-            $width = floatval($element['position']['width'] ?? $element['size']['width'] ?? $element['width'] ?? 100);
-            $height = floatval($element['position']['height'] ?? $element['size']['height'] ?? $element['height'] ?? 50);
-            $type = $element['type'] ?? 'text';
-            $visible = isset($element['visible']) ? (bool)$element['visible'] : true;
-
-            if (!$visible) {
-                continue;
-            }
-
-            // Style de base - positionnement
-            $style = "position: absolute; left: {$x}px; top: {$y}px; width: {$width}px; height: {$height}px; ";
-
-            // Ajouter TOUS les styles CSS via build_element_style
-            $style = $this->build_element_style($element, $style);
-
-            // Contenu de l'élément
-            $content = $this->render_element_content($element, $order);
-
-            // Classes CSS
-            $classes = 'canvas-element';
-            if (isset($element['className'])) {
-                $classes .= ' ' . esc_attr($element['className']);
-            }
-
-            // Générer l'élément HTML
-            $html .= "<div class=\"{$classes}\" style=\"{$style}\">{$content}</div>";
-        }
-
-        return $html;
     }
 
     /**

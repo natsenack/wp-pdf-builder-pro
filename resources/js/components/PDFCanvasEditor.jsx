@@ -9,8 +9,6 @@ import { FPSCounter } from './FPSCounter';
 
 // Import direct des composants (plus de lazy loading)
 import ContextMenu from './ContextMenu';
-import PreviewModal from './PreviewModalSimple';
-import ModalPDFViewer from './ModalPDFViewer';
 import WooCommerceElement from './WooCommerceElements';
 import ElementLibrary from './ElementLibrary';
 import PropertiesPanel from './PropertiesPanel';
@@ -18,10 +16,7 @@ import NewTemplateModal from './NewTemplateModal';
 
 export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
   const [tool, setTool] = useState('select');
-  const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [showNewTemplateModal, setShowNewTemplateModal] = useState(false);
-  const [showPDFModal, setShowPDFModal] = useState(false);
-  const [pdfModalUrl, setPdfModalUrl] = useState(null);
   const [isPropertiesCollapsed, setIsPropertiesCollapsed] = useState(false);
 
   // États pour le pan et la navigation
@@ -243,11 +238,8 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
       const data = await response.json();
 
       if (data.success) {
-
-        // Ouvrir le PDF dans une modale
-        // console.log('Ouverture du PDF dans une modale...');
-        setPdfModalUrl(pdfDataUrl);
-        setShowPDFModal(true);
+        // PDF généré avec succès
+        console.log('PDF généré avec succès');
       } else {
         console.error('Erreur serveur:', data.data);
         throw new Error(data.data?.message || 'Erreur lors de la génération du PDF');
@@ -647,12 +639,6 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
             ➕ Nouveau template
           </button>
           <button
-            className="btn btn-secondary"
-            onClick={() => setShowPreviewModal(true)}
-          >
-            👁️ Aperçu
-          </button>
-          <button
             className="btn btn-primary"
             onClick={() => canvasState.saveTemplate()}
             disabled={canvasState.isSaving}
@@ -676,21 +662,18 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
         onRedo={handleRedo}
         canUndo={canvasState.history.canUndo()}
         canRedo={canvasState.history.canRedo()}
-        onPreview={() => setShowPreviewModal(true)}
       />
 
       {/* Zone de travail principale - simplifiée */}
       <main className="editor-workspace">
-        {/* Bibliothèque d'éléments - masquée en mode aperçu */}
-        {!showPreviewModal && (
-          <aside className="editor-sidebar left-sidebar">
-            <ElementLibrary
-              onAddElement={handleAddElement}
-              selectedTool={tool}
-              onToolSelect={setTool}
-            />
-          </aside>
-        )}
+        {/* Bibliothèque d'éléments */}
+        <aside className="editor-sidebar left-sidebar">
+          <ElementLibrary
+            onAddElement={handleAddElement}
+            selectedTool={tool}
+            onToolSelect={setTool}
+          />
+        </aside>
 
         {/* Canvas avec éléments interactifs - structure simplifiée */}
         <section
@@ -880,9 +863,8 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
           </div>
         </section>
 
-        {/* Panneau de propriétés - masqué en mode aperçu */}
-        {!showPreviewModal && (
-          <aside className={`editor-sidebar right-sidebar ${isPropertiesCollapsed ? 'collapsed' : ''}`}>
+        {/* Panneau de propriétés */}
+        <aside className={`editor-sidebar right-sidebar ${isPropertiesCollapsed ? 'collapsed' : ''}`}>
             {!isPropertiesCollapsed && (
               <PropertiesPanel
                 selectedElements={canvasState.selection.selectedElements}
@@ -892,26 +874,23 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
               />
             )}
           </aside>
-        )}
       </main>
 
-      {/* Bouton de toggle repositionné à la fin pour être au-dessus de tout - masqué en mode aperçu */}
-      {!showPreviewModal && (
-        <button
-          className="sidebar-toggle-fixed"
-          onClick={() => setIsPropertiesCollapsed(!isPropertiesCollapsed)}
-          title={isPropertiesCollapsed ? 'Agrandir le panneau' : 'Réduire le panneau'}
-          style={{
-            position: 'fixed',
-            top: '50%',
-            right: isPropertiesCollapsed ? '0px' : '350px',
-            transform: 'translateY(-50%)',
-            zIndex: 999999
-          }}
-        >
-          {isPropertiesCollapsed ? '◀' : '▶'}
-        </button>
-      )}
+      {/* Bouton de toggle repositionné à la fin pour être au-dessus de tout */}
+      <button
+        className="sidebar-toggle-fixed"
+        onClick={() => setIsPropertiesCollapsed(!isPropertiesCollapsed)}
+        title={isPropertiesCollapsed ? 'Agrandir le panneau' : 'Réduire le panneau'}
+        style={{
+          position: 'fixed',
+          top: '50%',
+          right: isPropertiesCollapsed ? '0px' : '350px',
+          transform: 'translateY(-50%)',
+          zIndex: 999999
+        }}
+      >
+        {isPropertiesCollapsed ? '◀' : '▶'}
+      </button>
 
       {/* Menu contextuel */}
       {canvasState.contextMenu.contextMenu && (
@@ -941,40 +920,6 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
           </>
         )}
       </footer>
-
-      {/* Modale d'aperçu */}
-      <PreviewModal
-        isOpen={showPreviewModal}
-        onClose={() => {
-          setShowPreviewModal(false);
-        }}
-        elements={canvasState.elements}
-        canvasWidth={canvasState.canvasWidth}
-        canvasHeight={canvasState.canvasHeight}
-        ajaxurl={window.pdfBuilderAjax?.ajaxurl}
-        pdfBuilderNonce={window.pdfBuilderAjax?.nonce}
-        useServerPreview={false}
-        onOpenPDFModal={(pdfUrl) => {
-          setPdfModalUrl(pdfUrl);
-          setShowPDFModal(true);
-          setShowPreviewModal(false);
-        }}
-      />
-
-      <ModalPDFViewer
-        isOpen={showPDFModal}
-        onClose={() => {
-          setShowPDFModal(false);
-          if (pdfModalUrl && pdfModalUrl.startsWith('blob:')) {
-            setTimeout(() => {
-              URL.revokeObjectURL(pdfModalUrl);
-            }, 100);
-          }
-          setPdfModalUrl(null);
-        }}
-        pdfUrl={pdfModalUrl}
-        title="PDF Généré"
-      />
 
       {/* Modale Nouveau Template */}
       <NewTemplateModal

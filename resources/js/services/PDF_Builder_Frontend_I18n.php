@@ -76,7 +76,6 @@ class PDF_Builder_Frontend_I18n {
             'edit' => __('Edit', PDF_BUILDER_TEXT_DOMAIN),
             'view' => __('View', PDF_BUILDER_TEXT_DOMAIN),
             'download' => __('Download', PDF_BUILDER_TEXT_DOMAIN),
-            'preview' => __('Preview', PDF_BUILDER_TEXT_DOMAIN),
 
             // Chaînes spécifiques au PDF
             'generating_pdf' => __('Generating PDF...', PDF_BUILDER_TEXT_DOMAIN),

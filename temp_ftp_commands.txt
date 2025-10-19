@@ -1,6 +1,0 @@
-open 65.108.242.181
-nats
-[password]
-cd /wp-content/plugins/wp-pdf-builder-pro/src/Controllers
-put src/Controllers/PDF_Generator_Controller.php
-quit

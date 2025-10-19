@@ -330,22 +330,6 @@ class PDF_Builder_Canvas_Elements_Manager {
                     'price' => true,
                     'total' => true
                 ],
-                'previewProducts' => [
-                    [
-                        'name' => 'Produit A - Description du produit',
-                        'sku' => 'SKU001',
-                        'quantity' => 2,
-                        'price' => 19.99,
-                        'total' => 39.98
-                    ],
-                    [
-                        'name' => 'Produit B - Un autre article',
-                        'sku' => 'SKU002',
-                        'quantity' => 1,
-                        'price' => 29.99,
-                        'total' => 29.99
-                    ]
-                ],
                 'showSubtotal' => false,
                 'showShipping' => true,
                 'showTaxes' => true,
@@ -530,20 +514,6 @@ class PDF_Builder_Canvas_Elements_Manager {
                 // Source de données
                 $sanitized['dataSource'] = sanitize_text_field($element_data['dataSource'] ?? 'order_items');
 
-                // Données de produits d'aperçu
-                if (isset($element_data['previewProducts']) && is_array($element_data['previewProducts'])) {
-                    $sanitized['previewProducts'] = [];
-                    foreach ($element_data['previewProducts'] as $product) {
-                        if (is_array($product)) {
-                            $sanitized_product = [];
-                            $sanitized_product['name'] = sanitize_text_field($product['name'] ?? '');
-                            $sanitized_product['quantity'] = intval($product['quantity'] ?? 1);
-                            $sanitized_product['price'] = floatval($product['price'] ?? 0);
-                            $sanitized_product['total'] = floatval($product['total'] ?? 0);
-                            $sanitized['previewProducts'][] = $sanitized_product;
-                        }
-                    }
-                }
                 break;
 
             case 'customer_info':
@@ -635,7 +605,7 @@ class PDF_Builder_Canvas_Elements_Manager {
         // Propriétés qui ne devraient exister que pour les tableaux
         $table_only_properties = [
             'showHeaders', 'showBorders', 'showSubtotal', 'showShipping', 'showTaxes',
-            'showDiscount', 'showTotal', 'columns', 'headers', 'tableStyle', 'dataSource', 'previewProducts'
+            'showDiscount', 'showTotal', 'columns', 'headers', 'tableStyle', 'dataSource'
         ];
 
         // Propriétés qui ne devraient exister que pour les éléments d'information client/entreprise
