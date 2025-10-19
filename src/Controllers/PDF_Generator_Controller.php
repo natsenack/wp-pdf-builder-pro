@@ -280,8 +280,11 @@ class PDF_Builder_Pro_Generator {
 
                 $table_html = '';
                 if ($this->order) {
-                    $items = $this->order->get_items();
-                    error_log('[PDF Generator] Order items count: ' . count($items));
+                    // NOUVELLE APPROCHE : Générer d'abord avec les données fictives du canvas, puis remplacer par les vraies données
+                    $table_html = $this->generate_table_html_from_canvas_template($element);
+
+                    error_log('[PDF Generator] Table HTML generated from canvas template, length: ' . strlen($table_html));
+                }
 
                     $show_headers = $element['showHeaders'] ?? true;
                     $show_borders = $element['showBorders'] ?? true;
@@ -1424,7 +1427,287 @@ class PDF_Builder_Pro_Generator {
 
         return $styles[$style] ?? $styles['default'];
     }
-}
 
-// Alias pour compatibilité
-class_alias('PDF_Builder_Pro_Generator', 'PDF_Generator');
+    /**
+     * Génère le HTML du tableau en utilisant d'abord un template avec données fictives du canvas, puis remplace par les vraies données
+     */
+    private function generate_table_html_from_canvas_template($element) {
+        // Créer des données fictives pour générer le template HTML du canvas
+        $fake_data = $this->create_fake_order_data_for_template();
+
+        // Générer le HTML du tableau avec les données fictives (mais préserve tous les styles du canvas)
+        $fake_html = $this->generate_fake_table_html($element, $fake_data);
+
+        // Remplacer les données fictives par les vraies données de la commande
+        $real_data = $this->create_real_order_data();
+        $real_html = $this->replace_fake_data_with_real_data($fake_html, $fake_data, $real_data);
+
+        return $real_html;
+    }
+
+    /**
+     * Crée des données fictives pour générer le template HTML du canvas
+     */
+    private function create_fake_order_data_for_template() {
+        return [
+            'items' => [
+                ['name' => 'FAKE_PRODUCT_1', 'quantity' => 1, 'price' => 10.00, 'total' => 10.00],
+                ['name' => 'FAKE_PRODUCT_2', 'quantity' => 2, 'price' => 20.00, 'total' => 40.00],
+            ],
+            'subtotal' => 50.00,
+            'shipping' => 5.00,
+            'tax' => 10.00,
+            'discount' => 0.00,
+            'total' => 65.00
+        ];
+    }
+
+    /**
+     * Crée les vraies données de la commande
+     */
+    private function create_real_order_data() {
+        if (!$this->order) {
+            return $this->create_fake_order_data_for_template(); // Fallback
+        }
+
+        $items = [];
+        foreach ($this->order->get_items() as $item) {
+            $product = $item->get_product();
+            $price = $product ? $product->get_price() : 0;
+            $price_formatted = function_exists('wc_price') ? wc_price($price) : $price;
+            $total_formatted = function_exists('wc_price') ? wc_price($item->get_total()) : $item->get_total();
+
+            $items[] = [
+                'name' => $item->get_name(),
+                'quantity' => $item->get_quantity(),
+                'price' => $price_formatted,
+                'total' => $total_formatted
+            ];
+        }
+
+        $subtotal = function_exists('wc_price') ? wc_price($this->order->get_subtotal()) : $this->order->get_subtotal();
+        $shipping = function_exists('wc_price') ? wc_price($this->order->get_shipping_total()) : $this->order->get_shipping_total();
+        $tax = function_exists('wc_price') ? wc_price($this->order->get_total_tax()) : $this->order->get_total_tax();
+        $discount = function_exists('wc_price') ? wc_price($this->order->get_total_discount()) : $this->order->get_total_discount();
+        $total = function_exists('wc_price') ? wc_price($this->order->get_total()) : $this->order->get_total();
+
+        return [
+            'items' => $items,
+            'subtotal' => $subtotal,
+            'shipping' => $shipping,
+            'tax' => $tax,
+            'discount' => $discount,
+            'total' => $total
+        ];
+    }
+
+    /**
+     * Génère le HTML du tableau avec les données fictives mais préserve tous les styles du canvas
+     */
+    private function generate_fake_table_html($element, $fake_data) {
+        // Utiliser exactement la même logique que l'ancien code pour générer le HTML
+        // mais avec les données fictives au lieu des vraies données
+
+        $show_headers = $element['showHeaders'] ?? true;
+        $show_borders = $element['showBorders'] ?? true;
+        $headers = $element['headers'] ?? ['Produit', 'Qté', 'Prix', 'Total'];
+        $columns = $element['columns'] ?? ['image' => false, 'name' => true, 'sku' => false, 'quantity' => true, 'price' => true, 'total' => true];
+        $table_style = $element['tableStyle'] ?? 'classic';
+
+        // Appliquer les styles prédéfinis selon tableStyle
+        $table_styles = $this->get_table_styles($table_style);
+        $even_row_bg = $element['evenRowBg'] ?? $table_styles['even_row_bg'];
+        $odd_row_bg = $element['oddRowBg'] ?? $table_styles['odd_row_bg'];
+        $odd_row_text_color = $element['oddRowTextColor'] ?? $table_styles['odd_row_text_color'];
+        $header_bg = $element['headerBg'] ?? $table_styles['header_bg'];
+        $header_text_color = $element['headerTextColor'] ?? $table_styles['header_text_color'];
+        $border_color = $element['borderColor'] ?? $table_styles['border_color'];
+        $name_color = $element['nameColor'] ?? $table_styles['name_color'];
+        $quantity_color = $element['quantityColor'] ?? $table_styles['quantity_color'];
+        $price_color = $element['priceColor'] ?? $table_styles['price_color'];
+        $total_color = $element['totalColor'] ?? $table_styles['total_color'];
+
+        // Styles spécifiques pour les colonnes
+        $name_style = $element['nameStyle'] ?? 'font-weight: 500;';
+        $quantity_style = $element['quantityStyle'] ?? 'text-align: center;';
+        $price_style = $element['priceStyle'] ?? 'text-align: right;';
+        $total_style = $element['totalStyle'] ?? 'text-align: right; font-weight: bold;';
+
+        // Appliquer les propriétés CSS générales au tableau
+        $table_css = 'width: 100%;';
+
+        // Couleur de fond générale du tableau
+        if (isset($element['backgroundColor']) && $element['backgroundColor'] !== 'transparent') {
+            $table_css .= ' background-color: ' . esc_attr($element['backgroundColor']) . ';';
+        }
+
+        // Couleur du texte générale
+        if (isset($element['color'])) {
+            $table_css .= ' color: ' . esc_attr($element['color']) . ';';
+        }
+
+        // Taille de police
+        if (isset($element['fontSize'])) {
+            $table_css .= ' font-size: ' . intval($element['fontSize']) . 'px;';
+        } else {
+            $table_css .= ' font-size: 12px;'; // Valeur par défaut
+        }
+
+        // Famille de police
+        if (isset($element['fontFamily'])) {
+            $table_css .= ' font-family: ' . esc_attr($element['fontFamily']) . ';';
+        }
+
+        // Poids de la police
+        if (isset($element['fontWeight'])) {
+            $table_css .= ' font-weight: ' . esc_attr($element['fontWeight']) . ';';
+        }
+
+        // Style de la police
+        if (isset($element['fontStyle'])) {
+            $table_css .= ' font-style: ' . esc_attr($element['fontStyle']) . ';';
+        }
+
+        // Bordures générales - ajouter une bordure par défaut si aucune n'est spécifiée
+        $border_width = $element['borderWidth'] ?? 1; // Bordure de 1px par défaut
+        $border_style = $element['borderStyle'] ?? 'solid';
+        $border_color = $element['borderColor'] ?? '#cccccc'; // Gris clair par défaut
+        if ($border_width > 0) {
+            $table_css .= " border: {$border_width}px {$border_style} {$border_color};";
+        }
+
+        // Rayon des bordures
+        $border_radius = $element['borderRadius'] ?? 0;
+        if ($border_radius > 0) {
+            $table_css .= " border-radius: {$border_radius}px;";
+        }
+
+        // Ombres
+        if (isset($element['shadow']) && $element['shadow']) {
+            $shadow_color = $element['shadowColor'] ?? '#000000';
+            $shadow_offset_x = $element['shadowOffsetX'] ?? 2;
+            $shadow_offset_y = $element['shadowOffsetY'] ?? 2;
+            $shadow_blur = $element['shadowBlur'] ?? 1;
+            $table_css .= " box-shadow: {$shadow_offset_x}px {$shadow_offset_y}px {$shadow_blur}px {$shadow_color};";
+        }
+
+        // Ajouter le border-collapse pour les bordures de cellules
+        if ($show_borders) {
+            $table_css .= ' border-collapse: collapse;';
+        }
+
+        // Style des bordures pour les cellules
+        $cell_border_style = $show_borders ? "border: 1px solid {$border_color};" : '';
+
+        $table_html = "<table style='{$table_css}'>";
+
+        // Headers
+        if ($show_headers) {
+            $table_html .= "<thead><tr style='background-color: {$header_bg}; color: {$header_text_color};'>";
+            foreach ($headers as $header) {
+                $table_html .= "<th style='padding: 8px; text-align: left; {$cell_border_style} font-weight: bold;'>{$header}</th>";
+            }
+            $table_html .= "</tr></thead>";
+        }
+
+        $table_html .= "<tbody>";
+
+        // Utiliser les données fictives pour générer les lignes
+        $row_count = 0;
+        foreach ($fake_data['items'] as $item) {
+            $row_count++;
+            $is_even = ($row_count % 2 === 0);
+            $bg_color = $is_even ? $even_row_bg : $odd_row_bg;
+            $text_color = $is_even ? ($odd_row_text_color ?? 'inherit') : $odd_row_text_color;
+
+            $table_html .= "<tr style='background-color: {$bg_color}; color: {$text_color};'>";
+
+            // Product Name
+            if ($columns['name']) {
+                $table_html .= "<td style='padding: 8px; {$cell_border_style} {$name_style} color: {$name_color};'>{$item['name']}</td>";
+            }
+
+            // Quantity
+            if ($columns['quantity']) {
+                $table_html .= "<td style='padding: 8px; {$cell_border_style} {$quantity_style} color: {$quantity_color};'>{$item['quantity']}</td>";
+            }
+
+            // Price
+            if ($columns['price']) {
+                $table_html .= "<td style='padding: 8px; {$cell_border_style} {$price_style} color: {$price_color};'>{$item['price']}</td>";
+            }
+
+            // Total
+            if ($columns['total']) {
+                $table_html .= "<td style='padding: 8px; {$cell_border_style} {$total_style} color: {$total_color};'>{$item['total']}</td>";
+            }
+
+            $table_html .= "</tr>";
+        }
+
+        // Subtotal, Shipping, Taxes, Total
+        $show_subtotal = $element['showSubtotal'] ?? true;
+        $show_shipping = $element['showShipping'] ?? true;
+        $show_taxes = $element['showTaxes'] ?? true;
+        $show_discount = $element['showDiscount'] ?? true;
+        $show_total = $element['showTotal'] ?? true;
+
+        if ($show_subtotal || $show_shipping || $show_taxes || $show_discount || $show_total) {
+            $table_html .= "<tr style='background-color: #f9f9f9; font-weight: bold;'><td colspan='" . count(array_filter($columns)) . "' style='padding: 8px; {$cell_border_style} text-align: right;'>";
+
+            $summary_lines = [];
+
+            if ($show_subtotal) {
+                $summary_lines[] = "Sous-total: {$fake_data['subtotal']}";
+            }
+
+            if ($show_shipping && $fake_data['shipping'] > 0) {
+                $summary_lines[] = "Livraison: {$fake_data['shipping']}";
+            }
+
+            if ($show_taxes && $fake_data['tax'] > 0) {
+                $summary_lines[] = "TVA: {$fake_data['tax']}";
+            }
+
+            if ($show_discount && $fake_data['discount'] > 0) {
+                $summary_lines[] = "Remise: -{$fake_data['discount']}";
+            }
+
+            if ($show_total) {
+                $summary_lines[] = "TOTAL: {$fake_data['total']}";
+            }
+
+            $table_html .= implode('<br>', $summary_lines);
+            $table_html .= "</td></tr>";
+        }
+
+        $table_html .= "</tbody></table>";
+
+        return $table_html;
+    }
+
+    /**
+     * Remplace les données fictives par les vraies données dans le HTML généré
+     */
+    private function replace_fake_data_with_real_data($html, $fake_data, $real_data) {
+        // Remplacer les noms de produits fictifs
+        foreach ($fake_data['items'] as $index => $fake_item) {
+            if (isset($real_data['items'][$index])) {
+                $real_item = $real_data['items'][$index];
+                $html = str_replace($fake_item['name'], $real_item['name'], $html);
+                $html = str_replace((string)$fake_item['quantity'], (string)$real_item['quantity'], $html);
+                $html = str_replace($fake_item['price'], $real_item['price'], $html);
+                $html = str_replace($fake_item['total'], $real_item['total'], $html);
+            }
+        }
+
+        // Remplacer les totaux
+        $html = str_replace($fake_data['subtotal'], $real_data['subtotal'], $html);
+        $html = str_replace($fake_data['shipping'], $real_data['shipping'], $html);
+        $html = str_replace($fake_data['tax'], $real_data['tax'], $html);
+        $html = str_replace($fake_data['discount'], $real_data['discount'], $html);
+        $html = str_replace($fake_data['total'], $real_data['total'], $html);
+
+        return $html;
+    }
+}
