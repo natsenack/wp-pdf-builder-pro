@@ -205,7 +205,7 @@ class PDF_Builder_Pro_Generator {
         // LOG COMPLET DE DIAGNOSTIC POUR TOUS LES ÉLÉMENTS
         error_log('[PDF Generator] === RENDERING ELEMENT: ' . $type . ' ===');
         error_log('[PDF Generator] Element full config: ' . json_encode($element));
-        error_log('[PDF Generator] Element has properties: ' . (isset($element['properties']) ? 'YES (' . count($element['properties']) . ' props)' : 'NO'));
+        error_log('[PDF Generator] Element has ' . count($element) . ' total properties');
         error_log('[PDF Generator] Base style applied: ' . $style);
 
         switch ($type) {
