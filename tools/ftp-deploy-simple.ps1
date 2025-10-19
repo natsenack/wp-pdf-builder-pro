@@ -89,7 +89,7 @@ if (-not $modifiedFiles -or $modifiedFiles.Count -eq 0) {
 $modifiedFiles = $modifiedFiles | Select-Object -Unique | Where-Object {
     $file = $_
     # Inclure seulement les fichiers dans les dossiers essentiels
-    $essentialDirs = @('src', 'templates', 'assets', 'core', 'config', 'resources', 'lib', 'languages', 'tools')
+    $essentialDirs = @('src', 'templates', 'assets', 'core', 'config', 'resources', 'lib', 'languages')
     $essentialFiles = @('bootstrap.php', 'pdf-builder-pro.php', 'readme.txt')
 
     $isInEssentialDir = $essentialDirs | Where-Object { $file.StartsWith($_ + "\") -or $file.StartsWith($_ + '/') }

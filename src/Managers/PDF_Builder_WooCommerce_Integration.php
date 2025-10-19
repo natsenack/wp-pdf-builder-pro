@@ -1876,13 +1876,14 @@ class PDF_Builder_WooCommerce_Integration {
 
             error_log('PDF Builder: HTML generated, creating full HTML response');
             // Créer le HTML complet avec styles pour l'impression et téléchargement
+            $order_number = $order && is_object($order) ? $order->get_order_number() : 'N/A';
             $full_html = <<<HTML
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aperçu - Commande <?php echo $order && is_object($order) ? $order->get_order_number() : 'N/A'; ?></title>
+    <title>Aperçu - Commande {$order_number}</title>
     <style>
         * {
             margin: 0;
