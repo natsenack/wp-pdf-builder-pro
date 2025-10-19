@@ -69,14 +69,7 @@ class PDF_Builder_Pro_Generator {
      */
     public function set_order($order) {
         $this->order = $order;
-        error_log('[PDF Generator] Order set: ' . ($order ? $order->get_id() : 'null'));
-    }
-
-    /**
-     * Obtient l'ordre actuel
-     */
-    public function getOrder() {
-        return $this->order;
+        error_log('[PDF Generator] Order set: ' . ($order ? 'Order ID: ' . $order->get_id() : 'null'));
     }
 
     /**
@@ -86,6 +79,8 @@ class PDF_Builder_Pro_Generator {
         if (isset($options['is_preview']) && $options['is_preview']) {
             $this->set_preview_mode(true);
         }
+
+        error_log('[PDF Generator] Generate called with ' . count($elements) . ' elements, order: ' . ($this->order ? $this->order->get_id() : 'null'));
 
         try {
             $this->reset();
@@ -151,6 +146,8 @@ class PDF_Builder_Pro_Generator {
         $type = $element['type'] ?? 'text';
         $coords = $this->extract_element_coordinates($element, 1); // Garder en pixels pour HTML
 
+        error_log('[PDF Generator] Rendering element type: ' . $type . ', content: ' . ($element['content'] ?? $element['text'] ?? 'no content'));
+
         // Donner des dimensions par défaut si manquantes
         if (empty($coords['width']) || $coords['width'] <= 0) {
             $coords['width'] = 100; // Largeur par défaut
@@ -207,7 +204,7 @@ class PDF_Builder_Pro_Generator {
             case 'text':
             case 'dynamic-text':
             case 'multiline_text':
-                $content = $element['content'] ?? $element['text'] ?? '';
+                $content = $element['content'] ?? $element['text'] ?? $element['customContent'] ?? '';
                 // Pour dynamic-text, remplacer les variables si un ordre est défini
                 if ($type === 'dynamic-text' && $this->order) {
                     $original_content = $content;
@@ -372,7 +369,7 @@ class PDF_Builder_Pro_Generator {
     /**
      * Remplace les variables de commande et compagnie dans le contenu
      */
-    public function replace_order_variables($content, $order = null) {
+    private function replace_order_variables($content, $order = null) {
         // Variables de compagnie (toujours disponibles)
         $company_replacements = array(
             '{{company_name}}' => get_bloginfo('name'),
@@ -419,13 +416,19 @@ class PDF_Builder_Pro_Generator {
                 '{{shipping_country}}' => $order->get_shipping_country(),
                 '{{shipping_address}}' => $shipping_address ?: 'Adresse de livraison non disponible',
                 '{{total}}' => function_exists('wc_price') ? wc_price($order->get_total()) : $order->get_total(),
+                '{{order_total}}' => function_exists('wc_price') ? wc_price($order->get_total()) : $order->get_total(),
                 '{{subtotal}}' => function_exists('wc_price') ? wc_price($order->get_subtotal()) : $order->get_subtotal(),
+                '{{order_subtotal}}' => function_exists('wc_price') ? wc_price($order->get_subtotal()) : $order->get_subtotal(),
                 '{{tax}}' => function_exists('wc_price') ? wc_price($order->get_total_tax()) : $order->get_total_tax(),
+                '{{order_tax}}' => function_exists('wc_price') ? wc_price($order->get_total_tax()) : $order->get_total_tax(),
                 '{{shipping_total}}' => function_exists('wc_price') ? wc_price($order->get_shipping_total()) : $order->get_shipping_total(),
+                '{{order_shipping}}' => function_exists('wc_price') ? wc_price($order->get_shipping_total()) : $order->get_shipping_total(),
                 '{{discount_total}}' => function_exists('wc_price') ? wc_price($order->get_discount_total()) : $order->get_discount_total(),
                 '{{payment_method}}' => $order->get_payment_method_title(),
                 '{{order_status}}' => function_exists('wc_get_order_status_name') ? wc_get_order_status_name($order->get_status()) : $order->get_status(),
                 '{{currency}}' => $order->get_currency(),
+                '{{date}}' => date('d/m/Y'),
+                '{{due_date}}' => date('d/m/Y', strtotime('+30 days')),
             );
         }
 
