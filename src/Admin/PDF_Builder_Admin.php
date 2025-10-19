@@ -3463,9 +3463,9 @@ class PDF_Builder_Admin {
             __DIR__ . '/../../lib/tcpdf/tcpdf_autoload.php',  // Essayer tcpdf_autoload.php d'abord
             __DIR__ . '/../../lib/tcpdf/tcpdf.php',
             __DIR__ . '/../../vendor/tecnickcom/tcpdf/tcpdf.php',
-            plugin_dir_path(__FILE__) . '../../lib/tcpdf/tcpdf_autoload.php',
-            plugin_dir_path(__FILE__) . '../../lib/tcpdf/tcpdf.php',
-            plugin_dir_path(__FILE__) . '../../vendor/tecnickcom/tcpdf/tcpdf.php'
+            WP_PLUGIN_DIR . '/wp-pdf-builder-pro/lib/tcpdf/tcpdf_autoload.php',
+            WP_PLUGIN_DIR . '/wp-pdf-builder-pro/lib/tcpdf/tcpdf.php',
+            WP_PLUGIN_DIR . '/wp-pdf-builder-pro/vendor/tecnickcom/tcpdf/tcpdf.php'
         ];
 
         foreach ($tcpdf_paths as $path) {

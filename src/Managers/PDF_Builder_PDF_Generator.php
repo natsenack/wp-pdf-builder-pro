@@ -272,7 +272,7 @@ class PDF_Builder_PDF_Generator {
         $pdf_path = $pdf_dir . '/' . $filename;
 
         // Générer le PDF avec TCPDF
-        require_once plugin_dir_path(dirname(__FILE__)) . '../../lib/tcpdf/tcpdf_autoload.php';
+        require_once WP_PLUGIN_DIR . '/wp-pdf-builder-pro/lib/tcpdf/tcpdf_autoload.php';
 
         $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
@@ -664,7 +664,7 @@ class PDF_Builder_PDF_Generator {
             error_log('[PDF Builder] 🔄 NOUVELLE VERSION TCPDF - Génération d\'aperçu avec rendu haute fidélité');
 
             // Vérifier que le fichier TCPDF existe
-            $tcpdf_path = plugin_dir_path(dirname(__FILE__)) . '../../lib/tcpdf/tcpdf.php';
+            $tcpdf_path = WP_PLUGIN_DIR . '/wp-pdf-builder-pro/lib/tcpdf/tcpdf.php';
             error_log('[PDF Builder] TCPDF path: ' . $tcpdf_path);
             error_log('[PDF Builder] TCPDF file exists: ' . (file_exists($tcpdf_path) ? 'YES' : 'NO'));
 
