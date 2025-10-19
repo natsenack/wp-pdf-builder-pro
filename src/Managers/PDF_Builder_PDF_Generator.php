@@ -210,6 +210,9 @@ class PDF_Builder_PDF_Generator {
 
             error_log('[PDF Builder Preview] Successfully decoded ' . count($canvas_elements) . ' elements');
 
+            // DEBUG: Confirm new code path is running
+            error_log('[PDF Builder Preview] NEW CODE PATH: Using internal HTML generation');
+
             // Générer le HTML directement sans dépendre du contrôleur externe
             $html_content = $this->generate_html_from_elements($canvas_elements);
             
