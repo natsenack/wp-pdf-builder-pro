@@ -1023,7 +1023,7 @@ class PDF_Builder_WooCommerce_Integration {
 
         // Vérification de sécurité
         if (!wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions')) {
-            error_log('PDF BUILDER DEBUG: Nonce verification failed');
+            error_log('PDF BUILDER DEBUG: Nonce verification failed - received: ' . ($_POST['nonce'] ?? 'none'));
             wp_send_json_error('Sécurité: Nonce invalide');
         }
 
@@ -1043,28 +1043,39 @@ class PDF_Builder_WooCommerce_Integration {
 
             // Générer le HTML depuis les éléments du template
             $generator = new PDF_Builder_Pro_Generator();
+            error_log('PDF BUILDER DEBUG: PDF_Builder_Pro_Generator instantiated');
+
             $html_content = $generator->generate([], ['is_preview' => false]);
+            error_log('PDF BUILDER DEBUG: HTML generated, length: ' . strlen($html_content));
 
             // Créer un fichier HTML temporaire pour le téléchargement
             $upload_dir = wp_upload_dir();
             $temp_dir = $upload_dir['basedir'] . '/pdf-builder-temp';
+            error_log('PDF BUILDER DEBUG: Upload dir: ' . $upload_dir['basedir']);
+            error_log('PDF BUILDER DEBUG: Temp dir: ' . $temp_dir);
 
             // Créer le dossier temporaire s'il n'existe pas
             if (!file_exists($temp_dir)) {
                 wp_mkdir_p($temp_dir);
+                error_log('PDF BUILDER DEBUG: Created temp directory');
             }
 
             // Générer un nom de fichier unique
             $filename = 'pdf-preview-' . $order_id . '-' . time() . '.html';
             $file_path = $temp_dir . '/' . $filename;
+            error_log('PDF BUILDER DEBUG: File path: ' . $file_path);
 
             // Sauvegarder le HTML dans le fichier
             if (file_put_contents($file_path, $html_content) === false) {
+                error_log('PDF BUILDER DEBUG: Failed to write HTML file');
                 wp_send_json_error('Erreur lors de la création du fichier HTML');
             }
 
+            error_log('PDF BUILDER DEBUG: HTML file written successfully');
+
             // Créer l'URL de téléchargement
             $download_url = $upload_dir['baseurl'] . '/pdf-builder-temp/' . $filename;
+            error_log('PDF BUILDER DEBUG: Download URL: ' . $download_url);
 
             wp_send_json_success([
                 'message' => 'HTML généré avec succès - TCPDF supprimé complètement',
