@@ -294,8 +294,10 @@ class PDF_Builder_Pro_Generator {
                         
                         // Price
                         if ($columns['price']) {
-                            $price = function_exists('wc_price') ? wc_price($item->get_price()) : $item->get_price();
-                            $table_html .= "<td style='padding: 8px; {$border_style} text-align: right;'>{$price}</td>";
+                            $product = $item->get_product();
+                            $price = $product ? $product->get_price() : 0;
+                            $price_formatted = function_exists('wc_price') ? wc_price($price) : $price;
+                            $table_html .= "<td style='padding: 8px; {$border_style} text-align: right;'>{$price_formatted}</td>";
                         }
                         
                         // Total
