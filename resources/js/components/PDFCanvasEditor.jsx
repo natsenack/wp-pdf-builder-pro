@@ -9,7 +9,7 @@ import { FPSCounter } from './FPSCounter';
 
 // Import direct des composants (plus de lazy loading)
 import ContextMenu from './ContextMenu';
-import PreviewModal from './PreviewModal';
+import PreviewModal from './PreviewModalSimple';
 import ModalPDFViewer from './ModalPDFViewer';
 import WooCommerceElement from './WooCommerceElements';
 import ElementLibrary from './ElementLibrary';

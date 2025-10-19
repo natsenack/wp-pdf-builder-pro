@@ -2,7 +2,7 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 304:
+/***/ 72:
 /***/ ((__unused_webpack_module, __unused_webpack___webpack_exports__, __webpack_require__) => {
 
 
@@ -5181,26 +5181,26 @@ var getKeyboardShortcut = function getKeyboardShortcut(label) {
   return shortcutMap[label];
 };
 /* harmony default export */ const components_ContextMenu = (ContextMenu);
-;// ./resources/js/components/PreviewModal.jsx
-function PreviewModal_regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return PreviewModal_regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (PreviewModal_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, PreviewModal_regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, PreviewModal_regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), PreviewModal_regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", PreviewModal_regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), PreviewModal_regeneratorDefine2(u), PreviewModal_regeneratorDefine2(u, o, "Generator"), PreviewModal_regeneratorDefine2(u, n, function () { return this; }), PreviewModal_regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (PreviewModal_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
-function PreviewModal_regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } PreviewModal_regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { PreviewModal_regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, PreviewModal_regeneratorDefine2(e, r, n, t); }
-function PreviewModal_asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
-function PreviewModal_asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { PreviewModal_asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { PreviewModal_asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
-function PreviewModal_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
-function PreviewModal_objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? PreviewModal_ownKeys(Object(t), !0).forEach(function (r) { PreviewModal_defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : PreviewModal_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-function PreviewModal_defineProperty(e, r, t) { return (r = PreviewModal_toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
-function PreviewModal_toPropertyKey(t) { var i = PreviewModal_toPrimitive(t, "string"); return "symbol" == PreviewModal_typeof(i) ? i : i + ""; }
-function PreviewModal_toPrimitive(t, r) { if ("object" != PreviewModal_typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != PreviewModal_typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function PreviewModal_typeof(o) { "@babel/helpers - typeof"; return PreviewModal_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, PreviewModal_typeof(o); }
-function PreviewModal_slicedToArray(r, e) { return PreviewModal_arrayWithHoles(r) || PreviewModal_iterableToArrayLimit(r, e) || PreviewModal_unsupportedIterableToArray(r, e) || PreviewModal_nonIterableRest(); }
-function PreviewModal_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function PreviewModal_unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return PreviewModal_arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? PreviewModal_arrayLikeToArray(r, a) : void 0; } }
-function PreviewModal_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
-function PreviewModal_iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
-function PreviewModal_arrayWithHoles(r) { if (Array.isArray(r)) return r; }
+;// ./resources/js/components/PreviewModalSimple.jsx
+function PreviewModalSimple_typeof(o) { "@babel/helpers - typeof"; return PreviewModalSimple_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, PreviewModalSimple_typeof(o); }
+function PreviewModalSimple_regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return PreviewModalSimple_regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (PreviewModalSimple_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, PreviewModalSimple_regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, PreviewModalSimple_regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), PreviewModalSimple_regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", PreviewModalSimple_regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), PreviewModalSimple_regeneratorDefine2(u), PreviewModalSimple_regeneratorDefine2(u, o, "Generator"), PreviewModalSimple_regeneratorDefine2(u, n, function () { return this; }), PreviewModalSimple_regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (PreviewModalSimple_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function PreviewModalSimple_regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } PreviewModalSimple_regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { PreviewModalSimple_regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, PreviewModalSimple_regeneratorDefine2(e, r, n, t); }
+function PreviewModalSimple_asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function PreviewModalSimple_asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { PreviewModalSimple_asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { PreviewModalSimple_asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+function PreviewModalSimple_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function PreviewModalSimple_objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? PreviewModalSimple_ownKeys(Object(t), !0).forEach(function (r) { PreviewModalSimple_defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : PreviewModalSimple_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function PreviewModalSimple_defineProperty(e, r, t) { return (r = PreviewModalSimple_toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function PreviewModalSimple_toPropertyKey(t) { var i = PreviewModalSimple_toPrimitive(t, "string"); return "symbol" == PreviewModalSimple_typeof(i) ? i : i + ""; }
+function PreviewModalSimple_toPrimitive(t, r) { if ("object" != PreviewModalSimple_typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != PreviewModalSimple_typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function PreviewModalSimple_slicedToArray(r, e) { return PreviewModalSimple_arrayWithHoles(r) || PreviewModalSimple_iterableToArrayLimit(r, e) || PreviewModalSimple_unsupportedIterableToArray(r, e) || PreviewModalSimple_nonIterableRest(); }
+function PreviewModalSimple_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function PreviewModalSimple_unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return PreviewModalSimple_arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? PreviewModalSimple_arrayLikeToArray(r, a) : void 0; } }
+function PreviewModalSimple_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function PreviewModalSimple_iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function PreviewModalSimple_arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 
 
-// Nouveau système d'aperçu côté serveur avec TCPDF
+// Aperçu simplifié - utilise uniquement le serveur pour générer l'aperçu
 
 var PreviewModal = function PreviewModal(_ref) {
   var isOpen = _ref.isOpen,
@@ -5211,1477 +5211,294 @@ var PreviewModal = function PreviewModal(_ref) {
     canvasWidth = _ref$canvasWidth === void 0 ? 595 : _ref$canvasWidth,
     _ref$canvasHeight = _ref.canvasHeight,
     canvasHeight = _ref$canvasHeight === void 0 ? 842 : _ref$canvasHeight,
-    _ref$zoom = _ref.zoom,
-    zoom = _ref$zoom === void 0 ? 1 : _ref$zoom,
     ajaxurl = _ref.ajaxurl,
-    pdfBuilderNonce = _ref.pdfBuilderNonce,
-    _ref$onOpenPDFModal = _ref.onOpenPDFModal,
-    onOpenPDFModal = _ref$onOpenPDFModal === void 0 ? null : _ref$onOpenPDFModal,
-    _ref$useServerPreview = _ref.useServerPreview,
-    useServerPreview = _ref$useServerPreview === void 0 ? true : _ref$useServerPreview;
+    pdfBuilderNonce = _ref.pdfBuilderNonce;
   var _useState = (0,react.useState)(null),
-    _useState2 = PreviewModal_slicedToArray(_useState, 2),
+    _useState2 = PreviewModalSimple_slicedToArray(_useState, 2),
     previewData = _useState2[0],
     setPreviewData = _useState2[1];
   var _useState3 = (0,react.useState)(false),
-    _useState4 = PreviewModal_slicedToArray(_useState3, 2),
+    _useState4 = PreviewModalSimple_slicedToArray(_useState3, 2),
     loading = _useState4[0],
     setLoading = _useState4[1];
   var _useState5 = (0,react.useState)(null),
-    _useState6 = PreviewModal_slicedToArray(_useState5, 2),
+    _useState6 = PreviewModalSimple_slicedToArray(_useState5, 2),
     error = _useState6[0],
     setError = _useState6[1];
 
-  // Fonction pour nettoyer les éléments avant sérialisation JSON
+  // Fonction simplifiée pour nettoyer les éléments avant envoi
   var cleanElementsForJSON = function cleanElementsForJSON(elements) {
-    if (!Array.isArray(elements)) {
-      throw new Error('Les éléments doivent être un tableau');
-    }
     return elements.map(function (element) {
-      if (!element || PreviewModal_typeof(element) !== 'object') {
-        throw new Error('Chaque élément doit être un objet valide');
-      }
-
-      // Créer une copie profonde de l'élément
-      var cleaned = JSON.parse(JSON.stringify(element));
-
-      // S'assurer que les propriétés numériques sont des nombres
-      var numericProps = ['x', 'y', 'width', 'height', 'fontSize', 'padding', 'zIndex', 'borderWidth'];
-      numericProps.forEach(function (prop) {
-        if (cleaned[prop] !== undefined) {
-          var numValue = parseFloat(cleaned[prop]);
-          if (isNaN(numValue)) {
-            throw new Error("Propri\xE9t\xE9 ".concat(prop, " doit \xEAtre un nombre valide"));
-          }
-          cleaned[prop] = numValue;
-        }
-      });
-
-      // Valider les propriétés requises
-      if (typeof cleaned.type !== 'string') {
-        throw new Error('Chaque élément doit avoir un type string');
-      }
-
-      // Nettoyer les propriétés potentiellement problématiques
-      delete cleaned.tempId; // Supprimer les IDs temporaires si présents
-      delete cleaned.isDragging; // Supprimer les états d'interaction
-      delete cleaned.isResizing; // Supprimer les états d'interaction
-
+      var cleaned = PreviewModalSimple_objectSpread({}, element);
+      // Supprimer seulement les propriétés non sérialisables de base
+      delete cleaned.tempId;
+      delete cleaned.isDragging;
+      delete cleaned.isResizing;
       return cleaned;
     });
   };
 
-  // Fonction de validation des éléments avant envoi
-  var validateElementsBeforeSend = function validateElementsBeforeSend(elements) {
-    try {
-      var cleanedElements = cleanElementsForJSON(elements);
-      var jsonString = JSON.stringify(cleanedElements);
-
-      // Vérifier que le JSON est valide
-      JSON.parse(jsonString);
-
-      // Vérifier la longueur raisonnable
-      if (jsonString.length > 10000000) {
-        // 10MB max
-        throw new Error('JSON trop volumineux');
-      }
-      return {
-        success: true,
-        jsonString: jsonString,
-        cleanedElements: cleanedElements
-      };
-    } catch (error) {
-      console.error('Client-side validation failed:', error);
-      return {
-        success: false,
-        error: error.message
-      };
-    }
-  };
-
-  // Fonction pour rendre le contenu du canvas en HTML
-  var renderCanvasContent = (0,react.useCallback)(function (elements) {
-    // Réduire les logs pour éviter la boucle infinie - n'afficher que les erreurs importantes
-    if (!elements || elements.length === 0) {
-      return /*#__PURE__*/React.createElement("div", {
-        style: {
-          padding: '20px',
-          textAlign: 'center',
-          color: '#666'
-        }
-      }, "Aucun \xE9l\xE9ment \xE0 afficher");
-    }
-
-    // Vérifier que zoom est valide
-    var validZoom = typeof zoom === 'number' && !isNaN(zoom) && zoom > 0 ? zoom : 1;
-    return /*#__PURE__*/React.createElement("div", {
-      style: {
-        position: 'relative',
-        width: canvasWidth * validZoom,
-        height: canvasHeight * validZoom,
-        backgroundColor: 'white',
-        border: '1px solid #e2e8f0',
-        borderRadius: '4px',
-        overflow: 'hidden',
-        margin: '0 auto'
-      }
-    }, elements.map(function (element, index) {
-      // Vérifier que les propriétés essentielles existent
-      if (typeof element.x !== 'number' || typeof element.y !== 'number' || typeof element.width !== 'number' || typeof element.height !== 'number') {
-        console.error('❌ Element missing required properties:', element);
-        return null;
-      }
-      var elementPadding = element.padding || 0;
-
-      // Styles spéciaux pour certains types d'éléments
-      var baseStyle = {
-        position: 'absolute',
-        left: (element.x + elementPadding) * validZoom,
-        top: (element.y + elementPadding) * validZoom,
-        width: Math.max(1, element.width - elementPadding * 2) * validZoom,
-        height: Math.max(1, element.height - elementPadding * 2) * validZoom,
-        zIndex: element.zIndex || index + 1
-      };
-
-      // Pour les lignes, utiliser toute la largeur du canvas
-      if (element.type === 'line') {
-        baseStyle = PreviewModal_objectSpread(PreviewModal_objectSpread({}, baseStyle), {}, {
-          left: 0,
-          width: '100%'
-        });
-      }
-      return /*#__PURE__*/React.createElement("div", {
-        key: index,
-        style: baseStyle
-      }, renderSpecialElement(element, validZoom));
-    }));
-  }, [zoom, canvasWidth, canvasHeight]);
-
-  // Fonction pour rendre un élément spécial (basée sur CanvasElement.jsx)
-  var renderSpecialElement = (0,react.useCallback)(function (element, zoom) {
-    var _element$columns2, _element$columns3, _element$columns4, _element$columns5, _element$columns6, _element$columns7;
-    // Réduire les logs - n'afficher que les erreurs importantes
-    switch (element.type) {
-      case 'text':
-        return /*#__PURE__*/React.createElement("div", {
-          style: {
-            width: '100%',
-            height: '100%',
-            fontSize: (element.fontSize || 16) * zoom,
-            color: element.color || '#000000',
-            fontWeight: element.fontWeight === 'bold' ? 'bold' : 'normal',
-            fontStyle: element.fontStyle === 'italic' ? 'italic' : 'normal',
-            textDecoration: element.textDecoration || 'none',
-            textAlign: element.textAlign || 'left',
-            lineHeight: element.lineHeight || '1.2',
-            whiteSpace: 'pre-wrap',
-            overflow: 'hidden',
-            padding: "".concat(4 * zoom, "px"),
-            boxSizing: 'border-box'
-          }
-        }, element.content || element.text || 'Texte');
-      case 'rectangle':
-        return /*#__PURE__*/React.createElement("div", {
-          style: {
-            width: '100%',
-            height: '100%',
-            backgroundColor: element.fillColor || 'transparent',
-            border: element.borderWidth ? "".concat(element.borderWidth * zoom, "px ").concat(element.borderStyle || 'solid', " ").concat(element.borderColor || '#000000') : 'none',
-            borderRadius: (element.borderRadius || 0) * zoom
-          }
-        });
-      case 'image':
-        return /*#__PURE__*/React.createElement("img", {
-          src: element.src || element.imageUrl || '',
-          alt: element.alt || 'Image',
-          style: {
-            width: '100%',
-            height: '100%',
-            objectFit: element.objectFit || 'cover',
-            borderRadius: (element.borderRadius || 0) * zoom
-          },
-          onError: function onError(e) {
-            e.target.style.display = 'none';
-          }
-        });
-      case 'line':
-        return /*#__PURE__*/React.createElement("div", {
-          style: {
-            width: '100%',
-            height: (element.lineWidth || element.strokeWidth || 1) * zoom,
-            borderTop: "".concat((element.lineWidth || element.strokeWidth || 1) * zoom, "px solid ").concat(element.lineColor || element.strokeColor || '#000000')
-          }
-        });
-      case 'divider':
-        return /*#__PURE__*/React.createElement("div", {
-          style: {
-            width: '100%',
-            backgroundColor: element.color || element.fillColor || '#cccccc',
-            height: "".concat((element.thickness || element.height || 2) * zoom, "px"),
-            margin: "".concat((element.margin || 10) * zoom, "px 0"),
-            borderRadius: (element.borderRadius || 0) * zoom
-          }
-        });
-      case 'product_table':
-        // Rendu dynamique du tableau de produits utilisant les propriétés de l'élément
-        var getTableStyles = function getTableStyles() {
-          var tableStyle = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'default';
-          var baseStyles = {
-            "default": {
-              headerBg: '#f8fafc',
-              headerBorder: '#e2e8f0',
-              rowBorder: '#f1f5f9',
-              rowBg: 'transparent',
-              altRowBg: '#fafbfc',
-              borderWidth: 1,
-              headerTextColor: '#334155',
-              rowTextColor: '#334155',
-              headerFontWeight: '600',
-              headerFontSize: '11px',
-              rowFontSize: '10px',
-              shadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
-              borderRadius: '4px'
-            },
-            classic: {
-              headerBg: '#1e293b',
-              headerBorder: '#334155',
-              rowBorder: '#334155',
-              rowBg: 'transparent',
-              altRowBg: '#ffffff',
-              borderWidth: 1.5,
-              headerTextColor: '#ffffff',
-              rowTextColor: '#1e293b',
-              headerFontWeight: '700',
-              headerFontSize: '11px',
-              rowFontSize: '10px',
-              shadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
-              borderRadius: '0px'
-            },
-            striped: {
-              headerBg: '#3b82f6',
-              headerBorder: '#2563eb',
-              rowBorder: '#e2e8f0',
-              rowBg: 'transparent',
-              altRowBg: '#f8fafc',
-              borderWidth: 1,
-              headerTextColor: '#ffffff',
-              rowTextColor: '#334155',
-              headerFontWeight: '600',
-              headerFontSize: '11px',
-              rowFontSize: '10px',
-              shadow: '0 1px 4px rgba(59, 130, 246, 0.2)',
-              borderRadius: '6px'
-            },
-            bordered: {
-              headerBg: '#ffffff',
-              headerBorder: '#374151',
-              rowBorder: '#d1d5db',
-              rowBg: 'transparent',
-              altRowBg: '#ffffff',
-              borderWidth: 2,
-              headerTextColor: '#111827',
-              rowTextColor: '#111827',
-              headerFontWeight: '600',
-              headerFontSize: '11px',
-              rowFontSize: '10px',
-              shadow: '0 4px 12px rgba(0, 0, 0, 0.1), inset 0 0 0 1px #e5e7eb',
-              borderRadius: '8px'
-            },
-            minimal: {
-              headerBg: '#ffffff',
-              headerBorder: '#d1d5db',
-              rowBorder: '#f3f4f6',
-              rowBg: 'transparent',
-              altRowBg: '#ffffff',
-              borderWidth: 0.5,
-              headerTextColor: '#6b7280',
-              rowTextColor: '#6b7280',
-              headerFontWeight: '500',
-              headerFontSize: '10px',
-              rowFontSize: '9px',
-              shadow: 'none',
-              borderRadius: '0px'
-            },
-            modern: {
-              headerBg: '#667eea',
-              headerBorder: '#5b21b6',
-              rowBorder: '#e9d5ff',
-              rowBg: 'transparent',
-              altRowBg: '#faf5ff',
-              borderWidth: 1,
-              headerTextColor: '#ffffff',
-              rowTextColor: '#6b21a8',
-              headerFontWeight: '600',
-              headerFontSize: '11px',
-              rowFontSize: '10px',
-              shadow: '0 4px 20px rgba(102, 126, 234, 0.25)',
-              borderRadius: '8px'
-            },
-            // Nouveaux styles colorés
-            slate_gray: {
-              headerBg: '#374151',
-              headerBorder: '#4b5563',
-              rowBorder: '#f3f4f6',
-              rowBg: 'transparent',
-              altRowBg: '#f9fafb',
-              borderWidth: 1.5,
-              headerTextColor: '#ffffff',
-              rowTextColor: '#374151'
-            },
-            coral: {
-              headerBg: '#f87171',
-              headerBorder: '#fca5a5',
-              rowBorder: '#fef2f2',
-              rowBg: 'transparent',
-              altRowBg: '#fef2f2',
-              borderWidth: 1.5,
-              headerTextColor: '#ffffff',
-              rowTextColor: '#dc2626',
-              headerFontWeight: '600',
-              headerFontSize: '11px',
-              rowFontSize: '10px',
-              shadow: '0 4px 16px rgba(248, 113, 113, 0.3)',
-              borderRadius: '6px'
-            },
-            teal: {
-              headerBg: '#14b8a6',
-              headerBorder: '#0d9488',
-              rowBorder: '#ccfbf1',
-              rowBg: 'transparent',
-              altRowBg: '#f0fdfa',
-              borderWidth: 1.5,
-              headerTextColor: '#ffffff',
-              rowTextColor: '#0f766e'
-            },
-            indigo: {
-              headerBg: '#6366f1',
-              headerBorder: '#818cf8',
-              rowBorder: '#e0e7ff',
-              rowBg: 'transparent',
-              altRowBg: '#eef2ff',
-              borderWidth: 1.5,
-              headerTextColor: '#ffffff',
-              rowTextColor: '#3730a3'
-            },
-            amber: {
-              headerBg: '#f59e0b',
-              headerBorder: '#fbbf24',
-              rowBorder: '#fef3c7',
-              rowBg: 'transparent',
-              altRowBg: '#fffbeb',
-              borderWidth: 1.5,
-              headerTextColor: '#92400e',
-              rowTextColor: '#92400e'
-            }
-          };
-          return baseStyles[tableStyle] || baseStyles["default"];
-        };
-        var tableStyles = getTableStyles(element.tableStyle);
-        var showHeaders = element.showHeaders !== false;
-        var showBorders = element.showBorders !== false;
-        var headers = element.headers || ['Produit', 'Qté', 'Prix'];
-
-        // Fonction pour obtenir l'en-tête d'une colonne
-        var getColumnHeader = function getColumnHeader(columnType) {
-          var defaultHeaders = {
-            image: 'Img',
-            name: headers[0] || 'Produit',
-            sku: 'SKU',
-            quantity: headers[1] || 'Qté',
-            price: headers[2] || 'Prix',
-            total: 'Total'
-          };
-          return defaultHeaders[columnType] || columnType;
-        };
-
-        // Données d'exemple pour l'aperçu (cohérentes avec le canvas)
-        var products = element.previewProducts || [{
-          name: 'Produit A - Description du produit',
-          sku: 'SKU001',
-          quantity: 2,
-          price: 19.99,
-          total: 39.98
-        }, {
-          name: 'Produit B - Un autre article',
-          sku: 'SKU002',
-          quantity: 1,
-          price: 29.99,
-          total: 29.99
-        }];
-
-        // Calcul des totaux
-        var subtotal = products.reduce(function (sum, product) {
-          return sum + product.total;
-        }, 0);
-        var shipping = element.showShipping ? 5.00 : 0;
-        var tax = element.showTaxes ? 2.25 : 0;
-        var discount = element.showDiscount ? -5.00 : 0;
-        var total = subtotal + shipping + tax + discount;
-
-        // Déterminer la dernière colonne visible pour les totaux
-        var getLastVisibleColumn = function getLastVisibleColumn() {
-          var columnKeys = ['image', 'name', 'sku', 'quantity', 'price', 'total'];
-          for (var i = columnKeys.length - 1; i >= 0; i--) {
-            var _element$columns;
-            if (((_element$columns = element.columns) === null || _element$columns === void 0 ? void 0 : _element$columns[columnKeys[i]]) !== false) {
-              return columnKeys[i];
-            }
-          }
-          return 'total';
-        };
-        var lastVisibleColumn = getLastVisibleColumn();
-        return /*#__PURE__*/React.createElement("div", {
-          style: {
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            fontSize: "".concat((element.fontSize || 10) * zoom, "px"),
-            fontFamily: element.fontFamily || 'Arial, sans-serif',
-            border: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.headerBorder) : element.borderWidth && element.borderWidth > 0 ? "".concat(Math.max(1, element.borderWidth * 0.5) * zoom, "px solid ").concat(element.borderColor || '#e5e7eb') : 'none',
-            borderRadius: "".concat((element.borderRadius || 2) * zoom, "px"),
-            overflow: 'hidden',
-            backgroundColor: element.backgroundColor || 'transparent',
-            boxSizing: 'border-box',
-            boxShadow: tableStyles.shadow && element.tableStyle === 'modern' ? "0 4px 8px ".concat(tableStyles.shadow) : 'none'
-          }
-        }, showHeaders && /*#__PURE__*/React.createElement("div", {
-          style: {
-            display: 'flex',
-            background: tableStyles.gradient || tableStyles.headerBg,
-            borderBottom: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.headerBorder) : 'none',
-            fontWeight: 'bold',
-            color: tableStyles.headerTextColor || (element.tableStyle === 'modern' ? '#ffffff' : '#000000'),
-            boxShadow: tableStyles.shadow ? "0 2px 4px ".concat(tableStyles.shadow) : 'none'
-          }
-        }, ((_element$columns2 = element.columns) === null || _element$columns2 === void 0 ? void 0 : _element$columns2.image) !== false && /*#__PURE__*/React.createElement("div", {
-          style: {
-            flex: "0 0 ".concat(40 * zoom, "px"),
-            padding: "".concat(4 * zoom, "px"),
-            textAlign: 'center',
-            borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.headerBorder) : 'none'
-          }
-        }, getColumnHeader('image')), ((_element$columns3 = element.columns) === null || _element$columns3 === void 0 ? void 0 : _element$columns3.name) !== false && /*#__PURE__*/React.createElement("div", {
-          style: {
-            flex: 1,
-            padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-            textAlign: 'left',
-            borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.headerBorder) : 'none'
-          }
-        }, getColumnHeader('name')), ((_element$columns4 = element.columns) === null || _element$columns4 === void 0 ? void 0 : _element$columns4.sku) !== false && /*#__PURE__*/React.createElement("div", {
-          style: {
-            flex: "0 0 ".concat(80 * zoom, "px"),
-            padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-            textAlign: 'left',
-            borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.headerBorder) : 'none'
-          }
-        }, getColumnHeader('sku')), ((_element$columns5 = element.columns) === null || _element$columns5 === void 0 ? void 0 : _element$columns5.quantity) !== false && /*#__PURE__*/React.createElement("div", {
-          style: {
-            flex: "0 0 ".concat(60 * zoom, "px"),
-            padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-            textAlign: 'center',
-            borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.headerBorder) : 'none'
-          }
-        }, getColumnHeader('quantity')), ((_element$columns6 = element.columns) === null || _element$columns6 === void 0 ? void 0 : _element$columns6.price) !== false && /*#__PURE__*/React.createElement("div", {
-          style: {
-            flex: "0 0 ".concat(80 * zoom, "px"),
-            padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-            textAlign: 'right',
-            borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.headerBorder) : 'none'
-          }
-        }, getColumnHeader('price')), ((_element$columns7 = element.columns) === null || _element$columns7 === void 0 ? void 0 : _element$columns7.total) !== false && /*#__PURE__*/React.createElement("div", {
-          style: {
-            flex: '0 0 80px',
-            padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-            textAlign: 'right'
-          }
-        }, getColumnHeader('total'))), /*#__PURE__*/React.createElement("div", {
-          style: {
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column'
-          }
-        }, products.map(function (product, index) {
-          var _element$columns8, _element$columns9, _element$columns0, _element$columns1, _element$columns10, _element$columns11;
-          return /*#__PURE__*/React.createElement("div", {
-            key: index,
-            style: {
-              display: 'flex',
-              borderBottom: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none',
-              backgroundColor: index % 2 === 0 ? element.evenRowBg || tableStyles.rowBg : element.oddRowBg || tableStyles.altRowBg,
-              color: index % 2 === 0 ? element.evenRowTextColor || tableStyles.rowTextColor : element.oddRowTextColor || tableStyles.rowTextColor,
-              boxShadow: tableStyles.shadow ? "0 1px 2px ".concat(tableStyles.shadow) : 'none'
-            }
-          }, ((_element$columns8 = element.columns) === null || _element$columns8 === void 0 ? void 0 : _element$columns8.image) !== false && /*#__PURE__*/React.createElement("div", {
-            style: {
-              flex: "0 0 ".concat(40 * zoom, "px"),
-              padding: "".concat(4 * zoom, "px"),
-              textAlign: 'center',
-              borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none'
-            }
-          }, "\uD83D\uDCF7"), ((_element$columns9 = element.columns) === null || _element$columns9 === void 0 ? void 0 : _element$columns9.name) !== false && /*#__PURE__*/React.createElement("div", {
-            style: {
-              flex: 1,
-              padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-              borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none'
-            }
-          }, product.name), ((_element$columns0 = element.columns) === null || _element$columns0 === void 0 ? void 0 : _element$columns0.sku) !== false && /*#__PURE__*/React.createElement("div", {
-            style: {
-              flex: "0 0 ".concat(80 * zoom, "px"),
-              padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-              borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none'
-            }
-          }, product.sku), ((_element$columns1 = element.columns) === null || _element$columns1 === void 0 ? void 0 : _element$columns1.quantity) !== false && /*#__PURE__*/React.createElement("div", {
-            style: {
-              flex: "0 0 ".concat(60 * zoom, "px"),
-              padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-              textAlign: 'center',
-              borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none'
-            }
-          }, product.quantity), ((_element$columns10 = element.columns) === null || _element$columns10 === void 0 ? void 0 : _element$columns10.price) !== false && /*#__PURE__*/React.createElement("div", {
-            style: {
-              flex: "0 0 ".concat(80 * zoom, "px"),
-              padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-              textAlign: 'right',
-              borderRight: showBorders ? "".concat(tableStyles.borderWidth * zoom, "px solid ").concat(tableStyles.rowBorder) : 'none'
-            }
-          }, product.price.toFixed(2), "\u20AC"), ((_element$columns11 = element.columns) === null || _element$columns11 === void 0 ? void 0 : _element$columns11.total) !== false && /*#__PURE__*/React.createElement("div", {
-            style: {
-              flex: "0 0 ".concat(80 * zoom, "px"),
-              padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-              textAlign: 'right'
-            }
-          }, product.total.toFixed(2), "\u20AC"));
-        })), /*#__PURE__*/React.createElement("div", {
-          style: {
-            borderTop: showBorders ? "".concat(tableStyles.borderWidth, "px solid ").concat(tableStyles.headerBorder) : 'none'
-          }
-        }, element.showSubtotal && /*#__PURE__*/React.createElement("div", {
-          style: {
-            display: 'flex',
-            justifyContent: 'flex-end',
-            padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-            fontWeight: 'bold'
-          }
-        }, /*#__PURE__*/React.createElement("div", {
-          style: {
-            width: 'auto',
-            textAlign: 'right',
-            display: 'flex',
-            justifyContent: 'space-between'
-          }
-        }, /*#__PURE__*/React.createElement("span", null, "Sous-total:"), /*#__PURE__*/React.createElement("span", null, subtotal.toFixed(2), "\u20AC"))), element.showShipping && shipping > 0 && /*#__PURE__*/React.createElement("div", {
-          style: {
-            display: 'flex',
-            justifyContent: 'flex-end',
-            padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px")
-          }
-        }, /*#__PURE__*/React.createElement("div", {
-          style: {
-            width: 'auto',
-            textAlign: 'right',
-            display: 'flex',
-            justifyContent: 'space-between'
-          }
-        }, /*#__PURE__*/React.createElement("span", null, "Port:"), /*#__PURE__*/React.createElement("span", null, shipping.toFixed(2), "\u20AC"))), element.showTaxes && tax > 0 && /*#__PURE__*/React.createElement("div", {
-          style: {
-            display: 'flex',
-            justifyContent: 'flex-end',
-            padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px")
-          }
-        }, /*#__PURE__*/React.createElement("div", {
-          style: {
-            width: 'auto',
-            textAlign: 'right',
-            display: 'flex',
-            justifyContent: 'space-between'
-          }
-        }, /*#__PURE__*/React.createElement("span", null, "TVA:"), /*#__PURE__*/React.createElement("span", null, tax.toFixed(2), "\u20AC"))), element.showDiscount && discount < 0 && /*#__PURE__*/React.createElement("div", {
-          style: {
-            display: 'flex',
-            justifyContent: 'flex-end',
-            padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px")
-          }
-        }, /*#__PURE__*/React.createElement("div", {
-          style: {
-            width: 'auto',
-            textAlign: 'right',
-            display: 'flex',
-            justifyContent: 'space-between'
-          }
-        }, /*#__PURE__*/React.createElement("span", null, "Remise:"), /*#__PURE__*/React.createElement("span", null, Math.abs(discount).toFixed(2), "\u20AC"))), element.showTotal && /*#__PURE__*/React.createElement("div", {
-          style: {
-            display: 'flex',
-            justifyContent: 'flex-end',
-            padding: "".concat(4 * zoom, "px ").concat(6 * zoom, "px"),
-            fontWeight: 'bold',
-            background: tableStyles.gradient || tableStyles.headerBg,
-            color: tableStyles.headerTextColor || (element.tableStyle === 'modern' ? '#ffffff' : '#000000'),
-            boxShadow: tableStyles.shadow ? "0 2px 4px ".concat(tableStyles.shadow) : 'none'
-          }
-        }, /*#__PURE__*/React.createElement("div", {
-          style: {
-            width: 'auto',
-            textAlign: 'right',
-            display: 'flex',
-            justifyContent: 'space-between'
-          }
-        }, /*#__PURE__*/React.createElement("span", null, "TOTAL:"), /*#__PURE__*/React.createElement("span", null, total.toFixed(2), "\u20AC")))));
-      case 'customer_info':
-        // Rendu dynamique des informations client utilisant les propriétés de l'élément
-        var customerFields = element.fields || ['name', 'email', 'phone', 'address', 'company', 'vat', 'siret'];
-        var showLabels = element.showLabels !== false;
-        var layout = element.layout || 'vertical';
-        var alignment = element.alignment || 'left';
-        var spacing = element.spacing || 3;
-
-        // Données fictives pour l'aperçu (seront remplacées par les vraies données lors de la génération)
-        var customerData = {
-          name: 'Jean Dupont',
-          company: 'ABC Company SARL',
-          address: '123 Rue de la Paix\n75001 Paris, France',
-          email: 'jean.dupont@email.com',
-          phone: '+33 6 12 34 56 78',
-          tva: 'FR 12 345 678 901',
-          siret: '123 456 789 00012',
-          website: 'www.abc-company.com'
-        };
-        var containerStyle = {
-          padding: "".concat(8 * zoom, "px"),
-          fontSize: (element.fontSize || 12) * zoom,
-          lineHeight: element.lineHeight || '1.4',
-          color: element.color || '#1e293b',
-          fontFamily: element.fontFamily || 'Inter, sans-serif',
-          textAlign: alignment,
-          display: layout === 'horizontal' ? 'flex' : 'block',
-          flexWrap: layout === 'horizontal' ? 'wrap' : 'nowrap',
-          gap: layout === 'horizontal' ? "".concat(spacing * zoom, "px") : '0'
-        };
-        return /*#__PURE__*/React.createElement("div", {
-          style: containerStyle
-        }, customerFields.map(function (field, index) {
-          var fieldData = customerData[field];
-          if (!fieldData) return null;
-          var fieldStyle = layout === 'horizontal' ? {
-            flex: '1',
-            minWidth: "".concat(120 * zoom, "px")
-          } : {
-            marginBottom: index < customerFields.length - 1 ? "".concat(spacing * zoom, "px") : '0',
-            display: 'flex',
-            alignItems: 'flex-start'
-          };
-          return /*#__PURE__*/React.createElement("div", {
-            key: field,
-            style: fieldStyle
-          }, showLabels && /*#__PURE__*/React.createElement("div", {
-            style: {
-              fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
-              marginBottom: layout === 'horizontal' ? "".concat(2 * zoom, "px") : '0',
-              marginRight: layout === 'horizontal' ? '0' : "".concat(8 * zoom, "px"),
-              fontSize: "".concat(11 * zoom, "px"),
-              opacity: 0.8,
-              minWidth: layout === 'horizontal' ? 'auto' : "".concat(80 * zoom, "px"),
-              flexShrink: 0
-            }
-          }, field === 'name' && 'Client', field === 'company' && 'Entreprise', field === 'address' && 'Adresse', field === 'email' && 'Email', field === 'phone' && 'Téléphone', field === 'tva' && 'N° TVA', field === 'siret' && 'SIRET', field === 'website' && 'Site web', ":"), /*#__PURE__*/React.createElement("div", {
-            style: {
-              whiteSpace: 'pre-line',
-              fontSize: (element.fontSize || 12) * zoom,
-              flex: layout === 'horizontal' ? '1' : 'auto'
-            }
-          }, fieldData));
-        }));
-      case 'company_info':
-        // Rendu dynamique des informations entreprise utilisant les propriétés de l'élément
-        var companyFields = element.fields || ['name', 'address', 'phone', 'email', 'website', 'vat', 'rcs', 'siret'];
-        var showCompanyLabels = element.showLabels !== false;
-        var companyLayout = element.layout || 'vertical';
-        var companyAlignment = element.alignment || 'left';
-        var companySpacing = element.spacing || 3;
-
-        // Données fictives pour l'aperçu (seront remplacées par les vraies données lors de la génération)
-        var companyData = {
-          name: 'ABC Company SARL',
-          address: '456 Avenue des Champs\n75008 Paris, France',
-          phone: '01 23 45 67 89',
-          email: 'contact@abc-company.com',
-          tva: 'FR 98 765 432 109',
-          siret: '987 654 321 00098',
-          rcs: 'Paris B 123 456 789',
-          website: 'www.abc-company.com'
-        };
-        var companyContainerStyle = {
-          padding: "".concat(8 * zoom, "px"),
-          fontSize: (element.fontSize || 12) * zoom,
-          lineHeight: element.lineHeight || '1.4',
-          color: element.color || '#1e293b',
-          fontFamily: element.fontFamily || 'Inter, sans-serif',
-          textAlign: companyAlignment,
-          display: companyLayout === 'horizontal' ? 'flex' : 'block',
-          flexWrap: companyLayout === 'horizontal' ? 'wrap' : 'nowrap',
-          gap: companyLayout === 'horizontal' ? "".concat(companySpacing * zoom, "px") : '0'
-        };
-        return /*#__PURE__*/React.createElement("div", {
-          style: companyContainerStyle
-        }, companyFields.map(function (field, index) {
-          var fieldData = companyData[field];
-          if (!fieldData) return null;
-          var companyFieldStyle = companyLayout === 'horizontal' ? {
-            flex: '1',
-            minWidth: "".concat(120 * zoom, "px")
-          } : {
-            marginBottom: index < companyFields.length - 1 ? "".concat(companySpacing * zoom, "px") : '0',
-            display: 'flex',
-            alignItems: 'flex-start'
-          };
-          return /*#__PURE__*/React.createElement("div", {
-            key: field,
-            style: companyFieldStyle
-          }, showCompanyLabels && /*#__PURE__*/React.createElement("div", {
-            style: {
-              fontWeight: element.labelStyle === 'bold' ? 'bold' : 'normal',
-              marginBottom: companyLayout === 'horizontal' ? "".concat(2 * zoom, "px") : '0',
-              marginRight: companyLayout === 'horizontal' ? '0' : "".concat(8 * zoom, "px"),
-              fontSize: "".concat(11 * zoom, "px"),
-              opacity: 0.8,
-              minWidth: companyLayout === 'horizontal' ? 'auto' : "".concat(80 * zoom, "px"),
-              flexShrink: 0
-            }
-          }, field === 'name' && 'Entreprise', field === 'address' && 'Adresse', field === 'phone' && 'Téléphone', field === 'email' && 'Email', field === 'tva' && 'N° TVA', field === 'siret' && 'SIRET', field === 'rcs' && 'RCS', field === 'website' && 'Site web', ":"), /*#__PURE__*/React.createElement("div", {
-            style: {
-              whiteSpace: 'pre-line',
-              fontSize: (element.fontSize || 12) * zoom,
-              flex: companyLayout === 'horizontal' ? '1' : 'auto'
-            }
-          }, fieldData));
-        }));
-      case 'company_logo':
-        return /*#__PURE__*/React.createElement("div", {
-          style: {
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: "".concat((element.padding || 8) * zoom, "px"),
-            backgroundColor: element.backgroundColor || 'transparent',
-            borderRadius: (element.borderRadius || 0) * zoom,
-            border: element.borderWidth ? "".concat(element.borderWidth * zoom, "px solid ").concat(element.borderColor || '#e5e7eb') : 'none'
-          }
-        }, element.imageUrl || element.src ? /*#__PURE__*/React.createElement("img", {
-          src: element.imageUrl || element.src,
-          alt: element.alt || "Logo entreprise",
-          style: {
-            maxWidth: '100%',
-            maxHeight: '100%',
-            objectFit: element.objectFit || 'contain'
-          }
-        }) : /*#__PURE__*/React.createElement("div", {
-          style: {
-            width: '100%',
-            height: '100%',
-            backgroundColor: '#f0f0f0',
-            border: "".concat(2 * zoom, "px dashed #ccc"),
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#666',
-            fontSize: (element.fontSize || 12) * zoom
-          }
-        }, "\uD83C\uDFE2 Logo"));
-      case 'order_number':
-        return /*#__PURE__*/React.createElement("div", {
-          style: {
-            padding: "".concat((element.padding || 8) * zoom, "px"),
-            fontSize: (element.fontSize || 14) * zoom,
-            fontWeight: element.fontWeight || 'bold',
-            color: element.color || '#333',
-            fontFamily: element.fontFamily || 'Inter, sans-serif',
-            textAlign: element.textAlign || 'left',
-            backgroundColor: element.backgroundColor || 'transparent',
-            borderRadius: (element.borderRadius || 0) * zoom,
-            border: element.borderWidth ? "".concat(element.borderWidth * zoom, "px solid ").concat(element.borderColor || '#e5e7eb') : 'none'
-          }
-        }, element.showLabel !== false && /*#__PURE__*/React.createElement("div", {
-          style: {
-            fontSize: (element.fontSize || 14) * 0.8 * zoom,
-            color: element.labelColor || '#666',
-            marginBottom: "".concat(2 * zoom, "px"),
-            fontWeight: 'normal'
-          }
-        }, element.label || 'N° de commande', ":"), /*#__PURE__*/React.createElement("div", {
-          style: {
-            fontSize: (element.fontSize || 14) * zoom,
-            fontWeight: element.fontWeight || 'bold'
-          }
-        }, element.prefix || 'CMD-', element.orderNumber || '2025-00123'));
-      case 'document_type':
-        return /*#__PURE__*/React.createElement("div", {
-          style: {
-            padding: "".concat((element.padding || 8) * zoom, "px"),
-            fontSize: "".concat((element.fontSize || 18) * zoom, "px"),
-            fontWeight: element.fontWeight || 'bold',
-            color: element.color || '#1e293b',
-            fontFamily: element.fontFamily || 'Inter, sans-serif',
-            textAlign: element.textAlign || 'center',
-            backgroundColor: element.backgroundColor || 'transparent',
-            borderRadius: (element.borderRadius || 0) * zoom
-          }
-        }, element.documentType === 'invoice' ? 'FACTURE' : element.documentType === 'quote' ? 'DEVIS' : element.documentType === 'receipt' ? 'REÇU' : element.documentType === 'order' ? 'COMMANDE' : element.documentType === 'credit_note' ? 'AVOIR' : 'DOCUMENT');
-      case 'progress-bar':
-        return /*#__PURE__*/React.createElement("div", {
-          style: {
-            width: '100%',
-            height: (element.height || 20) * zoom,
-            backgroundColor: element.backgroundColor || '#e5e7eb',
-            borderRadius: (element.borderRadius || 10) * zoom,
-            overflow: 'hidden',
-            border: element.borderWidth ? "".concat(element.borderWidth * zoom, "px solid ").concat(element.borderColor || '#d1d5db') : 'none'
-          }
-        }, /*#__PURE__*/React.createElement("div", {
-          style: {
-            width: "".concat(Math.min(100, Math.max(0, element.progressValue || 75)), "%"),
-            height: '100%',
-            backgroundColor: element.progressColor || '#3b82f6',
-            borderRadius: (element.borderRadius || 10) * zoom,
-            transition: element.animate !== false ? 'width 0.3s ease' : 'none'
-          }
-        }));
-      case 'mentions':
-        // Rendu des mentions légales
-        var mentions = [];
-        if (element.showEmail) mentions.push('contact@monsite.com');
-        if (element.showPhone) mentions.push('01 23 45 67 89');
-        if (element.showSiret) mentions.push('SIRET: 123 456 789 00012');
-        if (element.showVat) mentions.push('TVA: FR 12 345 678 901');
-        if (element.showAddress) mentions.push('123 Rue de la Paix, 75001 Paris');
-        if (element.showWebsite) mentions.push('www.monsite.com');
-        if (element.showCustomText && element.customText) mentions.push(element.customText);
-        var mentionsContent = mentions.join(element.separator || ' • ');
-        var mentionsLayout = element.layout || 'horizontal';
-        var mentionsContainerStyle = {
-          padding: "".concat(4 * zoom, "px"),
-          fontSize: (element.fontSize || 8) * zoom,
-          lineHeight: element.lineHeight || 1.2,
-          color: element.color || '#666666',
-          fontFamily: element.fontFamily || 'Inter, sans-serif',
-          textAlign: element.textAlign || 'center',
-          backgroundColor: element.backgroundColor || 'transparent',
-          border: element.borderWidth ? "".concat(element.borderWidth * zoom, "px solid ").concat(element.borderColor || '#d1d5db') : 'none',
-          borderRadius: element.borderRadius ? "".concat(element.borderRadius * zoom, "px") : '0',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start',
-          width: '100%',
-          height: '100%',
-          boxSizing: 'border-box'
-        };
-        return /*#__PURE__*/React.createElement("div", {
-          style: mentionsContainerStyle
-        }, mentionsLayout === 'vertical' ? /*#__PURE__*/React.createElement("div", {
-          style: {
-            display: 'flex',
-            flexDirection: 'column',
-            gap: "".concat(2 * zoom, "px"),
-            width: '100%',
-            textAlign: element.textAlign || 'center'
-          }
-        }, mentions.map(function (mention, index) {
-          return /*#__PURE__*/React.createElement("div", {
-            key: index,
-            style: {
-              lineHeight: element.lineHeight || 1.2
-            }
-          }, mention);
-        })) : /*#__PURE__*/React.createElement("div", {
-          style: {
-            textAlign: element.textAlign || 'center',
-            lineHeight: element.lineHeight || 1.2,
-            width: '100%',
-            wordBreak: 'break-word'
-          }
-        }, mentionsContent));
-      case 'dynamic-text':
-        // Rendu du texte dynamique avec système de templates
-        var getTemplateContent = function getTemplateContent(template, customContent) {
-          var templates = {
-            'total_only': '{{order_total}} €',
-            'order_info': 'Commande {{order_number}} - {{order_date}}',
-            'customer_info': '{{customer_name}} - {{customer_email}}',
-            'customer_address': '{{customer_name}}\n{{billing_address}}',
-            'full_header': 'Facture N° {{order_number}}\nClient: {{customer_name}}\nTotal: {{order_total}} €',
-            'invoice_header': 'FACTURE N° {{order_number}}\nDate: {{date}}\nClient: {{customer_name}}\n{{billing_address}}',
-            'order_summary': 'Sous-total: {{order_subtotal}} €\nFrais de port: {{order_shipping}} €\nTVA: {{order_tax}} €\nTotal: {{order_total}} €',
-            'payment_info': 'Échéance: {{due_date}}\nMontant: {{order_total}} €',
-            'payment_terms': 'Conditions de paiement: 30 jours\nÉchéance: {{due_date}}\nMontant dû: {{order_total}} €',
-            'shipping_info': 'Adresse de livraison:\n{{shipping_address}}',
-            'thank_you': 'Merci pour votre commande !\nNous vous remercions de votre confiance.',
-            'legal_notice': 'TVA non applicable - art. 293 B du CGI\nPaiement à 30 jours fin de mois',
-            'bank_details': 'Coordonnées bancaires:\nIBAN: FR76 1234 5678 9012 3456 7890 123\nBIC: BNPAFRPP',
-            'contact_info': 'Contact: contact@monentreprise.com\nTél: 01 23 45 67 89',
-            'order_confirmation': 'CONFIRMATION DE COMMANDE\nCommande {{order_number}} du {{order_date}}\nStatut: Confirmée',
-            'delivery_note': 'BON DE LIVRAISON\nCommande {{order_number}}\nDestinataire: {{customer_name}}\n{{shipping_address}}',
-            'warranty_info': 'Garantie: 2 ans pièces et main d\'œuvre\nService après-vente: sav@monentreprise.com',
-            'return_policy': 'Droit de rétractation: 14 jours\nRetour sous 30 jours pour défauts',
-            'signature_line': 'Signature du client:\n\n_______________________________\nDate: {{date}}',
-            'invoice_footer': 'Facture générée automatiquement le {{date}}\nConservez cette facture pour vos archives',
-            'terms_conditions': 'Conditions générales de vente disponibles sur notre site\nwww.monentreprise.com/conditions',
-            'quality_guarantee': 'Tous nos produits sont garantis contre les défauts\nService qualité: qualite@monentreprise.com',
-            'eco_friendly': 'Entreprise engagée pour l\'environnement\nEmballages recyclables et biodégradables',
-            'follow_up': 'Suivi de commande: {{order_number}}\nContact: suivi@monentreprise.com',
-            'custom': customContent || '{{order_total}} €'
-          };
-          return templates[template] || templates['total_only'];
-        };
-        var dynamicContent = getTemplateContent(element.template, element.customContent);
-
-        // Fonction simple de remplacement des variables pour l'aperçu
-        var replaceVariables = function replaceVariables(content) {
-          return content.replace(/\{\{order_total\}\}/g, '125.99 €').replace(/\{\{order_number\}\}/g, 'CMD-2025-00123').replace(/\{\{customer_name\}\}/g, 'Jean Dupont').replace(/\{\{customer_email\}\}/g, 'jean@example.com').replace(/\{\{date\}\}/g, '17/10/2025').replace(/\{\{order_date\}\}/g, '15/10/2025').replace(/\{\{due_date\}\}/g, '15/11/2025').replace(/\{\{order_subtotal\}\}/g, '100.00 €').replace(/\{\{order_tax\}\}/g, '25.99 €').replace(/\{\{order_shipping\}\}/g, '15.00 €').replace(/\{\{billing_address\}\}/g, '123 Rue de la Paix\n75001 Paris\nFrance').replace(/\{\{shipping_address\}\}/g, '456 Avenue des Champs\n75008 Paris\nFrance');
-        };
-        var processedContent = replaceVariables(dynamicContent);
-        return /*#__PURE__*/React.createElement("div", {
-          style: {
-            padding: "".concat((element.padding || 4) * zoom, "px"),
-            fontSize: (element.fontSize || 14) * zoom,
-            fontFamily: element.fontFamily || 'Inter, sans-serif',
-            fontWeight: element.fontWeight || 'normal',
-            color: element.color || '#333333',
-            textAlign: element.textAlign || 'left',
-            lineHeight: element.lineHeight || '1.4',
-            backgroundColor: element.backgroundColor || 'transparent',
-            border: element.borderWidth ? "".concat(element.borderWidth * zoom, "px solid ").concat(element.borderColor || '#e5e7eb') : 'none',
-            borderRadius: element.borderRadius ? "".concat(element.borderRadius * zoom, "px") : '0',
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start',
-            boxSizing: 'border-box',
-            wordBreak: 'break-word',
-            overflow: 'hidden'
-          }
-        }, /*#__PURE__*/React.createElement("div", {
-          style: {
-            width: '100%',
-            whiteSpace: 'pre-wrap',
-            overflowWrap: 'break-word'
-          }
-        }, processedContent));
-      default:
-        return /*#__PURE__*/React.createElement("div", {
-          style: {
-            width: '100%',
-            height: '100%',
-            backgroundColor: '#f0f0f0',
-            border: "".concat(1 * zoom, "px dashed #ccc"),
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: "".concat(12 * zoom, "px"),
-            color: '#666',
-            padding: "".concat(4 * zoom, "px"),
-            boxSizing: 'border-box'
-          }
-        }, element.type || 'Élément inconnu');
-    }
-  }, []);
-
-  // Générer l'aperçu quand la modale s'ouvre
-  (0,react.useEffect)(function () {
-    if (isOpen && elements.length > 0) {
-      if (useServerPreview) {
-        // Utiliser l'aperçu unifié côté serveur
-        generateServerPreview();
-      } else {
-        // Afficher immédiatement le contenu du canvas
-        setPreviewData({
-          success: true,
-          elements_count: elements.length,
-          width: 400,
-          height: 566,
-          fallback: false
-        });
-        // Puis générer l'aperçu côté serveur en arrière-plan
-        generatePreview();
-      }
-    } else if (isOpen && elements.length === 0) {
-      setPreviewData({
-        success: true,
-        elements_count: 0,
-        width: 400,
-        height: 566,
-        fallback: false
-      });
-    }
-  }, [isOpen, elements.length, useServerPreview]);
-  var generatePreview = /*#__PURE__*/function () {
-    var _ref2 = PreviewModal_asyncToGenerator(/*#__PURE__*/PreviewModal_regenerator().m(function _callee() {
-      var _window$pdfBuilderAja, ajaxUrl, nonceFormData, nonceResponse, nonceData, freshNonce, _cleanElementsForJSON, validationResult, jsonString, cleanedElements, formData, response, data, responseText, errorMessage, _t, _t2;
-      return PreviewModal_regenerator().w(function (_context) {
-        while (1) switch (_context.p = _context.n) {
-          case 0:
-            // console.log('🔍 [JS DEBUG] generatePreview called with', elements.length, 'elements'); // COMMENTÉ TEMPORAIREMENT
-
-            // Ne pas définir loading=true car l'aperçu s'affiche déjà
-            setError(null);
-            _context.p = 1;
-            // Vérifier que les variables AJAX sont disponibles
-            ajaxUrl = ((_window$pdfBuilderAja = window.pdfBuilderAjax) === null || _window$pdfBuilderAja === void 0 ? void 0 : _window$pdfBuilderAja.ajaxurl) || ajaxurl;
-            if (ajaxUrl) {
-              _context.n = 2;
-              break;
-            }
-            console.warn('Variables AJAX non disponibles pour validation côté serveur');
-            return _context.a(2);
-          case 2:
-            // Obtenir un nonce frais
-            nonceFormData = new FormData();
-            nonceFormData.append('action', 'pdf_builder_get_fresh_nonce');
-            _context.n = 3;
-            return fetch(ajaxUrl, {
-              method: 'POST',
-              body: nonceFormData
-            });
-          case 3:
-            nonceResponse = _context.v;
-            if (nonceResponse.ok) {
-              _context.n = 4;
-              break;
-            }
-            console.warn('Erreur obtention nonce pour validation:', nonceResponse.status);
-            return _context.a(2);
-          case 4:
-            _context.n = 5;
-            return nonceResponse.json();
-          case 5:
-            nonceData = _context.v;
-            if (nonceData.success) {
-              _context.n = 6;
-              break;
-            }
-            console.warn('Impossible d\'obtenir un nonce frais pour validation');
-            return _context.a(2);
-          case 6:
-            freshNonce = nonceData.data.nonce; // Fonction pour nettoyer les éléments avant sérialisation JSON
-            _cleanElementsForJSON = function _cleanElementsForJSON(elements) {
-              return elements.map(function (element) {
-                var cleaned = PreviewModal_objectSpread({}, element);
-
-                // Supprimer les propriétés non sérialisables
-                var propertiesToRemove = ['reactKey', 'tempId', 'style', '_internalId', 'ref', 'key'];
-                propertiesToRemove.forEach(function (prop) {
-                  delete cleaned[prop];
-                });
-
-                // Nettoyer récursivement tous les objets imbriqués
-                var _cleanObject = function cleanObject(obj) {
-                  if (obj === null || PreviewModal_typeof(obj) !== 'object') {
-                    return obj;
-                  }
-                  if (Array.isArray(obj)) {
-                    return obj.map(_cleanObject);
-                  }
-                  var cleanedObj = {};
-                  for (var key in obj) {
-                    if (obj.hasOwnProperty(key)) {
-                      var value = obj[key];
-
-                      // Ignorer les fonctions, symboles, et objets complexes
-                      if (typeof value === 'function' || PreviewModal_typeof(value) === 'symbol' || PreviewModal_typeof(value) === 'object' && value !== null && !Array.isArray(value) && !(value instanceof Date) && !(value instanceof RegExp)) {
-                        continue; // Skip this property
-                      }
-
-                      // Nettoyer récursivement
-                      cleanedObj[key] = _cleanObject(value);
-                    }
-                  }
-                  return cleanedObj;
-                };
-
-                // Appliquer le nettoyage récursif
-                var fullyCleaned = _cleanObject(cleaned);
-
-                // S'assurer que les propriétés numériques sont des nombres
-                ['x', 'y', 'width', 'height', 'fontSize', 'borderWidth', 'borderRadius'].forEach(function (prop) {
-                  if (fullyCleaned[prop] !== undefined && fullyCleaned[prop] !== null) {
-                    var num = parseFloat(fullyCleaned[prop]);
-                    if (!isNaN(num)) {
-                      fullyCleaned[prop] = num;
-                    } else {
-                      delete fullyCleaned[prop]; // Supprimer si pas un nombre valide
-                    }
-                  }
-                });
-
-                // S'assurer que les propriétés boolean sont des booléens
-                ['showLabels', 'showHeaders', 'showBorders', 'showSubtotal', 'showShipping', 'showTaxes', 'showDiscount', 'showTotal'].forEach(function (prop) {
-                  if (fullyCleaned[prop] !== undefined) {
-                    fullyCleaned[prop] = Boolean(fullyCleaned[prop]);
-                  }
-                });
-
-                // S'assurer que les chaînes sont des chaînes
-                ['id', 'type', 'content', 'text', 'color', 'backgroundColor', 'borderColor', 'fontFamily', 'fontWeight', 'fontStyle', 'textDecoration', 'textAlign', 'borderStyle'].forEach(function (prop) {
-                  if (fullyCleaned[prop] !== undefined && fullyCleaned[prop] !== null) {
-                    fullyCleaned[prop] = String(fullyCleaned[prop]);
-                  }
-                });
-                return fullyCleaned;
-              });
-            }; // Validation côté client avant envoi
-            validationResult = validateElementsBeforeSend(elements);
-            if (validationResult.success) {
-              _context.n = 7;
-              break;
-            }
-            console.error('❌ Validation côté client échouée:', validationResult.error);
-            setPreviewData(function (prev) {
-              return PreviewModal_objectSpread(PreviewModal_objectSpread({}, prev), {}, {
-                error: "Erreur de validation c\xF4t\xE9 client: ".concat(validationResult.error),
-                isLoading: false
-              });
-            });
-            return _context.a(2);
-          case 7:
-            jsonString = validationResult.jsonString, cleanedElements = validationResult.cleanedElements; // Logging removed for production
-            // Préparer les données pour l'AJAX
-            formData = new FormData();
-            formData.append('action', 'pdf_builder_validate_preview');
-            formData.append('nonce', freshNonce);
-            formData.append('elements', jsonString);
-
-            // Faire l'appel AJAX en arrière-plan
-            _context.n = 8;
-            return fetch(ajaxUrl, {
-              method: 'POST',
-              body: formData
-            });
-          case 8:
-            response = _context.v;
-            if (response.ok) {
-              _context.n = 9;
-              break;
-            }
-            console.warn('Erreur HTTP validation aperçu:', response.status);
-            return _context.a(2);
-          case 9:
-            _context.p = 9;
-            _context.n = 10;
-            return response.json();
-          case 10:
-            data = _context.v;
-            _context.n = 13;
-            break;
-          case 11:
-            _context.p = 11;
-            _t = _context.v;
-            console.error('❌ Erreur parsing JSON réponse serveur:', _t);
-            _context.n = 12;
-            return response.text();
-          case 12:
-            responseText = _context.v;
-            console.error('Contenu brut de la réponse:', responseText.substring(0, 500));
-            // Garder l'aperçu local mais marquer l'erreur
-            setPreviewData(function (prev) {
-              return PreviewModal_objectSpread(PreviewModal_objectSpread({}, prev), {}, {
-                server_error: 'Réponse serveur invalide (pas du JSON)'
-              });
-            });
-            return _context.a(2);
-          case 13:
-            if (data.success) {
-              // Logging removed for production
-
-              // Mettre à jour previewData avec les données du serveur si nécessaire
-              setPreviewData(function (prev) {
-                return PreviewModal_objectSpread(PreviewModal_objectSpread(PreviewModal_objectSpread({}, prev), data.data), {}, {
-                  server_validated: true
-                });
-              });
-            } else {
-              console.warn('⚠️ [JS DEBUG] Server validation failed:', data.data);
-              // Garder l'aperçu local mais marquer qu'il y a un problème serveur
-              // S'assurer que server_error est toujours une chaîne
-              errorMessage = 'Erreur validation serveur';
-              if (typeof data.data === 'string') {
-                errorMessage = data.data;
-              } else if (data.data && PreviewModal_typeof(data.data) === 'object' && data.data.message) {
-                errorMessage = data.data.message;
-              } else if (data.data && PreviewModal_typeof(data.data) === 'object') {
-                errorMessage = JSON.stringify(data.data);
-              }
-              setPreviewData(function (prev) {
-                return PreviewModal_objectSpread(PreviewModal_objectSpread({}, prev), {}, {
-                  server_error: errorMessage
-                });
-              });
-            }
-            _context.n = 15;
-            break;
-          case 14:
-            _context.p = 14;
-            _t2 = _context.v;
-            console.warn('Erreur validation aperçu côté serveur:', _t2);
-            // Ne pas afficher d'erreur car l'aperçu local fonctionne
-            setPreviewData(function (prev) {
-              return PreviewModal_objectSpread(PreviewModal_objectSpread({}, prev), {}, {
-                server_error: _t2.message || 'Erreur inconnue côté serveur'
-              });
-            });
-          case 15:
-            return _context.a(2);
-        }
-      }, _callee, null, [[9, 11], [1, 14]]);
-    }));
-    return function generatePreview() {
-      return _ref2.apply(this, arguments);
-    };
-  }();
+  // Générer l'aperçu côté serveur uniquement
   var generateServerPreview = /*#__PURE__*/function () {
-    var _ref3 = PreviewModal_asyncToGenerator(/*#__PURE__*/PreviewModal_regenerator().m(function _callee2() {
-      var fallbackTimeout, _window$pdfBuilderAja2, _window$pdfBuilderAja3, validationResult, jsonString, ajaxUrl, nonceFormData, nonceResponse, nonceData, freshNonce, formData, response, data, _t3;
-      return PreviewModal_regenerator().w(function (_context2) {
-        while (1) switch (_context2.p = _context2.n) {
+    var _ref2 = PreviewModalSimple_asyncToGenerator(/*#__PURE__*/PreviewModalSimple_regenerator().m(function _callee() {
+      var _window$pdfBuilderAja, _window$pdfBuilderAja2, cleanedElements, jsonString, nonceFormData, nonceResponse, nonceData, formData, response, data, _t;
+      return PreviewModalSimple_regenerator().w(function (_context) {
+        while (1) switch (_context.p = _context.n) {
           case 0:
             setLoading(true);
             setError(null);
             setPreviewData(null);
-
-            // Timeout de fallback - si l'aperçu côté serveur prend trop de temps, afficher l'aperçu côté client
-            fallbackTimeout = setTimeout(function () {
-              setPreviewData({
-                success: true,
-                elements_count: elements.length,
-                width: canvasWidth,
-                height: canvasHeight,
-                fallback: true,
-                server_timeout: true
-              });
-              setLoading(false);
-            }, 10000); // 10 secondes timeout
-            _context2.p = 1;
-            // Validation côté client avant envoi
-            validationResult = validateElementsBeforeSend(elements);
-            if (validationResult.success) {
-              _context2.n = 2;
-              break;
-            }
-            console.error('❌ Validation côté client échouée:', validationResult.error);
-            setPreviewData(function (prev) {
-              return PreviewModal_objectSpread(PreviewModal_objectSpread({}, prev), {}, {
-                error: "Erreur de validation c\xF4t\xE9 client: ".concat(validationResult.error),
-                isLoading: false
-              });
-            });
-            return _context2.a(2);
-          case 2:
-            jsonString = validationResult.jsonString; // Vérifier que les variables AJAX sont disponibles
-            ajaxUrl = ((_window$pdfBuilderAja2 = window.pdfBuilderAjax) === null || _window$pdfBuilderAja2 === void 0 ? void 0 : _window$pdfBuilderAja2.ajaxurl) || ajaxurl;
-            if (ajaxUrl) {
-              _context2.n = 3;
-              break;
-            }
-            alert('Erreur: Variables AJAX non disponibles. Rechargez la page.');
-            return _context2.a(2);
-          case 3:
-            // Obtenir un nonce frais pour l'aperçu
+            _context.p = 1;
+            // Nettoyer les éléments
+            cleanedElements = cleanElementsForJSON(elements);
+            jsonString = JSON.stringify(cleanedElements); // Obtenir un nonce frais
             nonceFormData = new FormData();
             nonceFormData.append('action', 'pdf_builder_get_fresh_nonce');
-            _context2.n = 4;
-            return fetch(ajaxUrl, {
+            _context.n = 2;
+            return fetch(ajaxurl || ((_window$pdfBuilderAja = window.pdfBuilderAjax) === null || _window$pdfBuilderAja === void 0 ? void 0 : _window$pdfBuilderAja.ajaxurl) || '/wp-admin/admin-ajax.php', {
               method: 'POST',
               body: nonceFormData
             });
-          case 4:
-            nonceResponse = _context2.v;
+          case 2:
+            nonceResponse = _context.v;
             if (nonceResponse.ok) {
-              _context2.n = 5;
+              _context.n = 3;
               break;
             }
-            throw new Error("Erreur HTTP nonce: ".concat(nonceResponse.status));
-          case 5:
-            _context2.n = 6;
+            throw new Error("Erreur nonce: ".concat(nonceResponse.status));
+          case 3:
+            _context.n = 4;
             return nonceResponse.json();
-          case 6:
-            nonceData = _context2.v;
+          case 4:
+            nonceData = _context.v;
             if (nonceData.success) {
-              _context2.n = 7;
+              _context.n = 5;
               break;
             }
-            throw new Error('Impossible d\'obtenir un nonce frais');
-          case 7:
-            freshNonce = nonceData.data.nonce; // Préparer les données pour l'AJAX unifié
+            throw new Error('Impossible d\'obtenir un nonce');
+          case 5:
+            // Préparer l'appel pour l'aperçu unifié
             formData = new FormData();
             formData.append('action', 'pdf_builder_unified_preview');
-            formData.append('nonce', freshNonce);
+            formData.append('nonce', nonceData.data.nonce);
             formData.append('elements', jsonString);
-            _context2.n = 8;
-            return fetch(ajaxurl || ((_window$pdfBuilderAja3 = window.pdfBuilderAjax) === null || _window$pdfBuilderAja3 === void 0 ? void 0 : _window$pdfBuilderAja3.ajaxurl) || '/wp-admin/admin-ajax.php', {
+            _context.n = 6;
+            return fetch(ajaxurl || ((_window$pdfBuilderAja2 = window.pdfBuilderAjax) === null || _window$pdfBuilderAja2 === void 0 ? void 0 : _window$pdfBuilderAja2.ajaxurl) || '/wp-admin/admin-ajax.php', {
               method: 'POST',
               body: formData
             });
-          case 8:
-            response = _context2.v;
+          case 6:
+            response = _context.v;
             if (response.ok) {
-              _context2.n = 9;
+              _context.n = 7;
               break;
             }
             throw new Error("Erreur HTTP: ".concat(response.status));
-          case 9:
-            _context2.n = 10;
+          case 7:
+            _context.n = 8;
             return response.json();
-          case 10:
-            data = _context2.v;
+          case 8:
+            data = _context.v;
             if (!(data.success && data.data && data.data.url)) {
-              _context2.n = 11;
+              _context.n = 9;
               break;
             }
-            // Nettoyer le timeout de fallback
-            clearTimeout(fallbackTimeout);
-
-            // Mettre à jour l'état pour afficher le PDF dans la modale
             setPreviewData({
               url: data.data.url,
-              server_validated: true,
               elements_count: elements.length,
               width: canvasWidth,
-              height: canvasHeight,
-              zoom: zoom
+              height: canvasHeight
             });
-            setLoading(false);
-            setError(null);
-
-            // Ne pas ouvrir de nouvel onglet - le PDF s'affichera dans la modale
-            return _context2.a(2);
-          case 11:
-            throw new Error(data.data || 'Erreur génération aperçu côté serveur');
-          case 12:
-            _context2.n = 14;
+            _context.n = 10;
             break;
-          case 13:
-            _context2.p = 13;
-            _t3 = _context2.v;
-            console.error('❌ Erreur génération aperçu côté serveur:', _t3);
-            // Nettoyer le timeout de fallback
-            clearTimeout(fallbackTimeout);
-            setError("Erreur aper\xE7u c\xF4t\xE9 serveur: ".concat(_t3.message));
+          case 9:
+            throw new Error(data.data || 'Erreur génération aperçu');
+          case 10:
+            _context.n = 12;
+            break;
+          case 11:
+            _context.p = 11;
+            _t = _context.v;
+            console.error('Erreur aperçu:', _t);
+            setError(_t.message);
+          case 12:
+            _context.p = 12;
             setLoading(false);
-          case 14:
-            return _context2.a(2);
+            return _context.f(12);
+          case 13:
+            return _context.a(2);
         }
-      }, _callee2, null, [[1, 13]]);
+      }, _callee, null, [[1, 11, 12, 13]]);
     }));
     return function generateServerPreview() {
-      return _ref3.apply(this, arguments);
+      return _ref2.apply(this, arguments);
     };
   }();
+
+  // Générer l'aperçu quand la modale s'ouvre
+  (0,react.useEffect)(function () {
+    if (isOpen && elements.length > 0) {
+      generateServerPreview();
+    }
+  }, [isOpen, elements.length]);
   if (!isOpen) return null;
   return /*#__PURE__*/React.createElement("div", {
-    className: "preview-modal-overlay",
+    style: {
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0, 0, 0, 0.7)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 10000
+    },
     onClick: onClose
   }, /*#__PURE__*/React.createElement("div", {
-    className: "preview-modal-content",
+    style: {
+      backgroundColor: 'white',
+      borderRadius: '8px',
+      width: '90%',
+      maxWidth: '1200px',
+      height: '90%',
+      maxHeight: '800px',
+      display: 'flex',
+      flexDirection: 'column',
+      boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)'
+    },
     onClick: function onClick(e) {
       return e.stopPropagation();
     }
   }, /*#__PURE__*/React.createElement("div", {
-    className: "preview-modal-header"
-  }, /*#__PURE__*/React.createElement("h3", null, "\uD83C\uDFA8 Aper\xE7u Canvas - PDF Builder Pro v2.0"), /*#__PURE__*/React.createElement("button", {
-    className: "preview-modal-close",
-    onClick: onClose
-  }, "\xD7")), /*#__PURE__*/React.createElement("div", {
-    className: "preview-modal-body"
-  }, loading && /*#__PURE__*/React.createElement("div", {
-    className: "preview-loading"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "preview-spinner"
-  }), /*#__PURE__*/React.createElement("p", null, "G\xE9n\xE9ration de l'aper\xE7u...")), error && /*#__PURE__*/React.createElement("div", {
-    className: "preview-error"
-  }, /*#__PURE__*/React.createElement("h4", null, "\u274C Erreur d'aper\xE7u"), /*#__PURE__*/React.createElement("p", null, error), /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("small", null, "Le PDF pourra quand m\xEAme \xEAtre g\xE9n\xE9r\xE9 normalement."))), previewData && /*#__PURE__*/React.createElement("div", {
-    className: "preview-content"
-  }, /*#__PURE__*/React.createElement("div", {
     style: {
-      textAlign: 'center',
-      marginBottom: '20px',
-      padding: '10px',
-      background: previewData.server_validated ? '#e8f5e8' : '#fff3cd',
-      borderRadius: '4px',
-      border: "1px solid ".concat(previewData.server_validated ? '#c3e6c3' : '#ffeaa7')
+      padding: '20px',
+      borderBottom: '1px solid #e2e8f0',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center'
     }
-  }, /*#__PURE__*/React.createElement("strong", null, previewData.server_validated ? '✅' : '⚡', " Aper\xE7u g\xE9n\xE9r\xE9"), /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("small", null, previewData.elements_count, " \xE9l\xE9ment", previewData.elements_count !== 1 ? 's' : '', " \u2022 ", previewData.width, "\xD7", previewData.height, "px", previewData.server_validated && ' • Serveur validé', previewData.server_error && ' • ⚠️ Problème serveur')), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("h3", {
+    style: {
+      margin: 0,
+      color: '#1e293b'
+    }
+  }, "\uD83D\uDCC4 Aper\xE7u PDF"), /*#__PURE__*/React.createElement("button", {
+    onClick: onClose,
+    style: {
+      background: 'none',
+      border: 'none',
+      fontSize: '24px',
+      cursor: 'pointer',
+      color: '#64748b',
+      padding: '0',
+      width: '30px',
+      height: '30px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    }
+  }, "\xD7")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1,
+      padding: '20px',
+      display: 'flex',
+      flexDirection: 'column',
+      overflow: 'hidden'
+    }
+  }, loading && /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
       justifyContent: 'center',
-      alignItems: 'flex-start',
-      minHeight: '400px',
-      backgroundColor: '#f8f9fa',
-      borderRadius: '8px',
-      padding: '20px'
+      flex: 1,
+      color: '#64748b'
     }
-  }, previewData.url ?
-  /*#__PURE__*/
-  // Aperçu côté serveur - afficher le PDF dans un iframe
-  React.createElement("iframe", {
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      width: '40px',
+      height: '40px',
+      border: '4px solid #e2e8f0',
+      borderTop: '4px solid #3b82f6',
+      borderRadius: '50%',
+      animation: 'spin 1s linear infinite',
+      marginBottom: '16px'
+    }
+  }), /*#__PURE__*/React.createElement("p", {
+    style: {
+      margin: 0
+    }
+  }, "G\xE9n\xE9ration de l'aper\xE7u...")), error && /*#__PURE__*/React.createElement("div", {
+    style: {
+      backgroundColor: '#fef2f2',
+      border: '1px solid #fecaca',
+      borderRadius: '6px',
+      padding: '16px',
+      color: '#dc2626',
+      textAlign: 'center'
+    }
+  }, /*#__PURE__*/React.createElement("h4", {
+    style: {
+      margin: '0 0 8px 0'
+    }
+  }, "\u274C Erreur"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      margin: 0
+    }
+  }, error)), previewData && !loading && /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1,
+      display: 'flex',
+      flexDirection: 'column'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      backgroundColor: '#f8fafc',
+      border: '1px solid #e2e8f0',
+      borderRadius: '6px',
+      padding: '12px',
+      marginBottom: '16px',
+      fontSize: '14px',
+      color: '#475569'
+    }
+  }, /*#__PURE__*/React.createElement("strong", null, previewData.elements_count, " \xE9l\xE9ment", previewData.elements_count !== 1 ? 's' : ''), " \u2022 Dimensions: ", previewData.width, "\xD7", previewData.height, "px"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1,
+      border: '1px solid #e2e8f0',
+      borderRadius: '6px',
+      overflow: 'hidden'
+    }
+  }, /*#__PURE__*/React.createElement("iframe", {
     src: previewData.url,
     style: {
       width: '100%',
-      height: '600px',
-      border: '1px solid #dee2e6',
-      borderRadius: '4px',
-      backgroundColor: 'white'
+      height: '100%',
+      border: 'none'
     },
-    title: "Aper\xE7u PDF c\xF4t\xE9 serveur"
-  }) :
-  // Aperçu côté client - rendre le HTML
-  renderCanvasContent(elements)), previewData.server_error && /*#__PURE__*/React.createElement("div", {
+    title: "Aper\xE7u PDF"
+  })))), /*#__PURE__*/React.createElement("div", {
     style: {
-      marginTop: '20px',
-      padding: '15px',
-      backgroundColor: '#ffeaa7',
-      borderRadius: '6px',
-      border: '1px solid #d4a574'
+      padding: '20px',
+      borderTop: '1px solid #e2e8f0',
+      display: 'flex',
+      justifyContent: 'flex-end'
     }
-  }, /*#__PURE__*/React.createElement("h5", {
-    style: {
-      margin: '0 0 10px 0',
-      color: '#856404'
-    }
-  }, "\u26A0\uFE0F Note"), /*#__PURE__*/React.createElement("p", {
-    style: {
-      margin: '0',
-      fontSize: '14px',
-      color: '#333'
-    }
-  }, "L'aper\xE7u s'affiche correctement, mais il y a un probl\xE8me de validation c\xF4t\xE9 serveur: ", previewData.server_error)), /*#__PURE__*/React.createElement("div", {
-    style: {
-      marginTop: '20px',
-      padding: '15px',
-      backgroundColor: '#e8f4fd',
-      borderRadius: '6px',
-      border: '1px solid #b3d9ff'
-    }
-  }, /*#__PURE__*/React.createElement("h5", {
-    style: {
-      margin: '0 0 10px 0',
-      color: '#0066cc'
-    }
-  }, "\u2139\uFE0F Informations du Canvas"), /*#__PURE__*/React.createElement("p", {
-    style: {
-      margin: '0',
-      fontSize: '14px',
-      color: '#333'
-    }
-  }, /*#__PURE__*/React.createElement("strong", null, "Dimensions:"), " ", canvasWidth, " \xD7 ", canvasHeight, " pixels", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("strong", null, "\xC9l\xE9ments:"), " ", elements.length, /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("strong", null, "Zoom:"), " ", Math.round(zoom * 100), "%", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("strong", null, "Status:"), " ", previewData.server_validated ? 'Validé côté serveur' : 'Aperçu local'))), !loading && !error && !previewData && /*#__PURE__*/React.createElement("div", {
-    className: "preview-loading"
-  }, /*#__PURE__*/React.createElement("p", null, "Pr\xE9paration de l'aper\xE7u..."))), /*#__PURE__*/React.createElement("div", {
-    className: "preview-modal-footer"
   }, /*#__PURE__*/React.createElement("button", {
-    className: "btn btn-secondary",
-    onClick: onClose
-  }, "\u274C Fermer"))));
+    onClick: onClose,
+    style: {
+      backgroundColor: '#64748b',
+      color: 'white',
+      border: 'none',
+      padding: '8px 16px',
+      borderRadius: '4px',
+      cursor: 'pointer',
+      fontSize: '14px'
+    }
+  }, "Fermer"))));
 };
-/* harmony default export */ const components_PreviewModal = (PreviewModal);
+/* harmony default export */ const PreviewModalSimple = (PreviewModal);
 ;// ./resources/js/components/ModalPDFViewer.jsx
 var ModalPDFViewer = function ModalPDFViewer(_ref) {
   var isOpen = _ref.isOpen,
@@ -13418,7 +12235,7 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
     onClose: canvasState.contextMenu.hideContextMenu
   }), /*#__PURE__*/react.createElement("footer", {
     className: "editor-status"
-  }, /*#__PURE__*/react.createElement("span", null, "\xC9l\xE9ments: ", canvasState.elements.length), /*#__PURE__*/react.createElement("span", null, "|"), globalSettings.settings.showZoomIndicator && /*#__PURE__*/react.createElement(react.Fragment, null, /*#__PURE__*/react.createElement("span", null, "Zoom: ", Math.round(canvasState.zoom.zoom * 100), "%"), /*#__PURE__*/react.createElement("span", null, "|")), /*#__PURE__*/react.createElement("span", null, "Outil: ", tool), canvasState.selection.selectedElements.length > 0 && /*#__PURE__*/react.createElement(react.Fragment, null, /*#__PURE__*/react.createElement("span", null, "|"), /*#__PURE__*/react.createElement("span", null, "\xC9l\xE9ments s\xE9lectionn\xE9s: ", canvasState.selection.selectedElements.length))), /*#__PURE__*/react.createElement(components_PreviewModal, {
+  }, /*#__PURE__*/react.createElement("span", null, "\xC9l\xE9ments: ", canvasState.elements.length), /*#__PURE__*/react.createElement("span", null, "|"), globalSettings.settings.showZoomIndicator && /*#__PURE__*/react.createElement(react.Fragment, null, /*#__PURE__*/react.createElement("span", null, "Zoom: ", Math.round(canvasState.zoom.zoom * 100), "%"), /*#__PURE__*/react.createElement("span", null, "|")), /*#__PURE__*/react.createElement("span", null, "Outil: ", tool), canvasState.selection.selectedElements.length > 0 && /*#__PURE__*/react.createElement(react.Fragment, null, /*#__PURE__*/react.createElement("span", null, "|"), /*#__PURE__*/react.createElement("span", null, "\xC9l\xE9ments s\xE9lectionn\xE9s: ", canvasState.selection.selectedElements.length))), /*#__PURE__*/react.createElement(PreviewModalSimple, {
     isOpen: showPreviewModal,
     onClose: function onClose() {
       setShowPreviewModal(false);
@@ -13897,7 +12714,7 @@ if (typeof window !== 'undefined') {
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, [96], () => (__webpack_require__(304)))
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, [96], () => (__webpack_require__(72)))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	
 /******/ })()
