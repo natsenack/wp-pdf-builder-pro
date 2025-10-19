@@ -868,8 +868,13 @@ class PDF_Builder_WooCommerce_Integration {
                     dataType: 'json',
                     success: function(response) {
                         console.log("PDF Preview response:", response);
-
+                        console.log("Response success:", response.success);
+                        console.log("Response data:", response.data);
+                        
                         if (response.success && response.data && response.data.html) {
+                            console.log("HTML content received, length:", response.data.html.length);
+                            console.log("HTML preview content (first 500 chars):", response.data.html.substring(0, 500));
+                            
                             // Afficher l'HTML directement dans l'iframe
                             var iframe = $iframe[0];
                             var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
@@ -883,6 +888,32 @@ class PDF_Builder_WooCommerce_Integration {
                             // Attendre que l'iframe soit chargé
                             $iframe.on('load', function() {
                                 console.log('HTML preview iframe loaded');
+                                
+                                // Log des éléments dans l'iframe
+                                try {
+                                    var iframeContent = iframe.contentDocument || iframe.contentWindow.document;
+                                    var elements = iframeContent.querySelectorAll('*');
+                                    console.log('Number of elements in preview:', elements.length);
+                                    
+                                    // Log des éléments avec du contenu textuel
+                                    var textElements = iframeContent.querySelectorAll('*');
+                                    textElements.forEach(function(el, index) {
+                                        if (el.textContent && el.textContent.trim()) {
+                                            console.log('Element ' + index + ':', el.tagName, el.className, 'Content:', el.textContent.trim().substring(0, 100));
+                                        }
+                                    });
+                                    
+                                    // Log des éléments dynamic-text spécifiquement
+                                    var dynamicElements = iframeContent.querySelectorAll('[data-dynamic]');
+                                    console.log('Dynamic elements found:', dynamicElements.length);
+                                    dynamicElements.forEach(function(el, index) {
+                                        console.log('Dynamic element ' + index + ':', el.getAttribute('data-dynamic'), 'Content:', el.textContent);
+                                    });
+                                    
+                                } catch (e) {
+                                    console.error('Error logging iframe elements:', e);
+                                }
+                                
                                 showStatus("Aperçu HTML chargé avec succès ✓", "success");
                             });
                         } else {
@@ -1209,6 +1240,13 @@ class PDF_Builder_WooCommerce_Integration {
             $elements = isset($_POST['elements']) ? $_POST['elements'] : null;
             $preview_type = isset($_POST['preview_type']) ? $_POST['preview_type'] : 'html'; // 'pdf' ou 'html' - FORCER HTML POUR ÉVITER TCPDF
 
+            // LOG DES ÉLÉMENTS REÇUS - DEBUG
+            error_log('PDF PREVIEW DEBUG - Order ID: ' . $order_id);
+            error_log('PDF PREVIEW DEBUG - Template ID: ' . $template_id);
+            error_log('PDF PREVIEW DEBUG - Preview Type: ' . $preview_type);
+            error_log('PDF PREVIEW DEBUG - Elements received: ' . substr($elements, 0, 500) . '...');
+            error_log('PDF PREVIEW DEBUG - Elements length: ' . strlen($elements));
+
 
 
             // S'assurer que la classe PDF_Builder_Pro_Generator est chargée
@@ -1237,6 +1275,15 @@ class PDF_Builder_WooCommerce_Integration {
                     wp_send_json_error('Données du template invalides');
                 }
 
+                // LOG DES ÉLÉMENTS DÉCODÉS
+                error_log('PDF PREVIEW DEBUG - Decoded elements count: ' . count($decoded_elements));
+                error_log('PDF PREVIEW DEBUG - Decoded elements: ' . json_encode($decoded_elements, JSON_PRETTY_PRINT));
+                
+                // Log des éléments individuels
+                foreach ($decoded_elements as $index => $element) {
+                    error_log('PDF PREVIEW DEBUG - Element ' . $index . ': type=' . ($element['type'] ?? 'unknown') . ', content=' . substr($element['content'] ?? '', 0, 100));
+                }
+
 
                 if ($preview_type === 'html') {
                     // Générer l'aperçu HTML avec les éléments du Canvas - SANS TCPDF
@@ -1245,6 +1292,10 @@ class PDF_Builder_WooCommerce_Integration {
                     // PLUS DE GÉNÉRATION PDF AVEC TCPDF - Forcer HTML
                     $result = $generator->generate($decoded_elements, ['is_preview' => true]);
                 }
+
+                // LOG DU RÉSULTAT GÉNÉRÉ
+                error_log('PDF PREVIEW DEBUG - Generation result: ' . substr($result, 0, 500) . '...');
+                error_log('PDF PREVIEW DEBUG - Result length: ' . strlen($result));
 
             } elseif ($order_id && $order_id > 0) {
                 // Aperçu de template depuis l'éditeur (éléments JSON)
@@ -1315,6 +1366,7 @@ class PDF_Builder_WooCommerce_Integration {
             // Gérer les différents types d'aperçu
             if ($preview_type === 'html') {
                 // Pour l'aperçu HTML, retourner directement le HTML généré
+                error_log('PDF PREVIEW DEBUG - Sending HTML response, length: ' . strlen($result));
                 wp_send_json_success(['html' => $result]);
             } else {
                 // Pour l'aperçu PDF, vérifier le fichier et retourner l'URL
