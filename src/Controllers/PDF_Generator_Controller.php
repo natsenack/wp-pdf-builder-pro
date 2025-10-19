@@ -312,10 +312,10 @@ class PDF_Builder_Pro_Generator {
                         error_log('[PDF Generator] Table font style: ' . $element['fontStyle']);
                     }
 
-                    // Bordures générales
-                    $border_width = $element['borderWidth'] ?? 0;
+                    // Bordures générales - ajouter une bordure par défaut si aucune n'est spécifiée
+                    $border_width = $element['borderWidth'] ?? 1; // Bordure de 1px par défaut
                     $border_style = $element['borderStyle'] ?? 'solid';
-                    $border_color = $element['borderColor'] ?? '#000000';
+                    $border_color = $element['borderColor'] ?? '#cccccc'; // Gris clair par défaut
                     if ($border_width > 0) {
                         $table_css .= " border: {$border_width}px {$border_style} {$border_color};";
                         error_log('[PDF Generator] Table border: ' . $border_width . 'px ' . $border_style . ' ' . $border_color);
@@ -345,6 +345,9 @@ class PDF_Builder_Pro_Generator {
 
                     // Style des bordures pour les cellules
                     $cell_border_style = $show_borders ? 'border: 1px solid #ddd;' : '';
+
+                    error_log('[PDF Generator] Table CSS: ' . $table_css);
+                    error_log('[PDF Generator] Cell border style: ' . $cell_border_style);
 
                     $table_html .= "<table style='{$table_css}'>";
 
@@ -377,14 +380,14 @@ class PDF_Builder_Pro_Generator {
                         if ($columns['name']) {
                             $product_name = $item->get_name();
                             error_log('[PDF Generator] Product name: ' . $product_name);
-                            $table_html .= "<td style='padding: 8px; {$cell_border_style}'>{$product_name}</td>";
+                            $table_html .= "<td style='padding: 8px; {$cell_border_style} font-weight: 500;'>{$product_name}</td>";
                         }
 
                         // Quantity
                         if ($columns['quantity']) {
                             $quantity = $item->get_quantity();
                             error_log('[PDF Generator] Quantity: ' . $quantity);
-                            $table_html .= "<td style='padding: 8px; {$cell_border_style} text-align: center;'>{$quantity}</td>";
+                            $table_html .= "<td style='padding: 8px; {$cell_border_style} text-align: center; color: #2563eb;'>{$quantity}</td>";
                         }
 
                         // Price
@@ -393,14 +396,14 @@ class PDF_Builder_Pro_Generator {
                             $price = $product ? $product->get_price() : 0;
                             $price_formatted = function_exists('wc_price') ? wc_price($price) : $price;
                             error_log('[PDF Generator] Price: ' . $price . ' -> ' . $price_formatted);
-                            $table_html .= "<td style='padding: 8px; {$cell_border_style} text-align: right;'>{$price_formatted}</td>";
+                            $table_html .= "<td style='padding: 8px; {$cell_border_style} text-align: right; color: #16a34a;'>{$price_formatted}</td>";
                         }
 
                         // Total
                         if ($columns['total']) {
                             $total = function_exists('wc_price') ? wc_price($item->get_total()) : $item->get_total();
                             error_log('[PDF Generator] Total: ' . $total);
-                            $table_html .= "<td style='padding: 8px; {$cell_border_style} text-align: right; font-weight: bold;'>{$total}</td>";
+                            $table_html .= "<td style='padding: 8px; {$cell_border_style} text-align: right; font-weight: bold; color: #dc2626;'>{$total}</td>";
                         }
 
                         $table_html .= "</tr>";
@@ -409,9 +412,16 @@ class PDF_Builder_Pro_Generator {
                     // Subtotal, Shipping, Taxes, Total
                     $show_subtotal = $element['showSubtotal'] ?? true;
                     $show_shipping = $element['showShipping'] ?? true;
-                    $show_taxes = $element['showTaxes'] ?? false;
+                    $show_taxes = $element['showTaxes'] ?? true; // Afficher les taxes par défaut
                     $show_discount = $element['showDiscount'] ?? true;
                     $show_total = $element['showTotal'] ?? true;
+
+                    error_log('[PDF Generator] Summary display options:');
+                    error_log('[PDF Generator] - show_subtotal: ' . ($show_subtotal ? 'true' : 'false'));
+                    error_log('[PDF Generator] - show_shipping: ' . ($show_shipping ? 'true' : 'false'));
+                    error_log('[PDF Generator] - show_taxes: ' . ($show_taxes ? 'true' : 'false'));
+                    error_log('[PDF Generator] - show_discount: ' . ($show_discount ? 'true' : 'false'));
+                    error_log('[PDF Generator] - show_total: ' . ($show_total ? 'true' : 'false'));
                     
                     if ($show_subtotal || $show_shipping || $show_taxes || $show_discount || $show_total) {
                         $table_html .= "<tr style='background-color: #f9f9f9; font-weight: bold;'><td colspan='" . count(array_filter($columns)) . "' style='padding: 8px; {$cell_border_style} text-align: right;'>";
@@ -421,26 +431,31 @@ class PDF_Builder_Pro_Generator {
                         if ($show_subtotal) {
                             $subtotal = function_exists('wc_price') ? wc_price($this->order->get_subtotal()) : $this->order->get_subtotal();
                             $summary_lines[] = "Sous-total: {$subtotal}";
+                            error_log('[PDF Generator] Subtotal: ' . $subtotal);
                         }
                         
                         if ($show_shipping && $this->order->get_shipping_total() > 0) {
                             $shipping = function_exists('wc_price') ? wc_price($this->order->get_shipping_total()) : $this->order->get_shipping_total();
                             $summary_lines[] = "Livraison: {$shipping}";
+                            error_log('[PDF Generator] Shipping: ' . $shipping);
                         }
                         
                         if ($show_taxes && $this->order->get_total_tax() > 0) {
-                            $tax = function_exists('wc_price') ? wc_price($this->order->get_total_tax()) : $this->order->get_total_tax();
+                            $tax = function_exists('wc_price') ? wc_price($this->order->get_total_tax()) : $this->order->get_total();
                             $summary_lines[] = "TVA: {$tax}";
+                            error_log('[PDF Generator] Tax: ' . $tax);
                         }
                         
                         if ($show_discount && $this->order->get_discount_total() > 0) {
                             $discount = function_exists('wc_price') ? wc_price($this->order->get_discount_total()) : $this->order->get_discount_total();
                             $summary_lines[] = "Remise: -{$discount}";
+                            error_log('[PDF Generator] Discount: ' . $discount);
                         }
                         
                         if ($show_total) {
                             $total = function_exists('wc_price') ? wc_price($this->order->get_total()) : $this->order->get_total();
                             $summary_lines[] = "TOTAL: {$total}";
+                            error_log('[PDF Generator] Order total: ' . $total);
                         }
                         
                         $table_html .= implode('<br>', $summary_lines);
