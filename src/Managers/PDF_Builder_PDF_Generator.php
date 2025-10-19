@@ -180,7 +180,15 @@ class PDF_Builder_PDF_Generator {
             // Décoder les éléments JSON
             $canvas_elements = json_decode($elements, true);
             
+            // Debug: log du JSON reçu
+            error_log('PDF Builder Preview - JSON brut reçu: ' . substr($elements, 0, 200));
+            error_log('PDF Builder Preview - json_last_error: ' . json_last_error());
+            error_log('PDF Builder Preview - json_last_error_msg: ' . json_last_error_msg());
+            error_log('PDF Builder Preview - is_array check: ' . (is_array($canvas_elements) ? 'true' : 'false'));
+            error_log('PDF Builder Preview - count: ' . (is_array($canvas_elements) ? count($canvas_elements) : 'N/A'));
+            
             if (!$canvas_elements || !is_array($canvas_elements)) {
+                error_log('PDF Builder Preview - Échec validation: canvas_elements=' . ($canvas_elements ? 'not null' : 'null') . ', is_array=' . (is_array($canvas_elements) ? 'true' : 'false'));
                 wp_send_json_error('Format JSON invalide pour les éléments');
             }
 
