@@ -56,11 +56,13 @@ const PreviewModal = ({
         throw new Error('Impossible d\'obtenir un nonce');
       }
 
-      // Préparer l'appel pour l'aperçu unifié avec FormData
+      // Préparer l'appel pour l'aperçu unifié avec FormData (base64 encoded)
       const formData = new FormData();
       formData.append('action', 'pdf_builder_unified_preview');
       formData.append('nonce', nonceData.data.nonce);
-      formData.append('elements', jsonString);
+      // Encoder le JSON en base64 pour éviter les problèmes d'encodage
+      const base64Json = btoa(unescape(encodeURIComponent(jsonString)));
+      formData.append('elements', base64Json);
 
       const response = await fetch(ajaxurl || window.pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
         method: 'POST',
