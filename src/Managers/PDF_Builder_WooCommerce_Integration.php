@@ -2146,10 +2146,11 @@ class PDF_Builder_WooCommerce_Integration {
                     this.elements.footerZoom.text(zoomPercent + '%');
 
                     // Mettre à jour les boutons actifs
+                    var self = this;
                     this.elements.zoomBtns.removeClass('active');
                     this.elements.zoomBtns.each(function() {
                         var btnZoom = $(this).data('zoom');
-                        if (parseFloat(btnZoom) === this.state.currentZoom) {
+                        if (parseFloat(btnZoom) === self.state.currentZoom) {
                             $(this).addClass('active');
                         }
                     });

@@ -1196,14 +1196,113 @@ class PDF_Builder_Pro_Generator {
     private function create_fake_order_data_for_template() {
         return [
             'items' => [
-                ['name' => 'FAKE_PRODUCT_1', 'quantity' => 1, 'price' => 10.00, 'total' => 10.00],
-                ['name' => 'FAKE_PRODUCT_2', 'quantity' => 2, 'price' => 20.00, 'total' => 40.00],
+                $this->create_fake_item_data(1),
+                $this->create_fake_item_data(2),
             ],
             'subtotal' => 50.00,
             'shipping' => 5.00,
             'tax' => 10.00,
             'discount' => 0.00,
             'total' => 65.00
+        ];
+    }
+
+    /**
+     * Crée des données fictives complètes pour un item
+     */
+    private function create_fake_item_data($index) {
+        return [
+            // Propriétés de base
+            'name' => 'FAKE_PRODUCT_' . $index,
+            'quantity' => $index,
+            'quantity_raw' => $index,
+            'price' => $index * 10.00,
+            'price_raw' => $index * 10.00,
+            'total' => $index * $index * 10.00,
+            'total_raw' => $index * $index * 10.00,
+            'subtotal' => $index * $index * 10.00,
+            'subtotal_raw' => $index * $index * 10.00,
+            'tax' => $index * 2.00,
+            'tax_raw' => $index * 2.00,
+
+            // Propriétés du produit
+            'product_id' => 100 + $index,
+            'sku' => 'FAKE-SKU-' . $index,
+            'product_url' => 'https://example.com/product-' . $index,
+            'product_type' => 'simple',
+            'is_virtual' => false,
+            'is_downloadable' => false,
+            'is_taxable' => true,
+            'tax_class' => 'standard',
+            'tax_status' => 'taxable',
+
+            // Prix du produit
+            'regular_price' => $index * 10.00,
+            'regular_price_raw' => $index * 10.00,
+            'sale_price' => null,
+            'sale_price_raw' => null,
+            'price_html' => '$' . ($index * 10.00),
+
+            // Poids et dimensions
+            'weight' => $index * 0.5,
+            'weight_unit' => 'kg',
+            'dimensions' => $index . ' x ' . ($index + 1) . ' x ' . ($index + 2),
+            'length' => $index * 10,
+            'width' => ($index + 1) * 10,
+            'height' => ($index + 2) * 10,
+            'dimension_unit' => 'cm',
+
+            // Descriptions
+            'description' => 'Fake product ' . $index . ' description',
+            'short_description' => 'Fake product ' . $index . ' short description',
+
+            // Stock
+            'stock_quantity' => $index * 10,
+            'stock_status' => 'instock',
+            'manage_stock' => true,
+            'backorders' => 'no',
+
+            // Visibilité et statut
+            'status' => 'publish',
+            'catalog_visibility' => 'visible',
+            'featured' => false,
+
+            // Images
+            'image_id' => 200 + $index,
+            'image_url' => 'https://example.com/image-' . $index . '.jpg',
+            'gallery_image_ids' => [],
+
+            // Catégories et tags
+            'categories' => ['Fake Category ' . $index],
+            'category_ids' => [300 + $index],
+            'tags' => ['fake', 'product', 'tag' . $index],
+            'tag_ids' => [400 + $index],
+
+            // Attributs
+            'attributes' => [],
+            'variation_attributes' => [],
+
+            // Pour les variations
+            'variation_id' => null,
+            'parent_id' => null,
+            'variation_attributes_formatted' => '',
+
+            // Métadonnées
+            'meta_data' => [],
+            'item_meta_data' => [],
+
+            // Propriétés spécifiques à l'item
+            'item_id' => 500 + $index,
+            'order_id' => 999,
+
+            // Données calculées
+            'line_total_formatted' => '$' . ($index * $index * 10.00),
+            'line_subtotal_formatted' => '$' . ($index * $index * 10.00),
+            'line_tax_formatted' => '$' . ($index * 2.00),
+
+            // Données pour compatibilité
+            'formatted_price' => '$' . ($index * 10.00),
+            'formatted_total' => '$' . ($index * $index * 10.00),
         ];
     }
 
@@ -1218,18 +1317,14 @@ class PDF_Builder_Pro_Generator {
         $items = [];
         foreach ($this->order->get_items() as $item) {
             $product = $item->get_product();
-            $price = $product ? $product->get_price() : 0;
-            $price_formatted = function_exists('wc_price') ? wc_price($price) : $price;
-            $total_formatted = function_exists('wc_price') ? wc_price($item->get_total()) : $item->get_total();
 
-            $items[] = [
-                'name' => $item->get_name(),
-                'quantity' => $item->get_quantity(),
-                'price' => $price_formatted,
-                'total' => $total_formatted
-            ];
+            // Récupérer TOUTES les propriétés disponibles de l'item et du produit
+            $item_data = $this->extract_complete_item_data($item, $product);
+
+            $items[] = $item_data;
         }
 
+        // Récupérer les totaux de la commande
         $subtotal = function_exists('wc_price') ? wc_price($this->order->get_subtotal()) : $this->order->get_subtotal();
         $shipping = function_exists('wc_price') ? wc_price($this->order->get_shipping_total()) : $this->order->get_shipping_total();
         $tax = function_exists('wc_price') ? wc_price($this->order->get_total_tax()) : $this->order->get_total_tax();
@@ -1244,6 +1339,138 @@ class PDF_Builder_Pro_Generator {
             'discount' => $discount,
             'total' => $total
         ];
+    }
+
+    /**
+     * Extrait toutes les propriétés disponibles d'un item de commande WooCommerce
+     */
+    private function extract_complete_item_data($item, $product = null) {
+        $data = [];
+
+        // === PROPRIÉTÉS DE BASE DE L'ITEM ===
+        $data['name'] = $item->get_name();
+        $data['quantity'] = $item->get_quantity();
+        $data['quantity_raw'] = $item->get_quantity(); // Version non formatée
+
+        // === PROPRIÉTÉS DE PRIX ===
+        $data['price'] = function_exists('wc_price') ? wc_price($item->get_subtotal() / max(1, $item->get_quantity())) : ($item->get_subtotal() / max(1, $item->get_quantity()));
+        $data['price_raw'] = $item->get_subtotal() / max(1, $item->get_quantity()); // Prix unitaire brut
+        $data['total'] = function_exists('wc_price') ? wc_price($item->get_total()) : $item->get_total();
+        $data['total_raw'] = $item->get_total(); // Total brut
+        $data['subtotal'] = function_exists('wc_price') ? wc_price($item->get_subtotal()) : $item->get_subtotal();
+        $data['subtotal_raw'] = $item->get_subtotal(); // Subtotal brut
+        $data['tax'] = function_exists('wc_price') ? wc_price($item->get_total_tax()) : $item->get_total_tax();
+        $data['tax_raw'] = $item->get_total_tax(); // Taxe brute
+
+        // === PROPRIÉTÉS DU PRODUIT ===
+        if ($product) {
+            $data['product_id'] = $product->get_id();
+            $data['sku'] = $product->get_sku();
+            $data['product_url'] = get_permalink($product->get_id());
+            $data['product_type'] = $product->get_type();
+            $data['is_virtual'] = $product->is_virtual();
+            $data['is_downloadable'] = $product->is_downloadable();
+            $data['is_taxable'] = $product->is_taxable();
+            $data['tax_class'] = $product->get_tax_class();
+            $data['tax_status'] = $product->get_tax_status();
+
+            // Prix du produit
+            $data['regular_price'] = function_exists('wc_price') ? wc_price($product->get_regular_price()) : $product->get_regular_price();
+            $data['regular_price_raw'] = $product->get_regular_price();
+            $data['sale_price'] = function_exists('wc_price') ? wc_price($product->get_sale_price()) : $product->get_sale_price();
+            $data['sale_price_raw'] = $product->get_sale_price();
+            $data['price_html'] = $product->get_price_html();
+
+            // Poids et dimensions
+            $data['weight'] = $product->get_weight();
+            $data['weight_unit'] = get_option('woocommerce_weight_unit', 'kg');
+            $data['dimensions'] = $product->get_dimensions();
+            $data['length'] = $product->get_length();
+            $data['width'] = $product->get_width();
+            $data['height'] = $product->get_height();
+            $data['dimension_unit'] = get_option('woocommerce_dimension_unit', 'cm');
+
+            // Descriptions
+            $data['description'] = $product->get_description();
+            $data['short_description'] = $product->get_short_description();
+
+            // Stock
+            $data['stock_quantity'] = $product->get_stock_quantity();
+            $data['stock_status'] = $product->get_stock_status();
+            $data['manage_stock'] = $product->get_manage_stock();
+            $data['backorders'] = $product->get_backorders();
+
+            // Visibilité et statut
+            $data['status'] = $product->get_status();
+            $data['catalog_visibility'] = $product->get_catalog_visibility();
+            $data['featured'] = $product->get_featured();
+
+            // Images
+            $data['image_id'] = $product->get_image_id();
+            $data['image_url'] = wp_get_attachment_image_url($product->get_image_id(), 'full');
+            $data['gallery_image_ids'] = $product->get_gallery_image_ids();
+
+            // Catégories et tags
+            $data['categories'] = wp_get_post_terms($product->get_id(), 'product_cat', ['fields' => 'names']);
+            $data['category_ids'] = wp_get_post_terms($product->get_id(), 'product_cat', ['fields' => 'ids']);
+            $data['tags'] = wp_get_post_terms($product->get_id(), 'product_tag', ['fields' => 'names']);
+            $data['tag_ids'] = wp_get_post_terms($product->get_id(), 'product_tag', ['fields' => 'ids']);
+
+            // Attributs du produit
+            $data['attributes'] = $product->get_attributes();
+            $data['variation_attributes'] = $product->get_variation_attributes();
+
+            // Pour les variations
+            if ($product->is_type('variation')) {
+                $data['variation_id'] = $product->get_id();
+                $data['parent_id'] = $product->get_parent_id();
+                // Formater les attributs de variation manuellement
+                $variation_attributes = $product->get_variation_attributes();
+                $formatted = [];
+                foreach ($variation_attributes as $key => $value) {
+                    if (!empty($value)) {
+                        $taxonomy = str_replace('attribute_', '', $key);
+                        $term = get_term_by('slug', $value, $taxonomy);
+                        if ($term) {
+                            $formatted[] = $term->name;
+                        } else {
+                            $formatted[] = $value;
+                        }
+                    }
+                }
+                $data['variation_attributes_formatted'] = implode(', ', $formatted);
+            }
+
+            // Métadonnées du produit
+            $data['meta_data'] = [];
+            foreach ($product->get_meta_data() as $meta) {
+                $data['meta_data'][$meta->key] = $meta->value;
+            }
+        }
+
+        // === PROPRIÉTÉS SPÉCIFIQUES À L'ITEM DE COMMANDE ===
+        $data['item_id'] = $item->get_id();
+        $data['order_id'] = $item->get_order_id();
+
+        // Métadonnées de l'item
+        $data['item_meta_data'] = [];
+        foreach ($item->get_meta_data() as $meta) {
+            $data['item_meta_data'][$meta->key] = $meta->value;
+        }
+
+        // === DONNÉES CALCULÉES ===
+        $data['line_total_formatted'] = $data['total'];
+        $data['line_subtotal_formatted'] = $data['subtotal'];
+        $data['line_tax_formatted'] = $data['tax'];
+
+        // === DONNÉES POUR COMPATIBILITÉ AVEC L'ANCIEN CODE ===
+        // Garder les anciennes clés pour compatibilité
+        $data['formatted_price'] = $data['price'];
+        $data['formatted_total'] = $data['total'];
+
+        error_log('[PDF Generator] Extracted complete item data for "' . $data['name'] . '": ' . json_encode(array_keys($data)));
+
+        return $data;
     }
 
     /**
@@ -1367,24 +1594,70 @@ class PDF_Builder_Pro_Generator {
 
             $table_html .= "<tr style='background-color: {$bg_color}; color: {$text_color};'>";
 
-            // Product Name
-            if ($columns['name']) {
-                $table_html .= "<td style='padding: 8px; {$cell_border_style} {$name_style} color: {$name_color};'>{$item['name']}</td>";
-            }
+            // Générer TOUTES les colonnes possibles, même celles non activées
+            // Cela permet au système de remplacer toutes les propriétés disponibles
 
-            // Quantity
-            if ($columns['quantity']) {
-                $table_html .= "<td style='padding: 8px; {$cell_border_style} {$quantity_style} color: {$quantity_color};'>{$item['quantity']}</td>";
+            // Image column (même si non activée)
+            $table_html .= "<td style='padding: 8px; {$cell_border_style}; display: " . ($columns['image'] ? 'table-cell' : 'none') . ";'>";
+            if ($columns['image'] && isset($item['image_url']) && $item['image_url']) {
+                $table_html .= "<img src='{$item['image_url']}' style='max-width: 50px; max-height: 50px;' alt='{$item['name']}'>";
+            } elseif ($columns['image']) {
+                $table_html .= "<div style='width: 50px; height: 50px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #999;'>Img</div>";
             }
+            $table_html .= "</td>";
 
-            // Price
-            if ($columns['price']) {
-                $table_html .= "<td style='padding: 8px; {$cell_border_style} {$price_style} color: {$price_color};'>{$item['price']}</td>";
-            }
+            // Name column
+            $table_html .= "<td style='padding: 8px; {$cell_border_style} {$name_style} color: {$name_color}; display: " . ($columns['name'] ? 'table-cell' : 'none') . ";'>{$item['name']}</td>";
 
-            // Total
-            if ($columns['total']) {
-                $table_html .= "<td style='padding: 8px; {$cell_border_style} {$total_style} color: {$total_color};'>{$item['total']}</td>";
+            // SKU column (même si non activée)
+            $table_html .= "<td style='padding: 8px; {$cell_border_style}; display: " . ($columns['sku'] ? 'table-cell' : 'none') . ";'>{$item['sku']}</td>";
+
+            // Quantity column
+            $table_html .= "<td style='padding: 8px; {$cell_border_style} {$quantity_style} color: {$quantity_color}; display: " . ($columns['quantity'] ? 'table-cell' : 'none') . ";'>{$item['quantity']}</td>";
+
+            // Price column
+            $table_html .= "<td style='padding: 8px; {$cell_border_style} {$price_style} color: {$price_color}; display: " . ($columns['price'] ? 'table-cell' : 'none') . ";'>{$item['price']}</td>";
+
+            // Total column
+            $table_html .= "<td style='padding: 8px; {$cell_border_style} {$total_style} color: {$total_color}; display: " . ($columns['total'] ? 'table-cell' : 'none') . ";'>{$item['total']}</td>";
+
+            // === AJOUTER TOUTES LES AUTRES COLONNES POSSIBLES ===
+            // Ces colonnes seront masquées par défaut mais leurs valeurs seront disponibles pour le remplacement
+
+            // Description (toujours cachée mais disponible pour remplacement)
+            $table_html .= "<td style='display: none;'>{$item['description']}</td>";
+            $table_html .= "<td style='display: none;'>{$item['short_description']}</td>";
+
+            // Prix du produit
+            $table_html .= "<td style='display: none;'>{$item['regular_price']}</td>";
+            $table_html .= "<td style='display: none;'>{$item['sale_price']}</td>";
+
+            // Poids et dimensions
+            $table_html .= "<td style='display: none;'>{$item['weight']}</td>";
+            $table_html .= "<td style='display: none;'>{$item['dimensions']}</td>";
+
+            // Stock
+            $table_html .= "<td style='display: none;'>{$item['stock_quantity']}</td>";
+            $table_html .= "<td style='display: none;'>{$item['stock_status']}</td>";
+
+            // Catégories et tags (sérialiser les arrays pour le remplacement)
+            $table_html .= "<td style='display: none;'>" . (is_array($item['categories']) ? implode(', ', $item['categories']) : $item['categories']) . "</td>";
+            $table_html .= "<td style='display: none;'>" . (is_array($item['tags']) ? implode(', ', $item['tags']) : $item['tags']) . "</td>";
+
+            // Attributs de variation
+            $table_html .= "<td style='display: none;'>{$item['variation_attributes_formatted']}</td>";
+
+            // Toutes les autres propriétés scalaires disponibles
+            $hidden_properties = [
+                'product_id', 'product_url', 'product_type', 'tax_class', 'tax_status',
+                'length', 'width', 'height', 'dimension_unit', 'weight_unit',
+                'manage_stock', 'backorders', 'status', 'catalog_visibility', 'featured',
+                'is_virtual', 'is_downloadable', 'is_taxable', 'item_id', 'order_id'
+            ];
+
+            foreach ($hidden_properties as $prop) {
+                $value = isset($item[$prop]) ? $item[$prop] : '';
+                $table_html .= "<td style='display: none;'>{$value}</td>";
             }
 
             $table_html .= "</tr>";
@@ -1435,24 +1708,47 @@ class PDF_Builder_Pro_Generator {
      * Remplace les données fictives par les vraies données dans le HTML généré
      */
     private function replace_fake_data_with_real_data($html, $fake_data, $real_data) {
-        // Remplacer les noms de produits fictifs
+        // Remplacer les données des items - toutes les propriétés disponibles
         foreach ($fake_data['items'] as $index => $fake_item) {
             if (isset($real_data['items'][$index])) {
                 $real_item = $real_data['items'][$index];
-                $html = str_replace($fake_item['name'], $real_item['name'], $html);
-                $html = str_replace((string)$fake_item['quantity'], (string)$real_item['quantity'], $html);
-                $html = str_replace($fake_item['price'], $real_item['price'], $html);
-                $html = str_replace($fake_item['total'], $real_item['total'], $html);
+
+                // Remplacer toutes les propriétés disponibles de l'item
+                foreach ($fake_item as $key => $fake_value) {
+                    if (isset($real_item[$key])) {
+                        $real_value = $real_item[$key];
+
+                        // Gérer les arrays (comme categories, tags, etc.)
+                        if (is_array($fake_value)) {
+                            // Pour les arrays, remplacer chaque élément
+                            if (is_array($real_value)) {
+                                foreach ($fake_value as $i => $fake_array_item) {
+                                    if (isset($real_value[$i])) {
+                                        $html = str_replace((string)$fake_array_item, (string)$real_value[$i], $html);
+                                    }
+                                }
+                            }
+                        } else {
+                            // Remplacement simple pour les valeurs scalaires
+                            $html = str_replace((string)$fake_value, (string)$real_value, $html);
+                        }
+
+                        error_log("[PDF Generator] Replaced item property {$key}: '{$fake_value}' -> '{$real_value}'");
+                    }
+                }
             }
         }
 
-        // Remplacer les totaux
-        $html = str_replace($fake_data['subtotal'], $real_data['subtotal'], $html);
-        $html = str_replace($fake_data['shipping'], $real_data['shipping'], $html);
-        $html = str_replace($fake_data['tax'], $real_data['tax'], $html);
-        $html = str_replace($fake_data['discount'], $real_data['discount'], $html);
-        $html = str_replace($fake_data['total'], $real_data['total'], $html);
+        // Remplacer les totaux de la commande
+        $totals_to_replace = ['subtotal', 'shipping', 'tax', 'discount', 'total'];
+        foreach ($totals_to_replace as $total_key) {
+            if (isset($fake_data[$total_key]) && isset($real_data[$total_key])) {
+                $html = str_replace((string)$fake_data[$total_key], (string)$real_data[$total_key], $html);
+                error_log("[PDF Generator] Replaced total {$total_key}: '{$fake_data[$total_key]}' -> '{$real_data[$total_key]}'");
+            }
+        }
 
+        error_log('[PDF Generator] HTML replacement completed. Final HTML length: ' . strlen($html));
         return $html;
     }
 }
