@@ -210,31 +210,31 @@ class PDF_Builder_PDF_Generator {
 
             error_log('[PDF Builder Preview] Successfully decoded ' . count($canvas_elements) . ' elements');
 
-            // Générer le HTML directement sans dépendre du contrôleur externe
-            $html_content = $this->generate_html_from_elements($canvas_elements);
-            
-            if (!empty($html_content)) {
-                // Créer un fichier HTML temporaire pour l'aperçu
+            // Générer l'aperçu PDF avec TCPDF pour un rendu fidèle
+            $pdf_content = $this->generate_pdf_preview($canvas_elements);
+
+            if (!empty($pdf_content)) {
+                // Créer un fichier PDF temporaire pour l'aperçu
                 $upload_dir = wp_upload_dir();
-                $html_dir = $upload_dir['basedir'] . '/pdf-builder';
-                if (!file_exists($html_dir)) {
-                    wp_mkdir_p($html_dir);
+                $pdf_dir = $upload_dir['basedir'] . '/pdf-builder';
+                if (!file_exists($pdf_dir)) {
+                    wp_mkdir_p($pdf_dir);
                 }
 
-                $filename = 'preview-' . time() . '.html';
-                $html_path = $html_dir . '/' . $filename;
-                file_put_contents($html_path, $html_content);
-                
-                $html_url = str_replace($upload_dir['basedir'], $upload_dir['baseurl'], $html_path);
+                $filename = 'preview-' . time() . '.pdf';
+                $pdf_path = $pdf_dir . '/' . $filename;
+                file_put_contents($pdf_path, $pdf_content);
+
+                $pdf_url = str_replace($upload_dir['basedir'], $upload_dir['baseurl'], $pdf_path);
 
                 wp_send_json_success(array(
-                    'url' => $html_url,
-                    'path' => $html_path,
+                    'url' => $pdf_url,
+                    'path' => $pdf_path,
                     'elements_count' => count($canvas_elements),
-                    'type' => 'html'
+                    'type' => 'pdf'
                 ));
             } else {
-                wp_send_json_error('Erreur lors de la génération du HTML d\'aperçu');
+                wp_send_json_error('Erreur lors de la génération du PDF d\'aperçu');
             }
         } catch (Exception $e) {
             error_log('[PDF Builder Preview] Exception: ' . $e->getMessage());
@@ -644,6 +644,158 @@ class PDF_Builder_PDF_Generator {
             default:
                 return "<div class='canvas-element' style='" . esc_attr($style) . "; background: #ffe6e6; border: 1px solid #ff0000; display: flex; align-items: center; justify-content: center; color: #ff0000;'>{$type}</div>";
         }
+    }
+
+    /**
+     * Générer un aperçu PDF avec TCPDF pour un rendu fidèle
+     */
+    private function generate_pdf_preview($elements) {
+        try {
+            // Charger TCPDF
+            require_once plugin_dir_path(dirname(__FILE__)) . '../../lib/tcpdf/tcpdf.php';
+
+            // Créer une instance TCPDF pour l'aperçu
+            $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
+
+            // Configuration de base
+            $pdf->SetCreator('PDF Builder Pro');
+            $pdf->SetAuthor('PDF Builder Pro');
+            $pdf->SetTitle('PDF Preview');
+            $pdf->SetSubject('PDF Preview');
+
+            // Supprimer les en-têtes et pieds de page par défaut
+            $pdf->setPrintHeader(false);
+            $pdf->setPrintFooter(false);
+
+            // Marges
+            $pdf->SetMargins(15, 20, 15);
+            $pdf->SetAutoPageBreak(true, 15);
+
+            // Ajouter une page
+            $pdf->AddPage();
+
+            // Si aucun élément, utiliser les éléments d'exemple
+            if (empty($elements)) {
+                $elements = $this->get_sample_elements();
+            }
+
+            // Rendre chaque élément dans le PDF
+            foreach ($elements as $element) {
+                $this->render_element_to_pdf($pdf, $element);
+            }
+
+            // Générer le PDF en tant que string
+            return $pdf->Output('', 'S');
+
+        } catch (Exception $e) {
+            error_log('[PDF Builder Preview] TCPDF Error: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Rendre un élément dans le PDF avec TCPDF
+     */
+    private function render_element_to_pdf($pdf, $element) {
+        $type = $element['type'] ?? 'text';
+
+        // Extraire les coordonnées (convertir pixels en mm pour TCPDF)
+        $x = ($element['position']['x'] ?? $element['x'] ?? 0) * 0.264583; // px to mm
+        $y = ($element['position']['y'] ?? $element['y'] ?? 0) * 0.264583; // px to mm
+        $width = ($element['size']['width'] ?? $element['width'] ?? 100) * 0.264583;
+        $height = ($element['size']['height'] ?? $element['height'] ?? 50) * 0.264583;
+
+        // Contraindre dans les limites A4 (210x297mm)
+        $x = max(15, min(195 - $width, $x + 15)); // +15 pour la marge gauche
+        $y = max(20, min(277 - $height, $y + 20)); // +20 pour la marge haute
+
+        switch ($type) {
+            case 'text':
+            case 'dynamic-text':
+            case 'multiline_text':
+                $content = $element['content'] ?? $element['text'] ?? $element['customContent'] ?? '';
+
+                // Styles de texte
+                $font_size = ($element['properties']['fontSize'] ?? 12) * 0.75; // Ajuster la taille
+                $color = $this->hex_to_rgb($element['properties']['color'] ?? '#000000');
+                $font_weight = ($element['properties']['fontWeight'] ?? 'normal') === 'bold' ? 'B' : '';
+                $text_align = $element['properties']['textAlign'] ?? 'left';
+
+                $pdf->SetFont('helvetica', $font_weight, $font_size);
+                $pdf->SetTextColor($color[0], $color[1], $color[2]);
+
+                // Calculer l'alignement
+                $align = 'L';
+                if ($text_align === 'center') $align = 'C';
+                elseif ($text_align === 'right') $align = 'R';
+
+                $pdf->SetXY($x, $y);
+                $pdf->Cell($width, $height, $content, 0, 1, $align, false, '', 0, false, 'T', 'T');
+                break;
+
+            case 'rectangle':
+                $bg_color = $this->hex_to_rgb($element['properties']['backgroundColor'] ?? '#ffffff');
+                $border_color = $this->hex_to_rgb($element['properties']['border'] ? '#cccccc' : '#ffffff');
+
+                $pdf->SetFillColor($bg_color[0], $bg_color[1], $bg_color[2]);
+                $pdf->SetDrawColor($border_color[0], $border_color[1], $border_color[2]);
+                $pdf->SetLineWidth(0.2);
+
+                $pdf->Rect($x, $y, $width, $height, 'DF');
+                break;
+
+            case 'line':
+            case 'divider':
+                $line_color = $this->hex_to_rgb($element['properties']['lineColor'] ?? '#cccccc');
+                $line_width = $element['properties']['lineWidth'] ?? 1;
+
+                $pdf->SetDrawColor($line_color[0], $line_color[1], $line_color[2]);
+                $pdf->SetLineWidth($line_width * 0.2);
+
+                $pdf->Line($x, $y + $height/2, $x + $width, $y + $height/2);
+                break;
+
+            case 'image':
+            case 'company_logo':
+                $src = $element['imageUrl'] ?? $element['src'] ?? '';
+                if ($src && filter_var($src, FILTER_VALIDATE_URL)) {
+                    try {
+                        $pdf->Image($src, $x, $y, $width, $height, '', '', '', false, 300, '', false, false, 0, false, false, false);
+                    } catch (Exception $e) {
+                        // Image non accessible, dessiner un placeholder
+                        $pdf->SetFillColor(240, 240, 240);
+                        $pdf->Rect($x, $y, $width, $height, 'DF');
+                        $pdf->SetFont('helvetica', '', 8);
+                        $pdf->SetTextColor(100, 100, 100);
+                        $pdf->SetXY($x, $y + $height/2 - 2);
+                        $pdf->Cell($width, 4, 'Image', 0, 0, 'C');
+                    }
+                } else {
+                    // Placeholder pour image manquante
+                    $pdf->SetFillColor(240, 240, 240);
+                    $pdf->Rect($x, $y, $width, $height, 'DF');
+                    $pdf->SetFont('helvetica', '', 8);
+                    $pdf->SetTextColor(100, 100, 100);
+                    $pdf->SetXY($x, $y + $height/2 - 2);
+                    $pdf->Cell($width, 4, 'Image', 0, 0, 'C');
+                }
+                break;
+        }
+    }
+
+    /**
+     * Convertir une couleur hexadécimale en RGB
+     */
+    private function hex_to_rgb($hex) {
+        $hex = ltrim($hex, '#');
+        if (strlen($hex) == 3) {
+            $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2];
+        }
+        return [
+            hexdec(substr($hex, 0, 2)),
+            hexdec(substr($hex, 2, 2)),
+            hexdec(substr($hex, 4, 2))
+        ];
     }
 
     /**
