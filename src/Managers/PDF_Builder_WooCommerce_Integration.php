@@ -38,6 +38,7 @@ class PDF_Builder_WooCommerce_Integration {
         // AJAX handlers pour WooCommerce - gérés par le manager
         add_action('wp_ajax_pdf_builder_generate_pdf', [$this, 'ajax_generate_order_pdf'], 1);
         add_action('wp_ajax_pdf_builder_generate_order_pdf', [$this, 'ajax_generate_order_pdf'], 1); // Alias pour compatibilité
+        add_action('wp_ajax_pdf_builder_generate_order_pdf_preview', [$this, 'ajax_generate_order_pdf_preview'], 1);
         add_action('wp_ajax_pdf_builder_save_order_canvas', [$this, 'ajax_save_order_canvas'], 1);
     }
     private function detect_document_type($order_status) {
