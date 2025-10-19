@@ -6581,6 +6581,16 @@ class PDF_Builder_Admin {
             $h_source = isset($element['height']) ? 'height' : (isset($element['size']['height']) ? 'size.height' : (isset($element['position']['height']) ? 'position.height' : 'défaut'));
             error_log("[PDF Preview] Élément {$index} ({$type}): x={$x} (de {$x_source}), y={$y} (de {$y_source}), w={$width} (de {$w_source}), h={$height} (de {$h_source}), visible=" . ($visible ? 'true' : 'false'));
 
+            // CONTRAINTE: S'assurer que l'élément reste dans les limites du canvas A4
+            $original_x = $x;
+            $original_y = $y;
+            $x = max(0, min($canvas_width - $width, $x));
+            $y = max(0, min($canvas_height - $height, $y));
+            
+            if ($x !== $original_x || $y !== $original_y) {
+                error_log("[PDF Preview] Élément {$index} ({$type}) corrigé: position originale x={$original_x}, y={$original_y} -> corrigée x={$x}, y={$y} (canvas: {$canvas_width}x{$canvas_height})");
+            }
+
             if (!$visible) {
                 continue;
             }
