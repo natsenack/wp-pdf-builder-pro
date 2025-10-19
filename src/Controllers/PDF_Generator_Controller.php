@@ -272,7 +272,7 @@ class PDF_Builder_Pro_Generator {
                     error_log('[PDF Generator] Table config - colors: even_bg=' . $even_row_bg . ', odd_bg=' . $odd_row_bg . ', odd_text=' . $odd_row_text_color);
 
                     // Appliquer les propriétés CSS générales au tableau
-                    $table_css = 'width: 100%; font-size: 12px;';
+                    $table_css = 'width: 100%;';
 
                     // Couleur de fond générale du tableau
                     if (isset($element['backgroundColor']) && $element['backgroundColor'] !== 'transparent') {
@@ -286,10 +286,12 @@ class PDF_Builder_Pro_Generator {
                         error_log('[PDF Generator] Table text color: ' . $element['color']);
                     }
 
-                    // Taille de police
+                    // Taille de police (remplace la valeur par défaut)
                     if (isset($element['fontSize'])) {
                         $table_css .= ' font-size: ' . intval($element['fontSize']) . 'px;';
                         error_log('[PDF Generator] Table font size: ' . $element['fontSize']);
+                    } else {
+                        $table_css .= ' font-size: 12px;'; // Valeur par défaut
                     }
 
                     // Famille de police
@@ -336,11 +338,28 @@ class PDF_Builder_Pro_Generator {
                         error_log('[PDF Generator] Table shadow: ' . $shadow_offset_x . 'px ' . $shadow_offset_y . 'px ' . $shadow_blur . 'px ' . $shadow_color);
                     }
 
-                    $table_css .= $border_style; // Ajouter le border_style des cellules si nécessaire
+                    // Ajouter le border-collapse pour les bordures de cellules
+                    if ($show_borders) {
+                        $table_css .= ' border-collapse: collapse;';
+                    }
+
+                    // Style des bordures pour les cellules
+                    $cell_border_style = $show_borders ? 'border: 1px solid #ddd;' : '';
 
                     $table_html .= "<table style='{$table_css}'>";
 
-                    error_log('[PDF Generator] Final table CSS: ' . $table_css);                    // Products
+                    error_log('[PDF Generator] Final table CSS: ' . $table_css);
+                    error_log('[PDF Generator] Cell border style: ' . $cell_border_style);
+
+                    // Headers
+                    if ($show_headers) {
+                        error_log('[PDF Generator] Rendering table headers');
+                        $table_html .= "<thead><tr style='background-color: #f5f5f5;'>";
+                        foreach ($headers as $header) {
+                            $table_html .= "<th style='padding: 8px; text-align: left; {$cell_border_style} font-weight: bold;'>{$header}</th>";
+                        }
+                        $table_html .= "</tr></thead>";
+                    }
                     $table_html .= "<tbody>";
                     $row_count = 0;
                     foreach ($items as $item) {
@@ -356,14 +375,14 @@ class PDF_Builder_Pro_Generator {
                         if ($columns['name']) {
                             $product_name = $item->get_name();
                             error_log('[PDF Generator] Product name: ' . $product_name);
-                            $table_html .= "<td style='padding: 8px; {$border_style}'>{$product_name}</td>";
+                            $table_html .= "<td style='padding: 8px; {$cell_border_style}'>{$product_name}</td>";
                         }
 
                         // Quantity
                         if ($columns['quantity']) {
                             $quantity = $item->get_quantity();
                             error_log('[PDF Generator] Quantity: ' . $quantity);
-                            $table_html .= "<td style='padding: 8px; {$border_style} text-align: center;'>{$quantity}</td>";
+                            $table_html .= "<td style='padding: 8px; {$cell_border_style} text-align: center;'>{$quantity}</td>";
                         }
 
                         // Price
@@ -372,14 +391,14 @@ class PDF_Builder_Pro_Generator {
                             $price = $product ? $product->get_price() : 0;
                             $price_formatted = function_exists('wc_price') ? wc_price($price) : $price;
                             error_log('[PDF Generator] Price: ' . $price . ' -> ' . $price_formatted);
-                            $table_html .= "<td style='padding: 8px; {$border_style} text-align: right;'>{$price_formatted}</td>";
+                            $table_html .= "<td style='padding: 8px; {$cell_border_style} text-align: right;'>{$price_formatted}</td>";
                         }
 
                         // Total
                         if ($columns['total']) {
                             $total = function_exists('wc_price') ? wc_price($item->get_total()) : $item->get_total();
                             error_log('[PDF Generator] Total: ' . $total);
-                            $table_html .= "<td style='padding: 8px; {$border_style} text-align: right; font-weight: bold;'>{$total}</td>";
+                            $table_html .= "<td style='padding: 8px; {$cell_border_style} text-align: right; font-weight: bold;'>{$total}</td>";
                         }
 
                         $table_html .= "</tr>";
@@ -393,7 +412,7 @@ class PDF_Builder_Pro_Generator {
                     $show_total = $element['showTotal'] ?? true;
                     
                     if ($show_subtotal || $show_shipping || $show_taxes || $show_discount || $show_total) {
-                        $table_html .= "<tr style='background-color: #f9f9f9; font-weight: bold;'><td colspan='" . count(array_filter($columns)) . "' style='padding: 8px; {$border_style} text-align: right;'>";
+                        $table_html .= "<tr style='background-color: #f9f9f9; font-weight: bold;'><td colspan='" . count(array_filter($columns)) . "' style='padding: 8px; {$cell_border_style} text-align: right;'>";
                         
                         $summary_lines = [];
                         
