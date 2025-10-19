@@ -1266,6 +1266,18 @@ class PDF_Builder_WooCommerce_Integration {
             if (!empty($elements)) {
                 // Priorité aux éléments passés directement (depuis l'éditeur Canvas)
 
+                // Récupérer l'order pour les variables dynamiques si order_id est fourni
+                $order = null;
+                if ($order_id && $order_id > 0) {
+                    if (!class_exists('WooCommerce')) {
+                        wp_send_json_error('WooCommerce n\'est pas installé ou activé');
+                    }
+                    $order = wc_get_order($order_id);
+                    if (!$order) {
+                        wp_send_json_error('Commande non trouvée');
+                    }
+                }
+
                 // Nettoyer les slashes échappés par PHP (correction force)
                 $clean_elements = stripslashes($elements);
 
@@ -1287,10 +1299,18 @@ class PDF_Builder_WooCommerce_Integration {
 
                 if ($preview_type === 'html') {
                     // Générer l'aperçu HTML avec les éléments du Canvas - SANS TCPDF
-                    $result = $generator->generate($decoded_elements, ['is_preview' => true]);
+                    $options = ['is_preview' => true];
+                    if ($order) {
+                        $options['order'] = $order;
+                    }
+                    $result = $generator->generate($decoded_elements, $options);
                 } else {
                     // PLUS DE GÉNÉRATION PDF AVEC TCPDF - Forcer HTML
-                    $result = $generator->generate($decoded_elements, ['is_preview' => true]);
+                    $options = ['is_preview' => true];
+                    if ($order) {
+                        $options['order'] = $order;
+                    }
+                    $result = $generator->generate($decoded_elements, $options);
                 }
 
                 // LOG DU RÉSULTAT GÉNÉRÉ
@@ -1299,6 +1319,15 @@ class PDF_Builder_WooCommerce_Integration {
 
             } elseif ($order_id && $order_id > 0) {
                 // Aperçu de template depuis l'éditeur (éléments JSON)
+
+                // Récupérer l'order pour les variables dynamiques
+                if (!class_exists('WooCommerce')) {
+                    wp_send_json_error('WooCommerce n\'est pas installé ou activé');
+                }
+                $order = wc_get_order($order_id);
+                if (!$order) {
+                    wp_send_json_error('Commande non trouvée');
+                }
 
                 // Nettoyer les slashes échappés par PHP (correction force)
                 $clean_elements = stripslashes($elements);
@@ -1312,10 +1341,10 @@ class PDF_Builder_WooCommerce_Integration {
 
                 if ($preview_type === 'html') {
                     // Générer l'aperçu HTML avec les éléments du template - SANS TCPDF
-                    $result = $generator->generate($decoded_elements, ['is_preview' => true]);
+                    $result = $generator->generate($decoded_elements, ['is_preview' => true, 'order' => $order]);
                 } else {
                     // PLUS DE GÉNÉRATION PDF AVEC TCPDF - Forcer HTML
-                    $result = $generator->generate($decoded_elements, ['is_preview' => true]);
+                    $result = $generator->generate($decoded_elements, ['is_preview' => true, 'order' => $order]);
                 }
 
             } elseif ($order_id && $order_id > 0) {
@@ -1353,7 +1382,7 @@ class PDF_Builder_WooCommerce_Integration {
                 $elements_for_pdf = isset($template_data['elements']) ? $template_data['elements'] : [];
 
                 // Générer l'aperçu PDF
-                $result = $generator->generate($elements_for_pdf, ['is_preview' => true]);
+                $result = $generator->generate($elements_for_pdf, ['is_preview' => true, 'order' => $order]);
 
             } else {
                 wp_send_json_error('Contexte d\'aperçu invalide');
