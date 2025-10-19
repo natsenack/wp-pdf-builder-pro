@@ -272,22 +272,28 @@ class PDF_Builder_Pro_Generator {
                 return "<div class='canvas-element' style='" . esc_attr($style) . ";'></div>";
 
             case 'product_table':
-                // LOGS DÉTAILLÉS POUR DIAGNOSTIC
-                error_log('[PDF Generator] === PRODUCT_TABLE RENDERING START ===');
-                error_log('[PDF Generator] Element ID: ' . ($element['id'] ?? 'unknown'));
-                error_log('[PDF Generator] Element properties count: ' . count($element));
-                error_log('[PDF Generator] Element properties: ' . json_encode($element));
+                try {
+                    // LOGS DÉTAILLÉS POUR DIAGNOSTIC
+                    error_log('[PDF Generator] === PRODUCT_TABLE RENDERING START ===');
+                    error_log('[PDF Generator] Element ID: ' . ($element['id'] ?? 'unknown'));
+                    error_log('[PDF Generator] Element properties count: ' . count($element));
+                    error_log('[PDF Generator] Element properties: ' . json_encode($element));
 
-                $table_html = '';
-                $table_html = $this->generate_table_html_from_canvas_template($element);
+                    $table_html = '';
+                    $table_html = $this->generate_table_html_from_canvas_template($element);
 
-                error_log('[PDF Generator] Table HTML generated from canvas template, length: ' . strlen($table_html));
+                    error_log('[PDF Generator] Table HTML generated from canvas template, length: ' . strlen($table_html));
 
-                error_log('[PDF Generator] === PRODUCT_TABLE RENDERING END ===');
-                error_log('[PDF Generator] Generated HTML length: ' . strlen($table_html));
-                error_log('[PDF Generator] Generated HTML preview: ' . substr($table_html, 0, 200) . '...');
+                    error_log('[PDF Generator] === PRODUCT_TABLE RENDERING END ===');
+                    error_log('[PDF Generator] Generated HTML length: ' . strlen($table_html));
+                    error_log('[PDF Generator] Generated HTML preview: ' . substr($table_html, 0, 200) . '...');
 
-                return "<div class='canvas-element' style='" . esc_attr($style) . "; overflow: auto;'>" . $table_html . "</div>";
+                    return "<div class='canvas-element' style='" . esc_attr($style) . "; overflow: auto;'>" . $table_html . "</div>";
+                } catch (Exception $e) {
+                    error_log('[PDF Generator] ERROR in product_table: ' . $e->getMessage());
+                    error_log('[PDF Generator] ERROR stack trace: ' . $e->getTraceAsString());
+                    throw $e; // Re-throw to be caught by the outer try/catch
+                }
 
             case 'customer_info':
                 // LOG DES PROPRIÉTÉS CUSTOMER INFO
@@ -1177,34 +1183,55 @@ class PDF_Builder_Pro_Generator {
      * Génère le HTML du tableau en utilisant d'abord un template avec données fictives du canvas, puis remplace par les vraies données
      */
     private function generate_table_html_from_canvas_template($element) {
-        // Créer des données fictives pour générer le template HTML du canvas
-        $fake_data = $this->create_fake_order_data_for_template();
+        try {
+            error_log('[PDF Generator] TABLE: Starting table generation for element: ' . ($element['id'] ?? 'unknown'));
 
-        // Générer le HTML du tableau avec les données fictives (mais préserve tous les styles du canvas)
-        $fake_html = $this->generate_fake_table_html($element, $fake_data);
+            // Créer des données fictives pour générer le template HTML du canvas
+            $fake_data = $this->create_fake_order_data_for_template();
+            error_log('[PDF Generator] TABLE: Fake data created: ' . json_encode($fake_data));
 
-        // Remplacer les données fictives par les vraies données de la commande
-        $real_data = $this->create_real_order_data();
-        $real_html = $this->replace_fake_data_with_real_data($fake_html, $fake_data, $real_data);
+            // Générer le HTML du tableau avec les données fictives (mais préserve tous les styles du canvas)
+            $fake_html = $this->generate_fake_table_html($element, $fake_data);
+            error_log('[PDF Generator] TABLE: Fake HTML generated, length: ' . strlen($fake_html));
 
-        return $real_html;
+            // Remplacer les données fictives par les vraies données de la commande
+            $real_data = $this->create_real_order_data();
+            error_log('[PDF Generator] TABLE: Real data created: ' . json_encode($real_data));
+
+            $real_html = $this->replace_fake_data_with_real_data($fake_html, $fake_data, $real_data);
+            error_log('[PDF Generator] TABLE: Real HTML generated, length: ' . strlen($real_html));
+
+            return $real_html;
+        } catch (Exception $e) {
+            error_log('[PDF Generator] TABLE ERROR in generate_table_html_from_canvas_template: ' . $e->getMessage());
+            error_log('[PDF Generator] TABLE ERROR stack trace: ' . $e->getTraceAsString());
+            throw $e;
+        }
     }
 
     /**
      * Crée des données fictives pour générer le template HTML du canvas
      */
     private function create_fake_order_data_for_template() {
-        return [
-            'items' => [
-                $this->create_fake_item_data(1),
-                $this->create_fake_item_data(2),
-            ],
-            'subtotal' => 50.00,
-            'shipping' => 5.00,
-            'tax' => 10.00,
-            'discount' => 0.00,
-            'total' => 65.00
-        ];
+        try {
+            error_log('[PDF Generator] TABLE: Creating fake order data');
+            $data = [
+                'items' => [
+                    $this->create_fake_item_data(1),
+                    $this->create_fake_item_data(2),
+                ],
+                'subtotal' => 50.00,
+                'shipping' => 5.00,
+                'tax' => 10.00,
+                'discount' => 0.00,
+                'total' => 65.00
+            ];
+            error_log('[PDF Generator] TABLE: Fake order data created successfully');
+            return $data;
+        } catch (Exception $e) {
+            error_log('[PDF Generator] TABLE ERROR in create_fake_order_data_for_template: ' . $e->getMessage());
+            throw $e;
+        }
     }
 
     /**
@@ -1310,35 +1337,49 @@ class PDF_Builder_Pro_Generator {
      * Crée les vraies données de la commande
      */
     private function create_real_order_data() {
-        if (!$this->order) {
-            return $this->create_fake_order_data_for_template(); // Fallback
+        try {
+            error_log('[PDF Generator] TABLE: Creating real order data');
+            if (!$this->order) {
+                error_log('[PDF Generator] TABLE: No order object, using fallback fake data');
+                return $this->create_fake_order_data_for_template(); // Fallback
+            }
+
+            error_log('[PDF Generator] TABLE: Order object exists, extracting items');
+            $items = [];
+            foreach ($this->order->get_items() as $item) {
+                $product = $item->get_product();
+
+                // Récupérer TOUTES les propriétés disponibles de l'item et du produit
+                $item_data = $this->extract_complete_item_data($item, $product);
+
+                $items[] = $item_data;
+            }
+
+            error_log('[PDF Generator] TABLE: Extracted ' . count($items) . ' items from order');
+
+            // Récupérer les totaux de la commande
+            $subtotal = function_exists('wc_price') ? wc_price($this->order->get_subtotal()) : $this->order->get_subtotal();
+            $shipping = function_exists('wc_price') ? wc_price($this->order->get_shipping_total()) : $this->order->get_shipping_total();
+            $tax = function_exists('wc_price') ? wc_price($this->order->get_total_tax()) : $this->order->get_total_tax();
+            $discount = function_exists('wc_price') ? wc_price($this->order->get_total_discount()) : $this->order->get_total_discount();
+            $total = function_exists('wc_price') ? wc_price($this->order->get_total()) : $this->order->get_total();
+
+            $data = [
+                'items' => $items,
+                'subtotal' => $subtotal,
+                'shipping' => $shipping,
+                'tax' => $tax,
+                'discount' => $discount,
+                'total' => $total
+            ];
+
+            error_log('[PDF Generator] TABLE: Real order data created successfully');
+            return $data;
+        } catch (Exception $e) {
+            error_log('[PDF Generator] TABLE ERROR in create_real_order_data: ' . $e->getMessage());
+            error_log('[PDF Generator] TABLE ERROR stack trace: ' . $e->getTraceAsString());
+            throw $e;
         }
-
-        $items = [];
-        foreach ($this->order->get_items() as $item) {
-            $product = $item->get_product();
-
-            // Récupérer TOUTES les propriétés disponibles de l'item et du produit
-            $item_data = $this->extract_complete_item_data($item, $product);
-
-            $items[] = $item_data;
-        }
-
-        // Récupérer les totaux de la commande
-        $subtotal = function_exists('wc_price') ? wc_price($this->order->get_subtotal()) : $this->order->get_subtotal();
-        $shipping = function_exists('wc_price') ? wc_price($this->order->get_shipping_total()) : $this->order->get_shipping_total();
-        $tax = function_exists('wc_price') ? wc_price($this->order->get_total_tax()) : $this->order->get_total_tax();
-        $discount = function_exists('wc_price') ? wc_price($this->order->get_total_discount()) : $this->order->get_total_discount();
-        $total = function_exists('wc_price') ? wc_price($this->order->get_total()) : $this->order->get_total();
-
-        return [
-            'items' => $items,
-            'subtotal' => $subtotal,
-            'shipping' => $shipping,
-            'tax' => $tax,
-            'discount' => $discount,
-            'total' => $total
-        ];
     }
 
     /**
@@ -1385,7 +1426,12 @@ class PDF_Builder_Pro_Generator {
      * Génère le HTML du tableau avec des données fictives pour le template du canvas
      */
     private function generate_fake_table_html($element, $fake_data) {
-        $headers = $element['headers'] ?? ['Produit', 'Qté', 'Prix', 'Total'];
+        try {
+            error_log('[PDF Generator] TABLE: Starting fake table HTML generation');
+            error_log('[PDF Generator] TABLE: Element data: ' . json_encode($element));
+            error_log('[PDF Generator] TABLE: Fake data: ' . json_encode($fake_data));
+
+            $headers = $element['headers'] ?? ['Produit', 'Qté', 'Prix', 'Total'];
         $columns = $element['columns'] ?? ['image' => false, 'name' => true, 'sku' => false, 'quantity' => true, 'price' => true, 'total' => true];
         $table_style = $element['tableStyle'] ?? 'classic';
         $show_borders = $element['showBorders'] ?? true;
@@ -1606,54 +1652,69 @@ class PDF_Builder_Pro_Generator {
 
         $table_html .= "</tbody></table>";
 
+        error_log('[PDF Generator] TABLE: Fake table HTML generated successfully, length: ' . strlen($table_html));
         return $table_html;
+        } catch (Exception $e) {
+            error_log('[PDF Generator] TABLE ERROR in generate_fake_table_html: ' . $e->getMessage());
+            error_log('[PDF Generator] TABLE ERROR stack trace: ' . $e->getTraceAsString());
+            throw $e;
+        }
     }
 
     /**
      * Remplace les données fictives par les vraies données dans le HTML généré
      */
     private function replace_fake_data_with_real_data($html, $fake_data, $real_data) {
-        // Remplacer les données des items - toutes les propriétés disponibles
-        foreach ($fake_data['items'] as $index => $fake_item) {
-            if (isset($real_data['items'][$index])) {
-                $real_item = $real_data['items'][$index];
+        try {
+            error_log('[PDF Generator] TABLE: Starting data replacement in HTML');
+            error_log('[PDF Generator] TABLE: HTML length before replacement: ' . strlen($html));
 
-                // Remplacer toutes les propriétés disponibles de l'item
-                foreach ($fake_item as $key => $fake_value) {
-                    if (isset($real_item[$key])) {
-                        $real_value = $real_item[$key];
+            // Remplacer les données des items - toutes les propriétés disponibles
+            foreach ($fake_data['items'] as $index => $fake_item) {
+                if (isset($real_data['items'][$index])) {
+                    $real_item = $real_data['items'][$index];
 
-                        // Gérer les arrays (comme categories, tags, etc.)
-                        if (is_array($fake_value)) {
-                            // Pour les arrays, remplacer chaque élément
-                            if (is_array($real_value)) {
-                                foreach ($fake_value as $i => $fake_array_item) {
-                                    if (isset($real_value[$i])) {
-                                        $html = str_replace((string)$fake_array_item, (string)$real_value[$i], $html);
+                    // Remplacer toutes les propriétés disponibles de l'item
+                    foreach ($fake_item as $key => $fake_value) {
+                        if (isset($real_item[$key])) {
+                            $real_value = $real_item[$key];
+
+                            // Gérer les arrays (comme categories, tags, etc.)
+                            if (is_array($fake_value)) {
+                                // Pour les arrays, remplacer chaque élément
+                                if (is_array($real_value)) {
+                                    foreach ($fake_value as $i => $fake_array_item) {
+                                        if (isset($real_value[$i])) {
+                                            $html = str_replace((string)$fake_array_item, (string)$real_value[$i], $html);
+                                        }
                                     }
                                 }
+                            } else {
+                                // Remplacement simple pour les valeurs scalaires
+                                $html = str_replace((string)$fake_value, (string)$real_value, $html);
                             }
-                        } else {
-                            // Remplacement simple pour les valeurs scalaires
-                            $html = str_replace((string)$fake_value, (string)$real_value, $html);
-                        }
 
-                        error_log("[PDF Generator] Replaced item property {$key}: '{$fake_value}' -> '{$real_value}'");
+                            error_log("[PDF Generator] Replaced item property {$key}: '{$fake_value}' -> '{$real_value}'");
+                        }
                     }
                 }
             }
-        }
 
-        // Remplacer les totaux de la commande
-        $totals_to_replace = ['subtotal', 'shipping', 'tax', 'discount', 'total'];
-        foreach ($totals_to_replace as $total_key) {
-            if (isset($fake_data[$total_key]) && isset($real_data[$total_key])) {
-                $html = str_replace((string)$fake_data[$total_key], (string)$real_data[$total_key], $html);
-                error_log("[PDF Generator] Replaced total {$total_key}: '{$fake_data[$total_key]}' -> '{$real_data[$total_key]}'");
+            // Remplacer les totaux de la commande
+            $totals_to_replace = ['subtotal', 'shipping', 'tax', 'discount', 'total'];
+            foreach ($totals_to_replace as $total_key) {
+                if (isset($fake_data[$total_key]) && isset($real_data[$total_key])) {
+                    $html = str_replace((string)$fake_data[$total_key], (string)$real_data[$total_key], $html);
+                    error_log("[PDF Generator] Replaced total {$total_key}: '{$fake_data[$total_key]}' -> '{$real_data[$total_key]}'");
+                }
             }
-        }
 
-        error_log('[PDF Generator] HTML replacement completed. Final HTML length: ' . strlen($html));
-        return $html;
+            error_log('[PDF Generator] HTML replacement completed. Final HTML length: ' . strlen($html));
+            return $html;
+        } catch (Exception $e) {
+            error_log('[PDF Generator] TABLE ERROR in replace_fake_data_with_real_data: ' . $e->getMessage());
+            error_log('[PDF Generator] TABLE ERROR stack trace: ' . $e->getTraceAsString());
+            throw $e;
+        }
     }
 }
