@@ -81,7 +81,9 @@ const PreviewModal = ({
           elements_count: elements.length,
           width: canvasWidth,
           height: canvasHeight,
-          type: data.data.type || 'pdf'
+          type: data.data.type || 'pdf',
+          version: data.data.version,
+          renderer: data.data.renderer
         });
       } else {
         throw new Error(data.data || 'Erreur génération aperçu');
@@ -235,6 +237,21 @@ const PreviewModal = ({
               >
                 <strong>{previewData.elements_count} élément{previewData.elements_count !== 1 ? 's' : ''}</strong> •
                 Dimensions: {previewData.width}×{previewData.height}px
+                {previewData.version && (
+                  <div style={{
+                    marginTop: '8px',
+                    padding: '6px 10px',
+                    backgroundColor: '#dbeafe',
+                    border: '1px solid #bfdbfe',
+                    borderRadius: '4px',
+                    color: '#1e40af',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                    display: 'inline-block'
+                  }}>
+                    🚀 NOUVELLE VERSION TCPDF {previewData.version}
+                  </div>
+                )}
               </div>
 
               {/* Aperçu */}

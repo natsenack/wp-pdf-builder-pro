@@ -5315,7 +5315,9 @@ var PreviewModal = function PreviewModal(_ref) {
               elements_count: elements.length,
               width: canvasWidth,
               height: canvasHeight,
-              type: data.data.type || 'pdf'
+              type: data.data.type || 'pdf',
+              version: data.data.version,
+              renderer: data.data.renderer
             });
             _context.n = 10;
             break;
@@ -5471,7 +5473,19 @@ var PreviewModal = function PreviewModal(_ref) {
       fontSize: '14px',
       color: '#475569'
     }
-  }, /*#__PURE__*/React.createElement("strong", null, previewData.elements_count, " \xE9l\xE9ment", previewData.elements_count !== 1 ? 's' : ''), " \u2022 Dimensions: ", previewData.width, "\xD7", previewData.height, "px"), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("strong", null, previewData.elements_count, " \xE9l\xE9ment", previewData.elements_count !== 1 ? 's' : ''), " \u2022 Dimensions: ", previewData.width, "\xD7", previewData.height, "px", previewData.version && /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: '8px',
+      padding: '6px 10px',
+      backgroundColor: '#dbeafe',
+      border: '1px solid #bfdbfe',
+      borderRadius: '4px',
+      color: '#1e40af',
+      fontSize: '12px',
+      fontWeight: 'bold',
+      display: 'inline-block'
+    }
+  }, "\uD83D\uDE80 NOUVELLE VERSION TCPDF ", previewData.version)), /*#__PURE__*/React.createElement("div", {
     style: {
       flex: 1,
       border: '1px solid #e2e8f0',

@@ -231,7 +231,9 @@ class PDF_Builder_PDF_Generator {
                     'url' => $pdf_url,
                     'path' => $pdf_path,
                     'elements_count' => count($canvas_elements),
-                    'type' => 'pdf'
+                    'type' => 'pdf',
+                    'version' => 'TCPDF_6.6.2',
+                    'renderer' => 'tcpdf_high_fidelity'
                 ));
             } else {
                 wp_send_json_error('Erreur lors de la génération du PDF d\'aperçu');
@@ -651,6 +653,9 @@ class PDF_Builder_PDF_Generator {
      */
     private function generate_pdf_preview($elements) {
         try {
+            // Indicateur de version TCPDF
+            error_log('[PDF Builder] 🔄 NOUVELLE VERSION TCPDF - Génération d\'aperçu avec rendu haute fidélité');
+
             // Charger TCPDF
             require_once plugin_dir_path(dirname(__FILE__)) . '../../lib/tcpdf/tcpdf.php';
 
