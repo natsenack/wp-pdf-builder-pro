@@ -258,7 +258,7 @@ class PDF_Builder_Admin {
         add_action('wp_ajax_pdf_debug_metabox', [$this, 'ajax_debug_pdf_metabox']);
 
         // Hook AJAX pour l'aperçu PDF unifié
-        add_action('wp_ajax_pdf_builder_unified_preview', [$this, 'ajax_unified_pdf_preview']);
+        add_action('wp_ajax_pdf_builder_unified_pdf_preview', [$this, 'ajax_unified_pdf_preview']);
 
         // Hook AJAX pour servir les aperçus PDF en cache
         add_action('wp_ajax_pdf_builder_serve_preview', [$this, 'ajax_serve_preview']);
