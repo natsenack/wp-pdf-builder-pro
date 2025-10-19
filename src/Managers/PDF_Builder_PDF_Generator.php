@@ -693,13 +693,13 @@ class PDF_Builder_PDF_Generator {
             // Ajouter une page
             $pdf->AddPage();
 
-            // Si aucun élément, utiliser les éléments d'exemple
-            if (empty($elements)) {
-                $elements = $this->get_sample_elements();
-            }
+            // Pour l'aperçu dans l'éditeur, utiliser toujours les éléments d'exemple
+            // pour montrer un rendu représentatif du PDF final
+            $elements = $this->get_sample_elements();
 
             // Rendre chaque élément dans le PDF
-            foreach ($elements as $element) {
+            foreach ($elements as $index => $element) {
+                error_log('[PDF Builder] Rendu élément ' . ($index + 1) . '/' . count($elements) . ' - Type: ' . ($element['type'] ?? 'unknown'));
                 $this->render_element_to_pdf($pdf, $element);
             }
 
@@ -798,6 +798,19 @@ class PDF_Builder_PDF_Generator {
                     $pdf->SetXY($x, $y + $height/2 - 2);
                     $pdf->Cell($width, 4, 'Image', 0, 0, 'C');
                 }
+                break;
+
+            default:
+                // Élément non supporté - afficher un placeholder
+                error_log('[PDF Builder] Élément non supporté: ' . $type);
+                $pdf->SetFillColor(255, 235, 235);
+                $pdf->SetDrawColor(255, 0, 0);
+                $pdf->SetLineWidth(0.5);
+                $pdf->Rect($x, $y, $width, $height, 'DF');
+                $pdf->SetFont('helvetica', '', 8);
+                $pdf->SetTextColor(255, 0, 0);
+                $pdf->SetXY($x, $y + $height/2 - 2);
+                $pdf->Cell($width, 4, $type, 0, 0, 'C');
                 break;
         }
     }
