@@ -200,6 +200,10 @@ class PDF_Builder_Pro_Generator {
             case 'dynamic-text':
             case 'multiline_text':
                 $content = $element['content'] ?? $element['text'] ?? '';
+                // Pour dynamic-text, remplacer les variables si un ordre est défini
+                if ($type === 'dynamic-text' && $this->order) {
+                    $content = $this->replace_order_variables($content, $this->order);
+                }
                 return "<div class='canvas-element' style='" . esc_attr($style) . "; white-space: pre-wrap; word-wrap: break-word;'>" . wp_kses_post($content) . "</div>";
 
             case 'image':
@@ -353,6 +357,152 @@ class PDF_Builder_Pro_Generator {
     private function log_error($message) {
         $this->errors[] = $message;
         error_log('[PDF Builder] ' . $message);
+    }
+
+    /**
+     * Remplace les variables de commande et compagnie dans le contenu
+     */
+    private function replace_order_variables($content, $order = null) {
+        // Variables de compagnie (toujours disponibles)
+        $company_replacements = array(
+            '{{company_name}}' => get_bloginfo('name'),
+            '{{company_email}}' => get_option('pdf_builder_company_email', ''),
+            '{{company_phone}}' => get_option('pdf_builder_company_phone', ''),
+            '{{company_siret}}' => get_option('pdf_builder_company_siret', ''),
+            '{{company_vat}}' => get_option('pdf_builder_company_vat', ''),
+            '{{company_address}}' => get_option('pdf_builder_company_address', ''),
+            '{{company_info}}' => $this->format_complete_company_info(),
+        );
+
+        // Variables de commande (seulement si ordre existe)
+        $order_replacements = array();
+        if ($order) {
+            $billing_address = $order->get_formatted_billing_address();
+            $shipping_address = $order->get_formatted_shipping_address();
+
+            $order_replacements = array(
+                '{{order_id}}' => $order->get_id(),
+                '{{order_number}}' => $order->get_order_number(),
+                '{{order_date}}' => $order->get_date_created() ? $order->get_date_created()->date('d/m/Y') : date('d/m/Y'),
+                '{{order_date_time}}' => $order->get_date_created() ? $order->get_date_created()->date('d/m/Y H:i:s') : date('d/m/Y H:i:s'),
+                '{{customer_name}}' => trim($order->get_billing_first_name() . ' ' . $order->get_billing_last_name()),
+                '{{customer_first_name}}' => $order->get_billing_first_name(),
+                '{{customer_last_name}}' => $order->get_billing_last_name(),
+                '{{customer_email}}' => $order->get_billing_email(),
+                '{{customer_phone}}' => $order->get_billing_phone(),
+                '{{billing_company}}' => $order->get_billing_company(),
+                '{{billing_address_1}}' => $order->get_billing_address_1(),
+                '{{billing_address_2}}' => $order->get_billing_address_2(),
+                '{{billing_city}}' => $order->get_billing_city(),
+                '{{billing_state}}' => $order->get_billing_state(),
+                '{{billing_postcode}}' => $order->get_billing_postcode(),
+                '{{billing_country}}' => $order->get_billing_country(),
+                '{{billing_address}}' => $billing_address ?: 'Adresse de facturation non disponible',
+                '{{shipping_first_name}}' => $order->get_shipping_first_name(),
+                '{{shipping_last_name}}' => $order->get_shipping_last_name(),
+                '{{shipping_company}}' => $order->get_shipping_company(),
+                '{{shipping_address_1}}' => $order->get_shipping_address_1(),
+                '{{shipping_address_2}}' => $order->get_shipping_address_2(),
+                '{{shipping_city}}' => $order->get_shipping_city(),
+                '{{shipping_state}}' => $order->get_shipping_state(),
+                '{{shipping_postcode}}' => $order->get_shipping_postcode(),
+                '{{shipping_country}}' => $order->get_shipping_country(),
+                '{{shipping_address}}' => $shipping_address ?: 'Adresse de livraison non disponible',
+                '{{total}}' => function_exists('wc_price') ? wc_price($order->get_total()) : $order->get_total(),
+                '{{subtotal}}' => function_exists('wc_price') ? wc_price($order->get_subtotal()) : $order->get_subtotal(),
+                '{{tax}}' => function_exists('wc_price') ? wc_price($order->get_total_tax()) : $order->get_total_tax(),
+                '{{shipping_total}}' => function_exists('wc_price') ? wc_price($order->get_shipping_total()) : $order->get_shipping_total(),
+                '{{discount_total}}' => function_exists('wc_price') ? wc_price($order->get_discount_total()) : $order->get_discount_total(),
+                '{{payment_method}}' => $order->get_payment_method_title(),
+                '{{order_status}}' => function_exists('wc_get_order_status_name') ? wc_get_order_status_name($order->get_status()) : $order->get_status(),
+                '{{currency}}' => $order->get_currency(),
+            );
+        }
+
+        // Fusionner les remplacements
+        $all_replacements = array_merge($order_replacements, $company_replacements);
+
+        // Créer les arrays pour les différents formats de variables
+        $double_brace_replacements = $all_replacements;
+
+        // Variables avec crochets [variable]
+        $bracket_replacements = array();
+        foreach ($all_replacements as $key => $value) {
+            $bracket_key = str_replace(['{{', '}}'], ['[', ']'], $key);
+            $bracket_replacements[$bracket_key] = $value;
+        }
+
+        // Variables avec accolades simples {variable}
+        $single_brace_replacements = array();
+        foreach ($all_replacements as $key => $value) {
+            $single_key = str_replace(['{{', '}}'], ['{', '}'], $key);
+            $single_brace_replacements[$single_key] = $value;
+        }
+
+        // Appliquer les remplacements dans l'ordre : simples, doubles, crochets
+        $content = str_replace(array_keys($single_brace_replacements), array_values($single_brace_replacements), $content);
+        $content = str_replace(array_keys($double_brace_replacements), array_values($double_brace_replacements), $content);
+        $content = str_replace(array_keys($bracket_replacements), array_values($bracket_replacements), $content);
+
+        return $content;
+    }
+
+    /**
+     * Formate les informations complètes de la compagnie
+     */
+    private function format_complete_company_info() {
+        $company_info = get_option('pdf_builder_company_info', '');
+        if (!empty($company_info)) {
+            return $company_info;
+        }
+
+        $company_parts = [];
+        $company_name = get_bloginfo('name');
+        if (!empty($company_name)) {
+            $company_parts[] = $company_name;
+        }
+
+        $address_parts = [];
+        $company_address = get_option('pdf_builder_company_address', '');
+        if (!empty($company_address)) {
+            $address_parts[] = $company_address;
+        }
+
+        $company_city = get_option('pdf_builder_company_city', '');
+        if (!empty($company_city)) {
+            $address_parts[] = $company_city;
+        }
+
+        $company_postcode = get_option('pdf_builder_company_postcode', '');
+        if (!empty($company_postcode)) {
+            $address_parts[] = $company_postcode;
+        }
+
+        if (!empty($address_parts)) {
+            $company_parts = array_merge($company_parts, $address_parts);
+        }
+
+        $company_email = get_option('pdf_builder_company_email', '');
+        if (!empty($company_email)) {
+            $company_parts[] = $company_email;
+        }
+
+        $company_phone = get_option('pdf_builder_company_phone', '');
+        if (!empty($company_phone)) {
+            $company_parts[] = $company_phone;
+        }
+
+        $company_siret = get_option('pdf_builder_company_siret', '');
+        if (!empty($company_siret)) {
+            $company_parts[] = 'SIRET: ' . $company_siret;
+        }
+
+        $company_vat = get_option('pdf_builder_company_vat', '');
+        if (!empty($company_vat)) {
+            $company_parts[] = 'TVA: ' . $company_vat;
+        }
+
+        return implode("\n", $company_parts);
     }
 }
 
