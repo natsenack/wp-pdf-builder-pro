@@ -702,11 +702,33 @@ class PDF_Builder_WooCommerce_Integration {
 
                 error_log('PDF PREVIEW DEBUG - Template data retrieved: ' . json_encode($template_data));
 
-                // Décoder les éléments du template
-                $template_elements = json_decode($template_data['elements'], true);
+                // Décoder les données du template (qui contient les éléments)
+                $decoded_template_data = json_decode($template_data['template_data'], true);
                 if (json_last_error() !== JSON_ERROR_NONE) {
-                    error_log('PDF PREVIEW DEBUG - Template elements JSON decode error: ' . json_last_error_msg());
-                    wp_send_json_error('Données du template corrompues');
+                    error_log('PDF PREVIEW DEBUG - Template data JSON decode error: ' . json_last_error_msg());
+                    error_log('PDF PREVIEW DEBUG - Raw template_data: ' . substr($template_data['template_data'], 0, 500));
+                    // Essayer de récupérer avec stripslashes au cas où
+                    $clean_template_data = stripslashes($template_data['template_data']);
+                    $decoded_template_data = json_decode($clean_template_data, true);
+                    if (json_last_error() !== JSON_ERROR_NONE) {
+                        wp_send_json_error('Données du template invalides: ' . json_last_error_msg());
+                    }
+                }
+
+                $template_elements = isset($decoded_template_data['elements']) ? $decoded_template_data['elements'] : [];
+
+                if (empty($template_elements)) {
+                    error_log('PDF PREVIEW DEBUG - Template has no elements, using fallback');
+                    // Template vide, utiliser un élément de fallback
+                    $template_elements = [
+                        [
+                            'type' => 'text',
+                            'content' => 'Template vide - Veuillez ajouter des éléments dans l\'éditeur',
+                            'position' => ['x' => 20, 'y' => 50],
+                            'size' => ['width' => 150, 'height' => 20],
+                            'style' => ['fontSize' => 12, 'fontWeight' => 'normal']
+                        ]
+                    ];
                 }
 
                 error_log('PDF PREVIEW DEBUG - Template elements decoded successfully, count: ' . count($template_elements));
