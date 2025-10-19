@@ -6571,6 +6571,9 @@ class PDF_Builder_Admin {
             $type = $element['type'] ?? 'text';
             $visible = isset($element['visible']) ? (bool)$element['visible'] : true;
 
+            // DEBUG: Log des coordonnées extraites
+            error_log("[PDF Preview] Élément {$index} ({$type}): x={$x}, y={$y}, w={$width}, h={$height}, visible=" . ($visible ? 'true' : 'false'));
+
             if (!$visible) {
                 continue;
             }
@@ -6594,8 +6597,12 @@ class PDF_Builder_Admin {
 
             // Rendre l'élément selon son type
             $html .= '<div class="canvas-element" style="' . esc_attr($style) . '">';
-            $html .= $this->render_preview_element($element, $order);
+            $element_html = $this->render_preview_element($element, $order);
+            $html .= $element_html;
             $html .= '</div>';
+
+            // DEBUG: Log l'HTML généré
+            error_log("[PDF Preview] Élément {$index} HTML: " . substr($element_html, 0, 100) . "...");
         }
 
         return $html;
