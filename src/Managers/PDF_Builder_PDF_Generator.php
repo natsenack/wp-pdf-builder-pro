@@ -181,26 +181,34 @@ class PDF_Builder_PDF_Generator {
         error_log('[PDF Builder Preview] Raw elements received: ' . substr($elements, 0, 200) . '...');
         error_log('[PDF Builder Preview] Elements length: ' . strlen($elements));
 
-        // Décoder depuis base64
-        $jsonString = base64_decode($elements);
-        if ($jsonString === false) {
-            wp_send_json_error('Erreur décodage base64');
-        }
-
-        error_log('[PDF Builder Preview] Decoded JSON length: ' . strlen($jsonString));
-        error_log('[PDF Builder Preview] Decoded JSON start: ' . substr($jsonString, 0, 200) . '...');
-
         try {
+            // Décoder depuis base64
+            $jsonString = base64_decode($elements);
+            if ($jsonString === false) {
+                error_log('[PDF Builder Preview] Base64 decode failed');
+                wp_send_json_error('Erreur décodage base64');
+                return;
+            }
+
+            error_log('[PDF Builder Preview] Decoded JSON length: ' . strlen($jsonString));
+            error_log('[PDF Builder Preview] Decoded JSON start: ' . substr($jsonString, 0, 200) . '...');
+
             // Décoder les éléments JSON
             $canvas_elements = json_decode($jsonString, true);
             
-            if (!$canvas_elements || !is_array($canvas_elements)) {
-                error_log('[PDF Builder Preview] json_last_error: ' . json_last_error());
-                error_log('[PDF Builder Preview] json_last_error_msg: ' . json_last_error_msg());
-                error_log('[PDF Builder Preview] is_array check: ' . (is_array($canvas_elements) ? 'true' : 'false'));
-                error_log('[PDF Builder Preview] count: ' . (is_array($canvas_elements) ? count($canvas_elements) : 'N/A'));
-                wp_send_json_error('Format JSON invalide pour les éléments');
+            if ($canvas_elements === null && json_last_error() !== JSON_ERROR_NONE) {
+                error_log('[PDF Builder Preview] JSON decode error: ' . json_last_error_msg());
+                wp_send_json_error('Erreur décodage JSON: ' . json_last_error_msg());
+                return;
             }
+            
+            if (!$canvas_elements || !is_array($canvas_elements)) {
+                error_log('[PDF Builder Preview] Invalid canvas elements structure');
+                wp_send_json_error('Format JSON invalide pour les éléments');
+                return;
+            }
+
+            error_log('[PDF Builder Preview] Successfully decoded ' . count($canvas_elements) . ' elements');
 
             // Créer un template à partir des éléments canvas
             $template_data = array(
@@ -226,7 +234,8 @@ class PDF_Builder_PDF_Generator {
                 wp_send_json_error('Erreur lors de la génération du PDF d\'aperçu');
             }
         } catch (Exception $e) {
-            wp_send_json_error('Erreur aperçu: ' . $e->getMessage());
+            error_log('[PDF Builder Preview] Exception: ' . $e->getMessage());
+            wp_send_json_error('Erreur traitement données: ' . $e->getMessage());
         }
     }
 
