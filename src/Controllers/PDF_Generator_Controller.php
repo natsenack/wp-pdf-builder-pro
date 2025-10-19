@@ -167,34 +167,30 @@ class PDF_Builder_Pro_Generator {
         // Appliquer les styles CSS des propriétés
         $style .= 'box-sizing: border-box; ';
         
+        // Utiliser la fonction centralisée pour extraire tous les styles
         if (isset($element['properties'])) {
-            $style .= $this->extract_element_styles($element['properties']);
+            $additional_styles = $this->extract_element_styles($element['properties']);
+            if (!empty($additional_styles)) {
+                $style .= $additional_styles . '; ';
+            }
         }
         
-        // Ajouter les styles directement de l'élément s'ils existent
-        if (isset($element['color'])) {
-            $style .= 'color: ' . esc_attr($element['color']) . '; ';
-        }
-        if (isset($element['backgroundColor'])) {
-            $style .= 'background-color: ' . esc_attr($element['backgroundColor']) . '; ';
-        }
-        if (isset($element['fontSize'])) {
-            $style .= 'font-size: ' . intval($element['fontSize']) . 'px; ';
-        }
-        if (isset($element['fontWeight'])) {
-            $style .= 'font-weight: ' . esc_attr($element['fontWeight']) . '; ';
-        }
-        if (isset($element['textAlign'])) {
-            $style .= 'text-align: ' . esc_attr($element['textAlign']) . '; ';
-        }
-        if (isset($element['border'])) {
-            $style .= 'border: ' . esc_attr($element['border']) . '; ';
-        }
-        if (isset($element['borderColor'])) {
-            $style .= 'border-color: ' . esc_attr($element['borderColor']) . '; ';
-        }
-        if (isset($element['borderWidth'])) {
-            $style .= 'border-width: ' . intval($element['borderWidth']) . 'px; ';
+        // Propriétés directes de l'élément (fallback si pas dans properties)
+        $direct_properties = [
+            'color', 'backgroundColor', 'fontSize', 'fontWeight', 'fontStyle', 'fontFamily',
+            'textAlign', 'textDecoration', 'lineHeight', 'border', 'borderColor', 'borderWidth',
+            'borderStyle', 'borderRadius', 'opacity', 'rotation', 'scale', 'shadow',
+            'shadowColor', 'shadowOffsetX', 'shadowOffsetY', 'shadowBlur', 'visible',
+            'brightness', 'contrast', 'saturate', 'blur', 'hueRotate', 'sepia', 'grayscale', 'invert'
+        ];
+        
+        foreach ($direct_properties as $prop) {
+            if (isset($element[$prop]) && !isset($element['properties'][$prop])) {
+                $css_prop = $this->convert_property_to_css($prop, $element[$prop]);
+                if ($css_prop) {
+                    $style .= $css_prop . '; ';
+                }
+            }
         }
 
         try {
@@ -536,62 +532,167 @@ class PDF_Builder_Pro_Generator {
 
         // Couleur de fond
         if (isset($properties['backgroundColor'])) {
-            $styles[] = 'background-color: ' . $properties['backgroundColor'];
+            $styles[] = 'background-color: ' . esc_attr($properties['backgroundColor']);
         }
 
         // Couleur du texte
         if (isset($properties['color'])) {
-            $styles[] = 'color: ' . $properties['color'];
+            $styles[] = 'color: ' . esc_attr($properties['color']);
         }
 
         // Taille de police
         if (isset($properties['fontSize'])) {
-            $styles[] = 'font-size: ' . $properties['fontSize'] . 'px';
+            $styles[] = 'font-size: ' . intval($properties['fontSize']) . 'px';
+        }
+
+        // Poids de la police
+        if (isset($properties['fontWeight'])) {
+            $styles[] = 'font-weight: ' . esc_attr($properties['fontWeight']);
+        }
+
+        // Style de la police
+        if (isset($properties['fontStyle'])) {
+            $styles[] = 'font-style: ' . esc_attr($properties['fontStyle']);
         }
 
         // Famille de police
         if (isset($properties['fontFamily'])) {
-            $styles[] = 'font-family: ' . $properties['fontFamily'];
+            $styles[] = 'font-family: ' . esc_attr($properties['fontFamily']);
         }
 
         // Alignement du texte
         if (isset($properties['textAlign'])) {
-            $styles[] = 'text-align: ' . $properties['textAlign'];
+            $styles[] = 'text-align: ' . esc_attr($properties['textAlign']);
         }
 
-        // Décoration du texte (souligné, barré, etc.)
+        // Décoration du texte
         if (isset($properties['textDecoration'])) {
-            $styles[] = 'text-decoration: ' . $properties['textDecoration'];
+            $styles[] = 'text-decoration: ' . esc_attr($properties['textDecoration']);
         }
 
         // Hauteur de ligne
         if (isset($properties['lineHeight'])) {
-            $styles[] = 'line-height: ' . $properties['lineHeight'];
+            $styles[] = 'line-height: ' . esc_attr($properties['lineHeight']);
         }
 
-        // Style de bordure
-        if (isset($properties['borderStyle'])) {
-            $width = $properties['borderWidth'] ?? 1;
-            $color = $properties['borderColor'] ?? '#000000';
-            $styles[] = "border: {$width}px {$properties['borderStyle']} $color";
+        // Opacité
+        if (isset($properties['opacity'])) {
+            $styles[] = 'opacity: ' . floatval($properties['opacity']);
+        }
+
+        // Bordures
+        $border_width = $properties['borderWidth'] ?? 0;
+        $border_style = $properties['borderStyle'] ?? 'solid';
+        $border_color = $properties['borderColor'] ?? '#000000';
+        $border_radius = $properties['borderRadius'] ?? 0;
+
+        if ($border_width > 0) {
+            $styles[] = "border: {$border_width}px {$border_style} {$border_color}";
+        }
+
+        if ($border_radius > 0) {
+            $styles[] = "border-radius: {$border_radius}px";
         }
 
         // Ombre
-        if (isset($properties['shadow'])) {
-            $styles[] = 'box-shadow: ' . $properties['shadow'];
+        if (isset($properties['shadow']) && $properties['shadow']) {
+            $shadow_color = $properties['shadowColor'] ?? '#000000';
+            $shadow_offset_x = $properties['shadowOffsetX'] ?? 2;
+            $shadow_offset_y = $properties['shadowOffsetY'] ?? 2;
+            $shadow_blur = $properties['shadowBlur'] ?? 1;
+            $styles[] = "box-shadow: {$shadow_offset_x}px {$shadow_offset_y}px {$shadow_blur}px {$shadow_color}";
         }
 
-        // Rotation
-        if (isset($properties['rotation'])) {
-            $styles[] = 'transform: rotate(' . $properties['rotation'] . 'deg)';
+        // Transformations
+        $transforms = [];
+        if (isset($properties['rotation']) && $properties['rotation'] != 0) {
+            $transforms[] = 'rotate(' . intval($properties['rotation']) . 'deg)';
+        }
+        if (isset($properties['scale']) && $properties['scale'] != 1) {
+            $transforms[] = 'scale(' . floatval($properties['scale']) . ')';
+        }
+        if (!empty($transforms)) {
+            $styles[] = 'transform: ' . implode(' ', $transforms);
         }
 
-        // Échelle
-        if (isset($properties['scale'])) {
-            $styles[] = 'transform: scale(' . $properties['scale'] . ')';
+        // Filtres CSS
+        $filters = [];
+        if (isset($properties['brightness']) && $properties['brightness'] != 100) {
+            $filters[] = "brightness({$properties['brightness']}%)";
+        }
+        if (isset($properties['contrast']) && $properties['contrast'] != 100) {
+            $filters[] = "contrast({$properties['contrast']}%)";
+        }
+        if (isset($properties['saturate']) && $properties['saturate'] != 100) {
+            $filters[] = "saturate({$properties['saturate']}%)";
+        }
+        if (isset($properties['blur']) && $properties['blur'] > 0) {
+            $filters[] = "blur({$properties['blur']}px)";
+        }
+        if (isset($properties['hueRotate']) && $properties['hueRotate'] != 0) {
+            $filters[] = "hue-rotate({$properties['hueRotate']}deg)";
+        }
+        if (isset($properties['sepia']) && $properties['sepia'] > 0) {
+            $filters[] = "sepia({$properties['sepia']}%)";
+        }
+        if (isset($properties['grayscale']) && $properties['grayscale'] > 0) {
+            $filters[] = "grayscale({$properties['grayscale']}%)";
+        }
+        if (isset($properties['invert']) && $properties['invert'] > 0) {
+            $filters[] = "invert({$properties['invert']}%)";
+        }
+        if (!empty($filters)) {
+            $styles[] = 'filter: ' . implode(' ', $filters);
         }
 
-        return implode('; ', $styles);
+        // Visibilité
+        if (isset($properties['visible']) && !$properties['visible']) {
+            $styles[] = 'display: none';
+        }
+    }
+
+    /**
+     * Convertir une propriété d'élément en propriété CSS
+     */
+    private function convert_property_to_css($property, $value) {
+        switch ($property) {
+            case 'color':
+                return 'color: ' . esc_attr($value);
+            case 'backgroundColor':
+                return 'background-color: ' . esc_attr($value);
+            case 'fontSize':
+                return 'font-size: ' . intval($value) . 'px';
+            case 'fontWeight':
+                return 'font-weight: ' . esc_attr($value);
+            case 'fontStyle':
+                return 'font-style: ' . esc_attr($value);
+            case 'textAlign':
+                return 'text-align: ' . esc_attr($value);
+            case 'fontFamily':
+                return 'font-family: ' . esc_attr($value);
+            case 'lineHeight':
+                return 'line-height: ' . esc_attr($value);
+            case 'visible':
+                return $value ? null : 'display: none';
+            case 'brightness':
+                return $value != 100 ? "filter: brightness({$value}%)" : null;
+            case 'contrast':
+                return $value != 100 ? "filter: contrast({$value}%)" : null;
+            case 'saturate':
+                return $value != 100 ? "filter: saturate({$value}%)" : null;
+            case 'blur':
+                return $value > 0 ? "filter: blur({$value}px)" : null;
+            case 'hueRotate':
+                return $value != 0 ? "filter: hue-rotate({$value}deg)" : null;
+            case 'sepia':
+                return $value > 0 ? "filter: sepia({$value}%)" : null;
+            case 'grayscale':
+                return $value > 0 ? "filter: grayscale({$value}%)" : null;
+            case 'invert':
+                return $value > 0 ? "filter: invert({$value}%)" : null;
+            default:
+                return null;
+        }
     }
 
     /**
