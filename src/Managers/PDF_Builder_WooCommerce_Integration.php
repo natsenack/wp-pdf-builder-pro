@@ -547,12 +547,6 @@ class PDF_Builder_WooCommerce_Integration {
                     wp_send_json_error('Données du template invalides');
                 }
 
-                // LOG POUR DIAGNOSTIC - ÉLÉMENTS REÇUS
-                error_log('[PDF Generator] WooCommerce Preview - Elements received count: ' . count($decoded_elements));
-                foreach ($decoded_elements as $index => $element) {
-                    error_log('[PDF Generator] Element ' . $index . ': type=' . ($element['type'] ?? 'unknown') . ', id=' . ($element['id'] ?? 'unknown'));
-                }
-
                 if ($preview_type === 'html') {
                     // Générer l'aperçu HTML avec les éléments du Canvas - SANS TCPDF
                     $options = ['is_preview' => true];
@@ -642,13 +636,6 @@ class PDF_Builder_WooCommerce_Integration {
                 }
 
                 $template_elements = isset($decoded_template_data['elements']) ? $decoded_template_data['elements'] : [];
-
-                // LOG POUR DIAGNOSTIC - TEMPLATE CHARGÉ DEPUIS DB
-                error_log('[PDF Generator] WooCommerce Preview - Template loaded from DB, ID: ' . $template_id);
-                error_log('[PDF Generator] WooCommerce Preview - Template elements count: ' . count($template_elements));
-                foreach ($template_elements as $index => $element) {
-                    error_log('[PDF Generator] Template Element ' . $index . ': type=' . ($element['type'] ?? 'unknown') . ', id=' . ($element['id'] ?? 'unknown'));
-                }
 
                 if (empty($template_elements)) {
                     // Template vide, utiliser un élément de fallback
