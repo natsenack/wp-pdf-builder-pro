@@ -189,8 +189,16 @@ class PDF_Builder_PDF_Generator {
                 wp_send_json_error('Format JSON invalide pour les éléments');
             }
 
-            // Générer le PDF en utilisant les éléments comme template
-            $pdf_path = $this->generate_pdf_from_template_data($canvas_elements, 'preview-' . time() . '.pdf');
+            // Créer un template à partir des éléments canvas
+            $template_data = array(
+                'elements' => $canvas_elements,
+                'canvasWidth' => 595, // A4 width in points
+                'canvasHeight' => 842, // A4 height in points
+                'version' => '1.0'
+            );
+            
+            // Générer le PDF en utilisant les données template
+            $pdf_path = $this->generate_pdf_from_template_data($template_data, 'preview-' . time() . '.pdf');
 
             if ($pdf_path && file_exists($pdf_path)) {
                 $upload_dir = wp_upload_dir();
