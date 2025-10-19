@@ -638,8 +638,17 @@ class PDF_Builder_WooCommerce_Integration {
                     wp_send_json_error('WooCommerce n\'est pas installé ou activé');
                 }
 
-                $order = wc_get_order($order_id);
+                error_log('PDF PREVIEW DEBUG - About to call wc_get_order with ID: ' . $order_id);
+                try {
+                    $order = wc_get_order($order_id);
+                    error_log('PDF PREVIEW DEBUG - wc_get_order returned: ' . gettype($order));
+                } catch (Exception $e) {
+                    error_log('PDF PREVIEW DEBUG - Exception in wc_get_order: ' . $e->getMessage());
+                    wp_send_json_error('Erreur lors du chargement de la commande: ' . $e->getMessage());
+                }
+                error_log('PDF PREVIEW DEBUG - Order object check: ' . ($order ? 'NOT NULL' : 'NULL'));
                 if (!$order) {
+                    error_log('PDF PREVIEW DEBUG - Order is null, sending error');
                     wp_send_json_error('Commande non trouvée');
                 }
 
