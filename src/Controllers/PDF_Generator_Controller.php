@@ -204,7 +204,12 @@ class PDF_Builder_Pro_Generator {
             case 'text':
             case 'dynamic-text':
             case 'multiline_text':
-                $content = $element['content'] ?? $element['text'] ?? $element['customContent'] ?? '';
+                // Pour dynamic-text, prioriser customContent, sinon content/text
+                if ($type === 'dynamic-text') {
+                    $content = $element['customContent'] ?? $element['content'] ?? $element['text'] ?? '';
+                } else {
+                    $content = $element['content'] ?? $element['text'] ?? '';
+                }
                 // Pour dynamic-text, remplacer les variables si un ordre est défini
                 if ($type === 'dynamic-text' && $this->order) {
                     $original_content = $content;

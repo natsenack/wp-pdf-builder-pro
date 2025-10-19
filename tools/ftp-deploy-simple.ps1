@@ -2,20 +2,20 @@
 # ================================
 # Version optimisée - Déploiement FTP avec vérification des changements et parallélisation
 
-Write-Host "🚀 FTP DEPLOY - VERSION SIMPLE & ROBUSTE" -ForegroundColor Green
+Write-Host "FTP DEPLOY - VERSION SIMPLE & ROBUSTE" -ForegroundColor Green
 Write-Host "=========================================" -ForegroundColor Green
 
 # ============================================================================
 # 1. CONFIGURATION
 # ============================================================================
-Write-Host "`n📋 1. Chargement de la configuration..." -ForegroundColor Cyan
+Write-Host "1. Chargement de la configuration..." -ForegroundColor Cyan
 
 $scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
 $projectRoot = Split-Path -Parent $scriptPath
 $configFile = Join-Path $scriptPath "ftp-config.env"
 
 if (-not (Test-Path $configFile)) {
-    Write-Host ("❌ Erreur: Fichier de configuration manquant: " + $configFile) -ForegroundColor Red
+Write-Host "Erreur: Fichier de configuration manquant:" $configFile -ForegroundColor Red
     exit 1
 }
 
@@ -31,7 +31,7 @@ $ftpUser = $envVars['FTP_USER']
 $ftpPassword = $envVars['FTP_PASS']
 $remotePath = $envVars['FTP_PATH']
 
-Write-Host "✅ Configuration chargée" -ForegroundColor Green
+Write-Host "Configuration chargee" -ForegroundColor Green
 Write-Host ("   Serveur: " + $ftpHost) -ForegroundColor Gray
 Write-Host ("   User: " + $ftpUser) -ForegroundColor Gray
 Write-Host ("   Destination: " + $remotePath) -ForegroundColor Gray
@@ -39,30 +39,30 @@ Write-Host ("   Destination: " + $remotePath) -ForegroundColor Gray
 # ============================================================================
 # 2. COMPILATION
 # ============================================================================
-Write-Host "`n🔨 2. Compilation du projet..." -ForegroundColor Cyan
+Write-Host "2. Compilation du projet..." -ForegroundColor Cyan
 
 Push-Location $projectRoot
 
 if (-not (Test-Path "package.json")) {
-    Write-Host "❌ Erreur: package.json introuvable" -ForegroundColor Red
+    Write-Host "ERREUR: package.json introuvable" -ForegroundColor Red
     Pop-Location
     exit 1
 }
 
 & npm run build
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "❌ Erreur: La compilation a échoué" -ForegroundColor Red
+Write-Host "Erreur: La compilation a echoue" -ForegroundColor Red
     Pop-Location
     exit 1
 }
 
-Write-Host "✅ Compilation réussie" -ForegroundColor Green
+Write-Host "Compilation reussie" -ForegroundColor Green
 Pop-Location
 
 # ============================================================================
 # 3. DÉTECTION DES FICHIERS MODIFIÉS (OPTIMISÉ)
 # ============================================================================
-Write-Host "`n✓ 3. Détection des fichiers modifiés..." -ForegroundColor Cyan
+Write-Host "3. Detection des fichiers modifies..." -ForegroundColor Cyan
 
 Push-Location $projectRoot
 
@@ -86,17 +86,32 @@ if (-not $modifiedFiles -or $modifiedFiles.Count -eq 0) {
 }
 
 # Éliminer les doublons et filtrer
-$modifiedFiles = $modifiedFiles | Select-Object -Unique | Where-Object {
-    $file = $_
-    # Inclure seulement les fichiers dans les dossiers essentiels
+$filteredFiles = @()
+foreach ($file in $modifiedFiles) {
     $essentialDirs = @('src', 'templates', 'assets', 'core', 'config', 'resources', 'lib', 'languages')
     $essentialFiles = @('bootstrap.php', 'pdf-builder-pro.php', 'readme.txt')
 
-    $isInEssentialDir = $essentialDirs | Where-Object { $file.StartsWith($_ + "\") -or $file.StartsWith($_ + '/') }
-    $isEssentialFile = $essentialFiles -contains $file
+    $isEssential = $false
+    foreach ($dir in $essentialDirs) {
+        if ($file.StartsWith($dir + '/') -or $file.StartsWith($dir + '\')) {
+            $isEssential = $true
+            break
+        }
+    }
+    if (-not $isEssential) {
+        foreach ($essentialFile in $essentialFiles) {
+            if ($file -eq $essentialFile) {
+                $isEssential = $true
+                break
+            }
+        }
+    }
 
-    $isInEssentialDir -or $isEssentialFile
+    if ($isEssential) {
+        $filteredFiles += $file
+    }
 }
+$modifiedFiles = $filteredFiles | Select-Object -Unique
 
 $filesToDeploy = @()
 foreach ($file in $modifiedFiles) {
@@ -111,16 +126,16 @@ foreach ($file in $modifiedFiles) {
 
 Pop-Location
 
-Write-Host ("✅ " + $filesToDeploy.Count + " fichiers modifiés à déployer") -ForegroundColor Green
+Write-Host ($filesToDeploy.Count + " fichiers modifies a deployer") -ForegroundColor Green
 if ($filesToDeploy.Count -eq 0) {
-    Write-Host "ℹ️  Aucun fichier modifié détecté. Déploiement annulé." -ForegroundColor Yellow
+Write-Host "`nINFO: Aucun fichier modifie detecte. Deploiement annule." -ForegroundColor Yellow
     exit 0
 }
 
 # ============================================================================
 # 4. CONNEXION FTP ET UPLOAD PARALLÈLE (OPTIMISÉ)
 # ============================================================================
-Write-Host "`n📤 4. Connexion FTP et upload parallèle..." -ForegroundColor Cyan
+Write-Host "4. Connexion FTP et upload..." -ForegroundColor Cyan
 
 $ftpUri = "ftp://" + $ftpHost + $remotePath + "/"
 $credential = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
@@ -156,74 +171,66 @@ function Send-FtpFile {
     }
 }
 
-# Upload en parallèle par lots
+# Upload simple et séquentiel
 $results = @()
-for ($i = 0; $i -lt $filesToDeploy.Count; $i += $maxConcurrentUploads) {
-    $batch = $filesToDeploy[$i..([Math]::Min($i + $maxConcurrentUploads - 1, $filesToDeploy.Count - 1))]
+foreach ($fileInfo in $filesToDeploy) {
+    try {
+        $localFile = $fileInfo.FullPath
+        $remoteFile = $ftpUri + ($fileInfo.RelativePath -replace '\\', '/')
 
-    $lotNumber = $i / $maxConcurrentUploads + 1
-    Write-Host ("📦 Traitement du lot " + $lotNumber + " (" + $batch.Count + " fichiers)...") -ForegroundColor Gray
+        $webClient = New-Object System.Net.WebClient
+        $webClient.Credentials = $credential
+        $webClient.UploadFile($remoteFile, $localFile)
 
-    # Lancer les uploads en parallèle
-    $jobs = $batch | ForEach-Object {
-        Start-Job -ScriptBlock ${function:Send-FtpFile} -ArgumentList $_, $ftpUri, $ftpUser, $ftpPassword
-    }
-
-    # Attendre la fin de tous les jobs du lot
-    $jobs | Wait-Job | Out-Null
-
-    # Récupérer les résultats
-    $batchResults = $jobs | ForEach-Object {
-        $result = Receive-Job -Job $_
-        Remove-Job -Job $_
-        $result
-    }
-
-    $results += $batchResults
-
-    # Afficher les résultats du lot
-    foreach ($result in $batchResults) {
-        if ($result.Success) {
-            Write-Host ('✅ ' + $result.FilePath) -ForegroundColor Green
-            $uploadedCount++
-        } else {
-            Write-Host ('❌ Erreur uploading ' + $result.FilePath + ': ' + $result.Error) -ForegroundColor Red
-            $failedCount++
+        $results += @{
+            Success = $true
+            FilePath = $fileInfo.RelativePath
         }
+        Write-Host "OK $($fileInfo.RelativePath)" -ForegroundColor Green
+        $uploadedCount++
+    }
+    catch {
+        $results += @{
+            Success = $false
+            FilePath = $fileInfo.RelativePath
+            Error = $_.Exception.Message
+        }
+        Write-Host "ERREUR uploading $($fileInfo.RelativePath): $($_.Exception.Message)" -ForegroundColor Red
+        $failedCount++
     }
 }
 
 # ============================================================================
 # 5. RÉSUMÉ
 # ============================================================================
-Write-Host "`n📊 5. Résumé du déploiement" -ForegroundColor Cyan
+Write-Host "5. Resume du deploiement" -ForegroundColor Cyan
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Gray
-Write-Host ("✅ Fichiers uploadés: " + $uploadedCount) -ForegroundColor Green
-Write-Host ('❌ Fichiers échoués: ' + $failedCount) -ForegroundColor $(if ($failedCount -gt 0) { 'Red' } else { 'Green' })
+Write-Host ("Fichiers uploades: " + $uploadedCount) -ForegroundColor Green
+Write-Host ('Fichiers echoues: ' + $failedCount) -ForegroundColor $(if ($failedCount -gt 0) { 'Red' } else { 'Green' })
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor Gray
 
 # ============================================================================
 # 6. PUSH GIT
 # ============================================================================
-Write-Host "`n🔄 6. Push Git..." -ForegroundColor Cyan
+Write-Host "6. Push Git..." -ForegroundColor Cyan
 
 Push-Location $projectRoot
 
 git add -A
-    $date = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
-    git commit -m ("Déploiement automatique - " + $date)
+$date = Get-Date -Format 'yyyy-MM-dd HH:mm:ss'
+git commit -m "Déploiement automatique - $date"
 
 if ($LASTEXITCODE -ne 0 -and $LASTEXITCODE -ne 1) {
-    Write-Host "❌ Erreur Git" -ForegroundColor Red
+    Write-Host "ERREUR Git" -ForegroundColor Red
     Pop-Location
     exit 1
 }
 
 git push origin dev
 if ($LASTEXITCODE -eq 0) {
-    Write-Host "✅ Push Git réussi" -ForegroundColor Green
+    Write-Host "Push Git reussi" -ForegroundColor Green
 } else {
-    Write-Host "⚠️  Erreur lors du push Git" -ForegroundColor Yellow
+    Write-Host "ATTENTION: Erreur lors du push Git" -ForegroundColor Yellow
 }
 
 Pop-Location
@@ -231,5 +238,3 @@ Pop-Location
 # ============================================================================
 # FIN
 # ============================================================================
-Write-Host "`n✅ Déploiement terminé!" -ForegroundColor Green
-Write-Host ("Destination: ftp://" + $ftpHost + $remotePath + "/") -ForegroundColor Cyan
