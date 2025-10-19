@@ -1345,143 +1345,45 @@ class PDF_Builder_Pro_Generator {
      * Extrait toutes les propriétés disponibles d'un item de commande WooCommerce
      */
     private function extract_complete_item_data($item, $product = null) {
-        $data = [];
+        // Version simplifiée et robuste avec vérifications de sécurité
+        $data = [
+            'name' => 'Produit',
+            'quantity' => 1,
+            'price' => '0.00',
+            'total' => '0.00'
+        ];
 
-        // === PROPRIÉTÉS DE BASE DE L'ITEM ===
-        $data['name'] = $item->get_name();
-        $data['quantity'] = $item->get_quantity();
-        $data['quantity_raw'] = $item->get_quantity(); // Version non formatée
+        if ($item) {
+            $data['name'] = method_exists($item, 'get_name') ? $item->get_name() : 'Produit sans nom';
+            $data['quantity'] = method_exists($item, 'get_quantity') ? $item->get_quantity() : 1;
 
-        // === PROPRIÉTÉS DE PRIX ===
-        $data['price'] = function_exists('wc_price') ? wc_price($item->get_subtotal() / max(1, $item->get_quantity())) : ($item->get_subtotal() / max(1, $item->get_quantity()));
-        $data['price_raw'] = $item->get_subtotal() / max(1, $item->get_quantity()); // Prix unitaire brut
-        $data['total'] = function_exists('wc_price') ? wc_price($item->get_total()) : $item->get_total();
-        $data['total_raw'] = $item->get_total(); // Total brut
-        $data['subtotal'] = function_exists('wc_price') ? wc_price($item->get_subtotal()) : $item->get_subtotal();
-        $data['subtotal_raw'] = $item->get_subtotal(); // Subtotal brut
-        $data['tax'] = function_exists('wc_price') ? wc_price($item->get_total_tax()) : $item->get_total_tax();
-        $data['tax_raw'] = $item->get_total_tax(); // Taxe brute
+            if (method_exists($item, 'get_total')) {
+                $data['total'] = function_exists('wc_price') ? wc_price($item->get_total()) : number_format($item->get_total(), 2);
+            }
 
-        // === PROPRIÉTÉS DU PRODUIT ===
+            if (method_exists($item, 'get_subtotal') && method_exists($item, 'get_quantity')) {
+                $quantity = max(1, $item->get_quantity());
+                $unit_price = $item->get_subtotal() / $quantity;
+                $data['price'] = function_exists('wc_price') ? wc_price($unit_price) : number_format($unit_price, 2);
+            }
+        }
+
+        // Ajouter quelques propriétés supplémentaires si disponibles
         if ($product) {
-            $data['product_id'] = $product->get_id();
-            $data['sku'] = $product->get_sku();
-            $data['product_url'] = get_permalink($product->get_id());
-            $data['product_type'] = $product->get_type();
-            $data['is_virtual'] = $product->is_virtual();
-            $data['is_downloadable'] = $product->is_downloadable();
-            $data['is_taxable'] = $product->is_taxable();
-            $data['tax_class'] = $product->get_tax_class();
-            $data['tax_status'] = $product->get_tax_status();
-
-            // Prix du produit
-            $data['regular_price'] = function_exists('wc_price') ? wc_price($product->get_regular_price()) : $product->get_regular_price();
-            $data['regular_price_raw'] = $product->get_regular_price();
-            $data['sale_price'] = function_exists('wc_price') ? wc_price($product->get_sale_price()) : $product->get_sale_price();
-            $data['sale_price_raw'] = $product->get_sale_price();
-            $data['price_html'] = $product->get_price_html();
-
-            // Poids et dimensions
-            $data['weight'] = $product->get_weight();
-            $data['weight_unit'] = get_option('woocommerce_weight_unit', 'kg');
-            $data['dimensions'] = $product->get_dimensions();
-            $data['length'] = $product->get_length();
-            $data['width'] = $product->get_width();
-            $data['height'] = $product->get_height();
-            $data['dimension_unit'] = get_option('woocommerce_dimension_unit', 'cm');
-
-            // Descriptions
-            $data['description'] = $product->get_description();
-            $data['short_description'] = $product->get_short_description();
-
-            // Stock
-            $data['stock_quantity'] = $product->get_stock_quantity();
-            $data['stock_status'] = $product->get_stock_status();
-            $data['manage_stock'] = $product->get_manage_stock();
-            $data['backorders'] = $product->get_backorders();
-
-            // Visibilité et statut
-            $data['status'] = $product->get_status();
-            $data['catalog_visibility'] = $product->get_catalog_visibility();
-            $data['featured'] = $product->get_featured();
-
-            // Images
-            $data['image_id'] = $product->get_image_id();
-            $data['image_url'] = wp_get_attachment_image_url($product->get_image_id(), 'full');
-            $data['gallery_image_ids'] = $product->get_gallery_image_ids();
-
-            // Catégories et tags
-            $data['categories'] = wp_get_post_terms($product->get_id(), 'product_cat', ['fields' => 'names']);
-            $data['category_ids'] = wp_get_post_terms($product->get_id(), 'product_cat', ['fields' => 'ids']);
-            $data['tags'] = wp_get_post_terms($product->get_id(), 'product_tag', ['fields' => 'names']);
-            $data['tag_ids'] = wp_get_post_terms($product->get_id(), 'product_tag', ['fields' => 'ids']);
-
-            // Attributs du produit
-            $data['attributes'] = $product->get_attributes();
-            $data['variation_attributes'] = $product->get_variation_attributes();
-
-            // Pour les variations
-            if ($product->is_type('variation')) {
-                $data['variation_id'] = $product->get_id();
-                $data['parent_id'] = $product->get_parent_id();
-                // Formater les attributs de variation manuellement
-                $variation_attributes = $product->get_variation_attributes();
-                $formatted = [];
-                foreach ($variation_attributes as $key => $value) {
-                    if (!empty($value)) {
-                        $taxonomy = str_replace('attribute_', '', $key);
-                        $term = get_term_by('slug', $value, $taxonomy);
-                        if ($term) {
-                            $formatted[] = $term->name;
-                        } else {
-                            $formatted[] = $value;
-                        }
-                    }
-                }
-                $data['variation_attributes_formatted'] = implode(', ', $formatted);
+            if (method_exists($product, 'get_sku')) {
+                $data['sku'] = $product->get_sku();
             }
-
-            // Métadonnées du produit
-            $data['meta_data'] = [];
-            foreach ($product->get_meta_data() as $meta) {
-                $data['meta_data'][$meta->key] = $meta->value;
+            if (method_exists($product, 'get_description')) {
+                $data['description'] = $product->get_description();
             }
         }
-
-        // === PROPRIÉTÉS SPÉCIFIQUES À L'ITEM DE COMMANDE ===
-        $data['item_id'] = $item->get_id();
-        $data['order_id'] = $item->get_order_id();
-
-        // Métadonnées de l'item
-        $data['item_meta_data'] = [];
-        foreach ($item->get_meta_data() as $meta) {
-            $data['item_meta_data'][$meta->key] = $meta->value;
-        }
-
-        // === DONNÉES CALCULÉES ===
-        $data['line_total_formatted'] = $data['total'];
-        $data['line_subtotal_formatted'] = $data['subtotal'];
-        $data['line_tax_formatted'] = $data['tax'];
-
-        // === DONNÉES POUR COMPATIBILITÉ AVEC L'ANCIEN CODE ===
-        // Garder les anciennes clés pour compatibilité
-        $data['formatted_price'] = $data['price'];
-        $data['formatted_total'] = $data['total'];
-
-        error_log('[PDF Generator] Extracted complete item data for "' . $data['name'] . '": ' . json_encode(array_keys($data)));
 
         return $data;
     }
 
     /**
-     * Génère le HTML du tableau avec les données fictives mais préserve tous les styles du canvas
+     * Remplace les données fictives par les vraies données dans le HTML généré
      */
-    private function generate_fake_table_html($element, $fake_data) {
-        // Utiliser exactement la même logique que l'ancien code pour générer le HTML
-        // mais avec les données fictives au lieu des vraies données
-
-        $show_headers = $element['showHeaders'] ?? true;
-        $show_borders = $element['showBorders'] ?? true;
         $headers = $element['headers'] ?? ['Produit', 'Qté', 'Prix', 'Total'];
         $columns = $element['columns'] ?? ['image' => false, 'name' => true, 'sku' => false, 'quantity' => true, 'price' => true, 'total' => true];
         $table_style = $element['tableStyle'] ?? 'classic';
