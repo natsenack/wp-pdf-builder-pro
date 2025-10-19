@@ -5701,7 +5701,7 @@ class PDF_Builder_Admin {
             }
 
             // Vérifier le nonce
-            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_order_actions')) {
+            if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_nonce')) {
                 error_log('[PDF Builder] AJAX Preview - Nonce invalide');
                 wp_send_json_error(['message' => 'Nonce invalide']);
                 return;
