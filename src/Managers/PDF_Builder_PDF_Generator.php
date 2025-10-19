@@ -216,19 +216,29 @@ class PDF_Builder_PDF_Generator {
             // Générer le HTML directement sans dépendre du contrôleur externe
             $html_content = $this->generate_html_from_elements($canvas_elements);
             
+            error_log('[PDF Builder Preview] HTML generation completed, length: ' . strlen($html_content));
+            
             if (!empty($html_content)) {
                 // Créer un fichier HTML temporaire pour l'aperçu
                 $upload_dir = wp_upload_dir();
                 $html_dir = $upload_dir['basedir'] . '/pdf-builder';
+                error_log('[PDF Builder Preview] Upload dir: ' . $upload_dir['basedir']);
+                error_log('[PDF Builder Preview] HTML dir: ' . $html_dir);
+                
                 if (!file_exists($html_dir)) {
                     wp_mkdir_p($html_dir);
+                    error_log('[PDF Builder Preview] Created HTML directory');
                 }
 
                 $filename = 'preview-' . time() . '.html';
                 $html_path = $html_dir . '/' . $filename;
-                file_put_contents($html_path, $html_content);
+                error_log('[PDF Builder Preview] HTML path: ' . $html_path);
+                
+                $write_result = file_put_contents($html_path, $html_content);
+                error_log('[PDF Builder Preview] File write result: ' . ($write_result !== false ? 'SUCCESS (' . $write_result . ' bytes)' : 'FAILED'));
                 
                 $html_url = str_replace($upload_dir['basedir'], $upload_dir['baseurl'], $html_path);
+                error_log('[PDF Builder Preview] HTML URL: ' . $html_url);
 
                 wp_send_json_success(array(
                     'url' => $html_url,
@@ -237,6 +247,7 @@ class PDF_Builder_PDF_Generator {
                     'type' => 'html'
                 ));
             } else {
+                error_log('[PDF Builder Preview] HTML content is empty');
                 wp_send_json_error('Erreur lors de la génération du HTML d\'aperçu');
             }
         } catch (Exception $e) {
@@ -407,6 +418,7 @@ class PDF_Builder_PDF_Generator {
      * Générer le HTML à partir des éléments du canvas
      */
     private function generate_html_from_elements($elements) {
+        error_log('[PDF Builder Preview] Starting HTML generation for ' . count($elements) . ' elements');
         $html = '<!DOCTYPE html>
 <html>
 <head>
