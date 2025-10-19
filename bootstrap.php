@@ -41,12 +41,7 @@ function pdf_builder_load_core() {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Core.php';
     }
 
-    // Charger la classe d'administration depuis src/
-    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php')) {
-        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
-    }
-
-    // Charger les managers essentiels depuis src/Managers/
+    // Charger les managers essentiels depuis src/Managers/ AVANT PDF_Builder_Admin
     $managers = array(
         'PDF_Builder_Cache_Manager.php',
         'PDF_Builder_Canvas_Elements_Manager.php',
@@ -66,6 +61,11 @@ function pdf_builder_load_core() {
         if (file_exists($manager_path)) {
             require_once $manager_path;
         }
+    }
+
+    // Charger la classe d'administration depuis src/ APRÈS les managers
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
     }
 
     // Charger le contrôleur PDF

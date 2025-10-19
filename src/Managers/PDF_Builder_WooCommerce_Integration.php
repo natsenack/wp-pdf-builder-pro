@@ -27,8 +27,8 @@ class PDF_Builder_WooCommerce_Integration {
      * Initialiser les hooks
      */
     private function init_hooks() {
-        // Enregistrer les hooks AJAX via l'action plugins_loaded pour s'assurer qu'ils sont disponibles tôt
-        add_action('plugins_loaded', [$this, 'register_ajax_hooks']);
+        // Enregistrer les hooks AJAX via l'action init pour s'assurer qu'ils sont disponibles tôt
+        add_action('init', [$this, 'register_ajax_hooks']);
     }
 
     /**
@@ -756,7 +756,7 @@ class PDF_Builder_WooCommerce_Integration {
             var orderId = <?php echo intval($order_id); ?>;
             var templateId = <?php echo $selected_template ? intval($selected_template['id']) : 0; ?>;
             var ajaxUrl = "https://threeaxe.fr/wp-admin/admin-ajax.php";
-            var nonce = "<?php echo esc_js(wp_create_nonce('pdf_builder_order_actions')); ?>";
+            var nonce = pdfBuilderAjax.nonce;
 
             console.log("MetaBoxes.js - Configuration loaded:", {
                 orderId: orderId,
@@ -1375,48 +1375,487 @@ class PDF_Builder_WooCommerce_Integration {
      * AJAX handler pour générer l'aperçu miroir du PDF avec les vraies données
      */
     public function ajax_preview_mirror() {
-        check_ajax_referer('pdf_builder_order_actions', 'nonce');
-        
+        // Log pour debug
+        error_log('PDF Builder: ajax_preview_mirror called');
+
+        // Vérifier le nonce avec l'action globale
+        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_nonce')) {
+            error_log('PDF Builder: Nonce verification failed');
+            wp_send_json_error('Nonce invalide');
+        }
+
         if (!current_user_can('manage_woocommerce')) {
+            error_log('PDF Builder: User does not have manage_woocommerce capability');
             wp_send_json_error('Permissions insuffisantes');
         }
 
         $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
         $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
 
+        error_log("PDF Builder: ajax_preview_mirror - order_id: $order_id, template_id: $template_id");
+
         if (!$order_id) {
+            error_log('PDF Builder: No order_id provided');
             wp_send_json_error('ID commande manquant');
         }
 
+        error_log('PDF Builder: Getting order object');
+        $order = wc_get_order($order_id);
+        if (!$order) {
+            error_log("PDF Builder: Order $order_id not found");
+            wp_send_json_error('Commande introuvable');
+        }
+
+        error_log('PDF Builder: Order found, processing template');
         try {
-            $order = wc_get_order($order_id);
-            if (!$order) {
-                wp_send_json_error('Commande introuvable');
-            }
-
-            // Charger le template
             if ($template_id > 0) {
+                error_log('PDF Builder: Loading specific template');
                 $templates = get_option('pdf_builder_templates', []);
+                error_log('PDF Builder: Available templates: ' . json_encode(array_keys($templates)));
                 $template_data = isset($templates[$template_id]) ? $templates[$template_id] : null;
-            } else {
-                $order_status = $order->get_status();
-                $status_templates = get_option('pdf_builder_order_status_templates', []);
-                $status_key = 'wc-' . $order_status;
+                
+                // If specific template not found, fall back to auto-detection
+                if (!$template_data) {
+                    error_log('PDF Builder: Specific template not found, falling back to auto-detection');
+                    if ($order) {
+                        $order_status = $order->get_status();
+                        $status_templates = get_option('pdf_builder_order_status_templates', []);
+                        $status_key = 'wc-' . $order_status;
 
-                if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
-                    $mapped_template_id = $status_templates[$status_key];
-                    $templates = get_option('pdf_builder_templates', []);
-                    $template_data = isset($templates[$mapped_template_id]) ? $templates[$mapped_template_id] : null;
+                        if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
+                            $mapped_template_id = $status_templates[$status_key];
+                            $templates = get_option('pdf_builder_templates', []);
+                            $template_data = isset($templates[$mapped_template_id]) ? $templates[$mapped_template_id] : null;
+                            error_log('PDF Builder: Auto-detected template for status ' . $order_status . ': ' . ($template_data ? 'found' : 'not found'));
+                        } else {
+                            $templates = get_option('pdf_builder_templates', []);
+                            $template_data = !empty($templates) ? reset($templates) : null;
+                            error_log('PDF Builder: Using first available template: ' . ($template_data ? 'found' : 'not found'));
+                        }
+                    } else {
+                        $template_data = null;
+                    }
+                }
+            } else {
+                error_log('PDF Builder: Auto-detecting template based on order status');
+                // Détecter automatiquement le template basé sur le statut de la commande
+                if ($order) {
+                    $order_status = $order->get_status();
+                    $status_templates = get_option('pdf_builder_order_status_templates', []);
+                    $status_key = 'wc-' . $order_status;
+
+                    if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
+                        $mapped_template_id = $status_templates[$status_key];
+                        $templates = get_option('pdf_builder_templates', []);
+                        $template_data = isset($templates[$mapped_template_id]) ? $templates[$mapped_template_id] : null;
+                    } else {
+                        $templates = get_option('pdf_builder_templates', []);
+                        $template_data = !empty($templates) ? reset($templates) : null;
+                    }
                 } else {
-                    $templates = get_option('pdf_builder_templates', []);
-                    $template_data = !empty($templates) ? reset($templates) : null;
+                    $template_data = null;
                 }
             }
 
+            error_log('PDF Builder: Template data loaded: ' . ($template_data ? 'found' : 'not found'));
             if (!$template_data) {
-                wp_send_json_error('Template non trouvé');
+                error_log('PDF Builder: No template data found - creating a default template');
+                
+                // Create a comprehensive default template that looks like a real invoice
+                $default_template = [
+                    'id' => 1,
+                    'name' => 'Facture Standard',
+                    'canvasWidth' => 595,
+                    'canvasHeight' => 842,
+                    'pages' => [
+                        [
+                            'elements' => [
+                                // Header - Company Info
+                                [
+                                    'id' => 'company_name',
+                                    'type' => 'text',
+                                    'content' => 'THREEAXE',
+                                    'position' => ['x' => 50, 'y' => 30],
+                                    'size' => ['width' => 200, 'height' => 25],
+                                    'style' => [
+                                        'fontSize' => '20px',
+                                        'fontWeight' => 'bold',
+                                        'color' => '#2563eb',
+                                        'textAlign' => 'left'
+                                    ],
+                                    'visible' => true
+                                ],
+                                [
+                                    'id' => 'company_address',
+                                    'type' => 'text',
+                                    'content' => '123 Rue de la Tech\n75001 Paris\nFrance',
+                                    'position' => ['x' => 50, 'y' => 60],
+                                    'size' => ['width' => 200, 'height' => 40],
+                                    'style' => [
+                                        'fontSize' => '12px',
+                                        'color' => '#666666',
+                                        'lineHeight' => '1.4',
+                                        'textAlign' => 'left'
+                                    ],
+                                    'visible' => true
+                                ],
+                                [
+                                    'id' => 'company_contact',
+                                    'type' => 'text',
+                                    'content' => 'Tél: +33 1 23 45 67 89\nEmail: contact@threeaxe.fr',
+                                    'position' => ['x' => 50, 'y' => 105],
+                                    'size' => ['width' => 200, 'height' => 30],
+                                    'style' => [
+                                        'fontSize' => '11px',
+                                        'color' => '#666666',
+                                        'lineHeight' => '1.3',
+                                        'textAlign' => 'left'
+                                    ],
+                                    'visible' => true
+                                ],
+                                // Invoice Title
+                                [
+                                    'id' => 'invoice_title',
+                                    'type' => 'text',
+                                    'content' => 'FACTURE',
+                                    'position' => ['x' => 350, 'y' => 30],
+                                    'size' => ['width' => 200, 'height' => 30],
+                                    'style' => [
+                                        'fontSize' => '24px',
+                                        'fontWeight' => 'bold',
+                                        'color' => '#dc2626',
+                                        'textAlign' => 'right'
+                                    ],
+                                    'visible' => true
+                                ],
+                                [
+                                    'id' => 'invoice_number',
+                                    'type' => 'text',
+                                    'content' => 'N° {{order_number}}',
+                                    'position' => ['x' => 350, 'y' => 65],
+                                    'size' => ['width' => 200, 'height' => 20],
+                                    'style' => [
+                                        'fontSize' => '14px',
+                                        'fontWeight' => 'bold',
+                                        'color' => '#000000',
+                                        'textAlign' => 'right'
+                                    ],
+                                    'visible' => true
+                                ],
+                                [
+                                    'id' => 'invoice_date',
+                                    'type' => 'text',
+                                    'content' => 'Date: {{order_date}}',
+                                    'position' => ['x' => 350, 'y' => 90],
+                                    'size' => ['width' => 200, 'height' => 18],
+                                    'style' => [
+                                        'fontSize' => '12px',
+                                        'color' => '#666666',
+                                        'textAlign' => 'right'
+                                    ],
+                                    'visible' => true
+                                ],
+                                // Bill To section
+                                [
+                                    'id' => 'bill_to_title',
+                                    'type' => 'text',
+                                    'content' => 'FACTURER À:',
+                                    'position' => ['x' => 50, 'y' => 160],
+                                    'size' => ['width' => 200, 'height' => 20],
+                                    'style' => [
+                                        'fontSize' => '12px',
+                                        'fontWeight' => 'bold',
+                                        'color' => '#000000',
+                                        'textAlign' => 'left'
+                                    ],
+                                    'visible' => true
+                                ],
+                                [
+                                    'id' => 'bill_to_name',
+                                    'type' => 'text',
+                                    'content' => '{{customer_name}}',
+                                    'position' => ['x' => 50, 'y' => 185],
+                                    'size' => ['width' => 200, 'height' => 20],
+                                    'style' => [
+                                        'fontSize' => '14px',
+                                        'fontWeight' => 'bold',
+                                        'color' => '#000000',
+                                        'textAlign' => 'left'
+                                    ],
+                                    'visible' => true
+                                ],
+                                [
+                                    'id' => 'bill_to_address',
+                                    'type' => 'text',
+                                    'content' => '{{billing_address}}',
+                                    'position' => ['x' => 50, 'y' => 210],
+                                    'size' => ['width' => 200, 'height' => 60],
+                                    'style' => [
+                                        'fontSize' => '12px',
+                                        'color' => '#666666',
+                                        'lineHeight' => '1.4',
+                                        'textAlign' => 'left'
+                                    ],
+                                    'visible' => true
+                                ],
+                                // Products table header
+                                [
+                                    'id' => 'table_header_bg',
+                                    'type' => 'rectangle',
+                                    'position' => ['x' => 50, 'y' => 300],
+                                    'size' => ['width' => 495, 'height' => 25],
+                                    'style' => [
+                                        'backgroundColor' => '#f8f9fa',
+                                        'border' => '1px solid #dee2e6'
+                                    ],
+                                    'visible' => true
+                                ],
+                                [
+                                    'id' => 'product_header',
+                                    'type' => 'text',
+                                    'content' => 'PRODUIT',
+                                    'position' => ['x' => 60, 'y' => 305],
+                                    'size' => ['width' => 200, 'height' => 20],
+                                    'style' => [
+                                        'fontSize' => '12px',
+                                        'fontWeight' => 'bold',
+                                        'color' => '#000000',
+                                        'textAlign' => 'left'
+                                    ],
+                                    'visible' => true
+                                ],
+                                [
+                                    'id' => 'qty_header',
+                                    'type' => 'text',
+                                    'content' => 'QTÉ',
+                                    'position' => ['x' => 350, 'y' => 305],
+                                    'size' => ['width' => 50, 'height' => 20],
+                                    'style' => [
+                                        'fontSize' => '12px',
+                                        'fontWeight' => 'bold',
+                                        'color' => '#000000',
+                                        'textAlign' => 'center'
+                                    ],
+                                    'visible' => true
+                                ],
+                                [
+                                    'id' => 'price_header',
+                                    'type' => 'text',
+                                    'content' => 'PRIX',
+                                    'position' => ['x' => 410, 'y' => 305],
+                                    'size' => ['width' => 60, 'height' => 20],
+                                    'style' => [
+                                        'fontSize' => '12px',
+                                        'fontWeight' => 'bold',
+                                        'color' => '#000000',
+                                        'textAlign' => 'right'
+                                    ],
+                                    'visible' => true
+                                ],
+                                [
+                                    'id' => 'total_header',
+                                    'type' => 'text',
+                                    'content' => 'TOTAL',
+                                    'position' => ['x' => 480, 'y' => 305],
+                                    'size' => ['width' => 60, 'height' => 20],
+                                    'style' => [
+                                        'fontSize' => '12px',
+                                        'fontWeight' => 'bold',
+                                        'color' => '#000000',
+                                        'textAlign' => 'right'
+                                    ],
+                                    'visible' => true
+                                ],
+                                // Sample product row
+                                [
+                                    'id' => 'product_row_bg',
+                                    'type' => 'rectangle',
+                                    'position' => ['x' => 50, 'y' => 325],
+                                    'size' => ['width' => 495, 'height' => 25],
+                                    'style' => [
+                                        'backgroundColor' => '#ffffff',
+                                        'border' => '1px solid #dee2e6',
+                                        'borderTop' => 'none'
+                                    ],
+                                    'visible' => true
+                                ],
+                                [
+                                    'id' => 'product_name',
+                                    'type' => 'text',
+                                    'content' => '{{product_name}}',
+                                    'position' => ['x' => 60, 'y' => 330],
+                                    'size' => ['width' => 200, 'height' => 20],
+                                    'style' => [
+                                        'fontSize' => '12px',
+                                        'color' => '#000000',
+                                        'textAlign' => 'left'
+                                    ],
+                                    'visible' => true
+                                ],
+                                [
+                                    'id' => 'product_qty',
+                                    'type' => 'text',
+                                    'content' => '{{product_qty}}',
+                                    'position' => ['x' => 350, 'y' => 330],
+                                    'size' => ['width' => 50, 'height' => 20],
+                                    'style' => [
+                                        'fontSize' => '12px',
+                                        'color' => '#000000',
+                                        'textAlign' => 'center'
+                                    ],
+                                    'visible' => true
+                                ],
+                                [
+                                    'id' => 'product_price',
+                                    'type' => 'text',
+                                    'content' => '{{product_price}}',
+                                    'position' => ['x' => 410, 'y' => 330],
+                                    'size' => ['width' => 60, 'height' => 20],
+                                    'style' => [
+                                        'fontSize' => '12px',
+                                        'color' => '#000000',
+                                        'textAlign' => 'right'
+                                    ],
+                                    'visible' => true
+                                ],
+                                [
+                                    'id' => 'product_total',
+                                    'type' => 'text',
+                                    'content' => '{{product_total}}',
+                                    'position' => ['x' => 480, 'y' => 330],
+                                    'size' => ['width' => 60, 'height' => 20],
+                                    'style' => [
+                                        'fontSize' => '12px',
+                                        'color' => '#000000',
+                                        'textAlign' => 'right'
+                                    ],
+                                    'visible' => true
+                                ],
+                                // Totals section
+                                [
+                                    'id' => 'subtotal_label',
+                                    'type' => 'text',
+                                    'content' => 'Sous-total:',
+                                    'position' => ['x' => 350, 'y' => 380],
+                                    'size' => ['width' => 100, 'height' => 20],
+                                    'style' => [
+                                        'fontSize' => '12px',
+                                        'color' => '#666666',
+                                        'textAlign' => 'right'
+                                    ],
+                                    'visible' => true
+                                ],
+                                [
+                                    'id' => 'subtotal_amount',
+                                    'type' => 'text',
+                                    'content' => '{{subtotal}}',
+                                    'position' => ['x' => 460, 'y' => 380],
+                                    'size' => ['width' => 80, 'height' => 20],
+                                    'style' => [
+                                        'fontSize' => '12px',
+                                        'color' => '#000000',
+                                        'textAlign' => 'right'
+                                    ],
+                                    'visible' => true
+                                ],
+                                [
+                                    'id' => 'tax_label',
+                                    'type' => 'text',
+                                    'content' => 'TVA (20%):',
+                                    'position' => ['x' => 350, 'y' => 400],
+                                    'size' => ['width' => 100, 'height' => 20],
+                                    'style' => [
+                                        'fontSize' => '12px',
+                                        'color' => '#666666',
+                                        'textAlign' => 'right'
+                                    ],
+                                    'visible' => true
+                                ],
+                                [
+                                    'id' => 'tax_amount',
+                                    'type' => 'text',
+                                    'content' => '{{tax_amount}}',
+                                    'position' => ['x' => 460, 'y' => 400],
+                                    'size' => ['width' => 80, 'height' => 20],
+                                    'style' => [
+                                        'fontSize' => '12px',
+                                        'color' => '#000000',
+                                        'textAlign' => 'right'
+                                    ],
+                                    'visible' => true
+                                ],
+                                [
+                                    'id' => 'total_label',
+                                    'type' => 'text',
+                                    'content' => 'TOTAL TTC:',
+                                    'position' => ['x' => 350, 'y' => 425],
+                                    'size' => ['width' => 100, 'height' => 25],
+                                    'style' => [
+                                        'fontSize' => '14px',
+                                        'fontWeight' => 'bold',
+                                        'color' => '#000000',
+                                        'textAlign' => 'right'
+                                    ],
+                                    'visible' => true
+                                ],
+                                [
+                                    'id' => 'total_amount',
+                                    'type' => 'text',
+                                    'content' => '{{order_total}}',
+                                    'position' => ['x' => 460, 'y' => 425],
+                                    'size' => ['width' => 80, 'height' => 25],
+                                    'style' => [
+                                        'fontSize' => '14px',
+                                        'fontWeight' => 'bold',
+                                        'color' => '#000000',
+                                        'textAlign' => 'right'
+                                    ],
+                                    'visible' => true
+                                ],
+                                // Footer
+                                [
+                                    'id' => 'footer_text',
+                                    'type' => 'text',
+                                    'content' => 'Merci pour votre confiance !',
+                                    'position' => ['x' => 50, 'y' => 780],
+                                    'size' => ['width' => 495, 'height' => 20],
+                                    'style' => [
+                                        'fontSize' => '12px',
+                                        'color' => '#666666',
+                                        'textAlign' => 'center',
+                                        'fontStyle' => 'italic'
+                                    ],
+                                    'visible' => true
+                                ],
+                                [
+                                    'id' => 'footer_line',
+                                    'type' => 'line',
+                                    'position' => ['x' => 50, 'y' => 770],
+                                    'size' => ['width' => 495, 'height' => 1],
+                                    'style' => [
+                                        'borderTop' => '1px solid #dee2e6'
+                                    ],
+                                    'visible' => true
+                                ]
+                            ]
+                        ]
+                    ]
+                ];
+                
+                // Save the default template
+                $templates = [1 => $default_template];
+                update_option('pdf_builder_templates', $templates);
+                
+                // Set it as the default for completed orders
+                $status_templates = get_option('pdf_builder_order_status_templates', []);
+                $status_templates['wc-completed'] = 1;
+                update_option('pdf_builder_order_status_templates', $status_templates);
+                
+                $template_data = $default_template;
+                error_log('PDF Builder: Default template created successfully');
             }
 
+            error_log('PDF Builder: Extracting elements from template');
             // Extraire les éléments
             $elements = [];
             if (isset($template_data['pages']) && is_array($template_data['pages']) && !empty($template_data['pages'])) {
@@ -1425,12 +1864,17 @@ class PDF_Builder_WooCommerce_Integration {
                 $elements = $template_data['elements'];
             }
 
+            error_log('PDF Builder: Found ' . count($elements) . ' elements');
             $canvas_width = intval($template_data['canvasWidth'] ?? $template_data['canvas']['width'] ?? 595);
             $canvas_height = intval($template_data['canvasHeight'] ?? $template_data['canvas']['height'] ?? 842);
 
+            error_log("PDF Builder: Canvas size: {$canvas_width}x{$canvas_height}");
+
             // Générer le HTML avec les vraies données de la commande
+            error_log('PDF Builder: Generating preview HTML');
             $preview_html = $this->render_preview_canvas($elements, $order, $canvas_width, $canvas_height);
 
+            error_log('PDF Builder: HTML generated, creating full HTML response');
             // Créer le HTML complet avec styles pour l'impression et téléchargement
             $full_html = <<<HTML
 <!DOCTYPE html>
@@ -1438,7 +1882,7 @@ class PDF_Builder_WooCommerce_Integration {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aperçu - Commande {$order->get_order_number()}</title>
+    <title>Aperçu - Commande <?php echo $order && is_object($order) ? $order->get_order_number() : 'N/A'; ?></title>
     <style>
         * {
             margin: 0;
@@ -1663,5 +2107,460 @@ HTML;
      */
     private function get_ajax_url() {
         return admin_url('admin-ajax.php');
+    }
+
+    /**
+     * Récupère l'ID du template approprié pour une commande donnée
+     */
+    private function get_template_for_order($order) {
+        if (!$order) {
+            return null;
+        }
+
+        // Vérifier si un template spécifique est demandé via POST
+        if (isset($_POST['template_id']) && !empty($_POST['template_id'])) {
+            return intval($_POST['template_id']);
+        }
+
+        // Détecter automatiquement le template basé sur le statut de la commande
+        $order_status = $order->get_status();
+        $status_templates = get_option('pdf_builder_order_status_templates', []);
+        $status_key = 'wc-' . $order_status;
+
+        if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
+            return $status_templates[$status_key];
+        }
+
+        // Template par défaut - prendre le premier template disponible
+        $templates = get_option('pdf_builder_templates', []);
+        if (!empty($templates)) {
+            $first_template = reset($templates);
+            return $first_template['id'] ?? null;
+        }
+
+        return null;
+    }
+
+    /**
+     * Rend le HTML du canvas d'aperçu avec les vraies données de la commande
+     */
+    private function render_preview_canvas($elements, $order, $canvas_width, $canvas_height) {
+        error_log('PDF Builder: render_preview_canvas called with ' . count($elements) . ' elements');
+        $html = '';
+
+        if (!is_array($elements) || empty($elements)) {
+            error_log('PDF Builder: No elements to render');
+            return $html;
+        }
+
+        error_log('PDF Builder: Processing elements loop');
+        foreach ($elements as $index => $element) {
+            // Vérifier les propriétés essentielles
+            $x = floatval($element['position']['x'] ?? $element['x'] ?? 0);
+            $y = floatval($element['position']['y'] ?? $element['y'] ?? 0);
+            $width = floatval($element['position']['width'] ?? $element['size']['width'] ?? $element['width'] ?? 100);
+            $height = floatval($element['position']['height'] ?? $element['size']['height'] ?? $element['height'] ?? 50);
+            $type = $element['type'] ?? 'text';
+            $visible = isset($element['visible']) ? (bool)$element['visible'] : true;
+
+            if (!$visible) {
+                continue;
+            }
+
+            // Style de base - positionnement
+            $style = "position: absolute; left: {$x}px; top: {$y}px; width: {$width}px; height: {$height}px; ";
+
+            // Ajouter TOUS les styles CSS via build_element_style
+            $style = $this->build_element_style($element, $style);
+
+            // Contenu de l'élément
+            $content = $this->render_element_content($element, $order);
+
+            // Classes CSS
+            $classes = 'canvas-element';
+            if (isset($element['className'])) {
+                $classes .= ' ' . esc_attr($element['className']);
+            }
+
+            // Générer l'élément HTML
+            $html .= "<div class=\"{$classes}\" style=\"{$style}\">{$content}</div>";
+        }
+
+        return $html;
+    }
+
+    /**
+     * Construit le style CSS d'un élément
+     */
+    private function build_element_style($element, $base_style) {
+        $style = $base_style;
+
+        // Get styles from element
+        $element_styles = $element['style'] ?? $element['styles'] ?? [];
+
+        // Font properties
+        if (isset($element_styles['fontSize'])) {
+            $style .= "font-size: {$element_styles['fontSize']}; ";
+        }
+        if (isset($element_styles['fontWeight'])) {
+            $style .= "font-weight: {$element_styles['fontWeight']}; ";
+        }
+        if (isset($element_styles['fontStyle'])) {
+            $style .= "font-style: {$element_styles['fontStyle']}; ";
+        }
+        if (isset($element_styles['fontFamily'])) {
+            $style .= "font-family: {$element_styles['fontFamily']}; ";
+        }
+        if (isset($element_styles['lineHeight'])) {
+            $style .= "line-height: {$element_styles['lineHeight']}; ";
+        }
+
+        // Text properties
+        if (isset($element_styles['color'])) {
+            $style .= "color: {$element_styles['color']}; ";
+        }
+        if (isset($element_styles['textAlign'])) {
+            $style .= "text-align: {$element_styles['textAlign']}; ";
+        }
+        if (isset($element_styles['textDecoration'])) {
+            $style .= "text-decoration: {$element_styles['textDecoration']}; ";
+        }
+        if (isset($element_styles['textTransform'])) {
+            $style .= "text-transform: {$element_styles['textTransform']}; ";
+        }
+        if (isset($element_styles['letterSpacing'])) {
+            $style .= "letter-spacing: {$element_styles['letterSpacing']}; ";
+        }
+        if (isset($element_styles['wordSpacing'])) {
+            $style .= "word-spacing: {$element_styles['wordSpacing']}; ";
+        }
+
+        // Background properties
+        if (isset($element_styles['backgroundColor'])) {
+            $style .= "background-color: {$element_styles['backgroundColor']}; ";
+        }
+        if (isset($element_styles['backgroundImage'])) {
+            $style .= "background-image: url('{$element_styles['backgroundImage']}'); ";
+        }
+        if (isset($element_styles['backgroundSize'])) {
+            $style .= "background-size: {$element_styles['backgroundSize']}; ";
+        }
+        if (isset($element_styles['backgroundPosition'])) {
+            $style .= "background-position: {$element_styles['backgroundPosition']}; ";
+        }
+        if (isset($element_styles['backgroundRepeat'])) {
+            $style .= "background-repeat: {$element_styles['backgroundRepeat']}; ";
+        }
+
+        // Border properties - comprehensive
+        if (isset($element_styles['border'])) {
+            $style .= "border: {$element_styles['border']}; ";
+        }
+        if (isset($element_styles['borderWidth'])) {
+            $style .= "border-width: {$element_styles['borderWidth']}; ";
+        }
+        if (isset($element_styles['borderStyle'])) {
+            $style .= "border-style: {$element_styles['borderStyle']}; ";
+        }
+        if (isset($element_styles['borderColor'])) {
+            $style .= "border-color: {$element_styles['borderColor']}; ";
+        }
+        if (isset($element_styles['borderRadius'])) {
+            $style .= "border-radius: {$element_styles['borderRadius']}; ";
+        }
+
+        // Individual border sides
+        $border_sides = ['Top', 'Right', 'Bottom', 'Left'];
+        foreach ($border_sides as $side) {
+            $side_lower = strtolower($side);
+            if (isset($element_styles['border' . $side])) {
+                $style .= "border-{$side_lower}: {$element_styles['border' . $side]}; ";
+            }
+            if (isset($element_styles['border' . $side . 'Width'])) {
+                $style .= "border-{$side_lower}-width: {$element_styles['border' . $side . 'Width']}; ";
+            }
+            if (isset($element_styles['border' . $side . 'Style'])) {
+                $style .= "border-{$side_lower}-style: {$element_styles['border' . $side . 'Style']}; ";
+            }
+            if (isset($element_styles['border' . $side . 'Color'])) {
+                $style .= "border-{$side_lower}-color: {$element_styles['border' . $side . 'Color']}; ";
+            }
+        }
+
+        // Padding and margins - comprehensive
+        $spacing_props = ['padding', 'margin'];
+        foreach ($spacing_props as $prop) {
+            if (isset($element_styles[$prop])) {
+                $style .= "{$prop}: {$element_styles[$prop]}; ";
+            }
+            $directions = ['Top', 'Right', 'Bottom', 'Left'];
+            foreach ($directions as $dir) {
+                $dir_lower = strtolower($dir);
+                if (isset($element_styles[$prop . $dir])) {
+                    $style .= "{$prop}-{$dir_lower}: {$element_styles[$prop . $dir]}; ";
+                }
+            }
+        }
+
+        // Dimensions
+        if (isset($element_styles['width'])) {
+            $style .= "width: {$element_styles['width']}; ";
+        }
+        if (isset($element_styles['height'])) {
+            $style .= "height: {$element_styles['height']}; ";
+        }
+        if (isset($element_styles['minWidth'])) {
+            $style .= "min-width: {$element_styles['minWidth']}; ";
+        }
+        if (isset($element_styles['minHeight'])) {
+            $style .= "min-height: {$element_styles['minHeight']}; ";
+        }
+        if (isset($element_styles['maxWidth'])) {
+            $style .= "max-width: {$element_styles['maxWidth']}; ";
+        }
+        if (isset($element_styles['maxHeight'])) {
+            $style .= "max-height: {$element_styles['maxHeight']}; ";
+        }
+
+        // Positioning
+        if (isset($element_styles['position'])) {
+            $style .= "position: {$element_styles['position']}; ";
+        }
+        if (isset($element_styles['top'])) {
+            $style .= "top: {$element_styles['top']}; ";
+        }
+        if (isset($element_styles['left'])) {
+            $style .= "left: {$element_styles['left']}; ";
+        }
+        if (isset($element_styles['right'])) {
+            $style .= "right: {$element_styles['right']}; ";
+        }
+        if (isset($element_styles['bottom'])) {
+            $style .= "bottom: {$element_styles['bottom']}; ";
+        }
+
+        // Display and visibility
+        if (isset($element_styles['display'])) {
+            $style .= "display: {$element_styles['display']}; ";
+        }
+        if (isset($element_styles['visibility'])) {
+            $style .= "visibility: {$element_styles['visibility']}; ";
+        }
+        if (isset($element_styles['opacity'])) {
+            $style .= "opacity: {$element_styles['opacity']}; ";
+        }
+
+        // Flexbox properties
+        if (isset($element_styles['display']) && $element_styles['display'] === 'flex') {
+            if (isset($element_styles['flexDirection'])) {
+                $style .= "flex-direction: {$element_styles['flexDirection']}; ";
+            }
+            if (isset($element_styles['justifyContent'])) {
+                $style .= "justify-content: {$element_styles['justifyContent']}; ";
+            }
+            if (isset($element_styles['alignItems'])) {
+                $style .= "align-items: {$element_styles['alignItems']}; ";
+            }
+            if (isset($element_styles['flexWrap'])) {
+                $style .= "flex-wrap: {$element_styles['flexWrap']}; ";
+            }
+        }
+
+        // Box shadow
+        if (isset($element_styles['boxShadow'])) {
+            $style .= "box-shadow: {$element_styles['boxShadow']}; ";
+        }
+
+        // Z-index and overflow
+        if (isset($element_styles['zIndex'])) {
+            $style .= "z-index: {$element_styles['zIndex']}; ";
+        }
+        if (isset($element_styles['overflow'])) {
+            $style .= "overflow: {$element_styles['overflow']}; ";
+        }
+
+        // Special handling for rectangle elements
+        if (($element['type'] ?? '') === 'rectangle') {
+            if (isset($element_styles['backgroundColor'])) {
+                $style .= "background-color: {$element_styles['backgroundColor']}; ";
+            }
+            if (isset($element_styles['border'])) {
+                $style .= "border: {$element_styles['border']}; ";
+            }
+        }
+
+        // Special handling for line elements
+        if (($element['type'] ?? '') === 'line') {
+            if (isset($element_styles['borderTop'])) {
+                $style .= "border-top: {$element_styles['borderTop']}; ";
+            } else {
+                $style .= "border-top: 1px solid #000000; ";
+            }
+            $style .= "height: 1px; ";
+        }
+
+        return trim($style);
+    }
+
+    /**
+     * Rend le contenu d'un élément avec les données de la commande
+     */
+    private function render_element_content($element, $order) {
+        $type = $element['type'] ?? 'text';
+        $content = $element['content'] ?? '';
+
+        // Remplacer les variables dynamiques avec les vraies données de la commande
+        if ($order) {
+            $content = $this->replace_order_variables($content, $order);
+        }
+
+        switch ($type) {
+            case 'text':
+                return esc_html($content);
+
+            case 'textarea':
+                return nl2br(esc_html($content));
+
+            case 'image':
+                $src = $element['src'] ?? $element['content'] ?? '';
+                $alt = $element['alt'] ?? 'Image';
+                $width = $element['width'] ?? $element['size']['width'] ?? 'auto';
+                $height = $element['height'] ?? $element['size']['height'] ?? 'auto';
+
+                // Handle different width/height formats
+                if (is_numeric($width)) {
+                    $width .= 'px';
+                }
+                if (is_numeric($height)) {
+                    $height .= 'px';
+                }
+
+                if (!empty($src)) {
+                    return "<img src=\"{$src}\" alt=\"{$alt}\" style=\"width: {$width}; height: {$height}; object-fit: cover; max-width: 100%; max-height: 100%;\">";
+                }
+                return '';
+
+            case 'line':
+                return ''; // Handled by CSS styling only
+
+            case 'rectangle':
+                return ''; // Just a colored/styled div, no content needed
+
+            case 'html':
+                // Allow basic HTML but sanitize it
+                return wp_kses($content, [
+                    'br' => [],
+                    'strong' => [],
+                    'b' => [],
+                    'em' => [],
+                    'i' => [],
+                    'u' => [],
+                    'span' => ['style' => []],
+                    'div' => ['style' => []],
+                    'p' => ['style' => []],
+                    'table' => ['style' => []],
+                    'tr' => ['style' => []],
+                    'td' => ['style' => []],
+                    'th' => ['style' => []],
+                    'thead' => ['style' => []],
+                    'tbody' => ['style' => []],
+                ]);
+
+            default:
+                return esc_html($content);
+        }
+    }
+
+    /**
+     * Remplace les variables de commande dans le contenu
+     */
+    private function replace_order_variables($content, $order) {
+        if (!$order) {
+            return $content;
+        }
+
+        // Basic order information
+        $replacements = [
+            '{{order_number}}' => $order->get_order_number(),
+            '{{order_date}}' => $order->get_date_created() ? $order->get_date_created()->format('d/m/Y') : '',
+            '{{order_total}}' => $order->get_formatted_order_total(),
+            '{{order_status}}' => wc_get_order_status_name($order->get_status()),
+            '{{customer_name}}' => $order->get_formatted_billing_full_name(),
+            '{{customer_email}}' => $order->get_billing_email() ?: '',
+            '{{customer_phone}}' => $order->get_billing_phone() ?: '',
+            '{{billing_address}}' => $order->get_formatted_billing_address() ?: '',
+            '{{shipping_address}}' => $order->get_formatted_shipping_address() ?: '',
+            '{{payment_method}}' => $order->get_payment_method_title(),
+            '{{shipping_method}}' => $order->get_shipping_method(),
+        ];
+
+        // Financial information
+        $subtotal = $order->get_subtotal();
+        $total_tax = $order->get_total_tax();
+        $shipping_total = $order->get_shipping_total();
+        $discount_total = $order->get_discount_total();
+
+        $replacements = array_merge($replacements, [
+            '{{subtotal}}' => wc_price($subtotal),
+            '{{tax_amount}}' => wc_price($total_tax),
+            '{{shipping_amount}}' => wc_price($shipping_total),
+            '{{discount_amount}}' => wc_price($discount_total),
+            '{{total_excl_tax}}' => wc_price($order->get_total() - $total_tax),
+        ]);
+
+        // Handle product-specific variables (for single product display)
+        $items = $order->get_items();
+        if (!empty($items)) {
+            $first_item = reset($items);
+
+            $replacements = array_merge($replacements, [
+                '{{product_name}}' => $first_item->get_name(),
+                '{{product_qty}}' => $first_item->get_quantity(),
+                '{{product_price}}' => wc_price($first_item->get_total() / $first_item->get_quantity()),
+                '{{product_total}}' => wc_price($first_item->get_total()),
+                '{{product_sku}}' => $first_item->get_product() ? $first_item->get_product()->get_sku() : '',
+            ]);
+
+            // For multiple products, create a summary
+            if (count($items) > 1) {
+                $product_summary = '';
+                foreach ($items as $item) {
+                    $product_summary .= $item->get_name() . ' (x' . $item->get_quantity() . ') - ' . wc_price($item->get_total()) . "\n";
+                }
+                $replacements['{{products_list}}'] = $product_summary;
+            } else {
+                $replacements['{{products_list}}'] = $first_item->get_name() . ' (x' . $first_item->get_quantity() . ') - ' . wc_price($first_item->get_total());
+            }
+        }
+
+        // Handle billing address components
+        $billing_address = [
+            '{{billing_first_name}}' => $order->get_billing_first_name(),
+            '{{billing_last_name}}' => $order->get_billing_last_name(),
+            '{{billing_company}}' => $order->get_billing_company(),
+            '{{billing_address_1}}' => $order->get_billing_address_1(),
+            '{{billing_address_2}}' => $order->get_billing_address_2(),
+            '{{billing_city}}' => $order->get_billing_city(),
+            '{{billing_state}}' => $order->get_billing_state(),
+            '{{billing_postcode}}' => $order->get_billing_postcode(),
+            '{{billing_country}}' => $order->get_billing_country(),
+        ];
+
+        // Handle shipping address components
+        $shipping_address = [
+            '{{shipping_first_name}}' => $order->get_shipping_first_name(),
+            '{{shipping_last_name}}' => $order->get_shipping_last_name(),
+            '{{shipping_company}}' => $order->get_shipping_company(),
+            '{{shipping_address_1}}' => $order->get_shipping_address_1(),
+            '{{shipping_address_2}}' => $order->get_shipping_address_2(),
+            '{{shipping_city}}' => $order->get_shipping_city(),
+            '{{shipping_state}}' => $order->get_shipping_state(),
+            '{{shipping_postcode}}' => $order->get_shipping_postcode(),
+            '{{shipping_country}}' => $order->get_shipping_country(),
+        ];
+
+        $replacements = array_merge($replacements, $billing_address, $shipping_address);
+
+        return str_replace(array_keys($replacements), array_values($replacements), $content);
     }
 }
