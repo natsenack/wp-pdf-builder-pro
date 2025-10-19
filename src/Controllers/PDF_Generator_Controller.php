@@ -292,7 +292,29 @@ class PDF_Builder_Pro_Generator {
                     $odd_row_bg = $element['oddRowBg'] ?? '#ebebeb';
                     $odd_row_text_color = $element['oddRowTextColor'] ?? '#666666';
 
-                    error_log('[PDF Generator] Table config - show_headers: ' . ($show_headers ? 'true' : 'false') . ', show_borders: ' . ($show_borders ? 'true' : 'false'));
+                    // Appliquer les styles prédéfinis selon tableStyle
+                    $table_styles = $this->get_table_styles($table_style);
+                    $even_row_bg = $element['evenRowBg'] ?? $table_styles['even_row_bg'];
+                    $odd_row_bg = $element['oddRowBg'] ?? $table_styles['odd_row_bg'];
+                    $odd_row_text_color = $element['oddRowTextColor'] ?? $table_styles['odd_row_text_color'];
+                    $header_bg = $element['headerBg'] ?? $table_styles['header_bg'];
+                    $header_text_color = $element['headerTextColor'] ?? $table_styles['header_text_color'];
+                    $border_color = $element['borderColor'] ?? $table_styles['border_color'];
+                    $name_color = $element['nameColor'] ?? $table_styles['name_color'];
+                    $quantity_color = $element['quantityColor'] ?? $table_styles['quantity_color'];
+                    $price_color = $element['priceColor'] ?? $table_styles['price_color'];
+                    $total_color = $element['totalColor'] ?? $table_styles['total_color'];
+
+                    // Styles spécifiques pour les colonnes (récupérés depuis l'élément)
+                    $name_style = $element['nameStyle'] ?? 'font-weight: 500;';
+                    $quantity_style = $element['quantityStyle'] ?? 'text-align: center;';
+                    $price_style = $element['priceStyle'] ?? 'text-align: right;';
+                    $total_style = $element['totalStyle'] ?? 'text-align: right; font-weight: bold;';
+
+                    error_log('[PDF Generator] Table style applied: ' . $table_style);
+                    error_log('[PDF Generator] Table style colors: header_bg=' . $header_bg . ', border=' . $border_color);
+                    error_log('[PDF Generator] Column colors - name: ' . $name_color . ', quantity: ' . $quantity_color . ', price: ' . $price_color . ', total: ' . $total_color);
+                    error_log('[PDF Generator] Column styles - name: ' . $name_style . ', quantity: ' . $quantity_style . ', price: ' . $price_style . ', total: ' . $total_style);
                     error_log('[PDF Generator] Table config - headers: ' . json_encode($headers));
                     error_log('[PDF Generator] Table config - columns: ' . json_encode($columns));
                     error_log('[PDF Generator] Table config - table_style: ' . $table_style);
@@ -371,23 +393,10 @@ class PDF_Builder_Pro_Generator {
                     }
 
                     // Couleurs spécifiques pour les colonnes (utiliser les propriétés variables ou valeurs par défaut)
-                    $name_color = $element['nameColor'] ?? 'inherit';
-                    $quantity_color = $element['quantityColor'] ?? '#2563eb';
-                    $price_color = $element['priceColor'] ?? '#16a34a';
-                    $total_color = $element['totalColor'] ?? '#dc2626';
-
-                    error_log('[PDF Generator] Column colors - name: ' . $name_color . ', quantity: ' . $quantity_color . ', price: ' . $price_color . ', total: ' . $total_color);
-
-                    // Styles spécifiques pour les colonnes
-                    $name_style = $element['nameStyle'] ?? 'font-weight: 500;';
-                    $quantity_style = $element['quantityStyle'] ?? 'text-align: center;';
-                    $price_style = $element['priceStyle'] ?? 'text-align: right;';
-                    $total_style = $element['totalStyle'] ?? 'text-align: right; font-weight: bold;';
-
-                    error_log('[PDF Generator] Column styles - name: ' . $name_style . ', quantity: ' . $quantity_style . ', price: ' . $price_style . ', total: ' . $total_style);
+                    // NOTE: Les couleurs sont maintenant définies plus haut avec priorité sur les propriétés de l'élément
 
                     // Style des bordures pour les cellules
-                    $cell_border_style = $show_borders ? 'border: 1px solid #ddd;' : '';
+                    $cell_border_style = $show_borders ? "border: 1px solid {$border_color};" : '';
 
                     error_log('[PDF Generator] Table CSS: ' . $table_css);
                     error_log('[PDF Generator] Cell border style: ' . $cell_border_style);
@@ -400,7 +409,7 @@ class PDF_Builder_Pro_Generator {
                     // Headers
                     if ($show_headers) {
                         error_log('[PDF Generator] Rendering table headers');
-                        $table_html .= "<thead><tr style='background-color: #f5f5f5;'>";
+                        $table_html .= "<thead><tr style='background-color: {$header_bg}; color: {$header_text_color};'>";
                         foreach ($headers as $header) {
                             $table_html .= "<th style='padding: 8px; text-align: left; {$cell_border_style} font-weight: bold;'>{$header}</th>";
                         }
@@ -1122,6 +1131,280 @@ class PDF_Builder_Pro_Generator {
         }
 
         return implode("\n", $company_parts);
+    }
+
+    /**
+     * Retourne les styles prédéfinis pour les tableaux selon le style choisi
+     */
+    private function get_table_styles($style) {
+        $styles = [
+            'default' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#f9f9f9',
+                'odd_row_text_color' => '#333333',
+                'header_bg' => '#f5f5f5',
+                'header_text_color' => '#333333',
+                'border_color' => '#ddd',
+                'name_color' => 'inherit',
+                'quantity_color' => '#2563eb',
+                'price_color' => '#16a34a',
+                'total_color' => '#dc2626'
+            ],
+            'classic' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#ebebeb',
+                'odd_row_text_color' => '#666666',
+                'header_bg' => '#f5f5f5',
+                'header_text_color' => '#333333',
+                'border_color' => '#ddd',
+                'name_color' => 'inherit',
+                'quantity_color' => '#2563eb',
+                'price_color' => '#16a34a',
+                'total_color' => '#dc2626'
+            ],
+            'striped' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#f8f9fa',
+                'odd_row_text_color' => '#495057',
+                'header_bg' => '#e9ecef',
+                'header_text_color' => '#212529',
+                'border_color' => '#dee2e6',
+                'name_color' => 'inherit',
+                'quantity_color' => '#007bff',
+                'price_color' => '#28a745',
+                'total_color' => '#dc3545'
+            ],
+            'bordered' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#ffffff',
+                'odd_row_text_color' => '#333333',
+                'header_bg' => '#f8f9fa',
+                'header_text_color' => '#495057',
+                'border_color' => '#dee2e6',
+                'name_color' => 'inherit',
+                'quantity_color' => '#6c757d',
+                'price_color' => '#28a745',
+                'total_color' => '#dc3545'
+            ],
+            'minimal' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#ffffff',
+                'odd_row_text_color' => '#333333',
+                'header_bg' => '#ffffff',
+                'header_text_color' => '#666666',
+                'border_color' => '#f0f0f0',
+                'name_color' => 'inherit',
+                'quantity_color' => '#999999',
+                'price_color' => '#666666',
+                'total_color' => '#333333'
+            ],
+            'modern' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#f8f9ff',
+                'odd_row_text_color' => '#2d3748',
+                'header_bg' => '#2d3748',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#e2e8f0',
+                'name_color' => 'inherit',
+                'quantity_color' => '#3182ce',
+                'price_color' => '#38a169',
+                'total_color' => '#e53e3e'
+            ],
+            'blue_ocean' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#f0f8ff',
+                'odd_row_text_color' => '#2c5282',
+                'header_bg' => '#2c5282',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#90cdf4',
+                'name_color' => 'inherit',
+                'quantity_color' => '#3182ce',
+                'price_color' => '#38a169',
+                'total_color' => '#e53e3e'
+            ],
+            'emerald_forest' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#f0fff4',
+                'odd_row_text_color' => '#22543d',
+                'header_bg' => '#22543d',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#9ae6b4',
+                'name_color' => 'inherit',
+                'quantity_color' => '#38a169',
+                'price_color' => '#3182ce',
+                'total_color' => '#e53e3e'
+            ],
+            'sunset_orange' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#fffaf0',
+                'odd_row_text_color' => '#9c4221',
+                'header_bg' => '#9c4221',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#fbb6ce',
+                'name_color' => 'inherit',
+                'quantity_color' => '#dd6b20',
+                'price_color' => '#38a169',
+                'total_color' => '#e53e3e'
+            ],
+            'royal_purple' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#faf5ff',
+                'odd_row_text_color' => '#553c9a',
+                'header_bg' => '#553c9a',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#d6bcfa',
+                'name_color' => 'inherit',
+                'quantity_color' => '#805ad5',
+                'price_color' => '#38a169',
+                'total_color' => '#e53e3e'
+            ],
+            'rose_pink' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#fff5f5',
+                'odd_row_text_color' => '#97266d',
+                'header_bg' => '#97266d',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#fed7d7',
+                'name_color' => 'inherit',
+                'quantity_color' => '#d53f8c',
+                'price_color' => '#38a169',
+                'total_color' => '#e53e3e'
+            ],
+            'teal_aqua' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#e6fffa',
+                'odd_row_text_color' => '#234e52',
+                'header_bg' => '#234e52',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#81e6d9',
+                'name_color' => 'inherit',
+                'quantity_color' => '#319795',
+                'price_color' => '#38a169',
+                'total_color' => '#e53e3e'
+            ],
+            'crimson_red' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#fff5f5',
+                'odd_row_text_color' => '#9b2c2c',
+                'header_bg' => '#9b2c2c',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#feb2b2',
+                'name_color' => 'inherit',
+                'quantity_color' => '#e53e3e',
+                'price_color' => '#38a169',
+                'total_color' => '#c53030'
+            ],
+            'amber_gold' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#fffff0',
+                'odd_row_text_color' => '#744210',
+                'header_bg' => '#744210',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#fbd38d',
+                'name_color' => 'inherit',
+                'quantity_color' => '#d69e2e',
+                'price_color' => '#38a169',
+                'total_color' => '#e53e3e'
+            ],
+            'indigo_night' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#f7fafc',
+                'odd_row_text_color' => '#2a4365',
+                'header_bg' => '#2a4365',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#a0aec0',
+                'name_color' => 'inherit',
+                'quantity_color' => '#4c51bf',
+                'price_color' => '#38a169',
+                'total_color' => '#e53e3e'
+            ],
+            'slate_gray' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#f7fafc',
+                'odd_row_text_color' => '#2d3748',
+                'header_bg' => '#2d3748',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#a0aec0',
+                'name_color' => 'inherit',
+                'quantity_color' => '#4a5568',
+                'price_color' => '#38a169',
+                'total_color' => '#e53e3e'
+            ],
+            'coral_sunset' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#fff5f5',
+                'odd_row_text_color' => '#c05621',
+                'header_bg' => '#c05621',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#fed7cc',
+                'name_color' => 'inherit',
+                'quantity_color' => '#ed8936',
+                'price_color' => '#38a169',
+                'total_color' => '#e53e3e'
+            ],
+            'mint_green' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#f0fff4',
+                'odd_row_text_color' => '#276749',
+                'header_bg' => '#276749',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#9ae6b4',
+                'name_color' => 'inherit',
+                'quantity_color' => '#38a169',
+                'price_color' => '#319795',
+                'total_color' => '#e53e3e'
+            ],
+            'violet_dream' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#faf5ff',
+                'odd_row_text_color' => '#6b46c1',
+                'header_bg' => '#6b46c1',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#d6bcfa',
+                'name_color' => 'inherit',
+                'quantity_color' => '#805ad5',
+                'price_color' => '#38a169',
+                'total_color' => '#e53e3e'
+            ],
+            'sky_blue' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#ebf8ff',
+                'odd_row_text_color' => '#2a69ac',
+                'header_bg' => '#2a69ac',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#90cdf4',
+                'name_color' => 'inherit',
+                'quantity_color' => '#4299e1',
+                'price_color' => '#38a169',
+                'total_color' => '#e53e3e'
+            ],
+            'forest_green' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#f0fff4',
+                'odd_row_text_color' => '#22543d',
+                'header_bg' => '#22543d',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#9ae6b4',
+                'name_color' => 'inherit',
+                'quantity_color' => '#38a169',
+                'price_color' => '#3182ce',
+                'total_color' => '#e53e3e'
+            ],
+            'ruby_red' => [
+                'even_row_bg' => '#ffffff',
+                'odd_row_bg' => '#fff5f5',
+                'odd_row_text_color' => '#9b2c2c',
+                'header_bg' => '#9b2c2c',
+                'header_text_color' => '#ffffff',
+                'border_color' => '#feb2b2',
+                'name_color' => 'inherit',
+                'quantity_color' => '#e53e3e',
+                'price_color' => '#38a169',
+                'total_color' => '#c53030'
+            ]
+        ];
+
+        return $styles[$style] ?? $styles['default'];
     }
 }
 
