@@ -284,8 +284,6 @@ class PDF_Builder_Pro_Generator {
                     $table_html = $this->generate_table_html_from_canvas_template($element);
 
                     error_log('[PDF Generator] Table HTML generated from canvas template, length: ' . strlen($table_html));
-                }
-
                     $show_headers = $element['showHeaders'] ?? true;
                     $show_borders = $element['showBorders'] ?? true;
                     $headers = $element['headers'] ?? ['Produit', 'Qté', 'Prix', 'Total'];
@@ -438,6 +436,7 @@ class PDF_Builder_Pro_Generator {
                     }
                     $table_html .= "<tbody>";
                     $row_count = 0;
+                    $items = $this->order->get_items();
                     foreach ($items as $item) {
                         $row_count++;
                         $is_even = ($row_count % 2 === 0);
