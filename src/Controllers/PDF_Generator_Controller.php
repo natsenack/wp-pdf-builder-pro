@@ -457,12 +457,12 @@ class PDF_Builder_Pro_Generator {
             $single_brace_replacements[$single_key] = $value;
         }
 
-        // Appliquer les remplacements dans l'ordre : simples, doubles, crochets
+        // Appliquer les remplacements dans l'ordre : doubles, simples, crochets
         $original_content = $content;
-        $content = str_replace(array_keys($single_brace_replacements), array_values($single_brace_replacements), $content);
-        error_log('[PDF Generator] After single brace replacements: "' . $original_content . '" -> "' . $content . '"');
         $content = str_replace(array_keys($double_brace_replacements), array_values($double_brace_replacements), $content);
         error_log('[PDF Generator] After double brace replacements: "' . $original_content . '" -> "' . $content . '"');
+        $content = str_replace(array_keys($single_brace_replacements), array_values($single_brace_replacements), $content);
+        error_log('[PDF Generator] After single brace replacements: "' . $original_content . '" -> "' . $content . '"');
         $content = str_replace(array_keys($bracket_replacements), array_values($bracket_replacements), $content);
         error_log('[PDF Generator] After bracket replacements: "' . $original_content . '" -> "' . $content . '"');
 
