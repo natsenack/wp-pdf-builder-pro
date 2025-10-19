@@ -139,14 +139,11 @@ class PDF_Builder_Pro_Generator {
         return $html;
     }
 
-    /**
-     * Rendre un élément individuel en HTML
-     */
     private function render_element_to_html($element) {
         $type = $element['type'] ?? 'text';
         $coords = $this->extract_element_coordinates($element, 1); // Garder en pixels pour HTML
 
-        error_log('[PDF Generator] Rendering element type: ' . $type . ', content: ' . ($element['content'] ?? $element['text'] ?? 'no content'));
+        error_log('[PDF Generator] Rendering element type: ' . $type . ', id: ' . ($element['id'] ?? 'no-id'));
 
         // Donner des dimensions par défaut si manquantes
         if (empty($coords['width']) || $coords['width'] <= 0) {
@@ -200,6 +197,15 @@ class PDF_Builder_Pro_Generator {
             $style .= 'border-width: ' . intval($element['borderWidth']) . 'px; ';
         }
 
+        try {
+            return $this->render_element_content($element, $style, $type);
+        } catch (Exception $e) {
+            error_log('[PDF Generator] Error rendering element ' . $type . ': ' . $e->getMessage());
+            return "<div class='canvas-element' style='" . esc_attr($style) . "; background: #ffe6e6; border: 1px solid #ff0000; display: flex; align-items: center; justify-content: center; color: #ff0000;'>Erreur: {$type}</div>";
+        }
+    }
+
+    private function render_element_content($element, $style, $type) {
         switch ($type) {
             case 'text':
             case 'dynamic-text':
@@ -237,10 +243,118 @@ class PDF_Builder_Pro_Generator {
 
             case 'divider':
             case 'line':
-                return "<div class='canvas-element' style='" . esc_attr($style) . "; background-color: #cccccc;'></div>";
+                $line_color = $element['lineColor'] ?? '#64748b';
+                $line_width = $element['lineWidth'] ?? 2;
+                $style .= "border-bottom: {$line_width}px solid {$line_color}; height: {$line_width}px;";
+                return "<div class='canvas-element' style='" . esc_attr($style) . ";'></div>";
 
             case 'product_table':
-                return "<div class='canvas-element' style='" . esc_attr($style) . "; border: 1px solid #ddd; overflow: auto;'>Tableau produits</div>";
+                $table_html = '';
+                if ($this->order) {
+                    $items = $this->order->get_items();
+                    $show_headers = $element['showHeaders'] ?? true;
+                    $show_borders = $element['showBorders'] ?? true;
+                    $headers = $element['headers'] ?? ['Produit', 'Qté', 'Prix', 'Total'];
+                    $columns = $element['columns'] ?? ['image' => false, 'name' => true, 'sku' => false, 'quantity' => true, 'price' => true, 'total' => true];
+                    $table_style = $element['tableStyle'] ?? 'classic';
+                    $even_row_bg = $element['evenRowBg'] ?? '#ffffff';
+                    $odd_row_bg = $element['oddRowBg'] ?? '#ebebeb';
+                    $odd_row_text_color = $element['oddRowTextColor'] ?? '#666666';
+                    
+                    $border_style = $show_borders ? 'border: 1px solid #ddd; border-collapse: collapse;' : '';
+                    
+                    $table_html .= "<table style='width: 100%; {$border_style} font-size: 12px;'>";
+                    
+                    // Headers
+                    if ($show_headers) {
+                        $table_html .= "<thead><tr style='background-color: #f5f5f5;'>";
+                        foreach ($headers as $header) {
+                            $table_html .= "<th style='padding: 8px; text-align: left; {$border_style} font-weight: bold;'>{$header}</th>";
+                        }
+                        $table_html .= "</tr></thead>";
+                    }
+                    
+                    // Products
+                    $table_html .= "<tbody>";
+                    $row_count = 0;
+                    foreach ($items as $item) {
+                        $row_count++;
+                        $bg_color = ($row_count % 2 === 0) ? $even_row_bg : $odd_row_bg;
+                        $text_color = ($row_count % 2 === 0) ? 'inherit' : $odd_row_text_color;
+                        
+                        $table_html .= "<tr style='background-color: {$bg_color}; color: {$text_color};'>";
+                        
+                        // Product Name
+                        if ($columns['name']) {
+                            $product_name = $item->get_name();
+                            $table_html .= "<td style='padding: 8px; {$border_style}'>{$product_name}</td>";
+                        }
+                        
+                        // Quantity
+                        if ($columns['quantity']) {
+                            $quantity = $item->get_quantity();
+                            $table_html .= "<td style='padding: 8px; {$border_style} text-align: center;'>{$quantity}</td>";
+                        }
+                        
+                        // Price
+                        if ($columns['price']) {
+                            $price = function_exists('wc_price') ? wc_price($item->get_price()) : $item->get_price();
+                            $table_html .= "<td style='padding: 8px; {$border_style} text-align: right;'>{$price}</td>";
+                        }
+                        
+                        // Total
+                        if ($columns['total']) {
+                            $total = function_exists('wc_price') ? wc_price($item->get_total()) : $item->get_total();
+                            $table_html .= "<td style='padding: 8px; {$border_style} text-align: right; font-weight: bold;'>{$total}</td>";
+                        }
+                        
+                        $table_html .= "</tr>";
+                    }
+                    
+                    // Subtotal, Shipping, Taxes, Total
+                    $show_subtotal = $element['showSubtotal'] ?? true;
+                    $show_shipping = $element['showShipping'] ?? true;
+                    $show_taxes = $element['showTaxes'] ?? false;
+                    $show_discount = $element['showDiscount'] ?? true;
+                    $show_total = $element['showTotal'] ?? true;
+                    
+                    if ($show_subtotal || $show_shipping || $show_taxes || $show_discount || $show_total) {
+                        $table_html .= "<tr style='background-color: #f9f9f9; font-weight: bold;'><td colspan='" . count(array_filter($columns)) . "' style='padding: 8px; {$border_style} text-align: right;'>";
+                        
+                        $summary_lines = [];
+                        
+                        if ($show_subtotal) {
+                            $subtotal = function_exists('wc_price') ? wc_price($this->order->get_subtotal()) : $this->order->get_subtotal();
+                            $summary_lines[] = "Sous-total: {$subtotal}";
+                        }
+                        
+                        if ($show_shipping && $this->order->get_shipping_total() > 0) {
+                            $shipping = function_exists('wc_price') ? wc_price($this->order->get_shipping_total()) : $this->order->get_shipping_total();
+                            $summary_lines[] = "Livraison: {$shipping}";
+                        }
+                        
+                        if ($show_taxes && $this->order->get_total_tax() > 0) {
+                            $tax = function_exists('wc_price') ? wc_price($this->order->get_total_tax()) : $this->order->get_total_tax();
+                            $summary_lines[] = "TVA: {$tax}";
+                        }
+                        
+                        if ($show_discount && $this->order->get_discount_total() > 0) {
+                            $discount = function_exists('wc_price') ? wc_price($this->order->get_discount_total()) : $this->order->get_discount_total();
+                            $summary_lines[] = "Remise: -{$discount}";
+                        }
+                        
+                        if ($show_total) {
+                            $total = function_exists('wc_price') ? wc_price($this->order->get_total()) : $this->order->get_total();
+                            $summary_lines[] = "TOTAL: {$total}";
+                        }
+                        
+                        $table_html .= implode('<br>', $summary_lines);
+                        $table_html .= "</td></tr>";
+                    }
+                    
+                    $table_html .= "</tbody></table>";
+                }
+                return "<div class='canvas-element' style='" . esc_attr($style) . "; overflow: auto;'>" . $table_html . "</div>";
 
             case 'customer_info':
                 $customer_info = '';
