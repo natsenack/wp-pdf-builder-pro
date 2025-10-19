@@ -882,12 +882,31 @@ class PDF_Builder_WooCommerce_Integration {
                             iframeDoc.write(response.data.html);
                             iframeDoc.close();
                             
+                            console.log('HTML written to iframe, length:', response.data.html.length);
+                            console.log('HTML content written (first 500 chars):', response.data.html.substring(0, 500));
+                            
                             $loading.hide();
                             $iframe.show();
                             
                             // Attendre que l'iframe soit chargé
                             $iframe.on('load', function() {
                                 console.log('HTML preview iframe loaded');
+                                
+                                // Log du contenu HTML juste après le chargement
+                                try {
+                                    var iframeContent = iframe.contentDocument || iframe.contentWindow.document;
+                                    console.log('Iframe content after load (first 1000 chars):', iframeContent.documentElement.outerHTML.substring(0, 1000));
+                                    
+                                    // Vérifier si des scripts ont modifié le contenu
+                                    var scripts = iframeContent.querySelectorAll('script');
+                                    console.log('Number of scripts in iframe:', scripts.length);
+                                    scripts.forEach(function(script, index) {
+                                        console.log('Script ' + index + ' content (first 200 chars):', script.textContent.substring(0, 200));
+                                    });
+                                    
+                                } catch (e) {
+                                    console.error('Error logging iframe after load:', e);
+                                }
                                 
                                 // Log des éléments dans l'iframe
                                 try {

@@ -126,7 +126,7 @@ foreach ($file in $modifiedFiles) {
 
 Pop-Location
 
-Write-Host ($filesToDeploy.Count + " fichiers modifies a deployer") -ForegroundColor Green
+Write-Host "$($filesToDeploy.Count) fichiers modifies a deployer" -ForegroundColor Green
 if ($filesToDeploy.Count -eq 0) {
 Write-Host "`nINFO: Aucun fichier modifie detecte. Deploiement annule." -ForegroundColor Yellow
     exit 0
