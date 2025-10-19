@@ -6870,7 +6870,7 @@ class PDF_Builder_Admin {
 
             case 'customer_info':
                 if ($order) {
-                    $html = '<div style="font-size: 12px; line-height: 1.4; ' . esc_attr($element_style) . '">';
+                    $html = '<div style="width: 100%; height: 100%; font-size: 12px; line-height: 1.4; ' . esc_attr($element_style) . '">';
                     $html .= '<div style="font-weight: bold;">' . esc_html($order->get_billing_first_name() . ' ' . $order->get_billing_last_name()) . '</div>';
                     $billing = $order->get_formatted_billing_address();
                     if ($billing) {
@@ -6885,32 +6885,32 @@ class PDF_Builder_Admin {
                     $html .= '</div>';
                     return $html;
                 }
-                return '<div style="' . esc_attr($element_style) . '">Client</div>';
+                return '<div style="width: 100%; height: 100%; ' . esc_attr($element_style) . '">Client</div>';
 
             case 'order_number':
                 if ($order) {
-                    return '<div style="' . esc_attr($element_style) . '">' . esc_html($order->get_order_number()) . '</div>';
+                    return '<div style="width: 100%; height: 100%; display: flex; align-items: center; ' . esc_attr($element_style) . '">' . esc_html($order->get_order_number()) . '</div>';
                 }
-                return '<div style="' . esc_attr($element_style) . '">N° commande</div>';
+                return '<div style="width: 100%; height: 100%; display: flex; align-items: center; ' . esc_attr($element_style) . '">N° commande</div>';
 
             case 'order_date':
                 if ($order) {
                     $date = $order->get_date_created() ? $order->get_date_created()->format('d/m/Y') : date('d/m/Y');
-                    return '<div style="' . esc_attr($element_style) . '">' . esc_html($date) . '</div>';
+                    return '<div style="width: 100%; height: 100%; display: flex; align-items: center; ' . esc_attr($element_style) . '">' . esc_html($date) . '</div>';
                 }
-                return '<div style="' . esc_attr($element_style) . '">Date</div>';
+                return '<div style="width: 100%; height: 100%; display: flex; align-items: center; ' . esc_attr($element_style) . '">Date</div>';
 
             case 'total':
                 if ($order) {
-                    return '<div style="' . esc_attr($element_style) . '">' . wc_price($order->get_total()) . '</div>';
+                    return '<div style="width: 100%; height: 100%; display: flex; align-items: center; ' . esc_attr($element_style) . '">' . wc_price($order->get_total()) . '</div>';
                 }
-                return '<div style="' . esc_attr($element_style) . '">Total</div>';
+                return '<div style="width: 100%; height: 100%; display: flex; align-items: center; ' . esc_attr($element_style) . '">Total</div>';
 
             case 'subtotal':
                 if ($order) {
-                    return '<div style="' . esc_attr($element_style) . '">' . wc_price($order->get_subtotal()) . '</div>';
+                    return '<div style="width: 100%; height: 100%; display: flex; align-items: center; ' . esc_attr($element_style) . '">' . wc_price($order->get_subtotal()) . '</div>';
                 }
-                return '<div style="' . esc_attr($element_style) . '">Sous-total</div>';
+                return '<div style="width: 100%; height: 100%; display: flex; align-items: center; ' . esc_attr($element_style) . '">Sous-total</div>';
 
             case 'mentions':
                 $mentions = [];
@@ -6931,18 +6931,18 @@ class PDF_Builder_Admin {
                     if ($vat) $mentions[] = 'TVA: ' . $vat;
                 }
                 $separator = isset($element['separator']) ? $element['separator'] : ' • ';
-                return '<div style="' . esc_attr($element_style) . '">' . esc_html(implode($separator, $mentions)) . '</div>';
+                return '<div style="width: 100%; height: 100%; display: flex; align-items: center; ' . esc_attr($element_style) . '">' . esc_html(implode($separator, $mentions)) . '</div>';
 
             case 'company_info':
-                return '<div style="' . esc_attr($element_style) . '">' . nl2br(esc_html($this->format_complete_company_info())) . '</div>';
+                return '<div style="width: 100%; height: 100%; ' . esc_attr($element_style) . '">' . nl2br(esc_html($this->format_complete_company_info())) . '</div>';
 
             case 'document_type':
                 if ($order) {
                     $order_status = $order->get_status();
                     $document_type = $this->detect_document_type($order_status);
-                    return '<div style="' . esc_attr($element_style) . '">' . esc_html($this->get_document_type_label($document_type)) . '</div>';
+                    return '<div style="width: 100%; height: 100%; display: flex; align-items: center; ' . esc_attr($element_style) . '">' . esc_html($this->get_document_type_label($document_type)) . '</div>';
                 }
-                return '<div style="' . esc_attr($element_style) . '">FACTURE</div>';
+                return '<div style="width: 100%; height: 100%; display: flex; align-items: center; ' . esc_attr($element_style) . '">FACTURE</div>';
 
             case 'rectangle':
                 return '';
