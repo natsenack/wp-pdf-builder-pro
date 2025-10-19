@@ -5314,7 +5314,8 @@ var PreviewModal = function PreviewModal(_ref) {
               url: data.data.url,
               elements_count: elements.length,
               width: canvasWidth,
-              height: canvasHeight
+              height: canvasHeight,
+              type: data.data.type || 'pdf'
             });
             _context.n = 10;
             break;
@@ -5484,7 +5485,7 @@ var PreviewModal = function PreviewModal(_ref) {
       height: '100%',
       border: 'none'
     },
-    title: "Aper\xE7u PDF"
+    title: "Aper\xE7u"
   })))), /*#__PURE__*/React.createElement("div", {
     style: {
       padding: '20px',

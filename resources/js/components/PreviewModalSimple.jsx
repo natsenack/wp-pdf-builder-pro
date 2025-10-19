@@ -80,7 +80,8 @@ const PreviewModal = ({
           url: data.data.url,
           elements_count: elements.length,
           width: canvasWidth,
-          height: canvasHeight
+          height: canvasHeight,
+          type: data.data.type || 'pdf'
         });
       } else {
         throw new Error(data.data || 'Erreur génération aperçu');
@@ -245,7 +246,7 @@ const PreviewModal = ({
                     height: '100%',
                     border: 'none'
                   }}
-                  title="Aperçu PDF"
+                  title="Aperçu"
                 />
               </div>
             </div>
