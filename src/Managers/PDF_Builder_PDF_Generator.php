@@ -218,20 +218,36 @@ class PDF_Builder_PDF_Generator {
                 'version' => '1.0'
             );
             
-            // Générer le PDF en utilisant les données template
-            $pdf_path = $this->generate_pdf_from_template_data($template_data, 'preview-' . time() . '.pdf');
-
-            if ($pdf_path && file_exists($pdf_path)) {
+            // Générer le PDF en utilisant le nouveau générateur SANS TCPDF
+            require_once plugin_dir_path(dirname(__FILE__)) . '../Controllers/PDF_Generator_Controller.php';
+            
+            $generator = new PDF_Builder_Pro_Generator();
+            $generator->set_preview_mode(true);
+            
+            // Générer le HTML (pas de PDF pour l'instant)
+            $html_content = $generator->generate($canvas_elements);
+            
+            if (!empty($html_content)) {
+                // Créer un fichier HTML temporaire pour l'aperçu
                 $upload_dir = wp_upload_dir();
-                $pdf_url = str_replace($upload_dir['basedir'], $upload_dir['baseurl'], $pdf_path);
+                $html_dir = $upload_dir['basedir'] . '/pdf-builder';
+                if (!file_exists($html_dir)) {
+                    wp_mkdir_p($html_dir);
+                }
+
+                $html_path = $html_dir . '/' . $filename . '.html';
+                file_put_contents($html_path, $html_content);
+                
+                $html_url = str_replace($upload_dir['basedir'], $upload_dir['baseurl'], $html_path);
 
                 wp_send_json_success(array(
-                    'url' => $pdf_url,
-                    'path' => $pdf_path,
-                    'elements_count' => count($canvas_elements)
+                    'url' => $html_url,
+                    'path' => $html_path,
+                    'elements_count' => count($canvas_elements),
+                    'type' => 'html'
                 ));
             } else {
-                wp_send_json_error('Erreur lors de la génération du PDF d\'aperçu');
+                wp_send_json_error('Erreur lors de la génération du HTML d\'aperçu');
             }
         } catch (Exception $e) {
             error_log('[PDF Builder Preview] Exception: ' . $e->getMessage());
