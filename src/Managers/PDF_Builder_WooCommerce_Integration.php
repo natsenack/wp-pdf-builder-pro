@@ -523,8 +523,13 @@ class PDF_Builder_WooCommerce_Integration {
                 }
             }
 
-
-            $generator = new PDF_Builder_Pro_Generator();
+            try {
+                $generator = new PDF_Builder_Pro_Generator();
+                error_log('PDF PREVIEW DEBUG - Generator instantiated successfully');
+            } catch (Exception $e) {
+                error_log('PDF PREVIEW DEBUG - Generator instantiation failed: ' . $e->getMessage());
+                wp_send_json_error('Erreur d\'instanciation du générateur: ' . $e->getMessage());
+            }
 
             // Déterminer le type d'aperçu
             error_log('PDF PREVIEW DEBUG - About to check elements condition');
