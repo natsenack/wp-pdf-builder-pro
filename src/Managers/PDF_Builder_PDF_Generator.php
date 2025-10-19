@@ -180,7 +180,12 @@ class PDF_Builder_PDF_Generator {
             // Décoder les éléments JSON
             $canvas_elements = json_decode($elements, true);
             
+            // Debug: log du JSON reçu
+            error_log('PDF Builder Preview - JSON reçu: ' . substr($elements, 0, 500));
+            error_log('PDF Builder Preview - Éléments décodés: ' . print_r($canvas_elements, true));
+            
             if (!$canvas_elements || !is_array($canvas_elements)) {
+                error_log('PDF Builder Preview - Échec décodage JSON ou pas un array');
                 wp_send_json_error('Format JSON invalide pour les éléments');
             }
 
