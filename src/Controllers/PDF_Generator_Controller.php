@@ -4,7 +4,7 @@
  * Version: 3.0 - Migration complète vers approche moderne
  * Auteur: PDF Builder Pro Team
  * Description: Systeme plug-and-play pour generation PDF haute performance sans TCPDF
- * Updated: 2025-10-19 - Force deployment
+ * Updated: 2025-10-19 - Force deployment v2
  */
 
 // Sécurité WordPress - Empêcher l'accès direct
