@@ -186,7 +186,7 @@ class PDF_Builder_Pro_Generator {
         
         foreach ($direct_properties as $prop) {
             if (isset($element[$prop]) && !isset($element['properties'][$prop])) {
-                $css_prop = $this->convert_property_to_css($prop, $element[$prop]);
+                $css_prop = $this->convert_property_to_css($prop, $element[$prop], $element);
                 if ($css_prop) {
                     $style .= $css_prop . '; ';
                 }
@@ -654,7 +654,7 @@ class PDF_Builder_Pro_Generator {
     /**
      * Convertir une propriété d'élément en propriété CSS
      */
-    private function convert_property_to_css($property, $value) {
+    private function convert_property_to_css($property, $value, $element = null) {
         switch ($property) {
             case 'color':
                 return 'color: ' . esc_attr($value);
@@ -670,10 +670,21 @@ class PDF_Builder_Pro_Generator {
                 return 'text-align: ' . esc_attr($value);
             case 'fontFamily':
                 return 'font-family: ' . esc_attr($value);
-            case 'lineHeight':
-                return 'line-height: ' . esc_attr($value);
-            case 'visible':
-                return $value ? null : 'display: none';
+            case 'textDecoration':
+                return 'text-decoration: ' . esc_attr($value);
+            case 'opacity':
+                return 'opacity: ' . floatval($value);
+            case 'border':
+            case 'borderColor':
+            case 'borderWidth':
+            case 'borderStyle':
+            case 'borderRadius':
+                // Les propriétés de bordure sont gérées ensemble dans extract_element_styles
+                return null;
+            case 'rotation':
+            case 'scale':
+                // Les transformations sont gérées ensemble dans extract_element_styles
+                return null;
             case 'brightness':
                 return $value != 100 ? "filter: brightness({$value}%)" : null;
             case 'contrast':
@@ -690,6 +701,12 @@ class PDF_Builder_Pro_Generator {
                 return $value > 0 ? "filter: grayscale({$value}%)" : null;
             case 'invert':
                 return $value > 0 ? "filter: invert({$value}%)" : null;
+            case 'shadowColor':
+            case 'shadowOffsetX':
+            case 'shadowOffsetY':
+            case 'shadowBlur':
+                // Les propriétés shadow sont gérées ensemble dans extract_element_styles
+                return null;
             default:
                 return null;
         }
