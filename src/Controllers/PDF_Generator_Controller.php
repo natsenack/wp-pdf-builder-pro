@@ -243,10 +243,174 @@ class PDF_Builder_Pro_Generator {
                 return "<div class='canvas-element' style='" . esc_attr($style) . "; border: 1px solid #ddd; overflow: auto;'>Tableau produits</div>";
 
             case 'customer_info':
-                return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 12px; line-height: 1.4;'>Informations client</div>";
+                $customer_info = '';
+                if ($this->order) {
+                    $fields = $element['fields'] ?? ['name', 'phone', 'address', 'email'];
+                    $show_labels = $element['showLabels'] ?? true;
+                    $label_style = $element['labelStyle'] ?? 'normal';
+                    
+                    $customer_parts = [];
+                    
+                    if (in_array('name', $fields)) {
+                        $name = trim($this->order->get_billing_first_name() . ' ' . $this->order->get_billing_last_name());
+                        if ($name) {
+                            $label = $show_labels ? ($label_style === 'bold' ? '<strong>Nom:</strong> ' : 'Nom: ') : '';
+                            $customer_parts[] = $label . $name;
+                        }
+                    }
+                    
+                    if (in_array('phone', $fields)) {
+                        $phone = $this->order->get_billing_phone();
+                        if ($phone) {
+                            $label = $show_labels ? ($label_style === 'bold' ? '<strong>Tél:</strong> ' : 'Tél: ') : '';
+                            $customer_parts[] = $label . $phone;
+                        }
+                    }
+                    
+                    if (in_array('email', $fields)) {
+                        $email = $this->order->get_billing_email();
+                        if ($email) {
+                            $label = $show_labels ? ($label_style === 'bold' ? '<strong>Email:</strong> ' : 'Email: ') : '';
+                            $customer_parts[] = $label . $email;
+                        }
+                    }
+                    
+                    if (in_array('address', $fields)) {
+                        $address = $this->order->get_formatted_billing_address();
+                        if ($address) {
+                            $label = $show_labels ? ($label_style === 'bold' ? '<strong>Adresse:</strong><br>' : 'Adresse:<br>') : '';
+                            $customer_parts[] = $label . nl2br($address);
+                        }
+                    }
+                    
+                    $customer_info = implode('<br>', $customer_parts);
+                }
+                return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 12px; line-height: 1.4;'>" . wp_kses_post($customer_info ?: 'Informations client') . "</div>";
 
-            default:
-                return "<div class='canvas-element' style='" . esc_attr($style) . "'>[$type]</div>";
+            case 'company_info':
+                $company_info = '';
+                if ($this->order) {
+                    $fields = $element['fields'] ?? ['name', 'address', 'phone', 'rcs'];
+                    
+                    $company_parts = [];
+                    
+                    if (in_array('name', $fields)) {
+                        $name = get_bloginfo('name');
+                        if ($name) {
+                            $company_parts[] = '<strong>' . esc_html($name) . '</strong>';
+                        }
+                    }
+                    
+                    if (in_array('address', $fields)) {
+                        $address = get_option('pdf_builder_company_address', '');
+                        if ($address) {
+                            $company_parts[] = nl2br(esc_html($address));
+                        }
+                    }
+                    
+                    if (in_array('phone', $fields)) {
+                        $phone = get_option('pdf_builder_company_phone', '');
+                        if ($phone) {
+                            $company_parts[] = 'Tél: ' . esc_html($phone);
+                        }
+                    }
+                    
+                    if (in_array('rcs', $fields)) {
+                        $rcs = get_option('pdf_builder_company_siret', '');
+                        if ($rcs) {
+                            $company_parts[] = 'SIRET: ' . esc_html($rcs);
+                        }
+                    }
+                    
+                    $company_info = implode('<br>', $company_parts);
+                }
+                return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 12px; line-height: 1.4;'>" . wp_kses_post($company_info ?: '[company_info]') . "</div>";
+
+            case 'order_number':
+                $order_number = '';
+                if ($this->order) {
+                    $format = $element['format'] ?? 'Commande #{order_number}';
+                    $show_label = $element['showLabel'] ?? true;
+                    $label_text = $element['labelText'] ?? 'N° de commande:';
+                    
+                    // Replace variables in format
+                    $order_number = $this->replace_order_variables($format, $this->order);
+                    
+                    if ($show_label && $label_text) {
+                        $order_number = '<strong>' . esc_html($label_text) . '</strong><br>' . $order_number;
+                    }
+                }
+                return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 14px; font-weight: bold; text-align: right;'>" . wp_kses_post($order_number ?: 'Texte') . "</div>";
+
+            case 'document_type':
+                $doc_type = $element['documentType'] ?? 'invoice';
+                $doc_label = $doc_type === 'invoice' ? 'FACTURE' : ($doc_type === 'quote' ? 'DEVIS' : strtoupper($doc_type));
+                return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 18px; font-weight: bold; text-align: center;'>" . esc_html($doc_label) . "</div>";
+
+            case 'mentions':
+                $mentions = '';
+                if ($this->order) {
+                    $show_email = $element['showEmail'] ?? true;
+                    $show_phone = $element['showPhone'] ?? true;
+                    $show_siret = $element['showSiret'] ?? true;
+                    $show_vat = $element['showVat'] ?? false;
+                    $show_address = $element['showAddress'] ?? false;
+                    $show_website = $element['showWebsite'] ?? false;
+                    $show_custom_text = $element['showCustomText'] ?? false;
+                    $custom_text = $element['customText'] ?? '';
+                    $separator = $element['separator'] ?? ' • ';
+                    
+                    $mention_parts = [];
+                    
+                    if ($show_email) {
+                        $email = get_option('pdf_builder_company_email', '');
+                        if ($email) {
+                            $mention_parts[] = esc_html($email);
+                        }
+                    }
+                    
+                    if ($show_phone) {
+                        $phone = get_option('pdf_builder_company_phone', '');
+                        if ($phone) {
+                            $mention_parts[] = esc_html($phone);
+                        }
+                    }
+                    
+                    if ($show_siret) {
+                        $siret = get_option('pdf_builder_company_siret', '');
+                        if ($siret) {
+                            $mention_parts[] = 'SIRET ' . esc_html($siret);
+                        }
+                    }
+                    
+                    if ($show_vat) {
+                        $vat = get_option('pdf_builder_company_vat', '');
+                        if ($vat) {
+                            $mention_parts[] = 'TVA ' . esc_html($vat);
+                        }
+                    }
+                    
+                    if ($show_address) {
+                        $address = get_option('pdf_builder_company_address', '');
+                        if ($address) {
+                            $mention_parts[] = esc_html($address);
+                        }
+                    }
+                    
+                    if ($show_website) {
+                        $website = get_option('home');
+                        if ($website) {
+                            $mention_parts[] = esc_html($website);
+                        }
+                    }
+                    
+                    if ($show_custom_text && $custom_text) {
+                        $mention_parts[] = esc_html($custom_text);
+                    }
+                    
+                    $mentions = implode($separator, $mention_parts);
+                }
+                return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 8px; text-align: center;'>" . esc_html($mentions ?: 'Texte') . "</div>";
         }
     }
 
