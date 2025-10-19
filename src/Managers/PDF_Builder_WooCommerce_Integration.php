@@ -846,44 +846,60 @@ class PDF_Builder_WooCommerce_Integration {
             // Handler pour le bouton APERÇU PDF
             $('#pdf-preview-btn').on('click', function(e) {
                 e.preventDefault();
-                
+
                 console.log("PDF Preview - Aperçu PDF clicked");
                 console.log("Using nonce:", nonce.substring(0, 5) + "...");
-                
+
                 // Afficher la modale avec loading
                 var $modal = $('#woo-pdf-preview-modal');
                 var $loading = $modal.find('.woo-pdf-preview-loading');
                 var $iframe = $modal.find('#woo-pdf-preview-iframe');
                 var $body = $modal.find('.woo-pdf-preview-modal-body');
-                
+
                 $modal.show();
                 $loading.show();
+                $iframe.hide();
 
-                showStatus("Chargement de l'aperçu en cours...", "loading");
+                showStatus("Génération de l'aperçu PDF...", "loading");
 
-                // Charger directement la page d'aperçu Canvas au lieu de générer un PDF TCPDF
-                // L'aperçu Canvas est identique à l'éditeur et s'affiche plus rapidement
-                var previewUrl = "<?php echo admin_url('admin-ajax.php'); ?>" +
-                    "?action=pdf_builder_canvas_preview" +
-                    "&order_id=" + encodeURIComponent(orderId) +
-                    "&template_id=" + encodeURIComponent(templateId) +
-                    "&nonce=" + encodeURIComponent(nonce);
-                
-                console.log("Loading canvas preview from:", previewUrl);
-                
-                // Charger l'iframe avec l'aperçu Canvas
-                $iframe.attr('src', previewUrl);
-                
-                // Masquer le loading et afficher l'iframe
-                setTimeout(function() {
-                    $loading.hide();
-                    $iframe.css('display', 'block');
-                    // Attendre que l'iframe soit chargé
-                    $iframe.on('load', function() {
-                        console.log('Canvas preview iframe loaded');
-                        showStatus("Aperçu chargé avec succès ✓", "success");
-                    });
-                }, 300);
+                // Utiliser l'API unifiée pour générer l'aperçu PDF
+                var data = {
+                    action: 'pdf_builder_unified_pdf_preview',
+                    nonce: nonce,
+                    order_id: orderId
+                };
+
+                $.ajax({
+                    url: ajaxUrl,
+                    type: 'POST',
+                    data: data,
+                    dataType: 'json',
+                    success: function(response) {
+                        console.log("PDF Preview response:", response);
+
+                        if (response.success && response.data && response.data.url) {
+                            // Charger l'URL du PDF dans l'iframe
+                            $iframe.attr('src', response.data.url);
+                            $loading.hide();
+                            $iframe.show();
+
+                            // Attendre que l'iframe soit chargé
+                            $iframe.on('load', function() {
+                                console.log('PDF preview iframe loaded');
+                                showStatus("Aperçu PDF chargé avec succès ✓", "success");
+                            });
+                        } else {
+                            var errorMsg = response.data || "Erreur lors de la génération de l'aperçu";
+                            showStatus("Erreur: " + errorMsg, "error");
+                            $loading.hide();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("PDF Preview error:", error);
+                        showStatus("Erreur AJAX: " + error, "error");
+                        $loading.hide();
+                    }
+                });
             });
 
             // Gérer la fermeture de la modale
@@ -1092,6 +1108,7 @@ class PDF_Builder_WooCommerce_Integration {
             if (!$order) {
                 error_log('PDF BUILDER DEBUG: Order not found');
                 wp_send_json_error('Commande introuvable');
+                return;
             }
 
             // Charger le template
@@ -1312,36 +1329,31 @@ class PDF_Builder_WooCommerce_Integration {
                     $template_id = $this->get_template_for_order($order);
                 }
 
-                if ($preview_type === 'html') {
-                    // Pour l'aperçu HTML, récupérer les éléments du template depuis la base de données
-                    global $wpdb;
-                    $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-                    $template = $wpdb->get_row($wpdb->prepare("SELECT id, name, template_data FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
+                // Pour l'aperçu, récupérer les éléments du template depuis la base de données
+                global $wpdb;
+                $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+                $template = $wpdb->get_row($wpdb->prepare("SELECT id, name, template_data FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
 
-                    if (!$template) {
-                        wp_send_json_error('Template non trouvé');
-                    }
-
-
-                    $template_data = json_decode($template['template_data'], true);
-                    if (json_last_error() !== JSON_ERROR_NONE) {
-                        wp_send_json_error('Données du template invalides');
-                    }
-
-                    $elements_for_html = isset($template_data['elements']) ? $template_data['elements'] : [];
-
-                    $result = $generator->render_html_preview($elements_for_html, $order_id);
-                } else {
-                    // Aperçu PDF normal
-                    $result = $generator->generate_simple_preview($order_id, $template_id);
+                if (!$template) {
+                    wp_send_json_error('Template non trouvé');
                 }
+
+                $template_data = json_decode($template['template_data'], true);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    wp_send_json_error('Données du template invalides');
+                }
+
+                $elements_for_pdf = isset($template_data['elements']) ? $template_data['elements'] : [];
+
+                // Générer l'aperçu PDF
+                $result = $generator->generate($elements_for_pdf, ['is_preview' => true]);
 
             } else {
                 wp_send_json_error('Contexte d\'aperçu invalide');
             }
 
-            if (is_wp_error($result)) {
-                wp_send_json_error($result->get_error_message());
+            if (!$result) {
+                wp_send_json_error('Erreur lors de la génération de l\'aperçu');
             }
 
             // Gérer les différents types d'aperçu
