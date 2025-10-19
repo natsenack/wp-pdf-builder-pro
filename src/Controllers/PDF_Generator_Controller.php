@@ -311,6 +311,24 @@ class PDF_Builder_Pro_Generator {
                     $price_style = $element['priceStyle'] ?? 'text-align: right;';
                     $total_style = $element['totalStyle'] ?? 'text-align: right; font-weight: bold;';
 
+                    // LOG DÉTAILLÉ DE CHAQUE PROPRIÉTÉ RÉCUPÉRÉE
+                    error_log('[PDF Generator] === TABLE PROPERTIES FROM ELEMENT ===');
+                    error_log('[PDF Generator] evenRowBg: ' . ($element['evenRowBg'] ?? 'NOT_SET -> using: ' . $even_row_bg));
+                    error_log('[PDF Generator] oddRowBg: ' . ($element['oddRowBg'] ?? 'NOT_SET -> using: ' . $odd_row_bg));
+                    error_log('[PDF Generator] oddRowTextColor: ' . ($element['oddRowTextColor'] ?? 'NOT_SET -> using: ' . $odd_row_text_color));
+                    error_log('[PDF Generator] headerBg: ' . ($element['headerBg'] ?? 'NOT_SET -> using: ' . $header_bg));
+                    error_log('[PDF Generator] headerTextColor: ' . ($element['headerTextColor'] ?? 'NOT_SET -> using: ' . $header_text_color));
+                    error_log('[PDF Generator] borderColor: ' . ($element['borderColor'] ?? 'NOT_SET -> using: ' . $border_color));
+                    error_log('[PDF Generator] nameColor: ' . ($element['nameColor'] ?? 'NOT_SET -> using: ' . $name_color));
+                    error_log('[PDF Generator] quantityColor: ' . ($element['quantityColor'] ?? 'NOT_SET -> using: ' . $quantity_color));
+                    error_log('[PDF Generator] priceColor: ' . ($element['priceColor'] ?? 'NOT_SET -> using: ' . $price_color));
+                    error_log('[PDF Generator] totalColor: ' . ($element['totalColor'] ?? 'NOT_SET -> using: ' . $total_color));
+                    error_log('[PDF Generator] nameStyle: ' . ($element['nameStyle'] ?? 'NOT_SET -> using: ' . $name_style));
+                    error_log('[PDF Generator] quantityStyle: ' . ($element['quantityStyle'] ?? 'NOT_SET -> using: ' . $quantity_style));
+                    error_log('[PDF Generator] priceStyle: ' . ($element['priceStyle'] ?? 'NOT_SET -> using: ' . $price_style));
+                    error_log('[PDF Generator] totalStyle: ' . ($element['totalStyle'] ?? 'NOT_SET -> using: ' . $total_style));
+                    error_log('[PDF Generator] === END TABLE PROPERTIES ===');
+
                     error_log('[PDF Generator] Table style applied: ' . $table_style);
                     error_log('[PDF Generator] Table style colors: header_bg=' . $header_bg . ', border=' . $border_color);
                     error_log('[PDF Generator] Column colors - name: ' . $name_color . ', quantity: ' . $quantity_color . ', price: ' . $price_color . ', total: ' . $total_color);
