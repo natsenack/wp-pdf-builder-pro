@@ -205,13 +205,13 @@ class PDF_Builder_PDF_Generator {
             
             if ($canvas_elements === null && json_last_error() !== JSON_ERROR_NONE) {
                 error_log('[PDF Builder Preview] JSON decode error: ' . json_last_error_msg());
-                wp_send_json_error('Erreur décodage JSON: ' . json_last_error_msg());
+                wp_send_json_error('Erreur de décodage JSON : ' . json_last_error_msg() . '. Les données des éléments semblent corrompues.');
                 return;
             }
-            
+
             if (!$canvas_elements || !is_array($canvas_elements)) {
-                error_log('[PDF Builder Preview] Invalid canvas elements structure');
-                wp_send_json_error('Format JSON invalide pour les éléments');
+                error_log('[PDF Builder Preview] Invalid canvas elements structure: ' . gettype($canvas_elements));
+                wp_send_json_error('Format des éléments du canvas invalide. Attendu : tableau d\'éléments.');
                 return;
             }
 
@@ -225,12 +225,20 @@ class PDF_Builder_PDF_Generator {
                 $upload_dir = wp_upload_dir();
                 $pdf_dir = $upload_dir['basedir'] . '/pdf-builder';
                 if (!file_exists($pdf_dir)) {
-                    wp_mkdir_p($pdf_dir);
+                    if (!wp_mkdir_p($pdf_dir)) {
+                        error_log('[PDF Builder Preview] Impossible de créer le dossier: ' . $pdf_dir);
+                        wp_send_json_error('Erreur système : impossible de créer le dossier de stockage temporaire.');
+                        return;
+                    }
                 }
 
-                $filename = 'preview-' . time() . '.pdf';
+                $filename = 'preview-' . time() . '-' . wp_generate_password(8, false) . '.pdf';
                 $pdf_path = $pdf_dir . '/' . $filename;
-                file_put_contents($pdf_path, $pdf_content);
+                if (file_put_contents($pdf_path, $pdf_content) === false) {
+                    error_log('[PDF Builder Preview] Impossible d\'écrire le fichier: ' . $pdf_path);
+                    wp_send_json_error('Erreur système : impossible de sauvegarder le fichier PDF temporaire.');
+                    return;
+                }
 
                 $pdf_url = str_replace($upload_dir['basedir'], $upload_dir['baseurl'], $pdf_path);
 
@@ -243,7 +251,8 @@ class PDF_Builder_PDF_Generator {
                     'renderer' => 'tcpdf_high_fidelity'
                 ));
             } else {
-                wp_send_json_error('Erreur lors de la génération du PDF d\'aperçu');
+                error_log('[PDF Builder Preview] PDF generation returned empty content');
+                wp_send_json_error('La génération du PDF a échoué. Vérifiez que vos éléments sont correctement configurés.');
             }
         } catch (Exception $e) {
             error_log('[PDF Builder Preview] Exception: ' . $e->getMessage());
@@ -699,6 +708,38 @@ class PDF_Builder_PDF_Generator {
                 $elements = $this->get_sample_elements();
             }
 
+            // Vérifier s'il y a des éléments valides
+            $has_valid_elements = false;
+            foreach ($elements as $element) {
+                $element_type = $element['type'] ?? '';
+                if (!empty($element_type) && in_array($element_type, [
+                    'text', 'dynamic-text', 'multiline_text', 'rectangle', 'line', 'divider',
+                    'image', 'company_logo', 'company_info', 'customer_info', 'order_number',
+                    'product_table', 'mentions', 'document_type'
+                ])) {
+                    $has_valid_elements = true;
+                    break;
+                }
+            }
+
+            // Si aucun élément valide, utiliser les éléments d'exemple avec un message informatif
+            if (!$has_valid_elements) {
+                $elements = $this->get_sample_elements();
+                // Ajouter un message informatif en haut
+                array_unshift($elements, [
+                    'type' => 'text',
+                    'content' => 'APERÇU - AUCUN ÉLÉMENT VALIDE DÉTECTÉ',
+                    'position' => ['x' => 50, 'y' => 30],
+                    'size' => ['width' => 300, 'height' => 20],
+                    'properties' => [
+                        'color' => '#dc2626',
+                        'fontSize' => 14,
+                        'fontWeight' => 'bold',
+                        'textAlign' => 'center'
+                    ]
+                ]);
+            }
+
             // Rendre chaque élément dans le PDF
             foreach ($elements as $index => $element) {
                 error_log('[PDF Builder] Rendu élément ' . ($index + 1) . '/' . count($elements) . ' - Type: ' . ($element['type'] ?? 'unknown'));
@@ -718,15 +759,31 @@ class PDF_Builder_PDF_Generator {
      * Rendre un élément dans le PDF avec TCPDF
      */
     private function render_element_to_pdf($pdf, $element) {
+        // Validation robuste des données d'élément
+        if (!is_array($element) || empty($element)) {
+            error_log('[PDF Builder] Élément invalide ou vide: ' . json_encode($element));
+            return;
+        }
+
         $type = $element['type'] ?? 'text';
+        if (!is_string($type) || empty($type)) {
+            error_log('[PDF Builder] Type d\'élément invalide: ' . json_encode($element));
+            $type = 'text';
+        }
 
-        // Extraire les coordonnées (convertir pixels en mm pour TCPDF)
-        $x = ($element['position']['x'] ?? $element['x'] ?? 0) * 0.264583; // px to mm
-        $y = ($element['position']['y'] ?? $element['y'] ?? 0) * 0.264583; // px to mm
-        $width = ($element['size']['width'] ?? $element['width'] ?? 100) * 0.264583;
-        $height = ($element['size']['height'] ?? $element['height'] ?? 50) * 0.264583;
+        // Extraire et valider les coordonnées (convertir pixels en mm pour TCPDF)
+        $x_raw = $element['position']['x'] ?? $element['x'] ?? 0;
+        $y_raw = $element['position']['y'] ?? $element['y'] ?? 0;
+        $width_raw = $element['size']['width'] ?? $element['width'] ?? 100;
+        $height_raw = $element['size']['height'] ?? $element['height'] ?? 50;
 
-        // Contraindre dans les limites A4 (210x297mm)
+        // S'assurer que les valeurs sont numériques
+        $x = (is_numeric($x_raw) ? $x_raw : 0) * 0.264583; // px to mm
+        $y = (is_numeric($y_raw) ? $y_raw : 0) * 0.264583; // px to mm
+        $width = (is_numeric($width_raw) ? $width_raw : 100) * 0.264583;
+        $height = (is_numeric($height_raw) ? $height_raw : 50) * 0.264583;
+
+        // Contraindre dans les limites A4 (210x297mm) avec marges
         $x = max(15, min(195 - $width, $x + 15)); // +15 pour la marge gauche
         $y = max(20, min(277 - $height, $y + 20)); // +20 pour la marge haute
 
@@ -776,9 +833,42 @@ class PDF_Builder_PDF_Generator {
                 $pdf->Line($x, $y + $height/2, $x + $width, $y + $height/2);
                 break;
 
+            case 'company_info':
+            case 'customer_info':
+                $content = $element['content'] ?? $element['text'] ?? 'Informations';
+                $font_size = ($element['properties']['fontSize'] ?? 10) * 0.75;
+                $color = $this->hex_to_rgb($element['properties']['color'] ?? '#000000');
+
+                $pdf->SetFont('helvetica', '', $font_size);
+                $pdf->SetTextColor($color[0], $color[1], $color[2]);
+                $pdf->SetXY($x, $y);
+                $pdf->MultiCell($width, $height/3, $content, 0, 'L', false, 1);
+                break;
+
+            case 'order_number':
+                $content = $element['content'] ?? $element['text'] ?? 'N° Commande: #12345';
+                $font_size = ($element['properties']['fontSize'] ?? 12) * 0.75;
+                $color = $this->hex_to_rgb($element['properties']['color'] ?? '#000000');
+
+                $pdf->SetFont('helvetica', 'B', $font_size);
+                $pdf->SetTextColor($color[0], $color[1], $color[2]);
+                $pdf->SetXY($x, $y);
+                $pdf->Cell($width, $height, $content, 0, 1, 'L');
+                break;
+
+            case 'product_table':
+                // Placeholder pour table de produits
+                $pdf->SetFillColor(245, 245, 245);
+                $pdf->Rect($x, $y, $width, $height, 'DF');
+                $pdf->SetFont('helvetica', 'B', 10);
+                $pdf->SetTextColor(0, 0, 0);
+                $pdf->SetXY($x + 5, $y + 5);
+                $pdf->Cell($width - 10, 8, 'TABLE DE PRODUITS', 0, 0, 'C');
+                break;
+
             case 'image':
             case 'company_logo':
-                $src = $element['imageUrl'] ?? $element['src'] ?? '';
+                $src = $element['imageUrl'] ?? $element['src'] ?? $element['properties']['src'] ?? '';
                 if ($src && filter_var($src, FILTER_VALIDATE_URL)) {
                     try {
                         $pdf->Image($src, $x, $y, $width, $height, '', '', '', false, 300, '', false, false, 0, false, false, false);
@@ -802,17 +892,30 @@ class PDF_Builder_PDF_Generator {
                 }
                 break;
 
+            case 'document_type':
+                $content = $element['content'] ?? $element['text'] ?? 'FACTURE';
+                $font_size = ($element['properties']['fontSize'] ?? 16) * 0.75;
+                $color = $this->hex_to_rgb($element['properties']['color'] ?? '#2563eb');
+
+                $pdf->SetFont('helvetica', 'B', $font_size);
+                $pdf->SetTextColor($color[0], $color[1], $color[2]);
+                $pdf->SetXY($x, $y);
+                $pdf->Cell($width, $height, strtoupper($content), 0, 1, 'C');
+                break;
+
             default:
-                // Élément non supporté - afficher un placeholder
-                error_log('[PDF Builder] Élément non supporté: ' . $type);
-                $pdf->SetFillColor(255, 235, 235);
-                $pdf->SetDrawColor(255, 0, 0);
+                // Élément non supporté - afficher un placeholder informatif
+                error_log('[PDF Builder] Élément non supporté: ' . $type . ' - Données: ' . json_encode($element));
+                $pdf->SetFillColor(255, 250, 205); // Jaune clair
+                $pdf->SetDrawColor(255, 193, 7);   // Orange
                 $pdf->SetLineWidth(0.5);
                 $pdf->Rect($x, $y, $width, $height, 'DF');
-                $pdf->SetFont('helvetica', '', 8);
-                $pdf->SetTextColor(255, 0, 0);
-                $pdf->SetXY($x, $y + $height/2 - 2);
-                $pdf->Cell($width, 4, $type, 0, 0, 'C');
+                $pdf->SetFont('helvetica', '', 7);
+                $pdf->SetTextColor(139, 69, 19);   // Marron
+                $pdf->SetXY($x + 2, $y + 2);
+                $pdf->Cell($width - 4, 4, 'Type non supporté:', 0, 0, 'L');
+                $pdf->SetXY($x + 2, $y + 6);
+                $pdf->Cell($width - 4, 4, $type, 0, 0, 'L');
                 break;
         }
     }
