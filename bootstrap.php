@@ -408,7 +408,8 @@ function pdf_builder_ajax_get_fresh_nonce() {
 }
 
 /**
-
+ * Actions AJAX fallback
+ */
 add_action('wp_ajax_pdf_builder_get_fresh_nonce', 'pdf_builder_ajax_get_fresh_nonce');
 add_action('wp_ajax_nopriv_pdf_builder_get_fresh_nonce', 'pdf_builder_ajax_get_fresh_nonce');
 add_action('wp_ajax_pdf_builder_get_settings', 'pdf_builder_ajax_get_settings_fallback');
