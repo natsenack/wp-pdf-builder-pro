@@ -57,16 +57,21 @@ class PDF_Builder_Template_Manager {
      */
     public function ajax_save_template() {
         $log_prefix = '[PDF Builder] Template Save';
-        
-        // ========== ÉTAPE 1 : Vérification des permissions ==========
-        if (!current_user_can('manage_options')) {
-            error_log($log_prefix . ' - ❌ ERREUR: Permissions insuffisantes pour user ID ' . get_current_user_id());
-            wp_send_json_error('Permissions insuffisantes');
-        }
-        
-        error_log($log_prefix . ' - ✅ Permissions vérifiées pour user ID ' . get_current_user_id());
 
-        // ========== ÉTAPE 2 : Vérification du nonce ==========
+        try {
+            // ========== LOGGING INITIAL ==========
+            error_log($log_prefix . ' - 🚀 DÉBUT DE LA SAUVEGARDE');
+            error_log($log_prefix . ' - PHP Version: ' . PHP_VERSION);
+            error_log($log_prefix . ' - Memory limit: ' . ini_get('memory_limit'));
+            error_log($log_prefix . ' - POST data keys: ' . implode(', ', array_keys($_POST)));
+
+            // ========== ÉTAPE 1 : Vérification des permissions ==========
+            if (!current_user_can('manage_options')) {
+                error_log($log_prefix . ' - ❌ ERREUR: Permissions insuffisantes pour user ID ' . get_current_user_id());
+                wp_send_json_error('Permissions insuffisantes');
+            }
+
+            error_log($log_prefix . ' - ✅ Permissions vérifiées pour user ID ' . get_current_user_id());        // ========== ÉTAPE 2 : Vérification du nonce ==========
         $received_nonce = isset($_POST['nonce']) ? $_POST['nonce'] : 'none';
         
         $nonce_valid = false;
@@ -189,6 +194,11 @@ class PDF_Builder_Template_Manager {
             'template_id' => $template_id,
             'element_count' => $element_count
         ));
+        } catch (Exception $e) {
+            error_log($log_prefix . ' - 💥 EXCEPTION GLOBALE: ' . $e->getMessage());
+            error_log($log_prefix . ' - Stack trace: ' . $e->getTraceAsString());
+            wp_send_json_error('Erreur critique lors de la sauvegarde: ' . $e->getMessage());
+        }
     }
 
     /**
