@@ -643,9 +643,44 @@ class PDF_Builder_WooCommerce_Integration {
                     wp_send_json_error('Commande non trouvée');
                 }
 
+                error_log('PDF PREVIEW DEBUG - Order loaded successfully, status: ' . $order->get_status());
+
                 // Déterminer le template à utiliser
                 if (!$template_id || $template_id <= 0) {
-                    $template_id = $this->get_template_for_order($order);
+                    // Logique de détermination automatique du template basée sur le statut de la commande
+                    global $wpdb;
+                    $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+                    
+                    $order_status = $order->get_status();
+                    $status_templates = get_option('pdf_builder_order_status_templates', []);
+                    $status_key = 'wc-' . $order_status;
+                    
+                    if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
+                        // Il y a un mapping spécifique pour ce statut
+                        $template_id = $status_templates[$status_key];
+                        error_log('PDF PREVIEW DEBUG - Using mapped template ID: ' . $template_id . ' for status: ' . $order_status);
+                    } else {
+                        // Détection automatique basée sur le type de document
+                        $document_type = $this->detect_document_type($order_status);
+                        $document_type_label = $this->get_document_type_label($document_type);
+                        
+                        $all_templates = $wpdb->get_results("SELECT id, name FROM $table_templates ORDER BY name ASC", ARRAY_A);
+                        
+                        // Chercher un template dont le nom contient le type de document détecté
+                        foreach ($all_templates as $template) {
+                            if (stripos($template['name'], $document_type_label) !== false) {
+                                $template_id = $template['id'];
+                                error_log('PDF PREVIEW DEBUG - Auto-detected template ID: ' . $template_id . ' for document type: ' . $document_type_label);
+                                break;
+                            }
+                        }
+                        
+                        // Fallback: prendre le premier template disponible
+                        if (!$template_id && !empty($all_templates)) {
+                            $template_id = $all_templates[0]['id'];
+                            error_log('PDF PREVIEW DEBUG - Using fallback template ID: ' . $template_id);
+                        }
+                    }
                 }
 
                 // Pour l'aperçu, récupérer les éléments du template depuis la base de données
