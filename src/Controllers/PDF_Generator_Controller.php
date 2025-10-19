@@ -69,6 +69,14 @@ class PDF_Builder_Pro_Generator {
      */
     public function set_order($order) {
         $this->order = $order;
+        error_log('[PDF Generator] Order set: ' . ($order ? $order->get_id() : 'null'));
+    }
+
+    /**
+     * Obtient l'ordre actuel
+     */
+    public function getOrder() {
+        return $this->order;
     }
 
     /**
@@ -202,7 +210,9 @@ class PDF_Builder_Pro_Generator {
                 $content = $element['content'] ?? $element['text'] ?? '';
                 // Pour dynamic-text, remplacer les variables si un ordre est défini
                 if ($type === 'dynamic-text' && $this->order) {
+                    $original_content = $content;
                     $content = $this->replace_order_variables($content, $this->order);
+                    error_log('[PDF Generator] Dynamic-text replacement: "' . $original_content . '" -> "' . $content . '"');
                 }
                 return "<div class='canvas-element' style='" . esc_attr($style) . "; white-space: pre-wrap; word-wrap: break-word;'>" . wp_kses_post($content) . "</div>";
 
@@ -362,7 +372,7 @@ class PDF_Builder_Pro_Generator {
     /**
      * Remplace les variables de commande et compagnie dans le contenu
      */
-    private function replace_order_variables($content, $order = null) {
+    public function replace_order_variables($content, $order = null) {
         // Variables de compagnie (toujours disponibles)
         $company_replacements = array(
             '{{company_name}}' => get_bloginfo('name'),
@@ -383,8 +393,8 @@ class PDF_Builder_Pro_Generator {
             $order_replacements = array(
                 '{{order_id}}' => $order->get_id(),
                 '{{order_number}}' => $order->get_order_number(),
-                '{{order_date}}' => $order->get_date_created() ? $order->get_date_created()->date('d/m/Y') : date('d/m/Y'),
-                '{{order_date_time}}' => $order->get_date_created() ? $order->get_date_created()->date('d/m/Y H:i:s') : date('d/m/Y H:i:s'),
+            '{{order_date}}' => $order->get_date_created() ? $order->get_date_created()->format('d/m/Y') : date('d/m/Y'),
+            '{{order_date_time}}' => $order->get_date_created() ? $order->get_date_created()->format('d/m/Y H:i:s') : date('d/m/Y H:i:s'),
                 '{{customer_name}}' => trim($order->get_billing_first_name() . ' ' . $order->get_billing_last_name()),
                 '{{customer_first_name}}' => $order->get_billing_first_name(),
                 '{{customer_last_name}}' => $order->get_billing_last_name(),
