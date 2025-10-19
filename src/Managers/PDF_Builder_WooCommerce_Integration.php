@@ -547,6 +547,12 @@ class PDF_Builder_WooCommerce_Integration {
                     wp_send_json_error('Données du template invalides');
                 }
 
+                // LOG POUR DIAGNOSTIC - ÉLÉMENTS REÇUS
+                error_log('[PDF Generator] WooCommerce Preview - Elements received count: ' . count($decoded_elements));
+                foreach ($decoded_elements as $index => $element) {
+                    error_log('[PDF Generator] Element ' . $index . ': type=' . ($element['type'] ?? 'unknown') . ', id=' . ($element['id'] ?? 'unknown'));
+                }
+
                 if ($preview_type === 'html') {
                     // Générer l'aperçu HTML avec les éléments du Canvas - SANS TCPDF
                     $options = ['is_preview' => true];
