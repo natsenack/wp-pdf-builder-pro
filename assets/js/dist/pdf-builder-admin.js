@@ -4113,14 +4113,28 @@ var useCanvasState = function useCanvasState(_ref) {
           });
         case 22:
           response = _context.v;
+          console.log('📥 PDF Builder SAVE - Réponse brute du serveur:', {
+            status: response.status,
+            statusText: response.statusText,
+            headers: Object.fromEntries(response.headers.entries()),
+            url: response.url
+          });
+
+          // console.log('📥 PDF Builder SAVE - Réponse reçue du serveur, status:', response.status);
           _context.n = 23;
           return response.json();
         case 23:
           result = _context.v;
+          console.log('📥 PDF Builder SAVE - Résultat JSON du serveur:', result);
           if (result.success) {
             _context.n = 24;
             break;
           }
+          console.error('❌ PDF Builder SAVE - Échec côté serveur:', {
+            success: result.success,
+            data: result.data,
+            fullResult: result
+          });
           throw new Error(((_result$data = result.data) === null || _result$data === void 0 ? void 0 : _result$data.message) || 'Erreur lors de la sauvegarde');
         case 24:
           // Notification de succès pour les templates existants
