@@ -533,7 +533,9 @@ class PDF_Builder_WooCommerce_Integration {
 
             // Déterminer le type d'aperçu
             error_log('PDF PREVIEW DEBUG - About to check elements condition');
-            if (!empty($elements)) {
+            $elements_is_empty = empty($elements);
+            error_log('PDF PREVIEW DEBUG - Elements is empty check: ' . ($elements_is_empty ? 'TRUE' : 'FALSE'));
+            if (!$elements_is_empty) {
                 error_log('PDF PREVIEW DEBUG - Entering elements branch (Canvas editor)');
                 // Première branche pour les éléments du Canvas
                 // Priorité aux éléments passés directement (depuis l'éditeur Canvas)
@@ -596,7 +598,7 @@ class PDF_Builder_WooCommerce_Integration {
                 error_log('PDF PREVIEW DEBUG - Result length: ' . strlen($result));
 
             } elseif ($order_id && $order_id > 0) {
-                // Aperçu de template depuis l'éditeur (éléments JSON)
+                error_log('PDF PREVIEW DEBUG - Entering order_id branch (WooCommerce metabox), order_id: ' . $order_id);
 
                 // Récupérer l'order pour les variables dynamiques
                 if (!class_exists('WooCommerce')) {
