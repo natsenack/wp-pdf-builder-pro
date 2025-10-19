@@ -630,7 +630,8 @@ class PDF_Builder_WooCommerce_Integration {
                 }
 
             } elseif ($order_id && $order_id > 0) {
-                error_log('PDF PREVIEW DEBUG - Entering order_id branch (WooCommerce metabox), order_id: ' . $order_id);
+                error_log('PDF PREVIEW DEBUG - Entering order_id branch (WooCommerce metabox)');
+                error_log('PDF PREVIEW DEBUG - Order ID value: ' . print_r($order_id, true));
                 // Aperçu de commande WooCommerce - récupérer depuis la base de données
 
                 // Vérifier que WooCommerce est actif
