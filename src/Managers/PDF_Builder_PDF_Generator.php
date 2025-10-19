@@ -210,18 +210,8 @@ class PDF_Builder_PDF_Generator {
 
             error_log('[PDF Builder Preview] Successfully decoded ' . count($canvas_elements) . ' elements');
 
-            // Générer le PDF en utilisant le nouveau générateur SANS TCPDF
-            $controller_path = plugin_dir_path(dirname(__FILE__)) . '../Controllers/PDF_Generator_Controller.php';
-            error_log('[PDF Builder Preview] Controller path: ' . $controller_path);
-            error_log('[PDF Builder Preview] Controller exists: ' . (file_exists($controller_path) ? 'YES' : 'NO'));
-            
-            require_once $controller_path;
-            
-            $generator = new PDF_Builder_Pro_Generator();
-            $generator->set_preview_mode(true);
-            
-            // Générer le HTML (pas de PDF pour l'instant)
-            $html_content = $generator->generate($canvas_elements);
+            // Générer le HTML directement sans dépendre du contrôleur externe
+            $html_content = $this->generate_html_from_elements($canvas_elements);
             
             if (!empty($html_content)) {
                 // Créer un fichier HTML temporaire pour l'aperçu
@@ -408,6 +398,135 @@ class PDF_Builder_PDF_Generator {
                 )
             )
         );
+    }
+
+    /**
+     * Générer le HTML à partir des éléments du canvas
+     */
+    private function generate_html_from_elements($elements) {
+        $html = '<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>PDF Preview</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
+        .pdf-container { 
+            position: relative;
+            width: 595px; 
+            height: 842px; 
+            background: white; 
+            margin: 0 auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .canvas-element { position: absolute; overflow: hidden; }
+    </style>
+</head>
+<body>
+    <div class="pdf-container">';
+
+        foreach ($elements as $element) {
+            $html .= $this->render_element_to_html($element);
+        }
+
+        $html .= '
+    </div>
+</body>
+</html>';
+
+        return $html;
+    }
+
+    /**
+     * Rendre un élément individuel en HTML
+     */
+    private function render_element_to_html($element) {
+        $type = $element['type'] ?? 'text';
+        
+        // Extraire les coordonnées
+        $x = $element['position']['x'] ?? $element['x'] ?? 0;
+        $y = $element['position']['y'] ?? $element['y'] ?? 0;
+        $width = $element['size']['width'] ?? $element['width'] ?? 100;
+        $height = $element['size']['height'] ?? $element['height'] ?? 50;
+
+        // Dimensions par défaut si manquantes
+        if (empty($width) || $width <= 0) $width = 100;
+        if (empty($height) || $height <= 0) $height = 50;
+
+        // Contraindre dans les limites A4 (595x842 pixels)
+        $canvas_width = 595;
+        $canvas_height = 842;
+        $x = max(0, min($canvas_width - $width, $x));
+        $y = max(0, min($canvas_height - $height, $y));
+
+        $style = sprintf(
+            'position: absolute; left: %dpx; top: %dpx; width: %dpx; height: %dpx;',
+            $x, $y, $width, $height
+        );
+
+        // Appliquer les styles CSS des propriétés
+        $style .= 'box-sizing: border-box; ';
+        
+        // Styles de base depuis les propriétés
+        if (isset($element['properties'])) {
+            if (isset($element['properties']['color'])) {
+                $style .= 'color: ' . $element['properties']['color'] . '; ';
+            }
+            if (isset($element['properties']['backgroundColor'])) {
+                $style .= 'background-color: ' . $element['properties']['backgroundColor'] . '; ';
+            }
+            if (isset($element['properties']['fontSize'])) {
+                $style .= 'font-size: ' . $element['properties']['fontSize'] . 'px; ';
+            }
+            if (isset($element['properties']['fontWeight'])) {
+                $style .= 'font-weight: ' . $element['properties']['fontWeight'] . '; ';
+            }
+            if (isset($element['properties']['textAlign'])) {
+                $style .= 'text-align: ' . $element['properties']['textAlign'] . '; ';
+            }
+            if (isset($element['properties']['border'])) {
+                $style .= 'border: ' . $element['properties']['border'] . '; ';
+            }
+        }
+
+        // Rendre selon le type d'élément
+        switch ($type) {
+            case 'text':
+            case 'dynamic-text':
+            case 'multiline_text':
+                $content = $element['content'] ?? $element['text'] ?? $element['customContent'] ?? '';
+                $style .= 'white-space: pre-wrap; word-wrap: break-word; ';
+                return "<div class='canvas-element' style='" . esc_attr($style) . "'>" . wp_kses_post($content) . "</div>";
+
+            case 'image':
+            case 'company_logo':
+                $src = $element['imageUrl'] ?? $element['src'] ?? '';
+                if (!$src && $type === 'company_logo') {
+                    $custom_logo_id = get_theme_mod('custom_logo');
+                    $src = $custom_logo_id ? wp_get_attachment_image_url($custom_logo_id, 'full') : '';
+                }
+                if ($src) {
+                    $style .= 'object-fit: contain; ';
+                    return "<img class='canvas-element' src='" . esc_url($src) . "' style='" . esc_attr($style) . "' />";
+                }
+                return "<div class='canvas-element' style='" . esc_attr($style) . "; background: #f0f0f0; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center;'>Image</div>";
+
+            case 'rectangle':
+                $style .= 'border: 1px solid #ccc; ';
+                return "<div class='canvas-element' style='" . esc_attr($style) . "'></div>";
+
+            case 'divider':
+            case 'line':
+                $line_color = $element['lineColor'] ?? '#64748b';
+                $line_width = $element['lineWidth'] ?? 2;
+                $style .= "border-bottom: {$line_width}px solid {$line_color}; height: {$line_width}px;";
+                return "<div class='canvas-element' style='" . esc_attr($style) . "'></div>";
+
+            default:
+                return "<div class='canvas-element' style='" . esc_attr($style) . "; background: #ffe6e6; border: 1px solid #ff0000; display: flex; align-items: center; justify-content: center; color: #ff0000;'>{$type}</div>";
+        }
     }
 
     /**
