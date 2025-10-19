@@ -56,19 +56,15 @@ const PreviewModal = ({
         throw new Error('Impossible d\'obtenir un nonce');
       }
 
-      // Préparer l'appel pour l'aperçu unifié
-      const requestData = {
-        action: 'pdf_builder_unified_preview',
-        nonce: nonceData.data.nonce,
-        elements: jsonString
-      };
+      // Préparer l'appel pour l'aperçu unifié avec FormData
+      const formData = new FormData();
+      formData.append('action', 'pdf_builder_unified_preview');
+      formData.append('nonce', nonceData.data.nonce);
+      formData.append('elements', jsonString);
 
       const response = await fetch(ajaxurl || window.pdfBuilderAjax?.ajaxurl || '/wp-admin/admin-ajax.php', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestData)
+        body: formData
       });
 
       if (!response.ok) {

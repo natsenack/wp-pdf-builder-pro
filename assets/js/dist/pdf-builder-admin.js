@@ -5246,7 +5246,7 @@ var PreviewModal = function PreviewModal(_ref) {
   // Générer l'aperçu côté serveur uniquement
   var generateServerPreview = /*#__PURE__*/function () {
     var _ref2 = PreviewModalSimple_asyncToGenerator(/*#__PURE__*/PreviewModalSimple_regenerator().m(function _callee() {
-      var _window$pdfBuilderAja, _window$pdfBuilderAja2, cleanedElements, jsonString, nonceFormData, nonceResponse, nonceData, requestData, response, data, _t;
+      var _window$pdfBuilderAja, _window$pdfBuilderAja2, cleanedElements, jsonString, nonceFormData, nonceResponse, nonceData, formData, response, data, _t;
       return PreviewModalSimple_regenerator().w(function (_context) {
         while (1) switch (_context.p = _context.n) {
           case 0:
@@ -5282,19 +5282,15 @@ var PreviewModal = function PreviewModal(_ref) {
             }
             throw new Error('Impossible d\'obtenir un nonce');
           case 5:
-            // Préparer l'appel pour l'aperçu unifié
-            requestData = {
-              action: 'pdf_builder_unified_preview',
-              nonce: nonceData.data.nonce,
-              elements: jsonString
-            };
+            // Préparer l'appel pour l'aperçu unifié avec FormData
+            formData = new FormData();
+            formData.append('action', 'pdf_builder_unified_preview');
+            formData.append('nonce', nonceData.data.nonce);
+            formData.append('elements', jsonString);
             _context.n = 6;
             return fetch(ajaxurl || ((_window$pdfBuilderAja2 = window.pdfBuilderAjax) === null || _window$pdfBuilderAja2 === void 0 ? void 0 : _window$pdfBuilderAja2.ajaxurl) || '/wp-admin/admin-ajax.php', {
               method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(requestData)
+              body: formData
             });
           case 6:
             response = _context.v;
