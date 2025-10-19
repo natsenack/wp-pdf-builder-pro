@@ -100,5 +100,6 @@
   "intelephense.format.braces": "psr-12",
   "intelephense.diagnostics.enable": true,
   "intelephense.diagnostics.run": "onType",
-  "intelephense.telemetry.enabled": false
+  "intelephense.telemetry.enabled": false,
+  "files.defaultLanguage": "fr"
 }

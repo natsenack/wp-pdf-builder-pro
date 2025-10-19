@@ -1,10 +1,10 @@
 /******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 11:
+/***/ 304:
 /***/ ((__unused_webpack_module, __unused_webpack___webpack_exports__, __webpack_require__) => {
 
-"use strict";
 
 // UNUSED EXPORTS: default
 
@@ -8287,8 +8287,257 @@ var ElementCustomizationService = /*#__PURE__*/function () {
 
 // Instance singleton du service
 var elementCustomizationService = new ElementCustomizationService();
-// EXTERNAL MODULE: ./resources/js/utils/elementPropertyRestrictions.js
-var elementPropertyRestrictions = __webpack_require__(957);
+;// ./resources/js/utils/elementPropertyRestrictions.js
+// Système de gestion des propriétés d'éléments
+// Définit les restrictions et validations pour chaque type d'élément
+
+var ELEMENT_PROPERTY_RESTRICTIONS = {
+  // Éléments spéciaux - contrôle du fond autorisé mais valeur par défaut transparente
+  special: {
+    backgroundColor: {
+      disabled: false,
+      // Maintenant autorisé
+      "default": 'transparent' // Valeur par défaut transparente
+    },
+    borderColor: {
+      disabled: false
+    },
+    borderWidth: {
+      disabled: false
+    }
+  },
+  // Éléments de mise en page - contrôle complet
+  layout: {
+    backgroundColor: {
+      disabled: false,
+      "default": '#f8fafc'
+    },
+    borderColor: {
+      disabled: false
+    },
+    borderWidth: {
+      disabled: false
+    }
+  },
+  // Éléments de texte - contrôle complet
+  text: {
+    backgroundColor: {
+      disabled: false,
+      "default": 'transparent'
+    },
+    borderColor: {
+      disabled: false
+    },
+    borderWidth: {
+      disabled: false
+    }
+  },
+  // Éléments graphiques - contrôle complet
+  shape: {
+    backgroundColor: {
+      disabled: false,
+      "default": '#e5e7eb'
+    },
+    borderColor: {
+      disabled: false
+    },
+    borderWidth: {
+      disabled: false
+    }
+  },
+  // Éléments médias - contrôle limité
+  media: {
+    backgroundColor: {
+      disabled: false,
+      "default": '#f3f4f6'
+    },
+    borderColor: {
+      disabled: false
+    },
+    borderWidth: {
+      disabled: false
+    }
+  },
+  // Éléments dynamiques - contrôle complet
+  dynamic: {
+    backgroundColor: {
+      disabled: false,
+      "default": 'transparent'
+    },
+    borderColor: {
+      disabled: false
+    },
+    borderWidth: {
+      disabled: false
+    }
+  }
+};
+
+// Mapping des types d'éléments vers leurs catégories
+var ELEMENT_TYPE_MAPPING = {
+  // Spéciaux
+  'product_table': 'special',
+  'customer_info': 'special',
+  'company_logo': 'special',
+  'company_info': 'special',
+  'order_number': 'special',
+  'document_type': 'special',
+  'progress-bar': 'special',
+  // Mise en page
+  'layout-header': 'layout',
+  'layout-footer': 'layout',
+  'layout-sidebar': 'layout',
+  'layout-section': 'layout',
+  'layout-container': 'layout',
+  'layout-section-divider': 'layout',
+  'layout-spacer': 'layout',
+  'layout-two-column': 'layout',
+  'layout-three-column': 'layout',
+  // Texte
+  'text': 'text',
+  'dynamic-text': 'text',
+  'conditional-text': 'text',
+  'counter': 'text',
+  'date-dynamic': 'text',
+  'currency': 'text',
+  'formula': 'text',
+  // Formes
+  'rectangle': 'shape',
+  'line': 'shape',
+  'shape-rectangle': 'shape',
+  'shape-circle': 'shape',
+  'shape-line': 'shape',
+  'shape-arrow': 'shape',
+  'shape-triangle': 'shape',
+  'shape-star': 'shape',
+  'divider': 'shape',
+  // Médias
+  'image': 'media',
+  'image-upload': 'media',
+  'logo': 'media',
+  'barcode': 'media',
+  'qrcode': 'media',
+  'qrcode-dynamic': 'media',
+  'icon': 'media',
+  // Dynamiques
+  'table-dynamic': 'dynamic',
+  'gradient-box': 'dynamic',
+  'shadow-box': 'dynamic',
+  'rounded-box': 'dynamic',
+  'border-box': 'dynamic',
+  'background-pattern': 'dynamic',
+  'watermark': 'dynamic',
+  // Factures (mélange de catégories)
+  'invoice-header': 'layout',
+  'invoice-address-block': 'layout',
+  'invoice-info-block': 'layout',
+  'invoice-products-table': 'special',
+  'invoice-totals-block': 'layout',
+  'invoice-payment-terms': 'layout',
+  'invoice-legal-footer': 'layout',
+  'invoice-signature-block': 'layout'
+};
+
+// Fonction pour vérifier si une propriété est autorisée pour un type d'élément
+var isPropertyAllowed = function isPropertyAllowed(elementType, propertyName) {
+  var category = ELEMENT_TYPE_MAPPING[elementType] || 'text'; // défaut texte
+  var restrictions = ELEMENT_PROPERTY_RESTRICTIONS[category];
+  if (!restrictions || !restrictions[propertyName]) {
+    return true; // propriété autorisée par défaut
+  }
+  return !restrictions[propertyName].disabled;
+};
+
+// Fonction pour obtenir la valeur par défaut d'une propriété
+var getPropertyDefault = function getPropertyDefault(elementType, propertyName) {
+  var category = ELEMENT_TYPE_MAPPING[elementType] || 'text';
+  var restrictions = ELEMENT_PROPERTY_RESTRICTIONS[category];
+  if (restrictions && restrictions[propertyName] && restrictions[propertyName]["default"] !== undefined) {
+    return restrictions[propertyName]["default"];
+  }
+  return null; // pas de valeur par défaut spécifique
+};
+
+// Fonction pour valider une propriété
+var validateProperty = function validateProperty(elementType, propertyName, value) {
+  if (!isPropertyAllowed(elementType, propertyName)) {
+    var _ELEMENT_PROPERTY_RES;
+    return {
+      valid: false,
+      reason: ((_ELEMENT_PROPERTY_RES = ELEMENT_PROPERTY_RESTRICTIONS[ELEMENT_TYPE_MAPPING[elementType] || 'text'][propertyName]) === null || _ELEMENT_PROPERTY_RES === void 0 ? void 0 : _ELEMENT_PROPERTY_RES.reason) || 'Propriété non autorisée'
+    };
+  }
+
+  // Validations spécifiques selon le type de propriété
+  switch (propertyName) {
+    case 'backgroundColor':
+      if (typeof value !== 'string') {
+        return {
+          valid: false,
+          reason: 'La couleur doit être une chaîne'
+        };
+      }
+      // Plus de restriction pour les éléments spéciaux - ils peuvent maintenant avoir un fond
+      break;
+    case 'borderWidth':
+      if (typeof value !== 'number' || value < 0) {
+        return {
+          valid: false,
+          reason: 'La largeur de bordure doit être un nombre positif'
+        };
+      }
+      break;
+    case 'fontSize':
+      if (typeof value !== 'number' || value <= 0) {
+        return {
+          valid: false,
+          reason: 'La taille de police doit être un nombre positif'
+        };
+      }
+      break;
+    case 'width':
+    case 'height':
+      if (typeof value !== 'number' || value <= 0) {
+        return {
+          valid: false,
+          reason: 'Les dimensions doivent être positives'
+        };
+      }
+      break;
+    default:
+      break;
+  }
+  return {
+    valid: true
+  };
+};
+
+// Fonction pour corriger automatiquement une propriété invalide
+var fixInvalidProperty = function fixInvalidProperty(elementType, propertyName, invalidValue) {
+  // Pour les éléments spéciaux, backgroundColor peut maintenant être contrôlé
+  // (pas de forçage automatique à 'transparent')
+
+  // Valeurs par défaut pour les propriétés numériques
+  var numericDefaults = {
+    borderWidth: 0,
+    fontSize: 14,
+    width: 100,
+    height: 50,
+    padding: 8
+  };
+  if (numericDefaults[propertyName] !== undefined) {
+    return numericDefaults[propertyName];
+  }
+
+  // Valeurs par défaut pour les chaînes
+  var stringDefaults = {
+    backgroundColor: 'transparent',
+    borderColor: 'transparent',
+    color: '#000000',
+    fontFamily: 'Arial, sans-serif'
+  };
+  return stringDefaults[propertyName] || invalidValue;
+};
 ;// ./resources/js/hooks/useElementCustomization.js
 function useElementCustomization_typeof(o) { "@babel/helpers - typeof"; return useElementCustomization_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, useElementCustomization_typeof(o); }
 function useElementCustomization_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
@@ -8354,13 +8603,13 @@ var useElementCustomization = function useElementCustomization(selectedElements,
 
       // Pour les propriétés restreintes, utiliser les valeurs par défaut spécifiques
       Object.keys(defaultProperties).forEach(function (property) {
-        var specificDefault = (0,elementPropertyRestrictions.getPropertyDefault)(elementType, property);
+        var specificDefault = getPropertyDefault(elementType, property);
         if (specificDefault !== null) {
           restrictedDefaults[property] = specificDefault;
         }
 
         // Pour les éléments spéciaux, forcer backgroundColor à transparent
-        if (elementPropertyRestrictions.ELEMENT_TYPE_MAPPING[elementType] === 'special' && property === 'backgroundColor') {
+        if (ELEMENT_TYPE_MAPPING[elementType] === 'special' && property === 'backgroundColor') {
           restrictedDefaults[property] = 'transparent';
         }
       });
@@ -8368,24 +8617,24 @@ var useElementCustomization = function useElementCustomization(selectedElements,
 
       // Pour les propriétés restreintes, forcer les valeurs corrigées
       Object.keys(restrictedDefaults).forEach(function (property) {
-        var isRestricted = !(0,elementPropertyRestrictions.isPropertyAllowed)(elementType, property);
+        var isRestricted = !isPropertyAllowed(elementType, property);
         if (isRestricted) {
-          var correctedValue = (0,elementPropertyRestrictions.fixInvalidProperty)(elementType, property, newProperties[property]);
+          var correctedValue = fixInvalidProperty(elementType, property, newProperties[property]);
           if (correctedValue !== newProperties[property]) {
             newProperties[property] = correctedValue;
           }
         }
         // Pour les éléments spéciaux, garder backgroundColor à transparent par défaut seulement si pas défini
-        else if (elementPropertyRestrictions.ELEMENT_TYPE_MAPPING[elementType] === 'special' && property === 'backgroundColor' && !newProperties[property]) {
+        else if (ELEMENT_TYPE_MAPPING[elementType] === 'special' && property === 'backgroundColor' && !newProperties[property]) {
           newProperties[property] = 'transparent';
         }
       });
 
       // Validation finale des propriétés
       Object.keys(newProperties).forEach(function (property) {
-        var validation = (0,elementPropertyRestrictions.validateProperty)(elementType, property, newProperties[property]);
+        var validation = validateProperty(elementType, property, newProperties[property]);
         if (!validation.valid) {
-          newProperties[property] = (0,elementPropertyRestrictions.fixInvalidProperty)(elementType, property, newProperties[property]);
+          newProperties[property] = fixInvalidProperty(elementType, property, newProperties[property]);
         }
       });
       setLocalProperties(newProperties);
@@ -8403,7 +8652,7 @@ var useElementCustomization = function useElementCustomization(selectedElements,
     var validatedValue = value;
 
     // Validation selon le système de restrictions
-    var validation = (0,elementPropertyRestrictions.validateProperty)(element.type, property, value);
+    var validation = validateProperty(element.type, property, value);
     if (!validation.valid) {
       // Ne pas appliquer le changement si la propriété n'est pas autorisée
       return;
@@ -13498,13 +13747,6 @@ if (typeof window !== 'undefined') {
 // Export par défaut pour webpack
 /* harmony default export */ const js = ((/* unused pure expression or super */ null && (pdfBuilderPro)));
 
-/***/ }),
-
-/***/ 957:
-/***/ (() => {
-
-
-
 /***/ })
 
 /******/ 	});
@@ -13655,7 +13897,7 @@ if (typeof window !== 'undefined') {
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, [96], () => (__webpack_require__(11)))
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, [96], () => (__webpack_require__(304)))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	
 /******/ })()
