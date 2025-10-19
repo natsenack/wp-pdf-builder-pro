@@ -504,15 +504,6 @@ class PDF_Builder_WooCommerce_Integration {
             $elements = isset($_POST['elements']) ? $_POST['elements'] : null;
             $preview_type = isset($_POST['preview_type']) ? $_POST['preview_type'] : 'html'; // 'pdf' ou 'html' - FORCER HTML POUR ÉVITER TCPDF
 
-            // LOG DES ÉLÉMENTS REÇUS - DEBUG
-            error_log('PDF PREVIEW DEBUG - Order ID: ' . $order_id);
-            error_log('PDF PREVIEW DEBUG - Template ID: ' . $template_id);
-            error_log('PDF PREVIEW DEBUG - Preview Type: ' . $preview_type);
-            error_log('PDF PREVIEW DEBUG - Elements received: ' . (is_null($elements) ? 'NULL' : substr($elements, 0, 500) . '...'));
-            error_log('PDF PREVIEW DEBUG - Elements is empty: ' . (empty($elements) ? 'YES' : 'NO'));
-
-
-
             // S'assurer que la classe PDF_Builder_Pro_Generator est chargée
             if (!class_exists('PDF_Builder_Pro_Generator')) {
                 $generator_path = plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'includes/pdf-generator.php';
@@ -525,18 +516,13 @@ class PDF_Builder_WooCommerce_Integration {
 
             try {
                 $generator = new PDF_Builder_Pro_Generator();
-                error_log('PDF PREVIEW DEBUG - Generator instantiated successfully');
             } catch (Exception $e) {
-                error_log('PDF PREVIEW DEBUG - Generator instantiation failed: ' . $e->getMessage());
                 wp_send_json_error('Erreur d\'instanciation du générateur: ' . $e->getMessage());
             }
 
             // Déterminer le type d'aperçu
-            error_log('PDF PREVIEW DEBUG - About to check elements condition');
             $elements_is_empty = empty($elements);
-            error_log('PDF PREVIEW DEBUG - Elements is empty check: ' . ($elements_is_empty ? 'TRUE' : 'FALSE'));
             if (!$elements_is_empty) {
-                error_log('PDF PREVIEW DEBUG - Entering elements branch (Canvas editor)');
                 // Première branche pour les éléments du Canvas
                 // Priorité aux éléments passés directement (depuis l'éditeur Canvas)
 
@@ -561,24 +547,11 @@ class PDF_Builder_WooCommerce_Integration {
                     wp_send_json_error('Données du template invalides');
                 }
 
-                // LOG DES ÉLÉMENTS DÉCODÉS
-                error_log('PDF PREVIEW DEBUG - Decoded elements count: ' . count($decoded_elements));
-                error_log('PDF PREVIEW DEBUG - Decoded elements: ' . json_encode($decoded_elements, JSON_PRETTY_PRINT));
-                
-                // Log des éléments individuels
-                foreach ($decoded_elements as $index => $element) {
-                    error_log('PDF PREVIEW DEBUG - Element ' . $index . ': type=' . ($element['type'] ?? 'unknown') . ', content=' . substr($element['content'] ?? '', 0, 100));
-                }
-
-
                 if ($preview_type === 'html') {
                     // Générer l'aperçu HTML avec les éléments du Canvas - SANS TCPDF
                     $options = ['is_preview' => true];
                     if ($order) {
                         $options['order'] = $order;
-                        error_log('PDF PREVIEW DEBUG - Passing order to generator (Canvas elements), order ID: ' . $order->get_id());
-                    } else {
-                        error_log('PDF PREVIEW DEBUG - No order passed to generator (Canvas elements)');
                     }
                     $result = $generator->generate($decoded_elements, $options);
                 } else {
@@ -586,56 +559,25 @@ class PDF_Builder_WooCommerce_Integration {
                     $options = ['is_preview' => true];
                     if ($order) {
                         $options['order'] = $order;
-                        error_log('PDF PREVIEW DEBUG - Passing order to generator (Canvas elements, PDF mode), order ID: ' . $order->get_id());
-                    } else {
-                        error_log('PDF PREVIEW DEBUG - No order passed to generator (Canvas elements, PDF mode)');
                     }
                     $result = $generator->generate($decoded_elements, $options);
                 }
 
-                // LOG DU RÉSULTAT GÉNÉRÉ
-                error_log('PDF PREVIEW DEBUG - Generation result: ' . substr($result, 0, 500) . '...');
-                error_log('PDF PREVIEW DEBUG - Result length: ' . strlen($result));
-
-                // LOG DU RÉSULTAT GÉNÉRÉ
-                error_log('PDF PREVIEW DEBUG - Generation result: ' . substr($result, 0, 500) . '...');
-                error_log('PDF PREVIEW DEBUG - Result length: ' . strlen($result));
-
             } else {
-                error_log('PDF PREVIEW DEBUG - Entering order_id branch (WooCommerce metabox)');
-                error_log('PDF PREVIEW DEBUG - Order ID value: ' . print_r($order_id, true));
                 // Aperçu de commande WooCommerce - récupérer depuis la base de données
 
                 // Vérifier que WooCommerce est actif
-                error_log('PDF PREVIEW DEBUG - Checking WooCommerce class existence');
-                $woocommerce_exists = class_exists('WooCommerce');
-                error_log('PDF PREVIEW DEBUG - WooCommerce class exists: ' . ($woocommerce_exists ? 'YES' : 'NO'));
-                if (!$woocommerce_exists) {
-                    error_log('PDF PREVIEW DEBUG - WooCommerce not found, sending error');
+                if (!class_exists('WooCommerce')) {
                     wp_send_json_error('WooCommerce n\'est pas installé ou activé');
                 }
-                error_log('PDF PREVIEW DEBUG - WooCommerce check passed');
 
-                error_log('PDF PREVIEW DEBUG - About to call wc_get_order with ID: ' . $order_id);
-                try {
-                    $order = wc_get_order($order_id);
-                    error_log('PDF PREVIEW DEBUG - wc_get_order returned: ' . gettype($order));
-                } catch (Exception $e) {
-                    error_log('PDF PREVIEW DEBUG - Exception in wc_get_order: ' . $e->getMessage());
-                    wp_send_json_error('Erreur lors du chargement de la commande: ' . $e->getMessage());
-                }
-                error_log('PDF PREVIEW DEBUG - Order object check: ' . ($order ? 'NOT NULL' : 'NULL'));
+                $order = wc_get_order($order_id);
                 if (!$order) {
-                    error_log('PDF PREVIEW DEBUG - Order is null, sending error');
                     wp_send_json_error('Commande non trouvée');
                 }
 
-                error_log('PDF PREVIEW DEBUG - Order loaded successfully, status: ' . $order->get_status());
-
                 // Déterminer le template à utiliser
-                error_log('PDF PREVIEW DEBUG - Template ID before determination: ' . $template_id);
                 if (!$template_id || $template_id <= 0) {
-                    error_log('PDF PREVIEW DEBUG - Need to determine template automatically');
                     // Logique de détermination automatique du template basée sur le statut de la commande
                     global $wpdb;
                     $table_templates = $wpdb->prefix . 'pdf_builder_templates';
@@ -644,69 +586,47 @@ class PDF_Builder_WooCommerce_Integration {
                     $status_templates = get_option('pdf_builder_order_status_templates', []);
                     $status_key = 'wc-' . $order_status;
                     
-                    error_log('PDF PREVIEW DEBUG - Order status: ' . $order_status . ', status key: ' . $status_key);
-                    error_log('PDF PREVIEW DEBUG - Status templates config: ' . json_encode($status_templates));
-                    
                     if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
                         // Il y a un mapping spécifique pour ce statut
                         $template_id = $status_templates[$status_key];
-                        error_log('PDF PREVIEW DEBUG - Using mapped template ID: ' . $template_id . ' for status: ' . $order_status);
                     } else {
-                        error_log('PDF PREVIEW DEBUG - No mapping found, trying auto-detection');
                         // Détection automatique basée sur le type de document
                         $document_type = $this->detect_document_type($order_status);
                         $document_type_label = $this->get_document_type_label($document_type);
                         
-                        error_log('PDF PREVIEW DEBUG - Document type: ' . $document_type . ', label: ' . $document_type_label);
-                        
                         $all_templates = $wpdb->get_results("SELECT id, name FROM $table_templates ORDER BY name ASC", ARRAY_A);
-                        
-                        error_log('PDF PREVIEW DEBUG - Found ' . count($all_templates) . ' templates in database');
                         
                         // Chercher un template dont le nom contient le type de document détecté
                         foreach ($all_templates as $template) {
-                            error_log('PDF PREVIEW DEBUG - Checking template: ' . $template['name']);
                             if (stripos($template['name'], $document_type_label) !== false) {
                                 $template_id = $template['id'];
-                                error_log('PDF PREVIEW DEBUG - Auto-detected template ID: ' . $template_id . ' for document type: ' . $document_type_label);
                                 break;
                             }
                         }
                         
                         if (!$template_id) {
-                            error_log('PDF PREVIEW DEBUG - No template found by auto-detection, using first available template');
                             // Si aucun template trouvé, prendre le premier disponible
                             if (!empty($all_templates)) {
                                 $template_id = $all_templates[0]['id'];
-                                error_log('PDF PREVIEW DEBUG - Using fallback template ID: ' . $template_id);
                             } else {
-                                error_log('PDF PREVIEW DEBUG - No templates available in database');
                                 wp_send_json_error('Aucun template disponible');
                             }
                         }
                     }
                 }
 
-                error_log('PDF PREVIEW DEBUG - Final template ID: ' . $template_id);
-
                 // Récupérer les éléments du template depuis la base de données
-                error_log('PDF PREVIEW DEBUG - About to retrieve template elements from database');
                 global $wpdb;
                 $table_templates = $wpdb->prefix . 'pdf_builder_templates';
                 $template_data = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_templates WHERE id = %d", $template_id), ARRAY_A);
                 
                 if (!$template_data) {
-                    error_log('PDF PREVIEW DEBUG - Template not found in database');
                     wp_send_json_error('Template non trouvé');
                 }
-
-                error_log('PDF PREVIEW DEBUG - Template data retrieved: ' . json_encode($template_data));
 
                 // Décoder les données du template (qui contient les éléments)
                 $decoded_template_data = json_decode($template_data['template_data'], true);
                 if (json_last_error() !== JSON_ERROR_NONE) {
-                    error_log('PDF PREVIEW DEBUG - Template data JSON decode error: ' . json_last_error_msg());
-                    error_log('PDF PREVIEW DEBUG - Raw template_data: ' . substr($template_data['template_data'], 0, 500));
                     // Essayer de récupérer avec stripslashes au cas où
                     $clean_template_data = stripslashes($template_data['template_data']);
                     $decoded_template_data = json_decode($clean_template_data, true);
@@ -718,7 +638,6 @@ class PDF_Builder_WooCommerce_Integration {
                 $template_elements = isset($decoded_template_data['elements']) ? $decoded_template_data['elements'] : [];
 
                 if (empty($template_elements)) {
-                    error_log('PDF PREVIEW DEBUG - Template has no elements, using fallback');
                     // Template vide, utiliser un élément de fallback
                     $template_elements = [
                         [
@@ -731,18 +650,12 @@ class PDF_Builder_WooCommerce_Integration {
                     ];
                 }
 
-                error_log('PDF PREVIEW DEBUG - Template elements decoded successfully, count: ' . count($template_elements));
-
                 // Générer l'aperçu
                 if ($preview_type === 'html') {
-                    error_log('PDF PREVIEW DEBUG - Generating HTML preview with template elements');
                     $result = $generator->generate($template_elements, ['is_preview' => true, 'order' => $order]);
                 } else {
-                    error_log('PDF PREVIEW DEBUG - Generating PDF preview with template elements');
                     $result = $generator->generate($template_elements, ['is_preview' => true, 'order' => $order]);
                 }
-
-                error_log('PDF PREVIEW DEBUG - Preview generation completed successfully');
             }
 
             if (!$result) {
@@ -752,7 +665,6 @@ class PDF_Builder_WooCommerce_Integration {
             // Gérer les différents types d'aperçu
             if ($preview_type === 'html') {
                 // Pour l'aperçu HTML, retourner directement le HTML généré
-                error_log('PDF PREVIEW DEBUG - Sending HTML response, length: ' . strlen($result));
                 wp_send_json_success(['html' => $result]);
             } else {
                 // Pour l'aperçu PDF, vérifier le fichier et retourner l'URL
