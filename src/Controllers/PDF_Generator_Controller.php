@@ -1382,11 +1382,14 @@ class PDF_Builder_Pro_Generator {
     }
 
     /**
-     * Remplace les données fictives par les vraies données dans le HTML généré
+     * Génère le HTML du tableau avec des données fictives pour le template du canvas
      */
+    private function generate_fake_table_html($element, $fake_data) {
         $headers = $element['headers'] ?? ['Produit', 'Qté', 'Prix', 'Total'];
         $columns = $element['columns'] ?? ['image' => false, 'name' => true, 'sku' => false, 'quantity' => true, 'price' => true, 'total' => true];
         $table_style = $element['tableStyle'] ?? 'classic';
+        $show_borders = $element['showBorders'] ?? true;
+        $show_headers = $element['showHeaders'] ?? true;
 
         // Appliquer les styles prédéfinis selon tableStyle
         $table_styles = $this->get_table_styles($table_style);
