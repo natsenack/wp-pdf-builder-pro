@@ -318,11 +318,13 @@ if (typeof window !== 'undefined') {
                 `;
 
                 document.body.appendChild(modal);
+                alert('DEBUG: Modal ajoutée au DOM - ' + document.body.children.length + ' enfants');
                 console.log('=== FALLBACK MODAL CREATED AND APPENDED TO BODY ===');
                 console.log('Modal element:', modal);
                 console.log('Body children count:', document.body.children.length);
                 
             } catch (error) {
+                alert('ERREUR lors de la création de la modal: ' + error.message);
                 console.error('=== ERROR CREATING FALLBACK MODAL ===', error);
             }
 
