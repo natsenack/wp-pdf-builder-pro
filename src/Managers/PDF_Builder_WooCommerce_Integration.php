@@ -279,7 +279,28 @@ class PDF_Builder_WooCommerce_Integration
                 $('#function-status').html('Function: <strong style="color: #28a745;">FOUND ✓</strong>');
             }
 
-            // Bouton aperçu
+            // TEST DIRECT: Ajouter un événement de clic direct pour prouver la connexion
+            $('#pdf-preview-btn').on('click', function() {
+                console.log('PDF Builder: Preview button clicked - DIRECT EVENT');
+                $('#phase8-debug-info').append('<div style="color: #ff6b35; font-weight: bold;">🔥 BUTTON CLICKED AT: ' + new Date().toLocaleTimeString() + '</div>');
+
+                // Appeler directement la fonction pour tester
+                if (typeof window.pdfBuilderShowPreview === 'function') {
+                    console.log('PDF Builder: Calling pdfBuilderShowPreview directly');
+                    try {
+                        window.pdfBuilderShowPreview(orderId, templateId, nonce);
+                        $('#phase8-debug-info').append('<div style="color: #28a745; font-weight: bold;">✅ FUNCTION CALLED SUCCESSFULLY</div>');
+                    } catch (error) {
+                        console.error('PDF Builder: Error calling function:', error);
+                        $('#phase8-debug-info').append('<div style="color: #dc3545; font-weight: bold;">❌ ERROR: ' + error.message + '</div>');
+                    }
+                } else {
+                    console.error('PDF Builder: Function not found');
+                    $('#phase8-debug-info').append('<div style="color: #dc3545; font-weight: bold;">❌ FUNCTION NOT FOUND</div>');
+                }
+            });
+
+            // Bouton aperçu (ORIGINAL)
             $('#pdf-preview-btn').on('click', function() {
                 console.log('PDF Builder: Preview button clicked');
                 showPreviewModal(orderId, templateId, nonce);

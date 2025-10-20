@@ -11735,7 +11735,7 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
       return setShowNewTemplateModal(false);
     },
     onCreateTemplate: handleCreateTemplate
-  }), /*#__PURE__*/react.createElement(PreviewModal["default"], {
+  }), /*#__PURE__*/react.createElement(PreviewModal/* default */.A, {
     isOpen: showPreviewModal,
     onClose: function onClose() {
       return setShowPreviewModal(false);
@@ -12021,113 +12021,108 @@ var pdfBuilderPro = new PDFBuilderPro();
 if (typeof window !== 'undefined') {
   // Effectuer le health check avant d'exposer l'instance
   if (PDFBuilderSecurity.performHealthCheck()) {
-    // Fonction de fallback en cas d'erreur du système React
-    var showFallbackModal = function showFallbackModal(orderId, templateId, nonce) {
-      console.log('=== USING FALLBACK MODAL DUE TO ERROR ===');
-      try {
-        // Supprimer toute modal existante
-        var existingModal = document.getElementById('pdf-builder-preview-modal');
-        if (existingModal) {
-          existingModal.remove();
-        }
-
-        // Créer une modal simple en HTML pur
-        var modal = document.createElement('div');
-        modal.id = 'pdf-builder-preview-modal';
-        modal.innerHTML = "\n                    <div style=\"\n                        position: fixed;\n                        top: 0;\n                        left: 0;\n                        width: 100%;\n                        height: 100%;\n                        background: rgba(0,0,0,0.8);\n                        z-index: 999999;\n                        display: flex;\n                        align-items: center;\n                        justify-content: center;\n                    \">\n                        <div style=\"\n                            background: white;\n                            padding: 30px;\n                            border-radius: 8px;\n                            max-width: 600px;\n                            width: 90%;\n                            text-align: center;\n                            box-shadow: 0 4px 20px rgba(0,0,0,0.3);\n                        \">\n                            <h2 style=\"color: #007cba; margin-bottom: 20px;\">\uD83D\uDCC4 Aper\xE7u PDF - Commande #".concat(orderId, "</h2>\n                            <div style=\"background: #f8f9fa; padding: 20px; border-radius: 6px; margin: 20px 0;\">\n                                <p style=\"margin: 10px 0;\"><strong>Commande ID:</strong> ").concat(orderId, "</p>\n                                <p style=\"margin: 10px 0;\"><strong>Template ID:</strong> ").concat(templateId, "</p>\n                                <p style=\"margin: 10px 0;\"><strong>Statut:</strong> <span style=\"color: #dc3545;\">Erreur de chargement</span></p>\n                            </div>\n                            <p style=\"color: #666; margin: 20px 0; font-size: 14px;\">\n                                Erreur lors du chargement du syst\xE8me d'aper\xE7u avanc\xE9.<br>\n                                Utilisez le bouton \"G\xE9n\xE9rer PDF\" pour cr\xE9er le document.\n                            </p>\n                            <div style=\"margin-top: 25px;\">\n                                <button onclick=\"this.parentElement.parentElement.parentElement.remove()\" style=\"\n                                    background: #007cba;\n                                    color: white;\n                                    border: none;\n                                    padding: 12px 24px;\n                                    border-radius: 4px;\n                                    cursor: pointer;\n                                    font-size: 14px;\n                                    margin-right: 10px;\n                                \">Fermer</button>\n                                <button onclick=\"alert('Fonctionnalit\xE9 de g\xE9n\xE9ration PDF \xE0 impl\xE9menter'); this.parentElement.parentElement.parentElement.remove()\" style=\"\n                                    background: #28a745;\n                                    color: white;\n                                    border: none;\n                                    padding: 12px 24px;\n                                    border-radius: 4px;\n                                    cursor: pointer;\n                                    font-size: 14px;\n                                \">G\xE9n\xE9rer PDF</button>\n                            </div>\n                        </div>\n                    </div>\n                ");
-        document.body.appendChild(modal);
-        console.log('=== FALLBACK MODAL CREATED ===');
-      } catch (fallbackError) {
-        console.error('=== ERROR CREATING FALLBACK MODAL ===', fallbackError);
-        alert('Erreur critique lors de l\'affichage de l\'aperçu: ' + fallbackError.message);
-      }
-    }; // Marquer comme initialisé pour éviter les conflits
     window.PDFBuilderPro = pdfBuilderPro;
     // Alias pour compatibilité
     window.pdfBuilderPro = pdfBuilderPro;
 
-    // Fonction pour afficher l'aperçu dans la metabox WooCommerce
+    // Fonction pour afficher l'aperçu dans la metabox WooCommerce - RECREATION COMPLETE PHASE 8
     window.pdfBuilderShowPreview = function (orderId, templateId, nonce) {
-      console.log('=== PDF BUILDER DEBUG: pdfBuilderShowPreview START ===');
+      console.log('=== PDF BUILDER PHASE 8: pdfBuilderShowPreview START ===');
       console.log('Parameters:', {
         orderId: orderId,
         templateId: templateId,
-        nonce: nonce
+        nonce: nonce,
+        timestamp: Date.now()
       });
 
-      // TEST IMMÉDIAT : Afficher une alerte pour prouver la connexion
-      alert('🔥 PHASE 8: pdfBuilderShowPreview appelée avec succès!\nOrder: ' + orderId + '\nTemplate: ' + templateId + '\nTimestamp: ' + new Date().toLocaleTimeString());
-      console.log('=== ALERT SHOWN - PROVING CONNECTION ===');
+      // 1. IMMÉDIAT: Créer un indicateur visuel que la fonction est appelée
+      var visualIndicator = document.createElement('div');
+      visualIndicator.id = 'phase8-visual-indicator';
+      visualIndicator.style.cssText = "\n                position: fixed !important;\n                top: 10px !important;\n                right: 10px !important;\n                background: #ff6b35 !important;\n                color: white !important;\n                padding: 15px !important;\n                border-radius: 8px !important;\n                z-index: 1000000 !important;\n                font-weight: bold !important;\n                font-size: 14px !important;\n                border: 3px solid #ff4500 !important;\n                box-shadow: 0 4px 12px rgba(255,107,53,0.3) !important;\n            ";
+      visualIndicator.innerHTML = "\n                \uD83D\uDD25 PHASE 8 ACTIVE<br>\n                Order: ".concat(orderId, "<br>\n                Template: ").concat(templateId, "<br>\n                Time: ").concat(new Date().toLocaleTimeString(), "<br>\n                <span style=\"color: yellow;\">MODAL LOADING...</span>\n            ");
+      document.body.appendChild(visualIndicator);
+      console.log('=== VISUAL INDICATOR CREATED ===');
 
-      // CRÉER UN ÉLÉMENT DOM VISIBLE IMMÉDIATEMENT
-      var testDiv = document.createElement('div');
-      testDiv.id = 'phase8-test-element';
-      testDiv.innerHTML = '<h1 style="color: red; font-size: 48px; position: fixed; top: 100px; left: 100px; z-index: 1000000; background: yellow; padding: 20px; border: 10px solid red;">🔥 PHASE 8 ACTIVE - MODAL CREATED 🔥</h1>';
-      testDiv.innerHTML += '<p style="color: blue; font-size: 24px; position: fixed; top: 200px; left: 100px; z-index: 1000000;">Order: ' + orderId + ' | Template: ' + templateId + ' | Time: ' + new Date().toLocaleTimeString() + '</p>';
-      document.body.appendChild(testDiv);
-      console.log('=== TEST ELEMENT CREATED IN DOM ===');
+      // 2. Supprimer toute modal existante
+      var existingModal = document.getElementById('pdf-builder-preview-modal');
+      if (existingModal) {
+        existingModal.remove();
+        console.log('=== REMOVED EXISTING MODAL ===');
+      }
 
-      // VERSION RÉELLE : Système d'aperçu unifié avec React
-      console.log('=== USING REAL PREVIEW SYSTEM ===');
+      // 3. Créer le conteneur de modal
+      var modalContainer = document.createElement('div');
+      modalContainer.id = 'pdf-builder-preview-modal';
+      modalContainer.style.cssText = "\n                position: fixed !important;\n                top: 0 !important;\n                left: 0 !important;\n                width: 100vw !important;\n                height: 100vh !important;\n                background: rgba(0,0,0,0.8) !important;\n                z-index: 999999 !important;\n                display: flex !important;\n                align-items: center !important;\n                justify-content: center !important;\n            ";
+      document.body.appendChild(modalContainer);
+      console.log('=== MODAL CONTAINER CREATED ===');
+
+      // 4. Créer le contenu de la modal avec React
+      var modalContent = document.createElement('div');
+      modalContent.id = 'pdf-builder-preview-root';
+      modalContent.style.cssText = "\n                background: white !important;\n                border-radius: 12px !important;\n                width: 90vw !important;\n                height: 90vh !important;\n                max-width: 1200px !important;\n                max-height: 800px !important;\n                position: relative !important;\n                overflow: hidden !important;\n                box-shadow: 0 20px 60px rgba(0,0,0,0.3) !important;\n            ";
+      modalContainer.appendChild(modalContent);
+
+      // 5. Bouton de fermeture
+      var closeButton = document.createElement('button');
+      closeButton.innerHTML = '✕';
+      closeButton.style.cssText = "\n                position: absolute !important;\n                top: 15px !important;\n                right: 15px !important;\n                background: #dc3545 !important;\n                color: white !important;\n                border: none !important;\n                border-radius: 50% !important;\n                width: 40px !important;\n                height: 40px !important;\n                font-size: 20px !important;\n                cursor: pointer !important;\n                z-index: 1000001 !important;\n                display: flex !important;\n                align-items: center !important;\n                justify-content: center !important;\n            ";
+      closeButton.onclick = function () {
+        modalContainer.remove();
+        visualIndicator.remove();
+        console.log('=== MODAL CLOSED ===');
+      };
+      modalContent.appendChild(closeButton);
+
+      // 6. Contenu de chargement initial
+      var loadingContent = document.createElement('div');
+      loadingContent.style.cssText = "\n                display: flex !important;\n                flex-direction: column !important;\n                align-items: center !important;\n                justify-content: center !important;\n                height: 100% !important;\n                color: #666 !important;\n                font-size: 18px !important;\n            ";
+      loadingContent.innerHTML = "\n                <div style=\"font-size: 48px; margin-bottom: 20px;\">\uD83D\uDD04</div>\n                <div style=\"font-weight: bold; margin-bottom: 10px;\">Chargement de l'aper\xE7u...</div>\n                <div style=\"font-size: 14px; color: #999;\">\n                    Order: ".concat(orderId, " | Template: ").concat(templateId, "<br>\n                    ").concat(new Date().toLocaleString(), "\n                </div>\n            ");
+      modalContent.appendChild(loadingContent);
+
+      // 7. Monter le composant React PreviewModal
       try {
-        // Supprimer toute modal existante pour éviter les doublons
-        var existingModal = document.getElementById('pdf-builder-preview-modal');
-        if (existingModal) {
-          existingModal.remove();
-          console.log('=== REMOVED EXISTING MODAL ===');
-        }
+        console.log('=== LOADING PREVIEW MODAL COMPONENT ===');
 
-        // Créer le conteneur de modal avec styles FORCES pour visibilité
-        var modalContainer = document.createElement('div');
-        modalContainer.id = 'pdf-builder-preview-modal';
-        modalContainer.style.cssText = "\n                    position: fixed !important;\n                    top: 0 !important;\n                    left: 0 !important;\n                    width: 100vw !important;\n                    height: 100vh !important;\n                    background: rgba(255,0,0,0.9) !important;\n                    z-index: 999999 !important;\n                    display: flex !important;\n                    align-items: center !important;\n                    justify-content: center !important;\n                    border: 20px solid yellow !important;\n                ";
-
-        // Ajouter un message visible immédiatement
-        var debugMessage = document.createElement('div');
-        debugMessage.textContent = '🔥 PHASE 8 MODAL CREATED - ' + new Date().toLocaleTimeString();
-        debugMessage.style.cssText = "\n                    position: absolute !important;\n                    top: 50px !important;\n                    left: 50px !important;\n                    background: white !important;\n                    color: red !important;\n                    padding: 20px !important;\n                    border-radius: 10px !important;\n                    font-size: 24px !important;\n                    font-weight: bold !important;\n                    z-index: 1000000 !important;\n                    border: 5px solid red !important;\n                ";
-        modalContainer.appendChild(debugMessage);
-        document.body.appendChild(modalContainer);
-        console.log('=== MODAL CONTAINER CREATED WITH FORCED RED BACKGROUND ===');
-
-        // Créer le conteneur React pour la modal
-        var previewRoot = document.createElement('div');
-        previewRoot.id = 'pdf-builder-preview-root';
-        previewRoot.style.cssText = 'width: 100%; height: 100%;';
-        modalContainer.appendChild(previewRoot);
-        console.log('=== PREVIEW ROOT CREATED ===');
-
-        // Importer dynamiquement la PreviewModal et ses dépendances
+        // Importer dynamiquement le composant PreviewModal
         Promise.resolve(/* import() */).then(__webpack_require__.bind(__webpack_require__, 819)).then(function (_ref2) {
-          var PreviewModal = _ref2["default"];
-          console.log('=== PREVIEW MODAL IMPORTED SUCCESSFULLY ===');
+          var PreviewModal = _ref2.PreviewModal;
+          console.log('=== PREVIEW MODAL COMPONENT LOADED ===');
 
-          // Créer et rendre le composant React
-          var modalElement = /*#__PURE__*/react.createElement(PreviewModal, {
+          // Créer l'élément React
+          var previewModalElement = /*#__PURE__*/react.createElement(PreviewModal, {
             isOpen: true,
             onClose: function onClose() {
-              console.log('=== CLOSING PREVIEW MODAL ===');
               modalContainer.remove();
+              visualIndicator.remove();
+              console.log('=== MODAL CLOSED VIA REACT ===');
             },
             mode: 'metabox',
             orderId: orderId,
             templateId: templateId,
             nonce: nonce
           });
-          react_dom.render(modalElement, previewRoot);
-          console.log('=== REACT MODAL RENDERED SUCCESSFULLY ===');
+
+          // Monter avec ReactDOM
+          react_dom.render(previewModalElement, modalContent);
+
+          // Mettre à jour l'indicateur visuel
+          visualIndicator.innerHTML = visualIndicator.innerHTML.replace('MODAL LOADING...', '<span style="color: #28a745;">MODAL LOADED ✓</span>');
+          console.log('=== REACT MODAL MOUNTED SUCCESSFULLY ===');
         })["catch"](function (error) {
-          console.error('=== ERROR IMPORTING PREVIEW MODAL ===', error);
-          // Fallback vers la modal HTML simple en cas d'erreur
-          modalContainer.remove();
-          showFallbackModal(orderId, templateId, nonce);
+          console.error('=== ERROR LOADING PREVIEW MODAL ===', error);
+          loadingContent.innerHTML = "\n                        <div style=\"font-size: 48px; margin-bottom: 20px; color: #dc3545;\">\u274C</div>\n                        <div style=\"font-weight: bold; margin-bottom: 10px; color: #dc3545;\">Erreur de chargement</div>\n                        <div style=\"font-size: 14px; color: #666;\">".concat(error.message, "</div>\n                    ");
+          visualIndicator.innerHTML = visualIndicator.innerHTML.replace('MODAL LOADING...', '<span style="color: #dc3545;">ERROR ❌</span>');
         });
       } catch (error) {
-        console.error('=== ERROR CREATING REACT MODAL ===', error);
-        // Fallback vers la modal HTML simple en cas d'erreur
-        showFallbackModal(orderId, templateId, nonce);
+        console.error('=== ERROR IN MODAL CREATION ===', error);
+        loadingContent.innerHTML = "\n                    <div style=\"font-size: 48px; margin-bottom: 20px; color: #dc3545;\">\u274C</div>\n                    <div style=\"font-weight: bold; margin-bottom: 10px; color: #dc3545;\">Erreur syst\xE8me</div>\n                    <div style=\"font-size: 14px; color: #666;\">".concat(error.message, "</div>\n                ");
+        visualIndicator.innerHTML = visualIndicator.innerHTML.replace('MODAL LOADING...', '<span style="color: #dc3545;">ERROR ❌</span>');
       }
+      console.log('=== PDF BUILDER PHASE 8: pdfBuilderShowPreview END ===');
     };
+
+    // Marquer comme initialisé pour éviter les conflits
     PDFBuilderSecurity.preventMultipleInit();
   } else {
     console.error('PDF Builder Pro: Not attaching to window due to health check failure');
@@ -12152,7 +12147,7 @@ if (typeof window !== 'undefined') {
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  "default": () => (/* binding */ preview_system_PreviewModal)
+  A: () => (/* binding */ preview_system_PreviewModal)
 });
 
 // EXTERNAL MODULE: ./node_modules/react/index.js
