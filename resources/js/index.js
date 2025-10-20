@@ -271,6 +271,14 @@ if (typeof window !== 'undefined') {
             alert('🔥 PHASE 8: pdfBuilderShowPreview appelée avec succès!\nOrder: ' + orderId + '\nTemplate: ' + templateId + '\nTimestamp: ' + new Date().toLocaleTimeString());
             console.log('=== ALERT SHOWN - PROVING CONNECTION ===');
 
+            // CRÉER UN ÉLÉMENT DOM VISIBLE IMMÉDIATEMENT
+            const testDiv = document.createElement('div');
+            testDiv.id = 'phase8-test-element';
+            testDiv.innerHTML = '<h1 style="color: red; font-size: 48px; position: fixed; top: 100px; left: 100px; z-index: 1000000; background: yellow; padding: 20px; border: 10px solid red;">🔥 PHASE 8 ACTIVE - MODAL CREATED 🔥</h1>';
+            testDiv.innerHTML += '<p style="color: blue; font-size: 24px; position: fixed; top: 200px; left: 100px; z-index: 1000000;">Order: ' + orderId + ' | Template: ' + templateId + ' | Time: ' + new Date().toLocaleTimeString() + '</p>';
+            document.body.appendChild(testDiv);
+            console.log('=== TEST ELEMENT CREATED IN DOM ===');
+
             // VERSION RÉELLE : Système d'aperçu unifié avec React
             console.log('=== USING REAL PREVIEW SYSTEM ===');
 
