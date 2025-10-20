@@ -21,7 +21,7 @@ const PreviewModal = ({
   templateId = null,
   nonce = null
 }) => {
-  console.log('PDF Builder Debug: PreviewModal render - isOpen:', isOpen, 'mode:', mode, 'templateId:', templateId, 'timestamp:', Date.now());
+  console.log('PDF Builder Debug: PreviewModal FUNCTION CALLED - isOpen:', isOpen, 'timestamp:', Date.now());
 
   const [isLoading, setIsLoading] = useState(false);
   const [previewData, setPreviewData] = useState(null);
@@ -170,10 +170,14 @@ const PreviewModal = ({
     handleClose();
   }, [handleClose]);
 
+  console.log('PDF Builder Debug: About to check isOpen condition - isOpen:', isOpen, 'timestamp:', Date.now());
+
   if (!isOpen) {
     console.log('PDF Builder Debug: PreviewModal not rendering - isOpen is false');
     return null;
   }
+
+  console.log('PDF Builder Debug: isOpen is true, continuing to render');
 
   console.log('PDF Builder Debug: PreviewModal rendering JSX - isOpen:', isOpen, 'isLoading:', isLoading, 'error:', !!error, 'previewData:', !!previewData);
 

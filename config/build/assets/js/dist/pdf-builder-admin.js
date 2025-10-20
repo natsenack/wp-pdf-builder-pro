@@ -16475,7 +16475,7 @@ var PreviewModal = function PreviewModal(_ref) {
     templateId = _ref$templateId === void 0 ? null : _ref$templateId,
     _ref$nonce = _ref.nonce,
     nonce = _ref$nonce === void 0 ? null : _ref$nonce;
-  console.log('PDF Builder Debug: PreviewModal render - isOpen:', isOpen, 'mode:', mode, 'templateId:', templateId, 'timestamp:', Date.now());
+  console.log('PDF Builder Debug: PreviewModal FUNCTION CALLED - isOpen:', isOpen, 'timestamp:', Date.now());
   var _useState = (0,react.useState)(false),
     _useState2 = PreviewModal_slicedToArray(_useState, 2),
     isLoading = _useState2[0],
@@ -16674,10 +16674,12 @@ var PreviewModal = function PreviewModal(_ref) {
     e.stopPropagation(); // Prevent overlay close
     handleClose();
   }, [handleClose]);
+  console.log('PDF Builder Debug: About to check isOpen condition - isOpen:', isOpen, 'timestamp:', Date.now());
   if (!isOpen) {
     console.log('PDF Builder Debug: PreviewModal not rendering - isOpen is false');
     return null;
   }
+  console.log('PDF Builder Debug: isOpen is true, continuing to render');
   console.log('PDF Builder Debug: PreviewModal rendering JSX - isOpen:', isOpen, 'isLoading:', isLoading, 'error:', !!error, 'previewData:', !!previewData);
   try {
     console.log('PDF Builder Debug: About to return JSX from PreviewModal');
