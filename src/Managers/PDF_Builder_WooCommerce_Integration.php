@@ -192,8 +192,24 @@ class PDF_Builder_WooCommerce_Integration
             }
         }
 
+        // Vérifier que le template sélectionné existe vraiment
+        if ($selected_template) {
+            $existing_template = $wpdb->get_var(
+                $wpdb->prepare(
+                    "SELECT id FROM $table_templates WHERE id = %d",
+                    $selected_template['id']
+                )
+            );
+
+            if (!$existing_template) {
+                // Le template sélectionné n'existe pas, utiliser le premier disponible
+                error_log('PDF Builder: Selected template ID ' . $selected_template['id'] . ' does not exist, using fallback');
+                $selected_template = !empty($all_templates) ? $all_templates[0] : null;
+            }
+        }
+
         wp_nonce_field('pdf_builder_order_actions', 'pdf_builder_order_nonce');
-        
+
         // Récupérer le label du statut WooCommerce
         $order_statuses = wc_get_order_statuses();
         $status_label = isset($order_statuses['wc-' . $order_status]) ? $order_statuses['wc-' . $order_status] : ucfirst($order_status);
@@ -1351,8 +1367,17 @@ class PDF_Builder_WooCommerce_Integration
 
             // Vérifier que le template existe
             if (!get_post($template_id)) {
-                error_log('PDF Builder: Template introuvable - ID: ' . $template_id);
-                wp_send_json_error('Template introuvable');
+                error_log('PDF Builder: Template introuvable - ID: ' . $template_id . ', returning empty elements');
+                // Au lieu d'une erreur, retourner un tableau vide pour permettre le fonctionnement
+                wp_send_json_success(
+                    [
+                    'elements' => [],
+                    'template_id' => $template_id,
+                    'cached' => false,
+                    'element_count' => 0,
+                    'warning' => 'Template not found, using empty elements'
+                    ]
+                );
                 return;
             }
 
