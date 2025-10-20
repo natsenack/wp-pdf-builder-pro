@@ -1,0 +1,69 @@
+<?php
+// Serveur de test simple pour le modal
+header('Content-Type: text/html; charset=utf-8');
+?>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Modal Simplifié</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        button { padding: 10px 20px; background: #007cba; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #005a87; }
+        #test-results { margin-top: 20px; padding: 10px; background: #f8f9fa; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>Test du Modal PDF Builder Simplifié</h1>
+    <p>Cliquez sur le bouton pour ouvrir le modal de diagnostic.</p>
+
+    <button onclick="testModal()">🧪 Tester le Modal</button>
+
+    <div id="test-results">
+        <h3>Résultats du test:</h3>
+        <div id="results-content">En attente...</div>
+    </div>
+
+    <!-- Charger les assets compilés -->
+    <script src="assets/js/dist/vendors.js"></script>
+    <script src="assets/js/dist/pdf-builder-admin.js"></script>
+
+    <script>
+        function testModal() {
+            console.log('🧪 Test du modal démarré');
+
+            // Simuler les données nécessaires
+            window.pdfBuilderTestData = {
+                orderId: 123,
+                templateElements: [
+                    { id: 1, type: 'text', content: 'Test Element 1' },
+                    { id: 2, type: 'text', content: 'Test Element 2' }
+                ]
+            };
+
+            // Appeler la fonction de modal
+            if (typeof pdfBuilderShowPreview === 'function') {
+                console.log('✅ Fonction pdfBuilderShowPreview trouvée');
+                pdfBuilderShowPreview(123, 'order');
+                document.getElementById('results-content').innerHTML = '✅ Modal ouvert - vérifiez s\'il reste ouvert après chargement';
+            } else {
+                console.error('❌ Fonction pdfBuilderShowPreview non trouvée');
+                document.getElementById('results-content').innerHTML = '❌ Fonction pdfBuilderShowPreview non trouvée';
+            }
+        }
+
+        // Surveiller les logs de console
+        const originalLog = console.log;
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            if (args[0] && args[0].includes('PDF Builder Debug')) {
+                const logDiv = document.getElementById('results-content');
+                logDiv.innerHTML += '<br>🔍 ' + args.join(' ');
+                logDiv.scrollTop = logDiv.scrollHeight;
+            }
+        };
+    </script>
+</body>
+</html>

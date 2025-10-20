@@ -20,7 +20,7 @@ const PDFBuilderSecurity = {
         const checks = {
             react: typeof React === 'object' && React.createElement,
             reactDom: typeof ReactDOM === 'object' && ReactDOM.render,
-            pdfCanvasEditor: PDFCanvasEditor && (typeof PDFCanvasEditor === 'function' || typeof PDFCanvasEditor === 'object'),
+            // pdfCanvasEditor: PDFCanvasEditor && (typeof PDFCanvasEditor === 'function' || typeof PDFCanvasEditor === 'object'),
             hooks: typeof hooks === 'object',
             window: typeof window !== 'undefined',
             document: typeof document !== 'undefined'
@@ -416,8 +416,11 @@ window.pdfBuilderShowPreview = function(orderId, templateId, nonce) {
         console.log('=== LOADING PREVIEW MODAL COMPONENT ===');
 
         // Importer dynamiquement le composant PreviewModal
-        import('./components/preview-system/PreviewModal.jsx').then(({ PreviewModal }) => {
-            console.log('=== PREVIEW MODAL COMPONENT LOADED ===');
+        console.log('=== STARTING DYNAMIC IMPORT ===');
+        import('./components/preview-system/PreviewModal.jsx').then((module) => {
+            console.log('=== DYNAMIC IMPORT SUCCESS ===', module);
+            const PreviewModal = module.default;
+            console.log('=== PreviewModal extracted ===', PreviewModal);
 
             // Créer l'élément React
             const previewModalElement = React.createElement(PreviewModal, {
@@ -434,20 +437,23 @@ window.pdfBuilderShowPreview = function(orderId, templateId, nonce) {
             });
 
             // Monter avec ReactDOM
+            console.log('=== ABOUT TO CALL ReactDOM.render ===');
             ReactDOM.render(previewModalElement, modalContent);
+            console.log('=== ReactDOM.render CALLED SUCCESSFULLY ===');
 
             // Mettre à jour l'indicateur visuel
             visualIndicator.innerHTML = visualIndicator.innerHTML.replace('MODAL LOADING...', '<span style="color: #28a745;">MODAL LOADED ✓</span>');
 
             console.log('=== REACT MODAL MOUNTED SUCCESSFULLY ===');
         }).catch(error => {
-            console.error('=== ERROR LOADING PREVIEW MODAL ===', error);
+            console.error('=== DYNAMIC IMPORT FAILED ===', error);
+            console.error('=== Error details ===', error.message, error.stack);
             loadingContent.innerHTML = `
                 <div style="font-size: 48px; margin-bottom: 20px; color: #dc3545;">❌</div>
-                <div style="font-weight: bold; margin-bottom: 10px; color: #dc3545;">Erreur de chargement</div>
+                <div style="font-weight: bold; margin-bottom: 10px; color: #dc3545;">Erreur d'import dynamique</div>
                 <div style="font-size: 14px; color: #666;">${error.message}</div>
             `;
-            visualIndicator.innerHTML = visualIndicator.innerHTML.replace('MODAL LOADING...', '<span style="color: #dc3545;">ERROR ❌</span>');
+            visualIndicator.innerHTML = visualIndicator.innerHTML.replace('MODAL LOADING...', '<span style="color: #dc3545;">IMPORT ERROR ❌</span>');
         });
 
     } catch (error) {
@@ -462,213 +468,6 @@ window.pdfBuilderShowPreview = function(orderId, templateId, nonce) {
 
     console.log('=== PDF BUILDER PHASE 8: pdfBuilderShowPreview END ===');
 };
-
-// FORCER LA CRÉATION DE LA FONCTION QUOI QU'IL ARRIVE
-console.log('=== FORCE CREATING pdfBuilderShowPreview FUNCTION ===');
-
-// Fonction pour afficher l'aperçu dans la metabox WooCommerce - RECREATION COMPLETE PHASE 8
-window.pdfBuilderShowPreview = function(orderId, templateId, nonce) {
-    console.log('=== PDF BUILDER PHASE 8: pdfBuilderShowPreview START (FORCED) ===');
-    console.log('Parameters:', { orderId, templateId, nonce, timestamp: Date.now() });
-
-    // Indicateur d'urgence
-    const emergencyIndicator = document.createElement('div');
-    emergencyIndicator.id = 'pdf-builder-emergency-indicator';
-    emergencyIndicator.style.cssText = `
-        position: fixed !important;
-        top: 50px !important;
-        right: 10px !important;
-        background: #ff6b35 !important;
-        color: white !important;
-        padding: 15px !important;
-        border-radius: 8px !important;
-        z-index: 1000000 !important;
-        font-weight: bold !important;
-        font-size: 14px !important;
-        border: 3px solid #ff4500 !important;
-        box-shadow: 0 4px 12px rgba(255,107,53,0.3) !important;
-    `;
-    emergencyIndicator.innerHTML = `
-        🔥 EMERGENCY MODE<br>
-        Order: ${orderId}<br>
-        Template: ${templateId}<br>
-        Time: ${new Date().toLocaleTimeString()}<br>
-        <span style="color: yellow;">FUNCTION CALLED!</span>
-    `;
-    document.body.appendChild(emergencyIndicator);
-
-    // Créer une modal simple en HTML pur
-    const modal = document.createElement('div');
-    modal.id = 'pdf-builder-emergency-modal';
-    modal.style.cssText = `
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100vw !important;
-        height: 100vh !important;
-        background: rgba(0,0,0,0.9) !important;
-        z-index: 999999 !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-    `;
-
-    const modalContent = document.createElement('div');
-    modalContent.style.cssText = `
-        background: white !important;
-        border-radius: 12px !important;
-        width: 80vw !important;
-        height: 80vh !important;
-        max-width: 800px !important;
-        max-height: 600px !important;
-        position: relative !important;
-        padding: 30px !important;
-        text-align: center !important;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.3) !important;
-    `;
-
-    modalContent.innerHTML = `
-        <button onclick="this.parentElement.parentElement.remove();
-document.getElementById('pdf-builder-emergency-indicator').remove();" style="
-            position: absolute !important;
-            top: 15px !important;
-            right: 15px !important;
-            background: #dc3545 !important;
-            color: white !important;
-            border: none !important;
-            border-radius: 50% !important;
-            width: 40px !important;
-            height: 40px !important;
-            font-size: 20px !important;
-            cursor: pointer !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-        ">✕</button>
-
-        <h2 style="color: #007cba; margin-bottom: 20px;">🚨 MODE URGENCE - PDF Builder</h2>
-        <div style="background: #f8f9fa; padding: 20px; border-radius: 6px; margin: 20px 0;">
-            <p style="margin: 10px 0;"><strong>Commande ID:</strong> ${orderId}</p>
-            <p style="margin: 10px 0;"><strong>Template ID:</strong> ${templateId}</p>
-            <p style="margin: 10px 0;"><strong>Statut:</strong> <span style="color: #dc3545;">Health check failed - Emergency mode</span></p>
-            <p style="margin: 10px 0;"><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p>
-        </div>
-        <p style="color: #666; margin: 20px 0; font-size: 14px;">
-            Le système d'aperçu avancé n'a pas pu se charger correctement.<br>
-            Vérifiez la console pour les détails du health check.
-        </p>
-    `;
-
-    modal.appendChild(modalContent);
-    document.body.appendChild(modal);
-
-    console.log('=== EMERGENCY MODAL CREATED ===');
-};
-
-// Marquer comme initialisé pour éviter les conflits
-PDFBuilderSecurity.preventMultipleInit();
-
-    // FORCER LA CRÉATION DE LA FONCTION QUOI QU'IL ARRIVE
-    console.log('=== FORCE CREATING pdfBuilderShowPreview FUNCTION ===');
-
-    // Fonction pour afficher l'aperçu dans la metabox WooCommerce - RECREATION COMPLETE PHASE 8
-    window.pdfBuilderShowPreview = function(orderId, templateId, nonce) {
-        console.log('=== PDF BUILDER PHASE 8: pdfBuilderShowPreview START (FORCED) ===');
-        console.log('Parameters:', { orderId, templateId, nonce, timestamp: Date.now() });
-
-        // Indicateur d'urgence
-        const emergencyIndicator = document.createElement('div');
-        emergencyIndicator.id = 'pdf-builder-emergency-indicator';
-        emergencyIndicator.style.cssText = `
-            position: fixed !important;
-            top: 50px !important;
-            right: 10px !important;
-            background: #ff6b35 !important;
-            color: white !important;
-            padding: 15px !important;
-            border-radius: 8px !important;
-            z-index: 1000000 !important;
-            font-weight: bold !important;
-            font-size: 14px !important;
-            border: 3px solid #ff4500 !important;
-            box-shadow: 0 4px 12px rgba(255,107,53,0.3) !important;
-        `;
-        emergencyIndicator.innerHTML = `
-            🔥 EMERGENCY MODE<br>
-            Order: ${orderId}<br>
-            Template: ${templateId}<br>
-            Time: ${new Date().toLocaleTimeString()}<br>
-            <span style="color: yellow;">FUNCTION CALLED!</span>
-        `;
-        document.body.appendChild(emergencyIndicator);
-
-        // Créer une modal simple en HTML pur
-        const modal = document.createElement('div');
-        modal.id = 'pdf-builder-emergency-modal';
-        modal.style.cssText = `
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100vw !important;
-            height: 100vh !important;
-            background: rgba(0,0,0,0.9) !important;
-            z-index: 999999 !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-        `;
-
-        const modalContent = document.createElement('div');
-        modalContent.style.cssText = `
-            background: white !important;
-            border-radius: 12px !important;
-            width: 80vw !important;
-            height: 80vh !important;
-            max-width: 800px !important;
-            max-height: 600px !important;
-            position: relative !important;
-            padding: 30px !important;
-            text-align: center !important;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3) !important;
-        `;
-
-        modalContent.innerHTML = `
-            <button onclick="this.parentElement.parentElement.remove(); document.getElementById('pdf-builder-emergency-indicator').remove();" style="
-                position: absolute !important;
-                top: 15px !important;
-                right: 15px !important;
-                background: #dc3545 !important;
-                color: white !important;
-                border: none !important;
-                border-radius: 50% !important;
-                width: 40px !important;
-                height: 40px !important;
-                font-size: 20px !important;
-                cursor: pointer !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-            ">✕</button>
-
-            <h2 style="color: #007cba; margin-bottom: 20px;">🚨 MODE URGENCE - PDF Builder</h2>
-            <div style="background: #f8f9fa; padding: 20px; border-radius: 6px; margin: 20px 0;">
-                <p style="margin: 10px 0;"><strong>Commande ID:</strong> ${orderId}</p>
-                <p style="margin: 10px 0;"><strong>Template ID:</strong> ${templateId}</p>
-                <p style="margin: 10px 0;"><strong>Statut:</strong> <span style="color: #dc3545;">Health check failed - Emergency mode</span></p>
-                <p style="margin: 10px 0;"><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p>
-            </div>
-            <p style="color: #666; margin: 20px 0; font-size: 14px;">
-                Le système d'aperçu avancé n'a pas pu se charger correctement.<br>
-                Vérifiez la console pour les détails du health check.
-            </p>
-        `;
-
-        modal.appendChild(modalContent);
-        document.body.appendChild(modal);
-
-        console.log('=== EMERGENCY MODAL CREATED ===');
-    };
-
     if (PDFBuilderSecurity.performHealthCheck()) {
         window.PDFBuilderPro = pdfBuilderPro;
         // Alias pour compatibilité

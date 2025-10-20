@@ -8,7 +8,7 @@ module.exports = {
   },
   output: {
     filename: '[name].js',
-    path: path.resolve(__dirname, 'assets/js/dist')
+    path: path.resolve(__dirname, '../../assets/js/dist')
     // Retiré libraryTarget pour permettre l'exécution automatique du code
   },
   // React est partagé entre les chunks
