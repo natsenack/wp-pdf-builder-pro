@@ -1600,7 +1600,7 @@ class PDF_Builder_WooCommerce_Integration
             // Totaux détaillés
             'totals' => [
                 'subtotal' => $order->get_subtotal(),
-                'subtotal_tax' => $order->get_subtotal_tax(),
+                'subtotal_tax' => method_exists($order, 'get_subtotal_tax') ? $order->get_subtotal_tax() : 0,
                 'tax' => $order->get_total_tax(),
                 'shipping' => $order->get_shipping_total(),
                 'shipping_tax' => $order->get_shipping_tax(),
@@ -1644,7 +1644,7 @@ class PDF_Builder_WooCommerce_Integration
                 'total' => $item->get_total(),
                 'total_tax' => $item->get_total_tax(),
                 'subtotal' => $item->get_subtotal(),
-                'subtotal_tax' => $item->get_subtotal_tax(),
+                'subtotal_tax' => method_exists($item, 'get_subtotal_tax') ? $item->get_subtotal_tax() : 0,
                 'tax_class' => $item->get_tax_class(),
                 'sku' => $product ? $product->get_sku() : '',
                 'product_id' => $item->get_product_id(),
