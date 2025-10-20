@@ -221,7 +221,7 @@ $modifiedFiles = $filteredFiles | Select-Object -Unique
 $filesToDeploy = @()
 foreach ($file in $modifiedFiles) {
     $fullPath = Join-Path $projectRoot $file
-    if (Test-Path $fullPath) {
+    if ((Test-Path $fullPath) -and (Test-Path $fullPath -PathType Leaf)) {
         $filesToDeploy += @{
             FullPath = $fullPath
             RelativePath = $file
