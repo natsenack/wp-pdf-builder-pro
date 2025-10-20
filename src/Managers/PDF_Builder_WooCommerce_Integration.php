@@ -1375,7 +1375,7 @@ class PDF_Builder_WooCommerce_Integration
 
             wp_send_json_success(
                 [
-                'canvas_elements' => $canvas_elements,
+                'elements' => $canvas_elements,
                 'template_id' => $template_id,
                 'cached' => ($canvas_elements !== false),
                 'element_count' => is_array($canvas_elements) ? count($canvas_elements) : 0
