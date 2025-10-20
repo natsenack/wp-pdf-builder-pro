@@ -13649,6 +13649,7 @@ var WatermarkRenderer = function WatermarkRenderer(_ref) {
   }, content));
 };
 ;// ./resources/js/components/preview-system/PreviewRenderer.jsx
+function PreviewRenderer_typeof(o) { "@babel/helpers - typeof"; return PreviewRenderer_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, PreviewRenderer_typeof(o); }
 
 
 
@@ -13743,37 +13744,51 @@ var PreviewRenderer = function PreviewRenderer(_ref) {
     };
   }, []);
 
-  // Rendu d'un élément individuel
+  // Rendu d'un élément individuel avec gestion d'erreur robuste
   var renderElement = function renderElement(element) {
+    if (!element || PreviewRenderer_typeof(element) !== 'object') {
+      console.warn('PDF Builder Debug: Invalid element:', element);
+      return null;
+    }
+    if (!element.type) {
+      console.warn('PDF Builder Debug: Element missing type:', element);
+      return null;
+    }
     try {
       var Renderer = rendererMap[element.type] || rendererMap["default"];
+      if (!Renderer) {
+        console.warn('PDF Builder Debug: No renderer found for type:', element.type);
+        return null;
+      }
       return /*#__PURE__*/react.createElement(Renderer, {
-        key: element.id,
+        key: element.id || Math.random(),
         element: element,
         previewData: previewData,
         mode: mode
       });
     } catch (error) {
       console.error('PDF Builder Debug: Error rendering element:', element.type, element.id, error);
+      // Renderer de fallback ultra-simple
       return /*#__PURE__*/react.createElement("div", {
-        key: element.id,
-        className: "preview-element preview-element-error",
+        key: element.id || Math.random(),
         style: {
           position: 'absolute',
-          left: element.x || 0,
-          top: element.y || 0,
-          width: element.width || 200,
-          height: element.height || 50,
-          border: '2px dashed #ff6b6b',
+          left: (element.x || 0) + 'px',
+          top: (element.y || 0) + 'px',
+          width: (element.width || 200) + 'px',
+          height: (element.height || 50) + 'px',
+          border: '1px solid #ff6b6b',
           backgroundColor: '#ffeaea',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: '12px',
+          fontSize: '10px',
           color: '#ff6b6b',
-          borderRadius: '4px'
+          borderRadius: '2px',
+          padding: '2px',
+          boxSizing: 'border-box'
         }
-      }, "\u274C Erreur rendu: ", element.type);
+      }, "\u26A0\uFE0F ", element.type || 'Unknown');
     }
   };
   return /*#__PURE__*/react.createElement("div", {
@@ -14094,11 +14109,26 @@ var PreviewModal = function PreviewModal(_ref) {
         return window.location.reload();
       },
       className: "preview-retry-btn"
-    }, "R\xE9essayer")), !isLoading && !error && previewData && /*#__PURE__*/react.createElement(PreviewRenderer, {
-      elements: templateElements,
-      previewData: previewData,
-      mode: mode
-    })), /*#__PURE__*/react.createElement("div", {
+    }, "R\xE9essayer")), !isLoading && !error && previewData && /*#__PURE__*/react.createElement("div", {
+      className: "preview-content"
+    }, function () {
+      try {
+        return /*#__PURE__*/react.createElement(PreviewRenderer, {
+          elements: templateElements,
+          previewData: previewData,
+          mode: mode
+        });
+      } catch (rendererError) {
+        console.error('PDF Builder Debug: PreviewRenderer error:', rendererError);
+        return /*#__PURE__*/react.createElement("div", {
+          className: "preview-renderer-error"
+        }, /*#__PURE__*/react.createElement("p", null, "\u274C Erreur lors du rendu de l'aper\xE7u"), /*#__PURE__*/react.createElement("p", null, "D\xE9tails: ", rendererError.message), /*#__PURE__*/react.createElement("button", {
+          onClick: function onClick() {
+            return window.location.reload();
+          }
+        }, "Recharger la page"));
+      }
+    }())), /*#__PURE__*/react.createElement("div", {
       className: "preview-modal-footer"
     }, /*#__PURE__*/react.createElement("div", {
       className: "preview-info"

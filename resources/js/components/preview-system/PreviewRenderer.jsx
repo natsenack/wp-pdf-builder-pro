@@ -81,14 +81,29 @@ const PreviewRenderer = ({
     )
   }), []);
 
-  // Rendu d'un élément individuel
+  // Rendu d'un élément individuel avec gestion d'erreur robuste
   const renderElement = (element) => {
+    if (!element || typeof element !== 'object') {
+      console.warn('PDF Builder Debug: Invalid element:', element);
+      return null;
+    }
+
+    if (!element.type) {
+      console.warn('PDF Builder Debug: Element missing type:', element);
+      return null;
+    }
+
     try {
       const Renderer = rendererMap[element.type] || rendererMap.default;
 
+      if (!Renderer) {
+        console.warn('PDF Builder Debug: No renderer found for type:', element.type);
+        return null;
+      }
+
       return (
         <Renderer
-          key={element.id}
+          key={element.id || Math.random()}
           element={element}
           previewData={previewData}
           mode={mode}
@@ -96,27 +111,29 @@ const PreviewRenderer = ({
       );
     } catch (error) {
       console.error('PDF Builder Debug: Error rendering element:', element.type, element.id, error);
+      // Renderer de fallback ultra-simple
       return (
         <div
-          key={element.id}
-          className="preview-element preview-element-error"
+          key={element.id || Math.random()}
           style={{
             position: 'absolute',
-            left: element.x || 0,
-            top: element.y || 0,
-            width: element.width || 200,
-            height: element.height || 50,
-            border: '2px dashed #ff6b6b',
+            left: (element.x || 0) + 'px',
+            top: (element.y || 0) + 'px',
+            width: (element.width || 200) + 'px',
+            height: (element.height || 50) + 'px',
+            border: '1px solid #ff6b6b',
             backgroundColor: '#ffeaea',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '12px',
+            fontSize: '10px',
             color: '#ff6b6b',
-            borderRadius: '4px'
+            borderRadius: '2px',
+            padding: '2px',
+            boxSizing: 'border-box'
           }}
         >
-          ❌ Erreur rendu: {element.type}
+          ⚠️ {element.type || 'Unknown'}
         </div>
       );
     }

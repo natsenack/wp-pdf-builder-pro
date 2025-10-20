@@ -195,11 +195,30 @@ const PreviewModal = ({
           )}
 
           {!isLoading && !error && previewData && (
-            <PreviewRenderer
-              elements={templateElements}
-              previewData={previewData}
-              mode={mode}
-            />
+            <div className="preview-content">
+              {(() => {
+                try {
+                  return (
+                    <PreviewRenderer
+                      elements={templateElements}
+                      previewData={previewData}
+                      mode={mode}
+                    />
+                  );
+                } catch (rendererError) {
+                  console.error('PDF Builder Debug: PreviewRenderer error:', rendererError);
+                  return (
+                    <div className="preview-renderer-error">
+                      <p>❌ Erreur lors du rendu de l'aperçu</p>
+                      <p>Détails: {rendererError.message}</p>
+                      <button onClick={() => window.location.reload()}>
+                        Recharger la page
+                      </button>
+                    </div>
+                  );
+                }
+              })()}
+            </div>
           )}
         </div>
 
