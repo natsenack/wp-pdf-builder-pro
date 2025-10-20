@@ -166,20 +166,57 @@ const PreviewModal = ({
         className="preview-modal-overlay"
         onClick={handleOverlayClose}
         style={{
-          cursor: isProtectedFromAutoClose ? 'not-allowed' : 'default'
+          cursor: isProtectedFromAutoClose ? 'not-allowed' : 'default',
+          // Ajouter l'animation CSS pour le spinner
+          animation: 'none'
         }}
       >
-      <div className="preview-modal-content" onClick={(e) => e.stopPropagation()}>
+        <style>
+          {`
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+          `}
+        </style>
+      <div className="preview-modal-content" onClick={(e) => e.stopPropagation()} style={{
+        backgroundColor: 'white',
+        borderRadius: '12px',
+        boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+        maxWidth: '90vw',
+        maxHeight: '90vh',
+        width: '1200px',
+        height: '800px',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden'
+      }}>
         {/* Header de la modale */}
-        <div className="preview-modal-header">
-          <h3>
+        <div className="preview-modal-header" style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '15px 20px',
+          borderBottom: '1px solid #e1e5e9',
+          backgroundColor: '#f8f9fa'
+        }}>
+          <h3 style={{
+            margin: 0,
+            fontSize: '18px',
+            fontWeight: '600',
+            color: '#2c3e50'
+          }}>
             {mode === 'canvas' ? '🖼️ Aperçu Canvas' : '📄 Aperçu Commande'}
             {isProtectedFromAutoClose && (
               <span style={{
-                marginLeft: '10px',
-                fontSize: '12px',
+                marginLeft: '12px',
+                fontSize: '11px',
                 color: '#28a745',
-                fontWeight: 'normal'
+                fontWeight: '500',
+                backgroundColor: '#d4edda',
+                padding: '2px 8px',
+                borderRadius: '12px',
+                border: '1px solid #c3e6cb'
               }}>
                 🔒 Protégé
               </span>
@@ -189,17 +226,68 @@ const PreviewModal = ({
             className="preview-modal-close"
             onClick={handleButtonClose}
             title="Fermer l'aperçu"
+            style={{
+              background: 'none',
+              border: 'none',
+              fontSize: '24px',
+              color: '#6c757d',
+              cursor: 'pointer',
+              padding: '0',
+              width: '30px',
+              height: '30px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: '4px',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseEnter={(e) => e.target.style.backgroundColor = '#f8f9fa'}
+            onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
           >
             ×
           </button>
         </div>
 
         {/* Corps de la modale */}
-        <div className="preview-modal-body">
+        <div className="preview-modal-body" style={{
+          flex: 1,
+          overflow: 'auto',
+          backgroundColor: '#f8f9fa'
+        }}>
           {isLoading && (
-            <div className="preview-loading">
-              <div className="preview-spinner"></div>
-              <p>Chargement de l'aperçu...</p>
+            <div className="preview-loading" style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '60px 20px',
+              minHeight: '300px'
+            }}>
+              <div className="preview-spinner" style={{
+                width: '50px',
+                height: '50px',
+                border: '4px solid #f3f3f3',
+                borderTop: '4px solid #007cba',
+                borderRadius: '50%',
+                animation: 'spin 1s linear infinite',
+                marginBottom: '20px'
+              }}></div>
+              <h4 style={{
+                margin: '0 0 10px 0',
+                color: '#2c3e50',
+                fontSize: '16px',
+                fontWeight: '500'
+              }}>
+                Chargement de l'aperçu...
+              </h4>
+              <p style={{
+                margin: 0,
+                color: '#6c757d',
+                fontSize: '14px',
+                textAlign: 'center'
+              }}>
+                Récupération des données de commande et préparation de l'aperçu PDF
+              </p>
             </div>
           )}
 
@@ -244,12 +332,33 @@ const PreviewModal = ({
         </div>
 
         {/* Footer avec informations */}
-        <div className="preview-modal-footer">
-          <div className="preview-info">
-            <span className="preview-mode-badge">
-              {mode === 'canvas' ? 'Mode Exemple' : 'Mode Réel'}
+        <div className="preview-modal-footer" style={{
+          padding: '12px 20px',
+          borderTop: '1px solid #e1e5e9',
+          backgroundColor: '#f8f9fa',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <div className="preview-info" style={{
+            display: 'flex',
+            gap: '15px',
+            alignItems: 'center'
+          }}>
+            <span className="preview-mode-badge" style={{
+              backgroundColor: mode === 'canvas' ? '#e3f2fd' : '#d4edda',
+              color: mode === 'canvas' ? '#1565c0' : '#155724',
+              padding: '4px 12px',
+              borderRadius: '16px',
+              fontSize: '12px',
+              fontWeight: '500'
+            }}>
+              {mode === 'canvas' ? '🖼️ Mode Exemple' : '📄 Mode Réel'}
             </span>
-            <span className="preview-elements-count">
+            <span className="preview-elements-count" style={{
+              color: '#6c757d',
+              fontSize: '13px'
+            }}>
               {templateElements.length} élément{templateElements.length > 1 ? 's' : ''}
             </span>
           </div>
@@ -258,6 +367,20 @@ const PreviewModal = ({
               className="preview-download-btn"
               disabled={isLoading || !!error}
               title="Télécharger le PDF"
+              style={{
+                backgroundColor: (isLoading || !!error) ? '#6c757d' : '#007cba',
+                color: 'white',
+                border: 'none',
+                padding: '8px 16px',
+                borderRadius: '6px',
+                cursor: (isLoading || !!error) ? 'not-allowed' : 'pointer',
+                fontSize: '14px',
+                fontWeight: '500',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                transition: 'background-color 0.2s ease'
+              }}
             >
               📥 PDF
             </button>

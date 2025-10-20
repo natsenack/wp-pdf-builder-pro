@@ -14094,33 +14094,123 @@ var PreviewModal = function PreviewModal(_ref) {
       className: "preview-modal-overlay",
       onClick: handleOverlayClose,
       style: {
-        cursor: isProtectedFromAutoClose ? 'not-allowed' : 'default'
+        cursor: isProtectedFromAutoClose ? 'not-allowed' : 'default',
+        // Ajouter l'animation CSS pour le spinner
+        animation: 'none'
       }
-    }, /*#__PURE__*/react.createElement("div", {
+    }, /*#__PURE__*/react.createElement("style", null, "\n            @keyframes spin {\n              0% { transform: rotate(0deg); }\n              100% { transform: rotate(360deg); }\n            }\n          "), /*#__PURE__*/react.createElement("div", {
       className: "preview-modal-content",
       onClick: function onClick(e) {
         return e.stopPropagation();
+      },
+      style: {
+        backgroundColor: 'white',
+        borderRadius: '12px',
+        boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+        maxWidth: '90vw',
+        maxHeight: '90vh',
+        width: '1200px',
+        height: '800px',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden'
       }
     }, /*#__PURE__*/react.createElement("div", {
-      className: "preview-modal-header"
-    }, /*#__PURE__*/react.createElement("h3", null, mode === 'canvas' ? '🖼️ Aperçu Canvas' : '📄 Aperçu Commande', isProtectedFromAutoClose && /*#__PURE__*/react.createElement("span", {
+      className: "preview-modal-header",
       style: {
-        marginLeft: '10px',
-        fontSize: '12px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '15px 20px',
+        borderBottom: '1px solid #e1e5e9',
+        backgroundColor: '#f8f9fa'
+      }
+    }, /*#__PURE__*/react.createElement("h3", {
+      style: {
+        margin: 0,
+        fontSize: '18px',
+        fontWeight: '600',
+        color: '#2c3e50'
+      }
+    }, mode === 'canvas' ? '🖼️ Aperçu Canvas' : '📄 Aperçu Commande', isProtectedFromAutoClose && /*#__PURE__*/react.createElement("span", {
+      style: {
+        marginLeft: '12px',
+        fontSize: '11px',
         color: '#28a745',
-        fontWeight: 'normal'
+        fontWeight: '500',
+        backgroundColor: '#d4edda',
+        padding: '2px 8px',
+        borderRadius: '12px',
+        border: '1px solid #c3e6cb'
       }
     }, "\uD83D\uDD12 Prot\xE9g\xE9")), /*#__PURE__*/react.createElement("button", {
       className: "preview-modal-close",
       onClick: handleButtonClose,
-      title: "Fermer l'aper\xE7u"
+      title: "Fermer l'aper\xE7u",
+      style: {
+        background: 'none',
+        border: 'none',
+        fontSize: '24px',
+        color: '#6c757d',
+        cursor: 'pointer',
+        padding: '0',
+        width: '30px',
+        height: '30px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: '4px',
+        transition: 'all 0.2s ease'
+      },
+      onMouseEnter: function onMouseEnter(e) {
+        return e.target.style.backgroundColor = '#f8f9fa';
+      },
+      onMouseLeave: function onMouseLeave(e) {
+        return e.target.style.backgroundColor = 'transparent';
+      }
     }, "\xD7")), /*#__PURE__*/react.createElement("div", {
-      className: "preview-modal-body"
+      className: "preview-modal-body",
+      style: {
+        flex: 1,
+        overflow: 'auto',
+        backgroundColor: '#f8f9fa'
+      }
     }, isLoading && /*#__PURE__*/react.createElement("div", {
-      className: "preview-loading"
+      className: "preview-loading",
+      style: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '60px 20px',
+        minHeight: '300px'
+      }
     }, /*#__PURE__*/react.createElement("div", {
-      className: "preview-spinner"
-    }), /*#__PURE__*/react.createElement("p", null, "Chargement de l'aper\xE7u...")), error && /*#__PURE__*/react.createElement("div", {
+      className: "preview-spinner",
+      style: {
+        width: '50px',
+        height: '50px',
+        border: '4px solid #f3f3f3',
+        borderTop: '4px solid #007cba',
+        borderRadius: '50%',
+        animation: 'spin 1s linear infinite',
+        marginBottom: '20px'
+      }
+    }), /*#__PURE__*/react.createElement("h4", {
+      style: {
+        margin: '0 0 10px 0',
+        color: '#2c3e50',
+        fontSize: '16px',
+        fontWeight: '500'
+      }
+    }, "Chargement de l'aper\xE7u..."), /*#__PURE__*/react.createElement("p", {
+      style: {
+        margin: 0,
+        color: '#6c757d',
+        fontSize: '14px',
+        textAlign: 'center'
+      }
+    }, "R\xE9cup\xE9ration des donn\xE9es de commande et pr\xE9paration de l'aper\xE7u PDF")), error && /*#__PURE__*/react.createElement("div", {
       className: "preview-error"
     }, /*#__PURE__*/react.createElement("p", null, "\u274C ", error), /*#__PURE__*/react.createElement("button", {
       onClick: function onClick() {
@@ -14147,19 +14237,58 @@ var PreviewModal = function PreviewModal(_ref) {
         }, "Recharger la page"));
       }
     }())), /*#__PURE__*/react.createElement("div", {
-      className: "preview-modal-footer"
+      className: "preview-modal-footer",
+      style: {
+        padding: '12px 20px',
+        borderTop: '1px solid #e1e5e9',
+        backgroundColor: '#f8f9fa',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }
     }, /*#__PURE__*/react.createElement("div", {
-      className: "preview-info"
+      className: "preview-info",
+      style: {
+        display: 'flex',
+        gap: '15px',
+        alignItems: 'center'
+      }
     }, /*#__PURE__*/react.createElement("span", {
-      className: "preview-mode-badge"
-    }, mode === 'canvas' ? 'Mode Exemple' : 'Mode Réel'), /*#__PURE__*/react.createElement("span", {
-      className: "preview-elements-count"
+      className: "preview-mode-badge",
+      style: {
+        backgroundColor: mode === 'canvas' ? '#e3f2fd' : '#d4edda',
+        color: mode === 'canvas' ? '#1565c0' : '#155724',
+        padding: '4px 12px',
+        borderRadius: '16px',
+        fontSize: '12px',
+        fontWeight: '500'
+      }
+    }, mode === 'canvas' ? '🖼️ Mode Exemple' : '📄 Mode Réel'), /*#__PURE__*/react.createElement("span", {
+      className: "preview-elements-count",
+      style: {
+        color: '#6c757d',
+        fontSize: '13px'
+      }
     }, templateElements.length, " \xE9l\xE9ment", templateElements.length > 1 ? 's' : '')), /*#__PURE__*/react.createElement("div", {
       className: "preview-actions"
     }, /*#__PURE__*/react.createElement("button", {
       className: "preview-download-btn",
       disabled: isLoading || !!error,
-      title: "T\xE9l\xE9charger le PDF"
+      title: "T\xE9l\xE9charger le PDF",
+      style: {
+        backgroundColor: isLoading || !!error ? '#6c757d' : '#007cba',
+        color: 'white',
+        border: 'none',
+        padding: '8px 16px',
+        borderRadius: '6px',
+        cursor: isLoading || !!error ? 'not-allowed' : 'pointer',
+        fontSize: '14px',
+        fontWeight: '500',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '6px',
+        transition: 'background-color 0.2s ease'
+      }
     }, "\uD83D\uDCE5 PDF")))));
   } catch (renderError) {
     console.error('PDF Builder Debug: Error rendering PreviewModal JSX:', renderError);
