@@ -271,6 +271,13 @@ if (typeof window !== 'undefined') {
             console.log('=== USING FALLBACK MODAL ===');
 
             try {
+                // Supprimer toute modal existante pour éviter les doublons
+                const existingModal = document.getElementById('pdf-builder-preview-modal');
+                if (existingModal) {
+                    existingModal.remove();
+                    console.log('=== REMOVED EXISTING MODAL ===');
+                }
+
                 // Créer une modal simple en HTML pur
                 const modal = document.createElement('div');
                 modal.id = 'pdf-builder-preview-modal';
@@ -335,6 +342,11 @@ if (typeof window !== 'undefined') {
                 console.log('=== FALLBACK MODAL CREATED AND APPENDED TO BODY ===');
                 console.log('Modal element:', modal);
                 console.log('Body children count:', document.body.children.length);
+                
+                // Forcer l'affichage et ajouter une animation
+                modal.style.display = 'block';
+                modal.style.opacity = '1';
+                console.log('=== MODAL DISPLAYED SUCCESSFULLY ===');
 
             } catch (error) {
                 console.error('=== ERROR CREATING FALLBACK MODAL ===', error);
