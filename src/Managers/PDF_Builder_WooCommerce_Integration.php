@@ -1390,35 +1390,65 @@ class PDF_Builder_WooCommerce_Integration
                         'type' => 'text',
                         'x' => 50,
                         'y' => 50,
-                        'width' => 200,
-                        'height' => 30,
-                        'text' => 'PDF Builder Pro - Test Template', // Correction: 'text' au lieu de 'content'
-                        'fontSize' => 18,
+                        'width' => 500,
+                        'height' => 50,
+                        'text' => '🧪 TEST PDF BUILDER PRO - TEMPLATE TEST', // Correction: 'text' au lieu de 'content'
+                        'fontSize' => 24,
                         'fontWeight' => 'bold',
-                        'color' => '#007cba',
-                        'textAlign' => 'center'
+                        'color' => '#ffffff',
+                        'backgroundColor' => '#ff0000',
+                        'textAlign' => 'center',
+                        'borderRadius' => 10,
+                        'borderWidth' => 3,
+                        'borderColor' => '#000000'
                     ],
                     [
                         'id' => 'order-info',
                         'type' => 'text',
                         'x' => 50,
-                        'y' => 100,
-                        'width' => 300,
-                        'height' => 60,
-                        'text' => 'Commande #{order_number}\nClient: {customer_name}\nDate: {order_date}', // Correction: 'text' au lieu de 'content'
-                        'fontSize' => 12,
-                        'color' => '#333333'
+                        'y' => 120,
+                        'width' => 500,
+                        'height' => 100,
+                        'text' => '📋 COMMANDE TEST #{order_number}\n👤 Client: {customer_name}\n📅 Date: {order_date}\n✅ TEMPLATE CHARGÉ AVEC SUCCÈS', // Correction: 'text' au lieu de 'content'
+                        'fontSize' => 16,
+                        'color' => '#000000',
+                        'backgroundColor' => '#ffff00',
+                        'borderWidth' => 2,
+                        'borderColor' => '#000000',
+                        'borderRadius' => 5
                     ],
                     [
                         'id' => 'rectangle-bg',
                         'type' => 'rectangle',
-                        'x' => 40,
-                        'y' => 40,
-                        'width' => 515,
-                        'height' => 802,
-                        'backgroundColor' => '#ffffff',
-                        'borderColor' => '#dddddd',
-                        'borderWidth' => 1
+                        'x' => 20,
+                        'y' => 20,
+                        'width' => 754,
+                        'height' => 1083,
+                        'backgroundColor' => '#e0e0e0',
+                        'borderColor' => '#00ff00',
+                        'borderWidth' => 5
+                    ],
+                    [
+                        'id' => 'test-rectangle-1',
+                        'type' => 'rectangle',
+                        'x' => 100,
+                        'y' => 250,
+                        'width' => 200,
+                        'height' => 100,
+                        'backgroundColor' => '#0000ff',
+                        'borderColor' => '#ffffff',
+                        'borderWidth' => 3
+                    ],
+                    [
+                        'id' => 'test-rectangle-2',
+                        'type' => 'rectangle',
+                        'x' => 350,
+                        'y' => 250,
+                        'width' => 200,
+                        'height' => 100,
+                        'backgroundColor' => '#ff00ff',
+                        'borderColor' => '#000000',
+                        'borderWidth' => 3
                     ]
                 ];
 
@@ -1451,35 +1481,65 @@ class PDF_Builder_WooCommerce_Integration
                             'type' => 'text',
                             'x' => 50,
                             'y' => 50,
-                            'width' => 200,
-                            'height' => 30,
-                            'text' => 'PDF Builder Pro - Test Template',
-                            'fontSize' => 18,
+                            'width' => 500,
+                            'height' => 50,
+                            'text' => '🧪 TEST PDF BUILDER PRO - TEMPLATE TEST',
+                            'fontSize' => 24,
                             'fontWeight' => 'bold',
-                            'color' => '#007cba',
-                            'textAlign' => 'center'
+                            'color' => '#ffffff',
+                            'backgroundColor' => '#ff0000',
+                            'textAlign' => 'center',
+                            'borderRadius' => 10,
+                            'borderWidth' => 3,
+                            'borderColor' => '#000000'
                         ],
                         [
                             'id' => 'order-info',
                             'type' => 'text',
                             'x' => 50,
-                            'y' => 100,
-                            'width' => 300,
-                            'height' => 60,
-                            'text' => 'Commande #{order_number}\nClient: {customer_name}\nDate: {order_date}',
-                            'fontSize' => 12,
-                            'color' => '#333333'
+                            'y' => 120,
+                            'width' => 500,
+                            'height' => 100,
+                            'text' => '📋 COMMANDE TEST #{order_number}\n👤 Client: {customer_name}\n📅 Date: {order_date}\n✅ TEMPLATE CHARGÉ AVEC SUCCÈS',
+                            'fontSize' => 16,
+                            'color' => '#000000',
+                            'backgroundColor' => '#ffff00',
+                            'borderWidth' => 2,
+                            'borderColor' => '#000000',
+                            'borderRadius' => 5
                         ],
                         [
                             'id' => 'rectangle-bg',
                             'type' => 'rectangle',
-                            'x' => 40,
-                            'y' => 40,
-                            'width' => 515,
-                            'height' => 802,
-                            'backgroundColor' => '#ffffff',
-                            'borderColor' => '#dddddd',
-                            'borderWidth' => 1
+                            'x' => 20,
+                            'y' => 20,
+                            'width' => 754,
+                            'height' => 1083,
+                            'backgroundColor' => '#e0e0e0',
+                            'borderColor' => '#00ff00',
+                            'borderWidth' => 5
+                        ],
+                        [
+                            'id' => 'test-rectangle-1',
+                            'type' => 'rectangle',
+                            'x' => 100,
+                            'y' => 250,
+                            'width' => 200,
+                            'height' => 100,
+                            'backgroundColor' => '#0000ff',
+                            'borderColor' => '#ffffff',
+                            'borderWidth' => 3
+                        ],
+                        [
+                            'id' => 'test-rectangle-2',
+                            'type' => 'rectangle',
+                            'x' => 350,
+                            'y' => 250,
+                            'width' => 200,
+                            'height' => 100,
+                            'backgroundColor' => '#ff00ff',
+                            'borderColor' => '#000000',
+                            'borderWidth' => 3
                         ]
                     ];
                 }
