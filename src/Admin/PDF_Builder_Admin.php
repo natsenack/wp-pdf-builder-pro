@@ -1504,7 +1504,8 @@ class PDF_Builder_Admin
 
         wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'pdf-builder-vendors'], '8.0.0_force_' . microtime(true), false);
 
-        // DEBUG: Vérifier que le script est enqueued
+        // DEBUG: Confirm PHP deployment
+        error_log('PDF Builder: Scripts enqueued - PHP deployment confirmed');
 
         // Script de correction de nonce - NOUVEAU HANDLE POUR FORCER LE RECHARGEMENT
         wp_enqueue_script('pdf-builder-nonce-fix-v2', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-nonce-fix.js', ['jquery'], '4.0.0_force_reload_' . time(), false);
