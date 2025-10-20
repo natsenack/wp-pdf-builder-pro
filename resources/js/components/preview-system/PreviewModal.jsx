@@ -26,13 +26,18 @@ const PreviewModal = ({
   const [previewData, setPreviewData] = useState(null);
   const [error, setError] = useState(null);
   const [templateElements, setTemplateElements] = useState(elements);
+  const [preventAutoClose, setPreventAutoClose] = useState(true); // Protection contre la fermeture automatique
 
-  // Détection de démontage du composant
+  // Désactiver la protection contre la fermeture automatique après le chargement
   useEffect(() => {
-    return () => {
-      console.log('PDF Builder Debug: PreviewModal component unmounting');
-    };
-  }, []);
+    if (!isLoading && previewData) {
+      const timer = setTimeout(() => {
+        setPreventAutoClose(false);
+        console.log('PDF Builder Debug: Auto-close protection disabled');
+      }, 1000); // Attendre 1 seconde après le chargement
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading, previewData]);
 
   // Chargement des éléments du template en mode metabox
   useEffect(() => {
@@ -135,13 +140,18 @@ const PreviewModal = ({
     loadPreviewData();
   }, [isOpen, templateElements, orderId, currentMode]);
 
-  // Gestionnaire de fermeture depuis l'overlay
+  // Gestionnaire de fermeture depuis l'overlay - avec protection contre la fermeture automatique
   const handleOverlayClose = useCallback((e) => {
+    // Empêcher la fermeture automatique pendant le chargement ou pendant la protection
+    if (isLoading || preventAutoClose) {
+      console.log('PDF Builder Debug: Preventing overlay close - loading:', isLoading, 'preventAutoClose:', preventAutoClose);
+      return;
+    }
     console.log('PDF Builder Debug: Overlay clicked - closing modal');
     handleClose();
-  }, [handleClose]);
+  }, [handleClose, isLoading, preventAutoClose]);
 
-  // Gestionnaire de fermeture depuis le bouton
+  // Gestionnaire de fermeture depuis le bouton - toujours autorisé
   const handleButtonClose = useCallback((e) => {
     console.log('PDF Builder Debug: Close button clicked - closing modal');
     e.stopPropagation(); // Prevent overlay close

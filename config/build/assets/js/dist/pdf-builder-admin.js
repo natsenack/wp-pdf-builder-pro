@@ -13918,13 +13918,23 @@ var PreviewModal = function PreviewModal(_ref) {
     _useState8 = _slicedToArray(_useState7, 2),
     templateElements = _useState8[0],
     setTemplateElements = _useState8[1];
+  var _useState9 = (0,react.useState)(true),
+    _useState0 = _slicedToArray(_useState9, 2),
+    preventAutoClose = _useState0[0],
+    setPreventAutoClose = _useState0[1]; // Protection contre la fermeture automatique
 
-  // Détection de démontage du composant
+  // Désactiver la protection contre la fermeture automatique après le chargement
   (0,react.useEffect)(function () {
-    return function () {
-      console.log('PDF Builder Debug: PreviewModal component unmounting');
-    };
-  }, []);
+    if (!isLoading && previewData) {
+      var timer = setTimeout(function () {
+        setPreventAutoClose(false);
+        console.log('PDF Builder Debug: Auto-close protection disabled');
+      }, 1000); // Attendre 1 seconde après le chargement
+      return function () {
+        return clearTimeout(timer);
+      };
+    }
+  }, [isLoading, previewData]);
 
   // Chargement des éléments du template en mode metabox
   (0,react.useEffect)(function () {
@@ -14064,13 +14074,18 @@ var PreviewModal = function PreviewModal(_ref) {
     loadPreviewData();
   }, [isOpen, templateElements, orderId, currentMode]);
 
-  // Gestionnaire de fermeture depuis l'overlay
+  // Gestionnaire de fermeture depuis l'overlay - avec protection contre la fermeture automatique
   var handleOverlayClose = (0,react.useCallback)(function (e) {
+    // Empêcher la fermeture automatique pendant le chargement ou pendant la protection
+    if (isLoading || preventAutoClose) {
+      console.log('PDF Builder Debug: Preventing overlay close - loading:', isLoading, 'preventAutoClose:', preventAutoClose);
+      return;
+    }
     console.log('PDF Builder Debug: Overlay clicked - closing modal');
     handleClose();
-  }, [handleClose]);
+  }, [handleClose, isLoading, preventAutoClose]);
 
-  // Gestionnaire de fermeture depuis le bouton
+  // Gestionnaire de fermeture depuis le bouton - toujours autorisé
   var handleButtonClose = (0,react.useCallback)(function (e) {
     console.log('PDF Builder Debug: Close button clicked - closing modal');
     e.stopPropagation(); // Prevent overlay close
