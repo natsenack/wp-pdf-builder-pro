@@ -4,8 +4,6 @@ import React from 'react';
  * Renderer pour les éléments de texte simple
  */
 export const TextRenderer = ({ element, previewData, mode }) => {
-  console.log('PDF Builder Debug: TextRenderer called for element:', element.id, 'with text:', element.text, 'position:', element.x, element.y);
-
   const {
     x = 0,
     y = 0,

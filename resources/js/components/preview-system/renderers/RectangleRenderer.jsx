@@ -4,11 +4,6 @@ import React from 'react';
  * Renderer pour les éléments géométriques (rectangles, lignes, formes)
  */
 export const RectangleRenderer = ({ element, previewData, mode }) => {
-  console.log('PDF Builder Debug: RectangleRenderer called for element:', element.id, 'with props:', {
-    x: element.x, y: element.y, width: element.width, height: element.height,
-    backgroundColor: element.backgroundColor, borderColor: element.borderColor, borderWidth: element.borderWidth
-  });
-
   const {
     x = 0,
     y = 0,

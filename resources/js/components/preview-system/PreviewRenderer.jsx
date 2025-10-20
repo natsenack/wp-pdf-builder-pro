@@ -21,11 +21,6 @@ const PreviewRenderer = ({
   previewData = {},
   mode = 'canvas'
 }) => {
-  console.log('PDF Builder Debug: PreviewRenderer called with elements:', elements?.length || 0, 'elements');
-  console.log('PDF Builder Debug: PreviewRenderer elements array:', elements);
-  console.log('PDF Builder Debug: PreviewRenderer previewData:', previewData);
-  console.log('PDF Builder Debug: PreviewRenderer mode:', mode);
-
   // Configuration du canvas d'aperçu (format A4 approximatif)
   const CANVAS_CONFIG = {
     width: 794, // A4 width in pixels at 96 DPI
@@ -88,10 +83,7 @@ const PreviewRenderer = ({
 
   // Rendu d'un élément individuel
   const renderElement = (element) => {
-    console.log('PDF Builder Debug: Rendering element:', element.id, 'type:', element.type, 'position:', element.x, element.y, 'size:', element.width, 'x', element.height);
-
     const Renderer = rendererMap[element.type] || rendererMap.default;
-    console.log('PDF Builder Debug: Using renderer:', Renderer.name || 'default', 'for element type:', element.type);
 
     return (
       <Renderer
