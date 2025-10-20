@@ -16174,7 +16174,7 @@ var PreviewModal = function PreviewModal(_ref) {
     setTemplateElements = _useState8[1];
 
   // Sélection du mode de fonctionnement (stabilisé avec useMemo)
-  var currentMode = useMemo(function () {
+  var currentMode = (0,react.useMemo)(function () {
     return mode === 'metabox' ? MetaboxMode : CanvasMode;
   }, [mode]);
 
