@@ -12055,6 +12055,10 @@ if (typeof window !== 'undefined') {
         nonce: nonce
       });
 
+      // TEST IMMÉDIAT : Afficher une alerte pour prouver la connexion
+      alert('🔥 PHASE 8: pdfBuilderShowPreview appelée avec succès!\nOrder: ' + orderId + '\nTemplate: ' + templateId + '\nTimestamp: ' + new Date().toLocaleTimeString());
+      console.log('=== ALERT SHOWN - PROVING CONNECTION ===');
+
       // VERSION RÉELLE : Système d'aperçu unifié avec React
       console.log('=== USING REAL PREVIEW SYSTEM ===');
       try {
@@ -12065,12 +12069,18 @@ if (typeof window !== 'undefined') {
           console.log('=== REMOVED EXISTING MODAL ===');
         }
 
-        // Créer le conteneur principal de la modal
+        // Créer le conteneur de modal avec styles FORCES pour visibilité
         var modalContainer = document.createElement('div');
         modalContainer.id = 'pdf-builder-preview-modal';
-        modalContainer.style.cssText = "\n                    position: fixed;\n                    top: 0;\n                    left: 0;\n                    width: 100%;\n                    height: 100%;\n                    background: rgba(0,0,0,0.8);\n                    z-index: 999999;\n                    display: flex;\n                    align-items: center;\n                    justify-content: center;\n                ";
+        modalContainer.style.cssText = "\n                    position: fixed !important;\n                    top: 0 !important;\n                    left: 0 !important;\n                    width: 100vw !important;\n                    height: 100vh !important;\n                    background: rgba(255,0,0,0.9) !important;\n                    z-index: 999999 !important;\n                    display: flex !important;\n                    align-items: center !important;\n                    justify-content: center !important;\n                    border: 20px solid yellow !important;\n                ";
+
+        // Ajouter un message visible immédiatement
+        var debugMessage = document.createElement('div');
+        debugMessage.textContent = '🔥 PHASE 8 MODAL CREATED - ' + new Date().toLocaleTimeString();
+        debugMessage.style.cssText = "\n                    position: absolute !important;\n                    top: 50px !important;\n                    left: 50px !important;\n                    background: white !important;\n                    color: red !important;\n                    padding: 20px !important;\n                    border-radius: 10px !important;\n                    font-size: 24px !important;\n                    font-weight: bold !important;\n                    z-index: 1000000 !important;\n                    border: 5px solid red !important;\n                ";
+        modalContainer.appendChild(debugMessage);
         document.body.appendChild(modalContainer);
-        console.log('=== MODAL CONTAINER CREATED ===');
+        console.log('=== MODAL CONTAINER CREATED WITH FORCED RED BACKGROUND ===');
 
         // Créer le conteneur React pour la modal
         var previewRoot = document.createElement('div');

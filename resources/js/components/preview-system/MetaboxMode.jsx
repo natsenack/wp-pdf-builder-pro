@@ -51,38 +51,68 @@ function MetaboxMode({
   // Styles inline pour les indicateurs Phase 8
   const phase8Styles = `
     .phase8-badge {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 4px 8px;
-      border-radius: 12px;
-      font-size: 10px;
-      font-weight: bold;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-      z-index: 1000;
+      position: fixed !important;
+      top: 50px !important;
+      right: 20px !important;
+      background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%) !important;
+      color: white !important;
+      padding: 8px 16px !important;
+      border-radius: 20px !important;
+      font-size: 14px !important;
+      font-weight: bold !important;
+      box-shadow: 0 4px 12px rgba(255,107,107,0.4) !important;
+      z-index: 999999 !important;
+      border: 3px solid white !important;
+      animation: phase8-pulse 2s infinite !important;
+    }
+    @keyframes phase8-pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
     }
     .phase8-metrics {
-      font-size: 11px;
-      color: #666;
-      background: #f0f0f0;
-      padding: 2px 6px;
-      border-radius: 8px;
-      margin-left: 8px;
+      font-size: 12px !important;
+      color: #ff6b6b !important;
+      background: #ffeaea !important;
+      padding: 4px 8px !important;
+      border-radius: 12px !important;
+      margin-left: 8px !important;
+      border: 1px solid #ff6b6b !important;
+      font-weight: bold !important;
+    }
+    .metabox-mode {
+      border: 3px solid #ff6b6b !important;
+      position: relative !important;
     }
   `;
 
   // Injection des styles Phase 8
   useEffect(() => {
+    console.log('=== PHASE 8: Injecting styles ===');
     const styleSheet = document.createElement('style');
     styleSheet.textContent = phase8Styles;
     document.head.appendChild(styleSheet);
+    console.log('=== PHASE 8: Styles injected successfully ===');
 
     return () => {
       document.head.removeChild(styleSheet);
     };
   }, []);
+
+  // Debug: Log du rendu
+  console.log('=== PHASE 8: MetaboxMode rendering ===', { loading, error, previewData, templateElements });
+
+  // Alerte de confirmation Phase 8
+  useEffect(() => {
+    console.log('=== PHASE 8 ALERT: MetaboxMode component loaded! ===');
+    // Petit délai pour éviter de spammer
+    const timer = setTimeout(() => {
+      console.log('🚀 PHASE 8: Nouveau système d\'aperçu actif!');
+      console.log('📊 État actuel:', { loading, error, templateElements: templateElements?.length || 0 });
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [loading, error, templateElements]);
 
   // Rendu conditionnel selon l'état
   if (loading) {
@@ -122,9 +152,26 @@ function MetaboxMode({
 
   return (
     <div className={`metabox-mode ${compact ? 'compact' : ''} ${className}`}>
+      {/* DEBUG: Indicateur immédiat que Phase 8 fonctionne */}
+      <div style={{
+        position: 'fixed',
+        top: '20px',
+        left: '20px',
+        background: 'red',
+        color: 'white',
+        padding: '10px',
+        borderRadius: '10px',
+        fontSize: '16px',
+        fontWeight: 'bold',
+        zIndex: 999999,
+        border: '3px solid yellow'
+      }}>
+        🔥 PHASE 8 ACTIVE - {new Date().toLocaleTimeString()}
+      </div>
+
       {/* Badge Phase 8 - Indicateur visuel du nouveau système */}
       <div className="phase8-badge">
-        🚀 Phase 8 Active
+        🚀 Phase 8 Active - {templateElements?.length || 0} éléments
       </div>
 
       {/* En-tête avec onglets */}

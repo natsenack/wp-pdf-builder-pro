@@ -267,6 +267,10 @@ if (typeof window !== 'undefined') {
             console.log('=== PDF BUILDER DEBUG: pdfBuilderShowPreview START ===');
             console.log('Parameters:', { orderId, templateId, nonce });
 
+            // TEST IMMÉDIAT : Afficher une alerte pour prouver la connexion
+            alert('🔥 PHASE 8: pdfBuilderShowPreview appelée avec succès!\nOrder: ' + orderId + '\nTemplate: ' + templateId + '\nTimestamp: ' + new Date().toLocaleTimeString());
+            console.log('=== ALERT SHOWN - PROVING CONNECTION ===');
+
             // VERSION RÉELLE : Système d'aperçu unifié avec React
             console.log('=== USING REAL PREVIEW SYSTEM ===');
 
@@ -278,23 +282,43 @@ if (typeof window !== 'undefined') {
                     console.log('=== REMOVED EXISTING MODAL ===');
                 }
 
-                // Créer le conteneur principal de la modal
+                // Créer le conteneur de modal avec styles FORCES pour visibilité
                 const modalContainer = document.createElement('div');
                 modalContainer.id = 'pdf-builder-preview-modal';
                 modalContainer.style.cssText = `
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0,0,0,0.8);
-                    z-index: 999999;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
+                    position: fixed !important;
+                    top: 0 !important;
+                    left: 0 !important;
+                    width: 100vw !important;
+                    height: 100vh !important;
+                    background: rgba(255,0,0,0.9) !important;
+                    z-index: 999999 !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    border: 20px solid yellow !important;
                 `;
+
+                // Ajouter un message visible immédiatement
+                const debugMessage = document.createElement('div');
+                debugMessage.textContent = '🔥 PHASE 8 MODAL CREATED - ' + new Date().toLocaleTimeString();
+                debugMessage.style.cssText = `
+                    position: absolute !important;
+                    top: 50px !important;
+                    left: 50px !important;
+                    background: white !important;
+                    color: red !important;
+                    padding: 20px !important;
+                    border-radius: 10px !important;
+                    font-size: 24px !important;
+                    font-weight: bold !important;
+                    z-index: 1000000 !important;
+                    border: 5px solid red !important;
+                `;
+                modalContainer.appendChild(debugMessage);
+
                 document.body.appendChild(modalContainer);
-                console.log('=== MODAL CONTAINER CREATED ===');
+                console.log('=== MODAL CONTAINER CREATED WITH FORCED RED BACKGROUND ===');
 
                 // Créer le conteneur React pour la modal
                 const previewRoot = document.createElement('div');
