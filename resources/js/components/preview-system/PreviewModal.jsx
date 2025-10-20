@@ -20,15 +20,19 @@ const PreviewModal = ({
   templateId = null,
   nonce = null
 }) => {
-  console.log('PDF Builder: PreviewModal component rendered with props:', { isOpen, mode, orderId, templateId, nonce });
+  console.log('PDF Builder Debug: PreviewModal render - isOpen:', isOpen, 'mode:', mode, 'templateId:', templateId, 'timestamp:', Date.now());
 
   const [isLoading, setIsLoading] = useState(false);
   const [previewData, setPreviewData] = useState(null);
   const [error, setError] = useState(null);
   const [templateElements, setTemplateElements] = useState(elements);
 
-  // Sélection du mode de fonctionnement (stabilisé avec useMemo)
-  const currentMode = useMemo(() => mode === 'metabox' ? MetaboxMode : CanvasMode, [mode]);
+  // Détection de démontage du composant
+  useEffect(() => {
+    return () => {
+      console.log('PDF Builder Debug: PreviewModal component unmounting');
+    };
+  }, []);
 
   // Chargement des éléments du template en mode metabox
   useEffect(() => {
@@ -144,10 +148,16 @@ const PreviewModal = ({
     handleClose();
   }, [handleClose]);
 
-  if (!isOpen) return null;
+  if (!isOpen) {
+    console.log('PDF Builder Debug: PreviewModal not rendering - isOpen is false');
+    return null;
+  }
 
-  return (
-    <div className="preview-modal-overlay" onClick={handleOverlayClose}>
+  console.log('PDF Builder Debug: PreviewModal rendering JSX - isOpen:', isOpen, 'isLoading:', isLoading, 'error:', !!error, 'previewData:', !!previewData);
+
+  try {
+    return (
+      <div className="preview-modal-overlay" onClick={handleOverlayClose}>
       <div className="preview-modal-content" onClick={(e) => e.stopPropagation()}>
         {/* Header de la modale */}
         <div className="preview-modal-header">
@@ -216,6 +226,47 @@ const PreviewModal = ({
       </div>
     </div>
   );
+  } catch (renderError) {
+    console.error('PDF Builder Debug: Error rendering PreviewModal JSX:', renderError);
+    console.error('PDF Builder Debug: Render error details:', {
+      isOpen,
+      isLoading,
+      error,
+      previewData: !!previewData,
+      templateElementsCount: templateElements?.length,
+      mode
+    });
+
+    // Fallback en cas d'erreur de rendu
+    return (
+      <div className="preview-modal-overlay" onClick={handleOverlayClose}>
+        <div className="preview-modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className="preview-modal-header">
+            <h3>❌ Erreur d'aperçu</h3>
+            <button
+              className="preview-modal-close"
+              onClick={handleButtonClose}
+              title="Fermer l'aperçu"
+            >
+              ×
+            </button>
+          </div>
+          <div className="preview-modal-body">
+            <div className="preview-error">
+              <p>Une erreur s'est produite lors du rendu de l'aperçu.</p>
+              <p>Détails: {renderError.message}</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="preview-retry-btn"
+              >
+                Recharger la page
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 };
 
 export default PreviewModal;
