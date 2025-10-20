@@ -210,6 +210,17 @@ body.wp-admin .pdf-builder-container {
         const pdfBuilderProExists = typeof window.PDFBuilderPro !== 'undefined';
         const initExists = typeof window.PDFBuilderPro?.init === 'function';
 
+        // DEBUG: Log détaillé de l'état de PDFBuilderPro
+        console.log('🔍 PDF Builder Debug: PDFBuilderPro check details:');
+        console.log('- window.PDFBuilderPro type:', typeof window.PDFBuilderPro);
+        console.log('- window.PDFBuilderPro value:', window.PDFBuilderPro);
+        if (window.PDFBuilderPro) {
+            console.log('- PDFBuilderPro keys:', Object.keys(window.PDFBuilderPro));
+            console.log('- PDFBuilderPro has init:', 'init' in window.PDFBuilderPro);
+            console.log('- PDFBuilderPro.init type:', typeof window.PDFBuilderPro.init);
+            console.log('- PDFBuilderPro.init value:', window.PDFBuilderPro.init);
+        }
+
         if (pdfBuilderProExists && initExists) {
             try {
                 isInitialized = true;
@@ -269,10 +280,19 @@ body.wp-admin .pdf-builder-container {
         // Vérifier que tous les chunks sont chargés avec le code splitting
         const pdfBuilderProExists = typeof window.PDFBuilderPro !== 'undefined';
         const initExists = typeof window.PDFBuilderPro?.init === 'function';
-        
+
         // Avec le code splitting, vérifier aussi que React est disponible
         const reactExists = typeof window.React !== 'undefined';
         const reactDomExists = typeof window.ReactDOM !== 'undefined';
+
+        // DEBUG: Log à chaque vérification
+        if (scriptCheckAttempts % 10 === 0 || scriptCheckAttempts === 1) {
+            console.log(`🔍 PDF Builder Debug: Check attempt ${scriptCheckAttempts}/50`);
+            console.log('- pdfBuilderProExists:', pdfBuilderProExists);
+            console.log('- initExists:', initExists);
+            console.log('- reactExists:', reactExists);
+            console.log('- reactDomExists:', reactDomExists);
+        }
 
         if (pdfBuilderProExists && initExists && reactExists && reactDomExists) {
             initApp();
