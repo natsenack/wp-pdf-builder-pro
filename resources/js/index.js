@@ -63,7 +63,8 @@ const PDFBuilderSecurity = {
         // Si plus de 5 secondes se sont écoulées depuis la dernière initialisation,
         // permettre une réinitialisation (utile pour les rechargements de page)
         if (window._pdfBuilderInitialized && timeSinceLastInit < 5000) {
-            console.warn('PDF Builder Pro: Multiple initialization attempt prevented (last init:', new Date(lastInit).toLocaleTimeString() + ')');
+            // Log silencieux au lieu d'un avertissement intrusif
+            console.debug('PDF Builder Pro: Multiple initialization attempt prevented (last init:', new Date(lastInit).toLocaleTimeString() + ')');
             return false;
         }
 

@@ -5,7 +5,7 @@
 export class RealDataProvider {
   constructor() {
     this.ajaxUrl = window.ajaxurl || '/wp-admin/admin-ajax.php';
-    this.nonce = window.pdfBuilderPro?.nonce || '';
+    this.nonce = window.pdfBuilderPro?.nonce || window.pdfBuilderAjax?.nonce || '';
     this.variablesCache = new Map(); // Cache des variables par commande
   }
 

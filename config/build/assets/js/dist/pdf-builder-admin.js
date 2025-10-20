@@ -11836,7 +11836,8 @@ var PDFBuilderSecurity = {
     // Si plus de 5 secondes se sont écoulées depuis la dernière initialisation,
     // permettre une réinitialisation (utile pour les rechargements de page)
     if (window._pdfBuilderInitialized && timeSinceLastInit < 5000) {
-      console.warn('PDF Builder Pro: Multiple initialization attempt prevented (last init:', new Date(lastInit).toLocaleTimeString() + ')');
+      // Log silencieux au lieu d'un avertissement intrusif
+      console.debug('PDF Builder Pro: Multiple initialization attempt prevented (last init:', new Date(lastInit).toLocaleTimeString() + ')');
       return false;
     }
     window._pdfBuilderInitialized = true;
@@ -13821,7 +13822,7 @@ var SampleDataProvider = /*#__PURE__*/function () {
         subtotal: '999,99 €',
         tax: '199,99 €',
         discount: '200,00 €',
-        image: 'https://via.placeholder.com/100x100/4f46e5/ffffff?text=Laptop',
+        image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjNGY0NmU1Ii8+Cjx0ZXh0IHg9IjUwIiB5PSI1MCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjEwIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkxBUFQ8L3RleHQ+Cjwvc3ZnPg==',
         description: 'Ordinateur portable professionnel avec écran 15" 4K, processeur Intel i7, 16GB RAM, SSD 512GB.',
         short_description: 'Ordinateur portable professionnel 15" 4K',
         categories: ['Informatique', 'Ordinateurs Portables'],
@@ -13853,7 +13854,7 @@ var SampleDataProvider = /*#__PURE__*/function () {
         subtotal: '99,98 €',
         tax: '19,99 €',
         discount: '20,00 €',
-        image: 'https://via.placeholder.com/100x100/059669/ffffff?text=Mouse',
+        image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjMDU5NjY5Ii8+Cjx0ZXh0IHg9IjUwIiB5PSI1MCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjEwIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk1PVVNFPPC90ZXh0Pgo8L3N2Zz4=',
         description: 'Souris gaming optique RGB avec capteur PixArt 3335, 16 000 DPI, switches Omron et éclairage RGB personnalisable.',
         short_description: 'Souris gaming RGB 16K DPI',
         categories: ['Informatique', 'Périphériques', 'Gaming'],
@@ -13883,7 +13884,7 @@ var SampleDataProvider = /*#__PURE__*/function () {
         subtotal: '129,99 €',
         tax: '25,99 €',
         discount: '20,00 €',
-        image: 'https://via.placeholder.com/100x100/dc2626/ffffff?text=Keyboard',
+        image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjZGMyNjI2Ii8+Cjx0ZXh0IHg9IjUwIiB5PSI1MCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjEwIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPktFWUI8L3RleHQ+Cjwvc3ZnPg==',
         description: 'Clavier mécanique gaming avec switches Cherry MX Red, éclairage RGB par touche, repose-poignets ergonomique.',
         short_description: 'Clavier mécanique RGB Cherry MX',
         categories: ['Informatique', 'Périphériques', 'Gaming'],
@@ -14542,7 +14543,7 @@ var SampleDataProvider = /*#__PURE__*/function () {
     key: "generateCompanyLogoData",
     value: function generateCompanyLogoData(properties) {
       return {
-        imageUrl: 'https://via.placeholder.com/200x80/2563eb/ffffff?text=LOGO',
+        imageUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjgwIiB2aWV3Qm94PSIwIDAgMjAwIDgwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjMjU2M2ViIi8+Cjx0ZXh0IHg9IjEwMCIgeT0iNDAiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5MT0dPPC90ZXh0Pgo8L3N2Zz4=',
         alt: 'Logo de l\'entreprise'
       };
     }
@@ -14928,10 +14929,10 @@ function RealDataProvider_toPrimitive(t, r) { if ("object" != RealDataProvider_t
  */
 var RealDataProvider = /*#__PURE__*/function () {
   function RealDataProvider() {
-    var _window$pdfBuilderPro;
+    var _window$pdfBuilderPro, _window$pdfBuilderAja;
     RealDataProvider_classCallCheck(this, RealDataProvider);
     this.ajaxUrl = window.ajaxurl || '/wp-admin/admin-ajax.php';
-    this.nonce = ((_window$pdfBuilderPro = window.pdfBuilderPro) === null || _window$pdfBuilderPro === void 0 ? void 0 : _window$pdfBuilderPro.nonce) || '';
+    this.nonce = ((_window$pdfBuilderPro = window.pdfBuilderPro) === null || _window$pdfBuilderPro === void 0 ? void 0 : _window$pdfBuilderPro.nonce) || ((_window$pdfBuilderAja = window.pdfBuilderAjax) === null || _window$pdfBuilderAja === void 0 ? void 0 : _window$pdfBuilderAja.nonce) || '';
     this.variablesCache = new Map(); // Cache des variables par commande
   }
 

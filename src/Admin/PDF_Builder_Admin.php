@@ -1513,7 +1513,7 @@ class PDF_Builder_Admin
         wp_localize_script(
             'pdf-builder-admin-v3', 'pdfBuilderAjax', [
             'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('pdf_builder_nonce'),
+            'nonce' => wp_create_nonce('pdf_builder_order_actions'),
             'version' => '7.0.0_force_reload_' . time(),
             'timestamp' => time(),
             'strings' => [
@@ -1533,7 +1533,7 @@ class PDF_Builder_Admin
             window.pdfBuilderAjax = window.pdfBuilderAjax || ' . json_encode(
                 [
                 'ajaxurl' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('pdf_builder_nonce'),
+                'nonce' => wp_create_nonce('pdf_builder_order_actions'),
                 'version' => '8.0.0_force_' . time(),
                 'timestamp' => time(),
                 'strings' => [
@@ -1546,6 +1546,10 @@ class PDF_Builder_Admin
                 ]
             ) . ';
             console.log("PDF Builder: Variables AJAX définies globalement:", window.pdfBuilderAjax);
+            
+            // Définir également pdfBuilderPro.nonce pour la compatibilité avec RealDataProvider
+            window.pdfBuilderPro = window.pdfBuilderPro || {};
+            window.pdfBuilderPro.nonce = "' . wp_create_nonce('pdf_builder_order_actions') . '";
         ', 'before'
         );
 
@@ -1674,7 +1678,7 @@ class PDF_Builder_Admin
                     templateName: null,
                     isNew: ' . (isset($_GET['template_id']) ? 'false' : 'true') . ',
                     ajaxurl: "' . admin_url('admin-ajax.php') . '",
-                    nonce: "' . wp_create_nonce('pdf_builder_nonce') . '"
+                    nonce: "' . wp_create_nonce('pdf_builder_order_actions') . '"
                 };
             ', 'after'
             );
