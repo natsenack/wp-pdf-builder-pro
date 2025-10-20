@@ -16187,7 +16187,7 @@ var PreviewModal = function PreviewModal(_ref) {
     }
     var loadTemplateElements = /*#__PURE__*/function () {
       var _ref2 = PreviewModal_asyncToGenerator(/*#__PURE__*/PreviewModal_regenerator().m(function _callee() {
-        var _window$pdfBuilderPro, response, result, _result$data, _t;
+        var _window$pdfBuilderPro, _window$pdfBuilderPro2, response, result, _result$data, _t;
         return PreviewModal_regenerator().w(function (_context) {
           while (1) switch (_context.p = _context.n) {
             case 0:
@@ -16201,6 +16201,12 @@ var PreviewModal = function PreviewModal(_ref) {
               return _context.a(2);
             case 1:
               _context.p = 1;
+              console.log('PDF Builder Debug: Making AJAX request to:', window.ajaxurl || '/wp-admin/admin-ajax.php');
+              console.log('PDF Builder Debug: Request params:', {
+                action: 'pdf_builder_get_canvas_elements',
+                template_id: templateId,
+                nonce: nonce || ((_window$pdfBuilderPro = window.pdfBuilderPro) === null || _window$pdfBuilderPro === void 0 ? void 0 : _window$pdfBuilderPro.nonce) || ''
+              });
               _context.n = 2;
               return fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
                 method: 'POST',
@@ -16210,23 +16216,27 @@ var PreviewModal = function PreviewModal(_ref) {
                 body: new URLSearchParams({
                   action: 'pdf_builder_get_canvas_elements',
                   template_id: templateId,
-                  nonce: nonce || ((_window$pdfBuilderPro = window.pdfBuilderPro) === null || _window$pdfBuilderPro === void 0 ? void 0 : _window$pdfBuilderPro.nonce) || ''
+                  nonce: nonce || ((_window$pdfBuilderPro2 = window.pdfBuilderPro) === null || _window$pdfBuilderPro2 === void 0 ? void 0 : _window$pdfBuilderPro2.nonce) || ''
                 })
               });
             case 2:
               response = _context.v;
+              console.log('PDF Builder Debug: AJAX response status:', response.status);
               _context.n = 3;
               return response.json();
             case 3:
               result = _context.v;
+              console.log('PDF Builder Debug: AJAX response data:', result);
               if (!(result.success && result.data && result.data.elements)) {
                 _context.n = 4;
                 break;
               }
+              console.log('PDF Builder Debug: Elements loaded successfully:', result.data.elements.length, 'elements');
               setTemplateElements(result.data.elements);
               _context.n = 5;
               break;
             case 4:
+              console.log('PDF Builder Debug: AJAX request failed:', result);
               throw new Error(((_result$data = result.data) === null || _result$data === void 0 ? void 0 : _result$data.message) || 'Erreur lors du chargement des éléments du template');
             case 5:
               _context.n = 7;
@@ -16234,6 +16244,7 @@ var PreviewModal = function PreviewModal(_ref) {
             case 6:
               _context.p = 6;
               _t = _context.v;
+              console.error('PDF Builder Debug: Exception during AJAX call:', _t);
               console.error('Erreur lors du chargement des éléments du template:', _t);
               setError(_t.message || 'Erreur lors du chargement du template');
             case 7:
@@ -16250,31 +16261,46 @@ var PreviewModal = function PreviewModal(_ref) {
 
   // Chargement des données selon le mode
   (0,react.useEffect)(function () {
-    if (!isOpen || !templateElements || templateElements.length === 0) return;
+    console.log('PDF Builder Debug: loadPreviewData useEffect triggered');
+    console.log('PDF Builder Debug: Conditions - isOpen:', isOpen, 'templateElements:', (templateElements === null || templateElements === void 0 ? void 0 : templateElements.length) || 0);
+    if (!isOpen || !templateElements || templateElements.length === 0) {
+      console.log('PDF Builder Debug: Skipping preview data load - conditions not met');
+      return;
+    }
     var loadPreviewData = /*#__PURE__*/function () {
       var _ref3 = PreviewModal_asyncToGenerator(/*#__PURE__*/PreviewModal_regenerator().m(function _callee2() {
         var data, _t2;
         return PreviewModal_regenerator().w(function (_context2) {
           while (1) switch (_context2.p = _context2.n) {
             case 0:
+              console.log('PDF Builder Debug: Starting preview data load');
               setIsLoading(true);
               setError(null);
               _context2.p = 1;
+              console.log('PDF Builder Debug: Calling currentMode.loadData with:', {
+                elementsCount: templateElements.length,
+                orderId: orderId,
+                templateData: templateData
+              });
               _context2.n = 2;
               return currentMode.loadData(templateElements, orderId, templateData);
             case 2:
               data = _context2.v;
+              console.log('PDF Builder Debug: Preview data loaded successfully:', data);
               setPreviewData(data);
+              console.log('PDF Builder Debug: Preview data set in state');
               _context2.n = 4;
               break;
             case 3:
               _context2.p = 3;
               _t2 = _context2.v;
+              console.error('PDF Builder Debug: Error loading preview data:', _t2);
               console.error('Erreur lors du chargement des données d\'aperçu:', _t2);
               setError(_t2.message || 'Erreur lors du chargement de l\'aperçu');
             case 4:
               _context2.p = 4;
               setIsLoading(false);
+              console.log('PDF Builder Debug: Loading finished, isLoading set to false');
               return _context2.f(4);
             case 5:
               return _context2.a(2);

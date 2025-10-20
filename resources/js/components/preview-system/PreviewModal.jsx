@@ -49,6 +49,13 @@ const PreviewModal = ({
       }
 
       try {
+        console.log('PDF Builder Debug: Making AJAX request to:', window.ajaxurl || '/wp-admin/admin-ajax.php');
+        console.log('PDF Builder Debug: Request params:', {
+          action: 'pdf_builder_get_canvas_elements',
+          template_id: templateId,
+          nonce: nonce || window.pdfBuilderPro?.nonce || ''
+        });
+
         const response = await fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
           method: 'POST',
           headers: {
@@ -61,14 +68,19 @@ const PreviewModal = ({
           })
         });
 
+        console.log('PDF Builder Debug: AJAX response status:', response.status);
         const result = await response.json();
+        console.log('PDF Builder Debug: AJAX response data:', result);
 
         if (result.success && result.data && result.data.elements) {
+          console.log('PDF Builder Debug: Elements loaded successfully:', result.data.elements.length, 'elements');
           setTemplateElements(result.data.elements);
         } else {
+          console.log('PDF Builder Debug: AJAX request failed:', result);
           throw new Error(result.data?.message || 'Erreur lors du chargement des éléments du template');
         }
       } catch (err) {
+        console.error('PDF Builder Debug: Exception during AJAX call:', err);
         console.error('Erreur lors du chargement des éléments du template:', err);
         setError(err.message || 'Erreur lors du chargement du template');
       }
@@ -79,20 +91,38 @@ const PreviewModal = ({
 
   // Chargement des données selon le mode
   useEffect(() => {
-    if (!isOpen || !templateElements || templateElements.length === 0) return;
+    console.log('PDF Builder Debug: loadPreviewData useEffect triggered');
+    console.log('PDF Builder Debug: Conditions - isOpen:', isOpen, 'templateElements:', templateElements?.length || 0);
+
+    if (!isOpen || !templateElements || templateElements.length === 0) {
+      console.log('PDF Builder Debug: Skipping preview data load - conditions not met');
+      return;
+    }
 
     const loadPreviewData = async () => {
+      console.log('PDF Builder Debug: Starting preview data load');
       setIsLoading(true);
       setError(null);
 
       try {
+        console.log('PDF Builder Debug: Calling currentMode.loadData with:', {
+          elementsCount: templateElements.length,
+          orderId: orderId,
+          templateData: templateData
+        });
+
         const data = await currentMode.loadData(templateElements, orderId, templateData);
+        console.log('PDF Builder Debug: Preview data loaded successfully:', data);
+
         setPreviewData(data);
+        console.log('PDF Builder Debug: Preview data set in state');
       } catch (err) {
+        console.error('PDF Builder Debug: Error loading preview data:', err);
         console.error('Erreur lors du chargement des données d\'aperçu:', err);
         setError(err.message || 'Erreur lors du chargement de l\'aperçu');
       } finally {
         setIsLoading(false);
+        console.log('PDF Builder Debug: Loading finished, isLoading set to false');
       }
     };
 
