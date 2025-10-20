@@ -3,6 +3,9 @@ import { PreviewRenderer } from './PreviewRenderer';
 import { CanvasMode } from './modes/CanvasMode';
 import { MetaboxMode } from './modes/MetaboxMode';
 
+// DEBUG: Confirm deployment
+console.log('PDF Builder: PreviewModal component loaded - deployment confirmed');
+
 /**
  * Modal principal pour l'aperçu unifié PDF Builder Pro
  * Supporte deux modes : Canvas (données exemple) et Metabox (données réelles)

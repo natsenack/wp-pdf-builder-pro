@@ -16084,6 +16084,9 @@ function PreviewModal_arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 
 
 
+// DEBUG: Confirm deployment
+console.log('PDF Builder: PreviewModal component loaded - deployment confirmed');
+
 /**
  * Modal principal pour l'aperçu unifié PDF Builder Pro
  * Supporte deux modes : Canvas (données exemple) et Metabox (données réelles)
