@@ -478,33 +478,44 @@ var PreviewModal = function PreviewModal(_ref) {
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       style: {
         background: 'white',
-        width: '210mm',
-        minHeight: '297mm',
+        width: '420px',
+        // A4 width à 72 DPI ≈ 595px, réduit à 420px pour la modal
+        minHeight: '595px',
+        // A4 height à 72 DPI ≈ 842px, réduit à 595px
         margin: '0 auto',
-        padding: '20mm',
+        padding: '20px',
+        // Changé de mm à px pour cohérence
         boxShadow: '0 0 10px rgba(0,0,0,0.2)',
         border: '1px solid #e9ecef',
-        position: 'relative'
+        position: 'relative',
+        transform: 'scale(0.8)',
+        // Échelle réduite pour mieux rentrer
+        transformOrigin: 'top center',
+        marginBottom: '-80px' // Compensation pour l'échelle
       }
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       style: {
         borderBottom: '2px solid #007cba',
-        paddingBottom: '10mm',
-        marginBottom: '15mm',
+        paddingBottom: '10px',
+        // Changé de mm à px
+        marginBottom: '15px',
+        // Changé de mm à px
         textAlign: 'center'
       }
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h1", {
       style: {
         margin: '0',
         color: '#007cba',
-        fontSize: '24pt',
+        fontSize: '18pt',
+        // Réduit pour l'échelle
         fontWeight: 'bold'
       }
     }, mode === 'canvas' ? 'APERÇU TEMPLATE' : 'FACTURE / BON DE COMMANDE'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", {
       style: {
-        margin: '5mm 0 0 0',
+        margin: '5px 0 0 0',
+        // Changé de mm à px
         color: '#6c757d',
-        fontSize: '12pt'
+        fontSize: '10pt' // Réduit pour l'échelle
       }
     }, "G\xE9n\xE9r\xE9 le ", new Date().toLocaleDateString('fr-FR'), " \xE0 ", new Date().toLocaleTimeString('fr-FR'))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       style: {
@@ -516,137 +527,244 @@ var PreviewModal = function PreviewModal(_ref) {
     react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       style: {
         display: 'grid',
-        gap: '15mm'
+        gap: '30px'
       }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    }, " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       style: {
         background: 'white',
         border: '2px solid #007cba',
         borderRadius: '8px',
-        padding: '15mm',
+        padding: '30px',
+        // Changé de 15mm à 30px
         boxShadow: '0 4px 12px rgba(0,123,186,0.1)'
       }
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", {
       style: {
-        margin: '0 0 10mm 0',
+        margin: '0 0 20px 0',
+        // Changé de 10mm à 20px
         color: '#007cba',
         fontSize: '18pt',
         textAlign: 'center',
         borderBottom: '1px solid #dee2e6',
-        paddingBottom: '5mm'
+        paddingBottom: '10px' // Changé de 5mm à 10px
       }
     }, "\uD83D\uDDBC\uFE0F Aper\xE7u Visuel - \xC9diteur Canvas"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       style: {
         background: '#f8f9fa',
         border: '1px solid #dee2e6',
         borderRadius: '4px',
-        padding: '10mm',
+        padding: '10px',
+        // Changé de mm à px
         position: 'relative',
-        minHeight: '200mm'
+        minHeight: '400px' // Changé de mm à px
       }
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       style: {
         background: 'white',
-        width: '210mm',
-        minHeight: '297mm',
+        width: '420px',
+        // A4 width réduite
+        minHeight: '595px',
+        // A4 height réduite
         margin: '0 auto',
-        padding: '15mm',
+        padding: '15px',
+        // Changé de mm à px
         boxShadow: '0 0 8px rgba(0,0,0,0.15)',
         border: '1px solid #e9ecef',
         position: 'relative',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        transform: 'scale(0.8)',
+        // Échelle réduite
+        transformOrigin: 'top center',
+        marginBottom: '-80px' // Compensation pour l'échelle
       }
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       style: {
         position: 'absolute',
-        top: '15mm',
-        left: '15mm',
-        right: '15mm',
-        bottom: '15mm',
+        top: '15px',
+        // Changé de mm à px
+        left: '15px',
+        // Changé de mm à px
+        right: '15px',
+        // Changé de mm à px
+        bottom: '15px',
+        // Changé de mm à px
         backgroundImage: "\n                                      linear-gradient(rgba(0,123,186,0.1) 1px, transparent 1px),\n                                      linear-gradient(90deg, rgba(0,123,186,0.1) 1px, transparent 1px)\n                                    ",
-        backgroundSize: '10mm 10mm',
+        backgroundSize: '20px 20px',
+        // Changé de mm à px (10mm ≈ 20px à l'échelle)
         pointerEvents: 'none',
         opacity: 0.3
       }
     }), Array.isArray(templateElements) && templateElements.length > 0 ? templateElements.map(function (element, index) {
-      // Calculer les positions en mm (conversion depuis les coordonnées du canvas)
-      var x = element.x || 0;
-      var y = element.y || 0;
-      var width = element.width || 50;
-      var height = element.height || 20;
+      // Calculer les positions en pixels (conversion depuis les coordonnées du canvas)
+      // À l'échelle 0.8, on ajuste les coordonnées pour qu'elles correspondent
+      var scaleFactor = 0.8;
+      var x = (element.x || 0) * scaleFactor;
+      var y = (element.y || 0) * scaleFactor;
+      var width = (element.width || 50) * scaleFactor;
+      var height = (element.height || 20) * scaleFactor;
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         key: index,
         style: {
           position: 'absolute',
-          left: "".concat(15 + x, "mm"),
-          // 15mm pour le padding de la page
-          top: "".concat(15 + y, "mm"),
-          width: "".concat(width, "mm"),
-          minHeight: "".concat(height, "mm"),
-          background: element.type === 'text' ? '#e3f2fd' : element.type === 'image' ? '#f3e5f5' : element.type === 'rectangle' ? '#e8f5e8' : '#fff3e0',
-          border: "2px solid ".concat(element.type === 'text' ? '#2196f3' : element.type === 'image' ? '#9c27b0' : element.type === 'rectangle' ? '#4caf50' : '#ff9800'),
+          left: "".concat(15 + x, "px"),
+          // 15px pour le padding de la page
+          top: "".concat(15 + y, "px"),
+          width: "".concat(width, "px"),
+          minHeight: "".concat(height, "px"),
+          background: element.type === 'text' ? '#e3f2fd' : element.type === 'image' ? '#f3e5f5' : element.type === 'rectangle' ? '#e8f5e8' : element.type && element.type.startsWith('woocommerce-') ? '#efebe9' : element.type === 'barcode' ? '#eceff1' : '#fff3e0',
+          border: "2px solid ".concat(element.type === 'text' ? '#2196f3' : element.type === 'image' ? '#9c27b0' : element.type === 'rectangle' ? '#4caf50' : element.type && element.type.startsWith('woocommerce-') ? '#795548' : element.type === 'barcode' ? '#607d8b' : '#ff9800'),
           borderRadius: '3px',
-          padding: '3mm',
+          padding: '6px',
+          // Changé de 3mm à 6px
           boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
           overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
-          fontSize: '12pt',
+          fontSize: '10pt',
+          // Réduit pour l'échelle
           color: '#333',
           zIndex: index + 1
         },
-        title: "\xC9l\xE9ment ".concat(index + 1, " - ").concat(element.type || 'Inconnu', " (").concat(x, ", ").concat(y, ") - ").concat(width, "x").concat(height, "mm")
+        title: "\xC9l\xE9ment ".concat(index + 1, " - ").concat(element.type || 'Inconnu', " (").concat(Math.round(x / 0.8), ", ").concat(Math.round(y / 0.8), ") - ").concat(Math.round(width / 0.8), "x").concat(Math.round(height / 0.8), "px")
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         style: {
           position: 'absolute',
-          top: '2mm',
-          right: '2mm',
-          background: element.type === 'text' ? '#2196f3' : element.type === 'image' ? '#9c27b0' : element.type === 'rectangle' ? '#4caf50' : '#ff9800',
+          top: '4px',
+          // Changé de 2mm à 4px
+          right: '4px',
+          // Changé de 2mm à 4px
+          background: element.type === 'text' ? '#2196f3' : element.type === 'image' ? '#9c27b0' : element.type === 'rectangle' ? '#4caf50' : element.type && element.type.startsWith('woocommerce-') ? '#795548' : element.type === 'barcode' ? '#607d8b' : '#ff9800',
           color: 'white',
-          padding: '1mm 2mm',
-          borderRadius: '2mm',
-          fontSize: '8pt',
+          padding: '2px 4px',
+          // Changé de 1mm 2mm à 2px 4px
+          borderRadius: '4px',
+          // Changé de 2mm à 4px
+          fontSize: '7pt',
+          // Réduit pour l'échelle
           fontWeight: 'bold'
         }
-      }, element.type === 'text' ? 'T' : element.type === 'image' ? '🖼️' : element.type === 'rectangle' ? '▭' : '?'), element.type === 'text' && element.content ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      }, element.type === 'text' ? 'T' : element.type === 'image' ? '🖼️' : element.type === 'rectangle' ? '▭' : element.type && element.type.startsWith('woocommerce-') ? '🛒' : element.type === 'barcode' ? '▍' : '?'), element.type === 'text' && element.content ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         style: {
-          fontSize: '11pt',
+          fontSize: '10pt',
           textAlign: 'center',
           lineHeight: '1.3',
-          wordBreak: 'break-word'
+          wordBreak: 'break-word',
+          fontFamily: element.fontFamily || 'Arial, sans-serif',
+          fontWeight: element.fontWeight || 'normal',
+          fontStyle: element.fontStyle || 'normal',
+          color: element.color || '#333'
         }
-      }, typeof element.content === 'string' ? element.content.length > 50 ? element.content.substring(0, 50) + '...' : element.content : 'Texte') : element.type === 'image' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      }, typeof element.content === 'string' ? element.content.length > 30 ? element.content.substring(0, 30) + '...' : element.content : 'Texte d\'exemple') : element.type === 'image' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         style: {
-          fontSize: '24pt',
-          opacity: 0.6
+          width: '100%',
+          height: '60px',
+          background: 'linear-gradient(45deg, #f0f0f0 25%, transparent 25%), linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f0f0f0 75%), linear-gradient(-45deg, transparent 75%, #f0f0f0 75%)',
+          backgroundSize: '8px 8px',
+          backgroundPosition: '0 0, 0 4px, 4px -4px, -4px 0px',
+          border: '2px dashed #ccc',
+          borderRadius: '4px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#666',
+          fontSize: '20pt'
         }
-      }, "\uD83D\uDDBC\uFE0F") : element.type === 'rectangle' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      }, "\uFFFD") : element.type === 'rectangle' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         style: {
           width: '100%',
           height: '100%',
-          background: element.fillColor || '#4caf50',
-          opacity: 0.8,
-          borderRadius: '2px'
+          background: element.fillColor || element.backgroundColor || '#4caf50',
+          borderRadius: element.borderRadius ? "".concat(element.borderRadius, "px") : '2px',
+          border: element.borderWidth ? "".concat(element.borderWidth, "px solid ").concat(element.borderColor || '#333') : 'none'
         }
-      }) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      }) : element.type === 'woocommerce-order-number' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         style: {
-          fontSize: '16pt',
-          opacity: 0.6
+          fontSize: '12pt',
+          fontWeight: 'bold',
+          textAlign: 'center',
+          color: '#007cba'
         }
-      }, element.type || 'Élément'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      }, "#WC-2025-001") : element.type === 'woocommerce-billing-address' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        style: {
+          fontSize: '9pt',
+          textAlign: 'left',
+          lineHeight: '1.2'
+        }
+      }, "Jean Dupont", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("br", null), "123 Rue de la Paix", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("br", null), "75001 Paris", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("br", null), "France") : element.type === 'woocommerce-order-date' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        style: {
+          fontSize: '10pt',
+          textAlign: 'center'
+        }
+      }, "21/10/2025") : element.type === 'woocommerce-customer-name' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        style: {
+          fontSize: '11pt',
+          textAlign: 'center',
+          fontWeight: 'bold'
+        }
+      }, "Jean Dupont") : element.type === 'woocommerce-products-table' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        style: {
+          fontSize: '8pt',
+          width: '100%'
+        }
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        style: {
+          display: 'flex',
+          justifyContent: 'space-between',
+          borderBottom: '1px solid #ccc',
+          paddingBottom: '2px',
+          marginBottom: '2px'
+        }
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "Produit"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "Qt\xE9"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "Prix")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        style: {
+          display: 'flex',
+          justifyContent: 'space-between'
+        }
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "T-Shirt Blanc"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "1"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "25,00 \u20AC"))) : element.type === 'woocommerce-subtotal' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        style: {
+          fontSize: '10pt',
+          textAlign: 'right'
+        }
+      }, "Sous-total: 25,00 \u20AC") : element.type === 'woocommerce-taxes' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        style: {
+          fontSize: '10pt',
+          textAlign: 'right'
+        }
+      }, "TVA (20%): 5,00 \u20AC") : element.type === 'woocommerce-shipping' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        style: {
+          fontSize: '10pt',
+          textAlign: 'right'
+        }
+      }, "Livraison: 5,90 \u20AC") : element.type === 'woocommerce-order-total' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        style: {
+          fontSize: '12pt',
+          fontWeight: 'bold',
+          textAlign: 'right',
+          color: '#007cba'
+        }
+      }, "Total: 35,90 \u20AC") : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        style: {
+          fontSize: '14pt',
+          opacity: 0.6,
+          textAlign: 'center'
+        }
+      }, element.type === 'line' ? '━' : element.type === 'circle' ? '○' : element.type === 'barcode' ? '▍▍▍▍▍' : element.type || 'Élément'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         style: {
           position: 'absolute',
-          bottom: '2mm',
-          right: '2mm',
+          bottom: '4px',
+          // Changé de 2mm à 4px
+          right: '4px',
+          // Changé de 2mm à 4px
           background: 'rgba(0,0,0,0.7)',
           color: 'white',
-          padding: '1mm',
-          borderRadius: '1mm',
-          fontSize: '7pt'
+          padding: '2px',
+          // Changé de 1mm à 2px
+          borderRadius: '2px',
+          // Changé de 1mm à 2px
+          fontSize: '6pt' // Réduit pour l'échelle
         }
-      }, width, "\xD7", height));
+      }, Math.round(width / 0.8), "\xD7", Math.round(height / 0.8)));
     }) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       style: {
         position: 'absolute',
@@ -658,40 +776,44 @@ var PreviewModal = function PreviewModal(_ref) {
       }
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       style: {
-        fontSize: '48pt',
-        marginBottom: '10mm',
+        fontSize: '38pt',
+        marginBottom: '20px',
         opacity: 0.5
       }
-    }, "\uD83D\uDDBC\uFE0F"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", {
+    }, "\uD83D\uDDBC\uFE0F"), " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", {
       style: {
         margin: '0',
-        fontSize: '14pt'
+        fontSize: '11pt'
       }
-    }, "Aucun \xE9l\xE9ment dans le canvas"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", {
+    }, " ", "Aucun \xE9l\xE9ment dans le canvas"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", {
       style: {
-        margin: '5mm 0 0 0',
-        fontSize: '12pt'
+        margin: '10px 0 0 0',
+        fontSize: '9pt'
       }
-    }, "Ajoutez des \xE9l\xE9ments pour les voir positionn\xE9s ici"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    }, " ", "Ajoutez des \xE9l\xE9ments pour les voir positionn\xE9s ici"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       style: {
-        marginTop: '10mm',
-        padding: '8mm',
+        marginTop: '20px',
+        // Changé de 10mm à 20px
+        padding: '16px',
+        // Changé de 8mm à 16px
         background: 'white',
         borderRadius: '4px',
         border: '1px solid #dee2e6'
       }
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h4", {
       style: {
-        margin: '0 0 5mm 0',
+        margin: '0 0 10px 0',
+        // Changé de 5mm à 10px
         color: '#007cba',
-        fontSize: '12pt'
+        fontSize: '10pt' // Réduit pour l'échelle
       }
     }, "\uD83D\uDCCB L\xE9gende des \xE9l\xE9ments :"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       style: {
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(80mm, 1fr))',
-        gap: '3mm',
-        fontSize: '11pt'
+        gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+        // Ajusté pour plus d'éléments
+        gap: '6px',
+        fontSize: '9pt'
       }
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", {
       style: {
@@ -709,50 +831,64 @@ var PreviewModal = function PreviewModal(_ref) {
       style: {
         color: '#ff9800'
       }
-    }, "\u25A0"), " Autre")))))) :
+    }, "\u25A0"), " Formes"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", {
+      style: {
+        color: '#795548'
+      }
+    }, "\u25A0"), " WooCommerce"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", {
+      style: {
+        color: '#607d8b'
+      }
+    }, "\u25A0"), " Codes-barres")))))) :
     /*#__PURE__*/
     /* Mode Metabox : Afficher le JSON du template */
     react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       style: {
         display: 'grid',
-        gap: '10mm'
+        gap: '20px'
       }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    }, " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       style: {
         background: 'white',
         border: '2px solid #28a745',
         borderRadius: '8px',
-        padding: '15mm',
+        padding: '30px',
+        // Changé de 15mm à 30px
         boxShadow: '0 4px 12px rgba(40,167,69,0.1)'
       }
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", {
       style: {
-        margin: '0 0 10mm 0',
+        margin: '0 0 20px 0',
+        // Changé de 10mm à 20px
         color: '#28a745',
         fontSize: '18pt',
         textAlign: 'center',
         borderBottom: '1px solid #dee2e6',
-        paddingBottom: '5mm'
+        paddingBottom: '10px' // Changé de 5mm à 10px
       }
     }, "\uD83D\uDCC4 Donn\xE9es JSON du Template"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       style: {
         background: '#f8f9fa',
         border: '1px solid #dee2e6',
         borderRadius: '4px',
-        padding: '10mm',
+        padding: '20px',
+        // Changé de 10mm à 20px
         fontFamily: 'monospace',
         fontSize: '9pt',
         lineHeight: '1.4',
-        maxHeight: '150mm',
+        maxHeight: '300px',
+        // Changé de 150mm à 300px
         overflow: 'auto'
       }
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       style: {
         background: '#28a745',
         color: 'white',
-        padding: '2mm 5mm',
+        padding: '4px 10px',
+        // Changé de 2mm 5mm à 4px 10px
         borderRadius: '3px',
-        marginBottom: '5mm',
+        marginBottom: '10px',
+        // Changé de 5mm à 10px
         display: 'inline-block',
         fontSize: '10pt',
         fontWeight: 'bold'
@@ -766,8 +902,10 @@ var PreviewModal = function PreviewModal(_ref) {
       }
     }, Array.isArray(templateElements) && templateElements.length > 0 ? JSON.stringify(templateElements, null, 2) : '{\n  "template": [],\n  "message": "Aucune donnée JSON disponible"\n}')), Array.isArray(templateElements) && templateElements.length > 0 && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       style: {
-        marginTop: '10mm',
-        padding: '8mm',
+        marginTop: '20px',
+        // Changé de 10mm à 20px
+        padding: '16px',
+        // Changé de 8mm à 16px
         background: '#d4edda',
         border: '1px solid #c3e6cb',
         borderRadius: '4px',
@@ -793,10 +931,13 @@ var PreviewModal = function PreviewModal(_ref) {
     }).length), " \xE9l\xE9ment(s) positionn\xE9s")))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       style: {
         borderTop: '1px solid #dee2e6',
-        paddingTop: '10mm',
-        marginTop: '20mm',
+        paddingTop: '10px',
+        // Changé de mm à px
+        marginTop: '20px',
+        // Changé de mm à px
         textAlign: 'center',
-        fontSize: '10pt',
+        fontSize: '8pt',
+        // Réduit pour l'échelle
         color: '#6c757d'
       }
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", {
@@ -805,9 +946,9 @@ var PreviewModal = function PreviewModal(_ref) {
       }
     }, "PDF Builder Pro - Aper\xE7u g\xE9n\xE9r\xE9 automatiquement"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", {
       style: {
-        margin: '2mm 0 0 0'
+        margin: '2px 0 0 0'
       }
-    }, "Page 1 sur 1")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    }, " ", "Page 1 sur 1")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       style: {
         marginTop: '15px',
         padding: '10px',

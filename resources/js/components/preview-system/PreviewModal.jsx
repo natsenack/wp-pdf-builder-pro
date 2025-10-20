@@ -384,36 +384,39 @@ const PreviewModal = ({
                     position: 'relative',
                     boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
                   }}>
-                    {/* Simulation d'une page PDF A4 */}
+                    {/* Simulation d'une page PDF A4 à échelle réduite */}
                     <div style={{
                       background: 'white',
-                      width: '210mm',
-                      minHeight: '297mm',
+                      width: '420px', // A4 width à 72 DPI ≈ 595px, réduit à 420px pour la modal
+                      minHeight: '595px', // A4 height à 72 DPI ≈ 842px, réduit à 595px
                       margin: '0 auto',
-                      padding: '20mm',
+                      padding: '20px', // Changé de mm à px pour cohérence
                       boxShadow: '0 0 10px rgba(0,0,0,0.2)',
                       border: '1px solid #e9ecef',
-                      position: 'relative'
+                      position: 'relative',
+                      transform: 'scale(0.8)', // Échelle réduite pour mieux rentrer
+                      transformOrigin: 'top center',
+                      marginBottom: '-80px' // Compensation pour l'échelle
                     }}>
                       {/* En-tête de page */}
                       <div style={{
                         borderBottom: '2px solid #007cba',
-                        paddingBottom: '10mm',
-                        marginBottom: '15mm',
+                        paddingBottom: '10px', // Changé de mm à px
+                        marginBottom: '15px', // Changé de mm à px
                         textAlign: 'center'
                       }}>
                         <h1 style={{
                           margin: '0',
                           color: '#007cba',
-                          fontSize: '24pt',
+                          fontSize: '18pt', // Réduit pour l'échelle
                           fontWeight: 'bold'
                         }}>
                           {mode === 'canvas' ? 'APERÇU TEMPLATE' : 'FACTURE / BON DE COMMANDE'}
                         </h1>
                         <p style={{
-                          margin: '5mm 0 0 0',
+                          margin: '5px 0 0 0', // Changé de mm à px
                           color: '#6c757d',
-                          fontSize: '12pt'
+                          fontSize: '10pt' // Réduit pour l'échelle
                         }}>
                           Généré le {new Date().toLocaleDateString('fr-FR')} à {new Date().toLocaleTimeString('fr-FR')}
                         </p>
@@ -423,21 +426,21 @@ const PreviewModal = ({
                       <div style={{ flex: 1 }}>
                         {mode === 'canvas' ? (
                           /* Mode Canvas : Afficher le rendu visuel de l'éditeur */
-                          <div style={{ display: 'grid', gap: '15mm' }}>
+                          <div style={{ display: 'grid', gap: '30px' }}> {/* Changé de 15mm à 30px */}
                             <div style={{
                               background: 'white',
                               border: '2px solid #007cba',
                               borderRadius: '8px',
-                              padding: '15mm',
+                              padding: '30px', // Changé de 15mm à 30px
                               boxShadow: '0 4px 12px rgba(0,123,186,0.1)'
                             }}>
                               <h2 style={{
-                                margin: '0 0 10mm 0',
+                                margin: '0 0 20px 0', // Changé de 10mm à 20px
                                 color: '#007cba',
                                 fontSize: '18pt',
                                 textAlign: 'center',
                                 borderBottom: '1px solid #dee2e6',
-                                paddingBottom: '5mm'
+                                paddingBottom: '10px' // Changé de 5mm à 10px
                               }}>
                                 🖼️ Aperçu Visuel - Éditeur Canvas
                               </h2>
@@ -447,34 +450,37 @@ const PreviewModal = ({
                                 background: '#f8f9fa',
                                 border: '1px solid #dee2e6',
                                 borderRadius: '4px',
-                                padding: '10mm',
+                                padding: '10px', // Changé de mm à px
                                 position: 'relative',
-                                minHeight: '200mm'
+                                minHeight: '400px' // Changé de mm à px
                               }}>
-                                {/* Page A4 simulée */}
+                                {/* Page A4 simulée à échelle réduite */}
                                 <div style={{
                                   background: 'white',
-                                  width: '210mm',
-                                  minHeight: '297mm',
+                                  width: '420px', // A4 width réduite
+                                  minHeight: '595px', // A4 height réduite
                                   margin: '0 auto',
-                                  padding: '15mm',
+                                  padding: '15px', // Changé de mm à px
                                   boxShadow: '0 0 8px rgba(0,0,0,0.15)',
                                   border: '1px solid #e9ecef',
                                   position: 'relative',
-                                  overflow: 'hidden'
+                                  overflow: 'hidden',
+                                  transform: 'scale(0.8)', // Échelle réduite
+                                  transformOrigin: 'top center',
+                                  marginBottom: '-80px' // Compensation pour l'échelle
                                 }}>
                                   {/* Grille de fond pour aider au positionnement */}
                                   <div style={{
                                     position: 'absolute',
-                                    top: '15mm',
-                                    left: '15mm',
-                                    right: '15mm',
-                                    bottom: '15mm',
+                                    top: '15px', // Changé de mm à px
+                                    left: '15px', // Changé de mm à px
+                                    right: '15px', // Changé de mm à px
+                                    bottom: '15px', // Changé de mm à px
                                     backgroundImage: `
                                       linear-gradient(rgba(0,123,186,0.1) 1px, transparent 1px),
                                       linear-gradient(90deg, rgba(0,123,186,0.1) 1px, transparent 1px)
                                     `,
-                                    backgroundSize: '10mm 10mm',
+                                    backgroundSize: '20px 20px', // Changé de mm à px (10mm ≈ 20px à l'échelle)
                                     pointerEvents: 'none',
                                     opacity: 0.3
                                   }} />
@@ -482,117 +488,226 @@ const PreviewModal = ({
                                   {/* Éléments positionnés selon leurs coordonnées */}
                                   {Array.isArray(templateElements) && templateElements.length > 0 ? (
                                     templateElements.map((element, index) => {
-                                      // Calculer les positions en mm (conversion depuis les coordonnées du canvas)
-                                      const x = element.x || 0;
-                                      const y = element.y || 0;
-                                      const width = element.width || 50;
-                                      const height = element.height || 20;
+                                      // Calculer les positions en pixels (conversion depuis les coordonnées du canvas)
+                                      // À l'échelle 0.8, on ajuste les coordonnées pour qu'elles correspondent
+                                      const scaleFactor = 0.8;
+                                      const x = (element.x || 0) * scaleFactor;
+                                      const y = (element.y || 0) * scaleFactor;
+                                      const width = (element.width || 50) * scaleFactor;
+                                      const height = (element.height || 20) * scaleFactor;
 
                                       return (
                                         <div
                                           key={index}
                                           style={{
                                             position: 'absolute',
-                                            left: `${15 + x}mm`, // 15mm pour le padding de la page
-                                            top: `${15 + y}mm`,
-                                            width: `${width}mm`,
-                                            minHeight: `${height}mm`,
+                                            left: `${15 + x}px`, // 15px pour le padding de la page
+                                            top: `${15 + y}px`,
+                                            width: `${width}px`,
+                                            minHeight: `${height}px`,
                                             background: element.type === 'text' ? '#e3f2fd' :
                                                        element.type === 'image' ? '#f3e5f5' :
                                                        element.type === 'rectangle' ? '#e8f5e8' :
+                                                       (element.type && element.type.startsWith('woocommerce-')) ? '#efebe9' :
+                                                       element.type === 'barcode' ? '#eceff1' :
                                                        '#fff3e0',
                                             border: `2px solid ${
                                               element.type === 'text' ? '#2196f3' :
                                               element.type === 'image' ? '#9c27b0' :
                                               element.type === 'rectangle' ? '#4caf50' :
+                                              (element.type && element.type.startsWith('woocommerce-')) ? '#795548' :
+                                              element.type === 'barcode' ? '#607d8b' :
                                               '#ff9800'
                                             }`,
                                             borderRadius: '3px',
-                                            padding: '3mm',
+                                            padding: '6px', // Changé de 3mm à 6px
                                             boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                                             overflow: 'hidden',
                                             display: 'flex',
                                             flexDirection: 'column',
                                             justifyContent: 'center',
                                             alignItems: 'center',
-                                            fontSize: '12pt',
+                                            fontSize: '10pt', // Réduit pour l'échelle
                                             color: '#333',
                                             zIndex: index + 1
                                           }}
-                                          title={`Élément ${index + 1} - ${element.type || 'Inconnu'} (${x}, ${y}) - ${width}x${height}mm`}
+                                          title={`Élément ${index + 1} - ${element.type || 'Inconnu'} (${Math.round(x/0.8)}, ${Math.round(y/0.8)}) - ${Math.round(width/0.8)}x${Math.round(height/0.8)}px`}
                                         >
                                           {/* Indicateur de type d'élément */}
                                           <div style={{
                                             position: 'absolute',
-                                            top: '2mm',
-                                            right: '2mm',
+                                            top: '4px', // Changé de 2mm à 4px
+                                            right: '4px', // Changé de 2mm à 4px
                                             background: element.type === 'text' ? '#2196f3' :
                                                        element.type === 'image' ? '#9c27b0' :
                                                        element.type === 'rectangle' ? '#4caf50' :
+                                                       (element.type && element.type.startsWith('woocommerce-')) ? '#795548' :
+                                                       element.type === 'barcode' ? '#607d8b' :
                                                        '#ff9800',
                                             color: 'white',
-                                            padding: '1mm 2mm',
-                                            borderRadius: '2mm',
-                                            fontSize: '8pt',
+                                            padding: '2px 4px', // Changé de 1mm 2mm à 2px 4px
+                                            borderRadius: '4px', // Changé de 2mm à 4px
+                                            fontSize: '7pt', // Réduit pour l'échelle
                                             fontWeight: 'bold'
                                           }}>
                                             {element.type === 'text' ? 'T' :
                                              element.type === 'image' ? '🖼️' :
                                              element.type === 'rectangle' ? '▭' :
+                                             (element.type && element.type.startsWith('woocommerce-')) ? '🛒' :
+                                             element.type === 'barcode' ? '▍' :
                                              '?'}
                                           </div>
 
                                           {/* Contenu de l'élément */}
                                           {element.type === 'text' && element.content ? (
                                             <div style={{
-                                              fontSize: '11pt',
+                                              fontSize: '10pt',
                                               textAlign: 'center',
                                               lineHeight: '1.3',
-                                              wordBreak: 'break-word'
+                                              wordBreak: 'break-word',
+                                              fontFamily: element.fontFamily || 'Arial, sans-serif',
+                                              fontWeight: element.fontWeight || 'normal',
+                                              fontStyle: element.fontStyle || 'normal',
+                                              color: element.color || '#333'
                                             }}>
                                               {typeof element.content === 'string' ?
-                                                element.content.length > 50 ?
-                                                  element.content.substring(0, 50) + '...' :
+                                                element.content.length > 30 ?
+                                                  element.content.substring(0, 30) + '...' :
                                                   element.content :
-                                                'Texte'
+                                                'Texte d\'exemple'
                                               }
                                             </div>
                                           ) : element.type === 'image' ? (
                                             <div style={{
-                                              fontSize: '24pt',
-                                              opacity: 0.6
+                                              width: '100%',
+                                              height: '60px',
+                                              background: 'linear-gradient(45deg, #f0f0f0 25%, transparent 25%), linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f0f0f0 75%), linear-gradient(-45deg, transparent 75%, #f0f0f0 75%)',
+                                              backgroundSize: '8px 8px',
+                                              backgroundPosition: '0 0, 0 4px, 4px -4px, -4px 0px',
+                                              border: '2px dashed #ccc',
+                                              borderRadius: '4px',
+                                              display: 'flex',
+                                              alignItems: 'center',
+                                              justifyContent: 'center',
+                                              color: '#666',
+                                              fontSize: '20pt'
                                             }}>
-                                              🖼️
+                                              �
                                             </div>
                                           ) : element.type === 'rectangle' ? (
                                             <div style={{
                                               width: '100%',
                                               height: '100%',
-                                              background: element.fillColor || '#4caf50',
-                                              opacity: 0.8,
-                                              borderRadius: '2px'
+                                              background: element.fillColor || element.backgroundColor || '#4caf50',
+                                              borderRadius: element.borderRadius ? `${element.borderRadius}px` : '2px',
+                                              border: element.borderWidth ? `${element.borderWidth}px solid ${element.borderColor || '#333'}` : 'none'
                                             }} />
+                                          ) : element.type === 'woocommerce-order-number' ? (
+                                            <div style={{
+                                              fontSize: '12pt',
+                                              fontWeight: 'bold',
+                                              textAlign: 'center',
+                                              color: '#007cba'
+                                            }}>
+                                              #WC-2025-001
+                                            </div>
+                                          ) : element.type === 'woocommerce-billing-address' ? (
+                                            <div style={{
+                                              fontSize: '9pt',
+                                              textAlign: 'left',
+                                              lineHeight: '1.2'
+                                            }}>
+                                              Jean Dupont<br />
+                                              123 Rue de la Paix<br />
+                                              75001 Paris<br />
+                                              France
+                                            </div>
+                                          ) : element.type === 'woocommerce-order-date' ? (
+                                            <div style={{
+                                              fontSize: '10pt',
+                                              textAlign: 'center'
+                                            }}>
+                                              21/10/2025
+                                            </div>
+                                          ) : element.type === 'woocommerce-customer-name' ? (
+                                            <div style={{
+                                              fontSize: '11pt',
+                                              textAlign: 'center',
+                                              fontWeight: 'bold'
+                                            }}>
+                                              Jean Dupont
+                                            </div>
+                                          ) : element.type === 'woocommerce-products-table' ? (
+                                            <div style={{
+                                              fontSize: '8pt',
+                                              width: '100%'
+                                            }}>
+                                              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #ccc', paddingBottom: '2px', marginBottom: '2px' }}>
+                                                <span>Produit</span>
+                                                <span>Qté</span>
+                                                <span>Prix</span>
+                                              </div>
+                                              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                <span>T-Shirt Blanc</span>
+                                                <span>1</span>
+                                                <span>25,00 €</span>
+                                              </div>
+                                            </div>
+                                          ) : element.type === 'woocommerce-subtotal' ? (
+                                            <div style={{
+                                              fontSize: '10pt',
+                                              textAlign: 'right'
+                                            }}>
+                                              Sous-total: 25,00 €
+                                            </div>
+                                          ) : element.type === 'woocommerce-taxes' ? (
+                                            <div style={{
+                                              fontSize: '10pt',
+                                              textAlign: 'right'
+                                            }}>
+                                              TVA (20%): 5,00 €
+                                            </div>
+                                          ) : element.type === 'woocommerce-shipping' ? (
+                                            <div style={{
+                                              fontSize: '10pt',
+                                              textAlign: 'right'
+                                            }}>
+                                              Livraison: 5,90 €
+                                            </div>
+                                          ) : element.type === 'woocommerce-order-total' ? (
+                                            <div style={{
+                                              fontSize: '12pt',
+                                              fontWeight: 'bold',
+                                              textAlign: 'right',
+                                              color: '#007cba'
+                                            }}>
+                                              Total: 35,90 €
+                                            </div>
                                           ) : (
                                             <div style={{
-                                              fontSize: '16pt',
-                                              opacity: 0.6
+                                              fontSize: '14pt',
+                                              opacity: 0.6,
+                                              textAlign: 'center'
                                             }}>
-                                              {element.type || 'Élément'}
+                                              {element.type === 'line' ? '━' :
+                                               element.type === 'circle' ? '○' :
+                                               element.type === 'barcode' ? '▍▍▍▍▍' :
+                                               element.type || 'Élément'}
                                             </div>
                                           )}
 
                                           {/* Dimensions en bas à droite */}
                                           <div style={{
                                             position: 'absolute',
-                                            bottom: '2mm',
-                                            right: '2mm',
+                                            bottom: '4px', // Changé de 2mm à 4px
+                                            right: '4px', // Changé de 2mm à 4px
                                             background: 'rgba(0,0,0,0.7)',
                                             color: 'white',
-                                            padding: '1mm',
-                                            borderRadius: '1mm',
-                                            fontSize: '7pt'
+                                            padding: '2px', // Changé de 1mm à 2px
+                                            borderRadius: '2px', // Changé de 1mm à 2px
+                                            fontSize: '6pt' // Réduit pour l'échelle
                                           }}>
-                                            {width}×{height}
+                                            {Math.round(width/0.8)}×{Math.round(height/0.8)}
                                           </div>
                                         </div>
                                       );
@@ -606,11 +721,11 @@ const PreviewModal = ({
                                       textAlign: 'center',
                                       color: '#6c757d'
                                     }}>
-                                      <div style={{ fontSize: '48pt', marginBottom: '10mm', opacity: 0.5 }}>🖼️</div>
-                                      <p style={{ margin: '0', fontSize: '14pt' }}>
+                                      <div style={{ fontSize: '38pt', marginBottom: '20px', opacity: 0.5 }}>🖼️</div> {/* Changé de 10mm à 20px */}
+                                      <p style={{ margin: '0', fontSize: '11pt' }}> {/* Réduit pour l'échelle */}
                                         Aucun élément dans le canvas
                                       </p>
-                                      <p style={{ margin: '5mm 0 0 0', fontSize: '12pt' }}>
+                                      <p style={{ margin: '10px 0 0 0', fontSize: '9pt' }}> {/* Changé de 5mm à 10px */}
                                         Ajoutez des éléments pour les voir positionnés ici
                                       </p>
                                     </div>
@@ -619,29 +734,31 @@ const PreviewModal = ({
 
                                 {/* Légende des couleurs */}
                                 <div style={{
-                                  marginTop: '10mm',
-                                  padding: '8mm',
+                                  marginTop: '20px', // Changé de 10mm à 20px
+                                  padding: '16px', // Changé de 8mm à 16px
                                   background: 'white',
                                   borderRadius: '4px',
                                   border: '1px solid #dee2e6'
                                 }}>
                                   <h4 style={{
-                                    margin: '0 0 5mm 0',
+                                    margin: '0 0 10px 0', // Changé de 5mm à 10px
                                     color: '#007cba',
-                                    fontSize: '12pt'
+                                    fontSize: '10pt' // Réduit pour l'échelle
                                   }}>
                                     📋 Légende des éléments :
                                   </h4>
                                   <div style={{
                                     display: 'grid',
-                                    gridTemplateColumns: 'repeat(auto-fit, minmax(80mm, 1fr))',
-                                    gap: '3mm',
-                                    fontSize: '11pt'
+                                    gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', // Ajusté pour plus d'éléments
+                                    gap: '6px',
+                                    fontSize: '9pt'
                                   }}>
                                     <span><span style={{color:'#2196f3'}}>■</span> Texte</span>
                                     <span><span style={{color:'#9c27b0'}}>■</span> Image</span>
                                     <span><span style={{color:'#4caf50'}}>■</span> Rectangle</span>
-                                    <span><span style={{color:'#ff9800'}}>■</span> Autre</span>
+                                    <span><span style={{color:'#ff9800'}}>■</span> Formes</span>
+                                    <span><span style={{color:'#795548'}}>■</span> WooCommerce</span>
+                                    <span><span style={{color:'#607d8b'}}>■</span> Codes-barres</span>
                                   </div>
                                 </div>
                               </div>
@@ -649,21 +766,21 @@ const PreviewModal = ({
                           </div>
                         ) : (
                           /* Mode Metabox : Afficher le JSON du template */
-                          <div style={{ display: 'grid', gap: '10mm' }}>
+                          <div style={{ display: 'grid', gap: '20px' }}> {/* Changé de 10mm à 20px */}
                             <div style={{
                               background: 'white',
                               border: '2px solid #28a745',
                               borderRadius: '8px',
-                              padding: '15mm',
+                              padding: '30px', // Changé de 15mm à 30px
                               boxShadow: '0 4px 12px rgba(40,167,69,0.1)'
                             }}>
                               <h2 style={{
-                                margin: '0 0 10mm 0',
+                                margin: '0 0 20px 0', // Changé de 10mm à 20px
                                 color: '#28a745',
                                 fontSize: '18pt',
                                 textAlign: 'center',
                                 borderBottom: '1px solid #dee2e6',
-                                paddingBottom: '5mm'
+                                paddingBottom: '10px' // Changé de 5mm à 10px
                               }}>
                                 📄 Données JSON du Template
                               </h2>
@@ -671,19 +788,19 @@ const PreviewModal = ({
                                 background: '#f8f9fa',
                                 border: '1px solid #dee2e6',
                                 borderRadius: '4px',
-                                padding: '10mm',
+                                padding: '20px', // Changé de 10mm à 20px
                                 fontFamily: 'monospace',
                                 fontSize: '9pt',
                                 lineHeight: '1.4',
-                                maxHeight: '150mm',
+                                maxHeight: '300px', // Changé de 150mm à 300px
                                 overflow: 'auto'
                               }}>
                                 <div style={{
                                   background: '#28a745',
                                   color: 'white',
-                                  padding: '2mm 5mm',
+                                  padding: '4px 10px', // Changé de 2mm 5mm à 4px 10px
                                   borderRadius: '3px',
-                                  marginBottom: '5mm',
+                                  marginBottom: '10px', // Changé de 5mm à 10px
                                   display: 'inline-block',
                                   fontSize: '10pt',
                                   fontWeight: 'bold'
@@ -704,8 +821,8 @@ const PreviewModal = ({
                               </div>
                               {Array.isArray(templateElements) && templateElements.length > 0 && (
                                 <div style={{
-                                  marginTop: '10mm',
-                                  padding: '8mm',
+                                  marginTop: '20px', // Changé de 10mm à 20px
+                                  padding: '16px', // Changé de 8mm à 16px
                                   background: '#d4edda',
                                   border: '1px solid #c3e6cb',
                                   borderRadius: '4px',
@@ -733,16 +850,16 @@ const PreviewModal = ({
                       {/* Pied de page */}
                       <div style={{
                         borderTop: '1px solid #dee2e6',
-                        paddingTop: '10mm',
-                        marginTop: '20mm',
+                        paddingTop: '10px', // Changé de mm à px
+                        marginTop: '20px', // Changé de mm à px
                         textAlign: 'center',
-                        fontSize: '10pt',
+                        fontSize: '8pt', // Réduit pour l'échelle
                         color: '#6c757d'
                       }}>
                         <p style={{ margin: '0' }}>
                           PDF Builder Pro - Aperçu généré automatiquement
                         </p>
-                        <p style={{ margin: '2mm 0 0 0' }}>
+                        <p style={{ margin: '2px 0 0 0' }}> {/* Changé de mm à px */}
                           Page 1 sur 1
                         </p>
                       </div>
