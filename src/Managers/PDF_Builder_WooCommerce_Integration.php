@@ -1380,10 +1380,18 @@ class PDF_Builder_WooCommerce_Integration
                 return;
             }
 
-            // Vérifier que le template existe
-            if (!get_post($template_id)) {
-                error_log('PDF Builder: Template post ID ' . $template_id . ' does not exist as post');
-                // Essayer de récupérer depuis la table pdf_builder_templates même si le post n'existe pas
+            // Vérifier que le template existe (soit comme post WordPress, soit dans la table personnalisée)
+            $template_exists = false;
+            $template_data = null;
+
+            // D'abord vérifier si c'est un post WordPress
+            if (get_post($template_id)) {
+                error_log('PDF Builder: Template exists as WordPress post');
+                $template_exists = true;
+            } else {
+                error_log('PDF Builder: Template post ID ' . $template_id . ' does not exist as post, checking custom table');
+
+                // Essayer de récupérer depuis la table pdf_builder_templates
                 global $wpdb;
                 $table_templates = $wpdb->prefix . 'pdf_builder_templates';
                 $template = $wpdb->get_row(
@@ -1391,11 +1399,16 @@ class PDF_Builder_WooCommerce_Integration
                     ARRAY_A
                 );
 
-                error_log('PDF Builder: Checking template in custom table - Found: ' . ($template ? 'YES' : 'NO'));
-                if ($template) {
-                    error_log('PDF Builder: Template data: ' . substr($template['template_data'], 0, 200) . '...');
+                if ($template && !empty($template['template_data'])) {
+                    error_log('PDF Builder: Template found in custom table');
+                    $template_exists = true;
+                    $template_data = $template['template_data'];
+                } else {
+                    error_log('PDF Builder: Template not found in custom table either');
                 }
+            }
 
+            if (!$template_exists) {
                 wp_send_json_error('Template introuvable');
                 return;
             }
@@ -1408,21 +1421,10 @@ class PDF_Builder_WooCommerce_Integration
             if ($canvas_elements === false) {
                 error_log('PDF Builder: Cache miss - fetching from database');
 
-                // Récupération depuis la table pdf_builder_templates
-                global $wpdb;
-                $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-                error_log('PDF Builder: Querying table: ' . $table_templates . ' for template_id: ' . $template_id);
-
-                $template = $wpdb->get_row(
-                    $wpdb->prepare("SELECT template_data FROM $table_templates WHERE id = %d", $template_id),
-                    ARRAY_A
-                );
-
-                error_log('PDF Builder: Database query result: ' . ($template ? 'Template found' : 'Template NOT found'));
-
-                if ($template && !empty($template['template_data'])) {
-                    error_log('PDF Builder: Template data length: ' . strlen($template['template_data']));
-                    $decoded_data = json_decode($template['template_data'], true);
+                // Si on a déjà les données du template depuis la table personnalisée, les utiliser
+                if ($template_data !== null) {
+                    error_log('PDF Builder: Using pre-fetched template data from custom table');
+                    $decoded_data = json_decode($template_data, true);
                     error_log('PDF Builder: JSON decode error: ' . json_last_error_msg());
 
                     if (json_last_error() === JSON_ERROR_NONE && is_array($decoded_data)) {
@@ -1451,8 +1453,10 @@ class PDF_Builder_WooCommerce_Integration
                         $canvas_elements = [];
                     }
                 } else {
-                    error_log('PDF Builder: Template not found in pdf_builder_templates table or template_data empty');
-                    $canvas_elements = [];
+                    // Template WordPress classique - récupérer depuis les métadonnées
+                    error_log('PDF Builder: Template is WordPress post, fetching from postmeta');
+                    $canvas_elements = get_post_meta($template_id, 'pdf_builder_elements', true);
+                    error_log('PDF Builder: Elements from meta: ' . (is_array($canvas_elements) ? count($canvas_elements) : 'not array'));
                 }
 
                 // Validation et nettoyage des données
