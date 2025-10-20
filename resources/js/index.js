@@ -228,14 +228,11 @@ const pdfBuilderPro = new PDFBuilderPro();
 // Export par défaut pour webpack
 export default pdfBuilderPro;
 
-// Attacher à window pour WordPress - avec vérification et protection
+// Attacher à window pour WordPress - simplifié
 if (typeof window !== 'undefined') {
-    // Effectuer le health check avant d'exposer l'instance
-    if (PDFBuilderSecurity.performHealthCheck()) {
-        window.PDFBuilderPro = pdfBuilderPro;
-        // Alias pour compatibilité
-        window.pdfBuilderPro = pdfBuilderPro;
-    }
+    window.PDFBuilderPro = pdfBuilderPro;
+    // Alias pour compatibilité
+    window.pdfBuilderPro = pdfBuilderPro;
 }
 
 // Fonction pour afficher l'aperçu dans la metabox WooCommerce - RECREATION COMPLETE PHASE 8
