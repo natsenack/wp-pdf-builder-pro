@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { PreviewProvider } from './context/PreviewProvider';
 import { PreviewRenderer } from './PreviewRenderer';
 import { CanvasMode } from './modes/CanvasMode';
 import { MetaboxMode } from './modes/MetaboxMode';
@@ -448,4 +449,11 @@ const PreviewModal = ({
   }
 };
 
-export default PreviewModal;
+// Wrapper avec PreviewProvider pour nouvelle architecture
+const PreviewModalWithProvider = (props) => (
+  <PreviewProvider>
+    <PreviewModal {...props} />
+  </PreviewProvider>
+);
+
+export default PreviewModalWithProvider;
