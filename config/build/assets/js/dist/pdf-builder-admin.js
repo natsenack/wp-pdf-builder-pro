@@ -16227,6 +16227,8 @@ if (typeof window !== 'undefined') {
 
     // Fonction pour afficher l'aperçu dans la metabox WooCommerce
     window.pdfBuilderShowPreview = function (orderId, templateId, nonce) {
+      // DEBUG: Afficher une alerte pour confirmer que la fonction est appelée
+      alert('DEBUG: pdfBuilderShowPreview appelée avec orderId=' + orderId + ', templateId=' + templateId);
       console.log('=== PDF BUILDER DEBUG: pdfBuilderShowPreview START ===');
       console.log('Function called with parameters:', {
         orderId: orderId,
@@ -16237,6 +16239,7 @@ if (typeof window !== 'undefined') {
       // VERSION DE FALLBACK SIMPLE - Test de l'affichage de base
       console.log('=== USING FALLBACK MODAL ===');
       try {
+        alert('DEBUG: Création de la modal de fallback');
         // Créer une modal simple en HTML pur
         var modal = document.createElement('div');
         modal.id = 'pdf-builder-fallback-modal';
