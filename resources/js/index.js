@@ -79,6 +79,7 @@ class PDFBuilderPro {
     constructor() {
         this.version = '2.0.0';
         this.editors = new Map();
+        console.log('=== PDFBuilderPro CONSTRUCTOR CALLED ===');
 
         // Forcer l'inclusion des hooks (ne pas supprimer cette ligne)
         this._hooks = hooks;
@@ -99,10 +100,14 @@ class PDFBuilderPro {
         } catch (e) {
             // Ignorer les erreurs en mode SSR
         }
+
+        console.log('=== PDFBuilderPro INSTANCE CREATED ===');
+        console.log('Methods available:', Object.getOwnPropertyNames(this.__proto__));
     }
 
     // Initialiser l'éditeur dans un conteneur
     init(containerId, options = {}) {
+        console.log('=== PDFBuilderPro.init CALLED ===', { containerId, options });
 
         try {
             // Vérification stricte du containerId
@@ -241,11 +246,19 @@ const pdfBuilderPro = new PDFBuilderPro();
 // Export par défaut pour webpack
 export default pdfBuilderPro;
 
-// Attacher à window pour WordPress - simplifié
-if (typeof window !== 'undefined') {
-    window.PDFBuilderPro = pdfBuilderPro;
-    // Alias pour compatibilité
-    window.pdfBuilderPro = pdfBuilderPro;
+// Attacher à window pour WordPress - FORCER L'EXPOSITION
+try {
+    if (typeof window !== 'undefined') {
+        window.PDFBuilderPro = pdfBuilderPro;
+        window.pdfBuilderPro = pdfBuilderPro;
+        console.log('=== PDFBuilderPro EXPOSED GLOBALLY ===');
+        console.log('PDFBuilderPro available:', !!window.PDFBuilderPro);
+        console.log('PDFBuilderPro.init available:', typeof window.PDFBuilderPro?.init);
+    } else {
+        console.warn('Window not available, PDFBuilderPro not exposed globally');
+    }
+} catch (error) {
+    console.error('Error exposing PDFBuilderPro globally:', error);
 }
 
 // Fonction pour afficher l'aperçu dans la metabox WooCommerce - RECREATION COMPLETE PHASE 8
