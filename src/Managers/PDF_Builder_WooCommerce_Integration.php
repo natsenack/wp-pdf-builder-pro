@@ -1406,6 +1406,48 @@ class PDF_Builder_WooCommerce_Integration
                 $canvas_elements = get_post_meta($template_id, 'pdf_builder_elements', true);
                 error_log('PDF Builder: Elements from meta: ' . (is_array($canvas_elements) ? count($canvas_elements) : 'not array'));
 
+                // TEMPORAIRE : Si pas d'éléments, utiliser des éléments de test
+                if (!is_array($canvas_elements) || count($canvas_elements) === 0) {
+                    error_log('PDF Builder: Using test elements for template ' . $template_id);
+                    $canvas_elements = [
+                        [
+                            'id' => 'header-text',
+                            'type' => 'text',
+                            'x' => 50,
+                            'y' => 50,
+                            'width' => 200,
+                            'height' => 30,
+                            'content' => 'PDF Builder Pro - Test Template',
+                            'fontSize' => 18,
+                            'fontWeight' => 'bold',
+                            'color' => '#007cba',
+                            'textAlign' => 'center'
+                        ],
+                        [
+                            'id' => 'order-info',
+                            'type' => 'text',
+                            'x' => 50,
+                            'y' => 100,
+                            'width' => 300,
+                            'height' => 60,
+                            'content' => 'Commande #{order_number}\nClient: {customer_name}\nDate: {order_date}',
+                            'fontSize' => 12,
+                            'color' => '#333333'
+                        ],
+                        [
+                            'id' => 'rectangle-bg',
+                            'type' => 'rectangle',
+                            'x' => 40,
+                            'y' => 40,
+                            'width' => 515,
+                            'height' => 802,
+                            'backgroundColor' => '#ffffff',
+                            'borderColor' => '#dddddd',
+                            'borderWidth' => 1
+                        ]
+                    ];
+                }
+
                 // Validation et nettoyage des données
                 $canvas_elements = $this->validate_and_clean_canvas_elements($canvas_elements);
 
