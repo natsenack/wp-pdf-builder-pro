@@ -16680,6 +16680,7 @@ var PreviewModal = function PreviewModal(_ref) {
   }
   console.log('PDF Builder Debug: PreviewModal rendering JSX - isOpen:', isOpen, 'isLoading:', isLoading, 'error:', !!error, 'previewData:', !!previewData);
   try {
+    console.log('PDF Builder Debug: About to return JSX from PreviewModal');
     return /*#__PURE__*/react.createElement("div", {
       className: "preview-modal-overlay",
       onClick: handleOverlayClose,
@@ -16890,6 +16891,7 @@ var PreviewModal = function PreviewModal(_ref) {
       templateElementsCount: templateElements === null || templateElements === void 0 ? void 0 : templateElements.length,
       mode: mode
     });
+    console.log('PDF Builder Debug: About to return fallback JSX');
 
     // Fallback en cas d'erreur de rendu
     return /*#__PURE__*/react.createElement("div", {

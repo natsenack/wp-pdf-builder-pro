@@ -178,6 +178,7 @@ const PreviewModal = ({
   console.log('PDF Builder Debug: PreviewModal rendering JSX - isOpen:', isOpen, 'isLoading:', isLoading, 'error:', !!error, 'previewData:', !!previewData);
 
   try {
+    console.log('PDF Builder Debug: About to return JSX from PreviewModal');
     return (
       <div
         className="preview-modal-overlay"
@@ -416,6 +417,7 @@ const PreviewModal = ({
       templateElementsCount: templateElements?.length,
       mode
     });
+    console.log('PDF Builder Debug: About to return fallback JSX');
 
     // Fallback en cas d'erreur de rendu
     return (
