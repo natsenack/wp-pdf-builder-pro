@@ -13918,23 +13918,16 @@ var PreviewModal = function PreviewModal(_ref) {
     _useState8 = _slicedToArray(_useState7, 2),
     templateElements = _useState8[0],
     setTemplateElements = _useState8[1];
-  var _useState9 = (0,react.useState)(true),
+  var _useState9 = (0,react.useState)(Date.now()),
     _useState0 = _slicedToArray(_useState9, 2),
-    preventAutoClose = _useState0[0],
-    setPreventAutoClose = _useState0[1]; // Protection contre la fermeture automatique
+    modalOpenTime = _useState0[0],
+    setModalOpenTime = _useState0[1]; // Timestamp d'ouverture du modal
 
-  // Désactiver la protection contre la fermeture automatique après le chargement
-  (0,react.useEffect)(function () {
-    if (!isLoading && previewData) {
-      var timer = setTimeout(function () {
-        setPreventAutoClose(false);
-        console.log('PDF Builder Debug: Auto-close protection disabled');
-      }, 1000); // Attendre 1 seconde après le chargement
-      return function () {
-        return clearTimeout(timer);
-      };
-    }
-  }, [isLoading, previewData]);
+  // Protection contre la fermeture automatique : 3 secondes minimum
+  var isProtectedFromAutoClose = (0,react.useMemo)(function () {
+    var elapsed = Date.now() - modalOpenTime;
+    return elapsed < 3000; // 3 secondes de protection
+  }, [modalOpenTime]);
 
   // Chargement des éléments du template en mode metabox
   (0,react.useEffect)(function () {
@@ -14076,14 +14069,14 @@ var PreviewModal = function PreviewModal(_ref) {
 
   // Gestionnaire de fermeture depuis l'overlay - avec protection contre la fermeture automatique
   var handleOverlayClose = (0,react.useCallback)(function (e) {
-    // Empêcher la fermeture automatique pendant le chargement ou pendant la protection
-    if (isLoading || preventAutoClose) {
-      console.log('PDF Builder Debug: Preventing overlay close - loading:', isLoading, 'preventAutoClose:', preventAutoClose);
+    // Protection absolue contre la fermeture automatique pendant 3 secondes
+    if (isProtectedFromAutoClose) {
+      console.log('PDF Builder Debug: Blocking overlay close - protected period active');
       return;
     }
     console.log('PDF Builder Debug: Overlay clicked - closing modal');
     handleClose();
-  }, [handleClose, isLoading, preventAutoClose]);
+  }, [handleClose, isProtectedFromAutoClose]);
 
   // Gestionnaire de fermeture depuis le bouton - toujours autorisé
   var handleButtonClose = (0,react.useCallback)(function (e) {
@@ -14099,7 +14092,10 @@ var PreviewModal = function PreviewModal(_ref) {
   try {
     return /*#__PURE__*/react.createElement("div", {
       className: "preview-modal-overlay",
-      onClick: handleOverlayClose
+      onClick: handleOverlayClose,
+      style: {
+        cursor: isProtectedFromAutoClose ? 'not-allowed' : 'default'
+      }
     }, /*#__PURE__*/react.createElement("div", {
       className: "preview-modal-content",
       onClick: function onClick(e) {
@@ -14107,7 +14103,14 @@ var PreviewModal = function PreviewModal(_ref) {
       }
     }, /*#__PURE__*/react.createElement("div", {
       className: "preview-modal-header"
-    }, /*#__PURE__*/react.createElement("h3", null, mode === 'canvas' ? '🖼️ Aperçu Canvas' : '📄 Aperçu Commande'), /*#__PURE__*/react.createElement("button", {
+    }, /*#__PURE__*/react.createElement("h3", null, mode === 'canvas' ? '🖼️ Aperçu Canvas' : '📄 Aperçu Commande', isProtectedFromAutoClose && /*#__PURE__*/react.createElement("span", {
+      style: {
+        marginLeft: '10px',
+        fontSize: '12px',
+        color: '#28a745',
+        fontWeight: 'normal'
+      }
+    }, "\uD83D\uDD12 Prot\xE9g\xE9")), /*#__PURE__*/react.createElement("button", {
       className: "preview-modal-close",
       onClick: handleButtonClose,
       title: "Fermer l'aper\xE7u"

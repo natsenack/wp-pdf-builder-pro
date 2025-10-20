@@ -26,18 +26,13 @@ const PreviewModal = ({
   const [previewData, setPreviewData] = useState(null);
   const [error, setError] = useState(null);
   const [templateElements, setTemplateElements] = useState(elements);
-  const [preventAutoClose, setPreventAutoClose] = useState(true); // Protection contre la fermeture automatique
+  const [modalOpenTime, setModalOpenTime] = useState(Date.now()); // Timestamp d'ouverture du modal
 
-  // Désactiver la protection contre la fermeture automatique après le chargement
-  useEffect(() => {
-    if (!isLoading && previewData) {
-      const timer = setTimeout(() => {
-        setPreventAutoClose(false);
-        console.log('PDF Builder Debug: Auto-close protection disabled');
-      }, 1000); // Attendre 1 seconde après le chargement
-      return () => clearTimeout(timer);
-    }
-  }, [isLoading, previewData]);
+  // Protection contre la fermeture automatique : 3 secondes minimum
+  const isProtectedFromAutoClose = useMemo(() => {
+    const elapsed = Date.now() - modalOpenTime;
+    return elapsed < 3000; // 3 secondes de protection
+  }, [modalOpenTime]);
 
   // Chargement des éléments du template en mode metabox
   useEffect(() => {
@@ -142,14 +137,14 @@ const PreviewModal = ({
 
   // Gestionnaire de fermeture depuis l'overlay - avec protection contre la fermeture automatique
   const handleOverlayClose = useCallback((e) => {
-    // Empêcher la fermeture automatique pendant le chargement ou pendant la protection
-    if (isLoading || preventAutoClose) {
-      console.log('PDF Builder Debug: Preventing overlay close - loading:', isLoading, 'preventAutoClose:', preventAutoClose);
+    // Protection absolue contre la fermeture automatique pendant 3 secondes
+    if (isProtectedFromAutoClose) {
+      console.log('PDF Builder Debug: Blocking overlay close - protected period active');
       return;
     }
     console.log('PDF Builder Debug: Overlay clicked - closing modal');
     handleClose();
-  }, [handleClose, isLoading, preventAutoClose]);
+  }, [handleClose, isProtectedFromAutoClose]);
 
   // Gestionnaire de fermeture depuis le bouton - toujours autorisé
   const handleButtonClose = useCallback((e) => {
@@ -167,12 +162,28 @@ const PreviewModal = ({
 
   try {
     return (
-      <div className="preview-modal-overlay" onClick={handleOverlayClose}>
+      <div
+        className="preview-modal-overlay"
+        onClick={handleOverlayClose}
+        style={{
+          cursor: isProtectedFromAutoClose ? 'not-allowed' : 'default'
+        }}
+      >
       <div className="preview-modal-content" onClick={(e) => e.stopPropagation()}>
         {/* Header de la modale */}
         <div className="preview-modal-header">
           <h3>
             {mode === 'canvas' ? '🖼️ Aperçu Canvas' : '📄 Aperçu Commande'}
+            {isProtectedFromAutoClose && (
+              <span style={{
+                marginLeft: '10px',
+                fontSize: '12px',
+                color: '#28a745',
+                fontWeight: 'normal'
+              }}>
+                🔒 Protégé
+              </span>
+            )}
           </h3>
           <button
             className="preview-modal-close"
