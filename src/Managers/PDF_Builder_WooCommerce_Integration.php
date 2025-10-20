@@ -1393,9 +1393,39 @@ class PDF_Builder_WooCommerce_Integration
             error_log('PDF Builder: Cache status - cached: ' . ($canvas_elements !== false ? 'true' : 'false'));
 
             if ($canvas_elements === false) {
-                // Récupération depuis les métadonnées du post
-                $canvas_elements = get_post_meta($template_id, 'pdf_builder_elements', true);
-                error_log('PDF Builder: Elements from meta: ' . (is_array($canvas_elements) ? count($canvas_elements) : 'not array'));
+                // Récupération depuis la table pdf_builder_templates
+                global $wpdb;
+                $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+                $template = $wpdb->get_row(
+                    $wpdb->prepare("SELECT template_data FROM $table_templates WHERE id = %d", $template_id),
+                    ARRAY_A
+                );
+
+                if ($template && !empty($template['template_data'])) {
+                    $decoded_data = json_decode($template['template_data'], true);
+                    if (json_last_error() === JSON_ERROR_NONE && is_array($decoded_data)) {
+                        // Extraire les éléments depuis la structure du template
+                        if (isset($decoded_data['elements']) && is_array($decoded_data['elements'])) {
+                            $canvas_elements = $decoded_data['elements'];
+                        } elseif (isset($decoded_data['pages']) && is_array($decoded_data['pages']) && !empty($decoded_data['pages'])) {
+                            // Fallback pour l'ancienne structure
+                            $first_page = $decoded_data['pages'][0];
+                            if (isset($first_page['elements']) && is_array($first_page['elements'])) {
+                                $canvas_elements = $first_page['elements'];
+                            } else {
+                                $canvas_elements = [];
+                            }
+                        } else {
+                            $canvas_elements = [];
+                        }
+                    } else {
+                        error_log('PDF Builder: JSON corrompu dans template_data - ' . json_last_error_msg());
+                        $canvas_elements = [];
+                    }
+                } else {
+                    error_log('PDF Builder: Template non trouvé dans la table pdf_builder_templates - ID: ' . $template_id);
+                    $canvas_elements = [];
+                }
 
                 // Validation et nettoyage des données
                 $canvas_elements = $this->validate_and_clean_canvas_elements($canvas_elements);
