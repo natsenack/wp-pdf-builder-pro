@@ -11781,6 +11781,16 @@ function js_typeof(o) { "@babel/helpers - typeof"; return js_typeof = "function"
 // PDF BUILDER DEBUG: File loaded successfully - TIMESTAMP: ${Date.now()}
 console.log('=== PDF BUILDER FILE LOADED === TIMESTAMP:', Date.now());
 
+// TEST IMMÉDIAT DE CHARGEMENT - Ajouter un élément visible dès le chargement
+(function () {
+  var testElement = document.createElement('div');
+  testElement.id = 'pdf-builder-loaded-indicator';
+  testElement.style.cssText = "\n        position: fixed !important;\n        bottom: 10px !important;\n        right: 10px !important;\n        background: #007cba !important;\n        color: white !important;\n        padding: 8px 12px !important;\n        border-radius: 4px !important;\n        font-size: 11px !important;\n        font-weight: bold !important;\n        z-index: 99999 !important;\n        border: 2px solid #005a87 !important;\n    ";
+  testElement.innerHTML = 'PDF Builder ✓ Loaded at ' + new Date().toLocaleTimeString();
+  document.body.appendChild(testElement);
+  console.log('=== PDF BUILDER LOADED INDICATOR CREATED ===');
+})();
+
 // Forcer l'inclusion de tous les hooks personnalisés
 
 

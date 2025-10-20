@@ -7,6 +7,28 @@ import { PDFCanvasEditor } from './components/PDFCanvasEditor';
 // PDF BUILDER DEBUG: File loaded successfully - TIMESTAMP: ${Date.now()}
 console.log('=== PDF BUILDER FILE LOADED === TIMESTAMP:', Date.now());
 
+// TEST IMMÉDIAT DE CHARGEMENT - Ajouter un élément visible dès le chargement
+(function() {
+    const testElement = document.createElement('div');
+    testElement.id = 'pdf-builder-loaded-indicator';
+    testElement.style.cssText = `
+        position: fixed !important;
+        bottom: 10px !important;
+        right: 10px !important;
+        background: #007cba !important;
+        color: white !important;
+        padding: 8px 12px !important;
+        border-radius: 4px !important;
+        font-size: 11px !important;
+        font-weight: bold !important;
+        z-index: 99999 !important;
+        border: 2px solid #005a87 !important;
+    `;
+    testElement.innerHTML = 'PDF Builder ✓ Loaded at ' + new Date().toLocaleTimeString();
+    document.body.appendChild(testElement);
+    console.log('=== PDF BUILDER LOADED INDICATOR CREATED ===');
+})();
+
 // Forcer l'inclusion de tous les hooks personnalisés
 import /* webpackMode: "eager" */ * as hooks from './hooks';
 

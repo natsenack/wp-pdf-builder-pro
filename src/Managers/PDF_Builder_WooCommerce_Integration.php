@@ -300,35 +300,11 @@ class PDF_Builder_WooCommerce_Integration
                 }
             });
 
-            // Bouton aperçu (ORIGINAL)
-            $('#pdf-preview-btn').on('click', function() {
-                console.log('PDF Builder: Preview button clicked');
-                showPreviewModal(orderId, templateId, nonce);
-            });
-
             // Bouton génération PDF
             $('#pdf-generate-btn').on('click', function() {
                 generatePDF(orderId, templateId, nonce);
             });
         });
-
-        function showPreviewModal(orderId, templateId, nonce) {
-            console.log('PDF Builder: showPreviewModal called with:', { orderId, templateId, nonce });
-            // Ouvrir la modal d'aperçu
-            if (typeof window.pdfBuilderShowPreview === 'function') {
-                console.log('PDF Builder: pdfBuilderShowPreview function exists, calling it');
-                try {
-                    window.pdfBuilderShowPreview(orderId, templateId, nonce);
-                    console.log('PDF Builder: pdfBuilderShowPreview call completed');
-                } catch (error) {
-                    console.error('PDF Builder: Error calling pdfBuilderShowPreview:', error);
-                    alert('Erreur lors de l\'affichage de l\'aperçu: ' + error.message);
-                }
-            } else {
-                console.error('PDF Builder: pdfBuilderShowPreview function not found');
-                alert('Système d\'aperçu non chargé. Veuillez recharger la page.');
-            }
-        }
 
         function generatePDF(orderId, templateId, nonce) {
             // Générer le PDF
