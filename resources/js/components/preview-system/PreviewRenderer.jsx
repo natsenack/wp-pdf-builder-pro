@@ -83,16 +83,43 @@ const PreviewRenderer = ({
 
   // Rendu d'un élément individuel
   const renderElement = (element) => {
-    const Renderer = rendererMap[element.type] || rendererMap.default;
+    try {
+      const Renderer = rendererMap[element.type] || rendererMap.default;
 
-    return (
-      <Renderer
-        key={element.id}
-        element={element}
-        previewData={previewData}
-        mode={mode}
-      />
-    );
+      return (
+        <Renderer
+          key={element.id}
+          element={element}
+          previewData={previewData}
+          mode={mode}
+        />
+      );
+    } catch (error) {
+      console.error('PDF Builder Debug: Error rendering element:', element.type, element.id, error);
+      return (
+        <div
+          key={element.id}
+          className="preview-element preview-element-error"
+          style={{
+            position: 'absolute',
+            left: element.x || 0,
+            top: element.y || 0,
+            width: element.width || 200,
+            height: element.height || 50,
+            border: '2px dashed #ff6b6b',
+            backgroundColor: '#ffeaea',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '12px',
+            color: '#ff6b6b',
+            borderRadius: '4px'
+          }}
+        >
+          ❌ Erreur rendu: {element.type}
+        </div>
+      );
+    }
   };
 
   return (

@@ -13745,13 +13745,36 @@ var PreviewRenderer = function PreviewRenderer(_ref) {
 
   // Rendu d'un élément individuel
   var renderElement = function renderElement(element) {
-    var Renderer = rendererMap[element.type] || rendererMap["default"];
-    return /*#__PURE__*/react.createElement(Renderer, {
-      key: element.id,
-      element: element,
-      previewData: previewData,
-      mode: mode
-    });
+    try {
+      var Renderer = rendererMap[element.type] || rendererMap["default"];
+      return /*#__PURE__*/react.createElement(Renderer, {
+        key: element.id,
+        element: element,
+        previewData: previewData,
+        mode: mode
+      });
+    } catch (error) {
+      console.error('PDF Builder Debug: Error rendering element:', element.type, element.id, error);
+      return /*#__PURE__*/react.createElement("div", {
+        key: element.id,
+        className: "preview-element preview-element-error",
+        style: {
+          position: 'absolute',
+          left: element.x || 0,
+          top: element.y || 0,
+          width: element.width || 200,
+          height: element.height || 50,
+          border: '2px dashed #ff6b6b',
+          backgroundColor: '#ffeaea',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '12px',
+          color: '#ff6b6b',
+          borderRadius: '4px'
+        }
+      }, "\u274C Erreur rendu: ", element.type);
+    }
   };
   return /*#__PURE__*/react.createElement("div", {
     className: "preview-renderer"
@@ -16316,16 +16339,22 @@ var PreviewModal = function PreviewModal(_ref) {
     loadPreviewData();
   }, [isOpen, templateElements, orderId, currentMode]);
 
-  // Gestionnaire de fermeture
-  var handleClose = (0,react.useCallback)(function () {
-    setPreviewData(null);
-    setError(null);
-    onClose();
-  }, [onClose]);
+  // Gestionnaire de fermeture depuis l'overlay
+  var handleOverlayClose = (0,react.useCallback)(function (e) {
+    console.log('PDF Builder Debug: Overlay clicked - closing modal');
+    handleClose();
+  }, [handleClose]);
+
+  // Gestionnaire de fermeture depuis le bouton
+  var handleButtonClose = (0,react.useCallback)(function (e) {
+    console.log('PDF Builder Debug: Close button clicked - closing modal');
+    e.stopPropagation(); // Prevent overlay close
+    handleClose();
+  }, [handleClose]);
   if (!isOpen) return null;
   return /*#__PURE__*/react.createElement("div", {
     className: "preview-modal-overlay",
-    onClick: handleClose
+    onClick: handleOverlayClose
   }, /*#__PURE__*/react.createElement("div", {
     className: "preview-modal-content",
     onClick: function onClick(e) {
@@ -16335,7 +16364,7 @@ var PreviewModal = function PreviewModal(_ref) {
     className: "preview-modal-header"
   }, /*#__PURE__*/react.createElement("h3", null, mode === 'canvas' ? '🖼️ Aperçu Canvas' : '📄 Aperçu Commande'), /*#__PURE__*/react.createElement("button", {
     className: "preview-modal-close",
-    onClick: handleClose,
+    onClick: handleButtonClose,
     title: "Fermer l'aper\xE7u"
   }, "\xD7")), /*#__PURE__*/react.createElement("div", {
     className: "preview-modal-body"

@@ -131,17 +131,23 @@ const PreviewModal = ({
     loadPreviewData();
   }, [isOpen, templateElements, orderId, currentMode]);
 
-  // Gestionnaire de fermeture
-  const handleClose = useCallback(() => {
-    setPreviewData(null);
-    setError(null);
-    onClose();
-  }, [onClose]);
+  // Gestionnaire de fermeture depuis l'overlay
+  const handleOverlayClose = useCallback((e) => {
+    console.log('PDF Builder Debug: Overlay clicked - closing modal');
+    handleClose();
+  }, [handleClose]);
+
+  // Gestionnaire de fermeture depuis le bouton
+  const handleButtonClose = useCallback((e) => {
+    console.log('PDF Builder Debug: Close button clicked - closing modal');
+    e.stopPropagation(); // Prevent overlay close
+    handleClose();
+  }, [handleClose]);
 
   if (!isOpen) return null;
 
   return (
-    <div className="preview-modal-overlay" onClick={handleClose}>
+    <div className="preview-modal-overlay" onClick={handleOverlayClose}>
       <div className="preview-modal-content" onClick={(e) => e.stopPropagation()}>
         {/* Header de la modale */}
         <div className="preview-modal-header">
@@ -150,7 +156,7 @@ const PreviewModal = ({
           </h3>
           <button
             className="preview-modal-close"
-            onClick={handleClose}
+            onClick={handleButtonClose}
             title="Fermer l'aperçu"
           >
             ×
