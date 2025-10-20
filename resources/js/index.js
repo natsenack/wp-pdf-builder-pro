@@ -264,19 +264,16 @@ if (typeof window !== 'undefined') {
 
         // Fonction pour afficher l'aperçu dans la metabox WooCommerce
         window.pdfBuilderShowPreview = function(orderId, templateId, nonce) {
-            // DEBUG: Afficher une alerte pour confirmer que la fonction est appelée
-            alert('DEBUG: pdfBuilderShowPreview appelée avec orderId=' + orderId + ', templateId=' + templateId);
             console.log('=== PDF BUILDER DEBUG: pdfBuilderShowPreview START ===');
-            console.log('Function called with parameters:', { orderId, templateId, nonce });
+            console.log('Parameters:', { orderId, templateId, nonce });
 
             // VERSION DE FALLBACK SIMPLE - Test de l'affichage de base
             console.log('=== USING FALLBACK MODAL ===');
 
             try {
-                alert('DEBUG: Création de la modal de fallback');
                 // Créer une modal simple en HTML pur
                 const modal = document.createElement('div');
-                modal.id = 'pdf-builder-fallback-modal';
+                modal.id = 'pdf-builder-preview-modal';
                 modal.innerHTML = `
                     <div style="
                         position: fixed;
@@ -292,40 +289,56 @@ if (typeof window !== 'undefined') {
                     ">
                         <div style="
                             background: white;
-                            padding: 20px;
+                            padding: 30px;
                             border-radius: 8px;
-                            max-width: 500px;
+                            max-width: 600px;
                             width: 90%;
                             text-align: center;
+                            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
                         ">
-                            <h2>🧪 PDF Builder - Test Modal</h2>
-                            <p><strong>Order ID:</strong> ${orderId}</p>
-                            <p><strong>Template ID:</strong> ${templateId}</p>
-                            <p><strong>Nonce:</strong> ${nonce ? nonce.substring(0, 10) + '...' : 'null'}</p>
-                            <p style="color: green; margin: 20px 0;"><strong>✅ Modal affichée avec succès !</strong></p>
-                            <p style="color: #666; font-size: 14px;">Si vous voyez ce message, la modale fonctionne.<br>Le problème est dans React.</p>
-                            <button onclick="this.parentElement.parentElement.remove()" style="
-                                background: #007cba;
-                                color: white;
-                                border: none;
-                                padding: 10px 20px;
-                                border-radius: 4px;
-                                cursor: pointer;
-                                margin-top: 15px;
-                            ">Fermer</button>
+                            <h2 style="color: #007cba; margin-bottom: 20px;">📄 Aperçu PDF - Commande #${orderId}</h2>
+                            <div style="background: #f8f9fa; padding: 20px; border-radius: 6px; margin: 20px 0;">
+                                <p style="margin: 10px 0;"><strong>Commande ID:</strong> ${orderId}</p>
+                                <p style="margin: 10px 0;"><strong>Template ID:</strong> ${templateId}</p>
+                                <p style="margin: 10px 0;"><strong>Statut:</strong> <span style="color: #28a745;">Prêt pour génération</span></p>
+                            </div>
+                            <p style="color: #666; margin: 20px 0; font-size: 14px;">
+                                Fonctionnalité d'aperçu en cours de développement.<br>
+                                Utilisez le bouton "Générer PDF" pour créer le document.
+                            </p>
+                            <div style="margin-top: 25px;">
+                                <button onclick="this.parentElement.parentElement.parentElement.remove()" style="
+                                    background: #007cba;
+                                    color: white;
+                                    border: none;
+                                    padding: 12px 24px;
+                                    border-radius: 4px;
+                                    cursor: pointer;
+                                    font-size: 14px;
+                                    margin-right: 10px;
+                                ">Fermer</button>
+                                <button onclick="alert('Fonctionnalité de génération PDF à implémenter'); this.parentElement.parentElement.parentElement.remove()" style="
+                                    background: #28a745;
+                                    color: white;
+                                    border: none;
+                                    padding: 12px 24px;
+                                    border-radius: 4px;
+                                    cursor: pointer;
+                                    font-size: 14px;
+                                ">Générer PDF</button>
+                            </div>
                         </div>
                     </div>
                 `;
 
                 document.body.appendChild(modal);
-                alert('DEBUG: Modal ajoutée au DOM - ' + document.body.children.length + ' enfants');
                 console.log('=== FALLBACK MODAL CREATED AND APPENDED TO BODY ===');
                 console.log('Modal element:', modal);
                 console.log('Body children count:', document.body.children.length);
-                
+
             } catch (error) {
-                alert('ERREUR lors de la création de la modal: ' + error.message);
                 console.error('=== ERROR CREATING FALLBACK MODAL ===', error);
+                alert('Erreur lors de l\'affichage de l\'aperçu: ' + error.message);
             }
 
             return; // Ne pas exécuter le code React pour le moment
