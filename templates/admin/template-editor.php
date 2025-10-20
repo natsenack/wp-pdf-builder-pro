@@ -207,18 +207,21 @@ body.wp-admin .pdf-builder-container {
         //     init: typeof window.PDFBuilderPro?.init
         // });
 
-        const pdfBuilderProExists = typeof window.PDFBuilderPro !== 'undefined';
-        const initExists = typeof window.PDFBuilderPro?.init === 'function';
+        const pdfBuilderProExists = typeof window.PDFBuilderPro !== 'undefined' && window.PDFBuilderPro !== null;
+        const initExists = pdfBuilderProExists && typeof window.PDFBuilderPro.init === 'function';
 
-        // DEBUG: Log détaillé de l'état de PDFBuilderPro
+        // DEBUG: Log détaillé de l'état de PDFBuilderPro - TOUJOURS AFFICHÉ
         console.log('🔍 PDF Builder Debug: PDFBuilderPro check details:');
         console.log('- window.PDFBuilderPro type:', typeof window.PDFBuilderPro);
         console.log('- window.PDFBuilderPro value:', window.PDFBuilderPro);
-        if (window.PDFBuilderPro) {
+        console.log('- pdfBuilderProExists:', pdfBuilderProExists);
+        console.log('- initExists:', initExists);
+        if (pdfBuilderProExists) {
             console.log('- PDFBuilderPro keys:', Object.keys(window.PDFBuilderPro));
-            console.log('- PDFBuilderPro has init:', 'init' in window.PDFBuilderPro);
+            console.log('- PDFBuilderPro has init property:', 'init' in window.PDFBuilderPro);
             console.log('- PDFBuilderPro.init type:', typeof window.PDFBuilderPro.init);
             console.log('- PDFBuilderPro.init value:', window.PDFBuilderPro.init);
+            console.log('- Direct check window.PDFBuilderPro.init:', !!window.PDFBuilderPro.init);
         }
 
         if (pdfBuilderProExists && initExists) {
@@ -278,8 +281,8 @@ body.wp-admin .pdf-builder-container {
         scriptCheckAttempts++;
 
         // Vérifier que tous les chunks sont chargés avec le code splitting
-        const pdfBuilderProExists = typeof window.PDFBuilderPro !== 'undefined';
-        const initExists = typeof window.PDFBuilderPro?.init === 'function';
+        const pdfBuilderProExists = typeof window.PDFBuilderPro !== 'undefined' && window.PDFBuilderPro !== null;
+        const initExists = pdfBuilderProExists && typeof window.PDFBuilderPro.init === 'function';
 
         // Avec le code splitting, vérifier aussi que React est disponible
         const reactExists = typeof window.React !== 'undefined';
