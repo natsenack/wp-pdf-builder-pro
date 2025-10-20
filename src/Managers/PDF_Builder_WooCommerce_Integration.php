@@ -1392,7 +1392,7 @@ class PDF_Builder_WooCommerce_Integration
                         'y' => 50,
                         'width' => 200,
                         'height' => 30,
-                        'content' => 'PDF Builder Pro - Test Template',
+                        'text' => 'PDF Builder Pro - Test Template', // Correction: 'text' au lieu de 'content'
                         'fontSize' => 18,
                         'fontWeight' => 'bold',
                         'color' => '#007cba',
@@ -1405,7 +1405,7 @@ class PDF_Builder_WooCommerce_Integration
                         'y' => 100,
                         'width' => 300,
                         'height' => 60,
-                        'content' => 'Commande #{order_number}\nClient: {customer_name}\nDate: {order_date}',
+                        'text' => 'Commande #{order_number}\nClient: {customer_name}\nDate: {order_date}', // Correction: 'text' au lieu de 'content'
                         'fontSize' => 12,
                         'color' => '#333333'
                     ],
@@ -1453,7 +1453,7 @@ class PDF_Builder_WooCommerce_Integration
                             'y' => 50,
                             'width' => 200,
                             'height' => 30,
-                            'content' => 'PDF Builder Pro - Test Template',
+                            'text' => 'PDF Builder Pro - Test Template',
                             'fontSize' => 18,
                             'fontWeight' => 'bold',
                             'color' => '#007cba',
@@ -1466,7 +1466,7 @@ class PDF_Builder_WooCommerce_Integration
                             'y' => 100,
                             'width' => 300,
                             'height' => 60,
-                            'content' => 'Commande #{order_number}\nClient: {customer_name}\nDate: {order_date}',
+                            'text' => 'Commande #{order_number}\nClient: {customer_name}\nDate: {order_date}',
                             'fontSize' => 12,
                             'color' => '#333333'
                         ],
