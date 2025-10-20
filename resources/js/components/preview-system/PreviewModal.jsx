@@ -20,6 +20,8 @@ const PreviewModal = ({
   templateId = null,
   nonce = null
 }) => {
+  console.log('PDF Builder: PreviewModal component rendered with props:', { isOpen, mode, orderId, templateId, nonce });
+
   const [isLoading, setIsLoading] = useState(false);
   const [previewData, setPreviewData] = useState(null);
   const [error, setError] = useState(null);

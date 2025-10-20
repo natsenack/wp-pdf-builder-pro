@@ -12030,9 +12030,16 @@ if (typeof window !== 'undefined') {
 
     // Fonction pour afficher l'aperçu dans la metabox WooCommerce
     window.pdfBuilderShowPreview = function (orderId, templateId, nonce) {
+      console.log('PDF Builder: pdfBuilderShowPreview called with:', {
+        orderId: orderId,
+        templateId: templateId,
+        nonce: nonce
+      });
+
       // Créer ou récupérer la modal d'aperçu
       var modalContainer = document.getElementById('pdf-builder-preview-modal');
       if (!modalContainer) {
+        console.log('PDF Builder: Creating modal container');
         modalContainer = document.createElement('div');
         modalContainer.id = 'pdf-builder-preview-modal';
         modalContainer.style.cssText = "\n                    position: fixed;\n                    top: 0;\n                    left: 0;\n                    width: 100%;\n                    height: 100%;\n                    background: rgba(0,0,0,0.8);\n                    z-index: 999999;\n                    display: flex;\n                    align-items: center;\n                    justify-content: center;\n                ";
@@ -12042,18 +12049,23 @@ if (typeof window !== 'undefined') {
       // Créer le conteneur React pour la modal
       var previewRoot = document.getElementById('pdf-builder-preview-root');
       if (!previewRoot) {
+        console.log('PDF Builder: Creating preview root');
         previewRoot = document.createElement('div');
         previewRoot.id = 'pdf-builder-preview-root';
         modalContainer.appendChild(previewRoot);
       }
+      console.log('PDF Builder: Starting dynamic import of PreviewModal');
 
       // Importer dynamiquement la PreviewModal
       Promise.resolve(/* import() */).then(__webpack_require__.bind(__webpack_require__, 669)).then(function (_ref2) {
         var PreviewModal = _ref2["default"];
+        console.log('PDF Builder: PreviewModal imported successfully');
+
         // Créer l'élément React pour la modal d'aperçu
         var previewElement = /*#__PURE__*/(0,react.createElement)(PreviewModal, {
           isOpen: true,
           onClose: function onClose() {
+            console.log('PDF Builder: Modal close requested');
             modalContainer.style.display = 'none';
             react_dom.unmountComponentAtNode(previewRoot);
           },
@@ -12062,10 +12074,12 @@ if (typeof window !== 'undefined') {
           templateId: templateId,
           nonce: nonce
         });
+        console.log('PDF Builder: Rendering PreviewModal');
 
         // Rendre la modal
         react_dom.render(previewElement, previewRoot);
         modalContainer.style.display = 'flex';
+        console.log('PDF Builder: Modal should be visible now');
       })["catch"](function (error) {
         console.error('Erreur lors du chargement de la PreviewModal:', error);
         alert('Erreur lors du chargement du système d\'aperçu. Veuillez recharger la page.');
@@ -16106,6 +16120,13 @@ var PreviewModal = function PreviewModal(_ref) {
     templateId = _ref$templateId === void 0 ? null : _ref$templateId,
     _ref$nonce = _ref.nonce,
     nonce = _ref$nonce === void 0 ? null : _ref$nonce;
+  console.log('PDF Builder: PreviewModal component rendered with props:', {
+    isOpen: isOpen,
+    mode: mode,
+    orderId: orderId,
+    templateId: templateId,
+    nonce: nonce
+  });
   var _useState = (0,react.useState)(false),
     _useState2 = PreviewModal_slicedToArray(_useState, 2),
     isLoading = _useState2[0],
