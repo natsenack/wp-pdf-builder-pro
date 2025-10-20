@@ -1323,28 +1323,35 @@ class PDF_Builder_WooCommerce_Integration
     public function ajax_get_canvas_elements()
     {
         try {
+            error_log('PDF Builder: ajax_get_canvas_elements called');
+
             // Vérifier les permissions utilisateur
             if (!current_user_can('manage_woocommerce') && !current_user_can('edit_shop_orders')) {
+                error_log('PDF Builder: Permissions insuffisantes pour canvas elements');
                 wp_send_json_error('Permissions insuffisantes pour accéder aux éléments canvas');
                 return;
             }
 
             // Vérifier le nonce de sécurité
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_order_actions')) {
+                error_log('PDF Builder: Nonce invalide pour canvas elements - Received: ' . ($_POST['nonce'] ?? 'none'));
                 wp_send_json_error('Sécurité: Nonce invalide');
                 return;
             }
 
             // Valider et sanitiser le template_id
             $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
+            error_log('PDF Builder: Template ID: ' . $template_id);
 
             if (!$template_id || $template_id <= 0) {
+                error_log('PDF Builder: Template ID invalide');
                 wp_send_json_error('ID template invalide ou manquant');
                 return;
             }
 
             // Vérifier que le template existe
             if (!get_post($template_id)) {
+                error_log('PDF Builder: Template introuvable - ID: ' . $template_id);
                 wp_send_json_error('Template introuvable');
                 return;
             }
@@ -1352,10 +1359,12 @@ class PDF_Builder_WooCommerce_Integration
             // Récupérer les éléments depuis le cache ou la base de données
             $cache_key = 'pdf_builder_canvas_elements_' . $template_id;
             $canvas_elements = get_transient($cache_key);
+            error_log('PDF Builder: Cache status - cached: ' . ($canvas_elements !== false ? 'true' : 'false'));
 
             if ($canvas_elements === false) {
                 // Récupération depuis les métadonnées du post
                 $canvas_elements = get_post_meta($template_id, 'pdf_builder_elements', true);
+                error_log('PDF Builder: Elements from meta: ' . (is_array($canvas_elements) ? count($canvas_elements) : 'not array'));
 
                 // Validation et nettoyage des données
                 $canvas_elements = $this->validate_and_clean_canvas_elements($canvas_elements);
@@ -1363,6 +1372,8 @@ class PDF_Builder_WooCommerce_Integration
                 // Mettre en cache pour 5 minutes
                 set_transient($cache_key, $canvas_elements, 5 * MINUTE_IN_SECONDS);
             }
+
+            error_log('PDF Builder: Final elements count: ' . (is_array($canvas_elements) ? count($canvas_elements) : 'not array'));
 
             // Log de l'action pour audit
             error_log(
