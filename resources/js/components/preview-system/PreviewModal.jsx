@@ -27,8 +27,8 @@ const PreviewModal = ({
   const [error, setError] = useState(null);
   const [templateElements, setTemplateElements] = useState(elements);
 
-  // Sélection du mode de fonctionnement
-  const currentMode = mode === 'metabox' ? MetaboxMode : CanvasMode;
+  // Sélection du mode de fonctionnement (stabilisé avec useMemo)
+  const currentMode = useMemo(() => mode === 'metabox' ? MetaboxMode : CanvasMode, [mode]);
 
   // Chargement des éléments du template en mode metabox
   useEffect(() => {
@@ -79,7 +79,7 @@ const PreviewModal = ({
 
   // Chargement des données selon le mode
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || !templateElements || templateElements.length === 0) return;
 
     const loadPreviewData = async () => {
       setIsLoading(true);
@@ -97,7 +97,7 @@ const PreviewModal = ({
     };
 
     loadPreviewData();
-  }, [isOpen, mode, templateElements, orderId, templateData, currentMode]);
+  }, [isOpen, templateElements, orderId, currentMode]);
 
   // Gestionnaire de fermeture
   const handleClose = useCallback(() => {

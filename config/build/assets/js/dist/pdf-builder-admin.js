@@ -16173,8 +16173,10 @@ var PreviewModal = function PreviewModal(_ref) {
     templateElements = _useState8[0],
     setTemplateElements = _useState8[1];
 
-  // Sélection du mode de fonctionnement
-  var currentMode = mode === 'metabox' ? MetaboxMode : CanvasMode;
+  // Sélection du mode de fonctionnement (stabilisé avec useMemo)
+  var currentMode = useMemo(function () {
+    return mode === 'metabox' ? MetaboxMode : CanvasMode;
+  }, [mode]);
 
   // Chargement des éléments du template en mode metabox
   (0,react.useEffect)(function () {
@@ -16248,7 +16250,7 @@ var PreviewModal = function PreviewModal(_ref) {
 
   // Chargement des données selon le mode
   (0,react.useEffect)(function () {
-    if (!isOpen) return;
+    if (!isOpen || !templateElements || templateElements.length === 0) return;
     var loadPreviewData = /*#__PURE__*/function () {
       var _ref3 = PreviewModal_asyncToGenerator(/*#__PURE__*/PreviewModal_regenerator().m(function _callee2() {
         var data, _t2;
@@ -16284,7 +16286,7 @@ var PreviewModal = function PreviewModal(_ref) {
       };
     }();
     loadPreviewData();
-  }, [isOpen, mode, templateElements, orderId, templateData, currentMode]);
+  }, [isOpen, templateElements, orderId, currentMode]);
 
   // Gestionnaire de fermeture
   var handleClose = (0,react.useCallback)(function () {
