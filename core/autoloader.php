@@ -5,7 +5,7 @@
  * PSR-4 compliant autoloader for the PDF Builder Pro plugin
  */
 
-if (!defined('ABSPATH')) {
+if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
     exit;
 }
 

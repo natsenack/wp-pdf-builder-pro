@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Démonstration Tableau Produits + Frais</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .invoice {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #333;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .company-info {
+            float: left;
+            width: 50%;
+        }
+        .order-info {
+            float: right;
+            width: 50%;
+            text-align: right;
+        }
+        .clear { clear: both; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+
+        .totals {
+            float: right;
+            width: 300px;
+            margin-top: 20px;
+        }
+        .totals table {
+            margin: 0;
+        }
+        .totals td {
+            padding: 8px 12px;
+        }
+        .total-row {
+            font-weight: bold;
+            border-top: 2px solid #333;
+        }
+
+        .status {
+            background: #e8f5e8;
+            color: #2e7d32;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .advantages {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #007cba;
+        }
+        .advantages h3 {
+            margin-top: 0;
+            color: #007cba;
+        }
+        .advantages ul {
+            margin: 10px 0 0 0;
+            padding-left: 20px;
+        }
+        .advantages li {
+            margin-bottom: 5px;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice">
+        <div class="header">
+            <h1>FACTURE</h1>
+            <div class="status">Statut: Terminée</div>
+        </div>
+
+        <div class="company-info">
+            <h3>Informations Entreprise</h3>
+            <p>Ma Société SARL<br>
+            123 Rue de la Paix<br>
+            75001 Paris, France<br>
+            Tél: 01 23 45 67 89<br>
+            Email: contact@masociete.com</p>
+        </div>
+
+        <div class="order-info">
+            <h3>Commande #123</h3>
+            <p>Date: 20 octobre 2025<br>
+            Client: John Doe<br>
+            Email: john@example.com</p>
+        </div>
+
+        <div class="clear"></div>
+
+        <h3>Détail de la commande</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th class="text-center">Qté</th>
+                    <th class="text-right">Prix unit.</th>
+                    <th class="text-right">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Ordinateur Portable</td>
+                    <td class="text-center">1</td>
+                    <td class="text-right">999,00 €</td>
+                    <td class="text-right">999,00 €</td>
+                </tr>
+                <tr>
+                    <td>Souris Gaming</td>
+                    <td class="text-center">2</td>
+                    <td class="text-right">29,99 €</td>
+                    <td class="text-right">59,98 €</td>
+                </tr>
+                <tr>
+                    <td>Frais de traitement</td>
+                    <td class="text-center">1</td>
+                    <td class="text-right">5,00 €</td>
+                    <td class="text-right">5,00 €</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="totals">
+            <table>
+                <tr class="total-row">
+                    <td>SOUS-TOTAL:</td>
+                    <td class="text-right">1 063,98 €</td>
+                </tr>
+                <tr>
+                    <td>Frais de port:</td>
+                    <td class="text-right">15,00 €</td>
+                </tr>
+                <tr>
+                    <td>TVA (20%):</td>
+                    <td class="text-right">20,00 €</td>
+                </tr>
+                <tr class="total-row">
+                    <td>TOTAL TTC:</td>
+                    <td class="text-right">1 098,98 €</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="clear"></div>
+
+        <div style="margin-top: 50px; padding-top: 20px; border-top: 1px solid #ddd;">
+            <p><strong>Note:</strong> Les frais de commande sont inclus directement dans le sous-total. Les frais de port restent séparés selon les standards WooCommerce.</p>
+        </div>
+
+        <div class="advantages">
+            <h3>💡 AVANTAGES :</h3>
+            <ul>
+                <li>Support automatique des plugins ajoutant des statuts (wc-devis, etc.)</li>
+                <li>Frais de commande inclus directement dans le sous-total</li>
+                <li>Frais de port restent séparés (standards WooCommerce)</li>
+                <li>Formatage uniforme pour tous les types d'items</li>
+                <li>Compatibilité maximale avec les extensions WooCommerce</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

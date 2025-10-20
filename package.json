@@ -2,12 +2,11 @@
   "name": "wp-pdf-builder-pro",
   "version": "1.0.2",
   "description": "WordPress PDF Builder Pro - Frontend Assets",
-  "main": "index.js",
   "scripts": {
-    "build": "webpack --mode=production",
-    "build-prod": "webpack --mode=production",
-    "dev": "webpack --mode=development",
-    "watch": "webpack --mode=development --watch"
+    "build": "webpack --config=config/build/webpack.config.js --mode=production",
+    "build-prod": "webpack --config=config/build/webpack.config.js --mode=production",
+    "dev": "webpack --config=config/build/webpack.config.js --mode=development",
+    "watch": "webpack --config=config/build/webpack.config.js --mode=development --watch"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
@@ -16,6 +15,7 @@
     "@babel/preset-typescript": "^7.27.1",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
+    "artillery": "^2.0.26",
     "babel-loader": "^9.1.0",
     "css-loader": "^6.7.0",
     "style-loader": "^3.3.0",
@@ -27,14 +27,15 @@
   },
   "dependencies": {
     "@wordpress/element": "^6.32.0",
+    "puppeteer": "^21.11.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "toastr": "^2.1.4"
   },
   "sideEffects": [
-    "./src/hooks/useHistory.js",
-    "./src/hooks/useRotation.js",
-    "./src/hooks/useResize.js",
-    "./src/hooks/index.js"
+    "./resources/js/hooks/useHistory.js",
+    "./resources/js/hooks/useRotation.js",
+    "./resources/js/hooks/useResize.js",
+    "./resources/js/hooks/index.js"
   ]
 }

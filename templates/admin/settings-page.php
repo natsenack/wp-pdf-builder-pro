@@ -1833,33 +1833,59 @@ window.addEventListener('load', function() {
                 <p><?php _e('Configurez les templates PDF à utiliser automatiquement selon le statut des commandes WooCommerce.', 'pdf-builder-pro'); ?></p>
 
                 <div class="notice notice-info inline" style="margin-bottom: 20px;">
-                    <p><strong><?php _e('ℹ️ Information :', 'pdf-builder-pro'); ?></strong> <?php _e('Cette section détecte automatiquement tous les statuts de commande WooCommerce disponibles, y compris ceux ajoutés par des plugins tiers. Si vous installez un plugin qui ajoute de nouveaux statuts de commande, ils apparaîtront automatiquement ici.', 'pdf-builder-pro'); ?></p>
+                    <p><strong><?php _e('ℹ️ Détection automatique :', 'pdf-builder-pro'); ?></strong> <?php _e('Le système détecte automatiquement tous les statuts de commande WooCommerce. Les nouveaux statuts sont ajoutés automatiquement avec le template par défaut assigné.', 'pdf-builder-pro'); ?></p>
                 </div>
+
+                <?php
+                // Utiliser le StatusManager pour étendre les paramètres
+                global $pdf_builder_admin;
+                if (isset($pdf_builder_admin) && method_exists($pdf_builder_admin, 'get_status_manager')) {
+                    $status_manager = $pdf_builder_admin->get_status_manager();
+                    $status_info = $status_manager->get_status_info_for_admin();
+
+                    // Afficher les informations sur les statuts détectés
+                    if (!empty($status_info['newly_detected'])) {
+                        echo '<div class="notice notice-success inline" style="margin-bottom: 20px;">';
+                        echo '<p><strong>' . __('✅ Nouveaux statuts détectés :', 'pdf-builder-pro') . '</strong></p>';
+                        echo '<ul style="margin: 10px 0;">';
+                        foreach ($status_info['newly_detected'] as $new_status) {
+                            $assigned_text = $new_status['auto_assigned'] ?
+                                __('Template par défaut assigné', 'pdf-builder-pro') :
+                                __('Aucun template par défaut disponible', 'pdf-builder-pro');
+                            echo '<li><code>' . esc_html($new_status['key']) . '</code> - ' . esc_html($new_status['name']) . ' (' . $assigned_text . ')</li>';
+                        }
+                        echo '</ul>';
+                        echo '</div>';
+                    }
+                }
+                ?>
 
                 <table class="form-table">
                     <?php
-                    // Récupérer les statuts WooCommerce disponibles
+                    // Utiliser le StatusManager pour récupérer les statuts
                     $order_statuses = [];
-                    $woocommerce_available = function_exists('wc_get_order_statuses');
-
-                    if ($woocommerce_available) {
-                        $order_statuses = wc_get_order_statuses();
+                    if (isset($status_manager)) {
+                        $order_statuses = $status_manager->detect_woocommerce_statuses();
                     } else {
-                        // Statuts par défaut si WooCommerce n'est pas disponible
-                        $order_statuses = [
-                            'wc-pending' => __('En attente', 'pdf-builder-pro'),
-                            'wc-processing' => __('En cours', 'pdf-builder-pro'),
-                            'wc-on-hold' => __('En attente', 'pdf-builder-pro'),
-                            'wc-completed' => __('Terminée', 'pdf-builder-pro'),
-                            'wc-cancelled' => __('Annulée', 'pdf-builder-pro'),
-                            'wc-refunded' => __('Remboursée', 'pdf-builder-pro'),
-                            'wc-failed' => __('Échec', 'pdf-builder-pro')
-                        ];
-
-                        echo '<div class="notice notice-warning inline"><p>';
-                        _e('WooCommerce n\'est pas détecté. Les statuts affichés sont les statuts par défaut. Une fois WooCommerce activé, tous les statuts disponibles (y compris ceux ajoutés par des plugins) seront affichés ici.', 'pdf-builder-pro');
-                        echo '</p></div>';
+                        // Fallback vers l'ancienne méthode
+                        $woocommerce_available = function_exists('wc_get_order_statuses');
+                        if ($woocommerce_available) {
+                            $order_statuses = wc_get_order_statuses();
+                        } else {
+                            $order_statuses = [
+                                'wc-pending' => __('En attente', 'pdf-builder-pro'),
+                                'wc-processing' => __('En cours', 'pdf-builder-pro'),
+                                'wc-on-hold' => __('En attente', 'pdf-builder-pro'),
+                                'wc-completed' => __('Terminée', 'pdf-builder-pro'),
+                                'wc-cancelled' => __('Annulée', 'pdf-builder-pro'),
+                                'wc-refunded' => __('Remboursée', 'pdf-builder-pro'),
+                                'wc-failed' => __('Échec', 'pdf-builder-pro')
+                            ];
+                        }
                     }
+
+                    // Appliquer le filtre d'extension des paramètres
+                    $order_statuses = apply_filters('pdf_builder_order_status_settings', $order_statuses);
 
                     // Récupérer les mappings actuels
                     $current_mappings = get_option('pdf_builder_order_status_templates', []);
@@ -1873,12 +1899,19 @@ window.addEventListener('load', function() {
                         // Enlever le préfixe 'wc-' pour l'affichage
                         $display_status = str_replace('wc-', '', $status_key);
                         $selected_template = isset($current_mappings[$status_key]) ? $current_mappings[$status_key] : '';
+
+                        // Marquer les statuts récemment détectés
+                        $is_newly_detected = isset($status_info) && in_array($status_key, array_column($status_info['newly_detected'], 'key'));
+                        $row_class = $is_newly_detected ? 'style="background-color: #e8f5e8;"' : '';
                         ?>
-                        <tr>
+                        <tr <?php echo $row_class; ?>>
                             <th scope="row">
                                 <label for="template_<?php echo esc_attr($status_key); ?>">
                                     <?php echo esc_html($status_name); ?>
                                     <code>(<?php echo esc_html($display_status); ?>)</code>
+                                    <?php if ($is_newly_detected): ?>
+                                        <span class="dashicons dashicons-plus" style="color: #46b450;" title="<?php esc_attr_e('Nouveau statut détecté automatiquement', 'pdf-builder-pro'); ?>"></span>
+                                    <?php endif; ?>
                                 </label>
                             </th>
                             <td>
@@ -1892,6 +1925,9 @@ window.addEventListener('load', function() {
                                 </select>
                                 <p class="description">
                                     <?php printf(__('Template à utiliser pour les commandes avec le statut "%s".', 'pdf-builder-pro'), esc_html($status_name)); ?>
+                                    <?php if ($is_newly_detected): ?>
+                                        <br><em style="color: #46b450;"><?php _e('Nouveau statut détecté - Template par défaut assigné automatiquement.', 'pdf-builder-pro'); ?></em>
+                                    <?php endif; ?>
                                 </p>
                             </td>
                         </tr>

@@ -1,0 +1,150 @@
+{
+  "tests": [
+    {
+      "testName": "XSS Script Tag",
+      "type": "XSS",
+      "success": false,
+      "error": "Runtime.callFunctionOn timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if needed.",
+      "timestamp": "2025-10-20T09:27:09.293Z"
+    },
+    {
+      "testName": "XSS Event Handler",
+      "type": "XSS",
+      "success": false,
+      "error": "Navigation timeout of 10000 ms exceeded",
+      "timestamp": "2025-10-20T09:27:19.437Z"
+    },
+    {
+      "testName": "XSS JavaScript URL",
+      "type": "XSS",
+      "success": false,
+      "errors": [],
+      "hasAlerts": true,
+      "timestamp": "2025-10-20T09:27:22.084Z"
+    },
+    {
+      "testName": "Path Traversal Simple",
+      "type": "Path Traversal",
+      "success": false,
+      "isTraversal": true,
+      "isSensitive": false,
+      "normalizedPath": "..\\..\\..\\etc\\passwd",
+      "timestamp": "2025-10-20T09:27:22.091Z"
+    },
+    {
+      "testName": "Path Traversal Windows",
+      "type": "Path Traversal",
+      "success": false,
+      "isTraversal": true,
+      "isSensitive": false,
+      "normalizedPath": "..\\..\\..\\Windows\\System32\\config\\sam",
+      "timestamp": "2025-10-20T09:27:22.092Z"
+    },
+    {
+      "testName": "Path Normal",
+      "type": "Path Traversal",
+      "success": false,
+      "isTraversal": true,
+      "isSensitive": false,
+      "normalizedPath": "uploads\\pdf-builder-pro\\test.pdf",
+      "timestamp": "2025-10-20T09:27:22.092Z"
+    },
+    {
+      "testName": "Large HTML Document",
+      "type": "Resource Exhaustion",
+      "success": true,
+      "duration": 5911,
+      "memoryUsed": -5071544,
+      "fileSize": 74996,
+      "limits": {
+        "maxDuration": 30000,
+        "maxMemory": 524288000,
+        "maxFileSize": 52428800
+      },
+      "timestamp": "2025-10-20T09:27:28.021Z"
+    }
+  ],
+  "summary": {
+    "totalTests": 7,
+    "passedTests": 1,
+    "failedTests": 6,
+    "vulnerabilities": [
+      {
+        "type": "XSS",
+        "testName": "XSS Script Tag",
+        "details": {
+          "testName": "XSS Script Tag",
+          "type": "XSS",
+          "success": false,
+          "error": "Runtime.callFunctionOn timed out. Increase the 'protocolTimeout' setting in launch/connect calls for a higher timeout if needed.",
+          "timestamp": "2025-10-20T09:27:09.293Z"
+        }
+      },
+      {
+        "type": "XSS",
+        "testName": "XSS Event Handler",
+        "details": {
+          "testName": "XSS Event Handler",
+          "type": "XSS",
+          "success": false,
+          "error": "Navigation timeout of 10000 ms exceeded",
+          "timestamp": "2025-10-20T09:27:19.437Z"
+        }
+      },
+      {
+        "type": "XSS",
+        "testName": "XSS JavaScript URL",
+        "details": {
+          "testName": "XSS JavaScript URL",
+          "type": "XSS",
+          "success": false,
+          "errors": [],
+          "hasAlerts": true,
+          "timestamp": "2025-10-20T09:27:22.084Z"
+        }
+      },
+      {
+        "type": "Path Traversal",
+        "testName": "Path Traversal Simple",
+        "details": {
+          "testName": "Path Traversal Simple",
+          "type": "Path Traversal",
+          "success": false,
+          "isTraversal": true,
+          "isSensitive": false,
+          "normalizedPath": "..\\..\\..\\etc\\passwd",
+          "timestamp": "2025-10-20T09:27:22.091Z"
+        }
+      },
+      {
+        "type": "Path Traversal",
+        "testName": "Path Traversal Windows",
+        "details": {
+          "testName": "Path Traversal Windows",
+          "type": "Path Traversal",
+          "success": false,
+          "isTraversal": true,
+          "isSensitive": false,
+          "normalizedPath": "..\\..\\..\\Windows\\System32\\config\\sam",
+          "timestamp": "2025-10-20T09:27:22.092Z"
+        }
+      },
+      {
+        "type": "Path Traversal",
+        "testName": "Path Normal",
+        "details": {
+          "testName": "Path Normal",
+          "type": "Path Traversal",
+          "success": false,
+          "isTraversal": true,
+          "isSensitive": false,
+          "normalizedPath": "uploads\\pdf-builder-pro\\test.pdf",
+          "timestamp": "2025-10-20T09:27:22.092Z"
+        }
+      }
+    ]
+  },
+  "generatedAt": "2025-10-20T09:27:28.024Z",
+  "phase": "5.8",
+  "description": "Tests de sécurité génération PDF"
+}

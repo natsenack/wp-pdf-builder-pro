@@ -1,0 +1,96 @@
+{
+  "tests": [
+    {
+      "testName": "XSS Script Tag",
+      "type": "XSS Prevention",
+      "success": true,
+      "expectedRejection": true,
+      "input": "<script>alert(\"xss\")</script><h1>Test</h1>",
+      "output": "rejected",
+      "timestamp": "2025-10-20T09:32:41.854Z"
+    },
+    {
+      "testName": "XSS Event Handler",
+      "type": "XSS Prevention",
+      "success": true,
+      "expectedRejection": true,
+      "input": "<img src=x onerror=alert(\"xss\")>",
+      "output": "rejected",
+      "timestamp": "2025-10-20T09:32:41.855Z"
+    },
+    {
+      "testName": "XSS JavaScript URL",
+      "type": "XSS Prevention",
+      "success": true,
+      "expectedRejection": true,
+      "input": "<a href=\"javascript:alert('xss')\">Click</a>",
+      "output": "rejected",
+      "timestamp": "2025-10-20T09:32:41.856Z"
+    },
+    {
+      "testName": "HTML Sûr",
+      "type": "XSS Prevention",
+      "success": true,
+      "expectedRejection": false,
+      "input": "<h1>Titre</h1><p>Contenu sûr</p>",
+      "output": "accepted",
+      "timestamp": "2025-10-20T09:32:41.860Z"
+    },
+    {
+      "testName": "Path Traversal Simple",
+      "type": "Path Traversal",
+      "success": true,
+      "expectedRejection": true,
+      "path": "../../../etc/passwd",
+      "output": "rejected",
+      "timestamp": "2025-10-20T09:32:41.862Z"
+    },
+    {
+      "testName": "Path Traversal Windows",
+      "type": "Path Traversal",
+      "success": true,
+      "expectedRejection": true,
+      "path": "..\\..\\..\\Windows\\System32\\config\\sam",
+      "output": "rejected",
+      "timestamp": "2025-10-20T09:32:41.863Z"
+    },
+    {
+      "testName": "Chemin Sûr",
+      "type": "Path Traversal",
+      "success": true,
+      "expectedRejection": false,
+      "path": "wp-content/uploads/pdf-builder-pro/test.pdf",
+      "output": "accepted",
+      "timestamp": "2025-10-20T09:32:41.864Z"
+    },
+    {
+      "testName": "Sous limite",
+      "type": "Rate Limiting",
+      "success": true,
+      "expectedBlocking": false,
+      "requestCount": 5,
+      "maxRequests": 10,
+      "output": "allowed",
+      "timestamp": "2025-10-20T09:32:41.865Z"
+    },
+    {
+      "testName": "Au dessus limite",
+      "type": "Rate Limiting",
+      "success": true,
+      "expectedBlocking": true,
+      "requestCount": 15,
+      "maxRequests": 10,
+      "output": "blocked",
+      "timestamp": "2025-10-20T09:32:41.867Z"
+    }
+  ],
+  "summary": {
+    "totalTests": 9,
+    "passedTests": 9,
+    "failedTests": 0,
+    "securityScore": 100
+  },
+  "generatedAt": "2025-10-20T09:32:41.868Z",
+  "phase": "5.8",
+  "description": "Validation des corrections de sécurité"
+}

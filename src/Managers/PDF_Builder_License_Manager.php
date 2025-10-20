@@ -10,7 +10,8 @@ if (!defined('ABSPATH')) {
 
 
 
-class PDF_Builder_License_Manager {
+class PDF_Builder_License_Manager
+{
 
     /**
      * Instance unique
@@ -27,14 +28,16 @@ class PDF_Builder_License_Manager {
     /**
      * Constructeur privé
      */
-    private function __construct() {
+    private function __construct()
+    {
         $this->init();
     }
 
     /**
      * Obtenir l'instance unique
      */
-    public static function getInstance() {
+    public static function getInstance()
+    {
         if (null === self::$instance) {
             self::$instance = new self();
         }
@@ -44,7 +47,8 @@ class PDF_Builder_License_Manager {
     /**
      * Initialisation
      */
-    private function init() {
+    private function init()
+    {
         $this->license_key = get_option('pdf_builder_license_key', '');
         $this->license_status = get_option('pdf_builder_license_status', 'free');
         $this->license_data = get_option('pdf_builder_license_data', []);
@@ -55,28 +59,32 @@ class PDF_Builder_License_Manager {
     /**
      * Vérifier si l'utilisateur a une licence premium active
      */
-    public function is_premium() {
+    public function is_premium()
+    {
         return $this->license_status === 'active';
     }
 
     /**
      * Obtenir le statut de la licence
      */
-    public function get_license_status() {
+    public function get_license_status()
+    {
         return $this->license_status;
     }
 
     /**
      * Obtenir les données de licence
      */
-    public function get_license_data() {
+    public function get_license_data()
+    {
         return $this->license_data;
     }
 
     /**
      * Activer une licence
      */
-    public function activate_license($license_key) {
+    public function activate_license($license_key)
+    {
         // Validation basique
         if (empty($license_key)) {
             return ['success' => false, 'message' => 'Clé de licence requise'];
@@ -103,7 +111,8 @@ class PDF_Builder_License_Manager {
     /**
      * Désactiver la licence
      */
-    public function deactivate_license() {
+    public function deactivate_license()
+    {
         delete_option('pdf_builder_license_key');
         delete_option('pdf_builder_license_status');
         delete_option('pdf_builder_license_data');
@@ -119,7 +128,8 @@ class PDF_Builder_License_Manager {
      * Validation de la licence (simulation)
      * À remplacer par un appel à votre serveur de licences
      */
-    private function validate_license($license_key) {
+    private function validate_license($license_key)
+    {
         // Simulation de validation - REMPLACER PAR VOTRE LOGIQUE RÉELLE
         $valid_keys = [
             'PDF-PRO-DEMO-2025' => [
@@ -163,7 +173,8 @@ class PDF_Builder_License_Manager {
     /**
      * Vérification périodique du statut de la licence
      */
-    public function check_license_status() {
+    public function check_license_status()
+    {
         if (empty($this->license_key) || $this->license_status !== 'active') {
             return;
         }
@@ -187,7 +198,8 @@ class PDF_Builder_License_Manager {
     /**
      * Obtenir les informations de licence formatées
      */
-    public function get_license_info() {
+    public function get_license_info()
+    {
         return [
             'status' => $this->license_status,
             'is_premium' => $this->is_premium(),

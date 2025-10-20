@@ -8,7 +8,8 @@ if (!defined('ABSPATH')) {
  * Gestion centralisée de la génération PDF
  */
 
-class PDF_Builder_PDF_Generator {
+class PDF_Builder_PDF_Generator
+{
 
     /**
      * Instance du main plugin
@@ -18,7 +19,8 @@ class PDF_Builder_PDF_Generator {
     /**
      * Constructeur
      */
-    public function __construct($main_instance) {
+    public function __construct($main_instance)
+    {
         $this->main = $main_instance;
         $this->init_hooks();
     }
@@ -26,7 +28,8 @@ class PDF_Builder_PDF_Generator {
     /**
      * Initialiser les hooks
      */
-    private function init_hooks() {
+    private function init_hooks()
+    {
         // AJAX handlers pour la génération PDF
         add_action('wp_ajax_pdf_builder_generate_pdf_from_canvas', [$this, 'ajax_generate_pdf_from_canvas']);
         add_action('wp_ajax_pdf_builder_download_pdf', [$this, 'ajax_download_pdf']);
@@ -35,7 +38,8 @@ class PDF_Builder_PDF_Generator {
     /**
      * AJAX - Générer PDF depuis les données canvas
      */
-    public function ajax_generate_pdf_from_canvas() {
+    public function ajax_generate_pdf_from_canvas()
+    {
         // Vérifier les permissions
         if (!current_user_can('manage_options')) {
             wp_send_json_error('Permissions insuffisantes');
@@ -66,10 +70,12 @@ class PDF_Builder_PDF_Generator {
                 $upload_dir = wp_upload_dir();
                 $pdf_url = str_replace($upload_dir['basedir'], $upload_dir['baseurl'], $pdf_path);
 
-                wp_send_json_success(array(
+                wp_send_json_success(
+                    array(
                     'url' => $pdf_url,
                     'path' => $pdf_path
-                ));
+                    )
+                );
             } else {
                 wp_send_json_error('Erreur lors de la génération du PDF');
             }
@@ -85,7 +91,8 @@ class PDF_Builder_PDF_Generator {
     /**
      * AJAX - Télécharger PDF
      */
-    public function ajax_download_pdf() {
+    public function ajax_download_pdf()
+    {
         // Vérifier les permissions
         if (!current_user_can('manage_options')) {
             wp_send_json_error('Permissions insuffisantes');
@@ -107,10 +114,12 @@ class PDF_Builder_PDF_Generator {
             $pdf_path = $this->generate_pdf_from_template_data(json_decode($template_data, true), $filename);
 
             if ($pdf_path && file_exists($pdf_path)) {
-                wp_send_json_success(array(
+                wp_send_json_success(
+                    array(
                     'path' => $pdf_path,
                     'filename' => $filename
-                ));
+                    )
+                );
             } else {
                 wp_send_json_error('Erreur lors de la génération du PDF');
             }
@@ -126,7 +135,8 @@ class PDF_Builder_PDF_Generator {
     /**
      * Générer PDF depuis les données template
      */
-    private function generate_pdf_from_template_data($template, $filename) {
+    private function generate_pdf_from_template_data($template, $filename)
+    {
         if (!$template || !is_array($template)) {
             throw new Exception('Données template invalides');
         }
@@ -144,7 +154,7 @@ class PDF_Builder_PDF_Generator {
         $pdf_path = $pdf_dir . '/' . $filename;
 
         // Générer le PDF avec TCPDF
-        require_once WP_PLUGIN_DIR . '/wp-pdf-builder-pro/lib/tcpdf/tcpdf_autoload.php';
+        include_once WP_PLUGIN_DIR . '/wp-pdf-builder-pro/lib/tcpdf/tcpdf_autoload.php';
 
         $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
@@ -174,7 +184,8 @@ class PDF_Builder_PDF_Generator {
     /**
      * Générer HTML depuis les données template
      */
-    private function generate_html_from_template_data($template) {
+    private function generate_html_from_template_data($template)
+    {
         // Utiliser la même fonction que l'aperçu commande pour la cohérence
         if (class_exists('PDF_Builder\Admin\PDF_Builder_Admin')) {
             $admin = \PDF_Builder\Admin\PDF_Builder_Admin::getInstance();
@@ -190,7 +201,8 @@ class PDF_Builder_PDF_Generator {
     /**
      * Générer HTML unifié (version legacy - conservée pour compatibilité)
      */
-    private function generate_unified_html_legacy($template, $order = null) {
+    private function generate_unified_html_legacy($template, $order = null)
+    {
         $html = '<div style="font-family: Arial, sans-serif; padding: 20px;">';
 
         if (isset($template['pages']) && is_array($template['pages']) && !empty($template['pages'])) {
@@ -245,21 +257,21 @@ class PDF_Builder_PDF_Generator {
                 }
 
                 switch ($element['type']) {
-                    case 'text':
-                        $final_content = $order ? $this->replace_order_variables($content, $order) : $content;
-                        $html .= sprintf('<div style="%s">%s</div>', $style, esc_html($final_content));
-                        break;
+                case 'text':
+                    $final_content = $order ? $this->replace_order_variables($content, $order) : $content;
+                    $html .= sprintf('<div style="%s">%s</div>', $style, esc_html($final_content));
+                    break;
 
-                    case 'invoice_number':
-                        if ($order) {
-                            $invoice_number = $order->get_id() . '-' . time();
-                            $html .= sprintf('<div style="%s">%s</div>', $style, esc_html($invoice_number));
-                        }
-                        break;
+                case 'invoice_number':
+                    if ($order) {
+                        $invoice_number = $order->get_id() . '-' . time();
+                        $html .= sprintf('<div style="%s">%s</div>', $style, esc_html($invoice_number));
+                    }
+                    break;
 
-                    default:
-                        $html .= sprintf('<div style="%s">%s</div>', $style, esc_html($content));
-                        break;
+                default:
+                    $html .= sprintf('<div style="%s">%s</div>', $style, esc_html($content));
+                    break;
                 }
             }
         }
@@ -271,7 +283,8 @@ class PDF_Builder_PDF_Generator {
     /**
      * Convertir les éléments en format template
      */
-    private function convert_elements_to_template($elements) {
+    private function convert_elements_to_template($elements)
+    {
         return array(
             'pages' => array(
                 array(
@@ -284,7 +297,8 @@ class PDF_Builder_PDF_Generator {
     /**
      * Générer le HTML à partir des éléments du canvas
      */
-    private function generate_html_from_elements($elements) {
+    private function generate_html_from_elements($elements)
+    {
         // Vérifier que des éléments sont fournis
         if (empty($elements)) {
             throw new Exception('Aucun élément fourni pour la génération du PDF');
@@ -328,7 +342,8 @@ class PDF_Builder_PDF_Generator {
     /**
      * Rendre un élément individuel en HTML
      */
-    private function render_element_to_html($element) {
+    private function render_element_to_html($element)
+    {
         $type = $element['type'] ?? 'text';
         
         // Extraire les coordonnées
@@ -338,8 +353,10 @@ class PDF_Builder_PDF_Generator {
         $height = $element['size']['height'] ?? $element['height'] ?? 50;
 
         // Dimensions par défaut si manquantes
-        if (empty($width) || $width <= 0) $width = 100;
-        if (empty($height) || $height <= 0) $height = 50;
+        if (empty($width) || $width <= 0) { $width = 100;
+        }
+        if (empty($height) || $height <= 0) { $height = 50;
+        }
 
         // Contraindre dans les limites A4 (595x842 pixels)
         $canvas_width = 595;
@@ -379,39 +396,39 @@ class PDF_Builder_PDF_Generator {
 
         // Rendre selon le type d'élément
         switch ($type) {
-            case 'text':
-            case 'dynamic-text':
-            case 'multiline_text':
-                $content = $element['content'] ?? $element['text'] ?? $element['customContent'] ?? '';
-                $style .= 'white-space: pre-wrap; word-wrap: break-word; ';
-                return "<div class='canvas-element' style='" . esc_attr($style) . "'>" . wp_kses_post($content) . "</div>";
+        case 'text':
+        case 'dynamic-text':
+        case 'multiline_text':
+            $content = $element['content'] ?? $element['text'] ?? $element['customContent'] ?? '';
+            $style .= 'white-space: pre-wrap; word-wrap: break-word; ';
+            return "<div class='canvas-element' style='" . esc_attr($style) . "'>" . wp_kses_post($content) . "</div>";
 
-            case 'image':
-            case 'company_logo':
-                $src = $element['imageUrl'] ?? $element['src'] ?? '';
-                if (!$src && $type === 'company_logo') {
-                    $custom_logo_id = get_theme_mod('custom_logo');
-                    $src = $custom_logo_id ? wp_get_attachment_image_url($custom_logo_id, 'full') : '';
-                }
-                if ($src) {
-                    $style .= 'object-fit: contain; ';
-                    return "<img class='canvas-element' src='" . esc_url($src) . "' style='" . esc_attr($style) . "' />";
-                }
-                return "<div class='canvas-element' style='" . esc_attr($style) . "; background: #f0f0f0; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center;'>Image</div>";
+        case 'image':
+        case 'company_logo':
+            $src = $element['imageUrl'] ?? $element['src'] ?? '';
+            if (!$src && $type === 'company_logo') {
+                $custom_logo_id = get_theme_mod('custom_logo');
+                $src = $custom_logo_id ? wp_get_attachment_image_url($custom_logo_id, 'full') : '';
+            }
+            if ($src) {
+                $style .= 'object-fit: contain; ';
+                return "<img class='canvas-element' src='" . esc_url($src) . "' style='" . esc_attr($style) . "' />";
+            }
+            return "<div class='canvas-element' style='" . esc_attr($style) . "; background: #f0f0f0; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center;'>Image</div>";
 
-            case 'rectangle':
-                $style .= 'border: 1px solid #ccc; ';
-                return "<div class='canvas-element' style='" . esc_attr($style) . "'></div>";
+        case 'rectangle':
+            $style .= 'border: 1px solid #ccc; ';
+            return "<div class='canvas-element' style='" . esc_attr($style) . "'></div>";
 
-            case 'divider':
-            case 'line':
-                $line_color = $element['lineColor'] ?? '#64748b';
-                $line_width = $element['lineWidth'] ?? 2;
-                $style .= "border-bottom: {$line_width}px solid {$line_color}; height: {$line_width}px;";
-                return "<div class='canvas-element' style='" . esc_attr($style) . "'></div>";
+        case 'divider':
+        case 'line':
+            $line_color = $element['lineColor'] ?? '#64748b';
+            $line_width = $element['lineWidth'] ?? 2;
+            $style .= "border-bottom: {$line_width}px solid {$line_color}; height: {$line_width}px;";
+            return "<div class='canvas-element' style='" . esc_attr($style) . "'></div>";
 
-            default:
-                return "<div class='canvas-element' style='" . esc_attr($style) . "; background: #ffe6e6; border: 1px solid #ff0000; display: flex; align-items: center; justify-content: center; color: #ff0000;'>{$type}</div>";
+        default:
+            return "<div class='canvas-element' style='" . esc_attr($style) . "; background: #ffe6e6; border: 1px solid #ff0000; display: flex; align-items: center; justify-content: center; color: #ff0000;'>{$type}</div>";
         }
     }
 
@@ -430,7 +447,8 @@ class PDF_Builder_PDF_Generator {
     /**
      * Remplacer les variables de commande
      */
-    private function replace_order_variables($content, $order) {
+    private function replace_order_variables($content, $order)
+    {
         // Variables simples
         $content = str_replace('{{order_id}}', $order->get_id(), $content);
         $content = str_replace('{{order_number}}', $order->get_order_number(), $content);

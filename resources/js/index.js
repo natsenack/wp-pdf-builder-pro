@@ -258,6 +258,60 @@ if (typeof window !== 'undefined') {
         // Alias pour compatibilité
         window.pdfBuilderPro = pdfBuilderPro;
 
+        // Fonction pour afficher l'aperçu dans la metabox WooCommerce
+        window.pdfBuilderShowPreview = function(orderId, templateId, nonce) {
+            // Créer ou récupérer la modal d'aperçu
+            let modalContainer = document.getElementById('pdf-builder-preview-modal');
+            if (!modalContainer) {
+                modalContainer = document.createElement('div');
+                modalContainer.id = 'pdf-builder-preview-modal';
+                modalContainer.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.8);
+                    z-index: 999999;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                `;
+                document.body.appendChild(modalContainer);
+            }
+
+            // Créer le conteneur React pour la modal
+            let previewRoot = document.getElementById('pdf-builder-preview-root');
+            if (!previewRoot) {
+                previewRoot = document.createElement('div');
+                previewRoot.id = 'pdf-builder-preview-root';
+                modalContainer.appendChild(previewRoot);
+            }
+
+            // Importer dynamiquement la PreviewModal
+            import('./components/preview-system/PreviewModal').then(({ default: PreviewModal }) => {
+                // Créer l'élément React pour la modal d'aperçu
+                const previewElement = createElement(PreviewModal, {
+                    isOpen: true,
+                    onClose: () => {
+                        modalContainer.style.display = 'none';
+                        ReactDOM.unmountComponentAtNode(previewRoot);
+                    },
+                    mode: 'metabox',
+                    orderId: orderId,
+                    templateId: templateId,
+                    nonce: nonce
+                });
+
+                // Rendre la modal
+                ReactDOM.render(previewElement, previewRoot);
+                modalContainer.style.display = 'flex';
+            }).catch(error => {
+                console.error('Erreur lors du chargement de la PreviewModal:', error);
+                alert('Erreur lors du chargement du système d\'aperçu. Veuillez recharger la page.');
+            });
+        };
+
         // Marquer comme initialisé pour éviter les conflits
         PDFBuilderSecurity.preventMultipleInit();
     } else {

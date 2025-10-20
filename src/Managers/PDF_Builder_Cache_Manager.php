@@ -10,7 +10,8 @@ if (!defined('ABSPATH')) {
 
 
 
-class PDF_Builder_Cache_Manager {
+class PDF_Builder_Cache_Manager
+{
 
     /**
      * Instance unique de la classe
@@ -30,7 +31,8 @@ class PDF_Builder_Cache_Manager {
     /**
      * Constructeur privé
      */
-    private function __construct() {
+    private function __construct()
+    {
         $this->cache_expiration = defined('PDF_BUILDER_CACHE_EXPIRATION') ? PDF_BUILDER_CACHE_EXPIRATION : $this->cache_expiration;
 
         // Nettoyer le cache automatiquement
@@ -40,7 +42,8 @@ class PDF_Builder_Cache_Manager {
     /**
      * Obtenir l'instance unique
      */
-    public static function getInstance() {
+    public static function getInstance()
+    {
         if (null === self::$instance) {
             self::$instance = new self();
         }
@@ -50,14 +53,16 @@ class PDF_Builder_Cache_Manager {
     /**
      * Générer une clé de cache
      */
-    private function generate_key($key) {
+    private function generate_key($key)
+    {
         return $this->cache_prefix . md5($key);
     }
 
     /**
      * Définir une valeur en cache
      */
-    public function set($key, $value, $expiration = null) {
+    public function set($key, $value, $expiration = null)
+    {
         if (null === $expiration) {
             $expiration = $this->cache_expiration;
         }
@@ -74,7 +79,8 @@ class PDF_Builder_Cache_Manager {
     /**
      * Obtenir une valeur du cache
      */
-    public function get($key, $default = null) {
+    public function get($key, $default = null)
+    {
         $cache_key = $this->generate_key($key);
         $value = get_transient($cache_key);
 
@@ -88,7 +94,8 @@ class PDF_Builder_Cache_Manager {
     /**
      * Vérifier si une clé existe en cache
      */
-    public function exists($key) {
+    public function exists($key)
+    {
         $cache_key = $this->generate_key($key);
         return false !== get_transient($cache_key);
     }
@@ -96,7 +103,8 @@ class PDF_Builder_Cache_Manager {
     /**
      * Supprimer une valeur du cache
      */
-    public function delete($key) {
+    public function delete($key)
+    {
         $cache_key = $this->generate_key($key);
         $deleted = delete_transient($cache_key);
 
@@ -110,7 +118,8 @@ class PDF_Builder_Cache_Manager {
     /**
      * Vider tout le cache du plugin
      */
-    public function flush() {
+    public function flush()
+    {
         global $wpdb;
 
         $pattern = $this->cache_prefix . '%';
@@ -129,7 +138,8 @@ class PDF_Builder_Cache_Manager {
     /**
      * Nettoyer le cache expiré
      */
-    public function cleanup_expired_cache() {
+    public function cleanup_expired_cache()
+    {
         // WordPress gère automatiquement la suppression des transients expirés
         // Cette méthode peut être utilisée pour un nettoyage manuel si nécessaire
         pdf_builder_log("Expired cache cleanup completed", 2);
@@ -138,7 +148,8 @@ class PDF_Builder_Cache_Manager {
     /**
      * Obtenir les statistiques du cache
      */
-    public function get_stats() {
+    public function get_stats()
+    {
         global $wpdb;
 
         $pattern = $this->cache_prefix . '%';
@@ -159,7 +170,8 @@ class PDF_Builder_Cache_Manager {
     /**
      * Précharger des données en cache
      */
-    public function preload($keys) {
+    public function preload($keys)
+    {
         foreach ($keys as $key) {
             if (!$this->exists($key)) {
                 // Ici, vous pouvez implémenter la logique pour charger les données
@@ -171,23 +183,28 @@ class PDF_Builder_Cache_Manager {
 }
 
 // Fonctions globales pour le cache
-function pdf_builder_cache_set($key, $value, $expiration = null) {
+function pdf_builder_cache_set($key, $value, $expiration = null)
+{
     return PDF_Builder_Cache_Manager::getInstance()->set($key, $value, $expiration);
 }
 
-function pdf_builder_cache_get($key, $default = null) {
+function pdf_builder_cache_get($key, $default = null)
+{
     return PDF_Builder_Cache_Manager::getInstance()->get($key, $default);
 }
 
-function pdf_builder_cache_exists($key) {
+function pdf_builder_cache_exists($key)
+{
     return PDF_Builder_Cache_Manager::getInstance()->exists($key);
 }
 
-function pdf_builder_cache_delete($key) {
+function pdf_builder_cache_delete($key)
+{
     return PDF_Builder_Cache_Manager::getInstance()->delete($key);
 }
 
-function pdf_builder_cache_flush() {
+function pdf_builder_cache_flush()
+{
     return PDF_Builder_Cache_Manager::getInstance()->flush();
 }
 

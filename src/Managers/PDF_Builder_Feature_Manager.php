@@ -10,7 +10,8 @@ if (!defined('ABSPATH')) {
 
 
 
-class PDF_Builder_Feature_Manager {
+class PDF_Builder_Feature_Manager
+{
 
     /**
      * Définition des fonctionnalités et leurs restrictions
@@ -99,7 +100,8 @@ class PDF_Builder_Feature_Manager {
     /**
      * Vérifier si une fonctionnalité peut être utilisée
      */
-    public static function can_use_feature($feature_name) {
+    public static function can_use_feature($feature_name)
+    {
         $license_manager = PDF_Builder_License_Manager::getInstance();
         $is_premium = $license_manager->is_premium();
 
@@ -124,7 +126,8 @@ class PDF_Builder_Feature_Manager {
     /**
      * Vérifier les limites d'usage pour les utilisateurs free
      */
-    private static function check_usage_limit($feature_name, $limit) {
+    private static function check_usage_limit($feature_name, $limit)
+    {
         $usage_key = 'pdf_builder_usage_' . $feature_name;
         $current_usage = get_option($usage_key, 0);
         $reset_time = get_option($usage_key . '_reset', 0);
@@ -145,7 +148,8 @@ class PDF_Builder_Feature_Manager {
     /**
      * Incrémenter le compteur d'usage
      */
-    public static function increment_usage($feature_name) {
+    public static function increment_usage($feature_name)
+    {
         if (!isset(self::$features[$feature_name])) {
             return false;
         }
@@ -165,7 +169,8 @@ class PDF_Builder_Feature_Manager {
     /**
      * Obtenir l'usage actuel pour une fonctionnalité
      */
-    public static function get_current_usage($feature_name) {
+    public static function get_current_usage($feature_name)
+    {
         if (!isset(self::$features[$feature_name])) {
             return 0;
         }
@@ -176,7 +181,8 @@ class PDF_Builder_Feature_Manager {
     /**
      * Obtenir la limite pour une fonctionnalité
      */
-    public static function get_feature_limit($feature_name) {
+    public static function get_feature_limit($feature_name)
+    {
         if (!isset(self::$features[$feature_name]) || !isset(self::$features[$feature_name]['limit'])) {
             return -1; // Pas de limite
         }
@@ -187,14 +193,16 @@ class PDF_Builder_Feature_Manager {
     /**
      * Obtenir toutes les fonctionnalités disponibles
      */
-    public static function get_all_features() {
+    public static function get_all_features()
+    {
         return self::$features;
     }
 
     /**
      * Obtenir les fonctionnalités disponibles pour l'utilisateur actuel
      */
-    public static function get_available_features() {
+    public static function get_available_features()
+    {
         $license_manager = PDF_Builder_License_Manager::getInstance();
         $is_premium = $license_manager->is_premium();
         $available_features = [];
@@ -220,7 +228,8 @@ class PDF_Builder_Feature_Manager {
     /**
      * Obtenir les fonctionnalités premium (pour les suggestions d'upgrade)
      */
-    public static function get_premium_features() {
+    public static function get_premium_features()
+    {
         $premium_features = [];
 
         foreach (self::$features as $key => $feature) {
@@ -235,18 +244,20 @@ class PDF_Builder_Feature_Manager {
     /**
      * Vérifier si une fonctionnalité est premium
      */
-    public static function is_premium_feature($feature_name) {
+    public static function is_premium_feature($feature_name)
+    {
         if (!isset(self::$features[$feature_name])) {
             return false;
         }
 
-        return !$self::$features[$feature_name]['free'] && $self::$features[$feature_name]['premium'];
+        return !self::$features[$feature_name]['free'] && self::$features[$feature_name]['premium'];
     }
 
     /**
      * Obtenir les détails d'une fonctionnalité
      */
-    public static function get_feature_details($feature_name) {
+    public static function get_feature_details($feature_name)
+    {
         if (!isset(self::$features[$feature_name])) {
             return null;
         }

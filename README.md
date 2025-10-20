@@ -1,6 +1,6 @@
 # 📄 PDF Builder Pro - Documentation Complète
 
-## � Structure Organisée du Plugin
+## 📂 Structure Organisée du Plugin
 
 Le plugin suit une structure organisée pour séparer clairement les fichiers de production des outils de développement :
 
@@ -14,35 +14,41 @@ Le plugin suit une structure organisée pour séparer clairement les fichiers de
 ├── 📄 template-editor.php         ← Éditeur de templates
 ├── 📄 woocommerce-elements.css    ← Styles WooCommerce
 ├── 📁 assets/                     ← CSS/JS/Images (production)
+├── 📁 config/                     ← Configuration
+├── 📁 core/                       ← Noyau du système
+├── 📁 database/                   ← Gestion base de données
 ├── 📁 includes/                   ← Code PHP modulaire
 ├── 📁 languages/                  ← Traductions i18n
+├── 📁 lib/                        ← Bibliothèques externes
+├── 📁 resources/                  ← Ressources de développement
+├── 📁 src/                        ← Code source TypeScript/React
+├── 📁 templates/                  ← Templates système
 ├── 📁 uploads/                    ← Fichiers uploadés
 ├── 📁 vendor/                     ← Dépendances PHP (Composer)
-├── 📁 tools/                      ← Scripts de déploiement
 ├── 📁 docs/                       ← Documentation détaillée
-├── 📁 build-tools/                ← Outils de build (webpack, etc.)
-├── 📁 dev-tools/                  ← Outils de développement
-├── 📁 src/                        ← Code source TypeScript/React
-├── 📁 dist/                       ← Assets compilés (non déployés)
-├── 📁 archive/                    ← Sauvegardes automatiques
+│   ├── phases/                    ← Documentation des phases
+│   └── reports/                   ← Rapports de test et audit
+├── 📁 tests/                      ← Suite de tests automatisés
+│   ├── integration/               ← Tests d'intégration
+│   ├── performance/               ← Tests performance
+│   ├── security/                  ← Tests sécurité
+│   └── compatibility/             ← Tests compatibilité
+├── 📁 tools/                      ← Scripts de déploiement
 └── 📁 node_modules/               ← Dépendances JS (non déployés)
 ```
 
 ### 🚀 Fichiers de Production (Déployés)
 Seuls ces fichiers sont déployés sur le serveur WordPress :
 - `.htaccess`, `bootstrap.php`, `pdf-builder-pro.php`, `README.md`
-- `settings-page.php`, `template-editor.php`, `woocommerce-elements.css`
-- Dossiers : `assets/`, `includes/`, `languages/`, `uploads/`, `vendor/`
+- Dossiers : `assets/`, `config/`, `core/`, `database/`, `includes/`, `languages/`, `lib/`, `templates/`, `uploads/`, `vendor/`
 
 ### 🛠️ Fichiers de Développement (Locaux uniquement)
 Ces dossiers ne sont **jamais** déployés :
+- `docs/` - Documentation développeur et rapports
+- `tests/` - Suite complète de tests automatisés
 - `tools/` - Scripts de déploiement FTP
-- `docs/` - Documentation développeur
-- `build-tools/` - Webpack, TypeScript, etc.
-- `dev-tools/` - Outils de diagnostic
-- `src/` - Code source non compilé
-- `dist/` - Assets compilés (générés automatiquement)
-- `archive/` - Sauvegardes locales
+- `resources/` - Ressources de développement
+- `src/` - Code source TypeScript/React
 - `node_modules/` - Dépendances JavaScript
 
 ## �🚀 Déploiement et Installation
@@ -587,6 +593,35 @@ do_action('pdf_builder_pro_template_saved', $template_id);
 
   "template_id": 1,
 
+```
+
+## 🧪 Outils de Développement & Démonstrations
+
+### 🎯 Démonstrations HTML Interactives
+
+**Principe :** Les démonstrations HTML permettent de valider visuellement les modifications avant implémentation.
+
+**Avantages :**
+- ✅ **Validation instantanée** : Aperçu immédiat des changements
+- ✅ **Communication efficace** : Le développeur voit exactement ce que voit l'utilisateur
+- ✅ **Itération rapide** : Modifications et validation en temps réel
+- ✅ **Documentation vivante** : Les démos servent de spécifications visuelles
+
+**Fichiers de démonstration :**
+- `demo-tableau.html` - Aperçu des tableaux de produits avec frais
+- `tests/demo-improvements.php` - Script PHP de démonstration des calculs
+
+**Utilisation :**
+```bash
+# Lancer le serveur local
+php -S localhost:8000
+
+# Accéder à la démo
+# http://localhost:8000/demo-tableau.html
+```
+
+**Note :** Cette approche a prouvé son efficacité pour confirmer les spécifications avant développement.
+
 ## 💰 Tarification  "order_id": 123,
 
   "settings": {...}
@@ -977,5 +1012,6 @@ Console JavaScript affiche toutes les étapes d'initialisation.
 ---
 
 **Plugin PDF Builder Pro v5.0.0 - Interface Ultra-Moderne !** 🎉
-#   F i x   c a n v a s   p r e v i e w   -   r e a d y   f o r   d e p l o y m e n t  
+#   F i x   c a n v a s   p r e v i e w   -   r e a d y   f o r   d e p l o y m e n t 
+ 
  

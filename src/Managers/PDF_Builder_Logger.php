@@ -10,7 +10,8 @@ if (!defined('ABSPATH')) {
 
 
 
-class PDF_Builder_Logger {
+class PDF_Builder_Logger
+{
 
     /**
      * Instance unique de la classe
@@ -30,7 +31,8 @@ class PDF_Builder_Logger {
     /**
      * Constructeur privé
      */
-    private function __construct() {
+    private function __construct()
+    {
         $upload_dir = wp_upload_dir();
         $this->log_file = $upload_dir['basedir'] . '/pdf-builder-logs/plugin.log';
 
@@ -46,7 +48,8 @@ class PDF_Builder_Logger {
     /**
      * Obtenir l'instance unique
      */
-    public static function getInstance() {
+    public static function getInstance()
+    {
         if (null === self::$instance) {
             self::$instance = new self();
         }
@@ -56,7 +59,8 @@ class PDF_Builder_Logger {
     /**
      * Logger un message
      */
-    public function log($message, $level = 1, $context = array()) {
+    public function log($message, $level = 1, $context = array())
+    {
         if ($this->log_level < $level) {
             return;
         }
@@ -87,35 +91,40 @@ class PDF_Builder_Logger {
     /**
      * Logger une erreur
      */
-    public function error($message, $context = array()) {
+    public function error($message, $context = array())
+    {
         $this->log($message, 0, $context);
     }
 
     /**
      * Logger un avertissement
      */
-    public function warning($message, $context = array()) {
+    public function warning($message, $context = array())
+    {
         $this->log($message, 1, $context);
     }
 
     /**
      * Logger une information
      */
-    public function info($message, $context = array()) {
+    public function info($message, $context = array())
+    {
         $this->log($message, 2, $context);
     }
 
     /**
      * Logger un message de débogage
      */
-    public function debug($message, $context = array()) {
+    public function debug($message, $context = array())
+    {
         $this->log($message, 3, $context);
     }
 
     /**
      * Obtenir le nom du niveau
      */
-    private function get_level_name($level) {
+    private function get_level_name($level)
+    {
         $levels = array(
             0 => 'ERROR',
             1 => 'WARNING',
@@ -129,7 +138,8 @@ class PDF_Builder_Logger {
     /**
      * Nettoyer les anciens logs
      */
-    public function cleanup($days = 30) {
+    public function cleanup($days = 30)
+    {
         if (file_exists($this->log_file)) {
             $cutoff_time = time() - ($days * 24 * 60 * 60);
 
@@ -155,7 +165,8 @@ class PDF_Builder_Logger {
     /**
      * Obtenir le contenu du fichier de log
      */
-    public function get_log_contents($lines = 100) {
+    public function get_log_contents($lines = 100)
+    {
         if (!file_exists($this->log_file)) {
             return '';
         }
@@ -166,7 +177,8 @@ class PDF_Builder_Logger {
 }
 
 // Fonction globale pour le logging
-function pdf_builder_log($message, $level = 2, $context = array()) {
+function pdf_builder_log($message, $level = 2, $context = array())
+{
     PDF_Builder_Logger::getInstance()->log($message, $level, $context);
 }
 

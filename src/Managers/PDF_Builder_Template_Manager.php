@@ -8,7 +8,8 @@ if (!defined('ABSPATH')) {
  * Gestion centralisée des templates
  */
 
-class PDF_Builder_Template_Manager {
+class PDF_Builder_Template_Manager
+{
 
     /**
      * Instance du main plugin
@@ -18,7 +19,8 @@ class PDF_Builder_Template_Manager {
     /**
      * Constructeur
      */
-    public function __construct($main_instance) {
+    public function __construct($main_instance)
+    {
         $this->main = $main_instance;
         $this->init_hooks();
     }
@@ -26,7 +28,8 @@ class PDF_Builder_Template_Manager {
     /**
      * Initialiser les hooks
      */
-    private function init_hooks() {
+    private function init_hooks()
+    {
         // AJAX handlers pour les templates
         add_action('wp_ajax_pdf_builder_save_template', [$this, 'ajax_save_template']);
         add_action('wp_ajax_pdf_builder_pro_save_template', [$this, 'ajax_save_template']); // Alias pour compatibilité
@@ -37,7 +40,8 @@ class PDF_Builder_Template_Manager {
     /**
      * Page de gestion des templates
      */
-    public function templates_page() {
+    public function templates_page()
+    {
         if (!current_user_can('manage_options')) {
             wp_die(__('Vous n\'avez pas les permissions nécessaires.'));
         }
@@ -54,7 +58,8 @@ class PDF_Builder_Template_Manager {
     /**
      * AJAX - Sauvegarder un template
      */
-    public function ajax_save_template() {
+    public function ajax_save_template()
+    {
         try {
             // Vérification des permissions
             if (!current_user_can('manage_options')) {
@@ -96,62 +101,64 @@ class PDF_Builder_Template_Manager {
                 wp_send_json_error('Données template ou nom manquant');
             }
 
-        // Sauvegarde en base de données
-        global $wpdb;
-        $table_templates = $wpdb->prefix . 'pdf_builder_templates';
+            // Sauvegarde en base de données
+            global $wpdb;
+            $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
-        $data = array(
+            $data = array(
             'name' => $template_name,
             'template_data' => $template_data,
             'updated_at' => current_time('mysql')
-        );
+            );
 
-        try {
-            if ($template_id > 0) {
-                // Mise à jour d'un template existant
-                $result = $wpdb->update($table_templates, $data, array('id' => $template_id));
+            try {
+                if ($template_id > 0) {
+                    // Mise à jour d'un template existant
+                    $result = $wpdb->update($table_templates, $data, array('id' => $template_id));
                 
-                if ($result === false) {
-                    $db_error = $wpdb->last_error;
-                    throw new Exception('Erreur de mise à jour en base de données: ' . $db_error);
+                    if ($result === false) {
+                        $db_error = $wpdb->last_error;
+                        throw new Exception('Erreur de mise à jour en base de données: ' . $db_error);
+                    }
+                } else {
+                    // Création d'un nouveau template
+                    $data['created_at'] = current_time('mysql');
+                
+                    $result = $wpdb->insert($table_templates, $data);
+                    if ($result === false) {
+                        $db_error = $wpdb->last_error;
+                        throw new Exception('Erreur d\'insertion en base de données: ' . $db_error);
+                    }
+                
+                    $template_id = $wpdb->insert_id;
                 }
-            } else {
-                // Création d'un nouveau template
-                $data['created_at'] = current_time('mysql');
-                
-                $result = $wpdb->insert($table_templates, $data);
-                if ($result === false) {
-                    $db_error = $wpdb->last_error;
-                    throw new Exception('Erreur d\'insertion en base de données: ' . $db_error);
-                }
-                
-                $template_id = $wpdb->insert_id;
+            } catch (Exception $e) {
+                wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());
+                return;
             }
-        } catch (Exception $e) {
-            wp_send_json_error('Erreur lors de la sauvegarde: ' . $e->getMessage());
-            return;
-        }
 
-        // Vérification post-sauvegarde
-        $saved_template = $wpdb->get_row(
-            $wpdb->prepare("SELECT id, name, template_data FROM $table_templates WHERE id = %d", $template_id),
-            ARRAY_A
-        );
+            // Vérification post-sauvegarde
+            $saved_template = $wpdb->get_row(
+                $wpdb->prepare("SELECT id, name, template_data FROM $table_templates WHERE id = %d", $template_id),
+                ARRAY_A
+            );
 
-        if (!$saved_template) {
-            wp_send_json_error('Erreur: Template introuvable après sauvegarde');
-            return;
-        }
+            if (!$saved_template) {
+                wp_send_json_error('Erreur: Template introuvable après sauvegarde');
+                return;
+            }
 
-        $saved_data = json_decode($saved_template['template_data'], true);
-        $element_count = isset($saved_data['elements']) ? count($saved_data['elements']) : 0;
+            $saved_data = json_decode($saved_template['template_data'], true);
+            $element_count = isset($saved_data['elements']) ? count($saved_data['elements']) : 0;
 
-        // Réponse de succès
-        wp_send_json_success(array(
-            'message' => 'Template sauvegardé avec succès',
-            'template_id' => $template_id,
-            'element_count' => $element_count
-        ));
+            // Réponse de succès
+            wp_send_json_success(
+                array(
+                'message' => 'Template sauvegardé avec succès',
+                'template_id' => $template_id,
+                'element_count' => $element_count
+                )
+            );
         } catch (Exception $e) {
             wp_send_json_error('Erreur critique lors de la sauvegarde: ' . $e->getMessage());
         }
@@ -160,7 +167,8 @@ class PDF_Builder_Template_Manager {
     /**
      * AJAX - Charger un template
      */
-    public function ajax_load_template() {
+    public function ajax_load_template()
+    {
         // Vérification des permissions
         if (!current_user_can('manage_options')) {
             wp_send_json_error('Permissions insuffisantes');
@@ -215,18 +223,21 @@ class PDF_Builder_Template_Manager {
         }
 
         // Réponse de succès
-        wp_send_json_success(array(
+        wp_send_json_success(
+            array(
             'template' => $template_data,
             'name' => $template['name'],
             'element_count' => $element_count,
             'element_types' => $element_types
-        ));
+            )
+        );
     }
 
     /**
      * AJAX - Vider le cache REST
      */
-    public function ajax_flush_rest_cache() {
+    public function ajax_flush_rest_cache()
+    {
         if (!current_user_can('manage_options')) {
             wp_send_json_error('Permissions insuffisantes');
         }
@@ -242,7 +253,8 @@ class PDF_Builder_Template_Manager {
     /**
      * Charger un template de manière robuste
      */
-    public function load_template_robust($template_id) {
+    public function load_template_robust($template_id)
+    {
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
 
@@ -274,10 +286,11 @@ class PDF_Builder_Template_Manager {
      * Valider la structure complète d'un template
      * Retourne un tableau d'erreurs (vide si valide)
      * 
-     * @param array $template_data Données du template décodées
+     * @param  array $template_data Données du template décodées
      * @return array Tableau d'erreurs de validation
      */
-    private function validate_template_structure($template_data) {
+    private function validate_template_structure($template_data)
+    {
         $errors = [];
 
         // ===== Vérification 1 : Type et structure de base =====
@@ -355,11 +368,13 @@ class PDF_Builder_Template_Manager {
     /**
      * Valider un élément individuel du template
      * 
-     * @param array $element Élément à valider
-     * @param int $index Index de l'élément dans le tableau
+     * @param  array $element Élément à valider
+     * @param  int   $index   Index de l'élément dans
+     *                        le tableau
      * @return array Tableau d'erreurs pour cet élément
      */
-    private function validate_template_element($element, $index) {
+    private function validate_template_element($element, $index)
+    {
         $errors = [];
 
         // Vérification que c'est un objet

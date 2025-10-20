@@ -8,7 +8,8 @@ if (!defined('ABSPATH')) {
  * Gestion centralisée des paramètres et configurations
  */
 
-class PDF_Builder_Settings_Manager {
+class PDF_Builder_Settings_Manager
+{
 
     /**
      * Instance du main plugin
@@ -18,7 +19,8 @@ class PDF_Builder_Settings_Manager {
     /**
      * Constructeur
      */
-    public function __construct($main_instance) {
+    public function __construct($main_instance)
+    {
         $this->main = $main_instance;
         $this->init_hooks();
     }
@@ -26,7 +28,8 @@ class PDF_Builder_Settings_Manager {
     /**
      * Initialiser les hooks
      */
-    private function init_hooks() {
+    private function init_hooks()
+    {
         // Hooks pour les paramètres
         add_action('admin_init', [$this, 'register_settings']);
     }
@@ -34,7 +37,8 @@ class PDF_Builder_Settings_Manager {
     /**
      * Page de paramètres généraux
      */
-    public function settings_page() {
+    public function settings_page()
+    {
         if (!current_user_can('manage_options')) {
             wp_die(__('Vous n\'avez pas les permissions nécessaires.'));
         }
@@ -50,7 +54,8 @@ class PDF_Builder_Settings_Manager {
     /**
      * Page de paramètres de rendu canvas
      */
-    public function canvas_render_settings_page() {
+    public function canvas_render_settings_page()
+    {
         if (!current_user_can('manage_options')) {
             wp_die(__('Vous n\'avez pas les permissions nécessaires.'));
         }
@@ -67,7 +72,8 @@ class PDF_Builder_Settings_Manager {
     /**
      * Enregistrer les paramètres
      */
-    public function register_settings() {
+    public function register_settings()
+    {
         // Paramètres généraux
         register_setting('pdf_builder_settings', 'pdf_builder_allowed_roles');
         register_setting('pdf_builder_settings', 'pdf_builder_company_vat');
@@ -86,7 +92,8 @@ class PDF_Builder_Settings_Manager {
     /**
      * Sauvegarder les paramètres généraux
      */
-    private function save_settings() {
+    private function save_settings()
+    {
         // Rôles autorisés
         $allowed_roles = isset($_POST['allowed_roles']) ? $_POST['allowed_roles'] : ['administrator'];
         update_option('pdf_builder_allowed_roles', $allowed_roles);
@@ -113,7 +120,8 @@ class PDF_Builder_Settings_Manager {
     /**
      * Sauvegarder les paramètres de rendu canvas
      */
-    private function save_canvas_render_settings() {
+    private function save_canvas_render_settings()
+    {
         $dpi = isset($_POST['canvas_dpi']) ? intval($_POST['canvas_dpi']) : 300;
         $quality = isset($_POST['canvas_quality']) ? intval($_POST['canvas_quality']) : 90;
         $format = isset($_POST['canvas_format']) ? sanitize_text_field($_POST['canvas_format']) : 'png';
@@ -134,7 +142,8 @@ class PDF_Builder_Settings_Manager {
     /**
      * Sanitiser une valeur de paramètre
      */
-    private function sanitize_setting_value($value) {
+    private function sanitize_setting_value($value)
+    {
         if (is_array($value)) {
             return array_map([$this, 'sanitize_setting_value'], $value);
         }
@@ -149,7 +158,8 @@ class PDF_Builder_Settings_Manager {
     /**
      * Nettoyer les données JSON
      */
-    private function clean_json_data($json_string) {
+    private function clean_json_data($json_string)
+    {
         // Supprimer les caractères de contrôle
         $json_string = preg_replace('/[\x00-\x1F\x7F]/', '', $json_string);
 

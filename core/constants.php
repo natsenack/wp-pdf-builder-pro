@@ -97,3 +97,91 @@ if (!defined('PDF_BUILDER_EDITOR_CAPABILITY')) {
 if (!defined('PDF_BUILDER_AJAX_PREFIX')) {
     define('PDF_BUILDER_AJAX_PREFIX', 'pdf_builder_');
 }
+
+// ==========================================
+// SÉCURITÉ - Constantes pour le système d'aperçu
+// ==========================================
+
+// Nonces pour les différents contextes
+if (!defined('PDF_BUILDER_CANVAS_NONCE')) {
+    define('PDF_BUILDER_CANVAS_NONCE', 'pdf_builder_canvas_nonce');
+}
+
+if (!defined('PDF_BUILDER_ORDER_ACTIONS_NONCE')) {
+    define('PDF_BUILDER_ORDER_ACTIONS_NONCE', 'pdf_builder_order_actions');
+}
+
+if (!defined('PDF_BUILDER_PREVIEW_NONCE')) {
+    define('PDF_BUILDER_PREVIEW_NONCE', 'pdf_builder_preview_nonce');
+}
+
+// Timeouts de sécurité (en secondes)
+if (!defined('PDF_BUILDER_NONCE_LIFETIME')) {
+    define('PDF_BUILDER_NONCE_LIFETIME', 24 * 60 * 60); // 24 heures
+}
+
+if (!defined('PDF_BUILDER_SESSION_TIMEOUT')) {
+    define('PDF_BUILDER_SESSION_TIMEOUT', 30 * 60); // 30 minutes
+}
+
+if (!defined('PDF_BUILDER_CACHE_LIFETIME')) {
+    define('PDF_BUILDER_CACHE_LIFETIME', 60 * 60); // 1 heure
+}
+
+// Limites de taux (requêtes par minute)
+if (!defined('PDF_BUILDER_RATE_LIMIT_CANVAS')) {
+    define('PDF_BUILDER_RATE_LIMIT_CANVAS', 60); // 60 actions canvas/minute
+}
+
+if (!defined('PDF_BUILDER_RATE_LIMIT_PREVIEW')) {
+    define('PDF_BUILDER_RATE_LIMIT_PREVIEW', 30); // 30 aperçus/minute
+}
+
+if (!defined('PDF_BUILDER_RATE_LIMIT_GENERATE')) {
+    define('PDF_BUILDER_RATE_LIMIT_GENERATE', 10); // 10 générations/minute
+}
+
+// Limites de données
+if (!defined('PDF_BUILDER_MAX_CANVAS_ELEMENTS')) {
+    define('PDF_BUILDER_MAX_CANVAS_ELEMENTS', 100); // Maximum 100 éléments par canvas
+}
+
+if (!defined('PDF_BUILDER_MAX_ELEMENT_SIZE')) {
+    define('PDF_BUILDER_MAX_ELEMENT_SIZE', 50 * 1024 * 1024); // 50MB max par élément
+}
+
+if (!defined('PDF_BUILDER_MAX_PREVIEW_SIZE')) {
+    define('PDF_BUILDER_MAX_PREVIEW_SIZE', 10 * 1024 * 1024); // 10MB max pour l'aperçu
+}
+
+// Sanitisation et validation
+if (!defined('PDF_BUILDER_ALLOWED_HTML_TAGS')) {
+    define('PDF_BUILDER_ALLOWED_HTML_TAGS', 'strong,em,u,br,p,span');
+}
+
+if (!defined('PDF_BUILDER_ALLOWED_PROTOCOLS')) {
+    define('PDF_BUILDER_ALLOWED_PROTOCOLS', 'http,https,data');
+}
+
+// Permissions par défaut pour l'aperçu
+if (!defined('PDF_BUILDER_PREVIEW_CAPABILITIES')) {
+    define('PDF_BUILDER_PREVIEW_CAPABILITIES', 'manage_woocommerce,edit_shop_orders,shop_manager');
+}
+
+// Logging de sécurité
+if (!defined('PDF_BUILDER_SECURITY_LOG_ENABLED')) {
+    define('PDF_BUILDER_SECURITY_LOG_ENABLED', true);
+}
+
+if (!defined('PDF_BUILDER_SECURITY_LOG_LEVEL')) {
+    define('PDF_BUILDER_SECURITY_LOG_LEVEL', 'warning'); // error, warning, info
+}
+
+// Meta keys sécurisées pour le stockage
+if (!defined('PDF_BUILDER_CANVAS_META_KEY')) {
+    define('PDF_BUILDER_CANVAS_META_KEY', '_pdf_builder_canvas_data');
+}
+
+if (!defined('PDF_BUILDER_PREVIEW_META_KEY')) {
+    define('PDF_BUILDER_PREVIEW_META_KEY', '_pdf_builder_preview_settings');
+}

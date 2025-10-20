@@ -259,17 +259,149 @@ class PDF_Builder_WooCommerce_Data_Provider {
     }
 
     /**
-     * Obtenir les éléments de commande formatés
+     * Obtenir les éléments de commande formatés avec toutes les propriétés
      */
     private function get_order_items($order) {
         $items = array();
         foreach ($order->get_items() as $item_id => $item) {
-            $items[] = array(
+            $product = $item->get_product();
+            $product_data = array(
+                // Propriétés de base
                 'name' => $item->get_name(),
                 'quantity' => $item->get_quantity(),
                 'price' => wc_price($order->get_item_total($item, false, true)),
-                'total' => wc_price($order->get_item_total($item, true, true))
+                'total' => wc_price($order->get_item_total($item, true, true)),
+                'subtotal' => wc_price($order->get_item_subtotal($item, true, true)),
+
+                // Informations étendues du produit
+                'sku' => $product ? $product->get_sku() : '',
+                'description' => $product ? $product->get_description() : '',
+                'short_description' => $product ? $product->get_short_description() : '',
+                'weight' => $product ? $product->get_weight() : '',
+                'length' => $product ? $product->get_length() : '',
+                'width' => $product ? $product->get_width() : '',
+                'height' => $product ? $product->get_height() : '',
+
+                // Prix
+                'regular_price' => $product ? wc_price($product->get_regular_price()) : '',
+                'sale_price' => $product ? wc_price($product->get_sale_price()) : '',
+                'is_on_sale' => $product ? $product->is_on_sale() : false,
+
+                // Taxes et remises
+                'tax' => wc_price($order->get_item_tax($item, true)),
+                'tax_rate' => $order->get_item_tax_rate($item),
+                'discount' => wc_price($order->get_item_subtotal($item, true, true) - $order->get_item_total($item, true, true)),
+
+                // Stock
+                'stock_quantity' => $product ? $product->get_stock_quantity() : '',
+                'stock_status' => $product ? $product->get_stock_status() : '',
+                'manage_stock' => $product ? $product->get_manage_stock() : false,
+
+                // Image
+                'image_id' => $product ? $product->get_image_id() : '',
+                'image_url' => $product ? wp_get_attachment_image_url($product->get_image_id(), 'thumbnail') : '',
+
+                // Catégories
+                'categories' => array(),
+                'category_names' => array(),
+
+                // Attributs et variations
+                'attributes' => array(),
+                'variation_attributes' => array(),
+
+                // Métadonnées
+                'meta_data' => array(),
+
+                // Type de produit
+                'product_type' => $product ? $product->get_type() : 'simple',
+                'is_virtual' => $product ? $product->is_virtual() : false,
+                'is_downloadable' => $product ? $product->is_downloadable() : false,
+
+                // URLs
+                'product_url' => $product ? get_permalink($product->get_id()) : '',
+                'edit_url' => $product ? get_edit_post_link($product->get_id()) : '',
+
+                // Données de variation (si applicable)
+                'variation_id' => $item->get_variation_id(),
+                'variation_data' => array()
             );
+
+            // Récupérer les catégories
+            if ($product) {
+                $categories = $product->get_category_ids();
+                foreach ($categories as $cat_id) {
+                    $cat = get_term($cat_id, 'product_cat');
+                    if ($cat && !is_wp_error($cat)) {
+                        $product_data['categories'][] = $cat_id;
+                        $product_data['category_names'][] = $cat->name;
+                    }
+                }
+            }
+
+            // Récupérer les attributs du produit
+            if ($product) {
+                $attributes = $product->get_attributes();
+                foreach ($attributes as $attr_key => $attribute) {
+                    if ($attribute->is_taxonomy()) {
+                        $terms = wp_get_post_terms($product->get_id(), $attr_key, array('fields' => 'names'));
+                        $product_data['attributes'][$attribute->get_name()] = implode(', ', $terms);
+                    } else {
+                        $product_data['attributes'][$attribute->get_name()] = $attribute->get_options();
+                    }
+                }
+            }
+
+            // Récupérer les données de variation
+            if ($item->get_variation_id()) {
+                $variation = wc_get_product($item->get_variation_id());
+                if ($variation) {
+                    $product_data['variation_data'] = array(
+                        'id' => $variation->get_id(),
+                        'name' => $variation->get_name(),
+                        'sku' => $variation->get_sku(),
+                        'price' => wc_price($variation->get_price()),
+                        'regular_price' => wc_price($variation->get_regular_price()),
+                        'sale_price' => wc_price($variation->get_sale_price()),
+                        'attributes' => $variation->get_variation_attributes()
+                    );
+
+                    // Copier les attributs de variation
+                    $product_data['variation_attributes'] = $variation->get_variation_attributes();
+                }
+            }
+
+            // Récupérer les métadonnées du produit
+            if ($product) {
+                $meta_keys = array('_custom_product_field', '_warranty', '_brand', '_model');
+                foreach ($meta_keys as $meta_key) {
+                    $meta_value = get_post_meta($product->get_id(), $meta_key, true);
+                    if (!empty($meta_value)) {
+                        $product_data['meta_data'][$meta_key] = $meta_value;
+                    }
+                }
+            }
+
+            // Dimensions formatées
+            if ($product_data['length'] && $product_data['width'] && $product_data['height']) {
+                $product_data['dimensions'] = sprintf(
+                    '%s x %s x %s %s',
+                    $product_data['length'],
+                    $product_data['width'],
+                    $product_data['height'],
+                    get_option('woocommerce_dimension_unit', 'cm')
+                );
+            }
+
+            // Poids formaté
+            if ($product_data['weight']) {
+                $product_data['weight_formatted'] = sprintf(
+                    '%s %s',
+                    $product_data['weight'],
+                    get_option('woocommerce_weight_unit', 'kg')
+                );
+            }
+
+            $items[] = $product_data;
         }
         return $items;
     }

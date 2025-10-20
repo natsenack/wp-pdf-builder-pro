@@ -8,12 +8,14 @@ if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
 
-class PDF_Builder_Template_Migrator {
+class PDF_Builder_Template_Migrator
+{
 
     /**
      * Corrige les valeurs par défaut incorrectes dans les templates existants
      */
-    public static function migrate_template_data($template_data) {
+    public static function migrate_template_data($template_data)
+    {
         if (!is_array($template_data) || empty($template_data['elements'])) {
             return $template_data;
         }
@@ -82,7 +84,8 @@ class PDF_Builder_Template_Migrator {
     /**
      * Migrer tous les templates stockés en base de données
      */
-    public static function migrate_all_templates() {
+    public static function migrate_all_templates()
+    {
         global $wpdb;
         
         $table = $wpdb->postmeta;
@@ -135,7 +138,8 @@ class PDF_Builder_Template_Migrator {
     /**
      * Migrer les templates stockés comme options (templates globaux)
      */
-    public static function migrate_global_templates() {
+    public static function migrate_global_templates()
+    {
         global $wpdb;
         
         // Récupérer tous les templates globaux

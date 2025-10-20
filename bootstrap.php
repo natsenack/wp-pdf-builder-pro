@@ -4,8 +4,8 @@
  * Chargement différé des fonctionnalités du plugin
  */
 
-// Empêcher l'accès direct
-if (!defined('ABSPATH')) {
+// Empêcher l'accès direct (sauf pour les tests)
+if (!defined('ABSPATH') && !defined('PHPUNIT_RUNNING')) {
     exit('Accès direct interdit');
 }
 
@@ -48,11 +48,15 @@ function pdf_builder_load_core() {
         'PDF_Builder_Canvas_Interactions_Manager.php',
         'PDF_Builder_Diagnostic_Manager.php',
         'PDF_Builder_Drag_Drop_Manager.php',
+        'PDF_Builder_Feature_Manager.php',
+        'PDF_Builder_License_Manager.php',
         'PDF_Builder_Logger.php',
         'PDF_Builder_PDF_Generator.php',
         'PDF_Builder_Resize_Manager.php',
         'PDF_Builder_Settings_Manager.php',
+        'PDF_Builder_Status_Manager.php',
         'PDF_Builder_Template_Manager.php',
+        'PDF_Builder_Variable_Mapper.php',
         'PDF_Builder_WooCommerce_Integration.php'
     );
 
@@ -456,7 +460,7 @@ function pdf_builder_ajax_save_settings_fallback() {
         'log_level' => sanitize_text_field($_POST['log_level'] ?? 'info'),
         'max_template_size' => intval($_POST['max_template_size'] ?? 52428800),
         'email_notifications_enabled' => isset($_POST['email_notifications_enabled']),
-        'notification_events' => isset($_POST['notification_events']) ? array_map('sanitize_text_field', $_POST['notification_events']) : [],
+        'notification_events' => isset($_POST['notification_events']) ? array_map(function($event) { return sanitize_text_field($event); }, $_POST['notification_events']) : [],
         // Paramètres Canvas - anciens
         'canvas_element_borders_enabled' => isset($_POST['canvas_element_borders_enabled']),
         'canvas_border_width' => isset($_POST['canvas_border_width']) ? floatval($_POST['canvas_border_width']) : 1,
@@ -555,7 +559,7 @@ function pdf_builder_ajax_save_settings_fallback() {
 
     // Traiter les rôles autorisés
     if (isset($_POST['pdf_builder_allowed_roles'])) {
-        $allowed_roles = array_map('sanitize_text_field', (array) $_POST['pdf_builder_allowed_roles']);
+        $allowed_roles = array_map(function($role) { return sanitize_text_field($role); }, (array) $_POST['pdf_builder_allowed_roles']);
         if (empty($allowed_roles)) {
             $allowed_roles = ['administrator'];
         }
@@ -577,7 +581,7 @@ function pdf_builder_ajax_save_settings_fallback() {
     // Retourner le succès
     wp_send_json_success(array(
         'message' => __('Paramètres sauvegardés avec succès.', 'pdf-builder-pro'),
-        'spacing' => $settings['canvas_border_spacing'] ?? 2
+        'spacing' => $settings['canvas_border_spacing']
     ));
     exit;
 }

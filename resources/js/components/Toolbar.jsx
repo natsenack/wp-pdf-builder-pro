@@ -63,14 +63,6 @@ export const Toolbar = ({
       <div className="toolbar-content">
         {activeTab === 'home' && (
           <div className="tab-content">
-            {/* Groupe Actions principales */}
-            <div className="toolbar-group">
-              <h5>Actions</h5>
-              <div className="group-buttons">
-                {/* Bouton aperçu supprimé */}
-              </div>
-            </div>
-
             {/* Groupe Presse-papiers */}
             <div className="toolbar-group">
               <h5>Presse-papiers</h5>

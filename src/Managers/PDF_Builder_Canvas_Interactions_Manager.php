@@ -15,28 +15,33 @@ if (!defined('ABSPATH')) {
 /**
  * Classe principale pour gérer toutes les interactions du canvas
  */
-class PDF_Builder_Canvas_Interactions_Manager {
+class PDF_Builder_Canvas_Interactions_Manager
+{
 
     /**
      * Instance singleton
+     *
      * @var PDF_Builder_Canvas_Interactions_Manager
      */
     private static $instance = null;
 
     /**
      * Gestionnaire des éléments du canvas
+     *
      * @var PDF_Builder_Canvas_Elements_Manager
      */
     private $elements_manager = null;
 
     /**
      * Gestionnaire de drag & drop
+     *
      * @var PDF_Builder_Drag_Drop_Manager
      */
     private $drag_manager = null;
 
     /**
      * Gestionnaire de redimensionnement
+     *
      * @var PDF_Builder_Resize_Manager
      */
     private $resize_manager = null;
@@ -44,7 +49,8 @@ class PDF_Builder_Canvas_Interactions_Manager {
     /**
      * Constructeur privé (singleton)
      */
-    private function __construct() {
+    private function __construct()
+    {
         $this->init_dependencies();
         $this->init_hooks();
     }
@@ -52,7 +58,8 @@ class PDF_Builder_Canvas_Interactions_Manager {
     /**
      * Obtenir l'instance singleton
      */
-    public static function getInstance() {
+    public static function getInstance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
@@ -62,7 +69,8 @@ class PDF_Builder_Canvas_Interactions_Manager {
     /**
      * Initialiser les dépendances
      */
-    private function init_dependencies() {
+    private function init_dependencies()
+    {
         $this->elements_manager = PDF_Builder_Canvas_Elements_Manager::getInstance();
         $this->drag_manager = PDF_Builder_Drag_Drop_Manager::getInstance();
         $this->resize_manager = PDF_Builder_Resize_Manager::getInstance();
@@ -72,7 +80,8 @@ class PDF_Builder_Canvas_Interactions_Manager {
     /**
      * Initialiser les hooks WordPress
      */
-    private function init_hooks() {
+    private function init_hooks()
+    {
         // AJAX handlers pour les interactions
         add_action('wp_ajax_pdf_builder_start_drag', [$this, 'ajax_start_drag']);
         add_action('wp_ajax_pdf_builder_update_drag', [$this, 'ajax_update_drag']);
@@ -90,7 +99,8 @@ class PDF_Builder_Canvas_Interactions_Manager {
     /**
      * Démarrer une session de drag via AJAX
      */
-    public function ajax_start_drag() {
+    public function ajax_start_drag()
+    {
         try {
             // Vérifier le nonce
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_canvas_nonce')) {
@@ -121,10 +131,12 @@ class PDF_Builder_Canvas_Interactions_Manager {
                 $canvas_bounds
             );
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'session_id' => $session_id,
                 'session' => $session
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error('Failed to start drag session: ' . $e->getMessage());
@@ -134,8 +146,15 @@ class PDF_Builder_Canvas_Interactions_Manager {
     /**
      * Mettre à jour une session de drag via AJAX
      */
-    public function ajax_update_drag() {
+    public function ajax_update_drag()
+    {
         try {
+            // Vérifier le nonce
+            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_canvas_nonce')) {
+                wp_send_json_error('Invalid nonce');
+                return;
+            }
+
             $session_id = sanitize_text_field($_POST['session_id'] ?? '');
             $delta_x = floatval($_POST['delta_x'] ?? 0);
             $delta_y = floatval($_POST['delta_y'] ?? 0);
@@ -158,9 +177,11 @@ class PDF_Builder_Canvas_Interactions_Manager {
                 return;
             }
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'positions' => $new_positions
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error('Failed to update drag: ' . $e->getMessage());
@@ -170,8 +191,15 @@ class PDF_Builder_Canvas_Interactions_Manager {
     /**
      * Terminer une session de drag via AJAX
      */
-    public function ajax_end_drag() {
+    public function ajax_end_drag()
+    {
         try {
+            // Vérifier le nonce
+            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_canvas_nonce')) {
+                wp_send_json_error('Invalid nonce');
+                return;
+            }
+
             $session_id = sanitize_text_field($_POST['session_id'] ?? '');
             $final_positions = isset($_POST['final_positions']) ?
                 json_decode(stripslashes($_POST['final_positions']), true) : null;
@@ -188,9 +216,11 @@ class PDF_Builder_Canvas_Interactions_Manager {
                 return;
             }
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'session' => $result
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error('Failed to end drag session: ' . $e->getMessage());
@@ -200,7 +230,8 @@ class PDF_Builder_Canvas_Interactions_Manager {
     /**
      * Démarrer une session de redimensionnement via AJAX
      */
-    public function ajax_start_resize() {
+    public function ajax_start_resize()
+    {
         try {
             $element_id = sanitize_text_field($_POST['element_id'] ?? '');
             $handle = sanitize_text_field($_POST['handle'] ?? '');
@@ -229,10 +260,12 @@ class PDF_Builder_Canvas_Interactions_Manager {
                 $constraints
             );
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'session_id' => $session_id,
                 'session' => $session
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error('Failed to start resize session: ' . $e->getMessage());
@@ -242,8 +275,15 @@ class PDF_Builder_Canvas_Interactions_Manager {
     /**
      * Mettre à jour une session de redimensionnement via AJAX
      */
-    public function ajax_update_resize() {
+    public function ajax_update_resize()
+    {
         try {
+            // Vérifier le nonce
+            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_canvas_nonce')) {
+                wp_send_json_error('Invalid nonce');
+                return;
+            }
+
             $session_id = sanitize_text_field($_POST['session_id'] ?? '');
             $delta_x = floatval($_POST['delta_x'] ?? 0);
             $delta_y = floatval($_POST['delta_y'] ?? 0);
@@ -267,9 +307,11 @@ class PDF_Builder_Canvas_Interactions_Manager {
                 return;
             }
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'dimensions' => $dimensions
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error('Failed to update resize: ' . $e->getMessage());
@@ -279,8 +321,15 @@ class PDF_Builder_Canvas_Interactions_Manager {
     /**
      * Terminer une session de redimensionnement via AJAX
      */
-    public function ajax_end_resize() {
+    public function ajax_end_resize()
+    {
         try {
+            // Vérifier le nonce
+            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_canvas_nonce')) {
+                wp_send_json_error('Invalid nonce');
+                return;
+            }
+
             $session_id = sanitize_text_field($_POST['session_id'] ?? '');
             $final_dimensions = isset($_POST['final_dimensions']) ?
                 json_decode(stripslashes($_POST['final_dimensions']), true) : null;
@@ -297,9 +346,11 @@ class PDF_Builder_Canvas_Interactions_Manager {
                 return;
             }
 
-            wp_send_json_success([
+            wp_send_json_success(
+                [
                 'session' => $result
-            ]);
+                ]
+            );
 
         } catch (Exception $e) {
             wp_send_json_error('Failed to end resize session: ' . $e->getMessage());
@@ -309,21 +360,24 @@ class PDF_Builder_Canvas_Interactions_Manager {
     /**
      * Nettoyer une session de drag
      */
-    public function cleanup_drag_session($session_id) {
+    public function cleanup_drag_session($session_id)
+    {
         $this->drag_manager->cleanup_drag_session($session_id);
     }
 
     /**
      * Nettoyer une session de redimensionnement
      */
-    public function cleanup_resize_session($session_id) {
+    public function cleanup_resize_session($session_id)
+    {
         $this->resize_manager->cleanup_resize_session($session_id);
     }
 
     /**
      * Obtenir les statistiques d'interaction
      */
-    public function get_interaction_stats() {
+    public function get_interaction_stats()
+    {
         return [
             'drag' => $this->drag_manager->get_drag_performance_stats(),
             'resize' => $this->resize_manager->get_resize_performance_stats(),
@@ -337,21 +391,23 @@ class PDF_Builder_Canvas_Interactions_Manager {
     /**
      * Traiter une interaction complète (drag + resize)
      */
-    public function process_canvas_interaction($interaction_type, $data) {
+    public function process_canvas_interaction($interaction_type, $data)
+    {
         switch ($interaction_type) {
-            case 'drag':
-                return $this->process_drag_interaction($data);
-            case 'resize':
-                return $this->process_resize_interaction($data);
-            default:
-                return new WP_Error('invalid_interaction_type', 'Unknown interaction type');
+        case 'drag':
+            return $this->process_drag_interaction($data);
+        case 'resize':
+            return $this->process_resize_interaction($data);
+        default:
+            return new WP_Error('invalid_interaction_type', 'Unknown interaction type');
         }
     }
 
     /**
      * Traiter une interaction de drag
      */
-    private function process_drag_interaction($data) {
+    private function process_drag_interaction($data)
+    {
         // Logique pour traiter une interaction de drag complète
         // À implémenter selon les besoins
         return ['type' => 'drag', 'processed' => true];
@@ -360,7 +416,8 @@ class PDF_Builder_Canvas_Interactions_Manager {
     /**
      * Traiter une interaction de redimensionnement
      */
-    private function process_resize_interaction($data) {
+    private function process_resize_interaction($data)
+    {
         // Logique pour traiter une interaction de resize complète
         // À implémenter selon les besoins
         return ['type' => 'resize', 'processed' => true];

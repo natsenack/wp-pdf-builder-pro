@@ -2366,10 +2366,6 @@ var Toolbar = function Toolbar(_ref) {
     className: "tab-content"
   }, /*#__PURE__*/react.createElement("div", {
     className: "toolbar-group"
-  }, /*#__PURE__*/react.createElement("h5", null, "Actions"), /*#__PURE__*/react.createElement("div", {
-    className: "group-buttons"
-  })), /*#__PURE__*/react.createElement("div", {
-    className: "toolbar-group"
   }, /*#__PURE__*/react.createElement("h5", null, "Presse-papiers"), /*#__PURE__*/react.createElement("div", {
     className: "group-buttons"
   }, /*#__PURE__*/react.createElement("button", {
@@ -10745,6 +10741,8 @@ var NewTemplateModal = function NewTemplateModal(_ref) {
   }, "Ouvrir le template")))));
 };
 /* harmony default export */ const components_NewTemplateModal = (NewTemplateModal);
+// EXTERNAL MODULE: ./resources/js/components/preview-system/PreviewModal.jsx + 17 modules
+var PreviewModal = __webpack_require__(669);
 ;// ./resources/js/components/PDFCanvasEditor.jsx
 function PDFCanvasEditor_typeof(o) { "@babel/helpers - typeof"; return PDFCanvasEditor_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, PDFCanvasEditor_typeof(o); }
 function PDFCanvasEditor_regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return PDFCanvasEditor_regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (PDFCanvasEditor_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, PDFCanvasEditor_regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, PDFCanvasEditor_regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), PDFCanvasEditor_regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", PDFCanvasEditor_regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), PDFCanvasEditor_regeneratorDefine2(u), PDFCanvasEditor_regeneratorDefine2(u, o, "Generator"), PDFCanvasEditor_regeneratorDefine2(u, n, function () { return this; }), PDFCanvasEditor_regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (PDFCanvasEditor_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
@@ -10781,6 +10779,9 @@ function PDFCanvasEditor_arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 
 
 
+
+// Import du système d'aperçu unifié
+
 var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
   var options = _ref.options;
   var _useState = (0,react.useState)('select'),
@@ -10795,43 +10796,47 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
     _useState6 = PDFCanvasEditor_slicedToArray(_useState5, 2),
     isPropertiesCollapsed = _useState6[0],
     setIsPropertiesCollapsed = _useState6[1];
+  var _useState7 = (0,react.useState)(false),
+    _useState8 = PDFCanvasEditor_slicedToArray(_useState7, 2),
+    showPreviewModal = _useState8[0],
+    setShowPreviewModal = _useState8[1];
 
   // États pour le pan et la navigation
-  var _useState7 = (0,react.useState)({
+  var _useState9 = (0,react.useState)({
       x: 0,
       y: 0
     }),
-    _useState8 = PDFCanvasEditor_slicedToArray(_useState7, 2),
-    panOffset = _useState8[0],
-    setPanOffset = _useState8[1];
-  var _useState9 = (0,react.useState)(false),
     _useState0 = PDFCanvasEditor_slicedToArray(_useState9, 2),
-    isPanning = _useState0[0],
-    setIsPanning = _useState0[1];
-  var _useState1 = (0,react.useState)({
+    panOffset = _useState0[0],
+    setPanOffset = _useState0[1];
+  var _useState1 = (0,react.useState)(false),
+    _useState10 = PDFCanvasEditor_slicedToArray(_useState1, 2),
+    isPanning = _useState10[0],
+    setIsPanning = _useState10[1];
+  var _useState11 = (0,react.useState)({
       x: 0,
       y: 0
     }),
-    _useState10 = PDFCanvasEditor_slicedToArray(_useState1, 2),
-    lastPanPoint = _useState10[0],
-    setLastPanPoint = _useState10[1];
+    _useState12 = PDFCanvasEditor_slicedToArray(_useState11, 2),
+    lastPanPoint = _useState12[0],
+    setLastPanPoint = _useState12[1];
 
   // États pour les guides
-  var _useState11 = (0,react.useState)({
+  var _useState13 = (0,react.useState)({
       horizontal: [],
       vertical: []
     }),
-    _useState12 = PDFCanvasEditor_slicedToArray(_useState11, 2),
-    guides = _useState12[0],
-    setGuides = _useState12[1];
-  var _useState13 = (0,react.useState)(false),
     _useState14 = PDFCanvasEditor_slicedToArray(_useState13, 2),
-    isCreatingGuide = _useState14[0],
-    setIsCreatingGuide = _useState14[1];
-  var _useState15 = (0,react.useState)(null),
+    guides = _useState14[0],
+    setGuides = _useState14[1];
+  var _useState15 = (0,react.useState)(false),
     _useState16 = PDFCanvasEditor_slicedToArray(_useState15, 2),
-    guideCreationType = _useState16[0],
-    setGuideCreationType = _useState16[1]; // 'horizontal' or 'vertical'
+    isCreatingGuide = _useState16[0],
+    setIsCreatingGuide = _useState16[1];
+  var _useState17 = (0,react.useState)(null),
+    _useState18 = PDFCanvasEditor_slicedToArray(_useState17, 2),
+    guideCreationType = _useState18[0],
+    setGuideCreationType = _useState18[1]; // 'horizontal' or 'vertical'
 
   // Hook pour les paramètres globaux
   var globalSettings = useGlobalSettings();
@@ -11508,6 +11513,12 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
   }, /*#__PURE__*/react.createElement("h2", null, "\xC9diteur PDF - ", options.isNew ? 'Nouveau Template' : options.templateName), /*#__PURE__*/react.createElement("nav", {
     className: "editor-actions"
   }, /*#__PURE__*/react.createElement("button", {
+    className: "btn btn-outline preview-button",
+    onClick: function onClick() {
+      return setShowPreviewModal(true);
+    },
+    title: "Aper\xE7u du PDF (Ctrl+P)"
+  }, "\uD83D\uDC41\uFE0F Aper\xE7u"), /*#__PURE__*/react.createElement("button", {
     className: "btn btn-outline",
     onClick: function onClick() {
       return setShowNewTemplateModal(true);
@@ -11730,6 +11741,15 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
       return setShowNewTemplateModal(false);
     },
     onCreateTemplate: handleCreateTemplate
+  }), /*#__PURE__*/react.createElement(PreviewModal["default"], {
+    isOpen: showPreviewModal,
+    onClose: function onClose() {
+      return setShowPreviewModal(false);
+    },
+    mode: "canvas",
+    elements: canvasState.elements,
+    orderId: null,
+    templateData: options
   }), /*#__PURE__*/react.createElement(FPSCounter, {
     showFps: globalSettings.settings.showFps
   }));
@@ -12007,6 +12027,50 @@ if (typeof window !== 'undefined') {
     // Alias pour compatibilité
     window.pdfBuilderPro = pdfBuilderPro;
 
+    // Fonction pour afficher l'aperçu dans la metabox WooCommerce
+    window.pdfBuilderShowPreview = function (orderId, templateId, nonce) {
+      // Créer ou récupérer la modal d'aperçu
+      var modalContainer = document.getElementById('pdf-builder-preview-modal');
+      if (!modalContainer) {
+        modalContainer = document.createElement('div');
+        modalContainer.id = 'pdf-builder-preview-modal';
+        modalContainer.style.cssText = "\n                    position: fixed;\n                    top: 0;\n                    left: 0;\n                    width: 100%;\n                    height: 100%;\n                    background: rgba(0,0,0,0.8);\n                    z-index: 999999;\n                    display: flex;\n                    align-items: center;\n                    justify-content: center;\n                ";
+        document.body.appendChild(modalContainer);
+      }
+
+      // Créer le conteneur React pour la modal
+      var previewRoot = document.getElementById('pdf-builder-preview-root');
+      if (!previewRoot) {
+        previewRoot = document.createElement('div');
+        previewRoot.id = 'pdf-builder-preview-root';
+        modalContainer.appendChild(previewRoot);
+      }
+
+      // Importer dynamiquement la PreviewModal
+      Promise.resolve(/* import() */).then(__webpack_require__.bind(__webpack_require__, 669)).then(function (_ref2) {
+        var PreviewModal = _ref2["default"];
+        // Créer l'élément React pour la modal d'aperçu
+        var previewElement = /*#__PURE__*/(0,react.createElement)(PreviewModal, {
+          isOpen: true,
+          onClose: function onClose() {
+            modalContainer.style.display = 'none';
+            react_dom.unmountComponentAtNode(previewRoot);
+          },
+          mode: 'metabox',
+          orderId: orderId,
+          templateId: templateId,
+          nonce: nonce
+        });
+
+        // Rendre la modal
+        react_dom.render(previewElement, previewRoot);
+        modalContainer.style.display = 'flex';
+      })["catch"](function (error) {
+        console.error('Erreur lors du chargement de la PreviewModal:', error);
+        alert('Erreur lors du chargement du système d\'aperçu. Veuillez recharger la page.');
+      });
+    };
+
     // Marquer comme initialisé pour éviter les conflits
     PDFBuilderSecurity.preventMultipleInit();
   } else {
@@ -12023,6 +12087,4200 @@ if (typeof window !== 'undefined') {
 
 // Export par défaut pour webpack
 /* harmony default export */ const js = ((/* unused pure expression or super */ null && (pdfBuilderPro)));
+
+/***/ }),
+
+/***/ 669:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, {
+  "default": () => (/* binding */ preview_system_PreviewModal)
+});
+
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(540);
+;// ./resources/js/components/preview-system/renderers/TextRenderer.jsx
+
+
+/**
+ * Renderer pour les éléments de texte simple
+ */
+var TextRenderer = function TextRenderer(_ref) {
+  var element = _ref.element,
+    previewData = _ref.previewData,
+    mode = _ref.mode;
+  var _element$x = element.x,
+    x = _element$x === void 0 ? 0 : _element$x,
+    _element$y = element.y,
+    y = _element$y === void 0 ? 0 : _element$y,
+    _element$width = element.width,
+    width = _element$width === void 0 ? 200 : _element$width,
+    _element$height = element.height,
+    height = _element$height === void 0 ? 50 : _element$height,
+    _element$text = element.text,
+    text = _element$text === void 0 ? 'Texte d\'exemple' : _element$text,
+    _element$fontSize = element.fontSize,
+    fontSize = _element$fontSize === void 0 ? 14 : _element$fontSize,
+    _element$fontFamily = element.fontFamily,
+    fontFamily = _element$fontFamily === void 0 ? 'Arial' : _element$fontFamily,
+    _element$fontWeight = element.fontWeight,
+    fontWeight = _element$fontWeight === void 0 ? 'normal' : _element$fontWeight,
+    _element$fontStyle = element.fontStyle,
+    fontStyle = _element$fontStyle === void 0 ? 'normal' : _element$fontStyle,
+    _element$textAlign = element.textAlign,
+    textAlign = _element$textAlign === void 0 ? 'left' : _element$textAlign,
+    _element$color = element.color,
+    color = _element$color === void 0 ? '#333333' : _element$color,
+    _element$backgroundCo = element.backgroundColor,
+    backgroundColor = _element$backgroundCo === void 0 ? 'transparent' : _element$backgroundCo,
+    _element$borderWidth = element.borderWidth,
+    borderWidth = _element$borderWidth === void 0 ? 0 : _element$borderWidth,
+    _element$borderColor = element.borderColor,
+    borderColor = _element$borderColor === void 0 ? '#000000' : _element$borderColor,
+    _element$borderRadius = element.borderRadius,
+    borderRadius = _element$borderRadius === void 0 ? 0 : _element$borderRadius,
+    _element$opacity = element.opacity,
+    opacity = _element$opacity === void 0 ? 1 : _element$opacity,
+    _element$rotation = element.rotation,
+    rotation = _element$rotation === void 0 ? 0 : _element$rotation,
+    _element$scale = element.scale,
+    scale = _element$scale === void 0 ? 1 : _element$scale,
+    _element$visible = element.visible,
+    visible = _element$visible === void 0 ? true : _element$visible,
+    _element$shadow = element.shadow,
+    shadow = _element$shadow === void 0 ? false : _element$shadow,
+    _element$shadowColor = element.shadowColor,
+    shadowColor = _element$shadowColor === void 0 ? '#000000' : _element$shadowColor,
+    _element$shadowOffset = element.shadowOffsetX,
+    shadowOffsetX = _element$shadowOffset === void 0 ? 2 : _element$shadowOffset,
+    _element$shadowOffset2 = element.shadowOffsetY,
+    shadowOffsetY = _element$shadowOffset2 === void 0 ? 2 : _element$shadowOffset2,
+    _element$textDecorati = element.textDecoration,
+    textDecoration = _element$textDecorati === void 0 ? 'none' : _element$textDecorati,
+    _element$lineHeight = element.lineHeight,
+    lineHeight = _element$lineHeight === void 0 ? 1.2 : _element$lineHeight;
+  var style = {
+    position: 'absolute',
+    left: x,
+    top: y,
+    width: width,
+    height: height,
+    fontSize: "".concat(fontSize, "px"),
+    fontFamily: fontFamily,
+    fontWeight: fontWeight,
+    fontStyle: fontStyle,
+    textAlign: textAlign,
+    color: color,
+    backgroundColor: backgroundColor,
+    border: borderWidth > 0 ? "".concat(borderWidth, "px solid ").concat(borderColor) : 'none',
+    borderRadius: "".concat(borderRadius, "px"),
+    opacity: opacity,
+    padding: '4px',
+    boxSizing: 'border-box',
+    overflow: 'hidden',
+    display: visible ? 'flex' : 'none',
+    alignItems: 'center',
+    whiteSpace: 'pre-wrap',
+    wordWrap: 'break-word',
+    textDecoration: textDecoration,
+    lineHeight: lineHeight,
+    // Transformations
+    transform: "rotate(".concat(rotation, "deg) scale(").concat(scale, ")"),
+    transformOrigin: 'center center',
+    // Ombres
+    boxShadow: shadow ? "".concat(shadowOffsetX, "px ").concat(shadowOffsetY, "px 4px ").concat(shadowColor) : 'none'
+  };
+  return /*#__PURE__*/react.createElement("div", {
+    className: "preview-element preview-text-element",
+    style: style,
+    "data-element-id": element.id,
+    "data-element-type": "text"
+  }, text);
+};
+;// ./resources/js/components/preview-system/renderers/ImageRenderer.jsx
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+
+
+/**
+ * Renderer pour les éléments image (logos, etc.)
+ */
+var ImageRenderer = function ImageRenderer(_ref) {
+  var element = _ref.element,
+    previewData = _ref.previewData,
+    mode = _ref.mode;
+  var _element$x = element.x,
+    x = _element$x === void 0 ? 0 : _element$x,
+    _element$y = element.y,
+    y = _element$y === void 0 ? 0 : _element$y,
+    _element$width = element.width,
+    width = _element$width === void 0 ? 150 : _element$width,
+    _element$height = element.height,
+    height = _element$height === void 0 ? 80 : _element$height,
+    _element$imageUrl = element.imageUrl,
+    imageUrl = _element$imageUrl === void 0 ? '' : _element$imageUrl,
+    _element$alt = element.alt,
+    alt = _element$alt === void 0 ? 'Image' : _element$alt,
+    _element$objectFit = element.objectFit,
+    objectFit = _element$objectFit === void 0 ? 'contain' : _element$objectFit,
+    _element$backgroundCo = element.backgroundColor,
+    backgroundColor = _element$backgroundCo === void 0 ? 'transparent' : _element$backgroundCo,
+    _element$borderWidth = element.borderWidth,
+    borderWidth = _element$borderWidth === void 0 ? 0 : _element$borderWidth,
+    _element$borderColor = element.borderColor,
+    borderColor = _element$borderColor === void 0 ? '#000000' : _element$borderColor,
+    _element$borderRadius = element.borderRadius,
+    borderRadius = _element$borderRadius === void 0 ? 0 : _element$borderRadius,
+    _element$opacity = element.opacity,
+    opacity = _element$opacity === void 0 ? 1 : _element$opacity,
+    _element$rotation = element.rotation,
+    rotation = _element$rotation === void 0 ? 0 : _element$rotation,
+    _element$scale = element.scale,
+    scale = _element$scale === void 0 ? 1 : _element$scale,
+    _element$visible = element.visible,
+    visible = _element$visible === void 0 ? true : _element$visible,
+    _element$shadow = element.shadow,
+    shadow = _element$shadow === void 0 ? false : _element$shadow,
+    _element$shadowColor = element.shadowColor,
+    shadowColor = _element$shadowColor === void 0 ? '#000000' : _element$shadowColor,
+    _element$shadowOffset = element.shadowOffsetX,
+    shadowOffsetX = _element$shadowOffset === void 0 ? 2 : _element$shadowOffset,
+    _element$shadowOffset2 = element.shadowOffsetY,
+    shadowOffsetY = _element$shadowOffset2 === void 0 ? 2 : _element$shadowOffset2,
+    _element$brightness = element.brightness,
+    brightness = _element$brightness === void 0 ? 100 : _element$brightness,
+    _element$contrast = element.contrast,
+    contrast = _element$contrast === void 0 ? 100 : _element$contrast,
+    _element$saturate = element.saturate,
+    saturate = _element$saturate === void 0 ? 100 : _element$saturate;
+
+  // Récupérer les données d'image depuis l'aperçu
+  var elementKey = "".concat(element.type, "_").concat(element.id);
+  var imageData = previewData[elementKey] || {};
+  var finalImageUrl = imageData.imageUrl || imageUrl;
+  var containerStyle = {
+    position: 'absolute',
+    left: x,
+    top: y,
+    width: width,
+    height: height,
+    backgroundColor: backgroundColor,
+    border: borderWidth > 0 ? "".concat(borderWidth, "px solid ").concat(borderColor) : 'none',
+    borderRadius: "".concat(borderRadius, "px"),
+    opacity: opacity,
+    display: visible ? 'flex' : 'none',
+    alignItems: 'center',
+    justifyContent: 'center',
+    boxSizing: 'border-box',
+    overflow: 'hidden',
+    // Transformations
+    transform: "rotate(".concat(rotation, "deg) scale(").concat(scale, ")"),
+    transformOrigin: 'center center',
+    // Ombres
+    boxShadow: shadow ? "".concat(shadowOffsetX, "px ").concat(shadowOffsetY, "px 4px ").concat(shadowColor) : 'none'
+  };
+  var imageStyle = {
+    width: '100%',
+    height: '100%',
+    objectFit: objectFit,
+    borderRadius: borderWidth > 0 ? '0' : "".concat(borderRadius, "px"),
+    // Filtres d'image
+    filter: "brightness(".concat(brightness, "%) contrast(").concat(contrast, "%) saturate(").concat(saturate, "%)")
+  };
+  var placeholderStyle = {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#f8f9fa',
+    border: '2px dashed #dee2e6',
+    borderRadius: "".concat(borderRadius, "px"),
+    color: '#6c757d',
+    fontSize: '12px',
+    textAlign: 'center',
+    padding: '8px',
+    boxSizing: 'border-box'
+  };
+  return /*#__PURE__*/react.createElement("div", {
+    className: "preview-element preview-image-element",
+    style: containerStyle,
+    "data-element-id": element.id,
+    "data-element-type": element.type
+  }, finalImageUrl ? /*#__PURE__*/react.createElement("img", {
+    src: finalImageUrl,
+    alt: alt,
+    style: imageStyle,
+    onError: function onError(e) {
+      // Fallback vers le placeholder en cas d'erreur de chargement
+      e.target.style.display = 'none';
+      e.target.nextSibling.style.display = 'flex';
+    }
+  }) : null, /*#__PURE__*/react.createElement("div", {
+    style: _objectSpread(_objectSpread({}, placeholderStyle), {}, {
+      display: finalImageUrl ? 'none' : 'flex'
+    })
+  }, /*#__PURE__*/react.createElement("div", null, /*#__PURE__*/react.createElement("div", {
+    style: {
+      fontSize: '16px',
+      marginBottom: '4px'
+    }
+  }, "\uD83D\uDCF7"), /*#__PURE__*/react.createElement("div", null, element.type === 'company_logo' ? 'Logo' : 'Image'))));
+};
+;// ./resources/js/components/preview-system/renderers/TableRenderer.jsx
+function TableRenderer_typeof(o) { "@babel/helpers - typeof"; return TableRenderer_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, TableRenderer_typeof(o); }
+function TableRenderer_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function TableRenderer_objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? TableRenderer_ownKeys(Object(t), !0).forEach(function (r) { TableRenderer_defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : TableRenderer_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function TableRenderer_defineProperty(e, r, t) { return (r = TableRenderer_toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function TableRenderer_toPropertyKey(t) { var i = TableRenderer_toPrimitive(t, "string"); return "symbol" == TableRenderer_typeof(i) ? i : i + ""; }
+function TableRenderer_toPrimitive(t, r) { if ("object" != TableRenderer_typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != TableRenderer_typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+
+
+/**
+ * Renderer pour les tableaux de produits
+ */
+
+// Fonction utilitaire pour convertir RGB en CSS
+var rgbToCss = function rgbToCss(rgbArray) {
+  if (!Array.isArray(rgbArray) || rgbArray.length !== 3) {
+    return 'transparent';
+  }
+  return "rgb(".concat(rgbArray[0], ", ").concat(rgbArray[1], ", ").concat(rgbArray[2], ")");
+};
+var TableRenderer = function TableRenderer(_ref) {
+  var element = _ref.element,
+    previewData = _ref.previewData,
+    mode = _ref.mode;
+  var _element$x = element.x,
+    x = _element$x === void 0 ? 0 : _element$x,
+    _element$y = element.y,
+    y = _element$y === void 0 ? 0 : _element$y,
+    _element$width = element.width,
+    width = _element$width === void 0 ? 500 : _element$width,
+    _element$height = element.height,
+    height = _element$height === void 0 ? 200 : _element$height,
+    _element$showHeaders = element.showHeaders,
+    showHeaders = _element$showHeaders === void 0 ? true : _element$showHeaders,
+    _element$showBorders = element.showBorders,
+    showBorders = _element$showBorders === void 0 ? false : _element$showBorders,
+    _element$tableStyle = element.tableStyle,
+    tableStyle = _element$tableStyle === void 0 ? 'default' : _element$tableStyle,
+    _element$backgroundCo = element.backgroundColor,
+    backgroundColor = _element$backgroundCo === void 0 ? 'transparent' : _element$backgroundCo,
+    _element$borderWidth = element.borderWidth,
+    borderWidth = _element$borderWidth === void 0 ? 1 : _element$borderWidth,
+    _element$borderColor = element.borderColor,
+    borderColor = _element$borderColor === void 0 ? '#dddddd' : _element$borderColor,
+    _element$borderRadius = element.borderRadius,
+    borderRadius = _element$borderRadius === void 0 ? 0 : _element$borderRadius,
+    _element$opacity = element.opacity,
+    opacity = _element$opacity === void 0 ? 1 : _element$opacity,
+    _element$showLabels = element.showLabels,
+    showLabels = _element$showLabels === void 0 ? true : _element$showLabels,
+    _element$headers = element.headers,
+    headers = _element$headers === void 0 ? ['Produit', 'Qté', 'Prix'] : _element$headers,
+    _element$dataSource = element.dataSource,
+    dataSource = _element$dataSource === void 0 ? 'order_items' : _element$dataSource,
+    _element$columns = element.columns,
+    columns = _element$columns === void 0 ? {
+      image: true,
+      name: true,
+      sku: false,
+      quantity: true,
+      price: true,
+      total: true
+    } : _element$columns,
+    _element$showSubtotal = element.showSubtotal,
+    showSubtotal = _element$showSubtotal === void 0 ? false : _element$showSubtotal,
+    _element$showShipping = element.showShipping,
+    showShipping = _element$showShipping === void 0 ? true : _element$showShipping,
+    _element$showTaxes = element.showTaxes,
+    showTaxes = _element$showTaxes === void 0 ? true : _element$showTaxes,
+    _element$showDiscount = element.showDiscount,
+    showDiscount = _element$showDiscount === void 0 ? false : _element$showDiscount,
+    _element$showTotal = element.showTotal,
+    showTotal = _element$showTotal === void 0 ? false : _element$showTotal,
+    _element$rotation = element.rotation,
+    rotation = _element$rotation === void 0 ? 0 : _element$rotation,
+    _element$scale = element.scale,
+    scale = _element$scale === void 0 ? 1 : _element$scale,
+    _element$visible = element.visible,
+    visible = _element$visible === void 0 ? true : _element$visible,
+    _element$shadow = element.shadow,
+    shadow = _element$shadow === void 0 ? false : _element$shadow,
+    _element$shadowColor = element.shadowColor,
+    shadowColor = _element$shadowColor === void 0 ? '#000000' : _element$shadowColor,
+    _element$shadowOffset = element.shadowOffsetX,
+    shadowOffsetX = _element$shadowOffset === void 0 ? 2 : _element$shadowOffset,
+    _element$shadowOffset2 = element.shadowOffsetY,
+    shadowOffsetY = _element$shadowOffset2 === void 0 ? 2 : _element$shadowOffset2;
+
+  // Récupérer les données du tableau
+  var elementKey = "product_table_".concat(element.id);
+  var tableData = previewData[elementKey] || {};
+
+  // Utiliser les données de style du tableau si disponibles
+  var tableStyleData = tableData.tableStyleData || {
+    header_bg: [248, 249, 250],
+    // #f8f9fa
+    header_border: [226, 232, 240],
+    // #e2e8f0
+    row_border: [241, 245, 249],
+    // #f1f5f9
+    alt_row_bg: [250, 251, 252],
+    // #fafbfc
+    headerTextColor: '#000000',
+    rowTextColor: '#000000',
+    border_width: 1,
+    headerFontWeight: 'bold',
+    headerFontSize: '12px',
+    rowFontSize: '11px'
+  };
+
+  // Utiliser les headers depuis l'élément ou les données
+  var tableHeaders = headers && headers.length > 0 ? headers : tableData.headers || [];
+
+  // Générer les headers dynamiquement selon les colonnes activées (fallback)
+  var generateHeadersFromColumns = function generateHeadersFromColumns() {
+    var dynamicHeaders = [];
+    if (columns.image) dynamicHeaders.push('Image');
+    if (columns.name) dynamicHeaders.push('Produit');
+    if (columns.sku) dynamicHeaders.push('SKU');
+    if (columns.quantity) dynamicHeaders.push('Qté');
+    if (columns.price) dynamicHeaders.push('Prix');
+    if (columns.total) dynamicHeaders.push('Total');
+    return dynamicHeaders;
+  };
+
+  // Utiliser les headers dans cet ordre de priorité :
+  // 1. Headers personnalisés depuis l'élément
+  // 2. Headers depuis les données (générés par SampleDataProvider)
+  // 3. Headers générés dynamiquement depuis les colonnes
+  var finalHeaders = tableHeaders.length > 0 ? tableHeaders : tableData.headers && tableData.headers.length > 0 ? tableData.headers : generateHeadersFromColumns();
+  var containerStyle = {
+    position: 'absolute',
+    left: x,
+    top: y,
+    width: width,
+    height: height,
+    backgroundColor: backgroundColor,
+    border: borderWidth > 0 ? "".concat(borderWidth, "px solid ").concat(borderColor) : 'none',
+    borderRadius: "".concat(borderRadius, "px"),
+    opacity: opacity,
+    padding: '8px',
+    boxSizing: 'border-box',
+    overflow: 'auto',
+    display: visible ? 'block' : 'none',
+    // Transformations
+    transform: "rotate(".concat(rotation, "deg) scale(").concat(scale, ")"),
+    transformOrigin: 'center center',
+    // Ombres
+    boxShadow: shadow ? "".concat(shadowOffsetX, "px ").concat(shadowOffsetY, "px 4px ").concat(shadowColor) : 'none'
+  };
+  var tableStyleConfig = {
+    width: '100%',
+    borderCollapse: showBorders ? 'collapse' : 'separate',
+    borderSpacing: showBorders ? '0' : '2px',
+    fontSize: tableStyleData.rowFontSize,
+    fontFamily: 'Arial, sans-serif'
+  };
+  var headerStyle = {
+    backgroundColor: rgbToCss(tableStyleData.header_bg),
+    color: tableStyleData.headerTextColor,
+    fontWeight: tableStyleData.headerFontWeight,
+    fontSize: tableStyleData.headerFontSize,
+    padding: '8px',
+    textAlign: 'left',
+    border: showBorders ? "".concat(tableStyleData.border_width, "px solid ").concat(rgbToCss(tableStyleData.header_border)) : 'none'
+  };
+  var imageStyle = {
+    width: '40px',
+    height: '40px',
+    objectFit: 'cover',
+    borderRadius: '4px'
+  };
+  var descriptionStyle = {
+    maxWidth: '200px',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap'
+  };
+  var attributesStyle = {
+    maxWidth: '150px',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    fontSize: '10px'
+  };
+  var cellStyle = {
+    padding: '6px 8px',
+    border: showBorders ? "".concat(tableStyleData.border_width, "px solid ").concat(rgbToCss(tableStyleData.row_border)) : 'none',
+    verticalAlign: 'top',
+    fontSize: tableStyleData.rowFontSize,
+    color: tableStyleData.rowTextColor
+  };
+  return /*#__PURE__*/react.createElement("div", {
+    className: "preview-element preview-table-element",
+    style: containerStyle,
+    "data-element-id": element.id,
+    "data-element-type": "product_table"
+  }, /*#__PURE__*/react.createElement("table", {
+    style: tableStyleConfig
+  }, showHeaders && finalHeaders && finalHeaders.length > 0 && /*#__PURE__*/react.createElement("thead", null, /*#__PURE__*/react.createElement("tr", null, finalHeaders.map(function (header, index) {
+    return /*#__PURE__*/react.createElement("th", {
+      key: index,
+      style: headerStyle
+    }, header);
+  }))), /*#__PURE__*/react.createElement("tbody", null, tableData.rows && tableData.rows.map(function (row, rowIndex) {
+    // Appliquer les couleurs alternées des lignes
+    var isEvenRow = rowIndex % 2 === 0;
+    var rowBackgroundColor = isEvenRow ? rgbToCss(tableStyleData.alt_row_bg) : 'transparent';
+    return /*#__PURE__*/react.createElement("tr", {
+      key: rowIndex,
+      style: {
+        backgroundColor: rowBackgroundColor
+      }
+    }, row.map(function (cell, cellIndex) {
+      var header = finalHeaders[cellIndex] || '';
+      var isImageColumn = header.toLowerCase() === 'image';
+      var isDescriptionColumn = header.toLowerCase().includes('description');
+      var isAttributesColumn = header.toLowerCase() === 'attributs';
+      var isQuantityColumn = header.toLowerCase() === 'qté';
+      var isPriceColumn = header.toLowerCase().includes('prix') || header.toLowerCase() === 'total' || header.toLowerCase() === 'tva' || header.toLowerCase() === 'remise';
+      var cellStyleWithAlignment = TableRenderer_objectSpread({}, cellStyle);
+
+      // Alignement spécial pour certaines colonnes
+      if (isQuantityColumn) {
+        cellStyleWithAlignment.textAlign = 'center';
+      } else if (isPriceColumn) {
+        cellStyleWithAlignment.textAlign = 'right';
+      }
+      return /*#__PURE__*/react.createElement("td", {
+        key: cellIndex,
+        style: cellStyleWithAlignment
+      }, isImageColumn && cell ? /*#__PURE__*/react.createElement("img", {
+        src: cell,
+        alt: "Produit",
+        style: imageStyle,
+        onError: function onError(e) {
+          e.target.style.display = 'none';
+        }
+      }) : isDescriptionColumn && cell ? /*#__PURE__*/react.createElement("span", {
+        style: descriptionStyle,
+        title: cell
+      }, cell) : isAttributesColumn && cell ? /*#__PURE__*/react.createElement("span", {
+        style: attributesStyle,
+        title: cell
+      }, cell) : cell || '-');
+    }));
+  })), (showSubtotal || showShipping || showTaxes || showDiscount || showTotal) && tableData.totals && Object.keys(tableData.totals).length > 0 && /*#__PURE__*/react.createElement("tfoot", null, showSubtotal && tableData.totals.subtotal && /*#__PURE__*/react.createElement("tr", null, /*#__PURE__*/react.createElement("td", {
+    colSpan: finalHeaders.length,
+    style: TableRenderer_objectSpread(TableRenderer_objectSpread({}, cellStyle), {}, {
+      textAlign: 'right',
+      fontWeight: 'bold',
+      borderTop: '1px solid #dee2e6'
+    })
+  }, "Sous-total: ", tableData.totals.subtotal)), showShipping && tableData.totals.shipping && /*#__PURE__*/react.createElement("tr", null, /*#__PURE__*/react.createElement("td", {
+    colSpan: finalHeaders.length,
+    style: TableRenderer_objectSpread(TableRenderer_objectSpread({}, cellStyle), {}, {
+      textAlign: 'right',
+      fontWeight: 'bold'
+    })
+  }, "Frais de port: ", tableData.totals.shipping)), showTaxes && tableData.totals.tax && /*#__PURE__*/react.createElement("tr", null, /*#__PURE__*/react.createElement("td", {
+    colSpan: finalHeaders.length,
+    style: TableRenderer_objectSpread(TableRenderer_objectSpread({}, cellStyle), {}, {
+      textAlign: 'right',
+      fontWeight: 'bold'
+    })
+  }, "TVA: ", tableData.totals.tax)), showDiscount && tableData.totals.discount && /*#__PURE__*/react.createElement("tr", null, /*#__PURE__*/react.createElement("td", {
+    colSpan: finalHeaders.length,
+    style: TableRenderer_objectSpread(TableRenderer_objectSpread({}, cellStyle), {}, {
+      textAlign: 'right',
+      fontWeight: 'bold'
+    })
+  }, "Remise: ", tableData.totals.discount)), showTotal && tableData.totals.total && /*#__PURE__*/react.createElement("tr", null, /*#__PURE__*/react.createElement("td", {
+    colSpan: finalHeaders.length,
+    style: TableRenderer_objectSpread(TableRenderer_objectSpread({}, cellStyle), {}, {
+      textAlign: 'right',
+      fontWeight: 'bold',
+      fontSize: '14px',
+      color: '#2563eb',
+      borderTop: '2px solid #2563eb'
+    })
+  }, "Total: ", tableData.totals.total)))), (!tableData.rows || tableData.rows.length === 0) && /*#__PURE__*/react.createElement("div", {
+    style: {
+      textAlign: 'center',
+      color: '#6c757d',
+      fontStyle: 'italic',
+      padding: '20px'
+    }
+  }, "Aucun produit \xE0 afficher"));
+};
+;// ./resources/js/components/preview-system/renderers/CustomerInfoRenderer.jsx
+
+
+/**
+ * Renderer pour les informations client
+ */
+var CustomerInfoRenderer = function CustomerInfoRenderer(_ref) {
+  var element = _ref.element,
+    previewData = _ref.previewData,
+    mode = _ref.mode;
+  var _element$x = element.x,
+    x = _element$x === void 0 ? 0 : _element$x,
+    _element$y = element.y,
+    y = _element$y === void 0 ? 0 : _element$y,
+    _element$width = element.width,
+    width = _element$width === void 0 ? 300 : _element$width,
+    _element$height = element.height,
+    height = _element$height === void 0 ? 150 : _element$height,
+    _element$showHeaders = element.showHeaders,
+    showHeaders = _element$showHeaders === void 0 ? true : _element$showHeaders,
+    _element$showBorders = element.showBorders,
+    showBorders = _element$showBorders === void 0 ? false : _element$showBorders,
+    _element$fields = element.fields,
+    fields = _element$fields === void 0 ? ['name', 'email', 'phone', 'address'] : _element$fields,
+    _element$layout = element.layout,
+    layout = _element$layout === void 0 ? 'vertical' : _element$layout,
+    _element$showLabels = element.showLabels,
+    showLabels = _element$showLabels === void 0 ? true : _element$showLabels,
+    _element$labelStyle = element.labelStyle,
+    labelStyle = _element$labelStyle === void 0 ? 'bold' : _element$labelStyle,
+    _element$spacing = element.spacing,
+    spacing = _element$spacing === void 0 ? 8 : _element$spacing,
+    _element$fontSize = element.fontSize,
+    fontSize = _element$fontSize === void 0 ? 12 : _element$fontSize,
+    _element$fontFamily = element.fontFamily,
+    fontFamily = _element$fontFamily === void 0 ? 'Arial' : _element$fontFamily,
+    _element$fontWeight = element.fontWeight,
+    fontWeight = _element$fontWeight === void 0 ? 'normal' : _element$fontWeight,
+    _element$textAlign = element.textAlign,
+    textAlign = _element$textAlign === void 0 ? 'left' : _element$textAlign,
+    _element$color = element.color,
+    color = _element$color === void 0 ? '#333333' : _element$color,
+    _element$backgroundCo = element.backgroundColor,
+    backgroundColor = _element$backgroundCo === void 0 ? 'transparent' : _element$backgroundCo,
+    _element$borderWidth = element.borderWidth,
+    borderWidth = _element$borderWidth === void 0 ? 0 : _element$borderWidth,
+    _element$borderColor = element.borderColor,
+    borderColor = _element$borderColor === void 0 ? '#000000' : _element$borderColor,
+    _element$borderRadius = element.borderRadius,
+    borderRadius = _element$borderRadius === void 0 ? 0 : _element$borderRadius,
+    _element$opacity = element.opacity,
+    opacity = _element$opacity === void 0 ? 1 : _element$opacity,
+    _element$rotation = element.rotation,
+    rotation = _element$rotation === void 0 ? 0 : _element$rotation,
+    _element$scale = element.scale,
+    scale = _element$scale === void 0 ? 1 : _element$scale,
+    _element$visible = element.visible,
+    visible = _element$visible === void 0 ? true : _element$visible,
+    _element$shadow = element.shadow,
+    shadow = _element$shadow === void 0 ? false : _element$shadow,
+    _element$shadowColor = element.shadowColor,
+    shadowColor = _element$shadowColor === void 0 ? '#000000' : _element$shadowColor,
+    _element$shadowOffset = element.shadowOffsetX,
+    shadowOffsetX = _element$shadowOffset === void 0 ? 2 : _element$shadowOffset,
+    _element$shadowOffset2 = element.shadowOffsetY,
+    shadowOffsetY = _element$shadowOffset2 === void 0 ? 2 : _element$shadowOffset2,
+    _element$textDecorati = element.textDecoration,
+    textDecoration = _element$textDecorati === void 0 ? 'none' : _element$textDecorati,
+    _element$lineHeight = element.lineHeight,
+    lineHeight = _element$lineHeight === void 0 ? 1.2 : _element$lineHeight;
+
+  // Récupérer les données client
+  var elementKey = "customer_info_".concat(element.id);
+  var customerData = previewData[elementKey] || {};
+  var containerStyle = {
+    position: 'absolute',
+    left: x,
+    top: y,
+    width: width,
+    height: height,
+    backgroundColor: backgroundColor,
+    border: borderWidth > 0 ? "".concat(borderWidth, "px solid ").concat(borderColor) : 'none',
+    borderRadius: "".concat(borderRadius, "px"),
+    opacity: opacity,
+    padding: '8px',
+    boxSizing: 'border-box',
+    overflow: 'hidden',
+    fontSize: "".concat(fontSize, "px"),
+    fontFamily: fontFamily,
+    color: color,
+    display: visible ? 'block' : 'none',
+    textDecoration: textDecoration,
+    lineHeight: lineHeight,
+    // Transformations
+    transform: "rotate(".concat(rotation, "deg) scale(").concat(scale, ")"),
+    transformOrigin: 'center center',
+    // Ombres
+    boxShadow: shadow ? "".concat(shadowOffsetX, "px ").concat(shadowOffsetY, "px 4px ").concat(shadowColor) : 'none'
+  };
+  var fieldStyle = {
+    marginBottom: layout === 'vertical' ? "".concat(spacing, "px") : '0',
+    display: layout === 'horizontal' ? 'inline-block' : 'block',
+    marginRight: layout === 'horizontal' ? "".concat(spacing * 2, "px") : '0'
+  };
+  var labelStyleConfig = {
+    fontWeight: labelStyle === 'bold' ? 'bold' : 'normal',
+    textTransform: labelStyle === 'uppercase' ? 'uppercase' : 'none',
+    marginRight: showLabels ? '8px' : '0'
+  };
+  var valueStyle = {
+    fontWeight: fontWeight,
+    textAlign: textAlign
+  };
+
+  // Mapping des champs vers leurs libellés
+  var fieldLabels = {
+    name: 'Nom :',
+    email: 'Email :',
+    phone: 'Téléphone :',
+    address: 'Adresse :',
+    company: 'Entreprise :',
+    vat: 'TVA :',
+    siret: 'SIRET :'
+  };
+  return /*#__PURE__*/react.createElement("div", {
+    className: "preview-element preview-customer-info-element",
+    style: containerStyle,
+    "data-element-id": element.id,
+    "data-element-type": "customer_info"
+  }, fields.map(function (field, index) {
+    var value = customerData[field];
+    if (!value) return null;
+    return /*#__PURE__*/react.createElement("div", {
+      key: field,
+      style: fieldStyle
+    }, showLabels && /*#__PURE__*/react.createElement("span", {
+      style: labelStyleConfig
+    }, fieldLabels[field] || "".concat(field, " :")), /*#__PURE__*/react.createElement("span", {
+      style: valueStyle
+    }, field === 'address' ? /*#__PURE__*/react.createElement("span", {
+      style: {
+        whiteSpace: 'pre-line'
+      }
+    }, value) : value));
+  }), fields.length === 0 || Object.keys(customerData).length === 0 && /*#__PURE__*/react.createElement("div", {
+    style: {
+      textAlign: 'center',
+      color: '#6c757d',
+      fontStyle: 'italic',
+      padding: '20px'
+    }
+  }, "Aucune information client"));
+};
+;// ./resources/js/components/preview-system/renderers/CompanyInfoRenderer.jsx
+
+
+/**
+ * Renderer pour les informations entreprise
+ */
+var CompanyInfoRenderer = function CompanyInfoRenderer(_ref) {
+  var element = _ref.element,
+    previewData = _ref.previewData,
+    mode = _ref.mode;
+  var _element$x = element.x,
+    x = _element$x === void 0 ? 0 : _element$x,
+    _element$y = element.y,
+    y = _element$y === void 0 ? 0 : _element$y,
+    _element$width = element.width,
+    width = _element$width === void 0 ? 300 : _element$width,
+    _element$height = element.height,
+    height = _element$height === void 0 ? 120 : _element$height,
+    _element$showHeaders = element.showHeaders,
+    showHeaders = _element$showHeaders === void 0 ? false : _element$showHeaders,
+    _element$showBorders = element.showBorders,
+    showBorders = _element$showBorders === void 0 ? false : _element$showBorders,
+    _element$fields = element.fields,
+    fields = _element$fields === void 0 ? ['name', 'address', 'phone', 'email'] : _element$fields,
+    _element$layout = element.layout,
+    layout = _element$layout === void 0 ? 'vertical' : _element$layout,
+    _element$showLabels = element.showLabels,
+    showLabels = _element$showLabels === void 0 ? false : _element$showLabels,
+    _element$labelStyle = element.labelStyle,
+    labelStyle = _element$labelStyle === void 0 ? 'normal' : _element$labelStyle,
+    _element$spacing = element.spacing,
+    spacing = _element$spacing === void 0 ? 4 : _element$spacing,
+    _element$fontSize = element.fontSize,
+    fontSize = _element$fontSize === void 0 ? 12 : _element$fontSize,
+    _element$fontFamily = element.fontFamily,
+    fontFamily = _element$fontFamily === void 0 ? 'Arial' : _element$fontFamily,
+    _element$fontWeight = element.fontWeight,
+    fontWeight = _element$fontWeight === void 0 ? 'normal' : _element$fontWeight,
+    _element$textAlign = element.textAlign,
+    textAlign = _element$textAlign === void 0 ? 'left' : _element$textAlign,
+    _element$color = element.color,
+    color = _element$color === void 0 ? '#333333' : _element$color,
+    _element$backgroundCo = element.backgroundColor,
+    backgroundColor = _element$backgroundCo === void 0 ? 'transparent' : _element$backgroundCo,
+    _element$borderWidth = element.borderWidth,
+    borderWidth = _element$borderWidth === void 0 ? 0 : _element$borderWidth,
+    _element$borderColor = element.borderColor,
+    borderColor = _element$borderColor === void 0 ? '#000000' : _element$borderColor,
+    _element$borderRadius = element.borderRadius,
+    borderRadius = _element$borderRadius === void 0 ? 0 : _element$borderRadius,
+    _element$opacity = element.opacity,
+    opacity = _element$opacity === void 0 ? 1 : _element$opacity,
+    _element$rotation = element.rotation,
+    rotation = _element$rotation === void 0 ? 0 : _element$rotation,
+    _element$scale = element.scale,
+    scale = _element$scale === void 0 ? 1 : _element$scale,
+    _element$visible = element.visible,
+    visible = _element$visible === void 0 ? true : _element$visible,
+    _element$shadow = element.shadow,
+    shadow = _element$shadow === void 0 ? false : _element$shadow,
+    _element$shadowColor = element.shadowColor,
+    shadowColor = _element$shadowColor === void 0 ? '#000000' : _element$shadowColor,
+    _element$shadowOffset = element.shadowOffsetX,
+    shadowOffsetX = _element$shadowOffset === void 0 ? 2 : _element$shadowOffset,
+    _element$shadowOffset2 = element.shadowOffsetY,
+    shadowOffsetY = _element$shadowOffset2 === void 0 ? 2 : _element$shadowOffset2,
+    _element$textDecorati = element.textDecoration,
+    textDecoration = _element$textDecorati === void 0 ? 'none' : _element$textDecorati,
+    _element$lineHeight = element.lineHeight,
+    lineHeight = _element$lineHeight === void 0 ? 1.2 : _element$lineHeight;
+
+  // Récupérer les données entreprise
+  var elementKey = "company_info_".concat(element.id);
+  var companyData = previewData[elementKey] || {};
+  var containerStyle = {
+    position: 'absolute',
+    left: x,
+    top: y,
+    width: width,
+    height: height,
+    backgroundColor: backgroundColor,
+    border: borderWidth > 0 ? "".concat(borderWidth, "px solid ").concat(borderColor) : 'none',
+    borderRadius: "".concat(borderRadius, "px"),
+    opacity: opacity,
+    padding: '4px',
+    boxSizing: 'border-box',
+    overflow: 'hidden',
+    fontSize: "".concat(fontSize, "px"),
+    fontFamily: fontFamily,
+    color: color,
+    display: visible ? 'block' : 'none',
+    textDecoration: textDecoration,
+    lineHeight: lineHeight,
+    // Transformations
+    transform: "rotate(".concat(rotation, "deg) scale(").concat(scale, ")"),
+    transformOrigin: 'center center',
+    // Ombres
+    boxShadow: shadow ? "".concat(shadowOffsetX, "px ").concat(shadowOffsetY, "px 4px ").concat(shadowColor) : 'none'
+  };
+  var fieldStyle = {
+    marginBottom: layout === 'vertical' ? "".concat(spacing, "px") : '0',
+    display: layout === 'horizontal' ? 'inline-block' : 'block',
+    marginRight: layout === 'horizontal' ? "".concat(spacing * 2, "px") : '0'
+  };
+  var labelStyleConfig = {
+    fontWeight: labelStyle === 'bold' ? 'bold' : 'normal',
+    textTransform: labelStyle === 'uppercase' ? 'uppercase' : 'none',
+    marginRight: showLabels ? '8px' : '0'
+  };
+  var valueStyle = {
+    fontWeight: fontWeight,
+    textAlign: textAlign
+  };
+
+  // Mapping des champs vers leurs libellés
+  var fieldLabels = {
+    name: 'Nom :',
+    address: 'Adresse :',
+    phone: 'Téléphone :',
+    email: 'Email :',
+    website: 'Site web :',
+    vat: 'TVA :',
+    rcs: 'RCS :',
+    siret: 'SIRET :'
+  };
+  return /*#__PURE__*/react.createElement("div", {
+    className: "preview-element preview-company-info-element",
+    style: containerStyle,
+    "data-element-id": element.id,
+    "data-element-type": "company_info"
+  }, fields.map(function (field, index) {
+    var value = companyData[field];
+    if (!value) return null;
+    return /*#__PURE__*/react.createElement("div", {
+      key: field,
+      style: fieldStyle
+    }, showLabels && /*#__PURE__*/react.createElement("span", {
+      style: labelStyleConfig
+    }, fieldLabels[field] || "".concat(field, " :")), /*#__PURE__*/react.createElement("span", {
+      style: valueStyle
+    }, field === 'address' ? /*#__PURE__*/react.createElement("span", {
+      style: {
+        whiteSpace: 'pre-line'
+      }
+    }, value) : value));
+  }), fields.length === 0 || Object.keys(companyData).length === 0 && /*#__PURE__*/react.createElement("div", {
+    style: {
+      textAlign: 'center',
+      color: '#6c757d',
+      fontStyle: 'italic',
+      padding: '20px'
+    }
+  }, "Aucune information entreprise"));
+};
+;// ./resources/js/components/preview-system/renderers/OrderNumberRenderer.jsx
+
+
+/**
+ * Renderer pour le numéro de commande
+ */
+var OrderNumberRenderer = function OrderNumberRenderer(_ref) {
+  var element = _ref.element,
+    previewData = _ref.previewData,
+    mode = _ref.mode;
+  var _element$x = element.x,
+    x = _element$x === void 0 ? 0 : _element$x,
+    _element$y = element.y,
+    y = _element$y === void 0 ? 0 : _element$y,
+    _element$width = element.width,
+    width = _element$width === void 0 ? 300 : _element$width,
+    _element$height = element.height,
+    height = _element$height === void 0 ? 40 : _element$height,
+    _element$showHeaders = element.showHeaders,
+    showHeaders = _element$showHeaders === void 0 ? false : _element$showHeaders,
+    _element$showBorders = element.showBorders,
+    showBorders = _element$showBorders === void 0 ? false : _element$showBorders,
+    _element$format = element.format,
+    format = _element$format === void 0 ? 'Commande #{order_number} - {order_date}' : _element$format,
+    _element$fontSize = element.fontSize,
+    fontSize = _element$fontSize === void 0 ? 14 : _element$fontSize,
+    _element$fontFamily = element.fontFamily,
+    fontFamily = _element$fontFamily === void 0 ? 'Arial' : _element$fontFamily,
+    _element$fontWeight = element.fontWeight,
+    fontWeight = _element$fontWeight === void 0 ? 'bold' : _element$fontWeight,
+    _element$textAlign = element.textAlign,
+    textAlign = _element$textAlign === void 0 ? 'right' : _element$textAlign,
+    _element$color = element.color,
+    color = _element$color === void 0 ? '#333333' : _element$color,
+    _element$showLabel = element.showLabel,
+    showLabel = _element$showLabel === void 0 ? true : _element$showLabel,
+    _element$labelText = element.labelText,
+    labelText = _element$labelText === void 0 ? 'N° de commande:' : _element$labelText,
+    _element$backgroundCo = element.backgroundColor,
+    backgroundColor = _element$backgroundCo === void 0 ? 'transparent' : _element$backgroundCo,
+    _element$borderWidth = element.borderWidth,
+    borderWidth = _element$borderWidth === void 0 ? 0 : _element$borderWidth,
+    _element$borderColor = element.borderColor,
+    borderColor = _element$borderColor === void 0 ? '#000000' : _element$borderColor,
+    _element$borderRadius = element.borderRadius,
+    borderRadius = _element$borderRadius === void 0 ? 0 : _element$borderRadius,
+    _element$opacity = element.opacity,
+    opacity = _element$opacity === void 0 ? 1 : _element$opacity,
+    _element$rotation = element.rotation,
+    rotation = _element$rotation === void 0 ? 0 : _element$rotation,
+    _element$scale = element.scale,
+    scale = _element$scale === void 0 ? 1 : _element$scale,
+    _element$visible = element.visible,
+    visible = _element$visible === void 0 ? true : _element$visible,
+    _element$shadow = element.shadow,
+    shadow = _element$shadow === void 0 ? false : _element$shadow,
+    _element$shadowColor = element.shadowColor,
+    shadowColor = _element$shadowColor === void 0 ? '#000000' : _element$shadowColor,
+    _element$shadowOffset = element.shadowOffsetX,
+    shadowOffsetX = _element$shadowOffset === void 0 ? 2 : _element$shadowOffset,
+    _element$shadowOffset2 = element.shadowOffsetY,
+    shadowOffsetY = _element$shadowOffset2 === void 0 ? 2 : _element$shadowOffset2,
+    _element$textDecorati = element.textDecoration,
+    textDecoration = _element$textDecorati === void 0 ? 'none' : _element$textDecorati,
+    _element$lineHeight = element.lineHeight,
+    lineHeight = _element$lineHeight === void 0 ? 1.2 : _element$lineHeight;
+
+  // Récupérer les données du numéro de commande
+  var elementKey = "order_number_".concat(element.id);
+  var orderData = previewData[elementKey] || {};
+  var formattedNumber = orderData.formatted || format;
+  var containerStyle = {
+    position: 'absolute',
+    left: x,
+    top: y,
+    width: width,
+    height: height,
+    backgroundColor: backgroundColor,
+    border: borderWidth > 0 ? "".concat(borderWidth, "px solid ").concat(borderColor) : 'none',
+    borderRadius: "".concat(borderRadius, "px"),
+    opacity: opacity,
+    padding: '4px',
+    boxSizing: 'border-box',
+    overflow: 'hidden',
+    fontSize: "".concat(fontSize, "px"),
+    fontFamily: fontFamily,
+    color: color,
+    display: visible ? 'flex' : 'none',
+    alignItems: 'center',
+    justifyContent: textAlign === 'right' ? 'flex-end' : textAlign === 'center' ? 'center' : 'flex-start',
+    textDecoration: textDecoration,
+    lineHeight: lineHeight,
+    // Transformations
+    transform: "rotate(".concat(rotation, "deg) scale(").concat(scale, ")"),
+    transformOrigin: 'center center',
+    // Ombres
+    boxShadow: shadow ? "".concat(shadowOffsetX, "px ").concat(shadowOffsetY, "px 4px ").concat(shadowColor) : 'none'
+  };
+  var labelStyle = {
+    fontWeight: 'normal',
+    marginRight: showLabel ? '8px' : '0',
+    color: '#666666'
+  };
+  var valueStyle = {
+    fontWeight: fontWeight,
+    textAlign: textAlign
+  };
+  return /*#__PURE__*/react.createElement("div", {
+    className: "preview-element preview-order-number-element",
+    style: containerStyle,
+    "data-element-id": element.id,
+    "data-element-type": "order_number"
+  }, showLabel && /*#__PURE__*/react.createElement("span", {
+    style: labelStyle
+  }, labelText), /*#__PURE__*/react.createElement("span", {
+    style: valueStyle
+  }, formattedNumber));
+};
+;// ./resources/js/components/preview-system/renderers/DynamicTextRenderer.jsx
+
+
+/**
+ * Renderer pour les éléments de texte dynamique avec variables
+ */
+var DynamicTextRenderer = function DynamicTextRenderer(_ref) {
+  var element = _ref.element,
+    previewData = _ref.previewData,
+    mode = _ref.mode;
+  var _element$x = element.x,
+    x = _element$x === void 0 ? 0 : _element$x,
+    _element$y = element.y,
+    y = _element$y === void 0 ? 0 : _element$y,
+    _element$width = element.width,
+    width = _element$width === void 0 ? 300 : _element$width,
+    _element$height = element.height,
+    height = _element$height === void 0 ? 50 : _element$height,
+    _element$template = element.template,
+    template = _element$template === void 0 ? 'total_only' : _element$template,
+    _element$customConten = element.customContent,
+    customContent = _element$customConten === void 0 ? '{{order_total}} €' : _element$customConten,
+    _element$fontSize = element.fontSize,
+    fontSize = _element$fontSize === void 0 ? 14 : _element$fontSize,
+    _element$fontFamily = element.fontFamily,
+    fontFamily = _element$fontFamily === void 0 ? 'Arial' : _element$fontFamily,
+    _element$fontWeight = element.fontWeight,
+    fontWeight = _element$fontWeight === void 0 ? 'normal' : _element$fontWeight,
+    _element$fontStyle = element.fontStyle,
+    fontStyle = _element$fontStyle === void 0 ? 'normal' : _element$fontStyle,
+    _element$textAlign = element.textAlign,
+    textAlign = _element$textAlign === void 0 ? 'left' : _element$textAlign,
+    _element$color = element.color,
+    color = _element$color === void 0 ? '#333333' : _element$color,
+    _element$backgroundCo = element.backgroundColor,
+    backgroundColor = _element$backgroundCo === void 0 ? 'transparent' : _element$backgroundCo,
+    _element$borderWidth = element.borderWidth,
+    borderWidth = _element$borderWidth === void 0 ? 0 : _element$borderWidth,
+    _element$borderColor = element.borderColor,
+    borderColor = _element$borderColor === void 0 ? '#000000' : _element$borderColor,
+    _element$borderRadius = element.borderRadius,
+    borderRadius = _element$borderRadius === void 0 ? 0 : _element$borderRadius,
+    _element$opacity = element.opacity,
+    opacity = _element$opacity === void 0 ? 1 : _element$opacity,
+    _element$rotation = element.rotation,
+    rotation = _element$rotation === void 0 ? 0 : _element$rotation,
+    _element$scale = element.scale,
+    scale = _element$scale === void 0 ? 1 : _element$scale,
+    _element$visible = element.visible,
+    visible = _element$visible === void 0 ? true : _element$visible,
+    _element$shadow = element.shadow,
+    shadow = _element$shadow === void 0 ? false : _element$shadow,
+    _element$shadowColor = element.shadowColor,
+    shadowColor = _element$shadowColor === void 0 ? '#000000' : _element$shadowColor,
+    _element$shadowOffset = element.shadowOffsetX,
+    shadowOffsetX = _element$shadowOffset === void 0 ? 2 : _element$shadowOffset,
+    _element$shadowOffset2 = element.shadowOffsetY,
+    shadowOffsetY = _element$shadowOffset2 === void 0 ? 2 : _element$shadowOffset2,
+    _element$textDecorati = element.textDecoration,
+    textDecoration = _element$textDecorati === void 0 ? 'none' : _element$textDecorati,
+    _element$lineHeight = element.lineHeight,
+    lineHeight = _element$lineHeight === void 0 ? 1.2 : _element$lineHeight;
+
+  // Récupérer le contenu depuis les données d'aperçu
+  var elementKey = "dynamic-text_".concat(element.id);
+  var elementData = previewData[elementKey] || {};
+  var displayContent = elementData.content || customContent;
+  var style = {
+    position: 'absolute',
+    left: x,
+    top: y,
+    width: width,
+    height: height,
+    fontSize: "".concat(fontSize, "px"),
+    fontFamily: fontFamily,
+    fontWeight: fontWeight,
+    fontStyle: fontStyle,
+    textAlign: textAlign,
+    color: color,
+    backgroundColor: backgroundColor,
+    border: borderWidth > 0 ? "".concat(borderWidth, "px solid ").concat(borderColor) : 'none',
+    borderRadius: "".concat(borderRadius, "px"),
+    opacity: opacity,
+    padding: '4px',
+    boxSizing: 'border-box',
+    overflow: 'hidden',
+    display: visible ? 'flex' : 'none',
+    alignItems: 'center',
+    whiteSpace: 'pre-wrap',
+    wordWrap: 'break-word',
+    textDecoration: textDecoration,
+    lineHeight: lineHeight,
+    // Transformations
+    transform: "rotate(".concat(rotation, "deg) scale(").concat(scale, ")"),
+    transformOrigin: 'center center',
+    // Ombres
+    boxShadow: shadow ? "".concat(shadowOffsetX, "px ").concat(shadowOffsetY, "px 4px ").concat(shadowColor) : 'none'
+  };
+  return /*#__PURE__*/react.createElement("div", {
+    className: "preview-element preview-dynamic-text-element",
+    style: style,
+    "data-element-id": element.id,
+    "data-element-type": "dynamic-text",
+    title: "Template: ".concat(template)
+  }, displayContent);
+};
+;// ./resources/js/components/preview-system/renderers/MentionsRenderer.jsx
+
+
+/**
+ * Renderer pour les mentions légales
+ */
+var MentionsRenderer = function MentionsRenderer(_ref) {
+  var element = _ref.element,
+    previewData = _ref.previewData,
+    mode = _ref.mode;
+  var _element$x = element.x,
+    x = _element$x === void 0 ? 0 : _element$x,
+    _element$y = element.y,
+    y = _element$y === void 0 ? 0 : _element$y,
+    _element$width = element.width,
+    width = _element$width === void 0 ? 400 : _element$width,
+    _element$height = element.height,
+    height = _element$height === void 0 ? 60 : _element$height,
+    _element$showEmail = element.showEmail,
+    showEmail = _element$showEmail === void 0 ? true : _element$showEmail,
+    _element$showPhone = element.showPhone,
+    showPhone = _element$showPhone === void 0 ? true : _element$showPhone,
+    _element$showSiret = element.showSiret,
+    showSiret = _element$showSiret === void 0 ? true : _element$showSiret,
+    _element$showVat = element.showVat,
+    showVat = _element$showVat === void 0 ? false : _element$showVat,
+    _element$showAddress = element.showAddress,
+    showAddress = _element$showAddress === void 0 ? false : _element$showAddress,
+    _element$showWebsite = element.showWebsite,
+    showWebsite = _element$showWebsite === void 0 ? false : _element$showWebsite,
+    _element$showCustomTe = element.showCustomText,
+    showCustomText = _element$showCustomTe === void 0 ? false : _element$showCustomTe,
+    _element$customText = element.customText,
+    customText = _element$customText === void 0 ? '' : _element$customText,
+    _element$fontSize = element.fontSize,
+    fontSize = _element$fontSize === void 0 ? 8 : _element$fontSize,
+    _element$fontFamily = element.fontFamily,
+    fontFamily = _element$fontFamily === void 0 ? 'Arial' : _element$fontFamily,
+    _element$fontWeight = element.fontWeight,
+    fontWeight = _element$fontWeight === void 0 ? 'normal' : _element$fontWeight,
+    _element$textAlign = element.textAlign,
+    textAlign = _element$textAlign === void 0 ? 'center' : _element$textAlign,
+    _element$color = element.color,
+    color = _element$color === void 0 ? '#666666' : _element$color,
+    _element$lineHeight = element.lineHeight,
+    lineHeight = _element$lineHeight === void 0 ? 1.2 : _element$lineHeight,
+    _element$separator = element.separator,
+    separator = _element$separator === void 0 ? ' • ' : _element$separator,
+    _element$layout = element.layout,
+    layout = _element$layout === void 0 ? 'horizontal' : _element$layout,
+    _element$backgroundCo = element.backgroundColor,
+    backgroundColor = _element$backgroundCo === void 0 ? 'transparent' : _element$backgroundCo,
+    _element$borderWidth = element.borderWidth,
+    borderWidth = _element$borderWidth === void 0 ? 0 : _element$borderWidth,
+    _element$borderColor = element.borderColor,
+    borderColor = _element$borderColor === void 0 ? '#000000' : _element$borderColor,
+    _element$borderRadius = element.borderRadius,
+    borderRadius = _element$borderRadius === void 0 ? 0 : _element$borderRadius,
+    _element$opacity = element.opacity,
+    opacity = _element$opacity === void 0 ? 1 : _element$opacity,
+    _element$rotation = element.rotation,
+    rotation = _element$rotation === void 0 ? 0 : _element$rotation,
+    _element$scale = element.scale,
+    scale = _element$scale === void 0 ? 1 : _element$scale,
+    _element$visible = element.visible,
+    visible = _element$visible === void 0 ? true : _element$visible,
+    _element$shadow = element.shadow,
+    shadow = _element$shadow === void 0 ? false : _element$shadow,
+    _element$shadowColor = element.shadowColor,
+    shadowColor = _element$shadowColor === void 0 ? '#000000' : _element$shadowColor,
+    _element$shadowOffset = element.shadowOffsetX,
+    shadowOffsetX = _element$shadowOffset === void 0 ? 2 : _element$shadowOffset,
+    _element$shadowOffset2 = element.shadowOffsetY,
+    shadowOffsetY = _element$shadowOffset2 === void 0 ? 2 : _element$shadowOffset2,
+    _element$textDecorati = element.textDecoration,
+    textDecoration = _element$textDecorati === void 0 ? 'none' : _element$textDecorati;
+
+  // Récupérer les données des mentions
+  var elementKey = "mentions_".concat(element.id);
+  var mentionsData = previewData[elementKey] || {};
+  var mentions = mentionsData.mentions || [];
+  var containerStyle = {
+    position: 'absolute',
+    left: x,
+    top: y,
+    width: width,
+    height: height,
+    backgroundColor: backgroundColor,
+    border: borderWidth > 0 ? "".concat(borderWidth, "px solid ").concat(borderColor) : 'none',
+    borderRadius: "".concat(borderRadius, "px"),
+    opacity: opacity,
+    padding: '4px',
+    boxSizing: 'border-box',
+    overflow: 'hidden',
+    fontSize: "".concat(fontSize, "px"),
+    fontFamily: fontFamily,
+    fontWeight: fontWeight,
+    textAlign: textAlign,
+    color: color,
+    lineHeight: lineHeight,
+    display: visible ? 'flex' : 'none',
+    alignItems: 'center',
+    justifyContent: layout === 'horizontal' ? 'center' : 'flex-start',
+    flexDirection: layout === 'vertical' ? 'column' : 'row',
+    gap: layout === 'vertical' ? '4px' : '0',
+    textDecoration: textDecoration,
+    // Transformations
+    transform: "rotate(".concat(rotation, "deg) scale(").concat(scale, ")"),
+    transformOrigin: 'center center',
+    // Ombres
+    boxShadow: shadow ? "".concat(shadowOffsetX, "px ").concat(shadowOffsetY, "px 4px ").concat(shadowColor) : 'none'
+  };
+  var mentionStyle = {
+    flexShrink: 0
+  };
+  return /*#__PURE__*/react.createElement("div", {
+    className: "preview-element preview-mentions-element",
+    style: containerStyle,
+    "data-element-id": element.id,
+    "data-element-type": "mentions"
+  }, mentions.map(function (mention, index) {
+    return /*#__PURE__*/react.createElement(react.Fragment, {
+      key: index
+    }, /*#__PURE__*/react.createElement("span", {
+      style: mentionStyle
+    }, mention), index < mentions.length - 1 && layout === 'horizontal' && /*#__PURE__*/react.createElement("span", {
+      style: {
+        margin: '0 8px',
+        color: '#999'
+      }
+    }, separator));
+  }), mentions.length === 0 && /*#__PURE__*/react.createElement("div", {
+    style: {
+      textAlign: 'center',
+      color: '#6c757d',
+      fontStyle: 'italic',
+      width: '100%'
+    }
+  }, "Aucune mention l\xE9gale"));
+};
+;// ./resources/js/components/preview-system/renderers/RectangleRenderer.jsx
+
+
+/**
+ * Renderer pour les éléments géométriques (rectangles, lignes, formes)
+ */
+var RectangleRenderer = function RectangleRenderer(_ref) {
+  var element = _ref.element,
+    previewData = _ref.previewData,
+    mode = _ref.mode;
+  var _element$x = element.x,
+    x = _element$x === void 0 ? 0 : _element$x,
+    _element$y = element.y,
+    y = _element$y === void 0 ? 0 : _element$y,
+    _element$width = element.width,
+    width = _element$width === void 0 ? 100 : _element$width,
+    _element$height = element.height,
+    height = _element$height === void 0 ? 50 : _element$height,
+    _element$backgroundCo = element.backgroundColor,
+    backgroundColor = _element$backgroundCo === void 0 ? 'transparent' : _element$backgroundCo,
+    _element$borderColor = element.borderColor,
+    borderColor = _element$borderColor === void 0 ? '#000000' : _element$borderColor,
+    _element$borderWidth = element.borderWidth,
+    borderWidth = _element$borderWidth === void 0 ? 1 : _element$borderWidth,
+    _element$borderRadius = element.borderRadius,
+    borderRadius = _element$borderRadius === void 0 ? 0 : _element$borderRadius,
+    _element$opacity = element.opacity,
+    opacity = _element$opacity === void 0 ? 100 : _element$opacity,
+    _element$rotation = element.rotation,
+    rotation = _element$rotation === void 0 ? 0 : _element$rotation,
+    _element$scale = element.scale,
+    scale = _element$scale === void 0 ? 1 : _element$scale,
+    _element$visible = element.visible,
+    visible = _element$visible === void 0 ? true : _element$visible,
+    _element$shadow = element.shadow,
+    shadow = _element$shadow === void 0 ? false : _element$shadow,
+    _element$shadowColor = element.shadowColor,
+    shadowColor = _element$shadowColor === void 0 ? '#000000' : _element$shadowColor,
+    _element$shadowOffset = element.shadowOffsetX,
+    shadowOffsetX = _element$shadowOffset === void 0 ? 2 : _element$shadowOffset,
+    _element$shadowOffset2 = element.shadowOffsetY,
+    shadowOffsetY = _element$shadowOffset2 === void 0 ? 2 : _element$shadowOffset2;
+  var containerStyle = {
+    position: 'absolute',
+    left: x,
+    top: y,
+    width: width,
+    height: height,
+    backgroundColor: backgroundColor,
+    border: borderWidth > 0 ? "".concat(borderWidth, "px solid ").concat(borderColor) : 'none',
+    borderRadius: "".concat(borderRadius, "px"),
+    opacity: opacity / 100,
+    display: visible ? 'block' : 'none',
+    // Transformations
+    transform: "rotate(".concat(rotation, "deg) scale(").concat(scale, ")"),
+    transformOrigin: 'center center',
+    // Ombres
+    boxShadow: shadow ? "".concat(shadowOffsetX, "px ").concat(shadowOffsetY, "px 4px ").concat(shadowColor) : 'none'
+  };
+  return /*#__PURE__*/react.createElement("div", {
+    className: "preview-element preview-rectangle-element",
+    style: containerStyle,
+    "data-element-id": element.id,
+    "data-element-type": element.type
+  });
+};
+;// ./resources/js/components/preview-system/renderers/BarcodeRenderer.jsx
+
+
+/**
+ * Renderer pour les codes-barres et QR codes
+ */
+var BarcodeRenderer = function BarcodeRenderer(_ref) {
+  var element = _ref.element,
+    previewData = _ref.previewData,
+    mode = _ref.mode;
+  var _element$x = element.x,
+    x = _element$x === void 0 ? 0 : _element$x,
+    _element$y = element.y,
+    y = _element$y === void 0 ? 0 : _element$y,
+    _element$width = element.width,
+    width = _element$width === void 0 ? 150 : _element$width,
+    _element$height = element.height,
+    height = _element$height === void 0 ? 60 : _element$height,
+    _element$backgroundCo = element.backgroundColor,
+    backgroundColor = _element$backgroundCo === void 0 ? 'transparent' : _element$backgroundCo,
+    _element$borderColor = element.borderColor,
+    borderColor = _element$borderColor === void 0 ? '#000000' : _element$borderColor,
+    _element$borderWidth = element.borderWidth,
+    borderWidth = _element$borderWidth === void 0 ? 1 : _element$borderWidth,
+    _element$opacity = element.opacity,
+    opacity = _element$opacity === void 0 ? 100 : _element$opacity,
+    _element$rotation = element.rotation,
+    rotation = _element$rotation === void 0 ? 0 : _element$rotation,
+    _element$scale = element.scale,
+    scale = _element$scale === void 0 ? 1 : _element$scale,
+    _element$visible = element.visible,
+    visible = _element$visible === void 0 ? true : _element$visible,
+    _element$shadow = element.shadow,
+    shadow = _element$shadow === void 0 ? false : _element$shadow,
+    _element$shadowColor = element.shadowColor,
+    shadowColor = _element$shadowColor === void 0 ? '#000000' : _element$shadowColor,
+    _element$shadowOffset = element.shadowOffsetX,
+    shadowOffsetX = _element$shadowOffset === void 0 ? 2 : _element$shadowOffset,
+    _element$shadowOffset2 = element.shadowOffsetY,
+    shadowOffsetY = _element$shadowOffset2 === void 0 ? 2 : _element$shadowOffset2;
+  var containerStyle = {
+    position: 'absolute',
+    left: x,
+    top: y,
+    width: width,
+    height: height,
+    backgroundColor: backgroundColor,
+    border: borderWidth > 0 ? "".concat(borderWidth, "px solid ").concat(borderColor) : 'none',
+    opacity: opacity / 100,
+    display: visible ? 'flex' : 'none',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '10px',
+    color: '#666',
+    fontFamily: 'monospace',
+    // Transformations
+    transform: "rotate(".concat(rotation, "deg) scale(").concat(scale, ")"),
+    transformOrigin: 'center center',
+    // Ombres
+    boxShadow: shadow ? "".concat(shadowOffsetX, "px ").concat(shadowOffsetY, "px 4px ").concat(shadowColor) : 'none'
+  };
+
+  // Placeholder pour les codes-barres/QR codes
+  var placeholderText = element.type === 'qrcode' ? 'QR CODE' : 'BARCODE';
+  return /*#__PURE__*/react.createElement("div", {
+    className: "preview-element preview-barcode-element",
+    style: containerStyle,
+    "data-element-id": element.id,
+    "data-element-type": element.type
+  }, /*#__PURE__*/react.createElement("div", {
+    style: {
+      border: '1px dashed #ccc',
+      width: '80%',
+      height: '80%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: '#f9f9f9'
+    }
+  }, placeholderText));
+};
+;// ./resources/js/components/preview-system/renderers/ProgressBarRenderer.jsx
+
+
+/**
+ * Renderer pour les barres de progression
+ */
+var ProgressBarRenderer = function ProgressBarRenderer(_ref) {
+  var element = _ref.element,
+    previewData = _ref.previewData,
+    mode = _ref.mode;
+  var _element$x = element.x,
+    x = _element$x === void 0 ? 0 : _element$x,
+    _element$y = element.y,
+    y = _element$y === void 0 ? 0 : _element$y,
+    _element$width = element.width,
+    width = _element$width === void 0 ? 200 : _element$width,
+    _element$height = element.height,
+    height = _element$height === void 0 ? 20 : _element$height,
+    _element$backgroundCo = element.backgroundColor,
+    backgroundColor = _element$backgroundCo === void 0 ? '#e5e7eb' : _element$backgroundCo,
+    _element$borderColor = element.borderColor,
+    borderColor = _element$borderColor === void 0 ? '#d1d5db' : _element$borderColor,
+    _element$borderWidth = element.borderWidth,
+    borderWidth = _element$borderWidth === void 0 ? 1 : _element$borderWidth,
+    _element$borderRadius = element.borderRadius,
+    borderRadius = _element$borderRadius === void 0 ? 10 : _element$borderRadius,
+    _element$opacity = element.opacity,
+    opacity = _element$opacity === void 0 ? 100 : _element$opacity,
+    _element$progressValu = element.progressValue,
+    progressValue = _element$progressValu === void 0 ? 75 : _element$progressValu,
+    _element$progressColo = element.progressColor,
+    progressColor = _element$progressColo === void 0 ? '#3b82f6' : _element$progressColo,
+    _element$rotation = element.rotation,
+    rotation = _element$rotation === void 0 ? 0 : _element$rotation,
+    _element$scale = element.scale,
+    scale = _element$scale === void 0 ? 1 : _element$scale,
+    _element$visible = element.visible,
+    visible = _element$visible === void 0 ? true : _element$visible,
+    _element$shadow = element.shadow,
+    shadow = _element$shadow === void 0 ? false : _element$shadow,
+    _element$shadowColor = element.shadowColor,
+    shadowColor = _element$shadowColor === void 0 ? '#000000' : _element$shadowColor,
+    _element$shadowOffset = element.shadowOffsetX,
+    shadowOffsetX = _element$shadowOffset === void 0 ? 2 : _element$shadowOffset,
+    _element$shadowOffset2 = element.shadowOffsetY,
+    shadowOffsetY = _element$shadowOffset2 === void 0 ? 2 : _element$shadowOffset2;
+  var containerStyle = {
+    position: 'absolute',
+    left: x,
+    top: y,
+    width: width,
+    height: height,
+    backgroundColor: backgroundColor,
+    border: borderWidth > 0 ? "".concat(borderWidth, "px solid ").concat(borderColor) : 'none',
+    borderRadius: "".concat(borderRadius, "px"),
+    opacity: opacity / 100,
+    overflow: 'hidden',
+    display: visible ? 'block' : 'none',
+    // Transformations
+    transform: "rotate(".concat(rotation, "deg) scale(").concat(scale, ")"),
+    transformOrigin: 'center center',
+    // Ombres
+    boxShadow: shadow ? "".concat(shadowOffsetX, "px ").concat(shadowOffsetY, "px 4px ").concat(shadowColor) : 'none'
+  };
+  var progressStyle = {
+    width: "".concat(Math.min(100, Math.max(0, progressValue)), "%"),
+    height: '100%',
+    backgroundColor: progressColor,
+    transition: 'width 0.3s ease'
+  };
+  return /*#__PURE__*/react.createElement("div", {
+    className: "preview-element preview-progress-element",
+    style: containerStyle,
+    "data-element-id": element.id,
+    "data-element-type": "progress-bar"
+  }, /*#__PURE__*/react.createElement("div", {
+    style: progressStyle
+  }));
+};
+;// ./resources/js/components/preview-system/renderers/WatermarkRenderer.jsx
+
+
+/**
+ * Renderer pour les filigranes
+ */
+var WatermarkRenderer = function WatermarkRenderer(_ref) {
+  var element = _ref.element,
+    previewData = _ref.previewData,
+    mode = _ref.mode;
+  var _element$x = element.x,
+    x = _element$x === void 0 ? 0 : _element$x,
+    _element$y = element.y,
+    y = _element$y === void 0 ? 0 : _element$y,
+    _element$width = element.width,
+    width = _element$width === void 0 ? 300 : _element$width,
+    _element$height = element.height,
+    height = _element$height === void 0 ? 200 : _element$height,
+    _element$content = element.content,
+    content = _element$content === void 0 ? 'CONFIDENTIEL' : _element$content,
+    _element$color = element.color,
+    color = _element$color === void 0 ? '#999999' : _element$color,
+    _element$fontSize = element.fontSize,
+    fontSize = _element$fontSize === void 0 ? 48 : _element$fontSize,
+    _element$fontFamily = element.fontFamily,
+    fontFamily = _element$fontFamily === void 0 ? 'Arial, sans-serif' : _element$fontFamily,
+    _element$fontWeight = element.fontWeight,
+    fontWeight = _element$fontWeight === void 0 ? 'bold' : _element$fontWeight,
+    _element$opacity = element.opacity,
+    opacity = _element$opacity === void 0 ? 10 : _element$opacity,
+    _element$rotation = element.rotation,
+    rotation = _element$rotation === void 0 ? -45 : _element$rotation,
+    _element$scale = element.scale,
+    scale = _element$scale === void 0 ? 1 : _element$scale,
+    _element$visible = element.visible,
+    visible = _element$visible === void 0 ? true : _element$visible,
+    _element$shadow = element.shadow,
+    shadow = _element$shadow === void 0 ? false : _element$shadow,
+    _element$shadowColor = element.shadowColor,
+    shadowColor = _element$shadowColor === void 0 ? '#000000' : _element$shadowColor,
+    _element$shadowOffset = element.shadowOffsetX,
+    shadowOffsetX = _element$shadowOffset === void 0 ? 2 : _element$shadowOffset,
+    _element$shadowOffset2 = element.shadowOffsetY,
+    shadowOffsetY = _element$shadowOffset2 === void 0 ? 2 : _element$shadowOffset2,
+    _element$textDecorati = element.textDecoration,
+    textDecoration = _element$textDecorati === void 0 ? 'none' : _element$textDecorati,
+    _element$lineHeight = element.lineHeight,
+    lineHeight = _element$lineHeight === void 0 ? 1.2 : _element$lineHeight;
+  var containerStyle = {
+    position: 'absolute',
+    left: x,
+    top: y,
+    width: width,
+    height: height,
+    display: visible ? 'flex' : 'none',
+    alignItems: 'center',
+    justifyContent: 'center',
+    pointerEvents: 'none',
+    zIndex: 1000
+  };
+  var textStyle = {
+    color: color,
+    fontSize: "".concat(fontSize, "px"),
+    fontFamily: fontFamily,
+    fontWeight: fontWeight,
+    opacity: opacity / 100,
+    transform: "rotate(".concat(rotation, "deg) scale(").concat(scale, ")"),
+    transformOrigin: 'center center',
+    textAlign: 'center',
+    userSelect: 'none',
+    whiteSpace: 'nowrap',
+    textDecoration: textDecoration,
+    lineHeight: lineHeight,
+    // Ombres
+    boxShadow: shadow ? "".concat(shadowOffsetX, "px ").concat(shadowOffsetY, "px 4px ").concat(shadowColor) : 'none'
+  };
+  return /*#__PURE__*/react.createElement("div", {
+    className: "preview-element preview-watermark-element",
+    style: containerStyle,
+    "data-element-id": element.id,
+    "data-element-type": "watermark"
+  }, /*#__PURE__*/react.createElement("div", {
+    style: textStyle
+  }, content));
+};
+;// ./resources/js/components/preview-system/PreviewRenderer.jsx
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * Moteur de rendu unifié pour l'aperçu PDF
+ * Gère le rendu de tous les types d'éléments selon leurs propriétés
+ */
+var PreviewRenderer = function PreviewRenderer(_ref) {
+  var _ref$elements = _ref.elements,
+    elements = _ref$elements === void 0 ? [] : _ref$elements,
+    _ref$previewData = _ref.previewData,
+    previewData = _ref$previewData === void 0 ? {} : _ref$previewData,
+    _ref$mode = _ref.mode,
+    mode = _ref$mode === void 0 ? 'canvas' : _ref$mode;
+  // Configuration du canvas d'aperçu (format A4 approximatif)
+  var CANVAS_CONFIG = {
+    width: 794,
+    // A4 width in pixels at 96 DPI
+    height: 1123,
+    // A4 height in pixels at 96 DPI
+    backgroundColor: '#ffffff',
+    padding: 40
+  };
+
+  // Mapping des types d'éléments vers leurs renderers
+  var rendererMap = (0,react.useMemo)(function () {
+    return {
+      text: TextRenderer,
+      'dynamic-text': DynamicTextRenderer,
+      'conditional-text': DynamicTextRenderer,
+      // Utilise le même renderer
+      product_table: TableRenderer,
+      customer_info: CustomerInfoRenderer,
+      company_logo: ImageRenderer,
+      company_info: CompanyInfoRenderer,
+      order_number: OrderNumberRenderer,
+      document_type: OrderNumberRenderer,
+      // Utilise le même renderer
+      mentions: MentionsRenderer,
+      image: ImageRenderer,
+      logo: ImageRenderer,
+      // Alias pour company_logo
+      rectangle: RectangleRenderer,
+      line: RectangleRenderer,
+      // Utilise le même renderer
+      'shape-rectangle': RectangleRenderer,
+      'shape-circle': RectangleRenderer,
+      'shape-line': RectangleRenderer,
+      'shape-arrow': RectangleRenderer,
+      'shape-triangle': RectangleRenderer,
+      'shape-star': RectangleRenderer,
+      divider: RectangleRenderer,
+      // Utilise le même renderer
+      'progress-bar': ProgressBarRenderer,
+      barcode: BarcodeRenderer,
+      qrcode: BarcodeRenderer,
+      watermark: WatermarkRenderer,
+      // Fallback pour les éléments non supportés
+      "default": function _default(_ref2) {
+        var element = _ref2.element,
+          previewData = _ref2.previewData;
+        return /*#__PURE__*/react.createElement("div", {
+          className: "preview-element preview-element-unsupported",
+          style: {
+            position: 'absolute',
+            left: element.x || 0,
+            top: element.y || 0,
+            width: element.width || 200,
+            height: element.height || 50,
+            border: '2px dashed #ff6b6b',
+            backgroundColor: '#ffeaea',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '12px',
+            color: '#ff6b6b',
+            borderRadius: '4px'
+          }
+        }, "\u26A0\uFE0F \xC9l\xE9ment non support\xE9: ", element.type);
+      }
+    };
+  }, []);
+
+  // Rendu d'un élément individuel
+  var renderElement = function renderElement(element) {
+    var Renderer = rendererMap[element.type] || rendererMap["default"];
+    return /*#__PURE__*/react.createElement(Renderer, {
+      key: element.id,
+      element: element,
+      previewData: previewData,
+      mode: mode
+    });
+  };
+  return /*#__PURE__*/react.createElement("div", {
+    className: "preview-renderer"
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "preview-canvas",
+    style: {
+      width: CANVAS_CONFIG.width,
+      height: CANVAS_CONFIG.height,
+      backgroundColor: CANVAS_CONFIG.backgroundColor,
+      position: 'relative',
+      margin: '0 auto',
+      border: '1px solid #e1e5e9',
+      borderRadius: '8px',
+      overflow: 'hidden',
+      boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+    }
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "preview-document-area",
+    style: {
+      position: 'absolute',
+      top: CANVAS_CONFIG.padding,
+      left: CANVAS_CONFIG.padding,
+      right: CANVAS_CONFIG.padding,
+      bottom: CANVAS_CONFIG.padding,
+      backgroundColor: 'transparent'
+    }
+  }, elements.map(renderElement)), mode === 'canvas' && /*#__PURE__*/react.createElement(react.Fragment, null, /*#__PURE__*/react.createElement("div", {
+    className: "preview-margin-guide top",
+    style: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      height: CANVAS_CONFIG.padding,
+      backgroundColor: 'rgba(59, 130, 246, 0.1)',
+      borderBottom: '1px dashed #3b82f6'
+    }
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "preview-margin-guide bottom",
+    style: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      height: CANVAS_CONFIG.padding,
+      backgroundColor: 'rgba(59, 130, 246, 0.1)',
+      borderTop: '1px dashed #3b82f6'
+    }
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "preview-margin-guide left",
+    style: {
+      position: 'absolute',
+      top: 0,
+      bottom: 0,
+      left: 0,
+      width: CANVAS_CONFIG.padding,
+      backgroundColor: 'rgba(59, 130, 246, 0.1)',
+      borderRight: '1px dashed #3b82f6'
+    }
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "preview-margin-guide right",
+    style: {
+      position: 'absolute',
+      top: 0,
+      bottom: 0,
+      right: 0,
+      width: CANVAS_CONFIG.padding,
+      backgroundColor: 'rgba(59, 130, 246, 0.1)',
+      borderLeft: '1px dashed #3b82f6'
+    }
+  }))),  false && /*#__PURE__*/0);
+};
+
+;// ./resources/js/components/preview-system/data/SampleDataProvider.jsx
+function SampleDataProvider_typeof(o) { "@babel/helpers - typeof"; return SampleDataProvider_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, SampleDataProvider_typeof(o); }
+function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
+function SampleDataProvider_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function SampleDataProvider_objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? SampleDataProvider_ownKeys(Object(t), !0).forEach(function (r) { SampleDataProvider_defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : SampleDataProvider_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function SampleDataProvider_defineProperty(e, r, t) { return (r = SampleDataProvider_toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, SampleDataProvider_toPropertyKey(o.key), o); } }
+function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function SampleDataProvider_toPropertyKey(t) { var i = SampleDataProvider_toPrimitive(t, "string"); return "symbol" == SampleDataProvider_typeof(i) ? i : i + ""; }
+function SampleDataProvider_toPrimitive(t, r) { if ("object" != SampleDataProvider_typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != SampleDataProvider_typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+/**
+ * Fournisseur de données d'exemple pour le mode Canvas
+ * Génère des données fictives réalistes pour l'aperçu
+ */
+var SampleDataProvider = /*#__PURE__*/function () {
+  function SampleDataProvider() {
+    _classCallCheck(this, SampleDataProvider);
+    this.sampleData = {
+      // Données de produits d'exemple étendues
+      products: [{
+        name: 'Ordinateur Portable Pro 15"',
+        sku: 'LAPTOP-PRO-15',
+        quantity: 1,
+        price: '999,99 €',
+        regular_price: '1 199,99 €',
+        sale_price: '999,99 €',
+        total: '999,99 €',
+        subtotal: '999,99 €',
+        tax: '199,99 €',
+        discount: '200,00 €',
+        image: 'https://via.placeholder.com/100x100/4f46e5/ffffff?text=Laptop',
+        description: 'Ordinateur portable professionnel avec écran 15" 4K, processeur Intel i7, 16GB RAM, SSD 512GB.',
+        short_description: 'Ordinateur portable professionnel 15" 4K',
+        categories: ['Informatique', 'Ordinateurs Portables'],
+        weight: '2.1 kg',
+        dimensions: '35.5 x 24.5 x 1.8 cm',
+        attributes: {
+          'Processeur': 'Intel Core i7-11800H',
+          'RAM': '16GB DDR4',
+          'Stockage': 'SSD 512GB NVMe',
+          'Écran': '15.6" 4K UHD'
+        },
+        stock_quantity: 15,
+        stock_status: 'en_stock',
+        product_type: 'simple',
+        is_on_sale: true,
+        is_virtual: false,
+        is_downloadable: false,
+        meta_data: {
+          '_custom_field': 'Valeur personnalisée'
+        }
+      }, {
+        name: 'Souris Gaming RGB Optique',
+        sku: 'MOUSE-RGB-001',
+        quantity: 2,
+        price: '49,99 €',
+        regular_price: '59,99 €',
+        sale_price: '49,99 €',
+        total: '99,98 €',
+        subtotal: '99,98 €',
+        tax: '19,99 €',
+        discount: '20,00 €',
+        image: 'https://via.placeholder.com/100x100/059669/ffffff?text=Mouse',
+        description: 'Souris gaming optique RGB avec capteur PixArt 3335, 16 000 DPI, switches Omron et éclairage RGB personnalisable.',
+        short_description: 'Souris gaming RGB 16K DPI',
+        categories: ['Informatique', 'Périphériques', 'Gaming'],
+        weight: '0.085 kg',
+        dimensions: '12.5 x 6.8 x 3.8 cm',
+        attributes: {
+          'DPI': '16 000',
+          'Switches': 'Omron',
+          'Éclairage': 'RGB',
+          'Capteur': 'PixArt 3335'
+        },
+        stock_quantity: 45,
+        stock_status: 'en_stock',
+        product_type: 'simple',
+        is_on_sale: true,
+        is_virtual: false,
+        is_downloadable: false,
+        meta_data: {}
+      }, {
+        name: 'Clavier Mécanique Gaming',
+        sku: 'KEYBOARD-MECH-001',
+        quantity: 1,
+        price: '129,99 €',
+        regular_price: '149,99 €',
+        sale_price: '129,99 €',
+        total: '129,99 €',
+        subtotal: '129,99 €',
+        tax: '25,99 €',
+        discount: '20,00 €',
+        image: 'https://via.placeholder.com/100x100/dc2626/ffffff?text=Keyboard',
+        description: 'Clavier mécanique gaming avec switches Cherry MX Red, éclairage RGB par touche, repose-poignets ergonomique.',
+        short_description: 'Clavier mécanique RGB Cherry MX',
+        categories: ['Informatique', 'Périphériques', 'Gaming'],
+        weight: '0.95 kg',
+        dimensions: '43.5 x 13.5 x 3.8 cm',
+        attributes: {
+          'Switches': 'Cherry MX Red',
+          'Éclairage': 'RGB par touche',
+          'Disposition': 'AZERTY',
+          'Connexion': 'USB-C'
+        },
+        stock_quantity: 8,
+        stock_status: 'en_stock',
+        product_type: 'simple',
+        is_on_sale: true,
+        is_virtual: false,
+        is_downloadable: false,
+        meta_data: {
+          '_warranty': '2 ans'
+        }
+      }],
+      // Données client d'exemple
+      customer: {
+        name: 'Marie Dubois',
+        email: 'marie.dubois@email.com',
+        phone: '+33 6 12 34 56 78',
+        address: '15 Avenue des Champs-Élysées\n75008 Paris\nFrance',
+        company: 'TechCorp SARL',
+        vat: 'FR12345678901',
+        siret: '12345678901234'
+      },
+      // Données entreprise d'exemple
+      company: {
+        name: 'Ma Société SARL',
+        address: '123 Rue de la Paix\n75001 Paris\nFrance',
+        phone: '+33 1 42 86 75 30',
+        email: 'contact@masociete.com',
+        website: 'www.masociete.com',
+        vat: 'FR98765432109',
+        rcs: 'Paris B 123 456 789',
+        siret: '98765432109876'
+      },
+      // Données commande d'exemple
+      order: {
+        number: 'CMD-2025-001',
+        date: '19/10/2025',
+        total: '1 229,96 €',
+        subtotal: '1 129,97 €',
+        tax: '99,99 €',
+        shipping: '15,00 €',
+        discount: '15,00 €',
+        status: 'Traitement en cours',
+        paymentMethod: 'Carte bancaire',
+        shippingMethod: 'Colissimo 48h',
+        // Styles de tableau disponibles
+        tableStyles: {
+          "default": {
+            header_bg: [248, 249, 250],
+            // #f8f9fa
+            header_border: [226, 232, 240],
+            // #e2e8f0
+            row_border: [241, 245, 249],
+            // #f1f5f9
+            alt_row_bg: [250, 251, 252],
+            // #fafbfc
+            headerTextColor: '#000000',
+            rowTextColor: '#000000',
+            border_width: 1,
+            headerFontWeight: 'bold',
+            headerFontSize: '12px',
+            rowFontSize: '11px'
+          },
+          classic: {
+            header_bg: [30, 41, 59],
+            // #1e293b
+            header_border: [51, 65, 85],
+            // #334155
+            row_border: [51, 65, 85],
+            // #334155
+            alt_row_bg: [255, 255, 255],
+            // #ffffff
+            headerTextColor: '#ffffff',
+            rowTextColor: '#1e293b',
+            border_width: 1.5,
+            headerFontWeight: '700',
+            headerFontSize: '11px',
+            rowFontSize: '10px'
+          },
+          blue: {
+            header_bg: [59, 130, 246],
+            // #3b82f6
+            header_border: [37, 99, 235],
+            // #2563eb
+            row_border: [226, 232, 240],
+            // #e2e8f0
+            alt_row_bg: [248, 249, 250],
+            // #f8fafc
+            headerTextColor: '#ffffff',
+            rowTextColor: '#1e293b',
+            border_width: 1,
+            headerFontWeight: 'bold',
+            headerFontSize: '11px',
+            rowFontSize: '10px'
+          },
+          minimal: {
+            header_bg: [255, 255, 255],
+            // #ffffff
+            header_border: [229, 231, 235],
+            // #e5e7eb
+            row_border: [229, 231, 235],
+            // #e5e7eb
+            alt_row_bg: [255, 255, 255],
+            // #ffffff
+            headerTextColor: '#374151',
+            rowTextColor: '#374151',
+            border_width: 1,
+            headerFontWeight: '600',
+            headerFontSize: '12px',
+            rowFontSize: '11px'
+          },
+          light: {
+            header_bg: [249, 250, 251],
+            // #f9fafb
+            header_border: [209, 213, 219],
+            // #d1d5db
+            row_border: [229, 231, 235],
+            // #e5e7eb
+            alt_row_bg: [255, 255, 255],
+            // #ffffff
+            headerTextColor: '#111827',
+            rowTextColor: '#374151',
+            border_width: 1,
+            headerFontWeight: '500',
+            headerFontSize: '12px',
+            rowFontSize: '11px'
+          },
+          emerald_forest: {
+            header_bg: [16, 185, 129],
+            // #10b981
+            header_border: [5, 150, 105],
+            // #059669
+            row_border: [209, 213, 219],
+            // #d1d5db
+            alt_row_bg: [236, 253, 245],
+            // #ecfdf5
+            headerTextColor: '#ffffff',
+            rowTextColor: '#065f46',
+            border_width: 1,
+            headerFontWeight: 'bold',
+            headerFontSize: '11px',
+            rowFontSize: '10px'
+          },
+          striped: {
+            header_bg: [75, 85, 99],
+            // #4b5563
+            header_border: [107, 114, 128],
+            // #6b7280
+            row_border: [229, 231, 235],
+            // #e5e7eb
+            alt_row_bg: [249, 250, 251],
+            // #f9fafb
+            headerTextColor: '#ffffff',
+            rowTextColor: '#374151',
+            border_width: 1,
+            headerFontWeight: 'bold',
+            headerFontSize: '12px',
+            rowFontSize: '11px'
+          },
+          bordered: {
+            header_bg: [31, 41, 55],
+            // #1f2937
+            header_border: [55, 65, 81],
+            // #374151
+            row_border: [55, 65, 81],
+            // #374151
+            alt_row_bg: [255, 255, 255],
+            // #ffffff
+            headerTextColor: '#ffffff',
+            rowTextColor: '#1f2937',
+            border_width: 2,
+            headerFontWeight: 'bold',
+            headerFontSize: '12px',
+            rowFontSize: '11px'
+          },
+          modern: {
+            header_bg: [17, 24, 39],
+            // #111827
+            header_border: [75, 85, 99],
+            // #4b5563
+            row_border: [209, 213, 219],
+            // #d1d5db
+            alt_row_bg: [243, 244, 246],
+            // #f3f4f6
+            headerTextColor: '#ffffff',
+            rowTextColor: '#374151',
+            border_width: 1,
+            headerFontWeight: '600',
+            headerFontSize: '13px',
+            rowFontSize: '12px'
+          },
+          blue_ocean: {
+            header_bg: [12, 74, 110],
+            // #0c4a6e
+            header_border: [2, 132, 199],
+            // #0284c7
+            row_border: [186, 230, 253],
+            // #bae6fd
+            alt_row_bg: [240, 249, 255],
+            // #f0f9ff
+            headerTextColor: '#ffffff',
+            rowTextColor: '#0c4a6e',
+            border_width: 1,
+            headerFontWeight: 'bold',
+            headerFontSize: '12px',
+            rowFontSize: '11px'
+          },
+          sunset_orange: {
+            header_bg: [154, 52, 18],
+            // #9a3412
+            header_border: [234, 88, 12],
+            // #ea580c
+            row_border: [253, 186, 116],
+            // #fdba74
+            alt_row_bg: [255, 247, 237],
+            // #fff7ed
+            headerTextColor: '#ffffff',
+            rowTextColor: '#9a3412',
+            border_width: 1,
+            headerFontWeight: 'bold',
+            headerFontSize: '12px',
+            rowFontSize: '11px'
+          },
+          royal_purple: {
+            header_bg: [88, 28, 135],
+            // #581c87
+            header_border: [147, 51, 234],
+            // #9333ea
+            row_border: [221, 214, 254],
+            // #ddd6fe
+            alt_row_bg: [250, 245, 255],
+            // #faf5ff
+            headerTextColor: '#ffffff',
+            rowTextColor: '#581c87',
+            border_width: 1,
+            headerFontWeight: 'bold',
+            headerFontSize: '12px',
+            rowFontSize: '11px'
+          },
+          rose_pink: {
+            header_bg: [190, 18, 60],
+            // #be123c
+            header_border: [236, 72, 153],
+            // #ec4899
+            row_border: [253, 164, 175],
+            // #fda4af
+            alt_row_bg: [255, 241, 242],
+            // #fff1f2
+            headerTextColor: '#ffffff',
+            rowTextColor: '#be123c',
+            border_width: 1,
+            headerFontWeight: 'bold',
+            headerFontSize: '12px',
+            rowFontSize: '11px'
+          },
+          teal_aqua: {
+            header_bg: [5, 150, 105],
+            // #059669
+            header_border: [20, 184, 166],
+            // #14b8a6
+            row_border: [153, 246, 228],
+            // #99f6e4
+            alt_row_bg: [236, 253, 245],
+            // #ecfdf5
+            headerTextColor: '#ffffff',
+            rowTextColor: '#065f46',
+            border_width: 1,
+            headerFontWeight: 'bold',
+            headerFontSize: '12px',
+            rowFontSize: '11px'
+          },
+          crimson_red: {
+            header_bg: [153, 27, 27],
+            // #991b1b
+            header_border: [239, 68, 68],
+            // #ef4444
+            row_border: [252, 165, 165],
+            // #fca5a5
+            alt_row_bg: [254, 242, 242],
+            // #fef2f2
+            headerTextColor: '#ffffff',
+            rowTextColor: '#991b1b',
+            border_width: 1,
+            headerFontWeight: 'bold',
+            headerFontSize: '12px',
+            rowFontSize: '11px'
+          },
+          amber_gold: {
+            header_bg: [161, 98, 7],
+            // #a16207
+            header_border: [245, 158, 11],
+            // #f59e0b
+            row_border: [253, 230, 138],
+            // #fde68a
+            alt_row_bg: [254, 252, 232],
+            // #fefce8
+            headerTextColor: '#ffffff',
+            rowTextColor: '#92400e',
+            border_width: 1,
+            headerFontWeight: 'bold',
+            headerFontSize: '12px',
+            rowFontSize: '11px'
+          },
+          indigo_night: {
+            header_bg: [49, 46, 129],
+            // #312e81
+            header_border: [99, 102, 241],
+            // #6366f1
+            row_border: [196, 181, 253],
+            // #c4b5fd
+            alt_row_bg: [245, 243, 255],
+            // #f5f3ff
+            headerTextColor: '#ffffff',
+            rowTextColor: '#312e81',
+            border_width: 1,
+            headerFontWeight: 'bold',
+            headerFontSize: '12px',
+            rowFontSize: '11px'
+          },
+          slate_gray: {
+            header_bg: [51, 65, 85],
+            // #334155
+            header_border: [100, 116, 139],
+            // #64748b
+            row_border: [203, 213, 225],
+            // #cbd5e1
+            alt_row_bg: [248, 250, 252],
+            // #f8fafc
+            headerTextColor: '#ffffff',
+            rowTextColor: '#334155',
+            border_width: 1,
+            headerFontWeight: 'bold',
+            headerFontSize: '12px',
+            rowFontSize: '11px'
+          },
+          coral_sunset: {
+            header_bg: [194, 65, 12],
+            // #c2410c
+            header_border: [251, 146, 60],
+            // #fb923c
+            row_border: [253, 186, 116],
+            // #fdba74
+            alt_row_bg: [255, 247, 237],
+            // #fff7ed
+            headerTextColor: '#ffffff',
+            rowTextColor: '#9a3412',
+            border_width: 1,
+            headerFontWeight: 'bold',
+            headerFontSize: '12px',
+            rowFontSize: '11px'
+          },
+          mint_green: {
+            header_bg: [34, 197, 94],
+            // #22c55e
+            header_border: [74, 222, 128],
+            // #4ade80
+            row_border: [187, 247, 208],
+            // #bbf7d0
+            alt_row_bg: [240, 253, 244],
+            // #f0fdf4
+            headerTextColor: '#ffffff',
+            rowTextColor: '#166534',
+            border_width: 1,
+            headerFontWeight: 'bold',
+            headerFontSize: '12px',
+            rowFontSize: '11px'
+          },
+          violet_dream: {
+            header_bg: [109, 40, 217],
+            // #6d28d9
+            header_border: [168, 85, 247],
+            // #a855f7
+            row_border: [233, 213, 255],
+            // #e9d5ff
+            alt_row_bg: [251, 245, 255],
+            // #fbf5ff
+            headerTextColor: '#ffffff',
+            rowTextColor: '#6b21a8',
+            border_width: 1,
+            headerFontWeight: 'bold',
+            headerFontSize: '12px',
+            rowFontSize: '11px'
+          },
+          sky_blue: {
+            header_bg: [3, 105, 161],
+            // #0369a1
+            header_border: [14, 165, 233],
+            // #0ea5e9
+            row_border: [125, 211, 252],
+            // #7dd3fc
+            alt_row_bg: [240, 249, 255],
+            // #f0f9ff
+            headerTextColor: '#ffffff',
+            rowTextColor: '#0c4a6e',
+            border_width: 1,
+            headerFontWeight: 'bold',
+            headerFontSize: '12px',
+            rowFontSize: '11px'
+          },
+          forest_green: {
+            header_bg: [21, 128, 61],
+            // #15803d
+            header_border: [34, 197, 94],
+            // #22c55e
+            row_border: [134, 239, 172],
+            // #86efac
+            alt_row_bg: [236, 253, 245],
+            // #ecfdf5
+            headerTextColor: '#ffffff',
+            rowTextColor: '#14532d',
+            border_width: 1,
+            headerFontWeight: 'bold',
+            headerFontSize: '12px',
+            rowFontSize: '11px'
+          },
+          ruby_red: {
+            header_bg: [185, 28, 28],
+            // #b91c1c
+            header_border: [239, 68, 68],
+            // #ef4444
+            row_border: [252, 165, 165],
+            // #fca5a5
+            alt_row_bg: [254, 226, 226],
+            // #fee2e2
+            headerTextColor: '#ffffff',
+            rowTextColor: '#991b1b',
+            border_width: 1,
+            headerFontWeight: 'bold',
+            headerFontSize: '12px',
+            rowFontSize: '11px'
+          }
+        }
+      }
+    };
+  }
+
+  /**
+   * Génère des données d'exemple pour un type d'élément spécifique
+   * @param {string} elementType - Type de l'élément
+   * @param {Object} properties - Propriétés de l'élément
+   * @returns {Promise<any>} Données d'exemple
+   */
+  return _createClass(SampleDataProvider, [{
+    key: "getElementData",
+    value: (function () {
+      var _getElementData = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee(elementType, properties) {
+        var _t;
+        return _regenerator().w(function (_context) {
+          while (1) switch (_context.n) {
+            case 0:
+              _t = elementType;
+              _context.n = _t === 'product_table' ? 1 : _t === 'customer_info' ? 2 : _t === 'company_logo' ? 3 : _t === 'company_info' ? 4 : _t === 'order_number' ? 5 : _t === 'dynamic-text' ? 6 : _t === 'conditional-text' ? 6 : _t === 'mentions' ? 7 : _t === 'rectangle' ? 8 : _t === 'line' ? 8 : _t === 'shape-rectangle' ? 8 : _t === 'shape-circle' ? 8 : _t === 'shape-line' ? 8 : _t === 'shape-arrow' ? 8 : _t === 'shape-triangle' ? 8 : _t === 'shape-star' ? 8 : _t === 'divider' ? 8 : _t === 'barcode' ? 9 : _t === 'qrcode' ? 9 : _t === 'progress-bar' ? 10 : _t === 'watermark' ? 11 : 12;
+              break;
+            case 1:
+              return _context.a(2, this.generateProductTableData(properties));
+            case 2:
+              return _context.a(2, this.generateCustomerInfoData(properties));
+            case 3:
+              return _context.a(2, this.generateCompanyLogoData(properties));
+            case 4:
+              return _context.a(2, this.generateCompanyInfoData(properties));
+            case 5:
+              return _context.a(2, this.generateOrderNumberData(properties));
+            case 6:
+              return _context.a(2, this.generateDynamicTextData(properties));
+            case 7:
+              return _context.a(2, this.generateMentionsData(properties));
+            case 8:
+              return _context.a(2, this.generateRectangleData(properties));
+            case 9:
+              return _context.a(2, this.generateBarcodeData(properties));
+            case 10:
+              return _context.a(2, this.generateProgressBarData(properties));
+            case 11:
+              return _context.a(2, this.generateWatermarkData(properties));
+            case 12:
+              return _context.a(2, this.generateDefaultData(elementType, properties));
+            case 13:
+              return _context.a(2);
+          }
+        }, _callee, this);
+      }));
+      function getElementData(_x, _x2) {
+        return _getElementData.apply(this, arguments);
+      }
+      return getElementData;
+    }()
+    /**
+     * Génère des données pour un tableau de produits
+     */
+    )
+  }, {
+    key: "generateProductTableData",
+    value: function generateProductTableData(properties) {
+      var _properties$columns = properties.columns,
+        columns = _properties$columns === void 0 ? {} : _properties$columns,
+        _properties$showSubto = properties.showSubtotal,
+        showSubtotal = _properties$showSubto === void 0 ? false : _properties$showSubto,
+        _properties$showShipp = properties.showShipping,
+        showShipping = _properties$showShipp === void 0 ? true : _properties$showShipp,
+        _properties$showTaxes = properties.showTaxes,
+        showTaxes = _properties$showTaxes === void 0 ? true : _properties$showTaxes,
+        _properties$showDisco = properties.showDiscount,
+        showDiscount = _properties$showDisco === void 0 ? true : _properties$showDisco,
+        _properties$showTotal = properties.showTotal,
+        showTotal = _properties$showTotal === void 0 ? true : _properties$showTotal,
+        _properties$tableStyl = properties.tableStyle,
+        tableStyle = _properties$tableStyl === void 0 ? 'default' : _properties$tableStyl;
+      var tableData = {
+        headers: [],
+        rows: [],
+        totals: {},
+        style: tableStyle
+      };
+
+      // Configuration par défaut des colonnes si non spécifiée
+      var defaultColumns = {
+        image: false,
+        name: true,
+        sku: false,
+        description: false,
+        short_description: false,
+        categories: false,
+        quantity: true,
+        price: true,
+        regular_price: false,
+        sale_price: false,
+        discount: false,
+        tax: false,
+        weight: false,
+        dimensions: false,
+        attributes: false,
+        stock_quantity: false,
+        stock_status: false,
+        total: true
+      };
+
+      // Fusionner avec les colonnes spécifiées
+      var activeColumns = SampleDataProvider_objectSpread(SampleDataProvider_objectSpread({}, defaultColumns), columns);
+
+      // Déterminer les colonnes à afficher
+      if (activeColumns.image !== false) tableData.headers.push('Image');
+      if (activeColumns.name !== false) tableData.headers.push('Produit');
+      if (activeColumns.sku !== false) tableData.headers.push('SKU');
+      if (activeColumns.description !== false) tableData.headers.push('Description');
+      if (activeColumns.short_description !== false) tableData.headers.push('Description courte');
+      if (activeColumns.categories !== false) tableData.headers.push('Catégories');
+      if (activeColumns.quantity !== false) tableData.headers.push('Qté');
+      if (activeColumns.price !== false) tableData.headers.push('Prix');
+      if (activeColumns.regular_price !== false) tableData.headers.push('Prix régulier');
+      if (activeColumns.sale_price !== false) tableData.headers.push('Prix soldé');
+      if (activeColumns.discount !== false) tableData.headers.push('Remise');
+      if (activeColumns.tax !== false) tableData.headers.push('TVA');
+      if (activeColumns.weight !== false) tableData.headers.push('Poids');
+      if (activeColumns.dimensions !== false) tableData.headers.push('Dimensions');
+      if (activeColumns.attributes !== false) tableData.headers.push('Attributs');
+      if (activeColumns.stock_quantity !== false) tableData.headers.push('Stock');
+      if (activeColumns.stock_status !== false) tableData.headers.push('Statut stock');
+      if (activeColumns.total !== false) tableData.headers.push('Total');
+
+      // Générer les lignes de produits
+      tableData.rows = this.sampleData.products.map(function (product) {
+        var row = [];
+        if (activeColumns.image !== false) row.push(product.image);
+        if (activeColumns.name !== false) row.push(product.name);
+        if (activeColumns.sku !== false) row.push(product.sku || '-');
+        if (activeColumns.description !== false) row.push(product.description || '-');
+        if (activeColumns.short_description !== false) row.push(product.short_description || '-');
+        if (activeColumns.categories !== false) row.push(product.categories ? product.categories.join(', ') : '-');
+        if (activeColumns.quantity !== false) row.push(product.quantity);
+        if (activeColumns.price !== false) row.push(product.price);
+        if (activeColumns.regular_price !== false) row.push(product.regular_price || '-');
+        if (activeColumns.sale_price !== false) row.push(product.sale_price || '-');
+        if (activeColumns.discount !== false) row.push(product.discount || '0,00 €');
+        if (activeColumns.tax !== false) row.push(product.tax || '0,00 €');
+        if (activeColumns.weight !== false) row.push(product.weight || '-');
+        if (activeColumns.dimensions !== false) row.push(product.dimensions || '-');
+        if (activeColumns.attributes !== false) {
+          var attrs = product.attributes ? Object.entries(product.attributes).map(function (_ref) {
+            var _ref2 = _slicedToArray(_ref, 2),
+              k = _ref2[0],
+              v = _ref2[1];
+            return "".concat(k, ": ").concat(v);
+          }).join('; ') : '-';
+          row.push(attrs);
+        }
+        if (activeColumns.stock_quantity !== false) row.push(product.stock_quantity || '-');
+        if (activeColumns.stock_status !== false) row.push(product.stock_status === 'en_stock' ? 'En stock' : 'Rupture');
+        if (activeColumns.total !== false) row.push(product.total);
+        return row;
+      });
+
+      // Ajouter les totaux si demandés
+      if (showSubtotal) tableData.totals.subtotal = this.sampleData.order.subtotal;
+      if (showShipping) tableData.totals.shipping = this.sampleData.order.shipping;
+      if (showDiscount) tableData.totals.discount = this.sampleData.order.discount;
+      if (showTaxes) tableData.totals.tax = this.sampleData.order.tax;
+      if (showTotal) tableData.totals.total = this.sampleData.order.total;
+
+      // Ajouter les informations de style du tableau
+      tableData.tableStyleData = this.sampleData.order.tableStyles[tableStyle] || this.sampleData.order.tableStyles['default'];
+      return tableData;
+    }
+
+    /**
+     * Génère des données pour les informations client
+     */
+  }, {
+    key: "generateCustomerInfoData",
+    value: function generateCustomerInfoData(properties) {
+      var _this = this;
+      var _properties$fields = properties.fields,
+        fields = _properties$fields === void 0 ? [] : _properties$fields;
+      var data = {};
+      fields.forEach(function (field) {
+        switch (field) {
+          case 'name':
+            data.name = _this.sampleData.customer.name;
+            break;
+          case 'email':
+            data.email = _this.sampleData.customer.email;
+            break;
+          case 'phone':
+            data.phone = _this.sampleData.customer.phone;
+            break;
+          case 'address':
+            data.address = _this.sampleData.customer.address;
+            break;
+          case 'company':
+            data.company = _this.sampleData.customer.company;
+            break;
+          case 'vat':
+            data.vat = _this.sampleData.customer.vat;
+            break;
+          case 'siret':
+            data.siret = _this.sampleData.customer.siret;
+            break;
+        }
+      });
+      return data;
+    }
+
+    /**
+     * Génère des données pour le logo entreprise
+     */
+  }, {
+    key: "generateCompanyLogoData",
+    value: function generateCompanyLogoData(properties) {
+      return {
+        imageUrl: 'https://via.placeholder.com/200x80/2563eb/ffffff?text=LOGO',
+        alt: 'Logo de l\'entreprise'
+      };
+    }
+
+    /**
+     * Génère des données pour les informations entreprise
+     */
+  }, {
+    key: "generateCompanyInfoData",
+    value: function generateCompanyInfoData(properties) {
+      var _this2 = this;
+      var _properties$fields2 = properties.fields,
+        fields = _properties$fields2 === void 0 ? [] : _properties$fields2;
+      var data = {};
+      fields.forEach(function (field) {
+        switch (field) {
+          case 'name':
+            data.name = _this2.sampleData.company.name;
+            break;
+          case 'address':
+            data.address = _this2.sampleData.company.address;
+            break;
+          case 'phone':
+            data.phone = _this2.sampleData.company.phone;
+            break;
+          case 'email':
+            data.email = _this2.sampleData.company.email;
+            break;
+          case 'website':
+            data.website = _this2.sampleData.company.website;
+            break;
+          case 'vat':
+            data.vat = _this2.sampleData.company.vat;
+            break;
+          case 'rcs':
+            data.rcs = _this2.sampleData.company.rcs;
+            break;
+          case 'siret':
+            data.siret = _this2.sampleData.company.siret;
+            break;
+        }
+      });
+      return data;
+    }
+
+    /**
+     * Génère des données pour le numéro de commande
+     */
+  }, {
+    key: "generateOrderNumberData",
+    value: function generateOrderNumberData(properties) {
+      var _properties$format = properties.format,
+        format = _properties$format === void 0 ? 'Commande #{order_number} - {order_date}' : _properties$format;
+      return {
+        formatted: format.replace('{order_number}', this.sampleData.order.number).replace('{order_date}', this.sampleData.order.date)
+      };
+    }
+
+    /**
+     * Génère des données pour le texte dynamique
+     */
+  }, {
+    key: "generateDynamicTextData",
+    value: function generateDynamicTextData(properties) {
+      var _properties$template = properties.template,
+        template = _properties$template === void 0 ? 'total_only' : _properties$template,
+        _properties$customCon = properties.customContent,
+        customContent = _properties$customCon === void 0 ? '' : _properties$customCon;
+      var content = customContent;
+      if (template === 'total_only') {
+        content = "Total: ".concat(this.sampleData.order.total);
+      }
+
+      // Remplacer les variables
+      content = content.replace(/\{\{order_total\}\}/g, this.sampleData.order.total).replace(/\{\{customer_name\}\}/g, this.sampleData.customer.name).replace(/\{\{order_number\}\}/g, this.sampleData.order.number);
+      return {
+        content: content
+      };
+    }
+
+    /**
+     * Génère des données pour les mentions légales
+     */
+  }, {
+    key: "generateMentionsData",
+    value: function generateMentionsData(properties) {
+      var _properties$showEmail = properties.showEmail,
+        showEmail = _properties$showEmail === void 0 ? true : _properties$showEmail,
+        _properties$showPhone = properties.showPhone,
+        showPhone = _properties$showPhone === void 0 ? true : _properties$showPhone,
+        _properties$showSiret = properties.showSiret,
+        showSiret = _properties$showSiret === void 0 ? true : _properties$showSiret,
+        _properties$showVat = properties.showVat,
+        showVat = _properties$showVat === void 0 ? false : _properties$showVat,
+        _properties$showAddre = properties.showAddress,
+        showAddress = _properties$showAddre === void 0 ? false : _properties$showAddre,
+        _properties$showWebsi = properties.showWebsite,
+        showWebsite = _properties$showWebsi === void 0 ? false : _properties$showWebsi,
+        _properties$showCusto = properties.showCustomText,
+        showCustomText = _properties$showCusto === void 0 ? false : _properties$showCusto,
+        _properties$customTex = properties.customText,
+        customText = _properties$customTex === void 0 ? '' : _properties$customTex;
+      var mentions = [];
+      if (showEmail) mentions.push(this.sampleData.company.email);
+      if (showPhone) mentions.push(this.sampleData.company.phone);
+      if (showSiret) mentions.push("SIRET: ".concat(this.sampleData.company.siret));
+      if (showVat) mentions.push("TVA: ".concat(this.sampleData.company.vat));
+      if (showAddress) mentions.push(this.sampleData.company.address.replace('\n', ' • '));
+      if (showWebsite) mentions.push(this.sampleData.company.website);
+      if (showCustomText && customText) mentions.push(customText);
+      return {
+        mentions: mentions
+      };
+    }
+
+    /**
+     * Génère des données pour les rectangles et formes géométriques
+     */
+  }, {
+    key: "generateRectangleData",
+    value: function generateRectangleData(properties) {
+      return {
+        // Les rectangles utilisent principalement les propriétés CSS de base
+        rendered: true
+      };
+    }
+
+    /**
+     * Génère des données pour les codes-barres et QR codes
+     */
+  }, {
+    key: "generateBarcodeData",
+    value: function generateBarcodeData(properties) {
+      var _properties$content = properties.content,
+        content = _properties$content === void 0 ? '123456789' : _properties$content;
+      return {
+        code: content,
+        format: properties.type === 'qrcode' ? 'QR_CODE' : 'CODE128'
+      };
+    }
+
+    /**
+     * Génère des données pour les barres de progression
+     */
+  }, {
+    key: "generateProgressBarData",
+    value: function generateProgressBarData(properties) {
+      var _properties$progressV = properties.progressValue,
+        progressValue = _properties$progressV === void 0 ? 75 : _properties$progressV;
+      return {
+        progress: Math.min(100, Math.max(0, progressValue)),
+        label: "".concat(progressValue, "%")
+      };
+    }
+
+    /**
+     * Génère des données pour les filigranes
+     */
+  }, {
+    key: "generateWatermarkData",
+    value: function generateWatermarkData(properties) {
+      var _properties$content2 = properties.content,
+        content = _properties$content2 === void 0 ? 'CONFIDENTIEL' : _properties$content2;
+      return {
+        text: content,
+        angle: -45
+      };
+    }
+
+    /**
+     * Génère des données par défaut pour les éléments non supportés
+     */
+  }, {
+    key: "generateDefaultData",
+    value: function generateDefaultData(elementType, properties) {
+      return {
+        type: elementType,
+        placeholder: "Donn\xE9es d'exemple pour ".concat(elementType),
+        properties: properties
+      };
+    }
+  }]);
+}();
+;// ./resources/js/components/preview-system/modes/CanvasMode.jsx
+function CanvasMode_typeof(o) { "@babel/helpers - typeof"; return CanvasMode_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, CanvasMode_typeof(o); }
+function _regeneratorValues(e) { if (null != e) { var t = e["function" == typeof Symbol && Symbol.iterator || "@@iterator"], r = 0; if (t) return t.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) return { next: function next() { return e && r >= e.length && (e = void 0), { value: e && e[r++], done: !e }; } }; } throw new TypeError(CanvasMode_typeof(e) + " is not iterable"); }
+function CanvasMode_regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return CanvasMode_regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (CanvasMode_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, CanvasMode_regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, CanvasMode_regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), CanvasMode_regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", CanvasMode_regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), CanvasMode_regeneratorDefine2(u), CanvasMode_regeneratorDefine2(u, o, "Generator"), CanvasMode_regeneratorDefine2(u, n, function () { return this; }), CanvasMode_regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (CanvasMode_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function CanvasMode_regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } CanvasMode_regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { CanvasMode_regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, CanvasMode_regeneratorDefine2(e, r, n, t); }
+function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = CanvasMode_unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t["return"] || t["return"](); } finally { if (u) throw o; } } }; }
+function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || CanvasMode_unsupportedIterableToArray(r) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function CanvasMode_unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return CanvasMode_arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? CanvasMode_arrayLikeToArray(r, a) : void 0; } }
+function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function _arrayWithoutHoles(r) { if (Array.isArray(r)) return CanvasMode_arrayLikeToArray(r); }
+function CanvasMode_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function CanvasMode_asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function CanvasMode_asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { CanvasMode_asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { CanvasMode_asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+function CanvasMode_classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function CanvasMode_defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, CanvasMode_toPropertyKey(o.key), o); } }
+function CanvasMode_createClass(e, r, t) { return r && CanvasMode_defineProperties(e.prototype, r), t && CanvasMode_defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function CanvasMode_toPropertyKey(t) { var i = CanvasMode_toPrimitive(t, "string"); return "symbol" == CanvasMode_typeof(i) ? i : i + ""; }
+function CanvasMode_toPrimitive(t, r) { if ("object" != CanvasMode_typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != CanvasMode_typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+
+
+/**
+ * Mode Canvas : Aperçu avec données d'exemple
+ * Utilisé dans l'éditeur pour prévisualiser les éléments avec des données fictives
+ */
+var CanvasMode = /*#__PURE__*/function () {
+  function CanvasMode() {
+    CanvasMode_classCallCheck(this, CanvasMode);
+  }
+  return CanvasMode_createClass(CanvasMode, null, [{
+    key: "loadData",
+    value: (
+    /**
+     * Charge les données d'aperçu pour le mode Canvas
+     * @param {Array} elements - Liste des éléments du canvas
+     * @param {number|null} orderId - ID de commande (ignoré en mode Canvas)
+     * @param {Object} templateData - Données du template
+     * @returns {Promise<Object>} Données d'aperçu
+     */
+    function () {
+      var _loadData = CanvasMode_asyncToGenerator(/*#__PURE__*/CanvasMode_regenerator().m(function _callee(elements) {
+        var orderId,
+          templateData,
+          dataProvider,
+          elementTypes,
+          previewData,
+          _iterator,
+          _step,
+          _loop,
+          _args2 = arguments,
+          _t2;
+        return CanvasMode_regenerator().w(function (_context2) {
+          while (1) switch (_context2.p = _context2.n) {
+            case 0:
+              orderId = _args2.length > 1 && _args2[1] !== undefined ? _args2[1] : null;
+              templateData = _args2.length > 2 && _args2[2] !== undefined ? _args2[2] : {};
+              dataProvider = new SampleDataProvider(); // Collecter tous les types d'éléments présents
+              elementTypes = _toConsumableArray(new Set(elements.map(function (el) {
+                return el.type;
+              }))); // Générer des données d'exemple pour chaque type d'élément
+              previewData = {};
+              _iterator = _createForOfIteratorHelper(elementTypes);
+              _context2.p = 1;
+              _loop = /*#__PURE__*/CanvasMode_regenerator().m(function _loop() {
+                var elementType, elementsOfType, _iterator2, _step2, element, elementKey, _t;
+                return CanvasMode_regenerator().w(function (_context) {
+                  while (1) switch (_context.p = _context.n) {
+                    case 0:
+                      elementType = _step.value;
+                      elementsOfType = elements.filter(function (el) {
+                        return el.type === elementType;
+                      }); // Pour chaque élément du type, générer des données spécifiques
+                      _iterator2 = _createForOfIteratorHelper(elementsOfType);
+                      _context.p = 1;
+                      _iterator2.s();
+                    case 2:
+                      if ((_step2 = _iterator2.n()).done) {
+                        _context.n = 5;
+                        break;
+                      }
+                      element = _step2.value;
+                      elementKey = "".concat(element.type, "_").concat(element.id);
+                      _context.n = 3;
+                      return dataProvider.getElementData(element.type, element.properties || element);
+                    case 3:
+                      previewData[elementKey] = _context.v;
+                    case 4:
+                      _context.n = 2;
+                      break;
+                    case 5:
+                      _context.n = 7;
+                      break;
+                    case 6:
+                      _context.p = 6;
+                      _t = _context.v;
+                      _iterator2.e(_t);
+                    case 7:
+                      _context.p = 7;
+                      _iterator2.f();
+                      return _context.f(7);
+                    case 8:
+                      return _context.a(2);
+                  }
+                }, _loop, null, [[1, 6, 7, 8]]);
+              });
+              _iterator.s();
+            case 2:
+              if ((_step = _iterator.n()).done) {
+                _context2.n = 4;
+                break;
+              }
+              return _context2.d(_regeneratorValues(_loop()), 3);
+            case 3:
+              _context2.n = 2;
+              break;
+            case 4:
+              _context2.n = 6;
+              break;
+            case 5:
+              _context2.p = 5;
+              _t2 = _context2.v;
+              _iterator.e(_t2);
+            case 6:
+              _context2.p = 6;
+              _iterator.f();
+              return _context2.f(6);
+            case 7:
+              // Ajouter des variables globales d'exemple
+              previewData.global = {
+                order_number: 'CMD-2025-001',
+                order_date: '19/10/2025',
+                order_total: '149,99 €',
+                customer_name: 'Jean Dupont',
+                customer_email: 'jean.dupont@email.com',
+                customer_phone: '+33 6 12 34 56 78',
+                company_name: 'Ma Société SARL',
+                company_address: '123 Rue de la Paix\n75001 Paris\nFrance',
+                company_phone: '+33 1 42 86 75 30',
+                company_email: 'contact@masociete.com'
+              };
+              return _context2.a(2, previewData);
+          }
+        }, _callee, null, [[1, 5, 6, 7]]);
+      }));
+      function loadData(_x) {
+        return _loadData.apply(this, arguments);
+      }
+      return loadData;
+    }()
+    /**
+     * Valide si le mode Canvas peut être utilisé
+     * @param {Array} elements - Liste des éléments
+     * @returns {boolean} True si valide
+     */
+    )
+  }, {
+    key: "validate",
+    value: function validate(elements) {
+      // Le mode Canvas accepte tous les éléments
+      return elements && Array.isArray(elements);
+    }
+
+    /**
+     * Retourne les capacités du mode Canvas
+     * @returns {Object} Capacités disponibles
+     */
+  }, {
+    key: "getCapabilities",
+    value: function getCapabilities() {
+      return {
+        supportsRealData: false,
+        supportsDynamicVariables: true,
+        supportsAllElements: true,
+        maxElements: 50,
+        features: ['données_exemple', 'variables_globales', 'rendu_temps_reel', 'guides_marge']
+      };
+    }
+  }]);
+}();
+;// ./resources/js/components/preview-system/data/RealDataProvider.jsx
+function RealDataProvider_typeof(o) { "@babel/helpers - typeof"; return RealDataProvider_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, RealDataProvider_typeof(o); }
+function RealDataProvider_slicedToArray(r, e) { return RealDataProvider_arrayWithHoles(r) || RealDataProvider_iterableToArrayLimit(r, e) || RealDataProvider_unsupportedIterableToArray(r, e) || RealDataProvider_nonIterableRest(); }
+function RealDataProvider_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function RealDataProvider_unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return RealDataProvider_arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? RealDataProvider_arrayLikeToArray(r, a) : void 0; } }
+function RealDataProvider_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function RealDataProvider_iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function RealDataProvider_arrayWithHoles(r) { if (Array.isArray(r)) return r; }
+function RealDataProvider_regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return RealDataProvider_regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (RealDataProvider_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, RealDataProvider_regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, RealDataProvider_regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), RealDataProvider_regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", RealDataProvider_regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), RealDataProvider_regeneratorDefine2(u), RealDataProvider_regeneratorDefine2(u, o, "Generator"), RealDataProvider_regeneratorDefine2(u, n, function () { return this; }), RealDataProvider_regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (RealDataProvider_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function RealDataProvider_regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } RealDataProvider_regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { RealDataProvider_regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, RealDataProvider_regeneratorDefine2(e, r, n, t); }
+function RealDataProvider_asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function RealDataProvider_asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { RealDataProvider_asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { RealDataProvider_asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+function RealDataProvider_classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function RealDataProvider_defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, RealDataProvider_toPropertyKey(o.key), o); } }
+function RealDataProvider_createClass(e, r, t) { return r && RealDataProvider_defineProperties(e.prototype, r), t && RealDataProvider_defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function RealDataProvider_toPropertyKey(t) { var i = RealDataProvider_toPrimitive(t, "string"); return "symbol" == RealDataProvider_typeof(i) ? i : i + ""; }
+function RealDataProvider_toPrimitive(t, r) { if ("object" != RealDataProvider_typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != RealDataProvider_typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+/**
+ * Fournisseur de données réelles pour le mode Metabox
+ * Récupère les vraies données depuis WooCommerce
+ */
+var RealDataProvider = /*#__PURE__*/function () {
+  function RealDataProvider() {
+    var _window$pdfBuilderPro;
+    RealDataProvider_classCallCheck(this, RealDataProvider);
+    this.ajaxUrl = window.ajaxurl || '/wp-admin/admin-ajax.php';
+    this.nonce = ((_window$pdfBuilderPro = window.pdfBuilderPro) === null || _window$pdfBuilderPro === void 0 ? void 0 : _window$pdfBuilderPro.nonce) || '';
+    this.variablesCache = new Map(); // Cache des variables par commande
+  }
+
+  /**
+   * Charge les données complètes d'une commande WooCommerce
+   * @param {number} orderId - ID de la commande
+   * @returns {Promise<Object>} Données de la commande
+   */
+  return RealDataProvider_createClass(RealDataProvider, [{
+    key: "loadOrderData",
+    value: (function () {
+      var _loadOrderData = RealDataProvider_asyncToGenerator(/*#__PURE__*/RealDataProvider_regenerator().m(function _callee(orderId) {
+        var response, _response$data;
+        return RealDataProvider_regenerator().w(function (_context) {
+          while (1) switch (_context.n) {
+            case 0:
+              _context.n = 1;
+              return this.makeAjaxRequest('pdf_builder_get_order_data', {
+                order_id: orderId
+              });
+            case 1:
+              response = _context.v;
+              if (response.success) {
+                _context.n = 2;
+                break;
+              }
+              throw new Error(((_response$data = response.data) === null || _response$data === void 0 ? void 0 : _response$data.message) || 'Erreur lors du chargement des données de commande');
+            case 2:
+              return _context.a(2, response.data.order);
+          }
+        }, _callee, this);
+      }));
+      function loadOrderData(_x) {
+        return _loadOrderData.apply(this, arguments);
+      }
+      return loadOrderData;
+    }()
+    /**
+     * Charge les variables mappées pour une commande (utilise VariableMapper PHP)
+     * @param {number} orderId - ID de la commande
+     * @returns {Promise<Object>} Variables mappées
+     */
+    )
+  }, {
+    key: "loadVariables",
+    value: (function () {
+      var _loadVariables = RealDataProvider_asyncToGenerator(/*#__PURE__*/RealDataProvider_regenerator().m(function _callee2(orderId) {
+        var response, _response$data2, variables;
+        return RealDataProvider_regenerator().w(function (_context2) {
+          while (1) switch (_context2.n) {
+            case 0:
+              if (!this.variablesCache.has(orderId)) {
+                _context2.n = 1;
+                break;
+              }
+              return _context2.a(2, this.variablesCache.get(orderId));
+            case 1:
+              _context2.n = 2;
+              return this.makeAjaxRequest('pdf_builder_get_order_preview_data', {
+                order_id: orderId
+              });
+            case 2:
+              response = _context2.v;
+              if (response.success) {
+                _context2.n = 3;
+                break;
+              }
+              throw new Error(((_response$data2 = response.data) === null || _response$data2 === void 0 ? void 0 : _response$data2.message) || 'Erreur lors du chargement des variables d\'aperçu');
+            case 3:
+              variables = response.data.variables;
+              this.variablesCache.set(orderId, variables);
+              return _context2.a(2, variables);
+          }
+        }, _callee2, this);
+      }));
+      function loadVariables(_x2) {
+        return _loadVariables.apply(this, arguments);
+      }
+      return loadVariables;
+    }()
+    /**
+     * Valide l'accès à une commande
+     * @param {number} orderId - ID de la commande
+     * @returns {Promise<void>}
+     */
+    )
+  }, {
+    key: "validateOrderAccess",
+    value: (function () {
+      var _validateOrderAccess = RealDataProvider_asyncToGenerator(/*#__PURE__*/RealDataProvider_regenerator().m(function _callee3(orderId) {
+        var response, _response$data3;
+        return RealDataProvider_regenerator().w(function (_context3) {
+          while (1) switch (_context3.n) {
+            case 0:
+              _context3.n = 1;
+              return this.makeAjaxRequest('pdf_builder_validate_order_access', {
+                order_id: orderId
+              });
+            case 1:
+              response = _context3.v;
+              if (response.success) {
+                _context3.n = 2;
+                break;
+              }
+              throw new Error(((_response$data3 = response.data) === null || _response$data3 === void 0 ? void 0 : _response$data3.message) || 'Accès non autorisé à cette commande');
+            case 2:
+              return _context3.a(2);
+          }
+        }, _callee3, this);
+      }));
+      function validateOrderAccess(_x3) {
+        return _validateOrderAccess.apply(this, arguments);
+      }
+      return validateOrderAccess;
+    }()
+    /**
+     * Génère des données réelles pour un type d'élément spécifique
+     * @param {string} elementType - Type de l'élément
+     * @param {Object} properties - Propriétés de l'élément
+     * @param {Object} orderData - Données de la commande
+     * @returns {Promise<any>} Données réelles
+     */
+    )
+  }, {
+    key: "getElementData",
+    value: (function () {
+      var _getElementData = RealDataProvider_asyncToGenerator(/*#__PURE__*/RealDataProvider_regenerator().m(function _callee4(elementType, properties, orderData) {
+        var _t;
+        return RealDataProvider_regenerator().w(function (_context4) {
+          while (1) switch (_context4.n) {
+            case 0:
+              _t = elementType;
+              _context4.n = _t === 'product_table' ? 1 : _t === 'customer_info' ? 2 : _t === 'company_logo' ? 3 : _t === 'company_info' ? 4 : _t === 'order_number' ? 5 : _t === 'dynamic-text' ? 6 : _t === 'mentions' ? 7 : 8;
+              break;
+            case 1:
+              return _context4.a(2, this.generateProductTableData(properties, orderData));
+            case 2:
+              return _context4.a(2, this.generateCustomerInfoData(properties, orderData));
+            case 3:
+              return _context4.a(2, this.generateCompanyLogoData(properties, orderData));
+            case 4:
+              return _context4.a(2, this.generateCompanyInfoData(properties, orderData));
+            case 5:
+              return _context4.a(2, this.generateOrderNumberData(properties, orderData));
+            case 6:
+              return _context4.a(2, this.generateDynamicTextData(properties, orderData));
+            case 7:
+              return _context4.a(2, this.generateMentionsData(properties, orderData));
+            case 8:
+              return _context4.a(2, this.generateDefaultData(elementType, properties, orderData));
+            case 9:
+              return _context4.a(2);
+          }
+        }, _callee4, this);
+      }));
+      function getElementData(_x4, _x5, _x6) {
+        return _getElementData.apply(this, arguments);
+      }
+      return getElementData;
+    }()
+    /**
+     * Génère des données pour un tableau de produits (données réelles)
+     */
+    )
+  }, {
+    key: "generateProductTableData",
+    value: function generateProductTableData(properties, orderData) {
+      var _properties$columns = properties.columns,
+        columns = _properties$columns === void 0 ? {} : _properties$columns,
+        _properties$showSubto = properties.showSubtotal,
+        showSubtotal = _properties$showSubto === void 0 ? false : _properties$showSubto,
+        _properties$showShipp = properties.showShipping,
+        showShipping = _properties$showShipp === void 0 ? true : _properties$showShipp,
+        _properties$showTaxes = properties.showTaxes,
+        showTaxes = _properties$showTaxes === void 0 ? true : _properties$showTaxes,
+        _properties$tableStyl = properties.tableStyle,
+        tableStyle = _properties$tableStyl === void 0 ? 'default' : _properties$tableStyl;
+      var tableData = {
+        headers: [],
+        rows: [],
+        totals: {}
+      };
+
+      // Déterminer les colonnes à afficher
+      if (columns.image !== false) tableData.headers.push('Image');
+      if (columns.name !== false) tableData.headers.push('Produit');
+      if (columns.sku !== false) tableData.headers.push('SKU');
+      if (columns.quantity !== false) tableData.headers.push('Qté');
+      if (columns.price !== false) tableData.headers.push('Prix');
+      if (columns.total !== false) tableData.headers.push('Total');
+
+      // Générer les lignes de produits depuis les données réelles
+      if (orderData.items && Array.isArray(orderData.items)) {
+        tableData.rows = orderData.items.map(function (item) {
+          var row = [];
+          if (columns.image !== false) row.push(item.image || '');
+          if (columns.name !== false) row.push(item.name || '');
+          if (columns.sku !== false) row.push(item.sku || '');
+          if (columns.quantity !== false) row.push(item.quantity || 0);
+          if (columns.price !== false) row.push(item.price || '0 €');
+          if (columns.total !== false) row.push(item.total || '0 €');
+          return row;
+        });
+      }
+
+      // Ajouter les totaux si demandés
+      if (showSubtotal) tableData.totals.subtotal = orderData.subtotal || '0 €';
+      if (showShipping) tableData.totals.shipping = orderData.shipping_total || '0 €';
+      if (showTaxes) tableData.totals.tax = orderData.total_tax || '0 €';
+      tableData.totals.total = orderData.total || '0 €';
+
+      // Ajouter les données de style du tableau (même logique que SampleDataProvider)
+      tableData.tableStyleData = this.getTableStyleData(tableStyle);
+      return tableData;
+    }
+
+    /**
+     * Génère des données pour les informations client (données réelles)
+     */
+  }, {
+    key: "generateCustomerInfoData",
+    value: function generateCustomerInfoData(properties, orderData) {
+      var _this = this;
+      var _properties$fields = properties.fields,
+        fields = _properties$fields === void 0 ? [] : _properties$fields;
+      var data = {};
+      fields.forEach(function (field) {
+        var _orderData$billing, _orderData$billing2, _orderData$billing3, _orderData$billing4, _orderData$billing5, _orderData$billing6, _orderData$billing7;
+        switch (field) {
+          case 'name':
+            data.name = (_orderData$billing = orderData.billing) !== null && _orderData$billing !== void 0 && _orderData$billing.first_name && (_orderData$billing2 = orderData.billing) !== null && _orderData$billing2 !== void 0 && _orderData$billing2.last_name ? "".concat(orderData.billing.first_name, " ").concat(orderData.billing.last_name) : '';
+            break;
+          case 'email':
+            data.email = ((_orderData$billing3 = orderData.billing) === null || _orderData$billing3 === void 0 ? void 0 : _orderData$billing3.email) || '';
+            break;
+          case 'phone':
+            data.phone = ((_orderData$billing4 = orderData.billing) === null || _orderData$billing4 === void 0 ? void 0 : _orderData$billing4.phone) || '';
+            break;
+          case 'address':
+            data.address = _this.formatAddress(orderData.billing);
+            break;
+          case 'company':
+            data.company = ((_orderData$billing5 = orderData.billing) === null || _orderData$billing5 === void 0 ? void 0 : _orderData$billing5.company) || '';
+            break;
+          case 'vat':
+            data.vat = ((_orderData$billing6 = orderData.billing) === null || _orderData$billing6 === void 0 ? void 0 : _orderData$billing6.vat) || '';
+            break;
+          case 'siret':
+            data.siret = ((_orderData$billing7 = orderData.billing) === null || _orderData$billing7 === void 0 ? void 0 : _orderData$billing7.siret) || '';
+            break;
+        }
+      });
+      return data;
+    }
+
+    /**
+     * Génère des données pour le logo entreprise
+     */
+  }, {
+    key: "generateCompanyLogoData",
+    value: function generateCompanyLogoData(properties, orderData) {
+      // Le logo entreprise est généralement stocké dans les options WordPress
+      // Pour l'instant, retourner une valeur par défaut
+      return {
+        imageUrl: '',
+        // À récupérer depuis wp_options
+        alt: 'Logo de l\'entreprise'
+      };
+    }
+
+    /**
+     * Génère des données pour les informations entreprise
+     */
+  }, {
+    key: "generateCompanyInfoData",
+    value: function generateCompanyInfoData(properties, orderData) {
+      // Les informations entreprise sont généralement dans wp_options
+      // Simulation avec des données vides pour l'instant
+      var _properties$fields2 = properties.fields,
+        fields = _properties$fields2 === void 0 ? [] : _properties$fields2;
+      var data = {};
+      fields.forEach(function (field) {
+        data[field] = ''; // À récupérer depuis wp_options
+      });
+      return data;
+    }
+
+    /**
+     * Génère des données pour le numéro de commande
+     */
+  }, {
+    key: "generateOrderNumberData",
+    value: function generateOrderNumberData(properties, orderData) {
+      var _properties$format = properties.format,
+        format = _properties$format === void 0 ? 'Commande #{order_number} - {order_date}' : _properties$format;
+      return {
+        formatted: format.replace('{order_number}', orderData.number || orderData.id || '').replace('{order_date}', orderData.date_created || '')
+      };
+    }
+
+    /**
+     * Génère des données pour un élément de texte dynamique
+     */
+  }, {
+    key: "generateDynamicTextData",
+    value: (function () {
+      var _generateDynamicTextData = RealDataProvider_asyncToGenerator(/*#__PURE__*/RealDataProvider_regenerator().m(function _callee5(properties, orderData) {
+        var _properties$template, template, _properties$customCon, customContent, content, _orderData$order, variables, _t2;
+        return RealDataProvider_regenerator().w(function (_context5) {
+          while (1) switch (_context5.p = _context5.n) {
+            case 0:
+              _properties$template = properties.template, template = _properties$template === void 0 ? 'total_only' : _properties$template, _properties$customCon = properties.customContent, customContent = _properties$customCon === void 0 ? '' : _properties$customCon;
+              content = customContent;
+              if (template === 'total_only') {
+                content = "Total: ".concat(orderData.total || '0 €');
+              }
+
+              // Charger les variables mappées depuis le VariableMapper PHP
+              _context5.p = 1;
+              _context5.n = 2;
+              return this.loadVariables(orderData.id || ((_orderData$order = orderData.order) === null || _orderData$order === void 0 ? void 0 : _orderData$order.id));
+            case 2:
+              variables = _context5.v;
+              // Remplacer les variables avec les vraies données du VariableMapper
+              content = this.replaceVariablesWithMapper(content, variables);
+              _context5.n = 4;
+              break;
+            case 3:
+              _context5.p = 3;
+              _t2 = _context5.v;
+              console.warn('Erreur lors du chargement des variables, utilisation du fallback:', _t2);
+              // Fallback vers l'ancien système si le VariableMapper échoue
+              content = this.replaceVariables(content, orderData);
+            case 4:
+              return _context5.a(2, {
+                content: content
+              });
+          }
+        }, _callee5, this, [[1, 3]]);
+      }));
+      function generateDynamicTextData(_x7, _x8) {
+        return _generateDynamicTextData.apply(this, arguments);
+      }
+      return generateDynamicTextData;
+    }()
+    /**
+     * Génère des données pour les mentions légales
+     */
+    )
+  }, {
+    key: "generateMentionsData",
+    value: function generateMentionsData(properties, orderData) {
+      // Les mentions légales sont généralement dans wp_options
+      // Simulation pour l'instant
+      var _properties$showEmail = properties.showEmail,
+        showEmail = _properties$showEmail === void 0 ? true : _properties$showEmail,
+        _properties$showPhone = properties.showPhone,
+        showPhone = _properties$showPhone === void 0 ? true : _properties$showPhone,
+        _properties$showSiret = properties.showSiret,
+        showSiret = _properties$showSiret === void 0 ? true : _properties$showSiret,
+        _properties$showVat = properties.showVat,
+        showVat = _properties$showVat === void 0 ? false : _properties$showVat,
+        _properties$showAddre = properties.showAddress,
+        showAddress = _properties$showAddre === void 0 ? false : _properties$showAddre,
+        _properties$showWebsi = properties.showWebsite,
+        showWebsite = _properties$showWebsi === void 0 ? false : _properties$showWebsi,
+        _properties$showCusto = properties.showCustomText,
+        showCustomText = _properties$showCusto === void 0 ? false : _properties$showCusto,
+        _properties$customTex = properties.customText,
+        customText = _properties$customTex === void 0 ? '' : _properties$customTex;
+      var mentions = [];
+      if (showEmail) mentions.push(orderData.company_email || '');
+      if (showPhone) mentions.push(orderData.company_phone || '');
+      if (showSiret) mentions.push("SIRET: ".concat(orderData.company_siret || ''));
+      if (showVat) mentions.push("TVA: ".concat(orderData.company_vat || ''));
+      if (showAddress) mentions.push(orderData.company_address || '');
+      if (showWebsite) mentions.push(orderData.company_website || '');
+      if (showCustomText && customText) mentions.push(customText);
+      return {
+        mentions: mentions
+      };
+    }
+
+    /**
+     * Génère des données par défaut pour les éléments non supportés
+     */
+  }, {
+    key: "generateDefaultData",
+    value: function generateDefaultData(elementType, properties, orderData) {
+      return {
+        type: elementType,
+        placeholder: "Donn\xE9es r\xE9elles pour ".concat(elementType),
+        properties: properties,
+        orderData: orderData
+      };
+    }
+
+    /**
+     * Formate une adresse depuis les données WooCommerce
+     */
+  }, {
+    key: "formatAddress",
+    value: function formatAddress(addressData) {
+      if (!addressData) return '';
+      var parts = [addressData.address_1, addressData.address_2, addressData.postcode, addressData.city, addressData.state, addressData.country].filter(Boolean);
+      return parts.join('\n');
+    }
+
+    /**
+     * Remplace les variables dynamiques dans un contenu
+     */
+  }, {
+    key: "replaceVariables",
+    value: function replaceVariables(content, orderData) {
+      var _orderData$billing8, _orderData$billing9, _orderData$billing0, _orderData$billing1;
+      if (!content || !orderData) return content;
+      var replacements = {
+        '{{order_number}}': orderData.number || orderData.id || '',
+        '{{order_date}}': orderData.date_created || '',
+        '{{order_total}}': orderData.total || '0 €',
+        '{{order_status}}': orderData.status || '',
+        '{{customer_name}}': (_orderData$billing8 = orderData.billing) !== null && _orderData$billing8 !== void 0 && _orderData$billing8.first_name && (_orderData$billing9 = orderData.billing) !== null && _orderData$billing9 !== void 0 && _orderData$billing9.last_name ? "".concat(orderData.billing.first_name, " ").concat(orderData.billing.last_name) : '',
+        '{{customer_email}}': ((_orderData$billing0 = orderData.billing) === null || _orderData$billing0 === void 0 ? void 0 : _orderData$billing0.email) || '',
+        '{{customer_phone}}': ((_orderData$billing1 = orderData.billing) === null || _orderData$billing1 === void 0 ? void 0 : _orderData$billing1.phone) || '',
+        '{{billing_address}}': this.formatAddress(orderData.billing),
+        '{{shipping_address}}': this.formatAddress(orderData.shipping),
+        '{{payment_method}}': orderData.payment_method_title || '',
+        '{{shipping_method}}': orderData.shipping_method || '',
+        '{{subtotal}}': orderData.subtotal || '0 €',
+        '{{tax_amount}}': orderData.total_tax || '0 €',
+        '{{shipping_amount}}': orderData.shipping_total || '0 €',
+        '{{discount_amount}}': orderData.discount_total || '0 €',
+        '{{total_excl_tax}}': orderData.total_excl_tax || '0 €'
+      };
+      var result = content;
+      Object.entries(replacements).forEach(function (_ref) {
+        var _ref2 = RealDataProvider_slicedToArray(_ref, 2),
+          variable = _ref2[0],
+          value = _ref2[1];
+        result = result.replace(new RegExp(variable.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), value);
+      });
+      return result;
+    }
+
+    /**
+     * Remplace les variables dans le contenu en utilisant les données du VariableMapper PHP
+     * @param {string} content - Contenu avec variables
+     * @param {Object} variables - Variables du VariableMapper
+     * @returns {string} Contenu avec variables remplacées
+     */
+  }, {
+    key: "replaceVariablesWithMapper",
+    value: function replaceVariablesWithMapper(content, variables) {
+      if (!content || !variables) return content;
+      var result = content;
+
+      // Remplacer chaque variable du mapper
+      Object.entries(variables).forEach(function (_ref3) {
+        var _ref4 = RealDataProvider_slicedToArray(_ref3, 2),
+          key = _ref4[0],
+          value = _ref4[1];
+        var variable = "{{".concat(key, "}}");
+        var regex = new RegExp(variable.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+        result = result.replace(regex, value || '');
+      });
+      return result;
+    }
+
+    /**
+     * Récupère les données de style pour un tableau
+     */
+  }, {
+    key: "getTableStyleData",
+    value: function getTableStyleData(tableStyle) {
+      var tableStyles = {
+        "default": {
+          header_bg: [248, 249, 250],
+          // #f8f9fa
+          header_border: [226, 232, 240],
+          // #e2e8f0
+          row_border: [241, 245, 249],
+          // #f1f5f9
+          alt_row_bg: [250, 251, 252],
+          // #fafbfc
+          headerTextColor: '#000000',
+          rowTextColor: '#000000',
+          border_width: 1,
+          headerFontWeight: 'bold',
+          headerFontSize: '12px',
+          rowFontSize: '11px'
+        },
+        classic: {
+          header_bg: [30, 41, 59],
+          // #1e293b
+          header_border: [51, 65, 85],
+          // #334155
+          row_border: [51, 65, 85],
+          // #334155
+          alt_row_bg: [255, 255, 255],
+          // #ffffff
+          headerTextColor: '#ffffff',
+          rowTextColor: '#1e293b',
+          border_width: 1.5,
+          headerFontWeight: '700',
+          headerFontSize: '11px',
+          rowFontSize: '10px'
+        },
+        blue: {
+          header_bg: [59, 130, 246],
+          // #3b82f6
+          header_border: [37, 99, 235],
+          // #2563eb
+          row_border: [226, 232, 240],
+          // #e2e8f0
+          alt_row_bg: [248, 249, 250],
+          // #f8fafc
+          headerTextColor: '#ffffff',
+          rowTextColor: '#1e293b',
+          border_width: 1,
+          headerFontWeight: 'bold',
+          headerFontSize: '11px',
+          rowFontSize: '10px'
+        },
+        minimal: {
+          header_bg: [255, 255, 255],
+          // #ffffff
+          header_border: [229, 231, 235],
+          // #e5e7eb
+          row_border: [229, 231, 235],
+          // #e5e7eb
+          alt_row_bg: [255, 255, 255],
+          // #ffffff
+          headerTextColor: '#374151',
+          rowTextColor: '#374151',
+          border_width: 1,
+          headerFontWeight: '600',
+          headerFontSize: '12px',
+          rowFontSize: '11px'
+        },
+        light: {
+          header_bg: [249, 250, 251],
+          // #f9fafb
+          header_border: [209, 213, 219],
+          // #d1d5db
+          row_border: [229, 231, 235],
+          // #e5e7eb
+          alt_row_bg: [255, 255, 255],
+          // #ffffff
+          headerTextColor: '#111827',
+          rowTextColor: '#374151',
+          border_width: 1,
+          headerFontWeight: '500',
+          headerFontSize: '12px',
+          rowFontSize: '11px'
+        },
+        emerald_forest: {
+          header_bg: [16, 185, 129],
+          // #10b981
+          header_border: [5, 150, 105],
+          // #059669
+          row_border: [209, 213, 219],
+          // #d1d5db
+          alt_row_bg: [236, 253, 245],
+          // #ecfdf5
+          headerTextColor: '#ffffff',
+          rowTextColor: '#065f46',
+          border_width: 1,
+          headerFontWeight: 'bold',
+          headerFontSize: '11px',
+          rowFontSize: '10px'
+        },
+        striped: {
+          header_bg: [75, 85, 99],
+          // #4b5563
+          header_border: [107, 114, 128],
+          // #6b7280
+          row_border: [229, 231, 235],
+          // #e5e7eb
+          alt_row_bg: [249, 250, 251],
+          // #f9fafb
+          headerTextColor: '#ffffff',
+          rowTextColor: '#374151',
+          border_width: 1,
+          headerFontWeight: 'bold',
+          headerFontSize: '12px',
+          rowFontSize: '11px'
+        },
+        bordered: {
+          header_bg: [31, 41, 55],
+          // #1f2937
+          header_border: [55, 65, 81],
+          // #374151
+          row_border: [55, 65, 81],
+          // #374151
+          alt_row_bg: [255, 255, 255],
+          // #ffffff
+          headerTextColor: '#ffffff',
+          rowTextColor: '#1f2937',
+          border_width: 2,
+          headerFontWeight: 'bold',
+          headerFontSize: '12px',
+          rowFontSize: '11px'
+        },
+        modern: {
+          header_bg: [17, 24, 39],
+          // #111827
+          header_border: [75, 85, 99],
+          // #4b5563
+          row_border: [209, 213, 219],
+          // #d1d5db
+          alt_row_bg: [243, 244, 246],
+          // #f3f4f6
+          headerTextColor: '#ffffff',
+          rowTextColor: '#374151',
+          border_width: 1,
+          headerFontWeight: '600',
+          headerFontSize: '13px',
+          rowFontSize: '12px'
+        },
+        blue_ocean: {
+          header_bg: [12, 74, 110],
+          // #0c4a6e
+          header_border: [2, 132, 199],
+          // #0284c7
+          row_border: [186, 230, 253],
+          // #bae6fd
+          alt_row_bg: [240, 249, 255],
+          // #f0f9ff
+          headerTextColor: '#ffffff',
+          rowTextColor: '#0c4a6e',
+          border_width: 1,
+          headerFontWeight: 'bold',
+          headerFontSize: '12px',
+          rowFontSize: '11px'
+        },
+        sunset_orange: {
+          header_bg: [154, 52, 18],
+          // #9a3412
+          header_border: [234, 88, 12],
+          // #ea580c
+          row_border: [253, 186, 116],
+          // #fdba74
+          alt_row_bg: [255, 247, 237],
+          // #fff7ed
+          headerTextColor: '#ffffff',
+          rowTextColor: '#9a3412',
+          border_width: 1,
+          headerFontWeight: 'bold',
+          headerFontSize: '12px',
+          rowFontSize: '11px'
+        },
+        royal_purple: {
+          header_bg: [88, 28, 135],
+          // #581c87
+          header_border: [147, 51, 234],
+          // #9333ea
+          row_border: [221, 214, 254],
+          // #ddd6fe
+          alt_row_bg: [250, 245, 255],
+          // #faf5ff
+          headerTextColor: '#ffffff',
+          rowTextColor: '#581c87',
+          border_width: 1,
+          headerFontWeight: 'bold',
+          headerFontSize: '12px',
+          rowFontSize: '11px'
+        },
+        rose_pink: {
+          header_bg: [190, 18, 60],
+          // #be123c
+          header_border: [236, 72, 153],
+          // #ec4899
+          row_border: [253, 164, 175],
+          // #fda4af
+          alt_row_bg: [255, 241, 242],
+          // #fff1f2
+          headerTextColor: '#ffffff',
+          rowTextColor: '#be123c',
+          border_width: 1,
+          headerFontWeight: 'bold',
+          headerFontSize: '12px',
+          rowFontSize: '11px'
+        },
+        teal_aqua: {
+          header_bg: [5, 150, 105],
+          // #059669
+          header_border: [20, 184, 166],
+          // #14b8a6
+          row_border: [153, 246, 228],
+          // #99f6e4
+          alt_row_bg: [236, 253, 245],
+          // #ecfdf5
+          headerTextColor: '#ffffff',
+          rowTextColor: '#065f46',
+          border_width: 1,
+          headerFontWeight: 'bold',
+          headerFontSize: '12px',
+          rowFontSize: '11px'
+        },
+        crimson_red: {
+          header_bg: [153, 27, 27],
+          // #991b1b
+          header_border: [239, 68, 68],
+          // #ef4444
+          row_border: [252, 165, 165],
+          // #fca5a5
+          alt_row_bg: [254, 242, 242],
+          // #fef2f2
+          headerTextColor: '#ffffff',
+          rowTextColor: '#991b1b',
+          border_width: 1,
+          headerFontWeight: 'bold',
+          headerFontSize: '12px',
+          rowFontSize: '11px'
+        },
+        amber_gold: {
+          header_bg: [161, 98, 7],
+          // #a16207
+          header_border: [245, 158, 11],
+          // #f59e0b
+          row_border: [253, 230, 138],
+          // #fde68a
+          alt_row_bg: [254, 252, 232],
+          // #fefce8
+          headerTextColor: '#ffffff',
+          rowTextColor: '#92400e',
+          border_width: 1,
+          headerFontWeight: 'bold',
+          headerFontSize: '12px',
+          rowFontSize: '11px'
+        },
+        indigo_night: {
+          header_bg: [49, 46, 129],
+          // #312e81
+          header_border: [99, 102, 241],
+          // #6366f1
+          row_border: [196, 181, 253],
+          // #c4b5fd
+          alt_row_bg: [245, 243, 255],
+          // #f5f3ff
+          headerTextColor: '#ffffff',
+          rowTextColor: '#312e81',
+          border_width: 1,
+          headerFontWeight: 'bold',
+          headerFontSize: '12px',
+          rowFontSize: '11px'
+        },
+        slate_gray: {
+          header_bg: [51, 65, 85],
+          // #334155
+          header_border: [100, 116, 139],
+          // #64748b
+          row_border: [203, 213, 225],
+          // #cbd5e1
+          alt_row_bg: [248, 250, 252],
+          // #f8fafc
+          headerTextColor: '#ffffff',
+          rowTextColor: '#334155',
+          border_width: 1,
+          headerFontWeight: 'bold',
+          headerFontSize: '12px',
+          rowFontSize: '11px'
+        },
+        coral_sunset: {
+          header_bg: [194, 65, 12],
+          // #c2410c
+          header_border: [251, 146, 60],
+          // #fb923c
+          row_border: [253, 186, 116],
+          // #fdba74
+          alt_row_bg: [255, 247, 237],
+          // #fff7ed
+          headerTextColor: '#ffffff',
+          rowTextColor: '#9a3412',
+          border_width: 1,
+          headerFontWeight: 'bold',
+          headerFontSize: '12px',
+          rowFontSize: '11px'
+        },
+        mint_green: {
+          header_bg: [34, 197, 94],
+          // #22c55e
+          header_border: [74, 222, 128],
+          // #4ade80
+          row_border: [187, 247, 208],
+          // #bbf7d0
+          alt_row_bg: [240, 253, 244],
+          // #f0fdf4
+          headerTextColor: '#ffffff',
+          rowTextColor: '#166534',
+          border_width: 1,
+          headerFontWeight: 'bold',
+          headerFontSize: '12px',
+          rowFontSize: '11px'
+        },
+        violet_dream: {
+          header_bg: [109, 40, 217],
+          // #6d28d9
+          header_border: [168, 85, 247],
+          // #a855f7
+          row_border: [233, 213, 255],
+          // #e9d5ff
+          alt_row_bg: [251, 245, 255],
+          // #fbf5ff
+          headerTextColor: '#ffffff',
+          rowTextColor: '#6b21a8',
+          border_width: 1,
+          headerFontWeight: 'bold',
+          headerFontSize: '12px',
+          rowFontSize: '11px'
+        },
+        sky_blue: {
+          header_bg: [3, 105, 161],
+          // #0369a1
+          header_border: [14, 165, 233],
+          // #0ea5e9
+          row_border: [125, 211, 252],
+          // #7dd3fc
+          alt_row_bg: [240, 249, 255],
+          // #f0f9ff
+          headerTextColor: '#ffffff',
+          rowTextColor: '#0c4a6e',
+          border_width: 1,
+          headerFontWeight: 'bold',
+          headerFontSize: '12px',
+          rowFontSize: '11px'
+        },
+        forest_green: {
+          header_bg: [21, 128, 61],
+          // #15803d
+          header_border: [34, 197, 94],
+          // #22c55e
+          row_border: [134, 239, 172],
+          // #86efac
+          alt_row_bg: [236, 253, 245],
+          // #ecfdf5
+          headerTextColor: '#ffffff',
+          rowTextColor: '#14532d',
+          border_width: 1,
+          headerFontWeight: 'bold',
+          headerFontSize: '12px',
+          rowFontSize: '11px'
+        },
+        ruby_red: {
+          header_bg: [185, 28, 28],
+          // #b91c1c
+          header_border: [239, 68, 68],
+          // #ef4444
+          row_border: [252, 165, 165],
+          // #fca5a5
+          alt_row_bg: [254, 226, 226],
+          // #fee2e2
+          headerTextColor: '#ffffff',
+          rowTextColor: '#991b1b',
+          border_width: 1,
+          headerFontWeight: 'bold',
+          headerFontSize: '12px',
+          rowFontSize: '11px'
+        }
+      };
+      return tableStyles[tableStyle] || tableStyles['default'];
+    }
+
+    /**
+     * Effectue une requête AJAX vers WordPress
+     */
+  }, {
+    key: "makeAjaxRequest",
+    value: (function () {
+      var _makeAjaxRequest = RealDataProvider_asyncToGenerator(/*#__PURE__*/RealDataProvider_regenerator().m(function _callee6(action) {
+        var data,
+          formData,
+          response,
+          _args6 = arguments;
+        return RealDataProvider_regenerator().w(function (_context6) {
+          while (1) switch (_context6.n) {
+            case 0:
+              data = _args6.length > 1 && _args6[1] !== undefined ? _args6[1] : {};
+              formData = new FormData();
+              formData.append('action', action);
+              formData.append('nonce', this.nonce);
+              Object.entries(data).forEach(function (_ref5) {
+                var _ref6 = RealDataProvider_slicedToArray(_ref5, 2),
+                  key = _ref6[0],
+                  value = _ref6[1];
+                formData.append(key, value);
+              });
+              _context6.n = 1;
+              return fetch(this.ajaxUrl, {
+                method: 'POST',
+                body: formData
+              });
+            case 1:
+              response = _context6.v;
+              if (response.ok) {
+                _context6.n = 2;
+                break;
+              }
+              throw new Error("Erreur HTTP: ".concat(response.status));
+            case 2:
+              _context6.n = 3;
+              return response.json();
+            case 3:
+              return _context6.a(2, _context6.v);
+          }
+        }, _callee6, this);
+      }));
+      function makeAjaxRequest(_x9) {
+        return _makeAjaxRequest.apply(this, arguments);
+      }
+      return makeAjaxRequest;
+    }())
+  }]);
+}();
+;// ./resources/js/components/preview-system/modes/MetaboxMode.jsx
+function MetaboxMode_typeof(o) { "@babel/helpers - typeof"; return MetaboxMode_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, MetaboxMode_typeof(o); }
+function MetaboxMode_regeneratorValues(e) { if (null != e) { var t = e["function" == typeof Symbol && Symbol.iterator || "@@iterator"], r = 0; if (t) return t.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) return { next: function next() { return e && r >= e.length && (e = void 0), { value: e && e[r++], done: !e }; } }; } throw new TypeError(MetaboxMode_typeof(e) + " is not iterable"); }
+function MetaboxMode_regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return MetaboxMode_regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (MetaboxMode_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, MetaboxMode_regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, MetaboxMode_regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), MetaboxMode_regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", MetaboxMode_regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), MetaboxMode_regeneratorDefine2(u), MetaboxMode_regeneratorDefine2(u, o, "Generator"), MetaboxMode_regeneratorDefine2(u, n, function () { return this; }), MetaboxMode_regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (MetaboxMode_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function MetaboxMode_regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } MetaboxMode_regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { MetaboxMode_regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, MetaboxMode_regeneratorDefine2(e, r, n, t); }
+function MetaboxMode_createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = MetaboxMode_unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t["return"] || t["return"](); } finally { if (u) throw o; } } }; }
+function MetaboxMode_toConsumableArray(r) { return MetaboxMode_arrayWithoutHoles(r) || MetaboxMode_iterableToArray(r) || MetaboxMode_unsupportedIterableToArray(r) || MetaboxMode_nonIterableSpread(); }
+function MetaboxMode_nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function MetaboxMode_unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return MetaboxMode_arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? MetaboxMode_arrayLikeToArray(r, a) : void 0; } }
+function MetaboxMode_iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function MetaboxMode_arrayWithoutHoles(r) { if (Array.isArray(r)) return MetaboxMode_arrayLikeToArray(r); }
+function MetaboxMode_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function MetaboxMode_asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function MetaboxMode_asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { MetaboxMode_asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { MetaboxMode_asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+function MetaboxMode_classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function MetaboxMode_defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, MetaboxMode_toPropertyKey(o.key), o); } }
+function MetaboxMode_createClass(e, r, t) { return r && MetaboxMode_defineProperties(e.prototype, r), t && MetaboxMode_defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function MetaboxMode_toPropertyKey(t) { var i = MetaboxMode_toPrimitive(t, "string"); return "symbol" == MetaboxMode_typeof(i) ? i : i + ""; }
+function MetaboxMode_toPrimitive(t, r) { if ("object" != MetaboxMode_typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != MetaboxMode_typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+
+
+/**
+ * Mode Metabox : Aperçu avec données réelles de commande WooCommerce
+ * Utilisé dans la metabox des commandes pour afficher l'aperçu avec les vraies données
+ */
+var MetaboxMode = /*#__PURE__*/function () {
+  function MetaboxMode() {
+    MetaboxMode_classCallCheck(this, MetaboxMode);
+  }
+  return MetaboxMode_createClass(MetaboxMode, null, [{
+    key: "loadData",
+    value: (
+    /**
+     * Charge les données d'aperçu pour le mode Metabox
+     * @param {Array} elements - Liste des éléments du template
+     * @param {number} orderId - ID de la commande WooCommerce
+     * @param {Object} templateData - Données du template
+     * @returns {Promise<Object>} Données d'aperçu
+     */
+    function () {
+      var _loadData = MetaboxMode_asyncToGenerator(/*#__PURE__*/MetaboxMode_regenerator().m(function _callee(elements, orderId) {
+        var templateData,
+          dataProvider,
+          orderData,
+          elementTypes,
+          previewData,
+          _iterator,
+          _step,
+          _loop,
+          _args2 = arguments,
+          _t2,
+          _t3;
+        return MetaboxMode_regenerator().w(function (_context2) {
+          while (1) switch (_context2.p = _context2.n) {
+            case 0:
+              templateData = _args2.length > 2 && _args2[2] !== undefined ? _args2[2] : {};
+              if (orderId) {
+                _context2.n = 1;
+                break;
+              }
+              throw new Error('ID de commande requis pour le mode Metabox');
+            case 1:
+              dataProvider = new RealDataProvider();
+              _context2.p = 2;
+              _context2.n = 3;
+              return dataProvider.loadOrderData(orderId);
+            case 3:
+              orderData = _context2.v;
+              // Collecter tous les types d'éléments présents
+              elementTypes = MetaboxMode_toConsumableArray(new Set(elements.map(function (el) {
+                return el.type;
+              }))); // Générer des données réelles pour chaque type d'élément
+              previewData = {};
+              _iterator = MetaboxMode_createForOfIteratorHelper(elementTypes);
+              _context2.p = 4;
+              _loop = /*#__PURE__*/MetaboxMode_regenerator().m(function _loop() {
+                var elementType, elementsOfType, _iterator2, _step2, element, elementKey, _t;
+                return MetaboxMode_regenerator().w(function (_context) {
+                  while (1) switch (_context.p = _context.n) {
+                    case 0:
+                      elementType = _step.value;
+                      elementsOfType = elements.filter(function (el) {
+                        return el.type === elementType;
+                      }); // Pour chaque élément du type, générer des données spécifiques
+                      _iterator2 = MetaboxMode_createForOfIteratorHelper(elementsOfType);
+                      _context.p = 1;
+                      _iterator2.s();
+                    case 2:
+                      if ((_step2 = _iterator2.n()).done) {
+                        _context.n = 5;
+                        break;
+                      }
+                      element = _step2.value;
+                      elementKey = "".concat(element.type, "_").concat(element.id);
+                      _context.n = 3;
+                      return dataProvider.getElementData(element.type, element.properties || element, orderData);
+                    case 3:
+                      previewData[elementKey] = _context.v;
+                    case 4:
+                      _context.n = 2;
+                      break;
+                    case 5:
+                      _context.n = 7;
+                      break;
+                    case 6:
+                      _context.p = 6;
+                      _t = _context.v;
+                      _iterator2.e(_t);
+                    case 7:
+                      _context.p = 7;
+                      _iterator2.f();
+                      return _context.f(7);
+                    case 8:
+                      return _context.a(2);
+                  }
+                }, _loop, null, [[1, 6, 7, 8]]);
+              });
+              _iterator.s();
+            case 5:
+              if ((_step = _iterator.n()).done) {
+                _context2.n = 7;
+                break;
+              }
+              return _context2.d(MetaboxMode_regeneratorValues(_loop()), 6);
+            case 6:
+              _context2.n = 5;
+              break;
+            case 7:
+              _context2.n = 9;
+              break;
+            case 8:
+              _context2.p = 8;
+              _t2 = _context2.v;
+              _iterator.e(_t2);
+            case 9:
+              _context2.p = 9;
+              _iterator.f();
+              return _context2.f(9);
+            case 10:
+              // Variables globales de la commande
+              previewData.global = orderData;
+              return _context2.a(2, previewData);
+            case 11:
+              _context2.p = 11;
+              _t3 = _context2.v;
+              console.error('Erreur lors du chargement des données de commande:', _t3);
+              throw new Error("Impossible de charger les donn\xE9es de la commande ".concat(orderId, ": ").concat(_t3.message));
+            case 12:
+              return _context2.a(2);
+          }
+        }, _callee, null, [[4, 8, 9, 10], [2, 11]]);
+      }));
+      function loadData(_x, _x2) {
+        return _loadData.apply(this, arguments);
+      }
+      return loadData;
+    }()
+    /**
+     * Valide si le mode Metabox peut être utilisé
+     * @param {Array} elements - Liste des éléments
+     * @param {number} orderId - ID de la commande
+     * @returns {boolean} True si valide
+     */
+    )
+  }, {
+    key: "validate",
+    value: function validate(elements, orderId) {
+      return elements && Array.isArray(elements) && orderId && typeof orderId === 'number' && orderId > 0;
+    }
+
+    /**
+     * Retourne les capacités du mode Metabox
+     * @returns {Object} Capacités disponibles
+     */
+  }, {
+    key: "getCapabilities",
+    value: function getCapabilities() {
+      return {
+        supportsRealData: true,
+        supportsDynamicVariables: true,
+        supportsAllElements: true,
+        requiresOrderId: true,
+        maxElements: 100,
+        features: ['données_réelles', 'variables_dynamiques', 'validation_commande', 'sécurité_wc']
+      };
+    }
+
+    /**
+     * Vérifie si la commande existe et est accessible
+     * @param {number} orderId - ID de la commande
+     * @returns {Promise<boolean>} True si accessible
+     */
+  }, {
+    key: "checkOrderAccess",
+    value: (function () {
+      var _checkOrderAccess = MetaboxMode_asyncToGenerator(/*#__PURE__*/MetaboxMode_regenerator().m(function _callee2(orderId) {
+        var dataProvider, _t4;
+        return MetaboxMode_regenerator().w(function (_context3) {
+          while (1) switch (_context3.p = _context3.n) {
+            case 0:
+              _context3.p = 0;
+              dataProvider = new RealDataProvider();
+              _context3.n = 1;
+              return dataProvider.validateOrderAccess(orderId);
+            case 1:
+              return _context3.a(2, true);
+            case 2:
+              _context3.p = 2;
+              _t4 = _context3.v;
+              console.warn("Acc\xE8s refus\xE9 \xE0 la commande ".concat(orderId, ":"), _t4.message);
+              return _context3.a(2, false);
+          }
+        }, _callee2, null, [[0, 2]]);
+      }));
+      function checkOrderAccess(_x3) {
+        return _checkOrderAccess.apply(this, arguments);
+      }
+      return checkOrderAccess;
+    }())
+  }]);
+}();
+;// ./resources/js/components/preview-system/PreviewModal.jsx
+function PreviewModal_regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return PreviewModal_regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (PreviewModal_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, PreviewModal_regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, PreviewModal_regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), PreviewModal_regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", PreviewModal_regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), PreviewModal_regeneratorDefine2(u), PreviewModal_regeneratorDefine2(u, o, "Generator"), PreviewModal_regeneratorDefine2(u, n, function () { return this; }), PreviewModal_regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (PreviewModal_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function PreviewModal_regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } PreviewModal_regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { PreviewModal_regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, PreviewModal_regeneratorDefine2(e, r, n, t); }
+function PreviewModal_asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function PreviewModal_asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { PreviewModal_asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { PreviewModal_asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+function PreviewModal_slicedToArray(r, e) { return PreviewModal_arrayWithHoles(r) || PreviewModal_iterableToArrayLimit(r, e) || PreviewModal_unsupportedIterableToArray(r, e) || PreviewModal_nonIterableRest(); }
+function PreviewModal_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function PreviewModal_unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return PreviewModal_arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? PreviewModal_arrayLikeToArray(r, a) : void 0; } }
+function PreviewModal_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function PreviewModal_iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function PreviewModal_arrayWithHoles(r) { if (Array.isArray(r)) return r; }
+
+
+
+
+
+/**
+ * Modal principal pour l'aperçu unifié PDF Builder Pro
+ * Supporte deux modes : Canvas (données exemple) et Metabox (données réelles)
+ */
+var PreviewModal = function PreviewModal(_ref) {
+  var isOpen = _ref.isOpen,
+    onClose = _ref.onClose,
+    _ref$mode = _ref.mode,
+    mode = _ref$mode === void 0 ? 'canvas' : _ref$mode,
+    _ref$elements = _ref.elements,
+    elements = _ref$elements === void 0 ? [] : _ref$elements,
+    _ref$orderId = _ref.orderId,
+    orderId = _ref$orderId === void 0 ? null : _ref$orderId,
+    _ref$templateData = _ref.templateData,
+    templateData = _ref$templateData === void 0 ? {} : _ref$templateData,
+    _ref$templateId = _ref.templateId,
+    templateId = _ref$templateId === void 0 ? null : _ref$templateId,
+    _ref$nonce = _ref.nonce,
+    nonce = _ref$nonce === void 0 ? null : _ref$nonce;
+  var _useState = (0,react.useState)(false),
+    _useState2 = PreviewModal_slicedToArray(_useState, 2),
+    isLoading = _useState2[0],
+    setIsLoading = _useState2[1];
+  var _useState3 = (0,react.useState)(null),
+    _useState4 = PreviewModal_slicedToArray(_useState3, 2),
+    previewData = _useState4[0],
+    setPreviewData = _useState4[1];
+  var _useState5 = (0,react.useState)(null),
+    _useState6 = PreviewModal_slicedToArray(_useState5, 2),
+    error = _useState6[0],
+    setError = _useState6[1];
+  var _useState7 = (0,react.useState)(elements),
+    _useState8 = PreviewModal_slicedToArray(_useState7, 2),
+    templateElements = _useState8[0],
+    setTemplateElements = _useState8[1];
+
+  // Sélection du mode de fonctionnement
+  var currentMode = mode === 'metabox' ? MetaboxMode : CanvasMode;
+
+  // Chargement des éléments du template en mode metabox
+  (0,react.useEffect)(function () {
+    if (!isOpen || mode !== 'metabox') return;
+    var loadTemplateElements = /*#__PURE__*/function () {
+      var _ref2 = PreviewModal_asyncToGenerator(/*#__PURE__*/PreviewModal_regenerator().m(function _callee() {
+        var _window$pdfBuilderPro, response, result, _result$data, _t;
+        return PreviewModal_regenerator().w(function (_context) {
+          while (1) switch (_context.p = _context.n) {
+            case 0:
+              if (templateId) {
+                _context.n = 1;
+                break;
+              }
+              setError('ID du template manquant pour le mode metabox');
+              return _context.a(2);
+            case 1:
+              _context.p = 1;
+              _context.n = 2;
+              return fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                  action: 'pdf_builder_get_canvas_elements',
+                  template_id: templateId,
+                  nonce: nonce || ((_window$pdfBuilderPro = window.pdfBuilderPro) === null || _window$pdfBuilderPro === void 0 ? void 0 : _window$pdfBuilderPro.nonce) || ''
+                })
+              });
+            case 2:
+              response = _context.v;
+              _context.n = 3;
+              return response.json();
+            case 3:
+              result = _context.v;
+              if (!(result.success && result.data && result.data.elements)) {
+                _context.n = 4;
+                break;
+              }
+              setTemplateElements(result.data.elements);
+              _context.n = 5;
+              break;
+            case 4:
+              throw new Error(((_result$data = result.data) === null || _result$data === void 0 ? void 0 : _result$data.message) || 'Erreur lors du chargement des éléments du template');
+            case 5:
+              _context.n = 7;
+              break;
+            case 6:
+              _context.p = 6;
+              _t = _context.v;
+              console.error('Erreur lors du chargement des éléments du template:', _t);
+              setError(_t.message || 'Erreur lors du chargement du template');
+            case 7:
+              return _context.a(2);
+          }
+        }, _callee, null, [[1, 6]]);
+      }));
+      return function loadTemplateElements() {
+        return _ref2.apply(this, arguments);
+      };
+    }();
+    loadTemplateElements();
+  }, [isOpen, mode, templateId, nonce]);
+
+  // Chargement des données selon le mode
+  (0,react.useEffect)(function () {
+    if (!isOpen) return;
+    var loadPreviewData = /*#__PURE__*/function () {
+      var _ref3 = PreviewModal_asyncToGenerator(/*#__PURE__*/PreviewModal_regenerator().m(function _callee2() {
+        var data, _t2;
+        return PreviewModal_regenerator().w(function (_context2) {
+          while (1) switch (_context2.p = _context2.n) {
+            case 0:
+              setIsLoading(true);
+              setError(null);
+              _context2.p = 1;
+              _context2.n = 2;
+              return currentMode.loadData(templateElements, orderId, templateData);
+            case 2:
+              data = _context2.v;
+              setPreviewData(data);
+              _context2.n = 4;
+              break;
+            case 3:
+              _context2.p = 3;
+              _t2 = _context2.v;
+              console.error('Erreur lors du chargement des données d\'aperçu:', _t2);
+              setError(_t2.message || 'Erreur lors du chargement de l\'aperçu');
+            case 4:
+              _context2.p = 4;
+              setIsLoading(false);
+              return _context2.f(4);
+            case 5:
+              return _context2.a(2);
+          }
+        }, _callee2, null, [[1, 3, 4, 5]]);
+      }));
+      return function loadPreviewData() {
+        return _ref3.apply(this, arguments);
+      };
+    }();
+    loadPreviewData();
+  }, [isOpen, mode, templateElements, orderId, templateData, currentMode]);
+
+  // Gestionnaire de fermeture
+  var handleClose = (0,react.useCallback)(function () {
+    setPreviewData(null);
+    setError(null);
+    onClose();
+  }, [onClose]);
+  if (!isOpen) return null;
+  return /*#__PURE__*/react.createElement("div", {
+    className: "preview-modal-overlay",
+    onClick: handleClose
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "preview-modal-content",
+    onClick: function onClick(e) {
+      return e.stopPropagation();
+    }
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "preview-modal-header"
+  }, /*#__PURE__*/react.createElement("h3", null, mode === 'canvas' ? '🖼️ Aperçu Canvas' : '📄 Aperçu Commande'), /*#__PURE__*/react.createElement("button", {
+    className: "preview-modal-close",
+    onClick: handleClose,
+    title: "Fermer l'aper\xE7u"
+  }, "\xD7")), /*#__PURE__*/react.createElement("div", {
+    className: "preview-modal-body"
+  }, isLoading && /*#__PURE__*/react.createElement("div", {
+    className: "preview-loading"
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "preview-spinner"
+  }), /*#__PURE__*/react.createElement("p", null, "Chargement de l'aper\xE7u...")), error && /*#__PURE__*/react.createElement("div", {
+    className: "preview-error"
+  }, /*#__PURE__*/react.createElement("p", null, "\u274C ", error), /*#__PURE__*/react.createElement("button", {
+    onClick: function onClick() {
+      return window.location.reload();
+    },
+    className: "preview-retry-btn"
+  }, "R\xE9essayer")), !isLoading && !error && previewData && /*#__PURE__*/react.createElement(PreviewRenderer, {
+    elements: templateElements,
+    previewData: previewData,
+    mode: mode
+  })), /*#__PURE__*/react.createElement("div", {
+    className: "preview-modal-footer"
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "preview-info"
+  }, /*#__PURE__*/react.createElement("span", {
+    className: "preview-mode-badge"
+  }, mode === 'canvas' ? 'Mode Exemple' : 'Mode Réel'), /*#__PURE__*/react.createElement("span", {
+    className: "preview-elements-count"
+  }, templateElements.length, " \xE9l\xE9ment", templateElements.length > 1 ? 's' : '')), /*#__PURE__*/react.createElement("div", {
+    className: "preview-actions"
+  }, /*#__PURE__*/react.createElement("button", {
+    className: "preview-download-btn",
+    disabled: isLoading || !!error,
+    title: "T\xE9l\xE9charger le PDF"
+  }, "\uD83D\uDCE5 PDF")))));
+};
+/* harmony default export */ const preview_system_PreviewModal = (PreviewModal);
 
 /***/ })
 

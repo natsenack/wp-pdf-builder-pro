@@ -14,10 +14,14 @@ import ElementLibrary from './ElementLibrary';
 import PropertiesPanel from './PropertiesPanel';
 import NewTemplateModal from './NewTemplateModal';
 
+// Import du système d'aperçu unifié
+import PreviewModal from './preview-system/PreviewModal';
+
 export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
   const [tool, setTool] = useState('select');
   const [showNewTemplateModal, setShowNewTemplateModal] = useState(false);
   const [isPropertiesCollapsed, setIsPropertiesCollapsed] = useState(false);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
 
   // États pour le pan et la navigation
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
@@ -632,6 +636,13 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
         <h2>Éditeur PDF - {options.isNew ? 'Nouveau Template' : options.templateName}</h2>
         <nav className="editor-actions">
           <button
+            className="btn btn-outline preview-button"
+            onClick={() => setShowPreviewModal(true)}
+            title="Aperçu du PDF (Ctrl+P)"
+          >
+            👁️ Aperçu
+          </button>
+          <button
             className="btn btn-outline"
             onClick={() => setShowNewTemplateModal(true)}
             title="Créer un nouveau template"
@@ -926,6 +937,16 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
         isOpen={showNewTemplateModal}
         onClose={() => setShowNewTemplateModal(false)}
         onCreateTemplate={handleCreateTemplate}
+      />
+
+      {/* Modale d'aperçu unifié */}
+      <PreviewModal
+        isOpen={showPreviewModal}
+        onClose={() => setShowPreviewModal(false)}
+        mode="canvas"
+        elements={canvasState.elements}
+        orderId={null}
+        templateData={options}
       />
 
       {/* Compteur FPS */}

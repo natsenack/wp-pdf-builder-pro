@@ -15,22 +15,26 @@ if (!defined('ABSPATH')) {
 /**
  * Classe pour gérer les interactions de drag & drop
  */
-class PDF_Builder_Drag_Drop_Manager {
+class PDF_Builder_Drag_Drop_Manager
+{
 
     /**
      * Instance singleton
+     *
      * @var PDF_Builder_Drag_Drop_Manager
      */
     private static $instance = null;
 
     /**
      * Gestionnaire des éléments du canvas
+     *
      * @var PDF_Builder_Canvas_Elements_Manager
      */
     private $elements_manager = null;
 
     /**
      * État des sessions de drag actives
+     *
      * @var array
      */
     private $active_drag_sessions = [];
@@ -38,14 +42,16 @@ class PDF_Builder_Drag_Drop_Manager {
     /**
      * Constructeur privé (singleton)
      */
-    private function __construct() {
+    private function __construct()
+    {
         $this->init_dependencies();
     }
 
     /**
      * Obtenir l'instance singleton
      */
-    public static function getInstance() {
+    public static function getInstance()
+    {
         if (self::$instance === null) {
             self::$instance = new self();
         }
@@ -55,7 +61,8 @@ class PDF_Builder_Drag_Drop_Manager {
     /**
      * Initialiser les dépendances
      */
-    private function init_dependencies() {
+    private function init_dependencies()
+    {
         if (class_exists('PDF_Builder_Canvas_Elements_Manager')) {
             $this->elements_manager = PDF_Builder_Canvas_Elements_Manager::getInstance();
         }
@@ -64,7 +71,8 @@ class PDF_Builder_Drag_Drop_Manager {
     /**
      * Démarrer une session de drag
      */
-    public function start_drag_session($session_id, $element_ids, $initial_positions, $canvas_bounds = null) {
+    public function start_drag_session($session_id, $element_ids, $initial_positions, $canvas_bounds = null)
+    {
         $session = [
             'id' => $session_id,
             'element_ids' => $element_ids,
@@ -80,10 +88,12 @@ class PDF_Builder_Drag_Drop_Manager {
         $this->active_drag_sessions[$session_id] = $session;
 
         // Logger l'événement
-        $this->log_drag_event('start', $session_id, [
+        $this->log_drag_event(
+            'start', $session_id, [
             'element_count' => count($element_ids),
             'canvas_bounds' => $canvas_bounds
-        ]);
+            ]
+        );
 
         return $session;
     }
@@ -91,7 +101,8 @@ class PDF_Builder_Drag_Drop_Manager {
     /**
      * Mettre à jour la position pendant le drag
      */
-    public function update_drag_position($session_id, $delta_x, $delta_y, $snap_to_grid = false, $grid_size = 10) {
+    public function update_drag_position($session_id, $delta_x, $delta_y, $snap_to_grid = false, $grid_size = 10)
+    {
         if (!isset($this->active_drag_sessions[$session_id])) {
             return new WP_Error('session_not_found', 'Drag session not found');
         }
@@ -145,7 +156,8 @@ class PDF_Builder_Drag_Drop_Manager {
     /**
      * Finaliser une session de drag
      */
-    public function end_drag_session($session_id, $final_positions = null) {
+    public function end_drag_session($session_id, $final_positions = null)
+    {
         if (!isset($this->active_drag_sessions[$session_id])) {
             return new WP_Error('session_not_found', 'Drag session not found');
         }
@@ -161,11 +173,13 @@ class PDF_Builder_Drag_Drop_Manager {
         $session['duration'] = $session['end_time'] - $session['start_time'];
 
         // Logger l'événement
-        $this->log_drag_event('end', $session_id, [
+        $this->log_drag_event(
+            'end', $session_id, [
             'duration' => $session['duration'],
             'has_moved' => $session['has_moved'],
             'final_positions' => $session['current_positions']
-        ]);
+            ]
+        );
 
         $result = $session;
 
@@ -178,14 +192,16 @@ class PDF_Builder_Drag_Drop_Manager {
     /**
      * Obtenir l'état d'une session de drag
      */
-    public function get_drag_session($session_id) {
+    public function get_drag_session($session_id)
+    {
         return $this->active_drag_sessions[$session_id] ?? null;
     }
 
     /**
      * Nettoyer une session de drag
      */
-    public function cleanup_drag_session($session_id) {
+    public function cleanup_drag_session($session_id)
+    {
         if (isset($this->active_drag_sessions[$session_id])) {
             unset($this->active_drag_sessions[$session_id]);
         }
@@ -194,7 +210,8 @@ class PDF_Builder_Drag_Drop_Manager {
     /**
      * Valider les données de drag
      */
-    public function validate_drag_data($element_ids, $initial_positions) {
+    public function validate_drag_data($element_ids, $initial_positions)
+    {
         $errors = [];
 
         if (empty($element_ids) || !is_array($element_ids)) {
@@ -208,9 +225,10 @@ class PDF_Builder_Drag_Drop_Manager {
         foreach ($element_ids as $element_id) {
             if (!isset($initial_positions[$element_id])) {
                 $errors[] = "Missing initial position for element {$element_id}";
-            } elseif (!is_array($initial_positions[$element_id]) ||
-                     !isset($initial_positions[$element_id]['x']) ||
-                     !isset($initial_positions[$element_id]['y'])) {
+            } elseif (!is_array($initial_positions[$element_id]) 
+                || !isset($initial_positions[$element_id]['x']) 
+                || !isset($initial_positions[$element_id]['y'])
+            ) {
                 $errors[] = "Invalid position format for element {$element_id}";
             }
         }
@@ -221,7 +239,8 @@ class PDF_Builder_Drag_Drop_Manager {
     /**
      * Calculer les collisions pendant le drag
      */
-    public function calculate_drag_collisions($session_id, $all_elements) {
+    public function calculate_drag_collisions($session_id, $all_elements)
+    {
         if (!isset($this->active_drag_sessions[$session_id])) {
             return [];
         }
@@ -262,19 +281,25 @@ class PDF_Builder_Drag_Drop_Manager {
     /**
      * Logger les événements de drag
      */
-    private function log_drag_event($event_type, $session_id, $data = []) {
+    private function log_drag_event($event_type, $session_id, $data = [])
+    {
         $logger = PDF_Builder_Logger::getInstance();
         if ($logger) {
-            $logger->log('drag_drop', $event_type, array_merge([
-                'session_id' => $session_id
-            ], $data));
+            $logger->log(
+                'drag_drop', $event_type, array_merge(
+                    [
+                    'session_id' => $session_id
+                    ], $data
+                )
+            );
         }
     }
 
     /**
      * Obtenir les statistiques de performance du drag
      */
-    public function get_drag_performance_stats() {
+    public function get_drag_performance_stats()
+    {
         $stats = [
             'active_sessions' => count($this->active_drag_sessions),
             'total_sessions_today' => 0, // À implémenter avec historique

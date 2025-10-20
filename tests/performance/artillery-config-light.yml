@@ -1,0 +1,31 @@
+config:
+  target: 'http://localhost:8080'  # À adapter selon votre environnement
+  phases:
+    # Phase de warmup
+    - duration: 30  # 30 secondes
+      arrivalRate: 1  # 1 utilisateur par seconde
+      name: "Warmup"
+  defaults:
+    headers:
+      Content-Type: 'application/json'
+      User-Agent: 'Artillery-PDF-Test/1.0'
+
+scenarios:
+  # Scénario simplifié pour test de charge
+  - name: "Génération PDF Simple"
+    weight: 100
+    flow:
+      - post:
+          url: "/wp-admin/admin-ajax.php"
+          headers:
+            Content-Type: 'application/x-www-form-urlencoded'
+          form:
+            action: 'pdf_builder_generate_pdf'
+            template_id: 'test_template'
+            test_mode: 'true'
+            security: 'test_nonce_123'
+          capture:
+            json: "$.success"
+            as: "pdf_success"
+      - think: 1  # Pause de 1 seconde
+      - log: "PDF généré: {{ pdf_success }}"

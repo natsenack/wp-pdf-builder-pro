@@ -12,7 +12,8 @@ if (!defined('ABSPATH')) {
  * Classe principale du plugin PDF Builder Pro
  */
 
-class PDF_Builder_Core {
+class PDF_Builder_Core
+{
 
     /**
      * Instance unique de la classe
@@ -37,7 +38,8 @@ class PDF_Builder_Core {
     /**
      * Constructeur privé
      */
-    private function __construct() {
+    private function __construct()
+    {
         $this->init_hooks();
         $this->load_dependencies();
     }
@@ -45,7 +47,8 @@ class PDF_Builder_Core {
     /**
      * Obtenir l'instance unique
      */
-    public static function getInstance() {
+    public static function getInstance()
+    {
         if (null === self::$instance) {
             self::$instance = new self();
         }
@@ -55,7 +58,8 @@ class PDF_Builder_Core {
     /**
      * Initialiser les hooks WordPress
      */
-    private function init_hooks() {
+    private function init_hooks()
+    {
         add_action('init', array($this, 'init'));
         add_action('admin_init', array($this, 'admin_init'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
@@ -73,14 +77,16 @@ class PDF_Builder_Core {
     /**
      * Charger les dépendances
      */
-    private function load_dependencies() {
+    private function load_dependencies()
+    {
         // Les dépendances sont déjà chargées dans le fichier principal
     }
 
     /**
      * Initialisation du plugin
      */
-    public function init() {
+    public function init()
+    {
         // Vérifier les dépendances
         $this->check_dependencies();
 
@@ -94,7 +100,8 @@ class PDF_Builder_Core {
     /**
      * Initialisation de l'administration
      */
-    public function admin_init() {
+    public function admin_init()
+    {
 
         // Enregistrer les paramètres
         add_action('admin_init', array($this, 'register_settings'));
@@ -103,7 +110,8 @@ class PDF_Builder_Core {
     /**
      * Vérifier les dépendances système
      */
-    private function check_dependencies() {
+    private function check_dependencies()
+    {
         // Vérifier PHP
         if (version_compare(PHP_VERSION, '7.4', '<')) {
             add_action('admin_notices', array($this, 'php_version_notice'));
@@ -120,7 +128,8 @@ class PDF_Builder_Core {
     /**
      * Initialiser les fonctionnalités
      */
-    private function init_features() {
+    private function init_features()
+    {
         // Initialiser les managers canvas (récupérés depuis l'archive)
         $this->init_canvas_managers();
 
@@ -134,7 +143,8 @@ class PDF_Builder_Core {
     /**
      * Initialiser les managers canvas
      */
-    private function init_canvas_managers() {
+    private function init_canvas_managers()
+    {
         try {
             // Initialiser les managers (autoloader gère le chargement automatique)
             // Note: Ces classes sont dans le namespace global (pas de namespace déclaré)
@@ -151,7 +161,8 @@ class PDF_Builder_Core {
     /**
      * Initialiser l'intégration WooCommerce
      */
-    private function init_woocommerce_integration() {
+    private function init_woocommerce_integration()
+    {
         try {
             // Vérifier si WooCommerce est actif
             if (class_exists('WooCommerce')) {
@@ -166,18 +177,21 @@ class PDF_Builder_Core {
     /**
      * Charger les scripts pour le frontend
      */
-    public function enqueue_scripts() {
+    public function enqueue_scripts()
+    {
         // Scripts frontend si nécessaire
     }
 
     /**
      * Charger les scripts pour l'administration
      */
-    public function admin_enqueue_scripts($hook) {
+    public function admin_enqueue_scripts($hook)
+    {
         // Charger les scripts sur toutes les pages du plugin SAUF l'éditeur
-        if (($hook && strpos($hook, 'pdf-builder') !== false && strpos($hook, 'pdf-builder-editor') === false) ||
-            (isset($_GET['page']) && $_GET['page'] && strpos($_GET['page'], 'pdf-builder') !== false && $_GET['page'] !== 'pdf-builder-editor') ||
-            (isset($_SERVER['REQUEST_URI']) && $_SERVER['REQUEST_URI'] && strpos($_SERVER['REQUEST_URI'], 'pdf-builder-editor') !== false)) {
+        if (($hook && strpos($hook, 'pdf-builder') !== false && strpos($hook, 'pdf-builder-editor') === false) 
+            || (isset($_GET['page']) && $_GET['page'] && strpos($_GET['page'], 'pdf-builder') !== false && $_GET['page'] !== 'pdf-builder-editor') 
+            || (isset($_SERVER['REQUEST_URI']) && $_SERVER['REQUEST_URI'] && strpos($_SERVER['REQUEST_URI'], 'pdf-builder-editor') !== false)
+        ) {
 
             wp_enqueue_script(
                 'pdf-builder-admin-core',
@@ -193,7 +207,8 @@ class PDF_Builder_Core {
             );
 
             // Localiser le script pour AJAX
-            wp_localize_script('pdf-builder-admin-core', 'pdfBuilderAjax', array(
+            wp_localize_script(
+                'pdf-builder-admin-core', 'pdfBuilderAjax', array(
                 'ajaxurl' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('pdf_builder_templates'),
                 'strings' => array(
@@ -201,14 +216,16 @@ class PDF_Builder_Core {
                     'error' => __('An error occurred', 'pdf-builder-pro'),
                     'success' => __('Success', 'pdf-builder-pro')
                 )
-            ));
+                )
+            );
         }
     }
 
     /**
      * Ajouter le menu d'administration
      */
-    public function add_admin_menu() {
+    public function add_admin_menu()
+    {
         if (self::$menu_added) {
             return;
         }
@@ -271,7 +288,8 @@ class PDF_Builder_Core {
     /**
      * Enregistrer les paramètres
      */
-    public function register_settings() {
+    public function register_settings()
+    {
         \register_setting('pdf_builder_options', 'pdf_builder_settings');
 
         \add_settings_section(
@@ -285,7 +303,8 @@ class PDF_Builder_Core {
     /**
      * Page d'administration principale
      */
-    public function admin_page() {
+    public function admin_page()
+    {
         ?>
         <div class="wrap">
             <h1><?php _e('PDF Builder Pro', 'pdf-builder-pro'); ?></h1>
@@ -333,7 +352,8 @@ class PDF_Builder_Core {
     /**
      * Page des templates
      */
-    public function templates_page() {
+    public function templates_page()
+    {
         ?>
         <div class="wrap">
             <h1><?php _e('PDF Templates', 'pdf-builder-pro'); ?></h1>
@@ -350,14 +370,16 @@ class PDF_Builder_Core {
     /**
      * Page de l'éditeur de template
      */
-    public function template_editor_page() {
+    public function template_editor_page()
+    {
         include plugin_dir_path(__FILE__) . '../template-editor.php';
     }
 
     /**
      * Page des paramètres
      */
-    public function settings_page() {
+    public function settings_page()
+    {
         ?>
         <div class="wrap">
             <h1><?php _e('PDF Builder Settings', 'pdf-builder-pro'); ?></h1>
@@ -375,14 +397,16 @@ class PDF_Builder_Core {
     /**
      * Callback de la section des paramètres
      */
-    public function settings_section_callback() {
+    public function settings_section_callback()
+    {
         echo '<p>' . __('Configure PDF Builder Pro settings.', 'pdf-builder-pro') . '</p>';
     }
 
     /**
      * Activation du plugin
      */
-    public function activate() {
+    public function activate()
+    {
         // Créer les tables de base de données si nécessaire
         $this->create_database_tables();
 
@@ -395,7 +419,8 @@ class PDF_Builder_Core {
     /**
      * Désactivation du plugin
      */
-    public function deactivate() {
+    public function deactivate()
+    {
         // Nettoyer si nécessaire
         pdf_builder_log('PDF Builder Pro deactivated', 1);
     }
@@ -403,7 +428,8 @@ class PDF_Builder_Core {
     /**
      * Créer les tables de base de données
      */
-    private function create_database_tables() {
+    private function create_database_tables()
+    {
         global $wpdb;
 
         $charset_collate = $wpdb->get_charset_collate();
@@ -433,7 +459,7 @@ class PDF_Builder_Core {
             KEY template_id (template_id)
         ) $charset_collate;";
 
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        include_once ABSPATH . 'wp-admin/includes/upgrade.php';
         \dbDelta($sql_templates);
         \dbDelta($sql_order_canvases);
     }
@@ -441,7 +467,8 @@ class PDF_Builder_Core {
     /**
      * Notice pour version PHP trop ancienne
      */
-    public function php_version_notice() {
+    public function php_version_notice()
+    {
         ?>
         <div class="notice notice-error">
             <p><?php _e('PDF Builder Pro requires PHP 7.4 or higher.', 'pdf-builder-pro'); ?></p>
@@ -452,7 +479,8 @@ class PDF_Builder_Core {
     /**
      * Notice pour version WordPress trop ancienne
      */
-    public function wp_version_notice() {
+    public function wp_version_notice()
+    {
         ?>
         <div class="notice notice-error">
             <p><?php _e('PDF Builder Pro requires WordPress 5.0 or higher.', 'pdf-builder-pro'); ?></p>
@@ -463,7 +491,8 @@ class PDF_Builder_Core {
     /**
      * Initialisation de l'interface d'administration
      */
-    private function init_admin() {
+    private function init_admin()
+    {
         // Vérifier si WordPress est disponible
         if (!function_exists('add_action')) {
             return;
@@ -471,7 +500,7 @@ class PDF_Builder_Core {
 
         // Inclure et instancier la classe d'administration
         if (!class_exists('PDF_Builder\Admin\PDF_Builder_Admin')) {
-            require_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
+            include_once PDF_BUILDER_PLUGIN_DIR . 'src/Admin/PDF_Builder_Admin.php';
         }
 
         if (class_exists('PDF_Builder\Admin\PDF_Builder_Admin')) {
@@ -482,18 +511,20 @@ class PDF_Builder_Core {
     /**
      * Obtenir la version du plugin
      */
-    public function get_version() {
+    public function get_version()
+    {
         return $this->version;
     }
 
     /**
      * Génère un PDF pour une commande WooCommerce (délégation à l'admin)
      *
-     * @param int $order_id ID de la commande
-     * @param int $template_id ID du template (0 pour auto-détection)
-     * @return string|\WP_Error URL du PDF généré ou erreur
+     * @param  int $order_id    ID de la commande
+     * @param  int $template_id ID du template (0 pour auto-détection)
+     * @return mixed URL du PDF généré ou erreur
      */
-    public function generate_order_pdf($order_id, $template_id = 0) {
+    public function generate_order_pdf($order_id, $template_id = 0)
+    {
         if ($this->admin && method_exists($this->admin, 'generate_order_pdf')) {
             return $this->admin->generate_order_pdf($order_id, $template_id);
         } else {
@@ -504,7 +535,8 @@ class PDF_Builder_Core {
     /**
      * Page de test pour la sélection de templates
      */
-    public function test_template_selection_page() {
+    public function test_template_selection_page()
+    {
         // Simuler une commande WooCommerce
         $order_id = isset($_GET['order_id']) ? intval($_GET['order_id']) : 9275;
         $order = wc_get_order($order_id);
@@ -534,10 +566,12 @@ class PDF_Builder_Core {
         echo '<p>Mappings disponibles: <pre>' . print_r($status_templates, true) . '</pre></p>';
 
         if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
-            $mapped_template = $wpdb->get_row($wpdb->prepare(
-                "SELECT id, name FROM $table_templates WHERE id = %d",
-                $status_templates[$status_key]
-            ), ARRAY_A);
+            $mapped_template = $wpdb->get_row(
+                $wpdb->prepare(
+                    "SELECT id, name FROM $table_templates WHERE id = %d",
+                    $status_templates[$status_key]
+                ), ARRAY_A
+            );
             echo '<p style="color: green;">✅ Template mappé trouvé: ' . $mapped_template['name'] . ' (ID: ' . $mapped_template['id'] . ')</p>';
         } else {
             echo '<p style="color: orange;">⚠️ Aucun mapping spécifique trouvé</p>';
@@ -554,26 +588,26 @@ class PDF_Builder_Core {
             // Logique de détection automatique basée sur le statut
             $keywords = [];
             switch ($order_status) {
-                case 'pending':
-                    $keywords = ['devis', 'quote', 'estimation'];
-                    break;
-                case 'processing':
-                case 'on-hold':
-                    $keywords = ['facture', 'invoice', 'commande'];
-                    break;
-                case 'completed':
-                    $keywords = ['facture', 'invoice', 'reçu', 'receipt'];
-                    break;
-                case 'cancelled':
-                case 'refunded':
-                    $keywords = ['avoir', 'credit', 'refund'];
-                    break;
-                case 'failed':
-                    $keywords = ['erreur', 'failed', 'échoué'];
-                    break;
-                default:
-                    $keywords = ['facture', 'invoice'];
-                    break;
+            case 'pending':
+                $keywords = ['devis', 'quote', 'estimation'];
+                break;
+            case 'processing':
+            case 'on-hold':
+                $keywords = ['facture', 'invoice', 'commande'];
+                break;
+            case 'completed':
+                $keywords = ['facture', 'invoice', 'reçu', 'receipt'];
+                break;
+            case 'cancelled':
+            case 'refunded':
+                $keywords = ['avoir', 'credit', 'refund'];
+                break;
+            case 'failed':
+                $keywords = ['erreur', 'failed', 'échoué'];
+                break;
+            default:
+                $keywords = ['facture', 'invoice'];
+                break;
             }
 
             echo '<p>Mots-clés pour le statut \'' . $order_status . '\': <code>' . implode(', ', $keywords) . '</code></p>';
@@ -585,7 +619,11 @@ class PDF_Builder_Core {
                     "SELECT id, name FROM $table_templates WHERE is_default = 1 AND (" .
                     implode(' OR ', array_fill(0, count($keywords), 'LOWER(name) LIKE LOWER(%s)')) .
                     ") LIMIT 1",
-                    array_map(function($keyword) { return '%' . $keyword . '%'; }, $keywords)
+                    array_map(
+                        function ($keyword) {
+                            return '%' . $keyword . '%'; 
+                        }, $keywords
+                    )
                 );
 
                 echo '<p>Requête SQL: <code>' . $sql . '</code></p>';
@@ -669,7 +707,8 @@ class PDF_Builder_Core {
     /**
      * Action AJAX pour sauvegarder les paramètres
      */
-    public function ajax_save_settings() {
+    public function ajax_save_settings()
+    {
         // Vérifier le nonce
         if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'pdf_builder_settings')) {
             wp_send_json_error(__('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro'));
@@ -689,7 +728,11 @@ class PDF_Builder_Core {
             'log_level' => sanitize_text_field($_POST['log_level'] ?? 'info'),
             'max_template_size' => intval($_POST['max_template_size'] ?? 52428800),
             'email_notifications_enabled' => isset($_POST['email_notifications_enabled']),
-            'notification_events' => isset($_POST['notification_events']) ? array_map('sanitize_text_field', $_POST['notification_events']) : [],
+            'notification_events' => isset($_POST['notification_events']) ? array_map(
+                function ($event) {
+                    return sanitize_text_field($event); 
+                }, $_POST['notification_events']
+            ) : [],
             // Paramètres Canvas - anciens
             'canvas_element_borders_enabled' => isset($_POST['canvas_element_borders_enabled']),
             'canvas_border_width' => isset($_POST['canvas_border_width']) ? floatval($_POST['canvas_border_width']) : 1,
@@ -808,17 +851,20 @@ class PDF_Builder_Core {
         }
 
         // Retourner le succès
-        wp_send_json_success(array(
+        wp_send_json_success(
+            array(
             'message' => __('Paramètres sauvegardés avec succès.', 'pdf-builder-pro'),
-            'spacing' => $settings['canvas_border_spacing'] ?? 2
-        ));
+            'spacing' => $settings['canvas_border_spacing']
+            )
+        );
         exit;
     }
 
     /**
      * Action AJAX pour récupérer les paramètres
      */
-    public function ajax_get_settings() {
+    public function ajax_get_settings()
+    {
         // Vérifier le nonce
         if (!isset($_GET['nonce']) || !wp_verify_nonce($_GET['nonce'], 'pdf_builder_settings')) {
             wp_send_json_error(__('Erreur de sécurité : nonce invalide.', 'pdf-builder-pro'));

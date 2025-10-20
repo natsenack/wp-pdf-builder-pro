@@ -1,0 +1,21 @@
+parameters:
+  level: 5
+  paths:
+    - src
+    - templates
+  excludePaths:
+    - vendor
+    - uploads
+    - tests
+  stubs:
+    - vendor/phpstan/phpstan-wordpress/stubs
+    - stubs.php
+  inferPrivatePropertyTypeFromConstructor: true
+  reportUnmatchedIgnoredErrors: false
+
+includes:
+  - vendor/phpstan/phpstan-wordpress/extension.neon
+
+ignoreErrors:
+  - pattern: '#Undefined method Requests_Response#'
+  - pattern: '#Undefined static method WP_Theme#'

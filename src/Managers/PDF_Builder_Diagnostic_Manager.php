@@ -8,7 +8,8 @@ if (!defined('ABSPATH')) {
  * Gestion des diagnostics et tests
  */
 
-class PDF_Builder_Diagnostic_Manager {
+class PDF_Builder_Diagnostic_Manager
+{
 
     /**
      * Instance du main plugin
@@ -18,7 +19,8 @@ class PDF_Builder_Diagnostic_Manager {
     /**
      * Constructeur
      */
-    public function __construct($main_instance) {
+    public function __construct($main_instance)
+    {
         $this->main = $main_instance;
         $this->init_hooks();
     }
@@ -26,7 +28,8 @@ class PDF_Builder_Diagnostic_Manager {
     /**
      * Initialiser les hooks
      */
-    private function init_hooks() {
+    private function init_hooks()
+    {
         // AJAX handlers pour les diagnostics
         add_action('wp_ajax_pdf_builder_check_database', [$this, 'ajax_check_database']);
     }
@@ -34,7 +37,8 @@ class PDF_Builder_Diagnostic_Manager {
     /**
      * Page de diagnostic
      */
-    public function diagnostic_page() {
+    public function diagnostic_page()
+    {
         if (!current_user_can('manage_options')) {
             wp_die(__('Vous n\'avez pas les permissions nécessaires.'));
         }
@@ -49,7 +53,8 @@ class PDF_Builder_Diagnostic_Manager {
     /**
      * Page développeur
      */
-    public function developer_page() {
+    public function developer_page()
+    {
         if (!current_user_can('manage_options')) {
             wp_die(__('Vous n\'avez pas les permissions nécessaires.'));
         }
@@ -60,7 +65,8 @@ class PDF_Builder_Diagnostic_Manager {
     /**
      * Exécuter le diagnostic
      */
-    private function run_diagnostic() {
+    private function run_diagnostic()
+    {
         $template_id = isset($_POST['template_id']) ? intval($_POST['template_id']) : 0;
 
         if (!$template_id) {
@@ -118,7 +124,8 @@ class PDF_Builder_Diagnostic_Manager {
     /**
      * AJAX - Vérifier la base de données
      */
-    public function ajax_check_database() {
+    public function ajax_check_database()
+    {
         if (!current_user_can('manage_options')) {
             wp_send_json_error('Permissions insuffisantes');
         }
@@ -155,12 +162,14 @@ class PDF_Builder_Diagnostic_Manager {
             }
         }
 
-        wp_send_json_success(array(
+        wp_send_json_success(
+            array(
             'table_exists' => true,
             'template_count' => intval($template_count),
             'valid_templates' => $valid_count,
             'invalid_templates' => $invalid_count,
             'message' => 'Base de données vérifiée avec succès'
-        ));
+            )
+        );
     }
 }
