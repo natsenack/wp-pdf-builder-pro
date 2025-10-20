@@ -1706,20 +1706,24 @@ class PDF_Builder_WooCommerce_Integration
         try {
             // Vérifier les permissions utilisateur
             if (!current_user_can('manage_woocommerce') && !current_user_can('edit_shop_orders')) {
+                error_log('PDF Builder: Permissions insuffisantes - User: ' . get_current_user_id() . ', Capabilities: manage_woocommerce=' . (current_user_can('manage_woocommerce') ? 'yes' : 'no') . ', edit_shop_orders=' . (current_user_can('edit_shop_orders') ? 'yes' : 'no'));
                 wp_send_json_error('Permissions insuffisantes pour accéder aux données de commande');
                 return;
             }
 
             // Vérifier le nonce de sécurité
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_order_actions')) {
+                error_log('PDF Builder: Nonce invalide - Received: ' . ($_POST['nonce'] ?? 'none') . ', Expected action: pdf_builder_order_actions');
                 wp_send_json_error('Sécurité: Nonce invalide');
                 return;
             }
 
             // Valider et sanitiser les données d'entrée
             $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
+            error_log('PDF Builder: Processing order ID: ' . $order_id);
 
             if (!$order_id) {
+                error_log('PDF Builder: Order ID manquant');
                 wp_send_json_error('ID commande manquant');
                 return;
             }
@@ -1727,12 +1731,16 @@ class PDF_Builder_WooCommerce_Integration
             // Récupération et validation complète de la commande
             $order = $this->get_and_validate_order($order_id);
             if (is_wp_error($order)) {
+                error_log('PDF Builder: Order validation failed - ' . $order->get_error_message());
                 wp_send_json_error($order->get_error_message());
                 return;
             }
 
+            error_log('PDF Builder: Order validated successfully - Status: ' . $order->get_status());
+
             // Récupérer les données d'aperçu formatées
             $preview_data = $this->get_complete_order_preview_data($order);
+            error_log('PDF Builder: Preview data generated - Items count: ' . count($preview_data['items'] ?? []));
 
             // Log de l'action pour audit
             error_log(
