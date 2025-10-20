@@ -421,86 +421,223 @@ const PreviewModal = ({
 
                       {/* Contenu basé sur les éléments du template */}
                       <div style={{ flex: 1 }}>
-                        {Array.isArray(templateElements) && templateElements.length > 0 ? (
-                          <div style={{ display: 'grid', gap: '10mm' }}>
-                            {templateElements.slice(0, 5).map((element, index) => (
-                              <div key={index} style={{
-                                padding: '8mm',
-                                border: '1px solid #e9ecef',
-                                borderRadius: '4px',
-                                background: index % 2 === 0 ? '#f8f9fa' : 'white'
+                        {mode === 'canvas' ? (
+                          /* Mode Canvas : Afficher le contenu visuel de l'éditeur */
+                          <div style={{ display: 'grid', gap: '15mm' }}>
+                            <div style={{
+                              background: 'white',
+                              border: '2px solid #007cba',
+                              borderRadius: '8px',
+                              padding: '15mm',
+                              boxShadow: '0 4px 12px rgba(0,123,186,0.1)'
+                            }}>
+                              <h2 style={{
+                                margin: '0 0 10mm 0',
+                                color: '#007cba',
+                                fontSize: '18pt',
+                                textAlign: 'center',
+                                borderBottom: '1px solid #dee2e6',
+                                paddingBottom: '5mm'
                               }}>
-                                <div style={{
-                                  display: 'flex',
-                                  justifyContent: 'space-between',
-                                  alignItems: 'center'
-                                }}>
-                                  <div>
-                                    <strong style={{ color: '#007cba' }}>
-                                      Élément {index + 1}
-                                    </strong>
-                                    <div style={{
-                                      fontSize: '10pt',
-                                      color: '#6c757d',
-                                      marginTop: '2mm'
+                                🖼️ Contenu de l'Éditeur Canvas
+                              </h2>
+                              <div style={{
+                                display: 'grid',
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(80mm, 1fr))',
+                                gap: '10mm'
+                              }}>
+                                {Array.isArray(templateElements) && templateElements.length > 0 ? (
+                                  templateElements.map((element, index) => (
+                                    <div key={index} style={{
+                                      border: '1px solid #e9ecef',
+                                      borderRadius: '4px',
+                                      padding: '8mm',
+                                      background: index % 2 === 0 ? '#f8f9fa' : 'white',
+                                      position: 'relative'
                                     }}>
-                                      Type: {element.type || 'Inconnu'} |
-                                      Position: {element.x || 0}, {element.y || 0}
+                                      <div style={{
+                                        position: 'absolute',
+                                        top: '2mm',
+                                        right: '2mm',
+                                        background: '#007cba',
+                                        color: 'white',
+                                        padding: '1mm 3mm',
+                                        borderRadius: '2mm',
+                                        fontSize: '8pt',
+                                        fontWeight: 'bold'
+                                      }}>
+                                        #{index + 1}
+                                      </div>
+                                      <div style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '5mm',
+                                        marginBottom: '5mm'
+                                      }}>
+                                        <div style={{
+                                          width: '15mm',
+                                          height: '15mm',
+                                          background: '#007cba',
+                                          borderRadius: '50%',
+                                          display: 'flex',
+                                          alignItems: 'center',
+                                          justifyContent: 'center',
+                                          color: 'white',
+                                          fontSize: '10pt',
+                                          fontWeight: 'bold'
+                                        }}>
+                                          {element.type?.charAt(0)?.toUpperCase() || '?'}
+                                        </div>
+                                        <div>
+                                          <strong style={{ color: '#007cba', fontSize: '12pt' }}>
+                                            {element.type || 'Élément'} #{index + 1}
+                                          </strong>
+                                          <div style={{
+                                            fontSize: '9pt',
+                                            color: '#6c757d',
+                                            marginTop: '1mm'
+                                          }}>
+                                            Position: {element.x || 0}, {element.y || 0} |
+                                            Taille: {element.width || 'auto'} x {element.height || 'auto'}
+                                          </div>
+                                        </div>
+                                      </div>
+                                      {element.content && (
+                                        <div style={{
+                                          fontSize: '10pt',
+                                          color: '#495057',
+                                          lineHeight: '1.4',
+                                          background: '#f8f9fa',
+                                          padding: '3mm',
+                                          borderRadius: '2mm',
+                                          border: '1px solid #e9ecef'
+                                        }}>
+                                          <strong>Contenu:</strong><br />
+                                          {typeof element.content === 'string' ?
+                                            element.content.length > 200 ?
+                                              element.content.substring(0, 200) + '...' :
+                                              element.content :
+                                            <pre style={{
+                                              fontSize: '8pt',
+                                              margin: '2mm 0 0 0',
+                                              whiteSpace: 'pre-wrap',
+                                              wordBreak: 'break-word'
+                                            }}>
+                                              {JSON.stringify(element.content, null, 2)}
+                                            </pre>
+                                          }
+                                        </div>
+                                      )}
+                                      {element.style && (
+                                        <div style={{
+                                          fontSize: '9pt',
+                                          color: '#6c757d',
+                                          marginTop: '3mm',
+                                          padding: '2mm',
+                                          background: '#fff3cd',
+                                          borderRadius: '2mm'
+                                        }}>
+                                          <strong>Style:</strong> {JSON.stringify(element.style)}
+                                        </div>
+                                      )}
                                     </div>
-                                  </div>
+                                  ))
+                                ) : (
                                   <div style={{
-                                    width: '20mm',
-                                    height: '15mm',
-                                    background: '#e9ecef',
-                                    borderRadius: '2px',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    fontSize: '8pt',
+                                    gridColumn: '1 / -1',
+                                    textAlign: 'center',
+                                    padding: '20mm',
                                     color: '#6c757d'
                                   }}>
-                                    📄
-                                  </div>
-                                </div>
-                                {element.content && (
-                                  <div style={{
-                                    marginTop: '5mm',
-                                    fontSize: '11pt',
-                                    color: '#495057',
-                                    lineHeight: '1.4'
-                                  }}>
-                                    {typeof element.content === 'string' ?
-                                      element.content.substring(0, 100) + (element.content.length > 100 ? '...' : '') :
-                                      'Contenu: ' + JSON.stringify(element.content).substring(0, 50) + '...'
-                                    }
+                                    <div style={{ fontSize: '24pt', marginBottom: '5mm' }}>🖼️</div>
+                                    <p style={{ margin: '0', fontSize: '12pt' }}>
+                                      Aucun élément dans l'éditeur Canvas.<br />
+                                      Ajoutez des éléments pour les voir apparaître ici.
+                                    </p>
                                   </div>
                                 )}
                               </div>
-                            ))}
-                            {templateElements.length > 5 && (
-                              <div style={{
-                                textAlign: 'center',
-                                padding: '10mm',
-                                color: '#6c757d',
-                                fontStyle: 'italic'
-                              }}>
-                                ... et {templateElements.length - 5} autre(s) élément(s)
-                              </div>
-                            )}
+                            </div>
                           </div>
                         ) : (
-                          <div style={{
-                            textAlign: 'center',
-                            padding: '40mm',
-                            color: '#6c757d'
-                          }}>
-                            <div style={{ fontSize: '48pt', marginBottom: '10mm' }}>📄</div>
-                            <h3 style={{ margin: '0 0 10mm 0', color: '#007cba' }}>
-                              Aucun élément à afficher
-                            </h3>
-                            <p style={{ margin: '0', fontSize: '12pt' }}>
-                              Les éléments du template s'afficheront ici une fois chargés.
-                            </p>
+                          /* Mode Metabox : Afficher le JSON du template */
+                          <div style={{ display: 'grid', gap: '10mm' }}>
+                            <div style={{
+                              background: 'white',
+                              border: '2px solid #28a745',
+                              borderRadius: '8px',
+                              padding: '15mm',
+                              boxShadow: '0 4px 12px rgba(40,167,69,0.1)'
+                            }}>
+                              <h2 style={{
+                                margin: '0 0 10mm 0',
+                                color: '#28a745',
+                                fontSize: '18pt',
+                                textAlign: 'center',
+                                borderBottom: '1px solid #dee2e6',
+                                paddingBottom: '5mm'
+                              }}>
+                                📄 Données JSON du Template
+                              </h2>
+                              <div style={{
+                                background: '#f8f9fa',
+                                border: '1px solid #dee2e6',
+                                borderRadius: '4px',
+                                padding: '10mm',
+                                fontFamily: 'monospace',
+                                fontSize: '9pt',
+                                lineHeight: '1.4',
+                                maxHeight: '150mm',
+                                overflow: 'auto'
+                              }}>
+                                <div style={{
+                                  background: '#28a745',
+                                  color: 'white',
+                                  padding: '2mm 5mm',
+                                  borderRadius: '3px',
+                                  marginBottom: '5mm',
+                                  display: 'inline-block',
+                                  fontSize: '10pt',
+                                  fontWeight: 'bold'
+                                }}>
+                                  📋 Template JSON ({Array.isArray(templateElements) ? templateElements.length : 0} éléments)
+                                </div>
+                                <pre style={{
+                                  margin: '0',
+                                  whiteSpace: 'pre-wrap',
+                                  wordBreak: 'break-word',
+                                  color: '#495057'
+                                }}>
+                                  {Array.isArray(templateElements) && templateElements.length > 0 ?
+                                    JSON.stringify(templateElements, null, 2) :
+                                    '{\n  "template": [],\n  "message": "Aucune donnée JSON disponible"\n}'
+                                  }
+                                </pre>
+                              </div>
+                              {Array.isArray(templateElements) && templateElements.length > 0 && (
+                                <div style={{
+                                  marginTop: '10mm',
+                                  padding: '8mm',
+                                  background: '#d4edda',
+                                  border: '1px solid #c3e6cb',
+                                  borderRadius: '4px',
+                                  fontSize: '10pt'
+                                }}>
+                                  <strong style={{ color: '#155724' }}>📊 Analyse du Template:</strong>
+                                  <div style={{
+                                    marginTop: '3mm',
+                                    display: 'grid',
+                                    gridTemplateColumns: 'repeat(auto-fit, minmax(60mm, 1fr))',
+                                    gap: '3mm'
+                                  }}>
+                                    <span>• <strong>{templateElements.length}</strong> élément(s) total</span>
+                                    <span>• <strong>{templateElements.filter(e => e.type).length}</strong> élément(s) typés</span>
+                                    <span>• <strong>{templateElements.filter(e => e.content).length}</strong> élément(s) avec contenu</span>
+                                    <span>• <strong>{templateElements.filter(e => e.x !== undefined && e.y !== undefined).length}</strong> élément(s) positionnés</span>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
                           </div>
                         )}
                       </div>
@@ -528,18 +665,24 @@ const PreviewModal = ({
                   <div style={{
                     marginTop: '15px',
                     padding: '10px',
-                    background: '#e7f3ff',
+                    background: mode === 'canvas' ? '#e7f3ff' : '#d4edda',
                     borderRadius: '4px',
                     fontSize: '12px',
-                    color: '#0066cc',
-                    border: '1px solid #b3d9ff'
+                    color: mode === 'canvas' ? '#0066cc' : '#155724',
+                    border: mode === 'canvas' ? '1px solid #b3d9ff' : '1px solid #c3e6cb'
                   }}>
-                    <strong>📊 Informations techniques:</strong>
+                    <strong>{mode === 'canvas' ? '🖼️ Mode Canvas:' : '📄 Mode Metabox:'}</strong>
                     <div style={{ marginTop: '5px', display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
                       <span>• Éléments: {Array.isArray(templateElements) ? templateElements.length : 0}</span>
-                      <span>• Mode: {mode === 'canvas' ? 'Exemple' : 'Production'}</span>
+                      <span>• Mode: {mode === 'canvas' ? 'Éditeur Visuel' : 'Données JSON'}</span>
                       <span>• Données: {previewData ? '✅ Chargées' : '❌ Manquantes'}</span>
                       <span>• Template: {templateId || 'N/A'}</span>
+                      {mode === 'canvas' && (
+                        <span>• Positionnés: {Array.isArray(templateElements) ? templateElements.filter(e => e.x !== undefined && e.y !== undefined).length : 0}</span>
+                      )}
+                      {mode === 'metabox' && (
+                        <span>• Format: JSON</span>
+                      )}
                     </div>
                   </div>
                 </div>
