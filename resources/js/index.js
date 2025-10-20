@@ -267,8 +267,8 @@ if (typeof window !== 'undefined') {
             console.log('=== PDF BUILDER DEBUG: pdfBuilderShowPreview START ===');
             console.log('Parameters:', { orderId, templateId, nonce });
 
-            // VERSION DE FALLBACK SIMPLE - Test de l'affichage de base
-            console.log('=== USING FALLBACK MODAL ===');
+            // VERSION RÉELLE : Système d'aperçu unifié avec React
+            console.log('=== USING REAL PREVIEW SYSTEM ===');
 
             try {
                 // Supprimer toute modal existante pour éviter les doublons
@@ -276,6 +276,76 @@ if (typeof window !== 'undefined') {
                 if (existingModal) {
                     existingModal.remove();
                     console.log('=== REMOVED EXISTING MODAL ===');
+                }
+
+                // Créer le conteneur principal de la modal
+                const modalContainer = document.createElement('div');
+                modalContainer.id = 'pdf-builder-preview-modal';
+                modalContainer.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.8);
+                    z-index: 999999;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                `;
+                document.body.appendChild(modalContainer);
+                console.log('=== MODAL CONTAINER CREATED ===');
+
+                // Créer le conteneur React pour la modal
+                const previewRoot = document.createElement('div');
+                previewRoot.id = 'pdf-builder-preview-root';
+                previewRoot.style.cssText = 'width: 100%; height: 100%;';
+                modalContainer.appendChild(previewRoot);
+                console.log('=== PREVIEW ROOT CREATED ===');
+
+                // Importer dynamiquement la PreviewModal et ses dépendances
+                import('./components/preview-system/PreviewModal.jsx').then(({ default: PreviewModal }) => {
+                    console.log('=== PREVIEW MODAL IMPORTED SUCCESSFULLY ===');
+
+                    // Créer et rendre le composant React
+                    const modalElement = React.createElement(PreviewModal, {
+                        isOpen: true,
+                        onClose: () => {
+                            console.log('=== CLOSING PREVIEW MODAL ===');
+                            modalContainer.remove();
+                        },
+                        mode: 'metabox',
+                        orderId: orderId,
+                        templateId: templateId,
+                        nonce: nonce
+                    });
+
+                    ReactDOM.render(modalElement, previewRoot);
+                    console.log('=== REACT MODAL RENDERED SUCCESSFULLY ===');
+
+                }).catch(error => {
+                    console.error('=== ERROR IMPORTING PREVIEW MODAL ===', error);
+                    // Fallback vers la modal HTML simple en cas d'erreur
+                    modalContainer.remove();
+                    showFallbackModal(orderId, templateId, nonce);
+                });
+
+            } catch (error) {
+                console.error('=== ERROR CREATING REACT MODAL ===', error);
+                // Fallback vers la modal HTML simple en cas d'erreur
+                showFallbackModal(orderId, templateId, nonce);
+            }
+        };
+
+        // Fonction de fallback en cas d'erreur du système React
+        function showFallbackModal(orderId, templateId, nonce) {
+            console.log('=== USING FALLBACK MODAL DUE TO ERROR ===');
+
+            try {
+                // Supprimer toute modal existante
+                const existingModal = document.getElementById('pdf-builder-preview-modal');
+                if (existingModal) {
+                    existingModal.remove();
                 }
 
                 // Créer une modal simple en HTML pur
@@ -307,10 +377,10 @@ if (typeof window !== 'undefined') {
                             <div style="background: #f8f9fa; padding: 20px; border-radius: 6px; margin: 20px 0;">
                                 <p style="margin: 10px 0;"><strong>Commande ID:</strong> ${orderId}</p>
                                 <p style="margin: 10px 0;"><strong>Template ID:</strong> ${templateId}</p>
-                                <p style="margin: 10px 0;"><strong>Statut:</strong> <span style="color: #28a745;">Prêt pour génération</span></p>
+                                <p style="margin: 10px 0;"><strong>Statut:</strong> <span style="color: #dc3545;">Erreur de chargement</span></p>
                             </div>
                             <p style="color: #666; margin: 20px 0; font-size: 14px;">
-                                Fonctionnalité d'aperçu en cours de développement.<br>
+                                Erreur lors du chargement du système d'aperçu avancé.<br>
                                 Utilisez le bouton "Générer PDF" pour créer le document.
                             </p>
                             <div style="margin-top: 25px;">
@@ -339,102 +409,13 @@ if (typeof window !== 'undefined') {
                 `;
 
                 document.body.appendChild(modal);
-                console.log('=== FALLBACK MODAL CREATED AND APPENDED TO BODY ===');
-                console.log('Modal element:', modal);
-                console.log('Body children count:', document.body.children.length);
-                
-                // Forcer l'affichage et ajouter une animation
-                modal.style.display = 'block';
-                modal.style.opacity = '1';
-                console.log('=== MODAL DISPLAYED SUCCESSFULLY ===');
+                console.log('=== FALLBACK MODAL CREATED ===');
 
-            } catch (error) {
-                console.error('=== ERROR CREATING FALLBACK MODAL ===', error);
-                alert('Erreur lors de l\'affichage de l\'aperçu: ' + error.message);
+            } catch (fallbackError) {
+                console.error('=== ERROR CREATING FALLBACK MODAL ===', fallbackError);
+                alert('Erreur critique lors de l\'affichage de l\'aperçu: ' + fallbackError.message);
             }
-
-            return; // Ne pas exécuter le code React pour le moment
-
-            // Créer ou récupérer la modal d'aperçu
-            let modalContainer = document.getElementById('pdf-builder-preview-modal');
-            if (!modalContainer) {
-                console.log('Creating modal container');
-                modalContainer = document.createElement('div');
-                modalContainer.id = 'pdf-builder-preview-modal';
-                modalContainer.style.cssText = `
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0,0,0,0.8);
-                    z-index: 999999;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                `;
-                document.body.appendChild(modalContainer);
-                console.log('Modal container created and appended');
-            } else {
-                console.log('Modal container already exists');
-            }
-
-            // Créer le conteneur React pour la modal
-            let previewRoot = document.getElementById('pdf-builder-preview-root');
-            if (!previewRoot) {
-                console.log('Creating preview root');
-                previewRoot = document.createElement('div');
-                previewRoot.id = 'pdf-builder-preview-root';
-                previewRoot.style.cssText = 'width: 100%; height: 100%;';
-                modalContainer.appendChild(previewRoot);
-                console.log('Preview root created and appended');
-            } else {
-                console.log('Preview root already exists');
-            }
-
-            console.log('Setting modal to display flex');
-            modalContainer.style.display = 'flex';
-
-            console.log('Starting dynamic import');
-
-            // Importer dynamiquement la PreviewModal
-            import('./components/preview-system/PreviewModal').then(({ default: PreviewModal }) => {
-                console.log('=== PDF BUILDER SUCCESS: Import successful ===');
-
-                // Créer l'élément React pour la modal d'aperçu
-                const previewElement = createElement(PreviewModal, {
-                    isOpen: true,
-                    onClose: () => {
-                        console.log('=== PDF BUILDER: Modal close requested ===');
-                        modalContainer.style.display = 'none';
-                        ReactDOM.unmountComponentAtNode(previewRoot);
-                    },
-                    mode: 'metabox',
-                    orderId: orderId,
-                    templateId: templateId,
-                    nonce: nonce
-                });
-
-                console.log('=== PDF BUILDER: Rendering React component ===');
-                console.log('ReactDOM available:', typeof ReactDOM);
-                console.log('React available:', typeof React);
-                console.log('createElement available:', typeof createElement);
-
-                // Rendre la modal
-                try {
-                    ReactDOM.render(previewElement, previewRoot);
-                    modalContainer.style.display = 'flex';
-                    console.log('=== PDF BUILDER: Modal should be visible now ===');
-                } catch (renderError) {
-                    console.error('=== PDF BUILDER RENDER ERROR ===', renderError);
-                    // Fallback: try to show an alert
-                    alert('Erreur de rendu React: ' + renderError.message);
-                }
-            }).catch(error => {
-                console.error('=== PDF BUILDER ERROR: Import failed ===', error);
-                alert('Erreur lors du chargement du système d\'aperçu. Veuillez recharger la page.');
-            });
-        };
+        }
 
         // Marquer comme initialisé pour éviter les conflits
         PDFBuilderSecurity.preventMultipleInit();
