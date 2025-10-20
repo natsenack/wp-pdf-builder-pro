@@ -373,33 +373,21 @@ window.pdfBuilderShowPreview = function(orderId, templateId, nonce) {
     try {
         console.log('=== LOADING PREVIEW MODAL COMPONENT ===');
 
-        // Importer dynamiquement le composant PreviewModal
+        // Importer dynamiquement le système complet
         console.log('=== STARTING DYNAMIC IMPORT ===');
-        import('./components/preview-system/PreviewModal.jsx').then((module) => {
-            console.log('=== DYNAMIC IMPORT SUCCESS ===', module);
-            const PreviewModal = module.default;
-            console.log('=== PreviewModal extracted ===', PreviewModal);
+        Promise.all([
+            import('./components/preview-system/context/PreviewProvider'),
+            import('./components/preview-system/components/PreviewModal')
+        ]).then(([providerModule, modalModule]) => {
+            console.log('=== DYNAMIC IMPORT SUCCESS ===');
+            const PreviewProvider = providerModule.PreviewProvider;
+            const PreviewModal = modalModule.default;
+            console.log('=== Components extracted ===', { PreviewProvider, PreviewModal });
 
-            // EXPOSER LE COMPOSANT GLOBALEMENT POUR LES TESTS
-            if (typeof window !== 'undefined') {
-                window.PDFBuilderPreview = window.PDFBuilderPreview || {};
-                window.PDFBuilderPreview.PreviewModal = PreviewModal;
-                console.log('=== PreviewModal exposed globally ===');
-            }
-
-            // Créer l'élément React
-            const previewModalElement = React.createElement(PreviewModal, {
-                isOpen: true,
-                onClose: () => {
-                    modalContainer.remove();
-                    visualIndicator.remove();
-                    console.log('=== MODAL CLOSED VIA REACT ===');
-                },
-                mode: 'metabox',
-                orderId: orderId,
-                templateId: templateId,
-                nonce: nonce
-            });
+            // Créer l'élément React avec le Provider
+            const previewModalElement = React.createElement(PreviewProvider, {}, 
+                React.createElement(PreviewModal)
+            );
 
             // Monter avec ReactDOM
             console.log('=== ABOUT TO CALL ReactDOM.render ===');

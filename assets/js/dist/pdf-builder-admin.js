@@ -2,20 +2,19 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 10:
+/***/ 38:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-// ESM COMPAT FLAG
 __webpack_require__.r(__webpack_exports__);
-
-// EXPORTS
-__webpack_require__.d(__webpack_exports__, {
-  "default": () => (/* binding */ preview_system_PreviewModal)
-});
-
-// EXTERNAL MODULE: ./node_modules/react/index.js
-var react = __webpack_require__(540);
-;// ./resources/js/components/preview-system/context/PreviewContext.jsx
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   PREVIEW_ACTIONS: () => (/* binding */ PREVIEW_ACTIONS),
+/* harmony export */   PREVIEW_MODES: () => (/* binding */ PREVIEW_MODES),
+/* harmony export */   PreviewContext: () => (/* binding */ PreviewContext),
+/* harmony export */   initialState: () => (/* binding */ initialState),
+/* harmony export */   previewReducer: () => (/* binding */ previewReducer),
+/* harmony export */   usePreview: () => (/* binding */ usePreview)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(540);
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
@@ -102,11 +101,11 @@ function previewReducer(state, action) {
 }
 
 // Création du contexte
-var PreviewContext = /*#__PURE__*/(0,react.createContext)();
+var PreviewContext = /*#__PURE__*/(0,react__WEBPACK_IMPORTED_MODULE_0__.createContext)();
 
 // Hook personnalisé pour utiliser le contexte
 function usePreview() {
-  var context = (0,react.useContext)(PreviewContext);
+  var context = (0,react__WEBPACK_IMPORTED_MODULE_0__.useContext)(PreviewContext);
   if (!context) {
     throw new Error('usePreview must be used within a PreviewProvider');
   }
@@ -115,13 +114,25 @@ function usePreview() {
 
 // Export du contexte pour les tests ou usage avancé
 
-;// ./resources/js/components/preview-system/context/PreviewProvider.jsx
-function PreviewProvider_typeof(o) { "@babel/helpers - typeof"; return PreviewProvider_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, PreviewProvider_typeof(o); }
-function PreviewProvider_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
-function PreviewProvider_objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? PreviewProvider_ownKeys(Object(t), !0).forEach(function (r) { PreviewProvider_defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : PreviewProvider_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-function PreviewProvider_defineProperty(e, r, t) { return (r = PreviewProvider_toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
-function PreviewProvider_toPropertyKey(t) { var i = PreviewProvider_toPrimitive(t, "string"); return "symbol" == PreviewProvider_typeof(i) ? i : i + ""; }
-function PreviewProvider_toPrimitive(t, r) { if ("object" != PreviewProvider_typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != PreviewProvider_typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+
+/***/ }),
+
+/***/ 424:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   PreviewProvider: () => (/* binding */ PreviewProvider),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(540);
+/* harmony import */ var _PreviewContext__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(38);
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
@@ -138,16 +149,16 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 
 function PreviewProvider(_ref) {
   var children = _ref.children;
-  var _useReducer = (0,react.useReducer)(previewReducer, initialState),
+  var _useReducer = (0,react__WEBPACK_IMPORTED_MODULE_0__.useReducer)(_PreviewContext__WEBPACK_IMPORTED_MODULE_1__.previewReducer, _PreviewContext__WEBPACK_IMPORTED_MODULE_1__.initialState),
     _useReducer2 = _slicedToArray(_useReducer, 2),
     state = _useReducer2[0],
     dispatch = _useReducer2[1];
 
   // Actions optimisées avec useCallback
-  var openPreview = (0,react.useCallback)(function (mode, data) {
+  var openPreview = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function (mode, data) {
     var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
     dispatch({
-      type: PREVIEW_ACTIONS.OPEN,
+      type: _PreviewContext__WEBPACK_IMPORTED_MODULE_1__.PREVIEW_ACTIONS.OPEN,
       payload: {
         mode: mode,
         data: data,
@@ -155,45 +166,45 @@ function PreviewProvider(_ref) {
       }
     });
   }, []);
-  var closePreview = (0,react.useCallback)(function () {
+  var closePreview = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function () {
     dispatch({
-      type: PREVIEW_ACTIONS.CLOSE
+      type: _PreviewContext__WEBPACK_IMPORTED_MODULE_1__.PREVIEW_ACTIONS.CLOSE
     });
   }, []);
-  var setPage = (0,react.useCallback)(function (page) {
+  var setPage = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function (page) {
     dispatch({
-      type: PREVIEW_ACTIONS.SET_PAGE,
+      type: _PreviewContext__WEBPACK_IMPORTED_MODULE_1__.PREVIEW_ACTIONS.SET_PAGE,
       payload: page
     });
   }, []);
-  var setZoom = (0,react.useCallback)(function (zoom) {
+  var setZoom = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function (zoom) {
     dispatch({
-      type: PREVIEW_ACTIONS.SET_ZOOM,
+      type: _PreviewContext__WEBPACK_IMPORTED_MODULE_1__.PREVIEW_ACTIONS.SET_ZOOM,
       payload: zoom
     });
   }, []);
-  var setLoading = (0,react.useCallback)(function (loading) {
+  var setLoading = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function (loading) {
     dispatch({
-      type: PREVIEW_ACTIONS.SET_LOADING,
+      type: _PreviewContext__WEBPACK_IMPORTED_MODULE_1__.PREVIEW_ACTIONS.SET_LOADING,
       payload: loading
     });
   }, []);
-  var setError = (0,react.useCallback)(function (error) {
+  var setError = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function (error) {
     dispatch({
-      type: PREVIEW_ACTIONS.SET_ERROR,
+      type: _PreviewContext__WEBPACK_IMPORTED_MODULE_1__.PREVIEW_ACTIONS.SET_ERROR,
       payload: error
     });
   }, []);
-  var setData = (0,react.useCallback)(function (data) {
+  var setData = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function (data) {
     dispatch({
-      type: PREVIEW_ACTIONS.SET_DATA,
+      type: _PreviewContext__WEBPACK_IMPORTED_MODULE_1__.PREVIEW_ACTIONS.SET_DATA,
       payload: data
     });
   }, []);
 
   // Valeur du contexte optimisée avec useMemo
-  var contextValue = (0,react.useMemo)(function () {
-    return PreviewProvider_objectSpread(PreviewProvider_objectSpread({}, state), {}, {
+  var contextValue = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(function () {
+    return _objectSpread(_objectSpread({}, state), {}, {
       // Actions
       openPreview: openPreview,
       closePreview: closePreview,
@@ -210,13 +221,31 @@ function PreviewProvider(_ref) {
       zoomPercentage: Math.round(state.zoom * 100)
     });
   }, [state, openPreview, closePreview, setPage, setZoom, setLoading, setError, setData]);
-  return /*#__PURE__*/react.createElement(PreviewContext.Provider, {
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_PreviewContext__WEBPACK_IMPORTED_MODULE_1__.PreviewContext.Provider, {
     value: contextValue
   }, children);
 }
 
 // Export par défaut
-/* harmony default export */ const context_PreviewProvider = (PreviewProvider);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (PreviewProvider);
+
+/***/ }),
+
+/***/ 454:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+// ESM COMPAT FLAG
+__webpack_require__.r(__webpack_exports__);
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, {
+  "default": () => (/* binding */ components_PreviewModal)
+});
+
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(540);
+// EXTERNAL MODULE: ./resources/js/components/preview-system/context/PreviewContext.jsx
+var PreviewContext = __webpack_require__(38);
 ;// ./resources/js/components/preview-system/components/ModalSkeleton.jsx
 
 
@@ -300,7 +329,7 @@ var MetaboxMode = /*#__PURE__*/(0,react.lazy)(function () {
  * Optimisé avec lazy loading, error boundaries et performance
  */
 function PreviewModal() {
-  var _usePreview = usePreview(),
+  var _usePreview = (0,PreviewContext.usePreview)(),
     isOpen = _usePreview.isOpen,
     mode = _usePreview.mode,
     loading = _usePreview.loading,
@@ -364,65 +393,10 @@ function PreviewModal() {
 
 // Optimisation avec React.memo pour éviter les re-renders inutiles
 /* harmony default export */ const components_PreviewModal = (/*#__PURE__*/react.memo(PreviewModal));
-;// ./resources/js/components/preview-system/PreviewModal.jsx
-
-
-
-
-
-/**
- * PreviewModal - Wrapper avec PreviewProvider pour compatibilité
- * Ce fichier existe pour compatibilité avec les anciens imports
- */
-var PreviewModal_PreviewModal = function PreviewModal(props) {
-  console.log('PDF Builder: PreviewModal legacy wrapper called with props:', props);
-
-  // Si des props sont passées, on les utilise pour initialiser le context
-  var initialData = props.elements || null;
-  var initialMode = props.mode || 'canvas';
-  return /*#__PURE__*/react.createElement(PreviewProvider, null, /*#__PURE__*/react.createElement(PreviewModalWithContext, {
-    legacyProps: props,
-    initialData: initialData,
-    initialMode: initialMode
-  }));
-};
-
-// Composant interne qui gère la logique legacy
-var PreviewModalWithContext = function PreviewModalWithContext(_ref) {
-  var legacyProps = _ref.legacyProps,
-    initialData = _ref.initialData,
-    initialMode = _ref.initialMode;
-  var _usePreview = usePreview(),
-    openPreview = _usePreview.openPreview,
-    closePreview = _usePreview.closePreview,
-    isOpen = _usePreview.isOpen;
-
-  // Ouvrir automatiquement si des props legacy sont passées
-  react.useEffect(function () {
-    if (legacyProps && !isOpen) {
-      openPreview(initialMode, initialData);
-    }
-  }, [legacyProps, initialMode, initialData, isOpen, openPreview]);
-
-  // Gérer la fermeture legacy
-  react.useEffect(function () {
-    if (legacyProps && legacyProps.onClose) {
-      var handleClose = function handleClose() {
-        if (legacyProps.onClose) {
-          legacyProps.onClose();
-        }
-        closePreview();
-      };
-      // TODO: Attacher handleClose au context si nécessaire
-    }
-  }, [legacyProps, closePreview]);
-  return /*#__PURE__*/react.createElement(components_PreviewModal, null);
-};
-/* harmony default export */ const preview_system_PreviewModal = (PreviewModal_PreviewModal);
 
 /***/ }),
 
-/***/ 626:
+/***/ 472:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 // ESM COMPAT FLAG
@@ -11166,8 +11140,67 @@ var NewTemplateModal = function NewTemplateModal(_ref) {
   }, "Ouvrir le template")))));
 };
 /* harmony default export */ const components_NewTemplateModal = (NewTemplateModal);
-// EXTERNAL MODULE: ./resources/js/components/preview-system/PreviewModal.jsx + 4 modules
-var PreviewModal = __webpack_require__(10);
+// EXTERNAL MODULE: ./resources/js/components/preview-system/context/PreviewProvider.jsx
+var PreviewProvider = __webpack_require__(424);
+// EXTERNAL MODULE: ./resources/js/components/preview-system/context/PreviewContext.jsx
+var PreviewContext = __webpack_require__(38);
+// EXTERNAL MODULE: ./resources/js/components/preview-system/components/PreviewModal.jsx + 1 modules
+var PreviewModal = __webpack_require__(454);
+;// ./resources/js/components/preview-system/PreviewModal.jsx
+
+
+
+
+
+/**
+ * PreviewModal - Wrapper avec PreviewProvider pour compatibilité
+ * Ce fichier existe pour compatibilité avec les anciens imports
+ */
+var PreviewModal_PreviewModal = function PreviewModal(props) {
+  console.log('PDF Builder: PreviewModal legacy wrapper called with props:', props);
+
+  // Si des props sont passées, on les utilise pour initialiser le context
+  var initialData = props.elements || null;
+  var initialMode = props.mode || 'canvas';
+  return /*#__PURE__*/react.createElement(PreviewProvider.PreviewProvider, null, /*#__PURE__*/react.createElement(PreviewModalWithContext, {
+    legacyProps: props,
+    initialData: initialData,
+    initialMode: initialMode
+  }));
+};
+
+// Composant interne qui gère la logique legacy
+var PreviewModalWithContext = function PreviewModalWithContext(_ref) {
+  var legacyProps = _ref.legacyProps,
+    initialData = _ref.initialData,
+    initialMode = _ref.initialMode;
+  var _usePreview = (0,PreviewContext.usePreview)(),
+    openPreview = _usePreview.openPreview,
+    closePreview = _usePreview.closePreview,
+    isOpen = _usePreview.isOpen;
+
+  // Ouvrir automatiquement si des props legacy sont passées
+  react.useEffect(function () {
+    if (legacyProps && !isOpen) {
+      openPreview(initialMode, initialData);
+    }
+  }, [legacyProps, initialMode, initialData, isOpen, openPreview]);
+
+  // Gérer la fermeture legacy
+  react.useEffect(function () {
+    if (legacyProps && legacyProps.onClose) {
+      var handleClose = function handleClose() {
+        if (legacyProps.onClose) {
+          legacyProps.onClose();
+        }
+        closePreview();
+      };
+      // TODO: Attacher handleClose au context si nécessaire
+    }
+  }, [legacyProps, closePreview]);
+  return /*#__PURE__*/react.createElement(PreviewModal["default"], null);
+};
+/* harmony default export */ const preview_system_PreviewModal = (PreviewModal_PreviewModal);
 ;// ./resources/js/components/PDFCanvasEditor.jsx
 function PDFCanvasEditor_typeof(o) { "@babel/helpers - typeof"; return PDFCanvasEditor_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, PDFCanvasEditor_typeof(o); }
 function PDFCanvasEditor_regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return PDFCanvasEditor_regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (PDFCanvasEditor_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, PDFCanvasEditor_regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, PDFCanvasEditor_regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), PDFCanvasEditor_regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", PDFCanvasEditor_regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), PDFCanvasEditor_regeneratorDefine2(u), PDFCanvasEditor_regeneratorDefine2(u, o, "Generator"), PDFCanvasEditor_regeneratorDefine2(u, n, function () { return this; }), PDFCanvasEditor_regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (PDFCanvasEditor_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
@@ -12160,7 +12193,7 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
       return setShowNewTemplateModal(false);
     },
     onCreateTemplate: handleCreateTemplate
-  }), /*#__PURE__*/react.createElement(PreviewModal["default"], {
+  }), /*#__PURE__*/react.createElement(preview_system_PreviewModal, {
     isOpen: showPreviewModal,
     onClose: function onClose() {
       return setShowPreviewModal(false);
@@ -12188,6 +12221,12 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
 
 
 ;// ./resources/js/index.js
+function js_slicedToArray(r, e) { return js_arrayWithHoles(r) || js_iterableToArrayLimit(r, e) || js_unsupportedIterableToArray(r, e) || js_nonIterableRest(); }
+function js_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function js_unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return js_arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? js_arrayLikeToArray(r, a) : void 0; } }
+function js_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function js_iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function js_arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 function js_typeof(o) { "@babel/helpers - typeof"; return js_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, js_typeof(o); }
 function js_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function js_objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? js_ownKeys(Object(t), !0).forEach(function (r) { js_defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : js_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
@@ -12504,33 +12543,22 @@ window.pdfBuilderShowPreview = function (orderId, templateId, nonce) {
   try {
     console.log('=== LOADING PREVIEW MODAL COMPONENT ===');
 
-    // Importer dynamiquement le composant PreviewModal
+    // Importer dynamiquement le système complet
     console.log('=== STARTING DYNAMIC IMPORT ===');
-    Promise.resolve(/* import() */).then(__webpack_require__.bind(__webpack_require__, 10)).then(function (module) {
-      console.log('=== DYNAMIC IMPORT SUCCESS ===', module);
-      var PreviewModal = module["default"];
-      console.log('=== PreviewModal extracted ===', PreviewModal);
-
-      // EXPOSER LE COMPOSANT GLOBALEMENT POUR LES TESTS
-      if (typeof window !== 'undefined') {
-        window.PDFBuilderPreview = window.PDFBuilderPreview || {};
-        window.PDFBuilderPreview.PreviewModal = PreviewModal;
-        console.log('=== PreviewModal exposed globally ===');
-      }
-
-      // Créer l'élément React
-      var previewModalElement = /*#__PURE__*/react.createElement(PreviewModal, {
-        isOpen: true,
-        onClose: function onClose() {
-          modalContainer.remove();
-          visualIndicator.remove();
-          console.log('=== MODAL CLOSED VIA REACT ===');
-        },
-        mode: 'metabox',
-        orderId: orderId,
-        templateId: templateId,
-        nonce: nonce
+    Promise.all([Promise.resolve(/* import() */).then(__webpack_require__.bind(__webpack_require__, 424)), Promise.resolve(/* import() */).then(__webpack_require__.bind(__webpack_require__, 454))]).then(function (_ref2) {
+      var _ref3 = js_slicedToArray(_ref2, 2),
+        providerModule = _ref3[0],
+        modalModule = _ref3[1];
+      console.log('=== DYNAMIC IMPORT SUCCESS ===');
+      var PreviewProvider = providerModule.PreviewProvider;
+      var PreviewModal = modalModule["default"];
+      console.log('=== Components extracted ===', {
+        PreviewProvider: PreviewProvider,
+        PreviewModal: PreviewModal
       });
+
+      // Créer l'élément React avec le Provider
+      var previewModalElement = /*#__PURE__*/react.createElement(PreviewProvider, {}, /*#__PURE__*/react.createElement(PreviewModal));
 
       // Monter avec ReactDOM
       console.log('=== ABOUT TO CALL ReactDOM.render ===');
@@ -12851,7 +12879,7 @@ window.pdfBuilderPro = pdfBuilderPro;
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, [96], () => (__webpack_require__(626)))
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, [96], () => (__webpack_require__(472)))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	window.PDFBuilderPro = __webpack_exports__;
 /******/ 	
