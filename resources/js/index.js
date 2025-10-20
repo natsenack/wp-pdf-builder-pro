@@ -2,7 +2,17 @@
 import React from 'react';
 import { createElement } from 'react';
 import ReactDOM from 'react-dom';
+// import './react-global'; // REMOVED - on expose directement ici
 import { PDFCanvasEditor } from './components/PDFCanvasEditor';
+
+// FORCER L'EXPOSITION GLOBALE DE REACT ICI
+if (typeof window !== 'undefined') {
+    window.React = React;
+    window.ReactDOM = ReactDOM;
+    console.log('=== REACT EXPOSED GLOBALLY IN INDEX.JS ===');
+    console.log('React available:', !!window.React);
+    console.log('ReactDOM available:', !!window.ReactDOM);
+}
 
 // Forcer l'inclusion de tous les hooks personnalisés
 import /* webpackMode: "eager" */ * as hooks from './hooks';
@@ -51,10 +61,13 @@ const PDFBuilderSecurity = {
 // Test des imports de base avec protection
 try {
 
-    // Exposer React globalement pour compatibilité
+    // Exposer React globalement pour compatibilité - FORCER L'INCLUSION
     if (typeof window !== 'undefined') {
         window.React = React;
         window.ReactDOM = ReactDOM;
+        // Forcer l'utilisation pour éviter l'optimisation webpack
+        window._forceReactInclusion = { React, ReactDOM, createElement };
+        console.log('React exposed globally:', !!window.React, !!window.ReactDOM);
     }
 } catch (error) {
     PDFBuilderSecurity.logError(error, 'React initialization');
@@ -366,6 +379,13 @@ window.pdfBuilderShowPreview = function(orderId, templateId, nonce) {
             console.log('=== DYNAMIC IMPORT SUCCESS ===', module);
             const PreviewModal = module.default;
             console.log('=== PreviewModal extracted ===', PreviewModal);
+
+            // EXPOSER LE COMPOSANT GLOBALEMENT POUR LES TESTS
+            if (typeof window !== 'undefined') {
+                window.PDFBuilderPreview = window.PDFBuilderPreview || {};
+                window.PDFBuilderPreview.PreviewModal = PreviewModal;
+                console.log('=== PreviewModal exposed globally ===');
+            }
 
             // Créer l'élément React
             const previewModalElement = React.createElement(PreviewModal, {

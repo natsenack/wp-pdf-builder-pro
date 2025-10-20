@@ -2,18 +2,126 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 64:
+/***/ 10:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+// ESM COMPAT FLAG
 __webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(540);
-function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
-function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
-function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
-function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, {
+  "default": () => (/* binding */ preview_system_PreviewModal)
+});
+
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(540);
+;// ./resources/js/components/preview-system/context/PreviewContext.jsx
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+
+
+/**
+ * Preview Context - État global optimisé pour le système d'aperçu
+ * Utilise React Context pour partager l'état entre tous les composants
+ */
+
+// Types pour TypeScript (si utilisé)
+var PREVIEW_MODES = {
+  CANVAS: 'canvas',
+  METABOX: 'metabox'
+};
+var PREVIEW_ACTIONS = {
+  OPEN: 'OPEN',
+  CLOSE: 'CLOSE',
+  SET_PAGE: 'SET_PAGE',
+  SET_ZOOM: 'SET_ZOOM',
+  SET_LOADING: 'SET_LOADING',
+  SET_ERROR: 'SET_ERROR',
+  SET_DATA: 'SET_DATA'
+};
+
+// État initial
+var initialState = {
+  isOpen: false,
+  mode: PREVIEW_MODES.CANVAS,
+  currentPage: 1,
+  totalPages: 1,
+  zoom: 1,
+  loading: false,
+  error: null,
+  data: null,
+  config: {}
+};
+
+// Reducer pour gérer l'état
+function previewReducer(state, action) {
+  var _action$payload;
+  switch (action.type) {
+    case PREVIEW_ACTIONS.OPEN:
+      return _objectSpread(_objectSpread({}, state), {}, {
+        isOpen: true,
+        mode: action.payload.mode || PREVIEW_MODES.CANVAS,
+        data: action.payload.data || null,
+        config: action.payload.config || {},
+        loading: false,
+        error: null,
+        currentPage: 1,
+        zoom: 1
+      });
+    case PREVIEW_ACTIONS.CLOSE:
+      return _objectSpread({}, initialState);
+    case PREVIEW_ACTIONS.SET_PAGE:
+      return _objectSpread(_objectSpread({}, state), {}, {
+        currentPage: Math.max(1, Math.min(action.payload, state.totalPages))
+      });
+    case PREVIEW_ACTIONS.SET_ZOOM:
+      return _objectSpread(_objectSpread({}, state), {}, {
+        zoom: Math.max(0.5, Math.min(2, action.payload))
+      });
+    case PREVIEW_ACTIONS.SET_LOADING:
+      return _objectSpread(_objectSpread({}, state), {}, {
+        loading: action.payload
+      });
+    case PREVIEW_ACTIONS.SET_ERROR:
+      return _objectSpread(_objectSpread({}, state), {}, {
+        error: action.payload,
+        loading: false
+      });
+    case PREVIEW_ACTIONS.SET_DATA:
+      return _objectSpread(_objectSpread({}, state), {}, {
+        data: action.payload,
+        totalPages: ((_action$payload = action.payload) === null || _action$payload === void 0 ? void 0 : _action$payload.totalPages) || 1
+      });
+    default:
+      return state;
+  }
+}
+
+// Création du contexte
+var PreviewContext = /*#__PURE__*/(0,react.createContext)();
+
+// Hook personnalisé pour utiliser le contexte
+function usePreview() {
+  var context = (0,react.useContext)(PreviewContext);
+  if (!context) {
+    throw new Error('usePreview must be used within a PreviewProvider');
+  }
+  return context;
+}
+
+// Export du contexte pour les tests ou usage avancé
+
+;// ./resources/js/components/preview-system/context/PreviewProvider.jsx
+function PreviewProvider_typeof(o) { "@babel/helpers - typeof"; return PreviewProvider_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, PreviewProvider_typeof(o); }
+function PreviewProvider_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function PreviewProvider_objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? PreviewProvider_ownKeys(Object(t), !0).forEach(function (r) { PreviewProvider_defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : PreviewProvider_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function PreviewProvider_defineProperty(e, r, t) { return (r = PreviewProvider_toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function PreviewProvider_toPropertyKey(t) { var i = PreviewProvider_toPrimitive(t, "string"); return "symbol" == PreviewProvider_typeof(i) ? i : i + ""; }
+function PreviewProvider_toPrimitive(t, r) { if ("object" != PreviewProvider_typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != PreviewProvider_typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
@@ -21,1044 +129,309 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
 function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
 function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 
-// import { PreviewProvider } from './context/PreviewProvider';
-// import { PreviewRenderer } from './PreviewRenderer';
-// import { CanvasMode } from './modes/CanvasMode';
-// import { MetaboxMode } from './modes/MetaboxMode';
 
-// DEBUG: Confirm deployment
-console.log('PDF Builder: PreviewModal component loaded - deployment confirmed');
 
 /**
- * Modal principal pour l'aperçu unifié PDF Builder Pro
- * Supporte deux modes : Canvas (données exemple) et Metabox (données réelles)
+ * Preview Provider - Fournisseur d'état global pour le système d'aperçu
+ * Optimisé avec useCallback et useMemo pour éviter les re-renders inutiles
  */
-var PreviewModal = function PreviewModal(_ref) {
-  var isOpen = _ref.isOpen,
-    onClose = _ref.onClose,
-    _ref$mode = _ref.mode,
-    mode = _ref$mode === void 0 ? 'canvas' : _ref$mode,
-    _ref$elements = _ref.elements,
-    elements = _ref$elements === void 0 ? [] : _ref$elements,
-    _ref$orderId = _ref.orderId,
-    orderId = _ref$orderId === void 0 ? null : _ref$orderId,
-    _ref$templateData = _ref.templateData,
-    templateData = _ref$templateData === void 0 ? {} : _ref$templateData,
-    _ref$templateId = _ref.templateId,
-    templateId = _ref$templateId === void 0 ? null : _ref$templateId,
-    _ref$nonce = _ref.nonce,
-    nonce = _ref$nonce === void 0 ? null : _ref$nonce;
-  console.log('PDF Builder Debug: PreviewModal COMPONENT START - isOpen:', isOpen, 'timestamp:', Date.now());
-  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
-    _useState2 = _slicedToArray(_useState, 2),
-    isLoading = _useState2[0],
-    setIsLoading = _useState2[1];
-  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
-    _useState4 = _slicedToArray(_useState3, 2),
-    previewData = _useState4[0],
-    setPreviewData = _useState4[1];
-  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
-    _useState6 = _slicedToArray(_useState5, 2),
-    error = _useState6[0],
-    setError = _useState6[1];
-  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(elements),
-    _useState8 = _slicedToArray(_useState7, 2),
-    templateElements = _useState8[0],
-    setTemplateElements = _useState8[1];
-  var _useState9 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(Date.now()),
-    _useState0 = _slicedToArray(_useState9, 2),
-    modalOpenTime = _useState0[0],
-    setModalOpenTime = _useState0[1]; // Timestamp d'ouverture du modal
 
-  // Protection contre la fermeture automatique : 3 secondes minimum
-  var isProtectedFromAutoClose = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(function () {
-    var elapsed = Date.now() - modalOpenTime;
-    return elapsed < 3000; // 3 secondes de protection
-  }, [modalOpenTime]);
+function PreviewProvider(_ref) {
+  var children = _ref.children;
+  var _useReducer = (0,react.useReducer)(previewReducer, initialState),
+    _useReducer2 = _slicedToArray(_useReducer, 2),
+    state = _useReducer2[0],
+    dispatch = _useReducer2[1];
 
-  // Définition du mode courant utilisé pour charger les données (Canvas ou Metabox)
-  var currentMode = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(function () {
-    // TEMP: Return a dummy object instead of imported modes
-    return {
-      loadData: function () {
-        var _loadData = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
-          return _regenerator().w(function (_context) {
-            while (1) switch (_context.n) {
-              case 0:
-                return _context.a(2, {
-                  elements: [],
-                  data: null
-                });
-            }
-          }, _callee);
-        }));
-        function loadData() {
-          return _loadData.apply(this, arguments);
-        }
-        return loadData;
-      }()
+  // Actions optimisées avec useCallback
+  var openPreview = (0,react.useCallback)(function (mode, data) {
+    var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+    dispatch({
+      type: PREVIEW_ACTIONS.OPEN,
+      payload: {
+        mode: mode,
+        data: data,
+        config: config
+      }
+    });
+  }, []);
+  var closePreview = (0,react.useCallback)(function () {
+    dispatch({
+      type: PREVIEW_ACTIONS.CLOSE
+    });
+  }, []);
+  var setPage = (0,react.useCallback)(function (page) {
+    dispatch({
+      type: PREVIEW_ACTIONS.SET_PAGE,
+      payload: page
+    });
+  }, []);
+  var setZoom = (0,react.useCallback)(function (zoom) {
+    dispatch({
+      type: PREVIEW_ACTIONS.SET_ZOOM,
+      payload: zoom
+    });
+  }, []);
+  var setLoading = (0,react.useCallback)(function (loading) {
+    dispatch({
+      type: PREVIEW_ACTIONS.SET_LOADING,
+      payload: loading
+    });
+  }, []);
+  var setError = (0,react.useCallback)(function (error) {
+    dispatch({
+      type: PREVIEW_ACTIONS.SET_ERROR,
+      payload: error
+    });
+  }, []);
+  var setData = (0,react.useCallback)(function (data) {
+    dispatch({
+      type: PREVIEW_ACTIONS.SET_DATA,
+      payload: data
+    });
+  }, []);
+
+  // Valeur du contexte optimisée avec useMemo
+  var contextValue = (0,react.useMemo)(function () {
+    return PreviewProvider_objectSpread(PreviewProvider_objectSpread({}, state), {}, {
+      // Actions
+      openPreview: openPreview,
+      closePreview: closePreview,
+      setPage: setPage,
+      setZoom: setZoom,
+      setLoading: setLoading,
+      setError: setError,
+      setData: setData,
+      // Getters utilitaires
+      isFirstPage: state.currentPage === 1,
+      isLastPage: state.currentPage === state.totalPages,
+      canNavigatePrev: state.currentPage > 1,
+      canNavigateNext: state.currentPage < state.totalPages,
+      zoomPercentage: Math.round(state.zoom * 100)
+    });
+  }, [state, openPreview, closePreview, setPage, setZoom, setLoading, setError, setData]);
+  return /*#__PURE__*/react.createElement(PreviewContext.Provider, {
+    value: contextValue
+  }, children);
+}
+
+// Export par défaut
+/* harmony default export */ const context_PreviewProvider = (PreviewProvider);
+;// ./resources/js/components/preview-system/components/ModalSkeleton.jsx
+
+
+/**
+ * ModalSkeleton - Composant de chargement pour le système d'aperçu
+ * Affiche un skeleton loader pendant le lazy loading des composants
+ */
+function ModalSkeleton() {
+  return /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton"
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-header"
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-title"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-close"
+  })), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-toolbar"
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-button"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-button"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-button"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-spacer"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-zoom"
+  })), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-content"
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-page"
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-line"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-line short"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-line"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-line medium"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-line"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-line short"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-line"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-spacer"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-line"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-line medium"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-line"
+  }))), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-footer"
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-nav"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-page-info"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-export"
+  })));
+}
+/* harmony default export */ const components_ModalSkeleton = (ModalSkeleton);
+;// ./resources/js/components/preview-system/components/PreviewModal.jsx
+
+
+
+
+// Lazy loading des modes pour optimisation performance
+var CanvasMode = /*#__PURE__*/(0,react.lazy)(function () {
+  return __webpack_require__.e(/* import() */ 657).then(__webpack_require__.bind(__webpack_require__, 657));
+});
+var MetaboxMode = /*#__PURE__*/(0,react.lazy)(function () {
+  return __webpack_require__.e(/* import() */ 295).then(__webpack_require__.bind(__webpack_require__, 295));
+});
+
+/**
+ * PreviewModal - Composant principal du système d'aperçu modal
+ * Optimisé avec lazy loading, error boundaries et performance
+ */
+function PreviewModal() {
+  var _usePreview = usePreview(),
+    isOpen = _usePreview.isOpen,
+    mode = _usePreview.mode,
+    loading = _usePreview.loading,
+    error = _usePreview.error,
+    closePreview = _usePreview.closePreview;
+
+  // Gestionnaire d'échappement clavier
+  (0,react.useEffect)(function () {
+    if (!isOpen) return;
+    var handleKeyDown = function handleKeyDown(event) {
+      if (event.key === 'Escape') {
+        closePreview();
+      }
     };
-  }, [mode]);
+    document.addEventListener('keydown', handleKeyDown);
+    return function () {
+      return document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, closePreview]);
 
-  // Handler de fermeture qui délègue à la prop onClose si fournie
-  var handleClose = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function () {
-    if (onClose && typeof onClose === 'function') {
-      try {
-        onClose();
-      } catch (err) {
-        console.error('PDF Builder Debug: onClose callback threw an error:', err);
-      }
+  // Gestionnaire de clic sur l'overlay
+  var handleOverlayClick = function handleOverlayClick(event) {
+    if (event.target === event.currentTarget) {
+      closePreview();
     }
-  }, [onClose]);
+  };
 
-  // Chargement des éléments du template en mode metabox
-  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
-    console.log('PDF Builder Debug: useEffect triggered - isOpen:', isOpen, 'mode:', mode, 'templateId:', templateId);
-    if (!isOpen || mode !== 'metabox') {
-      console.log('PDF Builder Debug: Skipping loadTemplateElements - condition not met');
-      return;
-    }
-    var loadTemplateElements = /*#__PURE__*/function () {
-      var _ref2 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
-        var _window$pdfBuilderPro, _window$pdfBuilderPro2, response, result, _result$data, _t;
-        return _regenerator().w(function (_context2) {
-          while (1) switch (_context2.p = _context2.n) {
-            case 0:
-              console.log('PDF Builder Debug: loadTemplateElements called with templateId:', templateId);
-              if (templateId) {
-                _context2.n = 1;
-                break;
-              }
-              console.log('PDF Builder Debug: Template ID manquant');
-              setError('ID du template manquant pour le mode metabox');
-              return _context2.a(2);
-            case 1:
-              _context2.p = 1;
-              console.log('PDF Builder Debug: Making AJAX request to:', window.ajaxurl || '/wp-admin/admin-ajax.php');
-              console.log('PDF Builder Debug: Request params:', {
-                action: 'pdf_builder_get_canvas_elements',
-                template_id: templateId,
-                nonce: nonce || ((_window$pdfBuilderPro = window.pdfBuilderPro) === null || _window$pdfBuilderPro === void 0 ? void 0 : _window$pdfBuilderPro.nonce) || ''
-              });
-              _context2.n = 2;
-              return fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: new URLSearchParams({
-                  action: 'pdf_builder_get_canvas_elements',
-                  template_id: templateId,
-                  nonce: nonce || ((_window$pdfBuilderPro2 = window.pdfBuilderPro) === null || _window$pdfBuilderPro2 === void 0 ? void 0 : _window$pdfBuilderPro2.nonce) || ''
-                })
-              });
-            case 2:
-              response = _context2.v;
-              console.log('PDF Builder Debug: AJAX response status:', response.status);
-              _context2.n = 3;
-              return response.json();
-            case 3:
-              result = _context2.v;
-              console.log('PDF Builder Debug: AJAX response data:', result);
-              if (!(result.success && result.data && result.data.elements)) {
-                _context2.n = 4;
-                break;
-              }
-              console.log('PDF Builder Debug: Elements loaded successfully:', result.data.elements.length, 'elements');
-              console.log('PDF Builder Debug: Elements details:', result.data.elements);
-              setTemplateElements(result.data.elements);
-              _context2.n = 5;
-              break;
-            case 4:
-              console.log('PDF Builder Debug: AJAX request failed:', result);
-              console.log('PDF Builder Debug: Result data:', result.data);
-              throw new Error(((_result$data = result.data) === null || _result$data === void 0 ? void 0 : _result$data.message) || 'Erreur lors du chargement des éléments du template');
-            case 5:
-              _context2.n = 7;
-              break;
-            case 6:
-              _context2.p = 6;
-              _t = _context2.v;
-              console.error('PDF Builder Debug: Exception during AJAX call:', _t);
-              console.error('Erreur lors du chargement des éléments du template:', _t);
-              setError(_t.message || 'Erreur lors du chargement du template');
-            case 7:
-              return _context2.a(2);
-          }
-        }, _callee2, null, [[1, 6]]);
-      }));
-      return function loadTemplateElements() {
-        return _ref2.apply(this, arguments);
-      };
-    }();
-    loadTemplateElements();
-  }, [isOpen, mode, templateId, nonce]);
+  // Ne rien rendre si fermé
+  if (!isOpen) return null;
+  return /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-modal-overlay",
+    onClick: handleOverlayClick
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-modal-content"
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-modal-header"
+  }, /*#__PURE__*/react.createElement("h3", {
+    className: "pdf-preview-modal-title"
+  }, "Aper\xE7u PDF ", mode === 'canvas' ? '(Éditeur)' : '(Commande)'), /*#__PURE__*/react.createElement("button", {
+    className: "pdf-preview-modal-close",
+    onClick: closePreview,
+    "aria-label": "Fermer l'aper\xE7u",
+    type: "button"
+  }, "\xD7")), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-modal-body"
+  }, /*#__PURE__*/react.createElement(react.Suspense, {
+    fallback: /*#__PURE__*/react.createElement(components_ModalSkeleton, null)
+  }, error ? /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-error"
+  }, /*#__PURE__*/react.createElement("p", null, "Erreur lors du chargement de l'aper\xE7u :"), /*#__PURE__*/react.createElement("p", {
+    className: "error-message"
+  }, error), /*#__PURE__*/react.createElement("button", {
+    onClick: closePreview,
+    className: "pdf-preview-error-close"
+  }, "Fermer")) : /*#__PURE__*/react.createElement(react.Fragment, null, mode === 'canvas' && /*#__PURE__*/react.createElement(CanvasMode, null), mode === 'metabox' && /*#__PURE__*/react.createElement(MetaboxMode, null)))), loading && /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-loading-overlay"
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-spinner"
+  }), /*#__PURE__*/react.createElement("p", null, "G\xE9n\xE9ration de l'aper\xE7u..."))));
+}
 
-  // Chargement des données selon le mode
-  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
-    console.log('PDF Builder Debug: loadPreviewData useEffect triggered');
-    console.log('PDF Builder Debug: Conditions - isOpen:', isOpen, 'templateElements:', (templateElements === null || templateElements === void 0 ? void 0 : templateElements.length) || 0);
-    if (!isOpen || !templateElements || templateElements.length === 0) {
-      console.log('PDF Builder Debug: Skipping preview data load - conditions not met');
-      return;
-    }
-    var loadPreviewData = /*#__PURE__*/function () {
-      var _ref3 = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
-        var data, _t2;
-        return _regenerator().w(function (_context3) {
-          while (1) switch (_context3.p = _context3.n) {
-            case 0:
-              console.log('PDF Builder Debug: Starting preview data load');
-              setIsLoading(true);
-              setError(null);
-              _context3.p = 1;
-              console.log('PDF Builder Debug: Calling currentMode.loadData with:', {
-                elementsCount: templateElements.length,
-                orderId: orderId,
-                templateData: templateData
-              });
-              _context3.n = 2;
-              return currentMode.loadData(templateElements, orderId, templateData);
-            case 2:
-              data = _context3.v;
-              console.log('PDF Builder Debug: Preview data loaded successfully:', data);
-              setPreviewData(data);
-              console.log('PDF Builder Debug: Preview data set in state');
-              _context3.n = 4;
-              break;
-            case 3:
-              _context3.p = 3;
-              _t2 = _context3.v;
-              console.error('PDF Builder Debug: Error loading preview data:', _t2);
-              console.error('Erreur lors du chargement des données d\'aperçu:', _t2);
-              setError(_t2.message || 'Erreur lors du chargement de l\'aperçu');
-            case 4:
-              _context3.p = 4;
-              setIsLoading(false);
-              console.log('PDF Builder Debug: Loading finished, isLoading set to false');
-              return _context3.f(4);
-            case 5:
-              return _context3.a(2);
-          }
-        }, _callee3, null, [[1, 3, 4, 5]]);
-      }));
-      return function loadPreviewData() {
-        return _ref3.apply(this, arguments);
-      };
-    }();
-    loadPreviewData();
-  }, [isOpen, templateElements, orderId, currentMode]);
+// Optimisation avec React.memo pour éviter les re-renders inutiles
+/* harmony default export */ const components_PreviewModal = (/*#__PURE__*/react.memo(PreviewModal));
+;// ./resources/js/components/preview-system/PreviewModal.jsx
 
-  // Gestionnaire de fermeture depuis l'overlay - avec protection contre la fermeture automatique
-  var handleOverlayClose = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function (e) {
-    // Protection absolue contre la fermeture automatique pendant 3 secondes
-    if (isProtectedFromAutoClose) {
-      console.log('PDF Builder Debug: Blocking overlay close - protected period active');
-      return;
-    }
-    console.log('PDF Builder Debug: Overlay clicked - closing modal');
-    handleClose();
-  }, [handleClose, isProtectedFromAutoClose]);
 
-  // Gestionnaire de fermeture depuis le bouton - toujours autorisé
-  var handleButtonClose = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function (e) {
-    console.log('PDF Builder Debug: Close button clicked - closing modal');
-    e.stopPropagation(); // Prevent overlay close
-    handleClose();
-  }, [handleClose]);
-  console.log('🚀🚀🚀 PREVIEW MODAL START - isOpen:', isOpen, 'mode:', mode, 'templateId:', templateId);
-  console.log('🚀🚀🚀 STATE CHECK - isLoading:', isLoading, 'error:', !!error, 'previewData:', !!previewData, 'templateElements:', (templateElements === null || templateElements === void 0 ? void 0 : templateElements.length) || 'undefined');
 
-  // LOG DIAGNOSTIC IMMÉDIAT APRÈS L'APPEL DE FONCTION
-  console.log('🚀🚀🚀 RIGHT AFTER FUNCTION START - about to check isOpen condition');
-  if (!isOpen) {
-    console.log('❌❌❌ PreviewModal not rendering - isOpen is false');
-    return null;
-  }
-  console.log('✅✅✅ isOpen is true, continuing to render');
-  console.log('🚀🚀🚀 About to render JSX - final state check:', {
-    isLoading: isLoading,
-    error: !!error,
-    previewData: !!previewData,
-    templateElements: templateElements === null || templateElements === void 0 ? void 0 : templateElements.length
-  });
-  try {
-    console.log('🚀🚀🚀 About to return JSX from PreviewModal');
 
-    // RENDU COMPLET AVEC LOGS DE DEBUG
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      className: "preview-modal-overlay",
-      onClick: handleOverlayClose,
-      style: {
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100vh',
-        backgroundColor: 'rgba(0,0,0,0.8)',
-        zIndex: 999999,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
-      }
-    }, console.log('🎨🎨🎨 OVERLAY RENDERED'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      className: "preview-modal-content",
-      onClick: function onClick(e) {
-        return e.stopPropagation();
-      },
-      style: {
-        backgroundColor: 'white',
-        borderRadius: '12px',
-        boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
-        maxWidth: '90vw',
-        maxHeight: '90vh',
-        width: '1200px',
-        height: '800px',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden'
-      }
-    }, console.log('🎨🎨🎨 MODAL CONTENT RENDERED'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      className: "preview-modal-header",
-      style: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '15px 20px',
-        borderBottom: '1px solid #e1e5e9',
-        backgroundColor: '#f8f9fa'
-      }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", {
-      style: {
-        margin: 0,
-        fontSize: '18px',
-        fontWeight: '600',
-        color: '#2c3e50'
-      }
-    }, mode === 'canvas' ? '🖼️ Aperçu Canvas' : '📄 Aperçu Commande', isProtectedFromAutoClose && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", {
-      style: {
-        marginLeft: '12px',
-        fontSize: '11px',
-        color: '#28a745',
-        fontWeight: '500',
-        backgroundColor: '#d4edda',
-        padding: '2px 8px',
-        borderRadius: '12px',
-        border: '1px solid #c3e6cb'
-      }
-    }, "Prot\xE9g\xE9")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
-      className: "preview-modal-close",
-      onClick: handleButtonClose,
-      title: "Fermer l'aper\xE7u",
-      style: {
-        background: 'none',
-        border: 'none',
-        fontSize: '24px',
-        color: '#6c757d',
-        cursor: 'pointer',
-        padding: '0',
-        width: '30px',
-        height: '30px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: '4px',
-        transition: 'all 0.2s ease'
-      },
-      onMouseEnter: function onMouseEnter(e) {
-        return e.target.style.backgroundColor = '#f8f9fa';
-      },
-      onMouseLeave: function onMouseLeave(e) {
-        return e.target.style.backgroundColor = 'transparent';
-      }
-    }, "\xD7")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      className: "preview-modal-body",
-      style: {
-        flex: 1,
-        overflow: 'auto',
-        backgroundColor: '#f8f9fa'
-      }
-    }, console.log('🎨🎨🎨 BODY RENDERED - checking conditions:', {
-      isLoading: isLoading,
-      error: !!error,
-      previewData: !!previewData
-    }), isLoading && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      className: "preview-loading",
-      style: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '60px 20px',
-        minHeight: '300px'
-      }
-    }, console.log('🎨🎨🎨 LOADING STATE RENDERED'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      className: "preview-spinner",
-      style: {
-        width: '50px',
-        height: '50px',
-        border: '4px solid #f3f3f3',
-        borderTop: '4px solid #007cba',
-        borderRadius: '50%',
-        animation: 'spin 1s linear infinite',
-        marginBottom: '20px'
-      }
-    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h4", {
-      style: {
-        margin: '0 0 10px 0',
-        color: '#2c3e50',
-        fontSize: '16px',
-        fontWeight: '500'
-      }
-    }, "Chargement de l'aper\xE7u..."), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", {
-      style: {
-        margin: 0,
-        color: '#6c757d',
-        fontSize: '14px',
-        textAlign: 'center'
-      }
-    }, "R\xE9cup\xE9ration des donn\xE9es de commande et pr\xE9paration de l'aper\xE7u PDF")), error && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      className: "preview-error"
-    }, console.log('🎨🎨🎨 ERROR STATE RENDERED:', error), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, "\u274C ", error), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
-      onClick: function onClick() {
-        return window.location.reload();
-      },
-      className: "preview-retry-btn"
-    }, "R\xE9essayer")), !isLoading && !error && previewData && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      className: "preview-content"
-    }, console.log('🎨🎨🎨 CONTENT RENDERED - previewData exists'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      style: {
-        padding: '20px',
-        background: '#f8f9fa',
-        borderRadius: '8px',
-        border: '2px solid #007cba',
-        minHeight: '400px'
-      }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      style: {
-        background: 'white',
-        padding: '15px',
-        borderRadius: '6px',
-        marginBottom: '20px',
-        border: '1px solid #dee2e6',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-      }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", {
-      style: {
-        margin: '0 0 10px 0',
-        color: '#007cba',
-        fontSize: '18px',
-        fontWeight: '600',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px'
-      }
-    }, "\uD83D\uDCC4 Aper\xE7u PDF - ", mode === 'canvas' ? 'Mode Exemple' : 'Commande Réelle', orderId && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", {
-      style: {
-        fontSize: '14px',
-        color: '#6c757d'
-      }
-    }, "(ID: ", orderId, ")")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      style: {
-        display: 'flex',
-        gap: '15px',
-        fontSize: '13px',
-        color: '#6c757d'
-      }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "\uD83D\uDCCA ", Array.isArray(templateElements) ? templateElements.length : 0, " \xE9l\xE9ment(s)"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "\uD83D\uDCC5 ", new Date().toLocaleDateString('fr-FR')), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "\u23F0 ", new Date().toLocaleTimeString('fr-FR')))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      style: {
-        background: 'white',
-        border: '1px solid #dee2e6',
-        borderRadius: '6px',
-        padding: '20px',
-        minHeight: '300px',
-        position: 'relative',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-      }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      style: {
-        background: 'white',
-        width: '420px',
-        // A4 width à 72 DPI ≈ 595px, réduit à 420px pour la modal
-        minHeight: '595px',
-        // A4 height à 72 DPI ≈ 842px, réduit à 595px
-        margin: '0 auto',
-        padding: '20px',
-        // Changé de mm à px pour cohérence
-        boxShadow: '0 0 10px rgba(0,0,0,0.2)',
-        border: '1px solid #e9ecef',
-        position: 'relative',
-        transform: 'scale(0.8)',
-        // Échelle réduite pour mieux rentrer
-        transformOrigin: 'top center',
-        marginBottom: '-80px' // Compensation pour l'échelle
-      }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      style: {
-        borderBottom: '2px solid #007cba',
-        paddingBottom: '10px',
-        // Changé de mm à px
-        marginBottom: '15px',
-        // Changé de mm à px
-        textAlign: 'center'
-      }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h1", {
-      style: {
-        margin: '0',
-        color: '#007cba',
-        fontSize: '18pt',
-        // Réduit pour l'échelle
-        fontWeight: 'bold'
-      }
-    }, mode === 'canvas' ? 'APERÇU TEMPLATE' : 'FACTURE / BON DE COMMANDE'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", {
-      style: {
-        margin: '5px 0 0 0',
-        // Changé de mm à px
-        color: '#6c757d',
-        fontSize: '10pt' // Réduit pour l'échelle
-      }
-    }, "G\xE9n\xE9r\xE9 le ", new Date().toLocaleDateString('fr-FR'), " \xE0 ", new Date().toLocaleTimeString('fr-FR'))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      style: {
-        flex: 1
-      }
-    }, mode === 'canvas' ?
-    /*#__PURE__*/
-    /* Mode Canvas : Afficher le rendu visuel de l'éditeur */
-    react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      style: {
-        display: 'grid',
-        gap: '30px'
-      }
-    }, " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      style: {
-        background: 'white',
-        border: '2px solid #007cba',
-        borderRadius: '8px',
-        padding: '30px',
-        // Changé de 15mm à 30px
-        boxShadow: '0 4px 12px rgba(0,123,186,0.1)'
-      }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", {
-      style: {
-        margin: '0 0 20px 0',
-        // Changé de 10mm à 20px
-        color: '#007cba',
-        fontSize: '18pt',
-        textAlign: 'center',
-        borderBottom: '1px solid #dee2e6',
-        paddingBottom: '10px' // Changé de 5mm à 10px
-      }
-    }, "\uD83D\uDDBC\uFE0F Aper\xE7u Visuel - \xC9diteur Canvas"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      style: {
-        background: '#f8f9fa',
-        border: '1px solid #dee2e6',
-        borderRadius: '4px',
-        padding: '10px',
-        // Changé de mm à px
-        position: 'relative',
-        minHeight: '400px' // Changé de mm à px
-      }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      style: {
-        background: 'white',
-        width: '420px',
-        // A4 width réduite
-        minHeight: '595px',
-        // A4 height réduite
-        margin: '0 auto',
-        padding: '15px',
-        // Changé de mm à px
-        boxShadow: '0 0 8px rgba(0,0,0,0.15)',
-        border: '1px solid #e9ecef',
-        position: 'relative',
-        overflow: 'hidden',
-        transform: 'scale(0.8)',
-        // Échelle réduite
-        transformOrigin: 'top center',
-        marginBottom: '-80px' // Compensation pour l'échelle
-      }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      style: {
-        position: 'absolute',
-        top: '15px',
-        // Changé de mm à px
-        left: '15px',
-        // Changé de mm à px
-        right: '15px',
-        // Changé de mm à px
-        bottom: '15px',
-        // Changé de mm à px
-        backgroundImage: "\n                                      linear-gradient(rgba(0,123,186,0.1) 1px, transparent 1px),\n                                      linear-gradient(90deg, rgba(0,123,186,0.1) 1px, transparent 1px)\n                                    ",
-        backgroundSize: '20px 20px',
-        // Changé de mm à px (10mm ≈ 20px à l'échelle)
-        pointerEvents: 'none',
-        opacity: 0.3
-      }
-    }), Array.isArray(templateElements) && templateElements.length > 0 ? templateElements.map(function (element, index) {
-      // Debug: Afficher le type réel des éléments
-      console.log('PDF Builder Debug: Element', index, 'type:', element.type, 'full element:', element);
 
-      // Calculer les positions en pixels (conversion depuis les coordonnées du canvas)
-      // À l'échelle 0.8, on ajuste les coordonnées pour qu'elles correspondent
-      var scaleFactor = 0.8;
-      var x = (element.x || 0) * scaleFactor;
-      var y = (element.y || 0) * scaleFactor;
-      var width = (element.width || 50) * scaleFactor;
-      var height = (element.height || 20) * scaleFactor;
-      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-        key: index,
-        style: {
-          position: 'absolute',
-          left: "".concat(15 + x, "px"),
-          // 15px pour le padding de la page
-          top: "".concat(15 + y, "px"),
-          width: "".concat(width, "px"),
-          minHeight: "".concat(height, "px"),
-          background: element.type === 'text' ? '#e3f2fd' : element.type === 'image' ? '#f3e5f5' : element.type === 'rectangle' ? '#e8f5e8' : element.type && (element.type.startsWith('woocommerce-') || element.type.includes('_')) ? '#efebe9' : element.type === 'barcode' ? '#eceff1' : '#fff3e0',
-          border: "2px solid ".concat(element.type === 'text' ? '#2196f3' : element.type === 'image' ? '#9c27b0' : element.type === 'rectangle' ? '#4caf50' : element.type && (element.type.startsWith('woocommerce-') || element.type.includes('_')) ? '#795548' : element.type === 'barcode' ? '#607d8b' : '#ff9800'),
-          borderRadius: '3px',
-          padding: '6px',
-          // Changé de 3mm à 6px
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          fontSize: '10pt',
-          // Réduit pour l'échelle
-          color: '#333',
-          zIndex: index + 1
-        },
-        title: "\xC9l\xE9ment ".concat(index + 1, " - ").concat(element.type || 'Inconnu', " (").concat(Math.round(x / 0.8), ", ").concat(Math.round(y / 0.8), ") - ").concat(Math.round(width / 0.8), "x").concat(Math.round(height / 0.8), "px")
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-        style: {
-          position: 'absolute',
-          top: '4px',
-          // Changé de 2mm à 4px
-          right: '4px',
-          // Changé de 2mm à 4px
-          background: element.type === 'text' ? '#2196f3' : element.type === 'image' ? '#9c27b0' : element.type === 'rectangle' ? '#4caf50' : element.type && (element.type.startsWith('woocommerce-') || element.type.includes('_')) ? '#795548' : element.type === 'barcode' ? '#607d8b' : '#ff9800',
-          color: 'white',
-          padding: '2px 4px',
-          // Changé de 1mm 2mm à 2px 4px
-          borderRadius: '4px',
-          // Changé de 2mm à 4px
-          fontSize: '7pt',
-          // Réduit pour l'échelle
-          fontWeight: 'bold'
-        }
-      }, element.type === 'text' ? 'T' : element.type === 'image' ? '🖼️' : element.type === 'rectangle' ? '▭' : element.type && (element.type.startsWith('woocommerce-') || element.type.includes('_')) ? '🛒' : element.type === 'barcode' ? '▍' : '?'), element.type === 'text' && element.content ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-        style: {
-          fontSize: '10pt',
-          textAlign: 'center',
-          lineHeight: '1.3',
-          wordBreak: 'break-word',
-          fontFamily: element.fontFamily || 'Arial, sans-serif',
-          fontWeight: element.fontWeight || 'normal',
-          fontStyle: element.fontStyle || 'normal',
-          color: element.color || '#333'
-        }
-      }, typeof element.content === 'string' ? element.content.length > 30 ? element.content.substring(0, 30) + '...' : element.content : 'Texte d\'exemple') : element.type === 'image' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-        style: {
-          width: '100%',
-          height: '60px',
-          background: 'linear-gradient(45deg, #f0f0f0 25%, transparent 25%), linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f0f0f0 75%), linear-gradient(-45deg, transparent 75%, #f0f0f0 75%)',
-          backgroundSize: '8px 8px',
-          backgroundPosition: '0 0, 0 4px, 4px -4px, -4px 0px',
-          border: '2px dashed #ccc',
-          borderRadius: '4px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: '#666',
-          fontSize: '20pt'
-        }
-      }, "\uFFFD") : element.type === 'rectangle' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-        style: {
-          width: '100%',
-          height: '100%',
-          background: element.fillColor || element.backgroundColor || '#4caf50',
-          borderRadius: element.borderRadius ? "".concat(element.borderRadius, "px") : '2px',
-          border: element.borderWidth ? "".concat(element.borderWidth, "px solid ").concat(element.borderColor || '#333') : 'none'
-        }
-      }) : element.type === 'woocommerce-order-number' || element.type === 'order_number' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-        style: {
-          fontSize: '12pt',
-          fontWeight: 'bold',
-          textAlign: 'center',
-          color: '#007cba'
-        }
-      }, "#WC-2025-001") : element.type === 'woocommerce-billing-address' || element.type === 'billing_address' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-        style: {
-          fontSize: '9pt',
-          textAlign: 'left',
-          lineHeight: '1.2'
-        }
-      }, "Jean Dupont", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("br", null), "123 Rue de la Paix", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("br", null), "75001 Paris", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("br", null), "France") : element.type === 'woocommerce-order-date' || element.type === 'order_date' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-        style: {
-          fontSize: '10pt',
-          textAlign: 'center'
-        }
-      }, "21/10/2025") : element.type === 'woocommerce-customer-name' || element.type === 'customer_name' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-        style: {
-          fontSize: '11pt',
-          textAlign: 'center',
-          fontWeight: 'bold'
-        }
-      }, "Jean Dupont") : element.type === 'woocommerce-products-table' || element.type === 'products_table' || element.type === 'product_table' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-        style: {
-          fontSize: '8pt',
-          width: '100%'
-        }
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-        style: {
-          display: 'flex',
-          justifyContent: 'space-between',
-          borderBottom: '1px solid #ccc',
-          paddingBottom: '2px',
-          marginBottom: '2px'
-        }
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "Produit"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "Qt\xE9"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "Prix")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-        style: {
-          display: 'flex',
-          justifyContent: 'space-between'
-        }
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "T-Shirt Blanc"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "1"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "25,00 \u20AC"))) : element.type === 'woocommerce-subtotal' || element.type === 'subtotal' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-        style: {
-          fontSize: '10pt',
-          textAlign: 'right'
-        }
-      }, "Sous-total: 25,00 \u20AC") : element.type === 'woocommerce-taxes' || element.type === 'taxes' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-        style: {
-          fontSize: '10pt',
-          textAlign: 'right'
-        }
-      }, "TVA (20%): 5,00 \u20AC") : element.type === 'woocommerce-shipping' || element.type === 'shipping' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-        style: {
-          fontSize: '10pt',
-          textAlign: 'right'
-        }
-      }, "Livraison: 5,90 \u20AC") : element.type === 'woocommerce-order-total' || element.type === 'order_total' || element.type === 'total' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-        style: {
-          fontSize: '12pt',
-          fontWeight: 'bold',
-          textAlign: 'right',
-          color: '#007cba'
-        }
-      }, "Total: 35,90 \u20AC") : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-        style: {
-          fontSize: '14pt',
-          opacity: 0.6,
-          textAlign: 'center'
-        }
-      }, element.type === 'line' ? '━' : element.type === 'circle' ? '○' : element.type === 'barcode' ? '▍▍▍▍▍' : element.type || 'Élément'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-        style: {
-          position: 'absolute',
-          bottom: '4px',
-          // Changé de 2mm à 4px
-          right: '4px',
-          // Changé de 2mm à 4px
-          background: 'rgba(0,0,0,0.7)',
-          color: 'white',
-          padding: '2px',
-          // Changé de 1mm à 2px
-          borderRadius: '2px',
-          // Changé de 1mm à 2px
-          fontSize: '6pt' // Réduit pour l'échelle
-        }
-      }, Math.round(width / 0.8), "\xD7", Math.round(height / 0.8)));
-    }) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      style: {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        textAlign: 'center',
-        color: '#6c757d'
-      }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      style: {
-        fontSize: '38pt',
-        marginBottom: '20px',
-        opacity: 0.5
-      }
-    }, "\uD83D\uDDBC\uFE0F"), " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", {
-      style: {
-        margin: '0',
-        fontSize: '11pt'
-      }
-    }, " ", "Aucun \xE9l\xE9ment dans le canvas"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", {
-      style: {
-        margin: '10px 0 0 0',
-        fontSize: '9pt'
-      }
-    }, " ", "Ajoutez des \xE9l\xE9ments pour les voir positionn\xE9s ici"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      style: {
-        marginTop: '20px',
-        // Changé de 10mm à 20px
-        padding: '16px',
-        // Changé de 8mm à 16px
-        background: 'white',
-        borderRadius: '4px',
-        border: '1px solid #dee2e6'
-      }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h4", {
-      style: {
-        margin: '0 0 10px 0',
-        // Changé de 5mm à 10px
-        color: '#007cba',
-        fontSize: '10pt' // Réduit pour l'échelle
-      }
-    }, "\uD83D\uDCCB L\xE9gende des \xE9l\xE9ments :"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      style: {
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-        // Ajusté pour plus d'éléments
-        gap: '6px',
-        fontSize: '9pt'
-      }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", {
-      style: {
-        color: '#2196f3'
-      }
-    }, "\u25A0"), " Texte"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", {
-      style: {
-        color: '#9c27b0'
-      }
-    }, "\u25A0"), " Image"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", {
-      style: {
-        color: '#4caf50'
-      }
-    }, "\u25A0"), " Rectangle"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", {
-      style: {
-        color: '#ff9800'
-      }
-    }, "\u25A0"), " Formes"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", {
-      style: {
-        color: '#795548'
-      }
-    }, "\u25A0"), " WooCommerce"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", {
-      style: {
-        color: '#607d8b'
-      }
-    }, "\u25A0"), " Codes-barres")))))) :
-    /*#__PURE__*/
-    /* Mode Metabox : Afficher le JSON du template */
-    react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      style: {
-        display: 'grid',
-        gap: '20px'
-      }
-    }, " ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      style: {
-        background: 'white',
-        border: '2px solid #28a745',
-        borderRadius: '8px',
-        padding: '30px',
-        // Changé de 15mm à 30px
-        boxShadow: '0 4px 12px rgba(40,167,69,0.1)'
-      }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h2", {
-      style: {
-        margin: '0 0 20px 0',
-        // Changé de 10mm à 20px
-        color: '#28a745',
-        fontSize: '18pt',
-        textAlign: 'center',
-        borderBottom: '1px solid #dee2e6',
-        paddingBottom: '10px' // Changé de 5mm à 10px
-      }
-    }, "\uD83D\uDCC4 Donn\xE9es JSON du Template"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      style: {
-        background: '#f8f9fa',
-        border: '1px solid #dee2e6',
-        borderRadius: '4px',
-        padding: '20px',
-        // Changé de 10mm à 20px
-        fontFamily: 'monospace',
-        fontSize: '9pt',
-        lineHeight: '1.4',
-        maxHeight: '300px',
-        // Changé de 150mm à 300px
-        overflow: 'auto'
-      }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      style: {
-        background: '#28a745',
-        color: 'white',
-        padding: '4px 10px',
-        // Changé de 2mm 5mm à 4px 10px
-        borderRadius: '3px',
-        marginBottom: '10px',
-        // Changé de 5mm à 10px
-        display: 'inline-block',
-        fontSize: '10pt',
-        fontWeight: 'bold'
-      }
-    }, "\uD83D\uDCCB Template JSON (", Array.isArray(templateElements) ? templateElements.length : 0, " \xE9l\xE9ments)"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("pre", {
-      style: {
-        margin: '0',
-        whiteSpace: 'pre-wrap',
-        wordBreak: 'break-word',
-        color: '#495057'
-      }
-    }, Array.isArray(templateElements) && templateElements.length > 0 ? JSON.stringify(templateElements, null, 2) : '{\n  "template": [],\n  "message": "Aucune donnée JSON disponible"\n}')), Array.isArray(templateElements) && templateElements.length > 0 && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      style: {
-        marginTop: '20px',
-        // Changé de 10mm à 20px
-        padding: '16px',
-        // Changé de 8mm à 16px
-        background: '#d4edda',
-        border: '1px solid #c3e6cb',
-        borderRadius: '4px',
-        fontSize: '10pt'
-      }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("strong", {
-      style: {
-        color: '#155724'
-      }
-    }, "\uD83D\uDCCA Analyse du Template:"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      style: {
-        marginTop: '3mm',
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(60mm, 1fr))',
-        gap: '3mm'
-      }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "\u2022 ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("strong", null, templateElements.length), " \xE9l\xE9ment(s) total"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "\u2022 ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("strong", null, templateElements.filter(function (e) {
-      return e.type;
-    }).length), " \xE9l\xE9ment(s) typ\xE9s"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "\u2022 ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("strong", null, templateElements.filter(function (e) {
-      return e.content;
-    }).length), " \xE9l\xE9ment(s) avec contenu"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "\u2022 ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("strong", null, templateElements.filter(function (e) {
-      return e.x !== undefined && e.y !== undefined;
-    }).length), " \xE9l\xE9ment(s) positionn\xE9s")))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      style: {
-        borderTop: '1px solid #dee2e6',
-        paddingTop: '10px',
-        // Changé de mm à px
-        marginTop: '20px',
-        // Changé de mm à px
-        textAlign: 'center',
-        fontSize: '8pt',
-        // Réduit pour l'échelle
-        color: '#6c757d'
-      }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", {
-      style: {
-        margin: '0'
-      }
-    }, "PDF Builder Pro - Aper\xE7u g\xE9n\xE9r\xE9 automatiquement"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", {
-      style: {
-        margin: '2px 0 0 0'
-      }
-    }, " ", "Page 1 sur 1")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      style: {
-        marginTop: '15px',
-        padding: '10px',
-        background: mode === 'canvas' ? '#e7f3ff' : '#d4edda',
-        borderRadius: '4px',
-        fontSize: '12px',
-        color: mode === 'canvas' ? '#0066cc' : '#155724',
-        border: mode === 'canvas' ? '1px solid #b3d9ff' : '1px solid #c3e6cb'
-      }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("strong", null, mode === 'canvas' ? '🖼️ Mode Canvas:' : '📄 Mode Metabox:'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      style: {
-        marginTop: '5px',
-        display: 'flex',
-        gap: '15px',
-        flexWrap: 'wrap'
-      }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "\u2022 \xC9l\xE9ments: ", Array.isArray(templateElements) ? templateElements.length : 0), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "\u2022 Mode: ", mode === 'canvas' ? 'Éditeur Visuel' : 'Données JSON'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "\u2022 Donn\xE9es: ", previewData ? '✅ Chargées' : '❌ Manquantes'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "\u2022 Template: ", templateId || 'N/A'), mode === 'canvas' && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "\u2022 Positionn\xE9s: ", Array.isArray(templateElements) ? templateElements.filter(function (e) {
-      return e.x !== undefined && e.y !== undefined;
-    }).length : 0), mode === 'metabox' && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "\u2022 Format: JSON")))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      className: "preview-modal-footer",
-      style: {
-        padding: '12px 20px',
-        borderTop: '1px solid #e1e5e9',
-        backgroundColor: '#f8f9fa',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center'
-      }
-    }, console.log('🎨🎨🎨 FOOTER RENDERED'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      className: "preview-info",
-      style: {
-        display: 'flex',
-        gap: '15px',
-        alignItems: 'center'
-      }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", {
-      className: "preview-mode-badge",
-      style: {
-        backgroundColor: mode === 'canvas' ? '#e3f2fd' : '#d4edda',
-        color: mode === 'canvas' ? '#1565c0' : '#155724',
-        padding: '4px 12px',
-        borderRadius: '16px',
-        fontSize: '12px',
-        fontWeight: '500'
-      }
-    }, mode === 'canvas' ? '🖼️ Mode Exemple' : '📄 Mode Réel'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", {
-      className: "preview-elements-count",
-      style: {
-        color: '#6c757d',
-        fontSize: '13px'
-      }
-    }, Array.isArray(templateElements) ? templateElements.length : 0, " \xE9l\xE9ment", Array.isArray(templateElements) && templateElements.length > 1 ? 's' : '')), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      className: "preview-actions"
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
-      className: "preview-download-btn",
-      disabled: isLoading || !!error,
-      title: "T\xE9l\xE9charger le PDF",
-      style: {
-        backgroundColor: isLoading || !!error ? '#6c757d' : '#007cba',
-        color: 'white',
-        border: 'none',
-        padding: '8px 16px',
-        borderRadius: '6px',
-        cursor: isLoading || !!error ? 'not-allowed' : 'pointer',
-        fontSize: '14px',
-        fontWeight: '500',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '6px',
-        transition: 'background-color 0.2s ease'
-      }
-    }, "\uD83D\uDCE5 PDF")))));
-  } catch (renderError) {
-    console.error('PDF Builder Debug: JSX render error:', renderError);
-    console.error('PDF Builder Debug: Error stack:', renderError.stack);
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-      style: {
-        position: 'fixed',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        background: 'white',
-        padding: '20px',
-        borderRadius: '8px',
-        zIndex: 1000000
-      }
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", null, "\u274C Erreur de rendu JSX"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", null, renderError.message), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("pre", {
-      style: {
-        fontSize: '12px',
-        color: 'red'
-      }
-    }, renderError.stack), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
-      onClick: function onClick() {
-        return window.location.reload();
-      }
-    }, "Recharger"));
-  }
+/**
+ * PreviewModal - Wrapper avec PreviewProvider pour compatibilité
+ * Ce fichier existe pour compatibilité avec les anciens imports
+ */
+var PreviewModal_PreviewModal = function PreviewModal(props) {
+  console.log('PDF Builder: PreviewModal legacy wrapper called with props:', props);
+
+  // Si des props sont passées, on les utilise pour initialiser le context
+  var initialData = props.elements || null;
+  var initialMode = props.mode || 'canvas';
+  return /*#__PURE__*/react.createElement(PreviewProvider, null, /*#__PURE__*/react.createElement(PreviewModalWithContext, {
+    legacyProps: props,
+    initialData: initialData,
+    initialMode: initialMode
+  }));
 };
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (PreviewModal);
+
+// Composant interne qui gère la logique legacy
+var PreviewModalWithContext = function PreviewModalWithContext(_ref) {
+  var legacyProps = _ref.legacyProps,
+    initialData = _ref.initialData,
+    initialMode = _ref.initialMode;
+  var _usePreview = usePreview(),
+    openPreview = _usePreview.openPreview,
+    closePreview = _usePreview.closePreview,
+    isOpen = _usePreview.isOpen;
+
+  // Ouvrir automatiquement si des props legacy sont passées
+  react.useEffect(function () {
+    if (legacyProps && !isOpen) {
+      openPreview(initialMode, initialData);
+    }
+  }, [legacyProps, initialMode, initialData, isOpen, openPreview]);
+
+  // Gérer la fermeture legacy
+  react.useEffect(function () {
+    if (legacyProps && legacyProps.onClose) {
+      var handleClose = function handleClose() {
+        if (legacyProps.onClose) {
+          legacyProps.onClose();
+        }
+        closePreview();
+      };
+      // TODO: Attacher handleClose au context si nécessaire
+    }
+  }, [legacyProps, closePreview]);
+  return /*#__PURE__*/react.createElement(components_PreviewModal, null);
+};
+/* harmony default export */ const preview_system_PreviewModal = (PreviewModal_PreviewModal);
 
 /***/ }),
 
 /***/ 626:
-/***/ ((__unused_webpack_module, __unused_webpack___webpack_exports__, __webpack_require__) => {
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
+// ESM COMPAT FLAG
+__webpack_require__.r(__webpack_exports__);
 
-// UNUSED EXPORTS: default
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, {
+  "default": () => (/* binding */ js)
+});
 
 // NAMESPACE OBJECT: ./resources/js/hooks/index.js
 var hooks_namespaceObject = {};
@@ -4048,6 +3421,257 @@ var useContextMenu = function useContextMenu() {
     handleContextMenuAction: handleContextMenuAction,
     isAnimating: isAnimating
   };
+};
+;// ./resources/js/utils/elementPropertyRestrictions.js
+// Système de gestion des propriétés d'éléments
+// Définit les restrictions et validations pour chaque type d'élément
+
+var ELEMENT_PROPERTY_RESTRICTIONS = {
+  // Éléments spéciaux - contrôle du fond autorisé mais valeur par défaut transparente
+  special: {
+    backgroundColor: {
+      disabled: false,
+      // Maintenant autorisé
+      "default": 'transparent' // Valeur par défaut transparente
+    },
+    borderColor: {
+      disabled: false
+    },
+    borderWidth: {
+      disabled: false
+    }
+  },
+  // Éléments de mise en page - contrôle complet
+  layout: {
+    backgroundColor: {
+      disabled: false,
+      "default": '#f8fafc'
+    },
+    borderColor: {
+      disabled: false
+    },
+    borderWidth: {
+      disabled: false
+    }
+  },
+  // Éléments de texte - contrôle complet
+  text: {
+    backgroundColor: {
+      disabled: false,
+      "default": 'transparent'
+    },
+    borderColor: {
+      disabled: false
+    },
+    borderWidth: {
+      disabled: false
+    }
+  },
+  // Éléments graphiques - contrôle complet
+  shape: {
+    backgroundColor: {
+      disabled: false,
+      "default": '#e5e7eb'
+    },
+    borderColor: {
+      disabled: false
+    },
+    borderWidth: {
+      disabled: false
+    }
+  },
+  // Éléments médias - contrôle limité
+  media: {
+    backgroundColor: {
+      disabled: false,
+      "default": '#f3f4f6'
+    },
+    borderColor: {
+      disabled: false
+    },
+    borderWidth: {
+      disabled: false
+    }
+  },
+  // Éléments dynamiques - contrôle complet
+  dynamic: {
+    backgroundColor: {
+      disabled: false,
+      "default": 'transparent'
+    },
+    borderColor: {
+      disabled: false
+    },
+    borderWidth: {
+      disabled: false
+    }
+  }
+};
+
+// Mapping des types d'éléments vers leurs catégories
+var ELEMENT_TYPE_MAPPING = {
+  // Spéciaux
+  'product_table': 'special',
+  'customer_info': 'special',
+  'company_logo': 'special',
+  'company_info': 'special',
+  'order_number': 'special',
+  'document_type': 'special',
+  'progress-bar': 'special',
+  // Mise en page
+  'layout-header': 'layout',
+  'layout-footer': 'layout',
+  'layout-sidebar': 'layout',
+  'layout-section': 'layout',
+  'layout-container': 'layout',
+  'layout-section-divider': 'layout',
+  'layout-spacer': 'layout',
+  'layout-two-column': 'layout',
+  'layout-three-column': 'layout',
+  // Texte
+  'text': 'text',
+  'dynamic-text': 'text',
+  'conditional-text': 'text',
+  'counter': 'text',
+  'date-dynamic': 'text',
+  'currency': 'text',
+  'formula': 'text',
+  // Formes
+  'rectangle': 'shape',
+  'line': 'shape',
+  'shape-rectangle': 'shape',
+  'shape-circle': 'shape',
+  'shape-line': 'shape',
+  'shape-arrow': 'shape',
+  'shape-triangle': 'shape',
+  'shape-star': 'shape',
+  'divider': 'shape',
+  // Médias
+  'image': 'media',
+  'image-upload': 'media',
+  'logo': 'media',
+  'barcode': 'media',
+  'qrcode': 'media',
+  'qrcode-dynamic': 'media',
+  'icon': 'media',
+  // Dynamiques
+  'table-dynamic': 'dynamic',
+  'gradient-box': 'dynamic',
+  'shadow-box': 'dynamic',
+  'rounded-box': 'dynamic',
+  'border-box': 'dynamic',
+  'background-pattern': 'dynamic',
+  'watermark': 'dynamic',
+  // Factures (mélange de catégories)
+  'invoice-header': 'layout',
+  'invoice-address-block': 'layout',
+  'invoice-info-block': 'layout',
+  'invoice-products-table': 'special',
+  'invoice-totals-block': 'layout',
+  'invoice-payment-terms': 'layout',
+  'invoice-legal-footer': 'layout',
+  'invoice-signature-block': 'layout'
+};
+
+// Fonction pour vérifier si une propriété est autorisée pour un type d'élément
+var isPropertyAllowed = function isPropertyAllowed(elementType, propertyName) {
+  var category = ELEMENT_TYPE_MAPPING[elementType] || 'text'; // défaut texte
+  var restrictions = ELEMENT_PROPERTY_RESTRICTIONS[category];
+  if (!restrictions || !restrictions[propertyName]) {
+    return true; // propriété autorisée par défaut
+  }
+  return !restrictions[propertyName].disabled;
+};
+
+// Fonction pour obtenir la valeur par défaut d'une propriété
+var getPropertyDefault = function getPropertyDefault(elementType, propertyName) {
+  var category = ELEMENT_TYPE_MAPPING[elementType] || 'text';
+  var restrictions = ELEMENT_PROPERTY_RESTRICTIONS[category];
+  if (restrictions && restrictions[propertyName] && restrictions[propertyName]["default"] !== undefined) {
+    return restrictions[propertyName]["default"];
+  }
+  return null; // pas de valeur par défaut spécifique
+};
+
+// Fonction pour valider une propriété
+var validateProperty = function validateProperty(elementType, propertyName, value) {
+  if (!isPropertyAllowed(elementType, propertyName)) {
+    var _ELEMENT_PROPERTY_RES;
+    return {
+      valid: false,
+      reason: ((_ELEMENT_PROPERTY_RES = ELEMENT_PROPERTY_RESTRICTIONS[ELEMENT_TYPE_MAPPING[elementType] || 'text'][propertyName]) === null || _ELEMENT_PROPERTY_RES === void 0 ? void 0 : _ELEMENT_PROPERTY_RES.reason) || 'Propriété non autorisée'
+    };
+  }
+
+  // Validations spécifiques selon le type de propriété
+  switch (propertyName) {
+    case 'backgroundColor':
+      if (typeof value !== 'string') {
+        return {
+          valid: false,
+          reason: 'La couleur doit être une chaîne'
+        };
+      }
+      // Plus de restriction pour les éléments spéciaux - ils peuvent maintenant avoir un fond
+      break;
+    case 'borderWidth':
+      if (typeof value !== 'number' || value < 0) {
+        return {
+          valid: false,
+          reason: 'La largeur de bordure doit être un nombre positif'
+        };
+      }
+      break;
+    case 'fontSize':
+      if (typeof value !== 'number' || value <= 0) {
+        return {
+          valid: false,
+          reason: 'La taille de police doit être un nombre positif'
+        };
+      }
+      break;
+    case 'width':
+    case 'height':
+      if (typeof value !== 'number' || value <= 0) {
+        return {
+          valid: false,
+          reason: 'Les dimensions doivent être positives'
+        };
+      }
+      break;
+    default:
+      break;
+  }
+  return {
+    valid: true
+  };
+};
+
+// Fonction pour corriger automatiquement une propriété invalide
+var fixInvalidProperty = function fixInvalidProperty(elementType, propertyName, invalidValue) {
+  // Pour les éléments spéciaux, backgroundColor peut maintenant être contrôlé
+  // (pas de forçage automatique à 'transparent')
+
+  // Valeurs par défaut pour les propriétés numériques
+  var numericDefaults = {
+    borderWidth: 0,
+    fontSize: 14,
+    width: 100,
+    height: 50,
+    padding: 8
+  };
+  if (numericDefaults[propertyName] !== undefined) {
+    return numericDefaults[propertyName];
+  }
+
+  // Valeurs par défaut pour les chaînes
+  var stringDefaults = {
+    backgroundColor: 'transparent',
+    borderColor: 'transparent',
+    color: '#000000',
+    fontFamily: 'Arial, sans-serif'
+  };
+  return stringDefaults[propertyName] || invalidValue;
 };
 ;// ./resources/js/hooks/useCanvasState.js
 function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
@@ -7666,257 +7290,6 @@ var ElementCustomizationService = /*#__PURE__*/function () {
 
 // Instance singleton du service
 var elementCustomizationService = new ElementCustomizationService();
-;// ./resources/js/utils/elementPropertyRestrictions.js
-// Système de gestion des propriétés d'éléments
-// Définit les restrictions et validations pour chaque type d'élément
-
-var ELEMENT_PROPERTY_RESTRICTIONS = {
-  // Éléments spéciaux - contrôle du fond autorisé mais valeur par défaut transparente
-  special: {
-    backgroundColor: {
-      disabled: false,
-      // Maintenant autorisé
-      "default": 'transparent' // Valeur par défaut transparente
-    },
-    borderColor: {
-      disabled: false
-    },
-    borderWidth: {
-      disabled: false
-    }
-  },
-  // Éléments de mise en page - contrôle complet
-  layout: {
-    backgroundColor: {
-      disabled: false,
-      "default": '#f8fafc'
-    },
-    borderColor: {
-      disabled: false
-    },
-    borderWidth: {
-      disabled: false
-    }
-  },
-  // Éléments de texte - contrôle complet
-  text: {
-    backgroundColor: {
-      disabled: false,
-      "default": 'transparent'
-    },
-    borderColor: {
-      disabled: false
-    },
-    borderWidth: {
-      disabled: false
-    }
-  },
-  // Éléments graphiques - contrôle complet
-  shape: {
-    backgroundColor: {
-      disabled: false,
-      "default": '#e5e7eb'
-    },
-    borderColor: {
-      disabled: false
-    },
-    borderWidth: {
-      disabled: false
-    }
-  },
-  // Éléments médias - contrôle limité
-  media: {
-    backgroundColor: {
-      disabled: false,
-      "default": '#f3f4f6'
-    },
-    borderColor: {
-      disabled: false
-    },
-    borderWidth: {
-      disabled: false
-    }
-  },
-  // Éléments dynamiques - contrôle complet
-  dynamic: {
-    backgroundColor: {
-      disabled: false,
-      "default": 'transparent'
-    },
-    borderColor: {
-      disabled: false
-    },
-    borderWidth: {
-      disabled: false
-    }
-  }
-};
-
-// Mapping des types d'éléments vers leurs catégories
-var ELEMENT_TYPE_MAPPING = {
-  // Spéciaux
-  'product_table': 'special',
-  'customer_info': 'special',
-  'company_logo': 'special',
-  'company_info': 'special',
-  'order_number': 'special',
-  'document_type': 'special',
-  'progress-bar': 'special',
-  // Mise en page
-  'layout-header': 'layout',
-  'layout-footer': 'layout',
-  'layout-sidebar': 'layout',
-  'layout-section': 'layout',
-  'layout-container': 'layout',
-  'layout-section-divider': 'layout',
-  'layout-spacer': 'layout',
-  'layout-two-column': 'layout',
-  'layout-three-column': 'layout',
-  // Texte
-  'text': 'text',
-  'dynamic-text': 'text',
-  'conditional-text': 'text',
-  'counter': 'text',
-  'date-dynamic': 'text',
-  'currency': 'text',
-  'formula': 'text',
-  // Formes
-  'rectangle': 'shape',
-  'line': 'shape',
-  'shape-rectangle': 'shape',
-  'shape-circle': 'shape',
-  'shape-line': 'shape',
-  'shape-arrow': 'shape',
-  'shape-triangle': 'shape',
-  'shape-star': 'shape',
-  'divider': 'shape',
-  // Médias
-  'image': 'media',
-  'image-upload': 'media',
-  'logo': 'media',
-  'barcode': 'media',
-  'qrcode': 'media',
-  'qrcode-dynamic': 'media',
-  'icon': 'media',
-  // Dynamiques
-  'table-dynamic': 'dynamic',
-  'gradient-box': 'dynamic',
-  'shadow-box': 'dynamic',
-  'rounded-box': 'dynamic',
-  'border-box': 'dynamic',
-  'background-pattern': 'dynamic',
-  'watermark': 'dynamic',
-  // Factures (mélange de catégories)
-  'invoice-header': 'layout',
-  'invoice-address-block': 'layout',
-  'invoice-info-block': 'layout',
-  'invoice-products-table': 'special',
-  'invoice-totals-block': 'layout',
-  'invoice-payment-terms': 'layout',
-  'invoice-legal-footer': 'layout',
-  'invoice-signature-block': 'layout'
-};
-
-// Fonction pour vérifier si une propriété est autorisée pour un type d'élément
-var isPropertyAllowed = function isPropertyAllowed(elementType, propertyName) {
-  var category = ELEMENT_TYPE_MAPPING[elementType] || 'text'; // défaut texte
-  var restrictions = ELEMENT_PROPERTY_RESTRICTIONS[category];
-  if (!restrictions || !restrictions[propertyName]) {
-    return true; // propriété autorisée par défaut
-  }
-  return !restrictions[propertyName].disabled;
-};
-
-// Fonction pour obtenir la valeur par défaut d'une propriété
-var getPropertyDefault = function getPropertyDefault(elementType, propertyName) {
-  var category = ELEMENT_TYPE_MAPPING[elementType] || 'text';
-  var restrictions = ELEMENT_PROPERTY_RESTRICTIONS[category];
-  if (restrictions && restrictions[propertyName] && restrictions[propertyName]["default"] !== undefined) {
-    return restrictions[propertyName]["default"];
-  }
-  return null; // pas de valeur par défaut spécifique
-};
-
-// Fonction pour valider une propriété
-var validateProperty = function validateProperty(elementType, propertyName, value) {
-  if (!isPropertyAllowed(elementType, propertyName)) {
-    var _ELEMENT_PROPERTY_RES;
-    return {
-      valid: false,
-      reason: ((_ELEMENT_PROPERTY_RES = ELEMENT_PROPERTY_RESTRICTIONS[ELEMENT_TYPE_MAPPING[elementType] || 'text'][propertyName]) === null || _ELEMENT_PROPERTY_RES === void 0 ? void 0 : _ELEMENT_PROPERTY_RES.reason) || 'Propriété non autorisée'
-    };
-  }
-
-  // Validations spécifiques selon le type de propriété
-  switch (propertyName) {
-    case 'backgroundColor':
-      if (typeof value !== 'string') {
-        return {
-          valid: false,
-          reason: 'La couleur doit être une chaîne'
-        };
-      }
-      // Plus de restriction pour les éléments spéciaux - ils peuvent maintenant avoir un fond
-      break;
-    case 'borderWidth':
-      if (typeof value !== 'number' || value < 0) {
-        return {
-          valid: false,
-          reason: 'La largeur de bordure doit être un nombre positif'
-        };
-      }
-      break;
-    case 'fontSize':
-      if (typeof value !== 'number' || value <= 0) {
-        return {
-          valid: false,
-          reason: 'La taille de police doit être un nombre positif'
-        };
-      }
-      break;
-    case 'width':
-    case 'height':
-      if (typeof value !== 'number' || value <= 0) {
-        return {
-          valid: false,
-          reason: 'Les dimensions doivent être positives'
-        };
-      }
-      break;
-    default:
-      break;
-  }
-  return {
-    valid: true
-  };
-};
-
-// Fonction pour corriger automatiquement une propriété invalide
-var fixInvalidProperty = function fixInvalidProperty(elementType, propertyName, invalidValue) {
-  // Pour les éléments spéciaux, backgroundColor peut maintenant être contrôlé
-  // (pas de forçage automatique à 'transparent')
-
-  // Valeurs par défaut pour les propriétés numériques
-  var numericDefaults = {
-    borderWidth: 0,
-    fontSize: 14,
-    width: 100,
-    height: 50,
-    padding: 8
-  };
-  if (numericDefaults[propertyName] !== undefined) {
-    return numericDefaults[propertyName];
-  }
-
-  // Valeurs par défaut pour les chaînes
-  var stringDefaults = {
-    backgroundColor: 'transparent',
-    borderColor: 'transparent',
-    color: '#000000',
-    fontFamily: 'Arial, sans-serif'
-  };
-  return stringDefaults[propertyName] || invalidValue;
-};
 ;// ./resources/js/hooks/useElementCustomization.js
 function useElementCustomization_typeof(o) { "@babel/helpers - typeof"; return useElementCustomization_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, useElementCustomization_typeof(o); }
 function useElementCustomization_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
@@ -11793,8 +11166,8 @@ var NewTemplateModal = function NewTemplateModal(_ref) {
   }, "Ouvrir le template")))));
 };
 /* harmony default export */ const components_NewTemplateModal = (NewTemplateModal);
-// EXTERNAL MODULE: ./resources/js/components/preview-system/PreviewModal.jsx
-var PreviewModal = __webpack_require__(64);
+// EXTERNAL MODULE: ./resources/js/components/preview-system/PreviewModal.jsx + 4 modules
+var PreviewModal = __webpack_require__(10);
 ;// ./resources/js/components/PDFCanvasEditor.jsx
 function PDFCanvasEditor_typeof(o) { "@babel/helpers - typeof"; return PDFCanvasEditor_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, PDFCanvasEditor_typeof(o); }
 function PDFCanvasEditor_regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return PDFCanvasEditor_regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (PDFCanvasEditor_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, PDFCanvasEditor_regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, PDFCanvasEditor_regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), PDFCanvasEditor_regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", PDFCanvasEditor_regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), PDFCanvasEditor_regeneratorDefine2(u), PDFCanvasEditor_regeneratorDefine2(u, o, "Generator"), PDFCanvasEditor_regeneratorDefine2(u, n, function () { return this; }), PDFCanvasEditor_regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (PDFCanvasEditor_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
@@ -12802,7 +12175,7 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
 });
 
 // Optimisation : éviter les re-renders inutiles
-/* harmony default export */ const components_PDFCanvasEditor = (/*#__PURE__*/(/* unused pure expression or super */ null && (React.memo(/*#__PURE__*/forwardRef(PDFCanvasEditor)))));
+/* harmony default export */ const components_PDFCanvasEditor = (/*#__PURE__*/react.memo(/*#__PURE__*/(0,react.forwardRef)(PDFCanvasEditor)));
 ;// ./resources/js/hooks/index.js
 
 
@@ -12828,7 +12201,17 @@ function js_toPrimitive(t, r) { if ("object" != js_typeof(t) || !t) return t; va
 
 
 
+// import './react-global'; // REMOVED - on expose directement ici
 
+
+// FORCER L'EXPOSITION GLOBALE DE REACT ICI
+if (typeof window !== 'undefined') {
+  window.React = react;
+  window.ReactDOM = react_dom;
+  console.log('=== REACT EXPOSED GLOBALLY IN INDEX.JS ===');
+  console.log('React available:', !!window.React);
+  console.log('ReactDOM available:', !!window.ReactDOM);
+}
 
 // Forcer l'inclusion de tous les hooks personnalisés
 
@@ -12873,10 +12256,17 @@ var PDFBuilderSecurity = {
 
 // Test des imports de base avec protection
 try {
-  // Exposer React globalement pour compatibilité
+  // Exposer React globalement pour compatibilité - FORCER L'INCLUSION
   if (typeof window !== 'undefined') {
     window.React = react;
     window.ReactDOM = react_dom;
+    // Forcer l'utilisation pour éviter l'optimisation webpack
+    window._forceReactInclusion = {
+      React: react,
+      ReactDOM: react_dom,
+      createElement: react.createElement
+    };
+    console.log('React exposed globally:', !!window.React, !!window.ReactDOM);
   }
 } catch (error) {
   PDFBuilderSecurity.logError(error, 'React initialization');
@@ -13046,7 +12436,7 @@ var PDFBuilderPro = /*#__PURE__*/function () {
 var pdfBuilderPro = new PDFBuilderPro();
 
 // Export par défaut pour webpack
-/* harmony default export */ const js = ((/* unused pure expression or super */ null && (pdfBuilderPro)));
+/* harmony default export */ const js = (pdfBuilderPro);
 
 // Attacher à window pour WordPress - simplifié
 if (typeof window !== 'undefined') {
@@ -13116,10 +12506,17 @@ window.pdfBuilderShowPreview = function (orderId, templateId, nonce) {
 
     // Importer dynamiquement le composant PreviewModal
     console.log('=== STARTING DYNAMIC IMPORT ===');
-    Promise.resolve(/* import() */).then(__webpack_require__.bind(__webpack_require__, 64)).then(function (module) {
+    Promise.resolve(/* import() */).then(__webpack_require__.bind(__webpack_require__, 10)).then(function (module) {
       console.log('=== DYNAMIC IMPORT SUCCESS ===', module);
       var PreviewModal = module["default"];
       console.log('=== PreviewModal extracted ===', PreviewModal);
+
+      // EXPOSER LE COMPOSANT GLOBALEMENT POUR LES TESTS
+      if (typeof window !== 'undefined') {
+        window.PDFBuilderPreview = window.PDFBuilderPreview || {};
+        window.PDFBuilderPreview.PreviewModal = PreviewModal;
+        console.log('=== PreviewModal exposed globally ===');
+      }
 
       // Créer l'élément React
       var previewModalElement = /*#__PURE__*/react.createElement(PreviewModal, {
@@ -13241,9 +12638,88 @@ window.pdfBuilderPro = pdfBuilderPro;
 /******/ 		};
 /******/ 	})();
 /******/ 	
+/******/ 	/* webpack/runtime/ensure chunk */
+/******/ 	(() => {
+/******/ 		__webpack_require__.f = {};
+/******/ 		// This file contains only the entry chunk.
+/******/ 		// The chunk loading function for additional chunks
+/******/ 		__webpack_require__.e = (chunkId) => {
+/******/ 			return Promise.all(Object.keys(__webpack_require__.f).reduce((promises, key) => {
+/******/ 				__webpack_require__.f[key](chunkId, promises);
+/******/ 				return promises;
+/******/ 			}, []));
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/get javascript chunk filename */
+/******/ 	(() => {
+/******/ 		// This function allow to reference async chunks
+/******/ 		__webpack_require__.u = (chunkId) => {
+/******/ 			// return url for filenames based on template
+/******/ 			return "" + chunkId + ".js";
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/global */
+/******/ 	(() => {
+/******/ 		__webpack_require__.g = (function() {
+/******/ 			if (typeof globalThis === 'object') return globalThis;
+/******/ 			try {
+/******/ 				return this || new Function('return this')();
+/******/ 			} catch (e) {
+/******/ 				if (typeof window === 'object') return window;
+/******/ 			}
+/******/ 		})();
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
 /******/ 	(() => {
 /******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/load script */
+/******/ 	(() => {
+/******/ 		var inProgress = {};
+/******/ 		var dataWebpackPrefix = "PDFBuilderPro:";
+/******/ 		// loadScript function to load a script via script tag
+/******/ 		__webpack_require__.l = (url, done, key, chunkId) => {
+/******/ 			if(inProgress[url]) { inProgress[url].push(done); return; }
+/******/ 			var script, needAttach;
+/******/ 			if(key !== undefined) {
+/******/ 				var scripts = document.getElementsByTagName("script");
+/******/ 				for(var i = 0; i < scripts.length; i++) {
+/******/ 					var s = scripts[i];
+/******/ 					if(s.getAttribute("src") == url || s.getAttribute("data-webpack") == dataWebpackPrefix + key) { script = s; break; }
+/******/ 				}
+/******/ 			}
+/******/ 			if(!script) {
+/******/ 				needAttach = true;
+/******/ 				script = document.createElement('script');
+/******/ 		
+/******/ 				script.charset = 'utf-8';
+/******/ 				if (__webpack_require__.nc) {
+/******/ 					script.setAttribute("nonce", __webpack_require__.nc);
+/******/ 				}
+/******/ 				script.setAttribute("data-webpack", dataWebpackPrefix + key);
+/******/ 		
+/******/ 				script.src = url;
+/******/ 			}
+/******/ 			inProgress[url] = [done];
+/******/ 			var onScriptComplete = (prev, event) => {
+/******/ 				// avoid mem leaks in IE.
+/******/ 				script.onerror = script.onload = null;
+/******/ 				clearTimeout(timeout);
+/******/ 				var doneFns = inProgress[url];
+/******/ 				delete inProgress[url];
+/******/ 				script.parentNode && script.parentNode.removeChild(script);
+/******/ 				doneFns && doneFns.forEach((fn) => (fn(event)));
+/******/ 				if(prev) return prev(event);
+/******/ 			}
+/******/ 			var timeout = setTimeout(onScriptComplete.bind(null, undefined, { type: 'timeout', target: script }), 120000);
+/******/ 			script.onerror = onScriptComplete.bind(null, script.onerror);
+/******/ 			script.onload = onScriptComplete.bind(null, script.onload);
+/******/ 			needAttach && document.head.appendChild(script);
+/******/ 		};
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/make namespace object */
@@ -13257,6 +12733,29 @@ window.pdfBuilderPro = pdfBuilderPro;
 /******/ 		};
 /******/ 	})();
 /******/ 	
+/******/ 	/* webpack/runtime/publicPath */
+/******/ 	(() => {
+/******/ 		var scriptUrl;
+/******/ 		if (__webpack_require__.g.importScripts) scriptUrl = __webpack_require__.g.location + "";
+/******/ 		var document = __webpack_require__.g.document;
+/******/ 		if (!scriptUrl && document) {
+/******/ 			if (document.currentScript && document.currentScript.tagName.toUpperCase() === 'SCRIPT')
+/******/ 				scriptUrl = document.currentScript.src;
+/******/ 			if (!scriptUrl) {
+/******/ 				var scripts = document.getElementsByTagName("script");
+/******/ 				if(scripts.length) {
+/******/ 					var i = scripts.length - 1;
+/******/ 					while (i > -1 && (!scriptUrl || !/^http(s?):/.test(scriptUrl))) scriptUrl = scripts[i--].src;
+/******/ 				}
+/******/ 			}
+/******/ 		}
+/******/ 		// When supporting browsers where an automatic publicPath is not supported you must specify an output.publicPath manually via configuration
+/******/ 		// or pass an empty string ("") and set the __webpack_public_path__ variable from your code to use your own logic.
+/******/ 		if (!scriptUrl) throw new Error("Automatic publicPath is not supported in this browser");
+/******/ 		scriptUrl = scriptUrl.replace(/^blob:/, "").replace(/#.*$/, "").replace(/\?.*$/, "").replace(/\/[^\/]+$/, "/");
+/******/ 		__webpack_require__.p = scriptUrl;
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/jsonp chunk loading */
 /******/ 	(() => {
 /******/ 		// no baseURI
@@ -13268,7 +12767,44 @@ window.pdfBuilderPro = pdfBuilderPro;
 /******/ 			967: 0
 /******/ 		};
 /******/ 		
-/******/ 		// no chunk on demand loading
+/******/ 		__webpack_require__.f.j = (chunkId, promises) => {
+/******/ 				// JSONP chunk loading for javascript
+/******/ 				var installedChunkData = __webpack_require__.o(installedChunks, chunkId) ? installedChunks[chunkId] : undefined;
+/******/ 				if(installedChunkData !== 0) { // 0 means "already installed".
+/******/ 		
+/******/ 					// a Promise means "currently loading".
+/******/ 					if(installedChunkData) {
+/******/ 						promises.push(installedChunkData[2]);
+/******/ 					} else {
+/******/ 						if(true) { // all chunks have JS
+/******/ 							// setup Promise in chunk cache
+/******/ 							var promise = new Promise((resolve, reject) => (installedChunkData = installedChunks[chunkId] = [resolve, reject]));
+/******/ 							promises.push(installedChunkData[2] = promise);
+/******/ 		
+/******/ 							// start chunk loading
+/******/ 							var url = __webpack_require__.p + __webpack_require__.u(chunkId);
+/******/ 							// create error before stack unwound to get useful stacktrace later
+/******/ 							var error = new Error();
+/******/ 							var loadingEnded = (event) => {
+/******/ 								if(__webpack_require__.o(installedChunks, chunkId)) {
+/******/ 									installedChunkData = installedChunks[chunkId];
+/******/ 									if(installedChunkData !== 0) installedChunks[chunkId] = undefined;
+/******/ 									if(installedChunkData) {
+/******/ 										var errorType = event && (event.type === 'load' ? 'missing' : event.type);
+/******/ 										var realSrc = event && event.target && event.target.src;
+/******/ 										error.message = 'Loading chunk ' + chunkId + ' failed.\n(' + errorType + ': ' + realSrc + ')';
+/******/ 										error.name = 'ChunkLoadError';
+/******/ 										error.type = errorType;
+/******/ 										error.request = realSrc;
+/******/ 										installedChunkData[1](error);
+/******/ 									}
+/******/ 								}
+/******/ 							};
+/******/ 							__webpack_require__.l(url, loadingEnded, "chunk-" + chunkId, chunkId);
+/******/ 						}
+/******/ 					}
+/******/ 				}
+/******/ 		};
 /******/ 		
 /******/ 		// no prefetching
 /******/ 		
@@ -13305,7 +12841,7 @@ window.pdfBuilderPro = pdfBuilderPro;
 /******/ 			return __webpack_require__.O(result);
 /******/ 		}
 /******/ 		
-/******/ 		var chunkLoadingGlobal = self["webpackChunkwp_pdf_builder_pro"] = self["webpackChunkwp_pdf_builder_pro"] || [];
+/******/ 		var chunkLoadingGlobal = self["webpackChunkPDFBuilderPro"] = self["webpackChunkPDFBuilderPro"] || [];
 /******/ 		chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));
 /******/ 		chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
 /******/ 	})();
@@ -13317,6 +12853,7 @@ window.pdfBuilderPro = pdfBuilderPro;
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
 /******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, [96], () => (__webpack_require__(626)))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
+/******/ 	window.PDFBuilderPro = __webpack_exports__;
 /******/ 	
 /******/ })()
 ;

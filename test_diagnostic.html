@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnostic - PDF Builder Pro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            background: #e8f5e8;
+            border: 1px solid #28a745;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #dc3545;
+            color: #721c24;
+        }
+        button {
+            background: #007cba;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #005a87;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔍 Diagnostic - PDF Builder Pro</h1>
+        <p>Cette page teste étape par étape le chargement des composants.</p>
+
+        <div>
+            <button onclick="testStep1()">Étape 1: Vérifier les globals</button>
+            <button onclick="testStep2()">Étape 2: Tester React</button>
+            <button onclick="testStep3()">Étape 3: Tester PreviewModal</button>
+            <button onclick="testStep4()">Étape 4: Ouvrir Modal</button>
+        </div>
+
+        <div id="status" class="status">
+            <strong>Status:</strong> Prêt pour les tests
+        </div>
+
+        <div id="console" style="margin-top: 20px; padding: 10px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; font-family: monospace; font-size: 12px; max-height: 200px; overflow: auto;">
+            <strong>Console:</strong><br>
+        </div>
+    </div>
+
+    <!-- Charger React depuis CDN d'abord -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+    <!-- Scripts -->
+    <script src="assets/js/dist/pdf-builder-admin.js"></script>
+    <script src="assets/js/dist/globals.js"></script>
+    <script>
+        let consoleOutput = [];
+
+        function log(message) {
+            console.log(message);
+            consoleOutput.push(new Date().toLocaleTimeString() + ' - ' + message);
+            document.getElementById('console').innerHTML = '<strong>Console:</strong><br>' + consoleOutput.join('<br>');
+            document.getElementById('console').scrollTop = document.getElementById('console').scrollHeight;
+        }
+
+        function updateStatus(message, isError = false) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = isError ? 'status error' : 'status';
+            statusDiv.innerHTML = `<strong>Status:</strong> ${message}`;
+            log(message);
+        }
+
+        function testStep1() {
+            log('=== ÉTAPE 1: VÉRIFICATION DES GLOBALS ===');
+            try {
+                log('window.React: ' + (typeof window.React));
+                log('window.ReactDOM: ' + (typeof window.ReactDOM));
+                log('window.PDFBuilderPreview: ' + (typeof window.PDFBuilderPreview));
+                if (window.PDFBuilderPreview) {
+                    log('window.PDFBuilderPreview.PreviewModal: ' + (typeof window.PDFBuilderPreview.PreviewModal));
+                }
+
+                const allPresent = window.React && window.ReactDOM && window.PDFBuilderPreview && window.PDFBuilderPreview.PreviewModal;
+                updateStatus(allPresent ? '✅ Tous les globals présents' : '❌ Certains globals manquants', !allPresent);
+            } catch (error) {
+                updateStatus('❌ Erreur dans testStep1: ' + error.message, true);
+                log('Erreur: ' + error.stack);
+            }
+        }
+
+        function testStep2() {
+            log('=== ÉTAPE 2: TEST REACT ===');
+            try {
+                if (!window.React || !window.ReactDOM) {
+                    updateStatus('❌ React non disponible', true);
+                    return;
+                }
+
+                // Test simple de React
+                const testElement = window.React.createElement('div', null, 'Test React');
+                log('React.createElement réussi');
+
+                // Test du rendu
+                const testContainer = document.createElement('div');
+                document.body.appendChild(testContainer);
+                window.ReactDOM.render(testElement, testContainer);
+                log('ReactDOM.render réussi');
+
+                // Nettoyer
+                window.ReactDOM.unmountComponentAtNode(testContainer);
+                document.body.removeChild(testContainer);
+
+                updateStatus('✅ React fonctionne correctement');
+            } catch (error) {
+                updateStatus('❌ Erreur React: ' + error.message, true);
+                log('Erreur: ' + error.stack);
+            }
+        }
+
+        function testStep3() {
+            log('=== ÉTAPE 3: TEST PREVIEWMODAL ===');
+            try {
+                if (!window.PDFBuilderPreview || !window.PDFBuilderPreview.PreviewModal) {
+                    updateStatus('❌ PreviewModal non disponible', true);
+                    return;
+                }
+
+                log('PreviewModal type: ' + typeof window.PDFBuilderPreview.PreviewModal);
+                log('PreviewModal constructor: ' + (typeof window.PDFBuilderPreview.PreviewModal));
+
+                // Vérifier que c'est une fonction/classe
+                if (typeof window.PDFBuilderPreview.PreviewModal !== 'function') {
+                    updateStatus('❌ PreviewModal n\'est pas une fonction', true);
+                    return;
+                }
+
+                updateStatus('✅ PreviewModal disponible et valide');
+            } catch (error) {
+                updateStatus('❌ Erreur PreviewModal: ' + error.message, true);
+                log('Erreur: ' + error.stack);
+            }
+        }
+
+        function testStep4() {
+            log('=== ÉTAPE 4: OUVERTURE DU MODAL ===');
+            try {
+                if (!window.React || !window.ReactDOM || !window.PDFBuilderPreview || !window.PDFBuilderPreview.PreviewModal) {
+                    updateStatus('❌ Prérequis non satisfaits', true);
+                    return;
+                }
+
+                // Créer le conteneur du modal
+                const modalContainer = document.createElement('div');
+                modalContainer.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.5);
+                    z-index: 10000;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                `;
+                document.body.appendChild(modalContainer);
+
+                // Créer le contenu
+                const modalContent = document.createElement('div');
+                modalContent.style.cssText = `
+                    background: white;
+                    border-radius: 8px;
+                    padding: 20px;
+                    max-width: 600px;
+                    max-height: 80vh;
+                    overflow: auto;
+                    position: relative;
+                `;
+                modalContainer.appendChild(modalContent);
+
+                // Bouton de fermeture
+                const closeButton = document.createElement('button');
+                closeButton.textContent = '✕';
+                closeButton.style.cssText = `
+                    position: absolute;
+                    top: 10px;
+                    right: 10px;
+                    background: #dc3545;
+                    color: white;
+                    border: none;
+                    border-radius: 50%;
+                    width: 30px;
+                    height: 30px;
+                    cursor: pointer;
+                `;
+                closeButton.onclick = function() {
+                    try {
+                        window.ReactDOM.unmountComponentAtNode(modalContent);
+                    } catch (e) {
+                        log('Erreur démontage: ' + e.message);
+                    }
+                    document.body.removeChild(modalContainer);
+                    updateStatus('Modal fermé');
+                };
+                modalContent.appendChild(closeButton);
+
+                // Monter le composant React
+                const modalElement = window.React.createElement(window.PDFBuilderPreview.PreviewModal, {
+                    isOpen: true,
+                    onClose: function() {
+                        try {
+                            window.ReactDOM.unmountComponentAtNode(modalContent);
+                        } catch (e) {
+                            log('Erreur démontage: ' + e.message);
+                        }
+                        document.body.removeChild(modalContainer);
+                        updateStatus('Modal fermé via callback');
+                    },
+                    mode: 'canvas',
+                    elements: [
+                        { type: 'text', x: 50, y: 50, width: 200, height: 30, content: 'Test élément' }
+                    ]
+                });
+
+                window.ReactDOM.render(modalElement, modalContent);
+                updateStatus('✅ Modal ouvert avec succès');
+
+            } catch (error) {
+                updateStatus('❌ Erreur ouverture modal: ' + error.message, true);
+                log('Erreur: ' + error.stack);
+            }
+        }
+
+        // Test automatique au chargement
+        window.addEventListener('load', function() {
+            log('Page chargée, démarrage des tests automatiques...');
+            setTimeout(function() {
+                testStep1();
+            }, 500);
+        });
+    </script>
+</body>
+</html>

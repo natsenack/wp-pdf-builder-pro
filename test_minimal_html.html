@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Minimal</title>
+</head>
+<body>
+    <h1>Test Minimal HTML</h1>
+    <p>Si cette page s'affiche, le serveur fonctionne.</p>
+    <p>Timestamp: <span id="time"></span></p>
+
+    <script>
+        document.getElementById('time').textContent = new Date().toISOString();
+    </script>
+</body>
+</html>

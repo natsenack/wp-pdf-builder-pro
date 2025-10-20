@@ -8,14 +8,20 @@ module.exports = {
   },
   output: {
     filename: '[name].js',
-    path: path.resolve(__dirname, '../../assets/js/dist')
-    // Retiré libraryTarget pour permettre l'exécution automatique du code
+    path: path.resolve(__dirname, '../../assets/js/dist'),
+    library: {
+      name: 'PDFBuilderPro',
+      type: 'window'
+    }
   },
+  plugins: [
+    // ProvidePlugin retiré - on utilise l'import direct
+  ],
   // React est partagé entre les chunks
   mode: 'production',
   optimization: {
-    usedExports: true, // Activer l'élimination des exports non utilisés
-    sideEffects: true,  // Activer l'analyse des effets de bord pour optimisation
+    usedExports: false, // DÉSACTIVÉ pour éviter l'optimisation des globals
+    sideEffects: false,  // DÉSACTIVÉ pour éviter l'optimisation
     minimize: false,     // Désactiver la minification pour le debug
     // Réactiver le code splitting pour les composants dynamiques
     splitChunks: {

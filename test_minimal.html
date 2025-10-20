@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Minimal</title>
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Test Minimal JavaScript</h1>
+    <div id="output"></div>
+
+    <script>
+        function log(message, isError = false) {
+            const div = document.createElement('div');
+            div.className = isError ? 'error' : 'success';
+            div.textContent = new Date().toLocaleTimeString() + ' - ' + message;
+            document.getElementById('output').appendChild(div);
+            console.log(message);
+        }
+
+        log('Script chargé');
+
+        // Test 1: JavaScript de base
+        try {
+            log('Test JavaScript de base...');
+            const test = 'Hello World';
+            if (test === 'Hello World') {
+                log('✅ JavaScript de base fonctionne');
+            } else {
+                log('❌ JavaScript de base défaillant', true);
+            }
+        } catch (e) {
+            log('❌ Erreur JavaScript de base: ' + e.message, true);
+        }
+    </script>
+
+    <!-- Test du chargement du script PDF Builder -->
+        <!-- Charger React depuis CDN d'abord -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+    <!-- Scripts -->
+    <script src="assets/js/dist/pdf-builder-admin.js"></script>
+    <script src="assets/js/dist/globals.js"></script>
+    <script>
+        log('Script PDF Builder chargé');
+
+        // Test 2: Globals
+        setTimeout(function() {
+            try {
+                log('Test des globals...');
+
+                if (typeof window.React !== 'undefined') {
+                    log('✅ window.React disponible');
+                } else {
+                    log('❌ window.React manquant', true);
+                }
+
+                if (typeof window.ReactDOM !== 'undefined') {
+                    log('✅ window.ReactDOM disponible');
+                } else {
+                    log('❌ window.ReactDOM manquant', true);
+                }
+
+                if (typeof window.PDFBuilderPreview !== 'undefined') {
+                    log('✅ window.PDFBuilderPreview disponible');
+                    if (typeof window.PDFBuilderPreview.PreviewModal !== 'undefined') {
+                        log('✅ window.PDFBuilderPreview.PreviewModal disponible');
+                    } else {
+                        log('❌ window.PDFBuilderPreview.PreviewModal manquant', true);
+                    }
+                } else {
+                    log('❌ window.PDFBuilderPreview manquant', true);
+                }
+
+            } catch (e) {
+                log('❌ Erreur test globals: ' + e.message, true);
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
