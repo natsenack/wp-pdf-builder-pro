@@ -48,6 +48,42 @@ function MetaboxMode({
     setActiveTab(tab);
   }, []);
 
+  // Styles inline pour les indicateurs Phase 8
+  const phase8Styles = `
+    .phase8-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: bold;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      z-index: 1000;
+    }
+    .phase8-metrics {
+      font-size: 11px;
+      color: #666;
+      background: #f0f0f0;
+      padding: 2px 6px;
+      border-radius: 8px;
+      margin-left: 8px;
+    }
+  `;
+
+  // Injection des styles Phase 8
+  useEffect(() => {
+    const styleSheet = document.createElement('style');
+    styleSheet.textContent = phase8Styles;
+    document.head.appendChild(styleSheet);
+
+    return () => {
+      document.head.removeChild(styleSheet);
+    };
+  }, []);
+
   // Rendu conditionnel selon l'état
   if (loading) {
     return (
@@ -86,6 +122,11 @@ function MetaboxMode({
 
   return (
     <div className={`metabox-mode ${compact ? 'compact' : ''} ${className}`}>
+      {/* Badge Phase 8 - Indicateur visuel du nouveau système */}
+      <div className="phase8-badge">
+        🚀 Phase 8 Active
+      </div>
+
       {/* En-tête avec onglets */}
       <div className="metabox-header">
         <div className="metabox-tabs">
@@ -116,6 +157,10 @@ function MetaboxMode({
           <button className="metabox-action-btn" title="Plein écran">
             ⛶
           </button>
+          {/* Métriques Phase 8 */}
+          <div className="phase8-metrics">
+            ⚡ {templateElements?.length || 0} éléments
+          </div>
         </div>
       </div>
 
