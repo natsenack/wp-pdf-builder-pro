@@ -12155,6 +12155,7 @@ var TextRenderer = function TextRenderer(_ref) {
   var element = _ref.element,
     previewData = _ref.previewData,
     mode = _ref.mode;
+  console.log('PDF Builder Debug: TextRenderer called for element:', element.id, 'with text:', element.text, 'position:', element.x, element.y);
   var _element$x = element.x,
     x = _element$x === void 0 ? 0 : _element$x,
     _element$y = element.y,
@@ -13347,6 +13348,15 @@ var RectangleRenderer = function RectangleRenderer(_ref) {
   var element = _ref.element,
     previewData = _ref.previewData,
     mode = _ref.mode;
+  console.log('PDF Builder Debug: RectangleRenderer called for element:', element.id, 'with props:', {
+    x: element.x,
+    y: element.y,
+    width: element.width,
+    height: element.height,
+    backgroundColor: element.backgroundColor,
+    borderColor: element.borderColor,
+    borderWidth: element.borderWidth
+  });
   var _element$x = element.x,
     x = _element$x === void 0 ? 0 : _element$x,
     _element$y = element.y,
@@ -13674,6 +13684,11 @@ var PreviewRenderer = function PreviewRenderer(_ref) {
     previewData = _ref$previewData === void 0 ? {} : _ref$previewData,
     _ref$mode = _ref.mode,
     mode = _ref$mode === void 0 ? 'canvas' : _ref$mode;
+  console.log('PDF Builder Debug: PreviewRenderer called with elements:', (elements === null || elements === void 0 ? void 0 : elements.length) || 0, 'elements');
+  console.log('PDF Builder Debug: PreviewRenderer elements array:', elements);
+  console.log('PDF Builder Debug: PreviewRenderer previewData:', previewData);
+  console.log('PDF Builder Debug: PreviewRenderer mode:', mode);
+
   // Configuration du canvas d'aperçu (format A4 approximatif)
   var CANVAS_CONFIG = {
     width: 794,
@@ -13745,7 +13760,9 @@ var PreviewRenderer = function PreviewRenderer(_ref) {
 
   // Rendu d'un élément individuel
   var renderElement = function renderElement(element) {
+    console.log('PDF Builder Debug: Rendering element:', element.id, 'type:', element.type, 'position:', element.x, element.y, 'size:', element.width, 'x', element.height);
     var Renderer = rendererMap[element.type] || rendererMap["default"];
+    console.log('PDF Builder Debug: Using renderer:', Renderer.name || 'default', 'for element type:', element.type);
     return /*#__PURE__*/react.createElement(Renderer, {
       key: element.id,
       element: element,
