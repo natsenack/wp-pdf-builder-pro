@@ -16232,11 +16232,13 @@ var PreviewModal = function PreviewModal(_ref) {
                 break;
               }
               console.log('PDF Builder Debug: Elements loaded successfully:', result.data.elements.length, 'elements');
+              console.log('PDF Builder Debug: Elements details:', result.data.elements);
               setTemplateElements(result.data.elements);
               _context.n = 5;
               break;
             case 4:
               console.log('PDF Builder Debug: AJAX request failed:', result);
+              console.log('PDF Builder Debug: Result data:', result.data);
               throw new Error(((_result$data = result.data) === null || _result$data === void 0 ? void 0 : _result$data.message) || 'Erreur lors du chargement des éléments du template');
             case 5:
               _context.n = 7;

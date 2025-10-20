@@ -74,9 +74,11 @@ const PreviewModal = ({
 
         if (result.success && result.data && result.data.elements) {
           console.log('PDF Builder Debug: Elements loaded successfully:', result.data.elements.length, 'elements');
+          console.log('PDF Builder Debug: Elements details:', result.data.elements);
           setTemplateElements(result.data.elements);
         } else {
           console.log('PDF Builder Debug: AJAX request failed:', result);
+          console.log('PDF Builder Debug: Result data:', result.data);
           throw new Error(result.data?.message || 'Erreur lors du chargement des éléments du template');
         }
       } catch (err) {
