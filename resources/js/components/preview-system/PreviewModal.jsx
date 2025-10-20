@@ -422,7 +422,7 @@ const PreviewModal = ({
                       {/* Contenu basé sur les éléments du template */}
                       <div style={{ flex: 1 }}>
                         {mode === 'canvas' ? (
-                          /* Mode Canvas : Afficher le contenu visuel de l'éditeur */
+                          /* Mode Canvas : Afficher le rendu visuel de l'éditeur */
                           <div style={{ display: 'grid', gap: '15mm' }}>
                             <div style={{
                               background: 'white',
@@ -439,123 +439,211 @@ const PreviewModal = ({
                                 borderBottom: '1px solid #dee2e6',
                                 paddingBottom: '5mm'
                               }}>
-                                🖼️ Contenu de l'Éditeur Canvas
+                                🖼️ Aperçu Visuel - Éditeur Canvas
                               </h2>
+
+                              {/* Zone de rendu simulée A4 avec éléments positionnés */}
                               <div style={{
-                                display: 'grid',
-                                gridTemplateColumns: 'repeat(auto-fit, minmax(80mm, 1fr))',
-                                gap: '10mm'
+                                background: '#f8f9fa',
+                                border: '1px solid #dee2e6',
+                                borderRadius: '4px',
+                                padding: '10mm',
+                                position: 'relative',
+                                minHeight: '200mm'
                               }}>
-                                {Array.isArray(templateElements) && templateElements.length > 0 ? (
-                                  templateElements.map((element, index) => (
-                                    <div key={index} style={{
-                                      border: '1px solid #e9ecef',
-                                      borderRadius: '4px',
-                                      padding: '8mm',
-                                      background: index % 2 === 0 ? '#f8f9fa' : 'white',
-                                      position: 'relative'
-                                    }}>
-                                      <div style={{
-                                        position: 'absolute',
-                                        top: '2mm',
-                                        right: '2mm',
-                                        background: '#007cba',
-                                        color: 'white',
-                                        padding: '1mm 3mm',
-                                        borderRadius: '2mm',
-                                        fontSize: '8pt',
-                                        fontWeight: 'bold'
-                                      }}>
-                                        #{index + 1}
-                                      </div>
-                                      <div style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '5mm',
-                                        marginBottom: '5mm'
-                                      }}>
-                                        <div style={{
-                                          width: '15mm',
-                                          height: '15mm',
-                                          background: '#007cba',
-                                          borderRadius: '50%',
-                                          display: 'flex',
-                                          alignItems: 'center',
-                                          justifyContent: 'center',
-                                          color: 'white',
-                                          fontSize: '10pt',
-                                          fontWeight: 'bold'
-                                        }}>
-                                          {element.type?.charAt(0)?.toUpperCase() || '?'}
-                                        </div>
-                                        <div>
-                                          <strong style={{ color: '#007cba', fontSize: '12pt' }}>
-                                            {element.type || 'Élément'} #{index + 1}
-                                          </strong>
+                                {/* Page A4 simulée */}
+                                <div style={{
+                                  background: 'white',
+                                  width: '210mm',
+                                  minHeight: '297mm',
+                                  margin: '0 auto',
+                                  padding: '15mm',
+                                  boxShadow: '0 0 8px rgba(0,0,0,0.15)',
+                                  border: '1px solid #e9ecef',
+                                  position: 'relative',
+                                  overflow: 'hidden'
+                                }}>
+                                  {/* Grille de fond pour aider au positionnement */}
+                                  <div style={{
+                                    position: 'absolute',
+                                    top: '15mm',
+                                    left: '15mm',
+                                    right: '15mm',
+                                    bottom: '15mm',
+                                    backgroundImage: `
+                                      linear-gradient(rgba(0,123,186,0.1) 1px, transparent 1px),
+                                      linear-gradient(90deg, rgba(0,123,186,0.1) 1px, transparent 1px)
+                                    `,
+                                    backgroundSize: '10mm 10mm',
+                                    pointerEvents: 'none',
+                                    opacity: 0.3
+                                  }} />
+
+                                  {/* Éléments positionnés selon leurs coordonnées */}
+                                  {Array.isArray(templateElements) && templateElements.length > 0 ? (
+                                    templateElements.map((element, index) => {
+                                      // Calculer les positions en mm (conversion depuis les coordonnées du canvas)
+                                      const x = element.x || 0;
+                                      const y = element.y || 0;
+                                      const width = element.width || 50;
+                                      const height = element.height || 20;
+
+                                      return (
+                                        <div
+                                          key={index}
+                                          style={{
+                                            position: 'absolute',
+                                            left: `${15 + x}mm`, // 15mm pour le padding de la page
+                                            top: `${15 + y}mm`,
+                                            width: `${width}mm`,
+                                            minHeight: `${height}mm`,
+                                            background: element.type === 'text' ? '#e3f2fd' :
+                                                       element.type === 'image' ? '#f3e5f5' :
+                                                       element.type === 'rectangle' ? '#e8f5e8' :
+                                                       '#fff3e0',
+                                            border: `2px solid ${
+                                              element.type === 'text' ? '#2196f3' :
+                                              element.type === 'image' ? '#9c27b0' :
+                                              element.type === 'rectangle' ? '#4caf50' :
+                                              '#ff9800'
+                                            }`,
+                                            borderRadius: '3px',
+                                            padding: '3mm',
+                                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                                            overflow: 'hidden',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            fontSize: '12pt',
+                                            color: '#333',
+                                            zIndex: index + 1
+                                          }}
+                                          title={`Élément ${index + 1} - ${element.type || 'Inconnu'} (${x}, ${y}) - ${width}x${height}mm`}
+                                        >
+                                          {/* Indicateur de type d'élément */}
                                           <div style={{
-                                            fontSize: '9pt',
-                                            color: '#6c757d',
-                                            marginTop: '1mm'
+                                            position: 'absolute',
+                                            top: '2mm',
+                                            right: '2mm',
+                                            background: element.type === 'text' ? '#2196f3' :
+                                                       element.type === 'image' ? '#9c27b0' :
+                                                       element.type === 'rectangle' ? '#4caf50' :
+                                                       '#ff9800',
+                                            color: 'white',
+                                            padding: '1mm 2mm',
+                                            borderRadius: '2mm',
+                                            fontSize: '8pt',
+                                            fontWeight: 'bold'
                                           }}>
-                                            Position: {element.x || 0}, {element.y || 0} |
-                                            Taille: {element.width || 'auto'} x {element.height || 'auto'}
+                                            {element.type === 'text' ? 'T' :
+                                             element.type === 'image' ? '🖼️' :
+                                             element.type === 'rectangle' ? '▭' :
+                                             '?'}
                                           </div>
-                                        </div>
-                                      </div>
-                                      {element.content && (
-                                        <div style={{
-                                          fontSize: '10pt',
-                                          color: '#495057',
-                                          lineHeight: '1.4',
-                                          background: '#f8f9fa',
-                                          padding: '3mm',
-                                          borderRadius: '2mm',
-                                          border: '1px solid #e9ecef'
-                                        }}>
-                                          <strong>Contenu:</strong><br />
-                                          {typeof element.content === 'string' ?
-                                            element.content.length > 200 ?
-                                              element.content.substring(0, 200) + '...' :
-                                              element.content :
-                                            <pre style={{
-                                              fontSize: '8pt',
-                                              margin: '2mm 0 0 0',
-                                              whiteSpace: 'pre-wrap',
+
+                                          {/* Contenu de l'élément */}
+                                          {element.type === 'text' && element.content ? (
+                                            <div style={{
+                                              fontSize: '11pt',
+                                              textAlign: 'center',
+                                              lineHeight: '1.3',
                                               wordBreak: 'break-word'
                                             }}>
-                                              {JSON.stringify(element.content, null, 2)}
-                                            </pre>
-                                          }
+                                              {typeof element.content === 'string' ?
+                                                element.content.length > 50 ?
+                                                  element.content.substring(0, 50) + '...' :
+                                                  element.content :
+                                                'Texte'
+                                              }
+                                            </div>
+                                          ) : element.type === 'image' ? (
+                                            <div style={{
+                                              fontSize: '24pt',
+                                              opacity: 0.6
+                                            }}>
+                                              🖼️
+                                            </div>
+                                          ) : element.type === 'rectangle' ? (
+                                            <div style={{
+                                              width: '100%',
+                                              height: '100%',
+                                              background: element.fillColor || '#4caf50',
+                                              opacity: 0.8,
+                                              borderRadius: '2px'
+                                            }} />
+                                          ) : (
+                                            <div style={{
+                                              fontSize: '16pt',
+                                              opacity: 0.6
+                                            }}>
+                                              {element.type || 'Élément'}
+                                            </div>
+                                          )}
+
+                                          {/* Dimensions en bas à droite */}
+                                          <div style={{
+                                            position: 'absolute',
+                                            bottom: '2mm',
+                                            right: '2mm',
+                                            background: 'rgba(0,0,0,0.7)',
+                                            color: 'white',
+                                            padding: '1mm',
+                                            borderRadius: '1mm',
+                                            fontSize: '7pt'
+                                          }}>
+                                            {width}×{height}
+                                          </div>
                                         </div>
-                                      )}
-                                      {element.style && (
-                                        <div style={{
-                                          fontSize: '9pt',
-                                          color: '#6c757d',
-                                          marginTop: '3mm',
-                                          padding: '2mm',
-                                          background: '#fff3cd',
-                                          borderRadius: '2mm'
-                                        }}>
-                                          <strong>Style:</strong> {JSON.stringify(element.style)}
-                                        </div>
-                                      )}
+                                      );
+                                    })
+                                  ) : (
+                                    <div style={{
+                                      position: 'absolute',
+                                      top: '50%',
+                                      left: '50%',
+                                      transform: 'translate(-50%, -50%)',
+                                      textAlign: 'center',
+                                      color: '#6c757d'
+                                    }}>
+                                      <div style={{ fontSize: '48pt', marginBottom: '10mm', opacity: 0.5 }}>🖼️</div>
+                                      <p style={{ margin: '0', fontSize: '14pt' }}>
+                                        Aucun élément dans le canvas
+                                      </p>
+                                      <p style={{ margin: '5mm 0 0 0', fontSize: '12pt' }}>
+                                        Ajoutez des éléments pour les voir positionnés ici
+                                      </p>
                                     </div>
-                                  ))
-                                ) : (
-                                  <div style={{
-                                    gridColumn: '1 / -1',
-                                    textAlign: 'center',
-                                    padding: '20mm',
-                                    color: '#6c757d'
+                                  )}
+                                </div>
+
+                                {/* Légende des couleurs */}
+                                <div style={{
+                                  marginTop: '10mm',
+                                  padding: '8mm',
+                                  background: 'white',
+                                  borderRadius: '4px',
+                                  border: '1px solid #dee2e6'
+                                }}>
+                                  <h4 style={{
+                                    margin: '0 0 5mm 0',
+                                    color: '#007cba',
+                                    fontSize: '12pt'
                                   }}>
-                                    <div style={{ fontSize: '24pt', marginBottom: '5mm' }}>🖼️</div>
-                                    <p style={{ margin: '0', fontSize: '12pt' }}>
-                                      Aucun élément dans l'éditeur Canvas.<br />
-                                      Ajoutez des éléments pour les voir apparaître ici.
-                                    </p>
+                                    📋 Légende des éléments :
+                                  </h4>
+                                  <div style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: 'repeat(auto-fit, minmax(80mm, 1fr))',
+                                    gap: '3mm',
+                                    fontSize: '11pt'
+                                  }}>
+                                    <span><span style={{color:'#2196f3'}}>■</span> Texte</span>
+                                    <span><span style={{color:'#9c27b0'}}>■</span> Image</span>
+                                    <span><span style={{color:'#4caf50'}}>■</span> Rectangle</span>
+                                    <span><span style={{color:'#ff9800'}}>■</span> Autre</span>
                                   </div>
-                                )}
+                                </div>
                               </div>
                             </div>
                           </div>
