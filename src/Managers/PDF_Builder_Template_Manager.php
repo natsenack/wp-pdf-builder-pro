@@ -1,4 +1,5 @@
 <?php
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -10,7 +11,6 @@ if (!defined('ABSPATH')) {
 
 class PDF_Builder_Template_Manager
 {
-
     /**
      * Instance du main plugin
      */
@@ -115,7 +115,7 @@ class PDF_Builder_Template_Manager
                 if ($template_id > 0) {
                     // Mise à jour d'un template existant
                     $result = $wpdb->update($table_templates, $data, array('id' => $template_id));
-                
+
                     if ($result === false) {
                         $db_error = $wpdb->last_error;
                         throw new Exception('Erreur de mise à jour en base de données: ' . $db_error);
@@ -123,13 +123,13 @@ class PDF_Builder_Template_Manager
                 } else {
                     // Création d'un nouveau template
                     $data['created_at'] = current_time('mysql');
-                
+
                     $result = $wpdb->insert($table_templates, $data);
                     if ($result === false) {
                         $db_error = $wpdb->last_error;
                         throw new Exception('Erreur d\'insertion en base de données: ' . $db_error);
                     }
-                
+
                     $template_id = $wpdb->insert_id;
                 }
             } catch (Exception $e) {
@@ -285,7 +285,7 @@ class PDF_Builder_Template_Manager
     /**
      * Valider la structure complète d'un template
      * Retourne un tableau d'erreurs (vide si valide)
-     * 
+     *
      * @param  array $template_data Données du template décodées
      * @return array Tableau d'erreurs de validation
      */
@@ -367,7 +367,7 @@ class PDF_Builder_Template_Manager
 
     /**
      * Valider un élément individuel du template
-     * 
+     *
      * @param  array $element Élément à valider
      * @param  int   $index   Index de l'élément dans
      *                        le tableau
@@ -406,24 +406,24 @@ class PDF_Builder_Template_Manager
         }
 
         // Vérifier le type d'élément valide
-        $valid_types = ['text', 'image', 'rectangle', 'line', 'product_table', 
+        $valid_types = ['text', 'image', 'rectangle', 'line', 'product_table',
                        'customer_info', 'company_logo', 'company_info', 'order_number',
                        'document_type', 'textarea', 'html', 'divider', 'progress-bar',
                        'dynamic-text', 'mentions'];
-        
+
         if (!in_array($element_type, $valid_types)) {
-            $errors[] = "Élément $index ($element_id): type invalide '$element_type' (types valides: " . 
+            $errors[] = "Élément $index ($element_id): type invalide '$element_type' (types valides: " .
                        implode(', ', $valid_types) . ')';
         }
 
         // Vérifier les propriétés numériques
-        $numeric_props = ['x', 'y', 'width', 'height', 'fontSize', 'opacity', 'zIndex', 
+        $numeric_props = ['x', 'y', 'width', 'height', 'fontSize', 'opacity', 'zIndex',
                          'borderWidth', 'borderRadius', 'padding', 'margin', 'rotation'];
-        
+
         foreach ($numeric_props as $prop) {
             if (isset($element[$prop])) {
                 if (!is_numeric($element[$prop])) {
-                    $errors[] = "Élément $index ($element_id): '$prop' doit être numérique (reçu: " . 
+                    $errors[] = "Élément $index ($element_id): '$prop' doit être numérique (reçu: " .
                                gettype($element[$prop]) . ')';
                 }
             }
@@ -465,7 +465,7 @@ class PDF_Builder_Template_Manager
         foreach ($text_props as $prop) {
             if (isset($element[$prop]) && isset($valid_values[$prop])) {
                 if (!in_array($element[$prop], $valid_values[$prop])) {
-                    $errors[] = "Élément $index ($element_id): '$prop' valeur invalide '" . 
+                    $errors[] = "Élément $index ($element_id): '$prop' valeur invalide '" .
                                $element[$prop] . "' (valeurs: " . implode(', ', $valid_values[$prop]) . ')';
                 }
             }

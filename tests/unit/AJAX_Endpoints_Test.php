@@ -31,15 +31,9 @@ if (!function_exists('wp_send_json_success')) {
 }
 
 if (!function_exists('wp_send_json_error')) {
-    function wp_send_json_error($data = null, $status_code = null) {
-        echo json_encode(['success' => false, 'data' => $data]);
+    function wp_send_json_error($message = '') {
+        echo json_encode(['success' => false, 'data' => ['message' => $message]]);
         exit;
-    }
-}
-
-if (!function_exists('sanitize_text_field')) {
-    function sanitize_text_field($str) {
-        return trim($str);
     }
 }
 

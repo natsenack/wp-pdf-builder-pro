@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PDF Builder Pro - Validateur de Chemins
  *
@@ -16,7 +17,6 @@ if (!defined('ABSPATH')) {
 
 class PDF_Builder_Path_Validator
 {
-
     /**
      * Extensions de fichiers autorisées pour les PDFs
      */
@@ -57,7 +57,8 @@ class PDF_Builder_Path_Validator
         // Vérification des traversées de répertoire
         if (self::contains_directory_traversal($path)) {
             self::log_security_event(
-                'path_traversal_attempt', [
+                'path_traversal_attempt',
+                [
                 'path' => $path,
                 'user_id' => get_current_user_id(),
                 'ip' => self::get_client_ip()
@@ -69,7 +70,8 @@ class PDF_Builder_Path_Validator
         // Vérification des chemins absolus
         if (!$allow_absolute && self::is_absolute_path($path)) {
             self::log_security_event(
-                'absolute_path_attempt', [
+                'absolute_path_attempt',
+                [
                 'path' => $path,
                 'user_id' => get_current_user_id(),
                 'ip' => self::get_client_ip()
@@ -81,7 +83,8 @@ class PDF_Builder_Path_Validator
         // Vérification de l'extension
         if (!self::has_allowed_extension($path)) {
             self::log_security_event(
-                'disallowed_extension', [
+                'disallowed_extension',
+                [
                 'path' => $path,
                 'extension' => pathinfo($path, PATHINFO_EXTENSION),
                 'user_id' => get_current_user_id(),
@@ -94,7 +97,8 @@ class PDF_Builder_Path_Validator
         // Vérification du répertoire autorisé
         if (!self::is_in_allowed_directory($path)) {
             self::log_security_event(
-                'disallowed_directory', [
+                'disallowed_directory',
+                [
                 'path' => $path,
                 'user_id' => get_current_user_id(),
                 'ip' => self::get_client_ip()
@@ -333,7 +337,8 @@ class PDF_Builder_Path_Validator
             'timestamp' => current_time('mysql'),
             'event' => $event,
             'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'unknown'
-            ], $data
+            ],
+            $data
         );
 
         if (defined('WP_DEBUG') && WP_DEBUG) {

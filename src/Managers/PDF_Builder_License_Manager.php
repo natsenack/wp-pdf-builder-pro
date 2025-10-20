@@ -1,4 +1,5 @@
 <?php
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -12,7 +13,6 @@ if (!defined('ABSPATH')) {
 
 class PDF_Builder_License_Manager
 {
-
     /**
      * Instance unique
      */
@@ -209,5 +209,3 @@ class PDF_Builder_License_Manager
         ];
     }
 }
-
-

@@ -1,4 +1,5 @@
 <?php
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -12,7 +13,6 @@ if (!defined('ABSPATH')) {
 
 class PDF_Builder_Cache_Manager
 {
-
     /**
      * Instance unique de la classe
      */
@@ -207,5 +207,3 @@ function pdf_builder_cache_flush()
 {
     return PDF_Builder_Cache_Manager::getInstance()->flush();
 }
-
-

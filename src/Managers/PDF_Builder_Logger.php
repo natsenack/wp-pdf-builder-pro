@@ -1,8 +1,7 @@
 <?php
-// Empêcher l'accès direct
-if (!defined('ABSPATH')) {
-    exit('Accès direct interdit');
-}
+
+namespace PDF_Builder\Managers;
+
 /**
  * PDF Builder Logger
  * Système de logging pour le plugin PDF Builder Pro
@@ -12,7 +11,6 @@ if (!defined('ABSPATH')) {
 
 class PDF_Builder_Logger
 {
-
     /**
      * Instance unique de la classe
      */
@@ -42,7 +40,7 @@ class PDF_Builder_Logger
             wp_mkdir_p($log_dir);
         }
 
-        $this->log_level = defined('PDF_BUILDER_LOG_LEVEL') ? PDF_BUILDER_LOG_LEVEL : 1;
+        $this->log_level = defined('PDF_BUILDER_LOG_LEVEL') ? constant('PDF_BUILDER_LOG_LEVEL') : 1;
     }
 
     /**
@@ -66,7 +64,7 @@ class PDF_Builder_Logger
         }
 
         $timestamp = current_time('Y-m-d H:i:s');
-        $level_name = $this->get_level_name($level);
+        $level_name = $this->getLevelName($level);
 
         $log_entry = sprintf(
             "[%s] %s: %s",
@@ -123,13 +121,13 @@ class PDF_Builder_Logger
     /**
      * Obtenir le nom du niveau
      */
-    private function get_level_name($level)
+    private function getLevelName($level)
     {
         $levels = array(
-            0 => 'ERROR',
-            1 => 'WARNING',
-            2 => 'INFO',
-            3 => 'DEBUG'
+        0 => 'ERROR',
+        1 => 'WARNING',
+        2 => 'INFO',
+        3 => 'DEBUG'
         );
 
         return isset($levels[$level]) ? $levels[$level] : 'UNKNOWN';
@@ -165,7 +163,7 @@ class PDF_Builder_Logger
     /**
      * Obtenir le contenu du fichier de log
      */
-    public function get_log_contents($lines = 100)
+    public function getLogContents($lines = 100)
     {
         if (!file_exists($this->log_file)) {
             return '';
@@ -176,10 +174,13 @@ class PDF_Builder_Logger
     }
 }
 
+// Empêcher l'accès direct
+if (!defined('ABSPATH')) {
+    exit('Accès direct interdit');
+}
+
 // Fonction globale pour le logging
 function pdf_builder_log($message, $level = 2, $context = array())
 {
     PDF_Builder_Logger::getInstance()->log($message, $level, $context);
 }
-
-

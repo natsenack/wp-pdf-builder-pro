@@ -10931,18 +10931,12 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
     canvasState.updateElement(elementId, updates);
   }, [canvasState]);
 
-  // Fonctions Undo/Redo
+  // Fonctions Undo/Redo - utilisent directement celles du canvasState
   var handleUndo = (0,react.useCallback)(function () {
-    var previousState = canvasState.history.undo();
-    if (previousState) {
-      canvasState.setElements(previousState);
-    }
+    canvasState.undo();
   }, [canvasState]);
   var handleRedo = (0,react.useCallback)(function () {
-    var nextState = canvasState.history.redo();
-    if (nextState) {
-      canvasState.setElements(nextState);
-    }
+    canvasState.redo();
   }, [canvasState]);
 
   // Handler pour créer un nouveau template

@@ -1,4 +1,5 @@
 <?php
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -10,7 +11,6 @@ if (!defined('ABSPATH')) {
 
 class PDF_Builder_Extended_Cache_Manager
 {
-
     /**
      * Instance du main plugin
      */
@@ -274,7 +274,8 @@ class PDF_Builder_Extended_Cache_Manager
         // Si toujours trop d'éléments, supprimer les plus anciens
         if (count($this->memory_cache) > $this->cache_config['max_memory_items']) {
             uasort(
-                $this->memory_cache, function ($a, $b) {
+                $this->memory_cache,
+                function ($a, $b) {
                     return $a['expires'] <=> $b['expires'];
                 }
             );
@@ -391,7 +392,8 @@ class PDF_Builder_Extended_Cache_Manager
             $wpdb->prepare(
                 "SELECT cache_value, expires_at FROM $table_name
              WHERE cache_key = %s AND cache_type = %s AND expires_at > NOW()",
-                $key, $type
+                $key,
+                $type
             )
         );
 
@@ -409,7 +411,8 @@ class PDF_Builder_Extended_Cache_Manager
         $table_name = $wpdb->prefix . $this->db_cache_table;
 
         $wpdb->delete(
-            $table_name, [
+            $table_name,
+            [
             'cache_key' => $key,
             'cache_type' => $type
             ]

@@ -18,9 +18,9 @@ require_once __DIR__ . '/bootstrap.php';
 require_once __DIR__ . '/../src/Managers/PDF_Builder_Variable_Mapper.php';
 
 // Run the tests
-require_once __DIR__ . '/unit/PDF_Builder_Variable_Mapper_Test.php';
+require_once __DIR__ . '/unit/PDF_Builder_Variable_Mapper_Standalone_Test.php';
 
-$test = new PDF_Builder_Variable_Mapper_Test();
+$test = new PDF_Builder_Variable_Mapper_Standalone_Test();
 $success = $test->run();
 
 exit($success ? 0 : 1);

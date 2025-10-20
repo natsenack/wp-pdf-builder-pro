@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PDF Builder Pro - Validateur de Sécurité
  *
@@ -16,7 +17,6 @@ if (!defined('ABSPATH')) {
 
 class PDF_Builder_Security_Validator
 {
-
     /**
      * Sanitise le contenu HTML pour prévenir les attaques XSS
      *
@@ -148,7 +148,8 @@ class PDF_Builder_Security_Validator
         // Log des modifications pour audit
         if ($sanitized !== $content) {
             self::log_security_event(
-                'html_sanitized', [
+                'html_sanitized',
+                [
                 'original_length' => strlen($content),
                 'sanitized_length' => strlen($sanitized),
                 'user_id' => get_current_user_id(),
@@ -177,7 +178,8 @@ class PDF_Builder_Security_Validator
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             self::log_security_event(
-                'invalid_json', [
+                'invalid_json',
+                [
                 'error' => json_last_error_msg(),
                 'user_id' => get_current_user_id(),
                 'ip' => self::get_client_ip()
@@ -224,7 +226,8 @@ class PDF_Builder_Security_Validator
 
         if (!$valid) {
             self::log_security_event(
-                'invalid_nonce', [
+                'invalid_nonce',
+                [
                 'action' => $action,
                 'user_id' => get_current_user_id(),
                 'ip' => self::get_client_ip()
@@ -285,7 +288,8 @@ class PDF_Builder_Security_Validator
             'timestamp' => current_time('mysql'),
             'event' => $event,
             'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'unknown'
-            ], $data
+            ],
+            $data
         );
 
         // Log dans le fichier de debug WordPress si activé
@@ -307,7 +311,8 @@ class PDF_Builder_Security_Validator
     {
         if (!current_user_can($capability)) {
             self::log_security_event(
-                'insufficient_permissions', [
+                'insufficient_permissions',
+                [
                 'required_capability' => $capability,
                 'user_id' => get_current_user_id(),
                 'ip' => self::get_client_ip()

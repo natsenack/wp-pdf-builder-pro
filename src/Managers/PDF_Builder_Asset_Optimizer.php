@@ -1,4 +1,5 @@
 <?php
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -10,7 +11,6 @@ if (!defined('ABSPATH')) {
 
 class PDF_Builder_Asset_Optimizer
 {
-
     /**
      * Instance du main plugin
      */
@@ -291,16 +291,16 @@ class PDF_Builder_Asset_Optimizer
         $optimized_size = $original_size;
 
         switch ($extension) {
-        case 'jpg':
-        case 'jpeg':
-            $success = $this->optimize_jpeg($file_path, $optimized_path);
-            break;
-        case 'png':
-            $success = $this->optimize_png($file_path, $optimized_path);
-            break;
-        case 'gif':
-            $success = $this->optimize_gif($file_path, $optimized_path);
-            break;
+            case 'jpg':
+            case 'jpeg':
+                $success = $this->optimize_jpeg($file_path, $optimized_path);
+                break;
+            case 'png':
+                $success = $this->optimize_png($file_path, $optimized_path);
+                break;
+            case 'gif':
+                $success = $this->optimize_gif($file_path, $optimized_path);
+                break;
         }
 
         if ($success && file_exists($optimized_path)) {

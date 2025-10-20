@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PDF Builder Pro - Rate Limiter
  *
@@ -16,7 +17,6 @@ if (!defined('ABSPATH')) {
 
 class PDF_Builder_Rate_Limiter
 {
-
     /**
      * Limites par défaut
      */

@@ -1,4 +1,5 @@
 <?php
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -10,7 +11,6 @@ if (!defined('ABSPATH')) {
 
 class PDF_Builder_PDF_Generator
 {
-
     /**
      * Instance du main plugin
      */
@@ -59,7 +59,7 @@ class PDF_Builder_PDF_Generator
         try {
             // Décoder les données canvas
             $canvas_elements = json_decode($canvas_data, true);
-            
+
             if (!$canvas_elements || !is_array($canvas_elements)) {
                 wp_send_json_error('Format JSON invalide pour les données canvas');
             }
@@ -231,7 +231,10 @@ class PDF_Builder_PDF_Generator
 
                 $style = sprintf(
                     'position: absolute; left: %dpx; top: %dpx; width: %dpx; height: %dpx;',
-                    $x, $y, $width, $height
+                    $x,
+                    $y,
+                    $width,
+                    $height
                 );
 
                 if (isset($element['style'])) {
@@ -257,21 +260,21 @@ class PDF_Builder_PDF_Generator
                 }
 
                 switch ($element['type']) {
-                case 'text':
-                    $final_content = $order ? $this->replace_order_variables($content, $order) : $content;
-                    $html .= sprintf('<div style="%s">%s</div>', $style, esc_html($final_content));
-                    break;
+                    case 'text':
+                        $final_content = $order ? $this->replace_order_variables($content, $order) : $content;
+                        $html .= sprintf('<div style="%s">%s</div>', $style, esc_html($final_content));
+                        break;
 
-                case 'invoice_number':
-                    if ($order) {
-                        $invoice_number = $order->get_id() . '-' . time();
-                        $html .= sprintf('<div style="%s">%s</div>', $style, esc_html($invoice_number));
-                    }
-                    break;
+                    case 'invoice_number':
+                        if ($order) {
+                            $invoice_number = $order->get_id() . '-' . time();
+                            $html .= sprintf('<div style="%s">%s</div>', $style, esc_html($invoice_number));
+                        }
+                        break;
 
-                default:
-                    $html .= sprintf('<div style="%s">%s</div>', $style, esc_html($content));
-                    break;
+                    default:
+                        $html .= sprintf('<div style="%s">%s</div>', $style, esc_html($content));
+                        break;
                 }
             }
         }
@@ -345,7 +348,7 @@ class PDF_Builder_PDF_Generator
     private function render_element_to_html($element)
     {
         $type = $element['type'] ?? 'text';
-        
+
         // Extraire les coordonnées
         $x = $element['position']['x'] ?? $element['x'] ?? 0;
         $y = $element['position']['y'] ?? $element['y'] ?? 0;
@@ -353,9 +356,11 @@ class PDF_Builder_PDF_Generator
         $height = $element['size']['height'] ?? $element['height'] ?? 50;
 
         // Dimensions par défaut si manquantes
-        if (empty($width) || $width <= 0) { $width = 100;
+        if (empty($width) || $width <= 0) {
+            $width = 100;
         }
-        if (empty($height) || $height <= 0) { $height = 50;
+        if (empty($height) || $height <= 0) {
+            $height = 50;
         }
 
         // Contraindre dans les limites A4 (595x842 pixels)
@@ -366,12 +371,15 @@ class PDF_Builder_PDF_Generator
 
         $style = sprintf(
             'position: absolute; left: %dpx; top: %dpx; width: %dpx; height: %dpx;',
-            $x, $y, $width, $height
+            $x,
+            $y,
+            $width,
+            $height
         );
 
         // Appliquer les styles CSS des propriétés
         $style .= 'box-sizing: border-box; ';
-        
+
         // Styles de base depuis les propriétés
         if (isset($element['properties'])) {
             if (isset($element['properties']['color'])) {
@@ -396,39 +404,39 @@ class PDF_Builder_PDF_Generator
 
         // Rendre selon le type d'élément
         switch ($type) {
-        case 'text':
-        case 'dynamic-text':
-        case 'multiline_text':
-            $content = $element['content'] ?? $element['text'] ?? $element['customContent'] ?? '';
-            $style .= 'white-space: pre-wrap; word-wrap: break-word; ';
-            return "<div class='canvas-element' style='" . esc_attr($style) . "'>" . wp_kses_post($content) . "</div>";
+            case 'text':
+            case 'dynamic-text':
+            case 'multiline_text':
+                $content = $element['content'] ?? $element['text'] ?? $element['customContent'] ?? '';
+                $style .= 'white-space: pre-wrap; word-wrap: break-word; ';
+                return "<div class='canvas-element' style='" . esc_attr($style) . "'>" . wp_kses_post($content) . "</div>";
 
-        case 'image':
-        case 'company_logo':
-            $src = $element['imageUrl'] ?? $element['src'] ?? '';
-            if (!$src && $type === 'company_logo') {
-                $custom_logo_id = get_theme_mod('custom_logo');
-                $src = $custom_logo_id ? wp_get_attachment_image_url($custom_logo_id, 'full') : '';
-            }
-            if ($src) {
-                $style .= 'object-fit: contain; ';
-                return "<img class='canvas-element' src='" . esc_url($src) . "' style='" . esc_attr($style) . "' />";
-            }
-            return "<div class='canvas-element' style='" . esc_attr($style) . "; background: #f0f0f0; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center;'>Image</div>";
+            case 'image':
+            case 'company_logo':
+                $src = $element['imageUrl'] ?? $element['src'] ?? '';
+                if (!$src && $type === 'company_logo') {
+                    $custom_logo_id = get_theme_mod('custom_logo');
+                    $src = $custom_logo_id ? wp_get_attachment_image_url($custom_logo_id, 'full') : '';
+                }
+                if ($src) {
+                    $style .= 'object-fit: contain; ';
+                    return "<img class='canvas-element' src='" . esc_url($src) . "' style='" . esc_attr($style) . "' />";
+                }
+                return "<div class='canvas-element' style='" . esc_attr($style) . "; background: #f0f0f0; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center;'>Image</div>";
 
-        case 'rectangle':
-            $style .= 'border: 1px solid #ccc; ';
-            return "<div class='canvas-element' style='" . esc_attr($style) . "'></div>";
+            case 'rectangle':
+                $style .= 'border: 1px solid #ccc; ';
+                return "<div class='canvas-element' style='" . esc_attr($style) . "'></div>";
 
-        case 'divider':
-        case 'line':
-            $line_color = $element['lineColor'] ?? '#64748b';
-            $line_width = $element['lineWidth'] ?? 2;
-            $style .= "border-bottom: {$line_width}px solid {$line_color}; height: {$line_width}px;";
-            return "<div class='canvas-element' style='" . esc_attr($style) . "'></div>";
+            case 'divider':
+            case 'line':
+                $line_color = $element['lineColor'] ?? '#64748b';
+                $line_width = $element['lineWidth'] ?? 2;
+                $style .= "border-bottom: {$line_width}px solid {$line_color}; height: {$line_width}px;";
+                return "<div class='canvas-element' style='" . esc_attr($style) . "'></div>";
 
-        default:
-            return "<div class='canvas-element' style='" . esc_attr($style) . "; background: #ffe6e6; border: 1px solid #ff0000; display: flex; align-items: center; justify-content: center; color: #ff0000;'>{$type}</div>";
+            default:
+                return "<div class='canvas-element' style='" . esc_attr($style) . "; background: #ffe6e6; border: 1px solid #ff0000; display: flex; align-items: center; justify-content: center; color: #ff0000;'>{$type}</div>";
         }
     }
 

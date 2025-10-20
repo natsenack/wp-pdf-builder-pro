@@ -109,8 +109,8 @@ class Performance_Test {
             require_once __DIR__ . '/../../src/Managers/PDF_Builder_Variable_Mapper.php';
 
             // Tester la création et l'utilisation
-            $mapper = new PDF_Builder_Variable_Mapper($mock_order);
-            $variables = $mapper->get_all_variables();
+            $mapper = new \PDF_Builder\Managers\PDFBuilderVariableMapper($mock_order);
+            $variables = $mapper->getAllVariables();
 
             // Vérifications
             $success = $this->assert(is_array($variables), "VariableMapper retourne un tableau");

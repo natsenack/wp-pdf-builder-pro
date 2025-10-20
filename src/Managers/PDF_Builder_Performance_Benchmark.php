@@ -1,4 +1,5 @@
 <?php
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -10,7 +11,6 @@ if (!defined('ABSPATH')) {
 
 class PDF_Builder_Performance_Benchmark
 {
-
     /**
      * Instance du main plugin
      */
@@ -300,18 +300,18 @@ class PDF_Builder_Performance_Benchmark
             $start = microtime(true);
 
             switch ($query_type) {
-            case 'order_data':
-                // Simuler récupération données commande
-                $this->simulate_order_data_query($db_optimizer);
-                break;
-            case 'product_data':
-                // Simuler récupération données produit
-                $this->simulate_product_data_query($db_optimizer);
-                break;
-            case 'complex_join':
-                // Simuler jointure complexe
-                $this->simulate_complex_join_query($db_optimizer);
-                break;
+                case 'order_data':
+                    // Simuler récupération données commande
+                    $this->simulate_order_data_query($db_optimizer);
+                    break;
+                case 'product_data':
+                    // Simuler récupération données produit
+                    $this->simulate_product_data_query($db_optimizer);
+                    break;
+                case 'complex_join':
+                    // Simuler jointure complexe
+                    $this->simulate_complex_join_query($db_optimizer);
+                    break;
             }
 
             $times[] = microtime(true) - $start;
@@ -632,8 +632,8 @@ class PDF_Builder_Performance_Benchmark
         ];
 
         switch ($complexity) {
-        case 'simple':
-            $base_data['elements'] = [
+            case 'simple':
+                $base_data['elements'] = [
                 [
                     'type' => 'text',
                     'text' => 'Test PDF Generation',
@@ -642,13 +642,14 @@ class PDF_Builder_Performance_Benchmark
                     'fontSize' => 24,
                     'color' => '#000000'
                 ]
-            ];
-            break;
+                ];
+                break;
 
-        case 'medium':
-            $base_data['elements'] = array_merge(
-                $base_data['elements'], [
-                [
+            case 'medium':
+                $base_data['elements'] = array_merge(
+                    $base_data['elements'],
+                    [
+                    [
                     'type' => 'rectangle',
                     'x' => 50,
                     'y' => 50,
@@ -656,41 +657,41 @@ class PDF_Builder_Performance_Benchmark
                     'height' => 500,
                     'fillColor' => '#f0f0f0',
                     'strokeColor' => '#000000'
-                ],
-                [
+                    ],
+                    [
                     'type' => 'text',
                     'text' => 'Benchmark Test Document',
                     'x' => 100,
                     'y' => 100,
                     'fontSize' => 32,
                     'color' => '#333333'
-                ],
-                [
+                    ],
+                    [
                     'type' => 'line',
                     'x1' => 100,
                     'y1' => 150,
                     'x2' => 700,
                     'y2' => 150,
                     'color' => '#666666'
-                ]
                     ]
-            );
-            break;
+                    ]
+                );
+                break;
 
-        case 'complex':
-            $base_data = $this->get_test_canvas_data('medium');
-            // Ajouter plus d'éléments
-            for ($i = 0; $i < 20; $i++) {
-                $base_data['elements'][] = [
+            case 'complex':
+                $base_data = $this->get_test_canvas_data('medium');
+                // Ajouter plus d'éléments
+                for ($i = 0; $i < 20; $i++) {
+                    $base_data['elements'][] = [
                     'type' => 'text',
                     'text' => "Line item {$i}",
                     'x' => 120,
                     'y' => 180 + ($i * 20),
                     'fontSize' => 12,
                     'color' => '#000000'
-                ];
-            }
-            break;
+                    ];
+                }
+                break;
         }
 
         return $base_data;

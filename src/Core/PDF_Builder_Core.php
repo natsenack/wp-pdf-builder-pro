@@ -2,11 +2,6 @@
 
 namespace PDF_Builder\Core;
 
-// Empêcher l'accès direct
-if (!defined('ABSPATH')) {
-    exit('Accès direct interdit');
-}
-
 /**
  * PDF Builder Core
  * Classe principale du plugin PDF Builder Pro
@@ -14,7 +9,6 @@ if (!defined('ABSPATH')) {
 
 class PDF_Builder_Core
 {
-
     /**
      * Instance unique de la classe
      */
@@ -40,8 +34,8 @@ class PDF_Builder_Core
      */
     private function __construct()
     {
-        $this->init_hooks();
-        $this->load_dependencies();
+        $this->initHooks();
+        $this->loadDependencies();
     }
 
     /**
@@ -58,10 +52,10 @@ class PDF_Builder_Core
     /**
      * Initialiser les hooks WordPress
      */
-    private function init_hooks()
+    private function initHooks()
     {
         add_action('init', array($this, 'init'));
-        add_action('admin_init', array($this, 'admin_init'));
+        add_action('admin_init', array($this, 'adminInit'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
 
@@ -77,7 +71,7 @@ class PDF_Builder_Core
     /**
      * Charger les dépendances
      */
-    private function load_dependencies()
+    private function loadDependencies()
     {
         // Les dépendances sont déjà chargées dans le fichier principal
     }
@@ -88,7 +82,7 @@ class PDF_Builder_Core
     public function init()
     {
         // Vérifier les dépendances
-        $this->check_dependencies();
+        $this->checkDependencies();
 
         // Initialiser les fonctionnalités
         $this->init_features();
@@ -100,7 +94,7 @@ class PDF_Builder_Core
     /**
      * Initialisation de l'administration
      */
-    public function admin_init()
+    public function adminInit()
     {
 
         // Enregistrer les paramètres
@@ -110,7 +104,7 @@ class PDF_Builder_Core
     /**
      * Vérifier les dépendances système
      */
-    private function check_dependencies()
+    private function checkDependencies()
     {
         // Vérifier PHP
         if (version_compare(PHP_VERSION, '7.4', '<')) {
@@ -152,7 +146,6 @@ class PDF_Builder_Core
             $drag_manager = \PDF_Builder_Drag_Drop_Manager::getInstance();
             $resize_manager = \PDF_Builder_Resize_Manager::getInstance();
             $interactions_manager = \PDF_Builder_Canvas_Interactions_Manager::getInstance();
-
         } catch (\Exception $e) {
             // Gestion silencieuse des erreurs d'initialisation
         }
@@ -188,11 +181,11 @@ class PDF_Builder_Core
     public function admin_enqueue_scripts($hook)
     {
         // Charger les scripts sur toutes les pages du plugin SAUF l'éditeur
-        if (($hook && strpos($hook, 'pdf-builder') !== false && strpos($hook, 'pdf-builder-editor') === false) 
-            || (isset($_GET['page']) && $_GET['page'] && strpos($_GET['page'], 'pdf-builder') !== false && $_GET['page'] !== 'pdf-builder-editor') 
+        if (
+            ($hook && strpos($hook, 'pdf-builder') !== false && strpos($hook, 'pdf-builder-editor') === false)
+            || (isset($_GET['page']) && $_GET['page'] && strpos($_GET['page'], 'pdf-builder') !== false && $_GET['page'] !== 'pdf-builder-editor')
             || (isset($_SERVER['REQUEST_URI']) && $_SERVER['REQUEST_URI'] && strpos($_SERVER['REQUEST_URI'], 'pdf-builder-editor') !== false)
         ) {
-
             wp_enqueue_script(
                 'pdf-builder-admin-core',
                 PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js',
@@ -208,7 +201,9 @@ class PDF_Builder_Core
 
             // Localiser le script pour AJAX
             wp_localize_script(
-                'pdf-builder-admin-core', 'pdfBuilderAjax', array(
+                'pdf-builder-admin-core',
+                'pdfBuilderAjax',
+                array(
                 'ajaxurl' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('pdf_builder_templates'),
                 'strings' => array(
@@ -232,7 +227,6 @@ class PDF_Builder_Core
         self::$menu_added = true;
 
         try {
-
             add_menu_page(
                 __('PDF Builder Pro', 'pdf-builder-pro'),
                 __('PDF Builder', 'pdf-builder-pro'),
@@ -570,7 +564,8 @@ class PDF_Builder_Core
                 $wpdb->prepare(
                     "SELECT id, name FROM $table_templates WHERE id = %d",
                     $status_templates[$status_key]
-                ), ARRAY_A
+                ),
+                ARRAY_A
             );
             echo '<p style="color: green;">✅ Template mappé trouvé: ' . $mapped_template['name'] . ' (ID: ' . $mapped_template['id'] . ')</p>';
         } else {
@@ -588,26 +583,26 @@ class PDF_Builder_Core
             // Logique de détection automatique basée sur le statut
             $keywords = [];
             switch ($order_status) {
-            case 'pending':
-                $keywords = ['devis', 'quote', 'estimation'];
-                break;
-            case 'processing':
-            case 'on-hold':
-                $keywords = ['facture', 'invoice', 'commande'];
-                break;
-            case 'completed':
-                $keywords = ['facture', 'invoice', 'reçu', 'receipt'];
-                break;
-            case 'cancelled':
-            case 'refunded':
-                $keywords = ['avoir', 'credit', 'refund'];
-                break;
-            case 'failed':
-                $keywords = ['erreur', 'failed', 'échoué'];
-                break;
-            default:
-                $keywords = ['facture', 'invoice'];
-                break;
+                case 'pending':
+                    $keywords = ['devis', 'quote', 'estimation'];
+                    break;
+                case 'processing':
+                case 'on-hold':
+                    $keywords = ['facture', 'invoice', 'commande'];
+                    break;
+                case 'completed':
+                    $keywords = ['facture', 'invoice', 'reçu', 'receipt'];
+                    break;
+                case 'cancelled':
+                case 'refunded':
+                    $keywords = ['avoir', 'credit', 'refund'];
+                    break;
+                case 'failed':
+                    $keywords = ['erreur', 'failed', 'échoué'];
+                    break;
+                default:
+                    $keywords = ['facture', 'invoice'];
+                    break;
             }
 
             echo '<p>Mots-clés pour le statut \'' . $order_status . '\': <code>' . implode(', ', $keywords) . '</code></p>';
@@ -621,8 +616,9 @@ class PDF_Builder_Core
                     ") LIMIT 1",
                     array_map(
                         function ($keyword) {
-                            return '%' . $keyword . '%'; 
-                        }, $keywords
+                            return '%' . $keyword . '%';
+                        },
+                        $keywords
                     )
                 );
 
@@ -693,7 +689,6 @@ class PDF_Builder_Core
             } else {
                 echo '<p style="color: red;">❌ Erreur JSON: ' . json_last_error_msg() . '</p>';
             }
-
         } else {
             echo '<p style="color: red; font-size: 18px; font-weight: bold;">❌ Aucun template sélectionné</p>';
         }
@@ -730,8 +725,9 @@ class PDF_Builder_Core
             'email_notifications_enabled' => isset($_POST['email_notifications_enabled']),
             'notification_events' => isset($_POST['notification_events']) ? array_map(
                 function ($event) {
-                    return sanitize_text_field($event); 
-                }, $_POST['notification_events']
+                    return sanitize_text_field($event);
+                },
+                $_POST['notification_events']
             ) : [],
             // Paramètres Canvas - anciens
             'canvas_element_borders_enabled' => isset($_POST['canvas_element_borders_enabled']),
@@ -878,6 +874,11 @@ class PDF_Builder_Core
         wp_send_json_success($settings);
         exit;
     }
+}
+
+// Empêcher l'accès direct
+if (!defined('ABSPATH')) {
+    exit('Accès direct interdit');
 }
 
 

@@ -3046,6 +3046,65 @@ Implémenter un système freemium/premium complet permettant la monétisation du
 - ⚡ **Performance tuning** : Optimisations basées métriques réelles
 - 🔧 **Nouvelles fonctionnalités** : Roadmap features validées
 
+##### **8.1 Refonte Système d'Aperçu Modal** (Priorité Élevée)
+**Objectif** : Refonte complète du système d'aperçu modal pour performance optimale et sobriété fonctionnelle
+
+###### **Sous-tâches 8.1.1 - Conception Architecture** (1-2 jours)
+- [ ] **Analyse exigences fonctionnelles** : Aperçu PDF, navigation pages, zoom, export basique
+- [ ] **Design patterns avancés** : Provider pattern pour état global, hooks personnalisés
+- [ ] **API design unifiée** : Interface commune pour modes Canvas/Metabox
+- [ ] **Sécurité renforcée** : Sanitisation inputs, validation données, protection XSS
+- [ ] **Architecture modulaire** : Composants indépendants, séparation responsabilités
+
+###### **Sous-tâches 8.1.2 - Développement Core Components** (3-4 jours)
+- [ ] **Composant PreviewModal principal** : Lazy loading, Suspense, error boundaries
+- [ ] **Renderers spécialisés optimisés** : PDF, Canvas, Image avec virtualisation
+- [ ] **Gestion d'état avancée** : Context API, reducers, actions pour scalabilité
+- [ ] **Navigation intelligente** : Pagination lazy, zoom fluide, rotation
+- [ ] **Interface utilisateur sobre** : Design minimal, animations fluides, accessibilité WCAG
+
+###### **Sous-tâches 8.1.3 - Optimisation Performance** (2-3 jours)
+- [ ] **Bundle splitting avancé** : Code-splitting par fonctionnalité, dynamic imports
+- [ ] **Memoization complète** : React.memo, useMemo, useCallback stratégiques
+- [ ] **Virtualisation listes** : Grandes listes d'éléments sans impact performance
+- [ ] **Caching intelligent** : Cache aperçus générés, invalidation automatique
+- [ ] **Lazy loading images** : Intersection Observer, progressive loading
+- [ ] **Optimisation mémoire** : Cleanup automatique, garbage collection
+
+###### **Sous-tâches 8.1.4 - Tests & Validation** (2 jours)
+- [ ] **Tests unitaires complets** : Composants, hooks, utilitaires (couverture 90%+)
+- [ ] **Tests d'intégration** : Flux complets d'aperçu, interactions utilisateur
+- [ ] **Tests performance** : Métriques temps réel, mémoire, CPU
+- [ ] **Tests E2E** : Scénarios utilisateur complets avec Cypress/Puppeteer
+- [ ] **Tests accessibilité** : WCAG 2.1 AA validation automatique
+- [ ] **Tests cross-browser** : Chrome, Firefox, Safari, Edge
+
+###### **Sous-tâches 8.1.5 - Déploiement & Documentation** (1 jour)
+- [ ] **Build production optimisé** : Webpack config avancée, minification
+- [ ] **Documentation développeur** : Guide API, exemples, best practices
+- [ ] **Migration smooth** : Script transition ancien → nouveau système
+- [ ] **Monitoring post-déploiement** : Métriques performance, erreurs
+- [ ] **Formation équipe** : Sessions adoption nouvelle architecture
+
+##### **Métriques Cibles Phase 8.1**
+- **Performance** : Temps chargement < 1.5s (vs 3s actuel), mémoire < 50MB
+- **Puissance** : API extensible, renderers spécialisés, gestion état avancée
+- **Sobriété** : Fonctionnalités essentielles uniquement (aperçu, navigation, export)
+- **Qualité** : Tests 90%+ couverture, 0 erreurs critiques, WCAG 2.1 AA
+- **Maintenabilité** : Code modulaire, documentation complète, architecture évolutive
+
+##### **Plan d'Exécution Phase 8.1**
+- **Jour 1-2** : Conception détaillée, maquettes, spécifications API
+- **Jour 3-6** : Développement itératif composants core, tests continus
+- **Jour 7-8** : Optimisations performance, validation complète
+- **Jour 9** : Déploiement production, monitoring initial
+
+##### **Risques & Mitigations Phase 8.1**
+- **Risque performance** : Tests continus, benchmarks automatisés
+- **Risque régression** : Tests E2E complets, déploiement canary
+- **Risque complexité** : Architecture modulaire, documentation détaillée
+- **Risque adoption** : Formation équipe, migration assistée
+
 ### 🏆 **RÉUSSITE MAJEURE**
 
 **Le système d'aperçu unifié PDF Builder Pro représente une innovation majeure dans l'écosystème WordPress avec :**

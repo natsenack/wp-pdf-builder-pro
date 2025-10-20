@@ -1,4 +1,5 @@
 <?php
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -17,7 +18,6 @@ if (!defined('ABSPATH')) {
  */
 class PDF_Builder_Drag_Drop_Manager
 {
-
     /**
      * Instance singleton
      *
@@ -89,7 +89,9 @@ class PDF_Builder_Drag_Drop_Manager
 
         // Logger l'événement
         $this->log_drag_event(
-            'start', $session_id, [
+            'start',
+            $session_id,
+            [
             'element_count' => count($element_ids),
             'canvas_bounds' => $canvas_bounds
             ]
@@ -174,7 +176,9 @@ class PDF_Builder_Drag_Drop_Manager
 
         // Logger l'événement
         $this->log_drag_event(
-            'end', $session_id, [
+            'end',
+            $session_id,
+            [
             'duration' => $session['duration'],
             'has_moved' => $session['has_moved'],
             'final_positions' => $session['current_positions']
@@ -225,8 +229,9 @@ class PDF_Builder_Drag_Drop_Manager
         foreach ($element_ids as $element_id) {
             if (!isset($initial_positions[$element_id])) {
                 $errors[] = "Missing initial position for element {$element_id}";
-            } elseif (!is_array($initial_positions[$element_id]) 
-                || !isset($initial_positions[$element_id]['x']) 
+            } elseif (
+                !is_array($initial_positions[$element_id])
+                || !isset($initial_positions[$element_id]['x'])
                 || !isset($initial_positions[$element_id]['y'])
             ) {
                 $errors[] = "Invalid position format for element {$element_id}";
@@ -286,10 +291,13 @@ class PDF_Builder_Drag_Drop_Manager
         $logger = PDF_Builder_Logger::getInstance();
         if ($logger) {
             $logger->log(
-                'drag_drop', $event_type, array_merge(
+                'drag_drop',
+                $event_type,
+                array_merge(
                     [
                     'session_id' => $session_id
-                    ], $data
+                    ],
+                    $data
                 )
             );
         }
@@ -310,5 +318,3 @@ class PDF_Builder_Drag_Drop_Manager
         return $stats;
     }
 }
-
-

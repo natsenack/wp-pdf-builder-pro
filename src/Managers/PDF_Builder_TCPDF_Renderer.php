@@ -1,4 +1,7 @@
 <?php
+
+namespace PDF_Builder\Managers;
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -8,9 +11,8 @@ if (!defined('ABSPATH')) {
  * Génération PDF structurée avec TCPDF pour les données WooCommerce
  */
 
-class PDF_Builder_TCPDF_Renderer
+class PDFBuilderTCPDFRenderer
 {
-
     /**
      * Instance du main plugin
      */
@@ -22,18 +24,23 @@ class PDF_Builder_TCPDF_Renderer
     private $pdf;
 
     /**
+     * Données structurées (WooCommerce)
+     */
+    private $structured_data;
+
+    /**
      * Constructeur
      */
     public function __construct($main_instance)
     {
         $this->main = $main_instance;
-        $this->initialize_tcpdf();
+        $this->initializeTcpdf();
     }
 
     /**
      * Initialiser TCPDF
      */
-    private function initialize_tcpdf()
+    private function initializeTcpdf()
     {
         if (!class_exists('TCPDF')) {
             include_once WP_PLUGIN_DIR . '/wp-pdf-builder-pro/lib/tcpdf/tcpdf.php';
@@ -64,7 +71,8 @@ class PDF_Builder_TCPDF_Renderer
      * Générer PDF structuré avec données WooCommerce
      *
      * @param  array  $canvas_data     Données
-     *                                 du canvas
+     *                                 du
+ canvas
      * @param  array  $structured_data Données
      *                                 structurées
      * @param  string $output_path     Chemin de sortie
@@ -73,7 +81,10 @@ class PDF_Builder_TCPDF_Renderer
     public function generate_structured_pdf($canvas_data, $structured_data = [], $output_path = null)
     {
         try {
-            $this->initialize_tcpdf();
+            // Stocker les données structurées pour utilisation dans le rendu
+            $this->structured_data = $structured_data;
+
+            $this->initializeTcpdf();
 
             // Ajouter une page
             $this->pdf->AddPage();
@@ -94,7 +105,6 @@ class PDF_Builder_TCPDF_Renderer
                 $this->pdf->Output('generated_pdf.pdf', 'I');
                 return true;
             }
-
         } catch (Exception $e) {
             error_log('Erreur génération TCPDF: ' . $e->getMessage());
             return false;
@@ -107,7 +117,7 @@ class PDF_Builder_TCPDF_Renderer
     public function generate_overlay_pdf($structured_data, $filename)
     {
         try {
-            $this->initialize_tcpdf();
+            $this->initializeTcpdf();
 
             // Configuration pour overlay (fond transparent)
             $this->pdf->SetAlpha(0.9); // Semi-transparent
@@ -122,7 +132,6 @@ class PDF_Builder_TCPDF_Renderer
             $this->pdf->Output($output_path, 'F');
 
             return file_exists($output_path);
-
         } catch (Exception $e) {
             error_log('Erreur génération overlay TCPDF: ' . $e->getMessage());
             return false;
@@ -161,18 +170,21 @@ class PDF_Builder_TCPDF_Renderer
         $height_mm = $height * 0.264583;
 
         switch ($type) {
-        case 'text':
-            $this->render_text_element($element, $x_mm, $y_mm);
-            break;
-        case 'rectangle':
-            $this->render_rectangle_element($element, $x_mm, $y_mm, $width_mm, $height_mm);
-            break;
-        case 'image':
-            $this->render_image_element($element, $x_mm, $y_mm, $width_mm, $height_mm);
-            break;
-        case 'line':
-            $this->render_line_element($element);
-            break;
+            case 'text':
+                $this->render_text_element($element, $x_mm, $y_mm);
+                break;
+            case 'rectangle':
+                $this->render_rectangle_element($element, $x_mm, $y_mm, $width_mm, $height_mm);
+                break;
+            case 'image':
+                $this->render_image_element($element, $x_mm, $y_mm, $width_mm, $height_mm);
+                break;
+            case 'line':
+                $this->render_line_element($element);
+                break;
+            case 'product_table':
+                $this->render_table_element($element, $x_mm, $y_mm, $width_mm, $height_mm);
+                break;
         }
     }
 
@@ -257,6 +269,137 @@ class PDF_Builder_TCPDF_Renderer
         $this->set_color($color, 'draw');
         $this->pdf->SetLineWidth($width);
         $this->pdf->Line($x1, $y1, $x2, $y2);
+    }
+
+    /**
+     * Rendre un élément tableau
+     */
+    private function render_table_element($element, $x, $y, $width, $height)
+    {
+        // Récupérer les propriétés du tableau
+        $showHeaders = $element['showHeaders'] ?? true;
+        $showBorders = $element['showBorders'] ?? true;
+        $headers = $element['headers'] ?? ['Produit', 'Qté', 'Prix'];
+        $columns = $element['columns'] ?? [
+            'name' => true,
+            'quantity' => true,
+            'price' => true
+        ];
+        $dataSource = $element['dataSource'] ?? 'order_items';
+
+        // Récupérer les données du tableau depuis les données structurées
+        $tableData = $this->get_table_data($dataSource);
+
+        if (empty($tableData)) {
+            // Afficher un message si pas de données
+            $this->pdf->SetXY($x, $y);
+            $this->pdf->Cell($width, 10, 'Aucune donnée disponible', 1, 1, 'C');
+            return;
+        }
+
+        // Configuration du tableau
+        $this->pdf->SetXY($x, $y);
+
+        // Calculer la largeur des colonnes
+        $numColumns = count($headers);
+        $colWidth = $width / $numColumns;
+
+        // Style des bordures
+        $border = $showBorders ? 1 : 0;
+
+        // Headers
+        if ($showHeaders) {
+            $this->pdf->SetFont('helvetica', 'B', 10);
+            $this->pdf->SetFillColor(240, 240, 240); // Gris clair
+
+            foreach ($headers as $header) {
+                $this->pdf->Cell($colWidth, 8, $header, $border, 0, 'C', true);
+            }
+            $this->pdf->Ln();
+        }
+
+        // Données
+        $this->pdf->SetFont('helvetica', '', 9);
+        $this->pdf->SetFillColor(255, 255, 255); // Blanc
+
+        $fill = false;
+        foreach ($tableData as $row) {
+            foreach ($headers as $header) {
+                $value = $this->get_table_cell_value($row, $header, $columns);
+                $this->pdf->Cell($colWidth, 6, $value, $border, 0, 'L', $fill);
+            }
+            $this->pdf->Ln();
+            $fill = !$fill; // Alterner les couleurs de fond
+        }
+    }
+
+    /**
+     * Récupérer les données du tableau selon la source
+     */
+    private function get_table_data($dataSource)
+    {
+        if (empty($this->structured_data)) {
+            return [];
+        }
+
+        switch ($dataSource) {
+            case 'order_items':
+                return $this->structured_data['order_items'] ?? [];
+            case 'cart_items':
+                return $this->structured_data['cart_items'] ?? [];
+            case 'custom':
+                return $this->structured_data['custom_table_data'] ?? [];
+            default:
+                return [];
+        }
+    }
+
+    /**
+     * Récupérer la valeur d'une cellule selon l'en-tête et les colonnes
+     */
+    private function get_table_cell_value($row, $header, $columns)
+    {
+        $headerLower = strtolower($header);
+
+        // Produit/Nom
+        if (($headerLower === 'produit' || $headerLower === 'nom' || $headerLower === 'name') && $columns['name']) {
+            return $row['name'] ?? $row['product_name'] ?? '';
+        }
+
+        // Quantité
+        if (($headerLower === 'qté' || $headerLower === 'quantité' || $headerLower === 'quantity') && $columns['quantity']) {
+            return $row['quantity'] ?? $row['qty'] ?? '';
+        }
+
+        // Prix
+        if (($headerLower === 'prix' || $headerLower === 'price') && $columns['price']) {
+            $price = $row['price'] ?? $row['product_price'] ?? '';
+            return $this->format_price($price);
+        }
+
+        // Total
+        if (($headerLower === 'total') && $columns['total']) {
+            $total = $row['total'] ?? $row['line_total'] ?? '';
+            return $this->format_price($total);
+        }
+
+        // SKU
+        if (($headerLower === 'sku' || $headerLower === 'référence') && $columns['sku']) {
+            return $row['sku'] ?? '';
+        }
+
+        return '';
+    }
+
+    /**
+     * Formater un prix pour l'affichage
+     */
+    private function format_price($price)
+    {
+        if (is_numeric($price)) {
+            return number_format($price, 2, ',', ' ') . ' €';
+        }
+        return $price;
     }
 
     /**
@@ -384,14 +527,14 @@ class PDF_Builder_TCPDF_Renderer
             $b = hexdec(substr($matches[1], 4, 2));
 
             switch ($type) {
-            case 'fill':
-                $this->pdf->SetFillColor($r, $g, $b);
-                break;
-            case 'draw':
-                $this->pdf->SetDrawColor($r, $g, $b);
-                break;
-            default:
-                $this->pdf->SetTextColor($r, $g, $b);
+                case 'fill':
+                    $this->pdf->SetFillColor($r, $g, $b);
+                    break;
+                case 'draw':
+                    $this->pdf->SetDrawColor($r, $g, $b);
+                    break;
+                default:
+                    $this->pdf->SetTextColor($r, $g, $b);
             }
         }
     }
@@ -424,7 +567,6 @@ class PDF_Builder_TCPDF_Renderer
             if (file_put_contents($filepath, $image_data)) {
                 return $filepath;
             }
-
         } catch (Exception $e) {
             error_log('Erreur téléchargement image: ' . $e->getMessage());
         }

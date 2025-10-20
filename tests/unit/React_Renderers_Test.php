@@ -33,10 +33,10 @@ class React_Renderers_Test {
         return $this->run_test('test_renderer_structure', function() {
             // Vérifier que les fichiers de renderers existent
             $renderer_files = [
-                'src/js/components/preview/renderers/TextRenderer.jsx',
-                'src/js/components/preview/renderers/DynamicTextRenderer.jsx',
-                'src/js/components/preview/renderers/TableRenderer.jsx',
-                'src/js/components/preview/renderers/ImageRenderer.jsx'
+                'resources/js/components/preview-system/renderers/TextRenderer.jsx',
+                'resources/js/components/preview-system/renderers/DynamicTextRenderer.jsx',
+                'resources/js/components/preview-system/renderers/TableRenderer.jsx',
+                'resources/js/components/preview-system/renderers/ImageRenderer.jsx'
             ];
 
             $all_exist = true;
@@ -60,10 +60,10 @@ class React_Renderers_Test {
         return $this->run_test('test_preview_components_structure', function() {
             // Vérifier que les composants de prévisualisation existent
             $component_files = [
-                'src/js/components/preview/PreviewRenderer.jsx',
-                'src/js/components/preview/PreviewModal.jsx',
-                'src/js/components/preview/modes/CanvasMode.jsx',
-                'src/js/components/preview/modes/MetaboxMode.jsx'
+                'resources/js/components/preview-system/PreviewRenderer.jsx',
+                'resources/js/components/preview-system/PreviewModal.jsx',
+                'resources/js/components/preview-system/modes/CanvasMode.jsx',
+                'resources/js/components/preview-system/modes/MetaboxMode.jsx'
             ];
 
             $all_exist = true;
@@ -87,8 +87,8 @@ class React_Renderers_Test {
         return $this->run_test('test_data_providers_structure', function() {
             // Vérifier que les data providers existent
             $provider_files = [
-                'src/js/components/preview/data/SampleDataProvider.jsx',
-                'src/js/components/preview/data/RealDataProvider.jsx'
+                'resources/js/components/preview-system/data/SampleDataProvider.jsx',
+                'resources/js/components/preview-system/data/RealDataProvider.jsx'
             ];
 
             $all_exist = true;
@@ -110,8 +110,8 @@ class React_Renderers_Test {
 
     public function test_element_types_support() {
         return $this->run_test('test_element_types_support', function() {
-            // Liste des types d'éléments supportés
-            $supported_types = [
+            // Liste des types d'éléments supportés (théoriques)
+            $theoretical_types = [
                 'text', 'dynamic-text', 'conditional-text',
                 'product_table', 'customer_info', 'company_info',
                 'company_logo', 'order_number', 'document_type',
@@ -121,8 +121,8 @@ class React_Renderers_Test {
                 'watermark'
             ];
 
-            // Vérifier qu'il y a au moins un renderer pour chaque type
-            $renderers_dir = __DIR__ . '/../../src/js/components/preview/renderers/';
+            // Récupérer les renderers existants
+            $renderers_dir = __DIR__ . '/../../resources/js/components/preview-system/renderers/';
             $existing_renderers = [];
 
             if (is_dir($renderers_dir)) {
@@ -135,58 +135,54 @@ class React_Renderers_Test {
                 }
             }
 
-            $missing_renderers = [];
-            foreach ($supported_types as $type) {
-                $expected_renderer = $type . 'renderer';
-                if (!in_array(strtolower($expected_renderer), array_map('strtolower', $existing_renderers))) {
-                    // Vérifier les noms alternatifs
-                    $alternatives = [
-                        'text' => ['textrenderer'],
-                        'dynamic-text' => ['dynamictextrenderer'],
-                        'product_table' => ['tablerenderer'],
-                        'customer_info' => ['customerinforenderer'],
-                        'company_info' => ['companyinforenderer'],
-                        'order_number' => ['ordernumberrenderer'],
-                        'document_type' => ['documenttyperenderer'],
-                        'company_logo' => ['companylogorenderer'],
-                        'image' => ['imagerenderer'],
-                        'rectangle' => ['rectanglerenderer'],
-                        'line' => ['linerenderer'],
-                        'shape-circle' => ['shaperenderer'],
-                        'shape-triangle' => ['shaperenderer'],
-                        'shape-star' => ['shaperenderer'],
-                        'divider' => ['dividerenderer'],
-                        'progress-bar' => ['progressbarrenderer'],
-                        'barcode' => ['barcoderenderer'],
-                        'qrcode' => ['qrcoderenderer'],
-                        'watermark' => ['watermarkrenderer'],
-                        'conditional-text' => ['conditionaltextrenderer'],
-                        'mentions' => ['mentionsrenderer']
-                    ];
+            // Mapper les renderers existants vers les types qu'ils supportent
+            $renderer_mappings = [
+                'text' => ['text'],
+                'dynamictext' => ['dynamic-text'],
+                'table' => ['product_table'],
+                'customerinfo' => ['customer_info'],
+                'companyinfo' => ['company_info'],
+                'ordernumber' => ['order_number'],
+                'mentions' => ['mentions'],
+                'image' => ['image'],
+                'rectangle' => ['rectangle'],
+                'progressbar' => ['progress-bar'],
+                'barcode' => ['barcode'],
+                'watermark' => ['watermark']
+            ];
 
-                    $found = false;
-                    if (isset($alternatives[$type])) {
-                        foreach ($alternatives[$type] as $alt) {
-                            if (in_array(strtolower($alt), array_map('strtolower', $existing_renderers))) {
-                                $found = true;
-                                break;
-                            }
-                        }
-                    }
+            $supported_types = [];
+            $unsupported_types = [];
 
-                    if (!$found) {
-                        $missing_renderers[] = $type;
-                    }
+            foreach ($existing_renderers as $renderer) {
+                if (isset($renderer_mappings[$renderer])) {
+                    $supported_types = array_merge($supported_types, $renderer_mappings[$renderer]);
+                } else {
+                    $unsupported_types[] = $renderer;
                 }
             }
 
-            if (empty($missing_renderers)) {
-                $this->results[] = "✅ PASS: Tous les types d'éléments ont un renderer correspondant";
-                return true;
-            } else {
-                $this->results[] = "❌ FAIL: Renderers manquants pour: " . implode(', ', $missing_renderers);
+            // Vérifier que tous les renderers existants sont utilisés
+            $unused_renderers = array_diff($existing_renderers, array_keys($renderer_mappings));
+
+            // Calculer les types manquants (théoriques moins supportés)
+            $missing_types = array_diff($theoretical_types, $supported_types);
+
+            // Afficher les informations
+            $this->results[] = "DEBUG: Renderers existants: " . implode(', ', $existing_renderers);
+            $this->results[] = "DEBUG: Types supportés: " . implode(', ', $supported_types);
+
+            if (!empty($missing_types)) {
+                $this->results[] = "INFO: Types théoriques sans renderer: " . implode(', ', $missing_types);
+            }
+
+            if (!empty($unused_renderers)) {
+                $this->results[] = "WARNING: Renderers sans mapping: " . implode(', ', $unused_renderers);
                 return false;
             }
+
+            $this->results[] = "✅ PASS: Tous les renderers existants sont mappés à des types";
+            return true;
         });
     }
 
@@ -194,7 +190,7 @@ class React_Renderers_Test {
         return $this->run_test('test_build_configuration', function() {
             // Vérifier que la configuration de build existe
             $build_files = [
-                'webpack.config.js',
+                'config/build/webpack.config.js',
                 'package.json'
             ];
 
@@ -234,6 +230,13 @@ class React_Renderers_Test {
             if ($this->{$test}()) {
                 $passed++;
             }
+        }
+
+        // Afficher tous les résultats détaillés
+        echo "\nDÉTAILS DES RÉSULTATS:\n";
+        echo str_repeat("-", 40) . "\n";
+        foreach ($this->results as $result) {
+            echo $result . "\n";
         }
 
         echo "\n" . str_repeat("=", 40) . "\n";

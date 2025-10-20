@@ -165,18 +165,18 @@ class PDF_Builder_Test_Validator {
             require_once 'src/Managers/PDF_Builder_Variable_Mapper.php';
 
             $mock_order = new MockWCOrder();
-            $mapper = new PDF_Builder_Variable_Mapper($mock_order);
+            $mapper = new \PDF_Builder\Managers\PDFBuilderVariableMapper($mock_order);
 
-            $this->check($mapper instanceof PDF_Builder_Variable_Mapper,
+            $this->check($mapper instanceof \PDF_Builder\Managers\PDFBuilderVariableMapper,
                         "Instanciation VariableMapper réussie");
 
             // Tester que la classe a les méthodes attendues
-            $this->check(method_exists($mapper, 'get_all_variables'),
-                        "Méthode get_all_variables existe");
+            $this->check(method_exists($mapper, 'getAllVariables'),
+                        "Méthode getAllVariables existe");
 
             // Test basique avec commande null (devrait retourner tableau avec variables company)
-            $null_mapper = new PDF_Builder_Variable_Mapper(null);
-            $null_vars = $null_mapper->get_all_variables();
+            $null_mapper = new \PDF_Builder\Managers\PDFBuilderVariableMapper(null);
+            $null_vars = $null_mapper->getAllVariables();
             $this->check(is_array($null_vars), "Gestion commande null fonctionne");
             $this->check(array_key_exists('company_name', $null_vars), "Variables company disponibles même sans commande");
 

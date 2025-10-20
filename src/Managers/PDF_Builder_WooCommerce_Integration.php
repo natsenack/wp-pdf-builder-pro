@@ -1,4 +1,5 @@
 <?php
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -10,7 +11,6 @@ if (!defined('ABSPATH')) {
 
 class PDF_Builder_WooCommerce_Integration
 {
-
     /**
      * Instance du main plugin
      */
@@ -164,7 +164,8 @@ class PDF_Builder_WooCommerce_Integration
                 $wpdb->prepare(
                     "SELECT id, name FROM $table_templates WHERE id = %d",
                     $mapped_template_id
-                ), ARRAY_A
+                ),
+                ARRAY_A
             );
         } elseif (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
             // Fallback vers l'ancienne logique si le filtre ne retourne rien
@@ -172,7 +173,8 @@ class PDF_Builder_WooCommerce_Integration
                 $wpdb->prepare(
                     "SELECT id, name FROM $table_templates WHERE id = %d",
                     $status_templates[$status_key]
-                ), ARRAY_A
+                ),
+                ARRAY_A
             );
         }
 
@@ -213,7 +215,7 @@ class PDF_Builder_WooCommerce_Integration
         // Récupérer le label du statut WooCommerce
         $order_statuses = wc_get_order_statuses();
         $status_label = isset($order_statuses['wc-' . $order_status]) ? $order_statuses['wc-' . $order_status] : ucfirst($order_status);
-        
+
         // Déterminer si le template a été trouvé via mapping ou fallback
         $template_source = 'par défaut';
         if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
@@ -489,7 +491,6 @@ class PDF_Builder_WooCommerce_Integration
                 'pdf_url' => null
                 ]
             );
-
         } catch (Exception $e) {
             error_log('PDF BUILDER DEBUG: Exception: ' . $e->getMessage());
             wp_send_json_error('Erreur Exception: ' . $e->getMessage());
@@ -783,41 +784,42 @@ class PDF_Builder_WooCommerce_Integration
         }
 
         switch ($type) {
-        case 'text':
-            return esc_html($content);
+            case 'text':
+                return esc_html($content);
 
-        case 'textarea':
-            return nl2br(esc_html($content));
+            case 'textarea':
+                return nl2br(esc_html($content));
 
-        case 'image':
-            $src = $element['src'] ?? $element['content'] ?? '';
-            $alt = $element['alt'] ?? 'Image';
-            $width = $element['width'] ?? $element['size']['width'] ?? 'auto';
-            $height = $element['height'] ?? $element['size']['height'] ?? 'auto';
+            case 'image':
+                $src = $element['src'] ?? $element['content'] ?? '';
+                $alt = $element['alt'] ?? 'Image';
+                $width = $element['width'] ?? $element['size']['width'] ?? 'auto';
+                $height = $element['height'] ?? $element['size']['height'] ?? 'auto';
 
-            // Handle different width/height formats
-            if (is_numeric($width)) {
-                $width .= 'px';
-            }
-            if (is_numeric($height)) {
-                $height .= 'px';
-            }
+                // Handle different width/height formats
+                if (is_numeric($width)) {
+                    $width .= 'px';
+                }
+                if (is_numeric($height)) {
+                    $height .= 'px';
+                }
 
-            if (!empty($src)) {
-                return "<img src=\"{$src}\" alt=\"{$alt}\" style=\"width: {$width}; height: {$height}; object-fit: cover; max-width: 100%; max-height: 100%;\">";
-            }
-            return '';
+                if (!empty($src)) {
+                    return "<img src=\"{$src}\" alt=\"{$alt}\" style=\"width: {$width}; height: {$height}; object-fit: cover; max-width: 100%; max-height: 100%;\">";
+                }
+                return '';
 
-        case 'line':
-            return ''; // Handled by CSS styling only
+            case 'line':
+                return ''; // Handled by CSS styling only
 
-        case 'rectangle':
-            return ''; // Just a colored/styled div, no content needed
+            case 'rectangle':
+                return ''; // Just a colored/styled div, no content needed
 
-        case 'html':
-            // Allow basic HTML but sanitize it
-            return wp_kses(
-                $content, [
+            case 'html':
+                // Allow basic HTML but sanitize it
+                return wp_kses(
+                    $content,
+                    [
                     'br' => [],
                     'strong' => [],
                     'b' => [],
@@ -834,10 +836,10 @@ class PDF_Builder_WooCommerce_Integration
                     'thead' => ['style' => []],
                     'tbody' => ['style' => []],
                     ]
-            );
+                );
 
-        default:
-            return esc_html($content);
+            default:
+                return esc_html($content);
         }
     }
 
@@ -848,7 +850,7 @@ class PDF_Builder_WooCommerce_Integration
     {
         error_log('REPLACE VARIABLES - Input content: ' . substr($content, 0, 200) . '...');
         error_log('REPLACE VARIABLES - Order object exists: ' . ($order ? 'YES' : 'NO'));
-        
+
         if (!$order) {
             error_log('REPLACE VARIABLES - No order object, returning original content');
             return $content;
@@ -886,7 +888,8 @@ class PDF_Builder_WooCommerce_Integration
         $discount_total = $order->get_discount_total();
 
         $replacements = array_merge(
-            $replacements, [
+            $replacements,
+            [
             '{{subtotal}}' => wc_price($subtotal),
             '{{tax_amount}}' => wc_price($total_tax),
             '{{shipping_amount}}' => wc_price($shipping_total),
@@ -901,7 +904,8 @@ class PDF_Builder_WooCommerce_Integration
             $first_item = reset($items);
 
             $replacements = array_merge(
-                $replacements, [
+                $replacements,
+                [
                 '{{product_name}}' => $first_item->get_name(),
                 '{{product_qty}}' => $first_item->get_quantity(),
                 '{{product_price}}' => wc_price($first_item->get_total() / $first_item->get_quantity()),
@@ -955,10 +959,10 @@ class PDF_Builder_WooCommerce_Integration
         error_log('REPLACE VARIABLES - Sample values: ' . json_encode(array_slice($replacements, 0, 10, true)));
 
         $result = str_replace(array_keys($replacements), array_values($replacements), $content);
-        
+
         error_log('REPLACE VARIABLES - Final result: ' . substr($result, 0, 200) . '...');
         error_log('REPLACE VARIABLES - Content was modified: ' . ($content !== $result ? 'YES' : 'NO'));
-        
+
         return $result;
     }
 
@@ -1031,7 +1035,6 @@ class PDF_Builder_WooCommerce_Integration
                 'elements_count' => count($sanitized_elements)
                 ]
             );
-
         } catch (Exception $e) {
             error_log('PDF Builder: Erreur sauvegarde canvas - ' . $e->getMessage());
             wp_send_json_error('Erreur interne lors de la sauvegarde');
@@ -1085,20 +1088,21 @@ class PDF_Builder_WooCommerce_Integration
     private function sanitize_element_content($content, $type)
     {
         switch ($type) {
-        case 'text':
-        case 'dynamic-text':
-            return wp_kses(
-                $content, [
+            case 'text':
+            case 'dynamic-text':
+                return wp_kses(
+                    $content,
+                    [
                     'br' => [],
                     'strong' => [],
                     'em' => [],
                     'u' => []
                     ]
-            );
-        case 'image':
-            return esc_url_raw($content);
-        default:
-            return sanitize_text_field($content);
+                );
+            case 'image':
+                return esc_url_raw($content);
+            default:
+                return sanitize_text_field($content);
         }
     }
 
@@ -1199,7 +1203,6 @@ class PDF_Builder_WooCommerce_Integration
                 'elements_count' => count($canvas_data)
                 ]
             );
-
         } catch (Exception $e) {
             error_log('PDF Builder: Erreur chargement canvas - ' . $e->getMessage());
             wp_send_json_error('Erreur interne lors du chargement');
@@ -1257,7 +1260,6 @@ class PDF_Builder_WooCommerce_Integration
                 'order_id' => $order_id
                 ]
             );
-
         } catch (Exception $e) {
             error_log('PDF Builder: Erreur récupération données aperçu - ' . $e->getMessage());
             wp_send_json_error('Erreur interne lors de la récupération des données');
@@ -1486,7 +1488,6 @@ class PDF_Builder_WooCommerce_Integration
                 'element_count' => is_array($canvas_elements) ? count($canvas_elements) : 0
                 ]
             );
-
         } catch (Exception $e) {
             error_log('PDF Builder: Erreur récupération éléments canvas - ' . $e->getMessage());
             wp_send_json_error('Erreur interne lors de la récupération des éléments');
@@ -1560,23 +1561,23 @@ class PDF_Builder_WooCommerce_Integration
     private function sanitize_element_field($field, $value)
     {
         switch ($field) {
-        case 'id':
-        case 'type':
-            return sanitize_text_field($value);
-        case 'x':
-        case 'y':
-        case 'width':
-        case 'height':
-        case 'rotation':
-        case 'opacity':
-        case 'zIndex':
-            return floatval($value);
-        case 'content':
-            return $this->sanitize_element_content($value, 'text'); // Type par défaut
-        case 'style':
-            return is_array($value) ? $this->sanitize_element_styles($value) : [];
-        default:
-            return sanitize_text_field($value);
+            case 'id':
+            case 'type':
+                return sanitize_text_field($value);
+            case 'x':
+            case 'y':
+            case 'width':
+            case 'height':
+            case 'rotation':
+            case 'opacity':
+            case 'zIndex':
+                return floatval($value);
+            case 'content':
+                return $this->sanitize_element_content($value, 'text'); // Type par défaut
+            case 'style':
+                return is_array($value) ? $this->sanitize_element_styles($value) : [];
+            default:
+                return sanitize_text_field($value);
         }
     }
 
@@ -1862,7 +1863,6 @@ class PDF_Builder_WooCommerce_Integration
                 'order_id' => $order_id
                 ]
             );
-
         } catch (Exception $e) {
             error_log('PDF Builder: Erreur récupération données commande - ' . $e->getMessage());
             wp_send_json_error('Erreur interne lors de la récupération des données de commande');
@@ -1908,7 +1908,6 @@ class PDF_Builder_WooCommerce_Integration
                 'accessible' => true
                 ]
             );
-
         } catch (Exception $e) {
             error_log('PDF Builder: Erreur validation accès commande - ' . $e->getMessage());
             wp_send_json_error('Erreur interne lors de la validation d\'accès');

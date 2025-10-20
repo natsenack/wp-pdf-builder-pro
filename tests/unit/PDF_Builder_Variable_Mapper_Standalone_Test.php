@@ -185,7 +185,7 @@ class PDF_Builder_Variable_Mapper_Standalone_Test {
         $this->mockOrder = new MockWCOrder();
 
         // Initialiser le mapper
-        $this->mapper = new PDF_Builder_Variable_Mapper($this->mockOrder);
+        $this->mapper = new \PDF_Builder\Managers\PDFBuilderVariableMapper($this->mockOrder);
     }
 
     private function assert($condition, $message = '') {
@@ -199,17 +199,17 @@ class PDF_Builder_Variable_Mapper_Standalone_Test {
 
     public function test_can_instantiate_mapper() {
         return $this->assert(
-            $this->mapper instanceof PDF_Builder_Variable_Mapper,
-            "Le mapper devrait être une instance de PDF_Builder_Variable_Mapper"
+            $this->mapper instanceof \PDF_Builder\Managers\PDFBuilderVariableMapper,
+            "Le mapper devrait être une instance de PDFBuilderVariableMapper"
         );
     }
 
-    public function test_get_all_variables_returns_array() {
-        $variables = $this->mapper->get_all_variables();
+    public function test_getAllVariables_returns_array() {
+        $variables = $this->mapper->getAllVariables();
 
         $success = $this->assert(
             is_array($variables),
-            "get_all_variables devrait retourner un tableau"
+            "getAllVariables devrait retourner un tableau"
         );
 
         $success &= $this->assert(
@@ -221,7 +221,7 @@ class PDF_Builder_Variable_Mapper_Standalone_Test {
     }
 
     public function test_order_variables() {
-        $variables = $this->mapper->get_all_variables();
+        $variables = $this->mapper->getAllVariables();
 
         $success = $this->assert(
             array_key_exists('order_number', $variables),
@@ -252,7 +252,7 @@ class PDF_Builder_Variable_Mapper_Standalone_Test {
     }
 
     public function test_customer_variables() {
-        $variables = $this->mapper->get_all_variables();
+        $variables = $this->mapper->getAllVariables();
 
         $success = $this->assert(
             array_key_exists('customer_name', $variables),
@@ -273,19 +273,19 @@ class PDF_Builder_Variable_Mapper_Standalone_Test {
     }
 
     public function test_null_order_handling() {
-        $mapper = new PDF_Builder_Variable_Mapper(null);
-        $variables = $mapper->get_all_variables();
+        $mapper = new \PDF_Builder\Managers\PDFBuilderVariableMapper(null);
+        $variables = $mapper->getAllVariables();
 
         $success = $this->assert(
             is_array($variables),
-            "get_all_variables avec commande null devrait retourner un tableau"
+            "getAllVariables avec commande null devrait retourner un tableau"
         );
 
         return $success;
     }
 
     public function test_product_variables_includes_fees() {
-        $variables = $this->mapper->get_all_variables();
+        $variables = $this->mapper->getAllVariables();
 
         $success = $this->assert(
             array_key_exists('products_list', $variables),
@@ -311,7 +311,7 @@ class PDF_Builder_Variable_Mapper_Standalone_Test {
 
         $tests = [
             'test_can_instantiate_mapper',
-            'test_get_all_variables_returns_array',
+            'test_getAllVariables_returns_array',
             'test_order_variables',
             'test_customer_variables',
             'test_product_variables_includes_fees',
@@ -347,5 +347,5 @@ class PDF_Builder_Variable_Mapper_Standalone_Test {
 }
 
 // Exécuter les tests
-$test = new PDF_Builder_Variable_Mapper_Test();
+$test = new PDF_Builder_Variable_Mapper_Standalone_Test();
 $test->run();

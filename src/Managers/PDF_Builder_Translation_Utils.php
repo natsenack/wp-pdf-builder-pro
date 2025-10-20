@@ -1,4 +1,5 @@
 <?php
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -15,7 +16,6 @@ if (!defined('ABSPATH')) {
  */
 class PDF_Builder_Translation_Utils
 {
-
     /**
      * Instance unique de la classe
      */
@@ -236,5 +236,3 @@ function pdf_builder_translate_vars($text, $vars = array(), $context = '')
 {
     return PDF_Builder_Translation_Utils::getInstance()->translate_with_vars($text, $vars, $context);
 }
-
-

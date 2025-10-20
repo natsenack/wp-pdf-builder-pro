@@ -187,39 +187,39 @@ export const ELEMENT_PROPERTY_RESTRICTIONS = {
                                                                                     if (!isPropertyAllowed(elementType, propertyName)) {
                                                                                         return {
                                                                                             valid: false,
-                                                                                            reason: ELEMENT_PROPERTY_RESTRICTIONS[ELEMENT_TYPE_MAPPING[elementType] || 'text'][propertyName]?.reason || 'Propriété non autorisée'
+                                                                                            reason: ELEMENT_PROPERTY_RESTRICTIONS[ELEMENT_TYPE_MAPPING[elementType] || 'text'][propertyName] ? .reason || 'Propriété non autorisée'
                                                                                         };
                                                                                     }
 
                                                                                     // Validations spécifiques selon le type de propriété
                                                                                     switch (propertyName) {
-                                                                                    case 'backgroundColor':
-                                                                                        if (typeof value !== 'string') {
+                                                                                        case 'backgroundColor':
+                                                                                            if (typeof value !== 'string') {
                                                                                                     return { valid: false, reason: 'La couleur doit être une chaîne' };
-                                                                                        }
-                                                                                        // Plus de restriction pour les éléments spéciaux - ils peuvent maintenant avoir un fond
+                                                                                            }
+                                                                                            // Plus de restriction pour les éléments spéciaux - ils peuvent maintenant avoir un fond
                                                                       break;
 
-                                                                                    case 'borderWidth':
-                                                                                        if (typeof value !== 'number' || value < 0) {
-                                                                                            return { valid: false, reason: 'La largeur de bordure doit être un nombre positif' };
-                                                                                        }
+                                                                                        case 'borderWidth':
+                                                                                            if (typeof value !== 'number' || value < 0) {
+                                                                                                return { valid: false, reason: 'La largeur de bordure doit être un nombre positif' };
+                                                                                            }
                                                                       break;
 
-                                                                                    case 'fontSize':
-                                                                                        if (typeof value !== 'number' || value <= 0) {
-                                                                                            return { valid: false, reason: 'La taille de police doit être un nombre positif' };
-                                                                                        }
+                                                                                        case 'fontSize':
+                                                                                            if (typeof value !== 'number' || value <= 0) {
+                                                                                                return { valid: false, reason: 'La taille de police doit être un nombre positif' };
+                                                                                            }
                                                                 break;
 
-                                                                                    case 'width':
-                                                                                    case 'height':
-                                                                                        if (typeof value !== 'number' || value <= 0) {
+                                                                                        case 'width':
+                                                                                        case 'height':
+                                                                                            if (typeof value !== 'number' || value <= 0) {
                                                                                                 return { valid: false, reason: 'Les dimensions doivent être positives' };
-                                                                                        }
+                                                                                            }
                                                       break;
 
-                                                                                    default:
+                                                                                        default:
                                                               break;
                                                                                     }
 

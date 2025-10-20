@@ -1,4 +1,5 @@
 <?php
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -10,7 +11,6 @@ if (!defined('ABSPATH')) {
 
 class PDF_Builder_Dual_PDF_Generator
 {
-
     /**
      * Instance du main plugin
      */
@@ -33,14 +33,15 @@ class PDF_Builder_Dual_PDF_Generator
     {
         $this->main = $main_instance;
         $this->screenshot_renderer = new PDF_Builder_Screenshot_Renderer($main_instance);
-        $this->tcpdf_renderer = new PDF_Builder_TCPDF_Renderer($main_instance);
+        $this->tcpdf_renderer = new PDF_Builder\Managers\PDFBuilderTCPDFRenderer($main_instance);
     }
 
     /**
      * Générer PDF en mode dual (hybride)
      *
      * @param  array  $canvas_data     Données
-     *                                 du canvas
+     *                                 du
+ canvas
      * @param  array  $structured_data Données structurées
      *                                 (WooCommerce)
      * @param  string $filename        Nom du fichier
@@ -90,7 +91,6 @@ class PDF_Builder_Dual_PDF_Generator
 
             $this->log_generation('failed', null);
             return false;
-
         } catch (Exception $e) {
             error_log('Erreur génération PDF dual: ' . $e->getMessage());
             $this->log_generation('error', null, $e->getMessage());
@@ -130,13 +130,14 @@ class PDF_Builder_Dual_PDF_Generator
             $merged_pdf = $this->merge_pdfs($screenshot_pdf, $tcpdf_overlay, $filename);
 
             // Nettoyer les fichiers temporaires
-            if (file_exists($screenshot_pdf)) { unlink($screenshot_pdf);
+            if (file_exists($screenshot_pdf)) {
+                unlink($screenshot_pdf);
             }
-            if (file_exists($tcpdf_overlay)) { unlink($tcpdf_overlay);
+            if (file_exists($tcpdf_overlay)) {
+                unlink($tcpdf_overlay);
             }
 
             return $merged_pdf;
-
         } catch (Exception $e) {
             error_log('Erreur génération PDF hybride: ' . $e->getMessage());
             return false;
@@ -168,7 +169,6 @@ class PDF_Builder_Dual_PDF_Generator
 
             // Fallback: combiner les contenus HTML et régénérer
             return $this->merge_by_regeneration($pdf1, $pdf2, $output_filename);
-
         } catch (Exception $e) {
             error_log('Erreur fusion PDFs: ' . $e->getMessage());
             return $pdf1; // Retourner le PDF principal en cas d'erreur

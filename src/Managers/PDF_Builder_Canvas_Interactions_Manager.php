@@ -1,4 +1,5 @@
 <?php
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -17,7 +18,6 @@ if (!defined('ABSPATH')) {
  */
 class PDF_Builder_Canvas_Interactions_Manager
 {
-
     /**
      * Instance singleton
      *
@@ -74,7 +74,6 @@ class PDF_Builder_Canvas_Interactions_Manager
         $this->elements_manager = PDF_Builder_Canvas_Elements_Manager::getInstance();
         $this->drag_manager = PDF_Builder_Drag_Drop_Manager::getInstance();
         $this->resize_manager = PDF_Builder_Resize_Manager::getInstance();
-
     }
 
     /**
@@ -137,7 +136,6 @@ class PDF_Builder_Canvas_Interactions_Manager
                 'session' => $session
                 ]
             );
-
         } catch (Exception $e) {
             wp_send_json_error('Failed to start drag session: ' . $e->getMessage());
         }
@@ -182,7 +180,6 @@ class PDF_Builder_Canvas_Interactions_Manager
                 'positions' => $new_positions
                 ]
             );
-
         } catch (Exception $e) {
             wp_send_json_error('Failed to update drag: ' . $e->getMessage());
         }
@@ -221,7 +218,6 @@ class PDF_Builder_Canvas_Interactions_Manager
                 'session' => $result
                 ]
             );
-
         } catch (Exception $e) {
             wp_send_json_error('Failed to end drag session: ' . $e->getMessage());
         }
@@ -266,7 +262,6 @@ class PDF_Builder_Canvas_Interactions_Manager
                 'session' => $session
                 ]
             );
-
         } catch (Exception $e) {
             wp_send_json_error('Failed to start resize session: ' . $e->getMessage());
         }
@@ -312,7 +307,6 @@ class PDF_Builder_Canvas_Interactions_Manager
                 'dimensions' => $dimensions
                 ]
             );
-
         } catch (Exception $e) {
             wp_send_json_error('Failed to update resize: ' . $e->getMessage());
         }
@@ -351,7 +345,6 @@ class PDF_Builder_Canvas_Interactions_Manager
                 'session' => $result
                 ]
             );
-
         } catch (Exception $e) {
             wp_send_json_error('Failed to end resize session: ' . $e->getMessage());
         }
@@ -394,12 +387,12 @@ class PDF_Builder_Canvas_Interactions_Manager
     public function process_canvas_interaction($interaction_type, $data)
     {
         switch ($interaction_type) {
-        case 'drag':
-            return $this->process_drag_interaction($data);
-        case 'resize':
-            return $this->process_resize_interaction($data);
-        default:
-            return new WP_Error('invalid_interaction_type', 'Unknown interaction type');
+            case 'drag':
+                return $this->process_drag_interaction($data);
+            case 'resize':
+                return $this->process_resize_interaction($data);
+            default:
+                return new WP_Error('invalid_interaction_type', 'Unknown interaction type');
         }
     }
 
@@ -423,5 +416,3 @@ class PDF_Builder_Canvas_Interactions_Manager
         return ['type' => 'resize', 'processed' => true];
     }
 }
-
-

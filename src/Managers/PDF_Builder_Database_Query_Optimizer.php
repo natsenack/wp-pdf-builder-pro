@@ -1,4 +1,5 @@
 <?php
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -10,7 +11,6 @@ if (!defined('ABSPATH')) {
 
 class PDF_Builder_Database_Query_Optimizer
 {
-
     /**
      * Instance du main plugin
      */
@@ -353,7 +353,8 @@ class PDF_Builder_Database_Query_Optimizer
     public function measure_query_performance($query)
     {
         // Ne mesurer que les requêtes liées au PDF Builder
-        if (strpos($query, 'pdf_builder') === false 
+        if (
+            strpos($query, 'pdf_builder') === false
             && strpos($query, 'woocommerce') === false
         ) {
             return $query;
@@ -363,7 +364,8 @@ class PDF_Builder_Database_Query_Optimizer
 
         // Exécuter la requête et mesurer le temps
         add_action(
-            'shutdown', function () use ($query, $start_time) {
+            'shutdown',
+            function () use ($query, $start_time) {
                 $end_time = microtime(true);
                 $execution_time = $end_time - $start_time;
 

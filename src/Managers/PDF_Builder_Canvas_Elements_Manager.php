@@ -1,4 +1,5 @@
 <?php
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -17,7 +18,6 @@ if (!defined('ABSPATH')) {
  */
 class PDF_Builder_Canvas_Elements_Manager
 {
-
     /**
      * Instance singleton
      *
@@ -203,10 +203,12 @@ class PDF_Builder_Canvas_Elements_Manager
             $element_errors = $this->validate_element_data($cleaned_element);
             if (!empty($element_errors)) {
                 $errors = array_merge(
-                    $errors, array_map(
+                    $errors,
+                    array_map(
                         function ($err) use ($index) {
                             return "Élément {$index}: {$err}";
-                        }, $element_errors
+                        },
+                        $element_errors
                     )
                 );
                 // Continuer avec l'élément quand même (on nettoie ce qu'on peut)
@@ -483,136 +485,138 @@ class PDF_Builder_Canvas_Elements_Manager
 
         // Propriétés spécifiques selon le type d'élément
         switch ($element_type) {
-        case 'text':
-        case 'dynamic_text':
-        case 'conditional_text':
-            $sanitized['content'] = sanitize_text_field($element_data['content'] ?? '');
-            $sanitized['fontSize'] = max(8, min(72, floatval($element_data['fontSize'] ?? 14)));
-            $sanitized['lineHeight'] = max(0.5, min(3, floatval($element_data['lineHeight'] ?? 1.2)));
-            break;
+            case 'text':
+            case 'dynamic_text':
+            case 'conditional_text':
+                $sanitized['content'] = sanitize_text_field($element_data['content'] ?? '');
+                $sanitized['fontSize'] = max(8, min(72, floatval($element_data['fontSize'] ?? 14)));
+                $sanitized['lineHeight'] = max(0.5, min(3, floatval($element_data['lineHeight'] ?? 1.2)));
+                break;
 
-        case 'image':
-        case 'logo':
-            $sanitized['src'] = sanitize_text_field($element_data['src'] ?? '');
-            $sanitized['alt'] = sanitize_text_field($element_data['alt'] ?? '');
-            $sanitized['objectFit'] = in_array($element_data['objectFit'] ?? '', ['cover', 'contain', 'fill', 'none', 'scale-down'])
+            case 'image':
+            case 'logo':
+                $sanitized['src'] = sanitize_text_field($element_data['src'] ?? '');
+                $sanitized['alt'] = sanitize_text_field($element_data['alt'] ?? '');
+                $sanitized['objectFit'] = in_array($element_data['objectFit'] ?? '', ['cover', 'contain', 'fill', 'none', 'scale-down'])
                 ? $element_data['objectFit'] : 'cover';
-            break;
+                break;
 
-        case 'product_table':
-            // Propriétés spécifiques aux tableaux
-            $sanitized['fontSize'] = max(8, min(72, floatval($element_data['fontSize'] ?? 12)));
-            $sanitized['lineHeight'] = max(0.5, min(3, floatval($element_data['lineHeight'] ?? 1.2)));
-            $sanitized['spacing'] = max(0, min(50, floatval($element_data['spacing'] ?? 8)));
+            case 'product_table':
+                // Propriétés spécifiques aux tableaux
+                $sanitized['fontSize'] = max(8, min(72, floatval($element_data['fontSize'] ?? 12)));
+                $sanitized['lineHeight'] = max(0.5, min(3, floatval($element_data['lineHeight'] ?? 1.2)));
+                $sanitized['spacing'] = max(0, min(50, floatval($element_data['spacing'] ?? 8)));
 
-            // Propriétés booléennes spécifiques aux tableaux
-            $table_booleans = ['showHeaders', 'showBorders', 'showSubtotal', 'showShipping', 'showTaxes', 'showDiscount', 'showTotal'];
-            foreach ($table_booleans as $field) {
-                $sanitized[$field] = (bool) ($element_data[$field] ?? false);
-            }
+                // Propriétés booléennes spécifiques aux tableaux
+                $table_booleans = ['showHeaders', 'showBorders', 'showSubtotal', 'showShipping', 'showTaxes', 'showDiscount', 'showTotal'];
+                foreach ($table_booleans as $field) {
+                    $sanitized[$field] = (bool) ($element_data[$field] ?? false);
+                }
 
-            // Colonnes du tableau
-            if (isset($element_data['columns']) && is_array($element_data['columns'])) {
-                $sanitized['columns'] = array_map('boolval', $element_data['columns']);
-            }
+                // Colonnes du tableau
+                if (isset($element_data['columns']) && is_array($element_data['columns'])) {
+                    $sanitized['columns'] = array_map('boolval', $element_data['columns']);
+                }
 
-            // Headers du tableau
-            if (isset($element_data['headers']) && is_array($element_data['headers'])) {
-                $sanitized['headers'] = array_map(
-                    function ($header) {
-                        return sanitize_text_field($header); 
-                    }, $element_data['headers']
-                );
-            }
+                // Headers du tableau
+                if (isset($element_data['headers']) && is_array($element_data['headers'])) {
+                    $sanitized['headers'] = array_map(
+                        function ($header) {
+                            return sanitize_text_field($header);
+                        },
+                        $element_data['headers']
+                    );
+                }
 
-            // Style du tableau
-            $allowed_table_styles = ['default', 'classic', 'striped', 'bordered', 'minimal', 'modern', 'blue_ocean', 'emerald_forest', 'sunset_orange', 'royal_purple', 'rose_pink', 'teal_aqua', 'crimson_red', 'amber_gold', 'indigo_night', 'slate_gray', 'coral_sunset', 'mint_green', 'violet_dream', 'sky_blue', 'forest_green', 'ruby_red'];
-            $sanitized['tableStyle'] = in_array($element_data['tableStyle'] ?? '', $allowed_table_styles)
+                // Style du tableau
+                $allowed_table_styles = ['default', 'classic', 'striped', 'bordered', 'minimal', 'modern', 'blue_ocean', 'emerald_forest', 'sunset_orange', 'royal_purple', 'rose_pink', 'teal_aqua', 'crimson_red', 'amber_gold', 'indigo_night', 'slate_gray', 'coral_sunset', 'mint_green', 'violet_dream', 'sky_blue', 'forest_green', 'ruby_red'];
+                $sanitized['tableStyle'] = in_array($element_data['tableStyle'] ?? '', $allowed_table_styles)
                 ? $element_data['tableStyle'] : 'default';
 
-            // Source de données
-            $sanitized['dataSource'] = sanitize_text_field($element_data['dataSource'] ?? 'order_items');
+                // Source de données
+                $sanitized['dataSource'] = sanitize_text_field($element_data['dataSource'] ?? 'order_items');
 
-            break;
+                break;
 
-        case 'customer_info':
-        case 'company_info':
-            $sanitized['fontSize'] = max(8, min(72, floatval($element_data['fontSize'] ?? 12)));
-            $sanitized['lineHeight'] = max(0.5, min(3, floatval($element_data['lineHeight'] ?? 1.2)));
-            $sanitized['spacing'] = max(0, min(50, floatval($element_data['spacing'] ?? 8)));
+            case 'customer_info':
+            case 'company_info':
+                $sanitized['fontSize'] = max(8, min(72, floatval($element_data['fontSize'] ?? 12)));
+                $sanitized['lineHeight'] = max(0.5, min(3, floatval($element_data['lineHeight'] ?? 1.2)));
+                $sanitized['spacing'] = max(0, min(50, floatval($element_data['spacing'] ?? 8)));
 
-            $sanitized['layout'] = in_array($element_data['layout'] ?? '', ['vertical', 'horizontal'])
+                $sanitized['layout'] = in_array($element_data['layout'] ?? '', ['vertical', 'horizontal'])
                 ? $element_data['layout'] : 'vertical';
-            $sanitized['alignment'] = in_array($element_data['alignment'] ?? '', ['left', 'center', 'right'])
+                $sanitized['alignment'] = in_array($element_data['alignment'] ?? '', ['left', 'center', 'right'])
                 ? $element_data['alignment'] : 'left';
-            $sanitized['showLabels'] = (bool) ($element_data['showLabels'] ?? true);
-            $sanitized['labelStyle'] = in_array($element_data['labelStyle'] ?? '', ['normal', 'bold', 'uppercase'])
+                $sanitized['showLabels'] = (bool) ($element_data['showLabels'] ?? true);
+                $sanitized['labelStyle'] = in_array($element_data['labelStyle'] ?? '', ['normal', 'bold', 'uppercase'])
                 ? $element_data['labelStyle'] : 'normal';
 
-            if (isset($element_data['fields']) && is_array($element_data['fields'])) {
-                $sanitized['fields'] = array_map(
-                    function ($field) {
-                        return sanitize_text_field($field); 
-                    }, $element_data['fields']
-                );
-            }
-            break;
+                if (isset($element_data['fields']) && is_array($element_data['fields'])) {
+                    $sanitized['fields'] = array_map(
+                        function ($field) {
+                            return sanitize_text_field($field);
+                        },
+                        $element_data['fields']
+                    );
+                }
+                break;
 
-        case 'order_number':
-        case 'document_type':
-            $sanitized['fontSize'] = max(8, min(72, floatval($element_data['fontSize'] ?? 18)));
-            $sanitized['textAlign'] = in_array($element_data['textAlign'] ?? '', ['left', 'center', 'right', 'justify'])
+            case 'order_number':
+            case 'document_type':
+                $sanitized['fontSize'] = max(8, min(72, floatval($element_data['fontSize'] ?? 18)));
+                $sanitized['textAlign'] = in_array($element_data['textAlign'] ?? '', ['left', 'center', 'right', 'justify'])
                 ? $element_data['textAlign'] : 'center';
 
-            if ($element_type === 'order_number') {
-                $sanitized['format'] = sanitize_text_field($element_data['format'] ?? 'Commande #{order_number} - {order_date}');
-                $sanitized['showLabel'] = (bool) ($element_data['showLabel'] ?? true);
-                $sanitized['labelText'] = sanitize_text_field($element_data['labelText'] ?? 'N° de commande:');
-            } elseif ($element_type === 'document_type') {
-                $sanitized['documentType'] = in_array($element_data['documentType'] ?? '', ['invoice', 'quote', 'receipt', 'order', 'credit_note'])
+                if ($element_type === 'order_number') {
+                    $sanitized['format'] = sanitize_text_field($element_data['format'] ?? 'Commande #{order_number} - {order_date}');
+                    $sanitized['showLabel'] = (bool) ($element_data['showLabel'] ?? true);
+                    $sanitized['labelText'] = sanitize_text_field($element_data['labelText'] ?? 'N° de commande:');
+                } elseif ($element_type === 'document_type') {
+                    $sanitized['documentType'] = in_array($element_data['documentType'] ?? '', ['invoice', 'quote', 'receipt', 'order', 'credit_note'])
                     ? $element_data['documentType'] : 'invoice';
-            }
-            break;
+                }
+                break;
 
-        case 'company_logo':
-            $sanitized['imageUrl'] = sanitize_text_field($element_data['imageUrl'] ?? '');
-            $sanitized['fit'] = in_array($element_data['fit'] ?? '', ['cover', 'contain', 'fill', 'none', 'scale-down'])
+            case 'company_logo':
+                $sanitized['imageUrl'] = sanitize_text_field($element_data['imageUrl'] ?? '');
+                $sanitized['fit'] = in_array($element_data['fit'] ?? '', ['cover', 'contain', 'fill', 'none', 'scale-down'])
                 ? $element_data['fit'] : 'contain';
-            break;
+                break;
 
-        case 'progress-bar':
-            $sanitized['progressValue'] = max(0, min(100, floatval($element_data['progressValue'] ?? 75)));
-            $sanitized['progressColor'] = $this->is_valid_color($element_data['progressColor'] ?? '')
+            case 'progress-bar':
+                $sanitized['progressValue'] = max(0, min(100, floatval($element_data['progressValue'] ?? 75)));
+                $sanitized['progressColor'] = $this->is_valid_color($element_data['progressColor'] ?? '')
                 ? $element_data['progressColor'] : '#3b82f6';
-            break;
+                break;
 
-        case 'barcode':
-        case 'qrcode':
-            $sanitized['lineWidth'] = max(1, min(10, floatval($element_data['lineWidth'] ?? 2)));
-            $sanitized['lineColor'] = $this->is_valid_color($element_data['lineColor'] ?? '')
+            case 'barcode':
+            case 'qrcode':
+                $sanitized['lineWidth'] = max(1, min(10, floatval($element_data['lineWidth'] ?? 2)));
+                $sanitized['lineColor'] = $this->is_valid_color($element_data['lineColor'] ?? '')
                 ? $element_data['lineColor'] : '#64748b';
-            break;
+                break;
 
-        case 'rectangle':
-        case 'line':
-        case 'shape-rectangle':
-        case 'shape-circle':
-        case 'shape-line':
-        case 'shape-arrow':
-        case 'shape-triangle':
-        case 'shape-star':
-        case 'divider':
-            // Ces éléments utilisent principalement les propriétés communes
-            break;
+            case 'rectangle':
+            case 'line':
+            case 'shape-rectangle':
+            case 'shape-circle':
+            case 'shape-line':
+            case 'shape-arrow':
+            case 'shape-triangle':
+            case 'shape-star':
+            case 'divider':
+                // Ces éléments utilisent principalement les propriétés communes
+                break;
 
-        case 'watermark':
-            $sanitized['content'] = sanitize_text_field($element_data['content'] ?? 'CONFIDENTIEL');
-            $sanitized['opacity'] = max(0, min(100, floatval($element_data['opacity'] ?? 10)));
-            break;
+            case 'watermark':
+                $sanitized['content'] = sanitize_text_field($element_data['content'] ?? 'CONFIDENTIEL');
+                $sanitized['opacity'] = max(0, min(100, floatval($element_data['opacity'] ?? 10)));
+                break;
 
-        default:
-            // Pour les types inconnus, on garde seulement les propriétés communes
-            break;
+            default:
+                // Pour les types inconnus, on garde seulement les propriétés communes
+                break;
         }
 
         // Nettoyer les propriétés qui ne devraient pas exister pour ce type
@@ -679,192 +683,192 @@ class PDF_Builder_Canvas_Elements_Manager
 
         // Supprimer les propriétés selon le type d'élément
         switch ($element_type) {
-        case 'text':
-        case 'dynamic_text':
-        case 'conditional_text':
-        case 'counter':
-        case 'date_dynamic':
-        case 'currency':
-        case 'formula':
-            // Supprimer les propriétés qui ne sont pas pour le texte
-            $properties_to_remove = array_merge(
-                $table_only_properties,
-                $info_only_properties,
-                $image_only_properties,
-                $logo_only_properties,
-                $progress_only_properties,
-                $barcode_only_properties,
-                $order_only_properties,
-                $document_only_properties,
-                $watermark_only_properties
-            );
-            break;
+            case 'text':
+            case 'dynamic_text':
+            case 'conditional_text':
+            case 'counter':
+            case 'date_dynamic':
+            case 'currency':
+            case 'formula':
+                // Supprimer les propriétés qui ne sont pas pour le texte
+                $properties_to_remove = array_merge(
+                    $table_only_properties,
+                    $info_only_properties,
+                    $image_only_properties,
+                    $logo_only_properties,
+                    $progress_only_properties,
+                    $barcode_only_properties,
+                    $order_only_properties,
+                    $document_only_properties,
+                    $watermark_only_properties
+                );
+                break;
 
-        case 'image':
-            $properties_to_remove = array_merge(
-                $table_only_properties,
-                $info_only_properties,
-                $text_only_properties,
-                $logo_only_properties,
-                $progress_only_properties,
-                $barcode_only_properties,
-                $order_only_properties,
-                $document_only_properties,
-                $watermark_only_properties
-            );
-            break;
+            case 'image':
+                $properties_to_remove = array_merge(
+                    $table_only_properties,
+                    $info_only_properties,
+                    $text_only_properties,
+                    $logo_only_properties,
+                    $progress_only_properties,
+                    $barcode_only_properties,
+                    $order_only_properties,
+                    $document_only_properties,
+                    $watermark_only_properties
+                );
+                break;
 
-        case 'product_table':
-            $properties_to_remove = array_merge(
-                $info_only_properties,
-                $image_only_properties,
-                $logo_only_properties,
-                $progress_only_properties,
-                $barcode_only_properties,
-                $order_only_properties,
-                $document_only_properties,
-                $watermark_only_properties
-            );
-            break;
+            case 'product_table':
+                $properties_to_remove = array_merge(
+                    $info_only_properties,
+                    $image_only_properties,
+                    $logo_only_properties,
+                    $progress_only_properties,
+                    $barcode_only_properties,
+                    $order_only_properties,
+                    $document_only_properties,
+                    $watermark_only_properties
+                );
+                break;
 
-        case 'customer_info':
-        case 'company_info':
-            $properties_to_remove = array_merge(
-                $table_only_properties,
-                $text_only_properties,
-                $image_only_properties,
-                $logo_only_properties,
-                $progress_only_properties,
-                $barcode_only_properties,
-                $order_only_properties,
-                $document_only_properties,
-                $watermark_only_properties
-            );
-            break;
+            case 'customer_info':
+            case 'company_info':
+                $properties_to_remove = array_merge(
+                    $table_only_properties,
+                    $text_only_properties,
+                    $image_only_properties,
+                    $logo_only_properties,
+                    $progress_only_properties,
+                    $barcode_only_properties,
+                    $order_only_properties,
+                    $document_only_properties,
+                    $watermark_only_properties
+                );
+                break;
 
-        case 'company_logo':
-            $properties_to_remove = array_merge(
-                $table_only_properties,
-                $info_only_properties,
-                $text_only_properties,
-                $image_only_properties,
-                $progress_only_properties,
-                $barcode_only_properties,
-                $order_only_properties,
-                $document_only_properties,
-                $watermark_only_properties
-            );
-            break;
+            case 'company_logo':
+                $properties_to_remove = array_merge(
+                    $table_only_properties,
+                    $info_only_properties,
+                    $text_only_properties,
+                    $image_only_properties,
+                    $progress_only_properties,
+                    $barcode_only_properties,
+                    $order_only_properties,
+                    $document_only_properties,
+                    $watermark_only_properties
+                );
+                break;
 
-        case 'order_number':
-            $properties_to_remove = array_merge(
-                $table_only_properties,
-                $info_only_properties,
-                $text_only_properties,
-                $image_only_properties,
-                $logo_only_properties,
-                $progress_only_properties,
-                $barcode_only_properties,
-                $document_only_properties,
-                $watermark_only_properties
-            );
-            break;
+            case 'order_number':
+                $properties_to_remove = array_merge(
+                    $table_only_properties,
+                    $info_only_properties,
+                    $text_only_properties,
+                    $image_only_properties,
+                    $logo_only_properties,
+                    $progress_only_properties,
+                    $barcode_only_properties,
+                    $document_only_properties,
+                    $watermark_only_properties
+                );
+                break;
 
-        case 'document_type':
-            $properties_to_remove = array_merge(
-                $table_only_properties,
-                $info_only_properties,
-                $text_only_properties,
-                $image_only_properties,
-                $logo_only_properties,
-                $progress_only_properties,
-                $barcode_only_properties,
-                $order_only_properties,
-                $watermark_only_properties
-            );
-            break;
+            case 'document_type':
+                $properties_to_remove = array_merge(
+                    $table_only_properties,
+                    $info_only_properties,
+                    $text_only_properties,
+                    $image_only_properties,
+                    $logo_only_properties,
+                    $progress_only_properties,
+                    $barcode_only_properties,
+                    $order_only_properties,
+                    $watermark_only_properties
+                );
+                break;
 
-        case 'progress-bar':
-            $properties_to_remove = array_merge(
-                $table_only_properties,
-                $info_only_properties,
-                $text_only_properties,
-                $image_only_properties,
-                $logo_only_properties,
-                $barcode_only_properties,
-                $order_only_properties,
-                $document_only_properties,
-                $watermark_only_properties
-            );
-            break;
+            case 'progress-bar':
+                $properties_to_remove = array_merge(
+                    $table_only_properties,
+                    $info_only_properties,
+                    $text_only_properties,
+                    $image_only_properties,
+                    $logo_only_properties,
+                    $barcode_only_properties,
+                    $order_only_properties,
+                    $document_only_properties,
+                    $watermark_only_properties
+                );
+                break;
 
-        case 'barcode':
-        case 'qrcode':
-        case 'qrcode-dynamic':
-            $properties_to_remove = array_merge(
-                $table_only_properties,
-                $info_only_properties,
-                $text_only_properties,
-                $image_only_properties,
-                $logo_only_properties,
-                $progress_only_properties,
-                $order_only_properties,
-                $document_only_properties,
-                $watermark_only_properties
-            );
-            break;
+            case 'barcode':
+            case 'qrcode':
+            case 'qrcode-dynamic':
+                $properties_to_remove = array_merge(
+                    $table_only_properties,
+                    $info_only_properties,
+                    $text_only_properties,
+                    $image_only_properties,
+                    $logo_only_properties,
+                    $progress_only_properties,
+                    $order_only_properties,
+                    $document_only_properties,
+                    $watermark_only_properties
+                );
+                break;
 
-        case 'rectangle':
-        case 'line':
-        case 'shape-rectangle':
-        case 'shape-circle':
-        case 'shape-line':
-        case 'shape-arrow':
-        case 'shape-triangle':
-        case 'shape-star':
-        case 'divider':
-            $properties_to_remove = array_merge(
-                $table_only_properties,
-                $info_only_properties,
-                $text_only_properties,
-                $image_only_properties,
-                $logo_only_properties,
-                $progress_only_properties,
-                $barcode_only_properties,
-                $order_only_properties,
-                $document_only_properties,
-                $watermark_only_properties
-            );
-            break;
+            case 'rectangle':
+            case 'line':
+            case 'shape-rectangle':
+            case 'shape-circle':
+            case 'shape-line':
+            case 'shape-arrow':
+            case 'shape-triangle':
+            case 'shape-star':
+            case 'divider':
+                $properties_to_remove = array_merge(
+                    $table_only_properties,
+                    $info_only_properties,
+                    $text_only_properties,
+                    $image_only_properties,
+                    $logo_only_properties,
+                    $progress_only_properties,
+                    $barcode_only_properties,
+                    $order_only_properties,
+                    $document_only_properties,
+                    $watermark_only_properties
+                );
+                break;
 
-        case 'watermark':
-            $properties_to_remove = array_merge(
-                $table_only_properties,
-                $info_only_properties,
-                $image_only_properties,
-                $logo_only_properties,
-                $progress_only_properties,
-                $barcode_only_properties,
-                $order_only_properties,
-                $document_only_properties
-            );
-            break;
+            case 'watermark':
+                $properties_to_remove = array_merge(
+                    $table_only_properties,
+                    $info_only_properties,
+                    $image_only_properties,
+                    $logo_only_properties,
+                    $progress_only_properties,
+                    $barcode_only_properties,
+                    $order_only_properties,
+                    $document_only_properties
+                );
+                break;
 
-        default:
-            // Pour les types inconnus, garder seulement les propriétés communes
-            $properties_to_remove = array_merge(
-                $table_only_properties,
-                $info_only_properties,
-                $text_only_properties,
-                $image_only_properties,
-                $logo_only_properties,
-                $progress_only_properties,
-                $barcode_only_properties,
-                $order_only_properties,
-                $document_only_properties,
-                $watermark_only_properties
-            );
-            break;
+            default:
+                // Pour les types inconnus, garder seulement les propriétés communes
+                $properties_to_remove = array_merge(
+                    $table_only_properties,
+                    $info_only_properties,
+                    $text_only_properties,
+                    $image_only_properties,
+                    $logo_only_properties,
+                    $progress_only_properties,
+                    $barcode_only_properties,
+                    $order_only_properties,
+                    $document_only_properties,
+                    $watermark_only_properties
+                );
+                break;
         }
 
         // Supprimer les propriétés invalides
@@ -898,10 +902,12 @@ class PDF_Builder_Canvas_Elements_Manager
         }
 
         if (preg_match('/^rgba\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3}),\s*([0-1](\.\d+)?)\)$/', $color, $matches)) {
-            if ($matches[4] < 0 || $matches[4] > 1) { return false;
+            if ($matches[4] < 0 || $matches[4] > 1) {
+                return false;
             }
             foreach ([$matches[1], $matches[2], $matches[3]] as $value) {
-                if ($value < 0 || $value > 255) { return false;
+                if ($value < 0 || $value > 255) {
+                    return false;
                 }
             }
             return true;
@@ -909,23 +915,30 @@ class PDF_Builder_Canvas_Elements_Manager
 
         // Couleurs HSL/HSLA
         if (preg_match('/^hsl\((\d{1,3}),\s*(\d{1,3})%,\s*(\d{1,3})%\)$/', $color, $matches)) {
-            if ($matches[1] < 0 || $matches[1] > 360) { return false;
+            if ($matches[1] < 0 || $matches[1] > 360) {
+                return false;
             }
-            if ($matches[2] < 0 || $matches[2] > 100) { return false;
+            if ($matches[2] < 0 || $matches[2] > 100) {
+                return false;
             }
-            if ($matches[3] < 0 || $matches[3] > 100) { return false;
+            if ($matches[3] < 0 || $matches[3] > 100) {
+                return false;
             }
             return true;
         }
 
         if (preg_match('/^hsla\((\d{1,3}),\s*(\d{1,3})%,\s*(\d{1,3})%,\s*([0-1](\.\d+)?)\)$/', $color, $matches)) {
-            if ($matches[1] < 0 || $matches[1] > 360) { return false;
+            if ($matches[1] < 0 || $matches[1] > 360) {
+                return false;
             }
-            if ($matches[2] < 0 || $matches[2] > 100) { return false;
+            if ($matches[2] < 0 || $matches[2] > 100) {
+                return false;
             }
-            if ($matches[3] < 0 || $matches[3] > 100) { return false;
+            if ($matches[3] < 0 || $matches[3] > 100) {
+                return false;
             }
-            if ($matches[4] < 0 || $matches[4] > 1) { return false;
+            if ($matches[4] < 0 || $matches[4] > 1) {
+                return false;
             }
             return true;
         }
@@ -1051,47 +1064,47 @@ class PDF_Builder_Canvas_Elements_Manager
         $max_height = $constraints['max_height'] ?? 2000;
 
         switch ($handle) {
-        case 'nw': // Nord-Ouest
-            $new_width = max($min_width, $current_width - $delta_x);
-            $new_height = max($min_height, $current_height - $delta_y);
-            $new_x = $current_x + ($current_width - $new_width);
-            $new_y = $current_y + ($current_height - $new_height);
-            break;
+            case 'nw': // Nord-Ouest
+                $new_width = max($min_width, $current_width - $delta_x);
+                $new_height = max($min_height, $current_height - $delta_y);
+                $new_x = $current_x + ($current_width - $new_width);
+                $new_y = $current_y + ($current_height - $new_height);
+                break;
 
-        case 'ne': // Nord-Est
-            $new_width = max($min_width, $current_width + $delta_x);
-            $new_height = max($min_height, $current_height - $delta_y);
-            $new_y = $current_y + ($current_height - $new_height);
-            break;
+            case 'ne': // Nord-Est
+                $new_width = max($min_width, $current_width + $delta_x);
+                $new_height = max($min_height, $current_height - $delta_y);
+                $new_y = $current_y + ($current_height - $new_height);
+                break;
 
-        case 'sw': // Sud-Ouest
-            $new_width = max($min_width, $current_width - $delta_x);
-            $new_height = max($min_height, $current_height + $delta_y);
-            $new_x = $current_x + ($current_width - $new_width);
-            break;
+            case 'sw': // Sud-Ouest
+                $new_width = max($min_width, $current_width - $delta_x);
+                $new_height = max($min_height, $current_height + $delta_y);
+                $new_x = $current_x + ($current_width - $new_width);
+                break;
 
-        case 'se': // Sud-Est
-            $new_width = max($min_width, $current_width + $delta_x);
-            $new_height = max($min_height, $current_height + $delta_y);
-            break;
+            case 'se': // Sud-Est
+                $new_width = max($min_width, $current_width + $delta_x);
+                $new_height = max($min_height, $current_height + $delta_y);
+                break;
 
-        case 'n': // Nord
-            $new_height = max($min_height, $current_height - $delta_y);
-            $new_y = $current_y + ($current_height - $new_height);
-            break;
+            case 'n': // Nord
+                $new_height = max($min_height, $current_height - $delta_y);
+                $new_y = $current_y + ($current_height - $new_height);
+                break;
 
-        case 's': // Sud
-            $new_height = max($min_height, $current_height + $delta_y);
-            break;
+            case 's': // Sud
+                $new_height = max($min_height, $current_height + $delta_y);
+                break;
 
-        case 'w': // Ouest
-            $new_width = max($min_width, $current_width - $delta_x);
-            $new_x = $current_x + ($current_width - $new_width);
-            break;
+            case 'w': // Ouest
+                $new_width = max($min_width, $current_width - $delta_x);
+                $new_x = $current_x + ($current_width - $new_width);
+                break;
 
-        case 'e': // Est
-            $new_width = max($min_width, $current_width + $delta_x);
-            break;
+            case 'e': // Est
+                $new_width = max($min_width, $current_width + $delta_x);
+                break;
         }
 
         // Appliquer les contraintes maximales
@@ -1125,21 +1138,29 @@ class PDF_Builder_Canvas_Elements_Manager
         $near_top = $mouse_y >= $element_y - $threshold && $mouse_y <= $element_y + $threshold;
         $near_bottom = $mouse_y >= $element_y + $element_height - $threshold && $mouse_y <= $element_y + $element_height + $threshold;
 
-        if ($near_top && $near_left) { return 'nw';
+        if ($near_top && $near_left) {
+            return 'nw';
         }
-        if ($near_top && $near_right) { return 'ne';
+        if ($near_top && $near_right) {
+            return 'ne';
         }
-        if ($near_bottom && $near_left) { return 'sw';
+        if ($near_bottom && $near_left) {
+            return 'sw';
         }
-        if ($near_bottom && $near_right) { return 'se';
+        if ($near_bottom && $near_right) {
+            return 'se';
         }
-        if ($near_top) { return 'n';
+        if ($near_top) {
+            return 'n';
         }
-        if ($near_bottom) { return 's';
+        if ($near_bottom) {
+            return 's';
         }
-        if ($near_left) { return 'w';
+        if ($near_left) {
+            return 'w';
         }
-        if ($near_right) { return 'e';
+        if ($near_right) {
+            return 'e';
         }
 
         return null;
@@ -1179,7 +1200,8 @@ class PDF_Builder_Canvas_Elements_Manager
         $collisions = [];
 
         foreach ($other_elements as $other_element) {
-            if ($other_element['id'] === $element['id']) { continue;
+            if ($other_element['id'] === $element['id']) {
+                continue;
             }
 
             $other_bounds = [
@@ -1299,17 +1321,17 @@ class PDF_Builder_Canvas_Elements_Manager
      */
     public function load_canvas_elements($template_id)
     {
-        
+
         // Charger le template depuis la base de données
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-        
+
         $template = $wpdb->get_row(
             $wpdb->prepare("SELECT template_data FROM $table_templates WHERE id = %d", $template_id),
             ARRAY_A
         );
-        
-        
+
+
         if (!$template) {
             return [];
         }
@@ -1319,7 +1341,7 @@ class PDF_Builder_Canvas_Elements_Manager
         if (json_last_error() !== JSON_ERROR_NONE) {
             return [];
         }
-        
+
 
         // Extraire et valider les éléments du canvas
         $elements = [];
@@ -1329,19 +1351,16 @@ class PDF_Builder_Canvas_Elements_Manager
                 wp_json_encode($template_data['elements']),
                 "template_load_{$template_id}"
             );
-            
+
             if (is_wp_error($validated_elements)) {
                 // Retourner les éléments bruts si la validation échoue (pour éviter de perdre des données)
                 $elements = $template_data['elements'];
             } else {
                 $elements = $validated_elements;
             }
-            
         } else {
         }
 
         return $elements;
     }
 }
-
-

@@ -114,19 +114,13 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
     canvasState.updateElement(elementId, updates);
   }, [canvasState]);
 
-  // Fonctions Undo/Redo
+  // Fonctions Undo/Redo - utilisent directement celles du canvasState
   const handleUndo = useCallback(() => {
-    const previousState = canvasState.history.undo();
-    if (previousState) {
-      canvasState.setElements(previousState);
-    }
+    canvasState.undo();
   }, [canvasState]);
 
   const handleRedo = useCallback(() => {
-    const nextState = canvasState.history.redo();
-    if (nextState) {
-      canvasState.setElements(nextState);
-    }
+    canvasState.redo();
   }, [canvasState]);
 
   // Handler pour créer un nouveau template

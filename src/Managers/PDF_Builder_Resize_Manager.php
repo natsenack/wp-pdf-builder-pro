@@ -1,4 +1,5 @@
 <?php
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -17,7 +18,6 @@ if (!defined('ABSPATH')) {
  */
 class PDF_Builder_Resize_Manager
 {
-
     /**
      * Instance singleton
      *
@@ -89,7 +89,8 @@ class PDF_Builder_Resize_Manager
                 'max_height' => 2000,
                 'maintain_aspect_ratio' => false,
                 'aspect_ratio' => null
-                ], $constraints
+                ],
+                $constraints
             ),
             'start_time' => time(),
             'is_active' => true,
@@ -100,7 +101,9 @@ class PDF_Builder_Resize_Manager
 
         // Logger l'événement
         $this->log_resize_event(
-            'start', $session_id, [
+            'start',
+            $session_id,
+            [
             'element_id' => $element_id,
             'handle' => $handle,
             'initial_size' => $initial_size
@@ -206,7 +209,9 @@ class PDF_Builder_Resize_Manager
 
         // Logger l'événement
         $this->log_resize_event(
-            'end', $session_id, [
+            'end',
+            $session_id,
+            [
             'duration' => $session['duration'],
             'has_resized' => $session['has_resized'],
             'final_size' => $session['current_size'],
@@ -256,8 +261,9 @@ class PDF_Builder_Resize_Manager
             $errors[] = 'Invalid resize handle';
         }
 
-        if (!is_array($initial_size) 
-            || !isset($initial_size['width']) 
+        if (
+            !is_array($initial_size)
+            || !isset($initial_size['width'])
             || !isset($initial_size['height'])
         ) {
             $errors[] = 'Invalid initial size format';
@@ -310,10 +316,13 @@ class PDF_Builder_Resize_Manager
         $logger = PDF_Builder_Logger::getInstance();
         if ($logger) {
             $logger->log(
-                'resize', $event_type, array_merge(
+                'resize',
+                $event_type,
+                array_merge(
                     [
                     'session_id' => $session_id
-                    ], $data
+                    ],
+                    $data
                 )
             );
         }
@@ -334,5 +343,3 @@ class PDF_Builder_Resize_Manager
         return $stats;
     }
 }
-
-

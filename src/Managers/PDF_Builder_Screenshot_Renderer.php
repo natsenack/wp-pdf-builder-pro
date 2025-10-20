@@ -1,4 +1,5 @@
 <?php
+
 // Empêcher l'accès direct
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
@@ -10,7 +11,6 @@ if (!defined('ABSPATH')) {
 
 class PDF_Builder_Screenshot_Renderer
 {
-
     /**
      * Instance du main plugin
      */
@@ -60,7 +60,6 @@ class PDF_Builder_Screenshot_Renderer
             }
 
             return $success ? $pdf_path : false;
-
         } catch (Exception $e) {
             error_log('Erreur génération PDF screenshot: ' . $e->getMessage());
             return false;
@@ -154,27 +153,27 @@ class PDF_Builder_Screenshot_Renderer
         $html = '<div class="canvas-element ' . esc_attr($element['type']) . '-element" style="' . $style . '">';
 
         switch ($element['type']) {
-        case 'text':
-            $html .= '<div class="text-element">' . esc_html($props['text'] ?? '') . '</div>';
-            break;
+            case 'text':
+                $html .= '<div class="text-element">' . esc_html($props['text'] ?? '') . '</div>';
+                break;
 
-        case 'image':
-            if (!empty($props['src'])) {
-                $html .= '<img src="' . esc_url($props['src']) . '" alt="' . esc_attr($props['alt'] ?? '') . '">';
-            }
-            break;
+            case 'image':
+                if (!empty($props['src'])) {
+                    $html .= '<img src="' . esc_url($props['src']) . '" alt="' . esc_attr($props['alt'] ?? '') . '">';
+                }
+                break;
 
-        case 'shape':
-            // Formes géométriques simples
-            $shape_type = $props['shape'] ?? 'rectangle';
-            if ($shape_type === 'rectangle') {
-                $html .= '<div class="shape-element" style="width: 100%; height: 100%; background: ' . esc_attr($props['fill'] ?? '#fff') . '; border: ' . esc_attr($props['strokeWidth'] ?? 1) . 'px solid ' . esc_attr($props['stroke'] ?? '#000') . ';"></div>';
-            }
-            break;
+            case 'shape':
+                // Formes géométriques simples
+                $shape_type = $props['shape'] ?? 'rectangle';
+                if ($shape_type === 'rectangle') {
+                    $html .= '<div class="shape-element" style="width: 100%; height: 100%; background: ' . esc_attr($props['fill'] ?? '#fff') . '; border: ' . esc_attr($props['strokeWidth'] ?? 1) . 'px solid ' . esc_attr($props['stroke'] ?? '#000') . ';"></div>';
+                }
+                break;
 
-        case 'line':
-            $html .= '<hr style="border: none; border-top: ' . esc_attr($props['strokeWidth'] ?? 1) . 'px solid ' . esc_attr($props['stroke'] ?? '#000') . '; margin: 0;">';
-            break;
+            case 'line':
+                $html .= '<hr style="border: none; border-top: ' . esc_attr($props['strokeWidth'] ?? 1) . 'px solid ' . esc_attr($props['stroke'] ?? '#000') . '; margin: 0;">';
+                break;
         }
 
         $html .= '</div>';
@@ -320,7 +319,6 @@ class PDF_Builder_Screenshot_Renderer
 
             $pdf->Output($pdf_path, 'F');
             return file_exists($pdf_path);
-
         } catch (Exception $e) {
             error_log('Erreur TCPDF fallback: ' . $e->getMessage());
             return false;

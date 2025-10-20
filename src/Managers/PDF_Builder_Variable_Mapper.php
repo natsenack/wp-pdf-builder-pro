@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PDF Builder Pro - Variable Mapper
  *
@@ -9,18 +10,23 @@
  * @since   5.4
  */
 
+namespace PDF_Builder\Managers;
+
+// Importer les classes nécessaires
+use DateTime;
+use WC_DateTime;
+
 if (!defined('ABSPATH')) {
     exit;
 }
 
 /**
- * Class PDF_Builder_Variable_Mapper
+ * Class PDFBuilderVariableMapper
  *
  * Handles mapping of dynamic variables to WooCommerce order data
  */
-class PDF_Builder_Variable_Mapper
+class PDFBuilderVariableMapper
 {
-
     /**
      * WooCommerce order object
      *
@@ -43,28 +49,28 @@ class PDF_Builder_Variable_Mapper
      *
      * @return array Array of variable => value mappings
      */
-    public function get_all_variables()
+    public function getAllVariables()
     {
         if (!$this->order) {
             return array_merge(
-                $this->get_order_variables(),
-                $this->get_customer_variables(),
-                $this->get_address_variables(),
-                $this->get_financial_variables(),
-                $this->get_payment_variables(),
-                $this->get_product_variables(),
-                $this->get_company_variables()
+                $this->getOrderVariables(),
+                $this->getCustomerVariables(),
+                $this->getAddressVariables(),
+                $this->getFinancialVariables(),
+                $this->getPaymentVariables(),
+                $this->getProductVariables(),
+                $this->getCompanyVariables()
             );
         }
 
         return array_merge(
-            $this->get_order_variables(),
-            $this->get_customer_variables(),
-            $this->get_address_variables(),
-            $this->get_financial_variables(),
-            $this->get_payment_variables(),
-            $this->get_product_variables(),
-            $this->get_company_variables()
+            $this->getOrderVariables(),
+            $this->getCustomerVariables(),
+            $this->getAddressVariables(),
+            $this->getFinancialVariables(),
+            $this->getPaymentVariables(),
+            $this->getProductVariables(),
+            $this->getCompanyVariables()
         );
     }
 
@@ -73,7 +79,7 @@ class PDF_Builder_Variable_Mapper
      *
      * @return array
      */
-    private function get_order_variables()
+    private function getOrderVariables()
     {
         if (!$this->order) {
             return array(
@@ -89,11 +95,11 @@ class PDF_Builder_Variable_Mapper
 
         return array(
             'order_number' => $this->order->get_order_number(),
-            'order_date' => $this->format_date($this->order->get_date_created()),
-            'order_date_time' => $this->format_datetime($this->order->get_date_created()),
-            'order_date_modified' => $this->format_date($this->order->get_date_modified()),
-            'order_total' => $this->format_currency($this->order->get_total()),
-            'order_status' => $this->get_order_status_label($this->order->get_status()),
+            'order_date' => $this->formatDate($this->order->get_date_created()),
+            'order_date_time' => $this->formatDatetime($this->order->get_date_created()),
+            'order_date_modified' => $this->formatDate($this->order->get_date_modified()),
+            'order_total' => $this->formatCurrency($this->order->get_total()),
+            'order_status' => $this->getOrderStatusLabel($this->order->get_status()),
             'currency' => $this->order->get_currency()
         );
     }
@@ -103,7 +109,7 @@ class PDF_Builder_Variable_Mapper
      *
      * @return array
      */
-    private function get_customer_variables()
+    private function getCustomerVariables()
     {
         if (!$this->order) {
             return array(
@@ -131,7 +137,7 @@ class PDF_Builder_Variable_Mapper
      *
      * @return array
      */
-    private function get_address_variables()
+    private function getAddressVariables()
     {
         if (!$this->order) {
             return array(
@@ -159,7 +165,7 @@ class PDF_Builder_Variable_Mapper
             'billing_address_2' => $this->order->get_billing_address_2(),
             'billing_city' => $this->order->get_billing_city(),
             'billing_postcode' => $this->order->get_billing_postcode(),
-            'billing_country' => $this->get_country_name($this->order->get_billing_country()),
+            'billing_country' => $this->getCountryName($this->order->get_billing_country()),
             'billing_state' => $this->order->get_billing_state()
         );
     }
@@ -169,7 +175,7 @@ class PDF_Builder_Variable_Mapper
      *
      * @return array
      */
-    private function get_financial_variables()
+    private function getFinancialVariables()
     {
         if (!$this->order) {
             return array(
@@ -182,11 +188,11 @@ class PDF_Builder_Variable_Mapper
         }
 
         return array(
-            'subtotal' => $this->format_currency($this->calculate_subtotal_with_fees()),
-            'tax_amount' => $this->format_currency($this->order->get_total_tax()),
-            'shipping_amount' => $this->format_currency($this->order->get_shipping_total()),
-            'discount_amount' => $this->format_currency($this->order->get_discount_total()),
-            'total_excl_tax' => $this->format_currency($this->order->get_total() - $this->order->get_total_tax())
+            'subtotal' => $this->formatCurrency($this->calculateSubtotalWithFees()),
+            'tax_amount' => $this->formatCurrency($this->order->get_total_tax()),
+            'shipping_amount' => $this->formatCurrency($this->order->get_shipping_total()),
+            'discount_amount' => $this->formatCurrency($this->order->get_discount_total()),
+            'total_excl_tax' => $this->formatCurrency($this->order->get_total() - $this->order->get_total_tax())
         );
     }
 
@@ -195,7 +201,7 @@ class PDF_Builder_Variable_Mapper
      *
      * @return float
      */
-    private function calculate_subtotal_with_fees()
+    private function calculateSubtotalWithFees()
     {
         if (!$this->order) {
             return 0;
@@ -216,7 +222,7 @@ class PDF_Builder_Variable_Mapper
      *
      * @return array
      */
-    private function get_payment_variables()
+    private function getPaymentVariables()
     {
         if (!$this->order) {
             return array(
@@ -238,7 +244,7 @@ class PDF_Builder_Variable_Mapper
      *
      * @return array
      */
-    private function get_product_variables()
+    private function getProductVariables()
     {
         if (!$this->order) {
             return array(
@@ -272,7 +278,7 @@ class PDF_Builder_Variable_Mapper
                     '%s (x%d) - %s',
                     $name,
                     $quantity,
-                    $this->format_currency($total)
+                    $this->formatCurrency($total)
                 );
             }
         }
@@ -280,8 +286,8 @@ class PDF_Builder_Variable_Mapper
         return array(
             'product_name' => $first_item ? $first_item->get_name() : '',
             'product_qty' => $first_item ? $first_item->get_quantity() : '',
-            'product_price' => $first_item && $first_item->get_product() ? $this->format_currency($first_item->get_product()->get_price()) : '',
-            'product_total' => $first_item ? $this->format_currency($first_item->get_total()) : '',
+            'product_price' => $first_item && $first_item->get_product() ? $this->formatCurrency($first_item->get_product()->get_price()) : '',
+            'product_total' => $first_item ? $this->formatCurrency($first_item->get_total()) : '',
             'product_sku' => $first_item && $first_item->get_product() ? $first_item->get_product()->get_sku() : '',
             'products_list' => implode("\n", $products_list)
         );
@@ -292,7 +298,7 @@ class PDF_Builder_Variable_Mapper
      *
      * @return array
      */
-    private function get_company_variables()
+    private function getCompanyVariables()
     {
         // Get company info from WooCommerce settings
         $company_name = get_option('woocommerce_store_name', '');
@@ -306,7 +312,7 @@ class PDF_Builder_Variable_Mapper
             $company_address,
             $company_city,
             $company_postcode,
-            $this->get_country_name($company_country)
+            $this->getCountryName($company_country)
             )
         );
 
@@ -324,7 +330,7 @@ class PDF_Builder_Variable_Mapper
      * @param  float $amount Amount to format
      * @return string Formatted currency
      */
-    private function format_currency($amount)
+    private function formatCurrency($amount)
     {
         return wc_price($amount, array('currency' => $this->order->get_currency()));
     }
@@ -335,9 +341,9 @@ class PDF_Builder_Variable_Mapper
      * @param  WC_DateTime|DateTime|string $date Date to format
      * @return string Formatted date
      */
-    private function format_date($date)
+    private function formatDate($date)
     {
-        if ($date instanceof WC_DateTime) {
+        if (is_a($date, 'WC_DateTime')) {
             return $date->date_i18n(get_option('date_format'));
         }
         if ($date instanceof DateTime) {
@@ -352,15 +358,15 @@ class PDF_Builder_Variable_Mapper
      * @param  WC_DateTime|DateTime|string $datetime DateTime to format
      * @return string Formatted datetime
      */
-    private function format_datetime($datetime)
+    private function formatDatetime($date)
     {
-        if ($datetime instanceof WC_DateTime) {
-            return $datetime->date_i18n(get_option('date_format') . ' ' . get_option('time_format'));
+        if (is_a($date, 'WC_DateTime')) {
+            return $date->date_i18n(get_option('date_format') . ' ' . get_option('time_format'));
         }
-        if ($datetime instanceof DateTime) {
-            return date_i18n(get_option('date_format') . ' ' . get_option('time_format'), $datetime->getTimestamp());
+        if ($date instanceof DateTime) {
+            return date_i18n(get_option('date_format') . ' ' . get_option('time_format'), $date->getTimestamp());
         }
-        return date_i18n(get_option('date_format') . ' ' . get_option('time_format'), strtotime($datetime));
+        return date_i18n(get_option('date_format') . ' ' . get_option('time_format'), strtotime($date));
     }
 
     /**
@@ -369,7 +375,7 @@ class PDF_Builder_Variable_Mapper
      * @param  string $status Order status
      * @return string Status label
      */
-    private function get_order_status_label($status)
+    private function getOrderStatusLabel($status)
     {
         $statuses = wc_get_order_statuses();
         return isset($statuses[$status]) ? $statuses[$status] : $status;
@@ -381,9 +387,9 @@ class PDF_Builder_Variable_Mapper
      * @param  string $country_code Country code
      * @return string Country name
      */
-    private function get_country_name($country_code)
+    private function getCountryName($country_code)
     {
-        if (!function_exists('WC') || !$country_code) {
+        if (!function_exists('WC') || !$country_code || !WC()->countries) {
             return $country_code;
         }
 
@@ -397,9 +403,9 @@ class PDF_Builder_Variable_Mapper
      * @param  string $text Text containing variables
      * @return string Text with variables replaced
      */
-    public function replace_variables($text)
+    public function replaceVariables($text)
     {
-        $variables = $this->get_all_variables();
+        $variables = $this->getAllVariables();
 
         foreach ($variables as $key => $value) {
             $text = str_replace('{{' . $key . '}}', $value, $text);
@@ -413,7 +419,7 @@ class PDF_Builder_Variable_Mapper
      *
      * @return array Array of fallback values
      */
-    public static function get_fallbacks()
+    public static function getFallbacks()
     {
         return array(
             'order_number' => 'N/A',
