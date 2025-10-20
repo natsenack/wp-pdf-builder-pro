@@ -8,62 +8,10 @@ import { PDFCanvasEditor } from './components/PDFCanvasEditor';
 import /* webpackMode: "eager" */ * as hooks from './hooks';
 
 
-// Système de protection et monitoring
+// Système de protection et monitoring - SIMPLIFIÉ
 const PDFBuilderSecurity = {
-    healthChecks: [],
     errors: [],
     initialized: false,
-
-    // Health check pour vérifier que toutes les dépendances sont disponibles
-    performHealthCheck() {
-
-        const checks = {
-            react: typeof React === 'object' && React.createElement,
-            reactDom: typeof ReactDOM === 'object' && ReactDOM.render,
-            // pdfCanvasEditor: PDFCanvasEditor && (typeof PDFCanvasEditor === 'function' || typeof PDFCanvasEditor === 'object'),
-            hooks: typeof hooks === 'object',
-            window: typeof window !== 'undefined',
-            document: typeof document !== 'undefined'
-        };
-
-        this.healthChecks = checks;
-        const allHealthy = Object.values(checks).every(Boolean);
-
-        // AFFICHER LE RESULTAT DU HEALTH CHECK QUOI QU'IL ARRIVE
-        const healthElement = document.createElement('div');
-        healthElement.id = 'pdf-builder-health-indicator';
-        healthElement.style.cssText = `
-            position: fixed !important;
-            bottom: 40px !important;
-            right: 10px !important;
-            background: ${allHealthy ? '#28a745' : '#dc3545'} !important;
-            color: white !important;
-            padding: 8px 12px !important;
-            border-radius: 4px !important;
-            font-size: 11px !important;
-            font-weight: bold !important;
-            z-index: 99999 !important;
-            border: 2px solid ${allHealthy ? '#1e7e34' : '#bd2130'} !important;
-            max-width: 300px !important;
-        `;
-
-        let healthText = 'HEALTH CHECK: ' + (allHealthy ? 'PASS ✓' : 'FAIL ❌') + '\n';
-        Object.entries(checks).forEach(([key, value]) => {
-            healthText += `${key}: ${value ? '✓' : '✗'}\n`;
-        });
-        healthElement.innerHTML = healthText.replace(/\n/g, '<br>');
-        document.body.appendChild(healthElement);
-
-        if (allHealthy) {
-            this.initialized = true;
-            console.log('PDF Builder Pro: Health check passed ✅', checks);
-        } else {
-            console.error('PDF Builder Pro: Health check failed ❌', checks);
-            this.initialized = false;
-        }
-
-        return allHealthy;
-    },
 
     // Log sécurisé des erreurs
     logError(error, context = '') {
@@ -468,8 +416,11 @@ window.pdfBuilderShowPreview = function(orderId, templateId, nonce) {
 
     console.log('=== PDF BUILDER PHASE 8: pdfBuilderShowPreview END ===');
 };
-    if (PDFBuilderSecurity.performHealthCheck()) {
-        window.PDFBuilderPro = pdfBuilderPro;
-        // Alias pour compatibilité
-        window.pdfBuilderPro = pdfBuilderPro;
-}
+
+// Marquer comme initialisé pour éviter les conflits
+PDFBuilderSecurity.preventMultipleInit();
+
+// Attacher à window pour WordPress - simplifié
+window.PDFBuilderPro = pdfBuilderPro;
+// Alias pour compatibilité
+window.pdfBuilderPro = pdfBuilderPro;

@@ -12323,6 +12323,7 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
 
 
 ;// ./resources/js/index.js
+function js_typeof(o) { "@babel/helpers - typeof"; return js_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, js_typeof(o); }
 function js_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function js_objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? js_ownKeys(Object(t), !0).forEach(function (r) { js_defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : js_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function js_defineProperty(e, r, t) { return (r = js_toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
@@ -12331,13 +12332,6 @@ function js_defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o 
 function js_createClass(e, r, t) { return r && js_defineProperties(e.prototype, r), t && js_defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
 function js_toPropertyKey(t) { var i = js_toPrimitive(t, "string"); return "symbol" == js_typeof(i) ? i : i + ""; }
 function js_toPrimitive(t, r) { if ("object" != js_typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != js_typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function js_slicedToArray(r, e) { return js_arrayWithHoles(r) || js_iterableToArrayLimit(r, e) || js_unsupportedIterableToArray(r, e) || js_nonIterableRest(); }
-function js_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function js_unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return js_arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? js_arrayLikeToArray(r, a) : void 0; } }
-function js_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
-function js_iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
-function js_arrayWithHoles(r) { if (Array.isArray(r)) return r; }
-function js_typeof(o) { "@babel/helpers - typeof"; return js_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, js_typeof(o); }
 // Tous les imports doivent être au niveau supérieur du module
 
 
@@ -12347,46 +12341,10 @@ function js_typeof(o) { "@babel/helpers - typeof"; return js_typeof = "function"
 // Forcer l'inclusion de tous les hooks personnalisés
 
 
-// Système de protection et monitoring
+// Système de protection et monitoring - SIMPLIFIÉ
 var PDFBuilderSecurity = {
-  healthChecks: [],
   errors: [],
   initialized: false,
-  // Health check pour vérifier que toutes les dépendances sont disponibles
-  performHealthCheck: function performHealthCheck() {
-    var checks = {
-      react: js_typeof(react) === 'object' && react.createElement,
-      reactDom: js_typeof(react_dom) === 'object' && react_dom.render,
-      // pdfCanvasEditor: PDFCanvasEditor && (typeof PDFCanvasEditor === 'function' || typeof PDFCanvasEditor === 'object'),
-      hooks: js_typeof(hooks_namespaceObject) === 'object',
-      window: typeof window !== 'undefined',
-      document: typeof document !== 'undefined'
-    };
-    this.healthChecks = checks;
-    var allHealthy = Object.values(checks).every(Boolean);
-
-    // AFFICHER LE RESULTAT DU HEALTH CHECK QUOI QU'IL ARRIVE
-    var healthElement = document.createElement('div');
-    healthElement.id = 'pdf-builder-health-indicator';
-    healthElement.style.cssText = "\n            position: fixed !important;\n            bottom: 40px !important;\n            right: 10px !important;\n            background: ".concat(allHealthy ? '#28a745' : '#dc3545', " !important;\n            color: white !important;\n            padding: 8px 12px !important;\n            border-radius: 4px !important;\n            font-size: 11px !important;\n            font-weight: bold !important;\n            z-index: 99999 !important;\n            border: 2px solid ").concat(allHealthy ? '#1e7e34' : '#bd2130', " !important;\n            max-width: 300px !important;\n        ");
-    var healthText = 'HEALTH CHECK: ' + (allHealthy ? 'PASS ✓' : 'FAIL ❌') + '\n';
-    Object.entries(checks).forEach(function (_ref) {
-      var _ref2 = js_slicedToArray(_ref, 2),
-        key = _ref2[0],
-        value = _ref2[1];
-      healthText += "".concat(key, ": ").concat(value ? '✓' : '✗', "\n");
-    });
-    healthElement.innerHTML = healthText.replace(/\n/g, '<br>');
-    document.body.appendChild(healthElement);
-    if (allHealthy) {
-      this.initialized = true;
-      console.log('PDF Builder Pro: Health check passed ✅', checks);
-    } else {
-      console.error('PDF Builder Pro: Health check failed ❌', checks);
-      this.initialized = false;
-    }
-    return allHealthy;
-  },
   // Log sécurisé des erreurs
   logError: function logError(error) {
     var _navigator, _window;
@@ -12519,9 +12477,9 @@ var PDFBuilderPro = /*#__PURE__*/function () {
         // Créer l'éditeur React avec protection
         var editorElement = /*#__PURE__*/(0,react.createElement)(PDFCanvasEditor, {
           options: defaultOptions,
-          ref: function ref(_ref3) {
+          ref: function ref(_ref) {
             // Stocker la référence du composant
-            _this.canvas = _ref3;
+            _this.canvas = _ref;
           }
         });
 
@@ -12709,11 +12667,14 @@ window.pdfBuilderShowPreview = function (orderId, templateId, nonce) {
   }
   console.log('=== PDF BUILDER PHASE 8: pdfBuilderShowPreview END ===');
 };
-if (PDFBuilderSecurity.performHealthCheck()) {
-  window.PDFBuilderPro = pdfBuilderPro;
-  // Alias pour compatibilité
-  window.pdfBuilderPro = pdfBuilderPro;
-}
+
+// Marquer comme initialisé pour éviter les conflits
+PDFBuilderSecurity.preventMultipleInit();
+
+// Attacher à window pour WordPress - simplifié
+window.PDFBuilderPro = pdfBuilderPro;
+// Alias pour compatibilité
+window.pdfBuilderPro = pdfBuilderPro;
 
 /***/ })
 
