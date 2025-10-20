@@ -1502,7 +1502,7 @@ class PDF_Builder_Admin
         // Charger d'abord les vendors (React, etc.)
         wp_enqueue_script('pdf-builder-vendors', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/vendors.js', [], '8.0.0_force_' . microtime(true), false);
 
-        wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'pdf-builder-vendors'], '8.0.0_force_' . microtime(true), false);
+        wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'pdf-builder-vendors'], '9.0.0_force_' . microtime(true) . '_' . uniqid(), false);
 
         // DEBUG: Confirm PHP deployment
         error_log('PDF Builder: Scripts enqueued - PHP deployment confirmed - TIMESTAMP: ' . time());

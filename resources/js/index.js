@@ -267,6 +267,57 @@ if (typeof window !== 'undefined') {
             console.log('=== PDF BUILDER DEBUG: pdfBuilderShowPreview START ===');
             console.log('Parameters:', { orderId, templateId, nonce });
 
+            // VERSION DE FALLBACK SIMPLE - Test de l'affichage de base
+            console.log('=== USING FALLBACK MODAL ===');
+
+            // Créer une modal simple en HTML pur
+            const modal = document.createElement('div');
+            modal.id = 'pdf-builder-fallback-modal';
+            modal.innerHTML = `
+                <div style="
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.8);
+                    z-index: 999999;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                ">
+                    <div style="
+                        background: white;
+                        padding: 20px;
+                        border-radius: 8px;
+                        max-width: 500px;
+                        width: 90%;
+                        text-align: center;
+                    ">
+                        <h2>🧪 PDF Builder - Test Modal</h2>
+                        <p><strong>Order ID:</strong> ${orderId}</p>
+                        <p><strong>Template ID:</strong> ${templateId}</p>
+                        <p><strong>Nonce:</strong> ${nonce ? nonce.substring(0, 10) + '...' : 'null'}</p>
+                        <p style="color: green; margin: 20px 0;"><strong>✅ Modal affichée avec succès !</strong></p>
+                        <p style="color: #666; font-size: 14px;">Si vous voyez ce message, la modale fonctionne.<br>Le problème est dans React.</p>
+                        <button onclick="this.parentElement.parentElement.remove()" style="
+                            background: #007cba;
+                            color: white;
+                            border: none;
+                            padding: 10px 20px;
+                            border-radius: 4px;
+                            cursor: pointer;
+                            margin-top: 15px;
+                        ">Fermer</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+            console.log('=== FALLBACK MODAL CREATED AND DISPLAYED ===');
+
+            return; // Ne pas exécuter le code React pour le moment
+
             // Créer ou récupérer la modal d'aperçu
             let modalContainer = document.getElementById('pdf-builder-preview-modal');
             if (!modalContainer) {

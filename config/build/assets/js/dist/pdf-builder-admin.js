@@ -2,7 +2,7 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 626:
+/***/ 206:
 /***/ ((__unused_webpack_module, __unused_webpack___webpack_exports__, __webpack_require__) => {
 
 
@@ -10741,1403 +10741,6 @@ var NewTemplateModal = function NewTemplateModal(_ref) {
   }, "Ouvrir le template")))));
 };
 /* harmony default export */ const components_NewTemplateModal = (NewTemplateModal);
-// EXTERNAL MODULE: ./resources/js/components/preview-system/PreviewModal.jsx + 17 modules
-var PreviewModal = __webpack_require__(669);
-;// ./resources/js/components/PDFCanvasEditor.jsx
-function PDFCanvasEditor_typeof(o) { "@babel/helpers - typeof"; return PDFCanvasEditor_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, PDFCanvasEditor_typeof(o); }
-function PDFCanvasEditor_regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return PDFCanvasEditor_regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (PDFCanvasEditor_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, PDFCanvasEditor_regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, PDFCanvasEditor_regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), PDFCanvasEditor_regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", PDFCanvasEditor_regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), PDFCanvasEditor_regeneratorDefine2(u), PDFCanvasEditor_regeneratorDefine2(u, o, "Generator"), PDFCanvasEditor_regeneratorDefine2(u, n, function () { return this; }), PDFCanvasEditor_regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (PDFCanvasEditor_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
-function PDFCanvasEditor_regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } PDFCanvasEditor_regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { PDFCanvasEditor_regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, PDFCanvasEditor_regeneratorDefine2(e, r, n, t); }
-function PDFCanvasEditor_asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
-function PDFCanvasEditor_asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { PDFCanvasEditor_asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { PDFCanvasEditor_asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
-function PDFCanvasEditor_toConsumableArray(r) { return PDFCanvasEditor_arrayWithoutHoles(r) || PDFCanvasEditor_iterableToArray(r) || PDFCanvasEditor_unsupportedIterableToArray(r) || PDFCanvasEditor_nonIterableSpread(); }
-function PDFCanvasEditor_nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function PDFCanvasEditor_iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
-function PDFCanvasEditor_arrayWithoutHoles(r) { if (Array.isArray(r)) return PDFCanvasEditor_arrayLikeToArray(r); }
-function PDFCanvasEditor_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
-function PDFCanvasEditor_objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? PDFCanvasEditor_ownKeys(Object(t), !0).forEach(function (r) { PDFCanvasEditor_defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : PDFCanvasEditor_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-function PDFCanvasEditor_defineProperty(e, r, t) { return (r = PDFCanvasEditor_toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
-function PDFCanvasEditor_toPropertyKey(t) { var i = PDFCanvasEditor_toPrimitive(t, "string"); return "symbol" == PDFCanvasEditor_typeof(i) ? i : i + ""; }
-function PDFCanvasEditor_toPrimitive(t, r) { if ("object" != PDFCanvasEditor_typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != PDFCanvasEditor_typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function PDFCanvasEditor_slicedToArray(r, e) { return PDFCanvasEditor_arrayWithHoles(r) || PDFCanvasEditor_iterableToArrayLimit(r, e) || PDFCanvasEditor_unsupportedIterableToArray(r, e) || PDFCanvasEditor_nonIterableRest(); }
-function PDFCanvasEditor_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function PDFCanvasEditor_unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return PDFCanvasEditor_arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? PDFCanvasEditor_arrayLikeToArray(r, a) : void 0; } }
-function PDFCanvasEditor_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
-function PDFCanvasEditor_iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
-function PDFCanvasEditor_arrayWithHoles(r) { if (Array.isArray(r)) return r; }
-
-
-
-
-
-
-
-
-
-// Import direct des composants (plus de lazy loading)
-
-
-
-
-
-
-// Import du système d'aperçu unifié
-
-var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
-  var options = _ref.options;
-  var _useState = (0,react.useState)('select'),
-    _useState2 = PDFCanvasEditor_slicedToArray(_useState, 2),
-    tool = _useState2[0],
-    setTool = _useState2[1];
-  var _useState3 = (0,react.useState)(false),
-    _useState4 = PDFCanvasEditor_slicedToArray(_useState3, 2),
-    showNewTemplateModal = _useState4[0],
-    setShowNewTemplateModal = _useState4[1];
-  var _useState5 = (0,react.useState)(false),
-    _useState6 = PDFCanvasEditor_slicedToArray(_useState5, 2),
-    isPropertiesCollapsed = _useState6[0],
-    setIsPropertiesCollapsed = _useState6[1];
-  var _useState7 = (0,react.useState)(false),
-    _useState8 = PDFCanvasEditor_slicedToArray(_useState7, 2),
-    showPreviewModal = _useState8[0],
-    setShowPreviewModal = _useState8[1];
-
-  // États pour le pan et la navigation
-  var _useState9 = (0,react.useState)({
-      x: 0,
-      y: 0
-    }),
-    _useState0 = PDFCanvasEditor_slicedToArray(_useState9, 2),
-    panOffset = _useState0[0],
-    setPanOffset = _useState0[1];
-  var _useState1 = (0,react.useState)(false),
-    _useState10 = PDFCanvasEditor_slicedToArray(_useState1, 2),
-    isPanning = _useState10[0],
-    setIsPanning = _useState10[1];
-  var _useState11 = (0,react.useState)({
-      x: 0,
-      y: 0
-    }),
-    _useState12 = PDFCanvasEditor_slicedToArray(_useState11, 2),
-    lastPanPoint = _useState12[0],
-    setLastPanPoint = _useState12[1];
-
-  // États pour les guides
-  var _useState13 = (0,react.useState)({
-      horizontal: [],
-      vertical: []
-    }),
-    _useState14 = PDFCanvasEditor_slicedToArray(_useState13, 2),
-    guides = _useState14[0],
-    setGuides = _useState14[1];
-  var _useState15 = (0,react.useState)(false),
-    _useState16 = PDFCanvasEditor_slicedToArray(_useState15, 2),
-    isCreatingGuide = _useState16[0],
-    setIsCreatingGuide = _useState16[1];
-  var _useState17 = (0,react.useState)(null),
-    _useState18 = PDFCanvasEditor_slicedToArray(_useState17, 2),
-    guideCreationType = _useState18[0],
-    setGuideCreationType = _useState18[1]; // 'horizontal' or 'vertical'
-
-  // Hook pour les paramètres globaux
-  var globalSettings = useGlobalSettings();
-
-  // Fonctions pour gérer les guides
-  var addHorizontalGuide = (0,react.useCallback)(function (y) {
-    if (!globalSettings.settings.lockGuides) {
-      setGuides(function (prev) {
-        return PDFCanvasEditor_objectSpread(PDFCanvasEditor_objectSpread({}, prev), {}, {
-          horizontal: [].concat(PDFCanvasEditor_toConsumableArray(prev.horizontal), [y]).sort(function (a, b) {
-            return a - b;
-          })
-        });
-      });
-    }
-  }, [globalSettings.settings.lockGuides]);
-  var addVerticalGuide = (0,react.useCallback)(function (x) {
-    if (!globalSettings.settings.lockGuides) {
-      setGuides(function (prev) {
-        return PDFCanvasEditor_objectSpread(PDFCanvasEditor_objectSpread({}, prev), {}, {
-          vertical: [].concat(PDFCanvasEditor_toConsumableArray(prev.vertical), [x]).sort(function (a, b) {
-            return a - b;
-          })
-        });
-      });
-    }
-  }, [globalSettings.settings.lockGuides]);
-  var removeGuide = (0,react.useCallback)(function (type, position) {
-    if (!globalSettings.settings.lockGuides) {
-      setGuides(function (prev) {
-        return PDFCanvasEditor_objectSpread(PDFCanvasEditor_objectSpread({}, prev), {}, PDFCanvasEditor_defineProperty({}, type, prev[type].filter(function (pos) {
-          return pos !== position;
-        })));
-      });
-    }
-  }, [globalSettings.settings.lockGuides]);
-
-  // Données de commande WooCommerce (passées via options ou données de test)
-  var orderData = options.orderData || {
-    invoice_number: 'INV-001',
-    invoice_date: '15/10/2025',
-    order_number: '#12345',
-    order_date: '15/10/2025',
-    customer_name: 'John Doe',
-    customer_email: 'john.doe@example.com',
-    billing_address: '123 Rue de Test\n75001 Paris\nFrance',
-    shipping_address: '456 Rue de Livraison\n75002 Paris\nFrance',
-    payment_method: 'Carte bancaire',
-    order_status: 'Traitée',
-    subtotal: '45,00 €',
-    discount: '-5,00 €',
-    shipping: '5,00 €',
-    tax: '9,00 €',
-    total: '54,00 €',
-    refund: '0,00 €',
-    fees: '1,50 €',
-    quote_number: 'QUO-001',
-    quote_date: '15/10/2025',
-    quote_validity: '30 jours',
-    quote_notes: 'Conditions spéciales : paiement à 30 jours.',
-    products: [{
-      name: 'Produit Test 1',
-      quantity: 1,
-      price: '25,00 €',
-      total: '25,00 €'
-    }, {
-      name: 'Produit Test 2',
-      quantity: 2,
-      price: '10,00 €',
-      total: '20,00 €'
-    }]
-  };
-  var canvasState = useCanvasState({
-    initialElements: options.initialElements || [],
-    templateId: options.templateId || null,
-    canvasWidth: options.width || 595,
-    canvasHeight: options.height || 842,
-    globalSettings: globalSettings.settings
-  });
-
-  // Hook pour l'historique Undo/Redo - REMOVED: utilise maintenant canvasState.history
-  // const history = useHistory({ maxHistorySize: globalSettings.settings.undoLevels || 50 });
-
-  // Fonction wrapper pour les mises à jour avec historique
-  var updateElementWithHistory = (0,react.useCallback)(function (elementId, updates) {
-    var description = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'Modifier élément';
-    // Sauvegarder l'état actuel avant modification
-    var currentElements = canvasState.getAllElements();
-    canvasState.history.addToHistory(currentElements, description);
-
-    // Appliquer la mise à jour
-    canvasState.updateElement(elementId, updates);
-  }, [canvasState]);
-
-  // Fonctions Undo/Redo
-  var handleUndo = (0,react.useCallback)(function () {
-    var previousState = canvasState.history.undo();
-    if (previousState) {
-      canvasState.setElements(previousState);
-    }
-  }, [canvasState]);
-  var handleRedo = (0,react.useCallback)(function () {
-    var nextState = canvasState.history.redo();
-    if (nextState) {
-      canvasState.setElements(nextState);
-    }
-  }, [canvasState]);
-
-  // Handler pour créer un nouveau template
-  var handleCreateTemplate = (0,react.useCallback)(function (templateData) {
-    // TODO: Implémenter la logique de création du template
-    // Pour l'instant, on ferme juste la modale et on affiche les données
-    // Logging removed for production
-    alert("Template \"".concat(templateData.name, "\" cr\xE9\xE9 avec succ\xE8s!\n\nMod\xE8le: ").concat(templateData.defaultModel, "\nFormat: ").concat(templateData.paperFormat, "\nOrientation: ").concat(templateData.orientation, "\nCat\xE9gorie: ").concat(templateData.category));
-  }, []);
-
-  // Handlers pour les paramètres de grille
-  var handleShowGridChange = (0,react.useCallback)(function (showGrid) {
-    globalSettings.updateSettings({
-      showGrid: showGrid
-    });
-  }, [globalSettings]);
-  var handleSnapToGridChange = (0,react.useCallback)(function (snapToGrid) {
-    globalSettings.updateSettings({
-      snapToGrid: snapToGrid
-    });
-  }, [globalSettings]);
-  var editorRef = (0,react.useRef)(null);
-  var canvasRef = (0,react.useRef)(null);
-  var canvasContainerRef = (0,react.useRef)(null);
-
-  // Exposer les méthodes du composant via ref
-  (0,react.useImperativeHandle)(ref, function () {
-    return {
-      getElements: function getElements() {
-        return canvasState.getAllElements();
-      },
-      getRenderedHtml: function getRenderedHtml() {
-        // Cette méthode pourrait être implémentée pour retourner le HTML rendu
-        // Logging removed for production
-        return '<div>HTML rendering not yet implemented</div>';
-      }
-    };
-  }, [canvasState]);
-
-  // Hook pour le drag and drop
-  var dragAndDrop = useDragAndDrop({
-    onElementMove: function onElementMove(elementId, position) {
-      updateElementWithHistory(elementId, position, 'Déplacer élément');
-    },
-    onElementDrop: function onElementDrop(elementId, position) {
-      updateElementWithHistory(elementId, position, 'Déposer élément');
-    },
-    snapToGrid: globalSettings.settings.snapToGrid,
-    gridSize: globalSettings.settings.gridSize,
-    zoom: canvasState.zoom.zoom,
-    canvasWidth: canvasState.canvasWidth,
-    canvasHeight: canvasState.canvasHeight,
-    guides: guides,
-    snapToGuides: globalSettings.settings.snapToElements
-  });
-
-  // Gestion des raccourcis clavier
-  useKeyboardShortcuts({
-    onDelete: canvasState.deleteSelectedElements,
-    onCopy: canvasState.copySelectedElements,
-    onPaste: canvasState.pasteElements,
-    onUndo: handleUndo,
-    onRedo: handleRedo,
-    onSave: canvasState.saveTemplate,
-    onZoomIn: canvasState.zoom.zoomIn,
-    onZoomOut: canvasState.zoom.zoomOut
-  });
-
-  // Gestionnaire pour ajouter un élément depuis la bibliothèque
-  var handleAddElement = (0,react.useCallback)(function (elementType) {
-    var properties = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-    canvasState.addElement(elementType, properties);
-    setTool('select');
-  }, [canvasState]);
-
-  // Gestionnaire pour la sélection d'élément
-  var handleElementSelect = (0,react.useCallback)(function (elementId, event) {
-    var addToSelection = (event === null || event === void 0 ? void 0 : event.ctrlKey) || (event === null || event === void 0 ? void 0 : event.metaKey); // Ctrl ou Cmd pour multi-sélection
-    canvasState.selection.selectElement(elementId, addToSelection);
-  }, [canvasState.selection]);
-
-  // Gestionnaire pour l'impression
-  var handlePrint = (0,react.useCallback)(/*#__PURE__*/PDFCanvasEditor_asyncToGenerator(/*#__PURE__*/PDFCanvasEditor_regenerator().m(function _callee() {
-    var _window$pdfBuilderAja, _window$pdfBuilderAja2, elements, jsonString, formData, response, data, _data$data, _t, _t2;
-    return PDFCanvasEditor_regenerator().w(function (_context) {
-      while (1) switch (_context.p = _context.n) {
-        case 0:
-          _context.p = 0;
-          // Récupérer tous les éléments du canvas
-          elements = canvasState.getAllElements();
-          if (!(elements.length === 0)) {
-            _context.n = 1;
-            break;
-          }
-          alert('Aucun élément à imprimer. Ajoutez des éléments au canvas d\'abord.');
-          return _context.a(2);
-        case 1:
-          _context.p = 1;
-          jsonString = JSON.stringify(elements);
-          _context.n = 3;
-          break;
-        case 2:
-          _context.p = 2;
-          _t = _context.v;
-          console.error('❌ Erreur lors de JSON.stringify:', _t);
-          console.error('Éléments problématiques:', elements);
-          alert('Erreur de sérialisation des éléments. Vérifiez la console pour plus de détails.');
-          return _context.a(2);
-        case 3:
-          // Préparer les données pour l'AJAX
-          formData = new FormData();
-          formData.append('action', 'pdf_builder_generate_pdf');
-          formData.append('nonce', (_window$pdfBuilderAja = window.pdfBuilderAjax) === null || _window$pdfBuilderAja === void 0 ? void 0 : _window$pdfBuilderAja.nonce);
-          formData.append('elements', jsonString);
-
-          // Faire l'appel AJAX
-          _context.n = 4;
-          return fetch((_window$pdfBuilderAja2 = window.pdfBuilderAjax) === null || _window$pdfBuilderAja2 === void 0 ? void 0 : _window$pdfBuilderAja2.ajaxurl, {
-            method: 'POST',
-            body: formData
-          });
-        case 4:
-          response = _context.v;
-          if (response.ok) {
-            _context.n = 5;
-            break;
-          }
-          throw new Error("Erreur HTTP: ".concat(response.status));
-        case 5:
-          _context.n = 6;
-          return response.json();
-        case 6:
-          data = _context.v;
-          if (!data.success) {
-            _context.n = 7;
-            break;
-          }
-          // PDF généré avec succès
-          console.log('PDF généré avec succès');
-          _context.n = 8;
-          break;
-        case 7:
-          console.error('Erreur serveur:', data.data);
-          throw new Error(((_data$data = data.data) === null || _data$data === void 0 ? void 0 : _data$data.message) || 'Erreur lors de la génération du PDF');
-        case 8:
-          _context.n = 10;
-          break;
-        case 9:
-          _context.p = 9;
-          _t2 = _context.v;
-          console.error('Erreur lors de l\'impression:', _t2);
-          alert('Erreur lors de la génération du PDF: ' + _t2.message);
-        case 10:
-          return _context.a(2);
-      }
-    }, _callee, null, [[1, 2], [0, 9]]);
-  })), [canvasState]);
-
-  // Gestionnaire pour la désélection et création d'éléments
-  var handleCanvasClick = (0,react.useCallback)(function (e) {
-    // Vérifier si c'est un Ctrl+clic pour créer un guide
-    if (e.ctrlKey && globalSettings.settings.showGuides && !globalSettings.settings.lockGuides) {
-      var canvasRect = e.currentTarget.getBoundingClientRect();
-      var clickX = e.clientX - canvasRect.left;
-      var clickY = e.clientY - canvasRect.top;
-
-      // Ajuster pour le zoom et le pan
-      var adjustedX = (clickX - panOffset.x) / canvasState.zoom.zoom;
-      var adjustedY = (clickY - panOffset.y) / canvasState.zoom.zoom;
-
-      // Créer un guide horizontal ou vertical selon la position relative au centre
-      var centerX = canvasState.canvasWidth / 2;
-      var centerY = canvasState.canvasHeight / 2;
-      if (Math.abs(adjustedX - centerX) < Math.abs(adjustedY - centerY)) {
-        // Plus proche verticalement, créer guide horizontal
-        addHorizontalGuide(Math.round(adjustedY));
-      } else {
-        // Plus proche horizontalement, créer guide vertical
-        addVerticalGuide(Math.round(adjustedX));
-      }
-      return;
-    }
-
-    // Vérifier si le clic vient de la zone vide du canvas (pas d'un élément)
-    var clickedElement = e.target.closest('[data-element-id]');
-    if (clickedElement) {
-      // Si on clique sur un élément, ne rien faire ici (laissé à CanvasElement)
-      return;
-    }
-
-    // Si un outil d'ajout est sélectionné, créer l'élément
-    if (tool.startsWith('add-')) {
-      var _canvasRect = e.currentTarget.getBoundingClientRect();
-      var _clickX = e.clientX - _canvasRect.left;
-      var _clickY = e.clientY - _canvasRect.top;
-
-      // Ajuster pour le zoom
-      var _adjustedX = _clickX / canvasState.zoom.zoom;
-      var _adjustedY = _clickY / canvasState.zoom.zoom;
-      var elementType = 'text';
-      var defaultProps = {};
-
-      // Déterminer le type d'élément selon l'outil
-      switch (tool) {
-        case 'add-text':
-          elementType = 'text';
-          break;
-        case 'add-text-title':
-          elementType = 'text';
-          defaultProps = {
-            fontSize: 24,
-            fontWeight: 'bold'
-          };
-          break;
-        case 'add-text-subtitle':
-          elementType = 'text';
-          defaultProps = {
-            fontSize: 18,
-            fontWeight: 'bold'
-          };
-          break;
-        case 'add-rectangle':
-          elementType = 'rectangle';
-          break;
-        case 'add-circle':
-          elementType = 'shape-circle';
-          break;
-        case 'add-line':
-          elementType = 'line';
-          break;
-        case 'add-arrow':
-          elementType = 'shape-arrow';
-          break;
-        case 'add-triangle':
-          elementType = 'shape-triangle';
-          break;
-        case 'add-star':
-          elementType = 'shape-star';
-          break;
-        case 'add-divider':
-          elementType = 'divider';
-          break;
-        case 'add-image':
-          elementType = 'image';
-          break;
-        default:
-          // Pour les autres outils de la bibliothèque
-          if (tool.startsWith('add-')) {
-            elementType = tool.replace('add-', '');
-          }
-          break;
-      }
-      canvasState.addElement(elementType, PDFCanvasEditor_objectSpread({
-        x: Math.max(0, _adjustedX - 50),
-        y: Math.max(0, _adjustedY - 25)
-      }, defaultProps));
-
-      // Remettre l'outil de sélection après ajout
-      setTool('select');
-      return;
-    }
-
-    // Sinon, désélectionner
-    canvasState.selection.clearSelection();
-  }, [canvasState, tool]);
-
-  // Gestionnaire pour les changements de propriétés
-  var handlePropertyChange = (0,react.useCallback)(function (elementId, property, value) {
-    // Récupérer l'élément actuel pour connaître les valeurs existantes
-    var currentElement = canvasState.getElementById(elementId);
-    if (!currentElement) return;
-
-    // Gérer les propriétés imbriquées (ex: "columns.image" -> { columns: { image: value } })
-    var updates = {};
-    if (property.includes('.')) {
-      // Fonction récursive pour mettre à jour les propriétés imbriquées
-      // en préservant toutes les valeurs existantes
-      var updateNestedProperty = function updateNestedProperty(existingObj, path, val) {
-        var keys = path.split('.');
-        var lastKey = keys.pop();
-
-        // Commencer avec une copie complète de l'objet existant
-        var result = PDFCanvasEditor_objectSpread({}, existingObj);
-        var current = result;
-
-        // Naviguer jusqu'à l'avant-dernier niveau en préservant les objets existants
-        for (var i = 0; i < keys.length - 1; i++) {
-          var key = keys[i];
-          if (!current[key] || PDFCanvasEditor_typeof(current[key]) !== 'object') {
-            current[key] = {};
-          } else {
-            current[key] = PDFCanvasEditor_objectSpread({}, current[key]);
-          }
-          current = current[key];
-        }
-
-        // Pour le dernier niveau (avant la propriété finale)
-        var parentKey = keys[keys.length - 1];
-        if (parentKey) {
-          if (!current[parentKey] || PDFCanvasEditor_typeof(current[parentKey]) !== 'object') {
-            current[parentKey] = {};
-          } else {
-            current[parentKey] = PDFCanvasEditor_objectSpread({}, current[parentKey]);
-          }
-          current[parentKey][lastKey] = val;
-        } else {
-          // Propriété directement sur l'objet racine
-          current[lastKey] = val;
-        }
-        return result;
-      };
-
-      // Créer l'update en préservant toutes les propriétés existantes
-      var fullUpdate = updateNestedProperty(currentElement, property, value);
-      Object.assign(updates, fullUpdate);
-    } else {
-      updates[property] = value;
-    }
-    updateElementWithHistory(elementId, updates, "Modifier ".concat(property));
-  }, [canvasState, updateElementWithHistory]);
-
-  // Gestionnaire pour les mises à jour par lot
-  var handleBatchUpdate = (0,react.useCallback)(function (updates) {
-    updates.forEach(function (_ref3) {
-      var elementId = _ref3.elementId,
-        property = _ref3.property,
-        value = _ref3.value;
-      canvasState.updateElement(elementId, PDFCanvasEditor_defineProperty({}, property, value));
-    });
-  }, [canvasState]);
-
-  // Gestionnaire du menu contextuel
-  var handleContextMenu = (0,react.useCallback)(function (e) {
-    var elementId = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-    e.preventDefault();
-    var menuItems = [];
-    if (elementId) {
-      // Menu contextuel pour un élément spécifique
-      var element = canvasState.getElementById(elementId);
-      if (element) {
-        menuItems.push({
-          label: 'Copier',
-          action: function action() {
-            return canvasState.copySelectedElements();
-          }
-        }, {
-          label: 'Dupliquer',
-          action: function action() {
-            return canvasState.duplicateElement(elementId);
-          }
-        }, {
-          type: 'separator'
-        }, {
-          label: 'Supprimer',
-          action: function action() {
-            return canvasState.deleteElement(elementId);
-          }
-        });
-      }
-    } else {
-      // Menu contextuel pour le canvas vide
-      var hasSelection = canvasState.selection.selectedElements.length > 0;
-      if (hasSelection) {
-        menuItems.push({
-          label: 'Copier',
-          action: function action() {
-            return canvasState.copySelectedElements();
-          }
-        }, {
-          label: 'Dupliquer',
-          action: function action() {
-            return canvasState.duplicateSelectedElements();
-          }
-        }, {
-          type: 'separator'
-        }, {
-          label: 'Supprimer',
-          action: function action() {
-            return canvasState.deleteSelectedElements();
-          }
-        });
-      }
-      menuItems.push({
-        type: 'separator'
-      }, {
-        label: 'Coller',
-        action: function action() {
-          return canvasState.pasteElements();
-        }
-      }, {
-        type: 'separator'
-      }, {
-        label: 'Tout sélectionner',
-        action: function action() {
-          return canvasState.selectAll();
-        }
-      }, {
-        label: 'Désélectionner',
-        action: function action() {
-          return canvasState.selection.clearSelection();
-        }
-      });
-    }
-    canvasState.showContextMenu(e.clientX, e.clientY, menuItems);
-  }, [canvasState]);
-
-  // Gestionnaire pour les actions du menu contextuel
-  var handleContextMenuAction = (0,react.useCallback)(function (action) {
-    if (typeof action === 'function') {
-      action();
-    }
-  }, []);
-
-  // Fonction pour déterminer le curseur selon l'outil sélectionné
-  var getCursorStyle = (0,react.useCallback)(function () {
-    if (isPanning) return 'grabbing';
-    switch (tool) {
-      case 'select':
-        return 'default';
-      case 'add-text':
-      case 'add-text-title':
-      case 'add-text-subtitle':
-        return 'text';
-      case 'add-rectangle':
-      case 'add-circle':
-      case 'add-line':
-      case 'add-arrow':
-      case 'add-triangle':
-      case 'add-star':
-      case 'add-divider':
-      case 'add-image':
-        return 'crosshair';
-      default:
-        return 'default';
-    }
-  }, [tool, isPanning]);
-
-  // Gestionnaire pour le drag over
-  var handleDragOver = (0,react.useCallback)(function (e) {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'copy';
-  }, []);
-
-  // Gestionnaire pour le drop
-  var handleDrop = (0,react.useCallback)(function (e) {
-    e.preventDefault();
-    try {
-      var jsonData = e.dataTransfer.getData('application/json');
-
-      // Vérifier si les données existent et ne sont pas vides
-      if (!jsonData || jsonData.trim() === '') {
-        // C'est probablement un drop normal (image, fichier, etc.) - ignorer silencieusement
-        return;
-      }
-      var data = JSON.parse(jsonData);
-      if (data.type === 'new-element') {
-        var canvasRect = e.currentTarget.getBoundingClientRect();
-        var dropX = e.clientX - canvasRect.left;
-        var dropY = e.clientY - canvasRect.top;
-
-        // Ajuster pour le zoom
-        var adjustedX = dropX / canvasState.zoom.zoom;
-        var adjustedY = dropY / canvasState.zoom.zoom;
-        canvasState.addElement(data.elementType, PDFCanvasEditor_objectSpread({
-          x: Math.max(0, adjustedX - 50),
-          // Centrer l'élément sur le point de drop
-          y: Math.max(0, adjustedY - 25)
-        }, data.defaultProps));
-      }
-    } catch (error) {
-      // Ne logger que les vraies erreurs (pas les drops normaux)
-      if (error instanceof SyntaxError && e.dataTransfer.getData('application/json')) {
-        console.error('Erreur lors du parsing des données de drop:', error);
-      }
-      // Pour les autres types de drop (fichiers, images, etc.), ignorer silencieusement
-    }
-  }, [canvasState]);
-
-  // Gestionnaire pour le zoom avec la molette
-  var handleWheel = (0,react.useCallback)(function (e) {
-    if (!globalSettings.settings.zoomWithWheel) return;
-    e.preventDefault();
-
-    // Calculer le facteur de zoom basé sur les paramètres globaux
-    var zoomFactor = 1 + globalSettings.settings.zoomStep / 100;
-
-    // Déterminer si on zoome ou dézoome
-    var delta = e.deltaY > 0 ? -1 : 1;
-
-    // Calculer les coordonnées de la souris relatives au conteneur
-    var container = canvasContainerRef.current;
-    if (!container) return;
-    var rect = container.getBoundingClientRect();
-    var mouseX = e.clientX - rect.left;
-    var mouseY = e.clientY - rect.top;
-
-    // Appliquer le zoom vers le point de la souris
-    var finalZoomFactor = delta > 0 ? zoomFactor : 1 / zoomFactor;
-    canvasState.zoom.zoomToPoint(mouseX, mouseY, finalZoomFactor);
-  }, [globalSettings.settings.zoomWithWheel, globalSettings.settings.zoomStep, canvasState.zoom]);
-
-  // Attacher le gestionnaire de roue de manière non-passive pour permettre preventDefault
-  (0,react.useEffect)(function () {
-    var container = canvasContainerRef.current;
-    if (!container || !globalSettings.settings.zoomWithWheel) return;
-    var handleWheelEvent = function handleWheelEvent(e) {
-      handleWheel(e);
-    };
-    container.addEventListener('wheel', handleWheelEvent, {
-      passive: false
-    });
-    return function () {
-      container.removeEventListener('wheel', handleWheelEvent);
-    };
-  }, [handleWheel, globalSettings.settings.zoomWithWheel]);
-
-  // Gestionnaire pour le pan avec la souris (clic milieu ou espace + drag)
-  var handleMouseDown = (0,react.useCallback)(function (e) {
-    if (!globalSettings.settings.panWithMouse) return;
-
-    // Pan avec le bouton du milieu ou espace + clic gauche
-    if (e.button === 1 || e.button === 0 && e.altKey) {
-      e.preventDefault();
-      setIsPanning(true);
-      setLastPanPoint({
-        x: e.clientX,
-        y: e.clientY
-      });
-    }
-  }, [globalSettings.settings.panWithMouse]);
-  var handleMouseMove = (0,react.useCallback)(function (e) {
-    if (!isPanning) return;
-    var deltaX = e.clientX - lastPanPoint.x;
-    var deltaY = e.clientY - lastPanPoint.y;
-    setPanOffset(function (prev) {
-      return {
-        x: prev.x + deltaX,
-        y: prev.y + deltaY
-      };
-    });
-    setLastPanPoint({
-      x: e.clientX,
-      y: e.clientY
-    });
-  }, [isPanning, lastPanPoint]);
-  var handleMouseUp = (0,react.useCallback)(function () {
-    setIsPanning(false);
-  }, []);
-
-  // Gestionnaire pour double-clic
-  var handleDoubleClick = (0,react.useCallback)(function (e) {
-    if (!globalSettings.settings.zoomToSelection) return;
-
-    // Vérifier qu'il n'y a pas d'élément cliqué (double-clic sur le fond)
-    var clickedElement = e.target.closest('[data-element-id]');
-    if (clickedElement) return;
-
-    // Si des éléments sont sélectionnés, zoomer dessus
-    if (canvasState.selection.selectedElements.length > 0) {
-      canvasState.zoomToSelection();
-    }
-  }, [globalSettings.settings.zoomToSelection, canvasState]);
-  return /*#__PURE__*/react.createElement("div", {
-    className: "pdf-canvas-editor",
-    ref: editorRef
-  }, /*#__PURE__*/react.createElement("header", {
-    className: "editor-header"
-  }, /*#__PURE__*/react.createElement("h2", null, "\xC9diteur PDF - ", options.isNew ? 'Nouveau Template' : options.templateName), /*#__PURE__*/react.createElement("nav", {
-    className: "editor-actions"
-  }, /*#__PURE__*/react.createElement("button", {
-    className: "btn btn-outline preview-button",
-    onClick: function onClick() {
-      return setShowPreviewModal(true);
-    },
-    title: "Aper\xE7u du PDF (Ctrl+P)"
-  }, "\uD83D\uDC41\uFE0F Aper\xE7u"), /*#__PURE__*/react.createElement("button", {
-    className: "btn btn-outline",
-    onClick: function onClick() {
-      return setShowNewTemplateModal(true);
-    },
-    title: "Cr\xE9er un nouveau template"
-  }, "\u2795 Nouveau template"), /*#__PURE__*/react.createElement("button", {
-    className: "btn btn-primary",
-    onClick: function onClick() {
-      return canvasState.saveTemplate();
-    },
-    disabled: canvasState.isSaving
-  }, canvasState.isSaving ? '⏳ Sauvegarde...' : options.isNew ? '💾 Sauvegarder' : '✏️ Modifier'))), /*#__PURE__*/react.createElement(Toolbar, {
-    selectedTool: tool,
-    onToolSelect: setTool,
-    zoom: canvasState.zoom.zoom,
-    onZoomChange: canvasState.zoom.setZoomLevel,
-    showGrid: globalSettings.settings.showGrid,
-    onShowGridChange: handleShowGridChange,
-    snapToGrid: globalSettings.settings.snapToGrid,
-    onSnapToGridChange: handleSnapToGridChange,
-    onUndo: handleUndo,
-    onRedo: handleRedo,
-    canUndo: canvasState.history.canUndo(),
-    canRedo: canvasState.history.canRedo()
-  }), /*#__PURE__*/react.createElement("main", {
-    className: "editor-workspace"
-  }, /*#__PURE__*/react.createElement("aside", {
-    className: "editor-sidebar left-sidebar"
-  }, /*#__PURE__*/react.createElement(components_ElementLibrary, {
-    onAddElement: handleAddElement,
-    selectedTool: tool,
-    onToolSelect: setTool
-  })), /*#__PURE__*/react.createElement("section", {
-    className: "canvas-section",
-    ref: canvasContainerRef,
-    onContextMenu: handleContextMenu,
-    onDragOver: handleDragOver,
-    onDrop: handleDrop,
-    onMouseDown: handleMouseDown,
-    onMouseMove: handleMouseMove,
-    onMouseUp: handleMouseUp,
-    onMouseLeave: handleMouseUp,
-    onDoubleClick: handleDoubleClick,
-    style: {
-      cursor: getCursorStyle(),
-      backgroundColor: globalSettings.settings.containerShowTransparency ? 'transparent' : globalSettings.settings.containerBackgroundColor || '#f8f9fa',
-      backgroundImage: globalSettings.settings.containerShowTransparency ? "linear-gradient(45deg, #f0f0f0 25%, transparent 25%), linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f0f0f0 75%), linear-gradient(-45deg, transparent 75%, #f0f0f0 75%)" : 'none',
-      backgroundSize: globalSettings.settings.containerShowTransparency ? '20px 20px' : 'auto',
-      backgroundPosition: globalSettings.settings.containerShowTransparency ? '0 0, 0 10px, 10px -10px, -10px 0px' : '0 0'
-    }
-  }, /*#__PURE__*/react.createElement("div", {
-    className: "canvas-zoom-wrapper",
-    style: {
-      transform: "translate(".concat(panOffset.x, "px, ").concat(panOffset.y, "px) scale(").concat(canvasState.zoom.zoom, ")"),
-      transformOrigin: 'center',
-      cursor: isPanning ? 'grabbing' : 'default',
-      transition: globalSettings.settings.smoothZoom ? 'transform 0.2s ease-out' : 'none',
-      willChange: globalSettings.settings.enableHardwareAcceleration ? 'transform' : 'auto'
-    }
-  }, /*#__PURE__*/react.createElement("div", {
-    className: "canvas",
-    ref: canvasRef,
-    onClick: handleCanvasClick,
-    style: {
-      width: canvasState.canvasWidth,
-      height: 'auto',
-      // Laisser le CSS contrôler la hauteur pour s'adapter au conteneur 130vh
-      minHeight: canvasState.canvasHeight,
-      // Hauteur minimale pour éviter la compression excessive
-      position: 'relative',
-      backgroundColor: globalSettings.settings.canvasShowTransparency ? 'transparent' : globalSettings.settings.canvasBackgroundColor || '#ffffff',
-      backgroundImage: globalSettings.settings.canvasShowTransparency ? "linear-gradient(45deg, #f0f0f0 25%, transparent 25%), linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f0f0f0 75%), linear-gradient(-45deg, transparent 75%, #f0f0f0 75%)" : 'none',
-      backgroundSize: globalSettings.settings.canvasShowTransparency ? '20px 20px' : 'auto',
-      backgroundPosition: globalSettings.settings.canvasShowTransparency ? '0 0, 0 10px, 10px -10px, -10px 0px' : '0 0'
-    }
-  }, globalSettings.settings.showGrid && /*#__PURE__*/react.createElement("div", {
-    className: "canvas-grid",
-    style: {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      width: '100%',
-      height: '100%',
-      backgroundImage: "\n                      linear-gradient(to right, ".concat(globalSettings.settings.gridColor).concat(Math.round(globalSettings.settings.gridOpacity * 2.55).toString(16).padStart(2, '0'), " 1px, transparent 1px),\n                      linear-gradient(to bottom, ").concat(globalSettings.settings.gridColor).concat(Math.round(globalSettings.settings.gridOpacity * 2.55).toString(16).padStart(2, '0'), " 1px, transparent 1px)\n                    "),
-      backgroundSize: "".concat(globalSettings.settings.gridSize, "px ").concat(globalSettings.settings.gridSize, "px"),
-      pointerEvents: 'none',
-      zIndex: 1
-    }
-  }), globalSettings.settings.showGuides && /*#__PURE__*/react.createElement("div", {
-    className: "canvas-guides"
-  }, guides.horizontal.map(function (y, index) {
-    return /*#__PURE__*/react.createElement("div", {
-      key: "h-guide-".concat(index),
-      className: "canvas-guide horizontal-guide",
-      onClick: function onClick(e) {
-        e.stopPropagation();
-        if (!globalSettings.settings.lockGuides) {
-          removeGuide('horizontal', y);
-        }
-      },
-      style: {
-        position: 'absolute',
-        top: "".concat(y, "px"),
-        left: 0,
-        width: '100%',
-        height: '2px',
-        backgroundColor: '#007cba',
-        cursor: globalSettings.settings.lockGuides ? 'default' : 'pointer',
-        zIndex: 2,
-        opacity: 0.7
-      },
-      title: "Guide horizontal \xE0 ".concat(y, "px - ").concat(globalSettings.settings.lockGuides ? 'Verrouillé' : 'Cliquer pour supprimer')
-    });
-  }), guides.vertical.map(function (x, index) {
-    return /*#__PURE__*/react.createElement("div", {
-      key: "v-guide-".concat(index),
-      className: "canvas-guide vertical-guide",
-      onClick: function onClick(e) {
-        e.stopPropagation();
-        if (!globalSettings.settings.lockGuides) {
-          removeGuide('vertical', x);
-        }
-      },
-      style: {
-        position: 'absolute',
-        top: 0,
-        left: "".concat(x, "px"),
-        height: '100%',
-        width: '2px',
-        backgroundColor: '#007cba',
-        cursor: globalSettings.settings.lockGuides ? 'default' : 'pointer',
-        zIndex: 2,
-        opacity: 0.7
-      },
-      title: "Guide vertical \xE0 ".concat(x, "px - ").concat(globalSettings.settings.lockGuides ? 'Verrouillé' : 'Cliquer pour supprimer')
-    });
-  })), canvasState.elements.filter(function (el) {
-    return !el.type.startsWith('woocommerce-');
-  }).map(function (element) {
-    return /*#__PURE__*/react.createElement(CanvasElement, {
-      key: element.id,
-      element: element,
-      isSelected: canvasState.selection.selectedElements.includes(element.id),
-      zoom: 1,
-      snapToGrid: globalSettings.settings.snapToGrid,
-      gridSize: globalSettings.settings.gridSize,
-      canvasWidth: canvasState.canvasWidth,
-      canvasHeight: canvasState.canvasHeight,
-      onSelect: function onSelect() {
-        return handleElementSelect(element.id);
-      },
-      onUpdate: function onUpdate(updates) {
-        return canvasState.updateElement(element.id, updates);
-      },
-      onRemove: function onRemove() {
-        return canvasState.deleteElement(element.id);
-      },
-      onContextMenu: function onContextMenu(e) {
-        return handleContextMenu(e, element.id);
-      },
-      dragAndDrop: dragAndDrop,
-      enableRotation: globalSettings.settings.enableRotation,
-      rotationStep: globalSettings.settings.rotationStep,
-      rotationSnap: globalSettings.settings.rotationSnap,
-      guides: guides,
-      snapToGuides: globalSettings.settings.snapToElements
-    });
-  }), canvasState.elements.filter(function (el) {
-    return el.type.startsWith('woocommerce-');
-  }).map(function (element) {
-    return /*#__PURE__*/react.createElement(WooCommerceElements, {
-      key: element.id,
-      element: element,
-      isSelected: canvasState.selection.selectedElements.includes(element.id),
-      onSelect: handleElementSelect,
-      onUpdate: canvasState.updateElement,
-      dragAndDrop: dragAndDrop,
-      zoom: 1,
-      canvasWidth: canvasState.canvasWidth,
-      canvasHeight: canvasState.canvasHeight,
-      orderData: orderData,
-      onContextMenu: function onContextMenu(e) {
-        return handleContextMenu(e, element.id);
-      },
-      snapToGrid: globalSettings.settings.snapToGrid,
-      gridSize: globalSettings.settings.gridSize,
-      guides: guides,
-      snapToGuides: globalSettings.settings.snapToElements
-    });
-  })))), /*#__PURE__*/react.createElement("aside", {
-    className: "editor-sidebar right-sidebar ".concat(isPropertiesCollapsed ? 'collapsed' : '')
-  }, !isPropertiesCollapsed && /*#__PURE__*/react.createElement(components_PropertiesPanel, {
-    selectedElements: canvasState.selection.selectedElements,
-    elements: canvasState.elements,
-    onPropertyChange: handlePropertyChange,
-    onBatchUpdate: handleBatchUpdate
-  }))), /*#__PURE__*/react.createElement("button", {
-    className: "sidebar-toggle-fixed",
-    onClick: function onClick() {
-      return setIsPropertiesCollapsed(!isPropertiesCollapsed);
-    },
-    title: isPropertiesCollapsed ? 'Agrandir le panneau' : 'Réduire le panneau',
-    style: {
-      position: 'fixed',
-      top: '50%',
-      right: isPropertiesCollapsed ? '0px' : '350px',
-      transform: 'translateY(-50%)',
-      zIndex: 999999
-    }
-  }, isPropertiesCollapsed ? '◀' : '▶'), canvasState.contextMenu.contextMenu && /*#__PURE__*/react.createElement(components_ContextMenu, {
-    menu: canvasState.contextMenu.contextMenu,
-    onAction: handleContextMenuAction,
-    isAnimating: canvasState.contextMenu.isAnimating || false,
-    onClose: canvasState.contextMenu.hideContextMenu
-  }), /*#__PURE__*/react.createElement("footer", {
-    className: "editor-status"
-  }, /*#__PURE__*/react.createElement("span", null, "\xC9l\xE9ments: ", canvasState.elements.length), /*#__PURE__*/react.createElement("span", null, "|"), globalSettings.settings.showZoomIndicator && /*#__PURE__*/react.createElement(react.Fragment, null, /*#__PURE__*/react.createElement("span", null, "Zoom: ", Math.round(canvasState.zoom.zoom * 100), "%"), /*#__PURE__*/react.createElement("span", null, "|")), /*#__PURE__*/react.createElement("span", null, "Outil: ", tool), canvasState.selection.selectedElements.length > 0 && /*#__PURE__*/react.createElement(react.Fragment, null, /*#__PURE__*/react.createElement("span", null, "|"), /*#__PURE__*/react.createElement("span", null, "\xC9l\xE9ments s\xE9lectionn\xE9s: ", canvasState.selection.selectedElements.length))), /*#__PURE__*/react.createElement(components_NewTemplateModal, {
-    isOpen: showNewTemplateModal,
-    onClose: function onClose() {
-      return setShowNewTemplateModal(false);
-    },
-    onCreateTemplate: handleCreateTemplate
-  }), /*#__PURE__*/react.createElement(PreviewModal["default"], {
-    isOpen: showPreviewModal,
-    onClose: function onClose() {
-      return setShowPreviewModal(false);
-    },
-    mode: "canvas",
-    elements: canvasState.elements,
-    orderId: null,
-    templateData: options
-  }), /*#__PURE__*/react.createElement(FPSCounter, {
-    showFps: globalSettings.settings.showFps
-  }));
-});
-
-// Optimisation : éviter les re-renders inutiles
-/* harmony default export */ const components_PDFCanvasEditor = (/*#__PURE__*/(/* unused pure expression or super */ null && (React.memo(/*#__PURE__*/forwardRef(PDFCanvasEditor)))));
-;// ./resources/js/hooks/index.js
-
-
-
-
-
-
-
-
-
-
-;// ./resources/js/index.js
-function js_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
-function js_objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? js_ownKeys(Object(t), !0).forEach(function (r) { js_defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : js_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-function js_defineProperty(e, r, t) { return (r = js_toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
-function js_classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function js_defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, js_toPropertyKey(o.key), o); } }
-function js_createClass(e, r, t) { return r && js_defineProperties(e.prototype, r), t && js_defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
-function js_toPropertyKey(t) { var i = js_toPrimitive(t, "string"); return "symbol" == js_typeof(i) ? i : i + ""; }
-function js_toPrimitive(t, r) { if ("object" != js_typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != js_typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function js_typeof(o) { "@babel/helpers - typeof"; return js_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, js_typeof(o); }
-// Tous les imports doivent être au niveau supérieur du module
-
-
-
-
-
-// PDF BUILDER DEBUG: File loaded successfully - TIMESTAMP: ${Date.now()}
-console.log('=== PDF BUILDER FILE LOADED === TIMESTAMP:', Date.now());
-
-// Forcer l'inclusion de tous les hooks personnalisés
-
-
-// Système de protection et monitoring
-var PDFBuilderSecurity = {
-  healthChecks: [],
-  errors: [],
-  initialized: false,
-  // Health check pour vérifier que toutes les dépendances sont disponibles
-  performHealthCheck: function performHealthCheck() {
-    var checks = {
-      react: js_typeof(react) === 'object' && react.createElement,
-      reactDom: js_typeof(react_dom) === 'object' && react_dom.render,
-      pdfCanvasEditor: PDFCanvasEditor && (typeof PDFCanvasEditor === 'function' || js_typeof(PDFCanvasEditor) === 'object'),
-      hooks: js_typeof(hooks_namespaceObject) === 'object',
-      window: typeof window !== 'undefined',
-      document: typeof document !== 'undefined'
-    };
-    this.healthChecks = checks;
-    var allHealthy = Object.values(checks).every(Boolean);
-    if (allHealthy) {
-      this.initialized = true;
-    } else {
-      console.error('PDF Builder Pro: Health check failed ❌', checks);
-      this.initialized = false;
-    }
-    return allHealthy;
-  },
-  // Log sécurisé des erreurs
-  logError: function logError(error) {
-    var _navigator, _window;
-    var context = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-    var errorInfo = {
-      message: error.message,
-      stack: error.stack,
-      context: context,
-      timestamp: new Date().toISOString(),
-      userAgent: (_navigator = navigator) === null || _navigator === void 0 ? void 0 : _navigator.userAgent,
-      url: (_window = window) === null || _window === void 0 || (_window = _window.location) === null || _window === void 0 ? void 0 : _window.href
-    };
-    this.errors.push(errorInfo);
-    console.error('PDF Builder Pro Security Error:', errorInfo);
-  },
-  // Protection contre les appels multiples - améliorée
-  preventMultipleInit: function preventMultipleInit() {
-    var now = Date.now();
-    var lastInit = window._pdfBuilderLastInit || 0;
-    var timeSinceLastInit = now - lastInit;
-
-    // Si plus de 5 secondes se sont écoulées depuis la dernière initialisation,
-    // permettre une réinitialisation (utile pour les rechargements de page)
-    if (window._pdfBuilderInitialized && timeSinceLastInit < 5000) {
-      // Log silencieux au lieu d'un avertissement intrusif
-      console.debug('PDF Builder Pro: Multiple initialization attempt prevented (last init:', new Date(lastInit).toLocaleTimeString() + ')');
-      return false;
-    }
-    window._pdfBuilderInitialized = true;
-    window._pdfBuilderLastInit = now;
-    return true;
-  }
-};
-
-// Test des imports de base avec protection
-try {
-  // Exposer React globalement pour compatibilité
-  if (typeof window !== 'undefined') {
-    window.React = react;
-    window.ReactDOM = react_dom;
-  }
-} catch (error) {
-  PDFBuilderSecurity.logError(error, 'React initialization');
-  console.error('React test failed:', error);
-}
-
-// Classe principale pour l'éditeur PDF
-var PDFBuilderPro = /*#__PURE__*/function () {
-  function PDFBuilderPro() {
-    js_classCallCheck(this, PDFBuilderPro);
-    this.version = '2.0.0';
-    this.editors = new Map();
-
-    // Forcer l'inclusion des hooks (ne pas supprimer cette ligne)
-    this._hooks = hooks_namespaceObject;
-
-    // Références explicites pour forcer l'inclusion
-    this._forceInclude = {
-      useHistory: useHistory,
-      useRotation: useRotation,
-      useResize: useResize
-    };
-
-    // Forcer l'appel des hooks pour éviter le tree shaking
-    try {
-      var dummyHistory = useHistory();
-      var dummyRotation = useRotation(function () {});
-      var dummyResize = useResize();
-      this._dummyInstances = {
-        dummyHistory: dummyHistory,
-        dummyRotation: dummyRotation,
-        dummyResize: dummyResize
-      };
-    } catch (e) {
-      // Ignorer les erreurs en mode SSR
-    }
-  }
-
-  // Initialiser l'éditeur dans un conteneur
-  return js_createClass(PDFBuilderPro, [{
-    key: "init",
-    value: function init(containerId) {
-      var _this = this;
-      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      try {
-        // Vérification stricte du containerId
-        if (!containerId || typeof containerId !== 'string') {
-          throw new Error('ContainerId must be a non-empty string');
-        }
-        var container = document.getElementById(containerId);
-        if (!container) {
-          throw new Error("Container with ID \"".concat(containerId, "\" does not exist in the DOM"));
-        }
-
-        // Vérifier la disponibilité de React et ReactDOM
-        if (!react || !react_dom) {
-          throw new Error('React or ReactDOM is not available. Make sure the scripts are loaded properly.');
-        }
-
-        // Vérifier que PDFCanvasEditor est disponible
-        if (!PDFCanvasEditor) {
-          throw new Error('PDFCanvasEditor component is not available. Check for compilation errors.');
-        }
-
-        // Options par défaut avec validation
-        var defaultOptions = js_objectSpread({
-          templateId: null,
-          templateName: null,
-          isNew: true,
-          initialElements: [],
-          width: 595,
-          // A4 width in points
-          height: 842,
-          // A4 height in points
-          zoom: 1,
-          gridSize: 10,
-          snapToGrid: true
-        }, options);
-
-        // Validation des options critiques
-        if (typeof defaultOptions.width !== 'number' || defaultOptions.width <= 0) {
-          console.warn('PDFBuilderPro: Invalid width, using default A4 width');
-          defaultOptions.width = 595;
-        }
-        if (typeof defaultOptions.height !== 'number' || defaultOptions.height <= 0) {
-          console.warn('PDFBuilderPro: Invalid height, using default A4 height');
-          defaultOptions.height = 842;
-        }
-
-        // Créer l'éditeur React avec protection
-        var editorElement = /*#__PURE__*/(0,react.createElement)(PDFCanvasEditor, {
-          options: defaultOptions,
-          ref: function ref(_ref) {
-            // Stocker la référence du composant
-            _this.canvas = _ref;
-          }
-        });
-
-        // Vérifier que l'élément a été créé correctement
-        if (!editorElement) {
-          throw new Error('Failed to create React element for PDFCanvasEditor');
-        }
-        react_dom.render(editorElement, container);
-        this.editors.set(containerId, {
-          container: container,
-          options: defaultOptions
-        });
-      } catch (error) {
-        console.error('PDFBuilderPro: Failed to initialize editor:', error);
-
-        // Fallback visuel pour l'utilisateur
-        var _container = document.getElementById(containerId);
-        if (_container) {
-          _container.innerHTML = "\n                    <div style=\"\n                        color: #721c24;\n                        background-color: #f8d7da;\n                        border: 1px solid #f5c6cb;\n                        border-radius: 4px;\n                        padding: 15px;\n                        margin: 10px 0;\n                        font-family: Arial, sans-serif;\n                        font-size: 14px;\n                    \">\n                        <strong>Erreur PDF Builder Pro</strong><br>\n                        Impossible d'initialiser l'\xE9diteur. V\xE9rifiez la console pour plus de d\xE9tails.<br>\n                        <small>Erreur: ".concat(error.message, "</small>\n                    </div>\n                ");
-        }
-
-        // Re-throw pour permettre la gestion en amont si nécessaire
-        throw error;
-      }
-    }
-
-    // Détruire un éditeur
-  }, {
-    key: "destroy",
-    value: function destroy(containerId) {
-      try {
-        var editor = this.editors.get(containerId);
-        if (editor) {
-          // Vérifier que ReactDOM est disponible avant de démonter
-          if (react_dom && react_dom.unmountComponentAtNode) {
-            react_dom.unmountComponentAtNode(editor.container);
-          }
-          this.editors["delete"](containerId);
-        }
-      } catch (error) {
-        console.error('PDFBuilderPro: Error during destroy:', error);
-        // Forcer la suppression même en cas d'erreur
-        this.editors["delete"](containerId);
-      }
-    }
-
-    // Obtenir les données d'un éditeur
-  }, {
-    key: "getData",
-    value: function getData(containerId) {
-      // Cette méthode pourrait être étendue pour récupérer l'état actuel
-      return null;
-    }
-
-    // Obtenir les éléments du canvas actif
-  }, {
-    key: "getElements",
-    value: function getElements() {
-      try {
-        if (this.canvas && typeof this.canvas.getElements === 'function') {
-          return this.canvas.getElements();
-        }
-        console.warn('PDFBuilderPro: No active canvas or getElements method not available');
-        return [];
-      } catch (error) {
-        console.error('PDFBuilderPro: Error getting elements:', error);
-        return [];
-      }
-    }
-  }]);
-}(); // Instance globale
-var pdfBuilderPro = new PDFBuilderPro();
-
-// Attacher à window pour WordPress - avec vérification et protection
-if (typeof window !== 'undefined') {
-  // Effectuer le health check avant d'exposer l'instance
-  if (PDFBuilderSecurity.performHealthCheck()) {
-    window.PDFBuilderPro = pdfBuilderPro;
-    // Alias pour compatibilité
-    window.pdfBuilderPro = pdfBuilderPro;
-
-    // Fonction pour afficher l'aperçu dans la metabox WooCommerce
-    window.pdfBuilderShowPreview = function (orderId, templateId, nonce) {
-      console.log('=== PDF BUILDER DEBUG: pdfBuilderShowPreview START ===');
-      console.log('Parameters:', {
-        orderId: orderId,
-        templateId: templateId,
-        nonce: nonce
-      });
-
-      // Créer ou récupérer la modal d'aperçu
-      var modalContainer = document.getElementById('pdf-builder-preview-modal');
-      if (!modalContainer) {
-        console.log('Creating modal container');
-        modalContainer = document.createElement('div');
-        modalContainer.id = 'pdf-builder-preview-modal';
-        modalContainer.style.cssText = "\n                    position: fixed;\n                    top: 0;\n                    left: 0;\n                    width: 100%;\n                    height: 100%;\n                    background: rgba(0,0,0,0.8);\n                    z-index: 999999;\n                    display: flex;\n                    align-items: center;\n                    justify-content: center;\n                ";
-        document.body.appendChild(modalContainer);
-        console.log('Modal container created and appended');
-      } else {
-        console.log('Modal container already exists');
-      }
-
-      // Créer le conteneur React pour la modal
-      var previewRoot = document.getElementById('pdf-builder-preview-root');
-      if (!previewRoot) {
-        console.log('Creating preview root');
-        previewRoot = document.createElement('div');
-        previewRoot.id = 'pdf-builder-preview-root';
-        previewRoot.style.cssText = 'width: 100%; height: 100%;';
-        modalContainer.appendChild(previewRoot);
-        console.log('Preview root created and appended');
-      } else {
-        console.log('Preview root already exists');
-      }
-      console.log('Setting modal to display flex');
-      modalContainer.style.display = 'flex';
-      console.log('Starting dynamic import');
-
-      // Importer dynamiquement la PreviewModal
-      Promise.resolve(/* import() */).then(__webpack_require__.bind(__webpack_require__, 669)).then(function (_ref2) {
-        var PreviewModal = _ref2["default"];
-        console.log('=== PDF BUILDER SUCCESS: Import successful ===');
-
-        // Créer l'élément React pour la modal d'aperçu
-        var previewElement = /*#__PURE__*/(0,react.createElement)(PreviewModal, {
-          isOpen: true,
-          onClose: function onClose() {
-            console.log('=== PDF BUILDER: Modal close requested ===');
-            modalContainer.style.display = 'none';
-            react_dom.unmountComponentAtNode(previewRoot);
-          },
-          mode: 'metabox',
-          orderId: orderId,
-          templateId: templateId,
-          nonce: nonce
-        });
-        console.log('=== PDF BUILDER: Rendering React component ===');
-        console.log('ReactDOM available:', js_typeof(react_dom));
-        console.log('React available:', js_typeof(react));
-        console.log('createElement available:', js_typeof(react.createElement));
-
-        // Rendre la modal
-        try {
-          react_dom.render(previewElement, previewRoot);
-          modalContainer.style.display = 'flex';
-          console.log('=== PDF BUILDER: Modal should be visible now ===');
-        } catch (renderError) {
-          console.error('=== PDF BUILDER RENDER ERROR ===', renderError);
-          // Fallback: try to show an alert
-          alert('Erreur de rendu React: ' + renderError.message);
-        }
-      })["catch"](function (error) {
-        console.error('=== PDF BUILDER ERROR: Import failed ===', error);
-        alert('Erreur lors du chargement du système d\'aperçu. Veuillez recharger la page.');
-      });
-    };
-
-    // Marquer comme initialisé pour éviter les conflits
-    PDFBuilderSecurity.preventMultipleInit();
-  } else {
-    console.error('PDF Builder Pro: Not attaching to window due to health check failure');
-    // Exposer quand même une version limitée pour le debugging
-    window.PDFBuilderPro = {
-      version: '2.0.0',
-      status: 'unhealthy',
-      errors: PDFBuilderSecurity.errors,
-      healthChecks: PDFBuilderSecurity.healthChecks
-    };
-  }
-}
-
-// Export par défaut pour webpack
-/* harmony default export */ const js = ((/* unused pure expression or super */ null && (pdfBuilderPro)));
-
-/***/ }),
-
-/***/ 669:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-
-// EXPORTS
-__webpack_require__.d(__webpack_exports__, {
-  "default": () => (/* binding */ preview_system_PreviewModal)
-});
-
-// EXTERNAL MODULE: ./node_modules/react/index.js
-var react = __webpack_require__(540);
 ;// ./resources/js/components/preview-system/renderers/TextRenderer.jsx
 
 
@@ -12237,12 +10840,12 @@ var TextRenderer = function TextRenderer(_ref) {
   }, text);
 };
 ;// ./resources/js/components/preview-system/renderers/ImageRenderer.jsx
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
-function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function ImageRenderer_typeof(o) { "@babel/helpers - typeof"; return ImageRenderer_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, ImageRenderer_typeof(o); }
+function ImageRenderer_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function ImageRenderer_objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ImageRenderer_ownKeys(Object(t), !0).forEach(function (r) { ImageRenderer_defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ImageRenderer_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function ImageRenderer_defineProperty(e, r, t) { return (r = ImageRenderer_toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function ImageRenderer_toPropertyKey(t) { var i = ImageRenderer_toPrimitive(t, "string"); return "symbol" == ImageRenderer_typeof(i) ? i : i + ""; }
+function ImageRenderer_toPrimitive(t, r) { if ("object" != ImageRenderer_typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != ImageRenderer_typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 
 
 /**
@@ -12360,7 +10963,7 @@ var ImageRenderer = function ImageRenderer(_ref) {
       e.target.nextSibling.style.display = 'flex';
     }
   }) : null, /*#__PURE__*/react.createElement("div", {
-    style: _objectSpread(_objectSpread({}, placeholderStyle), {}, {
+    style: ImageRenderer_objectSpread(ImageRenderer_objectSpread({}, placeholderStyle), {}, {
       display: finalImageUrl ? 'none' : 'flex'
     })
   }, /*#__PURE__*/react.createElement("div", null, /*#__PURE__*/react.createElement("div", {
@@ -13820,22 +12423,22 @@ var PreviewRenderer = function PreviewRenderer(_ref) {
 
 ;// ./resources/js/components/preview-system/data/SampleDataProvider.jsx
 function SampleDataProvider_typeof(o) { "@babel/helpers - typeof"; return SampleDataProvider_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, SampleDataProvider_typeof(o); }
-function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
-function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
-function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
-function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
+function SampleDataProvider_slicedToArray(r, e) { return SampleDataProvider_arrayWithHoles(r) || SampleDataProvider_iterableToArrayLimit(r, e) || SampleDataProvider_unsupportedIterableToArray(r, e) || SampleDataProvider_nonIterableRest(); }
+function SampleDataProvider_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function SampleDataProvider_unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return SampleDataProvider_arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? SampleDataProvider_arrayLikeToArray(r, a) : void 0; } }
+function SampleDataProvider_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function SampleDataProvider_iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function SampleDataProvider_arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 function SampleDataProvider_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function SampleDataProvider_objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? SampleDataProvider_ownKeys(Object(t), !0).forEach(function (r) { SampleDataProvider_defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : SampleDataProvider_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function SampleDataProvider_defineProperty(e, r, t) { return (r = SampleDataProvider_toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
-function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
-function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
-function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
-function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
-function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
-function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, SampleDataProvider_toPropertyKey(o.key), o); } }
-function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function SampleDataProvider_regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return SampleDataProvider_regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (SampleDataProvider_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, SampleDataProvider_regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, SampleDataProvider_regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), SampleDataProvider_regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", SampleDataProvider_regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), SampleDataProvider_regeneratorDefine2(u), SampleDataProvider_regeneratorDefine2(u, o, "Generator"), SampleDataProvider_regeneratorDefine2(u, n, function () { return this; }), SampleDataProvider_regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (SampleDataProvider_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function SampleDataProvider_regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } SampleDataProvider_regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { SampleDataProvider_regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, SampleDataProvider_regeneratorDefine2(e, r, n, t); }
+function SampleDataProvider_asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function SampleDataProvider_asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { SampleDataProvider_asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { SampleDataProvider_asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+function SampleDataProvider_classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function SampleDataProvider_defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, SampleDataProvider_toPropertyKey(o.key), o); } }
+function SampleDataProvider_createClass(e, r, t) { return r && SampleDataProvider_defineProperties(e.prototype, r), t && SampleDataProvider_defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
 function SampleDataProvider_toPropertyKey(t) { var i = SampleDataProvider_toPrimitive(t, "string"); return "symbol" == SampleDataProvider_typeof(i) ? i : i + ""; }
 function SampleDataProvider_toPrimitive(t, r) { if ("object" != SampleDataProvider_typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != SampleDataProvider_typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 /**
@@ -13844,7 +12447,7 @@ function SampleDataProvider_toPrimitive(t, r) { if ("object" != SampleDataProvid
  */
 var SampleDataProvider = /*#__PURE__*/function () {
   function SampleDataProvider() {
-    _classCallCheck(this, SampleDataProvider);
+    SampleDataProvider_classCallCheck(this, SampleDataProvider);
     this.sampleData = {
       // Données de produits d'exemple étendues
       products: [{
@@ -14372,12 +12975,12 @@ var SampleDataProvider = /*#__PURE__*/function () {
    * @param {Object} properties - Propriétés de l'élément
    * @returns {Promise<any>} Données d'exemple
    */
-  return _createClass(SampleDataProvider, [{
+  return SampleDataProvider_createClass(SampleDataProvider, [{
     key: "getElementData",
     value: (function () {
-      var _getElementData = _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee(elementType, properties) {
+      var _getElementData = SampleDataProvider_asyncToGenerator(/*#__PURE__*/SampleDataProvider_regenerator().m(function _callee(elementType, properties) {
         var _t;
-        return _regenerator().w(function (_context) {
+        return SampleDataProvider_regenerator().w(function (_context) {
           while (1) switch (_context.n) {
             case 0:
               _t = elementType;
@@ -14509,7 +13112,7 @@ var SampleDataProvider = /*#__PURE__*/function () {
         if (activeColumns.dimensions !== false) row.push(product.dimensions || '-');
         if (activeColumns.attributes !== false) {
           var attrs = product.attributes ? Object.entries(product.attributes).map(function (_ref) {
-            var _ref2 = _slicedToArray(_ref, 2),
+            var _ref2 = SampleDataProvider_slicedToArray(_ref, 2),
               k = _ref2[0],
               v = _ref2[1];
             return "".concat(k, ": ").concat(v);
@@ -14768,12 +13371,12 @@ function CanvasMode_typeof(o) { "@babel/helpers - typeof"; return CanvasMode_typ
 function _regeneratorValues(e) { if (null != e) { var t = e["function" == typeof Symbol && Symbol.iterator || "@@iterator"], r = 0; if (t) return t.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) return { next: function next() { return e && r >= e.length && (e = void 0), { value: e && e[r++], done: !e }; } }; } throw new TypeError(CanvasMode_typeof(e) + " is not iterable"); }
 function CanvasMode_regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return CanvasMode_regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (CanvasMode_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, CanvasMode_regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, CanvasMode_regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), CanvasMode_regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", CanvasMode_regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), CanvasMode_regeneratorDefine2(u), CanvasMode_regeneratorDefine2(u, o, "Generator"), CanvasMode_regeneratorDefine2(u, n, function () { return this; }), CanvasMode_regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (CanvasMode_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
 function CanvasMode_regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } CanvasMode_regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { CanvasMode_regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, CanvasMode_regeneratorDefine2(e, r, n, t); }
-function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = CanvasMode_unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t["return"] || t["return"](); } finally { if (u) throw o; } } }; }
-function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || CanvasMode_unsupportedIterableToArray(r) || _nonIterableSpread(); }
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function CanvasMode_createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = CanvasMode_unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t["return"] || t["return"](); } finally { if (u) throw o; } } }; }
+function CanvasMode_toConsumableArray(r) { return CanvasMode_arrayWithoutHoles(r) || CanvasMode_iterableToArray(r) || CanvasMode_unsupportedIterableToArray(r) || CanvasMode_nonIterableSpread(); }
+function CanvasMode_nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function CanvasMode_unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return CanvasMode_arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? CanvasMode_arrayLikeToArray(r, a) : void 0; } }
-function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
-function _arrayWithoutHoles(r) { if (Array.isArray(r)) return CanvasMode_arrayLikeToArray(r); }
+function CanvasMode_iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function CanvasMode_arrayWithoutHoles(r) { if (Array.isArray(r)) return CanvasMode_arrayLikeToArray(r); }
 function CanvasMode_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 function CanvasMode_asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
 function CanvasMode_asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { CanvasMode_asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { CanvasMode_asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
@@ -14820,11 +13423,11 @@ var CanvasMode = /*#__PURE__*/function () {
               orderId = _args2.length > 1 && _args2[1] !== undefined ? _args2[1] : null;
               templateData = _args2.length > 2 && _args2[2] !== undefined ? _args2[2] : {};
               dataProvider = new SampleDataProvider(); // Collecter tous les types d'éléments présents
-              elementTypes = _toConsumableArray(new Set(elements.map(function (el) {
+              elementTypes = CanvasMode_toConsumableArray(new Set(elements.map(function (el) {
                 return el.type;
               }))); // Générer des données d'exemple pour chaque type d'élément
               previewData = {};
-              _iterator = _createForOfIteratorHelper(elementTypes);
+              _iterator = CanvasMode_createForOfIteratorHelper(elementTypes);
               _context2.p = 1;
               _loop = /*#__PURE__*/CanvasMode_regenerator().m(function _loop() {
                 var elementType, elementsOfType, _iterator2, _step2, element, elementKey, _t;
@@ -14835,7 +13438,7 @@ var CanvasMode = /*#__PURE__*/function () {
                       elementsOfType = elements.filter(function (el) {
                         return el.type === elementType;
                       }); // Pour chaque élément du type, générer des données spécifiques
-                      _iterator2 = _createForOfIteratorHelper(elementsOfType);
+                      _iterator2 = CanvasMode_createForOfIteratorHelper(elementsOfType);
                       _context.p = 1;
                       _iterator2.s();
                     case 2:
@@ -16334,6 +14937,1353 @@ var PreviewModal = function PreviewModal(_ref) {
   }, "\uD83D\uDCE5 PDF")))));
 };
 /* harmony default export */ const preview_system_PreviewModal = (PreviewModal);
+;// ./resources/js/components/PDFCanvasEditor.jsx
+function PDFCanvasEditor_typeof(o) { "@babel/helpers - typeof"; return PDFCanvasEditor_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, PDFCanvasEditor_typeof(o); }
+function PDFCanvasEditor_regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return PDFCanvasEditor_regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (PDFCanvasEditor_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, PDFCanvasEditor_regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, PDFCanvasEditor_regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), PDFCanvasEditor_regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", PDFCanvasEditor_regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), PDFCanvasEditor_regeneratorDefine2(u), PDFCanvasEditor_regeneratorDefine2(u, o, "Generator"), PDFCanvasEditor_regeneratorDefine2(u, n, function () { return this; }), PDFCanvasEditor_regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (PDFCanvasEditor_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
+function PDFCanvasEditor_regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } PDFCanvasEditor_regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { PDFCanvasEditor_regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, PDFCanvasEditor_regeneratorDefine2(e, r, n, t); }
+function PDFCanvasEditor_asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function PDFCanvasEditor_asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { PDFCanvasEditor_asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { PDFCanvasEditor_asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
+function PDFCanvasEditor_toConsumableArray(r) { return PDFCanvasEditor_arrayWithoutHoles(r) || PDFCanvasEditor_iterableToArray(r) || PDFCanvasEditor_unsupportedIterableToArray(r) || PDFCanvasEditor_nonIterableSpread(); }
+function PDFCanvasEditor_nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function PDFCanvasEditor_iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function PDFCanvasEditor_arrayWithoutHoles(r) { if (Array.isArray(r)) return PDFCanvasEditor_arrayLikeToArray(r); }
+function PDFCanvasEditor_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function PDFCanvasEditor_objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? PDFCanvasEditor_ownKeys(Object(t), !0).forEach(function (r) { PDFCanvasEditor_defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : PDFCanvasEditor_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function PDFCanvasEditor_defineProperty(e, r, t) { return (r = PDFCanvasEditor_toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function PDFCanvasEditor_toPropertyKey(t) { var i = PDFCanvasEditor_toPrimitive(t, "string"); return "symbol" == PDFCanvasEditor_typeof(i) ? i : i + ""; }
+function PDFCanvasEditor_toPrimitive(t, r) { if ("object" != PDFCanvasEditor_typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != PDFCanvasEditor_typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function PDFCanvasEditor_slicedToArray(r, e) { return PDFCanvasEditor_arrayWithHoles(r) || PDFCanvasEditor_iterableToArrayLimit(r, e) || PDFCanvasEditor_unsupportedIterableToArray(r, e) || PDFCanvasEditor_nonIterableRest(); }
+function PDFCanvasEditor_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function PDFCanvasEditor_unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return PDFCanvasEditor_arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? PDFCanvasEditor_arrayLikeToArray(r, a) : void 0; } }
+function PDFCanvasEditor_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function PDFCanvasEditor_iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function PDFCanvasEditor_arrayWithHoles(r) { if (Array.isArray(r)) return r; }
+
+
+
+
+
+
+
+
+
+// Import direct des composants (plus de lazy loading)
+
+
+
+
+
+
+// Import du système d'aperçu unifié
+
+var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
+  var options = _ref.options;
+  var _useState = (0,react.useState)('select'),
+    _useState2 = PDFCanvasEditor_slicedToArray(_useState, 2),
+    tool = _useState2[0],
+    setTool = _useState2[1];
+  var _useState3 = (0,react.useState)(false),
+    _useState4 = PDFCanvasEditor_slicedToArray(_useState3, 2),
+    showNewTemplateModal = _useState4[0],
+    setShowNewTemplateModal = _useState4[1];
+  var _useState5 = (0,react.useState)(false),
+    _useState6 = PDFCanvasEditor_slicedToArray(_useState5, 2),
+    isPropertiesCollapsed = _useState6[0],
+    setIsPropertiesCollapsed = _useState6[1];
+  var _useState7 = (0,react.useState)(false),
+    _useState8 = PDFCanvasEditor_slicedToArray(_useState7, 2),
+    showPreviewModal = _useState8[0],
+    setShowPreviewModal = _useState8[1];
+
+  // États pour le pan et la navigation
+  var _useState9 = (0,react.useState)({
+      x: 0,
+      y: 0
+    }),
+    _useState0 = PDFCanvasEditor_slicedToArray(_useState9, 2),
+    panOffset = _useState0[0],
+    setPanOffset = _useState0[1];
+  var _useState1 = (0,react.useState)(false),
+    _useState10 = PDFCanvasEditor_slicedToArray(_useState1, 2),
+    isPanning = _useState10[0],
+    setIsPanning = _useState10[1];
+  var _useState11 = (0,react.useState)({
+      x: 0,
+      y: 0
+    }),
+    _useState12 = PDFCanvasEditor_slicedToArray(_useState11, 2),
+    lastPanPoint = _useState12[0],
+    setLastPanPoint = _useState12[1];
+
+  // États pour les guides
+  var _useState13 = (0,react.useState)({
+      horizontal: [],
+      vertical: []
+    }),
+    _useState14 = PDFCanvasEditor_slicedToArray(_useState13, 2),
+    guides = _useState14[0],
+    setGuides = _useState14[1];
+  var _useState15 = (0,react.useState)(false),
+    _useState16 = PDFCanvasEditor_slicedToArray(_useState15, 2),
+    isCreatingGuide = _useState16[0],
+    setIsCreatingGuide = _useState16[1];
+  var _useState17 = (0,react.useState)(null),
+    _useState18 = PDFCanvasEditor_slicedToArray(_useState17, 2),
+    guideCreationType = _useState18[0],
+    setGuideCreationType = _useState18[1]; // 'horizontal' or 'vertical'
+
+  // Hook pour les paramètres globaux
+  var globalSettings = useGlobalSettings();
+
+  // Fonctions pour gérer les guides
+  var addHorizontalGuide = (0,react.useCallback)(function (y) {
+    if (!globalSettings.settings.lockGuides) {
+      setGuides(function (prev) {
+        return PDFCanvasEditor_objectSpread(PDFCanvasEditor_objectSpread({}, prev), {}, {
+          horizontal: [].concat(PDFCanvasEditor_toConsumableArray(prev.horizontal), [y]).sort(function (a, b) {
+            return a - b;
+          })
+        });
+      });
+    }
+  }, [globalSettings.settings.lockGuides]);
+  var addVerticalGuide = (0,react.useCallback)(function (x) {
+    if (!globalSettings.settings.lockGuides) {
+      setGuides(function (prev) {
+        return PDFCanvasEditor_objectSpread(PDFCanvasEditor_objectSpread({}, prev), {}, {
+          vertical: [].concat(PDFCanvasEditor_toConsumableArray(prev.vertical), [x]).sort(function (a, b) {
+            return a - b;
+          })
+        });
+      });
+    }
+  }, [globalSettings.settings.lockGuides]);
+  var removeGuide = (0,react.useCallback)(function (type, position) {
+    if (!globalSettings.settings.lockGuides) {
+      setGuides(function (prev) {
+        return PDFCanvasEditor_objectSpread(PDFCanvasEditor_objectSpread({}, prev), {}, PDFCanvasEditor_defineProperty({}, type, prev[type].filter(function (pos) {
+          return pos !== position;
+        })));
+      });
+    }
+  }, [globalSettings.settings.lockGuides]);
+
+  // Données de commande WooCommerce (passées via options ou données de test)
+  var orderData = options.orderData || {
+    invoice_number: 'INV-001',
+    invoice_date: '15/10/2025',
+    order_number: '#12345',
+    order_date: '15/10/2025',
+    customer_name: 'John Doe',
+    customer_email: 'john.doe@example.com',
+    billing_address: '123 Rue de Test\n75001 Paris\nFrance',
+    shipping_address: '456 Rue de Livraison\n75002 Paris\nFrance',
+    payment_method: 'Carte bancaire',
+    order_status: 'Traitée',
+    subtotal: '45,00 €',
+    discount: '-5,00 €',
+    shipping: '5,00 €',
+    tax: '9,00 €',
+    total: '54,00 €',
+    refund: '0,00 €',
+    fees: '1,50 €',
+    quote_number: 'QUO-001',
+    quote_date: '15/10/2025',
+    quote_validity: '30 jours',
+    quote_notes: 'Conditions spéciales : paiement à 30 jours.',
+    products: [{
+      name: 'Produit Test 1',
+      quantity: 1,
+      price: '25,00 €',
+      total: '25,00 €'
+    }, {
+      name: 'Produit Test 2',
+      quantity: 2,
+      price: '10,00 €',
+      total: '20,00 €'
+    }]
+  };
+  var canvasState = useCanvasState({
+    initialElements: options.initialElements || [],
+    templateId: options.templateId || null,
+    canvasWidth: options.width || 595,
+    canvasHeight: options.height || 842,
+    globalSettings: globalSettings.settings
+  });
+
+  // Hook pour l'historique Undo/Redo - REMOVED: utilise maintenant canvasState.history
+  // const history = useHistory({ maxHistorySize: globalSettings.settings.undoLevels || 50 });
+
+  // Fonction wrapper pour les mises à jour avec historique
+  var updateElementWithHistory = (0,react.useCallback)(function (elementId, updates) {
+    var description = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'Modifier élément';
+    // Sauvegarder l'état actuel avant modification
+    var currentElements = canvasState.getAllElements();
+    canvasState.history.addToHistory(currentElements, description);
+
+    // Appliquer la mise à jour
+    canvasState.updateElement(elementId, updates);
+  }, [canvasState]);
+
+  // Fonctions Undo/Redo
+  var handleUndo = (0,react.useCallback)(function () {
+    var previousState = canvasState.history.undo();
+    if (previousState) {
+      canvasState.setElements(previousState);
+    }
+  }, [canvasState]);
+  var handleRedo = (0,react.useCallback)(function () {
+    var nextState = canvasState.history.redo();
+    if (nextState) {
+      canvasState.setElements(nextState);
+    }
+  }, [canvasState]);
+
+  // Handler pour créer un nouveau template
+  var handleCreateTemplate = (0,react.useCallback)(function (templateData) {
+    // TODO: Implémenter la logique de création du template
+    // Pour l'instant, on ferme juste la modale et on affiche les données
+    // Logging removed for production
+    alert("Template \"".concat(templateData.name, "\" cr\xE9\xE9 avec succ\xE8s!\n\nMod\xE8le: ").concat(templateData.defaultModel, "\nFormat: ").concat(templateData.paperFormat, "\nOrientation: ").concat(templateData.orientation, "\nCat\xE9gorie: ").concat(templateData.category));
+  }, []);
+
+  // Handlers pour les paramètres de grille
+  var handleShowGridChange = (0,react.useCallback)(function (showGrid) {
+    globalSettings.updateSettings({
+      showGrid: showGrid
+    });
+  }, [globalSettings]);
+  var handleSnapToGridChange = (0,react.useCallback)(function (snapToGrid) {
+    globalSettings.updateSettings({
+      snapToGrid: snapToGrid
+    });
+  }, [globalSettings]);
+  var editorRef = (0,react.useRef)(null);
+  var canvasRef = (0,react.useRef)(null);
+  var canvasContainerRef = (0,react.useRef)(null);
+
+  // Exposer les méthodes du composant via ref
+  (0,react.useImperativeHandle)(ref, function () {
+    return {
+      getElements: function getElements() {
+        return canvasState.getAllElements();
+      },
+      getRenderedHtml: function getRenderedHtml() {
+        // Cette méthode pourrait être implémentée pour retourner le HTML rendu
+        // Logging removed for production
+        return '<div>HTML rendering not yet implemented</div>';
+      }
+    };
+  }, [canvasState]);
+
+  // Hook pour le drag and drop
+  var dragAndDrop = useDragAndDrop({
+    onElementMove: function onElementMove(elementId, position) {
+      updateElementWithHistory(elementId, position, 'Déplacer élément');
+    },
+    onElementDrop: function onElementDrop(elementId, position) {
+      updateElementWithHistory(elementId, position, 'Déposer élément');
+    },
+    snapToGrid: globalSettings.settings.snapToGrid,
+    gridSize: globalSettings.settings.gridSize,
+    zoom: canvasState.zoom.zoom,
+    canvasWidth: canvasState.canvasWidth,
+    canvasHeight: canvasState.canvasHeight,
+    guides: guides,
+    snapToGuides: globalSettings.settings.snapToElements
+  });
+
+  // Gestion des raccourcis clavier
+  useKeyboardShortcuts({
+    onDelete: canvasState.deleteSelectedElements,
+    onCopy: canvasState.copySelectedElements,
+    onPaste: canvasState.pasteElements,
+    onUndo: handleUndo,
+    onRedo: handleRedo,
+    onSave: canvasState.saveTemplate,
+    onZoomIn: canvasState.zoom.zoomIn,
+    onZoomOut: canvasState.zoom.zoomOut
+  });
+
+  // Gestionnaire pour ajouter un élément depuis la bibliothèque
+  var handleAddElement = (0,react.useCallback)(function (elementType) {
+    var properties = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    canvasState.addElement(elementType, properties);
+    setTool('select');
+  }, [canvasState]);
+
+  // Gestionnaire pour la sélection d'élément
+  var handleElementSelect = (0,react.useCallback)(function (elementId, event) {
+    var addToSelection = (event === null || event === void 0 ? void 0 : event.ctrlKey) || (event === null || event === void 0 ? void 0 : event.metaKey); // Ctrl ou Cmd pour multi-sélection
+    canvasState.selection.selectElement(elementId, addToSelection);
+  }, [canvasState.selection]);
+
+  // Gestionnaire pour l'impression
+  var handlePrint = (0,react.useCallback)(/*#__PURE__*/PDFCanvasEditor_asyncToGenerator(/*#__PURE__*/PDFCanvasEditor_regenerator().m(function _callee() {
+    var _window$pdfBuilderAja, _window$pdfBuilderAja2, elements, jsonString, formData, response, data, _data$data, _t, _t2;
+    return PDFCanvasEditor_regenerator().w(function (_context) {
+      while (1) switch (_context.p = _context.n) {
+        case 0:
+          _context.p = 0;
+          // Récupérer tous les éléments du canvas
+          elements = canvasState.getAllElements();
+          if (!(elements.length === 0)) {
+            _context.n = 1;
+            break;
+          }
+          alert('Aucun élément à imprimer. Ajoutez des éléments au canvas d\'abord.');
+          return _context.a(2);
+        case 1:
+          _context.p = 1;
+          jsonString = JSON.stringify(elements);
+          _context.n = 3;
+          break;
+        case 2:
+          _context.p = 2;
+          _t = _context.v;
+          console.error('❌ Erreur lors de JSON.stringify:', _t);
+          console.error('Éléments problématiques:', elements);
+          alert('Erreur de sérialisation des éléments. Vérifiez la console pour plus de détails.');
+          return _context.a(2);
+        case 3:
+          // Préparer les données pour l'AJAX
+          formData = new FormData();
+          formData.append('action', 'pdf_builder_generate_pdf');
+          formData.append('nonce', (_window$pdfBuilderAja = window.pdfBuilderAjax) === null || _window$pdfBuilderAja === void 0 ? void 0 : _window$pdfBuilderAja.nonce);
+          formData.append('elements', jsonString);
+
+          // Faire l'appel AJAX
+          _context.n = 4;
+          return fetch((_window$pdfBuilderAja2 = window.pdfBuilderAjax) === null || _window$pdfBuilderAja2 === void 0 ? void 0 : _window$pdfBuilderAja2.ajaxurl, {
+            method: 'POST',
+            body: formData
+          });
+        case 4:
+          response = _context.v;
+          if (response.ok) {
+            _context.n = 5;
+            break;
+          }
+          throw new Error("Erreur HTTP: ".concat(response.status));
+        case 5:
+          _context.n = 6;
+          return response.json();
+        case 6:
+          data = _context.v;
+          if (!data.success) {
+            _context.n = 7;
+            break;
+          }
+          // PDF généré avec succès
+          console.log('PDF généré avec succès');
+          _context.n = 8;
+          break;
+        case 7:
+          console.error('Erreur serveur:', data.data);
+          throw new Error(((_data$data = data.data) === null || _data$data === void 0 ? void 0 : _data$data.message) || 'Erreur lors de la génération du PDF');
+        case 8:
+          _context.n = 10;
+          break;
+        case 9:
+          _context.p = 9;
+          _t2 = _context.v;
+          console.error('Erreur lors de l\'impression:', _t2);
+          alert('Erreur lors de la génération du PDF: ' + _t2.message);
+        case 10:
+          return _context.a(2);
+      }
+    }, _callee, null, [[1, 2], [0, 9]]);
+  })), [canvasState]);
+
+  // Gestionnaire pour la désélection et création d'éléments
+  var handleCanvasClick = (0,react.useCallback)(function (e) {
+    // Vérifier si c'est un Ctrl+clic pour créer un guide
+    if (e.ctrlKey && globalSettings.settings.showGuides && !globalSettings.settings.lockGuides) {
+      var canvasRect = e.currentTarget.getBoundingClientRect();
+      var clickX = e.clientX - canvasRect.left;
+      var clickY = e.clientY - canvasRect.top;
+
+      // Ajuster pour le zoom et le pan
+      var adjustedX = (clickX - panOffset.x) / canvasState.zoom.zoom;
+      var adjustedY = (clickY - panOffset.y) / canvasState.zoom.zoom;
+
+      // Créer un guide horizontal ou vertical selon la position relative au centre
+      var centerX = canvasState.canvasWidth / 2;
+      var centerY = canvasState.canvasHeight / 2;
+      if (Math.abs(adjustedX - centerX) < Math.abs(adjustedY - centerY)) {
+        // Plus proche verticalement, créer guide horizontal
+        addHorizontalGuide(Math.round(adjustedY));
+      } else {
+        // Plus proche horizontalement, créer guide vertical
+        addVerticalGuide(Math.round(adjustedX));
+      }
+      return;
+    }
+
+    // Vérifier si le clic vient de la zone vide du canvas (pas d'un élément)
+    var clickedElement = e.target.closest('[data-element-id]');
+    if (clickedElement) {
+      // Si on clique sur un élément, ne rien faire ici (laissé à CanvasElement)
+      return;
+    }
+
+    // Si un outil d'ajout est sélectionné, créer l'élément
+    if (tool.startsWith('add-')) {
+      var _canvasRect = e.currentTarget.getBoundingClientRect();
+      var _clickX = e.clientX - _canvasRect.left;
+      var _clickY = e.clientY - _canvasRect.top;
+
+      // Ajuster pour le zoom
+      var _adjustedX = _clickX / canvasState.zoom.zoom;
+      var _adjustedY = _clickY / canvasState.zoom.zoom;
+      var elementType = 'text';
+      var defaultProps = {};
+
+      // Déterminer le type d'élément selon l'outil
+      switch (tool) {
+        case 'add-text':
+          elementType = 'text';
+          break;
+        case 'add-text-title':
+          elementType = 'text';
+          defaultProps = {
+            fontSize: 24,
+            fontWeight: 'bold'
+          };
+          break;
+        case 'add-text-subtitle':
+          elementType = 'text';
+          defaultProps = {
+            fontSize: 18,
+            fontWeight: 'bold'
+          };
+          break;
+        case 'add-rectangle':
+          elementType = 'rectangle';
+          break;
+        case 'add-circle':
+          elementType = 'shape-circle';
+          break;
+        case 'add-line':
+          elementType = 'line';
+          break;
+        case 'add-arrow':
+          elementType = 'shape-arrow';
+          break;
+        case 'add-triangle':
+          elementType = 'shape-triangle';
+          break;
+        case 'add-star':
+          elementType = 'shape-star';
+          break;
+        case 'add-divider':
+          elementType = 'divider';
+          break;
+        case 'add-image':
+          elementType = 'image';
+          break;
+        default:
+          // Pour les autres outils de la bibliothèque
+          if (tool.startsWith('add-')) {
+            elementType = tool.replace('add-', '');
+          }
+          break;
+      }
+      canvasState.addElement(elementType, PDFCanvasEditor_objectSpread({
+        x: Math.max(0, _adjustedX - 50),
+        y: Math.max(0, _adjustedY - 25)
+      }, defaultProps));
+
+      // Remettre l'outil de sélection après ajout
+      setTool('select');
+      return;
+    }
+
+    // Sinon, désélectionner
+    canvasState.selection.clearSelection();
+  }, [canvasState, tool]);
+
+  // Gestionnaire pour les changements de propriétés
+  var handlePropertyChange = (0,react.useCallback)(function (elementId, property, value) {
+    // Récupérer l'élément actuel pour connaître les valeurs existantes
+    var currentElement = canvasState.getElementById(elementId);
+    if (!currentElement) return;
+
+    // Gérer les propriétés imbriquées (ex: "columns.image" -> { columns: { image: value } })
+    var updates = {};
+    if (property.includes('.')) {
+      // Fonction récursive pour mettre à jour les propriétés imbriquées
+      // en préservant toutes les valeurs existantes
+      var updateNestedProperty = function updateNestedProperty(existingObj, path, val) {
+        var keys = path.split('.');
+        var lastKey = keys.pop();
+
+        // Commencer avec une copie complète de l'objet existant
+        var result = PDFCanvasEditor_objectSpread({}, existingObj);
+        var current = result;
+
+        // Naviguer jusqu'à l'avant-dernier niveau en préservant les objets existants
+        for (var i = 0; i < keys.length - 1; i++) {
+          var key = keys[i];
+          if (!current[key] || PDFCanvasEditor_typeof(current[key]) !== 'object') {
+            current[key] = {};
+          } else {
+            current[key] = PDFCanvasEditor_objectSpread({}, current[key]);
+          }
+          current = current[key];
+        }
+
+        // Pour le dernier niveau (avant la propriété finale)
+        var parentKey = keys[keys.length - 1];
+        if (parentKey) {
+          if (!current[parentKey] || PDFCanvasEditor_typeof(current[parentKey]) !== 'object') {
+            current[parentKey] = {};
+          } else {
+            current[parentKey] = PDFCanvasEditor_objectSpread({}, current[parentKey]);
+          }
+          current[parentKey][lastKey] = val;
+        } else {
+          // Propriété directement sur l'objet racine
+          current[lastKey] = val;
+        }
+        return result;
+      };
+
+      // Créer l'update en préservant toutes les propriétés existantes
+      var fullUpdate = updateNestedProperty(currentElement, property, value);
+      Object.assign(updates, fullUpdate);
+    } else {
+      updates[property] = value;
+    }
+    updateElementWithHistory(elementId, updates, "Modifier ".concat(property));
+  }, [canvasState, updateElementWithHistory]);
+
+  // Gestionnaire pour les mises à jour par lot
+  var handleBatchUpdate = (0,react.useCallback)(function (updates) {
+    updates.forEach(function (_ref3) {
+      var elementId = _ref3.elementId,
+        property = _ref3.property,
+        value = _ref3.value;
+      canvasState.updateElement(elementId, PDFCanvasEditor_defineProperty({}, property, value));
+    });
+  }, [canvasState]);
+
+  // Gestionnaire du menu contextuel
+  var handleContextMenu = (0,react.useCallback)(function (e) {
+    var elementId = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+    e.preventDefault();
+    var menuItems = [];
+    if (elementId) {
+      // Menu contextuel pour un élément spécifique
+      var element = canvasState.getElementById(elementId);
+      if (element) {
+        menuItems.push({
+          label: 'Copier',
+          action: function action() {
+            return canvasState.copySelectedElements();
+          }
+        }, {
+          label: 'Dupliquer',
+          action: function action() {
+            return canvasState.duplicateElement(elementId);
+          }
+        }, {
+          type: 'separator'
+        }, {
+          label: 'Supprimer',
+          action: function action() {
+            return canvasState.deleteElement(elementId);
+          }
+        });
+      }
+    } else {
+      // Menu contextuel pour le canvas vide
+      var hasSelection = canvasState.selection.selectedElements.length > 0;
+      if (hasSelection) {
+        menuItems.push({
+          label: 'Copier',
+          action: function action() {
+            return canvasState.copySelectedElements();
+          }
+        }, {
+          label: 'Dupliquer',
+          action: function action() {
+            return canvasState.duplicateSelectedElements();
+          }
+        }, {
+          type: 'separator'
+        }, {
+          label: 'Supprimer',
+          action: function action() {
+            return canvasState.deleteSelectedElements();
+          }
+        });
+      }
+      menuItems.push({
+        type: 'separator'
+      }, {
+        label: 'Coller',
+        action: function action() {
+          return canvasState.pasteElements();
+        }
+      }, {
+        type: 'separator'
+      }, {
+        label: 'Tout sélectionner',
+        action: function action() {
+          return canvasState.selectAll();
+        }
+      }, {
+        label: 'Désélectionner',
+        action: function action() {
+          return canvasState.selection.clearSelection();
+        }
+      });
+    }
+    canvasState.showContextMenu(e.clientX, e.clientY, menuItems);
+  }, [canvasState]);
+
+  // Gestionnaire pour les actions du menu contextuel
+  var handleContextMenuAction = (0,react.useCallback)(function (action) {
+    if (typeof action === 'function') {
+      action();
+    }
+  }, []);
+
+  // Fonction pour déterminer le curseur selon l'outil sélectionné
+  var getCursorStyle = (0,react.useCallback)(function () {
+    if (isPanning) return 'grabbing';
+    switch (tool) {
+      case 'select':
+        return 'default';
+      case 'add-text':
+      case 'add-text-title':
+      case 'add-text-subtitle':
+        return 'text';
+      case 'add-rectangle':
+      case 'add-circle':
+      case 'add-line':
+      case 'add-arrow':
+      case 'add-triangle':
+      case 'add-star':
+      case 'add-divider':
+      case 'add-image':
+        return 'crosshair';
+      default:
+        return 'default';
+    }
+  }, [tool, isPanning]);
+
+  // Gestionnaire pour le drag over
+  var handleDragOver = (0,react.useCallback)(function (e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+  }, []);
+
+  // Gestionnaire pour le drop
+  var handleDrop = (0,react.useCallback)(function (e) {
+    e.preventDefault();
+    try {
+      var jsonData = e.dataTransfer.getData('application/json');
+
+      // Vérifier si les données existent et ne sont pas vides
+      if (!jsonData || jsonData.trim() === '') {
+        // C'est probablement un drop normal (image, fichier, etc.) - ignorer silencieusement
+        return;
+      }
+      var data = JSON.parse(jsonData);
+      if (data.type === 'new-element') {
+        var canvasRect = e.currentTarget.getBoundingClientRect();
+        var dropX = e.clientX - canvasRect.left;
+        var dropY = e.clientY - canvasRect.top;
+
+        // Ajuster pour le zoom
+        var adjustedX = dropX / canvasState.zoom.zoom;
+        var adjustedY = dropY / canvasState.zoom.zoom;
+        canvasState.addElement(data.elementType, PDFCanvasEditor_objectSpread({
+          x: Math.max(0, adjustedX - 50),
+          // Centrer l'élément sur le point de drop
+          y: Math.max(0, adjustedY - 25)
+        }, data.defaultProps));
+      }
+    } catch (error) {
+      // Ne logger que les vraies erreurs (pas les drops normaux)
+      if (error instanceof SyntaxError && e.dataTransfer.getData('application/json')) {
+        console.error('Erreur lors du parsing des données de drop:', error);
+      }
+      // Pour les autres types de drop (fichiers, images, etc.), ignorer silencieusement
+    }
+  }, [canvasState]);
+
+  // Gestionnaire pour le zoom avec la molette
+  var handleWheel = (0,react.useCallback)(function (e) {
+    if (!globalSettings.settings.zoomWithWheel) return;
+    e.preventDefault();
+
+    // Calculer le facteur de zoom basé sur les paramètres globaux
+    var zoomFactor = 1 + globalSettings.settings.zoomStep / 100;
+
+    // Déterminer si on zoome ou dézoome
+    var delta = e.deltaY > 0 ? -1 : 1;
+
+    // Calculer les coordonnées de la souris relatives au conteneur
+    var container = canvasContainerRef.current;
+    if (!container) return;
+    var rect = container.getBoundingClientRect();
+    var mouseX = e.clientX - rect.left;
+    var mouseY = e.clientY - rect.top;
+
+    // Appliquer le zoom vers le point de la souris
+    var finalZoomFactor = delta > 0 ? zoomFactor : 1 / zoomFactor;
+    canvasState.zoom.zoomToPoint(mouseX, mouseY, finalZoomFactor);
+  }, [globalSettings.settings.zoomWithWheel, globalSettings.settings.zoomStep, canvasState.zoom]);
+
+  // Attacher le gestionnaire de roue de manière non-passive pour permettre preventDefault
+  (0,react.useEffect)(function () {
+    var container = canvasContainerRef.current;
+    if (!container || !globalSettings.settings.zoomWithWheel) return;
+    var handleWheelEvent = function handleWheelEvent(e) {
+      handleWheel(e);
+    };
+    container.addEventListener('wheel', handleWheelEvent, {
+      passive: false
+    });
+    return function () {
+      container.removeEventListener('wheel', handleWheelEvent);
+    };
+  }, [handleWheel, globalSettings.settings.zoomWithWheel]);
+
+  // Gestionnaire pour le pan avec la souris (clic milieu ou espace + drag)
+  var handleMouseDown = (0,react.useCallback)(function (e) {
+    if (!globalSettings.settings.panWithMouse) return;
+
+    // Pan avec le bouton du milieu ou espace + clic gauche
+    if (e.button === 1 || e.button === 0 && e.altKey) {
+      e.preventDefault();
+      setIsPanning(true);
+      setLastPanPoint({
+        x: e.clientX,
+        y: e.clientY
+      });
+    }
+  }, [globalSettings.settings.panWithMouse]);
+  var handleMouseMove = (0,react.useCallback)(function (e) {
+    if (!isPanning) return;
+    var deltaX = e.clientX - lastPanPoint.x;
+    var deltaY = e.clientY - lastPanPoint.y;
+    setPanOffset(function (prev) {
+      return {
+        x: prev.x + deltaX,
+        y: prev.y + deltaY
+      };
+    });
+    setLastPanPoint({
+      x: e.clientX,
+      y: e.clientY
+    });
+  }, [isPanning, lastPanPoint]);
+  var handleMouseUp = (0,react.useCallback)(function () {
+    setIsPanning(false);
+  }, []);
+
+  // Gestionnaire pour double-clic
+  var handleDoubleClick = (0,react.useCallback)(function (e) {
+    if (!globalSettings.settings.zoomToSelection) return;
+
+    // Vérifier qu'il n'y a pas d'élément cliqué (double-clic sur le fond)
+    var clickedElement = e.target.closest('[data-element-id]');
+    if (clickedElement) return;
+
+    // Si des éléments sont sélectionnés, zoomer dessus
+    if (canvasState.selection.selectedElements.length > 0) {
+      canvasState.zoomToSelection();
+    }
+  }, [globalSettings.settings.zoomToSelection, canvasState]);
+  return /*#__PURE__*/react.createElement("div", {
+    className: "pdf-canvas-editor",
+    ref: editorRef
+  }, /*#__PURE__*/react.createElement("header", {
+    className: "editor-header"
+  }, /*#__PURE__*/react.createElement("h2", null, "\xC9diteur PDF - ", options.isNew ? 'Nouveau Template' : options.templateName), /*#__PURE__*/react.createElement("nav", {
+    className: "editor-actions"
+  }, /*#__PURE__*/react.createElement("button", {
+    className: "btn btn-outline preview-button",
+    onClick: function onClick() {
+      return setShowPreviewModal(true);
+    },
+    title: "Aper\xE7u du PDF (Ctrl+P)"
+  }, "\uD83D\uDC41\uFE0F Aper\xE7u"), /*#__PURE__*/react.createElement("button", {
+    className: "btn btn-outline",
+    onClick: function onClick() {
+      return setShowNewTemplateModal(true);
+    },
+    title: "Cr\xE9er un nouveau template"
+  }, "\u2795 Nouveau template"), /*#__PURE__*/react.createElement("button", {
+    className: "btn btn-primary",
+    onClick: function onClick() {
+      return canvasState.saveTemplate();
+    },
+    disabled: canvasState.isSaving
+  }, canvasState.isSaving ? '⏳ Sauvegarde...' : options.isNew ? '💾 Sauvegarder' : '✏️ Modifier'))), /*#__PURE__*/react.createElement(Toolbar, {
+    selectedTool: tool,
+    onToolSelect: setTool,
+    zoom: canvasState.zoom.zoom,
+    onZoomChange: canvasState.zoom.setZoomLevel,
+    showGrid: globalSettings.settings.showGrid,
+    onShowGridChange: handleShowGridChange,
+    snapToGrid: globalSettings.settings.snapToGrid,
+    onSnapToGridChange: handleSnapToGridChange,
+    onUndo: handleUndo,
+    onRedo: handleRedo,
+    canUndo: canvasState.history.canUndo(),
+    canRedo: canvasState.history.canRedo()
+  }), /*#__PURE__*/react.createElement("main", {
+    className: "editor-workspace"
+  }, /*#__PURE__*/react.createElement("aside", {
+    className: "editor-sidebar left-sidebar"
+  }, /*#__PURE__*/react.createElement(components_ElementLibrary, {
+    onAddElement: handleAddElement,
+    selectedTool: tool,
+    onToolSelect: setTool
+  })), /*#__PURE__*/react.createElement("section", {
+    className: "canvas-section",
+    ref: canvasContainerRef,
+    onContextMenu: handleContextMenu,
+    onDragOver: handleDragOver,
+    onDrop: handleDrop,
+    onMouseDown: handleMouseDown,
+    onMouseMove: handleMouseMove,
+    onMouseUp: handleMouseUp,
+    onMouseLeave: handleMouseUp,
+    onDoubleClick: handleDoubleClick,
+    style: {
+      cursor: getCursorStyle(),
+      backgroundColor: globalSettings.settings.containerShowTransparency ? 'transparent' : globalSettings.settings.containerBackgroundColor || '#f8f9fa',
+      backgroundImage: globalSettings.settings.containerShowTransparency ? "linear-gradient(45deg, #f0f0f0 25%, transparent 25%), linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f0f0f0 75%), linear-gradient(-45deg, transparent 75%, #f0f0f0 75%)" : 'none',
+      backgroundSize: globalSettings.settings.containerShowTransparency ? '20px 20px' : 'auto',
+      backgroundPosition: globalSettings.settings.containerShowTransparency ? '0 0, 0 10px, 10px -10px, -10px 0px' : '0 0'
+    }
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "canvas-zoom-wrapper",
+    style: {
+      transform: "translate(".concat(panOffset.x, "px, ").concat(panOffset.y, "px) scale(").concat(canvasState.zoom.zoom, ")"),
+      transformOrigin: 'center',
+      cursor: isPanning ? 'grabbing' : 'default',
+      transition: globalSettings.settings.smoothZoom ? 'transform 0.2s ease-out' : 'none',
+      willChange: globalSettings.settings.enableHardwareAcceleration ? 'transform' : 'auto'
+    }
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "canvas",
+    ref: canvasRef,
+    onClick: handleCanvasClick,
+    style: {
+      width: canvasState.canvasWidth,
+      height: 'auto',
+      // Laisser le CSS contrôler la hauteur pour s'adapter au conteneur 130vh
+      minHeight: canvasState.canvasHeight,
+      // Hauteur minimale pour éviter la compression excessive
+      position: 'relative',
+      backgroundColor: globalSettings.settings.canvasShowTransparency ? 'transparent' : globalSettings.settings.canvasBackgroundColor || '#ffffff',
+      backgroundImage: globalSettings.settings.canvasShowTransparency ? "linear-gradient(45deg, #f0f0f0 25%, transparent 25%), linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f0f0f0 75%), linear-gradient(-45deg, transparent 75%, #f0f0f0 75%)" : 'none',
+      backgroundSize: globalSettings.settings.canvasShowTransparency ? '20px 20px' : 'auto',
+      backgroundPosition: globalSettings.settings.canvasShowTransparency ? '0 0, 0 10px, 10px -10px, -10px 0px' : '0 0'
+    }
+  }, globalSettings.settings.showGrid && /*#__PURE__*/react.createElement("div", {
+    className: "canvas-grid",
+    style: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      backgroundImage: "\n                      linear-gradient(to right, ".concat(globalSettings.settings.gridColor).concat(Math.round(globalSettings.settings.gridOpacity * 2.55).toString(16).padStart(2, '0'), " 1px, transparent 1px),\n                      linear-gradient(to bottom, ").concat(globalSettings.settings.gridColor).concat(Math.round(globalSettings.settings.gridOpacity * 2.55).toString(16).padStart(2, '0'), " 1px, transparent 1px)\n                    "),
+      backgroundSize: "".concat(globalSettings.settings.gridSize, "px ").concat(globalSettings.settings.gridSize, "px"),
+      pointerEvents: 'none',
+      zIndex: 1
+    }
+  }), globalSettings.settings.showGuides && /*#__PURE__*/react.createElement("div", {
+    className: "canvas-guides"
+  }, guides.horizontal.map(function (y, index) {
+    return /*#__PURE__*/react.createElement("div", {
+      key: "h-guide-".concat(index),
+      className: "canvas-guide horizontal-guide",
+      onClick: function onClick(e) {
+        e.stopPropagation();
+        if (!globalSettings.settings.lockGuides) {
+          removeGuide('horizontal', y);
+        }
+      },
+      style: {
+        position: 'absolute',
+        top: "".concat(y, "px"),
+        left: 0,
+        width: '100%',
+        height: '2px',
+        backgroundColor: '#007cba',
+        cursor: globalSettings.settings.lockGuides ? 'default' : 'pointer',
+        zIndex: 2,
+        opacity: 0.7
+      },
+      title: "Guide horizontal \xE0 ".concat(y, "px - ").concat(globalSettings.settings.lockGuides ? 'Verrouillé' : 'Cliquer pour supprimer')
+    });
+  }), guides.vertical.map(function (x, index) {
+    return /*#__PURE__*/react.createElement("div", {
+      key: "v-guide-".concat(index),
+      className: "canvas-guide vertical-guide",
+      onClick: function onClick(e) {
+        e.stopPropagation();
+        if (!globalSettings.settings.lockGuides) {
+          removeGuide('vertical', x);
+        }
+      },
+      style: {
+        position: 'absolute',
+        top: 0,
+        left: "".concat(x, "px"),
+        height: '100%',
+        width: '2px',
+        backgroundColor: '#007cba',
+        cursor: globalSettings.settings.lockGuides ? 'default' : 'pointer',
+        zIndex: 2,
+        opacity: 0.7
+      },
+      title: "Guide vertical \xE0 ".concat(x, "px - ").concat(globalSettings.settings.lockGuides ? 'Verrouillé' : 'Cliquer pour supprimer')
+    });
+  })), canvasState.elements.filter(function (el) {
+    return !el.type.startsWith('woocommerce-');
+  }).map(function (element) {
+    return /*#__PURE__*/react.createElement(CanvasElement, {
+      key: element.id,
+      element: element,
+      isSelected: canvasState.selection.selectedElements.includes(element.id),
+      zoom: 1,
+      snapToGrid: globalSettings.settings.snapToGrid,
+      gridSize: globalSettings.settings.gridSize,
+      canvasWidth: canvasState.canvasWidth,
+      canvasHeight: canvasState.canvasHeight,
+      onSelect: function onSelect() {
+        return handleElementSelect(element.id);
+      },
+      onUpdate: function onUpdate(updates) {
+        return canvasState.updateElement(element.id, updates);
+      },
+      onRemove: function onRemove() {
+        return canvasState.deleteElement(element.id);
+      },
+      onContextMenu: function onContextMenu(e) {
+        return handleContextMenu(e, element.id);
+      },
+      dragAndDrop: dragAndDrop,
+      enableRotation: globalSettings.settings.enableRotation,
+      rotationStep: globalSettings.settings.rotationStep,
+      rotationSnap: globalSettings.settings.rotationSnap,
+      guides: guides,
+      snapToGuides: globalSettings.settings.snapToElements
+    });
+  }), canvasState.elements.filter(function (el) {
+    return el.type.startsWith('woocommerce-');
+  }).map(function (element) {
+    return /*#__PURE__*/react.createElement(WooCommerceElements, {
+      key: element.id,
+      element: element,
+      isSelected: canvasState.selection.selectedElements.includes(element.id),
+      onSelect: handleElementSelect,
+      onUpdate: canvasState.updateElement,
+      dragAndDrop: dragAndDrop,
+      zoom: 1,
+      canvasWidth: canvasState.canvasWidth,
+      canvasHeight: canvasState.canvasHeight,
+      orderData: orderData,
+      onContextMenu: function onContextMenu(e) {
+        return handleContextMenu(e, element.id);
+      },
+      snapToGrid: globalSettings.settings.snapToGrid,
+      gridSize: globalSettings.settings.gridSize,
+      guides: guides,
+      snapToGuides: globalSettings.settings.snapToElements
+    });
+  })))), /*#__PURE__*/react.createElement("aside", {
+    className: "editor-sidebar right-sidebar ".concat(isPropertiesCollapsed ? 'collapsed' : '')
+  }, !isPropertiesCollapsed && /*#__PURE__*/react.createElement(components_PropertiesPanel, {
+    selectedElements: canvasState.selection.selectedElements,
+    elements: canvasState.elements,
+    onPropertyChange: handlePropertyChange,
+    onBatchUpdate: handleBatchUpdate
+  }))), /*#__PURE__*/react.createElement("button", {
+    className: "sidebar-toggle-fixed",
+    onClick: function onClick() {
+      return setIsPropertiesCollapsed(!isPropertiesCollapsed);
+    },
+    title: isPropertiesCollapsed ? 'Agrandir le panneau' : 'Réduire le panneau',
+    style: {
+      position: 'fixed',
+      top: '50%',
+      right: isPropertiesCollapsed ? '0px' : '350px',
+      transform: 'translateY(-50%)',
+      zIndex: 999999
+    }
+  }, isPropertiesCollapsed ? '◀' : '▶'), canvasState.contextMenu.contextMenu && /*#__PURE__*/react.createElement(components_ContextMenu, {
+    menu: canvasState.contextMenu.contextMenu,
+    onAction: handleContextMenuAction,
+    isAnimating: canvasState.contextMenu.isAnimating || false,
+    onClose: canvasState.contextMenu.hideContextMenu
+  }), /*#__PURE__*/react.createElement("footer", {
+    className: "editor-status"
+  }, /*#__PURE__*/react.createElement("span", null, "\xC9l\xE9ments: ", canvasState.elements.length), /*#__PURE__*/react.createElement("span", null, "|"), globalSettings.settings.showZoomIndicator && /*#__PURE__*/react.createElement(react.Fragment, null, /*#__PURE__*/react.createElement("span", null, "Zoom: ", Math.round(canvasState.zoom.zoom * 100), "%"), /*#__PURE__*/react.createElement("span", null, "|")), /*#__PURE__*/react.createElement("span", null, "Outil: ", tool), canvasState.selection.selectedElements.length > 0 && /*#__PURE__*/react.createElement(react.Fragment, null, /*#__PURE__*/react.createElement("span", null, "|"), /*#__PURE__*/react.createElement("span", null, "\xC9l\xE9ments s\xE9lectionn\xE9s: ", canvasState.selection.selectedElements.length))), /*#__PURE__*/react.createElement(components_NewTemplateModal, {
+    isOpen: showNewTemplateModal,
+    onClose: function onClose() {
+      return setShowNewTemplateModal(false);
+    },
+    onCreateTemplate: handleCreateTemplate
+  }), /*#__PURE__*/react.createElement(preview_system_PreviewModal, {
+    isOpen: showPreviewModal,
+    onClose: function onClose() {
+      return setShowPreviewModal(false);
+    },
+    mode: "canvas",
+    elements: canvasState.elements,
+    orderId: null,
+    templateData: options
+  }), /*#__PURE__*/react.createElement(FPSCounter, {
+    showFps: globalSettings.settings.showFps
+  }));
+});
+
+// Optimisation : éviter les re-renders inutiles
+/* harmony default export */ const components_PDFCanvasEditor = (/*#__PURE__*/(/* unused pure expression or super */ null && (React.memo(/*#__PURE__*/forwardRef(PDFCanvasEditor)))));
+;// ./resources/js/hooks/index.js
+
+
+
+
+
+
+
+
+
+
+;// ./resources/js/index.js
+function js_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function js_objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? js_ownKeys(Object(t), !0).forEach(function (r) { js_defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : js_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function js_defineProperty(e, r, t) { return (r = js_toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function js_classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function js_defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, js_toPropertyKey(o.key), o); } }
+function js_createClass(e, r, t) { return r && js_defineProperties(e.prototype, r), t && js_defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function js_toPropertyKey(t) { var i = js_toPrimitive(t, "string"); return "symbol" == js_typeof(i) ? i : i + ""; }
+function js_toPrimitive(t, r) { if ("object" != js_typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != js_typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function js_typeof(o) { "@babel/helpers - typeof"; return js_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, js_typeof(o); }
+// Tous les imports doivent être au niveau supérieur du module
+
+
+
+
+
+// PDF BUILDER DEBUG: File loaded successfully - TIMESTAMP: ${Date.now()}
+console.log('=== PDF BUILDER FILE LOADED === TIMESTAMP:', Date.now());
+
+// Forcer l'inclusion de tous les hooks personnalisés
+
+
+// Système de protection et monitoring
+var PDFBuilderSecurity = {
+  healthChecks: [],
+  errors: [],
+  initialized: false,
+  // Health check pour vérifier que toutes les dépendances sont disponibles
+  performHealthCheck: function performHealthCheck() {
+    var checks = {
+      react: js_typeof(react) === 'object' && react.createElement,
+      reactDom: js_typeof(react_dom) === 'object' && react_dom.render,
+      pdfCanvasEditor: PDFCanvasEditor && (typeof PDFCanvasEditor === 'function' || js_typeof(PDFCanvasEditor) === 'object'),
+      hooks: js_typeof(hooks_namespaceObject) === 'object',
+      window: typeof window !== 'undefined',
+      document: typeof document !== 'undefined'
+    };
+    this.healthChecks = checks;
+    var allHealthy = Object.values(checks).every(Boolean);
+    if (allHealthy) {
+      this.initialized = true;
+    } else {
+      console.error('PDF Builder Pro: Health check failed ❌', checks);
+      this.initialized = false;
+    }
+    return allHealthy;
+  },
+  // Log sécurisé des erreurs
+  logError: function logError(error) {
+    var _navigator, _window;
+    var context = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+    var errorInfo = {
+      message: error.message,
+      stack: error.stack,
+      context: context,
+      timestamp: new Date().toISOString(),
+      userAgent: (_navigator = navigator) === null || _navigator === void 0 ? void 0 : _navigator.userAgent,
+      url: (_window = window) === null || _window === void 0 || (_window = _window.location) === null || _window === void 0 ? void 0 : _window.href
+    };
+    this.errors.push(errorInfo);
+    console.error('PDF Builder Pro Security Error:', errorInfo);
+  },
+  // Protection contre les appels multiples - améliorée
+  preventMultipleInit: function preventMultipleInit() {
+    var now = Date.now();
+    var lastInit = window._pdfBuilderLastInit || 0;
+    var timeSinceLastInit = now - lastInit;
+
+    // Si plus de 5 secondes se sont écoulées depuis la dernière initialisation,
+    // permettre une réinitialisation (utile pour les rechargements de page)
+    if (window._pdfBuilderInitialized && timeSinceLastInit < 5000) {
+      // Log silencieux au lieu d'un avertissement intrusif
+      console.debug('PDF Builder Pro: Multiple initialization attempt prevented (last init:', new Date(lastInit).toLocaleTimeString() + ')');
+      return false;
+    }
+    window._pdfBuilderInitialized = true;
+    window._pdfBuilderLastInit = now;
+    return true;
+  }
+};
+
+// Test des imports de base avec protection
+try {
+  // Exposer React globalement pour compatibilité
+  if (typeof window !== 'undefined') {
+    window.React = react;
+    window.ReactDOM = react_dom;
+  }
+} catch (error) {
+  PDFBuilderSecurity.logError(error, 'React initialization');
+  console.error('React test failed:', error);
+}
+
+// Classe principale pour l'éditeur PDF
+var PDFBuilderPro = /*#__PURE__*/function () {
+  function PDFBuilderPro() {
+    js_classCallCheck(this, PDFBuilderPro);
+    this.version = '2.0.0';
+    this.editors = new Map();
+
+    // Forcer l'inclusion des hooks (ne pas supprimer cette ligne)
+    this._hooks = hooks_namespaceObject;
+
+    // Références explicites pour forcer l'inclusion
+    this._forceInclude = {
+      useHistory: useHistory,
+      useRotation: useRotation,
+      useResize: useResize
+    };
+
+    // Forcer l'appel des hooks pour éviter le tree shaking
+    try {
+      var dummyHistory = useHistory();
+      var dummyRotation = useRotation(function () {});
+      var dummyResize = useResize();
+      this._dummyInstances = {
+        dummyHistory: dummyHistory,
+        dummyRotation: dummyRotation,
+        dummyResize: dummyResize
+      };
+    } catch (e) {
+      // Ignorer les erreurs en mode SSR
+    }
+  }
+
+  // Initialiser l'éditeur dans un conteneur
+  return js_createClass(PDFBuilderPro, [{
+    key: "init",
+    value: function init(containerId) {
+      var _this = this;
+      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      try {
+        // Vérification stricte du containerId
+        if (!containerId || typeof containerId !== 'string') {
+          throw new Error('ContainerId must be a non-empty string');
+        }
+        var container = document.getElementById(containerId);
+        if (!container) {
+          throw new Error("Container with ID \"".concat(containerId, "\" does not exist in the DOM"));
+        }
+
+        // Vérifier la disponibilité de React et ReactDOM
+        if (!react || !react_dom) {
+          throw new Error('React or ReactDOM is not available. Make sure the scripts are loaded properly.');
+        }
+
+        // Vérifier que PDFCanvasEditor est disponible
+        if (!PDFCanvasEditor) {
+          throw new Error('PDFCanvasEditor component is not available. Check for compilation errors.');
+        }
+
+        // Options par défaut avec validation
+        var defaultOptions = js_objectSpread({
+          templateId: null,
+          templateName: null,
+          isNew: true,
+          initialElements: [],
+          width: 595,
+          // A4 width in points
+          height: 842,
+          // A4 height in points
+          zoom: 1,
+          gridSize: 10,
+          snapToGrid: true
+        }, options);
+
+        // Validation des options critiques
+        if (typeof defaultOptions.width !== 'number' || defaultOptions.width <= 0) {
+          console.warn('PDFBuilderPro: Invalid width, using default A4 width');
+          defaultOptions.width = 595;
+        }
+        if (typeof defaultOptions.height !== 'number' || defaultOptions.height <= 0) {
+          console.warn('PDFBuilderPro: Invalid height, using default A4 height');
+          defaultOptions.height = 842;
+        }
+
+        // Créer l'éditeur React avec protection
+        var editorElement = /*#__PURE__*/(0,react.createElement)(PDFCanvasEditor, {
+          options: defaultOptions,
+          ref: function ref(_ref) {
+            // Stocker la référence du composant
+            _this.canvas = _ref;
+          }
+        });
+
+        // Vérifier que l'élément a été créé correctement
+        if (!editorElement) {
+          throw new Error('Failed to create React element for PDFCanvasEditor');
+        }
+        react_dom.render(editorElement, container);
+        this.editors.set(containerId, {
+          container: container,
+          options: defaultOptions
+        });
+      } catch (error) {
+        console.error('PDFBuilderPro: Failed to initialize editor:', error);
+
+        // Fallback visuel pour l'utilisateur
+        var _container = document.getElementById(containerId);
+        if (_container) {
+          _container.innerHTML = "\n                    <div style=\"\n                        color: #721c24;\n                        background-color: #f8d7da;\n                        border: 1px solid #f5c6cb;\n                        border-radius: 4px;\n                        padding: 15px;\n                        margin: 10px 0;\n                        font-family: Arial, sans-serif;\n                        font-size: 14px;\n                    \">\n                        <strong>Erreur PDF Builder Pro</strong><br>\n                        Impossible d'initialiser l'\xE9diteur. V\xE9rifiez la console pour plus de d\xE9tails.<br>\n                        <small>Erreur: ".concat(error.message, "</small>\n                    </div>\n                ");
+        }
+
+        // Re-throw pour permettre la gestion en amont si nécessaire
+        throw error;
+      }
+    }
+
+    // Détruire un éditeur
+  }, {
+    key: "destroy",
+    value: function destroy(containerId) {
+      try {
+        var editor = this.editors.get(containerId);
+        if (editor) {
+          // Vérifier que ReactDOM est disponible avant de démonter
+          if (react_dom && react_dom.unmountComponentAtNode) {
+            react_dom.unmountComponentAtNode(editor.container);
+          }
+          this.editors["delete"](containerId);
+        }
+      } catch (error) {
+        console.error('PDFBuilderPro: Error during destroy:', error);
+        // Forcer la suppression même en cas d'erreur
+        this.editors["delete"](containerId);
+      }
+    }
+
+    // Obtenir les données d'un éditeur
+  }, {
+    key: "getData",
+    value: function getData(containerId) {
+      // Cette méthode pourrait être étendue pour récupérer l'état actuel
+      return null;
+    }
+
+    // Obtenir les éléments du canvas actif
+  }, {
+    key: "getElements",
+    value: function getElements() {
+      try {
+        if (this.canvas && typeof this.canvas.getElements === 'function') {
+          return this.canvas.getElements();
+        }
+        console.warn('PDFBuilderPro: No active canvas or getElements method not available');
+        return [];
+      } catch (error) {
+        console.error('PDFBuilderPro: Error getting elements:', error);
+        return [];
+      }
+    }
+  }]);
+}(); // Instance globale
+var pdfBuilderPro = new PDFBuilderPro();
+
+// Attacher à window pour WordPress - avec vérification et protection
+if (typeof window !== 'undefined') {
+  // Effectuer le health check avant d'exposer l'instance
+  if (PDFBuilderSecurity.performHealthCheck()) {
+    window.PDFBuilderPro = pdfBuilderPro;
+    // Alias pour compatibilité
+    window.pdfBuilderPro = pdfBuilderPro;
+
+    // Fonction pour afficher l'aperçu dans la metabox WooCommerce
+    window.pdfBuilderShowPreview = function (orderId, templateId, nonce) {
+      console.log('=== PDF BUILDER DEBUG: pdfBuilderShowPreview START ===');
+      console.log('Parameters:', {
+        orderId: orderId,
+        templateId: templateId,
+        nonce: nonce
+      });
+
+      // VERSION DE FALLBACK SIMPLE - Test de l'affichage de base
+      console.log('=== USING FALLBACK MODAL ===');
+
+      // Créer une modal simple en HTML pur
+      var modal = document.createElement('div');
+      modal.id = 'pdf-builder-fallback-modal';
+      modal.innerHTML = "\n                <div style=\"\n                    position: fixed;\n                    top: 0;\n                    left: 0;\n                    width: 100%;\n                    height: 100%;\n                    background: rgba(0,0,0,0.8);\n                    z-index: 999999;\n                    display: flex;\n                    align-items: center;\n                    justify-content: center;\n                \">\n                    <div style=\"\n                        background: white;\n                        padding: 20px;\n                        border-radius: 8px;\n                        max-width: 500px;\n                        width: 90%;\n                        text-align: center;\n                    \">\n                        <h2>\uD83E\uDDEA PDF Builder - Test Modal</h2>\n                        <p><strong>Order ID:</strong> ".concat(orderId, "</p>\n                        <p><strong>Template ID:</strong> ").concat(templateId, "</p>\n                        <p><strong>Nonce:</strong> ").concat(nonce ? nonce.substring(0, 10) + '...' : 'null', "</p>\n                        <p style=\"color: green; margin: 20px 0;\"><strong>\u2705 Modal affich\xE9e avec succ\xE8s !</strong></p>\n                        <p style=\"color: #666; font-size: 14px;\">Si vous voyez ce message, la modale fonctionne.<br>Le probl\xE8me est dans React.</p>\n                        <button onclick=\"this.parentElement.parentElement.remove()\" style=\"\n                            background: #007cba;\n                            color: white;\n                            border: none;\n                            padding: 10px 20px;\n                            border-radius: 4px;\n                            cursor: pointer;\n                            margin-top: 15px;\n                        \">Fermer</button>\n                    </div>\n                </div>\n            ");
+      document.body.appendChild(modal);
+      console.log('=== FALLBACK MODAL CREATED AND DISPLAYED ===');
+      return; // Ne pas exécuter le code React pour le moment
+
+      // Créer ou récupérer la modal d'aperçu
+      // removed by dead control flow
+ var modalContainer; 
+      // removed by dead control flow
+
+
+      // Créer le conteneur React pour la modal
+      // removed by dead control flow
+ var previewRoot; 
+      // removed by dead control flow
+
+      // removed by dead control flow
+
+      // removed by dead control flow
+
+      // removed by dead control flow
+
+
+      // Importer dynamiquement la PreviewModal
+      // removed by dead control flow
+
+    };
+
+    // Marquer comme initialisé pour éviter les conflits
+    PDFBuilderSecurity.preventMultipleInit();
+  } else {
+    console.error('PDF Builder Pro: Not attaching to window due to health check failure');
+    // Exposer quand même une version limitée pour le debugging
+    window.PDFBuilderPro = {
+      version: '2.0.0',
+      status: 'unhealthy',
+      errors: PDFBuilderSecurity.errors,
+      healthChecks: PDFBuilderSecurity.healthChecks
+    };
+  }
+}
+
+// Export par défaut pour webpack
+/* harmony default export */ const js = ((/* unused pure expression or super */ null && (pdfBuilderPro)));
 
 /***/ })
 
@@ -16485,7 +16435,7 @@ var PreviewModal = function PreviewModal(_ref) {
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, [96], () => (__webpack_require__(626)))
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, [96], () => (__webpack_require__(206)))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	
 /******/ })()
