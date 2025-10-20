@@ -488,6 +488,9 @@ const PreviewModal = ({
                                   {/* Éléments positionnés selon leurs coordonnées */}
                                   {Array.isArray(templateElements) && templateElements.length > 0 ? (
                                     templateElements.map((element, index) => {
+                                      // Debug: Afficher le type réel des éléments
+                                      console.log('PDF Builder Debug: Element', index, 'type:', element.type, 'full element:', element);
+
                                       // Calculer les positions en pixels (conversion depuis les coordonnées du canvas)
                                       // À l'échelle 0.8, on ajuste les coordonnées pour qu'elles correspondent
                                       const scaleFactor = 0.8;
@@ -508,14 +511,14 @@ const PreviewModal = ({
                                             background: element.type === 'text' ? '#e3f2fd' :
                                                        element.type === 'image' ? '#f3e5f5' :
                                                        element.type === 'rectangle' ? '#e8f5e8' :
-                                                       (element.type && element.type.startsWith('woocommerce-')) ? '#efebe9' :
+                                                       (element.type && (element.type.startsWith('woocommerce-') || element.type.includes('_'))) ? '#efebe9' :
                                                        element.type === 'barcode' ? '#eceff1' :
                                                        '#fff3e0',
                                             border: `2px solid ${
                                               element.type === 'text' ? '#2196f3' :
                                               element.type === 'image' ? '#9c27b0' :
                                               element.type === 'rectangle' ? '#4caf50' :
-                                              (element.type && element.type.startsWith('woocommerce-')) ? '#795548' :
+                                              (element.type && (element.type.startsWith('woocommerce-') || element.type.includes('_'))) ? '#795548' :
                                               element.type === 'barcode' ? '#607d8b' :
                                               '#ff9800'
                                             }`,
@@ -541,7 +544,7 @@ const PreviewModal = ({
                                             background: element.type === 'text' ? '#2196f3' :
                                                        element.type === 'image' ? '#9c27b0' :
                                                        element.type === 'rectangle' ? '#4caf50' :
-                                                       (element.type && element.type.startsWith('woocommerce-')) ? '#795548' :
+                                                       (element.type && (element.type.startsWith('woocommerce-') || element.type.includes('_'))) ? '#795548' :
                                                        element.type === 'barcode' ? '#607d8b' :
                                                        '#ff9800',
                                             color: 'white',
@@ -553,7 +556,7 @@ const PreviewModal = ({
                                             {element.type === 'text' ? 'T' :
                                              element.type === 'image' ? '🖼️' :
                                              element.type === 'rectangle' ? '▭' :
-                                             (element.type && element.type.startsWith('woocommerce-')) ? '🛒' :
+                                             (element.type && (element.type.startsWith('woocommerce-') || element.type.includes('_'))) ? '🛒' :
                                              element.type === 'barcode' ? '▍' :
                                              '?'}
                                           </div>
@@ -602,7 +605,7 @@ const PreviewModal = ({
                                               borderRadius: element.borderRadius ? `${element.borderRadius}px` : '2px',
                                               border: element.borderWidth ? `${element.borderWidth}px solid ${element.borderColor || '#333'}` : 'none'
                                             }} />
-                                          ) : element.type === 'woocommerce-order-number' ? (
+                                          ) : element.type === 'woocommerce-order-number' || element.type === 'order_number' ? (
                                             <div style={{
                                               fontSize: '12pt',
                                               fontWeight: 'bold',
@@ -611,7 +614,7 @@ const PreviewModal = ({
                                             }}>
                                               #WC-2025-001
                                             </div>
-                                          ) : element.type === 'woocommerce-billing-address' ? (
+                                          ) : element.type === 'woocommerce-billing-address' || element.type === 'billing_address' ? (
                                             <div style={{
                                               fontSize: '9pt',
                                               textAlign: 'left',
@@ -622,14 +625,14 @@ const PreviewModal = ({
                                               75001 Paris<br />
                                               France
                                             </div>
-                                          ) : element.type === 'woocommerce-order-date' ? (
+                                          ) : element.type === 'woocommerce-order-date' || element.type === 'order_date' ? (
                                             <div style={{
                                               fontSize: '10pt',
                                               textAlign: 'center'
                                             }}>
                                               21/10/2025
                                             </div>
-                                          ) : element.type === 'woocommerce-customer-name' ? (
+                                          ) : element.type === 'woocommerce-customer-name' || element.type === 'customer_name' ? (
                                             <div style={{
                                               fontSize: '11pt',
                                               textAlign: 'center',
@@ -637,7 +640,7 @@ const PreviewModal = ({
                                             }}>
                                               Jean Dupont
                                             </div>
-                                          ) : element.type === 'woocommerce-products-table' ? (
+                                          ) : element.type === 'woocommerce-products-table' || element.type === 'products_table' || element.type === 'product_table' ? (
                                             <div style={{
                                               fontSize: '8pt',
                                               width: '100%'
@@ -653,28 +656,28 @@ const PreviewModal = ({
                                                 <span>25,00 €</span>
                                               </div>
                                             </div>
-                                          ) : element.type === 'woocommerce-subtotal' ? (
+                                          ) : element.type === 'woocommerce-subtotal' || element.type === 'subtotal' ? (
                                             <div style={{
                                               fontSize: '10pt',
                                               textAlign: 'right'
                                             }}>
                                               Sous-total: 25,00 €
                                             </div>
-                                          ) : element.type === 'woocommerce-taxes' ? (
+                                          ) : element.type === 'woocommerce-taxes' || element.type === 'taxes' ? (
                                             <div style={{
                                               fontSize: '10pt',
                                               textAlign: 'right'
                                             }}>
                                               TVA (20%): 5,00 €
                                             </div>
-                                          ) : element.type === 'woocommerce-shipping' ? (
+                                          ) : element.type === 'woocommerce-shipping' || element.type === 'shipping' ? (
                                             <div style={{
                                               fontSize: '10pt',
                                               textAlign: 'right'
                                             }}>
                                               Livraison: 5,90 €
                                             </div>
-                                          ) : element.type === 'woocommerce-order-total' ? (
+                                          ) : element.type === 'woocommerce-order-total' || element.type === 'order_total' || element.type === 'total' ? (
                                             <div style={{
                                               fontSize: '12pt',
                                               fontWeight: 'bold',

@@ -595,6 +595,9 @@ var PreviewModal = function PreviewModal(_ref) {
         opacity: 0.3
       }
     }), Array.isArray(templateElements) && templateElements.length > 0 ? templateElements.map(function (element, index) {
+      // Debug: Afficher le type réel des éléments
+      console.log('PDF Builder Debug: Element', index, 'type:', element.type, 'full element:', element);
+
       // Calculer les positions en pixels (conversion depuis les coordonnées du canvas)
       // À l'échelle 0.8, on ajuste les coordonnées pour qu'elles correspondent
       var scaleFactor = 0.8;
@@ -611,8 +614,8 @@ var PreviewModal = function PreviewModal(_ref) {
           top: "".concat(15 + y, "px"),
           width: "".concat(width, "px"),
           minHeight: "".concat(height, "px"),
-          background: element.type === 'text' ? '#e3f2fd' : element.type === 'image' ? '#f3e5f5' : element.type === 'rectangle' ? '#e8f5e8' : element.type && element.type.startsWith('woocommerce-') ? '#efebe9' : element.type === 'barcode' ? '#eceff1' : '#fff3e0',
-          border: "2px solid ".concat(element.type === 'text' ? '#2196f3' : element.type === 'image' ? '#9c27b0' : element.type === 'rectangle' ? '#4caf50' : element.type && element.type.startsWith('woocommerce-') ? '#795548' : element.type === 'barcode' ? '#607d8b' : '#ff9800'),
+          background: element.type === 'text' ? '#e3f2fd' : element.type === 'image' ? '#f3e5f5' : element.type === 'rectangle' ? '#e8f5e8' : element.type && (element.type.startsWith('woocommerce-') || element.type.includes('_')) ? '#efebe9' : element.type === 'barcode' ? '#eceff1' : '#fff3e0',
+          border: "2px solid ".concat(element.type === 'text' ? '#2196f3' : element.type === 'image' ? '#9c27b0' : element.type === 'rectangle' ? '#4caf50' : element.type && (element.type.startsWith('woocommerce-') || element.type.includes('_')) ? '#795548' : element.type === 'barcode' ? '#607d8b' : '#ff9800'),
           borderRadius: '3px',
           padding: '6px',
           // Changé de 3mm à 6px
@@ -635,7 +638,7 @@ var PreviewModal = function PreviewModal(_ref) {
           // Changé de 2mm à 4px
           right: '4px',
           // Changé de 2mm à 4px
-          background: element.type === 'text' ? '#2196f3' : element.type === 'image' ? '#9c27b0' : element.type === 'rectangle' ? '#4caf50' : element.type && element.type.startsWith('woocommerce-') ? '#795548' : element.type === 'barcode' ? '#607d8b' : '#ff9800',
+          background: element.type === 'text' ? '#2196f3' : element.type === 'image' ? '#9c27b0' : element.type === 'rectangle' ? '#4caf50' : element.type && (element.type.startsWith('woocommerce-') || element.type.includes('_')) ? '#795548' : element.type === 'barcode' ? '#607d8b' : '#ff9800',
           color: 'white',
           padding: '2px 4px',
           // Changé de 1mm 2mm à 2px 4px
@@ -645,7 +648,7 @@ var PreviewModal = function PreviewModal(_ref) {
           // Réduit pour l'échelle
           fontWeight: 'bold'
         }
-      }, element.type === 'text' ? 'T' : element.type === 'image' ? '🖼️' : element.type === 'rectangle' ? '▭' : element.type && element.type.startsWith('woocommerce-') ? '🛒' : element.type === 'barcode' ? '▍' : '?'), element.type === 'text' && element.content ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      }, element.type === 'text' ? 'T' : element.type === 'image' ? '🖼️' : element.type === 'rectangle' ? '▭' : element.type && (element.type.startsWith('woocommerce-') || element.type.includes('_')) ? '🛒' : element.type === 'barcode' ? '▍' : '?'), element.type === 'text' && element.content ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         style: {
           fontSize: '10pt',
           textAlign: 'center',
@@ -679,31 +682,31 @@ var PreviewModal = function PreviewModal(_ref) {
           borderRadius: element.borderRadius ? "".concat(element.borderRadius, "px") : '2px',
           border: element.borderWidth ? "".concat(element.borderWidth, "px solid ").concat(element.borderColor || '#333') : 'none'
         }
-      }) : element.type === 'woocommerce-order-number' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      }) : element.type === 'woocommerce-order-number' || element.type === 'order_number' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         style: {
           fontSize: '12pt',
           fontWeight: 'bold',
           textAlign: 'center',
           color: '#007cba'
         }
-      }, "#WC-2025-001") : element.type === 'woocommerce-billing-address' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      }, "#WC-2025-001") : element.type === 'woocommerce-billing-address' || element.type === 'billing_address' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         style: {
           fontSize: '9pt',
           textAlign: 'left',
           lineHeight: '1.2'
         }
-      }, "Jean Dupont", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("br", null), "123 Rue de la Paix", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("br", null), "75001 Paris", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("br", null), "France") : element.type === 'woocommerce-order-date' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      }, "Jean Dupont", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("br", null), "123 Rue de la Paix", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("br", null), "75001 Paris", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("br", null), "France") : element.type === 'woocommerce-order-date' || element.type === 'order_date' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         style: {
           fontSize: '10pt',
           textAlign: 'center'
         }
-      }, "21/10/2025") : element.type === 'woocommerce-customer-name' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      }, "21/10/2025") : element.type === 'woocommerce-customer-name' || element.type === 'customer_name' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         style: {
           fontSize: '11pt',
           textAlign: 'center',
           fontWeight: 'bold'
         }
-      }, "Jean Dupont") : element.type === 'woocommerce-products-table' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      }, "Jean Dupont") : element.type === 'woocommerce-products-table' || element.type === 'products_table' || element.type === 'product_table' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         style: {
           fontSize: '8pt',
           width: '100%'
@@ -721,22 +724,22 @@ var PreviewModal = function PreviewModal(_ref) {
           display: 'flex',
           justifyContent: 'space-between'
         }
-      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "T-Shirt Blanc"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "1"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "25,00 \u20AC"))) : element.type === 'woocommerce-subtotal' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "T-Shirt Blanc"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "1"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "25,00 \u20AC"))) : element.type === 'woocommerce-subtotal' || element.type === 'subtotal' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         style: {
           fontSize: '10pt',
           textAlign: 'right'
         }
-      }, "Sous-total: 25,00 \u20AC") : element.type === 'woocommerce-taxes' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      }, "Sous-total: 25,00 \u20AC") : element.type === 'woocommerce-taxes' || element.type === 'taxes' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         style: {
           fontSize: '10pt',
           textAlign: 'right'
         }
-      }, "TVA (20%): 5,00 \u20AC") : element.type === 'woocommerce-shipping' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      }, "TVA (20%): 5,00 \u20AC") : element.type === 'woocommerce-shipping' || element.type === 'shipping' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         style: {
           fontSize: '10pt',
           textAlign: 'right'
         }
-      }, "Livraison: 5,90 \u20AC") : element.type === 'woocommerce-order-total' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      }, "Livraison: 5,90 \u20AC") : element.type === 'woocommerce-order-total' || element.type === 'order_total' || element.type === 'total' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
         style: {
           fontSize: '12pt',
           fontWeight: 'bold',
