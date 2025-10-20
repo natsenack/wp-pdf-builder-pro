@@ -34,6 +34,22 @@ const PreviewModal = ({
     return elapsed < 3000; // 3 secondes de protection
   }, [modalOpenTime]);
 
+  // Définition du mode courant utilisé pour charger les données (Canvas ou Metabox)
+  const currentMode = useMemo(() => {
+    return mode === 'metabox' ? MetaboxMode : CanvasMode;
+  }, [mode]);
+
+  // Handler de fermeture qui délègue à la prop onClose si fournie
+  const handleClose = useCallback(() => {
+    if (onClose && typeof onClose === 'function') {
+      try {
+        onClose();
+      } catch (err) {
+        console.error('PDF Builder Debug: onClose callback threw an error:', err);
+      }
+    }
+  }, [onClose]);
+
   // Chargement des éléments du template en mode metabox
   useEffect(() => {
     console.log('PDF Builder Debug: useEffect triggered - isOpen:', isOpen, 'mode:', mode, 'templateId:', templateId);
