@@ -16125,17 +16125,23 @@ var PreviewModal = function PreviewModal(_ref) {
 
   // Chargement des éléments du template en mode metabox
   (0,react.useEffect)(function () {
-    if (!isOpen || mode !== 'metabox') return;
+    console.log('PDF Builder Debug: useEffect triggered - isOpen:', isOpen, 'mode:', mode, 'templateId:', templateId);
+    if (!isOpen || mode !== 'metabox') {
+      console.log('PDF Builder Debug: Skipping loadTemplateElements - condition not met');
+      return;
+    }
     var loadTemplateElements = /*#__PURE__*/function () {
       var _ref2 = PreviewModal_asyncToGenerator(/*#__PURE__*/PreviewModal_regenerator().m(function _callee() {
         var _window$pdfBuilderPro, response, result, _result$data, _t;
         return PreviewModal_regenerator().w(function (_context) {
           while (1) switch (_context.p = _context.n) {
             case 0:
+              console.log('PDF Builder Debug: loadTemplateElements called with templateId:', templateId);
               if (templateId) {
                 _context.n = 1;
                 break;
               }
+              console.log('PDF Builder Debug: Template ID manquant');
               setError('ID du template manquant pour le mode metabox');
               return _context.a(2);
             case 1:

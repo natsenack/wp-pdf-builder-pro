@@ -27,10 +27,18 @@ const PreviewModal = ({
 
   // Chargement des éléments du template en mode metabox
   useEffect(() => {
-    if (!isOpen || mode !== 'metabox') return;
+    console.log('PDF Builder Debug: useEffect triggered - isOpen:', isOpen, 'mode:', mode, 'templateId:', templateId);
+
+    if (!isOpen || mode !== 'metabox') {
+      console.log('PDF Builder Debug: Skipping loadTemplateElements - condition not met');
+      return;
+    }
 
     const loadTemplateElements = async () => {
+      console.log('PDF Builder Debug: loadTemplateElements called with templateId:', templateId);
+
       if (!templateId) {
+        console.log('PDF Builder Debug: Template ID manquant');
         setError('ID du template manquant pour le mode metabox');
         return;
       }
