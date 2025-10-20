@@ -265,7 +265,7 @@ if (typeof window !== 'undefined') {
         // Fonction pour afficher l'aperçu dans la metabox WooCommerce
         window.pdfBuilderShowPreview = function(orderId, templateId, nonce) {
             console.log('=== PDF BUILDER DEBUG: pdfBuilderShowPreview START ===');
-            console.log('Parameters:', { orderId, templateId, nonce });
+            console.log('Function called with parameters:', { orderId, templateId, nonce });
 
             // VERSION DE FALLBACK SIMPLE - Test de l'affichage de base
             console.log('=== USING FALLBACK MODAL ===');
