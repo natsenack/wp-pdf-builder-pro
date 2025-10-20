@@ -1382,17 +1382,53 @@ class PDF_Builder_WooCommerce_Integration
 
             // Vérifier que le template existe
             if (!get_post($template_id)) {
-                error_log('PDF Builder: Template introuvable - ID: ' . $template_id . ', returning empty elements');
-                // Au lieu d'une erreur, retourner un tableau vide pour permettre le fonctionnement
-                wp_send_json_success(
+                error_log('PDF Builder: Template introuvable - ID: ' . $template_id . ', using test elements');
+                // TEMPORAIRE : Retourner des éléments de test même si le template n'existe pas
+                $test_elements = [
                     [
-                    'elements' => [],
+                        'id' => 'header-text',
+                        'type' => 'text',
+                        'x' => 50,
+                        'y' => 50,
+                        'width' => 200,
+                        'height' => 30,
+                        'content' => 'PDF Builder Pro - Test Template',
+                        'fontSize' => 18,
+                        'fontWeight' => 'bold',
+                        'color' => '#007cba',
+                        'textAlign' => 'center'
+                    ],
+                    [
+                        'id' => 'order-info',
+                        'type' => 'text',
+                        'x' => 50,
+                        'y' => 100,
+                        'width' => 300,
+                        'height' => 60,
+                        'content' => 'Commande #{order_number}\nClient: {customer_name}\nDate: {order_date}',
+                        'fontSize' => 12,
+                        'color' => '#333333'
+                    ],
+                    [
+                        'id' => 'rectangle-bg',
+                        'type' => 'rectangle',
+                        'x' => 40,
+                        'y' => 40,
+                        'width' => 515,
+                        'height' => 802,
+                        'backgroundColor' => '#ffffff',
+                        'borderColor' => '#dddddd',
+                        'borderWidth' => 1
+                    ]
+                ];
+
+                wp_send_json_success([
+                    'elements' => $test_elements,
                     'template_id' => $template_id,
                     'cached' => false,
-                    'element_count' => 0,
-                    'warning' => 'Template not found, using empty elements'
-                    ]
-                );
+                    'element_count' => count($test_elements),
+                    'warning' => 'Template not found, using test elements'
+                ]);
                 return;
             }
 
