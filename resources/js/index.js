@@ -4,6 +4,9 @@ import { createElement } from 'react';
 import ReactDOM from 'react-dom';
 import { PDFCanvasEditor } from './components/PDFCanvasEditor';
 
+// PDF BUILDER DEBUG: File loaded successfully - TIMESTAMP: ${Date.now()}
+console.log('=== PDF BUILDER FILE LOADED === TIMESTAMP:', Date.now());
+
 // Forcer l'inclusion de tous les hooks personnalisés
 import /* webpackMode: "eager" */ * as hooks from './hooks';
 
@@ -325,12 +328,20 @@ if (typeof window !== 'undefined') {
                 });
 
                 console.log('=== PDF BUILDER: Rendering React component ===');
+                console.log('ReactDOM available:', typeof ReactDOM);
+                console.log('React available:', typeof React);
+                console.log('createElement available:', typeof createElement);
 
                 // Rendre la modal
-                ReactDOM.render(previewElement, previewRoot);
-                modalContainer.style.display = 'flex';
-
-                console.log('=== PDF BUILDER: Modal should be visible now ===');
+                try {
+                    ReactDOM.render(previewElement, previewRoot);
+                    modalContainer.style.display = 'flex';
+                    console.log('=== PDF BUILDER: Modal should be visible now ===');
+                } catch (renderError) {
+                    console.error('=== PDF BUILDER RENDER ERROR ===', renderError);
+                    // Fallback: try to show an alert
+                    alert('Erreur de rendu React: ' + renderError.message);
+                }
             }).catch(error => {
                 console.error('=== PDF BUILDER ERROR: Import failed ===', error);
                 alert('Erreur lors du chargement du système d\'aperçu. Veuillez recharger la page.');

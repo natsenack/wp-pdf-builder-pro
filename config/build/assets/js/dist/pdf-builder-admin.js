@@ -11784,6 +11784,9 @@ function js_typeof(o) { "@babel/helpers - typeof"; return js_typeof = "function"
 
 
 
+// PDF BUILDER DEBUG: File loaded successfully - TIMESTAMP: ${Date.now()}
+console.log('=== PDF BUILDER FILE LOADED === TIMESTAMP:', Date.now());
+
 // Forcer l'inclusion de tous les hooks personnalisés
 
 
@@ -12085,11 +12088,20 @@ if (typeof window !== 'undefined') {
           nonce: nonce
         });
         console.log('=== PDF BUILDER: Rendering React component ===');
+        console.log('ReactDOM available:', js_typeof(react_dom));
+        console.log('React available:', js_typeof(react));
+        console.log('createElement available:', js_typeof(react.createElement));
 
         // Rendre la modal
-        react_dom.render(previewElement, previewRoot);
-        modalContainer.style.display = 'flex';
-        console.log('=== PDF BUILDER: Modal should be visible now ===');
+        try {
+          react_dom.render(previewElement, previewRoot);
+          modalContainer.style.display = 'flex';
+          console.log('=== PDF BUILDER: Modal should be visible now ===');
+        } catch (renderError) {
+          console.error('=== PDF BUILDER RENDER ERROR ===', renderError);
+          // Fallback: try to show an alert
+          alert('Erreur de rendu React: ' + renderError.message);
+        }
       })["catch"](function (error) {
         console.error('=== PDF BUILDER ERROR: Import failed ===', error);
         alert('Erreur lors du chargement du système d\'aperçu. Veuillez recharger la page.');
