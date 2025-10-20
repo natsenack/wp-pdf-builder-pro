@@ -251,12 +251,18 @@ class PDF_Builder_WooCommerce_Integration
 
         <script type="text/javascript">
         jQuery(document).ready(function($) {
+            console.log('PDF Builder: jQuery ready, checking elements');
+            console.log('PDF Builder: pdf-preview-btn exists:', $('#pdf-preview-btn').length > 0);
+            console.log('PDF Builder: pdfBuilderShowPreview exists:', typeof window.pdfBuilderShowPreview === 'function');
+
             var orderId = <?php echo intval($order_id); ?>;
             var templateId = <?php echo intval($selected_template ? $selected_template['id'] : 0); ?>;
             var nonce = '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>';
 
+            console.log('PDF Builder: Variables initialized:', { orderId, templateId, nonce });
             // Bouton aperçu
             $('#pdf-preview-btn').on('click', function() {
+                console.log('PDF Builder: Preview button clicked');
                 showPreviewModal(orderId, templateId, nonce);
             });
 
@@ -267,10 +273,13 @@ class PDF_Builder_WooCommerce_Integration
         });
 
         function showPreviewModal(orderId, templateId, nonce) {
+            console.log('PDF Builder: showPreviewModal called with:', { orderId, templateId, nonce });
             // Ouvrir la modal d'aperçu
             if (typeof window.pdfBuilderShowPreview === 'function') {
+                console.log('PDF Builder: pdfBuilderShowPreview function exists, calling it');
                 window.pdfBuilderShowPreview(orderId, templateId, nonce);
             } else {
+                console.error('PDF Builder: pdfBuilderShowPreview function not found');
                 alert('Système d\'aperçu non chargé. Veuillez recharger la page.');
             }
         }
