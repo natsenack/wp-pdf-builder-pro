@@ -428,57 +428,201 @@ var PreviewModal = function PreviewModal(_ref) {
       className: "preview-content"
     }, console.log('🎨🎨🎨 CONTENT RENDERED - previewData exists'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       style: {
-        padding: '30px',
-        textAlign: 'center',
-        background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
+        padding: '20px',
+        background: '#f8f9fa',
         borderRadius: '8px',
-        border: '2px solid #007cba'
+        border: '2px solid #007cba',
+        minHeight: '400px'
       }
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       style: {
-        fontSize: '48px',
-        marginBottom: '20px'
+        background: 'white',
+        padding: '15px',
+        borderRadius: '6px',
+        marginBottom: '20px',
+        border: '1px solid #dee2e6',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
       }
-    }, "\u2705"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", {
       style: {
+        margin: '0 0 10px 0',
         color: '#007cba',
-        marginBottom: '15px'
+        fontSize: '18px',
+        fontWeight: '600',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px'
       }
-    }, "Aper\xE7u PDF Builder - Fonctionnel !"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    }, "\uD83D\uDCC4 Aper\xE7u PDF - ", mode === 'canvas' ? 'Mode Exemple' : 'Commande Réelle', orderId && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", {
+      style: {
+        fontSize: '14px',
+        color: '#6c757d'
+      }
+    }, "(ID: ", orderId, ")")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      style: {
+        display: 'flex',
+        gap: '15px',
+        fontSize: '13px',
+        color: '#6c757d'
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "\uD83D\uDCCA ", Array.isArray(templateElements) ? templateElements.length : 0, " \xE9l\xE9ment(s)"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "\uD83D\uDCC5 ", new Date().toLocaleDateString('fr-FR')), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "\u23F0 ", new Date().toLocaleTimeString('fr-FR')))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       style: {
         background: 'white',
-        padding: '20px',
+        border: '1px solid #dee2e6',
         borderRadius: '6px',
-        marginBottom: '15px'
+        padding: '20px',
+        minHeight: '300px',
+        position: 'relative',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      style: {
+        background: 'white',
+        width: '210mm',
+        minHeight: '297mm',
+        margin: '0 auto',
+        padding: '20mm',
+        boxShadow: '0 0 10px rgba(0,0,0,0.2)',
+        border: '1px solid #e9ecef',
+        position: 'relative'
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      style: {
+        borderBottom: '2px solid #007cba',
+        paddingBottom: '10mm',
+        marginBottom: '15mm',
+        textAlign: 'center'
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h1", {
+      style: {
+        margin: '0',
+        color: '#007cba',
+        fontSize: '24pt',
+        fontWeight: 'bold'
+      }
+    }, mode === 'canvas' ? 'APERÇU TEMPLATE' : 'FACTURE / BON DE COMMANDE'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", {
+      style: {
+        margin: '5mm 0 0 0',
+        color: '#6c757d',
+        fontSize: '12pt'
+      }
+    }, "G\xE9n\xE9r\xE9 le ", new Date().toLocaleDateString('fr-FR'), " \xE0 ", new Date().toLocaleTimeString('fr-FR'))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      style: {
+        flex: 1
+      }
+    }, Array.isArray(templateElements) && templateElements.length > 0 ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      style: {
+        display: 'grid',
+        gap: '10mm'
+      }
+    }, templateElements.slice(0, 5).map(function (element, index) {
+      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        key: index,
+        style: {
+          padding: '8mm',
+          border: '1px solid #e9ecef',
+          borderRadius: '4px',
+          background: index % 2 === 0 ? '#f8f9fa' : 'white'
+        }
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        style: {
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }
+      }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("strong", {
+        style: {
+          color: '#007cba'
+        }
+      }, "\xC9l\xE9ment ", index + 1), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        style: {
+          fontSize: '10pt',
+          color: '#6c757d',
+          marginTop: '2mm'
+        }
+      }, "Type: ", element.type || 'Inconnu', " | Position: ", element.x || 0, ", ", element.y || 0)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        style: {
+          width: '20mm',
+          height: '15mm',
+          background: '#e9ecef',
+          borderRadius: '2px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '8pt',
+          color: '#6c757d'
+        }
+      }, "\uD83D\uDCC4")), element.content && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+        style: {
+          marginTop: '5mm',
+          fontSize: '11pt',
+          color: '#495057',
+          lineHeight: '1.4'
+        }
+      }, typeof element.content === 'string' ? element.content.substring(0, 100) + (element.content.length > 100 ? '...' : '') : 'Contenu: ' + JSON.stringify(element.content).substring(0, 50) + '...'));
+    }), templateElements.length > 5 && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      style: {
+        textAlign: 'center',
+        padding: '10mm',
+        color: '#6c757d',
+        fontStyle: 'italic'
+      }
+    }, "... et ", templateElements.length - 5, " autre(s) \xE9l\xE9ment(s)")) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      style: {
+        textAlign: 'center',
+        padding: '40mm',
+        color: '#6c757d'
+      }
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      style: {
+        fontSize: '48pt',
+        marginBottom: '10mm'
+      }
+    }, "\uD83D\uDCC4"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h3", {
+      style: {
+        margin: '0 0 10mm 0',
+        color: '#007cba'
+      }
+    }, "Aucun \xE9l\xE9ment \xE0 afficher"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", {
+      style: {
+        margin: '0',
+        fontSize: '12pt'
+      }
+    }, "Les \xE9l\xE9ments du template s'afficheront ici une fois charg\xE9s."))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      style: {
+        borderTop: '1px solid #dee2e6',
+        paddingTop: '10mm',
+        marginTop: '20mm',
+        textAlign: 'center',
+        fontSize: '10pt',
+        color: '#6c757d'
       }
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", {
       style: {
-        margin: '8px 0',
-        fontWeight: 'bold'
+        margin: '0'
       }
-    }, "\uD83D\uDCCA \xC9tat du syst\xE8me:"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", {
+    }, "PDF Builder Pro - Aper\xE7u g\xE9n\xE9r\xE9 automatiquement"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", {
       style: {
-        margin: '5px 0'
+        margin: '2mm 0 0 0'
       }
-    }, "\u2022 \xC9l\xE9ments charg\xE9s: ", Array.isArray(templateElements) ? templateElements.length : 0), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", {
+    }, "Page 1 sur 1")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       style: {
-        margin: '5px 0'
+        marginTop: '15px',
+        padding: '10px',
+        background: '#e7f3ff',
+        borderRadius: '4px',
+        fontSize: '12px',
+        color: '#0066cc',
+        border: '1px solid #b3d9ff'
       }
-    }, "\u2022 Donn\xE9es d'aper\xE7u: ", previewData ? '✅ Chargées' : '❌ Manquantes'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("strong", null, "\uD83D\uDCCA Informations techniques:"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       style: {
-        margin: '5px 0'
+        marginTop: '5px',
+        display: 'flex',
+        gap: '15px',
+        flexWrap: 'wrap'
       }
-    }, "\u2022 Mode: ", mode === 'canvas' ? '🖼️ Exemple' : '📄 Réel'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", {
-      style: {
-        margin: '5px 0'
-      }
-    }, "\u2022 Commande ID: ", orderId || 'N/A')), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("p", {
-      style: {
-        color: '#6c757d',
-        fontSize: '14px',
-        marginTop: '15px'
-      }
-    }, "\uD83C\uDF89 La modal d'aper\xE7u fonctionne correctement !", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("br", null), "Le syst\xE8me est pr\xEAt pour l'int\xE9gration du vrai rendu PDF.")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "\u2022 \xC9l\xE9ments: ", Array.isArray(templateElements) ? templateElements.length : 0), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "\u2022 Mode: ", mode === 'canvas' ? 'Exemple' : 'Production'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "\u2022 Donn\xE9es: ", previewData ? '✅ Chargées' : '❌ Manquantes'), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "\u2022 Template: ", templateId || 'N/A')))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
       className: "preview-modal-footer",
       style: {
         padding: '12px 20px',

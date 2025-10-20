@@ -335,27 +335,213 @@ const PreviewModal = ({
               <div className="preview-content">
                 {console.log('🎨🎨🎨 CONTENT RENDERED - previewData exists')}
                 <div style={{
-                  padding: '30px',
-                  textAlign: 'center',
-                  background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
+                  padding: '20px',
+                  background: '#f8f9fa',
                   borderRadius: '8px',
-                  border: '2px solid #007cba'
+                  border: '2px solid #007cba',
+                  minHeight: '400px'
                 }}>
-                  <div style={{ fontSize: '48px', marginBottom: '20px' }}>✅</div>
-                  <h3 style={{ color: '#007cba', marginBottom: '15px' }}>Aperçu PDF Builder - Fonctionnel !</h3>
-                  <div style={{ background: 'white', padding: '20px', borderRadius: '6px', marginBottom: '15px' }}>
-                    <p style={{ margin: '8px 0', fontWeight: 'bold' }}>
-                      📊 État du système:
-                    </p>
-                    <p style={{ margin: '5px 0' }}>• Éléments chargés: {Array.isArray(templateElements) ? templateElements.length : 0}</p>
-                    <p style={{ margin: '5px 0' }}>• Données d'aperçu: {previewData ? '✅ Chargées' : '❌ Manquantes'}</p>
-                    <p style={{ margin: '5px 0' }}>• Mode: {mode === 'canvas' ? '🖼️ Exemple' : '📄 Réel'}</p>
-                    <p style={{ margin: '5px 0' }}>• Commande ID: {orderId || 'N/A'}</p>
+                  {/* En-tête de l'aperçu PDF */}
+                  <div style={{
+                    background: 'white',
+                    padding: '15px',
+                    borderRadius: '6px',
+                    marginBottom: '20px',
+                    border: '1px solid #dee2e6',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                  }}>
+                    <h3 style={{
+                      margin: '0 0 10px 0',
+                      color: '#007cba',
+                      fontSize: '18px',
+                      fontWeight: '600',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}>
+                      📄 Aperçu PDF - {mode === 'canvas' ? 'Mode Exemple' : 'Commande Réelle'}
+                      {orderId && <span style={{ fontSize: '14px', color: '#6c757d' }}>(ID: {orderId})</span>}
+                    </h3>
+                    <div style={{
+                      display: 'flex',
+                      gap: '15px',
+                      fontSize: '13px',
+                      color: '#6c757d'
+                    }}>
+                      <span>📊 {Array.isArray(templateElements) ? templateElements.length : 0} élément(s)</span>
+                      <span>📅 {new Date().toLocaleDateString('fr-FR')}</span>
+                      <span>⏰ {new Date().toLocaleTimeString('fr-FR')}</span>
+                    </div>
                   </div>
-                  <p style={{ color: '#6c757d', fontSize: '14px', marginTop: '15px' }}>
-                    🎉 La modal d'aperçu fonctionne correctement !<br />
-                    Le système est prêt pour l'intégration du vrai rendu PDF.
-                  </p>
+
+                  {/* Zone de rendu PDF simulé */}
+                  <div style={{
+                    background: 'white',
+                    border: '1px solid #dee2e6',
+                    borderRadius: '6px',
+                    padding: '20px',
+                    minHeight: '300px',
+                    position: 'relative',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                  }}>
+                    {/* Simulation d'une page PDF A4 */}
+                    <div style={{
+                      background: 'white',
+                      width: '210mm',
+                      minHeight: '297mm',
+                      margin: '0 auto',
+                      padding: '20mm',
+                      boxShadow: '0 0 10px rgba(0,0,0,0.2)',
+                      border: '1px solid #e9ecef',
+                      position: 'relative'
+                    }}>
+                      {/* En-tête de page */}
+                      <div style={{
+                        borderBottom: '2px solid #007cba',
+                        paddingBottom: '10mm',
+                        marginBottom: '15mm',
+                        textAlign: 'center'
+                      }}>
+                        <h1 style={{
+                          margin: '0',
+                          color: '#007cba',
+                          fontSize: '24pt',
+                          fontWeight: 'bold'
+                        }}>
+                          {mode === 'canvas' ? 'APERÇU TEMPLATE' : 'FACTURE / BON DE COMMANDE'}
+                        </h1>
+                        <p style={{
+                          margin: '5mm 0 0 0',
+                          color: '#6c757d',
+                          fontSize: '12pt'
+                        }}>
+                          Généré le {new Date().toLocaleDateString('fr-FR')} à {new Date().toLocaleTimeString('fr-FR')}
+                        </p>
+                      </div>
+
+                      {/* Contenu basé sur les éléments du template */}
+                      <div style={{ flex: 1 }}>
+                        {Array.isArray(templateElements) && templateElements.length > 0 ? (
+                          <div style={{ display: 'grid', gap: '10mm' }}>
+                            {templateElements.slice(0, 5).map((element, index) => (
+                              <div key={index} style={{
+                                padding: '8mm',
+                                border: '1px solid #e9ecef',
+                                borderRadius: '4px',
+                                background: index % 2 === 0 ? '#f8f9fa' : 'white'
+                              }}>
+                                <div style={{
+                                  display: 'flex',
+                                  justifyContent: 'space-between',
+                                  alignItems: 'center'
+                                }}>
+                                  <div>
+                                    <strong style={{ color: '#007cba' }}>
+                                      Élément {index + 1}
+                                    </strong>
+                                    <div style={{
+                                      fontSize: '10pt',
+                                      color: '#6c757d',
+                                      marginTop: '2mm'
+                                    }}>
+                                      Type: {element.type || 'Inconnu'} |
+                                      Position: {element.x || 0}, {element.y || 0}
+                                    </div>
+                                  </div>
+                                  <div style={{
+                                    width: '20mm',
+                                    height: '15mm',
+                                    background: '#e9ecef',
+                                    borderRadius: '2px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '8pt',
+                                    color: '#6c757d'
+                                  }}>
+                                    📄
+                                  </div>
+                                </div>
+                                {element.content && (
+                                  <div style={{
+                                    marginTop: '5mm',
+                                    fontSize: '11pt',
+                                    color: '#495057',
+                                    lineHeight: '1.4'
+                                  }}>
+                                    {typeof element.content === 'string' ?
+                                      element.content.substring(0, 100) + (element.content.length > 100 ? '...' : '') :
+                                      'Contenu: ' + JSON.stringify(element.content).substring(0, 50) + '...'
+                                    }
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                            {templateElements.length > 5 && (
+                              <div style={{
+                                textAlign: 'center',
+                                padding: '10mm',
+                                color: '#6c757d',
+                                fontStyle: 'italic'
+                              }}>
+                                ... et {templateElements.length - 5} autre(s) élément(s)
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <div style={{
+                            textAlign: 'center',
+                            padding: '40mm',
+                            color: '#6c757d'
+                          }}>
+                            <div style={{ fontSize: '48pt', marginBottom: '10mm' }}>📄</div>
+                            <h3 style={{ margin: '0 0 10mm 0', color: '#007cba' }}>
+                              Aucun élément à afficher
+                            </h3>
+                            <p style={{ margin: '0', fontSize: '12pt' }}>
+                              Les éléments du template s'afficheront ici une fois chargés.
+                            </p>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Pied de page */}
+                      <div style={{
+                        borderTop: '1px solid #dee2e6',
+                        paddingTop: '10mm',
+                        marginTop: '20mm',
+                        textAlign: 'center',
+                        fontSize: '10pt',
+                        color: '#6c757d'
+                      }}>
+                        <p style={{ margin: '0' }}>
+                          PDF Builder Pro - Aperçu généré automatiquement
+                        </p>
+                        <p style={{ margin: '2mm 0 0 0' }}>
+                          Page 1 sur 1
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Informations techniques */}
+                  <div style={{
+                    marginTop: '15px',
+                    padding: '10px',
+                    background: '#e7f3ff',
+                    borderRadius: '4px',
+                    fontSize: '12px',
+                    color: '#0066cc',
+                    border: '1px solid #b3d9ff'
+                  }}>
+                    <strong>📊 Informations techniques:</strong>
+                    <div style={{ marginTop: '5px', display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+                      <span>• Éléments: {Array.isArray(templateElements) ? templateElements.length : 0}</span>
+                      <span>• Mode: {mode === 'canvas' ? 'Exemple' : 'Production'}</span>
+                      <span>• Données: {previewData ? '✅ Chargées' : '❌ Manquantes'}</span>
+                      <span>• Template: {templateId || 'N/A'}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
