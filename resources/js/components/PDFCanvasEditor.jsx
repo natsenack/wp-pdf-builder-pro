@@ -33,6 +33,11 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
   const [isCreatingGuide, setIsCreatingGuide] = useState(false);
   const [guideCreationType, setGuideCreationType] = useState(null); // 'horizontal' or 'vertical'
 
+  // Surveillance du state du modal d'aperçu
+  useEffect(() => {
+    console.log('👁️ State showPreviewModal changé:', showPreviewModal);
+  }, [showPreviewModal]);
+
   // Hook pour les paramètres globaux
   const globalSettings = useGlobalSettings();
 
@@ -628,14 +633,25 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
   }, [globalSettings.settings.zoomToSelection, canvasState]);
 
   // Stabiliser les props du modal pour éviter les re-renders inutiles
-  const previewModalProps = useMemo(() => ({
-    isOpen: showPreviewModal,
-    onClose: () => setShowPreviewModal(false),
-    mode: "canvas",
-    elements: canvasState.elements || [],
-    orderId: null,
-    templateData: options
-  }), [showPreviewModal, canvasState.elements, options]);
+  const previewModalProps = useMemo(() => {
+    console.log('🔄 Calcul des props du modal aperçu:', {
+      isOpen: showPreviewModal,
+      mode: "canvas",
+      elementsCount: canvasState.elements?.length || 0,
+      hasTemplateData: !!options
+    });
+    return {
+      isOpen: showPreviewModal,
+      onClose: () => {
+        console.log('🔄 Fermeture du modal aperçu');
+        setShowPreviewModal(false);
+      },
+      mode: "canvas",
+      elements: canvasState.elements || [],
+      orderId: null,
+      templateData: options
+    };
+  }, [showPreviewModal, canvasState.elements, options]);
 
   return (
     <div className="pdf-canvas-editor" ref={editorRef}>

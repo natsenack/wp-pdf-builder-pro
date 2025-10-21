@@ -11199,15 +11199,18 @@ var PreviewModal = __webpack_require__(454);
  * Ce fichier existe pour compatibilité avec les anciens imports
  */
 var PreviewModal_PreviewModal = function PreviewModal(props) {
+  console.log('🎭 PreviewModal rendu avec props:', props);
   try {
     // Ne rien rendre si props est undefined ou null
     if (!props) {
+      console.log('🎭 PreviewModal: props null/undefined, rien rendu');
       return /*#__PURE__*/react.createElement("div", null);
     }
     return /*#__PURE__*/react.createElement(PreviewProvider.PreviewProvider, null, /*#__PURE__*/react.createElement(PreviewModalWithContext, {
       legacyProps: props
     }));
   } catch (error) {
+    console.error('🎭 PreviewModal: Erreur dans PreviewModal:', error);
     return false;
   }
 };
@@ -11215,18 +11218,22 @@ var PreviewModal_PreviewModal = function PreviewModal(props) {
 // Composant interne qui gère la logique legacy
 var PreviewModalWithContext = function PreviewModalWithContext(_ref) {
   var legacyProps = _ref.legacyProps;
+  console.log('🎭 PreviewModalWithContext rendu avec legacyProps:', legacyProps);
   try {
     var _usePreviewContext = (0,PreviewContext.usePreviewContext)(),
       isOpen = _usePreviewContext.state.isOpen,
       _usePreviewContext$ac = _usePreviewContext.actions,
       openPreview = _usePreviewContext$ac.openPreview,
       closePreview = _usePreviewContext$ac.closePreview;
+    console.log('🎭 PreviewModalWithContext: isOpen du context:', isOpen);
 
     // Ouvrir automatiquement si des props legacy sont passées
     react.useEffect(function () {
+      console.log('🎭 useEffect ouverture: legacyProps?', !!legacyProps, 'isOpen?', isOpen);
       if (legacyProps && !isOpen) {
         var initialData = legacyProps.elements || null;
         var initialMode = legacyProps.mode || 'canvas';
+        console.log('🎭 Ouverture automatique du modal avec mode:', initialMode, 'data:', initialData);
         openPreview(initialMode, initialData);
       }
     }, [legacyProps, isOpen, openPreview]);
@@ -11346,6 +11353,11 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
     _useState18 = PDFCanvasEditor_slicedToArray(_useState17, 2),
     guideCreationType = _useState18[0],
     setGuideCreationType = _useState18[1]; // 'horizontal' or 'vertical'
+
+  // Surveillance du state du modal d'aperçu
+  (0,react.useEffect)(function () {
+    console.log('👁️ State showPreviewModal changé:', showPreviewModal);
+  }, [showPreviewModal]);
 
   // Hook pour les paramètres globaux
   var globalSettings = useGlobalSettings();
@@ -12015,10 +12027,18 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
 
   // Stabiliser les props du modal pour éviter les re-renders inutiles
   var previewModalProps = (0,react.useMemo)(function () {
+    var _canvasState$elements;
+    console.log('🔄 Calcul des props du modal aperçu:', {
+      isOpen: showPreviewModal,
+      mode: "canvas",
+      elementsCount: ((_canvasState$elements = canvasState.elements) === null || _canvasState$elements === void 0 ? void 0 : _canvasState$elements.length) || 0,
+      hasTemplateData: !!options
+    });
     return {
       isOpen: showPreviewModal,
       onClose: function onClose() {
-        return setShowPreviewModal(false);
+        console.log('🔄 Fermeture du modal aperçu');
+        setShowPreviewModal(false);
       },
       mode: "canvas",
       elements: canvasState.elements || [],
