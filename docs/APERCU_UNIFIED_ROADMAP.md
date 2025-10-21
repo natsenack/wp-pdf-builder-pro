@@ -1,7 +1,7 @@
 # 🚀 Reconstruction Système d'Aperçu
 
 **📅 Date** : 21 octobre 2025  
-**🔄 Statut** : Phase 1 terminée - Prêt pour Phase 2
+**🔄 Statut** : Phase 1 terminée (local + serveur distant)
 
 ---
 
@@ -21,6 +21,8 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
 - [x] Supprimer les styles CSS d'aperçu
 - [x] Recompiler les assets
 - [x] Valider la syntaxe PHP
+- [x] **Nettoyer le serveur distant**
+- [x] **Redéployer les fichiers nettoyés**
 
 ### 🔍 Phase 2 : Analyse & conception
 - [ ] Auditer les 7 types d'éléments
