@@ -28,6 +28,11 @@ function CanvasMode() {
   const elements = config?.elements || [];
   const previewData = data || {};
 
+  console.log('CanvasMode - State:', state);
+  console.log('CanvasMode - Config:', config);
+  console.log('CanvasMode - Elements:', elements);
+  console.log('CanvasMode - PreviewData:', previewData);
+
   // Dimensions du canvas (A4 par défaut)
   const canvasWidth = config?.templateData?.width || 595;
   const canvasHeight = config?.templateData?.height || 842;
@@ -41,10 +46,16 @@ function CanvasMode() {
   const scaleY = maxHeight / canvasHeight;
   const scale = Math.min(scaleX, scaleY, 1); // Ne pas agrandir si plus petit
 
+  console.log('CanvasMode - Canvas dimensions:', { canvasWidth, canvasHeight });
+  console.log('CanvasMode - Scale calculations:', { scaleX, scaleY, scale });
+
   // Fonction pour obtenir le renderer approprié selon le type d'élément
   const getRenderer = (element) => {
+    console.log('CanvasMode - Rendering element:', element);
     const elementKey = `${element.type}_${element.id}`;
     const elementData = previewData[elementKey] || {};
+
+    console.log('CanvasMode - Element key:', elementKey, 'Element data:', elementData);
 
     const commonProps = {
       element: { ...element, ...elementData },
@@ -101,6 +112,7 @@ function CanvasMode() {
       case 'progress-bar':
         return <ProgressBarRenderer key={element.id} {...commonProps} />;
       case 'mentions':
+        console.log('CanvasMode - Rendering mentions element:', element, 'with data:', elementData);
         return <MentionsRenderer key={element.id} {...commonProps} />;
       default:
         // Pour les éléments non reconnus, afficher un placeholder
@@ -146,7 +158,10 @@ function CanvasMode() {
         }}
       >
         {/* Rendre tous les éléments à leurs positions */}
-        {elements.map(element => getRenderer(element))}
+        {elements.map(element => {
+          console.log('CanvasMode - Mapping element:', element);
+          return getRenderer(element);
+        })}
 
         {/* Message d'exemple si aucun élément */}
         {elements.length === 0 && (

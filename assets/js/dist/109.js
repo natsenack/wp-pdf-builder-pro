@@ -1451,6 +1451,10 @@ function CanvasMode() {
   // Récupérer les éléments depuis la config (passés via PreviewModal)
   var elements = (config === null || config === void 0 ? void 0 : config.elements) || [];
   var previewData = data || {};
+  console.log('CanvasMode - State:', state);
+  console.log('CanvasMode - Config:', config);
+  console.log('CanvasMode - Elements:', elements);
+  console.log('CanvasMode - PreviewData:', previewData);
 
   // Dimensions du canvas (A4 par défaut)
   var canvasWidth = (config === null || config === void 0 || (_config$templateData = config.templateData) === null || _config$templateData === void 0 ? void 0 : _config$templateData.width) || 595;
@@ -1465,10 +1469,22 @@ function CanvasMode() {
   var scaleY = maxHeight / canvasHeight;
   var scale = Math.min(scaleX, scaleY, 1); // Ne pas agrandir si plus petit
 
+  console.log('CanvasMode - Canvas dimensions:', {
+    canvasWidth: canvasWidth,
+    canvasHeight: canvasHeight
+  });
+  console.log('CanvasMode - Scale calculations:', {
+    scaleX: scaleX,
+    scaleY: scaleY,
+    scale: scale
+  });
+
   // Fonction pour obtenir le renderer approprié selon le type d'élément
   var getRenderer = function getRenderer(element) {
+    console.log('CanvasMode - Rendering element:', element);
     var elementKey = "".concat(element.type, "_").concat(element.id);
     var elementData = previewData[elementKey] || {};
+    console.log('CanvasMode - Element key:', elementKey, 'Element data:', elementData);
     var commonProps = {
       element: CanvasMode_objectSpread(CanvasMode_objectSpread({}, element), elementData),
       previewData: previewData,
@@ -1541,6 +1557,7 @@ function CanvasMode() {
           key: element.id
         }, commonProps));
       case 'mentions':
+        console.log('CanvasMode - Rendering mentions element:', element, 'with data:', elementData);
         return /*#__PURE__*/react.createElement(MentionsRenderer, _extends({
           key: element.id
         }, commonProps));
@@ -1581,6 +1598,7 @@ function CanvasMode() {
       transformOrigin: 'top center'
     }
   }, elements.map(function (element) {
+    console.log('CanvasMode - Mapping element:', element);
     return getRenderer(element);
   }), elements.length === 0 && /*#__PURE__*/react.createElement("div", {
     style: {
