@@ -45,7 +45,7 @@ const PreviewModalWithContext = ({ legacyProps }) => {
         hasOpenedRef.current = true;
         prevPropsRef.current = { elements: initialData, mode: initialMode };
       }
-    }, [legacyProps, isOpen, openPreview]);
+    }, [legacyProps, openPreview]); // Removed isOpen to prevent re-runs
 
     // Réinitialiser le ref si les props changent significativement
     React.useEffect(() => {

@@ -11245,7 +11245,7 @@ var PreviewModalWithContext = function PreviewModalWithContext(_ref) {
           mode: initialMode
         };
       }
-    }, [legacyProps, isOpen, openPreview]);
+    }, [legacyProps, openPreview]); // Removed isOpen to prevent re-runs
 
     // Réinitialiser le ref si les props changent significativement
     react.useEffect(function () {
