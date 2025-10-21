@@ -371,11 +371,6 @@ function PreviewModal() {
     error = _usePreviewContext$st.error,
     closePreview = _usePreviewContext.actions.closePreview;
 
-  // Debug: logger les changements d'état du contexte
-  react.useEffect(function () {
-    console.log('🔍 PreviewModalComponent - context state changed - isOpen:', isOpen, 'mode:', mode);
-  }, [isOpen, mode]);
-
   // Gestionnaire d'échappement clavier
   (0,react.useEffect)(function () {
     if (!isOpen) return;
@@ -398,11 +393,7 @@ function PreviewModal() {
   };
 
   // Ne rien rendre si fermé ou si pas de mode valide
-  if (!isOpen || !mode) {
-    console.log('🔍 PreviewModalComponent - NOT RENDERING - isOpen:', isOpen, 'mode:', mode);
-    return null;
-  }
-  console.log('🔍 PreviewModalComponent - RENDERING modal - isOpen:', isOpen, 'mode:', mode);
+  if (!isOpen || !mode) return null;
   return /*#__PURE__*/react.createElement("div", {
     className: "pdf-preview-modal-overlay",
     onClick: handleOverlayClick
@@ -428,7 +419,7 @@ function PreviewModal() {
   }, error), /*#__PURE__*/react.createElement("button", {
     onClick: closePreview,
     className: "pdf-preview-error-close"
-  }, "Fermer")) : /*#__PURE__*/react.createElement(react.Fragment, null, mode === 'canvas' && /*#__PURE__*/react.createElement(react.Fragment, null, console.log('🔍 Rendering CanvasMode'), /*#__PURE__*/react.createElement(CanvasMode, null)), mode === 'metabox' && /*#__PURE__*/react.createElement(react.Fragment, null, console.log('🔍 Rendering MetaboxMode'), /*#__PURE__*/react.createElement(MetaboxMode, null))))), loading && /*#__PURE__*/react.createElement("div", {
+  }, "Fermer")) : /*#__PURE__*/react.createElement(react.Fragment, null, mode === 'canvas' && /*#__PURE__*/react.createElement(CanvasMode, null), mode === 'metabox' && /*#__PURE__*/react.createElement(MetaboxMode, null)))), loading && /*#__PURE__*/react.createElement("div", {
     className: "pdf-preview-loading-overlay"
   }, /*#__PURE__*/react.createElement("div", {
     className: "pdf-preview-spinner"
@@ -11232,22 +11223,14 @@ var PreviewModalWithContext = /*#__PURE__*/react.memo(function (_ref) {
       openPreview = _usePreviewContext$ac.openPreview,
       closePreview = _usePreviewContext$ac.closePreview;
 
-    // Debug: logger les changements de props legacy
-    react.useEffect(function () {
-      console.log('🔍 PreviewModalWithContext - legacyProps changed:', legacyProps);
-    }, [legacyProps]);
-
     // Ouvrir automatiquement si des props legacy indiquent que la modal doit être ouverte
     react.useEffect(function () {
-      console.log('🔍 useEffect triggered - legacyProps.isOpen:', legacyProps === null || legacyProps === void 0 ? void 0 : legacyProps.isOpen, 'isOpen:', isOpen);
       if (legacyProps && legacyProps.isOpen && !isOpen) {
-        console.log('🔍 Opening modal - calling openPreview');
         var initialData = legacyProps.elements || null;
         var initialMode = legacyProps.mode || 'canvas';
         openPreview(initialMode, initialData);
       } else if (legacyProps && !legacyProps.isOpen && isOpen) {
         // Fermer la modal si les props legacy indiquent qu'elle doit être fermée
-        console.log('🔍 Closing modal - calling closePreview');
         closePreview();
       }
     }, [legacyProps, openPreview, closePreview, isOpen]);
@@ -12034,11 +12017,6 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
       templateData: options
     };
   }, [showPreviewModal, canvasState.elements, options]);
-
-  // Debug: logger les changements d'état de la modal
-  react.useEffect(function () {
-    console.log('🔍 PDFCanvasEditor - showPreviewModal changed:', showPreviewModal);
-  }, [showPreviewModal]);
   return /*#__PURE__*/react.createElement("div", {
     className: "pdf-canvas-editor",
     ref: editorRef

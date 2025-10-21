@@ -18,11 +18,6 @@ function PreviewModal() {
     actions: { closePreview }
   } = usePreviewContext();
 
-  // Debug: logger les changements d'état du contexte
-  React.useEffect(() => {
-    console.log('🔍 PreviewModalComponent - context state changed - isOpen:', isOpen, 'mode:', mode);
-  }, [isOpen, mode]);
-
   // Gestionnaire d'échappement clavier
   useEffect(() => {
     if (!isOpen) return;
@@ -45,12 +40,7 @@ function PreviewModal() {
   };
 
   // Ne rien rendre si fermé ou si pas de mode valide
-  if (!isOpen || !mode) {
-    console.log('🔍 PreviewModalComponent - NOT RENDERING - isOpen:', isOpen, 'mode:', mode);
-    return null;
-  }
-
-  console.log('🔍 PreviewModalComponent - RENDERING modal - isOpen:', isOpen, 'mode:', mode);
+  if (!isOpen || !mode) return null;
 
   return (
     <div className="pdf-preview-modal-overlay" onClick={handleOverlayClick}>
@@ -86,18 +76,8 @@ function PreviewModal() {
               </div>
             ) : (
               <>
-                {mode === 'canvas' && (
-                  <>
-                    {console.log('🔍 Rendering CanvasMode')}
-                    <CanvasMode />
-                  </>
-                )}
-                {mode === 'metabox' && (
-                  <>
-                    {console.log('🔍 Rendering MetaboxMode')}
-                    <MetaboxMode />
-                  </>
-                )}
+                {mode === 'canvas' && <CanvasMode />}
+                {mode === 'metabox' && <MetaboxMode />}
               </>
             )}
           </Suspense>

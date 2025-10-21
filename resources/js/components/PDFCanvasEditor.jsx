@@ -635,11 +635,6 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
     templateData: options
   }), [showPreviewModal, canvasState.elements, options]);
 
-  // Debug: logger les changements d'état de la modal
-  React.useEffect(() => {
-    console.log('🔍 PDFCanvasEditor - showPreviewModal changed:', showPreviewModal);
-  }, [showPreviewModal]);
-
   return (
     <div className="pdf-canvas-editor" ref={editorRef}>
       {/* Header avec titre et actions */}
