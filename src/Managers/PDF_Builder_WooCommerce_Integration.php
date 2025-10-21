@@ -243,16 +243,6 @@ class PDF_Builder_WooCommerce_Integration
                     </button>
                     <?php endif; ?>
                 </div>
-
-                <!-- DEBUG ELEMENTS - PHASE 8 VERIFICATION -->
-                <div id="phase8-debug-info" style="margin-top: 15px; padding: 10px; background: #e8f5e8; border: 2px solid #28a745; border-radius: 5px; font-size: 12px;">
-                    <div style="font-weight: bold; color: #28a745;">🔍 DEBUG PHASE 8</div>
-                    <div>Order ID: <strong><?php echo intval($order_id); ?></strong></div>
-                    <div>Template ID: <strong><?php echo intval($selected_template ? $selected_template['id'] : 0); ?></strong></div>
-                    <div>Timestamp: <strong><?php echo date('H:i:s'); ?></strong></div>
-                    <div id="js-status" style="color: #dc3545;">JavaScript: <strong>NOT LOADED</strong></div>
-                    <div id="function-status" style="color: #dc3545;">Function: <strong>NOT FOUND</strong></div>
-                </div>
             </div>
         </div>
 
@@ -263,32 +253,18 @@ class PDF_Builder_WooCommerce_Integration
 
         <script type="text/javascript">
         jQuery(document).ready(function($) {
-
             var orderId = <?php echo intval($order_id); ?>;
             var templateId = <?php echo intval($selected_template ? $selected_template['id'] : 0); ?>;
             var nonce = '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>';
 
-
-            // UPDATE DEBUG INFO
-            $('#js-status').html('JavaScript: <strong style="color: #28a745;">LOADED ✓</strong>');
-            if (typeof window.pdfBuilderShowPreview === 'function') {
-                $('#function-status').html('Function: <strong style="color: #28a745;">FOUND ✓</strong>');
-            }
-
-            // TEST DIRECT: Ajouter un événement de clic direct pour prouver la connexion
+            // Événement clic sur le bouton aperçu
             $('#pdf-preview-btn').on('click', function() {
-                $('#phase8-debug-info').append('<div style="color: #ff6b35; font-weight: bold;">🔥 BUTTON CLICKED AT: ' + new Date().toLocaleTimeString() + '</div>');
-
-                // Appeler directement la fonction pour tester
                 if (typeof window.pdfBuilderShowPreview === 'function') {
                     try {
                         window.pdfBuilderShowPreview(orderId, templateId, nonce);
-                        $('#phase8-debug-info').append('<div style="color: #28a745; font-weight: bold;">✅ FUNCTION CALLED SUCCESSFULLY</div>');
                     } catch (error) {
-                        $('#phase8-debug-info').append('<div style="color: #dc3545; font-weight: bold;">❌ ERROR: ' + error.message + '</div>');
+                        // Erreur gérée silencieusement
                     }
-                } else {
-                    $('#phase8-debug-info').append('<div style="color: #dc3545; font-weight: bold;">❌ FUNCTION NOT FOUND</div>');
                 }
             });
 
