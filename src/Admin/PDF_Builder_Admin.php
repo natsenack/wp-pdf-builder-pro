@@ -253,8 +253,6 @@ class PDF_Builder_Admin
         add_action('wp_ajax_pdf_builder_save_settings_page', [$this, 'ajax_save_settings_page']);
 // Hook AJAX pour migrer les templates obsolètes
         add_action('wp_ajax_pdf_builder_migrate_templates', [$this, 'ajax_migrate_templates']);
-// Hook AJAX pour récupérer les données d'aperçu de commande (Phase 5.4)
-        add_action('wp_ajax_pdf_builder_get_order_preview_data', [$this, 'ajax_get_order_preview_data']);
 // Endpoint pour le debug direct (accessible via URL) - TODO: Implémenter ces méthodes
         // add_action('init', [$this, 'add_debug_endpoint']);
         // add_action('template_redirect', [$this, 'handle_debug_endpoint']);
@@ -421,7 +419,6 @@ class PDF_Builder_Admin
                                 <li>Zoom fluide (10% à 500%)</li>
                                 <li>Navigation panoramique</li>
                                 <li>Compteur FPS intégré</li>
-                                <li>Aperçu en direct</li>
                             </ul>
                         </div>
 
@@ -531,10 +528,6 @@ class PDF_Builder_Admin
                             <div class="new-feature-item">
                                 <span class="feature-badge">NOUVEAU</span>
                                 <strong>Compteur FPS</strong> - Surveillez les performances de l'éditeur canvas
-                            </div>
-                            <div class="new-feature-item">
-                                <span class="feature-badge">AMÉLIORÉ</span>
-                                <strong>Aperçu côté serveur</strong> - Validation des éléments avant génération
                             </div>
                             <div class="new-feature-item">
                                 <span class="feature-badge">CORRIGÉ</span>
@@ -2181,7 +2174,7 @@ class PDF_Builder_Admin
                             $table_html = $this->generate_order_products_table($order, $table_style, $element);
                             $html .= '<div class="pdf-element table-element" style="' . $style . '">' . $table_html . '</div>';
                         } else {
-            // Aperçu fictif du tableau de produits avec un meilleur style
+            // Exemple fictif du tableau de produits avec un meilleur style
                             $table_html = '<table style="width: 100%; border-collapse: collapse; font-size: 11px;">';
                             $table_html .= '<thead>';
                             $table_html .= '<tr style="background-color: #f8f9fa;">';
@@ -2290,7 +2283,7 @@ class PDF_Builder_Admin
                         break;
                     case 'customer_info':
                         if ($order) {
-            // Formater comme dans l'aperçu du builder avec les vraies données
+            // Formater comme dans le builder avec les vraies données
                             $customer_html = '<div style="padding: 8px; font-size: 12px; line-height: 1.4;">';
                             $customer_html .= '<div style="font-weight: bold; margin-bottom: 4px;">' . esc_html($order->get_billing_first_name() . ' ' . $order->get_billing_last_name()) . '</div>';
             // Adresse de facturation
@@ -2319,7 +2312,7 @@ class PDF_Builder_Admin
                             $customer_html .= '</div>';
                             $html .= sprintf('<div class="pdf-element" style="%s">%s</div>', $style, $customer_html);
                         } else {
-            // Aperçu fictif comme dans le builder
+            // Exemple fictif comme dans le builder
                             $customer_html = '<div style="padding: 8px; font-size: 12px; line-height: 1.4;">';
                             $customer_html .= '<div style="font-weight: bold; margin-bottom: 4px;">Client</div>';
                             $customer_html .= '<div>Jean Dupont</div>';
@@ -3590,7 +3583,7 @@ class PDF_Builder_Admin
         try {
             $html_content = $this->generate_unified_html($template, $order);
             echo "<p><strong>Longueur HTML généré:</strong> " . strlen($html_content) . " caractères</p>";
-            echo "<h3>Aperçu HTML (tronqué)</h3>";
+            echo "<h3>HTML généré (tronqué)</h3>";
             echo "<div style='border: 1px solid #ccc; padding: 10px; max-height: 400px; overflow: auto; background: #f9f9f9;'>";
             echo substr($html_content, 0, 2000) . (strlen($html_content) > 2000 ? '<p><em>... [tronqué]</em></p>' : '');
             echo "</div>";
@@ -5148,7 +5141,7 @@ class PDF_Builder_Admin
     }
 
     /**
-     * Rendre un tableau produit en HTML pour l'aperçu Canvas
+     * Rendre un tableau produit en HTML pour le Canvas
      * Respecte toutes les propriétés CSS de l'élément du canvas - SANS enveloppe supplémentaire
      */
     private function render_product_table_html($order, $element, $text_color = null, $font_family = null, $font_size = null)
@@ -5331,8 +5324,8 @@ class PDF_Builder_Admin
     }
 
     /**
-     * AJAX pour afficher l'aperçu Canvas d'une commande
-     * Affiche l'aperçu identique à l'éditeur Canvas
+     * AJAX pour afficher le Canvas d'une commande
+     * Affiche le rendu identique à l'éditeur Canvas
      */
 
     /**
@@ -5544,54 +5537,6 @@ class PDF_Builder_Admin
         }
 
         return $style;
-    }
-
-    /**
-     * AJAX endpoint to get order preview data for variable mapping
-     */
-    public function ajax_get_order_preview_data()
-    {
-        // Vérifier le nonce
-        if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_maintenance')) {
-            wp_send_json_error(['message' => __('Nonce invalide.', 'pdf-builder-pro')]);
-            return;
-        }
-
-        // Vérifier les permissions
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error(['message' => __('Permissions insuffisantes.', 'pdf-builder-pro')]);
-            return;
-        }
-
-        // Récupérer l'ID de la commande
-        $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
-        if (!$order_id) {
-            wp_send_json_error(['message' => __('ID de commande manquant.', 'pdf-builder-pro')]);
-            return;
-        }
-
-        try {
-// Charger la commande WooCommerce
-            $order = wc_get_order($order_id);
-            if (!$order) {
-                wp_send_json_error(['message' => __('Commande introuvable.', 'pdf-builder-pro')]);
-                return;
-            }
-
-            // Créer un nouveau mapper avec cette commande
-            $mapper = new \PDF_Builder\Managers\PDFBuilderVariableMapper($order);
-            // Obtenir toutes les variables
-            $variables = $mapper->getAllVariables();
-            wp_send_json_success([
-                'order_id' => $order_id,
-                'variables' => $variables,
-                'order_status' => $order->get_status(),
-                'order_date' => $order->get_date_created() ? $order->get_date_created()->format('Y-m-d H:i:s') : null
-                ]);
-        } catch (Exception $e) {
-            error_log('[PDF Builder] Erreur lors de la récupération des données d\'aperçu: ' . $e->getMessage());
-            wp_send_json_error(['message' => __('Erreur lors de la récupération des données: ', 'pdf-builder-pro') . $e->getMessage()]);
-        }
     }
 
     /**

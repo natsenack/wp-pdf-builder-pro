@@ -636,7 +636,7 @@ export const CanvasElement = ({
            };
 
            const content = getTemplateContent(element.template, element.customContent);
-           // Remplacement basique pour l'aperçu canvas
+           // Remplacement basique pour le rendu canvas
            return content
              .replace(/\{\{order_total\}\}/g, '125.99 €')
              .replace(/\{\{order_number\}\}/g, 'CMD-2025-001')
@@ -1606,7 +1606,7 @@ export const CanvasElement = ({
                 // Utiliser le format défini ou une valeur par défaut
                 const format = element.format || 'Commande #{order_number} - {order_date}';
 
-                // Données de test pour l'aperçu (seront remplacées par les vraies données lors de la génération)
+                // Données de test pour le rendu (seront remplacées par les vraies données lors de la génération)
                 const testData = {
                   order_number: '12345',
                   order_date: '15/10/2025'

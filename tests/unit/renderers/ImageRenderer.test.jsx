@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { render } from '@testing-library/react';
-import { ImageRenderer } from '../../../resources/js/components/preview-system/renderers/ImageRenderer';
+import { ImageRenderer } from '../../../src/renderers/ImageRenderer';
 
 describe('ImageRenderer', () => {
   const mockElement = {
@@ -29,7 +29,7 @@ describe('ImageRenderer', () => {
       <ImageRenderer element={mockElement} canvasScale={1} />
     );
     
-    const element = container.querySelector('.preview-image-element');
+    const element = container.querySelector('.pdf-image-element');
     expect(element).toBeInTheDocument();
   });
 
@@ -38,7 +38,7 @@ describe('ImageRenderer', () => {
       <ImageRenderer element={mockElement} canvasScale={1} />
     );
     
-    const element = container.querySelector('.preview-image-element');
+    const element = container.querySelector('.pdf-image-element');
     expect(element.style.left).toBe('20px');
     expect(element.style.top).toBe('30px');
     expect(element.style.width).toBe('150px');
@@ -88,7 +88,7 @@ describe('ImageRenderer', () => {
       <ImageRenderer element={mockElement} canvasScale={1} />
     );
     
-    const element = container.querySelector('.preview-image-element');
+    const element = container.querySelector('.pdf-image-element');
     expect(element.style.backgroundColor).toBe('white');
   });
 
@@ -97,7 +97,7 @@ describe('ImageRenderer', () => {
       <ImageRenderer element={mockElement} canvasScale={1} />
     );
     
-    const element = container.querySelector('.preview-image-element');
+    const element = container.querySelector('.pdf-image-element');
     expect(element.style.border).toContain('1px');
   });
 
@@ -106,7 +106,7 @@ describe('ImageRenderer', () => {
       <ImageRenderer element={mockElement} canvasScale={2} />
     );
     
-    const element = container.querySelector('.preview-image-element');
+    const element = container.querySelector('.pdf-image-element');
     expect(element.style.left).toBe('40px');
     expect(element.style.top).toBe('60px');
     expect(element.style.width).toBe('300px');
@@ -118,7 +118,7 @@ describe('ImageRenderer', () => {
       <ImageRenderer element={{ ...mockElement, visible: false }} canvasScale={1} />
     );
     
-    const element = container.querySelector('.preview-image-element');
+    const element = container.querySelector('.pdf-image-element');
     expect(element.style.display).toBe('none');
   });
 
@@ -144,7 +144,7 @@ describe('ImageRenderer', () => {
       <ImageRenderer element={mockElement} canvasScale={1} />
     );
     
-    const element = container.querySelector('.preview-image-element');
+    const element = container.querySelector('.pdf-image-element');
     expect(element.style.transformOrigin).toBe('top left');
   });
 });

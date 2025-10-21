@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { TextRenderer } from '../../../resources/js/components/preview-system/renderers/TextRenderer';
+import { TextRenderer } from '../../../src/renderers/TextRenderer';
 
 describe('TextRenderer', () => {
   const mockElement = {
@@ -39,7 +39,7 @@ describe('TextRenderer', () => {
       <TextRenderer element={mockElement} canvasScale={1} />
     );
     
-    const element = container.querySelector('.preview-text-element');
+    const element = container.querySelector('.pdf-text-element');
     const style = window.getComputedStyle(element);
     
     expect(element.style.left).toBe('10px');
@@ -53,7 +53,7 @@ describe('TextRenderer', () => {
       <TextRenderer element={hiddenElement} canvasScale={1} />
     );
     
-    const element = container.querySelector('.preview-text-element');
+    const element = container.querySelector('.pdf-text-element');
     expect(element.style.display).toBe('none');
   });
 
@@ -71,7 +71,7 @@ describe('TextRenderer', () => {
       <TextRenderer element={mockElement} canvasScale={1} />
     );
     
-    const element = container.querySelector('.preview-text-element');
+    const element = container.querySelector('.pdf-text-element');
     expect(element.style.color).toBe('#333333');
     expect(element.style.backgroundColor).toBe('transparent');
   });
@@ -82,7 +82,7 @@ describe('TextRenderer', () => {
       <TextRenderer element={elementWithBorder} canvasScale={1} />
     );
     
-    const element = container.querySelector('.preview-text-element');
+    const element = container.querySelector('.pdf-text-element');
     expect(element.style.border).toContain('2px');
     expect(element.style.border).toContain('solid');
   });
@@ -92,7 +92,7 @@ describe('TextRenderer', () => {
       <TextRenderer element={mockElement} canvasScale={2} />
     );
     
-    const element = container.querySelector('.preview-text-element');
+    const element = container.querySelector('.pdf-text-element');
     expect(element.style.left).toBe('20px');
     expect(element.style.top).toBe('40px');
     expect(element.style.fontSize).toBe('28px');
@@ -104,7 +104,7 @@ describe('TextRenderer', () => {
       <TextRenderer element={elementWithTransform} canvasScale={1} />
     );
     
-    const element = container.querySelector('.preview-text-element');
+    const element = container.querySelector('.pdf-text-element');
     expect(element.style.transform).toContain('rotate(45deg)');
     expect(element.style.transform).toContain('scale(0.5)');
   });
@@ -121,7 +121,7 @@ describe('TextRenderer', () => {
       <TextRenderer element={elementWithShadow} canvasScale={1} />
     );
     
-    const element = container.querySelector('.preview-text-element');
+    const element = container.querySelector('.pdf-text-element');
     expect(element.style.boxShadow).toContain('2px');
   });
 });

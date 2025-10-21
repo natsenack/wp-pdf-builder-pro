@@ -44,7 +44,6 @@ class PDF_Builder_WooCommerce_Integration
         add_action('wp_ajax_pdf_builder_generate_order_pdf', [$this, 'ajax_generate_order_pdf'], 1); // Alias pour compatibilité
         add_action('wp_ajax_pdf_builder_save_order_canvas', [$this, 'ajax_save_order_canvas'], 1);
         add_action('wp_ajax_pdf_builder_load_order_canvas', [$this, 'ajax_load_order_canvas'], 1);
-        add_action('wp_ajax_pdf_builder_get_order_preview_data', [$this, 'ajax_get_order_preview_data'], 1);
         add_action('wp_ajax_pdf_builder_get_canvas_elements', [$this, 'ajax_get_canvas_elements'], 1);
         add_action('wp_ajax_pdf_builder_get_order_data', [$this, 'ajax_get_order_data'], 1);
         add_action('wp_ajax_pdf_builder_validate_order_access', [$this, 'ajax_validate_order_access'], 1);
@@ -235,9 +234,6 @@ class PDF_Builder_WooCommerce_Integration
 
                 <div style="display: flex; gap: 10px; align-items: center;">
                     <?php if ($selected_template) : ?>
-                    <button type="button" id="pdf-preview-btn" class="button button-outline" style="padding: 8px 16px;">
-                        👁️ Aperçu
-                    </button>
                     <button type="button" id="pdf-generate-btn" class="button button-secondary" style="padding: 8px 16px;">
                         📄 Générer PDF
                     </button>
@@ -246,69 +242,11 @@ class PDF_Builder_WooCommerce_Integration
             </div>
         </div>
 
-        <!-- Modal d'aperçu React -->
-        <div id="pdf-builder-preview-modal" style="display: none;">
-            <div id="pdf-builder-preview-root"></div>
-        </div>
-
         <script type="text/javascript">
         jQuery(document).ready(function($) {
             var orderId = <?php echo intval($order_id); ?>;
             var templateId = <?php echo intval($selected_template ? $selected_template['id'] : 0); ?>;
             var nonce = '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>';
-
-            // Vérifier la disponibilité de la fonction
-            var funcCheckIndicator = document.createElement('div');
-            funcCheckIndicator.id = 'func-check-indicator';
-            funcCheckIndicator.style.cssText = 'position:fixed;top:70px;left:10px;padding:8px;border-radius:4px;z-index:10000;font-size:12px;';
-            
-            if (typeof window.pdfBuilderShowPreview === 'function') {
-                funcCheckIndicator.textContent = '🎯 FONCTION DISPONIBLE - ' + new Date().toLocaleTimeString();
-                funcCheckIndicator.style.background = '#28a745';
-                funcCheckIndicator.style.color = 'white';
-            } else {
-                funcCheckIndicator.textContent = '❌ FONCTION MANQUANTE - ' + new Date().toLocaleTimeString();
-                funcCheckIndicator.style.background = '#dc3545';
-                funcCheckIndicator.style.color = 'white';
-            }
-            document.body.appendChild(funcCheckIndicator);
-
-            // Supprimer après 10 secondes
-            setTimeout(function() { 
-                if (document.getElementById('func-check-indicator')) {
-                    document.getElementById('func-check-indicator').remove();
-                }
-            }, 10000);
-
-            // Événement clic sur le bouton aperçu
-            $('#pdf-preview-btn').on('click', function() {
-                // Indicateur visuel immédiat pour confirmer le clic
-                var indicator = document.createElement('div');
-                indicator.id = 'click-indicator';
-                indicator.style.cssText = 'position:fixed;top:50px;right:50px;background:#ff6b35;color:white;padding:10px;border-radius:5px;z-index:10000;font-weight:bold;';
-                indicator.textContent = '🔥 CLIC DETECTE - ' + new Date().toLocaleTimeString();
-                document.body.appendChild(indicator);
-
-                // Supprimer l'indicateur après 3 secondes
-                setTimeout(function() { 
-                    if (document.getElementById('click-indicator')) {
-                        document.getElementById('click-indicator').remove();
-                    }
-                }, 3000);
-
-                // Vérifier si la fonction existe
-                if (typeof window.pdfBuilderShowPreview === 'function') {
-                    try {
-                        window.pdfBuilderShowPreview(orderId, templateId, nonce);
-                    } catch (error) {
-                        indicator.textContent = '❌ ERREUR: ' + error.message;
-                        indicator.style.background = '#dc3545';
-                    }
-                } else {
-                    indicator.textContent = '❌ FONCTION NON TROUVEE';
-                    indicator.style.background = '#dc3545';
-                }
-            });
 
             // Bouton génération PDF
             $('#pdf-generate-btn').on('click', function() {
@@ -354,16 +292,10 @@ class PDF_Builder_WooCommerce_Integration
      */
     public function ajax_generate_order_pdf()
     {
-        // Log immédiat pour vérifier si la fonction est appelée
-        error_log('PDF BUILDER DEBUG: ajax_generate_order_pdf function STARTED');
-        error_log('PDF BUILDER DEBUG: POST data: ' . print_r($_POST, true));
-        error_log('PDF BUILDER DEBUG: REQUEST data: ' . print_r($_REQUEST, true));
-
         // === SÉCURITÉ PHASE 5.8 - Vérifications de sécurité ===
 
         // 1. Vérification des permissions utilisateur
         if (!PDF_Builder_Security_Validator::check_permissions('manage_woocommerce')) {
-            error_log('PDF BUILDER DEBUG: Permission check failed');
             wp_send_json_error(['message' => 'Permissions insuffisantes', 'code' => 'insufficient_permissions']);
             return;
         }
@@ -371,7 +303,6 @@ class PDF_Builder_WooCommerce_Integration
         // 2. Vérification du rate limiting
         if (!PDF_Builder_Rate_Limiter::check_rate_limit('pdf_generation')) {
             $remaining_time = PDF_Builder_Rate_Limiter::get_reset_time('pdf_generation');
-            error_log('PDF BUILDER DEBUG: Rate limit exceeded');
             wp_send_json_error(
                 [
                 'message' => 'Trop de requêtes. Veuillez réessayer dans ' . ceil($remaining_time / 60) . ' minutes.',
@@ -385,7 +316,6 @@ class PDF_Builder_WooCommerce_Integration
         // 3. Validation du nonce
         $nonce = isset($_POST['nonce']) ? sanitize_text_field($_POST['nonce']) : '';
         if (!PDF_Builder_Security_Validator::validate_nonce($nonce, 'pdf_builder_order_actions')) {
-            error_log('PDF BUILDER DEBUG: Nonce verification failed - received: ' . $nonce);
             wp_send_json_error(['message' => 'Sécurité: Nonce invalide', 'code' => 'invalid_nonce']);
             return;
         }
@@ -398,7 +328,6 @@ class PDF_Builder_WooCommerce_Integration
 
         // Validation de l'order_id
         if (!$order_id || $order_id <= 0) {
-            error_log('PDF BUILDER DEBUG: Invalid order ID: ' . $order_id);
             wp_send_json_error(['message' => 'ID commande invalide', 'code' => 'invalid_order_id']);
             return;
         }
@@ -415,19 +344,15 @@ class PDF_Builder_WooCommerce_Integration
         // Validation du chemin d'image si fourni
         if (!empty($image_path)) {
             if (!PDF_Builder_Path_Validator::validate_file_path($image_path)) {
-                error_log('PDF BUILDER DEBUG: Invalid image path: ' . $image_path);
                 wp_send_json_error(['message' => 'Chemin de fichier invalide', 'code' => 'invalid_file_path']);
                 return;
             }
         }
 
-        error_log("PDF BUILDER DEBUG: Parameters validated - order_id: $order_id, template_id: $template_id");
-
         try {
             // Charger la commande WooCommerce
             $order = wc_get_order($order_id);
             if (!$order) {
-                error_log('PDF BUILDER DEBUG: Order not found');
                 wp_send_json_error('Commande introuvable');
                 return;
             }
@@ -454,7 +379,6 @@ class PDF_Builder_WooCommerce_Integration
             }
 
             if (!$template_data) {
-                error_log('PDF BUILDER DEBUG: Template not found');
                 wp_send_json_error('Template non trouvé');
             }
 
@@ -466,46 +390,33 @@ class PDF_Builder_WooCommerce_Integration
                 $elements = $template_data['elements'];
             }
 
-            error_log('PDF BUILDER DEBUG: Elements count: ' . count($elements));
-
             // Générer le PDF SANS TCPDF - utiliser la nouvelle approche HTML
-            error_log('PDF BUILDER DEBUG: About to generate PDF without TCPDF using new HTML approach');
 
             // Générer le HTML depuis les éléments du template
             $generator = new PDF_Builder_Pro_Generator();
-            error_log('PDF BUILDER DEBUG: PDF_Builder_Pro_Generator instantiated');
 
             $html_content = $generator->generate($elements, ['order' => $order]);
-            error_log('PDF BUILDER DEBUG: HTML generated, length: ' . strlen($html_content));
 
             // Créer un fichier HTML temporaire pour le téléchargement
             $upload_dir = wp_upload_dir();
             $temp_dir = $upload_dir['basedir'] . '/pdf-builder-temp';
-            error_log('PDF BUILDER DEBUG: Upload dir: ' . $upload_dir['basedir']);
-            error_log('PDF BUILDER DEBUG: Temp dir: ' . $temp_dir);
 
             // Créer le dossier temporaire s'il n'existe pas
             if (!file_exists($temp_dir)) {
                 wp_mkdir_p($temp_dir);
-                error_log('PDF BUILDER DEBUG: Created temp directory');
             }
 
             // Générer un nom de fichier unique
             $filename = 'pdf-document-' . $order_id . '-' . time() . '.html';
             $file_path = $temp_dir . '/' . $filename;
-            error_log('PDF BUILDER DEBUG: File path: ' . $file_path);
 
             // Sauvegarder le HTML dans le fichier
             if (file_put_contents($file_path, $html_content) === false) {
-                error_log('PDF BUILDER DEBUG: Failed to write HTML file');
                 wp_send_json_error('Erreur lors de la création du fichier HTML');
             }
 
-            error_log('PDF BUILDER DEBUG: HTML file written successfully');
-
             // Créer l'URL de téléchargement
             $download_url = $upload_dir['baseurl'] . '/pdf-builder-temp/' . $filename;
-            error_log('PDF BUILDER DEBUG: Download URL: ' . $download_url);
 
             wp_send_json_success(
                 [
@@ -516,20 +427,13 @@ class PDF_Builder_WooCommerce_Integration
                 ]
             );
         } catch (Exception $e) {
-            error_log('PDF BUILDER DEBUG: Exception: ' . $e->getMessage());
             wp_send_json_error('Erreur Exception: ' . $e->getMessage());
         } catch (Error $e) {
-            error_log('PDF BUILDER DEBUG: Error: ' . $e->getMessage());
             wp_send_json_error('Erreur PHP: ' . $e->getMessage());
         } catch (Throwable $e) {
-            error_log('PDF BUILDER DEBUG: Throwable: ' . $e->getMessage());
             wp_send_json_error('Erreur Throwable: ' . $e->getMessage());
         }
     }
-
-    /**
-     * AJAX handler pour générer l'aperçu PDF d'une commande
-     */
 
     /**
      * Helper pour obtenir le nonce
@@ -872,18 +776,9 @@ class PDF_Builder_WooCommerce_Integration
      */
     private function replace_order_variables($content, $order)
     {
-        error_log('REPLACE VARIABLES - Input content: ' . substr($content, 0, 200) . '...');
-        error_log('REPLACE VARIABLES - Order object exists: ' . ($order ? 'YES' : 'NO'));
-
         if (!$order) {
-            error_log('REPLACE VARIABLES - No order object, returning original content');
             return $content;
         }
-
-        error_log('REPLACE VARIABLES - Order ID: ' . $order->get_id());
-        error_log('REPLACE VARIABLES - Order status: ' . $order->get_status());
-        error_log('REPLACE VARIABLES - Order total: ' . $order->get_total());
-        error_log('REPLACE VARIABLES - Order date: ' . ($order->get_date_created() ? $order->get_date_created()->format('Y-m-d H:i:s') : 'null'));
 
         // Basic order information
         $replacements = [
@@ -979,13 +874,8 @@ class PDF_Builder_WooCommerce_Integration
         $replacements = array_merge($replacements, $billing_address, $shipping_address);
 
         error_log('REPLACE VARIABLES - Total replacements available: ' . count($replacements));
-        error_log('REPLACE VARIABLES - Replacement keys: ' . json_encode(array_keys($replacements)));
-        error_log('REPLACE VARIABLES - Sample values: ' . json_encode(array_slice($replacements, 0, 10, true)));
 
         $result = str_replace(array_keys($replacements), array_values($replacements), $content);
-
-        error_log('REPLACE VARIABLES - Final result: ' . substr($result, 0, 200) . '...');
-        error_log('REPLACE VARIABLES - Content was modified: ' . ($content !== $result ? 'YES' : 'NO'));
 
         return $result;
     }
@@ -1234,164 +1124,19 @@ class PDF_Builder_WooCommerce_Integration
     }
 
     /**
-     * AJAX handler pour récupérer les données d'aperçu d'une commande
-     */
-    public function ajax_get_order_preview_data()
-    {
-        try {
-            // Vérifier les permissions utilisateur
-            if (!current_user_can('manage_woocommerce') && !current_user_can('edit_shop_orders')) {
-                wp_send_json_error('Permissions insuffisantes pour accéder aux données d\'aperçu');
-                return;
-            }
-
-            // Vérifier le nonce de sécurité
-            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_order_actions')) {
-                wp_send_json_error('Sécurité: Nonce invalide');
-                return;
-            }
-
-            // Valider et sanitiser les données d'entrée
-            $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
-
-            if (!$order_id) {
-                wp_send_json_error('ID commande manquant');
-                return;
-            }
-
-            // Récupération et validation complète de la commande
-            $order = $this->get_and_validate_order($order_id);
-            if (is_wp_error($order)) {
-                wp_send_json_error($order->get_error_message());
-                return;
-            }
-
-            // Récupérer les données d'aperçu formatées
-            $preview_data = $this->get_complete_order_preview_data($order);
-
-            // Log de l'action pour audit
-            error_log(
-                sprintf(
-                    'PDF Builder: Données aperçu récupérées pour commande #%d par utilisateur %d',
-                    $order_id,
-                    get_current_user_id()
-                )
-            );
-
-            wp_send_json_success(
-                [
-                'preview_data' => $preview_data,
-                'order_id' => $order_id
-                ]
-            );
-        } catch (Exception $e) {
-            error_log('PDF Builder: Erreur récupération données aperçu - ' . $e->getMessage());
-            wp_send_json_error('Erreur interne lors de la récupération des données');
-        }
-    }
-
-    /**
-     * Récupère les données d'aperçu formatées pour une commande
-     */
-    private function get_order_preview_data($order)
-    {
-        if (!$order) {
-            return [];
-        }
-
-        // Données de base de la commande
-        $preview_data = [
-            'order' => [
-                'id' => $order->get_id(),
-                'number' => $order->get_order_number(),
-                'date_created' => $order->get_date_created() ? $order->get_date_created()->format('Y-m-d H:i:s') : '',
-                'status' => $order->get_status(),
-                'currency' => $order->get_currency(),
-                'total' => $order->get_total(),
-                'subtotal' => $order->get_subtotal(),
-                'tax_total' => $order->get_total_tax(),
-                'shipping_total' => $order->get_shipping_total(),
-                'discount_total' => $order->get_discount_total(),
-                'payment_method' => $order->get_payment_method_title(),
-                'customer_note' => $order->get_customer_note(),
-            ],
-            'customer' => [
-                'id' => $order->get_customer_id(),
-                'email' => $order->get_billing_email(),
-                'first_name' => $order->get_billing_first_name(),
-                'last_name' => $order->get_billing_last_name(),
-                'company' => $order->get_billing_company(),
-            ],
-            'billing_address' => [
-                'first_name' => $order->get_billing_first_name(),
-                'last_name' => $order->get_billing_last_name(),
-                'company' => $order->get_billing_company(),
-                'address_1' => $order->get_billing_address_1(),
-                'address_2' => $order->get_billing_address_2(),
-                'city' => $order->get_billing_city(),
-                'state' => $order->get_billing_state(),
-                'postcode' => $order->get_billing_postcode(),
-                'country' => $order->get_billing_country(),
-                'email' => $order->get_billing_email(),
-                'phone' => $order->get_billing_phone(),
-            ],
-            'shipping_address' => [
-                'first_name' => $order->get_shipping_first_name(),
-                'last_name' => $order->get_shipping_last_name(),
-                'company' => $order->get_shipping_company(),
-                'address_1' => $order->get_shipping_address_1(),
-                'address_2' => $order->get_shipping_address_2(),
-                'city' => $order->get_shipping_city(),
-                'state' => $order->get_shipping_state(),
-                'postcode' => $order->get_shipping_postcode(),
-                'country' => $order->get_shipping_country(),
-            ],
-            'items' => [],
-            'totals' => [
-                'subtotal' => $order->get_subtotal(),
-                'tax' => $order->get_total_tax(),
-                'shipping' => $order->get_shipping_total(),
-                'discount' => $order->get_discount_total(),
-                'total' => $order->get_total(),
-            ]
-        ];
-
-        // Ajouter les articles de la commande
-        foreach ($order->get_items() as $item_id => $item) {
-            $product = $item->get_product();
-            $preview_data['items'][] = [
-                'id' => $item_id,
-                'name' => $item->get_name(),
-                'quantity' => $item->get_quantity(),
-                'price' => $item->get_total() / $item->get_quantity(),
-                'total' => $item->get_total(),
-                'sku' => $product ? $product->get_sku() : '',
-                'product_id' => $item->get_product_id(),
-                'variation_id' => $item->get_variation_id(),
-            ];
-        }
-
-        return $preview_data;
-    }
-
-    /**
      * AJAX handler pour récupérer les éléments canvas d'un template
      */
     public function ajax_get_canvas_elements()
     {
         try {
-            error_log('PDF Builder: ajax_get_canvas_elements called');
-
             // Vérifier les permissions utilisateur
             if (!current_user_can('manage_woocommerce') && !current_user_can('edit_shop_orders')) {
-                error_log('PDF Builder: Permissions insuffisantes pour canvas elements');
                 wp_send_json_error('Permissions insuffisantes pour accéder aux éléments canvas');
                 return;
             }
 
             // Vérifier le nonce de sécurité
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_order_actions')) {
-                error_log('PDF Builder: Nonce invalide pour canvas elements - Received: ' . ($_POST['nonce'] ?? 'none'));
                 wp_send_json_error('Sécurité: Nonce invalide');
                 return;
             }
@@ -1643,116 +1388,10 @@ class PDF_Builder_WooCommerce_Integration
         $current_status = $order->get_status();
 
         if (!in_array($current_status, $valid_statuses)) {
-            return new WP_Error('invalid_order_status', 'Statut de commande non valide pour l\'aperçu');
+            return new WP_Error('invalid_order_status', 'Statut de commande non valide pour le traitement');
         }
 
         return $order;
-    }
-
-    /**
-     * Récupère les données complètes d'aperçu d'une commande
-     */
-    private function get_complete_order_preview_data($order)
-    {
-        if (!$order || !is_a($order, 'WC_Order')) {
-            return [];
-        }
-
-        $preview_data = [
-            // Informations de base de la commande
-            'order' => [
-                'id' => $order->get_id(),
-                'number' => $order->get_order_number(),
-                'date_created' => $order->get_date_created() ? $order->get_date_created()->format('Y-m-d H:i:s') : null,
-                'date_modified' => $order->get_date_modified() ? $order->get_date_modified()->format('Y-m-d H:i:s') : null,
-                'status' => $order->get_status(),
-                'status_name' => wc_get_order_status_name($order->get_status()),
-                'currency' => $order->get_currency(),
-                'total' => $order->get_total(),
-                'subtotal' => $order->get_subtotal(),
-                'tax_total' => $order->get_total_tax(),
-                'shipping_total' => $order->get_shipping_total(),
-                'discount_total' => $order->get_discount_total(),
-                'payment_method' => $order->get_payment_method_title(),
-                'payment_method_code' => $order->get_payment_method(),
-                'transaction_id' => $order->get_transaction_id(),
-                'customer_note' => $order->get_customer_note(),
-                'order_key' => $order->get_order_key(),
-            ],
-
-            // Informations client
-            'customer' => [
-                'id' => $order->get_customer_id(),
-                'email' => $order->get_billing_email(),
-                'first_name' => $order->get_billing_first_name(),
-                'last_name' => $order->get_billing_last_name(),
-                'display_name' => $order->get_formatted_billing_full_name(),
-                'username' => $order->get_customer_id() ? get_userdata($order->get_customer_id())->user_login : null,
-            ],
-
-            // Adresse de facturation complète
-            'billing_address' => [
-                'first_name' => $order->get_billing_first_name(),
-                'last_name' => $order->get_billing_last_name(),
-                'company' => $order->get_billing_company(),
-                'address_1' => $order->get_billing_address_1(),
-                'address_2' => $order->get_billing_address_2(),
-                'city' => $order->get_billing_city(),
-                'state' => $order->get_billing_state(),
-                'state_name' => $order->get_billing_state(),
-                'postcode' => $order->get_billing_postcode(),
-                'country' => $order->get_billing_country(),
-                'country_name' => WC()->countries->countries[$order->get_billing_country()] ?? $order->get_billing_country(),
-                'email' => $order->get_billing_email(),
-                'phone' => $order->get_billing_phone(),
-                'formatted' => $order->get_formatted_billing_address(),
-            ],
-
-            // Adresse de livraison complète
-            'shipping_address' => [
-                'first_name' => $order->get_shipping_first_name(),
-                'last_name' => $order->get_shipping_last_name(),
-                'company' => $order->get_shipping_company(),
-                'address_1' => $order->get_shipping_address_1(),
-                'address_2' => $order->get_shipping_address_2(),
-                'city' => $order->get_shipping_city(),
-                'state' => $order->get_shipping_state(),
-                'state_name' => $order->get_shipping_state(),
-                'postcode' => $order->get_shipping_postcode(),
-                'country' => $order->get_shipping_country(),
-                'country_name' => $order->get_shipping_country(),
-                'formatted' => $order->get_formatted_shipping_address(),
-            ],
-
-            // Articles de la commande avec gestion des variations
-            'items' => $this->get_order_items_complete_data($order),
-
-            // Totaux détaillés
-            'totals' => [
-                'subtotal' => $order->get_subtotal(),
-                'subtotal_tax' => method_exists($order, 'get_subtotal_tax') ? $order->get_subtotal_tax() : 0,
-                'tax' => $order->get_total_tax(),
-                'shipping' => $order->get_shipping_total(),
-                'shipping_tax' => $order->get_shipping_tax(),
-                'discount' => $order->get_discount_total(),
-                'discount_tax' => $order->get_discount_tax(),
-                'total' => $order->get_total(),
-                'total_tax' => $order->get_total_tax(),
-                'total_excl_tax' => $order->get_total() - $order->get_total_tax(),
-            ],
-
-            // Métadonnées supplémentaires
-            'meta' => [
-                'needs_payment' => $order->needs_payment(),
-                'needs_processing' => $order->needs_processing(),
-                'has_downloadable_item' => $order->has_downloadable_item(),
-                'is_editable' => $order->is_editable(),
-                'created_via' => $order->get_created_via(),
-                'version' => $order->get_version(),
-            ]
-        ];
-
-        return $preview_data;
     }
 
     /**
@@ -1836,24 +1475,20 @@ class PDF_Builder_WooCommerce_Integration
         try {
             // Vérifier les permissions utilisateur
             if (!current_user_can('manage_woocommerce') && !current_user_can('edit_shop_orders')) {
-                error_log('PDF Builder: Permissions insuffisantes - User: ' . get_current_user_id() . ', Capabilities: manage_woocommerce=' . (current_user_can('manage_woocommerce') ? 'yes' : 'no') . ', edit_shop_orders=' . (current_user_can('edit_shop_orders') ? 'yes' : 'no'));
                 wp_send_json_error('Permissions insuffisantes pour accéder aux données de commande');
                 return;
             }
 
             // Vérifier le nonce de sécurité
             if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_order_actions')) {
-                error_log('PDF Builder: Nonce invalide - Received: ' . ($_POST['nonce'] ?? 'none') . ', Expected action: pdf_builder_order_actions');
                 wp_send_json_error('Sécurité: Nonce invalide');
                 return;
             }
 
             // Valider et sanitiser les données d'entrée
             $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
-            error_log('PDF Builder: Processing order ID: ' . $order_id);
 
             if (!$order_id) {
-                error_log('PDF Builder: Order ID manquant');
                 wp_send_json_error('ID commande manquant');
                 return;
             }
@@ -1861,16 +1496,20 @@ class PDF_Builder_WooCommerce_Integration
             // Récupération et validation complète de la commande
             $order = $this->get_and_validate_order($order_id);
             if (is_wp_error($order)) {
-                error_log('PDF Builder: Order validation failed - ' . $order->get_error_message());
                 wp_send_json_error($order->get_error_message());
                 return;
             }
 
-            error_log('PDF Builder: Order validated successfully - Status: ' . $order->get_status());
-
-            // Récupérer les données d'aperçu formatées
-            $preview_data = $this->get_complete_order_preview_data($order);
-            error_log('PDF Builder: Preview data generated - Items count: ' . count($preview_data['items'] ?? []));
+            // Récupérer les données de commande formatées
+            $order_data = [
+                'order' => [
+                    'id' => $order->get_id(),
+                    'number' => $order->get_order_number(),
+                    'status' => $order->get_status(),
+                    'total' => $order->get_total(),
+                ],
+                'items' => $this->get_order_items_complete_data($order),
+            ];
 
             // Log de l'action pour audit
             error_log(
@@ -1883,7 +1522,7 @@ class PDF_Builder_WooCommerce_Integration
 
             wp_send_json_success(
                 [
-                'order' => $preview_data,
+                'order' => $order_data,
                 'order_id' => $order_id
                 ]
             );

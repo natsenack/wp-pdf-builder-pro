@@ -164,29 +164,6 @@ body.wp-admin .pdf-builder-container {
 (function() {
     'use strict';
 
-    // DEBUG: Vérifier immédiatement si les scripts sont chargés
-    // PDF Builder Debug: Template editor loaded
-    // PDF Builder Debug: Checking for enqueued scripts...
-
-    // Vérifier tous les scripts dans le DOM
-    const allScripts = document.querySelectorAll('script[src]');
-    // PDF Builder Debug: Found scripts in DOM
-    allScripts.forEach((script, index) => {
-        const src = script.getAttribute('src');
-        console.log('🔍 PDF Builder Debug: Script ' + index + ': ' + src);
-    });
-
-    // Vérifier spécifiquement nos scripts
-    const pdfBuilderScripts = document.querySelectorAll('script[src*="pdf-builder-admin"]');
-    console.log('🔍 PDF Builder Debug: Found ' + pdfBuilderScripts.length + ' PDF Builder scripts');
-
-    // Vérifier les variables globales
-    console.log('🔍 PDF Builder Debug: Global variables check:');
-    console.log('- window.PDFBuilderPro:', typeof window.PDFBuilderPro);
-    console.log('- window.pdfBuilderAjax:', typeof window.pdfBuilderAjax);
-    console.log('- window.pdfBuilderCanvasSettings:', typeof window.pdfBuilderCanvasSettings);
-    console.log('- window.pdfBuilderData:', typeof window.pdfBuilderData);
-
     // Initialisation principale avec protection contre les exécutions multiples
     let isInitialized = false;
 
@@ -212,32 +189,9 @@ body.wp-admin .pdf-builder-container {
         const pdfBuilderPro = pdfBuilderProExists && pdfBuilderProRaw.default ? pdfBuilderProRaw.default : pdfBuilderProRaw;
         const initExists = pdfBuilderProExists && typeof pdfBuilderPro?.init === 'function';
 
-        // DEBUG: Log détaillé de l'état de PDFBuilderPro - TOUJOURS AFFICHÉ
-        console.log('🔍 PDF Builder Debug: PDFBuilderPro check details:');
-        console.log('- window.PDFBuilderPro type:', typeof window.PDFBuilderPro);
-        console.log('- window.PDFBuilderPro value:', window.PDFBuilderPro);
-        console.log('- pdfBuilderProExists:', pdfBuilderProExists);
-        console.log('- initExists:', initExists);
-
-        // LOGS DÉTAILLÉS QUOI QU'IL ARRIVE
-        if (pdfBuilderProExists) {
-            console.log('- PDFBuilderPro keys:', Object.keys(pdfBuilderProRaw));
-            console.log('- PDFBuilderPro has default:', 'default' in pdfBuilderProRaw);
-            console.log('- Using PDFBuilderPro.default:', !!pdfBuilderProRaw.default);
-            console.log('- Final pdfBuilderPro keys:', Object.keys(pdfBuilderPro));
-            console.log('- Final has init:', 'init' in pdfBuilderPro);
-            console.log('- Final PDFBuilderPro.init type:', typeof pdfBuilderPro.init);
-            console.log('- Final PDFBuilderPro.init value:', pdfBuilderPro.init);
-            console.log('- window.PDFBuilderPro === null?', window.PDFBuilderPro === null);
-            console.log('- window.PDFBuilderPro === undefined?', window.PDFBuilderPro === undefined);
-        } else {
-            console.log('- PDFBuilderPro is null or undefined');
-        }
-
         if (pdfBuilderProExists && initExists) {
             try {
                 isInitialized = true;
-                // console.log('✅ Scripts loaded successfully, initializing canvas editor...');
 
                 // Définir les données globales pour le JavaScript
                 window.pdfBuilderData = {

@@ -129,7 +129,7 @@ class PDF_Builder_PDF_Generator
     }
 
     /**
-     * AJAX - Aperçu unifié (pour le canvas editor)
+     * AJAX - Génération unifiée (pour le canvas editor)
      */
 
     /**
@@ -186,7 +186,7 @@ class PDF_Builder_PDF_Generator
      */
     private function generate_html_from_template_data($template)
     {
-        // Utiliser la même fonction que l'aperçu commande pour la cohérence
+        // Utiliser la même fonction que la génération commande pour la cohérence
         if (class_exists('PDF_Builder\Admin\PDF_Builder_Admin')) {
             $admin = \PDF_Builder\Admin\PDF_Builder_Admin::getInstance();
             if (method_exists($admin, 'generate_unified_html')) {
@@ -441,7 +441,7 @@ class PDF_Builder_PDF_Generator
     }
 
     /**
-     * Générer un aperçu PDF avec TCPDF pour un rendu fidèle
+     * Générer un PDF avec TCPDF pour un rendu fidèle
      */
 
     /**

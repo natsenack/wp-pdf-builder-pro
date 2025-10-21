@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useCallback, useState, useMemo } from 'react';
 import { useGlobalSettings } from '../hooks/useGlobalSettings';
+import { renderCanvas, renderElement } from '../utils/canvasRenderer';
 
 const Canvas = ({
   elements,

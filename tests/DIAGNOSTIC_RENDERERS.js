@@ -99,7 +99,7 @@ const RENDERER_ISSUES = {
       {
         name: 'Pas d\'accès aux données du tableau',
         severity: 'HIGH',
-        description: 'Ne reçoit pas previewData pour afficher les rows',
+        description: 'Ne reçoit pas orderData pour afficher les rows',
         fix: 'Passer tableData depuis config et l\'utiliser'
       },
       {

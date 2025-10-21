@@ -19,13 +19,9 @@ if (isset($pdf_builder_core) && $pdf_builder_core instanceof \PDF_Builder\Core\P
     $core = $pdf_builder_core;
 } else {
     $core = \PDF_Builder\Core\PDF_Builder_Core::getInstance();
-    // Temporaire : supprimer la vérification d'initialisation qui ne fonctionne pas
-    // if (!$core->is_initialized()) {
-    //     $core->init();
-    // }
 }
 
-$config = null; // Temporaire : pas de config manager pour l'instant
+$config = null;
 
 // Variable pour stocker les messages de notification
 $admin_notices = array();
@@ -372,8 +368,7 @@ window.addEventListener('load', function() {
     }
 
     // Message immédiat pour confirmer que le script s'exécute
-    // Debug elements removed - script is working properly
-    
+
     // Simple tab functionality without jQuery wrapper
     function simpleActivateTab(tabHref) {
         // Find the target element

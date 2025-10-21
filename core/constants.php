@@ -99,7 +99,7 @@ if (!defined('PDF_BUILDER_AJAX_PREFIX')) {
 }
 
 // ==========================================
-// SÉCURITÉ - Constantes pour le système d'aperçu
+// SÉCURITÉ - Constantes générales
 // ==========================================
 
 // Nonces pour les différents contextes
@@ -109,10 +109,6 @@ if (!defined('PDF_BUILDER_CANVAS_NONCE')) {
 
 if (!defined('PDF_BUILDER_ORDER_ACTIONS_NONCE')) {
     define('PDF_BUILDER_ORDER_ACTIONS_NONCE', 'pdf_builder_order_actions');
-}
-
-if (!defined('PDF_BUILDER_PREVIEW_NONCE')) {
-    define('PDF_BUILDER_PREVIEW_NONCE', 'pdf_builder_preview_nonce');
 }
 
 // Timeouts de sécurité (en secondes)
@@ -133,10 +129,6 @@ if (!defined('PDF_BUILDER_RATE_LIMIT_CANVAS')) {
     define('PDF_BUILDER_RATE_LIMIT_CANVAS', 60); // 60 actions canvas/minute
 }
 
-if (!defined('PDF_BUILDER_RATE_LIMIT_PREVIEW')) {
-    define('PDF_BUILDER_RATE_LIMIT_PREVIEW', 30); // 30 aperçus/minute
-}
-
 if (!defined('PDF_BUILDER_RATE_LIMIT_GENERATE')) {
     define('PDF_BUILDER_RATE_LIMIT_GENERATE', 10); // 10 générations/minute
 }
@@ -150,10 +142,6 @@ if (!defined('PDF_BUILDER_MAX_ELEMENT_SIZE')) {
     define('PDF_BUILDER_MAX_ELEMENT_SIZE', 50 * 1024 * 1024); // 50MB max par élément
 }
 
-if (!defined('PDF_BUILDER_MAX_PREVIEW_SIZE')) {
-    define('PDF_BUILDER_MAX_PREVIEW_SIZE', 10 * 1024 * 1024); // 10MB max pour l'aperçu
-}
-
 // Sanitisation et validation
 if (!defined('PDF_BUILDER_ALLOWED_HTML_TAGS')) {
     define('PDF_BUILDER_ALLOWED_HTML_TAGS', 'strong,em,u,br,p,span');
@@ -161,11 +149,6 @@ if (!defined('PDF_BUILDER_ALLOWED_HTML_TAGS')) {
 
 if (!defined('PDF_BUILDER_ALLOWED_PROTOCOLS')) {
     define('PDF_BUILDER_ALLOWED_PROTOCOLS', 'http,https,data');
-}
-
-// Permissions par défaut pour l'aperçu
-if (!defined('PDF_BUILDER_PREVIEW_CAPABILITIES')) {
-    define('PDF_BUILDER_PREVIEW_CAPABILITIES', 'manage_woocommerce,edit_shop_orders,shop_manager');
 }
 
 // Logging de sécurité
@@ -180,8 +163,4 @@ if (!defined('PDF_BUILDER_SECURITY_LOG_LEVEL')) {
 // Meta keys sécurisées pour le stockage
 if (!defined('PDF_BUILDER_CANVAS_META_KEY')) {
     define('PDF_BUILDER_CANVAS_META_KEY', '_pdf_builder_canvas_data');
-}
-
-if (!defined('PDF_BUILDER_PREVIEW_META_KEY')) {
-    define('PDF_BUILDER_PREVIEW_META_KEY', '_pdf_builder_preview_settings');
 }
