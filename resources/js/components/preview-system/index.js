@@ -4,7 +4,7 @@
  */
 
 // Context & Provider
-export { PreviewProvider, usePreview } from './context/PreviewProvider';
+export { PreviewProvider, usePreviewContext as usePreview } from './context/PreviewProvider';
 export { PreviewContext, previewReducer, initialState, PREVIEW_MODES, PREVIEW_ACTIONS } from './context/PreviewContext';
 
 // Composants principaux
