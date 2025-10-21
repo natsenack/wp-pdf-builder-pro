@@ -11227,16 +11227,40 @@ var PreviewModalWithContext = function PreviewModalWithContext(_ref) {
       closePreview = _usePreviewContext$ac.closePreview;
     console.log('🎭 PreviewModalWithContext: isOpen du context:', isOpen);
 
-    // Ouvrir automatiquement si des props legacy sont passées
+    // Ref pour éviter les ouvertures multiples
+    var hasOpenedRef = react.useRef(false);
+    var prevPropsRef = react.useRef(null);
+
+    // Ouvrir automatiquement si des props legacy sont passées (une seule fois)
     react.useEffect(function () {
-      console.log('🎭 useEffect ouverture: legacyProps?', !!legacyProps, 'isOpen?', isOpen);
-      if (legacyProps && !isOpen) {
+      console.log('🎭 useEffect ouverture: legacyProps?', !!legacyProps, 'isOpen?', isOpen, 'hasOpened?', hasOpenedRef.current);
+      if (legacyProps && !isOpen && !hasOpenedRef.current) {
         var initialData = legacyProps.elements || null;
         var initialMode = legacyProps.mode || 'canvas';
         console.log('🎭 Ouverture automatique du modal avec mode:', initialMode, 'data:', initialData);
         openPreview(initialMode, initialData);
+        hasOpenedRef.current = true;
+        prevPropsRef.current = {
+          elements: initialData,
+          mode: initialMode
+        };
       }
     }, [legacyProps, isOpen, openPreview]);
+
+    // Réinitialiser le ref si les props changent significativement
+    react.useEffect(function () {
+      if (legacyProps) {
+        var currentElements = legacyProps.elements || [];
+        var currentMode = legacyProps.mode || 'canvas';
+        var currentProps = {
+          elements: currentElements,
+          mode: currentMode
+        };
+        if (prevPropsRef.current && JSON.stringify(currentProps) !== JSON.stringify(prevPropsRef.current)) {
+          hasOpenedRef.current = false;
+        }
+      }
+    }, [legacyProps]);
 
     // Gérer la fermeture legacy
     react.useEffect(function () {
