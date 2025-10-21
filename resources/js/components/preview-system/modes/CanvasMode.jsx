@@ -120,7 +120,6 @@ function CanvasMode() {
         console.log('CanvasMode - Rendering mentions element:', element, 'with data:', elementData);
         return <MentionsRenderer key={element.id} {...commonProps} />;
       default:
-        // Pour les éléments non reconnus, afficher un placeholder
         return (
           <div
             key={element.id}
@@ -147,8 +146,6 @@ function CanvasMode() {
 
   return (
     <div className="canvas-mode-preview">
-      console.log('CanvasMode - Rendering JSX with', elements.length, 'elements');
-      {/* Canvas avec fond blanc simulant le PDF */}
       <div
         className="canvas-mode-canvas"
         style={{

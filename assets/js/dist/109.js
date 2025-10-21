@@ -1567,7 +1567,6 @@ function CanvasMode() {
           key: element.id
         }, commonProps));
       default:
-        // Pour les éléments non reconnus, afficher un placeholder
         return /*#__PURE__*/react.createElement("div", {
           key: element.id,
           style: {
@@ -1589,7 +1588,7 @@ function CanvasMode() {
   };
   return /*#__PURE__*/react.createElement("div", {
     className: "canvas-mode-preview"
-  }, "console.log('CanvasMode - Rendering JSX with', elements.length, 'elements');", /*#__PURE__*/react.createElement("div", {
+  }, /*#__PURE__*/react.createElement("div", {
     className: "canvas-mode-canvas",
     style: {
       width: canvasWidth,
