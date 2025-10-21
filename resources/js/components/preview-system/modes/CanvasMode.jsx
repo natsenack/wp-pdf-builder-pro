@@ -1,98 +1,167 @@
-import { SampleDataProvider } from '../data/SampleDataProvider';
+import React from 'react';
+import { usePreviewContext } from '../context/PreviewContext';
+
+// Import des renderers
+import { TextRenderer } from '../renderers/TextRenderer';
+import { RectangleRenderer } from '../renderers/RectangleRenderer';
+import { ImageRenderer } from '../renderers/ImageRenderer';
+import { TableRenderer } from '../renderers/TableRenderer';
+import { BarcodeRenderer } from '../renderers/BarcodeRenderer';
+import { DynamicTextRenderer } from '../renderers/DynamicTextRenderer';
+import { CustomerInfoRenderer } from '../renderers/CustomerInfoRenderer';
+import { CompanyInfoRenderer } from '../renderers/CompanyInfoRenderer';
+import { OrderNumberRenderer } from '../renderers/OrderNumberRenderer';
+import PDFRenderer from '../renderers/PDFRenderer';
+import { WatermarkRenderer } from '../renderers/WatermarkRenderer';
+import { ProgressBarRenderer } from '../renderers/ProgressBarRenderer';
+import { MentionsRenderer } from '../renderers/MentionsRenderer';
 
 /**
- * Mode Canvas : Aperçu avec données d'exemple
- * Utilisé dans l'éditeur pour prévisualiser les éléments avec des données fictives
+ * CanvasMode - Aperçu spatial du canvas avec données d'exemple
+ * Rend tous les éléments du canvas à leurs positions avec des données fictives
  */
-export class CanvasMode {
-  /**
-   * Charge les données d'aperçu pour le mode Canvas
-   * @param {Array} elements - Liste des éléments du canvas
-   * @param {number|null} orderId - ID de commande (ignoré en mode Canvas)
-   * @param {Object} templateData - Données du template
-   * @returns {Promise<Object>} Données d'aperçu
-   */
-  static async loadData(elements, orderId = null, templateData = {}) {
-    const dataProvider = new SampleDataProvider();
+function CanvasMode() {
+  const { state } = usePreviewContext();
+  const { data, config } = state;
 
-    // Collecter tous les types d'éléments présents
-    const elementTypes = [...new Set(elements.map(el => el.type))];
+  // Récupérer les éléments depuis la config (passés via PreviewModal)
+  const elements = config?.elements || [];
+  const previewData = data || {};
 
-    // Générer des données d'exemple pour chaque type d'élément
-    const previewData = {};
+  // Dimensions du canvas (A4 par défaut)
+  const canvasWidth = config?.templateData?.width || 595;
+  const canvasHeight = config?.templateData?.height || 842;
 
-    for (const elementType of elementTypes) {
-      const elementsOfType = elements.filter(el => el.type === elementType);
+  // Fonction pour obtenir le renderer approprié selon le type d'élément
+  const getRenderer = (element) => {
+    const elementKey = `${element.type}_${element.id}`;
+    const elementData = previewData[elementKey] || {};
 
-      // Pour chaque élément du type, générer des données spécifiques
-      for (const element of elementsOfType) {
-        const elementKey = `${element.type}_${element.id}`;
-        previewData[elementKey] = await dataProvider.getElementData(
-          element.type,
-          element.properties || element
+    const commonProps = {
+      element: { ...element, ...elementData },
+      previewData,
+      mode: 'canvas'
+    };
+
+    switch (element.type) {
+      case 'text':
+        return <TextRenderer key={element.id} {...commonProps} />;
+      case 'rectangle':
+        return <RectangleRenderer key={element.id} {...commonProps} />;
+      case 'image':
+        return <ImageRenderer key={element.id} {...commonProps} />;
+      case 'table':
+        return <TableRenderer key={element.id} {...commonProps} />;
+      case 'barcode':
+        return <BarcodeRenderer key={element.id} {...commonProps} />;
+      case 'dynamic-text':
+        return <DynamicTextRenderer key={element.id} {...commonProps} />;
+      case 'customer-info':
+        return <CustomerInfoRenderer key={element.id} {...commonProps} />;
+      case 'company-info':
+        return <CompanyInfoRenderer key={element.id} {...commonProps} />;
+      case 'order-number':
+        return <OrderNumberRenderer key={element.id} {...commonProps} />;
+      case 'pdf':
+        return <PDFRenderer key={element.id} {...commonProps} />;
+      case 'watermark':
+        return <WatermarkRenderer key={element.id} {...commonProps} />;
+      case 'progress-bar':
+        return <ProgressBarRenderer key={element.id} {...commonProps} />;
+      case 'mentions':
+        return <MentionsRenderer key={element.id} {...commonProps} />;
+      default:
+        // Pour les éléments non reconnus, afficher un placeholder
+        return (
+          <div
+            key={element.id}
+            style={{
+              position: 'absolute',
+              left: element.x || 0,
+              top: element.y || 0,
+              width: element.width || 100,
+              height: element.height || 50,
+              backgroundColor: '#f0f0f0',
+              border: '2px dashed #ccc',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '12px',
+              color: '#666'
+            }}
+          >
+            {element.type || 'unknown'}
+          </div>
         );
-      }
     }
+  };
 
-    // Ajouter des variables globales d'exemple
-    previewData.global = {
-      order_number: 'CMD-2025-001',
-      order_date: '19/10/2025',
-      order_total: '149,99 €',
-      customer_name: 'Jean Dupont',
-      customer_email: 'jean.dupont@email.com',
-      customer_phone: '+33 6 12 34 56 78',
-      company_name: 'Ma Société SARL',
-      company_address: '123 Rue de la Paix\n75001 Paris\nFrance',
-      company_phone: '+33 1 42 86 75 30',
-      company_email: 'contact@masociete.com'
-    };
-
-    return previewData;
-  }
-
-  /**
-   * Valide si le mode Canvas peut être utilisé
-   * @param {Array} elements - Liste des éléments
-   * @returns {boolean} True si valide
-   */
-  static validate(elements) {
-    // Le mode Canvas accepte tous les éléments
-    return elements && Array.isArray(elements);
-  }
-
-  /**
-   * Retourne les capacités du mode Canvas
-   * @returns {Object} Capacités disponibles
-   */
-  static getCapabilities() {
-    return {
-      supportsRealData: false,
-      supportsDynamicVariables: true,
-      supportsAllElements: true,
-      maxElements: 50,
-      features: [
-        'données_exemple',
-        'variables_globales',
-        'rendu_temps_reel',
-        'guides_marge'
-      ]
-    };
-  }
-}
-
-// Fournir un composant React par défaut qui utilise les helpers statiques
-import React from 'react';
-
-function CanvasModeComponent(props) {
-  // Composant léger qui délègue le rendu aux renderers existants via le context
-  // Ici on suppose que le PreviewContext / renderers prendront en charge l'affichage
   return (
-    <div className="canvas-mode-component">
-      {/* Le vrai rendu est géré par le système de preview via loadData */}
-      <div>Chargement de l'aperçu Canvas...</div>
+    <div className="canvas-mode-preview">
+      {/* Canvas avec fond blanc simulant le PDF */}
+      <div
+        className="canvas-mode-canvas"
+        style={{
+          width: canvasWidth,
+          height: canvasHeight,
+          backgroundColor: '#ffffff',
+          position: 'relative',
+          margin: '0 auto',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+          border: '1px solid #e1e1e1'
+        }}
+      >
+        {/* Rendre tous les éléments à leurs positions */}
+        {elements.map(element => getRenderer(element))}
+
+        {/* Message d'exemple si aucun élément */}
+        {elements.length === 0 && (
+          <div
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              textAlign: 'center',
+              color: '#666',
+              fontSize: '16px'
+            }}
+          >
+            <div style={{ fontSize: '48px', marginBottom: '16px' }}>📄</div>
+            <div>Aucun élément dans le canvas</div>
+            <div style={{ fontSize: '14px', marginTop: '8px' }}>
+              Ajoutez des éléments dans l'éditeur pour les voir ici
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Informations sur l'aperçu */}
+      <div
+        style={{
+          marginTop: '20px',
+          padding: '16px',
+          backgroundColor: '#f8f9fa',
+          borderRadius: '8px',
+          textAlign: 'center',
+          fontSize: '14px',
+          color: '#666'
+        }}
+      >
+        <strong>📋 Aperçu du Canvas</strong>
+        <br />
+        <span>Dimensions: {canvasWidth} × {canvasHeight} points ({Math.round(canvasWidth * 0.3528)} × {Math.round(canvasHeight * 0.3528)} mm)</span>
+        <br />
+        <span>Éléments: {elements.length}</span>
+        {Object.keys(previewData).length > 0 && (
+          <>
+            <br />
+            <span>🔄 Données d'exemple chargées</span>
+          </>
+        )}
+      </div>
     </div>
   );
 }
 
-export default CanvasModeComponent;
+export default CanvasMode;

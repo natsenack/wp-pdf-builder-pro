@@ -29,9 +29,28 @@ const PreviewModalWithContext = React.memo(({ legacyProps }) => {
     // Ouvrir automatiquement si des props legacy indiquent que la modal doit être ouverte
     React.useEffect(() => {
       if (legacyProps && legacyProps.isOpen && !isOpen) {
-        const initialData = legacyProps.elements || null;
-        const initialMode = legacyProps.mode || 'canvas';
-        openPreview(initialMode, initialData);
+        const openModal = async () => {
+          const initialData = legacyProps.elements || null;
+          const initialMode = legacyProps.mode || 'canvas';
+
+          // Charger les données d'aperçu si nécessaire
+          let previewData = null;
+          if (initialMode === 'canvas' && initialData && initialData.length > 0) {
+            try {
+              // Importer dynamiquement CanvasMode pour éviter les dépendances circulaires
+              const { default: CanvasMode } = await import('./modes/CanvasMode');
+              if (CanvasMode.loadData) {
+                previewData = await CanvasMode.loadData(initialData, null, legacyProps.templateData || {});
+              }
+            } catch (error) {
+              console.error('Erreur lors du chargement des données d\'aperçu:', error);
+            }
+          }
+
+          openPreview(initialMode, previewData, { elements: initialData, templateData: legacyProps.templateData });
+        };
+
+        openModal();
       } else if (legacyProps && !legacyProps.isOpen && isOpen) {
         // Fermer la modal si les props legacy indiquent qu'elle doit être fermée
         closePreview();
