@@ -46,7 +46,7 @@ function CanvasMode() {
         <span>|</span>
         <span>🔍 {Math.round(actualScale * 100)}%</span>
         <span>|</span>
-        <span>📦 {elements.length} éléments</span>
+        <span>📦 {(elements && elements.length) || 0} éléments</span>
         {previewData && Object.keys(previewData).length > 0 && (
           <>
             <span>|</span>
@@ -63,7 +63,7 @@ function CanvasMode() {
           {renderElements()}
 
           {/* Message si aucun élément */}
-          {elements.length === 0 && (
+          {(!elements || elements.length === 0) && (
             <div style={{
               position: 'absolute',
               top: '50%',
