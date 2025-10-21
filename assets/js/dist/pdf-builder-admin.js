@@ -371,6 +371,11 @@ function PreviewModal() {
     error = _usePreviewContext$st.error,
     closePreview = _usePreviewContext.actions.closePreview;
 
+  // Debug: logger les changements d'état du contexte
+  react.useEffect(function () {
+    console.log('🔍 PreviewModalComponent - context state changed - isOpen:', isOpen, 'mode:', mode);
+  }, [isOpen, mode]);
+
   // Gestionnaire d'échappement clavier
   (0,react.useEffect)(function () {
     if (!isOpen) return;
@@ -11230,12 +11235,15 @@ var PreviewModalWithContext = /*#__PURE__*/react.memo(function (_ref) {
 
     // Ouvrir automatiquement si des props legacy indiquent que la modal doit être ouverte
     react.useEffect(function () {
+      console.log('🔍 useEffect triggered - legacyProps.isOpen:', legacyProps === null || legacyProps === void 0 ? void 0 : legacyProps.isOpen, 'isOpen:', isOpen);
       if (legacyProps && legacyProps.isOpen && !isOpen) {
+        console.log('🔍 Opening modal - calling openPreview');
         var initialData = legacyProps.elements || null;
         var initialMode = legacyProps.mode || 'canvas';
         openPreview(initialMode, initialData);
       } else if (legacyProps && !legacyProps.isOpen && isOpen) {
         // Fermer la modal si les props legacy indiquent qu'elle doit être fermée
+        console.log('🔍 Closing modal - calling closePreview');
         closePreview();
       }
     }, [legacyProps, openPreview, closePreview, isOpen]);

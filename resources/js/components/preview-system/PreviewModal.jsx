@@ -33,12 +33,15 @@ const PreviewModalWithContext = React.memo(({ legacyProps }) => {
 
     // Ouvrir automatiquement si des props legacy indiquent que la modal doit être ouverte
     React.useEffect(() => {
+      console.log('🔍 useEffect triggered - legacyProps.isOpen:', legacyProps?.isOpen, 'isOpen:', isOpen);
       if (legacyProps && legacyProps.isOpen && !isOpen) {
+        console.log('🔍 Opening modal - calling openPreview');
         const initialData = legacyProps.elements || null;
         const initialMode = legacyProps.mode || 'canvas';
         openPreview(initialMode, initialData);
       } else if (legacyProps && !legacyProps.isOpen && isOpen) {
         // Fermer la modal si les props legacy indiquent qu'elle doit être fermée
+        console.log('🔍 Closing modal - calling closePreview');
         closePreview();
       }
     }, [legacyProps, openPreview, closePreview, isOpen]);

@@ -18,6 +18,11 @@ function PreviewModal() {
     actions: { closePreview }
   } = usePreviewContext();
 
+  // Debug: logger les changements d'état du contexte
+  React.useEffect(() => {
+    console.log('🔍 PreviewModalComponent - context state changed - isOpen:', isOpen, 'mode:', mode);
+  }, [isOpen, mode]);
+
   // Gestionnaire d'échappement clavier
   useEffect(() => {
     if (!isOpen) return;
