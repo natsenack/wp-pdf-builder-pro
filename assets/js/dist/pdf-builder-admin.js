@@ -12994,7 +12994,7 @@ window.pdfBuilderPro = pdfBuilderPro;
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
 /******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, [96], () => (__webpack_require__(472)))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
-/******/ 	window.PDFBuilderPro = __webpack_exports__;
+/******/ 	window.PDFBuilderPro = __webpack_exports__["default"];
 /******/ 	
 /******/ })()
 ;

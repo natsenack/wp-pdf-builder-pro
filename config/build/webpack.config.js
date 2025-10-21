@@ -11,7 +11,8 @@ module.exports = {
     path: path.resolve(__dirname, '../../assets/js/dist'),
     library: {
       name: 'PDFBuilderPro',
-      type: 'window'
+      type: 'window',
+      export: 'default'
     }
   },
   plugins: [

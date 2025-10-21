@@ -9,6 +9,6 @@ document.addEventListener('DOMContentLoaded', function () {
   // Vérifier si pdfBuilderAjax existe
   if (typeof pdfBuilderAjax === 'undefined') {} else {}
 });
-window.PDFBuilderPro = __webpack_exports__;
+window.PDFBuilderPro = __webpack_exports__["default"];
 /******/ })()
 ;
