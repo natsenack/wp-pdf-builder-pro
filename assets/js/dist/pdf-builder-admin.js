@@ -11223,51 +11223,17 @@ var PreviewModalWithContext = /*#__PURE__*/react.memo(function (_ref) {
       openPreview = _usePreviewContext$ac.openPreview,
       closePreview = _usePreviewContext$ac.closePreview;
 
-    // Ref pour éviter les ouvertures multiples
-    var hasOpenedRef = react.useRef(false);
-    var prevPropsRef = react.useRef(null);
-
-    // Ouvrir automatiquement si des props legacy sont passées (une seule fois)
+    // Ouvrir automatiquement si des props legacy indiquent que la modal doit être ouverte
     react.useEffect(function () {
-      if (legacyProps && !isOpen && !hasOpenedRef.current) {
+      if (legacyProps && legacyProps.isOpen && !isOpen) {
         var initialData = legacyProps.elements || null;
         var initialMode = legacyProps.mode || 'canvas';
         openPreview(initialMode, initialData);
-        hasOpenedRef.current = true;
-        prevPropsRef.current = {
-          elements: initialData,
-          mode: initialMode
-        };
+      } else if (legacyProps && !legacyProps.isOpen && isOpen) {
+        // Fermer la modal si les props legacy indiquent qu'elle doit être fermée
+        closePreview();
       }
-    }, [legacyProps, openPreview]); // Removed isOpen to prevent re-runs
-
-    // Réinitialiser le ref si les props changent significativement
-    react.useEffect(function () {
-      if (legacyProps) {
-        var currentElements = legacyProps.elements || [];
-        var currentMode = legacyProps.mode || 'canvas';
-        var currentProps = {
-          elements: currentElements,
-          mode: currentMode
-        };
-        if (prevPropsRef.current && JSON.stringify(currentProps) !== JSON.stringify(prevPropsRef.current)) {
-          hasOpenedRef.current = false;
-        }
-      }
-    }, [legacyProps]);
-
-    // Gérer la fermeture legacy
-    react.useEffect(function () {
-      if (legacyProps && legacyProps.onClose) {
-        var handleClose = function handleClose() {
-          if (legacyProps.onClose) {
-            legacyProps.onClose();
-          }
-          closePreview();
-        };
-        // TODO: Attacher handleClose au context si nécessaire
-      }
-    }, [legacyProps, closePreview]);
+    }, [legacyProps, openPreview, closePreview, isOpen]);
     return /*#__PURE__*/react.createElement(PreviewModal["default"], null);
   } catch (error) {
     console.error('PDF Builder: PreviewModalWithContext CRITICAL ERROR:', error);

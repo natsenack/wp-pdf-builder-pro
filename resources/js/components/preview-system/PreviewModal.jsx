@@ -26,45 +26,17 @@ const PreviewModalWithContext = React.memo(({ legacyProps }) => {
   try {
     const { state: { isOpen }, actions: { openPreview, closePreview } } = usePreviewContext();
 
-    // Ref pour éviter les ouvertures multiples
-    const hasOpenedRef = React.useRef(false);
-    const prevPropsRef = React.useRef(null);
-
-    // Ouvrir automatiquement si des props legacy sont passées (une seule fois)
+    // Ouvrir automatiquement si des props legacy indiquent que la modal doit être ouverte
     React.useEffect(() => {
-      if (legacyProps && !isOpen && !hasOpenedRef.current) {
+      if (legacyProps && legacyProps.isOpen && !isOpen) {
         const initialData = legacyProps.elements || null;
         const initialMode = legacyProps.mode || 'canvas';
         openPreview(initialMode, initialData);
-        hasOpenedRef.current = true;
-        prevPropsRef.current = { elements: initialData, mode: initialMode };
+      } else if (legacyProps && !legacyProps.isOpen && isOpen) {
+        // Fermer la modal si les props legacy indiquent qu'elle doit être fermée
+        closePreview();
       }
-    }, [legacyProps, openPreview]); // Removed isOpen to prevent re-runs
-
-    // Réinitialiser le ref si les props changent significativement
-    React.useEffect(() => {
-      if (legacyProps) {
-        const currentElements = legacyProps.elements || [];
-        const currentMode = legacyProps.mode || 'canvas';
-        const currentProps = { elements: currentElements, mode: currentMode };
-        if (prevPropsRef.current && JSON.stringify(currentProps) !== JSON.stringify(prevPropsRef.current)) {
-          hasOpenedRef.current = false;
-        }
-      }
-    }, [legacyProps]);
-
-    // Gérer la fermeture legacy
-    React.useEffect(() => {
-      if (legacyProps && legacyProps.onClose) {
-        const handleClose = () => {
-          if (legacyProps.onClose) {
-            legacyProps.onClose();
-          }
-          closePreview();
-        };
-        // TODO: Attacher handleClose au context si nécessaire
-      }
-    }, [legacyProps, closePreview]);
+    }, [legacyProps, openPreview, closePreview, isOpen]);
 
     return <PreviewModalComponent />;
   } catch (error) {
