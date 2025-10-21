@@ -180,7 +180,11 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
     onRedo: handleRedo,
     onSave: canvasState.saveTemplate,
     onZoomIn: canvasState.zoom.zoomIn,
-    onZoomOut: canvasState.zoom.zoomOut
+    onZoomOut: canvasState.zoom.zoomOut,
+    onPreview: () => {
+      console.log('⌨️ Raccourci Ctrl+P détecté');
+      setShowPreviewModal(true);
+    }
   });
 
   // Gestionnaire pour ajouter un élément depuis la bibliothèque
@@ -641,7 +645,40 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
         <nav className="editor-actions">
           <button
             className="btn btn-outline preview-button"
-            onClick={() => setShowPreviewModal(true)}
+            onClick={() => {
+              console.log('🎯 Bouton aperçu éditeur cliqué');
+              
+              // Indicateur visuel de débogage
+              const debugIndicator = document.createElement('div');
+              debugIndicator.id = 'editor-preview-debug-indicator';
+              debugIndicator.style.cssText = `
+                position: fixed;
+                top: 10px;
+                right: 10px;
+                background: orange;
+                color: white;
+                padding: 10px;
+                border-radius: 5px;
+                z-index: 9999;
+                font-size: 14px;
+                font-weight: bold;
+              `;
+              debugIndicator.textContent = '🎯 Clic aperçu éditeur détecté';
+              
+              // Supprimer l'ancien indicateur s'il existe
+              const existing = document.getElementById('editor-preview-debug-indicator');
+              if (existing) existing.remove();
+              
+              document.body.appendChild(debugIndicator);
+              
+              // Supprimer après 3 secondes
+              setTimeout(() => {
+                const indicator = document.getElementById('editor-preview-debug-indicator');
+                if (indicator) indicator.remove();
+              }, 3000);
+              
+              setShowPreviewModal(true);
+            }}
             title="Aperçu du PDF (Ctrl+P)"
           >
             👁️ Aperçu

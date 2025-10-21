@@ -4991,7 +4991,8 @@ var useKeyboardShortcuts = function useKeyboardShortcuts(_ref) {
     onSelectAll = _ref.onSelectAll,
     onDeselectAll = _ref.onDeselectAll,
     onToolSelect = _ref.onToolSelect,
-    onToggleGrid = _ref.onToggleGrid;
+    onToggleGrid = _ref.onToggleGrid,
+    onPreview = _ref.onPreview;
   (0,react.useEffect)(function () {
     var handleKeyDown = function handleKeyDown(e) {
       // Ignorer si on est dans un champ de saisie
@@ -5072,6 +5073,12 @@ var useKeyboardShortcuts = function useKeyboardShortcuts(_ref) {
             onToggleGrid();
           }
           break;
+        case 'p':
+          if (isCtrl && onPreview) {
+            e.preventDefault();
+            onPreview();
+          }
+          break;
 
         // Raccourcis pour les outils
         case 'v':
@@ -5112,7 +5119,7 @@ var useKeyboardShortcuts = function useKeyboardShortcuts(_ref) {
     return function () {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [onDelete, onCopy, onPaste, onUndo, onRedo, onSave, onZoomIn, onZoomOut, onSelectAll, onDeselectAll, onToolSelect, onToggleGrid]);
+  }, [onDelete, onCopy, onPaste, onUndo, onRedo, onSave, onZoomIn, onZoomOut, onSelectAll, onDeselectAll, onToolSelect, onToggleGrid, onPreview]);
 };
 ;// ./resources/js/hooks/useGlobalSettings.js
 function useGlobalSettings_typeof(o) { "@babel/helpers - typeof"; return useGlobalSettings_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, useGlobalSettings_typeof(o); }
@@ -11504,7 +11511,11 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
     onRedo: handleRedo,
     onSave: canvasState.saveTemplate,
     onZoomIn: canvasState.zoom.zoomIn,
-    onZoomOut: canvasState.zoom.zoomOut
+    onZoomOut: canvasState.zoom.zoomOut,
+    onPreview: function onPreview() {
+      console.log('⌨️ Raccourci Ctrl+P détecté');
+      setShowPreviewModal(true);
+    }
   });
 
   // Gestionnaire pour ajouter un élément depuis la bibliothèque
@@ -12025,7 +12036,25 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
   }, /*#__PURE__*/react.createElement("button", {
     className: "btn btn-outline preview-button",
     onClick: function onClick() {
-      return setShowPreviewModal(true);
+      console.log('🎯 Bouton aperçu éditeur cliqué');
+
+      // Indicateur visuel de débogage
+      var debugIndicator = document.createElement('div');
+      debugIndicator.id = 'editor-preview-debug-indicator';
+      debugIndicator.style.cssText = "\n                position: fixed;\n                top: 10px;\n                right: 10px;\n                background: orange;\n                color: white;\n                padding: 10px;\n                border-radius: 5px;\n                z-index: 9999;\n                font-size: 14px;\n                font-weight: bold;\n              ";
+      debugIndicator.textContent = '🎯 Clic aperçu éditeur détecté';
+
+      // Supprimer l'ancien indicateur s'il existe
+      var existing = document.getElementById('editor-preview-debug-indicator');
+      if (existing) existing.remove();
+      document.body.appendChild(debugIndicator);
+
+      // Supprimer après 3 secondes
+      setTimeout(function () {
+        var indicator = document.getElementById('editor-preview-debug-indicator');
+        if (indicator) indicator.remove();
+      }, 3000);
+      setShowPreviewModal(true);
     },
     title: "Aper\xE7u du PDF (Ctrl+P)"
   }, "\uD83D\uDC41\uFE0F Aper\xE7u"), /*#__PURE__*/react.createElement("button", {
