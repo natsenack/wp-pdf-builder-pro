@@ -12673,8 +12673,8 @@ var PreviewModal_PreviewModal = function PreviewModal(props) {
     // Ne rien rendre si props est undefined ou null
     if (!props) {
       console.warn('PDF Builder: PreviewModal called with undefined/null props, skipping render');
-      console.log('PDF Builder: PreviewModal returning empty Fragment due to invalid props');
-      return /*#__PURE__*/react.createElement(react.Fragment, null);
+      console.log('PDF Builder: PreviewModal returning empty string due to invalid props');
+      return '';
     }
     console.log('PDF Builder: PreviewModal proceeding with valid props, rendering component');
     return /*#__PURE__*/react.createElement(PreviewProvider.PreviewProvider, null, /*#__PURE__*/react.createElement(PreviewModalWithContext, {
