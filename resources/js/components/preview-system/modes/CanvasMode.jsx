@@ -21,7 +21,11 @@ import { MentionsRenderer } from '../renderers/MentionsRenderer';
  * Rend tous les éléments du canvas à leurs positions avec des données fictives
  */
 function CanvasMode() {
+  console.log('CanvasMode - Component rendering started');
+
   const { state } = usePreviewContext();
+  console.log('CanvasMode - usePreviewContext returned:', { state });
+
   const { data, config } = state;
 
   // Récupérer les éléments depuis la config (passés via PreviewModal)
@@ -51,6 +55,7 @@ function CanvasMode() {
 
   // Fonction pour obtenir le renderer approprié selon le type d'élément
   const getRenderer = (element) => {
+    console.log('CanvasMode - getRenderer called for element:', element.type, element.id);
     console.log('CanvasMode - Rendering element:', element);
     const elementKey = `${element.type}_${element.id}`;
     const elementData = previewData[elementKey] || {};
@@ -142,6 +147,7 @@ function CanvasMode() {
 
   return (
     <div className="canvas-mode-preview">
+      console.log('CanvasMode - Rendering JSX with', elements.length, 'elements');
       {/* Canvas avec fond blanc simulant le PDF */}
       <div
         className="canvas-mode-canvas"

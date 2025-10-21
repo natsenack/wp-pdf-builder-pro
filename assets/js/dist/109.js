@@ -1443,8 +1443,12 @@ function CanvasMode_toPrimitive(t, r) { if ("object" != CanvasMode_typeof(t) || 
  */
 function CanvasMode() {
   var _config$templateData, _config$templateData2;
+  console.log('CanvasMode - Component rendering started');
   var _usePreviewContext = (0,PreviewContext.usePreviewContext)(),
     state = _usePreviewContext.state;
+  console.log('CanvasMode - usePreviewContext returned:', {
+    state: state
+  });
   var data = state.data,
     config = state.config;
 
@@ -1481,6 +1485,7 @@ function CanvasMode() {
 
   // Fonction pour obtenir le renderer approprié selon le type d'élément
   var getRenderer = function getRenderer(element) {
+    console.log('CanvasMode - getRenderer called for element:', element.type, element.id);
     console.log('CanvasMode - Rendering element:', element);
     var elementKey = "".concat(element.type, "_").concat(element.id);
     var elementData = previewData[elementKey] || {};
@@ -1584,7 +1589,7 @@ function CanvasMode() {
   };
   return /*#__PURE__*/react.createElement("div", {
     className: "canvas-mode-preview"
-  }, /*#__PURE__*/react.createElement("div", {
+  }, "console.log('CanvasMode - Rendering JSX with', elements.length, 'elements');", /*#__PURE__*/react.createElement("div", {
     className: "canvas-mode-canvas",
     style: {
       width: canvasWidth,
