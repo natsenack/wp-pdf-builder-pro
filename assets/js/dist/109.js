@@ -1434,6 +1434,15 @@ function CanvasMode() {
   var canvasWidth = (config === null || config === void 0 || (_config$templateData = config.templateData) === null || _config$templateData === void 0 ? void 0 : _config$templateData.width) || 595;
   var canvasHeight = (config === null || config === void 0 || (_config$templateData2 = config.templateData) === null || _config$templateData2 === void 0 ? void 0 : _config$templateData2.height) || 842;
 
+  // Calculer l'échelle pour que le canvas tienne dans la modal
+  // La modal fait environ 800px de large et 600px de haut
+  // Laissons une marge de 100px de chaque côté
+  var maxWidth = 600;
+  var maxHeight = 400;
+  var scaleX = maxWidth / canvasWidth;
+  var scaleY = maxHeight / canvasHeight;
+  var scale = Math.min(scaleX, scaleY, 1); // Ne pas agrandir si plus petit
+
   // Fonction pour obtenir le renderer approprié selon le type d'élément
   var getRenderer = function getRenderer(element) {
     var elementKey = "".concat(element.type, "_").concat(element.id);
@@ -1528,7 +1537,9 @@ function CanvasMode() {
       position: 'relative',
       margin: '0 auto',
       boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-      border: '1px solid #e1e1e1'
+      border: '1px solid #e1e1e1',
+      transform: "scale(".concat(scale, ")"),
+      transformOrigin: 'top center'
     }
   }, elements.map(function (element) {
     return getRenderer(element);

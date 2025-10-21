@@ -32,6 +32,15 @@ function CanvasMode() {
   const canvasWidth = config?.templateData?.width || 595;
   const canvasHeight = config?.templateData?.height || 842;
 
+  // Calculer l'échelle pour que le canvas tienne dans la modal
+  // La modal fait environ 800px de large et 600px de haut
+  // Laissons une marge de 100px de chaque côté
+  const maxWidth = 600;
+  const maxHeight = 400;
+  const scaleX = maxWidth / canvasWidth;
+  const scaleY = maxHeight / canvasHeight;
+  const scale = Math.min(scaleX, scaleY, 1); // Ne pas agrandir si plus petit
+
   // Fonction pour obtenir le renderer approprié selon le type d'élément
   const getRenderer = (element) => {
     const elementKey = `${element.type}_${element.id}`;
@@ -108,7 +117,9 @@ function CanvasMode() {
           position: 'relative',
           margin: '0 auto',
           boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-          border: '1px solid #e1e1e1'
+          border: '1px solid #e1e1e1',
+          transform: `scale(${scale})`,
+          transformOrigin: 'top center'
         }}
       >
         {/* Rendre tous les éléments à leurs positions */}
