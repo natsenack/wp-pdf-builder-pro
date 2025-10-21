@@ -12,27 +12,15 @@ __webpack_require__.d(__webpack_exports__, {
   "default": () => (/* binding */ CanvasMode_new)
 });
 
-// NAMESPACE OBJECT: ./resources/js/components/preview-system/SimplePreviewSystem_v3.jsx
-var SimplePreviewSystem_v3_namespaceObject = {};
-__webpack_require__.r(SimplePreviewSystem_v3_namespaceObject);
-__webpack_require__.d(SimplePreviewSystem_v3_namespaceObject, {
-  PositionedElement: () => (PositionedElement),
-  SimpleCanvasPreview: () => (SimpleCanvasPreview),
-  SimpleElementRenderer: () => (SimpleElementRenderer),
-  SimpleImageRenderer: () => (SimpleImageRenderer),
-  SimplePreviewModal: () => (SimplePreviewModal),
-  SimplePreviewTest: () => (SimplePreviewTest),
-  SimpleRectangleRenderer: () => (SimpleRectangleRenderer),
-  SimpleTableRenderer: () => (SimpleTableRenderer),
-  SimpleTextRenderer: () => (SimpleTextRenderer),
-  SimpleUnknownRenderer: () => (SimpleUnknownRenderer),
-  "default": () => (SimplePreviewSystem_v3),
-  usePreviewScaling: () => (usePreviewScaling)
-});
-
 // EXTERNAL MODULE: ./node_modules/react/index.js
 var react = __webpack_require__(540);
 ;// ./resources/js/components/preview-system/SimplePreviewSystem_v3.jsx
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
@@ -49,6 +37,149 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 // =============================================================================
 // 1. SYSTÈME DE POSITIONNEMENT ULTRA-SIMPLE
 // =============================================================================
+
+/**
+ * Hook principal pour le système d'aperçu v3.0
+ * Fournit toutes les données et fonctions nécessaires à CanvasMode
+ */
+function useSimplePreview() {
+  // État du système d'aperçu
+  var _React$useState = react.useState({
+      elements: [],
+      templateData: {
+        width: 595,
+        height: 842,
+        orientation: 'Portrait'
+      },
+      previewData: {},
+      scale: 0.8,
+      zoom: 1,
+      isFullscreen: false
+    }),
+    _React$useState2 = _slicedToArray(_React$useState, 2),
+    state = _React$useState2[0],
+    setState = _React$useState2[1];
+
+  // Calculs des dimensions
+  var canvasWidth = state.templateData.width;
+  var canvasHeight = state.templateData.height;
+  var containerWidth = 800;
+  var containerHeight = 600;
+  var scaling = usePreviewScaling(canvasWidth, canvasHeight, containerWidth, containerHeight);
+  var actualScale = scaling.scale;
+  var displayWidth = scaling.displayWidth;
+  var displayHeight = scaling.displayHeight;
+
+  // Styles
+  var containerStyle = {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    padding: '20px',
+    backgroundColor: '#f5f5f7',
+    overflow: 'auto'
+  };
+  var canvasStyle = {
+    width: canvasWidth,
+    height: canvasHeight,
+    backgroundColor: '#ffffff',
+    position: 'relative',
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
+    border: '1px solid #e5e5e7',
+    borderRadius: '8px',
+    overflow: 'hidden',
+    transform: "scale(".concat(actualScale, ")"),
+    transformOrigin: 'top center',
+    margin: "".concat(20 / actualScale, "px auto")
+  };
+  var canvasWrapperStyle = {
+    width: displayWidth,
+    height: displayHeight,
+    margin: '20px auto',
+    position: 'relative'
+  };
+
+  // Fonction pour rendre les éléments
+  var renderElements = react.useCallback(function () {
+    console.log('[PREVIEW V3.0] Rendering elements:', state.elements.length);
+    return state.elements.map(function (element) {
+      console.log('[ELEMENT POSITION]', element.type, 'at', element.x, element.y);
+      return /*#__PURE__*/react.createElement(SimpleElementRenderer, {
+        key: element.id,
+        element: element,
+        previewData: state.previewData,
+        scale: 1
+      });
+    });
+  }, [state.elements, state.previewData]);
+  return {
+    // Données
+    elements: state.elements,
+    templateData: state.templateData,
+    previewData: state.previewData,
+    scale: state.scale,
+    zoom: state.zoom,
+    isFullscreen: state.isFullscreen,
+    // Calculs
+    actualScale: actualScale,
+    canvasWidth: canvasWidth,
+    canvasHeight: canvasHeight,
+    displayWidth: displayWidth,
+    displayHeight: displayHeight,
+    // Styles
+    containerStyle: containerStyle,
+    canvasStyle: canvasStyle,
+    canvasWrapperStyle: canvasWrapperStyle,
+    // Fonctions
+    renderElements: renderElements,
+    // Setters pour mettre à jour l'état (utiles pour l'intégration)
+    setElements: function setElements(elements) {
+      return setState(function (prev) {
+        return _objectSpread(_objectSpread({}, prev), {}, {
+          elements: elements
+        });
+      });
+    },
+    setTemplateData: function setTemplateData(templateData) {
+      return setState(function (prev) {
+        return _objectSpread(_objectSpread({}, prev), {}, {
+          templateData: templateData
+        });
+      });
+    },
+    setPreviewData: function setPreviewData(previewData) {
+      return setState(function (prev) {
+        return _objectSpread(_objectSpread({}, prev), {}, {
+          previewData: previewData
+        });
+      });
+    },
+    setScale: function setScale(scale) {
+      return setState(function (prev) {
+        return _objectSpread(_objectSpread({}, prev), {}, {
+          scale: scale
+        });
+      });
+    },
+    setZoom: function setZoom(zoom) {
+      return setState(function (prev) {
+        return _objectSpread(_objectSpread({}, prev), {}, {
+          zoom: zoom
+        });
+      });
+    },
+    setFullscreen: function setFullscreen(isFullscreen) {
+      return setState(function (prev) {
+        return _objectSpread(_objectSpread({}, prev), {}, {
+          isFullscreen: isFullscreen
+        });
+      });
+    }
+  };
+}
 
 /**
  * Hook pour calculer les dimensions et l'échelle de l'aperçu
@@ -169,14 +300,14 @@ function SimpleRectangleRenderer(_ref3) {
 function SimpleImageRenderer(_ref4) {
   var element = _ref4.element,
     scale = _ref4.scale;
-  var _React$useState = react.useState(false),
-    _React$useState2 = _slicedToArray(_React$useState, 2),
-    imageLoaded = _React$useState2[0],
-    setImageLoaded = _React$useState2[1];
   var _React$useState3 = react.useState(false),
     _React$useState4 = _slicedToArray(_React$useState3, 2),
-    imageError = _React$useState4[0],
-    setImageError = _React$useState4[1];
+    imageLoaded = _React$useState4[0],
+    setImageLoaded = _React$useState4[1];
+  var _React$useState5 = react.useState(false),
+    _React$useState6 = _slicedToArray(_React$useState5, 2),
+    imageError = _React$useState6[0],
+    setImageError = _React$useState6[1];
   return /*#__PURE__*/react.createElement(PositionedElement, {
     element: element,
     scale: scale,
@@ -582,10 +713,10 @@ function SimplePreviewModal(_ref9) {
  * Composant de test avec des données d'exemple
  */
 function SimplePreviewTest() {
-  var _React$useState5 = react.useState(false),
-    _React$useState6 = _slicedToArray(_React$useState5, 2),
-    showPreview = _React$useState6[0],
-    setShowPreview = _React$useState6[1];
+  var _React$useState7 = react.useState(false),
+    _React$useState8 = _slicedToArray(_React$useState7, 2),
+    showPreview = _React$useState8[0],
+    setShowPreview = _React$useState8[1];
 
   // Données de test ultra-simples
   var testElements = [{
@@ -698,7 +829,8 @@ function SimplePreviewTest() {
   SimplePreviewModal: SimplePreviewModal,
   SimplePreviewTest: SimplePreviewTest,
   SimpleElementRenderer: SimpleElementRenderer,
-  usePreviewScaling: usePreviewScaling
+  usePreviewScaling: usePreviewScaling,
+  useSimplePreview: useSimplePreview
 });
 ;// ./resources/js/components/preview-system/modes/CanvasMode_new.jsx
 
@@ -710,7 +842,7 @@ function SimplePreviewTest() {
  */
 
 function CanvasMode() {
-  var _useSimplePreview = (0,SimplePreviewSystem_v3_namespaceObject.useSimplePreview)(),
+  var _useSimplePreview = useSimplePreview(),
     elements = _useSimplePreview.elements,
     templateData = _useSimplePreview.templateData,
     previewData = _useSimplePreview.previewData,

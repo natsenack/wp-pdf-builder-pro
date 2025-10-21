@@ -10,6 +10,119 @@ import React from 'react';
 // =============================================================================
 
 /**
+ * Hook principal pour le système d'aperçu v3.0
+ * Fournit toutes les données et fonctions nécessaires à CanvasMode
+ */
+export function useSimplePreview() {
+  // État du système d'aperçu
+  const [state, setState] = React.useState({
+    elements: [],
+    templateData: { width: 595, height: 842, orientation: 'Portrait' },
+    previewData: {},
+    scale: 0.8,
+    zoom: 1,
+    isFullscreen: false
+  });
+
+  // Calculs des dimensions
+  const canvasWidth = state.templateData.width;
+  const canvasHeight = state.templateData.height;
+  const containerWidth = 800;
+  const containerHeight = 600;
+
+  const scaling = usePreviewScaling(canvasWidth, canvasHeight, containerWidth, containerHeight);
+  const actualScale = scaling.scale;
+
+  const displayWidth = scaling.displayWidth;
+  const displayHeight = scaling.displayHeight;
+
+  // Styles
+  const containerStyle = {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    padding: '20px',
+    backgroundColor: '#f5f5f7',
+    overflow: 'auto'
+  };
+
+  const canvasStyle = {
+    width: canvasWidth,
+    height: canvasHeight,
+    backgroundColor: '#ffffff',
+    position: 'relative',
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
+    border: '1px solid #e5e5e7',
+    borderRadius: '8px',
+    overflow: 'hidden',
+    transform: `scale(${actualScale})`,
+    transformOrigin: 'top center',
+    margin: `${20 / actualScale}px auto`
+  };
+
+  const canvasWrapperStyle = {
+    width: displayWidth,
+    height: displayHeight,
+    margin: '20px auto',
+    position: 'relative'
+  };
+
+  // Fonction pour rendre les éléments
+  const renderElements = React.useCallback(() => {
+    console.log('[PREVIEW V3.0] Rendering elements:', state.elements.length);
+
+    return state.elements.map((element) => {
+      console.log('[ELEMENT POSITION]', element.type, 'at', element.x, element.y);
+
+      return (
+        <SimpleElementRenderer
+          key={element.id}
+          element={element}
+          previewData={state.previewData}
+          scale={1}
+        />
+      );
+    });
+  }, [state.elements, state.previewData]);
+
+  return {
+    // Données
+    elements: state.elements,
+    templateData: state.templateData,
+    previewData: state.previewData,
+    scale: state.scale,
+    zoom: state.zoom,
+    isFullscreen: state.isFullscreen,
+
+    // Calculs
+    actualScale,
+    canvasWidth,
+    canvasHeight,
+    displayWidth,
+    displayHeight,
+
+    // Styles
+    containerStyle,
+    canvasStyle,
+    canvasWrapperStyle,
+
+    // Fonctions
+    renderElements,
+
+    // Setters pour mettre à jour l'état (utiles pour l'intégration)
+    setElements: (elements) => setState(prev => ({ ...prev, elements })),
+    setTemplateData: (templateData) => setState(prev => ({ ...prev, templateData })),
+    setPreviewData: (previewData) => setState(prev => ({ ...prev, previewData })),
+    setScale: (scale) => setState(prev => ({ ...prev, scale })),
+    setZoom: (zoom) => setState(prev => ({ ...prev, zoom })),
+    setFullscreen: (isFullscreen) => setState(prev => ({ ...prev, isFullscreen }))
+  };
+}
+
+/**
  * Hook pour calculer les dimensions et l'échelle de l'aperçu
  */
 export function usePreviewScaling(templateWidth, templateHeight, containerWidth = 800, containerHeight = 600) {
@@ -692,5 +805,6 @@ export default {
   SimplePreviewModal,
   SimplePreviewTest,
   SimpleElementRenderer,
-  usePreviewScaling
+  usePreviewScaling,
+  useSimplePreview
 };
