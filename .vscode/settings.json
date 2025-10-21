@@ -101,5 +101,6 @@
   "intelephense.diagnostics.enable": true,
   "intelephense.diagnostics.run": "onType",
   "intelephense.telemetry.enabled": false,
-  "files.defaultLanguage": "fr"
+  "files.defaultLanguage": "fr",
+  "accessibility.voice.speechLanguage": "fr-FR"
 }
