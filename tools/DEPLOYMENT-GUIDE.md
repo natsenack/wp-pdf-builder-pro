@@ -52,18 +52,7 @@ Install-Module -Name Posh-SSH -Scope CurrentUser -Force
 - Téléchargez : https://winscp.net/
 - Installation lourde (éviter si possible)
 
-## 🔧 INSTALLATION REQUISE
-
-### Pour SSH Posh-SSH :
-```powershell
-Install-Module -Name Posh-SSH -Scope CurrentUser -Force
-```
-
-### Pour WinSCP :
-- Téléchargez : https://winscp.net/
-- Installation standard
-
-## 📝 UTILISATION DÉTAILLÉE
+##  UTILISATION DÉTAILLÉE
 
 ### ✅ 1. FTP Optimisé - SCRIPT PAR DÉFAUT (Recommandé)
 ```powershell
