@@ -48,23 +48,23 @@ export const MentionsRenderer = ({ element, previewData, mode, canvasScale = 1 }
 
   const containerStyle = {
     position: 'absolute',
-    left: x * canvasScale,
-    top: y * canvasScale,
-    width: width * canvasScale,
-    height: height * canvasScale,
+    left: `${x * canvasScale}px`,
+    top: `${y * canvasScale}px`,
+    width: `${width * canvasScale}px`,
+    height: `${height * canvasScale}px`,
     backgroundColor,
     border: borderWidth > 0 ? `${borderWidth}px solid ${borderColor}` : 'none',
     borderRadius: `${borderRadius}px`,
-    opacity,
+    opacity: opacity / 100,
     padding: '4px',
     boxSizing: 'border-box',
     overflow: 'hidden',
-    fontSize: `${fontSize * canvasScale}px`,
+    fontSize: `${fontSize}px`,
     fontFamily,
     fontWeight,
     textAlign,
     color,
-    lineHeight,
+    lineHeight: `${lineHeight}`,
     display: visible ? 'flex' : 'none',
     alignItems: 'center',
     justifyContent: layout === 'horizontal' ? 'center' : 'flex-start',
@@ -73,7 +73,7 @@ export const MentionsRenderer = ({ element, previewData, mode, canvasScale = 1 }
     textDecoration,
     // Transformations
     transform: `rotate(${rotation}deg) scale(${scale})`,
-    transformOrigin: 'center center',
+    transformOrigin: 'top left',
     // Ombres
     boxShadow: shadow ? `${shadowOffsetX}px ${shadowOffsetY}px 4px ${shadowColor}` : 'none'
   };
