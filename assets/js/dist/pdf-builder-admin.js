@@ -12667,7 +12667,7 @@ var PreviewModal_PreviewModal = function PreviewModal(props) {
   // Ne rien rendre si props est undefined ou null
   if (!props) {
     console.warn('PDF Builder: PreviewModal called with undefined/null props, skipping render');
-    return /*#__PURE__*/react.createElement(react.Fragment, null);
+    return null;
   }
   return /*#__PURE__*/react.createElement(PreviewProvider.PreviewProvider, null, /*#__PURE__*/react.createElement(PreviewModalWithContext, {
     legacyProps: props
