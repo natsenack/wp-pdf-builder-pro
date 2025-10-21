@@ -103,6 +103,42 @@ class PDFBuilderPro {
 
         console.log('=== PDFBuilderPro INSTANCE CREATED ===');
         console.log('Methods available:', Object.getOwnPropertyNames(this.__proto__));
+
+        // Assigner explicitement showPreview comme propriété propre de l'instance
+        this.showPreview = this.showPreview.bind(this);
+        console.log('showPreview assigned to instance:', typeof this.showPreview);
+    }
+
+    // Afficher l'aperçu du PDF (pour compatibilité avec les tests)
+    showPreview(data) {
+        console.log('=== PDFBuilderPro.showPreview CALLED ===', data);
+
+        try {
+            // Si c'est un appel depuis l'éditeur canvas avec des éléments
+            if (data && data.elements) {
+                console.log('Canvas preview mode with elements:', data.elements.length);
+
+                // Pour le mode canvas, nous devons créer un modal temporaire
+                // Utiliser la logique existante mais adaptée pour les données canvas
+                if (window.pdfBuilderShowPreview) {
+                    // Adapter les données pour le format attendu par pdfBuilderShowPreview
+                    // Pour le canvas, nous passons null pour orderId et utilisons les éléments directement
+                    window.pdfBuilderShowPreview(null, null, null, data);
+                } else {
+                    console.error('pdfBuilderShowPreview function not available');
+                }
+            } else {
+                // Mode metabox standard
+                console.log('Metabox preview mode');
+                if (window.pdfBuilderShowPreview) {
+                    window.pdfBuilderShowPreview(data.orderId, data.templateId, data.nonce);
+                } else {
+                    console.error('pdfBuilderShowPreview function not available');
+                }
+            }
+        } catch (error) {
+            console.error('PDFBuilderPro: Error in showPreview:', error);
+        }
     }
 
     // Initialiser l'éditeur dans un conteneur
@@ -246,14 +282,25 @@ const pdfBuilderPro = new PDFBuilderPro();
 // Export par défaut pour webpack
 export default pdfBuilderPro;
 
-// Attacher à window pour WordPress - FORCER L'EXPOSITION
+// Attacher à window pour WordPress - FORCER L'EXPOSITION DIRECTE
 try {
     if (typeof window !== 'undefined') {
+        // Forcer l'assignation directe de l'instance, pas du module webpack
         window.PDFBuilderPro = pdfBuilderPro;
         window.pdfBuilderPro = pdfBuilderPro;
         console.log('=== PDFBuilderPro EXPOSED GLOBALLY ===');
         console.log('PDFBuilderPro available:', !!window.PDFBuilderPro);
+        console.log('PDFBuilderPro type:', typeof window.PDFBuilderPro);
         console.log('PDFBuilderPro.init available:', typeof window.PDFBuilderPro?.init);
+        console.log('PDFBuilderPro.showPreview available:', typeof window.PDFBuilderPro?.showPreview);
+        console.log('PDFBuilderPro keys:', Object.keys(window.PDFBuilderPro));
+
+        // Vérification supplémentaire pour s'assurer que showPreview est accessible
+        if (window.PDFBuilderPro && typeof window.PDFBuilderPro.showPreview === 'function') {
+            console.log('✅ PDFBuilderPro.showPreview is properly accessible');
+        } else {
+            console.error('❌ PDFBuilderPro.showPreview is NOT accessible');
+        }
     } else {
         console.warn('Window not available, PDFBuilderPro not exposed globally');
     }
@@ -262,9 +309,9 @@ try {
 }
 
 // Fonction pour afficher l'aperçu dans la metabox WooCommerce - RECREATION COMPLETE PHASE 8
-window.pdfBuilderShowPreview = function(orderId, templateId, nonce) {
+window.pdfBuilderShowPreview = function(orderId, templateId, nonce, canvasData = null) {
     console.log('=== PDF BUILDER PHASE 8: pdfBuilderShowPreview START ===');
-    console.log('Parameters:', { orderId, templateId, nonce, timestamp: Date.now() });
+    console.log('Parameters:', { orderId, templateId, nonce, canvasData: !!canvasData, timestamp: Date.now() });
 
     // 1. IMMÉDIAT: Créer un indicateur visuel que la fonction est appelée
     const visualIndicator = document.createElement('div');
@@ -283,7 +330,13 @@ window.pdfBuilderShowPreview = function(orderId, templateId, nonce) {
         border: 3px solid #ff4500 !important;
         box-shadow: 0 4px 12px rgba(255,107,53,0.3) !important;
     `;
-    visualIndicator.innerHTML = `
+    visualIndicator.innerHTML = canvasData ? `
+        🔥 CANVAS PREVIEW ACTIVE<br>
+        Elements: ${canvasData.elements ? canvasData.elements.length : 0}<br>
+        Mode: Canvas<br>
+        Time: ${new Date().toLocaleTimeString()}<br>
+        <span style="color: yellow;">CANVAS LOADING...</span>
+    ` : `
         🔥 PHASE 8 ACTIVE<br>
         Order: ${orderId}<br>
         Template: ${templateId}<br>
@@ -372,7 +425,14 @@ window.pdfBuilderShowPreview = function(orderId, templateId, nonce) {
         color: #666 !important;
         font-size: 18px !important;
     `;
-    loadingContent.innerHTML = `
+    loadingContent.innerHTML = canvasData ? `
+        <div style="font-size: 48px; margin-bottom: 20px;">🔄</div>
+        <div style="font-weight: bold; margin-bottom: 10px;">Chargement de l'aperçu Canvas...</div>
+        <div style="font-size: 14px; color: #999;">
+            Éléments: ${canvasData.elements ? canvasData.elements.length : 0}<br>
+            ${new Date().toLocaleString()}
+        </div>
+    ` : `
         <div style="font-size: 48px; margin-bottom: 20px;">🔄</div>
         <div style="font-weight: bold; margin-bottom: 10px;">Chargement de l'aperçu...</div>
         <div style="font-size: 14px; color: #999;">
@@ -386,46 +446,90 @@ window.pdfBuilderShowPreview = function(orderId, templateId, nonce) {
     try {
         console.log('=== LOADING PREVIEW MODAL COMPONENT ===');
 
-        // Importer dynamiquement le système complet
-        console.log('=== STARTING DYNAMIC IMPORT ===');
-        Promise.all([
-            import('./components/preview-system/context/PreviewProvider'),
-            import('./components/preview-system/components/PreviewModal')
-        ]).then(([providerModule, modalModule]) => {
-            console.log('=== DYNAMIC IMPORT SUCCESS ===');
-            const PreviewProvider = providerModule.PreviewProvider;
-            const PreviewModal = modalModule.default;
-            console.log('=== Components extracted ===', { PreviewProvider, PreviewModal });
+        // Vérifier si nous sommes en mode canvas
+        if (canvasData && canvasData.elements) {
+            console.log('=== CANVAS MODE: Using canvas data directly ===');
 
-            // Créer l'élément React avec le Provider
-            const previewModalElement = React.createElement(PreviewProvider, {}, 
-                React.createElement(PreviewModal, {
-                    mode: 'metabox',
-                    orderId: orderId,
-                    templateId: templateId,
-                    nonce: nonce
-                })
-            );
+            // Pour le mode canvas, créer un composant simple qui affiche les éléments
+            const CanvasPreviewComponent = () => {
+                return React.createElement('div', {
+                    style: {
+                        padding: '20px',
+                        fontFamily: 'Arial, sans-serif'
+                    }
+                }, [
+                    React.createElement('h2', { key: 'title' }, 'Aperçu Canvas'),
+                    React.createElement('div', {
+                        key: 'elements',
+                        style: { marginTop: '20px' }
+                    }, `Éléments: ${canvasData.elements.length}`),
+                    React.createElement('pre', {
+                        key: 'data',
+                        style: {
+                            background: '#f5f5f5',
+                            padding: '10px',
+                            borderRadius: '4px',
+                            fontSize: '12px',
+                            overflow: 'auto',
+                            maxHeight: '400px'
+                        }
+                    }, JSON.stringify(canvasData, null, 2))
+                ]);
+            };
 
-            // Monter avec ReactDOM
-            console.log('=== ABOUT TO CALL ReactDOM.render ===');
-            ReactDOM.render(previewModalElement, modalContent);
-            console.log('=== ReactDOM.render CALLED SUCCESSFULLY ===');
+            // Monter directement le composant canvas
+            console.log('=== ABOUT TO CALL ReactDOM.render for CANVAS ===');
+            ReactDOM.render(React.createElement(CanvasPreviewComponent), modalContent);
+            console.log('=== CANVAS PREVIEW RENDERED SUCCESSFULLY ===');
 
             // Mettre à jour l'indicateur visuel
-            visualIndicator.innerHTML = visualIndicator.innerHTML.replace('MODAL LOADING...', '<span style="color: #28a745;">MODAL LOADED ✓</span>');
+            visualIndicator.innerHTML = visualIndicator.innerHTML.replace('MODAL LOADING...', '<span style="color: #28a745;">CANVAS LOADED ✓</span>');
 
-            console.log('=== REACT MODAL MOUNTED SUCCESSFULLY ===');
-        }).catch(error => {
-            console.error('=== DYNAMIC IMPORT FAILED ===', error);
-            console.error('=== Error details ===', error.message, error.stack);
-            loadingContent.innerHTML = `
-                <div style="font-size: 48px; margin-bottom: 20px; color: #dc3545;">❌</div>
-                <div style="font-weight: bold; margin-bottom: 10px; color: #dc3545;">Erreur d'import dynamique</div>
-                <div style="font-size: 14px; color: #666;">${error.message}</div>
-            `;
-            visualIndicator.innerHTML = visualIndicator.innerHTML.replace('MODAL LOADING...', '<span style="color: #dc3545;">IMPORT ERROR ❌</span>');
-        });
+        } else {
+            // Mode metabox standard
+            console.log('=== METABOX MODE: Loading PreviewModal ===');
+
+            // Importer dynamiquement le système complet
+            console.log('=== STARTING DYNAMIC IMPORT ===');
+            Promise.all([
+                import('./components/preview-system/context/PreviewProvider'),
+                import('./components/preview-system/components/PreviewModal')
+            ]).then(([providerModule, modalModule]) => {
+                console.log('=== DYNAMIC IMPORT SUCCESS ===');
+                const PreviewProvider = providerModule.PreviewProvider;
+                const PreviewModal = modalModule.default;
+                console.log('=== Components extracted ===', { PreviewProvider, PreviewModal });
+
+                // Créer l'élément React avec le Provider
+                const previewModalElement = React.createElement(PreviewProvider, {},
+                    React.createElement(PreviewModal, {
+                        mode: 'metabox',
+                        orderId: orderId,
+                        templateId: templateId,
+                        nonce: nonce
+                    })
+                );
+
+                // Monter avec ReactDOM
+                console.log('=== ABOUT TO CALL ReactDOM.render ===');
+                ReactDOM.render(previewModalElement, modalContent);
+                console.log('=== ReactDOM.render CALLED SUCCESSFULLY ===');
+
+                // Mettre à jour l'indicateur visuel
+                visualIndicator.innerHTML = visualIndicator.innerHTML.replace('MODAL LOADING...', '<span style="color: #28a745;">MODAL LOADED ✓</span>');
+
+                console.log('=== REACT MODAL MOUNTED SUCCESSFULLY ===');
+            }).catch(error => {
+                console.error('=== DYNAMIC IMPORT FAILED ===', error);
+                console.error('=== Error details ===', error.message, error.stack);
+                loadingContent.innerHTML = `
+                    <div style="font-size: 48px; margin-bottom: 20px; color: #dc3545;">❌</div>
+                    <div style="font-weight: bold; margin-bottom: 10px; color: #dc3545;">Erreur d'import dynamique</div>
+                    <div style="font-size: 14px; color: #666;">${error.message}</div>
+                `;
+                visualIndicator.innerHTML = visualIndicator.innerHTML.replace('MODAL LOADING...', '<span style="color: #dc3545;">IMPORT ERROR ❌</span>');
+            });
+        }
 
     } catch (error) {
         console.error('=== ERROR IN MODAL CREATION ===', error);

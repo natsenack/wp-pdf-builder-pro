@@ -623,6 +623,16 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
     }
   }, [globalSettings.settings.zoomToSelection, canvasState]);
 
+  // Stabiliser les props du modal pour éviter les re-renders inutiles
+  const previewModalProps = useMemo(() => ({
+    isOpen: showPreviewModal,
+    onClose: () => setShowPreviewModal(false),
+    mode: "canvas",
+    elements: canvasState.elements || [],
+    orderId: null,
+    templateData: options
+  }), [showPreviewModal, canvasState.elements, options]);
+
   return (
     <div className="pdf-canvas-editor" ref={editorRef}>
       {/* Header avec titre et actions */}
@@ -934,14 +944,7 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
       />
 
       {/* Modale d'aperçu unifié */}
-      <PreviewModal
-        isOpen={showPreviewModal}
-        onClose={() => setShowPreviewModal(false)}
-        mode="canvas"
-        elements={canvasState.elements}
-        orderId={null}
-        templateData={options}
-      />
+      <PreviewModal {...previewModalProps} />
 
       {/* Compteur FPS */}
       <FPSCounter showFps={globalSettings.settings.showFps} />

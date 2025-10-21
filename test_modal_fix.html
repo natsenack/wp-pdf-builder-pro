@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Modal Fix - PDF Builder Pro</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        button { padding: 10px 20px; margin: 10px; background: #007cba; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #005a87; }
+        #status { margin-top: 20px; padding: 10px; background: #f0f0f0; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Correction Modal Preview</h1>
+    <p>Test rapide pour vérifier que le React error #306 est résolu.</p>
+
+    <button onclick="testModal()">Tester le Modal d'Aperçu</button>
+    <button onclick="checkPDFBuilderPro()">Vérifier PDFBuilderPro</button>
+
+    <div id="status">Status: Prêt</div>
+
+    <!-- Scripts compilés -->
+    <script src="assets/js/dist/vendors.js"></script>
+    <script src="assets/js/dist/pdf-builder-admin.js"></script>
+
+    <script>
+        function updateStatus(message) {
+            document.getElementById('status').textContent = 'Status: ' + message;
+            console.log(message);
+        }
+
+        function checkPDFBuilderPro() {
+            updateStatus('Vérification de PDFBuilderPro...');
+            console.log('🔍 PDFBuilderPro:', window.PDFBuilderPro);
+            console.log('🔍 Type:', typeof window.PDFBuilderPro);
+
+            if (window.PDFBuilderPro) {
+                console.log('🔍 Keys:', Object.keys(window.PDFBuilderPro));
+                console.log('🔍 hasOwnProperty showPreview:', window.PDFBuilderPro.hasOwnProperty('showPreview'));
+                console.log('🔍 showPreview in PDFBuilderPro:', 'showPreview' in window.PDFBuilderPro);
+                console.log('🔍 PDFBuilderPro.showPreview:', window.PDFBuilderPro.showPreview);
+                console.log('🔍 Type of showPreview:', typeof window.PDFBuilderPro.showPreview);
+
+                // Tester l'énumérabilité
+                for (let key in window.PDFBuilderPro) {
+                    if (key === 'showPreview') {
+                        console.log('🔍 showPreview trouvé dans for...in loop');
+                    }
+                }
+
+                updateStatus('✅ PDFBuilderPro trouvé');
+            } else {
+                updateStatus('❌ PDFBuilderPro non trouvé');
+            }
+        }
+
+        function testModal() {
+            updateStatus('Test du modal...');
+
+            console.log('🔍 Au début de testModal:');
+            console.log('🔍 window.PDFBuilderPro:', window.PDFBuilderPro);
+            console.log('🔍 typeof PDFBuilderPro:', typeof window.PDFBuilderPro);
+
+            try {
+                // Vérifier d'abord si PDFBuilderPro existe
+                if (!window.PDFBuilderPro) {
+                    updateStatus('❌ PDFBuilderPro n\'existe pas du tout');
+                    return;
+                }
+
+                console.log('🔍 PDFBuilderPro existe, vérification de showPreview...');
+                console.log('🔍 PDFBuilderPro.showPreview:', window.PDFBuilderPro.showPreview);
+                console.log('🔍 typeof showPreview:', typeof window.PDFBuilderPro.showPreview);
+                console.log('🔍 hasOwnProperty:', window.PDFBuilderPro.hasOwnProperty('showPreview'));
+                console.log('🔍 in operator:', 'showPreview' in window.PDFBuilderPro);
+
+                // Simuler l'ouverture du modal comme dans l'éditeur
+                if (window.PDFBuilderPro.showPreview) {
+                    const testData = {
+                        elements: [
+                            { type: 'text', x: 50, y: 50, width: 200, height: 30, content: 'Test Modal Fix' }
+                        ],
+                        canvasWidth: 595,
+                        canvasHeight: 842
+                    };
+
+                    console.log('🔍 Appel de PDFBuilderPro.showPreview avec:', testData);
+                    window.PDFBuilderPro.showPreview(testData);
+                    updateStatus('✅ Modal ouvert avec succès');
+                } else {
+                    console.log('🔍 PDFBuilderPro.showPreview est falsy');
+                    updateStatus('❌ PDFBuilderPro.showPreview non disponible');
+                }
+            } catch (error) {
+                updateStatus('❌ Erreur: ' + error.message);
+                console.error('Erreur modal:', error);
+            }
+        }
+
+        // Auto-test au chargement avec délai
+        window.addEventListener('load', function() {
+            console.log('🔍 Page chargée, attente de 2 secondes pour les scripts...');
+            setTimeout(function() {
+                console.log('🔍 Vérification automatique après délai...');
+                checkPDFBuilderPro();
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

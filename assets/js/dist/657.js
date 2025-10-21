@@ -1,5 +1,5 @@
 "use strict";
-(self["webpackChunkPDFBuilderPro"] = self["webpackChunkPDFBuilderPro"] || []).push([[657],{
+(self["webpackChunkwp_pdf_builder_pro"] = self["webpackChunkwp_pdf_builder_pro"] || []).push([[657],{
 
 /***/ 657:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {

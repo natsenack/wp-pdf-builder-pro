@@ -11951,6 +11951,20 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
       canvasState.zoomToSelection();
     }
   }, [globalSettings.settings.zoomToSelection, canvasState]);
+
+  // Stabiliser les props du modal pour éviter les re-renders inutiles
+  var previewModalProps = (0,react.useMemo)(function () {
+    return {
+      isOpen: showPreviewModal,
+      onClose: function onClose() {
+        return setShowPreviewModal(false);
+      },
+      mode: "canvas",
+      elements: canvasState.elements || [],
+      orderId: null,
+      templateData: options
+    };
+  }, [showPreviewModal, canvasState.elements, options]);
   return /*#__PURE__*/react.createElement("div", {
     className: "pdf-canvas-editor",
     ref: editorRef
@@ -12187,16 +12201,7 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
       return setShowNewTemplateModal(false);
     },
     onCreateTemplate: handleCreateTemplate
-  }), /*#__PURE__*/react.createElement(preview_system_PreviewModal, {
-    isOpen: showPreviewModal,
-    onClose: function onClose() {
-      return setShowPreviewModal(false);
-    },
-    mode: "canvas",
-    elements: canvasState.elements,
-    orderId: null,
-    templateData: options
-  }), /*#__PURE__*/react.createElement(FPSCounter, {
+  }), /*#__PURE__*/react.createElement(preview_system_PreviewModal, previewModalProps), /*#__PURE__*/react.createElement(FPSCounter, {
     showFps: globalSettings.settings.showFps
   }));
 });
@@ -12221,10 +12226,10 @@ function js_unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r
 function js_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 function js_iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
 function js_arrayWithHoles(r) { if (Array.isArray(r)) return r; }
-function js_typeof(o) { "@babel/helpers - typeof"; return js_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, js_typeof(o); }
 function js_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function js_objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? js_ownKeys(Object(t), !0).forEach(function (r) { js_defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : js_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function js_defineProperty(e, r, t) { return (r = js_toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function js_typeof(o) { "@babel/helpers - typeof"; return js_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, js_typeof(o); }
 function js_classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function js_defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, js_toPropertyKey(o.key), o); } }
 function js_createClass(e, r, t) { return r && js_defineProperties(e.prototype, r), t && js_defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
@@ -12339,10 +12344,47 @@ var PDFBuilderPro = /*#__PURE__*/function () {
     }
     console.log('=== PDFBuilderPro INSTANCE CREATED ===');
     console.log('Methods available:', Object.getOwnPropertyNames(this.__proto__));
+
+    // Assigner explicitement showPreview comme propriété propre de l'instance
+    this.showPreview = this.showPreview.bind(this);
+    console.log('showPreview assigned to instance:', js_typeof(this.showPreview));
   }
 
-  // Initialiser l'éditeur dans un conteneur
+  // Afficher l'aperçu du PDF (pour compatibilité avec les tests)
   return js_createClass(PDFBuilderPro, [{
+    key: "showPreview",
+    value: function showPreview(data) {
+      console.log('=== PDFBuilderPro.showPreview CALLED ===', data);
+      try {
+        // Si c'est un appel depuis l'éditeur canvas avec des éléments
+        if (data && data.elements) {
+          console.log('Canvas preview mode with elements:', data.elements.length);
+
+          // Pour le mode canvas, nous devons créer un modal temporaire
+          // Utiliser la logique existante mais adaptée pour les données canvas
+          if (window.pdfBuilderShowPreview) {
+            // Adapter les données pour le format attendu par pdfBuilderShowPreview
+            // Pour le canvas, nous passons null pour orderId et utilisons les éléments directement
+            window.pdfBuilderShowPreview(null, null, null, data);
+          } else {
+            console.error('pdfBuilderShowPreview function not available');
+          }
+        } else {
+          // Mode metabox standard
+          console.log('Metabox preview mode');
+          if (window.pdfBuilderShowPreview) {
+            window.pdfBuilderShowPreview(data.orderId, data.templateId, data.nonce);
+          } else {
+            console.error('pdfBuilderShowPreview function not available');
+          }
+        }
+      } catch (error) {
+        console.error('PDFBuilderPro: Error in showPreview:', error);
+      }
+    }
+
+    // Initialiser l'éditeur dans un conteneur
+  }, {
     key: "init",
     value: function init(containerId) {
       var _this = this;
@@ -12478,15 +12520,26 @@ var pdfBuilderPro = new PDFBuilderPro();
 // Export par défaut pour webpack
 /* harmony default export */ const js = (pdfBuilderPro);
 
-// Attacher à window pour WordPress - FORCER L'EXPOSITION
+// Attacher à window pour WordPress - FORCER L'EXPOSITION DIRECTE
 try {
   if (typeof window !== 'undefined') {
-    var _window$PDFBuilderPro;
+    var _window$PDFBuilderPro, _window$PDFBuilderPro2;
+    // Forcer l'assignation directe de l'instance, pas du module webpack
     window.PDFBuilderPro = pdfBuilderPro;
     window.pdfBuilderPro = pdfBuilderPro;
     console.log('=== PDFBuilderPro EXPOSED GLOBALLY ===');
     console.log('PDFBuilderPro available:', !!window.PDFBuilderPro);
+    console.log('PDFBuilderPro type:', js_typeof(window.PDFBuilderPro));
     console.log('PDFBuilderPro.init available:', js_typeof((_window$PDFBuilderPro = window.PDFBuilderPro) === null || _window$PDFBuilderPro === void 0 ? void 0 : _window$PDFBuilderPro.init));
+    console.log('PDFBuilderPro.showPreview available:', js_typeof((_window$PDFBuilderPro2 = window.PDFBuilderPro) === null || _window$PDFBuilderPro2 === void 0 ? void 0 : _window$PDFBuilderPro2.showPreview));
+    console.log('PDFBuilderPro keys:', Object.keys(window.PDFBuilderPro));
+
+    // Vérification supplémentaire pour s'assurer que showPreview est accessible
+    if (window.PDFBuilderPro && typeof window.PDFBuilderPro.showPreview === 'function') {
+      console.log('✅ PDFBuilderPro.showPreview is properly accessible');
+    } else {
+      console.error('❌ PDFBuilderPro.showPreview is NOT accessible');
+    }
   } else {
     console.warn('Window not available, PDFBuilderPro not exposed globally');
   }
@@ -12496,11 +12549,13 @@ try {
 
 // Fonction pour afficher l'aperçu dans la metabox WooCommerce - RECREATION COMPLETE PHASE 8
 window.pdfBuilderShowPreview = function (orderId, templateId, nonce) {
+  var canvasData = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
   console.log('=== PDF BUILDER PHASE 8: pdfBuilderShowPreview START ===');
   console.log('Parameters:', {
     orderId: orderId,
     templateId: templateId,
     nonce: nonce,
+    canvasData: !!canvasData,
     timestamp: Date.now()
   });
 
@@ -12508,7 +12563,7 @@ window.pdfBuilderShowPreview = function (orderId, templateId, nonce) {
   var visualIndicator = document.createElement('div');
   visualIndicator.id = 'phase8-visual-indicator';
   visualIndicator.style.cssText = "\n        position: fixed !important;\n        top: 10px !important;\n        right: 10px !important;\n        background: #ff6b35 !important;\n        color: white !important;\n        padding: 15px !important;\n        border-radius: 8px !important;\n        z-index: 1000000 !important;\n        font-weight: bold !important;\n        font-size: 14px !important;\n        border: 3px solid #ff4500 !important;\n        box-shadow: 0 4px 12px rgba(255,107,53,0.3) !important;\n    ";
-  visualIndicator.innerHTML = "\n        \uD83D\uDD25 PHASE 8 ACTIVE<br>\n        Order: ".concat(orderId, "<br>\n        Template: ").concat(templateId, "<br>\n        Time: ").concat(new Date().toLocaleTimeString(), "<br>\n        <span style=\"color: yellow;\">MODAL LOADING...</span>\n    ");
+  visualIndicator.innerHTML = canvasData ? "\n        \uD83D\uDD25 CANVAS PREVIEW ACTIVE<br>\n        Elements: ".concat(canvasData.elements ? canvasData.elements.length : 0, "<br>\n        Mode: Canvas<br>\n        Time: ").concat(new Date().toLocaleTimeString(), "<br>\n        <span style=\"color: yellow;\">CANVAS LOADING...</span>\n    ") : "\n        \uD83D\uDD25 PHASE 8 ACTIVE<br>\n        Order: ".concat(orderId, "<br>\n        Template: ").concat(templateId, "<br>\n        Time: ").concat(new Date().toLocaleTimeString(), "<br>\n        <span style=\"color: yellow;\">MODAL LOADING...</span>\n    ");
   document.body.appendChild(visualIndicator);
   console.log('=== VISUAL INDICATOR CREATED ===');
 
@@ -12546,49 +12601,92 @@ window.pdfBuilderShowPreview = function (orderId, templateId, nonce) {
   // 6. Contenu de chargement initial
   var loadingContent = document.createElement('div');
   loadingContent.style.cssText = "\n        display: flex !important;\n        flex-direction: column !important;\n        align-items: center !important;\n        justify-content: center !important;\n        height: 100% !important;\n        color: #666 !important;\n        font-size: 18px !important;\n    ";
-  loadingContent.innerHTML = "\n        <div style=\"font-size: 48px; margin-bottom: 20px;\">\uD83D\uDD04</div>\n        <div style=\"font-weight: bold; margin-bottom: 10px;\">Chargement de l'aper\xE7u...</div>\n        <div style=\"font-size: 14px; color: #999;\">\n            Order: ".concat(orderId, " | Template: ").concat(templateId, "<br>\n            ").concat(new Date().toLocaleString(), "\n        </div>\n    ");
+  loadingContent.innerHTML = canvasData ? "\n        <div style=\"font-size: 48px; margin-bottom: 20px;\">\uD83D\uDD04</div>\n        <div style=\"font-weight: bold; margin-bottom: 10px;\">Chargement de l'aper\xE7u Canvas...</div>\n        <div style=\"font-size: 14px; color: #999;\">\n            \xC9l\xE9ments: ".concat(canvasData.elements ? canvasData.elements.length : 0, "<br>\n            ").concat(new Date().toLocaleString(), "\n        </div>\n    ") : "\n        <div style=\"font-size: 48px; margin-bottom: 20px;\">\uD83D\uDD04</div>\n        <div style=\"font-weight: bold; margin-bottom: 10px;\">Chargement de l'aper\xE7u...</div>\n        <div style=\"font-size: 14px; color: #999;\">\n            Order: ".concat(orderId, " | Template: ").concat(templateId, "<br>\n            ").concat(new Date().toLocaleString(), "\n        </div>\n    ");
   modalContent.appendChild(loadingContent);
 
   // 7. Monter le composant React PreviewModal
   try {
     console.log('=== LOADING PREVIEW MODAL COMPONENT ===');
 
-    // Importer dynamiquement le système complet
-    console.log('=== STARTING DYNAMIC IMPORT ===');
-    Promise.all([Promise.resolve(/* import() */).then(__webpack_require__.bind(__webpack_require__, 424)), Promise.resolve(/* import() */).then(__webpack_require__.bind(__webpack_require__, 454))]).then(function (_ref2) {
-      var _ref3 = js_slicedToArray(_ref2, 2),
-        providerModule = _ref3[0],
-        modalModule = _ref3[1];
-      console.log('=== DYNAMIC IMPORT SUCCESS ===');
-      var PreviewProvider = providerModule.PreviewProvider;
-      var PreviewModal = modalModule["default"];
-      console.log('=== Components extracted ===', {
-        PreviewProvider: PreviewProvider,
-        PreviewModal: PreviewModal
-      });
+    // Vérifier si nous sommes en mode canvas
+    if (canvasData && canvasData.elements) {
+      console.log('=== CANVAS MODE: Using canvas data directly ===');
 
-      // Créer l'élément React avec le Provider
-      var previewModalElement = /*#__PURE__*/react.createElement(PreviewProvider, {}, /*#__PURE__*/react.createElement(PreviewModal, {
-        mode: 'metabox',
-        orderId: orderId,
-        templateId: templateId,
-        nonce: nonce
-      }));
+      // Pour le mode canvas, créer un composant simple qui affiche les éléments
+      var CanvasPreviewComponent = function CanvasPreviewComponent() {
+        return /*#__PURE__*/react.createElement('div', {
+          style: {
+            padding: '20px',
+            fontFamily: 'Arial, sans-serif'
+          }
+        }, [/*#__PURE__*/react.createElement('h2', {
+          key: 'title'
+        }, 'Aperçu Canvas'), /*#__PURE__*/react.createElement('div', {
+          key: 'elements',
+          style: {
+            marginTop: '20px'
+          }
+        }, "\xC9l\xE9ments: ".concat(canvasData.elements.length)), /*#__PURE__*/react.createElement('pre', {
+          key: 'data',
+          style: {
+            background: '#f5f5f5',
+            padding: '10px',
+            borderRadius: '4px',
+            fontSize: '12px',
+            overflow: 'auto',
+            maxHeight: '400px'
+          }
+        }, JSON.stringify(canvasData, null, 2))]);
+      };
 
-      // Monter avec ReactDOM
-      console.log('=== ABOUT TO CALL ReactDOM.render ===');
-      react_dom.render(previewModalElement, modalContent);
-      console.log('=== ReactDOM.render CALLED SUCCESSFULLY ===');
+      // Monter directement le composant canvas
+      console.log('=== ABOUT TO CALL ReactDOM.render for CANVAS ===');
+      react_dom.render(/*#__PURE__*/react.createElement(CanvasPreviewComponent), modalContent);
+      console.log('=== CANVAS PREVIEW RENDERED SUCCESSFULLY ===');
 
       // Mettre à jour l'indicateur visuel
-      visualIndicator.innerHTML = visualIndicator.innerHTML.replace('MODAL LOADING...', '<span style="color: #28a745;">MODAL LOADED ✓</span>');
-      console.log('=== REACT MODAL MOUNTED SUCCESSFULLY ===');
-    })["catch"](function (error) {
-      console.error('=== DYNAMIC IMPORT FAILED ===', error);
-      console.error('=== Error details ===', error.message, error.stack);
-      loadingContent.innerHTML = "\n                <div style=\"font-size: 48px; margin-bottom: 20px; color: #dc3545;\">\u274C</div>\n                <div style=\"font-weight: bold; margin-bottom: 10px; color: #dc3545;\">Erreur d'import dynamique</div>\n                <div style=\"font-size: 14px; color: #666;\">".concat(error.message, "</div>\n            ");
-      visualIndicator.innerHTML = visualIndicator.innerHTML.replace('MODAL LOADING...', '<span style="color: #dc3545;">IMPORT ERROR ❌</span>');
-    });
+      visualIndicator.innerHTML = visualIndicator.innerHTML.replace('MODAL LOADING...', '<span style="color: #28a745;">CANVAS LOADED ✓</span>');
+    } else {
+      // Mode metabox standard
+      console.log('=== METABOX MODE: Loading PreviewModal ===');
+
+      // Importer dynamiquement le système complet
+      console.log('=== STARTING DYNAMIC IMPORT ===');
+      Promise.all([Promise.resolve(/* import() */).then(__webpack_require__.bind(__webpack_require__, 424)), Promise.resolve(/* import() */).then(__webpack_require__.bind(__webpack_require__, 454))]).then(function (_ref2) {
+        var _ref3 = js_slicedToArray(_ref2, 2),
+          providerModule = _ref3[0],
+          modalModule = _ref3[1];
+        console.log('=== DYNAMIC IMPORT SUCCESS ===');
+        var PreviewProvider = providerModule.PreviewProvider;
+        var PreviewModal = modalModule["default"];
+        console.log('=== Components extracted ===', {
+          PreviewProvider: PreviewProvider,
+          PreviewModal: PreviewModal
+        });
+
+        // Créer l'élément React avec le Provider
+        var previewModalElement = /*#__PURE__*/react.createElement(PreviewProvider, {}, /*#__PURE__*/react.createElement(PreviewModal, {
+          mode: 'metabox',
+          orderId: orderId,
+          templateId: templateId,
+          nonce: nonce
+        }));
+
+        // Monter avec ReactDOM
+        console.log('=== ABOUT TO CALL ReactDOM.render ===');
+        react_dom.render(previewModalElement, modalContent);
+        console.log('=== ReactDOM.render CALLED SUCCESSFULLY ===');
+
+        // Mettre à jour l'indicateur visuel
+        visualIndicator.innerHTML = visualIndicator.innerHTML.replace('MODAL LOADING...', '<span style="color: #28a745;">MODAL LOADED ✓</span>');
+        console.log('=== REACT MODAL MOUNTED SUCCESSFULLY ===');
+      })["catch"](function (error) {
+        console.error('=== DYNAMIC IMPORT FAILED ===', error);
+        console.error('=== Error details ===', error.message, error.stack);
+        loadingContent.innerHTML = "\n                    <div style=\"font-size: 48px; margin-bottom: 20px; color: #dc3545;\">\u274C</div>\n                    <div style=\"font-weight: bold; margin-bottom: 10px; color: #dc3545;\">Erreur d'import dynamique</div>\n                    <div style=\"font-size: 14px; color: #666;\">".concat(error.message, "</div>\n                ");
+        visualIndicator.innerHTML = visualIndicator.innerHTML.replace('MODAL LOADING...', '<span style="color: #dc3545;">IMPORT ERROR ❌</span>');
+      });
+    }
   } catch (error) {
     console.error('=== ERROR IN MODAL CREATION ===', error);
     loadingContent.innerHTML = "\n            <div style=\"font-size: 48px; margin-bottom: 20px; color: #dc3545;\">\u274C</div>\n            <div style=\"font-weight: bold; margin-bottom: 10px; color: #dc3545;\">Erreur syst\xE8me</div>\n            <div style=\"font-size: 14px; color: #666;\">".concat(error.message, "</div>\n        ");
@@ -12723,7 +12821,7 @@ window.pdfBuilderPro = pdfBuilderPro;
 /******/ 	/* webpack/runtime/load script */
 /******/ 	(() => {
 /******/ 		var inProgress = {};
-/******/ 		var dataWebpackPrefix = "PDFBuilderPro:";
+/******/ 		var dataWebpackPrefix = "wp-pdf-builder-pro:";
 /******/ 		// loadScript function to load a script via script tag
 /******/ 		__webpack_require__.l = (url, done, key, chunkId) => {
 /******/ 			if(inProgress[url]) { inProgress[url].push(done); return; }
@@ -12884,7 +12982,7 @@ window.pdfBuilderPro = pdfBuilderPro;
 /******/ 			return __webpack_require__.O(result);
 /******/ 		}
 /******/ 		
-/******/ 		var chunkLoadingGlobal = self["webpackChunkPDFBuilderPro"] = self["webpackChunkPDFBuilderPro"] || [];
+/******/ 		var chunkLoadingGlobal = self["webpackChunkwp_pdf_builder_pro"] = self["webpackChunkwp_pdf_builder_pro"] || [];
 /******/ 		chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));
 /******/ 		chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
 /******/ 	})();
@@ -12896,7 +12994,6 @@ window.pdfBuilderPro = pdfBuilderPro;
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
 /******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, [96], () => (__webpack_require__(472)))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
-/******/ 	window.PDFBuilderPro = __webpack_exports__;
 /******/ 	
 /******/ })()
 ;
