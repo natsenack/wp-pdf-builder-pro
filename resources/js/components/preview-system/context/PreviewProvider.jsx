@@ -56,19 +56,48 @@ export function PreviewProvider({ children }) {
     });
   }, []);
 
+  const setRotation = useCallback((rotation) => {
+    dispatch({
+      type: 'SET_ROTATION',
+      payload: rotation
+    });
+  }, []);
+
+  const toggleFullscreen = useCallback(() => {
+    dispatch({
+      type: 'TOGGLE_FULLSCREEN'
+    });
+  }, []);
+
+  const loadPreview = useCallback((config) => {
+    console.log('loadPreview called with config:', config);
+    setLoading(true);
+    // Additional logic can be added here if needed
+  }, [setLoading]);
+
+  const clearPreview = useCallback(() => {
+    setLoading(false);
+    setData(null);
+    setError(null);
+  }, [setLoading, setData, setError]);
+
   // Valeur du contexte optimisée avec useMemo
   const contextValue = useMemo(() => ({
-    // État
-    ...state,
+    state,
 
-    // Actions
-    openPreview,
-    closePreview,
-    setPage,
-    setZoom,
-    setLoading,
-    setError,
-    setData,
+    actions: {
+      openPreview,
+      closePreview,
+      setPage,
+      setZoom,
+      setLoading,
+      setError,
+      setData,
+      setRotation,
+      toggleFullscreen,
+      loadPreview,
+      clearPreview
+    },
 
     // Getters utilitaires
     isFirstPage: state.currentPage === 1,
@@ -84,7 +113,11 @@ export function PreviewProvider({ children }) {
     setZoom,
     setLoading,
     setError,
-    setData
+    setData,
+    setRotation,
+    toggleFullscreen,
+    loadPreview,
+    clearPreview
   ]);
 
   return (

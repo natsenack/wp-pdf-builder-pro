@@ -9,7 +9,7 @@ import { usePerformanceMonitor } from './hooks/usePerformanceMonitor';
 function NavigationControls({ className = '' }) {
   const {
     state: { currentPage, totalPages, zoom, rotation, isFullscreen },
-    actions: { setCurrentPage, setZoom, setRotation, toggleFullscreen }
+    actions: { setPage: setCurrentPage, setZoom, setRotation, toggleFullscreen }
   } = usePreviewContext();
 
   const { measureOperation } = usePerformanceMonitor('NavigationControls');

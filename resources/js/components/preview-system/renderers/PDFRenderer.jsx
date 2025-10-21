@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { usePreview } from '../context/PreviewContext';
+import { usePreviewContext } from '../context/PreviewContext';
 import { usePerformanceMonitor } from '../hooks/usePerformanceMonitor';
 import { getPageDimensions, calculateOptimalZoom } from '../utils/previewUtils';
 

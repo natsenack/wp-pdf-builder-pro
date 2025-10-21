@@ -18,7 +18,9 @@ export const PREVIEW_ACTIONS = {
   SET_ZOOM: 'SET_ZOOM',
   SET_LOADING: 'SET_LOADING',
   SET_ERROR: 'SET_ERROR',
-  SET_DATA: 'SET_DATA'
+  SET_DATA: 'SET_DATA',
+  SET_ROTATION: 'SET_ROTATION',
+  TOGGLE_FULLSCREEN: 'TOGGLE_FULLSCREEN'
 };
 
 // État initial
@@ -28,6 +30,8 @@ const initialState = {
   currentPage: 1,
   totalPages: 1,
   zoom: 1,
+  rotation: 0,
+  isFullscreen: false,
   loading: false,
   error: null,
   data: null,
@@ -87,6 +91,18 @@ function previewReducer(state, action) {
         totalPages: action.payload?.totalPages || 1
       };
 
+    case PREVIEW_ACTIONS.SET_ROTATION:
+      return {
+        ...state,
+        rotation: action.payload
+      };
+
+    case PREVIEW_ACTIONS.TOGGLE_FULLSCREEN:
+      return {
+        ...state,
+        isFullscreen: !state.isFullscreen
+      };
+
     default:
       return state;
   }
@@ -96,10 +112,10 @@ function previewReducer(state, action) {
 const PreviewContext = createContext();
 
 // Hook personnalisé pour utiliser le contexte
-export function usePreview() {
+export function usePreviewContext() {
   const context = useContext(PreviewContext);
   if (!context) {
-    throw new Error('usePreview must be used within a PreviewProvider');
+    throw new Error('usePreviewContext must be used within a PreviewProvider');
   }
   return context;
 }

@@ -1,5 +1,5 @@
 import React, { Suspense, lazy, useEffect } from 'react';
-import { usePreview } from '../context/PreviewContext';
+import { usePreviewContext } from '../context/PreviewContext';
 import ModalSkeleton from './ModalSkeleton';
 
 // Lazy loading des modes pour optimisation performance
@@ -14,12 +14,9 @@ const MetaboxMode = lazy(() => import('../MetaboxMode'));
  */
 function PreviewModal() {
   const {
-    isOpen,
-    mode,
-    loading,
-    error,
-    closePreview
-  } = usePreview();
+    state: { isOpen, mode, loading, error },
+    actions: { closePreview }
+  } = usePreviewContext();
 
   // Gestionnaire d'échappement clavier
   useEffect(() => {

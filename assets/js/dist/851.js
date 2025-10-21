@@ -992,7 +992,7 @@ function NavigationControls(_ref) {
     rotation = _usePreviewContext$st.rotation,
     isFullscreen = _usePreviewContext$st.isFullscreen,
     _usePreviewContext$ac = _usePreviewContext.actions,
-    setCurrentPage = _usePreviewContext$ac.setCurrentPage,
+    setCurrentPage = _usePreviewContext$ac.setPage,
     setZoom = _usePreviewContext$ac.setZoom,
     setRotation = _usePreviewContext$ac.setRotation,
     toggleFullscreen = _usePreviewContext$ac.toggleFullscreen;
@@ -1193,7 +1193,7 @@ function MetaboxMode(_ref) {
     _usePreviewContext$st = _usePreviewContext.state,
     loading = _usePreviewContext$st.loading,
     error = _usePreviewContext$st.error,
-    previewData = _usePreviewContext$st.previewData,
+    previewData = _usePreviewContext$st.data,
     _usePreviewContext$ac = _usePreviewContext.actions,
     loadPreview = _usePreviewContext$ac.loadPreview,
     clearPreview = _usePreviewContext$ac.clearPreview;
@@ -1207,7 +1207,7 @@ function MetaboxMode(_ref) {
   // Chargement des données d'aperçu au montage
   (0,react.useEffect)(function () {
     if (productId && templateData) {
-      var timer = measureOperation('loadMetaboxPreview');
+      var timer = measureLoadTime('loadMetaboxPreview');
       loadPreview({
         type: 'metabox',
         productId: productId,

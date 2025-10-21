@@ -1,6 +1,6 @@
 import React from 'react';
 import { PreviewProvider } from './context/PreviewProvider';
-import { usePreview } from './context/PreviewContext';
+import { usePreviewContext } from './context/PreviewContext';
 import PreviewModalComponent from './components/PreviewModal';
 
 /**
@@ -41,7 +41,7 @@ const PreviewModalWithContext = ({ legacyProps }) => {
     console.log('PDF Builder: PreviewModalWithContext called with legacyProps:', legacyProps);
     console.log('PDF Builder: PreviewModalWithContext - legacyProps type:', typeof legacyProps);
 
-    const { openPreview, closePreview, isOpen } = usePreview();
+    const { state: { isOpen }, actions: { openPreview, closePreview } } = usePreviewContext();
     console.log('PDF Builder: PreviewModalWithContext - usePreview hook result:', { openPreview: typeof openPreview, closePreview: typeof closePreview, isOpen });
 
     // Ouvrir automatiquement si des props legacy sont passées

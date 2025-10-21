@@ -12,7 +12,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   PreviewContext: () => (/* binding */ PreviewContext),
 /* harmony export */   initialState: () => (/* binding */ initialState),
 /* harmony export */   previewReducer: () => (/* binding */ previewReducer),
-/* harmony export */   usePreview: () => (/* binding */ usePreview)
+/* harmony export */   usePreviewContext: () => (/* binding */ usePreviewContext)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(540);
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
@@ -40,7 +40,9 @@ var PREVIEW_ACTIONS = {
   SET_ZOOM: 'SET_ZOOM',
   SET_LOADING: 'SET_LOADING',
   SET_ERROR: 'SET_ERROR',
-  SET_DATA: 'SET_DATA'
+  SET_DATA: 'SET_DATA',
+  SET_ROTATION: 'SET_ROTATION',
+  TOGGLE_FULLSCREEN: 'TOGGLE_FULLSCREEN'
 };
 
 // État initial
@@ -50,6 +52,8 @@ var initialState = {
   currentPage: 1,
   totalPages: 1,
   zoom: 1,
+  rotation: 0,
+  isFullscreen: false,
   loading: false,
   error: null,
   data: null,
@@ -95,6 +99,14 @@ function previewReducer(state, action) {
         data: action.payload,
         totalPages: ((_action$payload = action.payload) === null || _action$payload === void 0 ? void 0 : _action$payload.totalPages) || 1
       });
+    case PREVIEW_ACTIONS.SET_ROTATION:
+      return _objectSpread(_objectSpread({}, state), {}, {
+        rotation: action.payload
+      });
+    case PREVIEW_ACTIONS.TOGGLE_FULLSCREEN:
+      return _objectSpread(_objectSpread({}, state), {}, {
+        isFullscreen: !state.isFullscreen
+      });
     default:
       return state;
   }
@@ -104,10 +116,10 @@ function previewReducer(state, action) {
 var PreviewContext = /*#__PURE__*/(0,react__WEBPACK_IMPORTED_MODULE_0__.createContext)();
 
 // Hook personnalisé pour utiliser le contexte
-function usePreview() {
+function usePreviewContext() {
   var context = (0,react__WEBPACK_IMPORTED_MODULE_0__.useContext)(PreviewContext);
   if (!context) {
-    throw new Error('usePreview must be used within a PreviewProvider');
+    throw new Error('usePreviewContext must be used within a PreviewProvider');
   }
   return context;
 }
@@ -127,12 +139,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(540);
 /* harmony import */ var _PreviewContext__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(38);
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
-function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
@@ -201,26 +207,53 @@ function PreviewProvider(_ref) {
       payload: data
     });
   }, []);
+  var setRotation = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function (rotation) {
+    dispatch({
+      type: 'SET_ROTATION',
+      payload: rotation
+    });
+  }, []);
+  var toggleFullscreen = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function () {
+    dispatch({
+      type: 'TOGGLE_FULLSCREEN'
+    });
+  }, []);
+  var loadPreview = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function (config) {
+    console.log('loadPreview called with config:', config);
+    setLoading(true);
+    // Additional logic can be added here if needed
+  }, [setLoading]);
+  var clearPreview = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function () {
+    setLoading(false);
+    setData(null);
+    setError(null);
+  }, [setLoading, setData, setError]);
 
   // Valeur du contexte optimisée avec useMemo
   var contextValue = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(function () {
-    return _objectSpread(_objectSpread({}, state), {}, {
-      // Actions
-      openPreview: openPreview,
-      closePreview: closePreview,
-      setPage: setPage,
-      setZoom: setZoom,
-      setLoading: setLoading,
-      setError: setError,
-      setData: setData,
+    return {
+      state: state,
+      actions: {
+        openPreview: openPreview,
+        closePreview: closePreview,
+        setPage: setPage,
+        setZoom: setZoom,
+        setLoading: setLoading,
+        setError: setError,
+        setData: setData,
+        setRotation: setRotation,
+        toggleFullscreen: toggleFullscreen,
+        loadPreview: loadPreview,
+        clearPreview: clearPreview
+      },
       // Getters utilitaires
       isFirstPage: state.currentPage === 1,
       isLastPage: state.currentPage === state.totalPages,
       canNavigatePrev: state.currentPage > 1,
       canNavigateNext: state.currentPage < state.totalPages,
       zoomPercentage: Math.round(state.zoom * 100)
-    });
-  }, [state, openPreview, closePreview, setPage, setZoom, setLoading, setError, setData]);
+    };
+  }, [state, openPreview, closePreview, setPage, setZoom, setLoading, setError, setData, setRotation, toggleFullscreen, loadPreview, clearPreview]);
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_PreviewContext__WEBPACK_IMPORTED_MODULE_1__.PreviewContext.Provider, {
     value: contextValue
   }, children);
@@ -12589,12 +12622,13 @@ var MetaboxMode = /*#__PURE__*/(0,react.lazy)(function () {
  * Optimisé avec lazy loading, error boundaries et performance
  */
 function PreviewModal() {
-  var _usePreview = (0,PreviewContext.usePreview)(),
-    isOpen = _usePreview.isOpen,
-    mode = _usePreview.mode,
-    loading = _usePreview.loading,
-    error = _usePreview.error,
-    closePreview = _usePreview.closePreview;
+  var _usePreviewContext = (0,PreviewContext.usePreviewContext)(),
+    _usePreviewContext$st = _usePreviewContext.state,
+    isOpen = _usePreviewContext$st.isOpen,
+    mode = _usePreviewContext$st.mode,
+    loading = _usePreviewContext$st.loading,
+    error = _usePreviewContext$st.error,
+    closePreview = _usePreviewContext.actions.closePreview;
 
   // Gestionnaire d'échappement clavier
   (0,react.useEffect)(function () {
@@ -12696,10 +12730,11 @@ var PreviewModalWithContext = function PreviewModalWithContext(_ref) {
   try {
     console.log('PDF Builder: PreviewModalWithContext called with legacyProps:', legacyProps);
     console.log('PDF Builder: PreviewModalWithContext - legacyProps type:', _typeof(legacyProps));
-    var _usePreview = (0,PreviewContext.usePreview)(),
-      openPreview = _usePreview.openPreview,
-      closePreview = _usePreview.closePreview,
-      isOpen = _usePreview.isOpen;
+    var _usePreviewContext = (0,PreviewContext.usePreviewContext)(),
+      isOpen = _usePreviewContext.state.isOpen,
+      _usePreviewContext$ac = _usePreviewContext.actions,
+      openPreview = _usePreviewContext$ac.openPreview,
+      closePreview = _usePreviewContext$ac.closePreview;
     console.log('PDF Builder: PreviewModalWithContext - usePreview hook result:', {
       openPreview: _typeof(openPreview),
       closePreview: _typeof(closePreview),

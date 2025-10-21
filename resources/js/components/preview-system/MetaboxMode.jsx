@@ -18,7 +18,7 @@ function MetaboxMode({
   showControls = true
 }) {
   const {
-    state: { loading, error, previewData },
+    state: { loading, error, data: previewData },
     actions: { loadPreview, clearPreview }
   } = usePreviewContext();
 
@@ -28,7 +28,7 @@ function MetaboxMode({
   // Chargement des données d'aperçu au montage
   useEffect(() => {
     if (productId && templateData) {
-      const timer = measureOperation('loadMetaboxPreview');
+      const timer = measureLoadTime('loadMetaboxPreview');
       loadPreview({
         type: 'metabox',
         productId,
