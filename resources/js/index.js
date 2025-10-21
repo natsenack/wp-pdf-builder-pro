@@ -9,9 +9,6 @@ import { PDFCanvasEditor } from './components/PDFCanvasEditor';
 if (typeof window !== 'undefined') {
     window.React = React;
     window.ReactDOM = ReactDOM;
-    console.log('=== REACT EXPOSED GLOBALLY IN INDEX.JS ===');
-    console.log('React available:', !!window.React);
-    console.log('ReactDOM available:', !!window.ReactDOM);
 }
 
 // Forcer l'inclusion de tous les hooks personnalisés
@@ -35,7 +32,6 @@ const PDFBuilderSecurity = {
         };
 
         this.errors.push(errorInfo);
-        console.error('PDF Builder Pro Security Error:', errorInfo);
     },
 
     // Protection contre les appels multiples - améliorée
@@ -48,7 +44,6 @@ const PDFBuilderSecurity = {
         // permettre une réinitialisation (utile pour les rechargements de page)
         if (window._pdfBuilderInitialized && timeSinceLastInit < 5000) {
             // Log silencieux au lieu d'un avertissement intrusif
-            console.debug('PDF Builder Pro: Multiple initialization attempt prevented (last init:', new Date(lastInit).toLocaleTimeString() + ')');
             return false;
         }
 
@@ -67,11 +62,9 @@ try {
         window.ReactDOM = ReactDOM;
         // Forcer l'utilisation pour éviter l'optimisation webpack
         window._forceReactInclusion = { React, ReactDOM, createElement };
-        console.log('React exposed globally:', !!window.React, !!window.ReactDOM);
     }
 } catch (error) {
     PDFBuilderSecurity.logError(error, 'React initialization');
-    console.error('React test failed:', error);
 }
 
 // Classe principale pour l'éditeur PDF
@@ -79,7 +72,6 @@ class PDFBuilderPro {
     constructor() {
         this.version = '2.0.0';
         this.editors = new Map();
-        console.log('=== PDFBuilderPro CONSTRUCTOR CALLED ===');
 
         // Forcer l'inclusion des hooks (ne pas supprimer cette ligne)
         this._hooks = hooks;
@@ -101,22 +93,17 @@ class PDFBuilderPro {
             // Ignorer les erreurs en mode SSR
         }
 
-        console.log('=== PDFBuilderPro INSTANCE CREATED ===');
-        console.log('Methods available:', Object.getOwnPropertyNames(this.__proto__));
 
         // Assigner explicitement showPreview comme propriété propre de l'instance
         this.showPreview = this.showPreview.bind(this);
-        console.log('showPreview assigned to instance:', typeof this.showPreview);
     }
 
     // Afficher l'aperçu du PDF (pour compatibilité avec les tests)
     showPreview(data) {
-        console.log('=== PDFBuilderPro.showPreview CALLED ===', data);
 
         try {
             // Si c'est un appel depuis l'éditeur canvas avec des éléments
             if (data && data.elements) {
-                console.log('Canvas preview mode with elements:', data.elements.length);
 
                 // Pour le mode canvas, nous devons créer un modal temporaire
                 // Utiliser la logique existante mais adaptée pour les données canvas
@@ -125,25 +112,20 @@ class PDFBuilderPro {
                     // Pour le canvas, nous passons null pour orderId et utilisons les éléments directement
                     window.pdfBuilderShowPreview(null, null, null, data);
                 } else {
-                    console.error('pdfBuilderShowPreview function not available');
                 }
             } else {
                 // Mode metabox standard
-                console.log('Metabox preview mode');
                 if (window.pdfBuilderShowPreview) {
                     window.pdfBuilderShowPreview(data.orderId, data.templateId, data.nonce);
                 } else {
-                    console.error('pdfBuilderShowPreview function not available');
                 }
             }
         } catch (error) {
-            console.error('PDFBuilderPro: Error in showPreview:', error);
         }
     }
 
     // Initialiser l'éditeur dans un conteneur
     init(containerId, options = {}) {
-        console.log('=== PDFBuilderPro.init CALLED ===', { containerId, options });
 
         try {
             // Vérification stricte du containerId
@@ -182,11 +164,9 @@ class PDFBuilderPro {
 
             // Validation des options critiques
             if (typeof defaultOptions.width !== 'number' || defaultOptions.width <= 0) {
-                console.warn('PDFBuilderPro: Invalid width, using default A4 width');
                 defaultOptions.width = 595;
             }
             if (typeof defaultOptions.height !== 'number' || defaultOptions.height <= 0) {
-                console.warn('PDFBuilderPro: Invalid height, using default A4 height');
                 defaultOptions.height = 842;
             }
 
@@ -209,8 +189,6 @@ class PDFBuilderPro {
 
 
         } catch (error) {
-            console.error('PDFBuilderPro: Failed to initialize editor:', error);
-
             // Fallback visuel pour l'utilisateur
             const container = document.getElementById(containerId);
             if (container) {
@@ -249,7 +227,6 @@ class PDFBuilderPro {
                 this.editors.delete(containerId);
             }
         } catch (error) {
-            console.error('PDFBuilderPro: Error during destroy:', error);
             // Forcer la suppression même en cas d'erreur
             this.editors.delete(containerId);
         }
@@ -267,10 +244,8 @@ class PDFBuilderPro {
             if (this.canvas && typeof this.canvas.getElements === 'function') {
                 return this.canvas.getElements();
             }
-            console.warn('PDFBuilderPro: No active canvas or getElements method not available');
             return [];
         } catch (error) {
-            console.error('PDFBuilderPro: Error getting elements:', error);
             return [];
         }
     }
@@ -288,30 +263,18 @@ try {
         // Forcer l'assignation directe de l'instance, pas du module webpack
         window.PDFBuilderPro = pdfBuilderPro;
         window.pdfBuilderPro = pdfBuilderPro;
-        console.log('=== PDFBuilderPro EXPOSED GLOBALLY ===');
-        console.log('PDFBuilderPro available:', !!window.PDFBuilderPro);
-        console.log('PDFBuilderPro type:', typeof window.PDFBuilderPro);
-        console.log('PDFBuilderPro.init available:', typeof window.PDFBuilderPro?.init);
-        console.log('PDFBuilderPro.showPreview available:', typeof window.PDFBuilderPro?.showPreview);
-        console.log('PDFBuilderPro keys:', Object.keys(window.PDFBuilderPro));
 
         // Vérification supplémentaire pour s'assurer que showPreview est accessible
         if (window.PDFBuilderPro && typeof window.PDFBuilderPro.showPreview === 'function') {
-            console.log('✅ PDFBuilderPro.showPreview is properly accessible');
         } else {
-            console.error('❌ PDFBuilderPro.showPreview is NOT accessible');
         }
     } else {
-        console.warn('Window not available, PDFBuilderPro not exposed globally');
     }
 } catch (error) {
-    console.error('Error exposing PDFBuilderPro globally:', error);
 }
 
 // Fonction pour afficher l'aperçu dans la metabox WooCommerce - RECREATION COMPLETE PHASE 8
 window.pdfBuilderShowPreview = function(orderId, templateId, nonce, canvasData = null) {
-    console.log('=== PDF BUILDER PHASE 8: pdfBuilderShowPreview START ===');
-    console.log('Parameters:', { orderId, templateId, nonce, canvasData: !!canvasData, timestamp: Date.now() });
 
     // 1. IMMÉDIAT: Créer un indicateur visuel que la fonction est appelée
     const visualIndicator = document.createElement('div');
@@ -344,13 +307,11 @@ window.pdfBuilderShowPreview = function(orderId, templateId, nonce, canvasData =
         <span style="color: yellow;">MODAL LOADING...</span>
     `;
     document.body.appendChild(visualIndicator);
-    console.log('=== VISUAL INDICATOR CREATED ===');
 
     // 2. Supprimer toute modal existante
     const existingModal = document.getElementById('pdf-builder-preview-modal');
     if (existingModal) {
         existingModal.remove();
-        console.log('=== REMOVED EXISTING MODAL ===');
     }
 
     // 3. Créer le conteneur de modal
@@ -369,7 +330,6 @@ window.pdfBuilderShowPreview = function(orderId, templateId, nonce, canvasData =
         justify-content: center !important;
     `;
     document.body.appendChild(modalContainer);
-    console.log('=== MODAL CONTAINER CREATED ===');
 
     // 4. Créer le contenu de la modal avec React
     const modalContent = document.createElement('div');
@@ -410,7 +370,6 @@ window.pdfBuilderShowPreview = function(orderId, templateId, nonce, canvasData =
     closeButton.onclick = function() {
         modalContainer.remove();
         visualIndicator.remove();
-        console.log('=== MODAL CLOSED ===');
     };
     modalContent.appendChild(closeButton);
 
@@ -444,11 +403,9 @@ window.pdfBuilderShowPreview = function(orderId, templateId, nonce, canvasData =
 
     // 7. Monter le composant React PreviewModal
     try {
-        console.log('=== LOADING PREVIEW MODAL COMPONENT ===');
 
         // Vérifier si nous sommes en mode canvas
         if (canvasData && canvasData.elements) {
-            console.log('=== CANVAS MODE: Using canvas data directly ===');
 
             // Pour le mode canvas, créer un composant simple qui affiche les éléments
             const CanvasPreviewComponent = () => {
@@ -478,27 +435,21 @@ window.pdfBuilderShowPreview = function(orderId, templateId, nonce, canvasData =
             };
 
             // Monter directement le composant canvas
-            console.log('=== ABOUT TO CALL ReactDOM.render for CANVAS ===');
             ReactDOM.render(React.createElement(CanvasPreviewComponent), modalContent);
-            console.log('=== CANVAS PREVIEW RENDERED SUCCESSFULLY ===');
 
             // Mettre à jour l'indicateur visuel
             visualIndicator.innerHTML = visualIndicator.innerHTML.replace('MODAL LOADING...', '<span style="color: #28a745;">CANVAS LOADED ✓</span>');
 
         } else {
             // Mode metabox standard
-            console.log('=== METABOX MODE: Loading PreviewModal ===');
 
             // Importer dynamiquement le système complet
-            console.log('=== STARTING DYNAMIC IMPORT ===');
             Promise.all([
                 import('./components/preview-system/context/PreviewProvider'),
-                import('./components/preview-system/PreviewModal')
+                import('./components/preview-system/components/PreviewModal')
             ]).then(([providerModule, modalModule]) => {
-                console.log('=== DYNAMIC IMPORT SUCCESS ===');
                 const PreviewProvider = providerModule.PreviewProvider;
                 const PreviewModal = modalModule.default;
-                console.log('=== Components extracted ===', { PreviewProvider, PreviewModal });
 
                 // Créer l'élément React avec le Provider
                 const previewModalElement = React.createElement(PreviewProvider, {},
@@ -511,17 +462,12 @@ window.pdfBuilderShowPreview = function(orderId, templateId, nonce, canvasData =
                 );
 
                 // Monter avec ReactDOM
-                console.log('=== ABOUT TO CALL ReactDOM.render ===');
                 ReactDOM.render(previewModalElement, modalContent);
-                console.log('=== ReactDOM.render CALLED SUCCESSFULLY ===');
 
                 // Mettre à jour l'indicateur visuel
                 visualIndicator.innerHTML = visualIndicator.innerHTML.replace('MODAL LOADING...', '<span style="color: #28a745;">MODAL LOADED ✓</span>');
 
-                console.log('=== REACT MODAL MOUNTED SUCCESSFULLY ===');
             }).catch(error => {
-                console.error('=== DYNAMIC IMPORT FAILED ===', error);
-                console.error('=== Error details ===', error.message, error.stack);
                 loadingContent.innerHTML = `
                     <div style="font-size: 48px; margin-bottom: 20px; color: #dc3545;">❌</div>
                     <div style="font-weight: bold; margin-bottom: 10px; color: #dc3545;">Erreur d'import dynamique</div>
@@ -532,7 +478,6 @@ window.pdfBuilderShowPreview = function(orderId, templateId, nonce, canvasData =
         }
 
     } catch (error) {
-        console.error('=== ERROR IN MODAL CREATION ===', error);
         loadingContent.innerHTML = `
             <div style="font-size: 48px; margin-bottom: 20px; color: #dc3545;">❌</div>
             <div style="font-weight: bold; margin-bottom: 10px; color: #dc3545;">Erreur système</div>
@@ -541,7 +486,6 @@ window.pdfBuilderShowPreview = function(orderId, templateId, nonce, canvasData =
         visualIndicator.innerHTML = visualIndicator.innerHTML.replace('MODAL LOADING...', '<span style="color: #dc3545;">ERROR ❌</span>');
     }
 
-    console.log('=== PDF BUILDER PHASE 8: pdfBuilderShowPreview END ===');
 };
 
 // Marquer comme initialisé pour éviter les conflits

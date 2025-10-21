@@ -263,15 +263,11 @@ class PDF_Builder_WooCommerce_Integration
 
         <script type="text/javascript">
         jQuery(document).ready(function($) {
-            console.log('PDF Builder: jQuery ready, checking elements');
-            console.log('PDF Builder: pdf-preview-btn exists:', $('#pdf-preview-btn').length > 0);
-            console.log('PDF Builder: pdfBuilderShowPreview exists:', typeof window.pdfBuilderShowPreview === 'function');
 
             var orderId = <?php echo intval($order_id); ?>;
             var templateId = <?php echo intval($selected_template ? $selected_template['id'] : 0); ?>;
             var nonce = '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>';
 
-            console.log('PDF Builder: Variables initialized:', { orderId, templateId, nonce });
 
             // UPDATE DEBUG INFO
             $('#js-status').html('JavaScript: <strong style="color: #28a745;">LOADED ✓</strong>');
@@ -281,21 +277,17 @@ class PDF_Builder_WooCommerce_Integration
 
             // TEST DIRECT: Ajouter un événement de clic direct pour prouver la connexion
             $('#pdf-preview-btn').on('click', function() {
-                console.log('PDF Builder: Preview button clicked - DIRECT EVENT');
                 $('#phase8-debug-info').append('<div style="color: #ff6b35; font-weight: bold;">🔥 BUTTON CLICKED AT: ' + new Date().toLocaleTimeString() + '</div>');
 
                 // Appeler directement la fonction pour tester
                 if (typeof window.pdfBuilderShowPreview === 'function') {
-                    console.log('PDF Builder: Calling pdfBuilderShowPreview directly');
                     try {
                         window.pdfBuilderShowPreview(orderId, templateId, nonce);
                         $('#phase8-debug-info').append('<div style="color: #28a745; font-weight: bold;">✅ FUNCTION CALLED SUCCESSFULLY</div>');
                     } catch (error) {
-                        console.error('PDF Builder: Error calling function:', error);
                         $('#phase8-debug-info').append('<div style="color: #dc3545; font-weight: bold;">❌ ERROR: ' + error.message + '</div>');
                     }
                 } else {
-                    console.error('PDF Builder: Function not found');
                     $('#phase8-debug-info').append('<div style="color: #dc3545; font-weight: bold;">❌ FUNCTION NOT FOUND</div>');
                 }
             });

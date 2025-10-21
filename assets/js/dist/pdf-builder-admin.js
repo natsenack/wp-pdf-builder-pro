@@ -263,7 +263,175 @@ function PreviewProvider(_ref) {
 
 /***/ }),
 
-/***/ 626:
+/***/ 454:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+// ESM COMPAT FLAG
+__webpack_require__.r(__webpack_exports__);
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, {
+  "default": () => (/* binding */ components_PreviewModal)
+});
+
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(540);
+// EXTERNAL MODULE: ./resources/js/components/preview-system/context/PreviewContext.jsx
+var PreviewContext = __webpack_require__(38);
+;// ./resources/js/components/preview-system/components/ModalSkeleton.jsx
+
+
+/**
+ * ModalSkeleton - Composant de chargement pour le système d'aperçu
+ * Affiche un skeleton loader pendant le lazy loading des composants
+ */
+function ModalSkeleton() {
+  return /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton"
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-header"
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-title"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-close"
+  })), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-toolbar"
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-button"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-button"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-button"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-spacer"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-zoom"
+  })), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-content"
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-page"
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-line"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-line short"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-line"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-line medium"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-line"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-line short"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-line"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-spacer"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-line"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-line medium"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-line"
+  }))), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-footer"
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-nav"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-page-info"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-export"
+  })));
+}
+/* harmony default export */ const components_ModalSkeleton = (ModalSkeleton);
+;// ./resources/js/components/preview-system/components/PreviewModal.jsx
+
+
+
+
+// Lazy loading des modes pour optimisation performance
+// CanvasMode (modes/CanvasMode) fournit des helpers statiques -> on ajoute un wrapper par défaut
+var CanvasMode = /*#__PURE__*/(0,react.lazy)(function () {
+  return __webpack_require__.e(/* import() */ 657).then(__webpack_require__.bind(__webpack_require__, 657));
+});
+// Utiliser la version composant de Metabox (components/MetaboxMode.jsx) pour que le module exporte bien un default React component
+var MetaboxMode = /*#__PURE__*/(0,react.lazy)(function () {
+  return __webpack_require__.e(/* import() */ 851).then(__webpack_require__.bind(__webpack_require__, 851));
+});
+
+/**
+ * PreviewModal - Composant principal du système d'aperçu modal
+ * Optimisé avec lazy loading, error boundaries et performance
+ */
+function PreviewModal() {
+  var _usePreviewContext = (0,PreviewContext.usePreviewContext)(),
+    _usePreviewContext$st = _usePreviewContext.state,
+    isOpen = _usePreviewContext$st.isOpen,
+    mode = _usePreviewContext$st.mode,
+    loading = _usePreviewContext$st.loading,
+    error = _usePreviewContext$st.error,
+    closePreview = _usePreviewContext.actions.closePreview;
+
+  // Gestionnaire d'échappement clavier
+  (0,react.useEffect)(function () {
+    if (!isOpen) return;
+    var handleKeyDown = function handleKeyDown(event) {
+      if (event.key === 'Escape') {
+        closePreview();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return function () {
+      return document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, closePreview]);
+
+  // Gestionnaire de clic sur l'overlay
+  var handleOverlayClick = function handleOverlayClick(event) {
+    if (event.target === event.currentTarget) {
+      closePreview();
+    }
+  };
+
+  // Ne rien rendre si fermé ou si pas de mode valide
+  if (!isOpen || !mode) return null;
+  return /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-modal-overlay",
+    onClick: handleOverlayClick
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-modal-content"
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-modal-header"
+  }, /*#__PURE__*/react.createElement("h3", {
+    className: "pdf-preview-modal-title"
+  }, "Aper\xE7u PDF ", mode === 'canvas' ? '(Éditeur)' : '(Commande)'), /*#__PURE__*/react.createElement("button", {
+    className: "pdf-preview-modal-close",
+    onClick: closePreview,
+    "aria-label": "Fermer l'aper\xE7u",
+    type: "button"
+  }, "\xD7")), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-modal-body"
+  }, /*#__PURE__*/react.createElement(react.Suspense, {
+    fallback: /*#__PURE__*/react.createElement(components_ModalSkeleton, null)
+  }, error ? /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-error"
+  }, /*#__PURE__*/react.createElement("p", null, "Erreur lors du chargement de l'aper\xE7u :"), /*#__PURE__*/react.createElement("p", {
+    className: "error-message"
+  }, error), /*#__PURE__*/react.createElement("button", {
+    onClick: closePreview,
+    className: "pdf-preview-error-close"
+  }, "Fermer")) : /*#__PURE__*/react.createElement(react.Fragment, null, mode === 'canvas' && /*#__PURE__*/react.createElement(CanvasMode, null), mode === 'metabox' && /*#__PURE__*/react.createElement(MetaboxMode, null)))), loading && /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-loading-overlay"
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-spinner"
+  }), /*#__PURE__*/react.createElement("p", null, "G\xE9n\xE9ration de l'aper\xE7u..."))));
+}
+
+// Optimisation avec React.memo pour éviter les re-renders inutiles
+/* harmony default export */ const components_PreviewModal = (/*#__PURE__*/react.memo(PreviewModal));
+
+/***/ }),
+
+/***/ 472:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 // ESM COMPAT FLAG
@@ -11007,8 +11175,76 @@ var NewTemplateModal = function NewTemplateModal(_ref) {
   }, "Ouvrir le template")))));
 };
 /* harmony default export */ const components_NewTemplateModal = (NewTemplateModal);
-// EXTERNAL MODULE: ./resources/js/components/preview-system/PreviewModal.jsx + 2 modules
-var PreviewModal = __webpack_require__(786);
+// EXTERNAL MODULE: ./resources/js/components/preview-system/context/PreviewProvider.jsx
+var PreviewProvider = __webpack_require__(424);
+// EXTERNAL MODULE: ./resources/js/components/preview-system/context/PreviewContext.jsx
+var PreviewContext = __webpack_require__(38);
+// EXTERNAL MODULE: ./resources/js/components/preview-system/components/PreviewModal.jsx + 1 modules
+var PreviewModal = __webpack_require__(454);
+;// ./resources/js/components/preview-system/PreviewModal.jsx
+
+
+
+
+
+/**
+ * PreviewModal - Wrapper avec PreviewProvider pour compatibilité
+ * Ce fichier existe pour compatibilité avec les anciens imports
+ */
+var PreviewModal_PreviewModal = function PreviewModal(props) {
+  try {
+    // Ne rien rendre si props est undefined ou null
+    if (!props) {
+      return /*#__PURE__*/react.createElement("div", null);
+    }
+    return /*#__PURE__*/react.createElement(PreviewProvider.PreviewProvider, null, /*#__PURE__*/react.createElement(PreviewModalWithContext, {
+      legacyProps: props
+    }));
+  } catch (error) {
+    return false;
+  }
+};
+
+// Composant interne qui gère la logique legacy
+var PreviewModalWithContext = function PreviewModalWithContext(_ref) {
+  var legacyProps = _ref.legacyProps;
+  try {
+    var _usePreviewContext = (0,PreviewContext.usePreviewContext)(),
+      isOpen = _usePreviewContext.state.isOpen,
+      _usePreviewContext$ac = _usePreviewContext.actions,
+      openPreview = _usePreviewContext$ac.openPreview,
+      closePreview = _usePreviewContext$ac.closePreview;
+
+    // Ouvrir automatiquement si des props legacy sont passées
+    react.useEffect(function () {
+      if (legacyProps && !isOpen) {
+        var initialData = legacyProps.elements || null;
+        var initialMode = legacyProps.mode || 'canvas';
+        openPreview(initialMode, initialData);
+      }
+    }, [legacyProps, isOpen, openPreview]);
+
+    // Gérer la fermeture legacy
+    react.useEffect(function () {
+      if (legacyProps && legacyProps.onClose) {
+        var handleClose = function handleClose() {
+          if (legacyProps.onClose) {
+            legacyProps.onClose();
+          }
+          closePreview();
+        };
+        // TODO: Attacher handleClose au context si nécessaire
+      }
+    }, [legacyProps, closePreview]);
+    return /*#__PURE__*/react.createElement(PreviewModal["default"], null);
+  } catch (error) {
+    console.error('PDF Builder: PreviewModalWithContext CRITICAL ERROR:', error);
+    console.error('PDF Builder: PreviewModalWithContext error stack:', error.stack);
+    console.error('PDF Builder: PreviewModalWithContext legacyProps that caused error:', legacyProps);
+    return null;
+  }
+};
+/* harmony default export */ const preview_system_PreviewModal = (PreviewModal_PreviewModal);
 ;// ./resources/js/components/PDFCanvasEditor.jsx
 function PDFCanvasEditor_typeof(o) { "@babel/helpers - typeof"; return PDFCanvasEditor_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, PDFCanvasEditor_typeof(o); }
 function PDFCanvasEditor_regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return PDFCanvasEditor_regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (PDFCanvasEditor_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, PDFCanvasEditor_regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, PDFCanvasEditor_regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), PDFCanvasEditor_regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", PDFCanvasEditor_regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), PDFCanvasEditor_regeneratorDefine2(u), PDFCanvasEditor_regeneratorDefine2(u, o, "Generator"), PDFCanvasEditor_regeneratorDefine2(u, n, function () { return this; }), PDFCanvasEditor_regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (PDFCanvasEditor_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
@@ -12015,7 +12251,7 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
       return setShowNewTemplateModal(false);
     },
     onCreateTemplate: handleCreateTemplate
-  }), /*#__PURE__*/react.createElement(PreviewModal["default"], previewModalProps), /*#__PURE__*/react.createElement(FPSCounter, {
+  }), /*#__PURE__*/react.createElement(preview_system_PreviewModal, previewModalProps), /*#__PURE__*/react.createElement(FPSCounter, {
     showFps: globalSettings.settings.showFps
   }));
 });
@@ -12040,10 +12276,10 @@ function js_unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r
 function js_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 function js_iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
 function js_arrayWithHoles(r) { if (Array.isArray(r)) return r; }
+function js_typeof(o) { "@babel/helpers - typeof"; return js_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, js_typeof(o); }
 function js_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function js_objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? js_ownKeys(Object(t), !0).forEach(function (r) { js_defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : js_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function js_defineProperty(e, r, t) { return (r = js_toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
-function js_typeof(o) { "@babel/helpers - typeof"; return js_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, js_typeof(o); }
 function js_classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
 function js_defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, js_toPropertyKey(o.key), o); } }
 function js_createClass(e, r, t) { return r && js_defineProperties(e.prototype, r), t && js_defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
@@ -12060,9 +12296,6 @@ function js_toPrimitive(t, r) { if ("object" != js_typeof(t) || !t) return t; va
 if (typeof window !== 'undefined') {
   window.React = react;
   window.ReactDOM = react_dom;
-  console.log('=== REACT EXPOSED GLOBALLY IN INDEX.JS ===');
-  console.log('React available:', !!window.React);
-  console.log('ReactDOM available:', !!window.ReactDOM);
 }
 
 // Forcer l'inclusion de tous les hooks personnalisés
@@ -12085,7 +12318,6 @@ var PDFBuilderSecurity = {
       url: (_window = window) === null || _window === void 0 || (_window = _window.location) === null || _window === void 0 ? void 0 : _window.href
     };
     this.errors.push(errorInfo);
-    console.error('PDF Builder Pro Security Error:', errorInfo);
   },
   // Protection contre les appels multiples - améliorée
   preventMultipleInit: function preventMultipleInit() {
@@ -12097,7 +12329,6 @@ var PDFBuilderSecurity = {
     // permettre une réinitialisation (utile pour les rechargements de page)
     if (window._pdfBuilderInitialized && timeSinceLastInit < 5000) {
       // Log silencieux au lieu d'un avertissement intrusif
-      console.debug('PDF Builder Pro: Multiple initialization attempt prevented (last init:', new Date(lastInit).toLocaleTimeString() + ')');
       return false;
     }
     window._pdfBuilderInitialized = true;
@@ -12118,11 +12349,9 @@ try {
       ReactDOM: react_dom,
       createElement: react.createElement
     };
-    console.log('React exposed globally:', !!window.React, !!window.ReactDOM);
   }
 } catch (error) {
   PDFBuilderSecurity.logError(error, 'React initialization');
-  console.error('React test failed:', error);
 }
 
 // Classe principale pour l'éditeur PDF
@@ -12131,7 +12360,6 @@ var PDFBuilderPro = /*#__PURE__*/function () {
     js_classCallCheck(this, PDFBuilderPro);
     this.version = '2.0.0';
     this.editors = new Map();
-    console.log('=== PDFBuilderPro CONSTRUCTOR CALLED ===');
 
     // Forcer l'inclusion des hooks (ne pas supprimer cette ligne)
     this._hooks = hooks_namespaceObject;
@@ -12156,45 +12384,32 @@ var PDFBuilderPro = /*#__PURE__*/function () {
     } catch (e) {
       // Ignorer les erreurs en mode SSR
     }
-    console.log('=== PDFBuilderPro INSTANCE CREATED ===');
-    console.log('Methods available:', Object.getOwnPropertyNames(this.__proto__));
 
     // Assigner explicitement showPreview comme propriété propre de l'instance
     this.showPreview = this.showPreview.bind(this);
-    console.log('showPreview assigned to instance:', js_typeof(this.showPreview));
   }
 
   // Afficher l'aperçu du PDF (pour compatibilité avec les tests)
   return js_createClass(PDFBuilderPro, [{
     key: "showPreview",
     value: function showPreview(data) {
-      console.log('=== PDFBuilderPro.showPreview CALLED ===', data);
       try {
         // Si c'est un appel depuis l'éditeur canvas avec des éléments
         if (data && data.elements) {
-          console.log('Canvas preview mode with elements:', data.elements.length);
-
           // Pour le mode canvas, nous devons créer un modal temporaire
           // Utiliser la logique existante mais adaptée pour les données canvas
           if (window.pdfBuilderShowPreview) {
             // Adapter les données pour le format attendu par pdfBuilderShowPreview
             // Pour le canvas, nous passons null pour orderId et utilisons les éléments directement
             window.pdfBuilderShowPreview(null, null, null, data);
-          } else {
-            console.error('pdfBuilderShowPreview function not available');
-          }
+          } else {}
         } else {
           // Mode metabox standard
-          console.log('Metabox preview mode');
           if (window.pdfBuilderShowPreview) {
             window.pdfBuilderShowPreview(data.orderId, data.templateId, data.nonce);
-          } else {
-            console.error('pdfBuilderShowPreview function not available');
-          }
+          } else {}
         }
-      } catch (error) {
-        console.error('PDFBuilderPro: Error in showPreview:', error);
-      }
+      } catch (error) {}
     }
 
     // Initialiser l'éditeur dans un conteneur
@@ -12203,10 +12418,6 @@ var PDFBuilderPro = /*#__PURE__*/function () {
     value: function init(containerId) {
       var _this = this;
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      console.log('=== PDFBuilderPro.init CALLED ===', {
-        containerId: containerId,
-        options: options
-      });
       try {
         // Vérification stricte du containerId
         if (!containerId || typeof containerId !== 'string') {
@@ -12244,11 +12455,9 @@ var PDFBuilderPro = /*#__PURE__*/function () {
 
         // Validation des options critiques
         if (typeof defaultOptions.width !== 'number' || defaultOptions.width <= 0) {
-          console.warn('PDFBuilderPro: Invalid width, using default A4 width');
           defaultOptions.width = 595;
         }
         if (typeof defaultOptions.height !== 'number' || defaultOptions.height <= 0) {
-          console.warn('PDFBuilderPro: Invalid height, using default A4 height');
           defaultOptions.height = 842;
         }
 
@@ -12271,8 +12480,6 @@ var PDFBuilderPro = /*#__PURE__*/function () {
           options: defaultOptions
         });
       } catch (error) {
-        console.error('PDFBuilderPro: Failed to initialize editor:', error);
-
         // Fallback visuel pour l'utilisateur
         var _container = document.getElementById(containerId);
         if (_container) {
@@ -12298,7 +12505,6 @@ var PDFBuilderPro = /*#__PURE__*/function () {
           this.editors["delete"](containerId);
         }
       } catch (error) {
-        console.error('PDFBuilderPro: Error during destroy:', error);
         // Forcer la suppression même en cas d'erreur
         this.editors["delete"](containerId);
       }
@@ -12320,10 +12526,8 @@ var PDFBuilderPro = /*#__PURE__*/function () {
         if (this.canvas && typeof this.canvas.getElements === 'function') {
           return this.canvas.getElements();
         }
-        console.warn('PDFBuilderPro: No active canvas or getElements method not available');
         return [];
       } catch (error) {
-        console.error('PDFBuilderPro: Error getting elements:', error);
         return [];
       }
     }
@@ -12337,55 +12541,29 @@ var pdfBuilderPro = new PDFBuilderPro();
 // Attacher à window pour WordPress - FORCER L'EXPOSITION DIRECTE
 try {
   if (typeof window !== 'undefined') {
-    var _window$PDFBuilderPro, _window$PDFBuilderPro2;
     // Forcer l'assignation directe de l'instance, pas du module webpack
     window.PDFBuilderPro = pdfBuilderPro;
     window.pdfBuilderPro = pdfBuilderPro;
-    console.log('=== PDFBuilderPro EXPOSED GLOBALLY ===');
-    console.log('PDFBuilderPro available:', !!window.PDFBuilderPro);
-    console.log('PDFBuilderPro type:', js_typeof(window.PDFBuilderPro));
-    console.log('PDFBuilderPro.init available:', js_typeof((_window$PDFBuilderPro = window.PDFBuilderPro) === null || _window$PDFBuilderPro === void 0 ? void 0 : _window$PDFBuilderPro.init));
-    console.log('PDFBuilderPro.showPreview available:', js_typeof((_window$PDFBuilderPro2 = window.PDFBuilderPro) === null || _window$PDFBuilderPro2 === void 0 ? void 0 : _window$PDFBuilderPro2.showPreview));
-    console.log('PDFBuilderPro keys:', Object.keys(window.PDFBuilderPro));
 
     // Vérification supplémentaire pour s'assurer que showPreview est accessible
-    if (window.PDFBuilderPro && typeof window.PDFBuilderPro.showPreview === 'function') {
-      console.log('✅ PDFBuilderPro.showPreview is properly accessible');
-    } else {
-      console.error('❌ PDFBuilderPro.showPreview is NOT accessible');
-    }
-  } else {
-    console.warn('Window not available, PDFBuilderPro not exposed globally');
-  }
-} catch (error) {
-  console.error('Error exposing PDFBuilderPro globally:', error);
-}
+    if (window.PDFBuilderPro && typeof window.PDFBuilderPro.showPreview === 'function') {} else {}
+  } else {}
+} catch (error) {}
 
 // Fonction pour afficher l'aperçu dans la metabox WooCommerce - RECREATION COMPLETE PHASE 8
 window.pdfBuilderShowPreview = function (orderId, templateId, nonce) {
   var canvasData = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
-  console.log('=== PDF BUILDER PHASE 8: pdfBuilderShowPreview START ===');
-  console.log('Parameters:', {
-    orderId: orderId,
-    templateId: templateId,
-    nonce: nonce,
-    canvasData: !!canvasData,
-    timestamp: Date.now()
-  });
-
   // 1. IMMÉDIAT: Créer un indicateur visuel que la fonction est appelée
   var visualIndicator = document.createElement('div');
   visualIndicator.id = 'phase8-visual-indicator';
   visualIndicator.style.cssText = "\n        position: fixed !important;\n        top: 10px !important;\n        right: 10px !important;\n        background: #ff6b35 !important;\n        color: white !important;\n        padding: 15px !important;\n        border-radius: 8px !important;\n        z-index: 1000000 !important;\n        font-weight: bold !important;\n        font-size: 14px !important;\n        border: 3px solid #ff4500 !important;\n        box-shadow: 0 4px 12px rgba(255,107,53,0.3) !important;\n    ";
   visualIndicator.innerHTML = canvasData ? "\n        \uD83D\uDD25 CANVAS PREVIEW ACTIVE<br>\n        Elements: ".concat(canvasData.elements ? canvasData.elements.length : 0, "<br>\n        Mode: Canvas<br>\n        Time: ").concat(new Date().toLocaleTimeString(), "<br>\n        <span style=\"color: yellow;\">CANVAS LOADING...</span>\n    ") : "\n        \uD83D\uDD25 PHASE 8 ACTIVE<br>\n        Order: ".concat(orderId, "<br>\n        Template: ").concat(templateId, "<br>\n        Time: ").concat(new Date().toLocaleTimeString(), "<br>\n        <span style=\"color: yellow;\">MODAL LOADING...</span>\n    ");
   document.body.appendChild(visualIndicator);
-  console.log('=== VISUAL INDICATOR CREATED ===');
 
   // 2. Supprimer toute modal existante
   var existingModal = document.getElementById('pdf-builder-preview-modal');
   if (existingModal) {
     existingModal.remove();
-    console.log('=== REMOVED EXISTING MODAL ===');
   }
 
   // 3. Créer le conteneur de modal
@@ -12393,7 +12571,6 @@ window.pdfBuilderShowPreview = function (orderId, templateId, nonce) {
   modalContainer.id = 'pdf-builder-preview-modal';
   modalContainer.style.cssText = "\n        position: fixed !important;\n        top: 0 !important;\n        left: 0 !important;\n        width: 100vw !important;\n        height: 100vh !important;\n        background: rgba(0,0,0,0.8) !important;\n        z-index: 999999 !important;\n        display: flex !important;\n        align-items: center !important;\n        justify-content: center !important;\n    ";
   document.body.appendChild(modalContainer);
-  console.log('=== MODAL CONTAINER CREATED ===');
 
   // 4. Créer le contenu de la modal avec React
   var modalContent = document.createElement('div');
@@ -12408,7 +12585,6 @@ window.pdfBuilderShowPreview = function (orderId, templateId, nonce) {
   closeButton.onclick = function () {
     modalContainer.remove();
     visualIndicator.remove();
-    console.log('=== MODAL CLOSED ===');
   };
   modalContent.appendChild(closeButton);
 
@@ -12420,12 +12596,8 @@ window.pdfBuilderShowPreview = function (orderId, templateId, nonce) {
 
   // 7. Monter le composant React PreviewModal
   try {
-    console.log('=== LOADING PREVIEW MODAL COMPONENT ===');
-
     // Vérifier si nous sommes en mode canvas
     if (canvasData && canvasData.elements) {
-      console.log('=== CANVAS MODE: Using canvas data directly ===');
-
       // Pour le mode canvas, créer un composant simple qui affiche les éléments
       var CanvasPreviewComponent = function CanvasPreviewComponent() {
         return /*#__PURE__*/react.createElement('div', {
@@ -12454,29 +12626,20 @@ window.pdfBuilderShowPreview = function (orderId, templateId, nonce) {
       };
 
       // Monter directement le composant canvas
-      console.log('=== ABOUT TO CALL ReactDOM.render for CANVAS ===');
       react_dom.render(/*#__PURE__*/react.createElement(CanvasPreviewComponent), modalContent);
-      console.log('=== CANVAS PREVIEW RENDERED SUCCESSFULLY ===');
 
       // Mettre à jour l'indicateur visuel
       visualIndicator.innerHTML = visualIndicator.innerHTML.replace('MODAL LOADING...', '<span style="color: #28a745;">CANVAS LOADED ✓</span>');
     } else {
       // Mode metabox standard
-      console.log('=== METABOX MODE: Loading PreviewModal ===');
 
       // Importer dynamiquement le système complet
-      console.log('=== STARTING DYNAMIC IMPORT ===');
-      Promise.all([Promise.resolve(/* import() */).then(__webpack_require__.bind(__webpack_require__, 424)), Promise.resolve(/* import() */).then(__webpack_require__.bind(__webpack_require__, 786))]).then(function (_ref2) {
+      Promise.all([Promise.resolve(/* import() */).then(__webpack_require__.bind(__webpack_require__, 424)), Promise.resolve(/* import() */).then(__webpack_require__.bind(__webpack_require__, 454))]).then(function (_ref2) {
         var _ref3 = js_slicedToArray(_ref2, 2),
           providerModule = _ref3[0],
           modalModule = _ref3[1];
-        console.log('=== DYNAMIC IMPORT SUCCESS ===');
         var PreviewProvider = providerModule.PreviewProvider;
         var PreviewModal = modalModule["default"];
-        console.log('=== Components extracted ===', {
-          PreviewProvider: PreviewProvider,
-          PreviewModal: PreviewModal
-        });
 
         // Créer l'élément React avec le Provider
         var previewModalElement = /*#__PURE__*/react.createElement(PreviewProvider, {}, /*#__PURE__*/react.createElement(PreviewModal, {
@@ -12487,26 +12650,19 @@ window.pdfBuilderShowPreview = function (orderId, templateId, nonce) {
         }));
 
         // Monter avec ReactDOM
-        console.log('=== ABOUT TO CALL ReactDOM.render ===');
         react_dom.render(previewModalElement, modalContent);
-        console.log('=== ReactDOM.render CALLED SUCCESSFULLY ===');
 
         // Mettre à jour l'indicateur visuel
         visualIndicator.innerHTML = visualIndicator.innerHTML.replace('MODAL LOADING...', '<span style="color: #28a745;">MODAL LOADED ✓</span>');
-        console.log('=== REACT MODAL MOUNTED SUCCESSFULLY ===');
       })["catch"](function (error) {
-        console.error('=== DYNAMIC IMPORT FAILED ===', error);
-        console.error('=== Error details ===', error.message, error.stack);
         loadingContent.innerHTML = "\n                    <div style=\"font-size: 48px; margin-bottom: 20px; color: #dc3545;\">\u274C</div>\n                    <div style=\"font-weight: bold; margin-bottom: 10px; color: #dc3545;\">Erreur d'import dynamique</div>\n                    <div style=\"font-size: 14px; color: #666;\">".concat(error.message, "</div>\n                ");
         visualIndicator.innerHTML = visualIndicator.innerHTML.replace('MODAL LOADING...', '<span style="color: #dc3545;">IMPORT ERROR ❌</span>');
       });
     }
   } catch (error) {
-    console.error('=== ERROR IN MODAL CREATION ===', error);
     loadingContent.innerHTML = "\n            <div style=\"font-size: 48px; margin-bottom: 20px; color: #dc3545;\">\u274C</div>\n            <div style=\"font-weight: bold; margin-bottom: 10px; color: #dc3545;\">Erreur syst\xE8me</div>\n            <div style=\"font-size: 14px; color: #666;\">".concat(error.message, "</div>\n        ");
     visualIndicator.innerHTML = visualIndicator.innerHTML.replace('MODAL LOADING...', '<span style="color: #dc3545;">ERROR ❌</span>');
   }
-  console.log('=== PDF BUILDER PHASE 8: pdfBuilderShowPreview END ===');
 };
 
 // Marquer comme initialisé pour éviter les conflits
@@ -12516,240 +12672,6 @@ PDFBuilderSecurity.preventMultipleInit();
 window.PDFBuilderPro = pdfBuilderPro;
 // Alias pour compatibilité
 window.pdfBuilderPro = pdfBuilderPro;
-
-/***/ }),
-
-/***/ 786:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-// ESM COMPAT FLAG
-__webpack_require__.r(__webpack_exports__);
-
-// EXPORTS
-__webpack_require__.d(__webpack_exports__, {
-  "default": () => (/* binding */ preview_system_PreviewModal)
-});
-
-// EXTERNAL MODULE: ./node_modules/react/index.js
-var react = __webpack_require__(540);
-// EXTERNAL MODULE: ./resources/js/components/preview-system/context/PreviewProvider.jsx
-var PreviewProvider = __webpack_require__(424);
-// EXTERNAL MODULE: ./resources/js/components/preview-system/context/PreviewContext.jsx
-var PreviewContext = __webpack_require__(38);
-;// ./resources/js/components/preview-system/components/ModalSkeleton.jsx
-
-
-/**
- * ModalSkeleton - Composant de chargement pour le système d'aperçu
- * Affiche un skeleton loader pendant le lazy loading des composants
- */
-function ModalSkeleton() {
-  return /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton"
-  }, /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-header"
-  }, /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-title"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-close"
-  })), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-toolbar"
-  }, /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-button"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-button"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-button"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-spacer"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-zoom"
-  })), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-content"
-  }, /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-page"
-  }, /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-line"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-line short"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-line"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-line medium"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-line"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-line short"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-line"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-spacer"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-line"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-line medium"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-line"
-  }))), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-footer"
-  }, /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-nav"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-page-info"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-export"
-  })));
-}
-/* harmony default export */ const components_ModalSkeleton = (ModalSkeleton);
-;// ./resources/js/components/preview-system/components/PreviewModal.jsx
-
-
-
-
-// Lazy loading des modes pour optimisation performance
-// CanvasMode (modes/CanvasMode) fournit des helpers statiques -> on ajoute un wrapper par défaut
-var CanvasMode = /*#__PURE__*/(0,react.lazy)(function () {
-  return __webpack_require__.e(/* import() */ 657).then(__webpack_require__.bind(__webpack_require__, 657));
-});
-// Utiliser la version composant de Metabox (components/MetaboxMode.jsx) pour que le module exporte bien un default React component
-var MetaboxMode = /*#__PURE__*/(0,react.lazy)(function () {
-  return __webpack_require__.e(/* import() */ 851).then(__webpack_require__.bind(__webpack_require__, 851));
-});
-
-/**
- * PreviewModal - Composant principal du système d'aperçu modal
- * Optimisé avec lazy loading, error boundaries et performance
- */
-function PreviewModal() {
-  var _usePreviewContext = (0,PreviewContext.usePreviewContext)(),
-    _usePreviewContext$st = _usePreviewContext.state,
-    isOpen = _usePreviewContext$st.isOpen,
-    mode = _usePreviewContext$st.mode,
-    loading = _usePreviewContext$st.loading,
-    error = _usePreviewContext$st.error,
-    closePreview = _usePreviewContext.actions.closePreview;
-
-  // Gestionnaire d'échappement clavier
-  (0,react.useEffect)(function () {
-    if (!isOpen) return;
-    var handleKeyDown = function handleKeyDown(event) {
-      if (event.key === 'Escape') {
-        closePreview();
-      }
-    };
-    document.addEventListener('keydown', handleKeyDown);
-    return function () {
-      return document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isOpen, closePreview]);
-
-  // Gestionnaire de clic sur l'overlay
-  var handleOverlayClick = function handleOverlayClick(event) {
-    if (event.target === event.currentTarget) {
-      closePreview();
-    }
-  };
-
-  // Ne rien rendre si fermé ou si pas de mode valide
-  if (!isOpen || !mode) return null;
-  return /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-modal-overlay",
-    onClick: handleOverlayClick
-  }, /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-modal-content"
-  }, /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-modal-header"
-  }, /*#__PURE__*/react.createElement("h3", {
-    className: "pdf-preview-modal-title"
-  }, "Aper\xE7u PDF ", mode === 'canvas' ? '(Éditeur)' : '(Commande)'), /*#__PURE__*/react.createElement("button", {
-    className: "pdf-preview-modal-close",
-    onClick: closePreview,
-    "aria-label": "Fermer l'aper\xE7u",
-    type: "button"
-  }, "\xD7")), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-modal-body"
-  }, /*#__PURE__*/react.createElement(react.Suspense, {
-    fallback: /*#__PURE__*/react.createElement(components_ModalSkeleton, null)
-  }, error ? /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-error"
-  }, /*#__PURE__*/react.createElement("p", null, "Erreur lors du chargement de l'aper\xE7u :"), /*#__PURE__*/react.createElement("p", {
-    className: "error-message"
-  }, error), /*#__PURE__*/react.createElement("button", {
-    onClick: closePreview,
-    className: "pdf-preview-error-close"
-  }, "Fermer")) : /*#__PURE__*/react.createElement(react.Fragment, null, mode === 'canvas' && /*#__PURE__*/react.createElement(CanvasMode, null), mode === 'metabox' && /*#__PURE__*/react.createElement(MetaboxMode, null)))), loading && /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-loading-overlay"
-  }, /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-spinner"
-  }), /*#__PURE__*/react.createElement("p", null, "G\xE9n\xE9ration de l'aper\xE7u..."))));
-}
-
-// Optimisation avec React.memo pour éviter les re-renders inutiles
-/* harmony default export */ const components_PreviewModal = (/*#__PURE__*/react.memo(PreviewModal));
-;// ./resources/js/components/preview-system/PreviewModal.jsx
-
-
-
-
-
-/**
- * PreviewModal - Wrapper avec PreviewProvider pour compatibilité
- * Ce fichier existe pour compatibilité avec les anciens imports
- */
-var PreviewModal_PreviewModal = function PreviewModal(props) {
-  try {
-    // Ne rien rendre si props est undefined ou null
-    if (!props) {
-      return /*#__PURE__*/react.createElement("div", null);
-    }
-    return /*#__PURE__*/react.createElement(PreviewProvider.PreviewProvider, null, /*#__PURE__*/react.createElement(PreviewModalWithContext, {
-      legacyProps: props
-    }));
-  } catch (error) {
-    return false;
-  }
-};
-
-// Composant interne qui gère la logique legacy
-var PreviewModalWithContext = function PreviewModalWithContext(_ref) {
-  var legacyProps = _ref.legacyProps;
-  try {
-    var _usePreviewContext = (0,PreviewContext.usePreviewContext)(),
-      isOpen = _usePreviewContext.state.isOpen,
-      _usePreviewContext$ac = _usePreviewContext.actions,
-      openPreview = _usePreviewContext$ac.openPreview,
-      closePreview = _usePreviewContext$ac.closePreview;
-
-    // Ouvrir automatiquement si des props legacy sont passées
-    react.useEffect(function () {
-      if (legacyProps && !isOpen) {
-        var initialData = legacyProps.elements || null;
-        var initialMode = legacyProps.mode || 'canvas';
-        openPreview(initialMode, initialData);
-      }
-    }, [legacyProps, isOpen, openPreview]);
-
-    // Gérer la fermeture legacy
-    react.useEffect(function () {
-      if (legacyProps && legacyProps.onClose) {
-        var handleClose = function handleClose() {
-          if (legacyProps.onClose) {
-            legacyProps.onClose();
-          }
-          closePreview();
-        };
-        // TODO: Attacher handleClose au context si nécessaire
-      }
-    }, [legacyProps, closePreview]);
-    return /*#__PURE__*/react.createElement(components_PreviewModal, null);
-  } catch (error) {
-    console.error('PDF Builder: PreviewModalWithContext CRITICAL ERROR:', error);
-    console.error('PDF Builder: PreviewModalWithContext error stack:', error.stack);
-    console.error('PDF Builder: PreviewModalWithContext legacyProps that caused error:', legacyProps);
-    return null;
-  }
-};
-/* harmony default export */ const preview_system_PreviewModal = (PreviewModal_PreviewModal);
 
 /***/ })
 
@@ -13040,7 +12962,7 @@ var PreviewModalWithContext = function PreviewModalWithContext(_ref) {
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, [96], () => (__webpack_require__(626)))
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, [96], () => (__webpack_require__(472)))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	window.PDFBuilderPro = __webpack_exports__["default"];
 /******/ 	
