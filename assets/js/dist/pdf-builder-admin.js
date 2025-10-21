@@ -349,13 +349,13 @@ function ModalSkeleton() {
 
 
 // Lazy loading des modes pour optimisation performance
-// CanvasMode (modes/CanvasMode) fournit des helpers statiques -> on ajoute un wrapper par défaut
+// CanvasMode_new (modes/CanvasMode_new) fournit des helpers statiques -> on ajoute un wrapper par défaut
 var CanvasMode = /*#__PURE__*/(0,react.lazy)(function () {
-  return Promise.all(/* import() */[__webpack_require__.e(734), __webpack_require__.e(109)]).then(__webpack_require__.bind(__webpack_require__, 109));
+  return __webpack_require__.e(/* import() */ 663).then(__webpack_require__.bind(__webpack_require__, 663));
 });
 // Utiliser la version composant de Metabox (components/MetaboxMode.jsx) pour que le module exporte bien un default React component
 var MetaboxMode = /*#__PURE__*/(0,react.lazy)(function () {
-  return Promise.all(/* import() */[__webpack_require__.e(734), __webpack_require__.e(350)]).then(__webpack_require__.bind(__webpack_require__, 350));
+  return __webpack_require__.e(/* import() */ 851).then(__webpack_require__.bind(__webpack_require__, 851));
 });
 
 /**
@@ -11245,7 +11245,7 @@ var PreviewModalWithContext = /*#__PURE__*/react.memo(function (_ref) {
                   }
                   _context.p = 1;
                   _context.n = 2;
-                  return Promise.all(/* import() */[__webpack_require__.e(734), __webpack_require__.e(109)]).then(__webpack_require__.bind(__webpack_require__, 109));
+                  return __webpack_require__.e(/* import() */ 663).then(__webpack_require__.bind(__webpack_require__, 663));
                 case 2:
                   _yield$import = _context.v;
                   CanvasMode = _yield$import["default"];

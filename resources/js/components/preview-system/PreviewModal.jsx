@@ -38,7 +38,7 @@ const PreviewModalWithContext = React.memo(({ legacyProps }) => {
           if (initialMode === 'canvas' && initialData && initialData.length > 0) {
             try {
               // Importer dynamiquement CanvasMode pour éviter les dépendances circulaires
-              const { default: CanvasMode } = await import('./modes/CanvasMode');
+              const { default: CanvasMode } = await import('./modes/CanvasMode_new');
               if (CanvasMode.loadData) {
                 previewData = await CanvasMode.loadData(initialData, null, legacyProps.templateData || {});
               }

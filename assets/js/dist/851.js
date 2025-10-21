@@ -322,11 +322,11 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
  * Utilise Canvas HTML5 pour le rendu haute qualité
  */
 function PDFRenderer(_ref) {
-  var pageData = _ref.pageData,
-    _ref$scale = _ref.scale,
-    scale = _ref$scale === void 0 ? 1 : _ref$scale,
-    _ref$className = _ref.className,
-    className = _ref$className === void 0 ? '' : _ref$className;
+  var element = _ref.element,
+    previewData = _ref.previewData,
+    mode = _ref.mode,
+    _ref$canvasScale = _ref.canvasScale,
+    canvasScale = _ref$canvasScale === void 0 ? 1 : _ref$canvasScale;
   var canvasRef = (0,react.useRef)(null);
   var _usePerformanceMonito = usePerformanceMonitor('PDFRenderer'),
     measureOperation = _usePerformanceMonito.measureOperation;
@@ -840,7 +840,9 @@ function ImageRenderer_toPrimitive(t, r) { if ("object" != ImageRenderer_typeof(
 var ImageRenderer = function ImageRenderer(_ref) {
   var element = _ref.element,
     previewData = _ref.previewData,
-    mode = _ref.mode;
+    mode = _ref.mode,
+    _ref$canvasScale = _ref.canvasScale,
+    canvasScale = _ref$canvasScale === void 0 ? 1 : _ref$canvasScale;
   var _element$x = element.x,
     x = _element$x === void 0 ? 0 : _element$x,
     _element$y = element.y,
@@ -892,10 +894,10 @@ var ImageRenderer = function ImageRenderer(_ref) {
   var finalImageUrl = imageData.imageUrl || imageUrl;
   var containerStyle = {
     position: 'absolute',
-    left: x,
-    top: y,
-    width: width,
-    height: height,
+    left: x * canvasScale,
+    top: y * canvasScale,
+    width: width * canvasScale,
+    height: height * canvasScale,
     backgroundColor: backgroundColor,
     border: borderWidth > 0 ? "".concat(borderWidth, "px solid ").concat(borderColor) : 'none',
     borderRadius: "".concat(borderRadius, "px"),
