@@ -256,7 +256,7 @@ function CanvasRenderer({ elements = [], scale = 1, interactive = false, classNa
         );
 
         // Ici on pourrait ajuster le zoom automatiquement
-        console.log('Optimal zoom:', optimalZoom);
+        // Optimal zoom calculé
       }
     };
 

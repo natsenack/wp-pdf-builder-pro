@@ -351,7 +351,7 @@ function confirmDeleteTemplate(templateId, templateName) {
 
 function deleteTemplate(templateId, templateName) {
     // Simulation de la suppression (à remplacer par un vrai appel AJAX)
-    console.log('Suppression du template:', templateId, templateName);
+// Suppression du template
 
     // Afficher un message de succès temporaire
     alert('✅ Template "' + templateName + '" supprimé avec succès !');
@@ -361,7 +361,7 @@ function deleteTemplate(templateId, templateName) {
 }
 
 function toggleDefaultTemplate(templateId, templateType, templateName) {
-    console.log('toggleDefaultTemplate called with:', templateId, templateType, templateName);
+// Toggle default template
 
     // Trouver l'icône du template actuel en utilisant l'attribut onclick
     const currentIcon = Array.from(document.querySelectorAll('.default-template-icon')).find(icon =>
@@ -369,7 +369,7 @@ function toggleDefaultTemplate(templateId, templateType, templateName) {
     );
     const isCurrentlyDefault = currentIcon?.style.opacity === '1';
 
-    console.log('Current icon found:', !!currentIcon, 'Is currently default:', isCurrentlyDefault);
+    // Current icon found
 
     // Préparer les données pour AJAX
     const data = {
@@ -379,8 +379,8 @@ function toggleDefaultTemplate(templateId, templateType, templateName) {
         nonce: pdfBuilderTemplatesNonce
     };
 
-    console.log('AJAX data:', data);
-    console.log('ajaxurl:', ajaxurl);
+    // AJAX data
+    // ajaxurl
 
     // Afficher un indicateur de chargement
     if (currentIcon) {
@@ -390,7 +390,7 @@ function toggleDefaultTemplate(templateId, templateType, templateName) {
 
     // Faire l'appel AJAX
     jQuery.post(ajaxurl, data, function(response) {
-        console.log('AJAX success:', response);
+        // AJAX success
         if (response.success) {
             // Mettre à jour l'icône et le titre
             if (currentIcon) {
@@ -426,7 +426,7 @@ function toggleDefaultTemplate(templateId, templateType, templateName) {
             showErrorMessage(response.data?.message || 'Erreur lors de la modification du statut par défaut');
         }
     }).fail(function(xhr, status, error) {
-        console.log('AJAX failed:', xhr, status, error);
+        // AJAX failed
         // Erreur de réseau
         if (currentIcon) {
             currentIcon.innerHTML = isCurrentlyDefault ? '*' : '-';

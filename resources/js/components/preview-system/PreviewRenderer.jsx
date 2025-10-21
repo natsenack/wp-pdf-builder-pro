@@ -84,12 +84,12 @@ const PreviewRenderer = ({
   // Rendu d'un élément individuel avec gestion d'erreur robuste
   const renderElement = (element) => {
     if (!element || typeof element !== 'object') {
-      console.warn('PDF Builder Debug: Invalid element:', element);
+      // Élément invalide
       return null;
     }
 
     if (!element.type) {
-      console.warn('PDF Builder Debug: Element missing type:', element);
+      // Élément sans type
       return null;
     }
 
@@ -97,7 +97,7 @@ const PreviewRenderer = ({
       const Renderer = rendererMap[element.type] || rendererMap.default;
 
       if (!Renderer) {
-        console.warn('PDF Builder Debug: No renderer found for type:', element.type);
+        // Aucun renderer trouvé
         return null;
       }
 
@@ -110,7 +110,7 @@ const PreviewRenderer = ({
         />
       );
     } catch (error) {
-      console.error('PDF Builder Debug: Error rendering element:', element.type, element.id, error);
+      // Erreur rendu élément
       // Renderer de fallback ultra-simple
       return (
         <div

@@ -219,7 +219,6 @@ function PreviewProvider(_ref) {
     });
   }, []);
   var loadPreview = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function (config) {
-    console.log('loadPreview called with config:', config);
     setLoading(true);
     // Additional logic can be added here if needed
   }, [setLoading]);
@@ -12688,7 +12687,6 @@ function PreviewModal() {
 // Optimisation avec React.memo pour éviter les re-renders inutiles
 /* harmony default export */ const components_PreviewModal = (/*#__PURE__*/react.memo(PreviewModal));
 ;// ./resources/js/components/preview-system/PreviewModal.jsx
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 
 
 
@@ -12700,26 +12698,14 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
  */
 var PreviewModal_PreviewModal = function PreviewModal(props) {
   try {
-    console.log('PDF Builder: PreviewModal legacy wrapper called with props:', props);
-    console.log('PDF Builder: PreviewModal - props type:', _typeof(props));
-    console.log('PDF Builder: PreviewModal - props is null:', props === null);
-    console.log('PDF Builder: PreviewModal - props is undefined:', props === undefined);
-    console.log('PDF Builder: PreviewModal - props truthy check:', !!props);
-
     // Ne rien rendre si props est undefined ou null
     if (!props) {
-      console.warn('PDF Builder: PreviewModal called with undefined/null props, skipping render');
-      console.log('PDF Builder: PreviewModal returning empty div due to invalid props');
       return /*#__PURE__*/react.createElement("div", null);
     }
-    console.log('PDF Builder: PreviewModal proceeding with valid props, rendering component');
     return /*#__PURE__*/react.createElement(PreviewProvider.PreviewProvider, null, /*#__PURE__*/react.createElement(PreviewModalWithContext, {
       legacyProps: props
     }));
   } catch (error) {
-    console.error('PDF Builder: PreviewModal CRITICAL ERROR:', error);
-    console.error('PDF Builder: PreviewModal error stack:', error.stack);
-    console.error('PDF Builder: PreviewModal props that caused error:', props);
     return false;
   }
 };
@@ -12728,53 +12714,33 @@ var PreviewModal_PreviewModal = function PreviewModal(props) {
 var PreviewModalWithContext = function PreviewModalWithContext(_ref) {
   var legacyProps = _ref.legacyProps;
   try {
-    console.log('PDF Builder: PreviewModalWithContext called with legacyProps:', legacyProps);
-    console.log('PDF Builder: PreviewModalWithContext - legacyProps type:', _typeof(legacyProps));
     var _usePreviewContext = (0,PreviewContext.usePreviewContext)(),
       isOpen = _usePreviewContext.state.isOpen,
       _usePreviewContext$ac = _usePreviewContext.actions,
       openPreview = _usePreviewContext$ac.openPreview,
       closePreview = _usePreviewContext$ac.closePreview;
-    console.log('PDF Builder: PreviewModalWithContext - usePreview hook result:', {
-      openPreview: _typeof(openPreview),
-      closePreview: _typeof(closePreview),
-      isOpen: isOpen
-    });
 
     // Ouvrir automatiquement si des props legacy sont passées
     react.useEffect(function () {
-      console.log('PDF Builder: PreviewModalWithContext useEffect triggered with legacyProps:', legacyProps);
       if (legacyProps && !isOpen) {
         var initialData = legacyProps.elements || null;
         var initialMode = legacyProps.mode || 'canvas';
-        console.log('PDF Builder: PreviewModalWithContext opening preview with:', {
-          initialData: initialData,
-          initialMode: initialMode
-        });
         openPreview(initialMode, initialData);
-      } else {
-        console.log('PDF Builder: PreviewModalWithContext skipping preview open - legacyProps:', !!legacyProps, 'isOpen:', isOpen);
       }
     }, [legacyProps, isOpen, openPreview]);
 
     // Gérer la fermeture legacy
     react.useEffect(function () {
-      console.log('PDF Builder: PreviewModalWithContext close effect triggered');
       if (legacyProps && legacyProps.onClose) {
         var handleClose = function handleClose() {
-          console.log('PDF Builder: PreviewModalWithContext handleClose called');
           if (legacyProps.onClose) {
             legacyProps.onClose();
           }
           closePreview();
         };
         // TODO: Attacher handleClose au context si nécessaire
-        console.log('PDF Builder: PreviewModalWithContext close handler set up');
-      } else {
-        console.log('PDF Builder: PreviewModalWithContext no close handler needed');
       }
     }, [legacyProps, closePreview]);
-    console.log('PDF Builder: PreviewModalWithContext about to render PreviewModalComponent');
     return /*#__PURE__*/react.createElement(components_PreviewModal, null);
   } catch (error) {
     console.error('PDF Builder: PreviewModalWithContext CRITICAL ERROR:', error);

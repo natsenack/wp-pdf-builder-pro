@@ -77,7 +77,7 @@ function NavigationControls({ className = '' }) {
   const handleExport = useCallback(() => {
     const timer = measureOperation('export');
     // TODO: Implémenter l'export selon le type (PDF, PNG, etc.)
-    console.log('Export functionality to be implemented');
+    // Export functionality to be implemented
     timer.end();
   }, [measureOperation]);
 

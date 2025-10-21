@@ -47,7 +47,7 @@ function PDFRenderer({ pageData, scale = 1, className = '' }) {
 
         setRenderStatus('complete');
       } catch (error) {
-        console.error('Erreur rendu PDF:', error);
+        // Erreur rendu PDF
         setRenderStatus('error');
       }
     });

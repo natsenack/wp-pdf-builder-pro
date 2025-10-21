@@ -70,7 +70,6 @@ export function PreviewProvider({ children }) {
   }, []);
 
   const loadPreview = useCallback((config) => {
-    console.log('loadPreview called with config:', config);
     setLoading(true);
     // Additional logic can be added here if needed
   }, [setLoading]);

@@ -373,7 +373,7 @@ function PDFRenderer(_ref) {
               ctx.restore();
               setRenderStatus('complete');
             } catch (error) {
-              console.error('Erreur rendu PDF:', error);
+              // Erreur rendu PDF
               setRenderStatus('error');
             }
           case 1:
@@ -796,7 +796,7 @@ function CanvasRenderer(_ref) {
         });
 
         // Ici on pourrait ajuster le zoom automatiquement
-        console.log('Optimal zoom:', optimalZoom);
+        // Optimal zoom calculé
       }
     };
     window.addEventListener('resize', handleResize);
@@ -1061,7 +1061,7 @@ function NavigationControls(_ref) {
   var handleExport = (0,react.useCallback)(function () {
     var timer = measureOperation('export');
     // TODO: Implémenter l'export selon le type (PDF, PNG, etc.)
-    console.log('Export functionality to be implemented');
+    // Export functionality to be implemented
     timer.end();
   }, [measureOperation]);
   return /*#__PURE__*/react.createElement("div", {

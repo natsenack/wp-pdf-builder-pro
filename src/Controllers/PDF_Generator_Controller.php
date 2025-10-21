@@ -75,7 +75,6 @@ class PDF_Builder_Pro_Generator
     public function setOrder($order)
     {
         $this->order = $order;
-        error_log('[PDF Generator] Order set: ' . ($order ? 'Order ID: ' . $order->get_id() : 'null'));
     }
 
     /**
@@ -83,8 +82,6 @@ class PDF_Builder_Pro_Generator
      */
     public function generate($elements, $options = [])
     {
-        error_log('[PDF Generator] Generate called with ' . count($elements) . ' elements, order: ' . ($this->order ? $this->order->get_id() : 'null'));
-
         try {
             $this->reset();
             $this->validate_elements($elements);
@@ -96,7 +93,6 @@ class PDF_Builder_Pro_Generator
             // TODO: Convertir HTML vers PDF avec une vraie bibliothèque
             return $this->html_content;
         } catch (Exception $e) {
-            error_log('[PDF Builder] PDF_Builder_Pro_Generator exception: ' . $e->getMessage());
             $this->log_error('Generation PDF echouee: ' . $e->getMessage());
             return $this->generate_fallback_html($elements);
         }
@@ -147,7 +143,7 @@ class PDF_Builder_Pro_Generator
         $type = $element['type'] ?? 'text';
         $coords = $this->extractElementCoordinates($element, 1); // Garder en pixels pour HTML
 
-        error_log('[PDF Generator] Rendering element type: ' . $type . ', id: ' . ($element['id'] ?? 'no-id'));
+        
 
         // Donner des dimensions par défaut si manquantes
         if (empty($coords['width']) || $coords['width'] <= 0) {
@@ -203,7 +199,7 @@ class PDF_Builder_Pro_Generator
         try {
             return $this->render_element_content($element, $style, $type);
         } catch (Exception $e) {
-            error_log('[PDF Generator] Error rendering element ' . $type . ': ' . $e->getMessage());
+            
             return "<div class='canvas-element' style='" . esc_attr($style) . "; background: #ffe6e6; border: 1px solid #ff0000; display: flex; align-items: center; justify-content: center; color: #ff0000;'>Erreur: {$type}</div>";
         }
     }
@@ -211,18 +207,18 @@ class PDF_Builder_Pro_Generator
     private function render_element_content($element, $style, $type)
     {
         // LOG COMPLET DE DIAGNOSTIC POUR TOUS LES ÉLÉMENTS
-        error_log('[PDF Generator] === RENDERING ELEMENT: ' . $type . ' ===');
-        error_log('[PDF Generator] Element full config: ' . json_encode($element));
-        error_log('[PDF Generator] Element has ' . count($element) . ' total properties');
-        error_log('[PDF Generator] Base style applied: ' . $style);
+        
+        
+        
+        
 
         switch ($type) {
             case 'text':
             case 'dynamic-text':
             case 'multiline_text':
                 // LOG DES PROPRIÉTÉS TEXT
-                error_log('[PDF Generator] TEXT ELEMENT - Type: ' . $type);
-                error_log('[PDF Generator] TEXT ELEMENT - Content sources: customContent=' . ($element['customContent'] ?? 'NOT_SET') . ', content=' . ($element['content'] ?? 'NOT_SET') . ', text=' . ($element['text'] ?? 'NOT_SET'));
+                
+                
 
                 // Pour dynamic-text, prioriser customContent, sinon content/text
                 if ($type === 'dynamic-text') {
@@ -231,30 +227,30 @@ class PDF_Builder_Pro_Generator
                     $content = $element['content'] ?? $element['text'] ?? '';
                 }
 
-                error_log('[PDF Generator] TEXT ELEMENT - Final content: "' . $content . '"');
+                
 
                 // Pour dynamic-text, remplacer les variables si un ordre est défini
                 if ($type === 'dynamic-text' && $this->order) {
                     $original_content = $content;
                     $content = $this->replace_order_variables($content, $this->order);
-                    error_log('[PDF Generator] DYNAMIC-TEXT - Variable replacement: "' . $original_content . '" -> "' . $content . '"');
+                    
                 }
                 return "<div class='canvas-element' style='" . esc_attr($style) . "; white-space: pre-wrap; word-wrap: break-word;'>" . wp_kses_post($content) . "</div>";
 
             case 'image':
             case 'company_logo':
                 // LOG DES PROPRIÉTÉS IMAGE
-                error_log('[PDF Generator] IMAGE ELEMENT - Type: ' . $type);
-                error_log('[PDF Generator] IMAGE ELEMENT - Sources: imageUrl=' . ($element['imageUrl'] ?? 'NOT_SET') . ', src=' . ($element['src'] ?? 'NOT_SET'));
+                
+                
 
                 $src = $element['imageUrl'] ?? $element['src'] ?? '';
                 if (!$src && $type === 'company_logo') {
                     $custom_logo_id = get_theme_mod('custom_logo');
                     $src = $custom_logo_id ? wp_get_attachment_image_url($custom_logo_id, 'full') : '';
-                    error_log('[PDF Generator] COMPANY LOGO - Theme logo ID: ' . ($custom_logo_id ?: 'NONE') . ', URL: ' . ($src ?: 'NONE'));
+                    
                 }
 
-                error_log('[PDF Generator] IMAGE ELEMENT - Final src: ' . ($src ?: 'EMPTY'));
+                
 
                 if ($src) {
                     return "<img class='canvas-element' src='" . esc_url($src) . "' style='" . esc_attr($style) . "; object-fit: contain;' />";
@@ -263,19 +259,19 @@ class PDF_Builder_Pro_Generator
 
             case 'rectangle':
                 // LOG DES PROPRIÉTÉS RECTANGLE
-                error_log('[PDF Generator] RECTANGLE ELEMENT - All properties extracted via CSS');
+                
                 return "<div class='canvas-element' style='" . esc_attr($style) . "; border: 1px solid #ccc;'></div>";
 
             case 'divider':
             case 'line':
                 // LOG DES PROPRIÉTÉS LINE
-                error_log('[PDF Generator] LINE ELEMENT - lineColor: ' . ($element['lineColor'] ?? 'DEFAULT(#64748b)') . ', lineWidth: ' . ($element['lineWidth'] ?? 'DEFAULT(2)'));
+                
 
                 $line_color = $element['lineColor'] ?? '#64748b';
                 $line_width = $element['lineWidth'] ?? 2;
                 $style .= "border-bottom: {$line_width}px solid {$line_color}; height: {$line_width}px;";
 
-                error_log('[PDF Generator] LINE ELEMENT - Applied style: border-bottom: ' . $line_width . 'px solid ' . $line_color);
+                
 
                 return "<div class='canvas-element' style='" . esc_attr($style) . ";'></div>";
 
@@ -287,9 +283,9 @@ class PDF_Builder_Pro_Generator
 
             case 'customer_info':
                 // LOG DES PROPRIÉTÉS CUSTOMER INFO
-                error_log('[PDF Generator] CUSTOMER INFO - fields: ' . json_encode($element['fields'] ?? 'DEFAULT'));
-                error_log('[PDF Generator] CUSTOMER INFO - showLabels: ' . ($element['showLabels'] ?? 'DEFAULT(true)'));
-                error_log('[PDF Generator] CUSTOMER INFO - labelStyle: ' . ($element['labelStyle'] ?? 'DEFAULT(normal)'));
+                
+                
+                
 
                 $customer_info = '';
                 if ($this->order) {
@@ -297,7 +293,7 @@ class PDF_Builder_Pro_Generator
                     $show_labels = $element['showLabels'] ?? true;
                     $label_style = $element['labelStyle'] ?? 'normal';
 
-                    error_log('[PDF Generator] CUSTOMER INFO - Processing fields: ' . implode(', ', $fields));
+                    
 
                     $customer_parts = [];
 
@@ -334,19 +330,19 @@ class PDF_Builder_Pro_Generator
                     }
 
                     $customer_info = implode('<br>', $customer_parts);
-                    error_log('[PDF Generator] CUSTOMER INFO - Generated content: ' . str_replace('<br>', ' | ', $customer_info));
+                    
                 }
                 return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 12px; line-height: 1.4;'>" . wp_kses_post($customer_info ?: 'Informations client') . "</div>";
 
             case 'company_info':
                 // LOG DES PROPRIÉTÉS COMPANY INFO
-                error_log('[PDF Generator] COMPANY INFO - fields: ' . json_encode($element['fields'] ?? 'DEFAULT'));
+                
 
                 $company_info = '';
                 if ($this->order) {
                     $fields = $element['fields'] ?? ['name', 'address', 'phone', 'rcs'];
 
-                    error_log('[PDF Generator] COMPANY INFO - Processing fields: ' . implode(', ', $fields));
+                    
 
                     $company_parts = [];
 
@@ -379,15 +375,15 @@ class PDF_Builder_Pro_Generator
                     }
 
                     $company_info = implode('<br>', $company_parts);
-                    error_log('[PDF Generator] COMPANY INFO - Generated content: ' . str_replace('<br>', ' | ', $company_info));
+                    
                 }
                 return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 12px; line-height: 1.4;'>" . wp_kses_post($company_info ?: '[company_info]') . "</div>";
 
             case 'order_number':
                 // LOG DES PROPRIÉTÉS ORDER NUMBER
-                error_log('[PDF Generator] ORDER NUMBER - format: ' . ($element['format'] ?? 'DEFAULT'));
-                error_log('[PDF Generator] ORDER NUMBER - showLabel: ' . ($element['showLabel'] ?? 'DEFAULT(true)'));
-                error_log('[PDF Generator] ORDER NUMBER - labelText: ' . ($element['labelText'] ?? 'DEFAULT'));
+                
+                
+                
 
                 $order_number = '';
                 if ($this->order) {
@@ -402,32 +398,32 @@ class PDF_Builder_Pro_Generator
                         $order_number = '<strong>' . esc_html($label_text) . '</strong><br>' . $order_number;
                     }
 
-                    error_log('[PDF Generator] ORDER NUMBER - Final content: ' . str_replace('<br>', ' | ', $order_number));
+                    
                 }
                 return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 14px; font-weight: bold; text-align: right;'>" . wp_kses_post($order_number ?: 'Texte') . "</div>";
 
             case 'document_type':
                 // LOG DES PROPRIÉTÉS DOCUMENT TYPE
-                error_log('[PDF Generator] DOCUMENT TYPE - documentType: ' . ($element['documentType'] ?? 'DEFAULT(invoice)'));
+                
 
                 $doc_type = $element['documentType'] ?? 'invoice';
                 $doc_label = $doc_type === 'invoice' ? 'FACTURE' : ($doc_type === 'quote' ? 'DEVIS' : strtoupper($doc_type));
 
-                error_log('[PDF Generator] DOCUMENT TYPE - Generated label: ' . $doc_label);
+                
 
                 return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 18px; font-weight: bold; text-align: center;'>" . esc_html($doc_label) . "</div>";
 
             case 'mentions':
                 // LOG DES PROPRIÉTÉS MENTIONS
-                error_log('[PDF Generator] MENTIONS - showEmail: ' . ($element['showEmail'] ?? 'DEFAULT(true)'));
-                error_log('[PDF Generator] MENTIONS - showPhone: ' . ($element['showPhone'] ?? 'DEFAULT(true)'));
-                error_log('[PDF Generator] MENTIONS - showSiret: ' . ($element['showSiret'] ?? 'DEFAULT(true)'));
-                error_log('[PDF Generator] MENTIONS - showVat: ' . ($element['showVat'] ?? 'DEFAULT(false)'));
-                error_log('[PDF Generator] MENTIONS - showAddress: ' . ($element['showAddress'] ?? 'DEFAULT(false)'));
-                error_log('[PDF Generator] MENTIONS - showWebsite: ' . ($element['showWebsite'] ?? 'DEFAULT(false)'));
-                error_log('[PDF Generator] MENTIONS - showCustomText: ' . ($element['showCustomText'] ?? 'DEFAULT(false)'));
-                error_log('[PDF Generator] MENTIONS - customText: ' . ($element['customText'] ?? 'NOT_SET'));
-                error_log('[PDF Generator] MENTIONS - separator: ' . ($element['separator'] ?? 'DEFAULT( • )'));
+                
+                
+                
+                
+                
+                
+                
+                
+                
 
                 $mentions = '';
                 if ($this->order) {
@@ -490,7 +486,7 @@ class PDF_Builder_Pro_Generator
                     }
 
                     $mentions = implode($separator, $mention_parts);
-                    error_log('[PDF Generator] MENTIONS - Generated content: ' . $mentions);
+                    
                 }
                 return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 8px; text-align: center;'>" . esc_html($mentions ?: 'Texte') . "</div>";
         }
@@ -743,7 +739,7 @@ class PDF_Builder_Pro_Generator
     private function log_error($message)
     {
         $this->errors[] = $message;
-        error_log('[PDF Builder] ' . $message);
+        
     }
 
     /**
@@ -836,11 +832,11 @@ class PDF_Builder_Pro_Generator
         // Appliquer les remplacements dans l'ordre : doubles, simples, crochets
         $original_content = $content;
         $content = str_replace(array_keys($double_brace_replacements), array_values($double_brace_replacements), $content);
-        error_log('[PDF Generator] After double brace replacements: "' . $original_content . '" -> "' . $content . '"');
+        
         $content = str_replace(array_keys($single_brace_replacements), array_values($single_brace_replacements), $content);
-        error_log('[PDF Generator] After single brace replacements: "' . $original_content . '" -> "' . $content . '"');
+        
         $content = str_replace(array_keys($bracket_replacements), array_values($bracket_replacements), $content);
-        error_log('[PDF Generator] After bracket replacements: "' . $original_content . '" -> "' . $content . '"');
+        
 
         return $content;
     }
@@ -1649,7 +1645,7 @@ class PDF_Builder_Pro_Generator
                             $html = str_replace((string)$fake_value, (string)$real_value, $html);
                         }
 
-                        error_log("[PDF Generator] Replaced item property {$key}: '{$fake_value}' -> '{$real_value}'");
+                        
                     }
                 }
             }
@@ -1660,11 +1656,11 @@ class PDF_Builder_Pro_Generator
         foreach ($totals_to_replace as $total_key) {
             if (isset($fake_data[$total_key]) && isset($real_data[$total_key])) {
                 $html = str_replace((string)$fake_data[$total_key], (string)$real_data[$total_key], $html);
-                error_log("[PDF Generator] Replaced total {$total_key}: '{$fake_data[$total_key]}' -> '{$real_data[$total_key]}'");
+                
             }
         }
 
-        error_log('[PDF Generator] HTML replacement completed. Final HTML length: ' . strlen($html));
+        
         return $html;
     }
 }

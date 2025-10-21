@@ -165,12 +165,12 @@ body.wp-admin .pdf-builder-container {
     'use strict';
 
     // DEBUG: Vérifier immédiatement si les scripts sont chargés
-    console.log('🔍 PDF Builder Debug: Template editor loaded');
-    console.log('🔍 PDF Builder Debug: Checking for enqueued scripts...');
+    // PDF Builder Debug: Template editor loaded
+    // PDF Builder Debug: Checking for enqueued scripts...
 
     // Vérifier tous les scripts dans le DOM
     const allScripts = document.querySelectorAll('script[src]');
-    console.log('🔍 PDF Builder Debug: Found ' + allScripts.length + ' scripts in DOM:');
+    // PDF Builder Debug: Found scripts in DOM
     allScripts.forEach((script, index) => {
         const src = script.getAttribute('src');
         console.log('🔍 PDF Builder Debug: Script ' + index + ': ' + src);

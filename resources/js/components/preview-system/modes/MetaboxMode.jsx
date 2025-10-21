@@ -99,7 +99,7 @@ export class MetaboxMode {
       await dataProvider.validateOrderAccess(orderId);
       return true;
     } catch (error) {
-      console.warn(`Accès refusé à la commande ${orderId}:`, error.message);
+      // Accès refusé à la commande
       return false;
     }
   }
