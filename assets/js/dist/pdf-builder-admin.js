@@ -398,7 +398,11 @@ function PreviewModal() {
   };
 
   // Ne rien rendre si fermé ou si pas de mode valide
-  if (!isOpen || !mode) return null;
+  if (!isOpen || !mode) {
+    console.log('🔍 PreviewModalComponent - NOT RENDERING - isOpen:', isOpen, 'mode:', mode);
+    return null;
+  }
+  console.log('🔍 PreviewModalComponent - RENDERING modal - isOpen:', isOpen, 'mode:', mode);
   return /*#__PURE__*/react.createElement("div", {
     className: "pdf-preview-modal-overlay",
     onClick: handleOverlayClick
@@ -424,7 +428,7 @@ function PreviewModal() {
   }, error), /*#__PURE__*/react.createElement("button", {
     onClick: closePreview,
     className: "pdf-preview-error-close"
-  }, "Fermer")) : /*#__PURE__*/react.createElement(react.Fragment, null, mode === 'canvas' && /*#__PURE__*/react.createElement(CanvasMode, null), mode === 'metabox' && /*#__PURE__*/react.createElement(MetaboxMode, null)))), loading && /*#__PURE__*/react.createElement("div", {
+  }, "Fermer")) : /*#__PURE__*/react.createElement(react.Fragment, null, mode === 'canvas' && /*#__PURE__*/react.createElement(react.Fragment, null, console.log('🔍 Rendering CanvasMode'), /*#__PURE__*/react.createElement(CanvasMode, null)), mode === 'metabox' && /*#__PURE__*/react.createElement(react.Fragment, null, console.log('🔍 Rendering MetaboxMode'), /*#__PURE__*/react.createElement(MetaboxMode, null))))), loading && /*#__PURE__*/react.createElement("div", {
     className: "pdf-preview-loading-overlay"
   }, /*#__PURE__*/react.createElement("div", {
     className: "pdf-preview-spinner"

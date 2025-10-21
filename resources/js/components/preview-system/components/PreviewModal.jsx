@@ -45,7 +45,12 @@ function PreviewModal() {
   };
 
   // Ne rien rendre si fermé ou si pas de mode valide
-  if (!isOpen || !mode) return null;
+  if (!isOpen || !mode) {
+    console.log('🔍 PreviewModalComponent - NOT RENDERING - isOpen:', isOpen, 'mode:', mode);
+    return null;
+  }
+
+  console.log('🔍 PreviewModalComponent - RENDERING modal - isOpen:', isOpen, 'mode:', mode);
 
   return (
     <div className="pdf-preview-modal-overlay" onClick={handleOverlayClick}>
@@ -81,8 +86,18 @@ function PreviewModal() {
               </div>
             ) : (
               <>
-                {mode === 'canvas' && <CanvasMode />}
-                {mode === 'metabox' && <MetaboxMode />}
+                {mode === 'canvas' && (
+                  <>
+                    {console.log('🔍 Rendering CanvasMode')}
+                    <CanvasMode />
+                  </>
+                )}
+                {mode === 'metabox' && (
+                  <>
+                    {console.log('🔍 Rendering MetaboxMode')}
+                    <MetaboxMode />
+                  </>
+                )}
               </>
             )}
           </Suspense>
