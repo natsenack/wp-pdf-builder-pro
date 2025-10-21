@@ -10,6 +10,12 @@ import PreviewModalComponent from './components/PreviewModal';
 const PreviewModal = (props) => {
   console.log('PDF Builder: PreviewModal legacy wrapper called with props:', props);
 
+  // Ne rien rendre si props est undefined ou null
+  if (!props) {
+    console.warn('PDF Builder: PreviewModal called with undefined/null props, skipping render');
+    return null;
+  }
+
   return (
     <PreviewProvider>
       <PreviewModalWithContext legacyProps={props} />
