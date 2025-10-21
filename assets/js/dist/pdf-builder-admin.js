@@ -12553,6 +12553,20 @@ try {
 // Fonction pour afficher l'aperçu dans la metabox WooCommerce - RECREATION COMPLETE PHASE 8
 window.pdfBuilderShowPreview = function (orderId, templateId, nonce) {
   var canvasData = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+  // Indicateur immédiat que la fonction est appelée
+  var funcIndicator = document.createElement('div');
+  funcIndicator.id = 'function-indicator';
+  funcIndicator.style.cssText = 'position:fixed;top:100px;right:50px;background:#28a745;color:white;padding:10px;border-radius:5px;z-index:10000;font-weight:bold;';
+  funcIndicator.textContent = '✅ FONCTION APPELEE - ' + new Date().toLocaleTimeString();
+  document.body.appendChild(funcIndicator);
+
+  // Supprimer après 5 secondes
+  setTimeout(function () {
+    if (document.getElementById('function-indicator')) {
+      document.getElementById('function-indicator').remove();
+    }
+  }, 5000);
+
   // 1. IMMÉDIAT: Créer un indicateur visuel que la fonction est appelée
   var visualIndicator = document.createElement('div');
   visualIndicator.id = 'phase8-visual-indicator';
@@ -12639,6 +12653,17 @@ window.pdfBuilderShowPreview = function (orderId, templateId, nonce) {
           providerModule = _ref3[0],
           contextModule = _ref3[1],
           modalModule = _ref3[2];
+        // Indicateur de succès d'import
+        var importIndicator = document.createElement('div');
+        importIndicator.id = 'import-indicator';
+        importIndicator.style.cssText = 'position:fixed;top:150px;right:50px;background:#28a745;color:white;padding:8px;border-radius:4px;z-index:10000;font-size:12px;font-weight:bold;';
+        importIndicator.textContent = '📦 IMPORTS REUSSIS - ' + new Date().toLocaleTimeString();
+        document.body.appendChild(importIndicator);
+        setTimeout(function () {
+          if (document.getElementById('import-indicator')) {
+            document.getElementById('import-indicator').remove();
+          }
+        }, 3000);
         var PreviewProvider = providerModule.PreviewProvider;
         var usePreviewContext = contextModule.usePreviewContext;
         var PreviewModal = modalModule["default"];
@@ -12671,9 +12696,27 @@ window.pdfBuilderShowPreview = function (orderId, templateId, nonce) {
         // Monter avec ReactDOM
         react_dom.render(previewModalElement, modalContent);
 
+        // Indicateur de montage réussi
+        var mountIndicator = document.createElement('div');
+        mountIndicator.id = 'mount-indicator';
+        mountIndicator.style.cssText = 'position:fixed;top:180px;right:50px;background:#28a745;color:white;padding:8px;border-radius:4px;z-index:10000;font-size:12px;font-weight:bold;';
+        mountIndicator.textContent = '⚛️ REACT MONTÉ - ' + new Date().toLocaleTimeString();
+        document.body.appendChild(mountIndicator);
+        setTimeout(function () {
+          if (document.getElementById('mount-indicator')) {
+            document.getElementById('mount-indicator').remove();
+          }
+        }, 3000);
+
         // Mettre à jour l'indicateur visuel
         visualIndicator.innerHTML = visualIndicator.innerHTML.replace('MODAL LOADING...', '<span style="color: #28a745;">MODAL LOADED ✓</span>');
       })["catch"](function (error) {
+        // Indicateur d'erreur d'import
+        var errorIndicator = document.createElement('div');
+        errorIndicator.id = 'import-error-indicator';
+        errorIndicator.style.cssText = 'position:fixed;top:150px;right:50px;background:#dc3545;color:white;padding:8px;border-radius:4px;z-index:10000;font-size:12px;font-weight:bold;max-width:300px;word-wrap:break-word;';
+        errorIndicator.textContent = '❌ IMPORT ERROR: ' + error.message;
+        document.body.appendChild(errorIndicator);
         loadingContent.innerHTML = "\n                    <div style=\"font-size: 48px; margin-bottom: 20px; color: #dc3545;\">\u274C</div>\n                    <div style=\"font-weight: bold; margin-bottom: 10px; color: #dc3545;\">Erreur d'import dynamique</div>\n                    <div style=\"font-size: 14px; color: #666;\">".concat(error.message, "</div>\n                ");
         visualIndicator.innerHTML = visualIndicator.innerHTML.replace('MODAL LOADING...', '<span style="color: #dc3545;">IMPORT ERROR ❌</span>');
       });

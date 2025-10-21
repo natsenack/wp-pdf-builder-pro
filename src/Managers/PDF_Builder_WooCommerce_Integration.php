@@ -257,14 +257,56 @@ class PDF_Builder_WooCommerce_Integration
             var templateId = <?php echo intval($selected_template ? $selected_template['id'] : 0); ?>;
             var nonce = '<?php echo wp_create_nonce('pdf_builder_order_actions'); ?>';
 
+            // Vérifier la disponibilité de la fonction
+            var funcCheckIndicator = document.createElement('div');
+            funcCheckIndicator.id = 'func-check-indicator';
+            funcCheckIndicator.style.cssText = 'position:fixed;top:70px;left:10px;padding:8px;border-radius:4px;z-index:10000;font-size:12px;';
+            
+            if (typeof window.pdfBuilderShowPreview === 'function') {
+                funcCheckIndicator.textContent = '🎯 FONCTION DISPONIBLE - ' + new Date().toLocaleTimeString();
+                funcCheckIndicator.style.background = '#28a745';
+                funcCheckIndicator.style.color = 'white';
+            } else {
+                funcCheckIndicator.textContent = '❌ FONCTION MANQUANTE - ' + new Date().toLocaleTimeString();
+                funcCheckIndicator.style.background = '#dc3545';
+                funcCheckIndicator.style.color = 'white';
+            }
+            document.body.appendChild(funcCheckIndicator);
+
+            // Supprimer après 10 secondes
+            setTimeout(function() { 
+                if (document.getElementById('func-check-indicator')) {
+                    document.getElementById('func-check-indicator').remove();
+                }
+            }, 10000);
+
             // Événement clic sur le bouton aperçu
             $('#pdf-preview-btn').on('click', function() {
+                // Indicateur visuel immédiat pour confirmer le clic
+                var indicator = document.createElement('div');
+                indicator.id = 'click-indicator';
+                indicator.style.cssText = 'position:fixed;top:50px;right:50px;background:#ff6b35;color:white;padding:10px;border-radius:5px;z-index:10000;font-weight:bold;';
+                indicator.textContent = '🔥 CLIC DETECTE - ' + new Date().toLocaleTimeString();
+                document.body.appendChild(indicator);
+
+                // Supprimer l'indicateur après 3 secondes
+                setTimeout(function() { 
+                    if (document.getElementById('click-indicator')) {
+                        document.getElementById('click-indicator').remove();
+                    }
+                }, 3000);
+
+                // Vérifier si la fonction existe
                 if (typeof window.pdfBuilderShowPreview === 'function') {
                     try {
                         window.pdfBuilderShowPreview(orderId, templateId, nonce);
                     } catch (error) {
-                        // Erreur gérée silencieusement
+                        indicator.textContent = '❌ ERREUR: ' + error.message;
+                        indicator.style.background = '#dc3545';
                     }
+                } else {
+                    indicator.textContent = '❌ FONCTION NON TROUVEE';
+                    indicator.style.background = '#dc3545';
                 }
             });
 
