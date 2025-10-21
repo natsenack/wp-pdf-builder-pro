@@ -40,8 +40,8 @@ function PreviewModal() {
     }
   };
 
-  // Ne rien rendre si fermé
-  if (!isOpen) return null;
+  // Ne rien rendre si fermé ou si pas de mode valide
+  if (!isOpen || !mode) return null;
 
   return (
     <div className="pdf-preview-modal-overlay" onClick={handleOverlayClick}>

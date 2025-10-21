@@ -399,7 +399,12 @@ window.pdfBuilderShowPreview = function(orderId, templateId, nonce) {
 
             // Créer l'élément React avec le Provider
             const previewModalElement = React.createElement(PreviewProvider, {}, 
-                React.createElement(PreviewModal)
+                React.createElement(PreviewModal, {
+                    mode: 'metabox',
+                    orderId: orderId,
+                    templateId: templateId,
+                    nonce: nonce
+                })
             );
 
             // Monter avec ReactDOM

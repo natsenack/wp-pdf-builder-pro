@@ -10,31 +10,25 @@ import PreviewModalComponent from './components/PreviewModal';
 const PreviewModal = (props) => {
   console.log('PDF Builder: PreviewModal legacy wrapper called with props:', props);
 
-  // Si des props sont passées, on les utilise pour initialiser le context
-  const initialData = props.elements || null;
-  const initialMode = props.mode || 'canvas';
-
   return (
     <PreviewProvider>
-      <PreviewModalWithContext
-        legacyProps={props}
-        initialData={initialData}
-        initialMode={initialMode}
-      />
+      <PreviewModalWithContext legacyProps={props} />
     </PreviewProvider>
   );
 };
 
 // Composant interne qui gère la logique legacy
-const PreviewModalWithContext = ({ legacyProps, initialData, initialMode }) => {
+const PreviewModalWithContext = ({ legacyProps }) => {
   const { openPreview, closePreview, isOpen } = usePreview();
 
   // Ouvrir automatiquement si des props legacy sont passées
   React.useEffect(() => {
     if (legacyProps && !isOpen) {
+      const initialData = legacyProps.elements || null;
+      const initialMode = legacyProps.mode || 'canvas';
       openPreview(initialMode, initialData);
     }
-  }, [legacyProps, initialMode, initialData, isOpen, openPreview]);
+  }, [legacyProps, isOpen, openPreview]);
 
   // Gérer la fermeture legacy
   React.useEffect(() => {

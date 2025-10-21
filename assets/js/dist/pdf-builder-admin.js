@@ -357,8 +357,8 @@ function PreviewModal() {
     }
   };
 
-  // Ne rien rendre si fermé
-  if (!isOpen) return null;
+  // Ne rien rendre si fermé ou si pas de mode valide
+  if (!isOpen || !mode) return null;
   return /*#__PURE__*/react.createElement("div", {
     className: "pdf-preview-modal-overlay",
     onClick: handleOverlayClick
@@ -11158,22 +11158,14 @@ var PreviewModal = __webpack_require__(454);
  */
 var PreviewModal_PreviewModal = function PreviewModal(props) {
   console.log('PDF Builder: PreviewModal legacy wrapper called with props:', props);
-
-  // Si des props sont passées, on les utilise pour initialiser le context
-  var initialData = props.elements || null;
-  var initialMode = props.mode || 'canvas';
   return /*#__PURE__*/react.createElement(PreviewProvider.PreviewProvider, null, /*#__PURE__*/react.createElement(PreviewModalWithContext, {
-    legacyProps: props,
-    initialData: initialData,
-    initialMode: initialMode
+    legacyProps: props
   }));
 };
 
 // Composant interne qui gère la logique legacy
 var PreviewModalWithContext = function PreviewModalWithContext(_ref) {
-  var legacyProps = _ref.legacyProps,
-    initialData = _ref.initialData,
-    initialMode = _ref.initialMode;
+  var legacyProps = _ref.legacyProps;
   var _usePreview = (0,PreviewContext.usePreview)(),
     openPreview = _usePreview.openPreview,
     closePreview = _usePreview.closePreview,
@@ -11182,9 +11174,11 @@ var PreviewModalWithContext = function PreviewModalWithContext(_ref) {
   // Ouvrir automatiquement si des props legacy sont passées
   react.useEffect(function () {
     if (legacyProps && !isOpen) {
+      var initialData = legacyProps.elements || null;
+      var initialMode = legacyProps.mode || 'canvas';
       openPreview(initialMode, initialData);
     }
-  }, [legacyProps, initialMode, initialData, isOpen, openPreview]);
+  }, [legacyProps, isOpen, openPreview]);
 
   // Gérer la fermeture legacy
   react.useEffect(function () {
@@ -12574,7 +12568,12 @@ window.pdfBuilderShowPreview = function (orderId, templateId, nonce) {
       });
 
       // Créer l'élément React avec le Provider
-      var previewModalElement = /*#__PURE__*/react.createElement(PreviewProvider, {}, /*#__PURE__*/react.createElement(PreviewModal));
+      var previewModalElement = /*#__PURE__*/react.createElement(PreviewProvider, {}, /*#__PURE__*/react.createElement(PreviewModal, {
+        mode: 'metabox',
+        orderId: orderId,
+        templateId: templateId,
+        nonce: nonce
+      }));
 
       // Monter avec ReactDOM
       console.log('=== ABOUT TO CALL ReactDOM.render ===');
