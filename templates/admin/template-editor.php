@@ -219,11 +219,13 @@ body.wp-admin .pdf-builder-container {
 
         // LOGS DÉTAILLÉS QUOI QU'IL ARRIVE
         if (pdfBuilderProExists) {
-            console.log('- PDFBuilderPro keys:', Object.keys(window.PDFBuilderPro));
-            console.log('- PDFBuilderPro has init property:', 'init' in window.PDFBuilderPro);
-            console.log('- PDFBuilderPro.init type:', typeof window.PDFBuilderPro.init);
-            console.log('- PDFBuilderPro.init value:', window.PDFBuilderPro.init);
-            console.log('- Direct check window.PDFBuilderPro.init:', !!window.PDFBuilderPro.init);
+            console.log('- PDFBuilderPro keys:', Object.keys(pdfBuilderProRaw));
+            console.log('- PDFBuilderPro has default:', 'default' in pdfBuilderProRaw);
+            console.log('- Using PDFBuilderPro.default:', !!pdfBuilderProRaw.default);
+            console.log('- Final pdfBuilderPro keys:', Object.keys(pdfBuilderPro));
+            console.log('- Final has init:', 'init' in pdfBuilderPro);
+            console.log('- Final PDFBuilderPro.init type:', typeof pdfBuilderPro.init);
+            console.log('- Final PDFBuilderPro.init value:', pdfBuilderPro.init);
             console.log('- window.PDFBuilderPro === null?', window.PDFBuilderPro === null);
             console.log('- window.PDFBuilderPro === undefined?', window.PDFBuilderPro === undefined);
         } else {
@@ -245,7 +247,9 @@ body.wp-admin .pdf-builder-container {
                 };
 
                 // console.log('📋 Initialisation via PDFBuilderPro.init()...');
-                window.PDFBuilderPro.init('invoice-quote-builder-container', {
+                const pdfBuilderProRaw = window.PDFBuilderPro;
+                const pdfBuilderPro = pdfBuilderProRaw.default ? pdfBuilderProRaw.default : pdfBuilderProRaw;
+                pdfBuilderPro.init('invoice-quote-builder-container', {
                     templateId: <?php echo $template_id ?: 'null'; ?>,
                     templateName: <?php echo $template_name ? json_encode($template_name) : 'null'; ?>,
                     isNew: <?php echo $is_new ? 'true' : 'false'; ?>,
@@ -287,8 +291,12 @@ body.wp-admin .pdf-builder-container {
         scriptCheckAttempts++;
 
         // Vérifier que tous les chunks sont chargés avec le code splitting
-        const pdfBuilderProExists = typeof window.PDFBuilderPro !== 'undefined' && window.PDFBuilderPro !== null;
-        const initExists = pdfBuilderProExists && typeof window.PDFBuilderPro.init === 'function';
+        const pdfBuilderProRaw = window.PDFBuilderPro;
+        const pdfBuilderProExists = typeof pdfBuilderProRaw !== 'undefined' && pdfBuilderProRaw !== null;
+
+        // Gérer le cas où webpack expose le module avec une propriété 'default'
+        const pdfBuilderPro = pdfBuilderProExists && pdfBuilderProRaw.default ? pdfBuilderProRaw.default : pdfBuilderProRaw;
+        const initExists = pdfBuilderProExists && typeof pdfBuilderPro?.init === 'function';
 
         // Avec le code splitting, vérifier aussi que React est disponible
         const reactExists = typeof window.React !== 'undefined';
@@ -302,10 +310,14 @@ body.wp-admin .pdf-builder-container {
             console.log('- reactExists:', reactExists);
             console.log('- reactDomExists:', reactDomExists);
             if (pdfBuilderProExists) {
-                console.log('- PDFBuilderPro keys:', Object.keys(window.PDFBuilderPro));
-                console.log('- PDFBuilderPro has init:', 'init' in window.PDFBuilderPro);
-                console.log('- PDFBuilderPro.init type:', typeof window.PDFBuilderPro.init);
-                console.log('- PDFBuilderPro.init value:', window.PDFBuilderPro.init);
+                const pdfBuilderProRaw = window.PDFBuilderPro;
+                const pdfBuilderPro = pdfBuilderProRaw.default ? pdfBuilderProRaw.default : pdfBuilderProRaw;
+                console.log('- PDFBuilderPro keys:', Object.keys(pdfBuilderProRaw));
+                console.log('- Has default property:', 'default' in pdfBuilderProRaw);
+                console.log('- Using default:', !!pdfBuilderProRaw.default);
+                console.log('- Final PDFBuilderPro keys:', Object.keys(pdfBuilderPro));
+                console.log('- Final has init:', 'init' in pdfBuilderPro);
+                console.log('- Final PDFBuilderPro.init type:', typeof pdfBuilderPro.init);
             }
         }
 
