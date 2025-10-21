@@ -3,7 +3,7 @@ import React from 'react';
 /**
  * Renderer pour les éléments de texte simple
  */
-export const TextRenderer = ({ element, previewData, mode }) => {
+export const TextRenderer = ({ element, previewData, mode, canvasScale = 1 }) => {
   const {
     x = 0,
     y = 0,
@@ -39,7 +39,7 @@ export const TextRenderer = ({ element, previewData, mode }) => {
     top: y,
     width,
     height,
-    fontSize: `${fontSize}px`,
+    fontSize: `${fontSize * canvasScale}px`,
     fontFamily,
     fontWeight,
     fontStyle,

@@ -3,7 +3,7 @@ import React from 'react';
 /**
  * Renderer pour les éléments de texte dynamique avec variables
  */
-export const DynamicTextRenderer = ({ element, previewData, mode }) => {
+export const DynamicTextRenderer = ({ element, previewData, mode, canvasScale = 1 }) => {
   const {
     x = 0,
     y = 0,
@@ -45,7 +45,7 @@ export const DynamicTextRenderer = ({ element, previewData, mode }) => {
     top: y,
     width,
     height,
-    fontSize: `${fontSize}px`,
+    fontSize: `${fontSize * canvasScale}px`,
     fontFamily,
     fontWeight,
     fontStyle,

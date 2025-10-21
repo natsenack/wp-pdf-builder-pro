@@ -25,7 +25,9 @@ var PreviewContext = __webpack_require__(38);
 var TextRenderer = function TextRenderer(_ref) {
   var element = _ref.element,
     previewData = _ref.previewData,
-    mode = _ref.mode;
+    mode = _ref.mode,
+    _ref$canvasScale = _ref.canvasScale,
+    canvasScale = _ref$canvasScale === void 0 ? 1 : _ref$canvasScale;
   var _element$x = element.x,
     x = _element$x === void 0 ? 0 : _element$x,
     _element$y = element.y,
@@ -82,7 +84,7 @@ var TextRenderer = function TextRenderer(_ref) {
     top: y,
     width: width,
     height: height,
-    fontSize: "".concat(fontSize, "px"),
+    fontSize: "".concat(fontSize * canvasScale, "px"),
     fontFamily: fontFamily,
     fontWeight: fontWeight,
     fontStyle: fontStyle,
@@ -561,7 +563,9 @@ var BarcodeRenderer = function BarcodeRenderer(_ref) {
 var DynamicTextRenderer = function DynamicTextRenderer(_ref) {
   var element = _ref.element,
     previewData = _ref.previewData,
-    mode = _ref.mode;
+    mode = _ref.mode,
+    _ref$canvasScale = _ref.canvasScale,
+    canvasScale = _ref$canvasScale === void 0 ? 1 : _ref$canvasScale;
   var _element$x = element.x,
     x = _element$x === void 0 ? 0 : _element$x,
     _element$y = element.y,
@@ -625,7 +629,7 @@ var DynamicTextRenderer = function DynamicTextRenderer(_ref) {
     top: y,
     width: width,
     height: height,
-    fontSize: "".concat(fontSize, "px"),
+    fontSize: "".concat(fontSize * canvasScale, "px"),
     fontFamily: fontFamily,
     fontWeight: fontWeight,
     fontStyle: fontStyle,
@@ -667,7 +671,9 @@ var DynamicTextRenderer = function DynamicTextRenderer(_ref) {
 var CustomerInfoRenderer = function CustomerInfoRenderer(_ref) {
   var element = _ref.element,
     previewData = _ref.previewData,
-    mode = _ref.mode;
+    mode = _ref.mode,
+    _ref$canvasScale = _ref.canvasScale,
+    canvasScale = _ref$canvasScale === void 0 ? 1 : _ref$canvasScale;
   var _element$x = element.x,
     x = _element$x === void 0 ? 0 : _element$x,
     _element$y = element.y,
@@ -745,7 +751,7 @@ var CustomerInfoRenderer = function CustomerInfoRenderer(_ref) {
     padding: '8px',
     boxSizing: 'border-box',
     overflow: 'hidden',
-    fontSize: "".concat(fontSize, "px"),
+    fontSize: "".concat(fontSize * canvasScale, "px"),
     fontFamily: fontFamily,
     color: color,
     display: visible ? 'block' : 'none',
@@ -820,7 +826,9 @@ var CustomerInfoRenderer = function CustomerInfoRenderer(_ref) {
 var CompanyInfoRenderer = function CompanyInfoRenderer(_ref) {
   var element = _ref.element,
     previewData = _ref.previewData,
-    mode = _ref.mode;
+    mode = _ref.mode,
+    _ref$canvasScale = _ref.canvasScale,
+    canvasScale = _ref$canvasScale === void 0 ? 1 : _ref$canvasScale;
   var _element$x = element.x,
     x = _element$x === void 0 ? 0 : _element$x,
     _element$y = element.y,
@@ -898,7 +906,7 @@ var CompanyInfoRenderer = function CompanyInfoRenderer(_ref) {
     padding: '4px',
     boxSizing: 'border-box',
     overflow: 'hidden',
-    fontSize: "".concat(fontSize, "px"),
+    fontSize: "".concat(fontSize * canvasScale, "px"),
     fontFamily: fontFamily,
     color: color,
     display: visible ? 'block' : 'none',
@@ -974,7 +982,9 @@ var CompanyInfoRenderer = function CompanyInfoRenderer(_ref) {
 var OrderNumberRenderer = function OrderNumberRenderer(_ref) {
   var element = _ref.element,
     previewData = _ref.previewData,
-    mode = _ref.mode;
+    mode = _ref.mode,
+    _ref$canvasScale = _ref.canvasScale,
+    canvasScale = _ref$canvasScale === void 0 ? 1 : _ref$canvasScale;
   var _element$x = element.x,
     x = _element$x === void 0 ? 0 : _element$x,
     _element$y = element.y,
@@ -1049,7 +1059,7 @@ var OrderNumberRenderer = function OrderNumberRenderer(_ref) {
     padding: '4px',
     boxSizing: 'border-box',
     overflow: 'hidden',
-    fontSize: "".concat(fontSize, "px"),
+    fontSize: "".concat(fontSize * canvasScale, "px"),
     fontFamily: fontFamily,
     color: color,
     display: visible ? 'flex' : 'none',
@@ -1450,7 +1460,8 @@ function CanvasMode() {
     var commonProps = {
       element: CanvasMode_objectSpread(CanvasMode_objectSpread({}, element), elementData),
       previewData: previewData,
-      mode: 'canvas'
+      mode: 'canvas',
+      canvasScale: scale
     };
     switch (element.type) {
       case 'text':

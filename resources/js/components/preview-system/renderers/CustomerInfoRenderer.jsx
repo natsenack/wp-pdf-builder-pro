@@ -3,7 +3,7 @@ import React from 'react';
 /**
  * Renderer pour les informations client
  */
-export const CustomerInfoRenderer = ({ element, previewData, mode }) => {
+export const CustomerInfoRenderer = ({ element, previewData, mode, canvasScale = 1 }) => {
   const {
     x = 0,
     y = 0,
@@ -55,7 +55,7 @@ export const CustomerInfoRenderer = ({ element, previewData, mode }) => {
     padding: '8px',
     boxSizing: 'border-box',
     overflow: 'hidden',
-    fontSize: `${fontSize}px`,
+    fontSize: `${fontSize * canvasScale}px`,
     fontFamily,
     color,
     display: visible ? 'block' : 'none',

@@ -3,7 +3,7 @@ import React from 'react';
 /**
  * Renderer pour le numéro de commande
  */
-export const OrderNumberRenderer = ({ element, previewData, mode }) => {
+export const OrderNumberRenderer = ({ element, previewData, mode, canvasScale = 1 }) => {
   const {
     x = 0,
     y = 0,
@@ -54,7 +54,7 @@ export const OrderNumberRenderer = ({ element, previewData, mode }) => {
     padding: '4px',
     boxSizing: 'border-box',
     overflow: 'hidden',
-    fontSize: `${fontSize}px`,
+    fontSize: `${fontSize * canvasScale}px`,
     fontFamily,
     color,
     display: visible ? 'flex' : 'none',

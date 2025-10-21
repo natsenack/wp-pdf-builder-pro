@@ -49,7 +49,8 @@ function CanvasMode() {
     const commonProps = {
       element: { ...element, ...elementData },
       previewData,
-      mode: 'canvas'
+      mode: 'canvas',
+      canvasScale: scale
     };
 
     switch (element.type) {
