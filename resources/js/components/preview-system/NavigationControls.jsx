@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import { usePreviewContext } from '../context/PreviewContext';
-import { usePerformanceMonitor } from '../hooks/usePerformanceMonitor';
+import { usePreviewContext } from './context/PreviewContext';
+import { usePerformanceMonitor } from './hooks/usePerformanceMonitor';
 
 /**
  * NavigationControls - Contrôles de navigation pour l'aperçu modal

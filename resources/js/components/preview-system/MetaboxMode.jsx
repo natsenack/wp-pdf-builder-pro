@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { usePreviewContext } from '../context/PreviewContext';
-import { usePerformanceMonitor } from '../hooks/usePerformanceMonitor';
+import { usePreviewContext } from './context/PreviewContext';
+import { usePerformanceMonitor } from './hooks/usePerformanceMonitor';
 import PDFRenderer from './renderers/PDFRenderer';
 import CanvasRenderer from './renderers/CanvasRenderer';
 import ImageRenderer from './renderers/ImageRenderer';

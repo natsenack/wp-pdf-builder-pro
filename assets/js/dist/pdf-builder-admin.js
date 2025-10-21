@@ -12575,11 +12575,13 @@ function ModalSkeleton() {
 
 
 // Lazy loading des modes pour optimisation performance
+// CanvasMode (modes/CanvasMode) fournit des helpers statiques -> on ajoute un wrapper par défaut
 var CanvasMode = /*#__PURE__*/(0,react.lazy)(function () {
   return __webpack_require__.e(/* import() */ 657).then(__webpack_require__.bind(__webpack_require__, 657));
 });
+// Utiliser la version composant de Metabox (components/MetaboxMode.jsx) pour que le module exporte bien un default React component
 var MetaboxMode = /*#__PURE__*/(0,react.lazy)(function () {
-  return __webpack_require__.e(/* import() */ 295).then(__webpack_require__.bind(__webpack_require__, 295));
+  return __webpack_require__.e(/* import() */ 851).then(__webpack_require__.bind(__webpack_require__, 851));
 });
 
 /**

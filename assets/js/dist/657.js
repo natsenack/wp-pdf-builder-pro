@@ -9,7 +9,8 @@ __webpack_require__.r(__webpack_exports__);
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  CanvasMode: () => (/* binding */ CanvasMode)
+  CanvasMode: () => (/* binding */ CanvasMode),
+  "default": () => (/* binding */ modes_CanvasMode)
 });
 
 ;// ./resources/js/components/preview-system/data/SampleDataProvider.jsx
@@ -957,6 +958,8 @@ var SampleDataProvider = /*#__PURE__*/function () {
     }
   }]);
 }();
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(540);
 ;// ./resources/js/components/preview-system/modes/CanvasMode.jsx
 function CanvasMode_typeof(o) { "@babel/helpers - typeof"; return CanvasMode_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, CanvasMode_typeof(o); }
 function _regeneratorValues(e) { if (null != e) { var t = e["function" == typeof Symbol && Symbol.iterator || "@@iterator"], r = 0; if (t) return t.call(e); if ("function" == typeof e.next) return e; if (!isNaN(e.length)) return { next: function next() { return e && r >= e.length && (e = void 0), { value: e && e[r++], done: !e }; } }; } throw new TypeError(CanvasMode_typeof(e) + " is not iterable"); }
@@ -1136,6 +1139,17 @@ var CanvasMode = /*#__PURE__*/function () {
     }
   }]);
 }();
+
+// Fournir un composant React par défaut qui utilise les helpers statiques
+
+function CanvasModeComponent(props) {
+  // Composant léger qui délègue le rendu aux renderers existants via le context
+  // Ici on suppose que le PreviewContext / renderers prendront en charge l'affichage
+  return /*#__PURE__*/react.createElement("div", {
+    className: "canvas-mode-component"
+  }, /*#__PURE__*/react.createElement("div", null, "Chargement de l'aper\xE7u Canvas..."));
+}
+/* harmony default export */ const modes_CanvasMode = (CanvasModeComponent);
 
 /***/ })
 

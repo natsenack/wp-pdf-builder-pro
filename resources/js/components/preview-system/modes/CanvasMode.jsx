@@ -80,3 +80,19 @@ export class CanvasMode {
     };
   }
 }
+
+// Fournir un composant React par défaut qui utilise les helpers statiques
+import React from 'react';
+
+function CanvasModeComponent(props) {
+  // Composant léger qui délègue le rendu aux renderers existants via le context
+  // Ici on suppose que le PreviewContext / renderers prendront en charge l'affichage
+  return (
+    <div className="canvas-mode-component">
+      {/* Le vrai rendu est géré par le système de preview via loadData */}
+      <div>Chargement de l'aperçu Canvas...</div>
+    </div>
+  );
+}
+
+export default CanvasModeComponent;

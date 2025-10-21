@@ -3,8 +3,10 @@ import { usePreview } from '../context/PreviewContext';
 import ModalSkeleton from './ModalSkeleton';
 
 // Lazy loading des modes pour optimisation performance
+// CanvasMode (modes/CanvasMode) fournit des helpers statiques -> on ajoute un wrapper par défaut
 const CanvasMode = lazy(() => import('../modes/CanvasMode'));
-const MetaboxMode = lazy(() => import('../modes/MetaboxMode'));
+// Utiliser la version composant de Metabox (components/MetaboxMode.jsx) pour que le module exporte bien un default React component
+const MetaboxMode = lazy(() => import('../MetaboxMode'));
 
 /**
  * PreviewModal - Composant principal du système d'aperçu modal
