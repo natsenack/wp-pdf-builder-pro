@@ -16,6 +16,7 @@ import NewTemplateModal from './NewTemplateModal';
 
 // Import du système d'aperçu unifié
 import PreviewModal from './preview-system/PreviewModal';
+import { PreviewProvider } from './preview-system/context/PreviewProvider';
 
 export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
   const [tool, setTool] = useState('select');
@@ -997,7 +998,9 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
       />
 
       {/* Modale d'aperçu unifié */}
-      <PreviewModal {...previewModalProps} />
+      <PreviewProvider>
+        <PreviewModal {...previewModalProps} />
+      </PreviewProvider>
 
       {/* Compteur FPS */}
       <FPSCounter showFps={globalSettings.settings.showFps} />

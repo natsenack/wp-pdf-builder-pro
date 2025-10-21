@@ -11206,9 +11206,9 @@ var PreviewModal_PreviewModal = function PreviewModal(props) {
       console.log('🎭 PreviewModal: props null/undefined, rien rendu');
       return /*#__PURE__*/react.createElement("div", null);
     }
-    return /*#__PURE__*/react.createElement(PreviewProvider.PreviewProvider, null, /*#__PURE__*/react.createElement(PreviewModalWithContext, {
+    return /*#__PURE__*/react.createElement(PreviewModalWithContext, {
       legacyProps: props
-    }));
+    });
   } catch (error) {
     console.error('🎭 PreviewModal: Erreur dans PreviewModal:', error);
     return false;
@@ -11321,6 +11321,7 @@ function PDFCanvasEditor_arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 
 
 // Import du système d'aperçu unifié
+
 
 var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
   var options = _ref.options;
@@ -12324,7 +12325,7 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
       return setShowNewTemplateModal(false);
     },
     onCreateTemplate: handleCreateTemplate
-  }), /*#__PURE__*/react.createElement(preview_system_PreviewModal, previewModalProps), /*#__PURE__*/react.createElement(FPSCounter, {
+  }), /*#__PURE__*/react.createElement(PreviewProvider.PreviewProvider, null, /*#__PURE__*/react.createElement(preview_system_PreviewModal, previewModalProps)), /*#__PURE__*/react.createElement(FPSCounter, {
     showFps: globalSettings.settings.showFps
   }));
 });

@@ -16,11 +16,7 @@ const PreviewModal = (props) => {
     return <div></div>;
   }
 
-    return (
-      <PreviewProvider>
-        <PreviewModalWithContext legacyProps={props} />
-      </PreviewProvider>
-    );
+    return <PreviewModalWithContext legacyProps={props} />;
   } catch (error) {
     console.error('🎭 PreviewModal: Erreur dans PreviewModal:', error);
     return false;
