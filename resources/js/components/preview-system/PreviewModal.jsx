@@ -24,7 +24,7 @@ const PreviewModal = (props) => {
 };
 
 // Composant interne qui gère la logique legacy
-const PreviewModalWithContext = ({ legacyProps }) => {
+const PreviewModalWithContext = React.memo(({ legacyProps }) => {
   console.log('🎭 PreviewModalWithContext rendu avec legacyProps:', legacyProps);
   try {
     const { state: { isOpen }, actions: { openPreview, closePreview } } = usePreviewContext();
@@ -79,6 +79,6 @@ const PreviewModalWithContext = ({ legacyProps }) => {
     console.error('PDF Builder: PreviewModalWithContext legacyProps that caused error:', legacyProps);
     return null;
   }
-};
+});
 
-export default PreviewModal;
+export default React.memo(PreviewModal);
