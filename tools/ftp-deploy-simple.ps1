@@ -1,4 +1,4 @@
-# 🚀 FTP DEPLOY - VERSION CORRIGÉE
+﻿# 🚀 FTP DEPLOY - VERSION CORRIGÉE
 # ================================
 # Version corrigée - Déploiement FTP avec création automatique des dossiers
 
@@ -301,3 +301,4 @@ Pop-Location
 # ============================================================================
 # FIN
 # ============================================================================
+
