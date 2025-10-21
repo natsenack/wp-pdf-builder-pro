@@ -799,12 +799,3 @@ export function SimplePreviewTest() {
     </div>
   );
 }
-
-export default {
-  SimpleCanvasPreview,
-  SimplePreviewModal,
-  SimplePreviewTest,
-  SimpleElementRenderer,
-  usePreviewScaling,
-  useSimplePreview
-};

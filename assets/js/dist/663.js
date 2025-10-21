@@ -824,14 +824,6 @@ function SimplePreviewTest() {
     title: "Aper\xE7u de test - Version 3.0"
   }));
 }
-/* harmony default export */ const SimplePreviewSystem_v3 = ({
-  SimpleCanvasPreview: SimpleCanvasPreview,
-  SimplePreviewModal: SimplePreviewModal,
-  SimplePreviewTest: SimplePreviewTest,
-  SimpleElementRenderer: SimpleElementRenderer,
-  usePreviewScaling: usePreviewScaling,
-  useSimplePreview: useSimplePreview
-});
 ;// ./resources/js/components/preview-system/modes/CanvasMode_new.jsx
 
 
