@@ -1,68 +1,29 @@
 import React from 'react';
-import { usePreviewContext } from '../context/PreviewContext_new';
-import { UniversalRenderer } from '../renderers/UniversalRenderer';
+import { useSimplePreview } from '../SimplePreviewSystem_v3';
 
 /**
- * Mode Canvas - Version 2.0 complètement refaite
- * Système d'aperçu spatial robuste et performant
+ * Mode Canvas - Version 3.0 ultra-simple
+ * Système d'aperçu avec calculs mathématiques parfaits
  */
 
 function CanvasMode() {
-  const { state, computed } = usePreviewContext();
-  
   const {
     elements,
     templateData,
     previewData,
     scale,
     zoom,
-    isFullscreen
-  } = state;
-
-  // Calcul des dimensions et de l'échelle
-  const canvasWidth = templateData.width;
-  const canvasHeight = templateData.height;
-  const finalScale = computed.actualScale;
-
-  // Dimensions d'affichage du canvas
-  const displayWidth = canvasWidth * finalScale;
-  const displayHeight = canvasHeight * finalScale;
-
-  // Style du conteneur principal
-  const containerStyle = {
-    width: '100%',
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    padding: '20px',
-    backgroundColor: '#f5f5f7',
-    overflow: 'auto'
-  };
-
-  // Style du canvas
-  const canvasStyle = {
-    width: canvasWidth,
-    height: canvasHeight,
-    backgroundColor: '#ffffff',
-    position: 'relative',
-    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
-    border: '1px solid #e5e5e7',
-    borderRadius: '8px',
-    overflow: 'hidden',
-    transform: `scale(${finalScale})`,
-    transformOrigin: 'top center',
-    margin: `${20 / finalScale}px auto`
-  };
-
-  // Style pour le wrapper qui contient le canvas mis à l'échelle
-  const canvasWrapperStyle = {
-    width: displayWidth,
-    height: displayHeight,
-    margin: '20px auto',
-    position: 'relative'
-  };
+    isFullscreen,
+    actualScale,
+    canvasWidth,
+    canvasHeight,
+    displayWidth,
+    displayHeight,
+    containerStyle,
+    canvasStyle,
+    canvasWrapperStyle,
+    renderElements
+  } = useSimplePreview();
 
   return (
     <div style={containerStyle} className="canvas-mode-container">
@@ -83,7 +44,7 @@ function CanvasMode() {
       }}>
         <span>📄 {canvasWidth} × {canvasHeight} points</span>
         <span>|</span>
-        <span>🔍 {Math.round(finalScale * 100)}%</span>
+        <span>🔍 {Math.round(actualScale * 100)}%</span>
         <span>|</span>
         <span>📦 {elements.length} éléments</span>
         {previewData && Object.keys(previewData).length > 0 && (
@@ -98,18 +59,8 @@ function CanvasMode() {
       <div style={canvasWrapperStyle}>
         {/* Canvas principal */}
         <div style={canvasStyle} className="preview-canvas">
-          {/* Rendu de tous les éléments */}
-          {elements.map((element) => (
-            <UniversalRenderer
-              key={element.id}
-              element={element}
-              previewData={previewData}
-              mode="canvas"
-              scale={1} // L'échelle est appliquée au niveau du canvas
-              zoom={1}  // Le zoom est appliqué au niveau du canvas
-              isPreview={true}
-            />
-          ))}
+          {/* Rendu de tous les éléments avec le système v3.0 */}
+          {renderElements()}
 
           {/* Message si aucun élément */}
           {elements.length === 0 && (
@@ -187,11 +138,6 @@ function CanvasMode() {
           <span>Zoom: {Math.round(zoom * 100)}%</span>
           <span>Résolution: {Math.round(canvasWidth * 0.3528)} × {Math.round(canvasHeight * 0.3528)} mm</span>
         </div>
-        {state.lastUpdated && (
-          <div style={{ marginTop: '8px', fontSize: '12px' }}>
-            Dernière mise à jour: {new Date(state.lastUpdated).toLocaleTimeString()}
-          </div>
-        )}
       </div>
     </div>
   );
