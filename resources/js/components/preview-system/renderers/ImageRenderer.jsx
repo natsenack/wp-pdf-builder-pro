@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 /**
  * Renderer pour les éléments image (logos, etc.)
  */
 export const ImageRenderer = ({ element, previewData, mode, canvasScale = 1 }) => {
+  const [imageLoaded, setImageLoaded] = useState(true);
+  const [imageError, setImageError] = useState(false);
+
   const {
     x = 0,
     y = 0,
@@ -61,7 +64,8 @@ export const ImageRenderer = ({ element, previewData, mode, canvasScale = 1 }) =
     objectFit,
     borderRadius: borderWidth > 0 ? '0' : `${borderRadius}px`,
     // Filtres d'image
-    filter: `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturate}%)`
+    filter: `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturate}%)`,
+    display: imageLoaded && !imageError ? 'block' : 'none'
   };
 
   const placeholderStyle = {
@@ -87,31 +91,33 @@ export const ImageRenderer = ({ element, previewData, mode, canvasScale = 1 }) =
       data-element-id={element.id}
       data-element-type={element.type}
     >
-      {finalImageUrl ? (
+      {finalImageUrl && !imageError ? (
         <img
           src={finalImageUrl}
           alt={alt}
           style={imageStyle}
-          onError={(e) => {
-            // Fallback vers le placeholder en cas d'erreur de chargement
-            e.target.style.display = 'none';
-            e.target.nextSibling.style.display = 'flex';
+          onLoad={() => {
+            setImageLoaded(true);
+            setImageError(false);
+          }}
+          onError={() => {
+            setImageLoaded(false);
+            setImageError(true);
+            console.warn(`Failed to load image: ${finalImageUrl}`);
           }}
         />
       ) : null}
 
       {/* Placeholder affiché si pas d'image ou erreur de chargement */}
-      <div
-        style={{
-          ...placeholderStyle,
-          display: finalImageUrl ? 'none' : 'flex'
-        }}
-      >
-        <div>
-          <div style={{ fontSize: '16px', marginBottom: '4px' }}>📷</div>
-          <div>{element.type === 'company_logo' ? 'Logo' : 'Image'}</div>
+      {!finalImageUrl || imageError ? (
+        <div style={placeholderStyle}>
+          <div>
+            <div style={{ fontSize: '16px', marginBottom: '4px' }}>📷</div>
+            <div>{element.type === 'company_logo' ? 'Logo' : 'Image'}</div>
+            {imageError && <div style={{ fontSize: '10px', marginTop: '4px', color: '#dc3545' }}>Erreur de chargement</div>}
+          </div>
         </div>
-      </div>
+      ) : null}
     </div>
   );
 };
