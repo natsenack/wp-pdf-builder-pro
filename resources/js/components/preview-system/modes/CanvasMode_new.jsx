@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSimplePreview } from '../SimplePreviewSystem_v3';
+import { useSimplePreview } from '../SimplePreviewSystem_v3_TEST';
 
 /**
  * Mode Canvas - Version 3.0 ultra-simple
