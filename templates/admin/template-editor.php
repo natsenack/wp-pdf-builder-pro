@@ -216,12 +216,18 @@ body.wp-admin .pdf-builder-container {
         console.log('- window.PDFBuilderPro value:', window.PDFBuilderPro);
         console.log('- pdfBuilderProExists:', pdfBuilderProExists);
         console.log('- initExists:', initExists);
+
+        // LOGS DÉTAILLÉS QUOI QU'IL ARRIVE
         if (pdfBuilderProExists) {
             console.log('- PDFBuilderPro keys:', Object.keys(window.PDFBuilderPro));
             console.log('- PDFBuilderPro has init property:', 'init' in window.PDFBuilderPro);
             console.log('- PDFBuilderPro.init type:', typeof window.PDFBuilderPro.init);
             console.log('- PDFBuilderPro.init value:', window.PDFBuilderPro.init);
             console.log('- Direct check window.PDFBuilderPro.init:', !!window.PDFBuilderPro.init);
+            console.log('- window.PDFBuilderPro === null?', window.PDFBuilderPro === null);
+            console.log('- window.PDFBuilderPro === undefined?', window.PDFBuilderPro === undefined);
+        } else {
+            console.log('- PDFBuilderPro is null or undefined');
         }
 
         if (pdfBuilderProExists && initExists) {
@@ -288,13 +294,19 @@ body.wp-admin .pdf-builder-container {
         const reactExists = typeof window.React !== 'undefined';
         const reactDomExists = typeof window.ReactDOM !== 'undefined';
 
-        // DEBUG: Log à chaque vérification
+        // LOGS DÉTAILLÉS À CHAQUE VÉRIFICATION
         if (scriptCheckAttempts % 10 === 0 || scriptCheckAttempts === 1) {
-            console.log(`🔍 PDF Builder Debug: Check attempt ${scriptCheckAttempts}/50`);
+            console.log(`🔍 PDF Builder Debug: Check attempt ${scriptCheckAttempts}/50 - DETAILED`);
             console.log('- pdfBuilderProExists:', pdfBuilderProExists);
             console.log('- initExists:', initExists);
             console.log('- reactExists:', reactExists);
             console.log('- reactDomExists:', reactDomExists);
+            if (pdfBuilderProExists) {
+                console.log('- PDFBuilderPro keys:', Object.keys(window.PDFBuilderPro));
+                console.log('- PDFBuilderPro has init:', 'init' in window.PDFBuilderPro);
+                console.log('- PDFBuilderPro.init type:', typeof window.PDFBuilderPro.init);
+                console.log('- PDFBuilderPro.init value:', window.PDFBuilderPro.init);
+            }
         }
 
         if (pdfBuilderProExists && initExists && reactExists && reactDomExists) {
