@@ -446,18 +446,35 @@ window.pdfBuilderShowPreview = function(orderId, templateId, nonce, canvasData =
             // Importer dynamiquement le système complet
             Promise.all([
                 import('./components/preview-system/context/PreviewProvider'),
+                import('./components/preview-system/context/PreviewContext'),
                 import('./components/preview-system/components/PreviewModal')
-            ]).then(([providerModule, modalModule]) => {
+            ]).then(([providerModule, contextModule, modalModule]) => {
                 const PreviewProvider = providerModule.PreviewProvider;
+                const { usePreviewContext } = contextModule;
                 const PreviewModal = modalModule.default;
 
-                // Créer l'élément React avec le Provider
+                // Créer un composant wrapper qui initialise le contexte
+                const PreviewWrapper = ({ orderId, templateId, nonce }) => {
+                    const { actions } = usePreviewContext();
+
+                    React.useEffect(() => {
+                        // Ouvrir la preview avec les paramètres
+                        actions.openPreview('metabox', {
+                            orderId,
+                            templateId,
+                            nonce
+                        });
+                    }, [actions, orderId, templateId, nonce]);
+
+                    return React.createElement(PreviewModal);
+                };
+
+                // Créer l'élément React avec le Provider et le wrapper
                 const previewModalElement = React.createElement(PreviewProvider, {},
-                    React.createElement(PreviewModal, {
-                        mode: 'metabox',
-                        orderId: orderId,
-                        templateId: templateId,
-                        nonce: nonce
+                    React.createElement(PreviewWrapper, {
+                        orderId,
+                        templateId,
+                        nonce
                     })
                 );
 

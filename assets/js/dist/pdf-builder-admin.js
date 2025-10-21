@@ -12634,16 +12634,35 @@ window.pdfBuilderShowPreview = function (orderId, templateId, nonce) {
       // Mode metabox standard
 
       // Importer dynamiquement le système complet
-      Promise.all([Promise.resolve(/* import() */).then(__webpack_require__.bind(__webpack_require__, 424)), Promise.resolve(/* import() */).then(__webpack_require__.bind(__webpack_require__, 454))]).then(function (_ref2) {
-        var _ref3 = js_slicedToArray(_ref2, 2),
+      Promise.all([Promise.resolve(/* import() */).then(__webpack_require__.bind(__webpack_require__, 424)), Promise.resolve(/* import() */).then(__webpack_require__.bind(__webpack_require__, 38)), Promise.resolve(/* import() */).then(__webpack_require__.bind(__webpack_require__, 454))]).then(function (_ref2) {
+        var _ref3 = js_slicedToArray(_ref2, 3),
           providerModule = _ref3[0],
-          modalModule = _ref3[1];
+          contextModule = _ref3[1],
+          modalModule = _ref3[2];
         var PreviewProvider = providerModule.PreviewProvider;
+        var usePreviewContext = contextModule.usePreviewContext;
         var PreviewModal = modalModule["default"];
 
-        // Créer l'élément React avec le Provider
-        var previewModalElement = /*#__PURE__*/react.createElement(PreviewProvider, {}, /*#__PURE__*/react.createElement(PreviewModal, {
-          mode: 'metabox',
+        // Créer un composant wrapper qui initialise le contexte
+        var PreviewWrapper = function PreviewWrapper(_ref4) {
+          var orderId = _ref4.orderId,
+            templateId = _ref4.templateId,
+            nonce = _ref4.nonce;
+          var _usePreviewContext = usePreviewContext(),
+            actions = _usePreviewContext.actions;
+          react.useEffect(function () {
+            // Ouvrir la preview avec les paramètres
+            actions.openPreview('metabox', {
+              orderId: orderId,
+              templateId: templateId,
+              nonce: nonce
+            });
+          }, [actions, orderId, templateId, nonce]);
+          return /*#__PURE__*/react.createElement(PreviewModal);
+        };
+
+        // Créer l'élément React avec le Provider et le wrapper
+        var previewModalElement = /*#__PURE__*/react.createElement(PreviewProvider, {}, /*#__PURE__*/react.createElement(PreviewWrapper, {
           orderId: orderId,
           templateId: templateId,
           nonce: nonce
