@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { PreviewProvider } from './context/PreviewProvider';
 import { usePreview } from './context/PreviewContext';
 import PreviewModalComponent from './components/PreviewModal';
@@ -19,7 +19,7 @@ const PreviewModal = (props) => {
   if (!props) {
     console.warn('PDF Builder: PreviewModal called with undefined/null props, skipping render');
     console.log('PDF Builder: PreviewModal returning empty Fragment due to invalid props');
-    return <React.Fragment />;
+    return <Fragment />;
   }    console.log('PDF Builder: PreviewModal proceeding with valid props, rendering component');
 
     return (
