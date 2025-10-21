@@ -10,6 +10,26 @@ import React from 'react';
 // =============================================================================
 
 /**
+ * Hook pour calculer les dimensions et l'échelle de l'aperçu
+ */
+export function usePreviewScaling(templateWidth, templateHeight, containerWidth = 800, containerHeight = 600) {
+  return React.useMemo(() => {
+    // Calcul de l'échelle pour que le template tienne dans le conteneur
+    const scaleX = containerWidth / templateWidth;
+    const scaleY = containerHeight / templateHeight;
+    const scale = Math.min(scaleX, scaleY, 1); // Ne pas agrandir
+
+    return {
+      scale,
+      displayWidth: templateWidth * scale,
+      displayHeight: templateHeight * scale,
+      templateWidth,
+      templateHeight
+    };
+  }, [templateWidth, templateHeight, containerWidth, containerHeight]);
+}
+
+/**
  * Hook principal pour le système d'aperçu v3.0
  * Fournit toutes les données et fonctions nécessaires à CanvasMode
  */
@@ -120,26 +140,6 @@ export function useSimplePreview() {
     setZoom: (zoom) => setState(prev => ({ ...prev, zoom })),
     setFullscreen: (isFullscreen) => setState(prev => ({ ...prev, isFullscreen }))
   };
-}
-
-/**
- * Hook pour calculer les dimensions et l'échelle de l'aperçu
- */
-export function usePreviewScaling(templateWidth, templateHeight, containerWidth = 800, containerHeight = 600) {
-  return React.useMemo(() => {
-    // Calcul de l'échelle pour que le template tienne dans le conteneur
-    const scaleX = containerWidth / templateWidth;
-    const scaleY = containerHeight / templateHeight;
-    const scale = Math.min(scaleX, scaleY, 1); // Ne pas agrandir
-
-    return {
-      scale,
-      displayWidth: templateWidth * scale,
-      displayHeight: templateHeight * scale,
-      templateWidth,
-      templateHeight
-    };
-  }, [templateWidth, templateHeight, containerWidth, containerHeight]);
 }
 
 /**

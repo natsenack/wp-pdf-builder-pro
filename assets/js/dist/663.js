@@ -39,6 +39,28 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 // =============================================================================
 
 /**
+ * Hook pour calculer les dimensions et l'échelle de l'aperçu
+ */
+function usePreviewScaling(templateWidth, templateHeight) {
+  var containerWidth = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 800;
+  var containerHeight = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 600;
+  return react.useMemo(function () {
+    // Calcul de l'échelle pour que le template tienne dans le conteneur
+    var scaleX = containerWidth / templateWidth;
+    var scaleY = containerHeight / templateHeight;
+    var scale = Math.min(scaleX, scaleY, 1); // Ne pas agrandir
+
+    return {
+      scale: scale,
+      displayWidth: templateWidth * scale,
+      displayHeight: templateHeight * scale,
+      templateWidth: templateWidth,
+      templateHeight: templateHeight
+    };
+  }, [templateWidth, templateHeight, containerWidth, containerHeight]);
+}
+
+/**
  * Hook principal pour le système d'aperçu v3.0
  * Fournit toutes les données et fonctions nécessaires à CanvasMode
  */
@@ -179,28 +201,6 @@ function useSimplePreview() {
       });
     }
   };
-}
-
-/**
- * Hook pour calculer les dimensions et l'échelle de l'aperçu
- */
-function usePreviewScaling(templateWidth, templateHeight) {
-  var containerWidth = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 800;
-  var containerHeight = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 600;
-  return react.useMemo(function () {
-    // Calcul de l'échelle pour que le template tienne dans le conteneur
-    var scaleX = containerWidth / templateWidth;
-    var scaleY = containerHeight / templateHeight;
-    var scale = Math.min(scaleX, scaleY, 1); // Ne pas agrandir
-
-    return {
-      scale: scale,
-      displayWidth: templateWidth * scale,
-      displayHeight: templateHeight * scale,
-      templateWidth: templateWidth,
-      templateHeight: templateHeight
-    };
-  }, [templateWidth, templateHeight, containerWidth, containerHeight]);
 }
 
 /**
