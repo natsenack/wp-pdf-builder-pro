@@ -189,6 +189,9 @@ function useSimplePreview() {
     }
   };
 }
+/* harmony default export */ const SimplePreviewSystem_v3 = ({
+  useSimplePreview: useSimplePreview
+});
 ;// ./resources/js/components/preview-system/modes/CanvasMode_new.jsx
 
 
@@ -199,22 +202,22 @@ function useSimplePreview() {
  */
 
 function CanvasMode() {
-  var _useSimplePreview = useSimplePreview(),
-    elements = _useSimplePreview.elements,
-    templateData = _useSimplePreview.templateData,
-    previewData = _useSimplePreview.previewData,
-    scale = _useSimplePreview.scale,
-    zoom = _useSimplePreview.zoom,
-    isFullscreen = _useSimplePreview.isFullscreen,
-    actualScale = _useSimplePreview.actualScale,
-    canvasWidth = _useSimplePreview.canvasWidth,
-    canvasHeight = _useSimplePreview.canvasHeight,
-    displayWidth = _useSimplePreview.displayWidth,
-    displayHeight = _useSimplePreview.displayHeight,
-    containerStyle = _useSimplePreview.containerStyle,
-    canvasStyle = _useSimplePreview.canvasStyle,
-    canvasWrapperStyle = _useSimplePreview.canvasWrapperStyle,
-    renderElements = _useSimplePreview.renderElements;
+  var _SimplePreviewSystem$ = SimplePreviewSystem_v3.useSimplePreview(),
+    elements = _SimplePreviewSystem$.elements,
+    templateData = _SimplePreviewSystem$.templateData,
+    previewData = _SimplePreviewSystem$.previewData,
+    scale = _SimplePreviewSystem$.scale,
+    zoom = _SimplePreviewSystem$.zoom,
+    isFullscreen = _SimplePreviewSystem$.isFullscreen,
+    actualScale = _SimplePreviewSystem$.actualScale,
+    canvasWidth = _SimplePreviewSystem$.canvasWidth,
+    canvasHeight = _SimplePreviewSystem$.canvasHeight,
+    displayWidth = _SimplePreviewSystem$.displayWidth,
+    displayHeight = _SimplePreviewSystem$.displayHeight,
+    containerStyle = _SimplePreviewSystem$.containerStyle,
+    canvasStyle = _SimplePreviewSystem$.canvasStyle,
+    canvasWrapperStyle = _SimplePreviewSystem$.canvasWrapperStyle,
+    renderElements = _SimplePreviewSystem$.renderElements;
   return /*#__PURE__*/react.createElement("div", {
     style: containerStyle,
     className: "canvas-mode-container"

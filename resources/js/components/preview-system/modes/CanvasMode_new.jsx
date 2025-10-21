@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSimplePreview } from '../SimplePreviewSystem_v3';
+import SimplePreviewSystem from '../SimplePreviewSystem_v3';
 
 /**
  * Mode Canvas - Version 3.0 ultra-simple
@@ -23,7 +23,7 @@ function CanvasMode() {
     canvasStyle,
     canvasWrapperStyle,
     renderElements
-  } = useSimplePreview();
+  } = SimplePreviewSystem.useSimplePreview();
 
   return (
     <div style={containerStyle} className="canvas-mode-container">

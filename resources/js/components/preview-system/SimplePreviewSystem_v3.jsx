@@ -128,3 +128,5 @@ export function useSimplePreview() {
     setFullscreen: (isFullscreen) => setState(prev => ({ ...prev, isFullscreen }))
   };
 }
+
+export default { useSimplePreview };
