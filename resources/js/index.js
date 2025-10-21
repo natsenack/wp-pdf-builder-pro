@@ -493,7 +493,7 @@ window.pdfBuilderShowPreview = function(orderId, templateId, nonce, canvasData =
             console.log('=== STARTING DYNAMIC IMPORT ===');
             Promise.all([
                 import('./components/preview-system/context/PreviewProvider'),
-                import('./components/preview-system/components/PreviewModal')
+                import('./components/preview-system/PreviewModal')
             ]).then(([providerModule, modalModule]) => {
                 console.log('=== DYNAMIC IMPORT SUCCESS ===');
                 const PreviewProvider = providerModule.PreviewProvider;
