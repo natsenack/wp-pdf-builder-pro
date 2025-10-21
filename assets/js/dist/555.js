@@ -77,10 +77,10 @@ var ImageRenderer = function ImageRenderer(_ref) {
   var finalImageUrl = imageData.imageUrl || imageUrl;
   var containerStyle = {
     position: 'absolute',
-    left: x * canvasScale,
-    top: y * canvasScale,
-    width: width * canvasScale,
-    height: height * canvasScale,
+    left: "".concat(x * canvasScale, "px"),
+    top: "".concat(y * canvasScale, "px"),
+    width: "".concat(width * canvasScale, "px"),
+    height: "".concat(height * canvasScale, "px"),
     backgroundColor: backgroundColor,
     border: borderWidth > 0 ? "".concat(borderWidth, "px solid ").concat(borderColor) : 'none',
     borderRadius: "".concat(borderRadius, "px"),
@@ -90,10 +90,8 @@ var ImageRenderer = function ImageRenderer(_ref) {
     justifyContent: 'center',
     boxSizing: 'border-box',
     overflow: 'hidden',
-    // Transformations
     transform: "rotate(".concat(rotation, "deg) scale(").concat(scale, ")"),
-    transformOrigin: 'center center',
-    // Ombres
+    transformOrigin: 'top left',
     boxShadow: shadow ? "".concat(shadowOffsetX, "px ").concat(shadowOffsetY, "px 4px ").concat(shadowColor) : 'none'
   };
   var imageStyle = {
@@ -182,8 +180,10 @@ var TextRenderer = function TextRenderer(_ref) {
     width = _element$width === void 0 ? 200 : _element$width,
     _element$height = element.height,
     height = _element$height === void 0 ? 50 : _element$height,
+    _element$content = element.content,
+    content = _element$content === void 0 ? '' : _element$content,
     _element$text = element.text,
-    text = _element$text === void 0 ? 'Texte d\'exemple' : _element$text,
+    text = _element$text === void 0 ? content || 'Texte d\'exemple' : _element$text,
     _element$fontSize = element.fontSize,
     fontSize = _element$fontSize === void 0 ? 14 : _element$fontSize,
     _element$fontFamily = element.fontFamily,
@@ -223,13 +223,15 @@ var TextRenderer = function TextRenderer(_ref) {
     _element$textDecorati = element.textDecoration,
     textDecoration = _element$textDecorati === void 0 ? 'none' : _element$textDecorati,
     _element$lineHeight = element.lineHeight,
-    lineHeight = _element$lineHeight === void 0 ? 1.2 : _element$lineHeight;
+    lineHeight = _element$lineHeight === void 0 ? 1.2 : _element$lineHeight,
+    _element$padding = element.padding,
+    padding = _element$padding === void 0 ? 4 : _element$padding;
   var style = {
     position: 'absolute',
-    left: x * canvasScale,
-    top: y * canvasScale,
-    width: width * canvasScale,
-    height: height * canvasScale,
+    left: "".concat(x * canvasScale, "px"),
+    top: "".concat(y * canvasScale, "px"),
+    width: "".concat(width * canvasScale, "px"),
+    minHeight: "".concat(height * canvasScale, "px"),
     fontSize: "".concat(fontSize * canvasScale, "px"),
     fontFamily: fontFamily,
     fontWeight: fontWeight,
@@ -240,19 +242,16 @@ var TextRenderer = function TextRenderer(_ref) {
     border: borderWidth > 0 ? "".concat(borderWidth, "px solid ").concat(borderColor) : 'none',
     borderRadius: "".concat(borderRadius, "px"),
     opacity: opacity,
-    padding: '4px',
+    padding: "".concat(padding, "px"),
     boxSizing: 'border-box',
-    overflow: 'hidden',
-    display: visible ? 'flex' : 'none',
-    alignItems: 'center',
-    whiteSpace: 'pre-wrap',
+    overflow: 'visible',
+    display: visible ? 'block' : 'none',
+    whiteSpace: 'normal',
     wordWrap: 'break-word',
     textDecoration: textDecoration,
     lineHeight: lineHeight,
-    // Transformations
     transform: "rotate(".concat(rotation, "deg) scale(").concat(scale, ")"),
-    transformOrigin: 'center center',
-    // Ombres
+    transformOrigin: 'top left',
     boxShadow: shadow ? "".concat(shadowOffsetX, "px ").concat(shadowOffsetY, "px 4px ").concat(shadowColor) : 'none'
   };
   return /*#__PURE__*/react.createElement("div", {
@@ -308,19 +307,17 @@ var RectangleRenderer = function RectangleRenderer(_ref) {
     shadowOffsetY = _element$shadowOffset2 === void 0 ? 2 : _element$shadowOffset2;
   var containerStyle = {
     position: 'absolute',
-    left: x * canvasScale,
-    top: y * canvasScale,
-    width: width * canvasScale,
-    height: height * canvasScale,
+    left: "".concat(x * canvasScale, "px"),
+    top: "".concat(y * canvasScale, "px"),
+    width: "".concat(width * canvasScale, "px"),
+    height: "".concat(height * canvasScale, "px"),
     backgroundColor: backgroundColor,
     border: borderWidth > 0 ? "".concat(borderWidth, "px solid ").concat(borderColor) : 'none',
     borderRadius: "".concat(borderRadius, "px"),
     opacity: opacity / 100,
     display: visible ? 'block' : 'none',
-    // Transformations
     transform: "rotate(".concat(rotation, "deg) scale(").concat(scale, ")"),
-    transformOrigin: 'center center',
-    // Ombres
+    transformOrigin: 'top left',
     boxShadow: shadow ? "".concat(shadowOffsetX, "px ").concat(shadowOffsetY, "px 4px ").concat(shadowColor) : 'none'
   };
   return /*#__PURE__*/react.createElement("div", {
@@ -466,10 +463,10 @@ var TableRenderer = function TableRenderer(_ref) {
   var finalHeaders = tableHeaders.length > 0 ? tableHeaders : tableData.headers && tableData.headers.length > 0 ? tableData.headers : generateHeadersFromColumns();
   var containerStyle = {
     position: 'absolute',
-    left: x * canvasScale,
-    top: y * canvasScale,
-    width: width * canvasScale,
-    height: height * canvasScale,
+    left: "".concat(x * canvasScale, "px"),
+    top: "".concat(y * canvasScale, "px"),
+    width: "".concat(width * canvasScale, "px"),
+    height: "".concat(height * canvasScale, "px"),
     backgroundColor: backgroundColor,
     border: borderWidth > 0 ? "".concat(borderWidth, "px solid ").concat(borderColor) : 'none',
     borderRadius: "".concat(borderRadius, "px"),
@@ -478,10 +475,8 @@ var TableRenderer = function TableRenderer(_ref) {
     boxSizing: 'border-box',
     overflow: 'auto',
     display: visible ? 'block' : 'none',
-    // Transformations
     transform: "rotate(".concat(rotation, "deg) scale(").concat(scale, ")"),
-    transformOrigin: 'center center',
-    // Ombres
+    transformOrigin: 'top left',
     boxShadow: shadow ? "".concat(shadowOffsetX, "px ").concat(shadowOffsetY, "px 4px ").concat(shadowColor) : 'none'
   };
   var tableStyleConfig = {
@@ -694,10 +689,10 @@ var DynamicTextRenderer = function DynamicTextRenderer(_ref) {
   var displayContent = elementData.content || customContent;
   var style = {
     position: 'absolute',
-    left: x * canvasScale,
-    top: y * canvasScale,
-    width: width * canvasScale,
-    height: height * canvasScale,
+    left: "".concat(x * canvasScale, "px"),
+    top: "".concat(y * canvasScale, "px"),
+    width: "".concat(width * canvasScale, "px"),
+    minHeight: "".concat(height * canvasScale, "px"),
     fontSize: "".concat(fontSize * canvasScale, "px"),
     fontFamily: fontFamily,
     fontWeight: fontWeight,
@@ -710,17 +705,14 @@ var DynamicTextRenderer = function DynamicTextRenderer(_ref) {
     opacity: opacity,
     padding: '4px',
     boxSizing: 'border-box',
-    overflow: 'hidden',
-    display: visible ? 'flex' : 'none',
-    alignItems: 'center',
-    whiteSpace: 'pre-wrap',
+    overflow: 'visible',
+    display: visible ? 'block' : 'none',
+    whiteSpace: 'normal',
     wordWrap: 'break-word',
     textDecoration: textDecoration,
     lineHeight: lineHeight,
-    // Transformations
     transform: "rotate(".concat(rotation, "deg) scale(").concat(scale, ")"),
-    transformOrigin: 'center center',
-    // Ombres
+    transformOrigin: 'top left',
     boxShadow: shadow ? "".concat(shadowOffsetX, "px ").concat(shadowOffsetY, "px 4px ").concat(shadowColor) : 'none'
   };
   return /*#__PURE__*/react.createElement("div", {
@@ -775,10 +767,10 @@ var BarcodeRenderer = function BarcodeRenderer(_ref) {
     shadowOffsetY = _element$shadowOffset2 === void 0 ? 2 : _element$shadowOffset2;
   var containerStyle = {
     position: 'absolute',
-    left: x * canvasScale,
-    top: y * canvasScale,
-    width: width * canvasScale,
-    height: height * canvasScale,
+    left: "".concat(x * canvasScale, "px"),
+    top: "".concat(y * canvasScale, "px"),
+    width: "".concat(width * canvasScale, "px"),
+    height: "".concat(height * canvasScale, "px"),
     backgroundColor: backgroundColor,
     border: borderWidth > 0 ? "".concat(borderWidth, "px solid ").concat(borderColor) : 'none',
     opacity: opacity / 100,
@@ -788,10 +780,8 @@ var BarcodeRenderer = function BarcodeRenderer(_ref) {
     fontSize: '10px',
     color: '#666',
     fontFamily: 'monospace',
-    // Transformations
     transform: "rotate(".concat(rotation, "deg) scale(").concat(scale, ")"),
-    transformOrigin: 'center center',
-    // Ombres
+    transformOrigin: 'top left',
     boxShadow: shadow ? "".concat(shadowOffsetX, "px ").concat(shadowOffsetY, "px 4px ").concat(shadowColor) : 'none'
   };
 
@@ -864,20 +854,18 @@ var ProgressBarRenderer = function ProgressBarRenderer(_ref) {
     shadowOffsetY = _element$shadowOffset2 === void 0 ? 2 : _element$shadowOffset2;
   var containerStyle = {
     position: 'absolute',
-    left: x * canvasScale,
-    top: y * canvasScale,
-    width: width * canvasScale,
-    height: height * canvasScale,
+    left: "".concat(x * canvasScale, "px"),
+    top: "".concat(y * canvasScale, "px"),
+    width: "".concat(width * canvasScale, "px"),
+    height: "".concat(height * canvasScale, "px"),
     backgroundColor: backgroundColor,
     border: borderWidth > 0 ? "".concat(borderWidth, "px solid ").concat(borderColor) : 'none',
     borderRadius: "".concat(borderRadius, "px"),
     opacity: opacity / 100,
     overflow: 'hidden',
     display: visible ? 'block' : 'none',
-    // Transformations
     transform: "rotate(".concat(rotation, "deg) scale(").concat(scale, ")"),
-    transformOrigin: 'center center',
-    // Ombres
+    transformOrigin: 'top left',
     boxShadow: shadow ? "".concat(shadowOffsetX, "px ").concat(shadowOffsetY, "px 4px ").concat(shadowColor) : 'none'
   };
   var progressStyle = {

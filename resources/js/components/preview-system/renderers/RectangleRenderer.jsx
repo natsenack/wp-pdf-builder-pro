@@ -26,19 +26,17 @@ export const RectangleRenderer = ({ element, previewData, mode, canvasScale = 1 
 
   const containerStyle = {
     position: 'absolute',
-    left: x * canvasScale,
-    top: y * canvasScale,
-    width: width * canvasScale,
-    height: height * canvasScale,
+    left: `${x * canvasScale}px`,
+    top: `${y * canvasScale}px`,
+    width: `${width * canvasScale}px`,
+    height: `${height * canvasScale}px`,
     backgroundColor,
     border: borderWidth > 0 ? `${borderWidth}px solid ${borderColor}` : 'none',
     borderRadius: `${borderRadius}px`,
     opacity: opacity / 100,
     display: visible ? 'block' : 'none',
-    // Transformations
     transform: `rotate(${rotation}deg) scale(${scale})`,
-    transformOrigin: 'center center',
-    // Ombres
+    transformOrigin: 'top left',
     boxShadow: shadow ? `${shadowOffsetX}px ${shadowOffsetY}px 4px ${shadowColor}` : 'none'
   };
 

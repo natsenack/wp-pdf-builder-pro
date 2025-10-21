@@ -9,7 +9,8 @@ export const TextRenderer = ({ element, previewData, mode, canvasScale = 1 }) =>
     y = 0,
     width = 200,
     height = 50,
-    text = 'Texte d\'exemple',
+    content = '',
+    text = content || 'Texte d\'exemple',
     fontSize = 14,
     fontFamily = 'Arial',
     fontWeight = 'normal',
@@ -21,7 +22,6 @@ export const TextRenderer = ({ element, previewData, mode, canvasScale = 1 }) =>
     borderColor = '#000000',
     borderRadius = 0,
     opacity = 1,
-    // Propriétés avancées
     rotation = 0,
     scale = 1,
     visible = true,
@@ -30,15 +30,16 @@ export const TextRenderer = ({ element, previewData, mode, canvasScale = 1 }) =>
     shadowOffsetX = 2,
     shadowOffsetY = 2,
     textDecoration = 'none',
-    lineHeight = 1.2
+    lineHeight = 1.2,
+    padding = 4
   } = element;
 
   const style = {
     position: 'absolute',
-    left: x * canvasScale,
-    top: y * canvasScale,
-    width: width * canvasScale,
-    height: height * canvasScale,
+    left: `${x * canvasScale}px`,
+    top: `${y * canvasScale}px`,
+    width: `${width * canvasScale}px`,
+    minHeight: `${height * canvasScale}px`,
     fontSize: `${fontSize * canvasScale}px`,
     fontFamily,
     fontWeight,
@@ -49,19 +50,16 @@ export const TextRenderer = ({ element, previewData, mode, canvasScale = 1 }) =>
     border: borderWidth > 0 ? `${borderWidth}px solid ${borderColor}` : 'none',
     borderRadius: `${borderRadius}px`,
     opacity,
-    padding: '4px',
+    padding: `${padding}px`,
     boxSizing: 'border-box',
-    overflow: 'hidden',
-    display: visible ? 'flex' : 'none',
-    alignItems: 'center',
-    whiteSpace: 'pre-wrap',
+    overflow: 'visible',
+    display: visible ? 'block' : 'none',
+    whiteSpace: 'normal',
     wordWrap: 'break-word',
     textDecoration,
     lineHeight,
-    // Transformations
     transform: `rotate(${rotation}deg) scale(${scale})`,
-    transformOrigin: 'center center',
-    // Ombres
+    transformOrigin: 'top left',
     boxShadow: shadow ? `${shadowOffsetX}px ${shadowOffsetY}px 4px ${shadowColor}` : 'none'
   };
 

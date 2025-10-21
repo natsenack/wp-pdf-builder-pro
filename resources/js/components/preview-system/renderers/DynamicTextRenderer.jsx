@@ -41,10 +41,10 @@ export const DynamicTextRenderer = ({ element, previewData, mode, canvasScale = 
 
   const style = {
     position: 'absolute',
-    left: x * canvasScale,
-    top: y * canvasScale,
-    width: width * canvasScale,
-    height: height * canvasScale,
+    left: `${x * canvasScale}px`,
+    top: `${y * canvasScale}px`,
+    width: `${width * canvasScale}px`,
+    minHeight: `${height * canvasScale}px`,
     fontSize: `${fontSize * canvasScale}px`,
     fontFamily,
     fontWeight,
@@ -57,17 +57,14 @@ export const DynamicTextRenderer = ({ element, previewData, mode, canvasScale = 
     opacity,
     padding: '4px',
     boxSizing: 'border-box',
-    overflow: 'hidden',
-    display: visible ? 'flex' : 'none',
-    alignItems: 'center',
-    whiteSpace: 'pre-wrap',
+    overflow: 'visible',
+    display: visible ? 'block' : 'none',
+    whiteSpace: 'normal',
     wordWrap: 'break-word',
     textDecoration,
     lineHeight,
-    // Transformations
     transform: `rotate(${rotation}deg) scale(${scale})`,
-    transformOrigin: 'center center',
-    // Ombres
+    transformOrigin: 'top left',
     boxShadow: shadow ? `${shadowOffsetX}px ${shadowOffsetY}px 4px ${shadowColor}` : 'none'
   };
 

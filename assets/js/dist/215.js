@@ -1390,10 +1390,10 @@ var ImageRenderer = function ImageRenderer(_ref) {
   var finalImageUrl = imageData.imageUrl || imageUrl;
   var containerStyle = {
     position: 'absolute',
-    left: x * canvasScale,
-    top: y * canvasScale,
-    width: width * canvasScale,
-    height: height * canvasScale,
+    left: "".concat(x * canvasScale, "px"),
+    top: "".concat(y * canvasScale, "px"),
+    width: "".concat(width * canvasScale, "px"),
+    height: "".concat(height * canvasScale, "px"),
     backgroundColor: backgroundColor,
     border: borderWidth > 0 ? "".concat(borderWidth, "px solid ").concat(borderColor) : 'none',
     borderRadius: "".concat(borderRadius, "px"),
@@ -1403,10 +1403,8 @@ var ImageRenderer = function ImageRenderer(_ref) {
     justifyContent: 'center',
     boxSizing: 'border-box',
     overflow: 'hidden',
-    // Transformations
     transform: "rotate(".concat(rotation, "deg) scale(").concat(scale, ")"),
-    transformOrigin: 'center center',
-    // Ombres
+    transformOrigin: 'top left',
     boxShadow: shadow ? "".concat(shadowOffsetX, "px ").concat(shadowOffsetY, "px 4px ").concat(shadowColor) : 'none'
   };
   var imageStyle = {
