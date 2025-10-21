@@ -35,10 +35,10 @@ export const TextRenderer = ({ element, previewData, mode, canvasScale = 1 }) =>
 
   const style = {
     position: 'absolute',
-    left: x,
-    top: y,
-    width,
-    height,
+    left: x * canvasScale,
+    top: y * canvasScale,
+    width: width * canvasScale,
+    height: height * canvasScale,
     fontSize: `${fontSize * canvasScale}px`,
     fontFamily,
     fontWeight,

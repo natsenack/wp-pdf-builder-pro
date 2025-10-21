@@ -7,7 +7,7 @@ import { getPageDimensions, calculateOptimalZoom } from '../utils/previewUtils';
  * PDFRenderer - Renderer spécialisé pour l'aperçu PDF
  * Utilise Canvas HTML5 pour le rendu haute qualité
  */
-function PDFRenderer({ pageData, scale = 1, className = '' }) {
+function PDFRenderer({ element, previewData, mode, canvasScale = 1 }) {
   const canvasRef = useRef(null);
   const { measureOperation } = usePerformanceMonitor('PDFRenderer');
   const [renderStatus, setRenderStatus] = useState('idle'); // idle, rendering, complete, error

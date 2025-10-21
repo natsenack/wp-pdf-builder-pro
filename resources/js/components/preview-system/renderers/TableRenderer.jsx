@@ -12,7 +12,7 @@ const rgbToCss = (rgbArray) => {
   return `rgb(${rgbArray[0]}, ${rgbArray[1]}, ${rgbArray[2]})`;
 };
 
-export const TableRenderer = ({ element, previewData, mode }) => {
+export const TableRenderer = ({ element, previewData, mode, canvasScale = 1 }) => {
   const {
     x = 0,
     y = 0,
@@ -96,10 +96,10 @@ export const TableRenderer = ({ element, previewData, mode }) => {
 
   const containerStyle = {
     position: 'absolute',
-    left: x,
-    top: y,
-    width,
-    height,
+    left: x * canvasScale,
+    top: y * canvasScale,
+    width: width * canvasScale,
+    height: height * canvasScale,
     backgroundColor,
     border: borderWidth > 0 ? `${borderWidth}px solid ${borderColor}` : 'none',
     borderRadius: `${borderRadius}px`,

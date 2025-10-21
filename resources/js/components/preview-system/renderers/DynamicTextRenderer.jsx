@@ -41,10 +41,10 @@ export const DynamicTextRenderer = ({ element, previewData, mode, canvasScale = 
 
   const style = {
     position: 'absolute',
-    left: x,
-    top: y,
-    width,
-    height,
+    left: x * canvasScale,
+    top: y * canvasScale,
+    width: width * canvasScale,
+    height: height * canvasScale,
     fontSize: `${fontSize * canvasScale}px`,
     fontFamily,
     fontWeight,

@@ -80,10 +80,10 @@ var TextRenderer = function TextRenderer(_ref) {
     lineHeight = _element$lineHeight === void 0 ? 1.2 : _element$lineHeight;
   var style = {
     position: 'absolute',
-    left: x,
-    top: y,
-    width: width,
-    height: height,
+    left: x * canvasScale,
+    top: y * canvasScale,
+    width: width * canvasScale,
+    height: height * canvasScale,
     fontSize: "".concat(fontSize * canvasScale, "px"),
     fontFamily: fontFamily,
     fontWeight: fontWeight,
@@ -125,7 +125,9 @@ var TextRenderer = function TextRenderer(_ref) {
 var RectangleRenderer = function RectangleRenderer(_ref) {
   var element = _ref.element,
     previewData = _ref.previewData,
-    mode = _ref.mode;
+    mode = _ref.mode,
+    _ref$canvasScale = _ref.canvasScale,
+    canvasScale = _ref$canvasScale === void 0 ? 1 : _ref$canvasScale;
   var _element$x = element.x,
     x = _element$x === void 0 ? 0 : _element$x,
     _element$y = element.y,
@@ -160,10 +162,10 @@ var RectangleRenderer = function RectangleRenderer(_ref) {
     shadowOffsetY = _element$shadowOffset2 === void 0 ? 2 : _element$shadowOffset2;
   var containerStyle = {
     position: 'absolute',
-    left: x,
-    top: y,
-    width: width,
-    height: height,
+    left: x * canvasScale,
+    top: y * canvasScale,
+    width: width * canvasScale,
+    height: height * canvasScale,
     backgroundColor: backgroundColor,
     border: borderWidth > 0 ? "".concat(borderWidth, "px solid ").concat(borderColor) : 'none',
     borderRadius: "".concat(borderRadius, "px"),
@@ -207,7 +209,9 @@ var rgbToCss = function rgbToCss(rgbArray) {
 var TableRenderer = function TableRenderer(_ref) {
   var element = _ref.element,
     previewData = _ref.previewData,
-    mode = _ref.mode;
+    mode = _ref.mode,
+    _ref$canvasScale = _ref.canvasScale,
+    canvasScale = _ref$canvasScale === void 0 ? 1 : _ref$canvasScale;
   var _element$x = element.x,
     x = _element$x === void 0 ? 0 : _element$x,
     _element$y = element.y,
@@ -316,10 +320,10 @@ var TableRenderer = function TableRenderer(_ref) {
   var finalHeaders = tableHeaders.length > 0 ? tableHeaders : tableData.headers && tableData.headers.length > 0 ? tableData.headers : generateHeadersFromColumns();
   var containerStyle = {
     position: 'absolute',
-    left: x,
-    top: y,
-    width: width,
-    height: height,
+    left: x * canvasScale,
+    top: y * canvasScale,
+    width: width * canvasScale,
+    height: height * canvasScale,
     backgroundColor: backgroundColor,
     border: borderWidth > 0 ? "".concat(borderWidth, "px solid ").concat(borderColor) : 'none',
     borderRadius: "".concat(borderRadius, "px"),
@@ -482,7 +486,9 @@ var TableRenderer = function TableRenderer(_ref) {
 var BarcodeRenderer = function BarcodeRenderer(_ref) {
   var element = _ref.element,
     previewData = _ref.previewData,
-    mode = _ref.mode;
+    mode = _ref.mode,
+    _ref$canvasScale = _ref.canvasScale,
+    canvasScale = _ref$canvasScale === void 0 ? 1 : _ref$canvasScale;
   var _element$x = element.x,
     x = _element$x === void 0 ? 0 : _element$x,
     _element$y = element.y,
@@ -515,10 +521,10 @@ var BarcodeRenderer = function BarcodeRenderer(_ref) {
     shadowOffsetY = _element$shadowOffset2 === void 0 ? 2 : _element$shadowOffset2;
   var containerStyle = {
     position: 'absolute',
-    left: x,
-    top: y,
-    width: width,
-    height: height,
+    left: x * canvasScale,
+    top: y * canvasScale,
+    width: width * canvasScale,
+    height: height * canvasScale,
     backgroundColor: backgroundColor,
     border: borderWidth > 0 ? "".concat(borderWidth, "px solid ").concat(borderColor) : 'none',
     opacity: opacity / 100,
@@ -625,10 +631,10 @@ var DynamicTextRenderer = function DynamicTextRenderer(_ref) {
   var displayContent = elementData.content || customContent;
   var style = {
     position: 'absolute',
-    left: x,
-    top: y,
-    width: width,
-    height: height,
+    left: x * canvasScale,
+    top: y * canvasScale,
+    width: width * canvasScale,
+    height: height * canvasScale,
     fontSize: "".concat(fontSize * canvasScale, "px"),
     fontFamily: fontFamily,
     fontWeight: fontWeight,
@@ -740,10 +746,10 @@ var CustomerInfoRenderer = function CustomerInfoRenderer(_ref) {
   var customerData = previewData[elementKey] || {};
   var containerStyle = {
     position: 'absolute',
-    left: x,
-    top: y,
-    width: width,
-    height: height,
+    left: x * canvasScale,
+    top: y * canvasScale,
+    width: width * canvasScale,
+    height: height * canvasScale,
     backgroundColor: backgroundColor,
     border: borderWidth > 0 ? "".concat(borderWidth, "px solid ").concat(borderColor) : 'none',
     borderRadius: "".concat(borderRadius, "px"),
@@ -895,10 +901,10 @@ var CompanyInfoRenderer = function CompanyInfoRenderer(_ref) {
   var companyData = previewData[elementKey] || {};
   var containerStyle = {
     position: 'absolute',
-    left: x,
-    top: y,
-    width: width,
-    height: height,
+    left: x * canvasScale,
+    top: y * canvasScale,
+    width: width * canvasScale,
+    height: height * canvasScale,
     backgroundColor: backgroundColor,
     border: borderWidth > 0 ? "".concat(borderWidth, "px solid ").concat(borderColor) : 'none',
     borderRadius: "".concat(borderRadius, "px"),
@@ -1048,10 +1054,10 @@ var OrderNumberRenderer = function OrderNumberRenderer(_ref) {
   var formattedNumber = orderData.formatted || format;
   var containerStyle = {
     position: 'absolute',
-    left: x,
-    top: y,
-    width: width,
-    height: height,
+    left: x * canvasScale,
+    top: y * canvasScale,
+    width: width * canvasScale,
+    height: height * canvasScale,
     backgroundColor: backgroundColor,
     border: borderWidth > 0 ? "".concat(borderWidth, "px solid ").concat(borderColor) : 'none',
     borderRadius: "".concat(borderRadius, "px"),
@@ -1104,7 +1110,9 @@ var PDFRenderer = __webpack_require__(813);
 var WatermarkRenderer = function WatermarkRenderer(_ref) {
   var element = _ref.element,
     previewData = _ref.previewData,
-    mode = _ref.mode;
+    mode = _ref.mode,
+    _ref$canvasScale = _ref.canvasScale,
+    canvasScale = _ref$canvasScale === void 0 ? 1 : _ref$canvasScale;
   var _element$x = element.x,
     x = _element$x === void 0 ? 0 : _element$x,
     _element$y = element.y,
@@ -1145,10 +1153,10 @@ var WatermarkRenderer = function WatermarkRenderer(_ref) {
     lineHeight = _element$lineHeight === void 0 ? 1.2 : _element$lineHeight;
   var containerStyle = {
     position: 'absolute',
-    left: x,
-    top: y,
-    width: width,
-    height: height,
+    left: x * canvasScale,
+    top: y * canvasScale,
+    width: width * canvasScale,
+    height: height * canvasScale,
     display: visible ? 'flex' : 'none',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1157,7 +1165,7 @@ var WatermarkRenderer = function WatermarkRenderer(_ref) {
   };
   var textStyle = {
     color: color,
-    fontSize: "".concat(fontSize, "px"),
+    fontSize: "".concat(fontSize * canvasScale, "px"),
     fontFamily: fontFamily,
     fontWeight: fontWeight,
     opacity: opacity / 100,
@@ -1189,7 +1197,9 @@ var WatermarkRenderer = function WatermarkRenderer(_ref) {
 var ProgressBarRenderer = function ProgressBarRenderer(_ref) {
   var element = _ref.element,
     previewData = _ref.previewData,
-    mode = _ref.mode;
+    mode = _ref.mode,
+    _ref$canvasScale = _ref.canvasScale,
+    canvasScale = _ref$canvasScale === void 0 ? 1 : _ref$canvasScale;
   var _element$x = element.x,
     x = _element$x === void 0 ? 0 : _element$x,
     _element$y = element.y,
@@ -1228,10 +1238,10 @@ var ProgressBarRenderer = function ProgressBarRenderer(_ref) {
     shadowOffsetY = _element$shadowOffset2 === void 0 ? 2 : _element$shadowOffset2;
   var containerStyle = {
     position: 'absolute',
-    left: x,
-    top: y,
-    width: width,
-    height: height,
+    left: x * canvasScale,
+    top: y * canvasScale,
+    width: width * canvasScale,
+    height: height * canvasScale,
     backgroundColor: backgroundColor,
     border: borderWidth > 0 ? "".concat(borderWidth, "px solid ").concat(borderColor) : 'none',
     borderRadius: "".concat(borderRadius, "px"),
@@ -1268,7 +1278,9 @@ var ProgressBarRenderer = function ProgressBarRenderer(_ref) {
 var MentionsRenderer = function MentionsRenderer(_ref) {
   var element = _ref.element,
     previewData = _ref.previewData,
-    mode = _ref.mode;
+    mode = _ref.mode,
+    _ref$canvasScale = _ref.canvasScale,
+    canvasScale = _ref$canvasScale === void 0 ? 1 : _ref$canvasScale;
   var _element$x = element.x,
     x = _element$x === void 0 ? 0 : _element$x,
     _element$y = element.y,
@@ -1342,10 +1354,10 @@ var MentionsRenderer = function MentionsRenderer(_ref) {
   var mentions = mentionsData.mentions || [];
   var containerStyle = {
     position: 'absolute',
-    left: x,
-    top: y,
-    width: width,
-    height: height,
+    left: x * canvasScale,
+    top: y * canvasScale,
+    width: width * canvasScale,
+    height: height * canvasScale,
     backgroundColor: backgroundColor,
     border: borderWidth > 0 ? "".concat(borderWidth, "px solid ").concat(borderColor) : 'none',
     borderRadius: "".concat(borderRadius, "px"),
@@ -1353,7 +1365,7 @@ var MentionsRenderer = function MentionsRenderer(_ref) {
     padding: '4px',
     boxSizing: 'border-box',
     overflow: 'hidden',
-    fontSize: "".concat(fontSize, "px"),
+    fontSize: "".concat(fontSize * canvasScale, "px"),
     fontFamily: fontFamily,
     fontWeight: fontWeight,
     textAlign: textAlign,
@@ -1501,9 +1513,25 @@ function CanvasMode() {
           key: element.id
         }, commonProps));
       case 'pdf':
-        return /*#__PURE__*/react.createElement(PDFRenderer["default"], _extends({
-          key: element.id
-        }, commonProps));
+        // Placeholder pour les éléments PDF dans l'aperçu canvas
+        return /*#__PURE__*/react.createElement("div", {
+          key: element.id,
+          style: {
+            position: 'absolute',
+            left: element.x * scale,
+            top: element.y * scale,
+            width: element.width * scale,
+            height: element.height * scale,
+            backgroundColor: '#f8f9fa',
+            border: '2px solid #dee2e6',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: "".concat(14 * scale, "px"),
+            color: '#6c757d',
+            borderRadius: '4px'
+          }
+        }, "\uD83D\uDCC4 PDF Embed");
       case 'watermark':
         return /*#__PURE__*/react.createElement(WatermarkRenderer, _extends({
           key: element.id
@@ -1522,16 +1550,16 @@ function CanvasMode() {
           key: element.id,
           style: {
             position: 'absolute',
-            left: element.x || 0,
-            top: element.y || 0,
-            width: element.width || 100,
-            height: element.height || 50,
+            left: (element.x || 0) * scale,
+            top: (element.y || 0) * scale,
+            width: (element.width || 100) * scale,
+            height: (element.height || 50) * scale,
             backgroundColor: '#f0f0f0',
             border: '2px dashed #ccc',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '12px',
+            fontSize: "".concat(12 * scale, "px"),
             color: '#666'
           }
         }, element.type || 'unknown');

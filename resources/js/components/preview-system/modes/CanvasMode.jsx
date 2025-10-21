@@ -73,7 +73,29 @@ function CanvasMode() {
       case 'order-number':
         return <OrderNumberRenderer key={element.id} {...commonProps} />;
       case 'pdf':
-        return <PDFRenderer key={element.id} {...commonProps} />;
+        // Placeholder pour les éléments PDF dans l'aperçu canvas
+        return (
+          <div
+            key={element.id}
+            style={{
+              position: 'absolute',
+              left: element.x * scale,
+              top: element.y * scale,
+              width: element.width * scale,
+              height: element.height * scale,
+              backgroundColor: '#f8f9fa',
+              border: '2px solid #dee2e6',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: `${14 * scale}px`,
+              color: '#6c757d',
+              borderRadius: '4px'
+            }}
+          >
+            📄 PDF Embed
+          </div>
+        );
       case 'watermark':
         return <WatermarkRenderer key={element.id} {...commonProps} />;
       case 'progress-bar':
@@ -87,16 +109,16 @@ function CanvasMode() {
             key={element.id}
             style={{
               position: 'absolute',
-              left: element.x || 0,
-              top: element.y || 0,
-              width: element.width || 100,
-              height: element.height || 50,
+              left: (element.x || 0) * scale,
+              top: (element.y || 0) * scale,
+              width: (element.width || 100) * scale,
+              height: (element.height || 50) * scale,
               backgroundColor: '#f0f0f0',
               border: '2px dashed #ccc',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '12px',
+              fontSize: `${12 * scale}px`,
               color: '#666'
             }}
           >

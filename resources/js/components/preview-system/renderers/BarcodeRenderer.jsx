@@ -3,7 +3,7 @@ import React from 'react';
 /**
  * Renderer pour les codes-barres et QR codes
  */
-export const BarcodeRenderer = ({ element, previewData, mode }) => {
+export const BarcodeRenderer = ({ element, previewData, mode, canvasScale = 1 }) => {
   const {
     x = 0,
     y = 0,
@@ -25,10 +25,10 @@ export const BarcodeRenderer = ({ element, previewData, mode }) => {
 
   const containerStyle = {
     position: 'absolute',
-    left: x,
-    top: y,
-    width,
-    height,
+    left: x * canvasScale,
+    top: y * canvasScale,
+    width: width * canvasScale,
+    height: height * canvasScale,
     backgroundColor,
     border: borderWidth > 0 ? `${borderWidth}px solid ${borderColor}` : 'none',
     opacity: opacity / 100,

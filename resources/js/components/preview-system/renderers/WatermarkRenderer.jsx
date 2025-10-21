@@ -3,7 +3,7 @@ import React from 'react';
 /**
  * Renderer pour les filigranes
  */
-export const WatermarkRenderer = ({ element, previewData, mode }) => {
+export const WatermarkRenderer = ({ element, previewData, mode, canvasScale = 1 }) => {
   const {
     x = 0,
     y = 0,
@@ -29,10 +29,10 @@ export const WatermarkRenderer = ({ element, previewData, mode }) => {
 
   const containerStyle = {
     position: 'absolute',
-    left: x,
-    top: y,
-    width,
-    height,
+    left: x * canvasScale,
+    top: y * canvasScale,
+    width: width * canvasScale,
+    height: height * canvasScale,
     display: visible ? 'flex' : 'none',
     alignItems: 'center',
     justifyContent: 'center',
@@ -42,7 +42,7 @@ export const WatermarkRenderer = ({ element, previewData, mode }) => {
 
   const textStyle = {
     color,
-    fontSize: `${fontSize}px`,
+    fontSize: `${fontSize * canvasScale}px`,
     fontFamily,
     fontWeight,
     opacity: opacity / 100,

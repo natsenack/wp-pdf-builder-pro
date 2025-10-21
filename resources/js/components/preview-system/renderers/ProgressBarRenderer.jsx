@@ -3,7 +3,7 @@ import React from 'react';
 /**
  * Renderer pour les barres de progression
  */
-export const ProgressBarRenderer = ({ element, previewData, mode }) => {
+export const ProgressBarRenderer = ({ element, previewData, mode, canvasScale = 1 }) => {
   const {
     x = 0,
     y = 0,
@@ -28,10 +28,10 @@ export const ProgressBarRenderer = ({ element, previewData, mode }) => {
 
   const containerStyle = {
     position: 'absolute',
-    left: x,
-    top: y,
-    width,
-    height,
+    left: x * canvasScale,
+    top: y * canvasScale,
+    width: width * canvasScale,
+    height: height * canvasScale,
     backgroundColor,
     border: borderWidth > 0 ? `${borderWidth}px solid ${borderColor}` : 'none',
     borderRadius: `${borderRadius}px`,
