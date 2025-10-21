@@ -296,8 +296,8 @@ body.wp-admin .pdf-builder-container {
         const pdfBuilderProRaw = window.PDFBuilderPro;
         const pdfBuilderProExists = typeof pdfBuilderProRaw !== 'undefined' && pdfBuilderProRaw !== null;
 
-        // Gérer le cas où webpack expose le module avec une propriété 'default'
-        const pdfBuilderPro = pdfBuilderProExists && pdfBuilderProRaw.default ? pdfBuilderProRaw.default : pdfBuilderProRaw;
+        // Avec la nouvelle configuration webpack, PDFBuilderPro est directement l'instance
+        const pdfBuilderPro = pdfBuilderProRaw;
         const initExists = pdfBuilderProExists && typeof pdfBuilderPro?.init === 'function';
 
         // Avec le code splitting, vérifier aussi que React est disponible
@@ -313,13 +313,10 @@ body.wp-admin .pdf-builder-container {
             console.log('- reactDomExists:', reactDomExists);
             if (pdfBuilderProExists) {
                 const pdfBuilderProRaw = window.PDFBuilderPro;
-                const pdfBuilderPro = pdfBuilderProRaw.default ? pdfBuilderProRaw.default : pdfBuilderProRaw;
                 console.log('- PDFBuilderPro keys:', Object.keys(pdfBuilderProRaw));
-                console.log('- Has default property:', 'default' in pdfBuilderProRaw);
-                console.log('- Using default:', !!pdfBuilderProRaw.default);
-                console.log('- Final PDFBuilderPro keys:', Object.keys(pdfBuilderPro));
-                console.log('- Final has init:', 'init' in pdfBuilderPro);
-                console.log('- Final PDFBuilderPro.init type:', typeof pdfBuilderPro.init);
+                console.log('- PDFBuilderPro type:', typeof pdfBuilderProRaw);
+                console.log('- Has init method:', typeof pdfBuilderProRaw.init === 'function');
+                console.log('- Has showPreview method:', typeof pdfBuilderProRaw.showPreview === 'function');
             }
         }
 

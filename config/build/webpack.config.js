@@ -8,7 +8,11 @@ module.exports = {
   },
   output: {
     filename: '[name].js',
-    path: path.resolve(__dirname, '../../assets/js/dist')
+    path: path.resolve(__dirname, '../../assets/js/dist'),
+    library: {
+      name: 'PDFBuilderPro',
+      type: 'window'
+    }
   },
   plugins: [
     // ProvidePlugin retiré - on utilise l'import direct

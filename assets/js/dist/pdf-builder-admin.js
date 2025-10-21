@@ -12821,7 +12821,7 @@ window.pdfBuilderPro = pdfBuilderPro;
 /******/ 	/* webpack/runtime/load script */
 /******/ 	(() => {
 /******/ 		var inProgress = {};
-/******/ 		var dataWebpackPrefix = "wp-pdf-builder-pro:";
+/******/ 		var dataWebpackPrefix = "PDFBuilderPro:";
 /******/ 		// loadScript function to load a script via script tag
 /******/ 		__webpack_require__.l = (url, done, key, chunkId) => {
 /******/ 			if(inProgress[url]) { inProgress[url].push(done); return; }
@@ -12982,7 +12982,7 @@ window.pdfBuilderPro = pdfBuilderPro;
 /******/ 			return __webpack_require__.O(result);
 /******/ 		}
 /******/ 		
-/******/ 		var chunkLoadingGlobal = self["webpackChunkwp_pdf_builder_pro"] = self["webpackChunkwp_pdf_builder_pro"] || [];
+/******/ 		var chunkLoadingGlobal = self["webpackChunkPDFBuilderPro"] = self["webpackChunkPDFBuilderPro"] || [];
 /******/ 		chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));
 /******/ 		chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
 /******/ 	})();
@@ -12994,6 +12994,7 @@ window.pdfBuilderPro = pdfBuilderPro;
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
 /******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, [96], () => (__webpack_require__(472)))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
+/******/ 	window.PDFBuilderPro = __webpack_exports__;
 /******/ 	
 /******/ })()
 ;
