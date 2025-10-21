@@ -8,11 +8,9 @@ import PreviewModalComponent from './components/PreviewModal';
  * Ce fichier existe pour compatibilité avec les anciens imports
  */
 const PreviewModal = (props) => {
-  console.log('🎭 PreviewModal rendu avec props:', props);
   try {
   // Ne rien rendre si props est undefined ou null
   if (!props) {
-    console.log('🎭 PreviewModal: props null/undefined, rien rendu');
     return <div></div>;
   }
 
@@ -25,22 +23,18 @@ const PreviewModal = (props) => {
 
 // Composant interne qui gère la logique legacy
 const PreviewModalWithContext = React.memo(({ legacyProps }) => {
-  console.log('🎭 PreviewModalWithContext rendu avec legacyProps:', legacyProps);
   try {
     const { state: { isOpen }, actions: { openPreview, closePreview } } = usePreviewContext();
-    console.log('🎭 PreviewModalWithContext: isOpen du context:', isOpen);
 
-        // Ref pour éviter les ouvertures multiples
+    // Ref pour éviter les ouvertures multiples
     const hasOpenedRef = React.useRef(false);
     const prevPropsRef = React.useRef(null);
 
     // Ouvrir automatiquement si des props legacy sont passées (une seule fois)
     React.useEffect(() => {
-      console.log('🎭 useEffect ouverture: legacyProps?', !!legacyProps, 'isOpen?', isOpen, 'hasOpened?', hasOpenedRef.current);
       if (legacyProps && !isOpen && !hasOpenedRef.current) {
         const initialData = legacyProps.elements || null;
         const initialMode = legacyProps.mode || 'canvas';
-        console.log('🎭 Ouverture automatique du modal avec mode:', initialMode, 'data:', initialData);
         openPreview(initialMode, initialData);
         hasOpenedRef.current = true;
         prevPropsRef.current = { elements: initialData, mode: initialMode };

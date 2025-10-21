@@ -12,13 +12,6 @@ __webpack_require__.d(__webpack_exports__, {
   "default": () => (/* binding */ preview_system_MetaboxMode)
 });
 
-// NAMESPACE OBJECT: ./resources/js/components/preview-system/renderers/ImageRenderer.jsx
-var ImageRenderer_namespaceObject = {};
-__webpack_require__.r(ImageRenderer_namespaceObject);
-__webpack_require__.d(ImageRenderer_namespaceObject, {
-  ImageRenderer: () => (ImageRenderer)
-});
-
 // EXTERNAL MODULE: ./node_modules/react/index.js
 var react = __webpack_require__(540);
 // EXTERNAL MODULE: ./resources/js/components/preview-system/context/PreviewContext.jsx
@@ -1369,7 +1362,7 @@ function MetaboxMode(_ref) {
         });
       case 'image':
       case 'company_logo':
-        return /*#__PURE__*/react.createElement(ImageRenderer_namespaceObject["default"], {
+        return /*#__PURE__*/react.createElement(ImageRenderer, {
           key: element.id,
           element: element,
           previewData: previewData,

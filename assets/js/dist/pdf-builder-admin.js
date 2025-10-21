@@ -11199,11 +11199,9 @@ var PreviewModal = __webpack_require__(454);
  * Ce fichier existe pour compatibilité avec les anciens imports
  */
 var PreviewModal_PreviewModal = function PreviewModal(props) {
-  console.log('🎭 PreviewModal rendu avec props:', props);
   try {
     // Ne rien rendre si props est undefined ou null
     if (!props) {
-      console.log('🎭 PreviewModal: props null/undefined, rien rendu');
       return /*#__PURE__*/react.createElement("div", null);
     }
     return /*#__PURE__*/react.createElement(PreviewModalWithContext, {
@@ -11218,14 +11216,12 @@ var PreviewModal_PreviewModal = function PreviewModal(props) {
 // Composant interne qui gère la logique legacy
 var PreviewModalWithContext = /*#__PURE__*/react.memo(function (_ref) {
   var legacyProps = _ref.legacyProps;
-  console.log('🎭 PreviewModalWithContext rendu avec legacyProps:', legacyProps);
   try {
     var _usePreviewContext = (0,PreviewContext.usePreviewContext)(),
       isOpen = _usePreviewContext.state.isOpen,
       _usePreviewContext$ac = _usePreviewContext.actions,
       openPreview = _usePreviewContext$ac.openPreview,
       closePreview = _usePreviewContext$ac.closePreview;
-    console.log('🎭 PreviewModalWithContext: isOpen du context:', isOpen);
 
     // Ref pour éviter les ouvertures multiples
     var hasOpenedRef = react.useRef(false);
@@ -11233,11 +11229,9 @@ var PreviewModalWithContext = /*#__PURE__*/react.memo(function (_ref) {
 
     // Ouvrir automatiquement si des props legacy sont passées (une seule fois)
     react.useEffect(function () {
-      console.log('🎭 useEffect ouverture: legacyProps?', !!legacyProps, 'isOpen?', isOpen, 'hasOpened?', hasOpenedRef.current);
       if (legacyProps && !isOpen && !hasOpenedRef.current) {
         var initialData = legacyProps.elements || null;
         var initialMode = legacyProps.mode || 'canvas';
-        console.log('🎭 Ouverture automatique du modal avec mode:', initialMode, 'data:', initialData);
         openPreview(initialMode, initialData);
         hasOpenedRef.current = true;
         prevPropsRef.current = {
@@ -11378,11 +11372,6 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
     _useState18 = PDFCanvasEditor_slicedToArray(_useState17, 2),
     guideCreationType = _useState18[0],
     setGuideCreationType = _useState18[1]; // 'horizontal' or 'vertical'
-
-  // Surveillance du state du modal d'aperçu
-  (0,react.useEffect)(function () {
-    console.log('👁️ State showPreviewModal changé:', showPreviewModal);
-  }, [showPreviewModal]);
 
   // Hook pour les paramètres globaux
   var globalSettings = useGlobalSettings();
@@ -11550,8 +11539,7 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
     onZoomIn: canvasState.zoom.zoomIn,
     onZoomOut: canvasState.zoom.zoomOut,
     onPreview: function onPreview() {
-      console.log('⌨️ Raccourci Ctrl+P détecté');
-      setShowPreviewModal(true);
+      return setShowPreviewModal(true);
     }
   });
 
@@ -12052,18 +12040,10 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
 
   // Stabiliser les props du modal pour éviter les re-renders inutiles
   var previewModalProps = (0,react.useMemo)(function () {
-    var _canvasState$elements;
-    console.log('🔄 Calcul des props du modal aperçu:', {
-      isOpen: showPreviewModal,
-      mode: "canvas",
-      elementsCount: ((_canvasState$elements = canvasState.elements) === null || _canvasState$elements === void 0 ? void 0 : _canvasState$elements.length) || 0,
-      hasTemplateData: !!options
-    });
     return {
       isOpen: showPreviewModal,
       onClose: function onClose() {
-        console.log('🔄 Fermeture du modal aperçu');
-        setShowPreviewModal(false);
+        return setShowPreviewModal(false);
       },
       mode: "canvas",
       elements: canvasState.elements || [],
@@ -12081,25 +12061,7 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
   }, /*#__PURE__*/react.createElement("button", {
     className: "btn btn-outline preview-button",
     onClick: function onClick() {
-      console.log('🎯 Bouton aperçu éditeur cliqué');
-
-      // Indicateur visuel de débogage
-      var debugIndicator = document.createElement('div');
-      debugIndicator.id = 'editor-preview-debug-indicator';
-      debugIndicator.style.cssText = "\n                position: fixed;\n                top: 10px;\n                right: 10px;\n                background: orange;\n                color: white;\n                padding: 10px;\n                border-radius: 5px;\n                z-index: 9999;\n                font-size: 14px;\n                font-weight: bold;\n              ";
-      debugIndicator.textContent = '🎯 Clic aperçu éditeur détecté';
-
-      // Supprimer l'ancien indicateur s'il existe
-      var existing = document.getElementById('editor-preview-debug-indicator');
-      if (existing) existing.remove();
-      document.body.appendChild(debugIndicator);
-
-      // Supprimer après 3 secondes
-      setTimeout(function () {
-        var indicator = document.getElementById('editor-preview-debug-indicator');
-        if (indicator) indicator.remove();
-      }, 3000);
-      setShowPreviewModal(true);
+      return setShowPreviewModal(true);
     },
     title: "Aper\xE7u du PDF (Ctrl+P)"
   }, "\uD83D\uDC41\uFE0F Aper\xE7u"), /*#__PURE__*/react.createElement("button", {

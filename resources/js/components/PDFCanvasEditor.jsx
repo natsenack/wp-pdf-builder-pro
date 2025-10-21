@@ -34,11 +34,6 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
   const [isCreatingGuide, setIsCreatingGuide] = useState(false);
   const [guideCreationType, setGuideCreationType] = useState(null); // 'horizontal' or 'vertical'
 
-  // Surveillance du state du modal d'aperçu
-  useEffect(() => {
-    console.log('👁️ State showPreviewModal changé:', showPreviewModal);
-  }, [showPreviewModal]);
-
   // Hook pour les paramètres globaux
   const globalSettings = useGlobalSettings();
 
@@ -187,10 +182,7 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
     onSave: canvasState.saveTemplate,
     onZoomIn: canvasState.zoom.zoomIn,
     onZoomOut: canvasState.zoom.zoomOut,
-    onPreview: () => {
-      console.log('⌨️ Raccourci Ctrl+P détecté');
-      setShowPreviewModal(true);
-    }
+    onPreview: () => setShowPreviewModal(true)
   });
 
   // Gestionnaire pour ajouter un élément depuis la bibliothèque
@@ -634,25 +626,14 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
   }, [globalSettings.settings.zoomToSelection, canvasState]);
 
   // Stabiliser les props du modal pour éviter les re-renders inutiles
-  const previewModalProps = useMemo(() => {
-    console.log('🔄 Calcul des props du modal aperçu:', {
-      isOpen: showPreviewModal,
-      mode: "canvas",
-      elementsCount: canvasState.elements?.length || 0,
-      hasTemplateData: !!options
-    });
-    return {
-      isOpen: showPreviewModal,
-      onClose: () => {
-        console.log('🔄 Fermeture du modal aperçu');
-        setShowPreviewModal(false);
-      },
-      mode: "canvas",
-      elements: canvasState.elements || [],
-      orderId: null,
-      templateData: options
-    };
-  }, [showPreviewModal, canvasState.elements, options]);
+  const previewModalProps = useMemo(() => ({
+    isOpen: showPreviewModal,
+    onClose: () => setShowPreviewModal(false),
+    mode: "canvas",
+    elements: canvasState.elements || [],
+    orderId: null,
+    templateData: options
+  }), [showPreviewModal, canvasState.elements, options]);
 
   return (
     <div className="pdf-canvas-editor" ref={editorRef}>
@@ -662,40 +643,7 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
         <nav className="editor-actions">
           <button
             className="btn btn-outline preview-button"
-            onClick={() => {
-              console.log('🎯 Bouton aperçu éditeur cliqué');
-              
-              // Indicateur visuel de débogage
-              const debugIndicator = document.createElement('div');
-              debugIndicator.id = 'editor-preview-debug-indicator';
-              debugIndicator.style.cssText = `
-                position: fixed;
-                top: 10px;
-                right: 10px;
-                background: orange;
-                color: white;
-                padding: 10px;
-                border-radius: 5px;
-                z-index: 9999;
-                font-size: 14px;
-                font-weight: bold;
-              `;
-              debugIndicator.textContent = '🎯 Clic aperçu éditeur détecté';
-              
-              // Supprimer l'ancien indicateur s'il existe
-              const existing = document.getElementById('editor-preview-debug-indicator');
-              if (existing) existing.remove();
-              
-              document.body.appendChild(debugIndicator);
-              
-              // Supprimer après 3 secondes
-              setTimeout(() => {
-                const indicator = document.getElementById('editor-preview-debug-indicator');
-                if (indicator) indicator.remove();
-              }, 3000);
-              
-              setShowPreviewModal(true);
-            }}
+            onClick={() => setShowPreviewModal(true)}
             title="Aperçu du PDF (Ctrl+P)"
           >
             👁️ Aperçu
