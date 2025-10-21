@@ -208,7 +208,9 @@ body.wp-admin .pdf-builder-container {
         // });
 
         const pdfBuilderProExists = typeof window.PDFBuilderPro !== 'undefined' && window.PDFBuilderPro !== null;
-        const initExists = pdfBuilderProExists && typeof window.PDFBuilderPro.init === 'function';
+        const pdfBuilderProRaw = window.PDFBuilderPro;
+        const pdfBuilderPro = pdfBuilderProExists && pdfBuilderProRaw.default ? pdfBuilderProRaw.default : pdfBuilderProRaw;
+        const initExists = pdfBuilderProExists && typeof pdfBuilderPro?.init === 'function';
 
         // DEBUG: Log détaillé de l'état de PDFBuilderPro - TOUJOURS AFFICHÉ
         console.log('🔍 PDF Builder Debug: PDFBuilderPro check details:');
