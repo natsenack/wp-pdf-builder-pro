@@ -1,14 +1,14 @@
 "use strict";
 (self["webpackChunkPDFBuilderPro"] = self["webpackChunkPDFBuilderPro"] || []).push([[555],{
 
-/***/ 544:
+/***/ 2544:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   ImageRenderer: () => (/* binding */ ImageRenderer)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(540);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6540);
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
@@ -145,7 +145,7 @@ var ImageRenderer = function ImageRenderer(_ref) {
 
 /***/ }),
 
-/***/ 555:
+/***/ 9555:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 // ESM COMPAT FLAG
@@ -157,7 +157,7 @@ __webpack_require__.d(__webpack_exports__, {
 });
 
 // EXTERNAL MODULE: ./node_modules/react/index.js
-var react = __webpack_require__(540);
+var react = __webpack_require__(6540);
 // EXTERNAL MODULE: ./resources/js/components/preview-system/context/PreviewContext.jsx
 var PreviewContext = __webpack_require__(38);
 ;// ./resources/js/components/preview-system/renderers/TextRenderer.jsx
@@ -231,7 +231,7 @@ var TextRenderer = function TextRenderer(_ref) {
     left: "".concat(x * canvasScale, "px"),
     top: "".concat(y * canvasScale, "px"),
     width: "".concat(width * canvasScale, "px"),
-    minHeight: "".concat(height * canvasScale, "px"),
+    height: "".concat(height * canvasScale, "px"),
     fontSize: "".concat(fontSize * canvasScale, "px"),
     fontFamily: fontFamily,
     fontWeight: fontWeight,
@@ -244,12 +244,12 @@ var TextRenderer = function TextRenderer(_ref) {
     opacity: opacity,
     padding: "".concat(padding, "px"),
     boxSizing: 'border-box',
-    overflow: 'visible',
+    overflow: 'hidden',
     display: visible ? 'block' : 'none',
-    whiteSpace: 'normal',
+    whiteSpace: 'pre-wrap',
     wordWrap: 'break-word',
     textDecoration: textDecoration,
-    lineHeight: lineHeight,
+    lineHeight: "".concat(lineHeight),
     transform: "rotate(".concat(rotation, "deg) scale(").concat(scale, ")"),
     transformOrigin: 'top left',
     boxShadow: shadow ? "".concat(shadowOffsetX, "px ").concat(shadowOffsetY, "px 4px ").concat(shadowColor) : 'none'
@@ -328,7 +328,7 @@ var RectangleRenderer = function RectangleRenderer(_ref) {
   });
 };
 // EXTERNAL MODULE: ./resources/js/components/preview-system/renderers/ImageRenderer.jsx
-var ImageRenderer = __webpack_require__(544);
+var ImageRenderer = __webpack_require__(2544);
 ;// ./resources/js/components/preview-system/renderers/TableRenderer.jsx
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
@@ -692,7 +692,7 @@ var DynamicTextRenderer = function DynamicTextRenderer(_ref) {
     left: "".concat(x * canvasScale, "px"),
     top: "".concat(y * canvasScale, "px"),
     width: "".concat(width * canvasScale, "px"),
-    minHeight: "".concat(height * canvasScale, "px"),
+    height: "".concat(height * canvasScale, "px"),
     fontSize: "".concat(fontSize * canvasScale, "px"),
     fontFamily: fontFamily,
     fontWeight: fontWeight,
@@ -705,12 +705,12 @@ var DynamicTextRenderer = function DynamicTextRenderer(_ref) {
     opacity: opacity,
     padding: '4px',
     boxSizing: 'border-box',
-    overflow: 'visible',
+    overflow: 'hidden',
     display: visible ? 'block' : 'none',
-    whiteSpace: 'normal',
+    whiteSpace: 'pre-wrap',
     wordWrap: 'break-word',
     textDecoration: textDecoration,
-    lineHeight: lineHeight,
+    lineHeight: "".concat(lineHeight),
     transform: "rotate(".concat(rotation, "deg) scale(").concat(scale, ")"),
     transformOrigin: 'top left',
     boxShadow: shadow ? "".concat(shadowOffsetX, "px ").concat(shadowOffsetY, "px 4px ").concat(shadowColor) : 'none'
@@ -723,7 +723,14 @@ var DynamicTextRenderer = function DynamicTextRenderer(_ref) {
     title: "Template: ".concat(template)
   }, displayContent);
 };
+// EXTERNAL MODULE: ./node_modules/jsbarcode/bin/JsBarcode.js
+var JsBarcode = __webpack_require__(6129);
+var JsBarcode_default = /*#__PURE__*/__webpack_require__.n(JsBarcode);
+// EXTERNAL MODULE: ./node_modules/qrcode/lib/browser.js
+var browser = __webpack_require__(7583);
 ;// ./resources/js/components/preview-system/renderers/BarcodeRenderer.jsx
+
+
 
 
 /**
@@ -764,7 +771,53 @@ var BarcodeRenderer = function BarcodeRenderer(_ref) {
     _element$shadowOffset = element.shadowOffsetX,
     shadowOffsetX = _element$shadowOffset === void 0 ? 2 : _element$shadowOffset,
     _element$shadowOffset2 = element.shadowOffsetY,
-    shadowOffsetY = _element$shadowOffset2 === void 0 ? 2 : _element$shadowOffset2;
+    shadowOffsetY = _element$shadowOffset2 === void 0 ? 2 : _element$shadowOffset2,
+    _element$content = element.content,
+    content = _element$content === void 0 ? '' : _element$content,
+    _element$code = element.code,
+    code = _element$code === void 0 ? '' : _element$code,
+    _element$format = element.format,
+    format = _element$format === void 0 ? 'CODE128' : _element$format;
+  var svgRef = (0,react.useRef)(null);
+  var canvasRef = (0,react.useRef)(null);
+
+  // Extraire le contenu du code à encoder
+  var codeValue = content || code || 'BARCODE';
+
+  // Générer le code-barres ou QR code
+  (0,react.useEffect)(function () {
+    if (!visible) return;
+    if (element.type === 'qrcode') {
+      // Générer QR code
+      if (canvasRef.current) {
+        browser.toCanvas(canvasRef.current, codeValue, {
+          errorCorrectionLevel: 'H',
+          type: 'image/png',
+          quality: 1,
+          margin: 0,
+          width: Math.min(200, Math.max(50, width * canvasScale / 2))
+        })["catch"](function (err) {
+          return console.error('QR Code génération échouée:', err);
+        });
+      }
+    } else {
+      // Générer code-barres
+      if (svgRef.current) {
+        try {
+          JsBarcode_default()(svgRef.current, codeValue, {
+            format: format || 'CODE128',
+            width: 2,
+            height: Math.max(40, height * canvasScale - 20),
+            displayValue: true,
+            fontSize: 12,
+            margin: 2
+          });
+        } catch (err) {
+          console.error('Code-barres génération échouée:', err);
+        }
+      }
+    }
+  }, [codeValue, element.type, width, height, canvasScale, format, visible]);
   var containerStyle = {
     position: 'absolute',
     left: "".concat(x * canvasScale, "px"),
@@ -777,32 +830,33 @@ var BarcodeRenderer = function BarcodeRenderer(_ref) {
     display: visible ? 'flex' : 'none',
     alignItems: 'center',
     justifyContent: 'center',
-    fontSize: '10px',
-    color: '#666',
-    fontFamily: 'monospace',
     transform: "rotate(".concat(rotation, "deg) scale(").concat(scale, ")"),
     transformOrigin: 'top left',
-    boxShadow: shadow ? "".concat(shadowOffsetX, "px ").concat(shadowOffsetY, "px 4px ").concat(shadowColor) : 'none'
+    boxShadow: shadow ? "".concat(shadowOffsetX, "px ").concat(shadowOffsetY, "px 4px ").concat(shadowColor) : 'none',
+    overflow: 'hidden'
   };
-
-  // Placeholder pour les codes-barres/QR codes
-  var placeholderText = element.type === 'qrcode' ? 'QR CODE' : 'BARCODE';
   return /*#__PURE__*/react.createElement("div", {
     className: "preview-element preview-barcode-element",
     style: containerStyle,
     "data-element-id": element.id,
     "data-element-type": element.type
-  }, /*#__PURE__*/react.createElement("div", {
+  }, element.type === 'qrcode' ? /*#__PURE__*/react.createElement("canvas", {
+    ref: canvasRef,
     style: {
-      border: '1px dashed #ccc',
-      width: '80%',
-      height: '80%',
+      width: '100%',
+      height: '100%',
+      objectFit: 'contain'
+    }
+  }) : /*#__PURE__*/react.createElement("svg", {
+    ref: svgRef,
+    style: {
+      width: '100%',
+      height: 'auto',
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: '#f9f9f9'
+      justifyContent: 'center'
     }
-  }, placeholderText));
+  }));
 };
 ;// ./resources/js/components/preview-system/renderers/ProgressBarRenderer.jsx
 
@@ -940,11 +994,13 @@ function ElementRenderer(_ref) {
     case 'qrcode':
       return /*#__PURE__*/react.createElement(BarcodeRenderer, {
         element: element,
+        previewData: templateData,
         canvasScale: scale
       });
     case 'progress-bar':
       return /*#__PURE__*/react.createElement(ProgressBarRenderer, {
         element: element,
+        previewData: templateData,
         canvasScale: scale
       });
     case 'customer_info':

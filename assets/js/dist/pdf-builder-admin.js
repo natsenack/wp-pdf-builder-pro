@@ -14,7 +14,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   previewReducer: () => (/* binding */ previewReducer),
 /* harmony export */   usePreviewContext: () => (/* binding */ usePreviewContext)
 /* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(540);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6540);
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
@@ -129,309 +129,7 @@ function usePreviewContext() {
 
 /***/ }),
 
-/***/ 424:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   PreviewProvider: () => (/* binding */ PreviewProvider),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(540);
-/* harmony import */ var _PreviewContext__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(38);
-function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
-function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
-function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
-function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
-
-
-
-/**
- * Preview Provider - Fournisseur d'état global pour le système d'aperçu
- * Optimisé avec useCallback et useMemo pour éviter les re-renders inutiles
- */
-
-function PreviewProvider(_ref) {
-  var children = _ref.children;
-  var _useReducer = (0,react__WEBPACK_IMPORTED_MODULE_0__.useReducer)(_PreviewContext__WEBPACK_IMPORTED_MODULE_1__.previewReducer, _PreviewContext__WEBPACK_IMPORTED_MODULE_1__.initialState),
-    _useReducer2 = _slicedToArray(_useReducer, 2),
-    state = _useReducer2[0],
-    dispatch = _useReducer2[1];
-
-  // Actions optimisées avec useCallback
-  var openPreview = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function (mode, data) {
-    var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-    dispatch({
-      type: _PreviewContext__WEBPACK_IMPORTED_MODULE_1__.PREVIEW_ACTIONS.OPEN,
-      payload: {
-        mode: mode,
-        data: data,
-        config: config
-      }
-    });
-  }, []);
-  var closePreview = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function () {
-    dispatch({
-      type: _PreviewContext__WEBPACK_IMPORTED_MODULE_1__.PREVIEW_ACTIONS.CLOSE
-    });
-  }, []);
-  var setPage = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function (page) {
-    dispatch({
-      type: _PreviewContext__WEBPACK_IMPORTED_MODULE_1__.PREVIEW_ACTIONS.SET_PAGE,
-      payload: page
-    });
-  }, []);
-  var setZoom = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function (zoom) {
-    dispatch({
-      type: _PreviewContext__WEBPACK_IMPORTED_MODULE_1__.PREVIEW_ACTIONS.SET_ZOOM,
-      payload: zoom
-    });
-  }, []);
-  var setLoading = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function (loading) {
-    dispatch({
-      type: _PreviewContext__WEBPACK_IMPORTED_MODULE_1__.PREVIEW_ACTIONS.SET_LOADING,
-      payload: loading
-    });
-  }, []);
-  var setError = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function (error) {
-    dispatch({
-      type: _PreviewContext__WEBPACK_IMPORTED_MODULE_1__.PREVIEW_ACTIONS.SET_ERROR,
-      payload: error
-    });
-  }, []);
-  var setData = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function (data) {
-    dispatch({
-      type: _PreviewContext__WEBPACK_IMPORTED_MODULE_1__.PREVIEW_ACTIONS.SET_DATA,
-      payload: data
-    });
-  }, []);
-  var setRotation = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function (rotation) {
-    dispatch({
-      type: 'SET_ROTATION',
-      payload: rotation
-    });
-  }, []);
-  var toggleFullscreen = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function () {
-    dispatch({
-      type: 'TOGGLE_FULLSCREEN'
-    });
-  }, []);
-  var loadPreview = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function (config) {
-    setLoading(true);
-    // Additional logic can be added here if needed
-  }, [setLoading]);
-  var clearPreview = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function () {
-    setLoading(false);
-    setData(null);
-    setError(null);
-  }, [setLoading, setData, setError]);
-
-  // Valeur du contexte optimisée avec useMemo
-  var contextValue = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(function () {
-    return {
-      state: state,
-      actions: {
-        openPreview: openPreview,
-        closePreview: closePreview,
-        setPage: setPage,
-        setZoom: setZoom,
-        setLoading: setLoading,
-        setError: setError,
-        setData: setData,
-        setRotation: setRotation,
-        toggleFullscreen: toggleFullscreen,
-        loadPreview: loadPreview,
-        clearPreview: clearPreview
-      },
-      // Getters utilitaires
-      isFirstPage: state.currentPage === 1,
-      isLastPage: state.currentPage === state.totalPages,
-      canNavigatePrev: state.currentPage > 1,
-      canNavigateNext: state.currentPage < state.totalPages,
-      zoomPercentage: Math.round(state.zoom * 100)
-    };
-  }, [state, openPreview, closePreview, setPage, setZoom, setLoading, setError, setData, setRotation, toggleFullscreen, loadPreview, clearPreview]);
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_PreviewContext__WEBPACK_IMPORTED_MODULE_1__.PreviewContext.Provider, {
-    value: contextValue
-  }, children);
-}
-
-// Export par défaut
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (PreviewProvider);
-
-/***/ }),
-
-/***/ 454:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-// ESM COMPAT FLAG
-__webpack_require__.r(__webpack_exports__);
-
-// EXPORTS
-__webpack_require__.d(__webpack_exports__, {
-  "default": () => (/* binding */ components_PreviewModal)
-});
-
-// EXTERNAL MODULE: ./node_modules/react/index.js
-var react = __webpack_require__(540);
-// EXTERNAL MODULE: ./resources/js/components/preview-system/context/PreviewContext.jsx
-var PreviewContext = __webpack_require__(38);
-;// ./resources/js/components/preview-system/components/ModalSkeleton.jsx
-
-
-/**
- * ModalSkeleton - Composant de chargement pour le système d'aperçu
- * Affiche un skeleton loader pendant le lazy loading des composants
- */
-function ModalSkeleton() {
-  return /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton"
-  }, /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-header"
-  }, /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-title"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-close"
-  })), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-toolbar"
-  }, /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-button"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-button"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-button"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-spacer"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-zoom"
-  })), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-content"
-  }, /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-page"
-  }, /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-line"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-line short"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-line"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-line medium"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-line"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-line short"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-line"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-spacer"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-line"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-line medium"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-line"
-  }))), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-footer"
-  }, /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-nav"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-page-info"
-  }), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-skeleton-export"
-  })));
-}
-/* harmony default export */ const components_ModalSkeleton = (ModalSkeleton);
-;// ./resources/js/components/preview-system/components/PreviewModal.jsx
-
-
-
-
-// Lazy loading des modes pour optimisation performance
-// CanvasMode (modes/CanvasMode) fournit des helpers statiques -> on ajoute un wrapper par défaut
-var CanvasMode = /*#__PURE__*/(0,react.lazy)(function () {
-  return __webpack_require__.e(/* import() */ 555).then(__webpack_require__.bind(__webpack_require__, 555));
-});
-// Utiliser la version composant de Metabox (components/MetaboxMode.jsx) pour que le module exporte bien un default React component
-var MetaboxMode = /*#__PURE__*/(0,react.lazy)(function () {
-  return __webpack_require__.e(/* import() */ 215).then(__webpack_require__.bind(__webpack_require__, 215));
-});
-
-/**
- * PreviewModal - Composant principal du système d'aperçu modal
- * Optimisé avec lazy loading, error boundaries et performance
- */
-function PreviewModal() {
-  var _usePreviewContext = (0,PreviewContext.usePreviewContext)(),
-    _usePreviewContext$st = _usePreviewContext.state,
-    isOpen = _usePreviewContext$st.isOpen,
-    mode = _usePreviewContext$st.mode,
-    loading = _usePreviewContext$st.loading,
-    error = _usePreviewContext$st.error,
-    closePreview = _usePreviewContext.actions.closePreview;
-
-  // Gestionnaire d'échappement clavier
-  (0,react.useEffect)(function () {
-    if (!isOpen) return;
-    var handleKeyDown = function handleKeyDown(event) {
-      if (event.key === 'Escape') {
-        closePreview();
-      }
-    };
-    document.addEventListener('keydown', handleKeyDown);
-    return function () {
-      return document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isOpen, closePreview]);
-
-  // Gestionnaire de clic sur l'overlay
-  var handleOverlayClick = function handleOverlayClick(event) {
-    if (event.target === event.currentTarget) {
-      closePreview();
-    }
-  };
-
-  // Ne rien rendre si fermé ou si pas de mode valide
-  if (!isOpen || !mode) return null;
-  return /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-modal-overlay",
-    onClick: handleOverlayClick
-  }, /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-modal-content"
-  }, /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-modal-header"
-  }, /*#__PURE__*/react.createElement("h3", {
-    className: "pdf-preview-modal-title"
-  }, "Aper\xE7u PDF ", mode === 'canvas' ? '(Éditeur)' : '(Commande)'), /*#__PURE__*/react.createElement("button", {
-    className: "pdf-preview-modal-close",
-    onClick: closePreview,
-    "aria-label": "Fermer l'aper\xE7u",
-    type: "button"
-  }, "\xD7")), /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-modal-body"
-  }, /*#__PURE__*/react.createElement(react.Suspense, {
-    fallback: /*#__PURE__*/react.createElement(components_ModalSkeleton, null)
-  }, error ? /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-error"
-  }, /*#__PURE__*/react.createElement("p", null, "Erreur lors du chargement de l'aper\xE7u :"), /*#__PURE__*/react.createElement("p", {
-    className: "error-message"
-  }, error), /*#__PURE__*/react.createElement("button", {
-    onClick: closePreview,
-    className: "pdf-preview-error-close"
-  }, "Fermer")) : /*#__PURE__*/react.createElement(react.Fragment, null, mode === 'canvas' && /*#__PURE__*/react.createElement(CanvasMode, null), mode === 'metabox' && /*#__PURE__*/react.createElement(MetaboxMode, null)))), loading && /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-loading-overlay"
-  }, /*#__PURE__*/react.createElement("div", {
-    className: "pdf-preview-spinner"
-  }), /*#__PURE__*/react.createElement("p", null, "G\xE9n\xE9ration de l'aper\xE7u..."))));
-}
-
-// Optimisation avec React.memo pour éviter les re-renders inutiles
-/* harmony default export */ const components_PreviewModal = (/*#__PURE__*/react.memo(PreviewModal));
-
-/***/ }),
-
-/***/ 472:
+/***/ 3472:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 // ESM COMPAT FLAG
@@ -459,7 +157,7 @@ __webpack_require__.d(hooks_namespaceObject, {
 });
 
 // EXTERNAL MODULE: ./node_modules/react/index.js
-var react = __webpack_require__(540);
+var react = __webpack_require__(6540);
 // EXTERNAL MODULE: ./node_modules/react-dom/index.js
 var react_dom = __webpack_require__(961);
 ;// ./resources/js/hooks/useResize.js
@@ -11183,11 +10881,11 @@ var NewTemplateModal = function NewTemplateModal(_ref) {
 };
 /* harmony default export */ const components_NewTemplateModal = (NewTemplateModal);
 // EXTERNAL MODULE: ./resources/js/components/preview-system/context/PreviewProvider.jsx
-var PreviewProvider = __webpack_require__(424);
+var PreviewProvider = __webpack_require__(7424);
 // EXTERNAL MODULE: ./resources/js/components/preview-system/context/PreviewContext.jsx
 var PreviewContext = __webpack_require__(38);
 // EXTERNAL MODULE: ./resources/js/components/preview-system/components/PreviewModal.jsx + 1 modules
-var PreviewModal = __webpack_require__(454);
+var PreviewModal = __webpack_require__(4454);
 ;// ./resources/js/components/preview-system/PreviewModal.jsx
 function PreviewModal_regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return PreviewModal_regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (PreviewModal_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, PreviewModal_regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, PreviewModal_regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), PreviewModal_regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", PreviewModal_regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), PreviewModal_regeneratorDefine2(u), PreviewModal_regeneratorDefine2(u, o, "Generator"), PreviewModal_regeneratorDefine2(u, n, function () { return this; }), PreviewModal_regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (PreviewModal_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
 function PreviewModal_regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } PreviewModal_regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { PreviewModal_regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, PreviewModal_regeneratorDefine2(e, r, n, t); }
@@ -11245,7 +10943,7 @@ var PreviewModalWithContext = /*#__PURE__*/react.memo(function (_ref) {
                   }
                   _context.p = 1;
                   _context.n = 2;
-                  return __webpack_require__.e(/* import() */ 555).then(__webpack_require__.bind(__webpack_require__, 555));
+                  return Promise.all(/* import() */[__webpack_require__.e(96), __webpack_require__.e(555)]).then(__webpack_require__.bind(__webpack_require__, 9555));
                 case 2:
                   _yield$import = _context.v;
                   CanvasMode = _yield$import["default"];
@@ -12700,7 +12398,7 @@ window.pdfBuilderShowPreview = function (orderId, templateId, nonce) {
       // Mode metabox standard
 
       // Importer dynamiquement le système complet
-      Promise.all([Promise.resolve(/* import() */).then(__webpack_require__.bind(__webpack_require__, 424)), Promise.resolve(/* import() */).then(__webpack_require__.bind(__webpack_require__, 38)), Promise.resolve(/* import() */).then(__webpack_require__.bind(__webpack_require__, 454))]).then(function (_ref2) {
+      Promise.all([Promise.resolve(/* import() */).then(__webpack_require__.bind(__webpack_require__, 7424)), Promise.resolve(/* import() */).then(__webpack_require__.bind(__webpack_require__, 38)), Promise.resolve(/* import() */).then(__webpack_require__.bind(__webpack_require__, 4454))]).then(function (_ref2) {
         var _ref3 = js_slicedToArray(_ref2, 3),
           providerModule = _ref3[0],
           contextModule = _ref3[1],
@@ -12787,6 +12485,308 @@ window.PDFBuilderPro = pdfBuilderPro;
 // Alias pour compatibilité
 window.pdfBuilderPro = pdfBuilderPro;
 
+/***/ }),
+
+/***/ 4454:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+// ESM COMPAT FLAG
+__webpack_require__.r(__webpack_exports__);
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, {
+  "default": () => (/* binding */ components_PreviewModal)
+});
+
+// EXTERNAL MODULE: ./node_modules/react/index.js
+var react = __webpack_require__(6540);
+// EXTERNAL MODULE: ./resources/js/components/preview-system/context/PreviewContext.jsx
+var PreviewContext = __webpack_require__(38);
+;// ./resources/js/components/preview-system/components/ModalSkeleton.jsx
+
+
+/**
+ * ModalSkeleton - Composant de chargement pour le système d'aperçu
+ * Affiche un skeleton loader pendant le lazy loading des composants
+ */
+function ModalSkeleton() {
+  return /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton"
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-header"
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-title"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-close"
+  })), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-toolbar"
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-button"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-button"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-button"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-spacer"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-zoom"
+  })), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-content"
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-page"
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-line"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-line short"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-line"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-line medium"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-line"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-line short"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-line"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-spacer"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-line"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-line medium"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-line"
+  }))), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-footer"
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-nav"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-page-info"
+  }), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-skeleton-export"
+  })));
+}
+/* harmony default export */ const components_ModalSkeleton = (ModalSkeleton);
+;// ./resources/js/components/preview-system/components/PreviewModal.jsx
+
+
+
+
+// Lazy loading des modes pour optimisation performance
+// CanvasMode (modes/CanvasMode) fournit des helpers statiques -> on ajoute un wrapper par défaut
+var CanvasMode = /*#__PURE__*/(0,react.lazy)(function () {
+  return Promise.all(/* import() */[__webpack_require__.e(96), __webpack_require__.e(555)]).then(__webpack_require__.bind(__webpack_require__, 9555));
+});
+// Utiliser la version composant de Metabox (components/MetaboxMode.jsx) pour que le module exporte bien un default React component
+var MetaboxMode = /*#__PURE__*/(0,react.lazy)(function () {
+  return __webpack_require__.e(/* import() */ 215).then(__webpack_require__.bind(__webpack_require__, 8215));
+});
+
+/**
+ * PreviewModal - Composant principal du système d'aperçu modal
+ * Optimisé avec lazy loading, error boundaries et performance
+ */
+function PreviewModal() {
+  var _usePreviewContext = (0,PreviewContext.usePreviewContext)(),
+    _usePreviewContext$st = _usePreviewContext.state,
+    isOpen = _usePreviewContext$st.isOpen,
+    mode = _usePreviewContext$st.mode,
+    loading = _usePreviewContext$st.loading,
+    error = _usePreviewContext$st.error,
+    closePreview = _usePreviewContext.actions.closePreview;
+
+  // Gestionnaire d'échappement clavier
+  (0,react.useEffect)(function () {
+    if (!isOpen) return;
+    var handleKeyDown = function handleKeyDown(event) {
+      if (event.key === 'Escape') {
+        closePreview();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return function () {
+      return document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, closePreview]);
+
+  // Gestionnaire de clic sur l'overlay
+  var handleOverlayClick = function handleOverlayClick(event) {
+    if (event.target === event.currentTarget) {
+      closePreview();
+    }
+  };
+
+  // Ne rien rendre si fermé ou si pas de mode valide
+  if (!isOpen || !mode) return null;
+  return /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-modal-overlay",
+    onClick: handleOverlayClick
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-modal-content"
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-modal-header"
+  }, /*#__PURE__*/react.createElement("h3", {
+    className: "pdf-preview-modal-title"
+  }, "Aper\xE7u PDF ", mode === 'canvas' ? '(Éditeur)' : '(Commande)'), /*#__PURE__*/react.createElement("button", {
+    className: "pdf-preview-modal-close",
+    onClick: closePreview,
+    "aria-label": "Fermer l'aper\xE7u",
+    type: "button"
+  }, "\xD7")), /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-modal-body"
+  }, /*#__PURE__*/react.createElement(react.Suspense, {
+    fallback: /*#__PURE__*/react.createElement(components_ModalSkeleton, null)
+  }, error ? /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-error"
+  }, /*#__PURE__*/react.createElement("p", null, "Erreur lors du chargement de l'aper\xE7u :"), /*#__PURE__*/react.createElement("p", {
+    className: "error-message"
+  }, error), /*#__PURE__*/react.createElement("button", {
+    onClick: closePreview,
+    className: "pdf-preview-error-close"
+  }, "Fermer")) : /*#__PURE__*/react.createElement(react.Fragment, null, mode === 'canvas' && /*#__PURE__*/react.createElement(CanvasMode, null), mode === 'metabox' && /*#__PURE__*/react.createElement(MetaboxMode, null)))), loading && /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-loading-overlay"
+  }, /*#__PURE__*/react.createElement("div", {
+    className: "pdf-preview-spinner"
+  }), /*#__PURE__*/react.createElement("p", null, "G\xE9n\xE9ration de l'aper\xE7u..."))));
+}
+
+// Optimisation avec React.memo pour éviter les re-renders inutiles
+/* harmony default export */ const components_PreviewModal = (/*#__PURE__*/react.memo(PreviewModal));
+
+/***/ }),
+
+/***/ 7424:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   PreviewProvider: () => (/* binding */ PreviewProvider),
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6540);
+/* harmony import */ var _PreviewContext__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(38);
+function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
+
+
+
+/**
+ * Preview Provider - Fournisseur d'état global pour le système d'aperçu
+ * Optimisé avec useCallback et useMemo pour éviter les re-renders inutiles
+ */
+
+function PreviewProvider(_ref) {
+  var children = _ref.children;
+  var _useReducer = (0,react__WEBPACK_IMPORTED_MODULE_0__.useReducer)(_PreviewContext__WEBPACK_IMPORTED_MODULE_1__.previewReducer, _PreviewContext__WEBPACK_IMPORTED_MODULE_1__.initialState),
+    _useReducer2 = _slicedToArray(_useReducer, 2),
+    state = _useReducer2[0],
+    dispatch = _useReducer2[1];
+
+  // Actions optimisées avec useCallback
+  var openPreview = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function (mode, data) {
+    var config = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+    dispatch({
+      type: _PreviewContext__WEBPACK_IMPORTED_MODULE_1__.PREVIEW_ACTIONS.OPEN,
+      payload: {
+        mode: mode,
+        data: data,
+        config: config
+      }
+    });
+  }, []);
+  var closePreview = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function () {
+    dispatch({
+      type: _PreviewContext__WEBPACK_IMPORTED_MODULE_1__.PREVIEW_ACTIONS.CLOSE
+    });
+  }, []);
+  var setPage = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function (page) {
+    dispatch({
+      type: _PreviewContext__WEBPACK_IMPORTED_MODULE_1__.PREVIEW_ACTIONS.SET_PAGE,
+      payload: page
+    });
+  }, []);
+  var setZoom = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function (zoom) {
+    dispatch({
+      type: _PreviewContext__WEBPACK_IMPORTED_MODULE_1__.PREVIEW_ACTIONS.SET_ZOOM,
+      payload: zoom
+    });
+  }, []);
+  var setLoading = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function (loading) {
+    dispatch({
+      type: _PreviewContext__WEBPACK_IMPORTED_MODULE_1__.PREVIEW_ACTIONS.SET_LOADING,
+      payload: loading
+    });
+  }, []);
+  var setError = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function (error) {
+    dispatch({
+      type: _PreviewContext__WEBPACK_IMPORTED_MODULE_1__.PREVIEW_ACTIONS.SET_ERROR,
+      payload: error
+    });
+  }, []);
+  var setData = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function (data) {
+    dispatch({
+      type: _PreviewContext__WEBPACK_IMPORTED_MODULE_1__.PREVIEW_ACTIONS.SET_DATA,
+      payload: data
+    });
+  }, []);
+  var setRotation = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function (rotation) {
+    dispatch({
+      type: 'SET_ROTATION',
+      payload: rotation
+    });
+  }, []);
+  var toggleFullscreen = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function () {
+    dispatch({
+      type: 'TOGGLE_FULLSCREEN'
+    });
+  }, []);
+  var loadPreview = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function (config) {
+    setLoading(true);
+    // Additional logic can be added here if needed
+  }, [setLoading]);
+  var clearPreview = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(function () {
+    setLoading(false);
+    setData(null);
+    setError(null);
+  }, [setLoading, setData, setError]);
+
+  // Valeur du contexte optimisée avec useMemo
+  var contextValue = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(function () {
+    return {
+      state: state,
+      actions: {
+        openPreview: openPreview,
+        closePreview: closePreview,
+        setPage: setPage,
+        setZoom: setZoom,
+        setLoading: setLoading,
+        setError: setError,
+        setData: setData,
+        setRotation: setRotation,
+        toggleFullscreen: toggleFullscreen,
+        loadPreview: loadPreview,
+        clearPreview: clearPreview
+      },
+      // Getters utilitaires
+      isFirstPage: state.currentPage === 1,
+      isLastPage: state.currentPage === state.totalPages,
+      canNavigatePrev: state.currentPage > 1,
+      canNavigateNext: state.currentPage < state.totalPages,
+      zoomPercentage: Math.round(state.zoom * 100)
+    };
+  }, [state, openPreview, closePreview, setPage, setZoom, setLoading, setError, setData, setRotation, toggleFullscreen, loadPreview, clearPreview]);
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_PreviewContext__WEBPACK_IMPORTED_MODULE_1__.PreviewContext.Provider, {
+    value: contextValue
+  }, children);
+}
+
+// Export par défaut
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (PreviewProvider);
+
 /***/ })
 
 /******/ 	});
@@ -12848,6 +12848,18 @@ window.pdfBuilderPro = pdfBuilderPro;
 /******/ 				}
 /******/ 			}
 /******/ 			return result;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
 /******/ 		};
 /******/ 	})();
 /******/ 	
@@ -13076,7 +13088,7 @@ window.pdfBuilderPro = pdfBuilderPro;
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, [96], () => (__webpack_require__(472)))
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, [96], () => (__webpack_require__(3472)))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	window.PDFBuilderPro = __webpack_exports__["default"];
 /******/ 	

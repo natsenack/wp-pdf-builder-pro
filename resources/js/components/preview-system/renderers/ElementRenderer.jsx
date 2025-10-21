@@ -62,6 +62,7 @@ function ElementRenderer({ element, scale = 1, templateData = {}, interactive = 
       return (
         <BarcodeRenderer
           element={element}
+          previewData={templateData}
           canvasScale={scale}
         />
       );
@@ -70,6 +71,7 @@ function ElementRenderer({ element, scale = 1, templateData = {}, interactive = 
       return (
         <ProgressBarRenderer
           element={element}
+          previewData={templateData}
           canvasScale={scale}
         />
       );

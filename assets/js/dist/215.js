@@ -1,7 +1,151 @@
 "use strict";
 (self["webpackChunkPDFBuilderPro"] = self["webpackChunkPDFBuilderPro"] || []).push([[215],{
 
-/***/ 215:
+/***/ 2544:
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   ImageRenderer: () => (/* binding */ ImageRenderer)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6540);
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+
+
+/**
+ * Renderer pour les éléments image (logos, etc.)
+ */
+var ImageRenderer = function ImageRenderer(_ref) {
+  var element = _ref.element,
+    previewData = _ref.previewData,
+    mode = _ref.mode,
+    _ref$canvasScale = _ref.canvasScale,
+    canvasScale = _ref$canvasScale === void 0 ? 1 : _ref$canvasScale;
+  var _element$x = element.x,
+    x = _element$x === void 0 ? 0 : _element$x,
+    _element$y = element.y,
+    y = _element$y === void 0 ? 0 : _element$y,
+    _element$width = element.width,
+    width = _element$width === void 0 ? 150 : _element$width,
+    _element$height = element.height,
+    height = _element$height === void 0 ? 80 : _element$height,
+    _element$imageUrl = element.imageUrl,
+    imageUrl = _element$imageUrl === void 0 ? '' : _element$imageUrl,
+    _element$alt = element.alt,
+    alt = _element$alt === void 0 ? 'Image' : _element$alt,
+    _element$objectFit = element.objectFit,
+    objectFit = _element$objectFit === void 0 ? 'contain' : _element$objectFit,
+    _element$backgroundCo = element.backgroundColor,
+    backgroundColor = _element$backgroundCo === void 0 ? 'transparent' : _element$backgroundCo,
+    _element$borderWidth = element.borderWidth,
+    borderWidth = _element$borderWidth === void 0 ? 0 : _element$borderWidth,
+    _element$borderColor = element.borderColor,
+    borderColor = _element$borderColor === void 0 ? '#000000' : _element$borderColor,
+    _element$borderRadius = element.borderRadius,
+    borderRadius = _element$borderRadius === void 0 ? 0 : _element$borderRadius,
+    _element$opacity = element.opacity,
+    opacity = _element$opacity === void 0 ? 1 : _element$opacity,
+    _element$rotation = element.rotation,
+    rotation = _element$rotation === void 0 ? 0 : _element$rotation,
+    _element$scale = element.scale,
+    scale = _element$scale === void 0 ? 1 : _element$scale,
+    _element$visible = element.visible,
+    visible = _element$visible === void 0 ? true : _element$visible,
+    _element$shadow = element.shadow,
+    shadow = _element$shadow === void 0 ? false : _element$shadow,
+    _element$shadowColor = element.shadowColor,
+    shadowColor = _element$shadowColor === void 0 ? '#000000' : _element$shadowColor,
+    _element$shadowOffset = element.shadowOffsetX,
+    shadowOffsetX = _element$shadowOffset === void 0 ? 2 : _element$shadowOffset,
+    _element$shadowOffset2 = element.shadowOffsetY,
+    shadowOffsetY = _element$shadowOffset2 === void 0 ? 2 : _element$shadowOffset2,
+    _element$brightness = element.brightness,
+    brightness = _element$brightness === void 0 ? 100 : _element$brightness,
+    _element$contrast = element.contrast,
+    contrast = _element$contrast === void 0 ? 100 : _element$contrast,
+    _element$saturate = element.saturate,
+    saturate = _element$saturate === void 0 ? 100 : _element$saturate;
+
+  // Récupérer les données d'image depuis l'aperçu
+  var elementKey = "".concat(element.type, "_").concat(element.id);
+  var imageData = previewData[elementKey] || {};
+  var finalImageUrl = imageData.imageUrl || imageUrl;
+  var containerStyle = {
+    position: 'absolute',
+    left: "".concat(x * canvasScale, "px"),
+    top: "".concat(y * canvasScale, "px"),
+    width: "".concat(width * canvasScale, "px"),
+    height: "".concat(height * canvasScale, "px"),
+    backgroundColor: backgroundColor,
+    border: borderWidth > 0 ? "".concat(borderWidth, "px solid ").concat(borderColor) : 'none',
+    borderRadius: "".concat(borderRadius, "px"),
+    opacity: opacity,
+    display: visible ? 'flex' : 'none',
+    alignItems: 'center',
+    justifyContent: 'center',
+    boxSizing: 'border-box',
+    overflow: 'hidden',
+    transform: "rotate(".concat(rotation, "deg) scale(").concat(scale, ")"),
+    transformOrigin: 'top left',
+    boxShadow: shadow ? "".concat(shadowOffsetX, "px ").concat(shadowOffsetY, "px 4px ").concat(shadowColor) : 'none'
+  };
+  var imageStyle = {
+    width: '100%',
+    height: '100%',
+    objectFit: objectFit,
+    borderRadius: borderWidth > 0 ? '0' : "".concat(borderRadius, "px"),
+    // Filtres d'image
+    filter: "brightness(".concat(brightness, "%) contrast(").concat(contrast, "%) saturate(").concat(saturate, "%)")
+  };
+  var placeholderStyle = {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#f8f9fa',
+    border: '2px dashed #dee2e6',
+    borderRadius: "".concat(borderRadius, "px"),
+    color: '#6c757d',
+    fontSize: '12px',
+    textAlign: 'center',
+    padding: '8px',
+    boxSizing: 'border-box'
+  };
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "preview-element preview-image-element",
+    style: containerStyle,
+    "data-element-id": element.id,
+    "data-element-type": element.type
+  }, finalImageUrl ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
+    src: finalImageUrl,
+    alt: alt,
+    style: imageStyle,
+    onError: function onError(e) {
+      // Fallback vers le placeholder en cas d'erreur de chargement
+      e.target.style.display = 'none';
+      e.target.nextSibling.style.display = 'flex';
+    }
+  }) : null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    style: _objectSpread(_objectSpread({}, placeholderStyle), {}, {
+      display: finalImageUrl ? 'none' : 'flex'
+    })
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    style: {
+      fontSize: '16px',
+      marginBottom: '4px'
+    }
+  }, "\uD83D\uDCF7"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, element.type === 'company_logo' ? 'Logo' : 'Image'))));
+};
+
+/***/ }),
+
+/***/ 8215:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 // ESM COMPAT FLAG
@@ -13,7 +157,7 @@ __webpack_require__.d(__webpack_exports__, {
 });
 
 // EXTERNAL MODULE: ./node_modules/react/index.js
-var react = __webpack_require__(540);
+var react = __webpack_require__(6540);
 // EXTERNAL MODULE: ./resources/js/components/preview-system/context/PreviewContext.jsx
 var PreviewContext = __webpack_require__(38);
 ;// ./resources/js/components/preview-system/hooks/usePerformanceMonitor.js
@@ -826,7 +970,7 @@ function CanvasRenderer(_ref) {
 }
 /* harmony default export */ const renderers_CanvasRenderer = (/*#__PURE__*/react.memo(CanvasRenderer));
 // EXTERNAL MODULE: ./resources/js/components/preview-system/renderers/ImageRenderer.jsx
-var ImageRenderer = __webpack_require__(544);
+var ImageRenderer = __webpack_require__(2544);
 ;// ./resources/js/components/preview-system/NavigationControls.jsx
 function NavigationControls_slicedToArray(r, e) { return NavigationControls_arrayWithHoles(r) || NavigationControls_iterableToArrayLimit(r, e) || NavigationControls_unsupportedIterableToArray(r, e) || NavigationControls_nonIterableRest(); }
 function NavigationControls_nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -1311,150 +1455,6 @@ function MetaboxMode(_ref) {
   }, "Haute (300 DPI)")))))));
 }
 /* harmony default export */ const preview_system_MetaboxMode = (/*#__PURE__*/react.memo(MetaboxMode));
-
-/***/ }),
-
-/***/ 544:
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   ImageRenderer: () => (/* binding */ ImageRenderer)
-/* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(540);
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
-function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-
-
-/**
- * Renderer pour les éléments image (logos, etc.)
- */
-var ImageRenderer = function ImageRenderer(_ref) {
-  var element = _ref.element,
-    previewData = _ref.previewData,
-    mode = _ref.mode,
-    _ref$canvasScale = _ref.canvasScale,
-    canvasScale = _ref$canvasScale === void 0 ? 1 : _ref$canvasScale;
-  var _element$x = element.x,
-    x = _element$x === void 0 ? 0 : _element$x,
-    _element$y = element.y,
-    y = _element$y === void 0 ? 0 : _element$y,
-    _element$width = element.width,
-    width = _element$width === void 0 ? 150 : _element$width,
-    _element$height = element.height,
-    height = _element$height === void 0 ? 80 : _element$height,
-    _element$imageUrl = element.imageUrl,
-    imageUrl = _element$imageUrl === void 0 ? '' : _element$imageUrl,
-    _element$alt = element.alt,
-    alt = _element$alt === void 0 ? 'Image' : _element$alt,
-    _element$objectFit = element.objectFit,
-    objectFit = _element$objectFit === void 0 ? 'contain' : _element$objectFit,
-    _element$backgroundCo = element.backgroundColor,
-    backgroundColor = _element$backgroundCo === void 0 ? 'transparent' : _element$backgroundCo,
-    _element$borderWidth = element.borderWidth,
-    borderWidth = _element$borderWidth === void 0 ? 0 : _element$borderWidth,
-    _element$borderColor = element.borderColor,
-    borderColor = _element$borderColor === void 0 ? '#000000' : _element$borderColor,
-    _element$borderRadius = element.borderRadius,
-    borderRadius = _element$borderRadius === void 0 ? 0 : _element$borderRadius,
-    _element$opacity = element.opacity,
-    opacity = _element$opacity === void 0 ? 1 : _element$opacity,
-    _element$rotation = element.rotation,
-    rotation = _element$rotation === void 0 ? 0 : _element$rotation,
-    _element$scale = element.scale,
-    scale = _element$scale === void 0 ? 1 : _element$scale,
-    _element$visible = element.visible,
-    visible = _element$visible === void 0 ? true : _element$visible,
-    _element$shadow = element.shadow,
-    shadow = _element$shadow === void 0 ? false : _element$shadow,
-    _element$shadowColor = element.shadowColor,
-    shadowColor = _element$shadowColor === void 0 ? '#000000' : _element$shadowColor,
-    _element$shadowOffset = element.shadowOffsetX,
-    shadowOffsetX = _element$shadowOffset === void 0 ? 2 : _element$shadowOffset,
-    _element$shadowOffset2 = element.shadowOffsetY,
-    shadowOffsetY = _element$shadowOffset2 === void 0 ? 2 : _element$shadowOffset2,
-    _element$brightness = element.brightness,
-    brightness = _element$brightness === void 0 ? 100 : _element$brightness,
-    _element$contrast = element.contrast,
-    contrast = _element$contrast === void 0 ? 100 : _element$contrast,
-    _element$saturate = element.saturate,
-    saturate = _element$saturate === void 0 ? 100 : _element$saturate;
-
-  // Récupérer les données d'image depuis l'aperçu
-  var elementKey = "".concat(element.type, "_").concat(element.id);
-  var imageData = previewData[elementKey] || {};
-  var finalImageUrl = imageData.imageUrl || imageUrl;
-  var containerStyle = {
-    position: 'absolute',
-    left: "".concat(x * canvasScale, "px"),
-    top: "".concat(y * canvasScale, "px"),
-    width: "".concat(width * canvasScale, "px"),
-    height: "".concat(height * canvasScale, "px"),
-    backgroundColor: backgroundColor,
-    border: borderWidth > 0 ? "".concat(borderWidth, "px solid ").concat(borderColor) : 'none',
-    borderRadius: "".concat(borderRadius, "px"),
-    opacity: opacity,
-    display: visible ? 'flex' : 'none',
-    alignItems: 'center',
-    justifyContent: 'center',
-    boxSizing: 'border-box',
-    overflow: 'hidden',
-    transform: "rotate(".concat(rotation, "deg) scale(").concat(scale, ")"),
-    transformOrigin: 'top left',
-    boxShadow: shadow ? "".concat(shadowOffsetX, "px ").concat(shadowOffsetY, "px 4px ").concat(shadowColor) : 'none'
-  };
-  var imageStyle = {
-    width: '100%',
-    height: '100%',
-    objectFit: objectFit,
-    borderRadius: borderWidth > 0 ? '0' : "".concat(borderRadius, "px"),
-    // Filtres d'image
-    filter: "brightness(".concat(brightness, "%) contrast(").concat(contrast, "%) saturate(").concat(saturate, "%)")
-  };
-  var placeholderStyle = {
-    width: '100%',
-    height: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#f8f9fa',
-    border: '2px dashed #dee2e6',
-    borderRadius: "".concat(borderRadius, "px"),
-    color: '#6c757d',
-    fontSize: '12px',
-    textAlign: 'center',
-    padding: '8px',
-    boxSizing: 'border-box'
-  };
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-    className: "preview-element preview-image-element",
-    style: containerStyle,
-    "data-element-id": element.id,
-    "data-element-type": element.type
-  }, finalImageUrl ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("img", {
-    src: finalImageUrl,
-    alt: alt,
-    style: imageStyle,
-    onError: function onError(e) {
-      // Fallback vers le placeholder en cas d'erreur de chargement
-      e.target.style.display = 'none';
-      e.target.nextSibling.style.display = 'flex';
-    }
-  }) : null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-    style: _objectSpread(_objectSpread({}, placeholderStyle), {}, {
-      display: finalImageUrl ? 'none' : 'flex'
-    })
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
-    style: {
-      fontSize: '16px',
-      marginBottom: '4px'
-    }
-  }, "\uD83D\uDCF7"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, element.type === 'company_logo' ? 'Logo' : 'Image'))));
-};
 
 /***/ })
 
