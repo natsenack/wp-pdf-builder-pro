@@ -26,6 +26,11 @@ const PreviewModalWithContext = React.memo(({ legacyProps }) => {
   try {
     const { state: { isOpen }, actions: { openPreview, closePreview } } = usePreviewContext();
 
+    // Debug: logger les changements de props legacy
+    React.useEffect(() => {
+      console.log('🔍 PreviewModalWithContext - legacyProps changed:', legacyProps);
+    }, [legacyProps]);
+
     // Ouvrir automatiquement si des props legacy indiquent que la modal doit être ouverte
     React.useEffect(() => {
       if (legacyProps && legacyProps.isOpen && !isOpen) {

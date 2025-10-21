@@ -11223,6 +11223,11 @@ var PreviewModalWithContext = /*#__PURE__*/react.memo(function (_ref) {
       openPreview = _usePreviewContext$ac.openPreview,
       closePreview = _usePreviewContext$ac.closePreview;
 
+    // Debug: logger les changements de props legacy
+    react.useEffect(function () {
+      console.log('🔍 PreviewModalWithContext - legacyProps changed:', legacyProps);
+    }, [legacyProps]);
+
     // Ouvrir automatiquement si des props legacy indiquent que la modal doit être ouverte
     react.useEffect(function () {
       if (legacyProps && legacyProps.isOpen && !isOpen) {
@@ -12017,6 +12022,11 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
       templateData: options
     };
   }, [showPreviewModal, canvasState.elements, options]);
+
+  // Debug: logger les changements d'état de la modal
+  react.useEffect(function () {
+    console.log('🔍 PDFCanvasEditor - showPreviewModal changed:', showPreviewModal);
+  }, [showPreviewModal]);
   return /*#__PURE__*/react.createElement("div", {
     className: "pdf-canvas-editor",
     ref: editorRef
