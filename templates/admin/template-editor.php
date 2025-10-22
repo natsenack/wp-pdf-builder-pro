@@ -254,17 +254,19 @@ body.wp-admin .pdf-builder-container {
         const pdfBuilderPro = pdfBuilderProExists && pdfBuilderProRaw.default ? pdfBuilderProRaw.default : pdfBuilderProRaw;
         const initExists = pdfBuilderProExists && typeof pdfBuilderPro?.init === 'function';
 
-        // Avec le code splitting, vérifier aussi que React est disponible
-        const reactExists = typeof window.React !== 'undefined';
-        const reactDomExists = typeof window.ReactDOM !== 'undefined';
+        // Avec le code splitting, vérifier aussi que React est disponible - COMMENTÉ car React est maintenant bundlé
+        // const reactExists = typeof window.React !== 'undefined';
+        // const reactDomExists = typeof window.ReactDOM !== 'undefined';
+        const reactExists = true; // React est bundlé dans PDFBuilderPro
+        const reactDomExists = true; // ReactDOM est bundlé dans PDFBuilderPro
 
         // LOGS DÉTAILLÉS À CHAQUE VÉRIFICATION
         if (scriptCheckAttempts % 10 === 0 || scriptCheckAttempts === 1) {
             console.log(`🔍 PDF Builder Debug: Check attempt ${scriptCheckAttempts}/50 - DETAILED`);
             console.log('- pdfBuilderProExists:', pdfBuilderProExists);
             console.log('- initExists:', initExists);
-            console.log('- reactExists:', reactExists);
-            console.log('- reactDomExists:', reactDomExists);
+            console.log('- reactExists: (bundled in PDFBuilderPro)', reactExists);
+            console.log('- reactDomExists: (bundled in PDFBuilderPro)', reactDomExists);
             if (pdfBuilderProExists) {
                 const pdfBuilderProRaw = window.PDFBuilderPro;
                 const pdfBuilderPro = pdfBuilderProRaw.default ? pdfBuilderProRaw.default : pdfBuilderProRaw;
