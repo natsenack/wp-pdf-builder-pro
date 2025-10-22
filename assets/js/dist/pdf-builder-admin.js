@@ -11927,7 +11927,7 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
 });
 
 // Optimisation : éviter les re-renders inutiles
-/* harmony default export */ const components_PDFCanvasEditor = (/*#__PURE__*/react.memo(/*#__PURE__*/(0,react.forwardRef)(PDFCanvasEditor)));
+PDFCanvasEditor.displayName = 'PDFCanvasEditor';
 ;// ./resources/js/hooks/index.js
 
 

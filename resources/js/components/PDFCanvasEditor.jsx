@@ -952,4 +952,4 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
 });
 
 // Optimisation : éviter les re-renders inutiles
-export default React.memo(forwardRef(PDFCanvasEditor));
+PDFCanvasEditor.displayName = 'PDFCanvasEditor';
