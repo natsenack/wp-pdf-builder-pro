@@ -40,11 +40,12 @@ if (!isset($GLOBALS['pdf_builder_scripts_loaded'])) {
     // Charger directement les scripts PDF Builder
     $assets_url = defined('PDF_BUILDER_PRO_ASSETS_URL') ? PDF_BUILDER_PRO_ASSETS_URL : plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/';
 
-    // Script principal
-    wp_enqueue_script('pdf-builder-admin-direct', $assets_url . 'js/dist/pdf-builder-admin.js', ['jquery'], '1.0.0_direct_' . time(), true);
+    // Script principal - CHARGER DIRECTEMENT AVEC BALISE SCRIPT
+    $script_url = $assets_url . 'js/dist/pdf-builder-admin.js?v=' . time();
+    echo '<script type="text/javascript" src="' . esc_url($script_url) . '"></script>';
 
-    // Variables AJAX
-    wp_localize_script('pdf-builder-admin-direct', 'pdfBuilderAjax', [
+    // Variables AJAX - AJOUTER DIRECTEMENT
+    $ajax_vars = [
         'ajaxurl' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('pdf_builder_order_actions'),
         'version' => '8.0.0_direct_' . time(),
@@ -54,7 +55,11 @@ if (!isset($GLOBALS['pdf_builder_scripts_loaded'])) {
             'error' => 'Erreur',
             'success' => 'Succès',
         ]
-    ]);
+    ];
+    echo '<script type="text/javascript">window.pdfBuilderAjax = ' . wp_json_encode($ajax_vars) . ';</script>';
+
+    // Variables AJAX pour wp_localize_script aussi
+    wp_localize_script('pdf-builder-admin-direct', 'pdfBuilderAjax', $ajax_vars);
 
     // Forcer l'exécution des scripts enqueued
     wp_scripts()->do_items();
