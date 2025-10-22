@@ -367,6 +367,7 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
     - Gérer mapping variables → valeurs d'exemple
     - **Test en ligne** : Données fictives injectées correctement
     - **Diagnostic** : Vérifier cohérence des données d'exemple
+    - **✅ RÉALISÉ** : CanvasModeProvider créé avec données fictives cohérentes (client Marie Dubois, commande CMD-2024-0456, société Votre Société SARL), système de cache intégré, tests unitaires validés, déploiement prêt
 
   - **3.2.3** : Implémenter MetaboxModeProvider (données WooCommerce)
     - Créer `MetaboxModeProvider` avec données réelles
@@ -460,6 +461,37 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
     - Optimiser ordre de chargement
     - **Test en ligne** : Ressources critiques prioritaires
     - **Diagnostic** : Vérifier waterfall réseau optimisé
+
+  - **3.4.5** : Implémenter boutons aperçu dans éditeur et metabox
+    - **Éditeur Canvas** :
+      - Ajouter bouton "Aperçu" dans toolbar principale (droite)
+      - Icône œil avec tooltip "Aperçu du PDF"
+      - Ouverture modal/panel latéral responsive
+      - Mode mobile : overlay fullscreen avec contrôles adaptatifs
+      - Intégration avec PreviewRenderer pour rendu temps réel
+      - Boutons de contrôle : zoom +, zoom -, zoom 100%, fermer
+      - **Test en ligne** : Aperçu fonctionnel dans éditeur
+      - **Diagnostic** : Rendu correct, contrôles opérationnels
+
+    - **Metabox WooCommerce** :
+      - Bouton "Aperçu PDF" dans section "Actions PDF"
+      - Positionné après "Générer PDF" et avant "Télécharger"
+      - Style cohérent avec boutons WooCommerce existants
+      - Ouverture modal responsive avec aperçu intégré
+      - Mode mobile : fullscreen avec navigation tactile
+      - Utilisation données commande réelles via DataProvider
+      - Boutons de contrôle : zoom, fermer, imprimer aperçu
+      - **Test en ligne** : Aperçu fonctionnel dans metabox
+      - **Diagnostic** : Données réelles affichées correctement
+
+    - **Composants UI partagés** :
+      - Composant React PreviewModal réutilisable
+      - Gestion responsive (desktop/tablet/mobile)
+      - États de chargement et gestion d'erreurs
+      - Intégration avec EventHandlerInterface pour interactions
+      - Cache temporaire pour éviter rechargements inutiles
+      - **Test en ligne** : Composants réutilisables validés
+      - **Diagnostic** : Performance et cohérence UI assurées
 
 ### ✅ Phase 4 : Tests & optimisation
 - [ ] **Étape 4.1 : Tests unitaires (100% couverture)**

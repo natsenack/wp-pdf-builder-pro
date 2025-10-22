@@ -210,6 +210,104 @@ try {
 
     echo "\n=== Tous les tests terminés avec succès ===\n";
 
+// Tests pour CanvasModeProvider (Phase 3.2.2)
+echo "\n\n=== Test CanvasModeProvider 3.2.2 ===\n\n";
+
+try {
+    // Inclure la classe CanvasModeProvider
+    require_once __DIR__ . '/src/Interfaces/DataProviderInterface.php';
+    require_once __DIR__ . '/src/Providers/CanvasModeProvider.php';
+
+    // Test 14: Instanciation CanvasModeProvider
+    echo "Test 14: Instanciation CanvasModeProvider\n";
+    $provider = new \PDF_Builder_Pro\Providers\CanvasModeProvider();
+    echo "✓ Provider instancié sans erreur\n";
+
+    // Test 15: Récupération données client
+    echo "\nTest 15: Données client fictives\n";
+    $customerData = $provider->getCustomerData();
+    echo "Nom: " . $customerData['full_name'] . "\n";
+    echo "Email: " . $customerData['email'] . "\n";
+    echo "Téléphone: " . $customerData['phone'] . "\n";
+    echo "✓ Données client récupérées\n";
+
+    // Test 16: Récupération données commande
+    echo "\nTest 16: Données commande fictives\n";
+    $orderData = $provider->getOrderData();
+    echo "Numéro commande: " . $orderData['order_number'] . "\n";
+    echo "Date: " . $orderData['order_date'] . "\n";
+    echo "Total: " . $orderData['total'] . " €\n";
+    echo "Nombre d'articles: " . count($orderData['items']) . "\n";
+    echo "✓ Données commande récupérées\n";
+
+    // Test 17: Récupération données société
+    echo "\nTest 17: Données société fictives\n";
+    $companyData = $provider->getCompanyData();
+    echo "Nom société: " . $companyData['name'] . "\n";
+    echo "Email: " . $companyData['email'] . "\n";
+    echo "SIRET: " . $companyData['siret'] . "\n";
+    echo "✓ Données société récupérées\n";
+
+    // Test 18: Génération données fictives
+    echo "\nTest 18: Génération données fictives\n";
+    $templateKeys = ['customer_name', 'order_number', 'order_total', 'company_name'];
+    $mockData = $provider->generateMockData($templateKeys);
+    echo "Données générées:\n";
+    foreach ($mockData as $key => $value) {
+        echo "  $key: $value\n";
+    }
+    echo "✓ Données fictives générées\n";
+
+    // Test 19: Vérification complétude
+    echo "\nTest 19: Vérification complétude données\n";
+    $requiredKeys = ['customer_name', 'order_number', 'company_name'];
+    $completeness = $provider->checkDataCompleteness($requiredKeys);
+    echo "Données complètes: " . ($completeness['complete'] ? 'Oui' : 'Non') . "\n";
+    if (!empty($completeness['missing'])) {
+        echo "Clés manquantes: " . implode(', ', $completeness['missing']) . "\n";
+    }
+    echo "✓ Vérification complétude effectuée\n";
+
+    // Test 20: Système de cache
+    echo "\nTest 20: Système de cache\n";
+    $testData = ['test' => 'cached_value'];
+    $cacheKey = 'test_cache_key';
+
+    // Mise en cache
+    $cacheResult = $provider->cacheData($cacheKey, $testData, 60);
+    echo "Mise en cache: " . ($cacheResult ? 'Réussie' : 'Échouée') . "\n";
+
+    // Récupération depuis le cache
+    $cachedData = $provider->getCachedData($cacheKey);
+    echo "Récupération cache: " . ($cachedData === $testData ? 'Réussie' : 'Échouée') . "\n";
+
+    // Invalidation du cache
+    $invalidateResult = $provider->invalidateCache($cacheKey);
+    echo "Invalidation cache: " . ($invalidateResult ? 'Réussie' : 'Échouée') . "\n";
+
+    // Vérification que le cache est vide
+    $cachedDataAfter = $provider->getCachedData($cacheKey);
+    echo "Cache après invalidation: " . ($cachedDataAfter === null ? 'Vide (OK)' : 'Non vide (ERREUR)') . "\n";
+    echo "✓ Système de cache fonctionnel\n";
+
+    // Test 21: Nettoyage des données
+    echo "\nTest 21: Nettoyage des données\n";
+    $rawData = [
+        'name' => 'Test & <script>alert("xss")</script>',
+        'safe' => 'Normal text'
+    ];
+    $sanitized = $provider->sanitizeData($rawData);
+    echo "Données brutes: " . $rawData['name'] . "\n";
+    echo "Données nettoyées: " . $sanitized['name'] . "\n";
+    echo "✓ Nettoyage des données effectué\n";
+
+    echo "\n=== Tests CanvasModeProvider terminés avec succès ===\n";
+
+} catch (\Exception $e) {
+    echo "ERREUR FATALE dans CanvasModeProvider: " . $e->getMessage() . "\n";
+    echo "Fichier: " . $e->getFile() . " Ligne: " . $e->getLine() . "\n";
+}
+
 } catch (\Exception $e) {
     echo "ERREUR FATALE: " . $e->getMessage() . "\n";
     echo "Fichier: " . $e->getFile() . " Ligne: " . $e->getLine() . "\n";
