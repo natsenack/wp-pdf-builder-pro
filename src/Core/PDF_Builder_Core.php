@@ -209,7 +209,7 @@ class PDF_Builder_Core
             // Précharger le ScriptLoader en priorité (petit fichier d'optimisation)
             wp_enqueue_script(
                 'pdf-builder-script-loader',
-                PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-script-loader.js',
+                PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-script-loader.a7f3092f8533c77194d1.js',
                 array(),
                 PDF_BUILDER_PRO_VERSION,
                 false // Charger dans le head pour optimiser le chargement
