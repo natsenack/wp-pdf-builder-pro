@@ -54,16 +54,16 @@ if (!isset($GLOBALS['pdf_builder_scripts_loaded'])) {
         console.log("window.ReactDOM:", typeof window.ReactDOM, window.ReactDOM ? "defined" : "undefined");
 
         // Test d\'exécution du script
-        if (typeof window.PDFBuilderPro !== "undefined") {
-            console.log("✓ PDFBuilderPro is available globally");
+        if (typeof window.pdfBuilderPro !== "undefined") {
+            console.log("✓ pdfBuilderPro is available globally");
             try {
-                console.log("PDFBuilderPro instance:", window.PDFBuilderPro);
-                console.log("PDFBuilderPro version:", window.PDFBuilderPro.version || "unknown");
+                console.log("pdfBuilderPro instance:", window.pdfBuilderPro);
+                console.log("pdfBuilderPro version:", window.pdfBuilderPro.version || "unknown");
             } catch(e) {
-                console.error("Error accessing PDFBuilderPro:", e);
+                console.error("Error accessing pdfBuilderPro:", e);
             }
         } else {
-            console.error("✗ PDFBuilderPro is NOT available globally");
+            console.error("✗ pdfBuilderPro is NOT available globally");
         }
 
         if (typeof window.React !== "undefined") {
@@ -277,11 +277,12 @@ body.wp-admin .pdf-builder-container {
 
         // console.log('Checking scripts loaded...', {
         //     PDFBuilderPro: typeof window.PDFBuilderPro,
-        //     init: typeof window.PDFBuilderPro?.init
+        //     pdfBuilderPro: typeof window.pdfBuilderPro,
+        //     init: typeof window.pdfBuilderPro?.init
         // });
 
-        const pdfBuilderProExists = typeof window.PDFBuilderPro !== 'undefined' && window.PDFBuilderPro !== null;
-        const pdfBuilderProRaw = window.PDFBuilderPro;
+        const pdfBuilderProExists = typeof window.pdfBuilderPro !== 'undefined' && window.pdfBuilderPro !== null;
+        const pdfBuilderProRaw = window.pdfBuilderPro;
         const pdfBuilderPro = pdfBuilderProExists && pdfBuilderProRaw.default ? pdfBuilderProRaw.default : pdfBuilderProRaw;
         const initExists = pdfBuilderProExists && typeof pdfBuilderPro?.init === 'function';
 
@@ -299,7 +300,7 @@ body.wp-admin .pdf-builder-container {
                 };
 
                 // console.log('📋 Initialisation via PDFBuilderPro.init()...');
-                const pdfBuilderProRaw = window.PDFBuilderPro;
+                const pdfBuilderProRaw = window.pdfBuilderPro;
                 const pdfBuilderPro = pdfBuilderProRaw.default ? pdfBuilderProRaw.default : pdfBuilderProRaw;
                 pdfBuilderPro.init('invoice-quote-builder-container', {
                     templateId: <?php echo $template_id ?: 'null'; ?>,
@@ -364,7 +365,7 @@ body.wp-admin .pdf-builder-container {
             console.log('- reactExists: (bundled in PDFBuilderPro)', reactExists);
             console.log('- reactDomExists: (bundled in PDFBuilderPro)', reactDomExists);
             if (pdfBuilderProExists) {
-                const pdfBuilderProRaw = window.PDFBuilderPro;
+                const pdfBuilderProRaw = window.pdfBuilderPro;
                 const pdfBuilderPro = pdfBuilderProRaw.default ? pdfBuilderProRaw.default : pdfBuilderProRaw;
                 console.log('- PDFBuilderPro keys:', Object.keys(pdfBuilderProRaw));
                 console.log('- Has default property:', 'default' in pdfBuilderProRaw);
