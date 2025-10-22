@@ -1423,14 +1423,15 @@ class PDF_Builder_Admin
             // Définir également pdfBuilderPro.nonce pour la compatibilité avec RealDataProvider
             // Attendre que le bundle soit chargé avant d\'ajouter le nonce
             function waitForPDFBuilderPro() {
-                if (window.pdfBuilderPro && typeof window.pdfBuilderPro.init === \'function\') {
-                    // L\'instance existe déjà, ajouter seulement le nonce si nécessaire
+                if (typeof window.initializePDFBuilderPro === \'function\') {
+                    // La fonction d'initialisation existe, l'utiliser pour obtenir l'instance
+                    window.pdfBuilderPro = window.initializePDFBuilderPro();
                     window.pdfBuilderPro.nonce = window.pdfBuilderPro.nonce || "' . wp_create_nonce('pdf_builder_order_actions') . '";
-                    console.log(\'PDF Builder: Nonce ajouté à l\\\'instance existante\');
+                    console.log(\'PDF Builder: Instance initialisée via initializePDFBuilderPro\');
                     return;
                 }
-                
-                // Si l\'instance n\'existe pas encore, attendre un peu et réessayer
+
+                // Si la fonction n\'existe pas encore, attendre un peu et réessayer
                 setTimeout(waitForPDFBuilderPro, 50);
             }
             

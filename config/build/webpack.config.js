@@ -28,16 +28,16 @@ module.exports = {
   // React est partagé entre les chunks
   mode: 'production',
   optimization: {
-    usedExports: true, // RÉACTIVÉ pour optimiser les exports
-    sideEffects: true,  // RÉACTIVÉ pour supprimer les effets secondaires inutiles
-    minimize: true,     // RÉACTIVÉ pour la production
+    usedExports: false, // DÉSACTIVÉ pour éviter la suppression des exports globaux
+    sideEffects: false,  // DÉSACTIVÉ pour éviter la suppression des effets secondaires
+    minimize: true,     // Garder la minification
     minimizer: [
       new TerserPlugin({
         terserOptions: {
           compress: {
-            drop_console: true, // Supprimer les console.log en production
+            drop_console: false, // NE PAS supprimer les console.log pour le debug
             drop_debugger: true,
-            pure_funcs: ['console.log', 'console.info', 'console.debug']
+            pure_funcs: [] // NE PAS supprimer les fonctions console
           },
           mangle: {
             safari10: true

@@ -1,5 +1,7 @@
 // DEBUG: Script execution started
 console.error('🚀 PDF Builder Pro: Script execution started - FORCE LOG');
+console.error('Script URL:', document.currentScript ? document.currentScript.src : 'unknown');
+console.error('Window object available:', typeof window);
 
 // Tous les imports doivent être au niveau supérieur du module
 import React from 'react';
@@ -233,28 +235,11 @@ const pdfBuilderPro = new PDFBuilderPro();
 // Export par défaut pour webpack
 export default pdfBuilderPro;
 
-// DEBUG: About to assign globals
-console.error('📋 PDF Builder Pro: About to assign global variables - FORCE LOG');
+// FONCTION GLOBALE SIMPLE POUR L'INITIALISATION
+window.initializePDFBuilderPro = function() {
+    console.error('🚀 PDF Builder Pro: initializePDFBuilderPro called');
+    return pdfBuilderPro;
+};
 
-// Attacher à window pour WordPress - FORCER L'EXPOSITION DIRECTE
-try {
-    if (typeof window !== 'undefined') {
-        // Forcer l'assignation directe de l'instance, pas du module webpack
-        window.PDFBuilderPro = pdfBuilderPro;
-        window.pdfBuilderPro = pdfBuilderPro;
-        console.error('✅ PDF Builder Pro: Global variables assigned successfully - FORCE LOG');
-        console.error('   - window.PDFBuilderPro:', typeof window.PDFBuilderPro);
-        console.error('   - window.pdfBuilderPro:', typeof window.pdfBuilderPro);
-    } else {
-        console.log('⚠️ PDF Builder Pro: Window not available');
-    }
-} catch (error) {
-    console.error('❌ PDF Builder Pro: Error assigning global variables:', error);
-}
-// Marquer comme initialisé pour éviter les conflits
-PDFBuilderSecurity.preventMultipleInit();
-
-// Attacher à window pour WordPress - simplifié
-window.PDFBuilderPro = pdfBuilderPro;
-// Alias pour compatibilité
-window.pdfBuilderPro = pdfBuilderPro;
+// IMPORTER ET INITIALISER LES GLOBALS - FORCER L'INCLUSION
+import './globals.js';
