@@ -203,7 +203,6 @@ class PDF_Builder_Core
         if (
             ($hook && strpos($hook, 'pdf-builder') !== false && strpos($hook, 'pdf-builder-editor') === false)
             || (isset($_GET['page']) && $_GET['page'] && strpos($_GET['page'], 'pdf-builder') !== false && $_GET['page'] !== 'pdf-builder-editor')
-            || (isset($_SERVER['REQUEST_URI']) && $_SERVER['REQUEST_URI'] && strpos($_SERVER['REQUEST_URI'], 'pdf-builder-editor') !== false)
         ) {
             // Phase 3.4.3 - Optimisation du chargement initial
             // Précharger le ScriptLoader en priorité (petit fichier d'optimisation)
