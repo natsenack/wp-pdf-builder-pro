@@ -1,0 +1,9 @@
+open ftp://nats:iZ6vU3zV2y@65.108.242.181
+cd /wp-content/plugins/wp-pdf-builder-pro
+put templates/admin/template-editor.php
+put src/Core/PDF_Builder_Core.php
+put src/Admin/PDF_Builder_Admin.php
+put bootstrap.php
+put pdf-builder-pro.php
+put assets/js/dist/pdf-builder-admin.js
+bye
