@@ -451,12 +451,13 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
     - **Diagnostic** : Vérifier réseau (pas de chargement précoce)
     - ✅ **RÉALISÉ** : LazyLoader.js créé avec Intersection Observer, ImageRenderer modifié pour data-src/loading=lazy, intégré dans système assets
 
-  - **3.4.2** : Ajouter cache pour données WooCommerce
+  - [x] **3.4.2** : Ajouter cache pour données WooCommerce
     - Implémenter cache transients pour données commande
     - Gérer invalidation cache intelligente
     - Optimiser requêtes répétées
     - **Test en ligne** : Données mises en cache correctement
     - **Diagnostic** : Vérifier DB queries réduites
+    - ✅ **RÉALISÉ** : WooCommerceCache.php créé avec transients, invalidation automatique, intégré dans MetaboxModeProvider
 
   - **3.4.3** : Optimiser chargement initial
     - Différer chargement JavaScript non critique
@@ -565,10 +566,8 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
 
 ## 📊 État actuel
 
-**Phase active** : 3/7  
-**Progression** : 60% (Phase 2 complète à 100% + Phase 3.1.1-3.1.4 + 3.2.1-3.2.4 terminées - infrastructure PreviewRenderer complète + système de providers + mode switching avec DI)
-
----
+**Phase active** : 3.4.3/7
+**Progression** : 67% (Phase 2 complète à 100% + Phase 3.1.1-3.1.4 + 3.2.1-3.2.4 + 3.3.1-3.3.7 + 3.4.1-3.4.2 terminées - infrastructure PreviewRenderer complète + système de providers + mode switching + renderers complets + lazy loading + cache WooCommerce)---
 
 ## ✅ Critères de succès
 

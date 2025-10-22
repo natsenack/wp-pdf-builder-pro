@@ -12,6 +12,7 @@
 namespace PDF_Builder_Pro\Providers;
 
 use PDF_Builder_Pro\Interfaces\DataProviderInterface;
+use PDF_Builder\Cache\WooCommerceCache;
 
 /**
  * Classe MetaboxModeProvider
@@ -100,14 +101,27 @@ class MetaboxModeProvider implements DataProviderInterface
      */
     public function getCustomerData(array $context = []): array
     {
-        $cacheKey = 'customer_data_' . md5(serialize($context));
+        $customerId = $this->order ? $this->order->get_customer_id() : 0;
 
-        if ($this->getCachedData($cacheKey)) {
-            return $this->getCachedData($cacheKey);
+        // Pour les commandes invitées, utiliser un cache basé sur l'email
+        if ($customerId === 0 && $this->order) {
+            $email = $this->order->get_billing_email();
+            $cacheKey = 'guest_' . md5($email);
+
+            // Essayer de récupérer du cache interne pour les invités
+            if ($this->getCachedData($cacheKey)) {
+                return $this->getCachedData($cacheKey);
+            }
+        } else {
+            // Essayer de récupérer du cache WooCommerce pour les clients enregistrés
+            $cachedData = WooCommerceCache::getCustomerData($customerId);
+            if ($cachedData !== null) {
+                return $cachedData;
+            }
         }
 
         $customerData = [
-            'customer_id' => $this->order ? $this->order->get_customer_id() : null,
+            'customer_id' => $customerId,
             'first_name' => $this->order ? $this->order->get_billing_first_name() : '[Prénom manquant]',
             'last_name' => $this->order ? $this->order->get_billing_last_name() : '[Nom manquant]',
             'full_name' => $this->order ?
@@ -130,7 +144,15 @@ class MetaboxModeProvider implements DataProviderInterface
             'vat_number' => $this->order ? $this->order->get_meta('_billing_vat_number') : ''
         ];
 
-        $this->cacheData($cacheKey, $customerData, $this->cacheTtl);
+        // Stocker en cache
+        if ($customerId === 0 && $this->order) {
+            // Cache interne pour les invités
+            $this->cacheData($cacheKey, $customerData, $this->cacheTtl);
+        } else {
+            // Cache WooCommerce pour les clients enregistrés
+            WooCommerceCache::setCustomerData($customerId, $customerData);
+        }
+
         return $customerData;
     }
 
@@ -142,16 +164,19 @@ class MetaboxModeProvider implements DataProviderInterface
      */
     public function getOrderData(array $context = []): array
     {
-        $cacheKey = 'order_data_' . md5(serialize($context));
-
-        if ($this->getCachedData($cacheKey)) {
-            return $this->getCachedData($cacheKey);
-        }
-
         if (!$this->order) {
             return $this->getEmptyOrderData();
         }
 
+        $orderId = $this->order->get_id();
+
+        // Essayer de récupérer du cache WooCommerce
+        $cachedData = WooCommerceCache::getOrderData($orderId, array_keys($context));
+        if ($cachedData !== null) {
+            return $cachedData;
+        }
+
+        // Générer les données si pas en cache
         $orderData = [
             'order_number' => $this->order->get_order_number(),
             'order_id' => $this->order->get_id(),
@@ -201,7 +226,9 @@ class MetaboxModeProvider implements DataProviderInterface
             'tracking_number' => $this->order->get_meta('_tracking_number') ?: ''
         ];
 
-        $this->cacheData($cacheKey, $orderData, $this->cacheTtl);
+        // Stocker en cache WooCommerce
+        WooCommerceCache::setOrderData($orderId, $orderData, array_keys($context));
+
         return $orderData;
     }
 
@@ -213,10 +240,12 @@ class MetaboxModeProvider implements DataProviderInterface
      */
     public function getCompanyData(array $context = []): array
     {
-        $cacheKey = 'company_data_' . md5(serialize($context));
+        $contextKey = isset($context['template']) ? $context['template'] : 'default';
 
-        if ($this->getCachedData($cacheKey)) {
-            return $this->getCachedData($cacheKey);
+        // Essayer de récupérer du cache WooCommerce
+        $cachedData = WooCommerceCache::getCompanyData($contextKey);
+        if ($cachedData !== null) {
+            return $cachedData;
         }
 
         $companyData = [
@@ -244,7 +273,9 @@ class MetaboxModeProvider implements DataProviderInterface
             'registration_number' => function_exists('get_option') ? get_option('woocommerce_store_registration') : ''
         ];
 
-        $this->cacheData($cacheKey, $companyData, $this->cacheTtl);
+        // Stocker en cache WooCommerce
+        WooCommerceCache::setCompanyData($companyData, $contextKey);
+
         return $companyData;
     }
 

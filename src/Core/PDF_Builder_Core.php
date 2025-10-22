@@ -69,11 +69,15 @@ class PDF_Builder_Core
     }
 
     /**
-     * Charger les dépendances
+     * Initialisation du cache WooCommerce
      */
-    private function loadDependencies()
+    private function init_woocommerce_cache()
     {
-        // Les dépendances sont déjà chargées dans le fichier principal
+        // Inclure la classe WooCommerceCache
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Cache/WooCommerceCache.php';
+
+        // Configurer l'invalidation automatique du cache
+        \PDF_Builder\Cache\WooCommerceCache::setupAutoInvalidation();
     }
 
     /**
@@ -86,6 +90,9 @@ class PDF_Builder_Core
 
         // Initialiser les fonctionnalités
         $this->init_features();
+
+        // Initialiser le cache WooCommerce
+        $this->init_woocommerce_cache();
 
         // Initialiser l'interface d'administration
         $this->init_admin();
