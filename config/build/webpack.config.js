@@ -52,21 +52,24 @@ module.exports = {
     ],
     // Optimisation avancée du code splitting
     splitChunks: {
-      chunks: 'all',
+      chunks: (chunk) => {
+        // Exclure l'entry point pdf-builder-admin du code splitting
+        return chunk.name !== 'pdf-builder-admin';
+      },
       minSize: 20000, // Taille minimale pour le splitting (20KB)
       maxSize: 244000, // Taille maximale recommandée (244KB)
       cacheGroups: {
         vendor: {
           test: /[\\/]node_modules[\\/]/,
           name: 'vendors',
-          chunks: 'all',
+          chunks: (chunk) => chunk.name !== 'pdf-builder-admin',
           priority: 10,
           enforce: true
         },
         react: {
           test: /[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/,
           name: 'react-vendor',
-          chunks: 'all',
+          chunks: (chunk) => chunk.name !== 'pdf-builder-admin',
           priority: 20,
           enforce: true
         },
@@ -79,7 +82,7 @@ module.exports = {
                    !module.context.includes('pdf-builder-admin');
           },
           name: 'pdf-builder-ui',
-          chunks: 'all',
+          chunks: (chunk) => chunk.name !== 'pdf-builder-admin',
           priority: 5
         },
         renderers: {
@@ -90,7 +93,7 @@ module.exports = {
                    !module.context.includes('pdf-builder-admin');
           },
           name: 'pdf-builder-renderers',
-          chunks: 'all',
+          chunks: (chunk) => chunk.name !== 'pdf-builder-admin',
           priority: 5
         },
         utilities: {
@@ -101,7 +104,7 @@ module.exports = {
                    !module.context.includes('pdf-builder-admin');
           },
           name: 'pdf-builder-utils',
-          chunks: 'all',
+          chunks: (chunk) => chunk.name !== 'pdf-builder-admin',
           priority: 3
         }
       }
