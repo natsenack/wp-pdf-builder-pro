@@ -146,12 +146,12 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
   - **Test** : 17 tests unitaires validés, build réussi  
   - **✅ VALIDÉ** : company_logo entièrement amélioré avec gestion unifiée, redimensionnement automatique, validation formats et propriétés complètes
 
-- [ ] **Étape 2.2.2 : Améliorer order_number**  
+- [x] **Étape 2.2.2 : Améliorer order_number**  
   - Implémenter formatage configurable (#CMD-2025-XXX, FACT-XXXX, etc.)  
-  - Ajouter validation format et prévisualisation  
+  - Ajouter validation des propriétés et gestion des cas spéciaux  
   - Étendre propriétés de style (police, couleur, alignement)  
-  - Gérer cas spéciaux (commandes sans numéro)  
   - **Test** : Formats validés, prévisualisation fonctionnelle
+  - **✅ VALIDÉ** : Formatage étendu (6 formats), validation propriétés, style complet, tests validés
 
 - [ ] **Étape 2.2.3 : Améliorer company_info**  
   - Mapping complet des champs société WooCommerce  
@@ -345,8 +345,8 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
 ## 📊 État actuel
 
 **Phase active** : 2/7  
-**Progression** : 28% (Phase 2.1 complète + company_logo amélioré - éléments validés, propriétés analysées, bugs corrigés, priorités définies, premier élément fondamental implémenté)  
-**Prochaine action** : Phase 2.2.2 - Implémentation order_number (formatage configurable)
+**Progression** : 31% (Phase 2.1 complète + company_logo + order_number améliorés - éléments validés, propriétés analysées, bugs corrigés, priorités définies, deux éléments fondamentaux implémentés)  
+**Prochaine action** : Phase 2.2.3 - Implémentation company_info (mapping société complet)
 
 ---
 
@@ -446,7 +446,15 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
 - **Propriétés de bordure complètes** : borderWidth, borderStyle, borderColor pour personnalisation avancée
 - **Tests complets** : 17 tests unitaires validés, build réussi sans régression
 
-**🎯 Prochaine étape** : Phase 2.2.2 - order_number (formatage configurable, validation)
+**✅ Phase 2.2.2 TERMINÉE** : order_number entièrement amélioré :
+- **Formatage configurable étendu** : 6 formats prédéfinis (CMD-2025-XXX, Facture N°XXX, etc.)
+- **Variables avancées** : {order_year}, {order_month}, {order_day} en plus de {order_number}, {order_date}
+- **Validation des propriétés** : fontSize borné (8-72px), gestion d'erreurs de formatage
+- **Propriétés de style étendues** : labelColor, lineHeight, bordures, backgroundColor
+- **Données de prévisualisation** : previewOrderNumber, previewOrderDate, etc. personnalisables
+- **Tests complets** : 21 tests unitaires validés, build réussi sans régression
+
+**🎯 Prochaine étape** : Phase 2.2.3 - company_info (mapping société complet)
 
 ---
 
