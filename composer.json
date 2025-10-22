@@ -12,8 +12,34 @@
     },
     "autoload": {
         "psr-4": {
-            "": "src/"
-        }
+            "PDF_Builder\\": "src/",
+            "PDF_Builder_Pro\\": "src/"
+        },
+        "files": [
+            "src/Managers/PDF_Builder_Asset_Optimizer.php",
+            "src/Managers/PDF_Builder_Cache_Manager.php",
+            "src/Managers/PDF_Builder_Canvas_Elements_Manager.php",
+            "src/Managers/PDF_Builder_Canvas_Interactions_Manager.php",
+            "src/Managers/PDF_Builder_Database_Query_Optimizer.php",
+            "src/Managers/PDF_Builder_Diagnostic_Manager.php",
+            "src/Managers/PDF_Builder_Drag_Drop_Manager.php",
+            "src/Managers/PDF_Builder_Dual_PDF_Generator.php",
+            "src/Managers/PDF_Builder_Extended_Cache_Manager.php",
+            "src/Managers/PDF_Builder_Feature_Manager.php",
+            "src/Managers/PDF_Builder_License_Manager.php",
+            "src/Managers/PDF_Builder_PDF_Generator.php",
+            "src/Managers/PDF_Builder_Performance_Benchmark.php",
+            "src/Managers/PDF_Builder_Resize_Manager.php",
+            "src/Managers/PDF_Builder_Screenshot_Renderer.php",
+            "src/Managers/PDF_Builder_Settings_Manager.php",
+            "src/Managers/PDF_Builder_Status_Manager.php",
+            "src/Managers/PDF_Builder_Template_Manager.php",
+            "src/Managers/PDF_Builder_Translation_Utils.php",
+            "src/Managers/PDF_Builder_WooCommerce_Integration.php",
+            "src/Core/PDF_Builder_Path_Validator.php",
+            "src/Core/PDF_Builder_Rate_Limiter.php",
+            "src/Core/PDF_Builder_Security_Validator.php"
+        ]
     },
     "scripts": {
         "test": "phpunit",

@@ -1419,7 +1419,7 @@ class PDF_Builder_Admin
             console.log("PDF Builder: Variables AJAX définies globalement:", window.pdfBuilderAjax);
             
             // Définir également pdfBuilderPro.nonce pour la compatibilité avec RealDataProvider
-            // Attendre que le bundle soit chargé avant d'ajouter le nonce
+            // Attendre que le bundle soit chargé avant d\'ajouter le nonce
             function waitForPDFBuilderPro() {
                 if (window.pdfBuilderPro && typeof window.pdfBuilderPro.init === \'function\') {
                     // L\'instance existe déjà, ajouter seulement le nonce si nécessaire

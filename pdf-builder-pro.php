@@ -19,6 +19,11 @@ if (!defined('ABSPATH')) {
 // Désactiver les avertissements de dépréciation pour la compatibilité PHP 8.1+
 error_reporting(error_reporting() & ~E_DEPRECATED);
 
+// Charger le logger pour les hooks d'activation/désactivation
+if (file_exists(plugin_dir_path(__FILE__) . 'src/Managers/PDF_Builder_Logger.php')) {
+    require_once plugin_dir_path(__FILE__) . 'src/Managers/PDF_Builder_Logger.php';
+}
+
 // Hook d'activation
 register_activation_hook(__FILE__, 'pdf_builder_activate');
 

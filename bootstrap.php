@@ -36,6 +36,11 @@ function pdf_builder_load_core() {
         require_once PDF_BUILDER_PLUGIN_DIR . 'core/autoloader.php';
     }
 
+    // Charger le logger en premier (nécessaire pour PDF_Builder_Core)
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Logger.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Managers/PDF_Builder_Logger.php';
+    }
+
     // Charger la classe principale PDF_Builder_Core depuis src/
     if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Core.php')) {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Core/PDF_Builder_Core.php';

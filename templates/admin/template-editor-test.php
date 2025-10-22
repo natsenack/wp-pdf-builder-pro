@@ -1,501 +1,102 @@
-<?php<?php
+<?php
+/**
+ * Template Editor TEST Page - PDF Builder Pro
+ * Test script loading and global variables
+ */
 
-// Empêcher l'accès direct// Empêcher l'accès direct
-
-if (!defined('ABSPATH')) {if (!defined('ABSPATH')) {
-
-    exit('Accès direct interdit');    exit('Accès direct interdit');
-
-}}
-
-/**/**
-
- * Template Editor TEST Page - PDF Builder Pro * Template Editor Page - PDF Builder Pro
-
- * Test script loading and global variables * React/TypeScript Canvas Editor
-
- */ */
-
-
-
-if (!is_user_logged_in() || !current_user_can('read')) {// Permissions are checked by WordPress via add_submenu_page capability parameter
-
-    wp_die(__('Vous devez être connecté pour accéder à cette page.', 'pdf-builder-pro'));// Additional check for logged-in users as fallback
-
-}if (!is_user_logged_in() || !current_user_can('read')) {
-
-?>    wp_die(__('Vous devez être connecté pour accéder à cette page.', 'pdf-builder-pro'));
-
+// Empêcher l'accès direct
+if (!defined('ABSPATH')) {
+    exit('Accès direct interdit');
 }
 
-<!DOCTYPE html>
-
-<html>// Tous les scripts et styles sont maintenant chargés dans la classe admin via enqueue_admin_scripts
-
-<head>// Plus besoin d'enqueues ici car ils sont déjà faits avant wp_head()
-
-    <title>Test PDF Builder Script Loading</title>
-
-    <meta charset="utf-8">// Forcer le chargement des scripts pour l'éditeur si ce n'est pas déjà fait
-
-</head>if (!did_action('admin_enqueue_scripts')) {
-
-<body>    do_action('admin_enqueue_scripts', 'pdf-builder-editor');
-
-    <h1>Test PDF Builder Script Loading</h1>}
-
-    <div id="test-results"></div>
-
-// S'assurer que le core PDF Builder est chargé
-
-    <?phpif (function_exists('pdf_builder_load_core_when_needed')) {
-
-    // Charger directement les scripts PDF Builder    pdf_builder_load_core_when_needed();
-
-    $assets_url = defined('PDF_BUILDER_PRO_ASSETS_URL') ? PDF_BUILDER_PRO_ASSETS_URL : plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/';}
-
-
-
-    // Script principal - CHARGER DIRECTEMENT AVEC BALISE SCRIPT SYNCHRONE// CHARGEMENT DIRECT DES SCRIPTS - DERNIER RECOURS
-
-    $script_url = $assets_url . 'js/dist/pdf-builder-admin.js?v=' . time();// Si les méthodes WordPress ne fonctionnent pas, charger directement
-
-    echo '<script type="text/javascript" src="' . esc_url($script_url) . '"></script>';if (!isset($GLOBALS['pdf_builder_scripts_loaded'])) {
-
-    $GLOBALS['pdf_builder_scripts_loaded'] = true;
-
-    // SCRIPT DE TEST IMMÉDIAT
-
-    echo '<script type="text/javascript">    // Charger jQuery si pas déjà chargé
-
-        (function() {    if (!wp_script_is('jquery', 'done')) {
-
-            console.log("=== IMMEDIATE TEST - Script loaded ===");        wp_enqueue_script('jquery');
-
-            console.log("Time:", new Date().toISOString());    }
-
-
-
-            function checkVariables() {    // Charger directement les scripts PDF Builder
-
-                const results = {    $assets_url = defined('PDF_BUILDER_PRO_ASSETS_URL') ? PDF_BUILDER_PRO_ASSETS_URL : plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/';
-
-                    PDFBuilderPro: typeof window.PDFBuilderPro,
-
-                    pdfBuilderPro: typeof window.pdfBuilderPro,    // Script principal - CHARGER DIRECTEMENT AVEC BALISE SCRIPT SYNCHRONE
-
-                    React: typeof window.React,    $script_url = $assets_url . 'js/dist/pdf-builder-admin.js?v=' . time();
-
-                    ReactDOM: typeof window.ReactDOM,    echo '<script type="text/javascript" src="' . esc_url($script_url) . '"></script>';
-
-                    timestamp: new Date().toISOString()
-
-                };    // SCRIPT DE TEST - Vérifier si les variables globales sont définies
-
-    echo '<script type="text/javascript">
-
-                console.log("Variables check:", results);        console.log("=== PDF Builder Script Execution Test ===");
-
-        console.log("Script loaded at:", new Date().toISOString());
-
-                const resultsDiv = document.getElementById("test-results");        console.log("window.PDFBuilderPro:", typeof window.PDFBuilderPro, window.PDFBuilderPro ? "defined" : "undefined");
-
-                if (resultsDiv) {        console.log("window.pdfBuilderPro:", typeof window.pdfBuilderPro, window.pdfBuilderPro ? "defined" : "undefined");
-
-                    resultsDiv.innerHTML = `        console.log("window.React:", typeof window.React, window.React ? "defined" : "undefined");
-
-                        <h2>Résultats du test</h2>        console.log("window.ReactDOM:", typeof window.ReactDOM, window.ReactDOM ? "defined" : "undefined");
-
-                        <pre>${JSON.stringify(results, null, 2)}</pre>
-
-                        <p><strong>Status:</strong> ${        // Test d\'exécution du script
-
-                            results.PDFBuilderPro !== "undefined" && results.React !== "undefined"        if (typeof window.PDFBuilderPro !== "undefined") {
-
-                                ? "<span style=\"color:green\">✓ SUCCÈS</span>"            console.log("✓ PDFBuilderPro is available globally");
-
-                                : "<span style=\"color:red\">✗ ÉCHEC</span>"            try {
-
-                        }</p>                console.log("PDFBuilderPro instance:", window.PDFBuilderPro);
-
-                    `;                console.log("PDFBuilderPro version:", window.PDFBuilderPro.version || "unknown");
-
-                }            } catch(e) {
-
-                console.error("Error accessing PDFBuilderPro:", e);
-
-                return results;            }
-
-            }        } else {
-
-            console.error("✗ PDFBuilderPro is NOT available globally");
-
-            // Vérifier immédiatement        }
-
-            const immediateResults = checkVariables();
-
-        if (typeof window.React !== "undefined") {
-
-            // Vérifier après un court délai            console.log("✓ React is available globally");
-
-            setTimeout(function() {        } else {
-
-                console.log("=== DELAYED TEST (100ms) ===");            console.error("✗ React is NOT available globally");
-
-                checkVariables();        }
-
-            }, 100);
-
-        if (typeof window.ReactDOM !== "undefined") {
-
-            // Vérifier après 1 seconde            console.log("✓ ReactDOM is available globally");
-
-            setTimeout(function() {        } else {
-
-                console.log("=== DELAYED TEST (1s) ===");            console.error("✗ ReactDOM is NOT available globally");
-
-                checkVariables();        }
-
-            }, 1000);        console.log("=== End Script Execution Test ===");
-
-    </script>';
-
-        })();
-
-    </script>';    // Variables AJAX - AJOUTER DIRECTEMENT
-
-    ?>    $ajax_vars = [
-
-        'ajaxurl' => admin_url('admin-ajax.php'),
-
-</body>        'nonce' => wp_create_nonce('pdf_builder_order_actions'),
-
-</html>        'version' => '8.0.0_direct_' . time(),
-        'timestamp' => time(),
-        'strings' => [
-            'loading' => 'Chargement...',
-            'error' => 'Erreur',
-            'success' => 'Succès',
-        ]
-    ];
-    echo '<script type="text/javascript">window.pdfBuilderAjax = ' . wp_json_encode($ajax_vars) . ';</script>';
-
-    // Variables AJAX pour wp_localize_script aussi
-    wp_localize_script('pdf-builder-admin-direct', 'pdfBuilderAjax', $ajax_vars);
-
-    // Forcer l'exécution des scripts enqueued
-    wp_scripts()->do_items();
+// Permissions check
+if (!is_user_logged_in() || !current_user_can('read')) {
+    wp_die(__('Vous devez être connecté pour accéder à cette page.', 'pdf-builder-pro'));
 }
 
-// Tentative classique si les classes sont disponibles
-if (class_exists('PDF_Builder\Admin\PDF_Builder_Admin')) {
-    // PDF_Builder_Admin::getInstance() nécessite une instance de la classe principale
-    if (class_exists('PDF_Builder\Core\PDF_Builder_Core')) {
-        $core_instance = \PDF_Builder\Core\PDF_Builder_Core::getInstance();
-        $admin_instance = \PDF_Builder\Admin\PDF_Builder_Admin::getInstance($core_instance);
-        if (method_exists($admin_instance, 'enqueue_admin_scripts')) {
-            $admin_instance->enqueue_admin_scripts('pdf-builder_page_pdf-builder-editor');
-        }
-    }
-}
-
-// Get template ID from URL
-$template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
-$is_new = $template_id === 0;
-
-// Récupérer les données complètes du template si c'est un template existant
-$template_name = '';
-$template_data = null;
-$initial_elements = [];
-
-if (!$is_new && $template_id > 0) {
-    global $wpdb;
-    $table_templates = $wpdb->prefix . 'pdf_builder_templates';
-    $template = $wpdb->get_row(
-        $wpdb->prepare("SELECT name, template_data FROM $table_templates WHERE id = %d", $template_id),
-        ARRAY_A
-    );
-
-    if ($template) {
-        $template_name = $template['name'];
-
-        // Décoder et préparer les données du template
-        $template_data_raw = $template['template_data'];
-        if (!empty($template_data_raw)) {
-            $decoded_data = json_decode($template_data_raw, true);
-            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded_data)) {
-                $template_data = $decoded_data;
-
-                // Extraire les éléments initiaux depuis la structure du template
-                // Structure actuelle : { elements: [...], canvasWidth, canvasHeight, version }
-                if (isset($decoded_data['elements']) && is_array($decoded_data['elements'])) {
-                    $initial_elements = $decoded_data['elements'];
-                } elseif (isset($decoded_data['pages']) && is_array($decoded_data['pages']) && !empty($decoded_data['pages'])) {
-                    // Fallback pour l'ancienne structure (si elle existe)
-                    $first_page = $decoded_data['pages'][0];
-                    if (isset($first_page['elements']) && is_array($first_page['elements'])) {
-                        $initial_elements = $first_page['elements'];
-                    }
-                }
-            }
-        }
-    }
-}
 ?>
-<div class="wrap">
-    
-    <div id="invoice-quote-builder-container" data-is-new="<?php echo $is_new ? 'true' : 'false'; ?>" class="pdf-builder-container">
-        <!-- Loading state -->
-        <div class="pdf-builder-loading">
-            <div>
-                <div class="icon">📄</div>
-                <h2><?php echo $is_new ? __('Créer un nouveau template', 'pdf-builder-pro') : __('Éditer le template', 'pdf-builder-pro'); ?></h2>
-                <p><?php _e('Chargement de l\'éditeur React/TypeScript avancé...', 'pdf-builder-pro'); ?></p>
-                <p style="font-size: 12px; color: #666; margin-top: 10px;">Chargement des scripts JavaScript...</p>
-                <div class="spinner"></div>
-            </div>
-        </div>
-        <!-- React App will be mounted here -->
-    </div>
-</div>
-
-<style>
-/* Styles essentiels pour l'éditeur PDF */
-.pdf-builder-container {
-    min-height: 130vh; /* Étendu pour plus d'espace de travail vertical */
-    background: #ffffff;
-    border-radius: 8px;
-    margin: 10px 0;
-    position: relative;
-    overflow: hidden;
-}
-
-.pdf-builder-container .pdf-canvas-editor {
-    width: 100%;
-    height: 100%;
-    min-height: 600px;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* Styles de chargement temporaires */
-.pdf-builder-loading {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    background: #ffffff;
-    border-radius: 6px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-}
-
-.pdf-builder-loading > div {
-    text-align: center;
-}
-
-.pdf-builder-loading .icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-}
-
-.pdf-builder-loading h2 {
-    margin: 0 0 1rem 0;
-    color: #1e293b;
-}
-
-.pdf-builder-loading .spinner {
-    display: inline-block;
-    width: 40px;
-    height: 40px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #007cba;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-/* Assurer la priorité des styles CSS sur les styles inline */
-.pdf-builder-container[style] {
-    padding: 0 !important;
-}
-
-/* Styles pour éviter les conflits avec WordPress admin */
-body.wp-admin .pdf-builder-container {
-    margin-top: 0;
-    margin-bottom: 0;
-}
-
-body.wp-admin #wpadminbar {
-    z-index: 10000 !important;
-}
-
-body.wp-admin #adminmenu {
-    z-index: 10000 !important;
-}
-
-body.wp-admin .pdf-builder-container {
-    z-index: 10 !important;
-}
-</style>
-
-<!-- Initialisation JavaScript -->
-<!-- Note: Tous les styles essentiels pour l'éditeur ont été consolidés ci-dessus. -->
-<script>
-(function() {
-    'use strict';
-
-    // Initialisation principale avec protection contre les exécutions multiples
-    let isInitialized = false;
-
-    const initApp = () => {
-        if (isInitialized) {
-            // console.log('PDF Builder already initialized, skipping...');
-            return;
-        }
-
-        // Cacher l'état de chargement
-        const loadingElement = document.querySelector('.pdf-builder-loading');
-        if (loadingElement) {
-            loadingElement.style.display = 'none';
-        }
-
-        // console.log('Checking scripts loaded...', {
-        //     PDFBuilderPro: typeof window.PDFBuilderPro,
-        //     init: typeof window.PDFBuilderPro?.init
-        // });
-
-        const pdfBuilderProExists = typeof window.PDFBuilderPro !== 'undefined' && window.PDFBuilderPro !== null;
-        const pdfBuilderProRaw = window.PDFBuilderPro;
-        const pdfBuilderPro = pdfBuilderProExists && pdfBuilderProRaw.default ? pdfBuilderProRaw.default : pdfBuilderProRaw;
-        const initExists = pdfBuilderProExists && typeof pdfBuilderPro?.init === 'function';
-
-        if (pdfBuilderProExists && initExists) {
-            try {
-                isInitialized = true;
-
-                // Définir les données globales pour le JavaScript
-                window.pdfBuilderData = {
-                    templateId: <?php echo $template_id ?: 'null'; ?>,
-                    templateName: <?php echo $template_name ? json_encode($template_name) : 'null'; ?>,
-                    isNew: <?php echo $is_new ? 'true' : 'false'; ?>,
-                    ajaxurl: ajaxurl,
-                    nonce: window.pdfBuilderAjax?.nonce || ''
-                };
-
-                // console.log('📋 Initialisation via PDFBuilderPro.init()...');
-                const pdfBuilderProRaw = window.PDFBuilderPro;
-                const pdfBuilderPro = pdfBuilderProRaw.default ? pdfBuilderProRaw.default : pdfBuilderProRaw;
-                pdfBuilderPro.init('invoice-quote-builder-container', {
-                    templateId: <?php echo $template_id ?: 'null'; ?>,
-                    templateName: <?php echo $template_name ? json_encode($template_name) : 'null'; ?>,
-                    isNew: <?php echo $is_new ? 'true' : 'false'; ?>,
-                    initialElements: <?php echo json_encode($initial_elements); ?>,
-                    width: 595,
-                    height: 842,
-                    zoom: 1,
-                    gridSize: 10,
-                    snapToGrid: true,
-                    maxHistorySize: 50
-                });
-            } catch (error) {
-                console.error('PDF Builder Pro: Erreur lors de l\'initialisation:', error);
-                isInitialized = false; // Reset on error
-
-                // Afficher l'erreur dans l'interface
-                const container = document.getElementById('invoice-quote-builder-container');
-                if (container) {
-                    container.innerHTML = `
-                        <div style="text-align: center; padding: 40px; color: #dc3545;">
-                            <h3>Erreur d'initialisation</h3>
-                            <p>Une erreur s'est produite lors du chargement de l'éditeur.</p>
-                            <p>Vérifiez la console pour plus de détails.</p>
-                            <button onclick="location.reload()">Recharger la page</button>
-                        </div>
-                    `;
-                }
-            }
-        } else {
-            console.error('❌ Scripts non chargés - PDFBuilderPro ou init manquant');
-        }
-    };
-
-    // Attendre que tous les scripts soient chargés avant d'initialiser
-    let scriptCheckAttempts = 0;
-    const maxScriptCheckAttempts = 50; // 5 secondes maximum
-
-    const checkScriptsLoaded = () => {
-        scriptCheckAttempts++;
-
-        // Vérifier que tous les chunks sont chargés avec le code splitting
-        const pdfBuilderProRaw = window.PDFBuilderPro;
-        const pdfBuilderProExists = typeof pdfBuilderProRaw !== 'undefined' && pdfBuilderProRaw !== null;
-
-        // Gérer le cas où webpack expose le module avec une propriété 'default'
-        const pdfBuilderPro = pdfBuilderProExists && pdfBuilderProRaw.default ? pdfBuilderProRaw.default : pdfBuilderProRaw;
-        const initExists = pdfBuilderProExists && typeof pdfBuilderPro?.init === 'function';
-
-        // Avec le code splitting, vérifier aussi que React est disponible - COMMENTÉ car React est maintenant bundlé
-        // const reactExists = typeof window.React !== 'undefined';
-        // const reactDomExists = typeof window.ReactDOM !== 'undefined';
-        const reactExists = true; // React est bundlé dans PDFBuilderPro
-        const reactDomExists = true; // ReactDOM est bundlé dans PDFBuilderPro
-
-        // LOGS DÉTAILLÉS À CHAQUE VÉRIFICATION
-        if (scriptCheckAttempts % 10 === 0 || scriptCheckAttempts === 1) {
-            console.log(`🔍 PDF Builder Debug: Check attempt ${scriptCheckAttempts}/50 - DETAILED`);
-            console.log('- pdfBuilderProExists:', pdfBuilderProExists);
-            console.log('- initExists:', initExists);
-            console.log('- reactExists: (bundled in PDFBuilderPro)', reactExists);
-            console.log('- reactDomExists: (bundled in PDFBuilderPro)', reactDomExists);
-            if (pdfBuilderProExists) {
-                const pdfBuilderProRaw = window.PDFBuilderPro;
-                const pdfBuilderPro = pdfBuilderProRaw.default ? pdfBuilderProRaw.default : pdfBuilderProRaw;
-                console.log('- PDFBuilderPro keys:', Object.keys(pdfBuilderProRaw));
-                console.log('- Has default property:', 'default' in pdfBuilderProRaw);
-                console.log('- Using default:', !!pdfBuilderProRaw.default);
-                console.log('- Final PDFBuilderPro keys:', Object.keys(pdfBuilderPro));
-                console.log('- Final has init:', 'init' in pdfBuilderPro);
-                console.log('- Final PDFBuilderPro.init type:', typeof pdfBuilderPro.init);
-            }
-        }
-
-        if (pdfBuilderProExists && initExists && reactExists && reactDomExists) {
-            initApp();
-        } else if (scriptCheckAttempts < maxScriptCheckAttempts) {
-            // Réessayer dans 100ms
-            setTimeout(checkScriptsLoaded, 100);
-        } else {
-            console.error('❌ Timeout: Scripts PDF Builder Pro n\'ont pas pu être chargés après 5 secondes');
-            console.error('Debug info:', {
-                pdfBuilderProExists,
-                initExists,
-                reactExists,
-                reactDomExists,
-                attempts: scriptCheckAttempts
-            });
-            // Afficher un message d'erreur à l'utilisateur
-            const container = document.getElementById('invoice-quote-builder-container');
-            if (container) {
-                container.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: #dc3545;">
-                        <h3>Erreur de chargement</h3>
-                        <p>Les scripts de l'éditeur PDF n'ont pas pu être chargés.</p>
-                        <p>Vérifiez la console pour plus de détails.</p>
-                        <button onclick="location.reload()">Recharger la page</button>
-                    </div>
-                `;
-            }
-        }
-    };
-
-    // Démarrer la vérification dès que le DOM est prêt
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', checkScriptsLoaded);
-    } else {
-        checkScriptsLoaded();
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test PDF Builder Script Loading</title>
+    <meta charset='utf-8'>
+    <?php
+    // Forcer le chargement des scripts pour l'éditeur si ce n'est pas déjà fait
+    if (!did_action('admin_enqueue_scripts')) {
+        do_action('admin_enqueue_scripts', 'pdf-builder-editor');
     }
+    wp_head();
+    ?>
+</head>
+<body>
+    <h1>Test PDF Builder Script Loading</h1>
+    
+    <div id='test-results'>
+        <h2>Test Results</h2>
+        <div id='script-status'></div>
+        <div id='global-vars-status'></div>
+        <div id='react-status'></div>
+    </div>
 
-})();
-</script>
+    <div id='pdf-builder-editor-root'></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const resultsDiv = document.getElementById('test-results');
+            
+            // Test 1: Check if scripts are loaded
+            const scriptStatus = document.getElementById('script-status');
+            const requiredScripts = [
+                'pdf-builder-editor-js',
+                'pdf-builder-editor-vendor-js'
+            ];
+            
+            let scriptLoaded = true;
+            requiredScripts.forEach(scriptId => {
+                const script = document.getElementById(scriptId);
+                if (!script) {
+                    scriptStatus.innerHTML += '<p style=\"color: red;\">❌ Script ' + scriptId + ' not found</p>';
+                    scriptLoaded = false;
+                } else {
+                    scriptStatus.innerHTML += '<p style=\"color: green;\">✅ Script ' + scriptId + ' loaded</p>';
+                }
+            });
+            
+            // Test 2: Check global variables
+            const globalVarsStatus = document.getElementById('global-vars-status');
+            const requiredGlobals = [
+                'PDF_Builder_Config',
+                'wp',
+                'React',
+                'ReactDOM'
+            ];
+            
+            requiredGlobals.forEach(globalVar => {
+                if (typeof window[globalVar] !== 'undefined') {
+                    globalVarsStatus.innerHTML += '<p style=\"color: green;\">✅ Global ' + globalVar + ' available</p>';
+                } else {
+                    globalVarsStatus.innerHTML += '<p style=\"color: red;\">❌ Global ' + globalVar + ' not found</p>';
+                }
+            });
+            
+            // Test 3: Check React mounting
+            const reactStatus = document.getElementById('react-status');
+            const rootElement = document.getElementById('pdf-builder-editor-root');
+            
+            if (rootElement && typeof React !== 'undefined' && typeof ReactDOM !== 'undefined') {
+                try {
+                    const element = React.createElement('div', { className: 'test-react' }, 'React is working!');
+                    ReactDOM.render(element, rootElement);
+                    reactStatus.innerHTML = '<p style=\"color: green;\">✅ React mounting successful</p>';
+                } catch (error) {
+                    reactStatus.innerHTML = '<p style=\"color: red;\">❌ React mounting failed: ' + error.message + '</p>';
+                }
+            } else {
+                reactStatus.innerHTML = '<p style=\"color: red;\">❌ React not available for mounting</p>';
+            }
+        });
+    </script>
+
+    <?php wp_footer(); ?>
+</body>
+</html>

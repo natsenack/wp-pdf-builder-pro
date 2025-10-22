@@ -459,7 +459,7 @@ class PDF_Builder_Core
         // Définir les options par défaut
         add_option('pdf_builder_version', $this->version);
 
-        pdf_builder_log('PDF Builder Pro activated', 1);
+        \pdf_builder_log('PDF Builder Pro activated', 1);
     }
 
     /**
@@ -468,7 +468,7 @@ class PDF_Builder_Core
     public function deactivate()
     {
         // Nettoyer si nécessaire
-        pdf_builder_log('PDF Builder Pro deactivated', 1);
+        \pdf_builder_log('PDF Builder Pro deactivated', 1);
     }
 
     /**
