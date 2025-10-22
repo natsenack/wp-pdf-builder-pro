@@ -319,8 +319,8 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
 ## 📊 État actuel
 
 **Phase active** : 2/7  
-**Progression** : 25% (Phase 2.1 complète - éléments validés, propriétés analysées, bugs corrigés, priorités définies)  
-**Prochaine action** : Phase 2.2 - Implémentation éléments fondamentaux (company_logo, order_number, company_info)
+**Progression** : 28% (Phase 2.1 complète + company_logo amélioré - éléments validés, propriétés analysées, bugs corrigés, priorités définies, premier élément fondamental implémenté)  
+**Prochaine action** : Phase 2.2.2 - Implémentation order_number (formatage configurable)
 
 ---
 
@@ -413,7 +413,14 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
 
 **🔧 Corrections appliquées** : 4 bugs de priorité moyenne corrigés (code mort nettoyé, propriétés texte unifiées, validation vérifiée).
 
-**🎯 Prochaine étape** : Phase 2.2 - Implémentation company_logo pour poser les bases du système reconstruit.
+**✅ Phase 2.2.1 TERMINÉE** : company_logo entièrement amélioré :
+- **Gestion unifiée src/imageUrl** : Support des deux propriétés pour compatibilité maximale
+- **Redimensionnement automatique** : Calcul intelligent des dimensions selon ratio d'aspect naturel
+- **Validation formats d'image** : Support JPG, PNG, WebP, SVG, GIF, BMP, TIFF, ICO avec messages d'erreur explicites
+- **Propriétés de bordure complètes** : borderWidth, borderStyle, borderColor pour personnalisation avancée
+- **Tests complets** : 17 tests unitaires validés, build réussi sans régression
+
+**🎯 Prochaine étape** : Phase 2.2.2 - order_number (formatage configurable, validation)
 
 ---
 
