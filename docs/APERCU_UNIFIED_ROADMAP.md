@@ -402,19 +402,21 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
     - **Diagnostic** : Vérifier qualité et performance chargement
     - ✅ **RÉALISÉ** : ImageRenderer créé avec support complet des formats d'image (JPG, PNG, SVG, GIF, BMP, TIFF, ICO, WebP), redimensionnement automatique, propriétés de style avancées (bordures, border-radius, object-fit), gestion des variables dynamiques, validation des dimensions, tests complets validés, déploiement réussi
 
-  - **3.3.3** : Créer ShapeRenderer (rectangle, circle, line, arrow)
+  - [x] **3.3.3** : Créer ShapeRenderer (rectangle, circle, line, arrow)
     - Implémenter rendu formes géométriques
     - Gérer propriétés (couleur, épaisseur, remplissage)
     - Support formes complexes (flèches, cercles)
     - **Test en ligne** : Formes affichées correctement
     - **Diagnostic** : Vérifier précision géométrique
+    - ✅ **RÉALISÉ** : ShapeRenderer créé avec support complet des 4 formes géométriques (rectangle, circle, line, arrow), propriétés CSS avancées, SVG pour flèches, tests unitaires validés, déploiement réussi
 
-  - **3.3.4** : Créer TableRenderer (product_table)
+  - [x] **3.3.4** : Créer TableRenderer (product_table)
     - Implémenter rendu tableaux avec données dynamiques
     - Gérer colonnes (produit, quantité, prix, total)
     - Support calculs automatiques (TVA, totaux)
     - **Test en ligne** : Tableau avec données WooCommerce
     - **Diagnostic** : Vérifier calculs et alignement
+    - ✅ **RÉALISÉ** : TableRenderer créé avec support complet des tableaux de produits WooCommerce, colonnes configurables (produit, quantité, prix, total), calculs automatiques (sous-total, TVA 20%, total), formatage devise EUR, styles CSS intégrés, gestion données manquantes, tests unitaires complets validés
 
   - **3.3.5** : Créer InfoRenderer (customer_info, company_info, mentions)
     - Implémenter rendu blocs d'information
