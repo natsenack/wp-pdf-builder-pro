@@ -386,7 +386,7 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
     - ✅ **VALIDÉ** : ModeSwitcher et DIContainer opérationnels, transitions fluides, injection de dépendances fonctionnelle, tests complets validés, déploiement réussi
 
 - [ ] **Étape 3.3 : Développer les 7 renderers spécialisés**
-  - **3.3.1** : Créer TextRenderer (dynamic-text, order_number)
+  - [x] **3.3.1** : Créer TextRenderer (dynamic-text, order_number)
     - Implémenter rendu texte avec variables dynamiques
     - Gérer formatage (gras, italique, couleur)
     - Support multiligne et alignement
