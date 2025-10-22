@@ -126,6 +126,88 @@ try {
     $scrollbars = $renderer->getScrollbarState();
     echo "getScrollbarState(): Horizontal=" . ($scrollbars['horizontal'] ? 'Oui' : 'Non') . ", Vertical=" . ($scrollbars['vertical'] ? 'Oui' : 'Non') . "\n";
 
+    // Test 14: Rendu d'élément texte
+    echo "\nTest 14: Rendu d'élément texte\n";
+    $renderer = new \PDF_Builder\Renderers\PreviewRenderer(['mode' => 'canvas']);
+    $renderer->init();
+    $elementData = [
+        'type' => 'text',
+        'text' => 'Hello World',
+        'x' => 10,
+        'y' => 20,
+        'width' => 100,
+        'height' => 50,
+        'fontSize' => 14,
+        'color' => '#ff0000',
+        'bold' => true
+    ];
+    $result = $renderer->renderElement($elementData);
+    echo "Rendu élément texte: " . ($result['success'] ? "Réussi" : "Échoué") . "\n";
+    if ($result['success']) {
+        echo "HTML généré: " . substr($result['html'], 0, 50) . "...\n";
+        echo "Position: x=" . $result['x'] . ", y=" . $result['y'] . "\n";
+    }
+
+    // Test 15: Rendu d'élément rectangle
+    echo "\nTest 15: Rendu d'élément rectangle\n";
+    $elementData = [
+        'type' => 'rectangle',
+        'x' => 50,
+        'y' => 50,
+        'width' => 200,
+        'height' => 100,
+        'fillColor' => '#00ff00',
+        'borderWidth' => 2,
+        'borderColor' => '#000000'
+    ];
+    $result = $renderer->renderElement($elementData);
+    echo "Rendu élément rectangle: " . ($result['success'] ? "Réussi" : "Échoué") . "\n";
+
+    // Test 16: Rendu avec zoom
+    echo "\nTest 16: Rendu avec zoom\n";
+    $rendererZoom = new \PDF_Builder\Renderers\PreviewRenderer(['mode' => 'canvas', 'zoom' => 150]);
+    $rendererZoom->init();
+    $elementData = [
+        'type' => 'text',
+        'text' => 'Zoom Test',
+        'x' => 10,
+        'y' => 10,
+        'width' => 100,
+        'height' => 30
+    ];
+    $result = $rendererZoom->renderElement($elementData);
+    echo "Rendu avec zoom 150%: " . ($result['success'] ? "Réussi" : "Échoué") . "\n";
+    if ($result['success']) {
+        echo "Zoom appliqué: " . $result['zoom_applied'] . "%\n";
+        echo "Dimensions ajustées: " . $result['width'] . "x" . $result['height'] . "\n";
+    }
+
+    // Test 17: Rendu responsive
+    echo "\nTest 17: Rendu responsive\n";
+    $rendererResponsive = new \PDF_Builder\Renderers\PreviewRenderer(['mode' => 'canvas', 'responsive' => true]);
+    $rendererResponsive->init();
+    $rendererResponsive->setContainerDimensions(400, 300);
+    $result = $rendererResponsive->renderElement($elementData);
+    echo "Rendu responsive: " . ($result['success'] ? "Réussi" : "Échoué") . "\n";
+    if ($result['success']) {
+        echo "Responsive appliqué: " . ($result['responsive_applied'] ? "Oui" : "Non") . "\n";
+    }
+
+    // Test 18: Élément non supporté
+    echo "\nTest 18: Élément non supporté\n";
+    $elementData = [
+        'type' => 'unsupported_element',
+        'x' => 0,
+        'y' => 0,
+        'width' => 100,
+        'height' => 100
+    ];
+    $result = $renderer->renderElement($elementData);
+    echo "Rendu élément non supporté: " . ($result['success'] ? "Réussi" : "Échoué") . "\n";
+    if (!$result['success']) {
+        echo "Erreur attendue: " . $result['error'] . "\n";
+    }
+
     echo "\n=== Tous les tests terminés avec succès ===\n";
 
 } catch (\Exception $e) {

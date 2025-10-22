@@ -563,6 +563,345 @@ class PreviewRenderer {
             'vertical' => $needsVertical
         ];
     }
+
+    /**
+     * Rend un élément spécifique selon ses propriétés
+     * Méthode appelée depuis CanvasElement.jsx pour rendre un élément
+     *
+     * @param array $elementData Données de l'élément (format CanvasElement)
+     * @return array Résultat du rendu avec HTML, CSS, position, etc.
+     */
+    public function renderElement(array $elementData) {
+        // Vérifier l'initialisation
+        if (!$this->initialized) {
+            error_log('PreviewRenderer: Tentative de rendu d\'élément sans initialisation');
+            return [
+                'success' => false,
+                'error' => 'Renderer non initialisé'
+            ];
+        }
+
+        try {
+            // Validation des données d'élément
+            if (!isset($elementData['type'])) {
+                throw new \Exception('Type d\'élément manquant');
+            }
+
+            // Rendre l'élément selon son type
+            $renderResult = $this->renderElementByType($elementData);
+
+            // Appliquer le zoom aux dimensions et positions
+            $renderResult = $this->applyZoomToElement($renderResult);
+
+            // Calculer la position responsive si nécessaire
+            if ($this->responsive && $this->containerDimensions) {
+                $renderResult = $this->applyResponsivePositioning($renderResult);
+            }
+
+            return array_merge($renderResult, [
+                'success' => true,
+                'element_type' => $elementData['type'],
+                'zoom_applied' => $this->zoomLevel,
+                'responsive_applied' => $this->responsive
+            ]);
+
+        } catch (\Exception $e) {
+            error_log('PreviewRenderer: Erreur rendu élément - ' . $e->getMessage());
+            return [
+                'success' => false,
+                'error' => $e->getMessage(),
+                'element_type' => $elementData['type'] ?? 'unknown'
+            ];
+        }
+    }
+
+    /**
+     * Rend un élément selon son type spécifique
+     *
+     * @param array $elementData Données de l'élément
+     * @return array Résultat du rendu
+     */
+    private function renderElementByType(array $elementData) {
+        $type = $elementData['type'];
+
+        switch ($type) {
+            case 'text':
+            case 'dynamic-text':
+                return $this->renderTextElement($elementData);
+
+            case 'rectangle':
+                return $this->renderRectangleElement($elementData);
+
+            case 'image':
+            case 'company_logo':
+                return $this->renderImageElement($elementData);
+
+            case 'line':
+                return $this->renderLineElement($elementData);
+
+            default:
+                // Élément non supporté pour l'instant
+                return $this->renderUnsupportedElement($elementData);
+        }
+    }
+
+    /**
+     * Rend un élément texte
+     */
+    private function renderTextElement(array $elementData) {
+        $text = $elementData['text'] ?? '';
+        $fontSize = $elementData['fontSize'] ?? 12;
+        $fontFamily = $elementData['fontFamily'] ?? 'Arial';
+        $color = $elementData['color'] ?? '#000000';
+        $bold = $elementData['bold'] ?? false;
+        $italic = $elementData['italic'] ?? false;
+        $underline = $elementData['underline'] ?? false;
+        $align = $elementData['textAlign'] ?? 'left';
+
+        // Styles CSS
+        $styles = [
+            'font-size' => $fontSize . 'px',
+            'font-family' => $fontFamily,
+            'color' => $color,
+            'text-align' => $align,
+            'position' => 'absolute',
+            'left' => ($elementData['x'] ?? 0) . 'px',
+            'top' => ($elementData['y'] ?? 0) . 'px',
+            'width' => ($elementData['width'] ?? 100) . 'px',
+            'height' => ($elementData['height'] ?? 50) . 'px',
+            'overflow' => 'hidden'
+        ];
+
+        // Styles de police
+        if ($bold) $styles['font-weight'] = 'bold';
+        if ($italic) $styles['font-style'] = 'italic';
+        if ($underline) $styles['text-decoration'] = 'underline';
+
+        // Générer le CSS inline
+        $cssString = '';
+        foreach ($styles as $property => $value) {
+            $cssString .= $property . ':' . $value . ';';
+        }
+
+        return [
+            'html' => '<div style="' . htmlspecialchars($cssString, ENT_QUOTES, 'UTF-8') . '">' . htmlspecialchars($text, ENT_QUOTES, 'UTF-8') . '</div>',
+            'css' => $cssString,
+            'x' => $elementData['x'] ?? 0,
+            'y' => $elementData['y'] ?? 0,
+            'width' => $elementData['width'] ?? 100,
+            'height' => $elementData['height'] ?? 50
+        ];
+    }
+
+    /**
+     * Rend un élément rectangle
+     */
+    private function renderRectangleElement(array $elementData) {
+        $fillColor = $elementData['fillColor'] ?? 'transparent';
+        $borderWidth = $elementData['borderWidth'] ?? 1;
+        $borderColor = $elementData['borderColor'] ?? '#000000';
+        $borderStyle = $elementData['borderStyle'] ?? 'solid';
+        $borderRadius = $elementData['borderRadius'] ?? 0;
+
+        $styles = [
+            'position' => 'absolute',
+            'left' => ($elementData['x'] ?? 0) . 'px',
+            'top' => ($elementData['y'] ?? 0) . 'px',
+            'width' => ($elementData['width'] ?? 100) . 'px',
+            'height' => ($elementData['height'] ?? 50) . 'px',
+            'background-color' => $fillColor,
+            'border' => $borderWidth . 'px ' . $borderStyle . ' ' . $borderColor,
+            'border-radius' => $borderRadius . 'px'
+        ];
+
+        $cssString = '';
+        foreach ($styles as $property => $value) {
+            $cssString .= $property . ':' . $value . ';';
+        }
+
+        return [
+            'html' => '<div style="' . htmlspecialchars($cssString, ENT_QUOTES, 'UTF-8') . '"></div>',
+            'css' => $cssString,
+            'x' => $elementData['x'] ?? 0,
+            'y' => $elementData['y'] ?? 0,
+            'width' => $elementData['width'] ?? 100,
+            'height' => $elementData['height'] ?? 50
+        ];
+    }
+
+    /**
+     * Rend un élément image
+     */
+    private function renderImageElement(array $elementData) {
+        $src = $elementData['src'] ?? $elementData['imageUrl'] ?? '';
+        $alt = $elementData['alt'] ?? '';
+
+        if (empty($src)) {
+            return $this->renderUnsupportedElement($elementData);
+        }
+
+        $styles = [
+            'position' => 'absolute',
+            'left' => ($elementData['x'] ?? 0) . 'px',
+            'top' => ($elementData['y'] ?? 0) . 'px',
+            'width' => ($elementData['width'] ?? 100) . 'px',
+            'height' => ($elementData['height'] ?? 50) . 'px',
+            'object-fit' => 'contain'
+        ];
+
+        $cssString = '';
+        foreach ($styles as $property => $value) {
+            $cssString .= $property . ':' . $value . ';';
+        }
+
+        return [
+            'html' => '<img src="' . htmlspecialchars($src, ENT_QUOTES, 'UTF-8') . '" alt="' . htmlspecialchars($alt, ENT_QUOTES, 'UTF-8') . '" style="' . htmlspecialchars($cssString, ENT_QUOTES, 'UTF-8') . '" />',
+            'css' => $cssString,
+            'x' => $elementData['x'] ?? 0,
+            'y' => $elementData['y'] ?? 0,
+            'width' => $elementData['width'] ?? 100,
+            'height' => $elementData['height'] ?? 50
+        ];
+    }
+
+    /**
+     * Rend un élément ligne
+     */
+    private function renderLineElement(array $elementData) {
+        $strokeWidth = $elementData['strokeWidth'] ?? 1;
+        $strokeColor = $elementData['strokeColor'] ?? '#000000';
+
+        $styles = [
+            'position' => 'absolute',
+            'left' => ($elementData['x'] ?? 0) . 'px',
+            'top' => ($elementData['y'] ?? 0) . 'px',
+            'width' => ($elementData['width'] ?? 100) . 'px',
+            'height' => ($elementData['height'] ?? 2) . 'px',
+            'background-color' => $strokeColor
+        ];
+
+        $cssString = '';
+        foreach ($styles as $property => $value) {
+            $cssString .= $property . ':' . $value . ';';
+        }
+
+        return [
+            'html' => '<div style="' . htmlspecialchars($cssString, ENT_QUOTES, 'UTF-8') . '"></div>',
+            'css' => $cssString,
+            'x' => $elementData['x'] ?? 0,
+            'y' => $elementData['y'] ?? 0,
+            'width' => $elementData['width'] ?? 100,
+            'height' => $elementData['height'] ?? 2
+        ];
+    }
+
+    /**
+     * Rend un élément non supporté (placeholder)
+     */
+    private function renderUnsupportedElement(array $elementData) {
+        $type = $elementData['type'] ?? 'unknown';
+
+        $styles = [
+            'position' => 'absolute',
+            'left' => ($elementData['x'] ?? 0) . 'px',
+            'top' => ($elementData['y'] ?? 0) . 'px',
+            'width' => ($elementData['width'] ?? 100) . 'px',
+            'height' => ($elementData['height'] ?? 50) . 'px',
+            'background-color' => '#f3f4f6',
+            'border' => '2px dashed #d1d5db',
+            'display' => 'flex',
+            'align-items' => 'center',
+            'justify-content' => 'center',
+            'font-size' => '12px',
+            'color' => '#6b7280'
+        ];
+
+        $cssString = '';
+        foreach ($styles as $property => $value) {
+            $cssString .= $property . ':' . $value . ';';
+        }
+
+        return [
+            'html' => '<div style="' . htmlspecialchars($cssString, ENT_QUOTES, 'UTF-8') . '">' . htmlspecialchars($type, ENT_QUOTES, 'UTF-8') . '</div>',
+            'css' => $cssString,
+            'x' => $elementData['x'] ?? 0,
+            'y' => $elementData['y'] ?? 0,
+            'width' => $elementData['width'] ?? 100,
+            'height' => $elementData['height'] ?? 50
+        ];
+    }
+
+    /**
+     * Applique le zoom aux dimensions et positions d'un élément rendu
+     */
+    private function applyZoomToElement(array $renderResult) {
+        if ($this->zoomLevel === 100) {
+            return $renderResult;
+        }
+
+        $zoomFactor = $this->zoomLevel / 100;
+
+        // Ajuster les dimensions
+        $renderResult['width'] = round($renderResult['width'] * $zoomFactor);
+        $renderResult['height'] = round($renderResult['height'] * $zoomFactor);
+
+        // Ajuster la position
+        $renderResult['x'] = round($renderResult['x'] * $zoomFactor);
+        $renderResult['y'] = round($renderResult['y'] * $zoomFactor);
+
+        // Mettre à jour le CSS
+        $renderResult['css'] = preg_replace_callback(
+            '/(width|height|left|top):\s*(\d+)px/',
+            function($matches) use ($zoomFactor) {
+                $property = $matches[1];
+                $value = (int)$matches[2];
+                $newValue = round($value * $zoomFactor);
+                return $property . ':' . $newValue . 'px';
+            },
+            $renderResult['css']
+        );
+
+        return $renderResult;
+    }
+
+    /**
+     * Applique le positionnement responsive à un élément rendu
+     */
+    private function applyResponsivePositioning(array $renderResult) {
+        if (!$this->containerDimensions) {
+            return $renderResult;
+        }
+
+        // Calculer les ratios
+        $canvasWidth = $this->dimensions['width'];
+        $canvasHeight = $this->dimensions['height'];
+        $containerWidth = $this->containerDimensions['width'];
+        $containerHeight = $this->containerDimensions['height'];
+
+        $scaleX = $containerWidth / $canvasWidth;
+        $scaleY = $containerHeight / $canvasHeight;
+        $scale = min($scaleX, $scaleY); // Maintenir les proportions
+
+        // Appliquer l'échelle
+        $renderResult['x'] = round($renderResult['x'] * $scale);
+        $renderResult['y'] = round($renderResult['y'] * $scale);
+        $renderResult['width'] = round($renderResult['width'] * $scale);
+        $renderResult['height'] = round($renderResult['height'] * $scale);
+
+        // Mettre à jour le CSS
+        $renderResult['css'] = preg_replace_callback(
+            '/(width|height|left|top):\s*(\d+)px/',
+            function($matches) use ($scale) {
+                $property = $matches[1];
+                $value = (int)$matches[2];
+                $newValue = round($value * $scale);
+                return $property . ':' . $newValue . 'px';
+            },
+            $renderResult['css']
+        );
+
+        return $renderResult;
+    }
 }
 
 // Initialisation si nécessaire (pour tests)

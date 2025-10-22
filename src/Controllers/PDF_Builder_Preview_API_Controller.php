@@ -39,6 +39,10 @@ class PDF_Builder_Preview_API_Controller {
 
         // Export du canvas
         add_action('wp_ajax_pdf_export_canvas', [$this, 'handle_export_canvas']);
+
+        // Rendu d'élément individuel (Phase 3.1.4)
+        add_action('wp_ajax_pdf_render_element', [$this, 'handle_render_element']);
+        add_action('wp_ajax_nopriv_pdf_render_element', [$this, 'handle_render_element']); // Pour le frontend si nécessaire
     }
 
     /**
@@ -389,7 +393,8 @@ class PDF_Builder_Preview_API_Controller {
             'pdf_generate_preview' => 10,  // 10 aperçus par minute
             'pdf_validate_license' => 5,   // 5 validations par minute
             'pdf_get_template_variables' => 20, // 20 récupérations par minute
-            'pdf_export_canvas' => 5       // 5 exports par minute
+            'pdf_export_canvas' => 5,      // 5 exports par minute
+            'pdf_render_element' => 50     // 50 rendus d'éléments par minute
         ];
 
         $limit = $limits[$endpoint] ?? 10;
@@ -557,6 +562,129 @@ class PDF_Builder_Preview_API_Controller {
         // Aussi dans les logs WordPress pour les événements critiques
         if (in_array($event, ['rate_limit_exceeded', 'permission_denied', 'invalid_nonce'])) {
             error_log('PDF Builder Security: ' . $event . ' - IP: ' . $log_entry['ip']);
+        }
+    }
+
+    /**
+     * Gérer le rendu d'un élément individuel
+     * Endpoint: wp_ajax_pdf_render_element
+     * Phase 3.1.4 - Intégration avec système de rendu existant
+     *
+     * Paramètres POST:
+     * - element_data: données de l'élément (JSON)
+     * - mode: 'canvas' ou 'metabox' (défaut: canvas)
+     * - zoom: niveau de zoom (défaut: 100)
+     * - responsive: mode responsive activé (défaut: true)
+     * - container_width: largeur conteneur pour responsive (optionnel)
+     * - container_height: hauteur conteneur pour responsive (optionnel)
+     * - nonce: nonce WordPress
+     */
+    public function handle_render_element() {
+        try {
+            // Vérifier le rate limiting
+            if (!$this->check_rate_limit('pdf_render_element')) {
+                wp_send_json_error(['message' => 'Trop de requêtes. Veuillez réessayer dans une minute.']);
+                $this->log_security_event('rate_limit_exceeded', ['endpoint' => 'pdf_render_element']);
+                return;
+            }
+
+            // Vérifier le nonce
+            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_preview_nonce')) {
+                wp_send_json_error(['message' => 'Nonce invalide ou expiré']);
+                $this->log_security_event('invalid_nonce', ['endpoint' => 'pdf_render_element']);
+                return;
+            }
+
+            // Vérifier les permissions
+            if (!current_user_can('edit_posts')) {
+                wp_send_json_error(['message' => 'Permissions insuffisantes']);
+                $this->log_security_event('permission_denied', ['endpoint' => 'pdf_render_element']);
+                return;
+            }
+
+            // Valider et sanitiser les données d'entrée
+            $element_data = json_decode(stripslashes($_POST['element_data'] ?? '{}'), true);
+            if (json_last_error() !== JSON_ERROR_NONE || empty($element_data)) {
+                wp_send_json_error(['message' => 'Données d\'élément invalides']);
+                return;
+            }
+
+            $mode = sanitize_text_field($_POST['mode'] ?? 'canvas');
+            $zoom = intval($_POST['zoom'] ?? 100);
+            $responsive = filter_var($_POST['responsive'] ?? true, FILTER_VALIDATE_BOOLEAN);
+            $container_width = intval($_POST['container_width'] ?? 0);
+            $container_height = intval($_POST['container_height'] ?? 0);
+
+            // Valider les valeurs
+            if (!in_array($mode, ['canvas', 'metabox'])) {
+                wp_send_json_error(['message' => 'Mode invalide']);
+                return;
+            }
+
+            if ($zoom < 50 || $zoom > 150) {
+                wp_send_json_error(['message' => 'Niveau de zoom invalide (50-150%)']);
+                return;
+            }
+
+            // Créer le renderer avec les options appropriées
+            $renderer_options = [
+                'mode' => $mode,
+                'zoom' => $zoom,
+                'responsive' => $responsive
+            ];
+
+            if ($container_width > 0 && $container_height > 0) {
+                $renderer_options['container_dimensions'] = [
+                    'width' => $container_width,
+                    'height' => $container_height
+                ];
+            }
+
+            // Inclure et instancier PreviewRenderer
+            require_once plugin_dir_path(dirname(__FILE__, 2)) . 'Renderers/PreviewRenderer.php';
+            $renderer = new \PDF_Builder\Renderers\PreviewRenderer($renderer_options);
+
+            // Initialiser le renderer
+            if (!$renderer->init()) {
+                wp_send_json_error(['message' => 'Erreur d\'initialisation du renderer']);
+                return;
+            }
+
+            // Définir les dimensions du conteneur si responsive
+            if ($responsive && $container_width > 0 && $container_height > 0) {
+                $renderer->setContainerDimensions($container_width, $container_height);
+            }
+
+            // Rendre l'élément
+            $render_result = $renderer->renderElement($element_data);
+
+            if (!$render_result['success']) {
+                wp_send_json_error([
+                    'message' => 'Erreur de rendu: ' . $render_result['error'],
+                    'element_type' => $render_result['element_type']
+                ]);
+                return;
+            }
+
+            // Retourner le résultat du rendu
+            wp_send_json_success([
+                'html' => $render_result['html'],
+                'css' => $render_result['css'],
+                'position' => [
+                    'x' => $render_result['x'],
+                    'y' => $render_result['y'],
+                    'width' => $render_result['width'],
+                    'height' => $render_result['height']
+                ],
+                'element_type' => $render_result['element_type'],
+                'zoom_applied' => $render_result['zoom_applied'],
+                'responsive_applied' => $render_result['responsive_applied']
+            ]);
+
+        } catch (\Exception $e) {
+            error_log('PDF Render Element Error: ' . $e->getMessage());
+            $this->log_security_event('render_element_error', ['error' => $e->getMessage()]);
+            wp_send_json_error(['message' => 'Erreur lors du rendu de l\'élément']);
         }
     }
 }
