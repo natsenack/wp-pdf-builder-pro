@@ -1424,7 +1424,7 @@ class PDF_Builder_Admin
                 if (window.pdfBuilderPro && typeof window.pdfBuilderPro.init === \'function\') {
                     // L\'instance existe déjà, ajouter seulement le nonce si nécessaire
                     window.pdfBuilderPro.nonce = window.pdfBuilderPro.nonce || "' . wp_create_nonce('pdf_builder_order_actions') . '";
-                    console.log("PDF Builder: Nonce ajouté à l\'instance existante");
+                    console.log(\'PDF Builder: Nonce ajouté à l\\\'instance existante\');
                     return;
                 }
                 
