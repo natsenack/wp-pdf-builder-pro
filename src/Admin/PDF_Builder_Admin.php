@@ -1427,7 +1427,7 @@ class PDF_Builder_Admin
                     // La fonction d'initialisation existe, l'utiliser pour obtenir l'instance
                     window.pdfBuilderPro = window.initializePDFBuilderPro();
                     window.pdfBuilderPro.nonce = window.pdfBuilderPro.nonce || "' . wp_create_nonce('pdf_builder_order_actions') . '";
-                    console.log(\'PDF Builder: Instance initialisée via initializePDFBuilderPro\');
+                    console.log(\'PDF Builder: Instance initialisee via initializePDFBuilderPro\');
                     return;
                 }
 
