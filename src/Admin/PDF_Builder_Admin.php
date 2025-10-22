@@ -1419,8 +1419,21 @@ class PDF_Builder_Admin
             console.log("PDF Builder: Variables AJAX définies globalement:", window.pdfBuilderAjax);
             
             // Définir également pdfBuilderPro.nonce pour la compatibilité avec RealDataProvider
-            window.pdfBuilderPro = window.pdfBuilderPro || {};
-            window.pdfBuilderPro.nonce = "' . wp_create_nonce('pdf_builder_order_actions') . '";
+            // Attendre que le bundle soit chargé avant d'ajouter le nonce
+            function waitForPDFBuilderPro() {
+                if (window.pdfBuilderPro && typeof window.pdfBuilderPro.init === \'function\') {
+                    // L\'instance existe déjà, ajouter seulement le nonce si nécessaire
+                    window.pdfBuilderPro.nonce = window.pdfBuilderPro.nonce || "' . wp_create_nonce('pdf_builder_order_actions') . '";
+                    console.log("PDF Builder: Nonce ajouté à l\'instance existante");
+                    return;
+                }
+                
+                // Si l\'instance n\'existe pas encore, attendre un peu et réessayer
+                setTimeout(waitForPDFBuilderPro, 50);
+            }
+            
+            // Démarrer l\'attente
+            waitForPDFBuilderPro();
         ', 'before');
 // Paramètres du canvas pour le JavaScript
         // Récupérer les paramètres canvas depuis le tableau pdf_builder_settings
