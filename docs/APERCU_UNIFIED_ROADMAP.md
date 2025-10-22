@@ -361,7 +361,7 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
     - **Diagnostic** : Vérifier implémentations conformes
     - **✅ RÉALISÉ** : 4 interfaces créées (ModeInterface, DataProviderInterface, PreviewRendererInterface, EventHandlerInterface) avec contrats d'échange détaillés, tests unitaires validés, déploiement FTP réussi
 
-  - **3.2.2** : Implémenter CanvasModeProvider (données fictives)
+  - [x] **3.2.2** : Implémenter CanvasModeProvider (données fictives)
     - Créer `CanvasModeProvider` avec données d'exemple
     - Implémenter injection de données fictives cohérentes
     - Gérer mapping variables → valeurs d'exemple
@@ -369,7 +369,7 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
     - **Diagnostic** : Vérifier cohérence des données d'exemple
     - **✅ RÉALISÉ** : CanvasModeProvider créé avec données fictives cohérentes (client Marie Dubois, commande CMD-2024-0456, société Votre Société SARL), système de cache intégré, tests unitaires validés, déploiement prêt
 
-  - **3.2.3** : Implémenter MetaboxModeProvider (données WooCommerce)
+  - [x] **3.2.3** : Implémenter MetaboxModeProvider (données WooCommerce)
     - Créer `MetaboxModeProvider` avec données réelles
     - Intégrer récupération données WooCommerce
     - Gérer cas données manquantes avec placeholders

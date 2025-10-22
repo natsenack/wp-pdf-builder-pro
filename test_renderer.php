@@ -11,6 +11,7 @@ if (!defined('ABSPATH')) {
 
 // Inclure la classe (dans un environnement réel, utiliser l'autoloader)
 require_once __DIR__ . '/src/Renderers/PreviewRenderer.php';
+require_once __DIR__ . '/src/Providers/index.php';
 
 echo "=== Test PreviewRenderer 3.1.1 ===\n\n";
 
@@ -498,6 +499,108 @@ try {
 
 } catch (\Exception $e) {
     echo "ERREUR FATALE dans MetaboxModeProvider: " . $e->getMessage() . "\n";
+    echo "Fichier: " . $e->getFile() . " Ligne: " . $e->getLine() . "\n";
+}
+
+// ==========================================
+// Test Phase 3.2.4 : ModeSwitcher & DIContainer
+// ==========================================
+
+echo "\n=== Test Phase 3.2.4 : ModeSwitcher & DIContainer ===\n";
+
+try {
+    // Test 31: Instanciation ModeSwitcher
+    echo "\nTest 31: Instanciation ModeSwitcher\n";
+    $modeSwitcher = new PDF_Builder_Pro\Managers\ModeSwitcher();
+    echo "✓ ModeSwitcher instancié avec succès\n";
+
+    // Test 32: Mode par défaut (Canvas)
+    echo "\nTest 32: Mode par défaut (Canvas)\n";
+    $currentMode = $modeSwitcher->getCurrentMode();
+    echo "Mode actuel: " . $currentMode . "\n";
+    echo "Est mode Canvas: " . ($modeSwitcher->isCanvasMode() ? 'Oui' : 'Non') . "\n";
+    echo "Est mode Metabox: " . ($modeSwitcher->isMetaboxMode() ? 'Oui' : 'Non') . "\n";
+    echo "✓ Mode par défaut correct (Canvas)\n";
+
+    // Test 33: Basculement vers Metabox
+    echo "\nTest 33: Basculement vers Metabox\n";
+    $switchResult = $modeSwitcher->switchToMetabox();
+    echo "Basculement réussi: " . ($switchResult ? 'Oui' : 'Non') . "\n";
+    echo "Mode actuel après basculement: " . $modeSwitcher->getCurrentMode() . "\n";
+    echo "Est mode Metabox: " . ($modeSwitcher->isMetaboxMode() ? 'Oui' : 'Non') . "\n";
+    echo "✓ Basculement vers Metabox réussi\n";
+
+    // Test 34: Basculement retour vers Canvas
+    echo "\nTest 34: Basculement retour vers Canvas\n";
+    $switchResult = $modeSwitcher->switchToCanvas();
+    echo "Basculement réussi: " . ($switchResult ? 'Oui' : 'Non') . "\n";
+    echo "Mode actuel après basculement: " . $modeSwitcher->getCurrentMode() . "\n";
+    echo "Est mode Canvas: " . ($modeSwitcher->isCanvasMode() ? 'Oui' : 'Non') . "\n";
+    echo "✓ Basculement retour vers Canvas réussi\n";
+
+    // Test 35: Injection d'ordre WooCommerce (mock)
+    echo "\nTest 35: Injection d'ordre WooCommerce (mock)\n";
+    $mockOrder = new stdClass();
+    $mockOrder->get_id = function() { return 12345; };
+    $mockOrder->get_order_number = function() { return 'WC-12345'; };
+    $mockOrder->get_billing_first_name = function() { return 'Jean'; };
+    $mockOrder->get_billing_last_name = function() { return 'Dupont'; };
+
+    $modeSwitcher->switchToMetabox();
+    $modeSwitcher->injectMetaboxOrder($mockOrder);
+    $currentProvider = $modeSwitcher->getCurrentProvider();
+    echo "Provider actuel: " . get_class($currentProvider) . "\n";
+    echo "✓ Injection d'ordre WooCommerce réussie\n";
+
+    // Test 36: DIContainer - Instanciation
+    echo "\nTest 36: DIContainer - Instanciation\n";
+    $diContainer = new PDF_Builder_Pro\Core\DIContainer();
+    echo "✓ DIContainer instancié avec succès\n";
+
+    // Test 37: DIContainer - Enregistrement de services
+    echo "\nTest 37: DIContainer - Enregistrement de services\n";
+    $diContainer->set('test_service', function() {
+        return 'Hello World';
+    });
+    $service = $diContainer->get('test_service');
+    echo "Service récupéré: " . $service . "\n";
+    echo "✓ Enregistrement et récupération de service réussis\n";
+
+    // Test 38: DIContainer - Singleton
+    echo "\nTest 38: DIContainer - Singleton\n";
+    $diContainer->set('singleton_service', function() {
+        return new stdClass();
+    }, true);
+
+    $instance1 = $diContainer->get('singleton_service');
+    $instance2 = $diContainer->get('singleton_service');
+    echo "Même instance (singleton): " . ($instance1 === $instance2 ? 'Oui' : 'Non') . "\n";
+    echo "✓ Pattern Singleton fonctionnel\n";
+
+    // Test 39: DIContainer - Configuration par défaut
+    echo "\nTest 39: DIContainer - Configuration par défaut\n";
+    $diContainer->configureDefaults('canvas');
+    $hasModeSwitcher = $diContainer->has('mode_switcher');
+    $hasRenderer = $diContainer->has('preview_renderer');
+    echo "ModeSwitcher enregistré: " . ($hasModeSwitcher ? 'Oui' : 'Non') . "\n";
+    echo "PreviewRenderer enregistré: " . ($hasRenderer ? 'Oui' : 'Non') . "\n";
+    echo "✓ Configuration par défaut réussie\n";
+
+    // Test 40: Intégration ModeSwitcher + DIContainer
+    echo "\nTest 40: Intégration ModeSwitcher + DIContainer\n";
+    $modeSwitcherFromDI = $diContainer->get('mode_switcher');
+    echo "ModeSwitcher depuis DI: " . get_class($modeSwitcherFromDI) . "\n";
+    echo "Mode actuel: " . $modeSwitcherFromDI->getCurrentMode() . "\n";
+
+    // Test de basculement via DI
+    $modeSwitcherFromDI->switchToMetabox();
+    echo "Mode après basculement via DI: " . $modeSwitcherFromDI->getCurrentMode() . "\n";
+    echo "✓ Intégration ModeSwitcher + DIContainer réussie\n";
+
+    echo "\n=== Tests Phase 3.2.4 terminés avec succès ===\n";
+
+} catch (\Exception $e) {
+    echo "ERREUR FATALE dans Phase 3.2.4: " . $e->getMessage() . "\n";
     echo "Fichier: " . $e->getFile() . " Ligne: " . $e->getLine() . "\n";
 }
 
