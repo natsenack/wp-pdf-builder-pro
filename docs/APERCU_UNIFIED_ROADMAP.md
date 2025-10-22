@@ -377,7 +377,7 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
     - **Diagnostic** : Vérifier mapping variables réelles
     - **✅ RÉALISÉ** : MetaboxModeProvider créé avec récupération données WooCommerce réelles (client Jean Dupont, commande WC-12345, société Ma Société SARL), système de cache intégré, gestion placeholders pour données manquantes, tests unitaires validés, déploiement prêt
 
-  - **3.2.4** : Configurer injection de dépendances et switch
+  - [x] **3.2.4** : Configurer injection de dépendances et switch
     - Implémenter système de switch entre modes
     - Configurer conteneur DI pour modes
     - Tester transitions Canvas ↔ Metabox
