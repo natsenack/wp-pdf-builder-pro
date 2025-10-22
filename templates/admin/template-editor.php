@@ -27,7 +27,40 @@ if (function_exists('pdf_builder_load_core_when_needed')) {
     pdf_builder_load_core_when_needed();
 }
 
-// Chargement explicite des scripts PDF Builder pour l'éditeur
+// CHARGEMENT DIRECT DES SCRIPTS - DERNIER RECOURS
+// Si les méthodes WordPress ne fonctionnent pas, charger directement
+if (!isset($GLOBALS['pdf_builder_scripts_loaded'])) {
+    $GLOBALS['pdf_builder_scripts_loaded'] = true;
+
+    // Charger jQuery si pas déjà chargé
+    if (!wp_script_is('jquery', 'done')) {
+        wp_enqueue_script('jquery');
+    }
+
+    // Charger directement les scripts PDF Builder
+    $assets_url = defined('PDF_BUILDER_PRO_ASSETS_URL') ? PDF_BUILDER_PRO_ASSETS_URL : plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/';
+
+    // Script principal
+    wp_enqueue_script('pdf-builder-admin-direct', $assets_url . 'js/dist/pdf-builder-admin.js', ['jquery'], '1.0.0_direct_' . time(), true);
+
+    // Variables AJAX
+    wp_localize_script('pdf-builder-admin-direct', 'pdfBuilderAjax', [
+        'ajaxurl' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('pdf_builder_order_actions'),
+        'version' => '8.0.0_direct_' . time(),
+        'timestamp' => time(),
+        'strings' => [
+            'loading' => 'Chargement...',
+            'error' => 'Erreur',
+            'success' => 'Succès',
+        ]
+    ]);
+
+    // Forcer l'exécution des scripts enqueued
+    wp_scripts()->do_items();
+}
+
+// Tentative classique si les classes sont disponibles
 if (class_exists('PDF_Builder\Admin\PDF_Builder_Admin')) {
     // PDF_Builder_Admin::getInstance() nécessite une instance de la classe principale
     if (class_exists('PDF_Builder\Core\PDF_Builder_Core')) {
