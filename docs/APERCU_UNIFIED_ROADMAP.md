@@ -394,12 +394,13 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
     - **Diagnostic** : Vérifier formatage et positionnement
     - ✅ **RÉALISÉ** : TextRenderer créé avec support complet des variables dynamiques, formatage CSS avancé, gestion des variables manquantes avec placeholders, variables système (date/heure), rendu order_number avec formats configurables, tests complets validés, déploiement réussi
 
-  - **3.3.2** : Créer ImageRenderer (company_logo)
+  - [x] **3.3.2** : Créer ImageRenderer (company_logo)
     - Implémenter chargement et redimensionnement images
     - Gérer formats (JPG, PNG, SVG) et optimisation
     - Support propriétés (bordures, arrondis)
     - **Test en ligne** : Logo affiché avec bonnes dimensions
     - **Diagnostic** : Vérifier qualité et performance chargement
+    - ✅ **RÉALISÉ** : ImageRenderer créé avec support complet des formats d'image (JPG, PNG, SVG, GIF, BMP, TIFF, ICO, WebP), redimensionnement automatique, propriétés de style avancées (bordures, border-radius, object-fit), gestion des variables dynamiques, validation des dimensions, tests complets validés, déploiement réussi
 
   - **3.3.3** : Créer ShapeRenderer (rectangle, circle, line, arrow)
     - Implémenter rendu formes géométriques
