@@ -241,4 +241,81 @@ describe('Phase 2.2 - Éléments fondamentaux améliorés', () => {
       });
     });
   });
+
+  describe('order_number - Améliorations Phase 2.2.2', () => {
+    test('devrait supporter plusieurs formats prédéfinis', () => {
+      const orderElement = {
+        type: 'order_number',
+        availableFormats: [
+          'Commande #{order_number} - {order_date}',
+          'CMD-{order_year}-{order_number}',
+          'Facture N°{order_number} du {order_date}',
+          'Bon de livraison #{order_number}',
+          '{order_number}/{order_year}',
+          'N° {order_number} - {order_date}'
+        ]
+      };
+
+      expect(orderElement.availableFormats).toHaveLength(6);
+      expect(orderElement.availableFormats).toContain('CMD-{order_year}-{order_number}');
+    });
+
+    test('devrait avoir des propriétés de prévisualisation', () => {
+      const orderElement = {
+        type: 'order_number',
+        previewOrderNumber: '12345',
+        previewOrderDate: '15/10/2025',
+        previewOrderYear: '2025',
+        previewOrderMonth: '10',
+        previewOrderDay: '15'
+      };
+
+      expect(orderElement.previewOrderNumber).toBe('12345');
+      expect(orderElement.previewOrderDate).toBe('15/10/2025');
+      expect(orderElement.previewOrderYear).toBe('2025');
+    });
+
+    test('devrait supporter les propriétés de style étendues', () => {
+      const orderElement = {
+        type: 'order_number',
+        fontSize: 16,
+        fontFamily: 'Helvetica',
+        fontWeight: 'normal',
+        textAlign: 'center',
+        color: '#000000',
+        labelColor: '#666666',
+        lineHeight: 1.5,
+        backgroundColor: '#f0f0f0',
+        borderWidth: 1,
+        borderStyle: 'solid',
+        borderColor: '#cccccc',
+        borderRadius: 4
+      };
+
+      expect(orderElement.fontSize).toBe(16);
+      expect(orderElement.fontFamily).toBe('Helvetica');
+      expect(orderElement.textAlign).toBe('center');
+      expect(orderElement.borderWidth).toBe(1);
+      expect(orderElement.lineHeight).toBe(1.5);
+    });
+
+    test('devrait avoir des valeurs par défaut appropriées', () => {
+      const orderElement = {
+        type: 'order_number',
+        format: 'Commande #{order_number} - {order_date}',
+        fontSize: 14,
+        fontFamily: 'Arial',
+        fontWeight: 'bold',
+        textAlign: 'right',
+        color: '#333333',
+        showLabel: true,
+        labelText: 'N° de commande:'
+      };
+
+      expect(orderElement.format).toBe('Commande #{order_number} - {order_date}');
+      expect(orderElement.fontSize).toBe(14);
+      expect(orderElement.textAlign).toBe('right');
+      expect(orderElement.showLabel).toBe(true);
+    });
+  });
 });

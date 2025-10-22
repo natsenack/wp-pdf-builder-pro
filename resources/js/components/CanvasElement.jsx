@@ -1655,55 +1655,78 @@ export const CanvasElement = ({
         )}
 
         {/* Rendu spécial pour le numéro de commande */}
-        {element.type === 'order_number' && (
-          <div style={{
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start',
-            padding: `${8 * zoom}px`,
-            fontSize: `${(element.fontSize || 14) * zoom}px`,
-            fontFamily: element.fontFamily || 'Arial',
-            fontWeight: element.fontWeight || 'bold',
-            color: element.color || '#333333',
-            textAlign: element.textAlign || 'right',
-            backgroundColor: element.backgroundColor || 'transparent',
-            // Bordures subtiles pour les éléments spéciaux
-            border: element.borderWidth && element.borderWidth > 0 ? `${Math.max(1, element.borderWidth * zoom * 0.5)}px solid ${element.borderColor || '#e5e7eb'}` : 'none',
-            borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '2px',
-            boxSizing: 'border-box'
-          }}>
-            {element.showLabel && (
+        {element.type === 'order_number' && (() => {
+          // Validation et normalisation des propriétés
+          const validatedFormat = element.format || 'Commande #{order_number} - {order_date}';
+          const validatedFontSize = Math.max(8, Math.min(72, element.fontSize || 14)); // Entre 8px et 72px
+          const validatedColor = element.color || '#333333';
+
+          // Données de test pour le rendu (seront remplacées par les vraies données lors de la génération)
+          const testData = {
+            order_number: element.previewOrderNumber || '12345',
+            order_date: element.previewOrderDate || '15/10/2025',
+            order_year: element.previewOrderYear || '2025',
+            order_month: element.previewOrderMonth || '10',
+            order_day: element.previewOrderDay || '15'
+          };
+
+          // Fonction de formatage avancé avec gestion d'erreurs
+          const formatOrderNumber = (format, data) => {
+            try {
+              return format
+                .replace(/{order_number}/g, data.order_number || 'N/A')
+                .replace(/{order_date}/g, data.order_date || 'N/A')
+                .replace(/{order_year}/g, data.order_year || 'N/A')
+                .replace(/{order_month}/g, data.order_month || 'N/A')
+                .replace(/{order_day}/g, data.order_day || 'N/A');
+            } catch (error) {
+              console.warn('Erreur de formatage order_number:', error);
+              return `Commande #${data.order_number || 'N/A'}`;
+            }
+          };
+
+          const formattedText = formatOrderNumber(validatedFormat, testData);
+
+          return (
+            <div style={{
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start',
+              padding: `${8 * zoom}px`,
+              fontSize: `${validatedFontSize * zoom}px`,
+              fontFamily: element.fontFamily || 'Arial',
+              fontWeight: element.fontWeight || 'bold',
+              color: validatedColor,
+              textAlign: element.textAlign || 'right',
+              backgroundColor: element.backgroundColor || 'transparent',
+              // Bordures subtiles pour les éléments spéciaux
+              border: element.borderWidth && element.borderWidth > 0 ? `${Math.max(1, element.borderWidth * zoom * 0.5)}px solid ${element.borderColor || '#e5e7eb'}` : 'none',
+              borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '2px',
+              boxSizing: 'border-box'
+            }}>
+              {element.showLabel && (
+                <div style={{
+                  fontSize: `${Math.max(8, validatedFontSize - 2) * zoom}px`,
+                  fontWeight: 'normal',
+                  color: element.labelColor || validatedColor,
+                  marginBottom: `${4 * zoom}px`,
+                  opacity: 0.8
+                }}>
+                  {element.labelText || 'N° de commande:'}
+                </div>
+              )}
               <div style={{
-                fontSize: `${12 * zoom}px`,
-                fontWeight: 'normal',
-                color: element.color || '#666',
-                marginBottom: `${4 * zoom}px`
+                wordBreak: 'break-word',
+                lineHeight: element.lineHeight || 1.2
               }}>
-                {element.labelText || 'N° de commande:'}
+                {formattedText}
               </div>
-            )}
-            <div>
-              {(() => {
-                // Utiliser le format défini ou une valeur par défaut
-                const format = element.format || 'Commande #{order_number} - {order_date}';
-
-                // Données de test pour le rendu (seront remplacées par les vraies données lors de la génération)
-                const testData = {
-                  order_number: '12345',
-                  order_date: '15/10/2025'
-                };
-
-                // Remplacer les variables dans le format
-                return format
-                  .replace(/{order_number}/g, testData.order_number)
-                  .replace(/{order_date}/g, testData.order_date);
-              })()}
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* Rendu spécial pour le type de document */}
         {element.type === 'document_type' && (

@@ -94,18 +94,45 @@ const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
       fieldID: 'order_number',
       label: 'Numéro de Commande',
       icon: '🔢',
-      description: 'Référence de commande avec date',
+      description: 'Référence de commande avec date et formatage configurable',
       defaultProperties: {
-        showHeaders: false,
-        showBorders: false,
+        // Formatage
         format: 'Commande #{order_number} - {order_date}',
+        availableFormats: [
+          'Commande #{order_number} - {order_date}',
+          'CMD-{order_year}-{order_number}',
+          'Facture N°{order_number} du {order_date}',
+          'Bon de livraison #{order_number}',
+          '{order_number}/{order_year}',
+          'N° {order_number} - {order_date}'
+        ],
+
+        // Style
         fontSize: 14,
         fontFamily: 'Arial',
         fontWeight: 'bold',
-        textAlign: 'right',
+        textAlign: 'right', // 'left', 'center', 'right'
         color: '#333333',
+        labelColor: '#666666',
+        lineHeight: 1.2,
+
+        // Affichage
         showLabel: true,
-        labelText: 'N° de commande:'
+        labelText: 'N° de commande:',
+
+        // Bordures et fond
+        backgroundColor: 'transparent',
+        borderWidth: 0,
+        borderStyle: 'solid',
+        borderColor: '#e5e7eb',
+        borderRadius: 0,
+
+        // Données de prévisualisation
+        previewOrderNumber: '12345',
+        previewOrderDate: '15/10/2025',
+        previewOrderYear: '2025',
+        previewOrderMonth: '10',
+        previewOrderDay: '15'
       }
     },
     {

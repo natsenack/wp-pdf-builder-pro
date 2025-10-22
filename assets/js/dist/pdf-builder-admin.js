@@ -1776,46 +1776,66 @@ var CanvasElement = function CanvasElement(_ref) {
     style: {
       color: element.color || '#333'
     }
-  }, "123 456 789 00012")))), element.type === 'order_number' && /*#__PURE__*/React.createElement("div", {
-    style: {
-      width: '100%',
-      height: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start',
-      padding: "".concat(8 * zoom, "px"),
-      fontSize: "".concat((element.fontSize || 14) * zoom, "px"),
-      fontFamily: element.fontFamily || 'Arial',
-      fontWeight: element.fontWeight || 'bold',
-      color: element.color || '#333333',
-      textAlign: element.textAlign || 'right',
-      backgroundColor: element.backgroundColor || 'transparent',
-      // Bordures subtiles pour les éléments spéciaux
-      border: element.borderWidth && element.borderWidth > 0 ? "".concat(Math.max(1, element.borderWidth * zoom * 0.5), "px solid ").concat(element.borderColor || '#e5e7eb') : 'none',
-      borderRadius: element.borderRadius ? "".concat(element.borderRadius * zoom, "px") : '2px',
-      boxSizing: 'border-box'
-    }
-  }, element.showLabel && /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: "".concat(12 * zoom, "px"),
-      fontWeight: 'normal',
-      color: element.color || '#666',
-      marginBottom: "".concat(4 * zoom, "px")
-    }
-  }, element.labelText || 'N° de commande:'), /*#__PURE__*/React.createElement("div", null, function () {
-    // Utiliser le format défini ou une valeur par défaut
-    var format = element.format || 'Commande #{order_number} - {order_date}';
+  }, "123 456 789 00012")))), element.type === 'order_number' && function () {
+    // Validation et normalisation des propriétés
+    var validatedFormat = element.format || 'Commande #{order_number} - {order_date}';
+    var validatedFontSize = Math.max(8, Math.min(72, element.fontSize || 14)); // Entre 8px et 72px
+    var validatedColor = element.color || '#333333';
 
     // Données de test pour le rendu (seront remplacées par les vraies données lors de la génération)
     var testData = {
-      order_number: '12345',
-      order_date: '15/10/2025'
+      order_number: element.previewOrderNumber || '12345',
+      order_date: element.previewOrderDate || '15/10/2025',
+      order_year: element.previewOrderYear || '2025',
+      order_month: element.previewOrderMonth || '10',
+      order_day: element.previewOrderDay || '15'
     };
 
-    // Remplacer les variables dans le format
-    return format.replace(/{order_number}/g, testData.order_number).replace(/{order_date}/g, testData.order_date);
-  }())), element.type === 'document_type' && /*#__PURE__*/React.createElement("div", {
+    // Fonction de formatage avancé avec gestion d'erreurs
+    var formatOrderNumber = function formatOrderNumber(format, data) {
+      try {
+        return format.replace(/{order_number}/g, data.order_number || 'N/A').replace(/{order_date}/g, data.order_date || 'N/A').replace(/{order_year}/g, data.order_year || 'N/A').replace(/{order_month}/g, data.order_month || 'N/A').replace(/{order_day}/g, data.order_day || 'N/A');
+      } catch (error) {
+        console.warn('Erreur de formatage order_number:', error);
+        return "Commande #".concat(data.order_number || 'N/A');
+      }
+    };
+    var formattedText = formatOrderNumber(validatedFormat, testData);
+    return /*#__PURE__*/React.createElement("div", {
+      style: {
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: element.textAlign === 'center' ? 'center' : element.textAlign === 'right' ? 'flex-end' : 'flex-start',
+        padding: "".concat(8 * zoom, "px"),
+        fontSize: "".concat(validatedFontSize * zoom, "px"),
+        fontFamily: element.fontFamily || 'Arial',
+        fontWeight: element.fontWeight || 'bold',
+        color: validatedColor,
+        textAlign: element.textAlign || 'right',
+        backgroundColor: element.backgroundColor || 'transparent',
+        // Bordures subtiles pour les éléments spéciaux
+        border: element.borderWidth && element.borderWidth > 0 ? "".concat(Math.max(1, element.borderWidth * zoom * 0.5), "px solid ").concat(element.borderColor || '#e5e7eb') : 'none',
+        borderRadius: element.borderRadius ? "".concat(element.borderRadius * zoom, "px") : '2px',
+        boxSizing: 'border-box'
+      }
+    }, element.showLabel && /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: "".concat(Math.max(8, validatedFontSize - 2) * zoom, "px"),
+        fontWeight: 'normal',
+        color: element.labelColor || validatedColor,
+        marginBottom: "".concat(4 * zoom, "px"),
+        opacity: 0.8
+      }
+    }, element.labelText || 'N° de commande:'), /*#__PURE__*/React.createElement("div", {
+      style: {
+        wordBreak: 'break-word',
+        lineHeight: element.lineHeight || 1.2
+      }
+    }, formattedText));
+  }(), element.type === 'document_type' && /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'inline-block',
       padding: "".concat(8 * zoom, "px"),
@@ -6087,18 +6107,35 @@ var ElementLibrary = function ElementLibrary(_ref) {
     fieldID: 'order_number',
     label: 'Numéro de Commande',
     icon: '🔢',
-    description: 'Référence de commande avec date',
+    description: 'Référence de commande avec date et formatage configurable',
     defaultProperties: {
-      showHeaders: false,
-      showBorders: false,
+      // Formatage
       format: 'Commande #{order_number} - {order_date}',
+      availableFormats: ['Commande #{order_number} - {order_date}', 'CMD-{order_year}-{order_number}', 'Facture N°{order_number} du {order_date}', 'Bon de livraison #{order_number}', '{order_number}/{order_year}', 'N° {order_number} - {order_date}'],
+      // Style
       fontSize: 14,
       fontFamily: 'Arial',
       fontWeight: 'bold',
       textAlign: 'right',
+      // 'left', 'center', 'right'
       color: '#333333',
+      labelColor: '#666666',
+      lineHeight: 1.2,
+      // Affichage
       showLabel: true,
-      labelText: 'N° de commande:'
+      labelText: 'N° de commande:',
+      // Bordures et fond
+      backgroundColor: 'transparent',
+      borderWidth: 0,
+      borderStyle: 'solid',
+      borderColor: '#e5e7eb',
+      borderRadius: 0,
+      // Données de prévisualisation
+      previewOrderNumber: '12345',
+      previewOrderDate: '15/10/2025',
+      previewOrderYear: '2025',
+      previewOrderMonth: '10',
+      previewOrderDay: '15'
     }
   }, {
     type: 'dynamic-text',
