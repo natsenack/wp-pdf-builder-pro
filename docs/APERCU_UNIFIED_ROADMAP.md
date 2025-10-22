@@ -318,12 +318,13 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
     - **Diagnostic** : Vérifier chaque ligne du constructeur
     - **✅ RÉALISÉ** : Classe PreviewRenderer créée avec constructeur, méthodes init/render/destroy, validation des modes, dimensions A4 par défaut (794×1123px), tests unitaires validés
 
-  - [ ] **3.1.2** : Configurer dimensions A4 (210×297mm)
+  - [x] **3.1.2** : Configurer dimensions A4 (210×297mm)
     - Calculer pixels depuis mm (DPI 150 = 794×1123px)
     - Définir constantes A4_WIDTH, A4_HEIGHT
     - Implémenter méthode `setDimensions()`
     - **Test en ligne** : Canvas visible avec bonnes dimensions
     - **Diagnostic** : Mesurer canvas avec dev tools
+    - **✅ RÉALISÉ** : Dimensions A4 configurées avec constantes, méthode setDimensions() avec validation, méthodes resetToA4() et calculatePixelDimensions(), tests validés
 
   - **3.1.3** : Ajouter gestion responsive et zoom
     - Implémenter zoom (50%, 75%, 100%, 125%, 150%)
@@ -644,9 +645,9 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
 
 **✅ Phase 2.5 TERMINÉE** : Spécification complète des APIs - tous les endpoints documentés avec sécurité, schémas, exemples et tests d'intégration
 
-**� Phase 3.1.1 TERMINÉE** : Classe PreviewRenderer de base créée avec constructeur, méthodes init/render/destroy, validation des modes, dimensions A4 par défaut, tests unitaires validés, déployée sur serveur avec correction des erreurs de compilation et résolution de l'erreur JavaScript Webpack
+**� Phase 3.1.2 TERMINÉE** : Dimensions A4 configurées (794×1123px à 150 DPI), constantes A4 définies, méthode setDimensions() implémentée avec validation, méthodes resetToA4() et calculatePixelDimensions() ajoutées, tests unitaires validés, déployé sur serveur
 
-**�📊 Progression globale** : Phase 2 terminée (100%), Phase 3 commencée (étape 3.1.1/16 terminée et déployée)
+**�📊 Progression globale** : Phase 2 terminée (100%), Phase 3 commencée (étape 3.1.2/16 terminée et déployée)
 
 ---
 

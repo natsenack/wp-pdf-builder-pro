@@ -92,6 +92,40 @@ try {
     $tooBigSet = $renderer->setDimensions(6000, 6000);
     echo "setDimensions(6000, 6000): " . ($tooBigSet ? 'Accepté (erreur)' : 'Rejeté (correct)') . "\n";
 
+    // Test 12: Zoom
+    echo "\nTest 12: Zoom\n";
+    echo "Zoom initial: " . $renderer->getZoom() . "%\n";
+    echo "Niveaux autorisés: " . implode(', ', $renderer->getAllowedZoomLevels()) . "\n";
+
+    $zoomSet = $renderer->setZoom(125);
+    echo "setZoom(125): " . ($zoomSet ? 'Réussi' : 'Échoué') . "\n";
+    echo "Zoom après setZoom(125): " . $renderer->getZoom() . "%\n";
+
+    $zoomIn = $renderer->zoomIn();
+    echo "zoomIn(): " . ($zoomIn ? 'Réussi' : 'Échoué') . "\n";
+    echo "Zoom après zoomIn(): " . $renderer->getZoom() . "%\n";
+
+    $zoomOut = $renderer->zoomOut();
+    echo "zoomOut(): " . ($zoomOut ? 'Réussi' : 'Échoué') . "\n";
+    echo "Zoom après zoomOut(): " . $renderer->getZoom() . "%\n";
+
+    // Test 13: Responsive
+    echo "\nTest 13: Responsive\n";
+    echo "Responsive initial: " . ($renderer->isResponsive() ? 'Activé' : 'Désactivé') . "\n";
+
+    $responsiveSet = $renderer->setResponsive(false);
+    echo "setResponsive(false): " . ($responsiveSet ? 'Réussi' : 'Échoué') . "\n";
+    echo "Responsive après setResponsive(false): " . ($renderer->isResponsive() ? 'Activé' : 'Désactivé') . "\n";
+
+    $containerSet = $renderer->setContainerDimensions(800, 600);
+    echo "setContainerDimensions(800, 600): " . ($containerSet ? 'Réussi' : 'Échoué') . "\n";
+
+    $responsiveDims = $renderer->getResponsiveDimensions();
+    echo "getResponsiveDimensions(): " . ($responsiveDims ? "Dimensions calculées" : "Null (pas responsive)") . "\n";
+
+    $scrollbars = $renderer->getScrollbarState();
+    echo "getScrollbarState(): Horizontal=" . ($scrollbars['horizontal'] ? 'Oui' : 'Non') . ", Vertical=" . ($scrollbars['vertical'] ? 'Oui' : 'Non') . "\n";
+
     echo "\n=== Tous les tests terminés avec succès ===\n";
 
 } catch (\Exception $e) {

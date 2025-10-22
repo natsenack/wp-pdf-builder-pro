@@ -50,6 +50,30 @@ class PreviewRenderer {
     private $initialized;
 
     /**
+     * Niveau de zoom actuel (en pourcentage)
+     * @var int
+     */
+    private $zoomLevel;
+
+    /**
+     * Niveaux de zoom autorisés
+     * @var array
+     */
+    private $allowedZoomLevels;
+
+    /**
+     * Mode responsive activé
+     * @var bool
+     */
+    private $responsive;
+
+    /**
+     * Dimensions du conteneur parent (pour responsive)
+     * @var array|null
+     */
+    private $containerDimensions;
+
+    /**
      * Constructeur - Initialise le PreviewRenderer avec les options
      *
      * @param array $options Options de configuration
@@ -77,11 +101,17 @@ class PreviewRenderer {
         // Initialiser les dimensions
         $this->dimensions = $this->initializeDimensions();
 
+        // Initialiser le zoom
+        $this->allowedZoomLevels = [50, 75, 100, 125, 150];
+        $this->zoomLevel = $this->validateZoomLevel($this->options['zoom']);
+        $this->responsive = $this->options['responsive'];
+        $this->containerDimensions = null;
+
         // État initial
         $this->initialized = false;
 
         // Log d'initialisation
-        error_log('PreviewRenderer: Instance créée avec mode=' . $this->mode);
+        error_log('PreviewRenderer: Instance créée avec mode=' . $this->mode . ', zoom=' . $this->zoomLevel . '%');
     }
 
     /**
@@ -187,6 +217,40 @@ class PreviewRenderer {
         }
 
         return $mode;
+    }
+
+    /**
+     * Valide et normalise un niveau de zoom
+     *
+     * @param int $zoom Niveau de zoom demandé
+     * @return int Niveau de zoom validé
+     * @throws \Exception Si zoom invalide
+     */
+    private function validateZoomLevel($zoom) {
+        $zoom = (int) $zoom;
+
+        if (!in_array($zoom, $this->allowedZoomLevels)) {
+            // Trouver le niveau le plus proche
+            $closest = null;
+            $minDiff = PHP_INT_MAX;
+
+            foreach ($this->allowedZoomLevels as $allowedZoom) {
+                $diff = abs($zoom - $allowedZoom);
+                if ($diff < $minDiff) {
+                    $minDiff = $diff;
+                    $closest = $allowedZoom;
+                }
+            }
+
+            if ($closest !== null) {
+                error_log('PreviewRenderer: Zoom ' . $zoom . '% ajusté au niveau autorisé le plus proche: ' . $closest . '%');
+                return $closest;
+            }
+
+            throw new \Exception('Niveau de zoom invalide: ' . $zoom . '%. Niveaux autorisés: ' . implode(', ', $this->allowedZoomLevels));
+        }
+
+        return $zoom;
     }
 
     /**
@@ -317,6 +381,187 @@ class PreviewRenderer {
      */
     public function getOptions() {
         return $this->options;
+    }
+
+    /**
+     * Définit le niveau de zoom
+     *
+     * @param int $zoom Niveau de zoom demandé (50, 75, 100, 125, 150)
+     * @return bool True si zoom défini avec succès
+     */
+    public function setZoom(int $zoom) {
+        try {
+            $validatedZoom = $this->validateZoomLevel($zoom);
+
+            if ($validatedZoom !== $this->zoomLevel) {
+                $this->zoomLevel = $validatedZoom;
+                error_log('PreviewRenderer: Zoom défini à ' . $this->zoomLevel . '%');
+            }
+
+            return true;
+
+        } catch (\Exception $e) {
+            error_log('PreviewRenderer: Erreur lors de la définition du zoom - ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Retourne le niveau de zoom actuel
+     *
+     * @return int Niveau de zoom en pourcentage
+     */
+    public function getZoom() {
+        return $this->zoomLevel;
+    }
+
+    /**
+     * Retourne les niveaux de zoom autorisés
+     *
+     * @return array Niveaux de zoom autorisés
+     */
+    public function getAllowedZoomLevels() {
+        return $this->allowedZoomLevels;
+    }
+
+    /**
+     * Zoom avant (niveau supérieur)
+     *
+     * @return bool True si zoom augmenté avec succès
+     */
+    public function zoomIn() {
+        $currentIndex = array_search($this->zoomLevel, $this->allowedZoomLevels);
+
+        if ($currentIndex !== false && $currentIndex < count($this->allowedZoomLevels) - 1) {
+            return $this->setZoom($this->allowedZoomLevels[$currentIndex + 1]);
+        }
+
+        return false; // Déjà au maximum
+    }
+
+    /**
+     * Zoom arrière (niveau inférieur)
+     *
+     * @return bool True si zoom diminué avec succès
+     */
+    public function zoomOut() {
+        $currentIndex = array_search($this->zoomLevel, $this->allowedZoomLevels);
+
+        if ($currentIndex !== false && $currentIndex > 0) {
+            return $this->setZoom($this->allowedZoomLevels[$currentIndex - 1]);
+        }
+
+        return false; // Déjà au minimum
+    }
+
+    /**
+     * Active/désactive le mode responsive
+     *
+     * @param bool $responsive True pour activer le responsive
+     * @return bool True si responsive défini avec succès
+     */
+    public function setResponsive(bool $responsive) {
+        $this->responsive = $responsive;
+        $this->options['responsive'] = $responsive;
+
+        error_log('PreviewRenderer: Mode responsive ' . ($responsive ? 'activé' : 'désactivé'));
+
+        return true;
+    }
+
+    /**
+     * Vérifie si le mode responsive est activé
+     *
+     * @return bool True si responsive activé
+     */
+    public function isResponsive() {
+        return $this->responsive;
+    }
+
+    /**
+     * Définit les dimensions du conteneur parent (pour calculs responsive)
+     *
+     * @param int $width Largeur du conteneur
+     * @param int $height Hauteur du conteneur
+     * @return bool True si dimensions définies
+     */
+    public function setContainerDimensions(int $width, int $height) {
+        if ($width <= 0 || $height <= 0) {
+            error_log('PreviewRenderer: Dimensions de conteneur invalides');
+            return false;
+        }
+
+        $this->containerDimensions = [
+            'width' => $width,
+            'height' => $height
+        ];
+
+        error_log('PreviewRenderer: Dimensions de conteneur définies à ' . $width . 'x' . $height);
+
+        return true;
+    }
+
+    /**
+     * Calcule les dimensions responsive en fonction du conteneur
+     *
+     * @return array|null Dimensions responsive [width, height] ou null si pas de conteneur
+     */
+    public function getResponsiveDimensions() {
+        if (!$this->responsive || !$this->containerDimensions) {
+            return null;
+        }
+
+        $canvasWidth = $this->dimensions['width'] * ($this->zoomLevel / 100);
+        $canvasHeight = $this->dimensions['height'] * ($this->zoomLevel / 100);
+
+        $containerWidth = $this->containerDimensions['width'];
+        $containerHeight = $this->containerDimensions['height'];
+
+        // Calculer le ratio pour s'adapter au conteneur
+        $widthRatio = $containerWidth / $canvasWidth;
+        $heightRatio = $containerHeight / $canvasHeight;
+        $scale = min($widthRatio, $heightRatio, 1); // Ne pas agrandir, seulement réduire
+
+        return [
+            'width' => round($canvasWidth * $scale),
+            'height' => round($canvasHeight * $scale),
+            'scale' => $scale
+        ];
+    }
+
+    /**
+     * Calcule si des scrollbars sont nécessaires
+     *
+     * @return array État des scrollbars [horizontal, vertical]
+     */
+    public function getScrollbarState() {
+        $responsive = $this->getResponsiveDimensions();
+
+        if ($responsive) {
+            // En mode responsive, pas de scrollbars nécessaires
+            return [
+                'horizontal' => false,
+                'vertical' => false
+            ];
+        }
+
+        // Dimensions avec zoom appliqué
+        $zoomedWidth = $this->dimensions['width'] * ($this->zoomLevel / 100);
+        $zoomedHeight = $this->dimensions['height'] * ($this->zoomLevel / 100);
+
+        // Si pas de dimensions de conteneur, supposer scrollbars nécessaires pour zoom > 100%
+        $needsHorizontal = $this->containerDimensions ?
+            $zoomedWidth > $this->containerDimensions['width'] :
+            $this->zoomLevel > 100;
+
+        $needsVertical = $this->containerDimensions ?
+            $zoomedHeight > $this->containerDimensions['height'] :
+            $this->zoomLevel > 100;
+
+        return [
+            'horizontal' => $needsHorizontal,
+            'vertical' => $needsVertical
+        ];
     }
 }
 
