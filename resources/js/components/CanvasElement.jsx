@@ -2,6 +2,49 @@ import { useRef, useCallback, useEffect, useMemo } from 'react';
 import { useResize } from '../hooks/useResize';
 import { useRotation } from '../hooks/useRotation.js';
 
+// Formats d'image supportés par les navigateurs modernes
+const SUPPORTED_IMAGE_FORMATS = [
+  'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp',
+  'image/svg+xml', 'image/bmp', 'image/tiff', 'image/x-icon'
+];
+
+// Extensions de fichier supportées
+const SUPPORTED_IMAGE_EXTENSIONS = [
+  '.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.bmp', '.tiff', '.ico'
+];
+
+// Fonction utilitaire pour valider le format d'une image
+const validateImageFormat = (imageUrl) => {
+  if (!imageUrl) return { isValid: false, format: null, reason: 'URL vide' };
+
+  try {
+    // Vérifier l'extension du fichier
+    const url = new URL(imageUrl);
+    const pathname = url.pathname.toLowerCase();
+    const hasValidExtension = SUPPORTED_IMAGE_EXTENSIONS.some(ext => pathname.endsWith(ext));
+
+    if (!hasValidExtension) {
+      return {
+        isValid: false,
+        format: null,
+        reason: `Extension non supportée. Formats acceptés: ${SUPPORTED_IMAGE_EXTENSIONS.join(', ')}`
+      };
+    }
+
+    return {
+      isValid: true,
+      format: pathname.split('.').pop(),
+      reason: null
+    };
+  } catch (error) {
+    return {
+      isValid: false,
+      format: null,
+      reason: 'URL invalide'
+    };
+  }
+};
+
 export const CanvasElement = ({
   element,
   isSelected,
@@ -23,13 +66,6 @@ export const CanvasElement = ({
 }) => {
   const elementRef = useRef(null);
   const canvasRectRef = useRef(null);
-
-  // DEBUG: Logger les propriétés des tableaux produits pour comparaison avec PHP
-  useEffect(() => {
-    if (element && element.type === 'product_table' && element.id) {
-      // Logging removed for production
-    }
-  }, [element?.id, element?.type]); // Utiliser seulement id et type pour éviter les re-renders
 
   const resize = useResize({
     onElementResize: (newRect) => {
@@ -323,9 +359,8 @@ export const CanvasElement = ({
         return;
       }
 
-      // Utiliser la même propriété que celle actuellement utilisée par l'élément
-      const textProperty = element.content !== undefined ? 'content' : 'text';
-      const updates = { [textProperty]: newText };
+      // Standardiser sur la propriété 'content' pour tous les éléments texte
+      const updates = { content: newText };
 
       onUpdate(updates);
     }
@@ -696,22 +731,8 @@ export const CanvasElement = ({
           };
           const lastVisibleColumn = getLastVisibleColumn();
           const tableStyles = getTableStyles(element.tableStyle);
-          // Forcer les bordures pour les tableaux de produits (correction du bug d'affichage)
-          const showBorders = element.showBorders !== false; // Utiliser la propriété showBorders de l'élément
-
-          // Log de debug pour voir les propriétés utilisées - COMMENTÉ POUR ÉVITER LA BOUCLE INFINIE
-          // console.log('CanvasElement product_table debug:', {
-          //   element: element,
-          //   products: products,
-          //   showBorders: showBorders,
-          //   tableStyles: tableStyles,
-          //   subtotal: subtotal,
-          //   shipping: shipping,
-          //   tax: tax,
-          //   discount: discount,
-          //   total: total,
-          //   lastVisibleColumn: lastVisibleColumn
-          // });
+          // Respecter le choix utilisateur pour les bordures (correction du bug d'affichage)
+          const showBorders = element.showBorders; // Utiliser directement la propriété showBorders de l'élément
           return (
             <div style={{
               width: '100%',
@@ -1271,50 +1292,113 @@ export const CanvasElement = ({
         })()}
 
         {/* Rendu spécial pour le logo entreprise */}
-        {element.type === 'company_logo' && (
-          <div style={{
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: element.alignment === 'center' ? 'center' : element.alignment === 'right' ? 'flex-end' : 'flex-start',
-            padding: '8px',
-            backgroundColor: element.backgroundColor || 'transparent',
-            // Bordures subtiles pour les éléments spéciaux
-            border: element.borderWidth && element.borderWidth > 0 ? `${Math.max(1, element.borderWidth * zoom * 0.5)}px solid ${element.borderColor || '#e5e7eb'}` : 'none',
-            borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '2px',
-            boxSizing: 'border-box'
-          }}>
-            {element.imageUrl ? (
-              <img
-                src={element.imageUrl}
-                alt="Logo entreprise"
-                style={{
+        {element.type === 'company_logo' && (() => {
+          const imageSource = element.src || element.imageUrl;
+          const formatValidation = validateImageFormat(imageSource);
+
+          return (
+            <div style={{
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: element.alignment === 'center' ? 'center' : element.alignment === 'right' ? 'flex-end' : 'flex-start',
+              padding: '8px',
+              backgroundColor: element.backgroundColor || 'transparent',
+              // Bordures subtiles pour les éléments spéciaux
+              border: element.borderWidth && element.borderWidth > 0 ? `${Math.max(1, element.borderWidth * zoom * 0.5)}px solid ${element.borderColor || '#e5e7eb'}` : 'none',
+              borderRadius: element.borderRadius ? `${element.borderRadius * zoom}px` : '2px',
+              boxSizing: 'border-box'
+            }}>
+              {imageSource && formatValidation.isValid ? (
+                <img
+                  src={imageSource}
+                  alt="Logo entreprise"
+                  style={{
+                    width: element.autoResize ? 'auto' : `${element.width || 150}px`,
+                    height: element.autoResize ? 'auto' : `${element.height || 80}px`,
+                    maxWidth: element.autoResize ? `${element.width || 150}px` : 'none',
+                    maxHeight: element.autoResize ? `${element.height || 80}px` : 'none',
+                    objectFit: element.fit || 'contain',
+                    borderRadius: element.borderRadius || 0,
+                    border: element.borderWidth ? `${element.borderWidth}px ${element.borderStyle || 'solid'} ${element.borderColor || 'transparent'}` : (element.showBorder ? '1px solid transparent' : 'none')
+                  }}
+                  onLoad={(e) => {
+                    // Redimensionnement automatique si activé
+                    if (element.autoResize && e.target) {
+                      const img = e.target;
+                      const maxWidth = element.width || 150;
+                      const maxHeight = element.height || 80;
+                      const aspectRatio = img.naturalWidth / img.naturalHeight;
+
+                      let newWidth = maxWidth;
+                      let newHeight = maxHeight;
+
+                      if (img.naturalWidth > maxWidth || img.naturalHeight > maxHeight) {
+                        if (aspectRatio > maxWidth / maxHeight) {
+                          newWidth = maxWidth;
+                          newHeight = maxWidth / aspectRatio;
+                        } else {
+                          newHeight = maxHeight;
+                          newWidth = maxHeight * aspectRatio;
+                        }
+                      } else {
+                        newWidth = img.naturalWidth;
+                        newHeight = img.naturalHeight;
+                      }
+
+                      img.style.width = `${newWidth}px`;
+                      img.style.height = `${newHeight}px`;
+                    }
+                  }}
+                  onError={(e) => {
+                    // Fallback si l'image ne charge pas
+                    console.warn('Erreur de chargement du logo entreprise:', imageSource);
+                  }}
+                />
+              ) : imageSource && !formatValidation.isValid ? (
+                // Message d'erreur pour format non supporté
+                <div style={{
                   width: `${element.width || 150}px`,
                   height: `${element.height || 80}px`,
-                  objectFit: element.fit || 'contain',
-                  borderRadius: element.borderRadius || 0,
-                  border: element.borderWidth ? `${element.borderWidth}px ${element.borderStyle || 'solid'} ${element.borderColor || 'transparent'}` : (element.showBorder ? '1px solid transparent' : 'none')
-                }}
-              />
-            ) : (
-              <div style={{
-                width: `${element.width || 150}px`,
-                height: `${element.height || 80}px`,
-                backgroundColor: '#f5f5f5',
-                border: element.borderWidth ? `${element.borderWidth}px ${element.borderStyle || 'solid'} ${element.borderColor || 'transparent'}` : (element.showBorder ? '1px solid transparent' : 'none'),
-                borderRadius: element.borderRadius || '4px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#999',
-                fontSize: `${12 * zoom}px`
-              }}>
-                🏢 Logo
-              </div>
-            )}
-          </div>
-        )}
+                  backgroundColor: '#fee2e2',
+                  border: '2px solid #fca5a5',
+                  borderRadius: element.borderRadius || '4px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#dc2626',
+                  fontSize: `${10 * zoom}px`,
+                  textAlign: 'center',
+                  padding: '4px'
+                }}>
+                  <div style={{ fontSize: `${14 * zoom}px`, marginBottom: '2px' }}>⚠️</div>
+                  <div>Format non supporté</div>
+                  <div style={{ fontSize: `${8 * zoom}px`, marginTop: '2px' }}>
+                    {formatValidation.reason}
+                  </div>
+                </div>
+              ) : (
+                // Placeholder quand aucune image n'est définie
+                <div style={{
+                  width: `${element.width || 150}px`,
+                  height: `${element.height || 80}px`,
+                  backgroundColor: '#f5f5f5',
+                  border: element.borderWidth ? `${element.borderWidth}px ${element.borderStyle || 'solid'} ${element.borderColor || 'transparent'}` : (element.showBorder ? '1px solid transparent' : 'none'),
+                  borderRadius: element.borderRadius || '4px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#999',
+                  fontSize: `${12 * zoom}px`
+                }}>
+                  🏢 Logo
+                </div>
+              )}
+            </div>
+          );
+        })()}
 
         {/* Rendu spécial pour les informations entreprise */}
         {element.type === 'company_info' && (

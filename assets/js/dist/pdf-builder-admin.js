@@ -351,6 +351,47 @@ function CanvasElement_toPrimitive(t, r) { if ("object" != CanvasElement_typeof(
 
 
 
+
+// Formats d'image supportés par les navigateurs modernes
+var SUPPORTED_IMAGE_FORMATS = (/* unused pure expression or super */ null && (['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml', 'image/bmp', 'image/tiff', 'image/x-icon']));
+
+// Extensions de fichier supportées
+var SUPPORTED_IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.bmp', '.tiff', '.ico'];
+
+// Fonction utilitaire pour valider le format d'une image
+var validateImageFormat = function validateImageFormat(imageUrl) {
+  if (!imageUrl) return {
+    isValid: false,
+    format: null,
+    reason: 'URL vide'
+  };
+  try {
+    // Vérifier l'extension du fichier
+    var url = new URL(imageUrl);
+    var pathname = url.pathname.toLowerCase();
+    var hasValidExtension = SUPPORTED_IMAGE_EXTENSIONS.some(function (ext) {
+      return pathname.endsWith(ext);
+    });
+    if (!hasValidExtension) {
+      return {
+        isValid: false,
+        format: null,
+        reason: "Extension non support\xE9e. Formats accept\xE9s: ".concat(SUPPORTED_IMAGE_EXTENSIONS.join(', '))
+      };
+    }
+    return {
+      isValid: true,
+      format: pathname.split('.').pop(),
+      reason: null
+    };
+  } catch (error) {
+    return {
+      isValid: false,
+      format: null,
+      reason: 'URL invalide'
+    };
+  }
+};
 var CanvasElement = function CanvasElement(_ref) {
   var _element$fields, _element$fields2, _element$fields3, _element$fields4, _element$fields5, _element$fields6, _element$fields7, _element$fields8, _element$fields9, _element$fields0, _element$fields1, _element$fields10, _element$fields11, _element$fields12, _element$fields13;
   var element = _ref.element,
@@ -380,14 +421,6 @@ var CanvasElement = function CanvasElement(_ref) {
     snapToGuides = _ref$snapToGuides === void 0 ? true : _ref$snapToGuides;
   var elementRef = (0,react.useRef)(null);
   var canvasRectRef = (0,react.useRef)(null);
-
-  // DEBUG: Logger les propriétés des tableaux produits pour comparaison avec PHP
-  (0,react.useEffect)(function () {
-    if (element && element.type === 'product_table' && element.id) {
-      // Logging removed for production
-    }
-  }, [element === null || element === void 0 ? void 0 : element.id, element === null || element === void 0 ? void 0 : element.type]); // Utiliser seulement id et type pour éviter les re-renders
-
   var resize = useResize({
     onElementResize: function onElementResize(newRect) {
       onUpdate({
@@ -688,9 +721,10 @@ var CanvasElement = function CanvasElement(_ref) {
         return;
       }
 
-      // Utiliser la même propriété que celle actuellement utilisée par l'élément
-      var textProperty = element.content !== undefined ? 'content' : 'text';
-      var updates = CanvasElement_defineProperty({}, textProperty, newText);
+      // Standardiser sur la propriété 'content' pour tous les éléments texte
+      var updates = {
+        content: newText
+      };
       onUpdate(updates);
     }
   }, [element, onUpdate]);
@@ -995,22 +1029,8 @@ var CanvasElement = function CanvasElement(_ref) {
     };
     var lastVisibleColumn = getLastVisibleColumn();
     var tableStyles = getTableStyles(element.tableStyle);
-    // Forcer les bordures pour les tableaux de produits (correction du bug d'affichage)
-    var showBorders = element.showBorders !== false; // Utiliser la propriété showBorders de l'élément
-
-    // Log de debug pour voir les propriétés utilisées - COMMENTÉ POUR ÉVITER LA BOUCLE INFINIE
-    // console.log('CanvasElement product_table debug:', {
-    //   element: element,
-    //   products: products,
-    //   showBorders: showBorders,
-    //   tableStyles: tableStyles,
-    //   subtotal: subtotal,
-    //   shipping: shipping,
-    //   tax: tax,
-    //   discount: discount,
-    //   total: total,
-    //   lastVisibleColumn: lastVisibleColumn
-    // });
+    // Respecter le choix utilisateur pour les bordures (correction du bug d'affichage)
+    var showBorders = element.showBorders; // Utiliser directement la propriété showBorders de l'élément
     return /*#__PURE__*/React.createElement("div", {
       style: {
         width: '100%',
@@ -1466,44 +1486,111 @@ var CanvasElement = function CanvasElement(_ref) {
         width: '100%'
       }
     }, content));
-  }(), element.type === 'company_logo' && /*#__PURE__*/React.createElement("div", {
-    style: {
-      width: '100%',
-      height: '100%',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: element.alignment === 'center' ? 'center' : element.alignment === 'right' ? 'flex-end' : 'flex-start',
-      padding: '8px',
-      backgroundColor: element.backgroundColor || 'transparent',
-      // Bordures subtiles pour les éléments spéciaux
-      border: element.borderWidth && element.borderWidth > 0 ? "".concat(Math.max(1, element.borderWidth * zoom * 0.5), "px solid ").concat(element.borderColor || '#e5e7eb') : 'none',
-      borderRadius: element.borderRadius ? "".concat(element.borderRadius * zoom, "px") : '2px',
-      boxSizing: 'border-box'
-    }
-  }, element.imageUrl ? /*#__PURE__*/React.createElement("img", {
-    src: element.imageUrl,
-    alt: "Logo entreprise",
-    style: {
-      width: "".concat(element.width || 150, "px"),
-      height: "".concat(element.height || 80, "px"),
-      objectFit: element.fit || 'contain',
-      borderRadius: element.borderRadius || 0,
-      border: element.borderWidth ? "".concat(element.borderWidth, "px ").concat(element.borderStyle || 'solid', " ").concat(element.borderColor || 'transparent') : element.showBorder ? '1px solid transparent' : 'none'
-    }
-  }) : /*#__PURE__*/React.createElement("div", {
-    style: {
-      width: "".concat(element.width || 150, "px"),
-      height: "".concat(element.height || 80, "px"),
-      backgroundColor: '#f5f5f5',
-      border: element.borderWidth ? "".concat(element.borderWidth, "px ").concat(element.borderStyle || 'solid', " ").concat(element.borderColor || 'transparent') : element.showBorder ? '1px solid transparent' : 'none',
-      borderRadius: element.borderRadius || '4px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      color: '#999',
-      fontSize: "".concat(12 * zoom, "px")
-    }
-  }, "\uD83C\uDFE2 Logo")), element.type === 'company_info' && /*#__PURE__*/React.createElement("div", {
+  }(), element.type === 'company_logo' && function () {
+    var imageSource = element.src || element.imageUrl;
+    var formatValidation = validateImageFormat(imageSource);
+    return /*#__PURE__*/React.createElement("div", {
+      style: {
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: element.alignment === 'center' ? 'center' : element.alignment === 'right' ? 'flex-end' : 'flex-start',
+        padding: '8px',
+        backgroundColor: element.backgroundColor || 'transparent',
+        // Bordures subtiles pour les éléments spéciaux
+        border: element.borderWidth && element.borderWidth > 0 ? "".concat(Math.max(1, element.borderWidth * zoom * 0.5), "px solid ").concat(element.borderColor || '#e5e7eb') : 'none',
+        borderRadius: element.borderRadius ? "".concat(element.borderRadius * zoom, "px") : '2px',
+        boxSizing: 'border-box'
+      }
+    }, imageSource && formatValidation.isValid ? /*#__PURE__*/React.createElement("img", {
+      src: imageSource,
+      alt: "Logo entreprise",
+      style: {
+        width: element.autoResize ? 'auto' : "".concat(element.width || 150, "px"),
+        height: element.autoResize ? 'auto' : "".concat(element.height || 80, "px"),
+        maxWidth: element.autoResize ? "".concat(element.width || 150, "px") : 'none',
+        maxHeight: element.autoResize ? "".concat(element.height || 80, "px") : 'none',
+        objectFit: element.fit || 'contain',
+        borderRadius: element.borderRadius || 0,
+        border: element.borderWidth ? "".concat(element.borderWidth, "px ").concat(element.borderStyle || 'solid', " ").concat(element.borderColor || 'transparent') : element.showBorder ? '1px solid transparent' : 'none'
+      },
+      onLoad: function onLoad(e) {
+        // Redimensionnement automatique si activé
+        if (element.autoResize && e.target) {
+          var img = e.target;
+          var maxWidth = element.width || 150;
+          var maxHeight = element.height || 80;
+          var aspectRatio = img.naturalWidth / img.naturalHeight;
+          var newWidth = maxWidth;
+          var newHeight = maxHeight;
+          if (img.naturalWidth > maxWidth || img.naturalHeight > maxHeight) {
+            if (aspectRatio > maxWidth / maxHeight) {
+              newWidth = maxWidth;
+              newHeight = maxWidth / aspectRatio;
+            } else {
+              newHeight = maxHeight;
+              newWidth = maxHeight * aspectRatio;
+            }
+          } else {
+            newWidth = img.naturalWidth;
+            newHeight = img.naturalHeight;
+          }
+          img.style.width = "".concat(newWidth, "px");
+          img.style.height = "".concat(newHeight, "px");
+        }
+      },
+      onError: function onError(e) {
+        // Fallback si l'image ne charge pas
+        console.warn('Erreur de chargement du logo entreprise:', imageSource);
+      }
+    }) : imageSource && !formatValidation.isValid ?
+    /*#__PURE__*/
+    // Message d'erreur pour format non supporté
+    React.createElement("div", {
+      style: {
+        width: "".concat(element.width || 150, "px"),
+        height: "".concat(element.height || 80, "px"),
+        backgroundColor: '#fee2e2',
+        border: '2px solid #fca5a5',
+        borderRadius: element.borderRadius || '4px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#dc2626',
+        fontSize: "".concat(10 * zoom, "px"),
+        textAlign: 'center',
+        padding: '4px'
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: "".concat(14 * zoom, "px"),
+        marginBottom: '2px'
+      }
+    }, "\u26A0\uFE0F"), /*#__PURE__*/React.createElement("div", null, "Format non support\xE9"), /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: "".concat(8 * zoom, "px"),
+        marginTop: '2px'
+      }
+    }, formatValidation.reason)) :
+    /*#__PURE__*/
+    // Placeholder quand aucune image n'est définie
+    React.createElement("div", {
+      style: {
+        width: "".concat(element.width || 150, "px"),
+        height: "".concat(element.height || 80, "px"),
+        backgroundColor: '#f5f5f5',
+        border: element.borderWidth ? "".concat(element.borderWidth, "px ").concat(element.borderStyle || 'solid', " ").concat(element.borderColor || 'transparent') : element.showBorder ? '1px solid transparent' : 'none',
+        borderRadius: element.borderRadius || '4px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#999',
+        fontSize: "".concat(12 * zoom, "px")
+      }
+    }, "\uD83C\uDFE2 Logo"));
+  }(), element.type === 'company_info' && /*#__PURE__*/React.createElement("div", {
     style: {
       width: '100%',
       height: '100%',
@@ -5958,15 +6045,23 @@ var ElementLibrary = function ElementLibrary(_ref) {
     icon: '🏢',
     description: 'Logo et identité visuelle de l\'entreprise',
     defaultProperties: {
+      src: '',
+      // Propriété principale pour l'image (compatible avec les éléments image)
       imageUrl: '',
+      // Propriété de fallback pour compatibilité
       width: 150,
       height: 80,
       alignment: 'left',
       // 'left', 'center', 'right'
       fit: 'contain',
       // 'contain', 'cover', 'fill'
+      autoResize: true,
+      // Redimensionnement automatique selon les dimensions naturelles
       showBorder: false,
-      borderRadius: 0
+      borderRadius: 0,
+      borderWidth: 0,
+      borderStyle: 'solid',
+      borderColor: 'transparent'
     }
   }, {
     type: 'company_info',
@@ -10747,9 +10842,9 @@ var NewTemplateModal = function NewTemplateModal(_ref) {
 };
 /* harmony default export */ const components_NewTemplateModal = (NewTemplateModal);
 ;// ./resources/js/components/PDFCanvasEditor.jsx
-function PDFCanvasEditor_typeof(o) { "@babel/helpers - typeof"; return PDFCanvasEditor_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, PDFCanvasEditor_typeof(o); }
 function PDFCanvasEditor_regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return PDFCanvasEditor_regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (PDFCanvasEditor_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, PDFCanvasEditor_regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, PDFCanvasEditor_regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), PDFCanvasEditor_regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", PDFCanvasEditor_regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), PDFCanvasEditor_regeneratorDefine2(u), PDFCanvasEditor_regeneratorDefine2(u, o, "Generator"), PDFCanvasEditor_regeneratorDefine2(u, n, function () { return this; }), PDFCanvasEditor_regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (PDFCanvasEditor_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
 function PDFCanvasEditor_regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } PDFCanvasEditor_regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { PDFCanvasEditor_regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, PDFCanvasEditor_regeneratorDefine2(e, r, n, t); }
+function PDFCanvasEditor_typeof(o) { "@babel/helpers - typeof"; return PDFCanvasEditor_typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, PDFCanvasEditor_typeof(o); }
 function PDFCanvasEditor_asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
 function PDFCanvasEditor_asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { PDFCanvasEditor_asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { PDFCanvasEditor_asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 function PDFCanvasEditor_toConsumableArray(r) { return PDFCanvasEditor_arrayWithoutHoles(r) || PDFCanvasEditor_iterableToArray(r) || PDFCanvasEditor_unsupportedIterableToArray(r) || PDFCanvasEditor_nonIterableSpread(); }
@@ -11016,7 +11111,7 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
 
   // Gestionnaire pour l'impression
   var handlePrint = (0,react.useCallback)(/*#__PURE__*/PDFCanvasEditor_asyncToGenerator(/*#__PURE__*/PDFCanvasEditor_regenerator().m(function _callee() {
-    var _window$pdfBuilderAja, _window$pdfBuilderAja2, elements, jsonString, formData, response, data, _data$data, _t, _t2;
+    var _window$pdfBuilderAja, _window$pdfBuilderAja2, elements, jsonString, cleanedElements, formData, response, data, _data$data, _t, _t2, _t3;
     return PDFCanvasEditor_regenerator().w(function (_context) {
       while (1) switch (_context.p = _context.n) {
         case 0:
@@ -11032,16 +11127,40 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
         case 1:
           _context.p = 1;
           jsonString = JSON.stringify(elements);
-          _context.n = 3;
+          _context.n = 5;
           break;
         case 2:
           _context.p = 2;
           _t = _context.v;
           console.error('❌ Erreur lors de JSON.stringify:', _t);
           console.error('Éléments problématiques:', elements);
-          alert('Erreur de sérialisation des éléments. Vérifiez la console pour plus de détails.');
+
+          // Tentative de nettoyage des éléments problématiques
+          _context.p = 3;
+          cleanedElements = elements.map(function (element) {
+            // Supprimer les propriétés problématiques (fonctions, undefined, etc.)
+            var cleaned = PDFCanvasEditor_objectSpread({}, element);
+            Object.keys(cleaned).forEach(function (key) {
+              if (typeof cleaned[key] === 'function' || cleaned[key] === undefined || PDFCanvasEditor_typeof(cleaned[key]) === 'object' && cleaned[key] !== null && !Array.isArray(cleaned[key])) {
+                // Garder seulement les propriétés primitives et tableaux
+                if (typeof cleaned[key] !== 'string' && typeof cleaned[key] !== 'number' && typeof cleaned[key] !== 'boolean' && !Array.isArray(cleaned[key])) {
+                  delete cleaned[key];
+                }
+              }
+            });
+            return cleaned;
+          });
+          jsonString = JSON.stringify(cleanedElements);
+          console.warn('✅ Éléments nettoyés et sérialisés avec succès');
+          _context.n = 5;
+          break;
+        case 4:
+          _context.p = 4;
+          _t2 = _context.v;
+          console.error('❌ Échec du nettoyage des éléments:', _t2);
+          alert('Erreur critique lors de la préparation des données. Veuillez recharger la page et réessayer.');
           return _context.a(2);
-        case 3:
+        case 5:
           // Préparer les données pour l'AJAX
           formData = new FormData();
           formData.append('action', 'pdf_builder_generate_pdf');
@@ -11049,46 +11168,46 @@ var PDFCanvasEditor = /*#__PURE__*/(0,react.forwardRef)(function (_ref, ref) {
           formData.append('elements', jsonString);
 
           // Faire l'appel AJAX
-          _context.n = 4;
+          _context.n = 6;
           return fetch((_window$pdfBuilderAja2 = window.pdfBuilderAjax) === null || _window$pdfBuilderAja2 === void 0 ? void 0 : _window$pdfBuilderAja2.ajaxurl, {
             method: 'POST',
             body: formData
           });
-        case 4:
+        case 6:
           response = _context.v;
           if (response.ok) {
-            _context.n = 5;
+            _context.n = 7;
             break;
           }
           throw new Error("Erreur HTTP: ".concat(response.status));
-        case 5:
-          _context.n = 6;
+        case 7:
+          _context.n = 8;
           return response.json();
-        case 6:
+        case 8:
           data = _context.v;
           if (!data.success) {
-            _context.n = 7;
+            _context.n = 9;
             break;
           }
           // PDF généré avec succès
           console.log('PDF généré avec succès');
-          _context.n = 8;
-          break;
-        case 7:
-          console.error('Erreur serveur:', data.data);
-          throw new Error(((_data$data = data.data) === null || _data$data === void 0 ? void 0 : _data$data.message) || 'Erreur lors de la génération du PDF');
-        case 8:
           _context.n = 10;
           break;
         case 9:
-          _context.p = 9;
-          _t2 = _context.v;
-          console.error('Erreur lors de l\'impression:', _t2);
-          alert('Erreur lors de la génération du PDF: ' + _t2.message);
+          console.error('Erreur serveur:', data.data);
+          throw new Error(((_data$data = data.data) === null || _data$data === void 0 ? void 0 : _data$data.message) || 'Erreur lors de la génération du PDF');
         case 10:
+          _context.n = 12;
+          break;
+        case 11:
+          _context.p = 11;
+          _t3 = _context.v;
+          console.error('Erreur lors de l\'impression:', _t3);
+          alert('Erreur lors de la génération du PDF: ' + _t3.message);
+        case 12:
           return _context.a(2);
       }
-    }, _callee, null, [[1, 2], [0, 9]]);
+    }, _callee, null, [[3, 4], [1, 2], [0, 11]]);
   })), [canvasState]);
 
   // Gestionnaire pour la désélection et création d'éléments

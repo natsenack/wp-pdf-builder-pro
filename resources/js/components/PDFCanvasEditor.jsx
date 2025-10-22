@@ -209,8 +209,31 @@ export const PDFCanvasEditor = forwardRef(({ options }, ref) => {
       } catch (jsonError) {
         console.error('❌ Erreur lors de JSON.stringify:', jsonError);
         console.error('Éléments problématiques:', elements);
-        alert('Erreur de sérialisation des éléments. Vérifiez la console pour plus de détails.');
-        return;
+
+        // Tentative de nettoyage des éléments problématiques
+        try {
+          const cleanedElements = elements.map(element => {
+            // Supprimer les propriétés problématiques (fonctions, undefined, etc.)
+            const cleaned = { ...element };
+            Object.keys(cleaned).forEach(key => {
+              if (typeof cleaned[key] === 'function' ||
+                  cleaned[key] === undefined ||
+                  (typeof cleaned[key] === 'object' && cleaned[key] !== null && !Array.isArray(cleaned[key]))) {
+                // Garder seulement les propriétés primitives et tableaux
+                if (typeof cleaned[key] !== 'string' && typeof cleaned[key] !== 'number' && typeof cleaned[key] !== 'boolean' && !Array.isArray(cleaned[key])) {
+                  delete cleaned[key];
+                }
+              }
+            });
+            return cleaned;
+          });
+          jsonString = JSON.stringify(cleanedElements);
+          console.warn('✅ Éléments nettoyés et sérialisés avec succès');
+        } catch (cleanupError) {
+          console.error('❌ Échec du nettoyage des éléments:', cleanupError);
+          alert('Erreur critique lors de la préparation des données. Veuillez recharger la page et réessayer.');
+          return;
+        }
       }
 
       // Préparer les données pour l'AJAX

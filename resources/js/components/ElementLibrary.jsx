@@ -55,13 +55,18 @@ const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
       icon: '🏢',
       description: 'Logo et identité visuelle de l\'entreprise',
       defaultProperties: {
-        imageUrl: '',
+        src: '', // Propriété principale pour l'image (compatible avec les éléments image)
+        imageUrl: '', // Propriété de fallback pour compatibilité
         width: 150,
         height: 80,
         alignment: 'left', // 'left', 'center', 'right'
         fit: 'contain', // 'contain', 'cover', 'fill'
+        autoResize: true, // Redimensionnement automatique selon les dimensions naturelles
         showBorder: false,
-        borderRadius: 0
+        borderRadius: 0,
+        borderWidth: 0,
+        borderStyle: 'solid',
+        borderColor: 'transparent'
       }
     },
     {
