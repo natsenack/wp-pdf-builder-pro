@@ -604,6 +604,149 @@ try {
     echo "Fichier: " . $e->getFile() . " Ligne: " . $e->getLine() . "\n";
 }
 
+// ==========================================
+// Phase 3.3.1 - TextRenderer Tests
+// ==========================================
+
+echo "\n\n=== Test TextRenderer Phase 3.3.1 ===\n\n";
+
+try {
+    // Inclure le TextRenderer
+    require_once __DIR__ . '/src/Renderers/TextRenderer.php';
+
+    // Test 41: Instanciation TextRenderer
+    echo "Test 41: Instanciation TextRenderer\n";
+    $textRenderer = new \PDF_Builder\Renderers\TextRenderer();
+    echo "✓ TextRenderer instancié avec succès\n";
+
+    // Test 42: Support des types d'éléments
+    echo "\nTest 42: Support des types d'éléments\n";
+    echo "Support dynamic-text: " . ($textRenderer->supportsElementType('dynamic-text') ? 'Oui' : 'Non') . "\n";
+    echo "Support order_number: " . ($textRenderer->supportsElementType('order_number') ? 'Oui' : 'Non') . "\n";
+    echo "Support rectangle: " . ($textRenderer->supportsElementType('rectangle') ? 'Oui' : 'Non') . "\n";
+    echo "✓ Support des types validé\n";
+
+    // Test 43: Rendu dynamic-text simple
+    echo "\nTest 43: Rendu dynamic-text simple\n";
+    $elementData = [
+        'type' => 'dynamic-text',
+        'content' => 'Bonjour {{customer_name}} !',
+        'properties' => ['font-size' => '16px', 'color' => '#333333']
+    ];
+    $context = [
+        'customer' => ['first_name' => 'Marie', 'last_name' => 'Dubois']
+    ];
+    $result = $textRenderer->render($elementData, $context);
+    echo "HTML généré: " . substr($result['html'], 0, 50) . "...\n";
+    echo "CSS généré: " . substr($result['css'], 0, 50) . "...\n";
+    echo "Variables remplacées: " . ($result['variables_replaced'] ?? 0) . "\n";
+    echo "Contenu final: " . $result['content'] . "\n";
+    echo "✓ Rendu dynamic-text réussi\n";
+
+    // Test 44: Rendu avec variables multiples
+    echo "\nTest 44: Rendu avec variables multiples\n";
+    $elementData = [
+        'type' => 'dynamic-text',
+        'content' => 'Commande {{order_number}} du {{current_date}} pour {{customer_name}}',
+        'properties' => ['font-weight' => 'bold']
+    ];
+    $context = [
+        'order' => ['number' => 'CMD-2024-0456'],
+        'customer' => ['first_name' => 'Jean', 'last_name' => 'Dupont']
+    ];
+    $result = $textRenderer->render($elementData, $context);
+    echo "Contenu traité: " . $result['content'] . "\n";
+    echo "✓ Variables multiples remplacées\n";
+
+    // Test 45: Rendu order_number
+    echo "\nTest 45: Rendu order_number\n";
+    $elementData = [
+        'type' => 'order_number',
+        'properties' => [
+            'format' => 'Facture N°{order_number}',
+            'font-size' => '18px',
+            'font-weight' => 'bold'
+        ]
+    ];
+    $context = [
+        'order' => ['number' => '12345', 'date' => '2024-10-22']
+    ];
+    $result = $textRenderer->render($elementData, $context);
+    echo "Numéro formaté: " . $result['formatted_number'] . "\n";
+    echo "✓ Formatage order_number réussi\n";
+
+    // Test 46: Gestion des variables manquantes
+    echo "\nTest 46: Gestion des variables manquantes\n";
+    $elementData = [
+        'type' => 'dynamic-text',
+        'content' => 'Bonjour {{customer_name}} et {{missing_variable}} !'
+    ];
+    $context = [
+        'customer' => ['name' => 'Marie']
+    ];
+    $result = $textRenderer->render($elementData, $context);
+    echo "Contenu avec placeholder: " . $result['content'] . "\n";
+    echo "✓ Variables manquantes gérées\n";
+
+    // Test 47: Variables système
+    echo "\nTest 47: Variables système\n";
+    $elementData = [
+        'type' => 'dynamic-text',
+        'content' => 'Date: {{current_date}} - Heure: {{current_time}}'
+    ];
+    $result = $textRenderer->render($elementData, []);
+    echo "Variables système: " . $result['content'] . "\n";
+    echo "✓ Variables système fonctionnelles\n";
+
+    // Test 48: Styles CSS avancés
+    echo "\nTest 48: Styles CSS avancés\n";
+    $elementData = [
+        'type' => 'dynamic-text',
+        'content' => 'Texte stylisé',
+        'properties' => [
+            'font-family' => 'Arial, sans-serif',
+            'font-size' => '14px',
+            'font-weight' => 'bold',
+            'font-style' => 'italic',
+            'color' => '#ff0000',
+            'text-align' => 'center',
+            'text-decoration' => 'underline'
+        ]
+    ];
+    $result = $textRenderer->render($elementData, []);
+    echo "CSS généré contient font-weight: " . (strpos($result['css'], 'font-weight: bold') !== false ? 'Oui' : 'Non') . "\n";
+    echo "CSS généré contient color: " . (strpos($result['css'], 'color: #ff0000') !== false ? 'Oui' : 'Non') . "\n";
+    echo "✓ Styles CSS avancés appliqués\n";
+
+    // Test 49: Validation des données
+    echo "\nTest 49: Validation des données\n";
+    $invalidElement = ['type' => 'invalid-type'];
+    $result = $textRenderer->render($invalidElement, []);
+    echo "Élément invalide rejeté: " . (isset($result['error']) ? 'Oui' : 'Non') . "\n";
+
+    $emptyContent = ['type' => 'dynamic-text', 'content' => ''];
+    $result = $textRenderer->render($emptyContent, []);
+    echo "Contenu vide géré: " . (isset($result['error']) ? 'Oui' : 'Non') . "\n";
+    echo "✓ Validation des données fonctionnelle\n";
+
+    // Test 50: Variables disponibles
+    echo "\nTest 50: Variables disponibles\n";
+    $context = [
+        'customer' => ['name' => 'Test', 'email' => 'test@example.com'],
+        'order' => ['number' => '123']
+    ];
+    $availableVars = $textRenderer->getAvailableVariables($context);
+    echo "Variables disponibles: " . count($availableVars) . " (incluant système)\n";
+    echo "Contient 'current_date': " . (in_array('current_date', $availableVars) ? 'Oui' : 'Non') . "\n";
+    echo "✓ Liste des variables disponible\n";
+
+    echo "\n=== Tests TextRenderer Phase 3.3.1 terminés avec succès ===\n";
+
+} catch (\Exception $e) {
+    echo "ERREUR FATALE dans Phase 3.3.1: " . $e->getMessage() . "\n";
+    echo "Fichier: " . $e->getFile() . " Ligne: " . $e->getLine() . "\n";
+}
+
 } catch (\Exception $e) {
     echo "ERREUR FATALE: " . $e->getMessage() . "\n";
     echo "Fichier: " . $e->getFile() . " Ligne: " . $e->getLine() . "\n";

@@ -88,12 +88,7 @@ class ModeSwitcher implements ModeInterface
         // Créer ou récupérer le provider pour ce mode
         $provider = $this->getProviderForMode($mode);
 
-        // Injecter le provider dans le renderer si disponible
-        if ($this->renderer !== null) {
-            $this->renderer->setDataProvider($provider);
-        }
-
-        // Mettre à jour l'état
+        // Mettre à jour l'état (le renderer recevra les données lors du rendu)
         $this->currentMode = $mode;
         $this->currentProvider = $provider;
 
@@ -130,11 +125,7 @@ class ModeSwitcher implements ModeInterface
     {
         $this->renderer = $renderer;
 
-        // Injecter le provider actuel dans le nouveau renderer
-        if ($this->currentProvider !== null) {
-            $this->renderer->setDataProvider($this->currentProvider);
-        }
-
+        // Le renderer recevra les données lors des appels de rendu
         return $this;
     }
 
@@ -231,10 +222,7 @@ class ModeSwitcher implements ModeInterface
             $this->providerCache[self::MODE_METABOX] = $provider;
             $this->currentProvider = $provider;
 
-            // Injecter dans le renderer si disponible
-            if ($this->renderer !== null) {
-                $this->renderer->setDataProvider($provider);
-            }
+            // Le renderer recevra les données lors des appels de rendu
         }
 
         return $this;
