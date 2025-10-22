@@ -17,6 +17,19 @@ if (!is_user_logged_in() || !current_user_can('read')) {
 // Tous les scripts et styles sont maintenant chargés dans la classe admin via enqueue_admin_scripts
 // Plus besoin d'enqueues ici car ils sont déjà faits avant wp_head()
 
+// Forcer le chargement des scripts pour l'éditeur si ce n'est pas déjà fait
+if (!did_action('admin_enqueue_scripts')) {
+    do_action('admin_enqueue_scripts', 'pdf-builder-editor');
+}
+
+// Chargement explicite des scripts PDF Builder pour l'éditeur
+if (class_exists('PDF_Builder\Admin\PDF_Builder_Admin')) {
+    $admin_instance = \PDF_Builder\Admin\PDF_Builder_Admin::getInstance();
+    if (method_exists($admin_instance, 'enqueue_admin_scripts')) {
+        $admin_instance->enqueue_admin_scripts('pdf-builder_page_pdf-builder-editor');
+    }
+}
+
 // Get template ID from URL
 $template_id = isset($_GET['template_id']) ? intval($_GET['template_id']) : 0;
 $is_new = $template_id === 0;
