@@ -1,5 +1,5 @@
 // DEBUG: Script execution started
-console.log('🚀 PDF Builder Pro: Script execution started');
+console.error('🚀 PDF Builder Pro: Script execution started - FORCE LOG');
 
 // Tous les imports doivent être au niveau supérieur du module
 import React from 'react';
@@ -234,7 +234,7 @@ const pdfBuilderPro = new PDFBuilderPro();
 export default pdfBuilderPro;
 
 // DEBUG: About to assign globals
-console.log('📋 PDF Builder Pro: About to assign global variables');
+console.error('📋 PDF Builder Pro: About to assign global variables - FORCE LOG');
 
 // Attacher à window pour WordPress - FORCER L'EXPOSITION DIRECTE
 try {
@@ -242,9 +242,9 @@ try {
         // Forcer l'assignation directe de l'instance, pas du module webpack
         window.PDFBuilderPro = pdfBuilderPro;
         window.pdfBuilderPro = pdfBuilderPro;
-        console.log('✅ PDF Builder Pro: Global variables assigned successfully');
-        console.log('   - window.PDFBuilderPro:', typeof window.PDFBuilderPro);
-        console.log('   - window.pdfBuilderPro:', typeof window.pdfBuilderPro);
+        console.error('✅ PDF Builder Pro: Global variables assigned successfully - FORCE LOG');
+        console.error('   - window.PDFBuilderPro:', typeof window.PDFBuilderPro);
+        console.error('   - window.pdfBuilderPro:', typeof window.pdfBuilderPro);
     } else {
         console.log('⚠️ PDF Builder Pro: Window not available');
     }
