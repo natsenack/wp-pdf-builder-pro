@@ -53,6 +53,45 @@ try {
         echo "✓ Mode invalide rejeté: " . $e->getMessage() . "\n";
     }
 
+    // Test 7: Constantes A4
+    echo "\nTest 7: Constantes A4\n";
+    echo "A4_WIDTH_MM: " . \PDF_Builder\Renderers\PreviewRenderer::A4_WIDTH_MM . "mm\n";
+    echo "A4_HEIGHT_MM: " . \PDF_Builder\Renderers\PreviewRenderer::A4_HEIGHT_MM . "mm\n";
+    echo "A4_DPI: " . \PDF_Builder\Renderers\PreviewRenderer::A4_DPI . "\n";
+    echo "A4_WIDTH_PX: " . \PDF_Builder\Renderers\PreviewRenderer::A4_WIDTH_PX . "px\n";
+    echo "A4_HEIGHT_PX: " . \PDF_Builder\Renderers\PreviewRenderer::A4_HEIGHT_PX . "px\n";
+
+    // Test 8: setDimensions()
+    echo "\nTest 8: setDimensions()\n";
+    $setResult = $renderer->setDimensions(1000, 1500);
+    echo "setDimensions(1000, 1500): " . ($setResult ? 'Réussi' : 'Échoué') . "\n";
+    $newDimensions = $renderer->getDimensions();
+    echo "Nouvelles dimensions: {$newDimensions['width']}x{$newDimensions['height']}\n";
+
+    // Test 9: resetToA4()
+    echo "\nTest 9: resetToA4()\n";
+    $resetResult = $renderer->resetToA4();
+    echo "resetToA4(): " . ($resetResult ? 'Réussi' : 'Échoué') . "\n";
+    $a4Dimensions = $renderer->getDimensions();
+    echo "Dimensions A4: {$a4Dimensions['width']}x{$a4Dimensions['height']}\n";
+    $isA4Correct = ($a4Dimensions['width'] === 794 && $a4Dimensions['height'] === 1123);
+    echo "Dimensions A4 correctes: " . ($isA4Correct ? 'Oui' : 'Non') . "\n";
+
+    // Test 10: calculatePixelDimensions()
+    echo "\nTest 10: calculatePixelDimensions()\n";
+    $calculated = \PDF_Builder\Renderers\PreviewRenderer::calculatePixelDimensions(210, 297, 150);
+    echo "calculatePixelDimensions(210, 297, 150): {$calculated['width']}x{$calculated['height']}\n";
+    $calcCorrect = ($calculated['width'] === 794 && $calculated['height'] === 1123);
+    echo "Calcul correct: " . ($calcCorrect ? 'Oui' : 'Non') . "\n";
+
+    // Test 11: Validation des dimensions
+    echo "\nTest 11: Validation des dimensions\n";
+    $invalidSet = $renderer->setDimensions(-100, 100);
+    echo "setDimensions(-100, 100): " . ($invalidSet ? 'Accepté (erreur)' : 'Rejeté (correct)') . "\n";
+
+    $tooBigSet = $renderer->setDimensions(6000, 6000);
+    echo "setDimensions(6000, 6000): " . ($tooBigSet ? 'Accepté (erreur)' : 'Rejeté (correct)') . "\n";
+
     echo "\n=== Tous les tests terminés avec succès ===\n";
 
 } catch (\Exception $e) {

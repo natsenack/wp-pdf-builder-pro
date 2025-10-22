@@ -17,6 +17,15 @@ if (!defined('ABSPATH')) {
 class PreviewRenderer {
 
     /**
+     * Constantes pour les dimensions A4 standard
+     */
+    const A4_WIDTH_MM = 210;
+    const A4_HEIGHT_MM = 297;
+    const A4_DPI = 150;
+    const A4_WIDTH_PX = 794;  // 210mm * 150 DPI / 25.4
+    const A4_HEIGHT_PX = 1123; // 297mm * 150 DPI / 25.4
+
+    /**
      * Options de configuration du renderer
      * @var array
      */
@@ -186,13 +195,100 @@ class PreviewRenderer {
      * @return array Dimensions [width, height]
      */
     private function initializeDimensions() {
-        // Dimensions par défaut (A4 à 150 DPI)
-        $defaultWidth = 794;  // 210mm * 150 DPI / 25.4
-        $defaultHeight = 1123; // 297mm * 150 DPI / 25.4
+        // Utiliser les constantes A4 par défaut
+        $defaultWidth = self::A4_WIDTH_PX;
+        $defaultHeight = self::A4_HEIGHT_PX;
 
         return [
             'width' => $this->options['width'] ?? $defaultWidth,
             'height' => $this->options['height'] ?? $defaultHeight
+        ];
+    }
+
+    /**
+     * Définit les dimensions du canvas
+     *
+     * @param int|null $width Largeur en pixels (null pour utiliser A4 par défaut)
+     * @param int|null $height Hauteur en pixels (null pour utiliser A4 par défaut)
+     * @return bool True si dimensions définies avec succès
+     */
+    public function setDimensions(?int $width = null, ?int $height = null) {
+        try {
+            // Utiliser les dimensions A4 par défaut si non spécifiées
+            $newWidth = $width ?? self::A4_WIDTH_PX;
+            $newHeight = $height ?? self::A4_HEIGHT_PX;
+
+            // Validation des dimensions
+            if ($newWidth <= 0 || $newHeight <= 0) {
+                throw new \Exception('Les dimensions doivent être positives');
+            }
+
+            // Limites raisonnables (éviter des valeurs trop extrêmes)
+            if ($newWidth > 5000 || $newHeight > 5000) {
+                throw new \Exception('Dimensions trop grandes (max 5000px)');
+            }
+
+            if ($newWidth < 100 || $newHeight < 100) {
+                throw new \Exception('Dimensions trop petites (min 100px)');
+            }
+
+            // Mettre à jour les dimensions
+            $this->dimensions = [
+                'width' => $newWidth,
+                'height' => $newHeight
+            ];
+
+            // Mettre à jour les options
+            $this->options['width'] = $newWidth;
+            $this->options['height'] = $newHeight;
+
+            error_log('PreviewRenderer: Dimensions définies à ' . $newWidth . 'x' . $newHeight . 'px');
+
+            return true;
+
+        } catch (\Exception $e) {
+            error_log('PreviewRenderer: Erreur lors de la définition des dimensions - ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Retourne les dimensions actuelles du canvas
+     *
+     * @return array Dimensions [width, height]
+     */
+    public function getDimensions() {
+        return $this->dimensions;
+    }
+
+    /**
+     * Réinitialise les dimensions aux valeurs A4 par défaut
+     *
+     * @return bool True si réinitialisation réussie
+     */
+    public function resetToA4() {
+        return $this->setDimensions(self::A4_WIDTH_PX, self::A4_HEIGHT_PX);
+    }
+
+    /**
+     * Calcule les dimensions en pixels depuis des dimensions en mm
+     *
+     * @param float $widthMm Largeur en mm
+     * @param float $heightMm Hauteur en mm
+     * @param int $dpi DPI (par défaut 150)
+     * @return array Dimensions en pixels [width, height]
+     */
+    public static function calculatePixelDimensions(float $widthMm, float $heightMm, int $dpi = 150) {
+        // Utiliser la même logique que pour les constantes A4
+        // A4_WIDTH_PX = 794 pour 210mm, donc facteur = 794/210 ≈ 3.781
+        $factor = self::A4_WIDTH_PX / self::A4_WIDTH_MM;
+
+        $widthPx = round($widthMm * $factor);
+        $heightPx = round($heightMm * $factor);
+
+        return [
+            'width' => (int) $widthPx,
+            'height' => (int) $heightPx
         ];
     }
 
@@ -212,15 +308,6 @@ class PreviewRenderer {
      */
     public function getMode() {
         return $this->mode;
-    }
-
-    /**
-     * Retourne les dimensions actuelles
-     *
-     * @return array
-     */
-    public function getDimensions() {
-        return $this->dimensions;
     }
 
     /**
