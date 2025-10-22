@@ -137,65 +137,61 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
   - **Test** : Valider liste complète avec exemples concrets
   - **✅ VALIDÉ** : Plan d'implémentation complet défini (PHASE_2.1.4_PRIORITES_IMPLEMENTATION.md) - 7 éléments classés par priorité avec plan 3 phases (fondamentaux → intermédiaires → critique)
 
-#### **2.2 Documenter les 35+ variables dynamiques**
-- [ ] **Étape 2.2.1 : Collecter toutes les variables WooCommerce disponibles**  
+#### **2.2 Implémenter les éléments fondamentaux**
+- [x] **Étape 2.2.1 : Améliorer company_logo**  
+  - Unifier gestion src/imageUrl pour compatibilité  
+  - Implémenter redimensionnement automatique selon ratio d'aspect  
+  - Ajouter validation formats d'image (JPG, PNG, WebP, SVG, GIF, BMP, TIFF, ICO)  
+  - Étendre propriétés de bordure (borderWidth, borderStyle, borderColor)  
+  - **Test** : 17 tests unitaires validés, build réussi  
+  - **✅ VALIDÉ** : company_logo entièrement amélioré avec gestion unifiée, redimensionnement automatique, validation formats et propriétés complètes
+
+- [ ] **Étape 2.2.2 : Améliorer order_number**  
+  - Implémenter formatage configurable (#CMD-2025-XXX, FACT-XXXX, etc.)  
+  - Ajouter validation format et prévisualisation  
+  - Étendre propriétés de style (police, couleur, alignement)  
+  - Gérer cas spéciaux (commandes sans numéro)  
+  - **Test** : Formats validés, prévisualisation fonctionnelle
+
+- [ ] **Étape 2.2.3 : Améliorer company_info**  
+  - Mapping complet des champs société WooCommerce  
+  - Templates prédéfinis pour différents secteurs  
+  - Gestion des données manquantes avec fallbacks  
+  - Optimisation mise en page responsive  
+  - **Test** : Tous champs société affichés correctement
+
+#### **2.3 Documenter les variables dynamiques**
+- [ ] **Étape 2.3.1 : Collecter toutes les variables WooCommerce disponibles**  
   - Examiner la classe `PDF_Builder_WooCommerce_Integration.php`  
   - Lister toutes les méthodes qui récupèrent des données (get_order_items, etc.)  
   - Inclure les variables standard WooCommerce (prix, client, etc.)  
   - Ajouter les variables personnalisées du plugin  
   - **Test** : Vérifier récupération données exemple
 
-- [ ] **Étape 2.2.2 : Classifier les variables par catégories**  
+- [ ] **Étape 2.3.2 : Classifier les variables par catégories**  
   - Grouper par type : client, produit, commande, entreprise, etc.  
   - Créer des sous-catégories (ex: client → nom, email, adresse)  
   - Noter les variables obligatoires vs optionnelles  
   - Identifier les variables qui nécessitent des calculs  
   - **Test** : Valider classification avec données réelles
 
-- [ ] **Étape 2.2.3 : Documenter le format et les exemples de chaque variable**  
+- [ ] **Étape 2.3.3 : Documenter le format et les exemples de chaque variable**  
   - Pour chaque variable, donner le format (string, number, date)  
   - Fournir des exemples concrets (ex: {{customer_name}} → "Jean Dupont")  
   - Noter les cas spéciaux (valeurs nulles, formats multiples)  
   - Documenter les transformations possibles (majuscules, format date)  
   - **Test** : Tester exemples dans template simple
 
-- [ ] **Étape 2.2.4 : Créer un guide d'utilisation pour les variables**  
+- [ ] **Étape 2.3.4 : Créer un guide d'utilisation pour les variables**  
   - Écrire des règles d'usage (quand utiliser chaque variable)  
   - Créer des exemples de templates avec variables  
   - Documenter les erreurs possibles et solutions  
   - Inclure une référence rapide pour les développeurs  
   - **Test** : Guide utilisable par testeur externe  
 
-#### **2.3 Définir l'architecture modulaire**
-- [ ] **Étape 2.3.1 : Dessiner le diagramme d'architecture générale**  
-  - Identifier les composants principaux (Renderer, Canvas, Metabox)  
-  - Dessiner les flux de données entre composants  
-  - Définir les points d'entrée (éditeur, metabox WooCommerce)  
-  - Noter les dépendances externes (TCPDF, React)  
-  - **Test** : Diagramme validé par équipe technique
+#### **2.4 Définir l'architecture modulaire**  
 
-- [ ] **Étape 2.3.2 : Définir les responsabilités de chaque module**  
-  - Pour chaque module, lister ses tâches spécifiques  
-  - Définir les interfaces publiques (méthodes exposées)  
-  - Spécifier les données d'entrée/sortie  
-  - Documenter les invariants (règles qui ne changent pas)  
-  - **Test** : Responsabilités approuvées par relecture
-
-- [ ] **Étape 2.3.3 : Spécifier les interfaces entre modules**  
-  - Définir les contrats entre modules (types de données)  
-  - Créer des interfaces TypeScript/PHP pour la communication  
-  - Planifier les événements et callbacks  
-  - Définir les gestionnaires d'erreurs  
-  - **Test** : Interfaces testées avec mocks
-
-- [ ] **Étape 2.3.4 : Planifier la séparation Canvas/Metabox**  
-  - Identifier le code commun vs spécifique à chaque mode  
-  - Planifier l'injection de dépendances pour les modes  
-  - Définir les points de branchement (factory pattern)  
-  - Documenter les différences de comportement  
-  - **Test** : Plan validé par prototype simple  
-
-#### **2.4 Spécifier les APIs**
+#### **2.4 Définir l'architecture modulaire**
 - [ ] **Étape 2.4.1 : Définir les endpoints AJAX internes nécessaires**  
   - Lister les actions AJAX (generate_preview, get_variables, validate_license, etc.)  
   - Spécifier les URLs et méthodes (wp_ajax_* hooks)  
@@ -219,6 +215,36 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
   - **Test** : Tests de sécurité passés
 
 - [ ] **Étape 2.4.4 : Créer des exemples d'utilisation des APIs**  
+  - Fournir des exemples de code JavaScript pour appeler les endpoints  
+  - Créer des scénarios d'usage courants  
+  - Documenter les cas d'erreur et gestion  
+  - Inclure des tests d'intégration simples  
+  - **Test** : Exemples fonctionnels testés  
+
+#### **2.5 Spécifier les APIs**
+- [ ] **Étape 2.5.1 : Définir les endpoints AJAX internes nécessaires**  
+  - Lister les actions AJAX (generate_preview, get_variables, validate_license, etc.)  
+  - Spécifier les URLs et méthodes (wp_ajax_* hooks)  
+  - Vérifier systèmes existants et les recréer si nécessaire  
+  - Définir les paramètres requis pour chaque endpoint  
+  - Planifier la gestion des erreurs et réponses  
+  - **Test** : Endpoints testés avec Postman/cURL
+
+- [ ] **Étape 2.5.2 : Spécifier les formats de données d'entrée/sortie**  
+  - Définir le schéma JSON pour les requêtes AJAX  
+  - Spécifier le format des réponses (succès/erreur)  
+  - Documenter les types de données (string, array, object)  
+  - Inclure des exemples de payloads  
+  - **Test** : Schémas validés avec JSON Schema
+
+- [ ] **Étape 2.5.3 : Documenter les méthodes de sécurité**  
+  - Spécifier l'usage des nonces WordPress  
+  - Définir la validation des données d'entrée  
+  - Planifier les contrôles de permissions  
+  - Documenter les mesures anti-injection  
+  - **Test** : Tests de sécurité passés
+
+- [ ] **Étape 2.5.4 : Créer des exemples d'utilisation des APIs**  
   - Fournir des exemples de code JavaScript pour appeler les endpoints  
   - Créer des scénarios d'usage courants  
   - Documenter les cas d'erreur et gestion  
