@@ -77,6 +77,11 @@ function pdf_builder_load_core() {
         require_once PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Generator_Controller.php';
     }
 
+    // Charger le contrôleur API d'aperçu (Phase 2.5.1)
+    if (file_exists(PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Builder_Preview_API_Controller.php')) {
+        require_once PDF_BUILDER_PLUGIN_DIR . 'src/Controllers/PDF_Builder_Preview_API_Controller.php';
+    }
+
     $loaded = true;
 }
 

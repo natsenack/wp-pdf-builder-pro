@@ -993,19 +993,37 @@ var CanvasElement = function CanvasElement(_ref) {
   // Le contenu sera rendu plus bas dans le même conteneur
   element.type !== 'image' && element.type !== 'rectangle' && element.type !== 'company_logo' && element.type !== 'order_number' && element.type !== 'company_info' && element.type !== 'document_type' ? element.type : null, element.type === 'product_table' && function (_element$columns2, _element$columns3, _element$columns4, _element$columns5, _element$columns6, _element$columns7) {
     // Données des produits (utiliser sampleProducts si disponible, sinon données par défaut)
-    var products = element.sampleProducts || [{
+    var defaultProducts = [{
       name: 'Produit A - Description du produit',
       sku: 'SKU001',
       quantity: 2,
       price: 19.99,
-      total: 39.98
+      total: 39.98,
+      item_type: 'line_item'
     }, {
       name: 'Produit B - Un autre article',
       sku: 'SKU002',
       quantity: 1,
       price: 29.99,
-      total: 29.99
+      total: 29.99,
+      item_type: 'line_item'
     }];
+
+    // Ajouter des frais d'exemple si showFees est activé
+    var defaultFees = element.showFees !== false ? [{
+      name: 'Frais de personnalisation',
+      sku: '',
+      quantity: 1,
+      price: 5.00,
+      total: 5.00,
+      item_type: 'fee'
+    }] : [];
+    var allItems = element.sampleProducts || [].concat(defaultProducts, defaultFees);
+
+    // Filtrer les items selon showFees
+    var products = element.showFees !== false ? allItems : allItems.filter(function (item) {
+      return item.item_type !== 'fee';
+    });
 
     // Calcul des totaux dynamiques
     var subtotal = products.reduce(function (sum, product) {
@@ -1635,7 +1653,7 @@ var CanvasElement = function CanvasElement(_ref) {
       fontWeight: 'bold',
       color: element.color || '#333'
     }
-  }, "Ma Soci\xE9t\xE9 SARL")), ((_element$fields9 = element.fields) === null || _element$fields9 === void 0 ? void 0 : _element$fields9.includes('address')) && /*#__PURE__*/React.createElement("div", {
+  }, element.previewCompanyName || 'Ma Société SARL')), ((_element$fields9 = element.fields) === null || _element$fields9 === void 0 ? void 0 : _element$fields9.includes('address')) && /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
@@ -1656,7 +1674,11 @@ var CanvasElement = function CanvasElement(_ref) {
       color: element.color || '#333',
       lineHeight: '1.4'
     }
-  }, "123 Rue de l'Entreprise", /*#__PURE__*/React.createElement("br", null), "75001 Paris, France")), ((_element$fields0 = element.fields) === null || _element$fields0 === void 0 ? void 0 : _element$fields0.includes('phone')) && /*#__PURE__*/React.createElement("div", {
+  }, element.previewAddress ? element.previewAddress.split('\n').map(function (line, index) {
+    return /*#__PURE__*/React.createElement("span", {
+      key: index
+    }, line, index < element.previewAddress.split('\n').length - 1 && /*#__PURE__*/React.createElement("br", null));
+  }) : /*#__PURE__*/React.createElement(React.Fragment, null, "123 Rue de l'Entreprise", /*#__PURE__*/React.createElement("br", null), "75001 Paris, France"))), ((_element$fields0 = element.fields) === null || _element$fields0 === void 0 ? void 0 : _element$fields0.includes('phone')) && /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
@@ -1676,7 +1698,7 @@ var CanvasElement = function CanvasElement(_ref) {
     style: {
       color: element.color || '#333'
     }
-  }, "+33 1 23 45 67 89")), ((_element$fields1 = element.fields) === null || _element$fields1 === void 0 ? void 0 : _element$fields1.includes('email')) && /*#__PURE__*/React.createElement("div", {
+  }, element.previewPhone || '+33 1 23 45 67 89')), ((_element$fields1 = element.fields) === null || _element$fields1 === void 0 ? void 0 : _element$fields1.includes('email')) && /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
@@ -1696,7 +1718,7 @@ var CanvasElement = function CanvasElement(_ref) {
     style: {
       color: '#1976d2'
     }
-  }, "contact@masociete.com")), ((_element$fields10 = element.fields) === null || _element$fields10 === void 0 ? void 0 : _element$fields10.includes('website')) && /*#__PURE__*/React.createElement("div", {
+  }, element.previewEmail || 'contact@masociete.com')), ((_element$fields10 = element.fields) === null || _element$fields10 === void 0 ? void 0 : _element$fields10.includes('website')) && /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
@@ -1716,7 +1738,7 @@ var CanvasElement = function CanvasElement(_ref) {
     style: {
       color: '#1976d2'
     }
-  }, "www.masociete.com")), ((_element$fields11 = element.fields) === null || _element$fields11 === void 0 ? void 0 : _element$fields11.includes('vat')) && /*#__PURE__*/React.createElement("div", {
+  }, element.previewWebsite || 'www.masociete.com')), ((_element$fields11 = element.fields) === null || _element$fields11 === void 0 ? void 0 : _element$fields11.includes('vat')) && /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
@@ -1736,7 +1758,7 @@ var CanvasElement = function CanvasElement(_ref) {
     style: {
       color: element.color || '#333'
     }
-  }, "FR 12 345 678 901")), ((_element$fields12 = element.fields) === null || _element$fields12 === void 0 ? void 0 : _element$fields12.includes('rcs')) && /*#__PURE__*/React.createElement("div", {
+  }, element.previewVat || 'FR 12 345 678 901')), ((_element$fields12 = element.fields) === null || _element$fields12 === void 0 ? void 0 : _element$fields12.includes('rcs')) && /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
@@ -1756,7 +1778,7 @@ var CanvasElement = function CanvasElement(_ref) {
     style: {
       color: element.color || '#333'
     }
-  }, "Paris B 123 456 789")), ((_element$fields13 = element.fields) === null || _element$fields13 === void 0 ? void 0 : _element$fields13.includes('siret')) && /*#__PURE__*/React.createElement("div", {
+  }, element.previewRcs || 'Paris B 123 456 789')), ((_element$fields13 = element.fields) === null || _element$fields13 === void 0 ? void 0 : _element$fields13.includes('siret')) && /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       flexDirection: element.layout === 'horizontal' ? 'column' : 'row',
@@ -1776,7 +1798,7 @@ var CanvasElement = function CanvasElement(_ref) {
     style: {
       color: element.color || '#333'
     }
-  }, "123 456 789 00012")))), element.type === 'order_number' && function () {
+  }, element.previewSiret || '123 456 789 00012')))), element.type === 'order_number' && function () {
     // Validation et normalisation des propriétés
     var validatedFormat = element.format || 'Commande #{order_number} - {order_date}';
     var validatedFontSize = Math.max(8, Math.min(72, element.fontSize || 14)); // Entre 8px et 72px
@@ -6039,7 +6061,8 @@ var ElementLibrary = function ElementLibrary(_ref) {
       showShipping: true,
       showTaxes: true,
       showDiscount: false,
-      showTotal: false
+      showTotal: false,
+      showFees: true // Afficher les frais par défaut
     }
   }, {
     type: 'customer_info',
@@ -6100,7 +6123,24 @@ var ElementLibrary = function ElementLibrary(_ref) {
       fontSize: 12,
       fontFamily: 'Arial',
       fontWeight: 'normal',
-      textAlign: 'left' // 'left', 'center', 'right'
+      textAlign: 'left',
+      // 'left', 'center', 'right'
+      // Nouvelles propriétés pour mapping WooCommerce
+      template: 'default',
+      // 'default', 'commercial', 'legal', 'minimal'
+      showCompanyName: true,
+      showAddress: true,
+      showContact: true,
+      showLegal: true,
+      // Données de prévisualisation
+      previewCompanyName: 'Ma Société SARL',
+      previewAddress: '123 Rue de l\'Entreprise\n75001 Paris, France',
+      previewPhone: '+33 1 23 45 67 89',
+      previewEmail: 'contact@masociete.com',
+      previewWebsite: 'www.masociete.com',
+      previewVat: 'FR12345678901',
+      previewSiret: '12345678901234',
+      previewRcs: 'RCS Paris 123456789'
     }
   }, {
     type: 'order_number',

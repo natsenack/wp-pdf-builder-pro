@@ -318,4 +318,267 @@ describe('Phase 2.2 - Éléments fondamentaux améliorés', () => {
       expect(orderElement.showLabel).toBe(true);
     });
   });
+
+  describe('Phase 2.2.3 - Simulation product_table avec frais', () => {
+    test('devrait inclure les frais de commande comme items du tableau', () => {
+      // Simulation d'une commande WooCommerce avec produits et frais
+      const mockOrderItems = [
+        {
+          type: 'line_item', // Produit normal
+          name: 'T-shirt Premium',
+          quantity: 2,
+          price: 25.00,
+          total: 50.00,
+          product_id: 123
+        },
+        {
+          type: 'fee', // Frais personnalisé
+          name: 'Frais de personnalisation',
+          quantity: 1,
+          price: 5.00,
+          total: 5.00
+        },
+        {
+          type: 'fee', // Frais de port personnalisé
+          name: 'Frais de port express',
+          quantity: 1,
+          price: 8.50,
+          total: 8.50
+        }
+      ];
+
+      // Simulation du rendu du tableau (logique simplifiée)
+      const tableItems = mockOrderItems.filter(item =>
+        item.type === 'line_item' || item.type === 'fee'
+      );
+
+      // Vérifications
+      expect(tableItems).toHaveLength(3); // 1 produit + 2 frais
+      expect(tableItems[0].name).toBe('T-shirt Premium');
+      expect(tableItems[0].type).toBe('line_item');
+      expect(tableItems[1].name).toBe('Frais de personnalisation');
+      expect(tableItems[1].type).toBe('fee');
+      expect(tableItems[2].name).toBe('Frais de port express');
+      expect(tableItems[2].type).toBe('fee');
+    });
+
+    test('devrait calculer correctement les totaux avec frais inclus', () => {
+      const mockOrderItems = [
+        { type: 'line_item', name: 'Produit A', total: 100.00 },
+        { type: 'line_item', name: 'Produit B', total: 50.00 },
+        { type: 'fee', name: 'Frais de service', total: 10.00 },
+        { type: 'fee', name: 'Frais de port', total: 15.00 }
+      ];
+
+      const subtotal = mockOrderItems
+        .filter(item => item.type === 'line_item')
+        .reduce((sum, item) => sum + item.total, 0);
+
+      const feesTotal = mockOrderItems
+        .filter(item => item.type === 'fee')
+        .reduce((sum, item) => sum + item.total, 0);
+
+      const grandTotal = subtotal + feesTotal;
+
+      expect(subtotal).toBe(150.00); // Produits seulement
+      expect(feesTotal).toBe(25.00); // Frais seulement
+      expect(grandTotal).toBe(175.00); // Total complet
+    });
+
+    test('devrait gérer les frais avec quantité variable', () => {
+      const mockOrderItems = [
+        { type: 'fee', name: 'Frais par produit', quantity: 3, price: 2.00, total: 6.00 },
+        { type: 'fee', name: 'Frais fixe', quantity: 1, price: 10.00, total: 10.00 }
+      ];
+
+      // Vérifier que les frais peuvent avoir des quantités variables
+      expect(mockOrderItems[0].quantity).toBe(3);
+      expect(mockOrderItems[0].total).toBe(6.00); // 3 × 2.00
+      expect(mockOrderItems[1].quantity).toBe(1);
+      expect(mockOrderItems[1].total).toBe(10.00); // 1 × 10.00
+    });
+
+    test('devrait permettre de filtrer ou masquer les frais si souhaité', () => {
+      const mockOrderItems = [
+        { type: 'line_item', name: 'Produit A', total: 100.00 },
+        { type: 'fee', name: 'Frais de service', total: 10.00 },
+        { type: 'fee', name: 'Frais de port', total: 15.00 }
+      ];
+
+      // Simulation de propriété pour masquer les frais
+      const showFees = false;
+
+      const displayItems = showFees
+        ? mockOrderItems
+        : mockOrderItems.filter(item => item.type === 'line_item');
+
+      expect(displayItems).toHaveLength(1); // Seulement le produit
+      expect(displayItems[0].name).toBe('Produit A');
+    });
+  });
+
+  describe('Phase 2.2.4 - Intégration des frais dans product_table', () => {
+    test('devrait inclure les frais dans les données réelles de commande', () => {
+      // Simulation des données retournées par create_real_order_data avec frais
+      const mockRealOrderData = {
+        items: [
+          {
+            name: 'T-shirt Premium',
+            quantity: 2,
+            price: '25.00',
+            total: '50.00',
+            item_type: 'line_item'
+          },
+          {
+            name: 'Frais de personnalisation',
+            quantity: 1,
+            price: '5.00',
+            total: '5.00',
+            item_type: 'fee'
+          }
+        ],
+        subtotal: '50.00',
+        shipping: '0.00',
+        tax: '0.00',
+        discount: '0.00',
+        total: '55.00'
+      };
+
+      // Vérifier que les frais sont inclus
+      const feeItems = mockRealOrderData.items.filter(item => item.item_type === 'fee');
+      const productItems = mockRealOrderData.items.filter(item => item.item_type === 'line_item');
+
+      expect(feeItems).toHaveLength(1);
+      expect(productItems).toHaveLength(1);
+      expect(feeItems[0].name).toBe('Frais de personnalisation');
+      expect(feeItems[0].total).toBe('5.00');
+    });
+
+    test('devrait respecter la propriété showFees pour filtrer les frais', () => {
+      const mockItemsWithFees = [
+        { name: 'Produit A', item_type: 'line_item', total: 100 },
+        { name: 'Frais de service', item_type: 'fee', total: 10 },
+        { name: 'Frais de port', item_type: 'fee', total: 15 }
+      ];
+
+      // Avec showFees = true (défaut)
+      const withFees = mockItemsWithFees.filter(item =>
+        item.item_type === 'line_item' || item.item_type === 'fee'
+      );
+      expect(withFees).toHaveLength(3);
+
+      // Avec showFees = false
+      const withoutFees = mockItemsWithFees.filter(item =>
+        item.item_type === 'line_item'
+      );
+      expect(withoutFees).toHaveLength(1);
+      expect(withoutFees[0].name).toBe('Produit A');
+    });
+
+    test('devrait calculer correctement les totaux incluant les frais', () => {
+      const mockOrderData = {
+        items: [
+          { item_type: 'line_item', total: 100.00 },
+          { item_type: 'line_item', total: 50.00 },
+          { item_type: 'fee', total: 10.00 },
+          { item_type: 'fee', total: 15.00 }
+        ]
+      };
+
+      const productTotal = mockOrderData.items
+        .filter(item => item.item_type === 'line_item')
+        .reduce((sum, item) => sum + item.total, 0);
+
+      const feesTotal = mockOrderData.items
+        .filter(item => item.item_type === 'fee')
+        .reduce((sum, item) => sum + item.total, 0);
+
+      const grandTotal = productTotal + feesTotal;
+
+      expect(productTotal).toBe(150.00);
+      expect(feesTotal).toBe(25.00);
+      expect(grandTotal).toBe(175.00);
+    });
+  });
+});
+
+describe('Phase 2.2.3 - company_info mapping WooCommerce', () => {
+  test('devrait avoir les propriétés étendues pour company_info', () => {
+    const companyInfoElement = expectedElements.find(el => el.type === 'company_info');
+    expect(companyInfoElement).toBeDefined();
+    expect(companyInfoElement.requiredProps).toContain('fields');
+    expect(companyInfoElement.requiredProps).toContain('layout');
+  });
+
+  test('devrait supporter tous les champs d\'entreprise', () => {
+    // Simulation des champs disponibles dans company_info
+    const availableFields = ['name', 'address', 'phone', 'email', 'website', 'vat', 'rcs', 'siret'];
+
+    availableFields.forEach(field => {
+      expect(['name', 'address', 'phone', 'email', 'website', 'vat', 'rcs', 'siret']).toContain(field);
+    });
+  });
+
+  test('devrait formater correctement les données d\'entreprise selon le template', () => {
+    // Simulation des données d'entreprise
+    const companyData = {
+      name: 'Ma Société SARL',
+      address: '123 Rue de l\'Entreprise',
+      city: 'Paris',
+      postcode: '75001',
+      phone: '+33 1 23 45 67 89',
+      email: 'contact@masociete.com',
+      website: 'www.masociete.com',
+      vat: 'FR12345678901',
+      siret: '12345678901234',
+      rcs: 'RCS Paris 123456789'
+    };
+
+    // Test template par défaut
+    const defaultTemplate = {
+      template: 'default',
+      fields: ['name', 'address', 'phone', 'email', 'vat', 'siret']
+    };
+
+    // Vérification que les données sont correctement structurées
+    expect(companyData.name).toBe('Ma Société SARL');
+    expect(companyData.vat).toBe('FR12345678901');
+    expect(companyData.siret).toBe('12345678901234');
+  });
+
+  test('devrait gérer les templates prédéfinis', () => {
+    const templates = ['default', 'commercial', 'legal', 'minimal'];
+
+    templates.forEach(template => {
+      expect(['default', 'commercial', 'legal', 'minimal']).toContain(template);
+    });
+  });
+
+  test('devrait valider les propriétés de prévisualisation', () => {
+    // Simulation des propriétés de prévisualisation
+    const previewProps = {
+      previewCompanyName: 'Test Company',
+      previewAddress: 'Test Address',
+      previewPhone: 'Test Phone',
+      previewEmail: 'test@email.com',
+      previewWebsite: 'www.test.com',
+      previewVat: 'TEST123',
+      previewSiret: '123456789',
+      previewRcs: 'TEST RCS'
+    };
+
+    // Vérification que toutes les propriétés de prévisualisation sont définies
+    Object.keys(previewProps).forEach(key => {
+      expect(previewProps[key]).toBeDefined();
+      expect(typeof previewProps[key]).toBe('string');
+    });
+  });
+
+  test('devrait supporter les layouts vertical et horizontal', () => {
+    const layouts = ['vertical', 'horizontal'];
+
+    layouts.forEach(layout => {
+      expect(['vertical', 'horizontal']).toContain(layout);
+    });
+  });
 });

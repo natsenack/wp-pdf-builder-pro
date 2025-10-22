@@ -1,0 +1,551 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pdf-builder-pro.com/schemas/api-endpoints",
+  "title": "PDF Builder Pro - Schémas API Endpoints",
+  "description": "Spécifications complètes des formats JSON pour tous les endpoints AJAX - Phase 2.5.2",
+  "version": "1.0.0",
+  "definitions": {
+
+    "nonce": {
+      "type": "string",
+      "description": "Nonce WordPress pour la sécurité CSRF",
+      "minLength": 10,
+      "maxLength": 100,
+      "pattern": "^[a-f0-9]+$",
+      "example": "abc123def456"
+    },
+
+    "error_response": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "enum": [false]
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "Message d'erreur explicite",
+              "example": "Nonce invalide"
+            }
+          },
+          "required": ["message"]
+        }
+      },
+      "required": ["success", "data"]
+    },
+
+    "success_response": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "enum": [true]
+        },
+        "data": {
+          "type": "object",
+          "description": "Données de réponse spécifiques à l'endpoint"
+        }
+      },
+      "required": ["success", "data"]
+    },
+
+    "template_data": {
+      "type": "object",
+      "description": "Structure des données du canvas/template",
+      "properties": {
+        "elements": {
+          "type": "array",
+          "description": "Liste des éléments du canvas",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": "string"},
+              "type": {"type": "string", "enum": ["text", "image", "rectangle", "line"]},
+              "position": {
+                "type": "object",
+                "properties": {
+                  "x": {"type": "number"},
+                  "y": {"type": "number"}
+                }
+              },
+              "size": {
+                "type": "object",
+                "properties": {
+                  "width": {"type": "number"},
+                  "height": {"type": "number"}
+                }
+              },
+              "properties": {"type": "object"}
+            }
+          }
+        },
+        "settings": {
+          "type": "object",
+          "description": "Paramètres généraux du template",
+          "properties": {
+            "orientation": {"type": "string", "enum": ["P", "L"]},
+            "format": {"type": "string", "enum": ["A4", "A3", "Letter"]},
+            "margins": {
+              "type": "object",
+              "properties": {
+                "top": {"type": "number"},
+                "right": {"type": "number"},
+                "bottom": {"type": "number"},
+                "left": {"type": "number"}
+              }
+            }
+          }
+        }
+      },
+      "required": ["elements"]
+    }
+  },
+
+  "endpoints": {
+
+    "pdf_generate_preview": {
+      "title": "Génération d'Aperçu",
+      "description": "Génère un aperçu du canvas selon le mode spécifié",
+      "method": "POST",
+      "action": "wp_ajax_pdf_generate_preview",
+
+      "request_schema": {
+        "type": "object",
+        "properties": {
+          "nonce": {"$ref": "#/definitions/nonce"},
+          "mode": {
+            "type": "string",
+            "enum": ["canvas", "metabox"],
+            "description": "Mode d'aperçu souhaité"
+          },
+          "template_data": {"$ref": "#/definitions/template_data"},
+          "order_id": {
+            "type": "integer",
+            "description": "ID de la commande WooCommerce (requis pour mode metabox)",
+            "minimum": 1
+          },
+          "format": {
+            "type": "string",
+            "enum": ["html", "png", "jpg"],
+            "default": "html",
+            "description": "Format de l'aperçu"
+          }
+        },
+        "required": ["nonce", "mode", "template_data"],
+        "if": {
+          "properties": {"mode": {"const": "metabox"}}
+        },
+        "then": {
+          "required": ["nonce", "mode", "template_data", "order_id"]
+        }
+      },
+
+      "request_example": {
+        "nonce": "abc123def456",
+        "mode": "canvas",
+        "template_data": {
+          "elements": [
+            {
+              "id": "text_1",
+              "type": "text",
+              "position": {"x": 50, "y": 100},
+              "size": {"width": 200, "height": 50},
+              "properties": {
+                "text": "Bonjour {{customer_name}}",
+                "fontSize": 14,
+                "color": "#000000"
+              }
+            }
+          ],
+          "settings": {
+            "orientation": "P",
+            "format": "A4",
+            "margins": {"top": 20, "right": 15, "bottom": 20, "left": 15}
+          }
+        },
+        "format": "html"
+      },
+
+      "response_success_schema": {
+        "allOf": [
+          {"$ref": "#/definitions/success_response"},
+          {
+            "properties": {
+              "data": {
+                "type": "object",
+                "properties": {
+                  "preview_url": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "URL temporaire de l'aperçu généré"
+                  },
+                  "expires": {
+                    "type": "integer",
+                    "description": "Timestamp d'expiration de l'aperçu",
+                    "minimum": 0
+                  },
+                  "format": {
+                    "type": "string",
+                    "enum": ["html", "png", "jpg"]
+                  },
+                  "mode": {
+                    "type": "string",
+                    "enum": ["canvas", "metabox"]
+                  }
+                },
+                "required": ["preview_url", "expires", "format", "mode"]
+              }
+            }
+          }
+        ]
+      },
+
+      "response_success_example": {
+        "success": true,
+        "data": {
+          "preview_url": "https://site.com/?pdf_preview=preview_abc123&mode=canvas&format=html",
+          "expires": 1730000000,
+          "format": "html",
+          "mode": "canvas"
+        }
+      },
+
+      "response_error_examples": [
+        {
+          "success": false,
+          "data": {"message": "Nonce invalide"}
+        },
+        {
+          "success": false,
+          "data": {"message": "Mode invalide"}
+        },
+        {
+          "success": false,
+          "data": {"message": "Permissions insuffisantes"}
+        }
+      ]
+    },
+
+    "pdf_validate_license": {
+      "title": "Validation de Licence",
+      "description": "Valide une clé de licence premium",
+      "method": "POST",
+      "action": "wp_ajax_pdf_validate_license",
+
+      "request_schema": {
+        "type": "object",
+        "properties": {
+          "nonce": {"$ref": "#/definitions/nonce"},
+          "license_key": {
+            "type": "string",
+            "description": "Clé de licence à valider (optionnel pour check status)",
+            "minLength": 10,
+            "maxLength": 50
+          }
+        },
+        "required": ["nonce"]
+      },
+
+      "request_example": {
+        "nonce": "def456ghi789",
+        "license_key": "PDF-PRO-2025-ABC123-XYZ789"
+      },
+
+      "response_success_schema": {
+        "allOf": [
+          {"$ref": "#/definitions/success_response"},
+          {
+            "properties": {
+              "data": {
+                "type": "object",
+                "properties": {
+                  "valid": {"type": "boolean"},
+                  "license_type": {
+                    "type": "string",
+                    "enum": ["premium", "freemium"]
+                  },
+                  "expires": {
+                    "type": ["integer", "null"],
+                    "description": "Timestamp d'expiration (null pour freemium)"
+                  },
+                  "features": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Liste des fonctionnalités activées"
+                  }
+                },
+                "required": ["valid", "license_type", "features"]
+              }
+            }
+          }
+        ]
+      },
+
+      "response_success_example": {
+        "success": true,
+        "data": {
+          "valid": true,
+          "license_type": "premium",
+          "expires": 1760000000,
+          "features": [
+            "unlimited_templates",
+            "export_png_jpg",
+            "advanced_variables",
+            "priority_support"
+          ]
+        }
+      }
+    },
+
+    "pdf_get_template_variables": {
+      "title": "Récupération des Variables",
+      "description": "Récupère les variables dynamiques disponibles pour un template",
+      "method": "POST",
+      "action": "wp_ajax_pdf_get_template_variables",
+
+      "request_schema": {
+        "type": "object",
+        "properties": {
+          "nonce": {"$ref": "#/definitions/nonce"},
+          "template_id": {
+            "type": "integer",
+            "description": "ID du template (0 pour nouveau)",
+            "minimum": 0
+          },
+          "mode": {
+            "type": "string",
+            "enum": ["canvas", "metabox"],
+            "description": "Mode pour déterminer les variables disponibles"
+          }
+        },
+        "required": ["nonce", "mode"]
+      },
+
+      "request_example": {
+        "nonce": "ghi789jkl012",
+        "template_id": 0,
+        "mode": "metabox"
+      },
+
+      "response_success_schema": {
+        "allOf": [
+          {"$ref": "#/definitions/success_response"},
+          {
+            "properties": {
+              "data": {
+                "type": "object",
+                "properties": {
+                  "variables": {
+                    "type": "object",
+                    "description": "Dictionnaire des variables disponibles",
+                    "patternProperties": {
+                      "^[a-zA-Z_][a-zA-Z0-9_]*$": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": ["string", "number", "date", "boolean", "array"]
+                          },
+                          "description": {"type": "string"},
+                          "example": {},
+                          "required": {"type": "boolean", "default": false},
+                          "format": {"type": "string"},
+                          "category": {"type": "string"}
+                        },
+                        "required": ["type", "description"]
+                      }
+                    }
+                  },
+                  "categories": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Liste des catégories de variables"
+                  }
+                },
+                "required": ["variables", "categories"]
+              }
+            }
+          }
+        ]
+      },
+
+      "response_success_example": {
+        "success": true,
+        "data": {
+          "variables": {
+            "customer_name": {
+              "type": "string",
+              "description": "Nom complet du client",
+              "example": "Jean Dupont",
+              "required": true,
+              "category": "customer"
+            },
+            "order_total": {
+              "type": "number",
+              "description": "Total de la commande TTC",
+              "format": "currency",
+              "example": 299.99,
+              "required": false,
+              "category": "order"
+            },
+            "company_name": {
+              "type": "string",
+              "description": "Nom de l'entreprise",
+              "example": "Ma Société SARL",
+              "required": true,
+              "category": "company"
+            }
+          },
+          "categories": ["customer", "order", "company", "dynamic"]
+        }
+      }
+    },
+
+    "pdf_export_canvas": {
+      "title": "Export du Canvas",
+      "description": "Exporte le canvas dans différents formats",
+      "method": "POST",
+      "action": "wp_ajax_pdf_export_canvas",
+
+      "request_schema": {
+        "type": "object",
+        "properties": {
+          "nonce": {"$ref": "#/definitions/nonce"},
+          "template_data": {"$ref": "#/definitions/template_data"},
+          "format": {
+            "type": "string",
+            "enum": ["pdf", "png", "jpg"],
+            "description": "Format d'export souhaité"
+          },
+          "quality": {
+            "type": "integer",
+            "description": "Qualité pour PNG/JPG (1-100)",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 90
+          },
+          "filename": {
+            "type": "string",
+            "description": "Nom du fichier personnalisé (optionnel)",
+            "maxLength": 100
+          }
+        },
+        "required": ["nonce", "template_data", "format"]
+      },
+
+      "request_example": {
+        "nonce": "jkl012mno345",
+        "template_data": {
+          "elements": [
+            {
+              "id": "text_1",
+              "type": "text",
+              "position": {"x": 50, "y": 100},
+              "size": {"width": 200, "height": 50},
+              "properties": {
+                "text": "Facture N° {{order_number}}",
+                "fontSize": 16,
+                "color": "#000000"
+              }
+            }
+          ],
+          "settings": {
+            "orientation": "P",
+            "format": "A4",
+            "margins": {"top": 20, "right": 15, "bottom": 20, "left": 15}
+          }
+        },
+        "format": "pdf",
+        "quality": 95,
+        "filename": "facture_123.pdf"
+      },
+
+      "response_success_schema": {
+        "allOf": [
+          {"$ref": "#/definitions/success_response"},
+          {
+            "properties": {
+              "data": {
+                "type": "object",
+                "properties": {
+                  "download_url": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "URL de téléchargement temporaire"
+                  },
+                  "filename": {
+                    "type": "string",
+                    "description": "Nom du fichier généré"
+                  },
+                  "expires": {
+                    "type": "integer",
+                    "description": "Timestamp d'expiration du téléchargement"
+                  }
+                },
+                "required": ["download_url", "filename", "expires"]
+              }
+            }
+          }
+        ]
+      },
+
+      "response_success_example": {
+        "success": true,
+        "data": {
+          "download_url": "https://site.com/?pdf_download=export_abc123&format=pdf",
+          "filename": "facture_123.pdf",
+          "expires": 1730003600
+        }
+      }
+    }
+  },
+
+  "common_validation_rules": {
+    "security": {
+      "nonce_required": true,
+      "permissions_required": ["edit_posts"],
+      "input_sanitization": true,
+      "output_escaping": true
+    },
+    "rate_limiting": {
+      "max_requests_per_minute": 30,
+      "max_requests_per_hour": 300
+    },
+    "caching": {
+      "preview_cache_ttl": 3600,
+      "variable_cache_ttl": 1800,
+      "export_temp_ttl": 3600
+    }
+  },
+
+  "testing_scenarios": [
+    {
+      "name": "Génération aperçu Canvas",
+      "endpoint": "pdf_generate_preview",
+      "payload": {"mode": "canvas", "format": "html"},
+      "expected_status": "success"
+    },
+    {
+      "name": "Validation licence invalide",
+      "endpoint": "pdf_validate_license",
+      "payload": {"license_key": "INVALID-KEY"},
+      "expected_status": "success",
+      "expected_data": {"valid": false, "license_type": "freemium"}
+    },
+    {
+      "name": "Récupération variables metabox",
+      "endpoint": "pdf_get_template_variables",
+      "payload": {"mode": "metabox"},
+      "expected_status": "success"
+    },
+    {
+      "name": "Export PDF avec nom personnalisé",
+      "endpoint": "pdf_export_canvas",
+      "payload": {"format": "pdf", "filename": "test.pdf"},
+      "expected_status": "success"
+    }
+  ]
+}

@@ -29,7 +29,8 @@ const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
         showShipping: true,
         showTaxes: true,
         showDiscount: false,
-        showTotal: false
+        showTotal: false,
+        showFees: true // Afficher les frais par défaut
       }
     },
     {
@@ -86,7 +87,22 @@ const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
         fontSize: 12,
         fontFamily: 'Arial',
         fontWeight: 'normal',
-        textAlign: 'left' // 'left', 'center', 'right'
+        textAlign: 'left', // 'left', 'center', 'right'
+        // Nouvelles propriétés pour mapping WooCommerce
+        template: 'default', // 'default', 'commercial', 'legal', 'minimal'
+        showCompanyName: true,
+        showAddress: true,
+        showContact: true,
+        showLegal: true,
+        // Données de prévisualisation
+        previewCompanyName: 'Ma Société SARL',
+        previewAddress: '123 Rue de l\'Entreprise\n75001 Paris, France',
+        previewPhone: '+33 1 23 45 67 89',
+        previewEmail: 'contact@masociete.com',
+        previewWebsite: 'www.masociete.com',
+        previewVat: 'FR12345678901',
+        previewSiret: '12345678901234',
+        previewRcs: 'RCS Paris 123456789'
       }
     },
     {

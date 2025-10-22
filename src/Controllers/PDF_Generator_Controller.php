@@ -335,48 +335,12 @@ class PDF_Builder_Pro_Generator
                 return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 12px; line-height: 1.4;'>" . wp_kses_post($customer_info ?: 'Informations client') . "</div>";
 
             case 'company_info':
-                // LOG DES PROPRIÉTÉS COMPANY INFO
-                
+                // Récupération des données d'entreprise
+                $company_data = $this->get_company_data();
 
-                $company_info = '';
-                if ($this->order) {
-                    $fields = $element['fields'] ?? ['name', 'address', 'phone', 'rcs'];
+                // Formatage selon le template choisi
+                $company_info = $this->format_company_info_by_template($element, $company_data);
 
-                    
-
-                    $company_parts = [];
-
-                    if (in_array('name', $fields)) {
-                        $name = get_bloginfo('name');
-                        if ($name) {
-                            $company_parts[] = '<strong>' . esc_html($name) . '</strong>';
-                        }
-                    }
-
-                    if (in_array('address', $fields)) {
-                        $address = get_option('pdf_builder_company_address', '');
-                        if ($address) {
-                            $company_parts[] = nl2br(esc_html($address));
-                        }
-                    }
-
-                    if (in_array('phone', $fields)) {
-                        $phone = get_option('pdf_builder_company_phone', '');
-                        if ($phone) {
-                            $company_parts[] = 'Tél: ' . esc_html($phone);
-                        }
-                    }
-
-                    if (in_array('rcs', $fields)) {
-                        $rcs = get_option('pdf_builder_company_siret', '');
-                        if ($rcs) {
-                            $company_parts[] = 'SIRET: ' . esc_html($rcs);
-                        }
-                    }
-
-                    $company_info = implode('<br>', $company_parts);
-                    
-                }
                 return "<div class='canvas-element' style='" . esc_attr($style) . "; font-size: 12px; line-height: 1.4;'>" . wp_kses_post($company_info ?: '[company_info]') . "</div>";
 
             case 'order_number':
@@ -901,6 +865,181 @@ class PDF_Builder_Pro_Generator
     }
 
     /**
+     * Récupère les données complètes de l'entreprise depuis WooCommerce/WordPress
+     */
+    private function get_company_data()
+    {
+        return [
+            'name' => get_bloginfo('name') ?: '',
+            'address' => get_option('pdf_builder_company_address', ''),
+            'city' => get_option('pdf_builder_company_city', ''),
+            'postcode' => get_option('pdf_builder_company_postcode', ''),
+            'country' => get_option('pdf_builder_company_country', ''),
+            'phone' => get_option('pdf_builder_company_phone', ''),
+            'email' => get_option('pdf_builder_company_email', ''),
+            'website' => get_option('pdf_builder_company_website', ''),
+            'vat' => get_option('pdf_builder_company_vat', ''),
+            'siret' => get_option('pdf_builder_company_siret', ''),
+            'rcs' => get_option('pdf_builder_company_rcs', ''),
+            'capital' => get_option('pdf_builder_company_capital', ''),
+            'legal_form' => get_option('pdf_builder_company_legal_form', ''),
+            'registration_city' => get_option('pdf_builder_company_registration_city', ''),
+            // Données WooCommerce si disponibles
+            'woocommerce_store_address' => get_option('woocommerce_store_address', ''),
+            'woocommerce_store_city' => get_option('woocommerce_store_city', ''),
+            'woocommerce_store_postcode' => get_option('woocommerce_store_postcode', ''),
+            'woocommerce_store_country' => get_option('woocommerce_store_country', ''),
+            'woocommerce_store_email' => get_option('woocommerce_store_email', ''),
+            'woocommerce_store_phone' => get_option('woocommerce_store_phone', '')
+        ];
+    }
+
+    /**
+     * Formate les informations d'entreprise selon le template choisi
+     */
+    private function format_company_info_by_template($element, $company_data)
+    {
+        $template = $element['template'] ?? 'default';
+        $fields = $element['fields'] ?? ['name', 'address', 'phone', 'email', 'vat', 'siret'];
+
+        $parts = [];
+
+        switch ($template) {
+            case 'commercial':
+                // Template commercial : focus sur contact et présentation
+                if (in_array('name', $fields) && !empty($company_data['name'])) {
+                    $parts[] = '<strong>' . esc_html($company_data['name']) . '</strong>';
+                }
+                if (in_array('address', $fields) && $this->has_address_data($company_data)) {
+                    $parts[] = $this->format_address($company_data);
+                }
+                if (in_array('phone', $fields) && !empty($company_data['phone'])) {
+                    $parts[] = '📞 ' . esc_html($company_data['phone']);
+                }
+                if (in_array('email', $fields) && !empty($company_data['email'])) {
+                    $parts[] = '✉️ ' . esc_html($company_data['email']);
+                }
+                if (in_array('website', $fields) && !empty($company_data['website'])) {
+                    $parts[] = '🌐 ' . esc_html($company_data['website']);
+                }
+                break;
+
+            case 'legal':
+                // Template juridique : focus sur informations légales
+                if (in_array('name', $fields) && !empty($company_data['name'])) {
+                    $parts[] = '<strong>' . esc_html($company_data['name']) . '</strong>';
+                }
+                if (in_array('address', $fields) && $this->has_address_data($company_data)) {
+                    $parts[] = $this->format_address($company_data);
+                }
+                if (in_array('siret', $fields) && !empty($company_data['siret'])) {
+                    $parts[] = 'SIRET: ' . esc_html($company_data['siret']);
+                }
+                if (in_array('vat', $fields) && !empty($company_data['vat'])) {
+                    $parts[] = 'N° TVA: ' . esc_html($company_data['vat']);
+                }
+                if (in_array('rcs', $fields) && !empty($company_data['rcs'])) {
+                    $parts[] = 'RCS: ' . esc_html($company_data['rcs']);
+                }
+                if (in_array('capital', $fields) && !empty($company_data['capital'])) {
+                    $parts[] = 'Capital: ' . esc_html($company_data['capital']) . ' €';
+                }
+                break;
+
+            case 'minimal':
+                // Template minimal : nom et contact essentiel
+                if (in_array('name', $fields) && !empty($company_data['name'])) {
+                    $parts[] = esc_html($company_data['name']);
+                }
+                $contact_parts = [];
+                if (in_array('phone', $fields) && !empty($company_data['phone'])) {
+                    $contact_parts[] = esc_html($company_data['phone']);
+                }
+                if (in_array('email', $fields) && !empty($company_data['email'])) {
+                    $contact_parts[] = esc_html($company_data['email']);
+                }
+                if (!empty($contact_parts)) {
+                    $parts[] = implode(' • ', $contact_parts);
+                }
+                break;
+
+            default: // 'default'
+                // Template par défaut : tous les champs demandés
+                if (in_array('name', $fields) && !empty($company_data['name'])) {
+                    $parts[] = '<strong>' . esc_html($company_data['name']) . '</strong>';
+                }
+                if (in_array('address', $fields) && $this->has_address_data($company_data)) {
+                    $parts[] = $this->format_address($company_data);
+                }
+                if (in_array('phone', $fields) && !empty($company_data['phone'])) {
+                    $parts[] = 'Téléphone: ' . esc_html($company_data['phone']);
+                }
+                if (in_array('email', $fields) && !empty($company_data['email'])) {
+                    $parts[] = 'Email: ' . esc_html($company_data['email']);
+                }
+                if (in_array('website', $fields) && !empty($company_data['website'])) {
+                    $parts[] = 'Site web: ' . esc_html($company_data['website']);
+                }
+                if (in_array('vat', $fields) && !empty($company_data['vat'])) {
+                    $parts[] = 'N° TVA: ' . esc_html($company_data['vat']);
+                }
+                if (in_array('siret', $fields) && !empty($company_data['siret'])) {
+                    $parts[] = 'SIRET: ' . esc_html($company_data['siret']);
+                }
+                if (in_array('rcs', $fields) && !empty($company_data['rcs'])) {
+                    $parts[] = 'RCS: ' . esc_html($company_data['rcs']);
+                }
+                break;
+        }
+
+        return implode('<br>', array_filter($parts));
+    }
+
+    /**
+     * Vérifie si des données d'adresse sont disponibles
+     */
+    private function has_address_data($company_data)
+    {
+        return !empty($company_data['address']) ||
+               !empty($company_data['city']) ||
+               !empty($company_data['postcode']) ||
+               !empty($company_data['country']);
+    }
+
+    /**
+     * Formate l'adresse complète
+     */
+    private function format_address($company_data)
+    {
+        $address_parts = [];
+
+        if (!empty($company_data['address'])) {
+            $address_parts[] = esc_html($company_data['address']);
+        }
+
+        $city_parts = [];
+        if (!empty($company_data['postcode'])) {
+            $city_parts[] = $company_data['postcode'];
+        }
+        if (!empty($company_data['city'])) {
+            $city_parts[] = $company_data['city'];
+        }
+        if (!empty($city_parts)) {
+            $address_parts[] = implode(' ', $city_parts);
+        }
+
+        if (!empty($company_data['country'])) {
+            $address_parts[] = esc_html($company_data['country']);
+        }
+
+        return nl2br(implode("\n", $address_parts));
+    }
+
+    /**
+     * Retourne les styles prédéfinis pour les tableaux selon le style choisi
+     */
+
+    /**
      * Retourne les styles prédéfinis pour les tableaux selon le style choisi
      */
     private function get_table_styles($style)
@@ -1202,6 +1341,7 @@ class PDF_Builder_Pro_Generator
             'items' => [
                 $this->create_fake_item_data(1),
                 $this->create_fake_item_data(2),
+                $this->create_fake_fee_data(1), // Ajouter un frais fictif
             ],
             'subtotal' => 50.00,
             'shipping' => 5.00,
@@ -1312,6 +1452,42 @@ class PDF_Builder_Pro_Generator
     }
 
     /**
+     * Crée des données fictives pour un frais
+     */
+    private function create_fake_fee_data($index)
+    {
+        return [
+            // Propriétés de base
+            'name' => 'FAKE_FEE_' . $index,
+            'quantity' => 1,
+            'quantity_raw' => 1,
+            'price' => 5.00,
+            'price_raw' => 5.00,
+            'total' => 5.00,
+            'total_raw' => 5.00,
+            'subtotal' => 5.00,
+            'subtotal_raw' => 5.00,
+            'tax' => 0.00,
+            'tax_raw' => 0.00,
+
+            // Propriétés spécifiques aux frais
+            'item_type' => 'fee',
+            'fee_id' => 600 + $index,
+            'order_id' => 999,
+
+            // Données pour compatibilité
+            'formatted_price' => '$5.00',
+            'formatted_total' => '$5.00',
+            'line_total_formatted' => '$5.00',
+            'line_subtotal_formatted' => '$5.00',
+            'line_tax_formatted' => '$0.00',
+
+            // Métadonnées
+            'meta_data' => [],
+        ];
+    }
+
+    /**
      * Crée les vraies données de la commande
      */
     private function create_real_order_data()
@@ -1321,13 +1497,24 @@ class PDF_Builder_Pro_Generator
         }
 
         $items = [];
+
+        // Récupérer les items de produits (line_items)
         foreach ($this->order->get_items() as $item) {
             $product = $item->get_product();
 
             // Récupérer TOUTES les propriétés disponibles de l'item et du produit
             $item_data = $this->extract_complete_item_data($item, $product);
+            $item_data['item_type'] = 'line_item'; // Marquer comme item de produit
 
             $items[] = $item_data;
+        }
+
+        // Récupérer les frais (fees) et les ajouter au tableau
+        foreach ($this->order->get_items('fee') as $fee) {
+            $fee_data = $this->extract_fee_item_data($fee);
+            $fee_data['item_type'] = 'fee'; // Marquer comme frais
+
+            $items[] = $fee_data;
         }
 
         // Récupérer les totaux de la commande
@@ -1382,6 +1569,32 @@ class PDF_Builder_Pro_Generator
             }
             if (method_exists($product, 'get_description')) {
                 $data['description'] = $product->get_description();
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Extrait les données d'un frais (fee) de commande WooCommerce
+     */
+    private function extract_fee_item_data($fee)
+    {
+        $data = [
+            'name' => 'Frais',
+            'quantity' => 1,
+            'price' => '0.00',
+            'total' => '0.00',
+            'sku' => '' // Les frais n'ont pas de SKU
+        ];
+
+        if ($fee) {
+            $data['name'] = method_exists($fee, 'get_name') ? $fee->get_name() : 'Frais sans nom';
+            $data['quantity'] = 1; // Les frais ont généralement une quantité de 1
+
+            if (method_exists($fee, 'get_total')) {
+                $data['total'] = function_exists('wc_price') ? wc_price($fee->get_total()) : number_format($fee->get_total(), 2);
+                $data['price'] = $data['total']; // Pour les frais, prix unitaire = total
             }
         }
 

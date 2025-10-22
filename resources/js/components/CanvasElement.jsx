@@ -707,10 +707,22 @@ export const CanvasElement = ({
         {/* Rendu spécial pour les tableaux de produits */}
         {element.type === 'product_table' && (() => {
           // Données des produits (utiliser sampleProducts si disponible, sinon données par défaut)
-          const products = element.sampleProducts || [
-            { name: 'Produit A - Description du produit', sku: 'SKU001', quantity: 2, price: 19.99, total: 39.98 },
-            { name: 'Produit B - Un autre article', sku: 'SKU002', quantity: 1, price: 29.99, total: 29.99 }
+          const defaultProducts = [
+            { name: 'Produit A - Description du produit', sku: 'SKU001', quantity: 2, price: 19.99, total: 39.98, item_type: 'line_item' },
+            { name: 'Produit B - Un autre article', sku: 'SKU002', quantity: 1, price: 29.99, total: 29.99, item_type: 'line_item' }
           ];
+
+          // Ajouter des frais d'exemple si showFees est activé
+          const defaultFees = element.showFees !== false ? [
+            { name: 'Frais de personnalisation', sku: '', quantity: 1, price: 5.00, total: 5.00, item_type: 'fee' }
+          ] : [];
+
+          const allItems = element.sampleProducts || [...defaultProducts, ...defaultFees];
+
+          // Filtrer les items selon showFees
+          const products = element.showFees !== false
+            ? allItems
+            : allItems.filter(item => item.item_type !== 'fee');
 
           // Calcul des totaux dynamiques
           const subtotal = products.reduce((sum, product) => sum + product.total, 0);
@@ -1448,7 +1460,7 @@ export const CanvasElement = ({
                     fontWeight: 'bold',
                     color: element.color || '#333'
                   }}>
-                    Ma Société SARL
+                    {element.previewCompanyName || 'Ma Société SARL'}
                   </div>
                 </div>
               )}
@@ -1477,8 +1489,17 @@ export const CanvasElement = ({
                     color: element.color || '#333',
                     lineHeight: '1.4'
                   }}>
-                    123 Rue de l'Entreprise<br />
-                    75001 Paris, France
+                    {element.previewAddress ? element.previewAddress.split('\n').map((line, index) => (
+                      <span key={index}>
+                        {line}
+                        {index < element.previewAddress.split('\n').length - 1 && <br />}
+                      </span>
+                    )) : (
+                      <>
+                        123 Rue de l'Entreprise<br />
+                        75001 Paris, France
+                      </>
+                    )}
                   </div>
                 </div>
               )}
@@ -1506,7 +1527,7 @@ export const CanvasElement = ({
                   <div style={{
                     color: element.color || '#333'
                   }}>
-                    +33 1 23 45 67 89
+                    {element.previewPhone || '+33 1 23 45 67 89'}
                   </div>
                 </div>
               )}
@@ -1534,7 +1555,7 @@ export const CanvasElement = ({
                   <div style={{
                     color: '#1976d2'
                   }}>
-                    contact@masociete.com
+                    {element.previewEmail || 'contact@masociete.com'}
                   </div>
                 </div>
               )}
@@ -1562,7 +1583,7 @@ export const CanvasElement = ({
                   <div style={{
                     color: '#1976d2'
                   }}>
-                    www.masociete.com
+                    {element.previewWebsite || 'www.masociete.com'}
                   </div>
                 </div>
               )}
@@ -1590,7 +1611,7 @@ export const CanvasElement = ({
                   <div style={{
                     color: element.color || '#333'
                   }}>
-                    FR 12 345 678 901
+                    {element.previewVat || 'FR 12 345 678 901'}
                   </div>
                 </div>
               )}
@@ -1618,7 +1639,7 @@ export const CanvasElement = ({
                   <div style={{
                     color: element.color || '#333'
                   }}>
-                    Paris B 123 456 789
+                    {element.previewRcs || 'Paris B 123 456 789'}
                   </div>
                 </div>
               )}
@@ -1646,7 +1667,7 @@ export const CanvasElement = ({
                   <div style={{
                     color: element.color || '#333'
                   }}>
-                    123 456 789 00012
+                    {element.previewSiret || '123 456 789 00012'}
                   </div>
                 </div>
               )}
