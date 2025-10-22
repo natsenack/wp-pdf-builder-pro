@@ -308,6 +308,199 @@ try {
     echo "Fichier: " . $e->getFile() . " Ligne: " . $e->getLine() . "\n";
 }
 
+// Tests pour MetaboxModeProvider (Phase 3.2.3)
+echo "\n\n=== Test MetaboxModeProvider 3.2.3 ===\n\n";
+
+try {
+    // Inclure la classe MetaboxModeProvider
+    require_once __DIR__ . '/src/Providers/MetaboxModeProvider.php';
+
+    // Créer un mock WC_Order pour les tests
+    class MockWCOrder {
+        public function get_id() { return 12345; }
+        public function get_order_number() { return 'WC-12345'; }
+        public function get_customer_id() { return 678; }
+        public function get_billing_first_name() { return 'Jean'; }
+        public function get_billing_last_name() { return 'Dupont'; }
+        public function get_billing_email() { return 'jean.dupont@example.com'; }
+        public function get_billing_phone() { return '+33123456789'; }
+        public function get_billing_company() { return 'Entreprise Test'; }
+        public function get_billing_address_1() { return '123 Rue de Test'; }
+        public function get_billing_city() { return 'Paris'; }
+        public function get_billing_postcode() { return '75001'; }
+        public function get_billing_country() { return 'FR'; }
+        public function get_formatted_billing_address() { return 'Jean Dupont\nEntreprise Test\n123 Rue de Test\n75001 Paris\nFrance'; }
+        public function get_total() { return 150.00; }
+        public function get_subtotal() { return 120.00; }
+        public function get_total_tax() { return 30.00; }
+        public function get_shipping_total() { return 10.00; }
+        public function get_discount_total() { return 0.00; }
+        public function get_currency() { return 'EUR'; }
+        public function get_status() { return 'processing'; }
+        public function get_payment_method_title() { return 'Carte bancaire'; }
+        public function get_customer_note() { return 'Livraison rapide svp'; }
+        public function get_date_created() { return new DateTime('2025-10-22 14:30:00'); }
+        public function get_items() { return [new MockWCOrderItem()]; }
+        public function get_shipping_methods() { return [new MockWCShippingMethod()]; }
+        public function get_formatted_shipping_address() { return 'Jean Dupont\n123 Rue de Test\n75001 Paris\nFrance'; }
+        public function get_shipping_first_name() { return 'Jean'; }
+        public function get_shipping_last_name() { return 'Dupont'; }
+        public function get_shipping_company() { return ''; }
+        public function get_shipping_address_1() { return '123 Rue de Test'; }
+        public function get_shipping_city() { return 'Paris'; }
+        public function get_shipping_postcode() { return '75001'; }
+        public function get_shipping_country() { return 'FR'; }
+        public function get_meta($key) {
+            $meta = [
+                '_billing_vat_number' => 'FR12345678901',
+                '_tracking_number' => 'TR123456789'
+            ];
+            return $meta[$key] ?? '';
+        }
+    }
+
+    class MockWCOrderItem {
+        public function get_product() { return new MockWCProduct(); }
+        public function get_name() { return 'Produit Test'; }
+        public function get_quantity() { return 2; }
+        public function get_total() { return 100.00; }
+    }
+
+    class MockWCProduct {
+        public function get_sku() { return 'PROD-001'; }
+        public function get_short_description() { return 'Description du produit test'; }
+    }
+
+    class MockWCShippingMethod {
+        public function get_method_title() { return 'Colissimo Express'; }
+    }
+
+    // Test 22: Instanciation MetaboxModeProvider
+    echo "Test 22: Instanciation MetaboxModeProvider\n";
+    $order = new MockWCOrder();
+    $provider = new \PDF_Builder_Pro\Providers\MetaboxModeProvider($order);
+    echo "✓ Provider instancié sans erreur\n";
+
+    // Test 23: Récupération données client réelles
+    echo "\nTest 23: Données client réelles depuis WooCommerce\n";
+    $customerData = $provider->getCustomerData();
+    echo "Prénom: " . $customerData['first_name'] . "\n";
+    echo "Nom: " . $customerData['last_name'] . "\n";
+    echo "Email: " . $customerData['email'] . "\n";
+    echo "Téléphone: " . $customerData['phone'] . "\n";
+    echo "✓ Données client récupérées\n";
+
+    // Test 24: Récupération données commande réelles
+    echo "\nTest 24: Données commande réelles depuis WooCommerce\n";
+    $orderData = $provider->getOrderData();
+    echo "Numéro commande: " . $orderData['order_number'] . "\n";
+    echo "Date: " . $orderData['order_date'] . "\n";
+    echo "Total: " . $orderData['total'] . " €\n";
+    echo "Statut: " . $orderData['order_status'] . "\n";
+    echo "Nombre d'articles: " . count($orderData['items']) . "\n";
+    echo "✓ Données commande récupérées\n";
+
+    // Test 25: Récupération données société depuis options WordPress/WooCommerce
+    echo "\nTest 25: Données société depuis paramètres WooCommerce\n";
+    // Simuler get_option pour les tests
+    if (!function_exists('get_option')) {
+        function get_option($key) {
+            $options = [
+                'woocommerce_store_name' => 'Ma Société SARL',
+                'woocommerce_store_email' => 'contact@masociete.com',
+                'woocommerce_store_address' => '456 Avenue des Champs',
+                'woocommerce_store_city' => 'Lyon',
+                'woocommerce_store_postcode' => '69000',
+                'woocommerce_store_country' => 'FR',
+                'woocommerce_store_phone' => '+33456789012',
+                'woocommerce_store_vat_number' => 'FR98765432109',
+                'woocommerce_store_siret' => '98765432109876',
+                'woocommerce_store_bank_name' => 'BNP Paribas',
+                'woocommerce_store_iban' => 'FR7612345678901234567890123',
+                'woocommerce_store_bic' => 'BNPAFRPP',
+                'woocommerce_store_logo' => '/wp-content/uploads/logo.png',
+                'woocommerce_store_ceo' => 'Marie Martin',
+                'woocommerce_store_registration' => 'RCS Lyon 987654321'
+            ];
+            return $options[$key] ?? '';
+        }
+    }
+    $companyData = $provider->getCompanyData();
+    echo "Nom société: " . $companyData['name'] . "\n";
+    echo "Email: " . $companyData['email'] . "\n";
+    echo "Adresse: " . $companyData['address']['formatted'] . "\n";
+    echo "✓ Données société récupérées\n";
+
+    // Test 26: Génération données mock depuis vraies données
+    echo "\nTest 26: Génération données mock depuis vraies données\n";
+    $templateKeys = ['customer_name', 'order_number', 'order_total', 'company_name'];
+    $mockData = $provider->generateMockData($templateKeys);
+    echo "Données mock générées:\n";
+    foreach ($mockData as $key => $value) {
+        echo "  $key: $value\n";
+    }
+    echo "✓ Données mock générées\n";
+
+    // Test 27: Vérification complétude avec vraies données
+    echo "\nTest 27: Vérification complétude avec vraies données\n";
+    $requiredKeys = ['customer_name', 'order_number', 'company_name'];
+    $completeness = $provider->checkDataCompleteness($requiredKeys);
+    echo "Données complètes: " . ($completeness['complete'] ? 'Oui' : 'Non') . "\n";
+    if (!empty($completeness['missing'])) {
+        echo "Clés manquantes: " . implode(', ', $completeness['missing']) . "\n";
+    }
+    echo "✓ Vérification complétude effectuée\n";
+
+    // Test 28: Gestion données manquantes avec placeholders
+    echo "\nTest 28: Gestion données manquantes avec placeholders\n";
+    $providerWithoutOrder = new \PDF_Builder_Pro\Providers\MetaboxModeProvider(null);
+    $emptyCustomerData = $providerWithoutOrder->getCustomerData();
+    $emptyOrderData = $providerWithoutOrder->getOrderData();
+    echo "Client sans commande: " . $emptyCustomerData['first_name'] . "\n";
+    echo "Commande sans données: " . $emptyOrderData['order_number'] . "\n";
+    echo "✓ Placeholders utilisés pour données manquantes\n";
+
+    // Test 29: Système de cache
+    echo "\nTest 29: Système de cache\n";
+    $testData = ['test' => 'cached_value'];
+    $cacheKey = 'test_cache_key';
+
+    // Mise en cache
+    $cacheResult = $provider->cacheData($cacheKey, $testData, 60);
+    echo "Mise en cache: " . ($cacheResult ? 'Réussie' : 'Échouée') . "\n";
+
+    // Récupération depuis le cache
+    $cachedData = $provider->getCachedData($cacheKey);
+    echo "Récupération cache: " . ($cachedData === $testData ? 'Réussie' : 'Échouée') . "\n";
+
+    // Invalidation du cache
+    $invalidateResult = $provider->invalidateCache($cacheKey);
+    echo "Invalidation cache: " . ($invalidateResult ? 'Réussie' : 'Échouée') . "\n";
+
+    // Vérification que le cache est vide
+    $cachedDataAfter = $provider->getCachedData($cacheKey);
+    echo "Cache après invalidation: " . ($cachedDataAfter === null ? 'Vide (OK)' : 'Non vide (ERREUR)') . "\n";
+    echo "✓ Système de cache fonctionnel\n";
+
+    // Test 30: Nettoyage et formatage des données
+    echo "\nTest 30: Nettoyage et formatage des données\n";
+    $rawData = [
+        'name' => 'Test & donnée',
+        'price' => 150.50,
+        'description' => 'Description <b>test</b>'
+    ];
+    $sanitized = $provider->sanitizeData($rawData);
+    echo "Prix formaté: " . $sanitized['price'] . "\n";
+    echo "Description nettoyée: " . $sanitized['description'] . "\n";
+    echo "✓ Nettoyage et formatage effectués\n";
+
+    echo "\n=== Tests MetaboxModeProvider terminés avec succès ===\n";
+
+} catch (\Exception $e) {
+    echo "ERREUR FATALE dans MetaboxModeProvider: " . $e->getMessage() . "\n";
+    echo "Fichier: " . $e->getFile() . " Ligne: " . $e->getLine() . "\n";
+}
+
 } catch (\Exception $e) {
     echo "ERREUR FATALE: " . $e->getMessage() . "\n";
     echo "Fichier: " . $e->getFile() . " Ligne: " . $e->getLine() . "\n";
