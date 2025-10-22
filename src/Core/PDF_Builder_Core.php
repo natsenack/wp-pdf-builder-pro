@@ -76,11 +76,8 @@ class PDF_Builder_Core
         // Inclure les constantes
         require_once PDF_BUILDER_PLUGIN_DIR . 'core/constants.php';
 
-        // Inclure l'autoloader
+        // Inclure l'autoloader (s'initialise automatiquement)
         require_once PDF_BUILDER_PLUGIN_DIR . 'core/autoloader.php';
-
-        // Initialiser l'autoloader
-        \PDF_Builder\Core\Autoloader::init();
 
         // Inclure les fonctions utilitaires
         require_once PDF_BUILDER_PLUGIN_DIR . 'core/bootstrap.php';
