@@ -22,11 +22,20 @@ if (!did_action('admin_enqueue_scripts')) {
     do_action('admin_enqueue_scripts', 'pdf-builder-editor');
 }
 
+// S'assurer que le core PDF Builder est chargé
+if (function_exists('pdf_builder_load_core_when_needed')) {
+    pdf_builder_load_core_when_needed();
+}
+
 // Chargement explicite des scripts PDF Builder pour l'éditeur
 if (class_exists('PDF_Builder\Admin\PDF_Builder_Admin')) {
-    $admin_instance = \PDF_Builder\Admin\PDF_Builder_Admin::getInstance();
-    if (method_exists($admin_instance, 'enqueue_admin_scripts')) {
-        $admin_instance->enqueue_admin_scripts('pdf-builder_page_pdf-builder-editor');
+    // PDF_Builder_Admin::getInstance() nécessite une instance de la classe principale
+    if (class_exists('PDF_Builder\Core\PDF_Builder_Core')) {
+        $core_instance = \PDF_Builder\Core\PDF_Builder_Core::getInstance();
+        $admin_instance = \PDF_Builder\Admin\PDF_Builder_Admin::getInstance($core_instance);
+        if (method_exists($admin_instance, 'enqueue_admin_scripts')) {
+            $admin_instance->enqueue_admin_scripts('pdf-builder_page_pdf-builder-editor');
+        }
     }
 }
 
