@@ -54,10 +54,14 @@ class ImageRenderer {
      * @param array $context Contexte de rendu (données WooCommerce, etc.)
      * @return string HTML généré pour l'image
      */
-    public function render(array $element, array $context = []): string {
+    public function render(array $element, array $context = []): array {
         // Validation de base
         if (!$this->validateElement($element)) {
-            return $this->getErrorPlaceholder('Élément image invalide');
+            return [
+                'html' => $this->getErrorPlaceholder('Élément image invalide'),
+                'css' => '',
+                'error' => 'Élément image invalide'
+            ];
         }
 
         // Récupération des propriétés
@@ -65,12 +69,20 @@ class ImageRenderer {
         $imageUrl = $this->getImageUrl($properties, $context);
 
         if (empty($imageUrl)) {
-            return $this->getErrorPlaceholder('Aucune image spécifiée');
+            return [
+                'html' => $this->getErrorPlaceholder('Aucune image spécifiée'),
+                'css' => '',
+                'error' => 'Aucune image spécifiée'
+            ];
         }
 
         // Validation du format d'image
         if (!$this->isValidImageFormat($imageUrl)) {
-            return $this->getErrorPlaceholder('Format d\'image non supporté');
+            return [
+                'html' => $this->getErrorPlaceholder('Format d\'image non supporté'),
+                'css' => '',
+                'error' => 'Format d\'image non supporté'
+            ];
         }
 
         // Calcul des dimensions
@@ -79,8 +91,15 @@ class ImageRenderer {
         // Génération des styles CSS
         $styles = $this->generateImageStyles($properties);
 
-        // Génération du HTML
-        return $this->generateImageHtml($imageUrl, $dimensions, $styles, $properties);
+        // Génération du HTML et CSS
+        $html = $this->generateImageHtml($imageUrl, $dimensions, $styles, $properties);
+        $css = ''; // TODO: Implémenter la génération CSS pour les images si nécessaire
+
+        return [
+            'html' => $html,
+            'css' => $css,
+            'error' => null
+        ];
     }
 
     /**
@@ -254,9 +273,13 @@ class ImageRenderer {
         $alt = $properties['alt'] ?? $properties['label'] ?? 'Image';
         $title = $properties['title'] ?? $alt;
 
+        // Placeholder par défaut pour le lazy loading
+        $placeholder = $properties['placeholder'] ?? 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkxvYWRpbmcuLi48L3RleHQ+PC9zdmc+';
+
         $html = sprintf(
-            '<img src="%s" alt="%s" title="%s" style="width: %dpx; height: %dpx; %s" />',
+            '<img data-src="%s" src="%s" alt="%s" title="%s" loading="lazy" style="width: %dpx; height: %dpx; %s" class="lazy-image" />',
             htmlspecialchars($imageUrl, ENT_QUOTES, 'UTF-8'),
+            htmlspecialchars($placeholder, ENT_QUOTES, 'UTF-8'),
             htmlspecialchars($alt, ENT_QUOTES, 'UTF-8'),
             htmlspecialchars($title, ENT_QUOTES, 'UTF-8'),
             $dimensions['width'],

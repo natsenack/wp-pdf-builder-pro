@@ -15,6 +15,10 @@ if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
 
+// Import du système de cache
+use PDF_Builder\Cache\RendererCache;
+use PDF_Builder\Performance\PerformanceMonitor;
+
 class TextRenderer {
 
     /**
@@ -54,34 +58,44 @@ class TextRenderer {
      * @return array Résultat du rendu HTML/CSS
      */
     public function render(array $elementData, array $context = []): array {
-        // Validation des données d'entrée
-        if (!$this->validateElementData($elementData)) {
-            return [
-                'html' => '<!-- Erreur: Données élément invalides -->',
-                'css' => '',
-                'error' => 'Données élément invalides'
-            ];
-        }
-
-        $type = $elementData['type'] ?? 'dynamic-text';
-        $content = $elementData['content'] ?? '';
-        $properties = $elementData['properties'] ?? [];
-
-        // Rendu selon le type d'élément
-        switch ($type) {
-            case 'dynamic-text':
-                return $this->renderDynamicText($content, $properties, $context);
-
-            case 'order_number':
-                return $this->renderOrderNumber($properties, $context);
-
-            default:
+        return PerformanceMonitor::measure(function() use ($elementData, $context) {
+            // Validation des données d'entrée
+            if (!$this->validateElementData($elementData)) {
                 return [
-                    'html' => '<!-- Erreur: Type d\'élément non supporté -->',
+                    'html' => '<!-- Erreur: Données élément invalides -->',
                     'css' => '',
-                    'error' => 'Type d\'élément non supporté: ' . $type
+                    'error' => 'Données élément invalides'
                 ];
-        }
+            }
+
+            $type = $elementData['type'] ?? 'dynamic-text';
+            $content = $elementData['content'] ?? '';
+            $properties = $elementData['properties'] ?? [];
+
+            // Rendu selon le type d'élément
+            switch ($type) {
+                case 'dynamic-text':
+                    $result = $this->renderDynamicText($content, $properties, $context);
+                    break;
+
+                case 'order_number':
+                    $result = $this->renderOrderNumber($properties, $context);
+                    break;
+
+                default:
+                    $result = [
+                        'html' => '<!-- Erreur: Type d\'élément non supporté -->',
+                        'css' => '',
+                        'error' => 'Type d\'élément non supporté: ' . $type
+                    ];
+                    break;
+            }
+
+            // Enregistrement des métriques de performance
+            PerformanceMonitor::recordRendererCall('TextRenderer', $type, 0); // Le temps est mesuré par measure()
+
+            return $result;
+        }, [], 'TextRenderer::render_' . ($elementData['type'] ?? 'unknown'));
     }
 
     /**
@@ -93,11 +107,17 @@ class TextRenderer {
      * @return array Résultat du rendu
      */
     private function renderDynamicText(string $content, array $properties, array $context): array {
-        // Remplacement des variables
+        // Remplacement des variables (avec cache)
         $processedContent = $this->replaceVariables($content, $context);
 
-        // Génération des styles CSS
-        $css = $this->generateTextStyles($properties);
+        // Génération des styles CSS (avec cache)
+        $styleKey = RendererCache::generateStyleKey($properties, 'text');
+        $css = RendererCache::get($styleKey);
+
+        if ($css === null) {
+            $css = $this->generateTextStyles($properties);
+            RendererCache::set($styleKey, $css, 600); // Cache 10 minutes pour les styles
+        }
 
         // Génération du HTML
         $html = $this->generateTextHtml($processedContent, $properties);
@@ -144,8 +164,14 @@ class TextRenderer {
      * @return string Contenu avec variables remplacées
      */
     private function replaceVariables(string $content, array $context): string {
-        // Extraction des variables du contenu
-        $variables = $this->extractVariables($content);
+        // Extraction des variables du contenu (avec cache)
+        $contentKey = 'content_vars_' . md5($content);
+        $variables = RendererCache::get($contentKey);
+
+        if ($variables === null) {
+            $variables = $this->extractVariables($content);
+            RendererCache::set($contentKey, $variables, 3600); // Cache 1 heure pour l'extraction
+        }
 
         $result = $content;
 
@@ -187,9 +213,18 @@ class TextRenderer {
      * @return string Valeur de la variable ou placeholder
      */
     private function getVariableValue(string $variable, array $context): string {
-        // Variables système
+        // Variables système (avec cache)
         if (isset(self::SYSTEM_VARIABLES[$variable])) {
-            return $this->getSystemVariableValue($variable);
+            $cacheKey = RendererCache::generateVariableKey($variable, []);
+            $cachedValue = RendererCache::get($cacheKey);
+
+            if ($cachedValue !== null) {
+                return $cachedValue;
+            }
+
+            $value = $this->getSystemVariableValue($variable);
+            RendererCache::set($cacheKey, $value, 60); // Cache 1 minute pour les variables système
+            return $value;
         }
 
         // Variables depuis le contexte (provider)
@@ -268,15 +303,25 @@ class TextRenderer {
         $mappings = [
             // Customer mappings
             'customer_name' => ['first_name', 'last_name'], // Combine first + last name
+            'customer_full_name' => 'full_name',
             'customer_firstname' => 'first_name',
             'customer_lastname' => 'last_name',
             'customer_email' => 'email',
             'customer_phone' => 'phone',
+            'customer_address_street' => 'address_street',
+            'customer_address_city' => 'address_city',
+            'customer_address_postcode' => 'address_postcode',
+            'customer_address_country' => 'address_country',
 
             // Order mappings
             'order_number' => 'number',
             'order_date' => 'date',
             'order_total' => 'total',
+            'order_subtotal' => 'subtotal',
+            'order_tax_total' => 'tax_total',
+            'order_shipping_total' => 'shipping_total',
+            'order_payment_method' => 'payment_method',
+            'order_transaction_id' => 'transaction_id',
             'order_status' => 'status',
 
             // Company mappings

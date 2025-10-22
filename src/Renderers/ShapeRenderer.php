@@ -50,10 +50,14 @@ class ShapeRenderer {
      * @param array $context Contexte de rendu (variables, etc.)
      * @return string HTML/CSS généré
      */
-    public function render(array $element, array $context = []): string {
+    public function render(array $element, array $context = []): array {
         // Validation de base
         if (!$this->validateElement($element)) {
-            return $this->generateErrorHtml('Élément de forme invalide');
+            return [
+                'html' => $this->generateErrorHtml('Élément de forme invalide'),
+                'css' => '',
+                'error' => 'Élément de forme invalide'
+            ];
         }
 
         // Déterminer le type de forme
@@ -62,16 +66,27 @@ class ShapeRenderer {
         // Générer le HTML selon le type
         switch ($shapeType) {
             case 'rectangle':
-                return $this->renderRectangle($element, $context);
+                $html = $this->renderRectangle($element, $context);
+                break;
             case 'circle':
-                return $this->renderCircle($element, $context);
+                $html = $this->renderCircle($element, $context);
+                break;
             case 'line':
-                return $this->renderLine($element, $context);
+                $html = $this->renderLine($element, $context);
+                break;
             case 'arrow':
-                return $this->renderArrow($element, $context);
+                $html = $this->renderArrow($element, $context);
+                break;
             default:
-                return $this->generateErrorHtml("Type de forme non supporté: {$shapeType}");
+                $html = $this->generateErrorHtml("Type de forme non supporté: {$shapeType}");
+                break;
         }
+
+        return [
+            'html' => $html,
+            'css' => '',
+            'error' => null
+        ];
     }
 
     /**

@@ -199,6 +199,15 @@ class PDF_Builder_Core
                 PDF_BUILDER_PRO_VERSION
             );
 
+            // Charger le LazyLoader pour les aperçus
+            wp_enqueue_script(
+                'pdf-builder-lazy-loader',
+                PDF_BUILDER_PRO_ASSETS_URL . 'js/LazyLoader.js',
+                array(),
+                PDF_BUILDER_PRO_VERSION,
+                true
+            );
+
             // Localiser le script pour AJAX
             wp_localize_script(
                 'pdf-builder-admin-core',

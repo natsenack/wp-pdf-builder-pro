@@ -16,6 +16,9 @@ if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
 
+// Import du système de cache
+use PDF_Builder\Cache\RendererCache;
+
 class InfoRenderer {
 
     /**
@@ -156,8 +159,14 @@ class InfoRenderer {
 
         $html .= '</div>';
 
-        // Génération des styles CSS
-        $css = $this->generateInfoStyles($properties, 'customer-info');
+        // Génération des styles CSS (avec cache)
+        $styleKey = RendererCache::generateStyleKey($properties, 'info_customer');
+        $css = RendererCache::get($styleKey);
+
+        if ($css === null) {
+            $css = $this->generateInfoStyles($properties, 'customer-info');
+            RendererCache::set($styleKey, $css, 600); // Cache 10 minutes
+        }
 
         return [
             'html' => $html,
@@ -197,8 +206,14 @@ class InfoRenderer {
 
         $html .= '</div>';
 
-        // Génération des styles CSS
-        $css = $this->generateInfoStyles($properties, 'company-info');
+        // Génération des styles CSS (avec cache)
+        $styleKey = RendererCache::generateStyleKey($properties, 'info_company');
+        $css = RendererCache::get($styleKey);
+
+        if ($css === null) {
+            $css = $this->generateInfoStyles($properties, 'company-info');
+            RendererCache::set($styleKey, $css, 600); // Cache 10 minutes
+        }
 
         return [
             'html' => $html,
@@ -236,8 +251,14 @@ class InfoRenderer {
 
         $html .= '</div>';
 
-        // Génération des styles CSS
-        $css = $this->generateMentionsStyles($properties);
+        // Génération des styles CSS (avec cache)
+        $styleKey = RendererCache::generateStyleKey($properties, 'info_mentions');
+        $css = RendererCache::get($styleKey);
+
+        if ($css === null) {
+            $css = $this->generateMentionsStyles($properties);
+            RendererCache::set($styleKey, $css, 600); // Cache 10 minutes
+        }
 
         return [
             'html' => $html,
@@ -433,6 +454,16 @@ class InfoRenderer {
      * @return string Valeur formatée
      */
     private function formatCompanyFieldValue(string $field, $value): string {
+        // Si la valeur est un array (comme l'adresse), la convertir en string
+        if (is_array($value)) {
+            switch ($field) {
+                case 'address':
+                    return implode(', ', array_filter($value));
+                default:
+                    return implode(', ', $value);
+            }
+        }
+
         switch ($field) {
             case 'capital':
                 return 'Capital social : ' . number_format((float)$value, 2, ',', ' ') . ' €';
@@ -453,7 +484,7 @@ class InfoRenderer {
                 return 'Web : ' . $value;
 
             default:
-                return $value;
+                return (string)$value;
         }
     }
 
