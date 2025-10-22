@@ -193,20 +193,34 @@ class PDF_Builder_Core
             || (isset($_GET['page']) && $_GET['page'] && strpos($_GET['page'], 'pdf-builder') !== false && $_GET['page'] !== 'pdf-builder-editor')
             || (isset($_SERVER['REQUEST_URI']) && $_SERVER['REQUEST_URI'] && strpos($_SERVER['REQUEST_URI'], 'pdf-builder-editor') !== false)
         ) {
+            // Phase 3.4.3 - Optimisation du chargement initial
+            // Précharger le ScriptLoader en priorité (petit fichier d'optimisation)
+            wp_enqueue_script(
+                'pdf-builder-script-loader',
+                PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-script-loader.js',
+                array(),
+                PDF_BUILDER_PRO_VERSION,
+                false // Charger dans le head pour optimiser le chargement
+            );
+
+            // Différer le chargement du script principal (lourd)
             wp_enqueue_script(
                 'pdf-builder-admin-core',
                 PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js',
                 array('jquery'),
                 PDF_BUILDER_PRO_VERSION,
-                true
-            );            wp_enqueue_style(
+                true // Garder en footer mais avec defer logique
+            );
+
+            // Styles critiques - préchargés
+            wp_enqueue_style(
                 'pdf-builder-admin-core',
                 PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-admin.css',
                 array(),
                 PDF_BUILDER_PRO_VERSION
             );
 
-            // Charger le LazyLoader pour les aperçus
+            // Charger le LazyLoader de manière optimisée
             wp_enqueue_script(
                 'pdf-builder-lazy-loader',
                 PDF_BUILDER_PRO_ASSETS_URL . 'js/LazyLoader.js',
@@ -220,15 +234,26 @@ class PDF_Builder_Core
                 'pdf-builder-admin-core',
                 'pdfBuilderAjax',
                 array(
-                'ajaxurl' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('pdf_builder_templates'),
-                'strings' => array(
-                    'loading' => __('Loading...', 'pdf-builder-pro'),
-                    'error' => __('An error occurred', 'pdf-builder-pro'),
-                    'success' => __('Success', 'pdf-builder-pro')
-                )
+                    'ajaxurl' => admin_url('admin-ajax.php'),
+                    'nonce' => wp_create_nonce('pdf_builder_templates'),
+                    'strings' => array(
+                        'loading' => __('Loading...', 'pdf-builder-pro'),
+                        'error' => __('An error occurred', 'pdf-builder-pro'),
+                        'success' => __('Success', 'pdf-builder-pro')
+                    ),
+                    // Configuration du ScriptLoader
+                    'scriptLoader' => array(
+                        'criticalScripts' => array('jquery', 'jquery-core'),
+                        'deferThreshold' => 2000,
+                        'preloadCritical' => true,
+                        'enableIntersectionObserver' => true
+                    )
                 )
             );
+
+            // Ajouter des attributs de performance aux scripts
+            add_filter('script_loader_tag', array($this, 'optimize_script_tags'), 10, 3);
+            add_filter('style_loader_tag', array($this, 'optimize_style_tags'), 10, 3);
         }
     }
 
@@ -889,6 +914,79 @@ class PDF_Builder_Core
         // Retourner les paramètres
         wp_send_json_success($settings);
         exit;
+    }
+
+    /**
+     * Phase 3.4.3 - Optimisation des balises script
+     * Ajoute des attributs de performance aux scripts
+     *
+     * @param string $tag Balise script générée
+     * @param string $handle Handle du script
+     * @param string $src URL du script
+     * @return string Balise script optimisée
+     */
+    public function optimize_script_tags($tag, $handle, $src)
+    {
+        // Scripts critiques qui ne doivent pas être différés
+        $critical_scripts = array(
+            'jquery',
+            'jquery-core',
+            'pdf-builder-script-loader'
+        );
+
+        // Scripts à différer (chargement asynchrone)
+        $defer_scripts = array(
+            'pdf-builder-lazy-loader'
+        );
+
+        // Scripts à charger de manière asynchrone
+        $async_scripts = array(
+            'pdf-builder-admin-core' // Le script principal peut être asynchrone
+        );
+
+        if (in_array($handle, $critical_scripts)) {
+            // Scripts critiques : ajouter preload et integrity si disponible
+            $preload_link = '<link rel="preload" href="' . esc_url($src) . '" as="script">';
+            $tag = $preload_link . $tag;
+        } elseif (in_array($handle, $defer_scripts)) {
+            // Scripts différés : ajouter defer
+            $tag = str_replace('<script ', '<script defer ', $tag);
+        } elseif (in_array($handle, $async_scripts)) {
+            // Scripts asynchrones : ajouter async
+            $tag = str_replace('<script ', '<script async ', $tag);
+        }
+
+        return $tag;
+    }
+
+    /**
+     * Phase 3.4.3 - Optimisation des balises style
+     * Ajoute des attributs de performance aux styles
+     *
+     * @param string $tag Balise style générée
+     * @param string $handle Handle du style
+     * @param string $href URL du style
+     * @return string Balise style optimisée
+     */
+    public function optimize_style_tags($tag, $handle, $href)
+    {
+        // Styles critiques à précharger
+        $critical_styles = array(
+            'pdf-builder-admin-core'
+        );
+
+        if (in_array($handle, $critical_styles)) {
+            // Ajouter preload pour les styles critiques
+            $preload_link = '<link rel="preload" href="' . esc_url($href) . '" as="style" onload="this.onload=null;this.rel=\'stylesheet\'">';
+            $noscript_fallback = '<noscript>' . $tag . '</noscript>';
+
+            // Créer un lien preload qui se transforme en stylesheet
+            $optimized_tag = '<link rel="preload" href="' . esc_url($href) . '" as="style" onload="this.onload=null;this.rel=\'stylesheet\'">' . $noscript_fallback;
+
+            return $optimized_tag;
+        }
+
+        return $tag;
     }
 }
 
