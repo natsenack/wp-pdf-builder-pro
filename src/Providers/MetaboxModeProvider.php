@@ -220,11 +220,11 @@ class MetaboxModeProvider implements DataProviderInterface
         }
 
         $companyData = [
-            'name' => function_exists('get_option') ? get_option('woocommerce_store_name') ?: get_bloginfo('name') : 'Test Company SARL',
-            'legal_name' => function_exists('get_option') ? get_option('woocommerce_store_name') ?: get_bloginfo('name') : 'Test Company SARL',
+            'name' => function_exists('get_option') ? (get_option('woocommerce_store_name') ?: get_bloginfo('name')) : 'Test Company SARL',
+            'legal_name' => function_exists('get_option') ? (get_option('woocommerce_store_name') ?: get_bloginfo('name')) : 'Test Company SARL',
             'siret' => function_exists('get_option') ? get_option('woocommerce_store_siret') : '',
             'vat_number' => function_exists('get_option') ? get_option('woocommerce_store_vat_number') : '',
-            'email' => function_exists('get_option') ? get_option('woocommerce_store_email') ?: get_option('admin_email') : 'test@example.com',
+            'email' => function_exists('get_option') ? (get_option('woocommerce_store_email') ?: get_option('admin_email')) : 'test@example.com',
             'phone' => function_exists('get_option') ? get_option('woocommerce_store_phone') : '',
             'website' => function_exists('get_site_url') ? get_site_url() : 'https://example.com',
             'address' => [

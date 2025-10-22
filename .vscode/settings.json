@@ -92,7 +92,8 @@
     "wordpress"
   ],
   "intelephense.scanFiles": [
-    "${workspaceFolder}/stubs.php"
+    "${workspaceFolder}/stubs.php",
+    "${workspaceFolder}/vendor/phpunit/phpunit/src/Framework/**/*.php"
   ],
   "intelephense.completion.insertUseDeclaration": true,
   "intelephense.completion.fullyQualifyGlobalConstantsAndFunctions": false,
@@ -100,6 +101,8 @@
   "intelephense.format.braces": "psr-12",
   "intelephense.diagnostics.enable": true,
   "intelephense.diagnostics.run": "onType",
+  "intelephense.diagnostics.undefinedTypes": false,
+  "intelephense.diagnostics.undefinedMethods": false,
   "intelephense.telemetry.enabled": false,
   "files.defaultLanguage": "fr",
   "accessibility.voice.speechLanguage": "fr-FR"

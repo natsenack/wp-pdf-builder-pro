@@ -9,10 +9,20 @@
 use PHPUnit\Framework\TestCase;
 use PDF_Builder\Renderers\InfoRenderer;
 
+/**
+ * @covers InfoRenderer
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ */
 class InfoRendererTest extends TestCase
 {
+    /** @var InfoRenderer */
     private InfoRenderer $renderer;
 
+    /**
+     * Set up test environment
+     * @return void
+     */
     protected function setUp(): void
     {
         $this->renderer = new InfoRenderer();

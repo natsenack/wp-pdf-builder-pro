@@ -155,7 +155,7 @@ const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
       type: 'dynamic-text',
       fieldID: 'dynamic_text',
       label: 'Texte Dynamique',
-      icon: '�',
+      icon: '📝',
       description: 'Texte avec variables dynamiques',
       defaultProperties: {
         template: 'total_only',

@@ -211,6 +211,11 @@ try {
 
     echo "\n=== Tous les tests terminés avec succès ===\n";
 
+} catch (\Exception $e) {
+    echo "ERREUR FATALE dans PreviewRenderer Phase 3.1.1: " . $e->getMessage() . "\n";
+    echo "Fichier: " . $e->getFile() . " Ligne: " . $e->getLine() . "\n";
+}
+
 // Tests pour CanvasModeProvider (Phase 3.2.2)
 echo "\n\n=== Test CanvasModeProvider 3.2.2 ===\n\n";
 
@@ -742,13 +747,17 @@ try {
 
     echo "\n=== Tests TextRenderer Phase 3.3.1 terminés avec succès ===\n";
 
+} catch (\Exception $e) {
+    echo "ERREUR FATALE dans TextRenderer Phase 3.3.1: " . $e->getMessage() . "\n";
+    echo "Fichier: " . $e->getFile() . " Ligne: " . $e->getLine() . "\n";
+}
+
     // ============================================
     // Tests ImageRenderer Phase 3.3.2
     // ============================================
     echo "\n\n=== Tests ImageRenderer Phase 3.3.2 ===\n\n";
 
-    // Inclure la classe ImageRenderer
-    require_once __DIR__ . '/src/Renderers/ImageRenderer.php';
+    try {
 
     // Test 51: Instanciation ImageRenderer
     echo "Test 51: Instanciation ImageRenderer\n";
@@ -880,4 +889,7 @@ try {
 
     echo "\n=== Tests ImageRenderer Phase 3.3.2 terminés avec succès ===\n";
 
+} catch (\Exception $e) {
+    echo "ERREUR FATALE dans ImageRenderer Phase 3.3.2: " . $e->getMessage() . "\n";
+    echo "Fichier: " . $e->getFile() . " Ligne: " . $e->getLine() . "\n";
 }

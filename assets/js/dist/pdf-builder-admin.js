@@ -6190,7 +6190,7 @@ var ElementLibrary = function ElementLibrary(_ref) {
     type: 'dynamic-text',
     fieldID: 'dynamic_text',
     label: 'Texte Dynamique',
-    icon: '�',
+    icon: '📝',
     description: 'Texte avec variables dynamiques',
     defaultProperties: {
       template: 'total_only',

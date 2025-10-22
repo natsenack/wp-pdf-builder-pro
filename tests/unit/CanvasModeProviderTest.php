@@ -9,6 +9,10 @@
 use PHPUnit\Framework\TestCase;
 use PDF_Builder_Pro\Providers\CanvasModeProvider;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ */
 class CanvasModeProviderTest extends TestCase
 {
     private CanvasModeProvider $provider;
