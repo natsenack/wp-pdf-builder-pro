@@ -20,11 +20,6 @@ module.exports = {
       return '[name].[contenthash].js';
     },
     path: path.resolve(__dirname, '../../assets/js/dist'),
-    library: {
-      name: 'PDFBuilderPro',
-      type: 'window',
-      export: 'default'
-    },
     clean: true // Nettoyer les anciens fichiers
   },
   plugins: [

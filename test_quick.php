@@ -1,1 +1,0 @@
-<?php require_once 'src/Renderers/ImageRenderer.php'; \ = new PDF_Builder\Renderers\ImageRenderer(); echo '✅ ImageRenderer instancié avec succès\n'; echo 'Types supportés: ' . implode(', ', \->getSupportedTypes()) . '\n';
