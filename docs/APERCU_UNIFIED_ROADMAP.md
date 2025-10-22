@@ -56,7 +56,7 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
 #### **Templates prédéfinis**
 - **Emplacement** : Modal dans le menu "Template" existant.
 - **Limite** : Freemium (quelques gratuits, plus payant).
-- **Sélection** : Visuelle (aperçus des modèles).
+- **Sé
 
 ### 🏗️ **Architecture technique**
 
@@ -557,7 +557,7 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
 ## 📊 État actuel
 
 **Phase active** : 3/7  
-**Progression** : 60% (Phase 2 complète à 100% + Phase 3.1.1-3.1.4 + 3.2.1-3.2.3 terminées - infrastructure PreviewRenderer complète + intégration système de rendu + interfaces communes + providers Canvas et Metabox)
+**Progression** : 60% (Phase 2 complète à 100% + Phase 3.1.1-3.1.4 + 3.2.1-3.2.4 terminées - infrastructure PreviewRenderer complète + système de providers + mode switching avec DI)
 
 ---
 
@@ -611,7 +611,7 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
 ### 📝 **Historique et décisions Phase 7**
 
 #### **Éléments importants de la discussion** :
-- **Stratégie freemium** : Version gratuite attractive avec limitations claires, premium à 69€ à vie (1 site)
+- **Stratégie freemium** : Version gratuite attractive avec limitations claires, premium
 - **Prix** : 69€ justifié par complexité IA + concurrence WooCommerce (30% commission compensée)
 - **Promo possible** : 59€ sur site externe vs 69€ sur WooCommerce
 - **Limitations gratuites** : 1 template, PDF only, 15 variables basiques, 3 dynamic-text models, watermark
@@ -718,8 +718,14 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
 - **Architecture modulaire** : Base solide pour implémenter CanvasMode et MetaboxMode dans les prochaines phases
 - **Déploiement réussi** : Toutes les interfaces uploadées sur le serveur via FTP
 
-**📊 Progression globale** : Phase 2 terminée (100%), Phase 3.1.1-3.1.4 + 3.2.1 terminées (infrastructure PreviewRenderer complète + intégration système de rendu + interfaces communes)
+**✅ Phase 3.2.2 TERMINÉE** : CanvasModeProvider entièrement implémenté avec données fictives complètes et interface DataProviderInterface.
+
+**✅ Phase 3.2.3 TERMINÉE** : MetaboxModeProvider entièrement implémenté avec données WooCommerce réelles et gestion d'erreurs.
+
+**✅ Phase 3.2.4 TERMINÉE** : ModeSwitcher et DIContainer entièrement implémentés avec système de mode switching opérationnel.
+
+**📊 Progression globale** : Phase 2 terminée (100%), Phase 3.1.1-3.1.4 + 3.2.1-3.2.4 terminées (infrastructure PreviewRenderer complète + système de providers + mode switching avec DI)
 
 ---
 
-*Phase 2.4 finalisée - Architecture modulaire complète et validée*
+*Phase 3.2.4 finalisée - Système de mode switching opérationnel*
