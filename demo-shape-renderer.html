@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Démo ShapeRenderer - Phase 3.3.3</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .demo-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .demo-title {
+            color: #333;
+            border-bottom: 2px solid #007cba;
+            padding-bottom: 10px;
+        }
+        .shape-demo {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #fafafa;
+        }
+        .shape-canvas {
+            position: relative;
+            width: 600px;
+            height: 400px;
+            border: 1px solid #ccc;
+            background: white;
+            margin: 10px 0;
+        }
+        .shape-info {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+        .code-block {
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h1 class="demo-title">Démo ShapeRenderer - Phase 3.3.3</h1>
+        <p>Cette démonstration montre les capacités de rendu des formes géométriques du PDF Builder Pro.</p>
+
+        <div class="shape-demo">
+            <h3>Rectangle avec coins arrondis</h3>
+            <div class="shape-canvas">
+                <div class="pdf-shape pdf-rectangle" style="position: absolute; left: 50px; top: 50px; width: 150px; height: 80px; background-color: #ff6b6b; border: 2px solid #000000; border-radius: 10px;"></div>
+            </div>
+            <div class="shape-info">
+                <strong>Propriétés:</strong> Position (50,50), Dimensions (150x80), Fond rouge, Bordure noire 2px, Coins arrondis 10px
+            </div>
+            <div class="code-block">
+{
+  "type": "rectangle",
+  "x": 50,
+  "y": 50,
+  "width": 150,
+  "height": 80,
+  "properties": {
+    "fill": "#ff6b6b",
+    "stroke": "#000000",
+    "strokeWidth": "2px",
+    "borderRadius": 10
+  }
+}
+            </div>
+        </div>
+
+        <div class="shape-demo">
+            <h3>Cercle</h3>
+            <div class="shape-canvas">
+                <div class="pdf-shape pdf-circle" style="position: absolute; left: 250px; top: 100px; width: 100px; height: 100px; background-color: #4ecdc4; border: 2px solid #000000; border-radius: 50%;"></div>
+            </div>
+            <div class="shape-info">
+                <strong>Propriétés:</strong> Position (250,100), Dimensions (100x100), Fond turquoise, Bordure noire 2px, Rayon 50%
+            </div>
+            <div class="code-block">
+{
+  "type": "circle",
+  "x": 250,
+  "y": 100,
+  "width": 100,
+  "height": 100,
+  "properties": {
+    "fill": "#4ecdc4",
+    "stroke": "#000000",
+    "strokeWidth": "2px"
+  }
+}
+            </div>
+        </div>
+
+        <div class="shape-demo">
+            <h3>Ligne horizontale</h3>
+            <div class="shape-canvas">
+                <div class="pdf-shape pdf-line" style="position: absolute; left: 50px; top: 200px; width: 200px; height: 0px; border-top: 3px solid #45b7d1;"></div>
+            </div>
+            <div class="shape-info">
+                <strong>Propriétés:</strong> Position (50,200), Longueur 200px, Épaisseur 3px, Couleur bleue
+            </div>
+            <div class="code-block">
+{
+  "type": "line",
+  "x": 50,
+  "y": 200,
+  "width": 200,
+  "height": 1,
+  "properties": {
+    "stroke": "#45b7d1",
+    "strokeWidth": "3px"
+  }
+}
+            </div>
+        </div>
+
+        <div class="shape-demo">
+            <h3>Flèche directionnelle (droite)</h3>
+            <div class="shape-canvas">
+                <div class="pdf-shape pdf-arrow" style="position: absolute; left: 350px; top: 220px;">
+                    <svg width="120" height="60" viewBox="0 0 120 60" style="display: block;">
+                        <polygon points="0,15 90,15 90,0 120,30 90,60 90,45 0,45" fill="#f9ca24" stroke="#000000" stroke-width="2"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="shape-info">
+                <strong>Propriétés:</strong> Position (350,220), Dimensions (120x60), Fond jaune, Bordure noire 2px, Direction droite
+            </div>
+            <div class="code-block">
+{
+  "type": "arrow",
+  "x": 350,
+  "y": 220,
+  "width": 120,
+  "height": 60,
+  "properties": {
+    "direction": "right",
+    "fill": "#f9ca24",
+    "stroke": "#000000",
+    "strokeWidth": 2
+  }
+}
+            </div>
+        </div>
+
+        <div class="shape-demo">
+            <h3>Flèche directionnelle (haut)</h3>
+            <div class="shape-canvas">
+                <div class="pdf-shape pdf-arrow" style="position: absolute; left: 100px; top: 250px;">
+                    <svg width="60" height="120" viewBox="0 0 60 120" style="display: block;">
+                        <polygon points="15,120 15,30 0,30 30,0 60,30 45,30 45,120" fill="#6c5ce7" stroke="#000000" stroke-width="2"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="shape-info">
+                <strong>Propriétés:</strong> Position (100,250), Dimensions (60x120), Fond violet, Bordure noire 2px, Direction haut
+            </div>
+            <div class="code-block">
+{
+  "type": "arrow",
+  "x": 100,
+  "y": 250,
+  "width": 60,
+  "height": 120,
+  "properties": {
+    "direction": "up",
+    "fill": "#6c5ce7",
+    "stroke": "#000000",
+    "strokeWidth": 2
+  }
+}
+            </div>
+        </div>
+
+        <div class="shape-demo">
+            <h3>Styles par défaut</h3>
+            <div class="shape-canvas">
+                <div class="pdf-shape pdf-rectangle" style="position: absolute; left: 400px; top: 50px; width: 100px; height: 60px; border: 1px solid #000000;"></div>
+            </div>
+            <div class="shape-info">
+                <strong>Propriétés:</strong> Aucune propriété définie - utilisation des styles par défaut (fond transparent, bordure noire 1px)
+            </div>
+            <div class="code-block">
+{
+  "type": "rectangle",
+  "x": 400,
+  "y": 50,
+  "width": 100,
+  "height": 60
+}
+            </div>
+        </div>
+
+        <div class="shape-demo">
+            <h3>Types de formes supportés</h3>
+            <ul>
+                <li><strong>rectangle:</strong> Rectangles avec support des coins arrondis</li>
+                <li><strong>circle:</strong> Cercles et ellipses (utilise le minimum des dimensions)</li>
+                <li><strong>line:</strong> Lignes droites horizontales (utilise border-top)</li>
+                <li><strong>arrow:</strong> Flèches directionnelles (gauche, droite, haut, bas) en SVG</li>
+            </ul>
+            <p><strong>Propriétés communes:</strong></p>
+            <ul>
+                <li><code>fill:</code> Couleur de fond (hexadécimal ou nom)</li>
+                <li><code>stroke:</code> Couleur de bordure</li>
+                <li><code>strokeWidth:</code> Épaisseur de bordure</li>
+                <li><code>opacity:</code> Opacité (0.0 à 1.0)</li>
+                <li><code>strokeDasharray:</code> Style de bordure (dashed, etc.)</li>
+                <li><code>borderRadius:</code> Coins arrondis (rectangles uniquement)</li>
+                <li><code>direction:</code> Direction de la flèche (right, left, up, down)</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

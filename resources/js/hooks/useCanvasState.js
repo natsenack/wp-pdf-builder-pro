@@ -1160,11 +1160,15 @@ export const useCanvasState = ({
     zoom.zoomToSelection(selectedElements, canvasWidth, canvasHeight, containerWidth, containerHeight);
   }, [selection.selectedElements, elements, zoom, canvasWidth, canvasHeight]);
 
+  // Conversion points vers pixels pour le rendu CSS
+  // 1 point = 1/72 pouce, 1 pixel = 1/96 pouce → pixels = points × (96/72) = points × 1.333...
+  const pointsToPixels = (points) => Math.round(points * (96 / 72));
+
   return useMemo(() => ({
     // État
     elements,
-    canvasWidth,
-    canvasHeight,
+    canvasWidth: pointsToPixels(canvasWidth), // Conversion points → pixels
+    canvasHeight: pointsToPixels(canvasHeight), // Conversion points → pixels
 
     // Hooks intégrés
     selection,
