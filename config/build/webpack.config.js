@@ -10,7 +10,15 @@ module.exports = {
     'pdf-builder-script-loader': './resources/js/ScriptLoader.js'
   },
   output: {
-    filename: '[name].[contenthash].js',
+    filename: (chunkData) => {
+      // Utiliser des noms fixes pour les entry points principaux
+      const name = chunkData.chunk.name;
+      if (name === 'pdf-builder-admin' || name === 'pdf-builder-nonce-fix' || name === 'pdf-builder-script-loader') {
+        return '[name].js';
+      }
+      // Utiliser des content hashes pour les chunks dynamiques
+      return '[name].[contenthash].js';
+    },
     path: path.resolve(__dirname, '../../assets/js/dist'),
     library: {
       name: 'PDFBuilderPro',
@@ -62,21 +70,36 @@ module.exports = {
           priority: 20,
           enforce: true
         },
-        // Nouveaux chunks pour optimiser le chargement
+        // Nouveaux chunks pour optimiser le chargement - EXCLURE pdf-builder-admin
         ui: {
-          test: /[\\/]src[\\/](Admin|Controllers)[\\/]/,
+          test: (module) => {
+            // Exclure les modules du pdf-builder-admin entry point
+            return module.context && 
+                   /[\\/]src[\\/](Admin|Controllers)[\\/]/.test(module.context) && 
+                   !module.context.includes('pdf-builder-admin');
+          },
           name: 'pdf-builder-ui',
           chunks: 'all',
           priority: 5
         },
         renderers: {
-          test: /[\\/]src[\\/]Renderers[\\/]/,
+          test: (module) => {
+            // Exclure les modules du pdf-builder-admin entry point
+            return module.context && 
+                   /[\\/]src[\\/]Renderers[\\/]/.test(module.context) && 
+                   !module.context.includes('pdf-builder-admin');
+          },
           name: 'pdf-builder-renderers',
           chunks: 'all',
           priority: 5
         },
         utilities: {
-          test: /[\\/]src[\\/]utilities[\\/]/,
+          test: (module) => {
+            // Exclure les modules du pdf-builder-admin entry point
+            return module.context && 
+                   /[\\/]src[\\/]utilities[\\/]/.test(module.context) && 
+                   !module.context.includes('pdf-builder-admin');
+          },
           name: 'pdf-builder-utils',
           chunks: 'all',
           priority: 3

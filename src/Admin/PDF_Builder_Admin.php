@@ -1381,7 +1381,16 @@ class PDF_Builder_Admin
 
         // Charger d'abord les vendors (React, etc.)
         wp_enqueue_script('pdf-builder-vendors', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/vendors.js', [], '8.0.0_force_' . microtime(true), false);
-        wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin.js', ['jquery', 'pdf-builder-vendors'], '9.0.0_force_' . microtime(true) . '_' . uniqid(), false);
+
+        // Charger TOUS les chunks pdf-builder-admin générés par webpack
+        wp_enqueue_script('pdf-builder-admin-runtime', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/runtime.6f39598fda3ae73bb4d2.js', [], '1.0.0_force_' . microtime(true), false);
+        wp_enqueue_script('pdf-builder-admin-1', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin-1d516cb0.dba576e10883b056b4d3.js', ['pdf-builder-admin-runtime'], '1.0.0_force_' . microtime(true), false);
+        wp_enqueue_script('pdf-builder-admin-2', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin-34fc0d47.95c88c6b447d9ff209d4.js', ['pdf-builder-admin-1'], '1.0.0_force_' . microtime(true), false);
+        wp_enqueue_script('pdf-builder-admin-3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin-4f3f9370.f447d47e9d6761dc9b25.js', ['pdf-builder-admin-2'], '1.0.0_force_' . microtime(true), false);
+        wp_enqueue_script('pdf-builder-admin-4', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin-e1c9197f.bdcdaec9ae6bfe1a2869.js', ['pdf-builder-admin-3'], '1.0.0_force_' . microtime(true), false);
+
+        // Script principal (celui qui expose PDFBuilderPro)
+        wp_enqueue_script('pdf-builder-admin-v3', PDF_BUILDER_PRO_ASSETS_URL . 'js/dist/pdf-builder-admin-e1c9197f.bdcdaec9ae6bfe1a2869.js', ['pdf-builder-admin-4'], '9.0.0_force_' . microtime(true) . '_' . uniqid(), false);
 // DEBUG: Confirm PHP deployment
         error_log('PDF Builder: Scripts enqueued - PHP deployment confirmed - TIMESTAMP: ' . time());
 // Script de correction de nonce - NOUVEAU HANDLE POUR FORCER LE RECHARGEMENT
