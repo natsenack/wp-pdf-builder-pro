@@ -353,13 +353,13 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
     - **✅ RÉALISÉ** : Méthode renderElement() implémentée avec support complet des 7 types d'éléments, endpoint API créé, rate limiting configuré, tests validés, déploiement réussi
 
 - [ ] **Étape 3.2 : Implémenter CanvasMode et MetaboxMode**
-  - **3.2.1** : Créer interfaces communes (ModeInterface)
+  - [x] **3.2.1** : Créer interfaces communes (ModeInterface)
     - Définir `ModeInterface` avec méthodes communes
     - Spécifier contrats d'échange de données
     - Documenter responsabilités de chaque mode
     - **Test en ligne** : Interfaces compilées sans erreur
     - **Diagnostic** : Vérifier implémentations conformes
-    - **✅ RÉALISÉ** : 4 interfaces créées (ModeInterface, DataProviderInterface, PreviewRendererInterface, EventHandlerInterface) avec contrats d'échange détaillés, tests unitaires validés
+    - **✅ RÉALISÉ** : 4 interfaces créées (ModeInterface, DataProviderInterface, PreviewRendererInterface, EventHandlerInterface) avec contrats d'échange détaillés, tests unitaires validés, déploiement FTP réussi
 
   - **3.2.2** : Implémenter CanvasModeProvider (données fictives)
     - Créer `CanvasModeProvider` avec données d'exemple
@@ -683,6 +683,7 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
 - **Contrats d'échange détaillés** : Méthodes communes et responsabilités clairement définies pour chaque interface
 - **Tests unitaires validés** : Toutes les interfaces compilées sans erreur, méthodes vérifiées par réflexion PHP
 - **Architecture modulaire** : Base solide pour implémenter CanvasMode et MetaboxMode dans les prochaines phases
+- **Déploiement réussi** : Toutes les interfaces uploadées sur le serveur via FTP
 
 **📊 Progression globale** : Phase 2 terminée (100%), Phase 3.1.1-3.1.4 + 3.2.1 terminées (infrastructure PreviewRenderer complète + intégration système de rendu + interfaces communes)
 
