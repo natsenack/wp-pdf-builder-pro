@@ -1424,7 +1424,7 @@ class PDF_Builder_Admin
             // Attendre que le bundle soit chargé avant d\'ajouter le nonce
             function waitForPDFBuilderPro() {
                 if (typeof window.initializePDFBuilderPro === \'function\') {
-                    // La fonction d'initialisation existe, l'utiliser pour obtenir l'instance
+                    // La fonction d\'initialisation existe, l\'utiliser pour obtenir l\'instance
                     window.pdfBuilderPro = window.initializePDFBuilderPro();
                     window.pdfBuilderPro.nonce = window.pdfBuilderPro.nonce || "' . wp_create_nonce('pdf_builder_order_actions') . '";
                     console.log(\'PDF Builder: Instance initialisee via initializePDFBuilderPro\');
@@ -5584,3 +5584,4 @@ class PDF_Builder_Admin
 if (!defined('ABSPATH')) {
     exit('Accès direct interdit');
 }
+// Correction appliquee le 10/23/2025 01:44:30
