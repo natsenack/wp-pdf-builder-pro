@@ -48,6 +48,25 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   // Gestionnaire d'outils
   const handleToolSelect = (toolId) => {
     setSelectedTool(toolId);
+
+    // Créer un élément selon l'outil sélectionné
+    const elementDefaults = {
+      'add-text': { type: 'text', text: 'Nouveau texte', x: 50, y: 50, fontSize: 16, color: '#000000' },
+      'add-text-title': { type: 'text', text: 'Titre', x: 50, y: 50, fontSize: 24, fontWeight: 'bold', color: '#000000' },
+      'add-text-subtitle': { type: 'text', text: 'Sous-titre', x: 50, y: 50, fontSize: 18, fontWeight: 'normal', color: '#666666' },
+      'add-rectangle': { type: 'rectangle', x: 50, y: 50, width: 100, height: 60, backgroundColor: '#ffffff', borderWidth: 1, borderColor: '#000000' },
+      'add-circle': { type: 'circle', x: 75, y: 75, radius: 30, backgroundColor: '#ffffff', borderWidth: 1, borderColor: '#000000' },
+      'add-line': { type: 'line', x: 50, y: 50, width: 100, height: 2, lineColor: '#000000', lineWidth: 2 },
+      'add-arrow': { type: 'line', x: 50, y: 50, width: 100, height: 2, lineColor: '#000000', lineWidth: 2 }, // TODO: Implémenter flèche
+      'add-triangle': { type: 'shape-triangle', x: 50, y: 50, width: 60, height: 50, backgroundColor: '#ffffff', borderWidth: 1, borderColor: '#000000' },
+      'add-star': { type: 'shape-star', x: 50, y: 50, width: 60, height: 60, backgroundColor: '#ffffff', borderWidth: 1, borderColor: '#000000' },
+      'add-divider': { type: 'line', x: 50, y: 50, width: 200, height: 2, lineColor: '#cccccc', lineWidth: 1 },
+      'add-image': { type: 'image', x: 50, y: 50, width: 100, height: 100, src: '' }
+    };
+
+    if (elementDefaults[toolId]) {
+      handleAddElement(elementDefaults[toolId].type, elementDefaults[toolId]);
+    }
   };
 
   // Gestionnaire de zoom
@@ -491,7 +510,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
     console.log('PDFEditor renderCanvas called - canvas dimensions:', canvas.width, 'x', canvas.height, '- elements count:', elements.length);
     if (elements.length > 0) {
-      console.log('PDFEditor rendering elements:', elements);
     }
 
     const ctx = canvas.getContext('2d');
@@ -524,7 +542,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
     // Dessiner les éléments
     elements.forEach((element, index) => {
-      console.log(`PDFEditor rendering element ${index}:`, element);
 
       // Mettre en évidence l'élément sélectionné
       if (selectedElement === element.id) {
@@ -604,13 +621,19 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
       console.log(`PDFEditor: Starting to render element ${index} of type "${element.type}" with id ${element.id}`);
 
       if (element.type === 'text') {
-        console.log(`PDFEditor: Rendering TEXT element ${element.id} at (${element.x}, ${element.y}): "${element.text}"`);
+        // Appliquer la couleur du texte
         ctx.fillStyle = element.color || '#000000';
+
+        // Appliquer le style de police (italic, etc.)
+        const fontStyle = element.fontStyle === 'italic' ? 'italic ' : '';
         const fontWeight = element.fontWeight ? `${element.fontWeight} ` : '';
-        ctx.font = `${fontWeight}${element.fontSize || 16}px ${element.fontFamily || 'Arial'}`;
+        ctx.font = `${fontStyle}${fontWeight}${element.fontSize || 16}px ${element.fontFamily || 'Arial'}`;
+
+        // Appliquer l'alignement du texte
+        ctx.textAlign = element.textAlign || 'left';
+
         const textX = element.x || 10;
         const textY = element.y || 30;
-        console.log(`PDFEditor drawing text at (${textX}, ${textY}): "${element.text || 'Texte'}"`);
         ctx.fillText(element.text || 'Texte', textX, textY);
       } else if (element.type === 'rectangle') {
         ctx.fillStyle = element.backgroundColor || '#ffffff';
@@ -618,7 +641,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         const rectY = element.y || 10;
         const rectWidth = element.width || 100;
         const rectHeight = element.height || 50;
-        console.log(`PDFEditor drawing rectangle at (${rectX}, ${rectY}) size (${rectWidth}, ${rectHeight})`);
         ctx.fillRect(rectX, rectY, rectWidth, rectHeight);
         if (element.borderWidth > 0) {
           ctx.strokeStyle = element.borderColor || '#000000';
@@ -626,7 +648,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           ctx.strokeRect(rectX, rectY, rectWidth, rectHeight);
         }
       } else if (element.type === 'circle') {
-        console.log(`PDFEditor: Rendering CIRCLE element ${element.id} at (${element.x || 10}, ${element.y || 10}) radius ${element.radius || 25}`);
         ctx.fillStyle = element.backgroundColor || '#ffffff';
         ctx.beginPath();
         ctx.arc(element.x || 10, element.y || 10, element.radius || 25, 0, 2 * Math.PI);
@@ -637,7 +658,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           ctx.stroke();
         }
       } else if (element.type === 'company_logo') {
-        console.log(`PDFEditor: Rendering COMPANY_LOGO element ${element.id} at (${element.x || 10}, ${element.y || 10})`);
         // Rendu spécifique pour le logo de l'entreprise
         const imageUrl = element.src || element.imageUrl;
         if (imageUrl) {
@@ -668,12 +688,10 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             }
 
             ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
-            console.log(`PDFEditor drawing company logo at (${drawX}, ${drawY}) size (${drawWidth}, ${drawHeight})`);
           };
           img.src = imageUrl;
         }
       } else if (element.type === 'dynamic-text') {
-        console.log(`PDFEditor: Rendering DYNAMIC_TEXT element ${element.id} at (${element.x || 10}, ${element.y || 30}): "${element.customContent || element.text || 'Texte'}"`);
         // Rendu spécifique pour le texte dynamique
         ctx.fillStyle = element.color || '#333333';
         const fontWeight = element.fontWeight || 'normal';
@@ -695,11 +713,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         }
 
         ctx.fillText(displayText, textX, textY + (element.height || 30) / 2);
-        console.log(`PDFEditor drawing dynamic text at (${textX}, ${textY}): "${displayText}"`);
       } else if (element.type === 'order_number') {
-        console.log(`PDFEditor: Rendering ORDER_NUMBER element ${element.id} at (${element.x || 10}, ${element.y || 30})`);
-        // Rendu spécifique pour le numéro de commande
-        ctx.fillStyle = element.color || '#333333';
         const fontWeight = element.fontWeight || 'bold';
         ctx.font = `${fontWeight} ${element.fontSize || 14}px ${element.fontFamily || 'Arial'}`;
         ctx.textAlign = element.textAlign || 'right';
@@ -717,11 +731,10 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         const formattedText = element.format || 'Commande #{order_number}';
         ctx.textAlign = element.textAlign || 'right';
         ctx.fillText(formattedText, textX + (element.width || 270), textY + (element.height || 40) / 2);
-        console.log(`PDFEditor drawing order number: "${formattedText}"`);
       } else if (element.type === 'document_type') {
-        console.log(`PDFEditor: Rendering DOCUMENT_TYPE element ${element.id} at (${element.x || 10}, ${element.y || 30}): "FACTURE"`);
-        // Rendu spécifique pour le type de document
-        ctx.fillStyle = element.color || '#1e293b';
+        // Appliquer la couleur du texte
+        ctx.fillStyle = element.color || '#000000';
+
         const fontWeight = element.fontWeight || 'bold';
         ctx.font = `${fontWeight} ${element.fontSize || 18}px ${element.fontFamily || 'Arial'}`;
         ctx.textAlign = element.textAlign || 'center';
@@ -731,9 +744,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         const displayText = 'FACTURE';
 
         ctx.fillText(displayText, textX + (element.width || 120) / 2, textY + (element.height || 50) / 2);
-        console.log(`PDFEditor drawing document type: "${displayText}"`);
       } else if (element.type === 'line') {
-        console.log(`PDFEditor: Rendering LINE element ${element.id} at (${element.x || 10}, ${element.y || 110}) width ${element.width || 20}`);
         // Rendu spécifique pour la ligne
         ctx.strokeStyle = element.lineColor || '#64748b';
         ctx.lineWidth = element.lineWidth || 2;
@@ -744,9 +755,59 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.moveTo(lineX, lineY + (element.height || 12) / 2);
         ctx.lineTo(lineX + lineWidth, lineY + (element.height || 12) / 2);
         ctx.stroke();
-        console.log(`PDFEditor drawing line at (${lineX}, ${lineY}) width: ${lineWidth}`);
+      } else if (element.type === 'shape-triangle') {
+        // Rendu spécifique pour le triangle
+        const centerX = element.x || 10;
+        const centerY = element.y || 10;
+        const width = element.width || 60;
+        const height = element.height || 50;
+
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY - height / 2); // Sommet
+        ctx.lineTo(centerX - width / 2, centerY + height / 2); // Bas gauche
+        ctx.lineTo(centerX + width / 2, centerY + height / 2); // Bas droite
+        ctx.closePath();
+
+        if (element.backgroundColor && element.backgroundColor !== 'transparent') {
+          ctx.fillStyle = element.backgroundColor;
+          ctx.fill();
+        }
+
+        if (element.borderWidth > 0) {
+          ctx.strokeStyle = element.borderColor || '#000000';
+          ctx.lineWidth = element.borderWidth || 1;
+          ctx.stroke();
+        }
+      } else if (element.type === 'shape-star') {
+        // Rendu spécifique pour l'étoile
+        const centerX = element.x || 10;
+        const centerY = element.y || 10;
+        const outerRadius = (element.width || 60) / 2;
+        const innerRadius = outerRadius * 0.5;
+        const spikes = 5;
+
+        ctx.beginPath();
+        for (let i = 0; i < spikes * 2; i++) {
+          const angle = (i * Math.PI) / spikes;
+          const radius = i % 2 === 0 ? outerRadius : innerRadius;
+          const x = centerX + Math.cos(angle) * radius;
+          const y = centerY + Math.sin(angle) * radius;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+
+        if (element.backgroundColor && element.backgroundColor !== 'transparent') {
+          ctx.fillStyle = element.backgroundColor;
+          ctx.fill();
+        }
+
+        if (element.borderWidth > 0) {
+          ctx.strokeStyle = element.borderColor || '#000000';
+          ctx.lineWidth = element.borderWidth || 1;
+          ctx.stroke();
+        }
       } else if (element.type === 'mentions') {
-        console.log(`PDFEditor: Rendering MENTIONS element ${element.id} at (${element.x || 10}, ${element.y || 10})`);
         // Rendu spécifique pour les mentions légales
         ctx.fillStyle = element.color || '#666666';
         ctx.font = `${element.fontSize || 8}px ${element.fontFamily || 'Arial'}`;
@@ -762,9 +823,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
         const displayText = parts.join(element.separator || ' • ');
         ctx.fillText(displayText, textX + (element.width || 300) / 2, textY + (element.height || 40) / 2);
-        console.log(`PDFEditor drawing mentions: "${displayText}"`);
       } else if (element.type === 'customer_info' || element.type === 'company_info') {
-        console.log(`PDFEditor: Rendering ${element.type.toUpperCase()} element ${element.id} at (${element.x || 10}, ${element.y || 10}) with ${element.fields?.length || 0} fields`);
         // Rendu spécifique pour les informations client/entreprise
         ctx.fillStyle = element.color || '#1e293b';
         ctx.font = `${element.fontSize || 14}px ${element.fontFamily || 'Arial'}`;
@@ -807,9 +866,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             currentY += (element.spacing || 5) + 15;
           });
         }
-        console.log(`PDFEditor drawing ${element.type} with ${element.fields?.length || 0} fields`);
       } else if (element.type === 'product_table') {
-        console.log(`PDFEditor: Rendering PRODUCT_TABLE element ${element.id} at (${element.x || 30}, ${element.y || 270})`);
         // Rendu basique pour le tableau de produits
         ctx.fillStyle = element.color || '#475569';
         ctx.font = `${element.fontSize || 14}px ${element.fontFamily || 'Arial'}`;
@@ -850,7 +907,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           currentY += 25;
         });
 
-        console.log(`PDFEditor drawing product table with ${sampleRows.length} rows`);
       } else {
         console.log(`PDFEditor: UNKNOWN ELEMENT TYPE "${element.type}" for element ${element.id} - rendering as generic red rectangle`);
         console.log(`PDFEditor: Detailed properties for ${element.type}:`, JSON.stringify(element, null, 2));
@@ -860,7 +916,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         const genericY = element.y || 10;
         const genericWidth = element.width || 100;
         const genericHeight = element.height || 30;
-        console.log(`PDFEditor drawing generic element (${element.type}) at (${genericX}, ${genericY}) size (${genericWidth}, ${genericHeight})`);
 
         // Dessiner un rectangle rouge avec le type d'élément
         ctx.fillRect(genericX, genericY, genericWidth, genericHeight);
@@ -891,7 +946,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
     console.log('PDFEditor useEffect triggered - initialElements:', initialElements, 'length:', initialElements ? initialElements.length : 'undefined');
     if (initialElements && initialElements.length > 0) {
       console.log('PDFEditor: Setting elements from initialElements:', initialElements.length, 'elements');
-      console.log('PDFEditor: Elements data:', initialElements);
       setElements(initialElements);
       setHistory([initialElements]);
       setHistoryIndex(0);

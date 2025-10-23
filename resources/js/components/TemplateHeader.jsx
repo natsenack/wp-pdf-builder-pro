@@ -15,10 +15,24 @@ const TemplateHeader = ({
     height: 842,
     orientation: 'portrait'
   });
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState('');
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (onSave) {
-      onSave();
+      setIsSaving(true);
+      setSaveMessage('');
+
+      try {
+        await onSave();
+        setSaveMessage('Template sauvegardé avec succès !');
+        setTimeout(() => setSaveMessage(''), 3000); // Masquer le message après 3 secondes
+      } catch (error) {
+        setSaveMessage('Erreur lors de la sauvegarde');
+        setTimeout(() => setSaveMessage(''), 3000);
+      } finally {
+        setIsSaving(false);
+      }
     }
   };
 
@@ -54,16 +68,26 @@ const TemplateHeader = ({
           <h2 className="template-title">
             {isNew ? 'Nouveau template' : `Modifier: ${templateName || 'Template sans nom'}`}
           </h2>
+          {saveMessage && (
+            <div className={`save-message ${saveMessage.includes('succès') ? 'success' : 'error'}`}>
+              {saveMessage}
+            </div>
+          )}
         </div>
 
         <div className="header-right">
           <button
-            className="header-btn save-btn"
+            className={`header-btn save-btn ${isSaving ? 'saving' : ''}`}
             onClick={handleSave}
+            disabled={isSaving}
             title={isNew ? 'Sauvegarder le template' : 'Modifier le template'}
           >
-            <span className="btn-icon">{isNew ? '💾' : '✏️'}</span>
-            <span className="btn-text">{isNew ? 'Sauvegarder' : 'Modifier'}</span>
+            <span className="btn-icon">
+              {isSaving ? '⏳' : (isNew ? '💾' : '✏️')}
+            </span>
+            <span className="btn-text">
+              {isSaving ? 'Sauvegarde...' : (isNew ? 'Sauvegarder' : 'Modifier')}
+            </span>
           </button>
 
           <button
