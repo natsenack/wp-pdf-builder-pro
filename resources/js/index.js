@@ -57,10 +57,43 @@ try {
             console.log('PDF Editor saving elements:', elements);
             
             try {
+              // Fonction pour nettoyer les éléments avant sérialisation
+              const sanitizeForJSON = (obj) => {
+                if (obj === null || typeof obj !== 'object') {
+                  return obj;
+                }
+                
+                if (Array.isArray(obj)) {
+                  return obj.map(sanitizeForJSON);
+                }
+                
+                const cleaned = {};
+                for (const [key, value] of Object.entries(obj)) {
+                  // Ignorer les fonctions, undefined, et les propriétés commençant par _
+                  if (typeof value !== 'function' && value !== undefined && !key.startsWith('_')) {
+                    cleaned[key] = sanitizeForJSON(value);
+                  }
+                }
+                return cleaned;
+              };
+              
+              const sanitizedElements = sanitizeForJSON(elements);
+              console.log('Sanitized elements for JSON:', sanitizedElements);
+              
+              // Tester la sérialisation JSON
+              let templateData;
+              try {
+                templateData = JSON.stringify(sanitizedElements);
+                console.log('JSON serialization successful, length:', templateData.length);
+              } catch (jsonError) {
+                console.error('JSON serialization failed:', jsonError);
+                throw new Error('Erreur de sérialisation JSON: ' + jsonError.message);
+              }
+              
               // Préparer les données pour la sauvegarde
               const saveData = {
                 action: 'pdf_builder_save_template',
-                template_data: JSON.stringify(elements),
+                template_data: templateData,
                 template_name: options.templateName || 'Template sans nom',
                 template_id: options.templateId || 0,
                 nonce: window.pdfBuilderAjax ? window.pdfBuilderAjax.nonce : (window.pdfBuilderPro ? window.pdfBuilderPro.nonce : '')
