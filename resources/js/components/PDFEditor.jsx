@@ -99,6 +99,13 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
     }
   };
 
+  // Gestionnaire de sauvegarde
+  const handleSave = async () => {
+    if (onSave) {
+      await onSave(elements);
+    }
+  };
+
   const canUndo = historyIndex > 0;
   const canRedo = historyIndex < history.length - 1;
 
@@ -2236,7 +2243,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
       <TemplateHeader
         templateName={templateName}
         isNew={isNew}
-        onSave={onSave}
+        onSave={handleSave}
         onCreateNew={handleCreateNew}
         onPreview={handlePreview}
       />
