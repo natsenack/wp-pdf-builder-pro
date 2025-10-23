@@ -369,9 +369,17 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         {showPropertiesPanel && selectedElement && (
           <div className="properties-panel-container">
             <PropertiesPanel
-              selectedElement={elements.find(el => el.id === selectedElement)}
-              onElementUpdate={(properties) => handleElementUpdate(selectedElement, properties)}
-              onElementDelete={() => handleElementDelete(selectedElement)}
+              selectedElements={selectedElement ? [selectedElement] : []}
+              elements={elements}
+              onPropertyChange={(elementId, property, value) => {
+                handleElementUpdate(elementId, { [property]: value });
+              }}
+              onBatchUpdate={(updates) => {
+                // Handle batch updates if needed
+                updates.forEach(update => {
+                  handleElementUpdate(update.elementId, update.properties);
+                });
+              }}
             />
           </div>
         )}
