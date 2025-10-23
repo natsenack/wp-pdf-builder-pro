@@ -15,6 +15,9 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   // Contexte d'aperçu
   const { actions: { openPreview } } = usePreviewContext();
 
+  // Debug: Afficher les éléments initiaux
+  console.log('PDFEditor initialElements:', initialElements);
+
   // État de l'éditeur
   const [selectedTool, setSelectedTool] = useState('select');
   const [zoom, setZoom] = useState(1.0);
@@ -120,6 +123,45 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
     // Sauvegarder automatiquement si callback fourni
     if (onSave) {
       onSave(newElements);
+    }
+  };
+
+  // Gestionnaire de drag over
+  const handleDragOver = (event) => {
+    event.preventDefault(); // Permettre le drop
+    event.dataTransfer.dropEffect = 'copy';
+  };
+
+  // Gestionnaire de drop
+  const handleDrop = (event) => {
+    event.preventDefault();
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / zoom;
+    const y = (event.clientY - rect.top) / zoom;
+
+    try {
+      const data = JSON.parse(event.dataTransfer.getData('application/json'));
+
+      if (data.type === 'element') {
+        // Créer un nouvel élément à la position du drop
+        const newElement = {
+          id: Date.now(),
+          type: data.elementType,
+          x: x,
+          y: y,
+          ...data.defaultProperties
+        };
+
+        const newElements = [...elements, newElement];
+        handleElementsChange(newElements);
+        setSelectedElement(newElement.id);
+      }
+    } catch (error) {
+      console.error('Erreur lors du drop:', error);
     }
   };
 
@@ -296,6 +338,21 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
     renderCanvas();
   }, [elements, zoom, showGrid, selectedElement]);
 
+  // S'assurer que le canvas se rend au montage initial
+  useEffect(() => {
+    renderCanvas();
+  }, []);
+
+  // Mettre à jour les éléments quand initialElements change
+  useEffect(() => {
+    if (initialElements && initialElements.length > 0) {
+      console.log('Updating elements from initialElements:', initialElements);
+      setElements(initialElements);
+      setHistory([initialElements]);
+      setHistoryIndex(0);
+    }
+  }, [initialElements]);
+
   // Écouter les événements globaux pour le bouton aperçu du header
   useEffect(() => {
     const handleGlobalPreview = (event) => {
@@ -362,6 +419,8 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
               cursor: selectedTool === 'select' ? 'default' : 'crosshair'
             }}
             onClick={handleCanvasClick}
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
           />
         </div>
 

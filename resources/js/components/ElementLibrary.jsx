@@ -241,7 +241,21 @@ const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
     }
   ];
 
-  // Gestionnaire pour le drag start - REMOVED: plus d'éléments à dragger
+  // Gestionnaire pour le drag start
+  const handleDragStart = (e, element, index) => {
+    e.dataTransfer.setData('application/json', JSON.stringify({
+      type: 'element',
+      elementType: element.type,
+      defaultProperties: {
+        x: 50 + (index * 20),
+        y: 100 + (index * 20),
+        width: 300,
+        height: 150,
+        ...element.defaultProperties
+      }
+    }));
+    e.dataTransfer.effectAllowed = 'copy';
+  };
 
   return (
     <>
@@ -295,6 +309,8 @@ const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
               <button
                 key={index}
                 className="element-button"
+                draggable={true}
+                onDragStart={(e) => handleDragStart(e, element, index)}
                 onClick={() => {
                   onAddElement(element.type, {
                     x: 50 + (index * 20),
