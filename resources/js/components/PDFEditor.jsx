@@ -15,9 +15,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   // Contexte d'aperçu
   const { actions: { openPreview } } = usePreviewContext();
 
-  // Debug: Afficher les éléments initiaux
-  console.log('PDFEditor initialElements:', initialElements);
-
   // État de l'éditeur
   const [selectedTool, setSelectedTool] = useState('select');
   const [zoom, setZoom] = useState(1.0);
@@ -346,7 +343,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   // Mettre à jour les éléments quand initialElements change
   useEffect(() => {
     if (initialElements && initialElements.length > 0) {
-      console.log('Updating elements from initialElements:', initialElements);
       setElements(initialElements);
       setHistory([initialElements]);
       setHistoryIndex(0);
