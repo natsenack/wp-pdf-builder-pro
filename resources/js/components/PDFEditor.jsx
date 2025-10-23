@@ -238,6 +238,18 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           const dx = x - element.x;
           const dy = y - element.y;
           return Math.sqrt(dx * dx + dy * dy) <= (element.radius || 25);
+        } else if (element.type === 'company_logo' || element.type === 'dynamic-text' ||
+                   element.type === 'order_number' || element.type === 'document_type' ||
+                   element.type === 'customer_info' || element.type === 'company_info' ||
+                   element.type === 'product_table' || element.type === 'mentions') {
+          // Pour tous les éléments rectangulaires avec width/height
+          return x >= element.x && x <= element.x + (element.width || 100) &&
+                 y >= element.y && y <= element.y + (element.height || 30);
+        } else if (element.type === 'line') {
+          // Pour les lignes, zone de tolérance autour de la ligne
+          const tolerance = 5;
+          return x >= element.x && x <= element.x + (element.width || 20) &&
+                 Math.abs(y - (element.y + (element.height || 12) / 2)) <= tolerance;
         }
         return false;
       });
@@ -310,6 +322,17 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           ctx.beginPath();
           ctx.arc(element.x, element.y, (element.radius || 25) + 5, 0, 2 * Math.PI);
           ctx.stroke();
+        } else if (element.type === 'company_logo' || element.type === 'dynamic-text' ||
+                   element.type === 'order_number' || element.type === 'document_type' ||
+                   element.type === 'customer_info' || element.type === 'company_info' ||
+                   element.type === 'product_table' || element.type === 'mentions') {
+          // Mise en évidence pour les éléments rectangulaires
+          ctx.strokeRect(element.x - 5, element.y - 5,
+                        (element.width || 100) + 10, (element.height || 30) + 10);
+        } else if (element.type === 'line') {
+          // Mise en évidence pour les lignes
+          ctx.strokeRect(element.x - 5, element.y - 10,
+                        (element.width || 20) + 10, (element.height || 12) + 20);
         }
 
         ctx.setLineDash([]);
