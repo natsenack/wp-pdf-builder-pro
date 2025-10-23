@@ -644,7 +644,10 @@ window.addEventListener('load', function() {
                 $license_info = $license_manager->get_license_info();
                 $is_premium = $license_manager->is_premium();
 
-                if ($license_manager->is_available()) {
+                // Vérifier si le gestionnaire de licence est fonctionnel
+                $license_available = method_exists($license_manager, 'activate_license') && method_exists($license_manager, 'get_license_info');
+
+                if ($license_available) {
                     // Traitement de l'activation de licence
                     if (isset($_POST['activate_license']) && check_admin_referer('activate_license', 'license_nonce')) {
                         $license_key = sanitize_text_field($_POST['license_key']);
