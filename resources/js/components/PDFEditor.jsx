@@ -256,11 +256,21 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           // Démarrer le redimensionnement
           setIsResizing(true);
           setResizeHandle(handle);
+
+          // Initialiser les dimensions selon le type d'élément
+          let initWidth = element.width || 100;
+          let initHeight = element.height || 30;
+
+          if (element.type === 'circle') {
+            initWidth = (element.radius || 25) * 2;
+            initHeight = (element.radius || 25) * 2;
+          }
+
           setResizeStart({
             x: x,
             y: y,
-            width: element.width || 100,
-            height: element.height || 30,
+            width: initWidth,
+            height: initHeight,
             elementX: element.x,
             elementY: element.y
           });
@@ -326,10 +336,12 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         let newHeight = resizeStart.height;
         let newX = element.x;
         let newY = element.y;
+        let newRadius = element.radius;
 
         const deltaX = x - resizeStart.x;
         const deltaY = y - resizeStart.y;
 
+        // Logique de redimensionnement commune
         switch (resizeHandle) {
           case 'nw':
             newWidth = Math.max(20, resizeStart.width - deltaX);
@@ -367,12 +379,23 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             break;
         }
 
-        handleElementUpdate(selectedElement, {
-          x: newX,
-          y: newY,
-          width: newWidth,
-          height: newHeight
-        });
+        // Adaptation selon le type d'élément
+        if (element.type === 'circle') {
+          // Pour les cercles, utiliser le minimum de width/height comme diamètre
+          newRadius = Math.min(newWidth, newHeight) / 2;
+          handleElementUpdate(selectedElement, {
+            x: newX,
+            y: newY,
+            radius: Math.max(10, newRadius)
+          });
+        } else {
+          handleElementUpdate(selectedElement, {
+            x: newX,
+            y: newY,
+            width: newWidth,
+            height: newHeight
+          });
+        }
       }
     } else if (isDragging && dragElement) {
       // Déplacer l'élément
@@ -401,16 +424,25 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
     const handleSize = 10;
     const offset = 5;
 
+    // Calculer les dimensions selon le type d'élément
+    let elementWidth = element.width || 100;
+    let elementHeight = element.height || 30;
+
+    if (element.type === 'circle') {
+      elementWidth = (element.radius || 25) * 2;
+      elementHeight = (element.radius || 25) * 2;
+    }
+
     // Calculer les positions des poignées
     const handles = {
       nw: { x: element.x - offset, y: element.y - offset },
-      ne: { x: element.x + (element.width || 100) - offset, y: element.y - offset },
-      sw: { x: element.x - offset, y: element.y + (element.height || 30) - offset },
-      se: { x: element.x + (element.width || 100) - offset, y: element.y + (element.height || 30) - offset },
-      n: { x: element.x + (element.width || 100) / 2 - offset, y: element.y - offset },
-      s: { x: element.x + (element.width || 100) / 2 - offset, y: element.y + (element.height || 30) - offset },
-      w: { x: element.x - offset, y: element.y + (element.height || 30) / 2 - offset },
-      e: { x: element.x + (element.width || 100) - offset, y: element.y + (element.height || 30) / 2 - offset }
+      ne: { x: element.x + elementWidth - offset, y: element.y - offset },
+      sw: { x: element.x - offset, y: element.y + elementHeight - offset },
+      se: { x: element.x + elementWidth - offset, y: element.y + elementHeight - offset },
+      n: { x: element.x + elementWidth / 2 - offset, y: element.y - offset },
+      s: { x: element.x + elementWidth / 2 - offset, y: element.y + elementHeight - offset },
+      w: { x: element.x - offset, y: element.y + elementHeight / 2 - offset },
+      e: { x: element.x + elementWidth - offset, y: element.y + elementHeight / 2 - offset }
     };
 
     for (const [handle, pos] of Object.entries(handles)) {
@@ -504,10 +536,10 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
       }
 
       // Dessiner les poignées de redimensionnement si l'élément est sélectionné
-      if (selectedElement === element.id && (element.type === 'rectangle' || element.type === 'company_logo' ||
-          element.type === 'dynamic-text' || element.type === 'order_number' || element.type === 'document_type' ||
-          element.type === 'customer_info' || element.type === 'company_info' || element.type === 'product_table' ||
-          element.type === 'mentions')) {
+      if (selectedElement === element.id && (element.type === 'rectangle' || element.type === 'circle' ||
+          element.type === 'company_logo' || element.type === 'dynamic-text' || element.type === 'order_number' ||
+          element.type === 'document_type' || element.type === 'customer_info' || element.type === 'company_info' ||
+          element.type === 'product_table' || element.type === 'mentions' || element.type === 'line')) {
         const handleSize = 8;
         const offset = 4;
 
@@ -515,12 +547,25 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.strokeStyle = '#ffffff';
         ctx.lineWidth = 1;
 
-        // Poignées de coin
+        // Calculer les dimensions selon le type d'élément
+        let handleWidth = element.width || 100;
+        let handleHeight = element.height || 30;
+
+        if (element.type === 'circle') {
+          handleWidth = (element.radius || 25) * 2;
+          handleHeight = (element.radius || 25) * 2;
+        }
+
+        // Poignées de coin et latérales
         const handles = [
           { x: element.x - offset, y: element.y - offset }, // nw
-          { x: element.x + (element.width || 100) - offset, y: element.y - offset }, // ne
-          { x: element.x - offset, y: element.y + (element.height || 30) - offset }, // sw
-          { x: element.x + (element.width || 100) - offset, y: element.y + (element.height || 30) - offset } // se
+          { x: element.x + handleWidth - offset, y: element.y - offset }, // ne
+          { x: element.x - offset, y: element.y + handleHeight - offset }, // sw
+          { x: element.x + handleWidth - offset, y: element.y + handleHeight - offset }, // se
+          { x: element.x + handleWidth / 2 - offset, y: element.y - offset }, // n
+          { x: element.x + handleWidth / 2 - offset, y: element.y + handleHeight - offset }, // s
+          { x: element.x - offset, y: element.y + handleHeight / 2 - offset }, // w
+          { x: element.x + handleWidth - offset, y: element.y + handleHeight / 2 - offset } // e
         ];
 
         handles.forEach(handle => {
