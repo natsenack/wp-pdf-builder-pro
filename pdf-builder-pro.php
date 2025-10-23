@@ -77,7 +77,6 @@ function pdf_builder_init() {
         }
     } else {
         // Log si bootstrap n'existe pas
-        error_log('PDF Builder Pro: bootstrap.php not found at ' . $bootstrap_path);
     }
 
     // Charger les outils de test en mode développement

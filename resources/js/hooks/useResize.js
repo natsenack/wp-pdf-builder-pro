@@ -57,13 +57,11 @@ export const useResize = ({
 
     // Vérifier que l'élément source existe encore dans le DOM
     if (!e.target || !e.target.isConnected) {
-      console.warn('Resize handle target no longer exists in DOM');
       return;
     }
 
     // Vérifier que l'élément parent existe encore
     if (!e.target.parentNode || !e.target.parentNode.isConnected) {
-      console.warn('Resize handle parent no longer exists in DOM');
       return;
     }
 

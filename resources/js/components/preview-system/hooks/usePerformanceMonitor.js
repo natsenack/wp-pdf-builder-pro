@@ -13,11 +13,8 @@ export function usePerformanceMonitor(componentName = 'Unknown') {
     startTimeRef.current = performance.now();
     renderCountRef.current = 0;
 
-    console.log(`[Performance] ${componentName} - Mount started`);
-
     return () => {
       const duration = performance.now() - startTimeRef.current;
-      console.log(`[Performance] ${componentName} - Unmount after ${duration.toFixed(2)}ms, ${renderCountRef.current} renders`);
     };
   }, [componentName]);
 
@@ -34,17 +31,13 @@ export function usePerformanceMonitor(componentName = 'Unknown') {
       const result = operation();
       const duration = performance.now() - start;
 
-      console.log(`[Performance] ${componentName} - ${operationName}: ${duration.toFixed(2)}ms`);
-
       // Mesurer la mémoire si disponible
       if (performance.memory) {
-        console.log(`[Performance] ${componentName} - Memory: ${(performance.memory.usedJSHeapSize / 1024 / 1024).toFixed(2)}MB used`);
       }
 
       return result;
     } catch (error) {
       const duration = performance.now() - start;
-      console.error(`[Performance] ${componentName} - ${operationName} failed after ${duration.toFixed(2)}ms:`, error);
       throw error;
     }
   }, [componentName]);
@@ -56,7 +49,6 @@ export function usePerformanceMonitor(componentName = 'Unknown') {
     return {
       end: () => {
         const duration = performance.now() - start;
-        console.log(`[Performance] ${componentName} - ${resourceName} loaded in ${duration.toFixed(2)}ms`);
         return duration;
       }
     };

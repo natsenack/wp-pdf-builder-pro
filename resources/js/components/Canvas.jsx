@@ -613,7 +613,7 @@ const Canvas = ({
 
       onElementUpdate(elementId, { x: newX, y: newY });
     } catch (error) {
-      console.warn('Erreur lors du drop:', error);
+      // Error during drop operation
     }
   }, [onElementUpdate, getMouseCoordinates, elements, canvasWidth, canvasHeight, snapToGrid, gridSize]);
 

@@ -1141,7 +1141,6 @@ class PDF_Builder_Admin
         </script>
 
         <script>
-        console.log("PDF Builder Debug: Page TCPDF chargée côté client");
         </script>
 
         <style>
@@ -1418,7 +1417,6 @@ class PDF_Builder_Admin
                     'confirm_duplicate' => __('Dupliquer ce template ?', 'pdf-builder-pro'),
                 ]
                 ]) . ';
-            console.log("PDF Builder: Variables AJAX définies globalement:", window.pdfBuilderAjax);
             
             // Définir également pdfBuilderPro.nonce pour la compatibilité avec RealDataProvider
             // Attendre que le bundle soit chargé avant d\'ajouter le nonce
@@ -1537,7 +1535,7 @@ class PDF_Builder_Admin
             'default_text_color' => $canvas_settings['default_text_color'] ?? '#000000',
             'default_background_color' => $canvas_settings['default_background_color'] ?? '#ffffff',
             'default_font_size' => $canvas_settings['default_font_size'] ?? 14
-            ]);
+        ]);
 // Styles pour l'éditeur canvas
         if ($hook === 'pdf-builder_page_pdf-builder-editor') {
             wp_enqueue_style('pdf-builder-react', PDF_BUILDER_PRO_ASSETS_URL . 'css/pdf-builder-react.css', [], PDF_BUILDER_PRO_VERSION);
@@ -1545,8 +1543,6 @@ class PDF_Builder_Admin
             wp_enqueue_style('pdf-builder-editor-consolidated', PDF_BUILDER_PRO_ASSETS_URL . 'css/editor.css', [], PDF_BUILDER_PRO_VERSION);
 // Script inline pour vérifier React
             wp_add_inline_script('pdf-builder-admin-v3', '
-                console.log("🔍 Vérification React (bundlé)...");
-                console.log("Bundle chargé, React devrait être disponible dans le bundle");
             ', 'after');
 // Variables globales pour l'éditeur
             wp_add_inline_script('pdf-builder-admin-v3', '
@@ -2800,9 +2796,7 @@ class PDF_Builder_Admin
                 }
             }
 
-            error_log('[PDF Builder] Début generate_unified_html');
             $html_content = $this->generate_unified_html($template_data, $order);
-            error_log('[PDF Builder] HTML généré, longueur: ' . strlen($html_content));
         // Charger TCPDF si nécessaire
             if (!class_exists('TCPDF')) {
                 $this->load_tcpdf_library();
@@ -2812,17 +2806,13 @@ class PDF_Builder_Admin
             // Utiliser une bibliothèque PDF si disponible
             if (class_exists('TCPDF')) {
         // Utiliser TCPDF si disponible
-                error_log('[PDF Builder] Création TCPDF');
                 $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
                 $pdf->SetCreator('PDF Builder Pro');
                 $pdf->SetAuthor('PDF Builder Pro');
                 $pdf->SetTitle('Order #' . $order->get_id());
                 $pdf->AddPage();
-                error_log('[PDF Builder] Avant writeHTML');
                 $pdf->writeHTML($html_content, true, false, true, false, '');
-                error_log('[PDF Builder] Avant Output - fichier: ' . $pdf_path);
                 $pdf->Output($pdf_path, 'F');
-                error_log('[PDF Builder] PDF généré: ' . $pdf_path);
                 return $pdf_path;
             } else {
     // Fallback: créer un fichier HTML pour simulation
@@ -2830,12 +2820,8 @@ class PDF_Builder_Admin
                 return $pdf_path;
             }
         } catch (Exception $e) {
-            error_log('[PDF Builder] Exception: ' . $e->getMessage());
-            error_log('[PDF Builder] Stack trace: ' . $e->getTraceAsString());
             throw $e;
         } catch (Error $e) {
-            error_log('[PDF Builder] Error: ' . $e->getMessage());
-            error_log('[PDF Builder] Stack trace: ' . $e->getTraceAsString());
             throw $e;
         }
     }
@@ -3570,9 +3556,7 @@ class PDF_Builder_Admin
         echo "<p><strong>Template ID:</strong> $template_id</p>";
 // Analyser la structure du template
         echo "<h2>Structure du template</h2>";
-        echo "<pre style='background: #f5f5f5; padding: 10px; overflow: auto; max-height: 200px;'>";
-        print_r(array_keys($template));
-        echo "</pre>";
+        echo "<p><strong>Clés du template:</strong> " . implode(', ', array_keys($template)) . "</p>";
         if (isset($template['pages']) && is_array($template['pages'])) {
             echo "<h3>Pages du template (" . count($template['pages']) . " pages)</h3>";
             foreach ($template['pages'] as $page_index => $page) {
@@ -4996,7 +4980,6 @@ class PDF_Builder_Admin
                             }
                         }
 
-                        error_log('[PDF Builder] Template migration - Headers régénérés pour le tableau');
                     }
                 }
             }
@@ -5013,28 +4996,20 @@ class PDF_Builder_Admin
         $order_status = $order->get_status();
         $status_templates = get_option('pdf_builder_order_status_templates', []);
         $status_key = 'wc-' . $order_status;
-        error_log('[PDF Builder] auto_detect_template - Statut commande: ' . $order_status);
-        error_log('[PDF Builder] auto_detect_template - Clé statut: ' . $status_key);
-        error_log('[PDF Builder] auto_detect_template - Status templates config: ' . json_encode($status_templates));
         if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
             $template_id = $status_templates[$status_key];
-            error_log('[PDF Builder] auto_detect_template - Template trouvé pour ce statut: ID ' . $template_id);
             $template = $this->load_template_by_id($template_id);
-            error_log('[PDF Builder] auto_detect_template - Template chargé: ' . json_encode($template));
             return $template;
         }
 
         // Template par défaut si aucun trouvé
-        error_log('[PDF Builder] auto_detect_template - Aucun template pour ce statut, utilisation du template par défaut');
         global $wpdb;
         $table_templates = $wpdb->prefix . 'pdf_builder_templates';
         $default_template = $wpdb->get_var("SELECT template_data FROM $table_templates ORDER BY id ASC LIMIT 1");
         if ($default_template) {
-            error_log('[PDF Builder] auto_detect_template - Template par défaut trouvé');
             return json_decode($default_template, true);
         }
 
-        error_log('[PDF Builder] auto_detect_template - Aucun template disponible!');
         return null;
     }
 
@@ -5094,7 +5069,6 @@ class PDF_Builder_Admin
                             }
 
                             $template_modified = true;
-                            error_log("[PDF Builder] Migration template ID={$row->id}: Headers régénérés");
                         }
                     }
                 }
@@ -5110,7 +5084,6 @@ class PDF_Builder_Admin
                 }
             }
 
-            error_log("[PDF Builder] Migration terminée: $migrated_count templates migrés");
             wp_send_json_success([
                 'message' => "Migration terminée: $migrated_count template(s) corrigé(s)",
                 'migrated' => $migrated_count,
@@ -5118,7 +5091,6 @@ class PDF_Builder_Admin
                 'errors' => $errors
                 ]);
         } catch (Exception $e) {
-            error_log('[PDF Builder] Erreur lors de la migration: ' . $e->getMessage());
             wp_send_json_error(['message' => 'Erreur lors de la migration: ' . $e->getMessage()]);
         }
     }
@@ -5545,12 +5517,6 @@ class PDF_Builder_Admin
 
         // Box-sizing
         $style .= "box-sizing: border-box; ";
-// DEBUG: Log les propriétés trouvées
-        if (!empty($properties_found)) {
-            error_log('[PDF Builder] Styles CSS appliqués (' . count($properties_found) . ' propriétés): ' . implode(', ', $properties_found));
-        } else {
-            error_log('[PDF Builder] AUCUN style CSS trouvé dans l\'élément! Clés disponibles: ' . implode(', ', array_keys($element)));
-        }
 
         return $style;
     }

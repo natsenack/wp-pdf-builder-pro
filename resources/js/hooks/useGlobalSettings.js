@@ -389,12 +389,10 @@ export const useGlobalSettings = () => {
         })
         .then(response => {
           if (!response.ok) {
-            console.warn('Erreur lors de la sauvegarde des paramètres dans WordPress:', response.status);
           } else {
           }
         })
         .catch(error => {
-          console.warn('Erreur AJAX lors de la sauvegarde des paramètres:', error);
         });
       }
 

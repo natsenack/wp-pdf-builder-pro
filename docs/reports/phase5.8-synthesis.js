@@ -35,14 +35,11 @@ class Phase58Synthesis {
             if (fs.existsSync(filePath)) {
                 const data = fs.readFileSync(filePath, 'utf8');
                 this.reports[key] = JSON.parse(data);
-                console.log(`✅ Rapport chargé: ${filename}`);
                 return true;
             } else {
-                console.log(`⚠️ Rapport non trouvé: ${filename}`);
                 return false;
             }
         } catch (error) {
-            console.log(`❌ Erreur chargement ${filename}: ${error.message}`);
             return false;
         }
     }
@@ -289,54 +286,11 @@ class Phase58Synthesis {
         const filePath = path.join(__dirname, filename);
         fs.writeFileSync(filePath, JSON.stringify(this.synthesis, null, 2));
 
-        console.log(`\n📊 Synthèse Phase 5.8 mise à jour sauvegardée: ${filePath}`);
         return this.synthesis;
     }
 
     printSummary() {
         const s = this.synthesis.summary;
-
-        console.log('\n🎯 SYNTHÈSE FINALE PHASE 5.8');
-        console.log('=' .repeat(50));
-        console.log(`Statut global: ${s.overallStatus.toUpperCase()}`);
-        console.log(`Score moyen: ${s.averageScore || 'N/A'}/100`);
-        console.log('');
-
-        console.log('📊 SCORES DÉTAILLÉS:');
-        console.log(`Performance: ${s.performanceScore}/100`);
-        console.log(`Sécurité: ${s.securityScore}/100`);
-        console.log(`Compatibilité: ${s.compatibilityScore.toFixed(2)}/100`);
-        console.log(`Tests de charge: ${s.loadTestScore}/100`);
-        console.log('');
-
-        if (s.criticalIssues.length > 0) {
-            console.log('🚨 PROBLÈMES CRITIQUES:');
-            s.criticalIssues.forEach(issue => console.log(`  • ${issue}`));
-            console.log('');
-        }
-
-        if (s.warnings.length > 0) {
-            console.log('⚠️ AVERTISSEMENTS:');
-            s.warnings.forEach(warning => console.log(`  • ${warning}`));
-            console.log('');
-        }
-
-        if (s.recommendations.length > 0) {
-            console.log('💡 RECOMMANDATIONS:');
-            s.recommendations.forEach(rec => console.log(`  • ${rec}`));
-            console.log('');
-        }
-
-        console.log('📈 PROCHAINES ÉTAPES:');
-        if (s.overallStatus === 'excellent' || s.overallStatus === 'good') {
-            console.log('  • Phase 5.8 validée - Passage aux phases 8-16 (refactoring)');
-            console.log('  • Migration TypeScript (Phase 8)');
-            console.log('  • Corrections PHP (Phase 9)');
-        } else {
-            console.log('  • Corrections des problèmes identifiés');
-            console.log('  • Re-validation Phase 5.8');
-            console.log('  • Tests supplémentaires si nécessaire');
-        }
     }
 }
 

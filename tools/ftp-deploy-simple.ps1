@@ -43,7 +43,7 @@
 #>
 
 param(
-    [string]$Mode = "Sequential",  # Sequential ou Parallel
+    [string]$Mode = "Sequential",  # Sequential ou Parallel (revert à Sequential pour éviter les problèmes de jobs)
     [switch]$Force,                # Forcer le déploiement même sans changements
     [switch]$NoCompile,            # Ne pas compiler automatiquement
     [switch]$NoGit,                # Ne pas faire de commit/push Git
@@ -51,9 +51,9 @@ param(
     [int]$ParallelJobs = 4         # Nombre de jobs parallèles (si mode Parallel)
 )
 
-Write-Host "🚀 FTP DEPLOY - VERSION OPTIMALE" -ForegroundColor Green
-Write-Host "=================================" -ForegroundColor Green
-Write-Host "Mode: $Mode | Force: $($Force.ToString()) | NoCompile: $($NoCompile.ToString())" -ForegroundColor Cyan
+Write-Host "🚀 FTP DEPLOY - VERSION ULTRA-RAPIDE" -ForegroundColor Green
+Write-Host "===================================" -ForegroundColor Green
+Write-Host "Mode: $Mode | Jobs: $ParallelJobs | Force: $($Force.ToString()) | NoCompile: $($NoCompile.ToString())" -ForegroundColor Cyan
 Write-Host ""
 
 # ============================================================================
@@ -134,43 +134,68 @@ function Create-FtpDirectory {
     )
 
     try {
+        # Normaliser le chemin (remplacer les backslashes par des slashes)
+        $directoryPath = $directoryPath -replace '\\', '/'
+
         # Diviser le chemin en segments
         $segments = $directoryPath -split '/' | Where-Object { $_ -ne '' }
 
-        $currentPath = $remotePath
+        $currentPath = $remotePath.TrimEnd('/')
+
+        # Création optimisée des dossiers (logs réduits pour performance)
+        $createdFolders = 0
 
         foreach ($segment in $segments) {
             $currentPath = $currentPath + "/" + $segment
             $ftpUri = "ftp://" + $ftpHost + $currentPath + "/"
 
+            $folderExists = $false
             try {
-                # Vérifier si le dossier existe déjà
+                # Vérifier si le dossier existe déjà (timeout réduit)
                 $checkRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
                 $checkRequest.Method = [System.Net.WebRequestMethods+Ftp]::ListDirectory
                 $checkRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
-                $checkRequest.Timeout = 5000
+                $checkRequest.Timeout = 3000  # Réduit à 3 secondes
 
                 $checkResponse = $checkRequest.GetResponse()
                 $checkResponse.Close()
-                # Le dossier existe déjà, continuer
+                $folderExists = $true
             }
             catch {
-                # Le dossier n'existe pas, le créer
-                $createRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
-                $createRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
-                $createRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
-                $createRequest.UseBinary = $true
-                $createRequest.KeepAlive = $false
-                $createRequest.Timeout = 10000
+                # Rien à faire, on va créer le dossier
+            }
 
-                $createResponse = $createRequest.GetResponse()
-                $createResponse.Close()
+            if (-not $folderExists) {
+                try {
+                    # Créer le dossier
+                    $createRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
+                    $createRequest.Method = [System.Net.WebRequestMethods+Ftp]::MakeDirectory
+                    $createRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
+                    $createRequest.UseBinary = $true
+                    $createRequest.KeepAlive = $false
+                    $createRequest.Timeout = 5000  # Réduit à 5 secondes
+
+                    $createResponse = $createRequest.GetResponse()
+                    $createResponse.Close()
+                    $createdFolders++
+                }
+                catch {
+                    return @{
+                        Success = $false
+                        Error = "Impossible de créer le dossier $currentPath : $($_.Exception.Message)"
+                        Directory = $directoryPath
+                    }
+                }
             }
         }
 
+        if ($createdFolders -gt 0) {
+            Write-Host "   📁 $createdFolders dossier(s) créé(s): $directoryPath" -ForegroundColor DarkGreen
+        }
         return @{ Success = $true }
     }
     catch {
+        Write-Host "   ❌ Erreur générale création dossiers: $($_.Exception.Message)" -ForegroundColor Red
         return @{
             Success = $false
             Error = $_.Exception.Message
@@ -190,7 +215,7 @@ function Send-FtpFile {
         # Extraire le chemin du dossier du fichier
         $directoryPath = [System.IO.Path]::GetDirectoryName($relativePath)
         if ($directoryPath -and $directoryPath -ne '.') {
-            # Créer les dossiers nécessaires
+            # Créer les dossiers nécessaires (avec retry)
             $createResult = Create-FtpDirectory -ftpHost $ftpHost -ftpUser $ftpUser -ftpPassword $ftpPassword -remotePath $remotePath -directoryPath $directoryPath
             if (-not $createResult.Success) {
                 return @{
@@ -412,13 +437,20 @@ $startTime = Get-Date
 if ($Mode -eq "Parallel" -and $filesToDeploy.Count -gt 1) {
     Write-Host "   Mode parallèle activé ($ParallelJobs jobs simultanés)" -ForegroundColor Gray
 
-    # Upload en parallèle avec gestion des jobs
+    # Upload en parallèle simplifié
     $jobResults = @()
     $jobIndex = 0
 
+    # Lancer tous les jobs d'abord
     while ($jobIndex -lt $filesToDeploy.Count) {
         $runningJobs = Get-Job | Where-Object { $_.State -eq 'Running' }
         $availableSlots = $ParallelJobs - $runningJobs.Count
+
+        if ($availableSlots -le 0) {
+            # Attendre qu'un job se termine (timeout court)
+            Start-Sleep -Milliseconds 500
+            continue
+        }
 
         # Démarrer de nouveaux jobs
         for ($i = 0; $i -lt $availableSlots -and $jobIndex -lt $filesToDeploy.Count; $i++) {
@@ -440,10 +472,9 @@ if ($Mode -eq "Parallel" -and $filesToDeploy.Count -gt 1) {
                     $result.Attempts = $attempt
 
                     try {
-                        # Créer les dossiers nécessaires
+                        # Créer les dossiers nécessaires (version simplifiée)
                         $directoryPath = [System.IO.Path]::GetDirectoryName($fileInfo.RelativePath)
                         if ($directoryPath -and $directoryPath -ne '.') {
-                            # Créer les dossiers (simplifié pour le job)
                             $segments = $directoryPath -split '/' | Where-Object { $_ -ne '' }
                             $currentPath = $remotePath
 
@@ -455,7 +486,7 @@ if ($Mode -eq "Parallel" -and $filesToDeploy.Count -gt 1) {
                                     $checkRequest = [System.Net.FtpWebRequest]::Create($ftpUri)
                                     $checkRequest.Method = [System.Net.WebRequestMethods+Ftp]::ListDirectory
                                     $checkRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
-                                    $checkRequest.Timeout = 5000
+                                    $checkRequest.Timeout = 3000
                                     $checkResponse = $checkRequest.GetResponse()
                                     $checkResponse.Close()
                                 }
@@ -465,7 +496,7 @@ if ($Mode -eq "Parallel" -and $filesToDeploy.Count -gt 1) {
                                     $createRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPassword)
                                     $createRequest.UseBinary = $true
                                     $createRequest.KeepAlive = $false
-                                    $createRequest.Timeout = 10000
+                                    $createRequest.Timeout = 5000
                                     $createResponse = $createRequest.GetResponse()
                                     $createResponse.Close()
                                 }
@@ -484,7 +515,7 @@ if ($Mode -eq "Parallel" -and $filesToDeploy.Count -gt 1) {
                     catch {
                         $result.Error = $_.Exception.Message
                         if ($attempt -lt $MaxRetries) {
-                            Start-Sleep -Seconds ($attempt * 2)  # Backoff exponentiel
+                            Start-Sleep -Seconds ($attempt * 2)
                         }
                     }
                 }
@@ -494,49 +525,41 @@ if ($Mode -eq "Parallel" -and $filesToDeploy.Count -gt 1) {
 
             $jobIndex++
         }
-
-        # Attendre qu'un job se termine
-        if ($runningJobs.Count -ge $ParallelJobs) {
-            $completedJob = Wait-Job -Any
-            $jobResult = Receive-Job $completedJob
-            $jobResults += $jobResult
-            Remove-Job $completedJob
-        }
     }
 
     # Attendre que tous les jobs se terminent
-    Get-Job | Wait-Job | ForEach-Object {
-        $jobResult = Receive-Job $_
-        $jobResults += $jobResult
-        Remove-Job $_
+    Write-Host "   Attente de la fin des uploads..." -ForegroundColor Gray
+    $remainingJobs = Get-Job
+    if ($remainingJobs.Count -gt 0) {
+        $remainingJobs | Wait-Job | ForEach-Object {
+            $jobResult = Receive-Job $_
+            $jobResults += $jobResult
+            Remove-Job $_
+        }
     }
 
-    # Traiter les résultats
+    # Traiter les résultats (optimisé)
     foreach ($result in $jobResults) {
         if ($result.Success) {
-            Write-Host "  ✅ OK $($result.FilePath)" -ForegroundColor Green
+            Write-Host "  ✅ $($result.FilePath)" -ForegroundColor Green
             $uploadedCount++
         } else {
-            Write-Host "  ❌ ÉCHEC $($result.FilePath) (tentatives: $($result.Attempts)): $($result.Error)" -ForegroundColor Red
+            Write-Host "  ❌ $($result.FilePath): $($result.Error)" -ForegroundColor Red
             $failedCount++
             $retryCount += $result.Attempts - 1
         }
     }
 
 } else {
-    Write-Host "   Mode séquentiel activé" -ForegroundColor Gray
-
-    # Upload séquentiel avec retry
+    # Upload séquentiel avec retry (optimisé)
     foreach ($fileInfo in $filesToDeploy) {
-        Write-Host "  Uploading $($fileInfo.RelativePath)..." -ForegroundColor Gray
-
         $result = Send-FtpFile -fileInfo $fileInfo -ftpHost $ftpHost -ftpUser $ftpUser -ftpPassword $ftpPassword -remotePath $remotePath
 
         if ($result.Success) {
-            Write-Host "    ✅ OK ($([math]::Round($fileInfo.Size / 1KB, 1)) KB)" -ForegroundColor Green
+            Write-Host "  ✅ $($fileInfo.RelativePath)" -ForegroundColor Green
             $uploadedCount++
         } else {
-            Write-Host "    ❌ ÉCHEC: $($result.Error)" -ForegroundColor Red
+            Write-Host "  ❌ $($fileInfo.RelativePath): $($result.Error)" -ForegroundColor Red
             $failedCount++
         }
     }

@@ -61,7 +61,6 @@ class PDF_Builder_Screenshot_Renderer
 
             return $success ? $pdf_path : false;
         } catch (Exception $e) {
-            error_log('Erreur génération PDF screenshot: ' . $e->getMessage());
             return false;
         }
     }
@@ -320,7 +319,6 @@ class PDF_Builder_Screenshot_Renderer
             $pdf->Output($pdf_path, 'F');
             return file_exists($pdf_path);
         } catch (Exception $e) {
-            error_log('Erreur TCPDF fallback: ' . $e->getMessage());
             return false;
         }
     }

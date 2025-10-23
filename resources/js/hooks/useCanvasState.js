@@ -876,7 +876,6 @@ export const useCanvasState = ({
               JSON.stringify(cleanedArray);
               cleaned[key] = cleanedArray;
             } catch (e) {
-              console.warn(`Impossible de sérialiser le tableau pour ${key}, utilisation tableau vide:`, e);
               cleaned[key] = [];
             }
           } else if (typeof validatedValue === 'object') {
@@ -896,12 +895,10 @@ export const useCanvasState = ({
               JSON.stringify(cleanedObj);
               cleaned[key] = cleanedObj;
             } catch (e) {
-              console.warn(`Impossible de sérialiser l'objet pour ${key}, utilisation objet vide:`, e);
               cleaned[key] = {};
             }
           } else {
             // Pour les autres types (functions, symbols, etc.), ignorer silencieusement
-            console.warn(`Type non supporté ignoré pour ${key}: ${typeof validatedValue}`);
           }
         }
 
@@ -935,8 +932,6 @@ export const useCanvasState = ({
         JSON.stringify(cleanedElements);
         // console.log('✅ PDF Builder SAVE - Test de sérialisation réussi');
       } catch (e) {
-        console.error('❌ PDF Builder SAVE - Erreur lors du nettoyage des éléments:', e);
-        console.error('❌ PDF Builder SAVE - Éléments originaux qui ont causé l\'erreur:', elements);
         // En cas d'erreur, utiliser un tableau vide pour éviter les crashes
         cleanedElements = [];
       }
@@ -1008,8 +1003,6 @@ export const useCanvasState = ({
         // console.log('PDF Builder SAVE - Données JSON brutes envoyées au serveur (premiers 500 chars):', jsonString.substring(0, 500));
 
       } catch (jsonError) {
-        console.error('Erreur de validation JSON côté client:', jsonError);
-        console.error('Données templateData qui ont causé l\'erreur:', templateData);
         throw new Error('Données JSON invalides côté client: ' + jsonError.message);
       }
 
@@ -1043,7 +1036,6 @@ export const useCanvasState = ({
           formData.append('nonce', window.pdfBuilderAjax?.nonce || window.pdfBuilderData?.nonce || '');
         }
       } catch (error) {
-        console.warn('Erreur lors de l\'obtention du nonce frais:', error);
         formData.append('nonce', window.pdfBuilderAjax?.nonce || window.pdfBuilderData?.nonce || '');
       }
 
@@ -1064,11 +1056,6 @@ export const useCanvasState = ({
       const result = await response.json();
 
       if (!result.success) {
-        console.error('❌ PDF Builder SAVE - Échec côté serveur:', {
-          success: result.success,
-          data: result.data,
-          fullResult: result
-        });
         throw new Error(result.data?.message || 'Erreur lors de la sauvegarde');
       }
 
@@ -1083,13 +1070,6 @@ export const useCanvasState = ({
 
       return templateData;
     } catch (error) {
-      console.error('❌ PDF Builder SAVE - Erreur lors de la sauvegarde:', error);
-      console.error('❌ PDF Builder SAVE - Détails de l\'erreur:', {
-        message: error.message,
-        stack: error.stack,
-        name: error.name
-      });
-
       // Notification d'erreur
       const errorMessage = error.message || 'Erreur inconnue lors de la sauvegarde';
       if (toastrAvailable) {
@@ -1268,7 +1248,6 @@ export const useCanvasState = ({
             }
           }
         } catch (error) {
-          console.warn('Erreur lors de la synchronisation inter-onglets:', error);
         }
       }
     };

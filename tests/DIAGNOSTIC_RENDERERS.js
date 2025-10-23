@@ -129,21 +129,10 @@ const RENDERER_ISSUES = {
   }
 };
 
-console.log('🔍 DIAGNOSTIC DES RENDERERS');
-console.log('============================\n');
-
 Object.entries(RENDERER_ISSUES).forEach(([renderer, data]) => {
-  console.log(`📦 ${renderer}`);
-  console.log('---');
-  
   data.issues.forEach(issue => {
     const icon = issue.severity === 'HIGH' ? '❌' : issue.severity === 'MEDIUM' ? '⚠️' : 'ℹ️';
-    console.log(`${icon} ${issue.name}`);
-    console.log(`   ${issue.description}`);
-    console.log(`   ➜ ${issue.fix}`);
   });
-  
-  console.log('');
 });
 
 export default RENDERER_ISSUES;

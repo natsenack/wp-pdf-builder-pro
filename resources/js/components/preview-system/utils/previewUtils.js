@@ -118,11 +118,9 @@ export function measurePerformance(fn, label = 'Operation') {
   try {
     const result = fn();
     const duration = performance.now() - start;
-    console.log(`[Performance] ${label}: ${duration.toFixed(2)}ms`);
     return result;
   } catch (error) {
     const duration = performance.now() - start;
-    console.error(`[Performance] ${label} failed after ${duration.toFixed(2)}ms:`, error);
     throw error;
   }
 }

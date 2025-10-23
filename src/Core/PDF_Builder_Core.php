@@ -609,7 +609,7 @@ class PDF_Builder_Core
 
         echo '<h2>🔍 Étape 1: Mapping spécifique</h2>';
         echo '<p>Clé recherchée: <code>' . $status_key . '</code></p>';
-        echo '<p>Mappings disponibles: <pre>' . print_r($status_templates, true) . '</pre></p>';
+        echo '<p>Mappings disponibles: <pre>' . 'Array with ' . count($status_templates) . ' items' . '</pre></p>';
 
         if (isset($status_templates[$status_key]) && $status_templates[$status_key] > 0) {
             $mapped_template = $wpdb->get_row(

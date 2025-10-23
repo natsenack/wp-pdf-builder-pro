@@ -106,7 +106,6 @@ class PDFBuilderTCPDFRenderer
                 return true;
             }
         } catch (Exception $e) {
-            error_log('Erreur génération TCPDF: ' . $e->getMessage());
             return false;
         }
     }
@@ -133,7 +132,6 @@ class PDFBuilderTCPDFRenderer
 
             return file_exists($output_path);
         } catch (Exception $e) {
-            error_log('Erreur génération overlay TCPDF: ' . $e->getMessage());
             return false;
         }
     }
@@ -568,7 +566,7 @@ class PDFBuilderTCPDFRenderer
                 return $filepath;
             }
         } catch (Exception $e) {
-            error_log('Erreur téléchargement image: ' . $e->getMessage());
+            // Error downloading image
         }
 
         return false;

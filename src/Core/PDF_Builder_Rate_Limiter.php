@@ -244,7 +244,6 @@ class PDF_Builder_Rate_Limiter
         ];
 
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('PDF_Builder_Rate_Limit: ' . json_encode($log_data));
         }
 
         // Alerte admin si nécessaire (optionnel)
@@ -269,7 +268,6 @@ class PDF_Builder_Rate_Limiter
         ];
 
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('PDF_Builder_Rate_Limit: ' . json_encode($log_data));
         }
     }
 

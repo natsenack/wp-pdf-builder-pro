@@ -209,7 +209,6 @@ class PDF_Builder_Template_Manager
         $validation_errors = $this->validate_template_structure($template_data);
         if (!empty($validation_errors)) {
             // On log mais on envoie quand même les données (backward compatibility)
-            error_log('[PDF Builder] Erreurs de validation template ID=' . $template_id . ': ' . implode(', ', $validation_errors));
         }
 
         // Analyse du contenu
@@ -370,7 +369,8 @@ class PDF_Builder_Template_Manager
      *
      * @param  array $element Élément à valider
      * @param  int   $index   Index de l'élément dans
-     *                        le tableau
+     *                        le
+ tableau
      * @return array Tableau d'erreurs pour cet élément
      */
     private function validate_template_element($element, $index)

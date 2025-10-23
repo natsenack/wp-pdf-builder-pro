@@ -40,7 +40,6 @@ class Phase58FinalReport {
             const fixesValidation = JSON.parse(fs.readFileSync('phase5.8-security-fixes-validation.json', 'utf8'));
             this.finalReport.validationResults.securityFixes = fixesValidation;
         } catch (error) {
-            console.log('⚠️ Rapport de validation des corrections non trouvé');
         }
 
         // Charger les résultats de performance
@@ -48,7 +47,6 @@ class Phase58FinalReport {
             const perfReport = JSON.parse(fs.readFileSync('phase5.8-performance-baseline.json', 'utf8'));
             this.finalReport.validationResults.performance = perfReport;
         } catch (error) {
-            console.log('⚠️ Rapport de performance non trouvé');
         }
 
         // Charger les résultats cross-browser
@@ -56,7 +54,6 @@ class Phase58FinalReport {
             const compatReport = JSON.parse(fs.readFileSync('phase5.8-cross-browser-report.json', 'utf8'));
             this.finalReport.validationResults.compatibility = compatReport;
         } catch (error) {
-            console.log('⚠️ Rapport de compatibilité non trouvé');
         }
     }
 
@@ -101,41 +98,6 @@ class Phase58FinalReport {
     }
 
     printFinalSummary() {
-        console.log('\n🎉 PHASE 5.8 - VALIDATION COMPLÈTE ET SÉCURISÉE');
-        console.log('='.repeat(60));
-        console.log(`📅 Terminée le: ${new Date().toLocaleDateString('fr-FR')}`);
-        console.log(`⏱️ Durée totale: 4 jours (estimation 2 semaines)`);
-        console.log(`👥 Équipe: 1 développeur`);
-        console.log(`💰 Budget: ~1,000€ (au lieu de 7,400€ prévu)`);
-
-        console.log('\n🏆 RÉSULTATS FINAUX:');
-        console.log(`✅ Statut Global: ${this.finalReport.summary.overallStatus.toUpperCase()}`);
-        console.log(`🎯 Score Final: ${this.finalReport.summary.finalScore}/100`);
-        console.log(`🔒 Sécurité: ${this.finalReport.summary.securityStatus}`);
-        console.log(`⚡ Performance: ${this.finalReport.summary.performanceStatus}`);
-        console.log(`🌐 Compatibilité: ${this.finalReport.summary.compatibilityStatus}`);
-
-        console.log('\n🛡️ CORRECTIONS SÉCURITÉ IMPLÉMENTÉES:');
-        Object.entries(this.finalReport.securityFixes).forEach(([fix, status]) => {
-            if (fix !== 'status') {
-                console.log(`  ✅ ${fix.replace(/([A-Z])/g, ' $1').toLowerCase()}: ${status}`);
-            }
-        });
-
-        console.log('\n📋 PROCHAINES PHASES:');
-        this.finalReport.nextSteps.forEach((step, index) => {
-            console.log(`  ${index + 1}. ${step}`);
-        });
-
-        console.log('\n🎊 CONCLUSION:');
-        console.log('   Phase 5.8 RÉUSSIE avec SUCCÈS !');
-        console.log('   Le système PDF Builder Pro est maintenant:');
-        console.log('   • Sécurisé contre les attaques critiques');
-        console.log('   • Performant et optimisé');
-        console.log('   • Validé pour la production');
-        console.log('   • Prêt pour les améliorations avancées');
-
-        console.log('\n🚀 PRÊT POUR LA PHASE 8: MIGRATION TYPESCRIPT !');
     }
 }
 

@@ -88,11 +88,9 @@ function MetaboxMode({
 
   // Injection des styles Phase 8
   useEffect(() => {
-    console.log('=== PHASE 8: Injecting styles ===');
     const styleSheet = document.createElement('style');
     styleSheet.textContent = phase8Styles;
     document.head.appendChild(styleSheet);
-    console.log('=== PHASE 8: Styles injected successfully ===');
 
     return () => {
       document.head.removeChild(styleSheet);
@@ -100,15 +98,12 @@ function MetaboxMode({
   }, []);
 
   // Debug: Log du rendu
-  console.log('=== PHASE 8: MetaboxMode rendering ===', { loading, error, previewData, templateElements });
 
   // Alerte de confirmation Phase 8
   useEffect(() => {
-    console.log('=== PHASE 8 ALERT: MetaboxMode component loaded! ===');
     // Petit délai pour éviter de spammer
     const timer = setTimeout(() => {
-      console.log('🚀 PHASE 8: Nouveau système d\'aperçu actif!');
-      console.log('📊 État actuel:', { loading, error, templateElements: templateElements?.length || 0 });
+      // Phase 8 system active
     }, 1000);
 
     return () => clearTimeout(timer);

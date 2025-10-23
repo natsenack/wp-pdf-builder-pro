@@ -294,7 +294,6 @@ class PDF_Builder_Security_Validator
 
         // Log dans le fichier de debug WordPress si activé
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('PDF_Builder_Security: ' . json_encode($log_data));
         }
 
         // Stockage en base pour audit (optionnel)

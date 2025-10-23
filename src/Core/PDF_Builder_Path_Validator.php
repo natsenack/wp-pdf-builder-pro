@@ -342,7 +342,6 @@ class PDF_Builder_Path_Validator
         );
 
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('PDF_Builder_Path_Security: ' . json_encode($log_data));
         }
     }
 }

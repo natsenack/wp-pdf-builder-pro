@@ -92,7 +92,6 @@ class PDF_Builder_Dual_PDF_Generator
             $this->log_generation('failed', null);
             return false;
         } catch (Exception $e) {
-            error_log('Erreur génération PDF dual: ' . $e->getMessage());
             $this->log_generation('error', null, $e->getMessage());
             return false;
         }
@@ -139,7 +138,6 @@ class PDF_Builder_Dual_PDF_Generator
 
             return $merged_pdf;
         } catch (Exception $e) {
-            error_log('Erreur génération PDF hybride: ' . $e->getMessage());
             return false;
         }
     }
@@ -170,7 +168,6 @@ class PDF_Builder_Dual_PDF_Generator
             // Fallback: combiner les contenus HTML et régénérer
             return $this->merge_by_regeneration($pdf1, $pdf2, $output_filename);
         } catch (Exception $e) {
-            error_log('Erreur fusion PDFs: ' . $e->getMessage());
             return $pdf1; // Retourner le PDF principal en cas d'erreur
         }
     }

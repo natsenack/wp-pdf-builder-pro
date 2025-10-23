@@ -549,7 +549,7 @@ window.addEventListener('load', function() {
     }
     ?>
 
-    <form method="post" action="<?php echo esc_url(admin_url('admin.php?page=pdf-builder-settings')); ?>" onsubmit="console.log('Form submitted'); console.log('Form action:', this.action); console.log('Form method:', this.method); return true;">
+    <form method="post" action="<?php echo esc_url(admin_url('admin.php?page=pdf-builder-settings')); ?>" onsubmit="return true;">
         <?php wp_nonce_field('pdf_builder_settings', 'pdf_builder_settings_nonce'); ?>
 
         <div class="pdf-builder-settings">

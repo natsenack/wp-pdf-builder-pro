@@ -315,7 +315,6 @@ body.wp-admin .pdf-builder-container {
                     maxHistorySize: 50
                 });
             } catch (error) {
-                console.error('PDF Builder Pro: Erreur lors de l\'initialisation:', error);
                 isInitialized = false; // Reset on error
 
                 // Afficher l'erreur dans l'interface
@@ -332,7 +331,6 @@ body.wp-admin .pdf-builder-container {
                 }
             }
         } else {
-            console.error('❌ Scripts non chargés - PDFBuilderPro ou init manquant');
         }
     };
 
@@ -382,14 +380,6 @@ body.wp-admin .pdf-builder-container {
             // Réessayer dans 100ms
             setTimeout(checkScriptsLoaded, 100);
         } else {
-            console.error('❌ Timeout: Scripts PDF Builder Pro n\'ont pas pu être chargés après 5 secondes');
-            console.error('Debug info:', {
-                pdfBuilderProExists,
-                initExists,
-                reactExists,
-                reactDomExists,
-                attempts: scriptCheckAttempts
-            });
             // Afficher un message d'erreur à l'utilisateur
             const container = document.getElementById('invoice-quote-builder-container');
             if (container) {

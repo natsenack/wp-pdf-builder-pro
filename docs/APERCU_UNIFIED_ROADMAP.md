@@ -162,6 +162,37 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
   - **Test** : Tous champs société affichés correctement
   - **✅ VALIDÉ** : Mapping complet implémenté avec 4 templates (default, commercial, legal, minimal), récupération données WooCommerce, propriétés étendues, tests validés
 
+- [ ] **Étape 2.2.4 : Implémenter boutons aperçu dans éditeur et metabox**
+  - [ ] **Étape 2.2.4.1 : Bouton aperçu dans éditeur Canvas**
+    - Ajouter bouton "Aperçu" dans toolbar principale (droite)
+    - Icône œil avec tooltip "Aperçu du PDF"
+    - Ouverture modal/panel latéral responsive
+    - Mode mobile : overlay fullscreen avec contrôles adaptatifs
+    - Intégration avec PreviewRenderer pour rendu temps réel
+    - Boutons de contrôle : zoom +, zoom -, zoom 100%, fermer
+    - **Test en ligne** : Aperçu fonctionnel dans éditeur
+    - **Diagnostic** : Rendu correct, contrôles opérationnels
+
+  - [ ] **Étape 2.2.4.2 : Bouton aperçu dans metabox WooCommerce**
+    - Bouton "Aperçu PDF" dans section "Actions PDF"
+    - Positionné après "Générer PDF" et avant "Télécharger"
+    - Style cohérent avec boutons WooCommerce existants
+    - Ouverture modal responsive avec aperçu intégré
+    - Mode mobile : fullscreen avec navigation tactile
+    - Utilisation données commande réelles via DataProvider
+    - Boutons de contrôle : zoom, fermer, imprimer aperçu
+    - **Test en ligne** : Aperçu fonctionnel dans metabox
+    - **Diagnostic** : Données réelles affichées correctement
+
+  - [ ] **Étape 2.2.4.3 : Composants UI partagés**
+    - Composant React PreviewModal réutilisable
+    - Gestion responsive (desktop/tablet/mobile)
+    - États de chargement et gestion d'erreurs
+    - Intégration avec EventHandlerInterface pour interactions
+    - Cache temporaire pour éviter rechargements inutiles
+    - **Test en ligne** : Composants réutilisables validés
+    - **Diagnostic** : Performance et cohérence UI assurées
+
 #### **2.3 Documenter les variables dynamiques**
 - [x] **Étape 2.3.1 : Collecter toutes les variables WooCommerce disponibles**  
   - Examiner la classe `PDF_Builder_WooCommerce_Integration.php`  
@@ -566,8 +597,11 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
 
 ## 📊 État actuel
 
-**Phase active** : 3.4.3/7
-**Progression** : 67% (Phase 2 complète à 100% + Phase 3.1.1-3.1.4 + 3.2.1-3.2.4 + 3.3.1-3.3.7 + 3.4.1-3.4.2 terminées - infrastructure PreviewRenderer complète + système de providers + mode switching + renderers complets + lazy loading + cache WooCommerce)---
+**Phase active** : 2/7  
+**Progression** : 31% (Phase 2.1 complète + company_logo + order_number améliorés - éléments validés, propriétés analysées, bugs corrigés, priorités définies, deux éléments fondamentaux implémentés)  
+**Prochaine action** : Phase 2.2.4 - Implémentation boutons aperçu avec modals
+
+---
 
 ## ✅ Critères de succès
 
@@ -673,6 +707,7 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
 - **Données de prévisualisation** : previewOrderNumber, previewOrderDate, etc. personnalisables
 - **Tests complets** : 21 tests unitaires validés, build réussi sans régression
 
+<<<<<<< HEAD
 **✅ Phase 2.2.3 TERMINÉE** : company_info mapping WooCommerce complet :
 - **Mapping complet des champs** : 12 champs société récupérés (name, address, phone, email, website, vat, siret, rcs, capital, legal_form, etc.)
 - **Templates prédéfinis** : 4 templates (default, commercial, legal, minimal) avec formatage adapté
@@ -707,6 +742,9 @@ Reconstruction complète du système d'aperçu PDF avec architecture moderne :
 - **Console propre** : Aucun problème détecté dans les logs, système opérationnel
 
 **📊 Progression globale** : Phase 2 terminée (100%), Phase 3.1.1-3.1.4 terminées (infrastructure PreviewRenderer complète avec zoom/responsive + intégration système de rendu)
+=======
+**🎯 Prochaine étape** : Phase 2.2.4 - boutons aperçu avec modals
+>>>>>>> 1823290 (23-10-2025)
 
 ---
 

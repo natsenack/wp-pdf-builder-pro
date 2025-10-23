@@ -35,7 +35,6 @@ export const SYSTEM_NAME = 'PDF Builder Pro Preview System';
 
 // Fonction d'initialisation du système
 export function initializePreviewSystem(config = {}) {
-  console.log(`[PreviewSystem] Initializing ${SYSTEM_NAME} v${SYSTEM_VERSION}`);
 
   // Validation de la configuration
   const validatedConfig = {
@@ -50,11 +49,7 @@ export function initializePreviewSystem(config = {}) {
   // Vérification du support navigateur
   const browserSupport = checkBrowserSupport();
   if (!browserSupport.promises || !browserSupport.fetch) {
-    console.warn('[PreviewSystem] Browser may not support all features. Consider upgrading.');
   }
-
-  console.log('[PreviewSystem] Configuration:', validatedConfig);
-  console.log('[PreviewSystem] Browser support:', browserSupport);
 
   return {
     version: SYSTEM_VERSION,
