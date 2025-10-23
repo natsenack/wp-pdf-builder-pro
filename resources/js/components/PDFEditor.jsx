@@ -24,7 +24,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   const [history, setHistory] = useState([initialElements]);
   const [historyIndex, setHistoryIndex] = useState(0);
   const [selectedElement, setSelectedElement] = useState(null);
-  const [showElementLibrary, setShowElementLibrary] = useState(false);
+  const [showElementLibrary, setShowElementLibrary] = useState(true);
   const [showPropertiesPanel, setShowPropertiesPanel] = useState(true);
 
   // Références
@@ -341,6 +341,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         {/* Bibliothèque d'éléments */}
         {showElementLibrary && (
           <div className="element-library-panel">
+            {console.log('Rendering ElementLibrary')}
             <ElementLibrary
               onAddElement={handleAddElement}
               selectedTool={selectedTool}
@@ -368,6 +369,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         {/* Panel des propriétés */}
         {showPropertiesPanel && selectedElement && (
           <div className="properties-panel-container">
+            {console.log('Rendering PropertiesPanel for element:', selectedElement)}
             <PropertiesPanel
               selectedElements={selectedElement ? [selectedElement] : []}
               elements={elements}
@@ -388,19 +390,25 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
       {/* Barre d'outils secondaire */}
       <div className="editor-toolbar-secondary">
         <button
-          onClick={() => setShowElementLibrary(!showElementLibrary)}
+          onClick={() => {
+            console.log('Toggle ElementLibrary:', !showElementLibrary);
+            setShowElementLibrary(!showElementLibrary);
+          }}
           className={`tool-btn ${showElementLibrary ? 'active' : ''}`}
         >
           📚 Bibliothèque
         </button>
         <button
-          onClick={() => setShowPropertiesPanel(!showPropertiesPanel)}
+          onClick={() => {
+            console.log('Toggle PropertiesPanel:', !showPropertiesPanel);
+            setShowPropertiesPanel(!showPropertiesPanel);
+          }}
           className={`tool-btn ${showPropertiesPanel ? 'active' : ''}`}
         >
           ⚙️ Propriétés
         </button>
         <span className="status-info">
-          Éléments: {elements.length} | Sélectionné: {selectedElement ? 'Oui' : 'Non'}
+          Éléments: {elements.length} | Sélectionné: {selectedElement ? 'Oui' : 'Non'} | Lib: {showElementLibrary ? 'Oui' : 'Non'} | Props: {showPropertiesPanel ? 'Oui' : 'Non'}
         </span>
       </div>
 
