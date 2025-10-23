@@ -513,7 +513,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
       return;
     }
 
-    console.log('PDFEditor renderCanvas called - canvas dimensions:', canvas.width, 'x', canvas.height, '- elements count:', elements.length);
     if (elements.length > 0) {
     }
 
@@ -623,7 +622,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
       }
 
       // Dessiner l'élément
-      console.log(`PDFEditor: Starting to render element ${index} of type "${element.type}" with id ${element.id}`);
 
       if (element.type === 'text') {
         // Appliquer la couleur du texte
@@ -2159,14 +2157,11 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
   // Mettre à jour les éléments quand initialElements change
   useEffect(() => {
-    console.log('PDFEditor useEffect triggered - initialElements:', initialElements, 'length:', initialElements ? initialElements.length : 'undefined');
     if (initialElements && initialElements.length > 0) {
-      console.log('PDFEditor: Setting elements from initialElements:', initialElements.length, 'elements');
       setElements(initialElements);
       setHistory([initialElements]);
       setHistoryIndex(0);
     } else {
-      console.log('PDFEditor: No initialElements provided or empty array');
       // Si pas d'éléments initiaux, initialiser avec un tableau vide
       setElements([]);
       setHistory([[]]);

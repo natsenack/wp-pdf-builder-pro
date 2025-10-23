@@ -18,11 +18,6 @@ export function initializeGlobals() {
             timestamp: Date.now()
         };
 
-        console.error('🚀 PDF Builder Pro: Global objects initialized via module');
-        console.error('   - window.PDFBuilderPro:', !!window.PDFBuilderPro);
-        console.error('   - window.pdfBuilderPro:', !!window.pdfBuilderPro);
-        console.error('   - window.__pdfBuilderGlobal:', !!window.__pdfBuilderGlobal);
-
         return instance;
     }
     return null;

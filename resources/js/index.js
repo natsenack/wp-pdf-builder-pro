@@ -1,8 +1,6 @@
 // PDF Builder Pro - Main Bundle
 // Met à jour l'objet pdfBuilderPro existant avec React et les composants
 
-console.log('🚀 PDF Builder Pro: Script starting...');
-
 // Import React normalement - sera bundlé avec webpack
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -11,19 +9,14 @@ import ReactDOM from 'react-dom';
 import { PDFEditor } from './components/PDFEditor.jsx';
 
 try {
-  console.log('🚀 PDF Builder Pro: Main bundle starting...');
-  console.error('🚀 PDF Builder Pro: Main bundle loading...');
-
   // Exposer React globalement pour la compatibilité
   if (typeof window !== 'undefined') {
     window.React = React;
     window.ReactDOM = ReactDOM;
-    console.error('🚀 PDF Builder Pro: React exposed globally');
   }
 
   // CRÉER OU METTRE À JOUR L'OBJET GLOBAL avec React et les composants
   if (typeof window !== 'undefined') {
-    console.error('🚀 PDF Builder Pro: Setting up PDFBuilder object');
 
     // Créer l'objet s'il n'existe pas
     if (!window.pdfBuilderPro) {
@@ -152,9 +145,8 @@ try {
     }
   };
 
-  console.error('🚀 PDF Builder Pro: pdfBuilderPro object updated with React');
 } else {
-  console.error('🚀 PDF Builder Pro: Warning - pdfBuilderPro object not found, creating new one');
+  console.error('Warning - pdfBuilderPro object not found, creating new one');
 
   // Fallback: créer l'objet si pas déjà créé par le script loader
   const pdfBuilderPro = {
@@ -190,7 +182,6 @@ try {
           container
         );
 
-        console.error('🚀 PDF Builder Pro: React app initialized successfully');
         return true;
 
       } catch (error) {
@@ -221,12 +212,10 @@ try {
     ReactDOM: ReactDOM
   };
   window.initializePDFBuilderPro = function() {
-    console.error('🚀 PDF Builder Pro: initializePDFBuilderPro called');
     return pdfBuilderPro;
   };
 }
 
-console.error('🚀 PDF Builder Pro: Main bundle loaded successfully');
 } catch (error) {
-  console.error('🚀 PDF Builder Pro: Main bundle failed to load:', error);
+  console.error('PDF Builder Pro: Main bundle failed to load:', error);
 }

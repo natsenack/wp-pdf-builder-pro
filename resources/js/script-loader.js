@@ -4,11 +4,8 @@
 (function() {
   'use strict';
 
-  console.error('🚀 PDF Builder Pro: Standalone Script Loader starting...');
-
   // Définir les variables globales immédiatement
   if (typeof window !== 'undefined') {
-    console.error('🚀 PDF Builder Pro: Setting up global variables immediately in standalone loader');
 
     // Créer l'API principale immédiatement
     var pdfBuilderPro = {
@@ -38,7 +35,6 @@
           // Afficher un message temporaire en attendant que le bundle principal charge les composants
           container.innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">Chargement de l\'éditeur PDF...</div>';
 
-          console.error('🚀 PDF Builder Pro: React app initialization deferred to main bundle');
           return true;
 
         } catch (error) {
@@ -64,12 +60,9 @@
     window.pdfBuilderPro = pdfBuilderPro;
     window.PDFBuilderPro = pdfBuilderPro; // Alias avec majuscule pour compatibilité
     window.initializePDFBuilderPro = function() {
-      console.error('🚀 PDF Builder Pro: initializePDFBuilderPro called');
       return pdfBuilderPro;
     };
 
-    console.error('🚀 PDF Builder Pro: Global variables defined immediately in standalone loader');
   }
 
-  console.error('🚀 PDF Builder Pro: Standalone Script Loader finished');
 })();
