@@ -40,7 +40,11 @@ if (!isset($GLOBALS['pdf_builder_scripts_loaded'])) {
     // Charger directement les scripts PDF Builder
     $assets_url = defined('PDF_BUILDER_PRO_ASSETS_URL') ? PDF_BUILDER_PRO_ASSETS_URL : plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/';
 
-    // Script principal - CHARGER DIRECTEMENT AVEC BALISE SCRIPT SYNCHRONE
+    // SCRIPT LOADER - Définit les variables globales immédiatement
+    $script_loader_url = $assets_url . 'js/dist/pdf-builder-script-loader.js?v=' . time();
+    echo '<script type="text/javascript" src="' . esc_url($script_loader_url) . '"></script>';
+
+    // Script principal - CHARGER ENSUITE avec les composants React
     $script_url = $assets_url . 'js/dist/pdf-builder-admin.js?v=' . time();
     echo '<script type="text/javascript" src="' . esc_url($script_url) . '"></script>';
 

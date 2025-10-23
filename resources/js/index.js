@@ -1,5 +1,7 @@
-// PDF Builder Pro - Entry Point
-console.error('🚀 PDF Builder Pro: Script execution started');
+// PDF Builder Pro - Main Bundle
+// Met à jour l'objet pdfBuilderPro existant avec React et les composants
+
+console.error('🚀 PDF Builder Pro: Main bundle loading...');
 
 // Import React depuis les externals webpack (si configurés) ou utiliser les globals
 let React, ReactDOM;
@@ -16,11 +18,19 @@ if (typeof window !== 'undefined' && window.React && window.ReactDOM) {
   ReactDOM = { render: () => {} };
 }
 
-// EXPOSER LES VARIABLES GLOBALES IMMÉDIATEMENT AU CHARGEMENT
-if (typeof window !== 'undefined') {
-  console.error('🚀 PDF Builder Pro: Setting up global variables immediately');
+// METTRE À JOUR L'OBJET GLOBAL EXISTANT avec React et les composants
+if (typeof window !== 'undefined' && window.pdfBuilderPro) {
+  console.error('🚀 PDF Builder Pro: Updating existing pdfBuilderPro object with React');
 
-  // Créer l'API principale immédiatement
+  // Mettre à jour l'objet existant avec React
+  window.pdfBuilderPro.React = React;
+  window.pdfBuilderPro.ReactDOM = ReactDOM;
+
+  console.error('🚀 PDF Builder Pro: pdfBuilderPro object updated with React');
+} else {
+  console.error('🚀 PDF Builder Pro: Warning - pdfBuilderPro object not found, creating new one');
+
+  // Fallback: créer l'objet si pas déjà créé par le script loader
   const pdfBuilderPro = {
     version: '2.0.0',
     React: React,
@@ -76,15 +86,13 @@ if (typeof window !== 'undefined') {
     }
   };
 
-  // Définir les variables globales immédiatement
+  // Définir les variables globales
   window.pdfBuilderPro = pdfBuilderPro;
-  window.PDFBuilderPro = pdfBuilderPro; // Alias avec majuscule pour compatibilité
+  window.PDFBuilderPro = pdfBuilderPro;
   window.initializePDFBuilderPro = function() {
     console.error('🚀 PDF Builder Pro: initializePDFBuilderPro called');
     return pdfBuilderPro;
   };
-
-  console.error('🚀 PDF Builder Pro: Global variables defined immediately');
 }
 
 // Composant PDFEditor simplifié pour éviter les problèmes de code splitting
@@ -125,4 +133,4 @@ const PDFEditor = ({ initialElements = [], onSave, templateName = '', isNew = tr
   ]);
 };
 
-console.error('🚀 PDF Builder Pro: Script fully loaded with React support');
+console.error('🚀 PDF Builder Pro: Main bundle loaded successfully');

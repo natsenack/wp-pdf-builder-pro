@@ -5,9 +5,9 @@ const CompressionPlugin = require('compression-webpack-plugin');
 
 module.exports = {
   entry: {
+    'pdf-builder-script-loader': './resources/js/script-loader.js',
     'pdf-builder-admin': './resources/js/index.js',
-    'pdf-builder-nonce-fix': './resources/js/pdf-builder-nonce-fix.js',
-    'pdf-builder-script-loader': './resources/js/ScriptLoader.js'
+    'pdf-builder-nonce-fix': './resources/js/pdf-builder-nonce-fix.js'
   },
   output: {
     filename: (chunkData) => {
