@@ -249,9 +249,12 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   // Fonction de rendu du canvas
   const renderCanvas = () => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas) {
+      console.log('PDFEditor renderCanvas: No canvas ref');
+      return;
+    }
 
-    console.log('PDFEditor renderCanvas called - elements count:', elements.length);
+    console.log('PDFEditor renderCanvas called - canvas dimensions:', canvas.width, 'x', canvas.height, '- elements count:', elements.length);
     if (elements.length > 0) {
       console.log('PDFEditor rendering elements:', elements);
     }
@@ -285,7 +288,9 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
     }
 
     // Dessiner les éléments
-    elements.forEach(element => {
+    elements.forEach((element, index) => {
+      console.log(`PDFEditor rendering element ${index}:`, element);
+
       // Mettre en évidence l'élément sélectionné
       if (selectedElement === element.id) {
         ctx.strokeStyle = '#007cba';
@@ -315,14 +320,22 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.fillStyle = element.color || '#000000';
         const fontWeight = element.fontWeight ? `${element.fontWeight} ` : '';
         ctx.font = `${fontWeight}${element.fontSize || 16}px ${element.fontFamily || 'Arial'}`;
-        ctx.fillText(element.text || 'Texte', element.x || 10, element.y || 30);
+        const textX = element.x || 10;
+        const textY = element.y || 30;
+        console.log(`PDFEditor drawing text at (${textX}, ${textY}): "${element.text || 'Texte'}"`);
+        ctx.fillText(element.text || 'Texte', textX, textY);
       } else if (element.type === 'rectangle') {
         ctx.fillStyle = element.backgroundColor || '#ffffff';
-        ctx.fillRect(element.x || 10, element.y || 10, element.width || 100, element.height || 50);
+        const rectX = element.x || 10;
+        const rectY = element.y || 10;
+        const rectWidth = element.width || 100;
+        const rectHeight = element.height || 50;
+        console.log(`PDFEditor drawing rectangle at (${rectX}, ${rectY}) size (${rectWidth}, ${rectHeight})`);
+        ctx.fillRect(rectX, rectY, rectWidth, rectHeight);
         if (element.borderWidth > 0) {
           ctx.strokeStyle = element.borderColor || '#000000';
           ctx.lineWidth = element.borderWidth || 1;
-          ctx.strokeRect(element.x || 10, element.y || 10, element.width || 100, element.height || 50);
+          ctx.strokeRect(rectX, rectY, rectWidth, rectHeight);
         }
       } else if (element.type === 'circle') {
         ctx.fillStyle = element.backgroundColor || '#ffffff';
