@@ -28,6 +28,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   const [showGrid, setShowGrid] = useState(true);
   const [snapToGrid, setSnapToGrid] = useState(true);
   const [selectedTool, setSelectedTool] = useState('select');
+  const [showElementLibrary, setShowElementLibrary] = useState(false);
 
   // État pour le drag & drop
   const [isDragging, setIsDragging] = useState(false);
