@@ -349,6 +349,8 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         }
       } else {
         // Rendu générique pour les éléments non supportés (product_table, customer_info, etc.)
+        console.log(`PDFEditor: Detailed properties for ${element.type}:`, element);
+
         ctx.fillStyle = '#ff6b6b'; // Rouge pour indiquer un élément non rendu
         const genericX = element.x || 10;
         const genericY = element.y || 10;
