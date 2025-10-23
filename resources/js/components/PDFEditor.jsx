@@ -349,40 +349,49 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         const deltaX = x - resizeStart.x;
         const deltaY = y - resizeStart.y;
 
-        // Logique de redimensionnement commune
+        // Logique de redimensionnement améliorée - ancrage intelligent
         switch (resizeHandle) {
           case 'nw':
+            // Redimensionner depuis le coin nord-ouest : maintenir le coin SE fixe
             newWidth = Math.max(20, resizeStart.width - deltaX);
             newHeight = Math.max(20, resizeStart.height - deltaY);
-            newX = element.x + (resizeStart.width - newWidth);
-            newY = element.y + (resizeStart.height - newHeight);
+            newX = resizeStart.elementX + deltaX; // Se déplacer avec la souris
+            newY = resizeStart.elementY + deltaY;
             break;
           case 'ne':
+            // Redimensionner depuis le coin nord-est : maintenir le coin SW fixe
             newWidth = Math.max(20, resizeStart.width + deltaX);
             newHeight = Math.max(20, resizeStart.height - deltaY);
-            newY = element.y + (resizeStart.height - newHeight);
+            newY = resizeStart.elementY + deltaY;
             break;
           case 'sw':
+            // Redimensionner depuis le coin sud-ouest : maintenir le coin NE fixe
             newWidth = Math.max(20, resizeStart.width - deltaX);
             newHeight = Math.max(20, resizeStart.height + deltaY);
-            newX = element.x + (resizeStart.width - newWidth);
+            newX = resizeStart.elementX + deltaX;
             break;
           case 'se':
+            // Redimensionner depuis le coin sud-est : maintenir le coin NW fixe
             newWidth = Math.max(20, resizeStart.width + deltaX);
             newHeight = Math.max(20, resizeStart.height + deltaY);
+            // Pas de changement de position
             break;
           case 'n':
+            // Redimensionner depuis le côté nord : maintenir le côté sud fixe
             newHeight = Math.max(20, resizeStart.height - deltaY);
-            newY = element.y + (resizeStart.height - newHeight);
+            newY = resizeStart.elementY + deltaY;
             break;
           case 's':
+            // Redimensionner depuis le côté sud : maintenir le côté nord fixe
             newHeight = Math.max(20, resizeStart.height + deltaY);
             break;
           case 'w':
+            // Redimensionner depuis le côté ouest : maintenir le côté est fixe
             newWidth = Math.max(20, resizeStart.width - deltaX);
-            newX = element.x + (resizeStart.width - newWidth);
+            newX = resizeStart.elementX + deltaX;
             break;
           case 'e':
+            // Redimensionner depuis le côté est : maintenir le côté ouest fixe
             newWidth = Math.max(20, resizeStart.width + deltaX);
             break;
         }
