@@ -592,7 +592,10 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
       }
 
       // Dessiner l'élément
+      console.log(`PDFEditor: Starting to render element ${index} of type "${element.type}" with id ${element.id}`);
+
       if (element.type === 'text') {
+        console.log(`PDFEditor: Rendering TEXT element ${element.id} at (${element.x}, ${element.y}): "${element.text}"`);
         ctx.fillStyle = element.color || '#000000';
         const fontWeight = element.fontWeight ? `${element.fontWeight} ` : '';
         ctx.font = `${fontWeight}${element.fontSize || 16}px ${element.fontFamily || 'Arial'}`;
@@ -614,6 +617,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           ctx.strokeRect(rectX, rectY, rectWidth, rectHeight);
         }
       } else if (element.type === 'circle') {
+        console.log(`PDFEditor: Rendering CIRCLE element ${element.id} at (${element.x || 10}, ${element.y || 10}) radius ${element.radius || 25}`);
         ctx.fillStyle = element.backgroundColor || '#ffffff';
         ctx.beginPath();
         ctx.arc(element.x || 10, element.y || 10, element.radius || 25, 0, 2 * Math.PI);
@@ -624,6 +628,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           ctx.stroke();
         }
       } else if (element.type === 'company_logo') {
+        console.log(`PDFEditor: Rendering COMPANY_LOGO element ${element.id} at (${element.x || 10}, ${element.y || 10})`);
         // Rendu spécifique pour le logo de l'entreprise
         const imageUrl = element.src || element.imageUrl;
         if (imageUrl) {
@@ -659,6 +664,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           img.src = imageUrl;
         }
       } else if (element.type === 'dynamic-text') {
+        console.log(`PDFEditor: Rendering DYNAMIC_TEXT element ${element.id} at (${element.x || 10}, ${element.y || 30}): "${element.customContent || element.text || 'Texte'}"`);
         // Rendu spécifique pour le texte dynamique
         ctx.fillStyle = element.color || '#333333';
         const fontWeight = element.fontWeight || 'normal';
@@ -682,6 +688,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.fillText(displayText, textX, textY + (element.height || 30) / 2);
         console.log(`PDFEditor drawing dynamic text at (${textX}, ${textY}): "${displayText}"`);
       } else if (element.type === 'order_number') {
+        console.log(`PDFEditor: Rendering ORDER_NUMBER element ${element.id} at (${element.x || 10}, ${element.y || 30})`);
         // Rendu spécifique pour le numéro de commande
         ctx.fillStyle = element.color || '#333333';
         const fontWeight = element.fontWeight || 'bold';
@@ -703,6 +710,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.fillText(formattedText, textX + (element.width || 270), textY + (element.height || 40) / 2);
         console.log(`PDFEditor drawing order number: "${formattedText}"`);
       } else if (element.type === 'document_type') {
+        console.log(`PDFEditor: Rendering DOCUMENT_TYPE element ${element.id} at (${element.x || 10}, ${element.y || 30}): "FACTURE"`);
         // Rendu spécifique pour le type de document
         ctx.fillStyle = element.color || '#1e293b';
         const fontWeight = element.fontWeight || 'bold';
@@ -716,6 +724,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.fillText(displayText, textX + (element.width || 120) / 2, textY + (element.height || 50) / 2);
         console.log(`PDFEditor drawing document type: "${displayText}"`);
       } else if (element.type === 'line') {
+        console.log(`PDFEditor: Rendering LINE element ${element.id} at (${element.x || 10}, ${element.y || 110}) width ${element.width || 20}`);
         // Rendu spécifique pour la ligne
         ctx.strokeStyle = element.lineColor || '#64748b';
         ctx.lineWidth = element.lineWidth || 2;
@@ -728,6 +737,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.stroke();
         console.log(`PDFEditor drawing line at (${lineX}, ${lineY}) width: ${lineWidth}`);
       } else if (element.type === 'mentions') {
+        console.log(`PDFEditor: Rendering MENTIONS element ${element.id} at (${element.x || 10}, ${element.y || 10})`);
         // Rendu spécifique pour les mentions légales
         ctx.fillStyle = element.color || '#666666';
         ctx.font = `${element.fontSize || 8}px ${element.fontFamily || 'Arial'}`;
@@ -745,6 +755,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.fillText(displayText, textX + (element.width || 300) / 2, textY + (element.height || 40) / 2);
         console.log(`PDFEditor drawing mentions: "${displayText}"`);
       } else if (element.type === 'customer_info' || element.type === 'company_info') {
+        console.log(`PDFEditor: Rendering ${element.type.toUpperCase()} element ${element.id} at (${element.x || 10}, ${element.y || 10}) with ${element.fields?.length || 0} fields`);
         // Rendu spécifique pour les informations client/entreprise
         ctx.fillStyle = element.color || '#1e293b';
         ctx.font = `${element.fontSize || 14}px ${element.fontFamily || 'Arial'}`;
@@ -789,6 +800,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         }
         console.log(`PDFEditor drawing ${element.type} with ${element.fields?.length || 0} fields`);
       } else if (element.type === 'product_table') {
+        console.log(`PDFEditor: Rendering PRODUCT_TABLE element ${element.id} at (${element.x || 30}, ${element.y || 270})`);
         // Rendu basique pour le tableau de produits
         ctx.fillStyle = element.color || '#475569';
         ctx.font = `${element.fontSize || 14}px ${element.fontFamily || 'Arial'}`;
@@ -831,7 +843,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
         console.log(`PDFEditor drawing product table with ${sampleRows.length} rows`);
       } else {
-        // Rendu générique pour les éléments non supportés (product_table, customer_info, etc.)
+        console.log(`PDFEditor: UNKNOWN ELEMENT TYPE "${element.type}" for element ${element.id} - rendering as generic red rectangle`);
         console.log(`PDFEditor: Detailed properties for ${element.type}:`, JSON.stringify(element, null, 2));
 
         ctx.fillStyle = '#ff6b6b'; // Rouge pour indiquer un élément non rendu
