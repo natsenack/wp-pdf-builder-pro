@@ -102,4 +102,4 @@ const PDFEditor = ({ initialElements = [], onSave, templateName = '', isNew = tr
   );
 };
 
-export default PDFEditor;
+export { PDFEditor };
