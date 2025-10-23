@@ -28,8 +28,8 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   const [showGrid, setShowGrid] = useState(true);
   const [snapToGrid, setSnapToGrid] = useState(true);
   const [selectedTool, setSelectedTool] = useState('select');
-  const [showElementLibrary, setShowElementLibrary] = useState(false);
-  const [showPropertiesPanel, setShowPropertiesPanel] = useState(true);
+  const [showElementLibrary, setShowElementLibrary] = useState(true);
+  const [showPropertiesPanel, setShowPropertiesPanel] = useState(false);
 
   // État pour le drag & drop
   const [isDragging, setIsDragging] = useState(false);
@@ -176,7 +176,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
     }
   };
 
-  // Gestionnaire de clic sur le canvas
+  // Gestionnaire de clic sur le canvas (pour création d'éléments seulement)
   const handleCanvasClick = (event) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -235,68 +235,78 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
       handleElementsChange(newElements);
       setSelectedElement(newElement.id);
       setSelectedTool('select'); // Revenir à l'outil de sélection
-    } else {
-      // Vérifier d'abord si on clique sur une poignée de redimensionnement
-      if (selectedElement) {
-        const element = elements.find(el => el.id === selectedElement);
-        if (element) {
-          const handle = getResizeHandleAtPosition(element, x, y);
-          if (handle) {
-            // Démarrer le redimensionnement
-            setIsResizing(true);
-            setResizeHandle(handle);
-            setResizeStart({
-              x: x,
-              y: y,
-              width: element.width || 100,
-              height: element.height || 30
-            });
-            return;
-          }
+    }
+  };
+
+  // Gestionnaire de pression souris (pour drag & resize)
+  const handleCanvasMouseDown = (event) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / zoom;
+    const y = (event.clientY - rect.top) / zoom;
+
+    // Vérifier d'abord si on clique sur une poignée de redimensionnement
+    if (selectedElement) {
+      const element = elements.find(el => el.id === selectedElement);
+      if (element) {
+        const handle = getResizeHandleAtPosition(element, x, y);
+        if (handle) {
+          // Démarrer le redimensionnement
+          setIsResizing(true);
+          setResizeHandle(handle);
+          setResizeStart({
+            x: x,
+            y: y,
+            width: element.width || 100,
+            height: element.height || 30,
+            elementX: element.x,
+            elementY: element.y
+          });
+          return;
         }
       }
+    }
 
-      // Sélectionner l'élément sous le curseur
-      const clickedElement = elements.find(element => {
-        if (element.type === 'text') {
-          const ctx = canvas.getContext('2d');
-          const fontWeight = element.fontWeight ? `${element.fontWeight} ` : '';
-          ctx.font = `${fontWeight}${element.fontSize || 16}px ${element.fontFamily || 'Arial'}`;
-          const metrics = ctx.measureText(element.text || 'Texte');
-          return x >= element.x && x <= element.x + metrics.width &&
-                 y >= element.y - element.fontSize && y <= element.y;
-        } else if (element.type === 'rectangle') {
-          return x >= element.x && x <= element.x + (element.width || 100) &&
-                 y >= element.y && y <= element.y + (element.height || 50);
-        } else if (element.type === 'circle') {
-          const dx = x - element.x;
-          const dy = y - element.y;
-          return Math.sqrt(dx * dx + dy * dy) <= (element.radius || 25);
-        } else if (element.type === 'company_logo' || element.type === 'dynamic-text' ||
-                   element.type === 'order_number' || element.type === 'document_type' ||
-                   element.type === 'customer_info' || element.type === 'company_info' ||
-                   element.type === 'product_table' || element.type === 'mentions') {
-          // Pour tous les éléments rectangulaires avec width/height
-          return x >= element.x && x <= element.x + (element.width || 100) &&
-                 y >= element.y && y <= element.y + (element.height || 30);
-        } else if (element.type === 'line') {
-          // Pour les lignes, zone de tolérance autour de la ligne
-          const tolerance = 5;
-          return x >= element.x && x <= element.x + (element.width || 20) &&
-                 Math.abs(y - (element.y + (element.height || 12) / 2)) <= tolerance;
-        }
-        return false;
-      });
-
-      if (clickedElement) {
-        setSelectedElement(clickedElement.id);
-        // Démarrer le drag si on clique sur un élément déjà sélectionné
-        setIsDragging(true);
-        setDragElement(clickedElement);
-        setDragStart({ x: x - clickedElement.x, y: y - clickedElement.y });
-      } else {
-        setSelectedElement(null);
+    // Vérifier si on clique sur un élément pour le drag
+    const clickedElement = elements.find(element => {
+      if (element.type === 'text') {
+        const ctx = canvas.getContext('2d');
+        const fontWeight = element.fontWeight ? `${element.fontWeight} ` : '';
+        ctx.font = `${fontWeight}${element.fontSize || 16}px ${element.fontFamily || 'Arial'}`;
+        const metrics = ctx.measureText(element.text || 'Texte');
+        return x >= element.x && x <= element.x + metrics.width &&
+               y >= element.y - element.fontSize && y <= element.y;
+      } else if (element.type === 'rectangle') {
+        return x >= element.x && x <= element.x + (element.width || 100) &&
+               y >= element.y && y <= element.y + (element.height || 50);
+      } else if (element.type === 'circle') {
+        const dx = x - element.x;
+        const dy = y - element.y;
+        return Math.sqrt(dx * dx + dy * dy) <= (element.radius || 25);
+      } else if (element.type === 'company_logo' || element.type === 'dynamic-text' ||
+                 element.type === 'order_number' || element.type === 'document_type' ||
+                 element.type === 'customer_info' || element.type === 'company_info' ||
+                 element.type === 'product_table' || element.type === 'mentions') {
+        // Pour tous les éléments rectangulaires avec width/height
+        return x >= element.x && x <= element.x + (element.width || 100) &&
+               y >= element.y && y <= element.y + (element.height || 30);
+      } else if (element.type === 'line') {
+        // Pour les lignes, zone de tolérance autour de la ligne
+        const tolerance = 5;
+        return x >= element.x && x <= element.x + (element.width || 20) &&
+               Math.abs(y - (element.y + (element.height || 12) / 2)) <= tolerance;
       }
+      return false;
+    });
+
+    if (clickedElement) {
+      setSelectedElement(clickedElement.id);
+      // Démarrer le drag
+      setIsDragging(true);
+      setDragElement(clickedElement);
+      setDragStart({ x: x, y: y }); // Position absolue du clic
     }
   };
 
@@ -366,8 +376,10 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
       }
     } else if (isDragging && dragElement) {
       // Déplacer l'élément
-      const newX = x - dragStart.x;
-      const newY = y - dragStart.y;
+      const deltaX = x - dragStart.x;
+      const deltaY = y - dragStart.y;
+      const newX = dragElement.x + deltaX;
+      const newY = dragElement.y + deltaY;
 
       handleElementUpdate(dragElement.id, {
         x: Math.max(0, newX), // Empêcher de sortir du canvas
@@ -875,6 +887,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
               cursor: selectedTool === 'select' ? 'default' : 'crosshair'
             }}
             onClick={handleCanvasClick}
+            onMouseDown={handleCanvasMouseDown}
             onMouseMove={handleCanvasMouseMove}
             onMouseUp={handleCanvasMouseUp}
             onMouseLeave={handleCanvasMouseUp}
