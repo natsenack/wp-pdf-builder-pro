@@ -1,4 +1,6 @@
-console.error('🚀 PDF Builder Pro: Script execution started');
+// DEBUG: Script execution started
+alert('PDF Builder script executed');
+console.error('🚀 PDF Builder Pro: Script execution started - FORCE LOG');
 
 import React from 'react';
 import ReactDOM from 'react-dom';
