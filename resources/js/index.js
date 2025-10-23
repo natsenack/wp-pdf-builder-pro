@@ -245,7 +245,7 @@ if (typeof window !== 'undefined') {
 export default pdfBuilderPro;
 
 // IMPORTER ET INITIALISER LES GLOBALS - FORCER L'INCLUSION
-import './globals.js';
+// import './globals.js'; // REMOVED - circular import causing issues
 
 // Forcer l'exécution immédiate
 console.error('🚀 PDF Builder Pro: Script fully loaded and globals exposed');
