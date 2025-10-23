@@ -1819,22 +1819,22 @@ const PropertiesPanel = memo(({
                       {
                         value: 'striped',
                         label: 'Alterné',
-                        headerBg: '#3b82f6',
-                        headerBorder: '#2563eb',
-                        rowBorder: '#e2e8f0',
+                        headerBg: '#e0f2fe',
+                        headerBorder: '#0ea5e9',
+                        rowBorder: '#f0f9ff',
                         altRowBg: '#f8fafc',
                         borderWidth: 1,
-                        textColor: '#ffffff'
+                        textColor: '#0c4a6e'
                       },
                       {
                         value: 'bordered',
                         label: 'Encadré',
-                        headerBg: '#ffffff',
-                        headerBorder: '#374151',
-                        rowBorder: '#d1d5db',
+                        headerBg: '#f8fafc',
+                        headerBorder: '#94a3b8',
+                        rowBorder: '#e2e8f0',
                         altRowBg: '#ffffff',
-                        borderWidth: 2,
-                        textColor: '#111827'
+                        borderWidth: 1,
+                        textColor: '#475569'
                       },
                       {
                         value: 'minimal',
@@ -1849,102 +1849,102 @@ const PropertiesPanel = memo(({
                       {
                         value: 'modern',
                         label: 'Moderne',
-                        gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                        headerBorder: '#5b21b6',
-                        rowBorder: '#e9d5ff',
+                        gradient: 'linear-gradient(135deg, #e9d5ff 0%, #ddd6fe 100%)',
+                        headerBorder: '#a855f7',
+                        rowBorder: '#f3e8ff',
                         altRowBg: '#faf5ff',
                         borderWidth: 1,
-                        textColor: '#ffffff'
+                        textColor: '#6b21a8'
                       },
                       {
                         value: 'blue_ocean',
                         label: 'Océan Bleu',
-                        gradient: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
-                        headerBorder: '#1e40af',
-                        rowBorder: '#dbeafe',
+                        gradient: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)',
+                        headerBorder: '#3b82f6',
+                        rowBorder: '#eff6ff',
                         altRowBg: '#eff6ff',
-                        borderWidth: 1.5,
-                        textColor: '#ffffff'
+                        borderWidth: 1,
+                        textColor: '#1e40af'
                       },
                       {
                         value: 'emerald_forest',
                         label: 'Forêt Émeraude',
-                        gradient: 'linear-gradient(135deg, #064e3b 0%, #10b981 100%)',
-                        headerBorder: '#065f46',
-                        rowBorder: '#d1fae5',
-                        altRowBg: '#a7f3d0',
-                        borderWidth: 1.5,
-                        textColor: '#ffffff'
+                        gradient: 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)',
+                        headerBorder: '#10b981',
+                        rowBorder: '#ecfdf5',
+                        altRowBg: '#ecfdf5',
+                        borderWidth: 1,
+                        textColor: '#065f46'
                       },
                       {
                         value: 'sunset_orange',
                         label: 'Coucher Orange',
-                        gradient: 'linear-gradient(135deg, #9a3412 0%, #f97316 100%)',
-                        headerBorder: '#c2410c',
-                        rowBorder: '#fed7aa',
+                        gradient: 'linear-gradient(135deg, #fed7aa 0%, #fdba74 100%)',
+                        headerBorder: '#f97316',
+                        rowBorder: '#fff7ed',
                         altRowBg: '#fff7ed',
-                        borderWidth: 1.5,
-                        textColor: '#ffffff'
+                        borderWidth: 1,
+                        textColor: '#c2410c'
                       },
                       {
                         value: 'royal_purple',
                         label: 'Royal Violet',
-                        gradient: 'linear-gradient(135deg, #581c87 0%, #a855f7 100%)',
-                        headerBorder: '#7c3aed',
-                        rowBorder: '#e9d5ff',
+                        gradient: 'linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%)',
+                        headerBorder: '#a855f7',
+                        rowBorder: '#faf5ff',
                         altRowBg: '#faf5ff',
-                        borderWidth: 1.5,
-                        textColor: '#ffffff'
+                        borderWidth: 1,
+                        textColor: '#7c3aed'
                       },
                       {
                         value: 'rose_pink',
                         label: 'Rose Bonbon',
-                        gradient: 'linear-gradient(135deg, #be185d 0%, #f472b6 100%)',
-                        headerBorder: '#db2777',
-                        rowBorder: '#fce7f3',
+                        gradient: 'linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%)',
+                        headerBorder: '#f472b6',
+                        rowBorder: '#fdf2f8',
                         altRowBg: '#fdf2f8',
-                        borderWidth: 1.5,
-                        textColor: '#ffffff'
+                        borderWidth: 1,
+                        textColor: '#db2777'
                       },
                       {
                         value: 'teal_aqua',
                         label: 'Aigue-marine',
-                        gradient: 'linear-gradient(135deg, #0f766e 0%, #14b8a6 100%)',
-                        headerBorder: '#0d9488',
-                        rowBorder: '#ccfbf1',
+                        gradient: 'linear-gradient(135deg, #ccfbf1 0%, #a7f3d0 100%)',
+                        headerBorder: '#14b8a6',
+                        rowBorder: '#f0fdfa',
                         altRowBg: '#f0fdfa',
-                        borderWidth: 1.5,
-                        textColor: '#ffffff'
+                        borderWidth: 1,
+                        textColor: '#0d9488'
                       },
                       {
                         value: 'crimson_red',
                         label: 'Rouge Cramoisi',
-                        gradient: 'linear-gradient(135deg, #991b1b 0%, #ef4444 100%)',
-                        headerBorder: '#dc2626',
-                        rowBorder: '#fecaca',
+                        gradient: 'linear-gradient(135deg, #fecaca 0%, #fca5a5 100%)',
+                        headerBorder: '#ef4444',
+                        rowBorder: '#fef2f2',
                         altRowBg: '#fef2f2',
-                        borderWidth: 1.5,
-                        textColor: '#ffffff'
+                        borderWidth: 1,
+                        textColor: '#dc2626'
                       },
                       {
                         value: 'amber_gold',
                         label: 'Or Ambré',
-                        gradient: 'linear-gradient(135deg, #92400e 0%, #f59e0b 100%)',
-                        headerBorder: '#d97706',
-                        rowBorder: '#fef3c7',
+                        gradient: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+                        headerBorder: '#f59e0b',
+                        rowBorder: '#fffbeb',
                         altRowBg: '#fffbeb',
-                        borderWidth: 1.5,
-                        textColor: '#ffffff'
+                        borderWidth: 1,
+                        textColor: '#d97706'
                       },
                       {
                         value: 'indigo_night',
                         label: 'Nuit Indigo',
-                        gradient: 'linear-gradient(135deg, #312e81 0%, #6366f1 100%)',
-                        headerBorder: '#4338ca',
-                        rowBorder: '#e0e7ff',
+                        gradient: 'linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%)',
+                        headerBorder: '#6366f1',
+                        rowBorder: '#eef2ff',
                         altRowBg: '#eef2ff',
-                        borderWidth: 1.5,
-                        textColor: '#ffffff'
+                        borderWidth: 1,
+                        textColor: '#4338ca'
                       },
                       {
                         value: 'slate_gray',
@@ -1959,41 +1959,41 @@ const PropertiesPanel = memo(({
                       {
                         value: 'coral',
                         label: 'Corail',
-                        headerBg: '#f87171',
-                        headerBorder: '#fca5a5',
+                        headerBg: '#fef2f2',
+                        headerBorder: '#f87171',
                         rowBorder: '#fef2f2',
                         altRowBg: '#fef2f2',
-                        borderWidth: 1.5,
-                        textColor: '#ffffff'
+                        borderWidth: 1,
+                        textColor: '#dc2626'
                       },
                       {
                         value: 'teal',
                         label: 'Sarcelle',
-                        headerBg: '#14b8a6',
+                        headerBg: '#ccfbf1',
                         headerBorder: '#0d9488',
-                        rowBorder: '#ccfbf1',
+                        rowBorder: '#f0fdfa',
                         altRowBg: '#f0fdfa',
-                        borderWidth: 1.5,
-                        textColor: '#ffffff'
+                        borderWidth: 1,
+                        textColor: '#0f766e'
                       },
                       {
                         value: 'indigo',
                         label: 'Indigo',
-                        headerBg: '#6366f1',
-                        headerBorder: '#818cf8',
-                        rowBorder: '#e0e7ff',
+                        headerBg: '#eef2ff',
+                        headerBorder: '#6366f1',
+                        rowBorder: '#eef2ff',
                         altRowBg: '#eef2ff',
-                        borderWidth: 1.5,
-                        textColor: '#ffffff'
+                        borderWidth: 1,
+                        textColor: '#3730a3'
                       },
                       {
                         value: 'amber',
                         label: 'Ambre',
-                        headerBg: '#f59e0b',
-                        headerBorder: '#fbbf24',
+                        headerBg: '#fef3c7',
+                        headerBorder: '#f59e0b',
                         rowBorder: '#fef3c7',
-                        altRowBg: '#fffbeb',
-                        borderWidth: 1.5,
+                        altRowBg: '#fef3c7',
+                        borderWidth: 1,
                         textColor: '#92400e'
                       }
                     ].map((style) => (

@@ -150,13 +150,13 @@ export const CanvasElement = ({
         borderRadius: '0px'
       },
       striped: {
-        headerBg: '#3b82f6',
-        headerBorder: '#2563eb',
-        rowBorder: '#e2e8f0',
+        headerBg: '#e0f2fe',
+        headerBorder: '#0ea5e9',
+        rowBorder: '#f0f9ff',
         rowBg: 'transparent',
         altRowBg: '#f8fafc',
         borderWidth: 1,
-        headerTextColor: '#ffffff',
+        headerTextColor: '#0c4a6e',
         rowTextColor: '#334155',
         headerFontWeight: '600',
         headerFontSize: '11px',
@@ -165,13 +165,13 @@ export const CanvasElement = ({
         borderRadius: '6px'
       },
       bordered: {
-        headerBg: '#ffffff',
-        headerBorder: '#374151',
-        rowBorder: '#d1d5db',
+        headerBg: '#f8fafc',
+        headerBorder: '#94a3b8',
+        rowBorder: '#e2e8f0',
         rowBg: 'transparent',
         altRowBg: '#ffffff',
-        borderWidth: 2,
-        headerTextColor: '#111827',
+        borderWidth: 1,
+        headerTextColor: '#475569',
         rowTextColor: '#111827',
         headerFontWeight: '600',
         headerFontSize: '11px',
@@ -195,13 +195,13 @@ export const CanvasElement = ({
         borderRadius: '0px'
       },
       modern: {
-        headerBg: '#6366f1',
-        headerBorder: '#5b21b6',
-        rowBorder: '#e9d5ff',
+        headerBg: '#e9d5ff',
+        headerBorder: '#a855f7',
+        rowBorder: '#f3e8ff',
         rowBg: 'transparent',
         altRowBg: '#faf5ff',
         borderWidth: 1,
-        headerTextColor: '#ffffff',
+        headerTextColor: '#6b21a8',
         rowTextColor: '#6b21a8',
         headerFontWeight: '600',
         headerFontSize: '11px',
@@ -221,13 +221,13 @@ export const CanvasElement = ({
         rowTextColor: '#374151'
       },
       coral: {
-        headerBg: '#f87171',
-        headerBorder: '#fca5a5',
+        headerBg: '#fef2f2',
+        headerBorder: '#f87171',
         rowBorder: '#fef2f2',
         rowBg: 'transparent',
         altRowBg: '#fef2f2',
-        borderWidth: 1.5,
-        headerTextColor: '#ffffff',
+        borderWidth: 1,
+        headerTextColor: '#dc2626',
         rowTextColor: '#dc2626',
         headerFontWeight: '600',
         headerFontSize: '11px',
@@ -236,32 +236,32 @@ export const CanvasElement = ({
         borderRadius: '6px'
       },
       teal: {
-        headerBg: '#14b8a6',
+        headerBg: '#ccfbf1',
         headerBorder: '#0d9488',
-        rowBorder: '#ccfbf1',
+        rowBorder: '#f0fdfa',
         rowBg: 'transparent',
         altRowBg: '#f0fdfa',
-        borderWidth: 1.5,
-        headerTextColor: '#ffffff',
+        borderWidth: 1,
+        headerTextColor: '#0f766e',
         rowTextColor: '#0f766e'
       },
       indigo: {
-        headerBg: '#6366f1',
-        headerBorder: '#818cf8',
-        rowBorder: '#e0e7ff',
+        headerBg: '#eef2ff',
+        headerBorder: '#6366f1',
+        rowBorder: '#eef2ff',
         rowBg: 'transparent',
         altRowBg: '#eef2ff',
-        borderWidth: 1.5,
-        headerTextColor: '#ffffff',
+        borderWidth: 1,
+        headerTextColor: '#3730a3',
         rowTextColor: '#3730a3'
       },
       amber: {
-        headerBg: '#f59e0b',
-        headerBorder: '#fbbf24',
+        headerBg: '#fef3c7',
+        headerBorder: '#f59e0b',
         rowBorder: '#fef3c7',
         rowBg: 'transparent',
-        altRowBg: '#fffbeb',
-        borderWidth: 1.5,
+        altRowBg: '#fef3c7',
+        borderWidth: 1,
         headerTextColor: '#92400e',
         rowTextColor: '#92400e'
       },
@@ -1082,7 +1082,7 @@ export const CanvasElement = ({
                 {(element.columns?.image !== false) && (
                   <div key="header-image" style={{
                     flex: '0 0 40px',
-                    padding: `${6 * zoom}px ${4 * zoom}px`,
+                    padding: `${8 * zoom}px ${6 * zoom}px`,
                     textAlign: 'center',
                     borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.headerBorder}` : 'none',
                     fontSize: `${tableStyles.headerFontSize * zoom * 0.9}px`,
@@ -1094,7 +1094,7 @@ export const CanvasElement = ({
                 {(element.columns?.name !== false) && (
                   <div key="header-name" style={{
                     flex: 1,
-                    padding: `${6 * zoom}px ${8 * zoom}px`,
+                    padding: `${8 * zoom}px ${10 * zoom}px`,
                     textAlign: 'left',
                     borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.headerBorder}` : 'none',
                     fontSize: `${tableStyles.headerFontSize * zoom}px`
@@ -1105,7 +1105,7 @@ export const CanvasElement = ({
                 {(element.columns?.sku !== false) && (
                   <div key="header-sku" style={{
                     flex: '0 0 80px',
-                    padding: `${6 * zoom}px ${8 * zoom}px`,
+                    padding: `${8 * zoom}px ${10 * zoom}px`,
                     textAlign: 'left',
                     borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.headerBorder}` : 'none',
                     fontSize: `${tableStyles.headerFontSize * zoom}px`
@@ -1115,8 +1115,8 @@ export const CanvasElement = ({
                 )}
                 {(element.columns?.quantity !== false) && (
                   <div key="header-quantity" style={{
-                    flex: '0 0 60px',
-                    padding: `${6 * zoom}px ${8 * zoom}px`,
+                    flex: '0 0 40px',
+                    padding: `${8 * zoom}px ${10 * zoom}px`,
                     textAlign: 'center',
                     borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.headerBorder}` : 'none',
                     fontSize: `${tableStyles.headerFontSize * zoom}px`
@@ -1127,7 +1127,7 @@ export const CanvasElement = ({
                 {(element.columns?.price !== false) && (
                   <div key="header-price" style={{
                     flex: '0 0 80px',
-                    padding: `${6 * zoom}px ${8 * zoom}px`,
+                    padding: `${8 * zoom}px ${10 * zoom}px`,
                     textAlign: 'right',
                     borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.headerBorder}` : 'none',
                     fontSize: `${tableStyles.headerFontSize * zoom}px`
@@ -1166,7 +1166,7 @@ export const CanvasElement = ({
                   {(element.columns?.image !== false) && (
                     <div style={{
                       flex: '0 0 40px',
-                      padding: `${5 * zoom}px ${4 * zoom}px`,
+                      padding: `${7 * zoom}px ${6 * zoom}px`,
                       textAlign: 'center',
                       borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none',
                       color: tableStyles.rowTextColor,
@@ -1179,7 +1179,7 @@ export const CanvasElement = ({
                   {(element.columns?.name !== false) && (
                     <div style={{
                       flex: 1,
-                      padding: `${5 * zoom}px ${8 * zoom}px`,
+                      padding: `${7 * zoom}px ${10 * zoom}px`,
                       borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none',
                       color: tableStyles.rowTextColor,
                       fontWeight: '500',
@@ -1191,7 +1191,7 @@ export const CanvasElement = ({
                   {(element.columns?.sku !== false) && (
                     <div style={{
                       flex: '0 0 80px',
-                      padding: `${5 * zoom}px ${8 * zoom}px`,
+                      padding: `${7 * zoom}px ${10 * zoom}px`,
                       borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none',
                       color: tableStyles.rowTextColor,
                       opacity: 0.8,
@@ -1203,8 +1203,8 @@ export const CanvasElement = ({
                   )}
                   {(element.columns?.quantity !== false) && (
                     <div style={{
-                      flex: '0 0 60px',
-                      padding: `${5 * zoom}px ${8 * zoom}px`,
+                      flex: '0 0 40px',
+                      padding: `${7 * zoom}px ${10 * zoom}px`,
                       textAlign: 'center',
                       borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none',
                       color: tableStyles.rowTextColor,
@@ -1216,7 +1216,7 @@ export const CanvasElement = ({
                   {(element.columns?.price !== false) && (
                     <div style={{
                       flex: '0 0 80px',
-                      padding: `${5 * zoom}px ${8 * zoom}px`,
+                      padding: `${7 * zoom}px ${10 * zoom}px`,
                       textAlign: 'right',
                       borderRight: showBorders ? `${tableStyles.borderWidth * zoom}px solid ${tableStyles.rowBorder}` : 'none',
                       color: tableStyles.rowTextColor,
@@ -1229,7 +1229,7 @@ export const CanvasElement = ({
                   {(element.columns?.total !== false) && (
                     <div style={{
                       flex: '0 0 80px',
-                      padding: `${5 * zoom}px ${8 * zoom}px`,
+                      padding: `${7 * zoom}px ${10 * zoom}px`,
                       textAlign: 'right',
                       color: tableStyles.rowTextColor,
                       fontWeight: '600',
@@ -1248,66 +1248,84 @@ export const CanvasElement = ({
                 {element.showSubtotal && (
                   <div style={{
                     display: 'flex',
-                    justifyContent: 'flex-end',
-                    padding: `${4 * zoom}px ${6 * zoom}px`,
-                    fontWeight: 'bold'
+                    padding: `${6 * zoom}px ${8 * zoom}px`,
+                    fontWeight: 'bold',
+                    backgroundColor: index % 2 === 0 ? 'transparent' : tableStyles.altRowBg,
+                    color: tableStyles.rowTextColor
                   }}>
-                    <div style={{ width: 'auto', textAlign: 'right', display: 'flex', justifyContent: 'space-between' }}>
-                      <span>Sous-total:</span>
-                      <span>{subtotal.toFixed(2)}€</span>
-                    </div>
+                    {/* Colonnes vides pour l'alignement */}
+                    {(element.columns?.image !== false) && <div style={{ flex: '0 0 40px' }}></div>}
+                    {(element.columns?.name !== false) && <div style={{ flex: 1, padding: `0 ${10 * zoom}px` }}>Sous-total:</div>}
+                    {(element.columns?.sku !== false) && <div style={{ flex: '0 0 80px' }}></div>}
+                    {(element.columns?.quantity !== false) && <div style={{ flex: '0 0 40px' }}></div>}
+                    {(element.columns?.price !== false) && <div style={{ flex: '0 0 80px' }}></div>}
+                    {(element.columns?.total !== false) && <div style={{ flex: '0 0 80px', textAlign: 'right', fontWeight: 'bold' }}>{subtotal.toFixed(2)}€</div>}
                   </div>
                 )}
                 {element.showShipping && (
                   <div style={{
                     display: 'flex',
-                    justifyContent: 'flex-end',
-                    padding: `${4 * zoom}px ${6 * zoom}px`
+                    padding: `${6 * zoom}px ${8 * zoom}px`,
+                    backgroundColor: index % 2 === 0 ? 'transparent' : tableStyles.altRowBg,
+                    color: tableStyles.rowTextColor
                   }}>
-                    <div style={{ width: 'auto', textAlign: 'right', display: 'flex', justifyContent: 'space-between' }}>
-                      <span>Port:</span>
-                      <span>{shipping.toFixed(2)}€</span>
-                    </div>
+                    {/* Colonnes vides pour l'alignement */}
+                    {(element.columns?.image !== false) && <div style={{ flex: '0 0 40px' }}></div>}
+                    {(element.columns?.name !== false) && <div style={{ flex: 1, padding: `0 ${10 * zoom}px` }}>Port:</div>}
+                    {(element.columns?.sku !== false) && <div style={{ flex: '0 0 80px' }}></div>}
+                    {(element.columns?.quantity !== false) && <div style={{ flex: '0 0 40px' }}></div>}
+                    {(element.columns?.price !== false) && <div style={{ flex: '0 0 80px' }}></div>}
+                    {(element.columns?.total !== false) && <div style={{ flex: '0 0 80px', textAlign: 'right' }}>{shipping.toFixed(2)}€</div>}
                   </div>
                 )}
                 {element.showTaxes && (
                   <div style={{
                     display: 'flex',
-                    justifyContent: 'flex-end',
-                    padding: `${4 * zoom}px ${6 * zoom}px`
+                    padding: `${6 * zoom}px ${8 * zoom}px`,
+                    backgroundColor: index % 2 === 0 ? 'transparent' : tableStyles.altRowBg,
+                    color: tableStyles.rowTextColor
                   }}>
-                    <div style={{ width: 'auto', textAlign: 'right', display: 'flex', justifyContent: 'space-between' }}>
-                      <span>TVA:</span>
-                      <span>{tax.toFixed(2)}€</span>
-                    </div>
+                    {/* Colonnes vides pour l'alignement */}
+                    {(element.columns?.image !== false) && <div style={{ flex: '0 0 40px' }}></div>}
+                    {(element.columns?.name !== false) && <div style={{ flex: 1, padding: `0 ${10 * zoom}px` }}>TVA:</div>}
+                    {(element.columns?.sku !== false) && <div style={{ flex: '0 0 80px' }}></div>}
+                    {(element.columns?.quantity !== false) && <div style={{ flex: '0 0 40px' }}></div>}
+                    {(element.columns?.price !== false) && <div style={{ flex: '0 0 80px' }}></div>}
+                    {(element.columns?.total !== false) && <div style={{ flex: '0 0 80px', textAlign: 'right' }}>{tax.toFixed(2)}€</div>}
                   </div>
                 )}
                 {element.showDiscount && (
                   <div style={{
                     display: 'flex',
-                    justifyContent: 'flex-end',
-                    padding: `${4 * zoom}px ${6 * zoom}px`
+                    padding: `${6 * zoom}px ${8 * zoom}px`,
+                    backgroundColor: index % 2 === 0 ? 'transparent' : tableStyles.altRowBg,
+                    color: tableStyles.rowTextColor
                   }}>
-                    <div style={{ width: 'auto', textAlign: 'right', display: 'flex', justifyContent: 'space-between' }}>
-                      <span>Remise:</span>
-                      <span>{Math.abs(discount).toFixed(2)}€</span>
-                    </div>
+                    {/* Colonnes vides pour l'alignement */}
+                    {(element.columns?.image !== false) && <div style={{ flex: '0 0 40px' }}></div>}
+                    {(element.columns?.name !== false) && <div style={{ flex: 1, padding: `0 ${10 * zoom}px` }}>Remise:</div>}
+                    {(element.columns?.sku !== false) && <div style={{ flex: '0 0 80px' }}></div>}
+                    {(element.columns?.quantity !== false) && <div style={{ flex: '0 0 40px' }}></div>}
+                    {(element.columns?.price !== false) && <div style={{ flex: '0 0 80px' }}></div>}
+                    {(element.columns?.total !== false) && <div style={{ flex: '0 0 80px', textAlign: 'right' }}>{Math.abs(discount).toFixed(2)}€</div>}
                   </div>
                 )}
                 {element.showTotal && (
                   <div style={{
                     display: 'flex',
-                    justifyContent: 'flex-end',
-                    padding: `${4 * zoom}px ${6 * zoom}px`,
+                    padding: `${6 * zoom}px ${8 * zoom}px`,
                     fontWeight: 'bold',
                     background: tableStyles.gradient || tableStyles.headerBg,
                     color: tableStyles.headerTextColor || (element.tableStyle === 'modern' ? '#ffffff' : '#000000'),
                     boxShadow: tableStyles.shadow ? `0 2px 4px ${tableStyles.shadow}` : 'none'
                   }}>
-                    <div style={{ width: 'auto', textAlign: 'right', display: 'flex', justifyContent: 'space-between' }}>
-                      <span>TOTAL:</span>
-                      <span>{total.toFixed(2)}€</span>
-                    </div>
+                    {/* Colonnes vides pour l'alignement */}
+                    {(element.columns?.image !== false) && <div style={{ flex: '0 0 40px' }}></div>}
+                    {(element.columns?.name !== false) && <div style={{ flex: 1, padding: `0 ${10 * zoom}px` }}>TOTAL:</div>}
+                    {(element.columns?.sku !== false) && <div style={{ flex: '0 0 80px' }}></div>}
+                    {(element.columns?.quantity !== false) && <div style={{ flex: '0 0 40px' }}></div>}
+                    {(element.columns?.price !== false) && <div style={{ flex: '0 0 80px' }}></div>}
+                    {(element.columns?.total !== false) && <div style={{ flex: '0 0 80px', textAlign: 'right', fontWeight: 'bold' }}>{total.toFixed(2)}€</div>}
                   </div>
                 )}
               </div>

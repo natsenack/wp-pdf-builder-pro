@@ -168,12 +168,12 @@ export class SampleDataProvider {
             rowFontSize: '10px'
           },
           blue: {
-            header_bg: [59, 130, 246], // #3b82f6
-            header_border: [37, 99, 235], // #2563eb
-            row_border: [226, 232, 240], // #e2e8f0
-            alt_row_bg: [248, 249, 250], // #f8fafc
-            headerTextColor: '#ffffff',
-            rowTextColor: '#1e293b',
+            header_bg: [224, 242, 254], // #e0f2fe
+            header_border: [14, 165, 233], // #0ea5e9
+            row_border: [240, 249, 255], // #f0f9ff
+            alt_row_bg: [248, 249, 252], // #f8fafc
+            headerTextColor: '#0c4a6e',
+            rowTextColor: '#334155',
             border_width: 1,
             headerFontWeight: 'bold',
             headerFontSize: '11px',
@@ -204,11 +204,11 @@ export class SampleDataProvider {
             rowFontSize: '11px'
           },
           emerald_forest: {
-            header_bg: [16, 185, 129], // #10b981
-            header_border: [5, 150, 105], // #059669
-            row_border: [209, 213, 219], // #d1d5db
+            header_bg: [209, 250, 229], // #d1fae5
+            header_border: [16, 185, 129], // #10b981
+            row_border: [236, 253, 245], // #ecfdf5
             alt_row_bg: [236, 253, 245], // #ecfdf5
-            headerTextColor: '#ffffff',
+            headerTextColor: '#065f46',
             rowTextColor: '#065f46',
             border_width: 1,
             headerFontWeight: 'bold',
@@ -252,11 +252,11 @@ export class SampleDataProvider {
             rowFontSize: '12px'
           },
           blue_ocean: {
-            header_bg: [12, 74, 110], // #0c4a6e
-            header_border: [2, 132, 199], // #0284c7
-            row_border: [186, 230, 253], // #bae6fd
-            alt_row_bg: [240, 249, 255], // #f0f9ff
-            headerTextColor: '#ffffff',
+            header_bg: [219, 234, 254], // #dbeafe
+            header_border: [59, 130, 246], // #3b82f6
+            row_border: [239, 246, 255], // #eff6ff
+            alt_row_bg: [239, 246, 255], // #eff6ff
+            headerTextColor: '#1e40af',
             rowTextColor: '#0c4a6e',
             border_width: 1,
             headerFontWeight: 'bold',
@@ -264,11 +264,11 @@ export class SampleDataProvider {
             rowFontSize: '11px'
           },
           sunset_orange: {
-            header_bg: [154, 52, 18], // #9a3412
-            header_border: [234, 88, 12], // #ea580c
-            row_border: [253, 186, 116], // #fdba74
+            header_bg: [253, 215, 170], // #fdd7aa
+            header_border: [245, 101, 101], // #f56565
+            row_border: [255, 247, 237], // #fff7ed
             alt_row_bg: [255, 247, 237], // #fff7ed
-            headerTextColor: '#ffffff',
+            headerTextColor: '#c2410c',
             rowTextColor: '#9a3412',
             border_width: 1,
             headerFontWeight: 'bold',
@@ -276,11 +276,11 @@ export class SampleDataProvider {
             rowFontSize: '11px'
           },
           royal_purple: {
-            header_bg: [88, 28, 135], // #581c87
-            header_border: [147, 51, 234], // #9333ea
-            row_border: [221, 214, 254], // #ddd6fe
+            header_bg: [233, 213, 255], // #e9d5ff
+            header_border: [168, 85, 247], // #a855f7
+            row_border: [250, 245, 255], // #faf5ff
             alt_row_bg: [250, 245, 255], // #faf5ff
-            headerTextColor: '#ffffff',
+            headerTextColor: '#7c3aed',
             rowTextColor: '#581c87',
             border_width: 1,
             headerFontWeight: 'bold',
@@ -288,11 +288,11 @@ export class SampleDataProvider {
             rowFontSize: '11px'
           },
           rose_pink: {
-            header_bg: [190, 18, 60], // #be123c
-            header_border: [236, 72, 153], // #ec4899
-            row_border: [253, 164, 175], // #fda4af
-            alt_row_bg: [255, 241, 242], // #fff1f2
-            headerTextColor: '#ffffff',
+            header_bg: [254, 226, 243], // #fee7f3
+            header_border: [244, 114, 182], // #f472b6
+            row_border: [253, 242, 248], // #fdf2f8
+            alt_row_bg: [253, 242, 248], // #fdf2f8
+            headerTextColor: '#db2777',
             rowTextColor: '#be123c',
             border_width: 1,
             headerFontWeight: 'bold',
@@ -300,11 +300,11 @@ export class SampleDataProvider {
             rowFontSize: '11px'
           },
           teal_aqua: {
-            header_bg: [5, 150, 105], // #059669
+            header_bg: [204, 251, 241], // #ccfbf1
             header_border: [20, 184, 166], // #14b8a6
-            row_border: [153, 246, 228], // #99f6e4
+            row_border: [240, 253, 250], // #f0fdfa
             alt_row_bg: [236, 253, 245], // #ecfdf5
-            headerTextColor: '#ffffff',
+            headerTextColor: '#0d9488',
             rowTextColor: '#065f46',
             border_width: 1,
             headerFontWeight: 'bold',
@@ -312,11 +312,11 @@ export class SampleDataProvider {
             rowFontSize: '11px'
           },
           crimson_red: {
-            header_bg: [153, 27, 27], // #991b1b
+            header_bg: [254, 202, 202], // #fecaca
             header_border: [239, 68, 68], // #ef4444
-            row_border: [252, 165, 165], // #fca5a5
+            row_border: [254, 242, 242], // #fef2f2
             alt_row_bg: [254, 242, 242], // #fef2f2
-            headerTextColor: '#ffffff',
+            headerTextColor: '#dc2626',
             rowTextColor: '#991b1b',
             border_width: 1,
             headerFontWeight: 'bold',
@@ -324,11 +324,11 @@ export class SampleDataProvider {
             rowFontSize: '11px'
           },
           amber_gold: {
-            header_bg: [161, 98, 7], // #a16207
+            header_bg: [254, 243, 199], // #fef3c7
             header_border: [245, 158, 11], // #f59e0b
-            row_border: [253, 230, 138], // #fde68a
+            row_border: [254, 252, 232], // #fefce8
             alt_row_bg: [254, 252, 232], // #fefce8
-            headerTextColor: '#ffffff',
+            headerTextColor: '#d97706',
             rowTextColor: '#92400e',
             border_width: 1,
             headerFontWeight: 'bold',
@@ -336,11 +336,11 @@ export class SampleDataProvider {
             rowFontSize: '11px'
           },
           indigo_night: {
-            header_bg: [49, 46, 129], // #312e81
+            header_bg: [238, 242, 255], // #eef2ff
             header_border: [99, 102, 241], // #6366f1
-            row_border: [196, 181, 253], // #c4b5fd
+            row_border: [238, 242, 255], // #eef2ff
             alt_row_bg: [245, 243, 255], // #f5f3ff
-            headerTextColor: '#ffffff',
+            headerTextColor: '#4338ca',
             rowTextColor: '#312e81',
             border_width: 1,
             headerFontWeight: 'bold',

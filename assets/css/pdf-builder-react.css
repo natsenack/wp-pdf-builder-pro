@@ -2047,6 +2047,15 @@ body.pdf-builder-active #wpadminbar {
   color: #475569;
 }
 
+/* Réduction de l'espacement pour les property-row avec checkbox-group */
+.property-row:has(.checkbox-group) {
+  gap: 8px;
+}
+
+.property-row:has(.checkbox-group) label {
+  min-width: 60px;
+}
+
 .checkbox-item input[type="checkbox"] {
   width: 16px;
   height: 16px;

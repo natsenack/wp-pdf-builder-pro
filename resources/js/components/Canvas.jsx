@@ -563,6 +563,12 @@ const Canvas = ({
           quantity: true,
           total: true
         };
+        // Valeurs par défaut pour les lignes de totaux
+        newElement.showSubtotal = false;
+        newElement.showShipping = true;
+        newElement.showTaxes = true;
+        newElement.showDiscount = false;
+        newElement.showTotal = true;
       }
 
       onElementUpdate(newElementId, newElement);
