@@ -53,9 +53,48 @@ try {
       ReactDOM.render(
         React.createElement(PDFEditor, {
           initialElements: options.initialElements || [],
-          onSave: (elements) => {
-            console.log('PDF Editor saved elements:', elements);
-            // TODO: Implement save logic
+          onSave: async (elements) => {
+            console.log('PDF Editor saving elements:', elements);
+            
+            try {
+              // Préparer les données pour la sauvegarde
+              const saveData = {
+                action: 'pdf_builder_save_template',
+                template_data: JSON.stringify(elements),
+                template_name: options.templateName || 'Template sans nom',
+                template_id: options.templateId || 0,
+                nonce: window.pdfBuilderPro ? window.pdfBuilderPro.nonce : ''
+              };
+
+              // Envoyer via AJAX
+              const response = await fetch(window.ajaxurl || '/wp-admin/admin-ajax.php', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams(saveData)
+              });
+
+              const result = await response.json();
+              
+              if (result.success) {
+                console.log('Template saved successfully:', result.data);
+                // Afficher un message de succès si possible
+                if (window.pdfBuilderPro && window.pdfBuilderPro.showNotice) {
+                  window.pdfBuilderPro.showNotice('Template sauvegardé avec succès !', 'success');
+                }
+              } else {
+                console.error('Save failed:', result.data);
+                if (window.pdfBuilderPro && window.pdfBuilderPro.showNotice) {
+                  window.pdfBuilderPro.showNotice('Erreur lors de la sauvegarde: ' + result.data, 'error');
+                }
+              }
+            } catch (error) {
+              console.error('Save error:', error);
+              if (window.pdfBuilderPro && window.pdfBuilderPro.showNotice) {
+                window.pdfBuilderPro.showNotice('Erreur réseau lors de la sauvegarde', 'error');
+              }
+            }
           },
           templateName: options.templateName || '',
           isNew: options.isNew || false

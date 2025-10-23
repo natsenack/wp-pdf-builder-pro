@@ -1738,9 +1738,28 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         const letterSpacing = element.letterSpacing || 0;
         const lineHeight = element.lineHeight || 1.2;
 
-        // Calculer la largeur des colonnes
+        // Calculer la largeur des colonnes avec largeur fixe pour la colonne Qté
         const numColumns = tableData.headers.length;
-        const columnWidth = tableWidth / numColumns;
+        let columnWidths = new Array(numColumns).fill(0);
+        let totalWidthUsed = 0;
+
+        // Largeur fixe de 40px pour la colonne "Qté"
+        const quantityColumnIndex = tableData.headers.indexOf('Qté');
+        if (quantityColumnIndex !== -1) {
+          columnWidths[quantityColumnIndex] = 40;
+          totalWidthUsed += 40;
+        }
+
+        // Répartir le reste de l'espace entre les autres colonnes
+        const remainingWidth = tableWidth - totalWidthUsed;
+        const remainingColumns = numColumns - (quantityColumnIndex !== -1 ? 1 : 0);
+        const defaultColumnWidth = remainingColumns > 0 ? remainingWidth / remainingColumns : remainingWidth / numColumns;
+
+        for (let i = 0; i < numColumns; i++) {
+          if (columnWidths[i] === 0) { // Pas encore défini (pas la colonne Qté)
+            columnWidths[i] = defaultColumnWidth;
+          }
+        }
 
         // En-têtes du tableau
         if (element.showHeaders !== false && tableData.headers.length > 0) {
@@ -1796,7 +1815,14 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
               headerText = headerText.replace(/\b\w/g, l => l.toUpperCase());
             }
 
-            const headerX = tableX + (index * columnWidth) + (columnWidth / 2);
+            // Calculer la position X centrée dans la colonne
+            let headerX;
+            if (index === 0) {
+              headerX = tableX + (columnWidths[0] / 2);
+            } else {
+              const previousWidth = columnWidths.slice(0, index).reduce((sum, w) => sum + w, 0);
+              headerX = tableX + previousWidth + (columnWidths[index] / 2);
+            }
 
             // Afficher le texte avec espacement des lettres si défini
             if (letterSpacing > 0) {
@@ -1813,9 +1839,10 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             if (element.showBorders !== false && index < tableData.headers.length - 1) {
               ctx.strokeStyle = tableStyleData.header_border ? `rgb(${tableStyleData.header_border.join(',')})` : '#e2e8f0';
               ctx.lineWidth = tableStyleData.border_width || 0.5;
+              const lineX = tableX + columnWidths.slice(0, index + 1).reduce((sum, w) => sum + w, 0);
               ctx.beginPath();
-              ctx.moveTo(tableX + ((index + 1) * columnWidth), currentY);
-              ctx.lineTo(tableX + ((index + 1) * columnWidth), currentY + headerHeight);
+              ctx.moveTo(lineX, currentY);
+              ctx.lineTo(lineX, currentY + headerHeight);
               ctx.stroke();
             }
           });
@@ -1886,7 +1913,14 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
               cellText = cellText.replace(/\b\w/g, l => l.toUpperCase());
             }
 
-            const cellX = tableX + (cellIndex * columnWidth) + (columnWidth / 2);
+            // Calculer la position X centrée dans la colonne
+            let cellX;
+            if (cellIndex === 0) {
+              cellX = tableX + (columnWidths[0] / 2);
+            } else {
+              const previousWidth = columnWidths.slice(0, cellIndex).reduce((sum, w) => sum + w, 0);
+              cellX = tableX + previousWidth + (columnWidths[cellIndex] / 2);
+            }
             const cellY = currentY + rowHeight / 2 + (rowFontSize * 0.35); // Centrage vertical amélioré
 
             // Gestion spéciale pour les images (placeholder)
@@ -1935,9 +1969,10 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             if (element.showBorders !== false && cellIndex < row.length - 1) {
               ctx.strokeStyle = `rgb(${tableStyleData.row_border.join(',')})`;
               ctx.lineWidth = tableStyleData.border_width || 0.3;
+              const lineX = tableX + columnWidths.slice(0, cellIndex + 1).reduce((sum, w) => sum + w, 0);
               ctx.beginPath();
-              ctx.moveTo(tableX + ((cellIndex + 1) * columnWidth), currentY + 2);
-              ctx.lineTo(tableX + ((cellIndex + 1) * columnWidth), currentY + rowHeight - 2);
+              ctx.moveTo(lineX, currentY + 2);
+              ctx.lineTo(lineX, currentY + rowHeight - 2);
               ctx.stroke();
             }
           });
@@ -1945,7 +1980,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           currentY += rowHeight;
         });
 
-        // Lignes de totaux
+        // Lignes de totaux - maintenant alignées avec les colonnes
         const totals = tableData.totals;
         if (Object.keys(totals).length > 0) {
           currentY += 8; // Espace avant les totaux
@@ -1987,7 +2022,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             ctx.font = `${fontStyle}${totalFontWeight} ${totalFontSize}px ${fontFamily}`;
             ctx.fillStyle = tableStyleData.headerTextColor;
 
-            // Libellé du total
+            // Libellé du total (dans la première colonne)
             let label = key === 'subtotal' ? 'Sous-total' :
                        key === 'shipping' ? 'Frais de port' :
                        key === 'tax' ? 'TVA' :
@@ -2003,21 +2038,22 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
               label = label.replace(/\b\w/g, l => l.toUpperCase());
             }
 
-            ctx.textAlign = 'left';
+            // Positionner le libellé dans la première colonne (Produit/Nom)
+            const labelX = tableX + (columnWidths[0] / 2);
             const labelY = currentY + totalHeight / 2 + (totalFontSize * 0.35);
+            ctx.textAlign = 'center';
 
-            // Afficher le libellé avec espacement des lettres si défini
             if (letterSpacing > 0) {
-              let charX = tableX + 15; // Padding gauche augmenté
+              let charX = labelX - (label.length * letterSpacing) / 2;
               for (let i = 0; i < label.length; i++) {
                 ctx.fillText(label[i], charX, labelY);
                 charX += ctx.measureText(label[i]).width + letterSpacing;
               }
             } else {
-              ctx.fillText(label, tableX + 15, labelY);
+              ctx.fillText(label, labelX, labelY);
             }
 
-            // Valeur du total
+            // Valeur du total (dans la dernière colonne Total)
             let valueText = String(value);
 
             // Appliquer la transformation de texte à la valeur
@@ -2029,18 +2065,42 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
               valueText = valueText.replace(/\b\w/g, l => l.toUpperCase());
             }
 
-            ctx.textAlign = 'right';
-            const valueY = currentY + totalHeight / 2 + (totalFontSize * 0.35);
-
-            // Afficher la valeur avec espacement des lettres si défini
-            if (letterSpacing > 0) {
-              let charX = tableX + tableWidth - 15 - (valueText.length * letterSpacing); // Padding droit augmenté
-              for (let i = 0; i < valueText.length; i++) {
-                ctx.fillText(valueText[i], charX, valueY);
-                charX += ctx.measureText(valueText[i]).width + letterSpacing;
+            // Positionner la valeur dans la colonne Total (dernière colonne)
+            const totalColumnIndex = tableData.headers.indexOf('Total');
+            if (totalColumnIndex !== -1) {
+              let valueX;
+              if (totalColumnIndex === 0) {
+                valueX = tableX + (columnWidths[0] / 2);
+              } else {
+                const previousWidth = columnWidths.slice(0, totalColumnIndex).reduce((sum, w) => sum + w, 0);
+                valueX = tableX + previousWidth + (columnWidths[totalColumnIndex] / 2);
               }
-            } else {
-              ctx.fillText(valueText, tableX + tableWidth - 15, valueY);
+              const valueY = currentY + totalHeight / 2 + (totalFontSize * 0.35);
+              ctx.textAlign = 'center';
+
+              if (letterSpacing > 0) {
+                let charX = valueX - (valueText.length * letterSpacing) / 2;
+                for (let i = 0; i < valueText.length; i++) {
+                  ctx.fillText(valueText[i], charX, valueY);
+                  charX += ctx.measureText(valueText[i]).width + letterSpacing;
+                }
+              } else {
+                ctx.fillText(valueText, valueX, valueY);
+              }
+            }
+
+            // Lignes verticales entre les colonnes pour les totaux
+            if (element.showBorders !== false) {
+              ctx.strokeStyle = `rgb(${tableStyleData.header_border.join(',')})`;
+              ctx.lineWidth = tableStyleData.border_width || 0.5;
+
+              for (let i = 0; i < numColumns - 1; i++) {
+                const lineX = tableX + columnWidths.slice(0, i + 1).reduce((sum, w) => sum + w, 0);
+                ctx.beginPath();
+                ctx.moveTo(lineX, currentY);
+                ctx.lineTo(lineX, currentY + totalHeight);
+                ctx.stroke();
+              }
             }
 
             currentY += totalHeight;
