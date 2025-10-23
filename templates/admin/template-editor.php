@@ -154,6 +154,39 @@ if (!$is_new && $template_id > 0) {
                 if (isset($decoded_data['elements']) && is_array($decoded_data['elements'])) {
                     $initial_elements = $decoded_data['elements'];
                     echo "<!-- DEBUG: " . count($initial_elements) . " éléments trouvés dans 'elements' -->";
+
+                    // Corriger les positions des éléments hors canvas
+                    $canvas_width = 595;  // Largeur A4 en pixels à 72 DPI
+                    $canvas_height = 842; // Hauteur A4 en pixels à 72 DPI
+
+                    foreach ($initial_elements as &$element) {
+                        // Vérifier et corriger la position X
+                        if (isset($element['x']) && $element['x'] < 0) {
+                            $element['x'] = 10; // Position minimale
+                        }
+                        if (isset($element['x']) && isset($element['width']) && ($element['x'] + $element['width']) > $canvas_width) {
+                            $element['x'] = max(10, $canvas_width - $element['width'] - 10);
+                        }
+
+                        // Vérifier et corriger la position Y
+                        if (isset($element['y']) && $element['y'] < 0) {
+                            $element['y'] = 10; // Position minimale
+                        }
+                        if (isset($element['y']) && isset($element['height']) && ($element['y'] + $element['height']) > $canvas_height) {
+                            $element['y'] = max(10, $canvas_height - $element['height'] - 10);
+                        }
+
+                        // Cas spécial pour les éléments sans dimensions explicites
+                        if (isset($element['y']) && !isset($element['height'])) {
+                            if ($element['y'] > $canvas_height - 50) {
+                                $element['y'] = $canvas_height - 50;
+                            }
+                        }
+                    }
+                    unset($element); // Libérer la référence
+
+                    echo "<!-- DEBUG: Positions des éléments corrigées pour le canvas {$canvas_width}x{$canvas_height} -->";
+
                 } elseif (isset($decoded_data['pages']) && is_array($decoded_data['pages']) && !empty($decoded_data['pages'])) {
                     // Fallback pour l'ancienne structure (si elle existe)
                     $first_page = $decoded_data['pages'][0];
