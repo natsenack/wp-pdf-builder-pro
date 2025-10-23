@@ -1638,12 +1638,66 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             ctx.globalAlpha = element.opacity;
         }
 
+        // Appliquer les filtres CSS si définis (simulation avec canvas)
+        if (element.brightness !== undefined || element.contrast !== undefined || element.saturate !== undefined) {
+          // Note: Les filtres canvas sont limités, nous simulons avec des ajustements de couleur
+          const brightness = element.brightness !== undefined ? element.brightness / 100 : 1;
+          const contrast = element.contrast !== undefined ? element.contrast / 100 : 1;
+          const saturate = element.saturate !== undefined ? element.saturate / 100 : 1;
+
+          // Appliquer un filtre de luminosité simple en ajustant la couleur
+          if (brightness !== 1) {
+            ctx.filter = `brightness(${brightness})`;
+          }
+        }
+
         // Appliquer les ombres si définies
         if (element.shadow) {
           ctx.shadowColor = element.shadowColor || '#000000';
-          ctx.shadowBlur = 5;
+          ctx.shadowBlur = element.shadowBlur || 5;
           ctx.shadowOffsetX = element.shadowOffsetX || 2;
           ctx.shadowOffsetY = element.shadowOffsetY || 2;
+        }
+
+        // Fond du tableau si défini
+        if (element.backgroundColor && element.backgroundColor !== 'transparent') {
+          ctx.fillStyle = element.backgroundColor;
+          if (element.borderRadius > 0) {
+            ctx.beginPath();
+            ctx.roundRect(tableX - 5, currentY - 5, tableWidth + 10, tableHeight + 10, element.borderRadius);
+            ctx.fill();
+          } else {
+            ctx.fillRect(tableX - 5, currentY - 5, tableWidth + 10, tableHeight + 10);
+          }
+        }
+
+        // Bordure du tableau si définie
+        if (element.borderWidth > 0) {
+          ctx.strokeStyle = element.borderColor || '#000000';
+          ctx.lineWidth = element.borderWidth || 1;
+          if (element.borderRadius > 0) {
+            ctx.beginPath();
+            ctx.roundRect(tableX - 5, currentY - 5, tableWidth + 10, tableHeight + 10, element.borderRadius);
+            ctx.stroke();
+          } else {
+            ctx.strokeRect(tableX - 5, currentY - 5, tableWidth + 10, tableHeight + 10);
+          }
+        }
+
+        // Appliquer la transformation (rotation, échelle) si définie
+        if (element.rotation || element.scaleX || element.scaleY) {
+          ctx.save();
+          const centerX = tableX + tableWidth / 2;
+          const centerY = currentY + tableHeight / 2;
+
+          ctx.translate(centerX, centerY);
+          if (element.rotation) {
+            ctx.rotate((element.rotation * Math.PI) / 180);
+          }
+          if (element.scaleX || element.scaleY) {
+            ctx.scale(element.scaleX || 1, element.scaleY || 1);
+          }
+          ctx.translate(-centerX, -centerY);
         }
 
         // Générer les données du tableau avec SampleDataProvider
@@ -1672,10 +1726,17 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           rowFontSize: '11px'
         };
 
-        // Configuration de la police
-        const headerFontSize = parseInt(tableStyleData.headerFontSize) || 12;
-        const rowFontSize = parseInt(tableStyleData.rowFontSize) || 11;
+        // Configuration de la police avec propriétés avancées
+        const headerFontSize = parseInt(tableStyleData.headerFontSize) || element.fontSize || 12;
+        const rowFontSize = parseInt(tableStyleData.rowFontSize) || element.fontSize || 11;
         const fontFamily = element.fontFamily || 'Arial';
+        const fontWeight = element.fontWeight || tableStyleData.headerFontWeight || 'normal';
+        const fontStyle = element.fontStyle === 'italic' ? 'italic ' : '';
+
+        // Appliquer les propriétés de texte avancées
+        const textTransform = element.textTransform || 'none';
+        const letterSpacing = element.letterSpacing || 0;
+        const lineHeight = element.lineHeight || 1.2;
 
         // Calculer la largeur des colonnes
         const numColumns = tableData.headers.length;
@@ -1696,12 +1757,33 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
           // Texte des en-têtes
           ctx.fillStyle = tableStyleData.headerTextColor;
-          ctx.font = `${tableStyleData.headerFontWeight} ${headerFontSize}px ${fontFamily}`;
+          ctx.font = `${fontStyle}${fontWeight} ${headerFontSize}px ${fontFamily}`;
           ctx.textAlign = 'center';
 
           tableData.headers.forEach((header, index) => {
+            let headerText = header;
+
+            // Appliquer la transformation de texte
+            if (textTransform === 'uppercase') {
+              headerText = headerText.toUpperCase();
+            } else if (textTransform === 'lowercase') {
+              headerText = headerText.toLowerCase();
+            } else if (textTransform === 'capitalize') {
+              headerText = headerText.replace(/\b\w/g, l => l.toUpperCase());
+            }
+
             const headerX = tableX + (index * columnWidth) + (columnWidth / 2);
-            ctx.fillText(header, headerX, currentY + 17);
+
+            // Afficher le texte avec espacement des lettres si défini
+            if (letterSpacing > 0) {
+              let charX = headerX - (headerText.length * letterSpacing) / 2;
+              for (let i = 0; i < headerText.length; i++) {
+                ctx.fillText(headerText[i], charX, currentY + 17);
+                charX += ctx.measureText(headerText[i]).width + letterSpacing;
+              }
+            } else {
+              ctx.fillText(headerText, headerX, currentY + 17);
+            }
 
             // Ligne verticale entre les colonnes si bordures activées
             if (element.showBorders !== false && index < tableData.headers.length - 1) {
@@ -1718,7 +1800,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         }
 
         // Lignes de données
-        ctx.font = `${rowFontSize}px ${fontFamily}`;
+        ctx.font = `${fontStyle}${fontWeight} ${rowFontSize}px ${fontFamily}`;
 
         tableData.rows.forEach((row, rowIndex) => {
           const rowHeight = 20;
@@ -1743,8 +1825,18 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           ctx.textAlign = 'center';
 
           row.forEach((cell, cellIndex) => {
+            let cellText = String(cell);
+
+            // Appliquer la transformation de texte
+            if (textTransform === 'uppercase') {
+              cellText = cellText.toUpperCase();
+            } else if (textTransform === 'lowercase') {
+              cellText = cellText.toLowerCase();
+            } else if (textTransform === 'capitalize') {
+              cellText = cellText.replace(/\b\w/g, l => l.toUpperCase());
+            }
+
             const cellX = tableX + (cellIndex * columnWidth) + (columnWidth / 2);
-            const cellText = String(cell);
 
             // Gestion spéciale pour les images (placeholder)
             if (cellText.startsWith('data:image') || cellText.includes('.jpg') || cellText.includes('.png')) {
@@ -1767,7 +1859,17 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
                 }
                 displayText += '...';
               }
-              ctx.fillText(displayText, cellX, currentY + 14);
+
+              // Afficher le texte avec espacement des lettres si défini
+              if (letterSpacing > 0) {
+                let charX = cellX - (displayText.length * letterSpacing) / 2;
+                for (let i = 0; i < displayText.length; i++) {
+                  ctx.fillText(displayText[i], charX, currentY + 14);
+                  charX += ctx.measureText(displayText[i]).width + letterSpacing;
+                }
+              } else {
+                ctx.fillText(displayText, cellX, currentY + 14);
+              }
             }
 
             // Ligne verticale entre les colonnes si bordures activées
@@ -1805,31 +1907,78 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
             // Texte du total
             ctx.fillStyle = tableStyleData.headerTextColor;
-            ctx.font = `${tableStyleData.headerFontWeight} ${headerFontSize}px ${fontFamily}`;
+            ctx.font = `${fontStyle}${fontWeight} ${headerFontSize}px ${fontFamily}`;
 
             // Libellé du total
-            const label = key === 'subtotal' ? 'Sous-total' :
-                         key === 'shipping' ? 'Frais de port' :
-                         key === 'tax' ? 'TVA' :
-                         key === 'discount' ? 'Remise' :
-                         key === 'total' ? 'TOTAL' : key;
+            let label = key === 'subtotal' ? 'Sous-total' :
+                       key === 'shipping' ? 'Frais de port' :
+                       key === 'tax' ? 'TVA' :
+                       key === 'discount' ? 'Remise' :
+                       key === 'total' ? 'TOTAL' : key;
+
+            // Appliquer la transformation de texte au libellé
+            if (textTransform === 'uppercase') {
+              label = label.toUpperCase();
+            } else if (textTransform === 'lowercase') {
+              label = label.toLowerCase();
+            } else if (textTransform === 'capitalize') {
+              label = label.replace(/\b\w/g, l => l.toUpperCase());
+            }
+
             ctx.textAlign = 'left';
-            ctx.fillText(label, tableX + 10, currentY + 13);
+
+            // Afficher le libellé avec espacement des lettres si défini
+            if (letterSpacing > 0) {
+              let charX = tableX + 10;
+              for (let i = 0; i < label.length; i++) {
+                ctx.fillText(label[i], charX, currentY + 13);
+                charX += ctx.measureText(label[i]).width + letterSpacing;
+              }
+            } else {
+              ctx.fillText(label, tableX + 10, currentY + 13);
+            }
 
             // Valeur du total
+            let valueText = String(value);
+
+            // Appliquer la transformation de texte à la valeur
+            if (textTransform === 'uppercase') {
+              valueText = valueText.toUpperCase();
+            } else if (textTransform === 'lowercase') {
+              valueText = valueText.toLowerCase();
+            } else if (textTransform === 'capitalize') {
+              valueText = valueText.replace(/\b\w/g, l => l.toUpperCase());
+            }
+
             ctx.textAlign = 'right';
-            ctx.fillText(String(value), tableX + tableWidth - 10, currentY + 13);
+
+            // Afficher la valeur avec espacement des lettres si défini
+            if (letterSpacing > 0) {
+              let charX = tableX + tableWidth - 10 - (valueText.length * letterSpacing);
+              for (let i = 0; i < valueText.length; i++) {
+                ctx.fillText(valueText[i], charX, currentY + 13);
+                charX += ctx.measureText(valueText[i]).width + letterSpacing;
+              }
+            } else {
+              ctx.fillText(valueText, tableX + tableWidth - 10, currentY + 13);
+            }
 
             currentY += totalHeight;
           });
         }
 
-        // Restaurer l'opacité et les ombres
+        // Restaurer l'opacité, les filtres et les ombres
         ctx.globalAlpha = 1;
+        ctx.filter = 'none';
         ctx.shadowColor = 'transparent';
         ctx.shadowBlur = 0;
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 0;
+
+        // Restaurer la transformation si elle était appliquée
+        if (element.rotation || element.scaleX || element.scaleY) {
+          ctx.restore();
+        }
 
       } else {
         console.log(`PDFEditor: UNKNOWN ELEMENT TYPE "${element.type}" for element ${element.id} - rendering as generic red rectangle`);
