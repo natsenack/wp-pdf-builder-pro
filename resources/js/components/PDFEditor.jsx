@@ -1,133 +1,118 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Toolbar } from './Toolbar';
-import PreviewModal from './preview-system/components/PreviewModal';
-import { PreviewProvider } from './preview-system/context/PreviewProvider';
-import { usePreviewContext } from './preview-system/context/PreviewContext';
 import './PDFEditor.css';
 
 /**
- * PDFEditor - Éditeur principal avec toolbar et aperçu
- * Phase 2.2.4.1 - Implémentation du bouton aperçu dans l'éditeur Canvas
+ * PDFEditor - Éditeur canvas simple et original
+ * Version basique avec canvas interactif
  */
-const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isNew = true }) => {
-  // Contexte d'aperçu
-  const { actions: { openPreview } } = usePreviewContext();
-
+const PDFEditor = ({ initialElements = [], onSave, templateName = '', isNew = true }) => {
   // État de l'éditeur
-  const [selectedTool, setSelectedTool] = useState('select');
   const [zoom, setZoom] = useState(1.0);
-  const [showGrid, setShowGrid] = useState(true);
-  const [snapToGrid, setSnapToGrid] = useState(true);
   const [elements, setElements] = useState(initialElements);
-  const [history, setHistory] = useState([initialElements]);
-  const [historyIndex, setHistoryIndex] = useState(0);
 
-  // Références
+  // Référence du canvas
   const canvasRef = useRef(null);
-
-  // Gestionnaire d'outils
-  const handleToolSelect = (toolId) => {
-    setSelectedTool(toolId);
-  };
 
   // Gestionnaire de zoom
   const handleZoomChange = (newZoom) => {
     setZoom(Math.max(0.1, Math.min(3.0, newZoom)));
   };
 
-  // Gestionnaire de grille
-  const handleShowGridChange = (show) => {
-    setShowGrid(show);
-  };
-
-  const handleSnapToGridChange = (snap) => {
-    setSnapToGrid(snap);
-  };
-
-  // Gestionnaire d'historique
-  const handleUndo = () => {
-    if (historyIndex > 0) {
-      setHistoryIndex(historyIndex - 1);
-      setElements(history[historyIndex - 1]);
-    }
-  };
-
-  const handleRedo = () => {
-    if (historyIndex < history.length - 1) {
-      setHistoryIndex(historyIndex + 1);
-      setElements(history[historyIndex + 1]);
-    }
-  };
-
-  const canUndo = historyIndex > 0;
-  const canRedo = historyIndex < history.length - 1;
-
-  // Gestionnaire d'aperçu
-  const handlePreview = () => {
-    openPreview('canvas', null, { elements });
-  };
-
-  // Gestionnaire nouveau template
-  const handleNewTemplate = () => {
-    // TODO: Implémenter la logique de nouveau template
-    console.log('Nouveau template demandé');
-  };
-
-  // Gestionnaire de sauvegarde des éléments
-  const handleElementsChange = (newElements) => {
-    const newHistory = history.slice(0, historyIndex + 1);
-    newHistory.push(newElements);
-    setHistory(newHistory);
-    setHistoryIndex(newHistory.length - 1);
-    setElements(newElements);
-
-    // Sauvegarder automatiquement si callback fourni
+  // Gestionnaire de sauvegarde
+  const handleSave = () => {
     if (onSave) {
-      onSave(newElements);
+      onSave(elements);
     }
+    console.log('PDF sauvegardé:', elements);
   };
 
-  // Écouter les événements globaux pour le bouton aperçu du header
+  // Effet pour dessiner sur le canvas
   useEffect(() => {
-    const handleGlobalPreview = (event) => {
-      if (event.type === 'pdfBuilderPreview') {
-        handlePreview();
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Effacer le canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Appliquer le zoom
+    ctx.save();
+    ctx.scale(zoom, zoom);
+
+    // Dessiner les éléments
+    elements.forEach((element, index) => {
+      ctx.fillStyle = element.color || '#000000';
+      ctx.font = `${element.fontSize || 16}px Arial`;
+
+      if (element.type === 'text') {
+        ctx.fillText(element.text || 'Texte', element.x || 10, element.y || 30);
+      } else if (element.type === 'rectangle') {
+        ctx.fillRect(element.x || 10, element.y || 10, element.width || 100, element.height || 50);
       }
+    });
+
+    ctx.restore();
+  }, [elements, zoom]);
+
+  // Gestionnaire de clic sur le canvas
+  const handleCanvasClick = (e) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / zoom;
+    const y = (e.clientY - rect.top) / zoom;
+
+    // Ajouter un élément texte au clic
+    const newElement = {
+      id: Date.now(),
+      type: 'text',
+      text: 'Nouveau texte',
+      x: x,
+      y: y,
+      fontSize: 16,
+      color: '#000000'
     };
 
-    // Écouter l'événement personnalisé
-    document.addEventListener('pdfBuilderPreview', handleGlobalPreview);
-
-    // Exposer la fonction globalement pour le bouton du header
-    window.pdfBuilderPro = window.pdfBuilderPro || {};
-    window.pdfBuilderPro.triggerPreview = handlePreview;
-
-    // Nettoyer les écouteurs
-    return () => {
-      document.removeEventListener('pdfBuilderPreview', handleGlobalPreview);
-    };
-  }, [elements]); // Dépendance sur elements pour que la fonction soit à jour
+    setElements([...elements, newElement]);
+  };
 
   return (
     <div className="pdf-editor">
-      {/* Toolbar principale */}
-      <Toolbar
-        selectedTool={selectedTool}
-        onToolSelect={handleToolSelect}
-        zoom={zoom}
-        onZoomChange={handleZoomChange}
-        showGrid={showGrid}
-        onShowGridChange={handleShowGridChange}
-        snapToGrid={snapToGrid}
-        onSnapToGridChange={handleSnapToGridChange}
-        onUndo={handleUndo}
-        onRedo={handleRedo}
-        canUndo={canUndo}
-        canRedo={canRedo}
-        onPreview={handlePreview}
-      />
+      {/* Header simple */}
+      <div className="editor-header">
+        <div className="editor-header-left">
+          <h2 className="editor-title">Éditeur PDF - {templateName || 'Nouveau template'}</h2>
+        </div>
+        <div className="editor-header-right">
+          <button className="header-button" onClick={handleSave}>
+            💾 Sauvegarder
+          </button>
+        </div>
+      </div>
 
-      {/* Zone de travail principale */}
+      {/* Toolbar simple */}
+      <div className="toolbar">
+        <div className="toolbar-section">
+          <label>Zoom: </label>
+          <input
+            type="range"
+            min="0.1"
+            max="3.0"
+            step="0.1"
+            value={zoom}
+            onChange={(e) => handleZoomChange(parseFloat(e.target.value))}
+          />
+          <span>{Math.round(zoom * 100)}%</span>
+        </div>
+        <div className="toolbar-section">
+          <button onClick={() => setElements([])}>🗑️ Effacer tout</button>
+        </div>
+      </div>
+
+      {/* Zone de canvas */}
       <div className="editor-workspace">
         <div className="canvas-container">
           <canvas
@@ -139,25 +124,17 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
               transform: `scale(${zoom})`,
               transformOrigin: 'top left'
             }}
+            onClick={handleCanvasClick}
           />
         </div>
       </div>
 
-      {/* Modal d'aperçu */}
-      <PreviewModal />
+      {/* Informations */}
+      <div className="editor-footer">
+        <p>Éléments: {elements.length} | Clickez sur le canvas pour ajouter du texte</p>
+      </div>
     </div>
   );
 };
 
-export const PDFEditor = ({ initialElements = [], onSave, templateName = '', isNew = true }) => {
-  return (
-    <PreviewProvider>
-      <PDFEditorContent
-        initialElements={initialElements}
-        onSave={onSave}
-        templateName={templateName}
-        isNew={isNew}
-      />
-    </PreviewProvider>
-  );
-};
+export { PDFEditor };
