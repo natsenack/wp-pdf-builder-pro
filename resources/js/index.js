@@ -232,14 +232,20 @@ class PDFBuilderPro {
 // Instance globale
 const pdfBuilderPro = new PDFBuilderPro();
 
+// EXPOSER LES GLOBALS ICI
+if (typeof window !== 'undefined') {
+    window.pdfBuilderPro = pdfBuilderPro;
+    window.initializePDFBuilderPro = function() {
+        console.error('🚀 PDF Builder Pro: initializePDFBuilderPro called');
+        return pdfBuilderPro;
+    };
+}
+
 // Export par défaut pour webpack
 export default pdfBuilderPro;
 
-// FONCTION GLOBALE SIMPLE POUR L'INITIALISATION
-window.initializePDFBuilderPro = function() {
-    console.error('🚀 PDF Builder Pro: initializePDFBuilderPro called');
-    return pdfBuilderPro;
-};
-
 // IMPORTER ET INITIALISER LES GLOBALS - FORCER L'INCLUSION
 import './globals.js';
+
+// Forcer l'exécution immédiate
+console.error('🚀 PDF Builder Pro: Script fully loaded and globals exposed');
