@@ -48,43 +48,45 @@ if (!isset($GLOBALS['pdf_builder_scripts_loaded'])) {
 
     // Script principal - CHARGER ENSUITE avec les composants React
     $script_url = $assets_url . 'js/dist/pdf-builder-admin.js?v=' . time();
-    echo '<script type="text/javascript">console.log("Tentative de chargement du script principal:", "' . esc_url($script_url) . '");</script>';
-    echo '<script type="text/javascript" src="' . esc_url($script_url) . '" onload="console.log(\'Script principal chargé\')" onerror="console.error(\'Erreur de chargement du script principal\')"></script>';
+    echo '<script type="text/javascript">if (window.pdfBuilderDebug || window.location.hostname === "localhost") { console.log("Tentative de chargement du script principal:", "' . esc_url($script_url) . '"); }</script>';
+    echo '<script type="text/javascript" src="' . esc_url($script_url) . '" onload="if (window.pdfBuilderDebug || window.location.hostname === \'localhost\') { console.log(\'Script principal chargé\'); }" onerror="console.error(\'Erreur de chargement du script principal\')"></script>';
 
     // SCRIPT DE TEST - Vérifier si les variables globales sont définies
     echo '<script type="text/javascript">
-        console.log("=== PDF Builder Script Execution Test ===");
-        console.log("Script loaded at:", new Date().toISOString());
-        console.log("window.PDFBuilderPro:", typeof window.PDFBuilderPro, window.PDFBuilderPro ? "defined" : "undefined");
-        console.log("window.pdfBuilderPro:", typeof window.pdfBuilderPro, window.pdfBuilderPro ? "defined" : "undefined");
-        console.log("window.React:", typeof window.React, window.React ? "defined" : "undefined");
-        console.log("window.ReactDOM:", typeof window.ReactDOM, window.ReactDOM ? "defined" : "undefined");
+        if (window.pdfBuilderDebug || window.location.hostname === "localhost") {
+            console.log("=== PDF Builder Script Execution Test ===");
+            console.log("Script loaded at:", new Date().toISOString());
+            console.log("window.PDFBuilderPro:", typeof window.PDFBuilderPro, window.PDFBuilderPro ? "defined" : "undefined");
+            console.log("window.pdfBuilderPro:", typeof window.pdfBuilderPro, window.pdfBuilderPro ? "defined" : "undefined");
+            console.log("window.React:", typeof window.React, window.React ? "defined" : "undefined");
+            console.log("window.ReactDOM:", typeof window.ReactDOM, window.ReactDOM ? "defined" : "undefined");
 
-        // Test d\'exécution du script
-        if (typeof window.pdfBuilderPro !== "undefined") {
-            console.log("✓ pdfBuilderPro is available globally");
-            try {
-                console.log("pdfBuilderPro instance:", window.pdfBuilderPro);
-                console.log("pdfBuilderPro version:", window.pdfBuilderPro.version || "unknown");
-            } catch(e) {
-                console.error("Error accessing pdfBuilderPro:", e);
+            // Test d\'exécution du script
+            if (typeof window.pdfBuilderPro !== "undefined") {
+                console.log("✓ pdfBuilderPro is available globally");
+                try {
+                    console.log("pdfBuilderPro instance:", window.pdfBuilderPro);
+                    console.log("pdfBuilderPro version:", window.pdfBuilderPro.version || "unknown");
+                } catch(e) {
+                    console.error("Error accessing pdfBuilderPro:", e);
+                }
+            } else {
+                console.error("✗ pdfBuilderPro is NOT available globally");
             }
-        } else {
-            console.error("✗ pdfBuilderPro is NOT available globally");
-        }
 
-        if (typeof window.React !== "undefined") {
-            console.log("✓ React is available globally");
-        } else {
-            console.error("✗ React is NOT available globally");
-        }
+            if (typeof window.React !== "undefined") {
+                console.log("✓ React is available globally");
+            } else {
+                console.error("✗ React is NOT available globally");
+            }
 
-        if (typeof window.ReactDOM !== "undefined") {
-            console.log("✓ ReactDOM is available globally");
-        } else {
-            console.error("✗ ReactDOM is NOT available globally");
+            if (typeof window.ReactDOM !== "undefined") {
+                console.log("✓ ReactDOM is available globally");
+            } else {
+                console.error("✗ ReactDOM is NOT available globally");
+            }
+            console.log("=== End Script Execution Test ===");
         }
-        console.log("=== End Script Execution Test ===");
     </script>';
 
     // Variables AJAX - AJOUTER DIRECTEMENT
@@ -354,7 +356,9 @@ body.wp-admin .pdf-builder-container {
                 // console.log('📋 Initialisation via PDFBuilderPro.init()...');
                 const pdfBuilderProRaw = window.pdfBuilderPro;
                 const pdfBuilderPro = pdfBuilderProRaw.default ? pdfBuilderProRaw.default : pdfBuilderProRaw;
-                console.log('📋 PDF Builder init - Template ID:', <?php echo $template_id ?: 'null'; ?>, 'Initial Elements:', <?php echo json_encode($initial_elements); ?>, 'Count:', <?php echo count($initial_elements); ?>);
+                if (window.pdfBuilderDebug || window.location.hostname === "localhost") {
+                    console.log('📋 PDF Builder init - Template ID:', <?php echo $template_id ?: 'null'; ?>, 'Initial Elements:', <?php echo json_encode($initial_elements); ?>, 'Count:', <?php echo count($initial_elements); ?>);
+                }
                 pdfBuilderPro.init('invoice-quote-builder-container', {
                     templateId: <?php echo $template_id ?: 'null'; ?>,
                     templateName: <?php echo $template_name ? json_encode($template_name) : 'null'; ?>,
@@ -409,7 +413,7 @@ body.wp-admin .pdf-builder-container {
         const reactDomExists = true; // ReactDOM est bundlé dans PDFBuilderPro
 
         // LOGS DÉTAILLÉS À CHAQUE VÉRIFICATION
-        if (scriptCheckAttempts % 10 === 0 || scriptCheckAttempts === 1) {
+        if ((scriptCheckAttempts % 10 === 0 || scriptCheckAttempts === 1) && (window.pdfBuilderDebug || window.location.hostname === "localhost")) {
             console.log(`🔍 PDF Builder Debug: Check attempt ${scriptCheckAttempts}/50 - DETAILED`);
             console.log('- pdfBuilderProExists:', pdfBuilderProExists);
             console.log('- initExists:', initExists);
