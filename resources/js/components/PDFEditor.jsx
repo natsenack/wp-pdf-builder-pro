@@ -347,6 +347,213 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           ctx.lineWidth = element.borderWidth || 1;
           ctx.stroke();
         }
+      } else if (element.type === 'company_logo') {
+        // Rendu spécifique pour le logo de l'entreprise
+        const imageUrl = element.src || element.imageUrl;
+        if (imageUrl) {
+          const img = new Image();
+          img.onload = () => {
+            const imgX = element.x || 10;
+            const imgY = element.y || 10;
+            const imgWidth = element.width || 120;
+            const imgHeight = element.height || 90;
+
+            // Calculer les dimensions pour maintenir le ratio d'aspect
+            const aspectRatio = img.width / img.height;
+            let drawWidth = imgWidth;
+            let drawHeight = imgHeight;
+            let drawX = imgX;
+            let drawY = imgY;
+
+            if (element.objectFit === 'cover') {
+              if (imgWidth / imgHeight > aspectRatio) {
+                drawHeight = imgHeight;
+                drawWidth = imgHeight * aspectRatio;
+                drawX = imgX + (imgWidth - drawWidth) / 2;
+              } else {
+                drawWidth = imgWidth;
+                drawHeight = imgWidth / aspectRatio;
+                drawY = imgY + (imgHeight - drawHeight) / 2;
+              }
+            }
+
+            ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+            console.log(`PDFEditor drawing company logo at (${drawX}, ${drawY}) size (${drawWidth}, ${drawHeight})`);
+          };
+          img.src = imageUrl;
+        }
+      } else if (element.type === 'dynamic-text') {
+        // Rendu spécifique pour le texte dynamique
+        ctx.fillStyle = element.color || '#333333';
+        const fontWeight = element.fontWeight || 'normal';
+        ctx.font = `${fontWeight} ${element.fontSize || 14}px ${element.fontFamily || 'Arial'}`;
+        ctx.textAlign = element.textAlign || 'left';
+
+        const textX = element.x || 10;
+        const textY = element.y || 30;
+        let displayText = element.text || 'Texte';
+
+        // Utiliser customContent si disponible
+        if (element.customContent) {
+          displayText = element.customContent;
+        }
+
+        // Pour les templates prédéfinis
+        if (element.template === 'signature_line') {
+          displayText = 'Signature: _______________________________';
+        }
+
+        ctx.fillText(displayText, textX, textY + (element.height || 30) / 2);
+        console.log(`PDFEditor drawing dynamic text at (${textX}, ${textY}): "${displayText}"`);
+      } else if (element.type === 'order_number') {
+        // Rendu spécifique pour le numéro de commande
+        ctx.fillStyle = element.color || '#333333';
+        const fontWeight = element.fontWeight || 'bold';
+        ctx.font = `${fontWeight} ${element.fontSize || 14}px ${element.fontFamily || 'Arial'}`;
+        ctx.textAlign = element.textAlign || 'right';
+
+        const textX = element.x || 10;
+        const textY = element.y || 30;
+
+        // Afficher le label si demandé
+        if (element.showLabel && element.labelText) {
+          ctx.textAlign = 'left';
+          ctx.fillText(element.labelText, textX, textY + (element.height || 40) / 2);
+        }
+
+        // Afficher le numéro formaté
+        const formattedText = element.format || 'Commande #{order_number}';
+        ctx.textAlign = element.textAlign || 'right';
+        ctx.fillText(formattedText, textX + (element.width || 270), textY + (element.height || 40) / 2);
+        console.log(`PDFEditor drawing order number: "${formattedText}"`);
+      } else if (element.type === 'document_type') {
+        // Rendu spécifique pour le type de document
+        ctx.fillStyle = element.color || '#1e293b';
+        const fontWeight = element.fontWeight || 'bold';
+        ctx.font = `${fontWeight} ${element.fontSize || 18}px ${element.fontFamily || 'Arial'}`;
+        ctx.textAlign = element.textAlign || 'center';
+
+        const textX = element.x || 10;
+        const textY = element.y || 30;
+        const displayText = 'FACTURE';
+
+        ctx.fillText(displayText, textX + (element.width || 120) / 2, textY + (element.height || 50) / 2);
+        console.log(`PDFEditor drawing document type: "${displayText}"`);
+      } else if (element.type === 'line') {
+        // Rendu spécifique pour la ligne
+        ctx.strokeStyle = element.lineColor || '#64748b';
+        ctx.lineWidth = element.lineWidth || 2;
+        ctx.beginPath();
+        const lineX = element.x || 10;
+        const lineY = element.y || 110;
+        const lineWidth = element.width || 20;
+        ctx.moveTo(lineX, lineY + (element.height || 12) / 2);
+        ctx.lineTo(lineX + lineWidth, lineY + (element.height || 12) / 2);
+        ctx.stroke();
+        console.log(`PDFEditor drawing line at (${lineX}, ${lineY}) width: ${lineWidth}`);
+      } else if (element.type === 'mentions') {
+        // Rendu spécifique pour les mentions légales
+        ctx.fillStyle = element.color || '#666666';
+        ctx.font = `${element.fontSize || 8}px ${element.fontFamily || 'Arial'}`;
+        ctx.textAlign = element.textAlign || 'center';
+
+        const textX = element.x || 10;
+        const textY = element.y || 10;
+        const parts = [];
+
+        if (element.showEmail) parts.push('email@company.com');
+        if (element.showPhone) parts.push('+33 1 23 45 67 89');
+        if (element.showSiret) parts.push('SIRET: 123 456 789 00012');
+
+        const displayText = parts.join(element.separator || ' • ');
+        ctx.fillText(displayText, textX + (element.width || 300) / 2, textY + (element.height || 40) / 2);
+        console.log(`PDFEditor drawing mentions: "${displayText}"`);
+      } else if (element.type === 'customer_info' || element.type === 'company_info') {
+        // Rendu spécifique pour les informations client/entreprise
+        ctx.fillStyle = element.color || '#1e293b';
+        ctx.font = `${element.fontSize || 14}px ${element.fontFamily || 'Arial'}`;
+        ctx.textAlign = 'left';
+
+        const textX = element.x || 10;
+        let currentY = element.y || 10;
+
+        if (element.fields && Array.isArray(element.fields)) {
+          element.fields.forEach(field => {
+            let fieldText = field;
+            if (element.showLabels !== false) {
+              fieldText = `${field.charAt(0).toUpperCase() + field.slice(1)}:`;
+            }
+
+            // Valeurs d'exemple selon le type
+            if (element.type === 'customer_info') {
+              const sampleData = {
+                name: 'Jean Dupont',
+                phone: '+33 6 12 34 56 78',
+                address: '123 Rue de la Paix, 75001 Paris',
+                email: 'jean.dupont@email.com'
+              };
+              if (sampleData[field]) {
+                fieldText += element.showLabels !== false ? ` ${sampleData[field]}` : sampleData[field];
+              }
+            } else if (element.type === 'company_info') {
+              const sampleData = {
+                name: 'Ma Société SARL',
+                address: '456 Avenue des Champs, 75008 Paris',
+                phone: '+33 1 98 76 54 32',
+                rcs: 'RCS Paris 123 456 789'
+              };
+              if (sampleData[field]) {
+                fieldText += element.showLabels !== false ? ` ${sampleData[field]}` : sampleData[field];
+              }
+            }
+
+            ctx.fillText(fieldText, textX, currentY + 15);
+            currentY += (element.spacing || 5) + 15;
+          });
+        }
+        console.log(`PDFEditor drawing ${element.type} with ${element.fields?.length || 0} fields`);
+      } else if (element.type === 'product_table') {
+        // Rendu basique pour le tableau de produits
+        ctx.fillStyle = element.color || '#475569';
+        ctx.font = `${element.fontSize || 14}px ${element.fontFamily || 'Arial'}`;
+
+        const tableX = element.x || 30;
+        let currentY = element.y || 270;
+
+        // En-têtes du tableau
+        if (element.showHeaders && element.headers) {
+          ctx.font = `bold ${element.fontSize || 14}px ${element.fontFamily || 'Arial'}`;
+          let headerX = tableX;
+          element.headers.forEach(header => {
+            ctx.fillText(header, headerX, currentY + 15);
+            headerX += 150; // Espacement fixe pour l'exemple
+          });
+          currentY += 25;
+        }
+
+        // Lignes d'exemple
+        ctx.font = `${element.fontSize || 14}px ${element.fontFamily || 'Arial'}`;
+        const sampleRows = [
+          ['Produit A', '2', '25.00 €'],
+          ['Produit B', '1', '15.50 €'],
+          ['Sous-total', '', '65.50 €']
+        ];
+
+        sampleRows.forEach((row, index) => {
+          let cellX = tableX;
+          const bgColor = index % 2 === 0 ? (element.evenRowBg || '#ffffff') : (element.oddRowBg || '#ebebeb');
+          ctx.fillStyle = bgColor;
+          ctx.fillRect(tableX, currentY - 5, element.width || 530, 20);
+          ctx.fillStyle = index % 2 === 0 ? element.color : (element.oddRowTextColor || '#666666');
+
+          row.forEach(cell => {
+            ctx.fillText(cell, cellX, currentY + 15);
+            cellX += 150;
+          });
+          currentY += 25;
+        });
+
+        console.log(`PDFEditor drawing product table with ${sampleRows.length} rows`);
       } else {
         // Rendu générique pour les éléments non supportés (product_table, customer_info, etc.)
         console.log(`PDFEditor: Detailed properties for ${element.type}:`, JSON.stringify(element, null, 2));
