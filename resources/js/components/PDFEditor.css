@@ -219,3 +219,97 @@
     padding: 16px;
   }
 }
+
+/* Workspace avec panels */
+.editor-workspace {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.element-library-panel {
+  width: 300px;
+  background-color: #ffffff;
+  border-right: 1px solid #e1e1e1;
+  overflow-y: auto;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+}
+
+.properties-panel-container {
+  width: 320px;
+  background-color: #ffffff;
+  border-left: 1px solid #e1e1e1;
+  overflow-y: auto;
+  box-shadow: -2px 0 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Toolbar secondaire */
+.editor-toolbar-secondary {
+  display: flex;
+  align-items: center;
+  padding: 8px 24px;
+  background-color: #ffffff;
+  border-top: 1px solid #e1e1e1;
+  gap: 16px;
+}
+
+.editor-toolbar-secondary .tool-btn {
+  background-color: #f0f0f0;
+  border: 1px solid #d1d1d1;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+
+.editor-toolbar-secondary .tool-btn:hover,
+.editor-toolbar-secondary .tool-btn.active {
+  background-color: #007cba;
+  color: white;
+  border-color: #007cba;
+}
+
+.status-info {
+  font-size: 12px;
+  color: #666;
+  margin-left: auto;
+}
+
+/* Canvas interactif */
+.pdf-canvas {
+  cursor: crosshair;
+}
+
+.pdf-canvas:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Sélection d'éléments */
+.element-selected {
+  box-shadow: 0 0 0 2px #007cba;
+}
+
+/* Responsive pour les panels */
+@media (max-width: 1400px) {
+  .element-library-panel,
+  .properties-panel-container {
+    width: 280px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .element-library-panel {
+    display: none;
+  }
+  
+  .properties-panel-container {
+    width: 300px;
+  }
+}
+
+@media (max-width: 1000px) {
+  .properties-panel-container {
+    display: none;
+  }
+}

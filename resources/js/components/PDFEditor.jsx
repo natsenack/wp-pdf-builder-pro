@@ -3,11 +3,13 @@ import { Toolbar } from './Toolbar';
 import PreviewModal from './preview-system/components/PreviewModal';
 import { PreviewProvider } from './preview-system/context/PreviewProvider';
 import { usePreviewContext } from './preview-system/context/PreviewContext';
+import ElementLibrary from './ElementLibrary';
+import PropertiesPanel from './PropertiesPanel';
 import './PDFEditor.css';
 
 /**
- * PDFEditor - Éditeur principal avec toolbar et aperçu
- * Phase 2.2.4.1 - Implémentation du bouton aperçu dans l'éditeur Canvas
+ * PDFEditor - Éditeur principal complet avec éléments et propriétés
+ * Phase 2.2.4.1 - Implémentation complète du système d'éléments
  */
 const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isNew = true }) => {
   // Contexte d'aperçu
@@ -21,6 +23,9 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   const [elements, setElements] = useState(initialElements);
   const [history, setHistory] = useState([initialElements]);
   const [historyIndex, setHistoryIndex] = useState(0);
+  const [selectedElement, setSelectedElement] = useState(null);
+  const [showElementLibrary, setShowElementLibrary] = useState(false);
+  const [showPropertiesPanel, setShowPropertiesPanel] = useState(true);
 
   // Références
   const canvasRef = useRef(null);
@@ -67,10 +72,41 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
     openPreview('canvas', null, { elements });
   };
 
-  // Gestionnaire nouveau template
-  const handleNewTemplate = () => {
-    // TODO: Implémenter la logique de nouveau template
-    console.log('Nouveau template demandé');
+  // Gestionnaire d'ajout d'élément depuis la bibliothèque
+  const handleAddElement = (elementType, defaultProperties = {}) => {
+    const newElement = {
+      id: Date.now(),
+      type: elementType,
+      x: Math.random() * 400 + 50, // Position aléatoire
+      y: Math.random() * 600 + 50,
+      ...defaultProperties
+    };
+
+    const newElements = [...elements, newElement];
+    handleElementsChange(newElements);
+    setSelectedElement(newElement.id);
+  };
+
+  // Gestionnaire de sélection d'élément
+  const handleElementSelect = (elementId) => {
+    setSelectedElement(elementId);
+  };
+
+  // Gestionnaire de mise à jour des propriétés d'un élément
+  const handleElementUpdate = (elementId, newProperties) => {
+    const newElements = elements.map(element =>
+      element.id === elementId ? { ...element, ...newProperties } : element
+    );
+    handleElementsChange(newElements);
+  };
+
+  // Gestionnaire de suppression d'élément
+  const handleElementDelete = (elementId) => {
+    const newElements = elements.filter(element => element.id !== elementId);
+    handleElementsChange(newElements);
+    if (selectedElement === elementId) {
+      setSelectedElement(null);
+    }
   };
 
   // Gestionnaire de sauvegarde des éléments
@@ -86,6 +122,179 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
       onSave(newElements);
     }
   };
+
+  // Gestionnaire de clic sur le canvas
+  const handleCanvasClick = (event) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / zoom;
+    const y = (event.clientY - rect.top) / zoom;
+
+    // Si un outil est sélectionné, créer un élément
+    if (selectedTool !== 'select') {
+      let newElement;
+
+      switch (selectedTool) {
+        case 'add-text':
+          newElement = {
+            id: Date.now(),
+            type: 'text',
+            text: 'Nouveau texte',
+            x: x,
+            y: y,
+            fontSize: 16,
+            color: '#000000',
+            fontFamily: 'Arial'
+          };
+          break;
+        case 'add-rectangle':
+          newElement = {
+            id: Date.now(),
+            type: 'rectangle',
+            x: x,
+            y: y,
+            width: 100,
+            height: 50,
+            backgroundColor: '#ffffff',
+            borderColor: '#000000',
+            borderWidth: 1
+          };
+          break;
+        case 'add-circle':
+          newElement = {
+            id: Date.now(),
+            type: 'circle',
+            x: x,
+            y: y,
+            radius: 25,
+            backgroundColor: '#ffffff',
+            borderColor: '#000000',
+            borderWidth: 1
+          };
+          break;
+        default:
+          return;
+      }
+
+      const newElements = [...elements, newElement];
+      handleElementsChange(newElements);
+      setSelectedElement(newElement.id);
+      setSelectedTool('select'); // Revenir à l'outil de sélection
+    } else {
+      // Sélectionner l'élément sous le curseur
+      const clickedElement = elements.find(element => {
+        if (element.type === 'text') {
+          const ctx = canvas.getContext('2d');
+          ctx.font = `${element.fontSize || 16}px ${element.fontFamily || 'Arial'}`;
+          const metrics = ctx.measureText(element.text || 'Texte');
+          return x >= element.x && x <= element.x + metrics.width &&
+                 y >= element.y - element.fontSize && y <= element.y;
+        } else if (element.type === 'rectangle') {
+          return x >= element.x && x <= element.x + (element.width || 100) &&
+                 y >= element.y && y <= element.y + (element.height || 50);
+        } else if (element.type === 'circle') {
+          const dx = x - element.x;
+          const dy = y - element.y;
+          return Math.sqrt(dx * dx + dy * dy) <= (element.radius || 25);
+        }
+        return false;
+      });
+
+      setSelectedElement(clickedElement ? clickedElement.id : null);
+    }
+  };
+
+  // Fonction de rendu du canvas
+  const renderCanvas = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Fond blanc
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Grille si activée
+    if (showGrid) {
+      ctx.strokeStyle = '#f0f0f0';
+      ctx.lineWidth = 1;
+      const gridSize = 20;
+
+      for (let x = 0; x <= canvas.width; x += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+
+      for (let y = 0; y <= canvas.height; y += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
+    }
+
+    // Dessiner les éléments
+    elements.forEach(element => {
+      // Mettre en évidence l'élément sélectionné
+      if (selectedElement === element.id) {
+        ctx.strokeStyle = '#007cba';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]);
+
+        if (element.type === 'text') {
+          ctx.font = `${element.fontSize || 16}px ${element.fontFamily || 'Arial'}`;
+          const metrics = ctx.measureText(element.text || 'Texte');
+          ctx.strokeRect(element.x - 5, element.y - element.fontSize - 5,
+                        metrics.width + 10, element.fontSize + 10);
+        } else if (element.type === 'rectangle') {
+          ctx.strokeRect(element.x - 5, element.y - 5,
+                        (element.width || 100) + 10, (element.height || 50) + 10);
+        } else if (element.type === 'circle') {
+          ctx.beginPath();
+          ctx.arc(element.x, element.y, (element.radius || 25) + 5, 0, 2 * Math.PI);
+          ctx.stroke();
+        }
+
+        ctx.setLineDash([]);
+      }
+
+      // Dessiner l'élément
+      if (element.type === 'text') {
+        ctx.fillStyle = element.color || '#000000';
+        ctx.font = `${element.fontSize || 16}px ${element.fontFamily || 'Arial'}`;
+        ctx.fillText(element.text || 'Texte', element.x || 10, element.y || 30);
+      } else if (element.type === 'rectangle') {
+        ctx.fillStyle = element.backgroundColor || '#ffffff';
+        ctx.fillRect(element.x || 10, element.y || 10, element.width || 100, element.height || 50);
+        if (element.borderWidth > 0) {
+          ctx.strokeStyle = element.borderColor || '#000000';
+          ctx.lineWidth = element.borderWidth || 1;
+          ctx.strokeRect(element.x || 10, element.y || 10, element.width || 100, element.height || 50);
+        }
+      } else if (element.type === 'circle') {
+        ctx.fillStyle = element.backgroundColor || '#ffffff';
+        ctx.beginPath();
+        ctx.arc(element.x || 10, element.y || 10, element.radius || 25, 0, 2 * Math.PI);
+        ctx.fill();
+        if (element.borderWidth > 0) {
+          ctx.strokeStyle = element.borderColor || '#000000';
+          ctx.lineWidth = element.borderWidth || 1;
+          ctx.stroke();
+        }
+      }
+    });
+  };
+
+  // Re-rendre à chaque changement
+  useEffect(() => {
+    renderCanvas();
+  }, [elements, zoom, showGrid, selectedElement]);
 
   // Écouter les événements globaux pour le bouton aperçu du header
   useEffect(() => {
@@ -106,7 +315,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
     return () => {
       document.removeEventListener('pdfBuilderPreview', handleGlobalPreview);
     };
-  }, [elements]); // Dépendance sur elements pour que la fonction soit à jour
+  }, [elements]);
 
   return (
     <div className="pdf-editor">
@@ -129,6 +338,18 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
       {/* Zone de travail principale */}
       <div className="editor-workspace">
+        {/* Bibliothèque d'éléments */}
+        {showElementLibrary && (
+          <div className="element-library-panel">
+            <ElementLibrary
+              onAddElement={handleAddElement}
+              selectedTool={selectedTool}
+              onToolSelect={setSelectedTool}
+            />
+          </div>
+        )}
+
+        {/* Canvas principal */}
         <div className="canvas-container">
           <canvas
             ref={canvasRef}
@@ -137,10 +358,42 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             height={842}
             style={{
               transform: `scale(${zoom})`,
-              transformOrigin: 'top left'
+              transformOrigin: 'top left',
+              cursor: selectedTool === 'select' ? 'default' : 'crosshair'
             }}
+            onClick={handleCanvasClick}
           />
         </div>
+
+        {/* Panel des propriétés */}
+        {showPropertiesPanel && selectedElement && (
+          <div className="properties-panel-container">
+            <PropertiesPanel
+              selectedElement={elements.find(el => el.id === selectedElement)}
+              onElementUpdate={(properties) => handleElementUpdate(selectedElement, properties)}
+              onElementDelete={() => handleElementDelete(selectedElement)}
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Barre d'outils secondaire */}
+      <div className="editor-toolbar-secondary">
+        <button
+          onClick={() => setShowElementLibrary(!showElementLibrary)}
+          className={`tool-btn ${showElementLibrary ? 'active' : ''}`}
+        >
+          📚 Bibliothèque
+        </button>
+        <button
+          onClick={() => setShowPropertiesPanel(!showPropertiesPanel)}
+          className={`tool-btn ${showPropertiesPanel ? 'active' : ''}`}
+        >
+          ⚙️ Propriétés
+        </button>
+        <span className="status-info">
+          Éléments: {elements.length} | Sélectionné: {selectedElement ? 'Oui' : 'Non'}
+        </span>
       </div>
 
       {/* Modal d'aperçu */}
