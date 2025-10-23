@@ -170,10 +170,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
     setHistoryIndex(newHistory.length - 1);
     setElements(newElements);
 
-    // Sauvegarder automatiquement si callback fourni
-    if (onSave) {
-      onSave(newElements);
-    }
+    // Auto-save removed to prevent infinite loop - save only on explicit user action
   };
 
   // Gestionnaire de drag over
