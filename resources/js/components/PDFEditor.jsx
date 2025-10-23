@@ -853,13 +853,13 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
           img.onerror = () => {
             // Placeholder élégant en cas d'erreur de chargement
-            this.renderLogoPlaceholder(ctx, imgX, imgY, imgWidth, imgHeight, element);
+            renderLogoPlaceholder(ctx, imgX, imgY, imgWidth, imgHeight, element);
           };
 
           img.src = imageUrl;
         } else {
           // Placeholder quand aucune image n'est définie
-          this.renderLogoPlaceholder(ctx, imgX, imgY, imgWidth, imgHeight, element);
+          renderLogoPlaceholder(ctx, imgX, imgY, imgWidth, imgHeight, element);
         }
 
         // Restaurer les filtres et autres propriétés
@@ -1903,8 +1903,8 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
     };
   }, [elements]);
 
-  // Méthode utilitaire pour rendre un placeholder élégant pour le logo
-  renderLogoPlaceholder = (ctx, x, y, width, height, element) => {
+  // Fonction utilitaire pour rendre un placeholder élégant pour le logo
+  const renderLogoPlaceholder = (ctx, x, y, width, height, element) => {
     // Fond du placeholder avec un dégradé subtil
     const gradient = ctx.createLinearGradient(x, y, x + width, y + height);
     gradient.addColorStop(0, '#f8fafc');
