@@ -271,12 +271,13 @@ const ELEMENT_PROPERTY_PROFILES = {
       }
     }
   },
-  // Tableaux produits (propriétés simplifiées - focus sur la structure)
+  // Tableaux produits (propriétés complètes)
   product_table: {
     appearance: {
-      sections: ['colors', 'borders', 'effects'],
+      sections: ['colors', 'typography', 'borders', 'effects'],
       properties: {
-        colors: ['backgroundColor'], // seulement le fond du tableau, pas de couleur texte individuelle
+        colors: ['backgroundColor', 'evenRowBg', 'oddRowBg', 'evenRowTextColor', 'oddRowTextColor'],
+        typography: ['fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'textDecoration', 'textAlign', 'textTransform', 'lineHeight', 'letterSpacing'],
         borders: ['borderWidth', 'borderColor', 'borderRadius'],
         effects: ['opacity', 'shadow']
       }
@@ -286,21 +287,22 @@ const ELEMENT_PROPERTY_PROFILES = {
       properties: {
         position: ['x', 'y'],
         dimensions: ['width', 'height'],
-        transform: ['rotation'],
+        transform: ['rotation', 'scaleX', 'scaleY'],
         layers: ['zIndex']
       }
     },
     content: {
       sections: ['table'],
       properties: {
-        table: ['columns', 'showHeaders', 'showBorders', 'tableStyle']
+        table: ['columns', 'showHeaders', 'showBorders', 'tableStyle', 'showSubtotal', 'showShipping', 'showTaxes', 'showDiscount', 'showTotal']
       }
     },
     effects: {
-      sections: ['opacity', 'shadows'],
+      sections: ['opacity', 'shadows', 'filters'],
       properties: {
         opacity: ['opacity'],
-        shadows: ['shadow', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY']
+        shadows: ['shadow', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY', 'shadowBlur'],
+        filters: ['brightness', 'contrast', 'saturate']
       }
     }
   },
@@ -1579,6 +1581,54 @@ const PropertiesPanel = memo(({
                       ↺ -90°
                     </button>
                   </div>
+                </div>
+
+                {/* Mise à l'échelle */}
+                <div className="property-row">
+                  <label>Mise à l'échelle X:</label>
+                  <div className="slider-container">
+                    <input
+                      type="range"
+                      min="0.1"
+                      max="3.0"
+                      step="0.1"
+                      value={localProperties.scaleX || 1}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'scaleX', parseFloat(e.target.value))}
+                      className="slider"
+                    />
+                    <span className="slider-value">{(localProperties.scaleX || 1).toFixed(1)}x</span>
+                  </div>
+                </div>
+
+                <div className="property-row">
+                  <label>Mise à l'échelle Y:</label>
+                  <div className="slider-container">
+                    <input
+                      type="range"
+                      min="0.1"
+                      max="3.0"
+                      step="0.1"
+                      value={localProperties.scaleY || 1}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'scaleY', parseFloat(e.target.value))}
+                      className="slider"
+                    />
+                    <span className="slider-value">{(localProperties.scaleY || 1).toFixed(1)}x</span>
+                  </div>
+                </div>
+
+                {/* Bouton de remise à l'échelle */}
+                <div className="property-row">
+                  <label></label>
+                  <button
+                    className="reset-scale-btn"
+                    onClick={() => {
+                      handlePropertyChange(selectedElement.id, 'scaleX', 1);
+                      handlePropertyChange(selectedElement.id, 'scaleY', 1);
+                    }}
+                    title="Remettre à l'échelle normale"
+                  >
+                    🔄 Réinitialiser échelle
+                  </button>
                 </div>
               </div>
             )}
@@ -3047,6 +3097,21 @@ const PropertiesPanel = memo(({
                         min="-20"
                         max="20"
                       />
+                    </div>
+
+                    <div className="property-row">
+                      <label>Flou:</label>
+                      <div className="slider-container">
+                        <input
+                          type="range"
+                          min="0"
+                          max="20"
+                          value={localProperties.shadowBlur || 5}
+                          onChange={(e) => handlePropertyChange(selectedElement.id, 'shadowBlur', safeParseInt(e.target.value, 5))}
+                          className="slider"
+                        />
+                        <span className="slider-value">{localProperties.shadowBlur || 5}px</span>
+                      </div>
                     </div>
                   </>
                 )}
