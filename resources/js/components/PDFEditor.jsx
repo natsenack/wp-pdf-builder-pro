@@ -15,6 +15,20 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   // Contexte d'aperçu
   const { actions: { openPreview } } = usePreviewContext();
 
+  // État des éléments
+  const [elements, setElements] = useState(initialElements);
+  const [selectedElement, setSelectedElement] = useState(null);
+
+  // État de l'historique
+  const [history, setHistory] = useState([initialElements]);
+  const [historyIndex, setHistoryIndex] = useState(0);
+
+  // État de l'interface
+  const [zoom, setZoom] = useState(1.0);
+  const [showGrid, setShowGrid] = useState(true);
+  const [snapToGrid, setSnapToGrid] = useState(true);
+  const [selectedTool, setSelectedTool] = useState('select');
+
   // État pour le drag & drop
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
