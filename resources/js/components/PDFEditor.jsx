@@ -1,148 +1,206 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Toolbar } from './Toolbar';
-import Canvas from './Canvas';
-import { useGlobalSettings } from '../hooks/useGlobalSettings';
 import './PDFEditor.css';
 
 /**
- * PDFEditor - Éditeur Canvas Builder Complet et Performant
- * Version complète avec toolbar, canvas interactif et toutes les fonctionnalités
+ * PDFEditor - Éditeur Canvas Simple et Fonctionnel
+ * Version simplifiée pour éviter les erreurs de dépendances
  */
 const PDFEditor = ({ initialElements = [], onSave, templateName = '', isNew = true }) => {
-  // États de l'éditeur
-  const [selectedTool, setSelectedTool] = useState('select');
+  // États simples
+  const [elements, setElements] = useState(initialElements);
   const [zoom, setZoom] = useState(1.0);
   const [showGrid, setShowGrid] = useState(true);
-  const [snapToGrid, setSnapToGrid] = useState(true);
-  const [elements, setElements] = useState(initialElements);
-  const [selectedElements, setSelectedElements] = useState([]);
-  const [history, setHistory] = useState([initialElements]);
-  const [historyIndex, setHistoryIndex] = useState(0);
+  const canvasRef = useRef(null);
 
-  // Hooks globaux
-  const { settings } = useGlobalSettings();
-
-  // Dimensions du canvas (format A4)
+  // Dimensions du canvas
   const canvasWidth = 595;
   const canvasHeight = 842;
 
-  // Gestionnaire de sélection d'outil
-  const handleToolSelect = useCallback((toolId) => {
-    setSelectedTool(toolId);
-  }, []);
-
-  // Gestionnaire de zoom
+  // Gestionnaire de zoom simple
   const handleZoomChange = useCallback((newZoom) => {
     setZoom(Math.max(0.1, Math.min(3.0, newZoom)));
   }, []);
 
-  // Gestionnaire de grille
-  const handleShowGridChange = useCallback((show) => {
-    setShowGrid(show);
-  }, []);
-
-  const handleSnapToGridChange = useCallback((snap) => {
-    setSnapToGrid(snap);
-  }, []);
-
-  // Gestionnaire d'historique
-  const handleUndo = useCallback(() => {
-    if (historyIndex > 0) {
-      setHistoryIndex(historyIndex - 1);
-      setElements(history[historyIndex - 1]);
-    }
-  }, [history, historyIndex]);
-
-  const handleRedo = useCallback(() => {
-    if (historyIndex < history.length - 1) {
-      setHistoryIndex(historyIndex + 1);
-      setElements(history[historyIndex + 1]);
-    }
-  }, [history, historyIndex]);
-
-  const canUndo = historyIndex > 0;
-  const canRedo = historyIndex < history.length - 1;
-
-  // Gestionnaire d'aperçu
-  const handlePreview = useCallback(() => {
-    // TODO: Implémenter l'aperçu PDF
-    console.log('Aperçu PDF demandé');
-  }, []);
-
-  // Gestionnaire de sélection d'éléments
-  const handleElementSelect = useCallback((elementIds) => {
-    setSelectedElements(elementIds);
-  }, []);
-
-  // Gestionnaire de mise à jour d'éléments
-  const handleElementUpdate = useCallback((updatedElements) => {
-    const newHistory = history.slice(0, historyIndex + 1);
-    newHistory.push(updatedElements);
-    setHistory(newHistory);
-    setHistoryIndex(newHistory.length - 1);
-    setElements(updatedElements);
-
-    // Sauvegarder automatiquement
+  // Gestionnaire de sauvegarde
+  const handleSave = useCallback(() => {
     if (onSave) {
-      onSave(updatedElements);
+      onSave(elements);
     }
-  }, [history, historyIndex, onSave]);
+    console.log('Éléments sauvegardés:', elements);
+  }, [elements, onSave]);
 
-  // Gestionnaire de suppression d'éléments
-  const handleElementRemove = useCallback((elementId) => {
-    const newElements = elements.filter(el => el.id !== elementId);
-    handleElementUpdate(newElements);
-  }, [elements, handleElementUpdate]);
+  // Gestionnaire d'ajout d'élément texte
+  const handleAddText = useCallback(() => {
+    const newElement = {
+      id: Date.now(),
+      type: 'text',
+      text: 'Nouveau texte',
+      x: 50,
+      y: 50,
+      fontSize: 16,
+      color: '#000000',
+      fontFamily: 'Arial'
+    };
+    setElements([...elements, newElement]);
+  }, [elements]);
+
+  // Gestionnaire d'ajout de rectangle
+  const handleAddRectangle = useCallback(() => {
+    const newElement = {
+      id: Date.now(),
+      type: 'rectangle',
+      x: 100,
+      y: 100,
+      width: 100,
+      height: 50,
+      backgroundColor: '#ffffff',
+      borderColor: '#000000',
+      borderWidth: 1
+    };
+    setElements([...elements, newElement]);
+  }, [elements]);
+
+  // Fonction de rendu du canvas
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Fond blanc
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Grille si activée
+    if (showGrid) {
+      ctx.strokeStyle = '#f0f0f0';
+      ctx.lineWidth = 1;
+      const gridSize = 20;
+
+      for (let x = 0; x <= canvas.width; x += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+
+      for (let y = 0; y <= canvas.height; y += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
+    }
+
+    // Appliquer le zoom
+    ctx.save();
+    ctx.scale(zoom, zoom);
+
+    // Dessiner les éléments
+    elements.forEach(element => {
+      if (element.type === 'text') {
+        ctx.fillStyle = element.color || '#000000';
+        ctx.font = `${element.fontSize || 16}px ${element.fontFamily || 'Arial'}`;
+        ctx.fillText(element.text || 'Texte', element.x || 10, element.y || 30);
+      } else if (element.type === 'rectangle') {
+        ctx.fillStyle = element.backgroundColor || '#ffffff';
+        ctx.fillRect(element.x || 10, element.y || 10, element.width || 100, element.height || 50);
+        if (element.borderWidth > 0) {
+          ctx.strokeStyle = element.borderColor || '#000000';
+          ctx.lineWidth = element.borderWidth || 1;
+          ctx.strokeRect(element.x || 10, element.y || 10, element.width || 100, element.height || 50);
+        }
+      }
+    });
+
+    ctx.restore();
+  }, [elements, zoom, showGrid]);
 
   return (
     <div className="pdf-editor">
-      {/* Toolbar complète */}
-      <Toolbar
-        selectedTool={selectedTool}
-        onToolSelect={handleToolSelect}
-        zoom={zoom}
-        onZoomChange={handleZoomChange}
-        showGrid={showGrid}
-        onShowGridChange={handleShowGridChange}
-        snapToGrid={snapToGrid}
-        onSnapToGridChange={handleSnapToGridChange}
-        onUndo={handleUndo}
-        onRedo={handleRedo}
-        canUndo={canUndo}
-        canRedo={canRedo}
-        onPreview={handlePreview}
-      />
-
-      {/* Zone de travail avec canvas */}
-      <div className="editor-workspace">
-        <div className="canvas-container">
-          <Canvas
-            elements={elements}
-            selectedElements={selectedElements}
-            tool={selectedTool}
-            zoom={zoom}
-            showGrid={showGrid}
-            snapToGrid={snapToGrid}
-            gridSize={settings?.gridSize || 20}
-            canvasWidth={canvasWidth}
-            canvasHeight={canvasHeight}
-            onElementSelect={handleElementSelect}
-            onElementUpdate={handleElementUpdate}
-            onElementRemove={handleElementRemove}
-            onContextMenu={() => {}}
-            selection={null}
-            zoomHook={zoom}
-          />
+      {/* Header simple */}
+      <div className="editor-header">
+        <h2>Éditeur PDF - {templateName || 'Nouveau template'}</h2>
+        <div className="header-actions">
+          <button onClick={handleSave} className="save-btn">💾 Sauvegarder</button>
         </div>
+      </div>
+
+      {/* Toolbar simple */}
+      <div className="editor-toolbar">
+        <div className="toolbar-group">
+          <button onClick={handleAddText} className="tool-btn">📝 Texte</button>
+          <button onClick={handleAddRectangle} className="tool-btn">▭ Rectangle</button>
+        </div>
+
+        <div className="toolbar-group">
+          <label>Zoom:</label>
+          <input
+            type="range"
+            min="0.1"
+            max="3.0"
+            step="0.1"
+            value={zoom}
+            onChange={(e) => handleZoomChange(parseFloat(e.target.value))}
+          />
+          <span>{Math.round(zoom * 100)}%</span>
+        </div>
+
+        <div className="toolbar-group">
+          <label>
+            <input
+              type="checkbox"
+              checked={showGrid}
+              onChange={(e) => setShowGrid(e.target.checked)}
+            />
+            Grille
+          </label>
+        </div>
+      </div>
+
+      {/* Zone de canvas */}
+      <div className="canvas-container">
+        <canvas
+          ref={canvasRef}
+          width={canvasWidth}
+          height={canvasHeight}
+          style={{
+            border: '2px solid #007cba',
+            backgroundColor: '#ffffff',
+            maxWidth: '100%',
+            height: 'auto'
+          }}
+        />
       </div>
 
       {/* Informations */}
       <div className="editor-footer">
         <div className="status-info">
-          <span>Outil: {selectedTool}</span>
           <span>Éléments: {elements.length}</span>
           <span>Zoom: {Math.round(zoom * 100)}%</span>
-          <span>Sélectionnés: {selectedElements.length}</span>
+          <span>Grille: {showGrid ? 'Activée' : 'Désactivée'}</span>
+        </div>
+      </div>
+
+      {/* Liste des éléments */}
+      <div className="elements-panel">
+        <h3>Éléments ({elements.length})</h3>
+        <div className="elements-list">
+          {elements.map((element, index) => (
+            <div key={element.id} className="element-item">
+              <span className="element-type">{element.type}</span>
+              <span className="element-content">
+                {element.type === 'text' ? element.text : `${element.width}x${element.height}`}
+              </span>
+              <button
+                onClick={() => setElements(elements.filter(e => e.id !== element.id))}
+                className="delete-btn"
+              >
+                🗑️
+              </button>
+            </div>
+          ))}
         </div>
       </div>
     </div>

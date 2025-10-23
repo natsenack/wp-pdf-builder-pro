@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang='fr'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Test Simple PDF Editor</title>
+    <script src='https://unpkg.com/react@18.2.0/umd/react.production.min.js'></script>
+    <script src='https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js'></script>
+    <style>
+        body { margin: 0; font-family: Arial, sans-serif; background: #f0f0f0; }
+        #test-container { padding: 20px; }
+        .test-result { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+    </style>
+</head>
+<body>
+    <div id='test-container'>
+        <h1>Test Simple PDF Editor</h1>
+        <div id='results'></div>
+        <div id='editor-container' style='border: 2px solid #007cba; margin: 20px 0; min-height: 400px; background: white;'></div>
+    </div>
+
+    <script src='assets/js/dist/pdf-builder-script-loader.js'></script>
+    <script src='assets/js/dist/pdf-builder-admin.js'></script>
+    <script>
+        const results = document.getElementById('results');
+        const editorContainer = document.getElementById('editor-container');
+
+        function addResult(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.textContent = message;
+            results.appendChild(div);
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        addResult('Test démarré...');
+
+        // Test 1: Vérifier React
+        if (typeof React !== 'undefined' && typeof ReactDOM !== 'undefined') {
+            addResult('✅ React et ReactDOM chargés', 'success');
+        } else {
+            addResult('❌ React non chargé', 'error');
+        }
+
+        // Test 2: Simuler WordPress
+        window.wp = window.wp || {};
+        window.wp.hooks = window.wp.hooks || { addAction: () => {}, doAction: () => {} };
+        addResult('✅ WordPress simulé', 'success');
+
+        // Test 3: Attendre le chargement du script
+        let attempts = 0;
+        const maxAttempts = 20;
+        const checkInterval = setInterval(() => {
+            attempts++;
+            addResult(`Tentative ${attempts}/${maxAttempts} de chargement du script...`);
+
+            if (typeof window.PDFBuilder !== 'undefined') {
+                clearInterval(checkInterval);
+                addResult('✅ window.PDFBuilder trouvé !', 'success');
+
+                // Test 4: Vérifier PDFEditor
+                if (window.PDFBuilder.PDFEditor) {
+                    addResult('✅ PDFEditor trouvé dans PDFBuilder', 'success');
+
+                    // Test 5: Essayer de rendre
+                    try {
+                        const root = ReactDOM.createRoot(editorContainer);
+                        root.render(React.createElement(window.PDFBuilder.PDFEditor, {
+                            initialElements: [
+                                { id: 1, type: 'text', text: 'Test Element', x: 50, y: 50, fontSize: 16, color: '#000000' }
+                            ],
+                            templateName: 'Template de Test',
+                            onSave: (elements) => {
+                                addResult(`Éléments sauvegardés: ${elements.length}`, 'success');
+                            }
+                        }));
+                        addResult('✅ Éditeur rendu avec succès ! 🎉', 'success');
+                    } catch (error) {
+                        addResult(`❌ Erreur de rendu: ${error.message}`, 'error');
+                        console.error('Render error:', error);
+                    }
+                } else {
+                    addResult('❌ PDFEditor non trouvé dans PDFBuilder', 'error');
+                    addResult('Contenu PDFBuilder: ' + JSON.stringify(Object.keys(window.PDFBuilder)), 'error');
+                }
+            } else if (attempts >= maxAttempts) {
+                clearInterval(checkInterval);
+                addResult('❌ Échec: PDFBuilder non trouvé après toutes les tentatives', 'error');
+                const pdfObjects = Object.keys(window).filter(k =>
+                    k.toLowerCase().includes('pdf') ||
+                    k.toLowerCase().includes('builder') ||
+                    k.toLowerCase().includes('react')
+                );
+                addResult('Objets liés trouvés: ' + JSON.stringify(pdfObjects), 'info');
+            }
+        }, 300);
+    </script>
+</body>
+</html>
