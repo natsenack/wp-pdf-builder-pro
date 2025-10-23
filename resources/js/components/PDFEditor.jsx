@@ -104,6 +104,9 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   // Gestionnaire de sélection d'élément
   const handleElementSelect = (elementId) => {
     setSelectedElement(elementId);
+    if (elementId) {
+      setShowPropertiesPanel(true); // Afficher automatiquement le panneau des propriétés
+    }
   };
 
   // Gestionnaire de mise à jour des propriétés d'un élément
@@ -313,10 +316,15 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
     if (clickedElement) {
       setSelectedElement(clickedElement.id);
+      setShowPropertiesPanel(true); // Afficher automatiquement le panneau des propriétés
       // Démarrer le drag
       setIsDragging(true);
       setDragElement(clickedElement);
       setDragStart({ x: x, y: y }); // Position absolue du clic
+    } else {
+      // Désélectionner si on clique dans le vide
+      setSelectedElement(null);
+      setShowPropertiesPanel(false); // Masquer le panneau des propriétés
     }
   };
 
