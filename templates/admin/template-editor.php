@@ -161,6 +161,228 @@ if (!$is_new && $template_id > 0) {
             }
         }
     }
+
+    // Si aucun élément n'a été trouvé et qu'on charge un template spécifique,
+    // créer des données fictives pour les tests
+    if (empty($initial_elements) && !$is_new && $template_id > 0) {
+        $initial_elements = [
+            [
+                'id' => 1,
+                'type' => 'text',
+                'text' => 'TEMPLATE DE TEST - ID: ' . $template_id,
+                'x' => 50,
+                'y' => 50,
+                'fontSize' => 20,
+                'color' => '#2563eb',
+                'fontFamily' => 'Arial',
+                'fontWeight' => 'bold'
+            ],
+            [
+                'id' => 2,
+                'type' => 'text',
+                'text' => 'Facture N°: #DEMO-001',
+                'x' => 50,
+                'y' => 100,
+                'fontSize' => 14,
+                'color' => '#374151',
+                'fontFamily' => 'Arial'
+            ],
+            [
+                'id' => 3,
+                'type' => 'text',
+                'text' => 'Date: ' . date('d/m/Y'),
+                'x' => 400,
+                'y' => 100,
+                'fontSize' => 14,
+                'color' => '#374151',
+                'fontFamily' => 'Arial'
+            ],
+            [
+                'id' => 4,
+                'type' => 'rectangle',
+                'x' => 50,
+                'y' => 140,
+                'width' => 500,
+                'height' => 2,
+                'backgroundColor' => '#e5e7eb',
+                'borderColor' => '#e5e7eb',
+                'borderWidth' => 0
+            ],
+            [
+                'id' => 5,
+                'type' => 'text',
+                'text' => 'Client: Société Demo SARL',
+                'x' => 50,
+                'y' => 160,
+                'fontSize' => 12,
+                'color' => '#000000',
+                'fontFamily' => 'Arial'
+            ],
+            [
+                'id' => 6,
+                'type' => 'text',
+                'text' => 'Adresse: 123 Rue de la Demo, 75001 Paris',
+                'x' => 50,
+                'y' => 180,
+                'fontSize' => 12,
+                'color' => '#000000',
+                'fontFamily' => 'Arial'
+            ],
+            [
+                'id' => 7,
+                'type' => 'rectangle',
+                'x' => 50,
+                'y' => 220,
+                'width' => 500,
+                'height' => 30,
+                'backgroundColor' => '#f9fafb',
+                'borderColor' => '#d1d5db',
+                'borderWidth' => 1
+            ],
+            [
+                'id' => 8,
+                'type' => 'text',
+                'text' => 'Description',
+                'x' => 60,
+                'y' => 235,
+                'fontSize' => 11,
+                'color' => '#000000',
+                'fontFamily' => 'Arial',
+                'fontWeight' => 'bold'
+            ],
+            [
+                'id' => 9,
+                'type' => 'text',
+                'text' => 'Quantité',
+                'x' => 350,
+                'y' => 235,
+                'fontSize' => 11,
+                'color' => '#000000',
+                'fontFamily' => 'Arial',
+                'fontWeight' => 'bold'
+            ],
+            [
+                'id' => 10,
+                'type' => 'text',
+                'text' => 'Prix',
+                'x' => 450,
+                'y' => 235,
+                'fontSize' => 11,
+                'color' => '#000000',
+                'fontFamily' => 'Arial',
+                'fontWeight' => 'bold'
+            ],
+            [
+                'id' => 11,
+                'type' => 'rectangle',
+                'x' => 50,
+                'y' => 255,
+                'width' => 500,
+                'height' => 25,
+                'backgroundColor' => '#ffffff',
+                'borderColor' => '#d1d5db',
+                'borderWidth' => 1
+            ],
+            [
+                'id' => 12,
+                'type' => 'text',
+                'text' => 'Service de développement web',
+                'x' => 60,
+                'y' => 270,
+                'fontSize' => 10,
+                'color' => '#000000',
+                'fontFamily' => 'Arial'
+            ],
+            [
+                'id' => 13,
+                'type' => 'text',
+                'text' => '1',
+                'x' => 360,
+                'y' => 270,
+                'fontSize' => 10,
+                'color' => '#000000',
+                'fontFamily' => 'Arial'
+            ],
+            [
+                'id' => 14,
+                'type' => 'text',
+                'text' => '2500.00 €',
+                'x' => 450,
+                'y' => 270,
+                'fontSize' => 10,
+                'color' => '#000000',
+                'fontFamily' => 'Arial'
+            ],
+            [
+                'id' => 15,
+                'type' => 'rectangle',
+                'x' => 50,
+                'y' => 285,
+                'width' => 500,
+                'height' => 25,
+                'backgroundColor' => '#ffffff',
+                'borderColor' => '#d1d5db',
+                'borderWidth' => 1
+            ],
+            [
+                'id' => 16,
+                'type' => 'text',
+                'text' => 'Maintenance et support',
+                'x' => 60,
+                'y' => 300,
+                'fontSize' => 10,
+                'color' => '#000000',
+                'fontFamily' => 'Arial'
+            ],
+            [
+                'id' => 17,
+                'type' => 'text',
+                'text' => '12',
+                'x' => 360,
+                'y' => 300,
+                'fontSize' => 10,
+                'color' => '#000000',
+                'fontFamily' => 'Arial'
+            ],
+            [
+                'id' => 18,
+                'type' => 'text',
+                'text' => '300.00 €',
+                'x' => 450,
+                'y' => 300,
+                'fontSize' => 10,
+                'color' => '#000000',
+                'fontFamily' => 'Arial'
+            ],
+            [
+                'id' => 19,
+                'type' => 'rectangle',
+                'x' => 350,
+                'y' => 320,
+                'width' => 200,
+                'height' => 40,
+                'backgroundColor' => '#f3f4f6',
+                'borderColor' => '#d1d5db',
+                'borderWidth' => 1
+            ],
+            [
+                'id' => 20,
+                'type' => 'text',
+                'text' => 'TOTAL: 2800.00 €',
+                'x' => 360,
+                'y' => 335,
+                'fontSize' => 14,
+                'color' => '#000000',
+                'fontFamily' => 'Arial',
+                'fontWeight' => 'bold'
+            ]
+        ];
+
+        // Définir un nom par défaut si aucun template trouvé
+        if (empty($template_name)) {
+            $template_name = 'Template Demo - ID: ' . $template_id;
+        }
+    }
 }
 ?>
 <div class="wrap">

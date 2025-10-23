@@ -226,7 +226,8 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
       const clickedElement = elements.find(element => {
         if (element.type === 'text') {
           const ctx = canvas.getContext('2d');
-          ctx.font = `${element.fontSize || 16}px ${element.fontFamily || 'Arial'}`;
+          const fontWeight = element.fontWeight ? `${element.fontWeight} ` : '';
+          ctx.font = `${fontWeight}${element.fontSize || 16}px ${element.fontFamily || 'Arial'}`;
           const metrics = ctx.measureText(element.text || 'Texte');
           return x >= element.x && x <= element.x + metrics.width &&
                  y >= element.y - element.fontSize && y <= element.y;
@@ -287,7 +288,8 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.setLineDash([5, 5]);
 
         if (element.type === 'text') {
-          ctx.font = `${element.fontSize || 16}px ${element.fontFamily || 'Arial'}`;
+          const fontWeight = element.fontWeight ? `${element.fontWeight} ` : '';
+          ctx.font = `${fontWeight}${element.fontSize || 16}px ${element.fontFamily || 'Arial'}`;
           const metrics = ctx.measureText(element.text || 'Texte');
           ctx.strokeRect(element.x - 5, element.y - element.fontSize - 5,
                         metrics.width + 10, element.fontSize + 10);
@@ -306,7 +308,8 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
       // Dessiner l'élément
       if (element.type === 'text') {
         ctx.fillStyle = element.color || '#000000';
-        ctx.font = `${element.fontSize || 16}px ${element.fontFamily || 'Arial'}`;
+        const fontWeight = element.fontWeight ? `${element.fontWeight} ` : '';
+        ctx.font = `${fontWeight}${element.fontSize || 16}px ${element.fontFamily || 'Arial'}`;
         ctx.fillText(element.text || 'Texte', element.x || 10, element.y || 30);
       } else if (element.type === 'rectangle') {
         ctx.fillStyle = element.backgroundColor || '#ffffff';
@@ -343,9 +346,12 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   // Mettre à jour les éléments quand initialElements change
   useEffect(() => {
     if (initialElements && initialElements.length > 0) {
+      console.log('PDFEditor: Setting elements from initialElements:', initialElements.length, 'elements');
       setElements(initialElements);
       setHistory([initialElements]);
       setHistoryIndex(0);
+    } else {
+      console.log('PDFEditor: No initialElements provided or empty array');
     }
   }, [initialElements]);
 
