@@ -29,8 +29,10 @@ try {
 
     // REMPLACER la méthode init existante par celle qui utilise React
     window.pdfBuilderPro.init = function(containerId, options = {}) {
-    console.log('PDF Builder Pro init called for', containerId, 'with options:', options);
-    console.log('Initial elements received:', options.initialElements, 'Count:', options.initialElements ? options.initialElements.length : 0);
+    if (window.pdfBuilderDebug || window.location.hostname === 'localhost') {
+      console.log('PDF Builder Pro init called for', containerId, 'with options:', options);
+      console.log('Initial elements received:', options.initialElements, 'Count:', options.initialElements ? options.initialElements.length : 0);
+    }
 
     try {
       if (!React || !ReactDOM) {
@@ -47,7 +49,9 @@ try {
         React.createElement(PDFEditor, {
           initialElements: options.initialElements || [],
           onSave: async (elements) => {
-            console.log('PDF Editor saving elements:', elements);
+            if (window.pdfBuilderDebug || window.location.hostname === 'localhost') {
+              console.log('PDF Editor saving elements:', elements);
+            }
             
             try {
               // Fonction pour nettoyer les éléments avant sérialisation
@@ -71,7 +75,9 @@ try {
               };
               
               const sanitizedElements = sanitizeForJSON(elements);
-              console.log('Sanitized elements for JSON:', sanitizedElements);
+              if (window.pdfBuilderDebug || window.location.hostname === 'localhost') {
+                console.log('Sanitized elements for JSON:', sanitizedElements);
+              }
               
               // Préparer la structure complète du template
               const templateData = {
@@ -85,7 +91,9 @@ try {
               let jsonString;
               try {
                 jsonString = JSON.stringify(templateData);
-                console.log('JSON serialization successful, length:', jsonString.length);
+                if (window.pdfBuilderDebug || window.location.hostname === 'localhost') {
+                  console.log('JSON serialization successful, length:', jsonString.length);
+                }
               } catch (jsonError) {
                 console.error('JSON serialization failed:', jsonError);
                 throw new Error('Erreur de sérialisation JSON: ' + jsonError.message);
@@ -112,7 +120,9 @@ try {
               const result = await response.json();
               
               if (result.success) {
-                console.log('Template saved successfully:', result.data);
+                if (window.pdfBuilderDebug || window.location.hostname === 'localhost') {
+                  console.log('Template saved successfully:', result.data);
+                }
                 // Afficher un message de succès si possible
                 if (window.pdfBuilderPro && window.pdfBuilderPro.showNotice) {
                   window.pdfBuilderPro.showNotice('Template sauvegardé avec succès !', 'success');
@@ -155,7 +165,9 @@ try {
     editors: new Map(),
 
     init: function(containerId, options = {}) {
-      console.log('PDF Builder Pro init called for', containerId, 'with options:', options);
+      if (window.pdfBuilderDebug || window.location.hostname === 'localhost') {
+        console.log('PDF Builder Pro init called for', containerId, 'with options:', options);
+      }
 
       try {
         if (!React || !ReactDOM) {
