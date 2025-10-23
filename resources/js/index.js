@@ -136,7 +136,6 @@ try {
         container
       );
 
-      console.error('🚀 PDF Builder Pro: React app initialized successfully');
       return true;
 
     } catch (error) {
