@@ -89,7 +89,32 @@
   width: 100px;
 }
 
-/* Canvas Container */
+/* Workspace */
+.editor-workspace {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  background-color: #f8f9fa;
+}
+
+.element-library-panel {
+  width: 320px;
+  background-color: #ffffff;
+  border-right: 1px solid #e1e1e1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.properties-panel-container {
+  width: 320px;
+  background-color: #ffffff;
+  border-left: 1px solid #e1e1e1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
 .canvas-container {
   flex: 1;
   display: flex;

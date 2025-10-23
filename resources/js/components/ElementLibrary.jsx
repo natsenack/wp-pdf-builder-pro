@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import '../../scss/styles/ElementLibrary.css';
 
 const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
   const [showHeaderTemplatesModal, setShowHeaderTemplatesModal] = useState(false);
