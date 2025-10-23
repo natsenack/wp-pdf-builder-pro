@@ -341,7 +341,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         {/* Bibliothèque d'éléments */}
         {showElementLibrary && (
           <div className="element-library-panel">
-            {console.log('Rendering ElementLibrary')}
             <ElementLibrary
               onAddElement={handleAddElement}
               selectedTool={selectedTool}
@@ -369,7 +368,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         {/* Panel des propriétés */}
         {showPropertiesPanel && selectedElement && (
           <div className="properties-panel-container">
-            {console.log('Rendering PropertiesPanel for element:', selectedElement)}
             <PropertiesPanel
               selectedElements={selectedElement ? [selectedElement] : []}
               elements={elements}
@@ -390,25 +388,19 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
       {/* Barre d'outils secondaire */}
       <div className="editor-toolbar-secondary">
         <button
-          onClick={() => {
-            console.log('Toggle ElementLibrary:', !showElementLibrary);
-            setShowElementLibrary(!showElementLibrary);
-          }}
+          onClick={() => setShowElementLibrary(!showElementLibrary)}
           className={`tool-btn ${showElementLibrary ? 'active' : ''}`}
         >
           📚 Bibliothèque
         </button>
         <button
-          onClick={() => {
-            console.log('Toggle PropertiesPanel:', !showPropertiesPanel);
-            setShowPropertiesPanel(!showPropertiesPanel);
-          }}
+          onClick={() => setShowPropertiesPanel(!showPropertiesPanel)}
           className={`tool-btn ${showPropertiesPanel ? 'active' : ''}`}
         >
           ⚙️ Propriétés
         </button>
         <span className="status-info">
-          Éléments: {elements.length} | Sélectionné: {selectedElement ? 'Oui' : 'Non'} | Lib: {showElementLibrary ? 'Oui' : 'Non'} | Props: {showPropertiesPanel ? 'Oui' : 'Non'}
+          Éléments: {elements.length} | Sélectionné: {selectedElement ? 'Oui' : 'Non'}
         </span>
       </div>
 
