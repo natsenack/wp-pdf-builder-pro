@@ -700,19 +700,44 @@ export class SampleDataProvider {
    * Génère des données pour le texte dynamique
    */
   generateDynamicTextData(properties) {
-    const { template = 'total_only', customContent = '' } = properties;
+    const { template = 'total_only', customContent = '', variables = {} } = properties;
 
     let content = customContent;
 
+    // Templates prédéfinis
     if (template === 'total_only') {
       content = `Total: ${this.sampleData.order.total}`;
+    } else if (template === 'order_summary') {
+      content = `Commande ${this.sampleData.order.number} - Total: ${this.sampleData.order.total}`;
+    } else if (template === 'customer_greeting') {
+      content = `Cher ${this.sampleData.customer.name},`;
+    } else if (template === 'company_info') {
+      content = `${this.sampleData.company.name} - ${this.sampleData.company.email}`;
     }
 
-    // Remplacer les variables
-    content = content
-      .replace(/\{\{order_total\}\}/g, this.sampleData.order.total)
-      .replace(/\{\{customer_name\}\}/g, this.sampleData.customer.name)
-      .replace(/\{\{order_number\}\}/g, this.sampleData.order.number);
+    // Remplacer toutes les variables disponibles
+    const allData = {
+      ...this.sampleData.customer,
+      ...this.sampleData.company,
+      ...this.sampleData.order,
+      // Variables personnalisées passées en paramètre
+      ...variables
+    };
+
+    // Remplacer les variables {{variable}} dans le contenu
+    Object.keys(allData).forEach(key => {
+      const regex = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
+      content = content.replace(regex, allData[key] || '');
+    });
+
+    // Remplacer les variables d'articles si elles existent
+    if (this.sampleData.products && this.sampleData.products.length > 0) {
+      const firstProduct = this.sampleData.products[0];
+      Object.keys(firstProduct).forEach(key => {
+        const regex = new RegExp(`\\{\\{product_${key}\\}\\}`, 'g');
+        content = content.replace(regex, firstProduct[key] || '');
+      });
+    }
 
     return { content };
   }

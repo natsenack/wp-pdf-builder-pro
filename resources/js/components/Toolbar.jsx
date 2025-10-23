@@ -34,7 +34,8 @@ export const Toolbar = ({
 
   const insertTools = [
     { id: 'add-divider', label: 'Séparateur (D)', icon: '⎯', shortcut: 'D' },
-    { id: 'add-image', label: 'Image (I)', icon: '🖼️', shortcut: 'I' }
+    { id: 'add-image', label: 'Image (I)', icon: '🖼️', shortcut: 'I' },
+    { id: 'add-dynamic-text', label: 'Texte Dynamique (Y)', icon: '📝', shortcut: 'Y' }
   ];
 
   const tabs = [

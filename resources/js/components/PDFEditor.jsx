@@ -62,7 +62,8 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
       'add-triangle': { type: 'shape-triangle', x: 50, y: 50, width: 60, height: 50, backgroundColor: '#ffffff', borderWidth: 1, borderColor: '#000000' },
       'add-star': { type: 'shape-star', x: 50, y: 50, width: 60, height: 60, backgroundColor: '#ffffff', borderWidth: 1, borderColor: '#000000' },
       'add-divider': { type: 'line', x: 50, y: 50, width: 200, height: 2, lineColor: '#cccccc', lineWidth: 1 },
-      'add-image': { type: 'image', x: 50, y: 50, width: 100, height: 100, src: '' }
+      'add-image': { type: 'image', x: 50, y: 50, width: 100, height: 100, src: '' },
+      'add-dynamic-text': { type: 'dynamic-text', x: 50, y: 50, width: 200, height: 30, template: 'total_only', customContent: '{{order_total}} €', fontSize: 14, color: '#333333' }
     };
 
     if (elementDefaults[toolId]) {
@@ -946,7 +947,11 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         // Utiliser SampleDataProvider pour les templates prédéfinis
         if (element.template && element.template !== 'custom') {
           const sampleDataProvider = new SampleDataProvider();
-          const templateData = sampleDataProvider.generateDynamicTextData(element.template, element.variables || {});
+          const templateData = sampleDataProvider.generateDynamicTextData({
+            template: element.template,
+            customContent: element.customContent || '',
+            variables: element.variables || {}
+          });
           displayText = templateData.content;
         } else if (element.customContent) {
           displayText = element.customContent;
