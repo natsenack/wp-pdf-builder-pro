@@ -15,17 +15,15 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   // Contexte d'aperçu
   const { actions: { openPreview } } = usePreviewContext();
 
-  // État de l'éditeur
-  const [selectedTool, setSelectedTool] = useState('select');
-  const [zoom, setZoom] = useState(1.0);
-  const [showGrid, setShowGrid] = useState(true);
-  const [snapToGrid, setSnapToGrid] = useState(true);
-  const [elements, setElements] = useState(initialElements || []);
-  const [history, setHistory] = useState([initialElements || []]);
-  const [historyIndex, setHistoryIndex] = useState(0);
-  const [selectedElement, setSelectedElement] = useState(null);
-  const [showElementLibrary, setShowElementLibrary] = useState(true);
-  const [showPropertiesPanel, setShowPropertiesPanel] = useState(true);
+  // État pour le drag & drop
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [dragElement, setDragElement] = useState(null);
+
+  // État pour le redimensionnement
+  const [isResizing, setIsResizing] = useState(false);
+  const [resizeHandle, setResizeHandle] = useState(null);
+  const [resizeStart, setResizeStart] = useState({ x: 0, y: 0, width: 0, height: 0 });
 
   // Références
   const canvasRef = useRef(null);
@@ -222,6 +220,26 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
       setSelectedElement(newElement.id);
       setSelectedTool('select'); // Revenir à l'outil de sélection
     } else {
+      // Vérifier d'abord si on clique sur une poignée de redimensionnement
+      if (selectedElement) {
+        const element = elements.find(el => el.id === selectedElement);
+        if (element) {
+          const handle = getResizeHandleAtPosition(element, x, y);
+          if (handle) {
+            // Démarrer le redimensionnement
+            setIsResizing(true);
+            setResizeHandle(handle);
+            setResizeStart({
+              x: x,
+              y: y,
+              width: element.width || 100,
+              height: element.height || 30
+            });
+            return;
+          }
+        }
+      }
+
       // Sélectionner l'élément sous le curseur
       const clickedElement = elements.find(element => {
         if (element.type === 'text') {
@@ -254,8 +272,127 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         return false;
       });
 
-      setSelectedElement(clickedElement ? clickedElement.id : null);
+      if (clickedElement) {
+        setSelectedElement(clickedElement.id);
+        // Démarrer le drag si on clique sur un élément déjà sélectionné
+        setIsDragging(true);
+        setDragElement(clickedElement);
+        setDragStart({ x: x - clickedElement.x, y: y - clickedElement.y });
+      } else {
+        setSelectedElement(null);
+      }
     }
+  };
+
+  // Gestionnaire de mouvement de souris
+  const handleCanvasMouseMove = (event) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / zoom;
+    const y = (event.clientY - rect.top) / zoom;
+
+    if (isResizing && selectedElement && resizeHandle) {
+      const element = elements.find(el => el.id === selectedElement);
+      if (element) {
+        let newWidth = resizeStart.width;
+        let newHeight = resizeStart.height;
+        let newX = element.x;
+        let newY = element.y;
+
+        const deltaX = x - resizeStart.x;
+        const deltaY = y - resizeStart.y;
+
+        switch (resizeHandle) {
+          case 'nw':
+            newWidth = Math.max(20, resizeStart.width - deltaX);
+            newHeight = Math.max(20, resizeStart.height - deltaY);
+            newX = element.x + (resizeStart.width - newWidth);
+            newY = element.y + (resizeStart.height - newHeight);
+            break;
+          case 'ne':
+            newWidth = Math.max(20, resizeStart.width + deltaX);
+            newHeight = Math.max(20, resizeStart.height - deltaY);
+            newY = element.y + (resizeStart.height - newHeight);
+            break;
+          case 'sw':
+            newWidth = Math.max(20, resizeStart.width - deltaX);
+            newHeight = Math.max(20, resizeStart.height + deltaY);
+            newX = element.x + (resizeStart.width - newWidth);
+            break;
+          case 'se':
+            newWidth = Math.max(20, resizeStart.width + deltaX);
+            newHeight = Math.max(20, resizeStart.height + deltaY);
+            break;
+          case 'n':
+            newHeight = Math.max(20, resizeStart.height - deltaY);
+            newY = element.y + (resizeStart.height - newHeight);
+            break;
+          case 's':
+            newHeight = Math.max(20, resizeStart.height + deltaY);
+            break;
+          case 'w':
+            newWidth = Math.max(20, resizeStart.width - deltaX);
+            newX = element.x + (resizeStart.width - newWidth);
+            break;
+          case 'e':
+            newWidth = Math.max(20, resizeStart.width + deltaX);
+            break;
+        }
+
+        handleElementUpdate(selectedElement, {
+          x: newX,
+          y: newY,
+          width: newWidth,
+          height: newHeight
+        });
+      }
+    } else if (isDragging && dragElement) {
+      // Déplacer l'élément
+      const newX = x - dragStart.x;
+      const newY = y - dragStart.y;
+
+      handleElementUpdate(dragElement.id, {
+        x: Math.max(0, newX), // Empêcher de sortir du canvas
+        y: Math.max(0, newY)
+      });
+    }
+  };
+
+  // Gestionnaire de relâchement de souris
+  const handleCanvasMouseUp = () => {
+    setIsDragging(false);
+    setIsResizing(false);
+    setDragElement(null);
+    setResizeHandle(null);
+  };
+
+  // Fonction pour déterminer quelle poignée de redimensionnement est à une position
+  const getResizeHandleAtPosition = (element, x, y) => {
+    const handleSize = 10;
+    const offset = 5;
+
+    // Calculer les positions des poignées
+    const handles = {
+      nw: { x: element.x - offset, y: element.y - offset },
+      ne: { x: element.x + (element.width || 100) - offset, y: element.y - offset },
+      sw: { x: element.x - offset, y: element.y + (element.height || 30) - offset },
+      se: { x: element.x + (element.width || 100) - offset, y: element.y + (element.height || 30) - offset },
+      n: { x: element.x + (element.width || 100) / 2 - offset, y: element.y - offset },
+      s: { x: element.x + (element.width || 100) / 2 - offset, y: element.y + (element.height || 30) - offset },
+      w: { x: element.x - offset, y: element.y + (element.height || 30) / 2 - offset },
+      e: { x: element.x + (element.width || 100) - offset, y: element.y + (element.height || 30) / 2 - offset }
+    };
+
+    for (const [handle, pos] of Object.entries(handles)) {
+      if (x >= pos.x && x <= pos.x + handleSize &&
+          y >= pos.y && y <= pos.y + handleSize) {
+        return handle;
+      }
+    }
+
+    return null;
   };
 
   // Fonction de rendu du canvas
@@ -336,6 +473,32 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         }
 
         ctx.setLineDash([]);
+      }
+
+      // Dessiner les poignées de redimensionnement si l'élément est sélectionné
+      if (selectedElement === element.id && (element.type === 'rectangle' || element.type === 'company_logo' ||
+          element.type === 'dynamic-text' || element.type === 'order_number' || element.type === 'document_type' ||
+          element.type === 'customer_info' || element.type === 'company_info' || element.type === 'product_table' ||
+          element.type === 'mentions')) {
+        const handleSize = 8;
+        const offset = 4;
+
+        ctx.fillStyle = '#007cba';
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1;
+
+        // Poignées de coin
+        const handles = [
+          { x: element.x - offset, y: element.y - offset }, // nw
+          { x: element.x + (element.width || 100) - offset, y: element.y - offset }, // ne
+          { x: element.x - offset, y: element.y + (element.height || 30) - offset }, // sw
+          { x: element.x + (element.width || 100) - offset, y: element.y + (element.height || 30) - offset } // se
+        ];
+
+        handles.forEach(handle => {
+          ctx.fillRect(handle.x, handle.y, handleSize, handleSize);
+          ctx.strokeRect(handle.x, handle.y, handleSize, handleSize);
+        });
       }
 
       // Dessiner l'élément
@@ -696,6 +859,9 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
               cursor: selectedTool === 'select' ? 'default' : 'crosshair'
             }}
             onClick={handleCanvasClick}
+            onMouseMove={handleCanvasMouseMove}
+            onMouseUp={handleCanvasMouseUp}
+            onMouseLeave={handleCanvasMouseUp}
             onDragOver={handleDragOver}
             onDrop={handleDrop}
           />
