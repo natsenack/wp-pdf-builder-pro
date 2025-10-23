@@ -5,6 +5,7 @@ import { PreviewProvider } from './preview-system/context/PreviewProvider';
 import { usePreviewContext } from './preview-system/context/PreviewContext';
 import ElementLibrary from './ElementLibrary';
 import PropertiesPanel from './PropertiesPanel';
+import TemplateHeader from './TemplateHeader';
 import './PDFEditor.css';
 
 /**
@@ -84,6 +85,14 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   // Gestionnaire d'aperçu
   const handlePreview = () => {
     openPreview('canvas', null, { elements });
+  };
+
+  // Gestionnaire de création d'un nouveau template
+  const handleCreateNew = (templateData) => {
+    // Pour l'instant, on peut juste afficher un message ou rediriger
+    console.log('Création d\'un nouveau template:', templateData);
+    // Ici on pourrait rediriger vers une nouvelle page ou ouvrir un nouvel éditeur
+    alert(`Nouveau template "${templateData.name}" créé avec succès!\nDimensions: ${templateData.width}x${templateData.height}px (${templateData.orientation})`);
   };
 
   // Gestionnaire d'ajout d'élément depuis la bibliothèque
@@ -918,6 +927,15 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
   return (
     <div className="pdf-editor">
+      {/* Header du template */}
+      <TemplateHeader
+        templateName={templateName}
+        isNew={isNew}
+        onSave={onSave}
+        onCreateNew={handleCreateNew}
+        onPreview={handlePreview}
+      />
+
       {/* Toolbar principale */}
       <Toolbar
         selectedTool={selectedTool}
@@ -932,7 +950,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         onRedo={handleRedo}
         canUndo={canUndo}
         canRedo={canRedo}
-        onPreview={handlePreview}
       />
 
       {/* Zone de travail principale */}

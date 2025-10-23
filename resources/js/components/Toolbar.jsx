@@ -12,8 +12,7 @@ export const Toolbar = ({
   onUndo,
   onRedo,
   canUndo,
-  canRedo,
-  onPreview
+  canRedo
 }) => {
   const [activeTab, setActiveTab] = React.useState('home');
 
@@ -58,20 +57,6 @@ export const Toolbar = ({
             <span className="tab-label">{tab.label}</span>
           </button>
         ))}
-      </div>
-
-      {/* Boutons de droite - Aperçu */}
-      <div className="toolbar-right">
-        <button
-          className="preview-button"
-          onClick={onPreview}
-          title="Aperçu du PDF"
-        >
-          <div className="button-content">
-            <span className="button-icon">👁️</span>
-            <span className="button-text">Aperçu</span>
-          </div>
-        </button>
       </div>
 
       {/* Contenu des onglets */}
