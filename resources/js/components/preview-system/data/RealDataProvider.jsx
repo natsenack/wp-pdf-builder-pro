@@ -196,19 +196,70 @@ export class RealDataProvider {
   }
 
   /**
-   * Génère des données pour les informations entreprise
+   * Génère des données pour les informations entreprise (données réelles)
    */
-  generateCompanyInfoData(properties, orderData) {
-    // Les informations entreprise sont généralement dans wp_options
-    // Simulation avec des données vides pour l'instant
+  async generateCompanyInfoData(properties, orderData) {
     const { fields = [] } = properties;
 
-    const data = {};
-    fields.forEach(field => {
-      data[field] = ''; // À récupérer depuis wp_options
-    });
+    try {
+      // Récupérer les données entreprise via AJAX
+      const response = await this.makeAjaxRequest('pdf_builder_get_company_data');
 
-    return data;
+      if (!response.success || !response.data?.company) {
+        // Fallback vers des données vides en cas d'erreur
+        const data = {};
+        fields.forEach(field => {
+          data[field] = '';
+        });
+        return data;
+      }
+
+      const companyData = response.data.company;
+      const data = {};
+
+      // Mapper les champs demandés avec les données récupérées
+      fields.forEach(field => {
+        switch (field) {
+          case 'name':
+            data.name = companyData.name || '';
+            break;
+          case 'address':
+            data.address = companyData.address || '';
+            break;
+          case 'phone':
+            data.phone = companyData.phone || '';
+            break;
+          case 'email':
+            data.email = companyData.email || '';
+            break;
+          case 'website':
+            data.website = companyData.website || '';
+            break;
+          case 'vat':
+            data.vat = companyData.vat || '';
+            break;
+          case 'rcs':
+            data.rcs = companyData.rcs || '';
+            break;
+          case 'siret':
+            data.siret = companyData.siret || '';
+            break;
+          default:
+            data[field] = '';
+        }
+      });
+
+      return data;
+
+    } catch (error) {
+      console.warn('Erreur lors de la récupération des données entreprise:', error);
+      // Fallback vers des données vides
+      const data = {};
+      fields.forEach(field => {
+        data[field] = '';
+      });
+      return data;
+    }
   }
 
   /**

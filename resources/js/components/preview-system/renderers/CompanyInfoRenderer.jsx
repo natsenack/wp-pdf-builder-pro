@@ -13,7 +13,9 @@ export const CompanyInfoRenderer = ({ element, previewData, mode, canvasScale = 
     showBorders = false,
     fields = ['name', 'address', 'phone', 'email'],
     layout = 'vertical',
+    template = 'custom', // Nouveau: template prédéfini
     showLabels = false,
+    showPlaceholders = true, // Nouveau: afficher les placeholders pour données manquantes
     labelStyle = 'normal',
     spacing = 4,
     fontSize = 12,
@@ -38,7 +40,85 @@ export const CompanyInfoRenderer = ({ element, previewData, mode, canvasScale = 
     lineHeight = 1.2
   } = element;
 
-  // Récupérer les données entreprise
+  // Configuration des templates prédéfinis par secteur
+  const templates = {
+    custom: {
+      fields: fields,
+      layout: layout,
+      showLabels: showLabels,
+      labelStyle: labelStyle,
+      showPlaceholders: showPlaceholders
+    },
+    b2b: {
+      fields: ['name', 'address', 'phone', 'email', 'website', 'vat', 'rcs', 'siret'],
+      layout: 'vertical',
+      showLabels: true,
+      labelStyle: 'bold',
+      showPlaceholders: true
+    },
+    b2c: {
+      fields: ['name', 'address', 'phone', 'email', 'website'],
+      layout: 'vertical',
+      showLabels: true,
+      labelStyle: 'normal',
+      showPlaceholders: true
+    },
+    services: {
+      fields: ['name', 'address', 'phone', 'email', 'website', 'vat'],
+      layout: 'vertical',
+      showLabels: true,
+      labelStyle: 'normal',
+      showPlaceholders: true
+    },
+    retail: {
+      fields: ['name', 'address', 'phone', 'email'],
+      layout: 'horizontal',
+      showLabels: false,
+      labelStyle: 'normal',
+      showPlaceholders: false
+    },
+    minimal: {
+      fields: ['name', 'phone', 'email'],
+      layout: 'vertical',
+      showLabels: false,
+      labelStyle: 'normal',
+      showPlaceholders: false
+    },
+    legal: {
+      fields: ['name', 'address', 'vat', 'rcs', 'siret'],
+      layout: 'vertical',
+      showLabels: true,
+      labelStyle: 'bold',
+      showPlaceholders: true
+    }
+  };
+
+  // Appliquer le template sélectionné
+  const currentTemplate = templates[template] || templates.custom;
+  const effectiveFields = currentTemplate.fields;
+  const effectiveLayout = currentTemplate.layout;
+  const effectiveShowLabels = currentTemplate.showLabels;
+  const effectiveLabelStyle = currentTemplate.labelStyle;
+  const effectiveShowPlaceholders = currentTemplate.showPlaceholders;
+
+  // Calcul responsive : ajuster automatiquement la mise en page selon la largeur disponible
+  const isNarrowContainer = width < 200;
+  const isVeryNarrowContainer = width < 150;
+
+  // Ajustements responsives
+  const responsiveLayout = isVeryNarrowContainer ? 'vertical' :
+                          (isNarrowContainer && effectiveLayout === 'horizontal') ? 'vertical' :
+                          effectiveLayout;
+
+  const responsiveFontSize = isVeryNarrowContainer ? Math.max(fontSize * 0.8, 8) :
+                            isNarrowContainer ? Math.max(fontSize * 0.9, 9) :
+                            fontSize;
+
+  const responsiveSpacing = isVeryNarrowContainer ? Math.max(spacing * 0.5, 2) :
+                           isNarrowContainer ? Math.max(spacing * 0.75, 3) :
+                           spacing;
+
+  const responsiveShowLabels = isVeryNarrowContainer ? false : effectiveShowLabels;
   const elementKey = `company_info_${element.id}`;
   const companyData = previewData[elementKey] || {};
 
@@ -55,7 +135,7 @@ export const CompanyInfoRenderer = ({ element, previewData, mode, canvasScale = 
     padding: '4px',
     boxSizing: 'border-box',
     overflow: 'hidden',
-    fontSize: `${fontSize * canvasScale}px`,
+    fontSize: `${responsiveFontSize * canvasScale}px`,
     fontFamily,
     color,
     display: visible ? 'block' : 'none',
@@ -69,15 +149,15 @@ export const CompanyInfoRenderer = ({ element, previewData, mode, canvasScale = 
   };
 
   const fieldStyle = {
-    marginBottom: layout === 'vertical' ? `${spacing}px` : '0',
-    display: layout === 'horizontal' ? 'inline-block' : 'block',
-    marginRight: layout === 'horizontal' ? `${spacing * 2}px` : '0'
+    marginBottom: responsiveLayout === 'vertical' ? `${responsiveSpacing}px` : '0',
+    display: responsiveLayout === 'horizontal' ? 'inline-block' : 'block',
+    marginRight: responsiveLayout === 'horizontal' ? `${responsiveSpacing * 2}px` : '0'
   };
 
   const labelStyleConfig = {
-    fontWeight: labelStyle === 'bold' ? 'bold' : 'normal',
-    textTransform: labelStyle === 'uppercase' ? 'uppercase' : 'none',
-    marginRight: showLabels ? '8px' : '0'
+    fontWeight: effectiveLabelStyle === 'bold' ? 'bold' : 'normal',
+    textTransform: effectiveLabelStyle === 'uppercase' ? 'uppercase' : 'none',
+    marginRight: effectiveShowLabels ? '8px' : '0'
   };
 
   const valueStyle = {
@@ -85,7 +165,7 @@ export const CompanyInfoRenderer = ({ element, previewData, mode, canvasScale = 
     textAlign
   };
 
-  // Mapping des champs vers leurs libellés
+  // Mapping des champs vers leurs libellés et fallbacks
   const fieldLabels = {
     name: 'Nom :',
     address: 'Adresse :',
@@ -97,6 +177,17 @@ export const CompanyInfoRenderer = ({ element, previewData, mode, canvasScale = 
     siret: 'SIRET :'
   };
 
+  const fieldPlaceholders = {
+    name: 'Nom de l\'entreprise non configuré',
+    address: 'Adresse non configurée',
+    phone: 'Téléphone non configuré',
+    email: 'Email non configuré',
+    website: 'Site web non configuré',
+    vat: 'Numéro TVA non configuré',
+    rcs: 'RCS non configuré',
+    siret: 'SIRET non configuré'
+  };
+
   return (
     <div
       className="preview-element preview-company-info-element"
@@ -104,37 +195,61 @@ export const CompanyInfoRenderer = ({ element, previewData, mode, canvasScale = 
       data-element-id={element.id}
       data-element-type="company_info"
     >
-      {fields.map((field, index) => {
+      {effectiveFields.map((field, index) => {
         const value = companyData[field];
-        if (!value) return null;
+        const hasValue = value && value.trim() !== '';
+
+        // Si pas de valeur et qu'on ne montre pas les placeholders, skip
+        if (!hasValue && !effectiveShowPlaceholders) return null;
+
+        const displayValue = hasValue ? value : (fieldPlaceholders[field] || `${field} non configuré`);
+        const isPlaceholder = !hasValue;
 
         return (
           <div key={field} style={fieldStyle}>
-            {showLabels && (
+            {responsiveShowLabels && (
               <span style={labelStyleConfig}>
                 {fieldLabels[field] || `${field} :`}
               </span>
             )}
-            <span style={valueStyle}>
+            <span style={{
+              ...valueStyle,
+              color: isPlaceholder ? '#6c757d' : color,
+              fontStyle: isPlaceholder ? 'italic' : 'normal',
+              wordWrap: 'break-word',
+              overflowWrap: 'break-word',
+              maxWidth: '100%'
+            }}>
               {field === 'address' ? (
-                <span style={{ whiteSpace: 'pre-line' }}>{value}</span>
+                <span style={{
+                  whiteSpace: isVeryNarrowContainer ? 'normal' : 'pre-line',
+                  wordWrap: 'break-word'
+                }}>
+                  {displayValue}
+                </span>
+              ) : field === 'email' || field === 'website' ? (
+                <span style={{
+                  wordBreak: isNarrowContainer ? 'break-all' : 'break-word'
+                }}>
+                  {displayValue}
+                </span>
               ) : (
-                value
+                displayValue
               )}
             </span>
           </div>
         );
       })}
 
-      {/* Message si aucune donnée */}
-      {fields.length === 0 || Object.keys(companyData).length === 0 && (
+      {/* Message si aucun champ configuré */}
+      {effectiveFields.length === 0 && (
         <div style={{
           textAlign: 'center',
           color: '#6c757d',
           fontStyle: 'italic',
           padding: '20px'
         }}>
-          Aucune information entreprise
+          Aucun champ d'information entreprise configuré
         </div>
       )}
     </div>

@@ -46,6 +46,7 @@ class PDF_Builder_WooCommerce_Integration
         add_action('wp_ajax_pdf_builder_load_order_canvas', [$this, 'ajax_load_order_canvas'], 1);
         add_action('wp_ajax_pdf_builder_get_canvas_elements', [$this, 'ajax_get_canvas_elements'], 1);
         add_action('wp_ajax_pdf_builder_get_order_data', [$this, 'ajax_get_order_data'], 1);
+        add_action('wp_ajax_pdf_builder_get_company_data', [$this, 'ajax_get_company_data'], 1);
         add_action('wp_ajax_pdf_builder_validate_order_access', [$this, 'ajax_validate_order_access'], 1);
     }
     private function detect_document_type($order_status)
@@ -1508,6 +1509,57 @@ class PDF_Builder_WooCommerce_Integration
             );
         } catch (Exception $e) {
             wp_send_json_error('Erreur interne lors de la validation d\'accès');
+        }
+    }
+
+    /**
+     * AJAX: Récupère les données entreprise depuis WooCommerce/WordPress
+     */
+    public function ajax_get_company_data()
+    {
+        try {
+            // Vérifier les permissions utilisateur
+            if (!current_user_can('manage_woocommerce') && !current_user_can('edit_shop_orders')) {
+                wp_send_json_error('Permissions insuffisantes pour accéder aux données entreprise');
+                return;
+            }
+
+            // Vérifier le nonce de sécurité
+            if (!wp_verify_nonce($_POST['nonce'] ?? '', 'pdf_builder_order_actions')) {
+                wp_send_json_error('Sécurité: Nonce invalide');
+                return;
+            }
+
+            // Récupérer les données entreprise depuis les options WordPress/WooCommerce
+            $company_data = [
+                'name' => get_bloginfo('name'),
+                'address' => trim(
+                    get_option('woocommerce_store_address') . ' ' .
+                    get_option('woocommerce_store_address_2') . ' ' .
+                    get_option('woocommerce_store_postcode') . ' ' .
+                    get_option('woocommerce_store_city')
+                ),
+                'phone' => get_option('woocommerce_phone') ?: get_option('pdf_builder_company_phone'),
+                'email' => get_option('woocommerce_email_from_address'),
+                'website' => get_option('siteurl'), // URL du site WordPress
+                'vat' => get_option('pdf_builder_company_vat'),
+                'rcs' => get_option('pdf_builder_company_rcs'),
+                'siret' => get_option('pdf_builder_company_siret')
+            ];
+
+            // Nettoyer les données vides
+            foreach ($company_data as $key => $value) {
+                if (empty($value)) {
+                    $company_data[$key] = '';
+                }
+            }
+
+            wp_send_json_success([
+                'company' => $company_data
+            ]);
+
+        } catch (Exception $e) {
+            wp_send_json_error('Erreur interne lors de la récupération des données entreprise');
         }
     }
 }
