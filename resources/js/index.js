@@ -1,9 +1,14 @@
 // PDF Builder Pro - Main Bundle
 // Met à jour l'objet pdfBuilderPro existant avec React et les composants
 
-// Import React directement depuis node_modules
+console.log('🚀 PDF Builder Pro: Script starting...');
+
+// Import React normalement - sera bundlé avec webpack
 import React from 'react';
 import ReactDOM from 'react-dom';
+
+// Import the real PDFEditor component
+import { PDFEditor } from './components/PDFEditor.jsx';
 
 try {
   console.log('🚀 PDF Builder Pro: Main bundle starting...');
@@ -129,44 +134,6 @@ try {
     return pdfBuilderPro;
   };
 }
-
-// Composant PDFEditor simplifié pour éviter les problèmes de code splitting
-const PDFEditor = ({ initialElements = [], onSave, templateName = '', isNew = true }) => {
-  const [elements, setElements] = React.useState(initialElements);
-  const [showPreview, setShowPreview] = React.useState(false);
-
-  const handlePreview = () => {
-    setShowPreview(true);
-  };
-
-  const handleSave = () => {
-    if (onSave) {
-      onSave(elements);
-    }
-  };
-
-  return React.createElement('div', { className: 'pdf-editor-container', style: { width: '100%', height: '600px', border: '1px solid #ccc', borderRadius: '4px', display: 'flex', flexDirection: 'column' } }, [
-    React.createElement('div', { key: 'toolbar', className: 'pdf-editor-toolbar', style: { padding: '10px', borderBottom: '1px solid #ccc', backgroundColor: '#f5f5f5', display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }, [
-      React.createElement('div', { key: 'title', style: { fontWeight: 'bold' } }, 'PDF Builder Pro - ' + (templateName || 'Nouveau Template')),
-      React.createElement('div', { key: 'actions', style: { display: 'flex', gap: '10px' } }, [
-        React.createElement('button', { key: 'preview', onClick: handlePreview, style: { padding: '8px 16px', backgroundColor: '#007cba', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' } }, 'Aperçu'),
-        React.createElement('button', { key: 'save', onClick: handleSave, style: { padding: '8px 16px', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' } }, 'Sauvegarder')
-      ])
-    ]),
-    React.createElement('div', { key: 'canvas', className: 'pdf-editor-canvas', style: { flex: 1, padding: '20px', backgroundColor: '#ffffff', overflow: 'auto' } }, [
-      React.createElement('div', { key: 'placeholder', style: { textAlign: 'center', color: '#666', fontSize: '18px', marginTop: '100px' } }, 'Zone d\'édition PDF - Fonctionnalité en développement'),
-      React.createElement('div', { key: 'elements-count', style: { marginTop: '20px', fontSize: '14px', color: '#999' } }, 'Éléments: ' + elements.length)
-    ]),
-    showPreview && React.createElement('div', { key: 'preview-modal', style: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }, onClick: () => setShowPreview(false) }, [
-      React.createElement('div', { style: { backgroundColor: 'white', padding: '20px', borderRadius: '8px', maxWidth: '600px', maxHeight: '80vh', overflow: 'auto' }, onClick: (e) => e.stopPropagation() }, [
-        React.createElement('h3', { key: 'title' }, 'Aperçu du PDF'),
-        React.createElement('p', { key: 'content' }, 'Template: ' + (templateName || 'Nouveau Template')),
-        React.createElement('p', { key: 'elements' }, 'Nombre d\'éléments: ' + elements.length),
-        React.createElement('button', { key: 'close', onClick: () => setShowPreview(false), style: { marginTop: '20px', padding: '8px 16px', backgroundColor: '#6c757d', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' } }, 'Fermer')
-      ])
-    ])
-  ]);
-};
 
 console.error('🚀 PDF Builder Pro: Main bundle loaded successfully');
 } catch (error) {

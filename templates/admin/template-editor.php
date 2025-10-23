@@ -40,13 +40,16 @@ if (!isset($GLOBALS['pdf_builder_scripts_loaded'])) {
     // Charger directement les scripts PDF Builder
     $assets_url = defined('PDF_BUILDER_PRO_ASSETS_URL') ? PDF_BUILDER_PRO_ASSETS_URL : plugin_dir_url(dirname(dirname(__FILE__))) . 'assets/';
 
-    // SCRIPT LOADER STANDALONE - Définit les variables globales immédiatement (PAS traité par webpack)
-    $script_loader_url = $assets_url . 'js/pdf-builder-script-loader-standalone.js?v=' . time();
-    echo '<script type="text/javascript" src="' . esc_url($script_loader_url) . '"></script>';
+    // React sera inclus dans le bundle webpack
+
+    // Charger le runtime webpack avant le script principal
+    $runtime_url = $assets_url . 'js/dist/runtime.fd1e176f059237da70e0.js?v=' . time();
+    echo '<script type="text/javascript" src="' . esc_url($runtime_url) . '"></script>';
 
     // Script principal - CHARGER ENSUITE avec les composants React
     $script_url = $assets_url . 'js/dist/pdf-builder-admin.js?v=' . time();
-    echo '<script type="text/javascript" src="' . esc_url($script_url) . '"></script>';
+    echo '<script type="text/javascript">console.log("Tentative de chargement du script principal:", "' . esc_url($script_url) . '");</script>';
+    echo '<script type="text/javascript" src="' . esc_url($script_url) . '" onload="console.log(\'Script principal chargé\')" onerror="console.error(\'Erreur de chargement du script principal\')"></script>';
 
     // SCRIPT DE TEST - Vérifier si les variables globales sont définies
     echo '<script type="text/javascript">

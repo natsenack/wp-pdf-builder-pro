@@ -32,6 +32,7 @@ module.exports = {
   // React est partagé entre les chunks
   mode: 'production',
   optimization: {
+    runtimeChunk: 'single', // Créer un seul runtime chunk partagé
     usedExports: false, // DÉSACTIVÉ pour éviter la suppression des exports globaux
     sideEffects: false,  // DÉSACTIVÉ pour éviter la suppression des effets secondaires
     minimize: true,     // Garder la minification
@@ -147,7 +148,6 @@ module.exports = {
     // 'react-dom': 'ReactDOM'
   },
   plugins: [
-    // ProvidePlugin retiré - on expose React globalement dans le code
     // Plugin de compression pour les assets
     new CompressionPlugin({
       algorithm: 'gzip',
