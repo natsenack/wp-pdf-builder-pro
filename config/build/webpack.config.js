@@ -20,7 +20,6 @@ module.exports = {
       return '[name].[contenthash].js';
     },
     path: path.resolve(__dirname, '../../assets/js/dist'),
-    globalObject: 'window',
     clean: true // Nettoyer les anciens fichiers
   },
   plugins: [
