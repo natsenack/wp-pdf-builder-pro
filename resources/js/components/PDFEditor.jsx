@@ -636,38 +636,146 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         const textY = element.y || 30;
         ctx.fillText(element.text || 'Texte', textX, textY);
       } else if (element.type === 'rectangle') {
-        ctx.fillStyle = element.backgroundColor || '#ffffff';
+        // Appliquer l'opacité si définie
+        if (element.opacity !== undefined && element.opacity < 1) {
+            ctx.globalAlpha = element.opacity;
+        }
+
+        // Appliquer les ombres si définies
+        if (element.shadow) {
+          ctx.shadowColor = element.shadowColor || '#000000';
+          ctx.shadowBlur = 5;
+          ctx.shadowOffsetX = element.shadowOffsetX || 2;
+          ctx.shadowOffsetY = element.shadowOffsetY || 2;
+        }
+
         const rectX = element.x || 10;
         const rectY = element.y || 10;
         const rectWidth = element.width || 100;
         const rectHeight = element.height || 50;
-        ctx.fillRect(rectX, rectY, rectWidth, rectHeight);
-        if (element.borderWidth > 0) {
-          ctx.strokeStyle = element.borderColor || '#000000';
-          ctx.lineWidth = element.borderWidth || 1;
-          ctx.strokeRect(rectX, rectY, rectWidth, rectHeight);
+
+        // Fond du rectangle
+        if (element.backgroundColor && element.backgroundColor !== 'transparent') {
+          ctx.fillStyle = element.backgroundColor;
+          if (element.borderRadius > 0) {
+            // Rectangle avec coins arrondis
+            ctx.beginPath();
+            ctx.roundRect(rectX, rectY, rectWidth, rectHeight, element.borderRadius);
+            ctx.fill();
+          } else {
+            ctx.fillRect(rectX, rectY, rectWidth, rectHeight);
+          }
         }
-      } else if (element.type === 'circle') {
-        ctx.fillStyle = element.backgroundColor || '#ffffff';
-        ctx.beginPath();
-        ctx.arc(element.x || 10, element.y || 10, element.radius || 25, 0, 2 * Math.PI);
-        ctx.fill();
+
+        // Bordure du rectangle
         if (element.borderWidth > 0) {
           ctx.strokeStyle = element.borderColor || '#000000';
           ctx.lineWidth = element.borderWidth || 1;
+          if (element.borderRadius > 0) {
+            ctx.beginPath();
+            ctx.roundRect(rectX, rectY, rectWidth, rectHeight, element.borderRadius);
+            ctx.stroke();
+          } else {
+            ctx.strokeRect(rectX, rectY, rectWidth, rectHeight);
+          }
+        }
+
+        // Restaurer l'opacité et les ombres
+        ctx.globalAlpha = 1;
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
+      } else if (element.type === 'circle') {
+        // Appliquer l'opacité si définie
+        if (element.opacity !== undefined && element.opacity < 1) {
+            ctx.globalAlpha = element.opacity;
+        }
+
+        // Appliquer les ombres si définies
+        if (element.shadow) {
+          ctx.shadowColor = element.shadowColor || '#000000';
+          ctx.shadowBlur = 5;
+          ctx.shadowOffsetX = element.shadowOffsetX || 2;
+          ctx.shadowOffsetY = element.shadowOffsetY || 2;
+        }
+
+        const centerX = element.x || 10;
+        const centerY = element.y || 10;
+        const radius = element.radius || 25;
+
+        // Fond du cercle
+        if (element.backgroundColor && element.backgroundColor !== 'transparent') {
+          ctx.fillStyle = element.backgroundColor;
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+          ctx.fill();
+        }
+
+        // Bordure du cercle
+        if (element.borderWidth > 0) {
+          ctx.strokeStyle = element.borderColor || '#000000';
+          ctx.lineWidth = element.borderWidth || 1;
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
           ctx.stroke();
         }
+
+        // Restaurer l'opacité et les ombres
+        ctx.globalAlpha = 1;
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
       } else if (element.type === 'company_logo') {
-        // Rendu spécifique pour le logo de l'entreprise
+        // Appliquer l'opacité si définie
+        if (element.opacity !== undefined && element.opacity < 1) {
+            ctx.globalAlpha = element.opacity;
+        }
+
+        // Appliquer les ombres si définies
+        if (element.shadow) {
+          ctx.shadowColor = element.shadowColor || '#000000';
+          ctx.shadowBlur = 5;
+          ctx.shadowOffsetX = element.shadowOffsetX || 2;
+          ctx.shadowOffsetY = element.shadowOffsetY || 2;
+        }
+
+        const imgX = element.x || 10;
+        const imgY = element.y || 10;
+        const imgWidth = element.width || 120;
+        const imgHeight = element.height || 90;
+
+        // Fond du logo si défini
+        if (element.backgroundColor && element.backgroundColor !== 'transparent') {
+          ctx.fillStyle = element.backgroundColor;
+          if (element.borderRadius > 0) {
+            ctx.beginPath();
+            ctx.roundRect(imgX, imgY, imgWidth, imgHeight, element.borderRadius);
+            ctx.fill();
+          } else {
+            ctx.fillRect(imgX, imgY, imgWidth, imgHeight);
+          }
+        }
+
+        // Bordure du logo si définie
+        if (element.borderWidth > 0) {
+          ctx.strokeStyle = element.borderColor || '#000000';
+          ctx.lineWidth = element.borderWidth || 1;
+          if (element.borderRadius > 0) {
+            ctx.beginPath();
+            ctx.roundRect(imgX, imgY, imgWidth, imgHeight, element.borderRadius);
+            ctx.stroke();
+          } else {
+            ctx.strokeRect(imgX, imgY, imgWidth, imgHeight);
+          }
+        }
+
+        // Rendu de l'image du logo
         const imageUrl = element.src || element.imageUrl;
         if (imageUrl) {
           const img = new Image();
           img.onload = () => {
-            const imgX = element.x || 10;
-            const imgY = element.y || 10;
-            const imgWidth = element.width || 120;
-            const imgHeight = element.height || 90;
-
             // Calculer les dimensions pour maintenir le ratio d'aspect
             const aspectRatio = img.width / img.height;
             let drawWidth = imgWidth;
@@ -691,15 +799,65 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           };
           img.src = imageUrl;
         }
-      } else if (element.type === 'dynamic-text') {
-        // Rendu spécifique pour le texte dynamique
-        ctx.fillStyle = element.color || '#333333';
-        const fontWeight = element.fontWeight || 'normal';
-        ctx.font = `${fontWeight} ${element.fontSize || 14}px ${element.fontFamily || 'Arial'}`;
-        ctx.textAlign = element.textAlign || 'left';
 
+        // Restaurer l'opacité et les ombres
+        ctx.globalAlpha = 1;
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
+      } else if (element.type === 'dynamic-text') {
+        // Appliquer l'opacité si définie
+        if (element.opacity !== undefined && element.opacity < 1) {
+            ctx.globalAlpha = element.opacity;
+        }
+
+        // Appliquer les ombres si définies
+        if (element.shadow) {
+          ctx.shadowColor = element.shadowColor || '#000000';
+          ctx.shadowBlur = 5;
+          ctx.shadowOffsetX = element.shadowOffsetX || 2;
+          ctx.shadowOffsetY = element.shadowOffsetY || 2;
+        }
+
+        // Fond du texte si défini
         const textX = element.x || 10;
         const textY = element.y || 30;
+        const textWidth = element.width || 200;
+        const textHeight = element.height || 30;
+
+        if (element.backgroundColor && element.backgroundColor !== 'transparent') {
+          ctx.fillStyle = element.backgroundColor;
+          if (element.borderRadius > 0) {
+            ctx.beginPath();
+            ctx.roundRect(textX, textY, textWidth, textHeight, element.borderRadius);
+            ctx.fill();
+          } else {
+            ctx.fillRect(textX, textY, textWidth, textHeight);
+          }
+        }
+
+        // Bordure du fond si définie
+        if (element.borderWidth > 0) {
+          ctx.strokeStyle = element.borderColor || '#000000';
+          ctx.lineWidth = element.borderWidth || 1;
+          if (element.borderRadius > 0) {
+            ctx.beginPath();
+            ctx.roundRect(textX, textY, textWidth, textHeight, element.borderRadius);
+            ctx.stroke();
+          } else {
+            ctx.strokeRect(textX, textY, textWidth, textHeight);
+          }
+        }
+
+        // Configuration du texte
+        ctx.fillStyle = element.color || '#333333';
+        const fontStyle = element.fontStyle === 'italic' ? 'italic ' : '';
+        const fontWeight = element.fontWeight || 'normal';
+        const textDecoration = element.textDecoration;
+        ctx.font = `${fontStyle}${fontWeight} ${element.fontSize || 14}px ${element.fontFamily || 'Arial'}`;
+        ctx.textAlign = element.textAlign || 'left';
+
         let displayText = element.text || 'Texte';
 
         // Utiliser customContent si disponible
@@ -712,25 +870,128 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           displayText = 'Signature: _______________________________';
         }
 
-        ctx.fillText(displayText, textX, textY + (element.height || 30) / 2);
-      } else if (element.type === 'order_number') {
-        const fontWeight = element.fontWeight || 'bold';
-        ctx.font = `${fontWeight} ${element.fontSize || 14}px ${element.fontFamily || 'Arial'}`;
-        ctx.textAlign = element.textAlign || 'right';
+        // Positionner le texte au centre verticalement
+        const textBaselineY = textY + textHeight / 2;
 
+        // Appliquer la décoration de texte (souligné, barré)
+        if (textDecoration === 'underline' || textDecoration === 'line-through') {
+          const textMetrics = ctx.measureText(displayText);
+          const lineY = textBaselineY + (textDecoration === 'underline' ? 2 : -2);
+
+          ctx.strokeStyle = element.color || '#333333';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(textX, lineY);
+          ctx.lineTo(textX + textMetrics.width, lineY);
+          ctx.stroke();
+        }
+
+        ctx.fillText(displayText, textX, textBaselineY);
+
+        // Restaurer l'opacité et les ombres
+        ctx.globalAlpha = 1;
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
+      } else if (element.type === 'order_number') {
+        // Appliquer l'opacité si définie
+        if (element.opacity !== undefined && element.opacity < 1) {
+            ctx.globalAlpha = element.opacity;
+        }
+
+        // Appliquer les ombres si définies
+        if (element.shadow) {
+          ctx.shadowColor = element.shadowColor || '#000000';
+          ctx.shadowBlur = 5;
+          ctx.shadowOffsetX = element.shadowOffsetX || 2;
+          ctx.shadowOffsetY = element.shadowOffsetY || 2;
+        }
+
+        // Fond du texte si défini
         const textX = element.x || 10;
         const textY = element.y || 30;
+        const textWidth = element.width || 270;
+        const textHeight = element.height || 40;
+
+        if (element.backgroundColor && element.backgroundColor !== 'transparent') {
+          ctx.fillStyle = element.backgroundColor;
+          if (element.borderRadius > 0) {
+            ctx.beginPath();
+            ctx.roundRect(textX, textY, textWidth, textHeight, element.borderRadius);
+            ctx.fill();
+          } else {
+            ctx.fillRect(textX, textY, textWidth, textHeight);
+          }
+        }
+
+        // Bordure du fond si définie
+        if (element.borderWidth > 0) {
+          ctx.strokeStyle = element.borderColor || '#000000';
+          ctx.lineWidth = element.borderWidth || 1;
+          if (element.borderRadius > 0) {
+            ctx.beginPath();
+            ctx.roundRect(textX, textY, textWidth, textHeight, element.borderRadius);
+            ctx.stroke();
+          } else {
+            ctx.strokeRect(textX, textY, textWidth, textHeight);
+          }
+        }
+
+        // Configuration du texte
+        ctx.fillStyle = element.color || '#000000';
+        const fontStyle = element.fontStyle === 'italic' ? 'italic ' : '';
+        const fontWeight = element.fontWeight || 'bold';
+        const textDecoration = element.textDecoration;
+        ctx.font = `${fontStyle}${fontWeight} ${element.fontSize || 14}px ${element.fontFamily || 'Arial'}`;
 
         // Afficher le label si demandé
         if (element.showLabel && element.labelText) {
           ctx.textAlign = 'left';
-          ctx.fillText(element.labelText, textX, textY + (element.height || 40) / 2);
+          const labelBaselineY = textY + textHeight / 2;
+
+          // Appliquer la décoration de texte pour le label
+          if (textDecoration === 'underline' || textDecoration === 'line-through') {
+            const labelMetrics = ctx.measureText(element.labelText);
+            const lineY = labelBaselineY + (textDecoration === 'underline' ? 2 : -2);
+
+            ctx.strokeStyle = element.color || '#000000';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(textX, lineY);
+            ctx.lineTo(textX + labelMetrics.width, lineY);
+            ctx.stroke();
+          }
+
+          ctx.fillText(element.labelText, textX, labelBaselineY);
         }
 
         // Afficher le numéro formaté
         const formattedText = element.format || 'Commande #{order_number}';
         ctx.textAlign = element.textAlign || 'right';
-        ctx.fillText(formattedText, textX + (element.width || 270), textY + (element.height || 40) / 2);
+        const numberBaselineY = textY + textHeight / 2;
+
+        // Appliquer la décoration de texte pour le numéro
+        if (textDecoration === 'underline' || textDecoration === 'line-through') {
+          const numberMetrics = ctx.measureText(formattedText);
+          const lineY = numberBaselineY + (textDecoration === 'underline' ? 2 : -2);
+
+          ctx.strokeStyle = element.color || '#000000';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(textX + textWidth - numberMetrics.width, lineY);
+          ctx.lineTo(textX + textWidth, lineY);
+          ctx.stroke();
+        }
+
+        ctx.fillText(formattedText, textX + textWidth, numberBaselineY);
+
+        // Restaurer l'opacité et les ombres
+        ctx.globalAlpha = 1;
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
       } else if (element.type === 'document_type') {
         // Appliquer la couleur du texte
         ctx.fillStyle = element.color || '#000000';
@@ -744,9 +1005,28 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         const displayText = 'FACTURE';
 
         ctx.fillText(displayText, textX + (element.width || 120) / 2, textY + (element.height || 50) / 2);
+
+        // Restaurer l'opacité et les ombres
+        ctx.globalAlpha = 1;
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
       } else if (element.type === 'line') {
-        // Rendu spécifique pour la ligne
-        ctx.strokeStyle = element.lineColor || '#64748b';
+        // Appliquer l'opacité si définie
+        if (element.opacity !== undefined && element.opacity < 1) {
+            ctx.globalAlpha = element.opacity;
+        }
+
+        // Appliquer les ombres si définies
+        if (element.shadow) {
+          ctx.shadowColor = element.shadowColor || '#000000';
+          ctx.shadowBlur = 5;
+          ctx.shadowOffsetX = element.shadowOffsetX || 2;
+          ctx.shadowOffsetY = element.shadowOffsetY || 2;
+        }
+
+        ctx.strokeStyle = element.lineColor || element.color || '#64748b';
         ctx.lineWidth = element.lineWidth || 2;
         ctx.beginPath();
         const lineX = element.x || 10;
@@ -755,6 +1035,13 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.moveTo(lineX, lineY + (element.height || 12) / 2);
         ctx.lineTo(lineX + lineWidth, lineY + (element.height || 12) / 2);
         ctx.stroke();
+
+        // Restaurer l'opacité et les ombres
+        ctx.globalAlpha = 1;
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
       } else if (element.type === 'shape-triangle') {
         // Rendu spécifique pour le triangle
         const centerX = element.x || 10;
@@ -808,29 +1095,137 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           ctx.stroke();
         }
       } else if (element.type === 'mentions') {
-        // Rendu spécifique pour les mentions légales
-        ctx.fillStyle = element.color || '#666666';
-        ctx.font = `${element.fontSize || 8}px ${element.fontFamily || 'Arial'}`;
-        ctx.textAlign = element.textAlign || 'center';
+        // Appliquer l'opacité si définie
+        if (element.opacity !== undefined && element.opacity < 1) {
+            ctx.globalAlpha = element.opacity;
+        }
 
+        // Appliquer les ombres si définies
+        if (element.shadow) {
+          ctx.shadowColor = element.shadowColor || '#000000';
+          ctx.shadowBlur = 5;
+          ctx.shadowOffsetX = element.shadowOffsetX || 2;
+          ctx.shadowOffsetY = element.shadowOffsetY || 2;
+        }
+
+        // Fond du texte si défini
         const textX = element.x || 10;
         const textY = element.y || 10;
-        const parts = [];
+        const textWidth = element.width || 300;
+        const textHeight = element.height || 40;
 
+        if (element.backgroundColor && element.backgroundColor !== 'transparent') {
+          ctx.fillStyle = element.backgroundColor;
+          if (element.borderRadius > 0) {
+            ctx.beginPath();
+            ctx.roundRect(textX, textY, textWidth, textHeight, element.borderRadius);
+            ctx.fill();
+          } else {
+            ctx.fillRect(textX, textY, textWidth, textHeight);
+          }
+        }
+
+        // Bordure du fond si définie
+        if (element.borderWidth > 0) {
+          ctx.strokeStyle = element.borderColor || '#000000';
+          ctx.lineWidth = element.borderWidth || 1;
+          if (element.borderRadius > 0) {
+            ctx.beginPath();
+            ctx.roundRect(textX, textY, textWidth, textHeight, element.borderRadius);
+            ctx.stroke();
+          } else {
+            ctx.strokeRect(textX, textY, textWidth, textHeight);
+          }
+        }
+
+        // Configuration du texte
+        ctx.fillStyle = element.color || '#666666';
+        const fontStyle = element.fontStyle === 'italic' ? 'italic ' : '';
+        const fontWeight = element.fontWeight || 'normal';
+        const textDecoration = element.textDecoration;
+        ctx.font = `${fontStyle}${fontWeight} ${element.fontSize || 8}px ${element.fontFamily || 'Arial'}`;
+        ctx.textAlign = element.textAlign || 'center';
+
+        const parts = [];
         if (element.showEmail) parts.push('email@company.com');
         if (element.showPhone) parts.push('+33 1 23 45 67 89');
         if (element.showSiret) parts.push('SIRET: 123 456 789 00012');
 
         const displayText = parts.join(element.separator || ' • ');
-        ctx.fillText(displayText, textX + (element.width || 300) / 2, textY + (element.height || 40) / 2);
-      } else if (element.type === 'customer_info' || element.type === 'company_info') {
-        // Rendu spécifique pour les informations client/entreprise
-        ctx.fillStyle = element.color || '#1e293b';
-        ctx.font = `${element.fontSize || 14}px ${element.fontFamily || 'Arial'}`;
-        ctx.textAlign = 'left';
+        const textBaselineY = textY + textHeight / 2;
 
+        // Appliquer la décoration de texte
+        if (textDecoration === 'underline' || textDecoration === 'line-through') {
+          const textMetrics = ctx.measureText(displayText);
+          const lineY = textBaselineY + (textDecoration === 'underline' ? 2 : -2);
+
+          ctx.strokeStyle = element.color || '#666666';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(textX + (textWidth - textMetrics.width) / 2, lineY);
+          ctx.lineTo(textX + (textWidth + textMetrics.width) / 2, lineY);
+          ctx.stroke();
+        }
+
+        ctx.fillText(displayText, textX + textWidth / 2, textBaselineY);
+
+        // Restaurer l'opacité et les ombres
+        ctx.globalAlpha = 1;
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
+      } else if (element.type === 'customer_info' || element.type === 'company_info') {
+        // Appliquer l'opacité si définie
+        if (element.opacity !== undefined && element.opacity < 1) {
+            ctx.globalAlpha = element.opacity;
+        }
+
+        // Appliquer les ombres si définies
+        if (element.shadow) {
+          ctx.shadowColor = element.shadowColor || '#000000';
+          ctx.shadowBlur = 5;
+          ctx.shadowOffsetX = element.shadowOffsetX || 2;
+          ctx.shadowOffsetY = element.shadowOffsetY || 2;
+        }
+
+        // Fond du bloc d'informations si défini
         const textX = element.x || 10;
         let currentY = element.y || 10;
+        const blockWidth = element.width || 200;
+        const blockHeight = element.height || 100;
+
+        if (element.backgroundColor && element.backgroundColor !== 'transparent') {
+          ctx.fillStyle = element.backgroundColor;
+          if (element.borderRadius > 0) {
+            ctx.beginPath();
+            ctx.roundRect(textX, currentY, blockWidth, blockHeight, element.borderRadius);
+            ctx.fill();
+          } else {
+            ctx.fillRect(textX, currentY, blockWidth, blockHeight);
+          }
+        }
+
+        // Bordure du bloc si définie
+        if (element.borderWidth > 0) {
+          ctx.strokeStyle = element.borderColor || '#000000';
+          ctx.lineWidth = element.borderWidth || 1;
+          if (element.borderRadius > 0) {
+            ctx.beginPath();
+            ctx.roundRect(textX, currentY, blockWidth, blockHeight, element.borderRadius);
+            ctx.stroke();
+          } else {
+            ctx.strokeRect(textX, currentY, blockWidth, blockHeight);
+          }
+        }
+
+        // Configuration du texte
+        ctx.fillStyle = element.color || '#1e293b';
+        const fontStyle = element.fontStyle === 'italic' ? 'italic ' : '';
+        const fontWeight = element.fontWeight || 'normal';
+        const textDecoration = element.textDecoration;
+        ctx.font = `${fontStyle}${fontWeight} ${element.fontSize || 14}px ${element.fontFamily || 'Arial'}`;
+        ctx.textAlign = 'left';
 
         if (element.fields && Array.isArray(element.fields)) {
           element.fields.forEach(field => {
@@ -862,22 +1257,76 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
               }
             }
 
+            // Appliquer la décoration de texte
+            if (textDecoration === 'underline' || textDecoration === 'line-through') {
+              const textMetrics = ctx.measureText(fieldText);
+              const lineY = currentY + 15 + (textDecoration === 'underline' ? 2 : -2);
+
+              ctx.strokeStyle = element.color || '#1e293b';
+              ctx.lineWidth = 1;
+              ctx.beginPath();
+              ctx.moveTo(textX, lineY);
+              ctx.lineTo(textX + textMetrics.width, lineY);
+              ctx.stroke();
+            }
+
             ctx.fillText(fieldText, textX, currentY + 15);
             currentY += (element.spacing || 5) + 15;
           });
         }
-      } else if (element.type === 'product_table') {
-        // Rendu basique pour le tableau de produits
-        ctx.fillStyle = element.color || '#475569';
-        ctx.font = `${element.fontSize || 14}px ${element.fontFamily || 'Arial'}`;
 
+        // Restaurer l'opacité et les ombres
+        ctx.globalAlpha = 1;
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
+      } else if (element.type === 'product_table') {
+        // Rendu du tableau de produits avec toutes les propriétés
         const tableX = element.x || 30;
         let currentY = element.y || 270;
+        const tableWidth = element.width || 530;
+        const tableHeight = element.height || 100;
+
+        // Appliquer l'opacité si définie
+        if (element.opacity !== undefined && element.opacity < 1) {
+            ctx.globalAlpha = element.opacity;
+        }
+
+        // Fond du tableau
+        if (element.backgroundColor && element.backgroundColor !== 'transparent') {
+          ctx.fillStyle = element.backgroundColor;
+          ctx.fillRect(tableX, currentY - 10, tableWidth, tableHeight + 20);
+        }
+
+        // Bordure du tableau
+        if (element.borderWidth > 0) {
+          ctx.strokeStyle = element.borderColor || '#000000';
+          ctx.lineWidth = element.borderWidth || 1;
+          ctx.strokeRect(tableX, currentY - 10, tableWidth, tableHeight + 20);
+        }
+
+        // Appliquer les ombres si définies
+        if (element.shadow) {
+          ctx.shadowColor = element.shadowColor || '#000000';
+          ctx.shadowBlur = 5;
+          ctx.shadowOffsetX = element.shadowOffsetX || 2;
+          ctx.shadowOffsetY = element.shadowOffsetY || 2;
+        }
+
+        // Configuration de la police
+        const fontStyle = element.fontStyle === 'italic' ? 'italic ' : '';
+        const fontWeight = element.fontWeight ? `${element.fontWeight} ` : '';
+        const fontSize = element.fontSize || 14;
+        const fontFamily = element.fontFamily || 'Arial';
 
         // En-têtes du tableau
         if (element.showHeaders && element.headers) {
-          ctx.font = `bold ${element.fontSize || 14}px ${element.fontFamily || 'Arial'}`;
-          let headerX = tableX;
+          ctx.font = `${fontStyle}${fontWeight}bold ${fontSize}px ${fontFamily}`;
+          ctx.fillStyle = element.color || '#000000';
+          ctx.textAlign = element.textAlign || 'left';
+
+          let headerX = tableX + 10;
           element.headers.forEach(header => {
             ctx.fillText(header, headerX, currentY + 15);
             headerX += 150; // Espacement fixe pour l'exemple
@@ -886,7 +1335,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         }
 
         // Lignes d'exemple
-        ctx.font = `${element.fontSize || 14}px ${element.fontFamily || 'Arial'}`;
+        ctx.font = `${fontStyle}${fontWeight}${fontSize}px ${fontFamily}`;
         const sampleRows = [
           ['Produit A', '2', '25.00 €'],
           ['Produit B', '1', '15.50 €'],
@@ -894,11 +1343,22 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ];
 
         sampleRows.forEach((row, index) => {
-          let cellX = tableX;
-          const bgColor = index % 2 === 0 ? (element.evenRowBg || '#ffffff') : (element.oddRowBg || '#ebebeb');
+          let cellX = tableX + 10;
+
+          // Fond alterné des lignes
+          const bgColor = index % 2 === 0 ? (element.evenRowBg || '#ffffff') : (element.oddRowBg || '#f9f9f9');
           ctx.fillStyle = bgColor;
-          ctx.fillRect(tableX, currentY - 5, element.width || 530, 20);
-          ctx.fillStyle = index % 2 === 0 ? element.color : (element.oddRowTextColor || '#666666');
+          ctx.fillRect(tableX, currentY - 5, tableWidth, 20);
+
+          // Bordures des cellules si activées
+          if (element.showBorders) {
+            ctx.strokeStyle = element.borderColor || '#dddddd';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(tableX, currentY - 5, tableWidth, 20);
+          }
+
+          // Couleur du texte alternée
+          ctx.fillStyle = index % 2 === 0 ? (element.color || '#000000') : (element.oddRowTextColor || '#666666');
 
           row.forEach(cell => {
             ctx.fillText(cell, cellX, currentY + 15);
@@ -906,6 +1366,13 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           });
           currentY += 25;
         });
+
+        // Restaurer l'opacité et les ombres
+        ctx.globalAlpha = 1;
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
 
       } else {
         console.log(`PDFEditor: UNKNOWN ELEMENT TYPE "${element.type}" for element ${element.id} - rendering as generic red rectangle`);
