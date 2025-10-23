@@ -734,10 +734,21 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             ctx.globalAlpha = element.opacity;
         }
 
+        // Appliquer les filtres CSS si définis
+        if (element.brightness !== undefined || element.contrast !== undefined || element.saturate !== undefined) {
+          const brightness = element.brightness !== undefined ? element.brightness / 100 : 1;
+          const contrast = element.contrast !== undefined ? element.contrast / 100 : 1;
+          const saturate = element.saturate !== undefined ? element.saturate / 100 : 1;
+
+          if (brightness !== 1) {
+            ctx.filter = `brightness(${brightness})`;
+          }
+        }
+
         // Appliquer les ombres si définies
         if (element.shadow) {
           ctx.shadowColor = element.shadowColor || '#000000';
-          ctx.shadowBlur = 5;
+          ctx.shadowBlur = element.shadowBlur || 5;
           ctx.shadowOffsetX = element.shadowOffsetX || 2;
           ctx.shadowOffsetY = element.shadowOffsetY || 2;
         }
@@ -747,9 +758,21 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         const imgWidth = element.width || 120;
         const imgHeight = element.height || 90;
 
-        // Fond du logo si défini
+        // Fond du logo avec un dégradé moderne si pas de couleur unie
         if (element.backgroundColor && element.backgroundColor !== 'transparent') {
-          ctx.fillStyle = element.backgroundColor;
+          if (element.backgroundColor.includes('gradient')) {
+            // Gestion des dégradés CSS simulés
+            const gradient = ctx.createLinearGradient(imgX, imgY, imgX + imgWidth, imgY + imgHeight);
+            if (element.backgroundColor.includes('linear-gradient')) {
+              // Dégradé simple bleu moderne par défaut
+              gradient.addColorStop(0, '#667eea');
+              gradient.addColorStop(1, '#764ba2');
+            }
+            ctx.fillStyle = gradient;
+          } else {
+            ctx.fillStyle = element.backgroundColor;
+          }
+
           if (element.borderRadius > 0) {
             ctx.beginPath();
             ctx.roundRect(imgX, imgY, imgWidth, imgHeight, element.borderRadius);
@@ -759,9 +782,9 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           }
         }
 
-        // Bordure du logo si définie
+        // Bordure du logo avec style moderne
         if (element.borderWidth > 0) {
-          ctx.strokeStyle = element.borderColor || '#000000';
+          ctx.strokeStyle = element.borderColor || '#e5e7eb';
           ctx.lineWidth = element.borderWidth || 1;
           if (element.borderRadius > 0) {
             ctx.beginPath();
@@ -772,8 +795,9 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           }
         }
 
-        // Rendu de l'image du logo
+        // Rendu de l'image du logo ou placeholder élégant
         const imageUrl = element.src || element.imageUrl;
+
         if (imageUrl) {
           const img = new Image();
           img.onload = () => {
@@ -784,7 +808,9 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             let drawX = imgX;
             let drawY = imgY;
 
-            if (element.objectFit === 'cover') {
+            // Gestion des modes object-fit
+            const objectFit = element.objectFit || 'contain';
+            if (objectFit === 'cover') {
               if (imgWidth / imgHeight > aspectRatio) {
                 drawHeight = imgHeight;
                 drawWidth = imgHeight * aspectRatio;
@@ -794,14 +820,50 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
                 drawHeight = imgWidth / aspectRatio;
                 drawY = imgY + (imgHeight - drawHeight) / 2;
               }
+            } else if (objectFit === 'contain') {
+              if (aspectRatio > imgWidth / imgHeight) {
+                drawWidth = imgWidth;
+                drawHeight = imgWidth / aspectRatio;
+                drawY = imgY + (imgHeight - drawHeight) / 2;
+              } else {
+                drawHeight = imgHeight;
+                drawWidth = imgHeight * aspectRatio;
+                drawX = imgX + (imgWidth - drawWidth) / 2;
+              }
+            } else if (objectFit === 'fill') {
+              // Étirer pour remplir complètement
+              drawWidth = imgWidth;
+              drawHeight = imgHeight;
+              drawX = imgX;
+              drawY = imgY;
             }
 
-            ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+            // Appliquer un léger arrondi aux coins de l'image si borderRadius défini
+            if (element.borderRadius > 0) {
+              ctx.save();
+              ctx.beginPath();
+              ctx.roundRect(imgX, imgY, imgWidth, imgHeight, element.borderRadius);
+              ctx.clip();
+              ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+              ctx.restore();
+            } else {
+              ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+            }
           };
+
+          img.onerror = () => {
+            // Placeholder élégant en cas d'erreur de chargement
+            this.renderLogoPlaceholder(ctx, imgX, imgY, imgWidth, imgHeight, element);
+          };
+
           img.src = imageUrl;
+        } else {
+          // Placeholder quand aucune image n'est définie
+          this.renderLogoPlaceholder(ctx, imgX, imgY, imgWidth, imgHeight, element);
         }
 
-        // Restaurer l'opacité et les ombres
+        // Restaurer les filtres et autres propriétés
+        ctx.filter = 'none';
         ctx.globalAlpha = 1;
         ctx.shadowColor = 'transparent';
         ctx.shadowBlur = 0;
@@ -813,10 +875,23 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             ctx.globalAlpha = element.opacity;
         }
 
+        // Appliquer les filtres CSS si définis (simulation avec canvas)
+        if (element.brightness !== undefined || element.contrast !== undefined || element.saturate !== undefined) {
+          // Note: Les filtres canvas sont limités, nous simulons avec des ajustements de couleur
+          const brightness = element.brightness !== undefined ? element.brightness / 100 : 1;
+          const contrast = element.contrast !== undefined ? element.contrast / 100 : 1;
+          const saturate = element.saturate !== undefined ? element.saturate / 100 : 1;
+
+          // Appliquer un filtre de luminosité simple en ajustant la couleur
+          if (brightness !== 1) {
+            ctx.filter = `brightness(${brightness})`;
+          }
+        }
+
         // Appliquer les ombres si définies
         if (element.shadow) {
           ctx.shadowColor = element.shadowColor || '#000000';
-          ctx.shadowBlur = 5;
+          ctx.shadowBlur = element.shadowBlur || 5;
           ctx.shadowOffsetX = element.shadowOffsetX || 2;
           ctx.shadowOffsetY = element.shadowOffsetY || 2;
         }
@@ -851,45 +926,106 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           }
         }
 
-        // Configuration du texte
+        // Configuration du texte avec toutes les propriétés de typographie
         ctx.fillStyle = element.color || '#333333';
         const fontStyle = element.fontStyle === 'italic' ? 'italic ' : '';
         const fontWeight = element.fontWeight || 'normal';
-        const textDecoration = element.textDecoration;
-        ctx.font = `${fontStyle}${fontWeight} ${element.fontSize || 14}px ${element.fontFamily || 'Arial'}`;
+        const fontSize = element.fontSize || 14;
+        const fontFamily = element.fontFamily || 'Arial';
+        const letterSpacing = element.letterSpacing || 0;
+        const lineHeight = element.lineHeight || 1.2;
+
+        ctx.font = `${fontStyle}${fontWeight} ${fontSize}px ${fontFamily}`;
         ctx.textAlign = element.textAlign || 'left';
 
-        let displayText = element.text || 'Texte';
+        // Générer le contenu du texte dynamique
+        let displayText = element.text || 'Texte dynamique';
 
-        // Utiliser customContent si disponible
-        if (element.customContent) {
+        // Utiliser SampleDataProvider pour les templates prédéfinis
+        if (element.template && element.template !== 'custom') {
+          const sampleDataProvider = new SampleDataProvider();
+          const templateData = sampleDataProvider.generateDynamicTextData(element.template, element.variables || {});
+          displayText = templateData.content;
+        } else if (element.customContent) {
           displayText = element.customContent;
         }
 
-        // Pour les templates prédéfinis
-        if (element.template === 'signature_line') {
-          displayText = 'Signature: _______________________________';
+        // Appliquer la transformation de texte
+        if (element.textTransform === 'uppercase') {
+          displayText = displayText.toUpperCase();
+        } else if (element.textTransform === 'lowercase') {
+          displayText = displayText.toLowerCase();
+        } else if (element.textTransform === 'capitalize') {
+          displayText = displayText.replace(/\b\w/g, l => l.toUpperCase());
         }
 
-        // Positionner le texte au centre verticalement
-        const textBaselineY = textY + textHeight / 2;
+        // Gestion du texte multiligne avec espacement des lettres et hauteur de ligne
+        const lines = displayText.split('\n');
+        const lineSpacing = fontSize * lineHeight;
+        let currentY = textY + fontSize;
 
-        // Appliquer la décoration de texte (souligné, barré)
-        if (textDecoration === 'underline' || textDecoration === 'line-through') {
-          const textMetrics = ctx.measureText(displayText);
-          const lineY = textBaselineY + (textDecoration === 'underline' ? 2 : -2);
-
-          ctx.strokeStyle = element.color || '#333333';
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(textX, lineY);
-          ctx.lineTo(textX + textMetrics.width, lineY);
-          ctx.stroke();
+        // Ajuster la position verticale selon l'alignement
+        if (element.textAlign === 'center') {
+          currentY = textY + (textHeight - (lines.length - 1) * lineSpacing) / 2 + fontSize / 2;
+        } else if (element.textAlign === 'right') {
+          currentY = textY + fontSize;
         }
 
-        ctx.fillText(displayText, textX, textBaselineY);
+        lines.forEach((line, index) => {
+          const lineY = currentY + (index * lineSpacing);
 
-        // Restaurer l'opacité et les ombres
+          // Appliquer l'espacement des lettres en dessinant caractère par caractère
+          if (letterSpacing > 0) {
+            let charX = textX;
+            if (element.textAlign === 'center') {
+              const lineWidth = ctx.measureText(line).width + (line.length - 1) * letterSpacing;
+              charX = textX + (textWidth - lineWidth) / 2;
+            } else if (element.textAlign === 'right') {
+              const lineWidth = ctx.measureText(line).width + (line.length - 1) * letterSpacing;
+              charX = textX + textWidth - lineWidth;
+            }
+
+            for (let i = 0; i < line.length; i++) {
+              ctx.fillText(line[i], charX, lineY);
+              charX += ctx.measureText(line[i]).width + letterSpacing;
+            }
+          } else {
+            // Texte normal sans espacement des lettres
+            let textXPos = textX;
+            if (element.textAlign === 'center') {
+              textXPos = textX + textWidth / 2;
+            } else if (element.textAlign === 'right') {
+              textXPos = textX + textWidth;
+            }
+            ctx.fillText(line, textXPos, lineY);
+          }
+
+          // Appliquer la décoration de texte (souligné, barré) à chaque ligne
+          if (element.textDecoration === 'underline' || element.textDecoration === 'line-through') {
+            const lineWidth = letterSpacing > 0 ?
+              line.split('').reduce((width, char) => width + ctx.measureText(char).width + letterSpacing, -letterSpacing) :
+              ctx.measureText(line).width;
+
+            let decorationX = textX;
+            if (element.textAlign === 'center') {
+              decorationX = textX + (textWidth - lineWidth) / 2;
+            } else if (element.textAlign === 'right') {
+              decorationX = textX + textWidth - lineWidth;
+            }
+
+            const decorationY = lineY + (element.textDecoration === 'underline' ? 2 : -fontSize * 0.2);
+
+            ctx.strokeStyle = element.color || '#333333';
+            ctx.lineWidth = Math.max(1, fontSize / 20);
+            ctx.beginPath();
+            ctx.moveTo(decorationX, decorationY);
+            ctx.lineTo(decorationX + lineWidth, decorationY);
+            ctx.stroke();
+          }
+        });
+
+        // Restaurer les filtres et autres propriétés
+        ctx.filter = 'none';
         ctx.globalAlpha = 1;
         ctx.shadowColor = 'transparent';
         ctx.shadowBlur = 0;
@@ -904,10 +1040,17 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         // Appliquer les ombres si définies
         if (element.shadow) {
           ctx.shadowColor = element.shadowColor || '#000000';
-          ctx.shadowBlur = 5;
+          ctx.shadowBlur = element.shadowBlur || 5;
           ctx.shadowOffsetX = element.shadowOffsetX || 2;
           ctx.shadowOffsetY = element.shadowOffsetY || 2;
         }
+
+        // Générer les données du numéro de commande avec SampleDataProvider
+        const sampleDataProvider = new SampleDataProvider();
+        const orderData = sampleDataProvider.generateOrderNumberData({
+          format: element.format || 'Commande #{order_number}',
+          previewOrderNumber: element.previewOrderNumber || '12345'
+        });
 
         // Fond du texte si défini
         const textX = element.x || 10;
@@ -939,53 +1082,138 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           }
         }
 
-        // Configuration du texte
+        // Configuration du texte avec toutes les propriétés typographiques
         ctx.fillStyle = element.color || '#000000';
         const fontStyle = element.fontStyle === 'italic' ? 'italic ' : '';
         const fontWeight = element.fontWeight || 'bold';
+        const fontSize = element.fontSize || 14;
+        const fontFamily = element.fontFamily || 'Arial';
+        const letterSpacing = element.letterSpacing || 0;
         const textDecoration = element.textDecoration;
-        ctx.font = `${fontStyle}${fontWeight} ${element.fontSize || 14}px ${element.fontFamily || 'Arial'}`;
+
+        ctx.font = `${fontStyle}${fontWeight} ${fontSize}px ${fontFamily}`;
 
         // Afficher le label si demandé
         if (element.showLabel && element.labelText) {
           ctx.textAlign = 'left';
           const labelBaselineY = textY + textHeight / 2;
 
-          // Appliquer la décoration de texte pour le label
-          if (textDecoration === 'underline' || textDecoration === 'line-through') {
-            const labelMetrics = ctx.measureText(element.labelText);
-            const lineY = labelBaselineY + (textDecoration === 'underline' ? 2 : -2);
-
-            ctx.strokeStyle = element.color || '#000000';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(textX, lineY);
-            ctx.lineTo(textX + labelMetrics.width, lineY);
-            ctx.stroke();
+          // Appliquer la transformation de texte à l'étiquette
+          let labelText = element.labelText;
+          if (element.textTransform === 'uppercase') {
+            labelText = labelText.toUpperCase();
+          } else if (element.textTransform === 'lowercase') {
+            labelText = labelText.toLowerCase();
+          } else if (element.textTransform === 'capitalize') {
+            labelText = labelText.replace(/\b\w/g, l => l.toUpperCase());
           }
 
-          ctx.fillText(element.labelText, textX, labelBaselineY);
+          // Appliquer l'espacement des lettres à l'étiquette
+          if (letterSpacing > 0) {
+            let charX = textX;
+            for (let i = 0; i < labelText.length; i++) {
+              ctx.fillText(labelText[i], charX, labelBaselineY);
+              charX += ctx.measureText(labelText[i]).width + letterSpacing;
+            }
+          } else {
+            ctx.fillText(labelText, textX, labelBaselineY);
+          }
+
+          // Appliquer la décoration de texte à l'étiquette
+          if (textDecoration === 'underline' || textDecoration === 'line-through') {
+            const labelWidth = letterSpacing > 0 ?
+              labelText.split('').reduce((width, char) => width + ctx.measureText(char).width + letterSpacing, -letterSpacing) :
+              ctx.measureText(labelText).width;
+
+            const lineY = labelBaselineY + (textDecoration === 'underline' ? 2 : -2);
+            ctx.strokeStyle = element.color || '#000000';
+            ctx.lineWidth = Math.max(1, fontSize / 20);
+            ctx.beginPath();
+            ctx.moveTo(textX, lineY);
+            ctx.lineTo(textX + labelWidth, lineY);
+            ctx.stroke();
+          }
         }
 
-        // Afficher le numéro formaté
-        const formattedText = element.format || 'Commande #{order_number}';
+        // Afficher le numéro formaté avec style moderne
+        const formattedText = orderData.formatted || 'Commande #12345';
+
+        // Appliquer la transformation de texte
+        let displayText = formattedText;
+        if (element.textTransform === 'uppercase') {
+          displayText = displayText.toUpperCase();
+        } else if (element.textTransform === 'lowercase') {
+          displayText = displayText.toLowerCase();
+        } else if (element.textTransform === 'capitalize') {
+          displayText = displayText.replace(/\b\w/g, l => l.toUpperCase());
+        }
+
         ctx.textAlign = element.textAlign || 'right';
         const numberBaselineY = textY + textHeight / 2;
 
-        // Appliquer la décoration de texte pour le numéro
-        if (textDecoration === 'underline' || textDecoration === 'line-through') {
-          const numberMetrics = ctx.measureText(formattedText);
-          const lineY = numberBaselineY + (textDecoration === 'underline' ? 2 : -2);
+        // Ajouter un fond subtil au numéro pour le mettre en valeur
+        if (element.highlightNumber) {
+          const numberWidth = letterSpacing > 0 ?
+            displayText.split('').reduce((width, char) => width + ctx.measureText(char).width + letterSpacing, -letterSpacing) :
+            ctx.measureText(displayText).width;
 
-          ctx.strokeStyle = element.color || '#000000';
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(textX + textWidth - numberMetrics.width, lineY);
-          ctx.lineTo(textX + textWidth, lineY);
-          ctx.stroke();
+          let numberX = textX + textWidth - numberWidth;
+          if (element.textAlign === 'center') {
+            numberX = textX + (textWidth - numberWidth) / 2;
+          } else if (element.textAlign === 'left') {
+            numberX = textX;
+          }
+
+          // Fond subtil
+          ctx.fillStyle = element.numberBackground || 'rgba(59, 130, 246, 0.1)';
+          ctx.fillRect(numberX - 4, numberBaselineY - fontSize * 0.7, numberWidth + 8, fontSize * 1.2);
         }
 
-        ctx.fillText(formattedText, textX + textWidth, numberBaselineY);
+        // Afficher le numéro avec espacement des lettres si défini
+        if (letterSpacing > 0) {
+          let charX = textX + textWidth;
+          if (element.textAlign === 'center') {
+            const totalWidth = displayText.split('').reduce((width, char) => width + ctx.measureText(char).width + letterSpacing, -letterSpacing);
+            charX = textX + (textWidth - totalWidth) / 2 + ctx.measureText(displayText[0]).width / 2;
+          } else if (element.textAlign === 'left') {
+            charX = textX + ctx.measureText(displayText[0]).width / 2;
+          }
+
+          for (let i = 0; i < displayText.length; i++) {
+            ctx.fillText(displayText[i], charX, numberBaselineY);
+            charX += ctx.measureText(displayText[i]).width + letterSpacing;
+          }
+        } else {
+          let textXPos = textX + textWidth;
+          if (element.textAlign === 'center') {
+            textXPos = textX + textWidth / 2;
+          } else if (element.textAlign === 'left') {
+            textXPos = textX;
+          }
+          ctx.fillText(displayText, textXPos, numberBaselineY);
+        }
+
+        // Appliquer la décoration de texte au numéro
+        if (textDecoration === 'underline' || textDecoration === 'line-through') {
+          const numberWidth = letterSpacing > 0 ?
+            displayText.split('').reduce((width, char) => width + ctx.measureText(char).width + letterSpacing, -letterSpacing) :
+            ctx.measureText(displayText).width;
+
+          let decorationX = textX + textWidth - numberWidth;
+          if (element.textAlign === 'center') {
+            decorationX = textX + (textWidth - numberWidth) / 2;
+          } else if (element.textAlign === 'left') {
+            decorationX = textX;
+          }
+
+          const decorationY = numberBaselineY + (textDecoration === 'underline' ? 2 : -fontSize * 0.2);
+          ctx.strokeStyle = element.color || '#000000';
+          ctx.lineWidth = Math.max(1, fontSize / 20);
+          ctx.beginPath();
+          ctx.moveTo(decorationX, decorationY);
+          ctx.lineTo(decorationX + numberWidth, decorationY);
+          ctx.stroke();
+        }
 
         // Restaurer l'opacité et les ombres
         ctx.globalAlpha = 1;
@@ -1185,16 +1413,29 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         // Appliquer les ombres si définies
         if (element.shadow) {
           ctx.shadowColor = element.shadowColor || '#000000';
-          ctx.shadowBlur = 5;
+          ctx.shadowBlur = element.shadowBlur || 5;
           ctx.shadowOffsetX = element.shadowOffsetX || 2;
           ctx.shadowOffsetY = element.shadowOffsetY || 2;
         }
 
-        // Fond du bloc d'informations si défini
+        // Générer les données avec SampleDataProvider
+        const sampleDataProvider = new SampleDataProvider();
+        let infoData;
+        if (element.type === 'customer_info') {
+          infoData = sampleDataProvider.generateCustomerInfoData({
+            fields: element.fields || ['name', 'email', 'phone', 'address']
+          });
+        } else {
+          infoData = sampleDataProvider.generateCompanyInfoData({
+            fields: element.fields || ['name', 'address', 'phone', 'email']
+          });
+        }
+
+        // Fond du bloc d'informations avec style moderne
         const textX = element.x || 10;
         let currentY = element.y || 10;
-        const blockWidth = element.width || 200;
-        const blockHeight = element.height || 100;
+        const blockWidth = element.width || 250;
+        const blockHeight = element.height || 120;
 
         if (element.backgroundColor && element.backgroundColor !== 'transparent') {
           ctx.fillStyle = element.backgroundColor;
@@ -1207,9 +1448,9 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           }
         }
 
-        // Bordure du bloc si définie
+        // Bordure du bloc avec style moderne
         if (element.borderWidth > 0) {
-          ctx.strokeStyle = element.borderColor || '#000000';
+          ctx.strokeStyle = element.borderColor || '#e2e8f0';
           ctx.lineWidth = element.borderWidth || 1;
           if (element.borderRadius > 0) {
             ctx.beginPath();
@@ -1220,60 +1461,163 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           }
         }
 
-        // Configuration du texte
+        // Configuration du texte avec toutes les propriétés typographiques
         ctx.fillStyle = element.color || '#1e293b';
         const fontStyle = element.fontStyle === 'italic' ? 'italic ' : '';
         const fontWeight = element.fontWeight || 'normal';
-        const textDecoration = element.textDecoration;
-        ctx.font = `${fontStyle}${fontWeight} ${element.fontSize || 14}px ${element.fontFamily || 'Arial'}`;
+        const fontSize = element.fontSize || 12;
+        const fontFamily = element.fontFamily || 'Arial';
+        const lineHeight = element.lineHeight || 1.4;
+        const letterSpacing = element.letterSpacing || 0;
+
+        ctx.font = `${fontStyle}${fontWeight} ${fontSize}px ${fontFamily}`;
         ctx.textAlign = 'left';
 
-        if (element.fields && Array.isArray(element.fields)) {
-          element.fields.forEach(field => {
-            let fieldText = field;
-            if (element.showLabels !== false) {
-              fieldText = `${field.charAt(0).toUpperCase() + field.slice(1)}:`;
+        // Icônes pour chaque type de champ
+        const fieldIcons = {
+          name: '👤',
+          email: '📧',
+          phone: '📞',
+          address: '🏠',
+          company: '🏢',
+          vat: '🆔',
+          siret: '📋'
+        };
+
+        // Calculer la hauteur de ligne
+        const lineSpacing = fontSize * lineHeight;
+
+        // Rendu selon la disposition (verticale ou horizontale)
+        const layout = element.layout || 'vertical';
+        const showLabels = element.showLabels !== false;
+        const labelStyle = element.labelStyle || 'normal';
+
+        if (layout === 'vertical') {
+          // Disposition verticale
+          Object.entries(infoData).forEach(([field, value]) => {
+            if (!value) return;
+
+            const icon = fieldIcons[field] || '📄';
+            let displayText = value;
+
+            // Ajouter l'étiquette si demandée
+            if (showLabels) {
+              const label = field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ');
+              if (labelStyle === 'bold') {
+                displayText = `${icon} ${label}: ${value}`;
+              } else if (labelStyle === 'italic') {
+                displayText = `${icon} ${label}: ${value}`;
+              } else {
+                displayText = `${icon} ${label}: ${value}`;
+              }
+            } else {
+              displayText = `${icon} ${value}`;
             }
 
-            // Valeurs d'exemple selon le type
-            if (element.type === 'customer_info') {
-              const sampleData = {
-                name: 'Jean Dupont',
-                phone: '+33 6 12 34 56 78',
-                address: '123 Rue de la Paix, 75001 Paris',
-                email: 'jean.dupont@email.com'
-              };
-              if (sampleData[field]) {
-                fieldText += element.showLabels !== false ? ` ${sampleData[field]}` : sampleData[field];
+            // Appliquer la transformation de texte
+            if (element.textTransform === 'uppercase') {
+              displayText = displayText.toUpperCase();
+            } else if (element.textTransform === 'lowercase') {
+              displayText = displayText.toLowerCase();
+            } else if (element.textTransform === 'capitalize') {
+              displayText = displayText.replace(/\b\w/g, l => l.toUpperCase());
+            }
+
+            // Position Y pour cette ligne
+            const lineY = currentY + fontSize;
+
+            // Appliquer l'espacement des lettres si défini
+            if (letterSpacing > 0) {
+              let charX = textX;
+              for (let i = 0; i < displayText.length; i++) {
+                ctx.fillText(displayText[i], charX, lineY);
+                charX += ctx.measureText(displayText[i]).width + letterSpacing;
               }
-            } else if (element.type === 'company_info') {
-              const sampleData = {
-                name: 'Ma Société SARL',
-                address: '456 Avenue des Champs, 75008 Paris',
-                phone: '+33 1 98 76 54 32',
-                rcs: 'RCS Paris 123 456 789'
-              };
-              if (sampleData[field]) {
-                fieldText += element.showLabels !== false ? ` ${sampleData[field]}` : sampleData[field];
-              }
+            } else {
+              ctx.fillText(displayText, textX, lineY);
             }
 
             // Appliquer la décoration de texte
-            if (textDecoration === 'underline' || textDecoration === 'line-through') {
-              const textMetrics = ctx.measureText(fieldText);
-              const lineY = currentY + 15 + (textDecoration === 'underline' ? 2 : -2);
+            if (element.textDecoration === 'underline' || element.textDecoration === 'line-through') {
+              const textWidth = letterSpacing > 0 ?
+                displayText.split('').reduce((width, char) => width + ctx.measureText(char).width + letterSpacing, -letterSpacing) :
+                ctx.measureText(displayText).width;
 
+              const decorationY = lineY + (element.textDecoration === 'underline' ? 2 : -fontSize * 0.2);
               ctx.strokeStyle = element.color || '#1e293b';
-              ctx.lineWidth = 1;
+              ctx.lineWidth = Math.max(1, fontSize / 20);
               ctx.beginPath();
-              ctx.moveTo(textX, lineY);
-              ctx.lineTo(textX + textMetrics.width, lineY);
+              ctx.moveTo(textX, decorationY);
+              ctx.lineTo(textX + textWidth, decorationY);
               ctx.stroke();
             }
 
-            ctx.fillText(fieldText, textX, currentY + 15);
-            currentY += (element.spacing || 5) + 15;
+            currentY += lineSpacing;
           });
+        } else {
+          // Disposition horizontale (2 colonnes)
+          const fields = Object.entries(infoData);
+          const midPoint = Math.ceil(fields.length / 2);
+
+          for (let i = 0; i < midPoint; i++) {
+            const leftField = fields[i];
+            const rightField = fields[i + midPoint];
+
+            // Colonne gauche
+            if (leftField) {
+              const [field, value] = leftField;
+              const icon = fieldIcons[field] || '📄';
+              let displayText = value;
+
+              if (showLabels) {
+                const label = field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ');
+                displayText = `${icon} ${label}: ${value}`;
+              } else {
+                displayText = `${icon} ${value}`;
+              }
+
+              // Appliquer la transformation de texte
+              if (element.textTransform === 'uppercase') {
+                displayText = displayText.toUpperCase();
+              } else if (element.textTransform === 'lowercase') {
+                displayText = displayText.toLowerCase();
+              } else if (element.textTransform === 'capitalize') {
+                displayText = displayText.replace(/\b\w/g, l => l.toUpperCase());
+              }
+
+              const lineY = currentY + fontSize;
+              ctx.fillText(displayText, textX, lineY);
+            }
+
+            // Colonne droite
+            if (rightField) {
+              const [field, value] = rightField;
+              const icon = fieldIcons[field] || '📄';
+              let displayText = value;
+
+              if (showLabels) {
+                const label = field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ');
+                displayText = `${icon} ${label}: ${value}`;
+              } else {
+                displayText = `${icon} ${value}`;
+              }
+
+              // Appliquer la transformation de texte
+              if (element.textTransform === 'uppercase') {
+                displayText = displayText.toUpperCase();
+              } else if (element.textTransform === 'lowercase') {
+                displayText = displayText.toLowerCase();
+              } else if (element.textTransform === 'capitalize') {
+                displayText = displayText.replace(/\b\w/g, l => l.toUpperCase());
+              }
+
+              const lineY = currentY + fontSize;
+              const rightX = textX + blockWidth / 2 + 10;
+              ctx.fillText(displayText, rightX, lineY);
+            }
+
+            currentY += lineSpacing;
+          }
         }
 
         // Restaurer l'opacité et les ombres
@@ -1558,6 +1902,45 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
       document.removeEventListener('pdfBuilderPreview', handleGlobalPreview);
     };
   }, [elements]);
+
+  // Méthode utilitaire pour rendre un placeholder élégant pour le logo
+  renderLogoPlaceholder = (ctx, x, y, width, height, element) => {
+    // Fond du placeholder avec un dégradé subtil
+    const gradient = ctx.createLinearGradient(x, y, x + width, y + height);
+    gradient.addColorStop(0, '#f8fafc');
+    gradient.addColorStop(1, '#e2e8f0');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(x, y, width, height);
+
+    // Bordure subtile
+    ctx.strokeStyle = '#cbd5e1';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x, y, width, height);
+
+    // Icône de logo stylisée (simplifiée)
+    const centerX = x + width / 2;
+    const centerY = y + height / 2;
+    const iconSize = Math.min(width, height) * 0.4;
+
+    // Cercle principal
+    ctx.fillStyle = '#64748b';
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, iconSize / 2, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Lettres "LOGO" stylisées
+    ctx.fillStyle = '#ffffff';
+    ctx.font = `bold ${iconSize * 0.25}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('LOGO', centerX, centerY);
+
+    // Texte d'aide en bas
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = `${Math.max(8, iconSize * 0.08)}px Arial`;
+    ctx.fillText('Cliquez pour ajouter', centerX, y + height - 8);
+    ctx.fillText('votre logo', centerX, y + height - 2);
+  };
 
   return (
     <div className="pdf-editor">
