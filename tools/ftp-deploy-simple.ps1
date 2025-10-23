@@ -43,12 +43,12 @@
 #>
 
 param(
-    [string]$Mode = "Sequential",  # Sequential ou Parallel (revert à Sequential pour éviter les problèmes de jobs)
+    [string]$Mode = "Parallel",     # Parallel par défaut pour plus de rapidité
     [switch]$Force,                # Forcer le déploiement même sans changements
     [switch]$NoCompile,            # Ne pas compiler automatiquement
     [switch]$NoGit,                # Ne pas faire de commit/push Git
     [int]$MaxRetries = 3,          # Nombre maximum de tentatives par fichier
-    [int]$ParallelJobs = 4         # Nombre de jobs parallèles (si mode Parallel)
+    [int]$ParallelJobs = 8         # Nombre de jobs parallèles augmenté (8 par défaut)
 )
 
 Write-Host "🚀 FTP DEPLOY - VERSION ULTRA-RAPIDE" -ForegroundColor Green

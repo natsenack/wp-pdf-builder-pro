@@ -21,10 +21,20 @@
         options = options || {};
         console.log('PDF Builder Pro init called for', containerId, 'with options:', options);
 
+        // Compteur pour éviter la boucle infinie
+        if (!options._retryCount) {
+          options._retryCount = 0;
+        }
+        options._retryCount++;
+
         try {
           // Attendre que React soit disponible (chargé par le bundle webpack)
           if (!this.React || !this.ReactDOM) {
-            console.warn('React not yet available, waiting...');
+            if (options._retryCount > 50) {
+              console.error('PDF Builder Pro: React not available after 50 retries, giving up');
+              return false;
+            }
+            console.warn('React not yet available, waiting... (attempt ' + options._retryCount + '/50)');
             var self = this;
             setTimeout(function() { self.init(containerId, options); }, 100);
             return false;

@@ -1,6 +1,7 @@
 // PDF Builder Pro - Main Bundle
 // Met à jour l'objet pdfBuilderPro existant avec React et les composants
 
+console.log('🚀 PDF Builder Pro: Main bundle starting...');
 console.error('🚀 PDF Builder Pro: Main bundle loading...');
 
 // Import React directement depuis node_modules
