@@ -1,5 +1,5 @@
-// PDF Builder Pro - Script Loader (Standalone)
-// Définit les variables globales immédiatement - VERSION STANDALONE
+// PDF Builder Pro - Standalone Script Loader
+// Définit les variables globales immédiatement - VERSION COMPLÈTEMENT STANDALONE
 
 (function() {
   'use strict';

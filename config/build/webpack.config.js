@@ -13,7 +13,11 @@ module.exports = {
     filename: (chunkData) => {
       // Utiliser des noms fixes pour les entry points principaux
       const name = chunkData.chunk.name;
-      if (name === 'pdf-builder-admin' || name === 'pdf-builder-nonce-fix' || name === 'pdf-builder-script-loader') {
+      if (name === 'pdf-builder-admin' || name === 'pdf-builder-nonce-fix') {
+        return '[name].js';
+      }
+      // Pour le script-loader, ne pas inclure le runtime chunk
+      if (name === 'pdf-builder-script-loader') {
         return '[name].js';
       }
       // Utiliser des content hashes pour les chunks dynamiques
@@ -48,8 +52,8 @@ module.exports = {
     // Optimisation avancée du code splitting
     splitChunks: {
       chunks: (chunk) => {
-        // Exclure l'entry point pdf-builder-admin du code splitting
-        return chunk.name !== 'pdf-builder-admin';
+        // Exclure les entry points principaux du code splitting
+        return chunk.name !== 'pdf-builder-admin' && chunk.name !== 'pdf-builder-script-loader';
       },
       minSize: 20000, // Taille minimale pour le splitting (20KB)
       maxSize: 244000, // Taille maximale recommandée (244KB)
@@ -57,49 +61,52 @@ module.exports = {
         vendor: {
           test: /[\\/]node_modules[\\/]/,
           name: 'vendors',
-          chunks: (chunk) => chunk.name !== 'pdf-builder-admin',
+          chunks: (chunk) => chunk.name !== 'pdf-builder-admin' && chunk.name !== 'pdf-builder-script-loader',
           priority: 10,
           enforce: true
         },
         react: {
           test: /[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/,
           name: 'react-vendor',
-          chunks: (chunk) => chunk.name !== 'pdf-builder-admin',
+          chunks: (chunk) => chunk.name !== 'pdf-builder-admin' && chunk.name !== 'pdf-builder-script-loader',
           priority: 20,
           enforce: true
         },
-        // Nouveaux chunks pour optimiser le chargement - EXCLURE pdf-builder-admin
+        // Nouveaux chunks pour optimiser le chargement - EXCLURE pdf-builder-admin et pdf-builder-script-loader
         ui: {
           test: (module) => {
-            // Exclure les modules du pdf-builder-admin entry point
+            // Exclure les modules des entry points principaux
             return module.context && 
                    /[\\/]src[\\/](Admin|Controllers)[\\/]/.test(module.context) && 
-                   !module.context.includes('pdf-builder-admin');
+                   !module.context.includes('pdf-builder-admin') &&
+                   !module.context.includes('pdf-builder-script-loader');
           },
           name: 'pdf-builder-ui',
-          chunks: (chunk) => chunk.name !== 'pdf-builder-admin',
+          chunks: (chunk) => chunk.name !== 'pdf-builder-admin' && chunk.name !== 'pdf-builder-script-loader',
           priority: 5
         },
         renderers: {
           test: (module) => {
-            // Exclure les modules du pdf-builder-admin entry point
+            // Exclure les modules des entry points principaux
             return module.context && 
                    /[\\/]src[\\/]Renderers[\\/]/.test(module.context) && 
-                   !module.context.includes('pdf-builder-admin');
+                   !module.context.includes('pdf-builder-admin') &&
+                   !module.context.includes('pdf-builder-script-loader');
           },
           name: 'pdf-builder-renderers',
-          chunks: (chunk) => chunk.name !== 'pdf-builder-admin',
+          chunks: (chunk) => chunk.name !== 'pdf-builder-admin' && chunk.name !== 'pdf-builder-script-loader',
           priority: 5
         },
         utilities: {
           test: (module) => {
-            // Exclure les modules du pdf-builder-admin entry point
+            // Exclure les modules des entry points principaux
             return module.context && 
                    /[\\/]src[\\/]utilities[\\/]/.test(module.context) && 
-                   !module.context.includes('pdf-builder-admin');
+                   !module.context.includes('pdf-builder-admin') &&
+                   !module.context.includes('pdf-builder-script-loader');
           },
           name: 'pdf-builder-utils',
-          chunks: (chunk) => chunk.name !== 'pdf-builder-admin',
+          chunks: (chunk) => chunk.name !== 'pdf-builder-admin' && chunk.name !== 'pdf-builder-script-loader',
           priority: 3
         }
       }
