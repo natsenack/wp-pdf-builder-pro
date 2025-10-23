@@ -347,6 +347,25 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           ctx.lineWidth = element.borderWidth || 1;
           ctx.stroke();
         }
+      } else {
+        // Rendu générique pour les éléments non supportés (product_table, customer_info, etc.)
+        ctx.fillStyle = '#ff6b6b'; // Rouge pour indiquer un élément non rendu
+        const genericX = element.x || 10;
+        const genericY = element.y || 10;
+        const genericWidth = element.width || 100;
+        const genericHeight = element.height || 30;
+        console.log(`PDFEditor drawing generic element (${element.type}) at (${genericX}, ${genericY}) size (${genericWidth}, ${genericHeight})`);
+
+        // Dessiner un rectangle rouge avec le type d'élément
+        ctx.fillRect(genericX, genericY, genericWidth, genericHeight);
+        ctx.strokeStyle = '#ff0000';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(genericX, genericY, genericWidth, genericHeight);
+
+        // Afficher le type d'élément
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '12px Arial';
+        ctx.fillText(element.type, genericX + 5, genericY + 20);
       }
     });
   };
