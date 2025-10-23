@@ -63,7 +63,7 @@ try {
                 template_data: JSON.stringify(elements),
                 template_name: options.templateName || 'Template sans nom',
                 template_id: options.templateId || 0,
-                nonce: window.pdfBuilderPro ? window.pdfBuilderPro.nonce : ''
+                nonce: window.pdfBuilderAjax ? window.pdfBuilderAjax.nonce : (window.pdfBuilderPro ? window.pdfBuilderPro.nonce : '')
               };
 
               // Envoyer via AJAX
