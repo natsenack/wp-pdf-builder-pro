@@ -20,8 +20,8 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   const [zoom, setZoom] = useState(1.0);
   const [showGrid, setShowGrid] = useState(true);
   const [snapToGrid, setSnapToGrid] = useState(true);
-  const [elements, setElements] = useState(initialElements);
-  const [history, setHistory] = useState([initialElements]);
+  const [elements, setElements] = useState(initialElements || []);
+  const [history, setHistory] = useState([initialElements || []]);
   const [historyIndex, setHistoryIndex] = useState(0);
   const [selectedElement, setSelectedElement] = useState(null);
   const [showElementLibrary, setShowElementLibrary] = useState(true);
@@ -251,6 +251,11 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    console.log('PDFEditor renderCanvas called - elements count:', elements.length);
+    if (elements.length > 0) {
+      console.log('PDFEditor rendering elements:', elements);
+    }
+
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -345,13 +350,19 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
   // Mettre à jour les éléments quand initialElements change
   useEffect(() => {
+    console.log('PDFEditor useEffect triggered - initialElements:', initialElements, 'length:', initialElements ? initialElements.length : 'undefined');
     if (initialElements && initialElements.length > 0) {
       console.log('PDFEditor: Setting elements from initialElements:', initialElements.length, 'elements');
+      console.log('PDFEditor: Elements data:', initialElements);
       setElements(initialElements);
       setHistory([initialElements]);
       setHistoryIndex(0);
     } else {
       console.log('PDFEditor: No initialElements provided or empty array');
+      // Si pas d'éléments initiaux, initialiser avec un tableau vide
+      setElements([]);
+      setHistory([[]]);
+      setHistoryIndex(0);
     }
   }, [initialElements]);
 
