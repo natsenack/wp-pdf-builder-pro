@@ -1,105 +1,163 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Toolbar } from './Toolbar';
+import PreviewModal from './preview-system/components/PreviewModal';
+import { PreviewProvider } from './preview-system/context/PreviewProvider';
+import { usePreviewContext } from './preview-system/context/PreviewContext';
 import './PDFEditor.css';
 
 /**
- * PDFEditor - Éditeur canvas original et basique
- * Version vraiment simple : canvas + ajout de texte par clic
+ * PDFEditor - Éditeur principal avec toolbar et aperçu
+ * Phase 2.2.4.1 - Implémentation du bouton aperçu dans l'éditeur Canvas
  */
-const PDFEditor = ({ initialElements = [], onSave, templateName = '', isNew = true }) => {
+const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isNew = true }) => {
+  // Contexte d'aperçu
+  const { actions: { openPreview } } = usePreviewContext();
+
+  // État de l'éditeur
+  const [selectedTool, setSelectedTool] = useState('select');
+  const [zoom, setZoom] = useState(1.0);
+  const [showGrid, setShowGrid] = useState(true);
+  const [snapToGrid, setSnapToGrid] = useState(true);
   const [elements, setElements] = useState(initialElements);
+  const [history, setHistory] = useState([initialElements]);
+  const [historyIndex, setHistoryIndex] = useState(0);
+
+  // Références
   const canvasRef = useRef(null);
 
-  // Fonction pour ajouter du texte au clic
-  const handleCanvasClick = (event) => {
-    const canvas = canvasRef.current;
-    const rect = canvas.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
+  // Gestionnaire d'outils
+  const handleToolSelect = (toolId) => {
+    setSelectedTool(toolId);
+  };
 
-    const newElement = {
-      id: Date.now(),
-      type: 'text',
-      text: 'Nouveau texte',
-      x: x,
-      y: y,
-      fontSize: 16,
-      color: '#000000'
+  // Gestionnaire de zoom
+  const handleZoomChange = (newZoom) => {
+    setZoom(Math.max(0.1, Math.min(3.0, newZoom)));
+  };
+
+  // Gestionnaire de grille
+  const handleShowGridChange = (show) => {
+    setShowGrid(show);
+  };
+
+  const handleSnapToGridChange = (snap) => {
+    setSnapToGrid(snap);
+  };
+
+  // Gestionnaire d'historique
+  const handleUndo = () => {
+    if (historyIndex > 0) {
+      setHistoryIndex(historyIndex - 1);
+      setElements(history[historyIndex - 1]);
+    }
+  };
+
+  const handleRedo = () => {
+    if (historyIndex < history.length - 1) {
+      setHistoryIndex(historyIndex + 1);
+      setElements(history[historyIndex + 1]);
+    }
+  };
+
+  const canUndo = historyIndex > 0;
+  const canRedo = historyIndex < history.length - 1;
+
+  // Gestionnaire d'aperçu
+  const handlePreview = () => {
+    openPreview('canvas', null, { elements });
+  };
+
+  // Gestionnaire nouveau template
+  const handleNewTemplate = () => {
+    // TODO: Implémenter la logique de nouveau template
+    console.log('Nouveau template demandé');
+  };
+
+  // Gestionnaire de sauvegarde des éléments
+  const handleElementsChange = (newElements) => {
+    const newHistory = history.slice(0, historyIndex + 1);
+    newHistory.push(newElements);
+    setHistory(newHistory);
+    setHistoryIndex(newHistory.length - 1);
+    setElements(newElements);
+
+    // Sauvegarder automatiquement si callback fourni
+    if (onSave) {
+      onSave(newElements);
+    }
+  };
+
+  // Écouter les événements globaux pour le bouton aperçu du header
+  useEffect(() => {
+    const handleGlobalPreview = (event) => {
+      if (event.type === 'pdfBuilderPreview') {
+        handlePreview();
+      }
     };
 
-    setElements([...elements, newElement]);
-  };
+    // Écouter l'événement personnalisé
+    document.addEventListener('pdfBuilderPreview', handleGlobalPreview);
 
-  // Fonction de rendu du canvas
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    // Exposer la fonction globalement pour le bouton du header
+    window.pdfBuilderPro = window.pdfBuilderPro || {};
+    window.pdfBuilderPro.triggerPreview = handlePreview;
 
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Fond blanc
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Bordure
-    ctx.strokeStyle = '#cccccc';
-    ctx.lineWidth = 1;
-    ctx.strokeRect(0, 0, canvas.width, canvas.height);
-
-    // Dessiner les éléments
-    elements.forEach(element => {
-      if (element.type === 'text') {
-        ctx.fillStyle = element.color || '#000000';
-        ctx.font = `${element.fontSize || 16}px Arial`;
-        ctx.fillText(element.text || 'Texte', element.x || 10, element.y || 30);
-      }
-    });
-  }, [elements]);
-
-  // Fonction de sauvegarde
-  const handleSave = () => {
-    if (onSave) {
-      onSave(elements);
-    }
-    console.log('Éléments sauvegardés:', elements);
-  };
+    // Nettoyer les écouteurs
+    return () => {
+      document.removeEventListener('pdfBuilderPreview', handleGlobalPreview);
+    };
+  }, [elements]); // Dépendance sur elements pour que la fonction soit à jour
 
   return (
     <div className="pdf-editor">
-      <div className="editor-header">
-        <h2>Éditeur PDF - Version Originale</h2>
-        <button onClick={handleSave} className="save-button">
-          💾 Sauvegarder
-        </button>
+      {/* Toolbar principale */}
+      <Toolbar
+        selectedTool={selectedTool}
+        onToolSelect={handleToolSelect}
+        zoom={zoom}
+        onZoomChange={handleZoomChange}
+        showGrid={showGrid}
+        onShowGridChange={handleShowGridChange}
+        snapToGrid={snapToGrid}
+        onSnapToGridChange={handleSnapToGridChange}
+        onUndo={handleUndo}
+        onRedo={handleRedo}
+        canUndo={canUndo}
+        canRedo={canRedo}
+        onPreview={handlePreview}
+      />
+
+      {/* Zone de travail principale */}
+      <div className="editor-workspace">
+        <div className="canvas-container">
+          <canvas
+            ref={canvasRef}
+            className="pdf-canvas"
+            width={595}
+            height={842}
+            style={{
+              transform: `scale(${zoom})`,
+              transformOrigin: 'top left'
+            }}
+          />
+        </div>
       </div>
 
-      <div className="canvas-container">
-        <canvas
-          ref={canvasRef}
-          width={800}
-          height={600}
-          onClick={handleCanvasClick}
-          style={{
-            border: '2px solid #007cba',
-            cursor: 'crosshair',
-            backgroundColor: '#ffffff'
-          }}
-        />
-        <p className="instructions">
-          Cliquez sur le canvas pour ajouter du texte
-        </p>
-      </div>
-
-      <div className="elements-list">
-        <h3>Éléments ({elements.length})</h3>
-        {elements.map((element, index) => (
-          <div key={element.id} className="element-item">
-            {element.type}: {element.text || `Élément ${index + 1}`}
-          </div>
-        ))}
-      </div>
+      {/* Modal d'aperçu */}
+      <PreviewModal />
     </div>
   );
 };
 
-export { PDFEditor };
+export const PDFEditor = ({ initialElements = [], onSave, templateName = '', isNew = true }) => {
+  return (
+    <PreviewProvider>
+      <PDFEditorContent
+        initialElements={initialElements}
+        onSave={onSave}
+        templateName={templateName}
+        isNew={isNew}
+      />
+    </PreviewProvider>
+  );
+};
