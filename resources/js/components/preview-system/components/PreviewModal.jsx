@@ -1,6 +1,7 @@
 import React, { Suspense, lazy, useEffect } from 'react';
 import { usePreviewContext } from '../context/PreviewContext';
 import ModalSkeleton from './ModalSkeleton';
+import NavigationControls from '../NavigationControls';
 
 // Lazy loading des modes pour optimisation performance
 // CanvasMode (modes/CanvasMode) fournit des helpers statiques -> on ajoute un wrapper par défaut
@@ -82,6 +83,9 @@ function PreviewModal() {
             )}
           </Suspense>
         </div>
+
+        {/* Contrôles de navigation */}
+        <NavigationControls />
 
         {/* Indicateur de chargement global */}
         {loading && (

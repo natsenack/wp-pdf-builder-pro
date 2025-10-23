@@ -1,0 +1,157 @@
+/* PDF Editor Styles - Phase 2.2.4.1 */
+
+.pdf-editor {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f8f9fa;
+}
+
+/* Editor Header */
+.editor-header {
+  background: white;
+  border-bottom: 1px solid #dee2e6;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 60px;
+}
+
+.editor-header-left {
+  flex: 1;
+}
+
+.editor-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.editor-header-right {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.header-button {
+  background: #007cba;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.header-button:hover {
+  background: #005a87;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-button .button-icon {
+  font-size: 16px;
+}
+
+.header-button .button-text {
+  white-space: nowrap;
+}
+
+.new-template-button {
+  background: #10b981;
+}
+
+.new-template-button:hover {
+  background: #059669;
+}
+
+.preview-button {
+  background: #f59e0b;
+}
+
+.preview-button:hover {
+  background: #d97706;
+}
+
+.editor-workspace {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px;
+  overflow: auto;
+}
+
+.canvas-container {
+  background: white;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.pdf-canvas {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Toolbar principale */
+.toolbar {
+  background: white;
+  border-bottom: 1px solid #dee2e6;
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  min-height: 50px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .pdf-editor {
+    height: auto;
+  }
+
+  .editor-workspace {
+    padding: 10px;
+  }
+
+  .toolbar {
+    padding: 4px 8px;
+    min-height: 40px;
+  }
+
+  .toolbar-content {
+    margin-left: 10px;
+    gap: 8px;
+  }
+
+  .toolbar-right {
+    padding-left: 10px;
+  }
+
+  .preview-button {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .preview-button .button-text {
+    display: none; /* Masquer le texte sur mobile */
+  }
+
+  .tab-button {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .tool-button, .edit-button {
+    padding: 4px;
+  }
+}

@@ -342,7 +342,7 @@ body.wp-admin .pdf-builder-container {
         scriptCheckAttempts++;
 
         // Vérifier que tous les chunks sont chargés avec le code splitting
-        const pdfBuilderProRaw = window.PDFBuilderPro;
+        const pdfBuilderProRaw = window.pdfBuilderPro; // Utiliser la version minuscule (principale)
         const pdfBuilderProExists = typeof pdfBuilderProRaw !== 'undefined' && pdfBuilderProRaw !== null;
 
         // Gérer le cas où webpack expose le module avec une propriété 'default'
@@ -363,8 +363,6 @@ body.wp-admin .pdf-builder-container {
             console.log('- reactExists: (bundled in PDFBuilderPro)', reactExists);
             console.log('- reactDomExists: (bundled in PDFBuilderPro)', reactDomExists);
             if (pdfBuilderProExists) {
-                const pdfBuilderProRaw = window.pdfBuilderPro;
-                const pdfBuilderPro = pdfBuilderProRaw.default ? pdfBuilderProRaw.default : pdfBuilderProRaw;
                 console.log('- PDFBuilderPro keys:', Object.keys(pdfBuilderProRaw));
                 console.log('- Has default property:', 'default' in pdfBuilderProRaw);
                 console.log('- Using default:', !!pdfBuilderProRaw.default);

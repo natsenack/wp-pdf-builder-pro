@@ -235,6 +235,7 @@ class PDF_Builder_Admin
         // Hooks de base de l'admin (restent dans cette classe)
         add_action('admin_menu', [$this, 'addAdminMenu']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_admin_scripts'], 20);
+        add_action('admin_head-pdf-builder-pro_page_pdf-builder-editor', [$this, 'add_preview_button_to_header']);
 // Hook supplémentaire pour les pages qui chargent du contenu dynamiquement
         add_action('wp_enqueue_scripts', [$this, 'enqueue_admin_scripts_late'], 20);
 // Hooks WooCommerce - Délégation vers le manager
@@ -1307,6 +1308,104 @@ class PDF_Builder_Admin
 
         // Charger les scripts comme dans enqueue_admin_scripts
         $this->load_admin_scripts('pdf-builder_page_pdf-builder-editor');
+    }
+
+    /**
+     * Ajoute le bouton aperçu dans le header WordPress de la page d'édition
+     */
+    public function add_preview_button_to_header()
+    {
+        // Vérifier qu'on est sur la bonne page
+        if (!isset($_GET['page']) || $_GET['page'] !== 'pdf-builder-editor') {
+            return;
+        }
+
+        // Injecter le CSS et JavaScript pour le bouton aperçu
+        ?>
+        <style>
+            .wp-admin .wp-header-end {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .pdf-preview-header-button {
+                background: #f59e0b;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 14px;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                text-decoration: none;
+                transition: all 0.2s;
+            }
+
+            .pdf-preview-header-button:hover {
+                background: #d97706;
+                transform: translateY(-1px);
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+
+            .pdf-preview-header-button .button-icon {
+                font-size: 16px;
+            }
+
+            .pdf-preview-header-button .button-text {
+                white-space: nowrap;
+            }
+
+            @media (max-width: 768px) {
+                .pdf-preview-header-button .button-text {
+                    display: none;
+                }
+            }
+        </style>
+
+        <script type="text/javascript">
+            document.addEventListener('DOMContentLoaded', function() {
+                // Attendre que le DOM soit chargé
+                setTimeout(function() {
+                    // Trouver le header WordPress
+                    var headerEnd = document.querySelector('.wp-header-end');
+                    if (!headerEnd) {
+                        // Créer wp-header-end s'il n'existe pas
+                        var wrap = document.querySelector('.wrap h1') || document.querySelector('.wrap');
+                        if (wrap) {
+                            headerEnd = document.createElement('div');
+                            headerEnd.className = 'wp-header-end';
+                            wrap.appendChild(headerEnd);
+                        }
+                    }
+
+                    if (headerEnd) {
+                        // Créer le bouton aperçu
+                        var previewButton = document.createElement('button');
+                        previewButton.className = 'pdf-preview-header-button';
+                        previewButton.innerHTML = '<span class="button-icon">👁️</span><span class="button-text">Aperçu</span>';
+                        previewButton.title = 'Aperçu du PDF';
+                        previewButton.onclick = function() {
+                            // Déclencher l'événement aperçu dans l'application React
+                            if (window.pdfBuilderPro && window.pdfBuilderPro.triggerPreview) {
+                                window.pdfBuilderPro.triggerPreview();
+                            } else {
+                                // Fallback: chercher dans le contexte React
+                                var event = new CustomEvent('pdfBuilderPreview');
+                                document.dispatchEvent(event);
+                            }
+                        };
+
+                        // Ajouter le bouton au header
+                        headerEnd.appendChild(previewButton);
+                    }
+                }, 100);
+            });
+        </script>
+        <?php
     }
 
     /**
