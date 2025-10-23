@@ -342,10 +342,14 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
   // Mettre à jour les éléments quand initialElements change
   useEffect(() => {
+    console.log('PDFEditor: initialElements changed:', initialElements);
     if (initialElements && initialElements.length > 0) {
+      console.log('PDFEditor: Setting elements from initialElements:', initialElements.length, 'elements');
       setElements(initialElements);
       setHistory([initialElements]);
       setHistoryIndex(0);
+    } else {
+      console.log('PDFEditor: No initialElements or empty array');
     }
   }, [initialElements]);
 
