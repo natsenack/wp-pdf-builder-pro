@@ -80,11 +80,19 @@ try {
               const sanitizedElements = sanitizeForJSON(elements);
               console.log('Sanitized elements for JSON:', sanitizedElements);
               
+              // Préparer la structure complète du template
+              const templateData = {
+                elements: sanitizedElements,
+                canvasWidth: 595,  // A4 width in pixels at 72 DPI
+                canvasHeight: 842, // A4 height in pixels at 72 DPI
+                version: '2.0.0'
+              };
+              
               // Tester la sérialisation JSON
-              let templateData;
+              let jsonString;
               try {
-                templateData = JSON.stringify(sanitizedElements);
-                console.log('JSON serialization successful, length:', templateData.length);
+                jsonString = JSON.stringify(templateData);
+                console.log('JSON serialization successful, length:', jsonString.length);
               } catch (jsonError) {
                 console.error('JSON serialization failed:', jsonError);
                 throw new Error('Erreur de sérialisation JSON: ' + jsonError.message);
@@ -93,7 +101,7 @@ try {
               // Préparer les données pour la sauvegarde
               const saveData = {
                 action: 'pdf_builder_save_template',
-                template_data: templateData,
+                template_data: jsonString,
                 template_name: options.templateName || 'Template sans nom',
                 template_id: options.templateId || 0,
                 nonce: window.pdfBuilderAjax ? window.pdfBuilderAjax.nonce : (window.pdfBuilderPro ? window.pdfBuilderPro.nonce : '')
