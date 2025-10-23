@@ -1,23 +1,24 @@
 // PDF Builder Pro - Main Bundle
 // Met à jour l'objet pdfBuilderPro existant avec React et les composants
 
-console.log('🚀 PDF Builder Pro: Main bundle starting...');
-console.error('🚀 PDF Builder Pro: Main bundle loading...');
-
 // Import React directement depuis node_modules
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-// Exposer React globalement pour la compatibilité
-if (typeof window !== 'undefined') {
-  window.React = React;
-  window.ReactDOM = ReactDOM;
-  console.error('🚀 PDF Builder Pro: React exposed globally');
-}
+try {
+  console.log('🚀 PDF Builder Pro: Main bundle starting...');
+  console.error('🚀 PDF Builder Pro: Main bundle loading...');
 
-// METTRE À JOUR L'OBJET GLOBAL EXISTANT avec React et les composants
-if (typeof window !== 'undefined' && window.pdfBuilderPro) {
-  console.error('🚀 PDF Builder Pro: Updating existing pdfBuilderPro object with React');
+  // Exposer React globalement pour la compatibilité
+  if (typeof window !== 'undefined') {
+    window.React = React;
+    window.ReactDOM = ReactDOM;
+    console.error('🚀 PDF Builder Pro: React exposed globally');
+  }
+
+  // METTRE À JOUR L'OBJET GLOBAL EXISTANT avec React et les composants
+  if (typeof window !== 'undefined' && window.pdfBuilderPro) {
+    console.error('🚀 PDF Builder Pro: Updating existing pdfBuilderPro object with React');
 
   // Mettre à jour l'objet existant avec React
   window.pdfBuilderPro.React = React;
@@ -168,3 +169,6 @@ const PDFEditor = ({ initialElements = [], onSave, templateName = '', isNew = tr
 };
 
 console.error('🚀 PDF Builder Pro: Main bundle loaded successfully');
+} catch (error) {
+  console.error('🚀 PDF Builder Pro: Main bundle failed to load:', error);
+}
