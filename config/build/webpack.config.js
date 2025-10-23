@@ -21,7 +21,6 @@ module.exports = {
     },
     path: path.resolve(__dirname, '../../assets/js/dist'),
     globalObject: 'window',
-    library: { type: 'umd' },
     clean: true // Nettoyer les anciens fichiers
   },
   plugins: [
