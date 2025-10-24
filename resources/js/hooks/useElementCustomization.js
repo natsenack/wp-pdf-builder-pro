@@ -18,10 +18,8 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
 
   // Obtenir l'élément sélectionné (mémorisé pour éviter les re-renders)
   const selectedElement = useMemo(() => {
-    return selectedElements.length > 0
-      ? elements.find(el => el.id === selectedElements[0])
-      : null;
-  }, [selectedElements, elements]);
+    return selectedElements.length > 0 ? selectedElements[0] : null;
+  }, [selectedElements]);
 
   // Synchroniser les propriétés locales avec l'élément sélectionné
   useEffect(() => {

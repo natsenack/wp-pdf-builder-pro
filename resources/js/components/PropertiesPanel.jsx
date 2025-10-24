@@ -1228,10 +1228,8 @@ const PropertiesPanel = memo(({
 
   // Obtenir l'élément sélectionné (mémorisé pour éviter les re-renders)
   const selectedElement = useMemo(() => {
-    return selectedElements.length > 0
-      ? elements.find(el => el.id === selectedElements[0])
-      : null;
-  }, [selectedElements, elements]);
+    return selectedElements.length > 0 ? selectedElements[0] : null;
+  }, [selectedElements]);
 
   // Mettre à jour les valeurs précédentes quand l'élément change
   useEffect(() => {
