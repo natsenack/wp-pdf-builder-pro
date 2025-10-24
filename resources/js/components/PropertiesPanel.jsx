@@ -3,6 +3,36 @@ import { useElementCustomization } from '../hooks/useElementCustomization';
 import { useElementSynchronization } from '../hooks/useElementSynchronization';
 import { elementCustomizationService } from '../services/ElementCustomizationService';
 
+// Composant Accordion pour organiser les propriétés
+const Accordion = memo(({ title, icon, children, defaultOpen = true, className = '' }) => {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+
+  const toggleAccordion = useCallback(() => {
+    setIsOpen(prev => !prev);
+  }, []);
+
+  return (
+    <div className={`accordion ${className}`}>
+      <button
+        className="accordion-header"
+        onClick={toggleAccordion}
+        type="button"
+      >
+        <span className="accordion-title">
+          {icon && <span className="accordion-icon">{icon}</span>}
+          {title}
+        </span>
+        <span className={`accordion-arrow ${isOpen ? 'open' : ''}`}>
+          ▼
+        </span>
+      </button>
+      <div className={`accordion-content ${isOpen ? 'open' : ''}`}>
+        {children}
+      </div>
+    </div>
+  );
+});
+
 // Configuration des presets par template pour le texte dynamique
 const TEMPLATE_PRESETS = {
   'total_only': {
@@ -824,9 +854,13 @@ const renderColorsSection = (selectedElement, localProperties, handlePropertyCha
   const isBackgroundEnabled = localProperties.backgroundColor !== 'transparent';
 
   return (
-    <div key="colors" className="properties-group">
-      <h4>🎨 Couleurs & Apparence</h4>
-
+    <Accordion
+      key="colors"
+      title="Couleurs & Apparence"
+      icon="🎨"
+      defaultOpen={true}
+      className="properties-accordion"
+    >
       {/* Couleur du texte - toujours disponible sauf pour les éléments qui n'ont pas de texte */}
       {selectedElement.type !== 'logo' && selectedElement.type !== 'company_logo' && (
         <ColorPicker
@@ -893,7 +927,7 @@ const renderColorsSection = (selectedElement, localProperties, handlePropertyCha
           </div>
         </div>
       </>
-    </div>
+    </Accordion>
   );
 };
 
@@ -912,8 +946,13 @@ const renderTypographySection = (selectedElement, localProperties, handlePropert
   if (!shouldShowSection('typography', selectedElement.type)) return null;
 
   return (
-    <div key="typography" className="properties-group">
-      <h4>📝 Typographie</h4>
+    <Accordion
+      key="typography"
+      title="Typographie"
+      icon="📝"
+      defaultOpen={true}
+      className="properties-accordion"
+    >
 
       {/* Famille de police */}
       <div className="property-row">
@@ -1088,7 +1127,7 @@ const renderTypographySection = (selectedElement, localProperties, handlePropert
           <span className="slider-value">{localProperties.letterSpacing || 0}px</span>
         </div>
       </div>
-    </div>
+    </Accordion>
   );
 };
 
@@ -1097,8 +1136,13 @@ const renderBordersSection = (selectedElement, localProperties, handlePropertyCh
   if (!isBorderEnabled && localProperties.borderWidth <= 0) return null;
 
   return (
-    <div key="borders" className="properties-group">
-      <h4>🔲 Bordures & Coins Arrondis</h4>
+    <Accordion
+      key="borders"
+      title="Bordures & Coins Arrondis"
+      icon="🔲"
+      defaultOpen={false}
+      className="properties-accordion"
+    >
 
       {/* Contrôle d'activation des bordures */}
       <div className="property-row">
@@ -1184,15 +1228,20 @@ const renderBordersSection = (selectedElement, localProperties, handlePropertyCh
           </div>
         </div>
       </div>
-    </div>
+    </Accordion>
   );
 };
 
 const renderEffectsSection = (selectedElement, localProperties, handlePropertyChange, activeTab) => {
   // Les effets sont disponibles pour tous les éléments
   return (
-    <div key="effects" className="properties-group">
-      <h4>✨ Effets</h4>
+    <Accordion
+      key="effects"
+      title="Effets"
+      icon="✨"
+      defaultOpen={false}
+      className="properties-accordion"
+    >
 
       <ColorPicker
         label="Ombre"
@@ -1230,7 +1279,7 @@ const renderEffectsSection = (selectedElement, localProperties, handlePropertyCh
           <span className="slider-value">{localProperties.boxShadowSpread ?? 0}px</span>
         </div>
       </div>
-    </div>
+    </Accordion>
   );
 };
 
@@ -1459,8 +1508,13 @@ const PropertiesPanel = memo(({
           <div className="tab-content">
             {/* Position précise (toujours disponible) */}
             {allowedControls.includes('position') && (
-              <div className="properties-group">
-                <h4>📍 Position Précise</h4>
+              <Accordion
+                key="position"
+                title="Position Précise"
+                icon="📍"
+                defaultOpen={true}
+                className="properties-accordion"
+              >
 
                 <div className="property-row">
                   <label>X:</label>
@@ -1487,13 +1541,18 @@ const PropertiesPanel = memo(({
                     <span className="unit">mm</span>
                   </div>
                 </div>
-              </div>
+              </Accordion>
             )}
 
             {/* Dimensions avec contraintes (toujours disponible) */}
             {allowedControls.includes('dimensions') && (
-              <div className="properties-group">
-                <h4>📏 Dimensions</h4>
+              <Accordion
+                key="dimensions"
+                title="Dimensions"
+                icon="📏"
+                defaultOpen={true}
+                className="properties-accordion"
+              >
 
                 <div className="property-row">
                   <label>Largeur:</label>
@@ -1559,13 +1618,18 @@ const PropertiesPanel = memo(({
                     </button>
                   </div>
                 </div>
-              </div>
+              </Accordion>
             )}
 
             {/* Transformation (toujours disponible) */}
             {allowedControls.includes('transform') && (
-              <div className="properties-group">
-                <h4>🔄 Transformation</h4>
+              <Accordion
+                key="transform"
+                title="Transformation"
+                icon="🔄"
+                defaultOpen={false}
+                className="properties-accordion"
+              >
 
                 <div className="property-row">
                   <label>Rotation:</label>
@@ -1665,13 +1729,18 @@ const PropertiesPanel = memo(({
                     🔄 Réinitialiser échelle
                   </button>
                 </div>
-              </div>
+              </Accordion>
             )}
 
             {/* Calques et profondeur (toujours disponible sauf pour les tableaux de produits) */}
             {allowedControls.includes('layers') && selectedElement.type !== 'product_table' && (
-              <div className="properties-group">
-                <h4>📚 Calques</h4>
+              <Accordion
+                key="layers"
+                title="Calques"
+                icon="📚"
+                defaultOpen={false}
+                className="properties-accordion"
+              >
 
                 <div className="property-row">
                   <label>Profondeur (Z-index):</label>
@@ -1704,7 +1773,7 @@ const PropertiesPanel = memo(({
                     </button>
                   </div>
                 </div>
-              </div>
+              </Accordion>
             )}
           </div>
         );
@@ -1714,8 +1783,13 @@ const PropertiesPanel = memo(({
           <div className="tab-content">
             {/* Contenu texte (uniquement pour les éléments texte) */}
             {allowedControls.includes('text') && selectedElement.type === 'text' && (
-              <div className="properties-group">
-                <h4>📝 Contenu texte</h4>
+              <Accordion
+                key="text-content"
+                title="Contenu texte"
+                icon="📝"
+                defaultOpen={true}
+                className="properties-accordion"
+              >
 
                 <div className="property-row">
                   <label>Texte:</label>
@@ -1756,14 +1830,19 @@ const PropertiesPanel = memo(({
                     </button>
                   </div>
                 </div>
-              </div>
+              </Accordion>
             )}
 
             {/* Variables dynamiques pour les éléments layout (header/footer/section) */}
             {allowedControls.includes('variables') && (selectedElement.type === 'layout-header' ||
               selectedElement.type === 'layout-footer' || selectedElement.type === 'layout-section') && (
-              <div className="properties-group">
-                <h4>🔄 Variables dynamiques</h4>
+              <Accordion
+                key="dynamic-variables"
+                title="Variables dynamiques"
+                icon="🔄"
+                defaultOpen={true}
+                className="properties-accordion"
+              >
 
                 <div className="property-row">
                   <label>Variables disponibles:</label>
@@ -1794,13 +1873,18 @@ const PropertiesPanel = memo(({
                     </button>
                   </div>
                 </div>
-              </div>
+              </Accordion>
             )}
 
             {/* Contrôles tableau produits (uniquement pour les éléments product_table) */}
             {allowedControls.includes('table') && selectedElement.type === 'product_table' && (
-              <div className="properties-group">
-                <h4>📊 Tableau produits</h4>
+              <Accordion
+                key="product-table"
+                title="Tableau produits"
+                icon="📊"
+                defaultOpen={true}
+                className="properties-accordion"
+              >
 
                 <div className="property-row">
                   <label>Colonnes à afficher:</label>
@@ -2196,13 +2280,18 @@ const PropertiesPanel = memo(({
                     </div>
                   </div>
                 </div>
-              </div>
+              </Accordion>
             )}
 
             {/* Contrôles informations client (uniquement pour les éléments customer_info) */}
             {allowedControls.includes('customer_fields') && selectedElement.type === 'customer_info' && (
-              <div className="properties-group">
-                <h4>👤 Informations client</h4>
+              <Accordion
+                key="customer-info"
+                title="Informations client"
+                icon="👤"
+                defaultOpen={true}
+                className="properties-accordion"
+              >
 
                 <div className="property-row">
                   <label>Champs à afficher:</label>
@@ -2300,13 +2389,18 @@ const PropertiesPanel = memo(({
                     <span className="slider-value">{localProperties.spacing || 8}px</span>
                   </div>
                 </div>
-              </div>
+              </Accordion>
             )}
 
             {/* Contrôles mentions légales (uniquement pour les éléments mentions) */}
             {allowedControls.includes('mentions') && selectedElement.type === 'mentions' && (
-              <div className="properties-group">
-                <h4>📄 Mentions légales</h4>
+              <Accordion
+                key="legal-mentions"
+                title="Mentions légales"
+                icon="📄"
+                defaultOpen={true}
+                className="properties-accordion"
+              >
 
                 <div className="property-row">
                   <label>Informations à afficher:</label>
@@ -2381,13 +2475,18 @@ const PropertiesPanel = memo(({
                     <span className="slider-value">{localProperties.lineHeight || 1.2}</span>
                   </div>
                 </div>
-              </div>
+              </Accordion>
             )}
 
             {/* Contrôles texte dynamique (uniquement pour les éléments dynamic-text) */}
             {allowedControls.includes('dynamic_text') && selectedElement.type === 'dynamic-text' && (
-              <div className="properties-group">
-                <h4>📝 Texte Dynamique</h4>
+              <Accordion
+                key="dynamic-text"
+                title="Texte Dynamique"
+                icon="📝"
+                defaultOpen={true}
+                className="properties-accordion"
+              >
 
                 <div className="property-row">
                   <label>Modèle:</label>
@@ -2547,13 +2646,18 @@ const PropertiesPanel = memo(({
                     </div>
                   </div>
                 </div>
-              </div>
+              </Accordion>
             )}
 
             {/* Contrôles informations entreprise (uniquement pour les éléments company_info) */}
             {allowedControls.includes('company_fields') && selectedElement.type === 'company_info' && (
-              <div className="properties-group">
-                <h4>🏢 Informations Entreprise</h4>
+              <Accordion
+                key="company-info"
+                title="Informations Entreprise"
+                icon="🏢"
+                defaultOpen={true}
+                className="properties-accordion"
+              >
 
                 <div className="property-row">
                   <label>Champs à afficher:</label>
@@ -2652,13 +2756,18 @@ const PropertiesPanel = memo(({
                     <span className="slider-value">{localProperties.spacing || 8}px</span>
                   </div>
                 </div>
-              </div>
+              </Accordion>
             )}
 
             {/* Contrôles type de document (uniquement pour les éléments document_type) */}
             {allowedControls.includes('document_type') && selectedElement.type === 'document_type' && (
-              <div className="properties-group">
-                <h4>📋 Type de Document</h4>
+              <Accordion
+                key="document-type"
+                title="Type de Document"
+                icon="📋"
+                defaultOpen={true}
+                className="properties-accordion"
+              >
 
                 <div className="property-row">
                   <label>Type de document:</label>
@@ -2673,13 +2782,18 @@ const PropertiesPanel = memo(({
                     <option value="credit_note">Avoir</option>
                   </select>
                 </div>
-              </div>
+              </Accordion>
             )}
 
             {/* Contrôles numéro de commande (uniquement pour les éléments order_number) */}
             {allowedControls.includes('order_number') && selectedElement.type === 'order_number' && (
-              <div className="properties-group">
-                <h4>🔢 Numéro de Commande</h4>
+              <Accordion
+                key="order-number"
+                title="Numéro de Commande"
+                icon="🔢"
+                defaultOpen={true}
+                className="properties-accordion"
+              >
 
                 <div className="property-row">
                   <label>Format d'affichage:</label>
@@ -2728,7 +2842,7 @@ const PropertiesPanel = memo(({
                     </select>
                   </div>
                 )}
-              </div>
+              </Accordion>
             )}
 
             {/* Contrôles de police disponibles pour tous les éléments qui les supportent */}
@@ -2742,8 +2856,13 @@ const PropertiesPanel = memo(({
 
             {/* Contrôles d'image disponibles uniquement pour les éléments logo */}
             {allowedControls.includes('image') && (selectedElement.type === 'logo' || selectedElement.type === 'company_logo') && (
-              <div className="properties-group">
-                <h4>[Img] Image</h4>
+              <Accordion
+                key="image-controls"
+                title="Image"
+                icon="🖼️"
+                defaultOpen={true}
+                className="properties-accordion"
+              >
 
               <div className="property-row">
                 <label>URL de l'image:</label>
@@ -2911,12 +3030,17 @@ const PropertiesPanel = memo(({
                   <option value="scale-down">Réduire</option>
                 </select>
               </div>
-            </div>
+            </Accordion>
             )}
             {/* Contrôles pour le type de document */}
             {selectedElement.type === 'document_type' && (
-              <div className="properties-group">
-                <h4>📋 Type de Document</h4>
+              <Accordion
+                key="document-type-alt"
+                title="Type de Document"
+                icon="📋"
+                defaultOpen={true}
+                className="properties-accordion"
+              >
 
                 <div className="property-row">
                   <label>Type de document:</label>
@@ -2976,13 +3100,18 @@ const PropertiesPanel = memo(({
                   onChange={(value) => handlePropertyChange(selectedElement.id, 'backgroundColor', value)}
                   presets={['transparent', '#ffffff', '#f8fafc', '#fef3c7', '#ecfdf5', '#f0f9ff']}
                 />
-              </div>
-            )}
+            </Accordion>
+)}
 
             {/* Contrôles de contenu disponibles pour tous les éléments sauf les tableaux de produits */}
             {selectedElement.type !== 'product_table' && (
-              <div className="properties-group">
-                <h4>� Contenu</h4>
+              <Accordion
+                key="content-controls"
+                title="Contenu"
+                icon="📝"
+                defaultOpen={false}
+                className="properties-accordion"
+              >
 
                 <div className="property-row">
                   <label>Texte/Contenu:</label>
@@ -3017,13 +3146,18 @@ const PropertiesPanel = memo(({
                     <option value="credit_note">Avoir</option>
                   </select>
                 </div>
-              </div>
+              </Accordion>
             )}
 
             {/* Contrôles de champs disponibles pour tous les éléments sauf les tableaux de produits */}
             {selectedElement.type !== 'product_table' && (
-              <div className="properties-group">
-                <h4>📋 Champs & Options</h4>
+              <Accordion
+                key="fields-options"
+                title="Champs & Options"
+                icon="📋"
+                defaultOpen={false}
+                className="properties-accordion"
+              >
 
                 <div className="property-row">
                   <label>Champs à afficher:</label>
@@ -3106,7 +3240,7 @@ const PropertiesPanel = memo(({
                     <span className="toggle-slider"></span>
                   </label>
                 </div>
-              </div>
+              </Accordion>
             )}
           </div>
         );
