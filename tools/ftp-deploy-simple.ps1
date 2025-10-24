@@ -440,6 +440,7 @@ if ($Mode -eq "Parallel" -and $filesToDeploy.Count -gt 1) {
     # Upload en parallèle simplifié
     $jobResults = @()
     $jobIndex = 0
+    $timestamp = Get-Random -Minimum 1000 -Maximum 9999
 
     # Lancer tous les jobs d'abord
     while ($jobIndex -lt $filesToDeploy.Count) {
@@ -455,7 +456,7 @@ if ($Mode -eq "Parallel" -and $filesToDeploy.Count -gt 1) {
         # Démarrer de nouveaux jobs
         for ($i = 0; $i -lt $availableSlots -and $jobIndex -lt $filesToDeploy.Count; $i++) {
             $fileInfo = $filesToDeploy[$jobIndex]
-            $jobName = "FTP_Upload_$jobIndex"
+            $jobName = "FTP_Upload_${timestamp}_$jobIndex"
 
             Start-Job -Name $jobName -ScriptBlock {
                 param($fileInfo, $ftpHost, $ftpUser, $ftpPassword, $remotePath, $MaxRetries)
@@ -529,13 +530,13 @@ if ($Mode -eq "Parallel" -and $filesToDeploy.Count -gt 1) {
 
     # Attendre que tous les jobs FTP se terminent (avec timeout de 60 secondes)
     Write-Host "   Attente de la fin des uploads..." -ForegroundColor Gray
-    $remainingJobs = Get-Job -Name "FTP_Upload_*" -ErrorAction SilentlyContinue
+    $remainingJobs = Get-Job | Where-Object { $_.Name -like "FTP_Upload_*" } -ErrorAction SilentlyContinue
     if ($remainingJobs -and $remainingJobs.Count -gt 0) {
         $timeout = New-TimeSpan -Seconds 60
         $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
         
         while ($stopwatch.Elapsed -lt $timeout) {
-            $stillRunning = Get-Job -Name "FTP_Upload_*" -State Running -ErrorAction SilentlyContinue
+            $stillRunning = Get-Job | Where-Object { $_.Name -like "FTP_Upload_*" -and $_.State -eq 'Running' } -ErrorAction SilentlyContinue
             if (-not $stillRunning -or $stillRunning.Count -eq 0) {
                 break
             }
@@ -543,7 +544,7 @@ if ($Mode -eq "Parallel" -and $filesToDeploy.Count -gt 1) {
         }
         
         # Récupérer les résultats de tous les jobs FTP
-        Get-Job -Name "FTP_Upload_*" -ErrorAction SilentlyContinue | ForEach-Object {
+        Get-Job | Where-Object { $_.Name -like "FTP_Upload_*" } -ErrorAction SilentlyContinue | ForEach-Object {
             $jobResult = Receive-Job $_ -ErrorAction SilentlyContinue
             if ($jobResult) {
                 $jobResults += $jobResult
