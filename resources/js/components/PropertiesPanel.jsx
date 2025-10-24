@@ -1279,12 +1279,6 @@ const PropertiesPanel = memo(({
     }
   }, [selectedElement]); // Ne dépendre que de selectedElement pour éviter les boucles
 
-  // Synchroniser l'état du toggle fond
-  useEffect(() => {
-    const shouldBeEnabled = !!localProperties.backgroundColor && localProperties.backgroundColor !== 'transparent';
-    setIsBackgroundEnabled(shouldBeEnabled);
-  }, [localProperties.backgroundColor]);
-
   // Synchroniser l'état du toggle bordures
   useEffect(() => {
     setIsBorderEnabled(!!localProperties.border && (localProperties.borderWidth || 0) > 0);
