@@ -1031,6 +1031,61 @@ const PropertiesPanel = memo(({
                     </div>
                   </div>
                 </div>
+
+                {/* Bouton de réinitialisation du tableau */}
+                <div className="property-row">
+                  <label></label>
+                  <button
+                    className="reset-table-btn"
+                    onClick={() => {
+                      // Réinitialiser les colonnes
+                      handlePropertyChange(selectedElement.id, 'columns', {
+                        image: false,
+                        name: true,
+                        sku: false,
+                        quantity: true,
+                        price: true,
+                        total: true
+                      });
+
+                      // Réinitialiser le style
+                      handlePropertyChange(selectedElement.id, 'tableStyle', 'default');
+
+                      // Réinitialiser les totaux
+                      handlePropertyChange(selectedElement.id, 'showSubtotal', false);
+                      handlePropertyChange(selectedElement.id, 'showShipping', true);
+                      handlePropertyChange(selectedElement.id, 'showTaxes', true);
+                      handlePropertyChange(selectedElement.id, 'showDiscount', true);
+                      handlePropertyChange(selectedElement.id, 'showTotal', true);
+
+                      // Réinitialiser les bordures
+                      handlePropertyChange(selectedElement.id, 'showBorders', true);
+
+                      // Réinitialiser les couleurs individuelles
+                      handlePropertyChange(selectedElement.id, 'evenRowBg', '#ffffff');
+                      handlePropertyChange(selectedElement.id, 'evenRowTextColor', '#000000');
+                      handlePropertyChange(selectedElement.id, 'oddRowBg', '#f9fafb');
+                      handlePropertyChange(selectedElement.id, 'oddRowTextColor', '#000000');
+                    }}
+                    title="Réinitialiser toutes les propriétés du tableau aux valeurs par défaut"
+                    style={{
+                      padding: '8px 16px',
+                      backgroundColor: '#dc2626',
+                      border: '1px solid #b91c1c',
+                      borderRadius: '6px',
+                      color: '#ffffff',
+                      fontSize: '13px',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      marginTop: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px'
+                    }}
+                  >
+                    🔄 Réinitialiser le tableau
+                  </button>
+                </div>
               </Accordion>
             )}
 

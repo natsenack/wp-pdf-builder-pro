@@ -2248,46 +2248,31 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           }
         }
 
-        // En-têtes du tableau
+        // En-têtes du tableau - Design épuré et professionnel
         if (element.showHeaders !== false && tableData.headers.length > 0) {
-          const headerHeight = 32;
+          const headerHeight = 28; // Réduit pour un look plus compact
 
-          // Fond de l'en-tête avec dégradé subtil
-          if (tableStyleData.header_bg) {
-            if (tableStyleData.header_gradient) {
-              // Dégradé personnalisé depuis le style
-              const gradient = ctx.createLinearGradient(tableX, currentY, tableX, currentY + headerHeight);
-              gradient.addColorStop(0, tableStyleData.header_gradient[0]);
-              gradient.addColorStop(1, tableStyleData.header_gradient[1]);
-              ctx.fillStyle = gradient;
-            } else {
-              ctx.fillStyle = `rgb(${tableStyleData.header_bg.join(',')})`;
-            }
-          } else {
-            // Dégradé par défaut moderne
-            const gradient = ctx.createLinearGradient(tableX, currentY, tableX, currentY + headerHeight);
-            gradient.addColorStop(0, '#f8fafc');
-            gradient.addColorStop(1, '#e2e8f0');
-            ctx.fillStyle = gradient;
-          }
+          // Fond de l'en-tête sobre et professionnel
+          ctx.fillStyle = tableStyleData.header_bg ?
+            `rgb(${tableStyleData.header_bg.join(',')})` :
+            '#f8fafc'; // Fond sobre par défaut
 
-          // Dessiner le fond de l'en-tête avec coins arrondis
-          const headerRadius = element.borderRadius || 4;
-          ctx.beginPath();
-          ctx.roundRect(tableX, currentY, tableWidth, headerHeight, headerRadius);
-          ctx.fill();
+          // Dessiner le fond de l'en-tête sans coins arrondis pour un look plus professionnel
+          ctx.fillRect(tableX, currentY, tableWidth, headerHeight);
 
-          // Bordure supérieure de l'en-tête
-          ctx.strokeStyle = tableStyleData.header_border ? `rgb(${tableStyleData.header_border.join(',')})` : '#cbd5e1';
-          ctx.lineWidth = tableStyleData.border_width || 1;
+          // Bordure subtile en bas de l'en-tête
+          ctx.strokeStyle = tableStyleData.header_border ?
+            `rgb(${tableStyleData.header_border.join(',')})` :
+            '#d1d5db';
+          ctx.lineWidth = 1;
           ctx.beginPath();
           ctx.moveTo(tableX, currentY + headerHeight);
           ctx.lineTo(tableX + tableWidth, currentY + headerHeight);
           ctx.stroke();
 
-          // Texte des en-têtes
-          ctx.fillStyle = tableStyleData.headerTextColor || '#1e293b';
-          ctx.font = `${fontStyle}${fontWeight} ${headerFontSize}px ${fontFamily}`;
+          // Texte des en-têtes avec style professionnel
+          ctx.fillStyle = tableStyleData.headerTextColor || '#374151';
+          ctx.font = `600 ${headerFontSize}px ${fontFamily}`; // Poids semi-bold pour plus de hiérarchie
           ctx.textAlign = 'center';
 
           tableData.headers.forEach((header, index) => {
@@ -2315,17 +2300,19 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             if (letterSpacing > 0) {
               let charX = headerX - (headerText.length * letterSpacing) / 2;
               for (let i = 0; i < headerText.length; i++) {
-                ctx.fillText(headerText[i], charX, currentY + 22);
+                ctx.fillText(headerText[i], charX, currentY + 20);
                 charX += ctx.measureText(headerText[i]).width + letterSpacing;
               }
             } else {
-              ctx.fillText(headerText, headerX, currentY + 22);
+              ctx.fillText(headerText, headerX, currentY + 20);
             }
 
-            // Ligne verticale entre les colonnes si bordures activées
+            // Ligne verticale subtile entre les colonnes si bordures activées
             if (element.showBorders !== false && index < tableData.headers.length - 1) {
-              ctx.strokeStyle = tableStyleData.header_border ? `rgb(${tableStyleData.header_border.join(',')})` : '#e2e8f0';
-              ctx.lineWidth = tableStyleData.border_width || 0.5;
+              ctx.strokeStyle = tableStyleData.header_border ?
+                `rgb(${tableStyleData.header_border.join(',')})` :
+                '#e5e7eb';
+              ctx.lineWidth = 0.5; // Bordure plus fine
               const lineX = tableX + columnWidths.slice(0, index + 1).reduce((sum, w) => sum + w, 0);
               ctx.beginPath();
               ctx.moveTo(lineX, currentY);
@@ -2337,54 +2324,43 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           currentY += headerHeight;
         }
 
-        // Lignes de données
-        ctx.font = `${fontStyle}${fontWeight} ${rowFontSize}px ${fontFamily}`;
+        // Lignes de données - Design épuré et professionnel
+        ctx.font = `${fontStyle}400 ${rowFontSize}px ${fontFamily}`; // Poids normal pour les données
 
         tableData.rows.forEach((row, rowIndex) => {
-          const rowHeight = 24; // Augmenté pour plus d'espacement
+          const rowHeight = 22; // Compact pour un look professionnel
           const isEvenRow = rowIndex % 2 === 0;
 
-          // Fond alterné des lignes avec dégradé subtil
+          // Fond alterné subtil - seulement pour les lignes paires avec une couleur très légère
           let bgColor;
           if (element.evenRowBg && element.oddRowBg) {
             // Utiliser les couleurs configurées depuis PropertiesPanel
             bgColor = isEvenRow ? element.evenRowBg : element.oddRowBg;
           } else {
-            // Couleurs par défaut avec dégradé subtil
+            // Alternance très subtile par défaut
             bgColor = isEvenRow ?
               `rgb(${tableStyleData.alt_row_bg.join(',')})` :
               '#ffffff';
           }
 
-          // Appliquer un dégradé subtil aux lignes paires pour plus de modernité
-          if (isEvenRow && !element.evenRowBg) {
-            const gradient = ctx.createLinearGradient(tableX, currentY, tableX, currentY + rowHeight);
-            gradient.addColorStop(0, `rgb(${tableStyleData.alt_row_bg.join(',')})`);
-            gradient.addColorStop(1, `rgba(${tableStyleData.alt_row_bg.join(',')}, 0.8)`);
-            ctx.fillStyle = gradient;
-          } else {
-            ctx.fillStyle = bgColor;
-          }
+          // Fond uni sans dégradé pour un look plus professionnel
+          ctx.fillStyle = bgColor;
+          ctx.fillRect(tableX, currentY, tableWidth, rowHeight);
 
-          // Dessiner le fond de la ligne avec coins légèrement arrondis
-          const rowRadius = element.borderRadius ? Math.min(element.borderRadius * 0.3, 2) : 1;
-          ctx.beginPath();
-          ctx.roundRect(tableX, currentY, tableWidth, rowHeight, rowRadius);
-          ctx.fill();
-
-          // Bordure de la ligne si activée, avec style moderne
+          // Bordure horizontale subtile seulement entre les lignes (pas autour)
           if (element.showBorders !== false) {
             ctx.strokeStyle = `rgb(${tableStyleData.row_border.join(',')})`;
-            ctx.lineWidth = tableStyleData.border_width || 0.5;
+            ctx.lineWidth = 0.3; // Bordure très fine
             ctx.beginPath();
-            ctx.roundRect(tableX, currentY, tableWidth, rowHeight, rowRadius);
+            ctx.moveTo(tableX, currentY + rowHeight);
+            ctx.lineTo(tableX + tableWidth, currentY + rowHeight);
             ctx.stroke();
           }
 
-          // Couleur du texte des cellules (configurable)
+          // Couleur du texte des cellules (configurable mais sobre)
           const rowTextColor = isEvenRow && element.evenRowTextColor ?
             element.evenRowTextColor :
-            (!isEvenRow && element.oddRowTextColor ? element.oddRowTextColor : tableStyleData.rowTextColor);
+            (!isEvenRow && element.oddRowTextColor ? element.oddRowTextColor : '#374151'); // Gris foncé professionnel
           ctx.fillStyle = rowTextColor;
           ctx.textAlign = 'center';
 
@@ -2408,36 +2384,29 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
               const previousWidth = columnWidths.slice(0, cellIndex).reduce((sum, w) => sum + w, 0);
               cellX = tableX + previousWidth + (columnWidths[cellIndex] / 2);
             }
-            const cellY = currentY + rowHeight / 2 + (rowFontSize * 0.35); // Centrage vertical amélioré
+            const cellY = currentY + rowHeight / 2 + (rowFontSize * 0.35);
 
-            // Gestion spéciale pour les images (placeholder)
+            // Gestion spéciale pour les images (placeholder sobre)
             if (cellText.startsWith('data:image') || cellText.includes('.jpg') || cellText.includes('.png')) {
-              // Dessiner un placeholder pour l'image avec style moderne
-              const imgSize = 16;
+              // Placeholder minimaliste
+              const imgSize = 14;
               const imgX = cellX - imgSize / 2;
               const imgY = currentY + (rowHeight - imgSize) / 2;
 
-              // Fond du placeholder avec coins arrondis
               ctx.fillStyle = '#f3f4f6';
-              ctx.beginPath();
-              ctx.roundRect(imgX, imgY, imgSize, imgSize, 2);
-              ctx.fill();
+              ctx.fillRect(imgX, imgY, imgSize, imgSize);
 
-              // Bordure du placeholder
               ctx.strokeStyle = '#d1d5db';
-              ctx.lineWidth = 1;
-              ctx.beginPath();
-              ctx.roundRect(imgX, imgY, imgSize, imgSize, 2);
-              ctx.stroke();
+              ctx.lineWidth = 0.5;
+              ctx.strokeRect(imgX, imgY, imgSize, imgSize);
 
-              // Icône image
-              ctx.fillStyle = '#6b7280';
-              ctx.font = '10px Arial';
+              ctx.fillStyle = '#9ca3af';
+              ctx.font = '8px Arial';
               ctx.textAlign = 'center';
-              ctx.fillText('🖼️', cellX, imgY + imgSize - 2);
+              ctx.fillText('�', cellX, imgY + imgSize - 1);
             } else {
-              // Texte normal avec espacement des lettres si défini
-              ctx.font = `${fontStyle}${fontWeight} ${rowFontSize}px ${fontFamily}`;
+              // Texte normal
+              ctx.font = `${fontStyle}400 ${rowFontSize}px ${fontFamily}`;
               ctx.fillStyle = rowTextColor;
               ctx.textAlign = 'center';
 
@@ -2452,14 +2421,14 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
               }
             }
 
-            // Ligne verticale entre les colonnes si bordures activées (style moderne)
+            // Ligne verticale subtile entre les colonnes si bordures activées
             if (element.showBorders !== false && cellIndex < row.length - 1) {
               ctx.strokeStyle = `rgb(${tableStyleData.row_border.join(',')})`;
-              ctx.lineWidth = tableStyleData.border_width || 0.3;
+              ctx.lineWidth = 0.3; // Bordure très fine
               const lineX = tableX + columnWidths.slice(0, cellIndex + 1).reduce((sum, w) => sum + w, 0);
               ctx.beginPath();
-              ctx.moveTo(lineX, currentY + 2);
-              ctx.lineTo(lineX, currentY + rowHeight - 2);
+              ctx.moveTo(lineX, currentY + 1);
+              ctx.lineTo(lineX, currentY + rowHeight - 1);
               ctx.stroke();
             }
           });
@@ -2467,25 +2436,26 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           currentY += rowHeight;
         });
 
-        // Lignes de totaux - maintenant alignées avec les colonnes
+        // Lignes de totaux - Design épuré et professionnel
         const totals = tableData.totals;
         if (Object.keys(totals).length > 0) {
-          currentY += 8; // Espace avant les totaux
+          currentY += 6; // Espace réduit avant les totaux
 
           Object.entries(totals).forEach(([key, value]) => {
-            const totalHeight = 22; // Augmenté pour plus d'espacement
+            const totalHeight = 20; // Compact pour un look professionnel
 
-            // Fond du total avec dégradé moderne
+            // Fond sobre pour les totaux (sans dégradé)
             const isTotalRow = key === 'total';
             if (isTotalRow) {
-              // Dégradé spécial pour le total final
-              const gradient = ctx.createLinearGradient(tableX, currentY, tableX, currentY + totalHeight);
-              gradient.addColorStop(0, `rgb(${tableStyleData.header_bg.join(',')})`);
-              gradient.addColorStop(1, `rgba(${tableStyleData.header_bg.map(c => Math.max(0, c - 20)).join(',')}, 0.9)`);
-              ctx.fillStyle = gradient;
+              // Fond légèrement plus foncé pour le total final
+              ctx.fillStyle = tableStyleData.header_bg ?
+                `rgb(${tableStyleData.header_bg.map(c => Math.max(0, c - 10)).join(',')})` :
+                '#f3f4f6';
             } else {
               // Fond normal pour les autres totaux
-              ctx.fillStyle = `rgb(${tableStyleData.header_bg.join(',')})`;
+              ctx.fillStyle = tableStyleData.header_bg ?
+                `rgb(${tableStyleData.header_bg.join(',')})` :
+                '#f9fafb';
             }
 
             // Trouver l'index de la colonne Prix et Total
@@ -2507,26 +2477,23 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             // Largeur du fond (de la colonne du libellé à la colonne de la valeur)
             const totalBgWidth = columnWidths.slice(labelColumnIndex, valueColumnIndex - labelColumnIndex + 1).reduce((sum, w) => sum + w, 0);
 
-            // Dessiner le fond avec coins arrondis (seulement sur les colonnes pertinentes)
-            const totalRadius = element.borderRadius ? Math.min(element.borderRadius * 0.5, 3) : 2;
-            ctx.beginPath();
-            ctx.roundRect(totalBgX, currentY, totalBgWidth, totalHeight, totalRadius);
-            ctx.fill();
+            // Fond uni sans coins arrondis pour un look professionnel
+            ctx.fillRect(totalBgX, currentY, totalBgWidth, totalHeight);
 
-            // Bordure du total si activée (seulement sur les colonnes pertinentes)
+            // Bordure subtile autour du fond des totaux
             if (element.showBorders !== false) {
-              ctx.strokeStyle = `rgb(${tableStyleData.header_border.join(',')})`;
-              ctx.lineWidth = tableStyleData.border_width || 1;
-              ctx.beginPath();
-              ctx.roundRect(totalBgX, currentY, totalBgWidth, totalHeight, totalRadius);
-              ctx.stroke();
+              ctx.strokeStyle = tableStyleData.header_border ?
+                `rgb(${tableStyleData.header_border.join(',')})` :
+                '#d1d5db';
+              ctx.lineWidth = 0.5;
+              ctx.strokeRect(totalBgX, currentY, totalBgWidth, totalHeight);
             }
 
-            // Style de texte spécial pour le total
-            const totalFontWeight = isTotalRow ? 'bold' : fontWeight;
-            const totalFontSize = isTotalRow ? headerFontSize + 1 : headerFontSize;
+            // Style de texte professionnel pour les totaux
+            const totalFontWeight = isTotalRow ? '600' : '500'; // Semi-bold pour hiérarchie
+            const totalFontSize = isTotalRow ? headerFontSize : rowFontSize;
             ctx.font = `${fontStyle}${totalFontWeight} ${totalFontSize}px ${fontFamily}`;
-            ctx.fillStyle = tableStyleData.headerTextColor;
+            ctx.fillStyle = isTotalRow ? '#1f2937' : '#374151'; // Texte plus foncé pour le total final
 
             // Libellé du total (dans la colonne Prix si elle existe, sinon première colonne)
             let label = key === 'subtotal' ? 'Sous-total' :
