@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback, useMemo, memo } from 'react';
+// Import styles for the accordion component so webpack bundles them
+import '../../scss/styles/Accordion.css';
 import { useElementCustomization } from '../hooks/useElementCustomization';
 import { useElementSynchronization } from '../hooks/useElementSynchronization';
 import { elementCustomizationService } from '../services/ElementCustomizationService';
