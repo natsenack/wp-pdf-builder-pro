@@ -78,16 +78,3 @@
 .accordion-content {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
-/* Debug styles - temporaire pour vérifier que les styles sont chargés */
-.accordion {
-  border: 2px solid #ff6b6b !important; /* Rouge pour debug */
-}
-
-.accordion-header {
-  background: #ffeaa7 !important; /* Jaune pour debug */
-}
-
-.accordion-content.open {
-  background: #55efc4 !important; /* Vert pour debug */
-}
