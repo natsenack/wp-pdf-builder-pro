@@ -1138,7 +1138,8 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         // Calculer les dimensions pour le positionnement
         // Positionner le texte avec une marge pour éviter les superpositions lors du redimensionnement
         const textMargin = 8; // Marge depuis les bords
-        const baselineY = textY + textMargin + fontSize;
+        const labelBaselineY = textY + textMargin + fontSize;
+        const numberBaselineY = labelBaselineY + fontSize + 4; // Ligne du numéro en dessous de l'étiquette
         let labelWidth = 0;
         let availableWidth = textWidth - (textMargin * 2);
 
@@ -1162,7 +1163,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         // Afficher l'étiquette si elle doit être affichée
         if (element.showLabel && element.labelText && processedLabel) {
           const labelX = textX + textMargin;
-          const labelY = baselineY;
+          const labelY = labelBaselineY;
 
           // Appliquer l'espacement des lettres pour l'étiquette si défini
           if (letterSpacing > 0) {
@@ -1222,7 +1223,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
           // Fond subtil
           ctx.fillStyle = element.numberBackground || 'rgba(59, 130, 246, 0.1)';
-          ctx.fillRect(highlightX - 4, baselineY - fontSize * 0.7, numberTextWidth + 8, fontSize * 1.2);
+          ctx.fillRect(highlightX - 4, numberBaselineY - fontSize * 0.7, numberTextWidth + 8, fontSize * 1.2);
         }
 
         // Afficher le numéro avec espacement des lettres si défini
@@ -1243,7 +1244,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           }
 
           for (let i = 0; i < displayText.length; i++) {
-            ctx.fillText(displayText[i], startX, baselineY);
+            ctx.fillText(displayText[i], startX, numberBaselineY);
             startX += ctx.measureText(displayText[i]).width + letterSpacing;
           }
         } else {
@@ -1258,7 +1259,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             textXPos = numberX + numberWidth;
             ctx.textAlign = 'right';
           }
-          ctx.fillText(displayText, textXPos, baselineY);
+          ctx.fillText(displayText, textXPos, numberBaselineY);
         }
 
         // Appliquer la décoration de texte au numéro
@@ -1274,7 +1275,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             decorationX = numberX;
           }
 
-          const decorationY = baselineY + (textDecoration === 'underline' ? 2 : -fontSize * 0.2);
+          const decorationY = numberBaselineY + (textDecoration === 'underline' ? 2 : -fontSize * 0.2);
           ctx.strokeStyle = element.color || '#000000';
           ctx.lineWidth = Math.max(1, fontSize / 20);
           ctx.beginPath();
