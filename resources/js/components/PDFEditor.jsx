@@ -148,9 +148,11 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
   // Gestionnaire de mise à jour des propriétés d'un élément
   const handleElementUpdate = (elementId, newProperties) => {
+    console.log('[DEBUG] handleElementUpdate called:', { elementId, newProperties });
     const newElements = elements.map(element =>
       element.id === elementId ? { ...element, ...newProperties } : element
     );
+    console.log('[DEBUG] newElements:', newElements.find(el => el.id === elementId));
     handleElementsChange(newElements);
   };
 
