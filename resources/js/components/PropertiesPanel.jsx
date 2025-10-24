@@ -2530,7 +2530,7 @@ const PropertiesPanel = memo(({
                           onChange={(e) => {
                             const currentFields = localProperties.fields || ['name', 'address', 'phone', 'email', 'website', 'vat', 'rcs', 'siret'];
                             const newFields = e.target.checked
-                              ? [...currentFields, key]
+                              ? (currentFields.includes(key) ? currentFields : [...currentFields, key])
                               : currentFields.filter(f => f !== key);
                             handlePropertyChange(selectedElement.id, 'fields', newFields);
                           }}
