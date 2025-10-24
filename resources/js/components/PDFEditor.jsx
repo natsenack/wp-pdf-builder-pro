@@ -2778,6 +2778,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           // Couleur du texte des cellules
           ctx.fillStyle = '#333333';
           ctx.textAlign = 'center';
+          const rowTextColor = '#333333'; // Couleur du texte des lignes de données
 
           row.forEach((cell, cellIndex) => {
             let cellText = String(cell);
