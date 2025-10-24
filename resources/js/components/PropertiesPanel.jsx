@@ -2242,6 +2242,20 @@ const PropertiesPanel = memo(({
                   </div>
                 )}
 
+                {localProperties.showLabels && (
+                  <div className="property-row">
+                    <label>Alignement des étiquettes:</label>
+                    <select
+                      value={localProperties.labelAlign || 'left'}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'labelAlign', e.target.value)}
+                    >
+                      <option value="left">Gauche</option>
+                      <option value="center">Centre</option>
+                      <option value="right">Droite</option>
+                    </select>
+                  </div>
+                )}
+
                 <div className="property-row">
                   <label>Espacement:</label>
                   <div className="slider-container">
@@ -2576,6 +2590,20 @@ const PropertiesPanel = memo(({
                       <option value="normal">Normal</option>
                       <option value="bold">Gras</option>
                       <option value="uppercase">Majuscules</option>
+                    </select>
+                  </div>
+                )}
+
+                {localProperties.showLabels && (
+                  <div className="property-row">
+                    <label>Alignement des étiquettes:</label>
+                    <select
+                      value={localProperties.labelAlign || 'left'}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'labelAlign', e.target.value)}
+                    >
+                      <option value="left">Gauche</option>
+                      <option value="center">Centre</option>
+                      <option value="right">Droite</option>
                     </select>
                   </div>
                 )}
