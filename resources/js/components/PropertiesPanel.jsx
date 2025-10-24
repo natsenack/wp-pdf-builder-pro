@@ -8,11 +8,6 @@ import { elementCustomizationService } from '../services/ElementCustomizationSer
 // Composant Accordion pour organiser les propriétés
 const Accordion = memo(({ title, icon, children, defaultOpen = false, className = '' }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
-
-  // Debug: vérifier l'état initial
-  useEffect(() => {
-    console.log(`Accordion "${title}" initialized with defaultOpen:`, defaultOpen, 'isOpen:', isOpen);
-  }, [title, defaultOpen, isOpen]);
   const contentId = useMemo(() => `accordion-content-${Math.random().toString(36).substr(2, 9)}`, []);
 
   const toggleAccordion = useCallback(() => {
