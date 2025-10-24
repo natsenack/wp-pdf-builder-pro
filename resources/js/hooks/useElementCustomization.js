@@ -100,6 +100,46 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
     const element = elements.find(el => el.id === elementId);
     if (!element) return;
 
+    // Si property est un objet, traiter comme un batch de propriétés
+    if (typeof property === 'object' && property !== null && !Array.isArray(property)) {
+      const propertiesObject = property;
+      
+      // Validation pour chaque propriété du batch
+      const validatedProperties = {};
+      Object.entries(propertiesObject).forEach(([prop, val]) => {
+        let validatedValue = val;
+
+        // Validation selon le système de restrictions
+        const validation = validateProperty(element.type, prop, val);
+        if (!validation.valid) {
+          // Ne pas appliquer le changement si la propriété n'est pas autorisée
+          return;
+        }
+
+        // Validation supplémentaire selon le type de propriété
+        if (typeof val !== 'boolean' && !prop.startsWith('columns.')) {
+          try {
+            const serviceValidated = elementCustomizationService.validateProperty(prop, val);
+            if (serviceValidated !== undefined) {
+              validatedValue = serviceValidated;
+            }
+          } catch (error) {
+            // Ignorer les erreurs de validation du service
+          }
+        }
+
+        validatedProperties[prop] = validatedValue;
+      });
+
+      // Mettre à jour l'état local immédiatement pour l'UI
+      setLocalProperties(prev => ({ ...prev, ...validatedProperties }));
+
+      // Notifier le parent pour la persistance avec toutes les propriétés
+      onPropertyChange(elementId, validatedProperties);
+      return;
+    }
+
+    // Traitement normal pour une propriété individuelle
     let validatedValue = value;
 
     // Validation selon le système de restrictions

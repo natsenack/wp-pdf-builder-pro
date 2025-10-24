@@ -2354,14 +2354,14 @@ const PropertiesPanel = memo(({
                       
                       handlePropertyChange(selectedElement.id, 'template', newTemplate);
                       
-                      // PRESETS TEMPORAIREMENT DÉSACTIVÉS - causent des conflits de synchronisation
-                      /*
                       // Appliquer les presets seulement si c'est un changement de template
                       // et seulement pour les propriétés qui ne sont pas déjà définies
                       if (newTemplate !== oldTemplate) {
-                        // Appliquer les presets immédiatement
+                        // Collecter tous les changements de presets et les appliquer en batch
                         const preset = TEMPLATE_PRESETS[newTemplate];
                         if (preset) {
+                          const presetChanges = {};
+                          
                           Object.entries(preset).forEach(([property, defaultValue]) => {
                             // Appliquer seulement si la propriété n'est pas déjà personnalisée
                             // ou si elle a la valeur par défaut du template précédent
@@ -2373,12 +2373,18 @@ const PropertiesPanel = memo(({
                             // 1. La propriété n'est pas définie, ou
                             // 2. Elle a la valeur par défaut du template précédent
                             if (currentValue === undefined || currentValue === oldDefaultValue) {
-                              handlePropertyChange(selectedElement.id, property, defaultValue);
+                              presetChanges[property] = defaultValue;
                             }
                           });
+                          
+                          // Appliquer tous les presets en une seule fois si il y en a
+                          if (Object.keys(presetChanges).length > 0) {
+                            setTimeout(() => {
+                              onPropertyChange(selectedElement.id, presetChanges);
+                            }, 50); // Petit délai pour laisser le template se stabiliser
+                          }
                         }
                       }
-                      */
                     }}
                   >
                     <option value="total_only">💰 Total uniquement</option>
