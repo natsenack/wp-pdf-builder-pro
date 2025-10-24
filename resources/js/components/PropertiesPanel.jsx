@@ -893,58 +893,56 @@ const renderColorsSection = (selectedElement, localProperties, handlePropertyCha
       )}
 
       {/* Contrôle du fond - toujours disponible */}
-      <>
-        <div className="property-row">
-          <span>Fond activé:</span>
-          <label className="toggle">
-            <input
-              type="checkbox"
-              checked={isBackgroundEnabled}
-              disabled={false}
-              onChange={(e) => {
-                if (e.target.checked) {
-                  handlePropertyChange(selectedElement.id, 'backgroundColor', '#ffffff');
-                } else {
-                  handlePropertyChange(selectedElement.id, 'backgroundColor', 'transparent');
-                }
-              }}
-            />
-            <span className="toggle-slider"></span>
-          </label>
-        </div>
-
-        {/* Couleur du fond (conditionnelle) */}
-        <div style={{
-          display: isBackgroundEnabled ? 'block' : 'none',
-          transition: 'opacity 0.3s ease'
-        }}>
-          <ColorPicker
-            label="Fond"
-            value={localProperties.backgroundColor === 'transparent' ? '#ffffff' : localProperties.backgroundColor}
-            onChange={(value) => {
-              handlePropertyChange(selectedElement.id, 'backgroundColor', value);
+      <div className="property-row">
+        <span>Fond activé:</span>
+        <label className="toggle">
+          <input
+            type="checkbox"
+            checked={isBackgroundEnabled}
+            disabled={false}
+            onChange={(e) => {
+              if (e.target.checked) {
+                handlePropertyChange(selectedElement.id, 'backgroundColor', '#ffffff');
+              } else {
+                handlePropertyChange(selectedElement.id, 'backgroundColor', 'transparent');
+              }
             }}
-            presets={['transparent', '#ffffff', '#f8fafc', '#f1f5f9', '#e2e8f0', '#cbd5e1', '#94a3b8']}
           />
+          <span className="toggle-slider"></span>
+        </label>
+      </div>
 
-          {/* Opacité du fond */}
-          <div className="property-row">
-            <label>Opacité fond:</label>
-            <div className="slider-container">
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.1"
-                value={localProperties.backgroundOpacity ?? 1}
-                onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundOpacity', safeParseFloat(e.target.value, 1))}
-                className="slider"
-              />
-              <span className="slider-value">{Math.round((localProperties.backgroundOpacity ?? 1) * 100)}%</span>
-            </div>
+      {/* Couleur du fond (conditionnelle) */}
+      <div style={{
+        display: isBackgroundEnabled ? 'block' : 'none',
+        transition: 'opacity 0.3s ease'
+      }}>
+        <ColorPicker
+          label="Fond"
+          value={localProperties.backgroundColor === 'transparent' ? '#ffffff' : localProperties.backgroundColor}
+          onChange={(value) => {
+            handlePropertyChange(selectedElement.id, 'backgroundColor', value);
+          }}
+          presets={['transparent', '#ffffff', '#f8fafc', '#f1f5f9', '#e2e8f0', '#cbd5e1', '#94a3b8']}
+        />
+
+        {/* Opacité du fond */}
+        <div className="property-row">
+          <label>Opacité fond:</label>
+          <div className="slider-container">
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.1"
+              value={localProperties.backgroundOpacity ?? 1}
+              onChange={(e) => handlePropertyChange(selectedElement.id, 'backgroundOpacity', safeParseFloat(e.target.value, 1))}
+              className="slider"
+            />
+            <span className="slider-value">{Math.round((localProperties.backgroundOpacity ?? 1) * 100)}%</span>
           </div>
         </div>
-      </>
+      </div>
     </Accordion>
   );
 };
@@ -1047,21 +1045,6 @@ const renderTypographySection = (selectedElement, localProperties, handlePropert
         </select>
       </div>
 
-      {/* Décoration de texte */}
-      <div className="property-row">
-        <label>Décoration:</label>
-        <select
-          value={localProperties.textDecoration || 'none'}
-          onChange={(e) => handlePropertyChange(selectedElement.id, 'textDecoration', e.target.value)}
-          className="property-select"
-        >
-          <option value="none">Aucune</option>
-          <option value="underline">Souligné</option>
-          <option value="overline">Surligné</option>
-          <option value="line-through">Barré</option>
-        </select>
-      </div>
-
       {/* Alignement du texte */}
       <div className="property-row">
         <label>Alignement:</label>
@@ -1109,6 +1092,21 @@ const renderTypographySection = (selectedElement, localProperties, handlePropert
           <option value="uppercase">Majuscules</option>
           <option value="lowercase">Minuscules</option>
           <option value="capitalize">Première lettre</option>
+        </select>
+      </div>
+
+      {/* Décoration de texte */}
+      <div className="property-row">
+        <label>Décoration:</label>
+        <select
+          value={localProperties.textDecoration || 'none'}
+          onChange={(e) => handlePropertyChange(selectedElement.id, 'textDecoration', e.target.value)}
+          className="property-select"
+        >
+          <option value="none">Aucune</option>
+          <option value="underline">Souligné</option>
+          <option value="overline">Surligné</option>
+          <option value="line-through">Barré</option>
         </select>
       </div>
 
