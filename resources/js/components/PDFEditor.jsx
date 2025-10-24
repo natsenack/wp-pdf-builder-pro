@@ -2499,10 +2499,11 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         // En-têtes
         ctx.fillStyle = text;
         ctx.font = 'bold 11px Arial';
-        ctx.textAlign = 'left';
         headers.forEach((header, idx) => {
           const colX = contentX + idx * colWidth;
-          ctx.fillText(header, colX + 8, currentY + headerHeight / 2 + 3);
+          ctx.textAlign = idx === 0 ? 'left' : 'right';
+          const textX = idx === 0 ? colX + 8 : colX + colWidth - 8;
+          ctx.fillText(header, textX, currentY + headerHeight / 2 + 3);
         });
         currentY += headerHeight;
 
@@ -2527,8 +2528,8 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           ctx.fillStyle = text;
           row.forEach((cell, cellIdx) => {
             const colX = contentX + cellIdx * colWidth;
-            ctx.textAlign = cellIdx === 0 ? 'left' : 'center';
-            const textX = cellIdx === 0 ? colX + 8 : colX + colWidth / 2;
+            ctx.textAlign = cellIdx === 0 ? 'left' : 'right';
+            const textX = cellIdx === 0 ? colX + 8 : colX + colWidth - 8;
             ctx.fillText(cell, textX, currentY + cellHeight / 2 + 3);
           });
           
