@@ -13,6 +13,8 @@ const rgbToCss = (rgbArray) => {
 };
 
 export const TableRenderer = ({ element, previewData, mode, canvasScale = 1 }) => {
+  // DEBUG: Log que le TableRenderer est appelé
+  console.log('🔍 TableRenderer CALLED for element:', element.id, 'type:', element.dataSource || element.type);
   const {
     x = 0,
     y = 0,
