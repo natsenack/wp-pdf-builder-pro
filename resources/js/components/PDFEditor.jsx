@@ -38,7 +38,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
     if (selectedElement && selectedElement.id) {
       const currentElement = elements.find(el => el.id === selectedElement.id);
       if (currentElement && currentElement !== selectedElement) {
-        console.log('[DEBUG] Synchronizing selectedElement with elements array');
+        console.log('[DEBUG] Synchronizing selectedElement with elements array - old template:', selectedElement.template, 'new template:', currentElement.template);
         setSelectedElement(currentElement);
       } else if (!currentElement) {
         console.log('[DEBUG] Selected element no longer exists, clearing selection');
@@ -163,7 +163,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
   // Gestionnaire de mise à jour des propriétés d'un élément
   const handleElementUpdate = (elementId, newProperties) => {
-    console.log('[DEBUG] handleElementUpdate called:', { elementId, newProperties });
+    console.log('[DEBUG] handleElementUpdate called:', { elementId, newProperties, template: newProperties.template });
     const newElements = elements.map(element =>
       element.id === elementId ? { ...element, ...newProperties } : element
     );
