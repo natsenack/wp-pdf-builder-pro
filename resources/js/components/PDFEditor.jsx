@@ -953,6 +953,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             variables: element.variables || {}
           });
           displayText = templateData.content;
+          console.log('[DEBUG] PDFEditor dynamic-text:', { id: element.id, template: element.template, displayText: displayText });
         } else if (element.customContent) {
           displayText = element.customContent;
         }
