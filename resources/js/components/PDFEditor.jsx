@@ -167,13 +167,13 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
   // Gestionnaire de sauvegarde des éléments
   const handleElementsChange = (newElements) => {
+    console.log('[DEBUG] handleElementsChange called with newElements length:', newElements.length);
     const newHistory = history.slice(0, historyIndex + 1);
     newHistory.push(newElements);
     setHistory(newHistory);
     setHistoryIndex(newHistory.length - 1);
     setElements(newElements);
-
-    // Auto-save removed to prevent infinite loop - save only on explicit user action
+    console.log('[DEBUG] setElements called');
   };
 
   // Gestionnaire de drag over
