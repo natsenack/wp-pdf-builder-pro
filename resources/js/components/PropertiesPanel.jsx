@@ -2354,14 +2354,13 @@ const PropertiesPanel = memo(({
                       
                       handlePropertyChange(selectedElement.id, 'template', newTemplate);
                       
-                      // PRESETS TEMPORAIREMENT DÉSACTIVÉS - causent des conflits de synchronisation
-                      /*
-                      // Appliquer les presets seulement si c'est un changement de template
-                      // et seulement pour les propriétés qui ne sont pas déjà définies
+                      // Appliquer les presets en batch pour éviter les conflits de synchronisation
                       if (newTemplate !== oldTemplate) {
-                        // Appliquer les presets immédiatement
                         const preset = TEMPLATE_PRESETS[newTemplate];
-                        if (preset) {
+                        if (preset && onBatchUpdate) {
+                          // Créer un objet avec toutes les propriétés du preset
+                          const presetUpdates = {};
+                          
                           Object.entries(preset).forEach(([property, defaultValue]) => {
                             // Appliquer seulement si la propriété n'est pas déjà personnalisée
                             // ou si elle a la valeur par défaut du template précédent
@@ -2373,12 +2372,19 @@ const PropertiesPanel = memo(({
                             // 1. La propriété n'est pas définie, ou
                             // 2. Elle a la valeur par défaut du template précédent
                             if (currentValue === undefined || currentValue === oldDefaultValue) {
-                              handlePropertyChange(selectedElement.id, property, defaultValue);
+                              presetUpdates[property] = defaultValue;
                             }
                           });
+                          
+                          // Appliquer toutes les propriétés du preset en une seule opération
+                          if (Object.keys(presetUpdates).length > 0) {
+                            onBatchUpdate([{
+                              elementId: selectedElement.id,
+                              properties: presetUpdates
+                            }]);
+                          }
                         }
                       }
-                      */
                     }}
                   >
                     <option value="total_only">💰 Total uniquement</option>
