@@ -2660,10 +2660,16 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             }
 
             // Ligne verticale subtile entre les colonnes si bordures activées
-            if (element.showBorders !== false && cellIndex < row.length - 1) {
+            if (element.showBorders !== false && displayIndex < headersToDisplay.length - 1) {
               ctx.strokeStyle = `rgb(${tableStyleData.row_border.join(',')})`;
-              ctx.lineWidth = 0.8; // Bordure plus visible
-              const lineX = tableX + columnWidths.slice(0, cellIndex + 1).reduce((sum, w) => sum + w, 0);
+              ctx.lineWidth = 0.8;
+              const nextColumnIndex = headerIndices[displayIndex + 1];
+              let lineX = tableX;
+              let nextAccumWidth = 0;
+              for (let i = 0; i < nextColumnIndex; i++) {
+                nextAccumWidth += columnWidths[i] || 0;
+              }
+              lineX = tableX + nextAccumWidth;
               ctx.beginPath();
               ctx.moveTo(lineX, currentY + 1);
               ctx.lineTo(lineX, currentY + rowHeight - 1);
@@ -2696,24 +2702,35 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
                 '#f9fafb';
             }
 
-            // Trouver l'index de la colonne Prix et Total
-            const priceColumnIndex = tableData.headers.indexOf('Prix');
-            const totalColumnIndex = tableData.headers.indexOf('Total');
+            // Trouver l'index de la colonne Prix et Total (dans les colonnes visibles)
+            const priceHeaderIndex = filteredHeaders.length > 0 ? 
+              filteredHeaders.indexOf('Prix') : tableData.headers.indexOf('Prix');
+            const totalHeaderIndex = filteredHeaders.length > 0 ? 
+              filteredHeaders.indexOf('Total') : tableData.headers.indexOf('Total');
 
-            // Calculer la position et largeur pour le fond des totaux (seulement colonnes Prix et Total)
+            // Obtenir les index réels dans le tableau original
+            const priceColumnIndex = priceHeaderIndex !== -1 ? 
+              (filteredHeaders.length > 0 ? visibleColumnIndices[priceHeaderIndex] : priceHeaderIndex) : -1;
+            const totalColumnIndex = totalHeaderIndex !== -1 ? 
+              (filteredHeaders.length > 0 ? visibleColumnIndices[totalHeaderIndex] : totalHeaderIndex) : -1;
+
+            // Calculer la position et largeur pour le fond des totaux
             const labelColumnIndex = priceColumnIndex !== -1 ? priceColumnIndex : 0;
-            const valueColumnIndex = totalColumnIndex !== -1 ? totalColumnIndex : tableData.headers.length - 1;
+            const valueColumnIndex = totalColumnIndex !== -1 ? totalColumnIndex : (numColumns - 1);
 
-            // Position X de départ du fond (début de la colonne du libellé)
-            let totalBgX;
-            if (labelColumnIndex === 0) {
-              totalBgX = tableX;
-            } else {
-              totalBgX = tableX + columnWidths.slice(0, labelColumnIndex).reduce((sum, w) => sum + w, 0);
+            // Position X de départ du fond
+            let totalBgX = tableX;
+            let labelAccumWidth = 0;
+            for (let i = 0; i < labelColumnIndex; i++) {
+              labelAccumWidth += columnWidths[i] || 0;
             }
+            totalBgX = tableX + labelAccumWidth;
 
             // Largeur du fond (de la colonne du libellé à la colonne de la valeur)
-            const totalBgWidth = columnWidths.slice(labelColumnIndex, valueColumnIndex - labelColumnIndex + 1).reduce((sum, w) => sum + w, 0);
+            let totalBgWidth = 0;
+            for (let i = labelColumnIndex; i <= valueColumnIndex; i++) {
+              totalBgWidth += columnWidths[i] || 0;
+            }
 
             // Fond uni sans coins arrondis pour un look professionnel
             ctx.fillRect(totalBgX, currentY, totalBgWidth, totalHeight);
@@ -2723,7 +2740,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
               ctx.strokeStyle = tableStyleData.header_border ?
                 `rgb(${tableStyleData.header_border.join(',')})` :
                 '#d1d5db';
-              ctx.lineWidth = 0.8; // Bordure plus visible
+              ctx.lineWidth = 0.8;
               ctx.strokeRect(totalBgX, currentY, totalBgWidth, totalHeight);
             }
 
