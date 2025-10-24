@@ -95,7 +95,7 @@ export const useElementCustomization = (selectedElements, elements, onPropertyCh
     } else {
       setLocalProperties({});
     }
-  }, [selectedElement]); // Dépendre de selectedElement entier pour détecter les changements de propriétés
+  }, [selectedElement?.id]); // Ne dépendre que de l'ID de l'élément pour éviter les conflits avec les changements locaux
 
   // Gestionnaire de changement de propriété avec validation
   const handlePropertyChange = useCallback((elementId, property, value) => {
