@@ -2435,6 +2435,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.shadowOffsetY = 0;
       } else if (element.type === 'product_table') {
         // === RENDU SIMPLIFIÉ DU TABLEAU DE PRODUITS ===
+        // Style: STRIPED MODERN (n°2)
         // Système: 1) Thème préfabriqué + 2) Surcharges de couleur simples
         
         const tableX = element.x || 30;
@@ -2442,25 +2443,18 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         const tableWidth = element.width || 530;
         const cellHeight = 18;
         const headerHeight = 22;
+        const totalHeight = 18;
 
-        // 1. THÈME (13 presets disponibles)
-        const themeKey = element.tableStyle || 'default';
-        const theme = {
-          default: { headerBg: '#f8fafc', headerText: '#334155', altRowBg: '#fafbfc', rowText: '#334155', border: '#e2e8f0' },
-          classic: { headerBg: '#1e293b', headerText: '#ffffff', altRowBg: '#ffffff', rowText: '#000000', border: '#334155' },
-          striped: { headerBg: '#e0f2fe', headerText: '#0c4a6e', altRowBg: '#f8fafc', rowText: '#0c4a6e', border: '#0ea5e9' },
-          bordered: { headerBg: '#f8fafc', headerText: '#475569', altRowBg: '#ffffff', rowText: '#475569', border: '#94a3b8' },
-          minimal: { headerBg: '#ffffff', headerText: '#6b7280', altRowBg: '#ffffff', rowText: '#6b7280', border: '#f3f4f6' },
-          modern: { headerBg: '#e9d5ff', headerText: '#6b21a8', altRowBg: '#faf5ff', rowText: '#6b21a8', border: '#a855f7' },
-          blue_ocean: { headerBg: '#dbeafe', headerText: '#1e40af', altRowBg: '#eff6ff', rowText: '#1e40af', border: '#3b82f6' },
-          emerald_forest: { headerBg: '#d1fae5', headerText: '#065f46', altRowBg: '#ecfdf5', rowText: '#065f46', border: '#10b981' },
-          sunset_orange: { headerBg: '#fed7aa', headerText: '#c2410c', altRowBg: '#fff7ed', rowText: '#c2410c', border: '#f97316' },
-          royal_purple: { headerBg: '#e9d5ff', headerText: '#7c3aed', altRowBg: '#faf5ff', rowText: '#7c3aed', border: '#a855f7' },
-          rose_pink: { headerBg: '#fce7f3', headerText: '#db2777', altRowBg: '#fdf2f8', rowText: '#db2777', border: '#f472b6' },
-          teal_aqua: { headerBg: '#ccfbf1', headerText: '#0d9488', altRowBg: '#f0fdfa', rowText: '#0d9488', border: '#14b8a6' }
-        }[themeKey] || { headerBg: '#f8fafc', headerText: '#334155', altRowBg: '#fafbfc', rowText: '#334155', border: '#e2e8f0' };
+        // Thème STRIPED MODERN (n°2 - celui sélectionné)
+        const theme = { 
+          headerBg: '#e0f2fe', 
+          headerText: '#0c4a6e', 
+          altRowBg: '#f8fafc', 
+          rowText: '#0c4a6e', 
+          border: '#0ea5e9'
+        };
 
-        // 2. SURCHARGES DE COULEUR (optionnelles - ne pas utiliser si vides)
+        // Surcharges de couleur optionnelles
         const headerBg = element.tableColorPrimary || theme.headerBg;
         const altRowBg = element.tableColorSecondary || theme.altRowBg;
         const rowBg = '#ffffff';
@@ -2485,12 +2479,27 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         // === RENDU ===
         const colWidth = tableWidth / headers.length;
 
-        // En-tête
-        ctx.fillStyle = headerBg;
+        // En-tête - Style STRIPED MODERN avec dégradé
+        const headerGradient = ctx.createLinearGradient(tableX, currentY, tableX, currentY + headerHeight);
+        headerGradient.addColorStop(0, headerBg);
+        headerGradient.addColorStop(1, '#b3e5fc'); // Gradient plus clair
+        ctx.fillStyle = headerGradient;
         ctx.fillRect(tableX, currentY, tableWidth, headerHeight);
+        
+        // Bordure supérieure de l'en-tête
         ctx.strokeStyle = borderColor;
-        ctx.lineWidth = borderWidth;
-        ctx.strokeRect(tableX, currentY, tableWidth, headerHeight);
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(tableX, currentY);
+        ctx.lineTo(tableX + tableWidth, currentY);
+        ctx.stroke();
+        
+        // Bordure inférieure de l'en-tête
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(tableX, currentY + headerHeight);
+        ctx.lineTo(tableX + tableWidth, currentY + headerHeight);
+        ctx.stroke();
 
         ctx.fillStyle = headerText;
         ctx.font = 'bold 11px Arial';
@@ -2500,15 +2509,16 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         });
         currentY += headerHeight;
 
-        // Lignes de données
+        // Lignes de données - Alternance de couleurs
         ctx.font = '10px Arial';
         rows.forEach((row, rowIdx) => {
           const isAltRow = rowIdx % 2 !== 0;
           ctx.fillStyle = isAltRow ? altRowBg : rowBg;
           ctx.fillRect(tableX, currentY, tableWidth, cellHeight);
           
+          // Bordure fine
           ctx.strokeStyle = borderColor;
-          ctx.lineWidth = borderWidth;
+          ctx.lineWidth = 0.5;
           ctx.strokeRect(tableX, currentY, tableWidth, cellHeight);
           
           ctx.fillStyle = rowText;
@@ -2517,6 +2527,76 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           });
           currentY += cellHeight;
         });
+
+        // Totaux
+        currentY += 4; // Espace avant totaux
+        
+        // Ligne de séparation
+        ctx.strokeStyle = borderColor;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(tableX, currentY);
+        ctx.lineTo(tableX + tableWidth, currentY);
+        ctx.stroke();
+        
+        currentY += 6;
+
+        // Sous-total
+        ctx.fillStyle = rowBg;
+        ctx.fillRect(tableX, currentY, tableWidth, totalHeight);
+        ctx.strokeStyle = borderColor;
+        ctx.lineWidth = 0.5;
+        ctx.strokeRect(tableX, currentY, tableWidth, totalHeight);
+        ctx.fillStyle = rowText;
+        ctx.font = '10px Arial';
+        ctx.textAlign = 'left';
+        ctx.fillText('Sous-total :', tableX + 10, currentY + totalHeight / 2 + 3);
+        ctx.textAlign = 'right';
+        ctx.fillText('87,48 €', tableX + tableWidth - 10, currentY + totalHeight / 2 + 3);
+        currentY += totalHeight;
+
+        // Frais de port
+        ctx.fillStyle = altRowBg;
+        ctx.fillRect(tableX, currentY, tableWidth, totalHeight);
+        ctx.strokeStyle = borderColor;
+        ctx.lineWidth = 0.5;
+        ctx.strokeRect(tableX, currentY, tableWidth, totalHeight);
+        ctx.fillStyle = rowText;
+        ctx.textAlign = 'left';
+        ctx.fillText('Frais de port :', tableX + 10, currentY + totalHeight / 2 + 3);
+        ctx.textAlign = 'right';
+        ctx.fillText('10,00 €', tableX + tableWidth - 10, currentY + totalHeight / 2 + 3);
+        currentY += totalHeight;
+
+        // TVA
+        ctx.fillStyle = rowBg;
+        ctx.fillRect(tableX, currentY, tableWidth, totalHeight);
+        ctx.strokeStyle = borderColor;
+        ctx.lineWidth = 0.5;
+        ctx.strokeRect(tableX, currentY, tableWidth, totalHeight);
+        ctx.fillStyle = rowText;
+        ctx.textAlign = 'left';
+        ctx.fillText('TVA (20%) :', tableX + 10, currentY + totalHeight / 2 + 3);
+        ctx.textAlign = 'right';
+        ctx.fillText('19,50 €', tableX + tableWidth - 10, currentY + totalHeight / 2 + 3);
+        currentY += totalHeight;
+
+        // TOTAL - Mise en évidence
+        const totalGradient = ctx.createLinearGradient(tableX, currentY, tableX, currentY + totalHeight);
+        totalGradient.addColorStop(0, altRowBg);
+        totalGradient.addColorStop(1, '#c8e6c9'); // Vert clair pour mettre en évidence
+        ctx.fillStyle = totalGradient;
+        ctx.fillRect(tableX, currentY, tableWidth, totalHeight);
+        ctx.strokeStyle = borderColor;
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(tableX, currentY, tableWidth, totalHeight);
+        ctx.fillStyle = borderColor;
+        ctx.font = 'bold 11px Arial';
+        ctx.textAlign = 'left';
+        ctx.fillText('TOTAL :', tableX + 10, currentY + totalHeight / 2 + 3);
+        ctx.textAlign = 'right';
+        ctx.fillText('116,98 €', tableX + tableWidth - 10, currentY + totalHeight / 2 + 3);
+        currentY += totalHeight;
 
         // Restaurer l'opacité
         ctx.globalAlpha = 1;

@@ -17,7 +17,7 @@ const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
         showBorders: false,
         headers: ['Produit', 'Qté', 'Prix'],
         dataSource: 'order_items',
-        tableStyle: 'default',
+        tableStyle: 'striped',
         tableColorPrimary: '',
         tableColorSecondary: '',
         columns: {
