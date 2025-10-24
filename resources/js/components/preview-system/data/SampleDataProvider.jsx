@@ -112,6 +112,8 @@ export class SampleDataProvider {
         email: 'marie.dubois@email.com',
         phone: '+33 6 12 34 56 78',
         address: '15 Avenue des Champs-Élysées\n75008 Paris\nFrance',
+        billing_address: '15 Avenue des Champs-Élysées\n75008 Paris\nFrance',
+        shipping_address: '456 Avenue des Roses\n75016 Paris\nFrance',
         company: 'TechCorp SARL',
         vat: 'FR12345678901',
         siret: '12345678901234'
@@ -133,6 +135,7 @@ export class SampleDataProvider {
       order: {
         number: 'CMD-2025-001',
         date: '19/10/2025',
+        due_date: '19/11/2025',
         total: '1 229,96 €',
         subtotal: '1 129,97 €',
         tax: '99,99 €',
@@ -704,15 +707,40 @@ export class SampleDataProvider {
 
     let content = customContent;
 
-    // Templates prédéfinis
-    if (template === 'total_only') {
-      content = `Total: ${this.sampleData.order.total}`;
-    } else if (template === 'order_summary') {
-      content = `Commande ${this.sampleData.order.number} - Total: ${this.sampleData.order.total}`;
-    } else if (template === 'customer_greeting') {
-      content = `Cher ${this.sampleData.customer.name},`;
-    } else if (template === 'company_info') {
-      content = `${this.sampleData.company.name} - ${this.sampleData.company.email}`;
+    // Templates prédéfinis avec leur contenu par défaut
+    const templates = {
+      'total_only': '{{order_total}} €',
+      'order_info': 'Commande {{order_number}} - {{order_date}}',
+      'customer_info': '{{customer_name}} - {{customer_email}}',
+      'customer_address': '{{customer_name}}\n{{billing_address}}',
+      'full_header': 'Facture N° {{order_number}}\nClient: {{customer_name}}\nTotal: {{order_total}} €',
+      'invoice_header': 'FACTURE N° {{order_number}}\nDate: {{date}}\nClient: {{customer_name}}\n{{billing_address}}',
+      'order_summary': 'Sous-total: {{order_subtotal}} €\nFrais de port: {{order_shipping}} €\nTVA: {{order_tax}} €\nTotal: {{order_total}} €',
+      'payment_info': 'Échéance: {{due_date}}\nMontant: {{order_total}} €',
+      'payment_terms': 'Conditions de paiement: 30 jours\nÉchéance: {{due_date}}\nMontant dû: {{order_total}} €',
+      'shipping_info': 'Adresse de livraison:\n{{shipping_address}}',
+      'thank_you': 'Merci pour votre commande !\nNous vous remercions de votre confiance.',
+      'legal_notice': 'TVA non applicable - art. 293 B du CGI\nPaiement à 30 jours fin de mois',
+      'bank_details': 'Coordonnées bancaires:\nIBAN: FR76 1234 5678 9012 3456 7890 123\nBIC: BNPAFRPP',
+      'contact_info': 'Contact: contact@monentreprise.com\nTél: 01 23 45 67 89',
+      'order_confirmation': 'CONFIRMATION DE COMMANDE\nCommande {{order_number}} du {{order_date}}\nStatut: Confirmée',
+      'delivery_note': 'BON DE LIVRAISON\nCommande {{order_number}}\nDestinataire: {{customer_name}}\n{{shipping_address}}',
+      'warranty_info': 'Garantie: 2 ans pièces et main d\'œuvre\nService après-vente: sav@monentreprise.com',
+      'return_policy': 'Droit de rétractation: 14 jours\nRetour sous 30 jours pour défauts',
+      'signature_line': 'Signature du client:\n\n_______________________________\nDate: {{date}}',
+      'invoice_footer': 'Facture générée automatiquement le {{date}}\nConservez cette facture pour vos archives',
+      'terms_conditions': 'Conditions générales de vente disponibles sur notre site\nwww.monentreprise.com/conditions',
+      'quality_guarantee': 'Tous nos produits sont garantis contre les défauts\nService qualité: qualite@monentreprise.com',
+      'eco_friendly': 'Entreprise engagée pour l\'environnement\nEmballages recyclables et biodégradables',
+      'follow_up': 'Suivi de commande: {{order_number}}\nContact: suivi@monentreprise.com',
+      'custom': customContent || '{{order_total}} €'
+    };
+
+    // Utiliser le template prédéfini si disponible, sinon utiliser customContent
+    if (templates[template]) {
+      content = templates[template];
+    } else if (template === 'custom') {
+      content = customContent;
     }
 
     // Remplacer toutes les variables disponibles
