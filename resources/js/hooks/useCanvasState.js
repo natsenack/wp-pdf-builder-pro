@@ -370,6 +370,8 @@ export const useCanvasState = ({
       showDiscount: false,
       showTotal: false,
       tableStyleChoice: Math.random() < 0.5 ? 'minimal' : 'striped', // Initialiser une seule fois
+      tablePrimaryColor: '#667eea', // Couleur primaire par défaut
+      tableSecondaryColor: '#f5f5f5', // Couleur secondaire par défaut
 
       // Propriétés de barre de progression
       progressColor: '#3b82f6',

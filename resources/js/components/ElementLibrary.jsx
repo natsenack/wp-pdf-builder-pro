@@ -19,6 +19,8 @@ const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
         dataSource: 'order_items',
         tableStyle: 'default',
         tableStyleChoice: Math.random() < 0.5 ? 'minimal' : 'striped', // Initialiser aléatoirement une fois
+        tablePrimaryColor: '#667eea', // Couleur primaire par défaut
+        tableSecondaryColor: '#f5f5f5', // Couleur secondaire par défaut
         columns: {
           image: true,
           name: true,

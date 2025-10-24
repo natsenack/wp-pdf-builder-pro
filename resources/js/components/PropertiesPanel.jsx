@@ -126,6 +126,7 @@ const PropertiesPanel = memo(({
       'borderColor', 'borderWidth', 'borderStyle', 'borderRadius', // Bordures
       'boxShadowColor', 'boxShadowBlur', 'boxShadowSpread', // Ombres
       'opacity', 'textShadowBlur', // Transparence et effets
+      'tablePrimaryColor', 'tableSecondaryColor', // Couleurs thème tableau
       // Assurer une synchronisation immédiate des templates dynamiques
       'template', 'customContent'
     ].includes(property)) {
