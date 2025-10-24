@@ -168,6 +168,12 @@ export const TableRenderer = ({ element, previewData, mode, canvasScale = 1 }) =
     header.toLowerCase() === 'tva'
   );
 
+  // Déterminer où placer les labels des totaux
+  // Si la colonne prix existe et n'est pas la première colonne, utiliser la colonne précédente
+  // Sinon, utiliser la colonne prix elle-même avec une mise en page différente
+  const labelColumnIndex = (priceColumnIndex > 0) ? priceColumnIndex - 1 : priceColumnIndex;
+  const useSeparateLabelColumn = priceColumnIndex > 0;
+
   return (
     <div
       className="preview-element preview-table-element"
@@ -251,7 +257,7 @@ export const TableRenderer = ({ element, previewData, mode, canvasScale = 1 }) =
             {showSubtotal && tableData.totals.subtotal && (
               <tr style={{ backgroundColor: rgbToCss(tableStyleData.alt_row_bg) }}>
                 {Array.from({ length: finalHeaders.length }, (_, index) => {
-                  if (index === priceColumnIndex - 1) {
+                  if (useSeparateLabelColumn && index === labelColumnIndex) {
                     return (
                       <td key={index} style={{ ...cellStyle, fontWeight: 'bold', textAlign: 'right' }}>
                         Sous-total:
@@ -259,8 +265,14 @@ export const TableRenderer = ({ element, previewData, mode, canvasScale = 1 }) =
                     );
                   } else if (index === priceColumnIndex) {
                     return (
-                      <td key={index} style={{ ...cellStyle, fontWeight: 'bold', textAlign: 'right', borderTop: '1px solid #dee2e6' }}>
-                        {tableData.totals.subtotal}
+                      <td key={index} style={{
+                        ...cellStyle,
+                        fontWeight: 'bold',
+                        textAlign: 'right',
+                        borderTop: '1px solid #dee2e6',
+                        ...(useSeparateLabelColumn ? {} : { paddingLeft: '80px' }) // Ajouter de l'espace pour le label si pas de colonne séparée
+                      }}>
+                        {useSeparateLabelColumn ? tableData.totals.subtotal : `Sous-total: ${tableData.totals.subtotal}`}
                       </td>
                     );
                   } else {
@@ -272,7 +284,7 @@ export const TableRenderer = ({ element, previewData, mode, canvasScale = 1 }) =
             {showShipping && tableData.totals.shipping && (
               <tr style={{ backgroundColor: 'transparent' }}>
                 {Array.from({ length: finalHeaders.length }, (_, index) => {
-                  if (index === priceColumnIndex - 1) {
+                  if (useSeparateLabelColumn && index === labelColumnIndex) {
                     return (
                       <td key={index} style={{ ...cellStyle, fontWeight: 'bold', textAlign: 'right' }}>
                         Frais de port:
@@ -280,8 +292,13 @@ export const TableRenderer = ({ element, previewData, mode, canvasScale = 1 }) =
                     );
                   } else if (index === priceColumnIndex) {
                     return (
-                      <td key={index} style={{ ...cellStyle, fontWeight: 'bold', textAlign: 'right' }}>
-                        {tableData.totals.shipping}
+                      <td key={index} style={{
+                        ...cellStyle,
+                        fontWeight: 'bold',
+                        textAlign: 'right',
+                        ...(useSeparateLabelColumn ? {} : { paddingLeft: '80px' })
+                      }}>
+                        {useSeparateLabelColumn ? tableData.totals.shipping : `Frais de port: ${tableData.totals.shipping}`}
                       </td>
                     );
                   } else {
@@ -293,7 +310,7 @@ export const TableRenderer = ({ element, previewData, mode, canvasScale = 1 }) =
             {showTaxes && tableData.totals.tax && (
               <tr style={{ backgroundColor: rgbToCss(tableStyleData.alt_row_bg) }}>
                 {Array.from({ length: finalHeaders.length }, (_, index) => {
-                  if (index === priceColumnIndex - 1) {
+                  if (useSeparateLabelColumn && index === labelColumnIndex) {
                     return (
                       <td key={index} style={{ ...cellStyle, fontWeight: 'bold', textAlign: 'right' }}>
                         TVA:
@@ -301,8 +318,13 @@ export const TableRenderer = ({ element, previewData, mode, canvasScale = 1 }) =
                     );
                   } else if (index === priceColumnIndex) {
                     return (
-                      <td key={index} style={{ ...cellStyle, fontWeight: 'bold', textAlign: 'right' }}>
-                        {tableData.totals.tax}
+                      <td key={index} style={{
+                        ...cellStyle,
+                        fontWeight: 'bold',
+                        textAlign: 'right',
+                        ...(useSeparateLabelColumn ? {} : { paddingLeft: '80px' })
+                      }}>
+                        {useSeparateLabelColumn ? tableData.totals.tax : `TVA: ${tableData.totals.tax}`}
                       </td>
                     );
                   } else {
@@ -314,7 +336,7 @@ export const TableRenderer = ({ element, previewData, mode, canvasScale = 1 }) =
             {showDiscount && tableData.totals.discount && (
               <tr style={{ backgroundColor: 'transparent' }}>
                 {Array.from({ length: finalHeaders.length }, (_, index) => {
-                  if (index === priceColumnIndex - 1) {
+                  if (useSeparateLabelColumn && index === labelColumnIndex) {
                     return (
                       <td key={index} style={{ ...cellStyle, fontWeight: 'bold', textAlign: 'right' }}>
                         Remise:
@@ -322,8 +344,13 @@ export const TableRenderer = ({ element, previewData, mode, canvasScale = 1 }) =
                     );
                   } else if (index === priceColumnIndex) {
                     return (
-                      <td key={index} style={{ ...cellStyle, fontWeight: 'bold', textAlign: 'right' }}>
-                        {tableData.totals.discount}
+                      <td key={index} style={{
+                        ...cellStyle,
+                        fontWeight: 'bold',
+                        textAlign: 'right',
+                        ...(useSeparateLabelColumn ? {} : { paddingLeft: '80px' })
+                      }}>
+                        {useSeparateLabelColumn ? tableData.totals.discount : `Remise: ${tableData.totals.discount}`}
                       </td>
                     );
                   } else {
@@ -335,20 +362,38 @@ export const TableRenderer = ({ element, previewData, mode, canvasScale = 1 }) =
             {showTotal && tableData.totals.total && (
               <tr style={{ backgroundColor: rgbToCss(tableStyleData.alt_row_bg) }}>
                 {Array.from({ length: finalHeaders.length }, (_, index) => {
-                  if (index === priceColumnIndex - 1) {
+                  if (useSeparateLabelColumn && index === labelColumnIndex) {
                     return (
-                      <td key={index} style={{ ...cellStyle, fontWeight: 'bold', textAlign: 'right', fontSize: '14px', color: '#2563eb', borderTop: '2px solid #2563eb' }}>
+                      <td key={index} style={{
+                        ...cellStyle,
+                        fontWeight: 'bold',
+                        textAlign: 'right',
+                        fontSize: '14px',
+                        color: '#2563eb',
+                        borderTop: '2px solid #2563eb'
+                      }}>
                         Total:
                       </td>
                     );
                   } else if (index === priceColumnIndex) {
                     return (
-                      <td key={index} style={{ ...cellStyle, fontWeight: 'bold', textAlign: 'right', fontSize: '14px', color: '#2563eb', borderTop: '2px solid #2563eb' }}>
-                        {tableData.totals.total}
+                      <td key={index} style={{
+                        ...cellStyle,
+                        fontWeight: 'bold',
+                        textAlign: 'right',
+                        fontSize: '14px',
+                        color: '#2563eb',
+                        borderTop: '2px solid #2563eb',
+                        ...(useSeparateLabelColumn ? {} : { paddingLeft: '80px' })
+                      }}>
+                        {useSeparateLabelColumn ? tableData.totals.total : `Total: ${tableData.totals.total}`}
                       </td>
                     );
                   } else {
-                    return <td key={index} style={{ ...cellStyle, borderTop: index === 0 ? '2px solid #2563eb' : 'none' }}></td>;
+                    return <td key={index} style={{
+                      ...cellStyle,
+                      borderTop: index === 0 ? '2px solid #2563eb' : 'none'
+                    }}></td>;
                   }
                 })}
               </tr>
