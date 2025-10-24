@@ -646,6 +646,49 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
       // Dessiner l'élément
 
       if (element.type === 'text') {
+        // Appliquer l'opacité si définie
+        if (element.opacity !== undefined && element.opacity < 1) {
+            ctx.globalAlpha = element.opacity;
+        }
+
+        // Appliquer les ombres si définies
+        if (element.shadow) {
+          ctx.shadowColor = element.shadowColor || '#000000';
+          ctx.shadowBlur = element.shadowBlur || 5;
+          ctx.shadowOffsetX = element.shadowOffsetX || 2;
+          ctx.shadowOffsetY = element.shadowOffsetY || 2;
+        }
+
+        const textX = element.x || 10;
+        const textY = element.y || 30;
+        const textWidth = element.width || 200;
+        const textHeight = element.height || 30;
+
+        // Fond du texte si défini
+        if (element.backgroundColor && element.backgroundColor !== 'transparent') {
+          ctx.fillStyle = element.backgroundColor;
+          if (element.borderRadius > 0) {
+            ctx.beginPath();
+            ctx.roundRect(textX, textY, textWidth, textHeight, element.borderRadius);
+            ctx.fill();
+          } else {
+            ctx.fillRect(textX, textY, textWidth, textHeight);
+          }
+        }
+
+        // Bordure du fond si définie
+        if (element.borderWidth > 0) {
+          ctx.strokeStyle = element.borderColor || '#000000';
+          ctx.lineWidth = element.borderWidth || 1;
+          if (element.borderRadius > 0) {
+            ctx.beginPath();
+            ctx.roundRect(textX, textY, textWidth, textHeight, element.borderRadius);
+            ctx.stroke();
+          } else {
+            ctx.strokeRect(textX, textY, textWidth, textHeight);
+          }
+        }
+
         // Appliquer la couleur du texte
         ctx.fillStyle = element.color || '#000000';
 
@@ -657,9 +700,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         // Appliquer l'alignement du texte
         ctx.textAlign = element.textAlign || 'left';
 
-        const textX = element.x || 10;
-        const textY = element.y || 30;
-        ctx.fillText(element.text || 'Texte', textX, textY);
+        ctx.fillText(element.text || 'Texte', textX, textY + (element.fontSize || 16) * 0.8);
       } else if (element.type === 'rectangle') {
         // Appliquer l'opacité si définie
         if (element.opacity !== undefined && element.opacity < 1) {
