@@ -1606,43 +1606,67 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
             const icon = fieldIcons[field] || '📄';
 
-            // Traitement spécial pour l'adresse : formatage sur deux lignes avec séparation au code postal
+            // Traitement spécial pour l'adresse : formatage sur deux lignes avec séparation intelligente
             if (field === 'address') {
               // Diviser l'adresse en lignes
               const addressLines = value.split('\n').map(line => line.trim()).filter(line => line);
 
-              // Trouver la ligne contenant le code postal (5 chiffres généralement)
-              let postalCodeIndex = -1;
-              let postalCodeLine = '';
+              // Chercher d'abord s'il y a une boîte postale
+              let postalBoxIndex = -1;
+              let postalBoxLine = '';
 
               addressLines.forEach((line, index) => {
-                // Détecter un code postal français (5 chiffres)
-                if (/\b\d{5}\b/.test(line)) {
-                  postalCodeIndex = index;
-                  postalCodeLine = line;
+                if (/\b(?:BP|boîte postale|boite postale|b\.p\.|p\.o\. box|postbox|case postale)\b/i.test(line)) {
+                  postalBoxIndex = index;
+                  postalBoxLine = line;
                 }
               });
 
               let displayLines = [];
 
-              if (postalCodeIndex !== -1) {
-                // Si on a trouvé un code postal, séparer l'adresse
-                const linesBeforePostal = addressLines.slice(0, postalCodeIndex);
-                const linesAfterPostal = addressLines.slice(postalCodeIndex);
+              if (postalBoxIndex !== -1) {
+                // Si on a trouvé une boîte postale, elle va sur la ligne 2 avec la suite
+                const linesBeforePostal = addressLines.slice(0, postalBoxIndex);
+                const linesAfterPostal = addressLines.slice(postalBoxIndex);
 
-                // Ligne 1 : Tout ce qui précède le code postal
+                // Ligne 1 : Tout ce qui précède la boîte postale
                 displayLines.push(linesBeforePostal.join(' '));
 
-                // Ligne 2 : Le code postal et tout ce qui suit
+                // Ligne 2 : La boîte postale et tout ce qui suit
                 displayLines.push(linesAfterPostal.join(' '));
               } else {
-                // Si pas de code postal détecté, prendre les deux premières lignes seulement
-                if (addressLines.length >= 2) {
-                  displayLines.push(addressLines[0]);
-                  displayLines.push(addressLines.slice(1).join(' '));
+                // Pas de boîte postale, chercher un code postal (formats internationaux)
+                let postalCodeIndex = -1;
+
+                addressLines.forEach((line, index) => {
+                  // Détection de codes postaux internationaux
+                  if (/\b\d{5}(?:-\d{4})?\b/.test(line) || // US: 12345 ou 12345-6789
+                      /\b[A-Z]\d[A-Z] \d[A-Z]\d\b/i.test(line) || // Canada: A1A 1A1
+                      /\b[A-Z]{1,2}\d{1,2}[A-Z]? \d[A-Z]{2}\b/i.test(line) || // UK: SW1A 1AA, M1 1AA
+                      /\b\d{4,6}\b/.test(line)) { // Autres pays: 4-6 chiffres
+                    postalCodeIndex = index;
+                  }
+                });
+
+                if (postalCodeIndex !== -1) {
+                  // Si on a trouvé un code postal, séparer l'adresse
+                  const linesBeforePostal = addressLines.slice(0, postalCodeIndex);
+                  const linesAfterPostal = addressLines.slice(postalCodeIndex);
+
+                  // Ligne 1 : Tout ce qui précède le code postal
+                  displayLines.push(linesBeforePostal.join(' '));
+
+                  // Ligne 2 : Le code postal et tout ce qui suit
+                  displayLines.push(linesAfterPostal.join(' '));
                 } else {
-                  displayLines.push(addressLines[0] || '');
-                  displayLines.push('');
+                  // Si pas de code postal détecté, prendre les deux premières lignes seulement
+                  if (addressLines.length >= 2) {
+                    displayLines.push(addressLines[0]);
+                    displayLines.push(addressLines.slice(1).join(' '));
+                  } else {
+                    displayLines.push(addressLines[0] || '');
+                    displayLines.push('');
+                  }
                 }
               }
 
@@ -1784,38 +1808,62 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
                 // Diviser l'adresse en lignes
                 const addressLines = value.split('\n').map(line => line.trim()).filter(line => line);
 
-                // Trouver la ligne contenant le code postal (5 chiffres généralement)
-                let postalCodeIndex = -1;
-                let postalCodeLine = '';
+                // Chercher d'abord s'il y a une boîte postale
+                let postalBoxIndex = -1;
+                let postalBoxLine = '';
 
                 addressLines.forEach((line, index) => {
-                  // Détecter un code postal français (5 chiffres)
-                  if (/\b\d{5}\b/.test(line)) {
-                    postalCodeIndex = index;
-                    postalCodeLine = line;
+                  if (/\b(?:BP|boîte postale|boite postale|b\.p\.|p\.o\. box|postbox|case postale)\b/i.test(line)) {
+                    postalBoxIndex = index;
+                    postalBoxLine = line;
                   }
                 });
 
                 let displayLines = [];
 
-                if (postalCodeIndex !== -1) {
-                  // Si on a trouvé un code postal, séparer l'adresse
-                  const linesBeforePostal = addressLines.slice(0, postalCodeIndex);
-                  const linesAfterPostal = addressLines.slice(postalCodeIndex);
+                if (postalBoxIndex !== -1) {
+                  // Si on a trouvé une boîte postale, elle va sur la ligne 2 avec la suite
+                  const linesBeforePostal = addressLines.slice(0, postalBoxIndex);
+                  const linesAfterPostal = addressLines.slice(postalBoxIndex);
 
-                  // Ligne 1 : Tout ce qui précède le code postal
+                  // Ligne 1 : Tout ce qui précède la boîte postale
                   displayLines.push(linesBeforePostal.join(' '));
 
-                  // Ligne 2 : Le code postal et tout ce qui suit
+                  // Ligne 2 : La boîte postale et tout ce qui suit
                   displayLines.push(linesAfterPostal.join(' '));
                 } else {
-                  // Si pas de code postal détecté, prendre les deux premières lignes seulement
-                  if (addressLines.length >= 2) {
-                    displayLines.push(addressLines[0]);
-                    displayLines.push(addressLines.slice(1).join(' '));
+                  // Pas de boîte postale, chercher un code postal (formats internationaux)
+                  let postalCodeIndex = -1;
+
+                  addressLines.forEach((line, index) => {
+                    // Détection de codes postaux internationaux
+                    if (/\b\d{5}(?:-\d{4})?\b/.test(line) || // US: 12345 ou 12345-6789
+                        /\b[A-Z]\d[A-Z] \d[A-Z]\d\b/i.test(line) || // Canada: A1A 1A1
+                        /\b[A-Z]{1,2}\d{1,2}[A-Z]? \d[A-Z]{2}\b/i.test(line) || // UK: SW1A 1AA, M1 1AA
+                        /\b\d{4,6}\b/.test(line)) { // Autres pays: 4-6 chiffres
+                      postalCodeIndex = index;
+                    }
+                  });
+
+                  if (postalCodeIndex !== -1) {
+                    // Si on a trouvé un code postal, séparer l'adresse
+                    const linesBeforePostal = addressLines.slice(0, postalCodeIndex);
+                    const linesAfterPostal = addressLines.slice(postalCodeIndex);
+
+                    // Ligne 1 : Tout ce qui précède le code postal
+                    displayLines.push(linesBeforePostal.join(' '));
+
+                    // Ligne 2 : Le code postal et tout ce qui suit
+                    displayLines.push(linesAfterPostal.join(' '));
                   } else {
-                    displayLines.push(addressLines[0] || '');
-                    displayLines.push('');
+                    // Si pas de code postal détecté, prendre les deux premières lignes seulement
+                    if (addressLines.length >= 2) {
+                      displayLines.push(addressLines[0]);
+                      displayLines.push(addressLines.slice(1).join(' '));
+                    } else {
+                      displayLines.push(addressLines[0] || '');
+                      displayLines.push('');
+                    }
                   }
                 }
 
@@ -1880,38 +1928,62 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
                 // Diviser l'adresse en lignes
                 const addressLines = value.split('\n').map(line => line.trim()).filter(line => line);
 
-                // Trouver la ligne contenant le code postal (5 chiffres généralement)
-                let postalCodeIndex = -1;
-                let postalCodeLine = '';
+                // Chercher d'abord s'il y a une boîte postale
+                let postalBoxIndex = -1;
+                let postalBoxLine = '';
 
                 addressLines.forEach((line, index) => {
-                  // Détecter un code postal français (5 chiffres)
-                  if (/\b\d{5}\b/.test(line)) {
-                    postalCodeIndex = index;
-                    postalCodeLine = line;
+                  if (/\b(?:BP|boîte postale|boite postale|b\.p\.|p\.o\. box|postbox|case postale)\b/i.test(line)) {
+                    postalBoxIndex = index;
+                    postalBoxLine = line;
                   }
                 });
 
                 let displayLines = [];
 
-                if (postalCodeIndex !== -1) {
-                  // Si on a trouvé un code postal, séparer l'adresse
-                  const linesBeforePostal = addressLines.slice(0, postalCodeIndex);
-                  const linesAfterPostal = addressLines.slice(postalCodeIndex);
+                if (postalBoxIndex !== -1) {
+                  // Si on a trouvé une boîte postale, elle va sur la ligne 2 avec la suite
+                  const linesBeforePostal = addressLines.slice(0, postalBoxIndex);
+                  const linesAfterPostal = addressLines.slice(postalBoxIndex);
 
-                  // Ligne 1 : Tout ce qui précède le code postal
+                  // Ligne 1 : Tout ce qui précède la boîte postale
                   displayLines.push(linesBeforePostal.join(' '));
 
-                  // Ligne 2 : Le code postal et tout ce qui suit
+                  // Ligne 2 : La boîte postale et tout ce qui suit
                   displayLines.push(linesAfterPostal.join(' '));
                 } else {
-                  // Si pas de code postal détecté, prendre les deux premières lignes seulement
-                  if (addressLines.length >= 2) {
-                    displayLines.push(addressLines[0]);
-                    displayLines.push(addressLines.slice(1).join(' '));
+                  // Pas de boîte postale, chercher un code postal (formats internationaux)
+                  let postalCodeIndex = -1;
+
+                  addressLines.forEach((line, index) => {
+                    // Détection de codes postaux internationaux
+                    if (/\b\d{5}(?:-\d{4})?\b/.test(line) || // US: 12345 ou 12345-6789
+                        /\b[A-Z]\d[A-Z] \d[A-Z]\d\b/i.test(line) || // Canada: A1A 1A1
+                        /\b[A-Z]{1,2}\d{1,2}[A-Z]? \d[A-Z]{2}\b/i.test(line) || // UK: SW1A 1AA, M1 1AA
+                        /\b\d{4,6}\b/.test(line)) { // Autres pays: 4-6 chiffres
+                      postalCodeIndex = index;
+                    }
+                  });
+
+                  if (postalCodeIndex !== -1) {
+                    // Si on a trouvé un code postal, séparer l'adresse
+                    const linesBeforePostal = addressLines.slice(0, postalCodeIndex);
+                    const linesAfterPostal = addressLines.slice(postalCodeIndex);
+
+                    // Ligne 1 : Tout ce qui précède le code postal
+                    displayLines.push(linesBeforePostal.join(' '));
+
+                    // Ligne 2 : Le code postal et tout ce qui suit
+                    displayLines.push(linesAfterPostal.join(' '));
                   } else {
-                    displayLines.push(addressLines[0] || '');
-                    displayLines.push('');
+                    // Si pas de code postal détecté, prendre les deux premières lignes seulement
+                    if (addressLines.length >= 2) {
+                      displayLines.push(addressLines[0]);
+                      displayLines.push(addressLines.slice(1).join(' '));
+                    } else {
+                      displayLines.push(addressLines[0] || '');
+                      displayLines.push('');
+                    }
                   }
                 }
 
