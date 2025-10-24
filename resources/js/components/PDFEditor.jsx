@@ -1122,49 +1122,68 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
         ctx.font = `${fontStyle}${fontWeight} ${fontSize}px ${fontFamily}`;
 
+        // Calculer les dimensions pour le positionnement
+        const baselineY = textY + textHeight / 2;
+        let labelWidth = 0;
+        let availableWidth = textWidth;
+
+        // Calculer la largeur de l'étiquette si elle doit être affichée
+        if (element.showLabel && element.labelText) {
+          let processedLabel = element.labelText;
+          if (element.textTransform === 'uppercase') {
+            processedLabel = processedLabel.toUpperCase();
+          } else if (element.textTransform === 'lowercase') {
+            processedLabel = processedLabel.toLowerCase();
+          } else if (element.textTransform === 'capitalize') {
+            processedLabel = processedLabel.replace(/\b\w/g, l => l.toUpperCase());
+          }
+
+          labelWidth = letterSpacing > 0 ?
+            processedLabel.split('').reduce((width, char) => width + ctx.measureText(char).width + letterSpacing, -letterSpacing) :
+            ctx.measureText(processedLabel).width;
+          availableWidth = textWidth - labelWidth - 10; // 10px d'espacement
+        }
+
         // Afficher le label si demandé
         if (element.showLabel && element.labelText) {
           ctx.textAlign = 'left';
-          const labelBaselineY = textY + textHeight / 2;
-
-          // Appliquer la transformation de texte à l'étiquette
-          let labelText = element.labelText;
+          let processedLabel = element.labelText;
           if (element.textTransform === 'uppercase') {
-            labelText = labelText.toUpperCase();
+            processedLabel = processedLabel.toUpperCase();
           } else if (element.textTransform === 'lowercase') {
-            labelText = labelText.toLowerCase();
+            processedLabel = processedLabel.toLowerCase();
           } else if (element.textTransform === 'capitalize') {
-            labelText = labelText.replace(/\b\w/g, l => l.toUpperCase());
+            processedLabel = processedLabel.replace(/\b\w/g, l => l.toUpperCase());
           }
 
-          // Appliquer l'espacement des lettres à l'étiquette
+          // Afficher l'étiquette avec espacement des lettres si défini
           if (letterSpacing > 0) {
             let charX = textX;
-            for (let i = 0; i < labelText.length; i++) {
-              ctx.fillText(labelText[i], charX, labelBaselineY);
-              charX += ctx.measureText(labelText[i]).width + letterSpacing;
+            for (let i = 0; i < processedLabel.length; i++) {
+              ctx.fillText(processedLabel[i], charX, baselineY);
+              charX += ctx.measureText(processedLabel[i]).width + letterSpacing;
             }
           } else {
-            ctx.fillText(labelText, textX, labelBaselineY);
+            ctx.fillText(processedLabel, textX, baselineY);
           }
 
           // Appliquer la décoration de texte à l'étiquette
           if (textDecoration === 'underline' || textDecoration === 'line-through') {
-            const labelWidth = letterSpacing > 0 ?
-              labelText.split('').reduce((width, char) => width + ctx.measureText(char).width + letterSpacing, -letterSpacing) :
-              ctx.measureText(labelText).width;
-
-            const lineY = labelBaselineY + (textDecoration === 'underline' ? 2 : -2);
+            const decorationY = baselineY + (textDecoration === 'underline' ? 2 : -2);
             ctx.strokeStyle = element.color || '#000000';
             ctx.lineWidth = Math.max(1, fontSize / 20);
             ctx.beginPath();
-            ctx.moveTo(textX, lineY);
-            ctx.lineTo(textX + labelWidth, lineY);
+            ctx.moveTo(textX, decorationY);
+            ctx.lineTo(textX + labelWidth, decorationY);
             ctx.stroke();
           }
         }
 
-        // Afficher le numéro formaté avec style moderne
+        // Position du numéro (à droite de l'étiquette avec espacement)
+        const numberX = element.showLabel && element.labelText ? textX + labelWidth + 10 : textX;
+        const numberWidth = availableWidth;
+
+        // Afficher le numéro formaté
         const formattedText = orderData.formatted || 'Commande #12345';
 
         // Appliquer la transformation de texte
@@ -1177,70 +1196,69 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           displayText = displayText.replace(/\b\w/g, l => l.toUpperCase());
         }
 
-        ctx.textAlign = element.textAlign || 'right';
-        const numberBaselineY = textY + textHeight / 2;
+        ctx.textAlign = element.textAlign || 'left';
 
         // Ajouter un fond subtil au numéro pour le mettre en valeur
         if (element.highlightNumber) {
-          const numberWidth = letterSpacing > 0 ?
+          const numberTextWidth = letterSpacing > 0 ?
             displayText.split('').reduce((width, char) => width + ctx.measureText(char).width + letterSpacing, -letterSpacing) :
             ctx.measureText(displayText).width;
 
-          let numberX = textX + textWidth - numberWidth;
+          let highlightX = numberX + numberWidth - numberTextWidth;
           if (element.textAlign === 'center') {
-            numberX = textX + (textWidth - numberWidth) / 2;
+            highlightX = numberX + (numberWidth - numberTextWidth) / 2;
           } else if (element.textAlign === 'left') {
-            numberX = textX;
+            highlightX = numberX;
           }
 
           // Fond subtil
           ctx.fillStyle = element.numberBackground || 'rgba(59, 130, 246, 0.1)';
-          ctx.fillRect(numberX - 4, numberBaselineY - fontSize * 0.7, numberWidth + 8, fontSize * 1.2);
+          ctx.fillRect(highlightX - 4, baselineY - fontSize * 0.7, numberTextWidth + 8, fontSize * 1.2);
         }
 
         // Afficher le numéro avec espacement des lettres si défini
         if (letterSpacing > 0) {
-          let charX = textX + textWidth;
+          let charX = numberX + numberWidth;
           if (element.textAlign === 'center') {
             const totalWidth = displayText.split('').reduce((width, char) => width + ctx.measureText(char).width + letterSpacing, -letterSpacing);
-            charX = textX + (textWidth - totalWidth) / 2 + ctx.measureText(displayText[0]).width / 2;
+            charX = numberX + (numberWidth - totalWidth) / 2 + ctx.measureText(displayText[0]).width / 2;
           } else if (element.textAlign === 'left') {
-            charX = textX + ctx.measureText(displayText[0]).width / 2;
+            charX = numberX + ctx.measureText(displayText[0]).width / 2;
           }
 
           for (let i = 0; i < displayText.length; i++) {
-            ctx.fillText(displayText[i], charX, numberBaselineY);
+            ctx.fillText(displayText[i], charX, baselineY);
             charX += ctx.measureText(displayText[i]).width + letterSpacing;
           }
         } else {
-          let textXPos = textX + textWidth;
+          let textXPos = numberX + numberWidth;
           if (element.textAlign === 'center') {
-            textXPos = textX + textWidth / 2;
+            textXPos = numberX + numberWidth / 2;
           } else if (element.textAlign === 'left') {
-            textXPos = textX;
+            textXPos = numberX;
           }
-          ctx.fillText(displayText, textXPos, numberBaselineY);
+          ctx.fillText(displayText, textXPos, baselineY);
         }
 
         // Appliquer la décoration de texte au numéro
         if (textDecoration === 'underline' || textDecoration === 'line-through') {
-          const numberWidth = letterSpacing > 0 ?
+          const numberTextWidth = letterSpacing > 0 ?
             displayText.split('').reduce((width, char) => width + ctx.measureText(char).width + letterSpacing, -letterSpacing) :
             ctx.measureText(displayText).width;
 
-          let decorationX = textX + textWidth - numberWidth;
+          let decorationX = numberX + numberWidth - numberTextWidth;
           if (element.textAlign === 'center') {
-            decorationX = textX + (textWidth - numberWidth) / 2;
+            decorationX = numberX + (numberWidth - numberTextWidth) / 2;
           } else if (element.textAlign === 'left') {
-            decorationX = textX;
+            decorationX = numberX;
           }
 
-          const decorationY = numberBaselineY + (textDecoration === 'underline' ? 2 : -fontSize * 0.2);
+          const decorationY = baselineY + (textDecoration === 'underline' ? 2 : -fontSize * 0.2);
           ctx.strokeStyle = element.color || '#000000';
           ctx.lineWidth = Math.max(1, fontSize / 20);
           ctx.beginPath();
           ctx.moveTo(decorationX, decorationY);
-          ctx.lineTo(decorationX + numberWidth, decorationY);
+          ctx.lineTo(decorationX + numberTextWidth, decorationY);
           ctx.stroke();
         }
 
