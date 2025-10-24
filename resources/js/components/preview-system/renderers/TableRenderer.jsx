@@ -161,6 +161,13 @@ export const TableRenderer = ({ element, previewData, mode, canvasScale = 1 }) =
     color: tableStyleData.rowTextColor
   };
 
+  // Trouver l'index de la colonne "Prix" pour aligner les totaux
+  const priceColumnIndex = finalHeaders.findIndex(header =>
+    header.toLowerCase().includes('prix') ||
+    header.toLowerCase() === 'total' ||
+    header.toLowerCase() === 'tva'
+  );
+
   return (
     <div
       className="preview-element preview-table-element"
@@ -241,77 +248,108 @@ export const TableRenderer = ({ element, previewData, mode, canvasScale = 1 }) =
          tableData.totals && Object.keys(tableData.totals).length > 0 && (
           <tfoot>
             {showSubtotal && tableData.totals.subtotal && (
-              <tr>
-                <td
-                  colSpan={finalHeaders.length}
-                  style={{
-                    ...cellStyle,
-                    textAlign: 'right',
-                    fontWeight: 'bold',
-                    borderTop: '1px solid #dee2e6'
-                  }}
-                >
-                  Sous-total: {tableData.totals.subtotal}
-                </td>
+              <tr style={{ backgroundColor: rgbToCss(tableStyleData.alt_row_bg) }}>
+                {Array.from({ length: finalHeaders.length }, (_, index) => {
+                  if (index === priceColumnIndex - 1) {
+                    return (
+                      <td key={index} style={{ ...cellStyle, fontWeight: 'bold', textAlign: 'right' }}>
+                        Sous-total:
+                      </td>
+                    );
+                  } else if (index === priceColumnIndex) {
+                    return (
+                      <td key={index} style={{ ...cellStyle, fontWeight: 'bold', textAlign: 'right', borderTop: '1px solid #dee2e6' }}>
+                        {tableData.totals.subtotal}
+                      </td>
+                    );
+                  } else {
+                    return <td key={index} style={cellStyle}></td>;
+                  }
+                })}
               </tr>
             )}
             {showShipping && tableData.totals.shipping && (
-              <tr>
-                <td
-                  colSpan={finalHeaders.length}
-                  style={{
-                    ...cellStyle,
-                    textAlign: 'right',
-                    fontWeight: 'bold'
-                  }}
-                >
-                  Frais de port: {tableData.totals.shipping}
-                </td>
+              <tr style={{ backgroundColor: 'transparent' }}>
+                {Array.from({ length: finalHeaders.length }, (_, index) => {
+                  if (index === priceColumnIndex - 1) {
+                    return (
+                      <td key={index} style={{ ...cellStyle, fontWeight: 'bold', textAlign: 'right' }}>
+                        Frais de port:
+                      </td>
+                    );
+                  } else if (index === priceColumnIndex) {
+                    return (
+                      <td key={index} style={{ ...cellStyle, fontWeight: 'bold', textAlign: 'right' }}>
+                        {tableData.totals.shipping}
+                      </td>
+                    );
+                  } else {
+                    return <td key={index} style={cellStyle}></td>;
+                  }
+                })}
               </tr>
             )}
             {showTaxes && tableData.totals.tax && (
-              <tr>
-                <td
-                  colSpan={finalHeaders.length}
-                  style={{
-                    ...cellStyle,
-                    textAlign: 'right',
-                    fontWeight: 'bold'
-                  }}
-                >
-                  TVA: {tableData.totals.tax}
-                </td>
+              <tr style={{ backgroundColor: rgbToCss(tableStyleData.alt_row_bg) }}>
+                {Array.from({ length: finalHeaders.length }, (_, index) => {
+                  if (index === priceColumnIndex - 1) {
+                    return (
+                      <td key={index} style={{ ...cellStyle, fontWeight: 'bold', textAlign: 'right' }}>
+                        TVA:
+                      </td>
+                    );
+                  } else if (index === priceColumnIndex) {
+                    return (
+                      <td key={index} style={{ ...cellStyle, fontWeight: 'bold', textAlign: 'right' }}>
+                        {tableData.totals.tax}
+                      </td>
+                    );
+                  } else {
+                    return <td key={index} style={cellStyle}></td>;
+                  }
+                })}
               </tr>
             )}
             {showDiscount && tableData.totals.discount && (
-              <tr>
-                <td
-                  colSpan={finalHeaders.length}
-                  style={{
-                    ...cellStyle,
-                    textAlign: 'right',
-                    fontWeight: 'bold'
-                  }}
-                >
-                  Remise: {tableData.totals.discount}
-                </td>
+              <tr style={{ backgroundColor: 'transparent' }}>
+                {Array.from({ length: finalHeaders.length }, (_, index) => {
+                  if (index === priceColumnIndex - 1) {
+                    return (
+                      <td key={index} style={{ ...cellStyle, fontWeight: 'bold', textAlign: 'right' }}>
+                        Remise:
+                      </td>
+                    );
+                  } else if (index === priceColumnIndex) {
+                    return (
+                      <td key={index} style={{ ...cellStyle, fontWeight: 'bold', textAlign: 'right' }}>
+                        {tableData.totals.discount}
+                      </td>
+                    );
+                  } else {
+                    return <td key={index} style={cellStyle}></td>;
+                  }
+                })}
               </tr>
             )}
             {showTotal && tableData.totals.total && (
-              <tr>
-                <td
-                  colSpan={finalHeaders.length}
-                  style={{
-                    ...cellStyle,
-                    textAlign: 'right',
-                    fontWeight: 'bold',
-                    fontSize: '14px',
-                    color: '#2563eb',
-                    borderTop: '2px solid #2563eb'
-                  }}
-                >
-                  Total: {tableData.totals.total}
-                </td>
+              <tr style={{ backgroundColor: rgbToCss(tableStyleData.alt_row_bg) }}>
+                {Array.from({ length: finalHeaders.length }, (_, index) => {
+                  if (index === priceColumnIndex - 1) {
+                    return (
+                      <td key={index} style={{ ...cellStyle, fontWeight: 'bold', textAlign: 'right', fontSize: '14px', color: '#2563eb', borderTop: '2px solid #2563eb' }}>
+                        Total:
+                      </td>
+                    );
+                  } else if (index === priceColumnIndex) {
+                    return (
+                      <td key={index} style={{ ...cellStyle, fontWeight: 'bold', textAlign: 'right', fontSize: '14px', color: '#2563eb', borderTop: '2px solid #2563eb' }}>
+                        {tableData.totals.total}
+                      </td>
+                    );
+                  } else {
+                    return <td key={index} style={{ ...cellStyle, borderTop: index === 0 ? '2px solid #2563eb' : 'none' }}></td>;
+                  }
+                })}
               </tr>
             )}
           </tfoot>
