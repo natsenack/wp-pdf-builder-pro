@@ -102,7 +102,7 @@ function CanvasMode() {
               }}>
                 {elements.map((element, index) => (
                   <ElementRenderer
-                    key={`${element.type}-${index}`}
+                    key={`${element.type}-${element.id}-${element.template}-${element.customContent}-${Date.now()}`}
                     element={element}
                     scale={1} // Échelle déjà appliquée au conteneur
                     templateData={templateData}
