@@ -154,11 +154,18 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   // Gestionnaire de mise à jour des propriétés d'un élément
   const handleElementUpdate = (elementId, newProperties) => {
     console.log('[DEBUG] handleElementUpdate called:', { elementId, newProperties, template: newProperties.template });
-    const newElements = elements.map(element =>
-      element.id === elementId ? { ...element, ...newProperties } : element
-    );
-    console.log('[DEBUG] newElements element template:', newElements.find(el => el.id === elementId)?.template);
-    handleElementsChange(newElements);
+    setElements(prevElements => {
+      const newElements = prevElements.map(element =>
+        element.id === elementId ? { ...element, ...newProperties } : element
+      );
+      console.log('[DEBUG] newElements element template:', newElements.find(el => el.id === elementId)?.template);
+      // Update history
+      const newHistory = history.slice(0, historyIndex + 1);
+      newHistory.push(newElements);
+      setHistory(newHistory);
+      setHistoryIndex(newHistory.length - 1);
+      return newElements;
+    });
   };
 
   // Gestionnaire de suppression d'élément
