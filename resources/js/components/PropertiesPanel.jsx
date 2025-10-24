@@ -2357,26 +2357,24 @@ const PropertiesPanel = memo(({
                       // Appliquer les presets seulement si c'est un changement de template
                       // et seulement pour les propriétés qui ne sont pas déjà définies
                       if (newTemplate !== oldTemplate) {
-                        // Délai pour éviter les conflits avec le changement de template
-                        setTimeout(() => {
-                          const preset = TEMPLATE_PRESETS[newTemplate];
-                          if (preset) {
-                            Object.entries(preset).forEach(([property, defaultValue]) => {
-                              // Appliquer seulement si la propriété n'est pas déjà personnalisée
-                              // ou si elle a la valeur par défaut du template précédent
-                              const currentValue = localProperties[property];
-                              const oldPreset = oldTemplate ? TEMPLATE_PRESETS[oldTemplate] : null;
-                              const oldDefaultValue = oldPreset ? oldPreset[property] : null;
-                              
-                              // Appliquer le preset si :
-                              // 1. La propriété n'est pas définie, ou
-                              // 2. Elle a la valeur par défaut du template précédent
-                              if (currentValue === undefined || currentValue === oldDefaultValue) {
-                                handlePropertyChange(selectedElement.id, property, defaultValue);
-                              }
-                            });
-                          }
-                        }, 100); // Petit délai pour éviter les conflits
+                        // Appliquer les presets immédiatement
+                        const preset = TEMPLATE_PRESETS[newTemplate];
+                        if (preset) {
+                          Object.entries(preset).forEach(([property, defaultValue]) => {
+                            // Appliquer seulement si la propriété n'est pas déjà personnalisée
+                            // ou si elle a la valeur par défaut du template précédent
+                            const currentValue = localProperties[property];
+                            const oldPreset = oldTemplate ? TEMPLATE_PRESETS[oldTemplate] : null;
+                            const oldDefaultValue = oldPreset ? oldPreset[property] : null;
+                            
+                            // Appliquer le preset si :
+                            // 1. La propriété n'est pas définie, ou
+                            // 2. Elle a la valeur par défaut du template précédent
+                            if (currentValue === undefined || currentValue === oldDefaultValue) {
+                              handlePropertyChange(selectedElement.id, property, defaultValue);
+                            }
+                          });
+                        }
                       }
                     }}
                   >
