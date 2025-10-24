@@ -19,7 +19,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
   // État des éléments
   const [elements, setElements] = useState(initialElements);
-  const [selectedElement, setSelectedElement] = useState(null);
+  const [selectedElement, setSelectedElement] = useState(null); // Maintenant c'est l'objet élément
 
   // État de l'historique
   const [history, setHistory] = useState([initialElements]);
@@ -135,12 +135,13 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
     const newElements = [...elements, newElement];
     handleElementsChange(newElements);
-    setSelectedElement(newElement.id);
+    setSelectedElement(newElement);
   };
 
   // Gestionnaire de sélection d'élément
   const handleElementSelect = (elementId) => {
-    setSelectedElement(elementId);
+    const element = elements.find(el => el.id === elementId);
+    setSelectedElement(element);
     if (elementId) {
       setShowPropertiesPanel(true); // Afficher automatiquement le panneau des propriétés
     }
@@ -160,7 +161,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   const handleElementDelete = (elementId) => {
     const newElements = elements.filter(element => element.id !== elementId);
     handleElementsChange(newElements);
-    if (selectedElement === elementId) {
+    if (selectedElement?.id === elementId) {
       setSelectedElement(null);
     }
   };
@@ -208,7 +209,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
         const newElements = [...elements, newElement];
         handleElementsChange(newElements);
-        setSelectedElement(newElement.id);
+        setSelectedElement(newElement);
       }
     } catch (error) {
       console.error('Erreur lors du drop:', error);
@@ -272,7 +273,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
       const newElements = [...elements, newElement];
       handleElementsChange(newElements);
-      setSelectedElement(newElement.id);
+      setSelectedElement(newElement);
       setSelectedTool('select'); // Revenir à l'outil de sélection
     }
   };
@@ -351,7 +352,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
     });
 
     if (clickedElement) {
-      setSelectedElement(clickedElement.id);
+      setSelectedElement(clickedElement);
       setShowPropertiesPanel(true); // Afficher automatiquement le panneau des propriétés
       // Démarrer le drag
       setIsDragging(true);
@@ -551,7 +552,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
     elements.forEach((element, index) => {
 
       // Mettre en évidence l'élément sélectionné
-      if (selectedElement === element.id) {
+      if (selectedElement?.id === element.id) {
         ctx.strokeStyle = '#007cba';
         ctx.lineWidth = 2;
         ctx.setLineDash([5, 5]);
@@ -586,7 +587,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
       }
 
       // Dessiner les poignées de redimensionnement si l'élément est sélectionné
-      if (selectedElement === element.id && (element.type === 'rectangle' || element.type === 'circle' ||
+      if (selectedElement?.id === element.id && (element.type === 'rectangle' || element.type === 'circle' ||
           element.type === 'company_logo' || element.type === 'dynamic-text' || element.type === 'order_number' ||
           element.type === 'document_type' || element.type === 'customer_info' || element.type === 'company_info' ||
           element.type === 'product_table' || element.type === 'mentions' || element.type === 'line')) {
