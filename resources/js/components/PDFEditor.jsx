@@ -560,8 +560,14 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
       }
     }
 
-    // Dessiner les éléments
-    elements.forEach((element, index) => {
+    // Dessiner les éléments (order_number en dernier pour qu'ils apparaissent au-dessus)
+    const sortedElements = [...elements].sort((a, b) => {
+      if (a.type === 'order_number' && b.type !== 'order_number') return 1;
+      if (b.type === 'order_number' && a.type !== 'order_number') return -1;
+      return 0;
+    });
+
+    sortedElements.forEach((element, index) => {
 
       // Mettre en évidence l'élément sélectionné
       if (selectedElement?.id === element.id) {
@@ -1136,9 +1142,10 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         let labelWidth = 0;
         let availableWidth = textWidth - (textMargin * 2);
 
-        // Calculer la largeur de l'étiquette si elle doit être affichée
+        // Calculer les propriétés de l'étiquette si elle doit être affichée
+        let processedLabel = '';
         if (element.showLabel && element.labelText) {
-          let processedLabel = element.labelText;
+          processedLabel = element.labelText;
           if (element.textTransform === 'uppercase') {
             processedLabel = processedLabel.toUpperCase();
           } else if (element.textTransform === 'lowercase') {
@@ -1150,41 +1157,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           labelWidth = letterSpacing > 0 ?
             processedLabel.split('').reduce((width, char) => width + ctx.measureText(char).width + letterSpacing, -letterSpacing) :
             ctx.measureText(processedLabel).width;
-        }
-
-        // Afficher le label si demandé
-        if (element.showLabel && element.labelText) {
-          ctx.textAlign = 'left';
-          let processedLabel = element.labelText;
-          if (element.textTransform === 'uppercase') {
-            processedLabel = processedLabel.toUpperCase();
-          } else if (element.textTransform === 'lowercase') {
-            processedLabel = processedLabel.toLowerCase();
-          } else if (element.textTransform === 'capitalize') {
-            processedLabel = processedLabel.replace(/\b\w/g, l => l.toUpperCase());
-          }
-
-          // Afficher l'étiquette avec espacement des lettres si défini
-          if (letterSpacing > 0) {
-            let charX = textX + textMargin;
-            for (let i = 0; i < processedLabel.length; i++) {
-              ctx.fillText(processedLabel[i], charX, baselineY);
-              charX += ctx.measureText(processedLabel[i]).width + letterSpacing;
-            }
-          } else {
-            ctx.fillText(processedLabel, textX + textMargin, baselineY);
-          }
-
-          // Appliquer la décoration de texte à l'étiquette
-          if (textDecoration === 'underline' || textDecoration === 'line-through') {
-            const decorationY = baselineY + (textDecoration === 'underline' ? 2 : -2);
-            ctx.strokeStyle = element.color || '#000000';
-            ctx.lineWidth = Math.max(1, fontSize / 20);
-            ctx.beginPath();
-            ctx.moveTo(textX + textMargin, decorationY);
-            ctx.lineTo(textX + textMargin + labelWidth, decorationY);
-            ctx.stroke();
-          }
         }
 
         // Position du numéro (à droite de l'étiquette avec espacement)
