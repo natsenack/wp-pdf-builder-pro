@@ -2191,10 +2191,11 @@ const PropertiesPanel = memo(({
                           type="checkbox"
                           checked={localProperties.fields?.includes(key) ?? true}
                           onChange={(e) => {
-                            const currentFields = localProperties.fields || ['name', 'email', 'phone', 'address', 'company', 'vat', 'siret'];
+                            const allFields = ['name', 'email', 'phone', 'address', 'company', 'vat', 'siret'];
+                            const currentFields = localProperties.fields || allFields;
                             const newFields = e.target.checked
-                              ? [...currentFields, key]
-                              : currentFields.filter(f => f !== key);
+                              ? allFields.filter(field => field === key || currentFields.includes(field))
+                              : allFields.filter(field => field !== key && currentFields.includes(field));
                             handlePropertyChange(selectedElement.id, 'fields', newFields);
                           }}
                         />
