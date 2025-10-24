@@ -289,7 +289,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
     // Vérifier d'abord si on clique sur une poignée de redimensionnement
     if (selectedElement) {
-      const element = elements.find(el => el.id === selectedElement);
+      const element = elements.find(el => el.id === selectedElement?.id);
       if (element) {
         const handle = getResizeHandleAtPosition(element, x, y);
         if (handle) {
@@ -375,7 +375,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
     const y = (event.clientY - rect.top) / zoom;
 
     if (isResizing && selectedElement && resizeHandle) {
-      const element = elements.find(el => el.id === selectedElement);
+      const element = elements.find(el => el.id === selectedElement?.id);
       if (element) {
         let newWidth = resizeStart.width;
         let newHeight = resizeStart.height;
@@ -511,6 +511,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
   // Fonction de rendu du canvas
   const renderCanvas = () => {
+    console.log('[DEBUG] PDFEditor renderCanvas called with elements:', elements.length, 'selectedElement:', selectedElement?.id);
     const canvas = canvasRef.current;
     if (!canvas) {
       console.log('PDFEditor renderCanvas: No canvas ref');
@@ -956,7 +957,13 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             variables: element.variables || {}
           });
           displayText = templateData.content;
-          console.log('[DEBUG] PDFEditor dynamic-text:', { id: element.id, template: element.template, displayText: displayText });
+          console.log('[DEBUG] PDFEditor renderCanvas dynamic-text:', {
+            id: element.id,
+            template: element.template,
+            customContent: element.customContent,
+            displayText: displayText,
+            timestamp: Date.now()
+          });
         } else if (element.customContent) {
           displayText = element.customContent;
         }
