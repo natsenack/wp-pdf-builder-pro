@@ -2509,7 +2509,10 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             ctx.font = `${fontStyle}${totalFontWeight} ${totalFontSize}px ${fontFamily}`;
             ctx.fillStyle = tableStyleData.headerTextColor;
 
-            // Libellé du total (dans la première colonne)
+            // Trouver l'index de la colonne Prix
+            const priceColumnIndex = tableData.headers.indexOf('Prix');
+
+            // Libellé du total (dans la colonne Prix si elle existe, sinon première colonne)
             let label = key === 'subtotal' ? 'Sous-total' :
                        key === 'shipping' ? 'Frais de port' :
                        key === 'tax' ? 'TVA' :
@@ -2525,8 +2528,15 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
               label = label.replace(/\b\w/g, l => l.toUpperCase());
             }
 
-            // Positionner le libellé dans la première colonne (Produit/Nom)
-            const labelX = tableX + (columnWidths[0] / 2);
+            // Positionner le libellé dans la colonne Prix (ou première colonne si Prix n'existe pas)
+            const labelColumnIndex = priceColumnIndex !== -1 ? priceColumnIndex : 0;
+            let labelX;
+            if (labelColumnIndex === 0) {
+              labelX = tableX + (columnWidths[0] / 2);
+            } else {
+              const previousWidth = columnWidths.slice(0, labelColumnIndex).reduce((sum, w) => sum + w, 0);
+              labelX = tableX + previousWidth + (columnWidths[labelColumnIndex] / 2);
+            }
             const labelY = currentY + totalHeight / 2 + (totalFontSize * 0.35);
             ctx.textAlign = 'center';
 
@@ -2540,7 +2550,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
               ctx.fillText(label, labelX, labelY);
             }
 
-            // Valeur du total (dans la dernière colonne Total)
+            // Valeur du total (dans la même colonne Prix)
             let valueText = String(value);
 
             // Appliquer la transformation de texte à la valeur
@@ -2552,28 +2562,19 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
               valueText = valueText.replace(/\b\w/g, l => l.toUpperCase());
             }
 
-            // Positionner la valeur dans la colonne Total (dernière colonne)
-            const totalColumnIndex = tableData.headers.indexOf('Total');
-            if (totalColumnIndex !== -1) {
-              let valueX;
-              if (totalColumnIndex === 0) {
-                valueX = tableX + (columnWidths[0] / 2);
-              } else {
-                const previousWidth = columnWidths.slice(0, totalColumnIndex).reduce((sum, w) => sum + w, 0);
-                valueX = tableX + previousWidth + (columnWidths[totalColumnIndex] / 2);
-              }
-              const valueY = currentY + totalHeight / 2 + (totalFontSize * 0.35);
-              ctx.textAlign = 'center';
+            // Positionner la valeur dans la colonne Prix (même position que le libellé)
+            const valueX = labelX; // Même position X que le libellé
+            const valueY = currentY + totalHeight / 2 + (totalFontSize * 0.35);
+            ctx.textAlign = 'center';
 
-              if (letterSpacing > 0) {
-                let charX = valueX - (valueText.length * letterSpacing) / 2;
-                for (let i = 0; i < valueText.length; i++) {
-                  ctx.fillText(valueText[i], charX, valueY);
-                  charX += ctx.measureText(valueText[i]).width + letterSpacing;
-                }
-              } else {
-                ctx.fillText(valueText, valueX, valueY);
+            if (letterSpacing > 0) {
+              let charX = valueX - (valueText.length * letterSpacing) / 2;
+              for (let i = 0; i < valueText.length; i++) {
+                ctx.fillText(valueText[i], charX, valueY);
+                charX += ctx.measureText(valueText[i]).width + letterSpacing;
               }
+            } else {
+              ctx.fillText(valueText, valueX, valueY);
             }
 
             // Lignes verticales entre les colonnes pour les totaux
