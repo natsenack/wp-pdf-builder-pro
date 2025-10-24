@@ -2656,6 +2656,20 @@ const PropertiesPanel = memo(({
                     />
                   </div>
                 )}
+
+                {localProperties.showLabel && (
+                  <div className="property-row">
+                    <label>Alignement de l'étiquette:</label>
+                    <select
+                      value={localProperties.labelAlign || 'left'}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'labelAlign', e.target.value)}
+                    >
+                      <option value="left">Gauche</option>
+                      <option value="center">Centre</option>
+                      <option value="right">Droite</option>
+                    </select>
+                  </div>
+                )}
               </div>
             )}
 
