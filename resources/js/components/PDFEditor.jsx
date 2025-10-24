@@ -19,7 +19,10 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
   // État des éléments
   const [elements, setElements] = useState(initialElements);
-  const [selectedElement, setSelectedElement] = useState(null); // Maintenant c'est l'objet élément
+  const [selectedElementId, setSelectedElementId] = useState(null); // Maintenant c'est l'ID de l'élément
+
+  // Fonction pour obtenir l'élément sélectionné
+  const selectedElement = selectedElementId ? elements.find(el => el.id === selectedElementId) : null;
 
   // État de l'historique
   const [history, setHistory] = useState([initialElements]);
@@ -33,19 +36,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   const [showElementLibrary, setShowElementLibrary] = useState(true);
   const [showPropertiesPanel, setShowPropertiesPanel] = useState(false);
 
-  // Synchroniser selectedElement avec elements
-  useEffect(() => {
-    if (selectedElement && selectedElement.id) {
-      const currentElement = elements.find(el => el.id === selectedElement.id);
-      if (currentElement && currentElement !== selectedElement) {
-        console.log('[DEBUG] Synchronizing selectedElement with elements array - old template:', selectedElement.template, 'new template:', currentElement.template);
-        setSelectedElement(currentElement);
-      } else if (!currentElement) {
-        console.log('[DEBUG] Selected element no longer exists, clearing selection');
-        setSelectedElement(null);
-      }
-    }
-  }, [elements, selectedElement]);
+  // Synchroniser selectedElement avec elements - REMOVED car on utilise maintenant selectedElementId
 
   // État pour le drag & drop
   const [isDragging, setIsDragging] = useState(false);
@@ -149,13 +140,12 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
     const newElements = [...elements, newElement];
     handleElementsChange(newElements);
-    setSelectedElement(newElement);
+    setSelectedElementId(newElement.id);
   };
 
   // Gestionnaire de sélection d'élément
   const handleElementSelect = (elementId) => {
-    const element = elements.find(el => el.id === elementId);
-    setSelectedElement(element);
+    setSelectedElementId(elementId);
     if (elementId) {
       setShowPropertiesPanel(true); // Afficher automatiquement le panneau des propriétés
     }
@@ -175,8 +165,8 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   const handleElementDelete = (elementId) => {
     const newElements = elements.filter(element => element.id !== elementId);
     handleElementsChange(newElements);
-    if (selectedElement?.id === elementId) {
-      setSelectedElement(null);
+    if (selectedElementId === elementId) {
+      setSelectedElementId(null);
     }
   };
 
@@ -223,7 +213,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
         const newElements = [...elements, newElement];
         handleElementsChange(newElements);
-        setSelectedElement(newElement);
+        setSelectedElementId(newElement.id);
       }
     } catch (error) {
       console.error('Erreur lors du drop:', error);
@@ -287,7 +277,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
       const newElements = [...elements, newElement];
       handleElementsChange(newElements);
-      setSelectedElement(newElement);
+      setSelectedElementId(newElement.id);
       setSelectedTool('select'); // Revenir à l'outil de sélection
     }
   };
@@ -366,7 +356,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
     });
 
     if (clickedElement) {
-      setSelectedElement(clickedElement);
+      setSelectedElementId(clickedElement.id);
       setShowPropertiesPanel(true); // Afficher automatiquement le panneau des propriétés
       // Démarrer le drag
       setIsDragging(true);
@@ -374,7 +364,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
       setDragStart({ x: x, y: y }); // Position absolue du clic
     } else {
       // Désélectionner si on clique dans le vide
-      setSelectedElement(null);
+      setSelectedElementId(null);
       setShowPropertiesPanel(false); // Masquer le panneau des propriétés
     }
   };
@@ -525,7 +515,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
   // Fonction de rendu du canvas
   const renderCanvas = () => {
-    console.log('[DEBUG] PDFEditor renderCanvas called with elements:', elements.length, 'selectedElement:', selectedElement?.id, 'selectedElement.template:', selectedElement?.template);
+    console.log('[DEBUG] PDFEditor renderCanvas called with elements:', elements.length, 'selectedElementId:', selectedElementId, 'selectedElement.template:', selectedElement?.template);
     const canvas = canvasRef.current;
     if (!canvas) {
       console.log('PDFEditor renderCanvas: No canvas ref');
