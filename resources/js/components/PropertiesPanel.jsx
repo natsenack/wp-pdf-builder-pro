@@ -3268,8 +3268,13 @@ const PropertiesPanel = memo(({
           <div className="tab-content">
             {/* Transparence & Visibilité (toujours disponible si autorisé) */}
             {allowedControls.includes('opacity') && (
-              <div className="properties-group">
-                <h4>🌟 Transparence & Visibilité</h4>
+              <Accordion
+                key="opacity"
+                title="Transparence & Visibilité"
+                icon="🌟"
+                defaultOpen={false}
+                className="properties-accordion"
+              >
 
                 <div className="property-row">
                   <label>Opacité:</label>
@@ -3297,13 +3302,18 @@ const PropertiesPanel = memo(({
                     <span className="toggle-slider"></span>
                   </label>
                 </div>
-              </div>
+              </Accordion>
             )}
 
             {/* Ombres & Effets (uniquement si autorisé) */}
             {allowedControls.includes('shadows') && (
-              <div className="properties-group">
-                <h4>✨ Ombres & Effets</h4>
+              <Accordion
+                key="shadows"
+                title="Ombres & Effets"
+                icon="✨"
+                defaultOpen={false}
+                className="properties-accordion"
+              >
 
                 <div className="property-row">
                   <label>Ombre:</label>
@@ -3364,13 +3374,18 @@ const PropertiesPanel = memo(({
                     </div>
                   </>
                 )}
-              </div>
+              </Accordion>
             )}
 
             {/* Filtres visuels (uniquement si autorisé) */}
             {allowedControls.includes('filters') && (
-              <div className="properties-group">
-                <h4>🎭 Filtres visuels</h4>
+              <Accordion
+                key="filters"
+                title="Filtres visuels"
+                icon="🎭"
+                defaultOpen={false}
+                className="properties-accordion"
+              >
 
                 <div className="property-row">
                   <label>Luminosité:</label>
@@ -3416,7 +3431,7 @@ const PropertiesPanel = memo(({
                     <span className="slider-value">{localProperties.saturate || 100}%</span>
                   </div>
                 </div>
-              </div>
+              </Accordion>
             )}
           </div>
         );
