@@ -1076,8 +1076,15 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
         // Générer les données du numéro de commande avec SampleDataProvider
         const sampleDataProvider = new SampleDataProvider();
+        // Utiliser le nouveau format par défaut si l'ancien contient une date (migration)
+        const defaultFormat = 'Commande #{order_number}';
+        const currentFormat = element.format;
+        const formatToUse = currentFormat && currentFormat.includes('{order_date}')
+          ? defaultFormat
+          : (currentFormat || defaultFormat);
+
         const orderData = sampleDataProvider.generateOrderNumberData({
-          format: element.format || 'Commande #{order_number}',
+          format: formatToUse,
           previewOrderNumber: element.previewOrderNumber || '12345'
         });
 
@@ -1218,24 +1225,36 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
         // Afficher le numéro avec espacement des lettres si défini
         if (letterSpacing > 0) {
-          let charX = numberX + numberWidth;
+          let startX;
           if (element.textAlign === 'center') {
             const totalWidth = displayText.split('').reduce((width, char) => width + ctx.measureText(char).width + letterSpacing, -letterSpacing);
-            charX = numberX + (numberWidth - totalWidth) / 2 + ctx.measureText(displayText[0]).width / 2;
+            startX = numberX + (numberWidth - totalWidth) / 2 + ctx.measureText(displayText[0]).width / 2;
           } else if (element.textAlign === 'left') {
-            charX = numberX + ctx.measureText(displayText[0]).width / 2;
+            startX = numberX + ctx.measureText(displayText[0]).width / 2;
+          } else { // right (default)
+            startX = numberX + numberWidth - ctx.measureText(displayText[displayText.length - 1]).width / 2;
+            // Calculer la position de départ pour alignement à droite avec letterSpacing
+            for (let i = displayText.length - 1; i >= 0; i--) {
+              startX -= ctx.measureText(displayText[i]).width + (i > 0 ? letterSpacing : 0);
+            }
+            startX += ctx.measureText(displayText[0]).width / 2;
           }
 
           for (let i = 0; i < displayText.length; i++) {
-            ctx.fillText(displayText[i], charX, baselineY);
-            charX += ctx.measureText(displayText[i]).width + letterSpacing;
+            ctx.fillText(displayText[i], startX, baselineY);
+            startX += ctx.measureText(displayText[i]).width + letterSpacing;
           }
         } else {
-          let textXPos = numberX + numberWidth;
+          let textXPos;
           if (element.textAlign === 'center') {
             textXPos = numberX + numberWidth / 2;
+            ctx.textAlign = 'center';
           } else if (element.textAlign === 'left') {
             textXPos = numberX;
+            ctx.textAlign = 'left';
+          } else { // right (default)
+            textXPos = numberX + numberWidth;
+            ctx.textAlign = 'right';
           }
           ctx.fillText(displayText, textXPos, baselineY);
         }
