@@ -64,6 +64,8 @@ export const CanvasElement = ({
   guides = { horizontal: [], vertical: [] },
   snapToGuides = true
 }) => {
+  // DEBUG: Log général pour voir si le composant se re-render
+  console.log('[DEBUG] CanvasElement render:', { id: element.id, type: element.type, template: element.template });
   const elementRef = useRef(null);
   const canvasRectRef = useRef(null);
 
