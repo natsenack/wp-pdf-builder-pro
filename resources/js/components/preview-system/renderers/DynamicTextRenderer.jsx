@@ -9,6 +9,10 @@ export const DynamicTextRenderer = ({ element, previewData, mode, canvasScale = 
     y = 0,
     width = 300,
     height = 50,
+    properties = {},
+  } = element;
+
+  const {
     template = 'total_only',
     customContent = '{{order_total}} €',
     fontSize = 14,
@@ -32,7 +36,7 @@ export const DynamicTextRenderer = ({ element, previewData, mode, canvasScale = 
     shadowOffsetY = 2,
     textDecoration = 'none',
     lineHeight = 1.2
-  } = element;
+  } = properties;
 
   // Récupérer le contenu depuis les données d'aperçu
   const elementKey = `dynamic-text_${element.id}`;

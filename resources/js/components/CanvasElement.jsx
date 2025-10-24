@@ -972,7 +972,7 @@ export const CanvasElement = ({
              return templates[template] || templates['total_only'];
            };
 
-           const content = getTemplateContent(element.template, element.customContent);
+           const content = getTemplateContent(element.properties?.template, element.properties?.customContent);
            // Remplacement basique pour le rendu canvas
            return content
              .replace(/\{\{order_total\}\}/g, '125.99 €')
