@@ -433,6 +433,115 @@ export class SampleDataProvider {
             headerFontWeight: 'bold',
             headerFontSize: '12px',
             rowFontSize: '11px'
+          },
+          // Styles manquants pour correspondre au panneau de propriétés
+          striped: {
+            header_bg: [224, 242, 254], // #e0f2fe
+            header_border: [14, 165, 233], // #0ea5e9
+            row_border: [240, 249, 255], // #f0f9ff
+            alt_row_bg: [248, 249, 252], // #f8fafc
+            headerTextColor: '#0c4a6e',
+            rowTextColor: '#334155',
+            border_width: 1,
+            headerFontWeight: 'bold',
+            headerFontSize: '12px',
+            rowFontSize: '11px'
+          },
+          bordered: {
+            header_bg: [248, 250, 252], // #f8fafc
+            header_border: [148, 163, 184], // #94a3b8
+            row_border: [226, 232, 240], // #e2e8f0
+            alt_row_bg: [255, 255, 255], // #ffffff
+            headerTextColor: '#475569',
+            rowTextColor: '#475569',
+            border_width: 1,
+            headerFontWeight: 'bold',
+            headerFontSize: '12px',
+            rowFontSize: '11px'
+          },
+          minimal: {
+            header_bg: [255, 255, 255], // #ffffff
+            header_border: [243, 244, 246], // #f3f4f6
+            row_border: [249, 250, 251], // #f9fafb
+            alt_row_bg: [255, 255, 255], // #ffffff
+            headerTextColor: '#6b7280',
+            rowTextColor: '#6b7280',
+            border_width: 0.5,
+            headerFontWeight: 'normal',
+            headerFontSize: '12px',
+            rowFontSize: '11px'
+          },
+          modern: {
+            header_bg: [233, 213, 255], // #e9d5ff
+            header_border: [168, 85, 247], // #a855f7
+            row_border: [243, 232, 255], // #f3e8ff
+            alt_row_bg: [250, 245, 255], // #faf5ff
+            headerTextColor: '#6b21a8',
+            rowTextColor: '#6b21a8',
+            border_width: 1,
+            headerFontWeight: '600',
+            headerFontSize: '13px',
+            rowFontSize: '12px'
+          },
+          blue_ocean: {
+            header_bg: [219, 234, 254], // #dbeafe
+            header_border: [59, 130, 246], // #3b82f6
+            row_border: [239, 246, 255], // #eff6ff
+            alt_row_bg: [239, 246, 255], // #eff6ff
+            headerTextColor: '#1e40af',
+            rowTextColor: '#1e40af',
+            border_width: 1,
+            headerFontWeight: 'bold',
+            headerFontSize: '12px',
+            rowFontSize: '11px'
+          },
+          coral: {
+            header_bg: [254, 242, 242], // #fef2f2
+            header_border: [248, 113, 113], // #f87171
+            row_border: [254, 242, 242], // #fef2f2
+            alt_row_bg: [254, 242, 242], // #fef2f2
+            headerTextColor: '#dc2626',
+            rowTextColor: '#dc2626',
+            border_width: 1,
+            headerFontWeight: 'bold',
+            headerFontSize: '12px',
+            rowFontSize: '11px'
+          },
+          teal: {
+            header_bg: [204, 251, 241], // #ccfbf1
+            header_border: [13, 148, 136], // #0d9488
+            row_border: [240, 253, 250], // #f0fdfa
+            alt_row_bg: [240, 253, 250], // #f0fdfa
+            headerTextColor: '#0f766e',
+            rowTextColor: '#0f766e',
+            border_width: 1,
+            headerFontWeight: 'bold',
+            headerFontSize: '12px',
+            rowFontSize: '11px'
+          },
+          indigo: {
+            header_bg: [238, 242, 255], // #eef2ff
+            header_border: [99, 102, 241], // #6366f1
+            row_border: [238, 242, 255], // #eef2ff
+            alt_row_bg: [238, 242, 255], // #eef2ff
+            headerTextColor: '#3730a3',
+            rowTextColor: '#3730a3',
+            border_width: 1,
+            headerFontWeight: 'bold',
+            headerFontSize: '12px',
+            rowFontSize: '11px'
+          },
+          amber: {
+            header_bg: [254, 243, 199], // #fef3c7
+            header_border: [245, 158, 11], // #f59e0b
+            row_border: [254, 243, 199], // #fef3c7
+            alt_row_bg: [254, 243, 199], // #fef3c7
+            headerTextColor: '#92400e',
+            rowTextColor: '#92400e',
+            border_width: 1,
+            headerFontWeight: 'bold',
+            headerFontSize: '12px',
+            rowFontSize: '11px'
           }
         }
       }
