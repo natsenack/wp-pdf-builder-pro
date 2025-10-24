@@ -816,9 +816,12 @@ const FontControls = ({ elementId, properties, onPropertyChange }) => (
 );
 
 // Fonctions helper pour rendre chaque section de propriétés dans l'ordre intelligent
-const renderColorsSection = (selectedElement, localProperties, handlePropertyChange, isBackgroundEnabled, activeTab) => {
+const renderColorsSection = (selectedElement, localProperties, handlePropertyChange, activeTab) => {
   // Vérifier si la section colors doit être affichée pour ce type d'élément
   if (!shouldShowSection('colors', selectedElement.type)) return null;
+
+  // Calculer si le fond est activé en fonction de la valeur backgroundColor
+  const isBackgroundEnabled = localProperties.backgroundColor !== 'transparent';
 
   return (
     <div key="colors" className="properties-group">
@@ -1241,7 +1244,6 @@ const PropertiesPanel = memo(({
   const [previousBackgroundColor, setPreviousBackgroundColor] = useState('#ffffff');
   const [previousBorderWidth, setPreviousBorderWidth] = useState(0);
   const [previousBorderColor, setPreviousBorderColor] = useState('#000000');
-  const [isBackgroundEnabled, setIsBackgroundEnabled] = useState(false);
   const [isBorderEnabled, setIsBorderEnabled] = useState(false);
 
   // Utiliser les hooks de personnalisation et synchronisation
@@ -1442,7 +1444,7 @@ const PropertiesPanel = memo(({
             {smartOrder.map(section => {
               switch (section) {
                 case 'colors':
-                  return renderColorsSection(selectedElement, localProperties, handlePropertyChange, isBackgroundEnabled, activeTab);
+                  return renderColorsSection(selectedElement, localProperties, handlePropertyChange, activeTab);
                 case 'typography':
                   return renderTypographySection(selectedElement, localProperties, handlePropertyChange, activeTab);
                 case 'borders':
