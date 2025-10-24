@@ -174,6 +174,7 @@ export const TableRenderer = ({ element, previewData, mode, canvasScale = 1 }) =
       style={containerStyle}
       data-element-id={element.id}
       data-element-type="product_table"
+      data-table-renderer-version="improved-totals-alignment"
     >
       <table style={tableStyleConfig}>
         {showHeaders && finalHeaders && finalHeaders.length > 0 && (
