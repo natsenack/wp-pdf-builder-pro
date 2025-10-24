@@ -1292,7 +1292,9 @@ const PropertiesPanel = memo(({
       'backgroundColor', 'backgroundOpacity', // Fond
       'borderColor', 'borderWidth', 'borderStyle', 'borderRadius', // Bordures
       'boxShadowColor', 'boxShadowBlur', 'boxShadowSpread', // Ombres
-      'opacity', 'textShadowBlur' // Transparence et effets
+      'opacity', 'textShadowBlur', // Transparence et effets
+      // Assurer une synchronisation immédiate des templates dynamiques
+      'template', 'customContent'
     ].includes(property)) {
       syncImmediate(elementId, property, validatedValue);
     }
@@ -2340,7 +2342,7 @@ const PropertiesPanel = memo(({
                 <h4>📝 Texte Dynamique</h4>
 
                 <div className="property-row">
-                  <label>Sélection du modèle:</label>
+                  <label>Modèle:</label>
                   <select
                     value={localProperties.template || 'total_only'}
                     onChange={(e) => {
@@ -2398,19 +2400,6 @@ const PropertiesPanel = memo(({
                     <option value="follow_up">📊 Suivi commande</option>
                     <option value="custom">🎨 Personnalisé</option>
                   </select>
-
-                  {localProperties.template === 'custom' && (
-                    <div className="property-row">
-                      <label>Contenu personnalisé:</label>
-                      <textarea
-                        value={localProperties.customContent || ''}
-                        onChange={(e) => handlePropertyChange(selectedElement.id, 'customContent', e.target.value)}
-                        placeholder="Entrez votre contenu personnalisé avec des variables {{variable}}"
-                        rows={3}
-                        style={{ width: '100%', resize: 'vertical' }}
-                      />
-                    </div>
-                  )}
                 </div>
 
                 {/* Bouton pour revenir aux valeurs par défaut du template */}
