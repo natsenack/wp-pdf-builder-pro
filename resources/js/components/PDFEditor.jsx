@@ -1130,10 +1130,11 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.font = `${fontStyle}${fontWeight} ${fontSize}px ${fontFamily}`;
 
         // Calculer les dimensions pour le positionnement
-        // Positionner le texte près du haut plutôt qu'au centre pour éviter les superpositions lors du redimensionnement
-        const baselineY = textY + fontSize * 1.2; // Un peu en dessous de la ligne de base du texte
+        // Positionner le texte avec une marge pour éviter les superpositions lors du redimensionnement
+        const textMargin = 8; // Marge depuis les bords
+        const baselineY = textY + textMargin + fontSize;
         let labelWidth = 0;
-        let availableWidth = textWidth;
+        let availableWidth = textWidth - (textMargin * 2);
 
         // Calculer la largeur de l'étiquette si elle doit être affichée
         if (element.showLabel && element.labelText) {
@@ -1149,7 +1150,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           labelWidth = letterSpacing > 0 ?
             processedLabel.split('').reduce((width, char) => width + ctx.measureText(char).width + letterSpacing, -letterSpacing) :
             ctx.measureText(processedLabel).width;
-          availableWidth = textWidth - labelWidth - 10; // 10px d'espacement
         }
 
         // Afficher le label si demandé
@@ -1166,13 +1166,13 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
           // Afficher l'étiquette avec espacement des lettres si défini
           if (letterSpacing > 0) {
-            let charX = textX;
+            let charX = textX + textMargin;
             for (let i = 0; i < processedLabel.length; i++) {
               ctx.fillText(processedLabel[i], charX, baselineY);
               charX += ctx.measureText(processedLabel[i]).width + letterSpacing;
             }
           } else {
-            ctx.fillText(processedLabel, textX, baselineY);
+            ctx.fillText(processedLabel, textX + textMargin, baselineY);
           }
 
           // Appliquer la décoration de texte à l'étiquette
@@ -1181,15 +1181,15 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             ctx.strokeStyle = element.color || '#000000';
             ctx.lineWidth = Math.max(1, fontSize / 20);
             ctx.beginPath();
-            ctx.moveTo(textX, decorationY);
-            ctx.lineTo(textX + labelWidth, decorationY);
+            ctx.moveTo(textX + textMargin, decorationY);
+            ctx.lineTo(textX + textMargin + labelWidth, decorationY);
             ctx.stroke();
           }
         }
 
         // Position du numéro (à droite de l'étiquette avec espacement)
-        const numberX = element.showLabel && element.labelText ? textX + labelWidth + 10 : textX;
-        const numberWidth = availableWidth;
+        const numberX = textX + textMargin + (element.showLabel && element.labelText ? labelWidth + 10 : 0);
+        const numberWidth = availableWidth - (element.showLabel && element.labelText ? labelWidth + 10 : 0);
 
         // Afficher le numéro formaté
         const formattedText = orderData.formatted || 'Commande #12345';
