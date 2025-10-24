@@ -1717,8 +1717,13 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
                 let displayText = line;
 
-                // Ajouter l'étiquette seulement à la première ligne si demandée
-                if (showLabels && lineIndex === 0) {
+                // Pour l'adresse, afficher toujours l'icône sur la première ligne
+                if (field === 'address' && lineIndex === 0) {
+                  const label = field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ');
+                  displayText = `${icon} ${line}`;
+                }
+                // Ajouter l'étiquette seulement à la première ligne si demandée (pour les autres champs)
+                else if (showLabels && lineIndex === 0) {
                   const label = field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ');
                   if (labelStyle === 'bold') {
                     displayText = `${icon} ${label}: ${line}`;
@@ -1915,11 +1920,17 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
                   let displayText = line;
 
-                  // Ajouter l'étiquette seulement à la première ligne si demandée
-                  if (showLabels && lineIndex === 0) {
+                  // Pour l'adresse, afficher toujours l'icône sur la première ligne
+                  if (field === 'address' && lineIndex === 0) {
+                    const label = field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ');
+                    displayText = `${icon} ${line}`;
+                  }
+                  // Ajouter l'étiquette seulement à la première ligne si demandée (pour les autres champs)
+                  else if (showLabels && lineIndex === 0) {
                     const label = field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ');
                     displayText = `${icon} ${label}: ${line}`;
                   } else {
+                    // Pour les lignes suivantes, ajouter une indentation (pas d'icône)
                     displayText = showLabels ? `   ${line}` : `   ${line}`;
                   }
 
@@ -2036,8 +2047,13 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
                   let displayText = line;
 
-                  // Ajouter l'étiquette seulement à la première ligne si demandée
-                  if (showLabels && lineIndex === 0) {
+                  // Pour l'adresse, afficher toujours l'icône sur la première ligne
+                  if (field === 'address' && lineIndex === 0) {
+                    const label = field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ');
+                    displayText = `${icon} ${line}`;
+                  }
+                  // Ajouter l'étiquette seulement à la première ligne si demandée (pour les autres champs)
+                  else if (showLabels && lineIndex === 0) {
                     const label = field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ');
                     displayText = `${icon} ${label}: ${line}`;
                   } else {
