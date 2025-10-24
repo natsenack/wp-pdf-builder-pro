@@ -1,7 +1,7 @@
 /* Styles pour les accordéons du panneau de propriétés */
 
 .accordion {
-  border: 1px solid #e2e8f0;
+  border: 1px solid #f1f5f9;
   border-radius: 6px;
   margin-bottom: 8px;
   overflow: hidden;
@@ -9,7 +9,7 @@
 }
 
 .accordion-header {
-  background: #f8fafc;
+  background: #fafbfc;
   border: none;
   width: 100%;
   padding: 12px 16px;
@@ -20,12 +20,12 @@
   justify-content: space-between;
   font-size: 14px;
   font-weight: 500;
-  color: #374151;
+  color: #475569;
   transition: background-color 0.2s ease;
 }
 
 .accordion-header:hover {
-  background: #f1f5f9;
+  background: #f8fafc;
 }
 
 .accordion-title {
@@ -40,7 +40,7 @@
 
 .accordion-arrow {
   font-size: 12px;
-  color: #6b7280;
+  color: #94a3b8;
   transition: transform 0.2s ease;
 }
 
