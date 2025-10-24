@@ -973,6 +973,8 @@ export const CanvasElement = ({
            };
 
            const content = getTemplateContent(element.template, element.customContent);
+           // DEBUG: Log temporaire pour tracer le rendu du template
+           console.log('[DEBUG] CanvasElement rendu dynamic-text:', { template: element.template, customContent: element.customContent, content: content });
            // Remplacement basique pour le rendu canvas
            return content
              .replace(/\{\{order_total\}\}/g, '125.99 €')

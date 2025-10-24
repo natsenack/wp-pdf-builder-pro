@@ -1284,6 +1284,11 @@ const PropertiesPanel = memo(({
     // Utiliser le hook de personnalisation pour la gestion locale
     customizationChange(elementId, property, validatedValue);
 
+    // DEBUG: Log temporaire pour tracer les changements de template
+    if (property === 'template') {
+      console.log('[DEBUG] Template changé:', { elementId, oldValue: localProperties.template, newValue: validatedValue });
+    }
+
     // Synchronisation immédiate pour les changements critiques et de style
     if ([
       'x', 'y', 'width', 'height', // Position et dimensions
