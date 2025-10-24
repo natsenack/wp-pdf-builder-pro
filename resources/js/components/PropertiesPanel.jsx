@@ -636,35 +636,92 @@ const PropertiesPanel = memo(({
                 defaultOpen={false}
                 className="properties-accordion"
               >
+                {/* Section principale compacte */}
+                <div className="table-controls-compact">
+                  {/* Colonnes et totaux */}
+                  <div className="table-section">
+                    <div className="section-title">📋 Configuration</div>
+                    <div className="compact-grid">
+                      <div className="grid-item">
+                        <label className="compact-label">Colonnes:</label>
+                        <div className="checkbox-grid">
+                          {[
+                            { key: 'image', label: 'Img' },
+                            { key: 'name', label: 'Nom' },
+                            { key: 'sku', label: 'SKU' },
+                            { key: 'quantity', label: 'Qté' },
+                            { key: 'price', label: 'Prix' },
+                            { key: 'total', label: 'Total' }
+                          ].map(({ key, label }) => (
+                            <label key={key} className="checkbox-compact">
+                              <input
+                                type="checkbox"
+                                checked={localProperties.columns?.[key] ?? true}
+                                onChange={(e) => {
+                                  handlePropertyChange(selectedElement.id, `columns.${key}`, e.target.checked);
+                                }}
+                              />
+                              {label}
+                            </label>
+                          ))}
+                        </div>
+                      </div>
 
-                <div className="property-row">
-                  <label>Colonnes à afficher:</label>
-                  <div className="checkbox-group">
-                    {[
-                      { key: 'image', label: 'Image' },
-                      { key: 'name', label: 'Nom' },
-                      { key: 'sku', label: 'SKU' },
-                      { key: 'quantity', label: 'Quantité' },
-                      { key: 'price', label: 'Prix' },
-                      { key: 'total', label: 'Total' }
-                    ].map(({ key, label }) => (
-                      <label key={key} className="checkbox-item">
+                      <div className="grid-item">
+                        <label className="compact-label">Totaux:</label>
+                        <div className="checkbox-grid">
+                          {[
+                            { key: 'showSubtotal', label: 'Sous-t.' },
+                            { key: 'showShipping', label: 'Port' },
+                            { key: 'showTaxes', label: 'TVA' },
+                            { key: 'showDiscount', label: 'Remise' },
+                            { key: 'showTotal', label: 'Total' }
+                          ].map(({ key, label }) => (
+                            <label key={key} className="checkbox-compact">
+                              <input
+                                type="checkbox"
+                                checked={localProperties[key] || false}
+                                onChange={(e) => handlePropertyChange(selectedElement.id, key, e.target.checked)}
+                              />
+                              {label}
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Bordures */}
+                  <div className="table-section">
+                    <div className="section-title">🔲 Bordures</div>
+                    <div className="border-controls">
+                      <label className="toggle-compact">
                         <input
                           type="checkbox"
-                          checked={localProperties.columns?.[key] ?? true}
-                          onChange={(e) => {
-                            handlePropertyChange(selectedElement.id, `columns.${key}`, e.target.checked);
-                          }}
+                          checked={localProperties.showBorders ?? true}
+                          onChange={(e) => handlePropertyChange(selectedElement.id, 'showBorders', e.target.checked)}
                         />
-                        {label}
+                        <span className="toggle-slider-small"></span>
+                        Cellules
                       </label>
-                    ))}
+
+                      <label className="toggle-compact">
+                        <input
+                          type="checkbox"
+                          checked={localProperties.showTableBorder ?? false}
+                          onChange={(e) => handlePropertyChange(selectedElement.id, 'showTableBorder', e.target.checked)}
+                        />
+                        <span className="toggle-slider-small"></span>
+                        Extérieure
+                      </label>
+                    </div>
                   </div>
                 </div>
 
-                <div className="property-row">
-                  <label>Style du tableau:</label>
-                  <div className="table-style-selector">
+                {/* Styles du tableau */}
+                <div className="table-section">
+                  <div className="section-title">🎨 Style du tableau</div>
+                  <div className="table-style-selector-compact">
                     {[
                       {
                         value: 'default',
@@ -728,7 +785,7 @@ const PropertiesPanel = memo(({
                       },
                       {
                         value: 'blue_ocean',
-                        label: 'Océan Bleu',
+                        label: 'Océan',
                         gradient: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)',
                         headerBorder: '#3b82f6',
                         rowBorder: '#eff6ff',
@@ -738,7 +795,7 @@ const PropertiesPanel = memo(({
                       },
                       {
                         value: 'emerald_forest',
-                        label: 'Forêt Émeraude',
+                        label: 'Forêt',
                         gradient: 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)',
                         headerBorder: '#10b981',
                         rowBorder: '#ecfdf5',
@@ -748,7 +805,7 @@ const PropertiesPanel = memo(({
                       },
                       {
                         value: 'sunset_orange',
-                        label: 'Coucher Orange',
+                        label: 'Coucher',
                         gradient: 'linear-gradient(135deg, #fed7aa 0%, #fdba74 100%)',
                         headerBorder: '#f97316',
                         rowBorder: '#fff7ed',
@@ -758,7 +815,7 @@ const PropertiesPanel = memo(({
                       },
                       {
                         value: 'royal_purple',
-                        label: 'Royal Violet',
+                        label: 'Royal',
                         gradient: 'linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%)',
                         headerBorder: '#a855f7',
                         rowBorder: '#faf5ff',
@@ -768,7 +825,7 @@ const PropertiesPanel = memo(({
                       },
                       {
                         value: 'rose_pink',
-                        label: 'Rose Bonbon',
+                        label: 'Rose',
                         gradient: 'linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%)',
                         headerBorder: '#f472b6',
                         rowBorder: '#fdf2f8',
@@ -778,268 +835,84 @@ const PropertiesPanel = memo(({
                       },
                       {
                         value: 'teal_aqua',
-                        label: 'Aigue-marine',
+                        label: 'Aigue',
                         gradient: 'linear-gradient(135deg, #ccfbf1 0%, #a7f3d0 100%)',
                         headerBorder: '#14b8a6',
                         rowBorder: '#f0fdfa',
                         altRowBg: '#f0fdfa',
                         borderWidth: 1,
                         textColor: '#0d9488'
-                      },
-                      {
-                        value: 'crimson_red',
-                        label: 'Rouge Cramoisi',
-                        gradient: 'linear-gradient(135deg, #fecaca 0%, #fca5a5 100%)',
-                        headerBorder: '#ef4444',
-                        rowBorder: '#fef2f2',
-                        altRowBg: '#fef2f2',
-                        borderWidth: 1,
-                        textColor: '#dc2626'
-                      },
-                      {
-                        value: 'amber_gold',
-                        label: 'Or Ambré',
-                        gradient: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
-                        headerBorder: '#f59e0b',
-                        rowBorder: '#fffbeb',
-                        altRowBg: '#fffbeb',
-                        borderWidth: 1,
-                        textColor: '#d97706'
-                      },
-                      {
-                        value: 'indigo_night',
-                        label: 'Nuit Indigo',
-                        gradient: 'linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%)',
-                        headerBorder: '#6366f1',
-                        rowBorder: '#eef2ff',
-                        altRowBg: '#eef2ff',
-                        borderWidth: 1,
-                        textColor: '#4338ca'
-                      },
-                      {
-                        value: 'slate_gray',
-                        label: 'Ardoise',
-                        headerBg: '#374151',
-                        headerBorder: '#4b5563',
-                        rowBorder: '#f3f4f6',
-                        altRowBg: '#f9fafb',
-                        borderWidth: 1.5,
-                        textColor: '#ffffff'
-                      },
-                      {
-                        value: 'coral',
-                        label: 'Corail',
-                        headerBg: '#fef2f2',
-                        headerBorder: '#f87171',
-                        rowBorder: '#fef2f2',
-                        altRowBg: '#fef2f2',
-                        borderWidth: 1,
-                        textColor: '#dc2626'
-                      },
-                      {
-                        value: 'teal',
-                        label: 'Sarcelle',
-                        headerBg: '#ccfbf1',
-                        headerBorder: '#0d9488',
-                        rowBorder: '#f0fdfa',
-                        altRowBg: '#f0fdfa',
-                        borderWidth: 1,
-                        textColor: '#0f766e'
-                      },
-                      {
-                        value: 'indigo',
-                        label: 'Indigo',
-                        headerBg: '#eef2ff',
-                        headerBorder: '#6366f1',
-                        rowBorder: '#eef2ff',
-                        altRowBg: '#eef2ff',
-                        borderWidth: 1,
-                        textColor: '#3730a3'
-                      },
-                      {
-                        value: 'amber',
-                        label: 'Ambre',
-                        headerBg: '#fef3c7',
-                        headerBorder: '#f59e0b',
-                        rowBorder: '#fef3c7',
-                        altRowBg: '#fef3c7',
-                        borderWidth: 1,
-                        textColor: '#92400e'
                       }
                     ].map((style) => (
                       <button
                         key={style.value}
                         type="button"
-                        className={`table-style-option ${localProperties.tableStyle === style.value ? 'active' : ''}`}
+                        className={`table-style-option-compact ${localProperties.tableStyle === style.value ? 'active' : ''}`}
                         onClick={() => handlePropertyChange(selectedElement.id, 'tableStyle', style.value)}
-                        title={`${style.label} - Style ${style.label.toLowerCase()} avec dégradé moderne`}
+                        title={`${style.label} - Style ${style.label.toLowerCase()}`}
                       >
-                        <div className="table-sample" style={{ maxHeight: '60px', overflow: 'hidden' }}>
-                          {/* Header row */}
+                        <div className="table-sample-compact">
                           <div
-                            className="table-header"
+                            className="table-header-compact"
                             style={{
                               background: style.gradient || style.headerBg,
-                              border: `${style.borderWidth}px solid ${style.headerBorder}`,
-                              borderBottom: 'none',
+                              border: `1px solid ${style.headerBorder}`,
                               color: style.textColor
                             }}
                           >
-                            <div className="table-cell" style={{ borderRight: `${style.borderWidth}px solid ${style.headerBorder}` }}>Produit</div>
-                            <div className="table-cell" style={{ borderRight: `${style.borderWidth}px solid ${style.headerBorder}` }}>Qté</div>
-                            <div className="table-cell">Prix</div>
+                            P|Q|P
                           </div>
-                          {/* Data rows */}
                           <div
-                            className="table-row"
+                            className="table-row-compact"
                             style={{
                               backgroundColor: style.altRowBg,
-                              border: `${style.borderWidth}px solid ${style.rowBorder}`,
+                              border: `1px solid ${style.rowBorder}`,
                               borderTop: 'none',
                               color: style.textColor
                             }}
                           >
-                            <div className="table-cell" style={{ borderRight: `${style.borderWidth}px solid ${style.rowBorder}` }}>Article 1</div>
-                            <div className="table-cell" style={{ borderRight: `${style.borderWidth}px solid ${style.rowBorder}` }}>2</div>
-                            <div className="table-cell">15.99€</div>
-                          </div>
-                          <div
-                            className="table-row"
-                            style={{
-                              backgroundColor: 'white',
-                              border: `${style.borderWidth}px solid ${style.rowBorder}`,
-                              borderTop: 'none',
-                              color: style.textColor
-                            }}
-                          >
-                            <div className="table-cell" style={{ borderRight: `${style.borderWidth}px solid ${style.rowBorder}` }}>Article 2</div>
-                            <div className="table-cell" style={{ borderRight: `${style.borderWidth}px solid ${style.rowBorder}` }}>1</div>
-                            <div className="table-cell">8.50€</div>
+                            A1|2|15€
                           </div>
                         </div>
-                        <span className="style-label">{style.label}</span>
+                        <span className="style-label-compact">{style.label}</span>
                       </button>
                     ))}
                   </div>
                 </div>
 
-                <div className="property-row">
-                  <label>Lignes de totaux:</label>
-                  <div className="checkbox-group">
-                    {[
-                      { key: 'showSubtotal', label: 'Sous-total' },
-                      { key: 'showShipping', label: 'Frais de port' },
-                      { key: 'showTaxes', label: 'Taxes' },
-                      { key: 'showDiscount', label: 'Remise' },
-                      { key: 'showTotal', label: 'Total général' }
-                    ].map(({ key, label }) => (
-                      <label key={key} className="checkbox-item">
-                        <input
-                          type="checkbox"
-                          checked={localProperties[key] || false}
-                          onChange={(e) => handlePropertyChange(selectedElement.id, key, e.target.checked)}
-                        />
-                        {label}
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="property-row">
-                  <label>Afficher les bordures des cellules:</label>
-                  <label className="toggle">
-                    <input
-                      type="checkbox"
-                      checked={localProperties.showBorders ?? true}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'showBorders', e.target.checked)}
-                    />
-                    <span className="toggle-slider"></span>
-                  </label>
-                </div>
-
-                <div className="property-row">
-                  <label>Afficher la bordure extérieure du tableau:</label>
-                  <label className="toggle">
-                    <input
-                      type="checkbox"
-                      checked={localProperties.showTableBorder ?? false}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'showTableBorder', e.target.checked)}
-                    />
-                    <span className="toggle-slider"></span>
-                  </label>
-                </div>
-
-                <div className="property-row">
-                  <label style={{ fontWeight: '600', color: '#2563eb', marginBottom: '8px', display: 'block' }}>
-                    🎨 Couleurs individuelles des produits
-                  </label>
-                  <div className="product-colors-editor">
-                    <div className="color-scheme-info">
-                      <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: '0 0 12px 0' }}>
-                        Définissez les couleurs pour les produits pairs et impairs :
-                      </p>
+                {/* Couleurs individuelles (compact) */}
+                <div className="table-section">
+                  <div className="section-title">🎨 Couleurs lignes</div>
+                  <div className="colors-compact">
+                    <div className="color-row">
+                      <span className="color-label">Pairs:</span>
+                      <input
+                        type="color"
+                        value={localProperties.evenRowBg || '#ffffff'}
+                        onChange={(e) => handlePropertyChange(selectedElement.id, 'evenRowBg', e.target.value)}
+                        title="Fond lignes paires"
+                      />
+                      <input
+                        type="color"
+                        value={localProperties.evenRowTextColor || '#000000'}
+                        onChange={(e) => handlePropertyChange(selectedElement.id, 'evenRowTextColor', e.target.value)}
+                        title="Texte lignes paires"
+                      />
                     </div>
-
-                    <div className="product-color-item">
-                      <div className="product-header">
-                        <span className="product-name">📏 Produits pairs (1er, 3ème, 5ème...)</span>
-                        <span className="product-index">Even</span>
-                      </div>
-                      <div className="color-controls">
-                        <div className="color-control">
-                          <label>🎯 Fond:</label>
-                          <div className="color-input-wrapper">
-                            <input
-                              type="color"
-                              value={localProperties.evenRowBg || '#ffffff'}
-                              onChange={(e) => handlePropertyChange(selectedElement.id, 'evenRowBg', e.target.value)}
-                            />
-                            <span className="color-value">{localProperties.evenRowBg || '#ffffff'}</span>
-                          </div>
-                        </div>
-                        <div className="color-control">
-                          <label>📝 Texte:</label>
-                          <div className="color-input-wrapper">
-                            <input
-                              type="color"
-                              value={localProperties.evenRowTextColor || '#000000'}
-                              onChange={(e) => handlePropertyChange(selectedElement.id, 'evenRowTextColor', e.target.value)}
-                            />
-                            <span className="color-value">{localProperties.evenRowTextColor || '#000000'}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="product-color-item">
-                      <div className="product-header">
-                        <span className="product-name">📐 Produits impairs (2ème, 4ème, 6ème...)</span>
-                        <span className="product-index">Odd</span>
-                      </div>
-                      <div className="color-controls">
-                        <div className="color-control">
-                          <label>🎯 Fond:</label>
-                          <div className="color-input-wrapper">
-                            <input
-                              type="color"
-                              value={localProperties.oddRowBg || '#f9fafb'}
-                              onChange={(e) => handlePropertyChange(selectedElement.id, 'oddRowBg', e.target.value)}
-                            />
-                            <span className="color-value">{localProperties.oddRowBg || '#f9fafb'}</span>
-                          </div>
-                        </div>
-                        <div className="color-control">
-                          <label>📝 Texte:</label>
-                          <div className="color-input-wrapper">
-                            <input
-                              type="color"
-                              value={localProperties.oddRowTextColor || '#000000'}
-                              onChange={(e) => handlePropertyChange(selectedElement.id, 'oddRowTextColor', e.target.value)}
-                            />
-                            <span className="color-value">{localProperties.oddRowTextColor || '#000000'}</span>
-                          </div>
-                        </div>
-                      </div>
+                    <div className="color-row">
+                      <span className="color-label">Impairs:</span>
+                      <input
+                        type="color"
+                        value={localProperties.oddRowBg || '#f9fafb'}
+                        onChange={(e) => handlePropertyChange(selectedElement.id, 'oddRowBg', e.target.value)}
+                        title="Fond lignes impaires"
+                      />
+                      <input
+                        type="color"
+                        value={localProperties.oddRowTextColor || '#000000'}
+                        onChange={(e) => handlePropertyChange(selectedElement.id, 'oddRowTextColor', e.target.value)}
+                        title="Texte lignes impaires"
+                      />
                     </div>
                   </div>
                 </div>
@@ -1084,21 +957,21 @@ const PropertiesPanel = memo(({
                     }}
                     title="Réinitialiser toutes les propriétés du tableau aux valeurs par défaut"
                     style={{
-                      padding: '8px 16px',
+                      padding: '6px 12px',
                       backgroundColor: '#dc2626',
                       border: '1px solid #b91c1c',
-                      borderRadius: '6px',
+                      borderRadius: '4px',
                       color: '#ffffff',
-                      fontSize: '13px',
+                      fontSize: '12px',
                       fontWeight: '500',
                       cursor: 'pointer',
                       marginTop: '8px',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '6px'
+                      gap: '4px'
                     }}
                   >
-                    🔄 Réinitialiser le tableau
+                    🔄 Reset
                   </button>
                 </div>
               </Accordion>

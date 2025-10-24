@@ -9,6 +9,194 @@ import TemplateHeader from './TemplateHeader';
 import { SampleDataProvider } from './preview-system/data/SampleDataProvider';
 import './PDFEditor.css';
 
+// Fonction helper pour obtenir les styles de tableau selon le style choisi
+const getTableStyles = (tableStyle = 'default') => {
+  const baseStyles = {
+    default: {
+      headerBg: '#f8fafc',
+      headerBorder: '#e2e8f0',
+      rowBorder: '#000000',
+      rowBg: 'transparent',
+      altRowBg: '#fafbfc',
+      borderWidth: 2,
+      headerTextColor: '#334155',
+      rowTextColor: '#334155',
+      headerFontWeight: '600',
+      headerFontSize: '11px',
+      rowFontSize: '10px',
+      shadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+      borderRadius: '4px'
+    },
+    classic: {
+      headerBg: '#1e293b',
+      headerBorder: '#334155',
+      rowBorder: '#334155',
+      rowBg: 'transparent',
+      altRowBg: '#ffffff',
+      borderWidth: 1.5,
+      headerTextColor: '#ffffff',
+      rowTextColor: '#1e293b',
+      headerFontWeight: '700',
+      headerFontSize: '11px',
+      rowFontSize: '10px',
+      shadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+      borderRadius: '0px'
+    },
+    striped: {
+      headerBg: '#e0f2fe',
+      headerBorder: '#0ea5e9',
+      rowBorder: '#f0f9ff',
+      rowBg: 'transparent',
+      altRowBg: '#f8fafc',
+      borderWidth: 1,
+      headerTextColor: '#0c4a6e',
+      rowTextColor: '#334155',
+      headerFontWeight: '600',
+      headerFontSize: '11px',
+      rowFontSize: '10px',
+      shadow: '0 1px 4px rgba(59, 130, 246, 0.2)',
+      borderRadius: '6px'
+    },
+    bordered: {
+      headerBg: '#f8fafc',
+      headerBorder: '#94a3b8',
+      rowBorder: '#e2e8f0',
+      rowBg: 'transparent',
+      altRowBg: '#ffffff',
+      borderWidth: 1,
+      headerTextColor: '#475569',
+      rowTextColor: '#111827',
+      headerFontWeight: '600',
+      headerFontSize: '11px',
+      rowFontSize: '10px',
+      shadow: '0 4px 12px rgba(0, 0, 0, 0.1), inset 0 0 0 1px #e5e7eb',
+      borderRadius: '8px'
+    },
+    minimal: {
+      headerBg: '#ffffff',
+      headerBorder: '#d1d5db',
+      rowBorder: '#f3f4f6',
+      rowBg: 'transparent',
+      altRowBg: '#ffffff',
+      borderWidth: 0.5,
+      headerTextColor: '#6b7280',
+      rowTextColor: '#6b7280',
+      headerFontWeight: '500',
+      headerFontSize: '10px',
+      rowFontSize: '9px',
+      shadow: 'none',
+      borderRadius: '0px'
+    },
+    modern: {
+      headerBg: '#e9d5ff',
+      headerBorder: '#a855f7',
+      rowBorder: '#f3e8ff',
+      rowBg: 'transparent',
+      altRowBg: '#faf5ff',
+      borderWidth: 1,
+      headerTextColor: '#6b21a8',
+      rowTextColor: '#6b21a8',
+      headerFontWeight: '600',
+      headerFontSize: '11px',
+      rowFontSize: '10px',
+      shadow: '0 4px 20px rgba(102, 126, 234, 0.25)',
+      borderRadius: '8px'
+    },
+    blue_ocean: {
+      headerBg: '#dbeafe',
+      headerBorder: '#3b82f6',
+      rowBorder: '#eff6ff',
+      rowBg: 'transparent',
+      altRowBg: '#eff6ff',
+      borderWidth: 1,
+      headerTextColor: '#1e40af',
+      rowTextColor: '#1e40af',
+      headerFontWeight: '600',
+      headerFontSize: '11px',
+      rowFontSize: '10px',
+      shadow: '0 4px 20px rgba(59, 130, 246, 0.25)',
+      borderRadius: '8px'
+    },
+    emerald_forest: {
+      headerBg: '#d1fae5',
+      headerBorder: '#10b981',
+      rowBorder: '#ecfdf5',
+      rowBg: 'transparent',
+      altRowBg: '#ecfdf5',
+      borderWidth: 1,
+      headerTextColor: '#065f46',
+      rowTextColor: '#065f46',
+      headerFontWeight: '600',
+      headerFontSize: '11px',
+      rowFontSize: '10px',
+      shadow: '0 4px 20px rgba(16, 185, 129, 0.25)',
+      borderRadius: '8px'
+    },
+    sunset_orange: {
+      headerBg: '#fed7aa',
+      headerBorder: '#f97316',
+      rowBorder: '#fff7ed',
+      rowBg: 'transparent',
+      altRowBg: '#fff7ed',
+      borderWidth: 1,
+      headerTextColor: '#c2410c',
+      rowTextColor: '#c2410c',
+      headerFontWeight: '600',
+      headerFontSize: '11px',
+      rowFontSize: '10px',
+      shadow: '0 4px 20px rgba(249, 115, 22, 0.25)',
+      borderRadius: '8px'
+    },
+    royal_purple: {
+      headerBg: '#e9d5ff',
+      headerBorder: '#a855f7',
+      rowBorder: '#faf5ff',
+      rowBg: 'transparent',
+      altRowBg: '#faf5ff',
+      borderWidth: 1,
+      headerTextColor: '#7c3aed',
+      rowTextColor: '#7c3aed',
+      headerFontWeight: '600',
+      headerFontSize: '11px',
+      rowFontSize: '10px',
+      shadow: '0 4px 20px rgba(168, 85, 247, 0.25)',
+      borderRadius: '8px'
+    },
+    rose_pink: {
+      headerBg: '#fce7f3',
+      headerBorder: '#f472b6',
+      rowBorder: '#fdf2f8',
+      rowBg: 'transparent',
+      altRowBg: '#fdf2f8',
+      borderWidth: 1,
+      headerTextColor: '#db2777',
+      rowTextColor: '#db2777',
+      headerFontWeight: '600',
+      headerFontSize: '11px',
+      rowFontSize: '10px',
+      shadow: '0 4px 20px rgba(244, 114, 182, 0.25)',
+      borderRadius: '8px'
+    },
+    teal_aqua: {
+      headerBg: '#ccfbf1',
+      headerBorder: '#14b8a6',
+      rowBorder: '#f0fdfa',
+      rowBg: 'transparent',
+      altRowBg: '#f0fdfa',
+      borderWidth: 1,
+      headerTextColor: '#0d9488',
+      rowTextColor: '#0d9488',
+      headerFontWeight: '600',
+      headerFontSize: '11px',
+      rowFontSize: '10px',
+      shadow: '0 4px 20px rgba(20, 184, 166, 0.25)',
+      borderRadius: '8px'
+    }
+  };
+
+  return baseStyles[tableStyle] || baseStyles.default;
+};
+
 /**
  * PDFEditor - Éditeur principal complet avec éléments et propriétés
  * Phase 2.2.4.1 - Implémentation complète du système d'éléments
@@ -2173,7 +2361,9 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
         // Bordure extérieure du tableau (contrôlée par showTableBorder)
         if (element.showTableBorder) {
-          ctx.strokeStyle = element.borderColor || '#374151';
+          // Utiliser la couleur de bordure du style de tableau sélectionné
+          const tableStyles = getTableStyles(element.tableStyle);
+          ctx.strokeStyle = tableStyles.headerBorder;
           ctx.lineWidth = 1.5; // Bordure plus visible pour le contour extérieur
           ctx.strokeRect(tableX - 2, currentY - 2, tableWidth + 4, tableHeight + 4);
         }
