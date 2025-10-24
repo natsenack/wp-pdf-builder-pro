@@ -168,6 +168,15 @@ export const TableRenderer = ({ element, previewData, mode, canvasScale = 1 }) =
     header.toLowerCase() === 'tva'
   );
 
+  // DEBUG: Afficher les headers et l'index trouvé
+  console.log('TableRenderer DEBUG:', {
+    elementId: element.id,
+    finalHeaders,
+    priceColumnIndex,
+    tableHeaders,
+    tableDataHeaders: tableData.headers
+  });
+
   // Déterminer où placer les labels des totaux
   // Si la colonne prix existe et n'est pas la première colonne, utiliser la colonne précédente
   // Sinon, utiliser la colonne prix elle-même avec une mise en page différente
