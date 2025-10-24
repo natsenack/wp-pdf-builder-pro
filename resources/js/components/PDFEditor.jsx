@@ -2427,26 +2427,53 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         let columnWidths = new Array(numColumns).fill(0);
         let totalWidthUsed = 0;
 
+        // Appliquer les filtres de colonnes depuis PropertiesPanel
+        const filteredHeaders = [];
+        const headerMap = {
+          'Img': 'image',
+          'Nom': 'name',
+          'SKU': 'sku',
+          'Qté': 'quantity',
+          'Prix': 'price',
+          'Total': 'total'
+        };
+
+        // Déterminer quelles colonnes afficher selon les propriétés
+        const visibleColumnIndices = [];
+        tableData.headers.forEach((header, idx) => {
+          const columnKey = headerMap[header] || header.toLowerCase();
+          if (element.columns && element.columns[columnKey] !== false) {
+            visibleColumnIndices.push(idx);
+            filteredHeaders.push(header);
+          }
+        });
+
+        // Ajuster les largeurs en fonction des colonnes visibles
+        const visibleNumColumns = visibleColumnIndices.length || numColumns;
+        
         // Largeur fixe de 40px pour la colonne "Qté"
-        const quantityColumnIndex = tableData.headers.indexOf('Qté');
-        if (quantityColumnIndex !== -1) {
-          columnWidths[quantityColumnIndex] = 40;
-          totalWidthUsed += 40;
+        const quantityHeaderIndex = filteredHeaders.indexOf('Qté');
+        if (quantityHeaderIndex !== -1) {
+          columnWidths[visibleColumnIndices[quantityHeaderIndex]] = Math.max(40, tableWidth / 10);
+          totalWidthUsed += columnWidths[visibleColumnIndices[quantityHeaderIndex]];
         }
 
         // Répartir le reste de l'espace entre les autres colonnes
-        const remainingWidth = tableWidth - totalWidthUsed;
-        const remainingColumns = numColumns - (quantityColumnIndex !== -1 ? 1 : 0);
-        const defaultColumnWidth = remainingColumns > 0 ? remainingWidth / remainingColumns : remainingWidth / numColumns;
+        const remainingWidth = Math.max(50, tableWidth - totalWidthUsed);
+        const remainingColumns = visibleNumColumns - (quantityHeaderIndex !== -1 ? 1 : 0);
+        const defaultColumnWidth = remainingColumns > 0 ? remainingWidth / remainingColumns : remainingWidth / Math.max(1, visibleNumColumns);
 
+        // Initialiser les largeurs de colonnes restantes avec une taille minimale
         for (let i = 0; i < numColumns; i++) {
-          if (columnWidths[i] === 0) { // Pas encore défini (pas la colonne Qté)
-            columnWidths[i] = defaultColumnWidth;
+          if (columnWidths[i] === 0 && visibleColumnIndices.includes(i)) {
+            columnWidths[i] = Math.max(30, defaultColumnWidth);
+          } else if (!visibleColumnIndices.includes(i)) {
+            columnWidths[i] = 0; // Colonne cachée
           }
         }
 
         // En-têtes du tableau - Design épuré et professionnel
-        if (element.showHeaders !== false && tableData.headers.length > 0) {
+        if (element.showHeaders !== false && (filteredHeaders.length > 0 || tableData.headers.length > 0)) {
           const headerHeight = 28; // Réduit pour un look plus compact
 
           // Fond de l'en-tête sobre et professionnel
@@ -2472,7 +2499,10 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           ctx.font = `600 ${headerFontSize}px ${fontFamily}`; // Poids semi-bold pour plus de hiérarchie
           ctx.textAlign = 'center';
 
-          tableData.headers.forEach((header, index) => {
+          const headersToDisplay = filteredHeaders.length > 0 ? filteredHeaders : tableData.headers;
+          const headerIndices = filteredHeaders.length > 0 ? visibleColumnIndices : tableData.headers.map((_, i) => i);
+
+          headersToDisplay.forEach((header, displayIndex) => {
             let headerText = header;
 
             // Appliquer la transformation de texte
@@ -2485,32 +2515,43 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             }
 
             // Calculer la position X centrée dans la colonne
-            let headerX;
-            if (index === 0) {
-              headerX = tableX + (columnWidths[0] / 2);
-            } else {
-              const previousWidth = columnWidths.slice(0, index).reduce((sum, w) => sum + w, 0);
-              headerX = tableX + previousWidth + (columnWidths[index] / 2);
+            const columnIndex = headerIndices[displayIndex];
+            let headerX = tableX;
+            let accumulatedWidth = 0;
+
+            for (let i = 0; i < columnIndex; i++) {
+              accumulatedWidth += columnWidths[i] || 0;
             }
+
+            headerX = tableX + accumulatedWidth + (columnWidths[columnIndex] / 2);
+
+            // Centrer verticalement le texte de l'en-tête
+            const headerY = currentY + headerHeight / 2 + (headerFontSize * 0.3);
 
             // Afficher le texte avec espacement des lettres si défini
             if (letterSpacing > 0) {
               let charX = headerX - (headerText.length * letterSpacing) / 2;
               for (let i = 0; i < headerText.length; i++) {
-                ctx.fillText(headerText[i], charX, currentY + 20);
+                ctx.fillText(headerText[i], charX, headerY);
                 charX += ctx.measureText(headerText[i]).width + letterSpacing;
               }
             } else {
-              ctx.fillText(headerText, headerX, currentY + 20);
+              ctx.fillText(headerText, headerX, headerY);
             }
 
             // Ligne verticale subtile entre les colonnes si bordures activées
-            if (element.showBorders !== false && index < tableData.headers.length - 1) {
+            if (element.showBorders !== false && displayIndex < headersToDisplay.length - 1) {
               ctx.strokeStyle = tableStyleData.header_border ?
                 `rgb(${tableStyleData.header_border.join(',')})` :
                 '#e5e7eb';
               ctx.lineWidth = 0.8; // Bordure plus visible
-              const lineX = tableX + columnWidths.slice(0, index + 1).reduce((sum, w) => sum + w, 0);
+              const nextColumnIndex = headerIndices[displayIndex + 1];
+              let lineX = tableX;
+              let nextAccumWidth = 0;
+              for (let i = 0; i < nextColumnIndex; i++) {
+                nextAccumWidth += columnWidths[i] || 0;
+              }
+              lineX = tableX + nextAccumWidth;
               ctx.beginPath();
               ctx.moveTo(lineX, currentY);
               ctx.lineTo(lineX, currentY + headerHeight);
