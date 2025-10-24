@@ -637,37 +637,77 @@ const PropertiesPanel = memo(({
                 defaultOpen={false}
                 className="properties-accordion"
               >
-
-                {/* Thème */}
+                {/* Colonnes et totaux */}
                 <div className="table-section">
-                  <div className="section-title">🎨 Thème</div>
-                  <div className="table-style-selector-compact">
+                  <div className="section-title">📋 Colonnes</div>
+                  <div className="checkbox-grid">
                     {[
-                      { value: 'default', label: 'Défaut', headerBg: '#f8fafc', headerBorder: '#e2e8f0', rowBorder: '#f1f5f9', altRowBg: '#fafbfc', borderWidth: 1, textColor: '#334155' },
-                      { value: 'classic', label: 'Classique', headerBg: '#1e293b', headerBorder: '#334155', rowBorder: '#334155', altRowBg: '#ffffff', borderWidth: 1.5, textColor: '#ffffff' },
-                      { value: 'striped', label: 'Alterné', headerBg: '#e0f2fe', headerBorder: '#0ea5e9', rowBorder: '#f0f9ff', altRowBg: '#f8fafc', borderWidth: 1, textColor: '#0c4a6e' },
-                      { value: 'bordered', label: 'Encadré', headerBg: '#f8fafc', headerBorder: '#94a3b8', rowBorder: '#e2e8f0', altRowBg: '#ffffff', borderWidth: 1, textColor: '#475569' },
-                      { value: 'minimal', label: 'Minimal', headerBg: '#ffffff', headerBorder: '#f3f4f6', rowBorder: '#f9fafb', altRowBg: '#ffffff', borderWidth: 0.5, textColor: '#6b7280' },
-                      { value: 'modern', label: 'Moderne', gradient: 'linear-gradient(135deg, #e9d5ff 0%, #ddd6fe 100%)', headerBorder: '#a855f7', rowBorder: '#f3e8ff', altRowBg: '#faf5ff', borderWidth: 1, textColor: '#6b21a8' },
-                      { value: 'blue_ocean', label: 'Océan', gradient: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)', headerBorder: '#3b82f6', rowBorder: '#eff6ff', altRowBg: '#eff6ff', borderWidth: 1, textColor: '#1e40af' },
-                      { value: 'emerald_forest', label: 'Forêt', gradient: 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)', headerBorder: '#10b981', rowBorder: '#ecfdf5', altRowBg: '#ecfdf5', borderWidth: 1, textColor: '#065f46' },
-                      { value: 'sunset_orange', label: 'Coucher', gradient: 'linear-gradient(135deg, #fed7aa 0%, #fdba74 100%)', headerBorder: '#f97316', rowBorder: '#fff7ed', altRowBg: '#fff7ed', borderWidth: 1, textColor: '#c2410c' },
-                      { value: 'royal_purple', label: 'Royal', gradient: 'linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%)', headerBorder: '#a855f7', rowBorder: '#faf5ff', altRowBg: '#faf5ff', borderWidth: 1, textColor: '#7c3aed' },
-                      { value: 'rose_pink', label: 'Rose', gradient: 'linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%)', headerBorder: '#f472b6', rowBorder: '#fdf2f8', altRowBg: '#fdf2f8', borderWidth: 1, textColor: '#db2777' },
-                      { value: 'teal_aqua', label: 'Aigue', gradient: 'linear-gradient(135deg, #ccfbf1 0%, #a7f3d0 100%)', headerBorder: '#14b8a6', rowBorder: '#f0fdfa', altRowBg: '#f0fdfa', borderWidth: 1, textColor: '#0d9488' }
-                    ].map((style) => (
-                      <button key={style.value} type="button" className={`table-style-option-compact ${localProperties.tableStyle === style.value ? 'active' : ''}`} onClick={() => handlePropertyChange(selectedElement.id, 'tableStyle', style.value)} title={`Thème ${style.label}`}>
-                        <div className="table-sample-compact">
-                          <div className="table-header-compact" style={{ background: style.gradient || style.headerBg, border: `1px solid ${style.headerBorder}`, color: style.textColor }}>P|Q|P</div>
-                          <div className="table-row-compact" style={{ backgroundColor: style.altRowBg, border: `1px solid ${style.rowBorder}`, borderTop: 'none', color: style.textColor }}>A1|2|15€</div>
-                        </div>
-                        <span className="style-label-compact">{style.label}</span>
-                      </button>
+                      { key: 'image', label: 'Image' },
+                      { key: 'name', label: 'Nom' },
+                      { key: 'sku', label: 'SKU' },
+                      { key: 'quantity', label: 'Qté' },
+                      { key: 'price', label: 'Prix' },
+                      { key: 'total', label: 'Total' }
+                    ].map(({ key, label }) => (
+                      <label key={key} className="checkbox-compact">
+                        <input
+                          type="checkbox"
+                          checked={localProperties.columns?.[key] ?? true}
+                          onChange={(e) => {
+                            handlePropertyChange(selectedElement.id, `columns.${key}`, e.target.checked);
+                          }}
+                        />
+                        {label}
+                      </label>
                     ))}
                   </div>
                 </div>
 
-                {/* Couleurs - 2 PICKERS SEULEMENT */}
+                <div className="table-section">
+                  <div className="section-title">🧮 Totaux</div>
+                  <div className="checkbox-grid">
+                    {[
+                      { key: 'showSubtotal', label: 'Sous-total' },
+                      { key: 'showShipping', label: 'Port' },
+                      { key: 'showTaxes', label: 'TVA' },
+                      { key: 'showDiscount', label: 'Remise' },
+                      { key: 'showTotal', label: 'Total' }
+                    ].map(({ key, label }) => (
+                      <label key={key} className="checkbox-compact">
+                        <input
+                          type="checkbox"
+                          checked={localProperties[key] || false}
+                          onChange={(e) => handlePropertyChange(selectedElement.id, key, e.target.checked)}
+                        />
+                        {label}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="table-section">
+                  <div className="section-title">🔲 Bordures</div>
+                  <div className="checkbox-grid">
+                    <label className="checkbox-compact">
+                      <input
+                        type="checkbox"
+                        checked={localProperties.showBorders ?? true}
+                        onChange={(e) => handlePropertyChange(selectedElement.id, 'showBorders', e.target.checked)}
+                      />
+                      Cellules
+                    </label>
+                    <label className="checkbox-compact">
+                      <input
+                        type="checkbox"
+                        checked={localProperties.showTableBorder ?? false}
+                        onChange={(e) => handlePropertyChange(selectedElement.id, 'showTableBorder', e.target.checked)}
+                      />
+                      Extérieure
+                    </label>
+                  </div>
+                </div>
+
+                {/* Couleurs - 2 PICKERS */}
                 <div className="table-section">
                   <div className="section-title">🎨 Couleurs</div>
                   <div className="colors-compact">
