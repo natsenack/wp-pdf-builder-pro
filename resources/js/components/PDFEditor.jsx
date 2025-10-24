@@ -1130,7 +1130,8 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.font = `${fontStyle}${fontWeight} ${fontSize}px ${fontFamily}`;
 
         // Calculer les dimensions pour le positionnement
-        const baselineY = textY + textHeight / 2;
+        // Positionner le texte près du haut plutôt qu'au centre pour éviter les superpositions lors du redimensionnement
+        const baselineY = textY + fontSize * 1.2; // Un peu en dessous de la ligne de base du texte
         let labelWidth = 0;
         let availableWidth = textWidth;
 
