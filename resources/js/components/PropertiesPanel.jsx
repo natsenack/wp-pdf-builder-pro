@@ -876,7 +876,7 @@ const renderColorsSection = (selectedElement, localProperties, handlePropertyCha
       key="colors"
       title="Couleurs & Apparence"
       icon="🎨"
-      defaultOpen={true}
+      defaultOpen={false}
       className="properties-accordion"
     >
       {/* Couleur du texte - toujours disponible sauf pour les éléments qui n'ont pas de texte */}
@@ -968,7 +968,7 @@ const renderTypographySection = (selectedElement, localProperties, handlePropert
       key="typography"
       title="Typographie"
       icon="📝"
-      defaultOpen={true}
+      defaultOpen={false}
       className="properties-accordion"
     >
 
@@ -1530,7 +1530,7 @@ const PropertiesPanel = memo(({
                 key="position"
                 title="Position Précise"
                 icon="📍"
-                defaultOpen={true}
+                defaultOpen={false}
                 className="properties-accordion"
               >
 
@@ -1568,7 +1568,7 @@ const PropertiesPanel = memo(({
                 key="dimensions"
                 title="Dimensions"
                 icon="📏"
-                defaultOpen={true}
+                defaultOpen={false}
                 className="properties-accordion"
               >
 
@@ -1805,7 +1805,7 @@ const PropertiesPanel = memo(({
                 key="text-content"
                 title="Contenu texte"
                 icon="📝"
-                defaultOpen={true}
+                defaultOpen={false}
                 className="properties-accordion"
               >
 
@@ -1858,7 +1858,7 @@ const PropertiesPanel = memo(({
                 key="dynamic-variables"
                 title="Variables dynamiques"
                 icon="🔄"
-                defaultOpen={true}
+                defaultOpen={false}
                 className="properties-accordion"
               >
 
@@ -1900,7 +1900,7 @@ const PropertiesPanel = memo(({
                 key="product-table"
                 title="Tableau produits"
                 icon="📊"
-                defaultOpen={true}
+                defaultOpen={false}
                 className="properties-accordion"
               >
 
@@ -2307,7 +2307,7 @@ const PropertiesPanel = memo(({
                 key="customer-info"
                 title="Informations client"
                 icon="👤"
-                defaultOpen={true}
+                defaultOpen={false}
                 className="properties-accordion"
               >
 
@@ -2416,7 +2416,7 @@ const PropertiesPanel = memo(({
                 key="legal-mentions"
                 title="Mentions légales"
                 icon="📄"
-                defaultOpen={true}
+                defaultOpen={false}
                 className="properties-accordion"
               >
 
@@ -2502,7 +2502,7 @@ const PropertiesPanel = memo(({
                 key="dynamic-text"
                 title="Texte Dynamique"
                 icon="📝"
-                defaultOpen={true}
+                defaultOpen={false}
                 className="properties-accordion"
               >
 
@@ -2673,7 +2673,7 @@ const PropertiesPanel = memo(({
                 key="company-info"
                 title="Informations Entreprise"
                 icon="🏢"
-                defaultOpen={true}
+                defaultOpen={false}
                 className="properties-accordion"
               >
 
@@ -2783,7 +2783,7 @@ const PropertiesPanel = memo(({
                 key="document-type"
                 title="Type de Document"
                 icon="📋"
-                defaultOpen={true}
+                defaultOpen={false}
                 className="properties-accordion"
               >
 
@@ -2809,7 +2809,7 @@ const PropertiesPanel = memo(({
                 key="order-number"
                 title="Numéro de Commande"
                 icon="🔢"
-                defaultOpen={true}
+                defaultOpen={false}
                 className="properties-accordion"
               >
 
@@ -2878,7 +2878,7 @@ const PropertiesPanel = memo(({
                 key="image-controls"
                 title="Image"
                 icon="🖼️"
-                defaultOpen={true}
+                defaultOpen={false}
                 className="properties-accordion"
               >
 
@@ -3056,7 +3056,7 @@ const PropertiesPanel = memo(({
                 key="document-type-alt"
                 title="Type de Document"
                 icon="📋"
-                defaultOpen={true}
+                defaultOpen={false}
                 className="properties-accordion"
               >
 
