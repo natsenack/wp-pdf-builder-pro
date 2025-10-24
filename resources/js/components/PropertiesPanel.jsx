@@ -719,9 +719,9 @@ const PropertiesPanel = memo(({
                   </div>
                 </div>
 
-                {/* Styles du tableau */}
+                {/* Styles du tableau - SIMPLIFIÉ */}
                 <div className="table-section">
-                  <div className="section-title">🎨 Style du tableau</div>
+                  <div className="section-title">🎨 Thème du tableau</div>
                   <div className="table-style-selector-compact">
                     {[
                       {
@@ -850,7 +850,7 @@ const PropertiesPanel = memo(({
                         type="button"
                         className={`table-style-option-compact ${localProperties.tableStyle === style.value ? 'active' : ''}`}
                         onClick={() => handlePropertyChange(selectedElement.id, 'tableStyle', style.value)}
-                        title={`${style.label} - Style ${style.label.toLowerCase()}`}
+                        title={`Thème ${style.label}`}
                       >
                         <div className="table-sample-compact">
                           <div
@@ -881,120 +881,58 @@ const PropertiesPanel = memo(({
                   </div>
                 </div>
 
-                {/* Couleurs thème (primaire & secondaire) */}
+                {/* Surcharge des couleurs - SIMPLE (juste 2 pickers) */}
                 <div className="table-section">
-                  <div className="section-title">🎨 Couleurs thème</div>
+                  <div className="section-title">🎨 Personnaliser les couleurs</div>
+                  <p style={{ fontSize: '0.85em', color: '#999', marginBottom: '12px' }}>
+                    Laissez vides pour utiliser les couleurs du thème
+                  </p>
                   <div className="colors-compact">
                     <div className="color-row">
-                      <span className="color-label">Primaire:</span>
+                      <span className="color-label">Principale:</span>
                       <input
                         type="color"
-                        value={localProperties.tablePrimaryColor || '#667eea'}
-                        onChange={(e) => handlePropertyChange(selectedElement.id, 'tablePrimaryColor', e.target.value)}
-                        title="Couleur primaire (en-têtes, bordures, totaux)"
+                        value={localProperties.tableColorPrimary || '#e2e8f0'}
+                        onChange={(e) => handlePropertyChange(selectedElement.id, 'tableColorPrimary', e.target.value)}
+                        title="En-têtes et bordures"
                       />
-                      <span className="color-hint" style={{ fontSize: '0.75em', color: '#666' }}>
-                        En-têtes & bordures
-                      </span>
+                      <button
+                        onClick={() => handlePropertyChange(selectedElement.id, 'tableColorPrimary', '')}
+                        style={{ padding: '2px 8px', fontSize: '11px', marginLeft: '4px' }}
+                      >
+                        ✕
+                      </button>
                     </div>
                     <div className="color-row">
                       <span className="color-label">Secondaire:</span>
                       <input
                         type="color"
-                        value={localProperties.tableSecondaryColor || '#f5f5f5'}
-                        onChange={(e) => handlePropertyChange(selectedElement.id, 'tableSecondaryColor', e.target.value)}
-                        title="Couleur secondaire (lignes paires, fonds)"
+                        value={localProperties.tableColorSecondary || '#fafbfc'}
+                        onChange={(e) => handlePropertyChange(selectedElement.id, 'tableColorSecondary', e.target.value)}
+                        title="Lignes alternées"
                       />
-                      <span className="color-hint" style={{ fontSize: '0.75em', color: '#666' }}>
-                        Fonds alternés
-                      </span>
+                      <button
+                        onClick={() => handlePropertyChange(selectedElement.id, 'tableColorSecondary', '')}
+                        style={{ padding: '2px 8px', fontSize: '11px', marginLeft: '4px' }}
+                      >
+                        ✕
+                      </button>
                     </div>
                   </div>
                 </div>
 
-                {/* Couleurs individuelles (compact) */}
-                <div className="table-section">
-                  <div className="section-title">🎨 Couleurs personnalisées</div>
-                  <p style={{ fontSize: '0.85em', color: '#999', marginBottom: '12px' }}>
-                    ⚠️ Surcharge les couleurs thème si définies
-                  </p>
-                  <div className="colors-compact">
-                    <div className="color-row">
-                      <span className="color-label">Pairs:</span>
-                      <input
-                        type="color"
-                        value={localProperties.evenRowBg || '#ffffff'}
-                        onChange={(e) => handlePropertyChange(selectedElement.id, 'evenRowBg', e.target.value)}
-                        title="Fond lignes paires"
-                      />
-                      <input
-                        type="color"
-                        value={localProperties.evenRowTextColor || '#000000'}
-                        onChange={(e) => handlePropertyChange(selectedElement.id, 'evenRowTextColor', e.target.value)}
-                        title="Texte lignes paires"
-                      />
-                    </div>
-                    <div className="color-row">
-                      <span className="color-label">Impairs:</span>
-                      <input
-                        type="color"
-                        value={localProperties.oddRowBg || '#f9fafb'}
-                        onChange={(e) => handlePropertyChange(selectedElement.id, 'oddRowBg', e.target.value)}
-                        title="Fond lignes impaires"
-                      />
-                      <input
-                        type="color"
-                        value={localProperties.oddRowTextColor || '#000000'}
-                        onChange={(e) => handlePropertyChange(selectedElement.id, 'oddRowTextColor', e.target.value)}
-                        title="Texte lignes impaires"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Bouton de réinitialisation du tableau */}
+                {/* Bouton de réinitialisation simple */}
                 <div className="property-row">
                   <label></label>
                   <button
                     className="reset-table-btn"
                     onClick={() => {
-                      // Réinitialiser les colonnes
-                      handlePropertyChange(selectedElement.id, 'columns', {
-                        image: false,
-                        name: true,
-                        sku: false,
-                        quantity: true,
-                        price: true,
-                        total: true
-                      });
-
-                      // Réinitialiser le style
                       handlePropertyChange(selectedElement.id, 'tableStyle', 'default');
-
-                      // Réinitialiser les totaux
-                      handlePropertyChange(selectedElement.id, 'showSubtotal', false);
-                      handlePropertyChange(selectedElement.id, 'showShipping', true);
-                      handlePropertyChange(selectedElement.id, 'showTaxes', true);
-                      handlePropertyChange(selectedElement.id, 'showDiscount', true);
-                      handlePropertyChange(selectedElement.id, 'showTotal', true);
-
-                      // Réinitialiser les bordures
+                      handlePropertyChange(selectedElement.id, 'tableColorPrimary', '');
+                      handlePropertyChange(selectedElement.id, 'tableColorSecondary', '');
                       handlePropertyChange(selectedElement.id, 'showBorders', true);
-
-                      // Réinitialiser la bordure extérieure du tableau
-                      handlePropertyChange(selectedElement.id, 'showTableBorder', false);
-
-                      // Réinitialiser les couleurs individuelles
-                      handlePropertyChange(selectedElement.id, 'evenRowBg', '#ffffff');
-                      handlePropertyChange(selectedElement.id, 'evenRowTextColor', '#000000');
-                      handlePropertyChange(selectedElement.id, 'oddRowBg', '#f9fafb');
-                      handlePropertyChange(selectedElement.id, 'oddRowTextColor', '#000000');
-
-                      // Réinitialiser les couleurs thème
-                      handlePropertyChange(selectedElement.id, 'tablePrimaryColor', '#667eea');
-                      handlePropertyChange(selectedElement.id, 'tableSecondaryColor', '#f5f5f5');
                     }}
-                    title="Réinitialiser toutes les propriétés du tableau aux valeurs par défaut"
+                    title="Réinitialiser le thème et les couleurs"
                     style={{
                       padding: '6px 12px',
                       backgroundColor: '#dc2626',
@@ -1004,13 +942,10 @@ const PropertiesPanel = memo(({
                       fontSize: '12px',
                       fontWeight: '500',
                       cursor: 'pointer',
-                      marginTop: '8px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px'
+                      marginTop: '8px'
                     }}
                   >
-                    🔄 Reset
+                    🔄 Réinitialiser
                   </button>
                 </div>
               </Accordion>

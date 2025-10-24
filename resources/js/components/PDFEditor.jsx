@@ -2434,527 +2434,93 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 0;
       } else if (element.type === 'product_table') {
-        // Rendu du tableau de produits avec toutes les propriétés depuis PropertiesPanel et SampleDataProvider
+        // === RENDU SIMPLIFIÉ DU TABLEAU DE PRODUITS ===
+        // Système: 1) Thème préfabriqué + 2) Surcharges de couleur simples
+        
         const tableX = element.x || 30;
         let currentY = element.y || 270;
         const tableWidth = element.width || 530;
-        const tableHeight = element.height || 100;
+        const cellHeight = 18;
+        const headerHeight = 22;
 
-        // Appliquer l'opacité si définie
+        // 1. THÈME (13 presets disponibles)
+        const themeKey = element.tableStyle || 'default';
+        const theme = {
+          default: { headerBg: '#f8fafc', headerText: '#334155', altRowBg: '#fafbfc', rowText: '#334155', border: '#e2e8f0' },
+          classic: { headerBg: '#1e293b', headerText: '#ffffff', altRowBg: '#ffffff', rowText: '#000000', border: '#334155' },
+          striped: { headerBg: '#e0f2fe', headerText: '#0c4a6e', altRowBg: '#f8fafc', rowText: '#0c4a6e', border: '#0ea5e9' },
+          bordered: { headerBg: '#f8fafc', headerText: '#475569', altRowBg: '#ffffff', rowText: '#475569', border: '#94a3b8' },
+          minimal: { headerBg: '#ffffff', headerText: '#6b7280', altRowBg: '#ffffff', rowText: '#6b7280', border: '#f3f4f6' },
+          modern: { headerBg: '#e9d5ff', headerText: '#6b21a8', altRowBg: '#faf5ff', rowText: '#6b21a8', border: '#a855f7' },
+          blue_ocean: { headerBg: '#dbeafe', headerText: '#1e40af', altRowBg: '#eff6ff', rowText: '#1e40af', border: '#3b82f6' },
+          emerald_forest: { headerBg: '#d1fae5', headerText: '#065f46', altRowBg: '#ecfdf5', rowText: '#065f46', border: '#10b981' },
+          sunset_orange: { headerBg: '#fed7aa', headerText: '#c2410c', altRowBg: '#fff7ed', rowText: '#c2410c', border: '#f97316' },
+          royal_purple: { headerBg: '#e9d5ff', headerText: '#7c3aed', altRowBg: '#faf5ff', rowText: '#7c3aed', border: '#a855f7' },
+          rose_pink: { headerBg: '#fce7f3', headerText: '#db2777', altRowBg: '#fdf2f8', rowText: '#db2777', border: '#f472b6' },
+          teal_aqua: { headerBg: '#ccfbf1', headerText: '#0d9488', altRowBg: '#f0fdfa', rowText: '#0d9488', border: '#14b8a6' }
+        }[themeKey] || { headerBg: '#f8fafc', headerText: '#334155', altRowBg: '#fafbfc', rowText: '#334155', border: '#e2e8f0' };
+
+        // 2. SURCHARGES DE COULEUR (optionnelles - ne pas utiliser si vides)
+        const headerBg = element.tableColorPrimary || theme.headerBg;
+        const altRowBg = element.tableColorSecondary || theme.altRowBg;
+        const rowBg = '#ffffff';
+        const headerText = theme.headerText;
+        const rowText = theme.rowText;
+        const borderColor = element.tableColorPrimary || theme.border;
+        const borderWidth = 1;
+
+        // Données d'exemple
+        const headers = ['Produit', 'Qté', 'Prix', 'Total'];
+        const rows = [
+          ['Produit A', '2', '15,99 €', '31,98 €'],
+          ['Produit B', '1', '25,50 €', '25,50 €'],
+          ['Produit C', '3', '10,00 €', '30,00 €']
+        ];
+
+        // Opacité
         if (element.opacity !== undefined && element.opacity < 1) {
             ctx.globalAlpha = element.opacity;
         }
 
-        // Appliquer les filtres CSS si définis (simulation avec canvas)
-        if (element.brightness !== undefined || element.contrast !== undefined || element.saturate !== undefined) {
-          // Note: Les filtres canvas sont limités, nous simulons avec des ajustements de couleur
-          const brightness = element.brightness !== undefined ? element.brightness / 100 : 1;
-          const contrast = element.contrast !== undefined ? element.contrast / 100 : 1;
-          const saturate = element.saturate !== undefined ? element.saturate / 100 : 1;
+        // === RENDU ===
+        const colWidth = tableWidth / headers.length;
 
-          // Appliquer un filtre de luminosité simple en ajustant la couleur
-          if (brightness !== 1) {
-            ctx.filter = `brightness(${brightness})`;
-          }
-        }
+        // En-tête
+        ctx.fillStyle = headerBg;
+        ctx.fillRect(tableX, currentY, tableWidth, headerHeight);
+        ctx.strokeStyle = borderColor;
+        ctx.lineWidth = borderWidth;
+        ctx.strokeRect(tableX, currentY, tableWidth, headerHeight);
 
-        // Appliquer les ombres si définies
-        if (element.shadow) {
-          ctx.shadowColor = element.shadowColor || '#000000';
-          ctx.shadowBlur = element.shadowBlur || 5;
-          ctx.shadowOffsetX = element.shadowOffsetX || 2;
-          ctx.shadowOffsetY = element.shadowOffsetY || 2;
-        }
+        ctx.fillStyle = headerText;
+        ctx.font = 'bold 11px Arial';
+        ctx.textAlign = 'center';
+        headers.forEach((header, idx) => {
+          ctx.fillText(header, tableX + idx * colWidth + colWidth / 2, currentY + headerHeight / 2 + 3);
+        });
+        currentY += headerHeight;
 
-        // Fond du tableau si défini
-        if (element.backgroundColor && element.backgroundColor !== 'transparent') {
-          ctx.fillStyle = element.backgroundColor;
-          if (element.borderRadius > 0) {
-            ctx.beginPath();
-            ctx.roundRect(tableX - 5, currentY - 5, tableWidth + 10, tableHeight + 10, element.borderRadius);
-            ctx.fill();
-          } else {
-            ctx.fillRect(tableX - 5, currentY - 5, tableWidth + 10, tableHeight + 10);
-          }
-        }
-
-        // Bordure du tableau si définie
-        if (element.borderWidth > 0) {
-          ctx.strokeStyle = element.borderColor || '#000000';
-          ctx.lineWidth = element.borderWidth || 1;
-          if (element.borderRadius > 0) {
-            ctx.beginPath();
-            ctx.roundRect(tableX - 5, currentY - 5, tableWidth + 10, tableHeight + 10, element.borderRadius);
-            ctx.stroke();
-          } else {
-            ctx.strokeRect(tableX - 5, currentY - 5, tableWidth + 10, tableHeight + 10);
-          }
-        }
-
-        // Bordure extérieure du tableau (contrôlée par showTableBorder)
-        if (element.showTableBorder) {
-          // Utiliser la couleur de bordure du style de tableau sélectionné
-          const tableStyles = getTableStyles(element.tableStyle);
-          ctx.strokeStyle = tableStyles.headerBorder;
-          ctx.lineWidth = 1.5; // Bordure plus visible pour le contour extérieur
-          ctx.strokeRect(tableX - 2, currentY - 2, tableWidth + 4, tableHeight + 4);
-        }
-
-        // Appliquer la transformation (rotation, échelle) si définie
-        if (element.rotation || element.scaleX || element.scaleY) {
-          ctx.save();
-          const centerX = tableX + tableWidth / 2;
-          const centerY = currentY + tableHeight / 2;
-
-          ctx.translate(centerX, centerY);
-          if (element.rotation) {
-            ctx.rotate((element.rotation * Math.PI) / 180);
-          }
-          if (element.scaleX || element.scaleY) {
-            ctx.scale(element.scaleX || 1, element.scaleY || 1);
-          }
-          ctx.translate(-centerX, -centerY);
-        }
-
-        // Générer les données du tableau avec SampleDataProvider
-        const sampleDataProvider = new SampleDataProvider();
-        const tableData = sampleDataProvider.generateProductTableData({
-          columns: element.columns || {},
-          showSubtotal: element.showSubtotal || false,
-          showShipping: element.showShipping || true,
-          showTaxes: element.showTaxes || true,
-          showDiscount: element.showDiscount || true,
-          showTotal: element.showTotal || true,
-          tableStyle: element.tableStyle || 'default'
+        // Lignes de données
+        ctx.font = '10px Arial';
+        rows.forEach((row, rowIdx) => {
+          const isAltRow = rowIdx % 2 !== 0;
+          ctx.fillStyle = isAltRow ? altRowBg : rowBg;
+          ctx.fillRect(tableX, currentY, tableWidth, cellHeight);
+          
+          ctx.strokeStyle = borderColor;
+          ctx.lineWidth = borderWidth;
+          ctx.strokeRect(tableX, currentY, tableWidth, cellHeight);
+          
+          ctx.fillStyle = rowText;
+          row.forEach((cell, cellIdx) => {
+            ctx.fillText(cell, tableX + cellIdx * colWidth + colWidth / 2, currentY + cellHeight / 2 + 3);
+          });
+          currentY += cellHeight;
         });
 
-        // Récupérer les données de style du tableau
-        const tableStyleData = tableData.tableStyleData || {
-          header_bg: [248, 249, 250], // #f8f9fa
-          header_border: [226, 232, 240], // #e2e8f0
-          row_border: [241, 245, 249], // #f1f5f9
-          alt_row_bg: [250, 251, 252], // #fafbfc
-          headerTextColor: '#000000',
-          rowTextColor: '#000000',
-          border_width: 1,
-          headerFontWeight: 'bold',
-          headerFontSize: '12px',
-          rowFontSize: '11px'
-        };
-
-        // Configuration de la police avec propriétés avancées
-        const headerFontSize = parseInt(tableStyleData.headerFontSize) || element.fontSize || 12;
-        const rowFontSize = parseInt(tableStyleData.rowFontSize) || element.fontSize || 11;
-        const fontFamily = element.fontFamily || 'Arial';
-        const fontWeight = element.fontWeight || tableStyleData.headerFontWeight || 'normal';
-        const fontStyle = element.fontStyle === 'italic' ? 'italic ' : '';
-
-        // Appliquer les propriétés de texte avancées
-        const textTransform = element.textTransform || 'none';
-        const letterSpacing = element.letterSpacing || 0;
-        const lineHeight = element.lineHeight || 1.2;
-
-        // Calculer la largeur des colonnes avec largeur fixe pour la colonne Qté
-        const numColumns = tableData.headers.length;
-        let columnWidths = new Array(numColumns).fill(0);
-        let totalWidthUsed = 0;
-
-        // Appliquer les filtres de colonnes depuis PropertiesPanel
-        const filteredHeaders = [];
-        const headerMap = {
-          'Img': 'image',
-          'Nom': 'name',
-          'SKU': 'sku',
-          'Qté': 'quantity',
-          'Prix': 'price',
-          'Total': 'total'
-        };
-
-        // Déterminer quelles colonnes afficher selon les propriétés
-        const visibleColumnIndices = [];
-        tableData.headers.forEach((header, idx) => {
-          const columnKey = headerMap[header] || header.toLowerCase();
-          if (element.columns && element.columns[columnKey] !== false) {
-            visibleColumnIndices.push(idx);
-            filteredHeaders.push(header);
-          }
-        });
-
-        // Ajuster les largeurs en fonction des colonnes visibles
-        const visibleNumColumns = visibleColumnIndices.length || numColumns;
-        
-        // Largeur fixe de 40px pour la colonne "Qté"
-        const quantityHeaderIndex = filteredHeaders.indexOf('Qté');
-        const quantityColumnActualIndex = quantityHeaderIndex !== -1 ? visibleColumnIndices[quantityHeaderIndex] : -1;
-        if (quantityColumnActualIndex !== -1) {
-          columnWidths[quantityColumnActualIndex] = Math.max(40, tableWidth / 10);
-          totalWidthUsed += columnWidths[quantityColumnActualIndex];
-        }
-
-        // Répartir le reste de l'espace entre les autres colonnes
-        const remainingWidth = Math.max(50, tableWidth - totalWidthUsed);
-        const remainingColumns = visibleNumColumns - (quantityHeaderIndex !== -1 ? 1 : 0);
-        const defaultColumnWidth = remainingColumns > 0 ? remainingWidth / remainingColumns : remainingWidth / Math.max(1, visibleNumColumns);
-
-        // Initialiser les largeurs de colonnes restantes avec une taille minimale
-        for (let i = 0; i < visibleNumColumns; i++) {
-          const actualColumnIndex = visibleColumnIndices[i];
-          if (columnWidths[actualColumnIndex] === 0) {
-            columnWidths[actualColumnIndex] = Math.max(30, defaultColumnWidth);
-          }
-        }
-        
-        // Mettre à zéro les colonnes invisibles
-        for (let i = 0; i < numColumns; i++) {
-          if (!visibleColumnIndices.includes(i)) {
-            columnWidths[i] = 0;
-          }
-        }
-
-        // Choisir aléatoirement entre 2 styles de tableaux (valeur stockée à la création)
-        // Si tableStyleChoice n'existe pas, l'initialiser une seule fois et la stocker
-        if (!element.tableStyleChoice) {
-          element.tableStyleChoice = Math.random() < 0.5 ? 'minimal' : 'striped';
-        }
-        const tableStyleChoice = element.tableStyleChoice;
-
-        // Récupérer les couleurs thème ou utiliser les défauts
-        const primaryColor = element.tablePrimaryColor || '#667eea';
-        const secondaryColor = element.tableSecondaryColor || '#f5f5f5';
-
-        // En-têtes du tableau - 2 styles possibles
-        if (element.showHeaders !== false && (filteredHeaders.length > 0 || tableData.headers.length > 0)) {
-          const headerHeight = 24;
-
-          // STYLE 1: MINIMAL LIGHT - Très épuré, fond léger gris
-          if (tableStyleChoice === 'minimal') {
-            // Fond simple avec couleur secondaire très légère
-            ctx.fillStyle = secondaryColor;
-            ctx.globalAlpha = 0.4;
-            ctx.fillRect(tableX, currentY, tableWidth, headerHeight);
-            ctx.globalAlpha = 1;
-
-            // Bordure inférieure avec couleur primaire
-            ctx.strokeStyle = primaryColor;
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(tableX, currentY + headerHeight - 0.5);
-            ctx.lineTo(tableX + tableWidth, currentY + headerHeight - 0.5);
-            ctx.stroke();
-          }
-          // STYLE 2: STRIPED MODERN - Avec dégradé et bordures
-          else {
-            const headerGradient = ctx.createLinearGradient(tableX, currentY, tableX, currentY + headerHeight);
-            headerGradient.addColorStop(0, primaryColor);
-            headerGradient.addColorStop(1, adjustColor(primaryColor, -20));
-            ctx.fillStyle = headerGradient;
-            ctx.fillRect(tableX, currentY, tableWidth, headerHeight);
-
-            // Bordure supérieure avec couleur primaire
-            ctx.strokeStyle = primaryColor;
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(tableX, currentY);
-            ctx.lineTo(tableX + tableWidth, currentY);
-            ctx.stroke();
-
-            // Bordure inférieure
-            ctx.strokeStyle = primaryColor;
-            ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            ctx.moveTo(tableX, currentY + headerHeight - 0.5);
-            ctx.lineTo(tableX + tableWidth, currentY + headerHeight - 0.5);
-            ctx.stroke();
-          }
-
-          // Texte des en-têtes - blanc pour contraste avec couleur primaire en mode striped
-          const headerTextColor = tableStyleChoice === 'striped' ? '#ffffff' : '#1a1a1a';
-          ctx.fillStyle = headerTextColor;
-          ctx.font = `700 ${headerFontSize}px ${fontFamily}`; // Bold au lieu de semi-bold
-          ctx.textAlign = 'center';
-
-          const headersToDisplay = filteredHeaders.length > 0 ? filteredHeaders : tableData.headers;
-          const headerIndices = filteredHeaders.length > 0 ? visibleColumnIndices : tableData.headers.map((_, i) => i);
-
-          headersToDisplay.forEach((header, displayIndex) => {
-            let headerText = header;
-
-            // Appliquer la transformation de texte
-            if (textTransform === 'uppercase') {
-              headerText = headerText.toUpperCase();
-            } else if (textTransform === 'lowercase') {
-              headerText = headerText.toLowerCase();
-            } else if (textTransform === 'capitalize') {
-              headerText = headerText.replace(/\b\w/g, l => l.toUpperCase());
-            }
-
-            // Calculer la position X centrée dans la colonne
-            const columnIndex = headerIndices[displayIndex];
-            let headerX = tableX;
-            let accumulatedWidth = 0;
-
-            for (let i = 0; i < columnIndex; i++) {
-              accumulatedWidth += columnWidths[i] || 0;
-            }
-
-            headerX = tableX + accumulatedWidth + (columnWidths[columnIndex] / 2);
-
-            // Centrer verticalement le texte de l'en-tête avec meilleur padding
-            const headerY = currentY + headerHeight / 2 + (headerFontSize * 0.3) + 2;
-
-            // Afficher le texte avec espacement des lettres si défini
-            if (letterSpacing > 0) {
-              let charX = headerX - (headerText.length * letterSpacing) / 2;
-              for (let i = 0; i < headerText.length; i++) {
-                ctx.fillText(headerText[i], charX, headerY);
-                charX += ctx.measureText(headerText[i]).width + letterSpacing;
-              }
-            } else {
-              ctx.fillText(headerText, headerX, headerY);
-            }
-
-            // Ligne verticale très subtile entre les colonnes si bordures activées
-            if (element.showBorders !== false && displayIndex < headersToDisplay.length - 1) {
-              ctx.strokeStyle = tableStyleData.header_border ? `rgba(${tableStyleData.header_border.join(',')}, 0.3)` : 'rgba(203, 213, 225, 0.3)';
-              ctx.lineWidth = 0.5; // Très subtile
-              const nextColumnIndex = headerIndices[displayIndex + 1];
-              let lineX = tableX;
-              let nextAccumWidth = 0;
-              for (let i = 0; i < nextColumnIndex; i++) {
-                nextAccumWidth += columnWidths[i] || 0;
-              }
-              lineX = tableX + nextAccumWidth;
-              ctx.beginPath();
-              ctx.moveTo(lineX, currentY + 4);
-              ctx.lineTo(lineX, currentY + headerHeight - 4);
-              ctx.stroke();
-            }
-          });
-
-          currentY += headerHeight;
-        }
-
-        // Lignes de données - 2 styles possibles
-        ctx.font = `${fontStyle}400 ${rowFontSize}px ${fontFamily}`; // Poids normal pour les données
-
-        tableData.rows.forEach((row, rowIndex) => {
-          const rowHeight = 20; // Compact pour les 2 styles
-          const isEvenRow = rowIndex % 2 === 0;
-
-          // STYLE 1: MINIMAL LIGHT - Fond très léger, alternance subtile
-          if (tableStyleChoice === 'minimal') {
-            // Utiliser la couleur secondaire avec très peu d'opacité
-            const bgColor = isEvenRow ? '#ffffff' : secondaryColor;
-            ctx.fillStyle = bgColor;
-            if (!isEvenRow) {
-              ctx.globalAlpha = 0.3;
-            }
-            ctx.fillRect(tableX, currentY, tableWidth, rowHeight);
-            ctx.globalAlpha = 1;
-
-            // Bordure simple fine avec couleur primaire très légère
-            ctx.strokeStyle = primaryColor;
-            ctx.globalAlpha = 0.2;
-            ctx.lineWidth = 0.5;
-            ctx.beginPath();
-            ctx.moveTo(tableX, currentY + rowHeight);
-            ctx.lineTo(tableX + tableWidth, currentY + rowHeight);
-            ctx.stroke();
-            ctx.globalAlpha = 1;
-          }
-          // STYLE 2: STRIPED MODERN - Alternance plus visible avec couleur secondaire
-          else {
-            const bgColor = isEvenRow ? '#ffffff' : secondaryColor;
-            ctx.fillStyle = bgColor;
-            ctx.fillRect(tableX, currentY, tableWidth, rowHeight);
-
-            // Bordure fine avec couleur primaire très légère
-            ctx.strokeStyle = primaryColor;
-            ctx.globalAlpha = 0.2;
-            ctx.lineWidth = 0.5;
-            ctx.beginPath();
-            ctx.moveTo(tableX, currentY + rowHeight);
-            ctx.lineTo(tableX + tableWidth, currentY + rowHeight);
-            ctx.stroke();
-            ctx.globalAlpha = 1;
-          }
-
-          // Couleur du texte des cellules
-          ctx.fillStyle = '#333333';
-          ctx.textAlign = 'center';
-          const rowTextColor = '#333333'; // Couleur du texte des lignes de données
-
-          row.forEach((cell, cellIndex) => {
-            let cellText = String(cell);
-
-            // Appliquer la transformation de texte
-            if (textTransform === 'uppercase') {
-              cellText = cellText.toUpperCase();
-            } else if (textTransform === 'lowercase') {
-              cellText = cellText.toLowerCase();
-            } else if (textTransform === 'capitalize') {
-              cellText = cellText.replace(/\b\w/g, l => l.toUpperCase());
-            }
-
-            // Calculer la position X centrée dans la colonne
-            let cellX;
-            if (cellIndex === 0) {
-              cellX = tableX + (columnWidths[0] / 2);
-            } else {
-              const previousWidth = columnWidths.slice(0, cellIndex).reduce((sum, w) => sum + w, 0);
-              cellX = tableX + previousWidth + (columnWidths[cellIndex] / 2);
-            }
-            const cellY = currentY + rowHeight / 2 + (rowFontSize * 0.35);
-
-            // Gestion spéciale pour les images (placeholder sobre)
-            if (cellText.startsWith('data:image') || cellText.includes('.jpg') || cellText.includes('.png')) {
-              // Placeholder minimaliste
-              const imgSize = 14;
-              const imgX = cellX - imgSize / 2;
-              const imgY = currentY + (rowHeight - imgSize) / 2;
-
-              ctx.fillStyle = '#f3f4f6';
-              ctx.fillRect(imgX, imgY, imgSize, imgSize);
-
-              ctx.strokeStyle = '#d1d5db';
-              ctx.lineWidth = 0.5;
-              ctx.strokeRect(imgX, imgY, imgSize, imgSize);
-
-              ctx.fillStyle = '#9ca3af';
-              ctx.font = '8px Arial';
-              ctx.textAlign = 'center';
-              ctx.fillText('�', cellX, imgY + imgSize - 1);
-            } else {
-              // Texte normal
-              ctx.font = `${fontStyle}400 ${rowFontSize}px ${fontFamily}`;
-              ctx.fillStyle = rowTextColor;
-              ctx.textAlign = 'center';
-
-              if (letterSpacing > 0) {
-                let charX = cellX - (cellText.length * letterSpacing) / 2;
-                for (let i = 0; i < cellText.length; i++) {
-                  ctx.fillText(cellText[i], charX, cellY);
-                  charX += ctx.measureText(cellText[i]).width + letterSpacing;
-                }
-              } else {
-                ctx.fillText(cellText, cellX, cellY);
-              }
-            }
-
-            // Ligne verticale subtile entre les colonnes si bordures activées
-            if (element.showBorders !== false && cellIndex < row.length - 1) {
-              ctx.strokeStyle = `rgb(${tableStyleData.row_border.join(',')})`;
-              ctx.lineWidth = 0.8; // Bordure plus visible
-              const lineX = tableX + columnWidths.slice(0, cellIndex + 1).reduce((sum, w) => sum + w, 0);
-              ctx.beginPath();
-              ctx.moveTo(lineX, currentY + 1);
-              ctx.lineTo(lineX, currentY + rowHeight - 1);
-              ctx.stroke();
-            }
-          });
-
-          currentY += rowHeight;
-        });
-
-        // Lignes de totaux - Design épuré et professionnel
-        const totals = tableData.totals;
-        if (Object.keys(totals).length > 0) {
-          currentY += 8; // Espace avant les totaux
-
-          // Séparateur avant les totaux avec couleur primaire
-          if (tableStyleChoice === 'minimal') {
-            ctx.strokeStyle = primaryColor;
-            ctx.globalAlpha = 0.3;
-            ctx.lineWidth = 1;
-          } else {
-            ctx.strokeStyle = primaryColor;
-            ctx.lineWidth = 1.5;
-          }
-          ctx.beginPath();
-          ctx.moveTo(tableX, currentY);
-          ctx.lineTo(tableX + tableWidth, currentY);
-          ctx.stroke();
-          ctx.globalAlpha = 1;
-
-          currentY += 6; // Espace après le séparateur
-
-          Object.entries(totals).forEach(([key, value]) => {
-            const totalHeight = 18; // Compact
-            const isTotalRow = key === 'total';
-
-            // Fond des totaux avec couleur secondaire pour le total
-            if (tableStyleChoice === 'minimal') {
-              ctx.fillStyle = isTotalRow ? secondaryColor : '#ffffff';
-              if (isTotalRow) {
-                ctx.globalAlpha = 0.4;
-              }
-            } else {
-              ctx.fillStyle = isTotalRow ? secondaryColor : '#ffffff';
-              if (isTotalRow) {
-                ctx.globalAlpha = 0.5;
-              }
-            }
-            ctx.fillRect(tableX, currentY, tableWidth, totalHeight);
-            ctx.globalAlpha = 1;
-
-            // Texte du total
-            ctx.font = `${fontStyle}${isTotalRow ? '700' : '500'} ${rowFontSize}px ${fontFamily}`;
-            ctx.fillStyle = isTotalRow ? primaryColor : '#666666';
-            ctx.textAlign = 'right';
-
-            // Libellé du total
-            let label = key === 'subtotal' ? 'Sous-total :' :
-                       key === 'shipping' ? 'Frais de port :' :
-                       key === 'tax' ? 'TVA :' :
-                       key === 'discount' ? 'Remise :' :
-                       key === 'total' ? 'TOTAL :' : key + ' :';
-
-            // Appliquer la transformation de texte
-            if (textTransform === 'uppercase') {
-              label = label.toUpperCase();
-            } else if (textTransform === 'lowercase') {
-              label = label.toLowerCase();
-            } else if (textTransform === 'capitalize') {
-              label = label.replace(/\b\w/g, l => l.toUpperCase());
-            }
-
-            // Positionner le label à 70% de la largeur
-            const labelX = tableX + (tableWidth * 0.65);
-            const totalY = currentY + totalHeight / 2 + (rowFontSize * 0.35);
-            ctx.fillText(label, labelX, totalY);
-
-            // Valeur du total
-            let valueText = String(value);
-
-            // Appliquer la transformation de texte
-            if (textTransform === 'uppercase') {
-              valueText = valueText.toUpperCase();
-            } else if (textTransform === 'lowercase') {
-              valueText = valueText.toLowerCase();
-            } else if (textTransform === 'capitalize') {
-              valueText = valueText.replace(/\b\w/g, l => l.toUpperCase());
-            }
-
-            // Positionner la valeur à droite
-            const valueX = tableX + tableWidth - 12;
-            ctx.fillText(valueText, valueX, totalY);
-
-            currentY += totalHeight;
-          });
-        }
-
-        // Restaurer l'opacité, les filtres et les ombres
+        // Restaurer l'opacité
         ctx.globalAlpha = 1;
-        ctx.filter = 'none';
-        ctx.shadowColor = 'transparent';
-        ctx.shadowBlur = 0;
-        ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = 0;
 
-        // Restaurer la transformation si elle était appliquée
-        if (element.rotation || element.scaleX || element.scaleY) {
-          ctx.restore();
-        }
       } else {
         console.log(`PDFEditor: UNKNOWN ELEMENT TYPE "${element.type}" for element ${element.id} - rendering as generic red rectangle`);
         console.log(`PDFEditor: Detailed properties for ${element.type}:`, JSON.stringify(element, null, 2));
