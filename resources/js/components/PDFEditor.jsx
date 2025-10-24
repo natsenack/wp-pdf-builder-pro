@@ -2318,13 +2318,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
               selectedElements={selectedElement ? [selectedElement] : []}
               elements={elements}
               onPropertyChange={(elementId, property, value) => {
-                // Si property est un objet, c'est un batch de propriétés
-                if (typeof property === 'object' && property !== null && !Array.isArray(property)) {
-                  handleElementUpdate(elementId, property);
-                } else {
-                  // Changement de propriété individuelle
-                  handleElementUpdate(elementId, { [property]: value });
-                }
+                handleElementUpdate(elementId, { [property]: value });
               }}
               onBatchUpdate={(updates) => {
                 // Handle batch updates if needed
