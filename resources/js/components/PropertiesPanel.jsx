@@ -637,243 +637,29 @@ const PropertiesPanel = memo(({
                 defaultOpen={false}
                 className="properties-accordion"
               >
-                {/* Section principale compacte */}
-                <div className="table-controls-compact">
-                  {/* Colonnes et totaux */}
-                  <div className="table-section">
-                    <div className="section-title">📋 Configuration</div>
-                    <div className="compact-grid">
-                      <div className="grid-item">
-                        <label className="compact-label">Colonnes:</label>
-                        <div className="checkbox-grid">
-                          {[
-                            { key: 'image', label: 'Img' },
-                            { key: 'name', label: 'Nom' },
-                            { key: 'sku', label: 'SKU' },
-                            { key: 'quantity', label: 'Qté' },
-                            { key: 'price', label: 'Prix' },
-                            { key: 'total', label: 'Total' }
-                          ].map(({ key, label }) => (
-                            <label key={key} className="checkbox-compact">
-                              <input
-                                type="checkbox"
-                                checked={localProperties.columns?.[key] ?? true}
-                                onChange={(e) => {
-                                  handlePropertyChange(selectedElement.id, `columns.${key}`, e.target.checked);
-                                }}
-                              />
-                              {label}
-                            </label>
-                          ))}
-                        </div>
-                      </div>
 
-                      <div className="grid-item">
-                        <label className="compact-label">Totaux:</label>
-                        <div className="checkbox-grid">
-                          {[
-                            { key: 'showSubtotal', label: 'Sous-t.' },
-                            { key: 'showShipping', label: 'Port' },
-                            { key: 'showTaxes', label: 'TVA' },
-                            { key: 'showDiscount', label: 'Remise' },
-                            { key: 'showTotal', label: 'Total' }
-                          ].map(({ key, label }) => (
-                            <label key={key} className="checkbox-compact">
-                              <input
-                                type="checkbox"
-                                checked={localProperties[key] || false}
-                                onChange={(e) => handlePropertyChange(selectedElement.id, key, e.target.checked)}
-                              />
-                              {label}
-                            </label>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Bordures */}
-                  <div className="table-section">
-                    <div className="section-title">🔲 Bordures</div>
-                    <div className="border-controls">
-                      <label className="toggle-compact">
-                        <input
-                          type="checkbox"
-                          checked={localProperties.showBorders ?? true}
-                          onChange={(e) => handlePropertyChange(selectedElement.id, 'showBorders', e.target.checked)}
-                        />
-                        <span className="toggle-slider-small"></span>
-                        Cellules
-                      </label>
-
-                      <label className="toggle-compact">
-                        <input
-                          type="checkbox"
-                          checked={localProperties.showTableBorder ?? false}
-                          onChange={(e) => handlePropertyChange(selectedElement.id, 'showTableBorder', e.target.checked)}
-                        />
-                        <span className="toggle-slider-small"></span>
-                        Extérieure
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Styles du tableau - SIMPLIFIÉ */}
+                {/* Thème */}
                 <div className="table-section">
-                  <div className="section-title">🎨 Thème du tableau</div>
+                  <div className="section-title">🎨 Thème</div>
                   <div className="table-style-selector-compact">
                     {[
-                      {
-                        value: 'default',
-                        label: 'Défaut',
-                        headerBg: '#f8fafc',
-                        headerBorder: '#e2e8f0',
-                        rowBorder: '#f1f5f9',
-                        altRowBg: '#fafbfc',
-                        borderWidth: 1,
-                        textColor: '#334155'
-                      },
-                      {
-                        value: 'classic',
-                        label: 'Classique',
-                        headerBg: '#1e293b',
-                        headerBorder: '#334155',
-                        rowBorder: '#334155',
-                        altRowBg: '#ffffff',
-                        borderWidth: 1.5,
-                        textColor: '#ffffff'
-                      },
-                      {
-                        value: 'striped',
-                        label: 'Alterné',
-                        headerBg: '#e0f2fe',
-                        headerBorder: '#0ea5e9',
-                        rowBorder: '#f0f9ff',
-                        altRowBg: '#f8fafc',
-                        borderWidth: 1,
-                        textColor: '#0c4a6e'
-                      },
-                      {
-                        value: 'bordered',
-                        label: 'Encadré',
-                        headerBg: '#f8fafc',
-                        headerBorder: '#94a3b8',
-                        rowBorder: '#e2e8f0',
-                        altRowBg: '#ffffff',
-                        borderWidth: 1,
-                        textColor: '#475569'
-                      },
-                      {
-                        value: 'minimal',
-                        label: 'Minimal',
-                        headerBg: '#ffffff',
-                        headerBorder: '#f3f4f6',
-                        rowBorder: '#f9fafb',
-                        altRowBg: '#ffffff',
-                        borderWidth: 0.5,
-                        textColor: '#6b7280'
-                      },
-                      {
-                        value: 'modern',
-                        label: 'Moderne',
-                        gradient: 'linear-gradient(135deg, #e9d5ff 0%, #ddd6fe 100%)',
-                        headerBorder: '#a855f7',
-                        rowBorder: '#f3e8ff',
-                        altRowBg: '#faf5ff',
-                        borderWidth: 1,
-                        textColor: '#6b21a8'
-                      },
-                      {
-                        value: 'blue_ocean',
-                        label: 'Océan',
-                        gradient: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)',
-                        headerBorder: '#3b82f6',
-                        rowBorder: '#eff6ff',
-                        altRowBg: '#eff6ff',
-                        borderWidth: 1,
-                        textColor: '#1e40af'
-                      },
-                      {
-                        value: 'emerald_forest',
-                        label: 'Forêt',
-                        gradient: 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)',
-                        headerBorder: '#10b981',
-                        rowBorder: '#ecfdf5',
-                        altRowBg: '#ecfdf5',
-                        borderWidth: 1,
-                        textColor: '#065f46'
-                      },
-                      {
-                        value: 'sunset_orange',
-                        label: 'Coucher',
-                        gradient: 'linear-gradient(135deg, #fed7aa 0%, #fdba74 100%)',
-                        headerBorder: '#f97316',
-                        rowBorder: '#fff7ed',
-                        altRowBg: '#fff7ed',
-                        borderWidth: 1,
-                        textColor: '#c2410c'
-                      },
-                      {
-                        value: 'royal_purple',
-                        label: 'Royal',
-                        gradient: 'linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%)',
-                        headerBorder: '#a855f7',
-                        rowBorder: '#faf5ff',
-                        altRowBg: '#faf5ff',
-                        borderWidth: 1,
-                        textColor: '#7c3aed'
-                      },
-                      {
-                        value: 'rose_pink',
-                        label: 'Rose',
-                        gradient: 'linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%)',
-                        headerBorder: '#f472b6',
-                        rowBorder: '#fdf2f8',
-                        altRowBg: '#fdf2f8',
-                        borderWidth: 1,
-                        textColor: '#db2777'
-                      },
-                      {
-                        value: 'teal_aqua',
-                        label: 'Aigue',
-                        gradient: 'linear-gradient(135deg, #ccfbf1 0%, #a7f3d0 100%)',
-                        headerBorder: '#14b8a6',
-                        rowBorder: '#f0fdfa',
-                        altRowBg: '#f0fdfa',
-                        borderWidth: 1,
-                        textColor: '#0d9488'
-                      }
+                      { value: 'default', label: 'Défaut', headerBg: '#f8fafc', headerBorder: '#e2e8f0', rowBorder: '#f1f5f9', altRowBg: '#fafbfc', borderWidth: 1, textColor: '#334155' },
+                      { value: 'classic', label: 'Classique', headerBg: '#1e293b', headerBorder: '#334155', rowBorder: '#334155', altRowBg: '#ffffff', borderWidth: 1.5, textColor: '#ffffff' },
+                      { value: 'striped', label: 'Alterné', headerBg: '#e0f2fe', headerBorder: '#0ea5e9', rowBorder: '#f0f9ff', altRowBg: '#f8fafc', borderWidth: 1, textColor: '#0c4a6e' },
+                      { value: 'bordered', label: 'Encadré', headerBg: '#f8fafc', headerBorder: '#94a3b8', rowBorder: '#e2e8f0', altRowBg: '#ffffff', borderWidth: 1, textColor: '#475569' },
+                      { value: 'minimal', label: 'Minimal', headerBg: '#ffffff', headerBorder: '#f3f4f6', rowBorder: '#f9fafb', altRowBg: '#ffffff', borderWidth: 0.5, textColor: '#6b7280' },
+                      { value: 'modern', label: 'Moderne', gradient: 'linear-gradient(135deg, #e9d5ff 0%, #ddd6fe 100%)', headerBorder: '#a855f7', rowBorder: '#f3e8ff', altRowBg: '#faf5ff', borderWidth: 1, textColor: '#6b21a8' },
+                      { value: 'blue_ocean', label: 'Océan', gradient: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)', headerBorder: '#3b82f6', rowBorder: '#eff6ff', altRowBg: '#eff6ff', borderWidth: 1, textColor: '#1e40af' },
+                      { value: 'emerald_forest', label: 'Forêt', gradient: 'linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%)', headerBorder: '#10b981', rowBorder: '#ecfdf5', altRowBg: '#ecfdf5', borderWidth: 1, textColor: '#065f46' },
+                      { value: 'sunset_orange', label: 'Coucher', gradient: 'linear-gradient(135deg, #fed7aa 0%, #fdba74 100%)', headerBorder: '#f97316', rowBorder: '#fff7ed', altRowBg: '#fff7ed', borderWidth: 1, textColor: '#c2410c' },
+                      { value: 'royal_purple', label: 'Royal', gradient: 'linear-gradient(135deg, #e9d5ff 0%, #d8b4fe 100%)', headerBorder: '#a855f7', rowBorder: '#faf5ff', altRowBg: '#faf5ff', borderWidth: 1, textColor: '#7c3aed' },
+                      { value: 'rose_pink', label: 'Rose', gradient: 'linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%)', headerBorder: '#f472b6', rowBorder: '#fdf2f8', altRowBg: '#fdf2f8', borderWidth: 1, textColor: '#db2777' },
+                      { value: 'teal_aqua', label: 'Aigue', gradient: 'linear-gradient(135deg, #ccfbf1 0%, #a7f3d0 100%)', headerBorder: '#14b8a6', rowBorder: '#f0fdfa', altRowBg: '#f0fdfa', borderWidth: 1, textColor: '#0d9488' }
                     ].map((style) => (
-                      <button
-                        key={style.value}
-                        type="button"
-                        className={`table-style-option-compact ${localProperties.tableStyle === style.value ? 'active' : ''}`}
-                        onClick={() => handlePropertyChange(selectedElement.id, 'tableStyle', style.value)}
-                        title={`Thème ${style.label}`}
-                      >
+                      <button key={style.value} type="button" className={`table-style-option-compact ${localProperties.tableStyle === style.value ? 'active' : ''}`} onClick={() => handlePropertyChange(selectedElement.id, 'tableStyle', style.value)} title={`Thème ${style.label}`}>
                         <div className="table-sample-compact">
-                          <div
-                            className="table-header-compact"
-                            style={{
-                              background: style.gradient || style.headerBg,
-                              border: `1px solid ${style.headerBorder}`,
-                              color: style.textColor
-                            }}
-                          >
-                            P|Q|P
-                          </div>
-                          <div
-                            className="table-row-compact"
-                            style={{
-                              backgroundColor: style.altRowBg,
-                              border: `1px solid ${style.rowBorder}`,
-                              borderTop: 'none',
-                              color: style.textColor
-                            }}
-                          >
-                            A1|2|15€
-                          </div>
+                          <div className="table-header-compact" style={{ background: style.gradient || style.headerBg, border: `1px solid ${style.headerBorder}`, color: style.textColor }}>P|Q|P</div>
+                          <div className="table-row-compact" style={{ backgroundColor: style.altRowBg, border: `1px solid ${style.rowBorder}`, borderTop: 'none', color: style.textColor }}>A1|2|15€</div>
                         </div>
                         <span className="style-label-compact">{style.label}</span>
                       </button>
@@ -881,95 +667,31 @@ const PropertiesPanel = memo(({
                   </div>
                 </div>
 
-                {/* Surcharge des couleurs - SIMPLE (juste 2 pickers) */}
+                {/* Couleurs - 2 PICKERS SEULEMENT */}
                 <div className="table-section">
-                  <div className="section-title">🎨 Personnaliser les couleurs</div>
-                  <p style={{ fontSize: '0.85em', color: '#999', marginBottom: '12px' }}>
-                    Laissez vides pour utiliser les couleurs du thème
-                  </p>
+                  <div className="section-title">🎨 Couleurs</div>
                   <div className="colors-compact">
                     <div className="color-row">
                       <span className="color-label">Principale:</span>
-                      <input
-                        type="color"
-                        value={localProperties.tableColorPrimary || '#e2e8f0'}
-                        onChange={(e) => handlePropertyChange(selectedElement.id, 'tableColorPrimary', e.target.value)}
-                        title="En-têtes et bordures"
-                      />
-                      <button
-                        onClick={() => handlePropertyChange(selectedElement.id, 'tableColorPrimary', '')}
-                        style={{ padding: '2px 8px', fontSize: '11px', marginLeft: '4px' }}
-                      >
-                        ✕
-                      </button>
+                      <input type="color" value={localProperties.tableColorPrimary || '#0ea5e9'} onChange={(e) => handlePropertyChange(selectedElement.id, 'tableColorPrimary', e.target.value)} />
+                      <button onClick={() => handlePropertyChange(selectedElement.id, 'tableColorPrimary', '')} style={{ padding: '2px 8px', fontSize: '11px' }}>✕</button>
                     </div>
                     <div className="color-row">
                       <span className="color-label">Secondaire:</span>
-                      <input
-                        type="color"
-                        value={localProperties.tableColorSecondary || '#fafbfc'}
-                        onChange={(e) => handlePropertyChange(selectedElement.id, 'tableColorSecondary', e.target.value)}
-                        title="Lignes alternées"
-                      />
-                      <button
-                        onClick={() => handlePropertyChange(selectedElement.id, 'tableColorSecondary', '')}
-                        style={{ padding: '2px 8px', fontSize: '11px', marginLeft: '4px' }}
-                      >
-                        ✕
-                      </button>
+                      <input type="color" value={localProperties.tableColorSecondary || '#e8ebff'} onChange={(e) => handlePropertyChange(selectedElement.id, 'tableColorSecondary', e.target.value)} />
+                      <button onClick={() => handlePropertyChange(selectedElement.id, 'tableColorSecondary', '')} style={{ padding: '2px 8px', fontSize: '11px' }}>✕</button>
                     </div>
                   </div>
                 </div>
 
-                {/* Format du tableau */}
+                {/* Format */}
                 <div className="table-section">
-                  <div className="section-title">📐 Format du tableau</div>
-                  <div className="property-row">
-                    <label>Style:</label>
-                    <select
-                      value={localProperties.tableFormat || 'full'}
-                      onChange={(e) => handlePropertyChange(selectedElement.id, 'tableFormat', e.target.value)}
-                      style={{
-                        padding: '6px',
-                        borderRadius: '4px',
-                        border: '1px solid #ddd',
-                        fontSize: '13px',
-                        width: '100%'
-                      }}
-                    >
-                      <option value="full">Complet (avec bordures)</option>
-                      <option value="simple">Simple (sans bordures)</option>
-                      <option value="minimal">Minimal (ligne seule)</option>
-                    </select>
-                  </div>
-                </div>
-
-                {/* Bouton de réinitialisation simple */}
-                <div className="property-row">
-                  <label></label>
-                  <button
-                    className="reset-table-btn"
-                    onClick={() => {
-                      handlePropertyChange(selectedElement.id, 'tableStyle', 'default');
-                      handlePropertyChange(selectedElement.id, 'tableColorPrimary', '');
-                      handlePropertyChange(selectedElement.id, 'tableColorSecondary', '');
-                      handlePropertyChange(selectedElement.id, 'showBorders', true);
-                    }}
-                    title="Réinitialiser le thème et les couleurs"
-                    style={{
-                      padding: '6px 12px',
-                      backgroundColor: '#dc2626',
-                      border: '1px solid #b91c1c',
-                      borderRadius: '4px',
-                      color: '#ffffff',
-                      fontSize: '12px',
-                      fontWeight: '500',
-                      cursor: 'pointer',
-                      marginTop: '8px'
-                    }}
-                  >
-                    🔄 Réinitialiser
-                  </button>
+                  <div className="section-title">📐 Format</div>
+                  <select value={localProperties.tableFormat || 'full'} onChange={(e) => handlePropertyChange(selectedElement.id, 'tableFormat', e.target.value)} style={{ padding: '6px', borderRadius: '4px', border: '1px solid #ddd', fontSize: '13px', width: '100%' }}>
+                    <option value="full">Complet (avec bordures)</option>
+                    <option value="simple">Simple (sans bordures)</option>
+                    <option value="minimal">Minimal (ligne seule)</option>
+                  </select>
                 </div>
               </Accordion>
             )}

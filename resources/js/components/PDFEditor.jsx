@@ -2435,7 +2435,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.shadowOffsetY = 0;
       } else if (element.type === 'product_table') {
         // === TABLEAU DE PRODUITS - STRIPED MODERN ===
-        // Design exact du demo-tableaux.html: barre latérale + alternance
+        // Design: Bordures horizontales uniquement (SANS barre latérale)
         
         const tableX = element.x || 30;
         let currentY = element.y || 270;
@@ -2443,22 +2443,20 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         const cellHeight = 18;
         const headerHeight = 22;
         const totalHeight = 18;
-        const sideBarWidth = 4;  // Barre latérale 4px
 
         // Thème STRIPED MODERN
         const theme = { 
-          border: '#0ea5e9',         // Bleu pour barre latérale
+          border: '#0ea5e9',         // Bleu pour les bordures
           headerBg: '#f0f0f0',       // Gris clair en-tête
-          evenRowBg: '#ffffff',      // Blanc
-          oddRowBg: '#fafafa',       // Gris très clair
-          totalsBg: '#f0f0f0',       // Gris pour totaux
-          totalsBgHighlight: '#e8ebff', // Bleu clair pour TOTAL
+          rowBg: '#ffffff',          // Blanc pur pour les données
           text: '#333333',
-          borderLine: '#e5e5e5'
+          borderLine: '#0ea5e9',     // Bordure bleu
+          totalsBg: '#ffffff',       // Blanc pour totaux
+          totalsBgHighlight: '#e8ebff' // Bleu clair pour TOTAL
         };
 
         // Surcharges de couleur optionnelles
-        const sidebarColor = element.tableColorPrimary || theme.border;
+        const borderColor = element.tableColorPrimary || theme.border;
         const headerBg = theme.headerBg;
         const text = theme.text;
 
@@ -2475,59 +2473,60 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             ctx.globalAlpha = element.opacity;
         }
 
-        // === BARRE LATÉRALE GAUCHE (4px) ===
-        ctx.fillStyle = sidebarColor;
-        const totalHeight_all = (headerHeight + rows.length * cellHeight + 8 + 4 * totalHeight);
-        ctx.fillRect(tableX, currentY, sideBarWidth, totalHeight_all);
-
-        const contentX = tableX + sideBarWidth + 8;
-        const contentWidth = tableWidth - sideBarWidth - 16;
-        const colWidth = contentWidth / headers.length;
+        const colWidth = tableWidth / headers.length;
 
         // ===== EN-TÊTE =====
-        ctx.fillStyle = headerBg;
-        ctx.fillRect(contentX - 2, currentY, contentWidth + 4, headerHeight);
-        
-        // Bordure inférieure de l'en-tête
-        ctx.strokeStyle = sidebarColor;
-        ctx.lineWidth = 2;
+        // Bordure ÉPAISSE du haut
+        ctx.strokeStyle = borderColor;
+        ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.moveTo(contentX - 2, currentY + headerHeight);
-        ctx.lineTo(contentX + contentWidth + 2, currentY + headerHeight);
+        ctx.moveTo(tableX, currentY);
+        ctx.lineTo(tableX + tableWidth, currentY);
         ctx.stroke();
 
-        // En-têtes
+        // Fond de l'en-tête
+        ctx.fillStyle = headerBg;
+        ctx.fillRect(tableX, currentY, tableWidth, headerHeight);
+        
+        // Texte en-têtes
         ctx.fillStyle = text;
         ctx.font = 'bold 11px Arial';
         headers.forEach((header, idx) => {
-          const colX = contentX + idx * colWidth;
+          const colX = tableX + idx * colWidth;
           ctx.textAlign = idx === 0 ? 'left' : 'right';
           const textX = idx === 0 ? colX + 8 : colX + colWidth - 8;
           ctx.fillText(header, textX, currentY + headerHeight / 2 + 3);
         });
+
+        // Bordure du bas de l'en-tête
+        ctx.strokeStyle = borderColor;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(tableX, currentY + headerHeight);
+        ctx.lineTo(tableX + tableWidth, currentY + headerHeight);
+        ctx.stroke();
+
         currentY += headerHeight;
 
         // ===== LIGNES DE DONNÉES =====
         ctx.font = '10px Arial';
         rows.forEach((row, rowIdx) => {
-          const isEvenRow = rowIdx % 2 === 0;
+          // Fond blanc pur (pas d'alternance)
+          ctx.fillStyle = theme.rowBg;
+          ctx.fillRect(tableX, currentY, tableWidth, cellHeight);
           
-          // Fond alterné
-          ctx.fillStyle = isEvenRow ? theme.evenRowBg : theme.oddRowBg;
-          ctx.fillRect(contentX - 2, currentY, contentWidth + 4, cellHeight);
-          
-          // Bordure inférieure fine
-          ctx.strokeStyle = theme.borderLine;
+          // Bordure inférieure très fine
+          ctx.strokeStyle = borderColor;
           ctx.lineWidth = 0.5;
           ctx.beginPath();
-          ctx.moveTo(contentX - 2, currentY + cellHeight);
-          ctx.lineTo(contentX + contentWidth + 2, currentY + cellHeight);
+          ctx.moveTo(tableX, currentY + cellHeight);
+          ctx.lineTo(tableX + tableWidth, currentY + cellHeight);
           ctx.stroke();
           
           // Texte
           ctx.fillStyle = text;
           row.forEach((cell, cellIdx) => {
-            const colX = contentX + cellIdx * colWidth;
+            const colX = tableX + cellIdx * colWidth;
             ctx.textAlign = cellIdx === 0 ? 'left' : 'right';
             const textX = cellIdx === 0 ? colX + 8 : colX + colWidth - 8;
             ctx.fillText(cell, textX, currentY + cellHeight / 2 + 3);
@@ -2536,70 +2535,49 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           currentY += cellHeight;
         });
 
-        // Espace avant totaux
-        currentY += 2;
-
         // ===== TOTAUX =====
-        // Bordure supérieure des totaux
-        ctx.strokeStyle = sidebarColor;
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(contentX - 2, currentY);
-        ctx.lineTo(contentX + contentWidth + 2, currentY);
-        ctx.stroke();
-
-        currentY += 2;
-
         // Fonction pour afficher une ligne de total
-        const drawTotalRow = (label, value, bgColor) => {
+        const drawTotalRow = (label, value, bgColor, hasTopBorder = false, hasBottomBorder = false) => {
+          // Bordure du haut si nécessaire
+          if (hasTopBorder) {
+            ctx.strokeStyle = borderColor;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(tableX, currentY);
+            ctx.lineTo(tableX + tableWidth, currentY);
+            ctx.stroke();
+          }
+
+          // Fond
           ctx.fillStyle = bgColor;
-          ctx.fillRect(contentX - 2, currentY, contentWidth + 4, totalHeight);
+          ctx.fillRect(tableX, currentY, tableWidth, totalHeight);
           
-          // Bordure inférieure
-          ctx.strokeStyle = theme.borderLine;
-          ctx.lineWidth = 0.5;
+          // Bordure du bas (toujours)
+          ctx.strokeStyle = borderColor;
+          ctx.lineWidth = hasBottomBorder ? 2 : 0.5;
           ctx.beginPath();
-          ctx.moveTo(contentX - 2, currentY + totalHeight);
-          ctx.lineTo(contentX + contentWidth + 2, currentY + totalHeight);
+          ctx.moveTo(tableX, currentY + totalHeight);
+          ctx.lineTo(tableX + tableWidth, currentY + totalHeight);
           ctx.stroke();
           
           // Texte
           ctx.fillStyle = text;
-          ctx.font = '10px Arial';
+          ctx.font = hasBottomBorder ? 'bold 11px Arial' : '10px Arial';
           ctx.textAlign = 'left';
-          ctx.fillText(label, contentX + 8, currentY + totalHeight / 2 + 3);
+          ctx.fillText(label, tableX + 8, currentY + totalHeight / 2 + 3);
           ctx.textAlign = 'right';
-          ctx.fillText(value, contentX + contentWidth - 8, currentY + totalHeight / 2 + 3);
+          ctx.fillText(value, tableX + tableWidth - 8, currentY + totalHeight / 2 + 3);
           
           currentY += totalHeight;
         };
 
-        // Lignes de totaux
-        drawTotalRow('Sous-total :', '87,48 €', theme.totalsBg);
-        drawTotalRow('Frais de port :', '10,00 €', theme.totalsBg);
-        drawTotalRow('TVA (20%) :', '19,50 €', theme.totalsBg);
+        // Lignes de totaux (sans bordure du haut)
+        drawTotalRow('Sous-total :', '87,48 €', theme.totalsBg, false, false);
+        drawTotalRow('Frais de port :', '10,00 €', theme.totalsBg, false, false);
+        drawTotalRow('TVA (20%) :', '19,50 €', theme.totalsBg, false, false);
         
-        // TOTAL - Highlight bleu
-        ctx.fillStyle = theme.totalsBgHighlight;
-        ctx.fillRect(contentX - 2, currentY, contentWidth + 4, totalHeight);
-        ctx.strokeStyle = sidebarColor;
-        ctx.lineWidth = 1;
-        ctx.strokeRect(contentX - 2, currentY, contentWidth + 4, totalHeight);
-        
-        ctx.fillStyle = text;
-        ctx.font = 'bold 11px Arial';
-        ctx.textAlign = 'left';
-        ctx.fillText('TOTAL :', contentX + 8, currentY + totalHeight / 2 + 3);
-        ctx.textAlign = 'right';
-        ctx.fillText('116,98 €', contentX + contentWidth - 8, currentY + totalHeight / 2 + 3);
-
-        // Bordure inférieure des totaux
-        ctx.strokeStyle = sidebarColor;
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(contentX - 2, currentY + totalHeight);
-        ctx.lineTo(contentX + contentWidth + 2, currentY + totalHeight);
-        ctx.stroke();
+        // TOTAL (bordure épaisse haut ET bas)
+        drawTotalRow('TOTAL :', '116,98 €', theme.totalsBgHighlight, false, true);
 
         // Restaurer l'opacité
         ctx.globalAlpha = 1;
