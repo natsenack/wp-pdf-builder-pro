@@ -1,0 +1,85 @@
+/* Styles pour les accordéons du panneau de propriétés */
+
+.accordion {
+  border: 1px solid #f1f5f9;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.accordion-header {
+  background: #fafbfc;
+  border: none;
+  width: 100%;
+  padding: 12px 16px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: 500;
+  color: #475569;
+  transition: background-color 0.2s ease;
+}
+
+.accordion-header:hover {
+  background: #f8fafc;
+}
+
+.accordion-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.accordion-icon {
+  font-size: 16px;
+}
+
+.accordion-arrow {
+  font-size: 12px;
+  color: #94a3b8;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.accordion-arrow.open {
+  transform: rotate(90deg);
+}
+
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s 0.4s ease;
+  padding: 0 16px;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.accordion-content.open {
+  max-height: 2000px;
+  padding: 16px;
+  opacity: 1;
+  visibility: visible;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s ease;
+}
+
+.properties-accordion .accordion-content {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+/* Styles spécifiques pour les accordéons dans le panneau de propriétés */
+.properties-panel .accordion {
+  margin-bottom: 12px;
+}
+
+.properties-panel .accordion:last-child {
+  margin-bottom: 0;
+}
+
+/* Animation fluide pour l'ouverture/fermeture */
+.accordion-content {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
