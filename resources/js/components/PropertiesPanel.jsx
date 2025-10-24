@@ -2373,16 +2373,24 @@ const PropertiesPanel = memo(({
                             // 2. Elle a la valeur par défaut du template précédent
                             if (currentValue === undefined || currentValue === oldDefaultValue) {
                               presetUpdates[property] = defaultValue;
+                              console.log('[DEBUG] Preset property will be applied:', property, '=', defaultValue);
+                            } else {
+                              console.log('[DEBUG] Preset property skipped (already customized):', property, 'current:', currentValue, 'old default:', oldDefaultValue);
                             }
                           });
                           
                           // Appliquer toutes les propriétés du preset en une seule opération
                           if (Object.keys(presetUpdates).length > 0) {
+                            console.log('[DEBUG] Applying preset batch update:', presetUpdates);
                             onBatchUpdate([{
                               elementId: selectedElement.id,
                               properties: presetUpdates
                             }]);
+                          } else {
+                            console.log('[DEBUG] No preset properties to apply');
                           }
+                        } else {
+                          console.log('[DEBUG] No preset or onBatchUpdate not available');
                         }
                       }
                     }}
