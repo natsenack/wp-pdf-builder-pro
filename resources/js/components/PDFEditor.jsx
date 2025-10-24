@@ -2509,8 +2509,9 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             ctx.font = `${fontStyle}${totalFontWeight} ${totalFontSize}px ${fontFamily}`;
             ctx.fillStyle = tableStyleData.headerTextColor;
 
-            // Trouver l'index de la colonne Prix
+            // Trouver l'index de la colonne Prix et Total
             const priceColumnIndex = tableData.headers.indexOf('Prix');
+            const totalColumnIndex = tableData.headers.indexOf('Total');
 
             // Libellé du total (dans la colonne Prix si elle existe, sinon première colonne)
             let label = key === 'subtotal' ? 'Sous-total' :
@@ -2550,7 +2551,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
               ctx.fillText(label, labelX, labelY);
             }
 
-            // Valeur du total (dans la même colonne Prix)
+            // Valeur du total (dans la colonne Total si elle existe, sinon dernière colonne)
             let valueText = String(value);
 
             // Appliquer la transformation de texte à la valeur
@@ -2562,8 +2563,15 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
               valueText = valueText.replace(/\b\w/g, l => l.toUpperCase());
             }
 
-            // Positionner la valeur dans la colonne Prix (même position que le libellé)
-            const valueX = labelX; // Même position X que le libellé
+            // Positionner la valeur dans la colonne Total (ou dernière colonne si Total n'existe pas)
+            const valueColumnIndex = totalColumnIndex !== -1 ? totalColumnIndex : tableData.headers.length - 1;
+            let valueX;
+            if (valueColumnIndex === 0) {
+              valueX = tableX + (columnWidths[0] / 2);
+            } else {
+              const previousWidth = columnWidths.slice(0, valueColumnIndex).reduce((sum, w) => sum + w, 0);
+              valueX = tableX + previousWidth + (columnWidths[valueColumnIndex] / 2);
+            }
             const valueY = currentY + totalHeight / 2 + (totalFontSize * 0.35);
             ctx.textAlign = 'center';
 
