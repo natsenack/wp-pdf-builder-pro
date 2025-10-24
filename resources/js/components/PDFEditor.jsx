@@ -2587,31 +2587,36 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           }
         }
 
-        // En-têtes du tableau - Design épuré et professionnel
+        // En-têtes du tableau - Design moderne et épuré
         if (element.showHeaders !== false && (filteredHeaders.length > 0 || tableData.headers.length > 0)) {
-          const headerHeight = 28; // Réduit pour un look plus compact
+          const headerHeight = 32; // Augmenté pour plus d'espace
 
-          // Fond de l'en-tête sobre et professionnel
-          ctx.fillStyle = tableStyleData.header_bg ?
-            `rgb(${tableStyleData.header_bg.join(',')})` :
-            '#f8fafc'; // Fond sobre par défaut
-
-          // Dessiner le fond de l'en-tête sans coins arrondis pour un look plus professionnel
+          // Fond de l'en-tête avec gradient subtil pour plus de profondeur
+          const headerGradient = ctx.createLinearGradient(tableX, currentY, tableX, currentY + headerHeight);
+          headerGradient.addColorStop(0, tableStyleData.header_bg ? `rgb(${tableStyleData.header_bg.join(',')})` : '#f8fafc');
+          headerGradient.addColorStop(1, tableStyleData.header_bg ? `rgba(${tableStyleData.header_bg.join(',')}, 0.95)` : '#f0f4f8');
+          ctx.fillStyle = headerGradient;
           ctx.fillRect(tableX, currentY, tableWidth, headerHeight);
 
-          // Bordure subtile en bas de l'en-tête
-          ctx.strokeStyle = tableStyleData.header_border ?
-            `rgb(${tableStyleData.header_border.join(',')})` :
-            '#d1d5db';
-          ctx.lineWidth = 1; // Bordure plus visible
+          // Bordure supérieure plus visible et moderne
+          ctx.strokeStyle = tableStyleData.header_border ? `rgb(${tableStyleData.header_border.join(',')})` : '#cbd5e1';
+          ctx.lineWidth = 1.5; // Plus visible
           ctx.beginPath();
-          ctx.moveTo(tableX, currentY + headerHeight);
-          ctx.lineTo(tableX + tableWidth, currentY + headerHeight);
+          ctx.moveTo(tableX, currentY);
+          ctx.lineTo(tableX + tableWidth, currentY);
           ctx.stroke();
 
-          // Texte des en-têtes avec style professionnel
-          ctx.fillStyle = tableStyleData.headerTextColor || '#374151';
-          ctx.font = `600 ${headerFontSize}px ${fontFamily}`; // Poids semi-bold pour plus de hiérarchie
+          // Bordure inférieure de l'en-tête - plus prononcée
+          ctx.strokeStyle = tableStyleData.header_border ? `rgb(${tableStyleData.header_border.join(',')})` : '#cbd5e1';
+          ctx.lineWidth = 2; // Plus prononcée pour délimiter clairement
+          ctx.beginPath();
+          ctx.moveTo(tableX, currentY + headerHeight - 0.5);
+          ctx.lineTo(tableX + tableWidth, currentY + headerHeight - 0.5);
+          ctx.stroke();
+
+          // Texte des en-têtes avec style moderne
+          ctx.fillStyle = tableStyleData.headerTextColor || '#1e293b'; // Couleur plus foncée et moderne
+          ctx.font = `700 ${headerFontSize}px ${fontFamily}`; // Bold au lieu de semi-bold
           ctx.textAlign = 'center';
 
           const headersToDisplay = filteredHeaders.length > 0 ? filteredHeaders : tableData.headers;
@@ -2640,8 +2645,8 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
             headerX = tableX + accumulatedWidth + (columnWidths[columnIndex] / 2);
 
-            // Centrer verticalement le texte de l'en-tête
-            const headerY = currentY + headerHeight / 2 + (headerFontSize * 0.3);
+            // Centrer verticalement le texte de l'en-tête avec meilleur padding
+            const headerY = currentY + headerHeight / 2 + (headerFontSize * 0.3) + 2;
 
             // Afficher le texte avec espacement des lettres si défini
             if (letterSpacing > 0) {
@@ -2654,12 +2659,10 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
               ctx.fillText(headerText, headerX, headerY);
             }
 
-            // Ligne verticale subtile entre les colonnes si bordures activées
+            // Ligne verticale très subtile entre les colonnes si bordures activées
             if (element.showBorders !== false && displayIndex < headersToDisplay.length - 1) {
-              ctx.strokeStyle = tableStyleData.header_border ?
-                `rgb(${tableStyleData.header_border.join(',')})` :
-                '#e5e7eb';
-              ctx.lineWidth = 0.8; // Bordure plus visible
+              ctx.strokeStyle = tableStyleData.header_border ? `rgba(${tableStyleData.header_border.join(',')}, 0.3)` : 'rgba(203, 213, 225, 0.3)';
+              ctx.lineWidth = 0.5; // Très subtile
               const nextColumnIndex = headerIndices[displayIndex + 1];
               let lineX = tableX;
               let nextAccumWidth = 0;
@@ -2668,8 +2671,8 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
               }
               lineX = tableX + nextAccumWidth;
               ctx.beginPath();
-              ctx.moveTo(lineX, currentY);
-              ctx.lineTo(lineX, currentY + headerHeight);
+              ctx.moveTo(lineX, currentY + 4);
+              ctx.lineTo(lineX, currentY + headerHeight - 4);
               ctx.stroke();
             }
           });
@@ -2677,43 +2680,41 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           currentY += headerHeight;
         }
 
-        // Lignes de données - Design épuré et professionnel
+        // Lignes de données - Design moderne et aéré
         ctx.font = `${fontStyle}400 ${rowFontSize}px ${fontFamily}`; // Poids normal pour les données
 
         tableData.rows.forEach((row, rowIndex) => {
-          const rowHeight = 22; // Compact pour un look professionnel
+          const rowHeight = 26; // Augmenté de 22 à 26 pour plus d'espace
           const isEvenRow = rowIndex % 2 === 0;
 
-          // Fond alterné subtil - seulement pour les lignes paires avec une couleur très légère
+          // Fond alterné moderne - plus subtil mais toujours visible
           let bgColor;
           if (element.evenRowBg && element.oddRowBg) {
             // Utiliser les couleurs configurées depuis PropertiesPanel
             bgColor = isEvenRow ? element.evenRowBg : element.oddRowBg;
           } else {
-            // Alternance très subtile par défaut
-            bgColor = isEvenRow ?
-              `rgb(${tableStyleData.alt_row_bg.join(',')})` :
-              '#ffffff';
+            // Alternance très subtile par défaut - encore plus légère
+            bgColor = isEvenRow ? 'rgba(248, 250, 252, 0.5)' : '#ffffff';
           }
 
-          // Fond uni sans dégradé pour un look plus professionnel
+          // Fond uni sans dégradé
           ctx.fillStyle = bgColor;
           ctx.fillRect(tableX, currentY, tableWidth, rowHeight);
 
-          // Bordure horizontale subtile seulement entre les lignes (pas autour)
+          // Bordure horizontale très fine et moderne entre les lignes
           if (element.showBorders !== false) {
-            ctx.strokeStyle = `rgb(${tableStyleData.row_border.join(',')})`;
-            ctx.lineWidth = 0.8; // Bordure plus visible
+            ctx.strokeStyle = 'rgba(203, 213, 225, 0.4)'; // Très subtle
+            ctx.lineWidth = 0.5; // Très fine
             ctx.beginPath();
-            ctx.moveTo(tableX, currentY + rowHeight);
-            ctx.lineTo(tableX + tableWidth, currentY + rowHeight);
+            ctx.moveTo(tableX + 4, currentY + rowHeight);
+            ctx.lineTo(tableX + tableWidth - 4, currentY + rowHeight);
             ctx.stroke();
           }
 
-          // Couleur du texte des cellules (configurable mais sobre)
+          // Couleur du texte des cellules (configurable mais moderne)
           const rowTextColor = isEvenRow && element.evenRowTextColor ?
             element.evenRowTextColor :
-            (!isEvenRow && element.oddRowTextColor ? element.oddRowTextColor : '#374151'); // Gris foncé professionnel
+            (!isEvenRow && element.oddRowTextColor ? element.oddRowTextColor : '#334155'); // Gris moderne
           ctx.fillStyle = rowTextColor;
           ctx.textAlign = 'center';
 
