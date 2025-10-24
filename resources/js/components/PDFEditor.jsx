@@ -155,6 +155,14 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
     );
     console.log('[DEBUG] newElements element template:', newElements.find(el => el.id === elementId)?.template);
     handleElementsChange(newElements);
+
+    // Mettre à jour selectedElement si c'est l'élément sélectionné qui a changé
+    if (selectedElement?.id === elementId) {
+      const updatedElement = newElements.find(el => el.id === elementId);
+      if (updatedElement) {
+        setSelectedElement(updatedElement);
+      }
+    }
   };
 
   // Gestionnaire de suppression d'élément
@@ -511,7 +519,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
   // Fonction de rendu du canvas
   const renderCanvas = () => {
-    console.log('[DEBUG] PDFEditor renderCanvas called with elements:', elements.length, 'selectedElement:', selectedElement?.id);
+    console.log('[DEBUG] PDFEditor renderCanvas called with elements:', elements.length, 'selectedElement:', selectedElement?.id, 'selectedElement.template:', selectedElement?.template);
     const canvas = canvasRef.current;
     if (!canvas) {
       console.log('PDFEditor renderCanvas: No canvas ref');
