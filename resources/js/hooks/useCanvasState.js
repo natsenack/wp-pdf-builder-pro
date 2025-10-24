@@ -369,6 +369,7 @@ export const useCanvasState = ({
       showTaxes: true,
       showDiscount: false,
       showTotal: false,
+      tableStyleChoice: Math.random() < 0.5 ? 'minimal' : 'striped', // Initialiser une seule fois
 
       // Propriétés de barre de progression
       progressColor: '#3b82f6',

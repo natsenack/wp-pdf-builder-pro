@@ -18,6 +18,7 @@ const ElementLibrary = ({ onAddElement, selectedTool, onToolSelect }) => {
         headers: ['Produit', 'Qté', 'Prix'],
         dataSource: 'order_items',
         tableStyle: 'default',
+        tableStyleChoice: Math.random() < 0.5 ? 'minimal' : 'striped', // Initialiser aléatoirement une fois
         columns: {
           image: true,
           name: true,
