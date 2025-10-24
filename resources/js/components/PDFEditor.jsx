@@ -636,32 +636,106 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         if (element.type === 'circle') {
           // Pour les cercles, utiliser le minimum de width/height comme diamètre
           newRadius = Math.min(newWidth, newHeight) / 2;
-          handleElementUpdate(selectedElement.id, {
+          let circleRect = {
             x: newX,
             y: newY,
-            radius: Math.max(10, newRadius)
+            width: newRadius * 2,
+            height: newRadius * 2
+          };
+          circleRect = constrainDimensions(element, circleRect);
+          
+          handleElementUpdate(selectedElement.id, {
+            x: circleRect.x,
+            y: circleRect.y,
+            radius: Math.max(10, circleRect.width / 2)
           });
         } else {
-          handleElementUpdate(selectedElement.id, {
+          // Appliquer les contraintes de redimensionnement
+          let resizeRect = {
             x: newX,
             y: newY,
             width: newWidth,
             height: newHeight
+          };
+          resizeRect = constrainDimensions(element, resizeRect);
+
+          // Maintenir les proportions pour certains éléments (images, cercles)
+          if ((element.type === 'image' || element.lockAspectRatio) && resizeHandle !== 'n' && resizeHandle !== 's') {
+            const originalRatio = resizeStart.width / resizeStart.height;
+            if (Math.abs(resizeRect.width / resizeRect.height - originalRatio) > 0.01) {
+              // Ajuster la hauteur selon la largeur
+              resizeRect.height = Math.round(resizeRect.width / originalRatio);
+            }
+          }
+
+          handleElementUpdate(selectedElement.id, {
+            x: resizeRect.x,
+            y: resizeRect.y,
+            width: resizeRect.width,
+            height: resizeRect.height
           });
         }
       }
     } else if (isDragging && dragElement) {
-      // Déplacer l'élément
+      // Déplacer l'élément avec contraintes
       const deltaX = x - dragStart.x;
       const deltaY = y - dragStart.y;
-      const newX = dragElement.x + deltaX;
-      const newY = dragElement.y + deltaY;
+      let newX = dragElement.x + deltaX;
+      let newY = dragElement.y + deltaY;
+
+      // Snap à la grille
+      const gridSize = 10;
+      newX = Math.round(newX / gridSize) * gridSize;
+      newY = Math.round(newY / gridSize) * gridSize;
+
+      // Respecter les limites du canvas
+      newX = Math.max(0, Math.min(595 - (dragElement.width || 100), newX));
+      newY = Math.max(0, Math.min(842 - (dragElement.height || 30), newY));
 
       handleElementUpdate(dragElement.id, {
-        x: Math.max(0, newX), // Empêcher de sortir du canvas
-        y: Math.max(0, newY)
+        x: newX,
+        y: newY
       });
     }
+  };
+
+  // Fonction pour valider et contraindre les dimensions selon les paramètres du plugin
+  const constrainDimensions = (element, rect) => {
+    const VALIDATION_CONSTRAINTS = {
+      numeric: {
+        x: { min: -1000, max: 5000 },
+        y: { min: -1000, max: 5000 },
+        width: { min: 1, max: 2000 },
+        height: { min: 1, max: 2000 }
+      }
+    };
+
+    // Appliquer les contraintes globales du canvas
+    rect.x = Math.max(0, Math.min(595 - rect.width, rect.x)); // Canvas A4
+    rect.y = Math.max(0, Math.min(842 - rect.height, rect.y)); // Canvas A4
+
+    // Appliquer les contraintes de type d'élément
+    const constraints = VALIDATION_CONSTRAINTS.numeric;
+    
+    rect.width = Math.max(
+      element.minWidth || constraints.width.min,
+      Math.min(constraints.width.max, rect.width)
+    );
+    rect.height = Math.max(
+      element.minHeight || constraints.height.min,
+      Math.min(constraints.height.max, rect.height)
+    );
+
+    // Snap à la grille si activé
+    if (true) { // snapToGrid par défaut
+      const gridSize = 10;
+      rect.x = Math.round(rect.x / gridSize) * gridSize;
+      rect.y = Math.round(rect.y / gridSize) * gridSize;
+      rect.width = Math.round(rect.width / gridSize) * gridSize;
+      rect.height = Math.round(rect.height / gridSize) * gridSize;
+    }
+
+    return rect;
   };
 
   // Gestionnaire de relâchement de souris
@@ -674,8 +748,9 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
   // Fonction pour déterminer quelle poignée de redimensionnement est à une position
   const getResizeHandleAtPosition = (element, x, y) => {
-    const handleSize = 10;
-    const offset = 5;
+    // Zone de détection plus grande pour une meilleure UX (16px au lieu de 10px)
+    const handleZone = 16;
+    const offset = handleZone / 2;
 
     // Calculer les dimensions selon le type d'élément
     let elementWidth = element.width || 100;
@@ -686,21 +761,54 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
       elementHeight = (element.radius || 25) * 2;
     }
 
-    // Calculer les positions des poignées
+    // Bords et coins de l'élément
+    const left = element.x;
+    const right = element.x + elementWidth;
+    const top = element.y;
+    const bottom = element.y + elementHeight;
+
+    // Zones de détection élargies pour meilleure UX
     const handles = {
-      nw: { x: element.x - offset, y: element.y - offset },
-      ne: { x: element.x + elementWidth - offset, y: element.y - offset },
-      sw: { x: element.x - offset, y: element.y + elementHeight - offset },
-      se: { x: element.x + elementWidth - offset, y: element.y + elementHeight - offset },
-      n: { x: element.x + elementWidth / 2 - offset, y: element.y - offset },
-      s: { x: element.x + elementWidth / 2 - offset, y: element.y + elementHeight - offset },
-      w: { x: element.x - offset, y: element.y + elementHeight / 2 - offset },
-      e: { x: element.x + elementWidth - offset, y: element.y + elementHeight / 2 - offset }
+      // Coins
+      nw: { 
+        xMin: left - offset, xMax: left + offset,
+        yMin: top - offset, yMax: top + offset
+      },
+      ne: { 
+        xMin: right - offset, xMax: right + offset,
+        yMin: top - offset, yMax: top + offset
+      },
+      sw: { 
+        xMin: left - offset, xMax: left + offset,
+        yMin: bottom - offset, yMax: bottom + offset
+      },
+      se: { 
+        xMin: right - offset, xMax: right + offset,
+        yMin: bottom - offset, yMax: bottom + offset
+      },
+      // Côtés
+      n: { 
+        xMin: left + 8, xMax: right - 8,
+        yMin: top - offset, yMax: top + offset
+      },
+      s: { 
+        xMin: left + 8, xMax: right - 8,
+        yMin: bottom - offset, yMax: bottom + offset
+      },
+      w: { 
+        xMin: left - offset, xMax: left + offset,
+        yMin: top + 8, yMax: bottom - 8
+      },
+      e: { 
+        xMin: right - offset, xMax: right + offset,
+        yMin: top + 8, yMax: bottom - 8
+      }
     };
 
-    for (const [handle, pos] of Object.entries(handles)) {
-      if (x >= pos.x && x <= pos.x + handleSize &&
-          y >= pos.y && y <= pos.y + handleSize) {
+    // Prioriser les coins puis les côtés pour une meilleure détection
+    for (const handle of ['nw', 'ne', 'sw', 'se', 'n', 's', 'w', 'e']) {
+      const zone = handles[handle];
+      if (x >= zone.xMin && x <= zone.xMax && y >= zone.yMin && y <= zone.yMax) {
         return handle;
       }
     }
