@@ -2627,9 +2627,9 @@ const PropertiesPanel = memo(({
                   <label>Format d'affichage:</label>
                   <input
                     type="text"
-                    value={localProperties.format || 'Commande #{order_number} - {order_date}'}
+                    value={localProperties.format || 'Commande #{order_number}'}
                     onChange={(e) => handlePropertyChange(selectedElement.id, 'format', e.target.value)}
-                    placeholder="Commande #{order_number} - {order_date}"
+                    placeholder="Commande #{order_number}"
                   />
                 </div>
 

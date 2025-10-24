@@ -1196,7 +1196,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           displayText = displayText.replace(/\b\w/g, l => l.toUpperCase());
         }
 
-        ctx.textAlign = element.textAlign || 'left';
+        ctx.textAlign = element.textAlign || 'right';
 
         // Ajouter un fond subtil au numéro pour le mettre en valeur
         if (element.highlightNumber) {
