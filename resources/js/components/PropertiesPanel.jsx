@@ -2354,6 +2354,8 @@ const PropertiesPanel = memo(({
                       
                       handlePropertyChange(selectedElement.id, 'template', newTemplate);
                       
+                      // PRESETS TEMPORAIREMENT DÉSACTIVÉS - causent des conflits de synchronisation
+                      /*
                       // Appliquer les presets seulement si c'est un changement de template
                       // et seulement pour les propriétés qui ne sont pas déjà définies
                       if (newTemplate !== oldTemplate) {
@@ -2376,6 +2378,7 @@ const PropertiesPanel = memo(({
                           });
                         }
                       }
+                      */
                     }}
                   >
                     <option value="total_only">💰 Total uniquement</option>
