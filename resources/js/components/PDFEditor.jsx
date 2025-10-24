@@ -2587,9 +2587,9 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           }
         }
 
-        // En-têtes du tableau - Design moderne et épuré
+        // En-têtes du tableau - Ligne simple et minimale
         if (element.showHeaders !== false && (filteredHeaders.length > 0 || tableData.headers.length > 0)) {
-          const headerHeight = 32; // Augmenté pour plus d'espace
+          const headerHeight = 24;
 
           // Fond de l'en-tête avec gradient subtil pour plus de profondeur
           const headerGradient = ctx.createLinearGradient(tableX, currentY, tableX, currentY + headerHeight);
