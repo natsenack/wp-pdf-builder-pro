@@ -1606,15 +1606,40 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
             const icon = fieldIcons[field] || '📄';
 
-            // Traitement spécial pour l'adresse : séparer les boîtes postales sur des lignes différentes
+            // Traitement spécial pour l'adresse : formatage sur deux lignes maximum
             if (field === 'address') {
-              // Diviser l'adresse en lignes, en mettant les boîtes postales sur des lignes séparées
+              // Diviser l'adresse en lignes
               const addressLines = value.split('\n').map(line => line.trim()).filter(line => line);
 
-              addressLines.forEach((line, lineIndex) => {
-                // Vérifier si cette ligne contient une boîte postale (BP, boîte postale, etc.)
-                const isPostalBox = /\b(?:BP|boîte postale|boite postale|b\.p\.)\b/i.test(line);
+              // Séparer la boîte postale du reste de l'adresse
+              let mainAddress = '';
+              let postalBox = '';
 
+              addressLines.forEach(line => {
+                if (/\b(?:BP|boîte postale|boite postale|b\.p\.)\b/i.test(line)) {
+                  postalBox = line;
+                } else {
+                  mainAddress += (mainAddress ? '\n' : '') + line;
+                }
+              });
+
+              // Créer les deux lignes maximum
+              const displayLines = [];
+              if (mainAddress) {
+                displayLines.push(mainAddress);
+              }
+              if (postalBox) {
+                displayLines.push(postalBox);
+              }
+
+              // Si pas de boîte postale, prendre les deux premières lignes seulement
+              if (!postalBox && addressLines.length > 2) {
+                displayLines.length = 0; // Reset
+                displayLines.push(addressLines.slice(0, -1).join('\n'));
+                displayLines.push(addressLines[addressLines.length - 1]);
+              }
+
+              displayLines.forEach((line, lineIndex) => {
                 let displayText = line;
 
                 // Ajouter l'étiquette seulement à la première ligne si demandée
@@ -1747,10 +1772,38 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
               // Traitement spécial pour l'adresse dans la colonne gauche
               if (field === 'address') {
-                // Diviser l'adresse en lignes, en mettant les boîtes postales sur des lignes séparées
+                // Diviser l'adresse en lignes
                 const addressLines = value.split('\n').map(line => line.trim()).filter(line => line);
 
-                addressLines.forEach((line, lineIndex) => {
+                // Séparer la boîte postale du reste de l'adresse
+                let mainAddress = '';
+                let postalBox = '';
+
+                addressLines.forEach(line => {
+                  if (/\b(?:BP|boîte postale|boite postale|b\.p\.)\b/i.test(line)) {
+                    postalBox = line;
+                  } else {
+                    mainAddress += (mainAddress ? '\n' : '') + line;
+                  }
+                });
+
+                // Créer les deux lignes maximum
+                const displayLines = [];
+                if (mainAddress) {
+                  displayLines.push(mainAddress);
+                }
+                if (postalBox) {
+                  displayLines.push(postalBox);
+                }
+
+                // Si pas de boîte postale, prendre les deux premières lignes seulement
+                if (!postalBox && addressLines.length > 2) {
+                  displayLines.length = 0; // Reset
+                  displayLines.push(addressLines.slice(0, -1).join('\n'));
+                  displayLines.push(addressLines[addressLines.length - 1]);
+                }
+
+                displayLines.forEach((line, lineIndex) => {
                   let displayText = line;
 
                   // Ajouter l'étiquette seulement à la première ligne si demandée
@@ -1806,10 +1859,38 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
               // Traitement spécial pour l'adresse dans la colonne droite
               if (field === 'address') {
-                // Diviser l'adresse en lignes, en mettant les boîtes postales sur des lignes séparées
+                // Diviser l'adresse en lignes
                 const addressLines = value.split('\n').map(line => line.trim()).filter(line => line);
 
-                addressLines.forEach((line, lineIndex) => {
+                // Séparer la boîte postale du reste de l'adresse
+                let mainAddress = '';
+                let postalBox = '';
+
+                addressLines.forEach(line => {
+                  if (/\b(?:BP|boîte postale|boite postale|b\.p\.)\b/i.test(line)) {
+                    postalBox = line;
+                  } else {
+                    mainAddress += (mainAddress ? '\n' : '') + line;
+                  }
+                });
+
+                // Créer les deux lignes maximum
+                const displayLines = [];
+                if (mainAddress) {
+                  displayLines.push(mainAddress);
+                }
+                if (postalBox) {
+                  displayLines.push(postalBox);
+                }
+
+                // Si pas de boîte postale, prendre les deux premières lignes seulement
+                if (!postalBox && addressLines.length > 2) {
+                  displayLines.length = 0; // Reset
+                  displayLines.push(addressLines.slice(0, -1).join('\n'));
+                  displayLines.push(addressLines[addressLines.length - 1]);
+                }
+
+                displayLines.forEach((line, lineIndex) => {
                   let displayText = line;
 
                   // Ajouter l'étiquette seulement à la première ligne si demandée
