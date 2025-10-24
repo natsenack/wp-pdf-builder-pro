@@ -8,17 +8,28 @@ import { elementCustomizationService } from '../services/ElementCustomizationSer
 // Composant Accordion pour organiser les propriétés
 const Accordion = memo(({ title, icon, children, defaultOpen = true, className = '' }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
+  const contentId = useMemo(() => `accordion-content-${Math.random().toString(36).substr(2, 9)}`, []);
 
   const toggleAccordion = useCallback(() => {
     setIsOpen(prev => !prev);
   }, []);
+
+  const handleKeyDown = useCallback((e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleAccordion();
+    }
+  }, [toggleAccordion]);
 
   return (
     <div className={`accordion ${className}`}>
       <button
         className="accordion-header"
         onClick={toggleAccordion}
+        onKeyDown={handleKeyDown}
         type="button"
+        aria-expanded={isOpen}
+        aria-controls={contentId}
       >
         <span className="accordion-title">
           {icon && <span className="accordion-icon">{icon}</span>}
@@ -28,7 +39,12 @@ const Accordion = memo(({ title, icon, children, defaultOpen = true, className =
           ▼
         </span>
       </button>
-      <div className={`accordion-content ${isOpen ? 'open' : ''}`}>
+      <div
+        id={contentId}
+        className={`accordion-content ${isOpen ? 'open' : ''}`}
+        role="region"
+        aria-labelledby={`accordion-header-${contentId}`}
+      >
         {children}
       </div>
     </div>
