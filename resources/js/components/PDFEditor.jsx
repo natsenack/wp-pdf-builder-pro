@@ -1625,15 +1625,16 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
               let displayLines = [];
 
               if (postalBoxIndex !== -1) {
-                // Si on a trouvé une boîte postale, elle va sur la ligne 2 avec la suite
+                // Si on a trouvé une boîte postale, elle va à la fin de la ligne 2
                 const linesBeforePostal = addressLines.slice(0, postalBoxIndex);
-                const linesAfterPostal = addressLines.slice(postalBoxIndex);
+                const linesAfterPostal = addressLines.slice(postalBoxIndex + 1); // Exclure la ligne de la boîte postale
 
                 // Ligne 1 : Tout ce qui précède la boîte postale
                 displayLines.push(linesBeforePostal.join(' '));
 
-                // Ligne 2 : La boîte postale et tout ce qui suit
-                displayLines.push(linesAfterPostal.join(' '));
+                // Ligne 2 : Tout ce qui suit la boîte postale + la boîte postale à la fin
+                const line2Content = linesAfterPostal.join(' ') + (linesAfterPostal.length > 0 ? ' ' : '') + postalBoxLine;
+                displayLines.push(line2Content);
               } else {
                 // Pas de boîte postale, chercher un code postal (formats internationaux)
                 let postalCodeIndex = -1;
@@ -1822,15 +1823,16 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
                 let displayLines = [];
 
                 if (postalBoxIndex !== -1) {
-                  // Si on a trouvé une boîte postale, elle va sur la ligne 2 avec la suite
+                  // Si on a trouvé une boîte postale, elle va à la fin de la ligne 2
                   const linesBeforePostal = addressLines.slice(0, postalBoxIndex);
-                  const linesAfterPostal = addressLines.slice(postalBoxIndex);
+                  const linesAfterPostal = addressLines.slice(postalBoxIndex + 1); // Exclure la ligne de la boîte postale
 
                   // Ligne 1 : Tout ce qui précède la boîte postale
                   displayLines.push(linesBeforePostal.join(' '));
 
-                  // Ligne 2 : La boîte postale et tout ce qui suit
-                  displayLines.push(linesAfterPostal.join(' '));
+                  // Ligne 2 : Tout ce qui suit la boîte postale + la boîte postale à la fin
+                  const line2Content = linesAfterPostal.join(' ') + (linesAfterPostal.length > 0 ? ' ' : '') + postalBoxLine;
+                  displayLines.push(line2Content);
                 } else {
                   // Pas de boîte postale, chercher un code postal (formats internationaux)
                   let postalCodeIndex = -1;
@@ -1942,15 +1944,16 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
                 let displayLines = [];
 
                 if (postalBoxIndex !== -1) {
-                  // Si on a trouvé une boîte postale, elle va sur la ligne 2 avec la suite
+                  // Si on a trouvé une boîte postale, elle va à la fin de la ligne 2
                   const linesBeforePostal = addressLines.slice(0, postalBoxIndex);
-                  const linesAfterPostal = addressLines.slice(postalBoxIndex);
+                  const linesAfterPostal = addressLines.slice(postalBoxIndex + 1); // Exclure la ligne de la boîte postale
 
                   // Ligne 1 : Tout ce qui précède la boîte postale
                   displayLines.push(linesBeforePostal.join(' '));
 
-                  // Ligne 2 : La boîte postale et tout ce qui suit
-                  displayLines.push(linesAfterPostal.join(' '));
+                  // Ligne 2 : Tout ce qui suit la boîte postale + la boîte postale à la fin
+                  const line2Content = linesAfterPostal.join(' ') + (linesAfterPostal.length > 0 ? ' ' : '') + postalBoxLine;
+                  displayLines.push(line2Content);
                 } else {
                   // Pas de boîte postale, chercher un code postal (formats internationaux)
                   let postalCodeIndex = -1;
