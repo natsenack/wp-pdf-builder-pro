@@ -437,13 +437,13 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         if (element.type === 'circle') {
           // Pour les cercles, utiliser le minimum de width/height comme diamètre
           newRadius = Math.min(newWidth, newHeight) / 2;
-          handleElementUpdate(selectedElement, {
+          handleElementUpdate(selectedElement.id, {
             x: newX,
             y: newY,
             radius: Math.max(10, newRadius)
           });
         } else {
-          handleElementUpdate(selectedElement, {
+          handleElementUpdate(selectedElement.id, {
             x: newX,
             y: newY,
             width: newWidth,
