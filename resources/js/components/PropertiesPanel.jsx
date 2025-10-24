@@ -6,7 +6,7 @@ import { useElementSynchronization } from '../hooks/useElementSynchronization';
 import { elementCustomizationService } from '../services/ElementCustomizationService';
 
 // Composant Accordion pour organiser les propriétés
-const Accordion = memo(({ title, icon, children, defaultOpen = true, className = '' }) => {
+const Accordion = memo(({ title, icon, children, defaultOpen = false, className = '' }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const contentId = useMemo(() => `accordion-content-${Math.random().toString(36).substr(2, 9)}`, []);
 
