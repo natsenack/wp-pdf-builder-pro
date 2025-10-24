@@ -958,6 +958,18 @@ const PropertiesPanel = memo(({
                 </div>
 
                 <div className="property-row">
+                  <label>Afficher la bordure extérieure du tableau:</label>
+                  <label className="toggle">
+                    <input
+                      type="checkbox"
+                      checked={localProperties.showTableBorder ?? false}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'showTableBorder', e.target.checked)}
+                    />
+                    <span className="toggle-slider"></span>
+                  </label>
+                </div>
+
+                <div className="property-row">
                   <label style={{ fontWeight: '600', color: '#2563eb', marginBottom: '8px', display: 'block' }}>
                     🎨 Couleurs individuelles des produits
                   </label>
@@ -1060,6 +1072,9 @@ const PropertiesPanel = memo(({
 
                       // Réinitialiser les bordures
                       handlePropertyChange(selectedElement.id, 'showBorders', true);
+
+                      // Réinitialiser la bordure extérieure du tableau
+                      handlePropertyChange(selectedElement.id, 'showTableBorder', false);
 
                       // Réinitialiser les couleurs individuelles
                       handlePropertyChange(selectedElement.id, 'evenRowBg', '#ffffff');

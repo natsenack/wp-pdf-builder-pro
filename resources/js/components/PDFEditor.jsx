@@ -2171,6 +2171,13 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           }
         }
 
+        // Bordure extérieure du tableau (contrôlée par showTableBorder)
+        if (element.showTableBorder) {
+          ctx.strokeStyle = element.borderColor || '#374151';
+          ctx.lineWidth = 1.5; // Bordure plus visible pour le contour extérieur
+          ctx.strokeRect(tableX - 2, currentY - 2, tableWidth + 4, tableHeight + 4);
+        }
+
         // Appliquer la transformation (rotation, échelle) si définie
         if (element.rotation || element.scaleX || element.scaleY) {
           ctx.save();
@@ -2264,7 +2271,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           ctx.strokeStyle = tableStyleData.header_border ?
             `rgb(${tableStyleData.header_border.join(',')})` :
             '#d1d5db';
-          ctx.lineWidth = 1;
+          ctx.lineWidth = 1; // Bordure plus visible
           ctx.beginPath();
           ctx.moveTo(tableX, currentY + headerHeight);
           ctx.lineTo(tableX + tableWidth, currentY + headerHeight);
@@ -2312,7 +2319,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
               ctx.strokeStyle = tableStyleData.header_border ?
                 `rgb(${tableStyleData.header_border.join(',')})` :
                 '#e5e7eb';
-              ctx.lineWidth = 0.5; // Bordure plus fine
+              ctx.lineWidth = 0.8; // Bordure plus visible
               const lineX = tableX + columnWidths.slice(0, index + 1).reduce((sum, w) => sum + w, 0);
               ctx.beginPath();
               ctx.moveTo(lineX, currentY);
@@ -2350,7 +2357,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
           // Bordure horizontale subtile seulement entre les lignes (pas autour)
           if (element.showBorders !== false) {
             ctx.strokeStyle = `rgb(${tableStyleData.row_border.join(',')})`;
-            ctx.lineWidth = 0.3; // Bordure très fine
+            ctx.lineWidth = 0.8; // Bordure plus visible
             ctx.beginPath();
             ctx.moveTo(tableX, currentY + rowHeight);
             ctx.lineTo(tableX + tableWidth, currentY + rowHeight);
@@ -2424,7 +2431,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             // Ligne verticale subtile entre les colonnes si bordures activées
             if (element.showBorders !== false && cellIndex < row.length - 1) {
               ctx.strokeStyle = `rgb(${tableStyleData.row_border.join(',')})`;
-              ctx.lineWidth = 0.3; // Bordure très fine
+              ctx.lineWidth = 0.8; // Bordure plus visible
               const lineX = tableX + columnWidths.slice(0, cellIndex + 1).reduce((sum, w) => sum + w, 0);
               ctx.beginPath();
               ctx.moveTo(lineX, currentY + 1);
@@ -2485,7 +2492,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
               ctx.strokeStyle = tableStyleData.header_border ?
                 `rgb(${tableStyleData.header_border.join(',')})` :
                 '#d1d5db';
-              ctx.lineWidth = 0.5;
+              ctx.lineWidth = 0.8; // Bordure plus visible
               ctx.strokeRect(totalBgX, currentY, totalBgWidth, totalHeight);
             }
 
@@ -2568,7 +2575,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             // Lignes verticales entre les colonnes pour les totaux (seulement entre les colonnes pertinentes)
             if (element.showBorders !== false) {
               ctx.strokeStyle = `rgb(${tableStyleData.header_border.join(',')})`;
-              ctx.lineWidth = tableStyleData.border_width || 0.5;
+              ctx.lineWidth = 0.8; // Bordure plus visible
 
               // Dessiner seulement les lignes verticales entre les colonnes du libellé et de la valeur
               for (let i = labelColumnIndex; i < valueColumnIndex; i++) {
