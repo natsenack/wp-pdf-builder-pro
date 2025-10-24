@@ -1687,8 +1687,8 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
                     displayText = `${icon} ${label}: ${line}`;
                   }
                 } else {
-                  // Pour les lignes suivantes, ajouter une indentation ou un préfixe
-                  displayText = showLabels ? `   ${line}` : `${icon} ${line}`;
+                  // Pour les lignes suivantes, ajouter une indentation (pas d'icône)
+                  displayText = showLabels ? `   ${line}` : `   ${line}`;
                 }
 
                 // Appliquer la transformation de texte
@@ -1879,7 +1879,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
                     const label = field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ');
                     displayText = `${icon} ${label}: ${line}`;
                   } else {
-                    displayText = showLabels ? `   ${line}` : `${icon} ${line}`;
+                    displayText = showLabels ? `   ${line}` : `   ${line}`;
                   }
 
                   // Appliquer la transformation de texte
@@ -2000,7 +2000,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
                     const label = field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ');
                     displayText = `${icon} ${label}: ${line}`;
                   } else {
-                    displayText = showLabels ? `   ${line}` : `${icon} ${line}`;
+                    displayText = showLabels ? `   ${line}` : `   ${line}`;
                   }
 
                   // Appliquer la transformation de texte
