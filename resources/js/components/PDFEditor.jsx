@@ -152,7 +152,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
     const newElements = elements.map(element =>
       element.id === elementId ? { ...element, ...newProperties } : element
     );
-    console.log('[DEBUG] newElements:', newElements.find(el => el.id === elementId));
+    console.log('[DEBUG] newElements element template:', newElements.find(el => el.id === elementId)?.template);
     handleElementsChange(newElements);
   };
 
