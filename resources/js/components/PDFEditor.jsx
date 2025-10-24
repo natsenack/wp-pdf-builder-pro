@@ -1605,61 +1605,131 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             if (!value) return;
 
             const icon = fieldIcons[field] || '📄';
-            let displayText = value;
 
-            // Ajouter l'étiquette si demandée
-            if (showLabels) {
-              const label = field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ');
-              if (labelStyle === 'bold') {
-                displayText = `${icon} ${label}: ${value}`;
-              } else if (labelStyle === 'italic') {
-                displayText = `${icon} ${label}: ${value}`;
+            // Traitement spécial pour l'adresse : séparer les boîtes postales sur des lignes différentes
+            if (field === 'address') {
+              // Diviser l'adresse en lignes, en mettant les boîtes postales sur des lignes séparées
+              const addressLines = value.split('\n').map(line => line.trim()).filter(line => line);
+
+              addressLines.forEach((line, lineIndex) => {
+                // Vérifier si cette ligne contient une boîte postale (BP, boîte postale, etc.)
+                const isPostalBox = /\b(?:BP|boîte postale|boite postale|b\.p\.)\b/i.test(line);
+
+                let displayText = line;
+
+                // Ajouter l'étiquette seulement à la première ligne si demandée
+                if (showLabels && lineIndex === 0) {
+                  const label = field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ');
+                  if (labelStyle === 'bold') {
+                    displayText = `${icon} ${label}: ${line}`;
+                  } else if (labelStyle === 'italic') {
+                    displayText = `${icon} ${label}: ${line}`;
+                  } else {
+                    displayText = `${icon} ${label}: ${line}`;
+                  }
+                } else {
+                  // Pour les lignes suivantes, ajouter une indentation ou un préfixe
+                  displayText = showLabels ? `   ${line}` : `${icon} ${line}`;
+                }
+
+                // Appliquer la transformation de texte
+                if (element.textTransform === 'uppercase') {
+                  displayText = displayText.toUpperCase();
+                } else if (element.textTransform === 'lowercase') {
+                  displayText = displayText.toLowerCase();
+                } else if (element.textTransform === 'capitalize') {
+                  displayText = displayText.replace(/\b\w/g, l => l.toUpperCase());
+                }
+
+                // Position Y pour cette ligne
+                const lineY = currentY + fontSize;
+
+                // Appliquer l'espacement des lettres si défini
+                if (letterSpacing > 0) {
+                  let charX = textX;
+                  for (let i = 0; i < displayText.length; i++) {
+                    ctx.fillText(displayText[i], charX, lineY);
+                    charX += ctx.measureText(displayText[i]).width + letterSpacing;
+                  }
+                } else {
+                  ctx.fillText(displayText, textX, lineY);
+                }
+
+                // Appliquer la décoration de texte
+                if (element.textDecoration === 'underline' || element.textDecoration === 'line-through') {
+                  const textWidth = letterSpacing > 0 ?
+                    displayText.split('').reduce((width, char) => width + ctx.measureText(char).width + letterSpacing, -letterSpacing) :
+                    ctx.measureText(displayText).width;
+
+                  const decorationY = lineY + (element.textDecoration === 'underline' ? 2 : -fontSize * 0.2);
+                  ctx.strokeStyle = element.color || '#1e293b';
+                  ctx.lineWidth = Math.max(1, fontSize / 20);
+                  ctx.beginPath();
+                  ctx.moveTo(textX, decorationY);
+                  ctx.lineTo(textX + textWidth, decorationY);
+                  ctx.stroke();
+                }
+
+                currentY += lineSpacing;
+              });
+            } else {
+              // Traitement normal pour les autres champs
+              let displayText = value;
+
+              // Ajouter l'étiquette si demandée
+              if (showLabels) {
+                const label = field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ');
+                if (labelStyle === 'bold') {
+                  displayText = `${icon} ${label}: ${value}`;
+                } else if (labelStyle === 'italic') {
+                  displayText = `${icon} ${label}: ${value}`;
+                } else {
+                  displayText = `${icon} ${label}: ${value}`;
+                }
               } else {
-                displayText = `${icon} ${label}: ${value}`;
+                displayText = `${icon} ${value}`;
               }
-            } else {
-              displayText = `${icon} ${value}`;
-            }
 
-            // Appliquer la transformation de texte
-            if (element.textTransform === 'uppercase') {
-              displayText = displayText.toUpperCase();
-            } else if (element.textTransform === 'lowercase') {
-              displayText = displayText.toLowerCase();
-            } else if (element.textTransform === 'capitalize') {
-              displayText = displayText.replace(/\b\w/g, l => l.toUpperCase());
-            }
-
-            // Position Y pour cette ligne
-            const lineY = currentY + fontSize;
-
-            // Appliquer l'espacement des lettres si défini
-            if (letterSpacing > 0) {
-              let charX = textX;
-              for (let i = 0; i < displayText.length; i++) {
-                ctx.fillText(displayText[i], charX, lineY);
-                charX += ctx.measureText(displayText[i]).width + letterSpacing;
+              // Appliquer la transformation de texte
+              if (element.textTransform === 'uppercase') {
+                displayText = displayText.toUpperCase();
+              } else if (element.textTransform === 'lowercase') {
+                displayText = displayText.toLowerCase();
+              } else if (element.textTransform === 'capitalize') {
+                displayText = displayText.replace(/\b\w/g, l => l.toUpperCase());
               }
-            } else {
-              ctx.fillText(displayText, textX, lineY);
+
+              // Position Y pour cette ligne
+              const lineY = currentY + fontSize;
+
+              // Appliquer l'espacement des lettres si défini
+              if (letterSpacing > 0) {
+                let charX = textX;
+                for (let i = 0; i < displayText.length; i++) {
+                  ctx.fillText(displayText[i], charX, lineY);
+                  charX += ctx.measureText(displayText[i]).width + letterSpacing;
+                }
+              } else {
+                ctx.fillText(displayText, textX, lineY);
+              }
+
+              // Appliquer la décoration de texte
+              if (element.textDecoration === 'underline' || element.textDecoration === 'line-through') {
+                const textWidth = letterSpacing > 0 ?
+                  displayText.split('').reduce((width, char) => width + ctx.measureText(char).width + letterSpacing, -letterSpacing) :
+                  ctx.measureText(displayText).width;
+
+                const decorationY = lineY + (element.textDecoration === 'underline' ? 2 : -fontSize * 0.2);
+                ctx.strokeStyle = element.color || '#1e293b';
+                ctx.lineWidth = Math.max(1, fontSize / 20);
+                ctx.beginPath();
+                ctx.moveTo(textX, decorationY);
+                ctx.lineTo(textX + textWidth, decorationY);
+                ctx.stroke();
+              }
+
+              currentY += lineSpacing;
             }
-
-            // Appliquer la décoration de texte
-            if (element.textDecoration === 'underline' || element.textDecoration === 'line-through') {
-              const textWidth = letterSpacing > 0 ?
-                displayText.split('').reduce((width, char) => width + ctx.measureText(char).width + letterSpacing, -letterSpacing) :
-                ctx.measureText(displayText).width;
-
-              const decorationY = lineY + (element.textDecoration === 'underline' ? 2 : -fontSize * 0.2);
-              ctx.strokeStyle = element.color || '#1e293b';
-              ctx.lineWidth = Math.max(1, fontSize / 20);
-              ctx.beginPath();
-              ctx.moveTo(textX, decorationY);
-              ctx.lineTo(textX + textWidth, decorationY);
-              ctx.stroke();
-            }
-
-            currentY += lineSpacing;
           });
         } else {
           // Disposition horizontale (2 colonnes)
@@ -1674,56 +1744,126 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             if (leftField) {
               const [field, value] = leftField;
               const icon = fieldIcons[field] || '📄';
-              let displayText = value;
 
-              if (showLabels) {
-                const label = field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ');
-                displayText = `${icon} ${label}: ${value}`;
+              // Traitement spécial pour l'adresse dans la colonne gauche
+              if (field === 'address') {
+                // Diviser l'adresse en lignes, en mettant les boîtes postales sur des lignes séparées
+                const addressLines = value.split('\n').map(line => line.trim()).filter(line => line);
+
+                addressLines.forEach((line, lineIndex) => {
+                  let displayText = line;
+
+                  // Ajouter l'étiquette seulement à la première ligne si demandée
+                  if (showLabels && lineIndex === 0) {
+                    const label = field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ');
+                    displayText = `${icon} ${label}: ${line}`;
+                  } else {
+                    displayText = showLabels ? `   ${line}` : `${icon} ${line}`;
+                  }
+
+                  // Appliquer la transformation de texte
+                  if (element.textTransform === 'uppercase') {
+                    displayText = displayText.toUpperCase();
+                  } else if (element.textTransform === 'lowercase') {
+                    displayText = displayText.toLowerCase();
+                  } else if (element.textTransform === 'capitalize') {
+                    displayText = displayText.replace(/\b\w/g, l => l.toUpperCase());
+                  }
+
+                  const lineY = currentY + fontSize;
+                  ctx.fillText(displayText, textX, lineY);
+                  currentY += lineSpacing;
+                });
               } else {
-                displayText = `${icon} ${value}`;
-              }
+                // Traitement normal pour les autres champs
+                let displayText = value;
 
-              // Appliquer la transformation de texte
-              if (element.textTransform === 'uppercase') {
-                displayText = displayText.toUpperCase();
-              } else if (element.textTransform === 'lowercase') {
-                displayText = displayText.toLowerCase();
-              } else if (element.textTransform === 'capitalize') {
-                displayText = displayText.replace(/\b\w/g, l => l.toUpperCase());
-              }
+                if (showLabels) {
+                  const label = field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ');
+                  displayText = `${icon} ${label}: ${value}`;
+                } else {
+                  displayText = `${icon} ${value}`;
+                }
 
-              const lineY = currentY + fontSize;
-              ctx.fillText(displayText, textX, lineY);
+                // Appliquer la transformation de texte
+                if (element.textTransform === 'uppercase') {
+                  displayText = displayText.toUpperCase();
+                } else if (element.textTransform === 'lowercase') {
+                  displayText = displayText.toLowerCase();
+                } else if (element.textTransform === 'capitalize') {
+                  displayText = displayText.replace(/\b\w/g, l => l.toUpperCase());
+                }
+
+                const lineY = currentY + fontSize;
+                ctx.fillText(displayText, textX, lineY);
+              }
             }
 
             // Colonne droite
             if (rightField) {
               const [field, value] = rightField;
               const icon = fieldIcons[field] || '📄';
-              let displayText = value;
 
-              if (showLabels) {
-                const label = field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ');
-                displayText = `${icon} ${label}: ${value}`;
+              // Traitement spécial pour l'adresse dans la colonne droite
+              if (field === 'address') {
+                // Diviser l'adresse en lignes, en mettant les boîtes postales sur des lignes séparées
+                const addressLines = value.split('\n').map(line => line.trim()).filter(line => line);
+
+                addressLines.forEach((line, lineIndex) => {
+                  let displayText = line;
+
+                  // Ajouter l'étiquette seulement à la première ligne si demandée
+                  if (showLabels && lineIndex === 0) {
+                    const label = field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ');
+                    displayText = `${icon} ${label}: ${line}`;
+                  } else {
+                    displayText = showLabels ? `   ${line}` : `${icon} ${line}`;
+                  }
+
+                  // Appliquer la transformation de texte
+                  if (element.textTransform === 'uppercase') {
+                    displayText = displayText.toUpperCase();
+                  } else if (element.textTransform === 'lowercase') {
+                    displayText = displayText.toLowerCase();
+                  } else if (element.textTransform === 'capitalize') {
+                    displayText = displayText.replace(/\b\w/g, l => l.toUpperCase());
+                  }
+
+                  const lineY = currentY + fontSize;
+                  const rightX = textX + blockWidth / 2 + 10;
+                  ctx.fillText(displayText, rightX, lineY);
+                  currentY += lineSpacing;
+                });
               } else {
-                displayText = `${icon} ${value}`;
-              }
+                // Traitement normal pour les autres champs
+                let displayText = value;
 
-              // Appliquer la transformation de texte
-              if (element.textTransform === 'uppercase') {
-                displayText = displayText.toUpperCase();
-              } else if (element.textTransform === 'lowercase') {
-                displayText = displayText.toLowerCase();
-              } else if (element.textTransform === 'capitalize') {
-                displayText = displayText.replace(/\b\w/g, l => l.toUpperCase());
-              }
+                if (showLabels) {
+                  const label = field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ');
+                  displayText = `${icon} ${label}: ${value}`;
+                } else {
+                  displayText = `${icon} ${value}`;
+                }
 
-              const lineY = currentY + fontSize;
-              const rightX = textX + blockWidth / 2 + 10;
-              ctx.fillText(displayText, rightX, lineY);
+                // Appliquer la transformation de texte
+                if (element.textTransform === 'uppercase') {
+                  displayText = displayText.toUpperCase();
+                } else if (element.textTransform === 'lowercase') {
+                  displayText = displayText.toLowerCase();
+                } else if (element.textTransform === 'capitalize') {
+                  displayText = displayText.replace(/\b\w/g, l => l.toUpperCase());
+                }
+
+                const lineY = currentY + fontSize;
+                const rightX = textX + blockWidth / 2 + 10;
+                ctx.fillText(displayText, rightX, lineY);
+              }
             }
 
-            currentY += lineSpacing;
+            // Avancer seulement si on n'a pas d'adresse multiligne
+            if ((!leftField || leftField[0] !== 'address') && (!rightField || rightField[0] !== 'address')) {
+              currentY += lineSpacing;
+            }
           }
         }
 
