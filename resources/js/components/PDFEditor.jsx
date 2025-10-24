@@ -2488,18 +2488,37 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
               ctx.fillStyle = `rgb(${tableStyleData.header_bg.join(',')})`;
             }
 
-            // Dessiner le fond avec coins arrondis
+            // Trouver l'index de la colonne Prix et Total
+            const priceColumnIndex = tableData.headers.indexOf('Prix');
+            const totalColumnIndex = tableData.headers.indexOf('Total');
+
+            // Calculer la position et largeur pour le fond des totaux (seulement colonnes Prix et Total)
+            const labelColumnIndex = priceColumnIndex !== -1 ? priceColumnIndex : 0;
+            const valueColumnIndex = totalColumnIndex !== -1 ? totalColumnIndex : tableData.headers.length - 1;
+
+            // Position X de départ du fond (début de la colonne du libellé)
+            let totalBgX;
+            if (labelColumnIndex === 0) {
+              totalBgX = tableX;
+            } else {
+              totalBgX = tableX + columnWidths.slice(0, labelColumnIndex).reduce((sum, w) => sum + w, 0);
+            }
+
+            // Largeur du fond (de la colonne du libellé à la colonne de la valeur)
+            const totalBgWidth = columnWidths.slice(labelColumnIndex, valueColumnIndex - labelColumnIndex + 1).reduce((sum, w) => sum + w, 0);
+
+            // Dessiner le fond avec coins arrondis (seulement sur les colonnes pertinentes)
             const totalRadius = element.borderRadius ? Math.min(element.borderRadius * 0.5, 3) : 2;
             ctx.beginPath();
-            ctx.roundRect(tableX, currentY, tableWidth, totalHeight, totalRadius);
+            ctx.roundRect(totalBgX, currentY, totalBgWidth, totalHeight, totalRadius);
             ctx.fill();
 
-            // Bordure du total si activée
+            // Bordure du total si activée (seulement sur les colonnes pertinentes)
             if (element.showBorders !== false) {
               ctx.strokeStyle = `rgb(${tableStyleData.header_border.join(',')})`;
               ctx.lineWidth = tableStyleData.border_width || 1;
               ctx.beginPath();
-              ctx.roundRect(tableX, currentY, tableWidth, totalHeight, totalRadius);
+              ctx.roundRect(totalBgX, currentY, totalBgWidth, totalHeight, totalRadius);
               ctx.stroke();
             }
 
@@ -2508,10 +2527,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             const totalFontSize = isTotalRow ? headerFontSize + 1 : headerFontSize;
             ctx.font = `${fontStyle}${totalFontWeight} ${totalFontSize}px ${fontFamily}`;
             ctx.fillStyle = tableStyleData.headerTextColor;
-
-            // Trouver l'index de la colonne Prix et Total
-            const priceColumnIndex = tableData.headers.indexOf('Prix');
-            const totalColumnIndex = tableData.headers.indexOf('Total');
 
             // Libellé du total (dans la colonne Prix si elle existe, sinon première colonne)
             let label = key === 'subtotal' ? 'Sous-total' :
@@ -2530,7 +2545,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             }
 
             // Positionner le libellé dans la colonne Prix (ou première colonne si Prix n'existe pas)
-            const labelColumnIndex = priceColumnIndex !== -1 ? priceColumnIndex : 0;
             let labelX;
             if (labelColumnIndex === 0) {
               labelX = tableX + (columnWidths[0] / 2);
@@ -2564,7 +2578,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             }
 
             // Positionner la valeur dans la colonne Total (ou dernière colonne si Total n'existe pas)
-            const valueColumnIndex = totalColumnIndex !== -1 ? totalColumnIndex : tableData.headers.length - 1;
             let valueX;
             if (valueColumnIndex === 0) {
               valueX = tableX + (columnWidths[0] / 2);
@@ -2585,12 +2598,13 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
               ctx.fillText(valueText, valueX, valueY);
             }
 
-            // Lignes verticales entre les colonnes pour les totaux
+            // Lignes verticales entre les colonnes pour les totaux (seulement entre les colonnes pertinentes)
             if (element.showBorders !== false) {
               ctx.strokeStyle = `rgb(${tableStyleData.header_border.join(',')})`;
               ctx.lineWidth = tableStyleData.border_width || 0.5;
 
-              for (let i = 0; i < numColumns - 1; i++) {
+              // Dessiner seulement les lignes verticales entre les colonnes du libellé et de la valeur
+              for (let i = labelColumnIndex; i < valueColumnIndex; i++) {
                 const lineX = tableX + columnWidths.slice(0, i + 1).reduce((sum, w) => sum + w, 0);
                 ctx.beginPath();
                 ctx.moveTo(lineX, currentY);
