@@ -921,6 +921,29 @@ const PropertiesPanel = memo(({
                   </div>
                 </div>
 
+                {/* Format du tableau */}
+                <div className="table-section">
+                  <div className="section-title">📐 Format du tableau</div>
+                  <div className="property-row">
+                    <label>Style:</label>
+                    <select
+                      value={localProperties.tableFormat || 'full'}
+                      onChange={(e) => handlePropertyChange(selectedElement.id, 'tableFormat', e.target.value)}
+                      style={{
+                        padding: '6px',
+                        borderRadius: '4px',
+                        border: '1px solid #ddd',
+                        fontSize: '13px',
+                        width: '100%'
+                      }}
+                    >
+                      <option value="full">Complet (avec bordures)</option>
+                      <option value="simple">Simple (sans bordures)</option>
+                      <option value="minimal">Minimal (ligne seule)</option>
+                    </select>
+                  </div>
+                </div>
+
                 {/* Bouton de réinitialisation simple */}
                 <div className="property-row">
                   <label></label>

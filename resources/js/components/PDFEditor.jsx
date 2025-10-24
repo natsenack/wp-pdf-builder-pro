@@ -2434,9 +2434,8 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 0;
       } else if (element.type === 'product_table') {
-        // === RENDU SIMPLIFIÉ DU TABLEAU DE PRODUITS ===
-        // Style: STRIPED MODERN (n°2)
-        // Système: 1) Thème préfabriqué + 2) Surcharges de couleur simples
+        // === TABLEAU DE PRODUITS - STYLE STRIPED MODERN ===
+        // Système: Thème + Surcharges couleur simples + Sélection de format
         
         const tableX = element.x || 30;
         let currentY = element.y || 270;
@@ -2445,7 +2444,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         const headerHeight = 22;
         const totalHeight = 18;
 
-        // Thème STRIPED MODERN (n°2 - celui sélectionné)
+        // Thème STRIPED MODERN (couleurs de votre design)
         const theme = { 
           headerBg: '#e0f2fe', 
           headerText: '#0c4a6e', 
@@ -2462,6 +2461,9 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         const rowText = theme.rowText;
         const borderColor = element.tableColorPrimary || theme.border;
         const borderWidth = 1;
+
+        // Format du tableau (défaut: 'full' = avec bordures verticales)
+        const tableFormat = element.tableFormat || 'full';
 
         // Données d'exemple
         const headers = ['Produit', 'Qté', 'Prix', 'Total'];
@@ -2482,7 +2484,7 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         // En-tête - Style STRIPED MODERN avec dégradé
         const headerGradient = ctx.createLinearGradient(tableX, currentY, tableX, currentY + headerHeight);
         headerGradient.addColorStop(0, headerBg);
-        headerGradient.addColorStop(1, '#b3e5fc'); // Gradient plus clair
+        headerGradient.addColorStop(1, '#b3e5fc');
         ctx.fillStyle = headerGradient;
         ctx.fillRect(tableX, currentY, tableWidth, headerHeight);
         
@@ -2501,35 +2503,66 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         ctx.lineTo(tableX + tableWidth, currentY + headerHeight);
         ctx.stroke();
 
+        // En-têtes avec bordures verticales si format 'full'
         ctx.fillStyle = headerText;
         ctx.font = 'bold 11px Arial';
         ctx.textAlign = 'center';
         headers.forEach((header, idx) => {
+          // Texte centré
           ctx.fillText(header, tableX + idx * colWidth + colWidth / 2, currentY + headerHeight / 2 + 3);
+          
+          // Bordure verticale entre colonnes si format 'full'
+          if (tableFormat === 'full' && idx < headers.length - 1) {
+            ctx.strokeStyle = borderColor;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(tableX + (idx + 1) * colWidth, currentY + 2);
+            ctx.lineTo(tableX + (idx + 1) * colWidth, currentY + headerHeight - 2);
+            ctx.stroke();
+          }
         });
         currentY += headerHeight;
 
-        // Lignes de données - Alternance de couleurs
+        // Lignes de données
         ctx.font = '10px Arial';
         rows.forEach((row, rowIdx) => {
           const isAltRow = rowIdx % 2 !== 0;
           ctx.fillStyle = isAltRow ? altRowBg : rowBg;
           ctx.fillRect(tableX, currentY, tableWidth, cellHeight);
           
-          // Bordure fine
+          // Bordure horizontale
           ctx.strokeStyle = borderColor;
           ctx.lineWidth = 0.5;
-          ctx.strokeRect(tableX, currentY, tableWidth, cellHeight);
+          ctx.beginPath();
+          ctx.moveTo(tableX, currentY + cellHeight);
+          ctx.lineTo(tableX + tableWidth, currentY + cellHeight);
+          ctx.stroke();
           
+          // Bordures verticales si format 'full'
+          if (tableFormat === 'full') {
+            ctx.lineWidth = 0.5;
+            for (let i = 1; i < headers.length; i++) {
+              ctx.beginPath();
+              ctx.moveTo(tableX + i * colWidth, currentY);
+              ctx.lineTo(tableX + i * colWidth, currentY + cellHeight);
+              ctx.stroke();
+            }
+          }
+          
+          // Texte des cellules
           ctx.fillStyle = rowText;
           row.forEach((cell, cellIdx) => {
-            ctx.fillText(cell, tableX + cellIdx * colWidth + colWidth / 2, currentY + cellHeight / 2 + 3);
+            ctx.textAlign = cellIdx === 0 ? 'left' : 'right';
+            const xPos = cellIdx === 0 ? 
+              tableX + cellIdx * colWidth + 8 : 
+              tableX + (cellIdx + 1) * colWidth - 8;
+            ctx.fillText(cell, xPos, currentY + cellHeight / 2 + 3);
           });
           currentY += cellHeight;
         });
 
-        // Totaux
-        currentY += 4; // Espace avant totaux
+        // Totaux (alignés à droite)
+        currentY += 4;
         
         // Ligne de séparation
         ctx.strokeStyle = borderColor;
@@ -2541,62 +2574,71 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         
         currentY += 6;
 
-        // Sous-total
-        ctx.fillStyle = rowBg;
-        ctx.fillRect(tableX, currentY, tableWidth, totalHeight);
-        ctx.strokeStyle = borderColor;
-        ctx.lineWidth = 0.5;
-        ctx.strokeRect(tableX, currentY, tableWidth, totalHeight);
-        ctx.fillStyle = rowText;
-        ctx.font = '10px Arial';
-        ctx.textAlign = 'left';
-        ctx.fillText('Sous-total :', tableX + 10, currentY + totalHeight / 2 + 3);
-        ctx.textAlign = 'right';
-        ctx.fillText('87,48 €', tableX + tableWidth - 10, currentY + totalHeight / 2 + 3);
-        currentY += totalHeight;
+        // Fonction pour afficher une ligne de total
+        const drawTotalRow = (label, value, bgColor, isTotal = false) => {
+          ctx.fillStyle = bgColor;
+          ctx.fillRect(tableX, currentY, tableWidth, totalHeight);
+          
+          // Bordure
+          ctx.strokeStyle = borderColor;
+          ctx.lineWidth = 0.5;
+          ctx.strokeRect(tableX, currentY, tableWidth, totalHeight);
+          
+          // Bordures verticales si format 'full'
+          if (tableFormat === 'full') {
+            for (let i = 1; i < 4; i++) {
+              ctx.beginPath();
+              ctx.moveTo(tableX + i * (tableWidth / 4), currentY);
+              ctx.lineTo(tableX + i * (tableWidth / 4), currentY + totalHeight);
+              ctx.stroke();
+            }
+          }
+          
+          ctx.fillStyle = rowText;
+          ctx.font = isTotal ? 'bold 11px Arial' : '10px Arial';
+          ctx.textAlign = 'left';
+          ctx.fillText(label, tableX + 10, currentY + totalHeight / 2 + 3);
+          ctx.textAlign = 'right';
+          ctx.fillText(value, tableX + tableWidth - 10, currentY + totalHeight / 2 + 3);
+          currentY += totalHeight;
+        };
 
-        // Frais de port
-        ctx.fillStyle = altRowBg;
-        ctx.fillRect(tableX, currentY, tableWidth, totalHeight);
-        ctx.strokeStyle = borderColor;
-        ctx.lineWidth = 0.5;
-        ctx.strokeRect(tableX, currentY, tableWidth, totalHeight);
-        ctx.fillStyle = rowText;
-        ctx.textAlign = 'left';
-        ctx.fillText('Frais de port :', tableX + 10, currentY + totalHeight / 2 + 3);
-        ctx.textAlign = 'right';
-        ctx.fillText('10,00 €', tableX + tableWidth - 10, currentY + totalHeight / 2 + 3);
-        currentY += totalHeight;
-
-        // TVA
-        ctx.fillStyle = rowBg;
-        ctx.fillRect(tableX, currentY, tableWidth, totalHeight);
-        ctx.strokeStyle = borderColor;
-        ctx.lineWidth = 0.5;
-        ctx.strokeRect(tableX, currentY, tableWidth, totalHeight);
-        ctx.fillStyle = rowText;
-        ctx.textAlign = 'left';
-        ctx.fillText('TVA (20%) :', tableX + 10, currentY + totalHeight / 2 + 3);
-        ctx.textAlign = 'right';
-        ctx.fillText('19,50 €', tableX + tableWidth - 10, currentY + totalHeight / 2 + 3);
-        currentY += totalHeight;
-
+        // Afficher les totaux
+        drawTotalRow('Sous-total :', '87,48 €', rowBg);
+        drawTotalRow('Frais de port :', '10,00 €', altRowBg);
+        drawTotalRow('TVA (20%) :', '19,50 €', rowBg);
+        
         // TOTAL - Mise en évidence
         const totalGradient = ctx.createLinearGradient(tableX, currentY, tableX, currentY + totalHeight);
-        totalGradient.addColorStop(0, altRowBg);
-        totalGradient.addColorStop(1, '#c8e6c9'); // Vert clair pour mettre en évidence
+        totalGradient.addColorStop(0, '#e0f2fe');
+        totalGradient.addColorStop(1, '#b3e5fc');
         ctx.fillStyle = totalGradient;
         ctx.fillRect(tableX, currentY, tableWidth, totalHeight);
+        
         ctx.strokeStyle = borderColor;
         ctx.lineWidth = 1.5;
         ctx.strokeRect(tableX, currentY, tableWidth, totalHeight);
+        
+        // Bordures verticales si format 'full'
+        if (tableFormat === 'full') {
+          for (let i = 1; i < 4; i++) {
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(tableX + i * (tableWidth / 4), currentY);
+            ctx.lineTo(tableX + i * (tableWidth / 4), currentY + totalHeight);
+            ctx.stroke();
+          }
+        }
+        
         ctx.fillStyle = borderColor;
         ctx.font = 'bold 11px Arial';
         ctx.textAlign = 'left';
         ctx.fillText('TOTAL :', tableX + 10, currentY + totalHeight / 2 + 3);
         ctx.textAlign = 'right';
         ctx.fillText('116,98 €', tableX + tableWidth - 10, currentY + totalHeight / 2 + 3);
-        currentY += totalHeight;
+
+        // Restaurer l'opacité
+        ctx.globalAlpha = 1;
 
         // Restaurer l'opacité
         ctx.globalAlpha = 1;
