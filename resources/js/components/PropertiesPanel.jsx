@@ -410,6 +410,40 @@ const ELEMENT_PROPERTY_PROFILES = {
       }
     }
   },
+  // Éléments numéro de commande
+  order_number: {
+    appearance: {
+      sections: ['colors', 'typography', 'borders', 'effects'],
+      properties: {
+        colors: ['color', 'backgroundColor'],
+        typography: ['fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'textDecoration', 'textAlign', 'textTransform', 'lineHeight', 'letterSpacing'],
+        borders: ['borderWidth', 'borderColor', 'borderRadius'],
+        effects: ['opacity', 'shadow']
+      }
+    },
+    layout: {
+      sections: ['position', 'dimensions', 'transform', 'layers'],
+      properties: {
+        position: ['x', 'y'],
+        dimensions: ['width', 'height'],
+        transform: ['rotation'],
+        layers: ['zIndex']
+      }
+    },
+    content: {
+      sections: ['order_number'],
+      properties: {
+        order_number: ['format', 'showLabel', 'labelText', 'labelAlign', 'previewOrderNumber', 'highlightNumber', 'numberBackground']
+      }
+    },
+    effects: {
+      sections: ['opacity', 'shadows'],
+      properties: {
+        opacity: ['opacity'],
+        shadows: ['shadow', 'shadowColor', 'shadowOffsetX', 'shadowOffsetY']
+      }
+    }
+  },
   // Éléments par défaut (forme géométrique)
   default: {
     appearance: {
