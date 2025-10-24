@@ -111,9 +111,9 @@ export class SampleDataProvider {
         name: 'Marie Dubois',
         email: 'marie.dubois@email.com',
         phone: '+33 6 12 34 56 78',
-        address: '15 Avenue des Champs-Élysées\n75008 Paris\nFrance',
-        billing_address: '15 Avenue des Champs-Élysées\n75008 Paris\nFrance',
-        shipping_address: '456 Avenue des Roses\n75016 Paris\nFrance',
+        address: '15 Avenue des Champs-Élysées\nBP 12345\n75008 Paris\nFrance',
+        billing_address: '15 Avenue des Champs-Élysées\nBP 12345\n75008 Paris\nFrance',
+        shipping_address: '456 Avenue des Roses\nBP 67890\n75016 Paris\nFrance',
         company: 'TechCorp SARL',
         vat: 'FR12345678901',
         siret: '12345678901234'
@@ -122,7 +122,7 @@ export class SampleDataProvider {
       // Données entreprise d'exemple
       company: {
         name: 'Ma Société SARL',
-        address: '123 Rue de la Paix\n75001 Paris\nFrance',
+        address: '123 Rue de la Paix\nBoîte Postale 987\n75001 Paris\nFrance',
         phone: '+33 1 42 86 75 30',
         email: 'contact@masociete.com',
         website: 'www.masociete.com',
