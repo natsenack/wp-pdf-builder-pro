@@ -2612,7 +2612,11 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
         }
 
         // Choisir aléatoirement entre 2 styles de tableaux (valeur stockée à la création)
-        const tableStyleChoice = element.tableStyleChoice || (Math.random() < 0.5 ? 'minimal' : 'striped');
+        // Si tableStyleChoice n'existe pas, l'initialiser une seule fois et la stocker
+        if (!element.tableStyleChoice) {
+          element.tableStyleChoice = Math.random() < 0.5 ? 'minimal' : 'striped';
+        }
+        const tableStyleChoice = element.tableStyleChoice;
 
         // Récupérer les couleurs thème ou utiliser les défauts
         const primaryColor = element.tablePrimaryColor || '#667eea';
