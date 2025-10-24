@@ -1162,29 +1162,67 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
 
         // Afficher l'étiquette si elle doit être affichée
         if (element.showLabel && element.labelText && processedLabel) {
-          const labelX = textX + textMargin;
-          const labelY = labelBaselineY;
+          const labelAlign = element.labelAlign || 'left'; // Alignement configurable pour l'étiquette
+          let labelX;
+
+          // Calculer la position X selon l'alignement de l'étiquette
+          if (labelAlign === 'center') {
+            labelX = textX + textWidth / 2;
+          } else if (labelAlign === 'right') {
+            labelX = textX + textWidth - textMargin;
+          } else { // left (default)
+            labelX = textX + textMargin;
+          }
 
           // Appliquer l'espacement des lettres pour l'étiquette si défini
           if (letterSpacing > 0) {
-            let charX = labelX;
+            let startX;
+            if (labelAlign === 'center') {
+              const totalWidth = processedLabel.split('').reduce((width, char) => width + ctx.measureText(char).width + letterSpacing, -letterSpacing);
+              startX = labelX - totalWidth / 2 + ctx.measureText(processedLabel[0]).width / 2;
+            } else if (labelAlign === 'right') {
+              startX = labelX - ctx.measureText(processedLabel[processedLabel.length - 1]).width / 2;
+              // Calculer la position de départ pour alignement à droite avec letterSpacing
+              for (let i = processedLabel.length - 1; i >= 0; i--) {
+                startX -= ctx.measureText(processedLabel[i]).width + (i > 0 ? letterSpacing : 0);
+              }
+              startX += ctx.measureText(processedLabel[0]).width / 2;
+            } else { // left (default)
+              startX = labelX + ctx.measureText(processedLabel[0]).width / 2;
+            }
+
             for (let i = 0; i < processedLabel.length; i++) {
-              ctx.fillText(processedLabel[i], charX, labelY);
-              charX += ctx.measureText(processedLabel[i]).width + letterSpacing;
+              ctx.fillText(processedLabel[i], startX, labelBaselineY);
+              startX += ctx.measureText(processedLabel[i]).width + letterSpacing;
             }
           } else {
-            ctx.textAlign = 'left';
-            ctx.fillText(processedLabel, labelX, labelY);
+            // Texte normal sans espacement des lettres
+            let textXPos = labelX;
+            if (labelAlign === 'center') {
+              ctx.textAlign = 'center';
+            } else if (labelAlign === 'right') {
+              ctx.textAlign = 'right';
+            } else { // left (default)
+              ctx.textAlign = 'left';
+            }
+            ctx.fillText(processedLabel, textXPos, labelBaselineY);
           }
 
           // Appliquer la décoration de texte à l'étiquette
           if (textDecoration === 'underline' || textDecoration === 'line-through') {
-            const decorationY = labelY + (textDecoration === 'underline' ? 2 : -fontSize * 0.2);
+            let decorationX = labelX;
+            if (labelAlign === 'center') {
+              decorationX = labelX - labelWidth / 2;
+            } else if (labelAlign === 'right') {
+              decorationX = labelX - labelWidth;
+            } // left: déjà correct
+
+            const decorationY = labelBaselineY + (textDecoration === 'underline' ? 2 : -fontSize * 0.2);
             ctx.strokeStyle = element.color || '#000000';
             ctx.lineWidth = Math.max(1, fontSize / 20);
             ctx.beginPath();
-            ctx.moveTo(labelX, decorationY);
-            ctx.lineTo(labelX + labelWidth, decorationY);
+            ctx.moveTo(decorationX, decorationY);
+            ctx.lineTo(decorationX + labelWidth, decorationY);
             ctx.stroke();
           }
         }
