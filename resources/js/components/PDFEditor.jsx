@@ -1159,6 +1159,35 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
             ctx.measureText(processedLabel).width;
         }
 
+        // Afficher l'étiquette si elle doit être affichée
+        if (element.showLabel && element.labelText && processedLabel) {
+          const labelX = textX + textMargin;
+          const labelY = baselineY;
+
+          // Appliquer l'espacement des lettres pour l'étiquette si défini
+          if (letterSpacing > 0) {
+            let charX = labelX;
+            for (let i = 0; i < processedLabel.length; i++) {
+              ctx.fillText(processedLabel[i], charX, labelY);
+              charX += ctx.measureText(processedLabel[i]).width + letterSpacing;
+            }
+          } else {
+            ctx.textAlign = 'left';
+            ctx.fillText(processedLabel, labelX, labelY);
+          }
+
+          // Appliquer la décoration de texte à l'étiquette
+          if (textDecoration === 'underline' || textDecoration === 'line-through') {
+            const decorationY = labelY + (textDecoration === 'underline' ? 2 : -fontSize * 0.2);
+            ctx.strokeStyle = element.color || '#000000';
+            ctx.lineWidth = Math.max(1, fontSize / 20);
+            ctx.beginPath();
+            ctx.moveTo(labelX, decorationY);
+            ctx.lineTo(labelX + labelWidth, decorationY);
+            ctx.stroke();
+          }
+        }
+
         // Position du numéro (à droite de l'étiquette avec espacement)
         const numberX = textX + textMargin + (element.showLabel && element.labelText ? labelWidth + 10 : 0);
         const numberWidth = availableWidth - (element.showLabel && element.labelText ? labelWidth + 10 : 0);
