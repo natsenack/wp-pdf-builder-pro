@@ -33,6 +33,20 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
   const [showElementLibrary, setShowElementLibrary] = useState(true);
   const [showPropertiesPanel, setShowPropertiesPanel] = useState(false);
 
+  // Synchroniser selectedElement avec elements
+  useEffect(() => {
+    if (selectedElement && selectedElement.id) {
+      const currentElement = elements.find(el => el.id === selectedElement.id);
+      if (currentElement && currentElement !== selectedElement) {
+        console.log('[DEBUG] Synchronizing selectedElement with elements array');
+        setSelectedElement(currentElement);
+      } else if (!currentElement) {
+        console.log('[DEBUG] Selected element no longer exists, clearing selection');
+        setSelectedElement(null);
+      }
+    }
+  }, [elements, selectedElement]);
+
   // État pour le drag & drop
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
@@ -155,14 +169,6 @@ const PDFEditorContent = ({ initialElements = [], onSave, templateName = '', isN
     );
     console.log('[DEBUG] newElements element template:', newElements.find(el => el.id === elementId)?.template);
     handleElementsChange(newElements);
-
-    // Mettre à jour selectedElement si c'est l'élément sélectionné qui a changé
-    if (selectedElement?.id === elementId) {
-      const updatedElement = newElements.find(el => el.id === elementId);
-      if (updatedElement) {
-        setSelectedElement(updatedElement);
-      }
-    }
   };
 
   // Gestionnaire de suppression d'élément
